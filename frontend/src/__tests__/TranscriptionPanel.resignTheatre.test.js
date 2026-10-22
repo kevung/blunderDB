@@ -10,6 +10,7 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -18,17 +19,13 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn(),
     PickTranscriptionVideo: vi.fn().mockResolvedValue(''),
     YouTubeWatchURL: vi.fn().mockResolvedValue('')
 }));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
-}));
 vi.mock('../components/VideoPane.svelte', async () => await import('./fixtures/FakeVideoPane.svelte'));
 
-import { ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import TranscriptionTheatre from '../components/TranscriptionTheatre.svelte';
@@ -94,7 +91,7 @@ beforeEach(() => {
     activeTabStore.set('transcription');
     statusBarModeStore.set('TRANSCRIBE');
     /** @type {any} */ (LegalMoves).mockResolvedValue([]);
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [] });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue({ side: 0, dice: [0, 0], unranked: false, candidates: [] });
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve({ id: 1, annotated: annotated() }));
 });
 

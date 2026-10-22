@@ -3,9 +3,8 @@
  *
  * La machine à touches est testée à part (transcriptionKeys.turn.test.js) ; ce
  * qui est vérifié ici, c'est la JOINTURE que seul le panneau fait : le moteur
- * CLASSE (EvaluatePositionImmediate, 0-ply, tous les coups), le générateur
- * NUMÉROTE (LegalMoves), et `select_candidate` s'adresse au second par le
- * rang du premier. Une jointure fausse choisit un autre coup que celui affiché,
+ * CLASSE et NUMÉROTE (TranscriptionCandidates, 0-ply, tous les coups), et
+ * `select_candidate` s'adresse au coup par son `index` chez le générateur. Une jointure fausse choisit un autre coup que celui affiché,
  * ce qu'aucun test de la machine seule ne verrait.
  *
  * Et la danse : un jet sans aucun coup légal crée l'Action sans une touche de
@@ -18,22 +17,20 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
     ApplyTranscriptionGesture: vi.fn()
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn()
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn()
 }));
 
-import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, ListTranscriptions, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, transcriptionPromptStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
@@ -92,7 +89,7 @@ beforeEach(() => {
     /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
     /** @type {any} */ (LegalMoves).mockResolvedValue(PLAYS);
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: RANKED });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer(PLAYS, RANKED));
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);
@@ -109,18 +106,17 @@ describe('le tour de pions', () => {
         await press('Digit3');
         await press('Digit1');
 
-        await vi.waitFor(() => expect(EvaluatePositionImmediate).toHaveBeenCalled());
+        await vi.waitFor(() => expect(TranscriptionCandidates).toHaveBeenCalled());
 
-        // Le jet et le camp sont posés sur la position du Cursor.
-        // `LegalMoves` est appelée aussi pour armer le coup joué au plateau —
-        // une fois par jet, T2.3 — donc l'appel visé ici est nommé par son jet
-        // et non par son rang dans la liste des appels.
+        // La liaison ne reçoit que le brouillon : le jet et le camp sont ceux
+        // qu'elle lit dans la séance.
+        expect(TranscriptionCandidates).toHaveBeenCalledWith(1);
+
+        // `LegalMoves` n'est appelée que pour armer le coup joué au plateau —
+        // une fois par jet — donc l'appel visé ici est nommé par son jet.
         const [pos] = /** @type {any} */ (LegalMoves).mock.calls.find((/** @type {any[]} */ [p]) => p.dice[0] === 3 && p.dice[1] === 1);
         expect(pos.dice).toEqual([3, 1]);
         expect(pos.player_on_roll).toBe(0);
-
-        // candidates = 0 : tous les coups, pas les dix d'une analyse stockée.
-        expect(/** @type {any} */ (EvaluatePositionImmediate).mock.calls[0][2]).toBe(0);
 
         // La table montre l'ordre de l'évaluation, meilleur d'abord.
         await vi.waitFor(() => expect(screen.getByText('8/5')).toBeTruthy());
@@ -175,13 +171,14 @@ describe('le tour de pions', () => {
 
     test('la danse est créée sans une touche de plus', async () => {
         /** @type {any} */ (LegalMoves).mockResolvedValue([]);
+        /** @type {any} */ (TranscriptionCandidates).mockResolvedValue({ side: 0, dice: [6, 6], unranked: false, candidates: [] });
         await openedPanel();
         await press('Digit6');
         await press('Digit6');
 
         await vi.waitFor(() => expect(gestures().at(-1)).toEqual({ Kind: 'dance' }));
-        // Aucun classement n'a été demandé : il n'y a rien à classer.
-        expect(EvaluatePositionImmediate).not.toHaveBeenCalled();
+        // La liaison ne rend aucun candidat : il n'y a rien à classer, rien à choisir.
+        expect(document.querySelectorAll('.candidates tbody tr').length).toBe(0);
         // La phrase habite la BARRE D'ÉTAT depuis ADR-0048 (décisions 2 et 8) :
         // le panneau ne porte plus de prose, il pose l'Action attendue dans un
         // magasin que la barre lit. Ce test monte le panneau seul, donc il lit
@@ -192,7 +189,7 @@ describe('le tour de pions', () => {
     // Un moteur qui refuse (un score hors de portée de la MET, une compilation
     // sans poids) ne doit pas empêcher de transcrire.
     test('sans classement, les coups légaux restent saisissables', async () => {
-        /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ refused: true });
+        /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer(PLAYS, null));
         await openedPanel();
         await press('Digit3');
         await press('Digit1');

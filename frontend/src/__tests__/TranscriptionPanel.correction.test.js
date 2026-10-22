@@ -19,6 +19,7 @@ import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -26,16 +27,13 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     TranscriptionMAT: vi.fn().mockResolvedValue('')
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn()
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn()
 }));
 
-import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, ListTranscriptions, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { get } from 'svelte/store';
 import {
@@ -120,7 +118,7 @@ beforeEach(() => {
     /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
     /** @type {any} */ (LegalMoves).mockResolvedValue([]);
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [] });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue({ side: 0, dice: [0, 0], unranked: false, candidates: [] });
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);
@@ -312,12 +310,15 @@ describe('Saisie et décision existante (ADR-0092)', () => {
     test('un jet tapé sur une insertion qui clôt une partie : le clavier suit le jet neuf, jamais l’ancien', async () => {
         /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated({ cursor: 3 }))));
         /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '24/18 13/10' }, { notation: '13/7 13/10' }]);
-        /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({
-            moves: [
-                { index: 0, move: '24/18 13/10', equity: 0.1 },
-                { index: 1, move: '13/7 13/10', equity: 0.05, equityError: 0.05 }
-            ]
-        });
+        /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(
+            candidatesAnswer(
+                [{ notation: '24/18 13/10' }, { notation: '13/7 13/10' }],
+                [
+                    { index: 0, move: '24/18 13/10', equity: 0.1 },
+                    { index: 1, move: '13/7 13/10', equity: 0.05, equityError: 0.05 }
+                ]
+            )
+        );
         await openedPanel(annotated({ cursor: 3 }));
         await press('Digit6');
         await press('Digit3');
