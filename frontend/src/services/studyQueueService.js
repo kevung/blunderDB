@@ -118,6 +118,23 @@ export async function unmarkLastStudied() {
     }
 }
 
+/**
+ * Pose ou retire la marque « vue » d'une position hors de la file (le menu contextuel) : la même
+ * marque que la file, sans passer à la suivante.
+ * @param {number} positionId
+ * @param {boolean} studied
+ */
+export async function setPositionStudied(positionId, studied) {
+    if (!positionId) return;
+    try {
+        await SetPositionStudied(positionId, studied);
+        setStatusBarMessage(tMsg(studied ? 'studyQueue.marked' : 'studyQueue.unmarked'));
+    } catch (error) {
+        logger.error('could not write the studied mark:', error);
+        setStatusBarMessage(tMsg('studyQueue.markFailed'));
+    }
+}
+
 /** Passe à la position suivante ; termine la file à la dernière. */
 export async function nextInQueue() {
     const queue = get(studyQueueStore);

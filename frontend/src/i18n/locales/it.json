@@ -1768,7 +1768,8 @@
         "importIdentifierFailed": "L'identificatore non ha potuto essere letto: {error}",
         "boardImageSaved": "Immagine salvata: {path}",
         "boardImageSaveFailed": "L'immagine non ha potuto essere salvata: {err}",
-        "pileError": "Pila: errore"
+        "pileError": "Pila: errore",
+        "xgidCopied": "XGID copiato negli appunti"
     },
     "stats": {
         "title": "Stats",
@@ -2127,7 +2128,8 @@
         "unmark": "Togli il segno",
         "backlogEmpty": "Nessun errore in attesa: tutto è commentato, archiviato, in scheda o segnato come visto.",
         "markFailed": "Non è stato possibile scrivere il segno.",
-        "unmarked": "Segno tolto: la posizione torna nella coda."
+        "unmarked": "Segno tolto: la posizione torna nella coda.",
+        "marked": "Posizione segnata come vista: esce dalla coda di studio."
     },
     "home": {
         "title": "blunderDB",
@@ -3644,5 +3646,31 @@
         "neilFormula": "E ≃ 50% + vantaggio × Neil(n), n = punti mancanti a chi insegue",
         "neilAxis": "righe = chi conduce, colonne = chi insegue (punti mancanti); in piccolo: scarto dalla MET",
         "neilFallback": "Chi conduce a 1 o 2 punti: valore della MET"
+    },
+    "actions": {
+        "group": {
+            "copy": "Copia / condividi",
+            "annotate": "Annota",
+            "navigate": "Naviga",
+            "analyze": "Analizza",
+            "train": "Allenati",
+            "manage": "Gestisci"
+        },
+        "copyImage": "Copia l'immagine",
+        "copyXGID": "Copia l'XGID",
+        "copyPositionText": "Copia la posizione come testo",
+        "comment": "Commenta",
+        "addTag": "Aggiungi un'etichetta #…",
+        "markStudied": "Segna come vista",
+        "unmarkStudied": "Togli il segno",
+        "sameStructure": "Posizioni con la stessa struttura",
+        "rolloutFast": "Rollout rapido",
+        "rolloutStandard": "Rollout standard",
+        "challenge": "Sfida su questa posizione",
+        "save": "Salva",
+        "trash": "Sposta nel cestino",
+        "openMatch": "Apri il match",
+        "openTournament": "Apri il torneo",
+        "openCollection": "Apri la collezione"
     }
 }

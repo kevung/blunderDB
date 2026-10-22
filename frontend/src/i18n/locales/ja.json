@@ -1768,7 +1768,8 @@
         "importIdentifierFailed": "識別子を読み取れませんでした：{error}",
         "boardImageSaved": "画像を保存しました：{path}",
         "boardImageSaveFailed": "画像を保存できませんでした：{err}",
-        "pileError": "パイル：エラー"
+        "pileError": "パイル：エラー",
+        "xgidCopied": "XGID をクリップボードにコピーしました"
     },
     "stats": {
         "title": "統計",
@@ -2127,7 +2128,8 @@
         "unmark": "確認済みを解除",
         "backlogEmpty": "待機中のブランダーはありません。すべてコメント済み、整理済み、カード化済み、または確認済みです。",
         "markFailed": "マークを書き込めませんでした。",
-        "unmarked": "マークを解除しました。局面はキューに戻ります。"
+        "unmarked": "マークを解除しました。局面はキューに戻ります。",
+        "marked": "局面を確認済みにしました：学習キューから外れます。"
     },
     "home": {
         "title": "blunderDB",
@@ -3644,5 +3646,31 @@
         "neilFormula": "E ≃ 50% + 点差 × Neil(n)、n = 追う側の残りポイント",
         "neilAxis": "行 = リード側、列 = 追う側（残りポイント）；小さい数字：METとの差",
         "neilFallback": "リード側が残り1〜2点：METの値"
+    },
+    "actions": {
+        "group": {
+            "copy": "コピー / 共有",
+            "annotate": "注釈",
+            "navigate": "移動",
+            "analyze": "解析",
+            "train": "練習",
+            "manage": "管理"
+        },
+        "copyImage": "画像をコピー",
+        "copyXGID": "XGID をコピー",
+        "copyPositionText": "局面をテキストでコピー",
+        "comment": "コメント",
+        "addTag": "#タグを追加…",
+        "markStudied": "確認済みにする",
+        "unmarkStudied": "確認済みを外す",
+        "sameStructure": "同じ構造の局面",
+        "rolloutFast": "高速ロールアウト",
+        "rolloutStandard": "標準ロールアウト",
+        "challenge": "この局面でチャレンジ",
+        "save": "保存",
+        "trash": "ゴミ箱へ移動",
+        "openMatch": "マッチを開く",
+        "openTournament": "トーナメントを開く",
+        "openCollection": "コレクションを開く"
     }
 }

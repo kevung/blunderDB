@@ -14,6 +14,7 @@
     import TournamentReview from './TournamentReview.svelte';
     import MatchPanel from './MatchPanel.svelte';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
+    import { menuFor } from '../services/actionCatalog.js';
     import PanelHeader from './panels/PanelHeader.svelte';
     import CountLink from './panels/CountLink.svelte';
     import { loadPositionsFromSelection, openStatsFor } from '../services/positionLoader.js';
@@ -425,7 +426,7 @@
      * @param {Event} event
      */
     async function deleteTournamentEntry(tournament, event) {
-        event.stopPropagation();
+        event?.stopPropagation();
         if (!(await confirmAction(get(t)('tournament.confirmDelete', { name: tournament.name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
             await DeleteTournament(tournament.id);
@@ -445,7 +446,7 @@
      * @param {Event} event
      */
     function startEdit(tournament, event) {
-        event.stopPropagation();
+        event?.stopPropagation();
         // The derived date is only a placeholder: the form's date stays empty until one is typed.
         tournamentEdit.start(tournament.id, {
             name: tournament.name,
@@ -784,6 +785,14 @@
                     onActivate={(tournament) => {
                         if (!tournamentEdit.isEditing(tournament.id)) selectTournament(tournament);
                     }}
+                    rowMenu={(tournament) =>
+                        tournamentEdit.isEditing(tournament.id)
+                            ? []
+                            : menuFor(
+                                  'tournament',
+                                  { do: { open: () => selectTournament(tournament), edit: () => startEdit(tournament, undefined), delete: () => deleteTournamentEntry(tournament, undefined) } },
+                                  $t
+                              )}
                     emptyText={narrowed ? $t('tournament.noTournamentsFiltered') : $t('tournament.noTournaments')}
                     emptyActions
                     emptyClear={narrowed

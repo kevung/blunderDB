@@ -5,8 +5,9 @@
  * Eval panel on the position the board is showing instead of the panel's
  * default bearoff), plus the small ergonomics batch added for #215: evaluate
  * the mirror, copy the board image with its analysis, open a new view, and —
- * only once the position has a database id — add it to an Anki deck. In
- * EDIT and EVAL the menu holds the two resets (clear, starting position);
+ * only once the position has a database id — add it to an Anki deck. The
+ * actions come from actionCatalog.js, grouped in submenus. In EDIT and EVAL
+ * the menu leads with the two resets (clear, starting position);
  * during a play in progress it leads with the play's own reset.
  *
  * two.js is mocked exactly as in Board.redraw.test.js — the drawing backend is
@@ -88,6 +89,12 @@ async function rightClickBoard() {
     return event;
 }
 
+/** Opens one group's submenu, as a click on it does. @param {string} name */
+async function openGroup(name) {
+    screen.getByRole('menuitem', { name: new RegExp(`^${name}`) }).click();
+    await tick();
+}
+
 describe('Board context menu', () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -117,6 +124,7 @@ describe('Board context menu', () => {
 
     test('offers "evaluate the mirror of this position", sending the mirrored board', async () => {
         await rightClickBoard();
+        await openGroup('Analyze');
 
         screen.getByRole('menuitem', { name: 'Evaluate the mirror of this position' }).click();
 
@@ -129,6 +137,7 @@ describe('Board context menu', () => {
 
     test('offers "copy the board image with the analysis"', async () => {
         await rightClickBoard();
+        await openGroup('Copy / share');
 
         screen.getByRole('menuitem', { name: 'Copy the board image with the analysis' }).click();
 
@@ -139,6 +148,7 @@ describe('Board context menu', () => {
         const addView = vi.spyOn(viewStore, 'addView');
 
         await rightClickBoard();
+        await openGroup('Navigate');
         screen.getByRole('menuitem', { name: 'New view' }).click();
 
         expect(addView).toHaveBeenCalledTimes(1);
@@ -151,6 +161,7 @@ describe('Board context menu', () => {
         ankiDecksStore.set([{ id: 7, name: 'Openings' }]);
 
         await rightClickBoard();
+        if (screen.queryByRole('menuitem', { name: /^Train/ })) await openGroup('Train');
 
         expect(screen.queryByRole('menuitem', { name: /Add to Anki deck/ })).toBeNull();
         expect(anki.loadDecks).not.toHaveBeenCalled();
@@ -160,6 +171,7 @@ describe('Board context menu', () => {
         ankiDecksStore.set([{ id: 7, name: 'Openings' }]);
 
         await rightClickBoard();
+        await openGroup('Train');
         const deckItem = screen.getByRole('menuitem', { name: 'Add to Anki deck: Openings' });
         deckItem.click();
         await tick();
@@ -181,7 +193,14 @@ describe('Board context menu', () => {
         const event = await rightClickBoard();
 
         expect(event.defaultPrevented, 'the native menu is still suppressed').toBe(true);
-        expect(screen.getAllByRole('menuitem').map((item) => item.textContent?.trim())).toEqual(['Clear the position', 'Starting position']);
+        expect(
+            screen
+                .getAllByRole('menuitem')
+                .slice(0, 2)
+                .map((item) => item.textContent?.trim())
+        ).toEqual(['Clear the position', 'Starting position']);
+        // The search board is not evaluated: no evaluation is offered on it.
+        expect(screen.queryByRole('menuitem', { name: 'Evaluate this position' })).toBeNull();
         screen.getByRole('menuitem', { name: 'Clear the position' }).click();
 
         const pos = get(positionStore);
