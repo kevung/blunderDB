@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 17:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -41,7 +41,7 @@ msgstr ""
 "stats``."
 
 #: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
-#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+#: ../../source/cli_stats.rst:261 ../../source/cli_stats.rst:315
 msgid "**Options:**"
 msgstr "**Параметры:**"
 
@@ -131,8 +131,8 @@ msgstr ""
 "фильтра, которую составляет группа."
 
 #: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
-#: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
-#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+#: ../../source/cli_stats.rst:224 ../../source/cli_stats.rst:269
+#: ../../source/cli_stats.rst:285 ../../source/cli_stats.rst:328
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
@@ -344,7 +344,24 @@ msgstr ""
 "месяц, каждая охватывает этот месяц и предыдущие месяцы окна (``--window "
 "month``, ``quarter`` или число месяцев)."
 
-#: ../../source/cli_stats.rst:193
+#: ../../source/cli_stats.rst:189
+msgid ""
+"``--by-phase`` découpe chaque fenêtre par phase de jeu (ouverture, milieu"
+" de partie, course, sortie…) : sous chaque ligne, une ligne par phase "
+"avec ses matchs, ses décisions et son PR, les mêmes chiffres que la "
+"ventilation par phase de ``stats breakdown`` restreinte à la fenêtre ; "
+"une phase sans décision comptée dans la fenêtre n'y figure pas. Le démon "
+"HTTP les rend dans ``per_phase`` quand la requête ``stats.prByWindow`` "
+"porte ``\"byPhase\": true``."
+msgstr ""
+"``--by-phase`` разбивает каждое окно по фазам игры (дебют, миттельшпиль, "
+"гонка, вывод…): под каждой строкой — по строке на фазу с её матчами, "
+"решениями и PR, те же цифры, что и разбивка по фазам в ``stats "
+"breakdown``, ограниченная окном; фаза без засчитанных решений в окне не "
+"показывается. HTTP-демон возвращает их в ``per_phase``, когда запрос "
+"``stats.prByWindow`` содержит ``\"byPhase\": true``."
+
+#: ../../source/cli_stats.rst:200
 msgid ""
 "**stats ranking** — Le classement des joueurs par PR, le plus bas en "
 "tête, parmi ceux qui ont au moins ``--min-decisions`` décisions comptées "
@@ -355,7 +372,7 @@ msgstr ""
 "кого не меньше ``--min-decisions`` учтённых решений (по умолчанию 500); "
 "два равных PR делят одно место. ``--limit N`` оставляет первых N."
 
-#: ../../source/cli_stats.rst:201
+#: ../../source/cli_stats.rst:208
 msgid ""
 "**stats engines** — Les moteurs d'analyse présents dans la base, sous le "
 "nom exact que ``--engine`` attend ; le même choix que le menu *Moteur* du"
@@ -365,7 +382,7 @@ msgstr ""
 "именем, которое ожидает ``--engine``; тот же выбор, что в меню *Движок* "
 "панели Stats."
 
-#: ../../source/cli_stats.rst:209
+#: ../../source/cli_stats.rst:216
 msgid ""
 "**Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``, ``--format "
@@ -383,7 +400,7 @@ msgstr ""
 " ``h2h`` и ``windows`` читают статистику по матчам и отвергают фильтр "
 "происхождения, который относится к каждому решению."
 
-#: ../../source/cli_stats.rst:227
+#: ../../source/cli_stats.rst:234
 msgid ""
 "**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où "
 "le joueur (tout joueur sans ``--player``) a une décision comptée sous le "
@@ -395,7 +412,7 @@ msgstr ""
 "фильтром, от самого старого к самому новому. Их идентификаторы передаются"
 " в ``list --type matches --ids``."
 
-#: ../../source/cli_stats.rst:237
+#: ../../source/cli_stats.rst:244
 msgid ""
 "**stats tournaments** — Les tournois que compte le nombre de tournois du "
 "Tableau de bord : ceux qui portent une décision comptée du joueur (de "
@@ -405,7 +422,7 @@ msgstr ""
 "«Панели»: те, где есть учтённое решение игрока (любого игрока без "
 "``--player``) под фильтром, по идентификатору."
 
-#: ../../source/cli_stats.rst:246
+#: ../../source/cli_stats.rst:253
 msgid ""
 "**stats progression** — Le PR de chaque match par ordre de date, le PR de"
 " chaque tournoi et le PR glissant sur les N dernières décisions : "
@@ -415,7 +432,7 @@ msgstr ""
 "турнира и скользящий PR по последним N решениям: вкладка *Progression* "
 "панели Stats (см. :ref:`stats`)."
 
-#: ../../source/cli_stats.rst:256
+#: ../../source/cli_stats.rst:263
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même "
@@ -425,13 +442,13 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Тот же "
 "фильтр, что и у ``list --type stats``."
 
-#: ../../source/cli_stats.rst:259
+#: ../../source/cli_stats.rst:266
 msgid ""
 "``--format text|json`` — Le JSON porte les matchs, les tournois et les PR"
 " glissants."
 msgstr "``--format text|json`` — JSON содержит матчи, турниры и скользящие PR."
 
-#: ../../source/cli_stats.rst:269
+#: ../../source/cli_stats.rst:276
 msgid ""
 "**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de "
 "jeu, étiquette de commentaire, score (away contre away) et action de "
@@ -444,7 +461,28 @@ msgstr ""
 "направлением ошибок с кубом: вкладка *Разбивки* панели Stats (см. "
 ":ref:`stats`). Параметры те же, что у ``stats progression``."
 
-#: ../../source/cli_stats.rst:285
+#: ../../source/cli_stats.rst:292
+msgid ""
+"**stats summary** — Le niveau du filtre sans aucun identifiant : "
+"effectifs, PR (pions, videau) et son intervalle à 95 %, perte de MWC par "
+"match en 7 points, PR par phase de jeu et par score, chaque ligne avec "
+"son effectif et son intervalle. Aucune position, aucun match, tournoi, "
+"adversaire ni étiquette n'y figure, ni les décisions les plus coûteuses :"
+" c'est ce qu'un profil public ou une carte de visite peut montrer sans "
+"rien divulguer. Le démon HTTP le sert à la route ``stats.summary`` ; "
+"``stats.compute`` reste inchangé. Les options sont celles de ``stats "
+"windows``."
+msgstr ""
+"**stats summary** — Уровень фильтра без каких-либо идентификаторов: "
+"количества, PR (шашки, куб) и его 95-процентный интервал, потеря MWC на "
+"матч до 7 очков, PR по фазам игры и по счёту, каждая строка со своим "
+"количеством и интервалом. В нём нет ни позиций, ни матчей, турниров, "
+"соперников или меток, ни самых дорогих решений: это то, что может "
+"показать публичный профиль или визитная карточка, ничего не раскрывая. "
+"HTTP-демон отдаёт его по маршруту ``stats.summary``; ``stats.compute`` не"
+" меняется. Параметры те же, что у ``stats windows``."
+
+#: ../../source/cli_stats.rst:306
 msgid ""
 "**stats report** — Le rapport HTML du panneau Stats (voir "
 ":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
@@ -457,17 +495,17 @@ msgstr ""
 "одном автономном файле, который браузер печатает в PDF. HTTP-демон отдаёт"
 " его по маршруту ``stats.report`` из того же генератора."
 
-#: ../../source/cli_stats.rst:296
+#: ../../source/cli_stats.rst:317
 msgid "``--html`` — Obligatoire : le HTML est le seul format."
 msgstr "``--html`` — Обязателен: HTML — единственный формат."
 
-#: ../../source/cli_stats.rst:297
+#: ../../source/cli_stats.rst:318
 msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
 msgstr ""
 "``--output <fichier>`` — Записываемый файл (по умолчанию: стандартный "
 "вывод)."
 
-#: ../../source/cli_stats.rst:298
+#: ../../source/cli_stats.rst:319
 msgid ""
 "``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
@@ -475,7 +513,7 @@ msgstr ""
 "``--lang <code>`` — Язык отчёта: ``fr``, ``en``, ``de``, ``el``, ``es``, "
 "``fi``, ``it``, ``ja`` или ``ru`` (по умолчанию ``en``)."
 
-#: ../../source/cli_stats.rst:300
+#: ../../source/cli_stats.rst:321
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
@@ -485,7 +523,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Фильтр: "
 "отчёт называет свою область."
 
-#: ../../source/cli_stats.rst:304
+#: ../../source/cli_stats.rst:325
 msgid ""
 "Les diagrammes y sont dessinés avec la palette par défaut ; seule "
 "l'application graphique emploie la palette du plateau choisie à l'écran."

@@ -18,7 +18,7 @@
 
     onMount(async () => {
         try {
-            rows = (await GetTimeErrors()) || [];
+            rows = (await GetTimeErrors([])) || [];
         } catch (error) {
             logger.error('Error loading time/error table:', error);
             rows = [];

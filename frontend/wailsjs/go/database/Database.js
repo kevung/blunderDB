@@ -742,8 +742,8 @@ export function GetStatsDateRange() {
   return window['go']['database']['Database']['GetStatsDateRange']();
 }
 
-export function GetTimeErrors() {
-  return window['go']['database']['Database']['GetTimeErrors']();
+export function GetTimeErrors(arg1) {
+  return window['go']['database']['Database']['GetTimeErrors'](arg1);
 }
 
 export function GetTournamentMatches(arg1) {
@@ -1108,6 +1108,14 @@ export function PRByWindow(arg1, arg2) {
 
 export function PRByWindowCtx(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PRByWindowCtx'](arg1, arg2, arg3);
+}
+
+export function PRByWindowPhases(arg1, arg2) {
+  return window['go']['database']['Database']['PRByWindowPhases'](arg1, arg2);
+}
+
+export function PRByWindowPhasesCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PRByWindowPhasesCtx'](arg1, arg2, arg3);
 }
 
 export function Pairs(arg1) {
@@ -1588,6 +1596,14 @@ export function StatsReportHTML(arg1, arg2, arg3) {
 
 export function StatsReportHTMLCtx(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['StatsReportHTMLCtx'](arg1, arg2, arg3, arg4);
+}
+
+export function StatsSummary(arg1) {
+  return window['go']['database']['Database']['StatsSummary'](arg1);
+}
+
+export function StatsSummaryCtx(arg1, arg2) {
+  return window['go']['database']['Database']['StatsSummaryCtx'](arg1, arg2);
 }
 
 export function StatsTournamentIDs(arg1) {

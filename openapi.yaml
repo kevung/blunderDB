@@ -6961,6 +6961,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_StudyQueueEntry"
+  /v1/stats.summary:
+    post:
+      operationId: stats.summary
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_StatsSummary"
+                nullable: true
   /v1/stats.timeErrors:
     post:
       operationId: stats.timeErrors
@@ -6970,7 +6988,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              $ref: "#/components/schemas/matchBadgesReq"
       responses:
         "200":
           description: OK
@@ -9867,6 +9885,8 @@ components:
         months:
           type: integer
           format: int32
+        byPhase:
+          type: boolean
     storage_Alias:
       type: object
       description: "Opaque: see the Go type storage.Alias (defined outside internal/server, not expanded here)."
@@ -9975,6 +9995,9 @@ components:
     storage_StatsResult:
       type: object
       description: "Opaque: see the Go type storage.StatsResult (defined outside internal/server, not expanded here)."
+    storage_StatsSummary:
+      type: object
+      description: "Opaque: see the Go type storage.StatsSummary (defined outside internal/server, not expanded here)."
     storage_StudyEffect:
       type: object
       description: "Opaque: see the Go type storage.StudyEffect (defined outside internal/server, not expanded here)."

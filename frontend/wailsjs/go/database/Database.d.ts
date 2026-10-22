@@ -393,7 +393,7 @@ export function GetStatsBreakdownPositionCounts(arg1:database.StatsFilter):Promi
 
 export function GetStatsDateRange():Promise<database.StatsDateRange>;
 
-export function GetTimeErrors():Promise<Array<storage.TimeErrorRow>>;
+export function GetTimeErrors(arg1:Array<number>):Promise<Array<storage.TimeErrorRow>>;
 
 export function GetTournamentMatches(arg1:number):Promise<Array<domain.Match>>;
 
@@ -576,6 +576,10 @@ export function OpenTranscription(arg1:number):Promise<database.TranscriptionSta
 export function PRByWindow(arg1:database.StatsFilter,arg2:number):Promise<Array<storage.WindowStats>>;
 
 export function PRByWindowCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.WindowStats>>;
+
+export function PRByWindowPhases(arg1:database.StatsFilter,arg2:number):Promise<Array<storage.WindowStats>>;
+
+export function PRByWindowPhasesCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.WindowStats>>;
 
 export function Pairs(arg1:number):Promise<Record<string, Array<storage.PairMember>>>;
 
@@ -816,6 +820,10 @@ export function StatsMatchIDsCtx(arg1:context.Context,arg2:database.StatsFilter)
 export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Record<number, string>):Promise<string>;
 
 export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
+
+export function StatsSummary(arg1:database.StatsFilter):Promise<storage.StatsSummary>;
+
+export function StatsSummaryCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.StatsSummary>;
 
 export function StatsTournamentIDs(arg1:database.StatsFilter):Promise<Array<number>>;
 

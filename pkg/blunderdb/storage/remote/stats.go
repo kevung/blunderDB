@@ -126,9 +126,11 @@ func (s statsStore) MatchTimeSummary(ctx context.Context, scope string, matchID 
 	return r, err
 }
 
-func (s statsStore) TimeErrors(ctx context.Context, scope string) ([]storage.TimeErrorRow, error) {
+func (s statsStore) TimeErrors(ctx context.Context, scope string, matchIDs []int64) ([]storage.TimeErrorRow, error) {
 	var r []storage.TimeErrorRow
-	err := s.c.call(ctx, scope, "stats.timeErrors", nil, &r)
+	err := s.c.call(ctx, scope, "stats.timeErrors", struct {
+		MatchIDs []int64 `json:"matchIds,omitempty"`
+	}{matchIDs}, &r)
 	return r, err
 }
 
@@ -213,11 +215,20 @@ func (s statsStore) PlayerContrast(ctx context.Context, scope, playerA, playerB 
 }
 
 func (s statsStore) PRByWindow(ctx context.Context, scope string, filter storage.StatsFilter, months int) ([]storage.WindowStats, error) {
+	return s.prByWindow(ctx, scope, filter, months, false)
+}
+
+func (s statsStore) PRByWindowPhases(ctx context.Context, scope string, filter storage.StatsFilter, months int) ([]storage.WindowStats, error) {
+	return s.prByWindow(ctx, scope, filter, months, true)
+}
+
+func (s statsStore) prByWindow(ctx context.Context, scope string, filter storage.StatsFilter, months int, byPhase bool) ([]storage.WindowStats, error) {
 	var r []storage.WindowStats
 	err := s.c.call(ctx, scope, "stats.prByWindow", struct {
-		Filter storage.StatsFilter `json:"filter"`
-		Months int                 `json:"months"`
-	}{filter, months}, &r)
+		Filter  storage.StatsFilter `json:"filter"`
+		Months  int                 `json:"months"`
+		ByPhase bool                `json:"byPhase,omitempty"`
+	}{filter, months, byPhase}, &r)
 	return r, err
 }
 

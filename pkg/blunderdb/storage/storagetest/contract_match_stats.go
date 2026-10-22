@@ -355,6 +355,30 @@ func testHeadToHeadWindowsRanking(t *testing.T, s storage.Storage) {
 		t.Errorf("PRByWindow of 0 months: %v, want ErrInvalid", err)
 	}
 
+	// Split by phase, that one window is Compute's PerPhase: same phases in
+	// the same order, same counts, same PR, adding up to the window.
+	phased, err := s.Stats().PRByWindowPhases(ctx, "", alice, 3)
+	if err != nil {
+		t.Fatalf("PRByWindowPhases: %v", err)
+	}
+	if len(phased) != 1 || phased[0].NumDecisions != win[0].NumDecisions || len(phased[0].PerPhase) != len(res.PerPhase) {
+		t.Fatalf("PRByWindowPhases = %+v, want the window %+v split as %+v", phased, win, res.PerPhase)
+	}
+	sum := 0
+	for i, ph := range phased[0].PerPhase {
+		want := res.PerPhase[i]
+		if ph.Phase != want.Phase || ph.NumDecisions != want.NumDecisions || math.Abs(ph.PR-want.PR) > 1e-9 {
+			t.Errorf("phase %d = %+v, want %+v", i, ph, want)
+		}
+		sum += ph.NumDecisions
+	}
+	if sum != phased[0].NumDecisions {
+		t.Errorf("phases add up to %d decisions, the window holds %d", sum, phased[0].NumDecisions)
+	}
+	if len(win[0].PerPhase) != 0 {
+		t.Errorf("PRByWindow fills PerPhase: %+v", win[0].PerPhase)
+	}
+
 	// The ranking is the players table's order by PR above a floor.
 	rows, err := s.Stats().PlayerTable(ctx, "", all)
 	if err != nil {

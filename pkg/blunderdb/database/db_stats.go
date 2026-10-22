@@ -226,6 +226,24 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 	return d.ComputeStatsCtx(context.Background(), filter)
 }
 
+// StatsSummary is the public part of ComputeStats (storage.StatsSummary):
+// the level of the filter's decisions without a position, match, tournament,
+// opponent or tag in it.
+func (d *Database) StatsSummary(filter StatsFilter) (*storage.StatsSummary, error) {
+	return d.StatsSummaryCtx(context.Background(), filter)
+}
+
+// StatsSummaryCtx is StatsSummary with a caller-supplied context.
+func (d *Database) StatsSummaryCtx(ctx context.Context, filter StatsFilter) (*storage.StatsSummary, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	r, err := d.store.Stats().Compute(ctx, "", toStorageStatsFilter(filter))
+	if err != nil {
+		return nil, err
+	}
+	return storage.SummaryOf(r), nil
+}
+
 // ComputeStatsCtx is ComputeStats with a caller-supplied context that aborts
 // the in-flight aggregation queries.
 func (d *Database) ComputeStatsCtx(ctx context.Context, filter StatsFilter) (*StatsResult, error) {
@@ -275,9 +293,11 @@ type SelectionSpec struct {
 	FamilyKind string
 	StudiedOn  string
 	Window     string
-	// One row of the time errors, for Kind "time_band"; the filter is not read.
+	// One row of the time errors, for Kind "time_band"; the filter is not
+	// read, MatchIDs narrows the row to those matches as the table was.
 	Player     string
 	TimeBucket int
+	MatchIDs   []int64
 }
 
 // BreakdownPositionCount mirrors storage.BreakdownPositionCount.
@@ -579,11 +599,12 @@ func (d *Database) GetMatchTimeSummary(matchID int64) (storage.MatchTimeSummary,
 }
 
 // GetTimeErrors crosses the time taken over decisions with the error they
-// cost, per player and duration band, for the Statistics tab.
-func (d *Database) GetTimeErrors() ([]storage.TimeErrorRow, error) {
+// cost, per player and duration band, for the Statistics tab: over the whole
+// database, or over matchIDs alone when it is non-empty.
+func (d *Database) GetTimeErrors(matchIDs []int64) ([]storage.TimeErrorRow, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-	return d.store.Stats().TimeErrors(context.Background(), "")
+	return d.store.Stats().TimeErrors(context.Background(), "", matchIDs)
 }
 
 // GetMatchDetailStats computes per-player statistics for the given match.

@@ -1322,6 +1322,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.studyPlanQueue — JSON."
         return self._call("/v1/stats.studyPlanQueue", payload)
 
+    def stats_summary(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.summary — JSON."
+        return self._call("/v1/stats.summary", payload)
+
     def stats_time_errors(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.timeErrors — JSON."
         return self._call("/v1/stats.timeErrors", payload)
