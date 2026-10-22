@@ -54,3 +54,10 @@ export const selectedMoveStore = writable(null);
 // own cube `decision`, for the image copy: in EVAL mode analysisStore describes
 // another position. Null when the panel shows nothing to copy.
 export const evalAnalysisStore = writable(null);
+
+// The Eval panel's gammonNet verdict, as the engine returned it and the batch
+// stores it (the moves with dice set, the cube otherwise), with the signature
+// of the board it describes: CTRL-S writes it only onto that very board.
+// Null while the engine has not answered, has declined, or off the Eval tab.
+/** @type {import('svelte/store').Writable<{ signature: string, analysis: { analysisType: string, checkerAnalysis?: { moves: any[] }, doublingCubeAnalysis?: any } } | null>} */
+export const evalVerdictStore = writable(null);

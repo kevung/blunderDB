@@ -124,6 +124,7 @@ export const PHOTOGRAPHED_ELSEWHERE = [
     'analysisStore',
     'selectedMoveStore',
     'evalAnalysisStore',
+    'evalVerdictStore',
     'commentTextStore',
     'activeTabStore',
     'statusBarModeStore',

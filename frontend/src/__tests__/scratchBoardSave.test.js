@@ -21,6 +21,7 @@ const db = vi.hoisted(() => ({
     SaveIndividualPosition: vi.fn(),
     UpdatePosition: vi.fn(() => Promise.resolve()),
     SaveAnalysis: vi.fn(() => Promise.resolve()),
+    SaveDisplayedEvaluation: vi.fn(() => Promise.resolve(true)),
     SaveComment: vi.fn(() => Promise.resolve()),
     LoadComment: vi.fn(() => Promise.resolve('')),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
@@ -65,7 +66,7 @@ async function openLibraryOf(ids) {
 }
 /** The ids of the list on screen, read the way a paged list gives them. */
 const listIds = () => positionsStore.idsBetween(0, get(positionsStore).length);
-import { analysisStore, emptyAnalysis } from '../stores/analysisStore.js';
+import { analysisStore, emptyAnalysis, evalVerdictStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { activeCollectionStore, collectionPositionsStore } from '../stores/collectionStore.js';
@@ -152,6 +153,7 @@ beforeEach(() => {
     lastSearchStore.set(null);
     setSearchState('', null, false);
     analysisStore.set(emptyAnalysis());
+    evalVerdictStore.set(null);
     db.SaveIndividualPosition.mockImplementation(async () => {
         if (!library.includes(99)) library.push(99);
         return { id: 99, existed: false };
@@ -526,6 +528,48 @@ describe('saving the Eval scratch board (#399)', () => {
         await saveCurrentPosition();
 
         expect(app.QueueGammonNetBatch).toHaveBeenCalledWith(2, 12, 0);
+    });
+
+    test('without a verdict on screen, no evaluation is written', async () => {
+        await openEvalFromLibrary();
+
+        await saveCurrentPosition();
+
+        expect(db.SaveDisplayedEvaluation).not.toHaveBeenCalled();
+    });
+
+    test('the verdict shown for this board is written with the position, and the status says so', async () => {
+        await openEvalFromLibrary();
+        const analysis = { analysisType: 'CheckerMove', checkerAnalysis: { moves: [{ index: 0, move: '24/18 13/8', equity: 0.1, analysisDepth: '2-ply' }] } };
+        evalVerdictStore.set({ signature: JSON.stringify(get(positionStore)), analysis });
+
+        await saveCurrentPosition();
+
+        expect(db.SaveDisplayedEvaluation).toHaveBeenCalledWith(99, analysis);
+        expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardSavedWithEval', i18nParams: { id: 99 } });
+    });
+
+    test('a verdict computed for another board is not written', async () => {
+        await openEvalFromLibrary();
+        evalVerdictStore.set({ signature: 'another board', analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: {} } });
+
+        await saveCurrentPosition();
+
+        expect(db.SaveDisplayedEvaluation).not.toHaveBeenCalled();
+        expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardSaved', i18nParams: { id: 99 } });
+    });
+
+    test('a known position keeps its analysis, and the status says the verdict was not saved', async () => {
+        db.SaveIndividualPosition.mockResolvedValue({ id: 1234, existed: true });
+        db.SaveDisplayedEvaluation.mockResolvedValueOnce(false);
+        await openEvalFromLibrary();
+        evalVerdictStore.set({ signature: JSON.stringify(get(positionStore)), analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: { analysisDepth: '0-ply' } } });
+
+        await saveCurrentPosition();
+
+        expect(db.SaveAnalysis).not.toHaveBeenCalled();
+        expect(db.SaveDisplayedEvaluation).toHaveBeenCalledWith(1234, expect.anything());
+        expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardAlreadyStoredAnalysisKept', i18nParams: { id: 1234 } });
     });
 
     test('outside a scratch board the save is still refused', async () => {

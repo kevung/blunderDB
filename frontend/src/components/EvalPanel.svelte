@@ -3,7 +3,7 @@
     import { statusBarModeStore, MODAL, openModal, configInitialTabStore } from '../stores/uiStore';
     import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
     import { positionStore } from '../stores/positionStore';
-    import { selectedMoveStore, evalAnalysisStore } from '../stores/analysisStore';
+    import { selectedMoveStore, evalAnalysisStore, evalVerdictStore } from '../stores/analysisStore';
     import { databasePathStore } from '../stores/databaseStore';
     import { positionRefusal } from '../services/positionRefusal.js';
     import { saveScratchBoard } from '../services/scratchBoard.js';
@@ -33,8 +33,8 @@
 
     let isActive = $derived($statusBarModeStore === 'EVAL');
 
-    // « Ajouter à la base » writes the position alone via saveScratchBoard(),
-    // never the evaluation. Disabled, with the reason as tooltip, when there is
+    // « Ajouter à la base » writes the position via saveScratchBoard(), with
+    // the verdict on screen (evalVerdictStore). Disabled, with the reason as tooltip, when there is
     // no database or the save would refuse. On a stored position the click
     // marks it individually imported.
     let addRefusal = $derived(!$databasePathStore ? 'eval.addPositionNoDatabase' : $positionStore?.board ? positionRefusal($positionStore) : null);
@@ -243,6 +243,7 @@
         CancelEvaluationAtRest().catch(() => {});
         selectedMoveStore.set(null);
         evalAnalysisStore.set(null);
+        evalVerdictStore.set(null);
         unsubEval.forEach((off) => off && off());
     });
 
@@ -462,6 +463,21 @@
     $effect(() => {
         evalAnalysisStore.set(isActive ? evalAnalysisSnapshot() : null);
     });
+
+    // What CTRL-S stores beside the board: the engine's own output, never the
+    // panel's display shapes (a race table, facts folded into the cube block).
+    $effect(() => {
+        evalVerdictStore.set(isActive && evalSettled ? evalVerdictSnapshot() : null);
+    });
+
+    function evalVerdictSnapshot() {
+        if (evalRefused) return null;
+        const signature = positionSignature;
+        if (hasDiceSet) {
+            return evalMoves.length ? { signature, analysis: { analysisType: 'CheckerMove', checkerAnalysis: { moves: evalMoves } } } : null;
+        }
+        return evalCubeAnalysis ? { signature, analysis: { analysisType: 'DoublingCube', doublingCubeAnalysis: evalCubeAnalysis } } : null;
+    }
 
     function evalAnalysisSnapshot() {
         if (evalRefused) return null;

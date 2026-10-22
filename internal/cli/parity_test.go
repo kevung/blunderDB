@@ -467,6 +467,7 @@ var databaseParity = map[string]parityEntry{
 	"SaveExcludePosition":               {Server: "/v1/filters.saveExcludePosition", Why: whyGUIState},
 	"SaveFilter":                        {Server: "/v1/filters.save", Why: whyGUIState},
 	"SaveLibrarySettings":               {CLI: "edit --error-threshold / --blunder-threshold", Server: "/v1/librarySettings.save"},
+	"SaveDisplayedEvaluation":           {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing", Why: "the Eval panel's verdict on the board is a GUI gesture (Ctrl-S); a script imports the position on its own (--individual, /v1/positions.save) and fills it with the same rule: gammonNet writes only where no analysis stands"},
 	"SaveIndividualPosition":            {Server: "/v1/positions.save", Why: "the GUI's one backend call for a position brought in on its own (ADR-0002); the CLI's position importers set the sticky flag themselves (ADR-0001)"},
 	"SaveLastVisitedPosition":           {Server: "/v1/matches.setLastVisitedPosition", Why: whyGUIState},
 	"SaveMetadata":                      {CLI: "edit", Why: whyMetadata},
