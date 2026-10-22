@@ -26,7 +26,8 @@ export const LANGUAGE_LABELS = {
 // Locales are fetched on demand (bundling all nine put 511 kB of JSON in the main chunk). Each
 // `?merged` module is the locale already completed with the English keys it lacks (build step,
 // i18nMergedLocales.js), so one dictionary is loaded and the lookup needs no English pass.
-// Nothing is bundled until `initLanguage` resolves: main.js awaits it before the first render.
+// No dictionary exists until one is loaded: `startupLanguage` guarantees one (English at worst)
+// before the first render.
 const localeLoaders = import.meta.glob('./locales/*.json', { query: '?merged' });
 /** @type {Record<string, any>} */
 const messages = {};
@@ -175,4 +176,24 @@ export async function initLanguage(lang) {
     const next = LOCALES.includes(lang) ? lang : FALLBACK_LOCALE;
     await ensureLocaleLoaded(next);
     language.set(next);
+}
+
+/**
+ * The persisted language before the first render, bounded by `timeoutMs` so a slow backend never
+ * leaves the window blank. Whatever happens (timeout, failed read, unknown locale), a dictionary
+ * is loaded on return: English when nothing else is, so no raw key is ever painted.
+ *
+ * @param {() => Promise<string>} getLanguage
+ * @param {number} [timeoutMs]
+ */
+export async function startupLanguage(getLanguage, timeoutMs = 1000) {
+    await Promise.race([
+        // Through then(): a binding missing altogether throws synchronously, and must not stop the mount.
+        Promise.resolve()
+            .then(() => getLanguage())
+            .then(initLanguage)
+            .catch(() => {}),
+        new Promise((resolve) => setTimeout(resolve, timeoutMs))
+    ]);
+    if (!messages[get(language)]) await initLanguage(FALLBACK_LOCALE);
 }

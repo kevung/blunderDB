@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { mergedLocales } from './i18nMergedLocales.js';
 
 // La construction du front web.
 //
@@ -12,7 +13,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 // `base` est relatif parce que la page est servie sous /app/ : des chemins
 // absolus la rendraient dépendante de l'endroit où le démon la monte.
 export default defineConfig({
-    plugins: [svelte({ compilerOptions: { runes: true } })],
+    plugins: [mergedLocales(), svelte({ compilerOptions: { runes: true } })],
     base: './',
     build: {
         outDir: '../internal/server/webui/dist',
