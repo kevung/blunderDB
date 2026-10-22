@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:29+0200\n"
+"POT-Creation-Date: 2026-10-22 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -989,41 +989,73 @@ msgstr ""
 #: ../../source/manuel_interface.rst:427
 msgid ""
 "**L'écran partagé.** Sur un grand écran, le bouton ◫ de la barre des "
-"onglets (*CTRL-MAJ-X*) partage la fenêtre en deux volets de même largeur."
-" L'un porte le groupe actif, entier ; l'autre une visionneuse en lecture "
-"d'une autre bibliothèque ouverte (de la même, s'il n'y en a qu'une) : son"
-" plateau, l'analyse de la position et son commentaire. La visionneuse "
-"parcourt toute la bibliothèque, un match rejoué coup par coup (la partie,"
-" le coup et ce qui a été joué s'affichent au-dessus du plateau) ou une "
-"collection, au choix de sa liste déroulante, avec ses boutons ⏮ ◀ ▶ ⏭. "
-"Elle s'ouvre là où cette bibliothèque a été quittée. Rien de ce qu'elle "
-"montre n'est écrit nulle part. Cliquer la visionneuse, hors de ses "
-"boutons, active sa bibliothèque : les deux volets échangent leurs rôles "
-"et chaque bibliothèque garde son côté ; *CTRL-MAJ-PAGE PRÉC.* / *PAGE "
-"SUIV.* fait de même au clavier. Sous 1280 pixels de large, l'écran "
-"partagé se refuse et propose l'échange sur place (*x*) ; il se ferme si "
-"la fenêtre devient trop étroite."
+"onglets (*CTRL-MAJ-X*) coupe en deux la seule zone du plateau. Chaque "
+"volet porte une bibliothèque ouverte et garde son côté : le groupe actif "
+"à gauche à l'ouverture, la première autre bibliothèque à droite (la même,"
+" s'il n'y en a qu'une ; l'en-tête dit alors *même base*). Le volet actif "
+"est vivant, cerné de la couleur de son groupe. L'autre est figé et "
+"atténué : le plateau de sa bibliothèque là où elle a été laissée, "
+"l'analyse de la position et son commentaire ; rien de ce qu'il montre "
+"n'est écrit nulle part. Chaque volet affiche son compteur *n / N*."
 msgstr ""
 "**Jaettu näyttö.** Suurella näytöllä välilehtipalkin painike ◫ (*CTRL-"
-"VAIHTO-X*) jakaa ikkunan kahteen yhtä leveään ruutuun. Toisessa on "
-"aktiivinen ryhmä kokonaisena; toisessa vain luku -katselin toisesta "
-"avoimesta kirjastosta (samasta, jos vain yksi on auki): sen lauta, aseman"
-" analyysi ja sen kommentti. Katselin selaa koko kirjaston, ottelun siirto"
-" siirrolta (peli, siirto ja pelattu näkyvät laudan yläpuolella) tai "
-"kokoelman, pudotusvalikosta valiten, painikkeillaan ⏮ ◀ ▶ ⏭. Se avautuu "
-"siihen, mihin kirjasto jätettiin. Mitään sen näyttämää ei kirjoiteta "
-"mihinkään. Katselimen napsauttaminen painikkeiden ulkopuolelta aktivoi "
-"sen kirjaston: ruudut vaihtavat rooleja ja kumpikin kirjasto pitää "
-"puolensa; *CTRL-VAIHTO-PAGE UP* / *PAGE DOWN* tekee saman näppäimistöltä."
-" Alle 1280 pikselin leveydellä jaettu näyttö hylätään ja tilalle "
-"tarjotaan vaihto paikan päällä (*x*); se sulkeutuu, jos ikkuna käy liian "
-"kapeaksi."
+"VAIHTO-X*) jakaa kahtia pelkän laudan alueen. Kukin ruutu kantaa avointa "
+"kirjastoa ja pitää puolensa: aktiivinen ryhmä vasemmalla avattaessa, "
+"ensimmäinen muu kirjasto oikealla (sama, jos kirjastoja on vain yksi; "
+"otsake sanoo silloin *sama kirjasto*). Aktiivinen ruutu on elävä ja sen "
+"ryhmän värillä reunustettu. Toinen on jäädytetty ja himmennetty: sen "
+"kirjaston lauta siinä, mihin se jätettiin, aseman analyysi ja kommentti; "
+"mitään sen näyttämää ei kirjoiteta minnekään. Kukin ruutu näyttää oman "
+"laskurinsa *n / N*."
 
-#: ../../source/manuel_interface.rst:445
+#: ../../source/manuel_interface.rst:437
+msgid ""
+"Un clic dans le volet figé, ou *CTRL-ALT-←* / *CTRL-ALT-→*, active sa "
+"bibliothèque ; le contour passe de l'autre côté et rien d'autre ne bouge."
+" Avec une seule bibliothèque, les deux vues échangent leurs positions. "
+"Barre d'outils, onglets, panneaux et barre d'état restent en un "
+"exemplaire et parlent toujours de la bibliothèque active : sa pastille et"
+" son nom précèdent les onglets des panneaux et le message de la barre "
+"d'état, et le titre de la fenêtre la nomme. Le clavier, *CTRL-S*, les "
+"imports et les commandes vont au volet actif. Pendant un Duel, une séance"
+" d'entraînement ou un import, le changement est refusé : le volet cliqué "
+"tremble et la barre d'état dit pourquoi."
+msgstr ""
+"Napsautus jäädytetyssä ruudussa tai *CTRL-ALT-←* / *CTRL-ALT-→* aktivoi "
+"sen kirjaston; reunus siirtyy toiselle puolelle eikä mikään muu liiku. "
+"Yhdellä kirjastolla kaksi näkymää vaihtavat asemansa. Työkalupalkki, "
+"välilehdet, paneelit ja tilarivi pysyvät yhtenä kappaleena ja puhuvat "
+"aina aktiivisen kirjaston puolesta: sen väripiste ja nimi edeltävät "
+"paneelien välilehtiä ja tilarivin viestiä, ja ikkunan otsikko nimeää sen."
+" Näppäimistö, *CTRL-S*, tuonnit ja komennot menevät aktiiviseen ruutuun. "
+"Duelin, harjoitusistunnon tai tuonnin aikana vaihto evätään: napsautettu "
+"ruutu tärisee ja tilarivi kertoo syyn."
+
+#: ../../source/manuel_interface.rst:448
+msgid ""
+"Glisser le compteur ou le plateau d'un volet sur l'autre copie la "
+"position dans la bibliothèque de ce volet, avec son analyse et son "
+"commentaire, sauf si son groupe est verrouillé ; la barre d'état propose "
+"alors *Annuler*. À partir de 1600 pixels de large, le panneau reste à "
+"côté des plateaux ; entre 1280 et 1600, il passe dessous ; sous 1280, "
+"l'écran partagé se refuse et propose l'échange sur place (*x*), et il se "
+"ferme si la fenêtre devient trop étroite. L'écran partagé et la "
+"bibliothèque de chaque côté sont repris à la session suivante."
+msgstr ""
+"Ruudun laskurin tai laudan vetäminen toisen päälle kopioi aseman "
+"analyyseineen ja kommentteineen tuon ruudun kirjastoon, ellei sen ryhmä "
+"ole lukittu; tilarivi tarjoaa silloin *Kumoa*. 1600 pikselin leveydestä "
+"alkaen paneeli pysyy lautojen vieressä; 1280–1600 pikselissä se siirtyy "
+"niiden alle; alle 1280 pikselissä jaettu näyttö evätään ja tarjotaan "
+"paikallista vaihtoa (*x*), ja se sulkeutuu, jos ikkuna käy liian "
+"kapeaksi. Jaettu näyttö ja kummankin puolen kirjasto palautetaan "
+"seuraavassa istunnossa."
+
+#: ../../source/manuel_interface.rst:460
 msgid "Configuration"
 msgstr "Asetukset"
 
-#: ../../source/manuel_interface.rst:447
+#: ../../source/manuel_interface.rst:462
 msgid ""
 "Le bouton de configuration (icône en forme de rouage) situé dans la barre"
 " d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration "
@@ -1033,7 +1065,7 @@ msgstr ""
 "puolella, avaa blunderDB:n asetusikkunan. Se on jaettu kymmeneen "
 "välilehteen:"
 
-#: ../../source/manuel_interface.rst:451
+#: ../../source/manuel_interface.rst:466
 #, no-python-format
 msgid ""
 "**Interface** — thème, langue, échelle d'affichage, position du panneau, "
@@ -1045,11 +1077,11 @@ msgstr ""
 "PageUp / PageDown -askel (10, 50, 100, 500 tai 1 000 asemaa tai 10 % "
 "luettelosta), lokit, päivitysten tarkistus, oma nimesi ja naapuriasemat;"
 
-#: ../../source/manuel_interface.rst:454
+#: ../../source/manuel_interface.rst:469
 msgid "**Couleurs** — les couleurs du plateau ;"
 msgstr "**Laudan värit** — laudan värit;"
 
-#: ../../source/manuel_interface.rst:455
+#: ../../source/manuel_interface.rst:470
 msgid ""
 "**Bibliothèque** — ce qui appartient à la base ouverte : les seuils "
 "d'erreur et de blunder, décrits ci-dessous ;"
@@ -1057,7 +1089,7 @@ msgstr ""
 "**Kirjasto** — se, mikä kuuluu avoinna olevaan tietokantaan: virheen ja "
 "blunderin kynnykset, jotka kuvataan alla;"
 
-#: ../../source/manuel_interface.rst:457
+#: ../../source/manuel_interface.rst:472
 msgid ""
 "**Maintenance** — l'état de santé de la base, une ligne par opération, "
 "décrit ci-dessous ;"
@@ -1065,7 +1097,7 @@ msgstr ""
 "**Ylläpito** — tietokannan kunto, yksi rivi kutakin toimenpidettä kohti, "
 "kuvataan alla;"
 
-#: ../../source/manuel_interface.rst:459
+#: ../../source/manuel_interface.rst:474
 msgid ""
 "**Corpus** — les doublons à l'import, les alias de joueurs et "
 "d'événements et la recherche des doublons probables (voir l'import de "
@@ -1075,17 +1107,17 @@ msgstr ""
 "aliakset sekä todennäköisten kaksoiskappaleiden haku (katso otteluiden "
 "tuonti);"
 
-#: ../../source/manuel_interface.rst:461
+#: ../../source/manuel_interface.rst:476
 msgid "**Bearoff** — les tables de sortie utilisées par le panneau Eval ;"
 msgstr "**Bearoff** — Eval-paneelin käyttämät ulosmenotaulukot;"
 
-#: ../../source/manuel_interface.rst:462
+#: ../../source/manuel_interface.rst:477
 msgid ""
 "**gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous"
 " ;"
 msgstr "**gammonNet** — sisäänrakennetun evaluaattorin asetukset, kuvattu alla;"
 
-#: ../../source/manuel_interface.rst:463
+#: ../../source/manuel_interface.rst:478
 msgid ""
 "**Dossier surveillé** — l'import automatique des matchs qui arrivent dans"
 " un dossier, décrit ci-dessous ;"
@@ -1093,7 +1125,7 @@ msgstr ""
 "**Valvottu kansio** — kansioon saapuvien otteluiden automaattinen tuonti,"
 " kuvattu alla;"
 
-#: ../../source/manuel_interface.rst:465
+#: ../../source/manuel_interface.rst:480
 msgid ""
 "**Assistant et MCP** — le serveur MCP local et l'assistant interne, "
 "décrits ci-dessous ;"
@@ -1101,7 +1133,7 @@ msgstr ""
 "**Avustaja ja MCP** — paikallinen MCP-palvelin ja sisäinen avustaja, "
 "kuvattu alla;"
 
-#: ../../source/manuel_interface.rst:467
+#: ../../source/manuel_interface.rst:482
 msgid ""
 "**Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la "
 "section :ref:`diffusion_controlee`."
@@ -1109,7 +1141,7 @@ msgstr ""
 "**Merkitsijän identiteetti** — avain, jolla alkuperämerkintäsi "
 "allekirjoitetaan; kuvattu luvussa :ref:`diffusion_controlee`."
 
-#: ../../source/manuel_interface.rst:470
+#: ../../source/manuel_interface.rst:485
 msgid ""
 "L'onglet *Interface* propose d'abord un **thème** : *suivre le système*, "
 "*clair*, *sombre*, *contraste élevé* ou *imprimable*. Le thème règle les "
@@ -1124,7 +1156,7 @@ msgstr ""
 "käyttöliittymä vaalean laudan ympärillä ei ole tumma teema vaan puolikas,"
 " sillä lauta täyttää suurimman osan ikkunasta."
 
-#: ../../source/manuel_interface.rst:476
+#: ../../source/manuel_interface.rst:491
 msgid ""
 "Vous gardez le dernier mot, et le mécanisme le garantit plutôt que de le "
 "promettre : l'onglet *Couleurs* continue de régler le plateau "
@@ -1147,7 +1179,7 @@ msgstr ""
 "theme-carries-the-board-palette-and-the-user-still-has-the-last-"
 "word.md>`__."
 
-#: ../../source/manuel_interface.rst:484
+#: ../../source/manuel_interface.rst:499
 msgid ""
 "*Suivre le système* est le réglage par défaut : il obéit à la préférence "
 "clair/sombre du bureau, y compris lorsqu'elle change en cours de session."
@@ -1158,7 +1190,7 @@ msgstr ""
 "asetusta, myös kun se muuttuu kesken istunnon. Työkalu ei tyrkytä "
 "vaaleaansa tai tummaansa työpöydälle joka on jo päättänyt."
 
-#: ../../source/manuel_interface.rst:488
+#: ../../source/manuel_interface.rst:503
 msgid ""
 "L'onglet *Interface* permet aussi de choisir la langue parmi l'anglais, "
 "le français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, "
@@ -1172,7 +1204,7 @@ msgstr ""
 "valitulle kielelle. Kielivalinta tallennetaan ja säilyy istunnosta "
 "toiseen."
 
-#: ../../source/manuel_interface.rst:494
+#: ../../source/manuel_interface.rst:509
 msgid ""
 "L'onglet *Bibliothèque* réunit ce qui appartient au fichier ouvert et non"
 " à la machine. Il est vide tant qu'aucune base n'est ouverte, et il le "
@@ -1182,7 +1214,7 @@ msgstr ""
 "eikä koneeseen. Se on tyhjä niin kauan kuin yhtään tietokantaa ei ole "
 "avattu, ja se sanoo sen."
 
-#: ../../source/manuel_interface.rst:497
+#: ../../source/manuel_interface.rst:512
 msgid ""
 "Il porte d'abord les deux **seuils** qui décident du vocabulaire de toute"
 " l'application : une décision est une **erreur** dès que son coût atteint"
@@ -1202,7 +1234,7 @@ msgstr ""
 "komentorivi puolestaan puhuu millipisteinä, joten kynnys 0,080 "
 "kirjoitetaan haussa ``E>80``."
 
-#: ../../source/manuel_interface.rst:506
+#: ../../source/manuel_interface.rst:521
 msgid ""
 "Ces seuils suivent le fichier, pas l'ordinateur : la même base compte les"
 " mêmes blunders partout où on l'ouvre, ``blunderdb info`` les affiche, et"
@@ -1216,7 +1248,7 @@ msgstr ""
 "threshold`` säätää niitä. Ne eivät kulje mukana viennissä: kynnys on "
 "lukutapa, ei asemien ominaisuus."
 
-#: ../../source/manuel_interface.rst:512
+#: ../../source/manuel_interface.rst:527
 msgid ""
 "Trois **préréglages** sont proposés d'un clic, chacun sous le nom du "
 "programme qui a tracé cette ligne : blunderDB (0,050 / 0,100), XG (0,020 "
@@ -1228,7 +1260,7 @@ msgstr ""
 "XG (0,020 / 0,080) ja gnubg (0,040 / 0,080). Oletuksena kirjasto lukee "
 "0,050 ja 0,100."
 
-#: ../../source/manuel_interface.rst:516
+#: ../../source/manuel_interface.rst:531
 msgid ""
 "Ce qu'ils changent, à l'écran : le nombre de blunders du compteur de la "
 "barre d'état et la recherche que son lien prépare, les colonnes « Erreurs"
@@ -1242,7 +1274,7 @@ msgstr ""
 "(:ref:`panneau_matchs`) sekä luettelon asemista, joita blunderDB tarjoaa "
 "katsottavaksi tuonnin jälkeen."
 
-#: ../../source/manuel_interface.rst:522
+#: ../../source/manuel_interface.rst:537
 msgid ""
 "La ligne **Espace récupérable** de l'onglet *Maintenance* porte le bouton"
 " **Compacter**, qui récupère l'espace disque laissé par les suppressions "
@@ -1285,7 +1317,7 @@ msgstr ""
 "tilarivillä. Sama toimenpide on käytettävissä komentoriviltä komennolla "
 "``blunderdb vacuum`` (ks. :ref:`cli`)."
 
-#: ../../source/manuel_interface.rst:542
+#: ../../source/manuel_interface.rst:557
 msgid ""
 "Après un compactage sur place, blunderDB vérifie que le fichier a bien "
 "rétréci. Sous Windows, le système refuse de raccourcir un fichier qu'un "
@@ -1300,7 +1332,7 @@ msgstr ""
 " käynnistä tiivistys uudelleen — sen sijaan, että se ilmoittaisi "
 "säästöstä, jota ei syntynyt."
 
-#: ../../source/manuel_interface.rst:548
+#: ../../source/manuel_interface.rst:563
 msgid ""
 "Le bouton **Ouvrir le dossier des journaux**, dans l'onglet *Interface*, "
 "ouvre le dossier contenant le journal de l'application — utile pour "
@@ -1314,7 +1346,7 @@ msgstr ""
 "pikakuvakkeesta tai kaksoisnapsautuksella ilman päätettä, joka näyttäisi "
 "mitään."
 
-#: ../../source/manuel_interface.rst:554
+#: ../../source/manuel_interface.rst:569
 msgid ""
 "La case **Vérifier les mises à jour au démarrage**, du même onglet, "
 "désactivée par défaut, interroge une fois la page des dernières versions "
@@ -1333,7 +1365,7 @@ msgstr ""
 "joka on tehty paketinhallinnan kautta (Flatpak, Homebrew, jakelun "
 "paketti…): silloin päivityksistä huolehtii se kanava eikä blunderDB itse."
 
-#: ../../source/manuel_interface.rst:563
+#: ../../source/manuel_interface.rst:578
 msgid ""
 "Deux réglages de l'onglet *Interface* gouvernent le classement des "
 "**positions voisines** (jeton ``like``, voir :ref:`panneau_recherche`) : "
@@ -1351,7 +1383,7 @@ msgstr ""
 "luettaisiin mittaukseksi. Tunnus ``like<12`` asettaa omansa yhtä hakua "
 "varten, asetukseen koskematta."
 
-#: ../../source/manuel_interface.rst:570
+#: ../../source/manuel_interface.rst:585
 msgid ""
 "L'onglet *Couleurs* permet de personnaliser les couleurs du plateau. "
 "Chaque élément dispose de son propre sélecteur de couleur : le fond, la "
@@ -1366,7 +1398,7 @@ msgstr ""
 "tuplauskuutio. *Palauta*-painike palauttaa kaikki oletusvärit. Kielen "
 "tavoin valitut värit säilyvät istunnosta toiseen."
 
-#: ../../source/manuel_interface.rst:577
+#: ../../source/manuel_interface.rst:592
 msgid ""
 "L'onglet *Bearoff* gère les tables de sortie du panneau Eval (voir "
 ":ref:`panneau_epc`). Elles ne sont **ni embarquées dans l'exécutable, ni "
@@ -1380,7 +1412,7 @@ msgstr ""
 "tavu tavulta sama kuin gnubg:n tuottama — SHA-256-tiiviste tarkistetaan "
 "ennen kuin taulukko hyväksytään."
 
-#: ../../source/manuel_interface.rst:583
+#: ../../source/manuel_interface.rst:598
 msgid ""
 "Les deux tables ordinaires (TS-06-06 pour le verdict de videau, OS-06 "
 "pour l'EPC) sont calculées au premier lancement, en arrière-plan et sans "
@@ -1394,7 +1426,7 @@ msgstr ""
 "normaalisti. Eval-paneeli mainitsee siitä vain, jos siihen asetetaan "
 "asema, joka tarvitsee vielä valmistumatonta taulukkoa."
 
-#: ../../source/manuel_interface.rst:589
+#: ../../source/manuel_interface.rst:604
 msgid ""
 "L'onglet affiche le domaine actif et son origine, l'état de la table une "
 "face que lit l'EPC, le dossier où tout cela vit, et la liste des tables "
@@ -1406,7 +1438,7 @@ msgstr ""
 "luettelon olemassa olevista taulukoista kokoineen ja tuomioineen. "
 "Jokainen rivi poistetaan erikseen, vahvistuksen jälkeen."
 
-#: ../../source/manuel_interface.rst:594
+#: ../../source/manuel_interface.rst:609
 msgid ""
 "**Vérifiée ou non vérifiée.** Une table *vérifiée* a exactement les "
 "octets que gnubg produit pour son domaine : son empreinte SHA-256 figure "
@@ -1428,7 +1460,7 @@ msgstr ""
 " viitteeseen. *Vioittunut* taulukko on ristiriidassa itsensä kanssa eikä "
 "sitä koskaan lueta; se lasketaan uudelleen."
 
-#: ../../source/manuel_interface.rst:602
+#: ../../source/manuel_interface.rst:617
 msgid ""
 "**Calculer une table plus large.** Le domaine se choisit dans une liste à"
 " deux familles, avec le nombre de cœurs à y consacrer (par défaut tous "
@@ -1438,7 +1470,7 @@ msgstr ""
 "luettelosta yhdessä sille annettavien ytimien määrän kanssa (oletuksena "
 "kaikki paitsi yksi, jotta kone pysyy käytettävänä):"
 
-#: ../../source/manuel_interface.rst:606
+#: ../../source/manuel_interface.rst:621
 msgid ""
 "**videau exact (deux faces)**, de TS-06-06 à TS-06-15 : élargit le "
 "domaine où la probabilité de gain et le verdict de videau sont lus plutôt"
@@ -1448,7 +1480,7 @@ msgstr ""
 "aluetta, jolla voittotodennäköisyys ja kuution tuomio luetaan eikä "
 "arvioida;"
 
-#: ../../source/manuel_interface.rst:609
+#: ../../source/manuel_interface.rst:624
 msgid ""
 "**EPC hors du jan (une face)**, de OS-06 à OS-10 : élargit la distance à "
 "laquelle un pion peut se trouver sans que le bloc EPC se taise. Ce "
@@ -1462,7 +1494,7 @@ msgstr ""
 "se on rakenteeltaan peräkkäinen eikä ydinmäärä hyödytä sitä — valitsin "
 "sanoo sen harmaantumalla."
 
-#: ../../source/manuel_interface.rst:615
+#: ../../source/manuel_interface.rst:630
 msgid ""
 "Avant de lancer quoi que ce soit, l'onglet annonce trois chiffres pour le"
 " domaine choisi : la taille sur le disque, la mémoire nécessaire pendant "
@@ -1481,7 +1513,7 @@ msgstr ""
 "tarjotaan harmaana ja perusteluineen — ”tarvittaisiin 24 Gt, jäljellä on "
 "12” on vastaus, puuttuva rivi ei olisi."
 
-#: ../../source/manuel_interface.rst:624
+#: ../../source/manuel_interface.rst:639
 msgid ""
 "À titre d'ordre de grandeur, sur une machine à seize fils : TS-06-09 pèse"
 " 191 Mo et demande une dizaine de secondes, TS-06-11 pèse 1,2 Go et "
@@ -1495,7 +1527,7 @@ msgstr ""
 "Yksipuolisella puolella, yhdellä ytimellä: OS-07 painaa 4,9 Mt ja vie 17 "
 "s, OS-08 15 Mt ja 1 min 20, OS-10 117 Mt ja puoli tuntia."
 
-#: ../../source/manuel_interface.rst:630
+#: ../../source/manuel_interface.rst:645
 msgid ""
 "**Pause et reprise.** Pendant le calcul, la progression affiche le temps "
 "restant *mesuré*, et deux boutons distincts : *Pause* et *Annuler*. La "
@@ -1511,7 +1543,7 @@ msgstr ""
 "alusta. Peruuttaminen ei säilytä mitään. Asetusikkunan sulkeminen ei "
 "keskeytä mitään — laskenta jatkuu taustalla."
 
-#: ../../source/manuel_interface.rst:636
+#: ../../source/manuel_interface.rst:651
 msgid ""
 "Un calcul mis en pause se retrouve au lancement suivant, nommé et chiffré"
 " (« TS-06-09 interrompue à 43 % »), avec *Reprendre* et *Supprimer*. Rien"
@@ -1522,7 +1554,7 @@ msgstr ""
 " *Poista*. Mikään ei käynnisty itsestään uudelleen: käyttäjä pyysi "
 "pysäytystä."
 
-#: ../../source/manuel_interface.rst:640
+#: ../../source/manuel_interface.rst:655
 msgid ""
 "L'onglet permet enfin de pointer vers un fichier ``.bd`` two-sided "
 "externe, par exemple une base produite par gnubg lui-même : la table au "
@@ -1532,7 +1564,7 @@ msgstr ""
 "``.bd``-tiedostoon, esimerkiksi gnubg:n itsensä tuottamaan tietokantaan: "
 "laajimman alueen taulukko voittaa."
 
-#: ../../source/manuel_interface.rst:646
+#: ../../source/manuel_interface.rst:661
 msgid ""
 "L'onglet **Maintenance** montre l'état de santé de la base : une ligne "
 "par opération, avec son compte, sa dernière exécution (date et issue : "
@@ -1544,7 +1576,7 @@ msgstr ""
 "peruttu tai epäonnistunut) ja toiminto. Vain tilastottomien otteluiden "
 "laskenta käynnistyy itsestään, avattaessa."
 
-#: ../../source/manuel_interface.rst:651
+#: ../../source/manuel_interface.rst:666
 msgid ""
 "**Positions sans analyse** — les positions qui ne portent aucune analyse "
 "; l'action est l'analyse gammonNet décrite plus bas. Les positions que "
@@ -1557,11 +1589,11 @@ msgstr ""
 "pistetilanne), pysyvät tässä luvussa, joka ei siis välttämättä pääse "
 "nollaan."
 
-#: ../../source/manuel_interface.rst:655
+#: ../../source/manuel_interface.rst:670
 msgid "**Analyses gammonNet périmées** — décrites plus bas."
 msgstr "**Vanhentuneet gammonNet-analyysit** — kuvataan alempana."
 
-#: ../../source/manuel_interface.rst:656
+#: ../../source/manuel_interface.rst:671
 msgid ""
 "**Matchs sans statistiques** — les matchs dont les statistiques ne sont "
 "pas encore calculées ; l'action les calcule tous. Une base ouverte en "
@@ -1584,7 +1616,7 @@ msgstr ""
 " ne, mikä voi kestää kauan suuressa tietokannassa: Tilastot-paneeli "
 "näyttää silloin tämän määrän, joka avaa tämän välilehden."
 
-#: ../../source/manuel_interface.rst:666
+#: ../../source/manuel_interface.rst:681
 msgid ""
 "**Colonnes d'analyse** — les colonnes que la recherche et les "
 "statistiques interrogent sont une projection des analyses stockées, "
@@ -1596,7 +1628,7 @@ msgstr ""
 "koskemattomina: toiminto laskee sarakkeet uudelleen tuomatta mitään "
 "uudelleen."
 
-#: ../../source/manuel_interface.rst:669
+#: ../../source/manuel_interface.rst:684
 msgid ""
 "**Erreurs des coups joués** — note les coups joués qui n'ont pas encore "
 "d'erreur."
@@ -1604,7 +1636,7 @@ msgstr ""
 "**Pelattujen siirtojen virheet** — arvioi pelatut siirrot, joilla ei "
 "vielä ole virhettä."
 
-#: ../../source/manuel_interface.rst:671
+#: ../../source/manuel_interface.rst:686
 msgid ""
 "**Analyses à l'ancien format** — réécrit au format binaire les analyses "
 "qu'une version antérieure stockait en JSON."
@@ -1612,13 +1644,13 @@ msgstr ""
 "**Vanhan muodon analyysit** — kirjoittaa binäärimuotoon uudelleen "
 "analyysit, jotka aiempi versio tallensi JSON-muodossa."
 
-#: ../../source/manuel_interface.rst:673
+#: ../../source/manuel_interface.rst:688
 msgid "**Corbeille** — le nombre d'entrées de la corbeille, qui l'ouvre."
 msgstr ""
 "**Roskakori** — roskakorin merkintöjen määrä; sitä napsauttamalla "
 "roskakori avautuu."
 
-#: ../../source/manuel_interface.rst:674
+#: ../../source/manuel_interface.rst:689
 msgid ""
 "**Espace récupérable** — l'espace libre du fichier, que le compactage "
 "décrit plus haut rend au disque."
@@ -1626,7 +1658,7 @@ msgstr ""
 "**Vapautettava tila** — tiedoston vapaa tila, jonka yllä kuvattu "
 "tiivistys palauttaa levylle."
 
-#: ../../source/manuel_interface.rst:677
+#: ../../source/manuel_interface.rst:692
 msgid ""
 "Un compte coûteux (il lit une table entière) attend le bouton "
 "**Compter**. Un compte de positions ouvre ces positions dans la liste ; "
@@ -1650,7 +1682,7 @@ msgstr ""
 "avatussa tietokannassa toiminnot on poistettu käytöstä. Samat "
 "toimenpiteet ovat saatavilla komentoriviltä (``blunderdb maintenance``)."
 
-#: ../../source/manuel_interface.rst:688
+#: ../../source/manuel_interface.rst:703
 msgid ""
 "L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 "
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-"
@@ -1666,7 +1698,7 @@ msgstr ""
 "on nimetty ja tallennetaan erikseen — toisen alentaminen ei koskaan muuta"
 " toista:"
 
-#: ../../source/manuel_interface.rst:692
+#: ../../source/manuel_interface.rst:707
 msgid ""
 "**Profondeur d'affichage** — le confort interactif pendant l'édition du "
 "plateau ; jamais écrite en base."
@@ -1674,7 +1706,7 @@ msgstr ""
 "**Näyttösyvyys** — interaktiivinen mukavuus lautaa muokattaessa; ei "
 "koskaan kirjoiteta tietokantaan."
 
-#: ../../source/manuel_interface.rst:694
+#: ../../source/manuel_interface.rst:709
 msgid ""
 "**Profondeur d'analyse** — ce que le lot d'analyse après import écrit "
 "dans l'Analyse d'une position."
@@ -1682,7 +1714,7 @@ msgstr ""
 "**Analyysisyvyys** — se, mitä tuonnin jälkeinen analyysierä kirjoittaa "
 "aseman Analyysiin."
 
-#: ../../source/manuel_interface.rst:697
+#: ../../source/manuel_interface.rst:712
 msgid ""
 "Les deux valent par défaut **2-ply**, la configuration canonique. Le menu"
 " marque d'un ⚠ les profondeurs 3-ply et 4-ply, dont le coût par position "
@@ -1712,7 +1744,7 @@ msgstr ""
 "hyödyllistä kirjastolle, joka on koottu ennen tämän toiminnon "
 "olemassaoloa."
 
-#: ../../source/manuel_interface.rst:711
+#: ../../source/manuel_interface.rst:726
 msgid ""
 "Une prise ou un refus est évalué par gammonNet sur la décision du "
 "doubleur, avant le double. Un verdict gammonNet écrit sur une telle "
@@ -1732,7 +1764,7 @@ msgstr ""
 "*Ylläpito*-välilehden rivi *Positiot ilman analyysiä* (tai automaattinen "
 "analyysi tuonnin jälkeen) arvioi sen uudelleen."
 
-#: ../../source/manuel_interface.rst:719
+#: ../../source/manuel_interface.rst:734
 msgid ""
 "La ligne **Analyses gammonNet périmées** de l'onglet *Maintenance* couvre"
 " le cas inverse : une position déjà analysée par gammonNet, mais dont "
@@ -1761,7 +1793,7 @@ msgstr ""
 "gammonNet-analyysin: se odottaa painiketta **Laske**. Erä laskee oman "
 "luettelonsa uudelleen käynnistyessään."
 
-#: ../../source/manuel_interface.rst:731
+#: ../../source/manuel_interface.rst:746
 msgid ""
 "Les deux lots sont **bornés, visibles et annulables, jamais un démon "
 "silencieux** : leur profondeur, leur progression (``positions analysées /"
@@ -1793,7 +1825,7 @@ msgstr ""
 "Peruutus samoin kuin sulkeminen keskeyttää myös parhaillaan laskettavan "
 "aseman, joka jää ilman analyysiä."
 
-#: ../../source/manuel_interface.rst:746
+#: ../../source/manuel_interface.rst:761
 msgid ""
 "Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un "
 "rollout stocké ou une opération de maintenance. Un lot ou une opération "
@@ -1810,7 +1842,7 @@ msgstr ""
 "käynnistämä erä sen sijaan odottaa toisen päättymistä, ja tilarivi "
 "ilmoittaa sen « odottavaksi » kunnes se alkaa."
 
-#: ../../source/manuel_interface.rst:755
+#: ../../source/manuel_interface.rst:770
 msgid ""
 "Le même onglet porte le **réglage des rollouts** lancés depuis le panneau"
 " Analyse (voir :ref:`rollouts`), conservé d'une session à l'autre : "
@@ -1828,7 +1860,7 @@ msgstr ""
 "monikertoja), JSD-raja, syvyys (ply), ehdokkaiden määrä, siemenluku ja "
 "prosessien määrä."
 
-#: ../../source/manuel_interface.rst:762
+#: ../../source/manuel_interface.rst:777
 msgid ""
 "**Table d'équité de match de la base.** Au bas de l'onglet, la liste "
 "**Table d'équité de match (MET) de la base** choisit la table avec "
@@ -1868,7 +1900,7 @@ msgstr ""
 "Taulukon vaihtaminen ei kirjoita mitään analyysia uudelleen: vain se "
 "muuttuu, mitä vertailut ottavat huomioon."
 
-#: ../../source/manuel_interface.rst:781
+#: ../../source/manuel_interface.rst:796
 msgid ""
 "L'évaluation en direct du panneau et la grille de videau sont valorisées "
 "avec la table de la base, comme les analyses qu'elle enregistre. Une "
@@ -1887,7 +1919,7 @@ msgstr ""
 " toisen moottorin (XG, GNUbg) analyysilla, katsotaan jälleen lasketuksi "
 "Kazaross-XG2:lla."
 
-#: ../../source/manuel_interface.rst:789
+#: ../../source/manuel_interface.rst:804
 msgid ""
 "**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un "
 "match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a"
@@ -1909,7 +1941,7 @@ msgstr ""
 "pelattu siirto tulee ottelun omasta siirtotaulusta, joka kirjoitetaan "
 "tuonnissa riippumatta siitä kantoiko tiedosto analyysin."
 
-#: ../../source/manuel_interface.rst:799
+#: ../../source/manuel_interface.rst:814
 msgid ""
 "Une base analysée avec une version antérieure à celle-ci n'a pas besoin "
 "d'être réévaluée : ``blunderdb repair`` recalcule les colonnes à partir "
@@ -1921,7 +1953,7 @@ msgstr ""
 "tallennetuista analyyseistä ja siirroista ja palauttaa noille otteluille "
 "niiden PR:n (katso :ref:`repair <cli_repair>`)."
 
-#: ../../source/manuel_interface.rst:804
+#: ../../source/manuel_interface.rst:819
 msgid ""
 "Une réserve honnête : une position est identifiée par sa structure, donc "
 "une position rencontrée deux fois — bien jouée une fois, mal l'autre — ne"
@@ -1934,11 +1966,11 @@ msgstr ""
 "yhden eron, ensimmäisen kirjatun esiintymänsä eron. Tämä ei ole tälle "
 "laskennalle ominaista: XG-kirjastolla on täsmälleen sama muoto."
 
-#: ../../source/manuel_interface.rst:812
+#: ../../source/manuel_interface.rst:827
 msgid "Dossier surveillé"
 msgstr "Valvottu kansio"
 
-#: ../../source/manuel_interface.rst:814
+#: ../../source/manuel_interface.rst:829
 msgid ""
 "L'onglet **Dossier surveillé** demande à blunderDB de regarder un dossier"
 " pendant qu'il tourne et d'importer chaque fichier de match qui y "
@@ -1950,7 +1982,7 @@ msgstr ""
 " Pelaat istunnon eXtreme Gammonissa, palaat blunderDB:hen, ja ottelut "
 "ovat jo siellä."
 
-#: ../../source/manuel_interface.rst:819
+#: ../../source/manuel_interface.rst:834
 msgid ""
 "Rien n'est deviné. Tant qu'aucun dossier n'est désigné, il n'y a pas de "
 "surveillance : blunderDB ne se met pas à lire un répertoire parce qu'il a"
@@ -1965,11 +1997,11 @@ msgstr ""
 "paikkoja ja tarjoaa jonkin vain jos se todella on olemassa; muuten se "
 "sanoo niin, ja kansion nimeäminen jää sinulle."
 
-#: ../../source/manuel_interface.rst:825
+#: ../../source/manuel_interface.rst:840
 msgid "Trois points méritent d'être connus avant d'activer la case :"
 msgstr "Kolme asiaa kannattaa tietää ennen ruudun rastittamista:"
 
-#: ../../source/manuel_interface.rst:827
+#: ../../source/manuel_interface.rst:842
 msgid ""
 "**Seuls les fichiers qui apparaissent sont importés.** Ce que le dossier "
 "contient déjà au moment où la surveillance démarre est enregistré comme "
@@ -1984,7 +2016,7 @@ msgstr ""
 "tuomiseen on kansion tuonti, joka on sitä varten — ja nämä kaksi sopivat "
 "hyvin yhteen: ensin tuonti, sitten valvonta."
 
-#: ../../source/manuel_interface.rst:833
+#: ../../source/manuel_interface.rst:848
 msgid ""
 "**Un fichier n'est importé qu'une fois sa taille stable.** Un match qu'un"
 " autre programme est en train d'écrire grossit d'un coup d'œil à l'autre "
@@ -1998,7 +2030,7 @@ msgstr ""
 "mitään. blunderDB odottaa siis näkevänsä saman tiedoston kahdesti "
 "muuttumattomana."
 
-#: ../../source/manuel_interface.rst:838
+#: ../../source/manuel_interface.rst:853
 msgid ""
 "**L'import est silencieux.** Vous étiez en train d'étudier une position "
 "quand vos matchs sont arrivés : vous reprendre l'écran serait le pire "
@@ -2022,7 +2054,7 @@ msgstr ""
 "kaksoiskappaleet tunnistetaan, sama tuontierä, sama automaattinen "
 "analyysi, jos se on käytössä."
 
-#: ../../source/manuel_interface.rst:849
+#: ../../source/manuel_interface.rst:864
 msgid ""
 "L'intervalle par défaut est de dix secondes ; le plancher est de deux. Le"
 " dossier n'est pas parcouru récursivement : un dossier surveillé est "
@@ -2035,7 +2067,7 @@ msgstr ""
 "ottelunsa, ei tutkittava puu. Irrotettu verkkojako ei pysäytä valvontaa "
 "eikä saa sisältöään käymään uudesta palatessaan."
 
-#: ../../source/manuel_interface.rst:855
+#: ../../source/manuel_interface.rst:870
 msgid ""
 "La même surveillance existe en ligne de commande, avec ``blunderdb import"
 " --type batch --dir <dossier> --watch`` (voir :ref:`cli`) : c'est la "
@@ -2045,11 +2077,11 @@ msgstr ""
 "--type batch --dir <kansio> --watch`` (katso :ref:`cli`): se on muoto, "
 "jota palvelin, ajastettu tehtävä tai skripti voi käyttää."
 
-#: ../../source/manuel_interface.rst:863
+#: ../../source/manuel_interface.rst:878
 msgid "Synchroniser deux machines"
 msgstr "Kahden koneen synkronointi"
 
-#: ../../source/manuel_interface.rst:865
+#: ../../source/manuel_interface.rst:880
 msgid ""
 "Copier sa base ``.db`` d'une machine à l'autre, ou la ranger dans un "
 "dossier synchronisé (Syncthing, Dropbox…), finit par l'abîmer : SQLite "
@@ -2067,7 +2099,7 @@ msgstr ""
 "tallennetaan kansioon, jota toinen kone **valvoo**. Siirtotavan valitset "
 "itse — Syncthing, USB-tikku, sähköposti: palvelinta tai tiliä ei tarvita."
 
-#: ../../source/manuel_interface.rst:873
+#: ../../source/manuel_interface.rst:888
 msgid ""
 "Sur la machine A, dans la fenêtre d'export, choisissez *Toute la "
 "bibliothèque*, cochez *Seulement ce qui est nouveau depuis le dernier "
@@ -2083,7 +2115,7 @@ msgstr ""
 "tullut kirjastoon samaan kansioon tehdyn edellisen viennin jälkeen; "
 "ensimmäinen sisältää kaiken."
 
-#: ../../source/manuel_interface.rst:879
+#: ../../source/manuel_interface.rst:894
 msgid ""
 "Sur la machine B, faites de ce dossier le :ref:`dossier surveillé "
 "<dossier_surveille>`. Chaque fichier ``.db`` qui y apparaît est fusionné "
@@ -2097,15 +2129,15 @@ msgstr ""
 "tunnettua asemaa ei kahdenneta, jo tunnettu ottelu tunnistetaan, "
 "kokoelmat ja oppitunnit yhdistetään nimensä perusteella."
 
-#: ../../source/manuel_interface.rst:884
+#: ../../source/manuel_interface.rst:899
 msgid "Faites de même dans l'autre sens, avec un second dossier."
 msgstr "Toimi samoin toiseen suuntaan toisen kansion kanssa."
 
-#: ../../source/manuel_interface.rst:886
+#: ../../source/manuel_interface.rst:901
 msgid "Ce qu'il faut savoir :"
 msgstr "Hyvä tietää:"
 
-#: ../../source/manuel_interface.rst:888
+#: ../../source/manuel_interface.rst:903
 msgid ""
 "**Le repère « dernière synchronisation » est chez celui qui exporte**, un"
 " par dossier de destination, et n'avance que lorsque le fichier est "
@@ -2117,7 +2149,7 @@ msgstr ""
 "valmis. Vastaanottava kone ei tallenna mitään. Epäonnistunut vienti "
 "jättää merkin paikalleen: seuraava vienti sisältää samat rivit."
 
-#: ../../source/manuel_interface.rst:892
+#: ../../source/manuel_interface.rst:907
 msgid ""
 "**La synchronisation se fait par ajout seul.** Une suppression ne se "
 "propage pas : supprimer un match sur A ne le supprime pas sur B. Une "
@@ -2145,7 +2177,7 @@ msgstr ""
 "suodattimet ja Anki-pakat eivät kuulu mukaan: kohteen *Koko kirjasto* "
 "vienti ilman valintaruutua sisältää ne."
 
-#: ../../source/manuel_interface.rst:903
+#: ../../source/manuel_interface.rst:918
 msgid ""
 "**Ce qu'une machine a reçu repart une fois vers l'autre**, puisque c'est "
 "nouveau dans sa bibliothèque ; l'autre le reconnaît sans rien ajouter, et"
@@ -2155,7 +2187,7 @@ msgstr ""
 "se on uutta sen kirjastossa; toinen tunnistaa sen lisäämättä mitään, ja "
 "seuraava vaihto on tyhjä."
 
-#: ../../source/manuel_interface.rst:906
+#: ../../source/manuel_interface.rst:921
 msgid ""
 "**Un fichier arrivé pendant que blunderDB était fermé n'est pas perdu** :"
 " au démarrage de la surveillance, chaque ``.db`` déjà présent dans le "
@@ -2173,7 +2205,7 @@ msgstr ""
 "uudelleenlukemisen ajan hinnalla. Poista jo vastaanotetut "
 "``sync-…``-tiedostot aika ajoin, jotta tämä käynnistys pysyy nopeana."
 
-#: ../../source/manuel_interface.rst:913
+#: ../../source/manuel_interface.rst:928
 msgid ""
 "**Un export incrémental n'écrase jamais un fichier.** Le fichier "
 "précédent porte peut-être des lignes que l'autre machine n'a pas encore "
@@ -2185,7 +2217,7 @@ msgstr ""
 "vienti jo käytössä olevaan tiedostonimeen hylätään. Valitse kansio, niin "
 "jokainen vienti saa siellä uuden nimen."
 
-#: ../../source/manuel_interface.rst:917
+#: ../../source/manuel_interface.rst:932
 msgid ""
 "**Un fichier réécrit sous un nom déjà vu est fusionné de nouveau** : la "
 "surveillance reconnaît un fichier à son nom, sa taille et sa date de "
@@ -2195,7 +2227,7 @@ msgstr ""
 "uudelleen**: valvonta tunnistaa tiedoston nimen, koon ja muokkausajan "
 "perusteella."
 
-#: ../../source/manuel_interface.rst:920
+#: ../../source/manuel_interface.rst:935
 msgid ""
 "**La bibliothèque ouverte n'est jamais fusionnée dans elle-même** : si "
 "elle se trouve dans le dossier surveillé, la surveillance la passe."
@@ -2203,7 +2235,7 @@ msgstr ""
 "**Avointa kirjastoa ei koskaan yhdistetä itseensä**: jos se on valvotussa"
 " kansiossa, valvonta ohittaa sen."
 
-#: ../../source/manuel_interface.rst:922
+#: ../../source/manuel_interface.rst:937
 msgid ""
 "**Un export qui a dû écarter des lignes** (signalées dans le journal) ne "
 "fait pas avancer le repère : le suivant les retente, avec tout ce qui les"
@@ -2213,7 +2245,7 @@ msgstr ""
 "siirrä merkkiä eteenpäin: seuraava yrittää niitä uudelleen kaiken niiden "
 "jälkeen tulevan kanssa."
 
-#: ../../source/manuel_interface.rst:924
+#: ../../source/manuel_interface.rst:939
 msgid ""
 "**Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom "
 "caché puis renommé d'un coup. Un fichier protégé par mot de passe "
@@ -2225,7 +2257,7 @@ msgstr ""
 "suojattua tiedostoa (``.dbx``) valvonta ei poimi, koska se ei voi kysyä "
 "salasanaa."
 
-#: ../../source/manuel_interface.rst:928
+#: ../../source/manuel_interface.rst:943
 msgid ""
 "En ligne de commande, ``blunderdb export --type database --incremental "
 "--file <dossier>`` d'un côté et ``blunderdb import --type batch --dir "
@@ -2239,11 +2271,11 @@ msgstr ""
 "``\"incremental\": true`` osoitteessa ``/v1/exports.sqlite`` (katso "
 ":ref:`headless`)."
 
-#: ../../source/manuel_interface.rst:936
+#: ../../source/manuel_interface.rst:951
 msgid "Assistant et MCP"
 msgstr "Avustaja ja MCP"
 
-#: ../../source/manuel_interface.rst:938
+#: ../../source/manuel_interface.rst:953
 msgid ""
 "L'onglet **Assistant et MCP** règle deux choses, toutes deux désactivées "
 "par défaut."
@@ -2251,7 +2283,7 @@ msgstr ""
 "Välilehti **Avustaja ja MCP** säätää kahta asiaa, jotka kumpikin ovat "
 "oletuksena pois päältä."
 
-#: ../../source/manuel_interface.rst:941
+#: ../../source/manuel_interface.rst:956
 msgid ""
 "Le **serveur MCP local** offre les outils de blunderDB (recherche, "
 "lecture d'une position et de son analyse, statistiques d'un joueur, "
@@ -2279,7 +2311,7 @@ msgstr ""
 "poisteta. Ilman avointa ikkunaa ``blunderdb mcp`` tarjoaa samat työkalut "
 "(katso :ref:`cli`)."
 
-#: ../../source/manuel_interface.rst:953
+#: ../../source/manuel_interface.rst:968
 msgid ""
 "L'**assistant interne** est un client de ces mêmes outils. Aucun modèle "
 "n'est embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama"
@@ -2306,7 +2338,7 @@ msgstr ""
 "``qwen2.5:7b``, on lähtökohta, ei suositus: mitään mallisuositusta ei "
 "anneta ilman lähdekoodin mukana toimitetun mittauskokeen tulosta."
 
-#: ../../source/manuel_interface.rst:965
+#: ../../source/manuel_interface.rst:980
 msgid ""
 "Une fois activé, l'assistant est un sous-onglet **Assistant** du panneau "
 "Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la "
@@ -2330,7 +2362,7 @@ msgstr ""
 "palvelimen kirjoittamisesta — ja jokainen sen valmistelema muutos "
 "näytetään, ja se tehdään vasta painikkeella **Vahvista**."
 
-#: ../../source/manuel_interface.rst:975
+#: ../../source/manuel_interface.rst:990
 msgid ""
 "La fenêtre de configuration regroupe également des réglages d'affichage "
 "de l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir"
@@ -2354,11 +2386,11 @@ msgstr ""
 "parempaa hyödyntämistä varten). Muiden asetusten tavoin nämä valinnat "
 "säilyvät istunnosta toiseen."
 
-#: ../../source/manuel_interface.rst:988
+#: ../../source/manuel_interface.rst:1003
 msgid "Visites guidées et base d'exemple"
 msgstr "Opastetut kierrokset ja esimerkkitietokanta"
 
-#: ../../source/manuel_interface.rst:990
+#: ../../source/manuel_interface.rst:1005
 msgid ""
 "Pour faciliter la prise en main, blunderDB propose des **visites "
 "guidées** de l'interface. Le catalogue des visites s'ouvre depuis la "
@@ -2382,7 +2414,7 @@ msgstr ""
 "tahansa. Ensimmäisellä käynnistyskerralla yleinen kierros tarjotaan "
 "automaattisesti."
 
-#: ../../source/manuel_interface.rst:1000
+#: ../../source/manuel_interface.rst:1015
 msgid ""
 "La commande ``demo`` charge une **base d'exemple** permettant de "
 "découvrir les fonctionnalités de l'outil sans importer ses propres "
@@ -2402,15 +2434,15 @@ msgstr ""
 "kierrokset käyttävät tätä tietokantaa, kun mitään tietokantaa ei ole "
 "avattu."
 
-#: ../../source/manuel_interface.rst:1011
+#: ../../source/manuel_interface.rst:1026
 msgid "Navigation dans les positions"
 msgstr "Asemien selaaminen"
 
-#: ../../source/manuel_interface.rst:1013
+#: ../../source/manuel_interface.rst:1028
 msgid "Par défaut, blunderDB permet de:"
 msgstr "Oletuksena blunderDB mahdollistaa seuraavat:"
 
-#: ../../source/manuel_interface.rst:1015
+#: ../../source/manuel_interface.rst:1030
 msgid ""
 "faire défiler les différentes positions de la bibliothèque courante — qui"
 " n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des "
@@ -2423,15 +2455,15 @@ msgstr ""
 "asemat viidenkymmenen ikkunoissa näytettävän aseman ympäriltä, joten "
 "kymmenientuhansien asemien tietokanta aukeaa yhtä nopeasti kuin pienikin,"
 
-#: ../../source/manuel_interface.rst:1021
+#: ../../source/manuel_interface.rst:1036
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "näyttää asemaan liittyvät analyysitiedot,"
 
-#: ../../source/manuel_interface.rst:1023
+#: ../../source/manuel_interface.rst:1038
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "näyttää, lisätä ja muokata aseman kommentteja."
 
-#: ../../source/manuel_interface.rst:1025
+#: ../../source/manuel_interface.rst:1040
 msgid ""
 "Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre "
 "où saisir directement l'indice d'une position pour y sauter, sans avoir à"
@@ -2443,16 +2475,16 @@ msgstr ""
 "vierittämistä. Se on komentorivin ``[number]``-komennon graafinen vastine"
 " (katso :ref:`cmd_positions`)."
 
-#: ../../source/manuel_interface.rst:1030
-#: ../../source/manuel_interface.rst:1043
+#: ../../source/manuel_interface.rst:1045
+#: ../../source/manuel_interface.rst:1058
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Katso saatavilla olevat pikanäppäimet kohdasta :ref:`raccourcis`."
 
-#: ../../source/manuel_interface.rst:1035
+#: ../../source/manuel_interface.rst:1050
 msgid "Édition de positions"
 msgstr "Asemien muokkaus"
 
-#: ../../source/manuel_interface.rst:1037
+#: ../../source/manuel_interface.rst:1052
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -2466,11 +2498,11 @@ msgstr ""
 "ja vuoron jakaumaa voi muokata hiirellä (katso "
 ":ref:`guide_edit_position`)."
 
-#: ../../source/manuel_interface.rst:1048
+#: ../../source/manuel_interface.rst:1063
 msgid "La ligne de commande"
 msgstr "Komentorivi"
 
-#: ../../source/manuel_interface.rst:1050
+#: ../../source/manuel_interface.rst:1065
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -2489,7 +2521,7 @@ msgstr ""
 " komentorivin käyttöön, joka mahdollistaa blunderDB:n tehokkaan ja "
 "sujuvan käytön, erityisesti asemahakutoiminnoissa."
 
-#: ../../source/manuel_interface.rst:1059
+#: ../../source/manuel_interface.rst:1074
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
@@ -2498,7 +2530,7 @@ msgstr ""
 "Avaa komentorivi painamalla *VÄLILYÖNTI*-näppäintä. Lähetä kysely ja "
 "sulje komentorivi painamalla *ENTER*-näppäintä."
 
-#: ../../source/manuel_interface.rst:1063
+#: ../../source/manuel_interface.rst:1078
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -2509,7 +2541,7 @@ msgstr ""
 "ovat kelvollisia, ja muuttaa tarvittaessa tietokannan tilaa välittömästi."
 " Käyttäjältä ei vaadita erillisiä tallennustoimia."
 
-#: ../../source/manuel_interface.rst:1068
+#: ../../source/manuel_interface.rst:1083
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de "
 "commandes disponible en ligne de commande."
@@ -2517,11 +2549,11 @@ msgstr ""
 "Katso komentorivillä käytettävissä olevien komentojen luettelo kohdasta "
 ":ref:`komentoluettelo <cmd_mode>`."
 
-#: ../../source/manuel_interface.rst:1074
+#: ../../source/manuel_interface.rst:1089
 msgid "La palette de commandes"
 msgstr "Komentopaletti"
 
-#: ../../source/manuel_interface.rst:1076
+#: ../../source/manuel_interface.rst:1091
 msgid ""
 "La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce "
 "que l'on ne sait plus où chercher : une commande de la ligne de commande,"
@@ -2537,7 +2569,7 @@ msgstr ""
 "aksenteista välittämättä: ”kmtrs” löytää kuutiomatriisin, ”lyon” Lyonin "
 "turnauksen ottelut."
 
-#: ../../source/manuel_interface.rst:1083
+#: ../../source/manuel_interface.rst:1098
 msgid ""
 "Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se"
 " lance comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne "
@@ -2551,7 +2583,7 @@ msgstr ""
 "kuin kaksoisnapsautuksella kirjastossa; ottelu avautuu kuin "
 "kaksoisnapsautuksella Otteluiden paneelissa."
 
-#: ../../source/manuel_interface.rst:1088
+#: ../../source/manuel_interface.rst:1103
 msgid ""
 "Quand une Direction est ouverte, la palette y ajoute le tournoi : "
 "joueurs, tables, matchs en cours et épreuves (voir :ref:`la recherche "
@@ -2577,3 +2609,60 @@ msgstr ""
 #~ "seurannut kommentteja. Toinen kone tunnistaa"
 #~ " ne kahdentamatta mitään; vain tiedosto "
 #~ "on tavallista suurempi."
+
+#~ msgid ""
+#~ "**L'écran partagé.** Sur un grand écran,"
+#~ " le bouton ◫ de la barre des"
+#~ " onglets (*CTRL-MAJ-X*) partage la "
+#~ "fenêtre en deux volets de même "
+#~ "largeur. L'un porte le groupe actif, "
+#~ "entier ; l'autre une visionneuse en "
+#~ "lecture d'une autre bibliothèque ouverte "
+#~ "(de la même, s'il n'y en a "
+#~ "qu'une) : son plateau, l'analyse de "
+#~ "la position et son commentaire. La "
+#~ "visionneuse parcourt toute la bibliothèque,"
+#~ " un match rejoué coup par coup "
+#~ "(la partie, le coup et ce qui "
+#~ "a été joué s'affichent au-dessus "
+#~ "du plateau) ou une collection, au "
+#~ "choix de sa liste déroulante, avec "
+#~ "ses boutons ⏮ ◀ ▶ ⏭. Elle "
+#~ "s'ouvre là où cette bibliothèque a "
+#~ "été quittée. Rien de ce qu'elle "
+#~ "montre n'est écrit nulle part. Cliquer"
+#~ " la visionneuse, hors de ses boutons,"
+#~ " active sa bibliothèque : les deux"
+#~ " volets échangent leurs rôles et "
+#~ "chaque bibliothèque garde son côté ; "
+#~ "*CTRL-MAJ-PAGE PRÉC.* / *PAGE "
+#~ "SUIV.* fait de même au clavier. "
+#~ "Sous 1280 pixels de large, l'écran "
+#~ "partagé se refuse et propose l'échange"
+#~ " sur place (*x*) ; il se ferme"
+#~ " si la fenêtre devient trop étroite."
+#~ msgstr ""
+#~ "**Jaettu näyttö.** Suurella näytöllä "
+#~ "välilehtipalkin painike ◫ (*CTRL-VAIHTO-X*)"
+#~ " jakaa ikkunan kahteen yhtä leveään "
+#~ "ruutuun. Toisessa on aktiivinen ryhmä "
+#~ "kokonaisena; toisessa vain luku -katselin "
+#~ "toisesta avoimesta kirjastosta (samasta, jos"
+#~ " vain yksi on auki): sen lauta, "
+#~ "aseman analyysi ja sen kommentti. "
+#~ "Katselin selaa koko kirjaston, ottelun "
+#~ "siirto siirrolta (peli, siirto ja "
+#~ "pelattu näkyvät laudan yläpuolella) tai "
+#~ "kokoelman, pudotusvalikosta valiten, painikkeillaan"
+#~ " ⏮ ◀ ▶ ⏭. Se avautuu siihen,"
+#~ " mihin kirjasto jätettiin. Mitään sen "
+#~ "näyttämää ei kirjoiteta mihinkään. Katselimen"
+#~ " napsauttaminen painikkeiden ulkopuolelta aktivoi"
+#~ " sen kirjaston: ruudut vaihtavat rooleja"
+#~ " ja kumpikin kirjasto pitää puolensa; "
+#~ "*CTRL-VAIHTO-PAGE UP* / *PAGE "
+#~ "DOWN* tekee saman näppäimistöltä. Alle "
+#~ "1280 pikselin leveydellä jaettu näyttö "
+#~ "hylätään ja tilalle tarjotaan vaihto "
+#~ "paikan päällä (*x*); se sulkeutuu, jos"
+#~ " ikkuna käy liian kapeaksi."

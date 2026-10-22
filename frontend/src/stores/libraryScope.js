@@ -227,6 +227,7 @@ export const OUTSIDE = [
     // the desktop's memory, kept across a switch, never a library's.
     'transferBasketStore',
     'lockedGroupsStore',
+    'transferUndoStore',
     // The board's transient state, recomputed from the position on screen.
     'analysisChallengeStore',
     'analysisChallengeHiddenStore',
@@ -321,8 +322,11 @@ export const OUTSIDE = [
     'libraryChangedStore',
     'groupActivityStore',
     'importForegroundStore',
-    // The split screen follows the groups: it names one and survives every switch.
-    'splitStore'
+    // The split screen follows the groups: each side names one and survives every switch; the
+    // shake and the frozen pane's position are the panes', not a library's.
+    'splitStore',
+    'splitShakeStore',
+    'splitFrozenStore'
 ];
 
 /** @param {Record<string, Scoped>} scope */

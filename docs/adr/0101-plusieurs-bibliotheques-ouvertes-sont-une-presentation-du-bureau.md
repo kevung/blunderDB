@@ -70,17 +70,31 @@ recopier un match demandait un export puis un import. Le bureau lie un seul `*da
    `across.*`, et juge avec les seuils du groupe actif ; une analyse faite avec une autre MET
    est signalée comme aujourd'hui.
 
-8. **L'écran partagé montre un groupe vivant et une visionneuse en lecture**, pas deux groupes
-   vivants. Le front tient un seul jeu de stores, photographié par groupe (point 3), et la
-   poignée liée ne porte que la bibliothèque active (point 2) : un second groupe complet
-   simultané demanderait de réécrire chaque store et chaque liaison par groupe. Le second volet
-   est donc une visionneuse fidèle (plateau, analyse, commentaire ; la bibliothèque, un match
-   rejoué coup par coup ou une collection) qui lit son groupe par son numéro
-   (`ViewerSteps`, `ViewerShow`, `ViewerCatalogOf`, sous le verrou des groupes) et n'écrit ni
-   store du volet vivant ni base. L'égalité des volets tient par l'activation : cliquer la
-   visionneuse active son groupe, les volets échangent leurs rôles et chaque bibliothèque garde
-   son côté ; le groupe actif reste celui du volet qui reçoit le clavier. Les deux volets ont la
-   même largeur ; sous 1280 px de large, l'option se refuse et propose l'échange sur place.
+8. **L'écran partagé coupe la seule zone du plateau en deux volets à côté fixe ; un seul
+   habillage suit le volet actif.** Le front tient un seul jeu de stores, photographié par
+   groupe (point 3), et la poignée liée ne porte que la bibliothèque active (point 2) : un
+   second groupe vivant simultané demanderait de réécrire chaque store et chaque liaison par
+   groupe. Chaque volet est donc attaché à un groupe et **ne change jamais de côté** (à
+   l'ouverture : l'actif à gauche, le premier autre à droite ; le même s'il est seul, « même
+   base ») ; le volet du groupe actif porte l'unique plateau vivant, cerné de la couleur du
+   groupe ; l'autre est figé et atténué — le plateau du groupe là où il a été laissé, son
+   analyse, son commentaire, son compteur « n / N » —, lu par numéro de groupe (`ViewerSteps`,
+   `ViewerShow`, sous le verrou des groupes) sans écrire ni store du groupe actif ni base. Un
+   clic dans le volet figé, ou Ctrl+Alt+←/→, passe par `activateGroup` et ne déplace que le
+   contour ; un refus (`switchRefusal` : Duel, entraînement, import) laisse le focus, fait
+   trembler le volet et la barre d'état dit pourquoi. Deux vues d'une même base échangent leurs
+   positions. Barre d'outils, onglets, panneaux et l'unique barre d'état restent en un
+   exemplaire et disent toujours la base active (pastille et nom en tête des panneaux et de la
+   barre d'état, titre de la fenêtre) : **aucune donnée d'une base n'apparaît sous le nom de
+   l'autre** (garde : `split-screen.spec.js`, qui alterne les volets). Clavier, Ctrl-S, imports,
+   commandes et MCP vont au volet actif. Glisser une position d'un volet sur l'autre la copie
+   dans la base de ce volet (`CopyPositionToGroup`, par le transfert du point 6), sauf groupe
+   verrouillé ; la barre d'état offre « Annuler » (`UndoPositionCopy`) quand la copie a ajouté
+   la position. Seuils : panneau latéral à partir de 1600 px, sous les plateaux entre 1280 et
+   1600 px, refus en dessous ; l'état (bases par fichier, côtés) est repris à la session
+   suivante, dans le stockage local du bureau, jamais dans une base. Rejeté : des volets qui
+   échangent leurs côtés à l'activation — le clic dans la visionneuse déplaçait la bibliothèque
+   que l'on venait de regarder.
 
 ## Consequences
 

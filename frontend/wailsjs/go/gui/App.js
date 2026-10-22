@@ -98,6 +98,10 @@ export function CopyImageToClipboard(arg1) {
   return window['go']['gui']['App']['CopyImageToClipboard'](arg1);
 }
 
+export function CopyPositionToGroup(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['CopyPositionToGroup'](arg1, arg2, arg3);
+}
+
 export function CountRolloutIDs(arg1, arg2) {
   return window['go']['gui']['App']['CountRolloutIDs'](arg1, arg2);
 }
@@ -416,6 +420,10 @@ export function SuggestWatchFolder() {
 
 export function TransferToGroup(arg1, arg2) {
   return window['go']['gui']['App']['TransferToGroup'](arg1, arg2);
+}
+
+export function UndoPositionCopy(arg1, arg2) {
+  return window['go']['gui']['App']['UndoPositionCopy'](arg1, arg2);
 }
 
 export function VideoSourceKind(arg1) {

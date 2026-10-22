@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // TransferBatch is what one library group gives to a transfer: rows named by
@@ -164,4 +165,79 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 		to.RefreshSearchStatistics()
 	}
 	return sum, nil
+}
+
+// PositionCopy is the account of one position carried from a split-screen
+// pane onto the other: the transfer's summary, and the position's id in the
+// destination when this copy added it (0 when dst held it already), the only
+// case the copy can be taken back.
+type PositionCopy struct {
+	TransferSummary
+	Created int64 `json:"created"`
+}
+
+// CopyPositionToGroup copies position id of group src into the library of
+// group dst through TransferToGroup, and says whether dst held it before, by
+// its Zobrist hash: a position is one per hash in a library.
+func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, error) {
+	var hash uint64
+	if err := a.readGroup(src, func(d *database.Database) error {
+		p, err := d.LoadPosition(int(id))
+		if err != nil {
+			return err
+		}
+		hash = storage.ZobristOf(p)
+		return nil
+	}); err != nil {
+		return PositionCopy{TransferSummary: TransferSummary{Group: dst}}, err
+	}
+	_, heldBefore, err := a.positionInGroup(dst, hash)
+	if err != nil {
+		return PositionCopy{TransferSummary: TransferSummary{Group: dst}}, err
+	}
+	sum, err := a.TransferToGroup(dst, []TransferBatch{{Group: src, PositionIDs: []int64{id}}})
+	out := PositionCopy{TransferSummary: sum}
+	if err != nil || heldBefore || sum.Cancelled || len(sum.Errors) > 0 {
+		return out, err
+	}
+	if created, found, err := a.positionInGroup(dst, hash); err == nil && found {
+		out.Created = created
+	}
+	return out, nil
+}
+
+// UndoPositionCopy takes back a copy CopyPositionToGroup made: the position
+// it added to dst leaves dst, with what came with it.
+func (a *App) UndoPositionCopy(dst int, id int64) error {
+	if id <= 0 {
+		return errors.New("nothing to take back")
+	}
+	a.libs.mu.Lock()
+	locked := a.libs.locked[dst]
+	a.libs.mu.Unlock()
+	if locked {
+		return ErrLibraryGroupLocked
+	}
+	return a.readGroup(dst, func(d *database.Database) error {
+		if d.IsReadOnly() {
+			return errors.New("the library is open read-only")
+		}
+		return d.DeletePosition(id)
+	})
+}
+
+// positionInGroup looks up the position stored under hash in group's library.
+func (a *App) positionInGroup(group int, hash uint64) (int64, bool, error) {
+	var id int64
+	var found bool
+	err := a.readGroup(group, func(d *database.Database) error {
+		st, _ := database.CurrentStore(d)
+		if st == nil {
+			return errors.New("no database open")
+		}
+		var err error
+		id, found, err = st.Positions().Exists(context.Background(), "", hash)
+		return err
+	})
+	return id, found, err
 }

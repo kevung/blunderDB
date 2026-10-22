@@ -15,8 +15,16 @@ export const transferBasketStore = writable(/** @type {TransferItem[]} */ ([]));
 /** The groups locked against transfers into them. */
 export const lockedGroupsStore = writable(/** @type {Set<number>} */ (new Set()));
 
-/** A group closed: its rows leave the basket, its lock goes with it. @param {number} id */
+/**
+ * The last position carried from one split-screen pane onto the other, while it can be taken
+ * back: the group it went into, its id there, and that library's name for the status bar.
+ * @type {import('svelte/store').Writable<{ dst: number, id: number, name: string } | null>}
+ */
+export const transferUndoStore = writable(/** @type {{ dst: number, id: number, name: string } | null} */ (null));
+
+/** A group closed: its rows leave the basket, its lock and a copy into it to take back go with it. @param {number} id */
 export function forgetTransferGroup(id) {
+    transferUndoStore.update((u) => (u?.dst === id ? null : u));
     transferBasketStore.update((items) => items.filter((i) => i.group !== id));
     lockedGroupsStore.update((s) => {
         if (!s.has(id)) return s;

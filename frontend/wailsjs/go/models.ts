@@ -4152,6 +4152,35 @@ export namespace gui {
 	        this.cancelled = source["cancelled"];
 	    }
 	}
+	export class PositionCopy {
+	    group: number;
+	    positions: number;
+	    matches: number;
+	    alreadyHeld: number;
+	    collections: number;
+	    lessons: number;
+	    errors: string[];
+	    cancelled: boolean;
+	    created: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PositionCopy(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.group = source["group"];
+	        this.positions = source["positions"];
+	        this.matches = source["matches"];
+	        this.alreadyHeld = source["alreadyHeld"];
+	        this.collections = source["collections"];
+	        this.lessons = source["lessons"];
+	        this.errors = source["errors"];
+	        this.cancelled = source["cancelled"];
+	        this.created = source["created"];
+	    }
+	}
+
 	export class TransferBatch {
 	    group: number;
 	    positionIDs: number[];

@@ -1,24 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { get, writable } from 'svelte/store';
 
-vi.mock('../../wailsjs/go/gui/App.js', () => ({ TransferToGroup: vi.fn(), SetLibraryGroupLocked: vi.fn() }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ TransferToGroup: vi.fn(), SetLibraryGroupLocked: vi.fn(), CopyPositionToGroup: vi.fn(), UndoPositionCopy: vi.fn() }));
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
 vi.mock('../stores/libraryGroupStore.js', () => ({
     tabGroupsStore: writable([
         { id: 1, path: '/libs/mine.db' },
         { id: 2, path: '/libs/club.db' }
-    ])
+    ]),
+    groupName: (path) => (path.split('/').pop() || '').replace(/\.db$/, '')
 }));
 vi.mock('../stores/libraryCountsStore.js', () => ({ refreshLibraryCounts: vi.fn() }));
 
-import { TransferToGroup, SetLibraryGroupLocked } from '../../wailsjs/go/gui/App.js';
+import { TransferToGroup, SetLibraryGroupLocked, CopyPositionToGroup, UndoPositionCopy } from '../../wailsjs/go/gui/App.js';
 import { setStatusBarMessage } from '../services/databaseService.js';
 import { tabGroupsStore } from '../stores/libraryGroupStore.js';
-import { transferBasketStore, lockedGroupsStore, forgetTransferGroup } from '../stores/transferBasketStore.js';
+import { transferBasketStore, lockedGroupsStore, forgetTransferGroup, transferUndoStore } from '../stores/transferBasketStore.js';
 import { groupIdsStore, activeGroupId, groupActivityStore } from '../stores/groupActivityStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { batchesOf, transferToGroup, toggleBasket, pourBasket, toggleGroupLock, dropTransferItem, addToBasket } from '../services/transferService.js';
+import { batchesOf, transferToGroup, toggleBasket, pourBasket, toggleGroupLock, dropTransferItem, addToBasket, undoPaneCopy } from '../services/transferService.js';
 
 const done = { group: 2, positions: 1, matches: 1, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false };
 const lastMessage = () => vi.mocked(setStatusBarMessage).mock.calls.at(-1)?.[0];
@@ -33,7 +34,35 @@ describe('transferService', () => {
         groupActivityStore.set(new Map());
         databasePathStore.set('/libs/mine.db');
         positionStore.set({ ...emptyPosition(), id: 7 });
+        transferUndoStore.set(null);
         vi.mocked(TransferToGroup).mockResolvedValue(done);
+    });
+
+    it('copies a position dropped on the other split pane straight in, and offers to take it back', async () => {
+        vi.mocked(CopyPositionToGroup).mockResolvedValue({ ...done, matches: 0, created: 41 });
+        dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
+        await vi.waitFor(() => expect(get(transferUndoStore)).toEqual({ dst: 2, id: 41, name: 'club' }));
+        expect(CopyPositionToGroup).toHaveBeenCalledWith(1, 7, 2);
+        expect(TransferToGroup).not.toHaveBeenCalled();
+        expect(lastMessage()).toEqual(expect.objectContaining({ i18nKey: 'transfer.done' }));
+        expect(await undoPaneCopy()).toBe(true);
+        expect(UndoPositionCopy).toHaveBeenCalledWith(2, 41);
+        expect(get(transferUndoStore)).toBe(null);
+        expect(lastMessage()).toEqual(expect.objectContaining({ i18nKey: 'transfer.undone' }));
+    });
+
+    it('offers nothing to take back when the pane held the position, and a locked pane refuses', async () => {
+        vi.mocked(CopyPositionToGroup).mockResolvedValue({ ...done, positions: 0, matches: 0, created: 0 });
+        dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
+        await vi.waitFor(() => expect(CopyPositionToGroup).toHaveBeenCalled());
+        await Promise.resolve();
+        expect(get(transferUndoStore)).toBe(null);
+        lockedGroupsStore.set(new Set([2]));
+        vi.mocked(CopyPositionToGroup).mockClear();
+        dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
+        await Promise.resolve();
+        expect(CopyPositionToGroup).not.toHaveBeenCalled();
+        expect(lastMessage()).toEqual(expect.objectContaining({ i18nKey: 'transfer.locked' }));
     });
 
     it('sends one batch per source group, each id once', () => {

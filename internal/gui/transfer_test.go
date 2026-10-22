@@ -137,3 +137,43 @@ func TestTransferToGroup_LockRefuses(t *testing.T) {
 		t.Error("locking a group that does not exist succeeded")
 	}
 }
+
+// A position carried from one pane onto the other lands in the destination
+// alone, and can be taken back; the copy of a position the destination held
+// already offers nothing to take back, and taking back leaves the source as
+// it was.
+func TestCopyPositionToGroup_UndoTakesBackOnlyWhatItAdded(t *testing.T) {
+	a, _ := twoGroups(t)
+	if s, err := a.ImportFilesIn(1, []string{filepath.Join("..", "..", "testdata", "test.mat")}, "test"); err != nil || s.Succeeded != 1 {
+		t.Fatalf("import into A: %+v, %v", s, err)
+	}
+	ids := everything(t, a, 1).PositionIDs
+	before := positionsOf(t, a, 1)
+
+	cp, err := a.CopyPositionToGroup(1, ids[0], 2)
+	if err != nil || cp.Created == 0 || cp.Positions != 1 {
+		t.Fatalf("copy A → B: %+v, %v", cp, err)
+	}
+	if n := positionsOf(t, a, 2); n != 1 {
+		t.Fatalf("B holds %d positions after one copy, want 1", n)
+	}
+	again, err := a.CopyPositionToGroup(1, ids[0], 2)
+	if err != nil || again.Created != 0 {
+		t.Fatalf("second copy: %+v, %v — want nothing to take back", again, err)
+	}
+	if err := a.UndoPositionCopy(2, cp.Created); err != nil {
+		t.Fatal(err)
+	}
+	if n := positionsOf(t, a, 2); n != 0 {
+		t.Fatalf("B holds %d positions after the undo, want 0", n)
+	}
+	if n := positionsOf(t, a, 1); n != before {
+		t.Fatalf("A holds %d positions after the undo, want %d", n, before)
+	}
+	if err := a.SetLibraryGroupLocked(2, true); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := a.CopyPositionToGroup(1, ids[0], 2); !errors.Is(err, ErrLibraryGroupLocked) {
+		t.Fatalf("copy into a locked group: %v, want ErrLibraryGroupLocked", err)
+	}
+}
