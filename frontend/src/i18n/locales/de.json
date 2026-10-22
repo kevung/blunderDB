@@ -1420,7 +1420,7 @@
         "new": "Neue Transkription",
         "newTooltip": "Einen Entwurf für ein zu transkribierendes Match anlegen",
         "import": "Importieren",
-        "importTooltip": "Eine .mat oder ein Transkriptionsdokument importieren",
+        "importTooltip": "Eine .mat oder ein Transkriptionsdokument importieren (i)",
         "empty": "Noch kein Entwurf",
         "updated": "Geändert",
         "players": "Spieler",

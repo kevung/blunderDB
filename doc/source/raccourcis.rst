@@ -393,6 +393,7 @@ veille ne demande pas la souris.
    "BAS, j / HAUT, k (liste des brouillons)", "Parcourir les brouillons. Le premier est surligné à l'ouverture : c'est le plus récemment modifié."
    "ENTREE (liste des brouillons)", "Ouvrir le brouillon surligné."
    "n (liste des brouillons)", "Ouvrir le formulaire de création."
+   "i (liste des brouillons)", "Importer un fichier ``.mat`` ou un document de transcription en brouillon."
    "Clic", "Ouvrir un brouillon de la liste."
    "1 … 6", "Saisir un dé. Sur le premier coup d'une partie : dé du joueur 1, puis dé du joueur 2 (le plus fort commence et joue les deux dés)."
    "1 … 6 (jet saisi)", "Au bout du document, valider le coup sélectionné et ouvrir le jet suivant. Sur une action écrite, retaper son jet sur place, sans rien valider."

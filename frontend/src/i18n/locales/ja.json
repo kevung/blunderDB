@@ -1420,7 +1420,7 @@
         "new": "新しい記譜",
         "newTooltip": "記譜するマッチの下書きを作成します",
         "import": "インポート",
-        "importTooltip": ".mat または記譜ドキュメントをインポートします",
+        "importTooltip": ".mat または記譜ドキュメントをインポートします (i)",
         "empty": "下書きがありません",
         "updated": "更新日時",
         "players": "プレイヤー",

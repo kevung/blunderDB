@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:56+0200\n"
+"POT-Creation-Date: 2026-10-22 23:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -1582,6 +1582,14 @@ msgid "Ouvrir le formulaire de création."
 msgstr "Άνοιγμα της φόρμας δημιουργίας."
 
 #: ../../source/raccourcis.rst:1
+msgid "i (liste des brouillons)"
+msgstr "i (λίστα προσχεδίων)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Importer un fichier ``.mat`` ou un document de transcription en brouillon."
+msgstr "Εισαγωγή αρχείου ``.mat`` ή εγγράφου μεταγραφής ως προσχέδιο."
+
+#: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
 msgstr "Άνοιγμα ενός πρόχειρου από τη λίστα."
 
@@ -2127,7 +2135,7 @@ msgstr ""
 "BACKSPACE σβήνει τα ζάρια που εισήχθησαν (:ref:`λεπτομέρειες "
 "<transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:444
+#: ../../source/raccourcis.rst:445
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -2135,7 +2143,7 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:447
+#: ../../source/raccourcis.rst:448
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -2154,7 +2162,7 @@ msgstr ""
 "συμπεριλαμβανομένου του *ALTGR* σε πληκτρολόγιο που τα τοποθετεί έτσι. "
 "Χωρίς βίντεο, τα πλήκτρα αυτά κρατούν τη συνηθισμένη τους σημασία."
 
-#: ../../source/raccourcis.rst:455
+#: ../../source/raccourcis.rst:456
 msgid ""
 "Un indicateur permanent, au-dessus du triangle et sur la barre du mode "
 "théâtre, dit l'effet d'ENTREE et des chiffres à l'instant. Aucune touche "
@@ -2164,7 +2172,7 @@ msgstr ""
 "θεάτρου, λέει το αποτέλεσμα του ENTER και των ψηφίων αυτή τη στιγμή. "
 "Κανένα πλήκτρο δεν είναι μπλοκαρισμένο:"
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:459
 msgid ""
 "**Saisie** — le curseur est au bout du document, ou sur une insertion. La"
 " première ligne de l'analyse est présélectionnée et dessinée ; le chiffre"
@@ -2179,7 +2187,7 @@ msgstr ""
 "τίποτα παραπάνω, καθώς την επικύρωσή της φέρνει το πρώτο πλήκτρο της "
 "επόμενης στροφής."
 
-#: ../../source/raccourcis.rst:463
+#: ../../source/raccourcis.rst:464
 msgid ""
 "**Coup N** — le curseur est sur une action déjà écrite. *j*/*k*, les "
 "flèches, le plateau et les clics sur l'analyse la corrigent ; le chiffre "
@@ -2192,7 +2200,7 @@ msgstr ""
 "επικυρώνει τη διόρθωση, με τον δείκτη να περνά στην επόμενη απόφαση. Το "
 "End επαναφέρει στην Καταχώριση."
 
-#: ../../source/raccourcis.rst:468
+#: ../../source/raccourcis.rst:469
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -2206,7 +2214,7 @@ msgstr ""
 "της, και η πλευρά διαβάζεται από τη στήλη. Τίποτα δεν καταγράφεται πριν "
 "από την επικύρωση."
 
-#: ../../source/raccourcis.rst:473
+#: ../../source/raccourcis.rst:474
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -2218,7 +2226,7 @@ msgstr ""
 "τη σειρά της αντί να αντικαταστήσει την επόμενη. Το τέλος της παρτίδας ή "
 "η μετακίνηση του δρομέα το τερματίζει."
 
-#: ../../source/raccourcis.rst:478
+#: ../../source/raccourcis.rst:479
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -2230,7 +2238,7 @@ msgstr ""
 " από τον δρομέα» στο τέλος του εγγράφου. Η φράση σβήνεται μόνη της και "
 "δίνει τη θέση της στην αναμενόμενη ενέργεια."
 
-#: ../../source/raccourcis.rst:483
+#: ../../source/raccourcis.rst:484
 msgid ""
 "Reculer le curseur sur une action, la rouvrir puis ressaisir la corrige "
 "**en place** : la validation remplace l'action et le curseur passe à la "
@@ -2251,7 +2259,7 @@ msgstr ""
 "επικύρωση. Η μετακίνηση του δείκτη μπρος ή πίσω μετά από κάποια αλλαγή "
 "καταγράφει τη διόρθωση παρεμπιπτόντως."
 
-#: ../../source/raccourcis.rst:491
+#: ../../source/raccourcis.rst:492
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -2279,7 +2287,7 @@ msgstr ""
 "οποία έλειπε. Η στοίβα αναιρέσεων ζει στη μνήμη: χάνεται με το κλείσιμο "
 "του πρόχειρου."
 
-#: ../../source/raccourcis.rst:502
+#: ../../source/raccourcis.rst:503
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -2289,7 +2297,7 @@ msgstr ""
 "καταγραφή και η γραμμή του προσχεδίου — περιγράφεται στο "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:509
+#: ../../source/raccourcis.rst:510
 msgid "Planche-contact"
 msgstr "Φύλλο επαφής"
 
@@ -2337,7 +2345,7 @@ msgstr "Άνοιγμα της θέσης στο ταμπλό και κλείσι
 msgid "Refermer la planche."
 msgstr "Κλείσιμο του φύλλου."
 
-#: ../../source/raccourcis.rst:526
+#: ../../source/raccourcis.rst:527
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 

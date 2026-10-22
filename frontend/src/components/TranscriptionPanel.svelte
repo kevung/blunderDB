@@ -289,7 +289,10 @@
         busy = true;
         try {
             const path = await PickTranscriptionFile();
-            if (!path) return;
+            if (!path) {
+                error = '';
+                return;
+            }
             const file = await ReadFileContent(path);
             if (file.error) throw new Error(file.error);
             setTranscription(await ImportTranscription(file.content));
@@ -1432,6 +1435,12 @@
             event.preventDefault();
             event.stopPropagation();
             openForm();
+            return;
+        }
+        if (isBareLetter(event, 'i') && !showForm) {
+            event.preventDefault();
+            event.stopPropagation();
+            importDraft();
         }
     }
 

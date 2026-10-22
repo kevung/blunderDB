@@ -1420,7 +1420,7 @@
         "new": "Nouvelle transcription",
         "newTooltip": "Créer un brouillon de match à transcrire",
         "import": "Importer",
-        "importTooltip": "Importer un .mat ou un document de transcription",
+        "importTooltip": "Importer un .mat ou un document de transcription (i)",
         "empty": "Aucun brouillon",
         "updated": "Modifié",
         "players": "Joueurs",

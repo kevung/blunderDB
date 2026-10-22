@@ -106,4 +106,25 @@ describe('importer un brouillon', () => {
         expect(ReadFileContent).not.toHaveBeenCalled();
         expect(ImportTranscription).not.toHaveBeenCalled();
     });
+
+    test('la touche i importe, comme le bouton', async () => {
+        /** @type {any} */ (PickTranscriptionFile).mockResolvedValue('/tmp/m.mat');
+        /** @type {any} */ (ReadFileContent).mockResolvedValue({ content: '7 point match', error: '' });
+        /** @type {any} */ (ImportTranscription).mockResolvedValue({ id: 5, annotated: annotated(1) });
+        render(TranscriptionPanel);
+        await tick();
+        document.getElementById('transcriptionPanel')?.focus();
+        await fireEvent.keyDown(document, { key: 'i', code: 'KeyI' });
+        await vi.waitFor(() => expect(get(transcriptionStore)?.id).toBe(5));
+    });
+
+    test('annuler le sélecteur efface le refus précédent', async () => {
+        /** @type {any} */ (PickTranscriptionFile).mockResolvedValueOnce('/tmp/m.json').mockResolvedValueOnce('');
+        /** @type {any} */ (ReadFileContent).mockResolvedValue({ content: 'oops', error: '' });
+        /** @type {any} */ (ImportTranscription).mockRejectedValue('not a transcription');
+        await clickImport();
+        await vi.waitFor(() => expect(document.querySelector('.error')).not.toBeNull());
+        await fireEvent.click(/** @type {HTMLElement} */ (document.getElementById('transcriptionImport')));
+        await vi.waitFor(() => expect(document.querySelector('.error')).toBeNull());
+    });
 });

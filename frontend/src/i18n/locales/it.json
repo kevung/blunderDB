@@ -1420,7 +1420,7 @@
         "new": "Nuova trascrizione",
         "newTooltip": "Creare una bozza di partita da trascrivere",
         "import": "Importa",
-        "importTooltip": "Importare un .mat o un documento di trascrizione",
+        "importTooltip": "Importare un .mat o un documento di trascrizione (i)",
         "empty": "Nessuna bozza",
         "updated": "Modificato",
         "players": "Giocatori",

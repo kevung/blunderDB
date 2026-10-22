@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:56+0200\n"
+"POT-Creation-Date: 2026-10-22 23:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1586,6 +1586,16 @@ msgid "Ouvrir le formulaire de création."
 msgstr "Das Erstellungsformular öffnen."
 
 #: ../../source/raccourcis.rst:1
+msgid "i (liste des brouillons)"
+msgstr "i (Liste der Entwürfe)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Importer un fichier ``.mat`` ou un document de transcription en brouillon."
+msgstr ""
+"Eine ``.mat``-Datei oder ein Transkriptionsdokument als Entwurf "
+"importieren."
+
+#: ../../source/raccourcis.rst:1
 msgid "Ouvrir un brouillon de la liste."
 msgstr "Einen Entwurf aus der Liste öffnen."
 
@@ -2127,7 +2137,7 @@ msgstr ""
 "verlassen. ESC verlässt ihn ebenfalls; im Kinomodus löscht RÜCKTASTE die "
 "eingegebenen Würfel (:ref:`Details <transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:444
+#: ../../source/raccourcis.rst:445
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -2135,7 +2145,7 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:447
+#: ../../source/raccourcis.rst:448
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -2154,7 +2164,7 @@ msgstr ""
 "gelesen, *ALTGR* eingeschlossen auf einer Tastatur, die sie so anordnet. "
 "Ohne Video behalten diese Tasten ihre übliche Bedeutung."
 
-#: ../../source/raccourcis.rst:455
+#: ../../source/raccourcis.rst:456
 msgid ""
 "Un indicateur permanent, au-dessus du triangle et sur la barre du mode "
 "théâtre, dit l'effet d'ENTREE et des chiffres à l'instant. Aucune touche "
@@ -2164,7 +2174,7 @@ msgstr ""
 "Kinomodus, zeigt die Wirkung von EINGABE und der Ziffern im Moment. Keine"
 " Taste ist gesperrt:"
 
-#: ../../source/raccourcis.rst:458
+#: ../../source/raccourcis.rst:459
 msgid ""
 "**Saisie** — le curseur est au bout du document, ou sur une insertion. La"
 " première ligne de l'analyse est présélectionnée et dessinée ; le chiffre"
@@ -2178,7 +2188,7 @@ msgstr ""
 "beste gespielte Zug kostet die beiden Würfel und nichts weiter, seine "
 "Bestätigung wird von der ersten Taste des nächsten Zuges getragen."
 
-#: ../../source/raccourcis.rst:463
+#: ../../source/raccourcis.rst:464
 msgid ""
 "**Coup N** — le curseur est sur une action déjà écrite. *j*/*k*, les "
 "flèches, le plateau et les clics sur l'analyse la corrigent ; le chiffre "
@@ -2191,7 +2201,7 @@ msgstr ""
 "EINGABE bestätigt die Korrektur, wobei der Cursor zur nächsten "
 "Entscheidung springt. Ende führt zurück zur Eingabe."
 
-#: ../../source/raccourcis.rst:468
+#: ../../source/raccourcis.rst:469
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -2205,7 +2215,7 @@ msgstr ""
 "Nachbarn, und die Seite liest sich an der Spalte ab. Vor der Bestätigung "
 "wird nichts festgehalten."
 
-#: ../../source/raccourcis.rst:473
+#: ../../source/raccourcis.rst:474
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -2217,7 +2227,7 @@ msgstr ""
 "eingefügt, statt die folgende zu überschreiben. Das Ende der Partie oder "
 "eine Bewegung des Cursors beendet das."
 
-#: ../../source/raccourcis.rst:478
+#: ../../source/raccourcis.rst:479
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -2229,7 +2239,7 @@ msgstr ""
 "Cursor“ am Ende des Dokuments. Der Satz verschwindet von selbst und gibt "
 "den Platz an die erwartete Aktion zurück."
 
-#: ../../source/raccourcis.rst:483
+#: ../../source/raccourcis.rst:484
 msgid ""
 "Reculer le curseur sur une action, la rouvrir puis ressaisir la corrige "
 "**en place** : la validation remplace l'action et le curseur passe à la "
@@ -2250,7 +2260,7 @@ msgstr ""
 "bestätigt wird. Das Vor- oder Zurückbewegen des Cursors nach einer "
 "Änderung speichert die Korrektur nebenbei."
 
-#: ../../source/raccourcis.rst:491
+#: ../../source/raccourcis.rst:492
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -2278,7 +2288,7 @@ msgstr ""
 " der er fehlte. Der Rückgängig-Stapel liegt im Arbeitsspeicher: Er geht "
 "verloren, sobald der Entwurf geschlossen wird."
 
-#: ../../source/raccourcis.rst:502
+#: ../../source/raccourcis.rst:503
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -2288,7 +2298,7 @@ msgstr ""
 "Transkript und die Entwurfsleiste — wird in :ref:`panneau_transcription` "
 "beschrieben."
 
-#: ../../source/raccourcis.rst:509
+#: ../../source/raccourcis.rst:510
 msgid "Planche-contact"
 msgstr "Kontaktbogen"
 
@@ -2336,7 +2346,7 @@ msgstr "Die Position auf dem Brett öffnen und den Bogen schließen."
 msgid "Refermer la planche."
 msgstr "Den Bogen schließen."
 
-#: ../../source/raccourcis.rst:526
+#: ../../source/raccourcis.rst:527
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 

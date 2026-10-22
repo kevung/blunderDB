@@ -1420,7 +1420,7 @@
         "new": "Uusi litterointi",
         "newTooltip": "Luo luonnos litteroitavasta ottelusta",
         "import": "Tuo",
-        "importTooltip": "Tuo .mat tai litterointiasiakirja",
+        "importTooltip": "Tuo .mat tai litterointiasiakirja (i)",
         "empty": "Ei luonnoksia",
         "updated": "Muokattu",
         "players": "Pelaajat",

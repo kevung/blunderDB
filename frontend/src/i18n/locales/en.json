@@ -1420,7 +1420,7 @@
         "new": "New transcription",
         "newTooltip": "Create a draft of a match to transcribe",
         "import": "Import",
-        "importTooltip": "Import a .mat or a transcription document",
+        "importTooltip": "Import a .mat or a transcription document (i)",
         "empty": "No draft yet",
         "updated": "Modified",
         "players": "Players",
