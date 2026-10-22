@@ -114,6 +114,7 @@ var serverOnly = map[string]string{
 	"/v1/tenants.quota":        whyTenantQuota,
 	"/v1/positions.fromOGID":   whyIdentifierDecode,
 	"/v1/positions.fromXGID":   whyPureDomain,
+	"/v1/positions.gnubgId":    whyPureDomain,
 	// The opening book is data embedded in the binary, not a tenant's rows:
 	// the GUI binds it on *gui.App and the CLI has `openingbook`.
 	"/v1/openingbook.status":   whyPureDomain,
@@ -283,6 +284,7 @@ var databaseParity = map[string]parityEntry{
 	"GetStatsBreakdownPositionCounts":   {Server: "/v1/stats.breakdownPositionCounts", Why: "the clickable figures of the GUI's Breakdowns tab, each the length of a drill-down; the CLI's `search` takes the same filters directly"},
 	"GetPositionIDsByTournament":        {Server: "/v1/stats.positionIdsByTournament", Why: "the CLI selects a tournament's positions with `search --tournament-ids`, which filters and prints them"},
 	"GetPositionIndexMap":               {CLI: "collection show", Server: "/v1/collections.positionIndexMap"},
+	"GetPositionMatchMoves":             {Server: "/v1/matches.movesByPosition", Why: "the GUI's 'open the match at this move' entry of the board's menu; a script has no board to open a match on, and `search` lists the positions of a match"},
 	"GetPositionProvenance":             {Why: "the GUI's 'this position comes from matches…' tooltip; neither the CLI nor the daemon has a reader for it, and matches.movePositions covers the other direction"},
 	"GetRandomAnkiCard":                 {Why: whyCram},
 	"GetStatsDateRange":                 {Server: "/v1/stats.dateRange", Why: "bounds of the GUI's date picker; the CLI takes --from/--to as given"},

@@ -5341,6 +5341,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/xgpResp"
+  /v1/positions.gnubgId:
+    post:
+      operationId: positions.gnubgId
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/legalMovesReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/gnubgIDResp"
   /v1/positions.indexOf:
     post:
       operationId: positions.indexOf
@@ -8984,6 +9001,15 @@ components:
         game:
           $ref: "#/components/schemas/domain_Game"
           nullable: true
+    gnubgIDResp:
+      type: object
+      properties:
+        position_id:
+          type: string
+        match_id:
+          type: string
+        id:
+          type: string
     htmlResp:
       type: object
       properties:

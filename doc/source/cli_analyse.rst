@@ -275,6 +275,33 @@ volontairement jamais estimé (voir `ADR-0009 <https://github.com/kevung/blunder
    # Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur
    ./blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
 
+.. _cli_gnubgid:
+
+gnubgid — ID GNUbg
+-------------------
+
+Écrit l'identifiant que GNU Backgammon affiche pour une position donnée par
+XGID ou par OGID : l'**ID de position** (le plateau, vu du côté du joueur au
+trait) et l'**ID de match** (videau, score, dés), joints par deux-points comme
+GNU Backgammon les copie. Calcul pur : aucun fichier de base de données n'est
+impliqué. La longueur du match et les scores sont déduits des scores « à
+combien » que la position porte, comme le fait l'XGID.
+
+.. code-block:: bash
+
+   ./blunderdb gnubgid [options] '<XGID|OGID>'
+
+**Options:**
+
+* ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb gnubgid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'
+   ./blunderdb gnubgid --format json '<XGID>'
+
 .. _cli_cubematrix:
 
 cubematrix — Matrice du videau

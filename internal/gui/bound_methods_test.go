@@ -73,6 +73,7 @@ var boundAppMethods = []string{
 	"ImportIssuerIdentity",
 	"IsDirectory",
 	"LegalMoves",
+	"GnubgID",
 	"LooksLikeOGID",
 	"ReadLogTail",
 	"OpenBearoffFileDialog",

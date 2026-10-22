@@ -50,6 +50,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `openingbook` - Which play at this score? Replies to the opening, judged by the book
 - `cubematrix` - Cube verdict at every score of a match, for one position
 - `epc` - EPC, win probability and money cube verdict (bearoff)
+- `gnubgid` - The GNUbg Position ID and Match ID of a position
 - `capture` - Read a position from a screen capture of an XG board
 - `rollout` - Roll out a position's plays or cube decision (gammonNet)
 - `bearoff` - Generate, list, verify and delete the bearoff tables
@@ -1112,6 +1113,28 @@ its measured error bound; the cube verdict is deliberately never estimated
 
 # With the downloaded TS-06-11 (exact up to 11 checkers per player)
 ./blunderDB epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
+```
+
+## Gnubgid Command
+
+Print the identifier GNU Backgammon shows for a position given as an XGID or an
+OGID: the **Position ID** (the board, seen from the side of the player on roll)
+and the **Match ID** (cube, score, dice), joined by a colon as GNU Backgammon
+copies them. Pure computation: no database file is involved. The match length
+and the scores are derived from the away scores the position holds, as the XGID
+does.
+
+```bash
+./blunderDB gnubgid [options] '<XGID|OGID>'
+```
+
+**Options:**
+- `--format` - Output format: `text` or `json` (default: text)
+
+**Example:**
+```bash
+./blunderDB gnubgid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'
+./blunderDB gnubgid --format json '<XGID>'
 ```
 
 ## Capture Command
@@ -3561,6 +3584,26 @@ Examples:
   # Export several (or all) matches as .mat files into a directory
   blunderdb export --db database.db --type mat --match-ids 5,9,12 --dir out/
   blunderdb export --db database.db --type mat --dir out/
+```
+
+### `blunderdb gnubgid`
+
+```
+Usage: blunderdb gnubgid [options] <XGID|OGID>
+
+Print the GNUbg identifier of a position: the Position ID (the board,
+from the side of the player on roll) and the Match ID (cube, score,
+dice), joined by a colon as GNU Backgammon copies them. The match
+length and the scores are derived from the away scores the position
+holds, as the XGID does.
+
+Options:
+  -format string
+    	Output format: text, json (default "text")
+
+Examples:
+  blunderdb gnubgid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'
+  blunderdb gnubgid --format json '<XGID>'
 ```
 
 ### `blunderdb healthcheck`

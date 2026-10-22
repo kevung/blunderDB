@@ -1018,6 +1018,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.fromXGP — JSON."
         return self._call("/v1/positions.fromXGP", payload)
 
+    def positions_gnubg_id(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.gnubgId — JSON."
+        return self._call("/v1/positions.gnubgId", payload)
+
     def positions_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.indexOf — JSON."
         return self._call("/v1/positions.indexOf", payload)

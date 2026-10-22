@@ -244,15 +244,11 @@ func EncodeXGID(pos *Position) string {
 			field7 |= 2
 		}
 	} else {
-		away1, away2 := PointsAway(pos.Score[0]), PointsAway(pos.Score[1])
-		matchLength = max(away1, away2)
-		if pos.Score[0] == Crawford || pos.Score[1] == Crawford {
+		var crawford bool
+		matchLength, score1, score2, crawford = pointsScored(pos)
+		if crawford {
 			field7 = 1
 		}
-		if matchLength == 1 && field7 == 0 {
-			matchLength = 2 // a 1-point match would say Crawford
-		}
-		score1, score2 = matchLength-away1, matchLength-away2
 	}
 	return fmt.Sprintf("%s:%d:%d:%d:%s:%d:%d:%d:%d:%d", EncodeXGIDBoard(pos),
 		pos.Cube.Value, cubeOwner, turn, dice, score1, score2, field7, matchLength, pos.MaxCube)
@@ -286,4 +282,20 @@ func xgidInt(fields []string, idx int) (int, bool) {
 		return 0, false
 	}
 	return n, true
+}
+
+// pointsScored turns the away scores of a match position into the match length
+// and the points each player has, as the identifiers of other programs state
+// them (XGID, GNUbg match ID). A position carries only the distances, so the
+// length is the larger of the two; crawford says the Crawford game is on.
+// A 1-point match would always be a Crawford game, so away [1, 1] outside it
+// goes out as a 2-point match at 1-1.
+func pointsScored(pos *Position) (matchLength, score1, score2 int, crawford bool) {
+	away1, away2 := PointsAway(pos.Score[0]), PointsAway(pos.Score[1])
+	matchLength = max(away1, away2)
+	crawford = pos.Score[0] == Crawford || pos.Score[1] == Crawford
+	if matchLength == 1 && !crawford {
+		matchLength = 2
+	}
+	return matchLength, matchLength - away1, matchLength - away2, crawford
 }

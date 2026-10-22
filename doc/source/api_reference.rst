@@ -285,6 +285,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.fromOGID                   JSON
      POST /v1/positions.fromXGID                   JSON
      POST /v1/positions.fromXGP                    JSON
+     POST /v1/positions.gnubgId                    JSON
      POST /v1/positions.indexOf                    JSON
      POST /v1/positions.legalMoves                 JSON
      POST /v1/positions.list                       NDJSON

@@ -94,6 +94,7 @@ Commandes disponibles
    "cubematrix", "Verdict de videau d'une position à chaque score d'un match."
    "rollout", "Joue une position jusqu'au bout pour départager ses coups ou sa décision de videau (XGID ou OGID)."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID ou OGID)."
+   "gnubgid", "Écrit l'ID de position et l'ID de match que GNU Backgammon donne à une position (XGID ou OGID)."
    "bearoff", "Fabrique, liste, vérifie et supprime les bases de sortie."
    "analyze", "Écrit une analyse gammonNet pour chaque position qui n'en a aucune."
    "tournament", "Lit un tournoi dirigé (classement, tableaux, pages) et confirme ses propositions."
