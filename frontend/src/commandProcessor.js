@@ -66,7 +66,15 @@ export function processCommand(command) {
         currentPositionIndexStore.set(index);
         statusBarTextStore.set(tMsg('commands.goToPosition', { n: index + 1 }));
     } else if (command.startsWith('#')) {
-        const tags = command.slice(1).trim();
+        // A tag is the `#word` itself: each word keeps (or gains) its `#`, which is
+        // what the tag search and the stored comment both read.
+        const tags = command
+            .split(/\s+/)
+            .filter(Boolean)
+            .map((/** @type {string} */ w) => '#' + w.replace(/^#+/, ''))
+            .filter((/** @type {string} */ t) => t.length > 1)
+            .join(' ');
+        if (!tags) return;
         insertTags(tags);
         statusBarTextStore.set(tMsg('commands.tagsAdded', { tags }));
     } else if (command === 'new' || command === 'ne' || command === 'n') {
@@ -298,10 +306,18 @@ export function parseFilters(filters, command) {
     return parseSearchTokens(filters, command);
 }
 
+/** @param {string} tags */
 function insertTags(tags) {
     commentTextStore.update((text) => {
-        const existingTags = new Set(text.match(/#[^\s#]+/g) || []);
-        const newTags = tags.split(' ').filter((tag) => !existingTags.has(tag));
+        // Tag search is case-insensitive, so `#Blunder` already holds `#blunder`.
+        const seen = new Set((text.match(/#[^\s#]+/g) || []).map((t) => t.toLowerCase()));
+        const newTags = tags.split(' ').filter((/** @type {string} */ tag) => {
+            const key = tag.toLowerCase();
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+        if (newTags.length === 0) return text;
         const updatedText = `${newTags.join(' ')}\n${text}`;
         setTimeout(() => {
             const textAreaEl = document.getElementById('commentTextArea');
