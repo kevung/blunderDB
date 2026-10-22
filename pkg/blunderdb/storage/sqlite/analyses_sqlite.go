@@ -683,6 +683,16 @@ func (s *analysisStore) CountWithoutAnalysis(ctx context.Context, _ string) (int
 	return n, nil
 }
 
+// CountPositionsWithAnalysisRow — see storage.AnalysisStore.
+func (s *analysisStore) CountPositionsWithAnalysisRow(ctx context.Context, _ string) (int, error) {
+	var n int
+	err := s.db.QueryRowContext(ctx, `SELECT COUNT(DISTINCT position_id) FROM analysis`).Scan(&n)
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: count positions with an analysis row: %w", err)
+	}
+	return n, nil
+}
+
 // invalidateMatchStatsOfPositionSQL drops the match_stats rows of every
 // match reaching one position: an analysis write that changes a column
 // those rows summarise (or gives the position its first analysis) makes

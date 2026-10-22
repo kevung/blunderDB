@@ -124,11 +124,6 @@ func drainTournaments(t *testing.T, seq func(func(*domain.Tournament, error) boo
 	return out
 }
 
-// WithoutAnalysis is what the daemon's catch-up sweep asks for, and its
-// meaning is ADR-0013's gap rule: a position with NO analysis row, not
-// a position with no gammonNet analysis. One already analysed by XG or GNUbg is
-// not a gap and must never come back from here — filling it would overwrite
-// somebody's imported analysis with a computed one.
 // evaluatedAnalysis is an analysis that carries an evaluation, so it is not a
 // gap; a bare PositionAnalysis{} is the reduced row a board saved without
 // evaluation leaves, which is one.
@@ -164,8 +159,14 @@ func testWithoutAnalysisEmptyRow(t *testing.T, s storage.Storage) {
 	if !has() {
 		t.Fatal("a position whose analysis holds only an XGID is not reported missing")
 	}
-	n, _ := s.Analyses().CountWithoutAnalysis(ctx, "")
-	ids, _ := s.Analyses().WithoutAnalysisIDs(ctx, "")
+	n, err := s.Analyses().CountWithoutAnalysis(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ids, err := s.Analyses().WithoutAnalysisIDs(ctx, "")
+	if err != nil {
+		t.Fatal(err)
+	}
 	if n != len(ids) {
 		t.Errorf("CountWithoutAnalysis = %d, want %d", n, len(ids))
 	}
@@ -187,6 +188,11 @@ func testWithoutAnalysisEmptyRow(t *testing.T, s storage.Storage) {
 	}
 }
 
+// WithoutAnalysis is what the daemon's catch-up sweep asks for, and its
+// meaning is ADR-0013's gap rule: a position with NO analysis row, not
+// a position with no gammonNet analysis. One already analysed by XG or GNUbg is
+// not a gap and must never come back from here — filling it would overwrite
+// somebody's imported analysis with a computed one.
 func testWithoutAnalysis(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 

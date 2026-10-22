@@ -355,7 +355,7 @@ func (m *mover) copyPositions(rep *Report) error {
 			return err
 		}
 	}
-	if err := m.checkAnalysesRead(rep, len(positions)); err != nil {
+	if err := m.checkAnalysesRead(rep); err != nil {
 		return err
 	}
 	m.progress(rep)
@@ -425,12 +425,12 @@ func (m *mover) copyPositionBatch(rep *Report, batch []*domain.Position) error {
 // checkAnalysesRead fails the migration when fewer analyses came across than
 // the source holds: LoadMany leaves out a payload it cannot decode, and a
 // migration must not drop one in silence.
-func (m *mover) checkAnalysesRead(rep *Report, positions int) error {
-	without, err := m.src.Analyses().CountWithoutAnalysis(m.ctx, "")
+func (m *mover) checkAnalysesRead(rep *Report) error {
+	held, err := m.src.Analyses().CountPositionsWithAnalysisRow(m.ctx, "")
 	if err != nil {
-		return fmt.Errorf("migrate: count positions without analysis: %w", err)
+		return fmt.Errorf("migrate: count analysis rows: %w", err)
 	}
-	if held := positions - without; rep.Analyses < held {
+	if rep.Analyses < held {
 		return fmt.Errorf("migrate: %d of the source's %d analyses could not be read", held-rep.Analyses, held)
 	}
 	return nil

@@ -628,6 +628,16 @@ func (s *analysisStore) CountWithoutAnalysis(ctx context.Context, scope string) 
 	return n, nil
 }
 
+// CountPositionsWithAnalysisRow — see storage.AnalysisStore.
+func (s *analysisStore) CountPositionsWithAnalysisRow(ctx context.Context, scope string) (int, error) {
+	var n int
+	err := s.db.QueryRow(ctx, `SELECT COUNT(DISTINCT position_id) FROM analysis WHERE tenant_id = $1`, tenantID(scope)).Scan(&n)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: count positions with an analysis row: %w", err)
+	}
+	return n, nil
+}
+
 // invalidateMatchStatsOnAnalysis drops the match_stats rows of every match
 // reaching positionID when the analysis about to be written changes a column
 // those rows summarise (or the position had no analysis). An unchanged
