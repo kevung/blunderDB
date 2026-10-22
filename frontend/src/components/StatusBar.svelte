@@ -26,13 +26,18 @@
     import { getCommandSuggestions } from '../commandVocabulary.js';
     import { libraryDrag } from '../utils/libraryDrag.js';
     import ActiveLibraryMark from './ActiveLibraryMark.svelte';
-    import { transferUndoStore } from '../stores/transferBasketStore.js';
+    import { transferHistoryStore } from '../stores/transferBasketStore.js';
     import { undoPaneCopy } from '../services/transferService.js';
 
     /** @type {function(string): void} */
     let { onCommand = (_cmd) => {} } = $props();
 
     let inputEl = $state();
+    // The chip hidden at this many copies; a new copy shows it again.
+    let dismissedCopies = $state(0);
+    $effect(() => {
+        if ($transferHistoryStore.length < dismissedCopies) dismissedCopies = $transferHistoryStore.length;
+    });
     let showInput = $derived($showCommandInputStore);
     let commandHistory = $derived($commandHistoryStore);
     let historyIndex = -1;
@@ -349,11 +354,18 @@
             >
         </span>
     {/if}
-    <!-- Une position portée d'un volet de l'écran partagé sur l'autre se reprend d'ici. -->
-    {#if $transferUndoStore}
+    <!-- Les copies de la session se reprennent d'ici, de la plus récente à la plus ancienne. -->
+    {#if $transferHistoryStore.length > dismissedCopies}
+        {@const last = $transferHistoryStore[$transferHistoryStore.length - 1]}
         <span class="watch-import-chip" data-testid="transfer-undo-chip">
-            <button type="button" class="watch-import-action" data-testid="transfer-undo" onclick={() => undoPaneCopy()}>{$t('transfer.undo')}</button>
-            <button type="button" class="watch-import-action" onclick={() => transferUndoStore.set(null)}>{$t('common.close')}</button>
+            <button
+                type="button"
+                class="watch-import-action"
+                data-testid="transfer-undo"
+                title={$t('transfer.undoTitle', { name: last.name, n: $transferHistoryStore.length })}
+                onclick={() => undoPaneCopy()}>{$t('transfer.undoCount', { n: $transferHistoryStore.length })}</button
+            >
+            <button type="button" class="watch-import-action" onclick={() => (dismissedCopies = $transferHistoryStore.length)}>{$t('common.close')}</button>
         </span>
     {/if}
     <!-- Imports du dossier surveillé : un bandeau, jamais une fenêtre. -->

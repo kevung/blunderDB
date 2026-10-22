@@ -1,37 +1,42 @@
-// The transfer basket and the group locks (ADR-0101): the desktop's memory, never a library's.
-// Both outlive a switch of library group, since they name rows of several groups at once.
+// The lot, the protections and the copies to take back (ADR-0101, ADR-0102): the desktop's
+// memory, never a library's. They outlive a switch of library group, since they name rows of
+// several groups at once.
 import { writable } from 'svelte/store';
 
 /**
- * @typedef {'position' | 'match' | 'collection' | 'lesson'} TransferKind
+ * @typedef {'position' | 'match' | 'tournament' | 'collection' | 'lesson'} TransferKind
  * @typedef {{ group: number, kind: TransferKind, id: number, label: string, path?: string }} TransferItem
- *   a row of the library of group, named by its id there; in the basket, path is that library's
+ *   a row of the library of group, named by its id there; in the lot, path is that library's
  *   file, since a group can open another one and the id would then name another row
  */
 
-/** What the basket holds, in the order it was filled. @type {import('svelte/store').Writable<TransferItem[]>} */
+/** What the lot holds, in the order it was filled. @type {import('svelte/store').Writable<TransferItem[]>} */
 export const transferBasketStore = writable(/** @type {TransferItem[]} */ ([]));
 
-/** The groups locked against transfers into them. */
+/** The groups protected from copies into them. */
 export const lockedGroupsStore = writable(/** @type {Set<number>} */ (new Set()));
 
 /**
- * The last position carried from one split-screen pane onto the other, while it can be taken
- * back: the group it went into, the receipt the backend keeps for it (the position's id and
- * hash stay there), and that library's name for the status bar.
- * @type {import('svelte/store').Writable<{ dst: number, receipt: number, name: string } | null>}
+ * @typedef {{ dst: number, receipt: number, name: string }} TransferUndo
+ *   a position copied into the library of group dst, while it can be taken back: the receipt the
+ *   backend keeps for it, and that library's name for the status bar
  */
-export const transferUndoStore = writable(/** @type {{ dst: number, receipt: number, name: string } | null} */ (null));
+
+/**
+ * The session's copies that can be taken back, oldest first: the last one is the next to undo.
+ * @type {import('svelte/store').Writable<TransferUndo[]>}
+ */
+export const transferHistoryStore = writable(/** @type {TransferUndo[]} */ ([]));
 
 /**
  * A group opened or created another library in place: a copy into it is no longer one to take
  * back from there. @param {number} group
  */
 export function forgetPaneCopyInto(group) {
-    transferUndoStore.update((u) => (u?.dst === group ? null : u));
+    transferHistoryStore.update((h) => (h.some((u) => u.dst === group) ? h.filter((u) => u.dst !== group) : h));
 }
 
-/** A group closed: its rows leave the basket, its lock and a copy into it to take back go with it. @param {number} id */
+/** A group closed: its rows leave the lot, its protection and the copies into it go with it. @param {number} id */
 export function forgetTransferGroup(id) {
     forgetPaneCopyInto(id);
     transferBasketStore.update((items) => items.filter((i) => i.group !== id));
@@ -41,4 +46,28 @@ export function forgetTransferGroup(id) {
         next.delete(id);
         return next;
     });
+}
+
+const PROTECTED_KEY = 'blunderdb.protectedLibraries';
+
+/** The files protected from copies, remembered from one session to the next. @returns {string[]} */
+export function protectedPaths() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(PROTECTED_KEY) ?? '[]');
+        return Array.isArray(saved) ? saved.filter((p) => typeof p === 'string') : [];
+    } catch {
+        return [];
+    }
+}
+
+/** Remembers whether the file at path is protected from copies. @param {string} path @param {boolean} on */
+export function rememberProtection(path, on) {
+    if (!path) return;
+    const paths = protectedPaths().filter((p) => p !== path);
+    if (on) paths.push(path);
+    try {
+        localStorage.setItem(PROTECTED_KEY, JSON.stringify(paths));
+    } catch {
+        // Not remembered: the protection still holds for this session.
+    }
 }

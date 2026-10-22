@@ -223,11 +223,11 @@ export const REFUSED = [
 ];
 
 export const OUTSIDE = [
-    // The transfer basket and the group locks name rows and groups of every library at once:
+    // The lot, the protections and the copies to take back name rows and groups of every library at once:
     // the desktop's memory, kept across a switch, never a library's.
     'transferBasketStore',
     'lockedGroupsStore',
-    'transferUndoStore',
+    'transferHistoryStore',
     // The board's transient state, recomputed from the position on screen.
     'analysisChallengeStore',
     'analysisChallengeHiddenStore',

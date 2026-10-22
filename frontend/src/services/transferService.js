@@ -1,9 +1,11 @@
-// Transfer between library groups (ADR-0101, ADR-0102): a row dragged onto another group's
-// header, or the basket poured into a group, is copied by the backend's one transfer
-// (TransferToGroup → Database.TransferTo), in the background, attached to the group it writes.
+// Exchanges between open libraries (ADR-0101, ADR-0102): a row dragged onto another group's
+// header, copied from the « Autres bases » panel or the context menu, or the lot copied into a
+// base, goes through the backend's one transfer (TransferToGroup → Database.TransferTo), in the
+// background, attached to the group it writes. A position copied alone keeps a receipt: the
+// session's history takes it back, newest first.
 import { get } from 'svelte/store';
 import { TransferToGroup, SetLibraryGroupLocked, CopyPositionToGroup, UndoPositionCopy } from '../../wailsjs/go/gui/App.js';
-import { transferBasketStore, lockedGroupsStore, transferUndoStore } from '../stores/transferBasketStore.js';
+import { transferBasketStore, lockedGroupsStore, transferHistoryStore, protectedPaths, rememberProtection } from '../stores/transferBasketStore.js';
 import { activeGroupId, groupIdsStore, noteGroupJob } from '../stores/groupActivityStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { databasePathStore, libraryChanged } from '../stores/databaseStore.js';
@@ -15,10 +17,10 @@ import { logger } from '../utils/logger.js';
 
 /**
  * @typedef {import('../stores/transferBasketStore.js').TransferItem} TransferItem
- * @typedef {{ group: number, positionIDs: number[], matchIDs: number[], collectionIDs: number[], lessonIDs: number[] }} TransferBatch
+ * @typedef {{ group: number, positionIDs: number[], matchIDs: number[], tournamentIDs: number[], collectionIDs: number[], lessonIDs: number[] }} TransferBatch
  */
 
-const FIELD = /** @type {const} */ ({ position: 'positionIDs', match: 'matchIDs', collection: 'collectionIDs', lesson: 'lessonIDs' });
+const FIELD = /** @type {const} */ ({ position: 'positionIDs', match: 'matchIDs', tournament: 'tournamentIDs', collection: 'collectionIDs', lesson: 'lessonIDs' });
 
 /**
  * The items as the backend takes them: one batch per group they come from.
@@ -31,7 +33,7 @@ export function batchesOf(items) {
     for (const item of items) {
         let batch = byGroup.get(item.group);
         if (!batch) {
-            batch = { group: item.group, positionIDs: [], matchIDs: [], collectionIDs: [], lessonIDs: [] };
+            batch = { group: item.group, positionIDs: [], matchIDs: [], tournamentIDs: [], collectionIDs: [], lessonIDs: [] };
             byGroup.set(item.group, batch);
         }
         const ids = batch[FIELD[item.kind]];
@@ -87,6 +89,7 @@ function transferDone(dst, summary) {
               // -1: the backend could not count them, and says no number rather than a false one.
               positions: summary.positions < 0 ? '?' : summary.positions,
               matches: summary.matches,
+              tournaments: summary.tournaments ?? 0,
               held: summary.alreadyHeld,
               collections: summary.collections,
               lessons: summary.lessons,
@@ -101,9 +104,8 @@ function transferDone(dst, summary) {
 }
 
 /**
- * A position carried from one split-screen pane onto the other: copied straight into the
- * library of that pane (a locked group refuses), and, when the copy added it there, offered to
- * take back from the status bar.
+ * A position copied alone into the library of group dst (a protected group refuses); when the
+ * copy added it there, it joins the session's history, to take back from the status bar.
  * @param {number} dst
  * @param {TransferItem} item
  */
@@ -116,37 +118,60 @@ export async function copyPositionToPane(dst, item) {
         setStatusBarMessage(tMsg('transfer.nothing'));
         return false;
     }
-    transferUndoStore.set(null);
     noteGroupJob(dst, 'running', 'transfer');
     let copy;
     try {
         copy = await CopyPositionToGroup(item.group, item.id, dst);
     } catch (error) {
-        logger.error('copying a position between split panes failed:', error);
+        logger.error('copying a position between libraries failed:', error);
         const message = tMsg('transfer.failed', { error: String(error) });
         noteGroupJob(dst, 'done', 'transfer', message);
         setStatusBarMessage(message);
         return false;
     }
-    // Both panes are in sight: the account is said now, whichever of them was written.
+    // The copy was asked from what is on screen: the account is said now, whichever base was written.
     const { ok, message } = transferDone(dst, copy);
     setStatusBarMessage(message);
-    if (ok && copy.receipt) transferUndoStore.set({ dst, receipt: copy.receipt, name: groupName(pathOf(dst)) });
+    if (ok && copy.receipt) transferHistoryStore.update((h) => [...h, { dst, receipt: copy.receipt, name: groupName(pathOf(dst)) }]);
     return ok;
 }
 
-/** Takes back the last position carried between split panes. */
+/**
+ * Copies one row into the base of group dst: a position alone keeps its receipt, the other rows
+ * go through the transfer of a lot.
+ * @param {number} dst
+ * @param {TransferItem} item
+ */
+export function copyToGroup(dst, item) {
+    return item.kind === 'position' ? copyPositionToPane(dst, item) : transferToGroup(dst, [item]);
+}
+
+/**
+ * Brings position id of the base of group src into the base on screen, with the same receipt
+ * as a copy the other way.
+ * @param {number} src
+ * @param {number} id
+ */
+export function fetchPositionFrom(src, id) {
+    return copyPositionToPane(get(activeGroupId), { group: src, kind: 'position', id, label: `#${id}` });
+}
+
+/** Takes back the session's last copy still in the history. */
 export async function undoPaneCopy() {
-    const undo = get(transferUndoStore);
+    const history = get(transferHistoryStore);
+    const undo = history[history.length - 1];
     if (!undo) return false;
-    transferUndoStore.set(null);
     try {
         await UndoPositionCopy(undo.receipt);
     } catch (error) {
         logger.error('taking back a position copy failed:', error);
+        // A copy written on since, or a base that opened another file, is gone for good; any
+        // other refusal (a protection, a passing failure) keeps it to try again.
+        if (String(error).includes('has changed since the copy')) transferHistoryStore.update((h) => h.filter((u) => u !== undo));
         setStatusBarMessage(tMsg('transfer.undoFailed', { error: String(error) }));
         return false;
     }
+    transferHistoryStore.update((h) => h.filter((u) => u !== undo));
     setStatusBarMessage(tMsg('transfer.undone', { name: undo.name }));
     if (undo.dst === get(activeGroupId)) {
         libraryChanged();
@@ -156,7 +181,7 @@ export async function undoPaneCopy() {
 }
 
 /**
- * The basket gesture, like the Pile's: the position on the board goes into the basket, or
+ * The lot gesture, like the Pile's (Maj+B): the position on the board goes into the lot, or
  * leaves it. A draft is not a row of the library yet: it is saved first.
  */
 export function toggleBasket() {
@@ -174,6 +199,11 @@ export function toggleBasket() {
     if (had) transferBasketStore.update((items) => items.filter((i) => !sameItem(i, item)));
     else transferBasketStore.update((items) => [...items, item]);
     setStatusBarMessage(tMsg(had ? 'transfer.basketOut' : 'transfer.basketIn', { n: get(transferBasketStore).length }));
+}
+
+/** Takes one row out of the lot. @param {TransferItem} item */
+export function removeFromBasket(item) {
+    transferBasketStore.update((items) => items.filter((i) => !sameItem(i, item)));
 }
 
 /** @param {TransferItem} a @param {TransferItem} b */
@@ -215,15 +245,16 @@ export async function pourBasket(dst) {
 }
 
 /**
- * Locks or unlocks group id against transfers into it.
+ * Protects group id from copies into it, or lifts the protection. Not quiet: the status bar says
+ * so. The protection is remembered by the file, for the next session.
  * @param {number} id
+ * @param {{ quiet?: boolean, locked?: boolean }} [options]
  */
-export async function toggleGroupLock(id) {
-    const locked = !isLocked(id);
+export async function toggleGroupLock(id, { quiet = false, locked = !isLocked(id) } = {}) {
     try {
         await SetLibraryGroupLocked(id, locked);
     } catch (error) {
-        logger.error('locking a library group failed:', error);
+        logger.error('protecting a library group failed:', error);
         return;
     }
     lockedGroupsStore.update((s) => {
@@ -232,12 +263,23 @@ export async function toggleGroupLock(id) {
         else next.delete(id);
         return next;
     });
+    if (quiet) return;
+    rememberProtection(pathOf(id), locked);
     setStatusBarMessage(tMsg(locked ? 'transfer.lockOn' : 'transfer.lockOff'));
 }
 
+// A file protected in an earlier session is protected again as soon as a group opens it.
+tabGroupsStore.subscribe((groups) => {
+    const saved = protectedPaths();
+    if (saved.length === 0) return;
+    for (const g of groups) {
+        if (g.path && saved.includes(g.path) && !isLocked(g.id)) toggleGroupLock(g.id, { quiet: true, locked: true });
+    }
+});
+
 /**
  * Where a drag ended: a group's header (its id), a split-screen pane ({ pane: its group }) or the
- * basket. The basket itself can be dragged onto a header, which pours it there.
+ * lot. The lot itself can be dragged onto a header, which copies it there.
  * @param {number | 'basket' | { pane: number }} target
  * @param {TransferItem | { kind: 'basket' }} dragged
  */

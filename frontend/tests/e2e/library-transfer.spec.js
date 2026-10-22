@@ -3,8 +3,7 @@
  *
  * Copier d'une bibliothèque à l'autre. Deux groupes ouverts, B affiché : la position affichée,
  * saisie par son compteur, glissée sur l'en-tête de A y est copiée en fond (pastille sur A) ;
- * un groupe verrouillé refuse et le dit ; le panier, rempli au clavier (MAJ-B), se verse en une
- * fois depuis son menu.
+ * une base protégée des copies refuse et le dit (le lot : elsewhere.spec.js).
  */
 
 import { test, expect } from '@playwright/test';
@@ -68,20 +67,6 @@ test('a locked group refuses the copy and says so', async ({ page }) => {
     expect((await getWailsCalls(page, 'SetLibraryGroupLocked')).map((c) => c.args)).toEqual([[1, true]]);
 
     await drag(page, page.getByTestId('position-counter'), headerA(page));
-    await expect(page.getByTestId('status-bar')).toContainText('locked');
+    await expect(page.getByTestId('status-bar')).toContainText('protected');
     expect(await getWailsCalls(page, 'TransferToGroup')).toEqual([]);
-});
-
-test('the basket, filled with SHIFT-B, is poured at once from its menu', async ({ page }) => {
-    await page.locator('body').click({ position: { x: 5, y: 300 } });
-    await page.keyboard.press('Shift+B');
-    await expect(page.getByTestId('transfer-basket')).toContainText('1');
-
-    await page.getByTestId('transfer-basket').click();
-    await page.locator('[data-testid="transfer-basket-pour"][data-group-id="1"]').click();
-    await expect(page.getByTestId('transfer-basket')).toContainText('0');
-    const calls = await getWailsCalls(page, 'TransferToGroup');
-    expect(calls).toHaveLength(1);
-    expect(calls[0].args[0]).toBe(1);
-    expect(calls[0].args[1][0].group).toBe(2);
 });

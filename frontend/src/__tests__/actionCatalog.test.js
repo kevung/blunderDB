@@ -33,7 +33,8 @@ describe('actionCatalog', () => {
             'actions.group.navigate',
             'actions.group.analyze',
             'actions.group.train',
-            'actions.group.manage'
+            'actions.group.manage',
+            'actions.group.send'
         ]);
         expect(items[2].separatorBefore).toBe(true);
         expect(labels(submenu(items, 'annotate'))).toEqual(['actions.comment', 'actions.addTag', 'actions.markStudied', 'actions.unmarkStudied']);
@@ -41,6 +42,28 @@ describe('actionCatalog', () => {
         expect(labels(submenu(items, 'manage'))).toEqual(['actions.trash']);
         // Évaluer stays at the first level and leads its group.
         expect(labels(submenu(items, 'analyze'))[0]).toBe('board.menu.evaluate');
+    });
+
+    test('the send group: one copy per other open base, the lot, and a position to each collection', () => {
+        const ctx = { mode: 'NORMAL', positionId: 42, dbOpen: true, otherBases: [{ id: 2, name: 'club' }], collections: [{ id: 9, name: 'Primes' }] };
+        const plain = (/** @type {any[]} */ items) => labels(items).map((/** @type {string} */ l) => l.split('{')[0]);
+        /** @type {any[]} */
+        const ran = [];
+        const handlers = { ...allHandlers('position'), copyTo: (/** @type {any} */ a) => ran.push(['copyTo', a]), addToCollection: (/** @type {any} */ a) => ran.push(['addToCollection', a.id]) };
+        const send = submenu(menuFor('position', { ...ctx, do: handlers }, t), 'send');
+        expect(plain(send)).toEqual(['actions.copyPositionTo', 'actions.addToLot', 'actions.addToCollection']);
+        send[0].onClick?.();
+        send[2].onClick?.();
+        expect(ran).toEqual([
+            ['copyTo', 2],
+            ['addToCollection', 9]
+        ]);
+        // A draft is not stored: nothing to send.
+        expect(submenu(menuFor('position', { ...ctx, positionId: 0, do: handlers }, t), 'send')).toBeUndefined();
+        const match = submenu(menuFor('match', { otherBases: ctx.otherBases, do: allHandlers('match') }, t), 'send');
+        expect(plain(match)).toEqual(['actions.copyMatchTo', 'actions.addToLot']);
+        const tournament = submenu(menuFor('tournament', { otherBases: ctx.otherBases, do: allHandlers('tournament') }, t), 'send');
+        expect(plain(tournament)).toEqual(['actions.copyTournamentTo', 'actions.addToLot']);
     });
 
     test('the studied mark: only the action that applies to the state is offered', () => {

@@ -24,6 +24,8 @@ import { chordLabel } from '../utils/keyNames.js';
  * @property {boolean} [studiedMark]                the position carries the studied mark (undefined: not read yet)
  * @property {boolean} [challengeOn]                 the analysis challenge is on
  * @property {{ id: number, name: string }[]} [ankiDecks]
+ * @property {{ id: number, name: string }[]} [otherBases]  the open bases other than the one on screen
+ * @property {{ id: number, name: string }[]} [collections] the collections of the base on screen
  *
  * @typedef {object} Action
  * @property {string} id
@@ -36,8 +38,8 @@ import { chordLabel } from '../utils/keyNames.js';
  *           one entry per element (an Anki deck): its handler receives `arg`
  */
 
-/** The submenus, in their order; `send` belongs to the transfers between libraries. */
-export const GROUPS = ['copy', 'annotate', 'navigate', 'analyze', 'train', 'manage'];
+/** The submenus, in their order; `send` copies the object to another open base. */
+export const GROUPS = ['copy', 'annotate', 'navigate', 'analyze', 'train', 'manage', 'send'];
 
 /** @type {Record<string, string>} */
 export const GROUP_LABELS = {
@@ -46,7 +48,8 @@ export const GROUP_LABELS = {
     navigate: 'actions.group.navigate',
     analyze: 'actions.group.analyze',
     train: 'actions.group.train',
-    manage: 'actions.group.manage'
+    manage: 'actions.group.manage',
+    send: 'actions.group.send'
 };
 
 // A position studied from the library, as opposed to the Search and Eval scratch boards.
@@ -61,6 +64,19 @@ const notSearch = (c) => c.mode !== 'EDIT';
 const stored = (c) => !!c.positionId && !SCRATCH.includes(c.mode ?? '');
 
 /** @type {Record<string, Action[]>} */
+/**
+ * The send group of a kind of object: one copy per other open base, and the lot.
+ * @param {string} copyLabel
+ * @param {(ctx: ActionContext) => boolean} [when]
+ * @returns {Action[]}
+ */
+function send(copyLabel, when = () => true) {
+    return [
+        { id: 'copyTo', label: copyLabel, group: 'send', when, each: (c) => (c.otherBases ?? []).map((b) => ({ label: copyLabel, args: { base: b.name }, arg: b.id })) },
+        { id: 'addToLot', label: 'actions.addToLot', group: 'send', when }
+    ];
+}
+
 export const CATALOG = {
     position: [
         // At the first level and again in their group, where the rest of their family is.
@@ -97,7 +113,15 @@ export const CATALOG = {
         { id: 'challenge', label: 'actions.challenge', group: 'train', shortcut: 'm', when: (c) => STUDIED.includes(c.mode ?? '') && !c.challengeOn },
 
         { id: 'save', label: 'actions.save', group: 'manage', shortcut: 'Ctrl+S', when: (c) => SCRATCH.includes(c.mode ?? '') && !!c.dbOpen },
-        { id: 'trash', label: 'actions.trash', group: 'manage', shortcut: 'Delete', when: studied }
+        { id: 'trash', label: 'actions.trash', group: 'manage', shortcut: 'Delete', when: studied },
+        ...send('actions.copyPositionTo', stored),
+        {
+            id: 'addToCollection',
+            label: 'actions.addToCollection',
+            group: 'send',
+            when: stored,
+            each: (c) => (c.collections ?? []).map((k) => ({ label: 'actions.addToCollection', args: { name: k.name }, arg: k }))
+        }
     ],
     match: [
         { id: 'open', label: 'actions.openMatch', group: null, top: true },
@@ -105,13 +129,15 @@ export const CATALOG = {
         { id: 'editTranscription', label: 'match.editTranscription', group: 'manage' },
         { id: 'swapPlayers', label: 'match.swapPlayers', group: 'manage' },
         { id: 'edit', label: 'common.edit', group: 'manage' },
-        { id: 'trash', label: 'actions.trash', group: 'manage' }
+        { id: 'trash', label: 'actions.trash', group: 'manage' },
+        ...send('actions.copyMatchTo')
     ],
     tournament: [
         { id: 'open', label: 'actions.openTournament', group: null, top: true },
         { id: 'edit', label: 'common.edit', group: 'manage' },
         // A tournament has no trash: it is deleted, after the panel's confirmation.
-        { id: 'delete', label: 'common.delete', group: 'manage' }
+        { id: 'delete', label: 'common.delete', group: 'manage' },
+        ...send('actions.copyTournamentTo')
     ],
     collection: [
         { id: 'open', label: 'actions.openCollection', group: null, top: true },

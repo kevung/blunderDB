@@ -45,6 +45,10 @@
     import { loadPositionsFromSelection } from '../services/positionLoader.js';
     import { exportMatchMat } from '../services/exportService.js';
     import { menuFor } from '../services/actionCatalog.js';
+    import { sendContext } from '../services/sendActions.js';
+
+    /** The send group of a match row: its copies to the other bases, and the lot. @param {any} match */
+    const sendMatch = (match) => sendContext('match', match.id, `${match.player1_name ?? ''} – ${match.player2_name ?? ''}`);
     import MatchCharts from './MatchCharts.svelte';
     import { fmtLoss, sortByLoss } from '../utils/decisionLoss.js';
     import MatchReview from './MatchReview.svelte';
@@ -1249,7 +1253,9 @@
                         : menuFor(
                               'match',
                               {
+                                  ...sendMatch(match),
                                   do: {
+                                      ...sendMatch(match).do,
                                       open: () => handleDoubleClick(match),
                                       exportMat: () => exportMatchMat(match),
                                       editTranscription: () => editMatchTranscription(match.id),

@@ -15,6 +15,7 @@
     import MatchPanel from './MatchPanel.svelte';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import { menuFor } from '../services/actionCatalog.js';
+    import { sendContext, otherBases } from '../services/sendActions.js';
     import PanelHeader from './panels/PanelHeader.svelte';
     import CountLink from './panels/CountLink.svelte';
     import { loadPositionsFromSelection, openStatsFor } from '../services/positionLoader.js';
@@ -790,7 +791,15 @@
                             ? []
                             : menuFor(
                                   'tournament',
-                                  { do: { open: () => selectTournament(tournament), edit: () => startEdit(tournament, undefined), delete: () => deleteTournamentEntry(tournament, undefined) } },
+                                  {
+                                      otherBases: otherBases(),
+                                      do: {
+                                          ...sendContext('tournament', tournament.id, tournament.name).do,
+                                          open: () => selectTournament(tournament),
+                                          edit: () => startEdit(tournament, undefined),
+                                          delete: () => deleteTournamentEntry(tournament, undefined)
+                                      }
+                                  },
                                   $t
                               )}
                     emptyText={narrowed ? $t('tournament.noTournamentsFiltered') : $t('tournament.noTournaments')}

@@ -15,13 +15,13 @@ vi.mock('../stores/libraryCountsStore.js', () => ({ refreshLibraryCounts: vi.fn(
 import { TransferToGroup, SetLibraryGroupLocked, CopyPositionToGroup, UndoPositionCopy } from '../../wailsjs/go/gui/App.js';
 import { setStatusBarMessage } from '../services/databaseService.js';
 import { tabGroupsStore } from '../stores/libraryGroupStore.js';
-import { transferBasketStore, lockedGroupsStore, forgetTransferGroup, transferUndoStore } from '../stores/transferBasketStore.js';
+import { transferBasketStore, lockedGroupsStore, forgetTransferGroup, transferHistoryStore } from '../stores/transferBasketStore.js';
 import { groupIdsStore, activeGroupId, groupActivityStore } from '../stores/groupActivityStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { batchesOf, transferToGroup, toggleBasket, pourBasket, toggleGroupLock, dropTransferItem, addToBasket, undoPaneCopy } from '../services/transferService.js';
 
-const done = { group: 2, positions: 1, matches: 1, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false };
+const done = { group: 2, positions: 1, matches: 1, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false };
 const lastMessage = () => vi.mocked(setStatusBarMessage).mock.calls.at(-1)?.[0];
 
 describe('transferService', () => {
@@ -34,21 +34,41 @@ describe('transferService', () => {
         groupActivityStore.set(new Map());
         databasePathStore.set('/libs/mine.db');
         positionStore.set({ ...emptyPosition(), id: 7 });
-        transferUndoStore.set(null);
+        transferHistoryStore.set([]);
         vi.mocked(TransferToGroup).mockResolvedValue(done);
     });
 
     it('copies a position dropped on the other split pane straight in, and offers to take it back', async () => {
         vi.mocked(CopyPositionToGroup).mockResolvedValue({ ...done, matches: 0, receipt: 3 });
         dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
-        await vi.waitFor(() => expect(get(transferUndoStore)).toEqual({ dst: 2, receipt: 3, name: 'club' }));
+        await vi.waitFor(() => expect(get(transferHistoryStore)).toEqual([{ dst: 2, receipt: 3, name: 'club' }]));
         expect(CopyPositionToGroup).toHaveBeenCalledWith(1, 7, 2);
         expect(TransferToGroup).not.toHaveBeenCalled();
         expect(lastMessage()).toEqual(expect.objectContaining({ i18nKey: 'transfer.done' }));
         expect(await undoPaneCopy()).toBe(true);
         expect(UndoPositionCopy).toHaveBeenCalledWith(3);
-        expect(get(transferUndoStore)).toBe(null);
+        expect(get(transferHistoryStore)).toEqual([]);
         expect(lastMessage()).toEqual(expect.objectContaining({ i18nKey: 'transfer.undone' }));
+    });
+
+    it('keeps every copy of the session and takes them back newest first', async () => {
+        vi.mocked(CopyPositionToGroup)
+            .mockResolvedValueOnce({ ...done, matches: 0, receipt: 3 })
+            .mockResolvedValueOnce({ ...done, matches: 0, receipt: 4 });
+        dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
+        await vi.waitFor(() => expect(get(transferHistoryStore)).toHaveLength(1));
+        dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 8, label: '#8' });
+        await vi.waitFor(() => expect(get(transferHistoryStore)).toHaveLength(2));
+        expect(await undoPaneCopy()).toBe(true);
+        expect(UndoPositionCopy).toHaveBeenLastCalledWith(4);
+        vi.mocked(UndoPositionCopy).mockRejectedValueOnce('the copied position has changed since the copy');
+        expect(await undoPaneCopy()).toBe(false);
+        expect(UndoPositionCopy).toHaveBeenLastCalledWith(3);
+        expect(get(transferHistoryStore)).toEqual([]);
+    });
+
+    it('a tournament goes into its own field of the batch', () => {
+        expect(batchesOf([{ group: 1, kind: 'tournament', id: 5, label: 'Open' }])).toEqual([{ group: 1, positionIDs: [], matchIDs: [], tournamentIDs: [5], collectionIDs: [], lessonIDs: [] }]);
     });
 
     it('offers nothing to take back when the pane held the position, and a locked pane refuses', async () => {
@@ -56,7 +76,7 @@ describe('transferService', () => {
         dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
         await vi.waitFor(() => expect(CopyPositionToGroup).toHaveBeenCalled());
         await Promise.resolve();
-        expect(get(transferUndoStore)).toBe(null);
+        expect(get(transferHistoryStore)).toEqual([]);
         lockedGroupsStore.set(new Set([2]));
         vi.mocked(CopyPositionToGroup).mockClear();
         dropTransferItem({ pane: 2 }, { group: 1, kind: 'position', id: 7, label: '#7' });
@@ -74,15 +94,15 @@ describe('transferService', () => {
                 { group: 2, kind: 'lesson', id: 4, label: '' }
             ])
         ).toEqual([
-            { group: 1, positionIDs: [7], matchIDs: [3], collectionIDs: [], lessonIDs: [] },
-            { group: 2, positionIDs: [], matchIDs: [], collectionIDs: [], lessonIDs: [4] }
+            { group: 1, positionIDs: [7], matchIDs: [3], collectionIDs: [], lessonIDs: [], tournamentIDs: [] },
+            { group: 2, positionIDs: [], matchIDs: [], collectionIDs: [], lessonIDs: [4], tournamentIDs: [] }
         ]);
     });
 
     it('copies a row dropped on another group, and badges that group off screen', async () => {
         dropTransferItem(2, { group: 1, kind: 'match', id: 3, label: 'A – B' });
         await vi.waitFor(() => expect(get(groupActivityStore).get(2)?.state).toBe('done'));
-        expect(TransferToGroup).toHaveBeenCalledWith(2, [{ group: 1, positionIDs: [], matchIDs: [3], collectionIDs: [], lessonIDs: [] }]);
+        expect(TransferToGroup).toHaveBeenCalledWith(2, [{ group: 1, positionIDs: [], matchIDs: [3], collectionIDs: [], lessonIDs: [], tournamentIDs: [] }]);
     });
 
     it('drops nothing on the group the row comes from', () => {
@@ -118,7 +138,7 @@ describe('transferService', () => {
         addToBasket({ group: 1, kind: 'collection', id: 2, label: '' });
         expect(await pourBasket(2)).toBe(true);
         expect(TransferToGroup).toHaveBeenCalledTimes(1);
-        expect(TransferToGroup).toHaveBeenCalledWith(2, [{ group: 1, positionIDs: [7], matchIDs: [], collectionIDs: [2], lessonIDs: [] }]);
+        expect(TransferToGroup).toHaveBeenCalledWith(2, [{ group: 1, positionIDs: [7], matchIDs: [], collectionIDs: [2], lessonIDs: [], tournamentIDs: [] }]);
         expect(get(transferBasketStore)).toEqual([]);
     });
 

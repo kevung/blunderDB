@@ -165,8 +165,7 @@ test('the + button follows the active group, and the tools sit apart on the righ
     // The tools are aligned to the right edge of the bar, apart from the tabs.
     const bar = await page.locator('.view-tabs').boundingBox();
     const split = await page.getByTestId('toggle-split').boundingBox();
-    const basket = await page.getByTestId('transfer-basket').boundingBox();
-    expect(bar.x + bar.width - (basket.x + basket.width)).toBeLessThan(40);
+    expect(bar.x + bar.width - (split.x + split.width)).toBeLessThan(40);
     expect(split.x).toBeGreaterThan(nextHeader.x + nextHeader.width);
 });
 

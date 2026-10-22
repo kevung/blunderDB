@@ -20,6 +20,7 @@ import { setPositionStudied, knownStudied, refreshStudied } from './studyQueueSe
 import { toggleCommentPanel } from './tabToggles.js';
 import { setStatusBarMessage } from './databaseService.js';
 import * as anki from './ankiService.js';
+import { sendContext } from './sendActions.js';
 import { mirrorPosition } from '../utils/boardGeometry.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
@@ -60,7 +61,10 @@ positionStore.subscribe((position) => {
  * @returns {import('./actionCatalog.js').ActionContext}
  */
 export function positionContext({ displayPosition = () => get(positionStore), positionId = get(positionStore)?.id ?? 0 } = {}) {
+    const send = sendContext('position', positionId, `#${positionId}`);
     return {
+        otherBases: send.otherBases,
+        collections: send.collections,
         mode: get(statusBarModeStore),
         positionId,
         dbOpen: !!get(databasePathStore),
@@ -94,7 +98,8 @@ export function positionContext({ displayPosition = () => get(positionStore), po
             addToAnkiDeck: (deck) => addPositionToAnkiDeck(deck, positionId),
             challenge: () => toggleAnalysisChallenge(),
             save: () => saveCurrentPosition(),
-            trash: () => deletePosition()
+            trash: () => deletePosition(),
+            ...send.do
         }
     };
 }

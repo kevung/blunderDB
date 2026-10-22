@@ -4130,6 +4130,7 @@ export namespace gui {
 	    group: number;
 	    positions: number;
 	    matches: number;
+	    tournaments: number;
 	    alreadyHeld: number;
 	    collections: number;
 	    lessons: number;
@@ -4145,6 +4146,7 @@ export namespace gui {
 	        this.group = source["group"];
 	        this.positions = source["positions"];
 	        this.matches = source["matches"];
+	        this.tournaments = source["tournaments"];
 	        this.alreadyHeld = source["alreadyHeld"];
 	        this.collections = source["collections"];
 	        this.lessons = source["lessons"];
@@ -4156,6 +4158,7 @@ export namespace gui {
 	    group: number;
 	    positions: number;
 	    matches: number;
+	    tournaments: number;
 	    alreadyHeld: number;
 	    collections: number;
 	    lessons: number;
@@ -4172,6 +4175,7 @@ export namespace gui {
 	        this.group = source["group"];
 	        this.positions = source["positions"];
 	        this.matches = source["matches"];
+	        this.tournaments = source["tournaments"];
 	        this.alreadyHeld = source["alreadyHeld"];
 	        this.collections = source["collections"];
 	        this.lessons = source["lessons"];
@@ -4185,6 +4189,7 @@ export namespace gui {
 	    group: number;
 	    positionIDs: number[];
 	    matchIDs: number[];
+	    tournamentIDs: number[];
 	    collectionIDs: number[];
 	    lessonIDs: number[];
 	
@@ -4197,6 +4202,7 @@ export namespace gui {
 	        this.group = source["group"];
 	        this.positionIDs = source["positionIDs"];
 	        this.matchIDs = source["matchIDs"];
+	        this.tournamentIDs = source["tournamentIDs"];
 	        this.collectionIDs = source["collectionIDs"];
 	        this.lessonIDs = source["lessonIDs"];
 	    }

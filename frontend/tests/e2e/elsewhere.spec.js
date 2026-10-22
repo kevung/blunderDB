@@ -1,10 +1,11 @@
 /**
  * elsewhere.spec.js
  *
- * Deux bibliothèques ouvertes. L'onglet Ailleurs montre ce que l'autre sait de la position
- * (analyse, autre MET, commentaire signé, match joué, voisines) et reste lisible à 1366 px ;
- * x montre sa position à la place du plateau, au même endroit et à la même taille, puis revient,
- * sans changer de groupe.
+ * Deux bases ouvertes. Le panneau Autres bases montre ce que l'autre sait de la position
+ * (présence, analyse, autre MET, commentaire signé, match joué, voisines) et reste lisible à
+ * 1366 px ; Copier vers / Récupérer depuis copient la position et Annuler reprend les copies de la
+ * session, de la plus récente à la plus ancienne ; le lot se remplit au clavier (MAJ-B) et se
+ * copie vers la base nommée ; x montre sa position à la place du plateau, puis revient.
  */
 
 import { test, expect } from '@playwright/test';
@@ -68,7 +69,11 @@ test.beforeEach(async ({ page }) => {
                 OpenLibraryGroup: { id: 2, path: pathB, active: true, readOnly: false },
                 ActivateLibraryGroup: null,
                 CloseLibraryGroup: null,
-                ElsewhereInGroups: elsewhere
+                ElsewhereInGroups: elsewhere,
+                SetLibraryGroupLocked: null,
+                TransferToGroup: { group: 1, positions: 1, matches: 0, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false },
+                CopyPositionToGroup: { group: 1, positions: 1, matches: 0, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false, receipt: 7 },
+                UndoPositionCopy: null
             }
         })
     );
@@ -137,4 +142,46 @@ test("x shows the other library's board in place of this one, then puts it back"
     await page.waitForTimeout(400);
     await page.keyboard.up('x');
     await expect(swap).toHaveCount(0);
+});
+
+/** The calls made to method, by their arguments. */
+const callsOf = (page, method) => page.evaluate((m) => window.__wailsCalls.filter((c) => c.method === m).map((c) => c.args), method);
+
+test('copy to the other base and fetch from it, then undo both, newest first', async ({ page }) => {
+    await page.keyboard.press('Control+Shift+A');
+    const group = page.locator('[data-testid="elsewhere-group"]');
+    await expect(group.locator('[data-testid="elsewhere-status"]')).toBeVisible();
+
+    await group.locator('[data-testid="elsewhere-copy-to"]').click();
+    await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(1);
+    const [[src, , dst]] = await callsOf(page, 'CopyPositionToGroup');
+    expect([src, dst]).toEqual([2, 1]);
+
+    await group.locator('[data-testid="elsewhere-fetch-from"]').click();
+    await expect.poll(async () => (await callsOf(page, 'CopyPositionToGroup')).length).toBe(2);
+    expect((await callsOf(page, 'CopyPositionToGroup'))[1]).toEqual([1, 31, 2]);
+
+    const undo = page.locator('[data-testid="transfer-undo"]');
+    await expect(undo).toContainText('2');
+    await undo.click();
+    await expect.poll(async () => (await callsOf(page, 'UndoPositionCopy')).length).toBe(1);
+    await expect(undo).toContainText('1');
+    await undo.click();
+    await expect.poll(async () => (await callsOf(page, 'UndoPositionCopy')).length).toBe(2);
+    await expect(undo).toHaveCount(0);
+});
+
+test('the lot, filled with SHIFT-B, is copied at once into the base it names', async ({ page }) => {
+    await page.keyboard.press('Control+Shift+A');
+    await page.evaluate(() => /** @type {HTMLElement | null} */ (document.activeElement)?.blur());
+    await page.keyboard.press('Shift+B');
+    const lot = page.locator('[data-testid="transfer-lot"]');
+    await expect(lot.locator('[data-testid="transfer-lot-item"]')).toHaveCount(1);
+
+    await lot.locator('[data-testid="transfer-lot-copy"]').click();
+    await expect(lot.locator('[data-testid="transfer-lot-item"]')).toHaveCount(0);
+    const calls = await callsOf(page, 'TransferToGroup');
+    expect(calls).toHaveLength(1);
+    expect(calls[0][0]).toBe(1);
+    expect(calls[0][1][0].group).toBe(2);
 });
