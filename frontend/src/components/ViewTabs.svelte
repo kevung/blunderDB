@@ -108,12 +108,25 @@
         }
     }
 
+    /**
+     * Scrolls the tab row, and only it, until the element is in sight (scrollIntoView would also
+     * move every scrollable ancestor).
+     * @param {Element | null | undefined} el
+     */
+    function reveal(el) {
+        if (!tabList || !el) return;
+        const row = tabList.getBoundingClientRect();
+        const box = el.getBoundingClientRect();
+        if (box.left < row.left) tabList.scrollLeft += box.left - row.left;
+        else if (box.right > row.right) tabList.scrollLeft += box.right - row.right;
+    }
+
     $effect(() => {
         void $activeViewId;
         void $tabGroupsStore;
         // The "+" follows the active group's last tab: kept in sight first, so the active tab wins when both cannot fit.
-        tabList?.querySelector('.add-btn')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
-        tabList?.querySelector('.view-tab.active')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+        reveal(tabList?.querySelector('.add-btn'));
+        reveal(tabList?.querySelector('.view-tab.active'));
     });
 
     /**
@@ -482,6 +495,7 @@
         position: relative;
         display: flex;
         min-width: 0;
+        overflow: hidden;
     }
     /* Fade on the edge where tabs are hidden; it lets clicks through. */
     .fade {

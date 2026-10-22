@@ -231,3 +231,40 @@ test('an overflowing row shows arrows and fades, shrinks tabs to a minimum, and 
     await expect(page.getByTestId('library-group').nth(0)).toHaveClass(/active/);
     await expect(page.locator('.view-tab.active')).toBeInViewport();
 });
+
+for (const width of [1024, 1366, 1920]) {
+    test(`with 30 tabs on two groups the tab row never overlaps the tools (${width}px)`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 700 });
+        await openTwoGroups(page);
+        for (let i = 0; i < 29; i++) await page.locator('.add-btn').click();
+
+        const rects = await page.evaluate(() => {
+            const r = (el) => {
+                const b = el.getBoundingClientRect();
+                return { left: b.left, right: b.right, width: b.width };
+            };
+            const tools = r(document.querySelector('.view-tab-tools'));
+            const list = r(document.querySelector('.view-tab-list'));
+            const add = r(document.querySelector('.add-btn'));
+            const tabs = [...document.querySelectorAll('.view-tab-list [role="tab"]')].map(r);
+            const clip = r(document.querySelector('.tab-clip'));
+            return { tools, list, add, tabs, clip, bar: document.documentElement.clientWidth };
+        });
+        expect(rects.tools.width).toBeGreaterThan(0);
+        // The scrolling row, the "+" and every visible tab stay left of the tools.
+        expect(rects.list.right).toBeLessThanOrEqual(rects.tools.left + 0.5);
+        expect(rects.clip.right).toBeLessThanOrEqual(rects.tools.left + 0.5);
+        expect(rects.add.right <= rects.tools.left + 0.5 || rects.add.left >= rects.list.right - 0.5 || rects.add.right <= rects.list.right + 0.5).toBe(true);
+        for (const t of rects.tabs) {
+            if (t.right > rects.list.left && t.left < rects.list.right) expect(Math.min(t.right, rects.list.right)).toBeLessThanOrEqual(rects.tools.left + 0.5);
+        }
+        // The overflow arrow stays visible and clickable; the "+" is reachable.
+        const arrow = page.locator('.scroll-btn').last();
+        await expect(arrow).toBeVisible();
+        const ab = await arrow.boundingBox();
+        expect(ab.x + ab.width).toBeLessThanOrEqual(rects.tools.left + 0.5);
+        await page.locator('.add-btn').scrollIntoViewIfNeeded();
+        const ad = await page.locator('.add-btn').boundingBox();
+        expect(ad.x + ad.width).toBeLessThanOrEqual(rects.tools.left + 0.5);
+    });
+}
