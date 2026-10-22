@@ -5,6 +5,9 @@ import { writable, get } from 'svelte/store';
 import { matchPanelRefreshTriggerStore, dbMutationCounterStore } from './uiStore.js';
 import { refreshLibraryCounts } from './libraryCountsStore.js';
 import { elsewhereStore, idleElsewhere } from './elsewhereStore.js';
+import { groupSwitchingStore, libraryReplaced, libraryOnScreenMark, libraryStillOnScreen } from './libraryEpoch.js';
+
+export { groupSwitchingStore, libraryReplaced, libraryOnScreenMark, libraryStillOnScreen };
 
 /** The groups in tab-bar order: ids only, the active one's path is databasePathStore. */
 export const groupIdsStore = writable(/** @type {number[]} */ ([1]));
@@ -18,12 +21,6 @@ export const activeGroupId = writable(1);
 export const groupActivityStore = writable(/** @type {Map<number, GroupActivity>} */ (new Map()));
 /** The groups whose library a job wrote while they were off screen: read again on their return. */
 const staleGroups = new Set();
-/**
- * Whether a switch of group is in flight. Between its first await and the state put back, the
- * screen still shows the group left while the backend may already be bound to the one coming:
- * a second switch would photograph the wrong group, and a write would land in the wrong library.
- */
-export const groupSwitchingStore = writable(false);
 
 /** The writes to the library on screen still awaiting the backend's answer. */
 const writesInFlight = new Set();
@@ -68,14 +65,6 @@ export async function holdingSwitch(fn) {
     }
 }
 
-/** Counts the libraries the bound handle has carried: a read knows which one it was sent to. */
-let libraryEpoch = 0;
-
-/** The bound handle now carries another library (a switch, an open): reads begun before belong to the one left. */
-export function libraryReplaced() {
-    libraryEpoch++;
-}
-
 /**
  * What a read of the library left rejects with: its answer belongs to another library. A caller
  * drops it silently (no error shown, no list emptied) and lowers what it raised in a finally; a
@@ -103,10 +92,10 @@ export function isLibraryLeft(error) {
  * @returns {Promise<T>}
  */
 export function readOfLibrary(read) {
-    const at = libraryEpoch;
+    const at = libraryOnScreenMark();
     return read().then(
-        (value) => (at === libraryEpoch ? value : Promise.reject(new LibraryLeft())),
-        (error) => Promise.reject(at === libraryEpoch ? error : new LibraryLeft())
+        (value) => (at === libraryOnScreenMark() ? value : Promise.reject(new LibraryLeft())),
+        (error) => Promise.reject(at === libraryOnScreenMark() ? error : new LibraryLeft())
     );
 }
 

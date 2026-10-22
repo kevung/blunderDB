@@ -14,7 +14,8 @@
 import { must } from './helpers/must.js';
 import { describe, test, expect } from 'vitest';
 import { get } from 'svelte/store';
-import { confirmAction, resolveConfirm, confirmModalStore } from '../services/confirmService.js';
+import { confirmAction, chooseAction, resolveConfirm, confirmModalStore } from '../services/confirmService.js';
+import { libraryReplaced, groupSwitchingStore } from '../stores/groupActivityStore.js';
 
 describe('confirmAction / resolveConfirm', () => {
     test('resolves true when confirmed', async () => {
@@ -39,6 +40,28 @@ describe('confirmAction / resolveConfirm', () => {
         await expect(first).resolves.toBe(false);
         resolveConfirm(true);
         await expect(second).resolves.toBe(true);
+    });
+
+    test('confirmed after another library came on screen, it says no: what it confirms is of the library left', async () => {
+        const p = confirmAction('Roll out these 42 positions?');
+        libraryReplaced();
+        resolveConfirm(true);
+        expect(await p).toBe(false);
+        const c = chooseAction('Open or merge?', [{ value: 'merge', label: 'Merge' }]);
+        libraryReplaced();
+        resolveConfirm('merge');
+        expect(await c).toBeNull();
+    });
+
+    test('confirmed while a switch is in flight, it says no', async () => {
+        const p = confirmAction('Delete?');
+        groupSwitchingStore.set(true);
+        try {
+            resolveConfirm(true);
+            expect(await p).toBe(false);
+        } finally {
+            groupSwitchingStore.set(false);
+        }
     });
 
     test('resolveConfirm without a pending confirmation is a no-op', () => {

@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { libraryOnScreenMark, libraryStillOnScreen } from '../stores/libraryEpoch.js';
 
 /**
  * Promise-based confirm/cancel dialog (WarningModal in "confirm" mode). Kept
@@ -14,7 +15,9 @@ let pendingResolve = null;
 /**
  * Show a confirm/cancel dialog; resolves to whether the user confirmed. A call
  * still pending when a new one starts resolves false first, so a stale
- * confirmation never fires.
+ * confirmation never fires. So does one answered after another library came
+ * on screen: what it confirms names rows (ids read, a list counted) of the
+ * library left, and acting on them would write into the one coming.
  *
  * @param {string} message
  * @param {{confirmLabel?: string, cancelLabel?: string, choices?: {value: string, label: string, primary?: boolean}[], tone?: 'danger' | 'primary'}} [options]
@@ -28,8 +31,9 @@ export function confirmAction(message, { confirmLabel = '', cancelLabel = '', ch
         resolvePrevious(false);
     }
     confirmModalStore.set({ message, confirmLabel, cancelLabel, choices, tone });
+    const mark = libraryOnScreenMark();
     return new Promise((resolve) => {
-        pendingResolve = resolve;
+        pendingResolve = (/** @type {unknown} */ answer) => resolve(answer && libraryStillOnScreen(mark) ? answer : false);
     });
 }
 
