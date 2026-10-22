@@ -41,6 +41,8 @@
     $effect(() => {
         void $activeViewId;
         void $tabGroupsStore;
+        // The "+" follows the active group's last tab: kept in sight first, so the active tab wins when both cannot fit.
+        tabList?.querySelector('.add-btn')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
         tabList?.querySelector('.view-tab.active')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
     });
 
@@ -152,7 +154,7 @@
      view or a second library. -->
 <div class="view-tabs" class:collapsed={tabCount <= 1}>
     {#if tabCount > 1}
-        <div class="view-tab-list" role="tablist" bind:this={tabList} onwheel={scrollSideways} use:tabDrag={{ onMoveView: moveGroupView, onMoveGroup: moveGroup }}>
+        <div class="view-tab-list" bind:this={tabList} onwheel={scrollSideways} use:tabDrag={{ onMoveView: moveGroupView, onMoveGroup: moveGroup }}>
             {#each $tabGroupsStore as group (group.id)}
                 {#if grouped}
                     <div
@@ -205,32 +207,35 @@
                         <button class="close-btn" onclick={(e) => handleCloseGroup(e, group.id)} title={$t('libraryGroups.close')}>&times;</button>
                     </div>
                 {/if}
-                {#each group.views as view (view.id)}
-                    {@const selected = group.active && $activeViewId === view.id}
-                    <div
-                        class="view-tab group-color-{group.color}"
-                        class:grouped
-                        class:active={selected}
-                        class:resting={!group.active && group.activeViewId === view.id}
-                        role="tab"
-                        aria-selected={selected}
-                        tabindex="0"
-                        data-group-id={group.id}
-                        data-view-id={view.id}
-                        onclick={() => handleTabClick(group.id, view.id, group.active)}
-                        ondblclick={() => group.active && handleDoubleClick(view)}
-                        onkeydown={(e) => handleTabKeydown(e, group.id, view.id, group.active)}
-                    >
-                        {#if group.active && editingId === view.id}
-                            <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
-                        {:else}
-                            <span class="tab-name" title={view.name}>{view.name}</span>
-                        {/if}
-                        {#if group.active && group.views.length > 1}
-                            <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
-                        {/if}
-                    </div>
-                {/each}
+                <!-- One tablist per group, laid out as if absent (display: contents): it holds only tabs, the header and the "+" stay outside. -->
+                <div class="group-tabs" role="tablist" aria-label={group.name || group.path || $t('libraryGroups.unnamed')}>
+                    {#each group.views as view (view.id)}
+                        {@const selected = group.active && $activeViewId === view.id}
+                        <div
+                            class="view-tab group-color-{group.color}"
+                            class:grouped
+                            class:active={selected}
+                            class:resting={!group.active && group.activeViewId === view.id}
+                            role="tab"
+                            aria-selected={selected}
+                            tabindex="0"
+                            data-group-id={group.id}
+                            data-view-id={view.id}
+                            onclick={() => handleTabClick(group.id, view.id, group.active)}
+                            ondblclick={() => group.active && handleDoubleClick(view)}
+                            onkeydown={(e) => handleTabKeydown(e, group.id, view.id, group.active)}
+                        >
+                            {#if group.active && editingId === view.id}
+                                <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
+                            {:else}
+                                <span class="tab-name" title={view.name}>{view.name}</span>
+                            {/if}
+                            {#if group.active && group.views.length > 1}
+                                <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
+                            {/if}
+                        </div>
+                    {/each}
+                </div>
                 <!-- A new view joins the group on screen: its button sits right after that group's last tab. -->
                 {#if group.active}
                     {@render addButton()}
@@ -337,6 +342,10 @@
         min-width: 0;
         overflow-x: auto;
         scrollbar-width: none;
+    }
+
+    .group-tabs {
+        display: contents;
     }
 
     /* Tools and operations, apart from the tabs and aligned to the right. */

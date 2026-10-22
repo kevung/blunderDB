@@ -110,7 +110,6 @@ test('the landing mark shows on a dragged-over tab and on the active group heade
     await page.locator('.add-btn').click();
     const shadow = (loc) => loc.evaluate((el) => getComputedStyle(el).boxShadow);
     const tab = tabsOf(page, 2).nth(1);
-    const header = page.locator('[data-testid="library-group"]').nth(1);
     const a = await tabsOf(page, 2).nth(0).boundingBox();
     const t = await tab.boundingBox();
     await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
@@ -121,16 +120,24 @@ test('the landing mark shows on a dragged-over tab and on the active group heade
     expect(await shadow(tab)).not.toBe('none');
     await page.mouse.up();
 
-    // The active header, dragged over from group 1's header.
-    const h1 = await page.locator('[data-testid="library-group"]').nth(0).boundingBox();
-    const h2 = await header.boundingBox();
-    await page.mouse.move(h1.x + h1.width * 0.15, h1.y + h1.height / 2);
+    // The click right after a drag is swallowed for a moment.
+    await page.waitForTimeout(300);
+    // The active header: group 1 on screen, group 2 dragged to the left onto it.
+    await page
+        .locator('[data-testid="library-group"]')
+        .nth(0)
+        .click({ position: { x: 8, y: 8 } });
+    const target = page.locator('[data-testid="library-group"]').nth(0);
+    await expect(target).toHaveClass(/active/);
+    const h1 = await target.boundingBox();
+    const h2 = await page.locator('[data-testid="library-group"]').nth(1).boundingBox();
+    await page.mouse.move(h2.x + h2.width * 0.15, h2.y + h2.height / 2);
     await page.mouse.down();
-    await page.mouse.move(h1.x + h1.width * 0.15 + 10, h1.y + h1.height / 2, { steps: 3 });
-    await page.mouse.move(h2.x + h2.width * 0.2, h2.y + h2.height / 2, { steps: 5 });
-    await expect(page.locator('.tab-drop-after, .tab-drop-before').first()).toBeVisible();
-    const marked = page.locator('.group-header.tab-drop-before, .group-header.tab-drop-after, .view-tab.tab-drop-after, .view-tab.tab-drop-before').first();
-    expect(await shadow(marked)).not.toBe('none');
+    await page.mouse.move(h2.x + h2.width * 0.15 - 10, h2.y + h2.height / 2, { steps: 3 });
+    await page.mouse.move(h1.x + h1.width * 0.2, h1.y + h1.height / 2, { steps: 5 });
+    await expect(target).toHaveClass(/active/);
+    await expect(target).toHaveClass(/tab-drop-(before|after)/);
+    expect(await shadow(target)).not.toBe('none');
     await page.mouse.up();
 });
 
@@ -141,6 +148,9 @@ test('the + button follows the active group, and the tools sit apart on the righ
 
     const add = page.getByTestId('add-view');
     await expect(add).toHaveCount(1);
+    // The "+" is not a child of any tablist, which holds only tabs.
+    expect(await page.locator('[role="tablist"] button.add-btn').count()).toBe(0);
+    expect(await page.locator('[role="tablist"] > :not([role="tab"])').count()).toBe(0);
     const last = await tabsOf(page, 1).last().boundingBox();
     const plus = await add.boundingBox();
     const nextHeader = await page.getByTestId('library-group').nth(1).boundingBox();
@@ -158,4 +168,20 @@ test('the + button follows the active group, and the tools sit apart on the righ
     const basket = await page.getByTestId('transfer-basket').boundingBox();
     expect(bar.x + bar.width - (basket.x + basket.width)).toBeLessThan(40);
     expect(split.x).toBeGreaterThan(nextHeader.x + nextHeader.width);
+});
+
+test('a scrolling row keeps the + in sight, and the active tab wins when both cannot fit', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await openTwoGroups(page);
+    const add = page.locator('.view-tabs .add-btn');
+    for (let i = 0; i < 30; i++) await add.click();
+    const row = page.locator('.view-tab-list');
+    expect(await row.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+    await expect(add).toBeInViewport();
+    await expect(page.locator('.view-tab.active')).toBeInViewport();
+    // A tab at the far left: the active tab stays in sight even though the "+" is far right.
+    const first = tabsOf(page, 2).first();
+    await first.click();
+    await expect(first).toHaveClass(/active/);
+    await expect(page.locator('.view-tab.active')).toBeInViewport();
 });
