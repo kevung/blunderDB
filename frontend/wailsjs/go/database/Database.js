@@ -742,8 +742,8 @@ export function GetStatsDateRange() {
   return window['go']['database']['Database']['GetStatsDateRange']();
 }
 
-export function GetTimeErrors() {
-  return window['go']['database']['Database']['GetTimeErrors']();
+export function GetTimeErrors(arg1) {
+  return window['go']['database']['Database']['GetTimeErrors'](arg1);
 }
 
 export function GetTournamentMatches(arg1) {

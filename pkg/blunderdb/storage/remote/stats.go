@@ -126,9 +126,11 @@ func (s statsStore) MatchTimeSummary(ctx context.Context, scope string, matchID 
 	return r, err
 }
 
-func (s statsStore) TimeErrors(ctx context.Context, scope string) ([]storage.TimeErrorRow, error) {
+func (s statsStore) TimeErrors(ctx context.Context, scope string, matchIDs []int64) ([]storage.TimeErrorRow, error) {
 	var r []storage.TimeErrorRow
-	err := s.c.call(ctx, scope, "stats.timeErrors", nil, &r)
+	err := s.c.call(ctx, scope, "stats.timeErrors", struct {
+		MatchIDs []int64 `json:"matchIds,omitempty"`
+	}{matchIDs}, &r)
 	return r, err
 }
 

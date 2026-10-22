@@ -20,7 +20,8 @@ sortie ``json`` porte ``decision_ms`` et ``cube_decision_ms``. Une durée
 inconnue n'est pas écrite. ``list --type timeerrors`` donne, par joueur et par
 tranche de durée (moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre
 de décisions, l'erreur moyenne et la part de blunders ; ``--format json`` en
-livre les lignes.
+livre les lignes. ``--ids`` (identifiants de matchs séparés par des virgules)
+restreint ce tableau à ces matchs : la revue d'un tournoi ou d'une séance.
 
 Pour un match joué ici par un Duel, les sorties ``text`` et ``summary``
 ajoutent son origine : le départ, le germe des dés révélé et son SHA-256, à

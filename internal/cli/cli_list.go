@@ -28,7 +28,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Matches filter and order, applied in SQL like the match panel's search box
 	matchQuery := listCmd.String("query", "", "With --type matches: keep matches whose players, event, location, round, tournament or date contain this text")
-	matchIDs := listCmd.String("ids", "", "With --type matches: keep only these match IDs, comma-separated (as `stats matches` prints them)")
+	matchIDs := listCmd.String("ids", "", "With --type matches or timeerrors: keep only these match IDs, comma-separated (as `stats matches` prints them)")
 	matchSort := listCmd.String("sort", "", "With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent")
 
 	// Stats-specific flags (only used when --type stats)
@@ -197,7 +197,14 @@ func (cli *CLI) runList(args []string) error {
 		statsProvenance(&filter)
 		return cli.showPlayerTable(filter, *statsFormat)
 	case "timeerrors":
-		return cli.showTimeErrors(strings.ToLower(*statsFormat))
+		var ids []int64
+		if *matchIDs != "" {
+			var err error
+			if ids, err = parseIDList(*matchIDs); err != nil {
+				return fmt.Errorf("invalid --ids: %w", err)
+			}
+		}
+		return cli.showTimeErrors(ids, strings.ToLower(*statsFormat))
 	default:
 		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'moves', 'analyses', 'imports', 'stats', 'players', 'timeerrors', or 'tags')", *listType)
 	}
@@ -719,8 +726,8 @@ var timeBandLabels = [4]string{"<5 s", "5-15 s", "15-30 s", ">30 s"}
 
 // showTimeErrors prints, per player and duration band, the decisions, the mean
 // error and the blunder rate: the figures of the Statistics tab's time table.
-func (cli *CLI) showTimeErrors(format string) error {
-	rows, err := cli.db.GetTimeErrors()
+func (cli *CLI) showTimeErrors(matchIDs []int64, format string) error {
+	rows, err := cli.db.GetTimeErrors(matchIDs)
 	if err != nil {
 		return fmt.Errorf("failed to compute time/error table: %w", err)
 	}

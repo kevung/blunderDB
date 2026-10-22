@@ -15,13 +15,13 @@ import (
 // after it, and an unscored decision counted but never averaged as zero.
 func testStatsTimeErrors(t *testing.T, s storage.Storage) {
 	ms := func(v int64) *int64 { return &v }
-	timedMatch(t, s, [][2]*int64{
+	matchID := timedMatch(t, s, [][2]*int64{
 		{ms(3000), ms(3000)}, // player 1: 6 s, band 1
 		{ms(40000), nil},     // player 2: band 3
 		{nil, nil},           // player 1: unknown, no band
 		{ms(1000), nil},      // player 2: band 0
 	})
-	got, err := s.Stats().TimeErrors(context.Background(), "")
+	got, err := s.Stats().TimeErrors(context.Background(), "", nil)
 	if err != nil {
 		t.Fatalf("TimeErrors: %v", err)
 	}
@@ -39,6 +39,39 @@ func testStatsTimeErrors(t *testing.T, s storage.Storage) {
 		}
 	}
 	assertTimeBandSelections(t, s, got)
+	assertTimeErrorsMatchScope(t, s, matchID, got)
+}
+
+// assertTimeErrorsMatchScope pins the matchIds scope: the Match itself gives
+// the whole table back, a Match that holds none of its decisions gives none,
+// and the "time_band" selection narrows the same way.
+func assertTimeErrorsMatchScope(t *testing.T, s storage.Storage, matchID int64, all []storage.TimeErrorRow) {
+	t.Helper()
+	ctx := context.Background()
+	same, err := s.Stats().TimeErrors(ctx, "", []int64{matchID})
+	if err != nil {
+		t.Fatalf("TimeErrors(match): %v", err)
+	}
+	if len(same) != len(all) {
+		t.Errorf("TimeErrors scoped to its only match: got %+v, want %+v", same, all)
+	}
+	other := matchID + 1000
+	none, err := s.Stats().TimeErrors(ctx, "", []int64{other})
+	if err != nil {
+		t.Fatalf("TimeErrors(other): %v", err)
+	}
+	if len(none) != 0 {
+		t.Errorf("TimeErrors scoped to another match: got %+v, want none", none)
+	}
+	r := all[0]
+	ids, err := s.Stats().PositionIDsBySelection(ctx, "", storage.StatsFilter{DecisionType: -1},
+		storage.SelectionSpec{Kind: "time_band", Player: r.Player, TimeBucket: r.Bucket, MatchIDs: []int64{other}})
+	if err != nil {
+		t.Fatalf("time_band(other): %v", err)
+	}
+	if len(ids) != 0 {
+		t.Errorf("time_band scoped to another match: got %v, want none", ids)
+	}
 }
 
 // testStatsTimeErrorsScoredByAnalysis pins that an analysis written after the
@@ -84,7 +117,7 @@ func testStatsTimeErrorsScoredByAnalysis(t *testing.T, s storage.Storage) {
 	}); err != nil {
 		t.Fatalf("Save analysis: %v", err)
 	}
-	got, err := s.Stats().TimeErrors(ctx, "")
+	got, err := s.Stats().TimeErrors(ctx, "", nil)
 	if err != nil {
 		t.Fatalf("TimeErrors: %v", err)
 	}

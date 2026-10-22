@@ -275,9 +275,11 @@ type SelectionSpec struct {
 	FamilyKind string
 	StudiedOn  string
 	Window     string
-	// One row of the time errors, for Kind "time_band"; the filter is not read.
+	// One row of the time errors, for Kind "time_band"; the filter is not
+	// read, MatchIDs narrows the row to those matches as the table was.
 	Player     string
 	TimeBucket int
+	MatchIDs   []int64
 }
 
 // BreakdownPositionCount mirrors storage.BreakdownPositionCount.
@@ -579,11 +581,12 @@ func (d *Database) GetMatchTimeSummary(matchID int64) (storage.MatchTimeSummary,
 }
 
 // GetTimeErrors crosses the time taken over decisions with the error they
-// cost, per player and duration band, for the Statistics tab.
-func (d *Database) GetTimeErrors() ([]storage.TimeErrorRow, error) {
+// cost, per player and duration band, for the Statistics tab: over the whole
+// database, or over matchIDs alone when it is non-empty.
+func (d *Database) GetTimeErrors(matchIDs []int64) ([]storage.TimeErrorRow, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-	return d.store.Stats().TimeErrors(context.Background(), "")
+	return d.store.Stats().TimeErrors(context.Background(), "", matchIDs)
 }
 
 // GetMatchDetailStats computes per-player statistics for the given match.

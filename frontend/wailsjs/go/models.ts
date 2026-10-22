@@ -1058,6 +1058,7 @@ export namespace database {
 	    Window: string;
 	    Player: string;
 	    TimeBucket: number;
+	    MatchIDs: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new SelectionSpec(source);
@@ -1087,6 +1088,7 @@ export namespace database {
 	        this.Window = source["Window"];
 	        this.Player = source["Player"];
 	        this.TimeBucket = source["TimeBucket"];
+	        this.MatchIDs = source["MatchIDs"];
 	    }
 	}
 	export class SessionState {

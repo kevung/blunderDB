@@ -241,9 +241,11 @@ type SelectionSpec struct {
 	Window     string
 	// Player and TimeBucket, for Kind "time_band", name one row of the time
 	// errors. Like that table, the selection reads every timed decision of
-	// the database and ignores the filter.
+	// the database, or of MatchIDs alone when it is non-empty, and ignores
+	// the filter.
 	Player     string
 	TimeBucket int
+	MatchIDs   []int64
 }
 
 // The dimensions of the breakdowns a SelectionSpec of Kind "breakdown" names.
@@ -719,8 +721,10 @@ type StatsStore interface {
 
 	// TimeErrors crosses the time a player took over a decision with the error
 	// it cost: one row per player and duration band that holds a decision, the
-	// players named as the Matches name them, the bands in order.
-	TimeErrors(ctx context.Context, scope string) ([]TimeErrorRow, error)
+	// players named as the Matches name them, the bands in order. A
+	// non-empty matchIDs reads the decisions of those Matches alone (the
+	// review of a tournament or a session); empty reads the whole database.
+	TimeErrors(ctx context.Context, scope string, matchIDs []int64) ([]TimeErrorRow, error)
 
 	// MatchBadges returns the per-player PR/MWC badge for the given matches,
 	// keyed by match id. A nil/empty matchIDs computes badges for every match in

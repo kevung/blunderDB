@@ -392,7 +392,7 @@ export function GetStatsBreakdownPositionCounts(arg1:database.StatsFilter):Promi
 
 export function GetStatsDateRange():Promise<database.StatsDateRange>;
 
-export function GetTimeErrors():Promise<Array<storage.TimeErrorRow>>;
+export function GetTimeErrors(arg1:Array<number>):Promise<Array<storage.TimeErrorRow>>;
 
 export function GetTournamentMatches(arg1:number):Promise<Array<domain.Match>>;
 

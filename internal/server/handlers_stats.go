@@ -226,8 +226,9 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.matchTimeSummary", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchTimeSummary, error) {
 			return ss().MatchTimeSummary(ctx, scope, req.MatchID)
 		})},
-		{http.MethodPost, "/v1/stats.timeErrors", rpc(func(ctx context.Context, scope string, _ struct{}) ([]storage.TimeErrorRow, error) {
-			return ss().TimeErrors(ctx, scope)
+		// Durée × erreur, de toute la base ou des seuls matchs de MatchIDs.
+		{http.MethodPost, "/v1/stats.timeErrors", rpc(func(ctx context.Context, scope string, req matchBadgesReq) ([]storage.TimeErrorRow, error) {
+			return ss().TimeErrors(ctx, scope, req.MatchIDs)
 		})},
 		{http.MethodPost, "/v1/stats.matchBadges", rpc(func(ctx context.Context, scope string, req matchBadgesReq) (matchBadgesResp, error) {
 			badges, err := ss().MatchBadges(ctx, scope, req.MatchIDs)

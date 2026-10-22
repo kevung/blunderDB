@@ -4044,7 +4044,7 @@ Options:
   -from string
     	Start date filter YYYY-MM-DD (stats only)
   -ids stats matches
-    	With --type matches: keep only these match IDs, comma-separated (as stats matches prints them)
+    	With --type matches or timeerrors: keep only these match IDs, comma-separated (as stats matches prints them)
   -limit int
     	Maximum number of items to list (default 10)
   -metric string
