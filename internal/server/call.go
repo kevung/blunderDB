@@ -127,7 +127,7 @@ func RunCall(args []string) error {
 	// subscribers like one of theirs; Close sends it before the process ends.
 	o := Options{Storage: st, EnableDirection: true, Transcription: true, Duel: true, SessionPerCall: true}
 	if !*list {
-		o.EventsDSN, o.EventsSendOnly = eventsDSN(*backend, effDSN), true
+		o.EventsDSN, o.EventsSendOnly = EventsDSNFor(*backend, effDSN), true
 	}
 	srv, err := New(o)
 	if err != nil {

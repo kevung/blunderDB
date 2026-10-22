@@ -284,7 +284,7 @@ func RunServe(args []string) error {
 		Transcription:    cfg.transcription,
 		Duel:             cfg.duel,
 		TranscriptionTTL: cfg.transcriptTTL,
-		EventsDSN:        eventsDSN(cfg.backend, cfg.dsn),
+		EventsDSN:        EventsDSNFor(cfg.backend, cfg.dsn),
 		CORSAllowOrigin:  cfg.corsOrigin,
 		RateLimitRPS:     cfg.rateLimitRPS,
 		RateLimitBurst:   cfg.rateLimitBurst,
@@ -370,9 +370,9 @@ func startPprofServer(ctx context.Context, logger *slog.Logger, addr string) (st
 	}
 }
 
-// eventsDSN is dsn when backend names PostgreSQL, "" otherwise: several daemons may share a
+// EventsDSNFor is dsn when backend names PostgreSQL, "" otherwise: several daemons may share a
 // PostgreSQL database and must tell one another of their gestures.
-func eventsDSN(backend, dsn string) string {
+func EventsDSNFor(backend, dsn string) string {
 	switch strings.ToLower(backend) {
 	case "postgres", "postgresql", "pg":
 		return dsn

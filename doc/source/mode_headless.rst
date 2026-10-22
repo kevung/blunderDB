@@ -416,7 +416,8 @@ match geste par geste, avec la même logique que le bureau. Les lectures
 (``list``, ``get``, ``exportMat``, ``losses``) sont toujours servies. Les
 gestes (``create``, ``open``, ``editMatch``, ``apply``, ``undo``, ``redo``,
 ``candidates``, ``close``, ``finish``, ``abandon``, ``materialize``) ne le sont
-qu'avec ``serve --transcription`` : sans ce drapeau, ces routes répondent 404.
+qu'avec ``serve --transcription`` (``Config.Transcription`` pour un hôte qui
+embarque le moteur) : sans ce drapeau, ces routes répondent 404.
 
 ``create`` et ``open`` rendent l'état du brouillon, sa ``revision`` et un
 ``sessionId``. ``apply``, ``undo``, ``redo``, ``close`` et ``finish`` nomment

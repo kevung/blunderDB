@@ -62,7 +62,9 @@ type Config struct {
 
 	// Transcription serves the transcription gestures (create, open, apply,
 	// finish...), as `serve --transcription` does. Off by default: the
-	// engine authenticates nobody, so the host decides who reaches them.
+	// engine authenticates nobody, so the host decides who reaches them. On
+	// PostgreSQL the instances sharing the database relay one another's
+	// gestures to their event subscribers (LISTEN/NOTIFY), as `serve` does.
 	Transcription bool
 	// TranscriptionTTL closes a transcription session idle for longer (its
 	// undo stack goes, nothing typed does). Zero means 30 minutes, the
@@ -115,9 +117,12 @@ const ReadTenantsHeader = middleware.ReadTenantsHeader
 
 // Bootstrap opens the storage backend, runs migrations, installs RLS policies
 // when enabled, builds the engine server and returns its http.Handler plus an
-// io.Closer for the storage pool. Mount the handler behind your own auth and
-// inject X-Tenant-ID per request — the tenant's positive decimal integer, a
-// name is refused with 400 (ADR-0005); the engine performs NO authentication.
+// io.Closer for the storage pool and, on PostgreSQL, the event transport. On
+// PostgreSQL with Config.Transcription, a failing LISTEN (a pgbouncer in
+// transaction mode, say) makes Bootstrap fail, as it makes serve fail. Mount
+// the handler behind your own auth and inject X-Tenant-ID per request — the
+// tenant's positive decimal integer, a name is refused with 400 (ADR-0005);
+// the engine performs NO authentication.
 // X-Read-Tenants, when Config.TrustReadTenants is set, is the embedder's to
 // write as well: strip the client's before setting it (ADR-0063).
 func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error) {
@@ -169,6 +174,7 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		StreamTimeout:      cfg.StreamTimeout,
 		MCPWrite:           cfg.MCPWrite,
 		Transcription:      cfg.Transcription,
+		EventsDSN:          internalserver.EventsDSNFor(cfg.Backend, cfg.DSN),
 		TranscriptionTTL:   cfg.TranscriptionTTL,
 		Identity:           cfg.Identity,
 		ImportDir:          cfg.ImportDir,
@@ -178,5 +184,17 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		st.Close()
 		return nil, nil, err
 	}
-	return srv.Handler(), st, nil
+	return srv.Handler(), &closer{srv: srv, st: st}, nil
+}
+
+// closer stops the server's event transport before the storage pool it shares
+// a database with.
+type closer struct {
+	srv *internalserver.Server
+	st  io.Closer
+}
+
+func (c *closer) Close() error {
+	c.srv.Close()
+	return c.st.Close()
 }
