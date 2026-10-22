@@ -22,6 +22,7 @@ import { groupIdsStore, activeGroupId, takeActivity, importForegroundStore as im
 
 export { groupIdsStore, activeGroupId, groupActivityStore, importForegroundStore, groupOnScreen, noteGroupJob } from './groupActivityStore.js';
 import { tMsg, translate } from '../i18n';
+import { moveItem } from '../utils/moveItem.js';
 import { logger } from '../utils/logger.js';
 
 /**
@@ -354,4 +355,36 @@ export function cycleTab(step) {
         return Promise.resolve(true);
     }
     return activateGroup(next.group, next.view);
+}
+
+/**
+ * Put a view before or after another of the same group, on screen or waiting. A view never
+ * leaves its group: the tab bar offers no drop elsewhere.
+ * @param {number} groupId
+ * @param {number} viewId
+ * @param {number} targetId
+ * @param {boolean} after
+ */
+export function moveGroupView(groupId, viewId, targetId, after) {
+    if (groupId === get(activeGroupId)) {
+        viewStore.moveView(viewId, targetId, after);
+        return;
+    }
+    parkedGroupsStore.update((m) => {
+        const photo = m.get(groupId);
+        if (!photo) return m;
+        const moved = moveItem(photo.views.views, (v) => v.id, viewId, targetId, after);
+        if (moved === photo.views.views) return m;
+        return new Map(m).set(groupId, { ...photo, views: { ...photo.views, views: moved } });
+    });
+}
+
+/**
+ * Put a group, with all its views, before or after another.
+ * @param {number} groupId
+ * @param {number} targetId
+ * @param {boolean} after
+ */
+export function moveGroup(groupId, targetId, after) {
+    groupIdsStore.update((ids) => moveItem(ids, (id) => id, groupId, targetId, after));
 }

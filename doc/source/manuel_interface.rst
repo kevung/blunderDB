@@ -280,6 +280,14 @@ le titre de la fenêtre nomme la base.
   vues. Fermer le groupe actif affiche son voisin ; la barre d'état nomme la
   bibliothèque fermée et celle affichée.
 
+* **Réordonner** : glisser un onglet le déplace avant ou après un autre onglet
+  du même groupe (un trait de la couleur d'accent marque l'emplacement) ;
+  glisser un en-tête de groupe déplace le groupe entier, avec toutes ses
+  vues, avant ou après un autre groupe. Une vue appartient à sa bibliothèque :
+  la déposer sur un autre groupe est refusé et ne change rien. L'ordre des
+  vues est celui des raccourcis *CTRL-1* … *CTRL-9* et il est conservé avec la
+  session ; l'ordre des groupes vaut pour la session en cours.
+
 L'en-tête du groupe actif porte le nom en blanc sur sa couleur ; ceux des
 autres groupes, le nom sur le fond de la barre, souligné en haut de leur
 couleur. Six couleurs se succèdent : un septième groupe reprend la première.

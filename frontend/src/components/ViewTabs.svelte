@@ -1,8 +1,9 @@
 <script>
     import { viewStore } from '../stores/viewStore';
-    import { tabGroupsStore, activateGroup, closeGroup, groupActivityStore } from '../stores/libraryGroupStore.js';
+    import { tabGroupsStore, activateGroup, closeGroup, groupActivityStore, moveGroupView, moveGroup } from '../stores/libraryGroupStore.js';
     import { transferBasketStore, lockedGroupsStore } from '../stores/transferBasketStore.js';
     import { libraryDrag } from '../utils/libraryDrag.js';
+    import { tabDrag } from '../utils/tabDrag.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { t } from '../i18n';
     import { splitStore } from '../stores/splitStore.js';
@@ -145,7 +146,7 @@
      view or a second library. -->
 <div class="view-tabs" class:collapsed={tabCount <= 1}>
     {#if tabCount > 1}
-        <div class="view-tab-list" role="tablist" bind:this={tabList} onwheel={scrollSideways}>
+        <div class="view-tab-list" role="tablist" bind:this={tabList} onwheel={scrollSideways} use:tabDrag={{ onMoveView: moveGroupView, onMoveGroup: moveGroup }}>
             {#each $tabGroupsStore as group (group.id)}
                 {#if grouped}
                     <div
@@ -209,6 +210,7 @@
                         aria-selected={selected}
                         tabindex="0"
                         data-group-id={group.id}
+                        data-view-id={view.id}
                         onclick={() => handleTabClick(group.id, view.id, group.active)}
                         ondblclick={() => group.active && handleDoubleClick(view)}
                         onkeydown={(e) => handleTabKeydown(e, group.id, view.id, group.active)}
@@ -347,6 +349,16 @@
         user-select: none;
         transition: background 0.1s;
         flex-shrink: 0;
+    }
+
+    /* Where a dragged tab or group would land. */
+    .view-tab.grouped.tab-drop-before,
+    .group-header.tab-drop-before {
+        box-shadow: inset 3px 0 0 var(--color-primary);
+    }
+    .view-tab.grouped.tab-drop-after,
+    .group-header.tab-drop-after {
+        box-shadow: inset -3px 0 0 var(--color-primary);
     }
 
     .view-tab:hover {

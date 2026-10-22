@@ -5,6 +5,7 @@ import { indexInList, listLength, isSettled } from './positionList.js';
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
 import { listOriginStore, LIBRARY_ORIGIN } from './listOriginStore';
+import { moveItem } from '../utils/moveItem.js';
 import { logger } from '../utils/logger.js';
 import { normalizeTabId } from '../services/tabOrder.js';
 
@@ -288,6 +289,17 @@ function createViewStore() {
         }
     }
 
+    /**
+     * Put a view before or after another of the same group; the active view stays active.
+     * @param {number} viewId
+     * @param {number} targetId
+     * @param {boolean} after
+     */
+    function moveView(viewId, targetId, after) {
+        if (viewsLocked()) return;
+        views.update((vs) => moveItem(vs, (v) => v.id, viewId, targetId, after));
+    }
+
     function renameView(/** @type {number} */ viewId, /** @type {string} */ newName) {
         views.update((vs) => vs.map((v) => (v.id === viewId ? { ...v, name: newName } : v)));
     }
@@ -449,6 +461,7 @@ function createViewStore() {
         addView,
         closeView,
         renameView,
+        moveView,
         selectPreviousView,
         selectNextView,
         saveCurrentViewState,
