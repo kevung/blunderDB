@@ -264,3 +264,97 @@ func TestUndoPositionCopy_KeepsTheReceiptAfterATransientRefusal(t *testing.T) {
 		t.Fatalf("B holds %d positions after the undo, want 0", n)
 	}
 }
+
+// tournamentInA imports two matches into group A and puts both into one
+// tournament, returning its id and the matches' ids.
+func tournamentInA(t *testing.T, a *App) (int64, []int64) {
+	t.Helper()
+	for _, f := range []string{"test.mat", "gnubg_selfplay_drops_7p.mat"} {
+		if s, err := a.ImportFilesIn(1, []string{filepath.Join("..", "..", "testdata", f)}, "test"); err != nil || s.Succeeded != 1 {
+			t.Fatalf("import %s into A: %+v, %v", f, s, err)
+		}
+	}
+	src := libraryOf(t, a, 1)
+	tid, err := src.CreateTournament("Open", "2026-10-22", "Club")
+	if err != nil {
+		t.Fatal(err)
+	}
+	matches := everything(t, a, 1).MatchIDs
+	if len(matches) != 2 {
+		t.Fatalf("A holds %d matches, want 2", len(matches))
+	}
+	for _, m := range matches {
+		if err := src.AddMatchToTournament(tid, m); err != nil {
+			t.Fatal(err)
+		}
+	}
+	return tid, matches
+}
+
+// A tournament copied leaves with all its matches; a match copied alone
+// brings the tournament's record and none of its other matches, even when a
+// tournament is named beside it in the same lot.
+func TestTransferToGroup_TournamentCarriesItsMatches(t *testing.T) {
+	t.Run("tournament", func(t *testing.T) {
+		a, _ := twoGroups(t)
+		tid, _ := tournamentInA(t, a)
+		sum, err := a.TransferToGroup(2, []TransferBatch{{Group: 1, TournamentIDs: []int64{tid}}})
+		if err != nil || len(sum.Errors) != 0 || sum.Tournaments != 1 || sum.Matches != 2 {
+			t.Fatalf("tournament A → B: %+v, %v", sum, err)
+		}
+	})
+	t.Run("match alone", func(t *testing.T) {
+		a, _ := twoGroups(t)
+		_, matches := tournamentInA(t, a)
+		sum, err := a.TransferToGroup(2, []TransferBatch{{Group: 1, MatchIDs: matches[:1]}})
+		if err != nil || len(sum.Errors) != 0 || sum.Tournaments != 1 || sum.Matches != 1 {
+			t.Fatalf("match A → B: %+v, %v", sum, err)
+		}
+	})
+	t.Run("match beside another tournament", func(t *testing.T) {
+		a, _ := twoGroups(t)
+		_, matches := tournamentInA(t, a)
+		src := libraryOf(t, a, 1)
+		other, err := src.CreateTournament("Empty", "", "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		sum, err := a.TransferToGroup(2, []TransferBatch{{Group: 1, MatchIDs: matches[:1], TournamentIDs: []int64{other}}})
+		if err != nil || len(sum.Errors) != 0 || sum.Tournaments != 2 || sum.Matches != 1 {
+			t.Fatalf("match and tournament A → B: %+v, %v", sum, err)
+		}
+	})
+}
+
+// The session keeps every copy it can take back: they come back newest first
+// into one library, and a refusal there does not spend the receipt.
+func TestUndoPositionCopy_HistoryTakesBackInReverseOrder(t *testing.T) {
+	a, _ := twoGroups(t)
+	if s, err := a.ImportFilesIn(1, []string{filepath.Join("..", "..", "testdata", "test.mat")}, "test"); err != nil || s.Succeeded != 1 {
+		t.Fatalf("import into A: %+v, %v", s, err)
+	}
+	ids := everything(t, a, 1).PositionIDs
+	first, err := a.CopyPositionToGroup(1, ids[0], 2)
+	if err != nil || first.Receipt == 0 {
+		t.Fatalf("first copy: %+v, %v", first, err)
+	}
+	second, err := a.CopyPositionToGroup(1, ids[1], 2)
+	if err != nil || second.Receipt == 0 {
+		t.Fatalf("second copy: %+v, %v", second, err)
+	}
+	if err := a.UndoPositionCopy(first.Receipt); !errors.Is(err, ErrLaterCopyFirst) {
+		t.Fatalf("undo of the older copy first: %v, want ErrLaterCopyFirst", err)
+	}
+	if err := a.UndoPositionCopy(second.Receipt); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.UndoPositionCopy(first.Receipt); err != nil {
+		t.Fatal(err)
+	}
+	if n := positionsOf(t, a, 2); n != 0 {
+		t.Fatalf("B holds %d positions after both undos, want 0", n)
+	}
+	if err := a.UndoPositionCopy(first.Receipt); err == nil {
+		t.Fatal("a spent receipt was taken back twice")
+	}
+}

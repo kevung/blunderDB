@@ -107,8 +107,8 @@ type App struct {
 	libs libraryGroups
 	// imports are the imports running on borrowed handles (import_files.go).
 	imports backgroundImports
-	// paneCopy is the last position carried between split panes, while it
-	// can be taken back (CopyPositionToGroup).
+	// paneCopy is the session's history of position copies between
+	// libraries that can be taken back (CopyPositionToGroup).
 	paneCopy paneCopies
 }
 

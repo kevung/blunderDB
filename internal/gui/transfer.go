@@ -10,25 +10,41 @@ import (
 )
 
 // TransferBatch is what one library group gives to a transfer: rows named by
-// their ids in that group's library. A drag carries one batch, the basket one
+// their ids in that group's library. A drag carries one batch, the lot one
 // per group it was filled from.
 type TransferBatch struct {
 	Group         int     `json:"group"`
 	PositionIDs   []int64 `json:"positionIDs"`
 	MatchIDs      []int64 `json:"matchIDs"`
+	TournamentIDs []int64 `json:"tournamentIDs"`
 	CollectionIDs []int64 `json:"collectionIDs"`
 	LessonIDs     []int64 `json:"lessonIDs"`
 }
 
 func (b TransferBatch) empty() bool {
-	return len(b.PositionIDs)+len(b.MatchIDs)+len(b.CollectionIDs)+len(b.LessonIDs) == 0
+	return len(b.PositionIDs)+len(b.MatchIDs)+len(b.TournamentIDs)+len(b.CollectionIDs)+len(b.LessonIDs) == 0
+}
+
+// parts splits off the batch's tournaments: ingest.Transfer gives a match
+// named alone its tournament's record only when no tournament is named beside
+// it, so a lot holding both goes in two transfers.
+func (b TransferBatch) parts() []TransferBatch {
+	if len(b.TournamentIDs) == 0 || len(b.PositionIDs)+len(b.MatchIDs)+len(b.CollectionIDs)+len(b.LessonIDs) == 0 {
+		return []TransferBatch{b}
+	}
+	rest := b
+	rest.TournamentIDs = nil
+	return []TransferBatch{{Group: b.Group, TournamentIDs: b.TournamentIDs}, rest}
 }
 
 // options is the export selection of the batch, with what travels beside each
 // row: its analyses, comments and played moves, a collection's positions, a
-// match's transcription and aliases. WholeLibrary stays off, so that the ids
-// alone say which rows leave.
+// match's transcription and aliases. A tournament leaves with all its
+// matches; a match named alone brings its tournament's record and none of the
+// tournament's other matches (ingest.Transfer's rule). WholeLibrary stays
+// off, so that the ids alone say which rows leave.
 func (b TransferBatch) options() database.ExportOptions {
+	matches := len(b.MatchIDs)+len(b.TournamentIDs) > 0
 	return database.ExportOptions{
 		PositionIDs:                b.PositionIDs,
 		IncludeAnalysis:            true,
@@ -36,8 +52,10 @@ func (b TransferBatch) options() database.ExportOptions {
 		IncludePlayedMoves:         true,
 		IncludeMatches:             len(b.MatchIDs) > 0,
 		MatchIDs:                   b.MatchIDs,
-		IncludeTranscriptions:      len(b.MatchIDs) > 0,
-		IncludeAliases:             len(b.MatchIDs) > 0,
+		IncludeTournaments:         matches,
+		TournamentIDs:              b.TournamentIDs,
+		IncludeTranscriptions:      matches,
+		IncludeAliases:             matches,
 		IncludeCollections:         len(b.CollectionIDs) > 0,
 		CollectionIDs:              b.CollectionIDs,
 		IncludeCollectionPositions: len(b.CollectionIDs) > 0,
@@ -55,6 +73,7 @@ type TransferSummary struct {
 	// already.
 	Positions   int      `json:"positions"`
 	Matches     int      `json:"matches"`
+	Tournaments int      `json:"tournaments"`
 	AlreadyHeld int      `json:"alreadyHeld"`
 	Collections int      `json:"collections"`
 	Lessons     int      `json:"lessons"`
@@ -108,7 +127,9 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 	var sources []source
 	for _, b := range batches {
 		if from := ends.from[b.Group]; from != nil && !b.empty() {
-			sources = append(sources, source{b, from})
+			for _, part := range b.parts() {
+				sources = append(sources, source{part, from})
+			}
 		}
 	}
 
@@ -122,6 +143,7 @@ func (a *App) TransferToGroup(dst int, batches []TransferBatch) (TransferSummary
 		rep, err := s.from.TransferTo(ctx, to, s.batch.options())
 		im := rep.Imported
 		sum.Matches += im.Matches
+		sum.Tournaments += im.Tournaments
 		sum.AlreadyHeld += im.SkippedDuplicates
 		sum.Collections += im.Collections
 		sum.Lessons += im.Lessons
@@ -214,12 +236,13 @@ type PositionCopy struct {
 	Receipt int `json:"receipt"`
 }
 
-// paneCopies keeps the last copy between split panes the desktop can take
-// back; its receipt names the file the copy went into.
+// paneCopies is the session's history of position copies the desktop can
+// take back, oldest first, held until the application closes; each receipt
+// names the file the copy went into.
 type paneCopies struct {
-	mu   sync.Mutex
-	next int
-	last *paneCopy
+	mu      sync.Mutex
+	next    int
+	history []paneCopy
 }
 
 type paneCopy struct {
@@ -228,9 +251,26 @@ type paneCopy struct {
 	receipt database.PositionCopyReceipt
 }
 
+// find is the index of the copy whose token is receipt, -1 when the history
+// does not hold it.
+func (p *paneCopies) find(receipt int) int {
+	for i, c := range p.history {
+		if c.token == receipt {
+			return i
+		}
+	}
+	return -1
+}
+
+// drop removes the copy at index i from the history.
+func (p *paneCopies) drop(i int) {
+	p.history = append(p.history[:i], p.history[i+1:]...)
+}
+
 // CopyPositionToGroup copies position id of group src into the library of
 // group dst (database.CopyPosition, which says whether its own import
-// transaction inserted the position), and keeps its receipt when it did.
+// transaction inserted the position), and keeps its receipt in the session's
+// history when it did.
 func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, error) {
 	ends, err := a.borrowTransferEnds(dst, []int{src})
 	if err != nil {
@@ -264,32 +304,43 @@ func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, err
 	a.paneCopy.mu.Lock()
 	defer a.paneCopy.mu.Unlock()
 	a.paneCopy.next++
-	a.paneCopy.last = &paneCopy{token: a.paneCopy.next, group: ends.dst, receipt: r}
+	a.paneCopy.history = append(a.paneCopy.history, paneCopy{token: a.paneCopy.next, group: ends.dst, receipt: r})
 	out.Receipt = a.paneCopy.next
 	return out, nil
 }
 
-// UndoPositionCopy takes back the copy whose receipt CopyPositionToGroup
-// gave, the last one only: the position leaves the destination with what
+// ErrLaterCopyFirst refuses to take back a copy while a later copy into the
+// same group is still held: copies are taken back in the reverse order.
+var ErrLaterCopyFirst = errors.New("a later copy into this library must be taken back first")
+
+// UndoPositionCopy takes back a copy of the session's history by the receipt
+// CopyPositionToGroup gave: the position leaves the destination with what
 // came with it, provided that group still has the same library open and the
-// position is as the copy left it (database.ErrPositionChanged otherwise).
-// The receipt is spent only by a take-back that succeeded: after a transient
-// failure the same receipt can be tried again.
+// position is as the copy left it (database.ErrPositionChanged otherwise,
+// and the copy leaves the history: it can no longer be taken back). Copies
+// into one group come back newest first (ErrLaterCopyFirst). After a
+// transient failure the same receipt can be tried again.
 func (a *App) UndoPositionCopy(receipt int) error {
 	a.paneCopy.mu.Lock()
 	defer a.paneCopy.mu.Unlock()
-	c := a.paneCopy.last
-	if c == nil || receipt <= 0 || c.token != receipt {
+	i := a.paneCopy.find(receipt)
+	if receipt <= 0 || i < 0 {
 		return errors.New("nothing to take back")
+	}
+	c := a.paneCopy.history[i]
+	for _, later := range a.paneCopy.history[i+1:] {
+		if later.group == c.group {
+			return ErrLaterCopyFirst
+		}
 	}
 	if err := a.writeGroup(c.group, func(d *database.Database) error {
 		return database.TakeBackPositionCopy(d, c.receipt)
 	}); err != nil {
 		if errors.Is(err, database.ErrPositionChanged) {
-			a.paneCopy.last = nil
+			a.paneCopy.drop(i)
 		}
 		return err
 	}
-	a.paneCopy.last = nil
+	a.paneCopy.drop(i)
 	return nil
 }
