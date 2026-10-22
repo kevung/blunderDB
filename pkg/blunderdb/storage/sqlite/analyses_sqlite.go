@@ -601,7 +601,7 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, _ string, opts stor
 	return func(yield func(*domain.Position, error) bool) {
 		query := `SELECT ` + qualify(positionCols, "p") + `
 			 FROM position p LEFT JOIN analysis a ON a.position_id = p.id
-			 WHERE a.position_id IS NULL
+			 WHERE (a.position_id IS NULL OR ` + sqlshared.NoEvaluationSQL("a") + `)
 			 ORDER BY p.id` + opts.SQL("LIMIT -1")
 		rows, err := s.db.QueryContext(ctx, query)
 		if err != nil {
@@ -629,7 +629,7 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, _ string, opts stor
 func (s *analysisStore) WithoutAnalysisIDs(ctx context.Context, _ string) ([]int64, error) {
 	rows, err := s.db.QueryContext(ctx, `SELECT p.id
 		 FROM position p LEFT JOIN analysis a ON a.position_id = p.id
-		 WHERE a.position_id IS NULL
+		 WHERE (a.position_id IS NULL OR `+sqlshared.NoEvaluationSQL("a")+`)
 		 ORDER BY p.id`)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: list ids without analysis: %w", err)
@@ -654,7 +654,7 @@ func (s *analysisStore) WithoutAnalysisIDsInMatch(ctx context.Context, _ string,
 		 JOIN move mv ON mv.position_id = p.id
 		 JOIN game g ON g.id = mv.game_id
 		 WHERE g.match_id = ?
-		   AND NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id)
+		   AND NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id AND NOT (`+sqlshared.NoEvaluationSQL("a")+`))
 		 ORDER BY p.id`, matchID)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: list match ids without analysis: %w", err)
@@ -676,7 +676,7 @@ func (s *analysisStore) CountWithoutAnalysis(ctx context.Context, _ string) (int
 	var n int
 	err := s.db.QueryRowContext(ctx, `SELECT COUNT(*)
 		 FROM position p LEFT JOIN analysis a ON a.position_id = p.id
-		 WHERE a.position_id IS NULL`).Scan(&n)
+		 WHERE (a.position_id IS NULL OR `+sqlshared.NoEvaluationSQL("a")+`)`).Scan(&n)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: count positions without analysis: %w", err)
 	}

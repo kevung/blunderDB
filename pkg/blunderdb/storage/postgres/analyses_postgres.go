@@ -542,7 +542,7 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, scope string, opts 
 		query := `SELECT ` + qualifiedPositionCols("p") + `
 			 FROM position p LEFT JOIN analysis a
 			   ON a.position_id = p.id AND a.tenant_id = p.tenant_id
-			 WHERE p.tenant_id = $1 AND a.position_id IS NULL
+			 WHERE p.tenant_id = $1 AND (a.position_id IS NULL OR ` + sqlshared.NoEvaluationSQL("a") + `)
 			 ORDER BY p.id` + opts.SQL("")
 		rows, err := s.db.Query(ctx, query, tenantID(scope))
 		if err != nil {
@@ -571,7 +571,7 @@ func (s *analysisStore) WithoutAnalysisIDs(ctx context.Context, scope string) ([
 	rows, err := s.db.Query(ctx, `SELECT p.id
 		 FROM position p LEFT JOIN analysis a
 		   ON a.position_id = p.id AND a.tenant_id = p.tenant_id
-		 WHERE p.tenant_id = $1 AND a.position_id IS NULL
+		 WHERE p.tenant_id = $1 AND (a.position_id IS NULL OR `+sqlshared.NoEvaluationSQL("a")+`)
 		 ORDER BY p.id`, tenantID(scope))
 	if err != nil {
 		return nil, fmt.Errorf("postgres: list ids without analysis: %w", err)
@@ -597,7 +597,8 @@ func (s *analysisStore) WithoutAnalysisIDsInMatch(ctx context.Context, scope str
 		 JOIN game g ON g.id = mv.game_id AND g.tenant_id = mv.tenant_id
 		 WHERE p.tenant_id = $1 AND g.match_id = $2
 		   AND NOT EXISTS (SELECT 1 FROM analysis a
-		                    WHERE a.position_id = p.id AND a.tenant_id = p.tenant_id)
+		                    WHERE a.position_id = p.id AND a.tenant_id = p.tenant_id
+		                      AND NOT (`+sqlshared.NoEvaluationSQL("a")+`))
 		 ORDER BY p.id`, tenantID(scope), matchID)
 	if err != nil {
 		return nil, fmt.Errorf("postgres: list match ids without analysis: %w", err)
@@ -620,7 +621,7 @@ func (s *analysisStore) CountWithoutAnalysis(ctx context.Context, scope string) 
 	err := s.db.QueryRow(ctx, `SELECT COUNT(*)
 		 FROM position p LEFT JOIN analysis a
 		   ON a.position_id = p.id AND a.tenant_id = p.tenant_id
-		 WHERE p.tenant_id = $1 AND a.position_id IS NULL`, tenantID(scope)).Scan(&n)
+		 WHERE p.tenant_id = $1 AND (a.position_id IS NULL OR `+sqlshared.NoEvaluationSQL("a")+`)`, tenantID(scope)).Scan(&n)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: count positions without analysis: %w", err)
 	}

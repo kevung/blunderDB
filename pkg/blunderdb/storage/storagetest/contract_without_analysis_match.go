@@ -57,7 +57,7 @@ func testWithoutAnalysisIDsInMatch(t *testing.T, s storage.Storage) {
 	}
 
 	// Filling a gap closes it in every match that reaches it.
-	if err := s.Analyses().Save(ctx, "", ids[1], &domain.PositionAnalysis{}); err != nil {
+	if err := s.Analyses().Save(ctx, "", ids[1], evaluatedAnalysis()); err != nil {
 		t.Fatal(err)
 	}
 	if got, want := in(m1), []int64{ids[0]}; !slices.Equal(got, want) {

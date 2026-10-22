@@ -463,7 +463,7 @@ var databaseParity = map[string]parityEntry{
 	"SaveAnalysis":                      {Server: "/v1/analyses.save", Why: "an analysis reaches the CLI through an import or `analyze`; pasting one is a GUI gesture"},
 	"SaveCommand":                       {Server: "/v1/history.save", Why: whyGUIState},
 	"SaveComment":                       {Server: "/v1/comments.add", Why: whyGUIEdit},
-	"SaveDisplayedEvaluation":           {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing", Why: "the Eval panel's verdict on the board is a GUI gesture (Ctrl-S); a script imports the position on its own (--individual, /v1/positions.save) and runs the batch, which writes gammonNet only on positions with no analysis row at all — a position already carrying a row, even an empty one, keeps it"},
+	"SaveDisplayedEvaluation":           {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing", Why: "the Eval panel's verdict on the board is a GUI gesture (Ctrl-S); a script imports the position on its own (--individual, /v1/positions.save) and runs the batch, which writes gammonNet only on positions with no analysis or an analysis without any evaluation (the XGID alone) — a position carrying an evaluation keeps it"},
 	"SaveEditPosition":                  {Server: "/v1/filters.saveEditPosition", Why: whyGUIState},
 	"SaveExcludePosition":               {Server: "/v1/filters.saveExcludePosition", Why: whyGUIState},
 	"SaveFilter":                        {Server: "/v1/filters.save", Why: whyGUIState},
