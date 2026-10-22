@@ -12,6 +12,7 @@ import (
 // TestBracketsOfASwissPhase: a Swiss phase has no graph before its switch. What a director
 // reads there is the lives board — who has how many lives left, and whom they have met.
 func TestBracketsOfASwissPhase(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -69,6 +70,7 @@ func TestBracketsOfASwissPhase(t *testing.T) {
 // TestBracketsOfABracketPhase: a drawn bracket comes back as sections of matches, each on its
 // display row, with the engine's label untranslated.
 func TestBracketsOfABracketPhase(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Tableau", "2026-09-12", "")
 	if err != nil {
@@ -165,6 +167,7 @@ func TestBracketsOfABracketPhase(t *testing.T) {
 // TestBracketFlagsTheMatchTheEngineComplainsAbout: a warning must be visible ON the bracket,
 // not only in a list far from it.
 func TestBracketFlagsTheMatchTheEngineComplainsAbout(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Tableau", "2026-09-12", "")
 	if err != nil {
@@ -276,6 +279,7 @@ func sectionsByKind(p BracketPhase) map[string]BracketSection {
 // TestBracketSkeleton: an undrawn elimination phase shows the shape the engine will draw — with
 // its consolation, last chance and grand final — and nobody in it.
 func TestBracketSkeleton(t *testing.T) {
+	t.Parallel()
 	cases := []struct {
 		name    string
 		cfg     string

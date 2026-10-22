@@ -275,13 +275,9 @@
         font-weight: 600;
         background: color-mix(in srgb, var(--color-text) 10%, var(--color-surface));
     }
-    .hint,
-    .source {
+    .hint {
         margin: 0 0 4px;
         color: var(--color-text-muted);
-    }
-    .source {
-        margin-top: 6px;
     }
     h3 {
         margin: 8px 0 4px;

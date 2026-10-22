@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 12:05+0200\n"
+"POT-Creation-Date: 2026-10-22 13:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -258,10 +258,32 @@ msgstr "Oikea napsautus laudan ulkopuolella (muokkaus, Eval)"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"ou *Position de départ*, puis les actions qui valent pour un brouillon "
+"(copier, évaluer, enregistrer)."
 msgstr ""
 "Avaa laudan valikko: *Tyhjennä asema*, kuten ASKELPALAUTIN, tai "
-"*Aloitusasema*."
+"*Aloitusasema*, sitten luonnokselle sopivat toiminnot (kopioi, arvioi, "
+"tallenna)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Clic droit sur le plateau ou sur une ligne de liste ; MENU, MAJ-F10 sur "
+"la ligne focalisée"
+msgstr ""
+"Oikea napsautus laudalla tai luettelon rivillä; MENU, VAIHTO-F10 "
+"kohdistetulla rivillä"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu contextuel de la position, du match, du tournoi ou de la "
+"collection (voir :ref:`menu contextuel <menu_contextuel_actions>`). "
+"HAUT/BAS parcourent un niveau, DROITE ouvre un sous-menu sur sa première "
+"action, GAUCHE y revient, ÉCHAP ferme le sous-menu puis le menu."
+msgstr ""
+"Avaa aseman, ottelun, turnauksen tai kokoelman kontekstivalikko (katso "
+":ref:`kontekstivalikko <menu_contextuel_actions>`). YLÖS/ALAS kulkevat "
+"tason läpi, OIKEA avaa alivalikon sen ensimmäisestä toiminnosta, VASEN "
+"palaa takaisin, ESC sulkee alivalikon ja sitten valikon."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup joué au plateau)"
@@ -275,7 +297,7 @@ msgstr ""
 "Aloita koko siirto alusta, asema muuttumattomana. Kunnes yhtään askelta "
 "on pelattu, laudan valikko avautuu tavalliseen tapaan."
 
-#: ../../source/raccourcis.rst:59
+#: ../../source/raccourcis.rst:60
 msgid "Navigation"
 msgstr "Navigointi"
 
@@ -383,7 +405,7 @@ msgstr ""
 "Poistu kokoelmasta tai ottelusta käynnistetyn ``ss``-haun tuloksista: "
 "paluu kokoelmaan tai ottelun tarkasteltuun siirtoon."
 
-#: ../../source/raccourcis.rst:78
+#: ../../source/raccourcis.rst:79
 msgid ""
 "Tant qu'une question du :ref:`panneau Entraînement "
 "<panneau_entrainement>` est posée sur le plateau, les touches qui "
@@ -406,7 +428,7 @@ msgstr ""
 "8/7``). Kun vastaus on näkyvissä, ENTER tekee ”Seuraava”, tai ”Lopeta”, "
 "jos seuraavaa kysymystä ei ole."
 
-#: ../../source/raccourcis.rst:90
+#: ../../source/raccourcis.rst:91
 msgid "Affichage"
 msgstr "Näyttö"
 
@@ -474,7 +496,7 @@ msgstr ""
 "Haaste päälle/pois: Analyysi-paneelin analyysi pysyy piilossa "
 "napsautukseen asti jokaisessa asemassa."
 
-#: ../../source/raccourcis.rst:108
+#: ../../source/raccourcis.rst:109
 msgid "Actions"
 msgstr "Toiminnot"
 
@@ -502,7 +524,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Käynnistä suodatinkirjaston kyseisen sijan kiinnitetty suodatin."
 
-#: ../../source/raccourcis.rst:122
+#: ../../source/raccourcis.rst:123
 msgid "Outils"
 msgstr "Työkalut"
 

@@ -42,6 +42,8 @@
 <script>
     import { tick, untrack } from 'svelte';
     import EmptyState from './EmptyState.svelte';
+    import ContextMenu from '../ContextMenu.svelte';
+    import { menuRequest } from '../../services/contextMenuTrigger.js';
     import { nextSort } from '../../utils/tableSort.js';
     import { dragReorder } from '../../utils/dragReorder.js';
     import { applyColumnView, filterIsInvalid } from '../../utils/columnView.js';
@@ -78,6 +80,8 @@
      * @property {boolean} [pointerRows]
      * @property {(row: any, index: number, event?: Event) => void} [onSelect]
      * @property {(row: any, index: number, event?: Event) => void} [onActivate]
+     * @property {(row: any, index: number) => import('../../services/actionCatalog.js').MenuItem[]} [rowMenu]
+     * @property {(row: any, index: number) => Promise<unknown>} [rowMenuSettled]
      * @property {(from: number, to: number) => void} [onReorder]
      * @property {string} [emptyText]
      * @property {boolean} [emptyActions]
@@ -117,6 +121,10 @@
         onSelect = undefined,
         /** A row was double-clicked. */
         onActivate = undefined,
+        /** The row's context menu, opened by a right click, the Menu key or Shift+F10: (row, index) => items. */
+        rowMenu = undefined,
+        /** What the row's menu waits on to be exact (a state read asynchronously): the menu opens at once, then is rebuilt. */
+        rowMenuSettled = undefined,
         /** (from, to): enables pointer drag reordering of the rows. */
         onReorder = undefined,
         emptyText = '',
@@ -307,6 +315,20 @@
         scrollToRow(next);
         return true;
     }
+
+    /** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */
+    let rowMenuAt = $state.raw(null);
+
+    /** @param {MouseEvent | KeyboardEvent} e @param {any} row @param {number} index */
+    function openRowMenu(e, row, index) {
+        if (!rowMenu) return;
+        const request = menuRequest(e, () => rowMenu(row, index));
+        if (!request) return;
+        rowMenuAt = request;
+        rowMenuSettled?.(row, index).then(() => {
+            if (rowMenuAt === request) rowMenuAt = { ...request, items: rowMenu(row, index) };
+        });
+    }
 </script>
 
 <div class="panel-table {className}">
@@ -377,13 +399,15 @@
                         class={rowClass?.(row, index) ?? ''}
                         class:selected={isSelected(row)}
                         class:pointer={pointerRows}
-                        tabindex={onActivate ? 0 : undefined}
+                        tabindex={onActivate || rowMenu ? 0 : undefined}
                         onclick={onSelect ? (e) => onSelect(row, index, e) : undefined}
                         ondblclick={onActivate ? (e) => onActivate(row, index, e) : undefined}
-                        onkeydown={onActivate
+                        oncontextmenu={rowMenu ? (e) => openRowMenu(e, row, index) : undefined}
+                        onkeydown={onActivate || rowMenu
                             ? (e) => {
+                                  openRowMenu(e, row, index);
                                   // Only the row itself: Enter on a button or field inside it keeps its own gesture.
-                                  if (e.key === 'Enter' && e.target === e.currentTarget && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                                  if (onActivate && e.key === 'Enter' && e.target === e.currentTarget && !e.ctrlKey && !e.metaKey && !e.altKey) {
                                       e.preventDefault();
                                       onActivate(row, index, e);
                                   }
@@ -405,6 +429,9 @@
             <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} action={emptyAction} />
         {/if}
     </div>
+    {#if rowMenuAt}
+        <ContextMenu x={rowMenuAt.x} y={rowMenuAt.y} items={rowMenuAt.items} onClose={() => (rowMenuAt = null)} testid="row-menu" />
+    {/if}
 </div>
 
 <style>

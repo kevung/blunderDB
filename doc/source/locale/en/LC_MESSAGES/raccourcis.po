@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 12:05+0200\n"
+"POT-Creation-Date: 2026-10-22 13:06+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -256,10 +256,31 @@ msgstr "Right-click outside the board (edit, Eval)"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"ou *Position de départ*, puis les actions qui valent pour un brouillon "
+"(copier, évaluer, enregistrer)."
 msgstr ""
 "Open the board menu: *Clear the position*, like BACKSPACE, or *Starting "
-"position*."
+"position*, then the actions that apply to a draft (copy, evaluate, save)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Clic droit sur le plateau ou sur une ligne de liste ; MENU, MAJ-F10 sur "
+"la ligne focalisée"
+msgstr ""
+"Right-click on the board or on a list row; MENU, SHIFT-F10 on the focused"
+" row"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu contextuel de la position, du match, du tournoi ou de la "
+"collection (voir :ref:`menu contextuel <menu_contextuel_actions>`). "
+"HAUT/BAS parcourent un niveau, DROITE ouvre un sous-menu sur sa première "
+"action, GAUCHE y revient, ÉCHAP ferme le sous-menu puis le menu."
+msgstr ""
+"Open the context menu of the position, match, tournament or collection "
+"(see :ref:`context menu <menu_contextuel_actions>`). UP/DOWN move through"
+" a level, RIGHT opens a submenu on its first action, LEFT goes back, ESC "
+"closes the submenu and then the menu."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup joué au plateau)"
@@ -273,7 +294,7 @@ msgstr ""
 "Start the whole move over from the beginning, the position unchanged. As "
 "long as no step is played, the board menu opens as usual."
 
-#: ../../source/raccourcis.rst:59
+#: ../../source/raccourcis.rst:60
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -381,7 +402,7 @@ msgstr ""
 "Leave the results of an ``ss`` search run from a collection or a match: "
 "back to the collection, or to the match on the move studied."
 
-#: ../../source/raccourcis.rst:78
+#: ../../source/raccourcis.rst:79
 msgid ""
 "Tant qu'une question du :ref:`panneau Entraînement "
 "<panneau_entrainement>` est posée sur le plateau, les touches qui "
@@ -404,7 +425,7 @@ msgstr ""
 "the answer is shown, ENTER does “Next”, or “Finish” if there is no next "
 "question."
 
-#: ../../source/raccourcis.rst:90
+#: ../../source/raccourcis.rst:91
 msgid "Affichage"
 msgstr "Display"
 
@@ -472,7 +493,7 @@ msgstr ""
 "Toggle the challenge: the Analysis panel's analysis is hidden until a "
 "click, on every position."
 
-#: ../../source/raccourcis.rst:108
+#: ../../source/raccourcis.rst:109
 msgid "Actions"
 msgstr "Actions"
 
@@ -500,7 +521,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Run the pinned filter of that rank in the filter library."
 
-#: ../../source/raccourcis.rst:122
+#: ../../source/raccourcis.rst:123
 msgid "Outils"
 msgstr "Tools"
 

@@ -22,6 +22,7 @@ func tinySettings() rollout.Settings {
 // again — an import, the GUI's own save — keeps it; the batch skips the
 // position on the next run.
 func TestRolloutPosition_StoresBesideAndSurvivesSaveAnalysis(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	p := domain.InitializePosition()
 	id, err := d.SavePosition(&p)
@@ -70,6 +71,7 @@ func TestRolloutPosition_StoresBesideAndSurvivesSaveAnalysis(t *testing.T) {
 // taking a context is bound but uncallable there, like the other batch entry
 // points; one taking a Result would let the webview store a rollout it made up.
 func TestDatabaseBindsNoRolloutResultWriter(t *testing.T) {
+	t.Parallel()
 	resultType := reflect.TypeOf((*rollout.Result)(nil))
 	typ := reflect.TypeOf(&Database{})
 	for i := 0; i < typ.NumMethod(); i++ {
@@ -85,6 +87,7 @@ func TestDatabaseBindsNoRolloutResultWriter(t *testing.T) {
 // A rollout, or a batch, started on one file writes nothing once another file
 // has been opened: its positions are those of the previous library.
 func TestRolloutWriteRefusedAfterTheDatabaseChanged(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	p := domain.InitializePosition()
 	id, err := d.SavePosition(&p)
@@ -120,6 +123,7 @@ func TestRolloutWriteRefusedAfterTheDatabaseChanged(t *testing.T) {
 
 // A plan read before the file changed writes nothing into the next one.
 func TestRolloutPlanRefusedAfterTheDatabaseChanged(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	p := domain.InitializePosition()
 	id, err := d.SavePosition(&p)
@@ -150,6 +154,7 @@ func TestRolloutPlanRefusedAfterTheDatabaseChanged(t *testing.T) {
 // The hook registered with SetBeforeSwitch runs before every switch, outside
 // the lock: a job it waits for can still take the lock to finish its write.
 func TestBeforeSwitchRunsOutsideTheLock(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	calls := 0
 	d.SetBeforeSwitch(func() {
@@ -171,6 +176,7 @@ func TestBeforeSwitchRunsOutsideTheLock(t *testing.T) {
 // Folding a duplicate position into the one the index holds keeps that
 // one's analysis and moves the duplicate's rollouts beside it.
 func TestMergePositionIntoKeepsTheDuplicatesRollouts(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	ctx := context.Background()
 	keep := domain.InitializePosition()
@@ -222,6 +228,7 @@ func TestMergePositionIntoKeepsTheDuplicatesRollouts(t *testing.T) {
 // A list on screen is rolled out as listed: in its order, each position once,
 // unknown ids dropped, and those already carrying this rollout skipped.
 func TestPositionsToRolloutIDsFollowsTheList(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	ctx := context.Background()
 	s := tinySettings()
@@ -284,6 +291,7 @@ func openReadOnlyPair(t *testing.T) (*Database, int64) {
 // engine runs, not after its games on a failed write; one that stores
 // nothing still runs.
 func TestRolloutRefusedOnReadOnlyDatabase(t *testing.T) {
+	t.Parallel()
 	d, id := openReadOnlyPair(t)
 	s := tinySettings()
 	ctx := context.Background()

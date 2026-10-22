@@ -240,6 +240,46 @@ ne peut vouloir dire que « l'une ou l'autre ».
 La même liste s'obtient hors de l'interface avec ``blunderdb list --type
 tags`` (voir :ref:`cli`).
 
+.. _menu_contextuel_actions:
+
+Menu contextuel
+---------------
+
+Un clic droit — ou la touche *MENU*, ou *MAJ-F10* sur la ligne focalisée —
+ouvre le même menu sur une position, qu'on la vise sur le plateau ou sur sa
+ligne dans une collection, et un menu de la même forme sur une ligne de la
+liste des matchs, des tournois ou des collections. Les deux gestes les plus
+courants sur une position, *Évaluer cette position* et *Copier l'image*, sont
+au premier niveau ; les autres sont rangés en sous-menus, marqués ▸ :
+
+* **Copier / partager** : l'image (*CTRL-X*), l'XGID seul, la position et son
+  analyse en texte (*CTRL-C*), l'image avec l'analyse, l'image enregistrée en
+  SVG ou en PNG ; pour un match, son export ``.mat``.
+* **Annoter** : *Commenter* ouvre le panneau Commentaires sur la position ;
+  *Ajouter une étiquette #…* ouvre la ligne de commande sur ``#``, et *ENTRÉE*
+  ajoute les étiquettes comme la commande ``#`` (voir :ref:`tags`) ; *Marquer
+  vue* et *Démarquer* posent ou retirent la marque de la file d'étude.
+* **Naviguer** : *Positions voisines*, *Positions de même structure* (la
+  recherche par structure sur le plateau entier), *Nouvelle vue*.
+* **Analyser** : évaluer la position, son miroir, ou dans un nouvel onglet ;
+  *Rollout rapide* et *Rollout standard*, comme ``ro fast`` et ``ro standard``
+  (voir :ref:`rollouts`).
+* **S'entraîner** : ajouter la position à un paquet Anki ; *Défi sur cette
+  position* active le défi (*m*), qui masque l'analyse.
+* **Gérer** : *Enregistrer* (*CTRL-S*) le brouillon du plateau de recherche
+  ou d'Eval, *Mettre à la corbeille* (*SUPPR*) une position de la base ; pour
+  un match, éditer sa transcription, intervertir les joueurs, le modifier ou
+  le mettre à la corbeille ; pour un tournoi, le modifier ou le supprimer ;
+  pour une collection, la modifier ou la mettre à la corbeille.
+
+Seules les actions qui s'appliquent sont proposées : un brouillon ne s'annote
+pas et ne va pas à la corbeille, le plateau de recherche ne s'évalue pas, une
+position absente de la base n'entre dans aucun paquet Anki, et un sous-menu
+sans action disparaît. Le raccourci d'une action, quand elle en a un, est
+écrit à sa droite. Au clavier, *HAUT* et *BAS* parcourent un niveau, *DROITE*
+ouvre le sous-menu sur sa première action, *GAUCHE* y revient, *ÉCHAP* ferme
+le sous-menu puis le menu.
+
 .. _corbeille:
 
 La corbeille

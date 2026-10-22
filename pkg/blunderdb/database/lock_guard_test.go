@@ -98,6 +98,7 @@ func TestPublicMethods_ReturnUnderLock(t *testing.T) {
 
 	for _, variant := range variants {
 		t.Run(variant.name, func(t *testing.T) {
+			t.Parallel()
 			for i := 0; i < typ.NumMethod(); i++ {
 				method := typ.Method(i)
 				t.Run(method.Name, func(t *testing.T) {

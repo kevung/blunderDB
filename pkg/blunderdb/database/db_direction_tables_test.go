@@ -70,6 +70,7 @@ func tableOfMatch(t *testing.T, d *Database, tID int64, matchID string) int {
 // Moving a match onto an occupied table swaps the two: no table ever holds two matches, and
 // moving again puts everything back.
 func TestMoveMatchToOccupiedTableSwaps(t *testing.T) {
+	t.Parallel()
 	d, tID, m1, m2 := hallWithTwoMatches(t)
 	if _, err := d.MoveMatchToTable(tID, m1, 2); err != nil {
 		t.Fatal(err)
@@ -100,6 +101,7 @@ func TestMoveMatchToOccupiedTableSwaps(t *testing.T) {
 
 // A match started by hand on an occupied table is refused: it would hide the other one.
 func TestStartMatchManuallyRefusesOccupiedTable(t *testing.T) {
+	t.Parallel()
 	d, tID, _, _ := hallWithTwoMatches(t)
 	if _, err := d.StartMatchManually(tID, "p4", "p5", 0, 1); err == nil {
 		t.Fatal("starting a match on an occupied table must be refused")
@@ -165,6 +167,7 @@ func mustWarnings(t *testing.T, d *Database, tID int64) []tournoi.Warning {
 
 // A table out of service takes no match: moving onto it is refused, and nothing moves.
 func TestMoveMatchToUnavailableTableIsRefused(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Salle", "2026-09-12", "")
 	if err != nil {

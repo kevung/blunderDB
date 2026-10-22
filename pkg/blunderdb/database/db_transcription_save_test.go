@@ -82,6 +82,7 @@ func lastPlayedAction(t *testing.T, state *TranscriptionState) int {
 }
 
 func TestFinishTranscription_CreatesThenEditReplacesInPlace(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
@@ -298,6 +299,7 @@ func TestTranscriptionMAT_MatchesTheSavedMatchExport(t *testing.T) {
 // A draft with nothing in it is the one thing a save refuses: an empty Match
 // would count in the statistics and answer searches with nothing at all.
 func TestFinishTranscription_RefusesAnEmptyDraft(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
@@ -317,6 +319,7 @@ func TestFinishTranscription_RefusesAnEmptyDraft(t *testing.T) {
 // positions and purges the old ones by the retention rule — expected, not a
 // leak, but every position loses its analysis.
 func TestSetLength_RehashesEveryPosition(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 

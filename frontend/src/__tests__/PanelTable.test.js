@@ -335,3 +335,31 @@ describe('a table with a view id (ADR-0090)', () => {
         expect(container.querySelector('tr.filter-row')).toBeNull();
     });
 });
+
+describe('the row menu', () => {
+    test('is rebuilt once rowMenuSettled resolves', async () => {
+        let studied = false;
+        /** @type {(v?: unknown) => void} */
+        let settle = () => {};
+        const settled = new Promise((resolve) => (settle = resolve));
+        const rowMenu = vi.fn(() =>
+            studied
+                ? [{ label: 'Mark', onClick: () => {} }]
+                : [
+                      { label: 'Mark', onClick: () => {} },
+                      { label: 'Unstudied', onClick: () => {} }
+                  ]
+        );
+        const { container, queryByTestId } = mount({ rowMenu, rowMenuSettled: () => settled });
+
+        await fireEvent.contextMenu(must(container.querySelector('tbody tr')));
+        expect(must(queryByTestId('row-menu')).querySelectorAll('[role="menuitem"]').length).toBe(2);
+
+        studied = true;
+        settle(undefined);
+        await settled;
+        await tick();
+        const labels = Array.from(must(queryByTestId('row-menu')).querySelectorAll('[role="menuitem"]')).map((b) => (b.textContent ?? '').trim());
+        expect(labels).toEqual(['Mark']);
+    });
+});

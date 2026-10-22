@@ -50,7 +50,8 @@ Position
    "b", "Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer."
    "MAJ-B", "Mettre la position affichée dans le panier de transfert entre bibliothèques, ou l'en retirer."
    "Double-clic hors du plateau", "Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les modes."
-   "Clic droit hors du plateau (édition, Eval)", "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, ou *Position de départ*."
+   "Clic droit hors du plateau (édition, Eval)", "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, ou *Position de départ*, puis les actions qui valent pour un brouillon (copier, évaluer, enregistrer)."
+   "Clic droit sur le plateau ou sur une ligne de liste ; MENU, MAJ-F10 sur la ligne focalisée", "Ouvrir le menu contextuel de la position, du match, du tournoi ou de la collection (voir :ref:`menu contextuel <menu_contextuel_actions>`). HAUT/BAS parcourent un niveau, DROITE ouvre un sous-menu sur sa première action, GAUCHE y revient, ÉCHAP ferme le sous-menu puis le menu."
    "Clic droit sur le plateau (coup joué au plateau)", "Reprendre tout le coup depuis le début, la position inchangée. Tant qu'aucun pas n'est joué, le menu du plateau s'ouvre comme d'habitude."
 
 .. _raccourcis_navigation:

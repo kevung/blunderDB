@@ -8,6 +8,7 @@ import (
 // TestSlotsAreEmptyUntilSomeoneFillsThem: a club tournament where nothing is recorded leaves
 // every Slot empty, and that is the ordinary case — not a gap to fill by inference.
 func TestSlotsAreEmptyUntilSomeoneFillsThem(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	if _, err := d.ConfirmAllProposals(tID); err != nil {
@@ -34,6 +35,7 @@ func TestSlotsAreEmptyUntilSomeoneFillsThem(t *testing.T) {
 // TestAttachIsAlwaysAGesture: a coincidence of names is a SUGGESTION. Importing files attaches
 // nothing on its own.
 func TestAttachIsAlwaysAGesture(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	v, err := d.ConfirmAllProposals(tID)
@@ -123,6 +125,7 @@ func TestAttachIsAlwaysAGesture(t *testing.T) {
 // TestPartialNameMatchIsNotSuggested: half a coincidence is not evidence. The director would
 // have to check it anyway, so suggesting it only wastes their attention.
 func TestPartialNameMatchIsNotSuggested(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	if _, err := d.ConfirmAllProposals(tID); err != nil {
@@ -158,6 +161,7 @@ func TestPartialNameMatchIsNotSuggested(t *testing.T) {
 // TestDisagreementIsShownNeverResolved: during a tournament it is the director's word that
 // stands. A file that says otherwise is flagged, and neither side is changed.
 func TestDisagreementIsShownNeverResolved(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	v, err := d.ConfirmAllProposals(tID)
@@ -280,6 +284,7 @@ func TestDisagreementIsShownNeverResolved(t *testing.T) {
 
 // TestDetachKeepsEverything: emptying a Slot touches neither the Match nor the result.
 func TestDetachKeepsEverything(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	v, err := d.ConfirmAllProposals(tID)
@@ -316,6 +321,7 @@ func TestDetachKeepsEverything(t *testing.T) {
 // TestTranscribeFromSlotInheritsTheHeaderAndReservesTheSlot: a director who starts typing a
 // match must see the Slot taken, or two people will type the same match.
 func TestTranscribeFromSlotInheritsTheHeaderAndReservesTheSlot(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	v, err := d.ConfirmAllProposals(tID)
@@ -373,6 +379,7 @@ func min(a, b int) int {
 // TestSlotOfMatch: the Match panel shows where a Match comes from; a Match filling no Slot
 // shows nothing extra, which is the ordinary case.
 func TestSlotOfMatch(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	v, err := d.ConfirmAllProposals(tID)

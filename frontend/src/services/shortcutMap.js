@@ -59,8 +59,8 @@ export const SHORTCUTS = {
     // therefore never see a key the menu claims.
     contextMenu: {
         tier: TIER.MENU,
-        keys: ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Tab', 'Shift+Tab'],
-        shadows: ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Tab']
+        keys: ['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End', 'Tab', 'Shift+Tab'],
+        shadows: ['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End', 'Tab']
     },
 
     // Docked panels, each mounted while its tab is the active one. Each swallows the keys it does

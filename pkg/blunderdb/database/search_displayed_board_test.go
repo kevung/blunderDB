@@ -90,6 +90,7 @@ func frontPayload(t *testing.T, displayed Position, moveError string, clearCheck
 }
 
 func TestSearch_DisplayedBoardOutsideEdit(t *testing.T) {
+	t.Parallel()
 	db := NewDatabase()
 	if err := db.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)

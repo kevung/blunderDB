@@ -44,6 +44,27 @@ async function writeCanvasToClipboard(canvas) {
     return savedPath ? { method: 'file', path: savedPath } : { method: 'clipboard' };
 }
 
+/** The XGID of the position on the board. */
+export function currentXGID() {
+    const mode = get(statusBarModeStore);
+    const analysis = /** @type {PanelAnalysis} */ (get(analysisStore));
+    // On a scratch board (EVAL, EDIT) analysisStore describes ANOTHER position:
+    // regenerate the XGID from the board.
+    const scratchBoard = mode === 'EVAL' || mode === 'EDIT';
+    return !scratchBoard && analysis.xgid ? analysis.xgid : generateXGID(get(positionStore));
+}
+
+/** Copies the XGID alone, the identifier other programs read. */
+export async function copyXGID() {
+    try {
+        await writeTextToClipboard(`XGID=${currentXGID()}`);
+        setStatusBarMessage(tMsg('status.xgidCopied'));
+    } catch (err) {
+        logger.error('Error copying to clipboard:', err);
+        setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
+    }
+}
+
 // The copies read the board and the analysis on screen, never the database:
 // they work with no database open (the Eval panel's scratch board).
 export function copyPosition() {
@@ -69,10 +90,8 @@ export function copyPosition() {
         )
     );
 
-    // On a scratch board (EVAL, EDIT) analysisStore describes ANOTHER position:
-    // regenerate the XGID from the board and carry nothing else.
     const scratchBoard = mode === 'EVAL' || mode === 'EDIT';
-    const xgid = !scratchBoard && analysis.xgid ? analysis.xgid : generateXGID(position);
+    const xgid = currentXGID();
 
     let clipboardContent = `XGID=${xgid}\n\n`;
 

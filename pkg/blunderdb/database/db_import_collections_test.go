@@ -15,6 +15,7 @@ import (
 // remapped and appended without duplicates, a living target left alone, a
 // second import of the same file changing nothing.
 func TestCommitImportDatabase_Collections(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	dir := t.TempDir()
 

@@ -91,6 +91,7 @@ func halvesOfFirstRound(t *testing.T, d *Database, tID int64) map[string]int {
 // Seeded, the best and the second are in opposite halves. That is the whole point of the
 // classical placement, and the only thing an organiser who asks for seeds is asking for.
 func TestSeeding_TheBestTwoAreInOppositeHalves(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := ratedBracket(t, d, 16, tournoi.SeedingRating)
 
@@ -133,6 +134,7 @@ func TestSeeding_TheBestTwoAreInOppositeHalves(t *testing.T) {
 // Off — the default — the draw is what it always was: the seed of the Direction decides it, and
 // the ratings change nothing.
 func TestSeeding_OffIsTheDrawOfBefore(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	plain := ratedBracket(t, d, 16, "")
 	seeded := ratedBracket(t, d, 16, tournoi.SeedingRating)
@@ -164,6 +166,7 @@ func TestSeeding_OffIsTheDrawOfBefore(t *testing.T) {
 // Players with no rating are placed deterministically, and a replay gives the same bracket.
 // A tournament where half the entrants have no rating is the ordinary case in a club.
 func TestSeeding_UnratedPlayersAreDeterministic(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	build := func() int64 {
 		tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"POT-Creation-Date: 2026-10-22 13:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -553,10 +553,114 @@ msgstr ""
 "tags`` (см. :ref:`cli`)."
 
 #: ../../source/manuel_bibliotheque.rst:246
+msgid "Menu contextuel"
+msgstr "Контекстное меню"
+
+#: ../../source/manuel_bibliotheque.rst:248
+msgid ""
+"Un clic droit — ou la touche *MENU*, ou *MAJ-F10* sur la ligne focalisée "
+"— ouvre le même menu sur une position, qu'on la vise sur le plateau ou "
+"sur sa ligne dans une collection, et un menu de la même forme sur une "
+"ligne de la liste des matchs, des tournois ou des collections. Les deux "
+"gestes les plus courants sur une position, *Évaluer cette position* et "
+"*Copier l'image*, sont au premier niveau ; les autres sont rangés en "
+"sous-menus, marqués ▸ :"
+msgstr ""
+"Щелчок правой кнопкой — или клавиша *MENU*, или *SHIFT-F10* на строке с "
+"фокусом — открывает одно и то же меню на позиции, будь она выбрана на "
+"доске или на своей строке в коллекции, и меню той же формы на строке "
+"списка матчей, турниров или коллекций. Два самых частых действия над "
+"позицией, *Оценить эту позицию* и *Копировать изображение*, находятся на "
+"первом уровне; остальные собраны в подменю, отмеченные значком ▸:"
+
+#: ../../source/manuel_bibliotheque.rst:255
+msgid ""
+"**Copier / partager** : l'image (*CTRL-X*), l'XGID seul, la position et "
+"son analyse en texte (*CTRL-C*), l'image avec l'analyse, l'image "
+"enregistrée en SVG ou en PNG ; pour un match, son export ``.mat``."
+msgstr ""
+"**Копировать / поделиться**: изображение (*CTRL-X*), один только XGID, "
+"позиция и её анализ в виде текста (*CTRL-C*), изображение с анализом, "
+"изображение, сохранённое в SVG или PNG; для матча его экспорт ``.mat``."
+
+#: ../../source/manuel_bibliotheque.rst:258
+msgid ""
+"**Annoter** : *Commenter* ouvre le panneau Commentaires sur la position ;"
+" *Ajouter une étiquette #…* ouvre la ligne de commande sur ``#``, et "
+"*ENTRÉE* ajoute les étiquettes comme la commande ``#`` (voir :ref:`tags`)"
+" ; *Marquer vue* et *Démarquer* posent ou retirent la marque de la file "
+"d'étude."
+msgstr ""
+"**Аннотировать**: *Комментировать* открывает панель комментариев на "
+"позиции; *Добавить #метку…* открывает командную строку на ``#``, а "
+"*ENTER* добавляет метки, как команда ``#`` (см. :ref:`tags`); *Отметить "
+"как просмотренную* и *Снять отметку* ставят или снимают отметку очереди "
+"изучения."
+
+#: ../../source/manuel_bibliotheque.rst:262
+msgid ""
+"**Naviguer** : *Positions voisines*, *Positions de même structure* (la "
+"recherche par structure sur le plateau entier), *Nouvelle vue*."
+msgstr ""
+"**Перейти**: *Соседние позиции*, *Позиции той же структуры* (поиск по "
+"структуре на всей доске), *Новый вид*."
+
+#: ../../source/manuel_bibliotheque.rst:264
+msgid ""
+"**Analyser** : évaluer la position, son miroir, ou dans un nouvel onglet "
+"; *Rollout rapide* et *Rollout standard*, comme ``ro fast`` et ``ro "
+"standard`` (voir :ref:`rollouts`)."
+msgstr ""
+"**Анализ**: оценить позицию, её зеркальный образ или в новой вкладке; "
+"*Быстрый роллаут* и *Стандартный роллаут*, как ``ro fast`` и ``ro "
+"standard`` (см. :ref:`rollouts`)."
+
+#: ../../source/manuel_bibliotheque.rst:267
+msgid ""
+"**S'entraîner** : ajouter la position à un paquet Anki ; *Défi sur cette "
+"position* active le défi (*m*), qui masque l'analyse."
+msgstr ""
+"**Тренировка**: добавить позицию в колоду Anki; *Вызов на этой позиции* "
+"включает вызов (*m*), скрывающий анализ."
+
+#: ../../source/manuel_bibliotheque.rst:269
+msgid ""
+"**Gérer** : *Enregistrer* (*CTRL-S*) le brouillon du plateau de recherche"
+" ou d'Eval, *Mettre à la corbeille* (*SUPPR*) une position de la base ; "
+"pour un match, éditer sa transcription, intervertir les joueurs, le "
+"modifier ou le mettre à la corbeille ; pour un tournoi, le modifier ou le"
+" supprimer ; pour une collection, la modifier ou la mettre à la "
+"corbeille."
+msgstr ""
+"**Управление**: *Сохранить* (*CTRL-S*) черновик доски поиска или Eval, "
+"*Переместить в корзину* (*Del*) позицию базы; для матча — править его "
+"запись, поменять игроков местами, изменить его или переместить в корзину;"
+" для турнира — изменить или удалить его; для коллекции — изменить её или "
+"переместить в корзину."
+
+#: ../../source/manuel_bibliotheque.rst:275
+msgid ""
+"Seules les actions qui s'appliquent sont proposées : un brouillon ne "
+"s'annote pas et ne va pas à la corbeille, le plateau de recherche ne "
+"s'évalue pas, une position absente de la base n'entre dans aucun paquet "
+"Anki, et un sous-menu sans action disparaît. Le raccourci d'une action, "
+"quand elle en a un, est écrit à sa droite. Au clavier, *HAUT* et *BAS* "
+"parcourent un niveau, *DROITE* ouvre le sous-menu sur sa première action,"
+" *GAUCHE* y revient, *ÉCHAP* ferme le sous-menu puis le menu."
+msgstr ""
+"Предлагаются только применимые действия: черновик не аннотируется и не "
+"отправляется в корзину, доска поиска не оценивается, позиция, "
+"отсутствующая в базе, не попадает ни в одну колоду Anki, а подменю без "
+"действий исчезает. Сочетание клавиш действия, если оно есть, пишется "
+"справа от него. С клавиатуры *ВВЕРХ* и *ВНИЗ* перемещаются по уровню, "
+"*ВПРАВО* открывает подменю на его первом действии, *ВЛЕВО* возвращает "
+"назад, *ESC* закрывает подменю, а затем меню."
+
+#: ../../source/manuel_bibliotheque.rst:286
 msgid "La corbeille"
 msgstr "Корзина"
 
-#: ../../source/manuel_bibliotheque.rst:248
+#: ../../source/manuel_bibliotheque.rst:288
 msgid ""
 "Supprimer une position, une collection, un commentaire, une carte Anki ou"
 " un match passe par une **corbeille** : la suppression a bien lieu, mais "
@@ -570,7 +674,7 @@ msgstr ""
 "списком, где для каждого элемента есть *Восстановить* и *Удалить*, а "
 "также кнопка *Очистить корзину*."
 
-#: ../../source/manuel_bibliotheque.rst:254
+#: ../../source/manuel_bibliotheque.rst:294
 msgid ""
 "Une position restaurée revient avec **son analyse et ses commentaires** —"
 " la rendre nue serait une restauration de nom seulement —, sa marque « "
@@ -593,7 +697,7 @@ msgstr ""
 "она получает новый. Коллекция возвращается со своим списком; позиции, "
 "которые она содержала, никогда не удалялись — коллекция лишь вид на них."
 
-#: ../../source/manuel_bibliotheque.rst:264
+#: ../../source/manuel_bibliotheque.rst:304
 msgid ""
 "Un match supprimé emporte ses parties, ses coups, leurs analyses et les "
 "positions que plus rien d'autre ne retient, avec les notes venues du "
@@ -627,7 +731,7 @@ msgstr ""
 "отпечатком файла; матч без отпечатка, введённый вручную или сыгранный в "
 "blunderDB, так не сравнивается."
 
-#: ../../source/manuel_bibliotheque.rst:280
+#: ../../source/manuel_bibliotheque.rst:320
 msgid ""
 "Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, "
 "jamais à l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout "
@@ -636,16 +740,16 @@ msgstr ""
 "Всё старше тридцати дней удаляет команда ``vacuum``, а не открытие базы: "
 "не делать ``vacuum`` — значит хранить всё."
 
-#: ../../source/manuel_bibliotheque.rst:283
+#: ../../source/manuel_bibliotheque.rst:323
 msgid "La corbeille ne voyage pas : un export ne l'emporte pas."
 msgstr "Корзина не путешествует: экспорт её не переносит."
 
-#: ../../source/manuel_bibliotheque.rst:288
-#: ../../source/manuel_bibliotheque.rst:296
+#: ../../source/manuel_bibliotheque.rst:328
+#: ../../source/manuel_bibliotheque.rst:336
 msgid "Panneau Recherche"
 msgstr "Панель поиска"
 
-#: ../../source/manuel_bibliotheque.rst:290
+#: ../../source/manuel_bibliotheque.rst:330
 msgid ""
 "Le panneau **Recherche** (*CTRL-F* ou *TAB*) permet de filtrer les "
 "positions selon des critères combinables librement : structure de pions, "
@@ -660,7 +764,7 @@ msgstr ""
 "поиска и редактор позиций, позволяя задать структуру шашек "
 "непосредственно на доске."
 
-#: ../../source/manuel_bibliotheque.rst:300
+#: ../../source/manuel_bibliotheque.rst:340
 msgid ""
 "Le panneau Recherche : filtres numériques, structure de pions au plateau,"
 " onglets *Au moins* / *Sauf*."
@@ -668,7 +772,7 @@ msgstr ""
 "Панель Поиска: числовые фильтры, структура шашек на доске, вкладки *Не "
 "менее* / *Кроме*."
 
-#: ../../source/manuel_bibliotheque.rst:303
+#: ../../source/manuel_bibliotheque.rst:343
 msgid ""
 "Les filtres se règlent dans le sous-onglet **Critères**. Quand une "
 "recherche ne trouve rien, le panneau l'affiche (« Aucune position ne "
@@ -679,7 +783,7 @@ msgstr ""
 "панель сообщает об этом («Ни одна позиция не подходит») и показывает "
 "кнопку **Очистить фильтры**, а не ограничивается строкой состояния."
 
-#: ../../source/manuel_bibliotheque.rst:307
+#: ../../source/manuel_bibliotheque.rst:347
 msgid ""
 "Pour chercher parmi les positions affichées, utiliser la commande ``ss`` "
 "suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la "
@@ -703,7 +807,7 @@ msgstr ""
 "отклоняется: он искал бы по всей библиотеке и заменил бы показанный "
 "список."
 
-#: ../../source/manuel_bibliotheque.rst:318
+#: ../../source/manuel_bibliotheque.rst:358
 msgid ""
 "Les résultats d'une recherche ``ss`` lancée depuis une collection ou un "
 "match se quittent avec *Esc*, en un seul appui dès que ni un champ ni le "
@@ -722,7 +826,7 @@ msgstr ""
 "запущенный из панели поиска, открытой над коллекцией или матчем, ищет по "
 "всей библиотеке, и *Esc* больше не возвращает к оставленному списку."
 
-#: ../../source/manuel_bibliotheque.rst:327
+#: ../../source/manuel_bibliotheque.rst:367
 msgid ""
 "Une recherche sur une grande base se montre avant d'être comptée : la "
 "première page de résultats s'affiche aussitôt, et la barre d'état indique"
@@ -741,7 +845,7 @@ msgstr ""
 " поиск и останавливает его просмотр базы; если первая страница уже "
 "показана, она остаётся одна, и строка состояния сообщает об этом."
 
-#: ../../source/manuel_bibliotheque.rst:335
+#: ../../source/manuel_bibliotheque.rst:375
 msgid ""
 "Le panneau propose un contrôle explicite du **type de décision** "
 "recherché : *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou "
@@ -762,7 +866,7 @@ msgstr ""
 "наоборот. В режиме *Тейк / Пас* куб отображается в центре доски на "
 "предложенном значении; это значение остаётся редактируемым."
 
-#: ../../source/manuel_bibliotheque.rst:344
+#: ../../source/manuel_bibliotheque.rst:384
 msgid ""
 "La **phase de partie** — ouverture, milieu de partie, course, sortie des "
 "pions — est une étiquette calculée par blunderDB à partir du plateau "
@@ -784,7 +888,7 @@ msgstr ""
 "ещё в дебюте, пока ни одна из сторон не сдвинула более четырёх шашек с "
 "исходных пунктов, ни одна не снята и ни одна не стоит на баре."
 
-#: ../../source/manuel_bibliotheque.rst:354
+#: ../../source/manuel_bibliotheque.rst:394
 msgid ""
 "L'étiquette est recalculée par la commande ``blunderdb repair``. Sur une "
 "base ouverte pour la première fois avec cette version, le calcul est fait"
@@ -797,7 +901,7 @@ msgstr ""
 "которой никогда не вычислялись, не возвращает ничего для ``ph:`` — "
 "ничего, а не ложный ответ."
 
-#: ../../source/manuel_bibliotheque.rst:359
+#: ../../source/manuel_bibliotheque.rst:399
 msgid ""
 "Le jeton ``like`` **classe** au lieu de restreindre : sa présence ordonne"
 " le résultat par distance croissante à une position cible — ``like`` la "
@@ -815,7 +919,7 @@ msgstr ""
 "транспортное расстояние в шашко-пипсах, объём движения шашек, разделяющий"
 " две позиции, с точки зрения игрока на ходу."
 
-#: ../../source/manuel_bibliotheque.rst:367
+#: ../../source/manuel_bibliotheque.rst:407
 msgid ""
 "Une voisine est le même **problème**, pas le même dessin : le classement "
 "se prend dans la classe de la cible — même type de décision, même régime "
@@ -840,7 +944,7 @@ msgstr ""
 "Упорядочивание, ничего не нашедшее, возвращает пустой список и сообщает "
 "об этом, а не десять несвязанных позиций."
 
-#: ../../source/manuel_bibliotheque.rst:378
+#: ../../source/manuel_bibliotheque.rst:418
 msgid ""
 "En mode **édition**, ``s like`` prend pour cible le plateau **dessiné** :"
 " on dessine à peu près la position dont on se souvient, on lance, et la "
@@ -857,7 +961,7 @@ msgstr ""
 "оставленный пустым пункт считается выведенными шашками, что верно для "
 "настоящей позиции и искажает расчёт для наполовину нарисованной доски."
 
-#: ../../source/manuel_bibliotheque.rst:385
+#: ../../source/manuel_bibliotheque.rst:425
 msgid ""
 "Chaque voisine porte sa distance sous les tableaux d'analyse, avec la "
 "position dont elle est proche. C'est ce qui permet de juger si l'on "
@@ -872,7 +976,7 @@ msgstr ""
 "Упорядочивание запускается и без командной строки: *CTRL-SHIFT-L* или "
 "пункт **Соседние позиции** контекстного меню доски."
 
-#: ../../source/manuel_bibliotheque.rst:391
+#: ../../source/manuel_bibliotheque.rst:431
 msgid ""
 "Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions "
 "rencontrées au moins trois fois dans la base, tous matchs et tous joueurs"
@@ -897,7 +1001,7 @@ msgstr ""
 "трёх раз, а ``pl\"Alice\"`` — позиции матчей, которые она сыграла; "
 "``op\"Bob\"`` так же ограничивает подсчёт матчами против Bob."
 
-#: ../../source/manuel_bibliotheque.rst:403
+#: ../../source/manuel_bibliotheque.rst:443
 msgid ""
 "Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase,"
 " et elle répond à la question qu'un paquet de filtres sauvegardés ne sait"
@@ -911,7 +1015,7 @@ msgstr ""
 "gt:mutualholding``), с точки зрения **игрока на ходу** — того плана, в "
 "котором принималось решение."
 
-#: ../../source/manuel_bibliotheque.rst:409
+#: ../../source/manuel_bibliotheque.rst:449
 msgid ""
 "Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus "
 "spécifique au plus général :"
@@ -919,7 +1023,7 @@ msgstr ""
 "Десять распознаваемых планов, в порядке, в каком правила их разбирают, от"
 " самого частного к самому общему:"
 
-#: ../../source/manuel_bibliotheque.rst:412
+#: ../../source/manuel_bibliotheque.rst:452
 msgid ""
 "``race`` — les pions les plus arriérés des deux camps se sont croisés : "
 "aucun contact n'est plus possible. Frontière de GNU Backgammon."
@@ -927,7 +1031,7 @@ msgstr ""
 "``race`` — самые задние шашки обеих сторон разошлись: контакт больше "
 "невозможен. Граница GNU Backgammon."
 
-#: ../../source/manuel_bibliotheque.rst:414
+#: ../../source/manuel_bibliotheque.rst:454
 msgid ""
 "``bearin`` — le joueur au trait rentre ses pions alors que l'adversaire "
 "tient encore une ancre dans son jan."
@@ -935,7 +1039,7 @@ msgstr ""
 "``bearin`` — игрок на ходу заводит шашки домой, пока соперник ещё держит "
 "якорь в его доме."
 
-#: ../../source/manuel_bibliotheque.rst:416
+#: ../../source/manuel_bibliotheque.rst:456
 msgid ""
 "``crunch`` — le joueur au trait a au plus six pions hors de ses points 1 "
 "et 2. Règle de GNU Backgammon, seuil de son auteur."
@@ -943,11 +1047,11 @@ msgstr ""
 "``crunch`` — у игрока на ходу не более шести шашек вне его пунктов 1 и 2."
 " Правило GNU Backgammon, порог его автора."
 
-#: ../../source/manuel_bibliotheque.rst:418
+#: ../../source/manuel_bibliotheque.rst:458
 msgid "``backgame`` — deux ancres ou plus dans le jan adverse."
 msgstr "``backgame`` — два и более якоря в доме соперника."
 
-#: ../../source/manuel_bibliotheque.rst:419
+#: ../../source/manuel_bibliotheque.rst:459
 msgid ""
 "``acepoint`` — une seule ancre, sur le point 1 adverse, avec au moins "
 "vingt pions de retard."
@@ -955,7 +1059,7 @@ msgstr ""
 "``acepoint`` — единственный якорь, на первом пункте соперника, при "
 "отставании не менее двадцати пипсов."
 
-#: ../../source/manuel_bibliotheque.rst:421
+#: ../../source/manuel_bibliotheque.rst:461
 msgid ""
 "``blitz`` — trois points du jan faits ou plus, et l'adversaire à la barre"
 " ou avec un blot à frapper dans ce jan."
@@ -963,7 +1067,7 @@ msgstr ""
 "``blitz`` — сделано три и более пункта дома, и соперник на баре или с "
 "блотом под удар в этом доме."
 
-#: ../../source/manuel_bibliotheque.rst:423
+#: ../../source/manuel_bibliotheque.rst:463
 msgid ""
 "``primevprime`` — les deux camps tiennent une amorce d'au moins quatre "
 "points, et chacun a un pion enfermé derrière celle de l'autre."
@@ -971,21 +1075,21 @@ msgstr ""
 "``primevprime`` — обе стороны держат прайм не менее чем из четырёх "
 "пунктов, и у каждой есть шашка, запертая за праймом другой."
 
-#: ../../source/manuel_bibliotheque.rst:425
+#: ../../source/manuel_bibliotheque.rst:465
 msgid "``mutualholding`` — les deux camps tiennent une ancre haute."
 msgstr "``mutualholding`` — обе стороны держат высокий якорь."
 
-#: ../../source/manuel_bibliotheque.rst:426
+#: ../../source/manuel_bibliotheque.rst:466
 msgid "``holding`` — le joueur au trait tient une ancre haute, l'adversaire non."
 msgstr "``holding`` — игрок на ходу держит высокий якорь, соперник — нет."
 
-#: ../../source/manuel_bibliotheque.rst:427
+#: ../../source/manuel_bibliotheque.rst:467
 msgid ""
 "``contact`` — contact, et aucun des plans ci-dessus. L'ouverture atterrit"
 " ici."
 msgstr "``contact`` — контакт, и ни один из планов выше. Дебют попадает сюда."
 
-#: ../../source/manuel_bibliotheque.rst:429
+#: ../../source/manuel_bibliotheque.rst:469
 msgid ""
 "Trois de ces règles sont celles de GNU Backgammon et sont sourcées ; les "
 "autres sont des **conventions de blunderDB**. La littérature du "
@@ -1006,7 +1110,7 @@ msgstr ""
 "здесь, а не спрятаны в коде, и они версионированы: измените их, запустите"
 " ``blunderdb repair``, и вся база будет размечена заново."
 
-#: ../../source/manuel_bibliotheque.rst:438
+#: ../../source/manuel_bibliotheque.rst:478
 msgid ""
 "Une seule étiquette est conservée par position, celle du joueur au trait."
 " Une étiquette dérivée n'est jamais modifiable, jamais exportée comme une"
@@ -1018,7 +1122,7 @@ msgstr ""
 "база, планы которой ни разу не вычислялись, ничего не возвращает по "
 "``gt:`` — так же, как по ``ph:``."
 
-#: ../../source/manuel_bibliotheque.rst:443
+#: ../../source/manuel_bibliotheque.rst:483
 msgid ""
 "Le filtre **Marquée** retient les positions que vous avez marquées "
 "(*flag*) dans le logiciel d'origine du match. Seul eXtreme Gammon produit"
@@ -1035,7 +1139,7 @@ msgstr ""
 "и тейк/пас, поскольку blunderDB разделяет надвое то, что исходный файл "
 "записывает как одно решение."
 
-#: ../../source/manuel_bibliotheque.rst:450
+#: ../../source/manuel_bibliotheque.rst:490
 msgid ""
 "Le marquage n'est pas rétroactif : les matchs déjà présents dans la base "
 "ne portent pas cette information, puisqu'elle n'existe que dans les "
@@ -1053,7 +1157,7 @@ msgstr ""
 "поставить, ни снять из blunderDB: для временного рабочего списка "
 "используйте лучше коллекцию."
 
-#: ../../source/manuel_bibliotheque.rst:458
+#: ../../source/manuel_bibliotheque.rst:498
 msgid ""
 "Le filtre **Commentaire** interroge les commentaires attachés aux "
 "positions selon trois modes exclusifs. *contient le texte* recherche un "
@@ -1073,7 +1177,7 @@ msgstr ""
 "сочетании с фильтром по ошибке или дате, чтобы составить список того, что"
 " осталось прокомментировать."
 
-#: ../../source/manuel_bibliotheque.rst:466
+#: ../../source/manuel_bibliotheque.rst:506
 msgid ""
 "Les commentaires importés depuis un fichier de match (XG, GNUbg) comptent"
 " comme des commentaires. Pour ne retenir que les vôtres, ajoutez le jeton"
@@ -1090,7 +1194,7 @@ msgstr ""
 "*матчу* или *турниру*, здесь ни при чём: они комментируют матч или "
 "турнир, а не его позиции."
 
-#: ../../source/manuel_bibliotheque.rst:473
+#: ../../source/manuel_bibliotheque.rst:513
 msgid ""
 "Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre"
 " modale) plutôt que sur la saisie d'identifiants numériques : deux listes"
@@ -1111,7 +1215,7 @@ msgstr ""
 "отмечает (и делает неактивными) его матчи-участники в списке матчей, "
 "наглядно показывая, что турнир эквивалентен множеству своих матчей."
 
-#: ../../source/manuel_bibliotheque.rst:482
+#: ../../source/manuel_bibliotheque.rst:522
 msgid ""
 "La bande du panneau de recherche porte un sélecteur *Critères* (les "
 "filtres) | *Historique* | *Enregistrés* — avec un quatrième segment, "
@@ -1138,7 +1242,7 @@ msgstr ""
 "поиск (см. :ref:`annexe_filtres`). Команда ``history`` (псевдоним ``hi``)"
 " открывает панель поиска."
 
-#: ../../source/manuel_bibliotheque.rst:495
+#: ../../source/manuel_bibliotheque.rst:535
 msgid ""
 "L'étoile d'un filtre de la bibliothèque l'**épingle**. Les filtres "
 "épinglés s'affichent en pastilles en haut du panneau, quel que soit "
@@ -1159,7 +1263,7 @@ msgstr ""
 "Закрепление принадлежит базе: оно следует за переименованным фильтром, "
 "исчезает вместе с удалённым и не переносится при экспорте библиотеки."
 
-#: ../../source/manuel_bibliotheque.rst:504
+#: ../../source/manuel_bibliotheque.rst:544
 msgid ""
 "Une recherche relancée garde son classement : ``s like42`` classe contre "
 "la position 42, et ``s like`` contre le plateau enregistré avec la "
@@ -1173,18 +1277,18 @@ msgstr ""
 "Запись, в которой доска не сохранилась, не запускается против доски на "
 "экране, и строка состояния сообщает об этом."
 
-#: ../../source/manuel_bibliotheque.rst:510
+#: ../../source/manuel_bibliotheque.rst:550
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste des "
 "filtres disponibles."
 msgstr "Смотрите :ref:`список команд <cmd_mode>` для списка доступных фильтров."
 
-#: ../../source/manuel_bibliotheque.rst:516
-#: ../../source/manuel_bibliotheque.rst:518
+#: ../../source/manuel_bibliotheque.rst:556
+#: ../../source/manuel_bibliotheque.rst:558
 msgid "Panneau Collections"
 msgstr "Панель коллекций"
 
-#: ../../source/manuel_bibliotheque.rst:522
+#: ../../source/manuel_bibliotheque.rst:562
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
@@ -1192,7 +1296,7 @@ msgstr ""
 "Панель Коллекций: название, число позиций, описание, дата последнего "
 "изменения."
 
-#: ../../source/manuel_bibliotheque.rst:525
+#: ../../source/manuel_bibliotheque.rst:565
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1210,7 +1314,7 @@ msgstr ""
 "матчей значок ⌨ открывает транскрипцию матча, а значок ✎ исправляет его "
 "метаданные."
 
-#: ../../source/manuel_bibliotheque.rst:533
+#: ../../source/manuel_bibliotheque.rst:573
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1232,7 +1336,7 @@ msgstr ""
 "и позиций внутри коллекции меняется перетаскиванием. Нажмите *CTRL-B* или"
 " выполните команду ``collection``, чтобы показать или скрыть панель."
 
-#: ../../source/manuel_bibliotheque.rst:544
+#: ../../source/manuel_bibliotheque.rst:584
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1244,7 +1348,7 @@ msgstr ""
 "добавляет или убирает показанную позицию. Пустой список предлагает **+ "
 "Новая коллекция**."
 
-#: ../../source/manuel_bibliotheque.rst:549
+#: ../../source/manuel_bibliotheque.rst:589
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1276,7 +1380,7 @@ msgstr ""
 "отдельно, а затем кладётся в Стопку. Командная строка делает тот же жест "
 "командой ``collection pile``."
 
-#: ../../source/manuel_bibliotheque.rst:562
+#: ../../source/manuel_bibliotheque.rst:602
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1293,7 +1397,7 @@ msgstr ""
 "список. Ничего не разрушается: позиции, которые она содержала, останутся "
 "на месте при возврате."
 
-#: ../../source/manuel_bibliotheque.rst:569
+#: ../../source/manuel_bibliotheque.rst:609
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1306,7 +1410,7 @@ msgstr ""
 " поиска, а запрос стирается. Позиции, которые она содержала до того, как "
 "стала живой, заменяются."
 
-#: ../../source/manuel_bibliotheque.rst:574
+#: ../../source/manuel_bibliotheque.rst:614
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1318,7 +1422,7 @@ msgstr ""
 "вернуть всю базу. Это единственная поломка, которой не должно быть у "
 "сохранённого фильтра: молча расшириться."
 
-#: ../../source/manuel_bibliotheque.rst:579
+#: ../../source/manuel_bibliotheque.rst:619
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1338,7 +1442,7 @@ msgstr ""
 "если какой-либо из них остаётся вне файла, коллекция выгружается "
 "**замороженной**, с позициями, которые запрос выбирает в момент экспорта."
 
-#: ../../source/manuel_bibliotheque.rst:588
+#: ../../source/manuel_bibliotheque.rst:628
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1356,7 +1460,7 @@ msgstr ""
 "порядке поиска, и строка состояния сообщает об этом вместе с реальным "
 "числом выбранных позиций."
 
-#: ../../source/manuel_bibliotheque.rst:598
+#: ../../source/manuel_bibliotheque.rst:638
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1373,7 +1477,7 @@ msgstr ""
 " учащие в отношении остальных; опорная позиция находится в центре "
 "нескольких ваших ошибок со схожей структурой, и её урок служит всем."
 
-#: ../../source/manuel_bibliotheque.rst:605
+#: ../../source/manuel_bibliotheque.rst:645
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1387,7 +1491,7 @@ msgstr ""
 "не превышает 12 шагов шашек; у ошибки с кубом соседние только ошибки с "
 "тем же счётом."
 
-#: ../../source/manuel_bibliotheque.rst:609
+#: ../../source/manuel_bibliotheque.rst:649
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1405,7 +1509,7 @@ msgstr ""
 "каждой строки — покрытая MWC; причина указывает значение, которое "
 "учитывается, когда урок считается за половину."
 
-#: ../../source/manuel_bibliotheque.rst:616
+#: ../../source/manuel_bibliotheque.rst:656
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1419,7 +1523,7 @@ msgstr ""
 "комментарием, в коллекции, карточка Anki или помеченная «изучена» — "
 "никогда не предлагается, а её соседи считаются покрытыми."
 
-#: ../../source/manuel_bibliotheque.rst:622
+#: ../../source/manuel_bibliotheque.rst:662
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1442,11 +1546,11 @@ msgstr ""
 "**колоду Anki** или **викторину**. В командной строке: ``blunderdb "
 "collection suggest`` (см. :ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:635
+#: ../../source/manuel_bibliotheque.rst:675
 msgid "Leçons"
 msgstr "Уроки"
 
-#: ../../source/manuel_bibliotheque.rst:637
+#: ../../source/manuel_bibliotheque.rst:677
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1462,7 +1566,7 @@ msgstr ""
 "уроки базы в строке состояния; ``le 2`` открывает урок 2; ``le edit`` "
 "открывает редактор уроков."
 
-#: ../../source/manuel_bibliotheque.rst:644
+#: ../../source/manuel_bibliotheque.rst:684
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1477,7 +1581,7 @@ msgstr ""
 " обычными жестами. *Закрыть* завершает урок. Шаг, коллекция или позиция "
 "которого удалена, сохраняет свой текст."
 
-#: ../../source/manuel_bibliotheque.rst:651
+#: ../../source/manuel_bibliotheque.rst:691
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1495,7 +1599,7 @@ msgstr ""
 " ни один экспорт её не переносит. Импорт файла, содержащего урок, создаёт"
 " его; уже имеющийся урок с тем же именем не затрагивается."
 
-#: ../../source/manuel_bibliotheque.rst:659
+#: ../../source/manuel_bibliotheque.rst:699
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1532,7 +1636,7 @@ msgstr ""
 "позиции, которые они показывали. Уроки можно также создавать и изменять "
 "из командной строки или через API (:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:676
+#: ../../source/manuel_bibliotheque.rst:716
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
@@ -1550,4 +1654,3 @@ msgstr ""
 "знак или быть защищён паролем (``.dbx``), как любой экспорт. Без этого "
 "флажка частичный экспорт (выборка позиций, коллекций или матчей) уроки не"
 " уносит."
-

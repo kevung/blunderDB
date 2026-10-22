@@ -108,6 +108,7 @@ func repairProposals(v *DirectionView) []tournoi.Action {
 }
 
 func TestDirectionRepair_ProposedAfterACorrection(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := bracketDirection(t, d, 8)
 	// Quarter-finals, then semi-finals: the semis are now built on the quarters' results.
@@ -149,6 +150,7 @@ func TestDirectionRepair_ProposedAfterACorrection(t *testing.T) {
 // Confirming nothing changes nothing: no cancellation is applied on the director's behalf. They
 // may well prefer to leave the bracket as it was played and note it by hand.
 func TestDirectionRepair_ConfirmingNothingChangesNothing(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := bracketDirection(t, d, 8)
 	playOneRound(t, d, tID)
@@ -178,6 +180,7 @@ func TestDirectionRepair_ConfirmingNothingChangesNothing(t *testing.T) {
 
 // Confirming the whole repair makes the warning disappear.
 func TestDirectionRepair_ConfirmingItAllClearsTheWarning(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := bracketDirection(t, d, 8)
 	playOneRound(t, d, tID)

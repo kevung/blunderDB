@@ -15,6 +15,7 @@ import (
 // pass and pressing `t` must REPLACE it (not insert before it), the game goes
 // on, and the following game's typing stays where it is.
 func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7, Player1: "Kévin", Player2: "Alice"})
 	if err != nil {
@@ -110,6 +111,7 @@ func TestTranscriptionCorrectAPassIntoATake(t *testing.T) {
 // said, and saying it again must decide again — through the binding, where the
 // entry is loaded by the Cursor and the validation replaces in place.
 func TestTranscriptionFirstPlayRetypedDecidesWhoStarts(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {

@@ -20,6 +20,7 @@ func openTemp(t *testing.T, name string) (*Database, string) {
 }
 
 func TestExchange_SwapsTheOpenLibrary(t *testing.T) {
+	t.Parallel()
 	bound, pathA := openTemp(t, "a.db")
 	parked, pathB := openTemp(t, "b.db")
 	pos := initialPosition()
@@ -59,6 +60,7 @@ func TestExchange_SwapsTheOpenLibrary(t *testing.T) {
 }
 
 func TestExchange_RefusesWhileAnImportHoldsEitherSide(t *testing.T) {
+	t.Parallel()
 	bound, _ := openTemp(t, "a.db")
 	parked, _ := openTemp(t, "b.db")
 	_, done := parked.beginCancellableImport()
@@ -74,6 +76,7 @@ func TestExchange_RefusesWhileAnImportHoldsEitherSide(t *testing.T) {
 }
 
 func TestOpenPath_FollowsOpenAndClose(t *testing.T) {
+	t.Parallel()
 	d, path := openTemp(t, "a.db")
 	if OpenPath(d) != path {
 		t.Fatalf("OpenPath = %q, want %q", OpenPath(d), path)
@@ -96,6 +99,7 @@ func TestOpenPath_FollowsOpenAndClose(t *testing.T) {
 // Exchange, or part of the handle. A new field fails here until it is placed:
 // left out of Exchange by mistake, it would follow the wrong file.
 func TestExchange_EveryFieldIsPlaced(t *testing.T) {
+	t.Parallel()
 	library := map[string]bool{
 		"db": true, "store": true, "lock": true, "readOnly": true, "path": true,
 		"transcriptSvc": true, "transcriptOn": true, "duelSvc": true, "duelOn": true, "duelBoard": true,
@@ -131,6 +135,7 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 // on either handle: it would begin on one library and write into the next.
 // The before-switch hook runs inside that window.
 func TestExchange_NoJobStartsDuringTheSwap(t *testing.T) {
+	t.Parallel()
 	bound, pathA := openTemp(t, "a.db")
 	parked, _ := openTemp(t, "b.db")
 	var jobErr, parkedJobErr error
@@ -167,6 +172,7 @@ func TestExchange_NoJobStartsDuringTheSwap(t *testing.T) {
 }
 
 func TestOpenGuard_RefusesBeforeTouchingTheOpenFile(t *testing.T) {
+	t.Parallel()
 	d, path := openTemp(t, "a.db")
 	refused := errors.New("held elsewhere")
 	other := filepath.Join(t.TempDir(), "b.db")

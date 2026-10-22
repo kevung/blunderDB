@@ -33,6 +33,7 @@ func fundedDirection(t *testing.T, d *Database, n int, prizes string) int64 {
 
 // The acceptance case: 24 players at 20, 10 % retained, 50/30/20.
 func TestPrizes_TheNumbersAddUp(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := fundedDirection(t, d, 24, `{"entry_fee":20,"retention":{"percent":10},
 		"sections":{"all":{"percents":[50,30,20]}}}`)
@@ -78,6 +79,7 @@ func TestPrizes_TheNumbersAddUp(t *testing.T) {
 // The pool follows entries and withdrawals with no intervention: it is derived, like everything
 // else. Everyone who entered counts, withdrawn included — they paid.
 func TestPrizes_ThePoolFollowsTheEntries(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := fundedDirection(t, d, 8, `{"entry_fee":20,"sections":{"all":{"percents":[100]}}}`)
 
@@ -117,6 +119,7 @@ func TestPrizes_ThePoolFollowsTheEntries(t *testing.T) {
 
 // The consolation hands out its OWN scale on its OWN standings.
 func TestPrizes_TheConsolationHasItsOwn(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := fundedDirection(t, d, 8, `{"entry_fee":20,"sections":{
 		"main":{"percents":[60,20]},"conso":{"percents":[15,5]}}}`)
@@ -156,6 +159,7 @@ func TestPrizes_TheConsolationHasItsOwn(t *testing.T) {
 
 // The prizes travel in the CSV, which is what a director pastes into their accounts.
 func TestPrizes_TheCSVCarriesThem(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := fundedDirection(t, d, 8, `{"entry_fee":20,"sections":{"all":{"percents":[70,30]}}}`)
 	playToTheEnd(t, d, tID)

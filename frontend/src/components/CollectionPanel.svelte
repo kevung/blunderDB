@@ -11,7 +11,7 @@
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
     import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
-    import { positionStore, collectionSource } from '../stores/positionStore';
+    import { positionStore, positionsStore, collectionSource } from '../stores/positionStore';
     import { analysisStore } from '../stores/analysisStore';
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { get } from 'svelte/store';
@@ -38,6 +38,9 @@
     import { t, tMsg } from '../i18n';
     import { confirmAction } from '../services/confirmService.js';
     import PanelTable from './panels/PanelTable.svelte';
+    import { menuFor } from '../services/actionCatalog.js';
+    import { positionContext } from '../services/positionActions.js';
+    import { refreshStudied } from '../services/studyQueueService.js';
     import ReferenceSuggest from './ReferenceSuggest.svelte';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
@@ -403,7 +406,7 @@
      * @param {Event} event
      */
     async function deleteCollection(collection, event) {
-        event.stopPropagation();
+        event?.stopPropagation();
         try {
             // Through the trash: restorable from the `trash` command.
             await TrashCollection(collection.id);
@@ -536,6 +539,20 @@
         } catch (error) {
             logger.error('Error removing position:', error);
         }
+    }
+
+    /**
+     * A position row's menu acts on the position on the board, as the board's own menu does: the
+     * row is displayed first, as a click displays it.
+     * @param {PositionRow} row
+     * @param {number} index
+     */
+    function positionRowMenu(row, index) {
+        // The actions that name the current position read it in the list on screen: a row that
+        // is not at its index there would have them act on another one.
+        if (!row?.id || positionsStore.idAt(index) !== row.id) return [];
+        if ($currentPositionIndexStore !== index || $positionStore?.id !== row.id) navigateToPosition(row, index);
+        return menuFor('position', positionContext({ positionId: row.id }), $t);
     }
 
     /**
@@ -709,6 +726,10 @@
                 rowClass={(collection) => (positionCollectionIds.includes(collection.id) ? 'in-collection' : '')}
                 onSelect={(collection, _index, e) => togglePositionInCollection(collection.id, e)}
                 onActivate={(collection) => openCollection(collection)}
+                rowMenu={(collection) =>
+                    collectionEdit.isEditing(collection.id)
+                        ? []
+                        : menuFor('collection', { do: { open: () => openCollection(collection), edit: () => startEditing(collection), trash: () => deleteCollection(collection, undefined) } }, $t)}
                 onReorder={collectionOrder.reorder}
                 rowAttrs={(collection) =>
                     libraryDragAttrs(() => (collectionEdit.isEditing(collection.id) ? null : { group: $activeGroupId, kind: 'collection', id: collection.id, label: collection.name }))}
@@ -848,6 +869,8 @@
                 columns={positionColumns}
                 rowClass={(_position, index) => [$currentPositionIndexStore === index ? 'current' : '', selectedPositionIndices.has(index) ? 'multi-selected' : ''].join(' ')}
                 onSelect={(_position, index, e) => selectAndDisplayPosition(index, e)}
+                rowMenu={positionRowMenu}
+                rowMenuSettled={(row) => refreshStudied(row.id)}
                 onReorder={handlePositionReorder}
                 rowAttrs={(position) => libraryDragAttrs(() => (position?.id ? { group: $activeGroupId, kind: 'position', id: position.id, label: `#${position.id}` } : null))}
                 emptyText={$t('collection.emptyCollection')}

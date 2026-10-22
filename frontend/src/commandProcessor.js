@@ -72,11 +72,17 @@ export function processCommand(command) {
             .split(/\s+/)
             .filter(Boolean)
             .map((/** @type {string} */ w) => '#' + w.replace(/^#+/, ''))
-            .filter((/** @type {string} */ t) => t.length > 1)
-            .join(' ');
-        if (!tags) return;
-        insertTags(tags);
-        statusBarTextStore.set(tMsg('commands.tagsAdded', { tags }));
+            .map(trimTagPunctuation)
+            .filter((/** @type {string} */ t) => t.length > 1);
+        if (tags.length === 0) return;
+        // ';' separates tags in the search grammar: a tag holding one could be
+        // written but never found again.
+        if (tags.some((/** @type {string} */ t) => t.includes(';'))) {
+            statusBarTextStore.set(tMsg('commands.tagInvalid'));
+            return;
+        }
+        const added = insertTags(tags);
+        statusBarTextStore.set(added.length > 0 ? tMsg('commands.tagsAdded', { tags: added.join(' ') }) : tMsg('commands.tagsAlreadyPresent', { tags: tags.join(' ') }));
     } else if (command === 'new' || command === 'ne' || command === 'n') {
         callbacks.onNewDatabase?.();
     } else if (command === 'open' || command === 'op' || command === 'o') {
@@ -306,18 +312,33 @@ export function parseFilters(filters, command) {
     return parseSearchTokens(filters, command);
 }
 
-/** @param {string} tags */
+/**
+ * Same rule as `ExtractTags` (domain/tags.go): trailing punctuation is not part
+ * of a tag, so `#blitz.` and `#blitz` are one.
+ * @param {string} tag
+ */
+function trimTagPunctuation(tag) {
+    return tag.replace(/[.,;:!?)\]}"']+$/, '');
+}
+
+/**
+ * @param {string[]} tags
+ * @returns {string[]} the tags actually written (those the comment lacked).
+ */
 function insertTags(tags) {
+    /** @type {string[]} */
+    let added = [];
     commentTextStore.update((text) => {
         // Tag search is case-insensitive, so `#Blunder` already holds `#blunder`.
-        const seen = new Set((text.match(/#[^\s#]+/g) || []).map((t) => t.toLowerCase()));
-        const newTags = tags.split(' ').filter((/** @type {string} */ tag) => {
+        const seen = new Set((text.match(/#[^\s#]+/g) || []).map((t) => trimTagPunctuation(t).toLowerCase()));
+        const newTags = tags.filter((/** @type {string} */ tag) => {
             const key = tag.toLowerCase();
             if (seen.has(key)) return false;
             seen.add(key);
             return true;
         });
         if (newTags.length === 0) return text;
+        added = newTags;
         const updatedText = `${newTags.join(' ')}\n${text}`;
         setTimeout(() => {
             const textAreaEl = document.getElementById('commentTextArea');
@@ -333,4 +354,5 @@ function insertTags(tags) {
         }
         return updatedText;
     });
+    return added;
 }

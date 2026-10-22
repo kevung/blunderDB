@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 12:05+0200\n"
+"POT-Creation-Date: 2026-10-22 13:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -261,10 +261,32 @@ msgstr "Δεξί κλικ έξω από τη σκακιέρα (επεξεργα�
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"ou *Position de départ*, puis les actions qui valent pour un brouillon "
+"(copier, évaluer, enregistrer)."
 msgstr ""
-"Άνοιγμα του μενού της σκακιέρας: *Εκκαθάριση θέσης*, όπως το BACKSPACE, ή"
-" *Αρχική θέση*."
+"Άνοιγμα του μενού του πίνακα: *Εκκαθάριση θέσης*, όπως το BACKSPACE, ή "
+"*Αρχική θέση*, και μετά οι ενέργειες που ισχύουν για ένα πρόχειρο "
+"(αντιγραφή, αξιολόγηση, αποθήκευση)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Clic droit sur le plateau ou sur une ligne de liste ; MENU, MAJ-F10 sur "
+"la ligne focalisée"
+msgstr ""
+"Δεξί κλικ στον πίνακα ή σε γραμμή λίστας· MENU, SHIFT-F10 στη γραμμή που "
+"έχει την εστίαση"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu contextuel de la position, du match, du tournoi ou de la "
+"collection (voir :ref:`menu contextuel <menu_contextuel_actions>`). "
+"HAUT/BAS parcourent un niveau, DROITE ouvre un sous-menu sur sa première "
+"action, GAUCHE y revient, ÉCHAP ferme le sous-menu puis le menu."
+msgstr ""
+"Άνοιγμα του μενού περιβάλλοντος της θέσης, του αγώνα, του τουρνουά ή της "
+"συλλογής (βλ. :ref:`μενού περιβάλλοντος <menu_contextuel_actions>`). "
+"ΠΆΝΩ/ΚΆΤΩ διατρέχουν ένα επίπεδο, ΔΕΞΙΆ ανοίγει υπομενού στην πρώτη του "
+"ενέργεια, ΑΡΙΣΤΕΡΆ επιστρέφει, ESC κλείνει το υπομενού και μετά το μενού."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup joué au plateau)"
@@ -278,7 +300,7 @@ msgstr ""
 "Επανάληψη ολόκληρης της κίνησης από την αρχή, με τη θέση αμετάβλητη. Όσο "
 "δεν έχει παιχτεί κανένα βήμα, το μενού του ταμπλό ανοίγει κανονικά."
 
-#: ../../source/raccourcis.rst:59
+#: ../../source/raccourcis.rst:60
 msgid "Navigation"
 msgstr "Πλοήγηση"
 
@@ -387,7 +409,7 @@ msgstr ""
 "συλλογή ή αγώνα: επιστροφή στη συλλογή, ή στον αγώνα στην κίνηση που "
 "μελετάται."
 
-#: ../../source/raccourcis.rst:78
+#: ../../source/raccourcis.rst:79
 msgid ""
 "Tant qu'une question du :ref:`panneau Entraînement "
 "<panneau_entrainement>` est posée sur le plateau, les touches qui "
@@ -411,7 +433,7 @@ msgstr ""
 "απάντηση, το ENTER κάνει «Επόμενη», ή «Τέλος» αν δεν υπάρχει επόμενη "
 "ερώτηση."
 
-#: ../../source/raccourcis.rst:90
+#: ../../source/raccourcis.rst:91
 msgid "Affichage"
 msgstr "Εμφάνιση"
 
@@ -479,7 +501,7 @@ msgstr ""
 "Ενεργοποίηση/απενεργοποίηση της πρόκλησης: η ανάλυση του πίνακα Ανάλυση "
 "κρύβεται μέχρι ένα κλικ, σε κάθε θέση."
 
-#: ../../source/raccourcis.rst:108
+#: ../../source/raccourcis.rst:109
 msgid "Actions"
 msgstr "Ενέργειες"
 
@@ -507,7 +529,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Εκτέλεση του καρφιτσωμένου φίλτρου αυτής της θέσης στη βιβλιοθήκη φίλτρων."
 
-#: ../../source/raccourcis.rst:122
+#: ../../source/raccourcis.rst:123
 msgid "Outils"
 msgstr "Εργαλεία"
 

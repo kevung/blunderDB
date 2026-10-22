@@ -193,6 +193,18 @@ func (d *Database) SetPositionStudied(positionID int64, studied bool) error {
 	return d.store.ImportBatches().SetStudied(context.Background(), "", positionID, studied)
 }
 
+// IsPositionStudied reports whether the user's "studied" mark is on a position.
+func (d *Database) IsPositionStudied(positionID int64) (bool, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return false, fmt.Errorf("no database is currently open")
+	}
+	at, err := d.store.ImportBatches().StudyMark(context.Background(), "", positionID)
+	return at != 0, err
+}
+
 // ListImportBatches returns the recorded batches, most recent first, with the
 // counts stored at the end of each import (not the measured half — that is
 // ImportReport, one batch at a time).

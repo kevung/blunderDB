@@ -24,6 +24,7 @@ func runningMatch(t *testing.T, d *Database, tID int64) *tournoi.Match {
 // TestResultWinnerOnly: the winner is the only thing required. A director often writes "Alice
 // wins" and nothing else, and that is an ordinary result — not a half-filled form.
 func TestResultWinnerOnly(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -45,6 +46,7 @@ func TestResultWinnerOnly(t *testing.T) {
 // TestResultBeyondLengthIsAcceptedAndFlagged: during a tournament it is the director's word
 // that stands. An impossible score is recorded, and shown as a warning.
 func TestResultBeyondLengthIsAcceptedAndFlagged(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -77,6 +79,7 @@ func TestResultBeyondLengthIsAcceptedAndFlagged(t *testing.T) {
 // TestResultNoteTravels: the remark — "ran out of time" — is rare and irreplaceable when it
 // serves. It rides on the event and survives a replay.
 func TestResultNoteTravels(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -102,6 +105,7 @@ func TestResultNoteTravels(t *testing.T) {
 // TestForfeitKeepsThePlayer: a forfeit for THIS match does not withdraw the player from the
 // tournament — they go on to follow a loser's path.
 func TestForfeitKeepsThePlayer(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -124,6 +128,7 @@ func TestForfeitKeepsThePlayer(t *testing.T) {
 
 // TestTableGrid: one cell per table, with what the director reads from two metres away.
 func TestTableGrid(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -172,6 +177,7 @@ func TestTableGrid(t *testing.T) {
 // TestTableGridShowsUnavailableAndReserved: a broken table and a reserved one are named as
 // such, not shown as free.
 func TestTableGridShowsUnavailableAndReserved(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Salle contrainte", "2026-09-12", "")
 	if err != nil {
@@ -212,6 +218,7 @@ func TestTableGridShowsUnavailableAndReserved(t *testing.T) {
 
 // TestMoveAndCancel: a running match moves table, and one launched by mistake is cancelled.
 func TestMoveAndCancel(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	// A roomy hall: sixteen tables for twelve matches, so there is somewhere to move to.
 	tID, err := d.CreateTournament("Grande salle", "2026-09-12", "")

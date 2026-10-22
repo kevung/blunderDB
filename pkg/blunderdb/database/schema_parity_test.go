@@ -304,6 +304,7 @@ func TestSchemaParity_MigratedVsFresh(t *testing.T) {
 	fresh := freshWrapperSchema(t)
 	for _, v := range fixtureVersions {
 		t.Run("wrapper_from_"+v, func(t *testing.T) {
+			t.Parallel()
 			diffSchemas(t,
 				"migrated from "+v+" (OpenDatabase)", migratedWrapperSchema(t, v),
 				"fresh (SetupDatabase)", fresh,
@@ -319,6 +320,7 @@ func TestSchemaParity_MigratedBackendVsWrapper(t *testing.T) {
 	t.Parallel()
 	for _, v := range []string{"1.0.0", "2.14.0"} {
 		t.Run("from_"+v, func(t *testing.T) {
+			t.Parallel()
 			diffSchemas(t,
 				"migrated from "+v+" (sqlite.Migrate)", migratedBackendSchema(t, v),
 				"migrated from "+v+" (OpenDatabase)", migratedWrapperSchema(t, v),

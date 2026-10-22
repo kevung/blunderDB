@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 12:05+0200\n"
+"POT-Creation-Date: 2026-10-22 13:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -262,10 +262,32 @@ msgstr "Rechtsklick außerhalb des Bretts (Bearbeitung, Eval)"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"ou *Position de départ*, puis les actions qui valent pour un brouillon "
+"(copier, évaluer, enregistrer)."
 msgstr ""
 "Das Brettmenü öffnen: *Position löschen*, wie RÜCKTASTE, oder "
-"*Startposition*."
+"*Startposition*, dann die Aktionen, die für einen Entwurf gelten "
+"(kopieren, auswerten, speichern)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Clic droit sur le plateau ou sur une ligne de liste ; MENU, MAJ-F10 sur "
+"la ligne focalisée"
+msgstr ""
+"Rechtsklick auf das Brett oder auf eine Listenzeile; MENU, UMSCHALT-F10 "
+"auf der fokussierten Zeile"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu contextuel de la position, du match, du tournoi ou de la "
+"collection (voir :ref:`menu contextuel <menu_contextuel_actions>`). "
+"HAUT/BAS parcourent un niveau, DROITE ouvre un sous-menu sur sa première "
+"action, GAUCHE y revient, ÉCHAP ferme le sous-menu puis le menu."
+msgstr ""
+"Das Kontextmenü der Stellung, des Matches, des Turniers oder der Sammlung"
+" öffnen (siehe :ref:`Kontextmenü <menu_contextuel_actions>`). HOCH/RUNTER"
+" durchlaufen eine Ebene, RECHTS öffnet ein Untermenü auf seiner ersten "
+"Aktion, LINKS kehrt zurück, ESC schließt das Untermenü und dann das Menü."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup joué au plateau)"
@@ -279,7 +301,7 @@ msgstr ""
 "Den ganzen Zug von vorn beginnen, die Stellung unverändert. Solange kein "
 "Schritt gespielt ist, öffnet sich das Brettmenü wie gewohnt."
 
-#: ../../source/raccourcis.rst:59
+#: ../../source/raccourcis.rst:60
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -389,7 +411,7 @@ msgstr ""
 "``ss``-Suche verlassen: zurück zur Sammlung oder zum Match auf dem "
 "betrachteten Zug."
 
-#: ../../source/raccourcis.rst:78
+#: ../../source/raccourcis.rst:79
 msgid ""
 "Tant qu'une question du :ref:`panneau Entraînement "
 "<panneau_entrainement>` est posée sur le plateau, les touches qui "
@@ -413,7 +435,7 @@ msgstr ""
 "die Antwort angezeigt, löst EINGABE „Weiter“ aus, oder „Beenden“, wenn "
 "keine weitere Frage folgt."
 
-#: ../../source/raccourcis.rst:90
+#: ../../source/raccourcis.rst:91
 msgid "Affichage"
 msgstr "Anzeige"
 
@@ -481,7 +503,7 @@ msgstr ""
 "Herausforderung ein-/ausschalten: Die Analyse im Analyse-Panel bleibt bei"
 " jeder Position bis zu einem Klick verborgen."
 
-#: ../../source/raccourcis.rst:108
+#: ../../source/raccourcis.rst:109
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -509,7 +531,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Den angehefteten Filter dieses Rangs der Filterbibliothek starten."
 
-#: ../../source/raccourcis.rst:122
+#: ../../source/raccourcis.rst:123
 msgid "Outils"
 msgstr "Werkzeuge"
 

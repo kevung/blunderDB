@@ -430,6 +430,7 @@ func resumesAfterCancel(t *testing.T, swap bool) {
 	}
 	for _, cut := range slices.Sorted(maps.Keys(cuts)) {
 		t.Run(cut, func(t *testing.T) {
+			t.Parallel()
 			path := filepath.Join(dir, cut+".db")
 			copyFile(t, source, path)
 			d := NewDatabase()

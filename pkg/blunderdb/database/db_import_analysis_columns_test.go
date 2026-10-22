@@ -121,6 +121,7 @@ func TestImportDatabase_DerivesAnalysisColumnsAsTransfer(t *testing.T) {
 // A library whose analyses hold their blob alone, provenance filled by the
 // open-time pass, gets back by repair the columns a transfer derives.
 func TestRepairAnalyses_FillsBlobOnlyRows(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	src := newTestDBWithXG(t)
 	opts := ingest.WholeLibraryOptions()
@@ -226,6 +227,7 @@ func TestImportDatabase_FailedAnalysisMergeAborts(t *testing.T) {
 // Repair finds such a row by comparing its columns with what its blob
 // derives, not by NULL, and a second run finds nothing.
 func TestRepairAnalyses_RederivesColumnsOfReplacedBlob(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	src := newTestDBWithXG(t)
 	d := newTestDB(t)

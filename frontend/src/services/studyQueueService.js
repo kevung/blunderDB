@@ -1,9 +1,10 @@
 import { get } from 'svelte/store';
-import { ImportStudyQueue, StudyBacklog, SetPositionStudied, StudyPlanQueue } from '../../wailsjs/go/database/Database.js';
+import { ImportStudyQueue, StudyBacklog, SetPositionStudied, IsPositionStudied, StudyPlanQueue } from '../../wailsjs/go/database/Database.js';
 import { studyQueueStore, studyQueueIndexStore, studyQueueActiveStore, studyQueueCurrentStore, studyQueueBacklogStore, studyQueueLastMarkedStore } from '../stores/studyQueueStore.js';
 import { showImportedPosition } from './importService.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { activeTabStore } from '../stores/uiStore';
+import { databasePathStore } from '../stores/databaseStore.js';
 import { fileImportReportStore, showFileImportModalStore, fileImportModeStore } from '../stores/importModalStore.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
@@ -95,6 +96,7 @@ export async function markCurrentStudied() {
     if (!entry) return;
     try {
         await SetPositionStudied(entry.positionId, true);
+        studiedMarks.set(entry.positionId, true);
         studyQueueLastMarkedStore.set(entry.positionId);
     } catch (error) {
         logger.error('could not mark the position studied:', error);
@@ -110,12 +112,80 @@ export async function unmarkLastStudied() {
     if (!id) return;
     try {
         await SetPositionStudied(id, false);
+        studiedMarks.set(id, false);
         studyQueueLastMarkedStore.set(0);
         setStatusBarMessage(tMsg('studyQueue.unmarked'));
     } catch (error) {
         logger.error('could not withdraw the studied mark:', error);
         setStatusBarMessage(tMsg('studyQueue.markFailed'));
     }
+}
+
+/**
+ * Pose ou retire la marque « vue » d'une position hors de la file (le menu contextuel) : la même
+ * marque que la file, sans passer à la suivante.
+ * @param {number} positionId
+ * @param {boolean} studied
+ */
+export async function setPositionStudied(positionId, studied) {
+    if (!positionId) return;
+    try {
+        await SetPositionStudied(positionId, studied);
+        studiedMarks.set(positionId, studied);
+        setStatusBarMessage(tMsg(studied ? 'studyQueue.marked' : 'studyQueue.unmarked'));
+    } catch (error) {
+        logger.error('could not write the studied mark:', error);
+        setStatusBarMessage(tMsg('studyQueue.markFailed'));
+    }
+}
+
+/** The studied mark as last read or written, by position: the menus build synchronously. */
+const studiedMarks = new Map();
+/** @type {Map<number, Promise<boolean | undefined>>} */
+const studiedReads = new Map();
+
+// A mark belongs to a library: opening another one forgets them all.
+databasePathStore.subscribe(() => {
+    studiedMarks.clear();
+    studiedReads.clear();
+});
+
+/**
+ * The studied mark of a position, as last known; undefined until read.
+ * @param {number} positionId
+ * @returns {boolean | undefined}
+ */
+export function knownStudied(positionId) {
+    return studiedMarks.get(positionId);
+}
+
+/**
+ * The studied mark of a position: the known one, else one read from the library (a single read
+ * at a time). undefined when there is no library to ask, or it cannot answer (a remote one).
+ * @param {number} positionId
+ * @returns {Promise<boolean | undefined>}
+ */
+export function refreshStudied(positionId) {
+    if (!positionId || !get(databasePathStore)) return Promise.resolve(undefined);
+    if (studiedMarks.has(positionId)) return Promise.resolve(studiedMarks.get(positionId));
+    const pending = studiedReads.get(positionId);
+    if (pending) return pending;
+    const read = (async () => {
+        try {
+            // Yield first, so a throw from the binding itself still lands after the read is registered.
+            await null;
+            const studied = await IsPositionStudied(positionId);
+            studiedMarks.set(positionId, studied);
+            return studied;
+        } catch (error) {
+            logger.debug('could not read the studied mark:', error);
+            return undefined;
+        } finally {
+            studiedReads.delete(positionId);
+        }
+    })();
+    studiedReads.set(positionId, read);
+    return read;
 }
 
 /** Passe à la position suivante ; termine la file à la dernière. */

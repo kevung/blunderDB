@@ -32,6 +32,7 @@ func wallBracketDirection(t *testing.T, d *Database, name, prefix string) int64 
 }
 
 func TestWallPage_RotatesTheBracketsOfEventsInBracketPhase(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	swiss := startedDirection(t, d, 16) // a Swiss phase: no tree
@@ -74,6 +75,7 @@ func TestWallPage_RotatesTheBracketsOfEventsInBracketPhase(t *testing.T) {
 }
 
 func TestWallPage_NoTreeWithoutBracket(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	swiss := startedDirection(t, d, 16)
@@ -99,6 +101,7 @@ func TestWallPage_NoTreeWithoutBracket(t *testing.T) {
 }
 
 func TestDirectionPage_ShowsItsOwnBracketInRotation(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	frenchStrings(t, d, "fr")
 	br := wallBracketDirection(t, d, "Coupe du dimanche", "Tab ")

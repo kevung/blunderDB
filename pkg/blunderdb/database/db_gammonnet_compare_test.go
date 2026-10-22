@@ -12,6 +12,7 @@ import (
 // written by another engine: one gammonNet entry beside an XG one does not make
 // the analysis gammonNet's own.
 func TestPositionsWithForeignAnalysis(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	ours := gammonnet.EngineLabelPrefix + "v1.0.0"
 	checker := func(engines ...string) domain.PositionAnalysis {

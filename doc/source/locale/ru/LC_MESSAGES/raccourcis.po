@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 12:05+0200\n"
+"POT-Creation-Date: 2026-10-22 13:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -259,10 +259,32 @@ msgstr "Щелчок правой кнопкой вне доски (редакт
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
+"ou *Position de départ*, puis les actions qui valent pour un brouillon "
+"(copier, évaluer, enregistrer)."
 msgstr ""
 "Открыть меню доски: *Очистить позицию*, как BACKSPACE, или *Начальная "
-"позиция*."
+"позиция*, затем действия, применимые к черновику (копировать, оценить, "
+"сохранить)."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Clic droit sur le plateau ou sur une ligne de liste ; MENU, MAJ-F10 sur "
+"la ligne focalisée"
+msgstr ""
+"Правый клик на доске или на строке списка; MENU, SHIFT-F10 на строке с "
+"фокусом"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu contextuel de la position, du match, du tournoi ou de la "
+"collection (voir :ref:`menu contextuel <menu_contextuel_actions>`). "
+"HAUT/BAS parcourent un niveau, DROITE ouvre un sous-menu sur sa première "
+"action, GAUCHE y revient, ÉCHAP ferme le sous-menu puis le menu."
+msgstr ""
+"Открыть контекстное меню позиции, матча, турнира или коллекции (см. "
+":ref:`контекстное меню <menu_contextuel_actions>`). ВВЕРХ/ВНИЗ "
+"перемещаются по уровню, ВПРАВО открывает подменю на его первом действии, "
+"ВЛЕВО возвращает назад, ESC закрывает подменю, а затем меню."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup joué au plateau)"
@@ -276,7 +298,7 @@ msgstr ""
 "Начать весь ход заново, позиция остаётся прежней. Пока не сыгран ни один "
 "шаг, меню доски открывается как обычно."
 
-#: ../../source/raccourcis.rst:59
+#: ../../source/raccourcis.rst:60
 msgid "Navigation"
 msgstr "Навигация"
 
@@ -384,7 +406,7 @@ msgstr ""
 "Выйти из результатов поиска ``ss``, запущенного из коллекции или матча: "
 "возврат к коллекции или к матчу на изучаемом ходе."
 
-#: ../../source/raccourcis.rst:78
+#: ../../source/raccourcis.rst:79
 msgid ""
 "Tant qu'une question du :ref:`panneau Entraînement "
 "<panneau_entrainement>` est posée sur le plateau, les touches qui "
@@ -406,7 +428,7 @@ msgstr ""
 "набранный ход (``13/7 8/7``). Когда ответ показан, ВВОД выполняет «Далее»"
 " или «Завершить», если следующего вопроса нет."
 
-#: ../../source/raccourcis.rst:90
+#: ../../source/raccourcis.rst:91
 msgid "Affichage"
 msgstr "Отображение"
 
@@ -474,7 +496,7 @@ msgstr ""
 "Включить/выключить испытание: анализ на панели «Анализ» скрыт до щелчка "
 "на каждой позиции."
 
-#: ../../source/raccourcis.rst:108
+#: ../../source/raccourcis.rst:109
 msgid "Actions"
 msgstr "Действия"
 
@@ -502,7 +524,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Запустить закреплённый фильтр с этим номером из библиотеки фильтров."
 
-#: ../../source/raccourcis.rst:122
+#: ../../source/raccourcis.rst:123
 msgid "Outils"
 msgstr "Инструменты"
 

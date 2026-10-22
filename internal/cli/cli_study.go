@@ -37,6 +37,7 @@ func (cli *CLI) studyHandlers() map[string]func([]string) error {
 		"queue":  cli.runStudyQueue,
 		"mark":   cli.runStudyMark,
 		"unmark": cli.runStudyUnmark,
+		"status": cli.runStudyStatus,
 	}
 }
 
@@ -62,6 +63,7 @@ func (cli *CLI) printStudyUsage() {
 	fmt.Println("  queue    List the backlog")
 	fmt.Println("  mark     Mark a position studied: it leaves the backlog")
 	fmt.Println("  unmark   Withdraw the mark: the position returns to the backlog")
+	fmt.Println("  status   Tell whether a position carries the mark")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb study queue --db database.db --limit 20")
@@ -148,6 +150,27 @@ func (cli *CLI) setStudied(args []string, studied bool) error {
 		fmt.Printf("Position %d marked studied.\n", *id)
 	} else {
 		fmt.Printf("Position %d is back in the study backlog.\n", *id)
+	}
+	return nil
+}
+
+func (cli *CLI) runStudyStatus(args []string) error {
+	fs, dbPath := studyFlagSet("status", "Tell whether a position carries the studied mark.", "blunderdb study status --db database.db --id 1234")
+	id := fs.Int64("id", 0, "Position ID (required)")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if err := requireID(fs, "id", *id); err != nil {
+		return err
+	}
+	studied, err := cli.db.IsPositionStudied(*id)
+	if err != nil {
+		return fmt.Errorf("study status: %w", err)
+	}
+	if studied {
+		fmt.Printf("Position %d is marked studied.\n", *id)
+	} else {
+		fmt.Printf("Position %d is not marked studied.\n", *id)
 	}
 	return nil
 }

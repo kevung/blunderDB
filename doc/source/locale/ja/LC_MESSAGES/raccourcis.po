@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 12:05+0200\n"
+"POT-Creation-Date: 2026-10-22 13:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -244,8 +244,28 @@ msgstr "盤面の外で右クリック（編集、Eval）"
 #: ../../source/raccourcis.rst:1
 msgid ""
 "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, "
-"ou *Position de départ*."
-msgstr "盤面のメニューを開く：\\ *局面を消去*\\ （BACKSPACE と同じ）または\\ *初期配置*\\ 。"
+"ou *Position de départ*, puis les actions qui valent pour un brouillon "
+"(copier, évaluer, enregistrer)."
+msgstr ""
+"盤面メニューを開きます。\\ *局面を消去*\\ (BACKSPACE と同じ)または\\ *初期配置*\\ 、続いて下書きに有効な操作 "
+"(コピー、評価、保存) が並びます。"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Clic droit sur le plateau ou sur une ligne de liste ; MENU, MAJ-F10 sur "
+"la ligne focalisée"
+msgstr "盤面またはリスト行での右クリック、フォーカスのある行での MENU、SHIFT-F10"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu contextuel de la position, du match, du tournoi ou de la "
+"collection (voir :ref:`menu contextuel <menu_contextuel_actions>`). "
+"HAUT/BAS parcourent un niveau, DROITE ouvre un sous-menu sur sa première "
+"action, GAUCHE y revient, ÉCHAP ferme le sous-menu puis le menu."
+msgstr ""
+"局面、マッチ、トーナメント、コレクションのコンテキストメニューを開きます (:ref:`コンテキストメニュー "
+"<menu_contextuel_actions>` を参照)。↑/↓ で階層内を移動し、→ でサブメニューを最初の操作で開き、← で戻り、ESC"
+" でサブメニュー、次にメニューを閉じます。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic droit sur le plateau (coup joué au plateau)"
@@ -257,7 +277,7 @@ msgid ""
 "qu'aucun pas n'est joué, le menu du plateau s'ouvre comme d'habitude."
 msgstr "手全体を最初からやり直します。局面は変わりません。まだ一歩も進めていない間は、盤のメニューがいつもどおり開きます。"
 
-#: ../../source/raccourcis.rst:59
+#: ../../source/raccourcis.rst:60
 msgid "Navigation"
 msgstr "ナビゲーション"
 
@@ -360,7 +380,7 @@ msgid ""
 " ou un match : retour à la collection, ou au match sur le coup étudié."
 msgstr "コレクションまたはマッチから実行した ``ss`` 検索の結果を抜ける：コレクション、またはマッチの検討中の手に戻る。"
 
-#: ../../source/raccourcis.rst:78
+#: ../../source/raccourcis.rst:79
 msgid ""
 "Tant qu'une question du :ref:`panneau Entraînement "
 "<panneau_entrainement>` est posée sur le plateau, les touches qui "
@@ -380,7 +400,7 @@ msgstr ""
 "が入力した手（ ``13/7 8/7`` ）を確定します。答えが表示されたあとは、 ENTER "
 "が「次へ」になり、次の問題がなければ「終了」になります。"
 
-#: ../../source/raccourcis.rst:90
+#: ../../source/raccourcis.rst:91
 msgid "Affichage"
 msgstr "表示"
 
@@ -444,7 +464,7 @@ msgid ""
 "jusqu'à un clic, à chaque position."
 msgstr "チャレンジの切替：各局面で、解析パネルの解析がクリックするまで隠されます。"
 
-#: ../../source/raccourcis.rst:108
+#: ../../source/raccourcis.rst:109
 msgid "Actions"
 msgstr "アクション"
 
@@ -472,7 +492,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "フィルターライブラリでその順位のピン留めフィルターを実行します。"
 
-#: ../../source/raccourcis.rst:122
+#: ../../source/raccourcis.rst:123
 msgid "Outils"
 msgstr "ツール"
 

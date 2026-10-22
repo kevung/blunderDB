@@ -149,6 +149,7 @@ func TestDirectionStore_DeleteKeepsMatches(t *testing.T) {
 // TestDirectionStore_UndirectedTournament: a Tournament assembled from files has no Direction,
 // and that is not an error condition to hide.
 func TestDirectionStore_UndirectedTournament(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Imported", "2025-01-01", "")
 	if err != nil {
@@ -184,6 +185,7 @@ func TestDirectionStore_List(t *testing.T) {
 // Tournament, edit the configuration and enter players while in preparation, then launch the
 // first match — which is what ends preparation.
 func TestDirectionAPI_PreparationThenFirstMatch(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Open de Lyon", "2026-09-12", "Lyon")
 	if err != nil {
@@ -278,6 +280,7 @@ func TestDirectionAPI_PreparationThenFirstMatch(t *testing.T) {
 // warnings and wait reasons are the engine's codes, rendered by the frontend — blunderDB
 // speaks nine languages and these values live in the database.
 func TestDirectionAPI_NoTranslatedText(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("T", "2026-09-12", "")
 	if err != nil {

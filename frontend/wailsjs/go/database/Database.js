@@ -854,6 +854,10 @@ export function IsPositionOnPile(arg1) {
   return window['go']['database']['Database']['IsPositionOnPile'](arg1);
 }
 
+export function IsPositionStudied(arg1) {
+  return window['go']['database']['Database']['IsPositionStudied'](arg1);
+}
+
 export function IsProtectedCopyPath(arg1) {
   return window['go']['database']['Database']['IsProtectedCopyPath'](arg1);
 }

@@ -51,6 +51,7 @@ func drawnBracket(t *testing.T, d *Database, n int, phase string) int64 {
 // Six players in a bracket of eight: two byes, and a latecomer takes one without a word of
 // warning — they simply appear in the bracket.
 func TestLatecomer_TakesAFreeBye(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := drawnBracket(t, d, 6, `{"kind":"bracket","length":5}`)
 
@@ -95,6 +96,7 @@ func TestLatecomer_TakesAFreeBye(t *testing.T) {
 // With no place left, the entry still happens and the view SAYS where they will enter — before
 // the director validates, since the free byes are what they are shown.
 func TestLatecomer_WithNoPlaceLeftTheViewSaysWhereTheyEnter(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	// Eight players in a bracket of eight: no bye at all. A consolation follows, open to all.
 	tID := drawnBracket(t, d, 8, `{"kind":"bracket","length":5},{"kind":"bracket","length":5,"entry":"all"}`)
@@ -130,6 +132,7 @@ func TestLatecomer_WithNoPlaceLeftTheViewSaysWhereTheyEnter(t *testing.T) {
 
 // Taking a place already played is refused: the engine does not guess what the director meant.
 func TestLatecomer_APlaceAlreadyPlayedIsRefused(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := drawnBracket(t, d, 6, `{"kind":"bracket","length":5}`)
 	slots, err := d.DirectionFreeSlots(tID)
@@ -151,6 +154,7 @@ func TestLatecomer_APlaceAlreadyPlayedIsRefused(t *testing.T) {
 // Nothing already drawn is redrawn: the pairings of the drawn round are the same before and
 // after a latecomer enters.
 func TestLatecomer_NothingIsRedrawn(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := drawnBracket(t, d, 6, `{"kind":"bracket","length":5}`)
 	before, err := d.Brackets(tID)
@@ -211,6 +215,7 @@ func TestLatecomer_NothingIsRedrawn(t *testing.T) {
 // Lengths per round: "15, 13, 11" reads from the LAST round backwards, which is the order an
 // organiser announces a tournament in. Each proposed match carries the length of its round.
 func TestLengths_PerRoundReachTheProposals(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := drawnBracket(t, d, 8, `{"kind":"bracket","length":9,"lengths":[15,13,11]}`)
 

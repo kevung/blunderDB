@@ -394,6 +394,8 @@
         "searchWouldReplaceCollection": "s busca en toda la biblioteca y reemplazaría la colección mostrada: use ss para buscar dentro de la colección.",
         "searchWouldReplaceMatch": "s busca en toda la biblioteca y reemplazaría el match mostrado: use ss para buscar dentro del match.",
         "tagsAdded": "Etiquetas añadidas: {tags}",
+        "tagsAlreadyPresent": "Etiquetas ya presentes: {tags}",
+        "tagInvalid": "Una etiqueta no puede contener «;»",
         "unknown": "Comando desconocido: {command}",
         "noMatchesFound": "No se encontraron partidas"
     },
@@ -1768,7 +1770,8 @@
         "importIdentifierFailed": "No se ha podido leer el identificador: {error}",
         "boardImageSaved": "Imagen guardada: {path}",
         "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}",
-        "pileError": "Pila: error"
+        "pileError": "Pila: error",
+        "xgidCopied": "XGID copiado al portapapeles"
     },
     "stats": {
         "title": "Stats",
@@ -2127,7 +2130,8 @@
         "unmark": "Quitar la marca",
         "backlogEmpty": "Ningún error pendiente: todo está comentado, archivado, en tarjeta o marcado como visto.",
         "markFailed": "No se pudo escribir la marca.",
-        "unmarked": "Marca retirada: la posición vuelve a la cola."
+        "unmarked": "Marca retirada: la posición vuelve a la cola.",
+        "marked": "Posición marcada como vista: sale de la cola de estudio."
     },
     "home": {
         "title": "blunderDB",
@@ -3643,5 +3647,31 @@
         "neilFormula": "E ≃ 50 % + ventaja × Neil(n), n = puntos que le faltan a quien va detrás",
         "neilAxis": "filas = quien va delante, columnas = quien va detrás (puntos que faltan); en pequeño: diferencia con la MET",
         "neilFallback": "Quien va delante a 1 o 2 puntos: valor de la MET"
+    },
+    "actions": {
+        "group": {
+            "copy": "Copiar / compartir",
+            "annotate": "Anotar",
+            "navigate": "Navegar",
+            "analyze": "Analizar",
+            "train": "Entrenar",
+            "manage": "Gestionar"
+        },
+        "copyImage": "Copiar la imagen",
+        "copyXGID": "Copiar el XGID",
+        "copyPositionText": "Copiar la posición como texto",
+        "comment": "Comentar",
+        "addTag": "Añadir una etiqueta #…",
+        "markStudied": "Marcar como vista",
+        "unmarkStudied": "Desmarcar",
+        "sameStructure": "Posiciones de la misma estructura",
+        "rolloutFast": "Rollout rápido",
+        "rolloutStandard": "Rollout estándar",
+        "challenge": "Desafío sobre esta posición",
+        "save": "Guardar",
+        "trash": "Mover a la papelera",
+        "openMatch": "Abrir el match",
+        "openTournament": "Abrir el torneo",
+        "openCollection": "Abrir la colección"
     }
 }
