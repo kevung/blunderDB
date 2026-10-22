@@ -45,7 +45,7 @@ const (
 	PLoseBackgammon
 )
 
-//go:embed strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin
+//go:embed strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16
 var embeddedWeights []byte
 
 type layer struct {
@@ -73,8 +73,9 @@ var (
 	embeddedErr  error
 )
 
-// embeddedNetwork returns the network compiled into the binary: the float32
-// reference artifact, not the float16 transport variant.
+// embeddedNetwork returns the network compiled into the binary: the float16
+// transport artifact (BGN6), widened to float32 at load. It halves the weight
+// bytes the binary carries; the evaluation itself stays float32.
 func embeddedNetwork() (*Network, error) {
 	embeddedOnce.Do(func() {
 		embeddedNet, embeddedErr = Load(embeddedWeights)
@@ -82,13 +83,18 @@ func embeddedNetwork() (*Network, error) {
 	return embeddedNet, embeddedErr
 }
 
-// Load parses a BGNN weight file. It refuses anything it does not fully
-// understand rather than filling in a default: a network handed an input it has
-// never seen returns five perfectly plausible numbers and says nothing about it.
+// Load parses a BGNN (float32) or BGN6 (float16) weight file. The two share
+// one layout; BGN6 stores the weights as IEEE binary16 and keeps the biases in
+// float32 (upstream spec BGN6). Both load to the same float32 Network.
+//
+// It refuses anything it does not fully understand rather than filling in a
+// default: a network handed an input it has never seen returns five perfectly
+// plausible numbers and says nothing about it.
 func Load(raw []byte) (*Network, error) {
-	if len(raw) < 20 || string(raw[:4]) != "BGNN" {
-		return nil, fmt.Errorf("gammonnet: not a BGNN weight file")
+	if len(raw) < 20 || (string(raw[:4]) != "BGNN" && string(raw[:4]) != "BGN6") {
+		return nil, fmt.Errorf("gammonnet: not a BGNN or BGN6 weight file")
 	}
+	half := string(raw[:4]) == "BGN6"
 	pos := 4
 	readInt := func() (int, error) {
 		if pos+4 > len(raw) {
@@ -171,9 +177,25 @@ func Load(raw []byte) (*Network, error) {
 		return out, nil
 	}
 
+	readHalves := func(count int) ([]float32, error) {
+		if pos+2*count > len(raw) {
+			return nil, fmt.Errorf("gammonnet: truncated weights")
+		}
+		out := make([]float32, count)
+		for i := range out {
+			out[i] = halfToFloat32(binary.LittleEndian.Uint16(raw[pos:]))
+			pos += 2
+		}
+		return out, nil
+	}
+	readWeights := readFloats
+	if half {
+		readWeights = readHalves
+	}
+
 	for _, d := range dims {
 		in, out := d[0], d[1]
-		w, err := readFloats(in * out)
+		w, err := readWeights(in * out)
 		if err != nil {
 			return nil, err
 		}
@@ -206,6 +228,34 @@ func Load(raw []byte) (*Network, error) {
 		return nil, err
 	}
 	return n, nil
+}
+
+// halfToFloat32 widens an IEEE 754 binary16 to binary32, exactly: every finite
+// half is a float32. A binary16 subnormal is a float32 normal, so it is
+// renormalised rather than copied; ±0, infinities and NaN payloads carry over.
+// It is gammonNet's from_half, bit for bit.
+func halfToFloat32(h uint16) float32 {
+	sign := uint32(h>>15) << 31
+	exponent := uint32(h>>10) & 0x1f
+	mantissa := uint32(h) & 0x3ff
+	var bits uint32
+	switch {
+	case exponent == 0 && mantissa == 0:
+		bits = sign
+	case exponent == 0:
+		exponent = 127 - 15 + 1
+		for mantissa&0x400 == 0 {
+			mantissa <<= 1
+			exponent--
+		}
+		mantissa &= 0x3ff
+		bits = sign | exponent<<23 | mantissa<<13
+	case exponent == 0x1f:
+		bits = sign | 0x7f800000 | mantissa<<13
+	default:
+		bits = sign | (exponent+127-15)<<23 | mantissa<<13
+	}
+	return math.Float32frombits(bits)
 }
 
 // Evaluator holds the scratch buffers one evaluation needs. A Network is

@@ -15,8 +15,8 @@ two moving targets.
 ## What you need
 
 - a checkout of [gammonNet](https://github.com/kevung/gammonNet) at the pinned version
-  (currently **v1.6.0**), including `vendor/backgammon-ai-engine` (fetched by its
-  `tools/fetch_vendor.py`);
+  (currently **v1.8.1**), including `vendor/backgammon-ai-engine` at commit `7184e2f` (fetched
+  by its `tools/fetch_vendor.py`);
 - a C compiler; nothing else. This never runs in CI.
 
 ## The two files, and the order they are made in
@@ -39,37 +39,44 @@ two moving targets.
    V=$GN/vendor/backgammon-ai-engine
    M=<blunderDB>/pkg/blunderdb/engine/gammonnet
 
-   gcc -O3 -march=native -I$GN/src -I$V/c_inference -I$V/c_engine -o gold gold.c \
+   gcc -O2 -pthread -I$GN/src -I$V/c_inference -I$V/c_engine -o gold gold.c \
        $GN/src/gn_search.c $GN/src/gn_infer_reference.c $GN/src/gn_encoding.c \
        $GN/src/gn_rules_reference.c $GN/src/gn_met.c $GN/src/gn_cube.c \
        $GN/src/gn_bearoff.c $GN/src/gn_evalcache.c $GN/src/gn_choose.c \
-       $GN/src/gn_int8_model.c $GN/src/gn_gemm_int8.c \
+       $GN/src/gn_int8_model.c $GN/src/gn_gemm_int8.c $GN/src/gn_parallel.c \
        $V/c_inference/nn_eval.c $V/c_engine/bg_engine.c -lm
 
    ./gold $M/testdata/search_corpus.bin \
-          $M/strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin \
-          $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
+          $M/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16 \
+          $M/strehl-prune-32_v1.8.1_2026-10-22.bin16 \
           $M/testdata/search_gold.bin
    ./gold $M/testdata/search_cube_corpus.bin \
-          $M/strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin \
-          $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
+          $M/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16 \
+          $M/strehl-prune-32_v1.8.1_2026-10-22.bin16 \
           $M/testdata/search_cube_gold.bin
    ./gold $M/testdata/search_corpus.bin \
-          $M/strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin \
-          $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
+          $M/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16 \
+          $M/strehl-prune-32_v1.8.1_2026-10-22.bin16 \
           $M/testdata/search_stage_gold.bin stage
    ./gold $M/testdata/search_corpus.bin \
-          $M/strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin \
-          $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
+          $M/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16 \
+          $M/strehl-prune-32_v1.8.1_2026-10-22.bin16 \
           $M/testdata/search_ply3_gold.bin ply3
    ```
+
+   **`-O2` and no `-march`, on purpose.** Under `-march=native` gcc contracts multiply-adds into
+   FMA wherever the CPU has it, and the gold then moves by an ulp or two from one machine to
+   the next (a Haswell build and a Zen 2 build disagree on a few bytes). The baseline x86-64
+   target has no FMA, so the line above gives the same bytes on every machine — the reason
+   gammonNet's own `make build` uses it. `-pthread` and `gn_parallel.c` are required since the
+   upstream search forks.
 
    The third run stages the root (1 ply, triplet (0, 4, 0.2)); the fourth answers the first ten
    cases at the published `ply3` level (about forty seconds). Both need a gammonNet that has
    `gn_search_set_root_stage` (commit 9c74d82, after v1.6.0); the first two files come out
    byte-identical from that commit.
 
-   About five seconds for the 85 cases — the C evaluates in batches of 32, which is why it is
+   Without SIMD the four files take about ten minutes. The C evaluates in batches of 32, which is why it is
    an order of magnitude faster than the Go port on the 2-ply cases (see ADR-0011 and #133).
 
 ## The second corpus: match states and the cube (ADR-0023)
@@ -145,6 +152,22 @@ generator does not move the file, the weights do. Margins: 4.768e-07 (money, 85,
 6-2) has its two candidates at exactly −0 in both engines, and the two order them differently —
 an exact tie, so the stable sort's generation-order rule should have made them agree. The
 gate fails on it by design; it is unresolved.
+
+**Regenerated on 2026-10-22 against gammonNet v1.8.1, from the float16 weights (BGN6).**
+The network is the same `strehl-prob5-512-512-256-256` and `strehl-prune-32`, now embedded as
+the `.bin16` transport files. Two steps, each checked against the SHA-256 gammonNet publishes
+for this recipe (kevung/gammonNet#33):
+
+- the **portable float32 build** first: the same weights in `.bin` form reproduce upstream's
+  four float32 digests, and move the previously committed golds (built `-O3 -march=native`)
+  by at most 3.6e-7, with no chosen move and no candidate count changed;
+- then the **`.bin16`**: the four files committed here, byte-identical to upstream's float16
+  digests. Against the float32 golds: 0 chosen move and 0 candidate count changed over
+  85 + 126 + 85 + 10 decisions; max|Δ| 9.4e-4 (money), 4.7e-4 (match and cube), 8.7e-4
+  (stage), 1.9e-4 (ply3). The effect at a match score on the production path is measured in
+  `tasks/mesure-float16-score-2026-10-22.md`.
+
+`cube_gold.bin` is unchanged: `cube_gold.c` loads no weights.
 
 Note the two extra translation units in the command above: v1.3.0's `gn_infer_reference.c`
 references `gn_int8_model_evaluate`, so `gn_int8_model.c` and `gn_gemm_int8.c` must be linked in

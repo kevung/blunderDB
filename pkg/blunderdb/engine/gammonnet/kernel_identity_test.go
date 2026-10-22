@@ -104,7 +104,7 @@ func TestKernelIdentityOnReferenceVectors(t *testing.T) {
 			copy(feats[lane][:], ref.features[(base+lane)*NumFeatures:(base+lane+1)*NumFeatures])
 		}
 		compareBatch(t, kernels, evs, scalar, &feats, EvalBatchWidth,
-			fmt.Sprintf("reference.bin[%d:%d]", base, base+EvalBatchWidth))
+			fmt.Sprintf("reference16.bin[%d:%d]", base, base+EvalBatchWidth))
 		full++
 	}
 	t.Logf("%d reference vectors, %d full batches, bit-identical", ref.count, full)
@@ -147,7 +147,7 @@ func TestKernelIdentityOnPartialBatches(t *testing.T) {
 				copy(feats[lane][:], ref.features[((base+lane)%ref.count)*NumFeatures:])
 			}
 			compareBatch(t, kernels, evs, scalar, &feats, n,
-				fmt.Sprintf("reference.bin[%d:+%d]", base, n))
+				fmt.Sprintf("reference16.bin[%d:+%d]", base, n))
 
 			for ki := range kernels {
 				if err := evs[ki].EvaluateBatch(&feats, n, &got); err != nil {

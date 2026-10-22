@@ -1,0 +1,50 @@
+{
+  "_comment": "Corpus de référence de la politique sans état, poids float16 (docs/specs/politique-spec.md §8, docs/specs/format-bgn6-spec.md). Les décisions de data/policy_reference.bin, répondues avec les .bin16 de l'artefact épinglé. Généré par tools/policy_corpus.py --fp16 ; ne pas éditer à la main.",
+  "format": "GNPL v1, enregistrements de 160 octets, petit-boutiste",
+  "questions": {
+    "path": "data/policy_reference.bin",
+    "sha256": "4f1b6e0588bf4c87bd31d81158c91b8d5c971418a1ba853b945ebe5a1d2a2674"
+  },
+  "count": 1411,
+  "levels": [
+    "instant",
+    "normal",
+    "thorough"
+  ],
+  "by_level_and_pending": {
+    "instant/CUBE": 417,
+    "instant/CUBE/refus": 3,
+    "instant/MOVE": 790,
+    "instant/MOVE/refus": 1,
+    "instant/RESIGN": 57,
+    "instant/RESIGN/refus": 1,
+    "instant/TAKE": 18,
+    "instant/TAKE/refus": 2,
+    "normal/CUBE": 25,
+    "normal/MOVE": 23,
+    "normal/RESIGN": 22,
+    "normal/TAKE": 22,
+    "thorough/CUBE": 8,
+    "thorough/MOVE": 8,
+    "thorough/RESIGN": 7,
+    "thorough/TAKE": 7
+  },
+  "action_differs_from_float32_by_level": {
+    "instant": 0,
+    "normal": 0,
+    "thorough": 0
+  },
+  "max_equity_delta_where_action_agrees": 0.000626559903845747,
+  "models": {
+    "release": "v1.8.1",
+    "network": {
+      "path": "models/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16",
+      "sha256": "79b27fb63c477ab8eccaa227b29f1e75580c6b7499433bf7e383685909d34954"
+    },
+    "prune": {
+      "path": "models/strehl-prune-32_v1.8.1_2026-10-22.bin16",
+      "sha256": "87c1986d30aae649a369d8f8fa9db8bab17197c69d66b24c926b93f29e847a70"
+    }
+  },
+  "conditions": "build natif par défaut (pas NATIVE_FP) ; aucune table bilatérale installée ; cache d'évaluation indifférent"
+}
