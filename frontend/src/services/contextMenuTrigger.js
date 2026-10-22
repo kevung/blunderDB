@@ -5,7 +5,7 @@
  */
 
 /**
- * @typedef {{ label: string, onClick: () => void, shortcut?: string, disabled?: boolean }} MenuItem
+ * @typedef {import('./actionCatalog.js').MenuItem} MenuItem
  * @typedef {{ x: number, y: number, items: MenuItem[] }} MenuRequest
  */
 

@@ -1,5 +1,5 @@
 <script>
-    import { t, tMsg, translate } from '../i18n';
+    import { t, translate } from '../i18n';
     import { logger } from '../utils/logger.js';
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
@@ -8,7 +8,6 @@
     import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
     import { defaultBoardConfig, applyPalette } from '../utils/boardConfig.js';
     import { applyStartingCheckers, attachBoardInteractions } from '../utils/boardInteractions.js';
-    import { rankNeighboursOfCurrentPosition } from '../services/rankService.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -18,10 +17,6 @@
     import { boardIsMirrored, labelsFlipped, screenOfModelPoint } from '../services/boardOrientation.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
-    import { sendPositionToEval, evaluateInNewView } from '../services/positionService.js';
-    import { copyBoardWithAnalysisImage, exportBoardImage } from '../services/clipboardService.js';
-    import { setStatusBarMessage } from '../services/databaseService.js';
-    import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
     import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
@@ -32,6 +27,9 @@
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore, transcriptionArrowsStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
+    import { menuFor } from '../services/actionCatalog.js';
+    import { positionContext } from '../services/positionActions.js';
+    import { refreshStudied } from '../services/studyQueueService.js';
     import { onPileStore, refreshPileState, togglePile } from '../services/pileService.js';
     import { duelHoldsBoardStore, duelStore } from '../stores/duelStore.js';
     import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmForfeitDuel, confirmCancelDuel, resignDuel } from '../services/duelService.js';
@@ -57,7 +55,7 @@
     boardCfg.orientation = get(boardOrientationStore);
 
     /** @typedef {import('../utils/boardGeometry.js').BoardPosition} BoardPosition */
-    /** @typedef {{ label: string, onClick: () => void }} MenuItem */
+    /** @typedef {import('../services/actionCatalog.js').MenuItem} MenuItem */
     /** @typedef {import('../utils/boardGeometry.js').BoardMetrics} BoardMetrics */
     /** @typedef {import('two.js').default['scene']} Group */
 
@@ -348,20 +346,15 @@
             boardMenu = { x, y, items: duelMenuItems() };
             return;
         }
-        // EDIT and EVAL: the menu holds the two resets; the right button edits the board elsewhere.
-        if (mode === 'EDIT' || mode === 'EVAL') {
-            boardMenu = {
-                x,
-                y,
-                items: [
-                    { label: $t('board.menu.clearPosition'), onClick: () => (mode === 'EVAL' ? resetEvalBoard() : resetBoard()) },
-                    { label: $t('board.menu.startingPosition'), onClick: () => startingBoard() }
-                ]
-            };
-            return;
-        }
         /** @type {MenuItem[]} */
         const items = [];
+        // EDIT and EVAL: the two resets come first; the right button edits the board elsewhere.
+        if (mode === 'EDIT' || mode === 'EVAL') {
+            items.push(
+                { label: $t('board.menu.clearPosition'), onClick: () => (mode === 'EVAL' ? resetEvalBoard() : resetBoard()) },
+                { label: $t('board.menu.startingPosition'), onClick: () => startingBoard() }
+            );
+        }
         // A play in progress (quiz, Transcription): its reset clears the play, not the position.
         // Under ADR-0086's grammar the right click on the board takes the play back instead.
         if (get(quizPlayStore) && !get(quizPlayValidateStore)) {
@@ -370,58 +363,27 @@
                 onClick: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s))
             });
         }
-        items.push(
-            {
-                label: $t('board.menu.evaluate'),
-                // The position as displayed (possibly mirrored), not the stored record.
-                onClick: () => sendPositionToEval(getDisplayPosition())
-            },
-            {
-                label: $t('board.menu.evaluateMirror'),
-                onClick: () => sendPositionToEval(mirrorPosition(getDisplayPosition()))
-            },
-            // A studied position only (ADR-0086 §10): a scratch or Transcription board is not one.
-            ...(mode === 'NORMAL' || mode === 'MATCH' || mode === 'COLLECTION' ? [{ label: $t('board.menu.evaluateInNewView'), onClick: () => evaluateInNewView(getDisplayPosition()) }] : []),
-            {
-                label: $t('board.menu.copyImageWithAnalysis'),
-                onClick: () => copyBoardWithAnalysisImage()
-            },
-            // Un fichier (souvent vectoriel) plutôt qu'une copie.
-            {
-                label: $t('board.menu.saveImageSVG'),
-                onClick: () => exportBoardImage('svg')
-            },
-            {
-                label: $t('board.menu.saveImagePNG'),
-                onClick: () => exportBoardImage('png')
-            },
-            {
-                label: $t('board.menu.newView'),
-                onClick: () => viewStore.addView()
-            }
-        );
-
-        // Anki cards are keyed by position id: nothing to add for a scratch board (id 0).
-        const position = get(positionStore);
-        if (position?.id) {
-            items.push(...ankiDeckMenuItems(position.id));
-            // « Positions voisines » (ADR-0043) ; pas pour un plateau brouillon (id 0).
-            items.push({
-                label: $t('board.menu.neighbours'),
-                onClick: () => rankNeighboursOfCurrentPosition()
-            });
-        }
-
-        boardMenu = { x, y, items };
+        // The evaluations read the position as displayed (possibly mirrored), not the stored record.
+        const build = () => {
+            const actions = menuFor('position', positionContext({ displayPosition: getDisplayPosition }), $t);
+            if (items.length > 0 && actions.length > 0) actions[0] = { ...actions[0], separatorBefore: true };
+            return [...items, ...actions];
+        };
+        boardMenu = { x, y, items: build() };
 
         // Decks load only once the Anki tab is visited: fetch here, non-blocking,
-        // and append the deck items when it resolves.
+        // and rebuild the menu when they arrive.
+        const position = get(positionStore);
+        if (position?.id) {
+            refreshStudied(position.id).then(() => {
+                if (boardMenu?.x === x && boardMenu?.y === y) boardMenu = { ...boardMenu, items: build() };
+            });
+        }
         if (position?.id && get(ankiDecksStore).length === 0) {
             anki.loadDecks()
                 .then(() => {
                     if (boardMenu?.x !== x || boardMenu?.y !== y) return; // menu closed/reopened meanwhile
-                    const extra = ankiDeckMenuItems(position.id);
-                    if (extra.length > 0) boardMenu = { ...boardMenu, items: [...boardMenu.items, ...extra] };
+                    if (get(ankiDecksStore).length > 0) boardMenu = { ...boardMenu, items: build() };
                 })
                 .catch((err) => logger.error('Failed to load Anki decks for the board context menu:', err));
         }
@@ -446,28 +408,6 @@
             { label: $t('duel.pause'), onClick: () => suspendDuel() },
             { label: $t('duel.cancel'), onClick: () => confirmCancelDuel() }
         ];
-    }
-
-    /** @param {number} positionId */
-    function ankiDeckMenuItems(positionId) {
-        return get(ankiDecksStore).map((deck) => ({
-            label: $t('board.menu.addToAnkiDeck', { deck: deck.name }),
-            onClick: () => addPositionToAnkiDeck(deck, positionId)
-        }));
-    }
-
-    /**
-     * @param {{ id: number, name: string }} deck
-     * @param {number} positionId
-     */
-    async function addPositionToAnkiDeck(deck, positionId) {
-        try {
-            await anki.addPositionToDeck(deck.id, positionId);
-            setStatusBarMessage(tMsg('status.positionAddedToDeck', { deck: deck.name }));
-        } catch (err) {
-            logger.error('Failed to add the position to the Anki deck:', err);
-            setStatusBarMessage(tMsg('status.failedAddToDeck', { err }));
-        }
     }
 
     // Le sens du plateau est décidé une fois (services/boardOrientation.js) pour

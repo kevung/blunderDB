@@ -44,6 +44,7 @@
     import CountLink from './panels/CountLink.svelte';
     import { loadPositionsFromSelection } from '../services/positionLoader.js';
     import { exportMatchMat } from '../services/exportService.js';
+    import { menuFor } from '../services/actionCatalog.js';
     import MatchCharts from './MatchCharts.svelte';
     import { fmtLoss, sortByLoss } from '../utils/decisionLoss.js';
     import MatchReview from './MatchReview.svelte';
@@ -388,8 +389,8 @@
         await tournamentEdit.save();
     }
 
-    function startEditMatch(/** @type {Match} */ match, /** @type {Event} */ ev) {
-        ev.stopPropagation();
+    function startEditMatch(/** @type {Match} */ match, /** @type {Event | undefined} */ ev) {
+        ev?.stopPropagation();
         matchEdit.start(match.id, {
             player1: match.player1_name || '',
             player2: match.player2_name || '',
@@ -913,8 +914,8 @@
         });
     });
 
-    async function deleteMatchEntry(/** @type {Match} */ match, /** @type {Event} */ event) {
-        event.stopPropagation();
+    async function deleteMatchEntry(/** @type {Match} */ match, /** @type {Event | undefined} */ event) {
+        event?.stopPropagation();
         if (!(await confirmAction(get(t)('match.confirmDelete', { player1: match.player1_name, player2: match.player2_name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
             // Through the trash: restorable from the `trash` command.
@@ -964,8 +965,8 @@
         }
     }
 
-    async function swapMatchPlayers(/** @type {Match} */ match, /** @type {Event} */ event) {
-        event.stopPropagation();
+    async function swapMatchPlayers(/** @type {Match} */ match, /** @type {Event | undefined} */ event) {
+        event?.stopPropagation();
         try {
             await SwapMatchPlayers(match.id);
             await matchListStore.refreshRow(match.id);
@@ -1242,6 +1243,23 @@
                     if (!matchEdit.isEditing(match.id)) handleDoubleClick(match);
                 }}
                 onNearEnd={matchListStore.loadMore}
+                rowMenu={(/** @type {Match} */ match) =>
+                    matchEdit.isEditing(match.id)
+                        ? []
+                        : menuFor(
+                              'match',
+                              {
+                                  do: {
+                                      open: () => handleDoubleClick(match),
+                                      exportMat: () => exportMatchMat(match),
+                                      editTranscription: () => editMatchTranscription(match.id),
+                                      swapPlayers: () => swapMatchPlayers(match, undefined),
+                                      edit: () => startEditMatch(match, undefined),
+                                      trash: () => deleteMatchEntry(match, undefined)
+                                  }
+                              },
+                              $t
+                          )}
                 emptyActions
                 emptyClear={filterText.trim() ? { label: $t('emptyState.clearFilter'), onClick: clearFilter } : null}
                 emptyText={matches.length === 0 && ($matchListStore.loaded || !$databasePathStore) ? (filterText.trim() ? $t('match.noMatchesFiltered') : $t('match.noMatchesImported')) : ''}

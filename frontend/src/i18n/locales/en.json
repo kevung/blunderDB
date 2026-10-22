@@ -1770,7 +1770,8 @@
         "importIdentifierFailed": "The identifier could not be read: {error}",
         "boardImageSaved": "Image saved: {path}",
         "boardImageSaveFailed": "The image could not be saved: {err}",
-        "pileError": "Pile: error"
+        "pileError": "Pile: error",
+        "xgidCopied": "XGID copied to the clipboard"
     },
     "stats": {
         "title": "Stats",
@@ -2129,7 +2130,8 @@
         "unmark": "Unmark",
         "backlogEmpty": "No blunder waiting: everything is commented, filed, carded or marked studied.",
         "markFailed": "The mark could not be written.",
-        "unmarked": "Mark withdrawn: the position is back in the queue."
+        "unmarked": "Mark withdrawn: the position is back in the queue.",
+        "marked": "Position marked as seen: it leaves the study queue."
     },
     "home": {
         "title": "blunderDB",
@@ -3646,5 +3648,31 @@
         "neilFormula": "E ≃ 50% + lead × Neil(n), n = trailer's points to go",
         "neilAxis": "rows = leader, columns = trailer (points to go); small: gap to the MET",
         "neilFallback": "Leader 1 or 2 away: MET value"
+    },
+    "actions": {
+        "group": {
+            "copy": "Copy / share",
+            "annotate": "Annotate",
+            "navigate": "Navigate",
+            "analyze": "Analyze",
+            "train": "Train",
+            "manage": "Manage"
+        },
+        "copyImage": "Copy the image",
+        "copyXGID": "Copy the XGID",
+        "copyPositionText": "Copy the position as text",
+        "comment": "Comment",
+        "addTag": "Add a #tag…",
+        "markStudied": "Mark as seen",
+        "unmarkStudied": "Unmark",
+        "sameStructure": "Positions with the same structure",
+        "rolloutFast": "Fast rollout",
+        "rolloutStandard": "Standard rollout",
+        "challenge": "Challenge on this position",
+        "save": "Save",
+        "trash": "Move to the trash",
+        "openMatch": "Open the match",
+        "openTournament": "Open the tournament",
+        "openCollection": "Open the collection"
     }
 }

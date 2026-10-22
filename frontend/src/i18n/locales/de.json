@@ -1770,7 +1770,8 @@
         "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}",
         "boardImageSaved": "Bild gespeichert: {path}",
         "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}",
-        "pileError": "Stapel: Fehler"
+        "pileError": "Stapel: Fehler",
+        "xgidCopied": "XGID in die Zwischenablage kopiert"
     },
     "stats": {
         "title": "Stats",
@@ -2129,7 +2130,8 @@
         "unmark": "Markierung entfernen",
         "backlogEmpty": "Kein Fehler wartet: alles ist kommentiert, einsortiert, als Karte angelegt oder als gesehen markiert.",
         "markFailed": "Die Markierung konnte nicht geschrieben werden.",
-        "unmarked": "Markierung entfernt: die Stellung ist wieder in der Warteschlange."
+        "unmarked": "Markierung entfernt: die Stellung ist wieder in der Warteschlange.",
+        "marked": "Position als gesehen markiert: sie verlässt die Lernliste."
     },
     "home": {
         "title": "blunderDB",
@@ -3646,5 +3648,31 @@
         "neilFormula": "E ≃ 50 % + Vorsprung × Neil(n), n = fehlende Punkte des Zurückliegenden",
         "neilAxis": "Zeilen = Führender, Spalten = Zurückliegender (fehlende Punkte); klein: Abweichung von der MET",
         "neilFallback": "Führender 1 oder 2 vor Schluss: MET-Wert"
+    },
+    "actions": {
+        "group": {
+            "copy": "Kopieren / teilen",
+            "annotate": "Annotieren",
+            "navigate": "Navigieren",
+            "analyze": "Analysieren",
+            "train": "Trainieren",
+            "manage": "Verwalten"
+        },
+        "copyImage": "Bild kopieren",
+        "copyXGID": "XGID kopieren",
+        "copyPositionText": "Position als Text kopieren",
+        "comment": "Kommentieren",
+        "addTag": "#Etikett hinzufügen…",
+        "markStudied": "Als gesehen markieren",
+        "unmarkStudied": "Markierung entfernen",
+        "sameStructure": "Positionen gleicher Struktur",
+        "rolloutFast": "Schneller Rollout",
+        "rolloutStandard": "Standard-Rollout",
+        "challenge": "Challenge zu dieser Position",
+        "save": "Speichern",
+        "trash": "In den Papierkorb",
+        "openMatch": "Match öffnen",
+        "openTournament": "Turnier öffnen",
+        "openCollection": "Sammlung öffnen"
     }
 }

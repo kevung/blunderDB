@@ -22,6 +22,7 @@ sous-commande prend ``--db``.
 * ``mark --id <id>`` — Marque la position vue : elle sort de la file. La marque
   est une donnée de la base, jamais exportée.
 * ``unmark --id <id>`` — Retire la marque : la position revient dans la file.
+* ``status --id <id>`` — Dit si la position porte la marque.
 
 **Exemples:**
 

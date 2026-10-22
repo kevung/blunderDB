@@ -448,6 +448,8 @@ export function IsOpenDatabase(arg1:string):Promise<boolean>;
 
 export function IsPositionOnPile(arg1:domain.Position):Promise<boolean>;
 
+export function IsPositionStudied(arg1:number):Promise<boolean>;
+
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
 export function IsReadOnly():Promise<boolean>;

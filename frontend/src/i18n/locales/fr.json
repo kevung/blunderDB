@@ -1770,7 +1770,8 @@
         "importIdentifierFailed": "L'identifiant n'a pas pu être lu : {error}",
         "boardImageSaved": "Image enregistrée : {path}",
         "boardImageSaveFailed": "L'image n'a pas pu être enregistrée : {err}",
-        "pileError": "Pile : erreur"
+        "pileError": "Pile : erreur",
+        "xgidCopied": "XGID copié dans le presse-papiers"
     },
     "stats": {
         "title": "Stats",
@@ -2129,7 +2130,8 @@
         "unmark": "Démarquer",
         "backlogEmpty": "Aucun blunder en attente : tout est commenté, rangé, en carte ou marqué vu.",
         "markFailed": "La marque n'a pas pu être écrite.",
-        "unmarked": "Marque retirée : la position revient dans la file."
+        "unmarked": "Marque retirée : la position revient dans la file.",
+        "marked": "Position marquée vue : elle sort de la file d'étude."
     },
     "home": {
         "title": "blunderDB",
@@ -3646,5 +3648,31 @@
         "neilFormula": "E ≃ 50 % + écart × Neil(n), n = points restants du suiveur",
         "neilAxis": "lignes = meneur, colonnes = suiveur (points restants) ; en petit : écart avec la MET",
         "neilFallback": "Meneur à 1 ou 2 points : valeur de la MET"
+    },
+    "actions": {
+        "group": {
+            "copy": "Copier / partager",
+            "annotate": "Annoter",
+            "navigate": "Naviguer",
+            "analyze": "Analyser",
+            "train": "S'entraîner",
+            "manage": "Gérer"
+        },
+        "copyImage": "Copier l'image",
+        "copyXGID": "Copier l'XGID",
+        "copyPositionText": "Copier la position en texte",
+        "comment": "Commenter",
+        "addTag": "Ajouter une étiquette #…",
+        "markStudied": "Marquer vue",
+        "unmarkStudied": "Démarquer",
+        "sameStructure": "Positions de même structure",
+        "rolloutFast": "Rollout rapide",
+        "rolloutStandard": "Rollout standard",
+        "challenge": "Défi sur cette position",
+        "save": "Enregistrer",
+        "trash": "Mettre à la corbeille",
+        "openMatch": "Ouvrir le match",
+        "openTournament": "Ouvrir le tournoi",
+        "openCollection": "Ouvrir la collection"
     }
 }

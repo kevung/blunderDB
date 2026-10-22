@@ -68,6 +68,10 @@ msgstr ""
 "``unmark --id <id>`` — Removes the mark: the position returns to the "
 "queue."
 
+#: ../../source/cli_entrainement.rst:25
+msgid "``status --id <id>`` — Dit si la position porte la marque."
+msgstr "``status --id <id>`` — Tells whether the position carries the mark."
+
 #: ../../source/cli_entrainement.rst:26 ../../source/cli_entrainement.rst:94
 #: ../../source/cli_entrainement.rst:168 ../../source/cli_entrainement.rst:232
 msgid "**Exemples:**"
