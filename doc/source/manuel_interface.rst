@@ -288,6 +288,11 @@ le titre de la fenêtre nomme la base.
   vues est celui des raccourcis *CTRL-1* … *CTRL-9* et il est conservé avec la
   session ; l'ordre des groupes vaut pour la session en cours.
 
+Passer d'un groupe à l'autre ne déplace jamais le plateau : dès que deux
+bibliothèques sont ouvertes, la place de la barre d'information de la position
+(sous les onglets) reste réservée, vide quand le groupe affiché n'a rien à y
+dire.
+
 L'en-tête du groupe actif porte le nom en blanc sur sa couleur ; ceux des
 autres groupes, le nom sur le fond de la barre, souligné en haut de leur
 couleur. Six couleurs se succèdent : un septième groupe reprend la première.

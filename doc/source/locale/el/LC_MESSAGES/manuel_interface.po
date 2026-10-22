@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:09+0200\n"
+"POT-Creation-Date: 2026-10-22 10:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -682,6 +682,18 @@ msgstr ""
 
 #: ../../source/manuel_interface.rst:291
 msgid ""
+"Passer d'un groupe à l'autre ne déplace jamais le plateau : dès que deux "
+"bibliothèques sont ouvertes, la place de la barre d'information de la "
+"position (sous les onglets) reste réservée, vide quand le groupe affiché "
+"n'a rien à y dire."
+msgstr ""
+"Η εναλλαγή από μια ομάδα σε άλλη δεν μετακινεί ποτέ το ταμπλό: μόλις "
+"ανοίξουν δύο βιβλιοθήκες, η θέση της γραμμής πληροφοριών της θέσης (κάτω "
+"από τις καρτέλες) παραμένει δεσμευμένη, κενή όταν η εμφανιζόμενη ομάδα "
+"δεν έχει κάτι να δείξει εκεί."
+
+#: ../../source/manuel_interface.rst:296
+msgid ""
 "L'en-tête du groupe actif porte le nom en blanc sur sa couleur ; ceux des"
 " autres groupes, le nom sur le fond de la barre, souligné en haut de leur"
 " couleur. Six couleurs se succèdent : un septième groupe reprend la "
@@ -701,7 +713,7 @@ msgstr ""
 "γραμμή κυλά (τροχός του ποντικιού, ή η αλλαγή προβολής που φέρνει την "
 "εμφανιζόμενη καρτέλα στην οθόνη) αντί να τις συρρικνώνει."
 
-#: ../../source/manuel_interface.rst:300
+#: ../../source/manuel_interface.rst:305
 msgid ""
 "La bascule est immédiate : chaque groupe garde en mémoire ses vues, sa "
 "liste de positions, la position courante, les critères de recherche (même"
@@ -735,7 +747,7 @@ msgstr ""
 "προσχέδια, Μονομαχίες, ιστορικό αναζήτησης, αποθηκευμένα φίλτρα) "
 "ξαναδιαβάζονται στη βιβλιοθήκη που εμφανίζεται."
 
-#: ../../source/manuel_interface.rst:316
+#: ../../source/manuel_interface.rst:321
 msgid ""
 "Un même fichier ne s'ouvre pas dans deux groupes : le rouvrir affiche le "
 "groupe qui le tient déjà."
@@ -743,7 +755,7 @@ msgstr ""
 "Το ίδιο αρχείο δεν ανοίγει σε δύο ομάδες: αν το ανοίξετε ξανά, "
 "εμφανίζεται η ομάδα που το κρατά ήδη."
 
-#: ../../source/manuel_interface.rst:319
+#: ../../source/manuel_interface.rst:324
 msgid ""
 "Les tâches de fond restent attachées à leur bibliothèque : un import de "
 "fichiers de matchs, le dossier surveillé et l'analyse GammonNet par lots "
@@ -775,7 +787,7 @@ msgstr ""
 " κείμενο θέσης περιμένει να εμφανιστεί ξανά αυτή η ομάδα. Το κλείσιμο "
 "μιας ομάδας σταματά τις εργασίες και την παρακολούθησή της."
 
-#: ../../source/manuel_interface.rst:333
+#: ../../source/manuel_interface.rst:338
 msgid ""
 "**Copier d'une bibliothèque à l'autre.** Une ligne glissée sur l'en-tête "
 "d'un autre groupe y est copiée, dans un sens comme dans l'autre : un "
@@ -810,7 +822,7 @@ msgstr ""
 "γραμμή κατάστασης λέει πόσες θέσεις και πόσα ματς είναι νέα και πόσα "
 "υπήρχαν ήδη."
 
-#: ../../source/manuel_interface.rst:348
+#: ../../source/manuel_interface.rst:353
 msgid ""
 "Le **panier** rassemble des lignes de plusieurs bibliothèques pour les "
 "verser en une fois. *MAJ-B* y met la position affichée, ou l'en retire, "
@@ -832,7 +844,7 @@ msgstr ""
 "γραμμές της, και χάνεται όταν κλείνει το blunderDB. Μια θέση που είναι "
 "ακόμη πρόχειρη πρέπει πρώτα να αποθηκευτεί."
 
-#: ../../source/manuel_interface.rst:357
+#: ../../source/manuel_interface.rst:362
 msgid ""
 "Le **cadenas** d'un en-tête verrouille son groupe : rien n'y est plus "
 "versé, ni par glisser ni par le panier, et la barre d'état le dit. Le "
@@ -844,7 +856,7 @@ msgstr ""
 "κατάστασης το λέει. Το κλείδωμα δεν αγγίζει ούτε τις εισαγωγές ούτε τις "
 "αλλαγές που γίνονται στην ομάδα· ένα δεύτερο κλικ το αίρει."
 
-#: ../../source/manuel_interface.rst:362
+#: ../../source/manuel_interface.rst:367
 msgid ""
 "Le changement de groupe reste refusé, au clic comme au clavier, avec un "
 "message dans la barre d'état qui nomme la cause et dit où l'arrêter, "
@@ -875,11 +887,11 @@ msgstr ""
 " λίστα των ομάδων: στην επόμενη εκκίνηση, το blunderDB ανοίγει ξανά την "
 "τελευταία ενεργή βάση."
 
-#: ../../source/manuel_interface.rst:378
+#: ../../source/manuel_interface.rst:383
 msgid "Ce que les autres bibliothèques savent : l'onglet Ailleurs"
 msgstr "Τι γνωρίζουν οι άλλες βιβλιοθήκες: η καρτέλα Αλλού"
 
-#: ../../source/manuel_interface.rst:380
+#: ../../source/manuel_interface.rst:385
 msgid ""
 "L'onglet **Ailleurs** (*CTRL-MAJ-A*) dit, pour la position affichée, ce "
 "qu'en savent les autres bibliothèques ouvertes en groupes. La position y "
@@ -895,7 +907,7 @@ msgstr ""
 "διαφορετικές θέσεις σε δύο βάσεις. Κάθε βιβλιοθήκη έχει το δικό της "
 "μπλοκ, με περίγραμμα στο χρώμα της ομάδας της:"
 
-#: ../../source/manuel_interface.rst:386
+#: ../../source/manuel_interface.rst:391
 msgid ""
 "**son analyse** : le meilleur coup, ou la meilleure action de videau, et "
 "le moteur qui l'a trouvé. Une analyse valorisée avec une autre table "
@@ -907,7 +919,7 @@ msgstr ""
 "ισοδυναμίας αγώνα διαφορετικό από της ενεργής βιβλιοθήκης φέρει την "
 "ένδειξη *άλλος MET*;"
 
-#: ../../source/manuel_interface.rst:389
+#: ../../source/manuel_interface.rst:394
 msgid ""
 "**ses commentaires**, chacun avec son auteur, ou son signataire et l'état"
 " de la signature comme dans le :ref:`panneau des commentaires "
@@ -917,7 +929,7 @@ msgstr ""
 "κατάσταση της υπογραφής, όπως στο :ref:`πάνελ σχολίων "
 "<panneau_commentaires>`;"
 
-#: ../../source/manuel_interface.rst:391
+#: ../../source/manuel_interface.rst:396
 msgid ""
 "**les matchs où la position a été jouée** : joueurs, épreuve, date, "
 "numéro du coup, coup ou décision joués et leur coût. Le verdict (*bon*, "
@@ -934,7 +946,7 @@ msgstr ""
 "50 αγώνες, εμφανίζονται οι 50 πιο πρόσφατα εισαχθέντες και δηλώνεται το "
 "σύνολο;"
 
-#: ../../source/manuel_interface.rst:397
+#: ../../source/manuel_interface.rst:402
 msgid ""
 "**ses positions voisines**, les cinq plus proches, en vignettes avec leur"
 " distance."
@@ -942,7 +954,7 @@ msgstr ""
 "**οι γειτονικές της θέσεις**, οι πέντε πλησιέστερες, ως μικρογραφίες με "
 "την απόστασή τους."
 
-#: ../../source/manuel_interface.rst:400
+#: ../../source/manuel_interface.rst:405
 msgid ""
 "Une bibliothèque qui ne contient pas la position le dit, et montre tout "
 "de même ses voisines. *Ouvrir là-bas*, un clic sur un match ou sur une "
@@ -956,7 +968,7 @@ msgstr ""
 "εμφανίζει εκεί τη θέση. Τίποτα δεν γράφεται σε καμία βάση. Το κουμπί ⟳ "
 "ξαναδιαβάζει τις άλλες βιβλιοθήκες."
 
-#: ../../source/manuel_interface.rst:405
+#: ../../source/manuel_interface.rst:410
 msgid ""
 "**L'échange sur place.** La touche *x* montre, à la place du plateau, au "
 "même endroit et à la même taille, la position de l'autre bibliothèque, "
@@ -982,7 +994,7 @@ msgstr ""
 "κάτω από μια μικρογραφία της καρτέλας Αλλού επιλέγει αντ' αυτού τη "
 "γειτονική αυτή θέση, μέχρι το *Ξεκαρφίτσωμα* ή μια αλλαγή ομάδας."
 
-#: ../../source/manuel_interface.rst:416
+#: ../../source/manuel_interface.rst:421
 msgid ""
 "**L'écran partagé.** Sur un grand écran, le bouton ◫ de la barre des "
 "onglets (*CTRL-MAJ-X*) partage la fenêtre en deux volets de même largeur."
@@ -1016,11 +1028,11 @@ msgstr ""
 "διαιρεμένη οθόνη απορρίπτεται και προτείνεται η επί τόπου εναλλαγή (*x*)·"
 " κλείνει αν το παράθυρο γίνει πολύ στενό."
 
-#: ../../source/manuel_interface.rst:434
+#: ../../source/manuel_interface.rst:439
 msgid "Configuration"
 msgstr "Ρυθμίσεις"
 
-#: ../../source/manuel_interface.rst:436
+#: ../../source/manuel_interface.rst:441
 msgid ""
 "Le bouton de configuration (icône en forme de rouage) situé dans la barre"
 " d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration "
@@ -1030,7 +1042,7 @@ msgstr ""
 "από το κουμπί βοήθειας, ανοίγει το παράθυρο ρυθμίσεων του blunderDB. "
 "Είναι οργανωμένο σε δέκα καρτέλες:"
 
-#: ../../source/manuel_interface.rst:440
+#: ../../source/manuel_interface.rst:445
 #, no-python-format
 msgid ""
 "**Interface** — thème, langue, échelle d'affichage, position du panneau, "
@@ -1043,11 +1055,11 @@ msgstr ""
 "αρχεία καταγραφής, έλεγχος ενημερώσεων, το όνομά σας και γειτονικές "
 "θέσεις·"
 
-#: ../../source/manuel_interface.rst:443
+#: ../../source/manuel_interface.rst:448
 msgid "**Couleurs** — les couleurs du plateau ;"
 msgstr "**Χρώματα ταμπλό** — τα χρώματα του ταμπλό·"
 
-#: ../../source/manuel_interface.rst:444
+#: ../../source/manuel_interface.rst:449
 msgid ""
 "**Bibliothèque** — ce qui appartient à la base ouverte : les seuils "
 "d'erreur et de blunder, décrits ci-dessous ;"
@@ -1055,7 +1067,7 @@ msgstr ""
 "**Βιβλιοθήκη** — ό,τι ανήκει στην ανοιχτή βάση: τα κατώφλια σφάλματος και"
 " blunder, που περιγράφονται παρακάτω·"
 
-#: ../../source/manuel_interface.rst:446
+#: ../../source/manuel_interface.rst:451
 msgid ""
 "**Maintenance** — l'état de santé de la base, une ligne par opération, "
 "décrit ci-dessous ;"
@@ -1063,7 +1075,7 @@ msgstr ""
 "**Συντήρηση** — η κατάσταση υγείας της βάσης, μία γραμμή ανά λειτουργία, "
 "που περιγράφεται παρακάτω·"
 
-#: ../../source/manuel_interface.rst:448
+#: ../../source/manuel_interface.rst:453
 msgid ""
 "**Corpus** — les doublons à l'import, les alias de joueurs et "
 "d'événements et la recherche des doublons probables (voir l'import de "
@@ -1073,11 +1085,11 @@ msgstr ""
 "και διοργανώσεων και η αναζήτηση πιθανών διπλοτύπων (βλ. εισαγωγή "
 "αγώνων)·"
 
-#: ../../source/manuel_interface.rst:450
+#: ../../source/manuel_interface.rst:455
 msgid "**Bearoff** — les tables de sortie utilisées par le panneau Eval ;"
 msgstr "**Bearoff** — οι πίνακες μαζέματος που χρησιμοποιεί ο πίνακας Eval·"
 
-#: ../../source/manuel_interface.rst:451
+#: ../../source/manuel_interface.rst:456
 msgid ""
 "**gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous"
 " ;"
@@ -1085,7 +1097,7 @@ msgstr ""
 "**gammonNet** — οι ρυθμίσεις του ενσωματωμένου αξιολογητή, που "
 "περιγράφονται παρακάτω·"
 
-#: ../../source/manuel_interface.rst:452
+#: ../../source/manuel_interface.rst:457
 msgid ""
 "**Dossier surveillé** — l'import automatique des matchs qui arrivent dans"
 " un dossier, décrit ci-dessous ;"
@@ -1093,7 +1105,7 @@ msgstr ""
 "**Παρακολουθούμενος φάκελος** — η αυτόματη εισαγωγή των αγώνων που "
 "φτάνουν σε έναν φάκελο, που περιγράφεται παρακάτω·"
 
-#: ../../source/manuel_interface.rst:454
+#: ../../source/manuel_interface.rst:459
 msgid ""
 "**Assistant et MCP** — le serveur MCP local et l'assistant interne, "
 "décrits ci-dessous ;"
@@ -1101,7 +1113,7 @@ msgstr ""
 "**Βοηθός και MCP** — ο τοπικός διακομιστής MCP και ο εσωτερικός βοηθός, "
 "που περιγράφονται παρακάτω·"
 
-#: ../../source/manuel_interface.rst:456
+#: ../../source/manuel_interface.rst:461
 msgid ""
 "**Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la "
 "section :ref:`diffusion_controlee`."
@@ -1109,7 +1121,7 @@ msgstr ""
 "**Ταυτότητα εκδότη** — το κλειδί που υπογράφει τις σημάνσεις προέλευσής "
 "σας, το οποίο περιγράφεται στην ενότητα :ref:`diffusion_controlee`."
 
-#: ../../source/manuel_interface.rst:459
+#: ../../source/manuel_interface.rst:464
 msgid ""
 "L'onglet *Interface* propose d'abord un **thème** : *suivre le système*, "
 "*clair*, *sombre*, *contraste élevé* ou *imprimable*. Le thème règle les "
@@ -1125,7 +1137,7 @@ msgstr ""
 "είναι το μισό, αφού το ταμπλό καταλαμβάνει το μεγαλύτερο μέρος του "
 "παραθύρου."
 
-#: ../../source/manuel_interface.rst:465
+#: ../../source/manuel_interface.rst:470
 msgid ""
 "Vous gardez le dernier mot, et le mécanisme le garantit plutôt que de le "
 "promettre : l'onglet *Couleurs* continue de régler le plateau "
@@ -1149,7 +1161,7 @@ msgstr ""
 "theme-carries-the-board-palette-and-the-user-still-has-the-last-"
 "word.md>`__."
 
-#: ../../source/manuel_interface.rst:473
+#: ../../source/manuel_interface.rst:478
 msgid ""
 "*Suivre le système* est le réglage par défaut : il obéit à la préférence "
 "clair/sombre du bureau, y compris lorsqu'elle change en cours de session."
@@ -1161,7 +1173,7 @@ msgstr ""
 "στη μέση της συνεδρίας. Ένα εργαλείο δεν επιβάλλει το φωτεινό ή το "
 "σκοτεινό του σε μια επιφάνεια εργασίας που έχει ήδη αποφασίσει."
 
-#: ../../source/manuel_interface.rst:477
+#: ../../source/manuel_interface.rst:482
 msgid ""
 "L'onglet *Interface* permet aussi de choisir la langue parmi l'anglais, "
 "le français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, "
@@ -1175,7 +1187,7 @@ msgstr ""
 "μηνύματα, βοήθεια) μεταφράζεται στην επιλεγμένη γλώσσα. Η επιλογή γλώσσας"
 " αποθηκεύεται και διατηρείται από συνεδρία σε συνεδρία."
 
-#: ../../source/manuel_interface.rst:483
+#: ../../source/manuel_interface.rst:488
 msgid ""
 "L'onglet *Bibliothèque* réunit ce qui appartient au fichier ouvert et non"
 " à la machine. Il est vide tant qu'aucune base n'est ouverte, et il le "
@@ -1184,7 +1196,7 @@ msgstr ""
 "Η καρτέλα *Βιβλιοθήκη* συγκεντρώνει ό,τι ανήκει στο ανοιχτό αρχείο και "
 "όχι στο μηχάνημα. Είναι κενή όσο δεν υπάρχει ανοιχτή βάση, και το λέει."
 
-#: ../../source/manuel_interface.rst:486
+#: ../../source/manuel_interface.rst:491
 msgid ""
 "Il porte d'abord les deux **seuils** qui décident du vocabulaire de toute"
 " l'application : une décision est une **erreur** dès que son coût atteint"
@@ -1204,7 +1216,7 @@ msgstr ""
 " όλων των πινάκων· η γραμμή εντολών, από την πλευρά της, μιλά σε χιλιοστά"
 " του πόντου, ώστε το κατώφλι 0,080 γράφεται ``E>80`` σε μια αναζήτηση."
 
-#: ../../source/manuel_interface.rst:495
+#: ../../source/manuel_interface.rst:500
 msgid ""
 "Ces seuils suivent le fichier, pas l'ordinateur : la même base compte les"
 " mêmes blunders partout où on l'ouvre, ``blunderdb info`` les affiche, et"
@@ -1218,7 +1230,7 @@ msgstr ""
 "threshold`` τα ρυθμίζει. Δεν ταξιδεύουν σε μια εξαγωγή: ένα κατώφλι είναι"
 " συνήθεια ανάγνωσης, όχι γεγονός των θέσεων."
 
-#: ../../source/manuel_interface.rst:501
+#: ../../source/manuel_interface.rst:506
 msgid ""
 "Trois **préréglages** sont proposés d'un clic, chacun sous le nom du "
 "programme qui a tracé cette ligne : blunderDB (0,050 / 0,100), XG (0,020 "
@@ -1230,7 +1242,7 @@ msgstr ""
 "0,100), XG (0,020 / 0,080) και gnubg (0,040 / 0,080). Εξ ορισμού, μια "
 "βιβλιοθήκη διαβάζει 0,050 και 0,100."
 
-#: ../../source/manuel_interface.rst:505
+#: ../../source/manuel_interface.rst:510
 msgid ""
 "Ce qu'ils changent, à l'écran : le nombre de blunders du compteur de la "
 "barre d'état et la recherche que son lien prépare, les colonnes « Erreurs"
@@ -1245,7 +1257,7 @@ msgstr ""
 "και τη λίστα των θέσεων που το blunderDB προτείνει για επανεξέταση μετά "
 "από μια εισαγωγή."
 
-#: ../../source/manuel_interface.rst:511
+#: ../../source/manuel_interface.rst:516
 msgid ""
 "La ligne **Espace récupérable** de l'onglet *Maintenance* porte le bouton"
 " **Compacter**, qui récupère l'espace disque laissé par les suppressions "
@@ -1289,7 +1301,7 @@ msgstr ""
 " ίδια λειτουργία διατίθεται στη γραμμή εντολών μέσω ``blunderdb vacuum`` "
 "(βλ. :ref:`cli`)."
 
-#: ../../source/manuel_interface.rst:531
+#: ../../source/manuel_interface.rst:536
 msgid ""
 "Après un compactage sur place, blunderDB vérifie que le fichier a bien "
 "rétréci. Sous Windows, le système refuse de raccourcir un fichier qu'un "
@@ -1303,7 +1315,7 @@ msgstr ""
 "τελειώνει με ένα μήνυμα που το λέει — κλείστε το άλλο πρόγραμμα και "
 "ξανατρέξτε τη — αντί να ανακοινώσει ένα κέρδος που δεν έγινε."
 
-#: ../../source/manuel_interface.rst:537
+#: ../../source/manuel_interface.rst:542
 msgid ""
 "Le bouton **Ouvrir le dossier des journaux**, dans l'onglet *Interface*, "
 "ouvre le dossier contenant le journal de l'application — utile pour "
@@ -1317,7 +1329,7 @@ msgstr ""
 " όταν το blunderDB έχει εκκινηθεί από συντόμευση ή διπλό κλικ, χωρίς "
 "συνδεδεμένο τερματικό που να εμφανίζει οτιδήποτε."
 
-#: ../../source/manuel_interface.rst:543
+#: ../../source/manuel_interface.rst:548
 msgid ""
 "La case **Vérifier les mises à jour au démarrage**, du même onglet, "
 "désactivée par défaut, interroge une fois la page des dernières versions "
@@ -1337,7 +1349,7 @@ msgstr ""
 "(Flatpak, Homebrew, πακέτο διανομής…): τότε αυτό το κανάλι διαχειρίζεται "
 "τις ενημερώσεις, όχι το ίδιο το blunderDB."
 
-#: ../../source/manuel_interface.rst:552
+#: ../../source/manuel_interface.rst:557
 msgid ""
 "Deux réglages de l'onglet *Interface* gouvernent le classement des "
 "**positions voisines** (jeton ``like``, voir :ref:`panneau_recherche`) : "
@@ -1356,7 +1368,7 @@ msgstr ""
 "διαβαζόταν ως μέτρηση. Το σύμβολο ``like<12`` επιβάλλει τη δική του για "
 "μία αναζήτηση, χωρίς να θίγει τη ρύθμιση."
 
-#: ../../source/manuel_interface.rst:559
+#: ../../source/manuel_interface.rst:564
 msgid ""
 "L'onglet *Couleurs* permet de personnaliser les couleurs du plateau. "
 "Chaque élément dispose de son propre sélecteur de couleur : le fond, la "
@@ -1372,7 +1384,7 @@ msgstr ""
 " κουμπί *Επαναφορά* επαναφέρει όλα τα προεπιλεγμένα χρώματα. Όπως και η "
 "γλώσσα, τα επιλεγμένα χρώματα διατηρούνται από τη μία συνεδρία στην άλλη."
 
-#: ../../source/manuel_interface.rst:566
+#: ../../source/manuel_interface.rst:571
 msgid ""
 "L'onglet *Bearoff* gère les tables de sortie du panneau Eval (voir "
 ":ref:`panneau_epc`). Elles ne sont **ni embarquées dans l'exécutable, ni "
@@ -1387,7 +1399,7 @@ msgstr ""
 "ό,τι παράγει το gnubg — το αποτύπωμα SHA-256 ελέγχεται πριν γίνει δεκτός "
 "ένας πίνακας."
 
-#: ../../source/manuel_interface.rst:572
+#: ../../source/manuel_interface.rst:577
 msgid ""
 "Les deux tables ordinaires (TS-06-06 pour le verdict de videau, OS-06 "
 "pour l'EPC) sont calculées au premier lancement, en arrière-plan et sans "
@@ -1402,7 +1414,7 @@ msgstr ""
 "μόνο αν τοποθετηθεί εκεί θέση που χρειάζεται πίνακα που δεν είναι ακόμη "
 "έτοιμος."
 
-#: ../../source/manuel_interface.rst:578
+#: ../../source/manuel_interface.rst:583
 msgid ""
 "L'onglet affiche le domaine actif et son origine, l'état de la table une "
 "face que lit l'EPC, le dossier où tout cela vit, et la liste des tables "
@@ -1414,7 +1426,7 @@ msgstr ""
 "αυτά, και τον κατάλογο των υπαρχόντων πινάκων με το μέγεθος και την "
 "ετυμηγορία τους. Κάθε γραμμή διαγράφεται ξεχωριστά, μετά από επιβεβαίωση."
 
-#: ../../source/manuel_interface.rst:583
+#: ../../source/manuel_interface.rst:588
 msgid ""
 "**Vérifiée ou non vérifiée.** Une table *vérifiée* a exactement les "
 "octets que gnubg produit pour son domaine : son empreinte SHA-256 figure "
@@ -1436,7 +1448,7 @@ msgstr ""
 "δεν τον συνέκρινε με την αναφορά. Ένας *κατεστραμμένος* πίνακας "
 "αντιφάσκει με τον εαυτό του και δεν διαβάζεται ποτέ· ξαναϋπολογίζεται."
 
-#: ../../source/manuel_interface.rst:591
+#: ../../source/manuel_interface.rst:596
 msgid ""
 "**Calculer une table plus large.** Le domaine se choisit dans une liste à"
 " deux familles, avec le nombre de cœurs à y consacrer (par défaut tous "
@@ -1446,7 +1458,7 @@ msgstr ""
 "οικογενειών, μαζί με τον αριθμό πυρήνων που θα του αφιερωθούν (εξ ορισμού"
 " όλοι εκτός από έναν, ώστε το μηχάνημα να παραμένει χρησιμοποιήσιμο):"
 
-#: ../../source/manuel_interface.rst:595
+#: ../../source/manuel_interface.rst:600
 msgid ""
 "**videau exact (deux faces)**, de TS-06-06 à TS-06-15 : élargit le "
 "domaine où la probabilité de gain et le verdict de videau sont lus plutôt"
@@ -1456,7 +1468,7 @@ msgstr ""
 " τομέα όπου η πιθανότητα νίκης και η ετυμηγορία κύβου διαβάζονται αντί να"
 " εκτιμώνται·"
 
-#: ../../source/manuel_interface.rst:598
+#: ../../source/manuel_interface.rst:603
 msgid ""
 "**EPC hors du jan (une face)**, de OS-06 à OS-10 : élargit la distance à "
 "laquelle un pion peut se trouver sans que le bloc EPC se taise. Ce "
@@ -1470,7 +1482,7 @@ msgstr ""
 "υπολογίζει, άρα είναι σειριακή εκ κατασκευής και ο αριθμός πυρήνων δεν "
 "της χρησιμεύει — ο επιλογέας το λέει γκριζάροντας."
 
-#: ../../source/manuel_interface.rst:604
+#: ../../source/manuel_interface.rst:609
 msgid ""
 "Avant de lancer quoi que ce soit, l'onglet annonce trois chiffres pour le"
 " domaine choisi : la taille sur le disque, la mémoire nécessaire pendant "
@@ -1490,7 +1502,7 @@ msgstr ""
 " «θα χρειάζονταν 24 GB, απομένουν 12» είναι απάντηση, μια απούσα γραμμή "
 "δεν θα ήταν."
 
-#: ../../source/manuel_interface.rst:613
+#: ../../source/manuel_interface.rst:618
 msgid ""
 "À titre d'ordre de grandeur, sur une machine à seize fils : TS-06-09 pèse"
 " 191 Mo et demande une dizaine de secondes, TS-06-11 pèse 1,2 Go et "
@@ -1505,7 +1517,7 @@ msgstr ""
 " ζυγίζει 4,9 MB και θέλει 17 δ, ο OS-08 15 MB και 1 λ 20, ο OS-10 117 MB "
 "και μισή ώρα."
 
-#: ../../source/manuel_interface.rst:619
+#: ../../source/manuel_interface.rst:624
 msgid ""
 "**Pause et reprise.** Pendant le calcul, la progression affiche le temps "
 "restant *mesuré*, et deux boutons distincts : *Pause* et *Annuler*. La "
@@ -1522,7 +1534,7 @@ msgstr ""
 "παραθύρου ρυθμίσεων δεν διακόπτει τίποτα — ο υπολογισμός συνεχίζεται στο "
 "παρασκήνιο."
 
-#: ../../source/manuel_interface.rst:625
+#: ../../source/manuel_interface.rst:630
 msgid ""
 "Un calcul mis en pause se retrouve au lancement suivant, nommé et chiffré"
 " (« TS-06-09 interrompue à 43 % »), avec *Reprendre* et *Supprimer*. Rien"
@@ -1533,7 +1545,7 @@ msgstr ""
 "*Συνέχιση* και *Διαγραφή*. Τίποτα δεν ξεκινά μόνο του: ο χρήστης ζήτησε "
 "τη διακοπή."
 
-#: ../../source/manuel_interface.rst:629
+#: ../../source/manuel_interface.rst:634
 msgid ""
 "L'onglet permet enfin de pointer vers un fichier ``.bd`` two-sided "
 "externe, par exemple une base produite par gnubg lui-même : la table au "
@@ -1543,7 +1555,7 @@ msgstr ""
 "``.bd``, για παράδειγμα μια βάση που παρήγαγε το ίδιο το gnubg: κερδίζει "
 "ο πίνακας με τον ευρύτερο τομέα."
 
-#: ../../source/manuel_interface.rst:635
+#: ../../source/manuel_interface.rst:640
 msgid ""
 "L'onglet **Maintenance** montre l'état de santé de la base : une ligne "
 "par opération, avec son compte, sa dernière exécution (date et issue : "
@@ -1556,7 +1568,7 @@ msgstr ""
 "υπολογισμός των αγώνων χωρίς στατιστικά ξεκινά μόνος του, κατά το "
 "άνοιγμα."
 
-#: ../../source/manuel_interface.rst:640
+#: ../../source/manuel_interface.rst:645
 msgid ""
 "**Positions sans analyse** — les positions qui ne portent aucune analyse "
 "; l'action est l'analyse gammonNet décrite plus bas. Les positions que "
@@ -1569,11 +1581,11 @@ msgstr ""
 "εκτός του πίνακα αγώνα) παραμένουν σε αυτό το πλήθος, που επομένως δεν "
 "φτάνει απαραίτητα στο μηδέν."
 
-#: ../../source/manuel_interface.rst:644
+#: ../../source/manuel_interface.rst:649
 msgid "**Analyses gammonNet périmées** — décrites plus bas."
 msgstr "**Παρωχημένες αναλύσεις gammonNet** — περιγράφονται παρακάτω."
 
-#: ../../source/manuel_interface.rst:645
+#: ../../source/manuel_interface.rst:650
 msgid ""
 "**Matchs sans statistiques** — les matchs dont les statistiques ne sont "
 "pas encore calculées ; l'action les calcule tous. Une base ouverte en "
@@ -1598,7 +1610,7 @@ msgstr ""
 " πίνακας Στατιστικών δείχνει τότε αυτόν τον αριθμό, που ανοίγει αυτή την "
 "καρτέλα."
 
-#: ../../source/manuel_interface.rst:655
+#: ../../source/manuel_interface.rst:660
 msgid ""
 "**Colonnes d'analyse** — les colonnes que la recherche et les "
 "statistiques interrogent sont une projection des analyses stockées, "
@@ -1609,7 +1621,7 @@ msgstr ""
 " είναι προβολή των αποθηκευμένων αναλύσεων, οι οποίες μένουν άθικτες: η "
 "ενέργεια τις υπολογίζει εκ νέου χωρίς να εισαγάγει ξανά τίποτα."
 
-#: ../../source/manuel_interface.rst:658
+#: ../../source/manuel_interface.rst:663
 msgid ""
 "**Erreurs des coups joués** — note les coups joués qui n'ont pas encore "
 "d'erreur."
@@ -1617,7 +1629,7 @@ msgstr ""
 "**Σφάλματα παιγμένων κινήσεων** — βαθμολογεί τις παιγμένες κινήσεις που "
 "δεν έχουν ακόμη σφάλμα."
 
-#: ../../source/manuel_interface.rst:660
+#: ../../source/manuel_interface.rst:665
 msgid ""
 "**Analyses à l'ancien format** — réécrit au format binaire les analyses "
 "qu'une version antérieure stockait en JSON."
@@ -1625,11 +1637,11 @@ msgstr ""
 "**Αναλύσεις παλαιάς μορφής** — ξαναγράφει σε δυαδική μορφή τις αναλύσεις "
 "που μια προηγούμενη έκδοση αποθήκευε σε JSON."
 
-#: ../../source/manuel_interface.rst:662
+#: ../../source/manuel_interface.rst:667
 msgid "**Corbeille** — le nombre d'entrées de la corbeille, qui l'ouvre."
 msgstr "**Κάδος** — το πλήθος των καταχωρίσεων του κάδου, τον οποίο ανοίγει."
 
-#: ../../source/manuel_interface.rst:663
+#: ../../source/manuel_interface.rst:668
 msgid ""
 "**Espace récupérable** — l'espace libre du fichier, que le compactage "
 "décrit plus haut rend au disque."
@@ -1637,7 +1649,7 @@ msgstr ""
 "**Ανακτήσιμος χώρος** — ο ελεύθερος χώρος του αρχείου, τον οποίο η "
 "συμπίεση που περιγράφεται παραπάνω επιστρέφει στον δίσκο."
 
-#: ../../source/manuel_interface.rst:666
+#: ../../source/manuel_interface.rst:671
 msgid ""
 "Un compte coûteux (il lit une table entière) attend le bouton "
 "**Compter**. Un compte de positions ouvre ces positions dans la liste ; "
@@ -1661,7 +1673,7 @@ msgstr ""
 "μόνο για ανάγνωση, οι ενέργειες είναι απενεργοποιημένες. Οι ίδιες "
 "λειτουργίες υπάρχουν στη γραμμή εντολών (``blunderdb maintenance``)."
 
-#: ../../source/manuel_interface.rst:677
+#: ../../source/manuel_interface.rst:682
 msgid ""
 "L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 "
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-"
@@ -1677,7 +1689,7 @@ msgstr ""
 "ονομασμένα και αποθηκευμένα ξεχωριστά — η μείωση του ενός δεν τροποποιεί "
 "ποτέ το άλλο:"
 
-#: ../../source/manuel_interface.rst:681
+#: ../../source/manuel_interface.rst:686
 msgid ""
 "**Profondeur d'affichage** — le confort interactif pendant l'édition du "
 "plateau ; jamais écrite en base."
@@ -1685,7 +1697,7 @@ msgstr ""
 "**Βάθος εμφάνισης** — η διαδραστική άνεση κατά την επεξεργασία του "
 "ταμπλό· δεν γράφεται ποτέ στη βάση."
 
-#: ../../source/manuel_interface.rst:683
+#: ../../source/manuel_interface.rst:688
 msgid ""
 "**Profondeur d'analyse** — ce que le lot d'analyse après import écrit "
 "dans l'Analyse d'une position."
@@ -1693,7 +1705,7 @@ msgstr ""
 "**Βάθος ανάλυσης** — αυτό που η δέσμη ανάλυσης μετά την εισαγωγή γράφει "
 "στην Ανάλυση μιας θέσης."
 
-#: ../../source/manuel_interface.rst:686
+#: ../../source/manuel_interface.rst:691
 msgid ""
 "Les deux valent par défaut **2-ply**, la configuration canonique. Le menu"
 " marque d'un ⚠ les profondeurs 3-ply et 4-ply, dont le coût par position "
@@ -1723,7 +1735,7 @@ msgstr ""
 " *Συντήρηση* επανεκκινεί χειροκίνητα την ίδια συμπλήρωση, χρήσιμη για μια"
 " βιβλιοθήκη που δημιουργήθηκε πριν από την ύπαρξη αυτής της λειτουργίας."
 
-#: ../../source/manuel_interface.rst:700
+#: ../../source/manuel_interface.rst:705
 msgid ""
 "Une prise ou un refus est évalué par gammonNet sur la décision du "
 "doubleur, avant le double. Un verdict gammonNet écrit sur une telle "
@@ -1743,7 +1755,7 @@ msgstr ""
 "να την αξιολογήσει εκ νέου η γραμμή *Θέσεις χωρίς ανάλυση* της καρτέλας "
 "*Συντήρηση* (ή η αυτόματη ανάλυση μετά την εισαγωγή)."
 
-#: ../../source/manuel_interface.rst:708
+#: ../../source/manuel_interface.rst:713
 msgid ""
 "La ligne **Analyses gammonNet périmées** de l'onglet *Maintenance* couvre"
 " le cas inverse : une position déjà analysée par gammonNet, mais dont "
@@ -1773,7 +1785,7 @@ msgstr ""
 "της βάσης: περιμένει το κουμπί **Μέτρηση**. Η δέσμη υπολογίζει εκ νέου τη"
 " δική της λίστα τη στιγμή που ξεκινά."
 
-#: ../../source/manuel_interface.rst:720
+#: ../../source/manuel_interface.rst:725
 msgid ""
 "Les deux lots sont **bornés, visibles et annulables, jamais un démon "
 "silencieux** : leur profondeur, leur progression (``positions analysées /"
@@ -1806,7 +1818,7 @@ msgstr ""
 "κλείσιμο διακόπτουν επίσης τη θέση που βρίσκεται υπό υπολογισμό, η οποία "
 "παραμένει χωρίς ανάλυση."
 
-#: ../../source/manuel_interface.rst:735
+#: ../../source/manuel_interface.rst:740
 msgid ""
 "Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un "
 "rollout stocké ou une opération de maintenance. Un lot ou une opération "
@@ -1824,7 +1836,7 @@ msgstr ""
 "περιμένει αντίθετα να τελειώσει εκείνη, και η γραμμή κατάστασης την "
 "εμφανίζει ως «σε αναμονή» μέχρι να ξεκινήσει."
 
-#: ../../source/manuel_interface.rst:744
+#: ../../source/manuel_interface.rst:749
 msgid ""
 "Le même onglet porte le **réglage des rollouts** lancés depuis le panneau"
 " Analyse (voir :ref:`rollouts`), conservé d'une session à l'autre : "
@@ -1842,7 +1854,7 @@ msgstr ""
 "ελάχιστες και μέγιστες παρτίδες (πολλαπλάσια του 36), όριο JSD, βάθος "
 "(ply), αριθμός υποψηφίων, σπόρος και αριθμός διεργασιών."
 
-#: ../../source/manuel_interface.rst:751
+#: ../../source/manuel_interface.rst:756
 msgid ""
 "**Table d'équité de match de la base.** Au bas de l'onglet, la liste "
 "**Table d'équité de match (MET) de la base** choisit la table avec "
@@ -1883,7 +1895,7 @@ msgstr ""
 " εξαιρείται ποτέ. Η αλλαγή πίνακα δεν ξαναγράφει καμία ανάλυση: αλλάζει "
 "μόνο ό,τι διατηρούν οι συγκρίσεις."
 
-#: ../../source/manuel_interface.rst:770
+#: ../../source/manuel_interface.rst:775
 msgid ""
 "L'évaluation en direct du panneau et la grille de videau sont valorisées "
 "avec la table de la base, comme les analyses qu'elle enregistre. Une "
@@ -1902,7 +1914,7 @@ msgstr ""
 "ανάλυση gammonNet που αντικαθίσταται από ανάλυση άλλης μηχανής (XG, "
 "GNUbg) θεωρείται ξανά υπολογισμένη με τον Kazaross-XG2."
 
-#: ../../source/manuel_interface.rst:778
+#: ../../source/manuel_interface.rst:783
 msgid ""
 "**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un "
 "match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a"
@@ -1925,7 +1937,7 @@ msgstr ""
 "τίποτα: η κίνηση που παίχτηκε προέρχεται από τον πίνακα κινήσεων του "
 "αγώνα, γραμμένο κατά την εισαγωγή, είτε το αρχείο έφερε ανάλυση είτε όχι."
 
-#: ../../source/manuel_interface.rst:788
+#: ../../source/manuel_interface.rst:793
 msgid ""
 "Une base analysée avec une version antérieure à celle-ci n'a pas besoin "
 "d'être réévaluée : ``blunderdb repair`` recalcule les colonnes à partir "
@@ -1937,7 +1949,7 @@ msgstr ""
 "τις κινήσεις που υπάρχουν ήδη και επιστρέφει το PR σε αυτούς τους αγώνες "
 "(δείτε :ref:`repair <cli_repair>`)."
 
-#: ../../source/manuel_interface.rst:793
+#: ../../source/manuel_interface.rst:798
 msgid ""
 "Une réserve honnête : une position est identifiée par sa structure, donc "
 "une position rencontrée deux fois — bien jouée une fois, mal l'autre — ne"
@@ -1951,11 +1963,11 @@ msgstr ""
 "εμφάνισής της. Δεν είναι ιδιαιτερότητα αυτού του υπολογισμού: μια "
 "βιβλιοθήκη XG έχει ακριβώς την ίδια μορφή."
 
-#: ../../source/manuel_interface.rst:801
+#: ../../source/manuel_interface.rst:806
 msgid "Dossier surveillé"
 msgstr "Παρακολουθούμενος φάκελος"
 
-#: ../../source/manuel_interface.rst:803
+#: ../../source/manuel_interface.rst:808
 msgid ""
 "L'onglet **Dossier surveillé** demande à blunderDB de regarder un dossier"
 " pendant qu'il tourne et d'importer chaque fichier de match qui y "
@@ -1967,7 +1979,7 @@ msgstr ""
 "**εμφανίζεται** εκεί. Παίζεις μια συνεδρία στο eXtreme Gammon, γυρνάς στο"
 " blunderDB, και βρίσκεις τους αγώνες ήδη εκεί."
 
-#: ../../source/manuel_interface.rst:808
+#: ../../source/manuel_interface.rst:813
 msgid ""
 "Rien n'est deviné. Tant qu'aucun dossier n'est désigné, il n'y a pas de "
 "surveillance : blunderDB ne se met pas à lire un répertoire parce qu'il a"
@@ -1983,11 +1995,11 @@ msgstr ""
 "υπάρχει πραγματικά· αλλιώς το λέει, και ο ορισμός του φακέλου είναι δική "
 "σας δουλειά."
 
-#: ../../source/manuel_interface.rst:814
+#: ../../source/manuel_interface.rst:819
 msgid "Trois points méritent d'être connus avant d'activer la case :"
 msgstr "Τρία πράγματα αξίζει να ξέρετε πριν τσεκάρετε το κουτί:"
 
-#: ../../source/manuel_interface.rst:816
+#: ../../source/manuel_interface.rst:821
 msgid ""
 "**Seuls les fichiers qui apparaissent sont importés.** Ce que le dossier "
 "contient déjà au moment où la surveillance démarre est enregistré comme "
@@ -2003,7 +2015,7 @@ msgstr ""
 "χρησιμοποιήστε την εισαγωγή φακέλου, που υπάρχει γι' αυτό — και οι δύο "
 "συνδυάζονται πολύ καλά, πρώτα η εισαγωγή, μετά η παρακολούθηση."
 
-#: ../../source/manuel_interface.rst:822
+#: ../../source/manuel_interface.rst:827
 msgid ""
 "**Un fichier n'est importé qu'une fois sa taille stable.** Un match qu'un"
 " autre programme est en train d'écrire grossit d'un coup d'œil à l'autre "
@@ -2017,7 +2029,7 @@ msgstr ""
 "το οποίο κανείς δεν μπορεί να κάνει τίποτα. Το blunderDB περιμένει λοιπόν"
 " να δει δύο φορές το ίδιο αρχείο αμετάβλητο."
 
-#: ../../source/manuel_interface.rst:827
+#: ../../source/manuel_interface.rst:832
 msgid ""
 "**L'import est silencieux.** Vous étiez en train d'étudier une position "
 "quand vos matchs sont arrivés : vous reprendre l'écran serait le pire "
@@ -2041,7 +2053,7 @@ msgstr ""
 "χειροκίνητη εισαγωγή: τα ίδια διπλότυπα εντοπίζονται, η ίδια δέσμη "
 "εισαγωγής, η ίδια αυτόματη ανάλυση αν είναι ενεργοποιημένη."
 
-#: ../../source/manuel_interface.rst:838
+#: ../../source/manuel_interface.rst:843
 msgid ""
 "L'intervalle par défaut est de dix secondes ; le plancher est de deux. Le"
 " dossier n'est pas parcouru récursivement : un dossier surveillé est "
@@ -2056,7 +2068,7 @@ msgstr ""
 "παρακολούθηση, ούτε κάνει το περιεχόμενό του να περάσει για νέο όταν "
 "επιστρέψει."
 
-#: ../../source/manuel_interface.rst:844
+#: ../../source/manuel_interface.rst:849
 msgid ""
 "La même surveillance existe en ligne de commande, avec ``blunderdb import"
 " --type batch --dir <dossier> --watch`` (voir :ref:`cli`) : c'est la "
@@ -2067,11 +2079,11 @@ msgstr ""
 "που μπορεί να χρησιμοποιήσει ένας διακομιστής, μια προγραμματισμένη "
 "εργασία ή ένα σενάριο."
 
-#: ../../source/manuel_interface.rst:852
+#: ../../source/manuel_interface.rst:857
 msgid "Synchroniser deux machines"
 msgstr "Συγχρονισμός δύο υπολογιστών"
 
-#: ../../source/manuel_interface.rst:854
+#: ../../source/manuel_interface.rst:859
 msgid ""
 "Copier sa base ``.db`` d'une machine à l'autre, ou la ranger dans un "
 "dossier synchronisé (Syncthing, Dropbox…), finit par l'abîmer : SQLite "
@@ -2091,7 +2103,7 @@ msgstr ""
 "stick, ηλεκτρονικό ταχυδρομείο: δεν υπάρχει ούτε διακομιστής ούτε "
 "λογαριασμός."
 
-#: ../../source/manuel_interface.rst:862
+#: ../../source/manuel_interface.rst:867
 msgid ""
 "Sur la machine A, dans la fenêtre d'export, choisissez *Toute la "
 "bibliothèque*, cochez *Seulement ce qui est nouveau depuis le dernier "
@@ -2107,7 +2119,7 @@ msgstr ""
 "μόνο ό,τι έχει μπει στη βιβλιοθήκη από την προηγούμενη εξαγωγή προς τον "
 "ίδιο φάκελο· η πρώτη περιέχει τα πάντα."
 
-#: ../../source/manuel_interface.rst:868
+#: ../../source/manuel_interface.rst:873
 msgid ""
 "Sur la machine B, faites de ce dossier le :ref:`dossier surveillé "
 "<dossier_surveille>`. Chaque fichier ``.db`` qui y apparaît est fusionné "
@@ -2121,15 +2133,15 @@ msgstr ""
 "ήδη γνωστή θέση δεν διπλασιάζεται, ένας ήδη γνωστός αγώνας αναγνωρίζεται,"
 " οι συλλογές και τα μαθήματα συγχωνεύονται με βάση το όνομά τους."
 
-#: ../../source/manuel_interface.rst:873
+#: ../../source/manuel_interface.rst:878
 msgid "Faites de même dans l'autre sens, avec un second dossier."
 msgstr "Κάντε το ίδιο και προς την αντίθετη κατεύθυνση, με δεύτερο φάκελο."
 
-#: ../../source/manuel_interface.rst:875
+#: ../../source/manuel_interface.rst:880
 msgid "Ce qu'il faut savoir :"
 msgstr "Τι πρέπει να γνωρίζετε:"
 
-#: ../../source/manuel_interface.rst:877
+#: ../../source/manuel_interface.rst:882
 msgid ""
 "**Le repère « dernière synchronisation » est chez celui qui exporte**, un"
 " par dossier de destination, et n'avance que lorsque le fichier est "
@@ -2142,7 +2154,7 @@ msgstr ""
 "αποτυγχάνει αφήνει το σημάδι στη θέση του: η επόμενη μεταφέρει τις ίδιες "
 "γραμμές."
 
-#: ../../source/manuel_interface.rst:881
+#: ../../source/manuel_interface.rst:886
 msgid ""
 "**La synchronisation se fait par ajout seul.** Une suppression ne se "
 "propage pas : supprimer un match sur A ne le supprime pas sur B. Une "
@@ -2170,7 +2182,7 @@ msgstr ""
 " δεν περιλαμβάνονται: μια εξαγωγή του *Ολόκληρη η βιβλιοθήκη* χωρίς το "
 "πλαίσιο τα περιλαμβάνει."
 
-#: ../../source/manuel_interface.rst:892
+#: ../../source/manuel_interface.rst:897
 msgid ""
 "**Ce qu'une machine a reçu repart une fois vers l'autre**, puisque c'est "
 "nouveau dans sa bibliothèque ; l'autre le reconnaît sans rien ajouter, et"
@@ -2180,7 +2192,7 @@ msgstr ""
 "αφού είναι νέο στη βιβλιοθήκη του· ο άλλος το αναγνωρίζει χωρίς να "
 "προσθέσει τίποτα, και η επόμενη ανταλλαγή είναι κενή."
 
-#: ../../source/manuel_interface.rst:895
+#: ../../source/manuel_interface.rst:900
 msgid ""
 "**Un fichier arrivé pendant que blunderDB était fermé n'est pas perdu** :"
 " au démarrage de la surveillance, chaque ``.db`` déjà présent dans le "
@@ -2199,7 +2211,7 @@ msgstr ""
 "κατά διαστήματα τα ήδη ληφθέντα αρχεία ``sync-…`` ώστε η εκκίνηση αυτή να"
 " παραμένει γρήγορη."
 
-#: ../../source/manuel_interface.rst:902
+#: ../../source/manuel_interface.rst:907
 msgid ""
 "**Un export incrémental n'écrase jamais un fichier.** Le fichier "
 "précédent porte peut-être des lignes que l'autre machine n'a pas encore "
@@ -2211,7 +2223,7 @@ msgstr ""
 "ακόμη: μια εξαγωγή σε όνομα αρχείου που υπάρχει ήδη απορρίπτεται. Ορίστε "
 "τον φάκελο, και κάθε εξαγωγή παίρνει εκεί νέο όνομα."
 
-#: ../../source/manuel_interface.rst:906
+#: ../../source/manuel_interface.rst:911
 msgid ""
 "**Un fichier réécrit sous un nom déjà vu est fusionné de nouveau** : la "
 "surveillance reconnaît un fichier à son nom, sa taille et sa date de "
@@ -2221,7 +2233,7 @@ msgstr ""
 "συγχωνεύεται ξανά**: η παρακολούθηση αναγνωρίζει ένα αρχείο από το όνομα,"
 " το μέγεθος και την ημερομηνία τροποποίησής του."
 
-#: ../../source/manuel_interface.rst:909
+#: ../../source/manuel_interface.rst:914
 msgid ""
 "**La bibliothèque ouverte n'est jamais fusionnée dans elle-même** : si "
 "elle se trouve dans le dossier surveillé, la surveillance la passe."
@@ -2229,7 +2241,7 @@ msgstr ""
 "**Η ανοιχτή βιβλιοθήκη δεν συγχωνεύεται ποτέ με τον εαυτό της**: αν "
 "βρίσκεται στον παρακολουθούμενο φάκελο, η παρακολούθηση την παρακάμπτει."
 
-#: ../../source/manuel_interface.rst:911
+#: ../../source/manuel_interface.rst:916
 msgid ""
 "**Un export qui a dû écarter des lignes** (signalées dans le journal) ne "
 "fait pas avancer le repère : le suivant les retente, avec tout ce qui les"
@@ -2239,7 +2251,7 @@ msgstr ""
 "ημερολόγιο) δεν προωθεί το σημάδι: η επόμενη τις ξαναδοκιμάζει, μαζί με "
 "ό,τι ακολουθεί."
 
-#: ../../source/manuel_interface.rst:913
+#: ../../source/manuel_interface.rst:918
 msgid ""
 "**Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom "
 "caché puis renommé d'un coup. Un fichier protégé par mot de passe "
@@ -2251,7 +2263,7 @@ msgstr ""
 "(``.dbx``) δεν λαμβάνεται από την παρακολούθηση, που δεν μπορεί να "
 "ζητήσει τον κωδικό."
 
-#: ../../source/manuel_interface.rst:917
+#: ../../source/manuel_interface.rst:922
 msgid ""
 "En ligne de commande, ``blunderdb export --type database --incremental "
 "--file <dossier>`` d'un côté et ``blunderdb import --type batch --dir "
@@ -2265,11 +2277,11 @@ msgstr ""
 "δέχεται ``\"incremental\": true`` στο ``/v1/exports.sqlite`` (βλ. "
 ":ref:`headless`)."
 
-#: ../../source/manuel_interface.rst:925
+#: ../../source/manuel_interface.rst:930
 msgid "Assistant et MCP"
 msgstr "Βοηθός και MCP"
 
-#: ../../source/manuel_interface.rst:927
+#: ../../source/manuel_interface.rst:932
 msgid ""
 "L'onglet **Assistant et MCP** règle deux choses, toutes deux désactivées "
 "par défaut."
@@ -2277,7 +2289,7 @@ msgstr ""
 "Η καρτέλα **Βοηθός και MCP** ρυθμίζει δύο πράγματα, και τα δύο "
 "απενεργοποιημένα από προεπιλογή."
 
-#: ../../source/manuel_interface.rst:930
+#: ../../source/manuel_interface.rst:935
 msgid ""
 "Le **serveur MCP local** offre les outils de blunderDB (recherche, "
 "lecture d'une position et de son analyse, statistiques d'un joueur, "
@@ -2307,7 +2319,7 @@ msgstr ""
 "διαγράφεται. Χωρίς ανοιχτό παράθυρο, η εντολή ``blunderdb mcp`` "
 "εξυπηρετεί τα ίδια εργαλεία (βλ. :ref:`cli`)."
 
-#: ../../source/manuel_interface.rst:942
+#: ../../source/manuel_interface.rst:947
 msgid ""
 "L'**assistant interne** est un client de ces mêmes outils. Aucun modèle "
 "n'est embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama"
@@ -2336,7 +2348,7 @@ msgstr ""
 "όχι σύσταση: καμία σύσταση μοντέλου δεν γίνεται χωρίς βαθμολογία από το "
 "πρόγραμμα μέτρησης που διανέμεται με τον πηγαίο κώδικα."
 
-#: ../../source/manuel_interface.rst:954
+#: ../../source/manuel_interface.rst:959
 msgid ""
 "Une fois activé, l'assistant est un sous-onglet **Assistant** du panneau "
 "Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la "
@@ -2361,7 +2373,7 @@ msgstr ""
 "διακομιστή MCP — και κάθε τροποποίηση που προετοιμάζει εμφανίζεται και "
 "γίνεται μόνο μετά το **Επιβεβαίωση**."
 
-#: ../../source/manuel_interface.rst:964
+#: ../../source/manuel_interface.rst:969
 msgid ""
 "La fenêtre de configuration regroupe également des réglages d'affichage "
 "de l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir"
@@ -2385,11 +2397,11 @@ msgstr ""
 "καλύτερη αξιοποίηση του διαθέσιμου χώρου). Όπως και οι άλλες ρυθμίσεις, "
 "αυτές οι επιλογές διατηρούνται από τη μία συνεδρία στην άλλη."
 
-#: ../../source/manuel_interface.rst:977
+#: ../../source/manuel_interface.rst:982
 msgid "Visites guidées et base d'exemple"
 msgstr "Ξεναγήσεις και βάση δείγματος"
 
-#: ../../source/manuel_interface.rst:979
+#: ../../source/manuel_interface.rst:984
 msgid ""
 "Pour faciliter la prise en main, blunderDB propose des **visites "
 "guidées** de l'interface. Le catalogue des visites s'ouvre depuis la "
@@ -2413,7 +2425,7 @@ msgstr ""
 " μπορεί να επαναληφθεί ανά πάσα στιγμή. Κατά την πρώτη εκκίνηση, η γενική"
 " ξενάγηση προτείνεται αυτόματα."
 
-#: ../../source/manuel_interface.rst:989
+#: ../../source/manuel_interface.rst:994
 msgid ""
 "La commande ``demo`` charge une **base d'exemple** permettant de "
 "découvrir les fonctionnalités de l'outil sans importer ses propres "
@@ -2433,15 +2445,15 @@ msgstr ""
 "και ο τόπος είναι φανταστικοί. Οι καθοδηγούμενες περιηγήσεις βασίζονται "
 "σε αυτή τη βάση όταν καμία βάση δεν είναι ανοιχτή."
 
-#: ../../source/manuel_interface.rst:1000
+#: ../../source/manuel_interface.rst:1005
 msgid "Navigation dans les positions"
 msgstr "Πλοήγηση στις θέσεις"
 
-#: ../../source/manuel_interface.rst:1002
+#: ../../source/manuel_interface.rst:1007
 msgid "Par défaut, blunderDB permet de:"
 msgstr "Εξ ορισμού, το blunderDB επιτρέπει:"
 
-#: ../../source/manuel_interface.rst:1004
+#: ../../source/manuel_interface.rst:1009
 msgid ""
 "faire défiler les différentes positions de la bibliothèque courante — qui"
 " n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des "
@@ -2455,15 +2467,15 @@ msgstr ""
 "από αυτήν που εμφανίζεται, ώστε μια βάση με πολλές δεκάδες χιλιάδες "
 "θέσεις να ανοίγει το ίδιο γρήγορα με μια μικρή,"
 
-#: ../../source/manuel_interface.rst:1010
+#: ../../source/manuel_interface.rst:1015
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "την εμφάνιση των πληροφοριών ανάλυσης που σχετίζονται με μια θέση,"
 
-#: ../../source/manuel_interface.rst:1012
+#: ../../source/manuel_interface.rst:1017
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "την εμφάνιση, προσθήκη και τροποποίηση των σχολίων μιας θέσης."
 
-#: ../../source/manuel_interface.rst:1014
+#: ../../source/manuel_interface.rst:1019
 msgid ""
 "Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre "
 "où saisir directement l'indice d'une position pour y sauter, sans avoir à"
@@ -2475,16 +2487,16 @@ msgstr ""
 "εκεί, χωρίς κύλιση. Είναι το γραφικό αντίστοιχο της εντολής ``[number]`` "
 "της γραμμής εντολών (βλ. :ref:`cmd_positions`)."
 
-#: ../../source/manuel_interface.rst:1019
-#: ../../source/manuel_interface.rst:1032
+#: ../../source/manuel_interface.rst:1024
+#: ../../source/manuel_interface.rst:1037
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Ανατρέξτε στο :ref:`raccourcis` για τις διαθέσιμες συντομεύσεις."
 
-#: ../../source/manuel_interface.rst:1024
+#: ../../source/manuel_interface.rst:1029
 msgid "Édition de positions"
 msgstr "Επεξεργασία θέσεων"
 
-#: ../../source/manuel_interface.rst:1026
+#: ../../source/manuel_interface.rst:1031
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -2498,11 +2510,11 @@ msgstr ""
 "πουλιών, ο κύβος (cube), το σκορ και η σειρά μπορούν να τροποποιηθούν με "
 "τη βοήθεια του ποντικιού (βλ. :ref:`guide_edit_position`)."
 
-#: ../../source/manuel_interface.rst:1037
+#: ../../source/manuel_interface.rst:1042
 msgid "La ligne de commande"
 msgstr "Η γραμμή εντολών"
 
-#: ../../source/manuel_interface.rst:1039
+#: ../../source/manuel_interface.rst:1044
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -2521,7 +2533,7 @@ msgstr ""
 " χρήση της γραμμής εντολών, η οποία επιτρέπει μια ισχυρή και ομαλή χρήση "
 "του blunderDB, ιδίως για τις λειτουργίες αναζήτησης θέσεων."
 
-#: ../../source/manuel_interface.rst:1048
+#: ../../source/manuel_interface.rst:1053
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
@@ -2531,7 +2543,7 @@ msgstr ""
 "υποβάλετε ένα ερώτημα και να κλείσετε τη γραμμή εντολών, πατήστε το "
 "πλήκτρο *ENTER*."
 
-#: ../../source/manuel_interface.rst:1052
+#: ../../source/manuel_interface.rst:1057
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -2543,7 +2555,7 @@ msgstr ""
 "βάσης δεδομένων εφόσον χρειάζεται. Δεν απαιτούνται ρητές ενέργειες "
 "αποθήκευσης από την πλευρά του χρήστη."
 
-#: ../../source/manuel_interface.rst:1057
+#: ../../source/manuel_interface.rst:1062
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de "
 "commandes disponible en ligne de commande."
@@ -2551,11 +2563,11 @@ msgstr ""
 "Ανατρέξτε στο :ref:`λίστα εντολών <cmd_mode>` για τη λίστα των διαθέσιμων"
 " εντολών στη γραμμή εντολών."
 
-#: ../../source/manuel_interface.rst:1063
+#: ../../source/manuel_interface.rst:1068
 msgid "La palette de commandes"
 msgstr "Η παλέτα εντολών"
 
-#: ../../source/manuel_interface.rst:1065
+#: ../../source/manuel_interface.rst:1070
 msgid ""
 "La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce "
 "que l'on ne sait plus où chercher : une commande de la ligne de commande,"
@@ -2571,7 +2583,7 @@ msgstr ""
 "δίπλα στο άλλο, χωρίς διάκριση πεζών-κεφαλαίων και τόνων: το «μτρκβ» "
 "βρίσκει τη μήτρα του κύβου, το «lyon» τους αγώνες ενός τουρνουά στη Λυών."
 
-#: ../../source/manuel_interface.rst:1072
+#: ../../source/manuel_interface.rst:1077
 msgid ""
 "Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se"
 " lance comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne "
@@ -2585,7 +2597,7 @@ msgstr ""
 "με διπλό κλικ στη βιβλιοθήκη· ένας αγώνας ανοίγει όπως με διπλό κλικ στο "
 "πάνελ Αγώνων."
 
-#: ../../source/manuel_interface.rst:1077
+#: ../../source/manuel_interface.rst:1082
 msgid ""
 "Quand une Direction est ouverte, la palette y ajoute le tournoi : "
 "joueurs, tables, matchs en cours et épreuves (voir :ref:`la recherche "
