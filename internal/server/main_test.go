@@ -6,6 +6,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 )
 
 // TestMain provides the EPC's one-sided bearoff table (ADR-0027) from the
@@ -19,5 +20,5 @@ func TestMain(m *testing.M) {
 	if err := engine.LoadOneSided(path); err != nil {
 		panic("server tests: loading the one-sided table: " + err.Error())
 	}
-	os.Exit(m.Run())
+	os.Exit(issuancetest.Run(m.Run))
 }

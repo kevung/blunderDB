@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 )
 
 // TestMain changes the working directory to the repository root before
@@ -20,5 +22,5 @@ func TestMain(m *testing.M) {
 	if err := os.Chdir(repoRoot); err != nil {
 		panic(err)
 	}
-	os.Exit(m.Run())
+	os.Exit(issuancetest.Run(m.Run))
 }

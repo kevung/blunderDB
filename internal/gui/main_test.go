@@ -7,6 +7,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 )
 
 // TestMain loads the generated bearoff tables once (ADR-0027) for the race
@@ -27,5 +28,5 @@ func TestMain(m *testing.M) {
 	if err := engine.LoadOneSided(oneSided); err != nil {
 		panic("gui tests: loading the one-sided table: " + err.Error())
 	}
-	os.Exit(m.Run())
+	os.Exit(issuancetest.Run(m.Run))
 }

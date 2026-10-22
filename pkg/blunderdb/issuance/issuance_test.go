@@ -574,3 +574,76 @@ func TestCarriedVideoSourceAndFileName(t *testing.T) {
 		}
 	}
 }
+
+func TestIdentitySaveIsAtomic(t *testing.T) {
+	dir := t.TempDir()
+	id := mustIdentity(t, "Jean")
+	if err := id.save(dir); err != nil {
+		t.Fatal(err)
+	}
+	if err := id.save(dir); err != nil {
+		t.Fatal(err)
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 1 {
+		t.Fatalf("leftover files after save: %v", entries)
+	}
+	if runtime.GOOS != "windows" {
+		info, err := os.Stat(IdentityPath(dir))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if info.Mode().Perm() != 0o600 {
+			t.Fatalf("mode = %v, want 0600", info.Mode().Perm())
+		}
+	}
+	back, err := LoadIdentity(dir)
+	if err != nil || back == nil || back.Fingerprint() != id.Fingerprint() {
+		t.Fatalf("reload: %v %v", back, err)
+	}
+}
+
+func TestIdentitySaveFailureLeavesNoTemporary(t *testing.T) {
+	dir := t.TempDir()
+	// A non-empty directory in the target's place makes the final rename fail.
+	target := IdentityPath(dir)
+	if err := os.MkdirAll(filepath.Join(target, "keep"), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	if err := mustIdentity(t, "Jean").save(dir); err == nil {
+		t.Fatal("save succeeded over a directory")
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 1 {
+		t.Fatalf("temporary file left behind: %v", entries)
+	}
+}
+
+func TestIdentitySaveFailureKeepsExistingFile(t *testing.T) {
+	if runtime.GOOS == "windows" || os.Geteuid() == 0 {
+		t.Skip("needs permission checks")
+	}
+	dir := t.TempDir()
+	id := mustIdentity(t, "Jean")
+	if err := id.save(dir); err != nil {
+		t.Fatal(err)
+	}
+	want, _ := os.ReadFile(IdentityPath(dir))
+	if err := os.Chmod(dir, 0o500); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(dir, 0o750) }()
+	if err := mustIdentity(t, "Autre").save(dir); err == nil {
+		t.Fatal("save succeeded in a read-only directory")
+	}
+	got, _ := os.ReadFile(IdentityPath(dir))
+	if string(got) != string(want) {
+		t.Fatal("existing identity altered by a failed save")
+	}
+}
