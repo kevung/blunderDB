@@ -455,8 +455,8 @@ pourquoi. Tant qu'un changement de bibliothèque n'est pas achevé, un second es
 ignoré, et *CTRL-S*, la mise à jour et la suppression d'une position sont
 refusées.
 
-Glisser le compteur d'un volet sur l'autre copie la position
-dans la bibliothèque de ce volet, avec son analyse et son commentaire, sauf si
+Glisser le compteur d'un volet, ou le plateau du volet figé, sur l'autre volet
+copie la position dans la bibliothèque de ce volet, avec son analyse et son commentaire, sauf si
 son groupe est verrouillé ; la barre d'état propose alors *Annuler*. À partir
 de 1600 pixels de large, le panneau reste à côté des plateaux ; entre 1280 et
 1600, il passe dessous ; sous 1280, l'écran partagé se refuse et propose

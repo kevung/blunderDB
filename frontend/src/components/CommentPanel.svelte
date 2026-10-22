@@ -9,7 +9,9 @@
     import { GetCommentAuthor } from '../../wailsjs/go/main/Config.js';
     import { MODAL, openModal } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
-    import { t } from '../i18n';
+    import { t, tMsg } from '../i18n';
+    import { writingOnScreen } from '../stores/groupActivityStore.js';
+    import { setStatusBarMessage } from '../services/databaseService.js';
     import { formatDateTime } from '../utils/format.js';
     import PanelHeader from './panels/PanelHeader.svelte';
     import EmptyState from './panels/EmptyState.svelte';
@@ -210,13 +212,27 @@
         }
     }
 
+    /**
+     * Sends a write naming rows of the library on screen by id, unless a switch of library is in
+     * flight: the id would name a row of the library coming. Whether it was sent.
+     * @param {() => Promise<unknown>} write
+     */
+    async function sendOnScreen(write) {
+        const sent = await writingOnScreen(async () => {
+            await write();
+            return true;
+        });
+        if (!sent) setStatusBarMessage(tMsg('libraryGroups.switching'));
+        return sent === true;
+    }
+
     async function addNewComment() {
         const pos = $positionStore;
         if (!pos || !pos.id) return;
         const text = promptText.trim();
         if (!text) return;
         try {
-            await AddComment(pos.id, text);
+            if (!(await sendOnScreen(() => AddComment(pos.id, text)))) return;
             promptText = '';
             await loadComments();
             // Scroll feed to top (newest first)
@@ -281,7 +297,8 @@
         editingCommentId = null;
         if (editingText !== comment.text) {
             try {
-                await UpdateCommentEntry(comment.id, editingText);
+                const text = editingText;
+                if (!(await sendOnScreen(() => UpdateCommentEntry(comment.id, text)))) return;
                 await loadComments();
             } catch (error) {
                 logger.error('Error saving edited comment:', error);
@@ -304,7 +321,7 @@
         event.stopPropagation();
         try {
             // Through the trash: restorable from the `trash` command.
-            await TrashCommentEntry(comment.id);
+            if (!(await sendOnScreen(() => TrashCommentEntry(comment.id)))) return;
             await loadComments();
         } catch (error) {
             logger.error('Error deleting comment:', error);

@@ -25,9 +25,10 @@ func (d *Database) TransferTo(ctx context.Context, dst *Database, opts ExportOpt
 }
 
 // transferWith is TransferTo with two hooks run while both libraries are
-// locked: before ahead of the copy, after once it is written. Whatever they
-// read of either library nothing else can change between them and the copy.
-func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportOptions, before, after func(ctx context.Context) error) (ingest.TransferReport, error) {
+// locked: before ahead of the copy, after once it is written, with its
+// report. The locks keep out the Database methods of either library, not a
+// borrowed handle or another Database on the same file.
+func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportOptions, before func(ctx context.Context) error, after func(ctx context.Context, rep ingest.TransferReport) error) (ingest.TransferReport, error) {
 	if dst == nil || d == dst {
 		return ingest.TransferReport{}, fmt.Errorf("%w: %w", storage.ErrInvalid, ingest.ErrSelfTransfer)
 	}
@@ -72,7 +73,7 @@ func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportO
 		return rep, err
 	}
 	if after != nil {
-		return rep, after(ctx)
+		return rep, after(ctx, rep)
 	}
 	return rep, nil
 }

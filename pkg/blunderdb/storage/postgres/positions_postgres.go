@@ -421,6 +421,35 @@ func (s *positionStore) Delete(ctx context.Context, scope string, id int64) erro
 	return nil
 }
 
+// HoldForDelete takes the analysis guard before the position row: the writer
+// of a first analysis holds the guard before its insert waits on the row
+// through the foreign key, and the other order would deadlock with it.
+func (s *positionStore) HoldForDelete(ctx context.Context, scope string, id int64) error {
+	tenant := tenantID(scope)
+	if _, err := s.db.Exec(ctx, `SELECT pg_advisory_xact_lock($1)`,
+		guardKey(storage.AnalysisGuardKey(scope, id))); err != nil {
+		return fmt.Errorf("postgres: hold position %d: %w", id, err)
+	}
+	var one int
+	err := s.db.QueryRow(ctx,
+		`SELECT 1 FROM position WHERE id = $1 AND tenant_id = $2 FOR UPDATE`, id, tenant).Scan(&one)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return fmt.Errorf("postgres: hold position %d: %w", id, storage.ErrNotFound)
+	}
+	if err != nil {
+		return fmt.Errorf("postgres: hold position %d: %w", id, err)
+	}
+	for _, q := range []string{
+		`SELECT 1 FROM analysis WHERE position_id = $1 AND tenant_id = $2 FOR UPDATE`,
+		`SELECT 1 FROM comment WHERE position_id = $1 AND tenant_id = $2 FOR UPDATE`,
+	} {
+		if _, err := s.db.Exec(ctx, q, id, tenant); err != nil {
+			return fmt.Errorf("postgres: hold position %d: %w", id, err)
+		}
+	}
+	return nil
+}
+
 // List streams stored positions ordered by id.
 func (s *positionStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {

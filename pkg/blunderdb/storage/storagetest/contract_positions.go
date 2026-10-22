@@ -178,6 +178,44 @@ func testPositionSaveCreatedConcurrent(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testPositionHoldForDelete pins the check-then-delete a take-back runs in
+// one transaction: the hold finds the position, a missing one is
+// ErrNotFound, and the delete under the hold commits with its cascade.
+func testPositionHoldForDelete(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := checkerPos()
+	id, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	if _, err := s.Comments().Add(ctx, "", id, "kept with it"); err != nil {
+		t.Fatalf("Comments.Add: %v", err)
+	}
+	tx, err := s.BeginTx(ctx)
+	if err != nil {
+		t.Fatalf("BeginTx: %v", err)
+	}
+	defer func() { _ = tx.Rollback() }()
+	if err := tx.Positions().HoldForDelete(ctx, "", id+1000); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("HoldForDelete of a missing position = %v, want ErrNotFound", err)
+	}
+	if err := tx.Positions().HoldForDelete(ctx, "", id); err != nil {
+		t.Fatalf("HoldForDelete: %v", err)
+	}
+	if err := tx.Positions().Delete(ctx, "", id); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if err := tx.Commit(); err != nil {
+		t.Fatalf("Commit: %v", err)
+	}
+	if _, err := s.Positions().Load(ctx, "", id); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Load after the held delete = %v, want ErrNotFound", err)
+	}
+	for c, err := range s.Comments().ByPosition(ctx, "", id) {
+		t.Errorf("comment %v (%v) outlived its position", c, err)
+	}
+}
+
 func testPositionUpdatePreservesID(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	p := checkerPos()

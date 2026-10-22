@@ -24,7 +24,7 @@ import { forgetDuel } from './duelService.js';
 import { resetLessonStores } from '../stores/lessonStore.js';
 import { logger } from '../utils/logger.js';
 import { forgetPaneCopyInto } from '../stores/transferBasketStore.js';
-import { activeGroupId } from '../stores/groupActivityStore.js';
+import { activeGroupId, groupSwitchingStore, holdingSwitch } from '../stores/groupActivityStore.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { translate, tMsg } from '../i18n';
@@ -276,6 +276,10 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         return;
     }
 
+    if (!inNewGroup && get(groupSwitchingStore)) {
+        setStatusBarMessage(tMsg('libraryGroups.switching'));
+        return;
+    }
     if (inNewGroup) {
         // Before any reset: a refused open leaves the active library and its screen as they were.
         try {
@@ -298,11 +302,18 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         resetTranscriptionStores();
 
         (await import('../stores/directionStore.js')).forgetDirection();
+        let opened = true;
         try {
-            if (!inNewGroup) await OpenDatabase(filePath);
+            // In place, the group's handle changes library: a switch would photograph the wrong
+            // one, and a write still on its way would land in the library coming.
+            if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), true))) === true;
         } catch (error) {
             openFailed = true;
             throw error;
+        }
+        if (!opened) {
+            setStatusBarMessage(tMsg('libraryGroups.switching'));
+            return;
         }
         // The group's library is another one now: its ids name other rows.
         if (!inNewGroup) forgetPaneCopyInto(get(activeGroupId));

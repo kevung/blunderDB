@@ -152,6 +152,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	saved := make([]savedRecord, 0, len(records))
 	targetIDs := make([]int64, 0, len(records))
 	targetOf := make(map[int64]int64, len(records))
+	var created []int64
 	for i := range records {
 		if err := ctx.Err(); err != nil {
 			return Summary{}, err
@@ -159,9 +160,12 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		rec := &records[i]
 		pc := *rec.pos
 		pc.ID = 0
-		id, err := tx.Positions().Save(ctx, scope, &pc)
+		id, inserted, err := tx.Positions().SaveCreated(ctx, scope, &pc)
 		if err != nil {
 			return Summary{}, err
+		}
+		if inserted {
+			created = append(created, id)
 		}
 		saved = append(saved, savedRecord{rec: rec, id: id})
 		targetIDs = append(targetIDs, id)
@@ -174,7 +178,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	}
 
 	carrier := mets.NewCarrier("import", tx.MatchEquityTables(), scope, srcTables)
-	var sum Summary
+	sum := Summary{CreatedPositions: created}
 	for _, s := range saved {
 		if err := ctx.Err(); err != nil {
 			return sum, err
