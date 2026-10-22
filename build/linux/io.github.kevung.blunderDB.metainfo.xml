@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.46.0" date="2026-10-23">
+      <description>
+        <ul>
+          <li>gammonNet v1.8.1 in half precision, with bit-identical evaluations on x86-64 and ARM</li>
+          <li>The Other bases panel exchanges positions, matches, tournaments and collections between open bases, and every copy can be undone</li>
+          <li>A true split screen, context menus with submenus, and reorderable, scrolling tabs</li>
+          <li>Ctrl-S also saves the displayed gammonNet evaluation; transcription drafts import from .mat or JSON</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.45.0" date="2026-10-21">
       <description>
         <ul>
