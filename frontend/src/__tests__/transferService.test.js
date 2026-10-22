@@ -8,7 +8,7 @@ vi.mock('../stores/libraryGroupStore.js', () => ({
         { id: 1, path: '/libs/mine.db' },
         { id: 2, path: '/libs/club.db' }
     ]),
-    groupName: (path) => (path.split('/').pop() || '').replace(/\.db$/, '')
+    groupName: (/** @type {string} */ path) => (path.split('/').pop() || '').replace(/\.db$/, '')
 }));
 vi.mock('../stores/libraryCountsStore.js', () => ({ refreshLibraryCounts: vi.fn() }));
 
