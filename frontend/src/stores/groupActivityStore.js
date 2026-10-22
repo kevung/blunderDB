@@ -2,6 +2,10 @@
 // Apart from libraryGroupStore so that a job's service can name its group without loading the
 // group machinery (the photographs, the scoped stores).
 import { writable, get } from 'svelte/store';
+import { libraryChanged } from './databaseStore.js';
+import { matchPanelRefreshTriggerStore, dbMutationCounterStore } from './uiStore.js';
+import { refreshLibraryCounts } from './libraryCountsStore.js';
+import { elsewhereStore, idleElsewhere } from './elsewhereStore.js';
 
 /** The groups in tab-bar order: ids only, the active one's path is databasePathStore. */
 export const groupIdsStore = writable(/** @type {number[]} */ ([1]));
@@ -59,6 +63,9 @@ export async function holdingSwitch(fn) {
         return await fn();
     } finally {
         groupSwitchingStore.set(false);
+        // A write that ended during the switch was kept for later: if its group is the one on
+        // screen now (the switch failed, or it ended after the group came), it is read now.
+        if (staleGroups.delete(get(activeGroupId))) readOnScreenAgain();
     }
 }
 
@@ -94,6 +101,38 @@ export function noteGroupJob(group, state, job, message = null) {
         const kept = state === 'running' && was?.state === 'done' ? was : null;
         return new Map(m).set(id, kept ?? { state, job, message: message ?? was?.message ?? null });
     });
+    return false;
+}
+
+/**
+ * Bumped by every write a job made to a library, whichever group: what the group on screen
+ * shows of the others (the « Autres bases » panel) reads them again.
+ */
+export const librariesWrittenStore = writable(0);
+
+/** Every panel listing the library on screen reads it again. */
+function readOnScreenAgain() {
+    libraryChanged();
+    matchPanelRefreshTriggerStore.update((n) => n + 1);
+    dbMutationCounterStore.update((n) => n + 1);
+    refreshLibraryCounts();
+}
+
+/**
+ * A job wrote the library of group: the one place that tells the panels. On screen, every panel
+ * listing it reads it again; off screen, or while a switch is in flight (the backend may be
+ * bound to either group), it is read when it is on screen again. Says whether it was read now.
+ * @param {number | null | undefined} group
+ */
+export function libraryWritten(group) {
+    librariesWrittenStore.update((n) => n + 1);
+    elsewhereStore.set(idleElsewhere());
+    const id = group || get(activeGroupId);
+    if (!get(groupSwitchingStore) && groupOnScreen(id)) {
+        readOnScreenAgain();
+        return true;
+    }
+    if (get(groupIdsStore).includes(id)) staleGroups.add(id);
     return false;
 }
 

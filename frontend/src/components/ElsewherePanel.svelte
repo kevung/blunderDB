@@ -13,6 +13,7 @@
     import { databasePathStore } from '../stores/databaseStore.js';
     import { groupIdsStore, activeGroupId, groupName, groupColorIndex, tabGroupsStore } from '../stores/libraryGroupStore.js';
     import { transferBasketStore, lockedGroupsStore } from '../stores/transferBasketStore.js';
+    import { librariesWrittenStore } from '../stores/groupActivityStore.js';
     import { loadElsewhere, openElsewhere, togglePin, analysisSummary, formatCost } from '../services/elsewhereService.js';
     import { copyPositionToPane, fetchPositionFrom, pourBasket, removeFromBasket, emptyBasket, copyToGroup, transferToGroup } from '../services/transferService.js';
     import { exchangeObjectStore } from '../stores/exchangeObjectStore.js';
@@ -127,6 +128,8 @@
         void $databasePathStore;
         void others.length;
         void $exchangeObjectStore;
+        // A copy, wherever it was started, may have changed which bases hold the object.
+        void $librariesWrittenStore;
         loadObject();
     });
 

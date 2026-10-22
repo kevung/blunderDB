@@ -325,6 +325,7 @@ export const OUTSIDE = [
     'groupActivityStore',
     'importForegroundStore',
     'groupSwitchingStore',
+    'librariesWrittenStore',
     // The split screen follows the groups: each side names one and survives every switch; the
     // shake and the frozen pane's position are the panes', not a library's.
     'splitStore',

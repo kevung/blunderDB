@@ -6,11 +6,10 @@
 import { get } from 'svelte/store';
 import { TransferToGroup, SetLibraryGroupLocked, CopyPositionToGroup, UndoPositionCopy } from '../../wailsjs/go/gui/App.js';
 import { transferBasketStore, lockedGroupsStore, transferHistoryStore, protectedPaths, rememberProtection } from '../stores/transferBasketStore.js';
-import { activeGroupId, groupIdsStore, noteGroupJob } from '../stores/groupActivityStore.js';
+import { activeGroupId, groupIdsStore, noteGroupJob, libraryWritten } from '../stores/groupActivityStore.js';
 import { positionStore } from '../stores/positionStore.js';
-import { databasePathStore, libraryChanged } from '../stores/databaseStore.js';
+import { databasePathStore } from '../stores/databaseStore.js';
 import { tabGroupsStore, groupName } from '../stores/libraryGroupStore.js';
-import { refreshLibraryCounts } from '../stores/libraryCountsStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { tMsg } from '../i18n';
 import { logger } from '../utils/logger.js';
@@ -70,6 +69,8 @@ export async function transferToGroup(dst, items) {
         logger.error('transfer between library groups failed:', error);
         const message = tMsg('transfer.failed', { error: String(error) });
         if (noteGroupJob(dst, 'done', 'transfer', message)) setStatusBarMessage(message);
+        // A copy that failed half way may have written part of the lot.
+        libraryWritten(dst);
         return false;
     }
     const { ok } = transferDone(dst, summary);
@@ -90,8 +91,10 @@ function keepReceipt(dst, ok, summary) {
 }
 
 /**
- * Says how a transfer into dst ended: on screen, the panels read the library again; off screen,
- * its header carries the badge. Says whether it ran to its end, and what was said.
+ * Says how a transfer into dst ended: on screen, the status bar says it; off screen, its header
+ * carries the badge. Either way dst was written, a cancelled copy included (what it copied
+ * before stopping stays): its panels read it again. Says whether it ran to its end, and what
+ * was said.
  * @param {number} dst
  * @param {import('../../wailsjs/go/models').gui.TransferSummary} summary
  */
@@ -109,11 +112,8 @@ function transferDone(dst, summary) {
               lessons: summary.lessons,
               failed
           });
-    if (noteGroupJob(dst, 'done', 'transfer', message)) {
-        setStatusBarMessage(message);
-        libraryChanged();
-        refreshLibraryCounts();
-    }
+    if (noteGroupJob(dst, 'done', 'transfer', message)) setStatusBarMessage(message);
+    libraryWritten(dst);
     return { ok: !summary.cancelled && failed === 0, message };
 }
 
@@ -141,6 +141,7 @@ export async function copyPositionToPane(dst, item) {
         const message = tMsg('transfer.failed', { error: String(error) });
         noteGroupJob(dst, 'done', 'transfer', message);
         setStatusBarMessage(message);
+        libraryWritten(dst);
         return false;
     }
     // The copy was asked from what is on screen: the account is said now, whichever base was written.
@@ -187,10 +188,7 @@ export async function undoPaneCopy() {
     }
     transferHistoryStore.update((h) => h.filter((u) => u !== undo));
     setStatusBarMessage(tMsg('transfer.undone', { name: undo.name }));
-    if (undo.dst === get(activeGroupId)) {
-        libraryChanged();
-        refreshLibraryCounts();
-    }
+    libraryWritten(undo.dst);
     return true;
 }
 

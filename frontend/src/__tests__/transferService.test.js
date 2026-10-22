@@ -16,9 +16,11 @@ import { TransferToGroup, SetLibraryGroupLocked, CopyPositionToGroup, UndoPositi
 import { setStatusBarMessage } from '../services/databaseService.js';
 import { tabGroupsStore } from '../stores/libraryGroupStore.js';
 import { transferBasketStore, lockedGroupsStore, forgetTransferGroup, transferHistoryStore } from '../stores/transferBasketStore.js';
-import { groupIdsStore, activeGroupId, groupActivityStore } from '../stores/groupActivityStore.js';
+import { groupIdsStore, activeGroupId, groupActivityStore, takeActivity, groupSwitchingStore, librariesWrittenStore } from '../stores/groupActivityStore.js';
+import { matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
+import { elsewhereStore } from '../stores/elsewhereStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
-import { databasePathStore } from '../stores/databaseStore.js';
+import { databasePathStore, libraryChangedStore } from '../stores/databaseStore.js';
 import { batchesOf, transferToGroup, toggleBasket, pourBasket, toggleGroupLock, dropTransferItem, addToBasket, undoPaneCopy } from '../services/transferService.js';
 
 const done = { receipt: 0, group: 2, positions: 1, matches: 1, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false };
@@ -180,5 +182,83 @@ describe('transferService', () => {
         forgetTransferGroup(2);
         expect(get(transferBasketStore)).toEqual([]);
         expect(get(lockedGroupsStore).has(2)).toBe(false);
+    });
+});
+
+describe('a copy tells every panel of the base it wrote', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        lockedGroupsStore.set(new Set());
+        groupIdsStore.set([1, 2]);
+        activeGroupId.set(1);
+        groupActivityStore.set(new Map());
+        transferHistoryStore.set([]);
+        takeActivity(2);
+    });
+
+    /** @returns {{ promise: Promise<any>, resolve: (v: any) => void }} */
+    function deferred() {
+        /** @type {(v: any) => void} */
+        let resolve = () => {};
+        const promise = new Promise((r) => (resolve = r));
+        return { promise, resolve };
+    }
+
+    it('reads the match list and the statistics again when the base comes on screen before the copy ends', async () => {
+        const answer = deferred();
+        vi.mocked(TransferToGroup).mockReturnValue(answer.promise);
+        const copy = transferToGroup(2, [{ group: 1, kind: 'match', id: 5, label: 'm' }]);
+        // The user brings the arriving base forward while the copy still runs.
+        takeActivity(2);
+        activeGroupId.set(2);
+        const matches = get(matchPanelRefreshTriggerStore);
+        const mutations = get(dbMutationCounterStore);
+        const library = get(libraryChangedStore);
+        answer.resolve(done);
+        await copy;
+        expect(get(matchPanelRefreshTriggerStore)).toBe(matches + 1);
+        expect(get(dbMutationCounterStore)).toBe(mutations + 1);
+        expect(get(libraryChangedStore)).toBe(library + 1);
+    });
+
+    it('a copy ending during a switch away from its base marks the base to read again', async () => {
+        activeGroupId.set(2);
+        const answer = deferred();
+        vi.mocked(TransferToGroup).mockReturnValue(answer.promise);
+        const copy = transferToGroup(2, [{ group: 1, kind: 'match', id: 5, label: 'm' }]);
+        groupSwitchingStore.set(true);
+        const matches = get(matchPanelRefreshTriggerStore);
+        answer.resolve(done);
+        await copy;
+        // The backend may already be bound to the base coming: nothing is read now.
+        expect(get(matchPanelRefreshTriggerStore)).toBe(matches);
+        groupSwitchingStore.set(false);
+        activeGroupId.set(1);
+        expect(takeActivity(2).stale).toBe(true);
+    });
+
+    it('a copy into a base off screen empties what the base on screen knows of the others', async () => {
+        elsewhereStore.set({ key: 'k', view: /** @type {any} */ ({ groups: [] }), loading: false, error: '' });
+        const writes = get(librariesWrittenStore);
+        vi.mocked(TransferToGroup).mockResolvedValue(done);
+        await transferToGroup(2, [{ group: 1, kind: 'match', id: 5, label: 'm' }]);
+        expect(get(elsewhereStore).key).toBe('');
+        expect(get(librariesWrittenStore)).toBe(writes + 1);
+        expect(takeActivity(2).stale).toBe(true);
+    });
+
+    it('a copy cancelled half way still reads the arriving base again', async () => {
+        activeGroupId.set(2);
+        vi.mocked(TransferToGroup).mockResolvedValue({ ...done, cancelled: true });
+        const matches = get(matchPanelRefreshTriggerStore);
+        await transferToGroup(2, [{ group: 1, kind: 'match', id: 5, label: 'm' }]);
+        expect(get(matchPanelRefreshTriggerStore)).toBe(matches + 1);
+    });
+
+    it('taking back a copy into a base off screen marks it to read again', async () => {
+        transferHistoryStore.set([{ dst: 2, receipt: 9, name: 'club' }]);
+        vi.mocked(UndoPositionCopy).mockResolvedValue(undefined);
+        expect(await undoPaneCopy()).toBe(true);
+        expect(takeActivity(2).stale).toBe(true);
     });
 });

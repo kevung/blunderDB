@@ -6,7 +6,7 @@ import { watchStatusStore, watchImportNoticeStore } from '../stores/watchStore.j
 import { fileImportBusyStore } from '../stores/importModalStore.js';
 import { databaseLoadedStore } from '../stores/databaseStore';
 import { importWatchedFiles, maybeAutoAnalyzeAfterImport } from './importService.js';
-import { activeGroupId, groupIdsStore, groupOnScreen, noteGroupJob } from '../stores/groupActivityStore.js';
+import { activeGroupId, groupIdsStore, groupOnScreen, noteGroupJob, libraryWritten } from '../stores/groupActivityStore.js';
 import { tMsg } from '../i18n';
 import { logger } from '../utils/logger.js';
 
@@ -171,8 +171,11 @@ async function importInBackground(group, files) {
         return;
     }
     const counts = { succeeded: summary.succeeded, skipped: summary.skipped, failed: summary.failed };
+    const here = noteGroupJob(group, 'done', 'watch', tMsg('status.watchImportDone', counts));
+    // Le groupe qui a reçu les fichiers relit sa bibliothèque, à l'écran ou à son retour.
+    if (summary.succeeded > 0) libraryWritten(group);
     // Revenu à l'écran entre-temps : le compte rendu se lit comme d'habitude.
-    if (!noteGroupJob(group, 'done', 'watch', tMsg('status.watchImportDone', counts))) {
+    if (!here) {
         if (summary.succeeded > 0) await maybeAutoAnalyzeAfterImport(group);
         return;
     }

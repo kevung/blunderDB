@@ -68,7 +68,7 @@ import {
     fileImportGroupStore,
     fileImportBusyStore
 } from '../stores/importModalStore.js';
-import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore } from '../stores/groupActivityStore.js';
+import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore, libraryWritten } from '../stores/groupActivityStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 
@@ -1133,6 +1133,7 @@ async function runFileImport(files, { quiet = false, resumeBatchID = 0 } = {}) {
         // Finished in a group off screen: its header says so, and the group reads its library
         // again when it comes back. Nothing here touches the library on screen.
         noteGroupJob(group, 'done', 'import', message);
+        libraryWritten(group);
         return null;
     }
 
