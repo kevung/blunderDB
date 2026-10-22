@@ -17,9 +17,9 @@ retour** : une base migrée n'est plus lisible par une version antérieure de
 blunderDB, d'où la sauvegarde préalable (:ref:`annexe_db_migration`). Le reste
 ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 
-- **Réanalyser les positions périmées** (0.38.0, 0.40.0). Une analyse gammonNet
-  écrite avant la version 0.40.0 l'a été par un moteur antérieur (gammonNet
-  v1.7.0 depuis) : ``blunderdb analyze --stale``, ou la ligne *Analyses
+- **Réanalyser les positions périmées** (0.38.0, 0.40.0, 0.46.0). Une analyse
+  gammonNet écrite avant la version 0.46.0 l'a été par un moteur antérieur
+  (gammonNet v1.8.1 depuis) : ``blunderdb analyze --stale``, ou la ligne *Analyses
   gammonNet périmées* de l'onglet *Maintenance*, la récrit. Une analyse
   importée n'est jamais touchée.
 - **Réimporter les fichiers source pour obtenir la chance** (0.33.0). Les matchs
@@ -41,6 +41,25 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   analyse : ``blunderdb match repair --list`` trouve les matchs qui diffèrent de
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
+
+0.46.0 (2026-10-23)
+-------------------
+
+- **gammonNet v1.8.1, en demi-précision** : le réseau embarqué est stocké en float16 (format BGN6) et l'application pèse 1,1 Mo de moins. Le moteur change de version : toute analyse gammonNet enregistrée auparavant est périmée, et ``blunderdb analyze --stale`` ou la ligne *Analyses gammonNet périmées* de l'onglet *Maintenance* la récrit.
+- **Les mêmes évaluations sur toutes les machines** : une analyse gammonNet donne le même résultat au bit près sur un processeur x86-64 ou ARM (arm64).
+- **Le panneau Autres bases** (*CTRL-MAJ-A*, qui remplace l'onglet Ailleurs) est le poste d'échange entre les bases ouvertes : pour chacune, il dit si la position y est *présente*, *absente* ou *présente avec une autre analyse*, et la copie dans un sens ou dans l'autre (*Copier vers …*, *Récupérer depuis …*) sans écraser l'analyse que la base d'arrivée tient déjà. Le lot, en bas du panneau, remplace le panier : *MAJ-B* et le groupe *Envoyer* du menu contextuel y mettent positions, matchs et tournois, copiés en une fois vers la base d'arrivée choisie.
+- **Le panneau Autres bases suit la sélection** : pour le match, le tournoi, la collection ou la leçon sélectionné dans son panneau, il dit si chaque autre base le contient déjà, avec ce qu'il y contient, et propose de le copier. ``blunderdb elsewhere --match``, ``--tournament``, ``--collection`` ou ``--lesson`` et la route ``across.objectElsewhere`` répondent de même.
+- **Annuler une copie** : chaque copie de la session entre deux bases — position, match, tournoi, collection ou lot — s'annule depuis la barre d'état (*Annuler la copie (n)*), la plus récente d'abord. L'annulation ne retire que ce que la copie a créé, et se refuse si ce qu'elle a créé a changé depuis.
+- **L'écran partagé coupe la seule zone du plateau en deux** : chaque volet garde sa base et son côté, le volet actif est cerné de sa couleur et l'autre atténué ; un clic ou *CTRL-ALT-← / →* change de volet, glisser une position d'un volet sur l'autre la copie, et les panneaux comme la barre d'état suivent la base active.
+- **Le menu contextuel en sous-menus** : le plateau et les lignes des panneaux Matchs, Tournois et Collections tirent leurs actions d'un même catalogue, rangées en sous-menus (▸) que les flèches du clavier parcourent. *Marquer vue* ou *Démarquer* selon que la position est marquée, *Copier l'ID GNUbg* donne l'ID de position et de match que GNU Backgammon charge, *Ouvrir le match à ce coup* ouvre le premier match qui a joué la position. ``blunderdb gnubgid`` et la route ``positions.gnubgId`` calculent le même ID.
+- **Les onglets** : quand ils ne tiennent plus dans la largeur, la rangée défile entre deux flèches, un dégradé marque le bord où des onglets sont cachés et le menu *Toutes les vues* (*∨*) liste les vues de chaque base. Glisser un onglet réordonne les vues de son groupe, glisser un en-tête de groupe déplace le groupe entier.
+- **CTRL-S enregistre aussi l'évaluation gammonNet affichée** dans le panneau Eval : le verdict du plateau (les coups avec des dés, le videau sinon) est écrit avec la position ; une analyse que la base tient déjà est conservée telle quelle.
+- **Les nombres de Neil exacts pour chaque n de 3 à 25** dans le panneau Données de référence, en fraction exacte, les points d'ancrage en caractères droits et les valeurs interpolées en italique.
+- **Transcription** : les coups candidats d'un jet sont tous ses coups légaux, classés au 0-ply ; le bouton *Importer* (touche *i* dans la liste des brouillons) ouvre un fichier ``.mat`` ou un document de transcription comme brouillon, ce que fait aussi la route ``transcriptions.import`` ; l'état d'une transcription rendu par le serveur porte ``video_source``, les repères et les durées de chaque action.
+- **Statistiques** : ``stats summary`` et la route ``stats.summary`` rendent la part publique des statistiques, sans les pires erreurs ni le détail par match ; ``stats windows --by-phase`` (``stats.prByWindow``) découpe chaque fenêtre par phase de jeu ; ``list --type timeerrors --ids`` (``stats.timeErrors``) se restreint à une liste de matchs ; la route ``stats.tournamentReviews`` rend la revue de plusieurs joueurs en un appel.
+- **Direction de tournoi** : un barème de prix en pourcentages se paie à l'unité, par la méthode du plus fort reste ; la somme versée égale la somme à distribuer arrondie, et un barème décroissant donne des montants décroissants.
+- Corrections notables : la commande ``#tag`` garde le ``#`` dans le commentaire, que la recherche ``#tag`` retrouve, et n'ajoute pas une étiquette déjà présente, ponctuation finale comprise ; le rattrapage d'analyse comble aussi les positions dont l'analyse ne porte que l'XGID ; changer de groupe ne fait plus bouger le plateau.
+- Voir :ref:`vue_ailleurs`, :ref:`menu_contextuel_actions`, :ref:`groupes_bibliotheques`, :ref:`panneau_reference`, :ref:`panneau_transcription`, :ref:`diriger_un_tournoi` et :ref:`headless`.
 
 0.45.0 (2026-10-21)
 -------------------

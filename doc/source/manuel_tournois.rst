@@ -399,7 +399,11 @@ sans être résolu — pendant un tournoi, la parole du directeur fait foi.
 
 L'onglet **Classement** montre le classement courant, section par section, avec
 le bilan de chacun (victoires–défaites) et les prix lorsqu'une dotation est
-réglée. Deux ex æquo partagent la place et le prix. Un joueur retiré garde le
+réglée. Un barème en pourcentages se paie à l'unité, par la méthode du plus
+fort reste : chaque montant est tronqué à l'unité, puis les unités qui manquent
+pour atteindre la somme à distribuer, arrondie, vont une à une aux places dont
+la partie décimale est la plus grande (à égalité, à la mieux classée) ; un
+barème en montants fixes se paie tel quel. Deux ex æquo partagent la place et le prix. Un joueur retiré garde le
 rang que son parcours lui vaut, noté « retiré » avec son bilan ou l'endroit du
 tableau où il s'est arrêté. **Clore le tournoi** fige le classement final. Le classement se copie en
 CSV, dans la langue de l'interface, avec la section et la dernière phase où

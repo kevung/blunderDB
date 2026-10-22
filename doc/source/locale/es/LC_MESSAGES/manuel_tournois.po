@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"POT-Creation-Date: 2026-10-22 23:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -960,7 +960,12 @@ msgstr ""
 msgid ""
 "L'onglet **Classement** montre le classement courant, section par "
 "section, avec le bilan de chacun (victoires–défaites) et les prix "
-"lorsqu'une dotation est réglée. Deux ex æquo partagent la place et le "
+"lorsqu'une dotation est réglée. Un barème en pourcentages se paie à "
+"l'unité, par la méthode du plus fort reste : chaque montant est tronqué à"
+" l'unité, puis les unités qui manquent pour atteindre la somme à "
+"distribuer, arrondie, vont une à une aux places dont la partie décimale "
+"est la plus grande (à égalité, à la mieux classée) ; un barème en "
+"montants fixes se paie tel quel. Deux ex æquo partagent la place et le "
 "prix. Un joueur retiré garde le rang que son parcours lui vaut, noté « "
 "retiré » avec son bilan ou l'endroit du tableau où il s'est arrêté. "
 "**Clore le tournoi** fige le classement final. Le classement se copie en "
@@ -974,20 +979,25 @@ msgid ""
 msgstr ""
 "La pestaña **Clasificación** muestra la clasificación actual, sección por"
 " sección, con el balance de cada uno (victorias–derrotas) y los premios "
-"cuando hay una dotación configurada. Dos empatados comparten el puesto y "
-"el premio. Un jugador retirado conserva el puesto que le vale su "
-"recorrido, marcado «retirado» con su balance o el punto del cuadro donde "
-"se detuvo. **Cerrar el torneo** fija la clasificación final. La "
-"clasificación se copia en CSV, en el idioma de la interfaz, con la "
-"sección y la última fase en que entró cada jugador, o se guarda en un "
-"archivo: **Guardar…** abre el diálogo del sistema con un nombre "
-"propuesto, el torneo seguido de la palabra «clasificación» y la fecha del"
-" día, y el archivo contiene exactamente el CSV copiado. En la línea de "
-"comandos, ``blunderdb tournament standings`` escribe el mismo CSV. El "
-"nombre de un jugador es un enlace: abre el Historial filtrado por él, "
-"donde cada uno de sus resultados se corrige."
+"cuando hay una dotación configurada. Una escala en porcentajes se paga "
+"por unidades enteras, por el método del resto mayor: cada importe se "
+"trunca a la unidad, y las unidades que faltan para alcanzar la suma por "
+"repartir, redondeada, van una a una a los puestos cuya parte decimal es "
+"mayor (en caso de empate, al mejor clasificado); una escala en importes "
+"fijos se paga tal cual. Dos empatados comparten el puesto y el premio. Un"
+" jugador retirado conserva el puesto que le vale su recorrido, marcado "
+"«retirado» con su balance o el punto del cuadro donde se detuvo. **Cerrar"
+" el torneo** fija la clasificación final. La clasificación se copia en "
+"CSV, en el idioma de la interfaz, con la sección y la última fase en que "
+"entró cada jugador, o se guarda en un archivo: **Guardar…** abre el "
+"diálogo del sistema con un nombre propuesto, el torneo seguido de la "
+"palabra «clasificación» y la fecha del día, y el archivo contiene "
+"exactamente el CSV copiado. En la línea de comandos, ``blunderdb "
+"tournament standings`` escribe el mismo CSV. El nombre de un jugador es "
+"un enlace: abre el Historial filtrado por él, donde cada uno de sus "
+"resultados se corrige."
 
-#: ../../source/manuel_tournois.rst:413
+#: ../../source/manuel_tournois.rst:417
 msgid ""
 "Clore sans match en cours est un clic ; quand tout est joué, la file "
 "propose aussi **Clore le tournoi**, qui se lance comme une autre "
@@ -1005,7 +1015,7 @@ msgstr ""
 "manera; la clasificación final deja entonces de ser final, y la "
 "reapertura queda en el registro."
 
-#: ../../source/manuel_tournois.rst:422
+#: ../../source/manuel_tournois.rst:426
 msgid ""
 "L'onglet **Historique** est le journal en clair : une ligne par décision,"
 " dans l'ordre, filtrable par joueur ou par match. C'est ce qu'un "
@@ -1019,7 +1029,7 @@ msgstr ""
 "corrige o se anota. Una línea de resultado nombra a los dos jugadores: el"
 " ganador y su adversario."
 
-#: ../../source/manuel_tournois.rst:427
+#: ../../source/manuel_tournois.rst:431
 msgid ""
 "**Corriger**, sur la ligne d'un résultat, ouvre sous elle la même reprise"
 " que la dernière décision : cliquer le bon vainqueur, avec le score s'il "
@@ -1032,11 +1042,11 @@ msgstr ""
 "el registro, la corrección se añade, y la clasificación la tiene en "
 "cuenta al instante."
 
-#: ../../source/manuel_tournois.rst:433
+#: ../../source/manuel_tournois.rst:437
 msgid "Les réglages"
 msgstr "Los ajustes"
 
-#: ../../source/manuel_tournois.rst:435
+#: ../../source/manuel_tournois.rst:439
 msgid ""
 "L'onglet **Réglages** s'ouvre sur des **formats nommés** : six tournois "
 "de club prêts à l'emploi, dont le premier est recommandé. En choisir un "
@@ -1046,7 +1056,7 @@ msgstr ""
 "de club listos para usar, el primero recomendado. Elegir uno basta para "
 "empezar; los campos siguen siendo modificables después."
 
-#: ../../source/manuel_tournois.rst:439
+#: ../../source/manuel_tournois.rst:443
 msgid ""
 "Se règlent ici : les phases (**Ajouter une phase** l'ajoute après les "
 "autres ; une phase déjà ouverte ne se retire pas) et leur longueur de "
@@ -1070,7 +1080,7 @@ msgstr ""
 "inscripción, retención del club, baremo por sección) y la carpeta de "
 "visualización."
 
-#: ../../source/manuel_tournois.rst:449
+#: ../../source/manuel_tournois.rst:453
 msgid ""
 "Un **tableau** a trois cases : **Consolante** (ses perdants jouent un "
 "second tableau, section à part au classement), **Réconciliation** (le "
@@ -1094,7 +1104,7 @@ msgstr ""
 "fase de **Grupos** se ajusta con el tamaño de los grupos (4 por defecto) "
 "y el número de clasificados por grupo (2 por defecto)."
 
-#: ../../source/manuel_tournois.rst:459
+#: ../../source/manuel_tournois.rst:463
 msgid ""
 "La **bascule** d'une phase suisse est la somme des vies restantes à "
 "partir de laquelle on passe au tableau. Si la somme des vies de départ "
@@ -1106,7 +1116,7 @@ msgstr ""
 "× vidas) ya es inferior o igual al umbral, la suiza se saltaría: los "
 "Ajustes lo señalan antes del primer lanzamiento."
 
-#: ../../source/manuel_tournois.rst:464
+#: ../../source/manuel_tournois.rst:468
 msgid ""
 "Les réglages restent accessibles **en cours de tournoi** : baisser la "
 "bascule à 22 h pour finir plus tôt, ajouter une consolante le samedi "
@@ -1130,7 +1140,7 @@ msgstr ""
 "entonces no se guarda nada: es el caso de la consolación, la "
 "reconciliación o la recarga de un cuadro ya sorteado."
 
-#: ../../source/manuel_tournois.rst:474
+#: ../../source/manuel_tournois.rst:478
 msgid ""
 "Une table au plateau cassé se déclare dans **Tables hors service** : ses "
 "numéros, séparés par des virgules (« 7, 12 »). Le moteur ne l'attribue "
@@ -1146,7 +1156,7 @@ msgstr ""
 "puesta fuera de servicio, la lista de lo que va a cambiar lo dice y "
 "nombra una mesa libre a la que moverlo, desde la ficha del match."
 
-#: ../../source/manuel_tournois.rst:481
+#: ../../source/manuel_tournois.rst:485
 msgid ""
 "Les **têtes de série** sont une option, éteinte par défaut : l'étude du "
 "moteur conclut « pas de têtes de série protégées », qui est la culture "
@@ -1157,11 +1167,11 @@ msgstr ""
 "cultura actual del backgammon. Activadas, los jugadores se colocan por "
 "valoración."
 
-#: ../../source/manuel_tournois.rst:486
+#: ../../source/manuel_tournois.rst:490
 msgid "Les épreuves d'un événement"
 msgstr "Las pruebas de un evento"
 
-#: ../../source/manuel_tournois.rst:488
+#: ../../source/manuel_tournois.rst:492
 msgid ""
 "Plusieurs épreuves jouées sur les mêmes tables — un principal, un speed, "
 "des doubles — se regroupent dans un **Événement**, en tête des Réglages "
@@ -1186,7 +1196,7 @@ msgstr ""
 "sus mesas; **Eliminar el evento**, tras confirmación, lo envía a la "
 "papelera y separa sus pruebas sin eliminar ninguna."
 
-#: ../../source/manuel_tournois.rst:499
+#: ../../source/manuel_tournois.rst:503
 msgid ""
 "Dans un événement, aucune épreuve ne propose une table où joue une autre "
 ": la grille montre ces tables occupées, avec le nom de l'épreuve, et un "
@@ -1204,7 +1214,7 @@ msgstr ""
 "de una prueba valen también para el evento, y la lista de lo que cambiará"
 " nombra las demás pruebas."
 
-#: ../../source/manuel_tournois.rst:506
+#: ../../source/manuel_tournois.rst:510
 msgid ""
 "Les **propriétés des tables** se règlent dans le panneau Événement : un "
 "tableau d'une ligne par table, avec son **nom** (« Stream », par "
@@ -1236,7 +1246,7 @@ msgstr ""
 "titulares de mesas distintas que se enfrentan juegan en la más pequeña de"
 " las dos."
 
-#: ../../source/manuel_tournois.rst:520
+#: ../../source/manuel_tournois.rst:524
 msgid ""
 "Une **salle** est l'ensemble des tables qui portent le même libellé : « "
 "salle A » pour les tables 1 à 20, « salle B » pour les suivantes. Dans "
@@ -1258,7 +1268,7 @@ msgstr ""
 "que juega sola ajusta las mismas propiedades de mesa en sus propios "
 "Ajustes, sin salas de prueba."
 
-#: ../../source/manuel_tournois.rst:529
+#: ../../source/manuel_tournois.rst:533
 msgid ""
 "Le **Classement de saison**, dans le panneau Événement, cumule les "
 "épreuves closes de l'événement : chaque place rapporte les points du "
@@ -1280,7 +1290,7 @@ msgstr ""
 "clasificación, **Copiar como CSV** la copia con una columna de puntos por"
 " prueba. Una prueba no cerrada no aporta nada."
 
-#: ../../source/manuel_tournois.rst:538
+#: ../../source/manuel_tournois.rst:542
 msgid ""
 "Ouvrir la Direction d'une épreuve d'un événement ouvre aussi les autres :"
 " un onglet par épreuve apparaît en haut de la Direction, chacun avec son "
@@ -1302,7 +1312,7 @@ msgstr ""
 " a Torneos devuelve la Dirección tal como se dejó: la misma prueba o "
 "*Todas las mesas*, y la misma pestaña de la vista."
 
-#: ../../source/manuel_tournois.rst:547
+#: ../../source/manuel_tournois.rst:551
 msgid ""
 "L'onglet **Toutes les tables**, à gauche des épreuves, montre toutes les "
 "tables de l'événement en une seule grille : une case par table, quelle "
@@ -1338,7 +1348,7 @@ msgstr ""
 "Hacer clic en una prueba o en una pestaña de vista sale de *Todas las "
 "mesas*."
 
-#: ../../source/manuel_tournois.rst:562
+#: ../../source/manuel_tournois.rst:566
 msgid ""
 "Quand l'événement a plusieurs salles, la grille se groupe par salle, sous"
 " le nom de chacune. Le nom d'une table s'affiche à côté de son numéro, "
@@ -1352,7 +1362,7 @@ msgstr ""
 " los titulares para una mesa asignada; las propuestas también nombran la "
 "mesa."
 
-#: ../../source/manuel_tournois.rst:566
+#: ../../source/manuel_tournois.rst:570
 msgid ""
 "Une même personne peut jouer plusieurs épreuves de l'événement : deux "
 "Participants du même nom sont la même personne, et pour une paire de "
@@ -1372,11 +1382,11 @@ msgstr ""
 "emparejamiento a mano sigue permitido: el match empieza, y su casilla de "
 "la cuadrícula lleva la misma mención."
 
-#: ../../source/manuel_tournois.rst:575
+#: ../../source/manuel_tournois.rst:579
 msgid "L'affichage du tournoi"
 msgstr "La pantalla del torneo"
 
-#: ../../source/manuel_tournois.rst:577
+#: ../../source/manuel_tournois.rst:581
 msgid ""
 "Un tournoi se regarde. Choisir un **dossier d'affichage** dans les "
 "Réglages suffit une fois pour toutes : blunderDB y réécrit une page HTML "
@@ -1391,7 +1401,7 @@ msgstr ""
 "conexión, en una segunda pantalla o proyectada, y no carga ningún recurso"
 " externo. *Abrir en el navegador* la muestra al instante."
 
-#: ../../source/manuel_tournois.rst:583
+#: ../../source/manuel_tournois.rst:587
 msgid ""
 "Les joueurs peuvent aussi suivre le tournoi sur leur téléphone. Dans les "
 "Réglages de la Direction, la rubrique **Afficher sur le réseau du club** "
@@ -1415,7 +1425,7 @@ msgstr ""
 " *Abrir en esta máquina* la abre en el navegador del equipo. *Dejar de "
 "mostrar* cierra el servidor, que también se detiene al cerrar blunderDB."
 
-#: ../../source/manuel_tournois.rst:593
+#: ../../source/manuel_tournois.rst:597
 msgid ""
 "L'affichage est éteint tant que le directeur ne l'allume pas, et il est "
 "**en lecture seule** : il ne sert que la page de ce tournoi, aucune autre"
@@ -1451,7 +1461,7 @@ msgstr ""
 "claramente y deja funcionando la pantalla en curso; relanzarla en su "
 "propio puerto la reemplaza de inmediato."
 
-#: ../../source/manuel_tournois.rst:608
+#: ../../source/manuel_tournois.rst:612
 msgid ""
 "Le **pare-feu** de la machine du directeur doit laisser entrer le port "
 "choisi : Windows demande l'autorisation au premier lancement, le pare-feu"
@@ -1470,7 +1480,7 @@ msgstr ""
 "«Affichage interrompu : données de HH:MM» en lugar de dar a entender que "
 "está al día."
 
-#: ../../source/manuel_tournois.rst:616
+#: ../../source/manuel_tournois.rst:620
 msgid ""
 "La **feuille d'appariements** se pose sur la table d'accueil : un clic "
 "sur *Imprimer la feuille* ouvre le dialogue d'impression du système. Une "
@@ -1484,7 +1494,7 @@ msgstr ""
 "vacías para el marcador — y una ronda de treinta y dos jugadores cabe en "
 "una página A4."
 
-#: ../../source/manuel_tournois.rst:621
+#: ../../source/manuel_tournois.rst:625
 msgid ""
 "Un événement a son propre dossier de sortie, choisi une fois dans son "
 "panneau de Réglages avec le même bouton *Choisir un dossier* : blunderDB "
@@ -1505,7 +1515,7 @@ msgstr ""
 "página mural; la carpeta propia de una prueba adjunta se conserva pero se"
 " ignora mientras siga en el evento."
 
-#: ../../source/manuel_tournois.rst:630
+#: ../../source/manuel_tournois.rst:634
 msgid ""
 "Quand une épreuve est en phase de tableau et que celui-ci est tiré, sa "
 "page murale et celle de l'événement montrent l'arbre en grand, lisible de"
@@ -1527,7 +1537,7 @@ msgstr ""
 "cuadro — una fase suiza, por ejemplo — no tiene árbol y la página queda "
 "como antes."
 
-#: ../../source/manuel_tournois.rst:640
+#: ../../source/manuel_tournois.rst:644
 msgid ""
 "Sous la rubrique « Est-ce que je joue ? », la page d'une épreuve et la "
 "page murale de l'événement nomment les joueurs qui ne jouent pas en ce "
@@ -1551,7 +1561,7 @@ msgstr ""
 "el exento de una ronda suiza, y «ganador/a». La clasificación toma el "
 "relevo una vez terminado el torneo."
 
-#: ../../source/manuel_tournois.rst:650
+#: ../../source/manuel_tournois.rst:654
 msgid ""
 "Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un "
 "tournoi dirigé sans interface graphique : ``list``, ``verify``, "
