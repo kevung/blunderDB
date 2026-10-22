@@ -85,7 +85,8 @@ export async function transferToGroup(dst, items) {
  * @param {{ receipt?: number }} summary
  */
 function keepReceipt(dst, ok, summary) {
-    if (ok && summary.receipt) transferHistoryStore.update((h) => [...h, { dst, receipt: summary.receipt, name: groupName(pathOf(dst)) }]);
+    const receipt = summary.receipt;
+    if (ok && receipt) transferHistoryStore.update((h) => [...h, { dst, receipt, name: groupName(pathOf(dst)) }]);
 }
 
 /**

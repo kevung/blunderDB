@@ -298,6 +298,7 @@
     function sortTournaments(list, { column: sortBy, direction: sortOrder }) {
         if (!sortBy) return list;
         return [...list].sort((a, b) => {
+            /** @type {any} */
             let valA, valB;
             if (sortBy === 'name') {
                 valA = (a.name || '').toLowerCase();

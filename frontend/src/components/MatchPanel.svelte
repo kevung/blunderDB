@@ -100,9 +100,11 @@
     const matches = $derived($matchListStore.rows);
     const matchTotal = $derived($matchListStore.total);
     let filterText = $state('');
+    /** @type {HTMLInputElement | null} */
     let filterInput = $state(null);
     /** @type {ReturnType<typeof setTimeout> | null} */
-    let filterTimer = null;
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let filterTimer;
     /** @type {any} */
     let selectedMatch = $state(null);
     // The « Autres bases » panel speaks of the match the user selected: noted on the gesture, not

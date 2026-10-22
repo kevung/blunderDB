@@ -21,7 +21,7 @@ import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { batchesOf, transferToGroup, toggleBasket, pourBasket, toggleGroupLock, dropTransferItem, addToBasket, undoPaneCopy } from '../services/transferService.js';
 
-const done = { group: 2, positions: 1, matches: 1, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false };
+const done = { receipt: 0, group: 2, positions: 1, matches: 1, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false };
 const lastMessage = () => vi.mocked(setStatusBarMessage).mock.calls.at(-1)?.[0];
 
 describe('transferService', () => {

@@ -451,7 +451,7 @@
         /** @type {any[]} */
         const gestures = [];
         commands.forEach((command, i) => {
-            const gesture = gestureOf(command);
+            const gesture = /** @type {any} */ (gestureOf(command));
             if (!gesture) return;
             // A validation that the next roll's digit carries is not the moment the play
             // was finished on screen: it leaves the action untimed rather than timed wrong
@@ -889,7 +889,7 @@
      * @returns {Promise<{list: Candidate[], unranked: boolean}>}
      */
     async function computeCandidates() {
-        const answer = await TranscriptionCandidates(draftId);
+        const answer = await TranscriptionCandidates(/** @type {number} */ (draftId));
         const list = (answer?.candidates ?? []).map((/** @type {any} */ c) => ({
             move: c.analysis ?? { index: c.index, move: c.notation },
             gen: c.index,
