@@ -142,6 +142,12 @@
     $effect(() => registerKeys('viewTabs', handleKeydown));
 </script>
 
+{#snippet addButton()}
+    <button class="add-btn" data-testid="add-view" onclick={() => addView()} title={$t('viewTabs.newView')}
+        >+{#if tabCount <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
+    >
+{/snippet}
+
 <!-- A single view of a single library collapses the bar to the bare "+"; it expands with a second
      view or a second library. -->
 <div class="view-tabs" class:collapsed={tabCount <= 1}>
@@ -225,66 +231,72 @@
                         {/if}
                     </div>
                 {/each}
+                <!-- A new view joins the group on screen: its button sits right after that group's last tab. -->
+                {#if group.active}
+                    {@render addButton()}
+                {/if}
             {/each}
         </div>
     {/if}
-    <button class="add-btn" onclick={() => addView()} title={$t('viewTabs.newView')}
-        >+{#if tabCount <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
-    >
-    <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')} aria-label={$t('libraryGroups.openInNewGroup')}
-        >&#x29C9;{#if !grouped}<span class="add-label">{$t('libraryGroups.openLabel')}</span>{/if}</button
-    >
-    <button
-        class="group-btn"
-        class:on={$splitStore.on}
-        data-testid="toggle-split"
-        onclick={() => toggleSplit()}
-        title={$t('split.toggle')}
-        aria-label={$t('split.toggle')}
-        aria-pressed={$splitStore.on}>&#x25EB;</button
-    >
-    {#if grouped || $transferBasketStore.length > 0}
-        <!-- The basket: rows of any group, poured at once into one; dragged onto a header, it pours there. -->
-        <div class="basket">
-            <span
-                class="basket-btn"
-                class:filled={$transferBasketStore.length > 0}
-                role="button"
-                tabindex="0"
-                data-testid="transfer-basket"
-                data-library-drop="basket"
-                title={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
-                aria-label={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
-                aria-expanded={basketMenuOpen}
-                onclick={() => (basketMenuOpen = !basketMenuOpen)}
-                onkeydown={(e) => e.key === 'Enter' && (basketMenuOpen = !basketMenuOpen)}
-                use:libraryDrag={() => ($transferBasketStore.length > 0 ? { kind: 'basket', label: $t('transfer.basketTitle', { n: $transferBasketStore.length }) } : null)}
-                >{$t('transfer.basket')}<span class="basket-count">{$transferBasketStore.length}</span></span
-            >
-            {#if basketMenuOpen}
-                <div class="basket-menu" role="menu" data-testid="transfer-basket-menu">
-                    {#each $tabGroupsStore as group (group.id)}
+    {#if tabCount <= 1}
+        {@render addButton()}
+    {/if}
+    <div class="view-tab-tools">
+        <button class="group-btn" data-testid="open-library-group" onclick={openInNewGroup} title={$t('libraryGroups.openInNewGroup')} aria-label={$t('libraryGroups.openInNewGroup')}
+            >&#x29C9;{#if !grouped}<span class="add-label">{$t('libraryGroups.openLabel')}</span>{/if}</button
+        >
+        <button
+            class="group-btn"
+            class:on={$splitStore.on}
+            data-testid="toggle-split"
+            onclick={() => toggleSplit()}
+            title={$t('split.toggle')}
+            aria-label={$t('split.toggle')}
+            aria-pressed={$splitStore.on}>&#x25EB;</button
+        >
+        {#if grouped || $transferBasketStore.length > 0}
+            <!-- The basket: rows of any group, poured at once into one; dragged onto a header, it pours there. -->
+            <div class="basket">
+                <span
+                    class="basket-btn"
+                    class:filled={$transferBasketStore.length > 0}
+                    role="button"
+                    tabindex="0"
+                    data-testid="transfer-basket"
+                    data-library-drop="basket"
+                    title={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
+                    aria-label={$t('transfer.basketTitle', { n: $transferBasketStore.length })}
+                    aria-expanded={basketMenuOpen}
+                    onclick={() => (basketMenuOpen = !basketMenuOpen)}
+                    onkeydown={(e) => e.key === 'Enter' && (basketMenuOpen = !basketMenuOpen)}
+                    use:libraryDrag={() => ($transferBasketStore.length > 0 ? { kind: 'basket', label: $t('transfer.basketTitle', { n: $transferBasketStore.length }) } : null)}
+                    >{$t('transfer.basket')}<span class="basket-count">{$transferBasketStore.length}</span></span
+                >
+                {#if basketMenuOpen}
+                    <div class="basket-menu" role="menu" data-testid="transfer-basket-menu">
+                        {#each $tabGroupsStore as group (group.id)}
+                            <button
+                                role="menuitem"
+                                data-testid="transfer-basket-pour"
+                                data-group-id={group.id}
+                                disabled={$transferBasketStore.length === 0 || $lockedGroupsStore.has(group.id)}
+                                onclick={() => pourInto(group.id)}>{$t('transfer.pourInto', { name: group.name || $t('libraryGroups.unnamed') })}</button
+                            >
+                        {/each}
                         <button
                             role="menuitem"
-                            data-testid="transfer-basket-pour"
-                            data-group-id={group.id}
-                            disabled={$transferBasketStore.length === 0 || $lockedGroupsStore.has(group.id)}
-                            onclick={() => pourInto(group.id)}>{$t('transfer.pourInto', { name: group.name || $t('libraryGroups.unnamed') })}</button
+                            data-testid="transfer-basket-empty"
+                            disabled={$transferBasketStore.length === 0}
+                            onclick={() => {
+                                basketMenuOpen = false;
+                                transfer().then((m) => m.emptyBasket());
+                            }}>{$t('transfer.emptyBasket')}</button
                         >
-                    {/each}
-                    <button
-                        role="menuitem"
-                        data-testid="transfer-basket-empty"
-                        disabled={$transferBasketStore.length === 0}
-                        onclick={() => {
-                            basketMenuOpen = false;
-                            transfer().then((m) => m.emptyBasket());
-                        }}>{$t('transfer.emptyBasket')}</button
-                    >
-                </div>
-            {/if}
-        </div>
-    {/if}
+                    </div>
+                {/if}
+            </div>
+        {/if}
+    </div>
 </div>
 
 <style>
@@ -325,6 +337,14 @@
         min-width: 0;
         overflow-x: auto;
         scrollbar-width: none;
+    }
+
+    /* Tools and operations, apart from the tabs and aligned to the right. */
+    .view-tab-tools {
+        display: flex;
+        align-items: stretch;
+        margin-left: auto;
+        flex-shrink: 0;
     }
 
     .view-tab-list::-webkit-scrollbar {

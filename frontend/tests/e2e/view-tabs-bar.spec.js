@@ -133,3 +133,29 @@ test('the landing mark shows on a dragged-over tab and on the active group heade
     expect(await shadow(marked)).not.toBe('none');
     await page.mouse.up();
 });
+
+test('the + button follows the active group, and the tools sit apart on the right', async ({ page }) => {
+    await openTwoGroups(page);
+    await page.locator('[role="tab"][data-group-id="1"]').click();
+    await expect(page.getByTestId('library-group').nth(0)).toHaveClass(/active/);
+
+    const add = page.getByTestId('add-view');
+    await expect(add).toHaveCount(1);
+    const last = await tabsOf(page, 1).last().boundingBox();
+    const plus = await add.boundingBox();
+    const nextHeader = await page.getByTestId('library-group').nth(1).boundingBox();
+    // Right after the last tab of group 1, before group 2's header.
+    expect(plus.x).toBeGreaterThanOrEqual(last.x + last.width - 1);
+    expect(plus.x + plus.width).toBeLessThanOrEqual(nextHeader.x + 1);
+
+    await add.click();
+    await expect(tabsOf(page, 1)).toHaveCount(2);
+    await expect(tabsOf(page, 2)).toHaveCount(1);
+
+    // The tools are aligned to the right edge of the bar, apart from the tabs.
+    const bar = await page.locator('.view-tabs').boundingBox();
+    const split = await page.getByTestId('toggle-split').boundingBox();
+    const basket = await page.getByTestId('transfer-basket').boundingBox();
+    expect(bar.x + bar.width - (basket.x + basket.width)).toBeLessThan(40);
+    expect(split.x).toBeGreaterThan(nextHeader.x + nextHeader.width);
+});

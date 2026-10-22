@@ -288,6 +288,12 @@ le titre de la fenêtre nomme la base.
   vues est celui des raccourcis *CTRL-1* … *CTRL-9* et il est conservé avec la
   session ; l'ordre des groupes vaut pour la session en cours.
 
+Le bouton *+* qui crée une vue est rattaché à droite du dernier onglet du
+groupe actif : la nouvelle vue rejoint ce groupe et apparaît là où l'on a
+cliqué. La barre se partage en deux zones : à gauche les groupes et leurs
+onglets, à droite, alignés au bord, les outils (autre bibliothèque, écran
+partagé, panier).
+
 Passer d'un groupe à l'autre ne déplace jamais le plateau : dès que deux
 bibliothèques sont ouvertes, la place de la barre d'information de la position
 (sous les onglets) reste réservée, vide quand le groupe affiché n'a rien à y
