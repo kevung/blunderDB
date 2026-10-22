@@ -64,26 +64,27 @@ func allRolls() [][2]int {
 	return out
 }
 
-// transcribedMidGame is a draft whose Cursor stands at a contact position a
-// few turns into a game, the ranking's expensive case, with no roll typed.
-// Each turn picks the first legal play, so the position is fixed.
-func transcribedMidGame(t *testing.T) (*Database, int64) {
+// transcribedContact is a draft whose Cursor stands on contactBoard, no roll
+// typed: the opening play is entered by hand as that board (a board no legal
+// play reaches is kept as entered), so the panel's widest lists — 152 plays
+// for 2-2, 133 for 1-1 — go through Database.TranscriptionCandidates.
+// contactBoard mirrors itself, so it is the same position for either side.
+func transcribedContact(t *testing.T) (*Database, int64) {
 	t.Helper()
 	db := newTestDB(t)
 	state, err := db.CreateTranscription(transcript.Header{MatchLength: 7})
 	if err != nil {
 		t.Fatalf("CreateTranscription: %v", err)
 	}
-	for _, roll := range [][2]int{{3, 1}, {6, 4}, {5, 2}, {4, 3}, {6, 2}, {5, 3}} {
-		for _, g := range []transcript.Gesture{
-			{Kind: transcript.GestureEnterDie, Die: roll[0]},
-			{Kind: transcript.GestureEnterDie, Die: roll[1]},
-			{Kind: transcript.GestureSelectCandidate, Candidate: 0},
-			{Kind: transcript.GestureValidate},
-		} {
-			if _, err := db.ApplyTranscriptionGesture(state.ID, g); err != nil {
-				t.Fatalf("roll %v, gesture %s: %v", roll, g.Kind, err)
-			}
+	board := contactBoard()
+	for _, g := range []transcript.Gesture{
+		{Kind: transcript.GestureEnterDie, Die: 3},
+		{Kind: transcript.GestureEnterDie, Die: 1},
+		{Kind: transcript.GestureEnterPlay, BoardAfter: &board},
+		{Kind: transcript.GestureValidate},
+	} {
+		if _, err := db.ApplyTranscriptionGesture(state.ID, g); err != nil {
+			t.Fatalf("gesture %s: %v", g.Kind, err)
 		}
 	}
 	return db, state.ID
@@ -137,10 +138,17 @@ func bestOf(t *testing.T, db *Database, id int64, roll [2]int, n int) (plays int
 // measured on an idle machine.
 func TestTranscriptionDoublesLatency(t *testing.T) {
 	const ceiling = 30 * time.Millisecond
-	db, id := transcribedMidGame(t)
+	db, id := transcribedContact(t)
 	rankRoll(t, db, id, [2]int{6, 5})
-	for _, roll := range [][2]int{{2, 2}, {1, 1}} {
+	for _, c := range []struct {
+		roll  [2]int
+		plays int
+	}{{[2]int{2, 2}, 152}, {[2]int{1, 1}, 133}} {
+		roll := c.roll
 		plays, best := bestOf(t, db, id, roll, 5)
+		if plays != c.plays {
+			t.Fatalf("roll %v: %d plays ranked, want the %d of contactBoard", roll, plays, c.plays)
+		}
 		t.Logf("roll %v, %d plays ranked at 0-ply unpruned: %v", roll, plays, best)
 		if best > ceiling && !raceEnabled {
 			t.Errorf("ranking roll %v took %v, over the %v guard of ux.md §7", roll, best, ceiling)
@@ -153,7 +161,7 @@ func TestTranscriptionDoublesLatency(t *testing.T) {
 // times the cost, the margin a shared CI runner needs.
 func TestTranscriptionRollLatencyPerKeystroke(t *testing.T) {
 	const ceiling = 30 * time.Millisecond
-	db, id := transcribedMidGame(t)
+	db, id := transcribedContact(t)
 	// Warm-up: a running application has already paid for the scratch.
 	rankRoll(t, db, id, [2]int{6, 5})
 	plays, best := bestOf(t, db, id, [2]int{3, 1}, 5)
@@ -202,7 +210,7 @@ func TestTranscriptionRankedSweepCost(t *testing.T) {
 		t.Skip("a measurement of a gesture that does not exist; -short skips it")
 	}
 	const guard = 500 * time.Millisecond
-	db, id := transcribedMidGame(t)
+	db, id := transcribedContact(t)
 	rolls := allRolls()
 	rankRoll(t, db, id, rolls[0])
 

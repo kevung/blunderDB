@@ -2,7 +2,6 @@ package database
 
 import (
 	"errors"
-	"runtime"
 	"testing"
 	"time"
 
@@ -59,7 +58,7 @@ func TestTranscriptionCandidates_NeverWaitsForACore(t *testing.T) {
 			t.Fatalf("enter die: %v", err)
 		}
 	}
-	for range runtime.GOMAXPROCS(0) {
+	for range gammonnet.ProcessCores().Cap() {
 		release := gammonnet.HoldCore()
 		defer release()
 	}

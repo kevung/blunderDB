@@ -180,6 +180,10 @@ func NewBatchSearcher(ply, pruneK int) (*Searcher, error) {
 // HoldCore takes a token of the process budget for a goroutine that is about
 // to search on its own — one position of a batch, one server request —
 // blocking while every core is busy. Call release once the search returns.
+// A serial, interactive 0/1-ply search does not take one — the live panel
+// (EvaluatePosition), the transcription candidates: it overruns the budget by
+// one goroutine for a few milliseconds, where waiting behind a batch would
+// stall the gesture for a whole deep position.
 func HoldCore() (release func()) { return ProcessCores().Hold() }
 
 // EvaluatePositionWith is EvaluatePosition on a searcher the caller owns and

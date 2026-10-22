@@ -163,8 +163,9 @@ func (d *Database) TranscriptionCandidates(id int64) (*transcription.Candidates,
 // equity table, a pooled serial searcher, pruning off. Caller holds d.mu.
 //
 // It takes no token of gammonnet.ProcessCores, unlike a search of a batch: a
-// 0-ply ranking forks nothing and lasts about a millisecond, so it can only
-// overrun the budget by one goroutine for that long, whereas waiting for a
+// 0-ply ranking forks nothing and lasts a few milliseconds, up to ~9 ms for a
+// double on a heavy contact board (152 plays), so it can only overrun the
+// budget by one goroutine for that long, whereas waiting for a
 // token behind a saturating batch would stall a keystroke for a whole deep
 // position, with the library held under d.mu.RLock all the while. The daemon
 // does queue it, on its own analysis pool, for tenant fairness.

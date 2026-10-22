@@ -26,5 +26,7 @@ and the header of `cube.go` first. Each invariant below is a bug if violated, ev
 - **Parallelism never changes a result.** Four loops fork from depth 2 (`parallel.go`); every
   sum is taken after the barrier in ascending roll order, each task writes only its own slot.
   All searches share one budget (`ProcessCores`; a goroutine searching on its own holds a
-  token, `HoldCore`), and a fork never waits for a token. A new fork site passes
+  token, `HoldCore`), and a fork never waits for a token. A serial, interactive 0/1-ply search
+  takes no token — the live panel (`EvaluatePosition`), the transcription candidates — since
+  waiting behind a batch would stall a gesture for a whole deep position. A new fork site passes
   `TestParallelSearchFingerprint` (ADR-0093).
