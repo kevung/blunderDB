@@ -99,7 +99,16 @@ plateau ne s'affiche pas sur la nouvelle position.
 Le bouton **Ajouter à la base**, en tête de la bande de badges, enregistre
 dans la base la position posée sur le plateau ; *CTRL-S*, la commande ``w``
 et le bouton *Enregistrer la position* de la barre d'outils font de même.
-Seule la position est écrite, jamais l'évaluation affichée ; si l'analyse
+L'évaluation gammonNet affichée pour ce plateau (les coups quand les dés
+sont posés, le videau sinon, avec sa profondeur) est enregistrée avec la
+position, telle que l'analyse par lot l'aurait écrite : la recherche
+``s i ad:gammonnet`` retrouve ces positions (en ligne de commande,
+``--individual`` avec ``--analysis gammonnet``). Si la position figurait déjà dans la base avec
+une analyse (importée, gammonNet à une autre profondeur, rollout), cette
+analyse est conservée telle quelle et la barre d'état dit que l'évaluation
+affichée n'a pas été enregistrée ; sans évaluation affichée (moteur en cours
+ou position refusée), seule la position est écrite, de même si la table d'équité de
+match a changé depuis le calcul, ce que la barre d'état signale. Si l'analyse
 automatique gammonNet est activée, son lot démarre ensuite, comme après un
 import. La barre d'état annonce le numéro de la position, y compris quand
 elle figurait déjà dans la base : elle y est alors marquée comme importée

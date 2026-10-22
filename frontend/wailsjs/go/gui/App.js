@@ -358,8 +358,8 @@ export function ShowQuestionDialog(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['ShowQuestionDialog'](arg1, arg2, arg3, arg4);
 }
 
-export function StartEvaluationAtRest(arg1, arg2, arg3, arg4) {
-  return window['go']['gui']['App']['StartEvaluationAtRest'](arg1, arg2, arg3, arg4);
+export function StartEvaluationAtRest(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['gui']['App']['StartEvaluationAtRest'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function StartFolderWatch(arg1, arg2) {

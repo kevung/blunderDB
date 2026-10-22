@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 15:20+0200\n"
+"POT-Creation-Date: 2026-10-22 10:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -173,8 +173,13 @@ msgid "CTRL-S"
 msgstr "CTRL-S"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer une position."
-msgstr "Tallenna asema."
+msgid ""
+"Enregistrer une position ; dans le panneau Eval, avec l'évaluation "
+"gammonNet affichée, sauf si la position a déjà une analyse (``s i "
+"ad:gammonnet`` les retrouve)."
+msgstr ""
+"Tallenna asema; Eval-paneelissa näytetyn gammonNet-evaluoinnin kanssa, "
+"paitsi jos asemalla on jo analyysi (``s i ad:gammonnet`` löytää ne)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-U"
@@ -2684,3 +2689,6 @@ msgstr "Sulje ohje."
 
 #~ msgid "Vue suivante."
 #~ msgstr "Seuraava näkymä."
+
+#~ msgid "Enregistrer une position."
+#~ msgstr "Tallenna asema."

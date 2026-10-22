@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 15:20+0200\n"
+"POT-Creation-Date: 2026-10-22 10:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -174,8 +174,14 @@ msgid "CTRL-S"
 msgstr "STRG-S"
 
 #: ../../source/raccourcis.rst:1
-msgid "Enregistrer une position."
-msgstr "Eine Position speichern."
+msgid ""
+"Enregistrer une position ; dans le panneau Eval, avec l'évaluation "
+"gammonNet affichée, sauf si la position a déjà une analyse (``s i "
+"ad:gammonnet`` les retrouve)."
+msgstr ""
+"Eine Position speichern; im Eval-Panel mit der angezeigten gammonNet-"
+"Bewertung, außer wenn die Position bereits eine Analyse hat (``s i "
+"ad:gammonnet`` findet sie)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-U"
@@ -2750,3 +2756,6 @@ msgstr "Hilfe schließen."
 
 #~ msgid "Vue suivante."
 #~ msgstr "Nächste Ansicht."
+
+#~ msgid "Enregistrer une position."
+#~ msgstr "Eine Position speichern."

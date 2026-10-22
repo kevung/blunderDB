@@ -1354,6 +1354,10 @@ export function SaveComment(arg1, arg2) {
   return window['go']['database']['Database']['SaveComment'](arg1, arg2);
 }
 
+export function SaveDisplayedEvaluation(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SaveDisplayedEvaluation'](arg1, arg2, arg3);
+}
+
 export function SaveEditPosition(arg1, arg2) {
   return window['go']['database']['Database']['SaveEditPosition'](arg1, arg2);
 }

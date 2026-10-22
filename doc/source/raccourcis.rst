@@ -42,7 +42,7 @@ Position
    "CTRL-X", "Copier l'image du board dans le presse-papier (PNG)."
    "CTRL-X CTRL-X", "Copier l'image du board avec l'analyse dans le presse-papier (PNG)."
    "CTRL-V", "Coller une position depuis le presse-papier (détection automatique du format) ; une capture d'écran du plateau est lue sur le plateau d'édition."
-   "CTRL-S", "Enregistrer une position."
+   "CTRL-S", "Enregistrer une position ; dans le panneau Eval, avec l'évaluation gammonNet affichée, sauf si la position a déjà une analyse (``s i ad:gammonnet`` les retrouve)."
    "CTRL-U", "Mettre à jour une position."
    "Del", "Supprimer la position courante (confirmation demandée)."
    "RETOUR ARRIERE", "En mode édition ou Eval : réinitialiser le board, le cube, le score et les dés."

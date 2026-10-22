@@ -4448,6 +4448,8 @@ export namespace gui {
 	    preRoll?: PositionFacts;
 	    cubeVerdict?: string;
 	    refused?: boolean;
+	    metId: number;
+	    tag?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new GammonNetEvalResult(source);
@@ -4461,6 +4463,8 @@ export namespace gui {
 	        this.preRoll = this.convertValues(source["preRoll"], PositionFacts);
 	        this.cubeVerdict = source["cubeVerdict"];
 	        this.refused = source["refused"];
+	        this.metId = source["metId"];
+	        this.tag = source["tag"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

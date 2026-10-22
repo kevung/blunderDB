@@ -9,6 +9,11 @@
  *  - A position already stored receives only its provenance flag: an empty
  *    analysis would blank its players and engine and promote an empty cube
  *    block.
+ *  - In EVAL, the gammonNet verdict the panel shows for this very board
+ *    (evalVerdictStore) is written after the position, by
+ *    SaveDisplayedEvaluation: only where no evaluation stands yet. An
+ *    existing analysis (imported, deeper, a rollout) is kept whole, and the
+ *    status bar says so: a verdict on screen never replaces one silently.
  *  - Mode, tab and index do not move; the position joins the list behind the
  *    board only when that list is the whole library
  *    (modeMachine.joinLibraryBehindScratchBoard).
@@ -21,7 +26,8 @@
 import { get } from 'svelte/store';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore } from '../stores/positionStore.js';
-import { emptyAnalysis } from '../stores/analysisStore.js';
+import { emptyAnalysis, evalVerdictStore } from '../stores/analysisStore.js';
+import { SaveDisplayedEvaluation } from '../../wailsjs/go/database/Database.js';
 import { statusBarModeStore } from '../stores/uiStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { generateXGID } from './xgid.js';
@@ -55,7 +61,11 @@ export async function saveScratchBoard() {
     // A copy: the write path stamps the new id on the object it is given, and
     // the board must not become a library record. The id the board may carry
     // (EDIT blanks the studied position in place) is not its own either.
-    const position = { ...JSON.parse(JSON.stringify(get(positionStore))), id: 0 };
+    const onScreen = get(positionStore);
+    const position = { ...JSON.parse(JSON.stringify(onScreen)), id: 0 };
+    // Read before any await: the verdict must describe the board being saved.
+    const shown = get(evalVerdictStore);
+    const verdict = shown && shown.signature === JSON.stringify(onScreen ?? null) ? shown : null;
 
     const refusal = positionRefusal(position);
     if (refusal) {
@@ -77,8 +87,33 @@ export async function saveScratchBoard() {
     );
     if (id == null) return null;
     logger.log('saveScratchBoard:', id, existed ? '(already stored)' : '(new)');
+    if (verdict) await saveVerdict(id, existed, verdict);
 
     if (!existed) await joinLibraryBehindScratchBoard(id);
     await maybeAutoAnalyzeAfterImport();
     return { id, existed };
+}
+
+/**
+ * Write the panel's verdict onto the stored position and say what became of it.
+ * @param {number} id
+ * @param {boolean} existed
+ * @param {{ metId: number, analysis: { analysisType: string } }} verdict the engine's output (evalVerdictStore)
+ */
+async function saveVerdict(id, existed, verdict) {
+    let outcome;
+    try {
+        outcome = await SaveDisplayedEvaluation(id, /** @type {any} */ (verdict.analysis), verdict.metId);
+    } catch (error) {
+        logger.error('saveScratchBoard: saving the evaluation failed:', error);
+        setStatusBarMessage(tMsg('status.scratchBoardEvalNotSaved', { id }));
+        return;
+    }
+    if (outcome === 'written') {
+        setStatusBarMessage(tMsg(existed ? 'status.scratchBoardAlreadyStoredEvalAdded' : 'status.scratchBoardSavedWithEval', { id }));
+    } else if (outcome === 'metChanged') {
+        setStatusBarMessage(tMsg('status.scratchBoardEvalMetChanged', { id }));
+    } else if (existed) {
+        setStatusBarMessage(tMsg('status.scratchBoardAlreadyStoredAnalysisKept', { id }));
+    }
 }

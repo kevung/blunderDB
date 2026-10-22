@@ -42,6 +42,12 @@ type GammonNetEvalResult struct {
 	// Refused: this build declines the position (e.g. a score beyond the
 	// MET). Data, not an error, so the panel can name it (ADR-0019 rule 4).
 	Refused bool `json:"refused,omitempty"`
+	// METID is the match equity table the verdict was valued with (0: the
+	// built-in one); a save writes it only under that same table (ADR-0068).
+	METID int64 `json:"metId"`
+	// Tag echoes StartEvaluationAtRest's tag, so the panel drops the answer
+	// of a search a newer gesture superseded.
+	Tag int `json:"tag,omitempty"`
 }
 
 // PositionFacts is the JSON mirror of gammonnet.PreRollFacts.
@@ -104,21 +110,23 @@ func (p *gammonNetLivePool) acquire(ply, pruneK int) (*gammonnet.Searcher, func(
 
 // StartEvaluationAtRest runs the display-depth search in the background,
 // cancelling any in flight. Emits "gammonnet-eval:done" (GammonNetEvalResult),
-// "gammonnet-eval:cancelled" when superseded, or "gammonnet-eval:error".
-func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates int) {
+// "gammonnet-eval:cancelled" when superseded, or "gammonnet-eval:error",
+// each carrying tag: a "done" can land after the gesture that superseded it.
+func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates, tag int) {
 	ctx, end := a.beginEvaluationAtRest()
 
 	go func() {
 		defer recoverBackground(a.ctx, "gammonNet evaluation at rest")
 		result, err := a.evaluateGammonNetCtx(ctx, pos, ply, pruneK, candidates)
 		if end() {
-			runtime.EventsEmit(a.ctx, "gammonnet-eval:cancelled")
+			runtime.EventsEmit(a.ctx, "gammonnet-eval:cancelled", map[string]int{"tag": tag})
 			return
 		}
 		if err != nil {
-			runtime.EventsEmit(a.ctx, "gammonnet-eval:error", map[string]string{"message": err.Error()})
+			runtime.EventsEmit(a.ctx, "gammonnet-eval:error", map[string]any{"message": err.Error(), "tag": tag})
 			return
 		}
+		result.Tag = tag
 		runtime.EventsEmit(a.ctx, "gammonnet-eval:done", result)
 	}()
 }
@@ -179,8 +187,9 @@ func (a *App) evaluateGammonNetCtx(ctx context.Context, pos domain.Position, ply
 	// The library's table values the live verdict, as it values the stored
 	// one (ADR-0068): the panel never shows a number another table produced.
 	var met *engine.MET
+	var metID int64
 	if a.db != nil {
-		if met, err = database.CurrentMET(a.db); err != nil {
+		if metID, met, err = database.CurrentMETWithID(a.db); err != nil {
 			return GammonNetEvalResult{}, err
 		}
 	}
@@ -203,7 +212,7 @@ func (a *App) evaluateGammonNetCtx(ctx context.Context, pos domain.Position, ply
 		verdict = raceVerdictFromCubeAction(result.CubeAction)
 	}
 
-	return GammonNetEvalResult{Moves: result.Moves, Cube: result.Cube, Race: raceEval, PreRoll: preRoll, CubeVerdict: verdict}, nil
+	return GammonNetEvalResult{Moves: result.Moves, Cube: result.Cube, Race: raceEval, PreRoll: preRoll, CubeVerdict: verdict, METID: metID}, nil
 }
 
 // preRollFacts is the position's fact vector (ADR-0017): relabelled when
