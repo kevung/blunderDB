@@ -9,19 +9,18 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// DisplayedEvaluationOutcome is what SaveDisplayedEvaluation did with the
-// verdict, for the caller to say.
-type DisplayedEvaluationOutcome string
-
+// The outcomes SaveDisplayedEvaluation returns, for the caller to say. Plain
+// strings, not a named type: the Wails binding would name a type it never
+// generates.
 const (
 	// EvaluationWritten: the verdict now stands on the position.
-	EvaluationWritten DisplayedEvaluationOutcome = "written"
+	EvaluationWritten = "written"
 	// EvaluationKept: the position already carried an evaluation, kept whole.
-	EvaluationKept DisplayedEvaluationOutcome = "kept"
+	EvaluationKept = "kept"
 	// EvaluationMETChanged: the library's match equity table changed since
 	// the verdict was computed; it would be labelled with a table that did
 	// not value it (ADR-0068), so nothing is written.
-	EvaluationMETChanged DisplayedEvaluationOutcome = "metChanged"
+	EvaluationMETChanged = "metChanged"
 )
 
 // SaveDisplayedEvaluation writes a gammonNet verdict the Eval panel computed
@@ -37,7 +36,7 @@ const (
 // whole: a 0-ply verdict on screen must never replace an imported XG
 // analysis or a deeper gammonNet one. A row holding only an XGID (a scratch
 // board saved before) counts as unevaluated and receives the verdict.
-func (d *Database) SaveDisplayedEvaluation(positionID int64, verdict PositionAnalysis, metID int64) (DisplayedEvaluationOutcome, error) {
+func (d *Database) SaveDisplayedEvaluation(positionID int64, verdict PositionAnalysis, metID int64) (string, error) {
 	hasMoves := verdict.CheckerAnalysis != nil && len(verdict.CheckerAnalysis.Moves) > 0
 	if !hasMoves && verdict.DoublingCubeAnalysis == nil {
 		return "", errors.New("save displayed evaluation: the verdict holds neither moves nor a cube analysis")
