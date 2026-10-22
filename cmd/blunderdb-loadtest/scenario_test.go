@@ -97,3 +97,55 @@ func TestRunNamedTenantsScenario(t *testing.T) {
 		t.Errorf("named-tenants: %d of %d requests were not refused with 400", rep.Errors, rep.TotalRequests)
 	}
 }
+
+// TestDoRequestRetriesBackpressure: a 503 is retried, honouring Retry-After,
+// and reaches the report as back-pressure, never as an error; once the retries
+// run out it is shed, still not an error.
+func TestDoRequestRetriesBackpressure(t *testing.T) {
+	oldMax, oldBase, oldCap := maxRetries, baseWait, maxWait
+	maxRetries, baseWait, maxWait = 3, time.Millisecond, 5*time.Millisecond
+	t.Cleanup(func() { maxRetries, baseWait, maxWait = oldMax, oldBase, oldCap })
+
+	calls := 0
+	busy := 2 // answers 503 this many times, then 200
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		if calls <= busy {
+			w.Header().Set("Retry-After", "1") // capped by maxWait
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+		w.Write([]byte(`{}`))
+	}))
+	defer ts.Close()
+
+	o := op{name: "x", build: func(*rand.Rand) (string, []byte) { return "/x", []byte(`{}`) }}
+	rng := rand.New(rand.NewSource(1))
+	s := doRequest(ts.Client(), ts.URL, "1", is2xx, o, rng)
+	if s.fail || s.shed || s.retries != 2 || calls != 3 {
+		t.Fatalf("recovered request: %+v after %d calls", s, calls)
+	}
+
+	calls, busy = 0, 1000
+	s = doRequest(ts.Client(), ts.URL, "1", is2xx, o, rng)
+	if s.fail || !s.shed || s.retries != 3 || calls != 4 {
+		t.Fatalf("exhausted request: %+v after %d calls", s, calls)
+	}
+
+	rep := buildReport(config{}, time.Second, []sample{s, {op: "x", fail: true, code: "500 ?"}})
+	if rep.Errors != 1 || rep.Backpressure != (backpressure{Requests: 1, Retries: 3, Shed: 1}) {
+		t.Fatalf("report: errors=%d bp=%+v", rep.Errors, rep.Backpressure)
+	}
+}
+
+func TestRetryWait(t *testing.T) {
+	if got := retryWait(0, "1"); got != time.Second {
+		t.Fatalf("Retry-After honoured: %v", got)
+	}
+	if got := retryWait(1, ""); got != 2*baseWait {
+		t.Fatalf("exponential step: %v", got)
+	}
+	if got := retryWait(0, "3600"); got != maxWait {
+		t.Fatalf("capped: %v", got)
+	}
+}
