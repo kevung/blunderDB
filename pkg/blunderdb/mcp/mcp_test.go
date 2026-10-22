@@ -15,6 +15,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -647,5 +648,19 @@ func TestTranscribeWriteTools(t *testing.T) {
 	}
 	if names := toolNames(t, cs); slices.Contains(names, "transcribe_abandon") {
 		t.Error("a tool deletes a draft: no tool erases")
+	}
+}
+
+func TestWriteToolsTellTheHost(t *testing.T) {
+	var writes atomic.Int32
+	cs := connect(t, demoServer(t, internalserver.Options{}).Handler(),
+		mcp.Options{Tenant: "1", Write: true, OnWrite: func() { writes.Add(1) }})
+	saved := call(t, cs, "save_position", obj{"text": "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"})
+	if got := writes.Load(); got != 1 {
+		t.Fatalf("after save_position the host heard %d writes, want 1", got)
+	}
+	call(t, cs, "get_position", obj{"positionId": saved["positionId"]})
+	if got := writes.Load(); got != 1 {
+		t.Errorf("a read tool told the host of a write: %d", got)
 	}
 }

@@ -5,13 +5,20 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
-vi.mock('../../wailsjs/runtime/runtime.js', () => ({ EventsOn: () => () => {}, EventsOff: () => {} }));
+const handlers = vi.hoisted(() => /** @type {Record<string, (e?: any) => void>} */ ({}));
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({
+    EventsOn: (/** @type {string} */ name, /** @type {(e?: any) => void} */ fn) => {
+        handlers[name] = fn;
+        return () => {};
+    },
+    EventsOff: () => {}
+}));
 const commands = vi.hoisted(() => /** @type {string[]} */ ([]));
 vi.mock('../commandProcessor.js', () => ({ processCommand: (c) => commands.push(c) }));
 
-import { openSearchView, showPositionById } from '../services/mcpHostService.js';
+import { openSearchView, showPositionById, initMCPHost } from '../services/mcpHostService.js';
 import { viewStore } from '../stores/viewStore.js';
-import { statusBarModeStore, statusBarTextStore } from '../stores/uiStore';
+import { statusBarModeStore, statusBarTextStore, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore';
 
 beforeEach(() => {
     commands.length = 0;
@@ -41,5 +48,16 @@ describe('openSearchView', () => {
         expect(get(viewStore.views)).toHaveLength(before);
         expect(commands).toEqual([]);
         expect(get(statusBarTextStore)).toBeTruthy();
+    });
+});
+
+describe('a write tool', () => {
+    test('the library on screen is read again by every panel', async () => {
+        await initMCPHost();
+        const matches = get(matchPanelRefreshTriggerStore);
+        const mutations = get(dbMutationCounterStore);
+        handlers['mcp:wrote']?.();
+        expect(get(matchPanelRefreshTriggerStore)).toBe(matches + 1);
+        expect(get(dbMutationCounterStore)).toBe(mutations + 1);
     });
 });

@@ -29,6 +29,10 @@ type Options struct {
 	// server a GUI will host — keeps it false: there a web page the user visits
 	// is the attacker the guard stops.
 	AllowRemoteHost bool
+	// OnWrite, when set, is called after each write tool that succeeded: a host
+	// showing the same rows (the GUI) reads them again. Nil for the daemon and
+	// stdio, where no window shows them.
+	OnWrite func()
 }
 
 // Extension registers further tools on a server.
@@ -37,9 +41,10 @@ type Extension func(tb *Toolbox)
 // Toolbox is what a tool set is registered against: the SDK server, the engine
 // the tools call, and the write gate.
 type Toolbox struct {
-	Server *sdk.Server
-	Engine *Engine
-	write  bool
+	Server  *sdk.Server
+	Engine  *Engine
+	write   bool
+	onWrite func()
 }
 
 // Kind says whether a tool only reads or also writes; a write tool is
@@ -70,6 +75,9 @@ func Add[In any](tb *Toolbox, kind Kind, t *sdk.Tool, h func(ctx context.Context
 	}
 	sdk.AddTool(tb.Server, t, func(ctx context.Context, req *sdk.CallToolRequest, in In) (*sdk.CallToolResult, any, error) {
 		out, err := h(ctx, req, in)
+		if err == nil && kind == Writes && tb.onWrite != nil {
+			tb.onWrite()
+		}
 		return nil, out, err
 	})
 	return true
@@ -84,7 +92,7 @@ func NewServer(handler http.Handler, opts Options) *sdk.Server {
 	}
 	srv := sdk.NewServer(&sdk.Implementation{Name: "blunderdb", Title: "blunderDB", Version: version},
 		&sdk.ServerOptions{Instructions: instructions})
-	tb := &Toolbox{Server: srv, Engine: NewEngine(handler, opts.Tenant), write: opts.Write}
+	tb := &Toolbox{Server: srv, Engine: NewEngine(handler, opts.Tenant), write: opts.Write, onWrite: opts.OnWrite}
 	registerBuiltins(tb)
 	for _, ext := range opts.Extensions {
 		ext(tb)

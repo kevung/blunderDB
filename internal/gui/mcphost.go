@@ -26,6 +26,9 @@ const DefaultMCPPort = 8765
 const (
 	mcpOpenViewEvent     = "mcp:open-view"
 	mcpShowPositionEvent = "mcp:show-position"
+	// mcpWroteEvent says a write tool changed the library on screen, which the
+	// tools always reach through the bound handle.
+	mcpWroteEvent = "mcp:wrote"
 )
 
 var errNoDatabase = errors.New("no database is open in blunderDB")
@@ -147,7 +150,12 @@ type mcpHost struct {
 // engine plus the display tools. Tenant 1: the GUI holds one local file.
 func (a *App) newMCPServer(write bool, display guiDisplay) *sdk.Server {
 	return mcp.NewServer(&a.mcp.engine, mcp.Options{Write: write, Tenant: "1", Version: "gui",
-		Extensions: []mcp.Extension{mcp.DisplayTools(display)}})
+		Extensions: []mcp.Extension{mcp.DisplayTools(display)},
+		OnWrite: func() {
+			if a.ctx != nil {
+				runtime.EventsEmit(a.ctx, mcpWroteEvent)
+			}
+		}})
 }
 
 // mcpHTTPHandler serves the tools at /mcp. The SDK's anti-rebinding guard

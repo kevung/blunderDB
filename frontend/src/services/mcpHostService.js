@@ -3,6 +3,7 @@ import { EventsOn } from '../../wailsjs/runtime/runtime.js';
 import { ConfigureMCPHost, GetMCPHostStatus } from '../../wailsjs/go/gui/App.js';
 import { GetMCPHost, SaveMCPHost } from '../../wailsjs/go/main/Config.js';
 import { viewStore } from '../stores/viewStore.js';
+import { libraryWritten } from '../stores/groupActivityStore.js';
 import { statusBarModeStore, statusBarTextStore } from '../stores/uiStore';
 import { processCommand } from '../commandProcessor.js';
 import { tMsg } from '../i18n';
@@ -29,6 +30,8 @@ export async function initMCPHost() {
         subscribed = true;
         EventsOn('mcp:open-view', (/** @type {{ name: string, query: string }} */ e) => openSearchView(e.name, e.query));
         EventsOn('mcp:show-position', (/** @type {{ id: number }} */ e) => showPositionById(e.id));
+        // The tools write through the bound handle: the library on screen.
+        EventsOn('mcp:wrote', () => libraryWritten(null));
     }
     try {
         await applyMCPHost(await GetMCPHost());
