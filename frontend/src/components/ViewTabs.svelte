@@ -1,5 +1,6 @@
 <script>
     import { viewStore } from '../stores/viewStore';
+    import { toCssPx } from '../utils/uiZoom.js';
     import { tabGroupsStore, activateGroup, closeGroup, groupActivityStore, moveGroupView, moveGroup } from '../stores/libraryGroupStore.js';
     import { transferBasketStore, lockedGroupsStore } from '../stores/transferBasketStore.js';
     import { libraryDrag } from '../utils/libraryDrag.js';
@@ -117,8 +118,9 @@
         if (!tabList || !el) return;
         const row = tabList.getBoundingClientRect();
         const box = el.getBoundingClientRect();
-        if (box.left < row.left) tabList.scrollLeft += box.left - row.left;
-        else if (box.right > row.right) tabList.scrollLeft += box.right - row.right;
+        // Window pixels against the zoomed UI: scrollLeft counts CSS pixels of the list.
+        if (box.left < row.left) tabList.scrollLeft += toCssPx(box.left - row.left);
+        else if (box.right > row.right) tabList.scrollLeft += toCssPx(box.right - row.right);
     }
 
     $effect(() => {
@@ -465,7 +467,7 @@
            tab row clips and scrolls itself, in .view-tab-list. */
         overflow: visible;
         position: relative;
-        z-index: 5;
+        z-index: 12;
         gap: 0;
         padding-left: 4px;
         /* The labels are controls, not text to copy. */
@@ -493,6 +495,8 @@
         align-items: stretch;
         min-width: 0;
         flex: 0 1 auto;
+        /* Even narrower than its two arrows, it never paints over the tools. */
+        overflow: hidden;
     }
     .tab-clip {
         position: relative;
