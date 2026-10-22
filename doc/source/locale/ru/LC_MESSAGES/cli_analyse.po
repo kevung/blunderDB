@@ -1,0 +1,960 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_analyse.rst:4
+msgid "Analyse et moteur"
+msgstr "Анализ и движок"
+
+#: ../../source/cli_analyse.rst:7
+msgid "analyze — Rattrapage gammonNet"
+msgstr "analyze — Догоняющий анализ gammonNet"
+
+#: ../../source/cli_analyse.rst:9
+msgid ""
+"Écrit une analyse gammonNet pour chaque position qui n'en a aucune — le "
+"rattrapage d'une bibliothèque constituée avant que cette fonctionnalité "
+"existe (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__, `ADR-0015 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-"
+"serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__). "
+"C'est la même opération que le déclenchement automatique après import et "
+"la ligne « Positions sans analyse » de l'onglet *Maintenance* de "
+"l'interface graphique, et que le point d'accès "
+"``/v1/gammonnet.analyzeMissing`` du démon ``serve`` pour un tenant — "
+"trois formes différentes de la même opération, pas trois logiques "
+"distinctes (voir :ref:`headless`)."
+msgstr ""
+"Записывает анализ gammonNet для каждой позиции, у которой его нет — "
+"доделывание для библиотеки, созданной до появления этой функции "
+"(`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013"
+"-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__, "
+"`ADR-0015 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0015"
+"-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-"
+"evaluator.md>`__). Это та же операция, что и автоматический запуск после "
+"импорта, строка «Позиции без анализа» вкладки *Обслуживание* графического"
+" интерфейса и конечная точка ``/v1/gammonnet.analyzeMissing`` демона "
+"``serve`` для тенанта — три разные формы одной и той же операции, а не "
+"три отдельные логики (см. :ref:`headless`)."
+
+#: ../../source/cli_analyse.rst:23 ../../source/cli_analyse.rst:197
+#: ../../source/cli_analyse.rst:253 ../../source/cli_analyse.rst:292
+#: ../../source/cli_analyse.rst:342 ../../source/cli_analyse.rst:465
+msgid "**Options:**"
+msgstr "**Параметры:**"
+
+#: ../../source/cli_analyse.rst:25
+msgid "``--db`` — Base de données (obligatoire)."
+msgstr "``--db`` — База данных (обязательно)."
+
+#: ../../source/cli_analyse.rst:26
+msgid "``--ply`` — Profondeur de recherche (défaut: 2, le paramètre canonique)."
+msgstr "``--ply`` — Глубина поиска (по умолчанию: 2, канонический параметр)."
+
+#: ../../source/cli_analyse.rst:27
+msgid "``--prune-k`` — Largeur d'élagage (défaut: 12, le paramètre canonique)."
+msgstr ""
+"``--prune-k`` — Ширина отсечения (по умолчанию: 12, канонический "
+"параметр)."
+
+#: ../../source/cli_analyse.rst:28
+msgid ""
+"``--candidates`` — Nombre de coups candidats conservés par décision de "
+"déplacement (défaut: 10)."
+msgstr ""
+"``--candidates`` — Число кандидатных ходов, сохраняемых для каждого "
+"решения о ходе (по умолчанию: 10)."
+
+#: ../../source/cli_analyse.rst:30
+msgid ""
+"``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
+"nombre de cœurs de la machine). Quand il reste moins de positions que de "
+"cœurs (un match court, la fin du lot), chaque recherche s'étale sur les "
+"cœurs libres ; le résultat ne change pas d'un bit."
+msgstr ""
+"``--jobs`` — Число позиций, анализируемых параллельно (по умолчанию: "
+"число ядер машины). Когда позиций осталось меньше, чем ядер (короткий "
+"матч, конец пакета), каждый поиск распределяется по свободным ядрам; "
+"результат не меняется ни на один бит."
+
+#: ../../source/cli_analyse.rst:34
+msgid ""
+"``--match`` — Restreint le lot aux positions d'un seul match (0, le "
+"défaut, signifie toute la bibliothèque)."
+msgstr ""
+"``--match`` — Ограничивает пакет позициями одного матча (0, значение по "
+"умолчанию, означает всю библиотеку)."
+
+#: ../../source/cli_analyse.rst:36
+msgid ""
+"``--compare`` — **N'écrit rien** : compare gammonNet aux analyses "
+"importées au lieu de combler des trous (voir plus bas)."
+msgstr ""
+"``--compare`` — **Ничего не пишет**: сравнивает gammonNet с "
+"импортированными анализами вместо заполнения пробелов (см. ниже)."
+
+#: ../../source/cli_analyse.rst:38
+msgid ""
+"``--stale`` — Réanalyse les positions dont l'analyse gammonNet est "
+"périmée — écrite par une version antérieure du moteur, ou à une autre "
+"profondeur que ``--ply`` — au lieu de combler des trous. Une position qui"
+" porte aussi une analyse XG, GNUbg ou BGBlitz n'est jamais touchée."
+msgstr ""
+"``--stale`` — Повторно анализирует позиции, анализ gammonNet которых "
+"устарел — записан более ранней версией движка или на иной глубине, чем "
+"``--ply`` — вместо заполнения пробелов. Позиция, несущая также анализ XG,"
+" GNUbg или BGBlitz, никогда не затрагивается."
+
+#: ../../source/cli_analyse.rst:42
+msgid ""
+"``--limit`` — Avec ``--compare``, s'arrête après ce nombre de positions "
+"(0 = toutes)."
+msgstr ""
+"``--limit`` — С ``--compare``: останавливается после указанного числа "
+"позиций (0 = все)."
+
+#: ../../source/cli_analyse.rst:44
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut, avec la progression) "
+"ou ``json`` (un seul document récapitulatif, imprimé à la fin)."
+msgstr ""
+"``--format`` — Формат вывода: ``text`` (по умолчанию, с индикацией хода "
+"выполнения) или ``json`` (единый итоговый документ, выводимый в конце)."
+
+#: ../../source/cli_analyse.rst:46
+msgid ""
+"``--rollout`` — Fait un rollout des positions que choisit ``--query`` au "
+"lieu de combler des trous (voir plus bas)."
+msgstr ""
+"``--rollout`` — Делает rollout позиций, выбранных ``--query``, вместо "
+"заполнения пропусков (см. ниже)."
+
+#: ../../source/cli_analyse.rst:48
+msgid ""
+"``--query`` — Avec ``--rollout``, les positions à jouer, dans le langage "
+"de requête de la recherche (``search --query-help``) ; vide, toutes."
+msgstr ""
+"``--query`` — С ``--rollout``: позиции для игры, на языке запросов поиска"
+" (``search --query-help``); пусто — все."
+
+#: ../../source/cli_analyse.rst:51
+msgid ""
+"**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un "
+"match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a"
+" fait passer par XG. blunderDB en connaissait les positions et les coups "
+"joués, mais rien ne disait ce qu'ils valaient ; une fois le lot passé, le"
+" coup effectivement joué est comparé au classement de gammonNet et "
+"l'écart alimente le PR et tous les autres indicateurs. Le coup joué vient"
+" de la table des coups du match, écrite à l'import, que le fichier ait "
+"porté une analyse ou non — il n'est jamais deviné."
+msgstr ""
+"**Матч, импортированный без анализа, теперь получает PR.** Это случай "
+"матча, сыгранного онлайн, или файла Jellyfish ``.mat``, который никто не "
+"пропускал через XG. blunderDB знал его позиции и сыгранные ходы, но ничто"
+" не говорило, чего они стоят; после прогона фактически сыгранный ход "
+"сравнивается с ранжированием gammonNet, и разница питает PR и все "
+"остальные показатели. Сыгранный ход берётся из таблицы ходов самого "
+"матча, записанной при импорте, независимо от того, нёс ли файл анализ, — "
+"он никогда не угадывается."
+
+#: ../../source/cli_analyse.rst:60
+msgid ""
+"Une base analysée avec une version antérieure à celle-ci n'a pas besoin "
+"d'être réévaluée : :ref:`repair <cli_repair>` recalcule les colonnes à "
+"partir de ce qui est déjà en base et rend leur PR à ces matchs."
+msgstr ""
+"Базу, проанализированную более ранней версией, не нужно переоценивать: "
+":ref:`repair <cli_repair>` пересчитывает столбцы по тому, что уже "
+"хранится, и возвращает этим матчам их PR."
+
+#: ../../source/cli_analyse.rst:64
+msgid ""
+"**Un seul match** (``--match``). Avec l'identifiant qu'affiche ``list "
+"--type matches``, le lot ne parcourt que les positions de ce match : même"
+" règle du trou, mêmes garanties, portée plus étroite. Un match qui vient "
+"d'être importé reçoit ses analyses sans que le reste de la bibliothèque "
+"soit balayé, et un match corrigé puis analysé une seconde fois ne coûte "
+"que les positions créées par la correction, puisque toutes les autres "
+"portent déjà une analyse. L'option ne se combine ni avec ``--stale`` ni "
+"avec ``--compare``, qui regardent tous deux des positions ayant déjà une "
+"analyse : demander les deux est une erreur, plutôt qu'une portée "
+"silencieusement ignorée."
+msgstr ""
+"**Только один матч** (``--match``). С идентификатором, который выводит "
+"``list --type matches``, пакет проходит только по позициям этого матча: "
+"то же правило пробела, те же гарантии, более узкая область. Только что "
+"импортированный матч получает свои анализы без обхода остальной "
+"библиотеки, а исправленный и проанализированный во второй раз матч стоит "
+"лишь тех позиций, которые создало исправление, поскольку все остальные "
+"уже несут анализ. Параметр не сочетается ни с ``--stale``, ни с "
+"``--compare``: оба смотрят на позиции, у которых анализ уже есть, поэтому"
+" запрос обоих — ошибка, а не молча проигнорированная область."
+
+#: ../../source/cli_analyse.rst:74
+msgid ""
+"**Le parallélisme** (``--jobs``). Les positions d'un lot sont "
+"indépendantes — aucune recherche n'informe la suivante — donc elles sont "
+"réparties sur ``--jobs`` fils d'exécution, chacun avec son propre "
+"évaluateur. Les analyses écrites sont **identiques quelle que soit la "
+"valeur de** ``--jobs`` ; seul le temps de calcul change. ``--jobs 1`` "
+"laisse la machine libre pour autre chose. L'annulation n'est pas affectée"
+" : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
+"était déjà calculé est écrit."
+msgstr ""
+"**Параллелизм** (``--jobs``). Позиции пакета независимы — ни один поиск "
+"не влияет на следующий — поэтому они распределяются по ``--jobs`` "
+"потокам, каждый со своим собственным оценщиком. Записанные анализы "
+"**идентичны при любом значении** ``--jobs``; меняется только время "
+"вычислений. ``--jobs 1`` оставляет машину свободной для других задач. "
+"Отмена не затрагивается: Ctrl-C останавливает пакет перед любой новой "
+"позицией, и всё уже вычисленное записывается."
+
+#: ../../source/cli_analyse.rst:82
+msgid ""
+"**La règle du trou** (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__). Une position"
+" portant déjà une analyse — XG, GNUbg, BGBlitz, ou un précédent passage "
+"de gammonNet — n'est jamais touchée, quel que soit le moteur manquant. "
+"Seule une position **sans aucune** analyse est écrite. La commande peut "
+"donc être relancée à tout moment sans risque, et interrompue proprement :"
+" Ctrl-C annule sans rien perdre de ce qui est déjà écrit, et la prochaine"
+" exécution reprend exactement là où la précédente s'est arrêtée — aucun "
+"journal n'est nécessaire, puisque « les positions sans analyse » est "
+"recalculé à chaque lancement."
+msgstr ""
+"**Правило пробела** (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__). Позиция, уже"
+" имеющая анализ — XG, GNUbg, BGBlitz или предыдущий проход gammonNet, — "
+"никогда не затрагивается, какого бы движка ни недоставало. Записывается "
+"только позиция **без какого-либо** анализа. Поэтому команду можно без "
+"риска перезапускать в любой момент и корректно прерывать: Ctrl-C отменяет"
+" её, не теряя ничего из уже записанного, а следующий запуск возобновляет "
+"работу ровно с того места, где остановился предыдущий, — никакого журнала"
+" не нужно, ведь «позиции без анализа» пересчитываются при каждом запуске."
+
+#: ../../source/cli_analyse.rst:91
+msgid "**Exemple:**"
+msgstr "**Пример:**"
+
+#: ../../source/cli_analyse.rst:109
+msgid ""
+"**Rollouts en lot** (``--rollout``). Chaque position que choisit "
+"``--query`` est jouée par un :ref:`rollout <cli_rollout>`, l'une après "
+"l'autre sur tous les cœurs, et le rollout est enregistré à côté de son "
+"analyse, jamais à sa place. La valeur est un préréglage — ``fast`` (216 "
+"parties tronquées à 7) ou ``standard`` (1296 parties tronquées à 11) — ou"
+" des réglages libres : un préréglage facultatif, puis ``games=``, ``min-"
+"games=``, ``truncation=``, ``jsd=``, ``ply=``, ``candidates=``, "
+"``seed=``, séparés par des virgules. Une position qui porte déjà un "
+"rollout aux mêmes réglages est sautée : une exécution interrompue par "
+"Ctrl-C reprend là où elle s'est arrêtée, la position en cours étant "
+"abandonnée entière. Une position que seul un rollout analyse est trouvée "
+"par la recherche à travers lui ; une position déjà analysée garde les "
+"colonnes de son analyse."
+msgstr ""
+"**Rollout пакетом** (``--rollout``). Каждая позиция, выбранная "
+"``--query``, играется :ref:`rollout <cli_rollout>`, одна за другой на "
+"всех ядрах, и rollout записывается рядом с её анализом, а не вместо него."
+" Значение — пресет: ``fast`` (216 партий, усечённых на 7) или "
+"``standard`` (1296 партий, усечённых на 11) — либо свободные настройки: "
+"необязательный пресет, затем ``games=``, ``min-games=``, ``truncation=``,"
+" ``jsd=``, ``ply=``, ``candidates=``, ``seed=``, через запятую. Позиция, "
+"уже имеющая rollout с теми же настройками, пропускается: запуск, "
+"прерванный Ctrl-C, продолжается с того места, где остановился, а текущая "
+"позиция отбрасывается целиком. Позиция, которую анализирует только "
+"rollout, находится поиском через него; уже проанализированная позиция "
+"сохраняет столбцы своего анализа."
+
+#: ../../source/cli_analyse.rst:129
+msgid "``--compare`` : **que vaut gammonNet sur votre bibliothèque ?**"
+msgstr "``--compare``: **чего стоит gammonNet на вашей базе?**"
+
+#: ../../source/cli_analyse.rst:131
+msgid ""
+"La précision du moteur est mesurée ailleurs contre des corpus de "
+"référence et contre la table de bearoff exacte. Aucune de ces mesures ne "
+"répond à la question qu'un utilisateur se pose vraiment, qui porte sur "
+"**ses** positions : sur les matchs importés d'XG, où le moteur embarqué "
+"est-il en désaccord avec l'analyse venue du fichier, et que coûterait ce "
+"désaccord ?"
+msgstr ""
+"Точность движка измеряется в другом месте — на эталонных корпусах и на "
+"точной таблице снятия. Ни одно из этих измерений не отвечает на вопрос, "
+"который пользователь задаёт на самом деле и который касается **его** "
+"позиций: в матчах, импортированных из XG, где встроенный движок "
+"расходится с анализом, пришедшим вместе с файлом, и во что это "
+"расхождение обошлось бы?"
+
+#: ../../source/cli_analyse.rst:137
+msgid ""
+"``--compare`` répond, et **n'écrit rien**. Ce n'est pas une précaution "
+"mais l'intérêt de la commande : l'ADR-0013 protège inconditionnellement "
+"une analyse importée, et la comparaison peut donc se lancer sur une "
+"bibliothèque qu'on ne veut surtout pas voir réécrite."
+msgstr ""
+"``--compare`` отвечает и **ничего не пишет**. Это не предосторожность, а "
+"смысл команды: ADR-0013 защищает импортированный анализ безусловно, и "
+"потому сравнение можно запустить на базе, которую совсем не хочется "
+"видеть переписанной."
+
+#: ../../source/cli_analyse.rst:142
+msgid "Le compte rendu donne :"
+msgstr "Отчёт даёт:"
+
+#: ../../source/cli_analyse.rst:144
+msgid ""
+"le **taux d'accord** sur la meilleure réponse, séparé entre coups de "
+"pions et décisions de videau — les deux n'ont rien à voir et un taux "
+"unique cacherait lequel des deux décroche ;"
+msgstr ""
+"**долю совпадений** по лучшему ответу, отдельно для ходов шашками и "
+"решений по кубу — эти две вещи никак не связаны, и единая доля скрыла бы,"
+" какая из них проседает;"
+
+#: ../../source/cli_analyse.rst:147
+msgid ""
+"le **coût du désaccord**, tarifé sur l'échelle de l'analyse importée : ce"
+" que le coup préféré par gammonNet vaut *selon le moteur importé*, moins "
+"ce que vaut son propre meilleur coup. Ce sens est le seul que les deux "
+"moteurs puissent chiffrer ensemble ; tarifer un désaccord deux fois "
+"inviterait à lire le plus petit des deux nombres ;"
+msgstr ""
+"**стоимость расхождения**, оценённую по шкале импортированного анализа: "
+"чего стоит предпочитаемый gammonNet ход *по мнению импортированного "
+"движка*, минус то, чего стоит его собственный лучший ход. Это направление"
+" — единственное, которое оба движка могут оценить вместе; оценивать "
+"расхождение дважды значило бы приглашать читать меньшее из двух чисел;"
+
+#: ../../source/cli_analyse.rst:152
+msgid ""
+"la ventilation **par phase de partie**, qui est ce qui dit *où* les "
+"désaccords se concentrent ;"
+msgstr ""
+"разбивку **по фазе игры**, которая и говорит, *где* расхождения "
+"сосредоточены;"
+
+#: ../../source/cli_analyse.rst:154
+msgid "les dix désaccords les plus coûteux, position par position."
+msgstr "десять самых дорогих расхождений, позиция за позицией."
+
+#: ../../source/cli_analyse.rst:156
+#, no-python-format
+msgid ""
+"Deux moteurs écrivent le même coup différemment — XG note « 13/7 » là où "
+"gammonNet écrit « 13/8 8/7 », les frappes sont marquées d'un côté et pas "
+"de l'autre, la répétition est parfois condensée en « (2) ». Ces "
+"différences sont du dialecte et non du désaccord : la comparaison ramène "
+"les deux notations à une forme canonique avant de les comparer. Sans "
+"cela, un corpus de test affichait 78,8 % d'accord au lieu de 93,2 % — "
+"quinze points de faux désaccords."
+msgstr ""
+"Два движка пишут один и тот же ход по-разному — XG пишет «13/7» там, где "
+"gammonNet пишет «13/8 8/7», удары помечаются с одной стороны и не "
+"помечаются с другой, повтор иногда сворачивается в «(2)». Эти различия — "
+"диалект, а не расхождение: сравнение приводит обе записи к канонической "
+"форме, прежде чем сравнивать. Без этого тестовый корпус показывал 78,8 % "
+"совпадений вместо 93,2 % — пятнадцать пунктов ложных расхождений."
+
+#: ../../source/cli_analyse.rst:164
+msgid ""
+"Un coup que le moteur importé n'a **pas listé** ne peut pas être tarifé "
+"sur son échelle : il compte comme un désaccord de coût nul plutôt que "
+"d'un coût inventé."
+msgstr ""
+"Ход, который импортированный движок **не** перечислил, нельзя оценить по "
+"его шкале: он считается расхождением нулевой стоимости, а не стоимости "
+"выдуманной."
+
+#: ../../source/cli_analyse.rst:182
+msgid "rollout — Rollout d'une position"
+msgstr "rollout — Rollout позиции"
+
+#: ../../source/cli_analyse.rst:184
+msgid ""
+"Joue une position un grand nombre de fois avec gammonNet, pour trancher "
+"ce qu'une recherche ne tranche pas : deux coups à quelques millièmes, ou "
+"une décision de videau où le modèle hésite. Avec des dés, ce sont ses "
+"coups qui sont joués (les meilleurs à la profondeur du rollout, au moins "
+"2 ply, ou ceux nommés par ``--move``) ; sans dés, sa décision de videau "
+"(Pas de double et Double/Prend ; Double/Passe vaut +1 exactement). La "
+"position vient d'un XGID ou d'un OGID, ou d'une base (``--db`` et "
+"``--id``) ; sans ``--store``, rien n'est enregistré."
+msgstr ""
+"Играет позицию большое число раз с помощью gammonNet, чтобы решить то, "
+"чего не решает поиск: два хода, отличающихся на тысячные доли, или "
+"решение по кубу, в котором модель колеблется. С кубиками играются её ходы"
+" (лучшие на глубине rollout, не менее 2 ply, или названные через "
+"``--move``); без кубиков — её решение по кубу (Без удвоения и "
+"Удвоение/Принять; Удвоение/Отказ стоит ровно +1). Позиция берётся из XGID"
+" или OGID либо из базы (``--db`` и ``--id``); без ``--store`` ничего не "
+"записывается."
+
+#: ../../source/cli_analyse.rst:199
+msgid ""
+"``--preset`` — Réglage de départ : ``fast`` (défaut : 216 parties "
+"tronquées à 7 demi-coups, arrêt à JSD 3 après 108) ou ``standard`` (1296 "
+"parties tronquées à 11, arrêt à JSD 3 après 324). Les deux jouent à 0 ply"
+" — le réseau seul, pour les coups, le videau et les feuilles ; ``--ply "
+"1`` ou plus joue plus profond, pour un temps plusieurs fois plus long. "
+"Les options suivantes remplacent le préréglage une à une."
+msgstr ""
+"``--preset`` — Исходная настройка: ``fast`` (по умолчанию: 216 партий, "
+"усечённых на 7 полуходах, остановка при JSD 3 после 108) или ``standard``"
+" (1296 партий, усечённых на 11, остановка при JSD 3 после 324). Обе "
+"играют на 0 ply — одна сеть, для ходов, куба и листьев; ``--ply 1`` и "
+"больше играет глубже, со временем в несколько раз больше. Следующие опции"
+" заменяют её по одной."
+
+#: ../../source/cli_analyse.rst:205
+msgid ""
+"``--games``, ``--min-games``, ``--truncation``, ``--jsd``, ``--ply``, "
+"``--candidates`` — Les paramètres du rollout (``--truncation 0`` joue "
+"chaque partie jusqu'au bout, ``--jsd 0`` n'arrête jamais avant la fin)."
+msgstr ""
+"``--games``, ``--min-games``, ``--truncation``, ``--jsd``, ``--ply``, "
+"``--candidates`` — Параметры rollout (``--truncation 0`` доигрывает "
+"каждую партию до конца, ``--jsd 0`` никогда не останавливается до конца)."
+
+#: ../../source/cli_analyse.rst:208
+msgid "``--move`` — Un coup à jouer, en notation blunderDB (répétable)."
+msgstr ""
+"``--move`` — Ход, который нужно сыграть, в нотации blunderDB (можно "
+"повторять)."
+
+#: ../../source/cli_analyse.rst:209
+msgid ""
+"``--seed`` — Graine des dés, fixe par défaut : la même commande donne les"
+" mêmes nombres."
+msgstr ""
+"``--seed`` — Зерно кубиков, по умолчанию фиксированное: одна и та же "
+"команда даёт те же числа."
+
+#: ../../source/cli_analyse.rst:211
+msgid ""
+"``--jobs`` — Parties jouées en parallèle (défaut : une par cœur) ; seul "
+"le temps change."
+msgstr ""
+"``--jobs`` — Партии, играемые параллельно (по умолчанию: по одной на "
+"ядро); меняется только время."
+
+#: ../../source/cli_analyse.rst:213 ../../source/cli_analyse.rst:294
+msgid ""
+"``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : "
+"``text``)."
+msgstr ""
+"``--format`` — Формат вывода: ``text`` или ``json`` (по умолчанию: "
+"``text``)."
+
+#: ../../source/cli_analyse.rst:214
+msgid ""
+"``--db``, ``--id`` — La base et l'identifiant de la position à jouer, à "
+"la place d'un XGID."
+msgstr ""
+"``--db``, ``--id`` — База и идентификатор позиции, которую нужно сыграть,"
+" вместо XGID."
+
+#: ../../source/cli_analyse.rst:216
+msgid ""
+"``--store`` — Enregistre le rollout terminé sur la position, comme une "
+"seconde analyse portant ses propres réglages, à côté de l'analyse "
+"importée ou évaluée, qu'il ne remplace jamais. Un rollout interrompu "
+"n'est pas enregistré ; de deux rollouts aux mêmes réglages, la série la "
+"plus longue est gardée, un rollout à d'autres réglages s'ajoute à côté."
+msgstr ""
+"``--store`` — Записывает завершённый роллаут в позицию как второй анализ "
+"со своими настройками, рядом с импортированным или вычисленным анализом, "
+"который он никогда не заменяет. Прерванный роллаут не записывается; из "
+"двух роллаутов с одинаковыми настройками сохраняется более длинная серия,"
+" а роллаут с другими настройками добавляется рядом."
+
+#: ../../source/cli_analyse.rst:221
+msgid ""
+"``--list`` — Affiche les rollouts enregistrés sur la position, du plus "
+"récent au plus ancien, au lieu d'en jouer un."
+msgstr ""
+"``--list`` — Выводит сохранённые для позиции роллауты, от новых к старым,"
+" вместо того чтобы проводить новый."
+
+#: ../../source/cli_analyse.rst:224
+msgid ""
+"Tous les candidats jouent les mêmes dés, la chance de chaque lancer est "
+"retirée du résultat de chaque partie (réduction de variance), les deux "
+"premiers lancers sont stratifiés et une partie s'arrête là où la base de "
+"sortie two-sided la couvre. Chaque ligne donne l'équité, son intervalle à"
+" 95 %, le nombre de parties jouées et la JSD, l'écart au meilleur en "
+"écarts-types de la différence. Le videau est joué pendant les parties : "
+"le classement est plus sûr que l'équité absolue. Ctrl-C affiche ce que "
+"les parties terminées ont établi."
+msgstr ""
+"Все кандидаты играют одними и теми же кубиками, удача каждого броска "
+"вычитается из результата каждой партии (снижение дисперсии), первые два "
+"броска стратифицируются, а партия останавливается там, где её покрывает "
+"two-sided база окончания игры. Каждая строка даёт эквити, его 95 %-й "
+"интервал, число сыгранных партий и JSD — отставание от лучшего в "
+"стандартных отклонениях разности. Куб разыгрывается во время партий: "
+"рейтинг надёжнее абсолютного эквити. Ctrl-C показывает то, что установили"
+" завершённые партии."
+
+#: ../../source/cli_analyse.rst:233 ../../source/cli_analyse.rst:268
+#: ../../source/cli_analyse.rst:312 ../../source/cli_analyse.rst:357
+#: ../../source/cli_analyse.rst:426 ../../source/cli_analyse.rst:486
+msgid "**Exemples:**"
+msgstr "**Примеры:**"
+
+#: ../../source/cli_analyse.rst:243
+msgid "epc — Calculatrice EPC"
+msgstr "epc — Калькулятор EPC"
+
+#: ../../source/cli_analyse.rst:245
+msgid ""
+"Calcule l'Effective Pip Count, la probabilité de gain et le verdict de "
+"videau money d'une position de sortie donnée par XGID ou par OGID "
+"(OpenGammon). Calcul pur : aucun fichier de base de données n'est "
+"impliqué."
+msgstr ""
+"Вычисляет Effective Pip Count, вероятность выигрыша и вердикт по кубу для"
+" игры на деньги для позиции выброса, заданной XGID или OGID (OpenGammon)."
+" Чистое вычисление: никакой файл базы не задействован."
+
+#: ../../source/cli_analyse.rst:255
+msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
+msgstr ""
+"``--format`` — Формат вывода: ``text`` или ``json`` (по умолчанию: "
+"``text``)."
+
+#: ../../source/cli_analyse.rst:256
+msgid ""
+"``--bearoff-ts`` — Base bearoff two-sided optionnelle (``.bd``) "
+"élargissant la base intégrée TS-06-06 (également lue depuis la variable "
+"d'environnement ``BLUNDERDB_TS_PATH``). La base valide la plus large "
+"l'emporte ; un fichier invalide est ignoré avec un avertissement."
+msgstr ""
+"``--bearoff-ts`` — Необязательная двусторонняя база выброса (``.bd``), "
+"расширяющая встроенную TS-06-06 (читается также из переменной окружения "
+"``BLUNDERDB_TS_PATH``). Побеждает самая широкая корректная база; неверный"
+" файл игнорируется с предупреждением."
+
+#: ../../source/cli_analyse.rst:261
+msgid ""
+"**Régimes.** Dans le domaine couvert par la base two-sided, la "
+"probabilité de gain et l'analyse money du videau (cubeless, ND, D/T, D/P,"
+" verdict) sont **exactes**. En dehors, la probabilité de gain est "
+"**estimée** (convolution des distributions de lancers one-sided plus une "
+"correction calibrée) et affichée avec sa marge d'erreur mesurée ; le "
+"verdict de videau n'est volontairement jamais estimé (voir `ADR-0009 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-"
+"chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__)."
+msgstr ""
+"**Режимы.** В области, покрытой двусторонней базой, вероятность выигрыша "
+"и анализ куба для игры на деньги (cubeless, ND, D/T, D/P, вердикт) "
+"**точны**. За её пределами вероятность выигрыша **оценивается** (свёртка "
+"односторонних распределений бросков плюс откалиброванная поправка) и "
+"выводится с измеренной погрешностью; вердикт по кубу намеренно никогда не"
+" оценивается (см. `ADR-0009 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-"
+"chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__)."
+
+#: ../../source/cli_analyse.rst:281
+msgid "cubematrix — Matrice du videau"
+msgstr "cubematrix — Матрица куба"
+
+#: ../../source/cli_analyse.rst:283
+msgid ""
+"Donne le verdict de videau d'une position à **tous les scores** d'un "
+"match : pour chaque case *away × away*, si la position se double et si "
+"elle se prend. Calcul pur : aucune base de données n'est ouverte, la "
+"position arrive par son XGID ou son OGID (OpenGammon)."
+msgstr ""
+"Даёт вердикт куба для позиции при **любом счёте** матча: для каждой "
+"клетки *away × away* — удваивать ли и принимать ли. Чистое вычисление: "
+"никакая база данных не открывается, позиция передаётся через XGID или "
+"OGID (OpenGammon)."
+
+#: ../../source/cli_analyse.rst:295
+msgid ""
+"``--match-length`` — Longueur du match que la grille couvre, de 1 à 25 "
+"(défaut : 7)."
+msgstr ""
+"``--match-length`` — Длина матча, которую покрывает сетка, от 1 до 25 (по"
+" умолчанию: 7)."
+
+#: ../../source/cli_analyse.rst:297
+msgid ""
+"``--ply`` — Profondeur de recherche de chaque case, ``0`` ou ``2`` "
+"(défaut : 2)."
+msgstr ""
+"``--ply`` — Глубина поиска для каждой клетки, ``0`` или ``2`` (по "
+"умолчанию: 2)."
+
+#: ../../source/cli_analyse.rst:299
+msgid ""
+"``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage"
+" (défaut : 12)."
+msgstr ""
+"``--prune-k`` — Число ходов-кандидатов, оставляемых сетью отсечения (по "
+"умолчанию: 12)."
+
+#: ../../source/cli_analyse.rst:301
+msgid ""
+"``--jobs`` — Recherches menées en parallèle (défaut : une par cœur). La "
+"grille est identique quelle que soit la valeur ; seul le temps change."
+msgstr ""
+"``--jobs`` — Число параллельных поисков (по умолчанию: по одному на "
+"ядро). Сетка одинакова при любом значении; меняется только время."
+
+#: ../../source/cli_analyse.rst:304
+msgid ""
+"Le score propre à la position est ignoré — la grille le remplace — mais "
+"son **videau** est conservé : la question posée est « à quel score "
+"retournerais-je *ce* videau ». La grille est post-Crawford d'un bout à "
+"l'autre."
+msgstr ""
+"Собственный счёт позиции игнорируется — сетка его заменяет — но её "
+"**куб** сохраняется: вопрос в том, при каком счёте стоит повернуть *этот*"
+" куб. Сетка всюду построена для положения после Кроуфорда."
+
+#: ../../source/cli_analyse.rst:308
+msgid ""
+"Chaque case est une recherche à part entière, parce que le moteur tient "
+"compte du score : une seule recherche relue à travers des équités de "
+"match différentes serait fausse exactement là où le score compte."
+msgstr ""
+"Каждая клетка — отдельный поиск, потому что движок учитывает счёт: "
+"единственный поиск, прочитанный через разные матчевые эквити, был бы "
+"неверен именно там, где счёт важен."
+
+#: ../../source/cli_analyse.rst:322
+msgid ""
+"Sortie ``text`` : une grille dont les lignes sont les points restant à "
+"faire au joueur au trait, les colonnes ceux de l'adversaire, puis la "
+"légende des sigles ``ND`` / ``DT`` / ``DP`` / ``TG`` et la raison de "
+"chaque case refusée."
+msgstr ""
+"Вывод ``text``: сетка, строки которой — очки, которых ещё не хватает "
+"игроку на ходу, а столбцы — очки соперника, затем легенда обозначений "
+"``ND`` / ``DT`` / ``DP`` / ``TG`` и причина для каждой отклонённой "
+"клетки."
+
+#: ../../source/cli_analyse.rst:327
+msgid "capture — Position depuis une capture d'écran"
+msgstr "capture — Позиция по скриншоту"
+
+#: ../../source/cli_analyse.rst:329
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon (thème par défaut) : pions, barre, pions sortis (ce qui manque à "
+"quinze), dés, camp au trait et videau. L'image (PNG, JPEG ou GIF) peut "
+"contenir autre chose que le plateau ; plus grande qu'un écran 4K "
+"(3840×2160), elle est réduite avant la lecture. Le score n'est jamais lu."
+" Ce que la lecture ne peut trancher est listé comme un doute, jamais "
+"deviné : flèche masquée, pile plus haute que les cinq pions que XG "
+"dessine côte à côte, dés illisibles."
+msgstr ""
+"Считывает позицию, показанную на скриншоте доски eXtreme Gammon (тема по "
+"умолчанию): шашки, бар, снятые шашки (то, чего не хватает до пятнадцати),"
+" кости, сторона, которой ходить, и куб. Изображение (PNG, JPEG или GIF) "
+"может содержать не только доску; если оно больше экрана 4K (3840×2160), "
+"его уменьшают перед считыванием. Счёт никогда не считывается. То, что "
+"считывание не может определить, перечисляется как сомнение и никогда не "
+"угадывается: скрытая стрелка, стопка выше пяти шашек, которые XG рисует "
+"рядом, нечитаемые кости."
+
+#: ../../source/cli_analyse.rst:344
+msgid ""
+"``--format`` — Format de sortie : ``text``, ``json`` ou ``xgid`` (défaut "
+": ``text``)."
+msgstr ""
+"``--format`` — Формат вывода: ``text``, ``json`` или ``xgid`` (по "
+"умолчанию: ``text``)."
+
+#: ../../source/cli_analyse.rst:345
+msgid ""
+"``--db`` et ``--save`` — Enregistre la position dans la base comme "
+"position individuelle."
+msgstr "``--db`` и ``--save`` — Сохраняет позицию в базе как отдельную позицию."
+
+#: ../../source/cli_analyse.rst:347
+msgid ""
+"``--score`` — Le score, que la capture ne montre pas : ``money``, ou les "
+"scores Away des deux joueurs, celui du joueur 1 (en bas) d'abord, par "
+"exemple ``2a/5a``."
+msgstr ""
+"``--score`` — Счёт, которого снимок не показывает: ``money`` или счета "
+"Away обоих игроков, сначала игрока 1 (внизу), например ``2a/5a``."
+
+#: ../../source/cli_analyse.rst:350
+msgid ""
+"``--turn`` — Le camp au trait, ``1`` (en bas) ou ``2`` (en haut), quand "
+"aucun dé ne le montre."
+msgstr ""
+"``--turn`` — Игрок на ходу, ``1`` (внизу) или ``2`` (вверху), когда кости"
+" его не показывают."
+
+#: ../../source/cli_analyse.rst:352
+msgid ""
+"``--force`` — Enregistre malgré les doutes de la lecture, une fois le "
+"plateau vérifié. Il ne remplace ni ``--score`` ni ``--turn`` : ``--save``"
+" refuse tant que le score, ou le trait sans dés, n'est pas fourni, et "
+"nomme l'option qui manque."
+msgstr ""
+"``--force`` — Сохраняет несмотря на сомнения чтения, после проверки "
+"доски. Он не заменяет ни ``--score``, ни ``--turn``: ``--save`` "
+"отказывает, пока не задан счёт или очередь хода без костей, и называет "
+"недостающую опцию."
+
+#: ../../source/cli_analyse.rst:366
+#, no-python-brace-format
+msgid ""
+"Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec "
+"``{\"data\": \"<image en base64>\"}``. Il refuse une image plus grande "
+"qu'un écran 4K au lieu de la réduire, et ne lit que deux images à la "
+"fois."
+msgstr ""
+"Демон предоставляет то же считывание: ``POST /v1/positions.fromImage`` с "
+"``{\"data\": \"<изображение в base64>\"}``. Он отклоняет изображение "
+"больше экрана 4K, а не уменьшает его, и считывает не более двух "
+"изображений одновременно."
+
+#: ../../source/cli_analyse.rst:371
+msgid "bearoff — Bases de sortie"
+msgstr "bearoff — Базы бироффа"
+
+#: ../../source/cli_analyse.rst:373
+msgid ""
+"Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
+"n'est embarqué : une table est calculée ici et vérifiée contre "
+"l'empreinte que gnubg produit pour son domaine. Aucune sous-commande ne "
+"parle à une base de données — une table de bearoff est de l'arithmétique "
+"sur le jeu, pas sur les positions de quelqu'un — donc aucune ne prend "
+"``--db``."
+msgstr ""
+"Создаёт базы бироффа и управляет ими. Ничего не загружается и ничего не "
+"встроено: таблица вычисляется здесь и сверяется с отпечатком, который "
+"gnubg производит для её области. Ни одна подкоманда не обращается к базе "
+"данных — таблица бироффа есть арифметика об игре, а не о чьих-либо "
+"позициях, — поэтому ни одна не принимает ``--db``."
+
+#: ../../source/cli_analyse.rst:386
+msgid ""
+"Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
+"two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
+"points (``os`` seul vaut ``os6``)."
+msgstr ""
+"Область записывается как в ``makebearoff``: ``6x9`` для двусторонней "
+"таблицы с девятью шашками у игрока, ``os8`` для односторонней таблицы на "
+"восемь пунктов (одно ``os`` означает ``os6``)."
+
+#: ../../source/cli_analyse.rst:390
+msgid ""
+"Les deux familles ne répondent pas à la même question. Une table **deux "
+"faces** élargit le domaine où la probabilité de gain et le verdict de "
+"videau sont exacts ; une table **une face** élargit la distance à "
+"laquelle un pion peut se trouver sans que l'EPC se taise (jusqu'à dix "
+"points)."
+msgstr ""
+"Два семейства отвечают на разные вопросы. **Двусторонняя** таблица "
+"расширяет область, где вероятность выигрыша и вердикт куба точны; "
+"**односторонняя** расширяет расстояние, на котором может стоять шашка без"
+" того, чтобы EPC умолк (до десяти пунктов)."
+
+#: ../../source/cli_analyse.rst:395
+msgid ""
+"**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
+"commencer, puis affiche le pourcentage et le temps restant mesuré."
+msgstr ""
+"**generate.** Называет размер, память и оценку времени до начала, затем "
+"показывает процент и измеренное оставшееся время."
+
+#: ../../source/cli_analyse.rst:398
+msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
+msgstr "``--ts`` — Вычисляемая двусторонняя область, например ``6x9``."
+
+#: ../../source/cli_analyse.rst:399
+msgid ""
+"``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
+"et un seul des deux est requis."
+msgstr ""
+"``--os`` — Вычисляемая односторонняя область, числом пунктов: от 6 до 12."
+" Требуется ровно одно из двух."
+
+#: ../../source/cli_analyse.rst:401
+msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
+msgstr "``--cores`` — Используемые ядра (по умолчанию: все, кроме одного)."
+
+#: ../../source/cli_analyse.rst:402
+msgid ""
+"``--data-dir`` — Où écrire (défaut : le dossier de données de "
+"l'application)."
+msgstr "``--data-dir`` — Куда писать (по умолчанию: каталог данных приложения)."
+
+#: ../../source/cli_analyse.rst:403
+msgid "``--quiet`` — Pas de ligne de progression."
+msgstr "``--quiet`` — Без строки прогресса."
+
+#: ../../source/cli_analyse.rst:405
+msgid ""
+"**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
+" la table et la même commande relancée reprend là où elle s'était "
+"arrêtée, au lieu de tout recalculer. Une demi-heure d'arithmétique mérite"
+" d'être écrite. ``bearoff delete`` jette une reprise en attente. Seul le "
+"balayage deux faces se met en pause ; le balayage une face est séquentiel"
+" et ``--cores`` ne lui sert à rien."
+msgstr ""
+"**CTRL-C ставит на паузу.** Сигнал перехватывается: состояние "
+"записывается рядом с таблицей, и та же команда, запущенная снова, "
+"продолжает с места остановки, а не пересчитывает всё. Полчаса арифметики "
+"стоит записать. ``bearoff delete`` выбрасывает отложенное продолжение. На"
+" паузу встаёт только двусторонний проход; односторонний последователен, и"
+" ``--cores`` ему ничего не даёт."
+
+#: ../../source/cli_analyse.rst:412
+msgid ""
+"**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
+"machine — et dit lesquels sont déjà présents, avec leur verdict, et "
+"lesquels ont un calcul en pause. ``--format json`` pour un script, "
+"``--cores`` pour changer l'hypothèse de l'estimation."
+msgstr ""
+"**list.** Оценивает каждую область — размер, память, время на этой машине"
+" — и говорит, какие уже есть, с их вердиктом, и у каких есть "
+"приостановленный проход. ``--format json`` для сценария, ``--cores`` "
+"чтобы изменить допущение оценки."
+
+#: ../../source/cli_analyse.rst:417
+msgid ""
+"**verify.** Répond ``verified`` (les mêmes octets que la référence), "
+"``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
+" ce domaine) ou ``corrupt`` (le fichier se contredit). Sort en erreur sur"
+" le dernier cas : cette commande est faite pour être mise dans un script."
+msgstr ""
+"**verify.** Отвечает ``verified`` (те же байты, что у эталона), "
+"``unverified`` (корректная, но для этой области отпечаток не записан) или"
+" ``corrupt`` (файл противоречит сам себе). В последнем случае завершается"
+" с ошибкой: эта команда сделана для сценария."
+
+#: ../../source/cli_analyse.rst:422
+msgid ""
+"**delete.** Retire la table, la reprise en attente et les débris d'un "
+"calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
+" l'application ; un domaine plus large ne l'est pas."
+msgstr ""
+"**delete.** Удаляет таблицу, отложенное продолжение и остатки погибшего "
+"прохода. Область по умолчанию пересчитывается при следующем запуске "
+"приложения; более широкая — нет."
+
+#: ../../source/cli_analyse.rst:446
+msgid "openingbook — Quel coup à ce score ?"
+msgstr "openingbook — Какой ход при этом счёте?"
+
+#: ../../source/cli_analyse.rst:448
+msgid ""
+"L'exercice *Ouverture* du panneau Entraînement (voir "
+":ref:`panneau_entrainement`) en ligne de commande : le coup d'ouverture "
+"(1st roll) ou la réponse (2nd roll) d'une partie à un score, tiré du "
+"livre d'ouverture embarqué et jugé contre lui. Tout coup à égalité avec "
+"le meilleur est juste (voir :ref:`metrique_livre_ouverture`). Aucune base"
+" n'est lue ni écrite."
+msgstr ""
+"Упражнение *Дебют* панели Тренировки (см. :ref:`panneau_entrainement`) в "
+"командной строке: дебютный ход (1st roll) или ответ (2nd roll) партии при"
+" некотором счёте, вытягиваемый из встроенной дебютной книги и оцениваемый"
+" по ней. Любой ход на равных (tied) с лучшим считается верным (см. "
+":ref:`metrique_livre_ouverture`). База не читается и не записывается."
+
+#: ../../source/cli_analyse.rst:454
+msgid "**openingbook status** — Le nombre de lignes du livre et ses scores."
+msgstr "**openingbook status** — Число строк книги и её счета."
+
+#: ../../source/cli_analyse.rst:456
+msgid ""
+"**openingbook question** — Tire une question : le jet d'ouverture et le "
+"score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
+"le jet de réponse dans la position que laisse un coup d'ouverture à "
+"égalité avec le meilleur à ce score, avec ce coup et le XGID de la "
+"position de réponse."
+msgstr ""
+"**openingbook question** — Вытягивает вопрос: дебютный бросок и счёт с "
+"XGID дебютной позиции; с ``--roll second`` — бросок ответа в позиции, "
+"которую оставляет дебютный ход, равный лучшему при этом счёте, с этим "
+"ходом и XGID позиции ответа."
+
+#: ../../source/cli_analyse.rst:467
+msgid ""
+"``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par "
+"défaut) ou ``second`` (la réponse)."
+msgstr ""
+"``--roll first|second`` — Бросок, который нужно сыграть: ``first`` "
+"(дебют, по умолчанию) или ``second`` (ответ)."
+
+#: ../../source/cli_analyse.rst:468
+msgid ""
+"``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2`` "
+"(le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), "
+"``1-1`` (le DMP, un point partout), ``money``."
+msgstr ""
+"``--score <liste>`` — Счета для розыгрыша, через запятую: ``4-2`` "
+"(отвечающий на 4 очках, открывающий на 2), ``1-2`` (игра Кроуфорда), "
+"``1-1`` (DMP, двойное матч-очко), ``money``."
+
+#: ../../source/cli_analyse.rst:470
+msgid ""
+"``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de "
+"réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` "
+"seulement."
+msgstr ""
+"``--opening <liste>``, ``--reply <liste>`` — Дебютные или ответные броски"
+" для розыгрыша (``31,65``); ``--reply`` только вместе с ``--roll "
+"second``."
+
+#: ../../source/cli_analyse.rst:471
+msgid "``--seed <n>`` — Tirage reproductible (0 = au hasard)."
+msgstr "``--seed <n>`` — Воспроизводимый розыгрыш (0 = случайный)."
+
+#: ../../source/cli_analyse.rst:472
+msgid ""
+"``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du"
+" livre embarqué."
+msgstr ""
+"``--book <fichier>`` — Книга ``.jsonl`` или ``.jsonl.gz`` вместо "
+"встроенной."
+
+#: ../../source/cli_analyse.rst:473
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — Формат вывода."
+
+#: ../../source/cli_analyse.rst:475
+#, no-python-format
+msgid ""
+"**openingbook answer** — Juge un coup et affiche chaque candidat contre "
+"le meilleur : écart, IC 95 % et « tied » (à égalité), en équité "
+"normalisée au score, avec le nombre de parties et le réglage du rollout. "
+"Sans ``--after``, le coup est l'ouverture ; avec ``--reply`` et "
+"``--after``, le coup est la réponse jouée après ce coup d'ouverture, "
+"celui que nomme la question ``--roll second``."
+msgstr ""
+"**openingbook answer** — Оценивает ход и показывает каждого кандидата в "
+"сравнении с лучшим: разрыв, 95 %-й ДИ и « tied » (на равных), в эквити, "
+"нормированной по счёту, с числом партий и настройкой роллаута. Без "
+"``--after`` ход является дебютом; с ``--reply`` и ``--after`` ход "
+"является ответом, сыгранным после этого дебютного хода, — тем, который "
+"называет вопрос ``--roll second``."

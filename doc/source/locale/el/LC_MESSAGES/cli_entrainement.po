@@ -1,0 +1,471 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_entrainement.rst:4
+msgid "Étude, leçons et entraînement"
+msgstr "Μελέτη, μαθήματα και εξάσκηση"
+
+#: ../../source/cli_entrainement.rst:7
+msgid "study — La file d'étude transversale"
+msgstr "study — Η διαγώνια ουρά μελέτης"
+
+#: ../../source/cli_entrainement.rst:9
+msgid ""
+"Liste les blunders du joueur de référence de la base, tous imports "
+"confondus, que rien n'a encore traités : sans commentaire, sans carte "
+"Anki, hors de toute collection et sans marque « vu » (voir "
+":ref:`file_etude_transversale`). Chaque sous-commande prend ``--db``."
+msgstr ""
+"Παραθέτει τα blunder του παίκτη αναφοράς της βάσης, από όλες τις "
+"εισαγωγές μαζί, που δεν έχει επεξεργαστεί ακόμη τίποτα: χωρίς σχόλιο, "
+"χωρίς κάρτα Anki, εκτός κάθε συλλογής και χωρίς σήμανση «ιδωμένο» (βλ. "
+":ref:`file_etude_transversale`). Κάθε υποεντολή δέχεται ``--db``."
+
+#: ../../source/cli_entrainement.rst:18 ../../source/cli_entrainement.rst:47
+#: ../../source/cli_entrainement.rst:118
+msgid "**Sous-commandes:**"
+msgstr "**Υποεντολές:**"
+
+#: ../../source/cli_entrainement.rst:20
+msgid ""
+"``queue [--limit <n>] [--format text|json]`` — La file, du plus coûteux "
+"au moins coûteux ; cinquante positions au plus."
+msgstr ""
+"``queue [--limit <n>] [--format text|json]`` — Η ουρά, από το πιο "
+"δαπανηρό στο λιγότερο δαπανηρό· το πολύ πενήντα θέσεις."
+
+#: ../../source/cli_entrainement.rst:22
+msgid ""
+"``mark --id <id>`` — Marque la position vue : elle sort de la file. La "
+"marque est une donnée de la base, jamais exportée."
+msgstr ""
+"``mark --id <id>`` — Σημειώνει τη θέση ως ιδωμένη: βγαίνει από την ουρά. "
+"Η σήμανση είναι δεδομένο της βάσης, δεν εξάγεται ποτέ."
+
+#: ../../source/cli_entrainement.rst:24
+msgid ""
+"``unmark --id <id>`` — Retire la marque : la position revient dans la "
+"file."
+msgstr "``unmark --id <id>`` — Αφαιρεί τη σήμανση: η θέση επιστρέφει στην ουρά."
+
+#: ../../source/cli_entrainement.rst:26 ../../source/cli_entrainement.rst:94
+#: ../../source/cli_entrainement.rst:168 ../../source/cli_entrainement.rst:232
+msgid "**Exemples:**"
+msgstr "**Παραδείγματα:**"
+
+#: ../../source/cli_entrainement.rst:34
+msgid "lesson — Gérer les leçons"
+msgstr "lesson — Διαχείριση μαθημάτων"
+
+#: ../../source/cli_entrainement.rst:36
+msgid ""
+"Gère les leçons : des suites ordonnées d'étapes qu'un coach écrit une "
+"fois pour un élève. Chaque étape a un titre, un texte et peut montrer une"
+" collection, une position, les deux ou aucune. Une leçon se remet dans un"
+" fichier ``.dbx`` (sous-commande ``export``) et se lit dans l'interface "
+"graphique avec la commande ``:le``. Chaque sous-commande prend ``--db`` ;"
+" ``list`` et ``show`` acceptent ``--format text`` (défaut) ou ``json``."
+msgstr ""
+"Διαχειρίζεται τα μαθήματα: διατεταγμένες ακολουθίες βημάτων που ένας "
+"προπονητής γράφει μία φορά για έναν μαθητή. Κάθε βήμα έχει τίτλο, κείμενο"
+" και μπορεί να δείχνει μια συλλογή, μια θέση, και τα δύο ή κανένα. Ένα "
+"μάθημα παραδίδεται σε αρχείο ``.dbx`` (υποεντολή ``export``) και "
+"διαβάζεται στη γραφική διεπαφή με την εντολή ``:le``. Κάθε υποεντολή "
+"δέχεται το ``--db``· τα ``list`` και ``show`` δέχονται ``--format text`` "
+"(προεπιλογή) ή ``json``."
+
+#: ../../source/cli_entrainement.rst:49
+msgid "``list`` — Liste des leçons : id, nom, nombre d'étapes."
+msgstr "``list`` — Εμφανίζει τα μαθήματα: id, όνομα, αριθμός βημάτων."
+
+#: ../../source/cli_entrainement.rst:50
+msgid ""
+"``show --id <id>`` — Les étapes d'une leçon, dans l'ordre : id d'étape, "
+"titre, texte, collection et position montrées."
+msgstr ""
+"``show --id <id>`` — Τα βήματα ενός μαθήματος, με τη σειρά: id βήματος, "
+"τίτλος, κείμενο, συλλογή και θέση που εμφανίζονται."
+
+#: ../../source/cli_entrainement.rst:52
+msgid "``create --name <nom> [--description <texte>]`` — Crée une leçon vide."
+msgstr ""
+"``create --name <nom> [--description <texte>]`` — Δημιουργεί ένα κενό "
+"μάθημα."
+
+#: ../../source/cli_entrainement.rst:53
+msgid ""
+"``edit --id <id> [--name <nom>] [--description <texte>]`` — Renomme une "
+"leçon ou change sa description ; ce qui n'est pas donné est conservé."
+msgstr ""
+"``edit --id <id> [--name <nom>] [--description <texte>]`` — Μετονομάζει "
+"ένα μάθημα ή αλλάζει την περιγραφή του· ό,τι δεν δίνεται διατηρείται."
+
+#: ../../source/cli_entrainement.rst:55
+msgid ""
+"``delete --id <id> --confirm`` — Supprime la leçon et ses étapes, "
+"définitivement (il n'y a pas de corbeille pour les leçons). Les "
+"collections et les positions que ses étapes montraient restent dans la "
+"base."
+msgstr ""
+"``delete --id <id> --confirm`` — Διαγράφει το μάθημα και τα βήματά του, "
+"οριστικά (δεν υπάρχει κάδος για τα μαθήματα). Οι συλλογές και οι θέσεις "
+"που έδειχναν τα βήματά του παραμένουν στη βάση."
+
+#: ../../source/cli_entrainement.rst:58
+msgid ""
+"``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file "
+"<fichier>] [--collection <id>] [--position <id>]`` — Ajoute une étape à "
+"la fin de la leçon."
+msgstr ""
+"``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file "
+"<fichier>] [--collection <id>] [--position <id>]`` — Προσθέτει ένα βήμα "
+"στο τέλος του μαθήματος."
+
+#: ../../source/cli_entrainement.rst:61
+msgid ""
+"``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file"
+" …] [--collection <id>] [--position <id>]`` — Modifie une étape ; seuls "
+"les champs donnés changent, ``--collection 0`` ou ``--position 0`` "
+"retirent ce que l'étape montrait."
+msgstr ""
+"``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file"
+" …] [--collection <id>] [--position <id>]`` — Τροποποιεί ένα βήμα· "
+"αλλάζουν μόνο τα πεδία που δίνονται, τα ``--collection 0`` ή ``--position"
+" 0`` αφαιρούν ό,τι έδειχνε το βήμα."
+
+#: ../../source/cli_entrainement.rst:65
+msgid "``remove-step --lesson <id> --step <id>`` — Retire une étape."
+msgstr "``remove-step --lesson <id> --step <id>`` — Αφαιρεί ένα βήμα."
+
+#: ../../source/cli_entrainement.rst:66
+msgid ""
+"``reorder --lesson <id> --steps <id,id,…>`` — Fixe l'ordre des étapes ; "
+"la liste donne toutes les étapes de la leçon."
+msgstr ""
+"``reorder --lesson <id> --steps <id,id,…>`` — Ορίζει τη σειρά των "
+"βημάτων· η λίστα πρέπει να περιέχει όλα τα βήματα του μαθήματος."
+
+#: ../../source/cli_entrainement.rst:68
+msgid ""
+"``export --id <id[,id…]> --out <fichier> [--analysis=false] "
+"[--comments=false] [--watermark <texte>] [--watermark-note <texte>] "
+"[--password <mot de passe>]`` — Exporte une ou plusieurs leçons, avec les"
+" collections et les positions que leurs étapes montrent, vers un nouveau "
+"fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé"
+" (voir la commande ``export`` pour le filigrane). Avec ``--html`` (une "
+"seule leçon, ``--lang fr|en|de|el|es|fi|it|ja|ru``), ``--out`` est une "
+"page HTML autonome : titre, description, chaque étape avec son texte et "
+"son plateau, l'analyse enregistrée de chaque position repliée comme une "
+"réponse de quiz, et l'origine du filigrane de la base en pied de page, "
+"s'il y en a un. Le fichier ne contient ni script ni adresse réseau."
+msgstr ""
+"``export --id <id[,id…]> --out <fichier> [--analysis=false] "
+"[--comments=false] [--watermark <texte>] [--watermark-note <texte>] "
+"[--password <mot de passe>]`` — Εξάγει ένα ή περισσότερα μαθήματα, με τις"
+" συλλογές και τις θέσεις που δείχνουν τα βήματά τους, σε νέο αρχείο "
+"βάσης· με το ``--password``, το αρχείο είναι ένα προστατευμένο ``.dbx`` "
+"(για το υδατογράφημα βλ. την εντολή ``export``). Με το ``--html`` (ένα "
+"μόνο μάθημα, ``--lang fr|en|de|el|es|fi|it|ja|ru``), το ``--out`` είναι "
+"μια αυτόνομη σελίδα HTML: τίτλος, περιγραφή, κάθε βήμα με το κείμενο και "
+"το ταμπλό του, η αποθηκευμένη ανάλυση κάθε θέσης διπλωμένη σαν απάντηση "
+"κουίζ και, στο υποσέλιδο, η προέλευση του υδατογραφήματος της βάσης, αν "
+"υπάρχει. Το αρχείο δεν περιέχει σενάριο ούτε διεύθυνση δικτύου."
+
+#: ../../source/cli_entrainement.rst:79
+msgid ""
+"``done --step <id> [--undo]`` — Marque une étape comme faite dans cette "
+"base, ou retire la marque avec ``--undo`` : c'est la progression de celui"
+" qui lit la leçon, et aucun export ne l'emporte."
+msgstr ""
+"``done --step <id> [--undo]`` — Σημειώνει ένα βήμα ως γινόμενο σε αυτή τη"
+" βάση ή αφαιρεί τη σήμανση με ``--undo``: είναι η πρόοδος αυτού που "
+"διαβάζει το μάθημα, και καμία εξαγωγή δεν την μεταφέρει."
+
+#: ../../source/cli_entrainement.rst:82
+msgid ""
+"``progress --id <id> [--format text|json]`` — Montre les étapes de la "
+"leçon marquées faites, avec la date du geste."
+msgstr ""
+"``progress --id <id> [--format text|json]`` — Εμφανίζει τα βήματα του "
+"μαθήματος που έχουν σημειωθεί ως γινόμενα, με την ημερομηνία της κίνησης."
+
+#: ../../source/cli_entrainement.rst:85
+msgid ""
+"Importer un fichier qui contient une leçon crée celle-ci avec ses étapes "
+"; une leçon dont le nom existe déjà dans la base n'est pas touchée, si "
+"bien que réimporter le même fichier ne change rien. Lire une leçon "
+"n'enregistre rien chez celui qui la lit ; seul ``done`` écrit sa "
+"progression."
+msgstr ""
+"Η εισαγωγή ενός αρχείου που περιέχει μάθημα το δημιουργεί με τα βήματά "
+"του· ένα μάθημα του οποίου το όνομα υπάρχει ήδη στη βάση δεν αγγίζεται, "
+"επομένως η εκ νέου εισαγωγή του ίδιου αρχείου δεν αλλάζει τίποτα. Η "
+"ανάγνωση ενός μαθήματος δεν καταγράφει τίποτα στην πλευρά αυτού που το "
+"διαβάζει· μόνο το ``done`` γράφει την πρόοδό του."
+
+#: ../../source/cli_entrainement.rst:90
+msgid ""
+"L'export de toute la bibliothèque (``export --type database``) emporte "
+"toutes les leçons avec ce que leurs étapes montrent ; un export partiel "
+"ne les emporte que nommées, par ``lesson export``."
+msgstr ""
+"Η εξαγωγή ολόκληρης της βιβλιοθήκης (``export --type database``) "
+"περιλαμβάνει όλα τα μαθήματα μαζί με ό,τι δείχνουν τα βήματά τους· μια "
+"μερική εξαγωγή περιλαμβάνει μόνο όσα κατονομάζονται, μέσω του ``lesson "
+"export``."
+
+#: ../../source/cli_entrainement.rst:108
+msgid "anki — Paquets de répétition espacée"
+msgstr "anki — Πακέτα επανάληψης με διαστήματα"
+
+#: ../../source/cli_entrainement.rst:110
+msgid ""
+"Consulte et entretient les paquets de répétition espacée (FSRS) du "
+"panneau Anki de l'interface graphique. La révision d'une carte demande le"
+" damier et reste dans l'interface graphique ; la CLI liste, mesure et "
+"resynchronise."
+msgstr ""
+"Εξετάζει και συντηρεί τα πακέτα επανάληψης με διαστήματα (FSRS) του "
+"πίνακα Anki της γραφικής διεπαφής. Η επανάληψη μιας κάρτας απαιτεί το "
+"ταμπλό και παραμένει στη γραφική διεπαφή· η CLI παραθέτει, μετρά και "
+"επανασυγχρονίζει."
+
+#: ../../source/cli_entrainement.rst:120
+msgid ""
+"``decks [--format text|json|csv]`` — Liste des paquets : source, nombre "
+"de cartes, cartes dues, cartes nouvelles."
+msgstr ""
+"``decks [--format text|json|csv]`` — Λίστα των πακέτων: πηγή, αριθμός "
+"καρτών, οφειλόμενες κάρτες, νέες κάρτες."
+
+#: ../../source/cli_entrainement.rst:122
+msgid ""
+"``stats --deck <id> [--format text|json]`` — Statistiques de révision "
+"d'un paquet : total, nouvelles, en apprentissage, à revoir, dues "
+"maintenant, et ses paramètres FSRS."
+msgstr ""
+"``stats --deck <id> [--format text|json]`` — Στατιστικά επανάληψης ενός "
+"πακέτου: σύνολο, νέες, σε εκμάθηση, προς επανάληψη, οφειλόμενες τώρα, και"
+" οι παράμετροί του FSRS."
+
+#: ../../source/cli_entrainement.rst:125
+msgid ""
+"``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — Cartes"
+" arrivant à échéance par jour civil (UTC) sur les ``n`` prochains jours "
+"(défaut 30, maximum 365) ; le jour 0 absorbe toutes les cartes en retard "
+"; ``--deck 0`` (défaut) couvre tous les paquets."
+msgstr ""
+"``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — Κάρτες"
+" που λήγουν ανά ημερολογιακή ημέρα (UTC) για τις επόμενες ``n`` ημέρες "
+"(προεπιλογή 30, μέγιστο 365)· η ημέρα 0 απορροφά όλες τις καθυστερημένες "
+"κάρτες· ``--deck 0`` (προεπιλογή) καλύπτει όλα τα πακέτα."
+
+#: ../../source/cli_entrainement.rst:129
+msgid ""
+"``sync --deck <id>`` — Ajoute une carte pour chaque position de la source"
+" du paquet qui n'en a pas encore ; les cartes existantes gardent leur "
+"planification."
+msgstr ""
+"``sync --deck <id>`` — Προσθέτει μια κάρτα για κάθε θέση της πηγής του "
+"πακέτου που δεν έχει ακόμη μία· οι υπάρχουσες κάρτες διατηρούν τον "
+"προγραμματισμό τους."
+
+#: ../../source/cli_entrainement.rst:132
+msgid ""
+"``retention --deck <id> [--format text|json]`` — Rétention mesurée d'un "
+"paquet, comparée à la cible que son propriétaire a choisie."
+msgstr ""
+"``retention --deck <id> [--format text|json]`` — η μετρημένη διατήρηση "
+"μιας τράπουλας, σε σύγκριση με τον στόχο που επέλεξε ο κάτοχός της."
+
+#: ../../source/cli_entrainement.rst:134
+msgid ""
+"``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format "
+"text|json]`` — Agit sur une carte. *Suspendre* la met de côté sans perdre"
+" son historique (elle ne ressort plus en séance) ; *enterrer* la masque "
+"jusqu'au lendemain, sans rien dire de sa valeur ; *retirer* la supprime "
+"du paquet — la position, elle, reste dans la base, un paquet n'étant "
+"qu'une liste d'étude posée dessus ; *undo* annule la dernière note de la "
+"carte, qui retrouve l'état d'avant cette note, et affiche cet état. Sans "
+"note à annuler, la commande refuse : « the card has no review to undo »."
+msgstr ""
+"``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format "
+"text|json]`` — ενεργεί σε μία κάρτα. Η *αναστολή* τη βάζει στην άκρη "
+"χωρίς να χαθεί το ιστορικό της (δεν εμφανίζεται πια σε συνεδρία)· η "
+"*ταφή* την κρύβει ως την επόμενη μέρα, χωρίς να λέει τίποτα για την αξία "
+"της· η *αφαίρεση* τη διαγράφει από την τράπουλα — η ίδια η θέση μένει στη"
+" βιβλιοθήκη, αφού μια τράπουλα δεν είναι παρά μια λίστα μελέτης πάνω της."
+" Το *undo* ακυρώνει την τελευταία αξιολόγηση της κάρτας, η οποία "
+"επανέρχεται στην κατάσταση πριν από αυτήν την αξιολόγηση, και εμφανίζει "
+"αυτή την κατάσταση. Χωρίς αξιολόγηση προς αναίρεση, η εντολή αρνείται: "
+"«the card has no review to undo»."
+
+#: ../../source/cli_entrainement.rst:142
+msgid ""
+"``log [--deck <id>] [--limit <n>] [--format text|json]`` — Journal des "
+"révisions, la plus récente d'abord (``--deck 0``, le défaut, couvre tous "
+"les paquets ; ``--limit`` vaut 20 par défaut). Le journal est ce que le "
+"planificateur a réellement reçu, par opposition à ce qu'il prévoit "
+"aujourd'hui : c'est le seul endroit où une note entrée par erreur se "
+"voit."
+msgstr ""
+"``log [--deck <id>] [--limit <n>] [--format text|json]`` — το ημερολόγιο "
+"επαναλήψεων, το πιο πρόσφατο πρώτο (``--deck 0``, η προεπιλογή, καλύπτει "
+"όλες τις τράπουλες· το ``--limit`` είναι 20 από προεπιλογή). Το "
+"ημερολόγιο είναι ό,τι πραγματικά δόθηκε στον προγραμματιστή, σε αντίθεση "
+"με ό,τι σχεδιάζει σήμερα: το μόνο σημείο όπου φαίνεται μια βαθμολογία που"
+" δόθηκε κατά λάθος."
+
+#: ../../source/cli_entrainement.rst:147
+msgid ""
+"``export --deck <id> | --collection <id> --out <fichier.apkg> [--format "
+"apkg] [--lang <langue>]`` — Écrit un paquet, ou une collection, en paquet"
+" Anki **.apkg** que l'application Anki importe sur ordinateur ou "
+"téléphone : une carte par position, le plateau, le score, le videau et "
+"les dés au recto, le meilleur coup ou la bonne décision de videau, son "
+"équité et l'erreur du coup joué au verso, libellés dans la langue "
+"``--lang`` (``en`` par défaut). Une collection vivante est évaluée à "
+"l'export, sous son plafond. L'export n'écrit rien dans la base ; un "
+"réexport importé dans Anki met ses cartes à jour au lieu de les "
+"dupliquer. Le daemon sert le même fichier sur ``POST "
+"/v1/anki.exportApkg``."
+msgstr ""
+"``export --deck <id> | --collection <id> --out <αρχείο.apkg> [--format "
+"apkg] [--lang <γλώσσα>]`` — Γράφει μια τράπουλα ή μια συλλογή ως πακέτο "
+"Anki **.apkg**, που η εφαρμογή Anki εισάγει σε υπολογιστή ή τηλέφωνο: μία"
+" κάρτα ανά θέση, με την ταμπλό, το σκορ, τον κύβο και τα ζάρια μπροστά, "
+"και την καλύτερη κίνηση ή τη σωστή απόφαση κύβου, την equity της και το "
+"σφάλμα της κίνησης που παίχτηκε πίσω, με ετικέτες στη γλώσσα ``--lang`` "
+"(``en`` εξ ορισμού). Μια ζωντανή συλλογή αξιολογείται κατά την εξαγωγή, "
+"εντός του ορίου της. Η εξαγωγή δεν γράφει τίποτα στη βάση· μια νέα "
+"εξαγωγή που εισάγεται στο Anki ενημερώνει τις κάρτες της αντί να τις "
+"διπλασιάζει. Ο daemon σερβίρει το ίδιο αρχείο στο ``POST "
+"/v1/anki.exportApkg``."
+
+#: ../../source/cli_entrainement.rst:158
+msgid ""
+"Un paquet fondé sur une collection relit sa collection ; fondé sur une "
+"collection vivante, il rejoue sa requête sous le même plafond de 5 000 "
+"positions et signale sur la sortie d'erreur une source tronquée. Un "
+"paquet fondé sur une recherche conserve la recherche telle que "
+"l'interface graphique l'a enregistrée (commande, damier et identifiants "
+"des positions trouvées à ce moment-là) : la grammaire de recherche vit "
+"dans l'interface graphique, la CLI resynchronise donc depuis les "
+"identifiants enregistrés et le signale sur la sortie d'erreur — ouvrez le"
+" paquet dans l'interface graphique pour rejouer la recherche elle-même."
+msgstr ""
+"Ένα πακέτο βασισμένο σε συλλογή διαβάζει ξανά τη συλλογή του· βασισμένο "
+"σε ζωντανή συλλογή, επαναλαμβάνει το ερώτημά της με το ίδιο όριο των "
+"5.000 θέσεων και αναφέρει στην έξοδο σφαλμάτων μια περικομμένη πηγή. Ένα "
+"πακέτο βασισμένο σε αναζήτηση διατηρεί την αναζήτηση όπως την κατέγραψε η"
+" γραφική διεπαφή (εντολή, ταμπλό και αναγνωριστικά των θέσεων που "
+"βρέθηκαν εκείνη τη στιγμή): η γραμματική αναζήτησης ζει στη γραφική "
+"διεπαφή, οπότε η CLI επανασυγχρονίζει από τα καταγεγραμμένα αναγνωριστικά"
+" και το αναφέρει στην έξοδο σφαλμάτων — ανοίξτε το πακέτο στη γραφική "
+"διεπαφή για να επαναλάβετε την ίδια την αναζήτηση."
+
+#: ../../source/cli_entrainement.rst:192
+msgid "training — Le journal d'entraînement"
+msgstr "training — Το ημερολόγιο εκπαίδευσης"
+
+#: ../../source/cli_entrainement.rst:194
+msgid ""
+"Relit le journal de l'onglet Entraînement (voir "
+":ref:`panneau_entrainement`) et fait des questions ratées de quoi "
+"réviser. Le journal est écrit par l'application graphique, ou par un "
+"client du démon à la route ``training.save`` ; la ligne de commande ne "
+"pose pas de questions."
+msgstr ""
+"Διαβάζει ξανά το ημερολόγιο της καρτέλας Εκπαίδευση (βλ. "
+":ref:`panneau_entrainement`) και μετατρέπει τις λανθασμένες ερωτήσεις σε "
+"υλικό επανάληψης. Το ημερολόγιο γράφεται από τη γραφική εφαρμογή ή από "
+"έναν πελάτη του δαίμονα μέσω της διαδρομής ``training.save``· η γραμμή "
+"εντολών δεν θέτει ερωτήσεις."
+
+#: ../../source/cli_entrainement.rst:199
+msgid ""
+"**training sessions** — Les séances, la plus récente d'abord, avec leur "
+"identifiant ; le PR n'existe que pour *Décision*."
+msgstr ""
+"**training sessions** — Οι συνεδρίες, η πιο πρόσφατη πρώτη, με το "
+"αναγνωριστικό τους· το PR υπάρχει μόνο για την *Απόφαση*."
+
+#: ../../source/cli_entrainement.rst:206 ../../source/cli_entrainement.rst:221
+msgid "**Options:**"
+msgstr "**Επιλογές:**"
+
+#: ../../source/cli_entrainement.rst:208
+msgid ""
+"``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ou ``decision``."
+msgstr ""
+"``--exercise <όνομα>`` — Μία μόνο άσκηση: ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ή ``decision``."
+
+#: ../../source/cli_entrainement.rst:210
+msgid "``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes)."
+msgstr "``--limit <n>`` — Αριθμός συνεδριών (προεπιλογή 20· 0 = όλες)."
+
+#: ../../source/cli_entrainement.rst:211
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — Μορφή εξόδου."
+
+#: ../../source/cli_entrainement.rst:213
+msgid ""
+"**training missed** — Les positions ratées, chacune une fois, la plus "
+"récemment ratée d'abord ; une question hors délai compte comme ratée. "
+"Seules les questions de *Décision* gardent leur position."
+msgstr ""
+"**training missed** — Οι λανθασμένες θέσεις, η καθεμία μία φορά, η πιο "
+"πρόσφατα λανθασμένη πρώτη· μια ερώτηση που έληξε ο χρόνος της μετράει ως "
+"λανθασμένη. Μόνο οι ερωτήσεις της *Απόφασης* κρατούν τη θέση τους."
+
+#: ../../source/cli_entrainement.rst:223
+msgid "``--exercise <nom>`` — Les séances d'un seul exercice."
+msgstr "``--exercise <όνομα>`` — Οι συνεδρίες μίας μόνο άσκησης."
+
+#: ../../source/cli_entrainement.rst:224
+msgid ""
+"``--session <id>`` — Une seule séance (un identifiant de ``training "
+"sessions``)."
+msgstr ""
+"``--session <id>`` — Μία μόνο συνεδρία (ένα αναγνωριστικό από το "
+"``training sessions``)."
+
+#: ../../source/cli_entrainement.rst:226
+msgid "``--limit <n>`` — Nombre de positions (défaut 0 = toutes)."
+msgstr "``--limit <n>`` — Αριθμός θέσεων (προεπιλογή 0 = όλες)."
+
+#: ../../source/cli_entrainement.rst:227
+msgid "``--deck <nom>`` — Crée un paquet Anki de ces positions."
+msgstr "``--deck <όνομα>`` — Δημιουργεί μια τράπουλα Anki με αυτές τις θέσεις."
+
+#: ../../source/cli_entrainement.rst:228
+msgid "``--collection <nom>`` — Crée une collection de ces positions."
+msgstr "``--collection <όνομα>`` — Δημιουργεί μια συλλογή με αυτές τις θέσεις."
+
+#: ../../source/cli_entrainement.rst:229
+msgid ""
+"``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et "
+"``DeckID`` ou ``CollectionID`` quand ils sont créés."
+msgstr ""
+"``--format text|json`` — Μορφή εξόδου· σε JSON, ``PositionIDs``, και "
+"``DeckID`` ή ``CollectionID`` όταν δημιουργούνται."

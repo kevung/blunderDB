@@ -1,0 +1,832 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_import_export.rst:4
+msgid "Importer, exporter, transférer"
+msgstr "インポート、エクスポート、転送"
+
+#: ../../source/cli_import_export.rst:7
+msgid "create — Créer une base de données"
+msgstr "create — データベースを作成する"
+
+#: ../../source/cli_import_export.rst:9
+msgid ""
+"Crée un nouveau fichier de base de données avec des métadonnées "
+"optionnelles."
+msgstr "任意のメタデータとともに新しいデータベースファイルを作成します。"
+
+#: ../../source/cli_import_export.rst:15 ../../source/cli_import_export.rst:42
+#: ../../source/cli_import_export.rst:269
+#: ../../source/cli_import_export.rst:393
+#: ../../source/cli_import_export.rst:461
+#: ../../source/cli_import_export.rst:487
+msgid "**Options:**"
+msgstr "**オプション：**"
+
+#: ../../source/cli_import_export.rst:17
+msgid "``--db`` — Chemin du fichier de base de données à créer (obligatoire)."
+msgstr "``--db`` — 作成するデータベースファイルのパス（必須）。"
+
+#: ../../source/cli_import_export.rst:18
+msgid "``--user`` — Nom du propriétaire de la base."
+msgstr "``--user`` — データベースの所有者名。"
+
+#: ../../source/cli_import_export.rst:19
+msgid "``--description`` — Description de la base."
+msgstr "``--description`` — データベースの説明。"
+
+#: ../../source/cli_import_export.rst:20
+msgid "``--force`` — Écraser le fichier s'il existe déjà."
+msgstr "``--force`` — ファイルが既に存在する場合は上書きする。"
+
+#: ../../source/cli_import_export.rst:21
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (chemin, "
+"version, utilisateur, description, date de création)."
+msgstr ""
+"``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ "
+"（パス、バージョン、ユーザー、説明、作成日時）。"
+
+#: ../../source/cli_import_export.rst:24
+msgid ""
+"L'extension ``.db`` est ajoutée automatiquement si elle est absente. Les "
+"répertoires parents sont créés si nécessaire."
+msgstr "``.db`` 拡張子がない場合は自動的に追加されます。必要に応じて親ディレクトリが作成されます。"
+
+#: ../../source/cli_import_export.rst:27
+msgid "**Exemple:**"
+msgstr "**例：**"
+
+#: ../../source/cli_import_export.rst:34
+msgid "import — Importer des données"
+msgstr "import — データをインポートする"
+
+#: ../../source/cli_import_export.rst:36
+msgid "Importe des fichiers de matchs ou de positions dans la base de données."
+msgstr "マッチまたはポジションファイルをデータベースにインポートします。"
+
+#: ../../source/cli_import_export.rst:44
+msgid "``--db`` — Chemin de la base de données (obligatoire)."
+msgstr "``--db`` — データベースのパス（必須）。"
+
+#: ../../source/cli_import_export.rst:45
+msgid ""
+"``--type`` — Type d'import: ``match``, ``position`` ou ``batch`` "
+"(obligatoire)."
+msgstr ""
+"``--type`` — インポートの種類：\\ ``match``\\ 、\\ ``position``\\ 、または ``batch``\\ "
+"（必須）。"
+
+#: ../../source/cli_import_export.rst:46
+msgid "``--file`` — Fichier à importer (pour ``match`` et ``position``)."
+msgstr "``--file`` — インポートするファイル（\\ ``match`` および ``position`` 用）。"
+
+#: ../../source/cli_import_export.rst:47
+msgid "``--dir`` — Répertoire à importer (pour ``batch``)."
+msgstr "``--dir`` — インポートするディレクトリ（\\ ``batch`` 用）。"
+
+#: ../../source/cli_import_export.rst:48
+msgid ""
+"``--recursive`` — Scanner récursivement les sous-répertoires (défaut: "
+"oui)."
+msgstr "``--recursive`` — サブディレクトリを再帰的にスキャンする（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:49
+msgid ""
+"``--watch`` — Avec ``--type batch`` : ne s'arrête pas, et importe chaque "
+"fichier de match **à mesure qu'il apparaît** dans ``--dir`` (Ctrl-C pour "
+"arrêter)."
+msgstr ""
+"``--watch``\\ — ``--type batch`` と併用します。終了せずに、``--dir`` に\\ **現れるたび**\\ "
+"にマッチファイルを取り込みます（Ctrl-C で停止）。"
+
+#: ../../source/cli_import_export.rst:52
+msgid ""
+"``--watch-every`` — Intervalle entre deux regards de ``--watch`` (défaut:"
+" 10s, plancher 2s)."
+msgstr "``--watch-every``\\ — ``--watch`` が見に行く間隔（既定：10s、下限 2s）。"
+
+#: ../../source/cli_import_export.rst:54
+msgid ""
+"``--resume`` — Avec ``--type batch`` : reprend le lot de ce numéro "
+"(affiché au départ de l'import, ou ``batch_id`` en JSON). Les fichiers de"
+" même chemin, taille et date que dans son journal sont sautés sans être "
+"lus, ceux de même contenu sont lus mais pas analysés ; les fichiers en "
+"erreur sont retentés."
+msgstr ""
+"``--resume`` ― ``--type batch`` "
+"を指定した場合:この番号のバッチを再開します(インポート開始時に表示される番号、JSON では "
+"``batch_id``)。そのジャーナルにあるものとパス・サイズ・日付が同じファイルは読み込まずにスキップされ、内容が同じファイルは読み込まれますが解析されません。エラーになったファイルは再試行されます。"
+
+#: ../../source/cli_import_export.rst:59
+msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
+msgstr "``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ 。"
+
+#: ../../source/cli_import_export.rst:60
+msgid ""
+"``--fail-on-error`` — Échoue si au moins un élément (``position`` ou "
+"``batch``) n'a pas pu être importé, même quand d'autres ont réussi."
+msgstr ""
+"``--fail-on-error`` — 他の要素が成功していても、少なくとも1つの要素（\\ ``position``\\ または\\ "
+"``batch``\\ ）をインポートできなかった場合に失敗する。"
+
+#: ../../source/cli_import_export.rst:62
+msgid ""
+"``--skip-duplicates`` — Ignore un match déjà en base sans en reprendre "
+"les analyses plus profondes (les marques d'étude restent appliquées). Par"
+" défaut, un doublon remplace chaque analyse rangée par la sienne quand "
+"elle est strictement plus profonde, et la ligne l'indique : ``DUPLICATE "
+"(N analyses deepened)``."
+msgstr ""
+"``--skip-duplicates``\\ — "
+"データベースに既にあるマッチを、より深い解析を取り込まずにスキップします（学習マークは適用されます）。既定では、重複したマッチは自身の解析が厳密により深い場合に保存済みの各解析を置き換え、その行に"
+" ``DUPLICATE (N analyses deepened)`` と表示されます。"
+
+#: ../../source/cli_import_export.rst:68
+msgid ""
+"Une décision dont l'analyse contient une valeur qui n'est pas un nombre "
+"fini (NaN ou infini) est importée sans cette analyse, et le reste du "
+"match entre normalement ; le compte rendu du lot en donne le nombre "
+"(``Decisions imported without their analysis``)."
+msgstr ""
+"解析に有限の数ではない値（NaN "
+"や無限大）を含む判断は、その解析なしでインポートされ、マッチの残りは通常どおり取り込まれます。バッチのレポートがその数を示します（\\ "
+"``Decisions imported without their analysis``\\ ）。"
+
+#: ../../source/cli_import_export.rst:73
+msgid "Le code de retour obéit à quatre règles :"
+msgstr "終了コードは 4 つの規則に従います："
+
+#: ../../source/cli_import_export.rst:75
+msgid ""
+"**rien n'a été reconnu** — chaque fichier a échoué — : erreur, que "
+"``--fail-on-error`` soit passé ou non ;"
+msgstr ""
+"\\ **何も認識されなかった**\\ 場合（すべてのファイルが失敗）：\\ ``--fail-on-error`` "
+"を渡したかどうかにかかわらずエラー。"
+
+#: ../../source/cli_import_export.rst:77
+msgid ""
+"**que des doublons** — chaque fichier était déjà en base — : succès. Un "
+"répertoire relancé sans nouveau fichier, la nuit ordinaire d'un script, "
+"sort en 0 avec ``duplicates`` seul non nul ;"
+msgstr ""
+"\\ **重複のみ**\\ "
+"の場合（すべてのファイルがすでにデータベースにあった）：成功。新しいファイルがないまま再実行されたディレクトリ、つまりスクリプトのごく普通の夜は、\\"
+" ``duplicates`` だけがゼロでない状態で 0 を返します。"
+
+#: ../../source/cli_import_export.rst:80
+msgid ""
+"**échec partiel** (certains éléments importés, d'autres refusés) : erreur"
+" seulement si ``--fail-on-error`` est passé ;"
+msgstr ""
+"**部分的な失敗**\\ （一部の要素はインポートされ、他は拒否された）：\\ ``--fail-on-error`` "
+"が渡された場合にのみエラーになります。"
+
+#: ../../source/cli_import_export.rst:82
+msgid ""
+"au moins un élément nouveau importé, sans ``--fail-on-error`` : succès, "
+"les fichiers refusés étant listés dans le tableau."
+msgstr ""
+"新しい要素が少なくとも 1 つインポートされ、\\ ``--fail-on-error`` "
+"が渡されていない場合：成功となり、拒否されたファイルは表に一覧されます。"
+
+#: ../../source/cli_import_export.rst:86
+msgid "Surveiller un dossier"
+msgstr "フォルダを監視する"
+
+#: ../../source/cli_import_export.rst:88
+msgid ""
+"``--watch`` transforme l'import de répertoire en surveillance : la "
+"commande ne rend pas la main et importe chaque fichier de match qui "
+"**apparaît** dans le dossier. C'est la forme sans interface du "
+":ref:`dossier surveillé <dossier_surveille>` de l'application."
+msgstr ""
+"``--watch``\\ はディレクトリの取り込みを監視に変えます。コマンドは戻らず、フォルダに\\ **現れた**\\ "
+"マッチファイルを次々に取り込みます。アプリケーションの :ref:`監視フォルダ <dossier_surveille>` "
+"の、画面を持たない形です。"
+
+#: ../../source/cli_import_export.rst:99
+msgid ""
+"Seuls les fichiers qui apparaissent sont importés : ce que le dossier "
+"contient au démarrage est enregistré comme connu et laissé tranquille — "
+"pointer une surveillance sur quatre ans de matchs ne doit pas les "
+"importer tous. Les deux commandes ci-dessus se composent donc exactement "
+"comme on l'espère."
+msgstr "取り込まれるのは現れたファイルだけです。開始時点でフォルダにあるものは既知として記録され、そのまま残されます。四年分のマッチに監視を向けたからといって、それらをすべて取り込んではいけません。上の二つのコマンドは、まさに期待どおりに組み合わさります。"
+
+#: ../../source/cli_import_export.rst:104
+msgid ""
+"Un fichier n'est importé qu'une fois sa **taille stable**, c'est-à-dire "
+"vu deux fois inchangé : un match qu'un autre programme est en train "
+"d'écrire grossit d'un regard à l'autre, et l'importer à moitié écrit "
+"donnerait une erreur syntaxique sur laquelle personne ne peut agir. Le "
+"dossier n'est pas parcouru récursivement. Un partage réseau devenu "
+"illisible n'arrête pas la surveillance, et son contenu ne passe pas pour "
+"nouveau à son retour."
+msgstr ""
+"ファイルは\\ **サイズが安定**\\ "
+"してから、つまり二度続けて変化がないと確認されてから取り込まれます。他のプログラムが書いている途中のマッチは見るたびに大きくなり、書きかけで取り込めば、誰にも手の打ちようがない構文エラーになります。フォルダは再帰的にはたどりません。読めなくなったネットワーク共有は監視を止めず、復帰したときにその中身が新規と見なされることもありません。"
+
+#: ../../source/cli_import_export.rst:111
+msgid ""
+"Une base ``.db`` qui apparaît dans le dossier est fusionnée comme par "
+"``import --type database`` : c'est ainsi qu'arrive l'export incrémental "
+"d'une autre machine (voir :ref:`synchroniser_deux_machines`)."
+msgstr ""
+"フォルダーに現れた\\ ``.db``\\ データベースは、\\ ``import --type database``\\ "
+"と同じようにマージされます。別のマシンの増分エクスポートはこうして届きます（\\ :ref:`2台のマシンを同期する "
+"<synchroniser_deux_machines>`\\ を参照）。"
+
+#: ../../source/cli_import_export.rst:115
+msgid ""
+"Ctrl-C arrête entre deux fichiers, jamais au milieu de l'un : le fichier "
+"en cours finit son import et son compte rendu s'affiche avant que la "
+"commande ne rende la main."
+msgstr ""
+"Ctrl-C "
+"はファイルとファイルのあいだで止まり、途中では止まりません。取り込み中のファイルは最後まで処理され、その報告が出てからコマンドが戻ります。"
+
+#: ../../source/cli_import_export.rst:120
+msgid "Import d'un match"
+msgstr "マッチのインポート"
+
+#: ../../source/cli_import_export.rst:122
+msgid ""
+"Formats supportés: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``), "
+"Jellyfish (``.mat``, ``.txt``), BGBlitz (``.bgf``) et HedgeHog "
+"(``.ogxm``)."
+msgstr ""
+"対応フォーマット：eXtreme Gammon（\\ ``.xg``\\ 、\\ ``.xgp``\\ ）、GNUbg（\\ ``.sgf``\\"
+" ）、Jellyfish（\\ ``.mat``\\ 、\\ ``.txt``\\ ）、BGBlitz（\\ ``.bgf``\\ "
+"）、HedgeHog（\\ ``.ogxm``\\ ）。"
+
+#: ../../source/cli_import_export.rst:137
+msgid "``--format json`` livre les mêmes champs en un seul document :"
+msgstr "``--format json`` は同じ項目を1つのドキュメントで返します："
+
+#: ../../source/cli_import_export.rst:153
+msgid "Import de positions"
+msgstr "ポジションのインポート"
+
+#: ../../source/cli_import_export.rst:155
+msgid ""
+"Importe des positions depuis un fichier texte, **une position JSON par "
+"ligne**. C'est exactement ce qu'écrit ``export --type positions`` : les "
+"deux commandes se répondent, un export se réimporte tel quel, sans rien "
+"retoucher."
+msgstr ""
+"テキストファイルからポジションをインポートします。\\ **1行に1つの JSON ポジション**\\ です。これはまさに ``export "
+"--type positions`` "
+"が書き出すものです。2つのコマンドは対をなしており、エクスポートしたものは何も手を加えずそのまま再インポートできます。"
+
+#: ../../source/cli_import_export.rst:165
+msgid ""
+"Une ligne, telle qu'``export`` la produit — le damier en occupe "
+"l'essentiel, vingt-six points suivis des sorties :"
+msgstr "``export`` が生成する1行は次のとおりです——大半を盤面が占めており、26のポイントに続いて上がったチェッカーが並びます："
+
+#: ../../source/cli_import_export.rst:172
+msgid ""
+"L'analyse et les commentaires ne voyagent pas par ce format : il porte la"
+" position, rien d'autre. Pour déplacer une bibliothèque entière, c'est "
+"``export --type database`` qu'il faut."
+msgstr ""
+"分析とコメントはこの形式では運ばれません。運ばれるのはポジションだけです。ライブラリ全体を移すには ``export --type "
+"database`` が必要です。"
+
+#: ../../source/cli_import_export.rst:177
+msgid "Import d'une base"
+msgstr "データベースのインポート"
+
+#: ../../source/cli_import_export.rst:179
+msgid ""
+"Fusionne une autre base blunderDB (*.db*) dans celle de ``--db``, selon "
+"les règles de la fusion de l'application de bureau et d'``imports.db`` en"
+" mode serveur (:ref:`guide_fusionner_base`) : positions, matchs, "
+"tournois, collections, leçons, paquets Anki, brouillons et alias, ainsi "
+"que la Direction des tournois et leur Rencontre. Importer deux fois le "
+"même fichier ne change rien. La sortie texte compte les matchs ajoutés et"
+" déjà présents, les Directions et Rencontres relues, et nomme les "
+"collections vivantes figées ou laissées sur une liste manuelle, et les "
+"familles que la base est trop ancienne pour porter."
+msgstr ""
+"別の blunderDB データベース（*.db*）を ``--db`` "
+"のデータベースに統合します。デスクトップアプリの統合およびサーバーモードの ``imports.db`` "
+"と同じ規則に従います（:ref:`guide_fusionner_base`）\\ "
+"：ポジション、マッチ、トーナメント、コレクション、レッスン、Anki "
+"デッキ、下書き、エイリアス、さらにトーナメントの運営とその対戦会。同じファイルを二度インポートしても何も変わりません。テキスト出力は、追加されたマッチとすでに存在したマッチ、読み戻された運営と対戦会を数え、固定された、または手動リストに残されたライブコレクションと、データベースが古すぎて扱えないファミリーを示します。"
+
+#: ../../source/cli_import_export.rst:195
+msgid "Import par lot"
+msgstr "一括インポート"
+
+#: ../../source/cli_import_export.rst:197
+msgid ""
+"Importe tous les fichiers de matchs d'un répertoire en une seule "
+"opération. C'est la méthode la plus efficace pour importer un grand "
+"nombre de matchs."
+msgstr "1回の操作でディレクトリのすべてのマッチファイルをインポートします。これは多数のマッチをインポートする最も効率的な方法です。"
+
+#: ../../source/cli_import_export.rst:206
+msgid ""
+"Un tableau récapitulatif indique pour chaque fichier si l'import a réussi"
+" (✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas "
+"compté comme un échec, et un lot qui n'en contient que des doublons est "
+"un succès (voir les règles ci-dessus)."
+msgstr "まとめの表に、各ファイルについてインポートが成功したか（✓）、失敗したか（✗）、重複だったか（⊘）が示されます。重複は失敗として数えられず、重複しか含まないバッチも成功です（上記の規則を参照）。"
+
+#: ../../source/cli_import_export.rst:211
+msgid ""
+"Chaque fichier du lot est journalisé (chemin, taille, date, SHA-256, "
+"match obtenu ou erreur). Le numéro du lot est affiché au départ ; si "
+"l'import est interrompu, ``--resume`` le continue sans analyser de "
+"nouveau ce qui est décidé. Avec ``--format json``, l'objet final porte "
+"``batch_id`` et le tableau ``journal``."
+msgstr ""
+"バッチの各ファイルはジャーナルに記録されます(パス、サイズ、日付、SHA-256、得られたマッチまたはエラー)。バッチ番号は開始時に表示されます。インポートが中断された場合、"
+" ``--resume`` により、判定済みの内容を再解析せずに続行できます。 ``--format json`` "
+"を指定すると、最終オブジェクトに ``batch_id`` と配列 ``journal`` が含まれます。"
+
+#: ../../source/cli_import_export.rst:241
+msgid ""
+"``--format json`` en donne la même chose, exploitable par un script : un "
+"objet par fichier dans ``files``, puis les totaux. Une nuit tranquille "
+"laisse ``duplicates`` seul non nul et ``failed`` à zéro, et le code de "
+"retour à 0 ; seul un lot où rien n'a été reconnu sort en erreur."
+msgstr ""
+"``--format json`` は同じ内容を、スクリプトで扱える形で返します。\\ ``files`` "
+"にファイルごとのオブジェクトが並び、続いて合計が来ます。何ごともない夜であれば、\\ ``duplicates`` だけがゼロでなく、\\ "
+"``failed`` はゼロのままで、終了コードも 0 です。エラーで終了するのは、何も認識されなかったバッチだけです。"
+
+#: ../../source/cli_import_export.rst:261
+msgid "export — Exporter des données"
+msgstr "export — データをエクスポートする"
+
+#: ../../source/cli_import_export.rst:263
+msgid "Exporte le contenu de la base vers des fichiers."
+msgstr "データベースの内容をファイルにエクスポートします。"
+
+#: ../../source/cli_import_export.rst:271
+msgid "``--db`` — Base source (obligatoire)."
+msgstr "``--db`` — ソースデータベース（必須）。"
+
+#: ../../source/cli_import_export.rst:272
+msgid ""
+"``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
+"``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
+"``.mat``) (obligatoire)."
+msgstr ""
+"``--type`` — エクスポートの種類：\\ ``database``\\ 、\\ ``positions``\\ 、\\ "
+"``matches``\\ 、または ``mat``\\ （1つまたは複数のマッチをJellyfish ``.mat`` "
+"トランスクリプションでエクスポート）（必須）。"
+
+#: ../../source/cli_import_export.rst:275
+msgid ""
+"``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
+"utilisé avec ``--dir``)."
+msgstr "``--file`` — 出力ファイル（\\ ``--dir``\\ と併用する ``--type mat`` を除き必須）。"
+
+#: ../../source/cli_import_export.rst:277
+msgid ""
+"``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
+"(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
+"matchs sont exportés)."
+msgstr ""
+"``--dir`` — バッチ ``.mat`` エクスポートの出力ディレクトリ（複数のマッチ、マッチごとに1ファイル。\\ ``--match-"
+"ids``\\ なしの場合、すべてのマッチがエクスポートされます）。"
+
+#: ../../source/cli_import_export.rst:280
+msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
+msgstr "``--analysis`` — 分析を含める（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:281
+msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
+msgstr "``--comments`` — コメントを含める（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:282
+msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
+msgstr "``--filters`` — フィルターライブラリを含める（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:283
+msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
+msgstr "``--played-moves`` — プレイされた手を含める（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:284
+msgid "``--matches`` — Inclure les matchs (défaut: oui)."
+msgstr "``--matches`` — マッチを含める（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:285
+msgid ""
+"``--transcriptions`` — Inclure le brouillon de transcription de chaque "
+"match exporté (défaut: oui)."
+msgstr "``--transcriptions`` — エクスポートする各マッチの文字起こしの下書きを含める（デフォルト: はい）。"
+
+#: ../../source/cli_import_export.rst:287
+msgid ""
+"``--aliases`` — Inclure les alias de joueurs et d'événements que les "
+"matchs exportés écrivent, pour que la fusion de joueurs les suive "
+"(défaut: oui)."
+msgstr ""
+"``--aliases`` — 書き出すマッチに書かれたプレイヤーとイベントの別名を含め、プレイヤーの統合がそれに従うようにします（デフォルト: "
+"はい）。"
+
+#: ../../source/cli_import_export.rst:289
+msgid "``--collections`` — Inclure les collections (défaut: oui)."
+msgstr "``--collections`` — コレクションを含める（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:290
+msgid "``--tournaments`` — Inclure les tournois (défaut: oui)."
+msgstr "``--tournaments`` — トーナメントを含める（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:291
+msgid "``--decks`` — Inclure les paquets Anki (défaut: oui)."
+msgstr "``--decks`` — Anki デッキを含めます（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:292
+msgid ""
+"``--lessons`` — Inclure les leçons, avec les collections et les positions"
+" que leurs étapes montrent (défaut: oui)."
+msgstr "``--lessons`` — レッスンを、その各ステップが示すコレクションとポジションとともに含めます（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:294
+msgid ""
+"``--anki-history`` — Emporter l'historique de révision des paquets "
+"exportés : l'état de chaque carte et le journal de ses révisions (défaut:"
+" oui)."
+msgstr "``--anki-history`` — エクスポートするデッキの復習履歴（各カードの状態とその復習のログ）を持ち出します（デフォルト：はい）。"
+
+#: ../../source/cli_import_export.rst:296
+msgid ""
+"``--collection-ids`` — IDs de collections à exporter (séparés par des "
+"virgules, vide = toutes)."
+msgstr "``--collection-ids`` — エクスポートするコレクションのID（カンマ区切り、空=すべて）。"
+
+#: ../../source/cli_import_export.rst:298
+msgid ""
+"``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
+"vide = tous)."
+msgstr "``--match-ids`` — エクスポートするマッチのID（カンマ区切り、空=すべて）。"
+
+#: ../../source/cli_import_export.rst:299
+msgid ""
+"``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
+"virgules, vide = tous)."
+msgstr "``--tournament-ids`` — エクスポートするトーナメントのID（カンマ区切り、空=すべて）。"
+
+#: ../../source/cli_import_export.rst:301
+msgid ""
+"``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions "
+"(séparés par des virgules, vide = tous)."
+msgstr "``--deck-ids`` — ポジションと共にエクスポートする Anki デッキの ID（カンマ区切り、空=すべて）。"
+
+#: ../../source/cli_import_export.rst:303
+msgid ""
+"``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules, "
+"vide = toutes)."
+msgstr "``--lesson-ids`` — エクスポートするレッスンのID（カンマ区切り、空=すべて）。"
+
+#: ../../source/cli_import_export.rst:306
+msgid ""
+"``--password`` — Enveloppe le résultat dans un conteneur chiffré "
+"(``.dbx``)."
+msgstr "``--password`` — 結果を暗号化されたコンテナ（``.dbx``）に包みます。"
+
+#: ../../source/cli_import_export.rst:307
+msgid ""
+"``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
+"fichier exporté (voir :ref:`diffusion_controlee`)."
+msgstr ""
+"``--watermark`` — 出力ファイルに\\ **署名付き**\\ "
+"の出所表明を書き込みます（:ref:`diffusion_controlee` を参照）。"
+
+#: ../../source/cli_import_export.rst:309
+msgid ""
+"``--watermark-note`` — Texte libre associé au filigrane (conditions "
+"d'usage, contact) ; utilisé avec ``--watermark``."
+msgstr "``--watermark-note`` — 透かしに添える自由記述（利用条件、連絡先）。``--watermark`` と併用します。"
+
+#: ../../source/cli_import_export.rst:311
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
+"résumant l'export: chemin, taille en octets, nombres)."
+msgstr ""
+"``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ "
+"（エクスポートの要約文書：パス、バイト単位のサイズ、件数）。"
+
+#: ../../source/cli_import_export.rst:313
+msgid ""
+"``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est "
+"entré dans la bibliothèque depuis le dernier export incrémental vers le "
+"même dossier, puis avance ce repère dans la base exportée. ``--file`` "
+"peut alors être un dossier, où un fichier ``sync-<machine>-<date>.db`` "
+"est créé (voir :ref:`synchroniser_deux_machines`). Un nom de fichier déjà"
+" pris est refusé : le fichier en place porte le delta précédent, que "
+"l'autre machine n'a peut-être pas encore fusionné."
+msgstr ""
+"``--incremental`` — \\ ``--type database``\\ "
+"と併用：同じフォルダーへの前回の増分エクスポート以降にライブラリへ入ったものだけをエクスポートし、エクスポートされたデータベース内のその目印を進めます。この場合"
+" ``--file`` にはフォルダーを指定でき、そこに\\ ``sync-<machine>-<date>.db``\\ "
+"ファイルが作成されます（\\ :ref:`2台のマシンを同期する <synchroniser_deux_machines>`\\ "
+"を参照）。既に存在するファイル名は拒否されます。その場所のファイルには前回の差分が入っており、相手のマシンがまだ統合していない可能性があるためです。"
+
+#: ../../source/cli_import_export.rst:320
+msgid ""
+"``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, "
+"à la place du dossier de destination."
+msgstr ""
+"``--sync-cursor`` — \\ ``--incremental``\\ "
+"と併用：書き出し先フォルダーの代わりに、読み取って進める目印の名前。"
+
+#: ../../source/cli_import_export.rst:322
+msgid ""
+"``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille "
+"par famille, ce que l'export écrirait, sans écrire de fichier (``--file``"
+" est alors facultatif). Les comptes sont ceux que l'export rapporte "
+"ensuite ; les collections vivantes qui partiraient figées et les paquets "
+"« recherche » dont la source perdrait une partie sont nommés. Avec un "
+"autre type, l'option est refusée."
+msgstr ""
+"``--plan`` — ``--type database`` または ``matches`` "
+"と併用すると、ファイルを書き出さずに、エクスポートが書き出す内容をファミリーごとに数えます(``--file`` "
+"は省略可能になります)。件数は、エクスポートがその後に報告するものと同じです。凍結されて出力されるライブコレクションと、ソースの一部が失われる「recherche」デッキは名前が示されます。他のタイプでは、このオプションは拒否されます。"
+
+#: ../../source/cli_import_export.rst:328
+msgid ""
+"``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des "
+"identifiants derrière un compte : ``positions``, ``comments`` (les "
+"positions qui les portent), ``matches``, ``tournaments``, ``directions`` "
+"(les tournois dont la Direction part), ``rencontres`` (les Rencontres qui"
+" partent avec un tournoi), ``collections``, ``lessons``, ``ankiDecks``, "
+"``transcriptions`` ou ``filters``. ``--offset`` et ``--limit`` "
+"choisissent la page (1000 identifiants au plus)."
+msgstr ""
+"``--plan-ids <famille>`` — ``--plan`` "
+"と同様ですが、件数の背後にある識別子のページを返します。``positions``、``comments`` (それらを持つポジション)、 "
+"``matches``、``tournaments``、``directions`` "
+"(運営記録が一緒にエクスポートされるトーナメント)、``rencontres`` "
+"(そのトーナメントの1つと一緒にエクスポートされるイベント)、``collections``、``lessons``、``ankiDecks``、``transcriptions``、``filters``"
+" のいずれかを指定します。``--offset`` と ``--limit`` でページを選びます(最大 1000 件の識別子)。"
+
+#: ../../source/cli_import_export.rst:334
+msgid ""
+"``--type database`` exporte toute la bibliothèque, comme l'export du "
+"serveur et comme la fenêtre d'export quand la liste affichée est la "
+"bibliothèque : positions, matchs, tournois (avec leur Direction : "
+"journal, paires, tables et rattachement des matchs exportés ; leur "
+"Rencontre part dès qu'un de ses tournois part), collections, leçons, "
+"paquets Anki, transcriptions, alias et filtres. Une option à ``false`` "
+"retire sa famille (``--collections=false``) ; une liste d'IDs la "
+"restreint à ces éléments et l'inclut. Un brouillon de transcription part "
+"avec le match qu'il a produit ; un brouillon qui n'a pas encore produit "
+"de match ne part que si tous les matchs partent. ``--type matches`` "
+"emporte aussi le brouillon de chaque match."
+msgstr ""
+"``--type database`` "
+"は、サーバーのエクスポートや、表示中の一覧がライブラリのときのエクスポートウィンドウと同様に、ライブラリ全体をエクスポートします。対象はポジション、マッチ、トーナメント"
+" "
+"(運営記録・ペア・テーブル・エクスポートされたマッチの紐づけを含み、そのトーナメントの1つがエクスポートされるとすぐ、それが属するイベントもエクスポートされます)、コレクション、レッスン、Anki"
+" デッキ、文字起こし、別名、フィルターです。オプションを ``false`` "
+"にすると、その分類が除かれます（``--collections=false``）。ID "
+"のリストを指定すると、その分類はそれらの項目に限定され、含められます。 "
+"文字起こしの下書きは、それが生み出したマッチと共にエクスポートされます。まだマッチを生み出していない下書きは、すべてのマッチをエクスポートするときにだけ含まれます。``--type"
+" matches`` も各マッチの下書きを含めます。"
+
+#: ../../source/cli_import_export.rst:343
+#: ../../source/cli_import_export.rst:428
+msgid "**Exemples:**"
+msgstr "**例：**"
+
+#: ../../source/cli_import_export.rst:366
+msgid ""
+"Un filigrane est signé avec l'identité d'émetteur locale (voir la "
+"commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
+"inamovible — le fichier reste une base SQLite ordinaire. Il ne protège "
+"rien, il indique seulement d'où vient le fichier. Un mot de passe protège"
+" le *transport* du fichier (la copie égarée, la pièce jointe envoyée par "
+"erreur), pas la base elle-même : quiconque a reçu le mot de passe peut "
+"l'ouvrir. blunderDB n'enregistre jamais rien côté destinataire (aucun "
+"registre, aucun journal) — voir `ADR-0007 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
+"mark-origin-and-nothing-else.md>`__."
+msgstr ""
+"透かしはローカルの発行者アイデンティティで署名されます（下記の ``identity`` "
+"コマンドを参照）。偽造はできませんが、取り除けないわけではありません。ファイルは通常の SQLite "
+"データベースのままです。透かしは何も保護せず、そのファイルがどこから来たかを示すだけです。パスワードが守るのはファイルの\\ *運搬*\\ "
+"（置き忘れたコピー、誤って送った添付）であって、データベース自体ではありません。パスワードを受け取った人は誰でも開けます。blunderDB "
+"は受け取る側に何も記録しません（台帳もログもありません）——`ADR-0007 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
+"mark-origin-and-nothing-else.md>`__ を参照してください。"
+
+#: ../../source/cli_import_export.rst:378
+msgid "transfer — Copier d'une bibliothèque à une autre"
+msgstr "transfer — ライブラリから別のライブラリへコピーする"
+
+#: ../../source/cli_import_export.rst:380
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire à manipuler. La sélection est celle de ``export --type "
+"database`` ; la fusion est celle de l'import d'une base ``.db`` : une "
+"position que la destination possède déjà n'est pas ajoutée une seconde "
+"fois (elle est reconnue à son hachage), ses analyses et ses commentaires "
+"se fusionnent, et un match, une collection, une leçon ou un paquet Anki "
+"déjà présent n'est pas dupliqué. Copier de A vers B puis de B vers A ne "
+"crée donc aucun doublon."
+msgstr ""
+"中間ファイルを扱うことなく、ライブラリの一部を別のライブラリにコピーします。選択は ``export --type database`` "
+"と同じで、マージは ``.db`` "
+"データベースのインポートと同じです。コピー先にすでにあるポジションは二重に追加されず（ハッシュで識別されます）、その分析とコメントはマージされ、すでに存在するマッチ、コレクション、レッスン、Anki"
+" デッキも重複しません。したがって、A から B へコピーしてから B から A へコピーしても、重複は生じません。"
+
+#: ../../source/cli_import_export.rst:395
+msgid ""
+"``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être"
+" au schéma de cette version de blunderDB). Une bibliothèque plus ancienne"
+" est refusée, car la mettre à jour serait y écrire : ouvrez-la une fois "
+"dans blunderDB. Une bibliothèque plus récente est refusée aussi : mettez "
+"blunderDB à jour."
+msgstr ""
+"``--from`` — コピー元のライブラリ（必須。存在し、この版の blunderDB "
+"のスキーマである必要があります）。古いライブラリは拒否されます。更新することはそこへ書き込むことになるためです。blunderDB "
+"で一度開いてください。新しいライブラリも拒否されます。blunderDB を更新してください。"
+
+#: ../../source/cli_import_export.rst:400
+msgid ""
+"``--to`` — Bibliothèque de destination (obligatoire ; créée si elle "
+"n'existe pas). Elle ne peut pas être la source."
+msgstr "``--to`` — コピー先ライブラリ（必須。存在しない場合は作成されます）。コピー元と同じにはできません。"
+
+#: ../../source/cli_import_export.rst:402
+msgid ""
+"``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
+"``--transcriptions``, ``--aliases``, ``--collections``, "
+"``--tournaments``, ``--decks``, ``--lessons`` — Comme pour ``export`` : "
+"une option à ``false`` retire sa famille (défaut : oui pour toutes)."
+msgstr ""
+"``--analysis``、``--comments``、``--played-"
+"moves``、``--matches``、``--transcriptions``、``--aliases``、``--collections``、``--tournaments``、``--decks``、``--lessons``"
+" — ``export`` と同じです。オプションを ``false`` にすると、その種類が除外されます（デフォルトはすべて含める）。"
+
+#: ../../source/cli_import_export.rst:406
+msgid ""
+"``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
+"ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint sa "
+"famille à ces éléments et l'inclut. Un ID que la source ne contient pas "
+"est une erreur, et rien n'est copié."
+msgstr ""
+"``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
+"ids``, ``--lesson-ids`` — コピー元の ID "
+"のリストを指定すると、その種類はそれらの要素に限定され、含められます。コピー元に存在しない ID はエラーとなり、何もコピーされません。"
+
+#: ../../source/cli_import_export.rst:410
+msgid ""
+"``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la "
+"source et ce que la destination en a pris)."
+msgstr ""
+"``--format`` — ``text``\\ （デフォルト）または ``json``\\ "
+"（コピー元から読み取った内容と、コピー先が取り込んだ内容）。"
+
+#: ../../source/cli_import_export.rst:413
+msgid ""
+"**Quelles positions partent.** Sans liste d'IDs, toutes les positions de "
+"la source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, "
+"seules partent les positions qu'atteignent les familles retenues (les "
+"membres d'une collection, les coups d'un match, les étapes d'une leçon, "
+"les cartes d'un paquet), avec leurs analyses et leurs commentaires. Une "
+"collection part toujours avec ses membres. Un match nommé par ``--match-"
+"ids`` emporte la fiche de son tournoi (nom, date, lieu), mais pas les "
+"autres matchs de ce tournoi ; avec ``--tournaments=false``, il arrive "
+"sans tournoi."
+msgstr ""
+"**どのポジションが送られるか。**\\ ID のリストがない場合、コピー元のすべてのポジションが、整理済みかどうかにかかわらず送られます。ID "
+"のリストが指定されると、選ばれた種類が到達するポジション（コレクションのメンバー、マッチの手、レッスンのステップ、デッキのカード）だけが、その分析とコメントとともに送られます。コレクションは常にそのメンバーとともに送られます。"
+" ``--match-ids`` "
+"で指定されたマッチは、そのトーナメントの情報（名前、日付、場所）を伴いますが、同じトーナメントの他のマッチは伴いません。 "
+"``--tournaments=false`` を指定すると、トーナメントなしで届きます。"
+
+#: ../../source/cli_import_export.rst:422
+msgid ""
+"Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal "
+"d'import, ni métadonnée de la source ; la destination garde les siennes, "
+"et la source ne reçoit rien. La bibliothèque de filtres et l'historique "
+"de révision des paquets Anki ne sont pas copiés : un paquet arrive sans "
+"historique, et un paquet du même nom déjà présent garde le sien."
+msgstr ""
+"コピーの出所を示すものは何も書き込まれません。透かしも、インポートログも、コピー元のメタデータもありません。コピー先は自身のメタデータを保持し、コピー元には何も書き込まれません。フィルターライブラリと"
+" Anki デッキの復習履歴はコピーされません。デッキは履歴なしで届き、同名のデッキがすでにある場合はそのデッキの履歴が保たれます。"
+
+#: ../../source/cli_import_export.rst:443
+msgid ""
+"Le serveur offre le même transfert entre deux tenants, tiré par le tenant"
+" qui reçoit (voir :ref:`mode_headless_transfert`)."
+msgstr ""
+"サーバーは、2 "
+"つのテナント間で同じ転送を提供します。転送は受け取る側のテナントが引き寄せます（:ref:`mode_headless_transfert` "
+"を参照）。"
+
+#: ../../source/cli_import_export.rst:447
+msgid "identity — Identité d'émetteur"
+msgstr "identity — 発行者アイデンティティ"
+
+#: ../../source/cli_import_export.rst:449
+msgid ""
+"Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
+"signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
+"apposé ; il n'y a rien à configurer. Elle appartient à une personne, pas "
+"à une base de données : tout ce que vous marquez porte une seule "
+"empreinte publique."
+msgstr ""
+"あなたの\\ **発行者アイデンティティ**\\ ——すべての透かしに署名する Ed25519 "
+"鍵——を表示または移動します。最初の透かしを付けた時点で自動的に作られ、設定は不要です。これはデータベースではなく個人に属します。あなたが印を付けたものはすべて、ただ一つの公開フィンガープリントを帯びます。"
+
+#: ../../source/cli_import_export.rst:463
+msgid "``--name`` — Change le nom affiché de l'identité."
+msgstr "``--name`` — アイデンティティの表示名を変更します。"
+
+#: ../../source/cli_import_export.rst:464
+msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
+msgstr "``--export`` — アイデンティティを ``.bdbid`` ファイルに書き出します。"
+
+#: ../../source/cli_import_export.rst:465
+msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
+msgstr "``--import`` — ``.bdbid`` ファイルからアイデンティティを読み込みます。"
+
+#: ../../source/cli_import_export.rst:466
+msgid ""
+"``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
+"exporté/importé (l'identité locale, elle, est volontairement non "
+"protégée)."
+msgstr ""
+"``--passphrase`` — "
+"書き出し／読み込みするファイルを保護する任意のパスフレーズ（ローカルのアイデンティティ自体は意図的に保護しません）。"
+
+#: ../../source/cli_import_export.rst:468
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
+"empreinte, chemin de stockage)."
+msgstr ""
+"``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ "
+"（名前、フィンガープリント、保存先パス）。"
+
+#: ../../source/cli_import_export.rst:471
+msgid ""
+"Le fichier exporté permet à quiconque le détient de signer en votre nom —"
+" ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
+" marqués conservent le nom sous lequel ils ont été scellés, et continuent"
+" de se vérifier."
+msgstr "書き出したファイルを持つ者は誰でも、あなたの名前で署名できます。共有しないでください。名前の変更はラベルを変えるだけです。すでに印を付けたファイルは封をした時点の名前を保ち、検証も通り続けます。"
+
+#: ../../source/cli_import_export.rst:477
+msgid "open — Ouvrir un fichier protégé"
+msgstr "open — 保護されたファイルを開く"
+
+#: ../../source/cli_import_export.rst:479
+msgid ""
+"Transforme un fichier protégé par mot de passe (``.dbx``) en base "
+"ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
+" fichier normal."
+msgstr "パスワードで保護されたファイル（``.dbx``）を通常のデータベースに変換します。パスワードを尋ねられるのは一度だけで、その後は普通のファイルです。"
+
+#: ../../source/cli_import_export.rst:489
+msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
+msgstr "``--db`` — 開く ``.dbx`` ファイル（必須）。"
+
+#: ../../source/cli_import_export.rst:490
+msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
+msgstr "``--password`` — コンテナのパスワード（必須）。"
+
+#: ../../source/cli_import_export.rst:491
+msgid ""
+"``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
+"extension ``.db``)."
+msgstr "``--file`` — 通常のデータベースの出力先パス（既定：同じ名前で拡張子 ``.db``）。"
+
+#: ../../source/cli_import_export.rst:494
+msgid ""
+"Ce que le mot de passe protège : le *transport* du fichier — la copie "
+"égarée dans un dossier de téléchargements, la pièce jointe envoyée par "
+"erreur. Pas la base : quiconque a reçu le mot de passe peut l'ouvrir. L"
+"'en-tête du conteneur est en clair, si bien que ``blunderdb info`` lit "
+"l'origine d'un fichier protégé sans son mot de passe."
+msgstr ""
+"パスワードが守るのはファイルの\\ *運搬*\\ "
+"です——ダウンロードフォルダに置き忘れたコピー、誤って送った添付。データベース自体ではありません。パスワードを受け取った人は誰でも開けます。コンテナのヘッダーは平文なので、``blunderdb"
+" info`` はパスワードなしでも保護されたファイルの出所を読み取れます。"

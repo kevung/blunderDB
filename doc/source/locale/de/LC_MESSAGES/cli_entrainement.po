@@ -1,0 +1,479 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_entrainement.rst:4
+msgid "Étude, leçons et entraînement"
+msgstr "Studium, Lektionen und Training"
+
+#: ../../source/cli_entrainement.rst:7
+msgid "study — La file d'étude transversale"
+msgstr "study — Die übergreifende Studien-Warteschlange"
+
+#: ../../source/cli_entrainement.rst:9
+msgid ""
+"Liste les blunders du joueur de référence de la base, tous imports "
+"confondus, que rien n'a encore traités : sans commentaire, sans carte "
+"Anki, hors de toute collection et sans marque « vu » (voir "
+":ref:`file_etude_transversale`). Chaque sous-commande prend ``--db``."
+msgstr ""
+"Listet die Blunder des Referenzspielers der Datenbank über alle Importe "
+"hinweg auf, die noch nichts bearbeitet hat: ohne Kommentar, ohne Anki-"
+"Karte, außerhalb jeder Sammlung und ohne Markierung »gesehen« (siehe "
+":ref:`file_etude_transversale`). Jeder Unterbefehl akzeptiert ``--db``."
+
+#: ../../source/cli_entrainement.rst:18 ../../source/cli_entrainement.rst:47
+#: ../../source/cli_entrainement.rst:118
+msgid "**Sous-commandes:**"
+msgstr "**Unterbefehle:**"
+
+#: ../../source/cli_entrainement.rst:20
+msgid ""
+"``queue [--limit <n>] [--format text|json]`` — La file, du plus coûteux "
+"au moins coûteux ; cinquante positions au plus."
+msgstr ""
+"``queue [--limit <n>] [--format text|json]`` — Die Warteschlange, vom "
+"kostspieligsten bis zum am wenigsten kostspieligen Fehler; höchstens "
+"fünfzig Stellungen."
+
+#: ../../source/cli_entrainement.rst:22
+msgid ""
+"``mark --id <id>`` — Marque la position vue : elle sort de la file. La "
+"marque est une donnée de la base, jamais exportée."
+msgstr ""
+"``mark --id <id>`` — Markiert die Stellung als gesehen: Sie verlässt die "
+"Warteschlange. Die Markierung ist ein Datum der Datenbank und wird nie "
+"exportiert."
+
+#: ../../source/cli_entrainement.rst:24
+msgid ""
+"``unmark --id <id>`` — Retire la marque : la position revient dans la "
+"file."
+msgstr ""
+"``unmark --id <id>`` — Entfernt die Markierung: Die Stellung kehrt in die"
+" Warteschlange zurück."
+
+#: ../../source/cli_entrainement.rst:26 ../../source/cli_entrainement.rst:94
+#: ../../source/cli_entrainement.rst:168 ../../source/cli_entrainement.rst:232
+msgid "**Exemples:**"
+msgstr "**Beispiele:**"
+
+#: ../../source/cli_entrainement.rst:34
+msgid "lesson — Gérer les leçons"
+msgstr "lesson — Lektionen verwalten"
+
+#: ../../source/cli_entrainement.rst:36
+msgid ""
+"Gère les leçons : des suites ordonnées d'étapes qu'un coach écrit une "
+"fois pour un élève. Chaque étape a un titre, un texte et peut montrer une"
+" collection, une position, les deux ou aucune. Une leçon se remet dans un"
+" fichier ``.dbx`` (sous-commande ``export``) et se lit dans l'interface "
+"graphique avec la commande ``:le``. Chaque sous-commande prend ``--db`` ;"
+" ``list`` et ``show`` acceptent ``--format text`` (défaut) ou ``json``."
+msgstr ""
+"Verwaltet Lektionen: geordnete Folgen von Schritten, die ein Coach einmal"
+" für einen Schüler schreibt. Jeder Schritt hat einen Titel, einen Text "
+"und kann eine Sammlung, eine Stellung, beides oder nichts zeigen. Eine "
+"Lektion wird in einer ``.dbx``-Datei weitergegeben (Unterbefehl "
+"``export``) und in der grafischen Oberfläche mit dem Befehl ``:le`` "
+"gelesen. Jeder Unterbefehl akzeptiert ``--db``; ``list`` und ``show`` "
+"akzeptieren ``--format text`` (Standard) oder ``json``."
+
+#: ../../source/cli_entrainement.rst:49
+msgid "``list`` — Liste des leçons : id, nom, nombre d'étapes."
+msgstr "``list`` — Listet die Lektionen auf: ID, Name, Anzahl der Schritte."
+
+#: ../../source/cli_entrainement.rst:50
+msgid ""
+"``show --id <id>`` — Les étapes d'une leçon, dans l'ordre : id d'étape, "
+"titre, texte, collection et position montrées."
+msgstr ""
+"``show --id <id>`` — Die Schritte einer Lektion in der richtigen "
+"Reihenfolge: Schritt-ID, Titel, Text sowie die gezeigte Sammlung und "
+"Stellung."
+
+#: ../../source/cli_entrainement.rst:52
+msgid "``create --name <nom> [--description <texte>]`` — Crée une leçon vide."
+msgstr ""
+"``create --name <nom> [--description <texte>]`` — Legt eine leere Lektion"
+" an."
+
+#: ../../source/cli_entrainement.rst:53
+msgid ""
+"``edit --id <id> [--name <nom>] [--description <texte>]`` — Renomme une "
+"leçon ou change sa description ; ce qui n'est pas donné est conservé."
+msgstr ""
+"``edit --id <id> [--name <nom>] [--description <texte>]`` — Benennt eine "
+"Lektion um oder ändert ihre Beschreibung; nicht angegebene Werte bleiben "
+"erhalten."
+
+#: ../../source/cli_entrainement.rst:55
+msgid ""
+"``delete --id <id> --confirm`` — Supprime la leçon et ses étapes, "
+"définitivement (il n'y a pas de corbeille pour les leçons). Les "
+"collections et les positions que ses étapes montraient restent dans la "
+"base."
+msgstr ""
+"``delete --id <id> --confirm`` — Löscht die Lektion und ihre Schritte "
+"endgültig (für Lektionen gibt es keinen Papierkorb). Die Sammlungen und "
+"Stellungen, die ihre Schritte zeigten, bleiben in der Datenbank."
+
+#: ../../source/cli_entrainement.rst:58
+msgid ""
+"``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file "
+"<fichier>] [--collection <id>] [--position <id>]`` — Ajoute une étape à "
+"la fin de la leçon."
+msgstr ""
+"``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file "
+"<fichier>] [--collection <id>] [--position <id>]`` — Fügt am Ende der "
+"Lektion einen Schritt hinzu."
+
+#: ../../source/cli_entrainement.rst:61
+msgid ""
+"``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file"
+" …] [--collection <id>] [--position <id>]`` — Modifie une étape ; seuls "
+"les champs donnés changent, ``--collection 0`` ou ``--position 0`` "
+"retirent ce que l'étape montrait."
+msgstr ""
+"``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file"
+" …] [--collection <id>] [--position <id>]`` — Ändert einen Schritt; nur "
+"die angegebenen Felder ändern sich, ``--collection 0`` oder ``--position "
+"0`` entfernen, was der Schritt zeigte."
+
+#: ../../source/cli_entrainement.rst:65
+msgid "``remove-step --lesson <id> --step <id>`` — Retire une étape."
+msgstr "``remove-step --lesson <id> --step <id>`` — Entfernt einen Schritt."
+
+#: ../../source/cli_entrainement.rst:66
+msgid ""
+"``reorder --lesson <id> --steps <id,id,…>`` — Fixe l'ordre des étapes ; "
+"la liste donne toutes les étapes de la leçon."
+msgstr ""
+"``reorder --lesson <id> --steps <id,id,…>`` — Legt die Reihenfolge der "
+"Schritte fest; die Liste nennt alle Schritte der Lektion."
+
+#: ../../source/cli_entrainement.rst:68
+msgid ""
+"``export --id <id[,id…]> --out <fichier> [--analysis=false] "
+"[--comments=false] [--watermark <texte>] [--watermark-note <texte>] "
+"[--password <mot de passe>]`` — Exporte une ou plusieurs leçons, avec les"
+" collections et les positions que leurs étapes montrent, vers un nouveau "
+"fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé"
+" (voir la commande ``export`` pour le filigrane). Avec ``--html`` (une "
+"seule leçon, ``--lang fr|en|de|el|es|fi|it|ja|ru``), ``--out`` est une "
+"page HTML autonome : titre, description, chaque étape avec son texte et "
+"son plateau, l'analyse enregistrée de chaque position repliée comme une "
+"réponse de quiz, et l'origine du filigrane de la base en pied de page, "
+"s'il y en a un. Le fichier ne contient ni script ni adresse réseau."
+msgstr ""
+"``export --id <id[,id…]> --out <fichier> [--analysis=false] "
+"[--comments=false] [--watermark <texte>] [--watermark-note <texte>] "
+"[--password <mot de passe>]`` — Exportiert eine oder mehrere Lektionen "
+"mit den Sammlungen und Stellungen, die ihre Schritte zeigen, in eine neue"
+" Datenbankdatei; mit ``--password`` ist die Datei eine geschützte "
+"``.dbx`` (zum Wasserzeichen siehe den Befehl ``export``). Mit ``--html`` "
+"(eine einzelne Lektion, ``--lang fr|en|de|el|es|fi|it|ja|ru``) ist "
+"``--out`` eine eigenständige HTML-Seite: Titel, Beschreibung, jeder "
+"Schritt mit Text und Brett, die gespeicherte Analyse jeder Stellung wie "
+"eine Quiz-Antwort eingeklappt, und in der Fußzeile die Herkunft des "
+"Wasserzeichens der Datenbank, falls vorhanden. Die Datei enthält weder "
+"Skript noch Netzwerkadresse."
+
+#: ../../source/cli_entrainement.rst:79
+msgid ""
+"``done --step <id> [--undo]`` — Marque une étape comme faite dans cette "
+"base, ou retire la marque avec ``--undo`` : c'est la progression de celui"
+" qui lit la leçon, et aucun export ne l'emporte."
+msgstr ""
+"``done --step <id> [--undo]`` — Markiert einen Schritt in dieser "
+"Datenbank als erledigt oder entfernt die Markierung mit ``--undo``: Das "
+"ist der Fortschritt dessen, der die Lektion liest, und kein Export nimmt "
+"ihn mit."
+
+#: ../../source/cli_entrainement.rst:82
+msgid ""
+"``progress --id <id> [--format text|json]`` — Montre les étapes de la "
+"leçon marquées faites, avec la date du geste."
+msgstr ""
+"``progress --id <id> [--format text|json]`` — Zeigt die als erledigt "
+"markierten Schritte der Lektion mit dem Datum der Geste."
+
+#: ../../source/cli_entrainement.rst:85
+msgid ""
+"Importer un fichier qui contient une leçon crée celle-ci avec ses étapes "
+"; une leçon dont le nom existe déjà dans la base n'est pas touchée, si "
+"bien que réimporter le même fichier ne change rien. Lire une leçon "
+"n'enregistre rien chez celui qui la lit ; seul ``done`` écrit sa "
+"progression."
+msgstr ""
+"Der Import einer Datei, die eine Lektion enthält, legt diese mit ihren "
+"Schritten an; eine Lektion, deren Name in der Datenbank bereits "
+"existiert, bleibt unberührt, sodass ein erneuter Import derselben Datei "
+"nichts ändert. Das Lesen einer Lektion speichert nichts beim Leser; nur "
+"``done`` schreibt seinen Fortschritt."
+
+#: ../../source/cli_entrainement.rst:90
+msgid ""
+"L'export de toute la bibliothèque (``export --type database``) emporte "
+"toutes les leçons avec ce que leurs étapes montrent ; un export partiel "
+"ne les emporte que nommées, par ``lesson export``."
+msgstr ""
+"Der Export der gesamten Bibliothek (``export --type database``) nimmt "
+"alle Lektionen mit dem mit, was ihre Schritte zeigen; ein Teilexport "
+"nimmt nur die namentlich genannten mit, über ``lesson export``."
+
+#: ../../source/cli_entrainement.rst:108
+msgid "anki — Paquets de répétition espacée"
+msgstr "anki — Stapel für verteiltes Wiederholen"
+
+#: ../../source/cli_entrainement.rst:110
+msgid ""
+"Consulte et entretient les paquets de répétition espacée (FSRS) du "
+"panneau Anki de l'interface graphique. La révision d'une carte demande le"
+" damier et reste dans l'interface graphique ; la CLI liste, mesure et "
+"resynchronise."
+msgstr ""
+"Zeigt und pflegt die Stapel für verteiltes Wiederholen (FSRS) des Anki-"
+"Panels der grafischen Oberfläche. Die Wiederholung einer Karte erfordert "
+"das Brett und bleibt der grafischen Oberfläche vorbehalten; die CLI "
+"listet, misst und synchronisiert neu."
+
+#: ../../source/cli_entrainement.rst:120
+msgid ""
+"``decks [--format text|json|csv]`` — Liste des paquets : source, nombre "
+"de cartes, cartes dues, cartes nouvelles."
+msgstr ""
+"``decks [--format text|json|csv]`` — Liste der Stapel: Quelle, Anzahl "
+"Karten, fällige Karten, neue Karten."
+
+#: ../../source/cli_entrainement.rst:122
+msgid ""
+"``stats --deck <id> [--format text|json]`` — Statistiques de révision "
+"d'un paquet : total, nouvelles, en apprentissage, à revoir, dues "
+"maintenant, et ses paramètres FSRS."
+msgstr ""
+"``stats --deck <id> [--format text|json]`` — Wiederholungsstatistiken "
+"eines Stapels: Gesamtzahl, neu, in Lernphase, zu wiederholen, jetzt "
+"fällig, sowie seine FSRS-Parameter."
+
+#: ../../source/cli_entrainement.rst:125
+msgid ""
+"``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — Cartes"
+" arrivant à échéance par jour civil (UTC) sur les ``n`` prochains jours "
+"(défaut 30, maximum 365) ; le jour 0 absorbe toutes les cartes en retard "
+"; ``--deck 0`` (défaut) couvre tous les paquets."
+msgstr ""
+"``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — "
+"Fällige Karten je Kalendertag (UTC) über die nächsten ``n`` Tage "
+"(Standard 30, Maximum 365); Tag 0 nimmt alle überfälligen Karten auf; "
+"``--deck 0`` (Standard) umfasst alle Stapel."
+
+#: ../../source/cli_entrainement.rst:129
+msgid ""
+"``sync --deck <id>`` — Ajoute une carte pour chaque position de la source"
+" du paquet qui n'en a pas encore ; les cartes existantes gardent leur "
+"planification."
+msgstr ""
+"``sync --deck <id>`` — Fügt für jede Position der Stapelquelle, die noch "
+"keine hat, eine Karte hinzu; bestehende Karten behalten ihren Zeitplan."
+
+#: ../../source/cli_entrainement.rst:132
+msgid ""
+"``retention --deck <id> [--format text|json]`` — Rétention mesurée d'un "
+"paquet, comparée à la cible que son propriétaire a choisie."
+msgstr ""
+"``retention --deck <id> [--format text|json]`` — die gemessene Retention "
+"eines Stapels, verglichen mit dem von seinem Besitzer gewählten Ziel."
+
+#: ../../source/cli_entrainement.rst:134
+msgid ""
+"``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format "
+"text|json]`` — Agit sur une carte. *Suspendre* la met de côté sans perdre"
+" son historique (elle ne ressort plus en séance) ; *enterrer* la masque "
+"jusqu'au lendemain, sans rien dire de sa valeur ; *retirer* la supprime "
+"du paquet — la position, elle, reste dans la base, un paquet n'étant "
+"qu'une liste d'étude posée dessus ; *undo* annule la dernière note de la "
+"carte, qui retrouve l'état d'avant cette note, et affiche cet état. Sans "
+"note à annuler, la commande refuse : « the card has no review to undo »."
+msgstr ""
+"``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format "
+"text|json]`` — wirkt auf eine Karte. *Aussetzen* legt sie beiseite, ohne "
+"ihre Historie zu verlieren (sie kommt in keiner Sitzung mehr vor); "
+"*Vergraben* verbirgt sie bis zum nächsten Tag, ohne etwas über ihren Wert"
+" zu sagen; *Entfernen* löscht sie aus dem Stapel — die Stellung selbst "
+"bleibt in der Bibliothek, ein Stapel ist nur eine darüber gelegte "
+"Lernliste. *undo* macht die letzte Bewertung der Karte rückgängig; die "
+"Karte kehrt in den Zustand vor dieser Bewertung zurück, und dieser "
+"Zustand wird angezeigt. Gibt es keine Bewertung zum Rückgängigmachen, "
+"verweigert der Befehl: „the card has no review to undo“."
+
+#: ../../source/cli_entrainement.rst:142
+msgid ""
+"``log [--deck <id>] [--limit <n>] [--format text|json]`` — Journal des "
+"révisions, la plus récente d'abord (``--deck 0``, le défaut, couvre tous "
+"les paquets ; ``--limit`` vaut 20 par défaut). Le journal est ce que le "
+"planificateur a réellement reçu, par opposition à ce qu'il prévoit "
+"aujourd'hui : c'est le seul endroit où une note entrée par erreur se "
+"voit."
+msgstr ""
+"``log [--deck <id>] [--limit <n>] [--format text|json]`` — das "
+"Wiederholungsprotokoll, das jüngste zuerst (``--deck 0``, der Standard, "
+"umfasst alle Stapel; ``--limit`` steht standardmäßig auf 20). Das "
+"Protokoll ist das, was dem Planer tatsächlich gesagt wurde, im Gegensatz "
+"zu dem, was er heute vorsieht: der einzige Ort, an dem eine versehentlich"
+" eingegebene Note sichtbar wird."
+
+#: ../../source/cli_entrainement.rst:147
+msgid ""
+"``export --deck <id> | --collection <id> --out <fichier.apkg> [--format "
+"apkg] [--lang <langue>]`` — Écrit un paquet, ou une collection, en paquet"
+" Anki **.apkg** que l'application Anki importe sur ordinateur ou "
+"téléphone : une carte par position, le plateau, le score, le videau et "
+"les dés au recto, le meilleur coup ou la bonne décision de videau, son "
+"équité et l'erreur du coup joué au verso, libellés dans la langue "
+"``--lang`` (``en`` par défaut). Une collection vivante est évaluée à "
+"l'export, sous son plafond. L'export n'écrit rien dans la base ; un "
+"réexport importé dans Anki met ses cartes à jour au lieu de les "
+"dupliquer. Le daemon sert le même fichier sur ``POST "
+"/v1/anki.exportApkg``."
+msgstr ""
+"``export --deck <id> | --collection <id> --out <datei.apkg> [--format "
+"apkg] [--lang <sprache>]`` — Schreibt einen Stapel oder eine Sammlung als"
+" Anki-Paket **.apkg**, das die Anki-Anwendung auf Computer oder Telefon "
+"importiert: eine Karte pro Position, vorne Brett, Spielstand, Doppler und"
+" Würfel, hinten der beste Zug oder die richtige Dopplerentscheidung, ihre"
+" Equity und der Fehler des gespielten Zuges, beschriftet in der Sprache "
+"``--lang`` (standardmäßig ``en``). Eine lebende Sammlung wird beim Export"
+" ausgewertet, innerhalb ihrer Obergrenze. Der Export schreibt nichts in "
+"die Datenbank; ein erneuter Export, in Anki importiert, aktualisiert "
+"dessen Karten, statt sie zu verdoppeln. Der Daemon liefert dieselbe Datei"
+" unter ``POST /v1/anki.exportApkg``."
+
+#: ../../source/cli_entrainement.rst:158
+msgid ""
+"Un paquet fondé sur une collection relit sa collection ; fondé sur une "
+"collection vivante, il rejoue sa requête sous le même plafond de 5 000 "
+"positions et signale sur la sortie d'erreur une source tronquée. Un "
+"paquet fondé sur une recherche conserve la recherche telle que "
+"l'interface graphique l'a enregistrée (commande, damier et identifiants "
+"des positions trouvées à ce moment-là) : la grammaire de recherche vit "
+"dans l'interface graphique, la CLI resynchronise donc depuis les "
+"identifiants enregistrés et le signale sur la sortie d'erreur — ouvrez le"
+" paquet dans l'interface graphique pour rejouer la recherche elle-même."
+msgstr ""
+"Ein auf einer Sammlung beruhender Stapel liest seine Sammlung erneut ein;"
+" beruht er auf einer lebendigen Sammlung, spielt er deren Abfrage unter "
+"derselben Obergrenze von 5.000 Positionen erneut ab und meldet eine "
+"gekürzte Quelle auf der Fehlerausgabe. Ein auf einer Suche beruhender "
+"Stapel behält die Suche so bei, wie die grafische Oberfläche sie "
+"gespeichert hat (Befehl, Brett und Kennungen der zu diesem Zeitpunkt "
+"gefundenen Positionen): Die Suchgrammatik lebt in der grafischen "
+"Oberfläche, die CLI synchronisiert daher anhand der gespeicherten "
+"Kennungen neu und meldet dies auf der Fehlerausgabe — öffnen Sie den "
+"Stapel in der grafischen Oberfläche, um die Suche selbst erneut "
+"auszuführen."
+
+#: ../../source/cli_entrainement.rst:192
+msgid "training — Le journal d'entraînement"
+msgstr "training — Das Trainingsprotokoll"
+
+#: ../../source/cli_entrainement.rst:194
+msgid ""
+"Relit le journal de l'onglet Entraînement (voir "
+":ref:`panneau_entrainement`) et fait des questions ratées de quoi "
+"réviser. Le journal est écrit par l'application graphique, ou par un "
+"client du démon à la route ``training.save`` ; la ligne de commande ne "
+"pose pas de questions."
+msgstr ""
+"Liest das Protokoll des Reiters Training (siehe "
+":ref:`panneau_entrainement`) wieder ein und macht aus den verfehlten "
+"Fragen Wiederholungsstoff. Das Protokoll wird von der grafischen "
+"Anwendung geschrieben oder von einem Daemon-Client über die Route "
+"``training.save``; die Kommandozeile stellt keine Fragen."
+
+#: ../../source/cli_entrainement.rst:199
+msgid ""
+"**training sessions** — Les séances, la plus récente d'abord, avec leur "
+"identifiant ; le PR n'existe que pour *Décision*."
+msgstr ""
+"**training sessions** — Die Sitzungen, die neueste zuerst, mit ihrer "
+"Kennung; der PR existiert nur für *Entscheidung*."
+
+#: ../../source/cli_entrainement.rst:206 ../../source/cli_entrainement.rst:221
+msgid "**Options:**"
+msgstr "**Optionen:**"
+
+#: ../../source/cli_entrainement.rst:208
+msgid ""
+"``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ou ``decision``."
+msgstr ""
+"``--exercise <name>`` — Eine einzelne Übung: ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` oder ``decision``."
+
+#: ../../source/cli_entrainement.rst:210
+msgid "``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes)."
+msgstr "``--limit <n>`` — Anzahl der Sitzungen (Standard 20; 0 = alle)."
+
+#: ../../source/cli_entrainement.rst:211
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — Ausgabeformat."
+
+#: ../../source/cli_entrainement.rst:213
+msgid ""
+"**training missed** — Les positions ratées, chacune une fois, la plus "
+"récemment ratée d'abord ; une question hors délai compte comme ratée. "
+"Seules les questions de *Décision* gardent leur position."
+msgstr ""
+"**training missed** — Die verfehlten Stellungen, jede einmal, die zuletzt"
+" verfehlte zuerst; eine Frage, bei der die Zeit ablief, zählt als "
+"verfehlt. Nur die Fragen von *Entscheidung* behalten ihre Stellung."
+
+#: ../../source/cli_entrainement.rst:223
+msgid "``--exercise <nom>`` — Les séances d'un seul exercice."
+msgstr "``--exercise <name>`` — Die Sitzungen einer einzelnen Übung."
+
+#: ../../source/cli_entrainement.rst:224
+msgid ""
+"``--session <id>`` — Une seule séance (un identifiant de ``training "
+"sessions``)."
+msgstr ""
+"``--session <id>`` — Eine einzelne Sitzung (eine Kennung aus ``training "
+"sessions``)."
+
+#: ../../source/cli_entrainement.rst:226
+msgid "``--limit <n>`` — Nombre de positions (défaut 0 = toutes)."
+msgstr "``--limit <n>`` — Anzahl der Stellungen (Standard 0 = alle)."
+
+#: ../../source/cli_entrainement.rst:227
+msgid "``--deck <nom>`` — Crée un paquet Anki de ces positions."
+msgstr "``--deck <name>`` — Erstellt einen Anki-Stapel aus diesen Stellungen."
+
+#: ../../source/cli_entrainement.rst:228
+msgid "``--collection <nom>`` — Crée une collection de ces positions."
+msgstr "``--collection <name>`` — Erstellt eine Sammlung aus diesen Stellungen."
+
+#: ../../source/cli_entrainement.rst:229
+msgid ""
+"``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et "
+"``DeckID`` ou ``CollectionID`` quand ils sont créés."
+msgstr ""
+"``--format text|json`` — Ausgabeformat; in JSON ``PositionIDs`` und "
+"``DeckID`` oder ``CollectionID``, wenn sie erstellt werden."

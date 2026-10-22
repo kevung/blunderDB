@@ -1,0 +1,503 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: it\n"
+"Language-Team: it <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_stats.rst:4
+msgid "Statistiques"
+msgstr "Statistiche"
+
+#: ../../source/cli_stats.rst:9
+msgid "stats — Erreurs récurrentes"
+msgstr "stats — Errori ricorrenti"
+
+#: ../../source/cli_stats.rst:11
+msgid ""
+"Regroupe les erreurs d'un filtre par plan de jeu et par thème, la plus "
+"coûteuse d'abord : le tableau *Erreurs récurrentes* de l'onglet Erreurs "
+"du panneau Stats (voir :ref:`stats`). Les statistiques globales restent "
+"sous ``list --type stats``."
+msgstr ""
+"Raggruppa gli errori di un filtro per piano di gioco e per tema, il più "
+"costoso per primo: la tabella *Errori ricorrenti* della scheda Errori del"
+" pannello Stats (vedi :ref:`stats`). Le statistiche globali restano sotto"
+" ``list --type stats``."
+
+#: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
+#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+msgid "**Options:**"
+msgstr "**Opzioni:**"
+
+#: ../../source/cli_stats.rst:22
+msgid "``--player <nom>`` — Uniquement les décisions de ce joueur."
+msgstr "``--player <nom>`` — Solo le decisioni di questo giocatore."
+
+#: ../../source/cli_stats.rst:23
+msgid ""
+"``--opponent <nom>`` — Uniquement les matchs joués contre ce joueur ; "
+"avec ``--player``, l'autre siège."
+msgstr ""
+"``--opponent <nom>`` — Solo i match giocati contro questo giocatore; con "
+"``--player``, l'altro lato."
+
+#: ../../source/cli_stats.rst:25
+msgid ""
+"``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, ``--to <AAAA-MM-JJ>``, "
+"``--decision-type all|checker|cube`` — Le même filtre que ``list --type "
+"stats``."
+msgstr ""
+"``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, ``--to <AAAA-MM-JJ>``, "
+"``--decision-type all|checker|cube`` — Lo stesso filtro di ``list --type "
+"stats``."
+
+#: ../../source/cli_stats.rst:28
+msgid ""
+"``--limit <n>`` — Nombre de groupes affichés en texte (défaut 20, ``0`` "
+"pour tous)."
+msgstr ""
+"``--limit <n>`` — Numero di gruppi mostrati in testo (predefinito 20, "
+"``0`` per tutti)."
+
+#: ../../source/cli_stats.rst:30
+msgid ""
+"``--format text|json`` — Le JSON porte chaque groupe avec la liste "
+"complète de ses positions."
+msgstr ""
+"``--format text|json`` — Il JSON riporta ogni gruppo con l'elenco "
+"completo delle sue posizioni."
+
+#: ../../source/cli_stats.rst:32
+msgid ""
+"``--quiz`` — Tire au hasard des positions parmi celles des trois groupes "
+"les plus coûteux (``--quiz-size <n>``, défaut 20) et les affiche : ce "
+"sont les identifiants que le quiz et ``quiz_grade`` jugent. En JSON, "
+"champ ``Quiz``."
+msgstr ""
+"``--quiz`` — Estrae a caso posizioni tra quelle dei tre gruppi più "
+"costosi (``--quiz-size <n>``, predefinito 20) e le stampa: sono gli "
+"identificatori che il quiz e ``quiz_grade`` giudicano. In JSON, il campo "
+"``Quiz``."
+
+#: ../../source/cli_stats.rst:36
+msgid ""
+"``--deck <nom>`` — Crée un paquet Anki de ce nom, rempli de toutes les "
+"positions des trois groupes les plus coûteux."
+msgstr ""
+"``--deck <nome>`` — Crea un mazzo Anki con quel nome, riempito con tutte "
+"le posizioni dei tre gruppi più costosi."
+
+#: ../../source/cli_stats.rst:38
+msgid ""
+"``--group <rang>`` — Avec ``--quiz`` ou ``--deck`` : le groupe de ce rang"
+" (1 pour le plus coûteux) au lieu des trois premiers."
+msgstr ""
+"``--group <rango>`` — Con ``--quiz`` o ``--deck``: il gruppo di quel "
+"rango (1 per il più costoso) al posto dei primi tre."
+
+#: ../../source/cli_stats.rst:41
+msgid ""
+"Un thème de coup de pions est ``gammon``, ``blots``, ``point`` ou "
+"``passive`` ; un thème de videau est ``offer_missed``, "
+"``offer_premature``, ``answer_wrong_pass`` ou ``answer_wrong_take``. Les "
+"erreurs qu'aucune règle ne nomme sortent du classement : elles sont "
+"listées à part, une ligne par plan de jeu (champ ``Unthemed`` en JSON), "
+"parce que l'explication ne se prononce qu'à partir de 60 mp, au-dessus du"
+" seuil *Erreur*. La colonne *COST (PR)* est la part du PR du filtre que "
+"le groupe représente."
+msgstr ""
+"Un tema di mossa di pedine è ``gammon``, ``blots``, ``point`` o "
+"``passive``; un tema di cubo è ``offer_missed``, ``offer_premature``, "
+"``answer_wrong_pass`` o ``answer_wrong_take``. Gli errori che nessuna "
+"regola nomina escono dalla classifica: sono elencati a parte, una riga "
+"per piano di gioco (campo ``Unthemed`` in JSON), perché la spiegazione si"
+" pronuncia solo a partire da 60 mp, sopra la soglia *Errore*. La colonna "
+"*COST (PR)* è la quota del PR del filtro che il gruppo rappresenta."
+
+#: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
+#: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
+#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+msgid "**Exemples:**"
+msgstr "**Esempi:**"
+
+#: ../../source/cli_stats.rst:58
+msgid ""
+"**stats plan** — Le plan d'étude du filtre, comme la carte *Plan d'étude*"
+" du tableau de bord (voir :ref:`plan_etude`) : les familles d'erreurs "
+"(plan de jeu × thème) classées par MWC récupérable, la somme sur leurs "
+"erreurs de la perte moins la difficulté, avec un intervalle à 95 %. Une "
+"famille entre au plan à partir de 5 erreurs chiffrées et d'un intervalle "
+"au-dessus de zéro ; les autres sont listées à part, à confirmer (champ "
+"``Tentative`` en JSON). Les erreurs sans thème et celles sans MWC (partie"
+" libre) sont seulement comptées (``Unthemed``, ``Unpriced``)."
+msgstr ""
+"**stats plan** — Il piano di studio del filtro, come la scheda *Piano di "
+"studio* della dashboard (vedere :ref:`plan_etude`): le famiglie di errori"
+" (piano di gioco × tema) ordinate per MWC recuperabile, la somma sui loro"
+" errori della perdita meno la difficoltà, con un intervallo al 95 %. Una "
+"famiglia entra nel piano a partire da 5 errori quantificati e da un "
+"intervallo sopra lo zero; le altre sono elencate a parte, da confermare "
+"(campo ``Tentative`` in JSON). Gli errori senza tema e quelli senza MWC "
+"(partita libera) sono solo contati (``Unthemed``, ``Unpriced``)."
+
+#: ../../source/cli_stats.rst:71
+msgid "Mêmes options de filtre que ``stats recurring``, plus :"
+msgstr "Le stesse opzioni di filtro di ``stats recurring``, più:"
+
+#: ../../source/cli_stats.rst:73
+msgid ""
+"``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
+" pour toutes)."
+msgstr ""
+"``--limit <n>`` — Numero di famiglie mostrate in testo (predefinito 10, "
+"``0`` per tutte)."
+
+#: ../../source/cli_stats.rst:75
+msgid ""
+"``--quiz`` (``--quiz-size <n>``, défaut 20), ``--deck <nom>`` — Comme "
+"pour ``stats recurring``, sur les positions des trois premières familles."
+msgstr ""
+"``--quiz`` (``--quiz-size <n>``, predefinito 20), ``--deck <nome>`` — "
+"Come per ``stats recurring``, sulle posizioni delle prime tre famiglie."
+
+#: ../../source/cli_stats.rst:77
+msgid ""
+"``--queue`` — Affiche la file d'étude de ces familles, une position par "
+"ligne, l'écart au joueur de référence le plus grand d'abord (JSON : "
+"``Queue``)."
+msgstr ""
+"``--queue`` — Mostra la coda di studio di queste famiglie, una posizione "
+"per riga, lo scarto maggiore dal giocatore di riferimento per primo "
+"(JSON: ``Queue``)."
+
+#: ../../source/cli_stats.rst:80
+msgid ""
+"``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
+"famille de ce rang (1 pour la première) au lieu des trois premières."
+msgstr ""
+"``--family <rango>`` — Con ``--quiz``, ``--deck`` o ``--queue``: la "
+"famiglia di quel rango (1 per la prima) invece delle prime tre."
+
+#: ../../source/cli_stats.rst:89
+msgid ""
+"**stats effect** — L'avant/après de chaque famille étudiée, comme la "
+"carte *Avant/après l'étude* du tableau de bord (voir "
+":ref:`avant_apres_etude`) : la date de la première action d'étude sur "
+"l'une de ses positions, le taux de perte en MWC pour 100 décisions de son"
+" plan et de sa nature avant et après ce jour, le gain et son intervalle à"
+" 95 %, et le verdict (``improved``, ``worse``, ``undetermined``, "
+"``insufficient`` sous 30 décisions par fenêtre)."
+msgstr ""
+"**stats effect** — Il prima/dopo di ogni famiglia studiata, come la "
+"scheda *Prima/dopo lo studio* della dashboard (vedere "
+":ref:`avant_apres_etude`): la data della prima azione di studio su una "
+"delle sue posizioni, il tasso di perdita in MWC ogni 100 decisioni del "
+"suo piano e della sua natura prima e dopo quel giorno, il guadagno e il "
+"suo intervallo al 95 %, e il verdetto (``improved``, ``worse``, "
+"``undetermined``, ``insufficient`` sotto 30 decisioni per finestra)."
+
+#: ../../source/cli_stats.rst:100
+#, no-python-format
+msgid ""
+"**stats biases** — Les biais signés du filtre, comme la carte *Biais "
+"signés* (voir :ref:`biais_signes`) : prise/refus, doubles (sur l'ensemble"
+" et par score) et blots, chacun avec ses deux comptes et leur coût, le "
+"biais, son intervalle à 95 % et le verdict (``too_much``, ``too_little``,"
+" ``balanced``, ``insufficient`` sous 20 décisions). La partie libre a sa "
+"ligne ``money`` et un score post-Crawford se lit à 1 point ; la part des "
+"coups de pions qui n'ont pas pu être rejoués est donnée sous le tableau."
+msgstr ""
+"**stats biases** — I bias con segno del filtro, come la scheda *Bias con "
+"segno* (vedere :ref:`biais_signes`): presa/rifiuto, raddoppi (nel "
+"complesso e per punteggio) e blot, ciascuno con i suoi due conteggi e il "
+"loro costo, il bias, il suo intervallo al 95 % e il verdetto "
+"(``too_much``, ``too_little``, ``balanced``, ``insufficient`` sotto 20 "
+"decisioni). La partita libera ha la sua riga ``money`` e un punteggio "
+"post-Crawford si legge a 1 punto; la quota delle mosse di pedine che non "
+"è stato possibile rigiocare è data sotto la tabella."
+
+#: ../../source/cli_stats.rst:112
+msgid ""
+"Mêmes options de filtre que ``stats recurring`` (``--player``, "
+"``--opponent``, ``--tournament``, ``--from``, ``--to``, ``--decision-"
+"type``, ``--format``)."
+msgstr ""
+"Le stesse opzioni di filtro di ``stats recurring`` (``--player``, "
+"``--opponent``, ``--tournament``, ``--from``, ``--to``, ``--decision-"
+"type``, ``--format``)."
+
+#: ../../source/cli_stats.rst:120
+#, no-python-format
+msgid ""
+"**stats tournament** — Le bilan d'un tournoi pour un joueur, comme le "
+"bouton *Bilan* du panneau Tournois (voir :ref:`bilan du tournoi "
+"<bilan_tournoi>`) : PR et perte MWC (éq. 7 pts) face au niveau habituel "
+"des 365 jours précédents, par ronde, par rang de la décision dans le "
+"match, par score (``dmp``, ``crawford``, ``post_crawford``, ``other``) et"
+" par rythme (``quick``, ``considered``), chacun avec son intervalle à 95 "
+"% et un verdict (``worse``, ``better``, ``usual``, ``insufficient`` sans "
+"intervalle, sous 20 décisions d'un côté ou sous 5 matchs habituels), puis"
+" au plus trois familles d'erreurs du tournoi."
+msgstr ""
+"**stats tournament** — Il bilancio di un torneo per un giocatore, come il"
+" pulsante *Bilancio* del pannello Tornei (vedi :ref:`bilancio del torneo "
+"<bilan_tournoi>`): PR e perdita MWC (eq. 7 pt) rispetto al livello "
+"abituale dei 365 giorni precedenti, per turno, per posizione della "
+"decisione nel match, per punteggio (``dmp``, ``crawford``, "
+"``post_crawford``, ``other``) e per ritmo (``quick``, ``considered``), "
+"ciascuno con il suo intervallo al 95 % e un verdetto (``worse``, "
+"``better``, ``usual``, ``insufficient`` senza intervallo, sotto 20 "
+"decisioni da una parte o sotto 5 match abituali), poi al massimo tre "
+"famiglie di errori del torneo."
+
+#: ../../source/cli_stats.rst:133
+msgid ""
+"Sans ``--player``, le joueur est le plus présent dans les matchs du "
+"tournoi."
+msgstr "Senza ``--player``, il giocatore è il più presente nei match del torneo."
+
+#: ../../source/cli_stats.rst:140
+msgid ""
+"**stats training** — Le PR du quiz Décision, le PR des matchs et la "
+"rétention Anki, repliés par fenêtre calendaire, comme l'onglet "
+"*Entraînement* du panneau Stats (voir :ref:`stats`)."
+msgstr ""
+"**stats training** — Il PR del quiz Decisione, il PR delle partite e la "
+"ritenzione Anki, raggruppati per finestra di calendario, come la scheda "
+"*Allenamento* del pannello Stats (vedi :ref:`stats`)."
+
+#: ../../source/cli_stats.rst:150
+msgid "``--window week|month`` — La fenêtre calendaire (défaut ``week``)."
+msgstr ""
+"``--window week|month`` — La finestra di calendario (predefinita "
+"``week``)."
+
+#: ../../source/cli_stats.rst:151
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre "
+"des matchs ; les journaux du quiz et d'Anki ne portent pas de joueur."
+msgstr ""
+"``--player <nome>``, ``--tournament <ids>``, ``--from <AAAA-MM-GG>``, "
+"``--to <AAAA-MM-GG>``, ``--decision-type all|checker|cube`` — Il filtro "
+"delle partite; i diari del quiz e di Anki non portano un giocatore."
+
+#: ../../source/cli_stats.rst:154
+msgid ""
+"``--format text|json`` — Le JSON porte aussi la liste des sessions de "
+"quiz ; le texte et le JSON donnent le PR du quiz par plan de jeu."
+msgstr ""
+"``--format text|json`` — Il JSON riporta anche l'elenco delle sessioni di"
+" quiz; il testo e il JSON danno il PR del quiz per piano di gioco."
+
+#: ../../source/cli_stats.rst:157
+msgid ""
+"Chaque série garde son nombre d'échantillons : une fenêtre sans décision "
+"y est un tiret en texte, un compte nul en JSON, jamais un zéro."
+msgstr ""
+"Ogni serie conserva il proprio numero di campioni: una finestra senza "
+"decisioni è un trattino nel testo e un conteggio nullo nel JSON, mai un "
+"valore zero."
+
+#: ../../source/cli_stats.rst:167
+msgid ""
+"**stats h2h** — Deux joueurs l'un contre l'autre : les matchs qu'ils ont "
+"disputés ensemble, le PR de chacun dans chaque match et sur l'ensemble, "
+"et le bilan des matchs menés à terme."
+msgstr ""
+"**stats h2h** — Due giocatori l'uno contro l'altro: le partite che hanno "
+"disputato insieme, il PR di ciascuno in ogni partita e nel complesso, e "
+"il bilancio delle partite portate a termine."
+
+#: ../../source/cli_stats.rst:175
+msgid ""
+"**stats contrast** — Les positions que deux joueurs ont tous deux eu à "
+"jouer et où l'un a bien joué (sous le seuil Erreur) et l'autre non, "
+"l'écart le plus large d'abord ; un joueur est jugé sur son pire coup de "
+"la position. ``--limit N`` garde les N premières lignes du texte ; le "
+"JSON donne tout, avec les ``position_id``."
+msgstr ""
+"**stats contrast** — Le posizioni che due giocatori hanno entrambi dovuto"
+" giocare e in cui uno ha giocato bene (sotto la soglia di Errore) e "
+"l'altro no, la differenza maggiore per prima; un giocatore è giudicato "
+"sulla sua peggiore giocata della posizione. ``--limit N`` mantiene le "
+"prime N righe del testo; il JSON dà tutto, con i ``position_id``."
+
+#: ../../source/cli_stats.rst:185
+msgid ""
+"**stats windows** — Le PR sur une fenêtre calendaire glissante : une "
+"ligne par mois, chacune couvrant ce mois et les précédents de la fenêtre "
+"(``--window month``, ``quarter`` ou un nombre de mois)."
+msgstr ""
+"**stats windows** — Il PR su una finestra di calendario scorrevole: una "
+"riga per mese, ciascuna riferita a quel mese e ai precedenti della "
+"finestra (``--window month``, ``quarter`` o un numero di mesi)."
+
+#: ../../source/cli_stats.rst:193
+msgid ""
+"**stats ranking** — Le classement des joueurs par PR, le plus bas en "
+"tête, parmi ceux qui ont au moins ``--min-decisions`` décisions comptées "
+"(500 par défaut) ; deux PR égaux partagent un rang. ``--limit N`` garde "
+"les N premiers."
+msgstr ""
+"**stats ranking** — La classifica dei giocatori per PR, il più basso per "
+"primo, tra quelli che hanno almeno ``--min-decisions`` decisioni "
+"conteggiate (500 per impostazione predefinita); due PR uguali condividono"
+" una posizione. ``--limit N`` mantiene i primi N."
+
+#: ../../source/cli_stats.rst:201
+msgid ""
+"**stats engines** — Les moteurs d'analyse présents dans la base, sous le "
+"nom exact que ``--engine`` attend ; le même choix que le menu *Moteur* du"
+" panneau Stats."
+msgstr ""
+"**stats engines** — I motori di analisi presenti nel database, con il "
+"nome esatto atteso da ``--engine``; la stessa scelta del menu *Motore* "
+"del pannello Stats."
+
+#: ../../source/cli_stats.rst:209
+msgid ""
+"**Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``, ``--format "
+"text|json``, et le filtre de provenance ``--engine <nom>`` (le moteur "
+"d'analyse, nom exact) et ``--min-depth <n>`` (la profondeur minimale de "
+"l'analyse), que ``list --type stats`` et ``list --type players`` "
+"acceptent aussi. ``h2h`` et ``windows`` lisent les statistiques par match"
+" et refusent le filtre de provenance, qui porte sur chaque décision."
+msgstr ""
+"**Opzioni comuni:** ``--tournament <ids>``, ``--from <AAAA-MM-GG>``, "
+"``--to <AAAA-MM-GG>``, ``--decision-type all|checker|cube``, ``--format "
+"text|json``, e il filtro di provenienza ``--engine <nome>`` (il motore di"
+" analisi, nome esatto) e ``--min-depth <n>`` (la profondità minima "
+"dell'analisi), che anche ``list --type stats`` e ``list --type players`` "
+"accettano. ``h2h`` e ``windows`` leggono le statistiche per partita e "
+"rifiutano il filtro di provenienza, che riguarda ogni decisione."
+
+#: ../../source/cli_stats.rst:227
+msgid ""
+"**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où "
+"le joueur (tout joueur sans ``--player``) a une décision comptée sous le "
+"filtre, du plus ancien au plus récent. Leurs identifiants se passent à "
+"``list --type matches --ids``."
+msgstr ""
+"**stats matches** — Le partite che una cifra del corpus conta: quelle in "
+"cui il giocatore (ogni giocatore senza ``--player``) ha una decisione "
+"contata sotto il filtro, dalla più vecchia alla più recente. I loro "
+"identificatori si passano a ``list --type matches --ids``."
+
+#: ../../source/cli_stats.rst:237
+msgid ""
+"**stats tournaments** — Les tournois que compte le nombre de tournois du "
+"Tableau de bord : ceux qui portent une décision comptée du joueur (de "
+"tout joueur sans ``--player``) sous le filtre, par identifiant."
+msgstr ""
+"**stats tournaments** — I tornei che il numero di tornei della Dashboard "
+"conta: quelli che contengono una decisione contata del giocatore (di "
+"qualsiasi giocatore senza ``--player``) sotto il filtro, per "
+"identificativo."
+
+#: ../../source/cli_stats.rst:246
+msgid ""
+"**stats progression** — Le PR de chaque match par ordre de date, le PR de"
+" chaque tournoi et le PR glissant sur les N dernières décisions : "
+"l'onglet *Progression* du panneau Stats (voir :ref:`stats`)."
+msgstr ""
+"**stats progression** — Il PR di ogni partita in ordine di data, il PR di"
+" ogni torneo e il PR mobile sulle ultime N decisioni: la scheda "
+"*Progression* del pannello Stats (vedi :ref:`stats`)."
+
+#: ../../source/cli_stats.rst:256
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même "
+"filtre que ``list --type stats``."
+msgstr ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Lo stesso "
+"filtro di ``list --type stats``."
+
+#: ../../source/cli_stats.rst:259
+msgid ""
+"``--format text|json`` — Le JSON porte les matchs, les tournois et les PR"
+" glissants."
+msgstr ""
+"``--format text|json`` — Il JSON contiene le partite, i tornei e i PR "
+"mobili."
+
+#: ../../source/cli_stats.rst:269
+msgid ""
+"**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de "
+"jeu, étiquette de commentaire, score (away contre away) et action de "
+"videau, avec la direction des erreurs de videau : l'onglet *Ventilations*"
+" du panneau Stats (voir :ref:`stats`). Les options sont celles de ``stats"
+" progression``."
+msgstr ""
+"**stats breakdown** — Il PR del filtro suddiviso per fase di gioco, piano"
+" di gioco, etichetta di commento, punteggio (away contro away) e azione "
+"del cubo, con la direzione degli errori di cubo: la scheda *Ripartizioni*"
+" del pannello Stats (vedi :ref:`stats`). Le opzioni sono quelle di "
+"``stats progression``."
+
+#: ../../source/cli_stats.rst:285
+msgid ""
+"**stats report** — Le rapport HTML du panneau Stats (voir "
+":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
+" plus coûteuses avec leur diagramme, en un seul fichier autonome que le "
+"navigateur imprime en PDF. Le démon HTTP le sert à la route "
+"``stats.report``, du même générateur."
+msgstr ""
+"**stats report** — Il rapporto HTML del pannello Stats (vedi "
+":ref:`rapport_html`): gli indicatori del filtro e le sue dieci decisioni "
+"più costose con il loro diagramma, in un unico file autonomo che il "
+"browser stampa in PDF. Il demone HTTP lo serve alla rotta "
+"``stats.report``, dallo stesso generatore."
+
+#: ../../source/cli_stats.rst:296
+msgid "``--html`` — Obligatoire : le HTML est le seul format."
+msgstr "``--html`` — Obbligatorio: HTML è l'unico formato."
+
+#: ../../source/cli_stats.rst:297
+msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
+msgstr "``--output <fichier>`` — Il file scritto (predefinito: output standard)."
+
+#: ../../source/cli_stats.rst:298
+msgid ""
+"``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
+"``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
+msgstr ""
+"``--lang <code>`` — La lingua del rapporto: ``fr``, ``en``, ``de``, "
+"``el``, ``es``, ``fi``, ``it``, ``ja`` o ``ru`` (predefinito ``en``)."
+
+#: ../../source/cli_stats.rst:300
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
+" le rapport nomme son périmètre."
+msgstr ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Il filtro: "
+"il rapporto nomina il proprio perimetro."
+
+#: ../../source/cli_stats.rst:304
+msgid ""
+"Les diagrammes y sont dessinés avec la palette par défaut ; seule "
+"l'application graphique emploie la palette du plateau choisie à l'écran."
+msgstr ""
+"I diagrammi vi sono disegnati con la tavolozza predefinita; solo "
+"l'applicazione grafica usa la tavolozza della scacchiera scelta a "
+"schermo."

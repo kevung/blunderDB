@@ -1,0 +1,1257 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_admin.rst:4
+msgid "Administration de la base"
+msgstr "Διαχείριση της βάσης δεδομένων"
+
+#: ../../source/cli_admin.rst:7
+msgid "info — Métadonnées de la base"
+msgstr "info — Μεταδεδομένα της βάσης"
+
+#: ../../source/cli_admin.rst:9
+msgid "Affiche les métadonnées et les statistiques d'une base de données."
+msgstr "Εμφανίζει τα μεταδεδομένα και τα στατιστικά μιας βάσης δεδομένων."
+
+#: ../../source/cli_admin.rst:15 ../../source/cli_admin.rst:102
+#: ../../source/cli_admin.rst:136 ../../source/cli_admin.rst:272
+#: ../../source/cli_admin.rst:317 ../../source/cli_admin.rst:357
+#: ../../source/cli_admin.rst:417 ../../source/cli_admin.rst:559
+#: ../../source/cli_admin.rst:660 ../../source/cli_admin.rst:690
+#: ../../source/cli_admin.rst:733
+msgid "**Options:**"
+msgstr "**Επιλογές:**"
+
+#: ../../source/cli_admin.rst:17 ../../source/cli_admin.rst:104
+#: ../../source/cli_admin.rst:138 ../../source/cli_admin.rst:274
+#: ../../source/cli_admin.rst:319 ../../source/cli_admin.rst:359
+#: ../../source/cli_admin.rst:419 ../../source/cli_admin.rst:561
+#: ../../source/cli_admin.rst:662
+msgid "``--db`` — Base de données (obligatoire)."
+msgstr "``--db`` — Βάση δεδομένων (υποχρεωτικό)."
+
+#: ../../source/cli_admin.rst:18
+msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
+msgstr "``--format`` — Μορφή εξόδου: ``text`` ή ``json`` (προεπιλογή: ``text``)."
+
+#: ../../source/cli_admin.rst:19
+msgid ""
+"``--estimate`` — Répond tout de suite sur une très grande base : au-delà "
+"de 200 000 lignes, un nombre est une estimation (borne haute), listée "
+"dans ``approximate`` en JSON et précédée de « ≈ » en texte, et les "
+"blunders ne sont donnés que si leur décompte gardé en cache vaut encore "
+"(sinon pas de ``blunder_count``). Par défaut, toutes les lignes sont "
+"comptées ; le décompte des blunders est gardé en cache dans la base et "
+"refait après toute écriture qui peut le changer (import, analyse, "
+"suppression, changement de seuil)."
+msgstr ""
+"``--estimate`` — Απαντά αμέσως σε πολύ μεγάλη βάση: πέρα από 200 000 "
+"γραμμές ένας αριθμός είναι εκτίμηση (άνω όριο), αναφέρεται στο "
+"``approximate`` σε JSON και προηγείται «≈» σε κείμενο, και τα blunders "
+"δίνονται μόνο όταν η αποθηκευμένη μέτρησή τους ισχύει ακόμη (αλλιώς χωρίς"
+" ``blunder_count``). Από προεπιλογή μετράται κάθε γραμμή· η μέτρηση των "
+"blunders αποθηκεύεται στη βάση και ξαναγίνεται μετά από κάθε εγγραφή που "
+"μπορεί να την αλλάξει (εισαγωγή, ανάλυση, διαγραφή, αλλαγή ορίου)."
+
+#: ../../source/cli_admin.rst:28 ../../source/cli_admin.rst:118
+#: ../../source/cli_admin.rst:191 ../../source/cli_admin.rst:669
+#: ../../source/cli_admin.rst:761
+msgid "**Exemples:**"
+msgstr "**Παραδείγματα:**"
+
+#: ../../source/cli_admin.rst:56
+msgid ""
+"``--format json`` ajoute l'origine du fichier — ``issuance`` porte le "
+"filigrane s'il y en a un, et l'identité d'émetteur de cette machine :"
+msgstr ""
+"Η ``--format json`` προσθέτει την προέλευση του αρχείου — το ``issuance``"
+" φέρει το υδατογράφημα, αν υπάρχει, και την ταυτότητα εκδότη αυτού του "
+"υπολογιστή:"
+
+#: ../../source/cli_admin.rst:93
+msgid "edit — Modifier les métadonnées"
+msgstr "edit — Τροποποίηση μεταδεδομένων"
+
+#: ../../source/cli_admin.rst:95
+msgid ""
+"Modifie le nom d'utilisateur, la description ou les seuils d'une base de "
+"données."
+msgstr ""
+"Τροποποιεί το όνομα χρήστη, την περιγραφή ή τα κατώφλια μιας βάσης "
+"δεδομένων."
+
+#: ../../source/cli_admin.rst:105
+msgid "``--user`` — Nouveau nom d'utilisateur."
+msgstr "``--user`` — Νέο όνομα χρήστη."
+
+#: ../../source/cli_admin.rst:106
+msgid "``--description`` — Nouvelle description."
+msgstr "``--description`` — Νέα περιγραφή."
+
+#: ../../source/cli_admin.rst:107
+msgid "``--clear-user`` — Effacer le nom d'utilisateur."
+msgstr "``--clear-user`` — Διαγραφή του ονόματος χρήστη."
+
+#: ../../source/cli_admin.rst:108
+msgid "``--clear-description`` — Effacer la description."
+msgstr "``--clear-description`` — Διαγραφή της περιγραφής."
+
+#: ../../source/cli_admin.rst:109
+msgid ""
+"``--error-threshold`` — Seuil d'erreur, en millipoints : une décision "
+"coûtant au moins cela est une erreur."
+msgstr ""
+"``--error-threshold`` — Κατώφλι σφάλματος, σε χιλιοστά του πόντου: μια "
+"απόφαση που κοστίζει τουλάχιστον τόσο είναι σφάλμα."
+
+#: ../../source/cli_admin.rst:111
+msgid ""
+"``--blunder-threshold`` — Seuil de blunder, en millipoints : une erreur "
+"coûtant au moins cela est un blunder."
+msgstr ""
+"``--blunder-threshold`` — Κατώφλι blunder, σε χιλιοστά του πόντου: ένα "
+"σφάλμα που κοστίζει τουλάχιστον τόσο είναι blunder."
+
+#: ../../source/cli_admin.rst:113
+#, no-python-brace-format
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(``{\"changes\": [...]}``)."
+msgstr ""
+"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
+"(``{\"changes\": [...]}``)."
+
+#: ../../source/cli_admin.rst:116
+msgid "Au moins une option de modification est requise."
+msgstr "Απαιτείται τουλάχιστον μία επιλογή τροποποίησης."
+
+#: ../../source/cli_admin.rst:127
+msgid "verify — Vérifier l'intégrité"
+msgstr "verify — Έλεγχος ακεραιότητας"
+
+#: ../../source/cli_admin.rst:129
+msgid ""
+"Vérifie l'intégrité de la base de données et, optionnellement, compare un"
+" match avec son fichier source."
+msgstr ""
+"Ελέγχει την ακεραιότητα της βάσης δεδομένων και, προαιρετικά, συγκρίνει "
+"έναν αγώνα με το αρχείο προέλευσής του."
+
+#: ../../source/cli_admin.rst:139
+msgid "``--match`` — ID du match à vérifier."
+msgstr "``--match`` — ID του αγώνα προς έλεγχο."
+
+#: ../../source/cli_admin.rst:140
+msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
+msgstr "``--mat`` — Αρχείο MAT προς σύγκριση (χρησιμοποιείται με ``--match``)."
+
+#: ../../source/cli_admin.rst:141
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(statistiques, orphelins, écart de schéma, et la vérification du match le"
+" cas échéant)."
+msgstr ""
+"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
+"(στατιστικά, ορφανές γραμμές, απόκλιση σχήματος, και ο έλεγχος του ματς "
+"αν υπάρχει)."
+
+#: ../../source/cli_admin.rst:145
+msgid ""
+"Sans l'option ``--match``, la commande affiche les statistiques générales"
+" de la base. Avec ``--match``, elle vérifie les données du match et peut "
+"les comparer avec le fichier source original."
+msgstr ""
+"Χωρίς την επιλογή ``--match``, η εντολή εμφανίζει τα γενικά στατιστικά "
+"της βάσης. Με το ``--match``, ελέγχει τα δεδομένα του αγώνα και μπορεί να"
+" τα συγκρίνει με το αρχικό αρχείο προέλευσης."
+
+#: ../../source/cli_admin.rst:149
+msgid ""
+"Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
+"les lignes orphelines — parties sans match, coups sans partie, analyses "
+"de coup sans coup, analyses sans position, entrées du journal de révision"
+" sans paquet ou sans position, questions d'entraînement sans séance — et "
+"affiche une ligne ``WARNING`` avec le total s'il y en a. Une base saine "
+"répond ``Orphaned rows: none``. Des orphelins peuvent subsister dans une "
+"base écrite par une version qui n'appliquait pas les clés étrangères sur "
+"toutes les connexions, ou avant que le journal de révision ait les "
+"siennes ; ils ne sont rattachés à aucun match ni à aucun paquet et "
+"n'occupent que de la place. La commande se termine tout de même avec le "
+"code de sortie 0."
+msgstr ""
+"Κάθε εκτέλεση ελέγχει επίσης την ακεραιότητα αναφορών: μετρά τις ορφανές "
+"γραμμές — παρτίδες χωρίς αγώνα, κινήσεις χωρίς παρτίδα, αναλύσεις κίνησης"
+" χωρίς κίνηση, αναλύσεις χωρίς θέση, εγγραφές του ημερολογίου επανάληψης "
+"χωρίς τράπουλα ή χωρίς θέση, ερωτήσεις προπόνησης χωρίς συνεδρία — και "
+"εμφανίζει μια γραμμή ``WARNING`` με το σύνολο, αν υπάρχουν. Μια υγιής "
+"βάση απαντά ``Orphaned rows: none``. Ορφανές γραμμές μπορεί να παραμένουν"
+" σε μια βάση που γράφτηκε από έκδοση η οποία δεν επέβαλλε τα ξένα κλειδιά"
+" σε κάθε σύνδεση, ή πριν το ημερολόγιο επανάληψης αποκτήσει τα δικά του· "
+"δεν ανήκουν σε κανέναν αγώνα ούτε σε καμία τράπουλα και απλώς πιάνουν "
+"χώρο. Η εντολή τερματίζει και πάλι με κωδικό εξόδου 0."
+
+#: ../../source/cli_admin.rst:159
+msgid ""
+"Chaque exécution compare aussi le schéma à la DDL de référence et liste "
+"les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
+"base ajoute ce qui manque quand elle le peut et ne fait que journaliser "
+"ce qu'elle ne peut pas ajouter (typiquement un index ``UNIQUE`` que des "
+"lignes en double l'empêchent de reconstruire) : c'est ici que cet écart "
+"devient visible, et une requête qui nomme l'un de ces éléments échoue "
+"tant que la cause n'est pas corrigée. Une base saine répond ``Schema: "
+"matches the reference DDL``. Comme les orphelins, un écart de schéma est "
+"un constat, pas un échec : le code de sortie reste 0."
+msgstr ""
+"Κάθε εκτέλεση συγκρίνει επίσης το σχήμα με το DDL αναφοράς και απαριθμεί "
+"τους πίνακες, τις στήλες και τα ευρετήρια που λείπουν από τη βάση. Το "
+"άνοιγμα μιας βάσης προσθέτει ό,τι λείπει όταν μπορεί και απλώς καταγράφει"
+" ό,τι δεν μπορεί να προσθέσει (συνήθως ένα ευρετήριο ``UNIQUE`` που "
+"διπλές γραμμές το εμποδίζουν να ξαναχτιστεί): εδώ γίνεται ορατό αυτό το "
+"κενό, και ένα ερώτημα που κατονομάζει ένα από αυτά τα στοιχεία "
+"αποτυγχάνει μέχρι να διορθωθεί η αιτία. Μια υγιής βάση απαντά ``Schema: "
+"matches the reference DDL``. Όπως και οι ορφανές γραμμές, μια απόκλιση "
+"σχήματος είναι διαπίστωση, όχι αποτυχία: ο κωδικός εξόδου παραμένει 0."
+
+#: ../../source/cli_admin.rst:169
+msgid ""
+"Chaque exécution contrôle enfin les règles que la DDL courante énonce "
+"mais que SQLite ne sait pas ajouter à une table déjà créée : les "
+"contraintes ``CHECK`` de plage (dés entre 0 et 6, videau et pips "
+"positifs, sorties entre 0 et 15, note de révision entre 1 et 4), le hash "
+"Zobrist qu'une ligne ne devrait jamais omettre et l'unicité d'une analyse"
+" par position. Une base créée depuis la version 2.18.0 du schéma les "
+"applique ; une base plus ancienne peut encore porter des lignes qu'une "
+"base neuve refuserait, et ce sont elles qui sont comptées ici, règle par "
+"règle. Une base saine répond ``Constraints: every row satisfies the "
+"current DDL``. C'est un constat de plus : rien n'est réparé et le code de"
+" sortie reste 0."
+msgstr ""
+"Κάθε εκτέλεση ελέγχει τέλος τους κανόνες που ορίζει η τρέχουσα DDL αλλά "
+"που η SQLite δεν μπορεί να προσθέσει σε έναν ήδη υπάρχοντα πίνακα: τους "
+"περιορισμούς εύρους ``CHECK`` (ζάρια από 0 έως 6, κύβος και pips μη "
+"αρνητικά, 0 έως 15 πούλια εκτός, βαθμολογία επανάληψης από 1 έως 4), το "
+"hash Zobrist που δεν θα έπρεπε ποτέ να λείπει από μια γραμμή και τη "
+"μοναδικότητα μιας ανάλυσης ανά θέση. Μια βάση που δημιουργήθηκε από την "
+"έκδοση σχήματος 2.18.0 και μετά τους επιβάλλει· μια παλαιότερη μπορεί να "
+"περιέχει ακόμη γραμμές που μια νέα βάση θα απέρριπτε, και αυτές μετρώνται"
+" εδώ, κανόνα προς κανόνα. Μια υγιής βάση απαντά ``Constraints: every row "
+"satisfies the current DDL``. Άλλη μια διαπίστωση: τίποτα δεν "
+"επιδιορθώνεται και ο κωδικός εξόδου παραμένει 0."
+
+#: ../../source/cli_admin.rst:180
+msgid ""
+"Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
+"``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
+"prétendent compter, et indique combien sont en désaccord et de combien au"
+" pire. Tous deux sont écrits une seule fois, à l'import, d'après ce que "
+"contenait le **fichier source**, et ce sont eux que la liste des matchs "
+"et la vue d'une partie affichent : un petit écart est le plus souvent un "
+"import qui a sauté ce qu'il ne savait pas convertir. Rien n'est réécrit —"
+" remplacer le compteur par ce qui a été stocké effacerait justement "
+"l'écart qu'il y a lieu de regarder. Une base saine répond ``Counters: "
+"game_count and move_count agree with the rows``."
+msgstr ""
+"Κάθε εκτέλεση υπολογίζει τέλος εκ νέου τους δύο αποκανονικοποιημένους "
+"μετρητές, ``match.game_count`` και ``game.move_count``, από τις γραμμές "
+"που ισχυρίζονται ότι μετρούν, και αναφέρει πόσοι διαφωνούν και κατά πόσο "
+"στη χειρότερη περίπτωση. Και οι δύο γράφονται μία φορά, κατά την "
+"εισαγωγή, από ό,τι περιείχε το **αρχείο πηγής**, και είναι αυτοί που "
+"εμφανίζουν η λίστα αγώνων και η προβολή παρτίδας: μια μικρή απόκλιση "
+"είναι συνήθως μια εισαγωγή που παρέλειψε ό,τι δεν μπορούσε να μετατρέψει."
+" Τίποτα δεν ξαναγράφεται — η αντικατάσταση του μετρητή με ό,τι "
+"αποθηκεύτηκε θα έσβηνε ακριβώς την απόκλιση που αξίζει να δει κανείς. Μια"
+" υγιής βάση απαντά ``Counters: game_count and move_count agree with the "
+"rows``."
+
+#: ../../source/cli_admin.rst:199
+msgid ""
+"**En faire une garde.** Le code de sortie vaut 0 quoi que la commande "
+"trouve : c'est ``--format json`` qui porte le verdict, et un script doit "
+"lire les compteurs lui-même."
+msgstr ""
+"**Να χρησιμοποιηθεί ως δικλείδα.** Ο κωδικός εξόδου είναι 0 ό,τι κι αν "
+"βρει η εντολή: η ``--format json`` είναι αυτή που φέρει την ετυμηγορία, "
+"και ένα σενάριο πρέπει να διαβάσει το ίδιο τους μετρητές."
+
+#: ../../source/cli_admin.rst:244
+msgid ""
+"Trois champs valent une alarme : ``orphan_total``, ``schema_drift_count``"
+" et ``constraint_violation_total``. Non nuls, ils décrivent une base à "
+"réparer."
+msgstr ""
+"Τρία πεδία αξίζουν συναγερμό: τα ``orphan_total``, ``schema_drift_count``"
+" και ``constraint_violation_total``. Όταν δεν είναι μηδενικά, περιγράφουν"
+" βάση που χρειάζεται επισκευή."
+
+#: ../../source/cli_admin.rst:252
+msgid ""
+"``counter_drift_total`` n'en fait pas partie, et l'exemple ci-dessus le "
+"montre : la base qui l'a produit venait d'être importée et affiche déjà "
+"53 parties dont le compteur de coups diffère de ce que les lignes "
+"contiennent. Ces compteurs viennent du fichier source, pas de la base ; "
+"un écart raconte l'import, il ne signale pas une corruption. Regardez-le,"
+" ne vous en servez pas comme d'un seuil."
+msgstr ""
+"Το ``counter_drift_total`` δεν ανήκει σε αυτά, και το παραπάνω παράδειγμα"
+" το δείχνει: η βάση που το παρήγαγε μόλις είχε εισαχθεί και εμφανίζει ήδη"
+" 53 παρτίδες των οποίων ο μετρητής κινήσεων διαφέρει από αυτό που "
+"περιέχουν οι γραμμές. Οι μετρητές αυτοί προέρχονται από το αρχείο πηγής, "
+"όχι από τη βάση· μια απόκλιση αφηγείται την εισαγωγή, δεν σημαίνει "
+"αλλοίωση. Κοιτάξτε τον, μη τον χρησιμοποιείτε ως κατώφλι."
+
+#: ../../source/cli_admin.rst:260
+msgid "vacuum — Compacter la base de données"
+msgstr "vacuum — Συμπύκνωση της βάσης δεδομένων"
+
+#: ../../source/cli_admin.rst:262
+msgid ""
+"Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
+"purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
+"des données, il faut le lui demander explicitement. C'est la seule façon "
+"de déclencher un compactage — il ne se produit jamais automatiquement à "
+"l'ouverture d'une base, car son coût est imprévisible sur une grosse "
+"base."
+msgstr ""
+"Ανακτά τον χώρο στον δίσκο που άφησαν οι διαγραφές (αγώνες, τουρνουά, "
+"εκκαθαρίσεις): η SQLite δεν μικραίνει ποτέ μόνη της το αρχείο όταν "
+"διαγράφονται δεδομένα, πρέπει να της ζητηθεί ρητά. Είναι ο μόνος τρόπος "
+"να ξεκινήσει μια συμπύκνωση — δεν συμβαίνει ποτέ αυτόματα στο άνοιγμα "
+"μιας βάσης, γιατί το κόστος της είναι απρόβλεπτο σε μεγάλη βάση."
+
+#: ../../source/cli_admin.rst:275
+#, no-python-brace-format
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(``{\"size_before\", \"size_after\", \"reclaimed\"}``, en octets)."
+msgstr ""
+"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
+"(``{\"size_before\", \"size_after\", \"reclaimed\"}``, σε bytes)."
+
+#: ../../source/cli_admin.rst:278
+msgid ""
+"La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
+"taille affichée avant compactage soit honnête, vérifie qu'il reste à côté"
+" du fichier environ sa taille en espace libre, écrit la base compactée "
+"dans une copie (``VACUUM INTO``) qui remplace ensuite le fichier, puis "
+"lance un ``ANALYZE`` pour rafraîchir les statistiques utilisées par le "
+"planificateur de requêtes. Si un autre programme a la base ouverte, le "
+"fichier n'est pas remplacé : la commande compacte sur place (``VACUUM``),"
+" ce qui demande environ deux fois la taille du fichier en espace libre. "
+"Si l'espace disque manque, la commande refuse de démarrer avec un message"
+" explicite plutôt que de risquer un compactage interrompu."
+msgstr ""
+"Η εντολή ξεκινά με ένα ``wal_checkpoint(TRUNCATE)`` ώστε το μέγεθος που "
+"εμφανίζεται πριν από τη συμπύκνωση να είναι ειλικρινές, ελέγχει ότι δίπλα"
+" στο αρχείο απομένει ελεύθερος χώρος περίπου ίσος με το μέγεθός του, "
+"γράφει τη συμπυκνωμένη βάση σε ένα αντίγραφο (``VACUUM INTO``) που στη "
+"συνέχεια αντικαθιστά το αρχείο, και έπειτα εκτελεί ένα ``ANALYZE`` για να"
+" ανανεώσει τα στατιστικά που χρησιμοποιεί ο σχεδιαστής ερωτημάτων. Αν ένα"
+" άλλο πρόγραμμα έχει ανοιχτή τη βάση, το αρχείο δεν αντικαθίσταται: η "
+"εντολή συμπυκνώνει επιτόπου (``VACUUM``), κάτι που απαιτεί περίπου το "
+"διπλάσιο του μεγέθους του αρχείου σε ελεύθερο χώρο. Αν λείπει χώρος στον "
+"δίσκο, η εντολή αρνείται να ξεκινήσει με ρητό μήνυμα αντί να "
+"διακινδυνεύσει μια διακοπείσα συμπύκνωση."
+
+#: ../../source/cli_admin.rst:289
+msgid ""
+"Avant le compactage, chaque analyse encore rangée en JSON par une version"
+" antérieure est réécrite au format binaire compact (voir ``reencode``)."
+msgstr ""
+"Πριν από τη συμπύκνωση, κάθε ανάλυση που μια προηγούμενη έκδοση έχει "
+"ακόμη αποθηκευμένη σε JSON ξαναγράφεται στη συμπαγή δυαδική μορφή (βλ. "
+"``reencode``)."
+
+#: ../../source/cli_admin.rst:292 ../../source/cli_admin.rst:332
+#: ../../source/cli_admin.rst:370 ../../source/cli_admin.rst:430
+#: ../../source/cli_admin.rst:641 ../../source/cli_admin.rst:702
+msgid "**Exemple:**"
+msgstr "**Παράδειγμα:**"
+
+#: ../../source/cli_admin.rst:304
+msgid "met — La table d'équité de match de la base"
+msgstr "met — Ο πίνακας ισοτιμίας αγώνα της βάσης"
+
+#: ../../source/cli_admin.rst:306
+msgid ""
+"Liste, importe ou choisit la table d'équité de match (MET) avec laquelle "
+"gammonNet valorise les scores de match de la base : Kazaross-XG2, "
+"intégrée, par défaut, ou une table explicite au format ``.xml`` de GNUbg."
+" Chaque analyse calculée enregistre sa table ; une analyse à un score de "
+"match calculée avec une autre table que la table courante est sortie des "
+"statistiques. Changer de table ne réécrit aucune analyse."
+msgstr ""
+"Εμφανίζει, εισάγει ή επιλέγει τον πίνακα ισοτιμίας αγώνα (MET) με τον "
+"οποίο το gammonNet αξιολογεί τα σκορ αγώνα της βάσης: Kazaross-XG2, "
+"ενσωματωμένος και προεπιλεγμένος, ή ρητός πίνακας σε μορφή ``.xml`` του "
+"GNUbg. Κάθε υπολογισμένη ανάλυση καταγράφει τον πίνακά της· μια ανάλυση "
+"σε σκορ αγώνα που υπολογίστηκε με πίνακα διαφορετικό από τον τρέχοντα "
+"εξαιρείται από τα στατιστικά. Η αλλαγή πίνακα δεν ξαναγράφει καμία "
+"ανάλυση."
+
+#: ../../source/cli_admin.rst:320
+msgid ""
+"``--import`` — Importe une table ``.xml`` de GNUbg. Une table déjà "
+"présente, ou identique à Kazaross-XG2, n'est pas ajoutée une seconde "
+"fois."
+msgstr ""
+"``--import`` — Εισάγει έναν πίνακα ``.xml`` του GNUbg. Ένας πίνακας που "
+"υπάρχει ήδη, ή είναι πανομοιότυπος με τον Kazaross-XG2, δεν προστίθεται "
+"δεύτερη φορά."
+
+#: ../../source/cli_admin.rst:322
+msgid "``--current`` — Avec ``--import`` : rend la table importée courante."
+msgstr "``--current`` — Με το ``--import``: κάνει τον εισαγόμενο πίνακα τρέχοντα."
+
+#: ../../source/cli_admin.rst:323
+msgid ""
+"``--use`` — Rend courante la table d'identifiant donné ; ``0`` revient à "
+"Kazaross-XG2."
+msgstr ""
+"``--use`` — Κάνει τρέχοντα τον πίνακα με τον δοθέντα αναγνωριστικό "
+"αριθμό· το ``0`` επιστρέφει στον Kazaross-XG2."
+
+#: ../../source/cli_admin.rst:325
+msgid "``--format`` — Format de sortie : ``text`` (défaut) ou ``json``."
+msgstr "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json``."
+
+#: ../../source/cli_admin.rst:327
+msgid ""
+"La commande affiche ensuite les tables de la base, la courante marquée "
+"d'un ``*``. Le démon expose les mêmes opérations sur les routes "
+"``met.list``, ``met.import``, ``met.setCurrent`` et ``met.ofAnalysis``, "
+"limitées au tenant de l'appelant."
+msgstr ""
+"Η εντολή εμφανίζει στη συνέχεια τους πίνακες της βάσης, με τον τρέχοντα "
+"σημειωμένο με ``*``. Ο δαίμονας εκθέτει τις ίδιες λειτουργίες στις "
+"διαδρομές ``met.list``, ``met.import``, ``met.setCurrent`` και "
+"``met.ofAnalysis``, περιορισμένες στον tenant του καλούντος."
+
+#: ../../source/cli_admin.rst:342
+msgid "reencode — Réécrire les analyses au format compact"
+msgstr "reencode — Επανεγγραφή των αναλύσεων σε συμπαγή μορφή"
+
+#: ../../source/cli_admin.rst:344
+msgid ""
+"Les analyses sont rangées dans un format binaire compact, environ deux "
+"fois plus petit que le JSON compressé des versions antérieures et "
+"plusieurs fois plus rapide à relire. Une base créée avant ce format reste"
+" lisible telle quelle : ses anciennes analyses sont converties quand "
+"elles sont réécrites (un import qui les enrichit, un ``vacuum``). "
+"``reencode`` les convertit toutes, sans compacter le fichier : utile "
+"quand le disque n'a pas la place de la copie compactée qu'écrit un "
+"``vacuum``, ou sur un serveur PostgreSQL, qui n'a pas de ``vacuum``."
+msgstr ""
+"Οι αναλύσεις αποθηκεύονται σε συμπαγή δυαδική μορφή, περίπου στο μισό "
+"μέγεθος του συμπιεσμένου JSON των προηγούμενων εκδόσεων και πολλές φορές "
+"ταχύτερη στην επανανάγνωση. Μια βάση που δημιουργήθηκε πριν από αυτή τη "
+"μορφή παραμένει αναγνώσιμη ως έχει: οι παλαιότερες αναλύσεις της "
+"μετατρέπονται όταν ξαναγράφονται (μια εισαγωγή που τις εμπλουτίζει, ένα "
+"``vacuum``). Το ``reencode`` τις μετατρέπει όλες, χωρίς συμπύκνωση του "
+"αρχείου: χρήσιμο όταν ο δίσκος δεν έχει χώρο για το συμπυκνωμένο "
+"αντίγραφο που γράφει ένα ``vacuum``, ή σε διακομιστή PostgreSQL, που δεν "
+"έχει ``vacuum``."
+
+#: ../../source/cli_admin.rst:360
+#, no-python-brace-format
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(``{\"rewritten\"}``, le nombre d'analyses réécrites)."
+msgstr ""
+"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
+"(``{\"rewritten\"}``, το πλήθος των αναλύσεων που ξαναγράφτηκαν)."
+
+#: ../../source/cli_admin.rst:363
+msgid ""
+"La conversion avance par lots de 2 000 analyses, chacun dans sa propre "
+"transaction. Interrompue, elle reprend au lancement suivant là où elle "
+"s'était arrêtée : les analyses déjà converties sont sautées sans être "
+"relues. Une analyse illisible est laissée telle quelle et signalée dans "
+"le journal. Elle ne se lance jamais d'elle-même. Le démon expose la même "
+"opération sur la route ``maintenance.reencode``, limitée au tenant de "
+"l'appelant."
+msgstr ""
+"Η μετατροπή προχωρά σε παρτίδες των 2 000 αναλύσεων, κάθε μία στη δική "
+"της συναλλαγή. Αν διακοπεί, συνεχίζει στην επόμενη εκτέλεση από το σημείο"
+" όπου σταμάτησε: οι ήδη μετατρεμμένες αναλύσεις παραλείπονται χωρίς να "
+"ξαναδιαβαστούν. Μια μη αναγνώσιμη ανάλυση αφήνεται ως έχει και αναφέρεται"
+" στο ημερολόγιο. Δεν ξεκινά ποτέ από μόνη της. Ο δαίμονας εκθέτει την "
+"ίδια λειτουργία στη διαδρομή ``maintenance.reencode``, περιορισμένη στο "
+"tenant του καλούντος."
+
+#: ../../source/cli_admin.rst:379
+msgid "maintenance — L'état de santé de la base"
+msgstr "maintenance — Η κατάσταση υγείας της βάσης"
+
+#: ../../source/cli_admin.rst:381
+msgid ""
+"Une ligne par opération de maintenance : ce qu'elle compte, son action et"
+" sa dernière exécution. Rien ne se lance de soi-même : ni à l'ouverture "
+"de la base, ni en lisant l'état."
+msgstr ""
+"Μία γραμμή ανά λειτουργία συντήρησης: τι μετράει, η ενέργειά της και η "
+"τελευταία της εκτέλεση. Τίποτα δεν ξεκινά από μόνο του: ούτε κατά το "
+"άνοιγμα της βάσης ούτε κατά την ανάγνωση της κατάστασης."
+
+#: ../../source/cli_admin.rst:392
+msgid "**Sous-commandes:**"
+msgstr "**Υποεντολές:**"
+
+#: ../../source/cli_admin.rst:394
+msgid ""
+"``status`` — Toutes les opérations, avec les compteurs gratuits et la "
+"dernière exécution de chacune. Un compteur coûteux affiche ``(count on "
+"demand)`` : ``count`` le calcule."
+msgstr ""
+"``status`` — Όλες οι λειτουργίες, με τους δωρεάν μετρητές και την "
+"τελευταία εκτέλεση της καθεμιάς. Ένας δαπανηρός μετρητής εμφανίζει "
+"``(count on demand)``: το ``count`` τον υπολογίζει."
+
+#: ../../source/cli_admin.rst:397
+msgid "``count`` — Calcule le compteur d'une opération, quel qu'en soit le coût."
+msgstr ""
+"``count`` — Υπολογίζει τον μετρητή μιας λειτουργίας, όποιο κι αν είναι το"
+" κόστος."
+
+#: ../../source/cli_admin.rst:398
+msgid ""
+"``ids`` — Liste les identifiants que l'opération compte (positions ou "
+"matchs) ; leur nombre est la réponse de ``count``."
+msgstr ""
+"``ids`` — Εμφανίζει τους αναγνωριστικούς αριθμούς που μετράει η "
+"λειτουργία (θέσεις ή αγώνες). Το πλήθος τους είναι η απάντηση του "
+"``count``."
+
+#: ../../source/cli_admin.rst:400
+msgid ""
+"``run`` — Lance l'action d'une opération et l'inscrit comme sa dernière "
+"exécution (terminée, annulée ou en échec). Ctrl-C l'arrête entre deux "
+"lots."
+msgstr ""
+"``run`` — Εκτελεί την ενέργεια μιας λειτουργίας και την καταγράφει ως "
+"τελευταία της εκτέλεση (ολοκληρώθηκε, ακυρώθηκε ή απέτυχε). Το Ctrl-C τη "
+"σταματά ανάμεσα σε δύο παρτίδες."
+
+#: ../../source/cli_admin.rst:403
+msgid "**Opérations:**"
+msgstr "**Λειτουργίες:**"
+
+#: ../../source/cli_admin.rst:1
+msgid "Opération"
+msgstr "Λειτουργία"
+
+#: ../../source/cli_admin.rst:1
+msgid "Compteur"
+msgstr "Μετρητής"
+
+#: ../../source/cli_admin.rst:1
+msgid "Action"
+msgstr "Ενέργεια"
+
+#: ../../source/cli_admin.rst:1
+msgid "``analysis.missing``"
+msgstr "``analysis.missing``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Positions sans aucune analyse, à la demande."
+msgstr "Θέσεις χωρίς καμία ανάλυση, κατά απαίτηση."
+
+#: ../../source/cli_admin.rst:1
+msgid "La commande ``analyze``."
+msgstr "Η εντολή ``analyze``."
+
+#: ../../source/cli_admin.rst:1
+msgid "``stats.matches``"
+msgstr "``stats.matches``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Matchs sans statistiques par match."
+msgstr "Αγώνες χωρίς στατιστικά ανά αγώνα."
+
+#: ../../source/cli_admin.rst:1
+msgid "Les calcule."
+msgstr "Τα υπολογίζει."
+
+#: ../../source/cli_admin.rst:1
+msgid "``analysis.columns``"
+msgstr "``analysis.columns``"
+
+#: ../../source/cli_admin.rst:1
+msgid "—"
+msgstr "—"
+
+#: ../../source/cli_admin.rst:1
+msgid "Recalcule les colonnes tirées des analyses."
+msgstr "Υπολογίζει ξανά τις στήλες που προκύπτουν από τις αναλύσεις."
+
+#: ../../source/cli_admin.rst:1
+msgid "``moves.errors``"
+msgstr "``moves.errors``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Note l'erreur des coups joués qui n'en ont pas."
+msgstr "Καταγράφει το σφάλμα των παιγμένων κινήσεων που δεν έχουν."
+
+#: ../../source/cli_admin.rst:1
+msgid "``analysis.legacy``"
+msgstr "``analysis.legacy``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Réécrit les analyses au format compact (``reencode``)."
+msgstr "Ξαναγράφει τις αναλύσεις στη συμπαγή μορφή (``reencode``)."
+
+#: ../../source/cli_admin.rst:1
+msgid "``trash``"
+msgstr "``trash``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Entrées de la corbeille."
+msgstr "Εγγραφές του κάδου."
+
+#: ../../source/cli_admin.rst:1
+msgid "La commande ``trash``."
+msgstr "Η εντολή ``trash``."
+
+#: ../../source/cli_admin.rst:1
+msgid "``vacuum``"
+msgstr "``vacuum``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Octets libres du fichier (SQLite)."
+msgstr "Ελεύθερα byte του αρχείου (SQLite)."
+
+#: ../../source/cli_admin.rst:1
+msgid "La commande ``vacuum``."
+msgstr "Η εντολή ``vacuum``."
+
+#: ../../source/cli_admin.rst:420
+msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
+msgstr "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json``."
+
+#: ../../source/cli_admin.rst:422
+msgid ""
+"La dernière exécution est rangée dans la base, avec ses réglages ; un "
+"export ne l'emporte pas. Une seule opération tourne à la fois. Le démon "
+"expose les mêmes sous-commandes sur les routes ``maintenance.status``, "
+"``maintenance.count``, ``maintenance.ids``, ``maintenance.run`` (en flux "
+"NDJSON, annulable par ``maintenance.cancel``), limitées au tenant de "
+"l'appelant ; une opération demandée pendant qu'une analyse gammonNet ou "
+"un rollout tourne pour ce tenant est refusée."
+msgstr ""
+"Η τελευταία εκτέλεση αποθηκεύεται στη βάση, μαζί με τις ρυθμίσεις της· "
+"μια εξαγωγή δεν τη μεταφέρει. Μία μόνο λειτουργία εκτελείται κάθε φορά. Ο"
+" δαίμονας εκθέτει τις ίδιες υποεντολές στις διαδρομές "
+"``maintenance.status``, ``maintenance.count``, ``maintenance.ids``, "
+"``maintenance.run`` (ως ροή NDJSON, ακυρώσιμη μέσω "
+"``maintenance.cancel``), περιορισμένες στον tenant του καλούντος· μια "
+"λειτουργία που ζητείται ενώ τρέχει ανάλυση gammonNet ή rollout για αυτόν "
+"τον tenant απορρίπτεται."
+
+#: ../../source/cli_admin.rst:439
+msgid "players — Les graphies d'un joueur"
+msgstr "players — Οι γραφές ενός παίκτη"
+
+#: ../../source/cli_admin.rst:441
+msgid ""
+"Une même personne signe parfois de plusieurs façons d'un fichier à "
+"l'autre (« Doe J. », « John Doe »). Un **alias** dit qu'un nom est une "
+"autre graphie d'un nom canonique. Les matchs déjà en base gardent les "
+"noms que leurs fichiers écrivent ; les statistiques, la table Joueurs et "
+"la recherche ``pl\"…\"`` lisent toutes les graphies comme une seule "
+"personne, et chaque import suivant enregistre le nom canonique. La fusion"
+" de joueurs de la fenêtre des matchs crée les mêmes alias."
+msgstr ""
+"Το ίδιο πρόσωπο υπογράφει μερικές φορές με διαφορετικούς τρόπους από "
+"αρχείο σε αρχείο («Doe J.», «John Doe»). Ένα **ψευδώνυμο** λέει ότι ένα "
+"όνομα είναι άλλη γραφή ενός κανονικού ονόματος. Οι αγώνες που υπάρχουν "
+"ήδη στη βάση κρατούν τα ονόματα που γράφουν τα αρχεία τους· τα "
+"στατιστικά, ο πίνακας Παίκτες και η αναζήτηση ``pl\"…\"`` διαβάζουν όλες "
+"τις γραφές ως ένα πρόσωπο, και κάθε επόμενη εισαγωγή καταγράφει το "
+"κανονικό όνομα. Η συγχώνευση παικτών του παραθύρου των αγώνων δημιουργεί "
+"τα ίδια ψευδώνυμα."
+
+#: ../../source/cli_admin.rst:453
+msgid "**Actions:**"
+msgstr "**Ενέργειες:**"
+
+#: ../../source/cli_admin.rst:455
+msgid ""
+"``add ALIAS CANONIQUE`` — ``ALIAS`` devient une graphie de ``CANONIQUE``."
+" Un canonique qui est lui-même un alias est suivi jusqu'à son propre "
+"canonique, et les alias qui visaient ``ALIAS`` passent à ``CANONIQUE`` : "
+"un seul niveau, jamais de chaîne."
+msgstr ""
+"``add ALIAS CANONIQUE`` — Το ``ALIAS`` γίνεται γραφή του ``CANONIQUE``. "
+"Ένα κανονικό όνομα που είναι το ίδιο ψευδώνυμο ακολουθείται μέχρι το δικό"
+" του κανονικό, και τα ψευδώνυμα που στόχευαν το ``ALIAS`` περνούν στο "
+"``CANONIQUE``: ένα μόνο επίπεδο, ποτέ αλυσίδα."
+
+#: ../../source/cli_admin.rst:459
+msgid "``list [--format text|json]`` — Les alias, rangés par nom canonique."
+msgstr ""
+"``list [--format text|json]`` — Τα ψευδώνυμα, ταξινομημένα κατά κανονικό "
+"όνομα."
+
+#: ../../source/cli_admin.rst:460
+msgid ""
+"``remove ALIAS`` — Oublie un alias ; sort en erreur si ce n'en était pas "
+"un."
+msgstr ""
+"``remove ALIAS`` — Ξεχνά ένα ψευδώνυμο· τερματίζει με σφάλμα αν δεν ήταν "
+"ψευδώνυμο."
+
+#: ../../source/cli_admin.rst:461
+msgid ""
+"``suggest [--format text|json]`` — Propose les noms qui ne diffèrent que "
+"par la casse, les accents, la ponctuation ou l'ordre des mots, avec pour "
+"canonique la graphie la plus fréquente. Rien n'est enregistré : chaque "
+"proposition s'écrit comme la commande ``add`` qui l'appliquerait."
+msgstr ""
+"``suggest [--format text|json]`` — Προτείνει τα ονόματα που διαφέρουν "
+"μόνο σε πεζά/κεφαλαία, τόνους, στίξη ή σειρά λέξεων, με κανονική τη "
+"συχνότερη γραφή. Τίποτα δεν καταγράφεται: κάθε πρόταση γράφεται ως η "
+"εντολή ``add`` που θα την εφάρμοζε."
+
+#: ../../source/cli_admin.rst:466
+msgid ""
+"**Empreintes.** Les empreintes d'un match (``match_hash``, "
+"``canonical_hash``) gardent les noms du fichier : l'alias s'applique "
+"après elles, aux seuls noms enregistrés. Un fichier importé avant que son"
+" alias existe se reconnaît donc toujours à l'import suivant. Un match "
+"importé sous une autre graphie, dont les dés sont ceux d'un match en base"
+" et dont les noms ne diffèrent que par des alias connus, est reconnu "
+"comme le même match : ses analyses enrichissent l'existant, aucun second "
+"match n'est créé."
+msgstr ""
+"**Αποτυπώματα.** Τα αποτυπώματα ενός αγώνα (``match_hash``, "
+"``canonical_hash``) κρατούν τα ονόματα του αρχείου: το ψευδώνυμο "
+"εφαρμόζεται μετά από αυτά, μόνο στα καταγεγραμμένα ονόματα. Ένα αρχείο "
+"που εισήχθη πριν υπάρξει το ψευδώνυμό του αναγνωρίζεται λοιπόν πάντα στην"
+" επόμενη εισαγωγή. Ένας αγώνας που εισάγεται με άλλη γραφή, με ζάρια ίδια"
+" με αυτά ενός αγώνα της βάσης και με ονόματα που διαφέρουν μόνο κατά "
+"γνωστά ψευδώνυμα, αναγνωρίζεται ως ο ίδιος αγώνας: οι αναλύσεις του "
+"εμπλουτίζουν τον υπάρχοντα, δεν δημιουργείται δεύτερος αγώνας."
+
+#: ../../source/cli_admin.rst:479
+msgid ""
+"**players merge** — La fusion de joueurs de la fenêtre des matchs, du "
+"même code que la route ``matches.mergePlayers`` du démon : chaque nom "
+"devient une graphie du nom canonique, comme autant de ``players alias "
+"add``."
+msgstr ""
+"**players merge** — Η συγχώνευση παικτών του παραθύρου των αγώνων, με τον"
+" ίδιο κώδικα με τη διαδρομή ``matches.mergePlayers`` του δαίμονα: κάθε "
+"όνομα γίνεται γραφή του κανονικού ονόματος, όπως άλλα τόσα ``players "
+"alias add``."
+
+#: ../../source/cli_admin.rst:487
+msgid ""
+"**players swap** — L'inversion des deux joueurs d'un match, que le "
+"fichier avait nommés dans le mauvais ordre (route "
+"``matches.swapPlayers``). Aucune position ni aucune analyse ne change : "
+"chaque joueur garde ses statistiques, sous l'autre siège. L'inversion est"
+" refusée tant qu'un brouillon de transcription est ouvert sur le match, "
+"et pour un match joué dans blunderDB."
+msgstr ""
+"**players swap** — Η αντιμετάθεση των δύο παικτών ενός αγώνα, που το "
+"αρχείο είχε ονομάσει με λάθος σειρά (διαδρομή ``matches.swapPlayers``). "
+"Καμία θέση και καμία ανάλυση δεν αλλάζει: κάθε παίκτης κρατά τα "
+"στατιστικά του, στην άλλη θέση. Η αντιμετάθεση απορρίπτεται όσο ένα "
+"πρόχειρο μεταγραφής είναι ανοιχτό στον αγώνα, καθώς και για αγώνα που "
+"παίχτηκε στο blunderDB."
+
+#: ../../source/cli_admin.rst:497
+msgid ""
+"**players main** — Le joueur principal de la fenêtre des matchs (routes "
+"``players.main.*``). Sans nom, affiche le joueur principal ; avec un nom,"
+" le désigne et inverse en une seule transaction tous les matchs où lui ou"
+" l'un de ses alias est joueur 2 ; chaque import ultérieur le place en "
+"joueur 1. ``--dry-run`` affiche les matchs à inverser sans rien changer ;"
+" ``--clear`` retire le joueur principal sans rien inverser en retour. Un "
+"match où un brouillon de transcription est ouvert, ou joué dans "
+"blunderDB, est laissé tel quel et listé à part."
+msgstr ""
+"**players main** — Ο κύριος παίκτης του παραθύρου των αγώνων (διαδρομές "
+"``players.main.*``). Χωρίς όνομα, εμφανίζει τον κύριο παίκτη· με όνομα, "
+"τον ορίζει και αντιστρέφει σε μία μόνο συναλλαγή όλους τους αγώνες όπου "
+"αυτός ή ένα από τα ψευδώνυμά του είναι ο παίκτης 2· κάθε επόμενη εισαγωγή"
+" τον τοποθετεί ως παίκτη 1. Το ``--dry-run`` εμφανίζει τους αγώνες που θα"
+" αντιστραφούν χωρίς να αλλάξει τίποτα· το ``--clear`` αφαιρεί τον κύριο "
+"παίκτη χωρίς να αντιστρέψει τίποτα πίσω. Ένας αγώνας με ανοιχτό προσχέδιο"
+" μεταγραφής, ή παιγμένος στο blunderDB, μένει ως έχει και παρατίθεται "
+"χωριστά."
+
+#: ../../source/cli_admin.rst:510
+msgid ""
+"**players matches** — Les identifiants des matchs d'un joueur, à l'un ou "
+"l'autre siège et sous tous ses alias (route ``players.matchIds``)."
+msgstr ""
+"**players matches** — Τα αναγνωριστικά των αγώνων ενός παίκτη, σε "
+"οποιαδήποτε από τις δύο θέσεις και υπό όλα τα ψευδώνυμά του (διαδρομή "
+"``players.matchIds``)."
+
+#: ../../source/cli_admin.rst:524
+msgid "events — Les graphies d'un événement"
+msgstr "events — Οι γραφές μιας διοργάνωσης"
+
+#: ../../source/cli_admin.rst:526
+msgid ""
+"Les mêmes actions que ``players alias``, pour les noms d'événement (le "
+"champ Event d'un fichier). À l'import, un match dont l'événement est un "
+"alias est rangé dans le tournoi du nom canonique."
+msgstr ""
+"Οι ίδιες ενέργειες με το ``players alias``, για τα ονόματα διοργανώσεων "
+"(το πεδίο Event ενός αρχείου). Κατά την εισαγωγή, ένας αγώνας του οποίου "
+"η διοργάνωση είναι ψευδώνυμο τοποθετείται στο τουρνουά με το κανονικό "
+"όνομα."
+
+#: ../../source/cli_admin.rst:538
+msgid "repair — Recalculer ce qui est dérivé"
+msgstr "repair — Επανυπολογισμός όσων είναι παράγωγα"
+
+#: ../../source/cli_admin.rst:540
+msgid ""
+"Recalcule ce que la base tire de ce qu'elle stocke : les colonnes "
+"scalaires de chaque analyse à partir de l'analyse elle-même, dont elles "
+"ne sont qu'une projection ; la phase et le type de jeu de chaque position"
+" à partir de son damier ; et la sentinelle de Crawford de chaque score à "
+"partir du match d'où la position vient, ou de l'XGID avec lequel elle est"
+" entrée. Les analyses ne sont pas touchées : ce sont les valeurs qu'on en"
+" avait tirées qui sont refaites."
+msgstr ""
+"Επανυπολογίζει ό,τι η βάση αντλεί από όσα αποθηκεύει: τις βαθμωτές στήλες"
+" κάθε ανάλυσης από την ίδια την ανάλυση, της οποίας δεν είναι παρά μια "
+"προβολή· τη φάση και τον τύπο παιχνιδιού κάθε θέσης από το ταμπλό της· "
+"και τον δείκτη Crawford κάθε σκορ από τον αγώνα από τον οποίο προέρχεται "
+"η θέση, ή από το XGID με το οποίο μπήκε. Οι αναλύσεις δεν θίγονται: αυτό "
+"που ξαναγίνεται είναι οι τιμές που είχαν εξαχθεί από αυτές."
+
+#: ../../source/cli_admin.rst:547
+msgid ""
+"Une base qui a reçu des analyses par l'import d'une autre base (``import "
+"--type database``, y compris par un dossier de synchronisation surveillé)"
+" avec une version antérieure à celle-ci garde ces analyses sans leurs "
+"colonnes, ou avec celles de l'analyse qu'elles ont remplacée : leurs "
+"blunders ne sont pas comptés et leurs coups forcés passent pour des "
+"décisions. ``repair`` compare ces colonnes à ce que l'analyse stockée en "
+"donne et refait celles qui diffèrent ; le même contenu compte alors comme"
+" s'il était venu par ``transfer``."
+msgstr ""
+"Μια βάση που έλαβε αναλύσεις μέσω εισαγωγής άλλης βάσης (``import --type "
+"database``, και μέσω παρακολουθούμενου φακέλου συγχρονισμού) με έκδοση "
+"προγενέστερη από αυτήν διατηρεί αυτές τις αναλύσεις χωρίς τις στήλες "
+"τους, ή με εκείνες της ανάλυσης που αντικατέστησαν: τα blunders τους δεν "
+"μετρώνται και οι αναγκαστικές κινήσεις τους θεωρούνται αποφάσεις. Το "
+"``repair`` συγκρίνει αυτές τις στήλες με ό,τι δίνει η αποθηκευμένη "
+"ανάλυση και ξαναφτιάχνει όσες διαφέρουν· το ίδιο περιεχόμενο μετράει τότε"
+" σαν να είχε έρθει μέσω ``transfer``."
+
+#: ../../source/cli_admin.rst:562
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un "
+"compteur par passe : ``repaired`` (colonnes d'analyse), ``phases`` "
+"(positions reclassées), ``crawford`` (positions réhachées) et "
+"``signatures_unverified`` (commentaires signés qu'un réhachage laisse non"
+" vérifiés : une signature couvre l'identité de la position). Chacun dit "
+"le nombre de lignes réellement changées. Avec ``--stats``, s'y ajoute "
+"``match_stats`` (matchs recalculés) ; avec ``--move-errors``, "
+"``move_errors`` (coups notés)."
+msgstr ""
+"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` — ένας "
+"μετρητής ανά πέρασμα: ``repaired`` (στήλες ανάλυσης), ``phases`` (θέσεις "
+"που αναταξινομήθηκαν) και ``crawford`` (θέσεις με νέο hash) και "
+"``signatures_unverified`` (υπογεγραμμένα σχόλια που ένας νέος "
+"κατακερματισμός αφήνει μη επαληθευμένα: μια υπογραφή καλύπτει την "
+"ταυτότητα της θέσης). Ο καθένας δίνει τον αριθμό των γραμμών που άλλαξαν "
+"πραγματικά. Με το ``--stats`` προστίθεται το ``match_stats`` (αγώνες που "
+"υπολογίστηκαν ξανά). Με το ``--move-errors`` προστίθεται το "
+"``move_errors`` (βαθμολογημένες κινήσεις)."
+
+#: ../../source/cli_admin.rst:569
+msgid "``--stats`` — Recalcule aussi, de zéro, les statistiques par match."
+msgstr ""
+"``--stats`` — Υπολογίζει επίσης εκ νέου, από το μηδέν, τα στατιστικά ανά "
+"αγώνα."
+
+#: ../../source/cli_admin.rst:570
+msgid ""
+"``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a "
+"cédée face au meilleur coup, lue dans l'analyse de sa position (colonne "
+"``error_mp`` de la table des coups). La passe est reprenable : "
+"interrompue, elle reprend où elle s'était arrêtée ; sur une très grande "
+"base elle dure plusieurs minutes. Côté serveur : ``matches.scoreMoves``."
+msgstr ""
+"``--move-errors`` — Γράφει επίσης, για κάθε κίνηση που παίχτηκε, το "
+"equity που έχασε σε σχέση με την καλύτερη κίνηση, διαβασμένο από την "
+"ανάλυση της θέσης της (στήλη ``error_mp`` του πίνακα κινήσεων). Το "
+"πέρασμα συνεχίζεται: αν διακοπεί, ξαναρχίζει από εκεί που σταμάτησε· σε "
+"πολύ μεγάλη βιβλιοθήκη διαρκεί αρκετά λεπτά. Στην πλευρά του διακομιστή: "
+"``matches.scoreMoves``."
+
+#: ../../source/cli_admin.rst:575
+msgid ""
+"``--duplicates`` — Ne lance aucune des passes : liste les paires de "
+"matchs que les dés disent identiques, sans rien fusionner (voir ci-"
+"dessous)."
+msgstr ""
+"``--duplicates`` — Δεν εκτελεί κανένα από τα περάσματα: απαριθμεί τα "
+"ζεύγη αγώνων που τα ζάρια δείχνουν πανομοιότυπα, χωρίς να συγχωνεύσει "
+"τίποτα (βλ. παρακάτω)."
+
+#: ../../source/cli_admin.rst:578
+msgid ""
+"Les statistiques par match sont, pour chaque joueur de chaque match, ses "
+"décisions, son erreur cumulée, son PR, ses blunders, sa chance et la "
+"provenance dominante de ses analyses ; les statistiques les lisent au "
+"lieu de reparcourir chaque décision. Elles s'écrivent avec le match à "
+"l'import et s'effacent à chaque changement qui les altère (match "
+"supprimé, joueurs permutés, analyse d'une de ses positions modifiée, "
+"seuil de blunder déplacé) ; la lecture suivante recalcule ce qui manque. "
+"Une base migrée d'une version antérieure les calcule une fois, à sa "
+"première ouverture. ``--stats`` les refait toutes : le recours si cette "
+"tenue de comptes se trompait un jour."
+msgstr ""
+"Τα στατιστικά ανά αγώνα είναι, για κάθε παίκτη κάθε αγώνα, οι αποφάσεις "
+"του, το αθροιστικό του σφάλμα, το PR του, τα blunder του, η τύχη του και "
+"η κυρίαρχη προέλευση των αναλύσεών του· τα στατιστικά τα διαβάζουν αντί "
+"να ξαναδιατρέχουν κάθε απόφαση. Γράφονται μαζί με τον αγώνα κατά την "
+"εισαγωγή και σβήνονται σε κάθε αλλαγή που τα μεταβάλλει (διαγραφή αγώνα, "
+"εναλλαγή παικτών, τροποποίηση της ανάλυσης μιας από τις θέσεις του, "
+"μετακίνηση του ορίου blunder)· η επόμενη ανάγνωση υπολογίζει ό,τι λείπει."
+" Μια βάση που μετατράπηκε από προηγούμενη έκδοση τα υπολογίζει μία φορά, "
+"στο πρώτο άνοιγμα. Το ``--stats`` τα ξαναφτιάχνει όλα: η λύση αν αυτή η "
+"τήρηση λογαριασμών κάποτε πάει στραβά."
+
+#: ../../source/cli_admin.rst:588
+#, no-python-brace-format
+msgid ""
+"**Doublons probables.** ``repair --duplicates`` compare les matchs par "
+"leurs dés, jamais par leurs noms. Deux cas sont signalés : la même "
+"longueur, le même score initial et les mêmes dés dans chaque partie sous "
+"d'autres noms de joueurs, et un match dont les dés prolongent ceux d'un "
+"autre — un match tronqué puis complété. Sous une paire aux mêmes dés, la "
+"sortie texte donne les commandes ``players alias add`` qui feraient "
+"nommer aux deux matchs les mêmes joueurs : une seule lecture quand un nom"
+" est commun aux deux (l'autre nom ne peut être que l'autre joueur), sinon"
+" deux — siège pour siège, puis croisée — numérotées, dont une seule est à"
+" lancer. La graphie du match le plus récent devient l'alias, celle du "
+"plus ancien le nom canonique. ``--format json`` rend ``{\"suspects\": "
+"[...]}``, chaque paire avec ``kind`` (``same_dice`` ou ``longer``), "
+"``matchId``, ``otherId``, ``players``, ``otherPlayers`` et, pour une "
+"paire aux mêmes dés, ``pairings`` : la liste des lectures, chacune avec "
+"ses ``aliases`` (``alias``, ``canonical``). Un match importé avant que "
+"l'empreinte des dés existe la reçoit au passage ; c'est la seule écriture"
+" de ce mode."
+msgstr ""
+"**Πιθανά διπλότυπα.** Το ``repair --duplicates`` συγκρίνει τους αγώνες με"
+" βάση τα ζάρια τους, ποτέ με βάση τα ονόματά τους. Αναφέρονται δύο "
+"περιπτώσεις: ίδιο μήκος, ίδιο αρχικό σκορ και ίδια ζάρια σε κάθε παρτίδα "
+"με άλλα ονόματα παικτών, και ένας αγώνας του οποίου τα ζάρια επεκτείνουν "
+"αυτά ενός άλλου — αγώνας που διακόπηκε και μετά ολοκληρώθηκε. Κάτω από "
+"ένα ζεύγος με τα ίδια ζάρια, η έξοδος κειμένου δίνει τις εντολές "
+"``players alias add`` που θα έκαναν τους δύο αγώνες να ονομάζουν τους "
+"ίδιους παίκτες: μία μόνο ανάγνωση όταν ένα όνομα είναι κοινό και στους "
+"δύο (το άλλο όνομα μπορεί να είναι μόνο ο άλλος παίκτης), αλλιώς δύο — "
+"θέση προς θέση, μετά χιαστί — αριθμημένες, από τις οποίες πρέπει να "
+"εκτελεστεί μόνο μία. Η γραφή του πιο πρόσφατου αγώνα γίνεται το "
+"ψευδώνυμο, αυτή του παλαιότερου το κανονικό όνομα. Το ``--format json`` "
+"επιστρέφει ``{\"suspects\": [...]}``, κάθε ζεύγος με ``kind`` "
+"(``same_dice`` ή ``longer``), ``matchId``, ``otherId``, ``players``, "
+"``otherPlayers`` και, για ζεύγος με τα ίδια ζάρια, ``pairings``: η λίστα "
+"των αναγνώσεων, καθεμία με τα ``aliases`` της (``alias``, ``canonical``)."
+" Ένας αγώνας που εισήχθη πριν υπάρξει το αποτύπωμα ζαριών το λαμβάνει "
+"στην πορεία· αυτή είναι η μόνη εγγραφή αυτής της λειτουργίας."
+
+#: ../../source/cli_admin.rst:604
+msgid ""
+"Utile après une correction de la façon dont une analyse importée est lue."
+" Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
+"double » de deux façons, et la seconde était comprise comme un vrai "
+"double — la colonne portait alors l'erreur d'un double qui n'avait jamais"
+" eu lieu. Et une analyse que blunderDB avait calculée lui-même ne savait "
+"pas quel coup avait été joué, si bien qu'un match importé sans analyse "
+"gardait une erreur nulle partout et un PR de 0,00 ; la colonne se "
+"recalcule à partir des coups du match. Corriger la lecture ne change rien"
+" aux lignes déjà écrites ; cette commande les refait."
+msgstr ""
+"Χρήσιμη μετά από διόρθωση του τρόπου με τον οποίο διαβάζεται μια "
+"εισηγμένη ανάλυση. Έχει ήδη συμβεί δύο φορές. Ο εισαγωγέας XG γράφει ένα "
+"«χωρίς διπλασιασμό» με δύο τρόπους, και ο δεύτερος εκλαμβανόταν ως "
+"πραγματικός διπλασιασμός — η στήλη έφερε τότε το σφάλμα ενός διπλασιασμού"
+" που ποτέ δεν έγινε. Και μια ανάλυση που το ίδιο το blunderDB είχε "
+"υπολογίσει δεν ήξερε ποια κίνηση είχε παιχτεί, οπότε ένας αγώνας που "
+"εισήχθη χωρίς ανάλυση κρατούσε μηδενικό σφάλμα παντού και PR 0,00· η "
+"στήλη ξαναϋπολογίζεται από τις κινήσεις του αγώνα. Η διόρθωση της "
+"ανάγνωσης δεν αλλάζει τίποτα στις ήδη γραμμένες γραμμές· αυτή η εντολή "
+"τις ξαναφτιάχνει."
+
+#: ../../source/cli_admin.rst:614
+msgid ""
+"La passe Crawford, elle, touche les positions elles-mêmes. Un score à "
+"``1`` signifie « un point à faire, et cette partie EST la Crawford » ; "
+"``0`` signifie « un point à faire, la Crawford est derrière ». Tant que "
+"les importeurs n'ont pas écrit cette distinction, toute position post-"
+"Crawford a été enregistrée comme une position de Crawford, donc lue "
+"videau mort — là où le poursuivant double en réalité à la première "
+"occasion. Corriger le score change le hachage de la position : la ligne "
+"est donc réhachée, et fusionnée avec sa jumelle correcte si la base en "
+"tient déjà une — l'analyse, les commentaires, les collections, les cartes"
+" Anki et leur journal de révision, les coups du match et les entrées de "
+"la corbeille qui la nomment suivent la ligne survivante. Une position "
+"qu'aucun match ne désigne n'est corrigée que sur la parole de l'XGID "
+"qu'elle a apporté d'un autre logiciel (XG, BGBlitz…) : quand le champ "
+"Crawford de cet XGID dit que la partie n'est pas la Crawford, et que "
+"l'XGID décrit bien cette position. Dans l'autre sens, une position sans "
+"match enregistrée à ``0`` des deux côtés passe à ``1`` quand l'XGID "
+"qu'elle a apporté est celui d'un match en 1 point et qu'il la décrit : la"
+" seule partie d'un match en 1 point commence à un point du but, c'est "
+"donc la Crawford, comme l'écrivent les importeurs. Le DMP d'après la "
+"Crawford d'un match plus long reste à ``0`` : son XGID donne la longueur "
+"de ce match. Un XGID que blunderDB a lui-même réécrit ne fait que répéter"
+" le score enregistré et ne prouve rien. Toute autre position sans match "
+"est laissée telle quelle : rien ne contredit ce que son score annonce."
+msgstr ""
+"Το πέρασμα του Crawford, αντιθέτως, αγγίζει τις ίδιες τις θέσεις. Σκορ "
+"``1`` σημαίνει «μένει ένας πόντος, και αυτή η παρτίδα ΕΙΝΑΙ η παρτίδα "
+"Crawford»· ``0`` σημαίνει «μένει ένας πόντος, η παρτίδα Crawford είναι "
+"πίσω μας». Όσο οι εισαγωγείς δεν έγραφαν αυτή τη διάκριση, κάθε θέση μετά"
+" το Crawford καταγραφόταν ως θέση Crawford, και άρα διαβαζόταν με νεκρό "
+"κύβο — εκεί ακριβώς όπου αυτός που χάνει διπλασιάζει στην πραγματικότητα "
+"με την πρώτη ευκαιρία. Η διόρθωση του σκορ αλλάζει τον κατακερματισμό της"
+" θέσης: η γραμμή λοιπόν ξανακατακερματίζεται και συγχωνεύεται με τη σωστή"
+" δίδυμή της αν η βάση κρατά ήδη μία — η ανάλυση, τα σχόλια, οι συλλογές, "
+"οι κάρτες Anki και το ημερολόγιο επαναλήψεών τους, οι κινήσεις του αγώνα "
+"και οι καταχωρίσεις του κάδου απορριμμάτων που την κατονομάζουν "
+"ακολουθούν τη γραμμή που επιβιώνει. Μια θέση την οποία δεν δείχνει "
+"κανένας αγώνας διορθώνεται μόνο με τον λόγο του XGID που έφερε από άλλο "
+"πρόγραμμα (XG, BGBlitz…): όταν το πεδίο Crawford αυτού του XGID λέει ότι "
+"η παρτίδα δεν είναι η παρτίδα Crawford, και το XGID περιγράφει πράγματι "
+"αυτή τη θέση. Προς την αντίθετη κατεύθυνση, μια θέση χωρίς αγώνα, "
+"αποθηκευμένη με ``0`` και από τις δύο πλευρές, περνά σε ``1`` όταν το "
+"XGID που έφερε είναι ενός αγώνα 1 πόντου και την περιγράφει: η μόνη "
+"παρτίδα ενός αγώνα 1 πόντου ξεκινά έναν πόντο πριν από τον στόχο, άρα "
+"είναι η παρτίδα Crawford, όπως τη γράφουν οι εισαγωγείς. Το DMP μετά την "
+"παρτίδα Crawford ενός μακρύτερου αγώνα μένει στο ``0``: το XGID του δίνει"
+" το μήκος αυτού του αγώνα. Ένα XGID που το blunderDB ξανάγραψε μόνο του "
+"απλώς επαναλαμβάνει το αποθηκευμένο σκορ και δεν αποδεικνύει τίποτα. Κάθε"
+" άλλη θέση χωρίς αγώνα μένει ως έχει: τίποτα δεν αντιφάσκει με όσα "
+"δηλώνει το σκορ της."
+
+#: ../../source/cli_admin.rst:636
+msgid ""
+"Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
+"colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
+"simple ouverture d'une base n'est pas quelque chose qu'un outil doit "
+"faire dans le dos de son utilisateur."
+msgstr ""
+"Τίποτα δεν την ενεργοποιεί αυτόματα, και αυτό είναι σκόπιμο: το να "
+"ξαναγράφονται οι στήλες ανάλυσης όλων, ή να ξανακατακερματίζονται θέσεις,"
+" με το απλό άνοιγμα μιας βάσης δεν είναι κάτι που ένα εργαλείο πρέπει να "
+"κάνει πίσω από την πλάτη του χρήστη του."
+
+#: ../../source/cli_admin.rst:652
+msgid "delete — Supprimer des données"
+msgstr "delete — Διαγραφή δεδομένων"
+
+#: ../../source/cli_admin.rst:654
+msgid ""
+"Supprime un match et toutes les données associées (parties, coups, "
+"analyses)."
+msgstr ""
+"Διαγράφει έναν αγώνα και όλα τα σχετικά δεδομένα (παρτίδες, κινήσεις, "
+"αναλύσεις)."
+
+#: ../../source/cli_admin.rst:663
+msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
+msgstr "``--type`` — Τύπος διαγραφής: ``match`` (υποχρεωτικό)."
+
+#: ../../source/cli_admin.rst:664
+msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
+msgstr "``--id`` — ID του στοιχείου προς διαγραφή (υποχρεωτικό)."
+
+#: ../../source/cli_admin.rst:665
+msgid "``--confirm`` — Supprimer sans demander de confirmation."
+msgstr "``--confirm`` — Διαγραφή χωρίς αίτημα επιβεβαίωσης."
+
+#: ../../source/cli_admin.rst:666
+#, no-python-brace-format
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(``{\"match_id\": N, \"deleted\": true}``)."
+msgstr ""
+"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
+"(``{\"match_id\": N, \"deleted\": true}``)."
+
+#: ../../source/cli_admin.rst:678
+msgid "healthcheck — Sonder un démon"
+msgstr "healthcheck — Έλεγχος ενός δαίμονα"
+
+#: ../../source/cli_admin.rst:680
+msgid ""
+"Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
+"est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
+"démon répond 200 (stockage joignable, schéma à la version attendue), "
+"``1`` sinon — stockage injoignable, schéma périmé, ou rien n'écoute à "
+"l'adresse. Aucun fichier de base n'est ouvert."
+msgstr ""
+"Ρωτά έναν δαίμονα ``serve`` σε λειτουργία (βλ. :doc:`mode_headless`) αν "
+"είναι διαθέσιμος: ένα αίτημα ``GET /readyz``, κωδικός επιστροφής ``0`` αν"
+" ο δαίμονας απαντά 200 (αποθήκευση προσβάσιμη, σχήμα στην αναμενόμενη "
+"έκδοση), ``1`` αλλιώς — αποθήκευση μη προσβάσιμη, ξεπερασμένο σχήμα ή "
+"τίποτα δεν ακούει στη διεύθυνση. Δεν ανοίγει κανένα αρχείο βάσης."
+
+#: ../../source/cli_admin.rst:692
+msgid ""
+"``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
+"sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
+"générique (``0.0.0.0``, ``[::]``) est sondée sur l'interface de bouclage."
+msgstr ""
+"``--addr`` — Διεύθυνση στην οποία ακούει ο δαίμονας (προεπιλογή "
+"``BLUNDERDB_ADDR``, αλλιώς ``:8080``). Μια διεύθυνση χωρίς host "
+"(``:8080``) ή με γενικό host (``0.0.0.0``, ``[::]``) ελέγχεται μέσω της "
+"διεπαφής loopback."
+
+#: ../../source/cli_admin.rst:695
+msgid ""
+"``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
+"défaut)."
+msgstr ""
+"``--timeout`` — Χρόνος μετά τον οποίο ο έλεγχος εγκαταλείπει (``2s`` από "
+"προεπιλογή)."
+
+#: ../../source/cli_admin.rst:697
+msgid ""
+"C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
+"image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
+"depuis ``cmd/serve`` la comprend aussi. Elle vaut tout autant dans un "
+"script ou une unité systemd."
+msgstr ""
+"Είναι η εντολή που εκτελεί το ``HEALTHCHECK`` της εικόνας container "
+"(εικόνα *distroless*, χωρίς ``curl``)· το δυαδικό ``serve`` που χτίζεται "
+"από το ``cmd/serve`` την καταλαβαίνει επίσης. Είναι εξίσου χρήσιμη σε ένα"
+" script ή σε μια μονάδα systemd."
+
+#: ../../source/cli_admin.rst:711
+msgid ""
+"En cas d'échec la raison est affichée, ce que ``docker inspect`` "
+"reproduit pour un conteneur ``unhealthy`` :"
+msgstr ""
+"Σε περίπτωση αποτυχίας εμφανίζεται η αιτία, την οποία το ``docker "
+"inspect`` αναπαράγει για ένα container ``unhealthy``:"
+
+#: ../../source/cli_admin.rst:719
+msgid "mcp — Offrir la base à un assistant IA"
+msgstr "mcp — Προσφορά της βάσης σε έναν βοηθό ΤΝ"
+
+#: ../../source/cli_admin.rst:721
+msgid ""
+"Sert les outils de la base à un assistant IA par le *Model Context "
+"Protocol*, sur l'entrée et la sortie standard : c'est l'assistant qui "
+"lance la commande. Les outils recherchent des positions dans la grammaire"
+" de la barre de commande, lisent une position et son analyse, expliquent "
+"une erreur, calculent les statistiques d'un joueur, listent matchs, "
+"tournois et collections, et posent un quiz. Ils ne font que lire, sauf "
+"avec ``--write``. La liste complète et l'équivalent HTTP du démon : "
+":ref:`headless_mcp`."
+msgstr ""
+"Εξυπηρετεί τα εργαλεία της βάσης σε έναν βοηθό ΤΝ μέσω του *Model Context"
+" Protocol*, στην τυπική είσοδο και έξοδο: ο βοηθός εκκινεί την εντολή. Τα"
+" εργαλεία αναζητούν θέσεις στη γραμματική της γραμμής εντολών, διαβάζουν "
+"μια θέση και την ανάλυσή της, εξηγούν ένα λάθος, υπολογίζουν τα "
+"στατιστικά ενός παίκτη, απαριθμούν αγώνες, τουρνουά και συλλογές και "
+"θέτουν ένα κουίζ. Μόνο διαβάζουν, εκτός αν δοθεί ``--write``. Ο πλήρης "
+"κατάλογος και το ισοδύναμο HTTP του δαίμονα: :ref:`headless_mcp`."
+
+#: ../../source/cli_admin.rst:735
+msgid "``--db`` — Fichier de base de données (obligatoire)."
+msgstr "``--db`` — Αρχείο βάσης δεδομένων (υποχρεωτικό)."
+
+#: ../../source/cli_admin.rst:736
+msgid ""
+"``--write`` — Offre aussi les outils qui écrivent : enregistrer une "
+"position, la commenter, créer et remplir une collection. Rien n'efface."
+msgstr ""
+"``--write`` — Προσφέρει επίσης τα εργαλεία που γράφουν: αποθήκευση θέσης,"
+" σχολιασμός της, δημιουργία και συμπλήρωση συλλογής. Τίποτα δεν "
+"διαγράφεται."
+
+#: ../../source/cli_admin.rst:739
+msgid ""
+"Comme ``call``, la commande migre le schéma d'une base ancienne à "
+"l'ouverture, même sans ``--write``."
+msgstr ""
+"Όπως η ``call``, η εντολή μεταφέρει το σχήμα μιας παλαιότερης βάσης κατά "
+"το άνοιγμα, ακόμη και χωρίς ``--write``."
+
+#: ../../source/cli_admin.rst:742
+msgid "**Exemple:** déclarer la base à Claude Code."
+msgstr "**Παράδειγμα:** δήλωση της βάσης στο Claude Code."
+
+#: ../../source/cli_admin.rst:749
+msgid "completion — Complétion shell"
+msgstr "completion — Συμπλήρωση κελύφους"
+
+#: ../../source/cli_admin.rst:751
+msgid ""
+"Affiche sur la sortie standard un script de complétion pour les noms de "
+"sous-commandes. La liste des commandes intégrée à chaque script est "
+"générée depuis la même table que ``blunderdb help`` et l'aiguillage de "
+"``main.go`` (``handlers()``) : une nouvelle sous-commande est donc "
+"proposée par la complétion dès qu'elle est câblée, sans rien à tenir à "
+"jour à la main."
+msgstr ""
+"Εμφανίζει στην τυπική έξοδο ένα σενάριο συμπλήρωσης για τα ονόματα των "
+"υποεντολών. Η λίστα εντολών που ενσωματώνεται σε κάθε σενάριο παράγεται "
+"από τον ίδιο πίνακα που διαβάζουν και το ``blunderdb help`` και η "
+"δρομολόγηση του ``main.go`` (``handlers()``): έτσι μια νέα υποεντολή "
+"προσφέρεται από τη συμπλήρωση μόλις συνδεθεί, χωρίς τίποτα να χρειάζεται "
+"χειροκίνητη συντήρηση."
+
+#: ../../source/cli_admin.rst:775
+msgid ""
+"Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
+" et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
+"au moment de la construction, et le cask Homebrew exécute ``blunderdb "
+"completion <shell>`` une fois à l'installation via "
+"``generate_completions_from_executable``. Rien n'est committé dans le "
+"dépôt : la complétion ne peut donc jamais dériver de la table des sous-"
+"commandes."
+msgstr ""
+"Τα πακέτα το εγκαθιστούν αυτόματα: το ``.deb``/``.rpm`` (nfpm) και το "
+"πακέτο AUR παράγουν τα τρία σενάρια από το πακεταρισμένο εκτελέσιμο κατά "
+"τη στιγμή της κατασκευής, και το Homebrew cask εκτελεί ``blunderdb "
+"completion <shell>`` μία φορά κατά την εγκατάσταση μέσω "
+"``generate_completions_from_executable``. Τίποτα δεν αποθηκεύεται στο "
+"αποθετήριο, οπότε η συμπλήρωση δεν μπορεί ποτέ να αποκλίνει από τον "
+"πίνακα υποεντολών."
+
+#: ../../source/cli_admin.rst:783
+msgid "version — Afficher la version"
+msgstr "version — Εμφάνιση της έκδοσης"
+
+#: ../../source/cli_admin.rst:785
+msgid ""
+"Affiche la version de blunderDB et celle du schéma de base de données que"
+" ce binaire écrit ; c'est la première chose à joindre à un rapport de "
+"bug."
+msgstr ""
+"Εμφανίζει την έκδοση του blunderDB και την έκδοση του σχήματος βάσης "
+"δεδομένων που γράφει αυτό το εκτελέσιμο· είναι το πρώτο πράγμα που "
+"επισυνάπτεται σε μια αναφορά σφάλματος."

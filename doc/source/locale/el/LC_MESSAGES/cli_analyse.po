@@ -1,0 +1,977 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_analyse.rst:4
+msgid "Analyse et moteur"
+msgstr "Ανάλυση και μηχανή"
+
+#: ../../source/cli_analyse.rst:7
+msgid "analyze — Rattrapage gammonNet"
+msgstr "analyze — Συμπλήρωση gammonNet"
+
+#: ../../source/cli_analyse.rst:9
+msgid ""
+"Écrit une analyse gammonNet pour chaque position qui n'en a aucune — le "
+"rattrapage d'une bibliothèque constituée avant que cette fonctionnalité "
+"existe (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__, `ADR-0015 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-"
+"serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__). "
+"C'est la même opération que le déclenchement automatique après import et "
+"la ligne « Positions sans analyse » de l'onglet *Maintenance* de "
+"l'interface graphique, et que le point d'accès "
+"``/v1/gammonnet.analyzeMissing`` du démon ``serve`` pour un tenant — "
+"trois formes différentes de la même opération, pas trois logiques "
+"distinctes (voir :ref:`headless`)."
+msgstr ""
+"Γράφει μια ανάλυση gammonNet για κάθε θέση που δεν έχει καμία — η "
+"συμπλήρωση μιας βιβλιοθήκης που δημιουργήθηκε πριν από την ύπαρξη αυτής "
+"της λειτουργίας (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__, `ADR-0015 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-"
+"serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__). "
+"Είναι η ίδια λειτουργία με την αυτόματη εκτέλεση μετά την εισαγωγή και τη"
+" γραμμή «Θέσεις χωρίς ανάλυση» της καρτέλας *Συντήρηση* της γραφικής "
+"διεπαφής, και με το σημείο πρόσβασης ``/v1/gammonnet.analyzeMissing`` του"
+" δαίμονα ``serve`` για έναν tenant — τρεις διαφορετικές μορφές της ίδιας "
+"λειτουργίας, όχι τρεις ξεχωριστές λογικές (βλ. :ref:`headless`)."
+
+#: ../../source/cli_analyse.rst:23 ../../source/cli_analyse.rst:197
+#: ../../source/cli_analyse.rst:253 ../../source/cli_analyse.rst:292
+#: ../../source/cli_analyse.rst:342 ../../source/cli_analyse.rst:465
+msgid "**Options:**"
+msgstr "**Επιλογές:**"
+
+#: ../../source/cli_analyse.rst:25
+msgid "``--db`` — Base de données (obligatoire)."
+msgstr "``--db`` — Βάση δεδομένων (υποχρεωτικό)."
+
+#: ../../source/cli_analyse.rst:26
+msgid "``--ply`` — Profondeur de recherche (défaut: 2, le paramètre canonique)."
+msgstr "``--ply`` — Βάθος αναζήτησης (προεπιλογή: 2, η κανονική παράμετρος)."
+
+#: ../../source/cli_analyse.rst:27
+msgid "``--prune-k`` — Largeur d'élagage (défaut: 12, le paramètre canonique)."
+msgstr "``--prune-k`` — Πλάτος κλαδέματος (προεπιλογή: 12, η κανονική παράμετρος)."
+
+#: ../../source/cli_analyse.rst:28
+msgid ""
+"``--candidates`` — Nombre de coups candidats conservés par décision de "
+"déplacement (défaut: 10)."
+msgstr ""
+"``--candidates`` — Αριθμός υποψήφιων κινήσεων που διατηρούνται ανά "
+"απόφαση κίνησης (προεπιλογή: 10)."
+
+#: ../../source/cli_analyse.rst:30
+msgid ""
+"``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
+"nombre de cœurs de la machine). Quand il reste moins de positions que de "
+"cœurs (un match court, la fin du lot), chaque recherche s'étale sur les "
+"cœurs libres ; le résultat ne change pas d'un bit."
+msgstr ""
+"``--jobs`` — Αριθμός θέσεων που αναλύονται παράλληλα (προεπιλογή: ο "
+"αριθμός των πυρήνων του μηχανήματος). Όταν απομένουν λιγότερες θέσεις από"
+" πυρήνες (ένας σύντομος αγώνας, το τέλος της παρτίδας), κάθε αναζήτηση "
+"απλώνεται στους ελεύθερους πυρήνες· το αποτέλεσμα δεν αλλάζει ούτε κατά "
+"ένα bit."
+
+#: ../../source/cli_analyse.rst:34
+msgid ""
+"``--match`` — Restreint le lot aux positions d'un seul match (0, le "
+"défaut, signifie toute la bibliothèque)."
+msgstr ""
+"``--match`` — Περιορίζει τη δέσμη στις θέσεις ενός μόνο αγώνα (0, η "
+"προεπιλογή, σημαίνει ολόκληρη τη βιβλιοθήκη)."
+
+#: ../../source/cli_analyse.rst:36
+msgid ""
+"``--compare`` — **N'écrit rien** : compare gammonNet aux analyses "
+"importées au lieu de combler des trous (voir plus bas)."
+msgstr ""
+"``--compare`` — **Δεν γράφει τίποτα**: συγκρίνει το gammonNet με τις "
+"εισηγμένες αναλύσεις αντί να καλύπτει κενά (βλ. παρακάτω)."
+
+#: ../../source/cli_analyse.rst:38
+msgid ""
+"``--stale`` — Réanalyse les positions dont l'analyse gammonNet est "
+"périmée — écrite par une version antérieure du moteur, ou à une autre "
+"profondeur que ``--ply`` — au lieu de combler des trous. Une position qui"
+" porte aussi une analyse XG, GNUbg ou BGBlitz n'est jamais touchée."
+msgstr ""
+"``--stale`` — Επαναναλύει τις θέσεις των οποίων η ανάλυση gammonNet είναι"
+" ξεπερασμένη — γραμμένη από προηγούμενη έκδοση της μηχανής, ή σε "
+"διαφορετικό βάθος από το ``--ply`` — αντί να συμπληρώνει κενά. Μια θέση "
+"που φέρει επίσης ανάλυση XG, GNUbg ή BGBlitz δεν αγγίζεται ποτέ."
+
+#: ../../source/cli_analyse.rst:42
+msgid ""
+"``--limit`` — Avec ``--compare``, s'arrête après ce nombre de positions "
+"(0 = toutes)."
+msgstr ""
+"``--limit`` — Με το ``--compare``, σταματά μετά από αυτόν τον αριθμό "
+"θέσεων (0 = όλες)."
+
+#: ../../source/cli_analyse.rst:44
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut, avec la progression) "
+"ou ``json`` (un seul document récapitulatif, imprimé à la fin)."
+msgstr ""
+"``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή, με πρόοδο) ή ``json`` "
+"(ένα και μόνο συνοπτικό έγγραφο, τυπωμένο στο τέλος)."
+
+#: ../../source/cli_analyse.rst:46
+msgid ""
+"``--rollout`` — Fait un rollout des positions que choisit ``--query`` au "
+"lieu de combler des trous (voir plus bas)."
+msgstr ""
+"``--rollout`` — Κάνει rollout στις θέσεις που επιλέγει το ``--query`` "
+"αντί να συμπληρώνει κενά (βλ. παρακάτω)."
+
+#: ../../source/cli_analyse.rst:48
+msgid ""
+"``--query`` — Avec ``--rollout``, les positions à jouer, dans le langage "
+"de requête de la recherche (``search --query-help``) ; vide, toutes."
+msgstr ""
+"``--query`` — Με το ``--rollout``, οι θέσεις που θα παιχτούν, στη γλώσσα "
+"ερωτημάτων της αναζήτησης (``search --query-help``)· κενό, όλες."
+
+#: ../../source/cli_analyse.rst:51
+msgid ""
+"**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un "
+"match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a"
+" fait passer par XG. blunderDB en connaissait les positions et les coups "
+"joués, mais rien ne disait ce qu'ils valaient ; une fois le lot passé, le"
+" coup effectivement joué est comparé au classement de gammonNet et "
+"l'écart alimente le PR et tous les autres indicateurs. Le coup joué vient"
+" de la table des coups du match, écrite à l'import, que le fichier ait "
+"porté une analyse ou non — il n'est jamais deviné."
+msgstr ""
+"**Ένας αγώνας που εισήχθη χωρίς ανάλυση αποκτά έτσι PR.** Είναι η "
+"περίπτωση ενός αγώνα που παίχτηκε διαδικτυακά, ή ενός αρχείου Jellyfish "
+"``.mat`` που κανείς δεν πέρασε από το XG. Το blunderDB γνώριζε τις θέσεις"
+" και τις κινήσεις που παίχτηκαν, αλλά τίποτα δεν έλεγε τι άξιζαν· μόλις "
+"τρέξει η παρτίδα, η κίνηση που όντως παίχτηκε συγκρίνεται με την κατάταξη"
+" του gammonNet και η διαφορά τροφοδοτεί το PR και όλους τους άλλους "
+"δείκτες. Η κίνηση που παίχτηκε προέρχεται από τον πίνακα κινήσεων του "
+"αγώνα, γραμμένο κατά την εισαγωγή, είτε το αρχείο έφερε ανάλυση είτε όχι "
+"— ποτέ δεν μαντεύεται."
+
+#: ../../source/cli_analyse.rst:60
+msgid ""
+"Une base analysée avec une version antérieure à celle-ci n'a pas besoin "
+"d'être réévaluée : :ref:`repair <cli_repair>` recalcule les colonnes à "
+"partir de ce qui est déjà en base et rend leur PR à ces matchs."
+msgstr ""
+"Μια βάση που αναλύθηκε με παλαιότερη έκδοση δεν χρειάζεται επανεκτίμηση: "
+"το :ref:`repair <cli_repair>` ξαναϋπολογίζει τις στήλες από ό,τι υπάρχει "
+"ήδη και επιστρέφει το PR σε αυτούς τους αγώνες."
+
+#: ../../source/cli_analyse.rst:64
+msgid ""
+"**Un seul match** (``--match``). Avec l'identifiant qu'affiche ``list "
+"--type matches``, le lot ne parcourt que les positions de ce match : même"
+" règle du trou, mêmes garanties, portée plus étroite. Un match qui vient "
+"d'être importé reçoit ses analyses sans que le reste de la bibliothèque "
+"soit balayé, et un match corrigé puis analysé une seconde fois ne coûte "
+"que les positions créées par la correction, puisque toutes les autres "
+"portent déjà une analyse. L'option ne se combine ni avec ``--stale`` ni "
+"avec ``--compare``, qui regardent tous deux des positions ayant déjà une "
+"analyse : demander les deux est une erreur, plutôt qu'une portée "
+"silencieusement ignorée."
+msgstr ""
+"**Ένας μόνο αγώνας** (``--match``). Με το αναγνωριστικό που εμφανίζει η "
+"``list --type matches``, η δέσμη διατρέχει μόνο τις θέσεις αυτού του "
+"αγώνα: ίδιος κανόνας του κενού, ίδιες εγγυήσεις, στενότερη εμβέλεια. Ένας"
+" αγώνας που μόλις εισήχθη λαμβάνει τις αναλύσεις του χωρίς να διατρέχεται"
+" η υπόλοιπη βιβλιοθήκη, και ένας αγώνας που διορθώθηκε και αναλύθηκε "
+"δεύτερη φορά κοστίζει μόνο τις θέσεις που δημιούργησε η διόρθωση, αφού "
+"όλες οι άλλες φέρουν ήδη ανάλυση. Η επιλογή δεν συνδυάζεται ούτε με "
+"``--stale`` ούτε με ``--compare``, που και οι δύο κοιτούν θέσεις οι "
+"οποίες έχουν ήδη ανάλυση: το να ζητηθούν και τα δύο είναι σφάλμα, όχι μια"
+" σιωπηλά αγνοημένη εμβέλεια."
+
+#: ../../source/cli_analyse.rst:74
+msgid ""
+"**Le parallélisme** (``--jobs``). Les positions d'un lot sont "
+"indépendantes — aucune recherche n'informe la suivante — donc elles sont "
+"réparties sur ``--jobs`` fils d'exécution, chacun avec son propre "
+"évaluateur. Les analyses écrites sont **identiques quelle que soit la "
+"valeur de** ``--jobs`` ; seul le temps de calcul change. ``--jobs 1`` "
+"laisse la machine libre pour autre chose. L'annulation n'est pas affectée"
+" : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
+"était déjà calculé est écrit."
+msgstr ""
+"**Ο παραλληλισμός** (``--jobs``). Οι θέσεις μιας δέσμης είναι ανεξάρτητες"
+" — καμία αναζήτηση δεν τροφοδοτεί την επόμενη — οπότε κατανέμονται σε "
+"``--jobs`` νήματα εκτέλεσης, καθένα με τον δικό του αξιολογητή. Οι "
+"αναλύσεις που γράφονται είναι **πανομοιότυπες όποια κι αν είναι η τιμή "
+"του** ``--jobs``· αλλάζει μόνο ο χρόνος υπολογισμού. Το ``--jobs 1`` "
+"αφήνει το μηχάνημα ελεύθερο για άλλες εργασίες. Η ακύρωση δεν "
+"επηρεάζεται: το Ctrl-C σταματά τη δέσμη πριν από κάθε νέα θέση, και ό,τι "
+"είχε ήδη υπολογιστεί γράφεται."
+
+#: ../../source/cli_analyse.rst:82
+msgid ""
+"**La règle du trou** (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__). Une position"
+" portant déjà une analyse — XG, GNUbg, BGBlitz, ou un précédent passage "
+"de gammonNet — n'est jamais touchée, quel que soit le moteur manquant. "
+"Seule une position **sans aucune** analyse est écrite. La commande peut "
+"donc être relancée à tout moment sans risque, et interrompue proprement :"
+" Ctrl-C annule sans rien perdre de ce qui est déjà écrit, et la prochaine"
+" exécution reprend exactement là où la précédente s'est arrêtée — aucun "
+"journal n'est nécessaire, puisque « les positions sans analyse » est "
+"recalculé à chaque lancement."
+msgstr ""
+"**Ο κανόνας του κενού** (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__). Μια θέση που"
+" φέρει ήδη μια ανάλυση — XG, GNUbg, BGBlitz, ή ένα προηγούμενο πέρασμα "
+"του gammonNet — δεν αγγίζεται ποτέ, όποια μηχανή κι αν λείπει. Γράφεται "
+"μόνο μια θέση **χωρίς καμία** ανάλυση. Η εντολή μπορεί επομένως να "
+"επανεκτελεστεί ανά πάσα στιγμή χωρίς κίνδυνο, και να διακοπεί καθαρά: το "
+"Ctrl-C ακυρώνει χωρίς να χαθεί τίποτα από όσα έχουν ήδη γραφτεί, και η "
+"επόμενη εκτέλεση συνεχίζει ακριβώς από εκεί που σταμάτησε η προηγούμενη —"
+" δεν χρειάζεται κανένα ημερολόγιο, αφού «οι θέσεις χωρίς ανάλυση» "
+"επανυπολογίζονται σε κάθε εκκίνηση."
+
+#: ../../source/cli_analyse.rst:91
+msgid "**Exemple:**"
+msgstr "**Παράδειγμα:**"
+
+#: ../../source/cli_analyse.rst:109
+msgid ""
+"**Rollouts en lot** (``--rollout``). Chaque position que choisit "
+"``--query`` est jouée par un :ref:`rollout <cli_rollout>`, l'une après "
+"l'autre sur tous les cœurs, et le rollout est enregistré à côté de son "
+"analyse, jamais à sa place. La valeur est un préréglage — ``fast`` (216 "
+"parties tronquées à 7) ou ``standard`` (1296 parties tronquées à 11) — ou"
+" des réglages libres : un préréglage facultatif, puis ``games=``, ``min-"
+"games=``, ``truncation=``, ``jsd=``, ``ply=``, ``candidates=``, "
+"``seed=``, séparés par des virgules. Une position qui porte déjà un "
+"rollout aux mêmes réglages est sautée : une exécution interrompue par "
+"Ctrl-C reprend là où elle s'est arrêtée, la position en cours étant "
+"abandonnée entière. Une position que seul un rollout analyse est trouvée "
+"par la recherche à travers lui ; une position déjà analysée garde les "
+"colonnes de son analyse."
+msgstr ""
+"**Rollout σε παρτίδες** (``--rollout``). Κάθε θέση που επιλέγει το "
+"``--query`` παίζεται με ένα :ref:`rollout <cli_rollout>`, η μία μετά την "
+"άλλη σε όλους τους πυρήνες, και το rollout καταγράφεται δίπλα στην "
+"ανάλυσή της, ποτέ στη θέση της. Η τιμή είναι μια προεπιλογή — ``fast`` "
+"(216 παιχνίδια κομμένα στο 7) ή ``standard`` (1296 παιχνίδια κομμένα στο "
+"11) — ή ελεύθερες ρυθμίσεις: μια προαιρετική προεπιλογή, έπειτα "
+"``games=``, ``min-games=``, ``truncation=``, ``jsd=``, ``ply=``, "
+"``candidates=``, ``seed=``, χωρισμένα με κόμματα. Μια θέση που φέρει ήδη "
+"rollout με τις ίδιες ρυθμίσεις παραλείπεται: μια εκτέλεση που διακόπηκε "
+"με Ctrl-C συνεχίζει από εκεί που σταμάτησε, με την τρέχουσα θέση να "
+"απορρίπτεται εξ ολοκλήρου. Μια θέση που αναλύεται μόνο από rollout "
+"βρίσκεται από την αναζήτηση μέσω αυτού· μια ήδη αναλυμένη θέση διατηρεί "
+"τις στήλες της ανάλυσής της."
+
+#: ../../source/cli_analyse.rst:129
+msgid "``--compare`` : **que vaut gammonNet sur votre bibliothèque ?**"
+msgstr "``--compare``: **τι αξίζει το gammonNet στη δική σας βάση;**"
+
+#: ../../source/cli_analyse.rst:131
+msgid ""
+"La précision du moteur est mesurée ailleurs contre des corpus de "
+"référence et contre la table de bearoff exacte. Aucune de ces mesures ne "
+"répond à la question qu'un utilisateur se pose vraiment, qui porte sur "
+"**ses** positions : sur les matchs importés d'XG, où le moteur embarqué "
+"est-il en désaccord avec l'analyse venue du fichier, et que coûterait ce "
+"désaccord ?"
+msgstr ""
+"Η ακρίβεια της μηχανής μετριέται αλλού έναντι σωμάτων αναφοράς και έναντι"
+" του ακριβούς πίνακα μαζέματος. Καμία από αυτές τις μετρήσεις δεν απαντά "
+"στο ερώτημα που πραγματικά θέτει ο χρήστης και που αφορά τις **δικές "
+"του** θέσεις: στους αγώνες που εισήχθησαν από το XG, πού διαφωνεί η "
+"ενσωματωμένη μηχανή με την ανάλυση που ήρθε με το αρχείο, και τι θα "
+"κόστιζε αυτή η διαφωνία;"
+
+#: ../../source/cli_analyse.rst:137
+msgid ""
+"``--compare`` répond, et **n'écrit rien**. Ce n'est pas une précaution "
+"mais l'intérêt de la commande : l'ADR-0013 protège inconditionnellement "
+"une analyse importée, et la comparaison peut donc se lancer sur une "
+"bibliothèque qu'on ne veut surtout pas voir réécrite."
+msgstr ""
+"Το ``--compare`` απαντά και **δεν γράφει τίποτα**. Δεν είναι προφύλαξη "
+"αλλά το νόημα της εντολής: το ADR-0013 προστατεύει ανεπιφύλακτα μια "
+"εισηγμένη ανάλυση, και η σύγκριση μπορεί έτσι να τρέξει σε μια βάση που "
+"κανείς δεν θέλει να ξαναγραφτεί."
+
+#: ../../source/cli_analyse.rst:142
+msgid "Le compte rendu donne :"
+msgstr "Η αναφορά δίνει:"
+
+#: ../../source/cli_analyse.rst:144
+msgid ""
+"le **taux d'accord** sur la meilleure réponse, séparé entre coups de "
+"pions et décisions de videau — les deux n'ont rien à voir et un taux "
+"unique cacherait lequel des deux décroche ;"
+msgstr ""
+"το **ποσοστό συμφωνίας** στην καλύτερη απάντηση, χωρισμένο ανάμεσα σε "
+"κινήσεις πουλιών και αποφάσεις κύβου — τα δύο δεν έχουν σχέση μεταξύ τους"
+" και ένα ενιαίο ποσοστό θα έκρυβε ποιο από τα δύο υστερεί·"
+
+#: ../../source/cli_analyse.rst:147
+msgid ""
+"le **coût du désaccord**, tarifé sur l'échelle de l'analyse importée : ce"
+" que le coup préféré par gammonNet vaut *selon le moteur importé*, moins "
+"ce que vaut son propre meilleur coup. Ce sens est le seul que les deux "
+"moteurs puissent chiffrer ensemble ; tarifer un désaccord deux fois "
+"inviterait à lire le plus petit des deux nombres ;"
+msgstr ""
+"το **κόστος της διαφωνίας**, αποτιμημένο στην κλίμακα της εισηγμένης "
+"ανάλυσης: πόσο αξίζει η κίνηση που προτιμά το gammonNet *σύμφωνα με την "
+"εισηγμένη μηχανή*, μείον πόσο αξίζει η δική της καλύτερη κίνηση. Αυτή η "
+"κατεύθυνση είναι η μόνη που μπορούν να αποτιμήσουν από κοινού και οι δύο "
+"μηχανές· η διπλή αποτίμηση μιας διαφωνίας θα προσκαλούσε να διαβαστεί ο "
+"μικρότερος από τους δύο αριθμούς·"
+
+#: ../../source/cli_analyse.rst:152
+msgid ""
+"la ventilation **par phase de partie**, qui est ce qui dit *où* les "
+"désaccords se concentrent ;"
+msgstr ""
+"την ανάλυση **ανά φάση του παιχνιδιού**, που είναι αυτό που λέει *πού* "
+"συγκεντρώνονται οι διαφωνίες·"
+
+#: ../../source/cli_analyse.rst:154
+msgid "les dix désaccords les plus coûteux, position par position."
+msgstr "τις δέκα πιο δαπανηρές διαφωνίες, θέση προς θέση."
+
+#: ../../source/cli_analyse.rst:156
+#, no-python-format
+msgid ""
+"Deux moteurs écrivent le même coup différemment — XG note « 13/7 » là où "
+"gammonNet écrit « 13/8 8/7 », les frappes sont marquées d'un côté et pas "
+"de l'autre, la répétition est parfois condensée en « (2) ». Ces "
+"différences sont du dialecte et non du désaccord : la comparaison ramène "
+"les deux notations à une forme canonique avant de les comparer. Sans "
+"cela, un corpus de test affichait 78,8 % d'accord au lieu de 93,2 % — "
+"quinze points de faux désaccords."
+msgstr ""
+"Δύο μηχανές γράφουν την ίδια κίνηση διαφορετικά — το XG γράφει «13/7» "
+"εκεί που το gammonNet γράφει «13/8 8/7», τα χτυπήματα σημειώνονται από τη"
+" μία πλευρά και όχι από την άλλη, η επανάληψη συμπυκνώνεται ενίοτε σε "
+"«(2)». Αυτές οι διαφορές είναι διάλεκτος και όχι διαφωνία: η σύγκριση "
+"ανάγει και τις δύο γραφές σε κανονική μορφή πριν τις συγκρίνει. Χωρίς "
+"αυτό, ένα δοκιμαστικό σώμα έδειχνε 78,8 % συμφωνία αντί για 93,2 % — "
+"δεκαπέντε μονάδες ψευδών διαφωνιών."
+
+#: ../../source/cli_analyse.rst:164
+msgid ""
+"Un coup que le moteur importé n'a **pas listé** ne peut pas être tarifé "
+"sur son échelle : il compte comme un désaccord de coût nul plutôt que "
+"d'un coût inventé."
+msgstr ""
+"Μια κίνηση που η εισηγμένη μηχανή **δεν** κατέγραψε δεν μπορεί να "
+"αποτιμηθεί στην κλίμακά της: μετρά ως διαφωνία μηδενικού κόστους αντί για"
+" ένα κόστος επινοημένο."
+
+#: ../../source/cli_analyse.rst:182
+msgid "rollout — Rollout d'une position"
+msgstr "rollout — Rollout μιας θέσης"
+
+#: ../../source/cli_analyse.rst:184
+msgid ""
+"Joue une position un grand nombre de fois avec gammonNet, pour trancher "
+"ce qu'une recherche ne tranche pas : deux coups à quelques millièmes, ou "
+"une décision de videau où le modèle hésite. Avec des dés, ce sont ses "
+"coups qui sont joués (les meilleurs à la profondeur du rollout, au moins "
+"2 ply, ou ceux nommés par ``--move``) ; sans dés, sa décision de videau "
+"(Pas de double et Double/Prend ; Double/Passe vaut +1 exactement). La "
+"position vient d'un XGID ou d'un OGID, ou d'une base (``--db`` et "
+"``--id``) ; sans ``--store``, rien n'est enregistré."
+msgstr ""
+"Παίζει μια θέση πολλές φορές με το gammonNet, για να κρίνει όσα μια "
+"αναζήτηση δεν κρίνει: δύο κινήσεις με διαφορά λίγων χιλιοστών ή μια "
+"απόφαση κύβου όπου το μοντέλο διστάζει. Με ζάρια παίζονται οι κινήσεις "
+"της (οι καλύτερες στο βάθος του rollout, τουλάχιστον 2 ply, ή αυτές που "
+"ορίζονται με ``--move``)· χωρίς ζάρια, η απόφαση κύβου (Όχι διπλασιασμός "
+"και Διπλασιασμός/Αποδοχή· το Διπλασιασμός/Άρνηση αξίζει ακριβώς +1). Η "
+"θέση προέρχεται από ένα XGID ή ένα OGID ή από μια βάση (``--db`` και "
+"``--id``)· χωρίς ``--store``, τίποτα δεν καταγράφεται."
+
+#: ../../source/cli_analyse.rst:199
+msgid ""
+"``--preset`` — Réglage de départ : ``fast`` (défaut : 216 parties "
+"tronquées à 7 demi-coups, arrêt à JSD 3 après 108) ou ``standard`` (1296 "
+"parties tronquées à 11, arrêt à JSD 3 après 324). Les deux jouent à 0 ply"
+" — le réseau seul, pour les coups, le videau et les feuilles ; ``--ply "
+"1`` ou plus joue plus profond, pour un temps plusieurs fois plus long. "
+"Les options suivantes remplacent le préréglage une à une."
+msgstr ""
+"``--preset`` — Αρχική ρύθμιση: ``fast`` (προεπιλογή: 216 παρτίδες "
+"κομμένες στις 7 κινήσεις, διακοπή στο JSD 3 μετά τις 108) ή ``standard`` "
+"(1296 παρτίδες κομμένες στις 11, διακοπή στο JSD 3 μετά τις 324). Και οι "
+"δύο παίζουν στα 0 ply — το δίκτυο μόνο του, για τις κινήσεις, τον κύβο "
+"και τα φύλλα· το ``--ply 1`` ή περισσότερο παίζει βαθύτερα, με χρόνο "
+"αρκετές φορές μεγαλύτερο. Οι επόμενες επιλογές την αντικαθιστούν μία προς"
+" μία."
+
+#: ../../source/cli_analyse.rst:205
+msgid ""
+"``--games``, ``--min-games``, ``--truncation``, ``--jsd``, ``--ply``, "
+"``--candidates`` — Les paramètres du rollout (``--truncation 0`` joue "
+"chaque partie jusqu'au bout, ``--jsd 0`` n'arrête jamais avant la fin)."
+msgstr ""
+"``--games``, ``--min-games``, ``--truncation``, ``--jsd``, ``--ply``, "
+"``--candidates`` — Οι παράμετροι του rollout (το ``--truncation 0`` "
+"παίζει κάθε παρτίδα ως το τέλος, το ``--jsd 0`` δεν σταματά ποτέ πριν το "
+"τέλος)."
+
+#: ../../source/cli_analyse.rst:208
+msgid "``--move`` — Un coup à jouer, en notation blunderDB (répétable)."
+msgstr ""
+"``--move`` — Μια κίνηση προς παιχνίδι, με τον συμβολισμό του blunderDB "
+"(επαναλαμβανόμενη)."
+
+#: ../../source/cli_analyse.rst:209
+msgid ""
+"``--seed`` — Graine des dés, fixe par défaut : la même commande donne les"
+" mêmes nombres."
+msgstr ""
+"``--seed`` — Σπόρος των ζαριών, σταθερός από προεπιλογή: η ίδια εντολή "
+"δίνει τους ίδιους αριθμούς."
+
+#: ../../source/cli_analyse.rst:211
+msgid ""
+"``--jobs`` — Parties jouées en parallèle (défaut : une par cœur) ; seul "
+"le temps change."
+msgstr ""
+"``--jobs`` — Παρτίδες που παίζονται παράλληλα (προεπιλογή: μία ανά "
+"πυρήνα)· αλλάζει μόνο ο χρόνος."
+
+#: ../../source/cli_analyse.rst:213 ../../source/cli_analyse.rst:294
+msgid ""
+"``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : "
+"``text``)."
+msgstr "``--format`` — Μορφή εξόδου: ``text`` ή ``json`` (προεπιλογή: ``text``)."
+
+#: ../../source/cli_analyse.rst:214
+msgid ""
+"``--db``, ``--id`` — La base et l'identifiant de la position à jouer, à "
+"la place d'un XGID."
+msgstr ""
+"``--db``, ``--id`` — Η βάση και ο αναγνωριστικός αριθμός της θέσης που θα"
+" παιχτεί, αντί για ένα XGID."
+
+#: ../../source/cli_analyse.rst:216
+msgid ""
+"``--store`` — Enregistre le rollout terminé sur la position, comme une "
+"seconde analyse portant ses propres réglages, à côté de l'analyse "
+"importée ou évaluée, qu'il ne remplace jamais. Un rollout interrompu "
+"n'est pas enregistré ; de deux rollouts aux mêmes réglages, la série la "
+"plus longue est gardée, un rollout à d'autres réglages s'ajoute à côté."
+msgstr ""
+"``--store`` — Καταγράφει το ολοκληρωμένο rollout στη θέση, ως δεύτερη "
+"ανάλυση με τις δικές της ρυθμίσεις, δίπλα στην εισηγμένη ή υπολογισμένη "
+"ανάλυση, την οποία δεν αντικαθιστά ποτέ. Ένα διακοπτόμενο rollout δεν "
+"καταγράφεται· από δύο rollouts με τις ίδιες ρυθμίσεις διατηρείται η "
+"μεγαλύτερη σειρά, ενώ ένα rollout με άλλες ρυθμίσεις προστίθεται δίπλα."
+
+#: ../../source/cli_analyse.rst:221
+msgid ""
+"``--list`` — Affiche les rollouts enregistrés sur la position, du plus "
+"récent au plus ancien, au lieu d'en jouer un."
+msgstr ""
+"``--list`` — Εμφανίζει τα rollouts που είναι αποθηκευμένα στη θέση, από "
+"το πιο πρόσφατο στο παλαιότερο, αντί να εκτελέσει ένα."
+
+#: ../../source/cli_analyse.rst:224
+msgid ""
+"Tous les candidats jouent les mêmes dés, la chance de chaque lancer est "
+"retirée du résultat de chaque partie (réduction de variance), les deux "
+"premiers lancers sont stratifiés et une partie s'arrête là où la base de "
+"sortie two-sided la couvre. Chaque ligne donne l'équité, son intervalle à"
+" 95 %, le nombre de parties jouées et la JSD, l'écart au meilleur en "
+"écarts-types de la différence. Le videau est joué pendant les parties : "
+"le classement est plus sûr que l'équité absolue. Ctrl-C affiche ce que "
+"les parties terminées ont établi."
+msgstr ""
+"Όλοι οι υποψήφιοι παίζουν τα ίδια ζάρια, η τύχη κάθε ρίψης αφαιρείται από"
+" το αποτέλεσμα κάθε παρτίδας (μείωση διακύμανσης), οι δύο πρώτες ρίψεις "
+"στρωματοποιούνται και μια παρτίδα σταματά εκεί που τη καλύπτει η βάση "
+"εξόδου two-sided. Κάθε γραμμή δίνει το equity, το διάστημα 95 % του, τον "
+"αριθμό των παρτίδων που παίχτηκαν και το JSD, τη διαφορά από τον καλύτερο"
+" σε τυπικές αποκλίσεις της διαφοράς. Ο κύβος παίζεται κατά τη διάρκεια "
+"των παρτίδων: η κατάταξη είναι πιο αξιόπιστη από το απόλυτο equity. Το "
+"Ctrl-C εμφανίζει όσα έχουν καθιερώσει οι ολοκληρωμένες παρτίδες."
+
+#: ../../source/cli_analyse.rst:233 ../../source/cli_analyse.rst:268
+#: ../../source/cli_analyse.rst:312 ../../source/cli_analyse.rst:357
+#: ../../source/cli_analyse.rst:426 ../../source/cli_analyse.rst:486
+msgid "**Exemples:**"
+msgstr "**Παραδείγματα:**"
+
+#: ../../source/cli_analyse.rst:243
+msgid "epc — Calculatrice EPC"
+msgstr "epc — Υπολογιστής EPC"
+
+#: ../../source/cli_analyse.rst:245
+msgid ""
+"Calcule l'Effective Pip Count, la probabilité de gain et le verdict de "
+"videau money d'une position de sortie donnée par XGID ou par OGID "
+"(OpenGammon). Calcul pur : aucun fichier de base de données n'est "
+"impliqué."
+msgstr ""
+"Υπολογίζει το Effective Pip Count, την πιθανότητα νίκης και την "
+"ετυμηγορία κύβου money μιας θέσης εξόδου δοσμένης με XGID ή με OGID "
+"(OpenGammon). Καθαρός υπολογισμός: δεν εμπλέκεται κανένα αρχείο βάσης "
+"δεδομένων."
+
+#: ../../source/cli_analyse.rst:255
+msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
+msgstr "``--format`` — Μορφή εξόδου: ``text`` ή ``json`` (προεπιλογή: ``text``)."
+
+#: ../../source/cli_analyse.rst:256
+msgid ""
+"``--bearoff-ts`` — Base bearoff two-sided optionnelle (``.bd``) "
+"élargissant la base intégrée TS-06-06 (également lue depuis la variable "
+"d'environnement ``BLUNDERDB_TS_PATH``). La base valide la plus large "
+"l'emporte ; un fichier invalide est ignoré avec un avertissement."
+msgstr ""
+"``--bearoff-ts`` — Προαιρετική αμφίπλευρη βάση bearoff (``.bd``) που "
+"διευρύνει την ενσωματωμένη TS-06-06 (διαβάζεται και από τη μεταβλητή "
+"περιβάλλοντος ``BLUNDERDB_TS_PATH``). Υπερισχύει η ευρύτερη έγκυρη βάση· "
+"ένα άκυρο αρχείο αγνοείται με προειδοποίηση."
+
+#: ../../source/cli_analyse.rst:261
+msgid ""
+"**Régimes.** Dans le domaine couvert par la base two-sided, la "
+"probabilité de gain et l'analyse money du videau (cubeless, ND, D/T, D/P,"
+" verdict) sont **exactes**. En dehors, la probabilité de gain est "
+"**estimée** (convolution des distributions de lancers one-sided plus une "
+"correction calibrée) et affichée avec sa marge d'erreur mesurée ; le "
+"verdict de videau n'est volontairement jamais estimé (voir `ADR-0009 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-"
+"chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__)."
+msgstr ""
+"**Καθεστώτα.** Στο εύρος που καλύπτει η αμφίπλευρη βάση, η πιθανότητα "
+"νίκης και η ανάλυση κύβου money (cubeless, ND, D/T, D/P, ετυμηγορία) "
+"είναι **ακριβείς**. Εκτός αυτού, η πιθανότητα νίκης **εκτιμάται** "
+"(συνέλιξη των μονόπλευρων κατανομών ζαριών συν μια βαθμονομημένη "
+"διόρθωση) και εμφανίζεται με το μετρημένο περιθώριο σφάλματός της· η "
+"ετυμηγορία κύβου δεν εκτιμάται ποτέ, σκοπίμως (βλ. `ADR-0009 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-"
+"chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__)."
+
+#: ../../source/cli_analyse.rst:281
+msgid "cubematrix — Matrice du videau"
+msgstr "cubematrix — Μήτρα του κύβου"
+
+#: ../../source/cli_analyse.rst:283
+msgid ""
+"Donne le verdict de videau d'une position à **tous les scores** d'un "
+"match : pour chaque case *away × away*, si la position se double et si "
+"elle se prend. Calcul pur : aucune base de données n'est ouverte, la "
+"position arrive par son XGID ou son OGID (OpenGammon)."
+msgstr ""
+"Δίνει την ετυμηγορία του κύβου μιας θέσης σε **κάθε σκορ** ενός αγώνα: "
+"για κάθε κελί *away × away*, αν η θέση διπλασιάζεται και αν γίνεται "
+"αποδεκτή. Καθαρός υπολογισμός: καμία βάση δεδομένων δεν ανοίγει, η θέση "
+"δίνεται ως XGID ή ως OGID (OpenGammon)."
+
+#: ../../source/cli_analyse.rst:295
+msgid ""
+"``--match-length`` — Longueur du match que la grille couvre, de 1 à 25 "
+"(défaut : 7)."
+msgstr ""
+"``--match-length`` — Μήκος αγώνα που καλύπτει το πλέγμα, από 1 έως 25 "
+"(προεπιλογή: 7)."
+
+#: ../../source/cli_analyse.rst:297
+msgid ""
+"``--ply`` — Profondeur de recherche de chaque case, ``0`` ou ``2`` "
+"(défaut : 2)."
+msgstr "``--ply`` — Βάθος αναζήτησης κάθε κελιού, ``0`` ή ``2`` (προεπιλογή: 2)."
+
+#: ../../source/cli_analyse.rst:299
+msgid ""
+"``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage"
+" (défaut : 12)."
+msgstr ""
+"``--prune-k`` — Πλήθος υποψήφιων κινήσεων που κρατά το δίκτυο κλαδέματος "
+"(προεπιλογή: 12)."
+
+#: ../../source/cli_analyse.rst:301
+msgid ""
+"``--jobs`` — Recherches menées en parallèle (défaut : une par cœur). La "
+"grille est identique quelle que soit la valeur ; seul le temps change."
+msgstr ""
+"``--jobs`` — Αναζητήσεις που τρέχουν παράλληλα (προεπιλογή: μία ανά "
+"πυρήνα). Το πλέγμα είναι το ίδιο όποια κι αν είναι η τιμή· αλλάζει μόνο ο"
+" χρόνος."
+
+#: ../../source/cli_analyse.rst:304
+msgid ""
+"Le score propre à la position est ignoré — la grille le remplace — mais "
+"son **videau** est conservé : la question posée est « à quel score "
+"retournerais-je *ce* videau ». La grille est post-Crawford d'un bout à "
+"l'autre."
+msgstr ""
+"Το ίδιο το σκορ της θέσης αγνοείται — το πλέγμα το αντικαθιστά — αλλά ο "
+"**κύβος** της διατηρείται: το ερώτημα είναι σε ποιο σκορ θα γύριζα "
+"*αυτόν* τον κύβο. Το πλέγμα είναι μετά το Crawford από άκρη σε άκρη."
+
+#: ../../source/cli_analyse.rst:308
+msgid ""
+"Chaque case est une recherche à part entière, parce que le moteur tient "
+"compte du score : une seule recherche relue à travers des équités de "
+"match différentes serait fausse exactement là où le score compte."
+msgstr ""
+"Κάθε κελί είναι δική του αναζήτηση, γιατί η μηχανή λαμβάνει υπόψη το "
+"σκορ: μία μόνο αναζήτηση διαβασμένη μέσα από διαφορετικές ισοδυναμίες "
+"αγώνα θα ήταν λάθος ακριβώς εκεί που μετράει το σκορ."
+
+#: ../../source/cli_analyse.rst:322
+msgid ""
+"Sortie ``text`` : une grille dont les lignes sont les points restant à "
+"faire au joueur au trait, les colonnes ceux de l'adversaire, puis la "
+"légende des sigles ``ND`` / ``DT`` / ``DP`` / ``TG`` et la raison de "
+"chaque case refusée."
+msgstr ""
+"Έξοδος ``text``: ένα πλέγμα του οποίου οι γραμμές είναι οι πόντοι που "
+"χρειάζεται ακόμη ο παίκτης στη σειρά και οι στήλες εκείνοι του αντιπάλου,"
+" έπειτα το υπόμνημα των συντομογραφιών ``ND`` / ``DT`` / ``DP`` / ``TG`` "
+"και ο λόγος κάθε κελιού που απορρίφθηκε."
+
+#: ../../source/cli_analyse.rst:327
+msgid "capture — Position depuis une capture d'écran"
+msgstr "capture — Θέση από στιγμιότυπο οθόνης"
+
+#: ../../source/cli_analyse.rst:329
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon (thème par défaut) : pions, barre, pions sortis (ce qui manque à "
+"quinze), dés, camp au trait et videau. L'image (PNG, JPEG ou GIF) peut "
+"contenir autre chose que le plateau ; plus grande qu'un écran 4K "
+"(3840×2160), elle est réduite avant la lecture. Le score n'est jamais lu."
+" Ce que la lecture ne peut trancher est listé comme un doute, jamais "
+"deviné : flèche masquée, pile plus haute que les cinq pions que XG "
+"dessine côte à côte, dés illisibles."
+msgstr ""
+"Διαβάζει τη θέση που δείχνει ένα στιγμιότυπο οθόνης ταμπλό του eXtreme "
+"Gammon (προεπιλεγμένο θέμα): πούλια, μπάρα, πούλια που έχουν βγει (ό,τι "
+"λείπει από τα δεκαπέντε), ζάρια, παίκτης που παίζει και κύβος. Η εικόνα "
+"(PNG, JPEG ή GIF) μπορεί να περιέχει και κάτι άλλο εκτός από το ταμπλό· "
+"αν είναι μεγαλύτερη από οθόνη 4K (3840×2160), σμικρύνεται πριν από την "
+"ανάγνωση. Το σκορ δεν διαβάζεται ποτέ. Ό,τι η ανάγνωση δεν μπορεί να "
+"κρίνει καταγράφεται ως αμφιβολία και δεν μαντεύεται ποτέ: κρυμμένο βέλος,"
+" στοίβα ψηλότερη από τα πέντε πούλια που το XG ζωγραφίζει δίπλα-δίπλα, μη"
+" αναγνώσιμα ζάρια."
+
+#: ../../source/cli_analyse.rst:344
+msgid ""
+"``--format`` — Format de sortie : ``text``, ``json`` ou ``xgid`` (défaut "
+": ``text``)."
+msgstr ""
+"``--format`` — Μορφή εξόδου: ``text``, ``json`` ή ``xgid`` (προεπιλογή: "
+"``text``)."
+
+#: ../../source/cli_analyse.rst:345
+msgid ""
+"``--db`` et ``--save`` — Enregistre la position dans la base comme "
+"position individuelle."
+msgstr "``--db`` και ``--save`` — Αποθηκεύει τη θέση στη βάση ως μεμονωμένη θέση."
+
+#: ../../source/cli_analyse.rst:347
+msgid ""
+"``--score`` — Le score, que la capture ne montre pas : ``money``, ou les "
+"scores Away des deux joueurs, celui du joueur 1 (en bas) d'abord, par "
+"exemple ``2a/5a``."
+msgstr ""
+"``--score`` — Το σκορ, που το στιγμιότυπο δεν δείχνει: ``money`` ή τα "
+"σκορ Away των δύο παικτών, πρώτα του παίκτη 1 (κάτω), για παράδειγμα "
+"``2a/5a``."
+
+#: ../../source/cli_analyse.rst:350
+msgid ""
+"``--turn`` — Le camp au trait, ``1`` (en bas) ou ``2`` (en haut), quand "
+"aucun dé ne le montre."
+msgstr ""
+"``--turn`` — Ο παίκτης που παίζει, ``1`` (κάτω) ή ``2`` (πάνω), όταν δεν "
+"τον δείχνουν ζάρια."
+
+#: ../../source/cli_analyse.rst:352
+msgid ""
+"``--force`` — Enregistre malgré les doutes de la lecture, une fois le "
+"plateau vérifié. Il ne remplace ni ``--score`` ni ``--turn`` : ``--save``"
+" refuse tant que le score, ou le trait sans dés, n'est pas fourni, et "
+"nomme l'option qui manque."
+msgstr ""
+"``--force`` — Αποθηκεύει παρά τις αμφιβολίες της ανάγνωσης, αφού ελεγχθεί"
+" το ταμπλό. Δεν αντικαθιστά ούτε το ``--score`` ούτε το ``--turn``: το "
+"``--save`` αρνείται όσο δεν δίνεται το σκορ, ή η σειρά χωρίς ζάρια, και "
+"κατονομάζει την επιλογή που λείπει."
+
+#: ../../source/cli_analyse.rst:366
+#, no-python-brace-format
+msgid ""
+"Le daemon offre la même lecture : ``POST /v1/positions.fromImage`` avec "
+"``{\"data\": \"<image en base64>\"}``. Il refuse une image plus grande "
+"qu'un écran 4K au lieu de la réduire, et ne lit que deux images à la "
+"fois."
+msgstr ""
+"Ο δαίμονας προσφέρει την ίδια ανάγνωση: ``POST /v1/positions.fromImage`` "
+"με ``{\"data\": \"<εικόνα σε base64>\"}``. Απορρίπτει μια εικόνα "
+"μεγαλύτερη από οθόνη 4K αντί να τη σμικρύνει, και διαβάζει μόνο δύο "
+"εικόνες ταυτόχρονα."
+
+#: ../../source/cli_analyse.rst:371
+msgid "bearoff — Bases de sortie"
+msgstr "bearoff — Βάσεις bearoff"
+
+#: ../../source/cli_analyse.rst:373
+msgid ""
+"Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
+"n'est embarqué : une table est calculée ici et vérifiée contre "
+"l'empreinte que gnubg produit pour son domaine. Aucune sous-commande ne "
+"parle à une base de données — une table de bearoff est de l'arithmétique "
+"sur le jeu, pas sur les positions de quelqu'un — donc aucune ne prend "
+"``--db``."
+msgstr ""
+"Φτιάχνει και διαχειρίζεται τις βάσεις bearoff. Τίποτα δεν κατεβαίνει και "
+"τίποτα δεν είναι ενσωματωμένο: ένας πίνακας υπολογίζεται εδώ και "
+"ελέγχεται με το αποτύπωμα που παράγει το gnubg για τον τομέα του. Καμία "
+"υποεντολή δεν μιλά σε βάση δεδομένων — ένας πίνακας bearoff είναι "
+"αριθμητική για το παιχνίδι, όχι για τις θέσεις κάποιου — οπότε καμία δεν "
+"παίρνει ``--db``."
+
+#: ../../source/cli_analyse.rst:386
+msgid ""
+"Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
+"two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
+"points (``os`` seul vaut ``os6``)."
+msgstr ""
+"Ο τομέας γράφεται όπως στο ``makebearoff``: ``6x9`` για τον αμφίπλευρο "
+"πίνακα με εννέα πούλια ανά παίκτη, ``os8`` για τον μονόπλευρο πίνακα οκτώ"
+" σημείων (το σκέτο ``os`` ισοδυναμεί με ``os6``)."
+
+#: ../../source/cli_analyse.rst:390
+msgid ""
+"Les deux familles ne répondent pas à la même question. Une table **deux "
+"faces** élargit le domaine où la probabilité de gain et le verdict de "
+"videau sont exacts ; une table **une face** élargit la distance à "
+"laquelle un pion peut se trouver sans que l'EPC se taise (jusqu'à dix "
+"points)."
+msgstr ""
+"Οι δύο οικογένειες δεν απαντούν στο ίδιο ερώτημα. Ένας **αμφίπλευρος** "
+"πίνακας διευρύνει τον τομέα όπου η πιθανότητα νίκης και η ετυμηγορία "
+"κύβου είναι ακριβείς· ένας **μονόπλευρος** διευρύνει την απόσταση στην "
+"οποία μπορεί να βρίσκεται ένα πούλι χωρίς να σωπάσει το EPC (έως δέκα "
+"σημεία)."
+
+#: ../../source/cli_analyse.rst:395
+msgid ""
+"**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
+"commencer, puis affiche le pourcentage et le temps restant mesuré."
+msgstr ""
+"**generate.** Δηλώνει το μέγεθος, τη μνήμη και τον εκτιμώμενο χρόνο πριν "
+"ξεκινήσει, και μετά δείχνει το ποσοστό και τον μετρημένο υπολειπόμενο "
+"χρόνο."
+
+#: ../../source/cli_analyse.rst:398
+msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
+msgstr "``--ts`` — Αμφίπλευρος τομέας προς υπολογισμό, για παράδειγμα ``6x9``."
+
+#: ../../source/cli_analyse.rst:399
+msgid ""
+"``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
+"et un seul des deux est requis."
+msgstr ""
+"``--os`` — Μονόπλευρος τομέας προς υπολογισμό, σε αριθμό σημείων: 6 έως "
+"12. Απαιτείται ακριβώς ένα από τα δύο."
+
+#: ../../source/cli_analyse.rst:401
+msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
+msgstr "``--cores`` — Πυρήνες προς χρήση (προεπιλογή: όλοι εκτός από έναν)."
+
+#: ../../source/cli_analyse.rst:402
+msgid ""
+"``--data-dir`` — Où écrire (défaut : le dossier de données de "
+"l'application)."
+msgstr ""
+"``--data-dir`` — Πού γράφεται (προεπιλογή: ο φάκελος δεδομένων της "
+"εφαρμογής)."
+
+#: ../../source/cli_analyse.rst:403
+msgid "``--quiet`` — Pas de ligne de progression."
+msgstr "``--quiet`` — Χωρίς γραμμή προόδου."
+
+#: ../../source/cli_analyse.rst:405
+msgid ""
+"**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
+" la table et la même commande relancée reprend là où elle s'était "
+"arrêtée, au lieu de tout recalculer. Une demi-heure d'arithmétique mérite"
+" d'être écrite. ``bearoff delete`` jette une reprise en attente. Seul le "
+"balayage deux faces se met en pause ; le balayage une face est séquentiel"
+" et ``--cores`` ne lui sert à rien."
+msgstr ""
+"**Το CTRL-C κάνει παύση.** Το σήμα συλλαμβάνεται: η κατάσταση γράφεται "
+"δίπλα στον πίνακα και η ίδια εντολή ξανατρέχοντας συνεχίζει από εκεί που "
+"σταμάτησε αντί να ξαναϋπολογίσει τα πάντα. Μισή ώρα αριθμητικής αξίζει να"
+" καταγραφεί. Το ``bearoff delete`` πετάει μια εκκρεμή συνέχιση. Μόνο η "
+"αμφίπλευρη σάρωση κάνει παύση· η μονόπλευρη είναι σειριακή και το "
+"``--cores`` δεν της χρησιμεύει."
+
+#: ../../source/cli_analyse.rst:412
+msgid ""
+"**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
+"machine — et dit lesquels sont déjà présents, avec leur verdict, et "
+"lesquels ont un calcul en pause. ``--format json`` pour un script, "
+"``--cores`` pour changer l'hypothèse de l'estimation."
+msgstr ""
+"**list.** Κοστολογεί κάθε τομέα — μέγεθος, μνήμη, χρόνος σε αυτό το "
+"μηχάνημα — και λέει ποιοι υπάρχουν ήδη, με την ετυμηγορία τους, και ποιοι"
+" έχουν υπολογισμό σε παύση. ``--format json`` για σενάριο, ``--cores`` "
+"για αλλαγή της υπόθεσης της εκτίμησης."
+
+#: ../../source/cli_analyse.rst:417
+msgid ""
+"**verify.** Répond ``verified`` (les mêmes octets que la référence), "
+"``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
+" ce domaine) ou ``corrupt`` (le fichier se contredit). Sort en erreur sur"
+" le dernier cas : cette commande est faite pour être mise dans un script."
+msgstr ""
+"**verify.** Απαντά ``verified`` (τα ίδια byte με την αναφορά), "
+"``unverified`` (καλοσχηματισμένος, αλλά δεν υπάρχει καταγεγραμμένο "
+"αποτύπωμα για αυτόν τον τομέα) ή ``corrupt`` (το αρχείο αντιφάσκει με τον"
+" εαυτό του). Τερματίζει με σφάλμα στην τελευταία περίπτωση: αυτή η εντολή"
+" φτιάχτηκε για να μπει σε σενάριο."
+
+#: ../../source/cli_analyse.rst:422
+msgid ""
+"**delete.** Retire la table, la reprise en attente et les débris d'un "
+"calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
+" l'application ; un domaine plus large ne l'est pas."
+msgstr ""
+"**delete.** Αφαιρεί τον πίνακα, την εκκρεμή συνέχιση και τα υπολείμματα "
+"ενός νεκρού υπολογισμού. Ένας προεπιλεγμένος τομέας ξαναϋπολογίζεται στην"
+" επόμενη εκκίνηση της εφαρμογής· ένας ευρύτερος όχι."
+
+#: ../../source/cli_analyse.rst:446
+msgid "openingbook — Quel coup à ce score ?"
+msgstr "openingbook — Ποια κίνηση σε αυτό το σκορ;"
+
+#: ../../source/cli_analyse.rst:448
+msgid ""
+"L'exercice *Ouverture* du panneau Entraînement (voir "
+":ref:`panneau_entrainement`) en ligne de commande : le coup d'ouverture "
+"(1st roll) ou la réponse (2nd roll) d'une partie à un score, tiré du "
+"livre d'ouverture embarqué et jugé contre lui. Tout coup à égalité avec "
+"le meilleur est juste (voir :ref:`metrique_livre_ouverture`). Aucune base"
+" n'est lue ni écrite."
+msgstr ""
+"Η άσκηση *Άνοιγμα* του πίνακα Εξάσκησης (βλ. :ref:`panneau_entrainement`)"
+" από τη γραμμή εντολών: η κίνηση ανοίγματος (1st roll) ή η απάντηση (2nd "
+"roll) ενός παιχνιδιού σε ένα σκορ, που κληρώνεται από το ενσωματωμένο "
+"βιβλίο ανοίγματος και κρίνεται με βάση αυτό. Κάθε κίνηση ισοδύναμη (tied)"
+" με την καλύτερη είναι σωστή (βλ. :ref:`metrique_livre_ouverture`). Καμία"
+" βάση δεν διαβάζεται ούτε γράφεται."
+
+#: ../../source/cli_analyse.rst:454
+msgid "**openingbook status** — Le nombre de lignes du livre et ses scores."
+msgstr ""
+"**openingbook status** — Ο αριθμός των γραμμών του βιβλίου και τα σκορ "
+"του."
+
+#: ../../source/cli_analyse.rst:456
+msgid ""
+"**openingbook question** — Tire une question : le jet d'ouverture et le "
+"score, avec le XGID de la position d'ouverture ; avec ``--roll second``, "
+"le jet de réponse dans la position que laisse un coup d'ouverture à "
+"égalité avec le meilleur à ce score, avec ce coup et le XGID de la "
+"position de réponse."
+msgstr ""
+"**openingbook question** — Κληρώνει μια ερώτηση: τη ζαριά ανοίγματος και "
+"το σκορ, με το XGID της θέσης ανοίγματος· με ``--roll second``, τη ζαριά "
+"απάντησης στη θέση που αφήνει μια κίνηση ανοίγματος που ισοβαθμεί με την "
+"καλύτερη σε αυτό το σκορ, με αυτή την κίνηση και το XGID της θέσης "
+"απάντησης."
+
+#: ../../source/cli_analyse.rst:467
+msgid ""
+"``--roll first|second`` — Le jet posé : ``first`` (l'ouverture, par "
+"défaut) ou ``second`` (la réponse)."
+msgstr ""
+"``--roll first|second`` — Η ζαριά που παίζεται: ``first`` (το άνοιγμα, "
+"από προεπιλογή) ή ``second`` (η απάντηση)."
+
+#: ../../source/cli_analyse.rst:468
+msgid ""
+"``--score <liste>`` — Scores à tirer, séparés par des virgules : ``4-2`` "
+"(le répondeur à 4 points, l'ouvreur à 2), ``1-2`` (partie Crawford), "
+"``1-1`` (le DMP, un point partout), ``money``."
+msgstr ""
+"``--score <liste>`` — Σκορ προς κλήρωση, χωρισμένα με κόμματα: ``4-2`` (ο"
+" απαντών στους 4 πόντους, ο ανοίγων στους 2), ``1-2`` (παιχνίδι "
+"Crawford), ``1-1`` (το DMP, διπλός πόντος αγώνα), ``money``."
+
+#: ../../source/cli_analyse.rst:470
+msgid ""
+"``--opening <liste>``, ``--reply <liste>`` — Jets d'ouverture ou de "
+"réponse à tirer (``31,65``) ; ``--reply`` avec ``--roll second`` "
+"seulement."
+msgstr ""
+"``--opening <liste>``, ``--reply <liste>`` — Ζαριές ανοίγματος ή "
+"απάντησης προς κλήρωση (``31,65``)· το ``--reply`` μόνο με ``--roll "
+"second``."
+
+#: ../../source/cli_analyse.rst:471
+msgid "``--seed <n>`` — Tirage reproductible (0 = au hasard)."
+msgstr "``--seed <n>`` — Αναπαραγώγιμη κλήρωση (0 = τυχαία)."
+
+#: ../../source/cli_analyse.rst:472
+msgid ""
+"``--book <fichier>`` — Un livre ``.jsonl`` ou ``.jsonl.gz`` à la place du"
+" livre embarqué."
+msgstr ""
+"``--book <fichier>`` — Ένα βιβλίο ``.jsonl`` ή ``.jsonl.gz`` αντί για το "
+"ενσωματωμένο βιβλίο."
+
+#: ../../source/cli_analyse.rst:473
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — Μορφή εξόδου."
+
+#: ../../source/cli_analyse.rst:475
+#, no-python-format
+msgid ""
+"**openingbook answer** — Juge un coup et affiche chaque candidat contre "
+"le meilleur : écart, IC 95 % et « tied » (à égalité), en équité "
+"normalisée au score, avec le nombre de parties et le réglage du rollout. "
+"Sans ``--after``, le coup est l'ouverture ; avec ``--reply`` et "
+"``--after``, le coup est la réponse jouée après ce coup d'ouverture, "
+"celui que nomme la question ``--roll second``."
+msgstr ""
+"**openingbook answer** — Κρίνει μια κίνηση και εμφανίζει κάθε υποψήφια "
+"απέναντι στην καλύτερη: διαφορά, ΔΕ 95 % και « tied » (ισοδύναμη), σε "
+"ισοτιμία κανονικοποιημένη στο σκορ, με τον αριθμό των παιχνιδιών και τη "
+"ρύθμιση του rollout. Χωρίς ``--after``, η κίνηση είναι το άνοιγμα· με "
+"``--reply`` και ``--after``, η κίνηση είναι η απάντηση που παίζεται μετά "
+"από αυτή την κίνηση ανοίγματος, εκείνη που κατονομάζει η ερώτηση ``--roll"
+" second``."

@@ -1,0 +1,1208 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_admin.rst:4
+msgid "Administration de la base"
+msgstr "Database administration"
+
+#: ../../source/cli_admin.rst:7
+msgid "info — Métadonnées de la base"
+msgstr "info — Database metadata"
+
+#: ../../source/cli_admin.rst:9
+msgid "Affiche les métadonnées et les statistiques d'une base de données."
+msgstr "Display metadata and statistics of a database."
+
+#: ../../source/cli_admin.rst:15 ../../source/cli_admin.rst:102
+#: ../../source/cli_admin.rst:136 ../../source/cli_admin.rst:272
+#: ../../source/cli_admin.rst:317 ../../source/cli_admin.rst:357
+#: ../../source/cli_admin.rst:417 ../../source/cli_admin.rst:559
+#: ../../source/cli_admin.rst:660 ../../source/cli_admin.rst:690
+#: ../../source/cli_admin.rst:733
+msgid "**Options:**"
+msgstr "**Options:**"
+
+#: ../../source/cli_admin.rst:17 ../../source/cli_admin.rst:104
+#: ../../source/cli_admin.rst:138 ../../source/cli_admin.rst:274
+#: ../../source/cli_admin.rst:319 ../../source/cli_admin.rst:359
+#: ../../source/cli_admin.rst:419 ../../source/cli_admin.rst:561
+#: ../../source/cli_admin.rst:662
+msgid "``--db`` — Base de données (obligatoire)."
+msgstr "``--db`` — Database (required)."
+
+#: ../../source/cli_admin.rst:18
+msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
+msgstr "``--format`` — Output format: ``text`` or ``json`` (default: ``text``)."
+
+#: ../../source/cli_admin.rst:19
+msgid ""
+"``--estimate`` — Répond tout de suite sur une très grande base : au-delà "
+"de 200 000 lignes, un nombre est une estimation (borne haute), listée "
+"dans ``approximate`` en JSON et précédée de « ≈ » en texte, et les "
+"blunders ne sont donnés que si leur décompte gardé en cache vaut encore "
+"(sinon pas de ``blunder_count``). Par défaut, toutes les lignes sont "
+"comptées ; le décompte des blunders est gardé en cache dans la base et "
+"refait après toute écriture qui peut le changer (import, analyse, "
+"suppression, changement de seuil)."
+msgstr ""
+"``--estimate`` — Answers at once on a very large database: beyond 200,000"
+" rows a number is an estimate (an upper bound), listed in ``approximate``"
+" in JSON and prefixed with \"≈\" in text, and blunders are given only "
+"when their cached count still holds (otherwise no ``blunder_count``). By "
+"default every row is counted; the blunder count is cached in the database"
+" and recounted after any write that can change it (import, analysis, "
+"deletion, threshold change)."
+
+#: ../../source/cli_admin.rst:28 ../../source/cli_admin.rst:118
+#: ../../source/cli_admin.rst:191 ../../source/cli_admin.rst:669
+#: ../../source/cli_admin.rst:761
+msgid "**Exemples:**"
+msgstr "**Examples:**"
+
+#: ../../source/cli_admin.rst:56
+msgid ""
+"``--format json`` ajoute l'origine du fichier — ``issuance`` porte le "
+"filigrane s'il y en a un, et l'identité d'émetteur de cette machine :"
+msgstr ""
+"``--format json`` adds the file's origin — ``issuance`` carries the "
+"watermark if there is one, and this machine's issuer identity:"
+
+#: ../../source/cli_admin.rst:93
+msgid "edit — Modifier les métadonnées"
+msgstr "edit — Edit metadata"
+
+#: ../../source/cli_admin.rst:95
+msgid ""
+"Modifie le nom d'utilisateur, la description ou les seuils d'une base de "
+"données."
+msgstr "Edit the user name, the description or the thresholds of a database."
+
+#: ../../source/cli_admin.rst:105
+msgid "``--user`` — Nouveau nom d'utilisateur."
+msgstr "``--user`` — New user name."
+
+#: ../../source/cli_admin.rst:106
+msgid "``--description`` — Nouvelle description."
+msgstr "``--description`` — New description."
+
+#: ../../source/cli_admin.rst:107
+msgid "``--clear-user`` — Effacer le nom d'utilisateur."
+msgstr "``--clear-user`` — Clear user name."
+
+#: ../../source/cli_admin.rst:108
+msgid "``--clear-description`` — Effacer la description."
+msgstr "``--clear-description`` — Clear description."
+
+#: ../../source/cli_admin.rst:109
+msgid ""
+"``--error-threshold`` — Seuil d'erreur, en millipoints : une décision "
+"coûtant au moins cela est une erreur."
+msgstr ""
+"``--error-threshold`` — Error threshold, in millipoints: a decision "
+"costing at least this much is an error."
+
+#: ../../source/cli_admin.rst:111
+msgid ""
+"``--blunder-threshold`` — Seuil de blunder, en millipoints : une erreur "
+"coûtant au moins cela est un blunder."
+msgstr ""
+"``--blunder-threshold`` — Blunder threshold, in millipoints: an error "
+"costing at least this much is a blunder."
+
+#: ../../source/cli_admin.rst:113
+#, no-python-brace-format
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(``{\"changes\": [...]}``)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` "
+"(``{\"changes\": [...]}``)."
+
+#: ../../source/cli_admin.rst:116
+msgid "Au moins une option de modification est requise."
+msgstr "At least one edit option is required."
+
+#: ../../source/cli_admin.rst:127
+msgid "verify — Vérifier l'intégrité"
+msgstr "verify — Verify integrity"
+
+#: ../../source/cli_admin.rst:129
+msgid ""
+"Vérifie l'intégrité de la base de données et, optionnellement, compare un"
+" match avec son fichier source."
+msgstr ""
+"Verify database integrity and optionally compare a match against its "
+"source file."
+
+#: ../../source/cli_admin.rst:139
+msgid "``--match`` — ID du match à vérifier."
+msgstr "``--match`` — Match ID to verify."
+
+#: ../../source/cli_admin.rst:140
+msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
+msgstr "``--mat`` — MAT file to compare against (used with ``--match``)."
+
+#: ../../source/cli_admin.rst:141
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(statistiques, orphelins, écart de schéma, et la vérification du match le"
+" cas échéant)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` (statistics,"
+" orphans, schema drift, and the match check if any)."
+
+#: ../../source/cli_admin.rst:145
+msgid ""
+"Sans l'option ``--match``, la commande affiche les statistiques générales"
+" de la base. Avec ``--match``, elle vérifie les données du match et peut "
+"les comparer avec le fichier source original."
+msgstr ""
+"Without ``--match``, the command displays general database statistics. "
+"With ``--match``, it verifies the match data and can compare it against "
+"the original source file."
+
+#: ../../source/cli_admin.rst:149
+msgid ""
+"Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
+"les lignes orphelines — parties sans match, coups sans partie, analyses "
+"de coup sans coup, analyses sans position, entrées du journal de révision"
+" sans paquet ou sans position, questions d'entraînement sans séance — et "
+"affiche une ligne ``WARNING`` avec le total s'il y en a. Une base saine "
+"répond ``Orphaned rows: none``. Des orphelins peuvent subsister dans une "
+"base écrite par une version qui n'appliquait pas les clés étrangères sur "
+"toutes les connexions, ou avant que le journal de révision ait les "
+"siennes ; ils ne sont rattachés à aucun match ni à aucun paquet et "
+"n'occupent que de la place. La commande se termine tout de même avec le "
+"code de sortie 0."
+msgstr ""
+"Every run also checks referential integrity: it counts orphaned rows — "
+"games without a match, moves without a game, move analyses without a "
+"move, analyses without a position, review-journal entries without a deck "
+"or without a position, training questions without a session — and prints "
+"a ``WARNING`` line with the total when any exist. A healthy database "
+"answers ``Orphaned rows: none``. Orphans can linger in a database written"
+" by a version that did not enforce foreign keys on every connection, or "
+"before the review journal had its own; they belong to no match and to no "
+"deck, and only take up space. The command still exits with code 0."
+
+#: ../../source/cli_admin.rst:159
+msgid ""
+"Chaque exécution compare aussi le schéma à la DDL de référence et liste "
+"les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
+"base ajoute ce qui manque quand elle le peut et ne fait que journaliser "
+"ce qu'elle ne peut pas ajouter (typiquement un index ``UNIQUE`` que des "
+"lignes en double l'empêchent de reconstruire) : c'est ici que cet écart "
+"devient visible, et une requête qui nomme l'un de ces éléments échoue "
+"tant que la cause n'est pas corrigée. Une base saine répond ``Schema: "
+"matches the reference DDL``. Comme les orphelins, un écart de schéma est "
+"un constat, pas un échec : le code de sortie reste 0."
+msgstr ""
+"Every run also compares the schema against the reference DDL and lists "
+"the tables, columns and indexes the database lacks. Opening a database "
+"adds what is missing when it can and only logs what it cannot add "
+"(typically a ``UNIQUE`` index that duplicate rows keep it from "
+"rebuilding): this is where that gap becomes visible, and a query naming "
+"one of those elements fails until the cause is fixed. A healthy database "
+"answers ``Schema: matches the reference DDL``. Like orphans, schema drift"
+" is a finding, not a failure: the exit code stays 0."
+
+#: ../../source/cli_admin.rst:169
+msgid ""
+"Chaque exécution contrôle enfin les règles que la DDL courante énonce "
+"mais que SQLite ne sait pas ajouter à une table déjà créée : les "
+"contraintes ``CHECK`` de plage (dés entre 0 et 6, videau et pips "
+"positifs, sorties entre 0 et 15, note de révision entre 1 et 4), le hash "
+"Zobrist qu'une ligne ne devrait jamais omettre et l'unicité d'une analyse"
+" par position. Une base créée depuis la version 2.18.0 du schéma les "
+"applique ; une base plus ancienne peut encore porter des lignes qu'une "
+"base neuve refuserait, et ce sont elles qui sont comptées ici, règle par "
+"règle. Une base saine répond ``Constraints: every row satisfies the "
+"current DDL``. C'est un constat de plus : rien n'est réparé et le code de"
+" sortie reste 0."
+msgstr ""
+"Every run finally checks the rules the current DDL states but SQLite "
+"cannot add to a table that already exists: the range ``CHECK`` "
+"constraints (dice between 0 and 6, non-negative cube and pip counts, 0 to"
+" 15 checkers off, review ratings between 1 and 4), the Zobrist hash a row"
+" should never be without, and one analysis per position. A database "
+"created since schema version 2.18.0 enforces them; an older one can still"
+" hold rows a new database would refuse, and those are what is counted "
+"here, rule by rule. A healthy database reports ``Constraints: every row "
+"satisfies the current DDL``. One more finding: nothing is repaired and "
+"the exit code stays 0."
+
+#: ../../source/cli_admin.rst:180
+msgid ""
+"Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
+"``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
+"prétendent compter, et indique combien sont en désaccord et de combien au"
+" pire. Tous deux sont écrits une seule fois, à l'import, d'après ce que "
+"contenait le **fichier source**, et ce sont eux que la liste des matchs "
+"et la vue d'une partie affichent : un petit écart est le plus souvent un "
+"import qui a sauté ce qu'il ne savait pas convertir. Rien n'est réécrit —"
+" remplacer le compteur par ce qui a été stocké effacerait justement "
+"l'écart qu'il y a lieu de regarder. Une base saine répond ``Counters: "
+"game_count and move_count agree with the rows``."
+msgstr ""
+"Every run finally recomputes the two denormalised counters, "
+"``match.game_count`` and ``game.move_count``, from the rows they claim to"
+" count, and reports how many disagree and by how much at worst. Both are "
+"written once, at import, from what the **source file** held, and are what"
+" the match list and the game view display: a small gap is usually an "
+"import that skipped what it could not convert. Nothing is rewritten — "
+"replacing the counter with what was stored would erase the very "
+"discrepancy worth looking at. A healthy database reports ``Counters: "
+"game_count and move_count agree with the rows``."
+
+#: ../../source/cli_admin.rst:199
+msgid ""
+"**En faire une garde.** Le code de sortie vaut 0 quoi que la commande "
+"trouve : c'est ``--format json`` qui porte le verdict, et un script doit "
+"lire les compteurs lui-même."
+msgstr ""
+"**Using it as a guard.** The exit code is 0 whatever the command finds: "
+"it is ``--format json`` that carries the verdict, and a script must read "
+"the counters itself."
+
+#: ../../source/cli_admin.rst:244
+msgid ""
+"Trois champs valent une alarme : ``orphan_total``, ``schema_drift_count``"
+" et ``constraint_violation_total``. Non nuls, ils décrivent une base à "
+"réparer."
+msgstr ""
+"Three fields are worth an alarm: ``orphan_total``, ``schema_drift_count``"
+" and ``constraint_violation_total``. When non-zero, they describe a "
+"database that needs repairing."
+
+#: ../../source/cli_admin.rst:252
+msgid ""
+"``counter_drift_total`` n'en fait pas partie, et l'exemple ci-dessus le "
+"montre : la base qui l'a produit venait d'être importée et affiche déjà "
+"53 parties dont le compteur de coups diffère de ce que les lignes "
+"contiennent. Ces compteurs viennent du fichier source, pas de la base ; "
+"un écart raconte l'import, il ne signale pas une corruption. Regardez-le,"
+" ne vous en servez pas comme d'un seuil."
+msgstr ""
+"``counter_drift_total`` is not one of them, and the example above shows "
+"why: the database that produced it had just been imported and already "
+"shows 53 games whose move counter differs from what the rows contain. "
+"These counters come from the source file, not from the database; a gap "
+"tells the story of the import, it does not signal corruption. Look at it,"
+" do not use it as a threshold."
+
+#: ../../source/cli_admin.rst:260
+msgid "vacuum — Compacter la base de données"
+msgstr "vacuum — Compacting the database"
+
+#: ../../source/cli_admin.rst:262
+msgid ""
+"Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
+"purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
+"des données, il faut le lui demander explicitement. C'est la seule façon "
+"de déclencher un compactage — il ne se produit jamais automatiquement à "
+"l'ouverture d'une base, car son coût est imprévisible sur une grosse "
+"base."
+msgstr ""
+"Reclaims the disk space left behind by deletions (matches, tournaments, "
+"purges): SQLite never shrinks the file by itself when data is deleted, it"
+" has to be asked explicitly. This is the only way to trigger a compaction"
+" — it never happens automatically when a database is opened, because its "
+"cost is unpredictable on a large one."
+
+#: ../../source/cli_admin.rst:275
+#, no-python-brace-format
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(``{\"size_before\", \"size_after\", \"reclaimed\"}``, en octets)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` "
+"(``{\"size_before\", \"size_after\", \"reclaimed\"}``, in bytes)."
+
+#: ../../source/cli_admin.rst:278
+msgid ""
+"La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
+"taille affichée avant compactage soit honnête, vérifie qu'il reste à côté"
+" du fichier environ sa taille en espace libre, écrit la base compactée "
+"dans une copie (``VACUUM INTO``) qui remplace ensuite le fichier, puis "
+"lance un ``ANALYZE`` pour rafraîchir les statistiques utilisées par le "
+"planificateur de requêtes. Si un autre programme a la base ouverte, le "
+"fichier n'est pas remplacé : la commande compacte sur place (``VACUUM``),"
+" ce qui demande environ deux fois la taille du fichier en espace libre. "
+"Si l'espace disque manque, la commande refuse de démarrer avec un message"
+" explicite plutôt que de risquer un compactage interrompu."
+msgstr ""
+"The command starts with a ``wal_checkpoint(TRUNCATE)`` so that the size "
+"reported before compaction is honest, checks that about the file's size "
+"is left as free space next to it, writes the compacted database into a "
+"copy (``VACUUM INTO``) that then replaces the file, and then runs an "
+"``ANALYZE`` to refresh the statistics the query planner uses. If another "
+"program has the database open, the file is not replaced: the command "
+"compacts in place (``VACUUM``), which needs about twice the file's size "
+"in free space. If disk space is short, the command refuses to start with "
+"an explicit message rather than risk an interrupted compaction."
+
+#: ../../source/cli_admin.rst:289
+msgid ""
+"Avant le compactage, chaque analyse encore rangée en JSON par une version"
+" antérieure est réécrite au format binaire compact (voir ``reencode``)."
+msgstr ""
+"Before compaction, every analysis still stored as JSON by an earlier "
+"version is rewritten in the compact binary format (see ``reencode``)."
+
+#: ../../source/cli_admin.rst:292 ../../source/cli_admin.rst:332
+#: ../../source/cli_admin.rst:370 ../../source/cli_admin.rst:430
+#: ../../source/cli_admin.rst:641 ../../source/cli_admin.rst:702
+msgid "**Exemple:**"
+msgstr "**Example:**"
+
+#: ../../source/cli_admin.rst:304
+msgid "met — La table d'équité de match de la base"
+msgstr "met — The library match equity table"
+
+#: ../../source/cli_admin.rst:306
+msgid ""
+"Liste, importe ou choisit la table d'équité de match (MET) avec laquelle "
+"gammonNet valorise les scores de match de la base : Kazaross-XG2, "
+"intégrée, par défaut, ou une table explicite au format ``.xml`` de GNUbg."
+" Chaque analyse calculée enregistre sa table ; une analyse à un score de "
+"match calculée avec une autre table que la table courante est sortie des "
+"statistiques. Changer de table ne réécrit aucune analyse."
+msgstr ""
+"Lists, imports or selects the match equity table (MET) with which "
+"gammonNet values the database's match scores: Kazaross-XG2, built in and "
+"the default, or an explicit table in GNUbg ``.xml`` format. Each computed"
+" analysis records its table; a match-score analysis computed with a table"
+" other than the current one is left out of the statistics. Changing the "
+"table rewrites no analysis."
+
+#: ../../source/cli_admin.rst:320
+msgid ""
+"``--import`` — Importe une table ``.xml`` de GNUbg. Une table déjà "
+"présente, ou identique à Kazaross-XG2, n'est pas ajoutée une seconde "
+"fois."
+msgstr ""
+"``--import`` — Imports a GNUbg ``.xml`` table. A table that is already "
+"present, or identical to Kazaross-XG2, is not added a second time."
+
+#: ../../source/cli_admin.rst:322
+msgid "``--current`` — Avec ``--import`` : rend la table importée courante."
+msgstr "``--current`` — With ``--import``: makes the imported table current."
+
+#: ../../source/cli_admin.rst:323
+msgid ""
+"``--use`` — Rend courante la table d'identifiant donné ; ``0`` revient à "
+"Kazaross-XG2."
+msgstr ""
+"``--use`` — Makes the table with the given identifier current; ``0`` goes"
+" back to Kazaross-XG2."
+
+#: ../../source/cli_admin.rst:325
+msgid "``--format`` — Format de sortie : ``text`` (défaut) ou ``json``."
+msgstr "``--format`` — Output format: ``text`` (default) or ``json``."
+
+#: ../../source/cli_admin.rst:327
+msgid ""
+"La commande affiche ensuite les tables de la base, la courante marquée "
+"d'un ``*``. Le démon expose les mêmes opérations sur les routes "
+"``met.list``, ``met.import``, ``met.setCurrent`` et ``met.ofAnalysis``, "
+"limitées au tenant de l'appelant."
+msgstr ""
+"The command then prints the database's tables, the current one marked "
+"with a ``*``. The daemon exposes the same operations on the ``met.list``,"
+" ``met.import``, ``met.setCurrent`` and ``met.ofAnalysis`` routes, "
+"limited to the caller's tenant."
+
+#: ../../source/cli_admin.rst:342
+msgid "reencode — Réécrire les analyses au format compact"
+msgstr "reencode — Rewrite analyses in the compact format"
+
+#: ../../source/cli_admin.rst:344
+msgid ""
+"Les analyses sont rangées dans un format binaire compact, environ deux "
+"fois plus petit que le JSON compressé des versions antérieures et "
+"plusieurs fois plus rapide à relire. Une base créée avant ce format reste"
+" lisible telle quelle : ses anciennes analyses sont converties quand "
+"elles sont réécrites (un import qui les enrichit, un ``vacuum``). "
+"``reencode`` les convertit toutes, sans compacter le fichier : utile "
+"quand le disque n'a pas la place de la copie compactée qu'écrit un "
+"``vacuum``, ou sur un serveur PostgreSQL, qui n'a pas de ``vacuum``."
+msgstr ""
+"Analyses are stored in a compact binary format, about half the size of "
+"the compressed JSON of earlier versions and several times faster to read "
+"back. A database created before this format remains readable as is: its "
+"older analyses are converted when they are rewritten (an import that "
+"enriches them, a ``vacuum``). ``reencode`` converts them all, without "
+"compacting the file: useful when the disk has no room for the compacted "
+"copy that a ``vacuum`` writes, or on a PostgreSQL server, which has no "
+"``vacuum``."
+
+#: ../../source/cli_admin.rst:360
+#, no-python-brace-format
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(``{\"rewritten\"}``, le nombre d'analyses réécrites)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` "
+"(``{\"rewritten\"}``, the number of analyses rewritten)."
+
+#: ../../source/cli_admin.rst:363
+msgid ""
+"La conversion avance par lots de 2 000 analyses, chacun dans sa propre "
+"transaction. Interrompue, elle reprend au lancement suivant là où elle "
+"s'était arrêtée : les analyses déjà converties sont sautées sans être "
+"relues. Une analyse illisible est laissée telle quelle et signalée dans "
+"le journal. Elle ne se lance jamais d'elle-même. Le démon expose la même "
+"opération sur la route ``maintenance.reencode``, limitée au tenant de "
+"l'appelant."
+msgstr ""
+"The conversion proceeds in batches of 2,000 analyses, each in its own "
+"transaction. If interrupted, it resumes at the next run where it stopped:"
+" analyses already converted are skipped without being read again. An "
+"unreadable analysis is left as it is and reported in the log. It never "
+"starts by itself. The daemon exposes the same operation on the "
+"``maintenance.reencode`` route, limited to the caller's tenant."
+
+#: ../../source/cli_admin.rst:379
+msgid "maintenance — L'état de santé de la base"
+msgstr "maintenance — The health of the database"
+
+#: ../../source/cli_admin.rst:381
+msgid ""
+"Une ligne par opération de maintenance : ce qu'elle compte, son action et"
+" sa dernière exécution. Rien ne se lance de soi-même : ni à l'ouverture "
+"de la base, ni en lisant l'état."
+msgstr ""
+"One line per maintenance operation: what it counts, its action and its "
+"latest run. Nothing starts by itself: neither when the database is "
+"opened, nor when the status is read."
+
+#: ../../source/cli_admin.rst:392
+msgid "**Sous-commandes:**"
+msgstr "**Subcommands:**"
+
+#: ../../source/cli_admin.rst:394
+msgid ""
+"``status`` — Toutes les opérations, avec les compteurs gratuits et la "
+"dernière exécution de chacune. Un compteur coûteux affiche ``(count on "
+"demand)`` : ``count`` le calcule."
+msgstr ""
+"``status`` — All operations, with the free counters and the latest run of"
+" each. An expensive counter shows ``(count on demand)``: ``count`` "
+"computes it."
+
+#: ../../source/cli_admin.rst:397
+msgid "``count`` — Calcule le compteur d'une opération, quel qu'en soit le coût."
+msgstr "``count`` — Computes an operation's counter, whatever its cost."
+
+#: ../../source/cli_admin.rst:398
+msgid ""
+"``ids`` — Liste les identifiants que l'opération compte (positions ou "
+"matchs) ; leur nombre est la réponse de ``count``."
+msgstr ""
+"``ids`` — Lists the identifiers the operation counts (positions or "
+"matches); their number is the answer of ``count``."
+
+#: ../../source/cli_admin.rst:400
+msgid ""
+"``run`` — Lance l'action d'une opération et l'inscrit comme sa dernière "
+"exécution (terminée, annulée ou en échec). Ctrl-C l'arrête entre deux "
+"lots."
+msgstr ""
+"``run`` — Runs an operation's action and records it as its latest run "
+"(completed, cancelled or failed). Ctrl-C stops it between two batches."
+
+#: ../../source/cli_admin.rst:403
+msgid "**Opérations:**"
+msgstr "**Operations:**"
+
+#: ../../source/cli_admin.rst:1
+msgid "Opération"
+msgstr "Operation"
+
+#: ../../source/cli_admin.rst:1
+msgid "Compteur"
+msgstr "Counter"
+
+#: ../../source/cli_admin.rst:1
+msgid "Action"
+msgstr "Action"
+
+#: ../../source/cli_admin.rst:1
+msgid "``analysis.missing``"
+msgstr "``analysis.missing``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Positions sans aucune analyse, à la demande."
+msgstr "Positions with no analysis at all, on demand."
+
+#: ../../source/cli_admin.rst:1
+msgid "La commande ``analyze``."
+msgstr "The ``analyze`` command."
+
+#: ../../source/cli_admin.rst:1
+msgid "``stats.matches``"
+msgstr "``stats.matches``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Matchs sans statistiques par match."
+msgstr "Matches without per-match statistics."
+
+#: ../../source/cli_admin.rst:1
+msgid "Les calcule."
+msgstr "Computes them."
+
+#: ../../source/cli_admin.rst:1
+msgid "``analysis.columns``"
+msgstr "``analysis.columns``"
+
+#: ../../source/cli_admin.rst:1
+msgid "—"
+msgstr "—"
+
+#: ../../source/cli_admin.rst:1
+msgid "Recalcule les colonnes tirées des analyses."
+msgstr "Recomputes the columns derived from the analyses."
+
+#: ../../source/cli_admin.rst:1
+msgid "``moves.errors``"
+msgstr "``moves.errors``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Note l'erreur des coups joués qui n'en ont pas."
+msgstr "Records the error of played moves that have none."
+
+#: ../../source/cli_admin.rst:1
+msgid "``analysis.legacy``"
+msgstr "``analysis.legacy``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Réécrit les analyses au format compact (``reencode``)."
+msgstr "Rewrites analyses in the compact format (``reencode``)."
+
+#: ../../source/cli_admin.rst:1
+msgid "``trash``"
+msgstr "``trash``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Entrées de la corbeille."
+msgstr "Trash entries."
+
+#: ../../source/cli_admin.rst:1
+msgid "La commande ``trash``."
+msgstr "The ``trash`` command."
+
+#: ../../source/cli_admin.rst:1
+msgid "``vacuum``"
+msgstr "``vacuum``"
+
+#: ../../source/cli_admin.rst:1
+msgid "Octets libres du fichier (SQLite)."
+msgstr "Free bytes in the file (SQLite)."
+
+#: ../../source/cli_admin.rst:1
+msgid "La commande ``vacuum``."
+msgstr "The ``vacuum`` command."
+
+#: ../../source/cli_admin.rst:420
+msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
+msgstr "``--format`` — Output format: ``text`` (default) or ``json``."
+
+#: ../../source/cli_admin.rst:422
+msgid ""
+"La dernière exécution est rangée dans la base, avec ses réglages ; un "
+"export ne l'emporte pas. Une seule opération tourne à la fois. Le démon "
+"expose les mêmes sous-commandes sur les routes ``maintenance.status``, "
+"``maintenance.count``, ``maintenance.ids``, ``maintenance.run`` (en flux "
+"NDJSON, annulable par ``maintenance.cancel``), limitées au tenant de "
+"l'appelant ; une opération demandée pendant qu'une analyse gammonNet ou "
+"un rollout tourne pour ce tenant est refusée."
+msgstr ""
+"The latest run is stored in the database, with its settings; an export "
+"does not carry it. Only one operation runs at a time. The daemon exposes "
+"the same sub-commands on the routes ``maintenance.status``, "
+"``maintenance.count``, ``maintenance.ids``, ``maintenance.run`` (as an "
+"NDJSON stream, cancellable through ``maintenance.cancel``), restricted to"
+" the caller's tenant; an operation requested while a gammonNet analysis "
+"or a rollout is running for that tenant is refused."
+
+#: ../../source/cli_admin.rst:439
+msgid "players — Les graphies d'un joueur"
+msgstr "players — A player's spellings"
+
+#: ../../source/cli_admin.rst:441
+msgid ""
+"Une même personne signe parfois de plusieurs façons d'un fichier à "
+"l'autre (« Doe J. », « John Doe »). Un **alias** dit qu'un nom est une "
+"autre graphie d'un nom canonique. Les matchs déjà en base gardent les "
+"noms que leurs fichiers écrivent ; les statistiques, la table Joueurs et "
+"la recherche ``pl\"…\"`` lisent toutes les graphies comme une seule "
+"personne, et chaque import suivant enregistre le nom canonique. La fusion"
+" de joueurs de la fenêtre des matchs crée les mêmes alias."
+msgstr ""
+"The same person sometimes signs in several ways from one file to another "
+"(\"Doe J.\", \"John Doe\"). An **alias** says that a name is another "
+"spelling of a canonical name. Matches already in the database keep the "
+"names their files write; the statistics, the Players table and the "
+"``pl\"…\"`` search read all the spellings as a single person, and every "
+"later import records the canonical name. The player merge of the matches "
+"window creates the same aliases."
+
+#: ../../source/cli_admin.rst:453
+msgid "**Actions:**"
+msgstr "**Actions:**"
+
+#: ../../source/cli_admin.rst:455
+msgid ""
+"``add ALIAS CANONIQUE`` — ``ALIAS`` devient une graphie de ``CANONIQUE``."
+" Un canonique qui est lui-même un alias est suivi jusqu'à son propre "
+"canonique, et les alias qui visaient ``ALIAS`` passent à ``CANONIQUE`` : "
+"un seul niveau, jamais de chaîne."
+msgstr ""
+"``add ALIAS CANONIQUE`` — ``ALIAS`` becomes a spelling of ``CANONIQUE``. "
+"A canonical name that is itself an alias is followed to its own canonical"
+" name, and the aliases that pointed to ``ALIAS`` move to ``CANONIQUE``: a"
+" single level, never a chain."
+
+#: ../../source/cli_admin.rst:459
+msgid "``list [--format text|json]`` — Les alias, rangés par nom canonique."
+msgstr "``list [--format text|json]`` — The aliases, sorted by canonical name."
+
+#: ../../source/cli_admin.rst:460
+msgid ""
+"``remove ALIAS`` — Oublie un alias ; sort en erreur si ce n'en était pas "
+"un."
+msgstr ""
+"``remove ALIAS`` — Forgets an alias; exits with an error if it was not "
+"one."
+
+#: ../../source/cli_admin.rst:461
+msgid ""
+"``suggest [--format text|json]`` — Propose les noms qui ne diffèrent que "
+"par la casse, les accents, la ponctuation ou l'ordre des mots, avec pour "
+"canonique la graphie la plus fréquente. Rien n'est enregistré : chaque "
+"proposition s'écrit comme la commande ``add`` qui l'appliquerait."
+msgstr ""
+"``suggest [--format text|json]`` — Proposes the names that differ only by"
+" case, accents, punctuation or word order, with the most frequent "
+"spelling as canonical. Nothing is recorded: each suggestion is written as"
+" the ``add`` command that would apply it."
+
+#: ../../source/cli_admin.rst:466
+msgid ""
+"**Empreintes.** Les empreintes d'un match (``match_hash``, "
+"``canonical_hash``) gardent les noms du fichier : l'alias s'applique "
+"après elles, aux seuls noms enregistrés. Un fichier importé avant que son"
+" alias existe se reconnaît donc toujours à l'import suivant. Un match "
+"importé sous une autre graphie, dont les dés sont ceux d'un match en base"
+" et dont les noms ne diffèrent que par des alias connus, est reconnu "
+"comme le même match : ses analyses enrichissent l'existant, aucun second "
+"match n'est créé."
+msgstr ""
+"**Fingerprints.** A match's fingerprints (``match_hash``, "
+"``canonical_hash``) keep the names of the file: the alias applies after "
+"them, to the recorded names only. A file imported before its alias "
+"existed is therefore still recognised at the next import. A match "
+"imported under another spelling, whose dice are those of a match in the "
+"database and whose names differ only by known aliases, is recognised as "
+"the same match: its analyses enrich the existing one, no second match is "
+"created."
+
+#: ../../source/cli_admin.rst:479
+msgid ""
+"**players merge** — La fusion de joueurs de la fenêtre des matchs, du "
+"même code que la route ``matches.mergePlayers`` du démon : chaque nom "
+"devient une graphie du nom canonique, comme autant de ``players alias "
+"add``."
+msgstr ""
+"**players merge** — The player merge of the matches window, from the same"
+" code as the daemon's ``matches.mergePlayers`` route: each name becomes a"
+" spelling of the canonical name, like as many ``players alias add``."
+
+#: ../../source/cli_admin.rst:487
+msgid ""
+"**players swap** — L'inversion des deux joueurs d'un match, que le "
+"fichier avait nommés dans le mauvais ordre (route "
+"``matches.swapPlayers``). Aucune position ni aucune analyse ne change : "
+"chaque joueur garde ses statistiques, sous l'autre siège. L'inversion est"
+" refusée tant qu'un brouillon de transcription est ouvert sur le match, "
+"et pour un match joué dans blunderDB."
+msgstr ""
+"**players swap** — The swap of a match's two players, which the file had "
+"named in the wrong order (route ``matches.swapPlayers``). No position and"
+" no analysis changes: each player keeps their statistics, under the other"
+" seat. The swap is refused while a transcription draft is open on the "
+"match, and for a match played in blunderDB."
+
+#: ../../source/cli_admin.rst:497
+msgid ""
+"**players main** — Le joueur principal de la fenêtre des matchs (routes "
+"``players.main.*``). Sans nom, affiche le joueur principal ; avec un nom,"
+" le désigne et inverse en une seule transaction tous les matchs où lui ou"
+" l'un de ses alias est joueur 2 ; chaque import ultérieur le place en "
+"joueur 1. ``--dry-run`` affiche les matchs à inverser sans rien changer ;"
+" ``--clear`` retire le joueur principal sans rien inverser en retour. Un "
+"match où un brouillon de transcription est ouvert, ou joué dans "
+"blunderDB, est laissé tel quel et listé à part."
+msgstr ""
+"**players main** — The main player of the matches window (routes "
+"``players.main.*``). Without a name, shows the main player; with a name, "
+"designates that player and, in a single transaction, swaps every match "
+"where he or she or one of the aliases is player 2; every later import "
+"places that player as player 1. ``--dry-run`` shows the matches to swap "
+"without changing anything; ``--clear`` removes the main player without "
+"swapping anything back. A match with an open transcription draft, or "
+"played in blunderDB, is left as is and listed separately."
+
+#: ../../source/cli_admin.rst:510
+msgid ""
+"**players matches** — Les identifiants des matchs d'un joueur, à l'un ou "
+"l'autre siège et sous tous ses alias (route ``players.matchIds``)."
+msgstr ""
+"**players matches** — The identifiers of a player's matches, on either "
+"side of the board and under all of his or her aliases (route "
+"``players.matchIds``)."
+
+#: ../../source/cli_admin.rst:524
+msgid "events — Les graphies d'un événement"
+msgstr "events — An event's spellings"
+
+#: ../../source/cli_admin.rst:526
+msgid ""
+"Les mêmes actions que ``players alias``, pour les noms d'événement (le "
+"champ Event d'un fichier). À l'import, un match dont l'événement est un "
+"alias est rangé dans le tournoi du nom canonique."
+msgstr ""
+"The same actions as ``players alias``, for event names (the Event field "
+"of a file). On import, a match whose event is an alias is filed in the "
+"tournament of the canonical name."
+
+#: ../../source/cli_admin.rst:538
+msgid "repair — Recalculer ce qui est dérivé"
+msgstr "repair — Recompute what is derived"
+
+#: ../../source/cli_admin.rst:540
+msgid ""
+"Recalcule ce que la base tire de ce qu'elle stocke : les colonnes "
+"scalaires de chaque analyse à partir de l'analyse elle-même, dont elles "
+"ne sont qu'une projection ; la phase et le type de jeu de chaque position"
+" à partir de son damier ; et la sentinelle de Crawford de chaque score à "
+"partir du match d'où la position vient, ou de l'XGID avec lequel elle est"
+" entrée. Les analyses ne sont pas touchées : ce sont les valeurs qu'on en"
+" avait tirées qui sont refaites."
+msgstr ""
+"Recomputes what the database derives from what it stores: the scalar "
+"columns of every analysis from the analysis itself, of which they are "
+"only a projection; each position's phase and game type from its board; "
+"and the Crawford sentinel of every score from the match the position came"
+" from, or from the XGID it came in with. The analyses are not touched: "
+"what is redone are the values that had been derived from them."
+
+#: ../../source/cli_admin.rst:547
+msgid ""
+"Une base qui a reçu des analyses par l'import d'une autre base (``import "
+"--type database``, y compris par un dossier de synchronisation surveillé)"
+" avec une version antérieure à celle-ci garde ces analyses sans leurs "
+"colonnes, ou avec celles de l'analyse qu'elles ont remplacée : leurs "
+"blunders ne sont pas comptés et leurs coups forcés passent pour des "
+"décisions. ``repair`` compare ces colonnes à ce que l'analyse stockée en "
+"donne et refait celles qui diffèrent ; le même contenu compte alors comme"
+" s'il était venu par ``transfer``."
+msgstr ""
+"A database that received analyses by importing another database (``import"
+" --type database``, including through a watched synchronisation folder) "
+"with a version earlier than this one keeps those analyses without their "
+"columns, or with those of the analysis they replaced: their blunders are "
+"not counted and their forced moves count as decisions. ``repair`` "
+"compares these columns with what the stored analysis yields and redoes "
+"those that differ; the same content then counts as if it had come through"
+" ``transfer``."
+
+#: ../../source/cli_admin.rst:562
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un "
+"compteur par passe : ``repaired`` (colonnes d'analyse), ``phases`` "
+"(positions reclassées), ``crawford`` (positions réhachées) et "
+"``signatures_unverified`` (commentaires signés qu'un réhachage laisse non"
+" vérifiés : une signature couvre l'identité de la position). Chacun dit "
+"le nombre de lignes réellement changées. Avec ``--stats``, s'y ajoute "
+"``match_stats`` (matchs recalculés) ; avec ``--move-errors``, "
+"``move_errors`` (coups notés)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` — one "
+"counter per pass: ``repaired`` (analysis columns), ``phases`` "
+"(reclassified positions) and ``crawford`` (rehashed positions), and "
+"``signatures_unverified`` (signed comments that a rehash leaves "
+"unverified: a signature covers the identity of the position). Each gives "
+"the number of rows actually changed. With ``--stats``, ``match_stats`` "
+"(matches recomputed) is added. With ``--move-errors``, ``move_errors`` "
+"(moves scored) is added."
+
+#: ../../source/cli_admin.rst:569
+msgid "``--stats`` — Recalcule aussi, de zéro, les statistiques par match."
+msgstr "``--stats`` — Also recomputes the per-match statistics from scratch."
+
+#: ../../source/cli_admin.rst:570
+msgid ""
+"``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a "
+"cédée face au meilleur coup, lue dans l'analyse de sa position (colonne "
+"``error_mp`` de la table des coups). La passe est reprenable : "
+"interrompue, elle reprend où elle s'était arrêtée ; sur une très grande "
+"base elle dure plusieurs minutes. Côté serveur : ``matches.scoreMoves``."
+msgstr ""
+"``--move-errors`` — Also writes, for each move played, the equity it gave"
+" up against the best move, read from the analysis of its position (the "
+"``error_mp`` column of the move table). The pass is resumable: "
+"interrupted, it resumes where it stopped; on a very large library it "
+"takes several minutes. Server side: ``matches.scoreMoves``."
+
+#: ../../source/cli_admin.rst:575
+msgid ""
+"``--duplicates`` — Ne lance aucune des passes : liste les paires de "
+"matchs que les dés disent identiques, sans rien fusionner (voir ci-"
+"dessous)."
+msgstr ""
+"``--duplicates`` — Runs none of the passes: lists the pairs of matches "
+"that the dice say are identical, without merging anything (see below)."
+
+#: ../../source/cli_admin.rst:578
+msgid ""
+"Les statistiques par match sont, pour chaque joueur de chaque match, ses "
+"décisions, son erreur cumulée, son PR, ses blunders, sa chance et la "
+"provenance dominante de ses analyses ; les statistiques les lisent au "
+"lieu de reparcourir chaque décision. Elles s'écrivent avec le match à "
+"l'import et s'effacent à chaque changement qui les altère (match "
+"supprimé, joueurs permutés, analyse d'une de ses positions modifiée, "
+"seuil de blunder déplacé) ; la lecture suivante recalcule ce qui manque. "
+"Une base migrée d'une version antérieure les calcule une fois, à sa "
+"première ouverture. ``--stats`` les refait toutes : le recours si cette "
+"tenue de comptes se trompait un jour."
+msgstr ""
+"The per-match statistics are, for each player of each match, their "
+"decisions, cumulative error, PR, blunders, luck and the dominant "
+"provenance of their analyses; the statistics read them instead of walking"
+" through every decision again. They are written with the match at import "
+"and cleared by every change that alters them (match deleted, players "
+"swapped, analysis of one of its positions modified, blunder threshold "
+"moved); the next read recomputes what is missing. A database migrated "
+"from an earlier version computes them once, on first opening. ``--stats``"
+" redoes them all: the remedy should this bookkeeping ever go wrong."
+
+#: ../../source/cli_admin.rst:588
+#, no-python-brace-format
+msgid ""
+"**Doublons probables.** ``repair --duplicates`` compare les matchs par "
+"leurs dés, jamais par leurs noms. Deux cas sont signalés : la même "
+"longueur, le même score initial et les mêmes dés dans chaque partie sous "
+"d'autres noms de joueurs, et un match dont les dés prolongent ceux d'un "
+"autre — un match tronqué puis complété. Sous une paire aux mêmes dés, la "
+"sortie texte donne les commandes ``players alias add`` qui feraient "
+"nommer aux deux matchs les mêmes joueurs : une seule lecture quand un nom"
+" est commun aux deux (l'autre nom ne peut être que l'autre joueur), sinon"
+" deux — siège pour siège, puis croisée — numérotées, dont une seule est à"
+" lancer. La graphie du match le plus récent devient l'alias, celle du "
+"plus ancien le nom canonique. ``--format json`` rend ``{\"suspects\": "
+"[...]}``, chaque paire avec ``kind`` (``same_dice`` ou ``longer``), "
+"``matchId``, ``otherId``, ``players``, ``otherPlayers`` et, pour une "
+"paire aux mêmes dés, ``pairings`` : la liste des lectures, chacune avec "
+"ses ``aliases`` (``alias``, ``canonical``). Un match importé avant que "
+"l'empreinte des dés existe la reçoit au passage ; c'est la seule écriture"
+" de ce mode."
+msgstr ""
+"**Probable duplicates.** ``repair --duplicates`` compares matches by "
+"their dice, never by their names. Two cases are reported: the same "
+"length, the same initial score and the same dice in each game under other"
+" player names, and a match whose dice extend those of another — a match "
+"truncated then completed. Under a pair with the same dice, the text "
+"output gives the ``players alias add`` commands that would make the two "
+"matches name the same players: a single reading when a name is common to "
+"both (the other name can only be the other player), otherwise two — seat "
+"for seat, then crossed — numbered, of which only one is to be run. The "
+"spelling of the most recent match becomes the alias, that of the oldest "
+"the canonical name. ``--format json`` returns ``{\"suspects\": [...]}``, "
+"each pair with ``kind`` (``same_dice`` or ``longer``), ``matchId``, "
+"``otherId``, ``players``, ``otherPlayers`` and, for a pair with the same "
+"dice, ``pairings``: the list of readings, each with its ``aliases`` "
+"(``alias``, ``canonical``). A match imported before the dice fingerprint "
+"existed receives it along the way; this is the only write of this mode."
+
+#: ../../source/cli_admin.rst:604
+msgid ""
+"Utile après une correction de la façon dont une analyse importée est lue."
+" Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
+"double » de deux façons, et la seconde était comprise comme un vrai "
+"double — la colonne portait alors l'erreur d'un double qui n'avait jamais"
+" eu lieu. Et une analyse que blunderDB avait calculée lui-même ne savait "
+"pas quel coup avait été joué, si bien qu'un match importé sans analyse "
+"gardait une erreur nulle partout et un PR de 0,00 ; la colonne se "
+"recalcule à partir des coups du match. Corriger la lecture ne change rien"
+" aux lignes déjà écrites ; cette commande les refait."
+msgstr ""
+"Useful after a correction to the way an imported analysis is read. It has"
+" already happened twice. The XG importer writes a “no double” two "
+"different ways, and the second was understood as a real double — the "
+"column then carried the error of a double that never took place. And an "
+"analysis blunderDB had computed itself did not know which move had been "
+"played, so a match imported without an analysis kept a zero error "
+"everywhere and a PR of 0.00; the column is recomputed from the match's "
+"moves. Correcting the reading changes nothing in the rows already "
+"written; this command redoes them."
+
+#: ../../source/cli_admin.rst:614
+msgid ""
+"La passe Crawford, elle, touche les positions elles-mêmes. Un score à "
+"``1`` signifie « un point à faire, et cette partie EST la Crawford » ; "
+"``0`` signifie « un point à faire, la Crawford est derrière ». Tant que "
+"les importeurs n'ont pas écrit cette distinction, toute position post-"
+"Crawford a été enregistrée comme une position de Crawford, donc lue "
+"videau mort — là où le poursuivant double en réalité à la première "
+"occasion. Corriger le score change le hachage de la position : la ligne "
+"est donc réhachée, et fusionnée avec sa jumelle correcte si la base en "
+"tient déjà une — l'analyse, les commentaires, les collections, les cartes"
+" Anki et leur journal de révision, les coups du match et les entrées de "
+"la corbeille qui la nomment suivent la ligne survivante. Une position "
+"qu'aucun match ne désigne n'est corrigée que sur la parole de l'XGID "
+"qu'elle a apporté d'un autre logiciel (XG, BGBlitz…) : quand le champ "
+"Crawford de cet XGID dit que la partie n'est pas la Crawford, et que "
+"l'XGID décrit bien cette position. Dans l'autre sens, une position sans "
+"match enregistrée à ``0`` des deux côtés passe à ``1`` quand l'XGID "
+"qu'elle a apporté est celui d'un match en 1 point et qu'il la décrit : la"
+" seule partie d'un match en 1 point commence à un point du but, c'est "
+"donc la Crawford, comme l'écrivent les importeurs. Le DMP d'après la "
+"Crawford d'un match plus long reste à ``0`` : son XGID donne la longueur "
+"de ce match. Un XGID que blunderDB a lui-même réécrit ne fait que répéter"
+" le score enregistré et ne prouve rien. Toute autre position sans match "
+"est laissée telle quelle : rien ne contredit ce que son score annonce."
+msgstr ""
+"The Crawford pass, for its part, touches the positions themselves. A "
+"score of ``1`` means “one point to go, and this game IS the Crawford "
+"game”; ``0`` means “one point to go, Crawford behind us”. Until the "
+"importers wrote that distinction, every post-Crawford position was "
+"recorded as a Crawford one, and therefore read with a dead cube — where "
+"the trailer in fact doubles at the first opportunity. Correcting the "
+"score changes the position's hash: the row is therefore rehashed, and "
+"merged with its correct twin if the database already holds one — the "
+"analysis, the comments, the collections, the Anki cards and their review "
+"journal, the match moves and the trash entries that name it follow the "
+"surviving row. A position no match points at is corrected only on the "
+"word of the XGID it brought from another program (XG, BGBlitz…): when "
+"that XGID's Crawford field says the game is not the Crawford one, and the"
+" XGID does describe this position. The other way round, a position "
+"without a match stored at ``0`` on both sides moves to ``1`` when the "
+"XGID it brought is that of a 1-point match and describes it: the only "
+"game of a 1-point match starts one point from the goal, so it is the "
+"Crawford game, as the importers write it. The DMP after the Crawford game"
+" of a longer match stays at ``0``: its XGID gives the length of that "
+"match. An XGID blunderDB rewrote itself only repeats the stored score and"
+" proves nothing. Any other position without a match is left as it is: "
+"nothing contradicts what its score announces."
+
+#: ../../source/cli_admin.rst:636
+msgid ""
+"Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
+"colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
+"simple ouverture d'une base n'est pas quelque chose qu'un outil doit "
+"faire dans le dos de son utilisateur."
+msgstr ""
+"Nothing triggers it automatically, and that is deliberate: rewriting "
+"everyone's analysis columns, or rehashing positions, on the mere act of "
+"opening a database is not something a tool should do behind its user's "
+"back."
+
+#: ../../source/cli_admin.rst:652
+msgid "delete — Supprimer des données"
+msgstr "delete — Delete data"
+
+#: ../../source/cli_admin.rst:654
+msgid ""
+"Supprime un match et toutes les données associées (parties, coups, "
+"analyses)."
+msgstr "Delete a match and all associated data (games, moves, analyses)."
+
+#: ../../source/cli_admin.rst:663
+msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
+msgstr "``--type`` — Delete type: ``match`` (required)."
+
+#: ../../source/cli_admin.rst:664
+msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
+msgstr "``--id`` — ID of the item to delete (required)."
+
+#: ../../source/cli_admin.rst:665
+msgid "``--confirm`` — Supprimer sans demander de confirmation."
+msgstr "``--confirm`` — Delete without asking for confirmation."
+
+#: ../../source/cli_admin.rst:666
+#, no-python-brace-format
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
+"(``{\"match_id\": N, \"deleted\": true}``)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` "
+"(``{\"match_id\": N, \"deleted\": true}``)."
+
+#: ../../source/cli_admin.rst:678
+msgid "healthcheck — Sonder un démon"
+msgstr "healthcheck — Probing a daemon"
+
+#: ../../source/cli_admin.rst:680
+msgid ""
+"Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
+"est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
+"démon répond 200 (stockage joignable, schéma à la version attendue), "
+"``1`` sinon — stockage injoignable, schéma périmé, ou rien n'écoute à "
+"l'adresse. Aucun fichier de base n'est ouvert."
+msgstr ""
+"Asks a running ``serve`` daemon (see :doc:`mode_headless`) whether it is "
+"ready: one ``GET /readyz`` request, exit code ``0`` when the daemon "
+"answers 200 (storage reachable, schema at the expected version), ``1`` "
+"otherwise — storage unreachable, stale schema, or nothing listening at "
+"the address. No database file is opened."
+
+#: ../../source/cli_admin.rst:692
+msgid ""
+"``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
+"sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
+"générique (``0.0.0.0``, ``[::]``) est sondée sur l'interface de bouclage."
+msgstr ""
+"``--addr`` — Address the daemon listens on (default ``BLUNDERDB_ADDR``, "
+"else ``:8080``). An address without a host (``:8080``) or with a wildcard"
+" host (``0.0.0.0``, ``[::]``) is probed on the loopback interface."
+
+#: ../../source/cli_admin.rst:695
+msgid ""
+"``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
+"défaut)."
+msgstr "``--timeout`` — Give up after this long (``2s`` by default)."
+
+#: ../../source/cli_admin.rst:697
+msgid ""
+"C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
+"image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
+"depuis ``cmd/serve`` la comprend aussi. Elle vaut tout autant dans un "
+"script ou une unité systemd."
+msgstr ""
+"This is the command the container image's ``HEALTHCHECK`` runs (a "
+"*distroless* image, without ``curl``); the ``serve`` binary built from "
+"``cmd/serve`` understands it too. It works just as well from a script or "
+"a systemd unit."
+
+#: ../../source/cli_admin.rst:711
+msgid ""
+"En cas d'échec la raison est affichée, ce que ``docker inspect`` "
+"reproduit pour un conteneur ``unhealthy`` :"
+msgstr ""
+"On failure the reason is printed, which ``docker inspect`` reproduces for"
+" an ``unhealthy`` container:"
+
+#: ../../source/cli_admin.rst:719
+msgid "mcp — Offrir la base à un assistant IA"
+msgstr "mcp — Offer the database to an AI assistant"
+
+#: ../../source/cli_admin.rst:721
+msgid ""
+"Sert les outils de la base à un assistant IA par le *Model Context "
+"Protocol*, sur l'entrée et la sortie standard : c'est l'assistant qui "
+"lance la commande. Les outils recherchent des positions dans la grammaire"
+" de la barre de commande, lisent une position et son analyse, expliquent "
+"une erreur, calculent les statistiques d'un joueur, listent matchs, "
+"tournois et collections, et posent un quiz. Ils ne font que lire, sauf "
+"avec ``--write``. La liste complète et l'équivalent HTTP du démon : "
+":ref:`headless_mcp`."
+msgstr ""
+"Serves the database tools to an AI assistant through the *Model Context "
+"Protocol*, over standard input and output: the assistant launches the "
+"command. The tools search positions in the command-bar grammar, read a "
+"position and its analysis, explain an error, compute a player's "
+"statistics, list matches, tournaments and collections, and ask a quiz "
+"question. They only read, except with ``--write``. The full list and the "
+"daemon's HTTP equivalent: :ref:`headless_mcp`."
+
+#: ../../source/cli_admin.rst:735
+msgid "``--db`` — Fichier de base de données (obligatoire)."
+msgstr "``--db`` — Database file (required)."
+
+#: ../../source/cli_admin.rst:736
+msgid ""
+"``--write`` — Offre aussi les outils qui écrivent : enregistrer une "
+"position, la commenter, créer et remplir une collection. Rien n'efface."
+msgstr ""
+"``--write`` — Also offers the tools that write: save a position, comment "
+"it, create and fill a collection. Nothing is deleted."
+
+#: ../../source/cli_admin.rst:739
+msgid ""
+"Comme ``call``, la commande migre le schéma d'une base ancienne à "
+"l'ouverture, même sans ``--write``."
+msgstr ""
+"Like ``call``, the command migrates an older database's schema when it "
+"opens it, even without ``--write``."
+
+#: ../../source/cli_admin.rst:742
+msgid "**Exemple:** déclarer la base à Claude Code."
+msgstr "**Example:** declare the database to Claude Code."
+
+#: ../../source/cli_admin.rst:749
+msgid "completion — Complétion shell"
+msgstr "completion — Shell completion"
+
+#: ../../source/cli_admin.rst:751
+msgid ""
+"Affiche sur la sortie standard un script de complétion pour les noms de "
+"sous-commandes. La liste des commandes intégrée à chaque script est "
+"générée depuis la même table que ``blunderdb help`` et l'aiguillage de "
+"``main.go`` (``handlers()``) : une nouvelle sous-commande est donc "
+"proposée par la complétion dès qu'elle est câblée, sans rien à tenir à "
+"jour à la main."
+msgstr ""
+"Prints a shell completion script for the subcommand names to standard "
+"output. The command list embedded in every script is generated from the "
+"same table ``blunderdb help`` and ``main.go``'s dispatch read "
+"(``handlers()``): a new subcommand is therefore offered by completion as "
+"soon as it is wired in, with nothing to keep up to date by hand."
+
+#: ../../source/cli_admin.rst:775
+msgid ""
+"Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
+" et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
+"au moment de la construction, et le cask Homebrew exécute ``blunderdb "
+"completion <shell>`` une fois à l'installation via "
+"``generate_completions_from_executable``. Rien n'est committé dans le "
+"dépôt : la complétion ne peut donc jamais dériver de la table des sous-"
+"commandes."
+msgstr ""
+"Packages install this automatically: the ``.deb``/``.rpm`` (nfpm) and the"
+" AUR package generate the three scripts from the packaged binary at build"
+" time, and the Homebrew cask runs ``blunderdb completion <shell>`` once "
+"at install time via ``generate_completions_from_executable``. Nothing is "
+"committed to the repository, so completion can never drift from the "
+"subcommand table."
+
+#: ../../source/cli_admin.rst:783
+msgid "version — Afficher la version"
+msgstr "version — Show the version"
+
+#: ../../source/cli_admin.rst:785
+msgid ""
+"Affiche la version de blunderDB et celle du schéma de base de données que"
+" ce binaire écrit ; c'est la première chose à joindre à un rapport de "
+"bug."
+msgstr ""
+"Prints blunderDB's version and the database schema version this binary "
+"writes; it is the first thing to attach to a bug report."

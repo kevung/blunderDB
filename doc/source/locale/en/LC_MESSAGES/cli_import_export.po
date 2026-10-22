@@ -1,0 +1,914 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_import_export.rst:4
+msgid "Importer, exporter, transférer"
+msgstr "Import, export, transfer"
+
+#: ../../source/cli_import_export.rst:7
+msgid "create — Créer une base de données"
+msgstr "create — Create a database"
+
+#: ../../source/cli_import_export.rst:9
+msgid ""
+"Crée un nouveau fichier de base de données avec des métadonnées "
+"optionnelles."
+msgstr "Create a new database file with optional metadata."
+
+#: ../../source/cli_import_export.rst:15 ../../source/cli_import_export.rst:42
+#: ../../source/cli_import_export.rst:269
+#: ../../source/cli_import_export.rst:393
+#: ../../source/cli_import_export.rst:461
+#: ../../source/cli_import_export.rst:487
+msgid "**Options:**"
+msgstr "**Options:**"
+
+#: ../../source/cli_import_export.rst:17
+msgid "``--db`` — Chemin du fichier de base de données à créer (obligatoire)."
+msgstr "``--db`` — Path to the database file to create (required)."
+
+#: ../../source/cli_import_export.rst:18
+msgid "``--user`` — Nom du propriétaire de la base."
+msgstr "``--user`` — Database owner name."
+
+#: ../../source/cli_import_export.rst:19
+msgid "``--description`` — Description de la base."
+msgstr "``--description`` — Database description."
+
+#: ../../source/cli_import_export.rst:20
+msgid "``--force`` — Écraser le fichier s'il existe déjà."
+msgstr "``--force`` — Overwrite the file if it already exists."
+
+#: ../../source/cli_import_export.rst:21
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (chemin, "
+"version, utilisateur, description, date de création)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` (path, "
+"version, user, description, creation date)."
+
+#: ../../source/cli_import_export.rst:24
+msgid ""
+"L'extension ``.db`` est ajoutée automatiquement si elle est absente. Les "
+"répertoires parents sont créés si nécessaire."
+msgstr ""
+"The ``.db`` extension is added automatically if missing. Parent "
+"directories are created as needed."
+
+#: ../../source/cli_import_export.rst:27
+msgid "**Exemple:**"
+msgstr "**Example:**"
+
+#: ../../source/cli_import_export.rst:34
+msgid "import — Importer des données"
+msgstr "import — Import data"
+
+#: ../../source/cli_import_export.rst:36
+msgid "Importe des fichiers de matchs ou de positions dans la base de données."
+msgstr "Import match or position files into the database."
+
+#: ../../source/cli_import_export.rst:44
+msgid "``--db`` — Chemin de la base de données (obligatoire)."
+msgstr "``--db`` — Path to the database (required)."
+
+#: ../../source/cli_import_export.rst:45
+msgid ""
+"``--type`` — Type d'import: ``match``, ``position`` ou ``batch`` "
+"(obligatoire)."
+msgstr "``--type`` — Import type: ``match``, ``position`` or ``batch`` (required)."
+
+#: ../../source/cli_import_export.rst:46
+msgid "``--file`` — Fichier à importer (pour ``match`` et ``position``)."
+msgstr "``--file`` — File to import (for ``match`` and ``position``)."
+
+#: ../../source/cli_import_export.rst:47
+msgid "``--dir`` — Répertoire à importer (pour ``batch``)."
+msgstr "``--dir`` — Directory to import (for ``batch``)."
+
+#: ../../source/cli_import_export.rst:48
+msgid ""
+"``--recursive`` — Scanner récursivement les sous-répertoires (défaut: "
+"oui)."
+msgstr "``--recursive`` — Recursively scan subdirectories (default: yes)."
+
+#: ../../source/cli_import_export.rst:49
+msgid ""
+"``--watch`` — Avec ``--type batch`` : ne s'arrête pas, et importe chaque "
+"fichier de match **à mesure qu'il apparaît** dans ``--dir`` (Ctrl-C pour "
+"arrêter)."
+msgstr ""
+"``--watch`` — With ``--type batch``: does not stop, and imports each "
+"match file **as it appears** in ``--dir`` (Ctrl-C to stop)."
+
+#: ../../source/cli_import_export.rst:52
+msgid ""
+"``--watch-every`` — Intervalle entre deux regards de ``--watch`` (défaut:"
+" 10s, plancher 2s)."
+msgstr "``--watch-every`` — How often ``--watch`` looks (default: 10s, floor 2s)."
+
+#: ../../source/cli_import_export.rst:54
+msgid ""
+"``--resume`` — Avec ``--type batch`` : reprend le lot de ce numéro "
+"(affiché au départ de l'import, ou ``batch_id`` en JSON). Les fichiers de"
+" même chemin, taille et date que dans son journal sont sautés sans être "
+"lus, ceux de même contenu sont lus mais pas analysés ; les fichiers en "
+"erreur sont retentés."
+msgstr ""
+"``--resume`` — With ``--type batch``: resumes the batch with this number "
+"(shown when the import starts, or ``batch_id`` in JSON). Files with the "
+"same path, size and date as in its log are skipped without being read, "
+"those with the same content are read but not analysed; files in error are"
+" retried."
+
+#: ../../source/cli_import_export.rst:59
+msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
+msgstr "``--format`` — Output format: ``text`` (default) or ``json``."
+
+#: ../../source/cli_import_export.rst:60
+msgid ""
+"``--fail-on-error`` — Échoue si au moins un élément (``position`` ou "
+"``batch``) n'a pas pu être importé, même quand d'autres ont réussi."
+msgstr ""
+"``--fail-on-error`` — Fails if at least one item (``position`` or "
+"``batch``) could not be imported, even when others succeeded."
+
+#: ../../source/cli_import_export.rst:62
+msgid ""
+"``--skip-duplicates`` — Ignore un match déjà en base sans en reprendre "
+"les analyses plus profondes (les marques d'étude restent appliquées). Par"
+" défaut, un doublon remplace chaque analyse rangée par la sienne quand "
+"elle est strictement plus profonde, et la ligne l'indique : ``DUPLICATE "
+"(N analyses deepened)``."
+msgstr ""
+"``--skip-duplicates`` — Skips a match already in the database without "
+"taking its deeper analyses (study marks are still applied). By default, a"
+" duplicate replaces each stored analysis with its own when it is strictly"
+" deeper, and the line says so: ``DUPLICATE (N analyses deepened)``."
+
+#: ../../source/cli_import_export.rst:68
+msgid ""
+"Une décision dont l'analyse contient une valeur qui n'est pas un nombre "
+"fini (NaN ou infini) est importée sans cette analyse, et le reste du "
+"match entre normalement ; le compte rendu du lot en donne le nombre "
+"(``Decisions imported without their analysis``)."
+msgstr ""
+"A decision whose analysis holds a value that is not a finite number (NaN "
+"or infinity) is imported without that analysis, and the rest of the match"
+" comes in as usual; the batch report gives their number (``Decisions "
+"imported without their analysis``)."
+
+#: ../../source/cli_import_export.rst:73
+msgid "Le code de retour obéit à quatre règles :"
+msgstr "The exit code follows four rules:"
+
+#: ../../source/cli_import_export.rst:75
+msgid ""
+"**rien n'a été reconnu** — chaque fichier a échoué — : erreur, que "
+"``--fail-on-error`` soit passé ou non ;"
+msgstr ""
+"**nothing was recognised** — every file failed — : error, whether "
+"``--fail-on-error`` is passed or not;"
+
+#: ../../source/cli_import_export.rst:77
+msgid ""
+"**que des doublons** — chaque fichier était déjà en base — : succès. Un "
+"répertoire relancé sans nouveau fichier, la nuit ordinaire d'un script, "
+"sort en 0 avec ``duplicates`` seul non nul ;"
+msgstr ""
+"**only duplicates** — every file was already in the database — : success."
+" A directory re-run with no new file, a script's ordinary night, exits "
+"with 0 and only ``duplicates`` non-zero;"
+
+#: ../../source/cli_import_export.rst:80
+msgid ""
+"**échec partiel** (certains éléments importés, d'autres refusés) : erreur"
+" seulement si ``--fail-on-error`` est passé ;"
+msgstr ""
+"**partial failure** (some items imported, others rejected): error only if"
+" ``--fail-on-error`` is passed;"
+
+#: ../../source/cli_import_export.rst:82
+msgid ""
+"au moins un élément nouveau importé, sans ``--fail-on-error`` : succès, "
+"les fichiers refusés étant listés dans le tableau."
+msgstr ""
+"at least one new item imported, without ``--fail-on-error``: success, "
+"with the rejected files listed in the table."
+
+#: ../../source/cli_import_export.rst:86
+msgid "Surveiller un dossier"
+msgstr "Watching a folder"
+
+#: ../../source/cli_import_export.rst:88
+msgid ""
+"``--watch`` transforme l'import de répertoire en surveillance : la "
+"commande ne rend pas la main et importe chaque fichier de match qui "
+"**apparaît** dans le dossier. C'est la forme sans interface du "
+":ref:`dossier surveillé <dossier_surveille>` de l'application."
+msgstr ""
+"``--watch`` turns the directory import into a watch: the command does not"
+" return, and imports each match file that **appears** in the folder. It "
+"is the headless form of the application's :ref:`watched folder "
+"<dossier_surveille>`."
+
+#: ../../source/cli_import_export.rst:99
+msgid ""
+"Seuls les fichiers qui apparaissent sont importés : ce que le dossier "
+"contient au démarrage est enregistré comme connu et laissé tranquille — "
+"pointer une surveillance sur quatre ans de matchs ne doit pas les "
+"importer tous. Les deux commandes ci-dessus se composent donc exactement "
+"comme on l'espère."
+msgstr ""
+"Only files that appear are imported: whatever the folder holds at start-"
+"up is recorded as known and left alone — pointing a watch at four years "
+"of matches must not import all of them. The two commands above therefore "
+"compose exactly as one would hope."
+
+#: ../../source/cli_import_export.rst:104
+msgid ""
+"Un fichier n'est importé qu'une fois sa **taille stable**, c'est-à-dire "
+"vu deux fois inchangé : un match qu'un autre programme est en train "
+"d'écrire grossit d'un regard à l'autre, et l'importer à moitié écrit "
+"donnerait une erreur syntaxique sur laquelle personne ne peut agir. Le "
+"dossier n'est pas parcouru récursivement. Un partage réseau devenu "
+"illisible n'arrête pas la surveillance, et son contenu ne passe pas pour "
+"nouveau à son retour."
+msgstr ""
+"A file is imported only once its **size has settled**, that is, seen "
+"twice unchanged: a match another program is writing grows from one look "
+"to the next, and importing it half-written would give a syntax error "
+"nobody can act on. The folder is not walked recursively. A network share "
+"that has become unreadable does not stop the watch, and its contents do "
+"not pass for new when it comes back."
+
+#: ../../source/cli_import_export.rst:111
+msgid ""
+"Une base ``.db`` qui apparaît dans le dossier est fusionnée comme par "
+"``import --type database`` : c'est ainsi qu'arrive l'export incrémental "
+"d'une autre machine (voir :ref:`synchroniser_deux_machines`)."
+msgstr ""
+"A ``.db`` database that appears in the folder is merged as by ``import "
+"--type database``: this is how the incremental export of another machine "
+"arrives (see :ref:`Synchronising two machines "
+"<synchroniser_deux_machines>`)."
+
+#: ../../source/cli_import_export.rst:115
+msgid ""
+"Ctrl-C arrête entre deux fichiers, jamais au milieu de l'un : le fichier "
+"en cours finit son import et son compte rendu s'affiche avant que la "
+"commande ne rende la main."
+msgstr ""
+"Ctrl-C stops between files, never inside one: the file being imported "
+"finishes and its report is printed before the command returns."
+
+#: ../../source/cli_import_export.rst:120
+msgid "Import d'un match"
+msgstr "Import a match"
+
+#: ../../source/cli_import_export.rst:122
+msgid ""
+"Formats supportés: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``), "
+"Jellyfish (``.mat``, ``.txt``), BGBlitz (``.bgf``) et HedgeHog "
+"(``.ogxm``)."
+msgstr ""
+"Supported formats: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``), "
+"Jellyfish (``.mat``, ``.txt``), BGBlitz (``.bgf``) and HedgeHog "
+"(``.ogxm``)."
+
+#: ../../source/cli_import_export.rst:137
+msgid "``--format json`` livre les mêmes champs en un seul document :"
+msgstr "``--format json`` delivers the same fields in a single document:"
+
+#: ../../source/cli_import_export.rst:153
+msgid "Import de positions"
+msgstr "Import positions"
+
+#: ../../source/cli_import_export.rst:155
+msgid ""
+"Importe des positions depuis un fichier texte, **une position JSON par "
+"ligne**. C'est exactement ce qu'écrit ``export --type positions`` : les "
+"deux commandes se répondent, un export se réimporte tel quel, sans rien "
+"retoucher."
+msgstr ""
+"Imports positions from a text file, **one JSON position per line**. This "
+"is exactly what ``export --type positions`` writes: the two commands "
+"answer each other, an export re-imports as is, with nothing to touch up."
+
+#: ../../source/cli_import_export.rst:165
+msgid ""
+"Une ligne, telle qu'``export`` la produit — le damier en occupe "
+"l'essentiel, vingt-six points suivis des sorties :"
+msgstr ""
+"A line, as ``export`` produces it — the board takes up most of it, "
+"twenty-six points followed by the checkers off:"
+
+#: ../../source/cli_import_export.rst:172
+msgid ""
+"L'analyse et les commentaires ne voyagent pas par ce format : il porte la"
+" position, rien d'autre. Pour déplacer une bibliothèque entière, c'est "
+"``export --type database`` qu'il faut."
+msgstr ""
+"The analysis and the comments do not travel through this format: it "
+"carries the position, nothing else. To move an entire library, ``export "
+"--type database`` is the one to use."
+
+#: ../../source/cli_import_export.rst:177
+msgid "Import d'une base"
+msgstr "Importing a database"
+
+#: ../../source/cli_import_export.rst:179
+msgid ""
+"Fusionne une autre base blunderDB (*.db*) dans celle de ``--db``, selon "
+"les règles de la fusion de l'application de bureau et d'``imports.db`` en"
+" mode serveur (:ref:`guide_fusionner_base`) : positions, matchs, "
+"tournois, collections, leçons, paquets Anki, brouillons et alias, ainsi "
+"que la Direction des tournois et leur Rencontre. Importer deux fois le "
+"même fichier ne change rien. La sortie texte compte les matchs ajoutés et"
+" déjà présents, les Directions et Rencontres relues, et nomme les "
+"collections vivantes figées ou laissées sur une liste manuelle, et les "
+"familles que la base est trop ancienne pour porter."
+msgstr ""
+"Merges another blunderDB database (*.db*) into the one given by ``--db``,"
+" by the rules of the desktop application's merge and of ``imports.db`` in"
+" server mode (:ref:`guide_fusionner_base`): positions, matches, "
+"tournaments, collections, lessons, Anki decks, drafts and aliases, as "
+"well as the tournaments' Direction and their Encounter. Importing the "
+"same file twice changes nothing. The text output counts the matches added"
+" and already present, the Directions and Encounters read back, and names "
+"the living collections frozen or left on a manual list, and the families "
+"the database is too old to carry."
+
+#: ../../source/cli_import_export.rst:195
+msgid "Import par lot"
+msgstr "Batch import"
+
+#: ../../source/cli_import_export.rst:197
+msgid ""
+"Importe tous les fichiers de matchs d'un répertoire en une seule "
+"opération. C'est la méthode la plus efficace pour importer un grand "
+"nombre de matchs."
+msgstr ""
+"Import all match files from a directory in a single operation. This is "
+"the most efficient method for importing a large number of matches."
+
+#: ../../source/cli_import_export.rst:206
+msgid ""
+"Un tableau récapitulatif indique pour chaque fichier si l'import a réussi"
+" (✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas "
+"compté comme un échec, et un lot qui n'en contient que des doublons est "
+"un succès (voir les règles ci-dessus)."
+msgstr ""
+"A summary table shows for each file whether the import succeeded (✓), "
+"failed (✗) or was a duplicate (⊘). A duplicate is not counted as a "
+"failure, and a batch containing only duplicates is a success (see the "
+"rules above)."
+
+#: ../../source/cli_import_export.rst:211
+msgid ""
+"Chaque fichier du lot est journalisé (chemin, taille, date, SHA-256, "
+"match obtenu ou erreur). Le numéro du lot est affiché au départ ; si "
+"l'import est interrompu, ``--resume`` le continue sans analyser de "
+"nouveau ce qui est décidé. Avec ``--format json``, l'objet final porte "
+"``batch_id`` et le tableau ``journal``."
+msgstr ""
+"Each file of the batch is logged (path, size, date, SHA-256, resulting "
+"match or error). The batch number is shown at the start; if the import is"
+" interrupted, ``--resume`` continues it without analysing again what is "
+"already decided. With ``--format json``, the final object carries "
+"``batch_id`` and the ``journal`` array."
+
+#: ../../source/cli_import_export.rst:241
+msgid ""
+"``--format json`` en donne la même chose, exploitable par un script : un "
+"objet par fichier dans ``files``, puis les totaux. Une nuit tranquille "
+"laisse ``duplicates`` seul non nul et ``failed`` à zéro, et le code de "
+"retour à 0 ; seul un lot où rien n'a été reconnu sort en erreur."
+msgstr ""
+"``--format json`` gives the same thing in a script-friendly form: one "
+"object per file in ``files``, then the totals. A quiet night leaves "
+"``duplicates`` alone non-zero and ``failed`` at zero, with the exit code "
+"at 0; only a batch where nothing was recognised exits in error."
+
+#: ../../source/cli_import_export.rst:261
+msgid "export — Exporter des données"
+msgstr "export — Export data"
+
+#: ../../source/cli_import_export.rst:263
+msgid "Exporte le contenu de la base vers des fichiers."
+msgstr "Export database contents to files."
+
+#: ../../source/cli_import_export.rst:271
+msgid "``--db`` — Base source (obligatoire)."
+msgstr "``--db`` — Source database (required)."
+
+#: ../../source/cli_import_export.rst:272
+msgid ""
+"``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
+"``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
+"``.mat``) (obligatoire)."
+msgstr ""
+"``--type`` — Export type: ``database``, ``positions``, ``matches`` or "
+"``mat`` (export of one or more matches as a Jellyfish ``.mat`` "
+"transcript) (required)."
+
+#: ../../source/cli_import_export.rst:275
+msgid ""
+"``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
+"utilisé avec ``--dir``)."
+msgstr ""
+"``--file`` — Output file (required, except for ``--type mat`` used with "
+"``--dir``)."
+
+#: ../../source/cli_import_export.rst:277
+msgid ""
+"``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
+"(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
+"matchs sont exportés)."
+msgstr ""
+"``--dir`` — Output directory for batch ``.mat`` export (several matches, "
+"one file per match; without ``--match-ids``, all matches are exported)."
+
+#: ../../source/cli_import_export.rst:280
+msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
+msgstr "``--analysis`` — Include analysis (default: yes)."
+
+#: ../../source/cli_import_export.rst:281
+msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
+msgstr "``--comments`` — Include comments (default: yes)."
+
+#: ../../source/cli_import_export.rst:282
+msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
+msgstr "``--filters`` — Include filter library (default: yes)."
+
+#: ../../source/cli_import_export.rst:283
+msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
+msgstr "``--played-moves`` — Include played moves (default: yes)."
+
+#: ../../source/cli_import_export.rst:284
+msgid "``--matches`` — Inclure les matchs (défaut: oui)."
+msgstr "``--matches`` — Include matches (default: yes)."
+
+#: ../../source/cli_import_export.rst:285
+msgid ""
+"``--transcriptions`` — Inclure le brouillon de transcription de chaque "
+"match exporté (défaut: oui)."
+msgstr ""
+"``--transcriptions`` — Include the transcription draft of each exported "
+"match (default: yes)."
+
+#: ../../source/cli_import_export.rst:287
+msgid ""
+"``--aliases`` — Inclure les alias de joueurs et d'événements que les "
+"matchs exportés écrivent, pour que la fusion de joueurs les suive "
+"(défaut: oui)."
+msgstr ""
+"``--aliases`` — Include the player and event aliases the exported matches"
+" write, so that the merging of players follows them (default: yes)."
+
+#: ../../source/cli_import_export.rst:289
+msgid "``--collections`` — Inclure les collections (défaut: oui)."
+msgstr "``--collections`` — Include collections (default: yes)."
+
+#: ../../source/cli_import_export.rst:290
+msgid "``--tournaments`` — Inclure les tournois (défaut: oui)."
+msgstr "``--tournaments`` — Include tournaments (default: yes)."
+
+#: ../../source/cli_import_export.rst:291
+msgid "``--decks`` — Inclure les paquets Anki (défaut: oui)."
+msgstr "``--decks`` — Include the Anki decks (default: yes)."
+
+#: ../../source/cli_import_export.rst:292
+msgid ""
+"``--lessons`` — Inclure les leçons, avec les collections et les positions"
+" que leurs étapes montrent (défaut: oui)."
+msgstr ""
+"``--lessons`` — Include lessons, with the collections and positions their"
+" steps show (default: yes)."
+
+#: ../../source/cli_import_export.rst:294
+msgid ""
+"``--anki-history`` — Emporter l'historique de révision des paquets "
+"exportés : l'état de chaque carte et le journal de ses révisions (défaut:"
+" oui)."
+msgstr ""
+"``--anki-history`` — Carry the review history of the exported decks: the "
+"state of each card and the log of its reviews (default: yes)."
+
+#: ../../source/cli_import_export.rst:296
+msgid ""
+"``--collection-ids`` — IDs de collections à exporter (séparés par des "
+"virgules, vide = toutes)."
+msgstr ""
+"``--collection-ids`` — IDs of the collections to export (comma-separated,"
+" empty = all)."
+
+#: ../../source/cli_import_export.rst:298
+msgid ""
+"``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
+"vide = tous)."
+msgstr "``--match-ids`` — Match IDs to export (comma-separated, empty = all)."
+
+#: ../../source/cli_import_export.rst:299
+msgid ""
+"``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
+"virgules, vide = tous)."
+msgstr ""
+"``--tournament-ids`` — IDs of the tournaments to export (comma-separated,"
+" empty = all)."
+
+#: ../../source/cli_import_export.rst:301
+msgid ""
+"``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions "
+"(séparés par des virgules, vide = tous)."
+msgstr ""
+"``--deck-ids`` — IDs of the Anki decks to export with their positions "
+"(comma-separated, empty = all)."
+
+#: ../../source/cli_import_export.rst:303
+msgid ""
+"``--lesson-ids`` — IDs de leçons à exporter (séparés par des virgules, "
+"vide = toutes)."
+msgstr ""
+"``--lesson-ids`` — IDs of the lessons to export (comma-separated, empty ="
+" all)."
+
+#: ../../source/cli_import_export.rst:306
+msgid ""
+"``--password`` — Enveloppe le résultat dans un conteneur chiffré "
+"(``.dbx``)."
+msgstr "``--password`` — Wraps the result in an encrypted container (``.dbx``)."
+
+#: ../../source/cli_import_export.rst:307
+msgid ""
+"``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
+"fichier exporté (voir :ref:`diffusion_controlee`)."
+msgstr ""
+"``--watermark`` — Writes a **signed** statement of origin into the "
+"exported file (see :ref:`diffusion_controlee`)."
+
+#: ../../source/cli_import_export.rst:309
+msgid ""
+"``--watermark-note`` — Texte libre associé au filigrane (conditions "
+"d'usage, contact) ; utilisé avec ``--watermark``."
+msgstr ""
+"``--watermark-note`` — Free text attached to the watermark (terms of use,"
+" contact); used together with ``--watermark``."
+
+#: ../../source/cli_import_export.rst:311
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
+"résumant l'export: chemin, taille en octets, nombres)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` (a document "
+"summarising the export: path, size in bytes, counts)."
+
+#: ../../source/cli_import_export.rst:313
+msgid ""
+"``--incremental`` — Avec ``--type database`` : n'exporte que ce qui est "
+"entré dans la bibliothèque depuis le dernier export incrémental vers le "
+"même dossier, puis avance ce repère dans la base exportée. ``--file`` "
+"peut alors être un dossier, où un fichier ``sync-<machine>-<date>.db`` "
+"est créé (voir :ref:`synchroniser_deux_machines`). Un nom de fichier déjà"
+" pris est refusé : le fichier en place porte le delta précédent, que "
+"l'autre machine n'a peut-être pas encore fusionné."
+msgstr ""
+"``--incremental`` — With ``--type database``: exports only what has "
+"entered the library since the last incremental export to the same folder,"
+" then advances that marker in the exported database. ``--file`` can then "
+"be a folder, where a ``sync-<machine>-<date>.db`` file is created (see "
+":ref:`Synchronising two machines <synchroniser_deux_machines>`). A file "
+"name already taken is refused: the file in place holds the previous "
+"delta, which the other machine may not have merged yet."
+
+#: ../../source/cli_import_export.rst:320
+msgid ""
+"``--sync-cursor`` — Avec ``--incremental`` : nom du repère lu et avancé, "
+"à la place du dossier de destination."
+msgstr ""
+"``--sync-cursor`` — With ``--incremental``: name of the marker read and "
+"advanced, in place of the destination folder."
+
+#: ../../source/cli_import_export.rst:322
+msgid ""
+"``--plan`` — Avec ``--type database`` ou ``matches`` : compte, famille "
+"par famille, ce que l'export écrirait, sans écrire de fichier (``--file``"
+" est alors facultatif). Les comptes sont ceux que l'export rapporte "
+"ensuite ; les collections vivantes qui partiraient figées et les paquets "
+"« recherche » dont la source perdrait une partie sont nommés. Avec un "
+"autre type, l'option est refusée."
+msgstr ""
+"``--plan`` — With ``--type database`` or ``matches``: counts, family by "
+"family, what the export would write, without writing a file (``--file`` "
+"is then optional). The counts are those that the export reports "
+"afterwards; live collections that would leave frozen and the “recherche” "
+"decks whose source would lose a part are named. With another type, the "
+"option is refused."
+
+#: ../../source/cli_import_export.rst:328
+msgid ""
+"``--plan-ids <famille>`` — Comme ``--plan``, mais rend une page des "
+"identifiants derrière un compte : ``positions``, ``comments`` (les "
+"positions qui les portent), ``matches``, ``tournaments``, ``directions`` "
+"(les tournois dont la Direction part), ``rencontres`` (les Rencontres qui"
+" partent avec un tournoi), ``collections``, ``lessons``, ``ankiDecks``, "
+"``transcriptions`` ou ``filters``. ``--offset`` et ``--limit`` "
+"choisissent la page (1000 identifiants au plus)."
+msgstr ""
+"``--plan-ids <famille>`` — Like ``--plan``, but returns a page of the "
+"identifiers behind a count: ``positions``, ``comments`` (the positions "
+"that carry them), ``matches``, ``tournaments``, ``directions`` (the "
+"tournaments whose Direction leaves with them), ``rencontres`` (the events"
+" that leave with one of their tournaments), ``collections``, ``lessons``,"
+" ``ankiDecks``, ``transcriptions`` or ``filters``. ``--offset`` and "
+"``--limit`` choose the page (1000 identifiers at most)."
+
+#: ../../source/cli_import_export.rst:334
+msgid ""
+"``--type database`` exporte toute la bibliothèque, comme l'export du "
+"serveur et comme la fenêtre d'export quand la liste affichée est la "
+"bibliothèque : positions, matchs, tournois (avec leur Direction : "
+"journal, paires, tables et rattachement des matchs exportés ; leur "
+"Rencontre part dès qu'un de ses tournois part), collections, leçons, "
+"paquets Anki, transcriptions, alias et filtres. Une option à ``false`` "
+"retire sa famille (``--collections=false``) ; une liste d'IDs la "
+"restreint à ces éléments et l'inclut. Un brouillon de transcription part "
+"avec le match qu'il a produit ; un brouillon qui n'a pas encore produit "
+"de match ne part que si tous les matchs partent. ``--type matches`` "
+"emporte aussi le brouillon de chaque match."
+msgstr ""
+"``--type database`` exports the whole library, like the server export and"
+" like the export window when the displayed list is the library: "
+"positions, matches, tournaments (with their Direction: journal, pairs, "
+"tables and the filing of the exported matches; their event leaves as soon"
+" as one of its tournaments does), collections, lessons, Anki decks, "
+"transcriptions, aliases and filters. An option set to ``false`` removes "
+"its family (``--collections=false``); a list of IDs restricts it to those"
+" items and includes it. A transcription draft leaves with the match it "
+"produced; a draft that has not yet produced a match leaves only if every "
+"match does. ``--type matches`` also carries each match's draft."
+
+#: ../../source/cli_import_export.rst:343
+#: ../../source/cli_import_export.rst:428
+msgid "**Exemples:**"
+msgstr "**Examples:**"
+
+#: ../../source/cli_import_export.rst:366
+msgid ""
+"Un filigrane est signé avec l'identité d'émetteur locale (voir la "
+"commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
+"inamovible — le fichier reste une base SQLite ordinaire. Il ne protège "
+"rien, il indique seulement d'où vient le fichier. Un mot de passe protège"
+" le *transport* du fichier (la copie égarée, la pièce jointe envoyée par "
+"erreur), pas la base elle-même : quiconque a reçu le mot de passe peut "
+"l'ouvrir. blunderDB n'enregistre jamais rien côté destinataire (aucun "
+"registre, aucun journal) — voir `ADR-0007 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
+"mark-origin-and-nothing-else.md>`__."
+msgstr ""
+"A watermark is signed with the local issuer identity (see the "
+"``identity`` command below): it cannot be forged, but it can be removed —"
+" the file remains an ordinary SQLite database. It protects nothing; it "
+"only states where the file came from. A password protects the file's "
+"*transport* (the stray copy, the attachment sent by mistake), not the "
+"database itself: whoever has the password can open it. blunderDB never "
+"records anything on the recipient's side (no registry, no log) — see "
+"`ADR-0007 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0007"
+"-watermarks-mark-origin-and-nothing-else.md>`__."
+
+#: ../../source/cli_import_export.rst:378
+msgid "transfer — Copier d'une bibliothèque à une autre"
+msgstr "transfer — Copy from one library to another"
+
+#: ../../source/cli_import_export.rst:380
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire à manipuler. La sélection est celle de ``export --type "
+"database`` ; la fusion est celle de l'import d'une base ``.db`` : une "
+"position que la destination possède déjà n'est pas ajoutée une seconde "
+"fois (elle est reconnue à son hachage), ses analyses et ses commentaires "
+"se fusionnent, et un match, une collection, une leçon ou un paquet Anki "
+"déjà présent n'est pas dupliqué. Copier de A vers B puis de B vers A ne "
+"crée donc aucun doublon."
+msgstr ""
+"Copies part of a library into another, with no intermediate file to "
+"handle. The selection is that of ``export --type database``; the merge is"
+" that of importing a ``.db`` database: a position the destination already"
+" holds is not added a second time (it is recognised by its hash), its "
+"analyses and comments are merged, and a match, collection, lesson or Anki"
+" deck already present is not duplicated. Copying from A to B then from B "
+"to A therefore creates no duplicate."
+
+#: ../../source/cli_import_export.rst:395
+msgid ""
+"``--from`` — Bibliothèque source (obligatoire ; elle doit exister et être"
+" au schéma de cette version de blunderDB). Une bibliothèque plus ancienne"
+" est refusée, car la mettre à jour serait y écrire : ouvrez-la une fois "
+"dans blunderDB. Une bibliothèque plus récente est refusée aussi : mettez "
+"blunderDB à jour."
+msgstr ""
+"``--from`` — Source library (required; it must exist and use the schema "
+"of this version of blunderDB). An older library is refused, because "
+"upgrading it would mean writing to it: open it once in blunderDB. A newer"
+" library is refused too: update blunderDB."
+
+#: ../../source/cli_import_export.rst:400
+msgid ""
+"``--to`` — Bibliothèque de destination (obligatoire ; créée si elle "
+"n'existe pas). Elle ne peut pas être la source."
+msgstr ""
+"``--to`` — Destination library (required; created if it does not exist). "
+"It cannot be the source."
+
+#: ../../source/cli_import_export.rst:402
+msgid ""
+"``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
+"``--transcriptions``, ``--aliases``, ``--collections``, "
+"``--tournaments``, ``--decks``, ``--lessons`` — Comme pour ``export`` : "
+"une option à ``false`` retire sa famille (défaut : oui pour toutes)."
+msgstr ""
+"``--analysis``, ``--comments``, ``--played-moves``, ``--matches``, "
+"``--transcriptions``, ``--aliases``, ``--collections``, "
+"``--tournaments``, ``--decks``, ``--lessons`` — As for ``export``: an "
+"option set to ``false`` removes its family (default: yes for all)."
+
+#: ../../source/cli_import_export.rst:406
+msgid ""
+"``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
+"ids``, ``--lesson-ids`` — Une liste d'IDs de la source restreint sa "
+"famille à ces éléments et l'inclut. Un ID que la source ne contient pas "
+"est une erreur, et rien n'est copié."
+msgstr ""
+"``--collection-ids``, ``--match-ids``, ``--tournament-ids``, ``--deck-"
+"ids``, ``--lesson-ids`` — A list of IDs from the source restricts its "
+"family to those items and includes it. An ID that the source does not "
+"contain is an error, and nothing is copied."
+
+#: ../../source/cli_import_export.rst:410
+msgid ""
+"``--format`` — ``text`` (défaut) ou ``json`` (ce qui a été lu dans la "
+"source et ce que la destination en a pris)."
+msgstr ""
+"``--format`` — ``text`` (default) or ``json`` (what was read from the "
+"source and what the destination took from it)."
+
+#: ../../source/cli_import_export.rst:413
+msgid ""
+"**Quelles positions partent.** Sans liste d'IDs, toutes les positions de "
+"la source partent, rangées ou non. Dès qu'une liste d'IDs est donnée, "
+"seules partent les positions qu'atteignent les familles retenues (les "
+"membres d'une collection, les coups d'un match, les étapes d'une leçon, "
+"les cartes d'un paquet), avec leurs analyses et leurs commentaires. Une "
+"collection part toujours avec ses membres. Un match nommé par ``--match-"
+"ids`` emporte la fiche de son tournoi (nom, date, lieu), mais pas les "
+"autres matchs de ce tournoi ; avec ``--tournaments=false``, il arrive "
+"sans tournoi."
+msgstr ""
+"**Which positions are sent.** Without a list of IDs, all positions of the"
+" source are sent, filed or not. As soon as a list of IDs is given, only "
+"the positions reached by the retained families are sent (the members of a"
+" collection, the moves of a match, the steps of a lesson, the cards of a "
+"deck), with their analyses and comments. A collection always goes with "
+"its members. A match named by ``--match-ids`` carries the record of its "
+"tournament (name, date, venue), but not the other matches of that "
+"tournament; with ``--tournaments=false``, it arrives without a "
+"tournament."
+
+#: ../../source/cli_import_export.rst:422
+msgid ""
+"Rien n'est écrit qui dise d'où vient la copie : ni filigrane, ni journal "
+"d'import, ni métadonnée de la source ; la destination garde les siennes, "
+"et la source ne reçoit rien. La bibliothèque de filtres et l'historique "
+"de révision des paquets Anki ne sont pas copiés : un paquet arrive sans "
+"historique, et un paquet du même nom déjà présent garde le sien."
+msgstr ""
+"Nothing is written that says where the copy comes from: no watermark, no "
+"import log, no metadata from the source; the destination keeps its own, "
+"and the source receives nothing. The filter library and the review "
+"history of Anki decks are not copied: a deck arrives without history, and"
+" a deck of the same name already present keeps its own."
+
+#: ../../source/cli_import_export.rst:443
+msgid ""
+"Le serveur offre le même transfert entre deux tenants, tiré par le tenant"
+" qui reçoit (voir :ref:`mode_headless_transfert`)."
+msgstr ""
+"The server offers the same transfer between two tenants, pulled by the "
+"receiving tenant (see :ref:`mode_headless_transfert`)."
+
+#: ../../source/cli_import_export.rst:447
+msgid "identity — Identité d'émetteur"
+msgstr "identity — Issuer identity"
+
+#: ../../source/cli_import_export.rst:449
+msgid ""
+"Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
+"signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
+"apposé ; il n'y a rien à configurer. Elle appartient à une personne, pas "
+"à une base de données : tout ce que vous marquez porte une seule "
+"empreinte publique."
+msgstr ""
+"Shows or moves your **issuer identity**: the Ed25519 key that signs every"
+" watermark. It is created on its own the first time a watermark is "
+"applied; there is nothing to configure. It belongs to a person, not to a "
+"database: everything you mark carries a single public fingerprint."
+
+#: ../../source/cli_import_export.rst:463
+msgid "``--name`` — Change le nom affiché de l'identité."
+msgstr "``--name`` — Changes the identity's display name."
+
+#: ../../source/cli_import_export.rst:464
+msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
+msgstr "``--export`` — Exports the identity to a ``.bdbid`` file."
+
+#: ../../source/cli_import_export.rst:465
+msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
+msgstr "``--import`` — Imports an identity from a ``.bdbid`` file."
+
+#: ../../source/cli_import_export.rst:466
+msgid ""
+"``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
+"exporté/importé (l'identité locale, elle, est volontairement non "
+"protégée)."
+msgstr ""
+"``--passphrase`` — Optional passphrase protecting the exported/imported "
+"file (the local identity itself is deliberately left unprotected)."
+
+#: ../../source/cli_import_export.rst:468
+msgid ""
+"``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
+"empreinte, chemin de stockage)."
+msgstr ""
+"``--format`` — Output format: ``text`` (default) or ``json`` (name, "
+"fingerprint, storage path)."
+
+#: ../../source/cli_import_export.rst:471
+msgid ""
+"Le fichier exporté permet à quiconque le détient de signer en votre nom —"
+" ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
+" marqués conservent le nom sous lequel ils ont été scellés, et continuent"
+" de se vérifier."
+msgstr ""
+"The exported file lets anyone holding it sign in your name — do not share"
+" it. Renaming changes a label and nothing else: files already marked keep"
+" the name they were sealed under, and still verify."
+
+#: ../../source/cli_import_export.rst:477
+msgid "open — Ouvrir un fichier protégé"
+msgstr "open — Opening a protected file"
+
+#: ../../source/cli_import_export.rst:479
+msgid ""
+"Transforme un fichier protégé par mot de passe (``.dbx``) en base "
+"ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
+" fichier normal."
+msgstr ""
+"Turns a password-protected file (``.dbx``) into an ordinary database. The"
+" password is asked once; after that it is a normal file."
+
+#: ../../source/cli_import_export.rst:489
+msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
+msgstr "``--db`` — The ``.dbx`` file to open (required)."
+
+#: ../../source/cli_import_export.rst:490
+msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
+msgstr "``--password`` — The container's password (required)."
+
+#: ../../source/cli_import_export.rst:491
+msgid ""
+"``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
+"extension ``.db``)."
+msgstr ""
+"``--file`` — Output path for the ordinary database (default: same name, "
+"``.db`` extension)."
+
+#: ../../source/cli_import_export.rst:494
+msgid ""
+"Ce que le mot de passe protège : le *transport* du fichier — la copie "
+"égarée dans un dossier de téléchargements, la pièce jointe envoyée par "
+"erreur. Pas la base : quiconque a reçu le mot de passe peut l'ouvrir. L"
+"'en-tête du conteneur est en clair, si bien que ``blunderdb info`` lit "
+"l'origine d'un fichier protégé sans son mot de passe."
+msgstr ""
+"What the password protects: the file's *transport* — the copy left in a "
+"downloads folder, the attachment sent by mistake. Not the database: "
+"whoever has the password can open it. The container's header is in the "
+"clear, so ``blunderdb info`` reads the origin of a protected file without"
+" its password."

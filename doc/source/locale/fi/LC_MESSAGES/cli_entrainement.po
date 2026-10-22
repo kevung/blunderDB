@@ -1,0 +1,465 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fi\n"
+"Language-Team: fi <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_entrainement.rst:4
+msgid "Étude, leçons et entraînement"
+msgstr "Opiskelu, oppitunnit ja harjoittelu"
+
+#: ../../source/cli_entrainement.rst:7
+msgid "study — La file d'étude transversale"
+msgstr "study — Tuonnit ylittävä opiskelujono"
+
+#: ../../source/cli_entrainement.rst:9
+msgid ""
+"Liste les blunders du joueur de référence de la base, tous imports "
+"confondus, que rien n'a encore traités : sans commentaire, sans carte "
+"Anki, hors de toute collection et sans marque « vu » (voir "
+":ref:`file_etude_transversale`). Chaque sous-commande prend ``--db``."
+msgstr ""
+"Luettelee tietokannan vertailupelaajan blunderit kaikista tuonneista, "
+"joita mikään ei ole vielä käsitellyt: ei kommenttia, ei Anki-korttia, ei "
+"kuulu mihinkään kokoelmaan eikä ole merkittyä »nähdyksi» (ks. "
+":ref:`file_etude_transversale`). Jokainen aliskomento ottaa "
+"``--db``-valitsimen."
+
+#: ../../source/cli_entrainement.rst:18 ../../source/cli_entrainement.rst:47
+#: ../../source/cli_entrainement.rst:118
+msgid "**Sous-commandes:**"
+msgstr "**Alikomennot:**"
+
+#: ../../source/cli_entrainement.rst:20
+msgid ""
+"``queue [--limit <n>] [--format text|json]`` — La file, du plus coûteux "
+"au moins coûteux ; cinquante positions au plus."
+msgstr ""
+"``queue [--limit <n>] [--format text|json]`` — Jono kalleimmasta "
+"halvimpaan; enintään viisikymmentä asemaa."
+
+#: ../../source/cli_entrainement.rst:22
+msgid ""
+"``mark --id <id>`` — Marque la position vue : elle sort de la file. La "
+"marque est une donnée de la base, jamais exportée."
+msgstr ""
+"``mark --id <id>`` — Merkitsee aseman nähdyksi: se poistuu jonosta. "
+"Merkintä on tietokannan dataa, jota ei koskaan viedä."
+
+#: ../../source/cli_entrainement.rst:24
+msgid ""
+"``unmark --id <id>`` — Retire la marque : la position revient dans la "
+"file."
+msgstr "``unmark --id <id>`` — Poistaa merkinnän: asema palaa jonoon."
+
+#: ../../source/cli_entrainement.rst:26 ../../source/cli_entrainement.rst:94
+#: ../../source/cli_entrainement.rst:168 ../../source/cli_entrainement.rst:232
+msgid "**Exemples:**"
+msgstr "**Esimerkkejä:**"
+
+#: ../../source/cli_entrainement.rst:34
+msgid "lesson — Gérer les leçons"
+msgstr "lesson — Hallitse oppitunteja"
+
+#: ../../source/cli_entrainement.rst:36
+msgid ""
+"Gère les leçons : des suites ordonnées d'étapes qu'un coach écrit une "
+"fois pour un élève. Chaque étape a un titre, un texte et peut montrer une"
+" collection, une position, les deux ou aucune. Une leçon se remet dans un"
+" fichier ``.dbx`` (sous-commande ``export``) et se lit dans l'interface "
+"graphique avec la commande ``:le``. Chaque sous-commande prend ``--db`` ;"
+" ``list`` et ``show`` acceptent ``--format text`` (défaut) ou ``json``."
+msgstr ""
+"Hallitsee oppitunteja: järjestettyjä vaiheiden sarjoja, jotka valmentaja "
+"kirjoittaa kerran oppilasta varten. Jokaisella vaiheella on otsikko ja "
+"teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. "
+"Oppitunti luovutetaan ``.dbx``-tiedostossa (alikomento ``export``) ja "
+"luetaan graafisessa käyttöliittymässä komennolla ``:le``. Jokainen "
+"alikomento ottaa vastaan valitsimen ``--db``; ``list`` ja ``show`` "
+"hyväksyvät valitsimen ``--format text`` (oletus) tai ``json``."
+
+#: ../../source/cli_entrainement.rst:49
+msgid "``list`` — Liste des leçons : id, nom, nombre d'étapes."
+msgstr "``list`` — Luettelee oppitunnit: tunnus, nimi, vaiheiden määrä."
+
+#: ../../source/cli_entrainement.rst:50
+msgid ""
+"``show --id <id>`` — Les étapes d'une leçon, dans l'ordre : id d'étape, "
+"titre, texte, collection et position montrées."
+msgstr ""
+"``show --id <id>`` — Oppitunnin vaiheet järjestyksessä: vaiheen tunnus, "
+"otsikko, teksti sekä näytetty kokoelma ja asema."
+
+#: ../../source/cli_entrainement.rst:52
+msgid "``create --name <nom> [--description <texte>]`` — Crée une leçon vide."
+msgstr "``create --name <nom> [--description <texte>]`` — Luo tyhjän oppitunnin."
+
+#: ../../source/cli_entrainement.rst:53
+msgid ""
+"``edit --id <id> [--name <nom>] [--description <texte>]`` — Renomme une "
+"leçon ou change sa description ; ce qui n'est pas donné est conservé."
+msgstr ""
+"``edit --id <id> [--name <nom>] [--description <texte>]`` — Nimeää "
+"oppitunnin uudelleen tai muuttaa sen kuvausta; antamatta jätetty säilyy."
+
+#: ../../source/cli_entrainement.rst:55
+msgid ""
+"``delete --id <id> --confirm`` — Supprime la leçon et ses étapes, "
+"définitivement (il n'y a pas de corbeille pour les leçons). Les "
+"collections et les positions que ses étapes montraient restent dans la "
+"base."
+msgstr ""
+"``delete --id <id> --confirm`` — Poistaa oppitunnin ja sen vaiheet "
+"lopullisesti (oppitunneilla ei ole roskakoria). Kokoelmat ja asemat, "
+"joita sen vaiheet näyttivät, jäävät tietokantaan."
+
+#: ../../source/cli_entrainement.rst:58
+msgid ""
+"``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file "
+"<fichier>] [--collection <id>] [--position <id>]`` — Ajoute une étape à "
+"la fin de la leçon."
+msgstr ""
+"``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file "
+"<fichier>] [--collection <id>] [--position <id>]`` — Lisää vaiheen "
+"oppitunnin loppuun."
+
+#: ../../source/cli_entrainement.rst:61
+msgid ""
+"``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file"
+" …] [--collection <id>] [--position <id>]`` — Modifie une étape ; seuls "
+"les champs donnés changent, ``--collection 0`` ou ``--position 0`` "
+"retirent ce que l'étape montrait."
+msgstr ""
+"``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file"
+" …] [--collection <id>] [--position <id>]`` — Muokkaa vaihetta; vain "
+"annetut kentät muuttuvat, ``--collection 0`` tai ``--position 0`` poistaa"
+" sen, mitä vaihe näytti."
+
+#: ../../source/cli_entrainement.rst:65
+msgid "``remove-step --lesson <id> --step <id>`` — Retire une étape."
+msgstr "``remove-step --lesson <id> --step <id>`` — Poistaa vaiheen."
+
+#: ../../source/cli_entrainement.rst:66
+msgid ""
+"``reorder --lesson <id> --steps <id,id,…>`` — Fixe l'ordre des étapes ; "
+"la liste donne toutes les étapes de la leçon."
+msgstr ""
+"``reorder --lesson <id> --steps <id,id,…>`` — Asettaa vaiheiden "
+"järjestyksen; luettelossa on oltava kaikki oppitunnin vaiheet."
+
+#: ../../source/cli_entrainement.rst:68
+msgid ""
+"``export --id <id[,id…]> --out <fichier> [--analysis=false] "
+"[--comments=false] [--watermark <texte>] [--watermark-note <texte>] "
+"[--password <mot de passe>]`` — Exporte une ou plusieurs leçons, avec les"
+" collections et les positions que leurs étapes montrent, vers un nouveau "
+"fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé"
+" (voir la commande ``export`` pour le filigrane). Avec ``--html`` (une "
+"seule leçon, ``--lang fr|en|de|el|es|fi|it|ja|ru``), ``--out`` est une "
+"page HTML autonome : titre, description, chaque étape avec son texte et "
+"son plateau, l'analyse enregistrée de chaque position repliée comme une "
+"réponse de quiz, et l'origine du filigrane de la base en pied de page, "
+"s'il y en a un. Le fichier ne contient ni script ni adresse réseau."
+msgstr ""
+"``export --id <id[,id…]> --out <fichier> [--analysis=false] "
+"[--comments=false] [--watermark <texte>] [--watermark-note <texte>] "
+"[--password <mot de passe>]`` — Vie yhden tai useamman oppitunnin sekä "
+"kokoelmat ja asemat, joita niiden vaiheet näyttävät, uuteen "
+"tietokantatiedostoon; valitsimella ``--password`` tiedosto on suojattu "
+"``.dbx`` (vesileimasta katso komento ``export``). Valitsimella ``--html``"
+" (yksi oppitunti, ``--lang fr|en|de|el|es|fi|it|ja|ru``) ``--out`` on "
+"itsenäinen HTML-sivu: otsikko, kuvaus, jokainen vaihe tekstineen ja "
+"lautoineen, kunkin aseman tallennettu analyysi taitettuna kuin "
+"tietokilpailun vastaus ja alatunnisteessa tietokannan vesileiman "
+"alkuperä, jos sellainen on. Tiedosto ei sisällä skriptiä eikä verkko-"
+"osoitetta."
+
+#: ../../source/cli_entrainement.rst:79
+msgid ""
+"``done --step <id> [--undo]`` — Marque une étape comme faite dans cette "
+"base, ou retire la marque avec ``--undo`` : c'est la progression de celui"
+" qui lit la leçon, et aucun export ne l'emporte."
+msgstr ""
+"``done --step <id> [--undo]`` — Merkitsee vaiheen tehdyksi tässä "
+"tietokannassa tai poistaa merkin valitsimella ``--undo``: tämä on "
+"oppituntia lukevan etenemistä, eikä mikään vienti vie sitä mukanaan."
+
+#: ../../source/cli_entrainement.rst:82
+msgid ""
+"``progress --id <id> [--format text|json]`` — Montre les étapes de la "
+"leçon marquées faites, avec la date du geste."
+msgstr ""
+"``progress --id <id> [--format text|json]`` — Näyttää oppitunnin "
+"tehdyiksi merkityt vaiheet eleen päivämäärän kanssa."
+
+#: ../../source/cli_entrainement.rst:85
+msgid ""
+"Importer un fichier qui contient une leçon crée celle-ci avec ses étapes "
+"; une leçon dont le nom existe déjà dans la base n'est pas touchée, si "
+"bien que réimporter le même fichier ne change rien. Lire une leçon "
+"n'enregistre rien chez celui qui la lit ; seul ``done`` écrit sa "
+"progression."
+msgstr ""
+"Oppitunnin sisältävän tiedoston tuonti luo oppitunnin vaiheineen; "
+"oppituntiin, jonka nimi on jo tietokannassa, ei kosketa, joten saman "
+"tiedoston tuonti uudelleen ei muuta mitään. Oppitunnin lukeminen ei "
+"tallenna mitään lukijan puolelle; vain ``done`` kirjoittaa hänen "
+"etenemisensä."
+
+#: ../../source/cli_entrainement.rst:90
+msgid ""
+"L'export de toute la bibliothèque (``export --type database``) emporte "
+"toutes les leçons avec ce que leurs étapes montrent ; un export partiel "
+"ne les emporte que nommées, par ``lesson export``."
+msgstr ""
+"Koko kirjaston vienti (``export --type database``) sisältää kaikki "
+"oppitunnit sekä sen, mitä niiden vaiheet näyttävät; osittainen vienti "
+"sisältää vain nimetyt oppitunnit komennolla ``lesson export``."
+
+#: ../../source/cli_entrainement.rst:108
+msgid "anki — Paquets de répétition espacée"
+msgstr "anki — Välitoistopakat"
+
+#: ../../source/cli_entrainement.rst:110
+msgid ""
+"Consulte et entretient les paquets de répétition espacée (FSRS) du "
+"panneau Anki de l'interface graphique. La révision d'une carte demande le"
+" damier et reste dans l'interface graphique ; la CLI liste, mesure et "
+"resynchronise."
+msgstr ""
+"Tarkastelee ja ylläpitää käyttöliittymän Anki-paneelin välitoistopakkoja "
+"(FSRS). Kortin kertaaminen vaatii laudan ja tapahtuu käyttöliittymässä; "
+"CLI listaa, mittaa ja synkronoi uudelleen."
+
+#: ../../source/cli_entrainement.rst:120
+msgid ""
+"``decks [--format text|json|csv]`` — Liste des paquets : source, nombre "
+"de cartes, cartes dues, cartes nouvelles."
+msgstr ""
+"``decks [--format text|json|csv]`` — Pakkojen luettelo: lähde, korttien "
+"määrä, erääntyneet kortit, uudet kortit."
+
+#: ../../source/cli_entrainement.rst:122
+msgid ""
+"``stats --deck <id> [--format text|json]`` — Statistiques de révision "
+"d'un paquet : total, nouvelles, en apprentissage, à revoir, dues "
+"maintenant, et ses paramètres FSRS."
+msgstr ""
+"``stats --deck <id> [--format text|json]`` — Pakan kertaustilastot: "
+"yhteensä, uudet, opittavana, kerrattavat, nyt erääntyvät, sekä sen FSRS-"
+"parametrit."
+
+#: ../../source/cli_entrainement.rst:125
+msgid ""
+"``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — Cartes"
+" arrivant à échéance par jour civil (UTC) sur les ``n`` prochains jours "
+"(défaut 30, maximum 365) ; le jour 0 absorbe toutes les cartes en retard "
+"; ``--deck 0`` (défaut) couvre tous les paquets."
+msgstr ""
+"``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — "
+"Erääntyvät kortit kalenteripäivittäin (UTC) seuraavien ``n`` päivän "
+"aikana (oletus 30, enintään 365); päivä 0 sisältää kaikki myöhässä olevat"
+" kortit; ``--deck 0`` (oletus) kattaa kaikki pakat."
+
+#: ../../source/cli_entrainement.rst:129
+msgid ""
+"``sync --deck <id>`` — Ajoute une carte pour chaque position de la source"
+" du paquet qui n'en a pas encore ; les cartes existantes gardent leur "
+"planification."
+msgstr ""
+"``sync --deck <id>`` — Lisää kortin jokaiselle pakan lähteen asemalle, "
+"jolla ei vielä ole korttia; olemassa olevat kortit säilyttävät "
+"ajoituksensa."
+
+#: ../../source/cli_entrainement.rst:132
+msgid ""
+"``retention --deck <id> [--format text|json]`` — Rétention mesurée d'un "
+"paquet, comparée à la cible que son propriétaire a choisie."
+msgstr ""
+"``retention --deck <id> [--format text|json]`` — pakan mitattu "
+"muistiinjäänti verrattuna omistajan valitsemaan tavoitteeseen."
+
+#: ../../source/cli_entrainement.rst:134
+msgid ""
+"``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format "
+"text|json]`` — Agit sur une carte. *Suspendre* la met de côté sans perdre"
+" son historique (elle ne ressort plus en séance) ; *enterrer* la masque "
+"jusqu'au lendemain, sans rien dire de sa valeur ; *retirer* la supprime "
+"du paquet — la position, elle, reste dans la base, un paquet n'étant "
+"qu'une liste d'étude posée dessus ; *undo* annule la dernière note de la "
+"carte, qui retrouve l'état d'avant cette note, et affiche cet état. Sans "
+"note à annuler, la commande refuse : « the card has no review to undo »."
+msgstr ""
+"``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format "
+"text|json]`` — kohdistuu yhteen korttiin. *Hyllytys* siirtää sen syrjään "
+"historiaa menettämättä (se ei enää tule vastaan istunnossa); *hautaus* "
+"piilottaa sen seuraavaan päivään sanomatta mitään sen arvosta; *poisto* "
+"poistaa sen pakasta — asema itse jää kirjastoon, sillä pakka on vain sen "
+"päälle asetettu opiskelulista. *undo* kumoaa kortin viimeisimmän arvion, "
+"jolloin kortti palaa tilaan ennen sitä arviota, ja näyttää tämän tilan. "
+"Jos kumottavaa arviota ei ole, komento kieltäytyy: ”the card has no "
+"review to undo”."
+
+#: ../../source/cli_entrainement.rst:142
+msgid ""
+"``log [--deck <id>] [--limit <n>] [--format text|json]`` — Journal des "
+"révisions, la plus récente d'abord (``--deck 0``, le défaut, couvre tous "
+"les paquets ; ``--limit`` vaut 20 par défaut). Le journal est ce que le "
+"planificateur a réellement reçu, par opposition à ce qu'il prévoit "
+"aujourd'hui : c'est le seul endroit où une note entrée par erreur se "
+"voit."
+msgstr ""
+"``log [--deck <id>] [--limit <n>] [--format text|json]`` — kertausloki, "
+"tuorein ensin (``--deck 0``, oletus, kattaa kaikki pakat; ``--limit`` on "
+"oletuksena 20). Loki on se, mitä ajoittajalle todella kerrottiin, "
+"vastakohtana sille, mitä se tänään suunnittelee: ainoa paikka, jossa "
+"vahingossa annettu arvosana näkyy."
+
+#: ../../source/cli_entrainement.rst:147
+msgid ""
+"``export --deck <id> | --collection <id> --out <fichier.apkg> [--format "
+"apkg] [--lang <langue>]`` — Écrit un paquet, ou une collection, en paquet"
+" Anki **.apkg** que l'application Anki importe sur ordinateur ou "
+"téléphone : une carte par position, le plateau, le score, le videau et "
+"les dés au recto, le meilleur coup ou la bonne décision de videau, son "
+"équité et l'erreur du coup joué au verso, libellés dans la langue "
+"``--lang`` (``en`` par défaut). Une collection vivante est évaluée à "
+"l'export, sous son plafond. L'export n'écrit rien dans la base ; un "
+"réexport importé dans Anki met ses cartes à jour au lieu de les "
+"dupliquer. Le daemon sert le même fichier sur ``POST "
+"/v1/anki.exportApkg``."
+msgstr ""
+"``export --deck <id> | --collection <id> --out <tiedosto.apkg> [--format "
+"apkg] [--lang <kieli>]`` — Kirjoittaa pakan tai kokoelman Anki-paketiksi "
+"**.apkg**, jonka Anki-sovellus tuo tietokoneella tai puhelimella: yksi "
+"kortti asemaa kohden, etupuolella lauta, tilanne, kuutio ja nopat, "
+"takapuolella paras siirto tai oikea kuutiopäätös, sen equity ja pelatun "
+"siirron virhe, tekstit kielellä ``--lang`` (oletus ``en``). Elävä "
+"kokoelma arvioidaan viennin hetkellä, ylärajansa puitteissa. Vienti ei "
+"kirjoita tietokantaan mitään; Ankiin tuotu uusi vienti päivittää "
+"korttinsa sen sijaan, että monistaisi ne. Daemon tarjoaa saman tiedoston "
+"osoitteessa ``POST /v1/anki.exportApkg``."
+
+#: ../../source/cli_entrainement.rst:158
+msgid ""
+"Un paquet fondé sur une collection relit sa collection ; fondé sur une "
+"collection vivante, il rejoue sa requête sous le même plafond de 5 000 "
+"positions et signale sur la sortie d'erreur une source tronquée. Un "
+"paquet fondé sur une recherche conserve la recherche telle que "
+"l'interface graphique l'a enregistrée (commande, damier et identifiants "
+"des positions trouvées à ce moment-là) : la grammaire de recherche vit "
+"dans l'interface graphique, la CLI resynchronise donc depuis les "
+"identifiants enregistrés et le signale sur la sortie d'erreur — ouvrez le"
+" paquet dans l'interface graphique pour rejouer la recherche elle-même."
+msgstr ""
+"Kokoelmaan perustuva pakka lukee kokoelmansa uudelleen; elävään "
+"kokoelmaan perustuva pakka suorittaa kyselynsä uudelleen samalla 5 000 "
+"aseman ylärajalla ja ilmoittaa virhetulosteessa typistetystä lähteestä. "
+"Hakuun perustuva pakka säilyttää haun sellaisena kuin graafinen "
+"käyttöliittymä sen tallensi (komento, lauta ja tuolloin löytyneiden "
+"asemien tunnisteet): hakukielioppi elää graafisessa käyttöliittymässä, "
+"joten CLI synkronoi uudelleen tallennetuista tunnisteista ja ilmoittaa "
+"siitä virhetulosteessa — avaa pakka graafisessa käyttöliittymässä "
+"suorittaaksesi itse haun uudelleen."
+
+#: ../../source/cli_entrainement.rst:192
+msgid "training — Le journal d'entraînement"
+msgstr "training — Harjoituspäiväkirja"
+
+#: ../../source/cli_entrainement.rst:194
+msgid ""
+"Relit le journal de l'onglet Entraînement (voir "
+":ref:`panneau_entrainement`) et fait des questions ratées de quoi "
+"réviser. Le journal est écrit par l'application graphique, ou par un "
+"client du démon à la route ``training.save`` ; la ligne de commande ne "
+"pose pas de questions."
+msgstr ""
+"Lukee uudelleen Harjoitus-välilehden päiväkirjan (katso "
+":ref:`panneau_entrainement`) ja tekee epäonnistuneista kysymyksistä "
+"kertausaineistoa. Päiväkirjan kirjoittaa graafinen sovellus tai daemonin "
+"asiakas reitin ``training.save`` kautta; komentorivi ei esitä kysymyksiä."
+
+#: ../../source/cli_entrainement.rst:199
+msgid ""
+"**training sessions** — Les séances, la plus récente d'abord, avec leur "
+"identifiant ; le PR n'existe que pour *Décision*."
+msgstr ""
+"**training sessions** — Istunnot, uusin ensin, tunnisteineen; PR on "
+"olemassa vain *Päätös*-harjoitukselle."
+
+#: ../../source/cli_entrainement.rst:206 ../../source/cli_entrainement.rst:221
+msgid "**Options:**"
+msgstr "**Valitsimet:**"
+
+#: ../../source/cli_entrainement.rst:208
+msgid ""
+"``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ou ``decision``."
+msgstr ""
+"``--exercise <nimi>`` — Yksi harjoitus: ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` tai ``decision``."
+
+#: ../../source/cli_entrainement.rst:210
+msgid "``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes)."
+msgstr "``--limit <n>`` — Istuntojen määrä (oletus 20; 0 = kaikki)."
+
+#: ../../source/cli_entrainement.rst:211
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — Tulostusmuoto."
+
+#: ../../source/cli_entrainement.rst:213
+msgid ""
+"**training missed** — Les positions ratées, chacune une fois, la plus "
+"récemment ratée d'abord ; une question hors délai compte comme ratée. "
+"Seules les questions de *Décision* gardent leur position."
+msgstr ""
+"**training missed** — Epäonnistuneet asemat, kukin kerran, viimeksi "
+"epäonnistunut ensin; aikarajan ylittänyt kysymys lasketaan "
+"epäonnistuneeksi. Vain *Päätös*-kysymykset säilyttävät asemansa."
+
+#: ../../source/cli_entrainement.rst:223
+msgid "``--exercise <nom>`` — Les séances d'un seul exercice."
+msgstr "``--exercise <nimi>`` — Yhden harjoituksen istunnot."
+
+#: ../../source/cli_entrainement.rst:224
+msgid ""
+"``--session <id>`` — Une seule séance (un identifiant de ``training "
+"sessions``)."
+msgstr ""
+"``--session <id>`` — Yksi istunto (``training sessions`` -komennon "
+"tunniste)."
+
+#: ../../source/cli_entrainement.rst:226
+msgid "``--limit <n>`` — Nombre de positions (défaut 0 = toutes)."
+msgstr "``--limit <n>`` — Asemien määrä (oletus 0 = kaikki)."
+
+#: ../../source/cli_entrainement.rst:227
+msgid "``--deck <nom>`` — Crée un paquet Anki de ces positions."
+msgstr "``--deck <nimi>`` — Luo näistä asemista Anki-pakan."
+
+#: ../../source/cli_entrainement.rst:228
+msgid "``--collection <nom>`` — Crée une collection de ces positions."
+msgstr "``--collection <nimi>`` — Luo näistä asemista kokoelman."
+
+#: ../../source/cli_entrainement.rst:229
+msgid ""
+"``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et "
+"``DeckID`` ou ``CollectionID`` quand ils sont créés."
+msgstr ""
+"``--format text|json`` — Tulostusmuoto; JSON-muodossa ``PositionIDs`` "
+"sekä ``DeckID`` tai ``CollectionID``, kun ne luodaan."

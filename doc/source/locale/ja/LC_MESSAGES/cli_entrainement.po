@@ -1,0 +1,426 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_entrainement.rst:4
+msgid "Étude, leçons et entraînement"
+msgstr "学習、レッスン、トレーニング"
+
+#: ../../source/cli_entrainement.rst:7
+msgid "study — La file d'étude transversale"
+msgstr "study — 横断学習キュー"
+
+#: ../../source/cli_entrainement.rst:9
+msgid ""
+"Liste les blunders du joueur de référence de la base, tous imports "
+"confondus, que rien n'a encore traités : sans commentaire, sans carte "
+"Anki, hors de toute collection et sans marque « vu » (voir "
+":ref:`file_etude_transversale`). Chaque sous-commande prend ``--db``."
+msgstr ""
+"データベースの基準プレイヤーのブランダーのうち、まだ何も処理されていないものを、すべてのインポートをまとめて一覧表示します。コメントなし、Anki"
+" カードなし、どのコレクションにも属さず、「見た」の印もないものです(:ref:`file_etude_transversale`\\ "
+"を参照)。各サブコマンドは\\ ``--db``\\ を受け付けます。"
+
+#: ../../source/cli_entrainement.rst:18 ../../source/cli_entrainement.rst:47
+#: ../../source/cli_entrainement.rst:118
+msgid "**Sous-commandes:**"
+msgstr "**サブコマンド：**"
+
+#: ../../source/cli_entrainement.rst:20
+msgid ""
+"``queue [--limit <n>] [--format text|json]`` — La file, du plus coûteux "
+"au moins coûteux ; cinquante positions au plus."
+msgstr ""
+"``queue [--limit <n>] [--format text|json]``\\ — キュー。コストの大きいものから小さいものへ、最大"
+" 50 局面。"
+
+#: ../../source/cli_entrainement.rst:22
+msgid ""
+"``mark --id <id>`` — Marque la position vue : elle sort de la file. La "
+"marque est une donnée de la base, jamais exportée."
+msgstr "``mark --id <id>``\\ — 局面に見た印を付けます。局面はキューから外れます。印はデータベースのデータで、エクスポートされません。"
+
+#: ../../source/cli_entrainement.rst:24
+msgid ""
+"``unmark --id <id>`` — Retire la marque : la position revient dans la "
+"file."
+msgstr "``unmark --id <id>``\\ — 印を外します。局面はキューに戻ります。"
+
+#: ../../source/cli_entrainement.rst:26 ../../source/cli_entrainement.rst:94
+#: ../../source/cli_entrainement.rst:168 ../../source/cli_entrainement.rst:232
+msgid "**Exemples:**"
+msgstr "**例：**"
+
+#: ../../source/cli_entrainement.rst:34
+msgid "lesson — Gérer les leçons"
+msgstr "lesson — レッスンの管理"
+
+#: ../../source/cli_entrainement.rst:36
+msgid ""
+"Gère les leçons : des suites ordonnées d'étapes qu'un coach écrit une "
+"fois pour un élève. Chaque étape a un titre, un texte et peut montrer une"
+" collection, une position, les deux ou aucune. Une leçon se remet dans un"
+" fichier ``.dbx`` (sous-commande ``export``) et se lit dans l'interface "
+"graphique avec la commande ``:le``. Chaque sous-commande prend ``--db`` ;"
+" ``list`` et ``show`` acceptent ``--format text`` (défaut) ou ``json``."
+msgstr ""
+"レッスンを管理します。レッスンとは、コーチが生徒のために一度だけ書く、順序付けられたステップの並びです。各ステップにはタイトルとテキストがあり、コレクション、ポジション、その両方、またはどちらも表示しないことができます。レッスンは"
+" ``.dbx`` ファイルで渡され(サブコマンド ``export``)、グラフィカルインターフェースでは ``:le`` "
+"コマンドで読みます。すべてのサブコマンドは ``--db`` を取り、``list`` と ``show`` は ``--format "
+"text``\\ (既定)または ``json`` を受け付けます。"
+
+#: ../../source/cli_entrainement.rst:49
+msgid "``list`` — Liste des leçons : id, nom, nombre d'étapes."
+msgstr "``list`` — レッスンの一覧:id、名前、ステップ数。"
+
+#: ../../source/cli_entrainement.rst:50
+msgid ""
+"``show --id <id>`` — Les étapes d'une leçon, dans l'ordre : id d'étape, "
+"titre, texte, collection et position montrées."
+msgstr ""
+"``show --id <id>`` — レッスンのステップを順に表示します。ステップ "
+"id、タイトル、テキスト、表示されるコレクションとポジション。"
+
+#: ../../source/cli_entrainement.rst:52
+msgid "``create --name <nom> [--description <texte>]`` — Crée une leçon vide."
+msgstr "``create --name <nom> [--description <texte>]`` — 空のレッスンを作成します。"
+
+#: ../../source/cli_entrainement.rst:53
+msgid ""
+"``edit --id <id> [--name <nom>] [--description <texte>]`` — Renomme une "
+"leçon ou change sa description ; ce qui n'est pas donné est conservé."
+msgstr ""
+"``edit --id <id> [--name <nom>] [--description <texte>]`` — "
+"レッスンの名前を変更するか、説明を変更します。指定しなかったものは保持されます。"
+
+#: ../../source/cli_entrainement.rst:55
+msgid ""
+"``delete --id <id> --confirm`` — Supprime la leçon et ses étapes, "
+"définitivement (il n'y a pas de corbeille pour les leçons). Les "
+"collections et les positions que ses étapes montraient restent dans la "
+"base."
+msgstr ""
+"``delete --id <id> --confirm`` — "
+"レッスンとそのステップを完全に削除します(レッスンにはごみ箱がありません)。ステップが表示していたコレクションとポジションはデータベースに残ります。"
+
+#: ../../source/cli_entrainement.rst:58
+msgid ""
+"``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file "
+"<fichier>] [--collection <id>] [--position <id>]`` — Ajoute une étape à "
+"la fin de la leçon."
+msgstr ""
+"``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file "
+"<fichier>] [--collection <id>] [--position <id>]`` — レッスンの末尾にステップを追加します。"
+
+#: ../../source/cli_entrainement.rst:61
+msgid ""
+"``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file"
+" …] [--collection <id>] [--position <id>]`` — Modifie une étape ; seuls "
+"les champs donnés changent, ``--collection 0`` ou ``--position 0`` "
+"retirent ce que l'étape montrait."
+msgstr ""
+"``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file"
+" …] [--collection <id>] [--position <id>]`` — "
+"ステップを変更します。指定したフィールドだけが変わり、``--collection 0`` または ``--position 0`` "
+"を指定すると、ステップが表示していたものが外れます。"
+
+#: ../../source/cli_entrainement.rst:65
+msgid "``remove-step --lesson <id> --step <id>`` — Retire une étape."
+msgstr "``remove-step --lesson <id> --step <id>`` — ステップを削除します。"
+
+#: ../../source/cli_entrainement.rst:66
+msgid ""
+"``reorder --lesson <id> --steps <id,id,…>`` — Fixe l'ordre des étapes ; "
+"la liste donne toutes les étapes de la leçon."
+msgstr ""
+"``reorder --lesson <id> --steps <id,id,…>`` — "
+"ステップの順序を設定します。リストにはレッスンのすべてのステップを指定します。"
+
+#: ../../source/cli_entrainement.rst:68
+msgid ""
+"``export --id <id[,id…]> --out <fichier> [--analysis=false] "
+"[--comments=false] [--watermark <texte>] [--watermark-note <texte>] "
+"[--password <mot de passe>]`` — Exporte une ou plusieurs leçons, avec les"
+" collections et les positions que leurs étapes montrent, vers un nouveau "
+"fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé"
+" (voir la commande ``export`` pour le filigrane). Avec ``--html`` (une "
+"seule leçon, ``--lang fr|en|de|el|es|fi|it|ja|ru``), ``--out`` est une "
+"page HTML autonome : titre, description, chaque étape avec son texte et "
+"son plateau, l'analyse enregistrée de chaque position repliée comme une "
+"réponse de quiz, et l'origine du filigrane de la base en pied de page, "
+"s'il y en a un. Le fichier ne contient ni script ni adresse réseau."
+msgstr ""
+"``export --id <id[,id…]> --out <fichier> [--analysis=false] "
+"[--comments=false] [--watermark <texte>] [--watermark-note <texte>] "
+"[--password <mot de passe>]`` — 1 "
+"つまたは複数のレッスンを、そのステップが表示するコレクションとポジションとともに、新しいデータベースファイルへエクスポートします。``--password``"
+" を指定すると、ファイルは保護された ``.dbx`` になります(透かしについては ``export`` コマンドを参照)。``--html``"
+" を付けると(レッスンは 1 つのみ。言語は ``--lang fr|en|de|el|es|fi|it|ja|ru`` "
+"で選びます)、``--out`` は単体の HTML "
+"ページになります。タイトル、説明、各ステップのテキストとボード、各ポジションの保存済み解析(クイズの答えのように折りたたみ)、そしてデータベースに透かしがあればフッターにその出所が入ります。ファイルにはスクリプトもネットワークアドレスも含まれません。"
+
+#: ../../source/cli_entrainement.rst:79
+msgid ""
+"``done --step <id> [--undo]`` — Marque une étape comme faite dans cette "
+"base, ou retire la marque avec ``--undo`` : c'est la progression de celui"
+" qui lit la leçon, et aucun export ne l'emporte."
+msgstr ""
+"``done --step <id> [--undo]`` — このデータベースでステップを完了としてマークするか、``--undo`` "
+"でマークを外します。これはレッスンを読む人の進捗であり、どのエクスポートにも含まれません。"
+
+#: ../../source/cli_entrainement.rst:82
+msgid ""
+"``progress --id <id> [--format text|json]`` — Montre les étapes de la "
+"leçon marquées faites, avec la date du geste."
+msgstr ""
+"``progress --id <id> [--format text|json]`` — "
+"完了とマークされたレッスンのステップを、その操作の日付とともに表示します。"
+
+#: ../../source/cli_entrainement.rst:85
+msgid ""
+"Importer un fichier qui contient une leçon crée celle-ci avec ses étapes "
+"; une leçon dont le nom existe déjà dans la base n'est pas touchée, si "
+"bien que réimporter le même fichier ne change rien. Lire une leçon "
+"n'enregistre rien chez celui qui la lit ; seul ``done`` écrit sa "
+"progression."
+msgstr ""
+"レッスンを含むファイルをインポートすると、そのレッスンがステップごと作成されます。同じ名前のレッスンがすでにデータベースにある場合は変更されないため、同じファイルを再度インポートしても何も変わりません。レッスンを読んでも、読む側には何も記録されません。進捗を書き込むのは"
+" ``done`` だけです。"
+
+#: ../../source/cli_entrainement.rst:90
+msgid ""
+"L'export de toute la bibliothèque (``export --type database``) emporte "
+"toutes les leçons avec ce que leurs étapes montrent ; un export partiel "
+"ne les emporte que nommées, par ``lesson export``."
+msgstr ""
+"ライブラリ全体のエクスポート( ``export --type database`` "
+")には、すべてのレッスンがそのステップが表示する内容とともに含まれます。部分エクスポートに含まれるのは、``lesson export`` "
+"で名前を指定したレッスンだけです。"
+
+#: ../../source/cli_entrainement.rst:108
+msgid "anki — Paquets de répétition espacée"
+msgstr "anki — 間隔反復デッキ"
+
+#: ../../source/cli_entrainement.rst:110
+msgid ""
+"Consulte et entretient les paquets de répétition espacée (FSRS) du "
+"panneau Anki de l'interface graphique. La révision d'une carte demande le"
+" damier et reste dans l'interface graphique ; la CLI liste, mesure et "
+"resynchronise."
+msgstr ""
+"グラフィカルインターフェースの Anki "
+"パネルが持つ間隔反復デッキ（FSRS）を確認・維持します。カードの復習にはボードが必要なため、グラフィカルインターフェース側で行います。CLI "
+"は一覧表示、計測、再同期を行います。"
+
+#: ../../source/cli_entrainement.rst:120
+msgid ""
+"``decks [--format text|json|csv]`` — Liste des paquets : source, nombre "
+"de cartes, cartes dues, cartes nouvelles."
+msgstr "``decks [--format text|json|csv]`` — デッキのリスト：ソース、カード数、期限が来ているカード数、新規カード数。"
+
+#: ../../source/cli_entrainement.rst:122
+msgid ""
+"``stats --deck <id> [--format text|json]`` — Statistiques de révision "
+"d'un paquet : total, nouvelles, en apprentissage, à revoir, dues "
+"maintenant, et ses paramètres FSRS."
+msgstr ""
+"``stats --deck <id> [--format text|json]`` — "
+"デッキの復習統計：合計、新規、学習中、要復習、現在期限が来ているもの、および FSRS パラメータ。"
+
+#: ../../source/cli_entrainement.rst:125
+msgid ""
+"``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — Cartes"
+" arrivant à échéance par jour civil (UTC) sur les ``n`` prochains jours "
+"(défaut 30, maximum 365) ; le jour 0 absorbe toutes les cartes en retard "
+"; ``--deck 0`` (défaut) couvre tous les paquets."
+msgstr ""
+"``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — 今後 "
+"``n``\\ "
+"日間（デフォルト30、最大365）について、暦日（UTC）ごとに期限を迎えるカード数。0日目には期限切れのカードがすべて含まれます。``--deck"
+" 0``\\ （デフォルト）はすべてのデッキを対象とします。"
+
+#: ../../source/cli_entrainement.rst:129
+msgid ""
+"``sync --deck <id>`` — Ajoute une carte pour chaque position de la source"
+" du paquet qui n'en a pas encore ; les cartes existantes gardent leur "
+"planification."
+msgstr ""
+"``sync --deck <id>`` — "
+"デッキのソースに含まれる各ポジションについて、まだカードがなければ追加します。既存のカードのスケジュールはそのまま保持されます。"
+
+#: ../../source/cli_entrainement.rst:132
+msgid ""
+"``retention --deck <id> [--format text|json]`` — Rétention mesurée d'un "
+"paquet, comparée à la cible que son propriétaire a choisie."
+msgstr ""
+"``retention --deck <id> [--format text|json]``\\ — "
+"所有者が選んだ目標と比べた、デッキの実測保持率。"
+
+#: ../../source/cli_entrainement.rst:134
+msgid ""
+"``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format "
+"text|json]`` — Agit sur une carte. *Suspendre* la met de côté sans perdre"
+" son historique (elle ne ressort plus en séance) ; *enterrer* la masque "
+"jusqu'au lendemain, sans rien dire de sa valeur ; *retirer* la supprime "
+"du paquet — la position, elle, reste dans la base, un paquet n'étant "
+"qu'une liste d'étude posée dessus ; *undo* annule la dernière note de la "
+"carte, qui retrouve l'état d'avant cette note, et affiche cet état. Sans "
+"note à annuler, la commande refuse : « the card has no review to undo »."
+msgstr ""
+"``card --id <id> --action suspend|unsuspend|bury|remove|undo [--format "
+"text|json]``\\ — 一枚のカードに作用します。\\ *保留*\\ は履歴を失わずに脇へ置きます（以後セッションに出ません）。\\ "
+"*埋める*\\ は価値については何も言わずに翌日まで隠します。\\ *削除*\\ "
+"はデッキから取り除きます。ポジション自体はライブラリに残ります。デッキはその上に重ねた学習リストにすぎないからです。\\ *undo*\\ "
+"はカードの最後の評価を取り消し、カードはその評価の前の状態に戻り、その状態を表示します。取り消す評価がない場合、コマンドは拒否します：「the "
+"card has no review to undo」。"
+
+#: ../../source/cli_entrainement.rst:142
+msgid ""
+"``log [--deck <id>] [--limit <n>] [--format text|json]`` — Journal des "
+"révisions, la plus récente d'abord (``--deck 0``, le défaut, couvre tous "
+"les paquets ; ``--limit`` vaut 20 par défaut). Le journal est ce que le "
+"planificateur a réellement reçu, par opposition à ce qu'il prévoit "
+"aujourd'hui : c'est le seul endroit où une note entrée par erreur se "
+"voit."
+msgstr ""
+"``log [--deck <id>] [--limit <n>] [--format text|json]``\\ — "
+"復習の記録。新しいものが先です（``--deck 0``\\ が既定で、すべてのデッキが対象。``--limit``\\ の既定は "
+"20）。記録はスケジューラーに実際に伝えられた内容であり、今日の予定とは別物です。誤って入力した評点が見える唯一の場所です。"
+
+#: ../../source/cli_entrainement.rst:147
+msgid ""
+"``export --deck <id> | --collection <id> --out <fichier.apkg> [--format "
+"apkg] [--lang <langue>]`` — Écrit un paquet, ou une collection, en paquet"
+" Anki **.apkg** que l'application Anki importe sur ordinateur ou "
+"téléphone : une carte par position, le plateau, le score, le videau et "
+"les dés au recto, le meilleur coup ou la bonne décision de videau, son "
+"équité et l'erreur du coup joué au verso, libellés dans la langue "
+"``--lang`` (``en`` par défaut). Une collection vivante est évaluée à "
+"l'export, sous son plafond. L'export n'écrit rien dans la base ; un "
+"réexport importé dans Anki met ses cartes à jour au lieu de les "
+"dupliquer. Le daemon sert le même fichier sur ``POST "
+"/v1/anki.exportApkg``."
+msgstr ""
+"``export --deck <id> | --collection <id> --out <file.apkg> [--format "
+"apkg] [--lang <lang>]`` — デッキまたはコレクションを Anki パッケージ **.apkg**\\ "
+"として書き出します。Anki アプリがパソコンや電話で取り込めます。1 局面につき 1 "
+"枚のカードで、表に盤面・スコア・キューブ・ダイス、裏に最善手または正しいキューブ判断、そのエクイティ、実際の手の誤差を載せ、ラベルは "
+"``--lang``\\ の言語です（既定は ``en``\\ "
+"）。ライブコレクションは書き出し時に上限の範囲で評価されます。書き出しはデータベースに何も書き込みません。再度書き出したものを Anki "
+"に取り込むと、カードは重複せずに更新されます。デーモンは同じファイルを ``POST /v1/anki.exportApkg``\\ "
+"で提供します。"
+
+#: ../../source/cli_entrainement.rst:158
+msgid ""
+"Un paquet fondé sur une collection relit sa collection ; fondé sur une "
+"collection vivante, il rejoue sa requête sous le même plafond de 5 000 "
+"positions et signale sur la sortie d'erreur une source tronquée. Un "
+"paquet fondé sur une recherche conserve la recherche telle que "
+"l'interface graphique l'a enregistrée (commande, damier et identifiants "
+"des positions trouvées à ce moment-là) : la grammaire de recherche vit "
+"dans l'interface graphique, la CLI resynchronise donc depuis les "
+"identifiants enregistrés et le signale sur la sortie d'erreur — ouvrez le"
+" paquet dans l'interface graphique pour rejouer la recherche elle-même."
+msgstr ""
+"コレクションに基づくデッキは、そのコレクションを読み直します。ライブコレクションに基づくデッキは、同じ上限である 5,000 "
+"ポジションのもとでそのクエリを再実行し、切り詰められたソースを標準エラー出力に知らせます。検索に基づくデッキは、グラフィカルインターフェースが記録した検索（コマンド、ボード、その時点で見つかったポジションの識別子）をそのまま保持します。検索の文法はグラフィカルインターフェース側にしかないため、CLI"
+" "
+"は記録された識別子から再同期し、その旨を標準エラー出力に表示します。検索そのものを再実行するには、グラフィカルインターフェースでデッキを開いてください。"
+
+#: ../../source/cli_entrainement.rst:192
+msgid "training — Le journal d'entraînement"
+msgstr "training — トレーニングジャーナル"
+
+#: ../../source/cli_entrainement.rst:194
+msgid ""
+"Relit le journal de l'onglet Entraînement (voir "
+":ref:`panneau_entrainement`) et fait des questions ratées de quoi "
+"réviser. Le journal est écrit par l'application graphique, ou par un "
+"client du démon à la route ``training.save`` ; la ligne de commande ne "
+"pose pas de questions."
+msgstr ""
+"「トレーニング」タブのジャーナル(:ref:`panneau_entrainement` "
+"を参照)を読み直し、間違えた問題を復習の材料にします。ジャーナルはグラフィカルアプリケーション、またはデーモンのクライアントが "
+"``training.save`` ルート経由で書き込みます。コマンドラインは問題を出しません。"
+
+#: ../../source/cli_entrainement.rst:199
+msgid ""
+"**training sessions** — Les séances, la plus récente d'abord, avec leur "
+"identifiant ; le PR n'existe que pour *Décision*."
+msgstr "**training sessions** — セッションを新しい順に、識別子付きで表示します。PR があるのは「判断」だけです。"
+
+#: ../../source/cli_entrainement.rst:206 ../../source/cli_entrainement.rst:221
+msgid "**Options:**"
+msgstr "**オプション：**"
+
+#: ../../source/cli_entrainement.rst:208
+msgid ""
+"``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ou ``decision``."
+msgstr ""
+"``--exercise <名前>`` — "
+"単一の演習:``scores``、``pips``、``bearoff``、``evaluation``、``decision`` のいずれか。"
+
+#: ../../source/cli_entrainement.rst:210
+msgid "``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes)."
+msgstr "``--limit <n>`` — セッション数(既定 20、0 = すべて)。"
+
+#: ../../source/cli_entrainement.rst:211
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — 出力形式。"
+
+#: ../../source/cli_entrainement.rst:213
+msgid ""
+"**training missed** — Les positions ratées, chacune une fois, la plus "
+"récemment ratée d'abord ; une question hors délai compte comme ratée. "
+"Seules les questions de *Décision* gardent leur position."
+msgstr ""
+"**training missed** — 間違えたポジションを、それぞれ 1 "
+"回ずつ、最近間違えたものから順に表示します。時間切れの問題は間違いとして数えます。ポジションを保持するのは「判断」の問題だけです。"
+
+#: ../../source/cli_entrainement.rst:223
+msgid "``--exercise <nom>`` — Les séances d'un seul exercice."
+msgstr "``--exercise <名前>`` — 単一の演習のセッション。"
+
+#: ../../source/cli_entrainement.rst:224
+msgid ""
+"``--session <id>`` — Une seule séance (un identifiant de ``training "
+"sessions``)."
+msgstr "``--session <id>`` — 単一のセッション(``training sessions`` の識別子)。"
+
+#: ../../source/cli_entrainement.rst:226
+msgid "``--limit <n>`` — Nombre de positions (défaut 0 = toutes)."
+msgstr "``--limit <n>`` — ポジション数(既定 0 = すべて)。"
+
+#: ../../source/cli_entrainement.rst:227
+msgid "``--deck <nom>`` — Crée un paquet Anki de ces positions."
+msgstr "``--deck <名前>`` — これらのポジションから Anki デッキを作成します。"
+
+#: ../../source/cli_entrainement.rst:228
+msgid "``--collection <nom>`` — Crée une collection de ces positions."
+msgstr "``--collection <名前>`` — これらのポジションからコレクションを作成します。"
+
+#: ../../source/cli_entrainement.rst:229
+msgid ""
+"``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et "
+"``DeckID`` ou ``CollectionID`` quand ils sont créés."
+msgstr ""
+"``--format text|json`` — 出力形式。JSON では ``PositionIDs`` に加え、作成された場合は "
+"``DeckID`` または ``CollectionID`` を返します。"

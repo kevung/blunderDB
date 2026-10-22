@@ -1,0 +1,505 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_stats.rst:4
+msgid "Statistiques"
+msgstr "Στατιστικά"
+
+#: ../../source/cli_stats.rst:9
+msgid "stats — Erreurs récurrentes"
+msgstr "stats — Επαναλαμβανόμενα λάθη"
+
+#: ../../source/cli_stats.rst:11
+msgid ""
+"Regroupe les erreurs d'un filtre par plan de jeu et par thème, la plus "
+"coûteuse d'abord : le tableau *Erreurs récurrentes* de l'onglet Erreurs "
+"du panneau Stats (voir :ref:`stats`). Les statistiques globales restent "
+"sous ``list --type stats``."
+msgstr ""
+"Ομαδοποιεί τα λάθη ενός φίλτρου ανά σχέδιο παιχνιδιού και ανά θέμα, με "
+"πρώτο το πιο δαπανηρό: ο πίνακας *Επαναλαμβανόμενα λάθη* της καρτέλας "
+"Errors του πίνακα Stats (βλ. :ref:`stats`). Τα καθολικά στατιστικά "
+"παραμένουν στο ``list --type stats``."
+
+#: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
+#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+msgid "**Options:**"
+msgstr "**Επιλογές:**"
+
+#: ../../source/cli_stats.rst:22
+msgid "``--player <nom>`` — Uniquement les décisions de ce joueur."
+msgstr "``--player <nom>`` — Μόνο οι αποφάσεις αυτού του παίκτη."
+
+#: ../../source/cli_stats.rst:23
+msgid ""
+"``--opponent <nom>`` — Uniquement les matchs joués contre ce joueur ; "
+"avec ``--player``, l'autre siège."
+msgstr ""
+"``--opponent <nom>`` — Μόνο οι αγώνες που παίχτηκαν εναντίον αυτού του "
+"παίκτη· με το ``--player``, η άλλη θέση."
+
+#: ../../source/cli_stats.rst:25
+msgid ""
+"``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, ``--to <AAAA-MM-JJ>``, "
+"``--decision-type all|checker|cube`` — Le même filtre que ``list --type "
+"stats``."
+msgstr ""
+"``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, ``--to <AAAA-MM-JJ>``, "
+"``--decision-type all|checker|cube`` — Το ίδιο φίλτρο με το ``list --type"
+" stats``."
+
+#: ../../source/cli_stats.rst:28
+msgid ""
+"``--limit <n>`` — Nombre de groupes affichés en texte (défaut 20, ``0`` "
+"pour tous)."
+msgstr ""
+"``--limit <n>`` — Αριθμός ομάδων που εμφανίζονται σε κείμενο (προεπιλογή "
+"20, ``0`` για όλες)."
+
+#: ../../source/cli_stats.rst:30
+msgid ""
+"``--format text|json`` — Le JSON porte chaque groupe avec la liste "
+"complète de ses positions."
+msgstr ""
+"``--format text|json`` — Το JSON περιέχει κάθε ομάδα με την πλήρη λίστα "
+"των θέσεών της."
+
+#: ../../source/cli_stats.rst:32
+msgid ""
+"``--quiz`` — Tire au hasard des positions parmi celles des trois groupes "
+"les plus coûteux (``--quiz-size <n>``, défaut 20) et les affiche : ce "
+"sont les identifiants que le quiz et ``quiz_grade`` jugent. En JSON, "
+"champ ``Quiz``."
+msgstr ""
+"``--quiz`` — Κληρώνει τυχαία θέσεις από εκείνες των τριών πιο δαπανηρών "
+"ομάδων (``--quiz-size <n>``, προεπιλογή 20) και τις εμφανίζει: είναι τα "
+"αναγνωριστικά που κρίνουν το κουίζ και το ``quiz_grade``. Σε JSON, το "
+"πεδίο ``Quiz``."
+
+#: ../../source/cli_stats.rst:36
+msgid ""
+"``--deck <nom>`` — Crée un paquet Anki de ce nom, rempli de toutes les "
+"positions des trois groupes les plus coûteux."
+msgstr ""
+"``--deck <όνομα>`` — Δημιουργεί μια τράπουλα Anki με αυτό το όνομα, "
+"γεμάτη με όλες τις θέσεις των τριών πιο δαπανηρών ομάδων."
+
+#: ../../source/cli_stats.rst:38
+msgid ""
+"``--group <rang>`` — Avec ``--quiz`` ou ``--deck`` : le groupe de ce rang"
+" (1 pour le plus coûteux) au lieu des trois premiers."
+msgstr ""
+"``--group <κατάταξη>`` — Με το ``--quiz`` ή το ``--deck``: η ομάδα αυτής "
+"της κατάταξης (1 για την πιο δαπανηρή) αντί για τις τρεις πρώτες."
+
+#: ../../source/cli_stats.rst:41
+msgid ""
+"Un thème de coup de pions est ``gammon``, ``blots``, ``point`` ou "
+"``passive`` ; un thème de videau est ``offer_missed``, "
+"``offer_premature``, ``answer_wrong_pass`` ou ``answer_wrong_take``. Les "
+"erreurs qu'aucune règle ne nomme sortent du classement : elles sont "
+"listées à part, une ligne par plan de jeu (champ ``Unthemed`` en JSON), "
+"parce que l'explication ne se prononce qu'à partir de 60 mp, au-dessus du"
+" seuil *Erreur*. La colonne *COST (PR)* est la part du PR du filtre que "
+"le groupe représente."
+msgstr ""
+"Ένα θέμα κίνησης πούλιων είναι ``gammon``, ``blots``, ``point`` ή "
+"``passive``· ένα θέμα κύβου είναι ``offer_missed``, ``offer_premature``, "
+"``answer_wrong_pass`` ή ``answer_wrong_take``. Τα λάθη που κανένας "
+"κανόνας δεν ονομάζει βγαίνουν από την κατάταξη: παρατίθενται χωριστά, μία"
+" γραμμή ανά σχέδιο παιχνιδιού (πεδίο ``Unthemed`` στο JSON), επειδή η "
+"εξήγηση εκφέρεται μόνο από 60 mp και πάνω, πάνω από το όριο *Λάθος*. Η "
+"στήλη *COST (PR)* είναι το μερίδιο του PR του φίλτρου που αντιπροσωπεύει "
+"η ομάδα."
+
+#: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
+#: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
+#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+msgid "**Exemples:**"
+msgstr "**Παραδείγματα:**"
+
+#: ../../source/cli_stats.rst:58
+msgid ""
+"**stats plan** — Le plan d'étude du filtre, comme la carte *Plan d'étude*"
+" du tableau de bord (voir :ref:`plan_etude`) : les familles d'erreurs "
+"(plan de jeu × thème) classées par MWC récupérable, la somme sur leurs "
+"erreurs de la perte moins la difficulté, avec un intervalle à 95 %. Une "
+"famille entre au plan à partir de 5 erreurs chiffrées et d'un intervalle "
+"au-dessus de zéro ; les autres sont listées à part, à confirmer (champ "
+"``Tentative`` en JSON). Les erreurs sans thème et celles sans MWC (partie"
+" libre) sont seulement comptées (``Unthemed``, ``Unpriced``)."
+msgstr ""
+"**stats plan** — Το πλάνο μελέτης του φίλτρου, όπως η κάρτα *Πλάνο "
+"μελέτης* του ταμπλό (βλ. :ref:`plan_etude`): οι οικογένειες λαθών (σχέδιο"
+" παιχνιδιού × θέμα) ταξινομημένες κατά ανακτήσιμο MWC, το άθροισμα της "
+"απώλειας μείον τη δυσκολία στα λάθη τους, με διάστημα 95 %. Μια "
+"οικογένεια μπαίνει στο πλάνο από 5 αποτιμημένα λάθη και ένα διάστημα πάνω"
+" από το μηδέν· οι υπόλοιπες αναφέρονται χωριστά, προς επιβεβαίωση (πεδίο "
+"``Tentative`` στο JSON). Τα λάθη χωρίς θέμα και αυτά χωρίς MWC (ελεύθερο "
+"παιχνίδι) απλώς μετριούνται (``Unthemed``, ``Unpriced``)."
+
+#: ../../source/cli_stats.rst:71
+msgid "Mêmes options de filtre que ``stats recurring``, plus :"
+msgstr "Ίδιες επιλογές φίλτρου με το ``stats recurring``, συν:"
+
+#: ../../source/cli_stats.rst:73
+msgid ""
+"``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
+" pour toutes)."
+msgstr ""
+"``--limit <n>`` — Αριθμός οικογενειών που εμφανίζονται σε κείμενο "
+"(προεπιλογή 10, ``0`` για όλες)."
+
+#: ../../source/cli_stats.rst:75
+msgid ""
+"``--quiz`` (``--quiz-size <n>``, défaut 20), ``--deck <nom>`` — Comme "
+"pour ``stats recurring``, sur les positions des trois premières familles."
+msgstr ""
+"``--quiz`` (``--quiz-size <n>``, προεπιλογή 20), ``--deck <όνομα>`` — "
+"Όπως στο ``stats recurring``, στις θέσεις των τριών πρώτων οικογενειών."
+
+#: ../../source/cli_stats.rst:77
+msgid ""
+"``--queue`` — Affiche la file d'étude de ces familles, une position par "
+"ligne, l'écart au joueur de référence le plus grand d'abord (JSON : "
+"``Queue``)."
+msgstr ""
+"``--queue`` — Εμφανίζει την ουρά μελέτης αυτών των οικογενειών, μία θέση "
+"ανά γραμμή, πρώτη η μεγαλύτερη απόκλιση από τον παίκτη αναφοράς (JSON: "
+"``Queue``)."
+
+#: ../../source/cli_stats.rst:80
+msgid ""
+"``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
+"famille de ce rang (1 pour la première) au lieu des trois premières."
+msgstr ""
+"``--family <θέση>`` — Με ``--quiz``, ``--deck`` ή ``--queue``: η "
+"οικογένεια αυτής της θέσης (1 για την πρώτη) αντί για τις τρεις πρώτες."
+
+#: ../../source/cli_stats.rst:89
+msgid ""
+"**stats effect** — L'avant/après de chaque famille étudiée, comme la "
+"carte *Avant/après l'étude* du tableau de bord (voir "
+":ref:`avant_apres_etude`) : la date de la première action d'étude sur "
+"l'une de ses positions, le taux de perte en MWC pour 100 décisions de son"
+" plan et de sa nature avant et après ce jour, le gain et son intervalle à"
+" 95 %, et le verdict (``improved``, ``worse``, ``undetermined``, "
+"``insufficient`` sous 30 décisions par fenêtre)."
+msgstr ""
+"**stats effect** — Το πριν/μετά κάθε μελετημένης οικογένειας, όπως η "
+"κάρτα *Πριν/μετά τη μελέτη* του πίνακα ελέγχου (βλ. "
+":ref:`avant_apres_etude`): η ημερομηνία της πρώτης ενέργειας μελέτης σε "
+"μία από τις θέσεις της, ο ρυθμός απώλειας σε MWC ανά 100 αποφάσεις του "
+"πλάνου και της φύσης της πριν και μετά από εκείνη την ημέρα, το κέρδος "
+"και το διάστημά του στο 95 %, και η κρίση (``improved``, ``worse``, "
+"``undetermined``, ``insufficient`` κάτω από 30 αποφάσεις ανά παράθυρο)."
+
+#: ../../source/cli_stats.rst:100
+#, no-python-format
+msgid ""
+"**stats biases** — Les biais signés du filtre, comme la carte *Biais "
+"signés* (voir :ref:`biais_signes`) : prise/refus, doubles (sur l'ensemble"
+" et par score) et blots, chacun avec ses deux comptes et leur coût, le "
+"biais, son intervalle à 95 % et le verdict (``too_much``, ``too_little``,"
+" ``balanced``, ``insufficient`` sous 20 décisions). La partie libre a sa "
+"ligne ``money`` et un score post-Crawford se lit à 1 point ; la part des "
+"coups de pions qui n'ont pas pu être rejoués est donnée sous le tableau."
+msgstr ""
+"**stats biases** — Οι προσημασμένες μεροληψίες του φίλτρου, όπως η κάρτα "
+"*Προσημασμένες μεροληψίες* (βλ. :ref:`biais_signes`): αποδοχή/απόρριψη, "
+"διπλασιασμοί (συνολικά και ανά σκορ) και blots, καθένα με τις δύο "
+"μετρήσεις του και το κόστος τους, τη μεροληψία, το διάστημά της στο 95 % "
+"και την κρίση (``too_much``, ``too_little``, ``balanced``, "
+"``insufficient`` κάτω από 20 αποφάσεις). Το ελεύθερο παιχνίδι έχει τη "
+"δική του γραμμή ``money`` και ένα σκορ μετά το Crawford διαβάζεται ως 1 "
+"πόντος· το ποσοστό των κινήσεων πουλιών που δεν μπόρεσαν να αναπαραχθούν "
+"δίνεται κάτω από τον πίνακα."
+
+#: ../../source/cli_stats.rst:112
+msgid ""
+"Mêmes options de filtre que ``stats recurring`` (``--player``, "
+"``--opponent``, ``--tournament``, ``--from``, ``--to``, ``--decision-"
+"type``, ``--format``)."
+msgstr ""
+"Ίδιες επιλογές φίλτρου με το ``stats recurring`` (``--player``, "
+"``--opponent``, ``--tournament``, ``--from``, ``--to``, ``--decision-"
+"type``, ``--format``)."
+
+#: ../../source/cli_stats.rst:120
+#, no-python-format
+msgid ""
+"**stats tournament** — Le bilan d'un tournoi pour un joueur, comme le "
+"bouton *Bilan* du panneau Tournois (voir :ref:`bilan du tournoi "
+"<bilan_tournoi>`) : PR et perte MWC (éq. 7 pts) face au niveau habituel "
+"des 365 jours précédents, par ronde, par rang de la décision dans le "
+"match, par score (``dmp``, ``crawford``, ``post_crawford``, ``other``) et"
+" par rythme (``quick``, ``considered``), chacun avec son intervalle à 95 "
+"% et un verdict (``worse``, ``better``, ``usual``, ``insufficient`` sans "
+"intervalle, sous 20 décisions d'un côté ou sous 5 matchs habituels), puis"
+" au plus trois familles d'erreurs du tournoi."
+msgstr ""
+"**stats tournament** — Ο απολογισμός ενός τουρνουά για έναν παίκτη, όπως "
+"το κουμπί *Απολογισμός* του πίνακα Τουρνουά (βλ. :ref:`ισοζύγιο του "
+"τουρνουά <bilan_tournoi>`): PR και απώλεια MWC (ισοδ. 7 πόντων) σε σχέση "
+"με το συνηθισμένο επίπεδο των 365 προηγούμενων ημερών, ανά γύρο, ανά "
+"σειρά της απόφασης στον αγώνα, ανά σκορ (``dmp``, ``crawford``, "
+"``post_crawford``, ``other``) και ανά ρυθμό (``quick``, ``considered``), "
+"καθένα με το διάστημά του 95 % και μια κρίση (``worse``, ``better``, "
+"``usual``, ``insufficient`` χωρίς διάστημα, κάτω από 20 αποφάσεις στη μία"
+" πλευρά ή κάτω από 5 συνηθισμένους αγώνες), και έπειτα το πολύ τρεις "
+"οικογένειες λαθών του τουρνουά."
+
+#: ../../source/cli_stats.rst:133
+msgid ""
+"Sans ``--player``, le joueur est le plus présent dans les matchs du "
+"tournoi."
+msgstr "Χωρίς ``--player``, ο παίκτης είναι ο πιο παρών στους αγώνες του τουρνουά."
+
+#: ../../source/cli_stats.rst:140
+msgid ""
+"**stats training** — Le PR du quiz Décision, le PR des matchs et la "
+"rétention Anki, repliés par fenêtre calendaire, comme l'onglet "
+"*Entraînement* du panneau Stats (voir :ref:`stats`)."
+msgstr ""
+"**stats training** — Το PR του κουίζ Απόφασης, το PR των αγώνων και η "
+"διατήρηση του Anki, ομαδοποιημένα ανά ημερολογιακό παράθυρο, όπως η "
+"καρτέλα *Εκπαίδευση* του πίνακα Stats (βλ. :ref:`stats`)."
+
+#: ../../source/cli_stats.rst:150
+msgid "``--window week|month`` — La fenêtre calendaire (défaut ``week``)."
+msgstr "``--window week|month`` — Το ημερολογιακό παράθυρο (προεπιλογή ``week``)."
+
+#: ../../source/cli_stats.rst:151
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre "
+"des matchs ; les journaux du quiz et d'Anki ne portent pas de joueur."
+msgstr ""
+"``--player <όνομα>``, ``--tournament <ids>``, ``--from <ΕΕΕΕ-ΜΜ-ΗΗ>``, "
+"``--to <ΕΕΕΕ-ΜΜ-ΗΗ>``, ``--decision-type all|checker|cube`` — Το φίλτρο "
+"των αγώνων· τα ημερολόγια του κουίζ και του Anki δεν φέρουν παίκτη."
+
+#: ../../source/cli_stats.rst:154
+msgid ""
+"``--format text|json`` — Le JSON porte aussi la liste des sessions de "
+"quiz ; le texte et le JSON donnent le PR du quiz par plan de jeu."
+msgstr ""
+"``--format text|json`` — Το JSON περιέχει επίσης τη λίστα των συνεδριών "
+"κουίζ· το κείμενο και το JSON δίνουν το PR κουίζ ανά πλάνο παιχνιδιού."
+
+#: ../../source/cli_stats.rst:157
+msgid ""
+"Chaque série garde son nombre d'échantillons : une fenêtre sans décision "
+"y est un tiret en texte, un compte nul en JSON, jamais un zéro."
+msgstr ""
+"Κάθε σειρά διατηρεί το πλήθος των δειγμάτων της: ένα παράθυρο χωρίς "
+"αποφάσεις είναι παύλα στο κείμενο και μηδενικό πλήθος στο JSON, ποτέ "
+"μηδενική τιμή."
+
+#: ../../source/cli_stats.rst:167
+msgid ""
+"**stats h2h** — Deux joueurs l'un contre l'autre : les matchs qu'ils ont "
+"disputés ensemble, le PR de chacun dans chaque match et sur l'ensemble, "
+"et le bilan des matchs menés à terme."
+msgstr ""
+"**stats h2h** — Δύο παίκτες ο ένας απέναντι στον άλλον: οι αγώνες που "
+"έπαιξαν μαζί, το PR του καθενός σε κάθε αγώνα και συνολικά, και ο "
+"απολογισμός των αγώνων που ολοκληρώθηκαν."
+
+#: ../../source/cli_stats.rst:175
+msgid ""
+"**stats contrast** — Les positions que deux joueurs ont tous deux eu à "
+"jouer et où l'un a bien joué (sous le seuil Erreur) et l'autre non, "
+"l'écart le plus large d'abord ; un joueur est jugé sur son pire coup de "
+"la position. ``--limit N`` garde les N premières lignes du texte ; le "
+"JSON donne tout, avec les ``position_id``."
+msgstr ""
+"**stats contrast** — Οι θέσεις που δύο παίκτες έπρεπε και οι δύο να "
+"παίξουν και όπου ο ένας έπαιξε καλά (κάτω από το όριο Σφάλματος) και ο "
+"άλλος όχι, με τη μεγαλύτερη διαφορά πρώτη· ο παίκτης κρίνεται από την "
+"χειρότερη κίνησή του στη θέση. Το ``--limit N`` κρατά τις πρώτες N "
+"γραμμές του κειμένου· το JSON δίνει τα πάντα, με τα ``position_id``."
+
+#: ../../source/cli_stats.rst:185
+msgid ""
+"**stats windows** — Le PR sur une fenêtre calendaire glissante : une "
+"ligne par mois, chacune couvrant ce mois et les précédents de la fenêtre "
+"(``--window month``, ``quarter`` ou un nombre de mois)."
+msgstr ""
+"**stats windows** — Το PR σε κυλιόμενο ημερολογιακό παράθυρο: μία γραμμή "
+"ανά μήνα, καθεμία καλύπτει αυτόν τον μήνα και τους προηγούμενους του "
+"παραθύρου (``--window month``, ``quarter`` ή έναν αριθμό μηνών)."
+
+#: ../../source/cli_stats.rst:193
+msgid ""
+"**stats ranking** — Le classement des joueurs par PR, le plus bas en "
+"tête, parmi ceux qui ont au moins ``--min-decisions`` décisions comptées "
+"(500 par défaut) ; deux PR égaux partagent un rang. ``--limit N`` garde "
+"les N premiers."
+msgstr ""
+"**stats ranking** — Η κατάταξη των παικτών κατά PR, με το χαμηλότερο "
+"πρώτο, ανάμεσα σε όσους έχουν τουλάχιστον ``--min-decisions`` μετρημένες "
+"αποφάσεις (500 από προεπιλογή)· δύο ίσα PR μοιράζονται την ίδια θέση. Το "
+"``--limit N`` κρατά τους πρώτους N."
+
+#: ../../source/cli_stats.rst:201
+msgid ""
+"**stats engines** — Les moteurs d'analyse présents dans la base, sous le "
+"nom exact que ``--engine`` attend ; le même choix que le menu *Moteur* du"
+" panneau Stats."
+msgstr ""
+"**stats engines** — Οι μηχανές ανάλυσης που υπάρχουν στη βάση, με το "
+"ακριβές όνομα που περιμένει το ``--engine``· η ίδια επιλογή με το μενού "
+"*Μηχανή* του πίνακα Stats."
+
+#: ../../source/cli_stats.rst:209
+msgid ""
+"**Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``, ``--format "
+"text|json``, et le filtre de provenance ``--engine <nom>`` (le moteur "
+"d'analyse, nom exact) et ``--min-depth <n>`` (la profondeur minimale de "
+"l'analyse), que ``list --type stats`` et ``list --type players`` "
+"acceptent aussi. ``h2h`` et ``windows`` lisent les statistiques par match"
+" et refusent le filtre de provenance, qui porte sur chaque décision."
+msgstr ""
+"**Κοινές επιλογές:** ``--tournament <ids>``, ``--from <ΕΕΕΕ-ΜΜ-ΗΗ>``, "
+"``--to <ΕΕΕΕ-ΜΜ-ΗΗ>``, ``--decision-type all|checker|cube``, ``--format "
+"text|json``, και το φίλτρο προέλευσης ``--engine <όνομα>`` (η μηχανή "
+"ανάλυσης, ακριβές όνομα) και ``--min-depth <n>`` (το ελάχιστο βάθος "
+"ανάλυσης), που τα δέχονται επίσης τα ``list --type stats`` και ``list "
+"--type players``. Τα ``h2h`` και ``windows`` διαβάζουν τα στατιστικά ανά "
+"αγώνα και απορρίπτουν το φίλτρο προέλευσης, το οποίο αφορά κάθε απόφαση."
+
+#: ../../source/cli_stats.rst:227
+msgid ""
+"**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où "
+"le joueur (tout joueur sans ``--player``) a une décision comptée sous le "
+"filtre, du plus ancien au plus récent. Leurs identifiants se passent à "
+"``list --type matches --ids``."
+msgstr ""
+"**stats matches** — Οι αγώνες που μετρά ένας αριθμός του σώματος: εκείνοι"
+" όπου ο παίκτης (κάθε παίκτης χωρίς ``--player``) έχει μια μετρημένη "
+"απόφαση υπό το φίλτρο, από τον παλαιότερο στον πιο πρόσφατο. Τα "
+"αναγνωριστικά τους περνούν στο ``list --type matches --ids``."
+
+#: ../../source/cli_stats.rst:237
+msgid ""
+"**stats tournaments** — Les tournois que compte le nombre de tournois du "
+"Tableau de bord : ceux qui portent une décision comptée du joueur (de "
+"tout joueur sans ``--player``) sous le filtre, par identifiant."
+msgstr ""
+"**stats tournaments** — Τα τουρνουά που μετρά ο αριθμός τουρνουά του "
+"Πίνακα ελέγχου: όσα περιέχουν μια μετρημένη απόφαση του παίκτη "
+"(οποιουδήποτε παίκτη χωρίς ``--player``) υπό το φίλτρο, κατά "
+"αναγνωριστικό."
+
+#: ../../source/cli_stats.rst:246
+msgid ""
+"**stats progression** — Le PR de chaque match par ordre de date, le PR de"
+" chaque tournoi et le PR glissant sur les N dernières décisions : "
+"l'onglet *Progression* du panneau Stats (voir :ref:`stats`)."
+msgstr ""
+"**stats progression** — Το PR κάθε αγώνα με σειρά ημερομηνίας, το PR κάθε"
+" τουρνουά και το κυλιόμενο PR στις τελευταίες N αποφάσεις: η καρτέλα "
+"*Progression* του πίνακα Stats (βλ. :ref:`stats`)."
+
+#: ../../source/cli_stats.rst:256
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même "
+"filtre que ``list --type stats``."
+msgstr ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Το ίδιο "
+"φίλτρο με το ``list --type stats``."
+
+#: ../../source/cli_stats.rst:259
+msgid ""
+"``--format text|json`` — Le JSON porte les matchs, les tournois et les PR"
+" glissants."
+msgstr ""
+"``--format text|json`` — Το JSON περιέχει τους αγώνες, τα τουρνουά και τα"
+" κυλιόμενα PR."
+
+#: ../../source/cli_stats.rst:269
+msgid ""
+"**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de "
+"jeu, étiquette de commentaire, score (away contre away) et action de "
+"videau, avec la direction des erreurs de videau : l'onglet *Ventilations*"
+" du panneau Stats (voir :ref:`stats`). Les options sont celles de ``stats"
+" progression``."
+msgstr ""
+"**stats breakdown** — Το PR του φίλτρου αναλυμένο ανά φάση παιχνιδιού, "
+"πλάνο παιχνιδιού, ετικέτα σχολίου, σκορ (away έναντι away) και ενέργεια "
+"κύβου, με την κατεύθυνση των λαθών κύβου: η καρτέλα *Αναλύσεις* του "
+"πίνακα Stats (βλ. :ref:`stats`). Οι επιλογές είναι οι ίδιες με του "
+"``stats progression``."
+
+#: ../../source/cli_stats.rst:285
+msgid ""
+"**stats report** — Le rapport HTML du panneau Stats (voir "
+":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
+" plus coûteuses avec leur diagramme, en un seul fichier autonome que le "
+"navigateur imprime en PDF. Le démon HTTP le sert à la route "
+"``stats.report``, du même générateur."
+msgstr ""
+"**stats report** — Η αναφορά HTML του πίνακα Stats (βλ. "
+":ref:`rapport_html`): οι δείκτες του φίλτρου και οι δέκα πιο δαπανηρές "
+"αποφάσεις του με το διάγραμμά τους, σε ένα αυτόνομο αρχείο που ο "
+"περιηγητής εκτυπώνει σε PDF. Ο δαίμονας HTTP το σερβίρει στη διαδρομή "
+"``stats.report``, από την ίδια γεννήτρια."
+
+#: ../../source/cli_stats.rst:296
+msgid "``--html`` — Obligatoire : le HTML est le seul format."
+msgstr "``--html`` — Υποχρεωτικό: το HTML είναι η μόνη μορφή."
+
+#: ../../source/cli_stats.rst:297
+msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
+msgstr ""
+"``--output <fichier>`` — Το αρχείο που γράφεται (προεπιλογή: τυπική "
+"έξοδος)."
+
+#: ../../source/cli_stats.rst:298
+msgid ""
+"``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
+"``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
+msgstr ""
+"``--lang <code>`` — Η γλώσσα της αναφοράς: ``fr``, ``en``, ``de``, "
+"``el``, ``es``, ``fi``, ``it``, ``ja`` ή ``ru`` (προεπιλογή ``en``)."
+
+#: ../../source/cli_stats.rst:300
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
+" le rapport nomme son périmètre."
+msgstr ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Το φίλτρο: "
+"η αναφορά κατονομάζει την εμβέλειά της."
+
+#: ../../source/cli_stats.rst:304
+msgid ""
+"Les diagrammes y sont dessinés avec la palette par défaut ; seule "
+"l'application graphique emploie la palette du plateau choisie à l'écran."
+msgstr ""
+"Τα διαγράμματα σχεδιάζονται εκεί με την προεπιλεγμένη παλέτα· μόνο η "
+"γραφική εφαρμογή χρησιμοποιεί την παλέτα του ταμπλό που επιλέγεται στην "
+"οθόνη."

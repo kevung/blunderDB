@@ -1,0 +1,455 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_stats.rst:4
+msgid "Statistiques"
+msgstr "統計"
+
+#: ../../source/cli_stats.rst:9
+msgid "stats — Erreurs récurrentes"
+msgstr "stats — 繰り返されるミス"
+
+#: ../../source/cli_stats.rst:11
+msgid ""
+"Regroupe les erreurs d'un filtre par plan de jeu et par thème, la plus "
+"coûteuse d'abord : le tableau *Erreurs récurrentes* de l'onglet Erreurs "
+"du panneau Stats (voir :ref:`stats`). Les statistiques globales restent "
+"sous ``list --type stats``."
+msgstr ""
+"フィルターのミスをプランとテーマごとにまとめ、コストの大きい順に並べます。Stats パネルの Errors "
+"タブにある「繰り返されるミス」の表です（\\ :ref:`stats`\\ を参照）。全体の統計は引き続き ``list --type "
+"stats`` で取得します。"
+
+#: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
+#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+msgid "**Options:**"
+msgstr "**オプション：**"
+
+#: ../../source/cli_stats.rst:22
+msgid "``--player <nom>`` — Uniquement les décisions de ce joueur."
+msgstr "``--player <nom>`` — このプレイヤーの判断のみ。"
+
+#: ../../source/cli_stats.rst:23
+msgid ""
+"``--opponent <nom>`` — Uniquement les matchs joués contre ce joueur ; "
+"avec ``--player``, l'autre siège."
+msgstr "``--opponent <nom>`` — この対戦相手と対戦したマッチのみ。\\ ``--player``\\ と併用すると、もう一方の席。"
+
+#: ../../source/cli_stats.rst:25
+msgid ""
+"``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, ``--to <AAAA-MM-JJ>``, "
+"``--decision-type all|checker|cube`` — Le même filtre que ``list --type "
+"stats``."
+msgstr ""
+"``--tournament <ids>``、``--from <AAAA-MM-JJ>``、``--to <AAAA-MM-JJ"
+">``、``--decision-type all|checker|cube`` — ``list --type stats`` "
+"と同じフィルターです。"
+
+#: ../../source/cli_stats.rst:28
+msgid ""
+"``--limit <n>`` — Nombre de groupes affichés en texte (défaut 20, ``0`` "
+"pour tous)."
+msgstr "``--limit <n>`` — テキストで表示するグループ数（既定は 20、``0`` ですべて）。"
+
+#: ../../source/cli_stats.rst:30
+msgid ""
+"``--format text|json`` — Le JSON porte chaque groupe avec la liste "
+"complète de ses positions."
+msgstr "``--format text|json`` — JSON は各グループをすべてのポジションの一覧とともに出力します。"
+
+#: ../../source/cli_stats.rst:32
+msgid ""
+"``--quiz`` — Tire au hasard des positions parmi celles des trois groupes "
+"les plus coûteux (``--quiz-size <n>``, défaut 20) et les affiche : ce "
+"sont les identifiants que le quiz et ``quiz_grade`` jugent. En JSON, "
+"champ ``Quiz``."
+msgstr ""
+"``--quiz`` — 最もコストの高い3グループのポジションから無作為に引いて表示します（``--quiz-size "
+"<n>``、既定は20）。これらはクイズと ``quiz_grade`` が判定する識別子です。JSONでは ``Quiz`` フィールド。"
+
+#: ../../source/cli_stats.rst:36
+msgid ""
+"``--deck <nom>`` — Crée un paquet Anki de ce nom, rempli de toutes les "
+"positions des trois groupes les plus coûteux."
+msgstr "``--deck <名前>`` — その名前のAnkiデッキを作り、最もコストの高い3グループのすべてのポジションを入れます。"
+
+#: ../../source/cli_stats.rst:38
+msgid ""
+"``--group <rang>`` — Avec ``--quiz`` ou ``--deck`` : le groupe de ce rang"
+" (1 pour le plus coûteux) au lieu des trois premiers."
+msgstr ""
+"``--group <順位>`` — ``--quiz`` または ``--deck`` "
+"と併用：最初の3グループの代わりに、その順位（最もコストの高いものが1）のグループ。"
+
+#: ../../source/cli_stats.rst:41
+msgid ""
+"Un thème de coup de pions est ``gammon``, ``blots``, ``point`` ou "
+"``passive`` ; un thème de videau est ``offer_missed``, "
+"``offer_premature``, ``answer_wrong_pass`` ou ``answer_wrong_take``. Les "
+"erreurs qu'aucune règle ne nomme sortent du classement : elles sont "
+"listées à part, une ligne par plan de jeu (champ ``Unthemed`` en JSON), "
+"parce que l'explication ne se prononce qu'à partir de 60 mp, au-dessus du"
+" seuil *Erreur*. La colonne *COST (PR)* est la part du PR du filtre que "
+"le groupe représente."
+msgstr ""
+"チェッカープレイのテーマは ``gammon``、``blots``、``point``、``passive`` のいずれかで、キューブのテーマは"
+" "
+"``offer_missed``、``offer_premature``、``answer_wrong_pass``、``answer_wrong_take``"
+" のいずれかです。どのルールも名付けないミスは順位から外れ、プランごとに1行で別に一覧されます(JSON では ``Unthemed`` "
+"フィールド)。説明文が判断を下すのは60 mp以上、つまり\\ *ミス*\\ のしきい値より上だけだからです。*COST (PR)* "
+"列は、そのグループがフィルターの PR に占める割合です。"
+
+#: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
+#: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
+#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+msgid "**Exemples:**"
+msgstr "**例：**"
+
+#: ../../source/cli_stats.rst:58
+msgid ""
+"**stats plan** — Le plan d'étude du filtre, comme la carte *Plan d'étude*"
+" du tableau de bord (voir :ref:`plan_etude`) : les familles d'erreurs "
+"(plan de jeu × thème) classées par MWC récupérable, la somme sur leurs "
+"erreurs de la perte moins la difficulté, avec un intervalle à 95 %. Une "
+"famille entre au plan à partir de 5 erreurs chiffrées et d'un intervalle "
+"au-dessus de zéro ; les autres sont listées à part, à confirmer (champ "
+"``Tentative`` en JSON). Les erreurs sans thème et celles sans MWC (partie"
+" libre) sont seulement comptées (``Unthemed``, ``Unpriced``)."
+msgstr ""
+"\\ **stats plan**\\  — フィルターの学習プラン。ダッシュボードの \\ *学習プラン*\\ "
+"カード（:ref:`plan_etude` を参照）と同じで、誤りのファミリー（プラン × テーマ）を回収可能 "
+"MWC、つまりその誤りにわたる損失マイナス難しさの合計の順に並べ、95 % 区間を付けます。ファミリーがプランに入るのは、数値化された誤りが 5 "
+"件以上で、区間がゼロより上のときです。それ以外は別に、要確認として挙げられます（JSON ではフィールド "
+"``Tentative``）。テーマのない誤りと MWC "
+"のない誤り（フリーゲーム）は数えられるだけです（``Unthemed``、``Unpriced``）。"
+
+#: ../../source/cli_stats.rst:71
+msgid "Mêmes options de filtre que ``stats recurring``, plus :"
+msgstr "``stats recurring`` と同じフィルターオプションに加えて、次があります。"
+
+#: ../../source/cli_stats.rst:73
+msgid ""
+"``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``"
+" pour toutes)."
+msgstr "``--limit <n>`` — テキストで表示するファミリーの数（既定は 10、``0`` ですべて）。"
+
+#: ../../source/cli_stats.rst:75
+msgid ""
+"``--quiz`` (``--quiz-size <n>``, défaut 20), ``--deck <nom>`` — Comme "
+"pour ``stats recurring``, sur les positions des trois premières familles."
+msgstr ""
+"``--quiz``\\ （``--quiz-size <n>``\\ 、既定は 20）、\\ ``--deck <名前>`` — ``stats"
+" recurring`` と同様に、上位 3 ファミリーのポジションに対して働きます。"
+
+#: ../../source/cli_stats.rst:77
+msgid ""
+"``--queue`` — Affiche la file d'étude de ces familles, une position par "
+"ligne, l'écart au joueur de référence le plus grand d'abord (JSON : "
+"``Queue``)."
+msgstr ""
+"``--queue`` — これらのファミリーの学習キューを、1 行に 1 "
+"ポジションで、基準プレイヤーとの差が最も大きいものから表示します（JSON：``Queue``）。"
+
+#: ../../source/cli_stats.rst:80
+msgid ""
+"``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la "
+"famille de ce rang (1 pour la première) au lieu des trois premières."
+msgstr ""
+"``--family <順位>`` — ``--quiz``、``--deck``、``--queue`` と併用：上位 3 "
+"ファミリーの代わりに、この順位のファミリー（1 が先頭）。"
+
+#: ../../source/cli_stats.rst:89
+msgid ""
+"**stats effect** — L'avant/après de chaque famille étudiée, comme la "
+"carte *Avant/après l'étude* du tableau de bord (voir "
+":ref:`avant_apres_etude`) : la date de la première action d'étude sur "
+"l'une de ses positions, le taux de perte en MWC pour 100 décisions de son"
+" plan et de sa nature avant et après ce jour, le gain et son intervalle à"
+" 95 %, et le verdict (``improved``, ``worse``, ``undetermined``, "
+"``insufficient`` sous 30 décisions par fenêtre)."
+msgstr ""
+"**stats effect** — 学習済みの各ファミリーの前後。ダッシュボードの\\ *学習の前後*\\ カード（\\ "
+":ref:`avant_apres_etude` "
+"を参照）と同じです。そのポジションのいずれかに対する最初の学習アクションの日付、その日の前後それぞれの、プランと種類が同じ 100 判断あたりの "
+"MWC 損失率、ゲインとその 95 % 区間、そして判定（\\ ``improved``\\ 、\\ ``worse``\\ 、\\ "
+"``undetermined``\\ 、ウィンドウあたり 30 判断未満は ``insufficient``\\ ）を示します。"
+
+#: ../../source/cli_stats.rst:100
+#, no-python-format
+msgid ""
+"**stats biases** — Les biais signés du filtre, comme la carte *Biais "
+"signés* (voir :ref:`biais_signes`) : prise/refus, doubles (sur l'ensemble"
+" et par score) et blots, chacun avec ses deux comptes et leur coût, le "
+"biais, son intervalle à 95 % et le verdict (``too_much``, ``too_little``,"
+" ``balanced``, ``insufficient`` sous 20 décisions). La partie libre a sa "
+"ligne ``money`` et un score post-Crawford se lit à 1 point ; la part des "
+"coups de pions qui n'ont pas pu être rejoués est donnée sous le tableau."
+msgstr ""
+"**stats biases** — フィルターの符号付きバイアス。\\ *符号付きバイアス*\\ カード（\\ "
+":ref:`biais_signes` "
+"を参照）と同じです。テイク／パス、ダブル（全体とスコア別）、ブロットについて、それぞれ二つのカウントとそのコスト、バイアス、95 % "
+"区間、判定（\\ ``too_much``\\ 、\\ ``too_little``\\ 、\\ ``balanced``\\ 、20 判断未満は"
+" ``insufficient``\\ ）を示します。フリーゲームには専用の ``money`` 行があり、ポストクロフォードのスコアは 1 "
+"ポイントとして読みます。再現できなかったチェッカームーブの割合は表の下に示されます。"
+
+#: ../../source/cli_stats.rst:112
+msgid ""
+"Mêmes options de filtre que ``stats recurring`` (``--player``, "
+"``--opponent``, ``--tournament``, ``--from``, ``--to``, ``--decision-"
+"type``, ``--format``)."
+msgstr ""
+"``stats recurring`` と同じフィルターオプション（\\ ``--player``\\ 、\\ ``--opponent``\\ "
+"、\\ ``--tournament``\\ 、\\ ``--from``\\ 、\\ ``--to``\\ 、\\ ``--decision-"
+"type``\\ 、\\ ``--format``\\ ）。"
+
+#: ../../source/cli_stats.rst:120
+#, no-python-format
+msgid ""
+"**stats tournament** — Le bilan d'un tournoi pour un joueur, comme le "
+"bouton *Bilan* du panneau Tournois (voir :ref:`bilan du tournoi "
+"<bilan_tournoi>`) : PR et perte MWC (éq. 7 pts) face au niveau habituel "
+"des 365 jours précédents, par ronde, par rang de la décision dans le "
+"match, par score (``dmp``, ``crawford``, ``post_crawford``, ``other``) et"
+" par rythme (``quick``, ``considered``), chacun avec son intervalle à 95 "
+"% et un verdict (``worse``, ``better``, ``usual``, ``insufficient`` sans "
+"intervalle, sous 20 décisions d'un côté ou sous 5 matchs habituels), puis"
+" au plus trois familles d'erreurs du tournoi."
+msgstr ""
+"**stats tournament** — あるプレイヤーのトーナメントの総括で、トーナメントパネルの *総括* "
+"ボタンと同じものです（:ref:`トーナメントの総括 <bilan_tournoi>` を参照）。PR と MWC 損失（7 ポイント換算）を直前"
+" 365 "
+"日の普段のレベルと比べ、ラウンド別、マッチ内での判断の順位別、スコア別（``dmp``、``crawford``、``post_crawford``、``other``）、テンポ別（``quick``、``considered``）に示します。それぞれに"
+" 95 % 区間と判定（``worse``、``better``、``usual``、区間がない場合、片側が 20 "
+"判断未満の場合、または普段のマッチが 5 未満の場合は "
+"``insufficient``）が付き、続いてトーナメントのミスの類型が最大三つ示されます。"
+
+#: ../../source/cli_stats.rst:133
+msgid ""
+"Sans ``--player``, le joueur est le plus présent dans les matchs du "
+"tournoi."
+msgstr "``--player`` を指定しない場合、プレイヤーはトーナメントのマッチに最も多く登場する人です。"
+
+#: ../../source/cli_stats.rst:140
+msgid ""
+"**stats training** — Le PR du quiz Décision, le PR des matchs et la "
+"rétention Anki, repliés par fenêtre calendaire, comme l'onglet "
+"*Entraînement* du panneau Stats (voir :ref:`stats`)."
+msgstr ""
+"**stats training** — 判断クイズの PR、マッチの PR、Anki の定着率を、Stats パネルの *トレーニング* "
+"タブと同様に、暦のウィンドウごとにまとめて表示します(:ref:`stats` を参照)。"
+
+#: ../../source/cli_stats.rst:150
+msgid "``--window week|month`` — La fenêtre calendaire (défaut ``week``)."
+msgstr "``--window week|month`` — 暦のウィンドウ(既定は ``week``)。"
+
+#: ../../source/cli_stats.rst:151
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre "
+"des matchs ; les journaux du quiz et d'Anki ne portent pas de joueur."
+msgstr ""
+"``--player <名前>``\\ 、\\ ``--tournament <ids>``\\ 、\\ ``--from <YYYY-MM-"
+"DD>``\\ 、\\ ``--to <YYYY-MM-DD>``\\ 、\\ ``--decision-type "
+"all|checker|cube`` — マッチのフィルタ。クイズと Anki のジャーナルにはプレイヤーがありません。"
+
+#: ../../source/cli_stats.rst:154
+msgid ""
+"``--format text|json`` — Le JSON porte aussi la liste des sessions de "
+"quiz ; le texte et le JSON donnent le PR du quiz par plan de jeu."
+msgstr ""
+"``--format text|json`` — JSON にはクイズのセッション一覧も含まれます。テキストと JSON "
+"のどちらも、プレイプラン別のクイズPRを出力します。"
+
+#: ../../source/cli_stats.rst:157
+msgid ""
+"Chaque série garde son nombre d'échantillons : une fenêtre sans décision "
+"y est un tiret en texte, un compte nul en JSON, jamais un zéro."
+msgstr "各系列はサンプル数を保持します。判断のないウィンドウは、テキストでは破線、JSON ではカウント 0 となり、値としてのゼロにはなりません。"
+
+#: ../../source/cli_stats.rst:167
+msgid ""
+"**stats h2h** — Deux joueurs l'un contre l'autre : les matchs qu'ils ont "
+"disputés ensemble, le PR de chacun dans chaque match et sur l'ensemble, "
+"et le bilan des matchs menés à terme."
+msgstr ""
+"**stats h2h** — 2 人のプレイヤーの直接対決です。2 人が一緒に戦ったマッチ、各マッチおよび全体での各自の "
+"PR、最後まで行われたマッチの勝敗を示します。"
+
+#: ../../source/cli_stats.rst:175
+msgid ""
+"**stats contrast** — Les positions que deux joueurs ont tous deux eu à "
+"jouer et où l'un a bien joué (sous le seuil Erreur) et l'autre non, "
+"l'écart le plus large d'abord ; un joueur est jugé sur son pire coup de "
+"la position. ``--limit N`` garde les N premières lignes du texte ; le "
+"JSON donne tout, avec les ``position_id``."
+msgstr ""
+"**stats contrast** — "
+"2人のプレイヤーがどちらも打った局面のうち、一方がうまく打ち（エラーのしきい値未満）、もう一方がそうでなかったもの。差が大きい順に並びます。プレイヤーは、その局面での最悪の手で判定されます。\\"
+" ``--limit N``\\ はテキストの先頭N行を残し、JSONは\\ ``position_id``\\ を含むすべてを返します。"
+
+#: ../../source/cli_stats.rst:185
+msgid ""
+"**stats windows** — Le PR sur une fenêtre calendaire glissante : une "
+"ligne par mois, chacune couvrant ce mois et les précédents de la fenêtre "
+"(``--window month``, ``quarter`` ou un nombre de mois)."
+msgstr ""
+"**stats windows** — 移動するカレンダー期間での PR です。月ごとに 1 "
+"行で、各行はその月と期間内のそれ以前の月を対象にします( ``--window month`` 、 ``quarter`` 、または月数)。"
+
+#: ../../source/cli_stats.rst:193
+msgid ""
+"**stats ranking** — Le classement des joueurs par PR, le plus bas en "
+"tête, parmi ceux qui ont au moins ``--min-decisions`` décisions comptées "
+"(500 par défaut) ; deux PR égaux partagent un rang. ``--limit N`` garde "
+"les N premiers."
+msgstr ""
+"**stats ranking** — PR によるプレイヤーの順位です。PR が低い順で、カウントされた判断が ``--min-"
+"decisions`` 以上(既定は 500)のプレイヤーが対象です。PR が等しい 2 人は同じ順位になります。 ``--limit N`` "
+"は上位 N 人を残します。"
+
+#: ../../source/cli_stats.rst:201
+msgid ""
+"**stats engines** — Les moteurs d'analyse présents dans la base, sous le "
+"nom exact que ``--engine`` attend ; le même choix que le menu *Moteur* du"
+" panneau Stats."
+msgstr ""
+"**stats engines** — データベースにある解析エンジンを、``--engine`` が受け付ける正確な名前で表示します。Stats"
+" パネルの *エンジン* メニューと同じ選択肢です。"
+
+#: ../../source/cli_stats.rst:209
+msgid ""
+"**Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``, ``--format "
+"text|json``, et le filtre de provenance ``--engine <nom>`` (le moteur "
+"d'analyse, nom exact) et ``--min-depth <n>`` (la profondeur minimale de "
+"l'analyse), que ``list --type stats`` et ``list --type players`` "
+"acceptent aussi. ``h2h`` et ``windows`` lisent les statistiques par match"
+" et refusent le filtre de provenance, qui porte sur chaque décision."
+msgstr ""
+"**共通オプション:** ``--tournament <ids>`` 、 ``--from <YYYY-MM-DD>`` 、 ``--to "
+"<YYYY-MM-DD>`` 、 ``--decision-type all|checker|cube`` 、 ``--format "
+"text|json`` 、さらに出所フィルタの ``--engine <名前>`` (解析エンジン、正確な名前)と ``--min-depth "
+"<n>`` (解析の最小深度)があり、 ``list --type stats`` と ``list --type players`` "
+"も受け付けます。 ``h2h`` と ``windows`` はマッチごとの統計を読むため、各判断に対して働く出所フィルタは拒否します。"
+
+#: ../../source/cli_stats.rst:227
+msgid ""
+"**stats matches** — Les matchs qu'un chiffre du corpus compte : ceux où "
+"le joueur (tout joueur sans ``--player``) a une décision comptée sous le "
+"filtre, du plus ancien au plus récent. Leurs identifiants se passent à "
+"``list --type matches --ids``."
+msgstr ""
+"**stats matches** — コーパスの数値が数えるマッチ。フィルタの下で、そのプレイヤー(``--player`` "
+"なしでは全プレイヤー)に数えられた判断があるマッチを、古いものから新しいものへ並べます。その識別子は ``list --type matches "
+"--ids`` に渡せます。"
+
+#: ../../source/cli_stats.rst:237
+msgid ""
+"**stats tournaments** — Les tournois que compte le nombre de tournois du "
+"Tableau de bord : ceux qui portent une décision comptée du joueur (de "
+"tout joueur sans ``--player``) sous le filtre, par identifiant."
+msgstr ""
+"**stats tournaments** — "
+"ダッシュボードのトーナメント数が数えるトーナメント：フィルターのもとでプレイヤー（``--player`` "
+"がなければ任意のプレイヤー）のカウントされた判断を含むもの、ID 順。"
+
+#: ../../source/cli_stats.rst:246
+msgid ""
+"**stats progression** — Le PR de chaque match par ordre de date, le PR de"
+" chaque tournoi et le PR glissant sur les N dernières décisions : "
+"l'onglet *Progression* du panneau Stats (voir :ref:`stats`)."
+msgstr ""
+"**stats progression** — 各マッチの PR を日付順に、各トーナメントの PR と直近 N 件の判断の移動 PR "
+"を表示します。Stats パネルの *Progression* タブに相当します(:ref:`stats` を参照)。"
+
+#: ../../source/cli_stats.rst:256
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même "
+"filtre que ``list --type stats``."
+msgstr ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — ``list "
+"--type stats`` と同じフィルタです。"
+
+#: ../../source/cli_stats.rst:259
+msgid ""
+"``--format text|json`` — Le JSON porte les matchs, les tournois et les PR"
+" glissants."
+msgstr "``--format text|json`` — JSON にはマッチ、トーナメント、移動 PR が含まれます。"
+
+#: ../../source/cli_stats.rst:269
+msgid ""
+"**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de "
+"jeu, étiquette de commentaire, score (away contre away) et action de "
+"videau, avec la direction des erreurs de videau : l'onglet *Ventilations*"
+" du panneau Stats (voir :ref:`stats`). Les options sont celles de ``stats"
+" progression``."
+msgstr ""
+"**stats breakdown** — フィルタの PR "
+"を、ゲームのフェーズ、ゲームプラン、コメントタグ、スコア(アウェイ対アウェイ)、キューブアクションごとに分け、キューブミスの方向も示します。Stats"
+" パネルの *内訳* タブに相当します(:ref:`stats` を参照)。オプションは ``stats progression`` と同じです。"
+
+#: ../../source/cli_stats.rst:285
+msgid ""
+"**stats report** — Le rapport HTML du panneau Stats (voir "
+":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
+" plus coûteuses avec leur diagramme, en un seul fichier autonome que le "
+"navigateur imprime en PDF. Le démon HTTP le sert à la route "
+"``stats.report``, du même générateur."
+msgstr ""
+"**stats report** — Stats パネルの HTML レポート(:ref:`rapport_html` "
+"を参照)です。フィルタの指標と、コストの大きい上位 10 件の判断を図とともに、ブラウザーが PDF "
+"として印刷できる単一の自己完結ファイルにまとめます。HTTP デーモンは同じジェネレーターから、ルート \\ ``stats.report``\\"
+" で提供します。"
+
+#: ../../source/cli_stats.rst:296
+msgid "``--html`` — Obligatoire : le HTML est le seul format."
+msgstr "``--html`` — 必須:HTML が唯一の形式です。"
+
+#: ../../source/cli_stats.rst:297
+msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
+msgstr "``--output <fichier>`` — 書き出すファイルです(デフォルト:標準出力)。"
+
+#: ../../source/cli_stats.rst:298
+msgid ""
+"``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
+"``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
+msgstr ""
+"``--lang <code>`` — "
+"レポートの言語:``fr``、``en``、``de``、``el``、``es``、``fi``、``it``、``ja``、``ru``\\ "
+"(デフォルトは ``en``)。"
+
+#: ../../source/cli_stats.rst:300
+msgid ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
+" le rapport nomme son périmètre."
+msgstr ""
+"``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
+"``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — "
+"フィルタ:レポートはその対象範囲を明示します。"
+
+#: ../../source/cli_stats.rst:304
+msgid ""
+"Les diagrammes y sont dessinés avec la palette par défaut ; seule "
+"l'application graphique emploie la palette du plateau choisie à l'écran."
+msgstr "図はここでは既定のパレットで描かれます。画面で選んだボードのパレットを使うのはグラフィカルアプリケーションだけです。"

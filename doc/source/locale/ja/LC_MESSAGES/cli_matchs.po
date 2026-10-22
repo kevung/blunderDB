@@ -1,0 +1,661 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cli_matchs.rst:4
+msgid "Matchs, tournois et parties"
+msgstr "マッチ、トーナメント、ゲーム"
+
+#: ../../source/cli_matchs.rst:7
+msgid "match — Afficher un match"
+msgstr "match — マッチを表示する"
+
+#: ../../source/cli_matchs.rst:9
+msgid ""
+"Affiche les positions et analyses d'un match importé. En sortie ``text`` "
+"et ``summary``, l'en-tête reprend ce que le fichier source dit du match "
+"quand il le dit : classement Elo et expérience de chaque joueur, "
+"transcripteur, règles Jacoby et Beaver d'une partie libre, programme qui "
+"a écrit le fichier ; la sortie ``json`` les porte dans l'objet ``match``."
+msgstr ""
+"インポートしたマッチのポジションと解析を表示します。\\ ``text``\\ と\\ ``summary``\\ "
+"の出力では、元ファイルがマッチについて記していれば、ヘッダーにそれが示されます：各プレイヤーの Elo レーティングと経験、記録者、マネーゲームの"
+" Jacoby と Beaver のルール、ファイルを書いたプログラム。\\ ``json``\\ の出力では\\ ``match``\\ "
+"オブジェクトに含まれます。"
+
+#: ../../source/cli_matchs.rst:15
+msgid ""
+"Quand le match a gardé la durée de ses décisions (un match joué contre un"
+" bot, voir le Duel), la sortie ``text`` donne la durée de chaque "
+"décision, celle du videau à part, et la sortie ``summary`` le total et la"
+" moyenne de chaque joueur, avec la marque du joueur dont la réserve s'est"
+" épuisée en premier ; la sortie ``json`` porte ``decision_ms`` et "
+"``cube_decision_ms``. Une durée inconnue n'est pas écrite. ``list --type "
+"timeerrors`` donne, par joueur et par tranche de durée (moins de 5 s, 5 à"
+" 15 s, 15 à 30 s, plus de 30 s), le nombre de décisions, l'erreur moyenne"
+" et la part de blunders ; ``--format json`` en livre les lignes."
+msgstr ""
+"マッチが判断の所要時間を保持している場合(ボット相手に指したマッチ、デュエルを参照)、``text`` "
+"出力は各判断の所要時間をキューブ判断を分けて示し、``summary`` "
+"出力は各プレイヤーの合計と平均を、持ち時間が先に尽きたプレイヤーの印付きで示します。``json`` 出力には ``decision_ms`` と"
+" ``cube_decision_ms`` が含まれます。不明な所要時間は書き出されません。\\ ``list --type "
+"timeerrors``\\ "
+"は、プレイヤーと所要時間の帯(5秒未満、5〜15秒、15〜30秒、30秒超)ごとに、判断数、平均誤り、ブランダーの割合を示します。\\ "
+"``--format json``\\ はその行を返します。"
+
+#: ../../source/cli_matchs.rst:25
+msgid ""
+"Pour un match joué ici par un Duel, les sorties ``text`` et ``summary`` "
+"ajoutent son origine : le départ, le germe des dés révélé et son SHA-256,"
+" à comparer avec l'empreinte publiée à la création du Duel, la fin du "
+"match (joué jusqu'au bout, arrêté avant la fin, ou perdu au temps et par "
+"qui), la cadence, le joueur dont la réserve s'est épuisée en premier et "
+"le Bot (niveau, version de gammonNet). Pour un match qui n'a pas été joué"
+" ici, elles écrivent ``Origin: not played here``. La sortie ``json`` "
+"porte l'origine sous ``origin`` (dont ``lost_on_time``), ``null`` pour un"
+" match qui n'a pas été joué ici. Le serveur la sert par "
+"``/v1/matches.origin`` : ``null`` pour un match sans origine, 404 pour un"
+" match qui n'existe pas."
+msgstr ""
+"ここでデュエルとして対局したマッチについて、``text`` と ``summary`` "
+"の出力はその出自を追加します。開始局面、公開されたダイスのシードとその "
+"SHA-256（デュエル作成時に公開されたフィンガープリントと照合するもの）、マッチの終わり方（最後まで対局、終了前に中断、または時間切れ負けとその当事者）、持ち時間、先に持ち時間が尽きたプレイヤー、ボット（レベル、gammonNet"
+" のバージョン）です。ここで対局していないマッチについては ``Origin: not played here`` と書きます。``json`` "
+"の出力では出自が ``origin``\\ （``lost_on_time`` を含む）に入り、ここで対局していないマッチでは ``null`` "
+"です。サーバーは ``/v1/matches.origin`` で提供し、出自のないマッチには ``null``、存在しないマッチには 404 "
+"を返します。"
+
+#: ../../source/cli_matchs.rst:36
+msgid ""
+"Pour un match analysé, la perte de chances de gagner le match de chaque "
+"coup (``mwc_loss``, une fraction : 0,0123 vaut 1,23 %, ``null`` pour un "
+"coup non noté) suit le même chemin : la sortie ``json`` porte la liste "
+"sous ``decision_losses``, ``text`` ajoute une ligne ``MWC loss`` aux "
+"coups notés et ``summary`` donne le total par joueur, égal à la perte MWC"
+" de la liste des matchs. Chaque entrée porte aussi sa difficulté "
+"(``difficulty``, la perte attendue d'un joueur de référence dans la même "
+"position, même unité, ``null`` pour un coup non noté) et ``avoidable`` "
+"pour une erreur évitable ; la sortie ``json`` ajoute "
+"``difficulty_summary`` (par joueur : ``difficulty``, ``excess``, "
+"``ratio``, ``avoidable``), ``text`` les lignes ``Difficulty`` et "
+"``Avoidable error``, ``summary`` une section ``Difficulty``. Le serveur "
+"la sert par ``/v1/stats.matchDecisionLosses``."
+msgstr ""
+"分析済みのマッチでは、各手で失われたマッチの勝率(``mwc_loss``、小数で、0,0123 は 1,23 % に当たり、採点されない手では "
+"``null``)も同じ経路をたどります。``json`` 出力は一覧を ``decision_losses`` の下に持ち、``text`` "
+"は採点された手に ``MWC loss`` の行を加え、``summary`` はプレイヤーごとの合計を示します。これはマッチ一覧の MWC "
+"損失に等しい値です。各エントリは難度(``difficulty``、同じ局面での基準プレイヤーの期待損失で、単位は同じ、採点されない手では "
+"``null``)と、避けられたミスを示す ``avoidable`` も持ちます。``json`` 出力は "
+"``difficulty_summary`` (プレイヤーごと: "
+"``difficulty``、``excess``、``ratio``、``avoidable``)を、``text`` は "
+"``Difficulty`` と ``Avoidable error`` の行を、``summary`` は ``Difficulty`` "
+"セクションを加えます。サーバーはこれを ``/v1/stats.matchDecisionLosses`` で提供します。"
+
+#: ../../source/cli_matchs.rst:48
+#, no-python-format
+msgid ""
+"``summary`` se termine par une section ``Review``, le bilan du match "
+"(:ref:`bilan du match <bilan_match>`) : par joueur, le PR et son "
+"intervalle à 95 % sur les parties, la perte MWC ramenée à 7 points et son"
+" intervalle sur les parties, le résultat ajusté de la chance (avec le "
+"résultat, la chance nette, l'écart des erreurs et la couverture des "
+"jets), les trois erreurs à revoir (partie, coup, perte et part évitable) "
+"et le partage des erreurs entre précipitées et réfléchies. Le serveur le "
+"sert par ``/v1/stats.matchReview``. Dans ``stats``, le PR global et les "
+"lignes par phase, par étiquette et par score portent leur intervalle à 95"
+" % sur les matchs (colonne ``95 % CI``), et ``list --type players`` une "
+"colonne ``L7``."
+msgstr ""
+"``summary`` は ``Review`` セクション、すなわちマッチの総括(:ref:`マッチの総括 "
+"<bilan_match>`)で終わります。プレイヤーごとに、PR とそのゲームにわたる 95 % 区間、7 ポイントに換算した MWC "
+"損失とそのゲームにわたる区間、運で補正した結果(結果、ネットの運、ミスの差、ダイスのカバー率を含む)、見直すべき 3 "
+"つのミス(ゲーム、手、損失、回避可能な割合)、そしてミスの急いだものと熟考したものへの内訳を示します。サーバーは "
+"``/v1/stats.matchReview`` で提供します。``stats`` では、全体の PR "
+"と、フェーズ別、ラベル別、スコア別の行が、マッチにわたる 95 % 区間(列 ``95 % CI``)を持ち、``list --type "
+"players`` には ``L7`` 列があります。"
+
+#: ../../source/cli_matchs.rst:62 ../../source/cli_matchs.rst:220
+msgid "**Options:**"
+msgstr "**オプション：**"
+
+#: ../../source/cli_matchs.rst:64
+msgid "``--db`` — Base de données (obligatoire)."
+msgstr "``--db`` — データベース（必須）。"
+
+#: ../../source/cli_matchs.rst:65
+msgid "``--id`` — ID du match à afficher (obligatoire)."
+msgstr "``--id`` — 表示するマッチのID（必須）。"
+
+#: ../../source/cli_matchs.rst:66
+msgid ""
+"``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
+"(défaut: ``json``)."
+msgstr ""
+"``--format`` — 出力フォーマット：\\ ``json``\\ 、\\ ``text``\\ 、または ``summary``\\ "
+"（デフォルト：\\ ``json``\\ ）。"
+
+#: ../../source/cli_matchs.rst:67
+msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
+msgstr "``--output`` — 出力ファイル（デフォルト：標準出力）。"
+
+#: ../../source/cli_matchs.rst:69 ../../source/cli_matchs.rst:183
+msgid "**Exemples:**"
+msgstr "**例：**"
+
+#: ../../source/cli_matchs.rst:77
+msgid ""
+"**match repair** — Réécrit les positions, les analyses et les erreurs "
+"d'un match à partir de son fichier source, celui que l'onglet **Infos** "
+"de sa fiche nomme. Le match garde son identifiant, son tournoi, les noms "
+"des joueurs tels qu'ils sont enregistrés (alias, corrections, inversion),"
+" sa date, son commentaire, sa vidéo et ses repères, sa transcription, et "
+"les commentaires écrits sur ses positions : un commentaire laissé sur une"
+" position que la réparation quitte passe sur celle que le fichier nomme "
+"pour le même coup, sauf si une collection, une carte Anki ou une leçon "
+"garde encore cette position ; le commentaire y reste et le rapport le "
+"compte. Une analyse plus profonde que celle du fichier (un rollout lancé "
+"depuis l'import) ou corrigée à la main reste. Un match déjà conforme à "
+"son fichier n'est pas réécrit. ``--dry-run`` dit ce qui changerait sans "
+"rien écrire. ``--list`` passe en revue tous les matchs qui nomment un "
+"fichier source et donne ceux qui en diffèrent, avec le nombre de coups "
+"dont la position change et la part de coups analysés avant et après, "
+"ainsi que ceux dont le fichier est introuvable ; il n'écrit rien. Un "
+"chemin relatif est cherché depuis le dossier de la base, puis depuis le "
+"dossier courant. La réparation est refusée quand le fichier est "
+"introuvable, ne contient plus le match (son empreinte n'est plus celle du"
+" match enregistré), ou quand les coups enregistrés ne permettent pas de "
+"dire quel joueur du fichier est lequel. Le serveur la sert par "
+"``/v1/matches.repair``, le fichier source envoyé dans la requête."
+msgstr ""
+"**match repair** — マッチのカードの **情報** "
+"タブが示すソースファイルから、そのマッチの局面・解析・エラーを書き直します。マッチは "
+"ID、トーナメント、保存されたとおりのプレイヤー名（エイリアス、修正、入れ替え）、日付、コメント、動画とマーク、トランスクリプション、局面に書かれたコメントを保持します。修復によって離れる局面に残されたコメントは、同じ手についてファイルが示す局面に移ります。ただし、コレクション、Anki"
+" "
+"カード、レッスンがその局面をまだ保持している場合、コメントはそこに残り、レポートがその数を示します。ファイルより深い解析（インポート後に実行したロールアウト）や手で修正した解析は残ります。ファイルとすでに一致するマッチは書き直されません。\\"
+" ``--dry-run`` は何も書かずに変更内容を示します。\\ ``--list`` "
+"はソースファイルを持つすべてのマッチを調べ、それと異なるものを、局面が変わる手の数と前後の解析済みの手の割合とともに示し、ファイルが見つからないものも示します。何も書き込みません。相対パスはデータベースのフォルダー、次に現在のフォルダーから探します。ファイルが見つからない場合、ファイルがもうそのマッチを含まない場合（その指紋が保存されたマッチのものでない場合）、保存された手からファイルのどちらのプレイヤーかを判別できない場合、修復は拒否されます。サーバーは"
+" ``/v1/matches.repair``\\ で提供し、ソースファイルはリクエストで送信されます。"
+
+#: ../../source/cli_matchs.rst:109
+msgid "tournament — Lire un tournoi dirigé"
+msgstr "tournament — 運営した大会を読む"
+
+#: ../../source/cli_matchs.rst:111
+msgid ""
+"Lit un tournoi dirigé sans interface graphique. Diriger un tournoi de "
+"façon interactive est le rôle de la console du moteur Nicomaque ; ces "
+"sous-commandes **lisent**, aucune n'attend de saisie, et seules ``move`` "
+"et ``confirm`` écrivent."
+msgstr ""
+"グラフィカルインターフェースなしで、運営中のトーナメントを読み取ります。トーナメントを対話的に運営するのは Nicomaque "
+"エンジンのコンソールの役目です。これらのサブコマンドは\\ **読み取り**\\ のみで、入力を待つものはなく、書き込むのは\\ "
+"``move``\\ と\\ ``confirm``\\ だけです。"
+
+#: ../../source/cli_matchs.rst:120
+msgid "**Sous-commandes:**"
+msgstr "**サブコマンド：**"
+
+#: ../../source/cli_matchs.rst:122
+msgid ""
+"``list [--format text|json]`` — Les tournois dirigés de la base, avec "
+"leur état, la version du moteur, l'événement auquel chacun appartient (si"
+" aucun, la colonne est vide) et la date de la dernière décision."
+msgstr ""
+"``list [--format text|json]`` — "
+"データベース内の運営済み大会と、その状態、エンジンのバージョン、それぞれが属するイベント（なければ空欄）、最後の決定の日付。"
+
+#: ../../source/cli_matchs.rst:125
+msgid ""
+"``verify --id N [--format text|json]`` — Rejoue la direction et signale "
+"tout avertissement résiduel. **Sort en erreur** s'il en reste un : c'est "
+"la vérification d'après-tournoi, et un script qui la passe sur les bases "
+"d'une saison veut un code de retour, pas une ligne à filtrer."
+msgstr ""
+"``verify --id N [--format text|json]`` — "
+"運営を再生し、残っている警告をすべて報告します。警告が残っていれば\\ **エラー終了**\\ "
+"します。これは大会後の点検であり、シーズン分のデータベースにこれを流すスクリプトが欲しいのは終了コードであって、絞り込むための一行ではありません。"
+
+#: ../../source/cli_matchs.rst:129
+msgid ""
+"``standings --id N`` — Le classement en CSV, prix compris, dans la langue"
+" de l'interface."
+msgstr "``standings --id N`` — 賞金を含む順位表を CSV で、インターフェイスの言語で出力します。"
+
+#: ../../source/cli_matchs.rst:131
+msgid ""
+"``ranking --season [--rencontre N] [--from AAAA-MM-JJ] [--to AAAA-MM-JJ] "
+"[--points 25,18,15] [--participation P] [--elo] [--format csv|json]`` — "
+"Le classement de saison : les tournois clos d'un événement ou d'une "
+"période (bornes incluses, sur la date du tournoi ; sans filtre, tous les "
+"tournois dirigés), chaque place convertie en points par le barème "
+"(vainqueur en tête ; par défaut 25, 18, 15, 12, 10, 8, 6, 4, 2, 1), plus "
+"``--participation`` par tournoi joué. Des ex æquo se partagent la moyenne"
+" des places qu'ils occupent. Une personne est reconnue d'un tournoi à "
+"l'autre par son nom. ``--elo`` ajoute un Elo de club rejoué sur les "
+"matchs de la saison (formule FIBS, départ 1500). Le CSV donne une ligne "
+"par personne et une colonne de points par tournoi ; un tournoi non clos "
+"est listé mais ne rapporte rien."
+msgstr ""
+"``ranking --season [--rencontre N] [--from AAAA-MM-JJ] [--to AAAA-MM-JJ] "
+"[--points 25,18,15] [--participation P] [--elo] [--format csv|json]`` — "
+"シーズンランキング。イベントまたは期間の終了済みの大会を対象とします（両端を含み、大会の日付で判定。フィルターがなければ運営したすべての大会）。各順位は配点表によってポイントに換算され（優勝者が先頭。既定は"
+" 25、18、15、12、10、8、6、4、2、1）、さらに参加した大会ごとに ``--participation`` "
+"が加わります。同順位は、占める順位の平均を分け合います。大会をまたいで、人物は名前で識別されます。\\ ``--elo`` "
+"は、シーズンの対戦をやり直して算出したクラブ Elo（FIBS の式、初期値 1500）を加えます。CSV は 1 人 1 行、大会ごとに 1 "
+"列のポイント列を出力します。終了していない大会は一覧に載りますが、ポイントにはなりません。"
+
+#: ../../source/cli_matchs.rst:142
+msgid ""
+"``page --id N|--rencontre N [--out <dossier>]`` — La page HTML "
+"d'affichage d'une épreuve (``--id``), ou la page murale d'un événement "
+"(``--rencontre`` : une ligne par table, quelle que soit l'épreuve qui "
+"l'occupe). Exactement l'un des deux est requis. Sans ``--out`` elle part "
+"sur la sortie standard ; avec, elle est écrite dans le dossier, qui "
+"devient celui de la direction ou de l'événement."
+msgstr ""
+"``page --id N|--rencontre N [--out <フォルダー>]`` — 種目の HTML "
+"表示ページ（``--id``）、またはイベントの壁面ページ（``--rencontre``：どの種目が使っていてもテーブルごとに1行）。どちらか一方が必須です。``--out``"
+" なしなら標準出力へ、指定するとそのフォルダーに書き出され、以後そこが運営またはイベントのフォルダーになります。"
+
+#: ../../source/cli_matchs.rst:148
+msgid ""
+"``export --id N`` — Le journal d'événements brut, rejouable par les "
+"outils du moteur. Le journal est toute la vérité d'une direction : le "
+"classement, les arbres et les avertissements en sont rejoués. Un outil "
+"qui lit cette sortie n'a besoin d'aucun blunderDB."
+msgstr ""
+"``export --id N`` — "
+"生のイベントジャーナル。エンジンのツールで再生できます。ジャーナルは運営のすべての真実であり、順位表もトーナメント表も警告もそこから再生されます。この出力を読むツールに"
+" blunderDB は一切不要です。"
+
+#: ../../source/cli_matchs.rst:152
+msgid ""
+"``move --id N --match M --table T [--format text|json]`` — Change la "
+"table d'un match en cours, comme le glisser-déposer d'une case sur une "
+"autre dans la grille. Si la table visée est occupée, les deux matchs "
+"**échangent** leurs tables ; une table hors service est refusée. Dans un "
+"événement, si la table est occupée par une autre épreuve, l'échange se "
+"fait entre les deux épreuves : un changement de table est écrit dans "
+"chaque journal. Affiche la table de chaque match en cours."
+msgstr ""
+"``move --id N --match M --table T [--format text|json]`` — "
+"進行中のマッチのテーブルを変更します。グリッドでセルを別のセルへドラッグするのと同じ操作です。移動先のテーブルが使用中なら、2 "
+"つのマッチがテーブルを\\ **入れ替え**\\ "
+"ます。使用停止中のテーブルは拒否されます。イベント内で、テーブルが別の種目に使われている場合は、2 "
+"つの種目の間で入れ替えます。テーブルの変更はそれぞれのログに記録されます。進行中の各マッチのテーブルを表示します。"
+
+#: ../../source/cli_matchs.rst:159
+msgid ""
+"``hall --rencontre N [--format text|json]`` — Toutes les tables d'un "
+"événement : une ligne par table, quelle que soit l'épreuve qui l'occupe "
+"(épreuve, match, joueurs), puis les propositions de toutes les épreuves "
+"en une seule file (``proposal``), les joueurs qui attendent depuis le "
+"plus longtemps d'abord, et enfin les matchs retenus faute de table ou de "
+"joueur libre (``held``, avec leur raison). C'est la grille que la vue "
+"*Toutes les tables* de la Direction affiche ; les tables sont groupées "
+"par salle quand l'événement en a, et nommées quand elles ont un nom."
+msgstr ""
+"``hall --rencontre N [--format text|json]`` — "
+"イベントのすべてのテーブルです。どの種目が使っているかにかかわらずテーブルごとに 1 "
+"行（種目、マッチ、プレイヤー）を示し、続けてすべての種目の提案を一つの列で示し（\\ ``proposal``\\ "
+"）、最も長く待っているプレイヤーが先になります。最後に、テーブルまたは空いているプレイヤーがないために保留されている試合を理由とともに示します（\\"
+" ``held``\\ ）。Direction の\\ *すべてのテーブル*\\ "
+"ビューが表示するグリッドです。イベントに会場がある場合、テーブルは会場ごとにまとめられ、名前を持つテーブルには名前が表示されます。"
+
+#: ../../source/cli_matchs.rst:167
+msgid ""
+"``proposals --id N [--format text|json]`` — La file des propositions du "
+"moteur, numérotée : matchs, tirages, passage de phase, repêchage d'un "
+"qualifié de poule retiré."
+msgstr ""
+"``proposals --id N [--format text|json]`` — "
+"エンジンの番号付き提案リスト：試合、抽選、フェーズの移行、棄権したグループ進出者の繰り上げ。"
+
+#: ../../source/cli_matchs.rst:170
+msgid ""
+"``confirm --id N --n K [--format text|json]`` — Confirme la proposition "
+"numéro K de ``proposals``, comme *Lancer* dans le panneau, puis affiche "
+"la file qui suit."
+msgstr ""
+"``confirm --id N --n K [--format text|json]`` — ``proposals`` の番号 K "
+"の提案を、パネルの *開始* と同じように確定し、続くリストを表示します。"
+
+#: ../../source/cli_matchs.rst:173
+msgid ""
+"``tables --rencontre N|--tournament N [--format text|json]`` — Les "
+"propriétés des tables (nom, salle, réservée, attitrée à) et les salles où"
+" joue chaque épreuve d'un événement (``--rencontre``), ou les propriétés "
+"d'une épreuve qui joue seule (``--tournament``). Lecture seule : "
+"l'écriture passe par ``call`` (``rencontres.setTables``, "
+"``rencontres.setEventRooms``, ``directions.setTables``)."
+msgstr ""
+"``tables --rencontre N|--tournament N [--format text|json]`` — "
+"テーブルのプロパティ（名前、会場、予約済み、割り当て先）と、イベントの各種目が行われる会場（``--rencontre``）、または単独で行われる種目のプロパティ（``--tournament``）を表示します。読み取り専用で、書き込みは"
+" ``call`` "
+"を通じて行います（``rencontres.setTables``、``rencontres.setEventRooms``、``directions.setTables``）。"
+
+#: ../../source/cli_matchs.rst:180
+msgid ""
+"**Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf "
+"pour ``list``, ``ranking``, ``page --rencontre``, ``hall`` et "
+"``tables``), ``--format``."
+msgstr ""
+"**共通オプション:** ``--db``\\ （必須）、\\ ``--id``\\ （\\ ``list``\\ 、\\ "
+"``ranking``\\ 、\\ ``page --rencontre``\\ 、\\ ``hall``\\ 、\\ ``tables`` "
+"以外で必須）、\\ ``--format``\\ 。"
+
+#: ../../source/cli_matchs.rst:203
+msgid "transcribe — Rejouer une transcription"
+msgstr "transcribe — 記譜を再生する"
+
+#: ../../source/cli_matchs.rst:205
+msgid ""
+"Rejoue une transcription et rend compte de ce que la relecture y trouve. "
+"La source est un fichier ``.mat``, un match de la bibliothèque ou un "
+"brouillon de transcription — exactement l'une des trois. Un match est lu "
+"par le ``.mat`` qu'il produirait à l'export : ce qui est rejoué est donc "
+"ce qu'un export contiendrait."
+msgstr ""
+"記譜を再生し、再生が見つけたものを報告します。ソースは\\ ``.mat``\\ "
+"ファイル、ライブラリのマッチ、記譜の下書きのいずれか一つだけです。マッチはエクスポート時に生成される\\ ``.mat``\\ "
+"を通して読まれるため、再生されるのはエクスポートが含むはずのものです。"
+
+#: ../../source/cli_matchs.rst:222
+msgid "``--mat`` — Fichier ``.mat`` à rejouer."
+msgstr "``--mat`` — 再生する\\ ``.mat``\\ ファイル。"
+
+#: ../../source/cli_matchs.rst:223
+msgid "``--db`` — Base de données, pour ``--match`` et ``--draft``."
+msgstr "``--db`` — データベース。\\ ``--match`` および ``--draft`` 用。"
+
+#: ../../source/cli_matchs.rst:224
+msgid "``--match`` — Identifiant du match de la bibliothèque à rejouer."
+msgstr "``--match`` — 再生するライブラリのマッチの識別子。"
+
+#: ../../source/cli_matchs.rst:225
+msgid "``--draft`` — Identifiant du brouillon de transcription à rejouer."
+msgstr "``--draft`` — 再生する記譜の下書きの識別子。"
+
+#: ../../source/cli_matchs.rst:226
+msgid "``--check`` — Liste les incohérences trouvées (comportement par défaut)."
+msgstr "``--check`` — 見つかった不整合を列挙する（既定の動作）。"
+
+#: ../../source/cli_matchs.rst:227
+msgid "``--render`` — Réécrit la transcription en ``.mat`` à ce chemin."
+msgstr "``--render`` — 記譜をこのパスに\\ ``.mat``\\ として書き戻す。"
+
+#: ../../source/cli_matchs.rst:228
+msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
+msgstr "``--format`` — 出力フォーマット：\\ ``text``\\ （デフォルト）または\\ ``json``\\ 。"
+
+#: ../../source/cli_matchs.rst:229
+msgid ""
+"``--edit`` — Ouvre un brouillon sur le ``--match`` (ou rend celui qui y "
+"est déjà ouvert)."
+msgstr "``--edit`` — ``--match`` に対して下書きを開きます(すでに開かれている下書きがあればそれを返します)。"
+
+#: ../../source/cli_matchs.rst:231
+msgid ""
+"``--accept-losses`` — Avec ``--edit`` sur un match importé : accepte que "
+"ses analyses et commentaires puissent être perdus."
+msgstr ""
+"``--accept-losses`` — 取り込み済みのマッチに対する ``--edit`` "
+"と併用:その分析とコメントが失われうることを受け入れます。"
+
+#: ../../source/cli_matchs.rst:233
+msgid ""
+"``--finish`` — Termine le ``--draft`` : écrit son match, ou remplace "
+"celui dont il a été ouvert, et libère le brouillon."
+msgstr "``--finish`` — ``--draft`` を完了します:そのマッチを書き込むか、開いた元のマッチを置き換え、下書きを解放します。"
+
+#: ../../source/cli_matchs.rst:235
+msgid ""
+"``--abandon`` — Abandonne le ``--draft`` : le supprime sans match ; un "
+"match dont il a été ouvert reste tel quel."
+msgstr "``--abandon`` — ``--draft`` を破棄します:マッチを作らずに削除します。開いた元のマッチはそのまま残ります。"
+
+#: ../../source/cli_matchs.rst:237
+msgid ""
+"``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme"
+" que tout ce qui y est écrit est perdu."
+msgstr ""
+"``--yes`` — マッチを一度も生み出していない下書きに ``--abandon`` "
+"を使うとき、その中に書かれたすべてが失われることを確認します。"
+
+#: ../../source/cli_matchs.rst:239
+msgid ""
+"``--materialize`` — Document JSON (``header`` et ``actions``, dés "
+"compris) à écrire en match d'un seul coup, ou pas du tout."
+msgstr ""
+"``--materialize`` — サイコロを含む JSON ドキュメント(``header`` と "
+"``actions``)を、一度にマッチとして書き込むか、まったく書き込まないか。"
+
+#: ../../source/cli_matchs.rst:242
+msgid ""
+"``--check`` nomme chaque incohérence avec le numéro de l'action et la "
+"partie où elle se trouve : coup illégal, deux tours de suite pour le même"
+" joueur, action de videau impossible, action au-delà de la fin du match, "
+"coup dont les pas n'utilisent pas ses propres dés, premier coup d'une "
+"partie joué sur un double, qu'aucun jet d'ouverture ne peut être, coup "
+"non consigné — la cellule ``???`` que gnubg écrit quand il n'a pas gardé "
+"le coup joué, et qui n'est pas une danse —, score annoncé incohérent — "
+"une partie dont la ligne de score n'est pas celle que donnent les parties"
+" précédentes, rejouée au score écrit."
+msgstr ""
+"``--check`` "
+"は各不整合を、アクション番号とそれが属するゲームとともに示します。不正な手、同じプレイヤーが続けて二手、不可能なキューブ操作、マッチ終了後のアクション、自身のダイスを使っていない手、ゾロ目で指されたゲームの最初の手(オープニングロールはゾロ目になりえません)、記録されていない手、そして申告スコアの不一致です。記録されていない手とは、gnubg"
+" が実際に指された手を残さなかったときに書く ``???`` "
+"のセルであり、ダンスではありません。申告スコアの不一致とは、スコア行が前のゲームから導かれるものと異なるゲームであり、書かれたスコアで再生されます。"
+
+#: ../../source/cli_matchs.rst:251
+msgid ""
+"Une incohérence est **rapportée, jamais opposée** : rien n'est refusé "
+"pour elle et le code de sortie reste 0 quoi que la relecture trouve. Un "
+"code non nul signale un vrai échec — fichier illisible, base qui ne "
+"s'ouvre pas, sortie impossible à écrire. Un script qui veut agir sur les "
+"constats les lit dans ``--format json``, où un fichier cassé et une "
+"partie contenant un coup illégal ne se confondent pas."
+msgstr ""
+"不整合は\\ **報告されるだけで、けっして拒否の理由になりません**\\ "
+"。不整合を理由に何かが拒まれることはなく、再生が何を見つけても終了コードは 0 のままです。ゼロ以外の終了コードは本当の失敗を示します — "
+"読めないファイル、開けないデータベース、書き込めない出力です。所見に基づいて動作させたいスクリプトは\\ ``--format json``\\ "
+"で読み取ります。そこでは壊れたファイルと不正な手を含むゲームが混同されません。"
+
+#: ../../source/cli_matchs.rst:258
+msgid ""
+"``--render`` réécrit la transcription en ``.mat``, ce qui permet de "
+"vérifier l'aller-retour sur un fichier réel, en dehors des tests."
+msgstr ""
+"``--render`` は記譜を\\ ``.mat``\\ "
+"として書き戻します。これにより、テストの外で実際のファイルについて往復変換を確認できます。"
+
+#: ../../source/cli_matchs.rst:261
+msgid ""
+"``--materialize`` écrit, sans brouillon, le match que joue un document "
+"d'actions arrivé d'ailleurs. Les règles sont appliquées strictement : la "
+"première action refusée fait échouer la commande avec son rang (à partir "
+"de 0) et son motif, et rien n'est écrit. Les durées de décision du "
+"document (``decision_ms``, ``cube_decision_ms``) sont reportées sur les "
+"coups."
+msgstr ""
+"``--materialize`` "
+"は、よそから届いたアクションのドキュメントが表すマッチを、下書きを経ずに書き込みます。ルールは厳密に適用されます。最初に拒否されたアクションがあると、コマンドはその順位(0"
+" "
+"から数えます)と理由を示して失敗し、何も書き込まれません。ドキュメントの判断時間(``decision_ms``、``cube_decision_ms``)は各手に引き継がれます。"
+
+#: ../../source/cli_matchs.rst:267
+msgid ""
+"Seules trois autres options écrivent, par les mêmes méthodes que le "
+"panneau Transcription : ``--edit`` ouvre un brouillon sur un match "
+"existant, ``--finish`` le termine — le match est remplacé sous le même "
+"identifiant —, et ``--abandon`` supprime un brouillon sans match, et "
+"exige ``--yes`` pour un brouillon jamais terminé, qui emporte tout ce qui"
+" y est écrit. Un match importé porte des analyses et des commentaires "
+"qu'un ``.mat`` ne porte pas : ``--edit`` en donne le compte au plus et "
+"refuse sans ``--accept-losses``."
+msgstr ""
+"書き込みを行う他のオプションは三つだけで、記譜パネルと同じメソッドを通します。``--edit`` "
+"は既存のマッチに対して下書きを開き、``--finish`` "
+"はそれを完了し(マッチは同じ識別子のまま置き換えられます)、``--abandon`` "
+"はマッチを作らずに下書きを削除します。一度も完了していない下書きには ``--yes`` "
+"が必要で、書かれた内容はすべて失われます。取り込み済みのマッチは ``.mat`` に含まれない分析とコメントを持っています。``--edit``"
+" は最大でその件数を示し、``--accept-losses`` がなければ拒否します。"
+
+#: ../../source/cli_matchs.rst:275
+msgid "**Exemple:**"
+msgstr "**例：**"
+
+#: ../../source/cli_matchs.rst:288
+msgid "duel — Jouer un Duel"
+msgstr "duel — デュエルをプレイする"
+
+#: ../../source/cli_matchs.rst:290
+msgid ""
+"Joue un Duel sans interface, une Action par appel. Chaque appel est son "
+"propre processus : il reprend le Duel dans la base, joue une Action et la"
+" réécrit. Les durées des coups d'un Duel joué ainsi sont inconnues, "
+"jamais nulles."
+msgstr ""
+"インターフェースなしで、1 回の呼び出しにつき 1 "
+"アクションずつデュエルを進めます。呼び出しごとに別プロセスとなり、データベースからデュエルを再開し、1 "
+"アクションを進めて書き戻します。この方法で進めたデュエルのムーブの所要時間は不明であり、ゼロではありません。"
+
+#: ../../source/cli_matchs.rst:306
+msgid "**Sous-commandes :**"
+msgstr "**サブコマンド：**"
+
+#: ../../source/cli_matchs.rst:308
+msgid ""
+"``create`` — Démarre un Duel et joue jusqu'à la première décision d'un "
+"Côté externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` "
+"(XGID du Départ) ; ``--name1`` et ``--name2`` ; ``--side1`` et "
+"``--side2`` (``external``, ou ``bot:<niveau>`` avec ``instant``, "
+"``normal`` ou ``thorough``, ou ``external:<configuration>@<moteur>``, un "
+"Côté externe qui déclare le Bot qui joue derrière lui : l'origine du "
+"Match l'enregistre comme déclaré, non attesté) ; ``--discard-at-end`` "
+"jette le brouillon à la fin au lieu d'écrire le Match ; ``--combined-"
+"seed`` ne lance aucun dé avant l'apport de chaque Côté externe au germe. "
+"``--away`` donne le score de la première partie en points manquants, "
+"``joueur1,joueur2`` (``1`` : la partie Crawford, ``0`` : un point après "
+"elle), et remplace celui de ``--start`` ; sans ``--start``, la partie "
+"part de la position initiale à ce score. ``--reroll`` fait tirer à "
+"nouveau le jet que porte ``--start`` ; ``--after-cube`` commence après la"
+" décision de videau du Départ (le joueur au trait lance aussitôt, un "
+"double offert est pris) — par défaut le Duel commence avant elle, et un "
+"double offert attend la réponse de l'adversaire. ``--single-game`` arrête"
+" le Duel à la fin de sa première partie, écrite seule comme Match. "
+"``--minutes-per-point`` et ``--delay`` fixent la cadence : la réserve de "
+"chaque joueur en minutes par point du match (Standard 2, Speed 0,4) et le"
+" délai par coup en secondes (12, 10) ; ``--time-out`` (``continue`` ou "
+"``lose_match``) ce que fait une réserve épuisée. Un Départ que les règles"
+" n'admettent pas (pions, score hors de la longueur, deux joueurs en "
+"partie Crawford, videau) est refusé avec son motif. Avec deux Bots, le "
+"match se joue en entier dans cet appel (``--side1 bot:instant --side2 "
+"bot:instant``) ; une session en argent entre deux Bots est refusée, car "
+"elle ne finirait jamais, sauf en une seule partie."
+msgstr ""
+"``create``\\ — デュエルを開始し、外部サイドの最初の判断まで進めます。\\ ``--length``\\ (1~25 "
+"ポイント)または\\ ``--money``\\ 、\\ ``--start``\\ (スタートの XGID)、\\ ``--name1``\\ "
+"と\\ ``--name2``\\ 、\\ ``--side1``\\ と\\ ``--side2``\\ (``external``\\ "
+"、または\\ ``instant``\\ 、\\ ``normal``\\ 、\\ ``thorough``\\ を伴う\\ "
+"``bot:<レベル>``\\ 、または背後でプレイするボットを申告する外部サイドを表す\\ ``external:<構成>@<エンジン>``\\"
+" 。マッチの由来はそれを、証明されたものではなく申告されたものとして記録します)を指定できます。\\ ``--discard-at-end``\\"
+" は、マッチを書き込まずに終了時に下書きを破棄します。\\ ``--combined-seed``\\ "
+"は、各外部サイドがシードへの寄与を行うまでダイスを振りません。\\ ``--away``\\ は、最初のゲームのスコアを足りないポイントで\\ "
+"``プレイヤー1,プレイヤー2``\\ の形で指定し(``1``\\ :クロフォードゲーム、\\ ``0``\\ :その後の 1 ポイント)、\\"
+" ``--start``\\ のスコアを置き換えます。\\ ``--start``\\ "
+"がなければ、ゲームはこのスコアで初期局面から始まります。\\ ``--reroll``\\ は、\\ ``--start``\\ "
+"が持つ出目を振り直します。\\ ``--after-cube``\\ "
+"は、スタートのキューブの判断の後から始めます(手番のプレイヤーはすぐに振り、提示されたダブルはテイクされます)。既定ではデュエルはその前から始まり、提示されたダブルは相手の答えを待ちます。\\"
+" ``--single-game``\\ は、最初のゲームの終わりでデュエルを止め、そのゲームだけをマッチとして書き込みます。\\ "
+"``--minutes-per-point``\\ と\\ ``--delay``\\ は持ち時間を定めます。各プレイヤーの持ち時間をマッチの 1"
+" ポイントあたりの分(Standard は 2、Speed は 0.4)で、手ごとのディレイを秒(12、10)で指定します。\\ "
+"``--time-out``\\ (``continue``\\ または\\ ``lose_match``\\ "
+")は、持ち時間を使い切ったときの扱いです。ルール上認められないスタート(チェッカー、マッチ長を超えるスコア、両プレイヤーがクロフォードゲーム、キューブ)は、理由とともに拒否されます。2"
+" つのボットの場合、マッチ全体がこの呼び出しの中で行われます(``--side1 bot:instant --side2 "
+"bot:instant``)。2 つのボットの間のマネーゲームのセッションは、1 ゲームのみの場合を除き、終わらないため拒否されます。"
+
+#: ../../source/cli_matchs.rst:334
+msgid ""
+"``show`` — Score, ce que le Duel attend et, pour un coup, les jeux "
+"légaux. Le germe des dés n'est jamais affiché avant la fin : l'empreinte "
+"le représente."
+msgstr ""
+"``show``\\ — "
+"スコア、デュエルが待っているもの、ムーブの場合は合法的なプレイを表示します。サイコロのシードは終了前には表示されず、フィンガープリントがその代わりとなります。"
+
+#: ../../source/cli_matchs.rst:336
+msgid "``list`` — Les Duels en suspens."
+msgstr "``list``\\ — 保留中のデュエル。"
+
+#: ../../source/cli_matchs.rst:337
+msgid ""
+"``roll``, ``move``, ``double``, ``take``, ``pass``, ``resign`` — Une "
+"Action du Côté que le Duel attend (``--side 1|2`` pour le nommer) ; "
+"``--play`` donne le coup en notation, dans l'ordre qu'on veut ; "
+"``--level`` (1 à 3) la valeur d'un abandon ; ``--revision`` refuse "
+"l'Action si le Duel a bougé."
+msgstr ""
+"``roll``\\ 、\\ ``move``\\ 、\\ ``double``\\ 、\\ ``take``\\ 、\\ ``pass``\\ "
+"、\\ ``resign``\\ — デュエルが待っているサイドの 1 アクション(``--side 1|2`` で指定)。\\ "
+"``--play``\\ はムーブを記法で、任意の順序で渡します。\\ ``--level``\\ (1~3)はリザインの価値を、\\ "
+"``--revision``\\ はデュエルが進んでいる場合にアクションを拒否します。"
+
+#: ../../source/cli_matchs.rst:341
+msgid ""
+"``contribute`` — L'apport d'un Côté externe au germe combiné (``--side "
+"1|2``, ``--value``, 1 à 64 octets), une seule fois, avant le premier "
+"lancer ; le dernier apport lance les dés. Les lancers sortent alors du "
+"HMAC-SHA256 du germe scellé sur l'apport de chaque Côté précédé de sa "
+"longueur, et l'origine du Match porte les apports."
+msgstr ""
+"``contribute``\\ — 結合シードへの外部サイドの寄与(``--side 1|2``\\ 、\\ ``--value``\\ "
+"、1~64 "
+"バイト)。最初のロールの前に一度だけ行えます。最後の寄与でダイスが始まります。ロールは、封印されたシードを鍵とし、各サイドの寄与をその長さを前置して並べたものに対する"
+" HMAC-SHA256 から得られ、マッチの由来は寄与を持ちます。"
+
+#: ../../source/cli_matchs.rst:346
+msgid ""
+"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie "
+"en cours va à l'autre Côté pour les points qui le portent à la longueur "
+"(en argent, une simple à la valeur du videau), et le Match s'écrit gagné "
+"par lui."
+msgstr ""
+"``forfeit`` — ``--side`` "
+"のサイド（必須）がマッチを放棄します。進行中のゲームは、相手サイドをマッチの長さに届かせるポイントで相手のものとなり（マネーゲームではキューブの値でのシングル）、マッチは相手の勝ちとして保存されます。"
+
+#: ../../source/cli_matchs.rst:350
+msgid ""
+"``stop`` — Arrête une session en argent et écrit son Match tel qu'il est,"
+" la partie en cours sans vainqueur. Un match en points est refusé : il ne"
+" s'écrit qu'entier (``forfeit``, ``discard``). Arrêter n'est pas "
+"abandonner."
+msgstr ""
+"``stop`` — "
+"マネーゲームのセッションを終了し、そのマッチを現状のまま保存します。進行中のゲームは勝者なしです。ポイントマッチは拒否されます。最後まで終えたものだけが保存されます（\\"
+" ``forfeit``\\ 、\\ ``discard``\\ ）。終了は放棄ではありません。"
+
+#: ../../source/cli_matchs.rst:353
+msgid "``discard`` — Jette le Duel : rien n'en est écrit."
+msgstr "``discard``\\ — デュエルを破棄します。何も書き込まれません。"
+
+#: ../../source/cli_matchs.rst:355
+msgid "Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``)."
+msgstr "すべてのサブコマンドが ``--db`` と ``--format``\\ (``text`` または ``json``)を受け付けます。"
