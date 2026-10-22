@@ -193,6 +193,46 @@ func testWithoutAnalysisEmptyRow(t *testing.T, s storage.Storage) {
 // a position with no gammonNet analysis. One already analysed by XG or GNUbg is
 // not a gap and must never come back from here — filling it would overwrite
 // somebody's imported analysis with a computed one.
+// CountPositionsWithAnalysisRow counts rows, whatever they hold: a position
+// without a row is not counted, one with an empty row or a full analysis is.
+func testCountPositionsWithAnalysisRow(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	count := func() int {
+		n, err := s.Analyses().CountPositionsWithAnalysisRow(ctx, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+	base := count()
+	var ids []int64
+	for i := 0; i < 3; i++ {
+		p := checkerPos()
+		p.Board.Points[9].Checkers = i + 1
+		p.Board.Points[9].Color = domain.Black
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, id)
+	}
+	if got := count(); got != base {
+		t.Errorf("positions without a row: count %d, want %d", got, base)
+	}
+	if err := s.Analyses().Save(ctx, "", ids[0], &domain.PositionAnalysis{XGID: "only-xgid"}); err != nil {
+		t.Fatal(err)
+	}
+	if got := count(); got != base+1 {
+		t.Errorf("after an empty row: count %d, want %d", got, base+1)
+	}
+	if err := s.Analyses().Save(ctx, "", ids[1], evaluatedAnalysis()); err != nil {
+		t.Fatal(err)
+	}
+	if got := count(); got != base+2 {
+		t.Errorf("after a full analysis: count %d, want %d", got, base+2)
+	}
+}
+
 func testWithoutAnalysis(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 
