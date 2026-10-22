@@ -271,6 +271,11 @@ au premier niveau ; les autres sont rangés en sous-menus, marqués ▸ :
   un match, éditer sa transcription, intervertir les joueurs, le modifier ou
   le mettre à la corbeille ; pour un tournoi, le modifier ou le supprimer ;
   pour une collection, la modifier ou la mettre à la corbeille.
+* **Envoyer** : *Copier la position vers …*, *Copier le match vers …* ou
+  *Copier le tournoi vers …*, une entrée par autre base ouverte, la même copie
+  que le panneau Autres bases, que *Annuler* reprend ; *Ajouter au lot* ; pour
+  une position, *Ajouter à la collection …*, une entrée par collection de la
+  base (voir :ref:`vue_ailleurs`).
 
 Seules les actions qui s'appliquent sont proposées : un brouillon ne s'annote
 pas et ne va pas à la corbeille, le plateau de recherche ne s'évalue pas, une

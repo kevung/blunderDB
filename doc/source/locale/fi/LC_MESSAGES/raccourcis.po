@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 15:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -235,11 +235,11 @@ msgstr "VAIHTO-B"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée dans le panier de transfert entre "
-"bibliothèques, ou l'en retirer."
+"Mettre la position affichée dans le lot du panneau Autres bases, à copier"
+" vers une autre base, ou l'en retirer."
 msgstr ""
-"Lisää näytetty asema kirjastojen väliseen siirtokoriin tai poista se "
-"sieltä."
+"Laita näytetty asema Muut tietokannat -paneelin erään kopioitavaksi "
+"toiseen tietokantaan tai poista se sieltä."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic hors du plateau"
@@ -696,11 +696,11 @@ msgstr "CTRL-VAIHTO-A"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Afficher/cacher l'onglet Ailleurs : ce que les autres bibliothèques "
-"ouvertes savent de la position."
+"Afficher/cacher le panneau Autres bases : ce que les autres bases "
+"ouvertes savent de la position, et l'échange avec elles."
 msgstr ""
-"Näytä/piilota Muualla-välilehti: mitä muut avatut kirjastot tietävät "
-"asemasta."
+"Näytä/piilota Muut tietokannat -paneeli: mitä muut avoimet tietokannat "
+"tietävät asemasta, ja vaihto niiden kanssa."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-MAJ-X"

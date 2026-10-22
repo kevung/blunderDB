@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 13:06+0200\n"
+"POT-Creation-Date: 2026-10-22 15:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -659,7 +659,22 @@ msgstr ""
 " oder löschen; bei einer Sammlung sie ändern oder in den Papierkorb "
 "verschieben."
 
-#: ../../source/manuel_bibliotheque.rst:275
+#: ../../source/manuel_bibliotheque.rst:274
+msgid ""
+"**Envoyer** : *Copier la position vers …*, *Copier le match vers …* ou "
+"*Copier le tournoi vers …*, une entrée par autre base ouverte, la même "
+"copie que le panneau Autres bases, que *Annuler* reprend ; *Ajouter au "
+"lot* ; pour une position, *Ajouter à la collection …*, une entrée par "
+"collection de la base (voir :ref:`vue_ailleurs`)."
+msgstr ""
+"**Senden**: *Position kopieren nach …*, *Match kopieren nach …* oder "
+"*Turnier kopieren nach …*, ein Eintrag je anderer geöffneter Datenbank, "
+"dieselbe Kopie wie im Panel Andere Datenbanken, die *Rückgängig* "
+"zurücknimmt; *Zum Los hinzufügen*; bei einer Position *Zur Sammlung "
+"hinzufügen …*, ein Eintrag je Sammlung der Datenbank (siehe "
+":ref:`vue_ailleurs`)."
+
+#: ../../source/manuel_bibliotheque.rst:280
 msgid ""
 "Seules les actions qui s'appliquent sont proposées : un brouillon ne "
 "s'annote pas et ne va pas à la corbeille, le plateau de recherche ne "
@@ -678,11 +693,11 @@ msgstr ""
 "Untermenü auf seiner ersten Aktion, *LINKS* kehrt zurück, *ESC* schließt "
 "das Untermenü und dann das Menü."
 
-#: ../../source/manuel_bibliotheque.rst:286
+#: ../../source/manuel_bibliotheque.rst:291
 msgid "La corbeille"
 msgstr "Der Papierkorb"
 
-#: ../../source/manuel_bibliotheque.rst:288
+#: ../../source/manuel_bibliotheque.rst:293
 msgid ""
 "Supprimer une position, une collection, un commentaire, une carte Anki ou"
 " un match passe par une **corbeille** : la suppression a bien lieu, mais "
@@ -697,7 +712,7 @@ msgstr ""
 "jeden Eintrag mit *Wiederherstellen* und *Löschen*, und eine Schaltfläche"
 " *Papierkorb leeren*."
 
-#: ../../source/manuel_bibliotheque.rst:294
+#: ../../source/manuel_bibliotheque.rst:299
 msgid ""
 "Une position restaurée revient avec **son analyse et ses commentaires** —"
 " la rendre nue serait une restauration de nom seulement —, sa marque « "
@@ -722,7 +737,7 @@ msgstr ""
 " die Positionen, die sie enthielt, waren nie gelöscht — eine Sammlung ist"
 " eine Sicht auf sie."
 
-#: ../../source/manuel_bibliotheque.rst:304
+#: ../../source/manuel_bibliotheque.rst:309
 msgid ""
 "Un match supprimé emporte ses parties, ses coups, leurs analyses et les "
 "positions que plus rien d'autre ne retient, avec les notes venues du "
@@ -760,7 +775,7 @@ msgstr ""
 "Fingerabdruck, eingegeben oder in blunderDB gespielt, wird so nicht "
 "verglichen."
 
-#: ../../source/manuel_bibliotheque.rst:320
+#: ../../source/manuel_bibliotheque.rst:325
 msgid ""
 "Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, "
 "jamais à l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout "
@@ -769,16 +784,16 @@ msgstr ""
 "Was älter als dreißig Tage ist, entfernt der Befehl ``vacuum``, nie das "
 "Öffnen einer Datenbank: kein ``vacuum`` heißt, alles zu behalten."
 
-#: ../../source/manuel_bibliotheque.rst:323
+#: ../../source/manuel_bibliotheque.rst:328
 msgid "La corbeille ne voyage pas : un export ne l'emporte pas."
 msgstr "Der Papierkorb reist nicht mit: ein Export nimmt ihn nicht mit."
 
-#: ../../source/manuel_bibliotheque.rst:328
-#: ../../source/manuel_bibliotheque.rst:336
+#: ../../source/manuel_bibliotheque.rst:333
+#: ../../source/manuel_bibliotheque.rst:341
 msgid "Panneau Recherche"
 msgstr "Such-Panel"
 
-#: ../../source/manuel_bibliotheque.rst:330
+#: ../../source/manuel_bibliotheque.rst:335
 msgid ""
 "Le panneau **Recherche** (*CTRL-F* ou *TAB*) permet de filtrer les "
 "positions selon des critères combinables librement : structure de pions, "
@@ -793,7 +808,7 @@ msgstr ""
 "gleichzeitig das Suchpanel und den Stellungseditor, sodass eine zu "
 "suchende Steinstruktur direkt auf dem Brett definiert werden kann."
 
-#: ../../source/manuel_bibliotheque.rst:340
+#: ../../source/manuel_bibliotheque.rst:345
 msgid ""
 "Le panneau Recherche : filtres numériques, structure de pions au plateau,"
 " onglets *Au moins* / *Sauf*."
@@ -801,7 +816,7 @@ msgstr ""
 "Das Suchpanel: numerische Filter, Steinstruktur auf dem Brett, Reiter "
 "*Mindestens* / *Außer*."
 
-#: ../../source/manuel_bibliotheque.rst:343
+#: ../../source/manuel_bibliotheque.rst:348
 msgid ""
 "Les filtres se règlent dans le sous-onglet **Critères**. Quand une "
 "recherche ne trouve rien, le panneau l'affiche (« Aucune position ne "
@@ -813,7 +828,7 @@ msgstr ""
 "Schaltfläche **Filter leeren**, statt es nur der Statusleiste zu "
 "überlassen."
 
-#: ../../source/manuel_bibliotheque.rst:347
+#: ../../source/manuel_bibliotheque.rst:352
 msgid ""
 "Pour chercher parmi les positions affichées, utiliser la commande ``ss`` "
 "suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la "
@@ -838,7 +853,7 @@ msgstr ""
 "einem Match wird ``s`` abgelehnt: Es würde die ganze Bibliothek "
 "durchsuchen und die angezeigte Liste ersetzen."
 
-#: ../../source/manuel_bibliotheque.rst:358
+#: ../../source/manuel_bibliotheque.rst:363
 msgid ""
 "Les résultats d'une recherche ``ss`` lancée depuis une collection ou un "
 "match se quittent avec *Esc*, en un seul appui dès que ni un champ ni le "
@@ -859,7 +874,7 @@ msgstr ""
 "durchsucht die ganze Bibliothek, und *Esc* führt nicht mehr zur "
 "verlassenen Liste zurück."
 
-#: ../../source/manuel_bibliotheque.rst:367
+#: ../../source/manuel_bibliotheque.rst:372
 msgid ""
 "Une recherche sur une grande base se montre avant d'être comptée : la "
 "première page de résultats s'affiche aussitôt, et la barre d'état indique"
@@ -879,7 +894,7 @@ msgstr ""
 "Seite schon angezeigt, bleibt sie allein stehen, und die Statusleiste "
 "sagt es."
 
-#: ../../source/manuel_bibliotheque.rst:375
+#: ../../source/manuel_bibliotheque.rst:380
 msgid ""
 "Le panneau propose un contrôle explicite du **type de décision** "
 "recherché : *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou "
@@ -902,7 +917,7 @@ msgstr ""
 "Modus *Annehmen / Aufgeben* wird der Dopplerwürfel mit dem angebotenen "
 "Wert in der Mitte des Bretts angezeigt; dieser Wert bleibt bearbeitbar."
 
-#: ../../source/manuel_bibliotheque.rst:384
+#: ../../source/manuel_bibliotheque.rst:389
 msgid ""
 "La **phase de partie** — ouverture, milieu de partie, course, sortie des "
 "pions — est une étiquette calculée par blunderDB à partir du plateau "
@@ -925,7 +940,7 @@ msgstr ""
 "als vier Steine von ihren Ausgangspunkten bewegt hat, nichts ausgewürfelt"
 " wurde und nichts auf der Bar steht."
 
-#: ../../source/manuel_bibliotheque.rst:394
+#: ../../source/manuel_bibliotheque.rst:399
 msgid ""
 "L'étiquette est recalculée par la commande ``blunderdb repair``. Sur une "
 "base ouverte pour la première fois avec cette version, le calcul est fait"
@@ -939,7 +954,7 @@ msgstr ""
 "berechnet wurden, liefert für ``ph:`` nichts — nichts statt einer "
 "falschen Antwort."
 
-#: ../../source/manuel_bibliotheque.rst:399
+#: ../../source/manuel_bibliotheque.rst:404
 msgid ""
 "Le jeton ``like`` **classe** au lieu de restreindre : sa présence ordonne"
 " le résultat par distance croissante à une position cible — ``like`` la "
@@ -957,7 +972,7 @@ msgstr ""
 "Entfernung ist eine Transportdistanz in Stein-Pips, die Menge an "
 "Steinbewegung, die zwei Stellungen trennt, aus Sicht des Spielers am Zug."
 
-#: ../../source/manuel_bibliotheque.rst:407
+#: ../../source/manuel_bibliotheque.rst:412
 msgid ""
 "Une voisine est le même **problème**, pas le même dessin : le classement "
 "se prend dans la classe de la cible — même type de décision, même régime "
@@ -984,7 +999,7 @@ msgstr ""
 "Pips. Eine Ordnung, die nichts findet, liefert eine leere Liste und sagt "
 "es, statt zehn zusammenhangloser Stellungen."
 
-#: ../../source/manuel_bibliotheque.rst:418
+#: ../../source/manuel_bibliotheque.rst:423
 msgid ""
 "En mode **édition**, ``s like`` prend pour cible le plateau **dessiné** :"
 " on dessine à peu près la position dont on se souvient, on lance, et la "
@@ -1002,7 +1017,7 @@ msgstr ""
 "Steine, was für eine echte Stellung genau ist und die Rechnung für eine "
 "halb fertige Zeichnung verfälscht."
 
-#: ../../source/manuel_bibliotheque.rst:425
+#: ../../source/manuel_bibliotheque.rst:430
 msgid ""
 "Chaque voisine porte sa distance sous les tableaux d'analyse, avec la "
 "position dont elle est proche. C'est ce qui permet de juger si l'on "
@@ -1018,7 +1033,7 @@ msgstr ""
 "Kommandozeile starten: *STRG-UMSCHALT-L* oder der Eintrag **Benachbarte "
 "Stellungen** im Kontextmenü des Bretts."
 
-#: ../../source/manuel_bibliotheque.rst:431
+#: ../../source/manuel_bibliotheque.rst:436
 msgid ""
 "Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions "
 "rencontrées au moins trois fois dans la base, tous matchs et tous joueurs"
@@ -1045,7 +1060,7 @@ msgstr ""
 " die sie gespielt hat; ``op\"Bob\"`` beschränkt die Zählung ebenso auf "
 "Matches gegen Bob."
 
-#: ../../source/manuel_bibliotheque.rst:443
+#: ../../source/manuel_bibliotheque.rst:448
 msgid ""
 "Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase,"
 " et elle répond à la question qu'un paquet de filtres sauvegardés ne sait"
@@ -1059,7 +1074,7 @@ msgstr ""
 "wiederholbar (``gt:holding gt:mutualholding``), aus Sicht des **Spielers "
 "am Zug** — des Plans, in dem die Entscheidung fiel."
 
-#: ../../source/manuel_bibliotheque.rst:449
+#: ../../source/manuel_bibliotheque.rst:454
 msgid ""
 "Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus "
 "spécifique au plus général :"
@@ -1067,7 +1082,7 @@ msgstr ""
 "Die zehn erkannten Pläne, in der Reihenfolge, in der die Regeln sie "
 "abarbeiten, vom Spezifischsten zum Allgemeinsten:"
 
-#: ../../source/manuel_bibliotheque.rst:452
+#: ../../source/manuel_bibliotheque.rst:457
 msgid ""
 "``race`` — les pions les plus arriérés des deux camps se sont croisés : "
 "aucun contact n'est plus possible. Frontière de GNU Backgammon."
@@ -1075,7 +1090,7 @@ msgstr ""
 "``race`` — die hintersten Steine beider Seiten haben sich gekreuzt: "
 "Kontakt ist nicht mehr möglich. Grenze von GNU Backgammon."
 
-#: ../../source/manuel_bibliotheque.rst:454
+#: ../../source/manuel_bibliotheque.rst:459
 msgid ""
 "``bearin`` — le joueur au trait rentre ses pions alors que l'adversaire "
 "tient encore une ancre dans son jan."
@@ -1083,7 +1098,7 @@ msgstr ""
 "``bearin`` — der Spieler am Zug bringt ein, während der Gegner noch einen"
 " Anker in dessen Heimfeld hält."
 
-#: ../../source/manuel_bibliotheque.rst:456
+#: ../../source/manuel_bibliotheque.rst:461
 msgid ""
 "``crunch`` — le joueur au trait a au plus six pions hors de ses points 1 "
 "et 2. Règle de GNU Backgammon, seuil de son auteur."
@@ -1091,11 +1106,11 @@ msgstr ""
 "``crunch`` — der Spieler am Zug hat höchstens sechs Steine außerhalb "
 "seiner Punkte 1 und 2. Regel von GNU Backgammon, Schwelle ihres Autors."
 
-#: ../../source/manuel_bibliotheque.rst:458
+#: ../../source/manuel_bibliotheque.rst:463
 msgid "``backgame`` — deux ancres ou plus dans le jan adverse."
 msgstr "``backgame`` — zwei oder mehr Anker im gegnerischen Heimfeld."
 
-#: ../../source/manuel_bibliotheque.rst:459
+#: ../../source/manuel_bibliotheque.rst:464
 msgid ""
 "``acepoint`` — une seule ancre, sur le point 1 adverse, avec au moins "
 "vingt pions de retard."
@@ -1103,7 +1118,7 @@ msgstr ""
 "``acepoint`` — ein einziger Anker, auf dem gegnerischen Ass-Punkt, mit "
 "mindestens zwanzig Pips Rückstand."
 
-#: ../../source/manuel_bibliotheque.rst:461
+#: ../../source/manuel_bibliotheque.rst:466
 msgid ""
 "``blitz`` — trois points du jan faits ou plus, et l'adversaire à la barre"
 " ou avec un blot à frapper dans ce jan."
@@ -1111,7 +1126,7 @@ msgstr ""
 "``blitz`` — drei oder mehr Heimfeldpunkte gemacht, und der Gegner auf der"
 " Bar oder mit einem Blot zum Schlagen in diesem Heimfeld."
 
-#: ../../source/manuel_bibliotheque.rst:463
+#: ../../source/manuel_bibliotheque.rst:468
 msgid ""
 "``primevprime`` — les deux camps tiennent une amorce d'au moins quatre "
 "points, et chacun a un pion enfermé derrière celle de l'autre."
@@ -1119,15 +1134,15 @@ msgstr ""
 "``primevprime`` — beide Seiten halten eine Prime von mindestens vier "
 "Punkten, und jede hat einen Stein hinter der des anderen gefangen."
 
-#: ../../source/manuel_bibliotheque.rst:465
+#: ../../source/manuel_bibliotheque.rst:470
 msgid "``mutualholding`` — les deux camps tiennent une ancre haute."
 msgstr "``mutualholding`` — beide Seiten halten einen hohen Anker."
 
-#: ../../source/manuel_bibliotheque.rst:466
+#: ../../source/manuel_bibliotheque.rst:471
 msgid "``holding`` — le joueur au trait tient une ancre haute, l'adversaire non."
 msgstr "``holding`` — der Spieler am Zug hält einen hohen Anker, der Gegner nicht."
 
-#: ../../source/manuel_bibliotheque.rst:467
+#: ../../source/manuel_bibliotheque.rst:472
 msgid ""
 "``contact`` — contact, et aucun des plans ci-dessus. L'ouverture atterrit"
 " ici."
@@ -1135,7 +1150,7 @@ msgstr ""
 "``contact`` — Kontakt, und keiner der obigen Pläne. Die Eröffnung landet "
 "hier."
 
-#: ../../source/manuel_bibliotheque.rst:469
+#: ../../source/manuel_bibliotheque.rst:474
 msgid ""
 "Trois de ces règles sont celles de GNU Backgammon et sont sourcées ; les "
 "autres sont des **conventions de blunderDB**. La littérature du "
@@ -1157,7 +1172,7 @@ msgstr ""
 "sind versioniert: ändern, ``blunderdb repair`` laufen lassen, und die "
 "ganze Datenbank ist neu etikettiert."
 
-#: ../../source/manuel_bibliotheque.rst:478
+#: ../../source/manuel_bibliotheque.rst:483
 msgid ""
 "Une seule étiquette est conservée par position, celle du joueur au trait."
 " Une étiquette dérivée n'est jamais modifiable, jamais exportée comme une"
@@ -1169,7 +1184,7 @@ msgstr ""
 "exportiert, und eine Datenbank, deren Pläne nie berechnet wurden, liefert"
 " für ``gt:`` nichts — wie für ``ph:``."
 
-#: ../../source/manuel_bibliotheque.rst:483
+#: ../../source/manuel_bibliotheque.rst:488
 msgid ""
 "Le filtre **Marquée** retient les positions que vous avez marquées "
 "(*flag*) dans le logiciel d'origine du match. Seul eXtreme Gammon produit"
@@ -1187,7 +1202,7 @@ msgstr ""
 "das Annehmen/Aufgeben, da blunderDB in zwei Teile zerlegt, was die "
 "Quelldatei als eine einzige Entscheidung speichert."
 
-#: ../../source/manuel_bibliotheque.rst:490
+#: ../../source/manuel_bibliotheque.rst:495
 msgid ""
 "Le marquage n'est pas rétroactif : les matchs déjà présents dans la base "
 "ne portent pas cette information, puisqu'elle n'existe que dans les "
@@ -1206,7 +1221,7 @@ msgstr ""
 " werden: Für eine temporäre Arbeitsliste verwenden Sie besser eine "
 "Sammlung."
 
-#: ../../source/manuel_bibliotheque.rst:498
+#: ../../source/manuel_bibliotheque.rst:503
 msgid ""
 "Le filtre **Commentaire** interroge les commentaires attachés aux "
 "positions selon trois modes exclusifs. *contient le texte* recherche un "
@@ -1226,7 +1241,7 @@ msgstr ""
 "nützlich in Kombination mit einem Fehler- oder Datumsfilter, um die Liste"
 " dessen zu erstellen, was noch zu kommentieren ist."
 
-#: ../../source/manuel_bibliotheque.rst:506
+#: ../../source/manuel_bibliotheque.rst:511
 msgid ""
 "Les commentaires importés depuis un fichier de match (XG, GNUbg) comptent"
 " comme des commentaires. Pour ne retenir que les vôtres, ajoutez le jeton"
@@ -1243,7 +1258,7 @@ msgstr ""
 " zu einer *Partie* oder einem *Turnier* sind ohnehin nicht betroffen: sie"
 " kommentieren die Partie oder das Turnier, nicht deren Stellungen."
 
-#: ../../source/manuel_bibliotheque.rst:513
+#: ../../source/manuel_bibliotheque.rst:518
 msgid ""
 "Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre"
 " modale) plutôt que sur la saisie d'identifiants numériques : deux listes"
@@ -1265,7 +1280,7 @@ msgstr ""
 "der Matchliste an (und graut sie aus), wodurch sichtbar wird, dass ein "
 "Turnier der Gesamtheit seiner Matches entspricht."
 
-#: ../../source/manuel_bibliotheque.rst:522
+#: ../../source/manuel_bibliotheque.rst:527
 msgid ""
 "La bande du panneau de recherche porte un sélecteur *Critères* (les "
 "filtres) | *Historique* | *Enregistrés* — avec un quatrième segment, "
@@ -1294,7 +1309,7 @@ msgstr ""
 ":ref:`annexe_filtres`). Der Befehl ``history`` (Alias ``hi``) öffnet das "
 "Suchpanel."
 
-#: ../../source/manuel_bibliotheque.rst:535
+#: ../../source/manuel_bibliotheque.rst:540
 msgid ""
 "L'étoile d'un filtre de la bibliothèque l'**épingle**. Les filtres "
 "épinglés s'affichent en pastilles en haut du panneau, quel que soit "
@@ -1317,7 +1332,7 @@ msgstr ""
 "verschwindet mit einem gelöschten und reist nicht mit dem Export der "
 "Bibliothek mit."
 
-#: ../../source/manuel_bibliotheque.rst:544
+#: ../../source/manuel_bibliotheque.rst:549
 msgid ""
 "Une recherche relancée garde son classement : ``s like42`` classe contre "
 "la position 42, et ``s like`` contre le plateau enregistré avec la "
@@ -1331,7 +1346,7 @@ msgstr ""
 "Eintrag ohne gespeichertes Brett wird nicht gegen das Brett auf dem "
 "Bildschirm ausgeführt, und die Statusleiste meldet es."
 
-#: ../../source/manuel_bibliotheque.rst:550
+#: ../../source/manuel_bibliotheque.rst:555
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste des "
 "filtres disponibles."
@@ -1339,12 +1354,12 @@ msgstr ""
 "Siehe :ref:`Liste der Befehle <cmd_mode>` für die Liste der verfügbaren "
 "Filter."
 
-#: ../../source/manuel_bibliotheque.rst:556
-#: ../../source/manuel_bibliotheque.rst:558
+#: ../../source/manuel_bibliotheque.rst:561
+#: ../../source/manuel_bibliotheque.rst:563
 msgid "Panneau Collections"
 msgstr "Sammlungen-Panel"
 
-#: ../../source/manuel_bibliotheque.rst:562
+#: ../../source/manuel_bibliotheque.rst:567
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
@@ -1352,7 +1367,7 @@ msgstr ""
 "Das Sammlungen-Panel: Name, Anzahl der Stellungen, Beschreibung, letzte "
 "Änderung."
 
-#: ../../source/manuel_bibliotheque.rst:565
+#: ../../source/manuel_bibliotheque.rst:570
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1370,7 +1385,7 @@ msgstr ""
 "Turniere schließt. In der Matchliste öffnet das Symbol ⌨ die "
 "Transkription des Matches und das Symbol ✎ korrigiert seine Metadaten."
 
-#: ../../source/manuel_bibliotheque.rst:573
+#: ../../source/manuel_bibliotheque.rst:578
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1394,7 +1409,7 @@ msgstr ""
 "Ziehen und Ablegen ändern. *CTRL-B* drücken oder den Befehl "
 "``collection`` ausführen, um das Fenster ein- oder auszublenden."
 
-#: ../../source/manuel_bibliotheque.rst:584
+#: ../../source/manuel_bibliotheque.rst:589
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1406,7 +1421,7 @@ msgstr ""
 "dieser Sammlung** fügt die angezeigte Stellung hinzu oder entfernt sie. "
 "Eine leere Liste bietet **+ Neue Sammlung** an."
 
-#: ../../source/manuel_bibliotheque.rst:589
+#: ../../source/manuel_bibliotheque.rst:594
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1439,7 +1454,7 @@ msgstr ""
 "einzeln hinzugebrachte Stellung, und dann auf den Stapel gelegt. Die "
 "Befehlszeile macht dieselbe Geste mit ``collection pile``."
 
-#: ../../source/manuel_bibliotheque.rst:602
+#: ../../source/manuel_bibliotheque.rst:607
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1456,7 +1471,7 @@ msgstr ""
 "dieselbe Schaltfläche gibt ihr die Liste zurück. Nichts wird zerstört: "
 "Die Stellungen, die sie enthielt, sind beim Zurückgehen noch da."
 
-#: ../../source/manuel_bibliotheque.rst:609
+#: ../../source/manuel_bibliotheque.rst:614
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1470,7 +1485,7 @@ msgstr ""
 "Sammlung, und die Abfrage wird gelöscht. Die Positionen, die sie vor dem "
 "Lebendigwerden enthielt, werden ersetzt."
 
-#: ../../source/manuel_bibliotheque.rst:614
+#: ../../source/manuel_bibliotheque.rst:619
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1482,7 +1497,7 @@ msgstr ""
 "ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein "
 "gespeicherter Filter nicht haben darf: sich im Stillen zu weiten."
 
-#: ../../source/manuel_bibliotheque.rst:619
+#: ../../source/manuel_bibliotheque.rst:624
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1504,7 +1519,7 @@ msgstr ""
 " außerhalb der Datei, wird die Sammlung **eingefroren** exportiert, mit "
 "den Positionen, die die Abfrage zum Zeitpunkt des Exports auswählt."
 
-#: ../../source/manuel_bibliotheque.rst:628
+#: ../../source/manuel_bibliotheque.rst:633
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1523,7 +1538,7 @@ msgstr ""
 "der Suche, den Stapel, und die Statusleiste meldet dies zusammen mit der "
 "tatsächlichen Anzahl der ausgewählten Positionen."
 
-#: ../../source/manuel_bibliotheque.rst:638
+#: ../../source/manuel_bibliotheque.rst:643
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1541,7 +1556,7 @@ msgstr ""
 "Referenzposition liegt im Zentrum mehrerer Ihrer Fehler von ähnlicher "
 "Struktur, und ihre Lehre gilt für alle."
 
-#: ../../source/manuel_bibliotheque.rst:645
+#: ../../source/manuel_bibliotheque.rst:650
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1555,7 +1570,7 @@ msgstr ""
 "Abstand in der ``like``-Distanz haben; ein Doppler-Fehler hat nur jene "
 "desselben Spielstands als Nachbarn."
 
-#: ../../source/manuel_bibliotheque.rst:649
+#: ../../source/manuel_bibliotheque.rst:654
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1574,7 +1589,7 @@ msgstr ""
 " ist der abgedeckte MWC; die Begründung nennt die Zahl, die zählt, wenn "
 "die Lehre zur Hälfte zählt."
 
-#: ../../source/manuel_bibliotheque.rst:656
+#: ../../source/manuel_bibliotheque.rst:661
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1589,7 +1604,7 @@ msgstr ""
 "Anki-Karte oder als „studiert“ markiert — wird nie vorgeschlagen, und "
 "ihre Nachbarn gelten als abgedeckt."
 
-#: ../../source/manuel_bibliotheque.rst:662
+#: ../../source/manuel_bibliotheque.rst:667
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1614,11 +1629,11 @@ msgstr ""
 "Kommandozeile: ``blunderdb collection suggest`` (siehe "
 ":ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:675
+#: ../../source/manuel_bibliotheque.rst:680
 msgid "Leçons"
 msgstr "Lektionen"
 
-#: ../../source/manuel_bibliotheque.rst:677
+#: ../../source/manuel_bibliotheque.rst:682
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1635,7 +1650,7 @@ msgstr ""
 "der Statusleiste auf; ``le 2`` öffnet Lektion 2; ``le edit`` öffnet den "
 "Lektionseditor."
 
-#: ../../source/manuel_bibliotheque.rst:684
+#: ../../source/manuel_bibliotheque.rst:689
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1651,7 +1666,7 @@ msgstr ""
 "verlässt die Lektion. Ein Schritt, dessen Sammlung oder Stellung gelöscht"
 " wurde, behält seinen Text."
 
-#: ../../source/manuel_bibliotheque.rst:691
+#: ../../source/manuel_bibliotheque.rst:696
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1671,7 +1686,7 @@ msgstr ""
 " Lektion enthält, legt sie an; eine bereits vorhandene Lektion desselben "
 "Namens bleibt unberührt."
 
-#: ../../source/manuel_bibliotheque.rst:699
+#: ../../source/manuel_bibliotheque.rst:704
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1711,7 +1726,7 @@ msgstr ""
 "lassen sich auch über die Kommandozeile oder die API anlegen und ändern "
 "(:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:716
+#: ../../source/manuel_bibliotheque.rst:721
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"

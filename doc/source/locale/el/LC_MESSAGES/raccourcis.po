@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 15:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -240,11 +240,11 @@ msgstr "SHIFT-B"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée dans le panier de transfert entre "
-"bibliothèques, ou l'en retirer."
+"Mettre la position affichée dans le lot du panneau Autres bases, à copier"
+" vers une autre base, ou l'en retirer."
 msgstr ""
-"Βάλτε την εμφανιζόμενη θέση στο καλάθι μεταφοράς μεταξύ βιβλιοθηκών, ή "
-"βγάλτε την."
+"Τοποθέτηση της εμφανιζόμενης θέσης στην παρτίδα του πλαισίου Άλλες "
+"βάσεις, για αντιγραφή σε άλλη βάση, ή αφαίρεσή της."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic hors du plateau"
@@ -712,11 +712,11 @@ msgstr "CTRL-SHIFT-A"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Afficher/cacher l'onglet Ailleurs : ce que les autres bibliothèques "
-"ouvertes savent de la position."
+"Afficher/cacher le panneau Autres bases : ce que les autres bases "
+"ouvertes savent de la position, et l'échange avec elles."
 msgstr ""
-"Εμφάνιση/απόκρυψη της καρτέλας Αλλού: τι γνωρίζουν οι άλλες ανοιχτές "
-"βιβλιοθήκες για τη θέση."
+"Εμφάνιση/απόκρυψη του πλαισίου Άλλες βάσεις: τι γνωρίζουν οι άλλες "
+"ανοιχτές βάσεις για τη θέση, και η ανταλλαγή μαζί τους."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-MAJ-X"

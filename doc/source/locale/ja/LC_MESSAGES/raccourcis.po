@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 15:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -225,9 +225,9 @@ msgstr "SHIFT-B"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée dans le panier de transfert entre "
-"bibliothèques, ou l'en retirer."
-msgstr "表示中のポジションをライブラリ間転送用のバスケットに入れる、または取り出す。"
+"Mettre la position affichée dans le lot du panneau Autres bases, à copier"
+" vers une autre base, ou l'en retirer."
+msgstr "表示中のポジションを「他のデータベース」パネルのロットに入れて他のデータベースへコピーできるようにするか、ロットから取り出します。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic hors du plateau"
@@ -658,9 +658,9 @@ msgstr "CTRL-SHIFT-A"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Afficher/cacher l'onglet Ailleurs : ce que les autres bibliothèques "
-"ouvertes savent de la position."
-msgstr "「他のライブラリ」タブの表示/非表示:開いている他のライブラリがそのポジションについて知っていること。"
+"Afficher/cacher le panneau Autres bases : ce que les autres bases "
+"ouvertes savent de la position, et l'échange avec elles."
+msgstr "「他のデータベース」パネルの表示/非表示：開いている他のデータベースがそのポジションについて知っていること、およびそれらとの交換。"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-MAJ-X"

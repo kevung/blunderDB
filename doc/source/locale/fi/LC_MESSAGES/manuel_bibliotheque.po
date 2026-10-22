@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 13:06+0200\n"
+"POT-Creation-Date: 2026-10-22 15:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -638,7 +638,21 @@ msgstr ""
 "roskakoriin; turnaukselle muokataan tai poistetaan se; kokoelmalle "
 "muokataan tai siirretään se roskakoriin."
 
-#: ../../source/manuel_bibliotheque.rst:275
+#: ../../source/manuel_bibliotheque.rst:274
+msgid ""
+"**Envoyer** : *Copier la position vers …*, *Copier le match vers …* ou "
+"*Copier le tournoi vers …*, une entrée par autre base ouverte, la même "
+"copie que le panneau Autres bases, que *Annuler* reprend ; *Ajouter au "
+"lot* ; pour une position, *Ajouter à la collection …*, une entrée par "
+"collection de la base (voir :ref:`vue_ailleurs`)."
+msgstr ""
+"**Lähetä**: *Kopioi asema kohteeseen …*, *Kopioi ottelu kohteeseen …* tai"
+" *Kopioi turnaus kohteeseen …*, yksi kohta kutakin muuta avointa "
+"tietokantaa kohti, sama kopio kuin Muut tietokannat -paneelissa, jonka "
+"*Kumoa* peruu; *Lisää erään*; aseman kohdalla *Lisää kokoelmaan …*, yksi "
+"kohta tietokannan kutakin kokoelmaa kohti (katso :ref:`vue_ailleurs`)."
+
+#: ../../source/manuel_bibliotheque.rst:280
 msgid ""
 "Seules les actions qui s'appliquent sont proposées : un brouillon ne "
 "s'annote pas et ne va pas à la corbeille, le plateau de recherche ne "
@@ -656,11 +670,11 @@ msgstr ""
 "läpi, *OIKEA* avaa alivalikon sen ensimmäisestä toiminnosta, *VASEN* "
 "palaa takaisin, *ESC* sulkee alivalikon ja sitten valikon."
 
-#: ../../source/manuel_bibliotheque.rst:286
+#: ../../source/manuel_bibliotheque.rst:291
 msgid "La corbeille"
 msgstr "Roskakori"
 
-#: ../../source/manuel_bibliotheque.rst:288
+#: ../../source/manuel_bibliotheque.rst:293
 msgid ""
 "Supprimer une position, une collection, un commentaire, une carte Anki ou"
 " un match passe par une **corbeille** : la suppression a bien lieu, mais "
@@ -674,7 +688,7 @@ msgstr ""
 "listaa ne, kussakin *Palauta* ja *Poista*, sekä painikkeen *Tyhjennä "
 "roskakori*."
 
-#: ../../source/manuel_bibliotheque.rst:294
+#: ../../source/manuel_bibliotheque.rst:299
 msgid ""
 "Une position restaurée revient avec **son analyse et ses commentaires** —"
 " la rendre nue serait une restauration de nom seulement —, sa marque « "
@@ -697,7 +711,7 @@ msgstr ""
 "palaa listansa kanssa; sen sisältämiä sijainteja ei koskaan poistettu — "
 "kokoelma on näkymä niihin."
 
-#: ../../source/manuel_bibliotheque.rst:304
+#: ../../source/manuel_bibliotheque.rst:309
 msgid ""
 "Un match supprimé emporte ses parties, ses coups, leurs analyses et les "
 "positions que plus rien d'autre ne retient, avec les notes venues du "
@@ -731,7 +745,7 @@ msgstr ""
 "tiedoston sormenjälki; ottelua ilman sormenjälkeä, syötettyä tai "
 "blunderDB:ssä pelattua, ei verrata näin."
 
-#: ../../source/manuel_bibliotheque.rst:320
+#: ../../source/manuel_bibliotheque.rst:325
 msgid ""
 "Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, "
 "jamais à l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout "
@@ -741,16 +755,16 @@ msgstr ""
 "tietokannan avaaminen: ``vacuum``:in tekemättä jättäminen on kaiken "
 "säilyttämistä."
 
-#: ../../source/manuel_bibliotheque.rst:323
+#: ../../source/manuel_bibliotheque.rst:328
 msgid "La corbeille ne voyage pas : un export ne l'emporte pas."
 msgstr "Roskakori ei kulje mukana: vienti ei kuljeta sitä."
 
-#: ../../source/manuel_bibliotheque.rst:328
-#: ../../source/manuel_bibliotheque.rst:336
+#: ../../source/manuel_bibliotheque.rst:333
+#: ../../source/manuel_bibliotheque.rst:341
 msgid "Panneau Recherche"
 msgstr "Hakupaneeli"
 
-#: ../../source/manuel_bibliotheque.rst:330
+#: ../../source/manuel_bibliotheque.rst:335
 msgid ""
 "Le panneau **Recherche** (*CTRL-F* ou *TAB*) permet de filtrer les "
 "positions selon des critères combinables librement : structure de pions, "
@@ -765,7 +779,7 @@ msgstr ""
 "samanaikaisesti hakupaneelin ja asemaeditorin, jolloin haettava "
 "pelinappularakenne voidaan määrittää suoraan laudalla."
 
-#: ../../source/manuel_bibliotheque.rst:340
+#: ../../source/manuel_bibliotheque.rst:345
 msgid ""
 "Le panneau Recherche : filtres numériques, structure de pions au plateau,"
 " onglets *Au moins* / *Sauf*."
@@ -773,7 +787,7 @@ msgstr ""
 "Hakupaneeli: numeeriset suotimet, pelinappularakenne laudalla, välilehdet"
 " *Vähintään* / *Paitsi*."
 
-#: ../../source/manuel_bibliotheque.rst:343
+#: ../../source/manuel_bibliotheque.rst:348
 msgid ""
 "Les filtres se règlent dans le sous-onglet **Critères**. Quand une "
 "recherche ne trouve rien, le panneau l'affiche (« Aucune position ne "
@@ -784,7 +798,7 @@ msgstr ""
 "mitään, paneeli kertoo sen (”Mikään asema ei täsmää”) ja tarjoaa "
 "**Tyhjennä suodattimet** -painikkeen, eikä vain tilarivi."
 
-#: ../../source/manuel_bibliotheque.rst:347
+#: ../../source/manuel_bibliotheque.rst:352
 msgid ""
 "Pour chercher parmi les positions affichées, utiliser la commande ``ss`` "
 "suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la "
@@ -807,7 +821,7 @@ msgstr ""
 "näkymän sijaan. Kokoelmassa ja ottelussa ``s`` hylätään: se hakisi koko "
 "kirjastosta ja korvaisi näytetyn luettelon."
 
-#: ../../source/manuel_bibliotheque.rst:358
+#: ../../source/manuel_bibliotheque.rst:363
 msgid ""
 "Les résultats d'une recherche ``ss`` lancée depuis une collection ou un "
 "match se quittent avec *Esc*, en un seul appui dès que ni un champ ni le "
@@ -827,7 +841,7 @@ msgstr ""
 "käynnistetty ``s`` hakee koko kirjastosta, eikä *Esc* enää palaa "
 "jätettyyn luetteloon."
 
-#: ../../source/manuel_bibliotheque.rst:367
+#: ../../source/manuel_bibliotheque.rst:372
 msgid ""
 "Une recherche sur une grande base se montre avant d'être comptée : la "
 "première page de résultats s'affiche aussitôt, et la barre d'état indique"
@@ -846,7 +860,7 @@ msgstr ""
 "olevan haun ja pysäyttää sen tietokannan läpikäynnin; jos ensimmäinen "
 "sivu oli jo näkyvissä, se jää yksin näkyviin, ja tilarivi kertoo siitä."
 
-#: ../../source/manuel_bibliotheque.rst:375
+#: ../../source/manuel_bibliotheque.rst:380
 msgid ""
 "Le panneau propose un contrôle explicite du **type de décision** "
 "recherché : *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou "
@@ -868,7 +882,7 @@ msgstr ""
 "Luovuta* -tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; "
 "tämä arvo on edelleen muokattavissa."
 
-#: ../../source/manuel_bibliotheque.rst:384
+#: ../../source/manuel_bibliotheque.rst:389
 msgid ""
 "La **phase de partie** — ouverture, milieu de partie, course, sortie des "
 "pions — est une étiquette calculée par blunderDB à partir du plateau "
@@ -890,7 +904,7 @@ msgstr ""
 "kauan kuin kumpikaan puoli ei ole siirtänyt yli neljää nappulaa "
 "lähtöpisteiltään, mitään ei ole poistettu eikä mikään ole palkissa."
 
-#: ../../source/manuel_bibliotheque.rst:394
+#: ../../source/manuel_bibliotheque.rst:399
 msgid ""
 "L'étiquette est recalculée par la commande ``blunderdb repair``. Sur une "
 "base ouverte pour la première fois avec cette version, le calcul est fait"
@@ -903,7 +917,7 @@ msgstr ""
 " avattaessa. Tietokanta, jonka vaiheita ei ole koskaan laskettu, ei "
 "palauta mitään ``ph:``-haulle — ei mitään, väärän vastauksen sijaan."
 
-#: ../../source/manuel_bibliotheque.rst:399
+#: ../../source/manuel_bibliotheque.rst:404
 msgid ""
 "Le jeton ``like`` **classe** au lieu de restreindre : sa présence ordonne"
 " le résultat par distance croissante à une position cible — ``like`` la "
@@ -921,7 +935,7 @@ msgstr ""
 "nappulapipeinä, se määrä nappuloiden liikettä, joka erottaa kaksi asemaa,"
 " vuorossa olevan pelaajan näkökulmasta."
 
-#: ../../source/manuel_bibliotheque.rst:407
+#: ../../source/manuel_bibliotheque.rst:412
 msgid ""
 "Une voisine est le même **problème**, pas le même dessin : le classement "
 "se prend dans la classe de la cible — même type de décision, même régime "
@@ -947,7 +961,7 @@ msgstr ""
 "mitään, palauttaa tyhjän listan ja sanoo sen, eikä kymmentä "
 "asiaankuulumatonta asemaa."
 
-#: ../../source/manuel_bibliotheque.rst:418
+#: ../../source/manuel_bibliotheque.rst:423
 msgid ""
 "En mode **édition**, ``s like`` prend pour cible le plateau **dessiné** :"
 " on dessine à peu près la position dont on se souvient, on lance, et la "
@@ -964,7 +978,7 @@ msgstr ""
 "piste lasketaan ulos kannetuiksi nappuloiksi, mikä on oikein todelliselle"
 " asemalle ja vääristää laskennan puolittain jätetylle piirrokselle."
 
-#: ../../source/manuel_bibliotheque.rst:425
+#: ../../source/manuel_bibliotheque.rst:430
 msgid ""
 "Chaque voisine porte sa distance sous les tableaux d'analyse, avec la "
 "position dont elle est proche. C'est ce qui permet de juger si l'on "
@@ -979,7 +993,7 @@ msgstr ""
 "Järjestyksen voi käynnistää myös ilman komentoriviä: *CTRL-SHIFT-L* tai "
 "laudan pikavalikon kohta **Naapuriasemat**."
 
-#: ../../source/manuel_bibliotheque.rst:431
+#: ../../source/manuel_bibliotheque.rst:436
 msgid ""
 "Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions "
 "rencontrées au moins trois fois dans la base, tous matchs et tous joueurs"
@@ -1005,7 +1019,7 @@ msgstr ""
 "olivat hänen pelaamissaan otteluissa; ``op\"Bob\"`` rajaa laskennan "
 "vastaavasti Bobia vastaan pelattuihin otteluihin."
 
-#: ../../source/manuel_bibliotheque.rst:443
+#: ../../source/manuel_bibliotheque.rst:448
 msgid ""
 "Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase,"
 " et elle répond à la question qu'un paquet de filtres sauvegardés ne sait"
@@ -1019,7 +1033,7 @@ msgstr ""
 "(``gt:holding gt:mutualholding``), vuorossa olevan **pelaajan** "
 "näkökulmasta — sen suunnitelman, jossa päätös tehtiin."
 
-#: ../../source/manuel_bibliotheque.rst:449
+#: ../../source/manuel_bibliotheque.rst:454
 msgid ""
 "Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus "
 "spécifique au plus général :"
@@ -1027,7 +1041,7 @@ msgstr ""
 "Kymmenen tunnistettua suunnitelmaa, siinä järjestyksessä kuin säännöt ne "
 "käyvät läpi, tarkimmasta yleisimpään:"
 
-#: ../../source/manuel_bibliotheque.rst:452
+#: ../../source/manuel_bibliotheque.rst:457
 msgid ""
 "``race`` — les pions les plus arriérés des deux camps se sont croisés : "
 "aucun contact n'est plus possible. Frontière de GNU Backgammon."
@@ -1035,7 +1049,7 @@ msgstr ""
 "``race`` — molempien osapuolten takimmaiset nappulat ovat ohittaneet "
 "toisensa: kontakti ei ole enää mahdollinen. GNU Backgammonin raja."
 
-#: ../../source/manuel_bibliotheque.rst:454
+#: ../../source/manuel_bibliotheque.rst:459
 msgid ""
 "``bearin`` — le joueur au trait rentre ses pions alors que l'adversaire "
 "tient encore une ancre dans son jan."
@@ -1043,7 +1057,7 @@ msgstr ""
 "``bearin`` — vuorossa oleva kotiuttaa nappuloitaan, kun vastustaja pitää "
 "yhä ankkuria hänen kotialueellaan."
 
-#: ../../source/manuel_bibliotheque.rst:456
+#: ../../source/manuel_bibliotheque.rst:461
 msgid ""
 "``crunch`` — le joueur au trait a au plus six pions hors de ses points 1 "
 "et 2. Règle de GNU Backgammon, seuil de son auteur."
@@ -1051,11 +1065,11 @@ msgstr ""
 "``crunch`` — vuorossa olevalla on enintään kuusi nappulaa pisteidensä 1 "
 "ja 2 ulkopuolella. GNU Backgammonin sääntö, sen tekijän kynnysarvo."
 
-#: ../../source/manuel_bibliotheque.rst:458
+#: ../../source/manuel_bibliotheque.rst:463
 msgid "``backgame`` — deux ancres ou plus dans le jan adverse."
 msgstr "``backgame`` — kaksi tai useampi ankkuri vastustajan kotialueella."
 
-#: ../../source/manuel_bibliotheque.rst:459
+#: ../../source/manuel_bibliotheque.rst:464
 msgid ""
 "``acepoint`` — une seule ancre, sur le point 1 adverse, avec au moins "
 "vingt pions de retard."
@@ -1063,7 +1077,7 @@ msgstr ""
 "``acepoint`` — yksi ainoa ankkuri, vastustajan ykköspisteellä, vähintään "
 "kaksikymmentä pipiä jäljessä."
 
-#: ../../source/manuel_bibliotheque.rst:461
+#: ../../source/manuel_bibliotheque.rst:466
 msgid ""
 "``blitz`` — trois points du jan faits ou plus, et l'adversaire à la barre"
 " ou avec un blot à frapper dans ce jan."
@@ -1071,7 +1085,7 @@ msgstr ""
 "``blitz`` — kolme tai useampi kotipiste tehtynä, ja vastustaja palkilla "
 "tai yksinäinen nappula lyötävänä siellä."
 
-#: ../../source/manuel_bibliotheque.rst:463
+#: ../../source/manuel_bibliotheque.rst:468
 msgid ""
 "``primevprime`` — les deux camps tiennent une amorce d'au moins quatre "
 "points, et chacun a un pion enfermé derrière celle de l'autre."
@@ -1079,15 +1093,15 @@ msgstr ""
 "``primevprime`` — molemmat pitävät vähintään neljän pisteen muuria, ja "
 "kummallakin on nappula loukussa toisen muurin takana."
 
-#: ../../source/manuel_bibliotheque.rst:465
+#: ../../source/manuel_bibliotheque.rst:470
 msgid "``mutualholding`` — les deux camps tiennent une ancre haute."
 msgstr "``mutualholding`` — molemmat pitävät korkeaa ankkuria."
 
-#: ../../source/manuel_bibliotheque.rst:466
+#: ../../source/manuel_bibliotheque.rst:471
 msgid "``holding`` — le joueur au trait tient une ancre haute, l'adversaire non."
 msgstr "``holding`` — vuorossa oleva pitää korkeaa ankkuria, vastustaja ei."
 
-#: ../../source/manuel_bibliotheque.rst:467
+#: ../../source/manuel_bibliotheque.rst:472
 msgid ""
 "``contact`` — contact, et aucun des plans ci-dessus. L'ouverture atterrit"
 " ici."
@@ -1095,7 +1109,7 @@ msgstr ""
 "``contact`` — kontakti, eikä mikään yllä olevista suunnitelmista. Avaus "
 "päätyy tänne."
 
-#: ../../source/manuel_bibliotheque.rst:469
+#: ../../source/manuel_bibliotheque.rst:474
 msgid ""
 "Trois de ces règles sont celles de GNU Backgammon et sont sourcées ; les "
 "autres sont des **conventions de blunderDB**. La littérature du "
@@ -1116,7 +1130,7 @@ msgstr ""
 "todetaan siksi tässä eikä piiloteta koodiin, ja ne on versioitu: muuta "
 "ne, aja ``blunderdb repair``, ja koko tietokanta merkitään uudelleen."
 
-#: ../../source/manuel_bibliotheque.rst:478
+#: ../../source/manuel_bibliotheque.rst:483
 msgid ""
 "Une seule étiquette est conservée par position, celle du joueur au trait."
 " Une étiquette dérivée n'est jamais modifiable, jamais exportée comme une"
@@ -1128,7 +1142,7 @@ msgstr ""
 "totuutena, ja tietokanta, jonka suunnitelmia ei ole koskaan laskettu, ei "
 "palauta ``gt:``-haulle mitään — kuten ei ``ph:``-haullekaan."
 
-#: ../../source/manuel_bibliotheque.rst:483
+#: ../../source/manuel_bibliotheque.rst:488
 msgid ""
 "Le filtre **Marquée** retient les positions que vous avez marquées "
 "(*flag*) dans le logiciel d'origine du match. Seul eXtreme Gammon produit"
@@ -1145,7 +1159,7 @@ msgstr ""
 " merkittyä asemaa, tuplauksen ja hyväksynnän/luovutuksen, koska blunderDB"
 " jakaa kahtia sen, minkä lähdetiedosto tallentaa yhtenä päätöksenä."
 
-#: ../../source/manuel_bibliotheque.rst:490
+#: ../../source/manuel_bibliotheque.rst:495
 msgid ""
 "Le marquage n'est pas rétroactif : les matchs déjà présents dans la base "
 "ne portent pas cette information, puisqu'elle n'existe que dans les "
@@ -1163,7 +1177,7 @@ msgstr ""
 "poistaa blunderDB:stä: väliaikaista työlistaa varten käytä mieluummin "
 "kokoelmaa."
 
-#: ../../source/manuel_bibliotheque.rst:498
+#: ../../source/manuel_bibliotheque.rst:503
 msgid ""
 "Le filtre **Commentaire** interroge les commentaires attachés aux "
 "positions selon trois modes exclusifs. *contient le texte* recherche un "
@@ -1183,7 +1197,7 @@ msgstr ""
 "yhdessä virhe- tai päivämääräsuodattimen kanssa laadittaessa luetteloa "
 "siitä, mitä on vielä kommentoitava."
 
-#: ../../source/manuel_bibliotheque.rst:506
+#: ../../source/manuel_bibliotheque.rst:511
 msgid ""
 "Les commentaires importés depuis un fichier de match (XG, GNUbg) comptent"
 " comme des commentaires. Pour ne retenir que les vôtres, ajoutez le jeton"
@@ -1200,7 +1214,7 @@ msgstr ""
 "eivät kuulu tähän: ne kommentoivat ottelua tai turnausta, eivät sen "
 "asemia."
 
-#: ../../source/manuel_bibliotheque.rst:513
+#: ../../source/manuel_bibliotheque.rst:518
 msgid ""
 "Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre"
 " modale) plutôt que sur la saisie d'identifiants numériques : deux listes"
@@ -1222,7 +1236,7 @@ msgstr ""
 "jäsenottelut ottelulistassa, mikä tekee näkyväksi sen, että turnaus "
 "vastaa otteluidensa joukkoa."
 
-#: ../../source/manuel_bibliotheque.rst:522
+#: ../../source/manuel_bibliotheque.rst:527
 msgid ""
 "La bande du panneau de recherche porte un sélecteur *Critères* (les "
 "filtres) | *Historique* | *Enregistrés* — avec un quatrième segment, "
@@ -1249,7 +1263,7 @@ msgstr ""
 "suorittaaksesi vastaavan haun uudelleen (katso :ref:`annexe_filtres`). "
 "Komento ``history`` (alias ``hi``) avaa hakupaneelin."
 
-#: ../../source/manuel_bibliotheque.rst:535
+#: ../../source/manuel_bibliotheque.rst:540
 msgid ""
 "L'étoile d'un filtre de la bibliothèque l'**épingle**. Les filtres "
 "épinglés s'affichent en pastilles en haut du panneau, quel que soit "
@@ -1271,7 +1285,7 @@ msgstr ""
 "tietokantaan: se seuraa uudelleennimettyä suodatinta, katoaa poistetun "
 "suodattimen mukana eikä kulje kirjaston viennin mukana."
 
-#: ../../source/manuel_bibliotheque.rst:544
+#: ../../source/manuel_bibliotheque.rst:549
 msgid ""
 "Une recherche relancée garde son classement : ``s like42`` classe contre "
 "la position 42, et ``s like`` contre le plateau enregistré avec la "
@@ -1285,7 +1299,7 @@ msgstr ""
 "lautaa ei tallennettu, ei ajeta näytöllä olevaa lautaa vastaan, ja "
 "tilarivi kertoo sen."
 
-#: ../../source/manuel_bibliotheque.rst:550
+#: ../../source/manuel_bibliotheque.rst:555
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste des "
 "filtres disponibles."
@@ -1293,18 +1307,18 @@ msgstr ""
 "Katso saatavilla olevien suodattimien luettelo kohdasta "
 ":ref:`komentoluettelo <cmd_mode>`."
 
-#: ../../source/manuel_bibliotheque.rst:556
-#: ../../source/manuel_bibliotheque.rst:558
+#: ../../source/manuel_bibliotheque.rst:561
+#: ../../source/manuel_bibliotheque.rst:563
 msgid "Panneau Collections"
 msgstr "Kokoelmapaneeli"
 
-#: ../../source/manuel_bibliotheque.rst:562
+#: ../../source/manuel_bibliotheque.rst:567
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
 msgstr "Kokoelmat-paneeli: nimi, asemien määrä, kuvaus, viimeisin muokkaus."
 
-#: ../../source/manuel_bibliotheque.rst:565
+#: ../../source/manuel_bibliotheque.rst:570
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1321,7 +1335,7 @@ msgstr ""
 "Kokoelmat- ja Turnaukset-paneeleissa. Otteluluettelossa ⌨-kuvake avaa "
 "ottelun litteroinnin ja ✎-kuvake korjaa sen metatiedot."
 
-#: ../../source/manuel_bibliotheque.rst:573
+#: ../../source/manuel_bibliotheque.rst:578
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1344,7 +1358,7 @@ msgstr ""
 " tai suorita komento ``collection`` näyttääksesi tai piilottaaksesi "
 "paneelin."
 
-#: ../../source/manuel_bibliotheque.rst:584
+#: ../../source/manuel_bibliotheque.rst:589
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1356,7 +1370,7 @@ msgstr ""
 "näytetyn aseman kokoelmaan tai poistaa sen. Tyhjä luettelo tarjoaa **+ "
 "Uusi kokoelma** -painikkeen."
 
-#: ../../source/manuel_bibliotheque.rst:589
+#: ../../source/manuel_bibliotheque.rst:594
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1388,7 +1402,7 @@ msgstr ""
 "sinne heti kuten yksinään tuotu asema ja lisätään sitten pinoon. "
 "Komentorivi tekee saman eleen komennolla ``collection pile``."
 
-#: ../../source/manuel_bibliotheque.rst:602
+#: ../../source/manuel_bibliotheque.rst:607
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1404,7 +1418,7 @@ msgstr ""
 "jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen "
 "sisältämät asemat ovat yhä tallella, kun palaat."
 
-#: ../../source/manuel_bibliotheque.rst:609
+#: ../../source/manuel_bibliotheque.rst:614
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1417,7 +1431,7 @@ msgstr ""
 "järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli "
 "ennen sen muuttumista eläväksi, korvataan."
 
-#: ../../source/manuel_bibliotheque.rst:614
+#: ../../source/manuel_bibliotheque.rst:619
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1429,7 +1443,7 @@ msgstr ""
 "palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla "
 "suodattimella ei saa olla: laajeta hiljaisuudessa."
 
-#: ../../source/manuel_bibliotheque.rst:619
+#: ../../source/manuel_bibliotheque.rst:624
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1450,7 +1464,7 @@ msgstr ""
 "tiedoston ulkopuolelle, kokoelma viedään **jäädytettynä** niillä "
 "asemilla, jotka kysely valitsee viennin hetkellä."
 
-#: ../../source/manuel_bibliotheque.rst:628
+#: ../../source/manuel_bibliotheque.rst:633
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1468,7 +1482,7 @@ msgstr ""
 "järjestyksessä syöttävät pakkaa, ja tilarivi kertoo tämän yhdessä "
 "valittujen asemien todellisen määrän kanssa."
 
-#: ../../source/manuel_bibliotheque.rst:638
+#: ../../source/manuel_bibliotheque.rst:643
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1485,7 +1499,7 @@ msgstr ""
 "opeta mitään muista; viiteasema on usean virheesi keskellä, rakenteeltaan"
 " samankaltaisena, ja sen opetus palvelee kaikkia."
 
-#: ../../source/manuel_bibliotheque.rst:645
+#: ../../source/manuel_bibliotheque.rst:650
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1499,7 +1513,7 @@ msgstr ""
 " on enintään 12 nappulaaskelta; tuplauskuution virheen naapureita ovat "
 "vain samassa tilanteessa olevat."
 
-#: ../../source/manuel_bibliotheque.rst:649
+#: ../../source/manuel_bibliotheque.rst:654
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1517,7 +1531,7 @@ msgstr ""
 "alussa oleva luku on katettu MWC; peruste antaa luvun, joka lasketaan, "
 "kun oppitunti lasketaan puoliksi."
 
-#: ../../source/manuel_bibliotheque.rst:656
+#: ../../source/manuel_bibliotheque.rst:661
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1531,7 +1545,7 @@ msgstr ""
 "kokoelmassa olevaa, Anki-korttia tai „opiskelluksi“ merkittyä — ei "
 "koskaan ehdoteta, ja sen naapurien katsotaan olevan katettuja."
 
-#: ../../source/manuel_bibliotheque.rst:662
+#: ../../source/manuel_bibliotheque.rst:667
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1555,11 +1569,11 @@ msgstr ""
 "**tietovisaksi**. Komentorivillä: ``blunderdb collection suggest`` (katso"
 " :ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:675
+#: ../../source/manuel_bibliotheque.rst:680
 msgid "Leçons"
 msgstr "Oppitunnit"
 
-#: ../../source/manuel_bibliotheque.rst:677
+#: ../../source/manuel_bibliotheque.rst:682
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1575,7 +1589,7 @@ msgstr ""
 " Komento ``le`` luettelee tietokannan oppitunnit tilarivillä; ``le 2`` "
 "avaa oppitunnin 2; ``le edit`` avaa oppituntieditorin."
 
-#: ../../source/manuel_bibliotheque.rst:684
+#: ../../source/manuel_bibliotheque.rst:689
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1590,7 +1604,7 @@ msgstr ""
 "näyttää, ja sitä selataan tavallisin elein. *Sulje* poistuu oppitunnilta."
 " Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä."
 
-#: ../../source/manuel_bibliotheque.rst:691
+#: ../../source/manuel_bibliotheque.rst:696
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1609,7 +1623,7 @@ msgstr ""
 "sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa "
 "oleva oppitunti jää koskematta."
 
-#: ../../source/manuel_bibliotheque.rst:699
+#: ../../source/manuel_bibliotheque.rst:704
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1647,7 +1661,7 @@ msgstr ""
 "Oppitunteja voi luoda ja muokata myös komentoriviltä tai API:n kautta "
 "(:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:716
+#: ../../source/manuel_bibliotheque.rst:721
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"

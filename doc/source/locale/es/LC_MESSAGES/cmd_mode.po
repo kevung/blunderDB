@@ -1126,7 +1126,7 @@ msgid "wx,y"
 msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gain comprises entre x % et y %."
 msgstr "El jugador tiene probabilidades de ganar comprendidas entre x % e y %."
 
@@ -1155,7 +1155,7 @@ msgid "gx,y"
 msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gammon comprises entre x % et y %."
 msgstr "El jugador tiene probabilidades de gammon comprendidas entre x % e y %."
 
@@ -1180,7 +1180,7 @@ msgid "bx,y"
 msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de backgammon comprises entre x % et y %."
 msgstr ""
 "El jugador tiene probabilidades de backgammon comprendidas entre x % e y "
@@ -1207,7 +1207,7 @@ msgid "Wx,y"
 msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gain comprises entre x % et y %."
 msgstr "El adversario tiene probabilidades de ganar comprendidas entre x % e y %."
 
@@ -1232,7 +1232,7 @@ msgid "Gx,y"
 msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gammon comprises entre x % et y %."
 msgstr "El adversario tiene probabilidades de gammon comprendidas entre x % e y %."
 
@@ -1257,7 +1257,7 @@ msgid "Bx,y"
 msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de backgammon comprises entre x % et y %."
 msgstr ""
 "El adversario tiene probabilidades de backgammon comprendidas entre x % e"

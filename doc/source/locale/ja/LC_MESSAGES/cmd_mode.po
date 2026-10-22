@@ -1039,7 +1039,7 @@ msgid "wx,y"
 msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gain comprises entre x % et y %."
 msgstr "プレイヤーの勝率が x % から y % の間にある。"
 
@@ -1068,7 +1068,7 @@ msgid "gx,y"
 msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gammon comprises entre x % et y %."
 msgstr "プレイヤーのギャモン率が x % から y % の間にある。"
 
@@ -1093,7 +1093,7 @@ msgid "bx,y"
 msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de backgammon comprises entre x % et y %."
 msgstr "プレイヤーのバックギャモン率が x % から y % の間にある。"
 
@@ -1118,7 +1118,7 @@ msgid "Wx,y"
 msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gain comprises entre x % et y %."
 msgstr "対戦相手の勝率が x % から y % の間にある。"
 
@@ -1143,7 +1143,7 @@ msgid "Gx,y"
 msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gammon comprises entre x % et y %."
 msgstr "対戦相手のギャモン率が x % から y % の間にある。"
 
@@ -1168,7 +1168,7 @@ msgid "Bx,y"
 msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de backgammon comprises entre x % et y %."
 msgstr "対戦相手のバックギャモン率が x % から y % の間にある。"
 

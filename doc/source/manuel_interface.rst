@@ -88,6 +88,9 @@ Des panneaux peuvent être affichés pour:
 
 * consulter les tables du score — MET, points de prise, valeurs du gammon, nombres de Neil — (panneau Données de référence, voir :ref:`panneau_reference`),
 
+* comparer la position avec les autres bases ouvertes et échanger avec elles
+  (panneau Autres bases, voir :ref:`vue_ailleurs`),
+
 * afficher les métadonnées de la base de données (panneau métadonnées).
 
 La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre.
@@ -304,7 +307,7 @@ Le bouton *+* qui crée une vue est rattaché à droite du dernier onglet du
 groupe actif : la nouvelle vue rejoint ce groupe et apparaît là où l'on a
 cliqué. La barre se partage en deux zones : à gauche les groupes et leurs
 onglets, à droite, alignés au bord, les outils (autre bibliothèque, écran
-partagé, panier).
+partagé).
 
 Passer d'un groupe à l'autre ne déplace jamais le plateau : dès que deux
 bibliothèques sont ouvertes, la place de la barre d'information de la position
@@ -375,19 +378,16 @@ copie tourne en fond, attachée au groupe d'arrivée : son en-tête porte la
 pastille, et la barre d'état dit, au retour, combien de positions et de matchs
 sont nouveaux et combien étaient déjà là.
 
-Le **panier** rassemble des lignes de plusieurs bibliothèques pour les verser
-en une fois. *MAJ-B* y met la position affichée, ou l'en retire, comme *b*
-pour la Pile ; une ligne glissée sur le panier y entre aussi. Le panier, à
-droite de la barre des onglets, montre son compte ; un clic ouvre son menu
-(*Verser dans …* chaque groupe, *Vider le panier*), et le glisser sur
-l'en-tête d'un groupe l'y verse. Il vit en mémoire, jamais dans une base :
-fermer un groupe en retire ses lignes, et il disparaît à la fermeture de
-blunderDB. Une position encore en brouillon doit d'abord être enregistrée.
+Le **lot** rassemble des lignes de plusieurs bases pour les copier en une
+fois ; il vit dans le panneau Autres bases (voir :ref:`vue_ailleurs`).
 
-Le **cadenas** d'un en-tête verrouille son groupe : rien n'y est plus versé,
-ni par glisser ni par le panier, et la barre d'état le dit. Le verrou ne touche
-ni les imports ni les modifications faites dans le groupe ; un second clic le
-lève.
+Le **cadenas** d'un en-tête, *Protéger des copies*, protège sa base : rien n'y
+est plus copié, ni par glisser, ni depuis le panneau Autres bases, ni par le
+lot ou le menu contextuel, et la barre d'état le dit. La protection ne touche
+ni les imports ni les modifications faites dans la base ; un second clic la
+lève. Elle est mémorisée par fichier d'une session à l'autre, dans les
+préférences de blunderDB et non dans la base : la rouvrir la protège de
+nouveau.
 
 Le changement de groupe reste refusé, au clic comme au clavier, avec un
 message dans la barre d'état qui nomme la cause et dit où l'arrêter, quand ce
@@ -404,14 +404,27 @@ blunderDB rouvre la dernière base active.
 
 .. _vue_ailleurs:
 
-Ce que les autres bibliothèques savent : l'onglet Ailleurs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Comparer et échanger : le panneau Autres bases
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-L'onglet **Ailleurs** (*CTRL-MAJ-A*) dit, pour la position affichée, ce qu'en
-savent les autres bibliothèques ouvertes en groupes. La position y est
+Le panneau **Autres bases** (*CTRL-MAJ-A*) est le poste d'échange entre les
+bases ouvertes en groupes : il dit, pour la position affichée, ce qu'en savent
+les autres bases, et permet de la copier de l'une à l'autre. La position y est
 retrouvée par son identité de plateau (son hachage), non par son numéro : un
-même numéro désigne deux positions différentes dans deux bases. Chaque
-bibliothèque a son bloc, bordé de la couleur de son groupe :
+même numéro désigne deux positions différentes dans deux bases. Avec une seule
+base ouverte, le panneau l'explique et propose *Ouvrir une base pour échanger*
+(*CTRL-MAJ-O*) ; sans position affichée, il le dit et ne lit rien.
+
+Chaque autre base a son bloc, bordé de la couleur de son groupe. Son en-tête
+dit si elle contient la position : *présente*, *absente*, ou *présente avec
+une autre analyse* quand son meilleur coup n'est pas celui de la base active.
+Deux boutons échangent la position : *Copier vers …* la copie de la base
+active dans celle-ci, *Récupérer depuis …* la copie de celle-ci dans la base
+active, avec son analyse, ses commentaires et ses coups joués. Une copie
+n'écrase jamais l'analyse que la base d'arrivée tient déjà : le bloc l'écrit,
+*Analyse conservée là-bas*, avant comme après la copie. Une position encore en
+brouillon doit d'abord être enregistrée. Viennent ensuite des blocs titrés,
+repliables :
 
 * **son analyse** : le meilleur coup, ou la meilleure action de videau, et le
   moteur qui l'a trouvé. Une analyse valorisée avec une autre table d'équité
@@ -424,13 +437,36 @@ bibliothèque a son bloc, bordé de la couleur de son groupe :
   ceux de l'autre ; un coût calculé avec une autre MET n'est pas comparé et
   reste marqué *autre MET*. Au-delà de 50 matchs, les 50 derniers importés
   sont listés et le total est indiqué ;
-* **ses positions voisines**, les cinq plus proches, en vignettes avec leur
-  distance.
+* **ses positions proches**, les cinq plus proches, en vignettes avec leur
+  distance ; ce bloc est replié quand la base contient la position, déplié
+  sinon.
 
-Une bibliothèque qui ne contient pas la position le dit, et montre tout de
-même ses voisines. *Ouvrir là-bas*, un clic sur un match ou sur une vignette
-active le groupe de cette bibliothèque et y affiche la position. Rien n'est
-écrit dans aucune base. Le bouton ⟳ relit les autres bibliothèques.
+*Ouvrir là-bas*, un clic sur un match ou sur une vignette active le groupe de
+cette base et y affiche la position. Lire n'écrit rien dans aucune base. Le
+pied du panneau rappelle les seuils du jugement, et *⟳ Relire les bases* relit
+les autres bases.
+
+**Annuler.** Chaque position copiée par le panneau, le menu contextuel ou
+l'écran partagé entre dans l'historique des copies de la session : la barre
+d'état propose *Annuler la copie (n)*, qui reprend la plus récente, puis la
+précédente, jusqu'à la fermeture de blunderDB. Une annulation se refuse, et le
+dit, si la position a changé depuis la copie (un commentaire, une collection)
+ou si le groupe a ouvert une autre base.
+
+**Le lot**, en bas du panneau, rassemble des lignes de plusieurs bases pour
+les copier en une fois. *MAJ-B* y met la position affichée, ou l'en retire,
+comme *b* pour la Pile ; le groupe *Envoyer* du menu contextuel y ajoute une
+position, un match ou un tournoi, et une ligne glissée sur le lot y entre
+aussi. Chaque ligne se retire d'un clic sur ×. On choisit la *Base d'arrivée*,
+puis *Copier le lot vers …* ; le titre du lot, glissé sur l'en-tête d'un
+groupe, l'y copie aussi. Un tournoi part avec tous ses matchs ; un match copié
+seul n'emporte que la fiche de son tournoi. Le lot vit en mémoire, jamais dans
+une base : fermer un groupe en retire ses lignes, et il disparaît à la
+fermeture de blunderDB.
+
+Le serveur n'a pas de *Copier vers* : un tenant n'écrit pas chez un autre ;
+la route ``across.transferPull`` y fait la copie de *Récupérer depuis*, et
+``blunderdb transfer`` la fait en ligne de commande.
 
 **L'échange sur place.** La touche *x* montre, à la place du plateau, au même
 endroit et à la même taille, la position de l'autre bibliothèque, sous un
@@ -440,8 +476,9 @@ pressée brièvement, l'échange reste affiché jusqu'à la pression suivante.
 Changer de position ou de fenêtre ramène aussi le plateau. Le groupe actif,
 la vue et la liste ne changent pas. La position montrée est, par défaut, la
 même position dans la première autre bibliothèque qui la contient ; le
-bouton *Épingler* sous une vignette de l'onglet Ailleurs choisit plutôt cette
-voisine, jusqu'à *Désépingler* ou un changement de groupe.
+bouton *Montrer avec x* sous une vignette du panneau Autres bases choisit
+plutôt cette voisine, jusqu'à *Ne plus montrer avec x* ou un changement de
+groupe.
 
 **L'écran partagé.** Sur un grand écran, le bouton ◫ de la barre des onglets
 (*CTRL-MAJ-X*) coupe en deux la seule zone du plateau. Chaque volet porte une
@@ -469,7 +506,8 @@ refusées.
 
 Glisser le compteur d'un volet, ou le plateau du volet figé, sur l'autre volet
 copie la position dans la bibliothèque de ce volet, avec son analyse et son commentaire, sauf si
-son groupe est verrouillé ; la barre d'état propose alors *Annuler*. À partir
+sa base est protégée des copies ; la copie rejoint l'historique que *Annuler*
+reprend. À partir
 de 1600 pixels de large, le panneau reste à côté des plateaux ; entre 1280 et
 1600, il passe dessous ; sous 1280, l'écran partagé se refuse et propose
 l'échange sur place (*x*), et il se ferme si la fenêtre devient trop étroite.

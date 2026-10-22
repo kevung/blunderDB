@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 15:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -241,11 +241,11 @@ msgstr "MAYÚS-B"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée dans le panier de transfert entre "
-"bibliothèques, ou l'en retirer."
+"Mettre la position affichée dans le lot du panneau Autres bases, à copier"
+" vers une autre base, ou l'en retirer."
 msgstr ""
-"Poner la posición mostrada en la cesta de transferencia entre "
-"bibliotecas, o retirarla."
+"Poner la posición mostrada en el lote del panel Otras bases, para "
+"copiarla a otra base, o retirarla de él."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic hors du plateau"
@@ -710,11 +710,11 @@ msgstr "CTRL-MAYÚS-A"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Afficher/cacher l'onglet Ailleurs : ce que les autres bibliothèques "
-"ouvertes savent de la position."
+"Afficher/cacher le panneau Autres bases : ce que les autres bases "
+"ouvertes savent de la position, et l'échange avec elles."
 msgstr ""
-"Mostrar/ocultar la pestaña En otro lugar: lo que saben de la posición las"
-" otras bibliotecas abiertas."
+"Mostrar/ocultar el panel Otras bases: lo que las otras bases abiertas "
+"saben de la posición, y el intercambio con ellas."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-MAJ-X"

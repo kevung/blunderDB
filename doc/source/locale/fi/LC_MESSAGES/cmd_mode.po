@@ -1102,7 +1102,7 @@ msgid "wx,y"
 msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gain comprises entre x % et y %."
 msgstr "Pelaajalla on voittotodennäköisyys välillä x % ja y %."
 
@@ -1131,7 +1131,7 @@ msgid "gx,y"
 msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gammon comprises entre x % et y %."
 msgstr "Pelaajalla on gammonin todennäköisyys välillä x % ja y %."
 
@@ -1156,7 +1156,7 @@ msgid "bx,y"
 msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "Le joueur a des chances de backgammon comprises entre x % et y %."
 msgstr "Pelaajalla on backgammonin todennäköisyys välillä x % ja y %."
 
@@ -1181,7 +1181,7 @@ msgid "Wx,y"
 msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gain comprises entre x % et y %."
 msgstr "Vastustajalla on voittotodennäköisyys välillä x % ja y %."
 
@@ -1206,7 +1206,7 @@ msgid "Gx,y"
 msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gammon comprises entre x % et y %."
 msgstr "Vastustajalla on gammonin todennäköisyys välillä x % ja y %."
 
@@ -1231,7 +1231,7 @@ msgid "Bx,y"
 msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de backgammon comprises entre x % et y %."
 msgstr "Vastustajalla on backgammonin todennäköisyys välillä x % ja y %."
 
