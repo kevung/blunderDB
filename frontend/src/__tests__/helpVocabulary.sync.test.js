@@ -108,18 +108,28 @@ const booleanFilterTokens = () => {
     return [...new Set([...grammarSrc.matchAll(/filters\.includes\('([^']+)'\)/g)].map((m) => m[1]))];
 };
 
+// A row may group commands that open the same thing (`tp2, tp2_live, ...`):
+// the names are then independent vocabulary entries without aliases, not one
+// command with aliases. A group is accepted only if every member is such an
+// entry, so a mistyped or stale member still fails.
+const aliasless = new Set(COMMANDS.filter((c) => c.aliases.length === 0).map((c) => c.name));
+const groupMembers = (label) => {
+    const parts = label.split(',').map((p) => p.trim());
+    return parts.length > 1 && parts.every((p) => aliasless.has(p)) ? parts : null;
+};
+
 describe('help ↔ commandVocabulary sync (fr.js)', () => {
     const commandLabels = commandLabelsOf(helpFr.commands);
 
     test('every commandVocabulary.js entry is documented in the commands table', () => {
-        const documented = new Set(commandLabels);
+        const documented = new Set(commandLabels.flatMap((label) => [label, ...(groupMembers(label) ?? [])]));
         const missing = COMMANDS.map(vocabLabel).filter((label) => !documented.has(label));
         expect(missing, `commandVocabulary.js entries missing from doc/source/cmd_mode.rst: ${missing.join(', ')}`).toEqual([]);
     });
 
     test('no ghost command entries in the commands table (e.g. the old `filter, fl`)', () => {
         const expected = new Set(COMMANDS.map(vocabLabel));
-        const ghosts = commandLabels.filter((label) => !expected.has(label));
+        const ghosts = commandLabels.filter((label) => !expected.has(label) && !groupMembers(label));
         expect(ghosts, `doc/source/cmd_mode.rst documents commands absent from commandVocabulary.js: ${ghosts.join(', ')}`).toEqual([]);
     });
 });
