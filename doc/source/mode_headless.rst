@@ -455,7 +455,8 @@ jusqu'à l'action suivante. Une clé inconnue est absente.
 
 ``candidates`` (``id``, ``sessionId``) rend les coups légaux du jet en cours de
 saisie, les deux dés entrés (sinon **400**) : tous, sans plafond, classés au
-0-ply sans élagage, du meilleur au moins bon. Chaque coup porte ``index`` (celui
+0-ply sans élagage, du meilleur au moins bon, comme dans le panneau de
+transcription du bureau. Chaque coup porte ``index`` (celui
 que nomme ``select_candidate``), sa notation, ses pas, son rang et son
 évaluation (``analysis``). Si le classement échoue (score hors de la table
 d'équité), ``unranked`` est vrai et les coups suivent l'ordre du générateur. Ce

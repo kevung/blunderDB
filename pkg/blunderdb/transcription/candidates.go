@@ -10,8 +10,10 @@ import (
 )
 
 // Ranker evaluates a checker Position and returns EVERY legal play, best
-// first, as the 0-ply Evaluation of the desktop's panel does. An error, or no
-// play recognised, leaves the candidates unranked.
+// first: gammonnet.RankAllPlaysWithMET at 0-ply, pruning off, which the
+// desktop (Database.TranscriptionCandidates) and the daemon
+// (transcriptions.candidates) both wrap. An error, or no play recognised,
+// leaves the candidates unranked.
 type Ranker func(ctx context.Context, pos domain.Position) ([]domain.CheckerMove, error)
 
 // Candidate is one legal play of the roll being entered.

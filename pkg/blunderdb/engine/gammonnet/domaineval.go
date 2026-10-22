@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -227,8 +228,10 @@ func EvaluatePositionWithMET(searcher *Searcher, pos domain.Position, met *engin
 // RankAllPlaysWithMET values EVERY legal play of pos, dice set, at 0-ply with
 // the pruning pass off, best first, in pos's referential as
 // EvaluatePositionWithMET reports it. A transcriber picks the play that was
-// made, often one the pruning network would have cut. searcher may be nil
-// (one is made) and is re-aimed like EvaluatePositionWith's.
+// made, often one the pruning network would have cut. searcher may be nil: one
+// is taken from rankSearchers, so a keystroke does not pay a Searcher's
+// allocation and finds its cache warm. It is re-aimed like
+// EvaluatePositionWith's.
 func RankAllPlaysWithMET(searcher *Searcher, pos domain.Position, met *engine.MET) ([]domain.CheckerMove, error) {
 	if pos.Dice[0] < 1 || pos.Dice[0] > 6 || pos.Dice[1] < 1 || pos.Dice[1] > 6 {
 		return nil, fmt.Errorf("gammonnet: dice %v out of range", pos.Dice)
@@ -243,10 +246,14 @@ func RankAllPlaysWithMET(searcher *Searcher, pos domain.Position, met *engine.ME
 	}
 	cfg.PruneK = 0
 	if searcher == nil {
-		if searcher, err = NewSearcher(cfg); err != nil {
+		if pooled, ok := rankSearchers.Get().(*Searcher); ok {
+			searcher = pooled
+		} else if searcher, err = NewSearcher(cfg); err != nil {
 			return nil, err
 		}
-	} else if err := searcher.Reconfigure(cfg); err != nil {
+		defer rankSearchers.Put(searcher)
+	}
+	if err := searcher.Reconfigure(cfg); err != nil {
 		return nil, err
 	}
 	scale, ok := NewEquityScale(state)
@@ -255,6 +262,11 @@ func RankAllPlaysWithMET(searcher *Searcher, pos domain.Position, met *engine.ME
 	}
 	return evaluateMoves(&gnPos, &pos, searcher, DepthLabel(0), 0, scale)
 }
+
+// rankSearchers keeps the serial searchers RankAllPlaysWithMET was called
+// without: one per concurrent caller, reused (a reused cache is licit,
+// cache.go).
+var rankSearchers sync.Pool
 
 // evaluateConfigured is the body the two entry points share, with the
 // searcher already aimed at cfg.
