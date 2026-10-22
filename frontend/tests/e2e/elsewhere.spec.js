@@ -12,7 +12,7 @@
 
 import { test, expect } from '@playwright/test';
 import { installWailsMock } from './helpers/wailsMock.js';
-import { openLibraryMock, positionC } from './helpers/fixtures.js';
+import { openLibraryMock, libraryMockAfter, positionC, matchSample, matchGames, matchMovePositions } from './helpers/fixtures.js';
 import en from '../../src/i18n/locales/en.json' with { type: 'json' };
 
 const pathB = '/libs/club.db';
@@ -251,5 +251,26 @@ test.describe('the states of the Elsewhere panel', () => {
         const group = page.locator('[data-testid="elsewhere-group"]');
         await expect(group.locator('[data-testid="elsewhere-status"]')).toContainText(en.elsewhere.status.otherAnalysis);
         await expect(group.locator('[data-testid="elsewhere-kept"]')).toBeVisible();
+    });
+
+    test('the match selected in its navigator stays the selection on the Elsewhere tab', async ({ page }) => {
+        await openTwoBases(page, {
+            app: { ElsewhereObjectInGroups: [{ group: 1, path: '/libs/mine.db', id: 12, name: '', count: 2 }] },
+            database: { GetAllMatches: [matchSample], GetGamesByMatch: matchGames, GetMatchMovePositions: matchMovePositions }
+        });
+        await page.getByRole('region', { name: 'Match navigator' }).getByRole('row', { name: /Alice/ }).click();
+        await page.keyboard.press('Control+Shift+A');
+        const object = page.locator('[data-testid="elsewhere-object"]');
+        await expect(object).toBeVisible();
+        await expect(object).toContainText('Alice');
+        await expect(object.locator('[data-testid="elsewhere-object-status"]')).toContainText(en.elsewhere.status.present);
+        expect((await callsOf(page, 'ElsewhereObjectInGroups')).at(-1)).toEqual(['match', 7]);
+    });
+
+    test('an empty base has no position to compare', async ({ page }) => {
+        await openTwoBases(page, { database: libraryMockAfter([]), land: false });
+        await page.keyboard.press('Control+Shift+A');
+        await expect(page.locator('[data-testid="elsewhere-no-position"]')).toHaveText(en.elsewhere.noPosition);
+        await expect(page.locator('[data-testid="elsewhere-group"]')).toHaveCount(0);
     });
 });

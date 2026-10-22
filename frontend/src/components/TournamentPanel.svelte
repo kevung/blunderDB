@@ -60,6 +60,7 @@
     import { registerKeys } from '../services/keyDispatch.js';
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
+    import { noteSelection, forgetSelection } from '../stores/exchangeObjectStore.js';
 
     /** @typedef {import('../../wailsjs/go/models').domain.Tournament} Tournament */
     /** @typedef {import('../../wailsjs/go/models').domain.Match} Match */
@@ -351,6 +352,7 @@
     // Back from a tournament's matches to the list of tournaments.
     function leaveTournament() {
         selectedTournamentStore.set(null);
+        forgetSelection('tournament');
         tournamentMatchesStore.set([]);
         addMatchSearch = '';
         tournamentCommentEdit.cancel();
@@ -360,6 +362,7 @@
     async function selectTournament(tournament) {
         if (selectedTournament && selectedTournament.id === tournament.id) {
             selectedTournamentStore.set(null);
+            forgetSelection('tournament');
             tournamentMatchesStore.set([]);
             addMatchSearch = '';
             return;
@@ -370,6 +373,7 @@
     /** Opens the tournament's detail, whatever was open before. @param {Tournament} tournament */
     async function openTournament(tournament) {
         selectedTournamentStore.set(tournament);
+        noteSelection('tournament', { id: tournament.id, label: tournament.name });
         addMatchSearch = '';
         await loadAllMatches();
         try {
@@ -434,6 +438,7 @@
             await loadTournaments();
             if (selectedTournament && selectedTournament.id === tournament.id) {
                 selectedTournamentStore.set(null);
+                forgetSelection('tournament');
                 tournamentMatchesStore.set([]);
             }
             statusBarTextStore.set(tMsg('tournament.deleted'));
@@ -671,6 +676,7 @@
                 sheetMatchId = null;
             } else if (selectedTournament) {
                 selectedTournamentStore.set(null);
+                forgetSelection('tournament');
                 tournamentMatchesStore.set([]);
             } else {
                 closeTournamentPanel();

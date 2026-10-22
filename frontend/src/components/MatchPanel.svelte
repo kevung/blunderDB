@@ -13,7 +13,7 @@
     import { onMount, onDestroy, untrack, tick } from 'svelte';
     import { get } from 'svelte/store';
     import { SvelteSet } from 'svelte/reactivity';
-    import { noteSelection } from '../stores/exchangeObjectStore.js';
+    import { noteSelection, forgetSelection } from '../stores/exchangeObjectStore.js';
     import {
         GetMatchByID,
         TrashMatch,
@@ -105,8 +105,10 @@
     let filterTimer = null;
     /** @type {any} */
     let selectedMatch = $state(null);
-    // The « Autres bases » panel speaks of the selected match.
-    $effect(() => noteSelection('match', selectedMatch ? { id: selectedMatch.id, label: `${selectedMatch.player1_name} – ${selectedMatch.player2_name}` } : null));
+    // The « Autres bases » panel speaks of the match the user selected: noted on the gesture, not
+    // on selectedMatch, which hiding the tab and restoring the last visited match also move.
+    /** @param {any} match */
+    const noteMatch = (match) => noteSelection('match', { id: match.id, label: `${match.player1_name} – ${match.player2_name}` });
     // A match requested from the command palette is being opened.
     let openingRequested = false;
     const visible = $derived($openPanels.has(PANEL.MATCH));
@@ -465,6 +467,7 @@
     function selectMatch(/** @type {Match} */ match) {
         if (selectedMatch && selectedMatch.id === match.id) {
             selectedMatch = null;
+            forgetSelection('match');
             detailMatch = null;
             detailMovePositions = [];
             detailGames = [];
@@ -476,6 +479,7 @@
             detailStats = null;
         } else {
             selectedMatch = match;
+            if (!embedded) noteMatch(match);
             loadMatchDetail(match);
         }
     }
@@ -915,6 +919,7 @@
                         return;
                     }
                     selectedMatch = match;
+                    noteMatch(match);
                     await loadMatchDetail(match);
                     const moveIndex = target.moveId ? detailMovePositions.findIndex((mp) => mp.move_id === target.moveId) : -1;
                     if (moveIndex >= 0) await jumpToMove(moveIndex);
@@ -936,6 +941,7 @@
             await loadMatches();
             if (selectedMatch && selectedMatch.id === match.id) {
                 selectedMatch = null;
+                forgetSelection('match');
                 detailMatch = null;
                 detailMovePositions = [];
                 detailGames = [];
@@ -1088,6 +1094,7 @@
             } else if (detailMatch) {
                 // Close detail pane first
                 selectedMatch = null;
+                forgetSelection('match');
                 detailMatch = null;
                 detailMovePositions = [];
                 detailGames = [];

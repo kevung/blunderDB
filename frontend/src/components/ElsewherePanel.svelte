@@ -27,7 +27,8 @@
     const THUMB_HEIGHT = 96;
 
     let others = $derived($groupIdsStore.filter((id) => id !== $activeGroupId));
-    let hasPosition = $derived(!!$databasePathStore && !!$positionStore);
+    // An empty base shows the empty board (positionStore.js): no checker, nothing to compare.
+    let hasPosition = $derived(!!$databasePathStore && !!$positionStore?.board?.points?.some((p) => p.checkers > 0));
 
     // Read again when the board, the library or the set of groups moves; the service keeps one
     // answer per board, so coming back to the tab reads nothing.
@@ -37,7 +38,7 @@
         void others.length;
         // Emptied by a library change (libraryScope.js): read again.
         void ($elsewhereStore.key === '');
-        const position = $positionStore;
+        const position = hasPosition ? $positionStore : null;
         const timer = setTimeout(() => loadElsewhere(position), 150);
         return () => clearTimeout(timer);
     });
