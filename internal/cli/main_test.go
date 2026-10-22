@@ -1,11 +1,12 @@
 package cli
 
 import (
-	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 )
 
 // TestMain changes the working directory to the repository root before

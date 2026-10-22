@@ -1,13 +1,13 @@
 package gui
 
 import (
-	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 	"os"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 )
 
 // TestMain loads the generated bearoff tables once (ADR-0027) for the race

@@ -1,12 +1,12 @@
 package server
 
 import (
-	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 	"os"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance/issuancetest"
 )
 
 // TestMain provides the EPC's one-sided bearoff table (ADR-0027) from the
