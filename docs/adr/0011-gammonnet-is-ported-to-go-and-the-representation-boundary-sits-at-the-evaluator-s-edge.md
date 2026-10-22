@@ -27,9 +27,10 @@ allocates two strings per candidate, ~5 000 candidates per 2-ply decision.
    the same Kazaross-XG2 table plus a Zadeh fallback beyond 25-away), precomputed per search
    into six outcome values; the Zobrist codec. The eval cache is ported, per search.
 5. **The weights are embedded in float32** (`go:embed`), the reference artifact.
+   *Replaced by ADR-0104.*
 6. **The port is proven at two levels.** Network parity on upstream's `verify/reference.bin`
    at upstream's criterion, 1e-6 (measured 5.960e-08). Search parity on versioned gold files:
-   the same chosen move at each ply, equities to 1e-6.
+   the same chosen move at each ply, equities to 1e-6. *Replaced by ADR-0104.*
 7. **The port follows the C.** A discrepancy from gammonNet is a bug, never an improvisation.
    A conceptual change — one whose gain survives a change of language — is written in
    gammonNet first, with its measurement, and the port follows; an implementation-only change

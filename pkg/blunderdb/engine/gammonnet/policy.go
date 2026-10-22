@@ -14,9 +14,9 @@ import (
 // below. The game, the dice, the clock stay with the caller (ADR-0072 rule 6).
 
 // PolicyEngineVersion names the gammonNet tag that publishes the policy this
-// file ports, the one its reference corpus comes from. It is not
-// EngineVersion: the policy can move upstream while the network, and so the
-// analyses EngineVersion dates, stays the same.
+// file ports. Its reference corpus comes from commit cc1a66c, replayed with the
+// .bin16 of that tag. It is not EngineVersion: the policy can move upstream
+// while the network, and so the analyses EngineVersion dates, stays the same.
 const PolicyEngineVersion = "gammonNet v1.8.1"
 
 // PolicyResignHorizon is H of spec §5.5: how many rolls ahead the certain

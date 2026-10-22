@@ -76,7 +76,7 @@ two moving targets.
    `gn_search_set_root_stage` (commit 9c74d82, after v1.6.0); the first two files come out
    byte-identical from that commit.
 
-   Without SIMD the four files take about ten minutes. The C evaluates in batches of 32, which is why it is
+   Without SIMD the four files (85, 126, 85 and 10 cases) take about ten minutes. The C evaluates in batches of 32, which is why it is
    an order of magnitude faster than the Go port on the 2-ply cases (see ADR-0011 and #133).
 
 ## The second corpus: match states and the cube (ADR-0023)
@@ -201,7 +201,7 @@ even though this harness never loads a quantised model.
 ## The margin, and why it is worth watching
 
 7.153e-07 against a 1e-6 tolerance is a factor of **1.4**, where network parity alone
-(`reference.bin`) leaves a factor of 16 — 5.960e-08. The search accumulates thousands of
+(`reference16.bin`) leaves a factor of 16 — 5.960e-08. The search accumulates thousands of
 evaluations, each carrying up to one ulp of difference from the final sigmoid, so the error
 grows with the tree. **At 3 or 4 ply the tolerance may not hold**, and the corpus deliberately
 stops at 2, which is the canonical depth. Deepening the corpus means re-establishing the

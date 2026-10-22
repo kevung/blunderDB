@@ -40,7 +40,7 @@ sa spec en donne la transposition en Go.
    prêté aux auxiliaires (`Searcher.LentTime`), si bien qu'étaler une recherche ne fait pas
    payer moins de CPU.
 7. **`EngineVersion` reste `gammonNet v1.7.0`** : v1.8.0 ne change aucune valeur (mêmes poids,
-   même recherche), donc aucune analyse stockée ne devient périmée.
+   même recherche), donc aucune analyse stockée ne devient périmée. *Remplacé par ADR-0104.*
 
 ## Consequences
 
