@@ -179,6 +179,15 @@ export function libraryWritten(group) {
     return false;
 }
 
+/**
+ * Marks group's library to read again on its next return: what a group left before its refresh
+ * ended gives back, since takeActivity had already taken the mark.
+ * @param {number} id
+ */
+export function markStale(id) {
+    if (get(groupIdsStore).includes(id)) staleGroups.add(id);
+}
+
 /** @param {number} id the group coming on screen: its badge goes, and says whether it is stale */
 export function takeActivity(id) {
     const activity = get(groupActivityStore).get(id) ?? null;

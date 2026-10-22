@@ -35,7 +35,9 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetLibraryCounts: vi.fn(async () => {
         calls.push('GetLibraryCounts');
         return null;
-    })
+    }),
+    // No counts unless a test gives some: the counts store then empties, as with no backend.
+    GetDatabaseStatsEstimate: vi.fn(() => Promise.reject(new Error('no counts')))
 }));
 const titles = vi.hoisted(() => /** @type {string[]} */ ([]));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
@@ -59,6 +61,8 @@ import { searchParamsStore, attachSearchForm } from '../stores/searchParamsStore
 import { matchListStore } from '../stores/matchListStore.js';
 import { matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import { ActivateLibraryGroup } from '../../wailsjs/go/gui/App.js';
+import { GetDatabaseStatsEstimate } from '../../wailsjs/go/database/Database.js';
+import { dbMutationCounterStore } from '../stores/uiStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import {
     groupIdsStore,
@@ -469,5 +473,32 @@ describe('the switch on a large library', () => {
         // eslint-disable-next-line no-console -- the measure is the point of this test
         console.info(`library group switch, 100 000 positions: median ${median.toFixed(2)} ms`);
         expect(median).toBeLessThan(50);
+    });
+});
+
+describe('a group left before its refresh ended', () => {
+    test('is read again on its next return: its library was written while away', async () => {
+        const afterFrame = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+        await openInNewGroup('/libs/b.db');
+        const groupB = get(activeGroupId);
+        await openInNewGroup('/libs/c.db');
+        const groupC = get(activeGroupId);
+        noteGroupJob(groupB, 'done', 'import');
+        await afterFrame();
+        const asked = vi.mocked(GetDatabaseStatsEstimate).mock.calls.length;
+
+        /** @type {(v: unknown) => void} */
+        let answer = () => {};
+        vi.mocked(GetDatabaseStatsEstimate).mockImplementationOnce(() => new Promise((r) => (answer = r)));
+        expect(await activateGroup(groupB)).toBe(true);
+        await vi.waitFor(() => expect(vi.mocked(GetDatabaseStatsEstimate).mock.calls.length).toBeGreaterThan(asked));
+        // A quick second Ctrl+Tab: B is left while its counts are still being read.
+        expect(await activateGroup(groupC)).toBe(true);
+        answer({});
+        await afterFrame();
+
+        const writes = get(dbMutationCounterStore);
+        expect(await activateGroup(groupB)).toBe(true);
+        await vi.waitFor(() => expect(get(dbMutationCounterStore)).toBeGreaterThan(writes));
     });
 });

@@ -46,7 +46,8 @@ async function readLibraryCounts() {
     try {
         const { GetDatabaseStatsEstimate } = await import('../../wailsjs/go/database/Database.js');
         const { loadLibrarySettings } = await import('../services/librarySettingsService.js');
-        const [stats, settings] = await Promise.all([GetDatabaseStatsEstimate().then((s) => s || {}), loadLibrarySettings()]);
+        const { readOfLibrary } = await import('./groupActivityStore.js');
+        const [stats, settings] = await Promise.all([readOfLibrary(() => GetDatabaseStatsEstimate()).then((s) => s || {}), loadLibrarySettings()]);
         if (seq !== refreshSeq) return;
         libraryCountsStore.set({
             positions: Number(stats.position_count || 0),
@@ -58,7 +59,10 @@ async function readLibraryCounts() {
                 matches: (stats.approximate || []).includes('matches')
             }
         });
-    } catch {
+    } catch (error) {
+        const { isLibraryLeft } = await import('./groupActivityStore.js');
+        // Les compteurs d'une base quittée ne s'affichent pas dans la suivante, qui relit les siens.
+        if (isLibraryLeft(error)) return;
         // Un compteur est un confort : s'il échoue, il s'efface au lieu de
         // s'interposer.
         if (seq === refreshSeq) libraryCountsStore.set(null);

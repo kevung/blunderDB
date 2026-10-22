@@ -18,7 +18,7 @@ import { matchListStore } from './matchListStore.js';
 import { directionSessionState, forgetDirection, restoreDirection } from './directionStore.js';
 import { takeScopedState, putScopedState } from './libraryScope.js';
 import { forgetTransferGroup } from './transferBasketStore.js';
-import { groupIdsStore, activeGroupId, takeActivity, libraryReplaced, importForegroundStore as importForegroundStoreRef, groupSwitchingStore, holdingSwitch } from './groupActivityStore.js';
+import { groupIdsStore, activeGroupId, takeActivity, markStale, libraryReplaced, importForegroundStore as importForegroundStoreRef, groupSwitchingStore, holdingSwitch } from './groupActivityStore.js';
 
 export { groupIdsStore, activeGroupId, groupActivityStore, importForegroundStore, groupOnScreen, noteGroupJob, groupSwitchingStore } from './groupActivityStore.js';
 import { tMsg, translate } from '../i18n';
@@ -205,7 +205,11 @@ export class LibraryGroupRefused extends Error {
 async function refreshAfterShow(countsBefore, stale = false) {
     const group = get(activeGroupId);
     await refreshLibraryCounts();
-    if (get(activeGroupId) !== group) return;
+    if (get(activeGroupId) !== group) {
+        // Left before it was read: the mark taken on its return is put back for the next one.
+        if (stale) markStale(group);
+        return;
+    }
     const list = get(matchListStore);
     if (stale || !list.loaded || get(libraryCountsStore)?.matches !== countsBefore?.matches) matchPanelRefreshTriggerStore.update((n) => n + 1);
     // What reads the library on a write (statistics, the panels) reads it again.
