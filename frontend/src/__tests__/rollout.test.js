@@ -55,6 +55,7 @@ const { databasePathStore } = await import('../stores/databaseStore.js');
 const { rolloutStore, rolloutChoiceStore, idleRollout } = await import('../stores/rolloutStore.js');
 const { analysisStore, selectedMoveStore } = await import('../stores/analysisStore.js');
 const { statusBarTextStore } = await import('../stores/uiStore.js');
+const { activeGroupId, groupSwitchingStore } = await import('../stores/groupActivityStore.js');
 const RolloutResults = (await import('../components/RolloutResults.svelte')).default;
 const RolloutSettings = (await import('../components/RolloutSettings.svelte')).default;
 const RolloutStrip = (await import('../components/RolloutStrip.svelte')).default;
@@ -537,6 +538,38 @@ describe('command', () => {
         expect(confirmAction.mock.calls[0][0]).toContain('42');
         expect(startIDs.mock.calls[0][0]).toEqual([3, 5, 8]);
         expect(startIDs.mock.calls[0][1].max_games).toBe(1296);
+    });
+
+    test('the ids go with the group they were read in', async () => {
+        await runRolloutCommand('search');
+        await waitFor(() => expect(startIDs).toHaveBeenCalledTimes(1));
+        expect(startIDs.mock.calls[0][2]).toBe(get(activeGroupId));
+    });
+
+    test('a switch of group during the confirmation refuses the ids read in the group left', async () => {
+        const readIn = get(activeGroupId);
+        confirmAction.mockImplementationOnce(async () => {
+            activeGroupId.set(readIn + 1);
+            return true;
+        });
+        try {
+            await runRolloutCommand('search');
+            await waitFor(() => expect(confirmAction).toHaveBeenCalled());
+            await waitFor(() => expect(get(rolloutStore).error).toContain('another library'));
+            expect(startIDs).not.toHaveBeenCalled();
+        } finally {
+            activeGroupId.set(readIn);
+        }
+    });
+
+    test('a stored position is not rolled out while a switch rebinds the handle', async () => {
+        groupSwitchingStore.set(true);
+        try {
+            await runRolloutCommand('fast');
+            expect(startRollout).not.toHaveBeenCalled();
+        } finally {
+            groupSwitchingStore.set(false);
+        }
     });
 
     test('declining the confirmation starts nothing', async () => {

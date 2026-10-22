@@ -406,8 +406,8 @@ export function StartRolloutFiltered(arg1, arg2) {
   return window['go']['gui']['App']['StartRolloutFiltered'](arg1, arg2);
 }
 
-export function StartRolloutIDs(arg1, arg2) {
-  return window['go']['gui']['App']['StartRolloutIDs'](arg1, arg2);
+export function StartRolloutIDs(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['StartRolloutIDs'](arg1, arg2, arg3);
 }
 
 export function StartTournamentDisplay(arg1) {

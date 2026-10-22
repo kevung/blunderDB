@@ -1013,6 +1013,7 @@
         "replaceConfirm": "ロールアウトが実行中です。キャンセルしてこれを開始しますか?",
         "replace": "置き換える",
         "readOnly": "データベースは読み取り専用で開かれています（別の blunderDB インスタンスが保持しています）。ロールアウトを保存できません。",
+        "listOfAnotherLibrary": "一覧は画面のものとは別のデータベースで読み込まれました。もう一度表示してからロールアウトを開始してください。",
         "menuStart": "ロールアウト（{preset}）",
         "menuStartMoves": "ロールアウト（{preset}）：{n} 手",
         "menuCancel": "ロールアウトをキャンセル",

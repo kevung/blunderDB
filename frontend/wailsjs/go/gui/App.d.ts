@@ -211,7 +211,7 @@ export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
 
 export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<number>;
 
-export function StartRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
+export function StartRolloutIDs(arg1:Array<number>,arg2:rollout.Settings,arg3:number):Promise<number>;
 
 export function StartTournamentDisplay(arg1:gui.TournamentDisplayConfig):Promise<gui.TournamentDisplayStatus>;
 

@@ -158,15 +158,25 @@ func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) (int
 	})
 }
 
+// ErrListOfAnotherLibrary refuses a request naming positions by ids read in a
+// library group that is no longer on screen: in the library bound now, those
+// ids name other positions.
+var ErrListOfAnotherLibrary = errors.New("the list was read in another library than the one on screen")
+
 // StartRolloutIDs is StartRolloutFiltered for the list the GUI shows: the
 // positions ids names, in that order, that carry no rollout of settings'
-// Signature yet. The events are those of StartRolloutFiltered.
-func (a *App) StartRolloutIDs(ids []int64, settings rollout.Settings) (int64, error) {
+// Signature yet. group is the library group the ids were read in; another
+// group on screen is refused (ErrListOfAnotherLibrary). The events are those
+// of StartRolloutFiltered.
+func (a *App) StartRolloutIDs(ids []int64, settings rollout.Settings, group int) (int64, error) {
 	if err := settings.Validate(); err != nil {
 		return 0, err
 	}
 	if a.db == nil {
 		return 0, errors.New("rollout: no database is open")
+	}
+	if group != a.activeGroup() {
+		return 0, ErrListOfAnotherLibrary
 	}
 	if err := a.db.RefuseReadOnly(); err != nil {
 		return 0, err

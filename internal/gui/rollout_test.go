@@ -160,7 +160,7 @@ func TestStartRollout_RefusedOnReadOnlyDatabase(t *testing.T) {
 	if _, err := a.StartRolloutFiltered("", rollout.Fast()); !errors.Is(err, database.ErrReadOnly) {
 		t.Errorf("StartRolloutFiltered: err = %v, want ErrReadOnly", err)
 	}
-	if _, err := a.StartRolloutIDs([]int64{1}, rollout.Fast()); !errors.Is(err, database.ErrReadOnly) {
+	if _, err := a.StartRolloutIDs([]int64{1}, rollout.Fast(), a.activeGroup()); !errors.Is(err, database.ErrReadOnly) {
 		t.Errorf("StartRolloutIDs: err = %v, want ErrReadOnly", err)
 	}
 	if st := a.RolloutStatus(); st.Running {

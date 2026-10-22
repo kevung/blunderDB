@@ -1013,6 +1013,7 @@
         "replaceConfirm": "Ein Rollout läuft. Abbrechen und dieses starten?",
         "replace": "Ersetzen",
         "readOnly": "die Datenbank ist schreibgeschützt geöffnet (eine andere blunderDB-Instanz hält sie): der Rollout könnte nicht gespeichert werden.",
+        "listOfAnotherLibrary": "die Liste wurde in einer anderen Datenbank gelesen als der angezeigten: zeigen Sie sie erneut an und starten Sie dann den Rollout.",
         "menuStart": "Rollout ({preset})",
         "menuStartMoves": "Rollout ({preset}) der {n} Züge",
         "menuCancel": "Rollout abbrechen",

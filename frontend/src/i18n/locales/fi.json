@@ -1013,6 +1013,7 @@
         "replaceConfirm": "Rollout on käynnissä. Peruutetaanko se ja käynnistetään tämä?",
         "replace": "Korvaa",
         "readOnly": "tietokanta on avattu vain luku -tilaan (toinen blunderDB-instanssi pitää sitä): rolloutia ei voisi tallentaa.",
+        "listOfAnotherLibrary": "lista luettiin eri tietokannasta kuin näytöllä oleva: näytä se uudelleen ja käynnistä sitten rollout.",
         "menuStart": "Rollout ({preset})",
         "menuStartMoves": "Rollout ({preset}): {n} siirtoa",
         "menuCancel": "Peruuta rollout",

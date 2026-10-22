@@ -1013,6 +1013,7 @@
         "replaceConfirm": "Un rollout est en cours. L'annuler et lancer celui-ci ?",
         "replace": "Remplacer",
         "readOnly": "la base est ouverte en lecture seule (une autre instance de blunderDB la tient) : le rollout ne pourrait pas être stocké.",
+        "listOfAnotherLibrary": "la liste a été lue dans une autre base que celle à l'écran : affichez-la de nouveau, puis lancez le rollout.",
         "menuStart": "Rollout ({preset})",
         "menuStartMoves": "Rollout ({preset}) des {n} coups",
         "menuCancel": "Annuler le rollout",

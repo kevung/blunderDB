@@ -1013,6 +1013,7 @@
         "replaceConfirm": "Εκτελείται ένα rollout. Να ακυρωθεί και να ξεκινήσει αυτό;",
         "replace": "Αντικατάσταση",
         "readOnly": "η βάση είναι ανοιχτή μόνο για ανάγνωση (την κρατά άλλη παρουσία του blunderDB): το rollout δεν θα μπορούσε να αποθηκευτεί.",
+        "listOfAnotherLibrary": "η λίστα διαβάστηκε σε άλλη βάση από αυτήν που εμφανίζεται: εμφανίστε την ξανά και μετά ξεκινήστε το rollout.",
         "menuStart": "Rollout ({preset})",
         "menuStartMoves": "Rollout ({preset}) των {n} κινήσεων",
         "menuCancel": "Ακύρωση του rollout",

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 )
 
 func newLibraryFile(t *testing.T, dir, name string, positions int) string {
@@ -282,5 +283,20 @@ func TestLibraryGroups_BoundOpenRefusesAFileAnotherGroupHolds(t *testing.T) {
 	}
 	if err := db.OpenDatabase(pathB); err != nil {
 		t.Errorf("reopening the active library: %v", err)
+	}
+}
+
+// Ids read in one library name other positions in another: a rollout of a list
+// read in A is refused once B is on screen, rather than run and stored in B.
+func TestLibraryGroups_RolloutOfAListReadInAnotherGroupIsRefused(t *testing.T) {
+	a, _ := twoGroups(t)
+	if err := a.ActivateLibraryGroup(2); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := a.StartRolloutIDs([]int64{1}, rollout.Fast(), 1); !errors.Is(err, ErrListOfAnotherLibrary) {
+		t.Fatalf("StartRolloutIDs of a list read in group 1, group 2 on screen: err = %v, want ErrListOfAnotherLibrary", err)
+	}
+	if st := a.RolloutStatus(); st.Running {
+		t.Errorf("a rollout started: %+v", st)
 	}
 }

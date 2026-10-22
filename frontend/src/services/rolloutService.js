@@ -7,7 +7,7 @@ import { positionStore } from '../stores/positionStore.js';
 import { statusBarTextStore, activeTabStore } from '../stores/uiStore.js';
 import { withDisplayedPositionIDs } from './modeMachine.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { libraryWritten } from '../stores/groupActivityStore.js';
+import { libraryWritten, writingOnScreen, readOfLibrary, isLibraryLeft, activeGroupId } from '../stores/groupActivityStore.js';
 import { confirmAction } from './confirmService.js';
 import { tMsg, t } from '../i18n';
 import { logger } from '../utils/logger.js';
@@ -43,6 +43,8 @@ function normalizeCandidate(c) {
 // Go refuses a rollout that would store on a library another instance holds with this text
 // (database.ErrReadOnly); it is said in the reader's language.
 const READ_ONLY = 'database is read-only';
+// And a list of ids read in a library group no longer on screen (gui.ErrListOfAnotherLibrary).
+const LIST_OF_ANOTHER_LIBRARY = 'the list was read in another library than the one on screen';
 
 /**
  * A refusal or a failure as the reader is told it.
@@ -51,6 +53,7 @@ const READ_ONLY = 'database is read-only';
 export function failure(err) {
     const message = err?.message ?? String(err ?? '');
     if (message.includes(READ_ONLY)) return get(t)('rollout.readOnly');
+    if (message.includes(LIST_OF_ANOTHER_LIBRARY)) return get(t)('rollout.listOfAnotherLibrary');
     return busyMessage(message) ?? message;
 }
 
@@ -377,7 +380,10 @@ export async function startRolloutOfCurrent(settings, moves = [], { unsaved = fa
         const request = /** @type {import('../../wailsjs/go/models.js').gui.RolloutRequest} */ (
             /** @type {unknown} */ ({ positionId: id, position: id ? undefined : pos, settings: settingsForWire(settings), moves: [...moves], store: id !== 0 })
         );
-        await startJob(() => StartRollout(request));
+        const start = async () => (await startJob(() => StartRollout(request)), true);
+        // A stored rollout names its position by id: never sent while a switch rebinds the handle.
+        const started = id ? await writingOnScreen(start) : await start();
+        if (!started) return refuse(get(t)('libraryGroups.switching'));
         rolloutStore.update((s) => ({ ...s, outcome: null, running: true, kind: 'position', positionId: id, games: 0, maxGames: Number(settings.max_games), candidates: [] }));
         await syncRolloutStatus();
         return '';
@@ -395,13 +401,17 @@ export async function startRolloutOfSearch(settings) {
     ensureRolloutEvents();
     const problem = settingsProblem(settings);
     if (problem) return refuse(problem);
+    // The group the ids are read in: the backend refuses them once another is on screen, where
+    // they would name other positions (the confirmation below leaves time for a switch).
+    const group = get(activeGroupId);
     // A paged list (a collection, search results) holds no ids of its own: read whole first.
     const ids = (await withDisplayedPositionIDs((listed) => listed)) ?? [];
     const wire = settingsForWire(settings);
     let total;
     try {
-        total = ids.length ? await CountRolloutIDs(ids, wire) : 0;
+        total = ids.length ? await readOfLibrary(() => CountRolloutIDs(ids, wire)) : 0;
     } catch (err) {
+        if (isLibraryLeft(err)) return refuse(get(t)('rollout.listOfAnotherLibrary'));
         return refuse(failure(err));
     }
     if (!total) {
@@ -410,9 +420,10 @@ export async function startRolloutOfSearch(settings) {
     }
     const ok = await confirmAction(get(t)('rollout.batchConfirm', { total, listed: ids.length, depth: `${wire.max_games}` }), { confirmLabel: get(t)('rollout.start') });
     if (!ok) return '';
+    if (get(activeGroupId) !== group) return refuse(get(t)('rollout.listOfAnotherLibrary'));
     try {
         rolloutStore.update((s) => ({ ...s, error: '' }));
-        await startJob(() => StartRolloutIDs(ids, wire));
+        await startJob(() => StartRolloutIDs(ids, wire, group));
         rolloutStore.update((s) => ({ ...idleRollout(), job: s.job, running: true, kind: 'batch', total, revision: s.revision }));
         await syncRolloutStatus();
         return '';

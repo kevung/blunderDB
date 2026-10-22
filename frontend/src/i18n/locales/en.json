@@ -1013,6 +1013,7 @@
         "replaceConfirm": "A rollout is running. Cancel it and start this one?",
         "replace": "Replace",
         "readOnly": "the database is open read-only (another blunderDB instance holds it): the rollout could not be stored.",
+        "listOfAnotherLibrary": "the list was read in another library than the one on screen: show it again, then start the rollout.",
         "menuStart": "Rollout ({preset})",
         "menuStartMoves": "Rollout ({preset}) of the {n} moves",
         "menuCancel": "Cancel the rollout",
