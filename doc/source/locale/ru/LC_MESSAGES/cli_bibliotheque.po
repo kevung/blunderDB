@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 16:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -474,7 +474,7 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:230 ../../source/cli_bibliotheque.rst:428
 #: ../../source/cli_bibliotheque.rst:524 ../../source/cli_bibliotheque.rst:580
-#: ../../source/cli_bibliotheque.rst:635 ../../source/cli_bibliotheque.rst:690
+#: ../../source/cli_bibliotheque.rst:641 ../../source/cli_bibliotheque.rst:697
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
@@ -901,7 +901,7 @@ msgstr ""
 "``csv``, как и ``list``."
 
 #: ../../source/cli_bibliotheque.rst:462 ../../source/cli_bibliotheque.rst:570
-#: ../../source/cli_bibliotheque.rst:655
+#: ../../source/cli_bibliotheque.rst:662
 msgid "**Sous-commandes:**"
 msgstr "**Подкоманды:**"
 
@@ -1216,13 +1216,29 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:626
 msgid ""
+"``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
+"Au lieu d'une position, un match, un tournoi, une collection ou une leçon"
+" de ``--db`` : la commande dit si chaque autre base le contient, sous la "
+"clé où une copie le fusionnerait (l'empreinte du match, même importé d'un"
+" autre format ; le nom sinon), avec son identifiant là-bas et ce qu'il "
+"contient (parties, matchs, positions ou étapes)."
+msgstr ""
+"``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
+"Вместо позиции — матч, турнир, коллекция или урок из ``--db``: команда "
+"сообщает, содержит ли его каждая другая база, под ключом, по которому его"
+" слила бы копия (отпечаток матча, даже импортированного из другого "
+"формата; иначе имя), с его идентификатором там и тем, что он содержит "
+"(партии, матчи, позиции или шаги)."
+
+#: ../../source/cli_bibliotheque.rst:632
+msgid ""
 "``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,"
 " 50 au plus)."
 msgstr ""
 "``--neighbours N`` — Число соседей на базу (по умолчанию: 5, 0: нет, не "
 "более 50)."
 
-#: ../../source/cli_bibliotheque.rst:628
+#: ../../source/cli_bibliotheque.rst:634
 msgid ""
 "``--max-distance D`` — Écarte les voisines à plus de D pips de pions "
 "déplacés (0 : sans plafond)."
@@ -1230,23 +1246,25 @@ msgstr ""
 "``--max-distance D`` — Отбрасывает соседей, удалённых более чем на D "
 "пипсов перемещённых шашек (0: без предела)."
 
-#: ../../source/cli_bibliotheque.rst:630
+#: ../../source/cli_bibliotheque.rst:636
 msgid "``--format`` — ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — ``text`` (по умолчанию) или ``json``."
 
-#: ../../source/cli_bibliotheque.rst:632
+#: ../../source/cli_bibliotheque.rst:638
 msgid ""
-"Le démon sert la même lecture à travers les tenants : "
-"``across.positionElsewhere`` (voir :ref:`headless`)."
+"Le démon sert les mêmes lectures à travers les tenants : "
+"``across.positionElsewhere`` et ``across.objectElsewhere`` (voir "
+":ref:`headless`)."
 msgstr ""
-"Демон предоставляет то же чтение через арендаторов: "
-"``across.positionElsewhere`` (см. :ref:`headless`)."
+"Демон предоставляет те же чтения через арендаторов: "
+"``across.positionElsewhere`` и ``across.objectElsewhere`` (см. "
+":ref:`headless`)."
 
-#: ../../source/cli_bibliotheque.rst:644
+#: ../../source/cli_bibliotheque.rst:651
 msgid "trash — La corbeille"
 msgstr "trash — Корзина"
 
-#: ../../source/cli_bibliotheque.rst:646
+#: ../../source/cli_bibliotheque.rst:653
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -1258,21 +1276,21 @@ msgstr ""
 " эта таблица существует — ни фильтр поиска, ни статистика, ни правило "
 "хранения."
 
-#: ../../source/cli_bibliotheque.rst:657
+#: ../../source/cli_bibliotheque.rst:664
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
 msgstr "``list`` — Что лежит в корзине, от недавно удалённого к более старому."
 
-#: ../../source/cli_bibliotheque.rst:659
+#: ../../source/cli_bibliotheque.rst:666
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr "``restore --id N`` — Возвращает запись N и убирает её из корзины."
 
-#: ../../source/cli_bibliotheque.rst:660
+#: ../../source/cli_bibliotheque.rst:667
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr "``discard --id N`` — Удаляет запись N сразу, не восстанавливая её."
 
-#: ../../source/cli_bibliotheque.rst:661
+#: ../../source/cli_bibliotheque.rst:668
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
@@ -1280,7 +1298,7 @@ msgstr ""
 "``empty [--older-than Д]`` — Очищает корзину или только то, что старше Д "
 "дней."
 
-#: ../../source/cli_bibliotheque.rst:663
+#: ../../source/cli_bibliotheque.rst:670
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection``, "
@@ -1290,7 +1308,7 @@ msgstr ""
 "действие можно было отменить. ``K`` — это ``position``, ``collection``, "
 "``comment`` или ``match``."
 
-#: ../../source/cli_bibliotheque.rst:667
+#: ../../source/cli_bibliotheque.rst:674
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, "
@@ -1302,7 +1320,7 @@ msgstr ""
 "параметр ``--kind`` сужает список до одного типа объектов: ``position``, "
 "``collection``, ``comment``, ``match`` или ``anki_card``."
 
-#: ../../source/cli_bibliotheque.rst:672
+#: ../../source/cli_bibliotheque.rst:679
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -1314,7 +1332,7 @@ msgstr ""
 "растил бы файл, роста которого никто не просил. Отмену сохраняет именно "
 "``trash delete``."
 
-#: ../../source/cli_bibliotheque.rst:677
+#: ../../source/cli_bibliotheque.rst:684
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon. Une position restaurée reprend son ancien "
@@ -1337,7 +1355,7 @@ msgstr ""
 "что успешное восстановление не смогло вернуть, — занятое или исчезнувшее "
 "место в Дирекции, удалённый турнир, — сообщается предупреждением."
 
-#: ../../source/cli_bibliotheque.rst:687
+#: ../../source/cli_bibliotheque.rst:694
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."

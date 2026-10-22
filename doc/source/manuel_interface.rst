@@ -446,12 +446,26 @@ cette base et y affiche la position. Lire n'écrit rien dans aucune base. Le
 pied du panneau rappelle les seuils du jugement, et *⟳ Relire les bases* relit
 les autres bases.
 
-**Annuler.** Chaque position copiée par le panneau, le menu contextuel ou
-l'écran partagé entre dans l'historique des copies de la session : la barre
-d'état propose *Annuler la copie (n)*, qui reprend la plus récente, puis la
-précédente, jusqu'à la fermeture de blunderDB. Une annulation se refuse, et le
-dit, si la position a changé depuis la copie (un commentaire, une collection)
-ou si le groupe a ouvert une autre base.
+**La sélection.** Quand un match, un tournoi, une collection ou une leçon est
+sélectionné dans son panneau, un bloc en tête du panneau le nomme et dit, pour
+chaque autre base, si elle le contient déjà, avec ce qu'il contient là-bas
+(parties, matchs, positions ou étapes), et propose les mêmes *Copier vers …* et
+*Récupérer depuis …*. Le match est reconnu à son empreinte, même importé d'un
+autre format ; le tournoi, la collection et la leçon à leur nom, comme une
+copie les fusionne.
+
+**Annuler.** Chaque copie qui a ajouté quelque chose à la base d'arrivée,
+position, match, tournoi, collection ou lot, par le panneau, le menu
+contextuel, un glisser ou l'écran partagé, entre dans l'historique des copies
+de la session : la barre d'état propose *Annuler la copie (n)*, qui reprend la
+plus récente, puis la précédente, jusqu'à la fermeture de blunderDB. Annuler
+ne retire que ce que la copie a créé : une position, un match ou un tournoi
+que la base tenait déjà reste, et une collection du même nom ne perd que les
+positions que la copie lui a ajoutées. Une annulation se refuse, et le dit, si
+ce que la copie a créé a changé depuis (un commentaire, une collection, un
+match rangé dans le tournoi) ou si le groupe a ouvert une autre base. Une copie
+qui a créé une leçon ne s'annule pas : retirer ses positions couperait ses
+étapes.
 
 **Le lot**, en bas du panneau, rassemble des lignes de plusieurs bases pour
 les copier en une fois. *MAJ-B* y met la position affichée, ou l'en retire,

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 16:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -482,7 +482,7 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:230 ../../source/cli_bibliotheque.rst:428
 #: ../../source/cli_bibliotheque.rst:524 ../../source/cli_bibliotheque.rst:580
-#: ../../source/cli_bibliotheque.rst:635 ../../source/cli_bibliotheque.rst:690
+#: ../../source/cli_bibliotheque.rst:641 ../../source/cli_bibliotheque.rst:697
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
@@ -906,7 +906,7 @@ msgstr ""
 "``json`` tai ``csv``, kuten ``list``."
 
 #: ../../source/cli_bibliotheque.rst:462 ../../source/cli_bibliotheque.rst:570
-#: ../../source/cli_bibliotheque.rst:655
+#: ../../source/cli_bibliotheque.rst:662
 msgid "**Sous-commandes:**"
 msgstr "**Alikomennot:**"
 
@@ -1222,13 +1222,29 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:626
 msgid ""
+"``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
+"Au lieu d'une position, un match, un tournoi, une collection ou une leçon"
+" de ``--db`` : la commande dit si chaque autre base le contient, sous la "
+"clé où une copie le fusionnerait (l'empreinte du match, même importé d'un"
+" autre format ; le nom sinon), avec son identifiant là-bas et ce qu'il "
+"contient (parties, matchs, positions ou étapes)."
+msgstr ""
+"``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
+"Aseman sijasta ottelu, turnaus, kokoelma tai oppitunti tietokannasta "
+"``--db``: komento kertoo, sisältääkö jokainen muu tietokanta sen, siinä "
+"avaimessa, jonka alle kopio sen yhdistäisi (ottelun sormenjälki, vaikka "
+"se olisi tuotu toisesta formaatista; muuten nimi), sen tunnisteen siellä "
+"ja sen sisällön (pelejä, otteluita, asemia tai vaiheita)."
+
+#: ../../source/cli_bibliotheque.rst:632
+msgid ""
 "``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,"
 " 50 au plus)."
 msgstr ""
 "``--neighbours N`` — Naapureiden määrä tietokantaa kohti (oletus: 5, 0: "
 "ei yhtään, enintään 50)."
 
-#: ../../source/cli_bibliotheque.rst:628
+#: ../../source/cli_bibliotheque.rst:634
 msgid ""
 "``--max-distance D`` — Écarte les voisines à plus de D pips de pions "
 "déplacés (0 : sans plafond)."
@@ -1236,23 +1252,24 @@ msgstr ""
 "``--max-distance D`` — Hylkää naapurit, jotka ovat yli D siirrettyjen "
 "nappuloiden pipin päässä (0: ei ylärajaa)."
 
-#: ../../source/cli_bibliotheque.rst:630
+#: ../../source/cli_bibliotheque.rst:636
 msgid "``--format`` — ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — ``text`` (oletus) tai ``json``."
 
-#: ../../source/cli_bibliotheque.rst:632
+#: ../../source/cli_bibliotheque.rst:638
 msgid ""
-"Le démon sert la même lecture à travers les tenants : "
-"``across.positionElsewhere`` (voir :ref:`headless`)."
+"Le démon sert les mêmes lectures à travers les tenants : "
+"``across.positionElsewhere`` et ``across.objectElsewhere`` (voir "
+":ref:`headless`)."
 msgstr ""
-"Daemon tarjoaa saman haun vuokraajien yli: ``across.positionElsewhere`` "
-"(katso :ref:`headless`)."
+"Daemon tarjoaa samat haut vuokraajien yli: ``across.positionElsewhere`` "
+"ja ``across.objectElsewhere`` (katso :ref:`headless`)."
 
-#: ../../source/cli_bibliotheque.rst:644
+#: ../../source/cli_bibliotheque.rst:651
 msgid "trash — La corbeille"
 msgstr "trash — Roskakori"
 
-#: ../../source/cli_bibliotheque.rst:646
+#: ../../source/cli_bibliotheque.rst:653
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -1264,21 +1281,21 @@ msgstr ""
 "tiedä tuon taulun olemassaolosta — ei hakusuodatin, ei tilasto, ei "
 "säilytyssääntö."
 
-#: ../../source/cli_bibliotheque.rst:657
+#: ../../source/cli_bibliotheque.rst:664
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
 msgstr "``list`` — Mitä roskakorissa on, uusimmasta poistosta vanhimpaan."
 
-#: ../../source/cli_bibliotheque.rst:659
+#: ../../source/cli_bibliotheque.rst:666
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr "``restore --id N`` — Palauttaa merkinnän N ja poistaa sen roskakorista."
 
-#: ../../source/cli_bibliotheque.rst:660
+#: ../../source/cli_bibliotheque.rst:667
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr "``discard --id N`` — Poistaa merkinnän N heti, palauttamatta sitä."
 
-#: ../../source/cli_bibliotheque.rst:661
+#: ../../source/cli_bibliotheque.rst:668
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
@@ -1286,7 +1303,7 @@ msgstr ""
 "``empty [--older-than P]`` — Tyhjentää roskakorin tai vain sen, mikä on "
 "yli P päivää vanhaa."
 
-#: ../../source/cli_bibliotheque.rst:663
+#: ../../source/cli_bibliotheque.rst:670
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection``, "
@@ -1296,7 +1313,7 @@ msgstr ""
 " teon voi perua. ``K`` on ``position``, ``collection``, ``comment`` tai "
 "``match``."
 
-#: ../../source/cli_bibliotheque.rst:667
+#: ../../source/cli_bibliotheque.rst:674
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, "
@@ -1308,7 +1325,7 @@ msgstr ""
 "``--kind`` rajaa luettelon yhteen objektityyppiin: ``position``, "
 "``collection``, ``comment``, ``match`` tai ``anki_card``."
 
-#: ../../source/cli_bibliotheque.rst:672
+#: ../../source/cli_bibliotheque.rst:679
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -1320,7 +1337,7 @@ msgstr ""
 "jättäminen kasvattaisi tiedostoa, jonka kasvua kukaan ei pyytänyt. "
 "``trash delete`` on se, joka säilyttää perumisen."
 
-#: ../../source/cli_bibliotheque.rst:677
+#: ../../source/cli_bibliotheque.rst:684
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon. Une position restaurée reprend son ancien "
@@ -1343,7 +1360,7 @@ msgstr ""
 "palautus ei voinut palauttaa — varattu tai kadonnut paikka johtamisessa, "
 "poistettu turnaus — ilmoitetaan varoituksella."
 
-#: ../../source/cli_bibliotheque.rst:687
+#: ../../source/cli_bibliotheque.rst:694
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."

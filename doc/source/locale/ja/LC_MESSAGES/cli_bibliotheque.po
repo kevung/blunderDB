@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 16:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -439,7 +439,7 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:230 ../../source/cli_bibliotheque.rst:428
 #: ../../source/cli_bibliotheque.rst:524 ../../source/cli_bibliotheque.rst:580
-#: ../../source/cli_bibliotheque.rst:635 ../../source/cli_bibliotheque.rst:690
+#: ../../source/cli_bibliotheque.rst:641 ../../source/cli_bibliotheque.rst:697
 msgid "**Exemples:**"
 msgstr "**例：**"
 
@@ -816,7 +816,7 @@ msgstr ""
 " ``--format text``\\ （デフォルト）、\\ ``json``\\ 、\\ ``csv``\\ を受け付けます。"
 
 #: ../../source/cli_bibliotheque.rst:462 ../../source/cli_bibliotheque.rst:570
-#: ../../source/cli_bibliotheque.rst:655
+#: ../../source/cli_bibliotheque.rst:662
 msgid "**Sous-commandes:**"
 msgstr "**サブコマンド：**"
 
@@ -1098,33 +1098,47 @@ msgstr "``--zobrist H`` — ハッシュ（10 進数）による局面の指定�
 
 #: ../../source/cli_bibliotheque.rst:626
 msgid ""
+"``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
+"Au lieu d'une position, un match, un tournoi, une collection ou une leçon"
+" de ``--db`` : la commande dit si chaque autre base le contient, sous la "
+"clé où une copie le fusionnerait (l'empreinte du match, même importé d'un"
+" autre format ; le nom sinon), avec son identifiant là-bas et ce qu'il "
+"contient (parties, matchs, positions ou étapes)."
+msgstr ""
+"``--match N``、``--tournament N``、``--collection N``、``--lesson N`` — "
+"ポジションの代わりに、``--db`` "
+"のマッチ、トーナメント、コレクション、レッスンを指定します。コマンドは、他の各データベースがそれを持っているかどうかを、コピーが統合するときのキー（マッチはフィンガープリントで、別の形式からインポートされたものも対象。それ以外は名前）のもとに、そこでの識別子と含まれるもの（ゲーム、マッチ、ポジション、ステップ）とともに表示します。"
+
+#: ../../source/cli_bibliotheque.rst:632
+msgid ""
 "``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,"
 " 50 au plus)."
 msgstr "``--neighbours N`` — データベースごとの近傍局面の数（デフォルト: 5、0: なし、最大 50）。"
 
-#: ../../source/cli_bibliotheque.rst:628
+#: ../../source/cli_bibliotheque.rst:634
 msgid ""
 "``--max-distance D`` — Écarte les voisines à plus de D pips de pions "
 "déplacés (0 : sans plafond)."
 msgstr "``--max-distance D`` — 動かしたチェッカーのピップ数が D を超えて離れた近傍局面を除外します（0: 上限なし）。"
 
-#: ../../source/cli_bibliotheque.rst:630
+#: ../../source/cli_bibliotheque.rst:636
 msgid "``--format`` — ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — ``text``\\ （デフォルト）または\\ ``json``\\ 。"
 
-#: ../../source/cli_bibliotheque.rst:632
+#: ../../source/cli_bibliotheque.rst:638
 msgid ""
-"Le démon sert la même lecture à travers les tenants : "
-"``across.positionElsewhere`` (voir :ref:`headless`)."
+"Le démon sert les mêmes lectures à travers les tenants : "
+"``across.positionElsewhere`` et ``across.objectElsewhere`` (voir "
+":ref:`headless`)."
 msgstr ""
-"デーモンはテナントをまたいで同じ読み取りを提供します: ``across.positionElsewhere``\\ "
-"（:ref:`headless`\\ を参照）。"
+"デーモンはテナントをまたいで同じ読み取りを提供します: ``across.positionElsewhere`` と "
+"``across.objectElsewhere``\\ （:ref:`headless`\\ を参照）。"
 
-#: ../../source/cli_bibliotheque.rst:644
+#: ../../source/cli_bibliotheque.rst:651
 msgid "trash — La corbeille"
 msgstr "trash — ごみ箱"
 
-#: ../../source/cli_bibliotheque.rst:646
+#: ../../source/cli_bibliotheque.rst:653
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -1134,27 +1148,27 @@ msgstr ""
 "何が削除され、それを何で戻せるか。削除はやはり削除である\\ ：消えるものの JSON "
 "スナップショットが先に書かれ、そのテーブルの存在をデータベースの他の何も知らない——検索フィルタも、統計も、保持規則も。"
 
-#: ../../source/cli_bibliotheque.rst:657
+#: ../../source/cli_bibliotheque.rst:664
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
 msgstr "``list`` — ごみ箱の中身を、最近削除したものから順に。"
 
-#: ../../source/cli_bibliotheque.rst:659
+#: ../../source/cli_bibliotheque.rst:666
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr "``restore --id N`` — 項目 N を戻し、ごみ箱から取り除く。"
 
-#: ../../source/cli_bibliotheque.rst:660
+#: ../../source/cli_bibliotheque.rst:667
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr "``discard --id N`` — 項目 N を復元せずに今すぐ削除する。"
 
-#: ../../source/cli_bibliotheque.rst:661
+#: ../../source/cli_bibliotheque.rst:668
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
 msgstr "``empty [--older-than D]`` — ごみ箱を空にする、または D 日より古いものだけを消す。"
 
-#: ../../source/cli_bibliotheque.rst:663
+#: ../../source/cli_bibliotheque.rst:670
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection``, "
@@ -1163,7 +1177,7 @@ msgstr ""
 "``delete --kind K --id N`` — 取り消せるように、\\ **ごみ箱を経由して**\\ オブジェクトを削除する。``K``"
 " は ``position``、``collection``、``comment``、``match`` のいずれか。"
 
-#: ../../source/cli_bibliotheque.rst:667
+#: ../../source/cli_bibliotheque.rst:674
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, "
@@ -1175,7 +1189,7 @@ msgstr ""
 "で一覧を一種類のオブジェクトに絞り込めます：``position``、``collection``、``comment``、``match``、``anki_card``\\"
 " 。"
 
-#: ../../source/cli_bibliotheque.rst:672
+#: ../../source/cli_bibliotheque.rst:679
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -1186,7 +1200,7 @@ msgstr ""
 "：局面を削除するスクリプトはそれが消えることを期待しており、黙ってスナップショットを残せば、誰も大きくしてくれと頼んでいないファイルが太る。取り消しを残すのは"
 " ``trash delete`` のほうである。"
 
-#: ../../source/cli_bibliotheque.rst:677
+#: ../../source/cli_bibliotheque.rst:684
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon. Une position restaurée reprend son ancien "
@@ -1202,7 +1216,7 @@ msgstr ""
 "局面の復元は Zobrist "
 "重複排除を再び通ります。重複を作ることは決してありません。復元された局面は元の番号に戻ります。その間に同じ局面が保存されていれば、そちらが保持され、足りないものを受け取ります。復元されたマッチも元の番号のまま、そのゲーム、手、解析、局面とともに戻ります。他のマッチがその番号を使っている場合、またはその間にファイルのフィンガープリントが同じマッチがインポートされた場合は拒否されます。復元が成功しても元に戻せなかったもの(使用済みまたは消えたディレクションの枠、削除されたトーナメント)は警告で知らされます。"
 
-#: ../../source/cli_bibliotheque.rst:687
+#: ../../source/cli_bibliotheque.rst:694
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:56+0200\n"
+"POT-Creation-Date: 2026-10-22 16:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -749,8 +749,9 @@ msgid ""
 "Le **lot** rassemble des lignes de plusieurs bases pour les copier en une"
 " fois ; il vit dans le panneau Autres bases (voir :ref:`vue_ailleurs`)."
 msgstr ""
-"**ロット**\\ は複数のデータベースの行を集めて一度にコピーします。ロットは「他のデータベース」パネルにあります（:ref:`vue_ailleurs`"
-" を参照）。"
+"**ロット**\\ "
+"は複数のデータベースの行を集めて一度にコピーします。ロットは「他のデータベース」パネルにあります（:ref:`vue_ailleurs` "
+"を参照）。"
 
 #: ../../source/manuel_interface.rst:384
 msgid ""
@@ -883,18 +884,40 @@ msgstr ""
 
 #: ../../source/manuel_interface.rst:449
 msgid ""
-"**Annuler.** Chaque position copiée par le panneau, le menu contextuel ou"
-" l'écran partagé entre dans l'historique des copies de la session : la "
-"barre d'état propose *Annuler la copie (n)*, qui reprend la plus récente,"
-" puis la précédente, jusqu'à la fermeture de blunderDB. Une annulation se"
-" refuse, et le dit, si la position a changé depuis la copie (un "
-"commentaire, une collection) ou si le groupe a ouvert une autre base."
+"**La sélection.** Quand un match, un tournoi, une collection ou une leçon"
+" est sélectionné dans son panneau, un bloc en tête du panneau le nomme et"
+" dit, pour chaque autre base, si elle le contient déjà, avec ce qu'il "
+"contient là-bas (parties, matchs, positions ou étapes), et propose les "
+"mêmes *Copier vers …* et *Récupérer depuis …*. Le match est reconnu à son"
+" empreinte, même importé d'un autre format ; le tournoi, la collection et"
+" la leçon à leur nom, comme une copie les fusionne."
 msgstr ""
-"**元に戻す。** パネル、コンテキストメニュー、分割画面でコピーされたポジションは、すべてセッションのコピー履歴に入ります。ステータスバーに\\"
-" *コピーを元に戻す (n)*\\ が表示され、最新のコピー、次にその前のコピーと、blunderDB "
-"を閉じるまで取り消せます。コピー後にポジションが変わった場合（コメントやコレクション）、またはグループが別のデータベースを開いた場合、取り消しは拒否され、その旨が表示されます。"
+"**選択。** "
+"マッチ、トーナメント、コレクション、レッスンがそれぞれのパネルで選択されていると、パネルの先頭のブロックがその名前を示し、他の各データベースについて、すでにそれを持っているかどうかと、そこに含まれるもの（ゲーム、マッチ、ポジション、ステップ）を表示します。同じ\\"
+" *… へコピー*\\ と\\ *… から取得*\\ "
+"も使えます。マッチは、別の形式からインポートされたものでもフィンガープリントで識別されます。トーナメント、コレクション、レッスンは、コピーが統合するときと同じく名前で識別されます。"
 
-#: ../../source/manuel_interface.rst:456
+#: ../../source/manuel_interface.rst:457
+msgid ""
+"**Annuler.** Chaque copie qui a ajouté quelque chose à la base d'arrivée,"
+" position, match, tournoi, collection ou lot, par le panneau, le menu "
+"contextuel, un glisser ou l'écran partagé, entre dans l'historique des "
+"copies de la session : la barre d'état propose *Annuler la copie (n)*, "
+"qui reprend la plus récente, puis la précédente, jusqu'à la fermeture de "
+"blunderDB. Annuler ne retire que ce que la copie a créé : une position, "
+"un match ou un tournoi que la base tenait déjà reste, et une collection "
+"du même nom ne perd que les positions que la copie lui a ajoutées. Une "
+"annulation se refuse, et le dit, si ce que la copie a créé a changé "
+"depuis (un commentaire, une collection, un match rangé dans le tournoi) "
+"ou si le groupe a ouvert une autre base. Une copie qui a créé une leçon "
+"ne s'annule pas : retirer ses positions couperait ses étapes."
+msgstr ""
+"**元に戻す。** "
+"コピー先のデータベースに何かを追加したコピー（ポジション、マッチ、トーナメント、コレクション、ロット）は、パネル、コンテキストメニュー、ドラッグ、分割画面のいずれで行っても、セッションのコピー履歴に入ります。ステータスバーに\\"
+" *コピーを元に戻す (n)*\\ が表示され、最新のコピー、次にその前のコピーと、blunderDB "
+"を閉じるまで取り消せます。元に戻すのは、コピーが作成したものだけです。データベースがすでに持っていたポジション、マッチ、トーナメントは残り、同名のコレクションからは、コピーが追加したポジションだけが取り除かれます。コピーが作成したものがその後に変わった場合（コメント、コレクション、トーナメントに収められたマッチ）、またはグループが別のデータベースを開いた場合、取り消しは拒否され、その旨が表示されます。レッスンを作成したコピーは取り消せません。そのポジションを取り除くとステップが途切れるためです。"
+
+#: ../../source/manuel_interface.rst:470
 msgid ""
 "**Le lot**, en bas du panneau, rassemble des lignes de plusieurs bases "
 "pour les copier en une fois. *MAJ-B* y met la position affichée, ou l'en "
@@ -914,7 +937,7 @@ msgstr ""
 "を実行します。ロットのタイトルをグループの見出しへドラッグしても、そこへコピーされます。トーナメントはすべてのマッチとともに送られ、マッチ単独のコピーはそのトーナメントのカードだけを伴います。ロットはメモリ上にあり、データベースには決して保存されません。グループを閉じるとその行は取り除かれ、blunderDB"
 " を閉じると消えます。"
 
-#: ../../source/manuel_interface.rst:467
+#: ../../source/manuel_interface.rst:481
 msgid ""
 "Le serveur n'a pas de *Copier vers* : un tenant n'écrit pas chez un autre"
 " ; la route ``across.transferPull`` y fait la copie de *Récupérer "
@@ -924,7 +947,7 @@ msgstr ""
 "``across.transferPull`` が\\ *… から取得*\\ のコピーをそこで行い、``blunderdb transfer`` "
 "がコマンドラインで行います。"
 
-#: ../../source/manuel_interface.rst:471
+#: ../../source/manuel_interface.rst:485
 msgid ""
 "**L'échange sur place.** La touche *x* montre, à la place du plateau, au "
 "même endroit et à la même taille, la position de l'autre bibliothèque, "
@@ -942,7 +965,7 @@ msgstr ""
 "キーは、盤面の代わりに、同じ場所に同じ大きさで、他のライブラリのポジションを表示します。その名前、最善手、コメント数を示す、そのライブラリの色の帯が付きます。キーを押し続けた場合は、離すと盤面に戻ります。短く押した場合は、次に押すまで入れ替えたままになります。ポジションやウィンドウを変えても盤面に戻ります。アクティブなグループ、ビュー、リストは変わりません。表示されるポジションは、既定では、それを含む最初の他のライブラリにある同じポジションです。「他のデータベース」パネルのサムネイルの下にある\\"
 " *x で表示*\\ ボタンは、代わりにその近傍ポジションを選び、\\ *x での表示をやめる*\\ かグループの変更までそのままになります。"
 
-#: ../../source/manuel_interface.rst:483
+#: ../../source/manuel_interface.rst:497
 msgid ""
 "**L'écran partagé.** Sur un grand écran, le bouton ◫ de la barre des "
 "onglets (*CTRL-MAJ-X*) coupe en deux la seule zone du plateau. Chaque "
@@ -961,7 +984,7 @@ msgstr ""
 "と表示されます）。アクティブなペインは操作でき、そのグループの色で縁取られます。もう一方は固定されて薄く表示され、そのライブラリが離れた位置の盤面、ポジションの解析とコメントを示します。表示内容はどこにも書き込まれません。各ペインは自分の\\"
 " *n / N*\\ カウンターを表示します。"
 
-#: ../../source/manuel_interface.rst:493
+#: ../../source/manuel_interface.rst:507
 msgid ""
 "Un clic dans le volet figé, ou *CTRL-ALT-←* / *CTRL-ALT-→*, active sa "
 "bibliothèque ; le contour passe de l'autre côté et rien d'autre ne bouge."
@@ -987,7 +1010,7 @@ msgstr ""
 "、インポート、コマンドはアクティブなペインに向かいます。Duel、トレーニングセッション、インポートの最中は切り替えが拒否され、クリックしたペインが揺れて、ステータスバーが理由を示します。ライブラリの切り替えが終わるまでは、2"
 " 回目の切り替えは無視され、\\ *CTRL-S*\\ 、ポジションの更新と削除は拒否されます。"
 
-#: ../../source/manuel_interface.rst:507
+#: ../../source/manuel_interface.rst:521
 msgid ""
 "Glisser le compteur d'un volet, ou le plateau du volet figé, sur l'autre "
 "volet copie la position dans la bibliothèque de ce volet, avec son "
@@ -1004,18 +1027,18 @@ msgstr ""
 "ピクセルでは下に移り、1280 ピクセル未満では分割画面は拒否されてその場での入れ替え（\\ *x*\\ "
 "）が提案されます。ウィンドウが狭くなりすぎると分割画面は閉じます。分割画面と各側のライブラリは次のセッションでも復元されます。"
 
-#: ../../source/manuel_interface.rst:520
+#: ../../source/manuel_interface.rst:534
 msgid "Configuration"
 msgstr "設定"
 
-#: ../../source/manuel_interface.rst:522
+#: ../../source/manuel_interface.rst:536
 msgid ""
 "Le bouton de configuration (icône en forme de rouage) situé dans la barre"
 " d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration "
 "de blunderDB. Elle est organisée en dix onglets :"
 msgstr "ツールバーのヘルプボタンの左にある設定ボタン（歯車のアイコン）が、blunderDB の設定ウィンドウを開きます。設定は十のタブに分かれています。"
 
-#: ../../source/manuel_interface.rst:526
+#: ../../source/manuel_interface.rst:540
 #, no-python-format
 msgid ""
 "**Interface** — thème, langue, échelle d'affichage, position du panneau, "
@@ -1026,58 +1049,58 @@ msgstr ""
 "**インターフェース** — テーマ、言語、表示倍率、パネルの位置、PageUp / PageDown の移動幅（10、50、100、500、1 "
 "000 ポジション、またはリストの 10 %）、ログ、更新の確認、あなたの名前と近傍ポジション。"
 
-#: ../../source/manuel_interface.rst:529
+#: ../../source/manuel_interface.rst:543
 msgid "**Couleurs** — les couleurs du plateau ;"
 msgstr "**ボードの色** — ボードの配色。"
 
-#: ../../source/manuel_interface.rst:530
+#: ../../source/manuel_interface.rst:544
 msgid ""
 "**Bibliothèque** — ce qui appartient à la base ouverte : les seuils "
 "d'erreur et de blunder, décrits ci-dessous ;"
 msgstr "**ライブラリ** — 開いているデータベースに属するもの。エラーとブランダーの閾値で、以下で説明します。"
 
-#: ../../source/manuel_interface.rst:532
+#: ../../source/manuel_interface.rst:546
 msgid ""
 "**Maintenance** — l'état de santé de la base, une ligne par opération, "
 "décrit ci-dessous ;"
 msgstr "**メンテナンス** — データベースの健全性。操作ごとに一行で、以下で説明します。"
 
-#: ../../source/manuel_interface.rst:534
+#: ../../source/manuel_interface.rst:548
 msgid ""
 "**Corpus** — les doublons à l'import, les alias de joueurs et "
 "d'événements et la recherche des doublons probables (voir l'import de "
 "matchs) ;"
 msgstr "**コーパス**\\ — インポート時の重複、プレイヤーとイベントの別名、重複の可能性の検索（マッチのインポートを参照）。"
 
-#: ../../source/manuel_interface.rst:536
+#: ../../source/manuel_interface.rst:550
 msgid "**Bearoff** — les tables de sortie utilisées par le panneau Eval ;"
 msgstr "**Bearoff** — Eval パネルが使うベアオフテーブル。"
 
-#: ../../source/manuel_interface.rst:537
+#: ../../source/manuel_interface.rst:551
 msgid ""
 "**gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous"
 " ;"
 msgstr "**gammonNet**\\ — 内蔵の評価エンジンの設定。以下で説明します；"
 
-#: ../../source/manuel_interface.rst:538
+#: ../../source/manuel_interface.rst:552
 msgid ""
 "**Dossier surveillé** — l'import automatique des matchs qui arrivent dans"
 " un dossier, décrit ci-dessous ;"
 msgstr "**監視フォルダ**\\ ——フォルダに届いたマッチを自動で取り込む仕組み。下で説明します。"
 
-#: ../../source/manuel_interface.rst:540
+#: ../../source/manuel_interface.rst:554
 msgid ""
 "**Assistant et MCP** — le serveur MCP local et l'assistant interne, "
 "décrits ci-dessous ;"
 msgstr "**アシスタントと MCP** — ローカル MCP サーバーと内蔵アシスタント。以下で説明します。"
 
-#: ../../source/manuel_interface.rst:542
+#: ../../source/manuel_interface.rst:556
 msgid ""
 "**Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la "
 "section :ref:`diffusion_controlee`."
 msgstr "**発行者の識別情報** — 出所の記載に署名する鍵。\\ :ref:`diffusion_controlee`\\ の節で説明します。"
 
-#: ../../source/manuel_interface.rst:545
+#: ../../source/manuel_interface.rst:559
 msgid ""
 "L'onglet *Interface* propose d'abord un **thème** : *suivre le système*, "
 "*clair*, *sombre*, *contraste élevé* ou *imprimable*. Le thème règle les "
@@ -1090,7 +1113,7 @@ msgstr ""
 "*ダーク*\\ 、\\ *ハイコントラスト*\\ 、\\ *印刷向け*\\ です。テーマは画面の配色を決め、\\ "
 "**盤のパレットも提案します**\\ 。暗い画面に明るい盤ではダークテーマの半分にしかなりません。盤がウィンドウの大半を占めるからです。"
 
-#: ../../source/manuel_interface.rst:551
+#: ../../source/manuel_interface.rst:565
 msgid ""
 "Vous gardez le dernier mot, et le mécanisme le garantit plutôt que de le "
 "promettre : l'onglet *Couleurs* continue de régler le plateau "
@@ -1109,7 +1132,7 @@ msgstr ""
 "theme-carries-the-board-palette-and-the-user-still-has-the-last-"
 "word.md>`__ を参照してください。"
 
-#: ../../source/manuel_interface.rst:559
+#: ../../source/manuel_interface.rst:573
 msgid ""
 "*Suivre le système* est le réglage par défaut : il obéit à la préférence "
 "clair/sombre du bureau, y compris lorsqu'elle change en cours de session."
@@ -1119,7 +1142,7 @@ msgstr ""
 "既定は\\ *システムに従う*\\ "
 "です。デスクトップのライト／ダークの設定に従い、セッションの途中で変わっても追随します。すでに決めているデスクトップに、道具が自分のライトやダークを押しつけることはありません。"
 
-#: ../../source/manuel_interface.rst:563
+#: ../../source/manuel_interface.rst:577
 msgid ""
 "L'onglet *Interface* permet aussi de choisir la langue parmi l'anglais, "
 "le français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, "
@@ -1130,7 +1153,7 @@ msgstr ""
 "*インターフェース*\\ "
 "タブでは言語も選べます。英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語です。ツールバー、パネル、メッセージ、ヘルプを含む画面全体が選んだ言語に翻訳されます。言語の選択は保存され、次のセッションにも引き継がれます。"
 
-#: ../../source/manuel_interface.rst:569
+#: ../../source/manuel_interface.rst:583
 msgid ""
 "L'onglet *Bibliothèque* réunit ce qui appartient au fichier ouvert et non"
 " à la machine. Il est vide tant qu'aucune base n'est ouverte, et il le "
@@ -1139,7 +1162,7 @@ msgstr ""
 "*ライブラリ*\\ "
 "タブは、マシンではなく開いているファイルに属するものをまとめます。データベースが一つも開かれていないあいだは空で、そのことを明示します。"
 
-#: ../../source/manuel_interface.rst:572
+#: ../../source/manuel_interface.rst:586
 msgid ""
 "Il porte d'abord les deux **seuils** qui décident du vocabulaire de toute"
 " l'application : une décision est une **erreur** dès que son coût atteint"
@@ -1156,7 +1179,7 @@ msgstr ""
 "は逆転した組を拒みます。値はエクイティで入力し——「0.080」——これはすべての表の単位です。一方、コマンドラインはミリポイントで語るため、0.080"
 " の閾値は検索では ``E>80`` と書きます。"
 
-#: ../../source/manuel_interface.rst:581
+#: ../../source/manuel_interface.rst:595
 msgid ""
 "Ces seuils suivent le fichier, pas l'ordinateur : la même base compte les"
 " mêmes blunders partout où on l'ouvre, ``blunderdb info`` les affiche, et"
@@ -1169,7 +1192,7 @@ msgstr ""
 "threshold`` "
 "がそれらを設定します。閾値はエクスポートには持ち出されません。閾値は読み方の習慣であって、局面についての事実ではないからです。"
 
-#: ../../source/manuel_interface.rst:587
+#: ../../source/manuel_interface.rst:601
 msgid ""
 "Trois **préréglages** sont proposés d'un clic, chacun sous le nom du "
 "programme qui a tracé cette ligne : blunderDB (0,050 / 0,100), XG (0,020 "
@@ -1181,7 +1204,7 @@ msgstr ""
 "0.100）、XG（0.020 / 0.080）、gnubg（0.040 / 0.080）です。既定では、ライブラリは 0.050 と 0.100"
 " を読みます。"
 
-#: ../../source/manuel_interface.rst:591
+#: ../../source/manuel_interface.rst:605
 msgid ""
 "Ce qu'ils changent, à l'écran : le nombre de blunders du compteur de la "
 "barre d'état et la recherche que son lien prépare, les colonnes « Erreurs"
@@ -1192,7 +1215,7 @@ msgstr ""
 "画面上で変わるのは、ステータスバーのカウンターのブランダー数とそのリンクが用意する検索、統計とプレイヤー表の「エラー」列と「ブランダー」列、マッチの詳細画面での手の印"
 " (:ref:`panneau_matchs`)、そしてインポート後に blunderDB が見直しを勧める局面の一覧です。"
 
-#: ../../source/manuel_interface.rst:597
+#: ../../source/manuel_interface.rst:611
 msgid ""
 "La ligne **Espace récupérable** de l'onglet *Maintenance* porte le bouton"
 " **Compacter**, qui récupère l'espace disque laissé par les suppressions "
@@ -1223,7 +1246,7 @@ msgstr ""
 "未満）を伝えるメッセージとともに開始を拒否します。操作を開始する前に確認が求められます。結果（得られた容量、単位はメガバイト）はその後ステータスバーに表示されます。同じ操作はコマンドラインから"
 " ``blunderdb vacuum`` で利用できます（:ref:`cli` を参照）。"
 
-#: ../../source/manuel_interface.rst:617
+#: ../../source/manuel_interface.rst:631
 msgid ""
 "Après un compactage sur place, blunderDB vérifie que le fichier a bien "
 "rétréci. Sous Windows, le système refuse de raccourcir un fichier qu'un "
@@ -1234,7 +1257,7 @@ msgstr ""
 "その場での圧縮の後、blunderDB はファイルが実際に小さくなったかを確認します。Windows "
 "では、別のプログラムが特定の方法で開いているファイルをシステムが縮小できません。その場合、圧縮は実際には得られなかった削減量を表示するのではなく、その旨を伝えるメッセージで終了します。もう一方のプログラムを閉じてから、もう一度実行してください。"
 
-#: ../../source/manuel_interface.rst:623
+#: ../../source/manuel_interface.rst:637
 msgid ""
 "Le bouton **Ouvrir le dossier des journaux**, dans l'onglet *Interface*, "
 "ouvre le dossier contenant le journal de l'application — utile pour "
@@ -1246,7 +1269,7 @@ msgstr ""
 "ボタンは、アプリケーションのログが入っているフォルダを開きます。不具合の報告に詳細を添えるときに便利で、とりわけ blunderDB "
 "をショートカットやダブルクリックから起動し、何かを表示する端末が付いていない場合に役立ちます。"
 
-#: ../../source/manuel_interface.rst:629
+#: ../../source/manuel_interface.rst:643
 msgid ""
 "La case **Vérifier les mises à jour au démarrage**, du même onglet, "
 "désactivée par défaut, interroge une fois la page des dernières versions "
@@ -1261,7 +1284,7 @@ msgstr ""
 "リポジトリのリリースページを問い合わせ、より新しいバージョンがあればステータスバーにメッセージを表示します。操作を妨げるウィンドウは決して出ません。パッケージマネージャ（Flatpak、Homebrew、ディストリビューションのパッケージなど）経由でインストールした場合、この確認は自動的に無効のままです。その場合は更新を扱うのはそのチャネルであり、blunderDB"
 " 自身ではありません。"
 
-#: ../../source/manuel_interface.rst:638
+#: ../../source/manuel_interface.rst:652
 msgid ""
 "Deux réglages de l'onglet *Interface* gouvernent le classement des "
 "**positions voisines** (jeton ``like``, voir :ref:`panneau_recherche`) : "
@@ -1276,7 +1299,7 @@ msgstr ""
 "を参照）。返す近傍の数と、それを超えるとポジションが近傍でなくなる最大距離です。この距離は既定でゼロ、すなわち上限なしです。尺度はゲームの段階によって変わり、ここで選んだ値は測定値のように読まれてしまうからです。\\"
 " ``like<12`` トークンは、設定に触れることなく、一度の検索にかぎって独自の上限を課します。"
 
-#: ../../source/manuel_interface.rst:645
+#: ../../source/manuel_interface.rst:659
 msgid ""
 "L'onglet *Couleurs* permet de personnaliser les couleurs du plateau. "
 "Chaque élément dispose de son propre sélecteur de couleur : le fond, la "
@@ -1289,7 +1312,7 @@ msgstr ""
 "のチェッカー、ダイス、ダイスの目、キューブのそれぞれに色の選択欄があります。\\ *リセット*\\ "
 "ボタンですべての色が既定値に戻ります。言語と同じく、選んだ色もセッションをまたいで保持されます。"
 
-#: ../../source/manuel_interface.rst:652
+#: ../../source/manuel_interface.rst:666
 msgid ""
 "L'onglet *Bearoff* gère les tables de sortie du panneau Eval (voir "
 ":ref:`panneau_epc`). Elles ne sont **ni embarquées dans l'exécutable, ni "
@@ -1302,7 +1325,7 @@ msgstr ""
 "はそれを使う機械の上で計算し、結果は gnubg が生成するものとバイト単位で同一です。テーブルを受け入れる前に SHA-256 "
 "の指紋が検証されます。"
 
-#: ../../source/manuel_interface.rst:658
+#: ../../source/manuel_interface.rst:672
 msgid ""
 "Les deux tables ordinaires (TS-06-06 pour le verdict de videau, OS-06 "
 "pour l'EPC) sont calculées au premier lancement, en arrière-plan et sans "
@@ -1314,7 +1337,7 @@ msgstr ""
 " 6 秒、その間アプリケーションは普通に使えます。Eval "
 "パネルがそれに触れるのは、まだ用意できていないテーブルを必要とするポジションを置いたときだけです。"
 
-#: ../../source/manuel_interface.rst:664
+#: ../../source/manuel_interface.rst:678
 msgid ""
 "L'onglet affiche le domaine actif et son origine, l'état de la table une "
 "face que lit l'EPC, le dossier où tout cela vit, et la liste des tables "
@@ -1324,7 +1347,7 @@ msgstr ""
 "このタブは、有効な領域とその出どころ、EPC "
 "が読む片面表の状態、それらが置かれるフォルダー、そして存在する表の一覧を大きさと判定つきで示します。各行は確認のうえ個別に削除できます。"
 
-#: ../../source/manuel_interface.rst:669
+#: ../../source/manuel_interface.rst:683
 msgid ""
 "**Vérifiée ou non vérifiée.** Une table *vérifiée* a exactement les "
 "octets que gnubg produit pour son domaine : son empreinte SHA-256 figure "
@@ -1341,7 +1364,7 @@ msgstr ""
 "1.08 の ``makebearoff`` ツールが生成するものです。*未検証* の表は形こそ正しいものの、その領域の指紋が登録されていません "
 "— 落ち度があるわけではなく、参照と比べた人がいないだけです。*破損* した表は自分自身と矛盾しており、決して読まれません。再計算されます。"
 
-#: ../../source/manuel_interface.rst:677
+#: ../../source/manuel_interface.rst:691
 msgid ""
 "**Calculer une table plus large.** Le domaine se choisit dans une liste à"
 " deux familles, avec le nombre de cœurs à y consacrer (par défaut tous "
@@ -1350,14 +1373,14 @@ msgstr ""
 "**より広い表を計算する。** 領域は二つの系統からなる一覧から選び、割り当てるコア数も選びます（既定は 1 "
 "つを除く全部。計算機が使えるままであるように）。"
 
-#: ../../source/manuel_interface.rst:681
+#: ../../source/manuel_interface.rst:695
 msgid ""
 "**videau exact (deux faces)**, de TS-06-06 à TS-06-15 : élargit le "
 "domaine où la probabilité de gain et le verdict de videau sont lus plutôt"
 " qu'estimés ;"
 msgstr "**厳密なキューブ（両面）**、TS-06-06 から TS-06-15 まで。勝率とキューブ判定が推定ではなく読み取りになる範囲を広げます。"
 
-#: ../../source/manuel_interface.rst:684
+#: ../../source/manuel_interface.rst:698
 msgid ""
 "**EPC hors du jan (une face)**, de OS-06 à OS-10 : élargit la distance à "
 "laquelle un pion peut se trouver sans que le bloc EPC se taise. Ce "
@@ -1369,7 +1392,7 @@ msgstr ""
 "の欄が黙らずに済む駒の距離を広げます。この走査は計算中の局面より小さい局面しか読まないので構造上逐次的であり、コア数は役に立ちません — "
 "選択欄が灰色になってそう告げます。"
 
-#: ../../source/manuel_interface.rst:690
+#: ../../source/manuel_interface.rst:704
 msgid ""
 "Avant de lancer quoi que ce soit, l'onglet annonce trois chiffres pour le"
 " domaine choisi : la taille sur le disque, la mémoire nécessaire pendant "
@@ -1384,7 +1407,7 @@ msgstr ""
 "かかるはずの時間です。最後のものは推定値から始まり、実測値になります。十分に広い計算はそれぞれ自らの速度を測り、保持するからです。使えるメモリが許さない領域は、理由とともに灰色で提示されます"
 " — 「24 GB 必要だが 12 GB しか残っていない」は答えですが、行が無いことは答えになりません。"
 
-#: ../../source/manuel_interface.rst:699
+#: ../../source/manuel_interface.rst:713
 msgid ""
 "À titre d'ordre de grandeur, sur une machine à seize fils : TS-06-09 pèse"
 " 191 Mo et demande une dizaine de secondes, TS-06-11 pèse 1,2 Go et "
@@ -1396,7 +1419,7 @@ msgstr ""
 "で数分、TS-06-13 はたいていの計算機がメモリに保持できる量を超えます。片面の側は 1 コアで、OS-07 が 4.9 MB で 17 "
 "秒、OS-08 が 15 MB で 1 分 20 秒、OS-10 が 117 MB で 30 分です。"
 
-#: ../../source/manuel_interface.rst:705
+#: ../../source/manuel_interface.rst:719
 msgid ""
 "**Pause et reprise.** Pendant le calcul, la progression affiche le temps "
 "restant *mesuré*, et deux boutons distincts : *Pause* et *Annuler*. La "
@@ -1409,7 +1432,7 @@ msgstr ""
 "を示します。一時停止は計算の状態を表の隣に書き出し、再び動かすと最初からではなく止まったところから続きます。中止は何も残しません。設定ウィンドウを閉じても何も中断されません"
 " — 計算は背後で続きます。"
 
-#: ../../source/manuel_interface.rst:711
+#: ../../source/manuel_interface.rst:725
 msgid ""
 "Un calcul mis en pause se retrouve au lancement suivant, nommé et chiffré"
 " (« TS-06-09 interrompue à 43 % »), avec *Reprendre* et *Supprimer*. Rien"
@@ -1418,7 +1441,7 @@ msgstr ""
 "一時停止した計算は次回の起動時に、名前と数字つきで（「TS-06-09 は 43 % で中断」）、*再開* と *削除* "
 "とともに現れます。ひとりでに再開することはありません。停止を求めたのは利用者だからです。"
 
-#: ../../source/manuel_interface.rst:715
+#: ../../source/manuel_interface.rst:729
 msgid ""
 "L'onglet permet enfin de pointer vers un fichier ``.bd`` two-sided "
 "externe, par exemple une base produite par gnubg lui-même : la table au "
@@ -1427,7 +1450,7 @@ msgstr ""
 "このタブでは最後に、外部の両面 \\ ``.bd``\\  ファイル — 例えば gnubg 自身が作ったデータベース — "
 "を指定できます。領域がもっとも広い表が優先されます。"
 
-#: ../../source/manuel_interface.rst:721
+#: ../../source/manuel_interface.rst:735
 msgid ""
 "L'onglet **Maintenance** montre l'état de santé de la base : une ligne "
 "par opération, avec son compte, sa dernière exécution (date et issue : "
@@ -1437,7 +1460,7 @@ msgstr ""
 "**メンテナンス**\\ "
 "タブはデータベースの健全性を示します。操作ごとに1行で、その件数、最後の実行（日付と結果：完了、キャンセル、失敗）、そのアクションを表示します。統計のないマッチの計算だけが、開いたときに自動で始まります。"
 
-#: ../../source/manuel_interface.rst:726
+#: ../../source/manuel_interface.rst:740
 msgid ""
 "**Positions sans analyse** — les positions qui ne portent aucune analyse "
 "; l'action est l'analyse gammonNet décrite plus bas. Les positions que "
@@ -1447,11 +1470,11 @@ msgstr ""
 "**解析のないポジション** — 解析を一つも持たないポジション。アクションは、後述の gammonNet 解析です。gammonNet "
 "が評価を拒否するポジション（ダンス、マッチ表の範囲外のスコア）はこの件数に残るため、件数が必ずしもゼロになるとは限りません。"
 
-#: ../../source/manuel_interface.rst:730
+#: ../../source/manuel_interface.rst:744
 msgid "**Analyses gammonNet périmées** — décrites plus bas."
 msgstr "**古い gammonNet 解析** — 後述します。"
 
-#: ../../source/manuel_interface.rst:731
+#: ../../source/manuel_interface.rst:745
 msgid ""
 "**Matchs sans statistiques** — les matchs dont les statistiques ne sont "
 "pas encore calculées ; l'action les calcule tous. Une base ouverte en "
@@ -1467,7 +1490,7 @@ msgstr ""
 "**統計のないマッチ**\\ — "
 "統計がまだ計算されていないマッチです。アクションはそれらをすべて計算します。書き込み可能で開いたデータベースにそれがあると、バックグラウンドでバッチごとに自動で計算します。ステータスバーにこの行の進捗とキャンセルボタンが表示され、トーナメントのバッジと統計パネルのプレイヤータブは計算の終了を待ち、アプリケーションの他の部分はそのまま使えます。別のデータベースを開くと停止します。読み取り専用またはコマンドラインでは、統計の最初の読み込みがそれらを計算し、大きなデータベースでは時間がかかることがあります。そのとき統計パネルにこの件数が表示され、このタブを開きます。"
 
-#: ../../source/manuel_interface.rst:741
+#: ../../source/manuel_interface.rst:755
 msgid ""
 "**Colonnes d'analyse** — les colonnes que la recherche et les "
 "statistiques interrogent sont une projection des analyses stockées, "
@@ -1477,29 +1500,29 @@ msgstr ""
 "**解析列** — "
 "検索と統計が参照する列は、保存された解析からの射影で、保存された解析自体は手つかずのままです。アクションは何も再インポートせずに、それらを再計算します。"
 
-#: ../../source/manuel_interface.rst:744
+#: ../../source/manuel_interface.rst:758
 msgid ""
 "**Erreurs des coups joués** — note les coups joués qui n'ont pas encore "
 "d'erreur."
 msgstr "**指し手のエラー** — まだエラーのない指し手を採点します。"
 
-#: ../../source/manuel_interface.rst:746
+#: ../../source/manuel_interface.rst:760
 msgid ""
 "**Analyses à l'ancien format** — réécrit au format binaire les analyses "
 "qu'une version antérieure stockait en JSON."
 msgstr "**旧形式の解析** — 以前のバージョンが JSON で保存していた解析を、バイナリ形式に書き直します。"
 
-#: ../../source/manuel_interface.rst:748
+#: ../../source/manuel_interface.rst:762
 msgid "**Corbeille** — le nombre d'entrées de la corbeille, qui l'ouvre."
 msgstr "**ゴミ箱** — ゴミ箱のエントリ数で、クリックするとゴミ箱が開きます。"
 
-#: ../../source/manuel_interface.rst:749
+#: ../../source/manuel_interface.rst:763
 msgid ""
 "**Espace récupérable** — l'espace libre du fichier, que le compactage "
 "décrit plus haut rend au disque."
 msgstr "**回収可能な容量** — ファイルの空き容量で、前述の圧縮によってディスクに戻されます。"
 
-#: ../../source/manuel_interface.rst:752
+#: ../../source/manuel_interface.rst:766
 msgid ""
 "Un compte coûteux (il lit une table entière) attend le bouton "
 "**Compter**. Un compte de positions ouvre ces positions dans la liste ; "
@@ -1518,7 +1541,7 @@ msgstr ""
 "解析、ロールアウト、または別のメンテナンス操作が実行中だと次の操作は拒否され、データベースを占有している操作の名前が示されます。読み取り専用で開いたデータベースでは、アクションは無効になります。同じ操作はコマンドライン（``blunderdb"
 " maintenance``）にもあります。"
 
-#: ../../source/manuel_interface.rst:763
+#: ../../source/manuel_interface.rst:777
 msgid ""
 "L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 "
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-"
@@ -1533,19 +1556,19 @@ msgstr ""
 "evaluator-s-edge.md>`__ "
 "を参照）。ここでは2つの探索深さを設定でき、それぞれ名前を持ち別々に保存されます——一方を下げても他方は決して変わりません："
 
-#: ../../source/manuel_interface.rst:767
+#: ../../source/manuel_interface.rst:781
 msgid ""
 "**Profondeur d'affichage** — le confort interactif pendant l'édition du "
 "plateau ; jamais écrite en base."
 msgstr "**表示深度**\\ ——ボード編集時の対話的な快適さのための設定；データベースには決して書き込まれません。"
 
-#: ../../source/manuel_interface.rst:769
+#: ../../source/manuel_interface.rst:783
 msgid ""
 "**Profondeur d'analyse** — ce que le lot d'analyse après import écrit "
 "dans l'Analyse d'une position."
 msgstr "**解析深度**\\ ——インポート後の分析バッチがポジションの「分析」として書き込む深さです。"
 
-#: ../../source/manuel_interface.rst:772
+#: ../../source/manuel_interface.rst:786
 msgid ""
 "Les deux valent par défaut **2-ply**, la configuration canonique. Le menu"
 " marque d'un ⚠ les profondeurs 3-ply et 4-ply, dont le coût par position "
@@ -1570,7 +1593,7 @@ msgstr ""
 " gammonNet 解析を起動します。\\ *メンテナンス*\\ タブの\\ **解析のないポジション**\\ "
 "の行は、同じ追いつき解析を手動で再実行します。この機能の追加前に作られたライブラリに便利です。"
 
-#: ../../source/manuel_interface.rst:786
+#: ../../source/manuel_interface.rst:800
 msgid ""
 "Une prise ou un refus est évalué par gammonNet sur la décision du "
 "doubleur, avant le double. Un verdict gammonNet écrit sur une telle "
@@ -1586,7 +1609,7 @@ msgstr ""
 "の判定は、受け手のリダブルを評価していました。その判定は、ライブラリを開くとき、またはそれを持つデータベースをインポートするときに削除されます。テイクまたはパスは再び解析のないポジションとなり、\\"
 " *メンテナンス*\\ タブの\\ *解析のないポジション*\\ の行（またはインポート後の自動解析）が再評価するまで、統計には含まれません。"
 
-#: ../../source/manuel_interface.rst:794
+#: ../../source/manuel_interface.rst:808
 msgid ""
 "La ligne **Analyses gammonNet périmées** de l'onglet *Maintenance* couvre"
 " le cas inverse : une position déjà analysée par gammonNet, mais dont "
@@ -1610,7 +1633,7 @@ msgstr ""
 "の保護は無条件のままです。古いポジションの件数はデータベース内のすべての gammonNet 解析を読むため、\\ **数える**\\ "
 "ボタンを待ちます。一括処理は、開始時に独自のリストを再計算します。"
 
-#: ../../source/manuel_interface.rst:806
+#: ../../source/manuel_interface.rst:820
 msgid ""
 "Les deux lots sont **bornés, visibles et annulables, jamais un démon "
 "silencieux** : leur profondeur, leur progression (``positions analysées /"
@@ -1635,7 +1658,7 @@ msgstr ""
 "**失敗した**\\ "
 "か（次回の実行で変更されずに再試行されます）。どちらかの実行中にアプリケーションを閉じても何も失われません：解析されたポジションはその都度書き込まれ、次の実行は解析が止まった正確にその場所から再開します——ジャーナルを持つ必要は一切ありません。キャンセルでも終了でも、計算中のポジションも中断され、その分析は残りません。"
 
-#: ../../source/manuel_interface.rst:821
+#: ../../source/manuel_interface.rst:835
 msgid ""
 "Un seul travail écrit la bibliothèque à la fois : un lot gammonNet, un "
 "rollout stocké ou une opération de maintenance. Un lot ou une opération "
@@ -1648,7 +1671,7 @@ msgstr ""
 "ライブラリに書き込む処理は一度に一つだけです：gammonNet の一括解析、保存するロールアウト、メンテナンス処理。\\ *メンテナンス*\\ "
 "タブから始めた一括解析や処理は、別の処理が実行中なら拒否され、ステータスバーがその処理を示します。インポート、書き起こし、デュエルが始める一括解析は逆にその終了を待ち、開始するまでステータスバーに「待機中」と表示されます。"
 
-#: ../../source/manuel_interface.rst:830
+#: ../../source/manuel_interface.rst:844
 msgid ""
 "Le même onglet porte le **réglage des rollouts** lancés depuis le panneau"
 " Analyse (voir :ref:`rollouts`), conservé d'une session à l'autre : "
@@ -1663,7 +1686,7 @@ msgstr ""
 "(1296 ゲーム、11 ハーフムーブで打ち切り)、または\\ **自由**\\ です。自由では、打ち切り、最小・最大ゲーム数(36 "
 "の倍数)、JSD の上限、深さ(ply)、候補数、シード、プロセス数のすべてを編集できます。"
 
-#: ../../source/manuel_interface.rst:837
+#: ../../source/manuel_interface.rst:851
 msgid ""
 "**Table d'équité de match de la base.** Au bas de l'onglet, la liste "
 "**Table d'équité de match (MET) de la base** choisit la table avec "
@@ -1695,7 +1718,7 @@ msgstr ""
 "で計算されたものとみなされます。現在のテーブルと異なるテーブルで計算されたマッチスコアの解析は、解析パネルで\\ **異なる MET**\\ "
 "と表示され、統計（エラー平均、PR、ランキング、直接対決）から除外されます。マネーゲームの解析が除外されることはありません。テーブルを変更しても解析は書き換えられず、比較が対象とするものだけが変わります。"
 
-#: ../../source/manuel_interface.rst:856
+#: ../../source/manuel_interface.rst:870
 msgid ""
 "L'évaluation en direct du panneau et la grille de videau sont valorisées "
 "avec la table de la base, comme les analyses qu'elle enregistre. Une "
@@ -1708,7 +1731,7 @@ msgstr ""
 "パネルのライブ評価とキューブマトリクスは、データベースが保存する解析と同じく、データベースのテーブルで評価されます。テーブルはそれを参照する解析とともに移動します。データベースのエクスポートはテーブルを含め、データベースのインポートは受け取り側のデータベースにテーブルを追加します。重複はせず（既にあるテーブルは値で識別されます）、現在のテーブルにもしません。別のエンジン（XG、GNUbg）の解析で置き換えられた"
 " gammonNet の解析は、再び Kazaross-XG2 で計算されたものとみなされます。"
 
-#: ../../source/manuel_interface.rst:864
+#: ../../source/manuel_interface.rst:878
 msgid ""
 "**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un "
 "match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a"
@@ -1726,7 +1749,7 @@ msgstr ""
 "の順位づけと比較され、その差が PR、エラー率、最悪の判断、そのほかすべての指標に、XG "
 "が解析したマッチとまったく同じように反映されます。この比較は何も作り出しません。指された手はマッチの手のテーブル、すなわち取り込み時に書かれたものから来ます。ファイルが解析を持っていたかどうかは関係ありません。"
 
-#: ../../source/manuel_interface.rst:874
+#: ../../source/manuel_interface.rst:888
 msgid ""
 "Une base analysée avec une version antérieure à celle-ci n'a pas besoin "
 "d'être réévaluée : ``blunderdb repair`` recalcule les colonnes à partir "
@@ -1736,7 +1759,7 @@ msgstr ""
 "本バージョンより前に解析したデータベースを評価し直す必要はありません。``blunderdb repair`` "
 "が既存の解析と手から列を計算し直し、それらのマッチに PR を取り戻します（:ref:`repair <cli_repair>` を参照）。"
 
-#: ../../source/manuel_interface.rst:879
+#: ../../source/manuel_interface.rst:893
 msgid ""
 "Une réserve honnête : une position est identifiée par sa structure, donc "
 "une position rencontrée deux fois — bien jouée une fois, mal l'autre — ne"
@@ -1747,11 +1770,11 @@ msgstr ""
 "正直な留保をひとつ。局面はその構造で識別されるため、二度現れた局面は——一方はうまく、他方はまずく指されていても——最初に記録された出現の差だけを持ちます。これはこの計算に固有のことではありません。XG"
 " のライブラリもまったく同じ形をしています。"
 
-#: ../../source/manuel_interface.rst:887
+#: ../../source/manuel_interface.rst:901
 msgid "Dossier surveillé"
 msgstr "監視フォルダ"
 
-#: ../../source/manuel_interface.rst:889
+#: ../../source/manuel_interface.rst:903
 msgid ""
 "L'onglet **Dossier surveillé** demande à blunderDB de regarder un dossier"
 " pendant qu'il tourne et d'importer chaque fichier de match qui y "
@@ -1762,7 +1785,7 @@ msgstr ""
 "マッチファイルを取り込むよう指示します。eXtreme Gammon でセッションを打ち、blunderDB "
 "に戻ると、マッチがすでにそこにあります。"
 
-#: ../../source/manuel_interface.rst:894
+#: ../../source/manuel_interface.rst:908
 msgid ""
 "Rien n'est deviné. Tant qu'aucun dossier n'est désigné, il n'y a pas de "
 "surveillance : blunderDB ne se met pas à lire un répertoire parce qu'il a"
@@ -1775,11 +1798,11 @@ msgstr ""
 "があなたのマッチの置き場所を推測してディレクトリを読み始めることはありません。\\ **候補を出す**\\ "
 "ボタンはこのマシンのよくある場所を探し、実際に存在する場合にのみ候補を示します。見つからなければそう伝え、フォルダの指定はあなたに委ねられます。"
 
-#: ../../source/manuel_interface.rst:900
+#: ../../source/manuel_interface.rst:914
 msgid "Trois points méritent d'être connus avant d'activer la case :"
 msgstr "チェックを入れる前に知っておく価値のあることが三つあります。"
 
-#: ../../source/manuel_interface.rst:902
+#: ../../source/manuel_interface.rst:916
 msgid ""
 "**Seuls les fichiers qui apparaissent sont importés.** Ce que le dossier "
 "contient déjà au moment où la surveillance démarre est enregistré comme "
@@ -1791,7 +1814,7 @@ msgstr ""
 "**取り込まれるのは現れたファイルだけです。**\\ "
 "監視を始めた時点でフォルダにあるものは既知として記録され、そのまま残されます。四年分のマッチに監視を向けたからといって、それらをすべて取り込んではいけません。すでにあるものを取り込むには、そのためにあるフォルダの取り込みを使ってください。二つはとてもよく噛み合います。先に取り込み、次に監視です。"
 
-#: ../../source/manuel_interface.rst:908
+#: ../../source/manuel_interface.rst:922
 msgid ""
 "**Un fichier n'est importé qu'une fois sa taille stable.** Un match qu'un"
 " autre programme est en train d'écrire grossit d'un coup d'œil à l'autre "
@@ -1803,7 +1826,7 @@ msgstr ""
 "他のプログラムが書いている途中のマッチは、見るたびに大きくなります。書きかけで取り込めば、誰にも手の打ちようがない構文解析エラーになります。そこで"
 " blunderDB は、同じファイルを二度、変化なしと確認するまで待ちます。"
 
-#: ../../source/manuel_interface.rst:913
+#: ../../source/manuel_interface.rst:927
 msgid ""
 "**L'import est silencieux.** Vous étiez en train d'étudier une position "
 "quand vos matchs sont arrivés : vous reprendre l'écran serait le pire "
@@ -1819,7 +1842,7 @@ msgstr ""
 "**取り込みは静かに行われます。**\\ "
 "マッチが届いたとき、あなたは局面を検討している最中でした。そこで画面を奪うのは最悪のタイミングです。モード、有効な検索、タブ、表示中の局面は動きません。局面の一覧は再読み込みされず、新しいマッチは次の再読み込みで表示されます。取り込みはウィンドウを出さずに行われ、ステータスバーに、取り込んだ数・（重複として）飛ばした数・失敗した数を示す帯が出ます。望めば完全な報告を開くボタンもあります。ほかはすべて手動の取り込みと同じです。重複の検出も、取り込みのロットも、有効なら自動解析も同じです。"
 
-#: ../../source/manuel_interface.rst:924
+#: ../../source/manuel_interface.rst:938
 msgid ""
 "L'intervalle par défaut est de dix secondes ; le plancher est de deux. Le"
 " dossier n'est pas parcouru récursivement : un dossier surveillé est "
@@ -1830,7 +1853,7 @@ msgstr ""
 "既定の間隔は 10 秒、下限は 2 "
 "秒です。フォルダは再帰的にはたどりません。監視フォルダは道具がマッチを置く場所であって、探索すべき木ではないからです。アンマウントされたネットワーク共有は監視を止めず、復帰したときにその中身を新規と見せることもありません。"
 
-#: ../../source/manuel_interface.rst:930
+#: ../../source/manuel_interface.rst:944
 msgid ""
 "La même surveillance existe en ligne de commande, avec ``blunderdb import"
 " --type batch --dir <dossier> --watch`` (voir :ref:`cli`) : c'est la "
@@ -1839,11 +1862,11 @@ msgstr ""
 "同じ監視はコマンドラインにもあり、``blunderdb import --type batch --dir <フォルダ> --watch`` "
 "で使えます（:ref:`cli` を参照）。サーバや定期実行、スクリプトが使えるのはこの形です。"
 
-#: ../../source/manuel_interface.rst:938
+#: ../../source/manuel_interface.rst:952
 msgid "Synchroniser deux machines"
 msgstr "2台のマシンを同期する"
 
-#: ../../source/manuel_interface.rst:940
+#: ../../source/manuel_interface.rst:954
 msgid ""
 "Copier sa base ``.db`` d'une machine à l'autre, ou la ranger dans un "
 "dossier synchronisé (Syncthing, Dropbox…), finit par l'abîmer : SQLite "
@@ -1859,7 +1882,7 @@ msgstr ""
 "は代わりに、もう一方のマシンが\\ **監視**\\ するフォルダーに置かれる\\ **増分エクスポート**\\ "
 "で二つのライブラリを同期します。転送手段は自由です（Syncthing、USB メモリ、メールなど）。サーバーもアカウントも不要です。"
 
-#: ../../source/manuel_interface.rst:948
+#: ../../source/manuel_interface.rst:962
 msgid ""
 "Sur la machine A, dans la fenêtre d'export, choisissez *Toute la "
 "bibliothèque*, cochez *Seulement ce qui est nouveau depuis le dernier "
@@ -1873,7 +1896,7 @@ msgstr ""
 "``sync-<machine>-<date>.db``\\ "
 "ファイルが書き込まれます。これには同じフォルダーへの前回のエクスポート以降にライブラリへ入ったものだけが含まれ、最初のファイルにはすべてが含まれます。"
 
-#: ../../source/manuel_interface.rst:954
+#: ../../source/manuel_interface.rst:968
 msgid ""
 "Sur la machine B, faites de ce dossier le :ref:`dossier surveillé "
 "<dossier_surveille>`. Chaque fichier ``.db`` qui y apparaît est fusionné "
@@ -1885,15 +1908,15 @@ msgstr ""
 "``.db``\\ "
 "ファイルはすべて、データベースのインポートと同じようにプレビューなしでマージされます。既知のポジションは重複せず、既知のマッチは認識され、コレクションとレッスンは名前でマージされます。"
 
-#: ../../source/manuel_interface.rst:959
+#: ../../source/manuel_interface.rst:973
 msgid "Faites de même dans l'autre sens, avec un second dossier."
 msgstr "反対方向も、二つ目のフォルダーで同じようにします。"
 
-#: ../../source/manuel_interface.rst:961
+#: ../../source/manuel_interface.rst:975
 msgid "Ce qu'il faut savoir :"
 msgstr "知っておくべきこと："
 
-#: ../../source/manuel_interface.rst:963
+#: ../../source/manuel_interface.rst:977
 msgid ""
 "**Le repère « dernière synchronisation » est chez celui qui exporte**, un"
 " par dossier de destination, et n'avance que lorsque le fichier est "
@@ -1901,7 +1924,7 @@ msgid ""
 "laisse le repère en place : le suivant emporte les mêmes lignes."
 msgstr "**「最後の同期」の目印はエクスポートする側にあり**、書き出し先フォルダーごとに一つで、ファイルが完成したときだけ進みます。受け取る側のマシンは何も記録しません。エクスポートが失敗すると目印はそのままで、次のエクスポートが同じ行を運びます。"
 
-#: ../../source/manuel_interface.rst:967
+#: ../../source/manuel_interface.rst:981
 msgid ""
 "**La synchronisation se fait par ajout seul.** Une suppression ne se "
 "propage pas : supprimer un match sur A ne le supprime pas sur B. Une "
@@ -1920,7 +1943,7 @@ msgstr ""
 "では削除されません。その場での変更も同様です。書き直したコメント、名前を変えたマッチ、送信済みのポジションでやり直した解析などです。送られるのは、前回のエクスポート以降に入ったポジション、マッチ、トーナメント、コレクション、レッスン、コメントです。コレクションはポジションが追加されたときにも、ポジションはコメントが追加されたときにも再び送られます。書き直したコメントは再び送られません。受け取る側のマシンは既に持っているテキストを置き換えないためです。訂正を伝えるには、新しいコメントとして追加してください。保存済みフィルターと"
 " Anki デッキは対象外です。チェックボックスなしの\\ *ライブラリ全体*\\ のエクスポートにはこれらが含まれます。"
 
-#: ../../source/manuel_interface.rst:978
+#: ../../source/manuel_interface.rst:992
 msgid ""
 "**Ce qu'une machine a reçu repart une fois vers l'autre**, puisque c'est "
 "nouveau dans sa bibliothèque ; l'autre le reconnaît sans rien ajouter, et"
@@ -1929,7 +1952,7 @@ msgstr ""
 "**マシンが受け取ったものは、一度だけ相手へ戻ります。**\\ "
 "そのマシンのライブラリでは新しいものだからです。相手は何も追加せずにそれを認識し、次の交換は空になります。"
 
-#: ../../source/manuel_interface.rst:981
+#: ../../source/manuel_interface.rst:995
 msgid ""
 "**Un fichier arrivé pendant que blunderDB était fermé n'est pas perdu** :"
 " au démarrage de la surveillance, chaque ``.db`` déjà présent dans le "
@@ -1943,7 +1966,7 @@ msgstr ""
 "がマージされます（マッチファイルとは異なります）。受け取る側のマシンは読み込んだものを記録しないため、起動のたびにフォルダーにまだ残っているすべてのファイルを再びマージします。何も追加されませんが、読み直す時間がかかります。この起動を速く保つため、受信済みの\\"
 " ``sync-…``\\ ファイルは時々削除してください。"
 
-#: ../../source/manuel_interface.rst:988
+#: ../../source/manuel_interface.rst:1002
 msgid ""
 "**Un export incrémental n'écrase jamais un fichier.** Le fichier "
 "précédent porte peut-être des lignes que l'autre machine n'a pas encore "
@@ -1953,20 +1976,20 @@ msgstr ""
 "**増分エクスポートはファイルを上書きしません。**\\ "
 "前のファイルには、相手のマシンがまだ受け取っていない行が入っているかもしれません。既に存在するファイル名へのエクスポートは拒否されます。フォルダーを指定すれば、エクスポートのたびに新しい名前が付きます。"
 
-#: ../../source/manuel_interface.rst:992
+#: ../../source/manuel_interface.rst:1006
 msgid ""
 "**Un fichier réécrit sous un nom déjà vu est fusionné de nouveau** : la "
 "surveillance reconnaît un fichier à son nom, sa taille et sa date de "
 "modification."
 msgstr "**既に見た名前で書き直されたファイルは再び統合されます**\\ 。監視はファイルを名前、サイズ、更新日時で識別します。"
 
-#: ../../source/manuel_interface.rst:995
+#: ../../source/manuel_interface.rst:1009
 msgid ""
 "**La bibliothèque ouverte n'est jamais fusionnée dans elle-même** : si "
 "elle se trouve dans le dossier surveillé, la surveillance la passe."
 msgstr "**開いているライブラリが自分自身に統合されることはありません**\\ ：監視フォルダーの中にあっても、監視はそれを飛ばします。"
 
-#: ../../source/manuel_interface.rst:997
+#: ../../source/manuel_interface.rst:1011
 msgid ""
 "**Un export qui a dû écarter des lignes** (signalées dans le journal) ne "
 "fait pas avancer le repère : le suivant les retente, avec tout ce qui les"
@@ -1975,7 +1998,7 @@ msgstr ""
 "**行を除外せざるを得なかったエクスポート**\\ "
 "（ログに記録されます）は、目印を進めません。次のエクスポートが、それらとその後に続くすべてを再試行します。"
 
-#: ../../source/manuel_interface.rst:999
+#: ../../source/manuel_interface.rst:1013
 msgid ""
 "**Un export n'est jamais vu à moitié écrit** : il est écrit sous un nom "
 "caché puis renommé d'un coup. Un fichier protégé par mot de passe "
@@ -1986,7 +2009,7 @@ msgstr ""
 "隠し名で書き込まれ、その後一度に名前が変更されます。パスワード保護されたファイル（\\ ``.dbx``\\ "
 "）は、パスワードを尋ねられない監視では取り込まれません。"
 
-#: ../../source/manuel_interface.rst:1003
+#: ../../source/manuel_interface.rst:1017
 msgid ""
 "En ligne de commande, ``blunderdb export --type database --incremental "
 "--file <dossier>`` d'un côté et ``blunderdb import --type batch --dir "
@@ -1999,17 +2022,17 @@ msgstr ""
 "--watch``\\ を実行します（\\ :ref:`cli`\\ を参照）。サーバーは\\ ``/v1/exports.sqlite``\\ "
 "で\\ ``\"incremental\": true``\\ を受け付けます（\\ :ref:`headless`\\ を参照）。"
 
-#: ../../source/manuel_interface.rst:1011
+#: ../../source/manuel_interface.rst:1025
 msgid "Assistant et MCP"
 msgstr "アシスタントと MCP"
 
-#: ../../source/manuel_interface.rst:1013
+#: ../../source/manuel_interface.rst:1027
 msgid ""
 "L'onglet **Assistant et MCP** règle deux choses, toutes deux désactivées "
 "par défaut."
 msgstr "**アシスタントと MCP** タブでは二つの項目を設定します。どちらも初期状態では無効です。"
 
-#: ../../source/manuel_interface.rst:1016
+#: ../../source/manuel_interface.rst:1030
 msgid ""
 "Le **serveur MCP local** offre les outils de blunderDB (recherche, "
 "lecture d'une position et de son analyse, statistiques d'un joueur, "
@@ -2033,7 +2056,7 @@ msgstr ""
 "カードの評価、ポジションの分析の隣へのロールアウトの保存ができるようになります。何も消去されません。ウィンドウが開いていないときは、\\ "
 "``blunderdb mcp`` が同じツールを提供します（\\ :ref:`cli` を参照）。"
 
-#: ../../source/manuel_interface.rst:1028
+#: ../../source/manuel_interface.rst:1042
 msgid ""
 "L'**assistant interne** est un client de ces mêmes outils. Aucun modèle "
 "n'est embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama"
@@ -2054,7 +2077,7 @@ msgstr ""
 " キーはシステムのキーリングに保存され、データベースにも設定ファイルにも保存されません。Ollama の既定のモデル ``qwen2.5:7b``"
 " は出発点であって、推奨ではありません。ソースコードに同梱の計測用ベンチのスコアがない限り、モデルの推奨は行われません。"
 
-#: ../../source/manuel_interface.rst:1040
+#: ../../source/manuel_interface.rst:1054
 msgid ""
 "Une fois activé, l'assistant est un sous-onglet **Assistant** du panneau "
 "Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la "
@@ -2074,7 +2097,7 @@ msgstr ""
 "**アシスタントに変更の提案を許可する（それぞれ確認あり）**\\ にチェックを入れた場合だけです。これはローカル MCP "
 "サーバーの書き込みとは別の設定です。アシスタントが準備した変更はそれぞれ表示され、\\ **確定**\\ の後にのみ実行されます。"
 
-#: ../../source/manuel_interface.rst:1050
+#: ../../source/manuel_interface.rst:1064
 msgid ""
 "La fenêtre de configuration regroupe également des réglages d'affichage "
 "de l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir"
@@ -2093,11 +2116,11 @@ msgstr ""
 "メニューでは、パネル（検索、マッチ、分析）をボードに対してどこに配置するかを決定します： *下*\\ 、\\ *横* または *自動*\\ "
 "（自動の場合、横長の画面では利用可能なスペースをより有効に活用するため横が選択されます）。他の設定と同様に、これらの選択はセッションをまたいで保持されます。"
 
-#: ../../source/manuel_interface.rst:1063
+#: ../../source/manuel_interface.rst:1077
 msgid "Visites guidées et base d'exemple"
 msgstr "ガイドツアーとサンプルデータベース"
 
-#: ../../source/manuel_interface.rst:1065
+#: ../../source/manuel_interface.rst:1079
 msgid ""
 "Pour faciliter la prise en main, blunderDB propose des **visites "
 "guidées** de l'interface. Le catalogue des visites s'ouvre depuis la "
@@ -2116,7 +2139,7 @@ msgstr ""
 " パネル、Anki "
 "復習、統計に特化したツアーです。各ツアーは、関連するインターフェースの要素を一手順ずつ強調表示し、その途中で話題のパネルを開き、いつでも再生できます。初回起動時には、全体ツアーが自動的に案内されます。"
 
-#: ../../source/manuel_interface.rst:1075
+#: ../../source/manuel_interface.rst:1089
 msgid ""
 "La commande ``demo`` charge une **base d'exemple** permettant de "
 "découvrir les fonctionnalités de l'outil sans importer ses propres "
@@ -2133,15 +2156,15 @@ msgstr ""
 "）、復習履歴付きの Anki "
 "デッキです。プレイヤー、トーナメント、会場は架空のものです。データベースが開かれていない場合、ガイドツアーはこのデータベースを利用します。"
 
-#: ../../source/manuel_interface.rst:1086
+#: ../../source/manuel_interface.rst:1100
 msgid "Navigation dans les positions"
 msgstr "ポジションのナビゲーション"
 
-#: ../../source/manuel_interface.rst:1088
+#: ../../source/manuel_interface.rst:1102
 msgid "Par défaut, blunderDB permet de:"
 msgstr "既定では、blunderDB では次のことができます："
 
-#: ../../source/manuel_interface.rst:1090
+#: ../../source/manuel_interface.rst:1104
 msgid ""
 "faire défiler les différentes positions de la bibliothèque courante — qui"
 " n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des "
@@ -2153,15 +2176,15 @@ msgstr ""
 "は識別子のリストだけを保持し、表示中のポジションの前後 50 "
 "件ずつの窓でポジションを読み込みます。そのため、数万件のポジションを含むデータベースでも小さなものと同じ速さで開きます。"
 
-#: ../../source/manuel_interface.rst:1096
+#: ../../source/manuel_interface.rst:1110
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "ポジションに関連する分析情報を表示する、"
 
-#: ../../source/manuel_interface.rst:1098
+#: ../../source/manuel_interface.rst:1112
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "ポジションのコメントを表示、追加、編集する。"
 
-#: ../../source/manuel_interface.rst:1100
+#: ../../source/manuel_interface.rst:1114
 msgid ""
 "Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre "
 "où saisir directement l'indice d'une position pour y sauter, sans avoir à"
@@ -2172,16 +2195,16 @@ msgstr ""
 "ボタンを押すと、局面の番号を直接入力してそこへ跳べるウィンドウが開きます。スクロールは不要です。コマンドラインの ``[number]`` "
 "コマンドに相当します（:ref:`cmd_positions` を参照）。"
 
-#: ../../source/manuel_interface.rst:1105
-#: ../../source/manuel_interface.rst:1118
+#: ../../source/manuel_interface.rst:1119
+#: ../../source/manuel_interface.rst:1132
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "利用可能なショートカットについては :ref:`raccourcis` を参照してください。"
 
-#: ../../source/manuel_interface.rst:1110
+#: ../../source/manuel_interface.rst:1124
 msgid "Édition de positions"
 msgstr "ポジションの編集"
 
-#: ../../source/manuel_interface.rst:1112
+#: ../../source/manuel_interface.rst:1126
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -2193,11 +2216,11 @@ msgstr ""
 "キーを押すと検索パネルが開き、ボード上のポジションを編集して、データベースに追加したり、検索するポジションの構造を定義したりできます。チェッカーの配置、キューブ、スコア、手番はマウスで変更できます（:ref:`guide_edit_position`"
 " を参照）。"
 
-#: ../../source/manuel_interface.rst:1123
+#: ../../source/manuel_interface.rst:1137
 msgid "La ligne de commande"
 msgstr "コマンドライン"
 
-#: ../../source/manuel_interface.rst:1125
+#: ../../source/manuel_interface.rst:1139
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -2212,14 +2235,14 @@ msgstr ""
 "のすべての機能を実行できます。データベースに対する一般的な操作、ポジションのナビゲーション、分析やコメントの表示、フィルターに基づくポジションの検索などです。インターフェースにある程度慣れたら、特にポジション検索機能において"
 " blunderDB を強力かつ快適に使用できるコマンドラインを徐々に使うことをお勧めします。"
 
-#: ../../source/manuel_interface.rst:1134
+#: ../../source/manuel_interface.rst:1148
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
 " *ENTREE*."
 msgstr "コマンドラインを開くには、\\ *スペース* キーを押します。リクエストを送信してコマンドラインを閉じるには、\\ *Enter* キーを押します。"
 
-#: ../../source/manuel_interface.rst:1138
+#: ../../source/manuel_interface.rst:1152
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -2229,17 +2252,17 @@ msgstr ""
 "blunderDB "
 "は、ユーザーが送信したリクエストが有効である限りそれを実行し、必要に応じてデータベースの状態を即座に変更します。ユーザーによる明示的な保存操作はありません。"
 
-#: ../../source/manuel_interface.rst:1143
+#: ../../source/manuel_interface.rst:1157
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de "
 "commandes disponible en ligne de commande."
 msgstr "コマンドラインで利用可能なコマンドの一覧については :ref:`コマンド一覧 <cmd_mode>` を参照してください。"
 
-#: ../../source/manuel_interface.rst:1149
+#: ../../source/manuel_interface.rst:1163
 msgid "La palette de commandes"
 msgstr "コマンドパレット"
 
-#: ../../source/manuel_interface.rst:1151
+#: ../../source/manuel_interface.rst:1165
 msgid ""
 "La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce "
 "que l'on ne sait plus où chercher : une commande de la ligne de commande,"
@@ -2251,7 +2274,7 @@ msgstr ""
 "コマンドパレット（\\ *CTRL-SHIFT-P*\\ "
 "）は、どこで探せばよいか分からなくなったものを、おおよその名前で見つけます。コマンドラインのコマンド、タブ、ライブラリのフィルター、マッチが対象です。入力した文字は順番どおりに現れればよく、隣り合っている必要はありません。大文字・小文字やアクセントも区別しません。「キュマト」でキューブマトリクスが、「lyon」でリヨンの大会のマッチが見つかります。"
 
-#: ../../source/manuel_interface.rst:1158
+#: ../../source/manuel_interface.rst:1172
 msgid ""
 "Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se"
 " lance comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne "
@@ -2263,7 +2286,7 @@ msgstr ""
 " ``ss`` "
 "はフィルターを書き込めるようにコマンドラインを開きます。フィルターはライブラリでダブルクリックしたときと同じように実行され、マッチはマッチパネルでダブルクリックしたときと同じように開きます。"
 
-#: ../../source/manuel_interface.rst:1163
+#: ../../source/manuel_interface.rst:1177
 msgid ""
 "Quand une Direction est ouverte, la palette y ajoute le tournoi : "
 "joueurs, tables, matchs en cours et épreuves (voir :ref:`la recherche "

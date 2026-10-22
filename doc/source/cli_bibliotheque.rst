@@ -613,7 +613,7 @@ nombre total (``matchesTotal`` et ``playsTruncated`` en JSON).
 
 .. code-block:: bash
 
-   ./blunderdb elsewhere --db <chemin> --other <fichier> [--other <fichier>...] (--position N | --xgid X | --zobrist H) [options]
+   ./blunderdb elsewhere --db <chemin> --other <fichier> [--other <fichier>...] (--position N | --xgid X | --zobrist H | --match N | --tournament N | --collection N | --lesson N) [options]
 
 **Options:**
 
@@ -623,20 +623,27 @@ nombre total (``matchesTotal`` et ``playsTruncated`` en JSON).
 * ``--xgid X`` — La position, par son XGID.
 * ``--zobrist H`` — La position, par son hachage (décimal) ; ses voisines ne
   sont alors cherchées que dans les bases qui la détiennent.
+* ``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — Au
+  lieu d'une position, un match, un tournoi, une collection ou une leçon de
+  ``--db`` : la commande dit si chaque autre base le contient, sous la clé où
+  une copie le fusionnerait (l'empreinte du match, même importé d'un autre
+  format ; le nom sinon), avec son identifiant là-bas et ce qu'il contient
+  (parties, matchs, positions ou étapes).
 * ``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,
   50 au plus).
 * ``--max-distance D`` — Écarte les voisines à plus de D pips de pions
   déplacés (0 : sans plafond).
 * ``--format`` — ``text`` (défaut) ou ``json``.
 
-Le démon sert la même lecture à travers les tenants : ``across.positionElsewhere``
-(voir :ref:`headless`).
+Le démon sert les mêmes lectures à travers les tenants : ``across.positionElsewhere``
+et ``across.objectElsewhere`` (voir :ref:`headless`).
 
 **Exemples:**
 
 .. code-block:: bash
 
    ./blunderdb elsewhere --db moi.db --other club.db --position 412
+   ./blunderdb elsewhere --db moi.db --other club.db --tournament 3
    ./blunderdb elsewhere --db moi.db --other a.db --other b.db --xgid "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"
    ./blunderdb elsewhere --db moi.db --other club.db --zobrist 1234567890 --format json
 

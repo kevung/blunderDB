@@ -3345,7 +3345,7 @@ Examples:
 ### `blunderdb elsewhere`
 
 ```
-Usage: blunderdb elsewhere --db <file> --other <file> [--other <file>...] (--position <id> | --xgid <XGID> | --zobrist <hash>) [options]
+Usage: blunderdb elsewhere --db <file> --other <file> [--other <file>...] (--position <id> | --xgid <XGID> | --zobrist <hash> | --match <id> | --tournament <id> | --collection <id> | --lesson <id>) [options]
 
 What other databases know of one board: their analysis, their comments, the
 matches where it was played and how, and their boards nearest to it. A play's
@@ -3356,11 +3356,23 @@ read-only: nothing is written to any of them, and a file in a read-only folder
 is read as it stands. A file that cannot be read is reported and skipped; the
 others answer, and the command fails only when none could be read.
 
+With --match, --tournament, --collection or --lesson, it says instead whether
+each other database holds that object of --db, under the key a copy merges
+it on: a match by its fingerprint (the same match imported from another
+format included), a tournament, a collection or a lesson by its name; and
+what the one it holds contains (games, matches, positions, steps).
+
 Options:
+  -collection int
+    	Instead of a board: a collection id of --db, found elsewhere by its name
   -db string
     	Database the board is judged from: its thresholds and match equity table (required)
   -format string
     	Output format: text or json (default "text")
+  -lesson int
+    	Instead of a board: a lesson id of --db, found elsewhere by its name
+  -match int
+    	Instead of a board: a match id of --db, found elsewhere by its fingerprint
   -max-distance int
     	Leave out neighbours farther than this many checker-pips (0: no ceiling)
   -neighbours int
@@ -3369,6 +3381,8 @@ Options:
     	Another database file to look in (repeatable, at least one)
   -position int
     	The board, as a position id of --db
+  -tournament int
+    	Instead of a board: a tournament id of --db, found elsewhere by its name
   -xgid string
     	The board, as an XGID
   -zobrist string
@@ -3378,6 +3392,7 @@ Examples:
   blunderdb elsewhere --db mine.db --other club.db --position 412
   blunderdb elsewhere --db mine.db --other a.db --other b.db --xgid "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"
   blunderdb elsewhere --db mine.db --other club.db --zobrist 1234567890 --format json
+  blunderdb elsewhere --db mine.db --other club.db --tournament 3
 ```
 
 ### `blunderdb epc`

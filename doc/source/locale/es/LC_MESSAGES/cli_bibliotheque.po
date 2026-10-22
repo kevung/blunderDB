@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 16:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -478,7 +478,7 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:230 ../../source/cli_bibliotheque.rst:428
 #: ../../source/cli_bibliotheque.rst:524 ../../source/cli_bibliotheque.rst:580
-#: ../../source/cli_bibliotheque.rst:635 ../../source/cli_bibliotheque.rst:690
+#: ../../source/cli_bibliotheque.rst:641 ../../source/cli_bibliotheque.rst:697
 msgid "**Exemples:**"
 msgstr "**Ejemplos:**"
 
@@ -907,7 +907,7 @@ msgstr ""
 "``json`` o ``csv``, igual que ``list``."
 
 #: ../../source/cli_bibliotheque.rst:462 ../../source/cli_bibliotheque.rst:570
-#: ../../source/cli_bibliotheque.rst:655
+#: ../../source/cli_bibliotheque.rst:662
 msgid "**Sous-commandes:**"
 msgstr "**Subcomandos:**"
 
@@ -1228,13 +1228,30 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:626
 msgid ""
+"``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
+"Au lieu d'une position, un match, un tournoi, une collection ou une leçon"
+" de ``--db`` : la commande dit si chaque autre base le contient, sous la "
+"clé où une copie le fusionnerait (l'empreinte du match, même importé d'un"
+" autre format ; le nom sinon), avec son identifiant là-bas et ce qu'il "
+"contient (parties, matchs, positions ou étapes)."
+msgstr ""
+"``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
+"En lugar de una posición, un partido, un torneo, una colección o una "
+"lección de ``--db``: el comando dice si cada otra base lo contiene, bajo "
+"la clave donde una copia lo fusionaría (la huella del partido, aunque se "
+"haya importado de otro formato; el nombre en los demás casos), con su "
+"identificador allí y lo que contiene (partidas, partidos, posiciones o "
+"pasos)."
+
+#: ../../source/cli_bibliotheque.rst:632
+msgid ""
 "``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,"
 " 50 au plus)."
 msgstr ""
 "``--neighbours N`` — Número de vecinas por base (por defecto: 5, 0: "
 "ninguna, 50 como máximo)."
 
-#: ../../source/cli_bibliotheque.rst:628
+#: ../../source/cli_bibliotheque.rst:634
 msgid ""
 "``--max-distance D`` — Écarte les voisines à plus de D pips de pions "
 "déplacés (0 : sans plafond)."
@@ -1242,23 +1259,25 @@ msgstr ""
 "``--max-distance D`` — Descarta las vecinas a más de D pips de fichas "
 "movidas (0: sin tope)."
 
-#: ../../source/cli_bibliotheque.rst:630
+#: ../../source/cli_bibliotheque.rst:636
 msgid "``--format`` — ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — ``text`` (por defecto) o ``json``."
 
-#: ../../source/cli_bibliotheque.rst:632
+#: ../../source/cli_bibliotheque.rst:638
 msgid ""
-"Le démon sert la même lecture à travers les tenants : "
-"``across.positionElsewhere`` (voir :ref:`headless`)."
+"Le démon sert les mêmes lectures à travers les tenants : "
+"``across.positionElsewhere`` et ``across.objectElsewhere`` (voir "
+":ref:`headless`)."
 msgstr ""
-"El demonio sirve la misma lectura a través de los tenants: "
-"``across.positionElsewhere`` (véase :ref:`headless`)."
+"El demonio sirve las mismas lecturas a través de los tenants: "
+"``across.positionElsewhere`` y ``across.objectElsewhere`` (véase "
+":ref:`headless`)."
 
-#: ../../source/cli_bibliotheque.rst:644
+#: ../../source/cli_bibliotheque.rst:651
 msgid "trash — La corbeille"
 msgstr "trash — La papelera"
 
-#: ../../source/cli_bibliotheque.rst:646
+#: ../../source/cli_bibliotheque.rst:653
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -1270,7 +1289,7 @@ msgstr ""
 "desaparece, y nada más en la base sabe que esa tabla existe — ningún "
 "filtro de búsqueda, ninguna estadística, ninguna regla de retención."
 
-#: ../../source/cli_bibliotheque.rst:657
+#: ../../source/cli_bibliotheque.rst:664
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
@@ -1278,15 +1297,15 @@ msgstr ""
 "``list`` — Lo que hay en la papelera, de lo más recientemente eliminado a"
 " lo más antiguo."
 
-#: ../../source/cli_bibliotheque.rst:659
+#: ../../source/cli_bibliotheque.rst:666
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr "``restore --id N`` — Devuelve la entrada N y la retira de la papelera."
 
-#: ../../source/cli_bibliotheque.rst:660
+#: ../../source/cli_bibliotheque.rst:667
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr "``discard --id N`` — Elimina la entrada N ahora mismo, sin restaurarla."
 
-#: ../../source/cli_bibliotheque.rst:661
+#: ../../source/cli_bibliotheque.rst:668
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
@@ -1294,7 +1313,7 @@ msgstr ""
 "``empty [--older-than D]`` — Vacía la papelera, o solo lo que tiene más "
 "de D días."
 
-#: ../../source/cli_bibliotheque.rst:663
+#: ../../source/cli_bibliotheque.rst:670
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection``, "
@@ -1304,7 +1323,7 @@ msgstr ""
 "que el gesto se pueda deshacer. ``K`` es ``position``, ``collection``, "
 "``comment`` o ``match``."
 
-#: ../../source/cli_bibliotheque.rst:667
+#: ../../source/cli_bibliotheque.rst:674
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, "
@@ -1316,7 +1335,7 @@ msgstr ""
 "``--kind`` restringe la lista a un tipo de objeto: ``position``, "
 "``collection``, ``comment``, ``match`` o ``anki_card``."
 
-#: ../../source/cli_bibliotheque.rst:672
+#: ../../source/cli_bibliotheque.rst:679
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -1328,7 +1347,7 @@ msgstr ""
 "haría crecer un archivo que nadie ha pedido que crezca. Es ``trash "
 "delete`` el que conserva la anulación."
 
-#: ../../source/cli_bibliotheque.rst:677
+#: ../../source/cli_bibliotheque.rst:684
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon. Une position restaurée reprend son ancien "
@@ -1352,7 +1371,7 @@ msgstr ""
 "ocupada o desaparecida, un torneo eliminado — se señala con una "
 "advertencia."
 
-#: ../../source/cli_bibliotheque.rst:687
+#: ../../source/cli_bibliotheque.rst:694
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."

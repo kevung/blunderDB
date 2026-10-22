@@ -1534,6 +1534,11 @@ Cinq lectures servent le club et le coach, sur la même liste
   une analyse faite avec une autre table d'équité est signalée
   (``otherMet``). ``blunderdb elsewhere`` fait la même lecture sur des
   fichiers ;
+  ``across.objectElsewhere`` (``{"kind": "match", "id": N}``, ou
+  ``tournament``, ``collection``, ``lesson``) dit si chacun de ces tenants
+  contient cet objet de ``X-Tenant-ID``, sous la clé où une copie le
+  fusionnerait (empreinte du match, nom sinon), avec son id et ce qu'il
+  contient ;
 - **bibliothèque partagée** : ``across.collectionsList`` liste les collections
   des tenants lus, ``across.collectionPositions`` (``tenant``,
   ``collectionId``) les positions de l'une d'elles, chacune avec son hachage. La

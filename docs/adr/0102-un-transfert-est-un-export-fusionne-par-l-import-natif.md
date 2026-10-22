@@ -85,6 +85,17 @@ panneau, à base d'arrivée explicite ; le menu contextuel (groupe *Envoyer*) y 
   `CopyPosition`), repris du plus récent au plus ancien jusqu'à la fermeture ; dans une même
   base, une copie plus récente doit être reprise d'abord (`ErrLaterCopyFirst`). Chaque reprise
   garde la règle sûre de `TakeBackPositionCopy` : refus si la position ou la base a changé.
+- Les copies de matchs, de tournois, de collections et de lots entrent au même historique : l'import
+  natif dit ce que sa transaction a créé (`Summary.CreatedMatches`, `CreatedTournaments`,
+  `CreatedCollections`, `AddedMembers`), `SealCopy` en fait un reçu à empreintes, `TakeBackCopy`
+  vérifie toutes les empreintes puis retire, dans une transaction, les membres ajoutés, les
+  collections, les matchs (parties d'abord, pour que la purge d'orphelins ne touche aucune position
+  préexistante), les tournois, puis les positions créées. Ce que la base tenait avant reste. Une
+  copie qui a créé une leçon n'a pas de reçu : retirer ses positions couperait ses étapes.
+- La présence d'un match, d'un tournoi, d'une collection ou d'une leçon dans les autres bases est
+  `storage.ElsewhereObject`, sous la clé où la copie fusionne (empreinte du match, nom sinon) ; le
+  bureau, `blunderdb elsewhere --match/--tournament/--collection/--lesson` et
+  `across.objectElsewhere` la lisent.
 - Le verrou devient « Protéger des copies » et se mémorise par chemin de fichier dans les
   préférences du poste, jamais dans la base (ADR-0007).
 - Le serveur n'a pas de *Copier vers* : un tenant n'écrit que chez lui (ADR-0065) ;
