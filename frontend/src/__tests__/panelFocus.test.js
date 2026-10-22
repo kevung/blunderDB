@@ -75,6 +75,26 @@ describe('focusPanelUnlessTyping', () => {
         expect(focusPanelUnlessTyping(el('#panel'))).toBe(true);
     });
 
+    test('leaves the keyboard to a menu opened outside the panel (a right click within the delay)', () => {
+        mount('<section id="panel" tabindex="-1"></section><div role="menu"><button id="item">Evaluate</button></div>');
+        el('#item').focus();
+
+        expect(focusPanelUnlessTyping(el('#panel'))).toBe(false);
+        expect(document.activeElement).toBe(el('#item'));
+    });
+
+    test('yields to a menu open outside the panel even before the menu focuses its first item', () => {
+        mount('<section id="panel" tabindex="-1"></section><div role="menu"><button>Evaluate</button></div>');
+
+        expect(focusPanelUnlessTyping(el('#panel'))).toBe(false);
+    });
+
+    test('a menu inside the panel does not stop it taking the focus', () => {
+        mount('<section id="panel" tabindex="-1"><div role="menu"><button>Open</button></div></section>');
+
+        expect(focusPanelUnlessTyping(el('#panel'))).toBe(true);
+    });
+
     test('a missing panel is a no-op', () => {
         expect(focusPanelUnlessTyping(null)).toBe(false);
     });

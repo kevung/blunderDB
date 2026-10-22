@@ -5,8 +5,10 @@
 // "typing" test keyboardService applies. It also yields to a focus already inside the panel (a row
 // just created and focused): the panel receives that row's keys by bubbling anyway. And it yields
 // to a modal open over it (the help opened within the delay): a modal takes its keys on its own
-// element, so a panel focused behind it would receive them instead. Anything else outside the
-// panel is still replaced.
+// element, so a panel focused behind it would receive them instead. It yields likewise to a menu
+// the user has just opened outside the panel (a right click within the delay): the menu reads its
+// arrows and Enter from its own focused item, and closes when the focus leaves it. Anything else
+// outside the panel is still replaced.
 
 const TYPING_TARGET = 'input, textarea, select, [contenteditable]';
 
@@ -33,6 +35,8 @@ export function focusPanelUnlessTyping(panel) {
     if (active && active !== panel && panel.contains(active)) return false;
     const modal = document.querySelector('[aria-modal="true"]');
     if (modal && !modal.contains(panel)) return false;
+    const menu = document.querySelector('[role="menu"]');
+    if (menu && !menu.contains(panel) && !panel.contains(menu)) return false;
     panel.focus();
     return true;
 }
