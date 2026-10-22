@@ -28,19 +28,23 @@ func runGuarded(realDir string, run func() int) int {
 	}
 	defer os.RemoveAll(tmp)
 	prev, had := os.LookupEnv("XDG_CONFIG_HOME")
+	restore := func() {
+		if had {
+			os.Setenv("XDG_CONFIG_HOME", prev)
+		} else {
+			os.Unsetenv("XDG_CONFIG_HOME")
+		}
+		xdg.Reload()
+	}
 	os.Setenv("XDG_CONFIG_HOME", tmp)
 	xdg.Reload()
 	if dir := issuance.ConfigDir(); !strings.HasPrefix(dir, tmp+string(filepath.Separator)) {
+		restore()
 		fmt.Fprintf(os.Stderr, "issuancetest: identity directory %s is outside %s\n", dir, tmp)
 		return 1
 	}
 	code := run()
-	if had {
-		os.Setenv("XDG_CONFIG_HOME", prev)
-	} else {
-		os.Unsetenv("XDG_CONFIG_HOME")
-	}
-	xdg.Reload()
+	restore()
 	if after := snapshot(realDir); after != before {
 		fmt.Fprintf(os.Stderr, "issuancetest: tests modified the real identity directory %s\n", realDir)
 		return 1
@@ -48,19 +52,12 @@ func runGuarded(realDir string, run func() int) int {
 	return code
 }
 
-// snapshot fingerprints a directory by names, sizes and modification times.
+// snapshot fingerprints the identity file alone (size and modification time; absent is a
+// valid state): the rest of the config directory is rewritten by the running application.
 func snapshot(dir string) string {
-	entries, err := os.ReadDir(dir)
+	info, err := os.Stat(issuance.IdentityPath(dir))
 	if err != nil {
 		return "absent"
 	}
-	var b strings.Builder
-	for _, e := range entries {
-		info, err := e.Info()
-		if err != nil {
-			continue
-		}
-		fmt.Fprintf(&b, "%s|%d|%d\n", e.Name(), info.Size(), info.ModTime().UnixNano())
-	}
-	return b.String()
+	return fmt.Sprintf("%d|%d", info.Size(), info.ModTime().UnixNano())
 }
