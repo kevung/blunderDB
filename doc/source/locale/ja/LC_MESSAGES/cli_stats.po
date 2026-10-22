@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 16:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -39,7 +39,7 @@ msgstr ""
 "stats`` で取得します。"
 
 #: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
-#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:308
 msgid "**Options:**"
 msgstr "**オプション：**"
 
@@ -119,7 +119,7 @@ msgstr ""
 
 #: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
 #: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
-#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:321
 msgid "**Exemples:**"
 msgstr "**例：**"
 
@@ -410,6 +410,24 @@ msgstr ""
 
 #: ../../source/cli_stats.rst:285
 msgid ""
+"**stats summary** — Le niveau du filtre sans aucun identifiant : "
+"effectifs, PR (pions, videau) et son intervalle à 95 %, perte de MWC par "
+"match en 7 points, PR par phase de jeu et par score, chaque ligne avec "
+"son effectif et son intervalle. Aucune position, aucun match, tournoi, "
+"adversaire ni étiquette n'y figure, ni les décisions les plus coûteuses :"
+" c'est ce qu'un profil public ou une carte de visite peut montrer sans "
+"rien divulguer. Le démon HTTP le sert à la route ``stats.summary`` ; "
+"``stats.compute`` reste inchangé. Les options sont celles de ``stats "
+"windows``."
+msgstr ""
+"**stats summary** — 識別子を一切含まないフィルターのレベル：件数、PR（チェッカー、キューブ）とその 95 % 区間、7 "
+"ポイントマッチあたりの MWC 損失、ゲームフェーズ別・スコア別の PR "
+"で、各行に件数と区間が付きます。ポジション、マッチ、トーナメント、対戦相手、タグは一切現れず、最も高くついた決定も含まれません。公開プロフィールや名刺が何も漏らさずに示せる内容です。HTTP"
+" デーモンは ``stats.summary``\\ ルートでこれを提供し、\\ ``stats.compute`` は変わりません。オプションは"
+" ``stats windows``\\ と同じです。"
+
+#: ../../source/cli_stats.rst:299
+msgid ""
 "**stats report** — Le rapport HTML du panneau Stats (voir "
 ":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
 " plus coûteuses avec leur diagramme, en un seul fichier autonome que le "
@@ -421,15 +439,15 @@ msgstr ""
 "として印刷できる単一の自己完結ファイルにまとめます。HTTP デーモンは同じジェネレーターから、ルート \\ ``stats.report``\\"
 " で提供します。"
 
-#: ../../source/cli_stats.rst:296
+#: ../../source/cli_stats.rst:310
 msgid "``--html`` — Obligatoire : le HTML est le seul format."
 msgstr "``--html`` — 必須:HTML が唯一の形式です。"
 
-#: ../../source/cli_stats.rst:297
+#: ../../source/cli_stats.rst:311
 msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
 msgstr "``--output <fichier>`` — 書き出すファイルです(デフォルト:標準出力)。"
 
-#: ../../source/cli_stats.rst:298
+#: ../../source/cli_stats.rst:312
 msgid ""
 "``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
@@ -438,7 +456,7 @@ msgstr ""
 "レポートの言語:``fr``、``en``、``de``、``el``、``es``、``fi``、``it``、``ja``、``ru``\\ "
 "(デフォルトは ``en``)。"
 
-#: ../../source/cli_stats.rst:300
+#: ../../source/cli_stats.rst:314
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
@@ -448,7 +466,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — "
 "フィルタ:レポートはその対象範囲を明示します。"
 
-#: ../../source/cli_stats.rst:304
+#: ../../source/cli_stats.rst:318
 msgid ""
 "Les diagrammes y sont dessinés avec la palette par défaut ; seule "
 "l'application graphique emploie la palette du plateau choisie à l'écran."

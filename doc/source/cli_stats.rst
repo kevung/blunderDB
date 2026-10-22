@@ -282,6 +282,20 @@ direction des erreurs de videau : l'onglet *Ventilations* du panneau Stats (voir
    ./blunderdb stats breakdown --db base.db --player "Alice"
    ./blunderdb stats breakdown --db base.db --format json
 
+**stats summary** — Le niveau du filtre sans aucun identifiant : effectifs, PR
+(pions, videau) et son intervalle à 95 %, perte de MWC par match en 7 points,
+PR par phase de jeu et par score, chaque ligne avec son effectif et son
+intervalle. Aucune position, aucun match, tournoi, adversaire ni étiquette n'y
+figure, ni les décisions les plus coûteuses : c'est ce qu'un profil public ou
+une carte de visite peut montrer sans rien divulguer. Le démon HTTP le sert à
+la route ``stats.summary`` ; ``stats.compute`` reste inchangé. Les options sont
+celles de ``stats windows``.
+
+.. code-block:: bash
+
+   ./blunderdb stats summary --db base.db --player "Alice"
+   ./blunderdb stats summary --db base.db --player "Alice" --format json
+
 **stats report** — Le rapport HTML du panneau Stats (voir :ref:`rapport_html`) :
 les indicateurs du filtre et ses dix décisions les plus coûteuses avec leur
 diagramme, en un seul fichier autonome que le navigateur imprime en PDF. Le

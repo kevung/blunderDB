@@ -186,6 +186,8 @@ var databaseParity = map[string]parityEntry{
 	"StatsReportHTML":                   {CLI: "stats report", Server: "/v1/stats.report"},
 	"StatsReportHTMLCtx":                {Why: whyCtxVariant},
 	"ComputeStatsCtx":                   {Why: whyCtxVariant},
+	"StatsSummary":                      {CLI: "stats summary", Server: "/v1/stats.summary"},
+	"StatsSummaryCtx":                   {Why: whyCtxVariant},
 	"CopyPositionToCollection":          {Server: "/v1/collections.copyPosition", Why: whyGUIEdit},
 	"CountOrphans":                      {CLI: "verify", Why: "orphaned game/move/analysis rows are the aftermath of the desktop pool enforcing foreign keys on one connection in ten (issue #157); the daemon's SQLite backend has always opened through DSN() and PostgreSQL enforces its keys server-side, so a library never carried any — its integrity is the operator's database tooling"},
 	"CountPositionsWithoutAnalysis":     {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},

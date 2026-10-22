@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 16:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -40,7 +40,7 @@ msgstr ""
 " ``list --type stats``."
 
 #: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
-#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:308
 msgid "**Options:**"
 msgstr "**Opzioni:**"
 
@@ -131,7 +131,7 @@ msgstr ""
 
 #: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
 #: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
-#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:321
 msgid "**Exemples:**"
 msgstr "**Esempi:**"
 
@@ -455,6 +455,28 @@ msgstr ""
 
 #: ../../source/cli_stats.rst:285
 msgid ""
+"**stats summary** — Le niveau du filtre sans aucun identifiant : "
+"effectifs, PR (pions, videau) et son intervalle à 95 %, perte de MWC par "
+"match en 7 points, PR par phase de jeu et par score, chaque ligne avec "
+"son effectif et son intervalle. Aucune position, aucun match, tournoi, "
+"adversaire ni étiquette n'y figure, ni les décisions les plus coûteuses :"
+" c'est ce qu'un profil public ou une carte de visite peut montrer sans "
+"rien divulguer. Le démon HTTP le sert à la route ``stats.summary`` ; "
+"``stats.compute`` reste inchangé. Les options sont celles de ``stats "
+"windows``."
+msgstr ""
+"**stats summary** — Il livello del filtro senza alcun identificativo: "
+"conteggi, PR (pedine, cubo) e il suo intervallo al 95 %, perdita di MWC "
+"per partita a 7 punti, PR per fase di gioco e per punteggio, ogni riga "
+"con il suo conteggio e il suo intervallo. Non vi compare nessuna "
+"posizione, partita, torneo, avversario né etichetta, né le decisioni più "
+"costose: è ciò che un profilo pubblico o un biglietto da visita può "
+"mostrare senza divulgare nulla. Il demone HTTP lo serve alla rotta "
+"``stats.summary``; ``stats.compute`` resta invariato. Le opzioni sono "
+"quelle di ``stats windows``."
+
+#: ../../source/cli_stats.rst:299
+msgid ""
 "**stats report** — Le rapport HTML du panneau Stats (voir "
 ":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
 " plus coûteuses avec leur diagramme, en un seul fichier autonome que le "
@@ -467,15 +489,15 @@ msgstr ""
 "browser stampa in PDF. Il demone HTTP lo serve alla rotta "
 "``stats.report``, dallo stesso generatore."
 
-#: ../../source/cli_stats.rst:296
+#: ../../source/cli_stats.rst:310
 msgid "``--html`` — Obligatoire : le HTML est le seul format."
 msgstr "``--html`` — Obbligatorio: HTML è l'unico formato."
 
-#: ../../source/cli_stats.rst:297
+#: ../../source/cli_stats.rst:311
 msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
 msgstr "``--output <fichier>`` — Il file scritto (predefinito: output standard)."
 
-#: ../../source/cli_stats.rst:298
+#: ../../source/cli_stats.rst:312
 msgid ""
 "``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
@@ -483,7 +505,7 @@ msgstr ""
 "``--lang <code>`` — La lingua del rapporto: ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` o ``ru`` (predefinito ``en``)."
 
-#: ../../source/cli_stats.rst:300
+#: ../../source/cli_stats.rst:314
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
@@ -493,7 +515,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Il filtro: "
 "il rapporto nomina il proprio perimetro."
 
-#: ../../source/cli_stats.rst:304
+#: ../../source/cli_stats.rst:318
 msgid ""
 "Les diagrammes y sont dessinés avec la palette par défaut ; seule "
 "l'application graphique emploie la palette du plateau choisie à l'écran."

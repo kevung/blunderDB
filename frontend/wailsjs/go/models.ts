@@ -9199,6 +9199,160 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class PhaseStats {
+	    Phase: string;
+	    PR: number;
+	    PRInterval: domain.Interval;
+	    NumDecisions: number;
+	    BlunderCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PhaseStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Phase = source["Phase"];
+	        this.PR = source["PR"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
+	        this.NumDecisions = source["NumDecisions"];
+	        this.BlunderCount = source["BlunderCount"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class ScoreCellStats {
+	    Money: boolean;
+	    MoverAway: number;
+	    OpponentAway: number;
+	    PR: number;
+	    PRInterval: domain.Interval;
+	    NumDecisions: number;
+	    BlunderCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ScoreCellStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Money = source["Money"];
+	        this.MoverAway = source["MoverAway"];
+	        this.OpponentAway = source["OpponentAway"];
+	        this.PR = source["PR"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
+	        this.NumDecisions = source["NumDecisions"];
+	        this.BlunderCount = source["BlunderCount"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class StatsTotals {
+	    NumPositions: number;
+	    NumMatches: number;
+	    NumTournaments: number;
+	    NumDecisions: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsTotals(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.NumPositions = source["NumPositions"];
+	        this.NumMatches = source["NumMatches"];
+	        this.NumTournaments = source["NumTournaments"];
+	        this.NumDecisions = source["NumDecisions"];
+	    }
+	}
+	export class StatsSummary {
+	    Totals: StatsTotals;
+	    PRGlobal: number;
+	    PRInterval: domain.Interval;
+	    PRChecker: number;
+	    PRCube: number;
+	    MWCAvailable: boolean;
+	    MWCGlobal: number;
+	    MWCChecker: number;
+	    MWCCube: number;
+	    MWC7: domain.MWC7;
+	    MWC7Checker: domain.MWC7;
+	    MWC7Cube: domain.MWC7;
+	    PerPhase: PhaseStats[];
+	    PerScore: ScoreCellStats[];
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Totals = this.convertValues(source["Totals"], StatsTotals);
+	        this.PRGlobal = source["PRGlobal"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
+	        this.PRChecker = source["PRChecker"];
+	        this.PRCube = source["PRCube"];
+	        this.MWCAvailable = source["MWCAvailable"];
+	        this.MWCGlobal = source["MWCGlobal"];
+	        this.MWCChecker = source["MWCChecker"];
+	        this.MWCCube = source["MWCCube"];
+	        this.MWC7 = this.convertValues(source["MWC7"], domain.MWC7);
+	        this.MWC7Checker = this.convertValues(source["MWC7Checker"], domain.MWC7);
+	        this.MWC7Cube = this.convertValues(source["MWC7Cube"], domain.MWC7);
+	        this.PerPhase = this.convertValues(source["PerPhase"], PhaseStats);
+	        this.PerScore = this.convertValues(source["PerScore"], ScoreCellStats);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class StudyEffect {
 	    MinDecisions: number;
 	    Families: StudyEffectFamily[];

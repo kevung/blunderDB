@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 16:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -40,7 +40,7 @@ msgstr ""
 "παραμένουν στο ``list --type stats``."
 
 #: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
-#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:308
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
@@ -132,7 +132,7 @@ msgstr ""
 
 #: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
 #: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
-#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:321
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
@@ -455,6 +455,28 @@ msgstr ""
 
 #: ../../source/cli_stats.rst:285
 msgid ""
+"**stats summary** — Le niveau du filtre sans aucun identifiant : "
+"effectifs, PR (pions, videau) et son intervalle à 95 %, perte de MWC par "
+"match en 7 points, PR par phase de jeu et par score, chaque ligne avec "
+"son effectif et son intervalle. Aucune position, aucun match, tournoi, "
+"adversaire ni étiquette n'y figure, ni les décisions les plus coûteuses :"
+" c'est ce qu'un profil public ou une carte de visite peut montrer sans "
+"rien divulguer. Le démon HTTP le sert à la route ``stats.summary`` ; "
+"``stats.compute`` reste inchangé. Les options sont celles de ``stats "
+"windows``."
+msgstr ""
+"**stats summary** — Το επίπεδο του φίλτρου χωρίς κανένα αναγνωριστικό: "
+"πλήθη, PR (πούλια, κύβος) και το διάστημα 95 % του, απώλεια MWC ανά αγώνα"
+" 7 πόντων, PR ανά φάση παιχνιδιού και ανά σκορ, κάθε γραμμή με το πλήθος "
+"και το διάστημά της. Δεν εμφανίζεται καμία θέση, κανένας αγώνας, "
+"τουρνουά, αντίπαλος ή ετικέτα, ούτε οι πιο δαπανηρές αποφάσεις: είναι "
+"ό,τι μπορεί να δείξει ένα δημόσιο προφίλ ή μια επαγγελματική κάρτα χωρίς "
+"να αποκαλύψει τίποτα. Ο δαίμονας HTTP το εξυπηρετεί στη διαδρομή "
+"``stats.summary``· το ``stats.compute`` μένει αμετάβλητο. Οι επιλογές "
+"είναι αυτές του ``stats windows``."
+
+#: ../../source/cli_stats.rst:299
+msgid ""
 "**stats report** — Le rapport HTML du panneau Stats (voir "
 ":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
 " plus coûteuses avec leur diagramme, en un seul fichier autonome que le "
@@ -467,17 +489,17 @@ msgstr ""
 "περιηγητής εκτυπώνει σε PDF. Ο δαίμονας HTTP το σερβίρει στη διαδρομή "
 "``stats.report``, από την ίδια γεννήτρια."
 
-#: ../../source/cli_stats.rst:296
+#: ../../source/cli_stats.rst:310
 msgid "``--html`` — Obligatoire : le HTML est le seul format."
 msgstr "``--html`` — Υποχρεωτικό: το HTML είναι η μόνη μορφή."
 
-#: ../../source/cli_stats.rst:297
+#: ../../source/cli_stats.rst:311
 msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
 msgstr ""
 "``--output <fichier>`` — Το αρχείο που γράφεται (προεπιλογή: τυπική "
 "έξοδος)."
 
-#: ../../source/cli_stats.rst:298
+#: ../../source/cli_stats.rst:312
 msgid ""
 "``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
@@ -485,7 +507,7 @@ msgstr ""
 "``--lang <code>`` — Η γλώσσα της αναφοράς: ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ή ``ru`` (προεπιλογή ``en``)."
 
-#: ../../source/cli_stats.rst:300
+#: ../../source/cli_stats.rst:314
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
@@ -495,7 +517,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Το φίλτρο: "
 "η αναφορά κατονομάζει την εμβέλειά της."
 
-#: ../../source/cli_stats.rst:304
+#: ../../source/cli_stats.rst:318
 msgid ""
 "Les diagrammes y sont dessinés avec la palette par défaut ; seule "
 "l'application graphique emploie la palette du plateau choisie à l'écran."

@@ -102,6 +102,15 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.compute", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StatsResult, error) {
 			return ss().Compute(ctx, scope, req.Filter)
 		})},
+		// La part publique de stats.compute (storage.StatsSummary) : niveau,
+		// intervalles, phases et scores, sans identifiant ni TopBlunders.
+		{http.MethodPost, "/v1/stats.summary", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StatsSummary, error) {
+			r, err := ss().Compute(ctx, scope, req.Filter)
+			if err != nil {
+				return nil, err
+			}
+			return storage.SummaryOf(r), nil
+		})},
 		// Le rapport HTML autonome du filtre, du même générateur que la GUI et
 		// `stats report`.
 		{http.MethodPost, "/v1/stats.report", rpc(func(ctx context.Context, scope string, req statsReportReq) (statsReportResp, error) {

@@ -226,6 +226,24 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 	return d.ComputeStatsCtx(context.Background(), filter)
 }
 
+// StatsSummary is the public part of ComputeStats (storage.StatsSummary):
+// the level of the filter's decisions without a position, match, tournament,
+// opponent or tag in it.
+func (d *Database) StatsSummary(filter StatsFilter) (*storage.StatsSummary, error) {
+	return d.StatsSummaryCtx(context.Background(), filter)
+}
+
+// StatsSummaryCtx is StatsSummary with a caller-supplied context.
+func (d *Database) StatsSummaryCtx(ctx context.Context, filter StatsFilter) (*storage.StatsSummary, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	r, err := d.store.Stats().Compute(ctx, "", toStorageStatsFilter(filter))
+	if err != nil {
+		return nil, err
+	}
+	return storage.SummaryOf(r), nil
+}
+
 // ComputeStatsCtx is ComputeStats with a caller-supplied context that aborts
 // the in-flight aggregation queries.
 func (d *Database) ComputeStatsCtx(ctx context.Context, filter StatsFilter) (*StatsResult, error) {

@@ -368,6 +368,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.studyPlan                      JSON
      POST /v1/stats.studyPlanIds                   JSON
      POST /v1/stats.studyPlanQueue                 JSON
+     POST /v1/stats.summary                        JSON
      POST /v1/stats.timeErrors                     JSON
      POST /v1/stats.tournamentBadges               JSON
      POST /v1/stats.tournamentIds                  JSON

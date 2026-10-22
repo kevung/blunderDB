@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 16:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -40,7 +40,7 @@ msgstr ""
 "``list --type stats``."
 
 #: ../../source/cli_stats.rst:20 ../../source/cli_stats.rst:148
-#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:294
+#: ../../source/cli_stats.rst:254 ../../source/cli_stats.rst:308
 msgid "**Options:**"
 msgstr "**Opciones:**"
 
@@ -131,7 +131,7 @@ msgstr ""
 
 #: ../../source/cli_stats.rst:49 ../../source/cli_stats.rst:160
 #: ../../source/cli_stats.rst:217 ../../source/cli_stats.rst:262
-#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:307
+#: ../../source/cli_stats.rst:278 ../../source/cli_stats.rst:321
 msgid "**Exemples:**"
 msgstr "**Ejemplos:**"
 
@@ -456,6 +456,27 @@ msgstr ""
 
 #: ../../source/cli_stats.rst:285
 msgid ""
+"**stats summary** — Le niveau du filtre sans aucun identifiant : "
+"effectifs, PR (pions, videau) et son intervalle à 95 %, perte de MWC par "
+"match en 7 points, PR par phase de jeu et par score, chaque ligne avec "
+"son effectif et son intervalle. Aucune position, aucun match, tournoi, "
+"adversaire ni étiquette n'y figure, ni les décisions les plus coûteuses :"
+" c'est ce qu'un profil public ou une carte de visite peut montrer sans "
+"rien divulguer. Le démon HTTP le sert à la route ``stats.summary`` ; "
+"``stats.compute`` reste inchangé. Les options sont celles de ``stats "
+"windows``."
+msgstr ""
+"**stats summary** — El nivel del filtro sin ningún identificador: "
+"recuentos, PR (fichas, cubo) y su intervalo al 95 %, pérdida de MWC por "
+"partida a 7 puntos, PR por fase de juego y por marcador, cada fila con su"
+" recuento y su intervalo. No aparece ninguna posición, partida, torneo, "
+"adversario ni etiqueta, ni las decisiones más costosas: es lo que un "
+"perfil público o una tarjeta de visita puede mostrar sin divulgar nada. "
+"El demonio HTTP lo sirve en la ruta ``stats.summary``; ``stats.compute`` "
+"no cambia. Las opciones son las de ``stats windows``."
+
+#: ../../source/cli_stats.rst:299
+msgid ""
 "**stats report** — Le rapport HTML du panneau Stats (voir "
 ":ref:`rapport_html`) : les indicateurs du filtre et ses dix décisions les"
 " plus coûteuses avec leur diagramme, en un seul fichier autonome que le "
@@ -468,17 +489,17 @@ msgstr ""
 "navegador imprime en PDF. El demonio HTTP lo sirve en la ruta "
 "``stats.report``, desde el mismo generador."
 
-#: ../../source/cli_stats.rst:296
+#: ../../source/cli_stats.rst:310
 msgid "``--html`` — Obligatoire : le HTML est le seul format."
 msgstr "``--html`` — Obligatorio: HTML es el único formato."
 
-#: ../../source/cli_stats.rst:297
+#: ../../source/cli_stats.rst:311
 msgid "``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard)."
 msgstr ""
 "``--output <fichier>`` — El archivo escrito (por defecto: salida "
 "estándar)."
 
-#: ../../source/cli_stats.rst:298
+#: ../../source/cli_stats.rst:312
 msgid ""
 "``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``)."
@@ -486,7 +507,7 @@ msgstr ""
 "``--lang <code>`` — El idioma del informe: ``fr``, ``en``, ``de``, "
 "``el``, ``es``, ``fi``, ``it``, ``ja`` o ``ru`` (por defecto ``en``)."
 
-#: ../../source/cli_stats.rst:300
+#: ../../source/cli_stats.rst:314
 msgid ""
 "``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, "
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre :"
@@ -496,7 +517,7 @@ msgstr ""
 "``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — El filtro: "
 "el informe nombra su ámbito."
 
-#: ../../source/cli_stats.rst:304
+#: ../../source/cli_stats.rst:318
 msgid ""
 "Les diagrammes y sont dessinés avec la palette par défaut ; seule "
 "l'application graphique emploie la palette du plateau choisie à l'écran."

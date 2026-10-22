@@ -816,6 +816,10 @@ export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Recor
 
 export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
 
+export function StatsSummary(arg1:database.StatsFilter):Promise<storage.StatsSummary>;
+
+export function StatsSummaryCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.StatsSummary>;
+
 export function StatsTournamentIDs(arg1:database.StatsFilter):Promise<Array<number>>;
 
 export function StatsTournamentIDsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<Array<number>>;
