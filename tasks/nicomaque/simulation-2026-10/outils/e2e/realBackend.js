@@ -106,6 +106,9 @@ export async function installRealBackend(page, opts) {
                 return resolved(window.__questionAnswer || (buttons && buttons[0]) || '');
             },
             FolderWatchStatus: () => resolved(null),
+            // Le bureau rend toujours un statut, jamais null : le harnais suit ce contrat.
+            GetTournamentDisplayStatus: () =>
+                resolved({ running: false, tournamentId: 0, addresses: [], publicAddresses: [], address: '', url: '', localUrl: '', qr: '', error: '', errorPort: 0 }),
             GetMCPHostStatus: () => resolved({}),
             ConfigureMCPHost: () => resolved({}),
             RolloutPresets: () => resolved([]),

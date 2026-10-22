@@ -15,7 +15,13 @@
     let { tournamentId } = $props();
 
     /** @type {{ running: boolean, tournamentId: number, addresses: string[], publicAddresses: string[], address: string, url: string, localUrl: string, qr: string, error: string, errorPort: number }} */
-    let status = $state({ running: false, tournamentId: 0, addresses: [], publicAddresses: [], address: '', url: '', localUrl: '', qr: '', error: '', errorPort: 0 });
+    const STOPPED = { running: false, tournamentId: 0, addresses: [], publicAddresses: [], address: '', url: '', localUrl: '', qr: '', error: '', errorPort: 0 };
+    let status = $state(STOPPED);
+
+    // Un statut absent (liaison factice, événement sans charge) vaut « éteint » : tout le
+    // panneau lit status.running sans garde.
+    /** @param {any} s */
+    const settle = (s) => (status = s ?? STOPPED);
     let port = $state(DEFAULT_PORT);
     let busy = $state(false);
 
@@ -39,14 +45,14 @@
         // reste simplement éteint.
         Promise.resolve()
             .then(() => GetTournamentDisplayStatus())
-            .then((s) => (status = s))
+            .then(settle)
             .catch(() => {});
     });
 
     // Le bureau arrête l'affichage quand le fichier ouvert change : le panneau l'apprend ici.
     $effect(() => {
         try {
-            return EventsOn('direction:network-display', (s) => (status = s));
+            return EventsOn('direction:network-display', settle);
         } catch {
             return undefined;
         }
@@ -56,7 +62,7 @@
     async function apply(action) {
         busy = true;
         try {
-            status = await action();
+            settle(await action());
         } catch {
             status = { ...status, error: 'failed' };
         } finally {
