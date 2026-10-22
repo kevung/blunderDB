@@ -169,3 +169,19 @@ test('the + button follows the active group, and the tools sit apart on the righ
     expect(bar.x + bar.width - (basket.x + basket.width)).toBeLessThan(40);
     expect(split.x).toBeGreaterThan(nextHeader.x + nextHeader.width);
 });
+
+test('a scrolling row keeps the + in sight, and the active tab wins when both cannot fit', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await openTwoGroups(page);
+    const add = page.locator('.view-tabs .add-btn');
+    for (let i = 0; i < 30; i++) await add.click();
+    const row = page.locator('.view-tab-list');
+    expect(await row.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+    await expect(add).toBeInViewport();
+    await expect(page.locator('.view-tab.active')).toBeInViewport();
+    // A tab at the far left: the active tab stays in sight even though the "+" is far right.
+    const first = tabsOf(page, 2).first();
+    await first.click();
+    await expect(first).toHaveClass(/active/);
+    await expect(page.locator('.view-tab.active')).toBeInViewport();
+});

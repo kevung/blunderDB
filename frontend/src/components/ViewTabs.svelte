@@ -41,9 +41,9 @@
     $effect(() => {
         void $activeViewId;
         void $tabGroupsStore;
-        tabList?.querySelector('.view-tab.active')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
-        // The "+" follows the active group's last tab: keep it in sight too.
+        // The "+" follows the active group's last tab: kept in sight first, so the active tab wins when both cannot fit.
         tabList?.querySelector('.add-btn')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+        tabList?.querySelector('.view-tab.active')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
     });
 
     /**
@@ -208,7 +208,7 @@
                     </div>
                 {/if}
                 <!-- One tablist per group, laid out as if absent (display: contents): it holds only tabs, the header and the "+" stay outside. -->
-                <div class="group-tabs" role="tablist" aria-label={group.name || group.path}>
+                <div class="group-tabs" role="tablist" aria-label={group.name || group.path || $t('libraryGroups.unnamed')}>
                     {#each group.views as view (view.id)}
                         {@const selected = group.active && $activeViewId === view.id}
                         <div
