@@ -242,3 +242,25 @@ func TestUndoPositionCopy_RefusesAnotherLibraryInTheGroup(t *testing.T) {
 		t.Fatal("a receipt was taken back twice")
 	}
 }
+
+// An undo refused for a reason that passes — the group locked meanwhile —
+// keeps its receipt: once the group is unlocked, the same undo succeeds.
+func TestUndoPositionCopy_KeepsTheReceiptAfterATransientRefusal(t *testing.T) {
+	a, _ := twoGroups(t)
+	cp, _ := copiedIntoB(t, a)
+	if err := a.SetLibraryGroupLocked(2, true); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.UndoPositionCopy(cp.Receipt); !errors.Is(err, ErrLibraryGroupLocked) {
+		t.Fatalf("undo into a locked group: %v, want ErrLibraryGroupLocked", err)
+	}
+	if err := a.SetLibraryGroupLocked(2, false); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.UndoPositionCopy(cp.Receipt); err != nil {
+		t.Fatalf("undo once unlocked: %v", err)
+	}
+	if n := positionsOf(t, a, 2); n != 0 {
+		t.Fatalf("B holds %d positions after the undo, want 0", n)
+	}
+}

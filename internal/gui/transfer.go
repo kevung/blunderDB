@@ -229,8 +229,8 @@ type paneCopy struct {
 }
 
 // CopyPositionToGroup copies position id of group src into the library of
-// group dst (Database.CopyPositionTo, under dst's lock from the look-up to
-// the write), and keeps its receipt when the copy added the position.
+// group dst (database.CopyPosition, which says whether its own import
+// transaction inserted the position), and keeps its receipt when it did.
 func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, error) {
 	ends, err := a.borrowTransferEnds(dst, []int{src})
 	if err != nil {
@@ -273,25 +273,23 @@ func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, err
 // gave, the last one only: the position leaves the destination with what
 // came with it, provided that group still has the same library open and the
 // position is as the copy left it (database.ErrPositionChanged otherwise).
+// The receipt is spent only by a take-back that succeeded: after a transient
+// failure the same receipt can be tried again.
 func (a *App) UndoPositionCopy(receipt int) error {
 	a.paneCopy.mu.Lock()
+	defer a.paneCopy.mu.Unlock()
 	c := a.paneCopy.last
 	if c == nil || receipt <= 0 || c.token != receipt {
-		a.paneCopy.mu.Unlock()
 		return errors.New("nothing to take back")
 	}
-	a.paneCopy.last = nil
-	a.paneCopy.mu.Unlock()
-	a.libs.mu.Lock()
-	locked := a.libs.locked[c.group]
-	a.libs.mu.Unlock()
-	if locked {
-		return ErrLibraryGroupLocked
-	}
-	return a.readGroup(c.group, func(d *database.Database) error {
-		if d.IsReadOnly() {
-			return errors.New("the library is open read-only")
-		}
+	if err := a.writeGroup(c.group, func(d *database.Database) error {
 		return database.TakeBackPositionCopy(d, c.receipt)
-	})
+	}); err != nil {
+		if errors.Is(err, database.ErrPositionChanged) {
+			a.paneCopy.last = nil
+		}
+		return err
+	}
+	a.paneCopy.last = nil
+	return nil
 }

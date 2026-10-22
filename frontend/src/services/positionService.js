@@ -27,7 +27,7 @@ import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { searchEmptyStore } from '../stores/searchParamsStore.js';
 import { listOriginStore, searchOrigin, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { viewStore } from '../stores/viewStore.js';
-import { groupSwitchingStore } from '../stores/groupActivityStore.js';
+import { groupSwitchingStore, writingOnScreen } from '../stores/groupActivityStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
 import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
 import { GetLikeLimit, GetLikeMaxDistance } from '../../wailsjs/go/main/Config.js';
@@ -849,7 +849,11 @@ export async function deletePosition() {
         const positionID = positionsStore.idAt(get(currentPositionIndexStore));
         // Through the trash: the delete really happens, but a snapshot
         // is written first, so `trash` can put it back for thirty days.
-        await TrashPosition(positionID ?? 0);
+        // A switch begun since the confirmation would bind the id to the library coming.
+        if (!(await writingOnScreen(async () => (await TrashPosition(positionID ?? 0), true)))) {
+            setStatusBarMessage(tMsg('libraryGroups.switching'));
+            return;
+        }
         logger.log('Position and associated analysis deleted with ID:', positionID);
 
         await loadAllPositions();
@@ -926,17 +930,25 @@ export async function updatePosition() {
         const originalPositionJSON = JSON.stringify(originalPosition);
 
         // The position row goes first: if the edit is refused (now a
-        // duplicate), the analysis must not have been deleted yet.
+        // duplicate), the analysis must not have been deleted yet. The three writes name the
+        // row by id: a switch must wait for them, and none may start once one has begun.
         analysis.xgid = generateXGID(position);
-        await UpdatePosition(/** @type {WirePosition} */ (/** @type {unknown} */ (position)));
-        logger.log('Position updated with ID:', positionID);
+        const written = await writingOnScreen(async () => {
+            await UpdatePosition(/** @type {WirePosition} */ (/** @type {unknown} */ (position)));
+            logger.log('Position updated with ID:', positionID);
 
-        if (positionJSON !== originalPositionJSON) {
-            await DeleteAnalysis(positionID ?? 0);
-            logger.log('Analysis deleted for position ID:', positionID);
+            if (positionJSON !== originalPositionJSON) {
+                await DeleteAnalysis(positionID ?? 0);
+                logger.log('Analysis deleted for position ID:', positionID);
+            }
+            await SaveAnalysis(positionID ?? 0, analysis);
+            logger.log('Analysis updated for position ID:', positionID);
+            return true;
+        });
+        if (!written) {
+            setStatusBarMessage(tMsg('libraryGroups.switching'));
+            return;
         }
-        await SaveAnalysis(positionID ?? 0, analysis);
-        logger.log('Analysis updated for position ID:', positionID);
 
         await loadAllPositions();
         currentPositionIndexStore.set(currentIndex);
