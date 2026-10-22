@@ -206,3 +206,63 @@ func TestCLI_ElsewhereSkipsAnUnreadableFile(t *testing.T) {
 		t.Error("no readable file yet no error")
 	}
 }
+
+// A match imported in both files, and a collection of the same name, are
+// found in the other file; a tournament it does not hold is absent.
+func TestCLI_ElsewhereFindsAMatchAndACollection(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	matchID, err := cli.db.ImportXGMatch(testdataPath("test.xg"))
+	if err != nil {
+		t.Fatalf("ImportXGMatch here: %v", err)
+	}
+	collID, err := cli.db.CreateCollection("À revoir", "")
+	if err != nil {
+		t.Fatalf("CreateCollection: %v", err)
+	}
+	tournamentID, err := cli.db.CreateTournament("Open", "", "")
+	if err != nil {
+		t.Fatalf("CreateTournament: %v", err)
+	}
+	otherPath := filepath.Join(tempDir(t), "other.db")
+	other := NewDatabase()
+	if err := other.SetupDatabase(otherPath); err != nil {
+		t.Fatalf("SetupDatabase other: %v", err)
+	}
+	theirMatch, err := other.ImportXGMatch(testdataPath("test.xg"))
+	if err != nil {
+		t.Fatalf("ImportXGMatch other: %v", err)
+	}
+	theirColl, err := other.CreateCollection("À revoir", "")
+	if err != nil {
+		t.Fatalf("CreateCollection other: %v", err)
+	}
+	other.Close()
+
+	for _, c := range []struct {
+		flag string
+		id   int64
+		want int64
+	}{{"--match", matchID, theirMatch}, {"--collection", collID, theirColl}, {"--tournament", tournamentID, 0}} {
+		out := captureStdout(t, func() {
+			if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", otherPath,
+				c.flag, strconv.FormatInt(c.id, 10), "--format", "json"}); err != nil {
+				t.Errorf("elsewhere %s: %v", c.flag, err)
+			}
+		})
+		var got struct {
+			Results []struct {
+				File string `json:"file"`
+				ID   int64  `json:"id"`
+			} `json:"results"`
+		}
+		if err := json.Unmarshal([]byte(out), &got); err != nil {
+			t.Fatalf("decode %q: %v", out, err)
+		}
+		if len(got.Results) != 1 || got.Results[0].ID != c.want {
+			t.Errorf("%s: results %+v, want id %d", c.flag, got.Results, c.want)
+		}
+	}
+	if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", otherPath, "--match", "1", "--lesson", "1"}); err == nil {
+		t.Error("two objects named at once were accepted")
+	}
+}

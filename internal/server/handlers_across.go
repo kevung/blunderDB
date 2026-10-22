@@ -150,6 +150,25 @@ type acrossElsewhereResp struct {
 	Results []acrossElsewhere `json:"results"`
 }
 
+// acrossObjectReq names an object of the writing tenant by kind and id.
+type acrossObjectReq struct {
+	Kind string `json:"kind"`
+	ID   int64  `json:"id"`
+}
+
+// acrossObject is what one read tenant holds under the object's key.
+type acrossObject struct {
+	Tenant string `json:"tenant"`
+	storage.ObjectPresence
+}
+
+// acrossObjectResp holds one answer per read tenant other than the writing
+// one, in the read set's order, with the key they were read by.
+type acrossObjectResp struct {
+	Query   storage.ObjectQuery `json:"query"`
+	Results []acrossObject      `json:"results"`
+}
+
 // acrossCollection is one collection of a read tenant: a shared library is a
 // tenant the proxy lists, read in place, never copied.
 type acrossCollection struct {
@@ -413,6 +432,31 @@ func (s *Server) acrossRoutes() []route {
 			}
 			for i, tg := range got {
 				resp.Results[i] = acrossElsewhere{Tenant: tg.Tenant, ElsewhereReport: tg.Item}
+			}
+			return resp, nil
+		})},
+		// Whether the other read tenants hold one match, tournament,
+		// collection or lesson of the writing tenant, under the key a copy
+		// merges it on (storage.ElsewhereObject).
+		{http.MethodPost, "/v1/across.objectElsewhere", rpc(func(ctx context.Context, scope string, req acrossObjectReq) (acrossObjectResp, error) {
+			q, err := storage.ObjectKey(ctx, st(), scope, req.Kind, req.ID)
+			if err != nil {
+				return acrossObjectResp{}, err
+			}
+			set := readSetOf(ctx, scope)
+			others := make(storage.ReadTenants, 0, len(set))
+			for _, t := range set {
+				if t != scope {
+					others = append(others, t)
+				}
+			}
+			got, err := storage.ElsewhereObject(ctx, storage.SourcesOf(st(), others), q)
+			if err != nil {
+				return acrossObjectResp{}, err
+			}
+			resp := acrossObjectResp{Query: q, Results: make([]acrossObject, len(got))}
+			for i, tg := range got {
+				resp.Results[i] = acrossObject{Tenant: tg.Tenant, ObjectPresence: tg.Item}
 			}
 			return resp, nil
 		})},

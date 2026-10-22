@@ -43,3 +43,10 @@ func TestAcrossElsewhere_NeedsABoard(t *testing.T) {
 		t.Errorf("no board: status %d, want 400", rec.Code)
 	}
 }
+
+func TestAcrossObjectElsewhere_RefusesAnUnknownKind(t *testing.T) {
+	srv, _ := newRecordingServer(t, false)
+	if rec := serveAcross(t, srv, "1", "2", "/v1/across.objectElsewhere", `{"kind":"deck","id":1}`); rec.Code != http.StatusBadRequest {
+		t.Errorf("unknown kind: status %d, want 400", rec.Code)
+	}
+}

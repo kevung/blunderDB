@@ -13,6 +13,7 @@ var boundAppMethods = []string{
 	"ActivateLibraryGroup",
 	"CloseLibraryGroup",
 	"ElsewhereInGroups",
+	"ElsewhereObjectInGroups",
 	"LibraryGroupHolding",
 	"ListLibraryGroups",
 	"OpenLibraryGroup",

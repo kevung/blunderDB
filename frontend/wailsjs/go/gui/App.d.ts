@@ -57,7 +57,7 @@ export function ConfigureMCPHost(arg1:gui.MCPHostConfig):Promise<gui.MCPHostStat
 
 export function CopyImageToClipboard(arg1:string):Promise<string>;
 
-export function CopyPositionToGroup(arg1:number,arg2:number,arg3:number):Promise<gui.PositionCopy>;
+export function CopyPositionToGroup(arg1:number,arg2:number,arg3:number):Promise<gui.TransferSummary>;
 
 export function CountRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
 
@@ -68,6 +68,8 @@ export function DeleteFile(arg1:string):Promise<void>;
 export function DiscardBearoffCheckpoint(arg1:number,arg2:number):Promise<void>;
 
 export function ElsewhereInGroups(arg1:domain.Position,arg2:number):Promise<gui.ElsewhereView>;
+
+export function ElsewhereObjectInGroups(arg1:string,arg2:number):Promise<Array<gui.ElsewhereObjectGroup>>;
 
 export function EnsureBearoffTables():Promise<void>;
 

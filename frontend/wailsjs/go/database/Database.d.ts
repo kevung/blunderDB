@@ -246,6 +246,10 @@ export function DiscardFromTrash(arg1:number):Promise<void>;
 
 export function DuelOffer():Promise<database.DuelOffer>;
 
+export function EachLibraryMove(arg1:any):Promise<void>;
+
+export function EachPositionAnalysis(arg1:any):Promise<void>;
+
 export function EditMatchTranscription(arg1:number):Promise<database.TranscriptionState>;
 
 export function EmptyTrash(arg1:number):Promise<number>;

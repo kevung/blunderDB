@@ -180,7 +180,7 @@ func TestCopyPositionToGroup_UndoTakesBackOnlyWhatItAdded(t *testing.T) {
 
 // copiedIntoB imports test.mat into group A and carries its first position
 // into group B, returning the copy and the position's id in B.
-func copiedIntoB(t *testing.T, a *App) (PositionCopy, int64) {
+func copiedIntoB(t *testing.T, a *App) (TransferSummary, int64) {
 	t.Helper()
 	if s, err := a.ImportFilesIn(1, []string{filepath.Join("..", "..", "testdata", "test.mat")}, "test"); err != nil || s.Succeeded != 1 {
 		t.Fatalf("import into A: %+v, %v", s, err)

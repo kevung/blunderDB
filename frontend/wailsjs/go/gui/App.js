@@ -122,6 +122,10 @@ export function ElsewhereInGroups(arg1, arg2) {
   return window['go']['gui']['App']['ElsewhereInGroups'](arg1, arg2);
 }
 
+export function ElsewhereObjectInGroups(arg1, arg2) {
+  return window['go']['gui']['App']['ElsewhereObjectInGroups'](arg1, arg2);
+}
+
 export function EnsureBearoffTables() {
   return window['go']['gui']['App']['EnsureBearoffTables']();
 }

@@ -160,6 +160,101 @@ func RunElsewhereTests(t *testing.T, factory func() storage.Storage) {
 			t.Error("a query naming no board was accepted")
 		}
 	})
+
+	t.Run("ObjectPresence", func(t *testing.T) {
+		testElsewhereObject(t, here, club, empty)
+	})
+}
+
+// testElsewhereObject holds storage.ElsewhereObject: a match is found by its
+// fingerprint, a tournament, a collection and a lesson by their name, each
+// with what it holds; a library without them answers ID 0.
+func testElsewhereObject(t *testing.T, here, club, empty storage.Storage) {
+	ctx := context.Background()
+	// The club holds the same match under another format: its canonical
+	// fingerprint names it.
+	m := domain.Match{Player1Name: "Ann", Player2Name: "Ben", MatchLength: 5, MatchHash: "fp-presence", CanonicalHash: "canon-presence"}
+	hereMatch, err := here.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match here: %v", err)
+	}
+	cross := domain.Match{Player1Name: "Ann", Player2Name: "Ben", MatchLength: 5, MatchHash: "other-format", CanonicalHash: "canon-presence"}
+	clubMatch, err := club.Matches().Save(ctx, "", &cross)
+	if err != nil {
+		t.Fatalf("Save match club: %v", err)
+	}
+	hereT, err := here.Tournaments().Create(ctx, "", "Open de Lyon", "", "")
+	if err != nil {
+		t.Fatalf("Create tournament: %v", err)
+	}
+	clubT, err := club.Tournaments().Create(ctx, "", "Open de Lyon", "", "")
+	if err != nil {
+		t.Fatalf("Create tournament: %v", err)
+	}
+	if err := club.Tournaments().AddMatch(ctx, "", clubT, clubMatch); err != nil {
+		t.Fatalf("AddMatch: %v", err)
+	}
+	hereC, err := here.Collections().Create(ctx, "", "À revoir", "")
+	if err != nil {
+		t.Fatalf("Create collection: %v", err)
+	}
+	clubC, err := club.Collections().Create(ctx, "", "À revoir", "")
+	if err != nil {
+		t.Fatalf("Create collection: %v", err)
+	}
+	pos := checkerPos()
+	pid, err := club.Positions().Save(ctx, "", &pos)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	if err := club.Collections().AddPositions(ctx, "", clubC, []int64{pid}); err != nil {
+		t.Fatalf("AddPositions: %v", err)
+	}
+	hereL, err := here.Lessons().Create(ctx, "", "Amorces", "")
+	if err != nil {
+		t.Fatalf("Create lesson: %v", err)
+	}
+	clubL, err := club.Lessons().Create(ctx, "", "Amorces", "")
+	if err != nil {
+		t.Fatalf("Create lesson: %v", err)
+	}
+	if _, err := club.Lessons().AddStep(ctx, "", clubL, domain.LessonStep{PositionID: pid}); err != nil {
+		t.Fatalf("AddStep: %v", err)
+	}
+
+	sources := []storage.Source{{Name: "club", Storage: club}, {Name: "empty", Storage: empty}}
+	for _, c := range []struct {
+		kind  string
+		id    int64
+		held  int64
+		count int
+	}{
+		{storage.ObjectMatch, hereMatch, clubMatch, 0},
+		{storage.ObjectTournament, hereT, clubT, 1},
+		{storage.ObjectCollection, hereC, clubC, 1},
+		{storage.ObjectLesson, hereL, clubL, 1},
+	} {
+		q, err := storage.ObjectKey(ctx, here, "", c.kind, c.id)
+		if err != nil {
+			t.Fatalf("ObjectKey %s: %v", c.kind, err)
+		}
+		got, err := storage.ElsewhereObject(ctx, sources, q)
+		if err != nil {
+			t.Fatalf("ElsewhereObject %s: %v", c.kind, err)
+		}
+		if len(got) != 2 || got[0].Tenant != "club" || got[0].Item.ID != c.held || got[0].Item.Count != c.count {
+			t.Errorf("%s in club = %+v, want id %d count %d", c.kind, got, c.held, c.count)
+		}
+		if len(got) == 2 && got[1].Item.ID != 0 {
+			t.Errorf("%s in an empty library = %+v, want absent", c.kind, got[1].Item)
+		}
+	}
+	if _, err := storage.ElsewhereObject(ctx, sources, storage.ObjectQuery{Kind: storage.ObjectTournament}); err == nil {
+		t.Error("a tournament named by no name was accepted")
+	}
+	if _, err := storage.ElsewhereObject(ctx, sources, storage.ObjectQuery{Kind: "deck", Name: "x"}); err == nil {
+		t.Error("an unknown kind was accepted")
+	}
 }
 
 // neighbourOf moves one checker of the side on roll one point down onto an

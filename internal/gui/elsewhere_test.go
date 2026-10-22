@@ -74,3 +74,32 @@ func TestElsewhereInGroups_OneGroupHasNoOtherLibrary(t *testing.T) {
 		t.Fatalf("view %+v, err %v", view, err)
 	}
 }
+
+// A collection of the active library is found in a waiting group by its name.
+func TestElsewhereObjectInGroups_FindsACollectionByName(t *testing.T) {
+	dir := t.TempDir()
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(func() { a.closeParkedLibraries(); _ = db.Close() })
+	if _, err := a.OpenLibraryGroup(newLibraryFile(t, dir, "a.db", 0)); err != nil {
+		t.Fatal(err)
+	}
+	theirs, err := db.CreateCollection("À revoir", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := a.OpenLibraryGroup(newLibraryFile(t, dir, "b.db", 0)); err != nil {
+		t.Fatal(err)
+	}
+	mine, err := db.CreateCollection("À revoir", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := a.ElsewhereObjectInGroups("collection", mine)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 1 || got[0].Group != 1 || got[0].ID != theirs || got[0].Name != "À revoir" {
+		t.Fatalf("groups: %+v, want group 1 holding collection %d", got, theirs)
+	}
+}

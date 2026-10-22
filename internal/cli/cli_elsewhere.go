@@ -18,8 +18,10 @@ import (
 
 // runElsewhere is `blunderdb elsewhere`: one board looked up by its Zobrist
 // hash in other database files, judged with the thresholds and match equity
-// table of --db (ADR-0103). The daemon serves the same read, across tenants,
-// as /v1/across.positionElsewhere.
+// table of --db (ADR-0103), or one match, tournament, collection or lesson of
+// --db looked up by the key a copy merges it on (storage.ElsewhereObject).
+// The daemon serves the same reads, across tenants, as
+// /v1/across.positionElsewhere and /v1/across.objectElsewhere.
 func (cli *CLI) runElsewhere(args []string) error {
 	fs := flag.NewFlagSet("elsewhere", flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Database the board is judged from: its thresholds and match equity table (required)")
@@ -28,11 +30,15 @@ func (cli *CLI) runElsewhere(args []string) error {
 	position := fs.Int64("position", 0, "The board, as a position id of --db")
 	xgid := fs.String("xgid", "", "The board, as an XGID")
 	zobrist := fs.String("zobrist", "", "The board, as its Zobrist hash (decimal); neighbours are then ranked only where it is held")
+	match := fs.Int64("match", 0, "Instead of a board: a match id of --db, found elsewhere by its fingerprint")
+	tournament := fs.Int64("tournament", 0, "Instead of a board: a tournament id of --db, found elsewhere by its name")
+	collection := fs.Int64("collection", 0, "Instead of a board: a collection id of --db, found elsewhere by its name")
+	lesson := fs.Int64("lesson", 0, "Instead of a board: a lesson id of --db, found elsewhere by its name")
 	neighbours := fs.Int("neighbours", storage.ElsewhereDefaultNeighbours, fmt.Sprintf("Nearest boards listed per database (0: none, at most %d)", storage.ElsewhereMaxNeighbours))
 	maxDistance := fs.Int("max-distance", 0, "Leave out neighbours farther than this many checker-pips (0: no ceiling)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb elsewhere --db <file> --other <file> [--other <file>...] (--position <id> | --xgid <XGID> | --zobrist <hash>) [options]")
+		fmt.Println("Usage: blunderdb elsewhere --db <file> --other <file> [--other <file>...] (--position <id> | --xgid <XGID> | --zobrist <hash> | --match <id> | --tournament <id> | --collection <id> | --lesson <id>) [options]")
 		fmt.Println()
 		fmt.Println("What other databases know of one board: their analysis, their comments, the")
 		fmt.Println("matches where it was played and how, and their boards nearest to it. A play's")
@@ -43,6 +49,12 @@ func (cli *CLI) runElsewhere(args []string) error {
 		fmt.Println("is read as it stands. A file that cannot be read is reported and skipped; the")
 		fmt.Println("others answer, and the command fails only when none could be read.")
 		fmt.Println()
+		fmt.Println("With --match, --tournament, --collection or --lesson, it says instead whether")
+		fmt.Println("each other database holds that object of --db, under the key a copy merges")
+		fmt.Println("it on: a match by its fingerprint (the same match imported from another")
+		fmt.Println("format included), a tournament, a collection or a lesson by its name; and")
+		fmt.Println("what the one it holds contains (games, matches, positions, steps).")
+		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()
 		fmt.Println()
@@ -50,6 +62,7 @@ func (cli *CLI) runElsewhere(args []string) error {
 		fmt.Println("  blunderdb elsewhere --db mine.db --other club.db --position 412")
 		fmt.Println("  blunderdb elsewhere --db mine.db --other a.db --other b.db --xgid \"XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10\"")
 		fmt.Println("  blunderdb elsewhere --db mine.db --other club.db --zobrist 1234567890 --format json")
+		fmt.Println("  blunderdb elsewhere --db mine.db --other club.db --tournament 3")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -62,13 +75,27 @@ func (cli *CLI) runElsewhere(args []string) error {
 		return fmt.Errorf("missing required flag: --other")
 	}
 	given := 0
+	objects := []struct {
+		kind string
+		id   int64
+	}{{storage.ObjectMatch, *match}, {storage.ObjectTournament, *tournament}, {storage.ObjectCollection, *collection}, {storage.ObjectLesson, *lesson}}
+	var object struct {
+		kind string
+		id   int64
+	}
 	for _, set := range []bool{*position != 0, *xgid != "", *zobrist != ""} {
 		if set {
 			given++
 		}
 	}
+	for _, o := range objects {
+		if o.id != 0 {
+			given++
+			object = o
+		}
+	}
 	if given != 1 {
-		return fmt.Errorf("name the board with exactly one of --position, --xgid or --zobrist")
+		return fmt.Errorf("name the board with exactly one of --position, --xgid or --zobrist, or the object with one of --match, --tournament, --collection or --lesson")
 	}
 	if *neighbours < 0 || *neighbours > storage.ElsewhereMaxNeighbours {
 		return fmt.Errorf("--neighbours must be between 0 and %d", storage.ElsewhereMaxNeighbours)
@@ -85,6 +112,9 @@ func (cli *CLI) runElsewhere(args []string) error {
 		return fmt.Errorf("no database open")
 	}
 	ctx := context.Background()
+	if object.id != 0 {
+		return cli.elsewhereObject(ctx, here, object.kind, object.id, others, strings.ToLower(*format) == "json")
+	}
 	q := storage.ElsewhereQuery{Neighbours: *neighbours, MaxDistance: *maxDistance}
 	if *neighbours == 0 {
 		q.Neighbours = -1
@@ -166,6 +196,78 @@ func (cli *CLI) runElsewhere(args []string) error {
 	}
 	printElsewhere(q.Zobrist, judge, others, byFile, unread)
 	return nil
+}
+
+// elsewhereObject prints whether each file of others holds object id of kind
+// of here, under the key a copy merges it on.
+func (cli *CLI) elsewhereObject(ctx context.Context, here storage.Storage, kind string, id int64, others []string, asJSON bool) error {
+	q, err := storage.ObjectKey(ctx, here, "", kind, id)
+	if err != nil {
+		return fmt.Errorf("%s %d: %w", kind, id, err)
+	}
+	unread := map[string]error{}
+	sources := make([]storage.Source, 0, len(others))
+	for _, path := range others {
+		st, err := openReadOnly(ctx, path)
+		if err != nil {
+			unread[path] = err
+			continue
+		}
+		defer st.Close()
+		sources = append(sources, storage.Source{Name: path, Storage: st})
+	}
+	if len(sources) == 0 {
+		msgs := make([]string, 0, len(others))
+		for _, path := range others {
+			msgs = append(msgs, unread[path].Error())
+		}
+		return errors.New(strings.Join(msgs, "\n"))
+	}
+	found, err := storage.ElsewhereObject(ctx, sources, q)
+	if err != nil {
+		return err
+	}
+	byFile := map[string]storage.ObjectPresence{}
+	for _, r := range found {
+		byFile[r.Tenant] = r.Item
+	}
+	type fileReport struct {
+		File  string `json:"file"`
+		Error string `json:"error,omitempty"`
+		storage.ObjectPresence
+	}
+	results := make([]fileReport, 0, len(others))
+	for _, path := range others {
+		if err, bad := unread[path]; bad {
+			results = append(results, fileReport{File: path, Error: err.Error()})
+			continue
+		}
+		results = append(results, fileReport{File: path, ObjectPresence: byFile[path]})
+	}
+	if asJSON {
+		return printJSON(struct {
+			Query   storage.ObjectQuery `json:"query"`
+			Results []fileReport        `json:"results"`
+		}{q, results})
+	}
+	label := q.Name
+	if kind == storage.ObjectMatch {
+		label = fmt.Sprintf("%d", id)
+	}
+	fmt.Printf("%s %s\n", kind, label)
+	w := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
+	fmt.Fprintln(w, "FILE\tHELD\tID\tCONTAINS")
+	for _, r := range results {
+		switch {
+		case r.Error != "":
+			fmt.Fprintf(w, "%s\tunreadable: %s\t\t\n", r.File, r.Error)
+		case r.ID == 0:
+			fmt.Fprintf(w, "%s\tno\t\t\n", r.File)
+		default:
+			fmt.Fprintf(w, "%s\tyes\t%d\t%d\n", r.File, r.ID, r.Count)
+		}
+	}
+	return w.Flush()
 }
 
 // openReadOnly opens another database file without writing to it: it must

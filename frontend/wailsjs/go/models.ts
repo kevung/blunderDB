@@ -4126,87 +4126,6 @@ export namespace gammonnet {
 }
 
 export namespace gui {
-	export class TransferSummary {
-	    group: number;
-	    positions: number;
-	    matches: number;
-	    tournaments: number;
-	    alreadyHeld: number;
-	    collections: number;
-	    lessons: number;
-	    errors: string[];
-	    cancelled: boolean;
-	
-	    static createFrom(source: any = {}) {
-	        return new TransferSummary(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.group = source["group"];
-	        this.positions = source["positions"];
-	        this.matches = source["matches"];
-	        this.tournaments = source["tournaments"];
-	        this.alreadyHeld = source["alreadyHeld"];
-	        this.collections = source["collections"];
-	        this.lessons = source["lessons"];
-	        this.errors = source["errors"];
-	        this.cancelled = source["cancelled"];
-	    }
-	}
-	export class PositionCopy {
-	    group: number;
-	    positions: number;
-	    matches: number;
-	    tournaments: number;
-	    alreadyHeld: number;
-	    collections: number;
-	    lessons: number;
-	    errors: string[];
-	    cancelled: boolean;
-	    receipt: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new PositionCopy(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.group = source["group"];
-	        this.positions = source["positions"];
-	        this.matches = source["matches"];
-	        this.tournaments = source["tournaments"];
-	        this.alreadyHeld = source["alreadyHeld"];
-	        this.collections = source["collections"];
-	        this.lessons = source["lessons"];
-	        this.errors = source["errors"];
-	        this.cancelled = source["cancelled"];
-	        this.receipt = source["receipt"];
-	    }
-	}
-
-	export class TransferBatch {
-	    group: number;
-	    positionIDs: number[];
-	    matchIDs: number[];
-	    tournamentIDs: number[];
-	    collectionIDs: number[];
-	    lessonIDs: number[];
-	
-	    static createFrom(source: any = {}) {
-	        return new TransferBatch(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.group = source["group"];
-	        this.positionIDs = source["positionIDs"];
-	        this.matchIDs = source["matchIDs"];
-	        this.tournamentIDs = source["tournamentIDs"];
-	        this.collectionIDs = source["collectionIDs"];
-	        this.lessonIDs = source["lessonIDs"];
-	    }
-	}
 	
 	export class AssistantRequest {
 	    preset: string;
@@ -4400,6 +4319,26 @@ export namespace gui {
 		    return a;
 		}
 	}
+	export class ElsewhereObjectGroup {
+	    group: number;
+	    path: string;
+	    id: number;
+	    name: string;
+	    count: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ElsewhereObjectGroup(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.group = source["group"];
+	        this.path = source["path"];
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.count = source["count"];
+	    }
+	}
 	export class ElsewhereView {
 	    zobrist: number;
 	    judge: storage.Judge;
@@ -4589,6 +4528,7 @@ export namespace gui {
 	    path: string;
 	    active: boolean;
 	    readOnly: boolean;
+	    locked: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new LibraryGroup(source);
@@ -4600,6 +4540,7 @@ export namespace gui {
 	        this.path = source["path"];
 	        this.active = source["active"];
 	        this.readOnly = source["readOnly"];
+	        this.locked = source["locked"];
 	    }
 	}
 	export class MCPHostConfig {
@@ -4779,6 +4720,58 @@ export namespace gui {
 	        this.errorPort = source["errorPort"];
 	    }
 	}
+	export class TransferBatch {
+	    group: number;
+	    positionIDs: number[];
+	    matchIDs: number[];
+	    tournamentIDs: number[];
+	    collectionIDs: number[];
+	    lessonIDs: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TransferBatch(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.group = source["group"];
+	        this.positionIDs = source["positionIDs"];
+	        this.matchIDs = source["matchIDs"];
+	        this.tournamentIDs = source["tournamentIDs"];
+	        this.collectionIDs = source["collectionIDs"];
+	        this.lessonIDs = source["lessonIDs"];
+	    }
+	}
+	export class TransferSummary {
+	    group: number;
+	    positions: number;
+	    matches: number;
+	    tournaments: number;
+	    alreadyHeld: number;
+	    collections: number;
+	    lessons: number;
+	    errors: string[];
+	    cancelled: boolean;
+	    receipt: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TransferSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.group = source["group"];
+	        this.positions = source["positions"];
+	        this.matches = source["matches"];
+	        this.tournaments = source["tournaments"];
+	        this.alreadyHeld = source["alreadyHeld"];
+	        this.collections = source["collections"];
+	        this.lessons = source["lessons"];
+	        this.errors = source["errors"];
+	        this.cancelled = source["cancelled"];
+	        this.receipt = source["receipt"];
+	    }
+	}
 	export class UpdateCheckResult {
 	    packageManaged: boolean;
 	    latestVersion?: string;
@@ -4811,25 +4804,6 @@ export namespace gui {
 	        this.command = source["command"];
 	    }
 	}
-	export class WatchStatus {
-	    running: boolean;
-	    folder: string;
-	    intervalSeconds: number;
-	    group: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new WatchStatus(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.running = source["running"];
-	        this.folder = source["folder"];
-	        this.intervalSeconds = source["intervalSeconds"];
-	        this.group = source["group"];
-	    }
-	}
-
 	export class ViewerEntry {
 	    id: number;
 	    label: string;
@@ -4947,6 +4921,25 @@ export namespace gui {
 	        this.played = source["played"];
 	    }
 	}
+	export class WatchStatus {
+	    running: boolean;
+	    folder: string;
+	    intervalSeconds: number;
+	    group: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new WatchStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.running = source["running"];
+	        this.folder = source["folder"];
+	        this.intervalSeconds = source["intervalSeconds"];
+	        this.group = source["group"];
+	    }
+	}
+
 }
 
 export namespace image {
@@ -8221,6 +8214,76 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class ElsewhereNeighbour {
+	    zobrist: number;
+	    distance: number;
+	    position: domain.Position;
+	
+	    static createFrom(source: any = {}) {
+	        return new ElsewhereNeighbour(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.zobrist = source["zobrist"];
+	        this.distance = source["distance"];
+	        this.position = this.convertValues(source["position"], domain.Position);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class ElsewherePlay {
+	    matchId: number;
+	    player1: string;
+	    player2: string;
+	    event: string;
+	    matchLength: number;
+	    matchDate?: string;
+	    moveNumber: number;
+	    player: number;
+	    moveType: string;
+	    played: string;
+	    errorMP?: number;
+	    verdict: string;
+	    dice: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ElsewherePlay(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.matchId = source["matchId"];
+	        this.player1 = source["player1"];
+	        this.player2 = source["player2"];
+	        this.event = source["event"];
+	        this.matchLength = source["matchLength"];
+	        this.matchDate = source["matchDate"];
+	        this.moveNumber = source["moveNumber"];
+	        this.player = source["player"];
+	        this.moveType = source["moveType"];
+	        this.played = source["played"];
+	        this.errorMP = source["errorMP"];
+	        this.verdict = source["verdict"];
+	        this.dice = source["dice"];
+	    }
+	}
 	export class ErrorPace {
 	    hasty: number;
 	    deliberate: number;
@@ -8314,76 +8377,6 @@ export namespace storage {
 		}
 	}
 	
-	export class ElsewhereNeighbour {
-	    zobrist: number;
-	    distance: number;
-	    position: domain.Position;
-	
-	    static createFrom(source: any = {}) {
-	        return new ElsewhereNeighbour(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.zobrist = source["zobrist"];
-	        this.distance = source["distance"];
-	        this.position = this.convertValues(source["position"], domain.Position);
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	export class ElsewherePlay {
-	    matchId: number;
-	    player1: string;
-	    player2: string;
-	    event: string;
-	    matchLength: number;
-	    matchDate?: string;
-	    moveNumber: number;
-	    player: number;
-	    moveType: string;
-	    played: string;
-	    errorMP?: number;
-	    verdict: string;
-	    dice: number[];
-	
-	    static createFrom(source: any = {}) {
-	        return new ElsewherePlay(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.matchId = source["matchId"];
-	        this.player1 = source["player1"];
-	        this.player2 = source["player2"];
-	        this.event = source["event"];
-	        this.matchLength = source["matchLength"];
-	        this.matchDate = source["matchDate"];
-	        this.moveNumber = source["moveNumber"];
-	        this.player = source["player"];
-	        this.moveType = source["moveType"];
-	        this.played = source["played"];
-	        this.errorMP = source["errorMP"];
-	        this.verdict = source["verdict"];
-	        this.dice = source["dice"];
-	    }
-	}
 	export class LibrarySettings {
 	    errorThresholdMP: number;
 	    blunderThresholdMP: number;

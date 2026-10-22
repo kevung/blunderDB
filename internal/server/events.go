@@ -66,6 +66,7 @@ var serverOnlyPaths = map[string]string{
 	"/v1/across.playerTable":         whyAcross,
 	"/v1/across.commentsByZobrist":   whyAcross,
 	"/v1/across.positionElsewhere":   whyAcross,
+	"/v1/across.objectElsewhere":     whyAcross,
 	"/v1/across.collectionsList":     whyAcross,
 	"/v1/across.collectionPositions": whyAcross,
 	"/v1/across.clubRanking":         whyAcross,

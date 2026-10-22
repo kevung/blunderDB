@@ -450,6 +450,14 @@ export function DuelOffer() {
   return window['go']['database']['Database']['DuelOffer']();
 }
 
+export function EachLibraryMove(arg1) {
+  return window['go']['database']['Database']['EachLibraryMove'](arg1);
+}
+
+export function EachPositionAnalysis(arg1) {
+  return window['go']['database']['Database']['EachPositionAnalysis'](arg1);
+}
+
 export function EditMatchTranscription(arg1) {
   return window['go']['database']['Database']['EditMatchTranscription'](arg1);
 }

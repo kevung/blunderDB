@@ -245,13 +245,6 @@ func (a *App) borrowTransferEnds(dst int, srcs []int) (transferEnds, error) {
 	return ends, nil
 }
 
-// PositionCopy is the account of one position carried from a split-screen
-// pane onto the other: the transfer's summary, whose receipt takes it back
-// (UndoPositionCopy), 0 when the destination held it already.
-type PositionCopy struct {
-	TransferSummary
-}
-
 // paneCopies is the session's history of copies the desktop can take back,
 // positions or matches, tournaments and collections, oldest first, held until
 // the application closes; each receipt names the file the copy went into.
@@ -298,16 +291,16 @@ func (p *paneCopies) drop(i int) {
 // group dst (database.CopyPosition, which says whether its own import
 // transaction inserted the position), and keeps its receipt in the session's
 // history when it did.
-func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, error) {
+func (a *App) CopyPositionToGroup(src int, id int64, dst int) (TransferSummary, error) {
 	ends, err := a.borrowTransferEnds(dst, []int{src})
 	if err != nil {
-		return PositionCopy{TransferSummary: TransferSummary{Group: ends.dst}}, err
+		return TransferSummary{Group: ends.dst}, err
 	}
 	defer ends.release()
 	sum := TransferSummary{Group: ends.dst, Errors: []string{}}
 	from := ends.from[src]
 	if from == nil {
-		return PositionCopy{TransferSummary: sum}, nil
+		return sum, nil
 	}
 	held, heldErr := ends.to.CountPositions()
 	r, err := database.CopyPosition(ends.ctx, from, ends.to, id)
@@ -324,7 +317,7 @@ func (a *App) CopyPositionToGroup(src int, id int64, dst int) (PositionCopy, err
 	if sum.Positions != 0 {
 		ends.to.RefreshSearchStatistics()
 	}
-	out := PositionCopy{TransferSummary: sum}
+	out := sum
 	if err != nil || !r.Created {
 		return out, nil
 	}
