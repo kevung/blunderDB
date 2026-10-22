@@ -186,3 +186,35 @@ func TestMatchReadParity_MovesCarryNoPlayedError(t *testing.T) {
 		t.Fatal("the fixture has no move")
 	}
 }
+
+// The move a position is played at points into the match's own move list: the
+// Matches panel finds the row to open by that move's id.
+func TestMatchReadParity_PositionMatchMoves(t *testing.T) {
+	t.Parallel()
+	db := newTestDBWithXG(t)
+	var posID int64
+	if err := db.db.QueryRow(`SELECT position_id FROM move WHERE position_id IS NOT NULL LIMIT 1`).Scan(&posID); err != nil {
+		t.Fatal(err)
+	}
+	moves, err := db.GetPositionMatchMoves(posID)
+	if err != nil || len(moves) == 0 {
+		t.Fatalf("GetPositionMatchMoves = %v, %v; want at least one move", moves, err)
+	}
+	first := moves[0]
+	positions, err := db.GetMatchMovePositions(first.MatchID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, mp := range positions {
+		if mp.MoveID == first.MoveID {
+			found = mp.Position.ID == posID && mp.GameNumber == first.GameNumber && mp.MoveNumber == first.MoveNumber
+		}
+	}
+	if !found {
+		t.Errorf("move %+v is not on position %d in match %d", first, posID, first.MatchID)
+	}
+	if none, err := db.GetPositionMatchMoves(999999); err != nil || len(none) != 0 {
+		t.Errorf("unknown position: %v, %v", none, err)
+	}
+}

@@ -58,6 +58,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/across.matchesList — NDJSON stream."
         return self._stream("/v1/across.matchesList", payload)
 
+    def across_object_elsewhere(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.objectElsewhere — JSON."
+        return self._call("/v1/across.objectElsewhere", payload)
+
     def across_player_table(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/across.playerTable — JSON."
         return self._call("/v1/across.playerTable", payload)
@@ -862,6 +866,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/matches.movesByMatch — NDJSON stream."
         return self._stream("/v1/matches.movesByMatch", payload)
 
+    def matches_moves_by_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.movesByPosition — JSON."
+        return self._call("/v1/matches.movesByPosition", payload)
+
     def matches_origin(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.origin — JSON."
         return self._call("/v1/matches.origin", payload)
@@ -1017,6 +1025,10 @@ class GeneratedAPI(BaseClient):
     def positions_from_xgp(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.fromXGP — JSON."
         return self._call("/v1/positions.fromXGP", payload)
+
+    def positions_gnubg_id(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.gnubgId — JSON."
+        return self._call("/v1/positions.gnubgId", payload)
 
     def positions_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.indexOf — JSON."

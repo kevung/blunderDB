@@ -13,7 +13,8 @@ import { ankiDecksStore } from '../stores/ankiStore.js';
 import { analysisChallengeStore, toggleAnalysisChallenge } from '../stores/analysisChallengeStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { sendPositionToEval, evaluateInNewView, loadPositionsByFilters, saveCurrentPosition, deletePosition } from './positionService.js';
-import { copyBoardImage, copyBoardWithAnalysisImage, copyPosition, copyXGID, exportBoardImage } from './clipboardService.js';
+import { copyBoardImage, copyBoardWithAnalysisImage, copyPosition, copyXGID, copyGnubgID, exportBoardImage } from './clipboardService.js';
+import { openMatchAtPosition } from './positionLoader.js';
 import { rankNeighboursOfCurrentPosition } from './rankService.js';
 import { runRolloutCommand } from './rolloutService.js';
 import { setPositionStudied, knownStudied, refreshStudied } from './studyQueueService.js';
@@ -77,6 +78,7 @@ export function positionContext({ displayPosition = () => get(positionStore), po
             evaluateInNewView: () => evaluateInNewView(displayPosition()),
             copyImage: () => copyBoardImage(),
             copyXGID: () => copyXGID(),
+            copyGnubgID: () => copyGnubgID(),
             copyPositionText: () => copyPosition(),
             copyImageWithAnalysis: () => copyBoardWithAnalysisImage(),
             saveImageSVG: () => exportBoardImage('svg'),
@@ -90,6 +92,7 @@ export function positionContext({ displayPosition = () => get(positionStore), po
             markStudied: () => setPositionStudied(positionId, true),
             unmarkStudied: () => setPositionStudied(positionId, false),
             neighbours: () => rankNeighboursOfCurrentPosition(),
+            openMatchAtMove: () => openMatchAtPosition(positionId),
             // A structure search on this board, as `s` on the search board asks it.
             sameStructure: () => loadPositionsByFilters({ queryBoard: get(positionStore), searchCommand: 's' }),
             newView: () => viewStore.addView(),

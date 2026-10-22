@@ -1771,7 +1771,10 @@
         "boardImageSaved": "Изображение сохранено: {path}",
         "boardImageSaveFailed": "Не удалось сохранить изображение: {err}",
         "pileError": "Стопка: ошибка",
-        "xgidCopied": "XGID скопирован в буфер обмена"
+        "xgidCopied": "XGID скопирован в буфер обмена",
+        "gnubgIdCopied": "ID GNUbg скопирован в буфер обмена",
+        "noMatchForPosition": "Ни один матч не играл эту позицию",
+        "moveGone": "Этого хода больше нет в матче: открыт там, где вы остановились"
     },
     "stats": {
         "title": "Статистика",
@@ -3693,12 +3696,14 @@
         },
         "copyImage": "Копировать изображение",
         "copyXGID": "Копировать XGID",
+        "copyGnubgID": "Копировать ID GNUbg",
         "copyPositionText": "Копировать позицию текстом",
         "comment": "Комментировать",
         "addTag": "Добавить #метку…",
         "markStudied": "Отметить как просмотренную",
         "unmarkStudied": "Снять отметку",
         "sameStructure": "Позиции той же структуры",
+        "openMatchAtMove": "Открыть матч на этом ходу",
         "rolloutFast": "Быстрый роллаут",
         "rolloutStandard": "Стандартный роллаут",
         "challenge": "Вызов на этой позиции",

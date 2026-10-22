@@ -60,6 +60,15 @@ type Config struct {
 	// 4×ImportMaxBodyBytes when zero.
 	MaxSpoolBytes int64
 
+	// Transcription serves the transcription gestures (create, open, apply,
+	// finish...), as `serve --transcription` does. Off by default: the
+	// engine authenticates nobody, so the host decides who reaches them.
+	Transcription bool
+	// TranscriptionTTL closes a transcription session idle for longer (its
+	// undo stack goes, nothing typed does). Zero means 30 minutes, the
+	// `serve --transcription-ttl` default.
+	TranscriptionTTL time.Duration
+
 	// CORSAllowOrigin enables CORS for the given origin(s) — see
 	// internal/server.Options.CORSAllowOrigin's doc comment for the exact
 	// syntax ("*", or a comma-separated list). Empty (the default) keeps
@@ -159,6 +168,8 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		RequestTimeout:     cfg.RequestTimeout,
 		StreamTimeout:      cfg.StreamTimeout,
 		MCPWrite:           cfg.MCPWrite,
+		Transcription:      cfg.Transcription,
+		TranscriptionTTL:   cfg.TranscriptionTTL,
 		Identity:           cfg.Identity,
 		ImportDir:          cfg.ImportDir,
 		TrustReadTenants:   cfg.TrustReadTenants,

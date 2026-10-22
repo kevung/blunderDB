@@ -13,7 +13,14 @@ import { get } from 'svelte/store';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { tMsg } from '../i18n';
-import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters, StatsTournamentIDs } from '../../wailsjs/go/database/Database.js';
+import {
+    GetPositionMatchMoves,
+    GetPositionIDsByStatsSelection,
+    GetPositionIDsByTournament,
+    GetPositionIDsByMatch,
+    LoadPositionIDsByFilters,
+    StatsTournamentIDs
+} from '../../wailsjs/go/database/Database.js';
 import { activeTabStore, statusBarTextStore, matchOpenRequestStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
@@ -207,6 +214,22 @@ export async function openMatchListInPanel(ids) {
 export function openMatchInPanel(matchID) {
     // The Matches panel opens it once its list is loaded, as the command palette does.
     matchOpenRequestStore.set(matchID);
+    activeTabStore.set('matches');
+}
+
+/**
+ * Open the first match that plays the position, on the move that plays it: the board's
+ * "open the match at this move". The status bar says so when no match has played it.
+ *
+ * @param {number} positionId
+ */
+export async function openMatchAtPosition(positionId) {
+    const moves = (await GetPositionMatchMoves(positionId)) ?? [];
+    if (moves.length === 0) {
+        statusBarTextStore.set(tMsg('status.noMatchForPosition'));
+        return;
+    }
+    matchOpenRequestStore.set({ id: moves[0].match_id, moveId: moves[0].move_id });
     activeTabStore.set('matches');
 }
 

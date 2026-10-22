@@ -1771,7 +1771,10 @@
         "boardImageSaved": "Η εικόνα αποθηκεύτηκε: {path}",
         "boardImageSaveFailed": "Η εικόνα δεν μπόρεσε να αποθηκευτεί: {err}",
         "pileError": "Στοίβα: σφάλμα",
-        "xgidCopied": "Το XGID αντιγράφηκε στο πρόχειρο"
+        "xgidCopied": "Το XGID αντιγράφηκε στο πρόχειρο",
+        "gnubgIdCopied": "Το ID GNUbg αντιγράφηκε στο πρόχειρο",
+        "noMatchForPosition": "Κανένας αγώνας δεν έπαιξε αυτή τη θέση",
+        "moveGone": "Αυτή η κίνηση δεν υπάρχει πια στον αγώνα: άνοιξε εκεί που τον αφήσατε"
     },
     "stats": {
         "title": "Στατιστικά",
@@ -3693,12 +3696,14 @@
         },
         "copyImage": "Αντιγραφή εικόνας",
         "copyXGID": "Αντιγραφή XGID",
+        "copyGnubgID": "Αντιγραφή ID GNUbg",
         "copyPositionText": "Αντιγραφή θέσης ως κείμενο",
         "comment": "Σχόλιο",
         "addTag": "Προσθήκη #ετικέτας…",
         "markStudied": "Σήμανση ως ειδωμένη",
         "unmarkStudied": "Αφαίρεση σήμανσης",
         "sameStructure": "Θέσεις ίδιας δομής",
+        "openMatchAtMove": "Άνοιγμα του αγώνα σε αυτή την κίνηση",
         "rolloutFast": "Γρήγορο rollout",
         "rolloutStandard": "Κανονικό rollout",
         "challenge": "Πρόκληση σε αυτή τη θέση",

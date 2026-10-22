@@ -15,12 +15,12 @@ import (
 // of a stored analysis (AnalyzeStaleGammonNet): any change re-runs every
 // stored row as a whole. Depth belongs in AnalysisDepth, never here.
 //
-// The tag fixes the weights (strehl-prob5-512-512-256-256, embedded by
-// network.go) together with the search, the "normal" level's filter triplet,
+// The tag fixes the weights (strehl-prob5-512-512-256-256 in float16, embedded
+// by network.go) together with the search, the "normal" level's filter triplet,
 // the cube model and the MET this file ports; a change to any of them moves
 // stored results, so every row analysed under an earlier label is stale
 // (analyze --stale). The gold files are built from the same tag.
-const EngineVersion = "gammonNet v1.7.0"
+const EngineVersion = "gammonNet v1.8.1"
 
 // ErrNotEvaluable marks a position this build declines to answer for (a
 // score beyond the MET's horizon, a cube decision the model refuses), as

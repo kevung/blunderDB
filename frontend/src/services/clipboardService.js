@@ -1,6 +1,6 @@
 import { tMsg, translate } from '../i18n';
 import { get } from 'svelte/store';
-import { CopyImageToClipboard, SaveBoardImageDialog, SaveBoardSVG, SaveBoardPNG } from '../../wailsjs/go/gui/App.js';
+import { CopyImageToClipboard, GnubgID, SaveBoardImageDialog, SaveBoardSVG, SaveBoardPNG } from '../../wailsjs/go/gui/App.js';
 import { snapshotBoardSVG, svgToCanvas, snapshotToPNGBase64, boardImageFilename, logSnapshotFailure } from './boardSnapshot.js';
 import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 
@@ -61,6 +61,17 @@ export async function copyXGID() {
         setStatusBarMessage(tMsg('status.xgidCopied'));
     } catch (err) {
         logger.error('Error copying to clipboard:', err);
+        setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
+    }
+}
+
+/** Copies the GNUbg ID, "<Position ID>:<Match ID>", which GNU Backgammon loads with `set gnubgid`. */
+export async function copyGnubgID() {
+    try {
+        await writeTextToClipboard(await GnubgID(get(positionStore)));
+        setStatusBarMessage(tMsg('status.gnubgIdCopied'));
+    } catch (err) {
+        logger.error('Error copying the GNUbg ID:', err);
         setStatusBarMessage(tMsg('status.errorCopyingClipboard'));
     }
 }

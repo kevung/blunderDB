@@ -714,6 +714,10 @@ export function GetPositionIndexMap() {
   return window['go']['database']['Database']['GetPositionIndexMap']();
 }
 
+export function GetPositionMatchMoves(arg1) {
+  return window['go']['database']['Database']['GetPositionMatchMoves'](arg1);
+}
+
 export function GetPositionProvenance(arg1) {
   return window['go']['database']['Database']['GetPositionProvenance'](arg1);
 }

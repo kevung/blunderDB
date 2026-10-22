@@ -36,6 +36,17 @@ func (s matchStore) MatchesByPosition(ctx context.Context, scope string, positio
 	return r.MatchIDs, err
 }
 
+func (s matchStore) MovesByPosition(ctx context.Context, scope string, positionID int64) ([]domain.PositionMove, error) {
+	var r struct {
+		Moves []domain.PositionMove `json:"moves"`
+	}
+	err := s.c.call(ctx, scope, "matches.movesByPosition", positionIDReq{positionID}, &r)
+	if r.Moves == nil {
+		r.Moves = []domain.PositionMove{}
+	}
+	return r.Moves, err
+}
+
 func (s matchStore) Get(ctx context.Context, scope string, id int64) (*domain.Match, error) {
 	var m *domain.Match
 	if err := s.c.call(ctx, scope, "matches.get", idReq{id}, &m); err != nil {

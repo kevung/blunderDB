@@ -105,6 +105,16 @@ func (d *Database) GetPositionProvenance(positionID int64) ([]Match, error) {
 	return matches, nil
 }
 
+// GetPositionMatchMoves returns the moves of matches played on the given
+// position, by match id, game and move number: where the Matches panel can
+// open a match at that move (storage.MatchStore.MovesByPosition). Empty for a
+// position no match mentions.
+func (d *Database) GetPositionMatchMoves(positionID int64) ([]PositionMove, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Matches().MovesByPosition(context.Background(), "", positionID)
+}
+
 // SaveLastVisitedPosition saves the last visited position index for a match
 // (storage.MatchStore.SetLastVisitedPosition).
 func (d *Database) SaveLastVisitedPosition(matchID int64, positionIndex int) error {

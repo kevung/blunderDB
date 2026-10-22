@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-22 16:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -335,6 +335,16 @@ msgid ""
 msgstr "ベアオフ局面（XGID または OGID）の Effective Pip Count とキューブ判断を計算します。"
 
 #: ../../source/cli.rst:1
+msgid "gnubgid"
+msgstr "gnubgid"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Écrit l'ID de position et l'ID de match que GNU Backgammon donne à une "
+"position (XGID ou OGID)."
+msgstr "GNU Backgammon が局面に与える局面 ID とマッチ ID を出力します (XGID または OGID)。"
+
+#: ../../source/cli.rst:1
 msgid "capture"
 msgstr "capture"
 
@@ -524,41 +534,41 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "サーバーモードと PostgreSQL への移行：\\ :ref:`headless` を参照。"
 
-#: ../../source/cli.rst:122
+#: ../../source/cli.rst:123
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr "各コマンドは ``--help`` オプションで詳細なヘルプを表示できます。"
 
-#: ../../source/cli.rst:136
+#: ../../source/cli.rst:137
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:139
+#: ../../source/cli.rst:140
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:148
+#: ../../source/cli.rst:149
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:155
+#: ../../source/cli.rst:156
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:168
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:169
+#: ../../source/cli.rst:170
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:170
+#: ../../source/cli.rst:171
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:172
+#: ../../source/cli.rst:173
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 

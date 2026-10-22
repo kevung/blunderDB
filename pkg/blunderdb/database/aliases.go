@@ -64,6 +64,7 @@ type (
 	Move                 = domain.Move
 	MoveAnalysis         = domain.MoveAnalysis
 	MatchMovePosition    = domain.MatchMovePosition
+	PositionMove         = domain.PositionMove
 
 	IssuanceInfo  = domain.IssuanceInfo
 	WatermarkInfo = domain.WatermarkInfo

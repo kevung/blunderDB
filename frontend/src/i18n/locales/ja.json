@@ -1771,7 +1771,10 @@
         "boardImageSaved": "画像を保存しました：{path}",
         "boardImageSaveFailed": "画像を保存できませんでした：{err}",
         "pileError": "パイル：エラー",
-        "xgidCopied": "XGID をクリップボードにコピーしました"
+        "xgidCopied": "XGID をクリップボードにコピーしました",
+        "gnubgIdCopied": "GNUbg ID をクリップボードにコピーしました",
+        "noMatchForPosition": "この局面を指したマッチはありません",
+        "moveGone": "この手はもうマッチにありません。前回の位置で開きました"
     },
     "stats": {
         "title": "統計",
@@ -3693,12 +3696,14 @@
         },
         "copyImage": "画像をコピー",
         "copyXGID": "XGID をコピー",
+        "copyGnubgID": "GNUbg ID をコピー",
         "copyPositionText": "局面をテキストでコピー",
         "comment": "コメント",
         "addTag": "#タグを追加…",
         "markStudied": "確認済みにする",
         "unmarkStudied": "確認済みを外す",
         "sameStructure": "同じ構造の局面",
+        "openMatchAtMove": "この手でマッチを開く",
         "rolloutFast": "高速ロールアウト",
         "rolloutStandard": "標準ロールアウト",
         "challenge": "この局面でチャレンジ",

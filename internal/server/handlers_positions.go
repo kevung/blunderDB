@@ -57,9 +57,17 @@ type imageReq struct {
 	Data string `json:"data"`
 }
 
-// legalMovesReq carries a position (board + dice + player on roll) to enumerate.
+// legalMovesReq carries a position (board + dice + player on roll) to enumerate; gnubgId reads the same request.
 type legalMovesReq struct {
 	Position *domain.Position `json:"position"`
+}
+
+// gnubgIDResp is the identifiers GNU Backgammon gives a position: its Position
+// ID, its Match ID and the two joined as it copies them.
+type gnubgIDResp struct {
+	PositionID string `json:"position_id"`
+	MatchID    string `json:"match_id"`
+	ID         string `json:"id"`
 }
 
 // xgpResp is the parsed position plus its analysis (if the file carried one).
@@ -220,6 +228,19 @@ func (s *Server) positionRoutes() []route {
 				plays = []domain.LegalPlay{}
 			}
 			return plays, nil
+		})},
+		// The GNUbg Position ID and Match ID of a position (pure; no storage).
+		// An invalid board (more than 15 checkers for a player) → 4xx.
+		{http.MethodPost, "/v1/positions.gnubgId", rpc(func(ctx context.Context, scope string, req legalMovesReq) (gnubgIDResp, error) {
+			if req.Position == nil {
+				return gnubgIDResp{}, errMissing("position")
+			}
+			posID, err := domain.EncodeGNUbgPositionID(req.Position)
+			if err != nil {
+				return gnubgIDResp{}, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+			}
+			matchID := domain.EncodeGNUbgMatchID(req.Position)
+			return gnubgIDResp{PositionID: posID, MatchID: matchID, ID: posID + ":" + matchID}, nil
 		})},
 		// EPC + race zone (pure; no storage). Single implementation shared
 		// with the GUI and the CLI (engine/race). Response { bottom, top,

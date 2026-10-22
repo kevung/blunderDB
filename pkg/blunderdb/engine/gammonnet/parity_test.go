@@ -32,12 +32,12 @@ type reference struct {
 
 func loadReference(t *testing.T) reference {
 	t.Helper()
-	raw, err := os.ReadFile("testdata/reference.bin")
+	raw, err := os.ReadFile("testdata/reference16.bin")
 	if err != nil {
 		t.Fatalf("reference vectors: %v", err)
 	}
 	if len(raw) < 16 || binary.LittleEndian.Uint32(raw) != referenceMagic {
-		t.Fatalf("reference.bin: unexpected magic")
+		t.Fatalf("reference16.bin: unexpected magic")
 	}
 	r := reference{
 		count:       int(int32(binary.LittleEndian.Uint32(raw[4:]))),

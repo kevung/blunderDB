@@ -38,7 +38,8 @@ describe('actionCatalog', () => {
         ]);
         expect(items[2].separatorBefore).toBe(true);
         expect(labels(submenu(items, 'annotate'))).toEqual(['actions.comment', 'actions.addTag', 'actions.markStudied', 'actions.unmarkStudied']);
-        expect(labels(submenu(items, 'navigate'))).toEqual(['board.menu.neighbours', 'actions.sameStructure', 'board.menu.newView']);
+        expect(labels(submenu(items, 'navigate'))).toEqual(['board.menu.neighbours', 'actions.sameStructure', 'actions.openMatchAtMove', 'board.menu.newView']);
+        expect(labels(submenu(items, 'copy'))).toContain('actions.copyGnubgID');
         expect(labels(submenu(items, 'manage'))).toEqual(['actions.trash']);
         // Évaluer stays at the first level and leads its group.
         expect(labels(submenu(items, 'analyze'))[0]).toBe('board.menu.evaluate');
@@ -64,6 +65,13 @@ describe('actionCatalog', () => {
         expect(plain(match)).toEqual(['actions.copyMatchTo', 'actions.addToLot']);
         const tournament = submenu(menuFor('tournament', { otherBases: ctx.otherBases, do: allHandlers('tournament') }, t), 'send');
         expect(plain(tournament)).toEqual(['actions.copyTournamentTo', 'actions.addToLot']);
+    });
+
+    test('opening the match at a move: offered for a stored position, not from inside a match', () => {
+        const navigate = (/** @type {string} */ mode) => labels(submenu(menuFor('position', { mode, positionId: 42, dbOpen: true, do: allHandlers('position') }, t), 'navigate') ?? []);
+        expect(navigate('COLLECTION')).toContain('actions.openMatchAtMove');
+        expect(navigate('MATCH')).not.toContain('actions.openMatchAtMove');
+        expect(navigate('EVAL')).not.toContain('actions.openMatchAtMove');
     });
 
     test('the studied mark: only the action that applies to the state is offered', () => {

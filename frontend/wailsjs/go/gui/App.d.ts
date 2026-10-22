@@ -91,6 +91,8 @@ export function GetMCPHostStatus():Promise<gui.MCPHostStatus>;
 
 export function GetTournamentDisplayStatus():Promise<gui.TournamentDisplayStatus>;
 
+export function GnubgID(arg1:domain.Position):Promise<string>;
+
 export function HelpBundle(arg1:string):Promise<string>;
 
 export function ImportFiles(arg1:Array<string>,arg2:boolean):Promise<gui.ImportFilesSummary>;

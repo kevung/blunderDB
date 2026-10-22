@@ -3127,6 +3127,26 @@ export namespace domain {
 		    return a;
 		}
 	}
+	export class PositionMove {
+	    match_id: number;
+	    game_id: number;
+	    game_number: number;
+	    move_number: number;
+	    move_id: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PositionMove(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.match_id = source["match_id"];
+	        this.game_id = source["game_id"];
+	        this.game_number = source["game_number"];
+	        this.move_number = source["move_number"];
+	        this.move_id = source["move_id"];
+	    }
+	}
 	
 	
 	

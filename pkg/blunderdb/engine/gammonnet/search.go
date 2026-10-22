@@ -53,7 +53,7 @@ var (
 	DefaultPruneEquityLossCIHigh = mustLevel("normal").PruneEquityLossCIHigh
 )
 
-//go:embed strehl-prune-32_v1.0.1_2026-08-27.bin
+//go:embed strehl-prune-32_v1.8.1_2026-10-22.bin16
 var embeddedPruneWeights []byte
 
 var (

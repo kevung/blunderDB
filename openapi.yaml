@@ -261,6 +261,30 @@ paths:
               schema:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/acrossMatch"
+  /v1/across.objectElsewhere:
+    post:
+      operationId: across.objectElsewhere
+      tags: [across]
+      x-kind: json
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossObjectReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acrossObjectResp"
   /v1/across.playerTable:
     post:
       operationId: across.playerTable
@@ -4678,6 +4702,23 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Move"
                 nullable: true
+  /v1/matches.movesByPosition:
+    post:
+      operationId: matches.movesByPosition
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/movesByPositionResp"
   /v1/matches.origin:
     post:
       operationId: matches.origin
@@ -5341,6 +5382,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/xgpResp"
+  /v1/positions.gnubgId:
+    post:
+      operationId: positions.gnubgId
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/legalMovesReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/gnubgIDResp"
   /v1/positions.indexOf:
     post:
       operationId: positions.indexOf
@@ -8115,6 +8173,28 @@ components:
         movePosition:
           $ref: "#/components/schemas/domain_MatchMovePosition"
           nullable: true
+    acrossObject:
+      type: object
+      properties:
+        tenant:
+          type: string
+    acrossObjectReq:
+      type: object
+      properties:
+        kind:
+          type: string
+        id:
+          type: integer
+          format: int64
+    acrossObjectResp:
+      type: object
+      properties:
+        query:
+          $ref: "#/components/schemas/storage_ObjectQuery"
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/acrossObject"
     acrossPlayers:
       type: object
       properties:
@@ -8821,6 +8901,9 @@ components:
     domain_PositionAnalysis:
       type: object
       description: "Opaque: see the Go type domain.PositionAnalysis (defined outside internal/server, not expanded here)."
+    domain_PositionMove:
+      type: object
+      description: "Opaque: see the Go type domain.PositionMove (defined outside internal/server, not expanded here)."
     domain_RolloutAnalysis:
       type: object
       description: "Opaque: see the Go type domain.RolloutAnalysis (defined outside internal/server, not expanded here)."
@@ -8984,6 +9067,15 @@ components:
         game:
           $ref: "#/components/schemas/domain_Game"
           nullable: true
+    gnubgIDResp:
+      type: object
+      properties:
+        position_id:
+          type: string
+        match_id:
+          type: string
+        id:
+          type: string
     htmlResp:
       type: object
       properties:
@@ -9329,6 +9421,13 @@ components:
         move:
           $ref: "#/components/schemas/domain_Move"
           nullable: true
+    movesByPositionResp:
+      type: object
+      properties:
+        moves:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_PositionMove"
     ogidReq:
       type: object
       properties:
@@ -9859,6 +9958,9 @@ components:
     storage_MoveGrade:
       type: object
       description: "Opaque: see the Go type storage.MoveGrade (defined outside internal/server, not expanded here)."
+    storage_ObjectQuery:
+      type: object
+      description: "Opaque: see the Go type storage.ObjectQuery (defined outside internal/server, not expanded here)."
     storage_PileToggle:
       type: object
       description: "Opaque: see the Go type storage.PileToggle (defined outside internal/server, not expanded here)."

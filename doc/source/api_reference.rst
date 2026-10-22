@@ -241,6 +241,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.movePositions                NDJSON
      POST /v1/matches.moves                        NDJSON
      POST /v1/matches.movesByMatch                 NDJSON
+     POST /v1/matches.movesByPosition              JSON
      POST /v1/matches.origin                       JSON
      POST /v1/matches.repair                       custom
      POST /v1/matches.save                         JSON
@@ -286,6 +287,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.fromOGID                   JSON
      POST /v1/positions.fromXGID                   JSON
      POST /v1/positions.fromXGP                    JSON
+     POST /v1/positions.gnubgId                    JSON
      POST /v1/positions.indexOf                    JSON
      POST /v1/positions.legalMoves                 JSON
      POST /v1/positions.list                       NDJSON

@@ -1771,7 +1771,10 @@
         "boardImageSaved": "Bild gespeichert: {path}",
         "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}",
         "pileError": "Stapel: Fehler",
-        "xgidCopied": "XGID in die Zwischenablage kopiert"
+        "xgidCopied": "XGID in die Zwischenablage kopiert",
+        "gnubgIdCopied": "GNUbg-ID in die Zwischenablage kopiert",
+        "noMatchForPosition": "Kein Match hat diese Position gespielt",
+        "moveGone": "Dieser Zug ist nicht mehr im Match: geöffnet, wo Sie aufgehört hatten"
     },
     "stats": {
         "title": "Stats",
@@ -3693,12 +3696,14 @@
         },
         "copyImage": "Bild kopieren",
         "copyXGID": "XGID kopieren",
+        "copyGnubgID": "GNUbg-ID kopieren",
         "copyPositionText": "Position als Text kopieren",
         "comment": "Kommentieren",
         "addTag": "#Etikett hinzufügen…",
         "markStudied": "Als gesehen markieren",
         "unmarkStudied": "Markierung entfernen",
         "sameStructure": "Positionen gleicher Struktur",
+        "openMatchAtMove": "Match bei diesem Zug öffnen",
         "rolloutFast": "Schneller Rollout",
         "rolloutStandard": "Standard-Rollout",
         "challenge": "Challenge zu dieser Position",

@@ -252,7 +252,9 @@ liste des matchs, des tournois ou des collections. Les deux gestes les plus
 courants sur une position, *Évaluer cette position* et *Copier l'image*, sont
 au premier niveau ; les autres sont rangés en sous-menus, marqués ▸ :
 
-* **Copier / partager** : l'image (*CTRL-X*), l'XGID seul, la position et son
+* **Copier / partager** : l'image (*CTRL-X*), l'XGID seul, l'ID GNUbg (l'ID de
+  position et l'ID de match que GNU Backgammon charge avec ``set gnubgid``,
+  aussi donnés par la commande ``gnubgid``), la position et son
   analyse en texte (*CTRL-C*), l'image avec l'analyse, l'image enregistrée en
   SVG ou en PNG ; pour un match, son export ``.mat``.
 * **Annoter** : *Commenter* ouvre le panneau Commentaires sur la position ;
@@ -260,7 +262,9 @@ au premier niveau ; les autres sont rangés en sous-menus, marqués ▸ :
   ajoute les étiquettes comme la commande ``#`` (voir :ref:`tags`) ; *Marquer
   vue* et *Démarquer* posent ou retirent la marque de la file d'étude.
 * **Naviguer** : *Positions voisines*, *Positions de même structure* (la
-  recherche par structure sur le plateau entier), *Nouvelle vue*.
+  recherche par structure sur le plateau entier), *Ouvrir le match à ce coup*
+  (le premier match qui a joué la position, ouvert sur le coup concerné ; la
+  barre d'état dit quand aucun n'y est passé), *Nouvelle vue*.
 * **Analyser** : évaluer la position, son miroir, ou dans un nouvel onglet ;
   *Rollout rapide* et *Rollout standard*, comme ``ro fast`` et ``ro standard``
   (voir :ref:`rollouts`).

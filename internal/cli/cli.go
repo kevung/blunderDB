@@ -115,6 +115,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"edit":        cli.runEdit,
 		"cubematrix":  cli.runCubeMatrix,
 		"epc":         cli.runEpc,
+		"gnubgid":     cli.runGnubgID,
 		"capture":     cli.runCapture,
 		"rollout":     cli.runRollout,
 		"search":      cli.runSearch,
@@ -195,6 +196,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  openingbook  Which play at this score? Replies to the opening, judged by the book")
 	fmt.Println("  cubematrix  Cube verdict at every score of a match, for one position")
 	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
+	fmt.Println("  gnubgid   The GNUbg Position ID and Match ID of a position")
 	fmt.Println("  capture   Read a position from a screen capture of an XG board")
 	fmt.Println("  rollout   Roll out a position's plays or cube decision (gammonNet)")
 	fmt.Println("  bearoff   Generate, list, verify and delete the bearoff tables")

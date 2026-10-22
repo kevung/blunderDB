@@ -58,11 +58,32 @@ func testMatchesByPosition(t *testing.T, s storage.Storage) {
 		}
 	}
 
+	// MovesByPosition names each move: both moves of both matches, by match,
+	// game and move number, each pointing at a move of that match.
+	moves, err := ms.MovesByPosition(ctx, "", sharedID)
+	if err != nil || len(moves) != 4 {
+		t.Fatalf("MovesByPosition(shared) = %v, %v; want 4 moves", moves, err)
+	}
+	for i, m := range moves {
+		if m.MatchID != matchIDs[i/2] || m.GameNumber != 1 || m.MoveNumber != int32(i%2+1) || m.MoveID == 0 || m.GameID == 0 {
+			t.Errorf("MovesByPosition(shared)[%d] = %+v; want match %d, game 1, move %d", i, m, matchIDs[i/2], i%2+1)
+		}
+	}
+	for name, id := range map[string]int64{"unreferenced": aloneID, "unknown": 999999} {
+		got, err := ms.MovesByPosition(ctx, "", id)
+		if err != nil || got == nil || len(got) != 0 {
+			t.Errorf("MovesByPosition(%s) = %#v, %v; want an empty, non-nil slice", name, got, err)
+		}
+	}
+
 	// Once the match is gone, the position is free again.
 	if err := ms.DeleteCascade(ctx, "", matchIDs[0]); err != nil {
 		t.Fatal(err)
 	}
 	if got, err := ms.MatchesByPosition(ctx, "", sharedID); err != nil || !slices.Equal(got, matchIDs[1:2]) {
 		t.Errorf("after delete MatchesByPosition = %v, %v; want %v", got, err, matchIDs[1:2])
+	}
+	if got, err := ms.MovesByPosition(ctx, "", sharedID); err != nil || len(got) != 2 || got[0].MatchID != matchIDs[1] {
+		t.Errorf("after delete MovesByPosition = %v, %v; want the 2 moves of match %d", got, err, matchIDs[1])
 	}
 }

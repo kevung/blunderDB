@@ -378,6 +378,8 @@ export function GetPositionIDsByTournament(arg1:number):Promise<Array<number>>;
 
 export function GetPositionIndexMap():Promise<Record<number, number>>;
 
+export function GetPositionMatchMoves(arg1:number):Promise<Array<domain.PositionMove>>;
+
 export function GetPositionProvenance(arg1:number):Promise<Array<domain.Match>>;
 
 export function GetRandomAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
