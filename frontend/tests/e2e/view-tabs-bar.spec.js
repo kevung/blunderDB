@@ -104,3 +104,32 @@ test('a group moves with all its tabs, beside the other group', async ({ page })
     const flat = await page.locator('[data-group-id]').evaluateAll((els) => els.map((el) => el.dataset.groupId));
     expect(flat).toEqual(['2', '2', '2', '1', '1']);
 });
+
+test('the landing mark shows on a dragged-over tab and on the active group header', async ({ page }) => {
+    await openTwoGroups(page);
+    await page.locator('.add-btn').click();
+    const shadow = (loc) => loc.evaluate((el) => getComputedStyle(el).boxShadow);
+    const tab = tabsOf(page, 2).nth(1);
+    const header = page.locator('[data-testid="library-group"]').nth(1);
+    const a = await tabsOf(page, 2).nth(0).boundingBox();
+    const t = await tab.boundingBox();
+    await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(a.x + a.width / 2 + 10, a.y + a.height / 2, { steps: 3 });
+    await page.mouse.move(t.x + t.width * 0.9, t.y + t.height / 2, { steps: 5 });
+    await expect(tab).toHaveClass(/tab-drop-after/);
+    expect(await shadow(tab)).not.toBe('none');
+    await page.mouse.up();
+
+    // The active header, dragged over from group 1's header.
+    const h1 = await page.locator('[data-testid="library-group"]').nth(0).boundingBox();
+    const h2 = await header.boundingBox();
+    await page.mouse.move(h1.x + h1.width * 0.15, h1.y + h1.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(h1.x + h1.width * 0.15 + 10, h1.y + h1.height / 2, { steps: 3 });
+    await page.mouse.move(h2.x + h2.width * 0.2, h2.y + h2.height / 2, { steps: 5 });
+    await expect(page.locator('.tab-drop-after, .tab-drop-before').first()).toBeVisible();
+    const marked = page.locator('.group-header.tab-drop-before, .group-header.tab-drop-after, .view-tab.tab-drop-after, .view-tab.tab-drop-before').first();
+    expect(await shadow(marked)).not.toBe('none');
+    await page.mouse.up();
+});

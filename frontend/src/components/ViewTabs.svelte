@@ -351,13 +351,13 @@
         flex-shrink: 0;
     }
 
-    /* Where a dragged tab or group would land. */
-    .view-tab.grouped.tab-drop-before,
-    .group-header.tab-drop-before {
+    /* Where a dragged tab or group would land; the extra class outranks the active header's rule. */
+    .view-tabs .view-tab.tab-drop-before,
+    .view-tabs .group-header.tab-drop-before {
         box-shadow: inset 3px 0 0 var(--color-primary);
     }
-    .view-tab.grouped.tab-drop-after,
-    .group-header.tab-drop-after {
+    .view-tabs .view-tab.tab-drop-after,
+    .view-tabs .group-header.tab-drop-after {
         box-shadow: inset -3px 0 0 var(--color-primary);
     }
 
