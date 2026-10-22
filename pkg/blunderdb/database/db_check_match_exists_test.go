@@ -11,6 +11,7 @@ import (
 // empty hash identifies nothing, as on the daemon's /v1/matches.findByHash: a
 // match stored without a hash (match_hash = ”) is not found by "".
 func TestCheckMatchExists(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 5,
 		MatchHash: "exact", CanonicalHash: "canonical"}

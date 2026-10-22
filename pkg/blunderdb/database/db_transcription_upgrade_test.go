@@ -12,6 +12,7 @@ import (
 // is reopened converted: the tie and the opening are gone, the play that
 // followed is the game's first and carries the score the tie declared.
 func TestTranscription_Version2DraftReopensConverted(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	const doc = `{"format_version":2,"header":{"match_length":7},"actions":[
 		{"side":0,"kind":"opening","dice":[4,4],"score":[1,0]},

@@ -22,6 +22,7 @@ func TestStorageMigratesLegacyDatabase(t *testing.T) {
 	// 1.9→2.0 backfill adds.
 	for _, version := range []string{"1.0.0", "1.6.0", "2.5.0", "2.7.0"} {
 		t.Run(version, func(t *testing.T) {
+			t.Parallel()
 			path := filepath.Join(t.TempDir(), "old.db")
 			createOldDatabase(t, path, version)
 

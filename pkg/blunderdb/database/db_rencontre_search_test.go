@@ -5,6 +5,7 @@ import "testing"
 // The search index feeds the director's palette: every event, player, table and running match of
 // the room in one call, whichever event they belong to.
 func TestRencontreSearchIndex_RoomWide(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	a := startedDirection(t, d, 16)
 	b := startedDirectionNamed(t, d, 16, "Joueuse ")
@@ -70,6 +71,7 @@ func TestRencontreSearchIndex_RoomWide(t *testing.T) {
 
 // A Direction outside any Rencontre is searched alone, over its own tables.
 func TestDirectionSearchIndex_LoneEvent(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	a := startedDirection(t, d, 8)
 	idx, err := d.DirectionSearchIndex(a)

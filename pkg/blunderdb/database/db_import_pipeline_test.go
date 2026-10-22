@@ -42,6 +42,7 @@ func pipelineFixture(t *testing.T) []string {
 // The writer decides in file order: the outcome of a list does not depend on
 // how many readers raced over it nor on how files are grouped.
 func TestImportFiles_DeterministicAcrossWorkers(t *testing.T) {
+	t.Parallel()
 	files := pipelineFixture(t)
 	type shape struct {
 		status        string
@@ -96,6 +97,7 @@ func TestImportFiles_DeterministicAcrossWorkers(t *testing.T) {
 
 // The pipeline writes what the one-file importers write.
 func TestImportFiles_SameDatabaseAsSequential(t *testing.T) {
+	t.Parallel()
 	files := pipelineFixture(t)
 	seq := newTestDB(t)
 	for _, f := range files {
@@ -122,6 +124,7 @@ func TestImportFiles_SameDatabaseAsSequential(t *testing.T) {
 // A cancellation rolls back the group being written; committed groups stay,
 // and every reported file is in the database.
 func TestImportFiles_CancelKeepsCommittedGroups(t *testing.T) {
+	t.Parallel()
 	files := pipelineFixture(t)
 	db := newTestDB(t)
 	seen := 0
@@ -144,6 +147,7 @@ func TestImportFiles_CancelKeepsCommittedGroups(t *testing.T) {
 
 // The open batch counts what the pipeline committed.
 func TestImportFiles_CountsIntoBatch(t *testing.T) {
+	t.Parallel()
 	files := pipelineFixture(t)
 	db := newTestDB(t)
 	id, err := db.BeginImportBatch("fixture", "mixed")

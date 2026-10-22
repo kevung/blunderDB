@@ -30,6 +30,7 @@ func analyseEveryMatchPosition(t *testing.T, db *Database, matchID int64) {
 }
 
 func TestPendingTranscriptionAnalysis_OffersTheUnfinishedMatch(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
@@ -68,6 +69,7 @@ func TestPendingTranscriptionAnalysis_OffersTheUnfinishedMatch(t *testing.T) {
 }
 
 func TestPendingTranscriptionAnalysis_SaysNothingOnAnAnalysedMatch(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
@@ -87,6 +89,7 @@ func TestPendingTranscriptionAnalysis_SaysNothingOnAnAnalysedMatch(t *testing.T)
 }
 
 func TestPendingTranscriptionAnalysis_IgnoresADraftThatProducedNoMatch(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	// A draft being typed has no match id, so there is nothing to finish — and
@@ -108,6 +111,7 @@ func TestPendingTranscriptionAnalysis_IgnoresADraftThatProducedNoMatch(t *testin
 // An imported match is the library's to analyse, not the transcription's:
 // the offer never names one, however much of it lacks analysis.
 func TestPendingTranscriptionAnalysis_IgnoresAnImportedMatch(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 	saved, err := db.FinishTranscription(id)

@@ -11,6 +11,7 @@ import (
 // TestLastDecisionIsTheOneToTakeBack: undo lands on the gesture the director is thinking of —
 // the last result — not on the note they typed in between.
 func TestLastDecisionIsTheOneToTakeBack(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -49,6 +50,7 @@ func TestLastDecisionIsTheOneToTakeBack(t *testing.T) {
 // TestCorrectionIsOneMoreEvent: correcting never erases. The first result stays in the log
 // where it happened, and both are readable in the history.
 func TestCorrectionIsOneMoreEvent(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -84,6 +86,7 @@ func TestCorrectionIsOneMoreEvent(t *testing.T) {
 
 // TestCorrectionTakesEffect: the corrected winner is the one that counts afterwards.
 func TestCorrectionTakesEffect(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)
@@ -116,6 +119,7 @@ func TestCorrectionTakesEffect(t *testing.T) {
 // TestCorrectionInBracketRaisesAWarningThatClears: a correction can leave a bracket wrong. The
 // engine says so, and stops saying so once the cause is gone — never because someone read it.
 func TestCorrectionInBracketRaisesAWarningThatClears(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID, err := d.CreateTournament("Tableau", "2026-09-12", "")
 	if err != nil {

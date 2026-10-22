@@ -111,6 +111,7 @@ func TestUpcomingSheetPrintsTheProposedRoundAndWritesNothing(t *testing.T) {
 }
 
 func TestUpcomingSheetWithNothingProposed(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := directedAt(t, d, 4, `{"name":"Court","tables":{"count":4},"phases":[{"kind":"bracket","length":3}]}`)
 	// Draw, then launch everything: nothing is left to announce.

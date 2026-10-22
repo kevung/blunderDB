@@ -11,6 +11,7 @@ import (
 // A match without a date (NULL, ” or the zero time) sorts by its import
 // date, on the wrapper's GetAllMatches exactly as on the contract's List.
 func TestMatchReadParity_UndatedSortsByImportDate(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	ins := func(hash string, date any, imported string) int64 {
 		res, err := db.db.Exec(`INSERT INTO match (player1_name, player2_name, match_length, match_date, import_date, game_count, match_hash)
@@ -54,6 +55,7 @@ func TestMatchReadParity_UndatedSortsByImportDate(t *testing.T) {
 // GetMatchMovePositions reads position.max_cube like the contract's
 // MovePositions.
 func TestMatchReadParity_MovePositionsMaxCube(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 	var matchID int64
 	if err := db.db.QueryRow(`SELECT id FROM match LIMIT 1`).Scan(&matchID); err != nil {
@@ -85,6 +87,7 @@ func TestMatchReadParity_MovePositionsMaxCube(t *testing.T) {
 // shows first: an undated match (legacy zero time) by its import date, as the
 // contract's LastVisited now sorts it on both backends.
 func TestMatchReadParity_LastVisitedFallbackSortsUndatedByImportDate(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	insertMatchRow(t, db, "h1", "2020-06-01T00:00:00Z", "2020-07-01T00:00:00Z")
 	zero := insertMatchRow(t, db, "h2", "0001-01-01T00:00:00Z", "2023-01-01T00:00:00Z")
@@ -105,6 +108,7 @@ func TestMatchReadParity_LastVisitedFallbackSortsUndatedByImportDate(t *testing.
 
 // An empty library still answers with the text the GUI reads.
 func TestMatchReadParity_LastVisitedEmptyLibrary(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	if _, err := db.GetLastVisitedMatch(); err == nil || err.Error() != "no matches in database" {
 		t.Errorf("err = %v, want \"no matches in database\"", err)
@@ -114,6 +118,7 @@ func TestMatchReadParity_LastVisitedEmptyLibrary(t *testing.T) {
 // A position's provenance is ordered as the match list orders: an undated
 // match sorts by its import date, not after every dated one.
 func TestMatchReadParity_ProvenanceInListOrder(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 	var posID, xgMatch int64
 	if err := db.db.QueryRow(`SELECT mv.position_id, g.match_id FROM move mv JOIN game g ON mv.game_id = g.id
@@ -148,6 +153,7 @@ func TestMatchReadParity_ProvenanceInListOrder(t *testing.T) {
 // GetMovesByGame reads the moves as recorded: no cost of the played move,
 // even on an analysed position, so the export reads no analysis.
 func TestMatchReadParity_MovesCarryNoPlayedError(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 	matches, err := db.GetAllMatches()
 	if err != nil {

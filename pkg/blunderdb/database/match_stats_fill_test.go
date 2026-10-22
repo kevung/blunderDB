@@ -247,6 +247,7 @@ func TestFillMatchStatsInBackground_StopsWhenTheFileChanges(t *testing.T) {
 }
 
 func TestFillMatchStatsInBackground_WritesNothingReadOnly(t *testing.T) {
+	t.Parallel()
 	d, _ := libraryWithoutMatchStats(t, "ro.db")
 	recordFill(d)
 	d.mu.Lock()
@@ -265,6 +266,7 @@ func TestFillMatchStatsInBackground_WritesNothingReadOnly(t *testing.T) {
 // Without a report, as in the CLI, nothing fills in the background: the
 // reads fill before they answer.
 func TestFillMatchStatsInBackground_OffWithoutReport(t *testing.T) {
+	t.Parallel()
 	d, _ := libraryWithoutMatchStats(t, "cli.db")
 	if d.FillMatchStatsInBackground() {
 		t.Fatal("a fill started without a report")
@@ -281,6 +283,7 @@ func TestFillMatchStatsInBackground_OffWithoutReport(t *testing.T) {
 // A page whose own fill loses the write lock to another writer still comes
 // back with its badges, read from the decisions.
 func TestListMatches_BadgesSurviveABusyFill(t *testing.T) {
+	t.Parallel()
 	d, path := libraryWithoutMatchStats(t, "busy-page.db")
 	// One pooled connection, so the short busy_timeout below is the one the
 	// page's fill runs on.

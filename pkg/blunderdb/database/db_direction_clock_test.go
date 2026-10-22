@@ -7,6 +7,7 @@ import (
 // TestClockBeforeAnyMatch: nothing has been launched, so the tournament's own clock has not
 // started. A tournament prepared the evening before has not been running since then.
 func TestClockBeforeAnyMatch(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -31,6 +32,7 @@ func TestClockBeforeAnyMatch(t *testing.T) {
 // TestClockCountsMatches: launching and finishing matches moves the counters, and the observed
 // pace appears once something has actually been played.
 func TestClockCountsMatches(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 
@@ -68,6 +70,7 @@ func TestClockCountsMatches(t *testing.T) {
 // TestClockCountsWarnings: the strip carries the count, so a director sees there is something
 // to look at without a window interrupting them.
 func TestClockCountsWarnings(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := startedDirection(t, d, 24)
 	m := runningMatch(t, d, tID)

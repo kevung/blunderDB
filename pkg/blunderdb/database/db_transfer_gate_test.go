@@ -12,6 +12,7 @@ import (
 // is refused while the source is held, and a transfer is refused while a
 // vacuum of its source runs.
 func TestTransferTo_HoldsTheSourceAgainstAVacuum(t *testing.T) {
+	t.Parallel()
 	src, dst := newTestDB(t), newTestDB(t)
 	release, err := src.holdForRead()
 	if err != nil {

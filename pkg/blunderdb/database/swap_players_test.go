@@ -55,6 +55,7 @@ func matchByID(t *testing.T, db *Database, id int64) Match {
 // list re-reads (GetMatchByID) carries the badges as they now are, and a
 // second swap gives the match back.
 func TestSwapMatchPlayers_RealMatchKeepsAnalyses(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(filepath.Join(t.TempDir(), "swap.db")); err != nil {
 		t.Fatal(err)

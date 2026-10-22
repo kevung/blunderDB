@@ -11,6 +11,7 @@ import (
 // undo and redo walk the draft's own history and must not forget it, or the
 // next save would create a second Match.
 func TestFinishTranscription_MatchIDSurvivesUndoAndRedo(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
@@ -47,6 +48,7 @@ func TestFinishTranscription_MatchIDSurvivesUndoAndRedo(t *testing.T) {
 // A Match deleted from the library takes the draft back to "never saved": its
 // gestures still write, and the next save creates a Match anew.
 func TestFinishTranscription_DeletedMatchMakesTheDraftUnsaved(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 
@@ -88,6 +90,7 @@ func TestFinishTranscription_DeletedMatchMakesTheDraftUnsaved(t *testing.T) {
 // A draft read back from disk after its Match was deleted (another run, the
 // server) is "never saved" as well.
 func TestOpenTranscription_DeletedMatchAcrossSessions(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	id := matDraft(t, db, filepath.Join("testdata", "test.mat"))
 

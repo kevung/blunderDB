@@ -11,6 +11,7 @@ import (
 )
 
 func TestDuelFacade_CreateConflictStop(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	sides := [2]duel.SideSpec{{Kind: duel.SideExternal, Name: "Kévin"}, {Kind: duel.SideExternal, Name: "Alice"}}
@@ -47,6 +48,7 @@ func TestDuelFacade_CreateConflictStop(t *testing.T) {
 
 // Closing the library puts the open Duel in suspense: its clocks stop with it.
 func TestDuelFacade_CloseSuspends(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	sides := [2]duel.SideSpec{{Kind: duel.SideExternal, Name: "A"}, {Kind: duel.SideExternal, Name: "B"}}
 	if _, err := db.CreateDuel(duel.Settings{MatchLength: 1, Sides: sides}); err != nil {
@@ -62,6 +64,7 @@ func TestDuelFacade_CloseSuspends(t *testing.T) {
 // The desktop shows one Duel at the board: creating or opening one puts the
 // one it leaves in suspense, though the Arbiter would keep both open.
 func TestDuelFacade_OneAtTheBoard(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	sides := [2]duel.SideSpec{{Kind: duel.SideExternal, Name: "A"}, {Kind: duel.SideExternal, Name: "B"}}
 	first, err := db.CreateDuel(duel.Settings{MatchLength: 3, Sides: sides})
@@ -114,6 +117,7 @@ func TestDuelFacade_OneAtTheBoard(t *testing.T) {
 
 // The form's « score seul » Start: the opening position at a chosen away score, no roll on it.
 func TestDuelFacade_StartAtScore(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	start := domain.InitializePosition()
 	start.Dice = [2]int{}
@@ -131,6 +135,7 @@ func TestDuelFacade_StartAtScore(t *testing.T) {
 // The origin of a Match played here is read back with its revealed seed, which
 // gives the fingerprint published at creation; an imported Match has none.
 func TestDuelFacade_MatchOrigin(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	sides := [2]duel.SideSpec{{Kind: duel.SideExternal, Name: "Kévin"}, {Kind: duel.SideExternal, Name: "Alice"}}

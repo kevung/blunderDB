@@ -54,6 +54,7 @@ func importedFixture(t *testing.T) *Database {
 // TestRefreshSearchStatistics_SkipsASmallBatch: one match file is below
 // statsRefreshMinPositions, so the batch ends without analysing anything.
 func TestRefreshSearchStatistics_SkipsASmallBatch(t *testing.T) {
+	t.Parallel()
 	d := importedFixture(t)
 	if d.positionsSinceStats == 0 || d.positionsSinceStats >= statsRefreshMinPositions {
 		t.Fatalf("fixture wrote %d positions, want 1..%d", d.positionsSinceStats, statsRefreshMinPositions-1)
@@ -71,6 +72,7 @@ func TestRefreshSearchStatistics_SkipsASmallBatch(t *testing.T) {
 // non-empty table, so the search plans cannot change. (optimize leaves an
 // empty table unanalysed; ANALYZE records it as "0 …".)
 func TestRefreshSearchStatistics_BoundedMatchesFullAnalyze(t *testing.T) {
+	t.Parallel()
 	d := importedFixture(t)
 	d.positionsSinceStats = statsRefreshMinPositions
 	d.RefreshSearchStatistics()

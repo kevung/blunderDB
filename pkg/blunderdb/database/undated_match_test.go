@@ -20,6 +20,7 @@ func insertMatchRow(t *testing.T, db *Database, hash string, date any, imported 
 
 // Every legacy text form of the zero time sorts as undated, by import date.
 func TestUndatedMatch_EveryZeroTimeFormSortsByImportDate(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	dated := insertMatchRow(t, db, "h1", "2020-06-01 00:00:00 +0000 UTC", "2020-07-01T00:00:00Z")
 	goString := insertMatchRow(t, db, "h2", "0001-01-01 00:00:00 +0000 UTC", "2023-01-01T00:00:00Z")
@@ -40,6 +41,7 @@ func TestUndatedMatch_EveryZeroTimeFormSortsByImportDate(t *testing.T) {
 
 // An unreadable date reads as absent instead of failing the whole list.
 func TestUndatedMatch_UnreadableDateDoesNotFailTheList(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	insertMatchRow(t, db, "h1", "2020-06-01T00:00:00Z", "2020-07-01T00:00:00Z")
 	bad := insertMatchRow(t, db, "h2", "17/05/2025", "2023-01-01T00:00:00Z")
@@ -66,6 +68,7 @@ func TestUndatedMatch_UnreadableDateDoesNotFailTheList(t *testing.T) {
 // Saving an undated match, whether the client sends ” or echoes the zero
 // time back, keeps it undated: NULL, sorted by its import date.
 func TestUndatedMatch_EditKeepsItUndated(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	older := insertMatchRow(t, db, "h1", "2020-06-01T00:00:00Z", "2020-07-01T00:00:00Z")
 	echoed := insertMatchRow(t, db, "h2", nil, "2023-01-01T00:00:00Z")

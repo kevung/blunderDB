@@ -11,6 +11,7 @@ import (
 // its Participants.
 
 func TestDirectory_IsDerivedFromTheDirections(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 	if err := d.EnterParticipants(tID, `[
@@ -49,6 +50,7 @@ func TestDirectory_IsDerivedFromTheDirections(t *testing.T) {
 // The same person entered twice is one line, and the LAST entry says the club: someone who
 // changed club is listed under the new one.
 func TestDirectory_TheLastEntryWins(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	first := preparedDirection(t, d)
 	if err := d.EnterParticipants(first, `[{"id":"ha","name":"Hugo Andrieu","club":"Lyon","rating":5}]`); err != nil {
@@ -88,6 +90,7 @@ func TestDirectory_TheLastEntryWins(t *testing.T) {
 // Two SPELLINGS stay two lines. Deciding that "J. Dupont" and "Jean Dupont" are one person is
 // exactly the inference blunderDB does not make.
 func TestDirectory_TwoSpellingsStayTwoLines(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 	if err := d.EnterParticipants(tID, `[
@@ -108,6 +111,7 @@ func TestDirectory_TwoSpellingsStayTwoLines(t *testing.T) {
 
 // Taking last time's entrants is one call: the point of the whole feature.
 func TestDirectory_TakeLastTimesEntrants(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	previous := preparedDirection(t, d)
 	if err := d.EnterParticipants(previous, `[
@@ -158,6 +162,7 @@ func TestDirectory_TakeLastTimesEntrants(t *testing.T) {
 
 // Export then import gives the same list back, accents included.
 func TestDirectory_CSVRoundTrip(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 	if err := d.EnterParticipants(tID, `[
@@ -193,6 +198,7 @@ func TestDirectory_CSVRoundTrip(t *testing.T) {
 // A malformed CSV shows the offending lines and imports nothing: parsing writes nothing at all,
 // which is what makes "nothing until confirmed" true rather than promised.
 func TestDirectory_AMalformedCSVWritesNothing(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 
@@ -229,6 +235,7 @@ func TestDirectory_AMalformedCSVWritesNothing(t *testing.T) {
 // A French spreadsheet writes semicolons and commas for decimals. A file that will not open is
 // a file the director stops using.
 func TestDirectory_ASpreadsheetsCSVAlsoReads(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	got, err := d.ParseDirectoryCSV(0, "nom;club;cote\nHugo Andrieu;Lyon;4,5\n")
 	if err != nil {
@@ -250,6 +257,7 @@ func TestDirectory_ASpreadsheetsCSVAlsoReads(t *testing.T) {
 // A line with no separator, among lines that have one, is an error and not a player: it
 // is what a stray note pasted with the list looks like.
 func TestDirectory_ALineWithNoSeparatorIsAnError(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	body := "Hugo Andrieu,Lyon,5\n\nligne sans séparateur\nLéa Bonnet,Lyon,4\n"
 	got, err := d.ParseDirectoryCSV(0, body)
@@ -277,6 +285,7 @@ func TestDirectory_ALineWithNoSeparatorIsAnError(t *testing.T) {
 // A duplicate — twice in the paste, or already entered — is a warning, and it is NOT among the
 // rows ready to enter: entering the same player twice is what a director does not mean.
 func TestDirectory_DuplicatesAreWarnedAndHeldBack(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 	tID := preparedDirection(t, d)
 	if err := d.EnterParticipants(tID, `[{"id":"a","name":"Marc Colin","club":"Paris","rating":6}]`); err != nil {
