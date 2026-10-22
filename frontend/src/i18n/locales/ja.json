@@ -3598,6 +3598,15 @@
             "comments": "コメント ({n})",
             "matches": "マッチ ({n})",
             "neighbours": "近い局面 ({n})"
+        },
+        "object": {
+            "heading": "選択：{kind}「{label}」",
+            "count": {
+                "match": "{n} ゲーム",
+                "tournament": "{n} マッチ",
+                "collection": "{n} 局面",
+                "lesson": "{n} ステップ"
+            }
         }
     },
     "transfer": {

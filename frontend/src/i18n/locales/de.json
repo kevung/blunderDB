@@ -3598,6 +3598,15 @@
             "comments": "Kommentare ({n})",
             "matches": "Matches ({n})",
             "neighbours": "Nahe Stellungen ({n})"
+        },
+        "object": {
+            "heading": "Auswahl: {kind} „{label}“",
+            "count": {
+                "match": "{n} Partien",
+                "tournament": "{n} Matches",
+                "collection": "{n} Positionen",
+                "lesson": "{n} Schritte"
+            }
         }
     },
     "transfer": {

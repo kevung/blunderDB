@@ -3598,6 +3598,15 @@
             "comments": "Σχόλια ({n})",
             "matches": "Αγώνες ({n})",
             "neighbours": "Κοντινές θέσεις ({n})"
+        },
+        "object": {
+            "heading": "Επιλογή: {kind} «{label}»",
+            "count": {
+                "match": "{n} παρτίδες",
+                "tournament": "{n} αγώνες",
+                "collection": "{n} θέσεις",
+                "lesson": "{n} βήματα"
+            }
         }
     },
     "transfer": {

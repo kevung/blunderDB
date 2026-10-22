@@ -13,6 +13,7 @@
     import { onMount, onDestroy, untrack, tick } from 'svelte';
     import { get } from 'svelte/store';
     import { SvelteSet } from 'svelte/reactivity';
+    import { noteSelection } from '../stores/exchangeObjectStore.js';
     import {
         GetMatchByID,
         TrashMatch,
@@ -104,6 +105,8 @@
     let filterTimer = null;
     /** @type {any} */
     let selectedMatch = $state(null);
+    // The « Autres bases » panel speaks of the selected match.
+    $effect(() => noteSelection('match', selectedMatch ? { id: selectedMatch.id, label: `${selectedMatch.player1_name} – ${selectedMatch.player2_name}` } : null));
     // A match requested from the command palette is being opened.
     let openingRequested = false;
     const visible = $derived($openPanels.has(PANEL.MATCH));

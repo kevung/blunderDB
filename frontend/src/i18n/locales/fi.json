@@ -3598,6 +3598,15 @@
             "comments": "Kommentit ({n})",
             "matches": "Ottelut ({n})",
             "neighbours": "Läheiset asemat ({n})"
+        },
+        "object": {
+            "heading": "Valinta: {kind} ”{label}”",
+            "count": {
+                "match": "{n} peliä",
+                "tournament": "{n} ottelua",
+                "collection": "{n} asemaa",
+                "lesson": "{n} vaihetta"
+            }
         }
     },
     "transfer": {

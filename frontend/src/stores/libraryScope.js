@@ -37,6 +37,7 @@ import { duelStore, duelListStore, duelFoldedStore, duelBoardStore } from './due
 import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from './collectionStore.js';
 import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentIDsFilterStore } from './tournamentStore.js';
 import { searchHistoryStore, lastSearchStore } from './searchHistoryStore.js';
+import { exchangeObjectStore } from './exchangeObjectStore.js';
 import { filterLibraryStore } from './filterLibraryStore.js';
 import { directionSummariesStore } from './directionStore.js';
 import { searchExcludePositionStore, emptySearchBoardPosition } from './searchExcludePositionStore.js';
@@ -152,6 +153,7 @@ export const RELOADED = {
     selectedTournamentStore: [selectedTournamentStore, () => null],
     tournamentMatchesStore: [tournamentMatchesStore, () => []],
     tournamentIDsFilterStore: [tournamentIDsFilterStore, () => null],
+    exchangeObjectStore: [exchangeObjectStore, () => null],
     ankiDecksStore: [ankiDecksStore, () => []],
     searchHistoryStore: [searchHistoryStore, () => []],
     filterLibraryStore: [filterLibraryStore, () => []],

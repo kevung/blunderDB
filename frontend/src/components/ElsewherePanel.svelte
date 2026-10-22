@@ -14,7 +14,10 @@
     import { groupIdsStore, activeGroupId, groupName, groupColorIndex, tabGroupsStore } from '../stores/libraryGroupStore.js';
     import { transferBasketStore, lockedGroupsStore } from '../stores/transferBasketStore.js';
     import { loadElsewhere, openElsewhere, togglePin, analysisSummary, formatCost } from '../services/elsewhereService.js';
-    import { copyPositionToPane, fetchPositionFrom, pourBasket, removeFromBasket, emptyBasket } from '../services/transferService.js';
+    import { copyPositionToPane, fetchPositionFrom, pourBasket, removeFromBasket, emptyBasket, copyToGroup, transferToGroup } from '../services/transferService.js';
+    import { exchangeObjectStore } from '../stores/exchangeObjectStore.js';
+    import { ElsewhereObjectInGroups } from '../../wailsjs/go/gui/App.js';
+    import { logger } from '../utils/logger.js';
     import { openDatabaseInNewGroup } from '../services/databaseService.js';
     import { libraryDrag } from '../utils/libraryDrag.js';
     import { renderPositionSVG } from '../services/diagramService.js';
@@ -99,6 +102,57 @@
         loadElsewhere($positionStore, { force: true });
     }
 
+    // The selected match, tournament, collection or lesson: whether each other base holds it,
+    // under the key a copy merges it on, and the same two copies as the position's.
+    /** @type {import('../../wailsjs/go/models').gui.ElsewhereObjectGroup[]} */
+    let objectGroups = $state([]);
+    let objectReads = 0;
+    async function loadObject() {
+        const object = $exchangeObjectStore;
+        const read = ++objectReads;
+        if (!object || others.length === 0) {
+            objectGroups = [];
+            return;
+        }
+        try {
+            const got = await ElsewhereObjectInGroups(object.kind, object.id);
+            if (read === objectReads) objectGroups = got ?? [];
+        } catch (error) {
+            logger.error('reading the selection in the other bases failed:', error);
+            if (read === objectReads) objectGroups = [];
+        }
+    }
+    $effect(() => {
+        void $databasePathStore;
+        void others.length;
+        void $exchangeObjectStore;
+        loadObject();
+    });
+
+    /** @type {Record<string, string>} What the object held there contains, by kind. */
+    const COUNT_KEYS = {
+        match: 'elsewhere.object.count.match',
+        tournament: 'elsewhere.object.count.tournament',
+        collection: 'elsewhere.object.count.collection',
+        lesson: 'elsewhere.object.count.lesson'
+    };
+
+    /** @param {number} dst */
+    async function copyObjectTo(dst) {
+        const object = $exchangeObjectStore;
+        if (!object) return;
+        await copyToGroup(dst, { group: $activeGroupId, ...object });
+        loadObject();
+    }
+
+    /** @param {number} src @param {number} id */
+    async function fetchObjectFrom(src, id) {
+        const object = $exchangeObjectStore;
+        if (!object) return;
+        await transferToGroup($activeGroupId, [{ group: src, kind: object.kind, id, label: object.label }]);
+        loadObject();
+    }
+
     // The base the lot goes into: chosen in the panel, another open base by default.
     let lotTarget = $state(0);
     let lotDst = $derived($groupIdsStore.includes(lotTarget) ? lotTarget : (others[0] ?? 0));
@@ -112,6 +166,37 @@
         </div>
     {:else}
         <p class="intro">{$t('elsewhere.intro')}</p>
+        {#if $exchangeObjectStore && objectGroups.length > 0}
+            {@const object = $exchangeObjectStore}
+            <section class="selection" data-testid="elsewhere-object">
+                <header>{$t('elsewhere.object.heading', { kind: $t(KIND_KEYS[object.kind]), label: object.label })}</header>
+                {#each objectGroups as g (g.group)}
+                    {@const name = groupName(g.path) || $t('libraryGroups.unnamed')}
+                    <div class="object-line" style="--group-color: var(--group-color-{groupColorIndex(g.group)})" data-testid="elsewhere-object-group">
+                        <span class="dot" aria-hidden="true"></span>
+                        <span class="name" title={g.path}>{name}</span>
+                        <span class="status {g.id ? 'present' : 'absent'}" data-testid="elsewhere-object-status"
+                            >{$t(g.id ? STATUS_KEYS.present : STATUS_KEYS.absent)}{g.id ? ' · ' + $t(COUNT_KEYS[object.kind], { n: g.count }) : ''}</span
+                        >
+                        <button
+                            type="button"
+                            class="link"
+                            data-testid="elsewhere-object-copy-to"
+                            disabled={$lockedGroupsStore.has(g.group)}
+                            title={$lockedGroupsStore.has(g.group) ? $t('transfer.locked') : ''}
+                            onclick={() => copyObjectTo(g.group)}>{$t('elsewhere.copyTo', { base: name })}</button
+                        >
+                        <button
+                            type="button"
+                            class="link"
+                            data-testid="elsewhere-object-fetch-from"
+                            disabled={!g.id || $lockedGroupsStore.has($activeGroupId)}
+                            onclick={() => fetchObjectFrom(g.group, g.id)}>{$t('elsewhere.fetchFrom', { base: name })}</button
+                        >
+                    </div>
+                {/each}
+            </section>
+        {/if}
         {#if !hasPosition}
             <p class="empty" data-testid="elsewhere-no-position">{$t('elsewhere.noPosition')}</p>
         {:else if $elsewhereStore.loading && !view}
@@ -340,6 +425,22 @@
         border-left: 3px solid var(--group-color);
         padding: 4px 0 6px 8px;
         margin-bottom: 8px;
+    }
+    .selection {
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--color-border);
+    }
+    .selection header {
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+    .object-line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 8px;
+        margin: 2px 0;
     }
     .group header {
         display: flex;

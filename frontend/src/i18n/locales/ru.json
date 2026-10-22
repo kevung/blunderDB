@@ -3598,6 +3598,15 @@
             "comments": "Комментарии ({n})",
             "matches": "Матчи ({n})",
             "neighbours": "Близкие позиции ({n})"
+        },
+        "object": {
+            "heading": "Выбрано: {kind} «{label}»",
+            "count": {
+                "match": "{n} партий",
+                "tournament": "{n} матчей",
+                "collection": "{n} позиций",
+                "lesson": "{n} шагов"
+            }
         }
     },
     "transfer": {
