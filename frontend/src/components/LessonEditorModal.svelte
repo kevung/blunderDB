@@ -16,7 +16,9 @@
         ReorderLessonSteps,
         GetAllCollections
     } from '../../wailsjs/go/database/Database.js';
+    import { untrack } from 'svelte';
     import { lessonEditorTargetStore } from '../stores/lessonStore.js';
+    import { dbMutationCounterStore } from '../stores/uiStore.js';
     import { positionStore } from '../stores/positionStore.js';
     import { openLesson, refreshOpenLesson } from '../services/lessonService.js';
     import { exportLessonHTML } from '../services/lessonHtmlService.js';
@@ -40,6 +42,20 @@
 
     $effect(() => {
         if (visible) void init();
+    });
+
+    // A write to the library while the editor is open (a copy, an MCP tool) may bring lessons or
+    // collections: the lists are read again, the lesson being edited is left as it is.
+    const mutationAtMount = untrack(() => $dbMutationCounterStore);
+    $effect(() => {
+        if ($dbMutationCounterStore === mutationAtMount) return;
+        untrack(() => {
+            if (!visible) return;
+            void loadLessons();
+            GetAllCollections()
+                .then((c) => (collections = c || []))
+                .catch((e) => logger.error('could not list the collections:', e));
+        });
     });
 
     async function init() {

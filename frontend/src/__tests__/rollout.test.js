@@ -556,3 +556,23 @@ describe('command', () => {
         expect(startRollout).toHaveBeenCalledTimes(1);
     });
 });
+
+describe('a stored rollout', () => {
+    test('is a write to the library: its lists and statistics read it again', async () => {
+        const { ensureRolloutEvents } = await import('../services/rolloutService.js');
+        const { dbMutationCounterStore } = await import('../stores/uiStore.js');
+        const { get: read } = await import('svelte/store');
+        ensureRolloutEvents();
+        let before = read(dbMutationCounterStore);
+        handlers['rollout:done']({ job: 99, positionId: 7, result: null, stored: false });
+        expect(read(dbMutationCounterStore)).toBe(before);
+        handlers['rollout:done']({ job: 99, positionId: 7, result: null, stored: true });
+        expect(read(dbMutationCounterStore)).toBe(before + 1);
+        before = read(dbMutationCounterStore);
+        handlers['rollout-batch:done']({ job: 100, total: 5, rolledOut: 4, refused: 1, failed: 0, signature: 's' });
+        expect(read(dbMutationCounterStore)).toBe(before + 1);
+        before = read(dbMutationCounterStore);
+        handlers['rollout-batch:cancelled']({ job: 101, total: 5, rolledOut: 2 });
+        expect(read(dbMutationCounterStore)).toBe(before + 1);
+    });
+});

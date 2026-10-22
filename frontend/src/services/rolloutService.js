@@ -7,6 +7,7 @@ import { positionStore } from '../stores/positionStore.js';
 import { statusBarTextStore, activeTabStore } from '../stores/uiStore.js';
 import { withDisplayedPositionIDs } from './modeMachine.js';
 import { databasePathStore } from '../stores/databaseStore.js';
+import { libraryWritten } from '../stores/groupActivityStore.js';
 import { confirmAction } from './confirmService.js';
 import { tMsg, t } from '../i18n';
 import { logger } from '../utils/logger.js';
@@ -71,6 +72,19 @@ function applyJob(change, e) {
 }
 
 /**
+ * A job's end that stored rollouts, whichever job the panel follows: the library was written, and
+ * what lists or counts it reads it again.
+ * @param {(e: any) => boolean} stored
+ * @param {(e: any) => void} handler
+ */
+function storing(stored, handler) {
+    return (/** @type {any} */ e) => {
+        handler(e);
+        if (stored(e)) libraryWritten(null);
+    };
+}
+
+/**
  * Applies an event to the state unless it belongs to a job that was replaced since: a cancelled job
  * still reports its end after the next one has begun. While a start is in flight the new job's
  * number is not known, so the events wait for it and are then filtered against it.
@@ -125,15 +139,18 @@ export function ensureRolloutEvents() {
         );
         EventsOn(
             'rollout:done',
-            onJob((s, e, job) => ({
-                ...told(e.stored ? 'rollout.doneStored' : 'rollout.doneNotStored'),
-                ...idleRollout(),
-                job,
-                result: e.stored ? null : (e.record ?? null),
-                resultKey: e.stored ? '' : s.pendingKey,
-                outcome: { type: 'done', positionId: e.positionId ?? 0, stored: !!e.stored },
-                revision: s.revision + 1
-            }))
+            storing(
+                (e) => !!e?.stored,
+                onJob((s, e, job) => ({
+                    ...told(e.stored ? 'rollout.doneStored' : 'rollout.doneNotStored'),
+                    ...idleRollout(),
+                    job,
+                    result: e.stored ? null : (e.record ?? null),
+                    resultKey: e.stored ? '' : s.pendingKey,
+                    outcome: { type: 'done', positionId: e.positionId ?? 0, stored: !!e.stored },
+                    revision: s.revision + 1
+                }))
+            )
         );
         EventsOn(
             'rollout:cancelled',
@@ -164,23 +181,29 @@ export function ensureRolloutEvents() {
         );
         EventsOn(
             'rollout-batch:done',
-            onJob((s, e, job) => ({
-                ...told('rollout.batchDone', { rolledOut: e.rolledOut ?? 0, total: e.total ?? 0, refused: e.refused ?? 0, failed: e.failed ?? 0 }),
-                ...idleRollout(),
-                job,
-                outcome: { ...e, type: 'batch-done' },
-                revision: s.revision + 1
-            }))
+            storing(
+                (e) => (e?.rolledOut ?? 0) > 0,
+                onJob((s, e, job) => ({
+                    ...told('rollout.batchDone', { rolledOut: e.rolledOut ?? 0, total: e.total ?? 0, refused: e.refused ?? 0, failed: e.failed ?? 0 }),
+                    ...idleRollout(),
+                    job,
+                    outcome: { ...e, type: 'batch-done' },
+                    revision: s.revision + 1
+                }))
+            )
         );
         EventsOn(
             'rollout-batch:cancelled',
-            onJob((s, e, job) => ({
-                ...told('rollout.batchCancelled', { rolledOut: e.rolledOut ?? 0, total: e.total ?? 0 }),
-                ...idleRollout(),
-                job,
-                outcome: { ...e, type: 'batch-cancelled' },
-                revision: s.revision + 1
-            }))
+            storing(
+                (e) => (e?.rolledOut ?? 0) > 0,
+                onJob((s, e, job) => ({
+                    ...told('rollout.batchCancelled', { rolledOut: e.rolledOut ?? 0, total: e.total ?? 0 }),
+                    ...idleRollout(),
+                    job,
+                    outcome: { ...e, type: 'batch-cancelled' },
+                    revision: s.revision + 1
+                }))
+            )
         );
         EventsOn(
             'rollout-batch:error',

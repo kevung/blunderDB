@@ -2,11 +2,11 @@
     import { logger } from '../utils/logger.js';
     import Modal from './Modal.svelte';
     import CountLink from './panels/CountLink.svelte';
-    import { tick } from 'svelte';
+    import { tick, untrack } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
     import { get } from 'svelte/store';
     import { GetAllPlayerNames, MergePlayers, ListAliases, RemoveAlias, MainPlayer, PlanMainPlayer, SetMainPlayer, ClearMainPlayer, PlayerMatchIDs } from '../../wailsjs/go/database/Database.js';
-    import { statusBarTextStore } from '../stores/uiStore';
+    import { statusBarTextStore, dbMutationCounterStore } from '../stores/uiStore';
     import { openMatchListInPanel } from '../services/positionLoader.js';
     import { t, tMsg } from '../i18n';
 
@@ -79,6 +79,13 @@
     }
 
     loadPlayers();
+
+    // A write to the library while the modal is open (an import, a copy) may bring players.
+    const mutationAtMount = untrack(() => $dbMutationCounterStore);
+    $effect(() => {
+        if ($dbMutationCounterStore === mutationAtMount) return;
+        untrack(() => loadPlayers(true));
+    });
 
     // What the Main player's designation would still swap; when something is
     // left, the confirmation band comes back.

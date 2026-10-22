@@ -24,10 +24,11 @@ const api = vi.hoisted(() => ({
 vi.mock('../../wailsjs/go/database/Database.js', () => api);
 vi.mock('../services/lessonService.js', () => ({ openLesson: vi.fn(), refreshOpenLesson: vi.fn() }));
 vi.mock('../services/lessonHtmlService.js', () => ({ exportLessonHTML: vi.fn() }));
-vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(async () => true) }));
+vi.mock('../services/confirmService.js', async (importOriginal) => ({ ...(await importOriginal()), confirmAction: vi.fn(async () => true) }));
 
 import LessonEditorModal from '../components/LessonEditorModal.svelte';
 import { lessonEditorTargetStore } from '../stores/lessonStore.js';
+import { dbMutationCounterStore } from '../stores/uiStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { must } from './helpers/must.js';
 
@@ -91,5 +92,18 @@ describe('LessonEditorModal', () => {
         const down = container.querySelectorAll('.step')[0].querySelectorAll('.row button')[1];
         await fireEvent.click(down);
         await waitFor(() => expect(api.ReorderLessonSteps).toHaveBeenCalledWith(2, [21, 20]));
+    });
+});
+
+describe('a write to the library while the editor is open', () => {
+    test('reads the lessons again: a copy may have brought one', async () => {
+        render(LessonEditorModal, { visible: true });
+        await waitFor(() => expect(api.ListLessons).toHaveBeenCalled());
+        await waitFor(() => expect(api.GetLesson).toHaveBeenCalled());
+        api.ListLessons.mockClear();
+        await new Promise((r) => setTimeout(r, 20));
+        expect(api.ListLessons).not.toHaveBeenCalled();
+        dbMutationCounterStore.update((n) => n + 1);
+        await waitFor(() => expect(api.ListLessons).toHaveBeenCalledTimes(1));
     });
 });

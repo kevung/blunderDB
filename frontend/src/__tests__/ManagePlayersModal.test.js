@@ -44,6 +44,7 @@ vi.mock('../services/positionLoader.js', () => ({
 }));
 
 import ManagePlayersModal from '../components/ManagePlayersModal.svelte';
+import { dbMutationCounterStore } from '../stores/uiStore.js';
 
 /** @type {ReturnType<typeof vi.fn>} */
 let onClose;
@@ -405,5 +406,14 @@ describe('ManagePlayersModal — main player, aliases, counts', () => {
         await settle();
         expect(PlayerMatchIDs).toHaveBeenCalledWith('Alice');
         expect(openMatchListInPanel).toHaveBeenCalledWith([1, 2, 3]);
+    });
+});
+
+describe('a write to the library while the modal is open', () => {
+    test('reads the players again: an import or a copy may have brought some', async () => {
+        await mount();
+        GetAllPlayerNames.mockClear();
+        dbMutationCounterStore.update((n) => n + 1);
+        await vi.waitFor(() => expect(GetAllPlayerNames).toHaveBeenCalledTimes(1));
     });
 });
