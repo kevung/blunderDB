@@ -317,7 +317,7 @@
     }
 
     /** @type {import('../../services/contextMenuTrigger.js').MenuRequest | null} */
-    let rowMenuAt = $state(null);
+    let rowMenuAt = $state.raw(null);
 
     /** @param {MouseEvent | KeyboardEvent} e @param {any} row @param {number} index */
     function openRowMenu(e, row, index) {
