@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"POT-Creation-Date: 2026-10-22 22:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -903,7 +903,7 @@ msgstr ""
 "mahdollisia, mutta kaikki muokkaus on poistettu käytöstä ja "
 "otsikkopalkissa lukee « [vain luku] »."
 
-#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:915
+#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:918
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Katso saatavilla olevat pikanäppäimet kohdasta :ref:`raccourcis`."
 
@@ -934,15 +934,19 @@ msgid ""
 "déjà produit (``#`` suivi de son identifiant) ou la mention « aucun match"
 " ». Un clic ouvre un brouillon, et le bouton **Brouillons** de la barre y"
 " ramène. Le bouton **Nouvelle transcription** déplie le formulaire de "
-"création."
+"création. Le bouton **Importer** ouvre un fichier ``.mat`` ou un document"
+" de transcription (JSON) et en fait un brouillon, aussitôt ouvert ; un "
+"fichier refusé affiche le motif et ne crée rien."
 msgstr ""
 "Paneeli avautuu tietokannan **luonnosluetteloon**: viimeisin muutos, "
 "pelaajat, ottelun pituus, toimintojen määrä ja jo tuotettu ottelu (``#`` "
 "ja sen tunniste) tai maininta ”ei ottelua”. Napsautus avaa luonnoksen, ja"
 " palkin **Luonnokset**-painike palaa luetteloon. **Uusi transkriptio** "
-"-painike avaa luontilomakkeen."
+"-painike avaa luontilomakkeen. **Tuo**-painike avaa ``.mat``-tiedoston "
+"tai litterointiasiakirjan (JSON) ja tekee siitä luonnoksen, joka avautuu "
+"heti; hylätty tiedosto näyttää syyn eikä luo mitään."
 
-#: ../../source/manuel_matchs.rst:406
+#: ../../source/manuel_matchs.rst:409
 msgid ""
 "La liste se parcourt aussi au clavier : *BAS* et *HAUT* (ou *j* et *k*) "
 "déplacent le surlignage, *ENTREE* ouvre le brouillon surligné, *n* déplie"
@@ -956,7 +960,7 @@ msgstr ""
 "viimeksi muutettu: eilisen työn jatkaminen maksaa siis kaksi näppäintä, "
 "*CTRL-VAIHTO-T* ja sitten *ENTER*."
 
-#: ../../source/manuel_matchs.rst:412
+#: ../../source/manuel_matchs.rst:415
 msgid ""
 "Le formulaire ne demande qu'une chose : la **longueur du match**. La "
 "valeur ``0`` désigne une partie d'argent et fait apparaître les cases "
@@ -971,7 +975,7 @@ msgstr ""
 " ei ole yhtään. Pelaajien nimiä ei kysytä: luonnos nimeää puolet *Pelaaja"
 " 1* ja *Pelaaja 2*, ja luettelo näyttää ”Nimetön”."
 
-#: ../../source/manuel_matchs.rst:419
+#: ../../source/manuel_matchs.rst:422
 msgid ""
 "Tout ce qui se déduit de ce qui a été tapé — la longueur du match (ou « "
 "Argent »), le score, la mention *Crawford* lorsque la partie en cours "
@@ -990,7 +994,7 @@ msgstr ""
 "sijaan kirjoitetaan kokonaisin sanoin **tilapalkkiin**: ”Kévinin nopat”, "
 "”Alicen vastaus tuplaukseen”."
 
-#: ../../source/manuel_matchs.rst:427
+#: ../../source/manuel_matchs.rst:430
 msgid ""
 "La **barre du brouillon**, en tête du panneau, se lit en trois groupes. À"
 " gauche, **Brouillons** ramène à la liste. Au centre, ce qui sert pendant"
@@ -1006,7 +1010,7 @@ msgstr ""
 "itsestään, sekä **⋯**-valikko. Kapeassa paneelissa syöttö siirtyy "
 "toiselle riville."
 
-#: ../../source/manuel_matchs.rst:433
+#: ../../source/manuel_matchs.rst:436
 msgid ""
 "Le **joueur 1 reste en bas du plateau**, quel que soit le camp au trait. "
 "Un match qui se transcrit est une partie qui se déroule : le trait change"
@@ -1029,7 +1033,7 @@ msgstr ""
 "suljetaan. Ei pidä sekoittaa Metatiedot-paneelin *Vaihda pelaajat* "
 "-painikkeeseen, joka vaihtaa pelaajat itse asiakirjassa."
 
-#: ../../source/manuel_matchs.rst:443
+#: ../../source/manuel_matchs.rst:446
 msgid ""
 "Le bouton **Métadonnées** de la barre déplie l'en-tête du brouillon, à "
 "tout moment : les noms des deux joueurs — autocomplétés depuis les "
@@ -1054,7 +1058,7 @@ msgstr ""
 "-painike vaihtaa nimet keskenään, antaa kaikki toiminnot vastapuolelle ja"
 " kääntää laudan: se on sama ottelu, luettuna toiselta puolelta."
 
-#: ../../source/manuel_matchs.rst:455
+#: ../../source/manuel_matchs.rst:458
 msgid ""
 "Ouvert, le formulaire prend la place de la saisie : les dés, la palette "
 "et les candidats sont masqués, la transcription reste visible, la vidéo "
@@ -1064,7 +1068,7 @@ msgstr ""
 "litterointi pysyy näkyvissä ja video pysyy paikallaan. Sama painike tai "
 "*Esc* palauttaa syötön."
 
-#: ../../source/manuel_matchs.rst:459
+#: ../../source/manuel_matchs.rst:462
 msgid ""
 "La **longueur du match** se change dans ce même volet, à tout moment : le"
 " score, la partie Crawford et le référentiel — les parties d'argent "
@@ -1085,7 +1089,7 @@ msgstr ""
 "uusi tallennus kirjoittaa täysin uudet asemat, jotka on analysoitava, ja "
 "vanhat katoavat heti kun mikään ei enää pidä niitä."
 
-#: ../../source/manuel_matchs.rst:468
+#: ../../source/manuel_matchs.rst:471
 msgid ""
 "Sous la barre, le brouillon occupe trois régions : la **palette** des "
 "cibles souris, les **coups candidats** et le **transcript**. Elles se "
@@ -1114,7 +1118,7 @@ msgstr ""
 " on sama: mikään ei tule heiton kahden ruudun ja ensimmäisen ehdokasrivin"
 " väliin, ja vähintään viisi ehdokasta luetaan ilman mitään vierittämistä."
 
-#: ../../source/manuel_matchs.rst:481
+#: ../../source/manuel_matchs.rst:484
 msgid ""
 "La palette montre les deux dés au fur et à mesure de leur saisie ; un "
 "clic dessus les efface, comme *RETOUR ARRIERE*. Une partie commence par "
@@ -1142,7 +1146,7 @@ msgstr ""
 "päättymisen jälkeen kirjattu kuutiotoiminto saa saman merkinnän: se jää "
 "päättyneeseen peliin, ei avaa uutta ja poistetaan käsin."
 
-#: ../../source/manuel_matchs.rst:493
+#: ../../source/manuel_matchs.rst:496
 msgid ""
 "Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,"
 " classés par le moteur embarqué, le premier présélectionné. Il ne dessine"
@@ -1163,7 +1167,7 @@ msgstr ""
 " ei koskaan kirjoiteta tietokantaan. Kun moottori ei ole käytettävissä, "
 "siirrot luetellaan järjestämättöminä ja luettelo kertoo sen otsikossaan."
 
-#: ../../source/manuel_matchs.rst:501
+#: ../../source/manuel_matchs.rst:504
 msgid ""
 "Un jet sans aucun coup légal enregistre la **danse** de lui-même : la "
 "main passe à l'adversaire sans coup à taper. Quand le jet dansant importe"
@@ -1180,7 +1184,7 @@ msgstr ""
 "kotialue päästää jokaisen heiton sisään, se ei syötä mitään ja tilarivi "
 "kertoo sen."
 
-#: ../../source/manuel_matchs.rst:508
+#: ../../source/manuel_matchs.rst:511
 msgid ""
 "La **molette** sélectionne le candidat suivant ou précédent, au-dessus de"
 " la liste comme au-dessus du damier : le regard reste sur le plateau et "
@@ -1193,7 +1197,7 @@ msgstr ""
 "tunnistaa siirron nopeammin kuin sen notaation lukeminen. Napsautus "
 "riviin valitsee sen, kaksoisnapsautus vahvistaa sen."
 
-#: ../../source/manuel_matchs.rst:513
+#: ../../source/manuel_matchs.rst:516
 msgid ""
 "Un indicateur, à gauche des cases du jet — et sur la barre du mode "
 "théâtre —, dit ce que fait la frappe à l'instant : **Saisie** au bout du "
@@ -1221,7 +1225,7 @@ msgstr ""
 "sitten seuraavaan päätökseen, ja sitä seuraavat asemat lasketaan "
 "uudelleen. End palauttaa asiakirjan loppuun."
 
-#: ../../source/manuel_matchs.rst:525
+#: ../../source/manuel_matchs.rst:528
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -1234,7 +1238,7 @@ msgstr ""
 "hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat "
 "sama heitto."
 
-#: ../../source/manuel_matchs.rst:530
+#: ../../source/manuel_matchs.rst:533
 msgid ""
 "Tout coup joué au plateau commence par le jet, tapé au clavier ou cliqué "
 "au triangle : sans dés saisis, le damier ne joue rien. Les deux dés "
@@ -1267,7 +1271,7 @@ msgstr ""
 "ehdokkaan nuolet poistuvat laudalta, jotta ne eivät sekoitu pelattavaan "
 "siirtoon; ne palaavat, kun siirto perutaan tai tallennetaan."
 
-#: ../../source/manuel_matchs.rst:544
+#: ../../source/manuel_matchs.rst:547
 msgid ""
 "Le coup achevé n'est enregistré que par une validation : un clic sur les "
 "dés grisés, ENTREE, ou le jet suivant — un chiffre ou une case du "
@@ -1279,7 +1283,7 @@ msgstr ""
 "ruutu —, joka tallentaa sen ensin noppien kanssa sellaisina kuin ne "
 "kirjoitettiin. Uudelleen luetussa toiminnossa se korvaa toiminnon."
 
-#: ../../source/manuel_matchs.rst:549
+#: ../../source/manuel_matchs.rst:552
 msgid ""
 "Un coup illégal se transcrit tel qu'il a été joué, sans bouton ni "
 "changement de mode. Un glissé qu'aucun coup légal n'offre pose le pion là"
@@ -1301,7 +1305,7 @@ msgstr ""
 "saavutetun laudan. Askelpalautin kumoaa viimeisen askeleen; sääntöjen "
 "ulkopuolisen ainoan askeleen kumoaminen palauttaa luettelon."
 
-#: ../../source/manuel_matchs.rst:558
+#: ../../source/manuel_matchs.rst:561
 msgid ""
 "Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur "
 "la cellule d'un coup — ou d'une danse, d'un coup non consigné — la change"
@@ -1329,7 +1333,7 @@ msgstr ""
 "Näppäin *e* avaa samoin kohdistimen solun. Käynnissä olevan syötön "
 "katkoviivasolu avautuu samoin heti, kun sen molemmat nopat on syötetty."
 
-#: ../../source/manuel_matchs.rst:571
+#: ../../source/manuel_matchs.rst:574
 msgid ""
 "Un coup saisi par le glissé libre ou par la notation qui se trouve être "
 "légal reste un coup ordinaire — la comparaison se fait sur le plateau "
@@ -1343,7 +1347,7 @@ msgstr ""
 "transkriptiin ”laiton siirto”, ja ``.mat``-vienti varoittaa ennen "
 "tiedoston kirjoittamista kieltäytymättä koskaan."
 
-#: ../../source/manuel_matchs.rst:577
+#: ../../source/manuel_matchs.rst:580
 msgid ""
 "Le plateau obtenu par un coup hors des règles vaut pour la position où il"
 " a été joué. Quand une correction plus haut dans le transcript change "
@@ -1355,7 +1359,7 @@ msgstr ""
 "siirron askeleet pelataan uudelleen uudesta asemasta, ja kaikki sitä "
 "seuraavat asemat noudattavat korjausta."
 
-#: ../../source/manuel_matchs.rst:582
+#: ../../source/manuel_matchs.rst:585
 msgid ""
 "Les flèches du plateau sont celles du coup écrit dans la décision sous le"
 " curseur, en gris, rejoué sur la position qu'elle a. Un pas qui ne s'y "
@@ -1382,7 +1386,7 @@ msgstr ""
 " tilalle: luettelon rivi piirtää nuolensa sinisenä vain, kun osoitin on "
 "sen päällä tai kun se valitaan rullalla, näppäimillä tai napsautuksella."
 
-#: ../../source/manuel_matchs.rst:591
+#: ../../source/manuel_matchs.rst:594
 msgid ""
 "Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**, "
 "**Abandonner** reprend à la souris les quatre gestes de videau : ce sont,"
@@ -1416,7 +1420,7 @@ msgstr ""
 "ottaminen ja passaaminen ovat kaksi symmetristä vastausta ja asuvat "
 "yhdessä rivillä, kumpikin yhden napsautuksen päässä."
 
-#: ../../source/manuel_matchs.rst:607
+#: ../../source/manuel_matchs.rst:610
 msgid ""
 "La **barre d'état** dit ce que le brouillon attend, en un mot : la danse "
 "enregistrée d'office, le premier coup d'une partie, la réponse attendue à"
@@ -1436,7 +1440,7 @@ msgstr ""
 "ajan. Toiminnon jälkeensä jättämä epäjohdonmukaisuus sen sijaan "
 "ilmoitetaan transkriptin otsikossa, siellä missä virheellinen solu on."
 
-#: ../../source/manuel_matchs.rst:615
+#: ../../source/manuel_matchs.rst:618
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -1449,7 +1453,7 @@ msgstr ""
 "arvolla). Pistetilanne, Crawford-peli ja ottelun loppu näkyvät silloin "
 "ottelupalkissa, ja seuraavan pelin ensimmäistä siirtoa odotetaan."
 
-#: ../../source/manuel_matchs.rst:620
+#: ../../source/manuel_matchs.rst:623
 msgid ""
 "Le score d'une partie est celui que donnent les parties précédentes, sauf"
 " s'il a été annoncé autrement à la table. Un double-clic sur le score de "
@@ -1476,7 +1480,7 @@ msgstr ""
 "epäjohdonmukaisuuden ”epäjohdonmukainen ilmoitettu tilanne”. Rahapelissä "
 "ei ole tilannetta ilmoitettavaksi."
 
-#: ../../source/manuel_matchs.rst:632
+#: ../../source/manuel_matchs.rst:635
 msgid ""
 "Un transcript repris en cours de match peut commencer après la partie "
 "Crawford. Lorsque la première partie s'ouvre avec un joueur à un point du"
@@ -1500,7 +1504,7 @@ msgstr ""
 "blunderDB lukee takaisin; gnubg ohittaa sen ja laskee tämän ensimmäisen "
 "pelin Crawford-peliksi."
 
-#: ../../source/manuel_matchs.rst:642
+#: ../../source/manuel_matchs.rst:645
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1538,7 +1542,7 @@ msgstr ""
 " vuoro — esimerkiksi poistettu päätös. Pelit taittuvat kokoon; "
 "kohdistimen peli on auki."
 
-#: ../../source/manuel_matchs.rst:658
+#: ../../source/manuel_matchs.rst:661
 msgid ""
 "**Ce qui est en train d'être tapé se dessine dans le transcript**, en "
 "pointillés, à la place exacte où il sera écrit : les dés au fur et à "
@@ -1558,7 +1562,7 @@ msgstr ""
 "luonnokseen ennen vahvistusta; se mitä luetaan ja se mitä asiakirja "
 "sanoo, eivät koskaan eroa toisistaan."
 
-#: ../../source/manuel_matchs.rst:667
+#: ../../source/manuel_matchs.rst:670
 msgid ""
 "Corriger, c'est taper sur la cellule où l'on est. Le curseur posé sur une"
 " action, un chiffre en recommence le jet sur place, et les quatre gestes "
@@ -1586,7 +1590,7 @@ msgstr ""
 "ilmoittaen sen tilanteen, josta sen peli alkoi: jos jatketun pelin loppu "
 "antaa toisen, ero merkitään."
 
-#: ../../source/manuel_matchs.rst:679
+#: ../../source/manuel_matchs.rst:682
 msgid ""
 "Revenir sur la **dernière** action, c'est revenir là où la transcription "
 "s'écrit. Un chiffre tapé sur elle en corrige encore le jet, mais une fois"
@@ -1601,7 +1605,7 @@ msgstr ""
 "Seuraavat päätökset lisätään silloin perään, kuten ensimmäisellä "
 "kerralla."
 
-#: ../../source/manuel_matchs.rst:685
+#: ../../source/manuel_matchs.rst:688
 msgid ""
 "Taper un **autre jet** sur le **premier coup** d'une partie décide à "
 "nouveau qui commence : le dé du joueur 1 se tape en premier, celui du "
@@ -1626,7 +1630,7 @@ msgstr ""
 "järjestys ei osoita, merkitään ”epäjohdonmukaiset nopat”. Pelin loppu "
 "säilyttää puolensa."
 
-#: ../../source/manuel_matchs.rst:695
+#: ../../source/manuel_matchs.rst:698
 msgid ""
 "Une **insertion au milieu du document continue d'insérer** : la "
 "validation ouvre une cellule vide à la suite, et l'action suivante "
@@ -1644,7 +1648,7 @@ msgstr ""
 "kirjoitettu. Pelin loppu tai kohdistimen siirtäminen päättää lisäyksen: "
 "kohdistin asettuu silloin seuraavan pelin ensimmäisen siirron kohdalle."
 
-#: ../../source/manuel_matchs.rst:703
+#: ../../source/manuel_matchs.rst:706
 msgid ""
 "**Suppr** (ou *x*) retire la décision en cours d'édition et recule sur la"
 " précédente, prête à être corrigée : sur une cellule écrite, l'action "
@@ -1662,7 +1666,7 @@ msgstr ""
 "puolensa, ja poiston jättämä kaksoisvuoro merkitään viemättä kohdistinta "
 "sen kohdalle."
 
-#: ../../source/manuel_matchs.rst:710
+#: ../../source/manuel_matchs.rst:713
 msgid ""
 "Un clic droit sur une cellule ouvre les corrections de cette action — "
 "insérer avant, insérer après, supprimer, changer de camp — et amène le "
@@ -1680,7 +1684,7 @@ msgstr ""
 "olevaan toimintoon”, tähtäisi soluun, jota ei ehkä näe, kun taas oikea "
 "napsautus nimeää omansa."
 
-#: ../../source/manuel_matchs.rst:717
+#: ../../source/manuel_matchs.rst:720
 msgid ""
 "La barre du brouillon porte ses deux seules sorties, au bout à droite, "
 "après le menu « ⋯ ». « **Terminer** » (CTRL-ENTREE) écrit le match dans "
@@ -1705,7 +1709,7 @@ msgstr ""
 "tallennuksesta: se kirjoitetaan tietokantaan jokaisen toiminnon jälkeen, "
 "ja paluu luetteloon jättää sen jatkettavaksi myöhemmin."
 
-#: ../../source/manuel_matchs.rst:728
+#: ../../source/manuel_matchs.rst:731
 msgid ""
 "Le menu **⋯** de la barre tient « **Texte .mat** », qui ouvre le fichier "
 "Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que "
@@ -1721,7 +1725,7 @@ msgstr ""
 "**↶** ja **↷** kumoavat ja tekevät uudelleen, kuten *CTRL-Z* ja *CTRL-"
 "VAIHTO-Z*."
 
-#: ../../source/manuel_matchs.rst:735
+#: ../../source/manuel_matchs.rst:738
 msgid ""
 "Si l'analyse d'un match transcrit a été interrompue — l'application "
 "fermée pendant le lot —, la barre d'état le signale à la prochaine "
@@ -1737,7 +1741,7 @@ msgstr ""
 "analysoimatta, ja uudelleen käynnistetty erä koskee vain tätä ottelua, ei"
 " koskaan koko kirjastoa."
 
-#: ../../source/manuel_matchs.rst:741
+#: ../../source/manuel_matchs.rst:744
 msgid ""
 "Un brouillon qui porte des incohérences est terminé tout de même, après "
 "un avertissement : rien n'est refusé. Un coup illégal est exporté tel "
@@ -1749,7 +1753,7 @@ msgstr ""
 "pelattiin, varoituksella, että gnubg ja XG ilmoittavat siitä (”Invalid "
 "move”) ja poikkeavat sen jälkeen."
 
-#: ../../source/manuel_matchs.rst:746
+#: ../../source/manuel_matchs.rst:749
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "
 "matchs ou « **Éditer la transcription** » de sa fiche ouvre un brouillon "
@@ -1771,7 +1775,7 @@ msgstr ""
 "kertoo, kuinka monta niitä on enintään, ja että luonnoksen viimeistely "
 "voi menettää ne."
 
-#: ../../source/manuel_matchs.rst:755
+#: ../../source/manuel_matchs.rst:758
 msgid ""
 "Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de "
 "la barre du brouillon ouvre un menu : **Fichier local…** pour choisir une"
@@ -1812,7 +1816,7 @@ msgstr ""
 "aikamerkkiä; kursori pysyy transkription lopussa valmiina syöttöön ja "
 "seuraa toistoa vasta, kun se siirtyy toiseen toimintoon."
 
-#: ../../source/manuel_matchs.rst:774
+#: ../../source/manuel_matchs.rst:777
 msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
@@ -1844,7 +1848,7 @@ msgstr ""
 " paneelille: syöttönäppäimet, videon näppäimet ja laudan kääntävät *CTRL-"
 "VASEN* / *CTRL-OIKEA* säilyttävät vaikutuksensa."
 
-#: ../../source/manuel_matchs.rst:788
+#: ../../source/manuel_matchs.rst:791
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1866,7 +1870,7 @@ msgstr ""
 "toiseen, ja leveys pysyy videon leveytenä kummalla puolella tahansa. "
 "Kahva ja painike jättävät näppäimistön paneelille."
 
-#: ../../source/manuel_matchs.rst:799
+#: ../../source/manuel_matchs.rst:802
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -1923,7 +1927,7 @@ msgstr ""
 "ei myöskään YouTubella: vain teatteritila muuttaa näyttöä. Tila on "
 "olemassa vain Litteroinnissa, kun video on liitetty."
 
-#: ../../source/manuel_matchs.rst:825
+#: ../../source/manuel_matchs.rst:828
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -1965,7 +1969,7 @@ msgstr ""
 "näytetään videon kulmassa, kun se ei ole 1×, ja uusi lähde alkaa taas "
 "nopeudella 1×."
 
-#: ../../source/manuel_matchs.rst:843
+#: ../../source/manuel_matchs.rst:846
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -1980,7 +1984,7 @@ msgstr ""
 "tiedoston videossa että YouTube-kehyksessä. Kulma muistetaan luonnokselle"
 " vain tällä tietokoneella; sitä ei kirjoiteta tietokantaan."
 
-#: ../../source/manuel_matchs.rst:849
+#: ../../source/manuel_matchs.rst:852
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2009,7 +2013,7 @@ msgstr ""
 "*l*) vie videon sekunnin ennen kyseisen toiminnon heittoa tai ennen sen "
 "siirtoa, jos heitolla ei ole hetkeä; tauolla oleva soitin pysyy tauolla."
 
-#: ../../source/manuel_matchs.rst:862
+#: ../../source/manuel_matchs.rst:865
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2059,7 +2063,7 @@ msgstr ""
 "heiton jälkeen ja palaa sitten transkription loppuun: siellä numerot "
 "avaavat seuraavan heiton, ja ilmaisin kertoo sen."
 
-#: ../../source/manuel_matchs.rst:884
+#: ../../source/manuel_matchs.rst:887
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2086,7 +2090,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav`` (viimeksi mainittu tulee RPM "
 "Fusionista) — katso :ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:896
+#: ../../source/manuel_matchs.rst:899
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2100,7 +2104,7 @@ msgstr ""
 "ennen. Kolmen tuloksettoman uudelleenlatauksen jälkeen ruutu ilmoittaa "
 "siitä ja tarjoaa uutta yritystä."
 
-#: ../../source/manuel_matchs.rst:901
+#: ../../source/manuel_matchs.rst:904
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -2119,7 +2123,7 @@ msgstr ""
 "komennon, joka korjaa tiedoston ilman uudelleenkoodausta, valmiina "
 "kopioitavaksi:"
 
-#: ../../source/manuel_matchs.rst:911
+#: ../../source/manuel_matchs.rst:914
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "
@@ -2130,4 +2134,3 @@ msgstr ""
 "otteluun tai transkriptioon. Ruutu tarjoaa saman komennon, kun se "
 "luovuttaa kolmen uudelleenlatauksen jälkeen ``.webm``- tai "
 "``.mkv``-tiedostolla."
-

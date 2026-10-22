@@ -97,6 +97,7 @@ var boundAppMethods = []string{
 	"OpenVideoExternally",
 	"PathExists",
 	"PickTranscriptionVideo",
+	"PickTranscriptionFile",
 	"VideoSourceKind",
 	"YouTubeEmbedURL",
 	"YouTubeWatchURL",

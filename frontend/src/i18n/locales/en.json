@@ -1419,6 +1419,8 @@
         "title": "Transcriptions",
         "new": "New transcription",
         "newTooltip": "Create a draft of a match to transcribe",
+        "import": "Import",
+        "importTooltip": "Import a .mat or a transcription document",
         "empty": "No draft yet",
         "updated": "Modified",
         "players": "Players",

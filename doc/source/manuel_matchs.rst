@@ -402,6 +402,9 @@ dernière modification, joueurs, longueur, nombre d'actions, et le match déjà
 produit (``#`` suivi de son identifiant) ou la mention « aucun match ». Un clic
 ouvre un brouillon, et le bouton **Brouillons** de la barre y ramène. Le bouton
 **Nouvelle transcription** déplie le formulaire de création.
+Le bouton **Importer** ouvre un fichier ``.mat`` ou un document de
+transcription (JSON) et en fait un brouillon, aussitôt ouvert ; un fichier
+refusé affiche le motif et ne crée rien.
 
 La liste se parcourt aussi au clavier : *BAS* et *HAUT* (ou *j* et *k*)
 déplacent le surlignage, *ENTREE* ouvre le brouillon surligné, *n* déplie le

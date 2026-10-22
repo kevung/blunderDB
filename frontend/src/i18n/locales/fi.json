@@ -1419,6 +1419,8 @@
         "title": "Litteroinnit",
         "new": "Uusi litterointi",
         "newTooltip": "Luo luonnos litteroitavasta ottelusta",
+        "import": "Tuo",
+        "importTooltip": "Tuo .mat tai litterointiasiakirja",
         "empty": "Ei luonnoksia",
         "updated": "Muokattu",
         "players": "Pelaajat",

@@ -155,6 +155,8 @@ export function PauseBearoffGeneration():Promise<void>;
 
 export function PickIdentityFile():Promise<domain.IdentityFilePick>;
 
+export function PickTranscriptionFile():Promise<string>;
+
 export function PickTranscriptionVideo():Promise<string>;
 
 export function PrepareDemoDatabase():Promise<string>;

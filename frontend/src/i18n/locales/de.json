@@ -1419,6 +1419,8 @@
         "title": "Transkriptionen",
         "new": "Neue Transkription",
         "newTooltip": "Einen Entwurf für ein zu transkribierendes Match anlegen",
+        "import": "Importieren",
+        "importTooltip": "Eine .mat oder ein Transkriptionsdokument importieren",
         "empty": "Noch kein Entwurf",
         "updated": "Geändert",
         "players": "Spieler",

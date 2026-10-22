@@ -95,8 +95,16 @@
     import { transcriptionArrows } from '../services/transcribedArrows.js';
     import { newBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps, parseDiceMove } from '../services/transcriptionPlay.js';
     import { containsSteps, completedPlay } from '../services/quizPlay.js';
-    import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
-    import { LegalMoves, PickTranscriptionVideo, YouTubeWatchURL } from '../../wailsjs/go/gui/App.js';
+    import {
+        ListTranscriptions,
+        CreateTranscription,
+        ImportTranscription,
+        OpenTranscription,
+        ApplyTranscriptionGesture,
+        TranscriptionMAT,
+        TranscriptionCandidates
+    } from '../../wailsjs/go/database/Database.js';
+    import { LegalMoves, PickTranscriptionFile, ReadFileContent, PickTranscriptionVideo, YouTubeWatchURL } from '../../wailsjs/go/gui/App.js';
     import { finishDraft, exportDraftMat, abandonDraft, draftState } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
     import { createCursorFollower, isTyping, typedRoll } from '../services/videoFollow.js';
@@ -269,6 +277,28 @@
             error = '';
         } catch (err) {
             logger.error('Failed to create a transcription draft:', err);
+            error = String(err);
+        } finally {
+            busy = false;
+        }
+    }
+
+    // Un .mat ou un document JSON devient un brouillon ouvert ; un refus n'écrit rien.
+    async function importDraft() {
+        if (busy) return;
+        busy = true;
+        try {
+            const path = await PickTranscriptionFile();
+            if (!path) return;
+            const file = await ReadFileContent(path);
+            if (file.error) throw new Error(file.error);
+            setTranscription(await ImportTranscription(file.content));
+            resetTranscriptionKeys();
+            showForm = false;
+            await refresh();
+            error = '';
+        } catch (err) {
+            logger.error('Failed to import a transcription draft:', err);
             error = String(err);
         } finally {
             busy = false;
@@ -2014,6 +2044,9 @@
             {#snippet header()}
                 <span class="detail-title">{$t('transcription.title')}</span>
                 <NewButton label={$t('transcription.new')} title={$t('transcription.newTooltip')} disabled={busy || !$databaseLoadedStore} onclick={openForm} />
+                <button class="new-btn" id="transcriptionImport" title={$t('transcription.importTooltip')} disabled={busy || !$databaseLoadedStore} onclick={importDraft}
+                    >{$t('transcription.import')}</button
+                >
             {/snippet}
             {#snippet subheader()}
                 {#if showForm}

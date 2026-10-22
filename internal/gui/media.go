@@ -303,6 +303,17 @@ func (a *App) PickTranscriptionVideo() (string, error) {
 	})
 }
 
+// PickTranscriptionFile asks for a .mat or a transcription document (JSON);
+// empty when cancelled.
+func (a *App) PickTranscriptionFile() (string, error) {
+	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Import a transcription",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "Transcriptions (*.mat, *.json)", Pattern: "*.mat;*.json"},
+		},
+	})
+}
+
 // MediaURL registers a video file and returns its loopback URL; the error
 // (missing file) is what lets the frontend offer to relocate it.
 func (a *App) MediaURL(path string) (string, error) { return a.media.register(path) }

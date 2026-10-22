@@ -294,6 +294,10 @@ export function PickIdentityFile() {
   return window['go']['gui']['App']['PickIdentityFile']();
 }
 
+export function PickTranscriptionFile() {
+  return window['go']['gui']['App']['PickTranscriptionFile']();
+}
+
 export function PickTranscriptionVideo() {
   return window['go']['gui']['App']['PickTranscriptionVideo']();
 }

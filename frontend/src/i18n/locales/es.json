@@ -1419,6 +1419,8 @@
         "title": "Transcripciones",
         "new": "Nueva transcripción",
         "newTooltip": "Crear un borrador de partida para transcribir",
+        "import": "Importar",
+        "importTooltip": "Importar un .mat o un documento de transcripción",
         "empty": "Ningún borrador",
         "updated": "Modificado",
         "players": "Jugadores",
