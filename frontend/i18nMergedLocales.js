@@ -17,7 +17,10 @@ export function mergedLocales() {
     return {
         name: 'blunderdb-merged-locales',
         enforce: /** @type {'pre'} */ ('pre'),
-        /** @param {string} id */
+        /**
+         * @this {{ addWatchFile: (id: string) => void }}
+         * @param {string} id
+         */
         load(id) {
             if (!id.includes('/i18n/locales/') || !id.endsWith(suffix)) return null;
             const file = id.slice(0, -'?merged'.length);

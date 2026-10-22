@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { moveItem } from '../utils/moveItem.js';
 
-const id = (x) => x;
+const id = (/** @type {any} */ x) => x;
 
 describe('moveItem', () => {
     test('moves an item before or after another', () => {

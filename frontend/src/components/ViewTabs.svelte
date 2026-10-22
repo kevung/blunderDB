@@ -11,6 +11,7 @@
 
     const { views, activeViewId, switchTo, addView, closeView, renameView } = viewStore;
 
+    /** @type {number | null} */
     let editingId = $state(null);
     let editingName = $state('');
     let editInput = $state();
