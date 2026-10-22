@@ -57,6 +57,8 @@ export function ConfigureMCPHost(arg1:gui.MCPHostConfig):Promise<gui.MCPHostStat
 
 export function CopyImageToClipboard(arg1:string):Promise<string>;
 
+export function CopyPositionToGroup(arg1:number,arg2:number,arg3:number):Promise<gui.PositionCopy>;
+
 export function CountRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
 
 export function DeleteBearoffTable(arg1:string):Promise<void>;
@@ -218,6 +220,8 @@ export function StopTournamentDisplay():Promise<gui.TournamentDisplayStatus>;
 export function SuggestWatchFolder():Promise<string>;
 
 export function TransferToGroup(arg1:number,arg2:Array<gui.TransferBatch>):Promise<gui.TransferSummary>;
+
+export function UndoPositionCopy(arg1:number):Promise<void>;
 
 export function VideoSourceKind(arg1:string):Promise<string>;
 

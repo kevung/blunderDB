@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:33+0200\n"
+"POT-Creation-Date: 2026-10-22 16:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -181,6 +181,16 @@ msgstr "export"
 #: ../../source/cli.rst:1
 msgid "Exporte des données."
 msgstr "Экспортировать данные."
+
+#: ../../source/cli.rst:1
+msgid "transfer"
+msgstr "transfer"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire."
+msgstr "Копирует часть библиотеки в другую без промежуточного файла."
 
 #: ../../source/cli.rst:1
 msgid "identity"
@@ -375,6 +385,28 @@ msgstr ""
 "или OGID)."
 
 #: ../../source/cli.rst:1
+msgid "capture"
+msgstr "capture"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon."
+msgstr "Считывает позицию, которую показывает снимок экрана доски eXtreme Gammon."
+
+#: ../../source/cli.rst:1
+msgid "openingbook"
+msgstr "openingbook"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Le coup d'ouverture ou la réponse d'une partie à un score, tiré du livre "
+"d'ouverture embarqué et jugé contre lui."
+msgstr ""
+"Дебютный ход или ответ партии при некотором счёте, взятый из встроенной "
+"дебютной книги и оценённый по ней."
+
+#: ../../source/cli.rst:1
 msgid "bearoff"
 msgstr "bearoff"
 
@@ -546,7 +578,7 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "Серверный режим и миграция в PostgreSQL: см. :ref:`headless`."
 
-#: ../../source/cli.rst:120
+#: ../../source/cli.rst:123
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
@@ -554,35 +586,35 @@ msgstr ""
 "Каждая команда принимает опцию ``--help`` для отображения подробной "
 "справки."
 
-#: ../../source/cli.rst:134
+#: ../../source/cli.rst:137
 msgid "Exemples de flux de travail"
 msgstr "Примеры рабочих процессов"
 
-#: ../../source/cli.rst:137
+#: ../../source/cli.rst:140
 msgid "Import d'un répertoire de tournoi"
 msgstr "Импорт каталога турнира"
 
-#: ../../source/cli.rst:146
+#: ../../source/cli.rst:149
 msgid "Sauvegarde régulière"
 msgstr "Регулярное резервное копирование"
 
-#: ../../source/cli.rst:153
+#: ../../source/cli.rst:156
 msgid "Analyse des erreurs"
 msgstr "Анализ ошибок"
 
-#: ../../source/cli.rst:165
+#: ../../source/cli.rst:168
 msgid "Codes de retour"
 msgstr "Коды возврата"
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:170
 msgid "``0`` — Succès."
 msgstr "``0`` — Успех."
 
-#: ../../source/cli.rst:168
+#: ../../source/cli.rst:171
 msgid "``1`` — Erreur."
 msgstr "``1`` — Ошибка."
 
-#: ../../source/cli.rst:170
+#: ../../source/cli.rst:173
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Это позволяет использовать CLI в скриптах с обработкой ошибок:"
 

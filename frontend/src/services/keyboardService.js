@@ -19,7 +19,7 @@ import { toggleAnalysisChallenge } from '../stores/analysisChallengeStore.js';
 import { newDatabase, openDatabase, openDatabaseInNewGroup, exitApp } from './databaseService.js';
 import { cycleTab, cycleGroup } from '../stores/libraryGroupStore.js';
 import { swapKeyDown } from './elsewhereService.js';
-import { toggleSplit } from './splitService.js';
+import { toggleSplit, activatePane } from './splitService.js';
 import {
     firstPosition,
     previousPosition,
@@ -405,6 +405,10 @@ export function handleKeyDown(event) {
         // lands last owns the clipboard, so a paste elsewhere could get the page selection.
         event.preventDefault();
         copyPosition();
+    } else if (event.ctrlKey && event.altKey && !event.shiftKey && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+        // The split screen: the left or the right pane comes live.
+        event.preventDefault();
+        activatePane(event.key === 'ArrowLeft' ? 'left' : 'right');
     } else if (event.ctrlKey && event.shiftKey && !event.altKey && letter('x')) {
         // The split screen: the live group and a read-only viewer side by side.
         event.preventDefault();

@@ -1773,7 +1773,8 @@
         "pileError": "Pila: errore",
         "xgidCopied": "XGID copiato negli appunti",
         "gnubgIdCopied": "ID GNUbg copiato negli appunti",
-        "noMatchForPosition": "Nessun match ha giocato questa posizione"
+        "noMatchForPosition": "Nessun match ha giocato questa posizione",
+        "moveGone": "Questa mossa non è più nel match: aperto dove lo avevi lasciato"
     },
     "stats": {
         "title": "Stats",
@@ -3547,6 +3548,7 @@
         "openLabel": "Altra libreria",
         "busyRollout": "Un rollout sta scrivendo nella libreria attiva: attendine la fine o fermalo (rollout stop) prima di cambiare libreria",
         "busyImport": "Un'importazione scrive file per file nella libreria attiva: attendine la fine prima di cambiare libreria",
+        "switching": "Cambio di libreria in corso: attendine la fine",
         "jobRunning": "Un'attività in background lavora in questa libreria",
         "jobDone": "Un'attività in background è terminata in questa libreria: mostrala per vedere il risultato",
         "busyDisplay": "Il torneo è mostrato sulla rete del club: ferma la visualizzazione (Direzione, Mostra sulla rete del club) prima di cambiare libreria",
@@ -3608,31 +3610,29 @@
         "pourInto": "Versa in {name}",
         "emptyBasket": "Svuota il cestino",
         "dragPosition": "Trascina sull'intestazione di un'altra libreria per copiarvi questa posizione",
-        "dragLesson": "Trascina sull'intestazione di un'altra libreria per copiarvi questa lezione"
+        "dragLesson": "Trascina sull'intestazione di un'altra libreria per copiarvi questa lezione",
+        "undo": "Annulla",
+        "undone": "Copia annullata: la posizione ha lasciato {name}.",
+        "undoFailed": "Impossibile annullare la copia: {error}"
     },
     "split": {
-        "toggle": "Schermo diviso: la libreria attiva e un visualizzatore affiancati (Ctrl+Maiusc+X)",
+        "toggle": "Schermo diviso: due tavolieri, una libreria per lato (Ctrl+Maiusc+X)",
         "tooNarrow": "Schermo diviso rifiutato: la finestra è più stretta di {min} px. Tieni premuto x per vedere la posizione nell'altra libreria al posto della tavola.",
         "closedNarrow": "Schermo diviso chiuso: la finestra è più stretta di {min} px. Tieni premuto x per lo scambio sul posto.",
-        "viewerLabel": "Visualizzatore della libreria {name}",
-        "readOnly": "sola lettura",
-        "activateHint": "Clicca per attivare questa libreria",
-        "sameLibrary": "Stessa libreria del riquadro attivo",
+        "sameLibrary": "stessa libreria",
         "close": "Chiudi lo schermo diviso",
-        "source": "Cosa scorrere",
-        "library": "Tutta la libreria",
-        "matches": "Match",
-        "collections": "Collezioni",
-        "first": "Prima",
-        "previous": "Precedente",
-        "next": "Successiva",
-        "last": "Ultima",
         "moveAt": "Partita {game}, mossa {move}",
         "empty": "Niente da mostrare.",
         "error": "Impossibile leggere la libreria.",
         "noDouble": "Nessun raddoppio",
         "doubleTake": "Raddoppio, accetta",
-        "doublePass": "Raddoppio, rifiuta"
+        "doublePass": "Raddoppio, rifiuta",
+        "liveHint": "attiva",
+        "frozenHint": "Fai clic (o Ctrl+Alt+←/→) per attivare questa libreria",
+        "paneLabel": "Riquadro congelato della libreria {name}",
+        "activeLibrary": "Libreria attiva: {name}",
+        "sameLibraryNotInList": "Questa posizione non è nella lista attiva: le due viste non possono scambiarsi.",
+        "sameLibraryMatchMode": "Un match riprodotto non ha una lista in cui ritrovare la posizione: due viste della stessa libreria non si scambiano in modalità match."
     },
     "reference": {
         "title": "Dati di riferimento",

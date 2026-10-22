@@ -205,6 +205,8 @@ export const SHORTCUTS = {
             'x',
             'Ctrl+Shift+A',
             'Ctrl+Shift+X',
+            'Ctrl+Alt+ArrowLeft',
+            'Ctrl+Alt+ArrowRight',
             'F11',
             '/'
         ]

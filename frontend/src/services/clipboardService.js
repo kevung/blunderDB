@@ -65,7 +65,7 @@ export async function copyXGID() {
     }
 }
 
-/** Copies the GNUbg ID, "<Position ID>:<Match ID>", which GNU Backgammon accepts in `set board`. */
+/** Copies the GNUbg ID, "<Position ID>:<Match ID>", which GNU Backgammon loads with `set gnubgid`. */
 export async function copyGnubgID() {
     try {
         await writeTextToClipboard(await GnubgID(get(positionStore)));

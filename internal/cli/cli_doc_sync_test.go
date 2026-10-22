@@ -64,9 +64,32 @@ func TestCLIPageDocumentsEveryCommand(t *testing.T) {
 		}
 		t.Errorf("subcommand %q has no section \"%s — …\" in doc/source/cli.rst or its cli_*.rst chapters (and no exemption naming the page that documents it)", name, name)
 	}
+
+	// The summary table of doc/source/cli.rst lists every command too: a row is
+	// a quoted name followed by a quoted description.
+	table := map[string]bool{}
+	row := regexp.MustCompile(`(?m)^   "([a-z]+)", "`)
+	for _, m := range row.FindAllStringSubmatch(string(srcOf(t, "doc/source/cli.rst")), -1) {
+		table[m[1]] = true
+	}
+	for _, name := range CommandNames() {
+		if !table[name] && name != "serve" && name != "migrate" && name != "call" {
+			t.Errorf("subcommand %q has no row in the summary table of doc/source/cli.rst", name)
+		}
+	}
+
 	for name := range documented {
 		if !IsCommand(name) {
 			t.Errorf("the CLI pages document %q, which is not a subcommand any more", name)
 		}
 	}
+}
+
+func srcOf(t *testing.T, page string) []byte {
+	t.Helper()
+	body, err := os.ReadFile(page)
+	if err != nil {
+		t.Fatalf("reading %s: %v", page, err)
+	}
+	return body
 }

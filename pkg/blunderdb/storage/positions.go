@@ -68,6 +68,16 @@ type PositionStore interface {
 	// collection links cascade).
 	Delete(ctx context.Context, scope string, id int64) error
 
+	// HoldForDelete keeps out, until the transaction it runs in ends, every
+	// write that would change what Delete(id) removes, so that what a caller
+	// reads of the position afterwards is what its Delete takes; ErrNotFound
+	// when there is no such position. A SQLite transaction holds the
+	// database's write lock already; PostgreSQL takes the guard a first
+	// analysis waits on, then locks the position row (every new row naming it
+	// waits on it through its foreign key) and the rows that change in place,
+	// its analysis and comments. Outside a transaction it holds nothing.
+	HoldForDelete(ctx context.Context, scope string, id int64) error
+
 	// List streams stored positions.
 	List(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.Position, error]
 

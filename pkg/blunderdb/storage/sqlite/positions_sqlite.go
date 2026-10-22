@@ -400,6 +400,20 @@ func (s *positionStore) Delete(ctx context.Context, scope string, id int64) erro
 	return nil
 }
 
+// HoldForDelete only says whether the position is there: the transaction's
+// write lock, taken by BeginTx, keeps every other writer out already.
+func (s *positionStore) HoldForDelete(ctx context.Context, scope string, id int64) error {
+	var one int
+	err := s.db.QueryRowContext(ctx, `SELECT 1 FROM position WHERE id = ?`, id).Scan(&one)
+	if errors.Is(err, sql.ErrNoRows) {
+		return fmt.Errorf("sqlite: hold position %d: %w", id, storage.ErrNotFound)
+	}
+	if err != nil {
+		return fmt.Errorf("sqlite: hold position %d: %w", id, err)
+	}
+	return nil
+}
+
 // List streams stored positions ordered by id.
 func (s *positionStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {

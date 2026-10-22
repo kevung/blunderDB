@@ -24,7 +24,7 @@ Base de données
    "CTRL-MAJ-I", "Fusionner une base de données dans celle-ci."
    "CTRL-MAJ-S", "Exporter la base de données."
    "CTRL-Q", "Fermer blunderDB."
-   "CTRL-M", "Modifier les métadonnées de la base de données."
+   "CTRL-M", "Afficher/cacher l'onglet Métadonnées de la base de données ; refusé en mode édition."
 
 .. _raccourcis_position:
 
@@ -98,10 +98,10 @@ Affichage
    "CTRL-GAUCHE", "Orientation du board à gauche."
    "CTRL-DROITE", "Orientation du board à droite."
    "CTRL-+ / CTRL-=", "Agrandir l'interface d'un pas de 10 % (200 % au plus), y compris depuis un champ de saisie ; le niveau s'affiche dans la barre d'état."
-   "CTRL--", "Réduire l'interface d'un pas de 10 % (50 % au plus)."
+   "CTRL--", "Réduire l'interface d'un pas de 10 % (50 % au moins)."
    "CTRL-0", "Revenir à l'échelle de 100 %."
-   "p", "Afficher/cacher le compte de course."
-   "m", "Activer/désactiver le défi : l'analyse du panneau Analyse est masquée jusqu'à un clic, à chaque position."
+   "p, MAJ-P", "Afficher/cacher le compte de course."
+   "m, MAJ-M", "Activer/désactiver le défi : l'analyse du panneau Analyse est masquée jusqu'à un clic, à chaque position."
 
 .. _raccourcis_modes:
 
@@ -113,7 +113,7 @@ Actions
    :widths: 7, 20
    :align: center
 
-   "TAB", "Ouvrir le panneau de recherche (éditeur de position)."
+   "TAB", "Ouvrir le panneau de recherche (éditeur de position), quand le focus est sur le plateau."
    "ESPACE", "Ouvrir la ligne de commande."
    "ALT-1 … ALT-9", "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 
@@ -127,7 +127,7 @@ Outils
    :widths: 7, 20
    :align: center
 
-   "CTRL-L", "Afficher/cacher l'analyse."
+   "CTRL-L", "Afficher/cacher l'analyse ; ferme d'abord l'onglet Commentaires s'il est ouvert."
    "CTRL-MAJ-L", "Classer les positions voisines de la position courante."
    "CTRL-P", "Afficher/cacher les commentaires."
    "CTRL-MAJ-P", "Ouvrir/fermer la palette de commandes : commandes, onglets, filtres et matchs, retrouvés par un nom approché."
@@ -146,7 +146,8 @@ Outils
    "CTRL-MAJ-T", "Afficher/cacher le panneau Transcription (brouillons de matchs)."
    "CTRL-MAJ-R", "Afficher/cacher le panneau Données de référence : MET, points de prise, valeurs du gammon, vue agrégée et nombres de Neil."
    "CTRL-MAJ-A", "Afficher/cacher l'onglet Ailleurs : ce que les autres bibliothèques ouvertes savent de la position."
-   "CTRL-MAJ-X", "Écran partagé : le groupe actif et une visionneuse en lecture d'une autre bibliothèque côte à côte ; refusé sous 1280 pixels de large."
+   "CTRL-MAJ-X", "Écran partagé : deux plateaux, une bibliothèque de chaque côté ; refusé sous 1280 pixels de large."
+   "CTRL-ALT-← / CTRL-ALT-→", "Écran partagé : active le volet de gauche / de droite."
    "x", "Échange sur place : montrer la position de l'autre bibliothèque au lieu du plateau ; maintenue, revenir en la relâchant, sinon à la pression suivante."
    "J / K", "Dans la file des propositions d'un tournoi dirigé : descendre, monter."
    "ENTRÉE", "Dans la file des propositions : confirmer la proposition choisie."
@@ -207,6 +208,9 @@ Ligne de commande
    "HAUT", "Parcourir l'historique des commandes vers le haut."
    "BAS", "Parcourir l'historique des commandes vers le bas."
    "ÉCHAP", "Pendant une recherche : l'interrompre."
+   "TAB / MAJ-TAB", "Parcourir les commandes proposées sous la ligne : la commande retenue remplace le texte saisi."
+   "ÉCHAP", "Masquer la liste des commandes proposées ; un second ÉCHAP ferme la ligne de commande."
+   "ENTRÉE", "Exécuter la commande, l'inscrire dans l'historique et fermer la ligne."
 
 .. _raccourcis_search_history:
 
@@ -294,6 +298,7 @@ Panneau des matchs
    "v", "Voir dans la vidéo la décision étudiée, une seconde avant le jet (match portant une source vidéo et un repère à cette décision)."
    "[ / ] (vidéo ouverte)", "Ralentir ou accélérer la lecture de la vidéo, par pas de 0,25 entre 0,25× et 4×."
    "/", "Aller au champ de filtre (joueur, événement, tournoi, date). *Esc* efface le filtre."
+   "GAUCHE / DROITE, DÉBUT / FIN (focus sur un onglet de la fiche du match)", "Passer à l'onglet précédent / suivant (Transcription, Graphes, À revoir, Détails, Infos, Stats), ou au premier / dernier."
    "Esc", "Désélectionner/fermer le panneau."
 
 .. _raccourcis_anki_panel:

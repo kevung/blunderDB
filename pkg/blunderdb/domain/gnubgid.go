@@ -3,7 +3,7 @@ package domain
 import "fmt"
 
 // GNUbg identifiers: the Position ID and the Match ID that GNU Backgammon
-// shows, copies and accepts in `set board`.
+// shows, copies and loads with `set gnubgid` (`set board` keeps only the position).
 //
 // # Source
 //

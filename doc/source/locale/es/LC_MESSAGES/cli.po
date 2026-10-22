@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:33+0200\n"
+"POT-Creation-Date: 2026-10-22 16:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -182,6 +182,16 @@ msgstr "export"
 #: ../../source/cli.rst:1
 msgid "Exporte des données."
 msgstr "Exporta datos."
+
+#: ../../source/cli.rst:1
+msgid "transfer"
+msgstr "transfer"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire."
+msgstr "Copia una parte de una biblioteca en otra, sin archivo intermedio."
 
 #: ../../source/cli.rst:1
 msgid "identity"
@@ -378,6 +388,30 @@ msgstr ""
 "posición (XGID u OGID)."
 
 #: ../../source/cli.rst:1
+msgid "capture"
+msgstr "capture"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon."
+msgstr ""
+"Lee la posición que muestra una captura de pantalla de un tablero de "
+"eXtreme Gammon."
+
+#: ../../source/cli.rst:1
+msgid "openingbook"
+msgstr "openingbook"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Le coup d'ouverture ou la réponse d'une partie à un score, tiré du livre "
+"d'ouverture embarqué et jugé contre lui."
+msgstr ""
+"La jugada de apertura o la respuesta de una partida a un marcador, sacada"
+" del libro de aperturas incorporado y juzgada contra él."
+
+#: ../../source/cli.rst:1
 msgid "bearoff"
 msgstr "bearoff"
 
@@ -551,41 +585,41 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "Modo servidor y migración a PostgreSQL: ver :ref:`headless`."
 
-#: ../../source/cli.rst:120
+#: ../../source/cli.rst:123
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr "Cada comando acepta la opción ``--help`` para mostrar su ayuda detallada."
 
-#: ../../source/cli.rst:134
+#: ../../source/cli.rst:137
 msgid "Exemples de flux de travail"
 msgstr "Ejemplos de flujos de trabajo"
 
-#: ../../source/cli.rst:137
+#: ../../source/cli.rst:140
 msgid "Import d'un répertoire de tournoi"
 msgstr "Importar un directorio de torneo"
 
-#: ../../source/cli.rst:146
+#: ../../source/cli.rst:149
 msgid "Sauvegarde régulière"
 msgstr "Copia de seguridad periódica"
 
-#: ../../source/cli.rst:153
+#: ../../source/cli.rst:156
 msgid "Analyse des erreurs"
 msgstr "Análisis de errores"
 
-#: ../../source/cli.rst:165
+#: ../../source/cli.rst:168
 msgid "Codes de retour"
 msgstr "Códigos de salida"
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:170
 msgid "``0`` — Succès."
 msgstr "``0`` — Éxito."
 
-#: ../../source/cli.rst:168
+#: ../../source/cli.rst:171
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:170
+#: ../../source/cli.rst:173
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Esto permite usar la CLI en scripts con gestión de errores:"
 

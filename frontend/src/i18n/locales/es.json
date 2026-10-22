@@ -1773,7 +1773,8 @@
         "pileError": "Pila: error",
         "xgidCopied": "XGID copiado al portapapeles",
         "gnubgIdCopied": "ID GNUbg copiado al portapapeles",
-        "noMatchForPosition": "Ningún match ha jugado esta posición"
+        "noMatchForPosition": "Ningún match ha jugado esta posición",
+        "moveGone": "Esa jugada ya no está en la partida: abierta donde la dejó"
     },
     "stats": {
         "title": "Stats",
@@ -3547,6 +3548,7 @@
         "openLabel": "Otra biblioteca",
         "busyRollout": "Un rollout está escribiendo en la biblioteca activa: espere a que termine o deténgalo (rollout stop) antes de cambiar de biblioteca",
         "busyImport": "Una importación escribe archivo por archivo en la biblioteca activa: espere a que termine antes de cambiar de biblioteca",
+        "switching": "Cambio de biblioteca en curso: espere a que termine",
         "jobRunning": "Una tarea en segundo plano trabaja en esta biblioteca",
         "jobDone": "Una tarea en segundo plano terminó en esta biblioteca: muéstrela para ver el resultado",
         "busyDisplay": "El torneo se muestra en la red del club: detenga la presentación (Dirección, Mostrar en la red del club) antes de cambiar de biblioteca",
@@ -3608,31 +3610,29 @@
         "pourInto": "Verter en {name}",
         "emptyBasket": "Vaciar la cesta",
         "dragPosition": "Arrastre sobre la cabecera de otra biblioteca para copiar allí esta posición",
-        "dragLesson": "Arrastre sobre la cabecera de otra biblioteca para copiar allí esta lección"
+        "dragLesson": "Arrastre sobre la cabecera de otra biblioteca para copiar allí esta lección",
+        "undo": "Deshacer",
+        "undone": "Copia deshecha: la posición salió de {name}.",
+        "undoFailed": "No se pudo deshacer la copia: {error}"
     },
     "split": {
-        "toggle": "Pantalla dividida: la biblioteca activa y un visor uno al lado del otro (Ctrl+Mayús+X)",
+        "toggle": "Pantalla dividida: dos tableros, una biblioteca a cada lado (Ctrl+Mayús+X)",
         "tooNarrow": "Pantalla dividida rechazada: la ventana mide menos de {min} px de ancho. Mantén x para ver la posición en la otra biblioteca en lugar del tablero.",
         "closedNarrow": "Pantalla dividida cerrada: la ventana mide menos de {min} px de ancho. Mantén x para el intercambio en el sitio.",
-        "viewerLabel": "Visor de la biblioteca {name}",
-        "readOnly": "solo lectura",
-        "activateHint": "Haz clic para activar esta biblioteca",
-        "sameLibrary": "La misma biblioteca que el panel activo",
+        "sameLibrary": "misma biblioteca",
         "close": "Cerrar la pantalla dividida",
-        "source": "Qué recorrer",
-        "library": "Toda la biblioteca",
-        "matches": "Partidas",
-        "collections": "Colecciones",
-        "first": "Primera",
-        "previous": "Anterior",
-        "next": "Siguiente",
-        "last": "Última",
         "moveAt": "Juego {game}, jugada {move}",
         "empty": "Nada que mostrar.",
         "error": "No se pudo leer la biblioteca.",
         "noDouble": "Sin doblar",
         "doubleTake": "Dobla, acepta",
-        "doublePass": "Dobla, rechaza"
+        "doublePass": "Dobla, rechaza",
+        "liveHint": "activa",
+        "frozenHint": "Haz clic (o Ctrl+Alt+←/→) para activar esta biblioteca",
+        "paneLabel": "Panel congelado de la biblioteca {name}",
+        "activeLibrary": "Biblioteca activa: {name}",
+        "sameLibraryNotInList": "Esta posición no está en la lista activa: las dos vistas no pueden intercambiarse.",
+        "sameLibraryMatchMode": "Un match reproducido no tiene lista donde encontrar la posición: dos vistas de una misma biblioteca no se intercambian en modo match."
     },
     "reference": {
         "title": "Datos de referencia",

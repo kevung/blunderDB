@@ -336,6 +336,12 @@ func checkMatchIsolation(t *testing.T, ctx context.Context, s storage.Storage, a
 	if got, err := s.Matches().MatchesByPosition(ctx, b, posID); err != nil || len(got) != 0 {
 		t.Errorf("MatchesByPosition(%s, position from %s) = %v, %v; want none", b, a, got, err)
 	}
+	if got, err := s.Matches().MovesByPosition(ctx, a, posID); err != nil || len(got) != 1 || got[0].MatchID != id {
+		t.Errorf("MovesByPosition(%s) = %v, %v; want the one move of match %d", a, got, err, id)
+	}
+	if got, err := s.Matches().MovesByPosition(ctx, b, posID); err != nil || len(got) != 0 {
+		t.Errorf("MovesByPosition(%s, position from %s) = %v, %v; want none", b, a, got, err)
+	}
 }
 
 func checkCommentIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {

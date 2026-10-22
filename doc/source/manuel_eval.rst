@@ -96,7 +96,7 @@ comme sur une base en lecture seule, et son résultat ne s'affiche que tant
 que le plateau reste le même. Un rollout lancé avant une modification du
 plateau ne s'affiche pas sur la nouvelle position.
 
-Le bouton **Ajouter à la base**, en tête de la bande de badges, enregistre
+Le bouton **Ajouter à la base**, en fin de bande de badges, après la case *Défi*, enregistre
 dans la base la position posée sur le plateau ; *CTRL-S*, la commande ``w``
 et le bouton *Enregistrer la position* de la barre d'outils font de même.
 L'évaluation gammonNet affichée pour ce plateau (les coups quand les dés
@@ -284,7 +284,7 @@ Panneau Données de référence
 Le panneau **Données de référence** réunit les tables du score. Il s'ouvre par
 *CTRL-MAJ-R* ou la commande ``ref``, sans base ouverte. Les commandes ``met``,
 ``tp2``, ``tp4`` et leurs variantes ``_live`` / ``_last``, ``gv1``, ``gv2`` et
-``gv4`` l'ouvrent sur l'onglet de la table demandée. Les lignes et les colonnes
+``gv4`` l'ouvrent sur l'onglet de la table demandée (MET, Points de prise ou Valeurs du gammon ; les variantes d'une même famille ouvrent le même onglet). Les lignes et les colonnes
 sont les points restants pour gagner le match : la ligne est le joueur dont on
 parle, la colonne son adversaire. Cinq onglets :
 

@@ -1773,7 +1773,8 @@
         "pileError": "Pino: virhe",
         "xgidCopied": "XGID kopioitu leikepöydälle",
         "gnubgIdCopied": "GNUbg-tunnus kopioitu leikepöydälle",
-        "noMatchForPosition": "Mikään ottelu ei ole pelannut tätä asemaa"
+        "noMatchForPosition": "Mikään ottelu ei ole pelannut tätä asemaa",
+        "moveGone": "Siirtoa ei enää ole ottelussa: avattu siihen, mihin se jäi"
     },
     "stats": {
         "title": "Tilastot",
@@ -3547,6 +3548,7 @@
         "openLabel": "Toinen kirjasto",
         "busyRollout": "Rollout kirjoittaa aktiiviseen kirjastoon: odota sen päättymistä tai pysäytä se (rollout stop) ennen kirjaston vaihtamista",
         "busyImport": "Tuonti kirjoittaa aktiiviseen kirjastoon tiedosto kerrallaan: odota sen päättymistä ennen kuin vaihdat kirjastoa",
+        "switching": "Kirjaston vaihto on käynnissä: odota sen päättymistä",
         "jobRunning": "Taustatehtävä on käynnissä tässä kirjastossa",
         "jobDone": "Taustatehtävä päättyi tässä kirjastossa: näytä se nähdäksesi tuloksen",
         "busyDisplay": "Turnaus näytetään kerhon verkossa: lopeta näyttäminen (Johtaminen, Näytä seuran verkossa) ennen kirjaston vaihtamista",
@@ -3608,31 +3610,29 @@
         "pourInto": "Kaada kohteeseen {name}",
         "emptyBasket": "Tyhjennä kori",
         "dragPosition": "Vedä toisen kirjaston otsikon päälle kopioidaksesi tämän aseman sinne",
-        "dragLesson": "Vedä toisen kirjaston otsikon päälle kopioidaksesi tämän oppitunnin sinne"
+        "dragLesson": "Vedä toisen kirjaston otsikon päälle kopioidaksesi tämän oppitunnin sinne",
+        "undo": "Kumoa",
+        "undone": "Kopiointi kumottu: asema poistui kirjastosta {name}.",
+        "undoFailed": "Kopiointia ei voitu kumota: {error}"
     },
     "split": {
-        "toggle": "Jaettu näyttö: aktiivinen kirjasto ja katselin rinnakkain (Ctrl+Vaihto+X)",
+        "toggle": "Jaettu näyttö: kaksi lautaa, yksi kirjasto kummallakin puolella (Ctrl+Vaihto+X)",
         "tooNarrow": "Jaettu näyttö hylätty: ikkuna on kapeampi kuin {min} px. Pidä x painettuna nähdäksesi aseman toisessa kirjastossa laudan paikalla.",
         "closedNarrow": "Jaettu näyttö suljettu: ikkuna on kapeampi kuin {min} px. Pidä x painettuna vaihtaaksesi paikan päällä.",
-        "viewerLabel": "Kirjaston {name} katselin",
-        "readOnly": "vain luku",
-        "activateHint": "Napsauta aktivoidaksesi tämän kirjaston",
-        "sameLibrary": "Sama kirjasto kuin aktiivisessa ruudussa",
+        "sameLibrary": "sama kirjasto",
         "close": "Sulje jaettu näyttö",
-        "source": "Mitä selataan",
-        "library": "Koko kirjasto",
-        "matches": "Ottelut",
-        "collections": "Kokoelmat",
-        "first": "Ensimmäinen",
-        "previous": "Edellinen",
-        "next": "Seuraava",
-        "last": "Viimeinen",
         "moveAt": "Peli {game}, siirto {move}",
         "empty": "Ei näytettävää.",
         "error": "Kirjastoa ei voitu lukea.",
         "noDouble": "Ei tuplausta",
         "doubleTake": "Tuplaus, otto",
-        "doublePass": "Tuplaus, luovutus"
+        "doublePass": "Tuplaus, luovutus",
+        "liveHint": "aktiivinen",
+        "frozenHint": "Napsauta (tai Ctrl+Alt+←/→) aktivoidaksesi tämän kirjaston",
+        "paneLabel": "Kirjaston {name} jäädytetty ruutu",
+        "activeLibrary": "Aktiivinen kirjasto: {name}",
+        "sameLibraryNotInList": "Tämä asema ei ole aktiivisessa luettelossa: näkymät eivät voi vaihtaa paikkaa.",
+        "sameLibraryMatchMode": "Toistettavalla ottelulla ei ole luetteloa, josta asema löytyisi: saman kirjaston kaksi näkymää eivät vaihda paikkaa ottelutilassa."
     },
     "reference": {
         "title": "Viitetiedot",

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:33+0200\n"
+"POT-Creation-Date: 2026-10-22 16:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -161,6 +161,16 @@ msgstr "export"
 #: ../../source/cli.rst:1
 msgid "Exporte des données."
 msgstr "データをエクスポートする。"
+
+#: ../../source/cli.rst:1
+msgid "transfer"
+msgstr "transfer"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire."
+msgstr "ライブラリの一部を、中間ファイルなしで別のライブラリにコピーします。"
 
 #: ../../source/cli.rst:1
 msgid "identity"
@@ -335,6 +345,26 @@ msgid ""
 msgstr "GNU Backgammon が局面に与える局面 ID とマッチ ID を出力します (XGID または OGID)。"
 
 #: ../../source/cli.rst:1
+msgid "capture"
+msgstr "capture"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon."
+msgstr "eXtreme Gammon の盤面のスクリーンショットに写っている局面を読み取ります。"
+
+#: ../../source/cli.rst:1
+msgid "openingbook"
+msgstr "openingbook"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Le coup d'ouverture ou la réponse d'une partie à un score, tiré du livre "
+"d'ouverture embarqué et jugé contre lui."
+msgstr "あるスコアでの対局のオープニングの手または返し。内蔵のオープニングブックから引き、それに照らして判定します。"
+
+#: ../../source/cli.rst:1
 msgid "bearoff"
 msgstr "bearoff"
 
@@ -504,41 +534,41 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "サーバーモードと PostgreSQL への移行：\\ :ref:`headless` を参照。"
 
-#: ../../source/cli.rst:120
+#: ../../source/cli.rst:123
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr "各コマンドは ``--help`` オプションで詳細なヘルプを表示できます。"
 
-#: ../../source/cli.rst:134
+#: ../../source/cli.rst:137
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:137
+#: ../../source/cli.rst:140
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:146
+#: ../../source/cli.rst:149
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:153
+#: ../../source/cli.rst:156
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:165
+#: ../../source/cli.rst:168
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:170
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:168
+#: ../../source/cli.rst:171
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:170
+#: ../../source/cli.rst:173
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 

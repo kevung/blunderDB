@@ -1,36 +1,24 @@
 <!--
-  The split screen's second pane (ADR-0101): a read-only viewer of one library group, the same
-  width as the live pane. It reads its group by number (ViewerSteps, ViewerShow, ViewerCatalogOf)
-  and writes no store of the live group: its walk, its board and its analysis are its own state.
-  Clicking the pane outside its controls activates its group; the panes then trade roles and each
-  library keeps its side.
+  The frozen pane of the split screen (ADR-0101 §8): one library group, on its fixed side, shown
+  where that group was left — its board, the analysis and the comment — dimmed. It reads its group
+  by number (ViewerSteps, ViewerShow) and writes no store of the active group. A click activates
+  its group (activatePane); nothing else moves.
 -->
 <script>
-    import { ViewerSteps, ViewerShow, ViewerCatalogOf } from '../../wailsjs/go/gui/App.js';
-    import { splitStore } from '../stores/splitStore.js';
-    import { groupIdsStore, activeGroupId, parkedGroupsStore, groupName, groupColorIndex } from '../stores/libraryGroupStore.js';
-    import { databasePathStore } from '../stores/databaseStore.js';
+    import { ViewerSteps, ViewerShow } from '../../wailsjs/go/gui/App.js';
+    import { splitShakeStore, splitFrozenStore } from '../stores/splitStore.js';
+    import { groupColorIndex } from '../stores/libraryGroupStore.js';
     import { boardOrientationStore } from '../stores/boardOrientationStore.js';
-    import { viewerGroup, followActivation, activateViewer, viewerStartOf, closeSplitIfNarrow, toggleSplit } from '../services/splitService.js';
+    import { activatePane, viewerStartOf } from '../services/splitService.js';
     import { analysisSummary } from '../services/elsewhereService.js';
     import { renderPositionSVG } from '../services/diagramService.js';
+    import { libraryDrag } from '../utils/libraryDrag.js';
+    import SplitPaneHeader from './SplitPaneHeader.svelte';
     import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
 
-    let group = $derived(viewerGroup($splitStore.group, $groupIdsStore, $activeGroupId));
-    let path = $derived(group === $activeGroupId ? $databasePathStore : ($parkedGroupsStore.get(group)?.path ?? ''));
-    let sameLibrary = $derived(group === $activeGroupId);
-
-    // The viewer's group came on screen: it takes the group left, on the other side.
-    let lastActive = $activeGroupId;
-    $effect(() => {
-        const to = $activeGroupId;
-        const from = lastActive;
-        lastActive = to;
-        if (from === to) return;
-        const next = followActivation($splitStore, from, to, $groupIdsStore);
-        if (next !== $splitStore) splitStore.set(next);
-    });
+    /** @type {{ group: number, side: 'left' | 'right', name: string, same?: boolean }} */
+    let { group, side, name, same = false } = $props();
 
     /** @type {import('../services/splitService.js').ViewerSource} */
     let source = $state({ kind: 'library', id: 0 });
@@ -40,10 +28,8 @@
     /** @type {any} */
     let item = $state(null);
     let error = $state('');
-    /** @type {{ matches: any[], collections: any[] }} */
-    let catalog = $state({ matches: [], collections: [] });
 
-    // A read answered after the viewer moved on shows nothing.
+    // A read answered after the pane moved on shows nothing.
     let generation = 0;
 
     /** @param {import('../services/splitService.js').ViewerSource} src @param {{ positionId?: number | null, index?: number }} [at] */
@@ -64,7 +50,7 @@
             index = Math.max(0, Math.min(i, read.length - 1));
         } catch (e) {
             if (mine !== generation) return;
-            logger.error('Error reading the viewer group:', e);
+            logger.error('Error reading the frozen pane:', e);
             steps = [];
             error = String(e);
         }
@@ -76,48 +62,54 @@
         const g = group;
         if (g === shownGroup) return;
         shownGroup = g;
+        item = null;
+        steps = [];
         const start = viewerStartOf(g);
         walk(start.source, { positionId: start.positionId, index: start.index });
-        ViewerCatalogOf(g)
-            .then((c) => {
-                if (shownGroup === g) catalog = c ?? { matches: [], collections: [] };
-            })
-            .catch((e) => logger.error('Error reading the viewer catalog:', e));
+    });
+
+    // Two views of one library traded places: this pane freezes on the position just left.
+    let refrozen = 0;
+    $effect(() => {
+        const ask = $splitFrozenStore.refreeze;
+        if (!ask || ask.n === refrozen) return;
+        refrozen = ask.n;
+        walk({ kind: 'library', id: 0 }, { positionId: ask.positionId });
     });
 
     $effect(() => {
         const step = steps[index];
         const g = group;
         const mine = generation;
+        splitFrozenStore.update((f) => ({ ...f, positionId: step?.positionId ?? null }));
         if (!step) {
             item = null;
             return;
         }
         ViewerShow(g, step.positionId)
             .then((read) => {
-                if (mine === generation && steps[index] === step) item = read;
+                if (mine === generation && steps[index] === step && g === group) item = read;
             })
-            .catch((e) => logger.error('Error reading a viewer position:', e));
+            .catch((e) => logger.error('Error reading a frozen position:', e));
     });
 
-    let sourceValue = $derived(`${source.kind}:${source.id}`);
-
-    /** @param {Event} event */
-    function chooseSource(event) {
-        const [chosen, id] = /** @type {HTMLSelectElement} */ (event.currentTarget).value.split(':');
-        const kind = /** @type {'library' | 'match' | 'collection'} */ (chosen);
-        walk({ kind, id: Number(id) });
-    }
-
-    /** @param {number} to */
-    function go(to) {
-        if (steps.length) index = Math.max(0, Math.min(to, steps.length - 1));
-    }
+    let shaking = $state(false);
+    let shook = $splitShakeStore.n;
+    $effect(() => {
+        const s = $splitShakeStore;
+        if (s.n === shook) return;
+        shook = s.n;
+        if (s.side !== side) return;
+        shaking = false;
+        requestAnimationFrame(() => (shaking = true));
+        const timer = setTimeout(() => (shaking = false), 450);
+        return () => clearTimeout(timer);
+    });
 
     /** @param {MouseEvent} event */
     function onPaneClick(event) {
-        if (/** @type {HTMLElement} */ (event.target).closest('button, select, a, .controls')) return;
-        activateViewer();
+        if (/** @type {HTMLElement} */ (event.target).closest('button, a, .count')) return;
+        activatePane(side);
     }
 
     let boardHost = $state(/** @type {HTMLElement | null} */ (null));
@@ -139,52 +131,31 @@
     let moves = $derived((item?.analysis?.checkerAnalysis?.moves ?? []).slice(0, 5));
     let cube = $derived(item?.analysis?.doublingCubeAnalysis ?? null);
     let step = $derived(steps[index] ?? null);
+    let count = $derived(steps.length ? `${index + 1} / ${steps.length}` : '0 / 0');
+
+    /** The position shown, carried onto the other pane or a group's header. */
+    const dragged = () => (step?.positionId ? { group, kind: /** @type {const} */ ('position'), id: step.positionId, label: `#${step.positionId}` } : null);
 
     /** @param {number | null | undefined} x */
     const eq = (x) => (x == null ? '' : (x >= 0 ? '+' : '') + x.toFixed(3));
 </script>
 
-<svelte:window onresize={() => closeSplitIfNarrow()} />
-
-<!-- The keyboard reaches the viewer's group by Ctrl+Shift+PageUp/PageDown. -->
+<!-- The keyboard reaches this pane by Ctrl+Alt+←/→. -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <section
     class="split-viewer"
-    class:left={$splitStore.side === 'left'}
+    class:shake={shaking}
     style="--group-color: var(--group-color-{groupColorIndex(group)})"
     data-testid="split-viewer"
-    aria-label={$t('split.viewerLabel', { name: groupName(path) || $t('libraryGroups.unnamed') })}
+    data-side={side}
+    data-group={group}
+    data-library-drop={group}
+    data-library-pane
+    aria-label={$t('split.paneLabel', { name: name || $t('libraryGroups.unnamed') })}
     onclick={onPaneClick}
 >
-    <header>
-        <span class="chip"></span>
-        <span class="name">{groupName(path) || $t('libraryGroups.unnamed')}</span>
-        <span class="badge">{$t('split.readOnly')}</span>
-        <span class="hint">{sameLibrary ? $t('split.sameLibrary') : $t('split.activateHint')}</span>
-        <button class="close controls" title={$t('split.close')} aria-label={$t('split.close')} onclick={() => toggleSplit()}>×</button>
-    </header>
-
-    <div class="controls bar">
-        <select value={sourceValue} onchange={chooseSource} aria-label={$t('split.source')} data-testid="split-source">
-            <option value="library:0">{$t('split.library')}</option>
-            {#if catalog.matches.length}
-                <optgroup label={$t('split.matches')}>
-                    {#each catalog.matches as m (m.id)}<option value="match:{m.id}">{m.label}</option>{/each}
-                </optgroup>
-            {/if}
-            {#if catalog.collections.length}
-                <optgroup label={$t('split.collections')}>
-                    {#each catalog.collections as c (c.id)}<option value="collection:{c.id}">{c.label} ({c.count})</option>{/each}
-                </optgroup>
-            {/if}
-        </select>
-        <button onclick={() => go(0)} disabled={index === 0} aria-label={$t('split.first')} title={$t('split.first')}>⏮</button>
-        <button onclick={() => go(index - 1)} disabled={index === 0} aria-label={$t('split.previous')} title={$t('split.previous')}>◀</button>
-        <span class="count" data-testid="split-count">{steps.length ? `${index + 1} / ${steps.length}` : '0 / 0'}</span>
-        <button onclick={() => go(index + 1)} disabled={index >= steps.length - 1} aria-label={$t('split.next')} title={$t('split.next')}>▶</button>
-        <button onclick={() => go(steps.length - 1)} disabled={index >= steps.length - 1} aria-label={$t('split.last')} title={$t('split.last')}>⏭</button>
-    </div>
+    <SplitPaneHeader {name} {count} {same} drag={dragged} />
 
     {#if source.kind === 'match' && step}
         <div class="played" data-testid="split-played">
@@ -193,7 +164,7 @@
         </div>
     {/if}
 
-    <div class="board" bind:this={boardHost}>
+    <div class="board" bind:this={boardHost} use:libraryDrag={dragged}>
         {#if error}
             <p class="empty">{$t('split.error')}</p>
         {:else if !steps.length}
@@ -239,86 +210,51 @@
 
 <style>
     .split-viewer {
-        /* The other half of the window, at the interface scale (see .main-container in App). */
-        zoom: var(--ui-scale, 1);
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        width: calc(50vw / var(--ui-scale, 1));
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 0;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
         background: var(--color-surface);
         color: var(--color-text);
-        border-left: 3px solid var(--group-color);
+        border: 3px solid transparent;
         overflow: hidden;
         cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.15s;
     }
-    .split-viewer.left {
-        right: auto;
-        left: 0;
-        border-left: none;
-        border-right: 3px solid var(--group-color);
+    .split-viewer:hover {
+        opacity: 0.8;
     }
-    header,
-    .bar,
+    .split-viewer.shake {
+        animation: split-shake 0.4s;
+    }
+    @keyframes split-shake {
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+        20%,
+        60% {
+            transform: translateX(-6px);
+        }
+        40%,
+        80% {
+            transform: translateX(6px);
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .split-viewer.shake {
+            animation: none;
+            outline: 2px dashed var(--group-color);
+        }
+    }
     .played {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 4px 8px;
+        padding: 2px 8px;
         flex-shrink: 0;
-    }
-    header {
-        border-bottom: 1px solid var(--color-border);
-    }
-    .chip {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: var(--group-color);
-        flex-shrink: 0;
-    }
-    .name {
-        font-weight: 600;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .badge {
-        font-size: var(--font-size-small);
-        border: 1px solid var(--group-color);
-        border-radius: 999px;
-        padding: 0 6px;
-        white-space: nowrap;
-    }
-    .hint {
-        font-size: var(--font-size-small);
-        opacity: 0.7;
-        flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .controls {
-        cursor: default;
-    }
-    select {
-        flex: 1;
-        min-width: 0;
-    }
-    .close {
-        background: none;
-        border: none;
-        cursor: pointer;
-    }
-    .count {
-        min-width: 5em;
-        text-align: center;
-        font-variant-numeric: tabular-nums;
-    }
-    .played {
         font-weight: 600;
     }
     .board {
@@ -336,7 +272,7 @@
     }
     .info {
         flex-shrink: 0;
-        max-height: 35%;
+        max-height: 30%;
         overflow: auto;
         padding: 4px 12px 8px;
         border-top: 1px solid var(--color-border);

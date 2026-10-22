@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 15:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -481,9 +481,9 @@ msgstr ""
 "mindestens 30 Pips Rückstand und einem Fehler von mindestens 50 "
 "Millipunkten:"
 
-#: ../../source/cli_bibliotheque.rst:230 ../../source/cli_bibliotheque.rst:426
-#: ../../source/cli_bibliotheque.rst:522 ../../source/cli_bibliotheque.rst:578
-#: ../../source/cli_bibliotheque.rst:633 ../../source/cli_bibliotheque.rst:688
+#: ../../source/cli_bibliotheque.rst:230 ../../source/cli_bibliotheque.rst:428
+#: ../../source/cli_bibliotheque.rst:524 ../../source/cli_bibliotheque.rst:580
+#: ../../source/cli_bibliotheque.rst:635 ../../source/cli_bibliotheque.rst:690
 msgid "**Exemples:**"
 msgstr "**Beispiele:**"
 
@@ -749,7 +749,7 @@ msgstr ""
 "dieser Engine (exakter Name, wie gespeichert) oder mindestens in dieser "
 "Tiefe (in Zügen) analysiert wurden; auch vom Typ ``players`` akzeptiert."
 
-#: ../../source/cli_bibliotheque.rst:354 ../../source/cli_bibliotheque.rst:378
+#: ../../source/cli_bibliotheque.rst:354 ../../source/cli_bibliotheque.rst:380
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr "``--format`` — Ausgabeformat: ``text`` oder ``json`` (Standard: ``text``)."
 
@@ -769,6 +769,14 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:361
 msgid ""
+"``--ids`` — Ne garde que ces identifiants de match, séparés par des "
+"virgules (ceux qu'imprime ``stats matches``)."
+msgstr ""
+"``--ids`` — Behält nur diese Match-Kennungen, durch Kommas getrennt (die,"
+" die ``stats matches`` ausgibt)."
+
+#: ../../source/cli_bibliotheque.rst:363
+msgid ""
 "``--sort`` — Ordre : ``date`` (défaut, le plus récent d'abord), "
 "``date_asc``, ``length_asc``, ``length_desc``, ``player1``, "
 "``player1_desc``, ``player2``, ``player2_desc``, ``tournament``, "
@@ -779,7 +787,7 @@ msgstr ""
 "``player1_desc``, ``player2``, ``player2_desc``, ``tournament``, "
 "``tournament_desc`` oder ``opponent``."
 
-#: ../../source/cli_bibliotheque.rst:365
+#: ../../source/cli_bibliotheque.rst:367
 msgid ""
 "Le filtre et le tri sont faits par la base, comme dans le panneau Matchs "
 "; le total annoncé est celui des matchs retenus. Le serveur les offre sur"
@@ -791,11 +799,11 @@ msgstr ""
 "sie unter ``/v1/matches.list`` (Felder ``text`` und ``sort``) und "
 "``/v1/matches.count`` an."
 
-#: ../../source/cli_bibliotheque.rst:369
+#: ../../source/cli_bibliotheque.rst:371
 msgid "**Options** (type ``imports`` uniquement) :"
 msgstr "**Optionen** (nur Typ ``imports``) :"
 
-#: ../../source/cli_bibliotheque.rst:371
+#: ../../source/cli_bibliotheque.rst:373
 msgid ""
 "``--batch`` — Identifiant d'un lot : affiche son compte rendu complet au "
 "lieu de la liste."
@@ -803,7 +811,7 @@ msgstr ""
 "``--batch`` — Kennung eines Stapels: zeigt dessen vollständigen Bericht "
 "statt der Liste."
 
-#: ../../source/cli_bibliotheque.rst:373
+#: ../../source/cli_bibliotheque.rst:375
 msgid ""
 "``--queue`` — Avec ``--batch`` : la **file d'étude** du lot plutôt que "
 "son compte rendu — les positions qui méritent un second regard, dans "
@@ -819,7 +827,7 @@ msgstr ""
 "Ursprungsprogramm markierten Stellungen, dann die knappen "
 "Würfelentscheidungen; eine Stellung erscheint nur einmal."
 
-#: ../../source/cli_bibliotheque.rst:380
+#: ../../source/cli_bibliotheque.rst:382
 msgid ""
 "La moitié mesurée du compte rendu est recalculée à chaque appel : un lot "
 "dont les positions ont été analysées depuis rend les chiffres "
@@ -829,11 +837,11 @@ msgstr ""
 "ein Stapel, dessen Stellungen inzwischen analysiert wurden, liefert die "
 "heutigen Zahlen, nicht die vom Tag des Imports."
 
-#: ../../source/cli_bibliotheque.rst:384
+#: ../../source/cli_bibliotheque.rst:386
 msgid "**Options** (type ``players`` uniquement) :"
 msgstr "**Optionen** (nur Typ ``players``) :"
 
-#: ../../source/cli_bibliotheque.rst:386
+#: ../../source/cli_bibliotheque.rst:388
 msgid ""
 "``--from`` / ``--to`` — Bornes de dates (AAAA-MM-JJ), par exemple les "
 "jours d'une compétition."
@@ -841,11 +849,11 @@ msgstr ""
 "``--from`` / ``--to`` — Datumsgrenzen (JJJJ-MM-TT), etwa die Tage eines "
 "Turniers."
 
-#: ../../source/cli_bibliotheque.rst:388
+#: ../../source/cli_bibliotheque.rst:390
 msgid "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois."
 msgstr "``--tournament`` — Auf eine oder mehrere Turnier-IDs einschränken."
 
-#: ../../source/cli_bibliotheque.rst:389
+#: ../../source/cli_bibliotheque.rst:391
 msgid ""
 "``--format`` — Format de sortie: ``text``, ``json`` ou ``csv`` (défaut: "
 "``text``)."
@@ -853,7 +861,7 @@ msgstr ""
 "``--format`` — Ausgabeformat: ``text``, ``json`` oder ``csv`` (Standard: "
 "``text``)."
 
-#: ../../source/cli_bibliotheque.rst:392
+#: ../../source/cli_bibliotheque.rst:394
 msgid ""
 "``--player`` et ``--decision-type`` ne s'appliquent **pas** à ce type : "
 "le tableau porte sur tous les joueurs et ventile déjà pions et videau en "
@@ -863,7 +871,7 @@ msgstr ""
 " Tabelle umfasst alle Spieler und teilt Steine und Doppler bereits in "
 "getrennte Spalten auf."
 
-#: ../../source/cli_bibliotheque.rst:397
+#: ../../source/cli_bibliotheque.rst:399
 msgid ""
 "Un tiret « — » (champ vide en CSV) signale une valeur **jamais mesurée**,"
 " à ne pas confondre avec zéro. C'est le cas de la chance pour tout match "
@@ -879,7 +887,7 @@ msgstr ""
 "Importieren Sie die Quelldateien erneut, um es zu erhalten. Die Spalte "
 "``luck_rolls`` gibt an, über wie viele Würfe der Mittelwert geht."
 
-#: ../../source/cli_bibliotheque.rst:404
+#: ../../source/cli_bibliotheque.rst:406
 msgid ""
 "Chaque type imprime un bloc par élément, précédé du total trouvé. La "
 "ligne finale rappelle quelle fenêtre est affichée, tronquée par "
@@ -891,11 +899,11 @@ msgstr ""
 " ``--limit`` (Standardwert 10 für Positionen) und verschoben durch "
 "``--offset``:"
 
-#: ../../source/cli_bibliotheque.rst:449
+#: ../../source/cli_bibliotheque.rst:451
 msgid "collection — Gérer les collections"
 msgstr "collection — Sammlungen verwalten"
 
-#: ../../source/cli_bibliotheque.rst:451
+#: ../../source/cli_bibliotheque.rst:453
 msgid ""
 "Gère les collections, ces ensembles de positions choisies à la main dans "
 "le panneau Collections de l'interface graphique. Chaque sous-commande "
@@ -907,12 +915,12 @@ msgstr ""
 "``--db`` entgegen; ``list`` und ``show`` akzeptieren ``--format text`` "
 "(Standard), ``json`` oder ``csv``, wie ``list``."
 
-#: ../../source/cli_bibliotheque.rst:460 ../../source/cli_bibliotheque.rst:568
-#: ../../source/cli_bibliotheque.rst:653
+#: ../../source/cli_bibliotheque.rst:462 ../../source/cli_bibliotheque.rst:570
+#: ../../source/cli_bibliotheque.rst:655
 msgid "**Sous-commandes:**"
 msgstr "**Unterbefehle:**"
 
-#: ../../source/cli_bibliotheque.rst:462
+#: ../../source/cli_bibliotheque.rst:464
 msgid ""
 "``list`` — Liste des collections : id, nom, nombre de positions, "
 "description."
@@ -920,7 +928,7 @@ msgstr ""
 "``list`` — Liste der Sammlungen: id, Name, Anzahl Positionen, "
 "Beschreibung."
 
-#: ../../source/cli_bibliotheque.rst:463
+#: ../../source/cli_bibliotheque.rst:465
 msgid ""
 "``show --id <id>`` — Positions d'une collection : id, index (le numéro "
 "1-based affiché dans la barre d'état de l'interface graphique), score, "
@@ -930,7 +938,7 @@ msgstr ""
 " Nummer, die in der Statusleiste der grafischen Oberfläche angezeigt "
 "wird), Spielstand, Entscheidungstyp und XGID."
 
-#: ../../source/cli_bibliotheque.rst:466
+#: ../../source/cli_bibliotheque.rst:468
 msgid ""
 "``create --name <nom> [--description <texte>] [--query <requête>]`` — "
 "Crée une collection vide ou, avec ``--query``, une collection vivante "
@@ -942,7 +950,7 @@ msgstr ""
 "Sammlung. Eine Abfrage, deren Token von keiner Regel erkannt wird, wird "
 "abgelehnt, bevor etwas geschrieben wird."
 
-#: ../../source/cli_bibliotheque.rst:470
+#: ../../source/cli_bibliotheque.rst:472
 msgid ""
 "``filter --id <id> --query <requête>`` — Rend une collection **vivante** "
 ": son contenu devient le résultat d'une recherche, réévalué chaque fois "
@@ -957,7 +965,7 @@ msgstr ""
 " wieder eine von Hand erstellte Liste und behält die enthaltenen "
 "Stellungen."
 
-#: ../../source/cli_bibliotheque.rst:475
+#: ../../source/cli_bibliotheque.rst:477
 msgid ""
 "``freeze --id <id>`` — Fige une collection vivante : les positions que sa"
 " requête sélectionne maintenant deviennent sa composition, la requête "
@@ -968,7 +976,7 @@ msgstr ""
 "Abfrage wird gelöscht. Wird bei einer Sammlung abgelehnt, die nicht "
 "lebendig ist."
 
-#: ../../source/cli_bibliotheque.rst:478
+#: ../../source/cli_bibliotheque.rst:480
 msgid ""
 "``evaluate --id <id> [--limit <n>] [--format text|json]`` — Lit les "
 "identifiants des positions d'une collection, en rejouant maintenant la "
@@ -987,7 +995,7 @@ msgstr ""
 "gehen die Kennungen auf die Standardausgabe und die Anzahl auf die "
 "Fehlerausgabe."
 
-#: ../../source/cli_bibliotheque.rst:485
+#: ../../source/cli_bibliotheque.rst:487
 msgid ""
 "``pile [--position-id <id> | --xgid <XGID>]`` — Met une position sur la "
 "Pile (la collection « à revoir plus tard »), ou l'en retire quand elle y "
@@ -1001,7 +1009,7 @@ msgstr ""
 "nicht in der Datenbank ist, wird zuerst als einzeln eingebrachte Position"
 " hineingeschrieben. Ohne Position wird der Stapel angezeigt."
 
-#: ../../source/cli_bibliotheque.rst:489
+#: ../../source/cli_bibliotheque.rst:491
 msgid ""
 "``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une "
 "collection (la description est conservée si elle n'est pas donnée)."
@@ -1010,7 +1018,7 @@ msgstr ""
 "Sammlung um (die Beschreibung bleibt erhalten, wenn sie nicht angegeben "
 "wird)."
 
-#: ../../source/cli_bibliotheque.rst:491
+#: ../../source/cli_bibliotheque.rst:493
 msgid ""
 "``delete --id <id> [--confirm]`` — Supprime une collection ; ses "
 "positions restent dans la base."
@@ -1018,7 +1026,7 @@ msgstr ""
 "``delete --id <id> [--confirm]`` — Löscht eine Sammlung; ihre Positionen "
 "bleiben in der Datenbank."
 
-#: ../../source/cli_bibliotheque.rst:493
+#: ../../source/cli_bibliotheque.rst:495
 msgid ""
 "``export --id <id[,id…]> --out <fichier.db> [--analysis=false] "
 "[--comments=false] [--matches=false] [--transcriptions=false] "
@@ -1040,7 +1048,7 @@ msgstr ""
 "ihren Transkriptionen und den Aliasen ihrer Spieler und Turniere (zu "
 "Wasserzeichen und Passwort siehe den Befehl ``export``)."
 
-#: ../../source/cli_bibliotheque.rst:502
+#: ../../source/cli_bibliotheque.rst:504
 msgid ""
 "``suggest [--player <nom>] [--match <ids>] [--tournament <ids>] [--from "
 "<date>] [--to <date>] [--decision-type all|checker|cube] [--size <n>] "
@@ -1071,7 +1079,7 @@ msgstr ""
 "Begründung (die die Zahl nennt, die zählt, wenn die Lehre zur Hälfte "
 "zählt); ``--format json`` liefert dieselben Bestandteile."
 
-#: ../../source/cli_bibliotheque.rst:516
+#: ../../source/cli_bibliotheque.rst:518
 msgid ""
 "Le XGID affiché par ``show`` est celui enregistré avec l'analyse de la "
 "position quand il existe (imports BGF et XGP) ; sinon il est généré "
@@ -1086,7 +1094,7 @@ msgstr ""
 "verbleibenden Spielstände, da eine gespeicherte Position den "
 "tatsächlichen Wert nicht festhält."
 
-#: ../../source/cli_bibliotheque.rst:535
+#: ../../source/cli_bibliotheque.rst:537
 msgid ""
 "Une base sans collection répond ``No collections found in database`` et "
 "sort tout de même avec le code 0."
@@ -1094,11 +1102,11 @@ msgstr ""
 "Eine Datenbank ohne Sammlung antwortet mit ``No collections found in "
 "database`` und endet trotzdem mit dem Exit-Code 0."
 
-#: ../../source/cli_bibliotheque.rst:555
+#: ../../source/cli_bibliotheque.rst:557
 msgid "comment — Les commentaires d'une position"
 msgstr "comment — Die Kommentare einer Position"
 
-#: ../../source/cli_bibliotheque.rst:557
+#: ../../source/cli_bibliotheque.rst:559
 msgid ""
 "Une position porte autant de commentaires qu'on veut, chacun attribué à "
 "son auteur (texte libre). Un commentaire reçu dans un export filigrané "
@@ -1115,7 +1123,7 @@ msgstr ""
 "entspricht —, und die Herkunft in der Spalte *Origin* (leer bei einem in "
 "blunderDB geschriebenen Kommentar)."
 
-#: ../../source/cli_bibliotheque.rst:570
+#: ../../source/cli_bibliotheque.rst:572
 msgid ""
 "``add --position N --text T [--author A]`` — Ajoute un commentaire à la "
 "position N, attribué à A (sans ``--author``, il n'a pas d'auteur)."
@@ -1123,7 +1131,7 @@ msgstr ""
 "``add --position N --text T [--author A]`` — Fügt der Position N einen "
 "Kommentar hinzu, zugeordnet A (ohne ``--author`` hat er keinen Autor)."
 
-#: ../../source/cli_bibliotheque.rst:572
+#: ../../source/cli_bibliotheque.rst:574
 msgid ""
 "``list [--position N] [--author A]`` — Liste les commentaires d'une "
 "position, ou de toute la base, éventuellement ceux d'un seul auteur."
@@ -1132,7 +1140,7 @@ msgstr ""
 "Position oder der gesamten Datenbank auf, gegebenenfalls nur die eines "
 "einzelnen Autors."
 
-#: ../../source/cli_bibliotheque.rst:575
+#: ../../source/cli_bibliotheque.rst:577
 msgid ""
 "**Options communes:** ``--db`` (obligatoire) ; ``list`` accepte "
 "``--format`` (``text`` ou ``json``)."
@@ -1140,11 +1148,11 @@ msgstr ""
 "**Gemeinsame Optionen:** ``--db`` (erforderlich); ``list`` akzeptiert "
 "``--format`` (``text`` oder ``json``)."
 
-#: ../../source/cli_bibliotheque.rst:587
+#: ../../source/cli_bibliotheque.rst:589
 msgid "elsewhere — Ailleurs : une position dans d'autres bases"
 msgstr "elsewhere — Anderswo: eine Stellung in anderen Datenbanken"
 
-#: ../../source/cli_bibliotheque.rst:589
+#: ../../source/cli_bibliotheque.rst:591
 msgid ""
 "Cherche une position, par son hachage Zobrist, dans d'autres fichiers de "
 "base passés à la même commande, et rend pour chacun ce qu'il en sait : "
@@ -1160,7 +1168,7 @@ msgstr ""
 "Zug und seine Kosten), und ihre nächsten Stellungen (dieselbe Rangfolge "
 "wie das ``like``-Token der Suche, in Pips bewegter Steine)."
 
-#: ../../source/cli_bibliotheque.rst:595
+#: ../../source/cli_bibliotheque.rst:597
 msgid ""
 "Le coût d'un coup joué ailleurs est jugé avec les seuils d'erreur et de "
 "blunder de la base ``--db``, jamais avec ceux de la base lue : ``error``,"
@@ -1202,11 +1210,11 @@ msgstr ""
 "wurde, werden nur die 50 zuletzt importierten gelesen: Die Ausgabe sagt "
 "es, mit der Gesamtzahl (``matchesTotal`` und ``playsTruncated`` in JSON)."
 
-#: ../../source/cli_bibliotheque.rst:616
+#: ../../source/cli_bibliotheque.rst:618
 msgid "**Options:**"
 msgstr "**Optionen:**"
 
-#: ../../source/cli_bibliotheque.rst:618
+#: ../../source/cli_bibliotheque.rst:620
 msgid ""
 "``--db`` (obligatoire) — La base qui juge : ses seuils et sa table "
 "d'équité."
@@ -1214,21 +1222,21 @@ msgstr ""
 "``--db`` (erforderlich) — Die beurteilende Datenbank: ihre Schwellenwerte"
 " und ihre Equity-Tabelle."
 
-#: ../../source/cli_bibliotheque.rst:619
+#: ../../source/cli_bibliotheque.rst:621
 msgid "``--other`` (obligatoire, répétable) — Un fichier de base où chercher."
 msgstr ""
 "``--other`` (erforderlich, wiederholbar) — Eine zu durchsuchende "
 "Datenbankdatei."
 
-#: ../../source/cli_bibliotheque.rst:620
+#: ../../source/cli_bibliotheque.rst:622
 msgid "``--position N`` — La position, par son identifiant dans ``--db``."
 msgstr "``--position N`` — Die Stellung, über ihre Kennung in ``--db``."
 
-#: ../../source/cli_bibliotheque.rst:621
+#: ../../source/cli_bibliotheque.rst:623
 msgid "``--xgid X`` — La position, par son XGID."
 msgstr "``--xgid X`` — Die Stellung, über ihre XGID."
 
-#: ../../source/cli_bibliotheque.rst:622
+#: ../../source/cli_bibliotheque.rst:624
 msgid ""
 "``--zobrist H`` — La position, par son hachage (décimal) ; ses voisines "
 "ne sont alors cherchées que dans les bases qui la détiennent."
@@ -1236,7 +1244,7 @@ msgstr ""
 "``--zobrist H`` — Die Stellung, über ihren Hash (dezimal); ihre Nachbarn "
 "werden dann nur in den Datenbanken gesucht, die sie enthalten."
 
-#: ../../source/cli_bibliotheque.rst:624
+#: ../../source/cli_bibliotheque.rst:626
 msgid ""
 "``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,"
 " 50 au plus)."
@@ -1244,7 +1252,7 @@ msgstr ""
 "``--neighbours N`` — Anzahl der Nachbarn pro Datenbank (Standard: 5, 0: "
 "keine, höchstens 50)."
 
-#: ../../source/cli_bibliotheque.rst:626
+#: ../../source/cli_bibliotheque.rst:628
 msgid ""
 "``--max-distance D`` — Écarte les voisines à plus de D pips de pions "
 "déplacés (0 : sans plafond)."
@@ -1252,11 +1260,11 @@ msgstr ""
 "``--max-distance D`` — Verwirft Nachbarn, die mehr als D Pips bewegter "
 "Steine entfernt sind (0: keine Obergrenze)."
 
-#: ../../source/cli_bibliotheque.rst:628
+#: ../../source/cli_bibliotheque.rst:630
 msgid "``--format`` — ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — ``text`` (Standard) oder ``json``."
 
-#: ../../source/cli_bibliotheque.rst:630
+#: ../../source/cli_bibliotheque.rst:632
 msgid ""
 "Le démon sert la même lecture à travers les tenants : "
 "``across.positionElsewhere`` (voir :ref:`headless`)."
@@ -1264,11 +1272,11 @@ msgstr ""
 "Der Daemon bietet dieselbe Abfrage mandantenübergreifend an: "
 "``across.positionElsewhere`` (siehe :ref:`headless`)."
 
-#: ../../source/cli_bibliotheque.rst:642
+#: ../../source/cli_bibliotheque.rst:644
 msgid "trash — La corbeille"
 msgstr "trash — Der Papierkorb"
 
-#: ../../source/cli_bibliotheque.rst:644
+#: ../../source/cli_bibliotheque.rst:646
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -1281,25 +1289,25 @@ msgstr ""
 "diese Tabelle existiert — kein Suchfilter, keine Statistik, keine "
 "Aufbewahrungsregel."
 
-#: ../../source/cli_bibliotheque.rst:655
+#: ../../source/cli_bibliotheque.rst:657
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
 msgstr "``list`` — Was im Papierkorb liegt, das zuletzt Gelöschte zuerst."
 
-#: ../../source/cli_bibliotheque.rst:657
+#: ../../source/cli_bibliotheque.rst:659
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr ""
 "``restore --id N`` — Stellt Eintrag N wieder her und entfernt ihn aus dem"
 " Papierkorb."
 
-#: ../../source/cli_bibliotheque.rst:658
+#: ../../source/cli_bibliotheque.rst:660
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr ""
 "``discard --id N`` — Verwirft Eintrag N sofort, ohne ihn "
 "wiederherzustellen."
 
-#: ../../source/cli_bibliotheque.rst:659
+#: ../../source/cli_bibliotheque.rst:661
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
@@ -1307,7 +1315,7 @@ msgstr ""
 "``empty [--older-than T]`` — Leert den Papierkorb, oder nur, was älter "
 "als T Tage ist."
 
-#: ../../source/cli_bibliotheque.rst:661
+#: ../../source/cli_bibliotheque.rst:663
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection``, "
@@ -1317,7 +1325,7 @@ msgstr ""
 "damit der Vorgang rückgängig gemacht werden kann. ``K`` ist ``position``,"
 " ``collection``, ``comment`` oder ``match``."
 
-#: ../../source/cli_bibliotheque.rst:665
+#: ../../source/cli_bibliotheque.rst:667
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, "
@@ -1329,7 +1337,7 @@ msgstr ""
 "beschränkt ``--kind`` die Liste auf eine Objektart: ``position``, "
 "``collection``, ``comment``, ``match`` oder ``anki_card``."
 
-#: ../../source/cli_bibliotheque.rst:670
+#: ../../source/cli_bibliotheque.rst:672
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -1342,7 +1350,7 @@ msgstr ""
 "Wachstum niemand verlangt hat. ``trash delete`` ist das, was die "
 "Rücknahme behält."
 
-#: ../../source/cli_bibliotheque.rst:675
+#: ../../source/cli_bibliotheque.rst:677
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon. Une position restaurée reprend son ancien "
@@ -1367,7 +1375,7 @@ msgstr ""
 "belegter oder verschwundener Platz in der Turnierleitung, ein gelöschtes "
 "Turnier — wird durch eine Warnung gemeldet."
 
-#: ../../source/cli_bibliotheque.rst:685
+#: ../../source/cli_bibliotheque.rst:687
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."

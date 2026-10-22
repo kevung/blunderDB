@@ -96,8 +96,10 @@
     import { showTab, showTrainingPanel, showDuelPanel } from './services/tabToggles.js';
     import { duelHoldsBoardStore, duelFoldedStore, tabOpensDuringDuel } from './stores/duelStore.js';
     import HomeScreen from './components/HomeScreen.svelte';
-    import SplitViewer from './components/SplitViewer.svelte';
+    import SplitArea from './components/SplitArea.svelte';
     import { splitStore } from './stores/splitStore.js';
+    import { splitPanelBeside, restoreSplit, markSplitRestored } from './services/splitService.js';
+    import { activeGroupId, activateGroup, openInNewGroup } from './stores/libraryGroupStore.js';
     import { initFolderWatch } from './services/watchService.js';
     import { initMCPHost } from './services/mcpHostService.js';
     import { initTheme } from './stores/themeStore.js';
@@ -145,7 +147,8 @@
     );
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let appliedPanelWidth = $derived(clampPanelSize(true, panelWidth, uiWidth));
-    let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
+    // Split, the panel stays beside the two boards only in a wide window; else it goes under them.
+    let isSidePanel = $derived($splitStore.on ? splitPanelBeside(uiWidth) : $effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
     // Écarté pour la session : le panneau Eval fonctionne sans base.
     let positionCount = 0;
@@ -165,7 +168,7 @@
     // reflow first; a 'resize' that doesn't change the window size is a no-op for
     // windowAspectStore (safe_not_equal), so this can't loop.
     $effect(() => {
-        $effectivePositionStore; // tracked dep
+        isSidePanel; // tracked dep
         requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     });
 
@@ -345,6 +348,23 @@
     let unregisterZoomKeys = null;
 
     /** The window is usable once it has painted; then the panels and modals kept off the first screen are fetched. */
+    /**
+     * The other side of the last session's split, opened in a group of its own; the library
+     * that was active comes back on screen and stays the one reopened next time.
+     * @param {string} path
+     */
+    async function openSplitOther(path) {
+        if (!(await PathExists(path))) return null;
+        const home = get(activeGroupId);
+        const homePath = get(databasePathStore);
+        await openDatabaseByPath(path, { inNewGroup: openInNewGroup });
+        const opened = get(activeGroupId);
+        if (opened === home) return null;
+        await activateGroup(home);
+        await SaveLastDatabasePath(homePath);
+        return opened;
+    }
+
     function startupDone() {
         // The frame callback runs before the paint it asks for, the macrotask after it.
         requestAnimationFrame(() =>
@@ -436,6 +456,7 @@
             const startupPath = await StartupFilePath();
             if (startupPath && (await PathExists(startupPath))) {
                 await openDatabaseByPath(startupPath);
+                markSplitRestored();
                 startupDone();
                 return;
             }
@@ -462,6 +483,11 @@
             // Any failure, the probe included, is transient: keep the path.
             logger.error('Error auto-reopening last database (keeping remembered path):', error);
         }
+        try {
+            await restoreSplit(get(databasePathStore), openSplitOther);
+        } catch (error) {
+            logger.error('Error putting back the split screen:', error);
+        }
         startupDone();
     });
 
@@ -477,14 +503,7 @@
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
-<main
-    class="main-container"
-    class:td-fullscreen={$directionFullscreenStore}
-    class:split-left={$splitStore.on && $splitStore.side === 'right'}
-    class:split-right={$splitStore.on && $splitStore.side === 'left'}
-    bind:this={mainArea}
-    use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}
->
+<main class="main-container" class:td-fullscreen={$directionFullscreenStore} bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
     {#if showDropOverlay}
         <div class="drop-overlay" transition:fade={{ duration: 150 }}>
             <div class="drop-overlay-content">
@@ -536,13 +555,16 @@
                  l'onglet Tournoi actif ET une Direction ouverte. Tout autre onglet ramène le
                  plateau sans rien fermer — la Direction reste ouverte et continue de vivre. -->
             <!-- Une vidéo de match peut se loger à gauche du plateau (stores/videoStageStore.js). -->
-            <VideoStage>
-                {#if $directionPageShownStore && DirectionViewComponent}
-                    <DirectionViewComponent />
-                {:else}
-                    <Board />
-                {/if}
-            </VideoStage>
+            <!-- L'écran partagé coupe cette zone seule en deux volets (ADR-0101 §8). -->
+            <SplitArea>
+                <VideoStage>
+                    {#if $directionPageShownStore && DirectionViewComponent}
+                        <DirectionViewComponent />
+                    {:else}
+                        <Board />
+                    {/if}
+                </VideoStage>
+            </SplitArea>
         </div>
 
         <div
@@ -578,11 +600,6 @@
     <TranscriptionTheatre />
 </main>
 
-<!-- L'écran partagé : l'autre moitié de la fenêtre, une visionneuse en lecture (ADR-0101). -->
-{#if $splitStore.on}
-    <SplitViewer />
-{/if}
-
 <style>
     .main-container {
         display: flex;
@@ -599,14 +616,6 @@
         padding: 0;
         box-sizing: border-box;
         overflow: hidden;
-    }
-
-    /* The split screen: the live group keeps one half, the viewer the other (SplitViewer). */
-    .main-container.split-left {
-        right: calc(50vw / var(--ui-scale, 1));
-    }
-    .main-container.split-right {
-        left: calc(50vw / var(--ui-scale, 1));
     }
 
     /* Wraps the board, the resize handle and the panel. Column (panel at the

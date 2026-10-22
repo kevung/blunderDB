@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 15:20+0200\n"
+"POT-Creation-Date: 2026-10-22 15:30+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -249,29 +249,29 @@ msgid ""
 "Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : "
 "``train scores`` (la fiche de score d'un score tiré au sort ; ``train "
 "tp`` et ``train takepoint`` sont des synonymes), ``train pips`` (le "
-"compte de pions des deux camps), ``train bearoff`` (l'EPC des deux camps "
-"sur une position engendrée ; ``train epc`` est un synonyme), ``train "
-"evaluation`` (les chances de gain et l'action de videau d'une position "
-"engendrée, en partie d'argent), ``train decision`` (une décision analysée"
-" de la liste parcourue : le coup se joue sur le plateau, l'action de "
-"videau se choisit dans le panneau ; ``train quiz`` est un synonyme), "
-"``train opening`` (le coup d'ouverture ou la réponse d'une partie à un "
-"score, selon le jet mémorisé au lanceur, joué sur le plateau et jugé "
-"contre le livre d'ouverture ; ``train ouverture`` et ``train book`` sont "
-"des synonymes)."
+"compte de pions des deux camps ; ``train pip`` est un synonyme), ``train "
+"bearoff`` (l'EPC des deux camps sur une position engendrée ; ``train "
+"epc`` est un synonyme), ``train evaluation`` (les chances de gain et "
+"l'action de videau d'une position engendrée, en partie d'argent), ``train"
+" decision`` (une décision analysée de la liste parcourue : le coup se "
+"joue sur le plateau, l'action de videau se choisit dans le panneau ; "
+"``train quiz`` est un synonyme), ``train opening`` (le coup d'ouverture "
+"ou la réponse d'une partie à un score, selon le jet mémorisé au lanceur, "
+"joué sur le plateau et jugé contre le livre d'ouverture ; ``train "
+"ouverture`` et ``train book`` sont des synonymes)."
 msgstr ""
 "Opens the Training panel. With an argument, it opens and starts: ``train "
 "scores`` (the score card of a randomly drawn score; ``train tp`` and "
 "``train takepoint`` are synonyms), ``train pips`` (the pip count of both "
-"sides), ``train bearoff`` (the EPC of both sides on a generated position;"
-" ``train epc`` is a synonym), ``train evaluation`` (the win chance and "
-"the cube action of a generated position, in money play), ``train "
-"decision`` (an analysed decision from the browsed list: the move is "
-"played on the board, the cube action is chosen in the panel; ``train "
-"quiz`` is a synonym), ``train opening`` (the opening move or the reply of"
-" a game at a score, according to the roll remembered in the launcher, "
-"played on the board and judged against the opening book; ``train "
-"ouverture`` and ``train book`` are synonyms)."
+"sides; ``train pip`` is a synonym), ``train bearoff`` (the EPC of both "
+"sides on a generated position; ``train epc`` is a synonym), ``train "
+"evaluation`` (the win chances and the cube action of a generated "
+"position, in money play), ``train decision`` (an analysed decision from "
+"the browsed list: the move is played on the board, the cube action is "
+"chosen in the panel; ``train quiz`` is a synonym), ``train opening`` (the"
+" opening move or the reply of a game at a score, according to the roll "
+"remembered in the launcher, played on the board and judged against the "
+"opening book; ``train ouverture`` and ``train book`` are synonyms)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "duel"
@@ -286,114 +286,34 @@ msgstr ""
 "(see :ref:`panneau_duel`)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "tp2"
-msgstr "tp2"
+msgid "tp2, tp2_live, tp2_last, tp4, tp4_live, tp4_last"
+msgstr "tp2, tp2_live, tp2_last, tp4, tp4_live, tp4_last"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2."
+"Ouvre le panneau Données de référence sur l'onglet Points de prise, qui "
+"réunit les tables des videaux 2 et 4, en course longue et en dernier "
+"lancer : ces six commandes ouvrent le même onglet."
 msgstr ""
-"Opens the Reference data panel on the take points, showing the table for "
-"the cube at 2."
+"Opens the Reference data panel on the Take points tab, which gathers the "
+"tables for the cube at 2 and 4, for long races and for the last roll: "
+"these six commands open the same tab."
 
 #: ../../source/cmd_mode.rst:1
-msgid "tp2_live"
-msgstr "tp2_live"
+msgid "gv1, gv2, gv4"
+msgstr "gv1, gv2, gv4"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2 pour les courses longues."
+"Ouvre le panneau Données de référence sur l'onglet Valeurs du gammon, qui"
+" réunit les tables des videaux 1, 2 et 4 : ces trois commandes ouvrent le"
+" même onglet."
 msgstr ""
-"Opens the Reference data panel on the take points, showing the table for "
-"the cube at 2 for long races."
+"Opens the Reference data panel on the Gammon values tab, which gathers "
+"the tables for the cube at 1, 2 and 4: these three commands open the same"
+" tab."
 
-#: ../../source/cmd_mode.rst:1
-msgid "tp2_last"
-msgstr "tp2_last"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2 mort."
-msgstr ""
-"Opens the Reference data panel on the take points, showing the table for "
-"the dead cube at 2."
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp4"
-msgstr "tp4"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4."
-msgstr ""
-"Opens the Reference data panel on the take points, showing the table for "
-"the cube at 4."
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp4_live"
-msgstr "tp4_live"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4 pour les courses longues."
-msgstr ""
-"Opens the Reference data panel on the take points, showing the table for "
-"the cube at 4 for long races."
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp4_last"
-msgstr "tp4_last"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4 mort."
-msgstr ""
-"Opens the Reference data panel on the take points, showing the table for "
-"the dead cube at 4."
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv1"
-msgstr "gv1"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 1."
-msgstr ""
-"Opens the Reference data panel on the gammon values, showing the table "
-"for the cube at 1."
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv2"
-msgstr "gv2"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 2."
-msgstr ""
-"Opens the Reference data panel on the gammon values, showing the table "
-"for the cube at 2."
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv4"
-msgstr "gv4"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 4."
-msgstr ""
-"Opens the Reference data panel on the gammon values, showing the table "
-"for the cube at 4."
-
-#: ../../source/cmd_mode.rst:56
+#: ../../source/cmd_mode.rst:49
 msgid "Positions et navigation"
 msgstr "Positions and navigation"
 
@@ -505,13 +425,15 @@ msgid ""
 "gammonNet de la configuration, ou le préréglage nommé) et ouvre le "
 "panneau Analyse. ``ro search [fast|standard]`` le lance sur la liste "
 "affichée, après confirmation avec le total ; ``ro stop`` arrête le "
-"rollout en cours."
+"rollout en cours. ``rapide`` est un synonyme de ``fast`` et ``recherche``"
+" de ``search``."
 msgstr ""
 "Rolls out the current position (with the setting chosen in the "
 "**gammonNet** tab of the configuration, or the named preset) and opens "
 "the Analysis panel. ``ro search [fast|standard]`` runs it on the "
 "displayed list, after a confirmation with the total; ``ro stop`` stops "
-"the rollout in progress."
+"the rollout in progress. ``rapide`` is a synonym of ``fast`` and "
+"``recherche`` of ``search``."
 
 #: ../../source/cmd_mode.rst:1
 msgid "history, hi"
@@ -613,7 +535,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigate to the last visited match."
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:80
 msgid "Édition et recherche"
 msgstr "Editing and search"
 
@@ -638,8 +560,14 @@ msgid "s"
 msgstr "s"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Chercher des positions avec des filtres."
-msgstr "Search for positions with filters."
+msgid ""
+"Chercher des positions avec des filtres. Refusé dans une collection ou un"
+" match, où il remplacerait la liste étudiée : la barre d'état renvoie "
+"alors vers ``ss``."
+msgstr ""
+"Search for positions with filters. Refused in a collection or a match, "
+"where it would replace the list being studied: the status bar then points"
+" to ``ss``."
 
 #: ../../source/cmd_mode.rst:1
 msgid "ss"
@@ -653,11 +581,11 @@ msgstr ""
 "Search among the positions on screen: current results, open collection or"
 " match under review."
 
-#: ../../source/cmd_mode.rst:103
+#: ../../source/cmd_mode.rst:96
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:105
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -672,9 +600,9 @@ msgstr ""
 " ``search`` flag that does the same thing (see :ref:`cli`); a dash marks "
 "a filter that only the grammar expresses."
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:105
 msgid ""
-"Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
+"Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
 "sont posés, ``d`` le type de décision, ``D`` et ``D1`` les dés, ``x`` la "
 "structure dessinée dans l'onglet *Sauf*. Un lancer ne s'écrit donc jamais"
@@ -683,8 +611,8 @@ msgid ""
 "plateau, ces jetons se comparent à un plateau vide ; ce sont les drapeaux"
 " de la troisième colonne qu'il faut y employer."
 msgstr ""
-"Five tokens do not carry their value: they read it from the search board."
-" ``cube`` and ``score`` take up the cube and the score set there, ``d`` "
+"Six tokens do not carry their value: they read it from the search board. "
+"``cube`` and ``score`` take up the cube and the score set there, ``d`` "
 "the decision type, ``D`` and ``D1`` the dice, ``x`` the structure drawn "
 "in the *Except* tab. A roll is therefore never written into the token: "
 "``D65`` does not exist, only the exclusion form carries its digits "
@@ -692,7 +620,7 @@ msgstr ""
 "compare against an empty board; it is the flags of the third column that "
 "must be used there instead."
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:114
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -702,7 +630,7 @@ msgstr ""
 " by ascending distance to a target position, and every other token "
 "narrows the set it ranks."
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -712,11 +640,11 @@ msgstr ""
 "*millipoints* of the table below: ``E>100`` keeps the moves that cost at "
 "least a tenth of a point, one point being worth 1000 millipoints."
 
-#: ../../source/cmd_mode.rst:129
+#: ../../source/cmd_mode.rst:122
 msgid "Deux recherches complètes :"
 msgstr "Two full searches:"
 
-#: ../../source/cmd_mode.rst:131
+#: ../../source/cmd_mode.rst:124
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -725,7 +653,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — more than 30 pips behind, between 40% and 60% "
 "winning chances, no comment."
 
-#: ../../source/cmd_mode.rst:133
+#: ../../source/cmd_mode.rst:126
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1125,13 +1053,13 @@ msgstr "tm>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup "
-"dont la durée est inconnue ne répond jamais. Avec ``E``, la durée et "
-"l'erreur sont celles du même coup joué."
+"Le joueur 1 a mis plus de x secondes à décider (coup ou videau ; x peut "
+"être décimal). Un coup dont la durée est inconnue ne répond jamais. Avec "
+"``E``, la durée et l'erreur sont celles du même coup joué."
 msgstr ""
-"Player 1 took more than x seconds to decide (checker play or cube). A "
-"play whose duration is unknown never matches. With ``E``, the duration "
-"and the error are those of the same play."
+"Player 1 took more than x seconds to decide (checker play or cube; x may "
+"be a decimal). A play whose duration is unknown never matches. With "
+"``E``, the duration and the error are those of the same play."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tm<x"
@@ -1179,7 +1107,7 @@ msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "Le joueur a des chances de gain comprises à x % et y %."
+msgid "Le joueur a des chances de gain comprises entre x % et y %."
 msgstr "The player has winning chances between x% and y%."
 
 #: ../../source/cmd_mode.rst:1
@@ -1208,7 +1136,7 @@ msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "Le joueur a des chances de gammon comprises à x % et y %."
+msgid "Le joueur a des chances de gammon comprises entre x % et y %."
 msgstr "The player has gammon chances between x% and y%."
 
 #: ../../source/cmd_mode.rst:1
@@ -1233,7 +1161,7 @@ msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "Le joueur a des chances de backgammon comprises à x % et y %."
+msgid "Le joueur a des chances de backgammon comprises entre x % et y %."
 msgstr "The player has backgammon chances between x% and y%."
 
 #: ../../source/cmd_mode.rst:1
@@ -1258,7 +1186,7 @@ msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "L'adversaire a des chances de gain comprises à x % et y %."
+msgid "L'adversaire a des chances de gain comprises entre x % et y %."
 msgstr "The opponent has winning chances between x% and y%."
 
 #: ../../source/cmd_mode.rst:1
@@ -1283,7 +1211,7 @@ msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "L'adversaire a des chances de gammon comprises à x % et y %."
+msgid "L'adversaire a des chances de gammon comprises entre x % et y %."
 msgstr "The opponent has gammon chances between x% and y%."
 
 #: ../../source/cmd_mode.rst:1
@@ -1308,7 +1236,7 @@ msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
+msgid "L'adversaire a des chances de backgammon comprises entre x % et y %."
 msgstr "The opponent has backgammon chances between x% and y%."
 
 #: ../../source/cmd_mode.rst:1
@@ -1336,8 +1264,12 @@ msgid "ox,y"
 msgstr "ox,y"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Le joueur a entre x et y pions sortis."
-msgstr "The player has between x and y checkers off."
+msgid ""
+"Le joueur a entre x et y pions sortis. ``ox`` seul : exactement x pions "
+"sortis."
+msgstr ""
+"The player has between x and y checkers off. ``ox`` alone: exactly x "
+"checkers off."
 
 #: ../../source/cmd_mode.rst:1
 msgid "O>x"
@@ -1781,14 +1713,15 @@ msgid ""
 "(``2024``, ``2024-06``, ``2024-06-15``) et couvre toute sa durée, bornes "
 "comprises : ``md:2024-01..2024-12`` va du 1er janvier au 31 décembre "
 "2024. Formes ``md:2024`` (toute l'année), ``md>2024-06`` et "
-"``md<2024-06``."
+"``md<2024-06``. Le séparateur ``/`` vaut ``-`` (``md:2024/06``)."
 msgstr ""
 "**Match date**, read from the position's ``match_date`` column (the date "
 "of the oldest match that reaches it), not the date the analysis was "
 "created (``T``). Each bound is a year, a month or a day (``2024``, "
 "``2024-06``, ``2024-06-15``) and covers its whole span, bounds included: "
 "``md:2024-01..2024-12`` runs from 1 January to 31 December 2024. Forms "
-"``md:2024`` (the whole year), ``md>2024-06`` and ``md<2024-06``."
+"``md:2024`` (the whole year), ``md>2024-06`` and ``md<2024-06``. The "
+"separator ``/`` is equivalent to ``-`` (``md:2024/06``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--match-date``"
@@ -1880,12 +1813,12 @@ msgid ""
 "Le **PR du match** du joueur qui a pris la décision est d'au moins x, lu "
 "dans les statistiques par match au camp de ce joueur (pas le PR de "
 "l'adversaire) ; un match sans PR est exclu. Formes ``pr>8``, ``pr<5`` et "
-"``pr4,9``, bornes comprises."
+"``pr4,9``, bornes comprises ; x peut être décimal."
 msgstr ""
 "The **match PR** of the player who made the decision is at least x, read "
 "from the per-match statistics at that player's seat (not the opponent's "
 "PR); a match without a PR is excluded. Forms ``pr>8``, ``pr<5`` and "
-"``pr4,9``, bounds included."
+"``pr4,9``, bounds included; x may be a decimal."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--pr``"
@@ -1918,46 +1851,48 @@ msgid "``--analysis``"
 msgstr "``--analysis``"
 
 #: ../../source/cmd_mode.rst:1
-msgid "like, like42, like<12, like42*"
-msgstr "like, like42, like<12, like42*"
+msgid "like, like42, like<12, like42*, like42<12*"
+msgstr "like, like42, like<12, like42*, like42<12*"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Classe le résultat par distance croissante à une position cible, au lieu "
 "de le restreindre : ``like`` prend la position courante, ``like42`` celle"
 " d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, "
-"``like42*`` élargit la classe de la cible à tous les types de décision et"
-" aux deux régimes, argent et match. Voir :ref:`panneau_recherche`."
+"``like42<12*`` combine la cible et le seuil, ``like42*`` élargit la "
+"classe de la cible à tous les types de décision et aux deux régimes, "
+"argent et match. Voir :ref:`panneau_recherche`."
 msgstr ""
 "Ranks the result by ascending distance to a target position instead of "
 "narrowing it: ``like`` takes the current position, ``like42`` the one "
 "with index 42, ``like<12`` drops anything beyond twelve checker-pips, "
-"``like42*`` widens the target's class to every kind of decision and to "
-"both regimes, money and match. See :ref:`panneau_recherche`."
+"``like42<12*`` combines the target and the threshold, ``like42*`` widens "
+"the target's class to every kind of decision and to both regimes, money "
+"and match. See :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:243
 msgid ""
-"Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
-" un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
-" qui garde un guillemet sans former une valeur complète est ignoré, et "
-"``blunderdb search --query`` le signale. Un tag peut contenir une "
-"apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est "
-"le séparateur des listes d'identifiants et de tags : il ne figure dans "
-"aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
+"Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
+"s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
+"deux. Un jeton qui garde un guillemet sans former une valeur complète est"
+" ignoré, et ``blunderdb search --query`` le signale. Un tag peut contenir"
+" une apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule"
+" est le séparateur des listes d'identifiants et de tags : il ne figure "
+"dans aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
 msgstr ""
-"The ``pl``, ``pl!``, ``op``, ``tn``, ``m`` and ``t`` values open with a "
-"double quote or an apostrophe and close with either. A token that keeps a"
-" quote without forming a complete value is ignored, and ``blunderdb "
-"search --query`` reports it. A tag may contain an apostrophe "
+"The ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` and ``t`` values open "
+"with a double quote or an apostrophe and close with either. A token that "
+"keeps a quote without forming a complete value is ignored, and "
+"``blunderdb search --query`` reports it. A tag may contain an apostrophe "
 "(``#l'ouverture``), never a double quote. The semicolon is the separator "
 "of identifier and tag lists: it appears in no value, and ``ma1;2`` is not"
 " a token (write ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:255
+#: ../../source/cmd_mode.rst:248
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribing from a terminal"
 
-#: ../../source/cmd_mode.rst:257
+#: ../../source/cmd_mode.rst:250
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1976,7 +1911,7 @@ msgstr ""
 "the revision returned by the previous call; every call is its own "
 "session, with no ``sessionId`` and no undo from one call to the next."
 
-#: ../../source/cmd_mode.rst:268
+#: ../../source/cmd_mode.rst:261
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -2097,3 +2032,100 @@ msgstr "Clear the command history."
 
 #~ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 #~ msgstr "Open the gammon value table with a 4-cube."
+
+#~ msgid "tp2"
+#~ msgstr "tp2"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2."
+#~ msgstr ""
+#~ "Opens the Reference data panel on "
+#~ "the take points, showing the table "
+#~ "for the cube at 2."
+
+#~ msgid "tp2_live"
+#~ msgstr "tp2_live"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2 "
+#~ "pour les courses longues."
+#~ msgstr ""
+#~ "Opens the Reference data panel on "
+#~ "the take points, showing the table "
+#~ "for the cube at 2 for long "
+#~ "races."
+
+#~ msgid "tp2_last"
+#~ msgstr "tp2_last"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2 "
+#~ "mort."
+#~ msgstr ""
+#~ "Opens the Reference data panel on "
+#~ "the take points, showing the table "
+#~ "for the dead cube at 2."
+
+#~ msgid "tp4"
+#~ msgstr "tp4"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 4."
+#~ msgstr ""
+#~ "Opens the Reference data panel on "
+#~ "the take points, showing the table "
+#~ "for the cube at 4."
+
+#~ msgid "tp4_live"
+#~ msgstr "tp4_live"
+
+#~ msgid "tp4_last"
+#~ msgstr "tp4_last"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 4 "
+#~ "mort."
+#~ msgstr ""
+#~ "Opens the Reference data panel on "
+#~ "the take points, showing the table "
+#~ "for the dead cube at 4."
+
+#~ msgid "gv1"
+#~ msgstr "gv1"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les valeurs du gammon, où "
+#~ "figure la table du videau à 1."
+#~ msgstr ""
+#~ "Opens the Reference data panel on "
+#~ "the gammon values, showing the table "
+#~ "for the cube at 1."
+
+#~ msgid "gv2"
+#~ msgstr "gv2"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les valeurs du gammon, où "
+#~ "figure la table du videau à 2."
+#~ msgstr ""
+#~ "Opens the Reference data panel on "
+#~ "the gammon values, showing the table "
+#~ "for the cube at 2."
+
+#~ msgid "gv4"
+#~ msgstr "gv4"
+
+#~ msgid "Chercher des positions avec des filtres."
+#~ msgstr "Search for positions with filters."

@@ -1408,7 +1408,7 @@ func (s *matchStore) MatchesByPosition(ctx context.Context, scope string, positi
 func (s *matchStore) MovesByPosition(ctx context.Context, scope string, positionID int64) ([]domain.PositionMove, error) {
 	rows, err := s.db.QueryContext(ctx, `SELECT g.match_id, mv.game_id, COALESCE(g.game_number,0), COALESCE(mv.move_number,0), mv.id
 		 FROM move mv JOIN game g ON g.id = mv.game_id
-		 WHERE mv.position_id = ? ORDER BY g.match_id, g.game_number, mv.move_number, mv.id`, positionID)
+		 WHERE mv.position_id = ? ORDER BY g.match_id, COALESCE(g.game_number,0), COALESCE(mv.move_number,0), mv.id`, positionID)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: moves by position %d: %w", positionID, err)
 	}

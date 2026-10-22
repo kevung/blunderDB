@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 15:20+0200\n"
+"POT-Creation-Date: 2026-10-22 15:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -253,30 +253,30 @@ msgid ""
 "Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : "
 "``train scores`` (la fiche de score d'un score tiré au sort ; ``train "
 "tp`` et ``train takepoint`` sont des synonymes), ``train pips`` (le "
-"compte de pions des deux camps), ``train bearoff`` (l'EPC des deux camps "
-"sur une position engendrée ; ``train epc`` est un synonyme), ``train "
-"evaluation`` (les chances de gain et l'action de videau d'une position "
-"engendrée, en partie d'argent), ``train decision`` (une décision analysée"
-" de la liste parcourue : le coup se joue sur le plateau, l'action de "
-"videau se choisit dans le panneau ; ``train quiz`` est un synonyme), "
-"``train opening`` (le coup d'ouverture ou la réponse d'une partie à un "
-"score, selon le jet mémorisé au lanceur, joué sur le plateau et jugé "
-"contre le livre d'ouverture ; ``train ouverture`` et ``train book`` sont "
-"des synonymes)."
+"compte de pions des deux camps ; ``train pip`` est un synonyme), ``train "
+"bearoff`` (l'EPC des deux camps sur une position engendrée ; ``train "
+"epc`` est un synonyme), ``train evaluation`` (les chances de gain et "
+"l'action de videau d'une position engendrée, en partie d'argent), ``train"
+" decision`` (une décision analysée de la liste parcourue : le coup se "
+"joue sur le plateau, l'action de videau se choisit dans le panneau ; "
+"``train quiz`` est un synonyme), ``train opening`` (le coup d'ouverture "
+"ou la réponse d'une partie à un score, selon le jet mémorisé au lanceur, "
+"joué sur le plateau et jugé contre le livre d'ouverture ; ``train "
+"ouverture`` et ``train book`` sont des synonymes)."
 msgstr ""
-"Abre el panel Entrenamiento. Con un argumento, abre y arranca: ``train "
-"scores`` (la ficha de puntuación de un marcador sorteado; ``train tp`` y "
-"``train takepoint`` son sinónimos), ``train pips`` (el recuento de fichas"
-" de ambos bandos), ``train bearoff`` (el EPC de ambos bandos en una "
-"posición generada; ``train epc`` es un sinónimo), ``train evaluation`` "
-"(la probabilidad de ganar y la acción de cubo de una posición generada, "
-"en partida por dinero), ``train decision`` (una decisión analizada de la "
-"lista recorrida: el movimiento se juega en el tablero, la acción de cubo "
-"se elige en el panel; ``train quiz`` es un sinónimo), ``train opening`` "
-"(el movimiento de apertura o la respuesta de una partida con un marcador,"
-" según la tirada recordada en el lanzador, jugado en el tablero y juzgado"
-" con el libro de aperturas; ``train ouverture`` y ``train book`` son "
-"sinónimos)."
+"Abre el panel Entrenamiento. Con un argumento, abre e inicia: ``train "
+"scores`` (la ficha de marcador de un marcador sorteado; ``train tp`` y "
+"``train takepoint`` son sinónimos), ``train pips`` (el recuento de pips "
+"de ambos bandos; ``train pip`` es un sinónimo), ``train bearoff`` (el EPC"
+" de ambos bandos en una posición generada; ``train epc`` es un sinónimo),"
+" ``train evaluation`` (las probabilidades de ganar y la acción de cubo de"
+" una posición generada, en juego de dinero), ``train decision`` (una "
+"decisión analizada de la lista recorrida: la jugada se hace en el "
+"tablero, la acción de cubo se elige en el panel; ``train quiz`` es un "
+"sinónimo), ``train opening`` (la jugada de apertura o la respuesta de una"
+" partida a un marcador, según la tirada memorizada en el lanzador, jugada"
+" en el tablero y juzgada contra el libro de aperturas; ``train "
+"ouverture`` y ``train book`` son sinónimos)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "duel"
@@ -291,114 +291,34 @@ msgstr ""
 "(véase :ref:`panneau_duel`)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "tp2"
-msgstr "tp2"
+msgid "tp2, tp2_live, tp2_last, tp4, tp4_live, tp4_last"
+msgstr "tp2, tp2_live, tp2_last, tp4, tp4_live, tp4_last"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2."
+"Ouvre le panneau Données de référence sur l'onglet Points de prise, qui "
+"réunit les tables des videaux 2 et 4, en course longue et en dernier "
+"lancer : ces six commandes ouvrent le même onglet."
 msgstr ""
-"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
-"tabla del cubo a 2."
+"Abre el panel Datos de referencia en la pestaña Puntos de toma, que reúne"
+" las tablas del cubo a 2 y a 4, en carrera larga y en última tirada: "
+"estos seis comandos abren la misma pestaña."
 
 #: ../../source/cmd_mode.rst:1
-msgid "tp2_live"
-msgstr "tp2_live"
+msgid "gv1, gv2, gv4"
+msgstr "gv1, gv2, gv4"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2 pour les courses longues."
+"Ouvre le panneau Données de référence sur l'onglet Valeurs du gammon, qui"
+" réunit les tables des videaux 1, 2 et 4 : ces trois commandes ouvrent le"
+" même onglet."
 msgstr ""
-"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
-"tabla del cubo a 2 para las carreras largas."
+"Abre el panel Datos de referencia en la pestaña Valores del gammon, que "
+"reúne las tablas del cubo a 1, 2 y 4: estos tres comandos abren la misma "
+"pestaña."
 
-#: ../../source/cmd_mode.rst:1
-msgid "tp2_last"
-msgstr "tp2_last"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2 mort."
-msgstr ""
-"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
-"tabla del cubo muerto a 2."
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp4"
-msgstr "tp4"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4."
-msgstr ""
-"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
-"tabla del cubo a 4."
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp4_live"
-msgstr "tp4_live"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4 pour les courses longues."
-msgstr ""
-"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
-"tabla del cubo a 4 para las carreras largas."
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp4_last"
-msgstr "tp4_last"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4 mort."
-msgstr ""
-"Abre el panel Datos de referencia en los puntos de toma, donde figura la "
-"tabla del cubo muerto a 4."
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv1"
-msgstr "gv1"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 1."
-msgstr ""
-"Abre el panel Datos de referencia en los valores del gammon, donde figura"
-" la tabla del cubo a 1."
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv2"
-msgstr "gv2"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 2."
-msgstr ""
-"Abre el panel Datos de referencia en los valores del gammon, donde figura"
-" la tabla del cubo a 2."
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv4"
-msgstr "gv4"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 4."
-msgstr ""
-"Abre el panel Datos de referencia en los valores del gammon, donde figura"
-" la tabla del cubo a 4."
-
-#: ../../source/cmd_mode.rst:56
+#: ../../source/cmd_mode.rst:49
 msgid "Positions et navigation"
 msgstr "Posiciones y navegación"
 
@@ -513,13 +433,15 @@ msgid ""
 "gammonNet de la configuration, ou le préréglage nommé) et ouvre le "
 "panneau Analyse. ``ro search [fast|standard]`` le lance sur la liste "
 "affichée, après confirmation avec le total ; ``ro stop`` arrête le "
-"rollout en cours."
+"rollout en cours. ``rapide`` est un synonyme de ``fast`` et ``recherche``"
+" de ``search``."
 msgstr ""
 "Rueda la posición actual (con el ajuste elegido en la pestaña "
 "**gammonNet** de la configuración, o el preajuste nombrado) y abre el "
 "panel Análisis. ``ro search [fast|standard]`` lo lanza sobre la lista "
 "mostrada, tras una confirmación con el total; ``ro stop`` detiene el "
-"rollout en curso."
+"rollout en curso. ``rapide`` es un sinónimo de ``fast`` y ``recherche`` "
+"de ``search``."
 
 #: ../../source/cmd_mode.rst:1
 msgid "history, hi"
@@ -623,7 +545,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:80
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -648,8 +570,14 @@ msgid "s"
 msgstr "s"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Chercher des positions avec des filtres."
-msgstr "Buscar posiciones con filtros."
+msgid ""
+"Chercher des positions avec des filtres. Refusé dans une collection ou un"
+" match, où il remplacerait la liste étudiée : la barre d'état renvoie "
+"alors vers ``ss``."
+msgstr ""
+"Buscar posiciones con filtros. Rechazado en una colección o una partida, "
+"donde sustituiría la lista estudiada: la barra de estado remite entonces "
+"a ``ss``."
 
 #: ../../source/cmd_mode.rst:1
 msgid "ss"
@@ -663,11 +591,11 @@ msgstr ""
 "Buscar entre las posiciones mostradas: resultados actuales, colección "
 "abierta o partida en revisión."
 
-#: ../../source/cmd_mode.rst:103
+#: ../../source/cmd_mode.rst:96
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
-#: ../../source/cmd_mode.rst:105
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -682,9 +610,9 @@ msgstr ""
 "cuando existe, la opción de ``search`` que hace lo mismo (ver "
 ":ref:`cli`); un guion señala un filtro que solo la gramática expresa."
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:105
 msgid ""
-"Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
+"Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
 "sont posés, ``d`` le type de décision, ``D`` et ``D1`` les dés, ``x`` la "
 "structure dessinée dans l'onglet *Sauf*. Un lancer ne s'écrit donc jamais"
@@ -693,16 +621,16 @@ msgid ""
 "plateau, ces jetons se comparent à un plateau vide ; ce sont les drapeaux"
 " de la troisième colonne qu'il faut y employer."
 msgstr ""
-"Cinco tokens no llevan su valor: lo leen en el tablero de búsqueda. "
-"``cube`` y ``score`` retoman el cubo y el score puestos en él, ``d`` el "
-"tipo de decisión, ``D`` y ``D1`` los dados, ``x`` la estructura dibujada "
-"en la pestaña *Excepto*. Una tirada nunca se escribe entonces en el "
-"token: ``D65`` no existe, solo la forma de exclusión lleva sus cifras "
-"(``xD65``). En la línea de comandos, donde no hay tablero, estos tokens "
+"Seis tokens no llevan su valor: lo leen en el tablero de búsqueda. "
+"``cube`` y ``score`` retoman el cubo y el marcador puestos en él, ``d`` "
+"el tipo de decisión, ``D`` y ``D1`` los dados, ``x`` la estructura "
+"dibujada en la pestaña *Excepto*. Una tirada nunca se escribe entonces en"
+" el token: ``D65`` no existe, solo la forma de exclusión lleva sus cifras"
+" (``xD65``). En la línea de comandos, donde no hay tablero, estos tokens "
 "se comparan con un tablero vacío; son las opciones de la tercera columna "
 "las que hay que emplear ahí."
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:114
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -712,7 +640,7 @@ msgstr ""
 "resultado por distancia creciente a una posición objetivo, y todos los "
 "demás tokens restringen el conjunto así ordenado."
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -722,11 +650,11 @@ msgstr ""
 "*milipuntos* de la tabla siguiente: ``E>100`` conserva las jugadas que "
 "costaron al menos una décima de punto, valiendo un punto 1000 milésimas."
 
-#: ../../source/cmd_mode.rst:129
+#: ../../source/cmd_mode.rst:122
 msgid "Deux recherches complètes :"
 msgstr "Dos búsquedas completas:"
 
-#: ../../source/cmd_mode.rst:131
+#: ../../source/cmd_mode.rst:124
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -735,7 +663,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — más de 30 pips de retraso, entre 40 % y 60 % de "
 "probabilidad de victoria, sin comentario."
 
-#: ../../source/cmd_mode.rst:133
+#: ../../source/cmd_mode.rst:126
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1145,13 +1073,13 @@ msgstr "tm>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup "
-"dont la durée est inconnue ne répond jamais. Avec ``E``, la durée et "
-"l'erreur sont celles du même coup joué."
+"Le joueur 1 a mis plus de x secondes à décider (coup ou videau ; x peut "
+"être décimal). Un coup dont la durée est inconnue ne répond jamais. Avec "
+"``E``, la durée et l'erreur sont celles du même coup joué."
 msgstr ""
-"El jugador 1 tardó más de x segundos en decidir (jugada o cubo). Una "
-"jugada de duración desconocida nunca coincide. Con ``E``, la duración y "
-"el error son los de la misma jugada."
+"El jugador 1 tardó más de x segundos en decidir (jugada o cubo; x puede "
+"ser decimal). Una jugada de duración desconocida nunca coincide. Con "
+"``E``, la duración y el error son los de la misma jugada."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tm<x"
@@ -1199,8 +1127,8 @@ msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "Le joueur a des chances de gain comprises à x % et y %."
-msgstr "El jugador tiene probabilidades de victoria entre el x % y el y %."
+msgid "Le joueur a des chances de gain comprises entre x % et y %."
+msgstr "El jugador tiene probabilidades de ganar comprendidas entre x % e y %."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--winrate-min`` ``--winrate-max``"
@@ -1228,8 +1156,8 @@ msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "Le joueur a des chances de gammon comprises à x % et y %."
-msgstr "El jugador tiene probabilidades de gammon entre el x % y el y %."
+msgid "Le joueur a des chances de gammon comprises entre x % et y %."
+msgstr "El jugador tiene probabilidades de gammon comprendidas entre x % e y %."
 
 #: ../../source/cmd_mode.rst:1
 msgid "b>x"
@@ -1253,8 +1181,10 @@ msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "Le joueur a des chances de backgammon comprises à x % et y %."
-msgstr "El jugador tiene probabilidades de backgammon entre el x % y el y %."
+msgid "Le joueur a des chances de backgammon comprises entre x % et y %."
+msgstr ""
+"El jugador tiene probabilidades de backgammon comprendidas entre x % e y "
+"%."
 
 #: ../../source/cmd_mode.rst:1
 msgid "W>x"
@@ -1278,8 +1208,8 @@ msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "L'adversaire a des chances de gain comprises à x % et y %."
-msgstr "El adversario tiene probabilidades de victoria entre el x % y el y %."
+msgid "L'adversaire a des chances de gain comprises entre x % et y %."
+msgstr "El adversario tiene probabilidades de ganar comprendidas entre x % e y %."
 
 #: ../../source/cmd_mode.rst:1
 msgid "G>x"
@@ -1303,8 +1233,8 @@ msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "L'adversaire a des chances de gammon comprises à x % et y %."
-msgstr "El adversario tiene probabilidades de gammon entre el x % y el y %."
+msgid "L'adversaire a des chances de gammon comprises entre x % et y %."
+msgstr "El adversario tiene probabilidades de gammon comprendidas entre x % e y %."
 
 #: ../../source/cmd_mode.rst:1
 msgid "B>x"
@@ -1328,8 +1258,10 @@ msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
 #, no-python-format
-msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
-msgstr "El adversario tiene probabilidades de backgammon entre el x % y el y %."
+msgid "L'adversaire a des chances de backgammon comprises entre x % et y %."
+msgstr ""
+"El adversario tiene probabilidades de backgammon comprendidas entre x % e"
+" y %."
 
 #: ../../source/cmd_mode.rst:1
 msgid "o>x"
@@ -1356,8 +1288,12 @@ msgid "ox,y"
 msgstr "ox,y"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Le joueur a entre x et y pions sortis."
-msgstr "El jugador tiene entre x e y fichas retiradas."
+msgid ""
+"Le joueur a entre x et y pions sortis. ``ox`` seul : exactement x pions "
+"sortis."
+msgstr ""
+"El jugador tiene entre x e y fichas fuera. ``ox`` solo: exactamente x "
+"fichas fuera."
 
 #: ../../source/cmd_mode.rst:1
 msgid "O>x"
@@ -1805,7 +1741,7 @@ msgid ""
 "(``2024``, ``2024-06``, ``2024-06-15``) et couvre toute sa durée, bornes "
 "comprises : ``md:2024-01..2024-12`` va du 1er janvier au 31 décembre "
 "2024. Formes ``md:2024`` (toute l'année), ``md>2024-06`` et "
-"``md<2024-06``."
+"``md<2024-06``. Le séparateur ``/`` vaut ``-`` (``md:2024/06``)."
 msgstr ""
 "**Fecha de la partida**, leída en la columna ``match_date`` de la "
 "posición (la fecha de la partida más antigua que la alcanza), y no la "
@@ -1813,7 +1749,7 @@ msgstr ""
 "un día (``2024``, ``2024-06``, ``2024-06-15``) y cubre toda su duración, "
 "límites incluidos: ``md:2024-01..2024-12`` va del 1 de enero al 31 de "
 "diciembre de 2024. Formas ``md:2024`` (todo el año), ``md>2024-06`` y "
-"``md<2024-06``."
+"``md<2024-06``. El separador ``/`` equivale a ``-`` (``md:2024/06``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--match-date``"
@@ -1906,12 +1842,12 @@ msgid ""
 "Le **PR du match** du joueur qui a pris la décision est d'au moins x, lu "
 "dans les statistiques par match au camp de ce joueur (pas le PR de "
 "l'adversaire) ; un match sans PR est exclu. Formes ``pr>8``, ``pr<5`` et "
-"``pr4,9``, bornes comprises."
+"``pr4,9``, bornes comprises ; x peut être décimal."
 msgstr ""
 "El **PR de la partida** del jugador que tomó la decisión es al menos x, "
 "leído en las estadísticas por partida del lado de ese jugador (no el PR "
 "del adversario); una partida sin PR queda excluida. Formas ``pr>8``, "
-"``pr<5`` y ``pr4,9``, límites incluidos."
+"``pr<5`` y ``pr4,9``, límites incluidos; x puede ser decimal."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--pr``"
@@ -1945,46 +1881,49 @@ msgid "``--analysis``"
 msgstr "``--analysis``"
 
 #: ../../source/cmd_mode.rst:1
-msgid "like, like42, like<12, like42*"
-msgstr "like, like42, like<12, like42*"
+msgid "like, like42, like<12, like42*, like42<12*"
+msgstr "like, like42, like<12, like42*, like42<12*"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Classe le résultat par distance croissante à une position cible, au lieu "
 "de le restreindre : ``like`` prend la position courante, ``like42`` celle"
 " d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, "
-"``like42*`` élargit la classe de la cible à tous les types de décision et"
-" aux deux régimes, argent et match. Voir :ref:`panneau_recherche`."
+"``like42<12*`` combine la cible et le seuil, ``like42*`` élargit la "
+"classe de la cible à tous les types de décision et aux deux régimes, "
+"argent et match. Voir :ref:`panneau_recherche`."
 msgstr ""
-"Ordena el resultado por distancia creciente a una posición objetivo, en "
-"vez de restringirlo: ``like`` toma la posición actual, ``like42`` la de "
-"índice 42, ``like<12`` descarta lo que está a más de doce pips de ficha, "
-"``like42*`` amplía la clase del objetivo a todos los tipos de decisión y "
-"a ambos regímenes, dinero y partido. Ver :ref:`panneau_recherche`."
+"Clasifica el resultado por distancia creciente a una posición objetivo, "
+"en lugar de restringirlo: ``like`` toma la posición actual, ``like42`` la"
+" de índice 42, ``like<12`` descarta lo que está a más de doce pips de "
+"ficha, ``like42<12*`` combina el objetivo y el umbral, ``like42*`` amplía"
+" la clase del objetivo a todos los tipos de decisión y a los dos "
+"regímenes, dinero y partida. Véase :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:243
 msgid ""
-"Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
-" un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
-" qui garde un guillemet sans former une valeur complète est ignoré, et "
-"``blunderdb search --query`` le signale. Un tag peut contenir une "
-"apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est "
-"le séparateur des listes d'identifiants et de tags : il ne figure dans "
-"aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
+"Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
+"s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
+"deux. Un jeton qui garde un guillemet sans former une valeur complète est"
+" ignoré, et ``blunderdb search --query`` le signale. Un tag peut contenir"
+" une apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule"
+" est le séparateur des listes d'identifiants et de tags : il ne figure "
+"dans aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
 msgstr ""
-"Los valores ``pl``, ``pl!``, ``op``, ``tn``, ``m`` y ``t`` se abren con "
-"unas comillas o un apóstrofo y se cierran con cualquiera de los dos. Un "
-"token que conserva unas comillas sin formar un valor completo se ignora, "
-"y ``blunderdb search --query`` lo señala. Una etiqueta puede contener un "
-"apóstrofo (``#l'ouverture``), nunca unas comillas. El punto y coma es el "
-"separador de las listas de identificadores y de etiquetas: no figura en "
-"ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 ma2``)."
+"Los valores ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` y ``t`` se "
+"abren con unas comillas o un apóstrofo y se cierran con cualquiera de los"
+" dos. Un token que conserva unas comillas sin formar un valor completo se"
+" ignora, y ``blunderdb search --query`` lo señala. Una etiqueta puede "
+"contener un apóstrofo (``#l'ouverture``), nunca unas comillas. El punto y"
+" coma es el separador de las listas de identificadores y de etiquetas: no"
+" figura en ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 "
+"ma2``)."
 
-#: ../../source/cmd_mode.rst:255
+#: ../../source/cmd_mode.rst:248
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribir desde un terminal"
 
-#: ../../source/cmd_mode.rst:257
+#: ../../source/cmd_mode.rst:250
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -2003,7 +1942,7 @@ msgstr ""
 " la revisión devuelta por la llamada anterior; cada llamada es su propia "
 "sesión, sin ``sessionId`` ni deshacer de una llamada a otra."
 
-#: ../../source/cmd_mode.rst:268
+#: ../../source/cmd_mode.rst:261
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 
@@ -2126,3 +2065,102 @@ msgstr "Borra el historial de comandos."
 
 #~ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 #~ msgstr "Abre la tabla de valores de gammon con el cubo a 4."
+
+#~ msgid "tp2"
+#~ msgstr "tp2"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2."
+#~ msgstr ""
+#~ "Abre el panel Datos de referencia "
+#~ "en los puntos de toma, donde "
+#~ "figura la tabla del cubo a 2."
+
+#~ msgid "tp2_live"
+#~ msgstr "tp2_live"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2 "
+#~ "pour les courses longues."
+#~ msgstr ""
+#~ "Abre el panel Datos de referencia "
+#~ "en los puntos de toma, donde "
+#~ "figura la tabla del cubo a 2 "
+#~ "para las carreras largas."
+
+#~ msgid "tp2_last"
+#~ msgstr "tp2_last"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2 "
+#~ "mort."
+#~ msgstr ""
+#~ "Abre el panel Datos de referencia "
+#~ "en los puntos de toma, donde "
+#~ "figura la tabla del cubo muerto a"
+#~ " 2."
+
+#~ msgid "tp4"
+#~ msgstr "tp4"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 4."
+#~ msgstr ""
+#~ "Abre el panel Datos de referencia "
+#~ "en los puntos de toma, donde "
+#~ "figura la tabla del cubo a 4."
+
+#~ msgid "tp4_live"
+#~ msgstr "tp4_live"
+
+#~ msgid "tp4_last"
+#~ msgstr "tp4_last"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 4 "
+#~ "mort."
+#~ msgstr ""
+#~ "Abre el panel Datos de referencia "
+#~ "en los puntos de toma, donde "
+#~ "figura la tabla del cubo muerto a"
+#~ " 4."
+
+#~ msgid "gv1"
+#~ msgstr "gv1"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les valeurs du gammon, où "
+#~ "figure la table du videau à 1."
+#~ msgstr ""
+#~ "Abre el panel Datos de referencia "
+#~ "en los valores del gammon, donde "
+#~ "figura la tabla del cubo a 1."
+
+#~ msgid "gv2"
+#~ msgstr "gv2"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les valeurs du gammon, où "
+#~ "figure la table du videau à 2."
+#~ msgstr ""
+#~ "Abre el panel Datos de referencia "
+#~ "en los valores del gammon, donde "
+#~ "figura la tabla del cubo a 2."
+
+#~ msgid "gv4"
+#~ msgstr "gv4"
+
+#~ msgid "Chercher des positions avec des filtres."
+#~ msgstr "Buscar posiciones con filtros."

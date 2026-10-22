@@ -8,6 +8,14 @@ propre issue le jour où il est lancé.
 
 ## Ouvert — Backend
 
+- **Copie d'une position entre volets : empreinte prise après le commit de l'import.**
+  `database.CopyPosition` calcule l'empreinte (`positionPrint`) de la position créée une fois
+  l'import validé et la provenance des analyses dérivée. Une écriture qu'un autre handle sur le
+  même fichier (import emprunté, autre `Database`) fait sur la nouvelle position dans cet
+  intervalle est comptée comme faisant partie de la copie, et `TakeBackPositionCopy` l'emporterait.
+  Piste : calculer l'empreinte dans la transaction d'import, après une dérivation de provenance
+  faite dans cette même transaction (aujourd'hui `backfillAnalysisProvenance` en tourne une à part).
+
 - **Décompte des gaffes de la barre d'état (`MetadataStore.blunderCount`, ~0,17 s par appel
   sur la même base)** : traité sur une autre branche ; à remesurer après sa fusion.
 

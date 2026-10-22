@@ -4,7 +4,8 @@
  *
  *   <tr use:libraryDrag={() => ({ group, kind: 'match', id, label })}>
  *
- * A drop target is any element carrying `data-library-drop`: a group's id, or "basket".
+ * A drop target is any element carrying `data-library-drop`: a group's id, or "basket"; with
+ * `data-library-pane` too, it is a split-screen pane.
  * Under the pointer it takes the class `library-drop-over`; the body takes `library-dragging`.
  */
 import { createAttachmentKey } from 'svelte/attachments';
@@ -20,7 +21,9 @@ export function dropTargetAt(x, y) {
 /** @param {HTMLElement} el */
 function targetOf(el) {
     const raw = el.dataset.libraryDrop;
-    return raw === 'basket' ? 'basket' : Number(raw);
+    if (raw === 'basket') return 'basket';
+    // A split-screen pane copies a position straight in, with an undo (transferService).
+    return el.dataset.libraryPane != null ? { pane: Number(raw) } : Number(raw);
 }
 
 /**

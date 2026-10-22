@@ -1511,7 +1511,7 @@ func (s *matchStore) MatchesByPosition(ctx context.Context, scope string, positi
 func (s *matchStore) MovesByPosition(ctx context.Context, scope string, positionID int64) ([]domain.PositionMove, error) {
 	rows, err := s.db.Query(ctx, `SELECT g.match_id, mv.game_id, COALESCE(g.game_number,0), COALESCE(mv.move_number,0), mv.id
 		 FROM move mv JOIN game g ON g.id = mv.game_id AND g.tenant_id = mv.tenant_id
-		 WHERE mv.position_id = $1 AND mv.tenant_id = $2 ORDER BY g.match_id, g.game_number, mv.move_number, mv.id`, positionID, tenantID(scope))
+		 WHERE mv.position_id = $1 AND mv.tenant_id = $2 ORDER BY g.match_id, COALESCE(g.game_number,0), COALESCE(mv.move_number,0), mv.id`, positionID, tenantID(scope))
 	if err != nil {
 		return nil, fmt.Errorf("postgres: moves by position %d: %w", positionID, err)
 	}

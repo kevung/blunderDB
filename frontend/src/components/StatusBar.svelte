@@ -25,6 +25,9 @@
     import { t, tMsg, resolveStatusMessage } from '../i18n';
     import { getCommandSuggestions } from '../commandVocabulary.js';
     import { libraryDrag } from '../utils/libraryDrag.js';
+    import ActiveLibraryMark from './ActiveLibraryMark.svelte';
+    import { transferUndoStore } from '../stores/transferBasketStore.js';
+    import { undoPaneCopy } from '../services/transferService.js';
 
     /** @type {function(string): void} */
     let { onCommand = (_cmd) => {} } = $props();
@@ -325,6 +328,8 @@
             <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder={$t('statusBar.typeCommand')} onkeydown={handleKeyDown} onblur={hideInput} />
         </div>
     {:else}
+        <!-- Split, the library the bar speaks for comes first (ADR-0101 §8). -->
+        <ActiveLibraryMark testid="status-library" />
         <!-- Live region on this span only: the rest of the bar is not status announcements. -->
         <span class="info-message" role="status" aria-live="polite" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
     {/if}
@@ -342,6 +347,13 @@
                     showFileImportModalStore.set(true);
                 }}>{$t('status.importChipShow')}</button
             >
+        </span>
+    {/if}
+    <!-- Une position portée d'un volet de l'écran partagé sur l'autre se reprend d'ici. -->
+    {#if $transferUndoStore}
+        <span class="watch-import-chip" data-testid="transfer-undo-chip">
+            <button type="button" class="watch-import-action" data-testid="transfer-undo" onclick={() => undoPaneCopy()}>{$t('transfer.undo')}</button>
+            <button type="button" class="watch-import-action" onclick={() => transferUndoStore.set(null)}>{$t('common.close')}</button>
         </span>
     {/if}
     <!-- Imports du dossier surveillé : un bandeau, jamais une fenêtre. -->

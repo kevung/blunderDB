@@ -1773,7 +1773,8 @@
         "pileError": "Pile: error",
         "xgidCopied": "XGID copied to the clipboard",
         "gnubgIdCopied": "GNUbg ID copied to the clipboard",
-        "noMatchForPosition": "No match has played this position"
+        "noMatchForPosition": "No match has played this position",
+        "moveGone": "That move is no longer in the match: opened where you left it"
     },
     "stats": {
         "title": "Stats",
@@ -3547,6 +3548,7 @@
         "openLabel": "Another library",
         "busyRollout": "A rollout is writing the active library: wait for it or stop it (rollout stop) before switching library",
         "busyImport": "An import is writing the active library file by file: wait for it to finish before switching library",
+        "switching": "A library switch is in progress: wait for it to finish",
         "jobRunning": "A background task is working in this library",
         "jobDone": "A background task finished in this library: show it to see the result",
         "busyDisplay": "The tournament is shown on the club network: stop showing it (Direction, Show on the club network) before switching library",
@@ -3608,31 +3610,29 @@
         "pourInto": "Pour into {name}",
         "emptyBasket": "Empty the basket",
         "dragPosition": "Drag onto another library's header to copy this position there",
-        "dragLesson": "Drag onto another library's header to copy this lesson there"
+        "dragLesson": "Drag onto another library's header to copy this lesson there",
+        "undo": "Undo",
+        "undone": "Copy undone: the position left {name}.",
+        "undoFailed": "The copy could not be undone: {error}"
     },
     "split": {
-        "toggle": "Split screen: the active library and a viewer side by side (Ctrl+Shift+X)",
+        "toggle": "Split screen: two boards, one library on each side (Ctrl+Shift+X)",
         "tooNarrow": "Split screen refused: the window is narrower than {min} px. Hold x to see the position in the other library in place of the board.",
         "closedNarrow": "Split screen closed: the window is narrower than {min} px. Hold x for the in-place swap.",
-        "viewerLabel": "Viewer of the library {name}",
-        "readOnly": "read-only",
-        "activateHint": "Click to activate this library",
-        "sameLibrary": "Same library as the active pane",
+        "sameLibrary": "same library",
         "close": "Close the split screen",
-        "source": "What to walk through",
-        "library": "The whole library",
-        "matches": "Matches",
-        "collections": "Collections",
-        "first": "First",
-        "previous": "Previous",
-        "next": "Next",
-        "last": "Last",
         "moveAt": "Game {game}, move {move}",
         "empty": "Nothing to show.",
         "error": "The library could not be read.",
         "noDouble": "No double",
         "doubleTake": "Double, take",
-        "doublePass": "Double, pass"
+        "doublePass": "Double, pass",
+        "liveHint": "active",
+        "frozenHint": "Click (or Ctrl+Alt+←/→) to activate this library",
+        "paneLabel": "Frozen pane of the library {name}",
+        "activeLibrary": "Active library: {name}",
+        "sameLibraryNotInList": "This position is not in the active list: the two views cannot trade places.",
+        "sameLibraryMatchMode": "A replayed match has no list to find the position in: two views of one library do not trade places in match mode."
     },
     "reference": {
         "title": "Reference data",

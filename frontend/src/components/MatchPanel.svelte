@@ -911,7 +911,10 @@
                     await loadMatchDetail(match);
                     const moveIndex = target.moveId ? detailMovePositions.findIndex((mp) => mp.move_id === target.moveId) : -1;
                     if (moveIndex >= 0) await jumpToMove(moveIndex);
-                    else await enterMatchMode(match);
+                    else {
+                        await enterMatchMode(match);
+                        if (target.moveId) statusBarTextStore.set(tMsg('status.moveGone'));
+                    }
                 })
                 .finally(() => (openingRequested = false));
         });

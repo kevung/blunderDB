@@ -76,17 +76,23 @@ Des panneaux peuvent être affichés pour:
 
 * afficher les statistiques de performance (panneau Stats),
 
-* calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau Eval),
+* évaluer n'importe quelle position avec gammonNet (panneau Eval) et, en bearoff, calculer son EPC (Effective Pip Count),
 
 * s'entraîner sur des exercices de calcul (panneau Entraînement),
 
 * étudier les positions par répétition espacée (panneau Anki),
 
+* jouer un match entier contre le Bot (panneau Duel, voir :ref:`panneau_duel`),
+
 * transcrire un match à la main (panneau Transcription),
+
+* consulter les tables du score — MET, points de prise, valeurs du gammon, nombres de Neil — (panneau Données de référence, voir :ref:`panneau_reference`),
 
 * afficher les métadonnées de la base de données (panneau métadonnées).
 
 La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre.
+
+Un clic droit sur un onglet du panneau propose *Masquer cet onglet*. Dès qu'un onglet est masqué, un bouton *∨* (*Onglets masqués*) apparaît à droite de la rangée : il liste les onglets masqués, et un clic sur *Afficher : …* le rend. Les onglets masqués sont conservés d'une session à l'autre.
 
 Des fenêtres modales peuvent s'afficher pour:
 
@@ -120,30 +126,35 @@ La zone d'affichage principale met à disposition à l'utilisateur:
 
 .. _board_menu_contextuel:
 
-Un clic droit sur le plateau ouvre un menu contextuel proposant : évaluer la
-position affichée dans le panneau Eval, évaluer son miroir, copier l'image
-du plateau avec son analyse dans le presse-papier (l'équivalent de *CTRL-X
-CTRL-X*, moins facile à découvrir), **enregistrer l'image dans un fichier**
-en SVG ou en PNG, ouvrir une nouvelle vue sur cette position, et — si la
-position vient déjà de la base — l'ajouter à un paquet Anki (répétition
-espacée) ou classer ses **positions voisines** (voir :ref:`panneau_recherche`).
+Un clic droit sur le plateau ouvre un menu contextuel. Les deux gestes les
+plus courants, *Évaluer cette position* (dans le panneau Eval) et *Copier
+l'image* (l'équivalent de *CTRL-X*), sont au premier niveau ; les autres sont
+rangés en sous-menus marqués ▸ — *Copier / partager* (dont **enregistrer
+l'image dans un fichier** en SVG ou en PNG), *Annoter*, *Naviguer* (positions
+voisines, nouvelle vue), *Analyser* (miroir, rollouts), *S'entraîner* (paquet
+Anki, défi) et *Gérer* (enregistrer, corbeille). Le menu est construit à
+partir d'un catalogue d'actions partagé avec les listes de matchs, de
+tournois et de collections, et il n'offre que les actions qui s'appliquent à
+la position affichée : voir :ref:`menu_contextuel_actions` pour le détail des
+sous-menus et la navigation au clavier.
 Pendant un coup joué au plateau (quiz, Transcription), un clic droit sur le
 damier reprend tout le coup sans toucher la position ; le menu ne s'y ouvre
 qu'avant le premier pas. En édition
 et en Eval, où le clic droit sur le plateau pose des pions, le menu s'ouvre
 d'un clic droit hors du plateau — hors des dés, du videau et des scores — et
-propose seulement *Effacer la position* (comme *RETOUR ARRIERE*) et *Position
-de départ*, qui pose les pions d'une partie neuve.
+commence par *Effacer la position* (comme *RETOUR ARRIERE*) et *Position de
+départ*, qui pose les pions d'une partie neuve, suivis des actions qui valent
+pour un brouillon.
 
 Le presse-papier est le geste courant ; enregistrer est l'autre besoin —
 l'illustration d'un article, d'un message de forum, d'une leçon. Le **SVG** y
 est proposé parce que le plateau en est un : c'est la forme qui survit à un
 agrandissement, celle qu'on met dans un document sans la flouter. Le PNG en
 dérive, comme la copie dans le presse-papier : un seul rendu, trois
-destinations, donc aucune ne peut diverger des autres. Ce menu n'apparaît pas dans le panneau Eval ni
-dans le panneau Recherche, où le bouton droit sert déjà à poser les pions de
-l'autre couleur. Voir :ref:`eval_amener_position` pour amener une position
-dans le panneau Eval.
+destinations, donc aucune ne peut diverger des autres. Dans le panneau
+Recherche et dans Eval, le bouton droit sert déjà à poser les pions de l'autre
+couleur : le menu y reste hors du plateau, comme ci-dessus. Voir
+:ref:`eval_amener_position` pour amener une position dans le panneau Eval.
 
 La barre d'état est structurée de gauche à droite par les informations
 suivantes:
@@ -229,15 +240,16 @@ dans une vue tout en parcourant un match dans une autre.
   courante.
 
 * **Fermer une vue** : cliquer sur la croix de l'onglet ou appuyer sur
-  *CTRL-W*. La dernière vue ne peut pas être fermée.
+  *CTRL-W*. La dernière vue ne peut pas être fermée ; la croix n'est dessinée que sur les onglets du groupe actif, quand il compte plus d'une vue. Fermer la vue active affiche le dernier onglet restant.
 
 * **Changer de vue** : cliquer sur un onglet, appuyer sur *CTRL-Page préc.* /
   *CTRL-Page suiv.* (ou *MAJ-J* / *MAJ-K*) pour passer à la vue précédente /
   suivante, ou *CTRL-1* à *CTRL-9* pour atteindre directement la n-ième vue
   de la bibliothèque active.
 
-* **Renommer une vue** : double-cliquer sur l'onglet, saisir le nouveau nom
-  et valider avec *ENTREE*.
+* **Renommer une vue** : double-cliquer sur l'onglet du groupe actif, saisir le
+  nouveau nom et valider avec *ENTREE* ; quitter le champ valide aussi,
+  *ECHAP* annule. Un nom vide laisse l'ancien.
 
 Une vue laissée dans le panneau Eval y revient telle qu'elle a été laissée :
 son plateau brouillon, et en sortant du panneau, la position qu'elle
@@ -260,7 +272,7 @@ elle que lisent et écrivent les panneaux, la recherche, les imports et
 l'assistant.
 
 Avec une seule bibliothèque ouverte, la barre ne montre aucun en-tête : seul
-le titre de la fenêtre nomme la base.
+le titre de la fenêtre nomme la base. Tant qu'il n'y a qu'une vue en tout, la barre ne dessine aucun onglet non plus : seul le bouton *+ Nouvelle vue* reste. L'infobulle d'un en-tête de groupe donne le chemin complet du fichier.
 
 * **Ouvrir une bibliothèque dans un nouveau groupe** : bouton *⧉ Autre
   bibliothèque* à droite de la barre d'onglets (*⧉* seul dès que deux
@@ -311,7 +323,7 @@ au-delà la barre défile (molette, ou le changement de vue qui amène l'onglet
 affiché à l'écran). Des flèches *‹* et *›* apparaissent alors aux deux bords de
 la rangée : un clic défile d'un cran, un appui maintenu défile en continu, et
 la flèche est grisée en bout de liste. Un dégradé marque le bord où des onglets
-sont cachés. Le bouton *∨* des outils, à droite, ouvre le menu *Toutes les
+sont cachés. Le bouton *∨* des outils, à droite, visible dès deux vues, ouvre le menu *Toutes les
 vues* : les vues de chaque bibliothèque, la vue courante cochée ; un clic
 active la vue et son groupe.
 
@@ -432,19 +444,37 @@ bouton *Épingler* sous une vignette de l'onglet Ailleurs choisit plutôt cette
 voisine, jusqu'à *Désépingler* ou un changement de groupe.
 
 **L'écran partagé.** Sur un grand écran, le bouton ◫ de la barre des onglets
-(*CTRL-MAJ-X*) partage la fenêtre en deux volets de même largeur. L'un porte
-le groupe actif, entier ; l'autre une visionneuse en lecture d'une autre
-bibliothèque ouverte (de la même, s'il n'y en a qu'une) : son plateau,
-l'analyse de la position et son commentaire. La visionneuse parcourt toute la
-bibliothèque, un match rejoué coup par coup (la partie, le coup et ce qui a
-été joué s'affichent au-dessus du plateau) ou une collection, au choix de sa
-liste déroulante, avec ses boutons ⏮ ◀ ▶ ⏭. Elle s'ouvre là où cette
-bibliothèque a été quittée. Rien de ce qu'elle montre n'est écrit nulle part.
-Cliquer la visionneuse, hors de ses boutons, active sa bibliothèque : les deux
-volets échangent leurs rôles et chaque bibliothèque garde son côté ;
-*CTRL-MAJ-PAGE PRÉC.* / *PAGE SUIV.* fait de même au clavier. Sous 1280 pixels de large,
-l'écran partagé se refuse et propose l'échange sur place (*x*) ; il se ferme
-si la fenêtre devient trop étroite.
+(*CTRL-MAJ-X*) coupe en deux la seule zone du plateau. Chaque volet porte une
+bibliothèque ouverte et garde son côté : le groupe actif à gauche à
+l'ouverture, la première autre bibliothèque à droite (la même, s'il n'y en a
+qu'une ; l'en-tête dit alors *même base*). Le volet actif est vivant, cerné de
+la couleur de son groupe. L'autre est figé et atténué : le plateau de sa
+bibliothèque là où elle a été laissée, l'analyse de la position et son
+commentaire ; rien de ce qu'il montre n'est écrit nulle part. Chaque volet
+affiche son compteur *n / N*.
+
+Un clic dans le volet figé, ou *CTRL-ALT-←* / *CTRL-ALT-→*, active sa
+bibliothèque ; le contour passe de l'autre côté et rien d'autre ne bouge. Avec
+une seule bibliothèque, les deux vues échangent leurs positions, sauf en mode
+match : un match rejoué n'a pas de liste où retrouver la position, la barre
+d'état le dit. Barre d'outils, onglets, panneaux et barre d'état restent en un exemplaire et
+parlent toujours de la bibliothèque active : sa pastille et son nom précèdent
+les onglets des panneaux et le message de la barre d'état, et le titre de la
+fenêtre la nomme. Le clavier, *CTRL-S*, les imports et les commandes vont au
+volet actif. Pendant un Duel, une séance d'entraînement ou un import, le
+changement est refusé : le volet cliqué tremble et la barre d'état dit
+pourquoi. Tant qu'un changement de bibliothèque n'est pas achevé, un second est
+ignoré, et *CTRL-S*, la mise à jour et la suppression d'une position sont
+refusées.
+
+Glisser le compteur d'un volet, ou le plateau du volet figé, sur l'autre volet
+copie la position dans la bibliothèque de ce volet, avec son analyse et son commentaire, sauf si
+son groupe est verrouillé ; la barre d'état propose alors *Annuler*. À partir
+de 1600 pixels de large, le panneau reste à côté des plateaux ; entre 1280 et
+1600, il passe dessous ; sous 1280, l'écran partagé se refuse et propose
+l'échange sur place (*x*), et il se ferme si la fenêtre devient trop étroite.
+L'écran partagé et la bibliothèque de chaque côté sont repris à la session
+suivante.
 
 .. _configuration:
 

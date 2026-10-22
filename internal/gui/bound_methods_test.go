@@ -18,6 +18,8 @@ var boundAppMethods = []string{
 	"OpenLibraryGroup",
 	"SetLibraryGroupLocked",
 	"TransferToGroup",
+	"CopyPositionToGroup",
+	"UndoPositionCopy",
 	"ViewerCatalogOf",
 	"ViewerShow",
 	"ViewerSteps",

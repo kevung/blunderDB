@@ -41,6 +41,9 @@ func (cli *CLI) runGnubgID(args []string) error {
 		cmd.Usage()
 		return fmt.Errorf("expected exactly one XGID or OGID argument")
 	}
+	if *format != "text" && *format != "json" {
+		return fmt.Errorf("unknown --format %q: use text or json", *format)
+	}
 	pos, err := domain.DecodePositionID(cmd.Arg(0))
 	if err != nil {
 		return fmt.Errorf("invalid XGID or OGID: %w", err)
