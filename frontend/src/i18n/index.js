@@ -6,8 +6,6 @@
 import { writable, derived, get } from 'svelte/store';
 import { SaveLanguage } from '../../wailsjs/go/main/Config.js';
 
-import en from './locales/en.json';
-
 // Supported locale codes (order = order shown in the language selector).
 export const LOCALES = ['en', 'fr', 'de', 'it', 'es', 'fi', 'ja', 'el', 'ru'];
 export const FALLBACK_LOCALE = 'en';
@@ -25,12 +23,14 @@ export const LANGUAGE_LABELS = {
     ru: 'Русский'
 };
 
-// Non-English locales are fetched on demand (bundling all nine put 511 kB of JSON in the main
-// chunk). English stays static: it is the fallback and the seed of `language`, needed before
-// any async load resolves.
-const localeLoaders = import.meta.glob('./locales/*.json');
+// Locales are fetched on demand (bundling all nine put 511 kB of JSON in the main chunk). Each
+// `?merged` module is the locale already completed with the English keys it lacks (build step,
+// i18nMergedLocales.js), so one dictionary is loaded and the lookup needs no English pass.
+// No dictionary exists until one is loaded: `startupLanguage` guarantees one (English at worst)
+// before the first render.
+const localeLoaders = import.meta.glob('./locales/*.json', { query: '?merged' });
 /** @type {Record<string, any>} */
-const messages = { en };
+const messages = {};
 
 /** @param {string} lang */
 async function ensureLocaleLoaded(lang) {
@@ -76,9 +76,6 @@ function interpolate(str, params) {
  */
 function translateFor(lang, key, params) {
     let raw = lookup(messages[lang], key);
-    if (raw === undefined && lang !== FALLBACK_LOCALE) {
-        raw = lookup(messages[FALLBACK_LOCALE], key);
-    }
     if (raw === undefined) raw = key; // final fallback: surface the key for visibility
     return /** @type {string} */ (interpolate(raw, params));
 }
@@ -92,30 +89,13 @@ export const language = writable(FALLBACK_LOCALE);
 export const t = derived(language, ($lang) => (/** @type {string} */ key, /** @type {Record<string, unknown> | null | undefined} */ params) => translateFor($lang, key, params));
 
 /**
- * Un bloc entier de messages, dans la langue courante, replié sur l'anglais clé par clé : la page
+ * Un bloc entier de messages, dans la langue courante (déjà repliée sur l'anglais au build) : la page
  * de salle, écrite en Go, rend ainsi les codes du moteur avec les mêmes mots que le front.
  *
  * @param {string} section
  */
 export function messageBlock(section) {
-    const base = lookup(messages[FALLBACK_LOCALE], section);
-    const own = lookup(messages[get(language)], section);
-    return mergeBlocks(base, own);
-}
-
-/**
- * Repli profond : l'anglais dessous, la langue de l'utilisateur dessus.
- *
- * @param {any} base
- * @param {any} own
- * @returns {any}
- */
-function mergeBlocks(base, own) {
-    if (own === undefined) return base === undefined ? {} : base;
-    if (base === undefined || typeof base !== 'object' || typeof own !== 'object') return own;
-    const out = { ...base };
-    for (const [k, v] of Object.entries(own)) out[k] = mergeBlocks(base[k], v);
-    return out;
+    return lookup(messages[get(language)], section) ?? {};
 }
 
 // Non-reactive translation for use outside Svelte components (.js modules).
@@ -196,4 +176,24 @@ export async function initLanguage(lang) {
     const next = LOCALES.includes(lang) ? lang : FALLBACK_LOCALE;
     await ensureLocaleLoaded(next);
     language.set(next);
+}
+
+/**
+ * The persisted language before the first render, bounded by `timeoutMs` so a slow backend never
+ * leaves the window blank. Whatever happens (timeout, failed read, unknown locale), a dictionary
+ * is loaded on return: English when nothing else is, so no raw key is ever painted.
+ *
+ * @param {() => Promise<string>} getLanguage
+ * @param {number} [timeoutMs]
+ */
+export async function startupLanguage(getLanguage, timeoutMs = 1000) {
+    await Promise.race([
+        // Through then(): a binding missing altogether throws synchronously, and must not stop the mount.
+        Promise.resolve()
+            .then(() => getLanguage())
+            .then(initLanguage)
+            .catch(() => {}),
+        new Promise((resolve) => setTimeout(resolve, timeoutMs))
+    ]);
+    if (!messages[get(language)]) await initLanguage(FALLBACK_LOCALE);
 }

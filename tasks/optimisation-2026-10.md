@@ -233,6 +233,14 @@ Les gains sont estimés à partir des mesures ci-dessus. Effort : S (moins d'un 
 
 **B1, décision : exporter compressé.** Les versions de schéma < 2.3.0 sont celles des releases ≤ 0.16.0 (0.16.0 : `DatabaseVersion` 2.0.0 ; 0.17.0, première à compresser, 74de0d6e4 : 2.3.0 ; aucune release entre les deux). Leur `CheckVersion` ne compare que la majeure (`db.go:1612` de 0.16.0), donc 2.47 passerait ce contrôle ; mais `position.state` n'est plus un `Position` JSON complet : depuis 2.2.0 c'est le tableau JSON de 28 entiers (`EncodeBoardCompact`), depuis 2.31.0 le binaire de 28 octets (`EncodeBoardState`), qu'écrit l'export. 0.16.0 fait `json.Unmarshal` de cette colonne vers un `Position` (`PositionExists`, `LoadAllPositions`…), ce qui échoue sur l'un comme sur l'autre : elle échoue sur les positions bien avant les analyses. Le JSON des analyses ne protégeait plus aucun lecteur. L'export passe par `SaveExportedAnalysis` (encodage de la base vive) ; la lecture des anciens exports JSON reste (`TestImportV220DatabaseIntoV230`).
 
+**Décisions du 2026-10-22 sur B.**
+
+- **B2 : caduque, déjà livré** par la table `match_stats` (2c5259513 et suites). Mesure du 2026-10-22, base synthdb 300 k, CLI, ouverture (0,09 s) comprise : `matches` 0,16-0,19 s, `tournaments` 0,10-0,12 s, `players` 0,18-0,22 s, contre 1-2,3 s avant. Le premier remplissage de la table coûte 10,5 s, payé par le premier lecteur.
+- **B3 : non** (A2 suffit). **B4 : non. B5 : non. B10 : non.**
+- **B6 : fait.** Les clés de repli sont fusionnées au build (`frontend/i18nMergedLocales.js`, import `?merged`) : `en` n'est plus dans le chunk principal, une locale = un seul chargement, et un test vérifie que chaque locale porte toutes les clés anglaises (aucune clé brute). Mesure : au démarrage en français, le JSON chargé passe de 134 ko (`en`, chunk principal) + 147 ko (`fr`) à 153 ko (`fr` fusionné), soit −128 ko ; `JSON.parse` de chaque catalogue : ~1,0-1,2 ms. Le gain de temps est donc de l'ordre de la milliseconde, très en deçà des ~30 ms estimés : le gain réel est la taille du chunk principal et de la mémoire, pas la latence.
+- **B8 : mesurer puis décider**, mesurée après la clôture de #758 (caduque).
+- **B9 : étude en cours côté gammonNet**, rien ici.
+
 ### Écarté ou neutre
 - **SDK MCP et x/text** : 0,56 et 0,33 Mo, tous deux utilisés pour de vrai. Le gain ne vaut pas l'effort.
 - **testcontainers** : absent des binaires.

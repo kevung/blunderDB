@@ -2,7 +2,7 @@ import './style.css';
 import { mount } from 'svelte';
 import App from './App.svelte';
 import { markStartup } from './utils/startupMarks.js';
-import { initLanguage } from './i18n';
+import { startupLanguage } from './i18n';
 import { GetLanguage } from '../wailsjs/go/main/Config.js';
 import { preloadDeferredComponents } from './components/lazyComponents.js';
 
@@ -19,17 +19,9 @@ if (import.meta.env.DEV) {
     Promise.all([preloadDeferredComponents({ immediate: true }), import('./components/direction/DirectionView.svelte').catch(() => {})]).then(() => markStartup('deferred-loaded'));
 }
 
-// The persisted language before the first render: mounted in English, the window painted
-// every label twice when the locale arrived. Bounded, so a backend slow to answer never
-// leaves the window blank; App's onMount applies the language whatever happens here.
-await Promise.race([
-    // Through then(): a binding missing altogether throws synchronously, and must not stop the mount.
-    Promise.resolve()
-        .then(() => GetLanguage())
-        .then(initLanguage)
-        .catch(() => {}),
-    new Promise((resolve) => setTimeout(resolve, 1000))
-]);
+// Mounted in English, the window painted every label twice when the locale arrived; App's
+// onMount applies the language whatever happens here.
+await startupLanguage(() => GetLanguage());
 
 const app = mount(App, { target: document.getElementById('app') });
 markStartup('mounted');
