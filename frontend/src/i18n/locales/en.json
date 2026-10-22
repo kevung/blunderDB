@@ -3640,9 +3640,9 @@
         "longRaces": "Long races (live)",
         "lastRoll": "Last roll (dead)",
         "axisHint": "rows / columns = points still needed to win the match",
+        "aggregatedHint": "Per cell: take point ×2 and ×4, each live / dead, then gammon value at cube 1 · 2 · 4.",
         "neilFormula": "E ≃ 50% + lead × Neil(n), n = trailer's points to go",
         "neilAxis": "rows = leader, columns = trailer (points to go); small: gap to the MET",
-        "neilFallback": "Leader 1 or 2 away: MET value",
-        "source": "Source"
+        "neilFallback": "Leader 1 or 2 away: MET value"
     }
 }

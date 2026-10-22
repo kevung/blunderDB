@@ -3640,9 +3640,9 @@
         "longRaces": "Courses longues (vivant)",
         "lastRoll": "Dernier lancer (mort)",
         "axisHint": "lignes / colonnes = points restants pour gagner le match",
+        "aggregatedHint": "Par cellule : point de prise ×2 et ×4, chacun vivant / mort, puis gammon au videau 1 · 2 · 4.",
         "neilFormula": "E ≃ 50 % + écart × Neil(n), n = points restants du suiveur",
         "neilAxis": "lignes = meneur, colonnes = suiveur (points restants) ; en petit : écart avec la MET",
-        "neilFallback": "Meneur à 1 ou 2 points : valeur de la MET",
-        "source": "Source"
+        "neilFallback": "Meneur à 1 ou 2 points : valeur de la MET"
     }
 }

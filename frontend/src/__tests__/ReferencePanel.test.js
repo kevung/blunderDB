@@ -59,6 +59,7 @@ describe('ReferencePanel', () => {
         await tick();
         expect(byTestId(container, 'reference-section-aggregated')).not.toBeNull();
         expect(get1(container, 'reference-tab-aggregated').getAttribute('aria-selected')).toBe('true');
+        expect(get1(container, 'reference-section-aggregated').textContent).toContain('Per cell: take point ×2 and ×4');
     });
 
     test('an aggregated cell holds tp2, tp4 and the three gammon values; a missing value is a dash', () => {

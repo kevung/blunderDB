@@ -3640,9 +3640,9 @@
         "longRaces": "Pitkät kilpajuoksut (elävä)",
         "lastRoll": "Viimeinen heitto (kuollut)",
         "axisHint": "rivit / sarakkeet = ottelun voittoon puuttuvat pisteet",
+        "aggregatedHint": "Solua kohti: ottopiste ×2 ja ×4, kumpikin elävä / kuollut, sitten gammonin arvo kuutiolla 1 · 2 · 4.",
         "neilFormula": "E ≃ 50 % + johto × Neil(n), n = perässä olevan puuttuvat pisteet",
         "neilAxis": "rivit = johtaja, sarakkeet = perässä oleva (puuttuvat pisteet); pienellä: ero MET:iin",
-        "neilFallback": "Johtaja 1 tai 2 pisteen päässä: MET-arvo",
-        "source": "Lähde"
+        "neilFallback": "Johtaja 1 tai 2 pisteen päässä: MET-arvo"
     }
 }

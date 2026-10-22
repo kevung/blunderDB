@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 11:16+0200\n"
+"POT-Creation-Date: 2026-10-22 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -544,59 +544,59 @@ msgstr "**ギャモン値**\\ — キューブ 1、2、4 について。"
 
 #: ../../source/manuel_eval.rst:297
 msgid ""
-"**Agrégé** — une grille de 2 à 9 points restants dont chaque case porte "
-"trois lignes : le point de prise au videau 2 (vivant / mort), au videau 4"
-" (vivant / mort), puis les valeurs du gammon aux videaux 1, 2 et 4, en "
-"couleur atténuée. Un tiret marque une valeur que la table ne définit pas "
-"à ce score ;"
+"**Agrégé** — une grille de 2 à 9 points restants, dont une légende en "
+"tête rappelle l'organisation de chaque case. Elle porte trois lignes : le"
+" point de prise au videau 2 (vivant / mort), au videau 4 (vivant / mort),"
+" puis les valeurs du gammon aux videaux 1, 2 et 4, en couleur atténuée. "
+"Un tiret marque une valeur que la table ne définit pas à ce score ;"
 msgstr ""
-"**集約**\\ — 残り 2〜9 ポイントの表で、各マスは 3 行から成ります。キューブ 2 (ライブ / デッド) とキューブ 4 (ライブ "
-"/ デッド) のテイクポイント、続いてキューブ 1、2、4 "
-"のギャモン値で、淡い色で表示されます。ダッシュは、そのスコアで表が定義していない値を示します。"
+"**集約**\\ — 残り 2〜9 ポイントの表で、先頭の凡例が各マスの構成を示します。各マスは 3 行から成ります。キ"
+"ューブ 2 (ライブ / デッド) とキューブ 4 (ライブ / デッド) のテイクポイント、続いてキューブ 1、2、4"
+" のギャモン値で、淡い色で表示されます。ダッシュは、そのスコアで表が定義していない値を示します。"
 
-#: ../../source/manuel_eval.rst:301
+#: ../../source/manuel_eval.rst:302
 msgid "**Nombres de Neil** — un raccourci de tête de la MET, dû à Neil Kazaross."
 msgstr "**ニールの数**\\ — MET の暗算用の近道で、Neil Kazaross によるものです。"
 
-#: ../../source/manuel_eval.rst:303
+#: ../../source/manuel_eval.rst:304
 msgid ""
 "**Les nombres de Neil.** L'équité du meneur s'estime par E ≃ 50 % + "
 "(écart de score) × Neil(*n*), où *n* est le nombre de points restants du "
-"**suiveur**. Les nombres valent 10 à 3 points restants, 9 à 4, 8 à 5, 7 à"
-" 6, 6 à 8, 5 à 11, 4 à 15, 3½ à 19 et 3 à 25 (mémo : « 8 is 6, 11 is 5, "
-"15 is 4 ») ; entre deux, ils s'interpolent linéairement (6½ à 7, 5⅔ à 9, "
-"5⅓ à 10, 4¾ à 12). Par exemple, à 3 points restants contre 5, "
-"l'estimation est 50 + 2 × 8 = 66 %, et la MET donne 64,8 %. L'onglet "
-"montre la ligne des nombres, puis une grille meneur × suiveur, de 2 à 15 "
-"points restants : chaque case donne l'estimation et, en petit, son écart "
-"avec la MET Kazaross-XG2, pour voir où le raccourci dévie. Le raccourci "
+"**suiveur**. L'onglet donne le nombre pour chaque *n* de 3 à 25, en "
+"entier et fraction exacte (6½ à 7, 5⅔ à 9, 5⅓ à 10, 4¾ à 12 ; sans glyphe"
+" de fraction, « 3 5⁄12 ») : les points d'ancrage (10 à 3 points restants,"
+" 9 à 4, 8 à 5, 7 à 6, 6 à 8, 5 à 11, 4 à 15, 3½ à 19 et 3 à 25) sont en "
+"caractères droits, les valeurs intermédiaires, obtenues par interpolation"
+" linéaire entre deux ancrages, en italique. Par exemple, à 3 points "
+"restants contre 5, l'estimation est 50 + 2 × 8 = 66 %, et la MET donne "
+"64,8 %. Sous la ligne des nombres, une grille meneur × suiveur, de 2 à 15"
+" points restants : chaque case donne l'estimation et, en petit, son écart"
+" avec la MET Kazaross-XG2, pour voir où le raccourci dévie. Le raccourci "
 "ne tient pas quand le meneur est à 1 ou 2 points : la ligne du meneur à 2"
-" points montre la valeur de la MET, en couleur atténuée et sans écart. "
-"Source : Kit Woolsey, `Match Equity Table "
-"<https://bkgm.com/articles/GOL/demo/equity.htm>`__, GammOnLine, 1999."
+" points montre la valeur de la MET, en couleur atténuée et sans écart."
 msgstr ""
 "**ニールの数。**\\ リーダーのエクイティは E ≃ 50% + (スコア差) × Neil(\\ *n*\\ ) で見積もります。\\ "
-"*n*\\ は\\ **トレーラー**\\ の残りポイント数です。数は、残り 3 で 10、4 で 9、5 で 8、6 で 7、8 で 6、11 "
-"で 5、15 で 4、19 で 3½、25 で 3 です (覚え方:「8 is 6, 11 is 5, 15 is 4」)。間の値は線形補間します"
-" (7 で 6½、9 で 5⅔、10 で 5⅓、12 で 4¾)。たとえば残り 3 対 5 では、見積もりは 50 + 2 × 8 = 66% "
+"*n*\\ は\\ **トレーラー**\\ の残りポイント数です。タブには 3 から 25 までの各\\ *n*\\ "
+"の数が、整数と正確な分数で表示されます (7 で 6½、9 で 5⅔、10 で 5⅓、12 で 4¾。分数の字形がない値は「3 "
+"5⁄12」)。アンカー点 (残り 3 で 10、4 で 9、5 で 8、6 で 7、8 で 6、11 で 5、15 で 4、19 で 3½、25 "
+"で 3) は立体、2 つのアンカーの間を線形補間した値は斜体です。たとえば残り 3 対 5 では、見積もりは 50 + 2 × 8 = 66% "
 "で、MET は 64.8% です。タブには数の行に続いて、残り 2〜15 ポイントのリーダー × "
 "トレーラーの表が表示されます。各マスには見積もりと、小さな字で Kazaross-XG2 MET "
 "との差が示され、近道がどこでずれるかが分かります。リーダーの残りが 1 または 2 のときは近道は成り立ちません。残り 2 "
-"のリーダーの行には、MET の値が淡い色で差なしに表示されます。出典: Kit Woolsey、`Match Equity Table "
-"<https://bkgm.com/articles/GOL/demo/equity.htm>`__、GammOnLine、1999 年。"
+"のリーダーの行には、MET の値が淡い色で差なしに表示されます。"
 
-#: ../../source/manuel_eval.rst:320
+#: ../../source/manuel_eval.rst:322
 msgid "Amener une position dans le panneau Eval"
 msgstr "ポジションを Eval パネルに持ち込む"
 
-#: ../../source/manuel_eval.rst:322
+#: ../../source/manuel_eval.rst:324
 msgid ""
 "Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude "
 "part le plus souvent d'une position déjà en main. Quatre gestes l'y "
 "amènent :"
 msgstr "パネルは既定でベアオフのポジションで開きますが、学習はたいてい、すでに手元にあるポジションから始まります。次の四つの操作でそこに持ち込めます："
 
-#: ../../source/manuel_eval.rst:325
+#: ../../source/manuel_eval.rst:327
 msgid ""
 "**Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la "
 "navigation d'un match, puis *Évaluer cette position* : le panneau Eval "
@@ -611,7 +611,7 @@ msgstr ""
 "は、相手側から見たポジションで開きます。コンテキストメニューは Eval パネルと Search "
 "パネルでは表示されません。そこでは右ボタンがすでに反対色のチェッカーを置くために使われているからです。"
 
-#: ../../source/manuel_eval.rst:333
+#: ../../source/manuel_eval.rst:335
 msgid ""
 "**Clic droit sur le plateau, puis** *Évaluer dans un nouvel onglet* : une"
 " nouvelle vue, nommée *Variante de #n* (n étant le numéro de la vue "
@@ -624,7 +624,7 @@ msgstr ""
 "は元のビューの番号）が、表示中のポジションで Eval "
 "パネルに開き、そこで自由に変化を並べられます。元のビューはポジション、リスト、解析を保ちます。この項目はトランスクリプションパネルには表示されません。"
 
-#: ../../source/manuel_eval.rst:339
+#: ../../source/manuel_eval.rst:341
 msgid ""
 "**CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse, "
 "puis la coller une fois dans le panneau Eval. Le collage accepte aussi un"
@@ -637,7 +637,7 @@ msgstr ""
 "Backgammon、別の blunderDB インスタンス）でも "
 "OGID（OpenGammon）でも構いません：クリップボードにあれば十分です。"
 
-#: ../../source/manuel_eval.rst:345
+#: ../../source/manuel_eval.rst:347
 msgid ""
 "**La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où "
 "l'identifiant n'est pas dans le presse-papier mais dans un message, sur "
@@ -652,7 +652,7 @@ msgstr ""
 "``import`` "
 "と同じ動詞で、引数がなければファイル選択を開き、引数があれば識別子を読みます。以降の経路は貼り付けとまったく同じです。同じ読み取り、同じ重複排除、取り込んだ局面の同じ開き方です。"
 
-#: ../../source/manuel_eval.rst:353
+#: ../../source/manuel_eval.rst:355
 msgid ""
 "Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La "
 "position arrive donc sans analyse, exactement comme un XGID nu, et "
@@ -661,7 +661,7 @@ msgstr ""
 "OGID が運ぶのは局面だけで、評価もコメントも含みません。したがって局面は分析なしで届きます。裸の XGID "
 "とまったく同じで、内蔵の評価器が後からその空白を埋められます。"
 
-#: ../../source/manuel_eval.rst:357
+#: ../../source/manuel_eval.rst:359
 msgid ""
 "Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du "
 "match (``7C``) : sans lui, un joueur à un point du but est après la "
@@ -670,7 +670,7 @@ msgstr ""
 "OGID では、マッチの長さに続く ``C`` でクロフォードゲームを表します（``7C``）。これがなければ、あと 1 "
 "ポイントで勝つプレイヤーはクロフォードゲームの後にいます。"
 
-#: ../../source/manuel_eval.rst:360
+#: ../../source/manuel_eval.rst:362
 msgid ""
 "**Une capture d'écran du plateau** (eXtreme Gammon, thème par défaut) se "
 "lit de trois façons : coller l'image (*CTRL-V*), la glisser sur la "
@@ -690,7 +690,7 @@ msgstr ""
 "*CTRL-V*\\ ）、ウィンドウにドラッグする、または *CTRL-I*\\ "
 "（``.png``、``.jpg``）で開きます。データベースは不要です。読み取ったポジションは編集盤面に置かれ、あくまで提案です。読み取りに自信のないポイントとキューブはオレンジの円で示されます。円で示せない疑い（ポイント番号が画像の外にあるときの盤の向き、読めないダイス）と、スクリーンショットには決して写らないもの（スコア、ダイスが隠れているときの手番）は、ステータスバーに表示されます。いつもどおり盤面を修正し、通常の操作で保存してください。それまでは何も保存されません。既知の盤面が認識できない画像は拒否され、理由がステータスバーに表示されます。同じ読み取りはコマンドライン（``capture``）でも使えます。"
 
-#: ../../source/manuel_eval.rst:372
+#: ../../source/manuel_eval.rst:374
 msgid ""
 "Le plateau du panneau Eval est un brouillon : la position y arrive sans "
 "son identifiant de base, de sorte qu'aucune modification faite ici ne "
@@ -701,7 +701,7 @@ msgstr ""
 "Eval "
 "パネルのボードは下書きです：ポジションはデータベースの識別子なしでそこに届くため、ここで行ったどんな変更も、元のレコードを書き換えることはありません。ボードの通常の編集（チェッカー、キューブ、ダイス、スコア）はすべてそこで利用でき、評価は各変更に追従します。"
 
-#: ../../source/manuel_eval.rst:378
+#: ../../source/manuel_eval.rst:380
 msgid ""
 "Dans l'autre sens, *CTRL-C* copie le plateau du panneau Eval dans le "
 "presse-papier, avec un XGID recalculé à partir des pions posés — donc "
@@ -714,20 +714,20 @@ msgstr ""
 "とともにクリップボードにコピーします——したがって eXtreme Gammon や別の blunderDB "
 "インスタンスに直接貼り付けられます。移動するのはポジションだけです：パネルが表示する評価はデータベースのレコードではなく、コピーには同行しません。"
 
-#: ../../source/manuel_eval.rst:384
+#: ../../source/manuel_eval.rst:386
 msgid ""
 "En quittant le panneau Eval, la position consultée auparavant est "
 "restaurée : le brouillon n'est jamais enregistré tout seul."
 msgstr "Eval パネルを離れると、直前に閲覧していたポジションが復元されます：下書きが勝手に保存されることは決してありません。"
 
-#: ../../source/manuel_eval.rst:387
+#: ../../source/manuel_eval.rst:389
 msgid ""
 "Lorsque la position est un bearoff pur (tous les pions des deux joueurs "
 "dans leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, "
 "pour le joueur au trait :"
 msgstr "ポジションが純粋なベアオフ（両プレイヤーの全チェッカーが自分のインナーボード内にある）で、ダイスが置かれていない場合、キューブの判断には手番のプレイヤーについて次が表示されます："
 
-#: ../../source/manuel_eval.rst:391
+#: ../../source/manuel_eval.rst:393
 msgid ""
 "en régime *exact* : les équités money (cubeless, sans double, "
 "double/prend, double/passe) et le **verdict de videau money** (pas de "
@@ -738,7 +738,7 @@ msgstr ""
 "**マネーゲームのキューブ判定**\\ "
 "（ノーダブル、ダブル/テイク、ダブル/パス、またはダブルには強すぎる）——マッチスコア以外の場合。スコアの場合については上記を参照、"
 
-#: ../../source/manuel_eval.rst:396
+#: ../../source/manuel_eval.rst:398
 msgid ""
 "en régime *évalué* : les mêmes équités et le même verdict à quatre "
 "valeurs, mais **joués par gammonNet** (recherche + modèle de videau "
@@ -749,14 +749,14 @@ msgstr ""
 "したもの（探索 + Janowski のキューブモデル）——\\ **マッチスコアでも**\\ "
 "利用可能で、これは推定方式が一度も提供できなかったものです；"
 
-#: ../../source/manuel_eval.rst:401
+#: ../../source/manuel_eval.rst:403
 msgid ""
 "en régime *estimé* : le verdict de videau n'est alors volontairement pas "
 "affiché — seule la probabilité de gain, dans le tableau de faits, "
 "accompagnée de sa marge d'erreur, reste disponible."
 msgstr "*推定*\\ 方式では：キューブ判定は意図的に表示されません——事実の表の中の勝率だけが、その誤差の範囲を添えて利用可能なままです。"
 
-#: ../../source/manuel_eval.rst:405
+#: ../../source/manuel_eval.rst:407
 msgid ""
 "Dès que des dés sont posés sur une position de course, cette décision de "
 "videau *avant le jet* disparaît — le plateau demande alors une décision "
@@ -769,7 +769,7 @@ msgstr ""
 "のキューブの判断は消えます——ボードはそのときキューブではなくチェッカープレイの判断を求めているからです——しかし勝率は判断ではなくポジションの事実のままです：勝率は手のリストの先頭の\\"
 " *ロール前*\\ の行に加わり、EPC はそのすぐ左に表示されたままです。"
 
-#: ../../source/manuel_eval.rst:412
+#: ../../source/manuel_eval.rst:414
 msgid ""
 "Un badge indique le régime : **exact** (valeur lue dans une base de "
 "données two-sided), **évalué · <profondeur>** (joué par gammonNet — la "
@@ -787,7 +787,7 @@ msgstr ""
 "——上記を参照。正確方式は利用可能なところではどこでも優先されます；そうでなければ、評価方式が計算を終え次第表示され、待機中に示されていた推定方式をその場で置き換えます。三つの方式とその仮定の正確な定義については"
 " :ref:`epc_methodologie` を参照してください。"
 
-#: ../../source/manuel_eval.rst:422
+#: ../../source/manuel_eval.rst:424
 msgid ""
 "**Élargir le domaine exact.** La table calculée au premier lancement "
 "couvre 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet "
@@ -796,7 +796,7 @@ msgstr ""
 "**正確な領域を広げる。** 初回起動時に計算されるテーブルは片側 6 チェッカーを扱います。それを超える方法は、設定の\\ "
 "*Bearoff*\\ タブに二つあります。"
 
-#: ../../source/manuel_eval.rst:426
+#: ../../source/manuel_eval.rst:428
 msgid ""
 "calculer une table deux faces plus large — jusqu'à TS-06-15 si la machine"
 " a la mémoire pour. L'onglet annonce la taille, la mémoire et le temps "
@@ -808,13 +808,13 @@ msgstr ""
 "まで。タブは開始前にこの計算機での大きさ・メモリ・時間を示し、計算は一時停止と再開ができます。中止された計算は \\ ``.part``\\  "
 "ファイルを残しますが、これが表として読まれることはありません。"
 
-#: ../../source/manuel_eval.rst:432
+#: ../../source/manuel_eval.rst:434
 msgid ""
 "indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au "
 "domaine le plus large l'emporte automatiquement."
 msgstr "gnubgの任意のtwo-sided ``.bd`` ファイルを指定する。最も広い範囲を持つデータベースが自動的に優先されます。"
 
-#: ../../source/manuel_eval.rst:435
+#: ../../source/manuel_eval.rst:437
 msgid ""
 "**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le "
 "panneau Eval puis y revenir retrouve la position sur laquelle on l'a "
@@ -830,7 +830,7 @@ msgstr ""
 " *BACKSPACE* "
 "はいつでも既定の盤に戻します。その途中でデータベースには何も書き込まれません。下書きはポジションとしての同一性を持たず、その評価は運ばれるのではなく到着時に計算し直されます。"
 
-#: ../../source/manuel_eval.rst:444
+#: ../../source/manuel_eval.rst:446
 msgid ""
 "**Mode défi.** La case *Défi*, dans la bande d'en-tête, active un mode "
 "entraînement : à chaque modification de la position, les valeurs de trois"
@@ -858,7 +858,7 @@ msgstr ""
 "覆います：リストは最善の手から最悪の手へ並んでいるため、一部だけ表示してもすでに答えを与えてしまうからです。レースポジション以外でダイスが置かれると、この単一のゾーンだけでパネルが表示するすべてを覆います。こうして、各陣営の"
 " EPC を見積もり、次にキューブや指すべき手について判断を下し、それから確認するという練習ができます。この設定は記憶されます。"
 
-#: ../../source/manuel_eval.rst:464
+#: ../../source/manuel_eval.rst:466
 msgid ""
 "**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : une fois "
 "l'écran d'accueil écarté, on y pose, colle (*CTRL-V*) et modifie une "
@@ -891,23 +891,23 @@ msgstr ""
 "、*チェッカー*\\ 、*ベアオフ*\\ 、*評価*\\ は利用でき、*判断*\\ "
 "は理由を表示して無効になり、終了したセッションは記録されません(ジャーナルがそう表示します)。トーナメント運営にはデータベースを開く必要があります。"
 
-#: ../../source/manuel_eval.rst:481
+#: ../../source/manuel_eval.rst:483
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
 msgstr "Eval パネルを閉じるには、\\ *CTRL-E* を押すか、別のタブに切り替えます。"
 
-#: ../../source/manuel_eval.rst:486
+#: ../../source/manuel_eval.rst:488
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Eval パネルの方法論と仮定"
 
-#: ../../source/manuel_eval.rst:488
+#: ../../source/manuel_eval.rst:490
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
 msgstr "パネルに表示される各値は明確な仮定に基づいています。ここではそれらを漏れなく述べます。"
 
-#: ../../source/manuel_eval.rst:491
+#: ../../source/manuel_eval.rst:493
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -917,7 +917,7 @@ msgstr ""
 "**領域。** *レース領域* — 勝率とキューブ判定 — "
 "が扱うのは純粋なベアオフだけです。両者の残りの駒がすべて自分の内奥にある局面です。局面は *振る前* に評価され、置かれた賽の目は無視されます。"
 
-#: ../../source/manuel_eval.rst:496
+#: ../../source/manuel_eval.rst:498
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -935,7 +935,7 @@ msgstr ""
 "の点に駒がある側も他と同じに扱われます。外挿は一切しません。1 点だけ遠い駒には単に EPC がない、というだけで、以前 7 の点の駒に EPC "
 "がなかったのと同じです。答えた表が六点のものでないときは、その名前がレース欄の隅に出ます（「OS-08」）。これがなければ既定で「六」と読み、その側が完全に内奥に入っていると信じてしまいます。"
 
-#: ../../source/manuel_eval.rst:506
+#: ../../source/manuel_eval.rst:508
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -951,7 +951,7 @@ msgstr ""
 "1 回の振りあたりのピップの厳密な平均。ゾロ目は 4 回と数える）。wastage = EPC − ピップ数。唯一の理想化は *片面の最適プレー*"
 " です。各プレーヤーは相手を無視して自分の振り数を最小にします — これが EPC の標準的な定義です。"
 
-#: ../../source/manuel_eval.rst:515
+#: ../../source/manuel_eval.rst:517
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -964,7 +964,7 @@ msgstr ""
 "*Bearoff* タブから計算する TS-06-11）から直接読み取ります。これらのデータベースは、両陣営の最適な two-sided "
 "プレイの下での完全な後退解析の結果です。追加の仮定はなく、誤差は量子化によるもの（< 0.002 %）に限られます。"
 
-#: ../../source/manuel_eval.rst:521
+#: ../../source/manuel_eval.rst:523
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -975,13 +975,13 @@ msgstr ""
 "**勝率、推定方式。** データベースの範囲外では、勝率は2つのone-"
 "sided分布の畳み込み（手番のプレイヤーは、自分のロール数が相手のロール数以下であれば勝ちます）により求め、その後、TS-06-11データベースに対してオフラインで較正された固定の多項式補正を適用します。3つの仮定があります："
 
-#: ../../source/manuel_eval.rst:527
+#: ../../source/manuel_eval.rst:529
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
 msgstr "2つのベアオフ過程の\\ **独立性**\\ ——レースでは構造的なもので、コンタクトがなければ相互作用は一切ありません；"
 
-#: ../../source/manuel_eval.rst:530
+#: ../../source/manuel_eval.rst:532
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -991,7 +991,7 @@ msgstr ""
 "**両陣営の最適なone-sidedプレイ**\\ ——これが\\ *近似*\\ "
 "です。実際には、リードされている側は分散を求めてプレイを変え、リードしている側は安全策を取ります。測定された効果は反対称のバイアス（畳み込みはリードしている側の優位を誇張します）で、補正がこれを統計的に吸収します；"
 
-#: ../../source/manuel_eval.rst:535
+#: ../../source/manuel_eval.rst:537
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -1003,7 +1003,7 @@ msgstr ""
 "%、第99百分位0.17 %、観測された最大値0.9 %（勝率のポイント単位）。\\ "
 "**各プレイヤー11チェッカーを超えると、この上限は外挿されたものです**\\ ——傾向は単調ですが、それを保証するオラクルはありません。"
 
-#: ../../source/manuel_eval.rst:541
+#: ../../source/manuel_eval.rst:543
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -1017,7 +1017,7 @@ msgstr ""
 "**ジャコビールールなしのマネーゲーム**\\ "
 "のものです。各プレイヤー11チェッカー以下の範囲ではギャモンは不可能です（各陣営はすでに少なくとも4チェッカーを上げています）。これは近似ではありません。判定（ノーダブル／ダブル・テイク／ダブル・パス）は、保存されたエクイティからGNUbgの規則に従って正確に再構築され、GNUbgの分析と一つひとつ照合して検証されています。"
 
-#: ../../source/manuel_eval.rst:549
+#: ../../source/manuel_eval.rst:551
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -1035,7 +1035,7 @@ msgstr ""
 "ことを前提とします。将来のリキューブは完全に評価されます（完全な後退解析）。終盤の非常に変動の大きいレースでは、リキューブの連鎖が手番の陣営の優位のほとんどを食いつぶします——そのため「ノーダブル」と「ダブル/テイク」のエクイティはゼロに近くなることがあり、一方、キューブモデルがこの連鎖を評価しないXGのようなエンジンは、デッドキューブに近い値を表示します（例えば3ポイントに2チェッカー対2ポイントに2チェッカー：勝率62"
 " %、正確なD/Tは+0.006、XGでは+0.475）。ただし、表示される\\ **判断**\\ はエンジンのものと一致します。"
 
-#: ../../source/manuel_eval.rst:560
+#: ../../source/manuel_eval.rst:562
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -1052,7 +1052,7 @@ msgstr ""
 "します。これこそ推定レジームにはできなかったことで（下記参照）、厳密レジームを除く三つのレジームのうちこれだけが、\\ **マッチスコアでの** "
 "判断を可能にします。"
 
-#: ../../source/manuel_eval.rst:568
+#: ../../source/manuel_eval.rst:570
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -1077,7 +1077,7 @@ msgstr ""
 "0.039、中央値 0.018、第95百分位 0.151、最大 "
 "0.406。この形は期待どおりのものです：不一致の大部分はまさにテイクポイントに集中しており、そこは正当に異なる二つの方法が僅差の判断で最も分かれる場所です——至るところでエクイティを失わせるような拡散したエラーではありません。"
 
-#: ../../source/manuel_eval.rst:581
+#: ../../source/manuel_eval.rst:583
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -1087,7 +1087,7 @@ msgstr ""
 "この測定は、レースにおける\\ **マネー**\\ "
 "の決定を対象としています。マッチスコアでの判定——この方式だけが下せるものです——と、コンタクトのあるポジションについては、公表された測定がありません。以上のことはこれらの場合には当てはまりません。"
 
-#: ../../source/manuel_eval.rst:585
+#: ../../source/manuel_eval.rst:587
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions à 3 plis évalue le réseau "
@@ -1107,7 +1107,7 @@ msgstr ""
 "だけであり、その二度とも自らの選択に付けた利得はせいぜい 0,0002 正規化エクイティだった\\ ：eXtreme Gammon "
 "がそもそも誤りと呼び始める 0,020 の二桁下である。全件をならすと、判断あたりの利得は 0,0000 である。"
 
-#: ../../source/manuel_eval.rst:596
+#: ../../source/manuel_eval.rst:598
 msgid ""
 "Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans "
 "l'onglet *gammonNet* de la configuration. À 3 et 4 plis, comme dans "
@@ -1124,7 +1124,7 @@ msgstr ""
 "で、このフィルターを使った場合には、パネルの前で待つ人の待ち時間に見合わないということです。この測定は再現可能であり（\\ "
 "``TestThreePlyMeasure``\\ ）、ネットワークが変われば結論は見直されます。"
 
-#: ../../source/manuel_eval.rst:604
+#: ../../source/manuel_eval.rst:606
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -1147,7 +1147,7 @@ msgstr ""
 " "
 "%、本物のブランダーを含む）。自信満々に表示される誤った判定は判定なしより悪いため、畳み込みには判定を表示する権利が一度も与えられませんでした——この穴を埋めるのは、統計的要約ではなく、軌道を実際にプレイする探索です。"
 
-#: ../../source/manuel_eval.rst:617
+#: ../../source/manuel_eval.rst:619
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"
@@ -1156,3 +1156,4 @@ msgid ""
 msgstr ""
 "ベアオフのデータベースは不変の数学的な表です。blunderDB はそれを自ら計算します。GNUbg の \\ ``makebearoff``\\"
 "  ツールとバイト単位で同一に、設定の *Bearoff* タブか \\ ``blunderdb bearoff generate``\\  で。"
+

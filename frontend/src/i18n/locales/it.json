@@ -3640,9 +3640,9 @@
         "longRaces": "Corse lunghe (vivo)",
         "lastRoll": "Ultimo tiro (morto)",
         "axisHint": "righe / colonne = punti mancanti per vincere il match",
+        "aggregatedHint": "Per cella: punto di take ×2 e ×4, ciascuno vivo / morto, poi valore del gammon a cubo 1 · 2 · 4.",
         "neilFormula": "E ≃ 50% + vantaggio × Neil(n), n = punti mancanti a chi insegue",
         "neilAxis": "righe = chi conduce, colonne = chi insegue (punti mancanti); in piccolo: scarto dalla MET",
-        "neilFallback": "Chi conduce a 1 o 2 punti: valore della MET",
-        "source": "Fonte"
+        "neilFallback": "Chi conduce a 1 o 2 punti: valore della MET"
     }
 }

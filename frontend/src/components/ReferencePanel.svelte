@@ -6,7 +6,7 @@
     import PanelHeader from './panels/PanelHeader.svelte';
     import { REFERENCE_TABLES, referenceValue } from '../services/referenceTables.js';
     import { tableData as metTable } from '../stores/metTable';
-    import { NEIL_ANCHORS, neilEstimate, formatNeilNumber } from '../services/neilNumbers.js';
+    import { neilExact, neilEstimate, formatNeilNumber } from '../services/neilNumbers.js';
     import { REFERENCE_SECTIONS, referenceSectionStore } from '../stores/referenceStore.js';
 
     const sectionLabels = $derived({
@@ -17,7 +17,6 @@
         neil: $t('reference.neil')
     });
 
-    const NEIL_SOURCE = 'https://bkgm.com/articles/GOL/demo/equity.htm';
     const NEIL_MEMO = '8 is 6, 11 is 5, 15 is 4';
 
     const takePointGroups = [
@@ -30,6 +29,7 @@
         { cube: 4, id: 'gv4' }
     ];
     const aggregatedAway = [2, 3, 4, 5, 6, 7, 8, 9];
+    const neilRow = Array.from({ length: 23 }, (_, i) => i + 3);
     const neilAway = Array.from({ length: 14 }, (_, i) => i + 2);
 
     /** @param {string} id @param {number} you @param {number} opp */
@@ -148,6 +148,7 @@
             {/each}
         {:else if $referenceSectionStore === 'aggregated'}
             <p class="hint">{$t('reference.axisHint')}</p>
+            <p class="hint">{$t('reference.aggregatedHint')}</p>
             <div class="scroll">
                 <table class="ref-grid aggregated">
                     <thead>
@@ -181,14 +182,14 @@
                     <tbody>
                         <tr>
                             <th>n</th>
-                            {#each NEIL_ANCHORS as [away] (away)}
+                            {#each neilRow as away (away)}
                                 <th>{away}</th>
                             {/each}
                         </tr>
                         <tr>
                             <th>Neil</th>
-                            {#each NEIL_ANCHORS as [away, value] (away)}
-                                <td data-testid="neil-number-{away}">{formatNeilNumber(value)}</td>
+                            {#each neilRow as away (away)}
+                                <td class:interpolated={!neilExact(away)?.anchor} data-testid="neil-number-{away}">{formatNeilNumber(away)}</td>
                             {/each}
                         </tr>
                     </tbody>
@@ -227,7 +228,6 @@
                     </tbody>
                 </table>
             </div>
-            <p class="source">{$t('reference.source')} <a href={NEIL_SOURCE} target="_blank" rel="noreferrer">Kit Woolsey, GammOnLine 1999</a></p>
         {/if}
     </div>
 </div>
@@ -324,6 +324,10 @@
     .aggregated td,
     .neil td {
         line-height: 1.2;
+    }
+    .interpolated {
+        color: var(--color-text-muted);
+        font-style: italic;
     }
     .muted,
     .gap {

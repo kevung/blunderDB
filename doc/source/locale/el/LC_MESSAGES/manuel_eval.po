@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 11:16+0200\n"
+"POT-Creation-Date: 2026-10-22 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -683,64 +683,66 @@ msgstr "**Τιμές του gammon** — με κύβο 1, 2 και 4·"
 
 #: ../../source/manuel_eval.rst:297
 msgid ""
-"**Agrégé** — une grille de 2 à 9 points restants dont chaque case porte "
-"trois lignes : le point de prise au videau 2 (vivant / mort), au videau 4"
-" (vivant / mort), puis les valeurs du gammon aux videaux 1, 2 et 4, en "
-"couleur atténuée. Un tiret marque une valeur que la table ne définit pas "
-"à ce score ;"
+"**Agrégé** — une grille de 2 à 9 points restants, dont une légende en "
+"tête rappelle l'organisation de chaque case. Elle porte trois lignes : le"
+" point de prise au videau 2 (vivant / mort), au videau 4 (vivant / mort),"
+" puis les valeurs du gammon aux videaux 1, 2 et 4, en couleur atténuée. "
+"Un tiret marque une valeur que la table ne définit pas à ce score ;"
 msgstr ""
-"**Συγκεντρωτικά** — ένα πλέγμα από 2 έως 9 πόντους που απομένουν, όπου "
-"κάθε κελί έχει τρεις γραμμές: το σημείο αποδοχής με κύβο 2 (ζωντανός / "
-"νεκρός), με κύβο 4 (ζωντανός / νεκρός), και έπειτα οι τιμές του gammon με"
-" κύβο 1, 2 και 4, σε αμυδρό χρώμα. Μια παύλα σημειώνει μια τιμή που ο "
-"πίνακας δεν ορίζει σε αυτό το σκορ·"
+"**Συγκεντρωτικά** — ένα πλέγμα από 2 έως 9 πόντους που απομένουν, με ένα "
+"υπόμνημα στην κορυφή που υπενθυμίζει την οργάνωση κάθε κελιού. Κάθε κελί "
+"έχει τρεις γραμμές: το σημείο αποδοχής με κύβο 2 (ζωντανός / νεκρός), με "
+"κύβο 4 (ζωντανός / νεκρός), και έπειτα οι τιμές του gammon με κύβο 1, 2 "
+"και 4, σε αμυδρό χρώμα. Μια παύλα σημειώνει μια τιμή που ο πίνακας δεν "
+"ορίζει σε αυτό το σκορ·"
 
-#: ../../source/manuel_eval.rst:301
+#: ../../source/manuel_eval.rst:302
 msgid "**Nombres de Neil** — un raccourci de tête de la MET, dû à Neil Kazaross."
 msgstr ""
 "**Αριθμοί του Neil** — μια νοερή συντόμευση του MET, που οφείλεται στον "
 "Neil Kazaross."
 
-#: ../../source/manuel_eval.rst:303
+#: ../../source/manuel_eval.rst:304
 msgid ""
 "**Les nombres de Neil.** L'équité du meneur s'estime par E ≃ 50 % + "
 "(écart de score) × Neil(*n*), où *n* est le nombre de points restants du "
-"**suiveur**. Les nombres valent 10 à 3 points restants, 9 à 4, 8 à 5, 7 à"
-" 6, 6 à 8, 5 à 11, 4 à 15, 3½ à 19 et 3 à 25 (mémo : « 8 is 6, 11 is 5, "
-"15 is 4 ») ; entre deux, ils s'interpolent linéairement (6½ à 7, 5⅔ à 9, "
-"5⅓ à 10, 4¾ à 12). Par exemple, à 3 points restants contre 5, "
-"l'estimation est 50 + 2 × 8 = 66 %, et la MET donne 64,8 %. L'onglet "
-"montre la ligne des nombres, puis une grille meneur × suiveur, de 2 à 15 "
-"points restants : chaque case donne l'estimation et, en petit, son écart "
-"avec la MET Kazaross-XG2, pour voir où le raccourci dévie. Le raccourci "
+"**suiveur**. L'onglet donne le nombre pour chaque *n* de 3 à 25, en "
+"entier et fraction exacte (6½ à 7, 5⅔ à 9, 5⅓ à 10, 4¾ à 12 ; sans glyphe"
+" de fraction, « 3 5⁄12 ») : les points d'ancrage (10 à 3 points restants,"
+" 9 à 4, 8 à 5, 7 à 6, 6 à 8, 5 à 11, 4 à 15, 3½ à 19 et 3 à 25) sont en "
+"caractères droits, les valeurs intermédiaires, obtenues par interpolation"
+" linéaire entre deux ancrages, en italique. Par exemple, à 3 points "
+"restants contre 5, l'estimation est 50 + 2 × 8 = 66 %, et la MET donne "
+"64,8 %. Sous la ligne des nombres, une grille meneur × suiveur, de 2 à 15"
+" points restants : chaque case donne l'estimation et, en petit, son écart"
+" avec la MET Kazaross-XG2, pour voir où le raccourci dévie. Le raccourci "
 "ne tient pas quand le meneur est à 1 ou 2 points : la ligne du meneur à 2"
-" points montre la valeur de la MET, en couleur atténuée et sans écart. "
-"Source : Kit Woolsey, `Match Equity Table "
-"<https://bkgm.com/articles/GOL/demo/equity.htm>`__, GammOnLine, 1999."
+" points montre la valeur de la MET, en couleur atténuée et sans écart."
 msgstr ""
 "**Οι αριθμοί του Neil.** Η ισοδυναμία του παίκτη που προηγείται εκτιμάται"
 " από τον τύπο E ≃ 50 % + (διαφορά σκορ) × Neil(*n*), όπου *n* είναι ο "
-"αριθμός των πόντων που απομένουν στον παίκτη που **έπεται**. Οι αριθμοί "
-"είναι 10 στους 3 πόντους που απομένουν, 9 στους 4, 8 στους 5, 7 στους 6, "
-"6 στους 8, 5 στους 11, 4 στους 15, 3½ στους 19 και 3 στους 25 (μνημονικός"
-" κανόνας: «8 is 6, 11 is 5, 15 is 4»)· ενδιάμεσα παρεμβάλλονται γραμμικά "
-"(6½ στους 7, 5⅔ στους 9, 5⅓ στους 10, 4¾ στους 12). Για παράδειγμα, με 3 "
-"πόντους που απομένουν απέναντι σε 5, η εκτίμηση είναι 50 + 2 × 8 = 66 %, "
-"και το MET δίνει 64,8 %. Η καρτέλα δείχνει τη γραμμή των αριθμών και "
-"έπειτα ένα πλέγμα παίκτης που προηγείται × παίκτης που έπεται, από 2 έως "
-"15 πόντους που απομένουν: κάθε κελί δίνει την εκτίμηση και, με μικρά "
-"γράμματα, τη διαφορά της από το MET Kazaross-XG2, ώστε να φαίνεται πού "
-"αποκλίνει η συντόμευση. Η συντόμευση δεν ισχύει όταν στον παίκτη που "
-"προηγείται απομένουν 1 ή 2 πόντοι: η γραμμή του παίκτη που προηγείται με "
-"2 πόντους που απομένουν δείχνει την τιμή του MET, σε αμυδρό χρώμα και "
-"χωρίς διαφορά. Πηγή: Kit Woolsey, `Match Equity Table "
-"<https://bkgm.com/articles/GOL/demo/equity.htm>`__, GammOnLine, 1999."
+"αριθμός των πόντων που απομένουν στον παίκτη που **έπεται**. Η καρτέλα "
+"δίνει τον αριθμό για κάθε *n* από 3 έως 25, ως ακέραιο και ακριβές κλάσμα"
+" (6½ στους 7, 5⅔ στους 9, 5⅓ στους 10, 4¾ στους 12· χωρίς σύμβολο "
+"κλάσματος, «3 5⁄12»): τα σημεία αγκύρωσης (10 στους 3 πόντους που "
+"απομένουν, 9 στους 4, 8 στους 5, 7 στους 6, 6 στους 8, 5 στους 11, 4 "
+"στους 15, 3½ στους 19 και 3 στους 25) είναι σε όρθια γράμματα, οι "
+"ενδιάμεσες τιμές, που προκύπτουν από γραμμική παρεμβολή μεταξύ δύο "
+"αγκυρώσεων, σε πλάγια. Για παράδειγμα, με 3 πόντους που απομένουν "
+"απέναντι σε 5, η εκτίμηση είναι 50 + 2 × 8 = 66 %, και το MET δίνει 64,8 "
+"%. Η καρτέλα δείχνει τη γραμμή των αριθμών και έπειτα ένα πλέγμα παίκτης "
+"που προηγείται × παίκτης που έπεται, από 2 έως 15 πόντους που απομένουν: "
+"κάθε κελί δίνει την εκτίμηση και, με μικρά γράμματα, τη διαφορά της από "
+"το MET Kazaross-XG2, ώστε να φαίνεται πού αποκλίνει η συντόμευση. Η "
+"συντόμευση δεν ισχύει όταν στον παίκτη που προηγείται απομένουν 1 ή 2 "
+"πόντοι: η γραμμή του παίκτη που προηγείται με 2 πόντους που απομένουν "
+"δείχνει την τιμή του MET, σε αμυδρό χρώμα και χωρίς διαφορά."
 
-#: ../../source/manuel_eval.rst:320
+#: ../../source/manuel_eval.rst:322
 msgid "Amener une position dans le panneau Eval"
 msgstr "Μεταφορά μιας θέσης στον πίνακα Eval"
 
-#: ../../source/manuel_eval.rst:322
+#: ../../source/manuel_eval.rst:324
 msgid ""
 "Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude "
 "part le plus souvent d'une position déjà en main. Quatre gestes l'y "
@@ -750,7 +752,7 @@ msgstr ""
 " συνήθως από μια θέση που έχετε ήδη στα χέρια σας. Τέσσερις χειρισμοί τη "
 "φέρνουν εκεί:"
 
-#: ../../source/manuel_eval.rst:325
+#: ../../source/manuel_eval.rst:327
 msgid ""
 "**Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la "
 "navigation d'un match, puis *Évaluer cette position* : le panneau Eval "
@@ -768,7 +770,7 @@ msgstr ""
 "ούτε στο πάνελ Αναζήτησης, όπου το δεξί κουμπί χρησιμεύει ήδη για την "
 "τοποθέτηση των πουλιών του άλλου χρώματος."
 
-#: ../../source/manuel_eval.rst:333
+#: ../../source/manuel_eval.rst:335
 msgid ""
 "**Clic droit sur le plateau, puis** *Évaluer dans un nouvel onglet* : une"
 " nouvelle vue, nommée *Variante de #n* (n étant le numéro de la vue "
@@ -784,7 +786,7 @@ msgstr ""
 " και την ανάλυσή της. Η επιλογή αυτή δεν προσφέρεται στο πάνελ "
 "Μεταγραφής."
 
-#: ../../source/manuel_eval.rst:339
+#: ../../source/manuel_eval.rst:341
 msgid ""
 "**CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse, "
 "puis la coller une fois dans le panneau Eval. Le collage accepte aussi un"
@@ -798,7 +800,7 @@ msgstr ""
 "GNU Backgammon, άλλη εμφάνιση του blunderDB) ή ένα OGID (OpenGammon): "
 "αρκεί να βρίσκεται στο πρόχειρο."
 
-#: ../../source/manuel_eval.rst:345
+#: ../../source/manuel_eval.rst:347
 msgid ""
 "**La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où "
 "l'identifiant n'est pas dans le presse-papier mais dans un message, sur "
@@ -816,7 +818,7 @@ msgstr ""
 "με της επικόλλησης — ίδια ανάγνωση, ίδια αποδιπλασίαση, ίδιο άνοιγμα της "
 "εισηγμένης θέσης."
 
-#: ../../source/manuel_eval.rst:353
+#: ../../source/manuel_eval.rst:355
 msgid ""
 "Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La "
 "position arrive donc sans analyse, exactement comme un XGID nu, et "
@@ -826,7 +828,7 @@ msgstr ""
 "φτάνει επομένως χωρίς ανάλυση, ακριβώς όπως ένα γυμνό XGID, και ο "
 "ενσωματωμένος αξιολογητής μπορεί να καλύψει το κενό στη συνέχεια."
 
-#: ../../source/manuel_eval.rst:357
+#: ../../source/manuel_eval.rst:359
 msgid ""
 "Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du "
 "match (``7C``) : sans lui, un joueur à un point du but est après la "
@@ -836,7 +838,7 @@ msgstr ""
 "το μήκος του αγώνα (``7C``): χωρίς αυτό, ένας παίκτης που απέχει έναν "
 "πόντο από τον στόχο βρίσκεται μετά την Crawford."
 
-#: ../../source/manuel_eval.rst:360
+#: ../../source/manuel_eval.rst:362
 msgid ""
 "**Une capture d'écran du plateau** (eXtreme Gammon, thème par défaut) se "
 "lit de trois façons : coller l'image (*CTRL-V*), la glisser sur la "
@@ -867,7 +869,7 @@ msgstr ""
 "απορρίπτεται, με την αιτία στη γραμμή κατάστασης. Η ίδια ανάγνωση υπάρχει"
 " στη γραμμή εντολών (``capture``)."
 
-#: ../../source/manuel_eval.rst:372
+#: ../../source/manuel_eval.rst:374
 msgid ""
 "Le plateau du panneau Eval est un brouillon : la position y arrive sans "
 "son identifiant de base, de sorte qu'aucune modification faite ici ne "
@@ -882,7 +884,7 @@ msgstr ""
 "(πούλια, κύβος, ζάρια, σκορ), και η αξιολόγηση ακολουθεί κάθε "
 "τροποποίηση."
 
-#: ../../source/manuel_eval.rst:378
+#: ../../source/manuel_eval.rst:380
 msgid ""
 "Dans l'autre sens, *CTRL-C* copie le plateau du panneau Eval dans le "
 "presse-papier, avec un XGID recalculé à partir des pions posés — donc "
@@ -897,7 +899,7 @@ msgstr ""
 " blunderDB. Μόνο η θέση ταξιδεύει: η αξιολόγηση που εμφανίζει ο πίνακας "
 "δεν είναι εγγραφή της βάσης και δεν συνοδεύει την αντιγραφή."
 
-#: ../../source/manuel_eval.rst:384
+#: ../../source/manuel_eval.rst:386
 msgid ""
 "En quittant le panneau Eval, la position consultée auparavant est "
 "restaurée : le brouillon n'est jamais enregistré tout seul."
@@ -905,7 +907,7 @@ msgstr ""
 "Φεύγοντας από τον πίνακα Eval, η θέση που εξεταζόταν προηγουμένως "
 "αποκαθίσταται: το προσχέδιο δεν αποθηκεύεται ποτέ από μόνο του."
 
-#: ../../source/manuel_eval.rst:387
+#: ../../source/manuel_eval.rst:389
 msgid ""
 "Lorsque la position est un bearoff pur (tous les pions des deux joueurs "
 "dans leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, "
@@ -915,7 +917,7 @@ msgstr ""
 "τεταρτημόριό τους) και δεν είναι τοποθετημένο κανένα ζάρι, η απόφαση "
 "κύβου εμφανίζει, για τον παίκτη στη βολή:"
 
-#: ../../source/manuel_eval.rst:391
+#: ../../source/manuel_eval.rst:393
 msgid ""
 "en régime *exact* : les équités money (cubeless, sans double, "
 "double/prend, double/passe) et le **verdict de videau money** (pas de "
@@ -928,7 +930,7 @@ msgstr ""
 "διπλασιασμός/πάσο ή πολύ καλό για διπλασιασμό) — εκτός σκορ αγώνα, βλ. "
 "παραπάνω για την περίπτωση του σκορ,"
 
-#: ../../source/manuel_eval.rst:396
+#: ../../source/manuel_eval.rst:398
 msgid ""
 "en régime *évalué* : les mêmes équités et le même verdict à quatre "
 "valeurs, mais **joués par gammonNet** (recherche + modèle de videau "
@@ -941,7 +943,7 @@ msgstr ""
 "διαθέσιμες **ακόμη και στο σκορ αγώνα**, κάτι που το εκτιμώμενο καθεστώς "
 "δεν μπόρεσε ποτέ να προσφέρει·"
 
-#: ../../source/manuel_eval.rst:401
+#: ../../source/manuel_eval.rst:403
 msgid ""
 "en régime *estimé* : le verdict de videau n'est alors volontairement pas "
 "affiché — seule la probabilité de gain, dans le tableau de faits, "
@@ -951,7 +953,7 @@ msgstr ""
 "εμφανίζεται — μόνο η πιθανότητα νίκης, στον πίνακα γεγονότων, "
 "συνοδευόμενη από το περιθώριο σφάλματός της, παραμένει διαθέσιμη."
 
-#: ../../source/manuel_eval.rst:405
+#: ../../source/manuel_eval.rst:407
 msgid ""
 "Dès que des dés sont posés sur une position de course, cette décision de "
 "videau *avant le jet* disparaît — le plateau demande alors une décision "
@@ -967,7 +969,7 @@ msgstr ""
 "λίστας των κινήσεων, δίπλα στο EPC, το οποίο παραμένει εμφανές ακριβώς "
 "στα αριστερά."
 
-#: ../../source/manuel_eval.rst:412
+#: ../../source/manuel_eval.rst:414
 msgid ""
 "Un badge indique le régime : **exact** (valeur lue dans une base de "
 "données two-sided), **évalué · <profondeur>** (joué par gammonNet — la "
@@ -990,7 +992,7 @@ msgstr ""
 "εμφανιζόταν κατά την αναμονή. Βλ. :ref:`epc_methodologie` για τον ακριβή "
 "ορισμό των τριών καθεστώτων και των υποθέσεών τους."
 
-#: ../../source/manuel_eval.rst:422
+#: ../../source/manuel_eval.rst:424
 msgid ""
 "**Élargir le domaine exact.** La table calculée au premier lancement "
 "couvre 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet "
@@ -1000,7 +1002,7 @@ msgstr ""
 "εκκίνηση καλύπτει 6 πούλια ανά παίκτη. Δύο τρόποι να πάτε παραπέρα, στην "
 "καρτέλα *Bearoff* των ρυθμίσεων:"
 
-#: ../../source/manuel_eval.rst:426
+#: ../../source/manuel_eval.rst:428
 msgid ""
 "calculer une table deux faces plus large — jusqu'à TS-06-15 si la machine"
 " a la mémoire pour. L'onglet annonce la taille, la mémoire et le temps "
@@ -1014,7 +1016,7 @@ msgstr ""
 " συνεχίζει. Ένας ακυρωμένος υπολογισμός αφήνει ένα αρχείο ``.part`` που "
 "δεν διαβάζεται ποτέ ως πίνακας·"
 
-#: ../../source/manuel_eval.rst:432
+#: ../../source/manuel_eval.rst:434
 msgid ""
 "indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au "
 "domaine le plus large l'emporte automatiquement."
@@ -1022,7 +1024,7 @@ msgstr ""
 "ορισμός οποιουδήποτε αρχείου ``.bd`` two-sided του gnubg. Η βάση με το "
 "ευρύτερο πεδίο υπερισχύει αυτόματα."
 
-#: ../../source/manuel_eval.rst:435
+#: ../../source/manuel_eval.rst:437
 msgid ""
 "**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le "
 "panneau Eval puis y revenir retrouve la position sur laquelle on l'a "
@@ -1042,7 +1044,7 @@ msgstr ""
 "στη βάση στο μεταξύ — το πρόχειρο δεν έχει ταυτότητα θέσης και η "
 "αξιολόγησή του υπολογίζεται εκ νέου κατά την άφιξη αντί να μεταφέρεται."
 
-#: ../../source/manuel_eval.rst:444
+#: ../../source/manuel_eval.rst:446
 msgid ""
 "**Mode défi.** La case *Défi*, dans la bande d'en-tête, active un mode "
 "entraînement : à chaque modification de la position, les valeurs de trois"
@@ -1081,7 +1083,7 @@ msgstr ""
 "κάθε πλευράς, και έπειτα να αποφανθείτε για τον κύβο ή για την κίνηση που"
 " πρέπει να παιχτεί, πριν επαληθεύσετε. Η ρύθμιση απομνημονεύεται."
 
-#: ../../source/manuel_eval.rst:464
+#: ../../source/manuel_eval.rst:466
 msgid ""
 "**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : une fois "
 "l'écran d'accueil écarté, on y pose, colle (*CTRL-V*) et modifie une "
@@ -1120,7 +1122,7 @@ msgstr ""
 "την αιτία να εμφανίζεται, και η ολοκληρωμένη συνεδρία δεν καταγράφεται "
 "(το ημερολόγιο το αναφέρει). Η Διεύθυνση τουρνουά απαιτεί ανοιχτή βάση."
 
-#: ../../source/manuel_eval.rst:481
+#: ../../source/manuel_eval.rst:483
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
@@ -1128,11 +1130,11 @@ msgstr ""
 "Για να κλείσετε τον πίνακα Eval, πατήστε *CTRL-E* ή μεταβείτε σε άλλη "
 "καρτέλα."
 
-#: ../../source/manuel_eval.rst:486
+#: ../../source/manuel_eval.rst:488
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Μεθοδολογία και υποθέσεις του πίνακα Eval"
 
-#: ../../source/manuel_eval.rst:488
+#: ../../source/manuel_eval.rst:490
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
@@ -1140,7 +1142,7 @@ msgstr ""
 "Κάθε τιμή που εμφανίζεται στον πίνακα βασίζεται σε συγκεκριμένες "
 "υποθέσεις, που διατυπώνονται εδώ εξαντλητικά."
 
-#: ../../source/manuel_eval.rst:491
+#: ../../source/manuel_eval.rst:493
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -1152,7 +1154,7 @@ msgstr ""
 " στο σπίτι τους. Η θέση αποτιμάται *πριν από τη ζαριά*· τα τυχόν "
 "τοποθετημένα ζάρια αγνοούνται."
 
-#: ../../source/manuel_eval.rst:496
+#: ../../source/manuel_eval.rst:498
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -1176,7 +1178,7 @@ msgstr ""
 "γωνία του μπλοκ κούρσας («OS-08») — χωρίς αυτό θα διάβαζε κανείς «έξι» εξ"
 " ορισμού και θα πίστευε την πλευρά εντελώς μέσα."
 
-#: ../../source/manuel_eval.rst:506
+#: ../../source/manuel_eval.rst:508
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -1197,7 +1199,7 @@ msgstr ""
 "ελαχιστοποιεί τις δικές του ζαριές αγνοώντας τον αντίπαλο — αυτός είναι ο"
 " καθιερωμένος ορισμός του EPC."
 
-#: ../../source/manuel_eval.rst:515
+#: ../../source/manuel_eval.rst:517
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -1213,7 +1215,7 @@ msgstr ""
 "βέλτιστο two-sided παιχνίδι και των δύο πλευρών: καμία πρόσθετη υπόθεση, "
 "σφάλμα περιορισμένο στην κβάντιση (< 0,002 %)."
 
-#: ../../source/manuel_eval.rst:521
+#: ../../source/manuel_eval.rst:523
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -1228,7 +1230,7 @@ msgstr ""
 " διόρθωσης, βαθμονομημένης εκτός σύνδεσης έναντι της βάσης TS-06-11. "
 "Τρεις υποθέσεις:"
 
-#: ../../source/manuel_eval.rst:527
+#: ../../source/manuel_eval.rst:529
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
@@ -1236,7 +1238,7 @@ msgstr ""
 "**ανεξαρτησία** των δύο διαδικασιών εξόδου — δομική στην κούρσα, χωρίς "
 "επαφή δεν υπάρχει καμία αλληλεπίδραση·"
 
-#: ../../source/manuel_eval.rst:530
+#: ../../source/manuel_eval.rst:532
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -1249,7 +1251,7 @@ msgstr ""
 "αποτέλεσμα είναι μια αντισυμμετρική μεροληψία (η συνέλιξη υπερβάλλει το "
 "προβάδισμα του προπορευόμενου) την οποία η διόρθωση απορροφά στατιστικά·"
 
-#: ../../source/manuel_eval.rst:535
+#: ../../source/manuel_eval.rst:537
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -1264,7 +1266,7 @@ msgstr ""
 "προεκτείνεται** — η τάση είναι μονότονη αλλά κανένα oracle δεν την "
 "πιστοποιεί."
 
-#: ../../source/manuel_eval.rst:541
+#: ../../source/manuel_eval.rst:543
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -1283,7 +1285,7 @@ msgstr ""
 "ανακατασκευάζεται ακριβώς από τις αποθηκευμένες ισοδυναμίες, σύμφωνα με "
 "τον κανόνα του GNUbg, επικυρωμένο ένα προς ένα έναντι της ανάλυσής του."
 
-#: ../../source/manuel_eval.rst:549
+#: ../../source/manuel_eval.rst:551
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -1309,7 +1311,7 @@ msgstr ""
 " έναντι +0,475 στο XG). Η εμφανιζόμενη **απόφαση**, ωστόσο, συμπίπτει με "
 "εκείνη των μηχανών."
 
-#: ../../source/manuel_eval.rst:560
+#: ../../source/manuel_eval.rst:562
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -1329,7 +1331,7 @@ msgstr ""
 "μπορούσε να κάνει (βλ. παρακάτω) και επιτρέπει, μόνο αυτό από τα τρία "
 "καθεστώτα μαζί με το ακριβές, μια ετυμηγορία **στο σκορ αγώνα**."
 
-#: ../../source/manuel_eval.rst:568
+#: ../../source/manuel_eval.rst:570
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -1361,7 +1363,7 @@ msgstr ""
 "αποκλίνουν περισσότερο σε μια οριακή απόφαση — όχι ένα διάχυτο σφάλμα που"
 " θα κόστιζε ισοδυναμία παντού."
 
-#: ../../source/manuel_eval.rst:581
+#: ../../source/manuel_eval.rst:583
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -1373,7 +1375,7 @@ msgstr ""
 "επαφής δεν έχουν δημοσιευμένη μέτρηση: τα παραπάνω δεν μεταφέρονται σε "
 "αυτές τις περιπτώσεις."
 
-#: ../../source/manuel_eval.rst:585
+#: ../../source/manuel_eval.rst:587
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions à 3 plis évalue le réseau "
@@ -1398,7 +1400,7 @@ msgstr ""
 "το 0,020, το κατώφλι από το οποίο το eXtreme Gammon μιλά για σφάλμα. Ανά "
 "απόφαση, όλες οι περιπτώσεις μαζί, το κέρδος είναι 0,0000."
 
-#: ../../source/manuel_eval.rst:596
+#: ../../source/manuel_eval.rst:598
 msgid ""
 "Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans "
 "l'onglet *gammonNet* de la configuration. À 3 et 4 plis, comme dans "
@@ -1419,7 +1421,7 @@ msgstr ""
 "αναπαραγώγιμη (``TestThreePlyMeasure``) και το συμπέρασμα θα ξανακριθεί "
 "αν το δίκτυο αλλάξει."
 
-#: ../../source/manuel_eval.rst:604
+#: ../../source/manuel_eval.rst:606
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -1451,7 +1453,7 @@ msgstr ""
 "αναζήτηση που παίζει την τροχιά, όχι μια στατιστική σύνοψη, που καλύπτει "
 "αυτό το κενό."
 
-#: ../../source/manuel_eval.rst:617
+#: ../../source/manuel_eval.rst:619
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"
@@ -1462,3 +1464,4 @@ msgstr ""
 "τους υπολογίζει το ίδιο, πανομοιότυπα με το εργαλείο ``makebearoff`` του "
 "GNUbg — byte προς byte — στην καρτέλα *Bearoff* των ρυθμίσεων ή με "
 "``blunderdb bearoff generate``."
+

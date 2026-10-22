@@ -3640,9 +3640,9 @@
         "longRaces": "Carreras largas (vivo)",
         "lastRoll": "Última tirada (muerto)",
         "axisHint": "filas / columnas = puntos que faltan para ganar el partido",
+        "aggregatedHint": "Por celda: punto de toma ×2 y ×4, cada uno vivo / muerto, luego valor de gammon con cubo 1 · 2 · 4.",
         "neilFormula": "E ≃ 50 % + ventaja × Neil(n), n = puntos que le faltan a quien va detrás",
         "neilAxis": "filas = quien va delante, columnas = quien va detrás (puntos que faltan); en pequeño: diferencia con la MET",
-        "neilFallback": "Quien va delante a 1 o 2 puntos: valor de la MET",
-        "source": "Fuente"
+        "neilFallback": "Quien va delante a 1 o 2 puntos: valor de la MET"
     }
 }

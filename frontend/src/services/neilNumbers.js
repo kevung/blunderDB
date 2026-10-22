@@ -1,8 +1,6 @@
 /**
  * Les nombres de Neil Kazaross : une estimation de tête de l'équité du meneur,
  * `E ≃ 50 % + (écart de score) × Neil(n)`, où `n` est l'away du SUIVEUR.
- * Source : Kit Woolsey, « Match Equity Table », GammOnLine 1999
- * (https://bkgm.com/articles/GOL/demo/equity.htm).
  *
  * L'estimation est confrontée à la MET Kazaross-XG2 (stores/metTable) pour
  * montrer où le raccourci dévie ; elle ne vaut rien quand le meneur est à 1
@@ -79,24 +77,80 @@ export function neilEstimate(leaderAway, trailerAway) {
     return { estimate, met, gap: met == null ? null : estimate - met, fallback: false };
 }
 
-/** @type {ReadonlyArray<[number, string]>} */
-const FRACTIONS = Object.freeze([
-    [1 / 2, '½'],
-    [1 / 3, '⅓'],
-    [2 / 3, '⅔'],
-    [1 / 4, '¼'],
-    [3 / 4, '¾']
-]);
+/**
+ * Le plus grand diviseur commun de deux entiers positifs.
+ * @param {number} a
+ * @param {number} b
+ * @returns {number}
+ */
+function gcd(a, b) {
+    return b === 0 ? a : gcd(b, a % b);
+}
 
 /**
- * Un nombre de Neil comme on le dit : `3½`, `5⅔`, sinon deux décimales.
- * @param {number} value
- * @returns {string}
+ * Le nombre de Neil exact pour un suiveur à `n` points : entier + fraction
+ * irréductible (`num`/`den`, `num` = 0 si le nombre est entier), `anchor`
+ * vrai pour un point d'ancrage. `null` hors de la table (3..25).
+ * @param {number} n
+ * @returns {{ whole: number, num: number, den: number, anchor: boolean }|null}
  */
-export function formatNeilNumber(value) {
-    const whole = Math.floor(value + 1e-9);
-    const rest = value - whole;
-    if (rest < 1e-9) return String(whole);
-    const glyph = FRACTIONS.find(([f]) => Math.abs(f - rest) < 1e-6)?.[1];
-    return glyph ? `${whole}${glyph}` : value.toFixed(2);
+export function neilExact(n) {
+    if (!Number.isInteger(n)) return null;
+    for (let i = 0; i < NEIL_ANCHORS.length; i++) {
+        const [away, value] = NEIL_ANCHORS[i];
+        if (n > away) continue;
+        if (n === away) return split(Math.round(value * 2), 2, true);
+        if (i === 0) return null;
+        const [prevAway, prevValue] = NEIL_ANCHORS[i - 1];
+        // Les valeurs d'ancrage sont des demis : on calcule en demis pour rester entier.
+        const span = away - prevAway;
+        const num = Math.round(prevValue * 2) * span + (Math.round(value * 2) - Math.round(prevValue * 2)) * (n - prevAway);
+        return split(num, 2 * span, false);
+    }
+    return null;
+}
+
+/**
+ * @param {number} num
+ * @param {number} den
+ * @param {boolean} anchor
+ * @returns {{ whole: number, num: number, den: number, anchor: boolean }}
+ */
+function split(num, den, anchor) {
+    const whole = Math.floor(num / den);
+    const rest = num - whole * den;
+    const g = rest === 0 ? den : gcd(rest, den);
+    return { whole, num: rest / g, den: rest === 0 ? 1 : den / g, anchor };
+}
+
+/** @type {Readonly<Record<string, string>>} */
+const FRACTION_GLYPHS = Object.freeze({
+    '1/2': '½',
+    '1/3': '⅓',
+    '2/3': '⅔',
+    '1/4': '¼',
+    '3/4': '¾',
+    '1/5': '⅕',
+    '2/5': '⅖',
+    '3/5': '⅗',
+    '4/5': '⅘',
+    '1/6': '⅙',
+    '5/6': '⅚',
+    '1/8': '⅛',
+    '3/8': '⅜',
+    '5/8': '⅝',
+    '7/8': '⅞'
+});
+
+/**
+ * Un nombre de Neil comme on le dit : `6½`, `5⅔`, et, faute de glyphe, `3 5⁄12`.
+ * @param {number} n away du suiveur
+ * @returns {string} vide hors de la table
+ */
+export function formatNeilNumber(n) {
+    const exact = neilExact(n);
+    if (!exact) return '';
+    if (exact.num === 0) return String(exact.whole);
+    const glyph = FRACTION_GLYPHS[`${exact.num}/${exact.den}`];
+    return glyph ? `${exact.whole}${glyph}` : `${exact.whole} ${exact.num}⁄${exact.den}`;
 }

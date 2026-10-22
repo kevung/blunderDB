@@ -3640,9 +3640,9 @@
         "longRaces": "Lange Rennen (lebend)",
         "lastRoll": "Letzter Wurf (tot)",
         "axisHint": "Zeilen / Spalten = noch fehlende Punkte zum Matchgewinn",
+        "aggregatedHint": "Pro Zelle: Take-Points ×2 und ×4, je lebend / tot, dann Gammon-Wert bei Würfel 1 · 2 · 4.",
         "neilFormula": "E ≃ 50 % + Vorsprung × Neil(n), n = fehlende Punkte des Zurückliegenden",
         "neilAxis": "Zeilen = Führender, Spalten = Zurückliegender (fehlende Punkte); klein: Abweichung von der MET",
-        "neilFallback": "Führender 1 oder 2 vor Schluss: MET-Wert",
-        "source": "Quelle"
+        "neilFallback": "Führender 1 oder 2 vor Schluss: MET-Wert"
     }
 }
