@@ -1,4 +1,5 @@
 import { must } from './helpers/must.js';
+import { librariesWrittenStore } from '../stores/groupActivityStore.js';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
@@ -177,6 +178,14 @@ describe('importMultipleFiles — one reload per batch', () => {
         expect(loadAllPositions).toHaveBeenCalledTimes(1);
         expect(outcome).toBeNull();
         expect(get(activeTabStore)).toBe('matches');
+    });
+});
+
+describe('an import that ends on screen', () => {
+    test('says the library was written: what the screen shows of the other libraries reads them again', async () => {
+        const written = get(librariesWrittenStore);
+        await importMultipleFiles([txtFile('a')]);
+        expect(get(librariesWrittenStore)).toBe(written + 1);
     });
 });
 

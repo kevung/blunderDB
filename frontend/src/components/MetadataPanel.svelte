@@ -22,13 +22,14 @@
 
     async function loadMetadata() {
         try {
-            const metadata = await LoadMetadata();
+            const metadata = await readOfLibrary(() => LoadMetadata());
             user = metadata.user || '';
             description = metadata.description || '';
             dateOfCreation = metadata.dateOfCreation || '';
             databaseVersion = metadata.database_version || '';
             loaded = true;
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading metadata:', error);
         }
         try {

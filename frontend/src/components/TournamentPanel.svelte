@@ -252,9 +252,10 @@
         sheetMatchId = null;
         if (!selectedTournament) return;
         try {
-            tournamentMatchesStore.set((await GetTournamentMatches(selectedTournament.id)) || []);
+            tournamentMatchesStore.set((await readOfLibrary(() => GetTournamentMatches(selectedTournament.id))) || []);
             await loadTournaments();
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error reloading tournament matches:', error);
         }
     }
@@ -381,9 +382,10 @@
         addMatchSearch = '';
         await loadAllMatches();
         try {
-            const matches = await GetTournamentMatches(tournament.id);
+            const matches = await readOfLibrary(() => GetTournamentMatches(tournament.id));
             tournamentMatchesStore.set(matches || []);
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error loading tournament matches:', error);
         }
     }
@@ -474,11 +476,12 @@
         if (!selectedTournament) return;
         try {
             await AddMatchToTournament(selectedTournament.id, matchId);
-            const matches = await GetTournamentMatches(selectedTournament.id);
+            const matches = await readOfLibrary(() => GetTournamentMatches(selectedTournament.id));
             tournamentMatchesStore.set(matches || []);
             await loadTournaments();
             await loadAllMatches();
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error adding match:', error);
         }
     }
@@ -488,10 +491,11 @@
         if (!selectedTournament) return;
         try {
             await RemoveMatchFromTournament(matchId);
-            const matches = await GetTournamentMatches(selectedTournament.id);
+            const matches = await readOfLibrary(() => GetTournamentMatches(selectedTournament.id));
             tournamentMatchesStore.set(matches || []);
             await loadTournaments();
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error removing match:', error);
         }
     }
@@ -515,7 +519,7 @@
             sheetVersion += 1;
             // Reload tournament matches
             if (selectedTournament) {
-                const matches = await GetTournamentMatches(selectedTournament.id);
+                const matches = await readOfLibrary(() => GetTournamentMatches(selectedTournament.id));
                 tournamentMatchesStore.set(matches || []);
             }
 
@@ -539,6 +543,7 @@
 
             statusBarTextStore.set(tMsg('tournament.swappedPlayers'));
         } catch (error) {
+            if (isLibraryLeft(error)) return;
             logger.error('Error swapping match players:', error);
             statusBarTextStore.set(tMsg(swapPlayersErrorKey(error, 'tournament.errorSwapping')));
         }

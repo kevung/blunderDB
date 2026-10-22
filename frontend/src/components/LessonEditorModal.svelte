@@ -19,6 +19,7 @@
     import { untrack } from 'svelte';
     import { lessonEditorTargetStore } from '../stores/lessonStore.js';
     import { dbMutationCounterStore } from '../stores/uiStore.js';
+    import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
     import { positionStore } from '../stores/positionStore.js';
     import { openLesson, refreshOpenLesson } from '../services/lessonService.js';
     import { exportLessonHTML } from '../services/lessonHtmlService.js';
@@ -52,9 +53,9 @@
         untrack(() => {
             if (!visible) return;
             void loadLessons();
-            GetAllCollections()
+            readOfLibrary(() => GetAllCollections())
                 .then((c) => (collections = c || []))
-                .catch((e) => logger.error('could not list the collections:', e));
+                .catch((e) => isLibraryLeft(e) || logger.error('could not list the collections:', e));
         });
     });
 
@@ -62,8 +63,9 @@
         error = '';
         await loadLessons();
         try {
-            collections = (await GetAllCollections()) || [];
+            collections = (await readOfLibrary(() => GetAllCollections())) || [];
         } catch (e) {
+            if (isLibraryLeft(e)) return;
             logger.error('could not list the collections:', e);
             collections = [];
         }
@@ -74,8 +76,9 @@
 
     async function loadLessons() {
         try {
-            lessons = (await ListLessons()) || [];
+            lessons = (await readOfLibrary(() => ListLessons())) || [];
         } catch (e) {
+            if (isLibraryLeft(e)) return;
             fail(e);
         }
     }
@@ -94,11 +97,12 @@
             return;
         }
         try {
-            const lesson = await GetLesson(id);
+            const lesson = await readOfLibrary(() => GetLesson(id));
             name = lesson.name;
             description = lesson.description;
             steps = (lesson.steps || []).map((s) => ({ ...s, dirty: false }));
         } catch (e) {
+            if (isLibraryLeft(e)) return;
             fail(e);
         }
     }

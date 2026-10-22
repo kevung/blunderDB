@@ -48,7 +48,7 @@ import { openMatchInPanel } from './positionLoader.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, pastePositionTextStore, matchContextStore, clipboardPositionStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
-import { currentPositionIndexStore, statusBarModeStore, commentTextStore, openPanel, PANEL, activeTabStore, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarModeStore, commentTextStore, openPanel, PANEL, activeTabStore } from '../stores/uiStore.js';
 import {
     showImportProgressModalStore,
     importModalModeStore,
@@ -574,8 +574,7 @@ async function importSingleFileCore(filePath) {
         try {
             const matchID = await ImportXGMatch(filePath);
             setStatusBarMessage(tMsg('status.xgMatchImported', { matchID }));
-            matchPanelRefreshTriggerStore.update((n) => n + 1);
-            dbMutationCounterStore.update((n) => n + 1);
+            libraryWritten(null);
             await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
@@ -595,8 +594,7 @@ async function importSingleFileCore(filePath) {
         try {
             const matchID = await ImportOGXMMatch(filePath);
             setStatusBarMessage(tMsg('status.ogxmMatchImported', { matchID }));
-            matchPanelRefreshTriggerStore.update((n) => n + 1);
-            dbMutationCounterStore.update((n) => n + 1);
+            libraryWritten(null);
             await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
@@ -616,8 +614,7 @@ async function importSingleFileCore(filePath) {
         try {
             const matchID = await ImportBGFMatch(filePath);
             setStatusBarMessage(tMsg('status.bgblitzMatchImported', { matchID }));
-            matchPanelRefreshTriggerStore.update((n) => n + 1);
-            dbMutationCounterStore.update((n) => n + 1);
+            libraryWritten(null);
             await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
@@ -638,8 +635,7 @@ async function importSingleFileCore(filePath) {
         try {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(tMsg('status.matchImported', { formatName, matchID }));
-            matchPanelRefreshTriggerStore.update((n) => n + 1);
-            dbMutationCounterStore.update((n) => n + 1);
+            libraryWritten(null);
             await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
@@ -678,8 +674,7 @@ async function importTxtFile(filePath) {
         try {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(tMsg('status.jellyfishMatchImported', { matchID }));
-            matchPanelRefreshTriggerStore.update((n) => n + 1);
-            dbMutationCounterStore.update((n) => n + 1);
+            libraryWritten(null);
             await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');
@@ -1145,10 +1140,8 @@ async function runFileImport(files, { quiet = false, resumeBatchID = 0 } = {}) {
         RefreshSearchStatistics();
     }
 
-    if (hadMatches) {
-        matchPanelRefreshTriggerStore.update((n) => n + 1);
-        dbMutationCounterStore.update((n) => n + 1);
-    }
+    // The one place that tells the panels, the counts and what is shown of the other libraries.
+    if (hadMatches || results.succeeded > 0) libraryWritten(group);
     // A quiet import leaves mode, search, tab and current position alone:
     // reloading the list would reset all four.
     if (!quiet) await reloadPositions();
@@ -1235,8 +1228,7 @@ async function pastePositionCore() {
         try {
             const matchID = await ImportGnuBGMatchFromText(result);
             setStatusBarMessage(tMsg('status.clipboardMatchImported', { matchID }));
-            matchPanelRefreshTriggerStore.update((n) => n + 1);
-            dbMutationCounterStore.update((n) => n + 1);
+            libraryWritten(null);
             await reloadPositions();
             openPanel(PANEL.MATCH);
             activeTabStore.set('matches');

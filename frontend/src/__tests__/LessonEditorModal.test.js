@@ -29,6 +29,7 @@ vi.mock('../services/confirmService.js', async (importOriginal) => ({ ...(await 
 import LessonEditorModal from '../components/LessonEditorModal.svelte';
 import { lessonEditorTargetStore } from '../stores/lessonStore.js';
 import { dbMutationCounterStore } from '../stores/uiStore.js';
+import { libraryReplaced } from '../stores/groupActivityStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { must } from './helpers/must.js';
 
@@ -105,5 +106,19 @@ describe('a write to the library while the editor is open', () => {
         expect(api.ListLessons).not.toHaveBeenCalled();
         dbMutationCounterStore.update((n) => n + 1);
         await waitFor(() => expect(api.ListLessons).toHaveBeenCalledTimes(1));
+    });
+
+    test('a list of the library left is not shown in the one coming', async () => {
+        const { container } = render(LessonEditorModal, { props: { visible: true, onClose: () => {} } });
+        await waitFor(() => expect(container.textContent).toContain('Primes'));
+        /** @type {(v: unknown) => void} */
+        let answer = () => {};
+        api.ListLessons.mockImplementationOnce(() => new Promise((r) => (answer = r)));
+        dbMutationCounterStore.update((n) => n + 1);
+        await waitFor(() => expect(api.ListLessons).toHaveBeenCalledTimes(2));
+        libraryReplaced();
+        answer([{ id: 9, name: 'Of the library left', stepCount: 0 }]);
+        await new Promise((r) => setTimeout(r, 20));
+        expect(container.textContent).not.toContain('Of the library left');
     });
 });
