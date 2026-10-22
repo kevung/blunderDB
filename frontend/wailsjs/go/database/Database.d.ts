@@ -246,6 +246,10 @@ export function DiscardFromTrash(arg1:number):Promise<void>;
 
 export function DuelOffer():Promise<database.DuelOffer>;
 
+export function EachLibraryMove(arg1:any):Promise<void>;
+
+export function EachPositionAnalysis(arg1:any):Promise<void>;
+
 export function EditMatchTranscription(arg1:number):Promise<database.TranscriptionState>;
 
 export function EmptyTrash(arg1:number):Promise<number>;
@@ -373,6 +377,8 @@ export function GetPositionIDsByStatsSelection(arg1:database.StatsFilter,arg2:da
 export function GetPositionIDsByTournament(arg1:number):Promise<Array<number>>;
 
 export function GetPositionIndexMap():Promise<Record<number, number>>;
+
+export function GetPositionMatchMoves(arg1:number):Promise<Array<domain.PositionMove>>;
 
 export function GetPositionProvenance(arg1:number):Promise<Array<domain.Match>>;
 

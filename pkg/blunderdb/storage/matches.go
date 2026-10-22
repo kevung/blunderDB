@@ -90,6 +90,12 @@ type MatchStore interface {
 	// an empty slice; a position of another tenant is unknown.
 	MatchesByPosition(ctx context.Context, scope string, positionID int64) ([]int64, error)
 
+	// MovesByPosition returns every move recorded on the position, by match id,
+	// then game number, then move number: where each match plays it. A position
+	// no match mentions, or an unknown id, gives an empty slice; a position of
+	// another tenant is unknown.
+	MovesByPosition(ctx context.Context, scope string, positionID int64) ([]domain.PositionMove, error)
+
 	// SetDiceHash stores a match's dice_hash, computed after the fact for a
 	// match imported before the column existed.
 	SetDiceHash(ctx context.Context, scope string, id int64, hash string) error

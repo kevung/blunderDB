@@ -33,8 +33,9 @@ export const commandPaletteOpenStore = writable(false);
 export const commandPaletteScopeStore = writable(null);
 
 // A match someone asked to open from outside the match panel (the command
-// palette): its id, until MatchPanel has loaded its list and opened it.
-/** @type {import('svelte/store').Writable<number | null>} */
+// palette): its id, until MatchPanel has loaded its list and opened it. A request that
+// names a move (`moveId`) opens the match on that move rather than where it was left.
+/** @type {import('svelte/store').Writable<number | { id: number, moveId?: number } | null>} */
 export const matchOpenRequestStore = writable(null);
 
 export const currentPositionIndexStore = writable(0);

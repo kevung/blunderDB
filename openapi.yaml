@@ -4678,6 +4678,23 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Move"
                 nullable: true
+  /v1/matches.movesByPosition:
+    post:
+      operationId: matches.movesByPosition
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/movesByPositionResp"
   /v1/matches.origin:
     post:
       operationId: matches.origin
@@ -8838,6 +8855,9 @@ components:
     domain_PositionAnalysis:
       type: object
       description: "Opaque: see the Go type domain.PositionAnalysis (defined outside internal/server, not expanded here)."
+    domain_PositionMove:
+      type: object
+      description: "Opaque: see the Go type domain.PositionMove (defined outside internal/server, not expanded here)."
     domain_RolloutAnalysis:
       type: object
       description: "Opaque: see the Go type domain.RolloutAnalysis (defined outside internal/server, not expanded here)."
@@ -9355,6 +9375,13 @@ components:
         move:
           $ref: "#/components/schemas/domain_Move"
           nullable: true
+    movesByPositionResp:
+      type: object
+      properties:
+        moves:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_PositionMove"
     ogidReq:
       type: object
       properties:

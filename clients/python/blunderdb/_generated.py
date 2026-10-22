@@ -862,6 +862,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/matches.movesByMatch — NDJSON stream."
         return self._stream("/v1/matches.movesByMatch", payload)
 
+    def matches_moves_by_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.movesByPosition — JSON."
+        return self._call("/v1/matches.movesByPosition", payload)
+
     def matches_origin(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.origin — JSON."
         return self._call("/v1/matches.origin", payload)

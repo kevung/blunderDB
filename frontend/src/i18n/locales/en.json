@@ -1771,7 +1771,9 @@
         "boardImageSaved": "Image saved: {path}",
         "boardImageSaveFailed": "The image could not be saved: {err}",
         "pileError": "Pile: error",
-        "xgidCopied": "XGID copied to the clipboard"
+        "xgidCopied": "XGID copied to the clipboard",
+        "gnubgIdCopied": "GNUbg ID copied to the clipboard",
+        "noMatchForPosition": "No match has played this position"
     },
     "stats": {
         "title": "Stats",
@@ -3660,12 +3662,14 @@
         },
         "copyImage": "Copy the image",
         "copyXGID": "Copy the XGID",
+        "copyGnubgID": "Copy the GNUbg ID",
         "copyPositionText": "Copy the position as text",
         "comment": "Comment",
         "addTag": "Add a #tag…",
         "markStudied": "Mark as seen",
         "unmarkStudied": "Unmark",
         "sameStructure": "Positions with the same structure",
+        "openMatchAtMove": "Open the match at this move",
         "rolloutFast": "Fast rollout",
         "rolloutStandard": "Standard rollout",
         "challenge": "Challenge on this position",

@@ -68,6 +68,7 @@ export const CATALOG = {
         { id: 'copyImage', label: 'actions.copyImage', group: 'copy', top: true, shortcut: 'Ctrl+X' },
 
         { id: 'copyXGID', label: 'actions.copyXGID', group: 'copy' },
+        { id: 'copyGnubgID', label: 'actions.copyGnubgID', group: 'copy' },
         { id: 'copyPositionText', label: 'actions.copyPositionText', group: 'copy', shortcut: 'Ctrl+C' },
         { id: 'copyImageWithAnalysis', label: 'board.menu.copyImageWithAnalysis', group: 'copy', when: notSearch },
         { id: 'saveImageSVG', label: 'board.menu.saveImageSVG', group: 'copy' },
@@ -80,6 +81,7 @@ export const CATALOG = {
 
         { id: 'neighbours', label: 'board.menu.neighbours', group: 'navigate', when: stored },
         { id: 'sameStructure', label: 'actions.sameStructure', group: 'navigate', when: (c) => c.mode === 'NORMAL' && !!c.dbOpen },
+        { id: 'openMatchAtMove', label: 'actions.openMatchAtMove', group: 'navigate', when: (c) => stored(c) && c.mode !== 'MATCH' },
         { id: 'newView', label: 'board.menu.newView', group: 'navigate', when: (c) => !SCRATCH.includes(c.mode ?? '') },
 
         { id: 'evaluateMirror', label: 'board.menu.evaluateMirror', group: 'analyze', when: notSearch },

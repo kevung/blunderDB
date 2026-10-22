@@ -1403,6 +1403,27 @@ func (s *matchStore) MatchesByPosition(ctx context.Context, scope string, positi
 	return out, rows.Err()
 }
 
+// MovesByPosition lists the moves played on the position — see
+// storage.MatchStore.
+func (s *matchStore) MovesByPosition(ctx context.Context, scope string, positionID int64) ([]domain.PositionMove, error) {
+	rows, err := s.db.QueryContext(ctx, `SELECT g.match_id, mv.game_id, COALESCE(g.game_number,0), COALESCE(mv.move_number,0), mv.id
+		 FROM move mv JOIN game g ON g.id = mv.game_id
+		 WHERE mv.position_id = ? ORDER BY g.match_id, g.game_number, mv.move_number, mv.id`, positionID)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: moves by position %d: %w", positionID, err)
+	}
+	defer rows.Close()
+	out := []domain.PositionMove{}
+	for rows.Next() {
+		var m domain.PositionMove
+		if err := rows.Scan(&m.MatchID, &m.GameID, &m.GameNumber, &m.MoveNumber, &m.MoveID); err != nil {
+			return nil, fmt.Errorf("sqlite: moves by position %d: %w", positionID, err)
+		}
+		out = append(out, m)
+	}
+	return out, rows.Err()
+}
+
 // SetDiceHash stores a match's dice_hash — see storage.MatchStore.
 func (s *matchStore) SetDiceHash(ctx context.Context, scope string, id int64, hash string) error {
 	if _, err := s.db.ExecContext(ctx, `UPDATE match SET dice_hash = ? WHERE id = ?`, nullableString(hash), id); err != nil {

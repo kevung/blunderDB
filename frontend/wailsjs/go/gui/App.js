@@ -158,6 +158,10 @@ export function GetTournamentDisplayStatus() {
   return window['go']['gui']['App']['GetTournamentDisplayStatus']();
 }
 
+export function GnubgID(arg1) {
+  return window['go']['gui']['App']['GnubgID'](arg1);
+}
+
 export function HelpBundle(arg1) {
   return window['go']['gui']['App']['HelpBundle'](arg1);
 }

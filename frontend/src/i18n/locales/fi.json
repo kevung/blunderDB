@@ -1771,7 +1771,9 @@
         "boardImageSaved": "Kuva tallennettu: {path}",
         "boardImageSaveFailed": "Kuvaa ei voitu tallentaa: {err}",
         "pileError": "Pino: virhe",
-        "xgidCopied": "XGID kopioitu leikepöydälle"
+        "xgidCopied": "XGID kopioitu leikepöydälle",
+        "gnubgIdCopied": "GNUbg-tunnus kopioitu leikepöydälle",
+        "noMatchForPosition": "Mikään ottelu ei ole pelannut tätä asemaa"
     },
     "stats": {
         "title": "Tilastot",
@@ -3660,12 +3662,14 @@
         },
         "copyImage": "Kopioi kuva",
         "copyXGID": "Kopioi XGID",
+        "copyGnubgID": "Kopioi GNUbg-tunnus",
         "copyPositionText": "Kopioi asema tekstinä",
         "comment": "Kommentoi",
         "addTag": "Lisää #tunniste…",
         "markStudied": "Merkitse nähdyksi",
         "unmarkStudied": "Poista merkintä",
         "sameStructure": "Saman rakenteen asemat",
+        "openMatchAtMove": "Avaa ottelu tästä siirrosta",
         "rolloutFast": "Nopea rollout",
         "rolloutStandard": "Tavallinen rollout",
         "challenge": "Haaste tästä asemasta",

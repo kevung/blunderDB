@@ -900,7 +900,8 @@
             matchOpenRequestStore.set(null);
             // Held while the match is fetched: the list's own reselect must not run meanwhile.
             openingRequested = true;
-            findMatch(requested)
+            const target = typeof requested === 'object' ? requested : { id: requested };
+            findMatch(target.id)
                 .then(async (match) => {
                     if (!match) {
                         statusBarTextStore.set(tMsg('palette.matchGone'));
@@ -908,7 +909,9 @@
                     }
                     selectedMatch = match;
                     await loadMatchDetail(match);
-                    await enterMatchMode(match);
+                    const moveIndex = target.moveId ? detailMovePositions.findIndex((mp) => mp.move_id === target.moveId) : -1;
+                    if (moveIndex >= 0) await jumpToMove(moveIndex);
+                    else await enterMatchMode(match);
                 })
                 .finally(() => (openingRequested = false));
         });

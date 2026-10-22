@@ -1177,6 +1177,16 @@ type MatchMovePosition struct {
 	TickMS     *int64 `json:"tick_ms,omitempty"`
 }
 
+// PositionMove is one move of a match played on a position: where the match
+// shows it, so that a caller can open the match at that move.
+type PositionMove struct {
+	MatchID    int64 `json:"match_id"`
+	GameID     int64 `json:"game_id"`
+	GameNumber int32 `json:"game_number"`
+	MoveNumber int32 `json:"move_number"`
+	MoveID     int64 `json:"move_id"`
+}
+
 // IssuerIdentityInfo describes this machine's signing identity, as displayed in the
 // settings. Present is false until the identity exists — it is created on the first
 // watermarked export, or when the user explicitly asks to save it.

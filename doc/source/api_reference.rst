@@ -240,6 +240,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.movePositions                NDJSON
      POST /v1/matches.moves                        NDJSON
      POST /v1/matches.movesByMatch                 NDJSON
+     POST /v1/matches.movesByPosition              JSON
      POST /v1/matches.origin                       JSON
      POST /v1/matches.repair                       custom
      POST /v1/matches.save                         JSON

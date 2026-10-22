@@ -1771,7 +1771,9 @@
         "boardImageSaved": "Imagen guardada: {path}",
         "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}",
         "pileError": "Pila: error",
-        "xgidCopied": "XGID copiado al portapapeles"
+        "xgidCopied": "XGID copiado al portapapeles",
+        "gnubgIdCopied": "ID GNUbg copiado al portapapeles",
+        "noMatchForPosition": "Ningún match ha jugado esta posición"
     },
     "stats": {
         "title": "Stats",
@@ -3660,12 +3662,14 @@
         },
         "copyImage": "Copiar la imagen",
         "copyXGID": "Copiar el XGID",
+        "copyGnubgID": "Copiar el ID GNUbg",
         "copyPositionText": "Copiar la posición como texto",
         "comment": "Comentar",
         "addTag": "Añadir una etiqueta #…",
         "markStudied": "Marcar como vista",
         "unmarkStudied": "Desmarcar",
         "sameStructure": "Posiciones de la misma estructura",
+        "openMatchAtMove": "Abrir el match en esta jugada",
         "rolloutFast": "Rollout rápido",
         "rolloutStandard": "Rollout estándar",
         "challenge": "Desafío sobre esta posición",
