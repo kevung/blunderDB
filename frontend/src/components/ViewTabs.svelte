@@ -1,5 +1,6 @@
 <script>
     import { viewStore } from '../stores/viewStore';
+    import { toCssPx } from '../utils/uiZoom.js';
     import { tabGroupsStore, activateGroup, closeGroup, groupActivityStore, moveGroupView, moveGroup } from '../stores/libraryGroupStore.js';
     import { transferBasketStore, lockedGroupsStore } from '../stores/transferBasketStore.js';
     import { libraryDrag } from '../utils/libraryDrag.js';
@@ -108,12 +109,26 @@
         }
     }
 
+    /**
+     * Scrolls the tab row, and only it, until the element is in sight (scrollIntoView would also
+     * move every scrollable ancestor).
+     * @param {Element | null | undefined} el
+     */
+    function reveal(el) {
+        if (!tabList || !el) return;
+        const row = tabList.getBoundingClientRect();
+        const box = el.getBoundingClientRect();
+        // Window pixels against the zoomed UI: scrollLeft counts CSS pixels of the list.
+        if (box.left < row.left) tabList.scrollLeft += toCssPx(box.left - row.left);
+        else if (box.right > row.right) tabList.scrollLeft += toCssPx(box.right - row.right);
+    }
+
     $effect(() => {
         void $activeViewId;
         void $tabGroupsStore;
         // The "+" follows the active group's last tab: kept in sight first, so the active tab wins when both cannot fit.
-        tabList?.querySelector('.add-btn')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
-        tabList?.querySelector('.view-tab.active')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+        reveal(tabList?.querySelector('.add-btn'));
+        reveal(tabList?.querySelector('.view-tab.active'));
     });
 
     /**
@@ -448,8 +463,11 @@
         border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
         height: 26px;
-        overflow-x: auto;
-        overflow-y: hidden;
+        /* Visible: the tools' dropdown menus hang below the bar and must not be clipped by it; the
+           tab row clips and scrolls itself, in .view-tab-list. */
+        overflow: visible;
+        position: relative;
+        z-index: 12;
         gap: 0;
         padding-left: 4px;
         /* The labels are controls, not text to copy. */
@@ -477,11 +495,14 @@
         align-items: stretch;
         min-width: 0;
         flex: 0 1 auto;
+        /* Even narrower than its two arrows, it never paints over the tools. */
+        overflow: hidden;
     }
     .tab-clip {
         position: relative;
         display: flex;
         min-width: 0;
+        overflow: hidden;
     }
     /* Fade on the edge where tabs are hidden; it lets clicks through. */
     .fade {

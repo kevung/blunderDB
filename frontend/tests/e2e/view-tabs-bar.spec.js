@@ -231,3 +231,69 @@ test('an overflowing row shows arrows and fades, shrinks tabs to a minimum, and 
     await expect(page.getByTestId('library-group').nth(0)).toHaveClass(/active/);
     await expect(page.locator('.view-tab.active')).toBeInViewport();
 });
+
+const barCases = [
+    [1024, 1],
+    [1366, 1],
+    [1920, 1],
+    [1024, 0.6],
+    [1024, 0.8],
+    [1024, 1.25],
+    [1024, 1.5]
+];
+for (const [width, zoom] of barCases) {
+    test(`with 30 tabs on two groups the tab row never overlaps the tools (${width}px, zoom ${zoom})`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 700 });
+        await openTwoGroups(page);
+        await page.evaluate((z) => document.documentElement.style.setProperty('--ui-scale', String(z)), zoom);
+        for (let i = 0; i < 29; i++) await page.locator('.view-tabs .add-btn').click();
+
+        const rects = await page.evaluate(() => {
+            const r = (el) => {
+                const b = el.getBoundingClientRect();
+                return { left: b.left, right: b.right, width: b.width };
+            };
+            const q = (s) => r(document.querySelector(s));
+            return {
+                tools: q('.view-tab-tools'),
+                scroller: q('.tab-scroller'),
+                list: q('.view-tab-list'),
+                add: q('.view-tab-list .add-btn'),
+                active: q('.view-tab.active'),
+                arrows: [...document.querySelectorAll('.scroll-btn')].map(r)
+            };
+        });
+        const edge = rects.tools.left + 0.5;
+        expect(rects.tools.width).toBeGreaterThan(0);
+        expect(rects.scroller.right).toBeLessThanOrEqual(edge);
+        expect(rects.list.right).toBeLessThanOrEqual(edge);
+        for (const a of rects.arrows) expect(a.right).toBeLessThanOrEqual(edge);
+        // The "+" and the active tab are fully inside the scrolling row, hence left of the tools.
+        for (const el of [rects.add, rects.active]) {
+            expect(el.left).toBeGreaterThanOrEqual(rects.list.left - 1);
+            expect(el.right).toBeLessThanOrEqual(rects.list.right + 1);
+        }
+        await expect(page.getByTestId('tabs-scroll-right')).toBeVisible();
+        await expect(page.getByTestId('tabs-scroll-left')).toBeVisible();
+    });
+}
+
+test('the all-views menu opens visible, not clipped by the bar, and stays open', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await openTwoGroups(page);
+    for (let i = 0; i < 12; i++) await page.locator('.add-btn').click();
+    await page.getByTestId('all-views').click();
+    const menu = page.getByTestId('all-views-menu');
+    await expect(menu).toBeVisible();
+    const hit = await menu.evaluate((el) => {
+        const b = el.getBoundingClientRect();
+        const top = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+        const bottom = document.elementFromPoint(b.left + b.width / 2, b.bottom - 4);
+        return { inMenu: !!top && el.contains(top), bottomInMenu: !!bottom && el.contains(bottom), height: b.height };
+    });
+    expect(hit.height).toBeGreaterThan(40);
+    expect(hit.inMenu).toBe(true);
+    expect(hit.bottomInMenu).toBe(true);
+    await page.waitForTimeout(400);
+    await expect(menu).toBeVisible();
+});
