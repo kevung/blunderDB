@@ -53,7 +53,7 @@
     import { directionFullscreenKey } from '../services/directionFullscreen.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
-    import { commentTextStore } from '../stores/uiStore';
+    import { commentTextStore, dbMutationCounterStore } from '../stores/uiStore';
     import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
     import { maintenanceStore, maintenanceEndedStore, STATS_MATCHES } from '../stores/maintenanceStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
@@ -741,6 +741,15 @@
         if ($libraryChangedStore === libraryAtMount) return;
         untrack(() => {
             refreshDirectionSummaries();
+            if ($openPanels.has(PANEL.TOURNAMENT) && $databaseLoadedStore) loadTournaments();
+        });
+    });
+
+    // A write to the library (a copy, an import, a restore) may have added or changed one.
+    const mutationAtMount = untrack(() => $dbMutationCounterStore);
+    $effect(() => {
+        if ($dbMutationCounterStore === mutationAtMount) return;
+        untrack(() => {
             if ($openPanels.has(PANEL.TOURNAMENT) && $databaseLoadedStore) loadTournaments();
         });
     });

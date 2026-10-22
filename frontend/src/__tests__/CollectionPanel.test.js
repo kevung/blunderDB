@@ -64,7 +64,7 @@ function serveOnce(ids) {
 
 import CollectionPanel from '../components/CollectionPanel.svelte';
 import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore.js';
-import { openPanels, PANEL, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore.js';
+import { openPanels, PANEL, statusBarTextStore, statusBarModeStore, currentPositionIndexStore, dbMutationCounterStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore } from '../stores/positionStore.js';
 
@@ -396,5 +396,15 @@ describe('CollectionPanel — keyboard shortcuts', () => {
 
         expect(confirmAction).toHaveBeenCalled();
         expect(RemovePositionFromCollection).toHaveBeenCalledWith(1, 202);
+    });
+});
+
+describe('CollectionPanel — a write to the library', () => {
+    test('reads the collections again: a copy or an import may have added one', async () => {
+        render(CollectionPanel, { props: {} });
+        expect(await screen.findByText('Backgames')).toBeTruthy();
+        vi.mocked(GetAllCollections).mockClear();
+        dbMutationCounterStore.update((n) => n + 1);
+        await vi.waitFor(() => expect(GetAllCollections).toHaveBeenCalledTimes(1));
     });
 });

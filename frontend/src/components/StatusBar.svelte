@@ -14,7 +14,7 @@
     import { transcriptionResumeStore, refreshTranscriptionResume, resumeTranscriptionAnalysis, dismissTranscriptionResume } from '../services/transcriptionSave.js';
     import { transcriptionPromptStore, transcriptionNoticeStore } from '../stores/transcriptionStore.js';
     import { showFileImportModalStore, fileImportModeStore, fileImportMinimizedStore, fileImportProgressStore, fileImportGroupStore } from '../stores/importModalStore.js';
-    import { activeGroupId, noteGroupJob } from '../stores/groupActivityStore.js';
+    import { activeGroupId, noteGroupJob, libraryWritten } from '../stores/groupActivityStore.js';
     import { positionsStore, matchContextStore, positionStore as boardPositionStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
@@ -177,6 +177,8 @@
             gammonNetBatchStore.set(null);
             const message = tMsg('eval.batchDone', summary ?? { evaluated: 0, refused: 0, failed: 0 });
             if (noteGroupJob(summary?.group, 'done', 'batch', message)) statusBarTextStore.set(message);
+            // The analyses written move the errors, the PR and the statistics of the library.
+            if (summary?.evaluated) libraryWritten(summary.group);
         }),
         EventsOn('gammonnet-batch:cancelled', () => gammonNetBatchStore.set(null)),
         // An automatic batch queued behind the job writing the library says so until it starts.

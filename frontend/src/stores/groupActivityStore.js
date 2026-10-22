@@ -2,7 +2,6 @@
 // Apart from libraryGroupStore so that a job's service can name its group without loading the
 // group machinery (the photographs, the scoped stores).
 import { writable, get } from 'svelte/store';
-import { libraryChanged } from './databaseStore.js';
 import { matchPanelRefreshTriggerStore, dbMutationCounterStore } from './uiStore.js';
 import { refreshLibraryCounts } from './libraryCountsStore.js';
 import { elsewhereStore, idleElsewhere } from './elsewhereStore.js';
@@ -137,9 +136,11 @@ export function noteGroupJob(group, state, job, message = null) {
  */
 export const librariesWrittenStore = writable(0);
 
-/** Every panel listing the library on screen reads it again. */
+/**
+ * Every panel listing the library on screen reads it again. Not libraryChanged: that one says
+ * another library came, and its panels drop what they hold (a field being edited, a review).
+ */
 function readOnScreenAgain() {
-    libraryChanged();
     matchPanelRefreshTriggerStore.update((n) => n + 1);
     dbMutationCounterStore.update((n) => n + 1);
     refreshLibraryCounts();

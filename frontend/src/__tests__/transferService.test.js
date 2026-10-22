@@ -20,7 +20,7 @@ import { groupIdsStore, activeGroupId, groupActivityStore, takeActivity, groupSw
 import { matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
 import { elsewhereStore } from '../stores/elsewhereStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
-import { databasePathStore, libraryChangedStore } from '../stores/databaseStore.js';
+import { databasePathStore } from '../stores/databaseStore.js';
 import { batchesOf, transferToGroup, toggleBasket, pourBasket, toggleGroupLock, dropTransferItem, addToBasket, undoPaneCopy } from '../services/transferService.js';
 
 const done = { receipt: 0, group: 2, positions: 1, matches: 1, tournaments: 0, alreadyHeld: 0, collections: 0, lessons: 0, errors: [], cancelled: false };
@@ -213,12 +213,10 @@ describe('a copy tells every panel of the base it wrote', () => {
         activeGroupId.set(2);
         const matches = get(matchPanelRefreshTriggerStore);
         const mutations = get(dbMutationCounterStore);
-        const library = get(libraryChangedStore);
         answer.resolve(done);
         await copy;
         expect(get(matchPanelRefreshTriggerStore)).toBe(matches + 1);
         expect(get(dbMutationCounterStore)).toBe(mutations + 1);
-        expect(get(libraryChangedStore)).toBe(library + 1);
     });
 
     it('a copy ending during a switch away from its base marks the base to read again', async () => {

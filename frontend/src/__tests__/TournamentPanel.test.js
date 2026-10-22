@@ -64,7 +64,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
-import { openPanels, PANEL, statusBarTextStore } from '../stores/uiStore.js';
+import { openPanels, PANEL, statusBarTextStore, dbMutationCounterStore } from '../stores/uiStore.js';
 import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
@@ -553,5 +553,15 @@ describe('TournamentPanel — filter', () => {
         } finally {
             tournamentIDsFilterStore.set(null);
         }
+    });
+});
+
+describe('a write to the library', () => {
+    test('reads the tournaments again: a copy or an import may have added one', async () => {
+        renderOpen();
+        await vi.waitFor(() => expect(GetAllTournaments).toHaveBeenCalled());
+        vi.mocked(GetAllTournaments).mockClear();
+        dbMutationCounterStore.update((n) => n + 1);
+        await vi.waitFor(() => expect(GetAllTournaments).toHaveBeenCalledTimes(1));
     });
 });

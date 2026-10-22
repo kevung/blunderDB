@@ -9,7 +9,7 @@
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { autofocus } from '../utils/autofocus.js';
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
-    import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
+    import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore, dbMutationCounterStore } from '../stores/uiStore';
     import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
     import { positionStore, positionsStore, collectionSource } from '../stores/positionStore';
     import { analysisStore } from '../stores/analysisStore';
@@ -215,8 +215,10 @@
     });
 
     // Load collections when a library becomes available, and again when another takes its place
+    // and after a write to it (a copy, an import, a restore).
     $effect(() => {
         void $libraryChangedStore;
+        void $dbMutationCounterStore;
         if ($databaseLoadedStore) {
             loadCollections();
             loadPositionIndexMap();
