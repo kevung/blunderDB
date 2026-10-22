@@ -58,6 +58,7 @@ function makePosition(id, bearoff = [3, 3]) {
 // Fresh modules per test: viewStore and the machine's slots are singletons.
 async function setup(index = 1) {
     vi.resetModules();
+    await (await import('../i18n')).initLanguage('en');
     const ui = await import('../stores/uiStore.js');
     const ps = await import('../stores/positionStore.js');
     const { viewStore } = await import('../stores/viewStore.js');

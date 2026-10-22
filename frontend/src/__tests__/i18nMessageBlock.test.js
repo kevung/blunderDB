@@ -33,11 +33,14 @@ describe('le bloc de messages passé au backend', () => {
         expect(messageBlock('direction').term.tables).toBe('Tische');
     });
 
-    test('se replie sur l’anglais clé par clé, sans trou', () => {
-        language.set('xx'); // une langue qui n'existe pas : tout vient du repli
-        const block = messageBlock('direction');
-        expect(block.term.tables).toBe('Tables');
-        expect(block.label.final).toBe('Final');
+    test('une langue chargée porte déjà tout le bloc anglais, clé par clé', async () => {
+        await setLanguage('fi');
+        const own = messageBlock('direction');
+        language.set('en');
+        const en = messageBlock('direction');
+        const keys = (/** @type {any} */ o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? keys(v, `${p}${k}.`) : [`${p}${k}`]));
+        const has = (/** @type {any} */ o, /** @type {string} */ path) => path.split('.').reduce((x, k) => (x == null ? undefined : x[k]), o) !== undefined;
+        for (const k of keys(en)) expect(has(own, k), k).toBe(true);
     });
 
     test('rend un objet vide plutôt que undefined pour une section inconnue', () => {

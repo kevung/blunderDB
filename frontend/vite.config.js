@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { mergedLocales } from './i18nMergedLocales.js';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [svelte({ compilerOptions: { runes: true } })],
+    plugins: [mergedLocales(), svelte({ compilerOptions: { runes: true } })],
     server: {
         // The panels and modals load on first use (src/components/lazyComponents.js). The
         // dev server compiles a module when first asked: warming them at start keeps a first
@@ -17,8 +18,7 @@ export default defineConfig({
         rollupOptions: {
             onwarn(warning, warn) {
                 // Suppress "dynamic import will not move module into another chunk" noise
-                // (locales/en.json is both the static fallback AND reachable through
-                // the lazy loaders — expected, not a bug). The
+                // (a locale JSON may also be reached by a test or a tool). The
                 // warning code varies by bundler version (Rollup vs Vite 8's Rolldown),
                 // so match on the message rather than pinning one code.
                 if (warning.message?.includes('dynamic import will not move module')) return;

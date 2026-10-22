@@ -1,11 +1,12 @@
 import { defineConfig } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { mergedLocales } from './i18nMergedLocales.js';
 
 export default defineConfig({
     // @sveltejs/vite-plugin-svelte 7 dropped the `hot` option (it warned
     // "invalid plugin option `hot` in inline config" on every test run); HMR
     // was already always off here since VITEST is set for the whole process.
-    plugins: [svelte()],
+    plugins: [mergedLocales(), svelte()],
     resolve: {
         conditions: ['browser']
     },

@@ -32,7 +32,7 @@ const { default: CubeVerdictTable } = await import('../components/CubeVerdictTab
 const { default: CandidateMovesTable } = await import('../components/CandidateMovesTable.svelte');
 const { cubeDecision, cubeTurnability } = await import('../utils/cubeDecision.js');
 const { playedMovePredicate, playedCubeActionPredicate } = await import('../utils/playedMarks.js');
-const { language } = await import('../i18n');
+const { language, initLanguage } = await import('../i18n');
 const { emptyAnalysis } = await import('../stores/analysisStore.js');
 
 const PLAYED_BG = '#fff3cd';
@@ -171,8 +171,8 @@ describe('the copied image paints exactly what the tables show', () => {
         language.set('en');
     });
 
-    test.each(['en', 'fr', 'ja'])('cube decision, %s', (lang) => {
-        language.set(lang);
+    test.each(['en', 'fr', 'ja'])('cube decision, %s', async (lang) => {
+        await initLanguage(lang);
         const { container } = render(CubeVerdictTable, {
             props: {
                 decision: cubeDecision({ cubeAnalysis: cubeAnalysis.doublingCubeAnalysis, turnability: cubeTurnability(position), stored: true }),
@@ -194,7 +194,7 @@ describe('the copied image paints exactly what the tables show', () => {
         // 3 headers, 3 × 3 option cells, 2 verdict cells, 2 × 2 info cells.
         expect(dom).toHaveLength(18);
         expect(dom).toContain('+0.850');
-        expect(dom).toContain('Double/Take');
+        if (lang === 'en') expect(dom).toContain('Double/Take');
         const at = indexOfRun(texts, dom);
         expect(at, `DOM strings must be a run of the painted ones\nDOM: ${dom.join(' | ')}\ncanvas: ${texts.join(' | ')}`).toBeGreaterThanOrEqual(0);
         // Nothing painted after that run: the DOM table is the last block.
@@ -214,8 +214,8 @@ describe('the copied image paints exactly what the tables show', () => {
         expect(texts.some((s) => s.includes('Redouble'))).toBe(false);
     });
 
-    test.each(['en', 'fr'])('checker candidates, %s', (lang) => {
-        language.set(lang);
+    test.each(['en', 'fr'])('checker candidates, %s', async (lang) => {
+        await initLanguage(lang);
         const { container } = render(CandidateMovesTable, {
             props: {
                 moves: checkerAnalysis.checkerAnalysis.moves,

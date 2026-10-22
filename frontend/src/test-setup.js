@@ -14,3 +14,15 @@ if (typeof globalThis.localStorage?.clear !== 'function') {
         }
     });
 }
+
+// English is loaded on demand like every locale; component tests render without calling
+// initLanguage, so load it before each file's tests (after its vi.mock calls took effect).
+import { beforeAll } from 'vitest';
+beforeAll(async () => {
+    try {
+        const mod = await import('./i18n/index.js');
+        await mod.initLanguage('en');
+    } catch {
+        // A file may mock the whole module: then it owns its translations.
+    }
+});

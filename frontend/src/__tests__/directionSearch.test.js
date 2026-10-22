@@ -11,7 +11,7 @@ import { buildPaletteItems, rankPaletteItems, runPaletteItem, openDirectionSearc
 import { directionSearchKey } from '../services/directionKeys.js';
 import { directionViewLoadedStore, openDirectionIdStore, directionJumpStore } from '../stores/directionStore.js';
 import { activeTabStore, commandPaletteOpenStore, commandPaletteScopeStore } from '../stores/uiStore.js';
-import { translate } from '../i18n';
+import { translate, initLanguage } from '../i18n';
 
 import fr from '../i18n/locales/fr.json';
 import en from '../i18n/locales/en.json';
@@ -34,6 +34,8 @@ const INDEX = [
     { kind: 'match', tournamentId: 1, epreuve: 'Principal', name: 'Alice Martin – Bob Durand', table: 4, matchId: 'M1', state: 'running' }
 ];
 
+// The items are built at collection time: English must be loaded before.
+await initLanguage('en');
 const items = buildPaletteItems({ translate, direction: INDEX });
 const first = (query) => rankPaletteItems(items, query)[0]?.item;
 
