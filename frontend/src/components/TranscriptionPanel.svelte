@@ -7,7 +7,7 @@
   whole annotated document; it derives no score, Crawford or side on roll.
 
   Creation asks only the length (0 = money, fonctionnel.md §1.1). The candidate
-  list is a 0-ply Evaluation (EvaluatePositionImmediate, EvalPanel's table),
+  list is the library's 0-ply ranking of every play (TranscriptionCandidates),
   shown and never stored (ADR-0045 rule 8). Mouse triggers (dice triangle, cube
   row, board cube, Transcript context menu) go through the key machine and
   `applyResult`, like a keystroke. Corrections are marked by the Replay, never
@@ -95,9 +95,8 @@
     import { transcriptionArrows } from '../services/transcribedArrows.js';
     import { newBoardPlay, undoBoardStep, stepsFromNotation, boardAfterSteps, parseDiceMove } from '../services/transcriptionPlay.js';
     import { containsSteps, completedPlay } from '../services/quizPlay.js';
-    import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
-    import { LegalMoves, EvaluatePositionImmediate, PickTranscriptionVideo, YouTubeWatchURL } from '../../wailsjs/go/gui/App.js';
-    import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
+    import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+    import { LegalMoves, PickTranscriptionVideo, YouTubeWatchURL } from '../../wailsjs/go/gui/App.js';
     import { finishDraft, exportDraftMat, abandonDraft, draftState } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
     import { createCursorFollower, isTyping, typedRoll } from '../services/videoFollow.js';
@@ -363,8 +362,8 @@
 
     let pending = Promise.resolve();
 
-    // Candidates ranked by 0-ply; `gen` is the index in LegalMoves' order, which
-    // `select_candidate` addresses. The join is exact: LegalMoves dedups by board.
+    // Candidates ranked by 0-ply; `gen` is the index in the engine's `Candidates`
+    // order, which `select_candidate` addresses.
     let ranked = $state(/** @type {Candidate[]} */ ([]));
     // Unranked (score beyond the MET, no weights): plays still listed in generator order.
     let unranked = $state(false);
@@ -837,8 +836,8 @@
         return gesture ? queue([gesture]) : pending;
     }
 
-    // Candidates: LegalMoves + EvaluatePositionImmediate at 0-ply (candidates = 0
-    // returns all). Never StartEvaluationAtRest: too slow between two keystrokes.
+    // Candidates: TranscriptionCandidates, every play at 0-ply. Never
+    // StartEvaluationAtRest: too slow between two keystrokes.
 
     let candidateGeneration = 0;
 
@@ -882,39 +881,21 @@
     }
 
     /**
-     * The plays of the roll, best first, each with its index in LegalMoves.
+     * The plays of the roll the session is on, best first, each with its index
+     * in the engine's `Candidates` (what `select_candidate` names). The ranking
+     * is the library's (TranscriptionCandidates: every play, 0-ply, no pruning),
+     * the one the daemon's `transcriptions.candidates` serves.
      *
-     * @param {any} rolled
      * @returns {Promise<{list: Candidate[], unranked: boolean}>}
      */
-    async function computeCandidates(rolled) {
-        // High die first, as the engine's `Candidates` generates: `gen` indexes that order.
-        const [a, b] = rolled.dice;
-        const pos = { ...rolled, dice: [Math.max(a, b), Math.min(a, b)] };
-        const plays = (await LegalMoves(pos)) ?? [];
-        if (!plays.length) return { list: [], unranked: false };
-
-        // Plain lookup, not a Map: local to this call, never read reactively.
-        const byNotation = Object.create(null);
-        plays.forEach((play, index) => {
-            if (byNotation[play.notation] === undefined) byNotation[play.notation] = index;
-        });
-
-        try {
-            const pruneK = await GetGammonNetPruneK();
-            const result = await EvaluatePositionImmediate(pos, pruneK, 0);
-            const moves = result?.refused ? [] : (result?.moves ?? []);
-            const list = moves
-                .map((move) => ({ move, gen: byNotation[move.move] }))
-                .filter((row) => row.gen !== undefined)
-                // Réduits par les pas joués au plateau (ADR-0052).
-                .map((row) => ({ ...row, steps: plays[row.gen]?.steps ?? [] }));
-            if (list.length) return { list, unranked: false };
-        } catch (err) {
-            logger.error('The 0-ply ranking of a transcription roll failed:', err);
-        }
-        // The generator's own order, which is an order and not a ranking.
-        return { list: plays.map((play, index) => ({ move: { index, move: play.notation }, gen: index, steps: play.steps ?? [] })), unranked: true };
+    async function computeCandidates() {
+        const answer = await TranscriptionCandidates(draftId);
+        const list = (answer?.candidates ?? []).map((/** @type {any} */ c) => ({
+            move: c.analysis ?? { index: c.index, move: c.notation },
+            gen: c.index,
+            steps: c.steps ?? []
+        }));
+        return { list, unranked: answer?.unranked === true };
     }
 
     /**
@@ -929,7 +910,7 @@
         const generation = ++candidateGeneration;
         let answer;
         try {
-            answer = await computeCandidates(pos);
+            answer = await computeCandidates();
         } catch (err) {
             logger.error('The legal plays of a transcription roll failed:', err);
             error = String(err);
@@ -984,11 +965,10 @@
             return;
         }
 
-        const pos = { ...structuredClone(info.before), id: 0 };
         const generation = ++candidateGeneration;
         let answer;
         try {
-            answer = await computeCandidates(pos);
+            answer = await computeCandidates();
         } catch (err) {
             logger.error('The legal plays of the Action under the cursor failed:', err);
             error = String(err);

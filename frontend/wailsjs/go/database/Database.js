@@ -1678,6 +1678,10 @@ export function TogglePile(arg1) {
   return window['go']['database']['Database']['TogglePile'](arg1);
 }
 
+export function TranscriptionCandidates(arg1) {
+  return window['go']['database']['Database']['TranscriptionCandidates'](arg1);
+}
+
 export function TranscriptionMAT(arg1) {
   return window['go']['database']['Database']['TranscriptionMAT'](arg1);
 }

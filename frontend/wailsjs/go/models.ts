@@ -10974,3 +10974,82 @@ export namespace transcript {
 
 }
 
+export namespace transcription {
+	
+	export class Candidate {
+	    index: number;
+	    notation: string;
+	    steps: domain.CheckerStep[];
+	    rank: number;
+	    analysis?: domain.CheckerMove;
+	
+	    static createFrom(source: any = {}) {
+	        return new Candidate(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.index = source["index"];
+	        this.notation = source["notation"];
+	        this.steps = this.convertValues(source["steps"], domain.CheckerStep);
+	        this.rank = source["rank"];
+	        this.analysis = this.convertValues(source["analysis"], domain.CheckerMove);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class Candidates {
+	    side: number;
+	    dice: number[];
+	    candidates: Candidate[];
+	    unranked: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Candidates(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.side = source["side"];
+	        this.dice = source["dice"];
+	        this.candidates = this.convertValues(source["candidates"], Candidate);
+	        this.unranked = source["unranked"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+

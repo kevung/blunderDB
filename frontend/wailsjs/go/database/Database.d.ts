@@ -21,6 +21,7 @@ import {parser} from '../models';
 import {rollout} from '../models';
 import {capture} from '../models';
 import {rollouts} from '../models';
+import {transcription} from '../models';
 
 export function AbandonTranscription(arg1:number):Promise<void>;
 
@@ -859,6 +860,8 @@ export function TablePlan(arg1:number):Promise<direction.TablePlan>;
 export function Tags():Promise<Array<domain.TagCount>>;
 
 export function TogglePile(arg1:domain.Position):Promise<storage.PileToggle>;
+
+export function TranscriptionCandidates(arg1:number):Promise<transcription.Candidates>;
 
 export function TranscriptionMAT(arg1:number):Promise<string>;
 
