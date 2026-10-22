@@ -19,7 +19,7 @@
 //
 // The weights are `strehl-prob5-512-512-256-256`, by Alexander Strehl
 // (alexstrehl/backgammon-ai-engine, MIT, pinned commit 7184e2f), redistributed
-// by gammonNet v1.7.0. "gammonNet" names the configuration, not the weights.
+// by gammonNet v1.8.1 in its float16 form (BGN6). "gammonNet" names the configuration, not the weights.
 // LICENSE.gammonNet and NOTICE.gammonNet travel with this package.
 package gammonnet
 

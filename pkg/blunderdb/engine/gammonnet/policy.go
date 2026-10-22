@@ -9,15 +9,15 @@ import (
 
 // The stateless playing policy: a decision goes in, an action comes out —
 // gammonNet's gn_policy.c, ported line for line under ADR-0011 and held by the
-// upstream reference corpus (testdata/policy_reference.bin). The spec is
+// upstream reference corpus (testdata/policy_reference16.bin). The spec is
 // upstream's docs/specs/politique-spec.md; its section numbers are cited
 // below. The game, the dice, the clock stay with the caller (ADR-0072 rule 6).
 
 // PolicyEngineVersion names the gammonNet tag that publishes the policy this
-// file ports, the one its reference corpus comes from. It is not
-// EngineVersion: the policy can move upstream while the network, and so the
-// analyses EngineVersion dates, stays the same.
-const PolicyEngineVersion = "gammonNet v1.7.0"
+// file ports. Its reference corpus comes from commit cc1a66c, replayed with the
+// .bin16 of that tag. It is not EngineVersion: the policy can move upstream
+// while the network, and so the analyses EngineVersion dates, stays the same.
+const PolicyEngineVersion = "gammonNet v1.8.1"
 
 // PolicyResignHorizon is H of spec §5.5: how many rolls ahead the certain
 // loss is read. Widening it is a measured choice, made upstream.
