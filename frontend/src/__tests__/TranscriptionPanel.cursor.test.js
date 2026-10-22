@@ -15,6 +15,7 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -22,16 +23,13 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     TranscriptionMAT: vi.fn().mockResolvedValue('')
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn()
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn()
 }));
 
-import { ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionStore, transcriptionKeyStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
@@ -110,7 +108,7 @@ beforeEach(() => {
     activeTabStore.set('transcription');
     statusBarModeStore.set('TRANSCRIBE');
     /** @type {any} */ (LegalMoves).mockResolvedValue(PLAYS);
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: RANKED });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer(PLAYS, RANKED));
     // Le moteur déplace le Cursor et rend le document entier, comme la liaison.
     let at = 3;
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
@@ -159,7 +157,7 @@ describe('le Cursor au clavier', () => {
         expect(get(selectedMoveStore)).toBe('8/5 6/5');
     });
 
-    test('la liste relue est générée dé fort en premier, comme celle que le moteur indexe', async () => {
+    test('la liste relue est celle de la liaison, pour le brouillon ouvert', async () => {
         await openedPanel();
         const lowFirst = annotated(2);
         lowFirst.actions[2].before.dice = [2, 5];
@@ -168,9 +166,8 @@ describe('le Cursor au clavier', () => {
         await fireEvent.keyDown(document, { code: 'KeyH', key: 'h' });
         await settle();
 
-        // Le plateau rejoue les pas sur le jet tel qu'écrit ; la liste, elle, sur le jet ordonné.
-        const rolls = /** @type {any} */ (LegalMoves).mock.calls.map((/** @type {any} */ call) => call[0].dice);
-        expect(rolls).toContainEqual([5, 2]);
+        // Le jet, son ordre et le classement sont l'affaire de la liaison : le panneau ne lui donne que le brouillon.
+        expect(TranscriptionCandidates).toHaveBeenCalledWith(1);
     });
 
     test('`l` avance', async () => {

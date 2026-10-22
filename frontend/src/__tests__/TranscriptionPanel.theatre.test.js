@@ -10,6 +10,7 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -18,18 +19,15 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn(),
     PickTranscriptionVideo: vi.fn().mockResolvedValue(''),
     YouTubeWatchURL: vi.fn((/** @type {string} */ s) => Promise.resolve(/youtu/.test(s) ? (s.startsWith('https://') ? s : 'https://www.youtube.com/watch?v=dQw4w9WgXcQ') : ''))
 }));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
-}));
 vi.mock('../components/VideoPane.svelte', async () => await import('./fixtures/FakeVideoPane.svelte'));
 
-import { ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import TranscriptionTheatre from '../components/TranscriptionTheatre.svelte';
 import { theatreStore, exitTheatre, enterTheatre, theatreKey, theatreAvailableStore } from '../services/transcriptionTheatre.js';
@@ -115,7 +113,7 @@ beforeEach(() => {
     activeTabStore.set('transcription');
     statusBarModeStore.set('TRANSCRIBE');
     /** @type {any} */ (LegalMoves).mockResolvedValue([{ notation: '8/5 6/5' }]);
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [{ index: 0, move: '8/5 6/5', equity: 0.1 }] });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer([{ notation: '8/5 6/5' }], [{ index: 0, move: '8/5 6/5', equity: 0.1 }]));
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve({ id: 1, annotated: annotated(at) }));
 });
 

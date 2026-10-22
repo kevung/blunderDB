@@ -1430,6 +1430,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/transcriptions.apply — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."
         return self._call("/v1/transcriptions.apply", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def transcriptions_candidates(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.candidates — JSON."
+        return self._call("/v1/transcriptions.candidates", payload)
+
     def transcriptions_close(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/transcriptions.close — JSON."
         return self._call("/v1/transcriptions.close", payload)

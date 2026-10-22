@@ -22,6 +22,7 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -29,16 +30,13 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     TranscriptionMAT: vi.fn().mockResolvedValue('')
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn()
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn()
 }));
 
-import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, ListTranscriptions, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import { transcriptionListStore, transcriptionStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { quizPlayStore, quizPlayValidateStore } from '../stores/quizPlayStore.js';
@@ -175,7 +173,7 @@ beforeEach(() => {
         const [a, b] = pos.dice;
         return Promise.resolve((a === 6 && b === 1) || (a === 1 && b === 6) ? PLAYS_61 : []);
     });
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: RANKED_61 });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer(PLAYS_61, RANKED_61, { dice: [6, 1] }));
     transcriptionListStore.set([]);
     clearTranscription();
     quizPlayStore.set(null);

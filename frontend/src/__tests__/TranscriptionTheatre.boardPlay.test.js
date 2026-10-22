@@ -11,6 +11,7 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -19,18 +20,15 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn(),
     PickTranscriptionVideo: vi.fn().mockResolvedValue(''),
     YouTubeWatchURL: vi.fn().mockResolvedValue('')
 }));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
-}));
 vi.mock('../components/VideoPane.svelte', async () => await import('./fixtures/FakeVideoPane.svelte'));
 
-import { ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
 import TranscriptionTheatre from '../components/TranscriptionTheatre.svelte';
 import { exitTheatre, enterTheatre } from '../services/transcriptionTheatre.js';
@@ -141,7 +139,7 @@ beforeEach(() => {
     activeTabStore.set('transcription');
     statusBarModeStore.set('TRANSCRIBE');
     /** @type {any} */ (LegalMoves).mockImplementation((/** @type {any} */ pos) => Promise.resolve(pos.dice[0] * pos.dice[1] === 6 ? PLAYS_61 : []));
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: RANKED_61 });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue(candidatesAnswer(PLAYS_61, RANKED_61, { dice: [6, 1] }));
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve({ id: 1, annotated: annotated() }));
 });
 

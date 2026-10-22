@@ -22,6 +22,7 @@ import { tick } from 'svelte';
 const engine = vi.hoisted(() => ({ sent: /** @type {any[]} */ ([]), state: /** @type {any} */ (null) }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(() => Promise.resolve({ side: 0, dice: [0, 0], unranked: false, candidates: [] })),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
     CreateTranscription: vi.fn(() => Promise.resolve(engine.state)),
     OpenTranscription: vi.fn(() => Promise.resolve(engine.state)),
@@ -39,14 +40,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     LegalMoves: vi.fn(() => Promise.resolve([])),
-    EvaluatePositionImmediate: vi.fn(() => Promise.resolve({ refused: true, moves: [] })),
     OpenExportMatDialog: vi.fn(() => Promise.resolve('')),
     StartGammonNetMatchBatch: vi.fn(() => Promise.resolve())
-}));
-
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn(() => Promise.resolve(0)),
-    GetGammonNetAnalysisPly: vi.fn(() => Promise.resolve(0))
 }));
 
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';

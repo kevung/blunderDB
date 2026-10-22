@@ -402,6 +402,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    transcriptions
      POST /v1/transcriptions.abandon               JSON  (Idempotency-Key)  (If-Match)
      POST /v1/transcriptions.apply                 JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/transcriptions.candidates            JSON
      POST /v1/transcriptions.close                 JSON
      POST /v1/transcriptions.create                JSON
      POST /v1/transcriptions.editMatch             JSON

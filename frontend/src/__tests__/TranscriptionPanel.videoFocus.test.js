@@ -12,6 +12,7 @@ import { tick } from 'svelte';
 const host = vi.hoisted(() => ({ kind: 'file' }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
@@ -20,15 +21,11 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     LegalMoves: vi.fn().mockResolvedValue([]),
-    EvaluatePositionImmediate: vi.fn().mockResolvedValue({ moves: [] }),
     PickTranscriptionVideo: vi.fn().mockResolvedValue(''),
     VideoSourceKind: vi.fn(() => Promise.resolve(host.kind)),
     MediaURL: vi.fn(() => Promise.resolve('http://127.0.0.1:1/m/tok')),
     YouTubeEmbedURL: vi.fn(() => Promise.resolve('http://127.0.0.1:1/yt/abc')),
     ReleaseMedia: vi.fn(() => Promise.resolve())
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
 }));
 
 import { ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';

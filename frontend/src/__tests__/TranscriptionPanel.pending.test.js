@@ -13,17 +13,14 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
     ApplyTranscriptionGesture: vi.fn()
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn()
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn()
 }));
 vi.mock('../services/transcriptionSave.js', async (importOriginal) => ({
     .../** @type {any} */ (await importOriginal()),
@@ -31,8 +28,8 @@ vi.mock('../services/transcriptionSave.js', async (importOriginal) => ({
     exportDraftMat: vi.fn().mockResolvedValue(false)
 }));
 
-import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, ListTranscriptions, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { finishDraft, exportDraftMat } from '../services/transcriptionSave.js';
 
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
@@ -90,7 +87,7 @@ beforeEach(() => {
     vi.clearAllMocks();
     /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
     /** @type {any} */ (LegalMoves).mockResolvedValue([]);
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [] });
+    /** @type {any} */ (TranscriptionCandidates).mockResolvedValue({ side: 0, dice: [0, 0], unranked: false, candidates: [] });
     transcriptionListStore.set([]);
     clearTranscription();
     selectedMoveStore.set(null);

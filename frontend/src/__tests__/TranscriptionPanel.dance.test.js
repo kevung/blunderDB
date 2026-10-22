@@ -12,24 +12,22 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    TranscriptionCandidates: vi.fn(),
     ListTranscriptions: vi.fn().mockResolvedValue([]),
     CreateTranscription: vi.fn(),
     OpenTranscription: vi.fn(),
     ApplyTranscriptionGesture: vi.fn()
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    LegalMoves: vi.fn(),
-    EvaluatePositionImmediate: vi.fn()
-}));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
+    LegalMoves: vi.fn()
 }));
 
-import { ApplyTranscriptionGesture, ListTranscriptions } from '../../wailsjs/go/database/Database.js';
-import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+import { ApplyTranscriptionGesture, ListTranscriptions, TranscriptionCandidates } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 
+import { candidatesAnswer } from './helpers/transcriptionCandidates.js';
 import TranscriptionPanel from '../components/TranscriptionPanel.svelte';
-import { transcriptionListStore, transcriptionStore, transcriptionNoticeStore, clearTranscription } from '../stores/transcriptionStore.js';
+import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, transcriptionNoticeStore, clearTranscription } from '../stores/transcriptionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -86,7 +84,12 @@ beforeEach(() => {
     /** @type {any} */ (ListTranscriptions).mockResolvedValue([]);
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation(() => Promise.resolve(state(annotated())));
     /** @type {any} */ (LegalMoves).mockImplementation(legalMoves);
-    /** @type {any} */ (EvaluatePositionImmediate).mockResolvedValue({ moves: [{ index: 0, move: '24/23 13/11', equity: 0 }] });
+    // La liaison répond pour le jet que le panneau a saisi : un jet dont les dés sont fermés danse.
+    /** @type {any} */ (TranscriptionCandidates).mockImplementation(() => {
+        const dice = get(transcriptionKeyStore).dice;
+        if (closed.has(dice[0]) && closed.has(dice[1])) return Promise.resolve({ side: 0, dice, unranked: false, candidates: [] });
+        return Promise.resolve(candidatesAnswer(PLAYS, [{ index: 0, move: '24/23 13/11', equity: 0 }], { dice }));
+    });
     transcriptionListStore.set([]);
     transcriptionNoticeStore.set(null);
     clearTranscription();
@@ -126,7 +129,8 @@ describe('f dans le panneau', () => {
         await press('KeyF');
 
         await vi.waitFor(() => expect(gestures()).toEqual([{ Kind: 'enter_die', Die: 6 }, { Kind: 'enter_die', Die: 5 }, { Kind: 'dance' }]));
-        expect(EvaluatePositionImmediate).not.toHaveBeenCalled();
+        // C'est la liaison qui dit que le jet danse : elle ne rend aucun candidat.
+        expect(TranscriptionCandidates).toHaveBeenCalledWith(1);
     });
 
     test('un double est pris quand un seul point est fermé', async () => {

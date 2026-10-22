@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -223,6 +224,49 @@ func EvaluatePositionWithMET(searcher *Searcher, pos domain.Position, met *engin
 
 	return evaluateConfigured(&gnPos, &pos, searcher, cfg, state, candidates)
 }
+
+// RankAllPlaysWithMET values EVERY legal play of pos, dice set, at 0-ply with
+// the pruning pass off, best first, in pos's referential as
+// EvaluatePositionWithMET reports it. A transcriber picks the play that was
+// made, often one the pruning network would have cut. searcher may be nil: one
+// is taken from rankSearchers, so a keystroke does not pay a Searcher's
+// allocation and finds its cache warm. It is re-aimed like
+// EvaluatePositionWith's.
+func RankAllPlaysWithMET(searcher *Searcher, pos domain.Position, met *engine.MET) ([]domain.CheckerMove, error) {
+	if pos.Dice[0] < 1 || pos.Dice[0] > 6 || pos.Dice[1] < 1 || pos.Dice[1] > 6 {
+		return nil, fmt.Errorf("gammonnet: dice %v out of range", pos.Dice)
+	}
+	gnPos, err := FromDomain(&pos)
+	if err != nil {
+		return nil, err
+	}
+	cfg, state, err := ConfigForPositionMET(&pos, met, 0, 0)
+	if err != nil {
+		return nil, err
+	}
+	cfg.PruneK = 0
+	if searcher == nil {
+		if pooled, ok := rankSearchers.Get().(*Searcher); ok {
+			searcher = pooled
+		} else if searcher, err = NewSearcher(cfg); err != nil {
+			return nil, err
+		}
+		defer rankSearchers.Put(searcher)
+	}
+	if err := searcher.Reconfigure(cfg); err != nil {
+		return nil, err
+	}
+	scale, ok := NewEquityScale(state)
+	if !ok {
+		return nil, fmt.Errorf("gammonnet: no equity referential at score %v", pos.Score)
+	}
+	return evaluateMoves(&gnPos, &pos, searcher, DepthLabel(0), 0, scale)
+}
+
+// rankSearchers keeps the serial searchers RankAllPlaysWithMET was called
+// without: one per concurrent caller, reused (a reused cache is licit,
+// cache.go).
+var rankSearchers sync.Pool
 
 // evaluateConfigured is the body the two entry points share, with the
 // searcher already aimed at cfg.
