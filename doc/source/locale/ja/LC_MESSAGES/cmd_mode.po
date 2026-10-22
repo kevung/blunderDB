@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 15:20+0200\n"
+"POT-Creation-Date: 2026-10-22 15:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -232,23 +232,24 @@ msgid ""
 "Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : "
 "``train scores`` (la fiche de score d'un score tiré au sort ; ``train "
 "tp`` et ``train takepoint`` sont des synonymes), ``train pips`` (le "
-"compte de pions des deux camps), ``train bearoff`` (l'EPC des deux camps "
-"sur une position engendrée ; ``train epc`` est un synonyme), ``train "
-"evaluation`` (les chances de gain et l'action de videau d'une position "
-"engendrée, en partie d'argent), ``train decision`` (une décision analysée"
-" de la liste parcourue : le coup se joue sur le plateau, l'action de "
-"videau se choisit dans le panneau ; ``train quiz`` est un synonyme), "
-"``train opening`` (le coup d'ouverture ou la réponse d'une partie à un "
-"score, selon le jet mémorisé au lanceur, joué sur le plateau et jugé "
-"contre le livre d'ouverture ; ``train ouverture`` et ``train book`` sont "
-"des synonymes)."
+"compte de pions des deux camps ; ``train pip`` est un synonyme), ``train "
+"bearoff`` (l'EPC des deux camps sur une position engendrée ; ``train "
+"epc`` est un synonyme), ``train evaluation`` (les chances de gain et "
+"l'action de videau d'une position engendrée, en partie d'argent), ``train"
+" decision`` (une décision analysée de la liste parcourue : le coup se "
+"joue sur le plateau, l'action de videau se choisit dans le panneau ; "
+"``train quiz`` est un synonyme), ``train opening`` (le coup d'ouverture "
+"ou la réponse d'une partie à un score, selon le jet mémorisé au lanceur, "
+"joué sur le plateau et jugé contre le livre d'ouverture ; ``train "
+"ouverture`` et ``train book`` sont des synonymes)."
 msgstr ""
-"トレーニングパネルを開きます。引数を付けると開いて開始します：``train scores``\\ "
-"（無作為に引いたスコアのスコアカード。``train tp`` と ``train takepoint`` は別名）、``train "
-"pips``\\ （両者のピップ数）、``train bearoff``\\ （生成した局面での両者の EPC。``train epc`` "
-"は別名）、``train evaluation``\\ （生成した局面の勝率とキューブアクション。マネーゲーム）、``train "
-"decision``\\ （表示中のリストから出題する解析済みの判断。手は盤上で打ち、キューブアクションはパネルで選びます。``train "
-"quiz`` は別名）、``train opening``\\ "
+"トレーニングパネルを開きます。引数を付けると開いて開始します：\\ ``train scores``\\ "
+"（無作為に引いたスコアのスコアカード。``train tp`` と ``train takepoint`` は別名）、\\ ``train "
+"pips``\\ （両者のピップ数。``train pip`` は別名）、\\ ``train bearoff``\\ （生成した局面での両者の "
+"EPC。``train epc`` は別名）、\\ ``train evaluation``\\ "
+"（生成した局面の勝率とキューブアクション。マネーゲーム）、\\ ``train decision``\\ "
+"（表示中のリストから出題する解析済みの判断。手は盤上で打ち、キューブアクションはパネルで選びます。``train quiz`` は別名）、\\ "
+"``train opening``\\ "
 "（あるスコアでの対局のオープニングの手または返し（ランチャーで記憶したロールによる）。盤上で打ち、オープニングブックに照らして判定する。``train"
 " ouverture`` と ``train book`` は別名）。"
 
@@ -265,96 +266,32 @@ msgstr ""
 "を審判（Arbiter）として、ボットと対局するマッチです（:ref:`panneau_duel`\\ を参照）。"
 
 #: ../../source/cmd_mode.rst:1
-msgid "tp2"
-msgstr "tp2"
+msgid "tp2, tp2_live, tp2_last, tp4, tp4_live, tp4_last"
+msgstr "tp2, tp2_live, tp2_last, tp4, tp4_live, tp4_last"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2."
-msgstr "参照データパネルをテイクポイントで開き、キューブ 2 の表を表示します。"
+"Ouvre le panneau Données de référence sur l'onglet Points de prise, qui "
+"réunit les tables des videaux 2 et 4, en course longue et en dernier "
+"lancer : ces six commandes ouvrent le même onglet."
+msgstr ""
+"参照データパネルをテイクポイントタブで開きます。このタブには、キューブ 2 と 4 "
+"の表、ロングレース用の表、最後のロール用の表がまとめられています。この 6 つのコマンドは同じタブを開きます。"
 
 #: ../../source/cmd_mode.rst:1
-msgid "tp2_live"
-msgstr "tp2_live"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2 pour les courses longues."
-msgstr "参照データパネルをテイクポイントで開き、長いレースでのキューブ 2 の表を表示します。"
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp2_last"
-msgstr "tp2_last"
+msgid "gv1, gv2, gv4"
+msgstr "gv1, gv2, gv4"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 2 mort."
-msgstr "参照データパネルをテイクポイントで開き、デッドキューブ 2 の表を表示します。"
+"Ouvre le panneau Données de référence sur l'onglet Valeurs du gammon, qui"
+" réunit les tables des videaux 1, 2 et 4 : ces trois commandes ouvrent le"
+" même onglet."
+msgstr ""
+"参照データパネルをギャモン価値タブで開きます。このタブには、キューブ 1、2、4 の表がまとめられています。この 3 "
+"つのコマンドは同じタブを開きます。"
 
-#: ../../source/cmd_mode.rst:1
-msgid "tp4"
-msgstr "tp4"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4."
-msgstr "参照データパネルをテイクポイントで開き、キューブ 4 の表を表示します。"
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp4_live"
-msgstr "tp4_live"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4 pour les courses longues."
-msgstr "参照データパネルをテイクポイントで開き、長いレースでのキューブ 4 の表を表示します。"
-
-#: ../../source/cmd_mode.rst:1
-msgid "tp4_last"
-msgstr "tp4_last"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les points de prise, où figure "
-"la table du videau à 4 mort."
-msgstr "参照データパネルをテイクポイントで開き、デッドキューブ 4 の表を表示します。"
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv1"
-msgstr "gv1"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 1."
-msgstr "参照データパネルをギャモン値で開き、キューブ 1 の表を表示します。"
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv2"
-msgstr "gv2"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 2."
-msgstr "参照データパネルをギャモン値で開き、キューブ 2 の表を表示します。"
-
-#: ../../source/cmd_mode.rst:1
-msgid "gv4"
-msgstr "gv4"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre le panneau Données de référence sur les valeurs du gammon, où "
-"figure la table du videau à 4."
-msgstr "参照データパネルをギャモン値で開き、キューブ 4 の表を表示します。"
-
-#: ../../source/cmd_mode.rst:56
+#: ../../source/cmd_mode.rst:49
 msgid "Positions et navigation"
 msgstr "局面とナビゲーション"
 
@@ -457,11 +394,13 @@ msgid ""
 "gammonNet de la configuration, ou le préréglage nommé) et ouvre le "
 "panneau Analyse. ``ro search [fast|standard]`` le lance sur la liste "
 "affichée, après confirmation avec le total ; ``ro stop`` arrête le "
-"rollout en cours."
+"rollout en cours. ``rapide`` est un synonyme de ``fast`` et ``recherche``"
+" de ``search``."
 msgstr ""
 "現在の局面をロールアウトし(設定の\\ **gammonNet**\\ タブで選んだ設定、または指定したプリセットで)、解析パネルを開きます。\\"
 " ``ro search [fast|standard]`` は確認ダイアログで総数を示した後、表示中の一覧に対して実行します。\\ ``ro "
-"stop`` は実行中のロールアウトを停止します。"
+"stop`` は実行中のロールアウトを停止します。\\ ``rapide`` は ``fast`` の、\\ ``recherche`` は "
+"``search`` の別名です。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "history, hi"
@@ -561,7 +500,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "最後に閲覧したマッチ内を移動します。"
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:80
 msgid "Édition et recherche"
 msgstr "編集と検索"
 
@@ -586,8 +525,13 @@ msgid "s"
 msgstr "s"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Chercher des positions avec des filtres."
-msgstr "フィルタを使って局面を検索します。"
+msgid ""
+"Chercher des positions avec des filtres. Refusé dans une collection ou un"
+" match, où il remplacerait la liste étudiée : la barre d'état renvoie "
+"alors vers ``ss``."
+msgstr ""
+"フィルターで局面を検索する。コレクションやマッチの中では拒否される。そこでは調査中のリストを置き換えてしまうためで、ステータスバーが ``ss``"
+" を案内する。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ss"
@@ -599,11 +543,11 @@ msgid ""
 "ouverte ou match en cours de revue."
 msgstr "表示中のポジションの中を検索：現在の結果、開いているコレクション、またはレビュー中のマッチ。"
 
-#: ../../source/cmd_mode.rst:103
+#: ../../source/cmd_mode.rst:96
 msgid "Filtres de recherche"
 msgstr "検索フィルタ"
 
-#: ../../source/cmd_mode.rst:105
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -617,9 +561,9 @@ msgstr ""
 "のフラグが存在する場合にそれを示します（\\ :ref:`cli`\\ "
 "を参照）。ダッシュは、この文法でしか表現できないフィルターであることを示します。"
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:105
 msgid ""
-"Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
+"Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
 "sont posés, ``d`` le type de décision, ``D`` et ``D1`` les dés, ``x`` la "
 "structure dessinée dans l'onglet *Sauf*. Un lancer ne s'écrit donc jamais"
@@ -628,13 +572,13 @@ msgid ""
 "plateau, ces jetons se comparent à un plateau vide ; ce sont les drapeaux"
 " de la troisième colonne qu'il faut y employer."
 msgstr ""
-"5つのトークンは値を自分では持ちません。値は検索用の盤面から読み取ります。\\ ``cube`` と ``score`` "
+"6つのトークンは値を自分では持ちません。値は検索用の盤面から読み取ります。\\ ``cube`` と ``score`` "
 "はそこに置かれたキューブとスコアを、\\ ``d`` は決定の種類を、\\ ``D`` と ``D1`` はダイスを、\\ ``x`` は "
 "*除く* タブに描かれた構造を受け取ります。したがって出目をトークンに書くことは決してありません。\\ ``D65`` "
 "は存在せず、数字を持つのは除外の形（\\ ``xD65``\\ "
 "）だけです。盤面のないコマンドラインでは、これらのトークンは空の盤面と比較されます。そこでは第3列のフラグを使ってください。"
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:114
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -643,7 +587,7 @@ msgstr ""
 "トークンのうち ``like`` だけは、絞り込むのではなく\\ **並べ替え**\\ "
 "ます。目標局面からの距離の昇順に結果を並べ、ほかのトークンはすべて、そうして並んだ集合を絞り込みます。"
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -652,18 +596,18 @@ msgstr ""
 "エラーとエクイティは\\ **エクイティの千分の1**\\ 単位で数えます——下の表でいう *ミリポイント* です。\\ ``E>100`` "
 "は、少なくとも 0.1 ポイントを失った手を残します。1ポイントは 1000 ミリポイントです。"
 
-#: ../../source/cmd_mode.rst:129
+#: ../../source/cmd_mode.rst:122
 msgid "Deux recherches complètes :"
 msgstr "完全な検索の例を二つ："
 
-#: ../../source/cmd_mode.rst:131
+#: ../../source/cmd_mode.rst:124
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
 "chances de gain, aucun commentaire."
 msgstr "``s p>30 w40,60 xco`` — 30 ピップ以上遅れており、勝率が 40 % から 60 % の間で、コメントがないもの。"
 
-#: ../../source/cmd_mode.rst:133
+#: ../../source/cmd_mode.rst:126
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1043,12 +987,12 @@ msgstr "tm>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup "
-"dont la durée est inconnue ne répond jamais. Avec ``E``, la durée et "
-"l'erreur sont celles du même coup joué."
+"Le joueur 1 a mis plus de x secondes à décider (coup ou videau ; x peut "
+"être décimal). Un coup dont la durée est inconnue ne répond jamais. Avec "
+"``E``, la durée et l'erreur sont celles du même coup joué."
 msgstr ""
-"プレイヤー1が判断に x 秒より長くかかった(チェッカーの手またはキューブ)。所要時間が不明な手は一致しません。\\ ``E``\\ "
-"と併用すると、所要時間と誤りは同じ手のものです。"
+"プレイヤー1が判断に x 秒より長くかかった(チェッカーの手またはキューブ。x は小数でもよい)。所要時間が不明な手は一致しません。\\ "
+"``E``\\ と併用すると、所要時間と誤りは同じ手のものです。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "tm<x"
@@ -1095,9 +1039,9 @@ msgid "wx,y"
 msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format
-msgid "Le joueur a des chances de gain comprises à x % et y %."
-msgstr "プレイヤーの勝率が x % から y % の範囲です。"
+#, no-python-format, python-format
+msgid "Le joueur a des chances de gain comprises entre x % et y %."
+msgstr "プレイヤーの勝率が x % から y % の間にある。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--winrate-min`` ``--winrate-max``"
@@ -1124,9 +1068,9 @@ msgid "gx,y"
 msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format
-msgid "Le joueur a des chances de gammon comprises à x % et y %."
-msgstr "プレイヤーのギャモン率が x % から y % の範囲です。"
+#, no-python-format, python-format
+msgid "Le joueur a des chances de gammon comprises entre x % et y %."
+msgstr "プレイヤーのギャモン率が x % から y % の間にある。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "b>x"
@@ -1149,9 +1093,9 @@ msgid "bx,y"
 msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format
-msgid "Le joueur a des chances de backgammon comprises à x % et y %."
-msgstr "プレイヤーのバックギャモン率が x % から y % の範囲です。"
+#, no-python-format, python-format
+msgid "Le joueur a des chances de backgammon comprises entre x % et y %."
+msgstr "プレイヤーのバックギャモン率が x % から y % の間にある。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "W>x"
@@ -1174,9 +1118,9 @@ msgid "Wx,y"
 msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format
-msgid "L'adversaire a des chances de gain comprises à x % et y %."
-msgstr "相手の勝率が x % から y % の範囲です。"
+#, no-python-format, python-format
+msgid "L'adversaire a des chances de gain comprises entre x % et y %."
+msgstr "対戦相手の勝率が x % から y % の間にある。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "G>x"
@@ -1199,9 +1143,9 @@ msgid "Gx,y"
 msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format
-msgid "L'adversaire a des chances de gammon comprises à x % et y %."
-msgstr "相手のギャモン率が x % から y % の範囲です。"
+#, no-python-format, python-format
+msgid "L'adversaire a des chances de gammon comprises entre x % et y %."
+msgstr "対戦相手のギャモン率が x % から y % の間にある。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "B>x"
@@ -1224,9 +1168,9 @@ msgid "Bx,y"
 msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, no-python-format
-msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
-msgstr "相手のバックギャモン率が x % から y % の範囲です。"
+#, no-python-format, python-format
+msgid "L'adversaire a des chances de backgammon comprises entre x % et y %."
+msgstr "対戦相手のバックギャモン率が x % から y % の間にある。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "o>x"
@@ -1253,8 +1197,10 @@ msgid "ox,y"
 msgstr "ox,y"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Le joueur a entre x et y pions sortis."
-msgstr "プレイヤーが x から y 個の駒を上がっています。"
+msgid ""
+"Le joueur a entre x et y pions sortis. ``ox`` seul : exactement x pions "
+"sortis."
+msgstr "プレイヤーのベアオフ済みチェッカーが x 個から y 個の間にある。\\ ``ox`` だけなら、ちょうど x 個。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "O>x"
@@ -1692,14 +1638,14 @@ msgid ""
 "(``2024``, ``2024-06``, ``2024-06-15``) et couvre toute sa durée, bornes "
 "comprises : ``md:2024-01..2024-12`` va du 1er janvier au 31 décembre "
 "2024. Formes ``md:2024`` (toute l'année), ``md>2024-06`` et "
-"``md<2024-06``."
+"``md<2024-06``. Le séparateur ``/`` vaut ``-`` (``md:2024/06``)."
 msgstr ""
-"**マッチの日付**\\ 。ポジションの ``match_date`` "
-"列（そのポジションに到達する最も古いマッチの日付）から読み取ります。解析の作成日（\\ ``T``\\ "
-"）ではありません。各境界は年・月・日のいずれか（\\ ``2024``\\ 、\\ ``2024-06``\\ 、\\ "
-"``2024-06-15``\\ ）で、その期間全体を含みます（境界値を含む）。\\ ``md:2024-01..2024-12`` は 2024"
-" 年 1 月 1 日から 12 月 31 日までです。\\ ``md:2024``\\ （その年全体）、\\ ``md>2024-06``\\ "
-"、\\ ``md<2024-06`` の形式も使えます。"
+"\\ **マッチの日付**\\ 。局面の ``match_date`` "
+"列（その局面に到達する最も古いマッチの日付）から読み取り、解析の作成日（\\ ``T``\\ ）ではありません。各境界は年、月または日（\\ "
+"``2024``、``2024-06``、``2024-06-15``\\ ）で、その期間全体を境界を含めて覆います。\\ "
+"``md:2024-01..2024-12`` は 2024 年 1 月 1 日から 12 月 31 日までです。形式は "
+"``md:2024``\\ （その年全体）、\\ ``md>2024-06``、\\ ``md<2024-06`` です。区切り文字 ``/`` "
+"は ``-`` と同じです（\\ ``md:2024/06``\\ ）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--match-date``"
@@ -1788,12 +1734,12 @@ msgid ""
 "Le **PR du match** du joueur qui a pris la décision est d'au moins x, lu "
 "dans les statistiques par match au camp de ce joueur (pas le PR de "
 "l'adversaire) ; un match sans PR est exclu. Formes ``pr>8``, ``pr<5`` et "
-"``pr4,9``, bornes comprises."
+"``pr4,9``, bornes comprises ; x peut être décimal."
 msgstr ""
 "判断を下したプレイヤーの\\ **マッチ PR** が x "
 "以上である場合です。マッチごとの統計のうち、そのプレイヤーの席の値を読み取ります（対戦相手の PR ではありません）。PR "
 "のないマッチは除外されます。\\ ``pr>8``\\ 、\\ ``pr<5``\\ 、\\ ``pr4,9`` "
-"の形式を使えます（境界値を含む）。"
+"の形式を使えます（境界値を含む。x は小数でもよい）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--pr``"
@@ -1826,42 +1772,44 @@ msgid "``--analysis``"
 msgstr "``--analysis``"
 
 #: ../../source/cmd_mode.rst:1
-msgid "like, like42, like<12, like42*"
-msgstr "like, like42, like<12, like42*"
+msgid "like, like42, like<12, like42*, like42<12*"
+msgstr "like, like42, like<12, like42*, like42<12*"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Classe le résultat par distance croissante à une position cible, au lieu "
 "de le restreindre : ``like`` prend la position courante, ``like42`` celle"
 " d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, "
-"``like42*`` élargit la classe de la cible à tous les types de décision et"
-" aux deux régimes, argent et match. Voir :ref:`panneau_recherche`."
+"``like42<12*`` combine la cible et le seuil, ``like42*`` élargit la "
+"classe de la cible à tous les types de décision et aux deux régimes, "
+"argent et match. Voir :ref:`panneau_recherche`."
 msgstr ""
 "結果を絞り込むのではなく、目標局面からの距離の昇順に並べ替えます。\\ ``like`` は現在の局面を、\\ ``like42`` "
-"は番号42の局面を取り、\\ ``like<12`` は十二チェッカーピップを超えるものを除き、\\ ``like42*`` "
-"は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ :ref:`panneau_recherche`\\ を参照。"
+"は番号42の局面を取り、\\ ``like<12`` は十二チェッカーピップを超えるものを除き、\\ ``like42<12*`` "
+"は目標としきい値を組み合わせ、\\ ``like42*`` は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ "
+":ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:243
 msgid ""
-"Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
-" un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
-" qui garde un guillemet sans former une valeur complète est ignoré, et "
-"``blunderdb search --query`` le signale. Un tag peut contenir une "
-"apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est "
-"le séparateur des listes d'identifiants et de tags : il ne figure dans "
-"aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
+"Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
+"s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
+"deux. Un jeton qui garde un guillemet sans former une valeur complète est"
+" ignoré, et ``blunderdb search --query`` le signale. Un tag peut contenir"
+" une apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule"
+" est le séparateur des listes d'identifiants et de tags : il ne figure "
+"dans aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
 msgstr ""
-"``pl``\\ 、\\ ``pl!``\\ 、\\ ``op``\\ 、\\ ``tn``\\ 、\\ ``m``\\ 、\\ ``t`` "
-"の値は、二重引用符またはアポストロフィで始まり、そのどちらかで終わります。引用符を含みながら完全な値にならないトークンは無視され、\\ "
-"``blunderdb search --query`` がそれを報告します。タグにはアポストロフィを含められます（\\ "
-"``#l'ouverture``\\ ）が、二重引用符は含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ "
-"``ma1;2`` はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
+"値 ``pl``、``pl!``、``op``、``tn``、``au``、``m``、``t`` "
+"は、二重引用符またはアポストロフィで始まり、そのどちらかで終わります。引用符を持ちながら完全な値にならないトークンは無視され、``blunderdb"
+" search --query`` がそれを報告します。タグにはアポストロフィを含められます（\\ ``#l'ouverture``\\ "
+"）が、二重引用符は決して含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ ``ma1;2`` "
+"はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
 
-#: ../../source/cmd_mode.rst:255
+#: ../../source/cmd_mode.rst:248
 msgid "Transcrire depuis un terminal"
 msgstr "ターミナルから転記する"
 
-#: ../../source/cmd_mode.rst:257
+#: ../../source/cmd_mode.rst:250
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1879,7 +1827,7 @@ msgstr ""
 "は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
 "はなく、呼び出しをまたいだ取り消しもできません。"
 
-#: ../../source/cmd_mode.rst:268
+#: ../../source/cmd_mode.rst:261
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 
@@ -1982,3 +1930,78 @@ msgstr "コマンド履歴を消去します。"
 
 #~ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 #~ msgstr "キューブ値 4 のギャモン値表を開きます。"
+
+#~ msgid "tp2"
+#~ msgstr "tp2"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2."
+#~ msgstr "参照データパネルをテイクポイントで開き、キューブ 2 の表を表示します。"
+
+#~ msgid "tp2_live"
+#~ msgstr "tp2_live"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2 "
+#~ "pour les courses longues."
+#~ msgstr "参照データパネルをテイクポイントで開き、長いレースでのキューブ 2 の表を表示します。"
+
+#~ msgid "tp2_last"
+#~ msgstr "tp2_last"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 2 "
+#~ "mort."
+#~ msgstr "参照データパネルをテイクポイントで開き、デッドキューブ 2 の表を表示します。"
+
+#~ msgid "tp4"
+#~ msgstr "tp4"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 4."
+#~ msgstr "参照データパネルをテイクポイントで開き、キューブ 4 の表を表示します。"
+
+#~ msgid "tp4_live"
+#~ msgstr "tp4_live"
+
+#~ msgid "tp4_last"
+#~ msgstr "tp4_last"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les points de prise, où "
+#~ "figure la table du videau à 4 "
+#~ "mort."
+#~ msgstr "参照データパネルをテイクポイントで開き、デッドキューブ 4 の表を表示します。"
+
+#~ msgid "gv1"
+#~ msgstr "gv1"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les valeurs du gammon, où "
+#~ "figure la table du videau à 1."
+#~ msgstr "参照データパネルをギャモン値で開き、キューブ 1 の表を表示します。"
+
+#~ msgid "gv2"
+#~ msgstr "gv2"
+
+#~ msgid ""
+#~ "Ouvre le panneau Données de référence"
+#~ " sur les valeurs du gammon, où "
+#~ "figure la table du videau à 2."
+#~ msgstr "参照データパネルをギャモン値で開き、キューブ 2 の表を表示します。"
+
+#~ msgid "gv4"
+#~ msgstr "gv4"
+
+#~ msgid "Chercher des positions avec des filtres."
+#~ msgstr "フィルタを使って局面を検索します。"

@@ -358,6 +358,8 @@ notebook qui a cessé de fonctionner sans que personne le sache.
 * ``--query`` — Ne garde que les matchs dont un joueur, l'événement, le lieu,
   la manche, le tournoi ou la date contient ce texte (sans tenir compte de la
   casse).
+* ``--ids`` — Ne garde que ces identifiants de match, séparés par des virgules
+  (ceux qu'imprime ``stats matches``).
 * ``--sort`` — Ordre : ``date`` (défaut, le plus récent d'abord), ``date_asc``,
   ``length_asc``, ``length_desc``, ``player1``, ``player1_desc``, ``player2``,
   ``player2_desc``, ``tournament``, ``tournament_desc`` ou ``opponent``.

@@ -38,17 +38,10 @@ Opérations globales
    "cm", "Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points."
    "tags", "Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche."
    "log", "Ouvre le journal d'activité : les deux cents dernières lignes du fichier de journal, avec de quoi les copier pour les joindre à un rapport, ou ouvrir le dossier qui les contient."
-   "train", "Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : ``train scores`` (la fiche de score d'un score tiré au sort ; ``train tp`` et ``train takepoint`` sont des synonymes), ``train pips`` (le compte de pions des deux camps), ``train bearoff`` (l'EPC des deux camps sur une position engendrée ; ``train epc`` est un synonyme), ``train evaluation`` (les chances de gain et l'action de videau d'une position engendrée, en partie d'argent), ``train decision`` (une décision analysée de la liste parcourue : le coup se joue sur le plateau, l'action de videau se choisit dans le panneau ; ``train quiz`` est un synonyme), ``train opening`` (le coup d'ouverture ou la réponse d'une partie à un score, selon le jet mémorisé au lanceur, joué sur le plateau et jugé contre le livre d'ouverture ; ``train ouverture`` et ``train book`` sont des synonymes)."
+   "train", "Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : ``train scores`` (la fiche de score d'un score tiré au sort ; ``train tp`` et ``train takepoint`` sont des synonymes), ``train pips`` (le compte de pions des deux camps ; ``train pip`` est un synonyme), ``train bearoff`` (l'EPC des deux camps sur une position engendrée ; ``train epc`` est un synonyme), ``train evaluation`` (les chances de gain et l'action de videau d'une position engendrée, en partie d'argent), ``train decision`` (une décision analysée de la liste parcourue : le coup se joue sur le plateau, l'action de videau se choisit dans le panneau ; ``train quiz`` est un synonyme), ``train opening`` (le coup d'ouverture ou la réponse d'une partie à un score, selon le jet mémorisé au lanceur, joué sur le plateau et jugé contre le livre d'ouverture ; ``train ouverture`` et ``train book`` sont des synonymes)."
    "duel", "Ouvre le panneau Duel : un match contre le Bot, arbitré par blunderDB (voir :ref:`panneau_duel`)."
-   "tp2", "Ouvre le panneau Données de référence sur les points de prise, où figure la table du videau à 2."
-   "tp2_live", "Ouvre le panneau Données de référence sur les points de prise, où figure la table du videau à 2 pour les courses longues."
-   "tp2_last", "Ouvre le panneau Données de référence sur les points de prise, où figure la table du videau à 2 mort."
-   "tp4", "Ouvre le panneau Données de référence sur les points de prise, où figure la table du videau à 4."
-   "tp4_live", "Ouvre le panneau Données de référence sur les points de prise, où figure la table du videau à 4 pour les courses longues."
-   "tp4_last", "Ouvre le panneau Données de référence sur les points de prise, où figure la table du videau à 4 mort."
-   "gv1", "Ouvre le panneau Données de référence sur les valeurs du gammon, où figure la table du videau à 1."
-   "gv2", "Ouvre le panneau Données de référence sur les valeurs du gammon, où figure la table du videau à 2."
-   "gv4", "Ouvre le panneau Données de référence sur les valeurs du gammon, où figure la table du videau à 4."
+   "tp2, tp2_live, tp2_last, tp4, tp4_live, tp4_last", "Ouvre le panneau Données de référence sur l'onglet Points de prise, qui réunit les tables des videaux 2 et 4, en course longue et en dernier lancer : ces six commandes ouvrent le même onglet."
+   "gv1, gv2, gv4", "Ouvre le panneau Données de référence sur l'onglet Valeurs du gammon, qui réunit les tables des videaux 1, 2 et 4 : ces trois commandes ouvrent le même onglet."
 
 .. _cmd_positions:
 
@@ -69,7 +62,7 @@ Positions et navigation
    "grid, gr", "Ouvre la planche-contact : la liste parcourue en grille de mini-plateaux, une page de vingt-quatre à la fois ; choisir une vignette ouvre sa position."
    "list, l", "Afficher l'analyse de la position courante."
    "comment, co", "Afficher/écrire des commentaires."
-   "rollout, ro [fast|standard]", "Lance le rollout de la position courante (réglage choisi dans l'onglet gammonNet de la configuration, ou le préréglage nommé) et ouvre le panneau Analyse. ``ro search [fast|standard]`` le lance sur la liste affichée, après confirmation avec le total ; ``ro stop`` arrête le rollout en cours."
+   "rollout, ro [fast|standard]", "Lance le rollout de la position courante (réglage choisi dans l'onglet gammonNet de la configuration, ou le préréglage nommé) et ouvre le panneau Analyse. ``ro search [fast|standard]`` le lance sur la liste affichée, après confirmation avec le total ; ``ro stop`` arrête le rollout en cours. ``rapide`` est un synonyme de ``fast`` et ``recherche`` de ``search``."
    "history, hi", "Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son onglet *Historique*)."
    "stats, st", "Afficher/masquer le panneau de statistiques."
    "match, ma", "Afficher/cacher le panneau des matchs."
@@ -93,7 +86,7 @@ Positions et navigation
 
    "write, wr, w", "Enregistre la position courante."
    "write!, wr!, w!", "Mettre à jour la position courante."
-   "s", "Chercher des positions avec des filtres."
+   "s", "Chercher des positions avec des filtres. Refusé dans une collection ou un match, où il remplacerait la liste étudiée : la barre d'état renvoie alors vers ``ss``."
    "ss", "Chercher parmi les positions affichées : résultats courants, collection ouverte ou match en cours de revue."
    
 
@@ -109,7 +102,7 @@ CLI* donne, quand il existe, le drapeau de ``search`` qui fait la même chose
 (voir :ref:`cli`) ; un tiret signale un filtre que seule la grammaire
 exprime.
 
-Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de
+Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de
 recherche. ``cube`` et ``score`` reprennent le videau et le score qui y sont
 posés, ``d`` le type de décision, ``D`` et ``D1`` les dés, ``x`` la structure
 dessinée dans l'onglet *Sauf*. Un lancer ne s'écrit donc jamais dans le
@@ -169,30 +162,30 @@ Deux recherches complètes :
    "E>x", "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x.", "``--move-error-min``"
    "E<x", "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x.", "``--move-error-max``"
    "Ex,y", "L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x et y.", "``--move-error-min`` ``--move-error-max``"
-   "tm>x", "Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup dont la durée est inconnue ne répond jamais. Avec ``E``, la durée et l'erreur sont celles du même coup joué.", "—"
+   "tm>x", "Le joueur 1 a mis plus de x secondes à décider (coup ou videau ; x peut être décimal). Un coup dont la durée est inconnue ne répond jamais. Avec ``E``, la durée et l'erreur sont celles du même coup joué.", "—"
    "tm<x", "Le joueur 1 a mis moins de x secondes à décider.", "—"
    "tmx,y", "Le joueur 1 a mis entre x et y secondes à décider, bornes comprises.", "—"
    "w>x", "Le joueur a des chances de gain supérieures à x %.", "``--winrate-min``"
    "w<x", "Le joueur a des chances de gain inférieures à x %.", "``--winrate-max``"
-   "wx,y", "Le joueur a des chances de gain comprises à x % et y %.", "``--winrate-min`` ``--winrate-max``"
+   "wx,y", "Le joueur a des chances de gain comprises entre x % et y %.", "``--winrate-min`` ``--winrate-max``"
    "g>x", "Le joueur a des chances de gammon supérieures à x %.", "—"
    "g<x", "Le joueur a des chances de gammon inférieures à x %.", "—"
-   "gx,y", "Le joueur a des chances de gammon comprises à x % et y %.", "—"
+   "gx,y", "Le joueur a des chances de gammon comprises entre x % et y %.", "—"
    "b>x", "Le joueur a des chances de backgammon supérieures à x %.", "—"
    "b<x", "Le joueur a des chances de backgammon inférieures à x %.", "—"
-   "bx,y", "Le joueur a des chances de backgammon comprises à x % et y %.", "—"
+   "bx,y", "Le joueur a des chances de backgammon comprises entre x % et y %.", "—"
    "W>x", "L'adversaire a des chances de gain supérieures à x %.", "—"
    "W<x", "L'adversaire a des chances de gain inférieures à x %.", "—"
-   "Wx,y", "L'adversaire a des chances de gain comprises à x % et y %.", "—"
+   "Wx,y", "L'adversaire a des chances de gain comprises entre x % et y %.", "—"
    "G>x", "L'adversaire a des chances de gammon supérieures à x %.", "—"
    "G<x", "L'adversaire a des chances de gammon inférieures à x %.", "—"
-   "Gx,y", "L'adversaire a des chances de gammon comprises à x % et y %.", "—"
+   "Gx,y", "L'adversaire a des chances de gammon comprises entre x % et y %.", "—"
    "B>x", "L'adversaire a des chances de backgammon supérieures à x %.", "—"
    "B<x", "L'adversaire a des chances de backgammon inférieures à x %.", "—"
-   "Bx,y", "L'adversaire a des chances de backgammon comprises à x % et y %.", "—"
+   "Bx,y", "L'adversaire a des chances de backgammon comprises entre x % et y %.", "—"
    "o>x", "Le joueur a au moins x pions sortis.", "``--off1-min``"
    "o<x", "Le joueur a au plus x pions sortis.", "—"
-   "ox,y", "Le joueur a entre x et y pions sortis.", "—"
+   "ox,y", "Le joueur a entre x et y pions sortis. ``ox`` seul : exactement x pions sortis.", "—"
    "O>x", "L'adversaire a au moins x pions sortis.", "``--off2-min``"
    "O<x", "L'adversaire a au plus x pions sortis.", "—"
    "Ox,y", "L'adversaire a entre x et y pions sortis.", "—"
@@ -237,17 +230,17 @@ Deux recherches complètes :
    "tn'nom'", "Rechercher dans les tournois dont le nom est ``nom`` : la casse est ignorée et ``*`` remplace n'importe quelle suite de caractères (ex: ``tn'open*'``).", "``--tournament-name``"
    "rd:x", "Rechercher dans les matchs de la ronde x (ex: ``rd:3``, ``rd:Finale``) : le texte de la ronde est comparé sans tenir compte de la casse, ``*`` remplace n'importe quelle suite de caractères. Répétable (``rd:1 rd:2``) : l'une ou l'autre.", "``--round``"
    "ml:x", "Le match a une longueur de x points. Formes ``ml:7``, ``ml:5,9``, ``ml>5`` et ``ml<9`` (bornes comprises).", "``--match-lengths``"
-   "md:x..y", "**Date du match**, lue dans la colonne ``match_date`` de la position (la date du plus ancien match qui l'atteint), et non la date de création de l'analyse (``T``). Chaque borne est une année, un mois ou un jour (``2024``, ``2024-06``, ``2024-06-15``) et couvre toute sa durée, bornes comprises : ``md:2024-01..2024-12`` va du 1er janvier au 31 décembre 2024. Formes ``md:2024`` (toute l'année), ``md>2024-06`` et ``md<2024-06``.", "``--match-date``"
+   "md:x..y", "**Date du match**, lue dans la colonne ``match_date`` de la position (la date du plus ancien match qui l'atteint), et non la date de création de l'analyse (``T``). Chaque borne est une année, un mois ou un jour (``2024``, ``2024-06``, ``2024-06-15``) et couvre toute sa durée, bornes comprises : ``md:2024-01..2024-12`` va du 1er janvier au 31 décembre 2024. Formes ``md:2024`` (toute l'année), ``md>2024-06`` et ``md<2024-06``. Le séparateur ``/`` vaut ``-`` (``md:2024/06``).", "``--match-date``"
    "idx", "Rechercher la position d'identifiant x (ex: id12).", "``--position-ids``"
    "idx,y", "Rechercher les positions d'identifiants x à y (ex: id5,10).", "``--position-ids``"
    "``pl'nom'``", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée et ``*`` remplace n'importe quelle suite de caractères (``pl'Ali*'``).", "``--player``"
    "``pl!'nom'``", "Seulement les décisions prises par ce joueur : le joueur au trait est celui qui occupe le camp de ce nom dans le match (joueur 1 ou joueur 2). Même règles de casse et de joker que ``pl``.", "``--player`` ``--seat-only``"
    "``op'nom'``", "Seulement les matchs où ce joueur est l'adversaire de celui de ``pl`` (``pl'Alice' op'Bob'`` : Alice contre Bob, de l'un ou l'autre côté ; avec ``pl!``, les seules décisions d'Alice). Sans ``pl``, ``op`` seul désigne un joueur à l'un ou l'autre camp, comme ``pl``. Mêmes règles de casse et de joker.", "``--opponent``"
-   "pr>x", "Le **PR du match** du joueur qui a pris la décision est d'au moins x, lu dans les statistiques par match au camp de ce joueur (pas le PR de l'adversaire) ; un match sans PR est exclu. Formes ``pr>8``, ``pr<5`` et ``pr4,9``, bornes comprises.", "``--pr``"
+   "pr>x", "Le **PR du match** du joueur qui a pris la décision est d'au moins x, lu dans les statistiques par match au camp de ce joueur (pas le PR de l'adversaire) ; un match sans PR est exclu. Formes ``pr>8``, ``pr<5`` et ``pr4,9``, bornes comprises ; x peut être décimal.", "``--pr``"
    "ad:xg", "Moteur et profondeur de l'analyse enregistrée pour la position. Moteurs : ``xg``, ``gnubg``, ``bgblitz``, ``hedgehog``, ``gammonnet`` (début du nom du moteur, casse ignorée). Profondeurs : ``3ply`` (exactement 3 plis), ``3ply+`` (au moins 3 plis), ``book`` (livre d'ouvertures), ``rollout`` (rollout, y compris XG Roller et Roller++). Répétable : les moteurs sont des alternatives, les profondeurs aussi, et un moteur et une profondeur doivent tous deux convenir (``ad:xg ad:gnubg ad:3ply+``).", "``--analysis``"
-   "like, like42, like<12, like42*", "Classe le résultat par distance croissante à une position cible, au lieu de le restreindre : ``like`` prend la position courante, ``like42`` celle d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, ``like42*`` élargit la classe de la cible à tous les types de décision et aux deux régimes, argent et match. Voir :ref:`panneau_recherche`.", "—"
+   "like, like42, like<12, like42*, like42<12*", "Classe le résultat par distance croissante à une position cible, au lieu de le restreindre : ``like`` prend la position courante, ``like42`` celle d'indice 42, ``like<12`` écarte ce qui est à plus de douze pions-pas, ``like42<12*`` combine la cible et le seuil, ``like42*`` élargit la classe de la cible à tous les types de décision et aux deux régimes, argent et match. Voir :ref:`panneau_recherche`.", "—"
 
-Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton qui garde un guillemet sans former une valeur complète est ignoré, et ``blunderdb search --query`` le signale. Un tag peut contenir une apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est le séparateur des listes d'identifiants et de tags : il ne figure dans aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``).
+Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton qui garde un guillemet sans former une valeur complète est ignoré, et ``blunderdb search --query`` le signale. Un tag peut contenir une apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est le séparateur des listes d'identifiants et de tags : il ne figure dans aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``).
 
 .. _cmd_transcription_call:
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 15:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -182,6 +182,16 @@ msgstr "export"
 #: ../../source/cli.rst:1
 msgid "Exporte des données."
 msgstr "Εξάγει δεδομένα."
+
+#: ../../source/cli.rst:1
+msgid "transfer"
+msgstr "transfer"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire."
+msgstr "Αντιγράφει ένα μέρος μιας βιβλιοθήκης σε άλλη, χωρίς ενδιάμεσο αρχείο."
 
 #: ../../source/cli.rst:1
 msgid "identity"
@@ -366,6 +376,30 @@ msgstr ""
 "εξόδου (XGID ή OGID)."
 
 #: ../../source/cli.rst:1
+msgid "capture"
+msgstr "capture"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon."
+msgstr ""
+"Διαβάζει τη θέση που δείχνει ένα στιγμιότυπο οθόνης ενός ταμπλό του "
+"eXtreme Gammon."
+
+#: ../../source/cli.rst:1
+msgid "openingbook"
+msgstr "openingbook"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Le coup d'ouverture ou la réponse d'une partie à un score, tiré du livre "
+"d'ouverture embarqué et jugé contre lui."
+msgstr ""
+"Η κίνηση ανοίγματος ή η απάντηση ενός παιχνιδιού σε ένα σκορ, παρμένη από"
+" το ενσωματωμένο βιβλίο ανοίγματος και κριμένη με βάση αυτό."
+
+#: ../../source/cli.rst:1
 msgid "bearoff"
 msgstr "bearoff"
 
@@ -539,7 +573,7 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "Λειτουργία διακομιστή και μετάβαση σε PostgreSQL: δείτε :ref:`headless`."
 
-#: ../../source/cli.rst:119
+#: ../../source/cli.rst:122
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
@@ -547,35 +581,35 @@ msgstr ""
 "Κάθε εντολή δέχεται την επιλογή ``--help`` για την εμφάνιση της "
 "λεπτομερούς βοήθειάς της."
 
-#: ../../source/cli.rst:133
+#: ../../source/cli.rst:136
 msgid "Exemples de flux de travail"
 msgstr "Παραδείγματα ροών εργασίας"
 
-#: ../../source/cli.rst:136
+#: ../../source/cli.rst:139
 msgid "Import d'un répertoire de tournoi"
 msgstr "Εισαγωγή ενός καταλόγου τουρνουά"
 
-#: ../../source/cli.rst:145
+#: ../../source/cli.rst:148
 msgid "Sauvegarde régulière"
 msgstr "Τακτικό αντίγραφο ασφαλείας"
 
-#: ../../source/cli.rst:152
+#: ../../source/cli.rst:155
 msgid "Analyse des erreurs"
 msgstr "Ανάλυση σφαλμάτων"
 
-#: ../../source/cli.rst:164
+#: ../../source/cli.rst:167
 msgid "Codes de retour"
 msgstr "Κωδικοί εξόδου"
 
-#: ../../source/cli.rst:166
+#: ../../source/cli.rst:169
 msgid "``0`` — Succès."
 msgstr "``0`` — Επιτυχία."
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:170
 msgid "``1`` — Erreur."
 msgstr "``1`` — Σφάλμα."
 
-#: ../../source/cli.rst:169
+#: ../../source/cli.rst:172
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρια με διαχείριση σφαλμάτων:"
 
@@ -9204,4 +9238,3 @@ msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρι
 #~ "δεδομένων που γράφει αυτό το εκτελέσιμο·"
 #~ " είναι το πρώτο πράγμα που "
 #~ "επισυνάπτεται σε μια αναφορά σφάλματος."
-

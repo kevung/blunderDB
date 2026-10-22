@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-22 15:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -161,6 +161,16 @@ msgstr "export"
 #: ../../source/cli.rst:1
 msgid "Exporte des données."
 msgstr "データをエクスポートする。"
+
+#: ../../source/cli.rst:1
+msgid "transfer"
+msgstr "transfer"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Copie une partie d'une bibliothèque dans une autre, sans fichier "
+"intermédiaire."
+msgstr "ライブラリの一部を、中間ファイルなしで別のライブラリにコピーします。"
 
 #: ../../source/cli.rst:1
 msgid "identity"
@@ -323,6 +333,26 @@ msgid ""
 "Calcule l'Effective Pip Count et le verdict de videau d'une position de "
 "sortie (XGID ou OGID)."
 msgstr "ベアオフ局面（XGID または OGID）の Effective Pip Count とキューブ判断を計算します。"
+
+#: ../../source/cli.rst:1
+msgid "capture"
+msgstr "capture"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Lit la position que montre une capture d'écran d'un plateau eXtreme "
+"Gammon."
+msgstr "eXtreme Gammon の盤面のスクリーンショットに写っている局面を読み取ります。"
+
+#: ../../source/cli.rst:1
+msgid "openingbook"
+msgstr "openingbook"
+
+#: ../../source/cli.rst:1
+msgid ""
+"Le coup d'ouverture ou la réponse d'une partie à un score, tiré du livre "
+"d'ouverture embarqué et jugé contre lui."
+msgstr "あるスコアでの対局のオープニングの手または返し。内蔵のオープニングブックから引き、それに照らして判定します。"
 
 #: ../../source/cli.rst:1
 msgid "bearoff"
@@ -494,41 +524,41 @@ msgstr "serve, migrate, call"
 msgid "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 msgstr "サーバーモードと PostgreSQL への移行：\\ :ref:`headless` を参照。"
 
-#: ../../source/cli.rst:119
+#: ../../source/cli.rst:122
 msgid ""
 "Chaque commande accepte l'option ``--help`` pour afficher son aide "
 "détaillée."
 msgstr "各コマンドは ``--help`` オプションで詳細なヘルプを表示できます。"
 
-#: ../../source/cli.rst:133
+#: ../../source/cli.rst:136
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:136
+#: ../../source/cli.rst:139
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:145
+#: ../../source/cli.rst:148
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:152
+#: ../../source/cli.rst:155
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:164
+#: ../../source/cli.rst:167
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:166
+#: ../../source/cli.rst:169
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:167
+#: ../../source/cli.rst:170
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:169
+#: ../../source/cli.rst:172
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 
@@ -7114,4 +7144,3 @@ msgstr "これにより、エラー処理を含むスクリプトでCLIを使用
 #~ "la première chose à joindre à un"
 #~ " rapport de bug."
 #~ msgstr "blunderDB のバージョンと、このバイナリが書き込むデータベーススキーマのバージョンを表示します。バグ報告に最初に添えるべき情報です。"
-
