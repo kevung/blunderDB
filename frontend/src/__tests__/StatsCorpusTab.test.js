@@ -95,5 +95,7 @@ describe('StatsFilterBar — provenance', () => {
         await waitFor(() => expect(container.querySelector('.corpus-busy')).toBeNull());
         expect(compute.disabled).toBe(false);
         expect(container.textContent).not.toContain('1999-01-01');
+        // Dropped without a word: the library left is not an error of the one on screen.
+        expect(container.textContent).not.toContain('library left');
     });
 });

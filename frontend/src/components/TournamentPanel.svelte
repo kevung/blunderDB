@@ -516,8 +516,15 @@
     async function swapMatchPlayersInTournament(match) {
         try {
             await SwapMatchPlayers(match.id);
-            sheetVersion += 1;
-            // Reload tournament matches
+        } catch (error) {
+            logger.error('Error swapping match players:', error);
+            statusBarTextStore.set(tMsg(swapPlayersErrorKey(error, 'tournament.errorSwapping')));
+            return;
+        }
+        sheetVersion += 1;
+        // The write is done: said even when the library is left before the reload below answers.
+        statusBarTextStore.set(tMsg('tournament.swappedPlayers'));
+        try {
             if (selectedTournament) {
                 const matches = await readOfLibrary(() => GetTournamentMatches(selectedTournament.id));
                 tournamentMatchesStore.set(matches || []);
@@ -540,12 +547,9 @@
                     positionStore.set(movePositions[currentIndex].position);
                 }
             }
-
-            statusBarTextStore.set(tMsg('tournament.swappedPlayers'));
         } catch (error) {
             if (isLibraryLeft(error)) return;
-            logger.error('Error swapping match players:', error);
-            statusBarTextStore.set(tMsg(swapPlayersErrorKey(error, 'tournament.errorSwapping')));
+            logger.error('Error reloading the tournament after a swap:', error);
         }
     }
 

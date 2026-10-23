@@ -58,6 +58,7 @@ import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, acti
 import { ankiViewModeStore, ankiReviewActionStore } from '../stores/ankiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { tMsg } from '../i18n';
+import { libraryReplaced } from '../stores/groupActivityStore.js';
 
 // Un plateau dessiné, reconnaissable : cinq pions sur le 6, trois sur le 8.
 function drawnBoard() {
@@ -127,6 +128,15 @@ describe('ALT-n lance le n-ième filtre épinglé', () => {
         await runPinnedFilter(3);
         expect(bindings.SearchPositionIDs).not.toHaveBeenCalled();
         expect(get(statusBarTextStore)).toEqual(tMsg('search.noPinnedAt', { n: 3 }));
+    });
+
+    test('une bibliothèque quittée pendant la lecture ne dit pas « aucun épinglé »', async () => {
+        useLibrary();
+        statusBarTextStore.set('');
+        bindings.LoadFilters.mockImplementationOnce(() => (libraryReplaced(), Promise.resolve([])));
+        await runPinnedFilter(3);
+        expect(bindings.SearchPositionIDs).not.toHaveBeenCalled();
+        expect(get(statusBarTextStore)).toBe('');
     });
 
     test('hors des modes NORMAL et ÉDITION, la recherche est refusée', async () => {

@@ -60,8 +60,11 @@ import {
     GetTournamentMatches,
     ListMatches,
     GetTournamentReview,
-    GetPositionIDsByTournament
+    GetPositionIDsByTournament,
+    SwapMatchPlayers
 } from '../../wailsjs/go/database/Database.js';
+import { libraryReplaced } from '../stores/groupActivityStore.js';
+import { tMsg } from '../i18n';
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import { openPanels, PANEL, statusBarTextStore, dbMutationCounterStore } from '../stores/uiStore.js';
@@ -221,6 +224,17 @@ describe('TournamentPanel — list view', () => {
         expect(ListMatches).toHaveBeenCalledWith(expect.objectContaining({ Unassigned: true }));
         expect(GetTournamentMatches).toHaveBeenCalledWith(1);
         expect(await screen.findByText('Alice')).toBeTruthy();
+    });
+
+    test('a swap written says so even when the library is left before the reload answers', async () => {
+        vi.mocked(GetTournamentMatches).mockResolvedValue(/** @type {any} */ ([{ id: 501, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, comment: '' }]));
+        renderOpen();
+        await fireEvent.dblClick(must((await screen.findByText('Blunder Cup')).closest('tr')));
+        await screen.findByText('Alice');
+        vi.mocked(GetTournamentMatches).mockImplementationOnce(() => (libraryReplaced(), Promise.resolve([])));
+        await fireEvent.click(screen.getByTitle(/swap/i));
+        await vi.waitFor(() => expect(SwapMatchPlayers).toHaveBeenCalledWith(501));
+        await vi.waitFor(() => expect(get(statusBarTextStore)).toEqual(tMsg('tournament.swappedPlayers')));
     });
 
     test('the strip shows as many positions as the ids the link opens', async () => {

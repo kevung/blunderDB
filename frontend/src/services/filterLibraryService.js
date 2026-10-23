@@ -24,19 +24,28 @@ import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 /** @typedef {{ id: number, name: string, command: string, pinned?: boolean }} SavedFilter */
 
 /**
- * Reload the library into filterLibraryStore and return it.
- * @returns {Promise<SavedFilter[]>}
+ * Reload the library into filterLibraryStore and return it; null when the library was left
+ * before the read was answered (the store keeps what the library coming shows).
+ * @returns {Promise<SavedFilter[] | null>}
  */
-export async function loadFilterLibrary() {
+async function readFilterLibrary() {
     try {
         const lib = (await readOfLibrary(() => LoadFilters())) || [];
         filterLibraryStore.set(lib);
         return lib;
     } catch (_error) {
-        if (isLibraryLeft(_error)) return;
+        if (isLibraryLeft(_error)) return null;
         filterLibraryStore.set([]);
         return [];
     }
+}
+
+/**
+ * Reload the library into filterLibraryStore and return it.
+ * @returns {Promise<SavedFilter[]>}
+ */
+export async function loadFilterLibrary() {
+    return (await readFilterLibrary()) ?? [];
 }
 
 /**
@@ -120,7 +129,10 @@ export async function runPinnedFilter(n) {
         statusBarTextStore.set(tMsg('commands.noDatabaseOpened'));
         return;
     }
-    const pinned = pinnedFilters(await loadFilterLibrary());
+    const library = await readFilterLibrary();
+    // Read in the library left: its pins say nothing of the one on screen.
+    if (!library) return;
+    const pinned = pinnedFilters(library);
     const filter = pinned[n - 1];
     if (!filter) {
         statusBarTextStore.set(tMsg('search.noPinnedAt', { n }));
