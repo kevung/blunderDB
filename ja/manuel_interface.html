@@ -1,0 +1,473 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>はじめにとインターフェース &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="分析、コメント、検索" href="manuel_bibliotheque.html" />
+    <link rel="prev" title="マニュアル" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/manuel_interface.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_interface.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_interface.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_interface.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_interface.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_interface.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_interface.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/manuel_interface.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">マニュアル</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">はじめにとインターフェース</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">はじめに</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interactions-principales">主な操作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#description-de-l-interface">インターフェースの説明</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglets-de-vues">ビュータブ</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plusieurs-bibliotheques-ouvertes">複数のライブラリを開く</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comparer-et-echanger-le-panneau-autres-bases">比較と交換：「他のデータベース」パネル</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">設定</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dossier-surveille">監視フォルダ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#synchroniser-deux-machines">2台のマシンを同期する</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assistant-et-mcp">アシスタントと MCP</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">ガイドツアーとサンプルデータベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#navigation-dans-les-positions">ポジションのナビゲーション</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edition-de-positions">ポジションの編集</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-ligne-de-commande">コマンドライン</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-palette-de-commandes">コマンドパレット</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">分析、コメント、検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">マッチと記譜</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">トーナメント</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">統計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">評価</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">トレーニング、Anki、デュエル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">インポート、出所、共有</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">マニュアル</a></li>
+      <li class="breadcrumb-item active">はじめにとインターフェース</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="prise-en-main-et-interface">
+<span id="manuel-interface"></span><h1>はじめにとインターフェース<a class="headerlink" href="#prise-en-main-et-interface" title="この見出しへのリンク"></a></h1>
+<section id="introduction">
+<h2>はじめに<a class="headerlink" href="#introduction" title="この見出しへのリンク"></a></h2>
+<p>blunderDB はバックギャモンのポジションのデータベースを構築するためのソフトウェアです。その主な強みは、プレイヤーが遭遇したポジション（オンラインやトーナメントで）を一か所に集約し、自由に組み合わせ可能なさまざまなフィルターで絞り込みながら再検討できる点にあります。blunderDB は参照用ポジションのカタログを作成するためにも利用できます。</p>
+<p>ポジションは <em>.db</em> ファイルで表されるデータベースに保存されます。デスクトップアプリケーションはこのファイルを直接開き、ネットワークアドレスを開くことは決してありません。<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">サーバーモード</span></a>は同じバイナリの別のモードであり、一方から他方へ移るにはデータベースをエクスポートするか移行するのであって、アプリケーションを URL に向けるのではありません。</p>
+</section>
+<section id="interactions-principales">
+<h2>主な操作<a class="headerlink" href="#interactions-principales" title="この見出しへのリンク"></a></h2>
+<p>blunderDB で可能な主な操作は次のとおりです：</p>
+<ul class="simple">
+<li><p>新しいポジションを追加する、</p></li>
+<li><p>既存のポジションを編集する、</p></li>
+<li><p><strong>CTRL-X</strong> でボードの画像をクリップボードにコピーする（PNG）、または <strong>CTRL-X CTRL-X</strong> で完全な分析と共にコピーする、</p></li>
+<li><p>既存のポジションを削除する、</p></li>
+<li><p>1 つまたは複数のポジションを検索する、</p></li>
+<li><p>さまざまなソース（XG、GNUbg、BGBlitz、Jellyfish、HedgeHog）からマッチをインポートする。XG ファイルからのコメントも含む、</p></li>
+<li><p>インポートしたマッチの手を辿る、</p></li>
+<li><p>ポジションをコレクションに整理する、</p></li>
+<li><p>マッチをトーナメントに整理する。</p></li>
+</ul>
+<p>ユーザーはタグを使ってポジションに自由にラベルを付け、コメントで注釈を加えることができます。</p>
+</section>
+<section id="description-de-l-interface">
+<h2>インターフェースの説明<a class="headerlink" href="#description-de-l-interface" title="この見出しへのリンク"></a></h2>
+<p>blunderDB のインターフェースは上から下に次の要素で構成されています：</p>
+<ul class="simple">
+<li><p>［上部］ツールバー。データベースに対して実行できる主な操作がすべてまとめられています、</p></li>
+<li><p>［中央］メイン表示エリア。バックギャモンのポジションを表示または編集できます、</p></li>
+<li><p>［下部］ステータスバー。データベースや現在のポジションに関するさまざまな情報を表示し、コマンドラインを内蔵しています。</p></li>
+</ul>
+<p>次の目的でパネルを表示できます：</p>
+<ul class="simple">
+<li><p>eXtreme Gammon（XG）、GNUbg、または BGBlitz から取得した、現在のポジションに関連する分析データを表示する、</p></li>
+<li><p>コメントを表示、追加、または編集する、</p></li>
+<li><p>組み合わせ可能な条件に従ってポジションを検索・フィルターする、</p></li>
+<li><p>ポジションのコレクションを表示・管理する（コレクションパネル）、</p></li>
+<li><p>インポートしたマッチの一覧を表示し、マッチの手を辿る（マッチパネル）、</p></li>
+<li><p>トーナメントを表示・管理する（トーナメントパネル）、</p></li>
+<li><p>パフォーマンス統計を表示する（Stats パネル）、</p></li>
+<li><p>gammonNet であらゆる局面を評価し（Eval パネル）、ベアオフでは EPC（Effective Pip Count）を計算する、</p></li>
+<li><p>計算問題でトレーニングする（Training パネル）、</p></li>
+<li><p>間隔反復によってポジションを学習する（Anki パネル）、</p></li>
+<li><p>マッチ全体を Bot と対戦する（Duel パネル、<a class="reference internal" href="manuel_entrainement.html#panneau-duel"><span class="std std-ref">デュエルパネル</span></a>を参照）、</p></li>
+<li><p>マッチを手で記譜する（Transcription パネル）、</p></li>
+<li><p>スコア別の表——MET、テイクポイント、ギャモン価値、ニールの数——を参照する（参照データパネル、<a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">参照データパネル</span></a>を参照）、</p></li>
+<li><p>ポジションを開いている他のデータベースと比較し、それらと交換します（「他のデータベース」パネル、<a class="reference internal" href="#vue-ailleurs"><span class="std std-ref">比較と交換：「他のデータベース」パネル</span></a> を参照）。</p></li>
+<li><p>データベースのメタデータを表示する（メタデータパネル）。</p></li>
+</ul>
+<p>パネルの高さはハンドルをドラッグして調整します。高さはどのタブでも同じです。</p>
+<p>パネルのタブを右クリックすると<em>このタブを非表示にする</em>が選べます。タブが 1 つでも非表示になると、行の右に<em>∨</em>ボタン（<em>非表示のタブ</em>）が現れ、非表示のタブを一覧し、<em>表示: …</em>をクリックするとそのタブが戻ります。非表示のタブはセッションをまたいで保存されます。</p>
+<p>次の目的でモーダルウィンドウを表示できます：</p>
+<ul class="simple">
+<li><p>blunderDB のヘルプを表示する。検索欄（<em>/</em> でカーソルが移動）は、大文字小文字やアクセントを区別せずに、入力したテキストの出現箇所を選択します（<em>ENTER</em> で次へ、<em>SHIFT-ENTER</em> で前へ）、</p></li>
+<li><p>ガイドツアーのカタログを表示します（ <a class="reference internal" href="#visites-guidees"><span class="std std-ref">ガイドツアーとサンプルデータベース</span></a> を参照）、</p></li>
+<li><p>データベースのエクスポートを設定する、</p></li>
+<li><p>blunderDB を設定する。特にインターフェースの言語を設定する（<a class="reference internal" href="#configuration"><span class="std std-ref">設定</span></a> を参照）。</p></li>
+</ul>
+<p>メイン表示エリアはユーザーに次のものを提供します：</p>
+<ul class="simple">
+<li><p>バックギャモンのポジションを表示または編集するためのボード、</p></li>
+<li><p>キューブのレベルと所有者、</p></li>
+<li><p>各プレイヤーのピップカウント、</p></li>
+<li><p>各プレイヤーのスコア、</p></li>
+<li><p>出目です。ダイスに値が表示されていない場合、ダイスの位置はどちらのプレイヤーに手番があるかを示し、そのポジションがキューブの判断であることを表します。キューブの判断がダブルへの応答（テイク／パス）である場合、提示されたキューブが盤面の中央に、提示された値で表示されます。</p></li>
+</ul>
+<p id="board-menu-contextuel">盤上で右クリックすると、コンテキストメニューが開きます。最もよく使う 2 つの操作、<em>この局面を評価</em>（Eval パネルで）と<em>画像をコピー</em>（<em>CTRL-X</em>と同じ）は第 1 階層にあり、そのほかは ▸ の付いたサブメニューに整理されています。<em>コピー / 共有</em>（SVG または PNG での<strong>画像のファイル保存</strong>を含む）、<em>注釈</em>、<em>移動</em>（近い局面、新しいビュー）、<em>解析</em>（鏡像、ロールアウト）、<em>練習</em>（Anki デッキ、チャレンジ）、<em>管理</em>（保存、ごみ箱）です。メニューは、マッチ、トーナメント、コレクションの一覧と共有するアクションのカタログから組み立てられ、表示中の局面に当てはまるアクションだけを提示します。サブメニューの詳細とキーボード操作は <a class="reference internal" href="manuel_bibliotheque.html#menu-contextuel-actions"><span class="std std-ref">コンテキストメニュー</span></a> を参照してください。盤上で手を進めている間（クイズ、トランスクリプト）は、盤上で右クリックすると局面には触れずに手全体をやり直します。メニューが開くのは最初の一歩の前だけです。編集と Eval では、盤上の右クリックが駒を置くため、メニューは盤の外（ダイス、キューブ、スコアの外）での右クリックで開き、<em>局面を消去</em>（<em>BACKSPACE</em>と同じ）と<em>初期配置</em>（新しいゲームの駒を配置）から始まり、下書きの盤に当てはまるアクションが続きます。</p>
+<p>クリップボードは日常の動作で、保存はもうひとつの必要——記事や掲示板の投稿、レッスンの図版です。<strong>SVG</strong>を用意したのは、盤がもともと SVG だからです。拡大に耐える形式であり、文書に入れてもぼやけません。PNG はそこから作られ、クリップボードへのコピーも同じです。描画はひとつ、行き先は三つ。したがってどれも互いに食い違いません。検索パネルと Eval では、右ボタンがすでに相手色の駒を置く操作なので、メニューは上と同じく盤の外に出ます。局面を Eval パネルに持ち込む方法は <a class="reference internal" href="manuel_eval.html#eval-amener-position"><span class="std std-ref">ポジションを Eval パネルに持ち込む</span></a> を参照してください。</p>
+<p>ステータスバーは左から右に次の情報で構成されています：</p>
+<ul class="simple">
+<li><p>コマンドライン。<em>スペース</em> キーを押すとアクセスできます、</p></li>
+<li><p>ユーザーが実行した操作に関連する情報メッセージ、</p></li>
+<li><p>現在の局面の番号と、現在のライブラリの局面数（マッチを辿っているときは着手・ゲームの情報）、</p></li>
+<li><p><strong>ライブラリ・カウンター</strong>——「局面 412 · ブランダー 38 · マッチ 5」——各数字は<strong>それが数えているものを開きます</strong>。局面、ライブラリの閾値での <code class="docutils literal notranslate"><span class="pre">E&gt;</span></code> の検索（入力したときと同じように即座に実行され、検索履歴に残ります）、あるいはマッチ一覧です。画面のリストがライブラリ全体でない場合（検索、コレクション、マッチ）、ブランダーの数は「12 / 340 ブランダー」と表示されます。そのリストのブランダー、続いて同じ閾値でのライブラリのブランダーです。20,000 局面を超えるリストは数えられず、合計のみが残ります。辿れない数字は飾りです。ブランダーの閾値はライブラリのものであり、設定の<em>ライブラリ</em>タブで調整され、統計と共有されます。閾値が二つあれば、同じ語が二つのことを意味してしまいます。カウンターはリンクが開くものをそのとおりに約束します。それは複数の指し方で指された局面についても同じで、その局面は最も大きい損失の値をとります。非常に大きなライブラリ（20 万行超）では、カウンターはテーブルを走査しません。「≈」が付いた数は推定値（削除された行が欠番を残すため上限値）です。 局面が推定値の場合、正直な推定のないブランダーの数は直近の正確な集計で、それを変えうる書き込みがない限り保たれます。インポートや変更の後は、バックグラウンドで集計し直すあいだ「?」と表示され、終わると自動的に戻ります。読み取り専用で開いたライブラリは集計し直さず、書き込み中のインスタンスが集計し直すまで「?」のままです。リンクは検索を実行し、正確な数を返します。 2 つのブランダー数は別々のリンクです。前者は表示中のリストで部分検索 <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;</span></code> を、後者はライブラリ全体の検索を実行します。合計だけが表示されるときは、リンクは 1 つです。</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>ユーザーによる検索から得られたポジションの場合、ステータスバーに表示されるポジション数はフィルターされたポジションの数に対応します。</p>
+</div>
+<p><strong>Anki</strong> タブは、全デッキを通じて復習待ちのカードがあるとき <strong>バッジ</strong> を表示します。この数字はタブを開く理由であり、タブの向こう側にあってはなりません。ゼロのときは何も出ません。「0」と書かれたバッジは雑音です。</p>
+<p><code class="docutils literal notranslate"><span class="pre">log</span></code> コマンドは <strong>動作ログ</strong> を開きます。ログファイルの末尾二百行、それをコピーするボタン——報告に添えるのに必要なもの——、そしてログの入ったフォルダを開くボタンです。ログは絞り込みも整形もされません。整えたログはもう引用できません。</p>
+<p><code class="docutils literal notranslate"><span class="pre">grid</span></code> コマンドは <strong>コンタクトシート</strong> を開きます。閲覧中のリスト（検索結果、ライブラリ、コレクション）を、盤面と同じ描画のミニ盤面のグリッドとして、24局面ずつのページで表示します。現在の局面のページで開き、そのサムネイルは枠で囲まれます。サムネイルをクリックするか <em>ENTER</em> を押すと、その局面が盤面に開き、シートが閉じます。キーボードだけで操作できます ( <a class="reference internal" href="raccourcis.html#raccourcis-contact-sheet"><span class="std std-ref">コンタクトシート</span></a> を参照)。編集モードやマッチの中では開きません。マッチは手順で閲覧します。</p>
+<p>検索パネルの <strong>検索履歴</strong> では、保存されたコマンドの各トークンが裸のトークンではなく、名前付きのチップとして表示されます（<em>接触なし</em>、<em>着手の誤り</em> など）。正確なコマンドはツールチップに残ります。再実行されるのはそれだからです。blunderDB が認識しないトークンは、近いものに置き換えず <strong>そのまま</strong> 表示されます。</p>
+</section>
+<section id="onglets-de-vues">
+<span id="onglets-vues"></span><h2>ビュータブ<a class="headerlink" href="#onglets-de-vues" title="この見出しへのリンク"></a></h2>
+<p>ツールバーの下にあるタブバーを使うと、複数の<strong>ビュー</strong>を並行して扱えます。各ビューは独立したワークスペースであり、独自のポジションリスト、現在のポジションのインデックス、表示中のポジション、解析と選択中の手、アクティブなパネル、編集中のコメント、そしてマッチ内のナビゲーション状態を保持します。これにより、例えば、あるビューで検索を開いたまま、別のビューでマッチを閲覧するといったことが可能になります。</p>
+<ul class="simple">
+<li><p><strong>ビューを作成する</strong>：タブバーの <em>+</em> ボタン（ビューが一つしかない間は <em>+ 新規ビュー</em> という名前）をクリックするか、<em>CTRL-T</em> を押します。新しいビューは現在のビューのコピーとして始まります。</p></li>
+<li><p><strong>ビューを閉じる</strong>：タブの×をクリックするか、<em>CTRL-W</em>を押します。最後のビューは閉じられません。×はアクティブなグループのタブにだけ、そのグループのビューが複数あるときに表示されます。アクティブなビューを閉じると、残った最後のタブが表示されます。</p></li>
+<li><p><strong>ビューの切り替え</strong>：タブをクリックする、<em>CTRL-PageUp</em>/ <em>CTRL-PageDown</em>（または <em>SHIFT-J</em>/ <em>SHIFT-K</em>）を押して前 / 次のビューへ移る、あるいは <em>CTRL-1</em>～<em>CTRL-9</em>でアクティブなライブラリの n 番目のビューへ直接移動します。</p></li>
+<li><p><strong>ビューの名前を変える</strong>：アクティブなグループのタブをダブルクリックし、新しい名前を入力して<em>ENTER</em>で確定します。入力欄から離れても確定され、<em>ESC</em>で取り消されます。名前が空なら元の名前のままです。</p></li>
+</ul>
+<p>Eval パネルに残したビューは、残したときのまま戻ります。下書きの盤面も、パネルを出たときに戻る研究中のポジションもそのままです。Eval パネルの最後の下書き盤面もビューごとに保たれます。</p>
+<p>ビューはデータベースのセッション状態とともに保存され、再オープン時に復元されます。</p>
+<section id="plusieurs-bibliotheques-ouvertes">
+<span id="groupes-bibliotheques"></span><h3>複数のライブラリを開く<a class="headerlink" href="#plusieurs-bibliotheques-ouvertes" title="この見出しへのリンク"></a></h3>
+<p>複数のデータベースを同時に開いたままにできます。それぞれがタブの<strong>グループ</strong>を構成します。バーでは、色付きの見出しにファイル名が表示され、そのライブラリのビューが続き、その上端には同じ色が使われます。同時にアクティブになるライブラリは 1 つだけで、パネル、検索、インポート、アシスタントが読み書きするのはこのライブラリです。</p>
+<p>ライブラリが 1 つだけ開いているときは、バーに見出しは表示されず、ウィンドウのタイトルだけがデータベースを示します。ビューが全体で 1 つだけの間は、バーにタブも表示されず、<em>+ 新規ビュー</em>ボタンだけが残ります。グループの見出しのツールチップには、ファイルのフルパスが表示されます。</p>
+<ul class="simple">
+<li><p><strong>ライブラリを新しいグループで開く</strong>：タブバー右側の <em>⧉ 別のライブラリ</em>ボタン（2 つのグループが開いている場合は <em>⧉</em>のみ）、<em>CTRL-SHIFT-O</em>、またはコマンド <code class="docutils literal notranslate"><span class="pre">open_group</span></code>（<code class="docutils literal notranslate"><span class="pre">og</span></code>）。それまでアクティブだったライブラリは、そのグループで開いたままです。一方、<em>CTRL-O</em>はアクティブなグループのライブラリを置き換えます。ツールバーの <em>開く</em>ボタンのツールチップに両方のショートカットが示されます。</p></li>
+<li><p><strong>ライブラリの切り替え</strong>：別のグループのタブをクリックすると、そのライブラリとそのビューが一度に有効になります。グループの見出しをクリックすると、最後に残したビューに戻ります。<em>CTRL-SHIFT-PageUp</em>/ <em>CTRL-SHIFT-PageDown</em>は前 / 次のライブラリへ移ります。<em>CTRL-PageUp</em>/ <em>CTRL-PageDown</em>（または <em>SHIFT-J</em>/ <em>SHIFT-K</em>）はすべてのグループのビューを順に巡ります。</p></li>
+<li><p><strong>グループを閉じる</strong>：見出しの × でライブラリとそのビューを閉じます。アクティブなグループを閉じると、隣のグループが表示されます。ステータスバーには、閉じたライブラリと表示されたライブラリの名前が示されます。</p></li>
+<li><p><strong>並べ替え</strong>: タブをドラッグすると、同じグループ内の別のタブの前または後ろに移動します（アクセントカラーの線が位置を示します）。グループの見出しをドラッグすると、そのすべてのビューとともにグループ全体が別のグループの前または後ろに移動します。ビューはそのライブラリに属します。別のグループにドロップしても拒否され、何も変わりません。ビューの順序は <em>CTRL-1</em> … <em>CTRL-9</em> のショートカットが指す順序で、セッションとともに保存されます。グループの順序は現在のセッションの間だけ有効です。</p></li>
+</ul>
+<p>ビューを作成する <em>+</em> ボタンは、アクティブなグループの最後のタブの右に付いています。新しいビューはそのグループに加わり、クリックした場所に現れます。バーは二つの領域に分かれます。左にはグループとそのタブ、右には端に揃えてツール（他のライブラリ、分割画面）が並びます。</p>
+<p>グループを切り替えても盤面は動きません。2つのライブラリを開いている間は、タブの下にあるポジション情報バーの場所が常に確保され、表示中のグループに表示する内容がないときは空になります。</p>
+<p>アクティブなグループの見出しは、その色の上に白で名前を表示します。ほかのグループの見出しは、バーの背景に名前を表示し、上端にそれぞれの色の下線が付きます。色は 6 色が順に使われ、7 番目のグループは最初の色に戻ります。ビューはライブラリごとに番号が付けられます。新しいグループで開いたデータベースは「#1」から始まり、<em>CTRL-1</em>… <em>CTRL-9</em>はアクティブなグループのビューを指します。タブがウィンドウの幅に収まらなくなると、タブはまず最小幅まで縮みます（名前は省略記号で終わり、完全な名前はツールチップに表示されます）。それを超えるとバーがスクロールします（マウスホイール、または表示中のタブを画面内に移すビューの切り替え）。このとき行の両端に矢印 <em>‹</em> と <em>›</em> が現れます。クリックで 1 ステップ、押し続けると連続してスクロールし、リストの端では矢印が無効になります。タブが隠れている側の端はフェードで示されます。右側のツールにある <em>∨</em> ボタンは 2 つ以上のビューがあると表示され、「すべてのビュー」メニューを開きます。各ライブラリのビューが並び、現在のビューにチェックが付きます。クリックするとそのビューとグループが有効になります。</p>
+<p>切り替えは即座に行われます。各グループは、ビュー、ポジション一覧、現在のポジション、検索条件（入力中で検索を実行していなくても）、マッチ一覧、カウンター、パネルの各一覧のスクロール位置をメモリに保持し、データベースを読み直さずに復元します。新しいグループで開いたライブラリは、空の検索フォームから始まります。あるグループで選んだマッチやトーナメントが別のグループに適用されることはありません。進行中の作業も一緒に移ります。文字起こしの下書き、レッスン、Anki の復習、学習キュー、開いている Direction は、離れたときのまま戻ります。不在の間に変わった可能性のあるものは、表示直後に読み直されます。カウンターは常に、マッチ一覧は件数が変わった場合、または不在の間にバックグラウンドタスクがライブラリへ書き込んだ場合です。各データベース固有の一覧（コレクション、トーナメント、Anki デッキ、下書き、デュエル、検索履歴、保存済みフィルター）は、表示されたライブラリで読み直されます。</p>
+<p>同じファイルを2つのグループで開くことはできません。開き直すと、すでにそのファイルを保持しているグループが表示されます。</p>
+<p>バックグラウンドタスクは自分のライブラリに結び付いたままです。マッチファイルのインポート、監視フォルダ、GammonNet のバッチ解析は、別のグループを表示しても開始したグループで続行され、表示中のライブラリには一切書き込みません。進捗とレポートはそのグループに残ります。グループが表示されていない間は、その見出しにバッジが付き、タスクが動作中は点滅し、完了すると点灯したままになります。グループに戻るとバッジは消え、ステータスバーにタスクの実行内容が表示され、マッチ一覧が読み直されます。インポートに続く自動解析は、インポート先のライブラリで開始されます。監視フォルダは開始したグループに属します。マッチファイルはそこでバックグラウンドでインポートされ、統合するデータベースやポジションテキストは、そのグループが再び表示されるまで待機します。グループを閉じると、そのタスクと監視が停止します。</p>
+<p><strong>ライブラリ間のコピー。</strong> 別のグループの見出しへドラッグした行は、どちらの向きでもそこへコピーされます。マッチ一覧のマッチ、コレクション一覧のコレクション、開いているコレクションのポジション、表示中のポジション（ステータスバーの「n / N」カウンターでつかみます）、または読んでいるレッスン（レッスンバーのその名前で）です。対象の見出しは点線で囲まれます。コピーは <code class="docutils literal notranslate"><span class="pre">transfer</span></code> コマンドと同じです。エクスポートの選択をネイティブインポートで統合し、解析、コメント、指した手も含みます。コレクションはそのポジションを、マッチはその書き起こしを伴います。受け取る側のライブラリがすでに持っているものは再びコピーされません。A から B へ、次に B から A へコピーしても重複は生じず、コピー元を示すものも何も残りません。コピーは受け取る側のグループに結び付いたバックグラウンドで実行されます。その見出しにはバッジが付き、戻るとステータスバーが新しいポジションとマッチの数、すでにあった数を伝えます。</p>
+<p><strong>ロット</strong>は複数のデータベースの行を集めて一度にコピーします。ロットは「他のデータベース」パネルにあります（<a class="reference internal" href="#vue-ailleurs"><span class="std std-ref">比較と交換：「他のデータベース」パネル</span></a> を参照）。</p>
+<p>見出しの<strong>錠前</strong>、<em>コピーから保護</em>は、そのデータベースを保護します。ドラッグでも、「他のデータベース」パネルからでも、ロットやコンテキストメニューからでも、もう何もコピーされず、ステータスバーがそれを知らせます。保護はインポートにもデータベース内での変更にも影響しません。もう一度クリックすると解除されます。保護はファイルごとにセッションをまたいで、データベースではなく blunderDB の設定に記憶されます。開き直すと再び保護されます。</p>
+<p>表示中のものに連動して動作しているものがある場合、グループの切り替えは、クリックでもキーボードでも拒否され続け、原因と停止する場所を示すメッセージがステータスバーに表示されます。対象は、結果がボード上のポジションに表示されるロールアウト（<code class="docutils literal notranslate"><span class="pre">rollout</span> <span class="pre">stop</span></code>）、表示中のライブラリをクラブのネットワークで提供するトーナメント表示（Direction で停止します）、ボードとそのビューを占有している実行中のデュエル、タイマーとログがどのグループにも属さないトレーニングセッション、そして、実行している間に限り、インターフェースでしか読めないファイル（ポジションテキスト、1件ずつインポート）のインポートやデータベースの統合です。blunderDB を終了するとき、保存されるのはアクティブなライブラリのセッションだけで、グループの一覧は保存されません。次回の起動時には、最後にアクティブだったデータベースが開き直されます。</p>
+</section>
+<section id="comparer-et-echanger-le-panneau-autres-bases">
+<span id="vue-ailleurs"></span><h3>比較と交換：「他のデータベース」パネル<a class="headerlink" href="#comparer-et-echanger-le-panneau-autres-bases" title="この見出しへのリンク"></a></h3>
+<p><strong>他のデータベース</strong>パネル（<em>CTRL-SHIFT-A</em>）は、グループで開いているデータベース間の交換所です。表示中のポジションについて、他のデータベースがそれをどう知っているかを示し、あるデータベースから別のデータベースへコピーできます。ポジションは番号ではなく、盤面の同一性（そのハッシュ）で探されます。同じ番号でも、二つのデータベースでは別のポジションを指します。開いているデータベースが一つだけの場合、パネルはそのことを説明し、<em>交換のためにデータベースを開く</em>（<em>CTRL-SHIFT-O</em>）を提案します。表示中のポジションがない場合も、そのことを示し、何も読み込みません。</p>
+<p>他のデータベースにはそれぞれブロックがあり、そのグループの色で縁取られます。見出しは、そのデータベースがポジションを含むかどうかを示します。<em>あり</em>、<em>なし</em>、または最善手がアクティブなデータベースと異なる場合の<em>別の解析であり</em>です。二つのボタンでポジションを交換します。<em>… へコピー</em>はアクティブなデータベースからこのデータベースへ、<em>… から取得</em>はこのデータベースからアクティブなデータベースへ、解析、コメント、指した手とともにコピーします。コピーは、コピー先がすでに持つ解析を決して上書きしません。ブロックはコピーの前も後も<em>向こうで保持された解析</em>と表示します。まだ下書きのポジションは先に保存する必要があります。続いて、見出し付きの折りたたみ可能なブロックがあります。</p>
+<ul class="simple">
+<li><p><strong>解析</strong>:最善手または最善のキューブアクションと、それを見つけたエンジン。アクティブなライブラリとは異なるマッチ・エクイティ・テーブルで評価された解析には、<em>他の MET</em> と表示されます。</p></li>
+<li><p><strong>コメント</strong>:それぞれ作者、または署名者と署名の状態が、<a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">コメントパネル</span></a>と同様に表示されます。</p></li>
+<li><p><strong>そのポジションがプレイされたマッチ</strong>:プレイヤー、大会、日付、手番号、プレイされた手または判断とそのコスト。判定(<em>良い</em>、<em>エラー</em>、<em>ブランダー</em>)は、他方ではなく<strong>アクティブな</strong>ライブラリのしきい値で下されます。別の MET で計算されたコストは比較されず、<em>他の MET</em> と表示されたままになります。50 マッチを超える場合は、最後にインポートされた 50 件が一覧表示され、総数が示されます。</p></li>
+<li><p><strong>近傍のポジション</strong>。最も近い五つを、距離付きのサムネイルで表示します。このブロックは、データベースがポジションを含むときは折りたたまれ、含まないときは展開されます。</p></li>
+</ul>
+<p><em>向こうで開く</em>。マッチまたはサムネイルをクリックすると、そのデータベースのグループがアクティブになり、そこにポジションが表示されます。読み込みはどのデータベースにも何も書き込みません。パネルの下部は判定のしきい値を示し、<em>⟳ データベースを再読み込み</em>は他のデータベースを読み直します。</p>
+<p><strong>選択。</strong> マッチ、トーナメント、コレクション、レッスンがそれぞれのパネルで選択されていると、パネルの先頭のブロックがその名前を示し、他の各データベースについて、すでにそれを持っているかどうかと、そこに含まれるもの（ゲーム、マッチ、ポジション、ステップ）を表示します。同じ<em>… へコピー</em>と<em>… から取得</em>も使えます。マッチは、別の形式からインポートされたものでもフィンガープリントで識別されます。トーナメント、コレクション、レッスンは、コピーが統合するときと同じく名前で識別されます。</p>
+<p><strong>元に戻す。</strong> コピー先のデータベースに何かを追加したコピー（ポジション、マッチ、トーナメント、コレクション、ロット）は、パネル、コンテキストメニュー、ドラッグ、分割画面のいずれで行っても、セッションのコピー履歴に入ります。ステータスバーに<em>コピーを元に戻す (n)</em>が表示され、最新のコピー、次にその前のコピーと、blunderDB を閉じるまで取り消せます。元に戻すのは、コピーが作成したものだけです。データベースがすでに持っていたポジション、マッチ、トーナメントは残り、同名のコレクションからは、コピーが追加したポジションだけが取り除かれます。コピーが作成したものがその後に変わった場合（コメント、コレクション、トーナメントに収められたマッチ）、またはグループが別のデータベースを開いた場合、取り消しは拒否され、その旨が表示されます。レッスンを作成したコピーは取り消せません。そのポジションを取り除くとステップが途切れるためです。</p>
+<p>パネル下部の<strong>ロット</strong>は、複数のデータベースの行を集めて一度にコピーします。<em>SHIFT-B</em>は表示中のポジションをロットに入れたり出したりします。Pile に対する <em>b</em> と同じです。コンテキストメニューの<em>送る</em>グループはポジション、マッチ、トーナメントをロットに追加し、ロットへドラッグした行も入ります。各行は × をクリックして取り除きます。<em>コピー先データベース</em>を選び、<em>ロットを … へコピー</em>を実行します。ロットのタイトルをグループの見出しへドラッグしても、そこへコピーされます。トーナメントはすべてのマッチとともに送られ、マッチ単独のコピーはそのトーナメントのカードだけを伴います。ロットはメモリ上にあり、データベースには決して保存されません。グループを閉じるとその行は取り除かれ、blunderDB を閉じると消えます。</p>
+<p>サーバーには<em>… へコピー</em>がありません。テナントは他のテナントに書き込みません。ルート <code class="docutils literal notranslate"><span class="pre">across.transferPull</span></code> が<em>… から取得</em>のコピーをそこで行い、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">transfer</span></code> がコマンドラインで行います。</p>
+<p><strong>その場での入れ替え。</strong> <em>x</em> キーは、盤面の代わりに、同じ場所に同じ大きさで、他のライブラリのポジションを表示します。その名前、最善手、コメント数を示す、そのライブラリの色の帯が付きます。キーを押し続けた場合は、離すと盤面に戻ります。短く押した場合は、次に押すまで入れ替えたままになります。ポジションやウィンドウを変えても盤面に戻ります。アクティブなグループ、ビュー、リストは変わりません。表示されるポジションは、既定では、それを含む最初の他のライブラリにある同じポジションです。「他のデータベース」パネルのサムネイルの下にある<em>x で表示</em>ボタンは、代わりにその近傍ポジションを選び、<em>x での表示をやめる</em>かグループの変更までそのままになります。</p>
+<p><strong>分割画面。</strong>大きな画面では、タブバーの ◫ ボタン（<em>CTRL-SHIFT-X</em>）で盤面の領域だけを 2 つに分けます。各ペインは開いているライブラリを 1 つ持ち、その側を保ちます。開いたときはアクティブなグループが左、最初の別のライブラリが右です（ライブラリが 1 つだけなら同じもので、見出しに<em>同じライブラリ</em>と表示されます）。アクティブなペインは操作でき、そのグループの色で縁取られます。もう一方は固定されて薄く表示され、そのライブラリが離れた位置の盤面、ポジションの解析とコメントを示します。表示内容はどこにも書き込まれません。各ペインは自分の<em>n / N</em>カウンターを表示します。</p>
+<p>固定ペインをクリックするか<em>CTRL-ALT-←</em> / <em>CTRL-ALT-→</em>を押すと、そのライブラリがアクティブになります。縁取りが反対側に移り、ほかは何も動きません。ライブラリが 1 つだけのときは、2 つのビューがポジションを入れ替えます。ただしマッチモードでは入れ替わりません。再生中のマッチにはポジションを探すリストがなく、ステータスバーがそう示します。ツールバー、タブ、パネル、ステータスバーは 1 つだけで、常にアクティブなライブラリを示します。その色の点と名前がパネルのタブとステータスバーのメッセージの前に付き、ウィンドウのタイトルにもその名前が出ます。キーボード、<em>CTRL-S</em>、インポート、コマンドはアクティブなペインに向かいます。Duel、トレーニングセッション、インポートの最中は切り替えが拒否され、クリックしたペインが揺れて、ステータスバーが理由を示します。ライブラリの切り替えが終わるまでは、2 回目の切り替えは無視され、<em>CTRL-S</em>、ポジションの更新と削除は拒否されます。</p>
+<p>ペインのカウンター、または固定ペインの盤面をもう一方のペインにドラッグすると、そのポジションが解析とコメントごと、そのペインのライブラリにコピーされます（そのデータベースがコピーから保護されている場合を除く）。コピーは<em>元に戻す</em>が取り消す履歴に入ります。幅 1600 ピクセル以上ではパネルは盤面の横に残り、1280〜1600 ピクセルでは下に移り、1280 ピクセル未満では分割画面は拒否されてその場での入れ替え（<em>x</em>）が提案されます。ウィンドウが狭くなりすぎると分割画面は閉じます。分割画面と各側のライブラリは次のセッションでも復元されます。</p>
+</section>
+</section>
+<section id="configuration">
+<span id="id1"></span><h2>設定<a class="headerlink" href="#configuration" title="この見出しへのリンク"></a></h2>
+<p>ツールバーのヘルプボタンの左にある設定ボタン（歯車のアイコン）が、blunderDB の設定ウィンドウを開きます。設定は十のタブに分かれています。</p>
+<ul class="simple">
+<li><p><strong>インターフェース</strong> — テーマ、言語、表示倍率、パネルの位置、PageUp / PageDown の移動幅（10、50、100、500、1 000 ポジション、またはリストの 10 %）、ログ、更新の確認、あなたの名前と近傍ポジション。</p></li>
+<li><p><strong>ボードの色</strong> — ボードの配色。</p></li>
+<li><p><strong>ライブラリ</strong> — 開いているデータベースに属するもの。エラーとブランダーの閾値で、以下で説明します。</p></li>
+<li><p><strong>メンテナンス</strong> — データベースの健全性。操作ごとに一行で、以下で説明します。</p></li>
+<li><p><strong>コーパス</strong>— インポート時の重複、プレイヤーとイベントの別名、重複の可能性の検索（マッチのインポートを参照）。</p></li>
+<li><p><strong>Bearoff</strong> — Eval パネルが使うベアオフテーブル。</p></li>
+<li><p><strong>gammonNet</strong>— 内蔵の評価エンジンの設定。以下で説明します；</p></li>
+<li><p><strong>監視フォルダ</strong>——フォルダに届いたマッチを自動で取り込む仕組み。下で説明します。</p></li>
+<li><p><strong>アシスタントと MCP</strong> — ローカル MCP サーバーと内蔵アシスタント。以下で説明します。</p></li>
+<li><p><strong>発行者の識別情報</strong> — 出所の記載に署名する鍵。<a class="reference internal" href="manuel_partage.html#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a>の節で説明します。</p></li>
+</ul>
+<p><em>インターフェース</em>タブの先頭には<strong>テーマ</strong>があります。<em>システムに従う</em>、<em>ライト</em>、<em>ダーク</em>、<em>ハイコントラスト</em>、<em>印刷向け</em>です。テーマは画面の配色を決め、<strong>盤のパレットも提案します</strong>。暗い画面に明るい盤ではダークテーマの半分にしかなりません。盤がウィンドウの大半を占めるからです。</p>
+<p>最終的に決めるのはあなたであり、そのことは約束ではなく仕組みで保証されています。<em>色</em>タブは引き続き盤を直接設定でき、テーマのあとに選んだ色はあなたのものです。起動時に適用されるのは画面のトークンだけで、盤のパレットは決して上書きされません。あなたが設定したパレットはすでに読み込まれており、起動のたびに書き直せば、あなたの作業が一セッションずつ消えていくからです。<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md">ADR-0038</a> を参照してください。</p>
+<p>既定は<em>システムに従う</em>です。デスクトップのライト／ダークの設定に従い、セッションの途中で変わっても追随します。すでに決めているデスクトップに、道具が自分のライトやダークを押しつけることはありません。</p>
+<p><em>インターフェース</em>タブでは言語も選べます。英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語です。ツールバー、パネル、メッセージ、ヘルプを含む画面全体が選んだ言語に翻訳されます。言語の選択は保存され、次のセッションにも引き継がれます。</p>
+<p><em>ライブラリ</em>タブは、マシンではなく開いているファイルに属するものをまとめます。データベースが一つも開かれていないあいだは空で、そのことを明示します。</p>
+<p>このタブはまず、アプリケーション全体の語彙を決める二つの<strong>閾値</strong>を備えています。決定はその損失がエラー閾値に達した時点で<strong>エラー</strong>となり、そのエラーはブランダー閾値に達した時点で<strong>ブランダー</strong>となります。すべてのブランダーはエラーですから、前者の閾値が後者を超えることはできず、blunderDB は逆転した組を拒みます。値はエクイティで入力し——「0.080」——これはすべての表の単位です。一方、コマンドラインはミリポイントで語るため、0.080 の閾値は検索では <code class="docutils literal notranslate"><span class="pre">E&gt;80</span></code> と書きます。</p>
+<p>これらの閾値はコンピューターではなくファイルに従います。同じデータベースは、どこで開いても同じ数のブランダーを数え、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> がそれらを表示し、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">edit</span> <span class="pre">--error-threshold</span></code> / <code class="docutils literal notranslate"><span class="pre">--blunder-threshold</span></code> がそれらを設定します。閾値はエクスポートには持ち出されません。閾値は読み方の習慣であって、局面についての事実ではないからです。</p>
+<p>三つの<strong>プリセット</strong>がワンクリックで用意されており、それぞれこの線を引いたプログラムの名前を冠しています。blunderDB（0.050 / 0.100）、XG（0.020 / 0.080）、gnubg（0.040 / 0.080）です。既定では、ライブラリは 0.050 と 0.100 を読みます。</p>
+<p>画面上で変わるのは、ステータスバーのカウンターのブランダー数とそのリンクが用意する検索、統計とプレイヤー表の「エラー」列と「ブランダー」列、マッチの詳細画面での手の印 (<a class="reference internal" href="manuel_matchs.html#panneau-matchs"><span class="std std-ref">マッチパネル</span></a>)、そしてインポート後に blunderDB が見直しを勧める局面の一覧です。</p>
+<p><em>メンテナンス</em>タブの<strong>回収可能な容量</strong>の行には<strong>圧縮</strong>ボタンがあり、削除（マッチ、トーナメント、パージ）で空いたディスク容量を回収します。データを削除してもデータベースは自然には小さくならないので、この圧縮は明示的に要求する必要があります。大きなデータベースでは、この操作に時間がかかることがあります。圧縮されたコピーはファイルの隣に書き込まれ、その後でファイルを置き換えます。一時的に、そのボリューム上にデータベースと同程度の空きディスク容量が必要で、必要なのはメモリではありません。別のプログラムがデータベースを開いている場合（たとえば読み取り専用の二つ目のインスタンス）、ファイルは置き換えられません。データベースはその場で圧縮され、そのために空き容量がデータベースの約二倍必要になり、一時ファイルはシステムの一時フォルダ、または環境変数 <code class="docutils literal notranslate"><span class="pre">SQLITE_TMPDIR</span></code> が指すフォルダに置かれます。<code class="docutils literal notranslate"><span class="pre">/tmp</span></code> が小さい場合は、この変数をデータベースのあるボリュームに向けてください。blunderDB は、圧縮が中断される危険を冒す代わりに、足りないもの（ディスク容量、または利用可能なメモリが 512 MB 未満）を伝えるメッセージとともに開始を拒否します。操作を開始する前に確認が求められます。結果（得られた容量、単位はメガバイト）はその後ステータスバーに表示されます。同じ操作はコマンドラインから <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> で利用できます（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）。</p>
+<p>その場での圧縮の後、blunderDB はファイルが実際に小さくなったかを確認します。Windows では、別のプログラムが特定の方法で開いているファイルをシステムが縮小できません。その場合、圧縮は実際には得られなかった削減量を表示するのではなく、その旨を伝えるメッセージで終了します。もう一方のプログラムを閉じてから、もう一度実行してください。</p>
+<p><em>インターフェース</em> タブにある <strong>ログフォルダを開く</strong> ボタンは、アプリケーションのログが入っているフォルダを開きます。不具合の報告に詳細を添えるときに便利で、とりわけ blunderDB をショートカットやダブルクリックから起動し、何かを表示する端末が付いていない場合に役立ちます。</p>
+<p>同じタブにある、既定でオフの <strong>起動時に更新を確認</strong> チェックボックスは、起動ごとに一度だけ GitHub リポジトリのリリースページを問い合わせ、より新しいバージョンがあればステータスバーにメッセージを表示します。操作を妨げるウィンドウは決して出ません。パッケージマネージャ（Flatpak、Homebrew、ディストリビューションのパッケージなど）経由でインストールした場合、この確認は自動的に無効のままです。その場合は更新を扱うのはそのチャネルであり、blunderDB 自身ではありません。</p>
+<p><em>インターフェース</em> タブの二つの設定が、<strong>近傍ポジション</strong> の並べ替えを決めます（<code class="docutils literal notranslate"><span class="pre">like</span></code> トークン、<a class="reference internal" href="manuel_bibliotheque.html#panneau-recherche"><span class="std std-ref">検索パネル</span></a> を参照）。返す近傍の数と、それを超えるとポジションが近傍でなくなる最大距離です。この距離は既定でゼロ、すなわち上限なしです。尺度はゲームの段階によって変わり、ここで選んだ値は測定値のように読まれてしまうからです。<code class="docutils literal notranslate"><span class="pre">like&lt;12</span></code> トークンは、設定に触れることなく、一度の検索にかぎって独自の上限を課します。</p>
+<p><em>ボードの色</em>タブでは、ボードの色を自由に設定できます。背景、枠、明るいポイントと暗いポイント、プレイヤー 1 とプレイヤー 2 のチェッカー、ダイス、ダイスの目、キューブのそれぞれに色の選択欄があります。<em>リセット</em>ボタンですべての色が既定値に戻ります。言語と同じく、選んだ色もセッションをまたいで保持されます。</p>
+<p><em>Bearoff</em>タブは Eval パネルのベアオフテーブルを扱います（<a class="reference internal" href="manuel_eval.html#panneau-epc"><span class="std std-ref">Eval パネル</span></a> を参照）。テーブルは<strong>実行ファイルに埋め込まれてもいなければ、ダウンロードされるものでもありません</strong>。blunderDB はそれを使う機械の上で計算し、結果は gnubg が生成するものとバイト単位で同一です。テーブルを受け入れる前に SHA-256 の指紋が検証されます。</p>
+<p>通常の二つのテーブル（キューブ判断用の TS-06-06、EPC 用の OS-06）は初回起動時に、背後で、何も尋ねずに計算されます。1 コアで約 6 秒、その間アプリケーションは普通に使えます。Eval パネルがそれに触れるのは、まだ用意できていないテーブルを必要とするポジションを置いたときだけです。</p>
+<p>このタブは、有効な領域とその出どころ、EPC が読む片面表の状態、それらが置かれるフォルダー、そして存在する表の一覧を大きさと判定つきで示します。各行は確認のうえ個別に削除できます。</p>
+<p><strong>検証済みか未検証か。</strong> <em>検証済み</em> の表は、その領域について gnubg が出すバイト列そのものです。SHA-256 の指紋が blunderDB に登録されており、それが再現されました。片面の表（OS-06 から OS-10）について登録されている指紋は、GNUbg 1.08 の <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> ツールが生成するものです。<em>未検証</em> の表は形こそ正しいものの、その領域の指紋が登録されていません — 落ち度があるわけではなく、参照と比べた人がいないだけです。<em>破損</em> した表は自分自身と矛盾しており、決して読まれません。再計算されます。</p>
+<p><strong>より広い表を計算する。</strong> 領域は二つの系統からなる一覧から選び、割り当てるコア数も選びます（既定は 1 つを除く全部。計算機が使えるままであるように）。</p>
+<ul class="simple">
+<li><p><strong>厳密なキューブ（両面）</strong>、TS-06-06 から TS-06-15 まで。勝率とキューブ判定が推定ではなく読み取りになる範囲を広げます。</p></li>
+<li><p><strong>内奥の外の EPC（片面）</strong>、OS-06 から OS-10 まで。EPC の欄が黙らずに済む駒の距離を広げます。この走査は計算中の局面より小さい局面しか読まないので構造上逐次的であり、コア数は役に立ちません — 選択欄が灰色になってそう告げます。</p></li>
+</ul>
+<p>何かを始める前に、タブは選んだ領域について 3 つの数を示します。ディスク上の大きさ、計算中に必要なメモリ、そして <em>この計算機で</em> かかるはずの時間です。最後のものは推定値から始まり、実測値になります。十分に広い計算はそれぞれ自らの速度を測り、保持するからです。使えるメモリが許さない領域は、理由とともに灰色で提示されます — 「24 GB 必要だが 12 GB しか残っていない」は答えですが、行が無いことは答えになりません。</p>
+<p>目安として、16 スレッドの計算機では、TS-06-09 は 191 MB で 10 秒ほど、TS-06-11 は 1.2 GB で数分、TS-06-13 はたいていの計算機がメモリに保持できる量を超えます。片面の側は 1 コアで、OS-07 が 4.9 MB で 17 秒、OS-08 が 15 MB で 1 分 20 秒、OS-10 が 117 MB で 30 分です。</p>
+<p><strong>一時停止と再開。</strong> 計算中、進捗は <em>実測の</em> 残り時間と、2 つの別々のボタン — <em>一時停止</em> と <em>中止</em> — を示します。一時停止は計算の状態を表の隣に書き出し、再び動かすと最初からではなく止まったところから続きます。中止は何も残しません。設定ウィンドウを閉じても何も中断されません — 計算は背後で続きます。</p>
+<p>一時停止した計算は次回の起動時に、名前と数字つきで（「TS-06-09 は 43 % で中断」）、<em>再開</em> と <em>削除</em> とともに現れます。ひとりでに再開することはありません。停止を求めたのは利用者だからです。</p>
+<p>このタブでは最後に、外部の両面 <code class="docutils literal notranslate"><span class="pre">.bd</span></code> ファイル — 例えば gnubg 自身が作ったデータベース — を指定できます。領域がもっとも広い表が優先されます。</p>
+<p id="onglet-maintenance"><strong>メンテナンス</strong>タブはデータベースの健全性を示します。操作ごとに1行で、その件数、最後の実行（日付と結果：完了、キャンセル、失敗）、そのアクションを表示します。統計のないマッチの計算だけが、開いたときに自動で始まります。</p>
+<ul class="simple">
+<li><p><strong>解析のないポジション</strong> — 解析を一つも持たないポジション。アクションは、後述の gammonNet 解析です。gammonNet が評価を拒否するポジション（ダンス、マッチ表の範囲外のスコア）はこの件数に残るため、件数が必ずしもゼロになるとは限りません。</p></li>
+<li><p><strong>古い gammonNet 解析</strong> — 後述します。</p></li>
+<li><p><strong>統計のないマッチ</strong>— 統計がまだ計算されていないマッチです。アクションはそれらをすべて計算します。書き込み可能で開いたデータベースにそれがあると、バックグラウンドでバッチごとに自動で計算します。ステータスバーにこの行の進捗とキャンセルボタンが表示され、トーナメントのバッジと統計パネルのプレイヤータブは計算の終了を待ち、アプリケーションの他の部分はそのまま使えます。別のデータベースを開くと停止します。読み取り専用またはコマンドラインでは、統計の最初の読み込みがそれらを計算し、大きなデータベースでは時間がかかることがあります。そのとき統計パネルにこの件数が表示され、このタブを開きます。</p></li>
+<li><p><strong>解析列</strong> — 検索と統計が参照する列は、保存された解析からの射影で、保存された解析自体は手つかずのままです。アクションは何も再インポートせずに、それらを再計算します。</p></li>
+<li><p><strong>指し手のエラー</strong> — まだエラーのない指し手を採点します。</p></li>
+<li><p><strong>旧形式の解析</strong> — 以前のバージョンが JSON で保存していた解析を、バイナリ形式に書き直します。</p></li>
+<li><p><strong>ゴミ箱</strong> — ゴミ箱のエントリ数で、クリックするとゴミ箱が開きます。</p></li>
+<li><p><strong>回収可能な容量</strong> — ファイルの空き容量で、前述の圧縮によってディスクに戻されます。</p></li>
+</ul>
+<p>負荷の大きい件数（テーブル全体を読み込みます）は、<strong>数える</strong>ボタンを待ちます。ポジションの件数をクリックすると、それらのポジションがリストに開きます。統計のないマッチの件数をクリックすると、それらのマッチがマッチパネルに開きます。操作はバックグラウンドで実行され、進行状況とキャンセルボタンがステータスバーに表示されます。データベースに書き込む操作は同時に一つしか実行されません。gammonNet 解析、ロールアウト、または別のメンテナンス操作が実行中だと次の操作は拒否され、データベースを占有している操作の名前が示されます。読み取り専用で開いたデータベースでは、アクションは無効になります。同じ操作はコマンドライン（<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">maintenance</span></code>）にもあります。</p>
+<p><strong>gammonNet</strong>タブは内蔵の評価エンジンを設定します（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md">ADR-0011</a> を参照）。ここでは2つの探索深さを設定でき、それぞれ名前を持ち別々に保存されます——一方を下げても他方は決して変わりません：</p>
+<ul class="simple">
+<li><p><strong>表示深度</strong>——ボード編集時の対話的な快適さのための設定；データベースには決して書き込まれません。</p></li>
+<li><p><strong>解析深度</strong>——インポート後の分析バッチがポジションの「分析」として書き込む深さです。</p></li>
+</ul>
+<p>どちらもデフォルトは<strong>2-ply</strong>で、これが標準の構成です。表示のメニューでは 3-ply と 4-ply の深さに ⚠ が付き、1 ポジションあたりのコストは 2-ply を大きく上回ります。このタブではさらに<strong>枝刈り</strong>（デフォルト <code class="docutils literal notranslate"><span class="pre">k=12</span></code>）と<strong>表示する候補手の数</strong>（デフォルト 10）、そして<strong>インポート後に自動解析する</strong>チェックボックスを設定できます。このチェックボックスを有効にすると、各インポートの後に<strong>解析を一つも持たない</strong>ポジション（gammonNet も XG も GNUbg も BGBlitz もない——ルールは「評価は穴を埋めるだけ」であり、決して置き換えではありません）が残っていないかを確認し、あればバックグラウンドで、設定された解析深度の gammonNet 解析を起動します。<em>メンテナンス</em>タブの<strong>解析のないポジション</strong>の行は、同じ追いつき解析を手動で再実行します。この機能の追加前に作られたライブラリに便利です。</p>
+<p>テイクまたはパスは、ダブルの前の、ダブルを提示する側の判断について gammonNet が評価します。以前のバージョンの blunderDB がこのような応答に書き込んだ gammonNet の判定は、受け手のリダブルを評価していました。その判定は、ライブラリを開くとき、またはそれを持つデータベースをインポートするときに削除されます。テイクまたはパスは再び解析のないポジションとなり、<em>メンテナンス</em>タブの<em>解析のないポジション</em>の行（またはインポート後の自動解析）が再評価するまで、統計には含まれません。</p>
+<p><em>メンテナンス</em>タブの<strong>古い gammonNet 解析</strong>の行は、その逆のケースを扱います。すでに gammonNet で解析されているが、保存された解析が実行中のものより古いエンジンバージョンで、または上で設定した解析深度とは異なる深度で書かれたポジションは、そこで古いものとして示され、再評価されます。XG、GNUbg、BGBlitz の解析も持つポジションは、gammonNet の内容にかかわらず、この一括処理では決して変更されません。<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>の保護は無条件のままです。古いポジションの件数はデータベース内のすべての gammonNet 解析を読むため、<strong>数える</strong>ボタンを待ちます。一括処理は、開始時に独自のリストを再計算します。</p>
+<p>両方のロットは<strong>範囲が定まり、可視で、キャンセル可能であり、決して静かなデーモンではありません</strong>：その深さ、進捗（<code class="docutils literal notranslate"><span class="pre">分析済みポジション</span> <span class="pre">/</span> <span class="pre">総数</span></code>、起動時は <code class="docutils literal notranslate"><span class="pre">0</span></code> から）とキャンセルボタンが、実行中ずっとステータスバーに表示され、完了すると消えて、結果を要約するメッセージに置き換わります——何件のポジションが<strong>解析され</strong>、何件が<strong>拒否され</strong>（gammonNet が評価を拒否するポジション、たとえばそのマッチ・イクイティ・テーブルの範囲を超えたスコアなど、これは決して故障ではありません）、何件が<strong>失敗した</strong>か（次回の実行で変更されずに再試行されます）。どちらかの実行中にアプリケーションを閉じても何も失われません：解析されたポジションはその都度書き込まれ、次の実行は解析が止まった正確にその場所から再開します——ジャーナルを持つ必要は一切ありません。キャンセルでも終了でも、計算中のポジションも中断され、その分析は残りません。</p>
+<p>ライブラリに書き込む処理は一度に一つだけです：gammonNet の一括解析、保存するロールアウト、メンテナンス処理。<em>メンテナンス</em>タブから始めた一括解析や処理は、別の処理が実行中なら拒否され、ステータスバーがその処理を示します。インポート、書き起こし、デュエルが始める一括解析は逆にその終了を待ち、開始するまでステータスバーに「待機中」と表示されます。</p>
+<p id="rollout-reglage">同じタブには、解析パネルから開始する<strong>ロールアウトの設定</strong>があり(<a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">ロールアウト</span></a> を参照)、セッションをまたいで保持されます。<strong>高速</strong>(216 ゲーム、7 ハーフムーブで打ち切り)、<strong>標準</strong>(1296 ゲーム、11 ハーフムーブで打ち切り)、または<strong>自由</strong>です。自由では、打ち切り、最小・最大ゲーム数(36 の倍数)、JSD の上限、深さ(ply)、候補数、シード、プロセス数のすべてを編集できます。</p>
+<p><strong>データベースのマッチエクイティテーブル。</strong> タブの下部にあるリスト<strong>データベースのマッチエクイティテーブル（MET）</strong>で、gammonNet がマッチスコアの評価に使うテーブルを選びます。既定は内蔵の Kazaross-XG2 で、GNUbg の <code class="docutils literal notranslate"><span class="pre">.xml</span></code> ファイルから読み込んだテーブルをボタン<strong>.xml の MET を読み込む…</strong>で選ぶこともできます。この選択はアプリケーションではなくデータベースに属します。別のデータベースを開くと、そのデータベースのテーブルに戻ります。読み込まれるのは明示的なテーブルのみです（パラメトリックな <code class="docutils literal notranslate"><span class="pre">zadeh</span></code> や <code class="docutils literal notranslate"><span class="pre">mec</span></code> テーブルは対象外）。読み込んだテーブルの長さを超える範囲では、内蔵テーブルが引き継ぎます。テーブルは名前ではなく値で識別されます。GNUbg の <code class="docutils literal notranslate"><span class="pre">Kazaross-XG2.xml</span></code> を読み込んでも何も追加されません。それは内蔵テーブルだからです。gammonNet が計算した各解析は、計算に使ったテーブルを記録します。読み込まれた解析（XG、GNUbg、BGBlitz）は Kazaross-XG2 で計算されたものとみなされます。現在のテーブルと異なるテーブルで計算されたマッチスコアの解析は、解析パネルで<strong>異なる MET</strong>と表示され、統計（エラー平均、PR、ランキング、直接対決）から除外されます。マネーゲームの解析が除外されることはありません。テーブルを変更しても解析は書き換えられず、比較が対象とするものだけが変わります。</p>
+<p>パネルのライブ評価とキューブマトリクスは、データベースが保存する解析と同じく、データベースのテーブルで評価されます。テーブルはそれを参照する解析とともに移動します。データベースのエクスポートはテーブルを含め、データベースのインポートは受け取り側のデータベースにテーブルを追加します。重複はせず（既にあるテーブルは値で識別されます）、現在のテーブルにもしません。別のエンジン（XG、GNUbg）の解析で置き換えられた gammonNet の解析は、再び Kazaross-XG2 で計算されたものとみなされます。</p>
+<p><strong>解析なしで取り込んだマッチにも PR が付くようになりました。</strong>オンラインで指したマッチや、XG を通していない Jellyfish の <code class="docutils literal notranslate"><span class="pre">.mat</span></code> ファイルがこれに当たります。blunderDB は局面と指された手を知っていましたが、それがどれだけの価値かを語る解析がありませんでした。バッチが走ると、実際に指された手が gammonNet の順位づけと比較され、その差が PR、エラー率、最悪の判断、そのほかすべての指標に、XG が解析したマッチとまったく同じように反映されます。この比較は何も作り出しません。指された手はマッチの手のテーブル、すなわち取り込み時に書かれたものから来ます。ファイルが解析を持っていたかどうかは関係ありません。</p>
+<p>本バージョンより前に解析したデータベースを評価し直す必要はありません。<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> が既存の解析と手から列を計算し直し、それらのマッチに PR を取り戻します（<a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a> を参照）。</p>
+<p>正直な留保をひとつ。局面はその構造で識別されるため、二度現れた局面は——一方はうまく、他方はまずく指されていても——最初に記録された出現の差だけを持ちます。これはこの計算に固有のことではありません。XG のライブラリもまったく同じ形をしています。</p>
+<section id="dossier-surveille">
+<span id="id2"></span><h3>監視フォルダ<a class="headerlink" href="#dossier-surveille" title="この見出しへのリンク"></a></h3>
+<p><strong>監視フォルダ</strong>タブは、blunderDB が動作中にフォルダを見張り、そこに<strong>現れた</strong>マッチファイルを取り込むよう指示します。eXtreme Gammon でセッションを打ち、blunderDB に戻ると、マッチがすでにそこにあります。</p>
+<p>推測はしません。フォルダを指定するまで監視は行われず、blunderDB があなたのマッチの置き場所を推測してディレクトリを読み始めることはありません。<strong>候補を出す</strong>ボタンはこのマシンのよくある場所を探し、実際に存在する場合にのみ候補を示します。見つからなければそう伝え、フォルダの指定はあなたに委ねられます。</p>
+<p>チェックを入れる前に知っておく価値のあることが三つあります。</p>
+<ul class="simple">
+<li><p><strong>取り込まれるのは現れたファイルだけです。</strong>監視を始めた時点でフォルダにあるものは既知として記録され、そのまま残されます。四年分のマッチに監視を向けたからといって、それらをすべて取り込んではいけません。すでにあるものを取り込むには、そのためにあるフォルダの取り込みを使ってください。二つはとてもよく噛み合います。先に取り込み、次に監視です。</p></li>
+<li><p><strong>ファイルはサイズが安定してから取り込まれます。</strong>他のプログラムが書いている途中のマッチは、見るたびに大きくなります。書きかけで取り込めば、誰にも手の打ちようがない構文解析エラーになります。そこで blunderDB は、同じファイルを二度、変化なしと確認するまで待ちます。</p></li>
+<li><p><strong>取り込みは静かに行われます。</strong>マッチが届いたとき、あなたは局面を検討している最中でした。そこで画面を奪うのは最悪のタイミングです。モード、有効な検索、タブ、表示中の局面は動きません。局面の一覧は再読み込みされず、新しいマッチは次の再読み込みで表示されます。取り込みはウィンドウを出さずに行われ、ステータスバーに、取り込んだ数・（重複として）飛ばした数・失敗した数を示す帯が出ます。望めば完全な報告を開くボタンもあります。ほかはすべて手動の取り込みと同じです。重複の検出も、取り込みのロットも、有効なら自動解析も同じです。</p></li>
+</ul>
+<p>既定の間隔は 10 秒、下限は 2 秒です。フォルダは再帰的にはたどりません。監視フォルダは道具がマッチを置く場所であって、探索すべき木ではないからです。アンマウントされたネットワーク共有は監視を止めず、復帰したときにその中身を新規と見せることもありません。</p>
+<p>同じ監視はコマンドラインにもあり、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;フォルダ&gt;</span> <span class="pre">--watch</span></code> で使えます（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）。サーバや定期実行、スクリプトが使えるのはこの形です。</p>
+</section>
+<section id="synchroniser-deux-machines">
+<span id="id3"></span><h3>2台のマシンを同期する<a class="headerlink" href="#synchroniser-deux-machines" title="この見出しへのリンク"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">.db</span></code>データベースをマシン間でコピーしたり、同期フォルダー（Syncthing、Dropbox など）に置いたりすると、いずれ壊れてしまいます。SQLite はデータベースの隣にジャーナルファイルを書き、ファイル同期がそれを順不同でコピーするためです。blunderDB は代わりに、もう一方のマシンが<strong>監視</strong>するフォルダーに置かれる<strong>増分エクスポート</strong>で二つのライブラリを同期します。転送手段は自由です（Syncthing、USB メモリ、メールなど）。サーバーもアカウントも不要です。</p>
+<ul class="simple">
+<li><p>マシン A のエクスポートウィンドウで<em>ライブラリ全体</em>を選び、<em>このフォルダーへの前回のエクスポート以降の新しいものだけ</em>にチェックを入れ、<strong>フォルダーを選択…</strong>でフォルダーを指定します。エクスポートのたびに、そのフォルダーへ<code class="docutils literal notranslate"><span class="pre">sync-&lt;machine&gt;-&lt;date&gt;.db</span></code>ファイルが書き込まれます。これには同じフォルダーへの前回のエクスポート以降にライブラリへ入ったものだけが含まれ、最初のファイルにはすべてが含まれます。</p></li>
+<li><p>マシン B では、そのフォルダーを<a class="reference internal" href="#dossier-surveille"><span class="std std-ref">監視フォルダ</span></a>にします。そこに現れた<code class="docutils literal notranslate"><span class="pre">.db</span></code>ファイルはすべて、データベースのインポートと同じようにプレビューなしでマージされます。既知のポジションは重複せず、既知のマッチは認識され、コレクションとレッスンは名前でマージされます。</p></li>
+<li><p>反対方向も、二つ目のフォルダーで同じようにします。</p></li>
+</ul>
+<p>知っておくべきこと：</p>
+<ul class="simple">
+<li><p><strong>「最後の同期」の目印はエクスポートする側にあり</strong>、書き出し先フォルダーごとに一つで、ファイルが完成したときだけ進みます。受け取る側のマシンは何も記録しません。エクスポートが失敗すると目印はそのままで、次のエクスポートが同じ行を運びます。</p></li>
+<li><p><strong>同期は追加のみで行われます。</strong>削除は伝わりません。A でマッチを削除しても B では削除されません。その場での変更も同様です。書き直したコメント、名前を変えたマッチ、送信済みのポジションでやり直した解析などです。送られるのは、前回のエクスポート以降に入ったポジション、マッチ、トーナメント、コレクション、レッスン、コメントです。コレクションはポジションが追加されたときにも、ポジションはコメントが追加されたときにも再び送られます。書き直したコメントは再び送られません。受け取る側のマシンは既に持っているテキストを置き換えないためです。訂正を伝えるには、新しいコメントとして追加してください。保存済みフィルターと Anki デッキは対象外です。チェックボックスなしの<em>ライブラリ全体</em>のエクスポートにはこれらが含まれます。</p></li>
+<li><p><strong>マシンが受け取ったものは、一度だけ相手へ戻ります。</strong>そのマシンのライブラリでは新しいものだからです。相手は何も追加せずにそれを認識し、次の交換は空になります。</p></li>
+<li><p><strong>blunderDB が閉じている間に届いたファイルは失われません。</strong>監視の開始時に、フォルダーにすでにある各<code class="docutils literal notranslate"><span class="pre">.db</span></code>がマージされます（マッチファイルとは異なります）。受け取る側のマシンは読み込んだものを記録しないため、起動のたびにフォルダーにまだ残っているすべてのファイルを再びマージします。何も追加されませんが、読み直す時間がかかります。この起動を速く保つため、受信済みの<code class="docutils literal notranslate"><span class="pre">sync-…</span></code>ファイルは時々削除してください。</p></li>
+<li><p><strong>増分エクスポートはファイルを上書きしません。</strong>前のファイルには、相手のマシンがまだ受け取っていない行が入っているかもしれません。既に存在するファイル名へのエクスポートは拒否されます。フォルダーを指定すれば、エクスポートのたびに新しい名前が付きます。</p></li>
+<li><p><strong>既に見た名前で書き直されたファイルは再び統合されます</strong>。監視はファイルを名前、サイズ、更新日時で識別します。</p></li>
+<li><p><strong>開いているライブラリが自分自身に統合されることはありません</strong>：監視フォルダーの中にあっても、監視はそれを飛ばします。</p></li>
+<li><p><strong>行を除外せざるを得なかったエクスポート</strong>（ログに記録されます）は、目印を進めません。次のエクスポートが、それらとその後に続くすべてを再試行します。</p></li>
+<li><p><strong>エクスポートが書きかけの状態で見えることはありません。</strong>隠し名で書き込まれ、その後一度に名前が変更されます。パスワード保護されたファイル（<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>）は、パスワードを尋ねられない監視では取り込まれません。</p></li>
+</ul>
+<p>コマンドラインでは、一方で<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span> <span class="pre">--incremental</span> <span class="pre">--file</span> <span class="pre">&lt;フォルダー&gt;</span></code>、もう一方で<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;フォルダー&gt;</span> <span class="pre">--watch</span></code>を実行します（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a>を参照）。サーバーは<code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code>で<code class="docutils literal notranslate"><span class="pre">&quot;incremental&quot;:</span> <span class="pre">true</span></code>を受け付けます（<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a>を参照）。</p>
+</section>
+<section id="assistant-et-mcp">
+<span id="assistant-mcp"></span><h3>アシスタントと MCP<a class="headerlink" href="#assistant-et-mcp" title="この見出しへのリンク"></a></h3>
+<p><strong>アシスタントと MCP</strong> タブでは二つの項目を設定します。どちらも初期状態では無効です。</p>
+<p><strong>ローカル MCP サーバー</strong> は、ウィンドウが開いている間、blunderDB のツール（検索、ポジションとその分析の読み取り、プレイヤーの統計、クイズなど）を、Claude Desktop や Claude Code のような Model Context Protocol を話すアシスタントに提供します。このマシン上でのみ <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;/mcp</span></code>（既定のポートは 8765）で待ち受け、Web ページからのリクエストは拒否します。表示用のツールが二つ追加されます。検索結果のビューを開くことと、ポジションを表示することです。ツールは読み取りのみですが、<strong>書き込みを許可</strong> にチェックを入れると、ポジションの保存、コメントの追加、コレクションの作成と充填、Anki カードの評価、ポジションの分析の隣へのロールアウトの保存ができるようになります。何も消去されません。ウィンドウが開いていないときは、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">mcp</span></code> が同じツールを提供します（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）。</p>
+<p><strong>内蔵アシスタント</strong>は、これらと同じツールのクライアントです。モデルは同梱されていません。OpenAI 互換のプロバイダーに接続します。既定ではこのマシン上の Ollama で、Groq、OpenRouter、Gemini、Anthropic、または別のアドレスも使えます。選んだプロバイダーに関わらず、このマシンの外にあるアドレスはすべてリモートとみなされます。その場合、入力した文とツールの結果がマシンの外に出ます。タブにその旨が表示され、そのアドレスそのものについて同意を求められます。別のアドレスにすると、あらためて求められます。API キーはシステムのキーリングに保存され、データベースにも設定ファイルにも保存されません。Ollama の既定のモデル <code class="docutils literal notranslate"><span class="pre">qwen2.5:7b</span></code> は出発点であって、推奨ではありません。ソースコードに同梱の計測用ベンチのスコアがない限り、モデルの推奨は行われません。</p>
+<p>有効にすると、アシスタントは検索パネルの<strong>アシスタント</strong>サブタブになります。文 (「レースでの 50 ミリポイントを超えるミス」など) を入力すると、その文にちなんだ名前の新しいビューが開き、そこで検索が実行されて切り替わります。そのトークンは検索履歴に残ります。ツールが返す内容はデータベース由来で、モデルが書いた内容には<strong>モデルの自由記述</strong>と表示されます。アシスタントが変更を提案するのは、<strong>アシスタントに変更の提案を許可する（それぞれ確認あり）</strong>にチェックを入れた場合だけです。これはローカル MCP サーバーの書き込みとは別の設定です。アシスタントが準備した変更はそれぞれ表示され、<strong>確定</strong>の後にのみ実行されます。</p>
+<p>設定ウィンドウには、インターフェースの表示設定もまとめられています。<strong>インターフェースの拡大率</strong> のスライダーを使うと、すべての要素を拡大または縮小でき、高密度ディスプレイや読みやすさの向上に役立ちます。ショートカット CTRL-+、CTRL-- 、CTRL-0 は、ブラウザーと同じようにこの拡大率を調整します。<strong>パネルの位置</strong> メニューでは、パネル（検索、マッチ、分析）をボードに対してどこに配置するかを決定します： <em>下</em>、<em>横</em> または <em>自動</em>（自動の場合、横長の画面では利用可能なスペースをより有効に活用するため横が選択されます）。他の設定と同様に、これらの選択はセッションをまたいで保持されます。</p>
+</section>
+</section>
+<section id="visites-guidees-et-base-d-exemple">
+<span id="visites-guidees"></span><h2>ガイドツアーとサンプルデータベース<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="この見出しへのリンク"></a></h2>
+<p>操作に慣れやすくするため、blunderDB はインターフェースの <strong>ガイドツアー</strong> を用意しています。ツアーのカタログは、ツールバーから、またはコマンド <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>（別名 <code class="docutils literal notranslate"><span class="pre">tour</span></code>）で開けます。7つのツアーが利用できます。インターフェースの全体ツアー、そしてポジションの検索、マッチのレビュー、トーナメントのレビュー、Eval パネル、Anki 復習、統計に特化したツアーです。各ツアーは、関連するインターフェースの要素を一手順ずつ強調表示し、その途中で話題のパネルを開き、いつでも再生できます。初回起動時には、全体ツアーが自動的に案内されます。</p>
+<p>コマンド <code class="docutils literal notranslate"><span class="pre">demo</span></code> は、自分の対局をインポートしなくてもツールの機能を試せる <strong>サンプルデータベース</strong> を読み込みます。内容は、eXtreme Gammon、BGBlitz、gammonNet が解析した 3 つのマッチ（うち 2 つはトーナメントにまとめられています）、3 つのテーマ別コレクション、タグ付きのコメント（ <code class="docutils literal notranslate"><span class="pre">#blunder</span></code> 、 <code class="docutils literal notranslate"><span class="pre">#cube</span></code> ）、復習履歴付きの Anki デッキです。プレイヤー、トーナメント、会場は架空のものです。データベースが開かれていない場合、ガイドツアーはこのデータベースを利用します。</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="navigation-positions"></span><h2>ポジションのナビゲーション<a class="headerlink" href="#navigation-dans-les-positions" title="この見出しへのリンク"></a></h2>
+<p>既定では、blunderDB では次のことができます：</p>
+<ul class="simple">
+<li><p>現在のライブラリのさまざまなポジションをスクロールする——ライブラリが一度にまとめて読み込まれることは決してありません。blunderDB は識別子のリストだけを保持し、表示中のポジションの前後 50 件ずつの窓でポジションを読み込みます。そのため、数万件のポジションを含むデータベースでも小さなものと同じ速さで開きます。</p></li>
+<li><p>ポジションに関連する分析情報を表示する、</p></li>
+<li><p>ポジションのコメントを表示、追加、編集する。</p></li>
+</ul>
+<p>ツールバーの<strong>局面へ移動</strong>ボタンを押すと、局面の番号を直接入力してそこへ跳べるウィンドウが開きます。スクロールは不要です。コマンドラインの <code class="docutils literal notranslate"><span class="pre">[number]</span></code> コマンドに相当します（<a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">局面とナビゲーション</span></a> を参照）。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>利用可能なショートカットについては <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">キーボードショートカット</span></a> を参照してください。</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="edition-positions"></span><h2>ポジションの編集<a class="headerlink" href="#edition-de-positions" title="この見出しへのリンク"></a></h2>
+<p><em>TAB</em> キーを押すと検索パネルが開き、ボード上のポジションを編集して、データベースに追加したり、検索するポジションの構造を定義したりできます。チェッカーの配置、キューブ、スコア、手番はマウスで変更できます（<a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">ポジションを編集する</span></a> を参照）。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>利用可能なショートカットについては <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">キーボードショートカット</span></a> を参照してください。</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="ligne-commande"></span><h2>コマンドライン<a class="headerlink" href="#la-ligne-de-commande" title="この見出しへのリンク"></a></h2>
+<p>ステータスバーに内蔵されたコマンドラインでは、グラフィカルインターフェースで利用できる blunderDB のすべての機能を実行できます。データベースに対する一般的な操作、ポジションのナビゲーション、分析やコメントの表示、フィルターに基づくポジションの検索などです。インターフェースにある程度慣れたら、特にポジション検索機能において blunderDB を強力かつ快適に使用できるコマンドラインを徐々に使うことをお勧めします。</p>
+<p>コマンドラインを開くには、<em>スペース</em> キーを押します。リクエストを送信してコマンドラインを閉じるには、<em>Enter</em> キーを押します。</p>
+<p>blunderDB は、ユーザーが送信したリクエストが有効である限りそれを実行し、必要に応じてデータベースの状態を即座に変更します。ユーザーによる明示的な保存操作はありません。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>コマンドラインで利用可能なコマンドの一覧については <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> を参照してください。</p>
+</div>
+</section>
+<section id="la-palette-de-commandes">
+<span id="palette-commandes"></span><h2>コマンドパレット<a class="headerlink" href="#la-palette-de-commandes" title="この見出しへのリンク"></a></h2>
+<p>コマンドパレット（<em>CTRL-SHIFT-P</em>）は、どこで探せばよいか分からなくなったものを、おおよその名前で見つけます。コマンドラインのコマンド、タブ、ライブラリのフィルター、マッチが対象です。入力した文字は順番どおりに現れればよく、隣り合っている必要はありません。大文字・小文字やアクセントも区別しません。「キュマト」でキューブマトリクスが、「lyon」でリヨンの大会のマッチが見つかります。</p>
+<p>矢印キーで選び、<em>ENTER</em> で実行し、<em>ESC</em> で閉じます。コマンドは入力したときと同じように実行されます。<code class="docutils literal notranslate"><span class="pre">s</span></code> と <code class="docutils literal notranslate"><span class="pre">ss</span></code> はフィルターを書き込めるようにコマンドラインを開きます。フィルターはライブラリでダブルクリックしたときと同じように実行され、マッチはマッチパネルでダブルクリックしたときと同じように開きます。</p>
+<p>Direction を開いている間、パレットにはその大会が加わります。プレイヤー、テーブル、進行中のマッチ、種目が対象です(<a class="reference internal" href="manuel_tournois.html#direction-recherche"><span class="std std-ref">クイック検索</span></a>を参照)。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="マニュアル" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="manuel_bibliotheque.html" class="btn btn-neutral float-right" title="分析、コメント、検索" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

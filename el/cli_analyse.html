@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ανάλυση και μηχανή &mdash; Τεκμηρίωση του blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9e57d487"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Μελέτη, μαθήματα και εξάσκηση" href="cli_entrainement.html" />
+    <link rel="prev" title="Αγώνες, τουρνουά και παρτίδες" href="cli_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/cli_analyse.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_analyse.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_analyse.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/cli_analyse.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_analyse.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_analyse.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_analyse.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_analyse.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Μετρικές και εργαλεία μελέτης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Γενική σύνταξη</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Διαθέσιμες εντολές</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Εισαγωγή, εξαγωγή, μεταφορά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Αγώνες, τουρνουά και παρτίδες</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Ανάλυση και μηχανή</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#analyze-rattrapage-gammonnet">analyze — Συμπλήρωση gammonNet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rollout-rollout-d-une-position">rollout — Rollout μιας θέσης</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#epc-calculatrice-epc">epc — Υπολογιστής EPC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gnubgid-id-gnubg">gnubgid — ID GNUbg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cubematrix-matrice-du-videau">cubematrix — Μήτρα του κύβου</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#capture-position-depuis-une-capture-d-ecran">capture — Θέση από στιγμιότυπο οθόνης</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bearoff-bases-de-sortie">bearoff — Βάσεις bearoff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#openingbook-quel-coup-a-ce-score">openingbook — Ποια κίνηση σε αυτό το σκορ;</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Μελέτη, μαθήματα και εξάσκηση</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Στατιστικά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Διαχείριση της βάσης δεδομένων</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Παραδείγματα ροών εργασίας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Κωδικοί εξόδου</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+      <li class="breadcrumb-item active">Ανάλυση και μηχανή</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-et-moteur">
+<span id="cli-analyse-chapitre"></span><h1>Ανάλυση και μηχανή<a class="headerlink" href="#analyse-et-moteur" title="Link to this heading"></a></h1>
+<section id="analyze-rattrapage-gammonnet">
+<h2>analyze — Συμπλήρωση gammonNet<a class="headerlink" href="#analyze-rattrapage-gammonnet" title="Link to this heading"></a></h2>
+<p>Γράφει μια ανάλυση gammonNet για κάθε θέση που δεν έχει καμία — η συμπλήρωση μιας βιβλιοθήκης που δημιουργήθηκε πριν από την ύπαρξη αυτής της λειτουργίας (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). Είναι η ίδια λειτουργία με την αυτόματη εκτέλεση μετά την εισαγωγή και τη γραμμή «Θέσεις χωρίς ανάλυση» της καρτέλας <em>Συντήρηση</em> της γραφικής διεπαφής, και με το σημείο πρόσβασης <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.analyzeMissing</span></code> του δαίμονα <code class="docutils literal notranslate"><span class="pre">serve</span></code> για έναν tenant — τρεις διαφορετικές μορφές της ίδιας λειτουργίας, όχι τρεις ξεχωριστές λογικές (βλ. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Βάθος αναζήτησης (προεπιλογή: 2, η κανονική παράμετρος).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Πλάτος κλαδέματος (προεπιλογή: 12, η κανονική παράμετρος).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Αριθμός υποψήφιων κινήσεων που διατηρούνται ανά απόφαση κίνησης (προεπιλογή: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Αριθμός θέσεων που αναλύονται παράλληλα (προεπιλογή: ο αριθμός των πυρήνων του μηχανήματος). Όταν απομένουν λιγότερες θέσεις από πυρήνες (ένας σύντομος αγώνας, το τέλος της παρτίδας), κάθε αναζήτηση απλώνεται στους ελεύθερους πυρήνες· το αποτέλεσμα δεν αλλάζει ούτε κατά ένα bit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — Περιορίζει τη δέσμη στις θέσεις ενός μόνο αγώνα (0, η προεπιλογή, σημαίνει ολόκληρη τη βιβλιοθήκη).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> — <strong>Δεν γράφει τίποτα</strong>: συγκρίνει το gammonNet με τις εισηγμένες αναλύσεις αντί να καλύπτει κενά (βλ. παρακάτω).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--stale</span></code> — Επαναναλύει τις θέσεις των οποίων η ανάλυση gammonNet είναι ξεπερασμένη — γραμμένη από προηγούμενη έκδοση της μηχανής, ή σε διαφορετικό βάθος από το <code class="docutils literal notranslate"><span class="pre">--ply</span></code> — αντί να συμπληρώνει κενά. Μια θέση που φέρει επίσης ανάλυση XG, GNUbg ή BGBlitz δεν αγγίζεται ποτέ.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Με το <code class="docutils literal notranslate"><span class="pre">--compare</span></code>, σταματά μετά από αυτόν τον αριθμό θέσεων (0 = όλες).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή, με πρόοδο) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (ένα και μόνο συνοπτικό έγγραφο, τυπωμένο στο τέλος).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rollout</span></code> — Κάνει rollout στις θέσεις που επιλέγει το <code class="docutils literal notranslate"><span class="pre">--query</span></code> αντί να συμπληρώνει κενά (βλ. παρακάτω).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — Με το <code class="docutils literal notranslate"><span class="pre">--rollout</span></code>, οι θέσεις που θα παιχτούν, στη γλώσσα ερωτημάτων της αναζήτησης (<code class="docutils literal notranslate"><span class="pre">search</span> <span class="pre">--query-help</span></code>)· κενό, όλες.</p></li>
+</ul>
+<p><strong>Ένας αγώνας που εισήχθη χωρίς ανάλυση αποκτά έτσι PR.</strong> Είναι η περίπτωση ενός αγώνα που παίχτηκε διαδικτυακά, ή ενός αρχείου Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> που κανείς δεν πέρασε από το XG. Το blunderDB γνώριζε τις θέσεις και τις κινήσεις που παίχτηκαν, αλλά τίποτα δεν έλεγε τι άξιζαν· μόλις τρέξει η παρτίδα, η κίνηση που όντως παίχτηκε συγκρίνεται με την κατάταξη του gammonNet και η διαφορά τροφοδοτεί το PR και όλους τους άλλους δείκτες. Η κίνηση που παίχτηκε προέρχεται από τον πίνακα κινήσεων του αγώνα, γραμμένο κατά την εισαγωγή, είτε το αρχείο έφερε ανάλυση είτε όχι — ποτέ δεν μαντεύεται.</p>
+<p>Μια βάση που αναλύθηκε με παλαιότερη έκδοση δεν χρειάζεται επανεκτίμηση: το <a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a> ξαναϋπολογίζει τις στήλες από ό,τι υπάρχει ήδη και επιστρέφει το PR σε αυτούς τους αγώνες.</p>
+<p><strong>Ένας μόνο αγώνας</strong> (<code class="docutils literal notranslate"><span class="pre">--match</span></code>). Με το αναγνωριστικό που εμφανίζει η <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span></code>, η δέσμη διατρέχει μόνο τις θέσεις αυτού του αγώνα: ίδιος κανόνας του κενού, ίδιες εγγυήσεις, στενότερη εμβέλεια. Ένας αγώνας που μόλις εισήχθη λαμβάνει τις αναλύσεις του χωρίς να διατρέχεται η υπόλοιπη βιβλιοθήκη, και ένας αγώνας που διορθώθηκε και αναλύθηκε δεύτερη φορά κοστίζει μόνο τις θέσεις που δημιούργησε η διόρθωση, αφού όλες οι άλλες φέρουν ήδη ανάλυση. Η επιλογή δεν συνδυάζεται ούτε με <code class="docutils literal notranslate"><span class="pre">--stale</span></code> ούτε με <code class="docutils literal notranslate"><span class="pre">--compare</span></code>, που και οι δύο κοιτούν θέσεις οι οποίες έχουν ήδη ανάλυση: το να ζητηθούν και τα δύο είναι σφάλμα, όχι μια σιωπηλά αγνοημένη εμβέλεια.</p>
+<p><strong>Ο παραλληλισμός</strong> (<code class="docutils literal notranslate"><span class="pre">--jobs</span></code>). Οι θέσεις μιας δέσμης είναι ανεξάρτητες — καμία αναζήτηση δεν τροφοδοτεί την επόμενη — οπότε κατανέμονται σε <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> νήματα εκτέλεσης, καθένα με τον δικό του αξιολογητή. Οι αναλύσεις που γράφονται είναι <strong>πανομοιότυπες όποια κι αν είναι η τιμή του</strong> <code class="docutils literal notranslate"><span class="pre">--jobs</span></code>· αλλάζει μόνο ο χρόνος υπολογισμού. Το <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">1</span></code> αφήνει το μηχάνημα ελεύθερο για άλλες εργασίες. Η ακύρωση δεν επηρεάζεται: το Ctrl-C σταματά τη δέσμη πριν από κάθε νέα θέση, και ό,τι είχε ήδη υπολογιστεί γράφεται.</p>
+<p><strong>Ο κανόνας του κενού</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>). Μια θέση που φέρει ήδη μια ανάλυση — XG, GNUbg, BGBlitz, ή ένα προηγούμενο πέρασμα του gammonNet — δεν αγγίζεται ποτέ, όποια μηχανή κι αν λείπει. Γράφεται μόνο μια θέση <strong>χωρίς καμία</strong> ανάλυση. Η εντολή μπορεί επομένως να επανεκτελεστεί ανά πάσα στιγμή χωρίς κίνδυνο, και να διακοπεί καθαρά: το Ctrl-C ακυρώνει χωρίς να χαθεί τίποτα από όσα έχουν ήδη γραφτεί, και η επόμενη εκτέλεση συνεχίζει ακριβώς από εκεί που σταμάτησε η προηγούμενη — δεν χρειάζεται κανένα ημερολόγιο, αφού «οι θέσεις χωρίς ανάλυση» επανυπολογίζονται σε κάθε εκκίνηση.</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...</span>
+<span class="c1">#   1/1204 (0%)</span>
+<span class="c1">#   61/1204 (5%)</span>
+<span class="c1">#   ...</span>
+<span class="c1">#   1204/1204 (100%)</span>
+<span class="c1"># Done.</span>
+
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--jobs<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Un seul match, celui qui vient d'être importé</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<p><strong>Rollout σε παρτίδες</strong> (<code class="docutils literal notranslate"><span class="pre">--rollout</span></code>). Κάθε θέση που επιλέγει το <code class="docutils literal notranslate"><span class="pre">--query</span></code> παίζεται με ένα <a class="reference internal" href="#cli-rollout"><span class="std std-ref">rollout</span></a>, η μία μετά την άλλη σε όλους τους πυρήνες, και το rollout καταγράφεται δίπλα στην ανάλυσή της, ποτέ στη θέση της. Η τιμή είναι μια προεπιλογή — <code class="docutils literal notranslate"><span class="pre">fast</span></code> (216 παιχνίδια κομμένα στο 7) ή <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 παιχνίδια κομμένα στο 11) — ή ελεύθερες ρυθμίσεις: μια προαιρετική προεπιλογή, έπειτα <code class="docutils literal notranslate"><span class="pre">games=</span></code>, <code class="docutils literal notranslate"><span class="pre">min-games=</span></code>, <code class="docutils literal notranslate"><span class="pre">truncation=</span></code>, <code class="docutils literal notranslate"><span class="pre">jsd=</span></code>, <code class="docutils literal notranslate"><span class="pre">ply=</span></code>, <code class="docutils literal notranslate"><span class="pre">candidates=</span></code>, <code class="docutils literal notranslate"><span class="pre">seed=</span></code>, χωρισμένα με κόμματα. Μια θέση που φέρει ήδη rollout με τις ίδιες ρυθμίσεις παραλείπεται: μια εκτέλεση που διακόπηκε με Ctrl-C συνεχίζει από εκεί που σταμάτησε, με την τρέχουσα θέση να απορρίπτεται εξ ολοκλήρου. Μια θέση που αναλύεται μόνο από rollout βρίσκεται από την αναζήτηση μέσω αυτού· μια ήδη αναλυμένη θέση διατηρεί τις στήλες της ανάλυσής της.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span>fast<span class="w"> </span>--query<span class="w"> </span><span class="s1">'E&gt;80'</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span><span class="s1">'standard,ply=1'</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">'c'</span>
+</pre></div>
+</div>
+<p id="analyze-compare"><code class="docutils literal notranslate"><span class="pre">--compare</span></code>: <strong>τι αξίζει το gammonNet στη δική σας βάση;</strong></p>
+<p>Η ακρίβεια της μηχανής μετριέται αλλού έναντι σωμάτων αναφοράς και έναντι του ακριβούς πίνακα μαζέματος. Καμία από αυτές τις μετρήσεις δεν απαντά στο ερώτημα που πραγματικά θέτει ο χρήστης και που αφορά τις <strong>δικές του</strong> θέσεις: στους αγώνες που εισήχθησαν από το XG, πού διαφωνεί η ενσωματωμένη μηχανή με την ανάλυση που ήρθε με το αρχείο, και τι θα κόστιζε αυτή η διαφωνία;</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">--compare</span></code> απαντά και <strong>δεν γράφει τίποτα</strong>. Δεν είναι προφύλαξη αλλά το νόημα της εντολής: το ADR-0013 προστατεύει ανεπιφύλακτα μια εισηγμένη ανάλυση, και η σύγκριση μπορεί έτσι να τρέξει σε μια βάση που κανείς δεν θέλει να ξαναγραφτεί.</p>
+<p>Η αναφορά δίνει:</p>
+<ul class="simple">
+<li><p>το <strong>ποσοστό συμφωνίας</strong> στην καλύτερη απάντηση, χωρισμένο ανάμεσα σε κινήσεις πουλιών και αποφάσεις κύβου — τα δύο δεν έχουν σχέση μεταξύ τους και ένα ενιαίο ποσοστό θα έκρυβε ποιο από τα δύο υστερεί·</p></li>
+<li><p>το <strong>κόστος της διαφωνίας</strong>, αποτιμημένο στην κλίμακα της εισηγμένης ανάλυσης: πόσο αξίζει η κίνηση που προτιμά το gammonNet <em>σύμφωνα με την εισηγμένη μηχανή</em>, μείον πόσο αξίζει η δική της καλύτερη κίνηση. Αυτή η κατεύθυνση είναι η μόνη που μπορούν να αποτιμήσουν από κοινού και οι δύο μηχανές· η διπλή αποτίμηση μιας διαφωνίας θα προσκαλούσε να διαβαστεί ο μικρότερος από τους δύο αριθμούς·</p></li>
+<li><p>την ανάλυση <strong>ανά φάση του παιχνιδιού</strong>, που είναι αυτό που λέει <em>πού</em> συγκεντρώνονται οι διαφωνίες·</p></li>
+<li><p>τις δέκα πιο δαπανηρές διαφωνίες, θέση προς θέση.</p></li>
+</ul>
+<p>Δύο μηχανές γράφουν την ίδια κίνηση διαφορετικά — το XG γράφει «13/7» εκεί που το gammonNet γράφει «13/8 8/7», τα χτυπήματα σημειώνονται από τη μία πλευρά και όχι από την άλλη, η επανάληψη συμπυκνώνεται ενίοτε σε «(2)». Αυτές οι διαφορές είναι διάλεκτος και όχι διαφωνία: η σύγκριση ανάγει και τις δύο γραφές σε κανονική μορφή πριν τις συγκρίνει. Χωρίς αυτό, ένα δοκιμαστικό σώμα έδειχνε 78,8 % συμφωνία αντί για 93,2 % — δεκαπέντε μονάδες ψευδών διαφωνιών.</p>
+<p>Μια κίνηση που η εισηγμένη μηχανή <strong>δεν</strong> κατέγραψε δεν μπορεί να αποτιμηθεί στην κλίμακά της: μετρά ως διαφωνία μηδενικού κόστους αντί για ένα κόστος επινοημένο.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparer sur un échantillon de 500 positions</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--compare<span class="w"> </span>--limit<span class="w"> </span><span class="m">500</span>
+
+<span class="c1"># compared: 118 decision(s)  (refused 2, failed 0)</span>
+<span class="c1"># same best answer: 93.2% (110/118)</span>
+<span class="c1">#   checker play:   93.7% (59/63)</span>
+<span class="c1">#   cube decision:  92.7% (51/55)</span>
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+<section id="rollout-rollout-d-une-position">
+<span id="cli-rollout"></span><h2>rollout — Rollout μιας θέσης<a class="headerlink" href="#rollout-rollout-d-une-position" title="Link to this heading"></a></h2>
+<p>Παίζει μια θέση πολλές φορές με το gammonNet, για να κρίνει όσα μια αναζήτηση δεν κρίνει: δύο κινήσεις με διαφορά λίγων χιλιοστών ή μια απόφαση κύβου όπου το μοντέλο διστάζει. Με ζάρια παίζονται οι κινήσεις της (οι καλύτερες στο βάθος του rollout, τουλάχιστον 2 ply, ή αυτές που ορίζονται με <code class="docutils literal notranslate"><span class="pre">--move</span></code>)· χωρίς ζάρια, η απόφαση κύβου (Όχι διπλασιασμός και Διπλασιασμός/Αποδοχή· το Διπλασιασμός/Άρνηση αξίζει ακριβώς +1). Η θέση προέρχεται από ένα XGID ή ένα OGID ή από μια βάση (<code class="docutils literal notranslate"><span class="pre">--db</span></code> και <code class="docutils literal notranslate"><span class="pre">--id</span></code>)· χωρίς <code class="docutils literal notranslate"><span class="pre">--store</span></code>, τίποτα δεν καταγράφεται.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;position&gt;<span class="w"> </span><span class="o">[</span>--store<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--preset</span></code> — Αρχική ρύθμιση: <code class="docutils literal notranslate"><span class="pre">fast</span></code> (προεπιλογή: 216 παρτίδες κομμένες στις 7 κινήσεις, διακοπή στο JSD 3 μετά τις 108) ή <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 παρτίδες κομμένες στις 11, διακοπή στο JSD 3 μετά τις 324). Και οι δύο παίζουν στα 0 ply — το δίκτυο μόνο του, για τις κινήσεις, τον κύβο και τα φύλλα· το <code class="docutils literal notranslate"><span class="pre">--ply</span> <span class="pre">1</span></code> ή περισσότερο παίζει βαθύτερα, με χρόνο αρκετές φορές μεγαλύτερο. Οι επόμενες επιλογές την αντικαθιστούν μία προς μία.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--games</span></code>, <code class="docutils literal notranslate"><span class="pre">--min-games</span></code>, <code class="docutils literal notranslate"><span class="pre">--truncation</span></code>, <code class="docutils literal notranslate"><span class="pre">--jsd</span></code>, <code class="docutils literal notranslate"><span class="pre">--ply</span></code>, <code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Οι παράμετροι του rollout (το <code class="docutils literal notranslate"><span class="pre">--truncation</span> <span class="pre">0</span></code> παίζει κάθε παρτίδα ως το τέλος, το <code class="docutils literal notranslate"><span class="pre">--jsd</span> <span class="pre">0</span></code> δεν σταματά ποτέ πριν το τέλος).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move</span></code> — Μια κίνηση προς παιχνίδι, με τον συμβολισμό του blunderDB (επαναλαμβανόμενη).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> — Σπόρος των ζαριών, σταθερός από προεπιλογή: η ίδια εντολή δίνει τους ίδιους αριθμούς.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Παρτίδες που παίζονται παράλληλα (προεπιλογή: μία ανά πυρήνα)· αλλάζει μόνο ο χρόνος.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (προεπιλογή: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--id</span></code> — Η βάση και ο αναγνωριστικός αριθμός της θέσης που θα παιχτεί, αντί για ένα XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--store</span></code> — Καταγράφει το ολοκληρωμένο rollout στη θέση, ως δεύτερη ανάλυση με τις δικές της ρυθμίσεις, δίπλα στην εισηγμένη ή υπολογισμένη ανάλυση, την οποία δεν αντικαθιστά ποτέ. Ένα διακοπτόμενο rollout δεν καταγράφεται· από δύο rollouts με τις ίδιες ρυθμίσεις διατηρείται η μεγαλύτερη σειρά, ενώ ένα rollout με άλλες ρυθμίσεις προστίθεται δίπλα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--list</span></code> — Εμφανίζει τα rollouts που είναι αποθηκευμένα στη θέση, από το πιο πρόσφατο στο παλαιότερο, αντί να εκτελέσει ένα.</p></li>
+</ul>
+<p>Όλοι οι υποψήφιοι παίζουν τα ίδια ζάρια, η τύχη κάθε ρίψης αφαιρείται από το αποτέλεσμα κάθε παρτίδας (μείωση διακύμανσης), οι δύο πρώτες ρίψεις στρωματοποιούνται και μια παρτίδα σταματά εκεί που τη καλύπτει η βάση εξόδου two-sided. Κάθε γραμμή δίνει το equity, το διάστημα 95 % του, τον αριθμό των παρτίδων που παίχτηκαν και το JSD, τη διαφορά από τον καλύτερο σε τυπικές αποκλίσεις της διαφοράς. Ο κύβος παίζεται κατά τη διάρκεια των παρτίδων: η κατάταξη είναι πιο αξιόπιστη από το απόλυτο equity. Το Ctrl-C εμφανίζει όσα έχουν καθιερώσει οι ολοκληρωμένες παρτίδες.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--move<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span>--move<span class="w"> </span><span class="s1">'24/23 13/10'</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--preset<span class="w"> </span>standard<span class="w"> </span>--store
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--list
+</pre></div>
+</div>
+</section>
+<section id="epc-calculatrice-epc">
+<h2>epc — Υπολογιστής EPC<a class="headerlink" href="#epc-calculatrice-epc" title="Link to this heading"></a></h2>
+<p>Υπολογίζει το Effective Pip Count, την πιθανότητα νίκης και την ετυμηγορία κύβου money μιας θέσης εξόδου δοσμένης με XGID ή με OGID (OpenGammon). Καθαρός υπολογισμός: δεν εμπλέκεται κανένα αρχείο βάσης δεδομένων.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (προεπιλογή: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — Προαιρετική αμφίπλευρη βάση bearoff (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) που διευρύνει την ενσωματωμένη TS-06-06 (διαβάζεται και από τη μεταβλητή περιβάλλοντος <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>). Υπερισχύει η ευρύτερη έγκυρη βάση· ένα άκυρο αρχείο αγνοείται με προειδοποίηση.</p></li>
+</ul>
+<p><strong>Καθεστώτα.</strong> Στο εύρος που καλύπτει η αμφίπλευρη βάση, η πιθανότητα νίκης και η ανάλυση κύβου money (cubeless, ND, D/T, D/P, ετυμηγορία) είναι <strong>ακριβείς</strong>. Εκτός αυτού, η πιθανότητα νίκης <strong>εκτιμάται</strong> (συνέλιξη των μονόπλευρων κατανομών ζαριών συν μια βαθμονομημένη διόρθωση) και εμφανίζεται με το μετρημένο περιθώριο σφάλματός της· η ετυμηγορία κύβου δεν εκτιμάται ποτέ, σκοπίμως (βλ. <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>).</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact : six pions ou moins de chaque côté</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'</span>
+
+<span class="c1"># Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">'XGID=…'</span>
+</pre></div>
+</div>
+</section>
+<section id="gnubgid-id-gnubg">
+<span id="cli-gnubgid"></span><h2>gnubgid — ID GNUbg<a class="headerlink" href="#gnubgid-id-gnubg" title="Link to this heading"></a></h2>
+<p>Γράφει το αναγνωριστικό που εμφανίζει το GNU Backgammon για μια θέση που δίνεται ως XGID ή OGID: το <strong>ID θέσης</strong> (ο πίνακας, όπως φαίνεται από την πλευρά του παίκτη που έχει σειρά) και το <strong>ID αγώνα</strong> (κύβος, σκορ, ζάρια), ενωμένα με άνω και κάτω τελεία όπως τα αντιγράφει το GNU Backgammon. Καθαρός υπολογισμός: δεν εμπλέκεται κανένα αρχείο βάσης δεδομένων. Το μήκος του αγώνα και τα σκορ προκύπτουν από τις αποστάσεις από τη νίκη που φέρει η θέση, όπως κάνει το XGID.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (προεπιλογή: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+</section>
+<section id="cubematrix-matrice-du-videau">
+<span id="cli-cubematrix"></span><h2>cubematrix — Μήτρα του κύβου<a class="headerlink" href="#cubematrix-matrice-du-videau" title="Link to this heading"></a></h2>
+<p>Δίνει την ετυμηγορία του κύβου μιας θέσης σε <strong>κάθε σκορ</strong> ενός αγώνα: για κάθε κελί <em>away × away</em>, αν η θέση διπλασιάζεται και αν γίνεται αποδεκτή. Καθαρός υπολογισμός: καμία βάση δεδομένων δεν ανοίγει, η θέση δίνεται ως XGID ή ως OGID (OpenGammon).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (προεπιλογή: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Μήκος αγώνα που καλύπτει το πλέγμα, από 1 έως 25 (προεπιλογή: 7).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Βάθος αναζήτησης κάθε κελιού, <code class="docutils literal notranslate"><span class="pre">0</span></code> ή <code class="docutils literal notranslate"><span class="pre">2</span></code> (προεπιλογή: 2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Πλήθος υποψήφιων κινήσεων που κρατά το δίκτυο κλαδέματος (προεπιλογή: 12).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Αναζητήσεις που τρέχουν παράλληλα (προεπιλογή: μία ανά πυρήνα). Το πλέγμα είναι το ίδιο όποια κι αν είναι η τιμή· αλλάζει μόνο ο χρόνος.</p></li>
+</ul>
+<p>Το ίδιο το σκορ της θέσης αγνοείται — το πλέγμα το αντικαθιστά — αλλά ο <strong>κύβος</strong> της διατηρείται: το ερώτημα είναι σε ποιο σκορ θα γύριζα <em>αυτόν</em> τον κύβο. Το πλέγμα είναι μετά το Crawford από άκρη σε άκρη.</p>
+<p>Κάθε κελί είναι δική του αναζήτηση, γιατί η μηχανή λαμβάνει υπόψη το σκορ: μία μόνο αναζήτηση διαβασμένη μέσα από διαφορετικές ισοδυναμίες αγώνα θα ήταν λάθος ακριβώς εκεί που μετράει το σκορ.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grille d'un match en 5 points</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--match-length<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'</span>
+
+<span class="c1"># Les équités de chaque case, pour un script</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p>Έξοδος <code class="docutils literal notranslate"><span class="pre">text</span></code>: ένα πλέγμα του οποίου οι γραμμές είναι οι πόντοι που χρειάζεται ακόμη ο παίκτης στη σειρά και οι στήλες εκείνοι του αντιπάλου, έπειτα το υπόμνημα των συντομογραφιών <code class="docutils literal notranslate"><span class="pre">ND</span></code> / <code class="docutils literal notranslate"><span class="pre">DT</span></code> / <code class="docutils literal notranslate"><span class="pre">DP</span></code> / <code class="docutils literal notranslate"><span class="pre">TG</span></code> και ο λόγος κάθε κελιού που απορρίφθηκε.</p>
+</section>
+<section id="capture-position-depuis-une-capture-d-ecran">
+<h2>capture — Θέση από στιγμιότυπο οθόνης<a class="headerlink" href="#capture-position-depuis-une-capture-d-ecran" title="Link to this heading"></a></h2>
+<p>Διαβάζει τη θέση που δείχνει ένα στιγμιότυπο οθόνης ταμπλό του eXtreme Gammon (προεπιλεγμένο θέμα): πούλια, μπάρα, πούλια που έχουν βγει (ό,τι λείπει από τα δεκαπέντε), ζάρια, παίκτης που παίζει και κύβος. Η εικόνα (PNG, JPEG ή GIF) μπορεί να περιέχει και κάτι άλλο εκτός από το ταμπλό· αν είναι μεγαλύτερη από οθόνη 4K (3840×2160), σμικρύνεται πριν από την ανάγνωση. Το σκορ δεν διαβάζεται ποτέ. Ό,τι η ανάγνωση δεν μπορεί να κρίνει καταγράφεται ως αμφιβολία και δεν μαντεύεται ποτέ: κρυμμένο βέλος, στοίβα ψηλότερη από τα πέντε πούλια που το XG ζωγραφίζει δίπλα-δίπλα, μη αναγνώσιμα ζάρια.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>&lt;image&gt;
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> ή <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (προεπιλογή: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> και <code class="docutils literal notranslate"><span class="pre">--save</span></code> — Αποθηκεύει τη θέση στη βάση ως μεμονωμένη θέση.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span></code> — Το σκορ, που το στιγμιότυπο δεν δείχνει: <code class="docutils literal notranslate"><span class="pre">money</span></code> ή τα σκορ Away των δύο παικτών, πρώτα του παίκτη 1 (κάτω), για παράδειγμα <code class="docutils literal notranslate"><span class="pre">2a/5a</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--turn</span></code> — Ο παίκτης που παίζει, <code class="docutils literal notranslate"><span class="pre">1</span></code> (κάτω) ή <code class="docutils literal notranslate"><span class="pre">2</span></code> (πάνω), όταν δεν τον δείχνουν ζάρια.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Αποθηκεύει παρά τις αμφιβολίες της ανάγνωσης, αφού ελεγχθεί το ταμπλό. Δεν αντικαθιστά ούτε το <code class="docutils literal notranslate"><span class="pre">--score</span></code> ούτε το <code class="docutils literal notranslate"><span class="pre">--turn</span></code>: το <code class="docutils literal notranslate"><span class="pre">--save</span></code> αρνείται όσο δεν δίνεται το σκορ, ή η σειρά χωρίς ζάρια, και κατονομάζει την επιλογή που λείπει.</p></li>
+</ul>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--format<span class="w"> </span>xgid<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>2a/5a<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>money<span class="w"> </span>--turn<span class="w"> </span><span class="m">2</span><span class="w"> </span>videau.png
+</pre></div>
+</div>
+<p>Ο δαίμονας προσφέρει την ίδια ανάγνωση: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/positions.fromImage</span></code> με <code class="docutils literal notranslate"><span class="pre">{&quot;data&quot;:</span> <span class="pre">&quot;&lt;εικόνα</span> <span class="pre">σε</span> <span class="pre">base64&gt;&quot;}</span></code>. Απορρίπτει μια εικόνα μεγαλύτερη από οθόνη 4K αντί να τη σμικρύνει, και διαβάζει μόνο δύο εικόνες ταυτόχρονα.</p>
+</section>
+<section id="bearoff-bases-de-sortie">
+<h2>bearoff — Βάσεις bearoff<a class="headerlink" href="#bearoff-bases-de-sortie" title="Link to this heading"></a></h2>
+<p>Φτιάχνει και διαχειρίζεται τις βάσεις bearoff. Τίποτα δεν κατεβαίνει και τίποτα δεν είναι ενσωματωμένο: ένας πίνακας υπολογίζεται εδώ και ελέγχεται με το αποτύπωμα που παράγει το gnubg για τον τομέα του. Καμία υποεντολή δεν μιλά σε βάση δεδομένων — ένας πίνακας bearoff είναι αριθμητική για το παιχνίδι, όχι για τις θέσεις κάποιου — οπότε καμία δεν παίρνει <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>&lt;file.bd&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>delete<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Ο τομέας γράφεται όπως στο <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>: <code class="docutils literal notranslate"><span class="pre">6x9</span></code> για τον αμφίπλευρο πίνακα με εννέα πούλια ανά παίκτη, <code class="docutils literal notranslate"><span class="pre">os8</span></code> για τον μονόπλευρο πίνακα οκτώ σημείων (το σκέτο <code class="docutils literal notranslate"><span class="pre">os</span></code> ισοδυναμεί με <code class="docutils literal notranslate"><span class="pre">os6</span></code>).</p>
+<p>Οι δύο οικογένειες δεν απαντούν στο ίδιο ερώτημα. Ένας <strong>αμφίπλευρος</strong> πίνακας διευρύνει τον τομέα όπου η πιθανότητα νίκης και η ετυμηγορία κύβου είναι ακριβείς· ένας <strong>μονόπλευρος</strong> διευρύνει την απόσταση στην οποία μπορεί να βρίσκεται ένα πούλι χωρίς να σωπάσει το EPC (έως δέκα σημεία).</p>
+<p><strong>generate.</strong> Δηλώνει το μέγεθος, τη μνήμη και τον εκτιμώμενο χρόνο πριν ξεκινήσει, και μετά δείχνει το ποσοστό και τον μετρημένο υπολειπόμενο χρόνο.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--ts</span></code> — Αμφίπλευρος τομέας προς υπολογισμό, για παράδειγμα <code class="docutils literal notranslate"><span class="pre">6x9</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--os</span></code> — Μονόπλευρος τομέας προς υπολογισμό, σε αριθμό σημείων: 6 έως 12. Απαιτείται ακριβώς ένα από τα δύο.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cores</span></code> — Πυρήνες προς χρήση (προεπιλογή: όλοι εκτός από έναν).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> — Πού γράφεται (προεπιλογή: ο φάκελος δεδομένων της εφαρμογής).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> — Χωρίς γραμμή προόδου.</p></li>
+</ul>
+<p><strong>Το CTRL-C κάνει παύση.</strong> Το σήμα συλλαμβάνεται: η κατάσταση γράφεται δίπλα στον πίνακα και η ίδια εντολή ξανατρέχοντας συνεχίζει από εκεί που σταμάτησε αντί να ξαναϋπολογίσει τα πάντα. Μισή ώρα αριθμητικής αξίζει να καταγραφεί. Το <code class="docutils literal notranslate"><span class="pre">bearoff</span> <span class="pre">delete</span></code> πετάει μια εκκρεμή συνέχιση. Μόνο η αμφίπλευρη σάρωση κάνει παύση· η μονόπλευρη είναι σειριακή και το <code class="docutils literal notranslate"><span class="pre">--cores</span></code> δεν της χρησιμεύει.</p>
+<p><strong>list.</strong> Κοστολογεί κάθε τομέα — μέγεθος, μνήμη, χρόνος σε αυτό το μηχάνημα — και λέει ποιοι υπάρχουν ήδη, με την ετυμηγορία τους, και ποιοι έχουν υπολογισμό σε παύση. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> για σενάριο, <code class="docutils literal notranslate"><span class="pre">--cores</span></code> για αλλαγή της υπόθεσης της εκτίμησης.</p>
+<p><strong>verify.</strong> Απαντά <code class="docutils literal notranslate"><span class="pre">verified</span></code> (τα ίδια byte με την αναφορά), <code class="docutils literal notranslate"><span class="pre">unverified</span></code> (καλοσχηματισμένος, αλλά δεν υπάρχει καταγεγραμμένο αποτύπωμα για αυτόν τον τομέα) ή <code class="docutils literal notranslate"><span class="pre">corrupt</span></code> (το αρχείο αντιφάσκει με τον εαυτό του). Τερματίζει με σφάλμα στην τελευταία περίπτωση: αυτή η εντολή φτιάχτηκε για να μπει σε σενάριο.</p>
+<p><strong>delete.</strong> Αφαιρεί τον πίνακα, την εκκρεμή συνέχιση και τα υπολείμματα ενός νεκρού υπολογισμού. Ένας προεπιλεγμένος τομέας ξαναϋπολογίζεται στην επόμενη εκκίνηση της εφαρμογής· ένας ευρύτερος όχι.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ce que cette machine a, et ce que chaque domaine coûterait</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x9<span class="w"> </span>--cores<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># OS-08 : l'EPC répond alors jusqu'à un pion sur la 8</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--os<span class="w"> </span><span class="m">8</span>
+
+<span class="c1"># Sur un serveur, dans le volume que lit le démon</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+</section>
+<section id="openingbook-quel-coup-a-ce-score">
+<span id="cli-openingbook"></span><h2>openingbook — Ποια κίνηση σε αυτό το σκορ;<a class="headerlink" href="#openingbook-quel-coup-a-ce-score" title="Link to this heading"></a></h2>
+<p>Η άσκηση <em>Άνοιγμα</em> του πίνακα Εξάσκησης (βλ. <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Πίνακας Εξάσκηση</span></a>) από τη γραμμή εντολών: η κίνηση ανοίγματος (1st roll) ή η απάντηση (2nd roll) ενός παιχνιδιού σε ένα σκορ, που κληρώνεται από το ενσωματωμένο βιβλίο ανοίγματος και κρίνεται με βάση αυτό. Κάθε κίνηση ισοδύναμη (tied) με την καλύτερη είναι σωστή (βλ. <a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">Βιβλίο ανοίγματος: διαφορά, ΔΕ 95 % και ισοδυναμία</span></a>). Καμία βάση δεν διαβάζεται ούτε γράφεται.</p>
+<p><strong>openingbook status</strong> — Ο αριθμός των γραμμών του βιβλίου και τα σκορ του.</p>
+<p><strong>openingbook question</strong> — Κληρώνει μια ερώτηση: τη ζαριά ανοίγματος και το σκορ, με το XGID της θέσης ανοίγματος· με <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>, τη ζαριά απάντησης στη θέση που αφήνει μια κίνηση ανοίγματος που ισοβαθμεί με την καλύτερη σε αυτό το σκορ, με αυτή την κίνηση και το XGID της θέσης απάντησης.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">first|second</span></code> — Η ζαριά που παίζεται: <code class="docutils literal notranslate"><span class="pre">first</span></code> (το άνοιγμα, από προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">second</span></code> (η απάντηση).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span> <span class="pre">&lt;liste&gt;</span></code> — Σκορ προς κλήρωση, χωρισμένα με κόμματα: <code class="docutils literal notranslate"><span class="pre">4-2</span></code> (ο απαντών στους 4 πόντους, ο ανοίγων στους 2), <code class="docutils literal notranslate"><span class="pre">1-2</span></code> (παιχνίδι Crawford), <code class="docutils literal notranslate"><span class="pre">1-1</span></code> (το DMP, διπλός πόντος αγώνα), <code class="docutils literal notranslate"><span class="pre">money</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opening</span> <span class="pre">&lt;liste&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--reply</span> <span class="pre">&lt;liste&gt;</span></code> — Ζαριές ανοίγματος ή απάντησης προς κλήρωση (<code class="docutils literal notranslate"><span class="pre">31,65</span></code>)· το <code class="docutils literal notranslate"><span class="pre">--reply</span></code> μόνο με <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span> <span class="pre">&lt;n&gt;</span></code> — Αναπαραγώγιμη κλήρωση (0 = τυχαία).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--book</span> <span class="pre">&lt;fichier&gt;</span></code> — Ένα βιβλίο <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> ή <code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code> αντί για το ενσωματωμένο βιβλίο.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Μορφή εξόδου.</p></li>
+</ul>
+<p><strong>openingbook answer</strong> — Κρίνει μια κίνηση και εμφανίζει κάθε υποψήφια απέναντι στην καλύτερη: διαφορά, ΔΕ 95 % και « tied » (ισοδύναμη), σε ισοτιμία κανονικοποιημένη στο σκορ, με τον αριθμό των παιχνιδιών και τη ρύθμιση του rollout. Χωρίς <code class="docutils literal notranslate"><span class="pre">--after</span></code>, η κίνηση είναι το άνοιγμα· με <code class="docutils literal notranslate"><span class="pre">--reply</span></code> και <code class="docutils literal notranslate"><span class="pre">--after</span></code>, η κίνηση είναι η απάντηση που παίζεται μετά από αυτή την κίνηση ανοίγματος, εκείνη που κατονομάζει η ερώτηση <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--score<span class="w"> </span>&lt;score&gt;<span class="w"> </span><span class="o">[</span>--reply<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--after<span class="w"> </span>&lt;coup&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;coup&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2,2-4
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span><span class="s1">'8/5 6/5'</span>
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--roll<span class="w"> </span>second<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--reply<span class="w"> </span><span class="m">21</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span>--after<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span><span class="s1">'13/11 6/5'</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_matchs.html" class="btn btn-neutral float-left" title="Αγώνες, τουρνουά και παρτίδες" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_entrainement.html" class="btn btn-neutral float-right" title="Μελέτη, μαθήματα και εξάσκηση" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

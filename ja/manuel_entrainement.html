@@ -1,0 +1,306 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>トレーニング、Anki、デュエル &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="インポート、出所、共有" href="manuel_partage.html" />
+    <link rel="prev" title="評価" href="manuel_eval.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/manuel_entrainement.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_entrainement.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_entrainement.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_entrainement.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_entrainement.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_entrainement.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_entrainement.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/manuel_entrainement.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">マニュアル</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">はじめにとインターフェース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">分析、コメント、検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">マッチと記譜</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">トーナメント</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">統計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">評価</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">トレーニング、Anki、デュエル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-anki">Anki パネル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-entrainement">トレーニングパネル</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-lanceur">ランチャー</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-six-exercices">六つの練習</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repondre">答える</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-journal-et-le-bilan">ジャーナルと集計</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-duel">デュエルパネル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">インポート、出所、共有</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">マニュアル</a></li>
+      <li class="breadcrumb-item active">トレーニング、Anki、デュエル</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="entrainement-anki-et-duel">
+<span id="manuel-entrainement"></span><h1>トレーニング、Anki、デュエル<a class="headerlink" href="#entrainement-anki-et-duel" title="この見出しへのリンク"></a></h1>
+<section id="panneau-anki">
+<span id="id1"></span><h2>Anki パネル<a class="headerlink" href="#panneau-anki" title="この見出しへのリンク"></a></h2>
+<p><strong>Anki</strong> パネル（<em>CTRL-K</em>）では、FSRS アルゴリズムを使った間隔反復によってポジションを学習できます。ユーザーはコレクションや検索結果からデッキを作成できます。</p>
+<p><strong>デッキの作成：</strong> <strong>+ 新規デッキ</strong> をクリックして、コレクションまたは現在の検索結果からデッキを作成します。検索に基づくデッキは、Anki タブを有効にしたときに自動的に同期されます。</p>
+<p><strong>スコア表のデッキ。</strong> 三つめのソース<em>スコア表</em>が求めるのは名前だけです。blunderDB が 2 から 9 away までの順序を問わない 36 のスコアでデッキを満たし、スコアのカードは<a class="reference internal" href="#panneau-entrainement"><span class="std std-ref">スコア練習</span></a>が表示するのと同じ表——両者のテイクポイントとギャモン値——になります。このデッキは自分で作ったときにだけ存在します。初日に 36 枚の期限が来るのは復習の負債であり、それは意図して負うものだからです。同期ボタンで作り直せます。</p>
+<p>二つの場所は同じ仕事をしません。スコア練習はこれらの数を<strong>時計の下で</strong>思い出させ、その速さを測ります。デッキはそれらを<strong>時間をかけて保たせ</strong>、速さは何も測りません。二つの履歴は別々のままです。トレーニングの記録は Anki の復習を見ませんし、Anki の統計はトレーニングのセッションを見ません。</p>
+<p><strong>選択したデッキがパネルのヘッダーを引き継ぎます</strong>：その名前、ポジション数（クリックで開きます）、期限の来たカードの数。右側には設定（⚙）、リセット（↻）、<em>練習</em> と <em>学習</em> があります。← でデッキ一覧に戻ります。</p>
+<p><strong>Anki へ書き出す：</strong> 一覧の行にある ⤓ ボタンで、デッキを <strong>.apkg</strong>ファイルとして書き出します。Anki アプリがパソコンや電話（AnkiDroid、AnkiMobile）で取り込めます。各局面は表裏のあるカードになります。表には盤面、手番のプレイヤー（下側）から見たスコア、キューブ、ダイス、裏には最善手または正しいキューブ判断、そのエクイティ、実際の手の誤差を載せます。ラベルはインターフェースの言語に従います。デッキは同期せずにそのまま書き出され、書き出しはデータベースに何も書き込みません。新しい書き出しを Anki に取り込み直すと、カードは重複せずに更新されます。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span> <span class="pre">export</span></code>を使い、コレクションも書き出せます（<a class="reference internal" href="cli.html"><span class="doc">コマンドラインインターフェース（CLI）</span></a>を参照）。</p>
+<p><strong>復習：</strong> デッキを選んで <em>Study</em> をクリックする（またはデッキをダブルクリックする）と、期限が来たカードの復習が始まります。ポジションカードはボード上にポジションを表示し、スコアカードはスコアを告げてボードはそのままにします。想起の度合いを <em>1</em>（もう一度）、<em>2</em>（難しい）、<em>3</em>（良い）、<em>4</em>（簡単）のキーで評価します。<em>Esc</em> を押すと中断してデッキ一覧に戻ります。</p>
+<p><strong>評価の取り消し。</strong>評価ボタンの下にある<em>元に戻す</em>ボタン、またはキー<em>u</em>で、セッションの最後の評価を取り消します。カードは直前とまったく同じ状態(期限、間隔、安定性、難易度、復習回数と忘却回数)に戻り、その評価は復習ログから消え、カードは再び評価されるように画面に戻ります。繰り返すと、セッションを評価ごとにさかのぼります。セッションが終わると、<em>元に戻す</em>は次のセッションまでデッキの帯に残ります。最後の評価も取り消せて、復習はそのカードから再開されます。スキーマのバージョン 2.42.0 より前に記録された復習は取り消せません。以前の状態が保存されていなかったためです。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span> <span class="pre">card</span> <span class="pre">--action</span> <span class="pre">undo</span></code> を使います(<a class="reference internal" href="cli.html"><span class="doc">コマンドラインインターフェース（CLI）</span></a> を参照)。</p>
+<p>二つの数は別々の名前を持ちます。一覧の <strong>期限切れ</strong> 列は、期限を過ぎたすべてのカード（保留中や埋もれたカードを含む）を数えます。ヘッダーの <em>期限到来</em> の数は、いま利用できるものだけを数えるので、より小さくなることがあります。</p>
+<p>Anki の数はリンクです。バーの期限到来・新規・学習中・復習中のカード、または一覧の <strong>カード</strong>・<strong>新規</strong>・<strong>期限切れ</strong> 列の値をクリックすると、対応するポジションが読み込まれます。同様に、開いているトーナメントでは、ポジション数をクリックするとまさにそれらのポジションが開きます。</p>
+<p><strong>キューブの判断は二枚のカードになり、連なります。</strong> キューブの判断は二つの問い——「ダブルするか」、次に「テイクするか」——であり、blunderDB は以前からそれを二つの局面として記録しています。片方だけを選んだデッキにはもう片方が加わります。判断を <strong>完成させる</strong> のであって、水増しではありません。両方が出題期日を迎えているとき、二枚目は一枚目の <strong>直後</strong> に出ます。</p>
+<p>それぞれが自分の評価と自分の予定を保ちます。一枚のカードの二段階ではなく、二枚のカードです。連なりは期日を前倒ししません。すでに期日を迎えたカードの順序を決めるだけです。二枚は同時に生まれるので初回は同時に期日を迎えます。役に立つのはまさにそこです。</p>
+<p><strong>答えを表示する：</strong> カードは問いを立てます——どの手を打つか、あるいはどのキューブアクションを取るか。考えてから <em>SPACE</em> を押す（または隠された領域をクリックする）と答えが現れます：分析タブが示すのと同じ、そのポジションに記録された分析です。答えは評価ボタンの下に表示され、ボタンはそのままの位置で手の届くところに残ります。リストの手をクリックするとボード上に表示されます。</p>
+<p>評価するために答えを表示する必要はありません。自信があれば、<em>1</em> から <em>4</em> のキーは有効なままです。答えは次のカードで再び隠されますが、単にタブを切り替えただけの場合は隠されません。Eval パネルやポジションのコメントを見に行っても、戻ったときに答えはそこで待っています。</p>
+<p>記録された分析のないポジションでは、隠された領域なしにその旨が直接表示されます。</p>
+<p><strong>ボード上で答える。</strong> 既定では自分で自分を評価します。ポジションデッキの設定で <em>ボード上で答える</em> にチェックを入れると、チェッカーのカードでは、Decision 練習のようにボード上で手を指します(チェッカーのクリックで最初の未使用のダイスで動かし、ダイスのクリックで残りのダイスを入れ替え、右クリックでステップを戻します)。完成した手はダイスのクリックまたは Enter で確定します。エンジンは記録された分析に照らしてその手を判定し、答えを表示して <strong>評価を提案します</strong>：速い正解は <em>簡単</em>、遅めの正解は <em>良い</em>、ブランダーの閾値未満のエラーは <em>難しい</em>、ブランダーまたは不正な手は <em>もう一度</em>。提案された評価はハイライトされます。主導権はあなたにあり、<em>1</em> から <em>4</em> で好きな評価をつけられます。分析が分類していない合法手では何も提案されません。キューブのカード、スコアのカード、スコアシートのデッキは自己評価のままです。指さずに答えを表示すると、手は放棄されます。</p>
+<p><strong>セッションを制限する：</strong>既定では、復習セッションは期限の来たカードをすべて出し切ります。設定でデッキごとにカード枚数の上限を設けられます。<em>セッションを制限</em> にチェックを入れ、1 回のセッションで出す枚数を指定してください。上限に達するとセッションはその旨を伝えて終了します。メッセージは「上限に達しました、期限の来たカードが残り何枚」と、待ち行列が本当に空になった場合とを区別します。それでも続けたいときはフリー練習があります。スケジュールを何も変えずに別の局面を出します。</p>
+<p>上限 <strong>0</strong> はカードを一枚も出しません。これは独立した状態であり、トーナメントの準備の間デッキを凍結するのに役立ちます。「上限なし」とは別物です。このとき <em>Study</em> ボタンは無効になります。</p>
+<p>上限は<strong>セッション</strong>に対するもので、1 日あたりではありません。blunderDB のデッキはコレクションか検索から作られます。有限の集まりであり、数回のセッションで導入し終わるため、1 日あたりの量はその大きさによってすでに抑えられています。1 日あたりの上限は決して効かないか、あるいは 1 回のセッションで収まっていたデッキに滞留を生むだけです。</p>
+<p><strong>フリートレーニング（cram）：</strong> <em>学習</em> の隣にある <em>練習</em> ボタンはフリートレーニングのセッションを始めます。FSRS のスケジュールを無視して、デッキのポジションがランダムに出題されます。このモードは <strong>間隔反復のスケジュールを一切変更しません</strong>。トーナメント前のウォーミングアップや、スケジュールを乱さずにテーマ別のデッキを集中的に復習するのに最適です。カードの状態の代わりに <em>Free</em> のバッジが表示され、<em>Next</em> ボタン（<em>1</em> から <em>4</em> のキー）でポジションが進みます。<em>Esc</em> は中断したセッションを記録せずに一覧に戻ります。</p>
+<p><strong>評価せずにカードを脇へ置く。</strong> 復習中、カードの見出しを右クリックすると、スケジューラに何も告げずにそのカードをセッションから外す 3 つの操作が出ます。</p>
+<ul class="simple">
+<li><p><strong>保留</strong> — カードは予定を保ったまま、保留のあいだ二度と出てきません。誤ったカードやまだ役に立たないカードを、付随する履歴を失わずに脇へ置く方法です。</p></li>
+<li><p><strong>伏せる</strong> — カードは翌日まで消えます。保留と違い、これはカードの価値について何も言いません。ついさっき別の場所で見たもの、あるいは一晩に二度は会いたくないものに使います。</p></li>
+<li><p><strong>外す</strong> — 確認のうえ、カードはデッキを離れます。局面そのものはデータベースに残ります。デッキはライブラリの上に置かれた学習リストであって、その複製ではありません。</p></li>
+</ul>
+<p>この 3 つはいずれも評価を記録しません。脇へ置いたカードは答えたカードではなく、セッションの集計にも入りません。</p>
+<p><strong>復習の記録。</strong> デッキの設定にある <em>復習の記録</em> ボタンは、スケジューラに何を <strong>伝えたか</strong> を示します — 日時、局面、評価、状態、与えられた間隔 — これから何をする予定かではありません。誤って入れた評価が見えるのはここだけです。そこで直すことはできません。予定表は手の届かないところにあり、まさにその規則が記録を有用にしています。過去は書き換えられませんが、知ることはできます。</p>
+<p><strong>停止/再開：</strong> 復習セッションは <em>Esc</em> でいつでも中断できます。ボタンは <em>再開</em> に変わり、進捗を表示します。それをクリックすると、中断したところから再開します。</p>
+<p><strong>デッキの管理：</strong>操作ボタンでデッキの名前変更、同期、リセット、削除ができます（後ろの2つは確認を求められます）。FSRS のパラメータ（目標保持率、最大間隔、ゆらぎ）は、設定（歯車のアイコン）でデッキごとに指定できます。</p>
+<p><strong>保持率：目標と実測：</strong><em>目標保持率</em> は、学習量と想起の質のあいだの折り合いをどう取るかというあなたの選択です。高いほど間隔は短くなり、復習量は増えます。その横で、設定はあなた自身の復習から求めた<strong>実測の保持率</strong>を表示します。これは情報であって制御ではありません。blunderDB があなたの正答率を追いかけて目標を書き換えることはありません。復習が 20 回に満たないあいだは実測を表示しません。ただの雑音を事実として読ませてしまうからです。</p>
+<p>保持率の変更は<strong>さかのぼって効きません</strong>。各カードは次の復習のときに新しいペースを取り入れ、すでに決まっている期日は動きません。したがって効果は少しずつ現れ、その日のうちには見えません。</p>
+<p><em>最大間隔</em> は間隔の上限を定めます。新しく作ったデッキは 1 年から始まります。アルゴリズムが数年先まで先送りする局面は、あなたが決めたわけでもないのにデッキから抜け落ちたも同然ですし、あなた自身の打ち方はそれより速く変わります。古いデッキはそれまでの値を保ちます。</p>
+</section>
+<section id="panneau-entrainement">
+<span id="id2"></span><h2>トレーニングパネル<a class="headerlink" href="#panneau-entrainement" title="この見出しへのリンク"></a></h2>
+<p><strong>Anki</strong> パネルは<strong>記憶する</strong>ものを復習させ、<strong>トレーニング</strong>パネルは時計の下で<strong>計算する</strong>ものを鍛えます。<code class="docutils literal notranslate"><span class="pre">CTRL-J</span></code>、ツールバーの « Position aléatoire » の直後に置かれたボタン、またはコマンド <code class="docutils literal notranslate"><span class="pre">train</span></code> で開きます。スコアカードはその両方にまたがります。ここで計算し、<a class="reference internal" href="#panneau-anki"><span class="std std-ref">スコア表のデッキ</span></a>で覚えます。</p>
+<p>待機中、パネルはランチャーと過去のセッションの集計を表示します。</p>
+<section id="le-lanceur">
+<h3>ランチャー<a class="headerlink" href="#le-lanceur" title="この見出しへのリンク"></a></h3>
+<p>設定は3つで、1行に1つずつです。「開始」はヘッダーバンドの端にあります：</p>
+<ul class="simple">
+<li><p><strong>練習</strong> — <em>スコア</em>、<em>ピップ数</em>、<em>ベアオフ</em>、<em>評価</em>、<em>判断</em>、<em>オープニング</em>。</p></li>
+<li><p>問題の<strong>ソース</strong>（練習が複数持つ場合）— <em>Vivier</em>（その練習の定型局面）、<em>Plateau</em>（現在の盤面そのまま）、<em>Base</em>（閲覧中の一覧の局面）。</p></li>
+<li><p><em>オープニング</em>では、ソースの代わりに出題する<strong>ロール</strong>を選びます。<em>1投目</em>（1st roll、オープニングの手）か<em>2投目</em>（2nd roll、返し）で、既定は<em>1投目</em>です。</p></li>
+<li><p>オープニングではさらに<strong>モード</strong>を選びます（排他）。<em>XGカテゴリ</em>（既定）は、チェックされた<strong>カテゴリ</strong>——<em>Money</em>、<em>DMP</em>、<em>Gammon save</em>（オープナーが 1-away Crawford、応答側が 2-away）、<em>Gammon go</em>（その逆）、いずれも初期状態でチェック済み——から出題します。<em>5ポイントマッチ</em>は、双方が 1〜5 away であるスコアのうちブックにあるものから等しい重みで 1 つ出題し、スコアの選択はありません。ブックにないカテゴリや<em>5ポイントマッチ</em>モードはグレー表示になります。</p></li>
+<li><p><strong>1問あたりの制限</strong> — なし、15、30 または 60 秒。</p></li>
+</ul>
+<p>選んだソース（またはロール）は練習ごとに記憶され、セッションをまたいで引き継がれます。</p>
+<p>閲覧中のリストは、統計パネルの<em>繰り返しの誤り</em>から来ることがあります。「このグループのクイズ」をクリックすると、リストがそのグループのポジションに置き換わり、「決定」練習が始まります。</p>
+<p><code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">scores</span></code>、<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">pips</span></code>、<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">bearoff</span></code>、<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">evaluation</span></code>、<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">decision</span></code>、<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">opening</span></code> はパネルを開いてそのまま開始します。<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">tp</span></code> と <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">takepoint</span></code> は <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">scores</span></code> の別名、<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">epc</span></code> は <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">bearoff</span></code> の別名、<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">quiz</span></code> は <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">decision</span></code> の別名、<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">ouverture</span></code> と <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">book</span></code> は <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">opening</span></code> の別名です。</p>
+</section>
+<section id="les-six-exercices">
+<h3>六つの練習<a class="headerlink" href="#les-six-exercices" title="この見出しへのリンク"></a></h3>
+<p><strong>Scores</strong> は 2 から 9 away までの順序なし 36 スコアから 1 つを引き、<strong>スコアカード</strong>を表示します: 2 列 — <em>Vous</em>（あなた）と <em>L'adversaire</em>（相手）— と 7 行 — キューブ 2 のテイクポイント、次にキューブ 4 のテイクポイント（それぞれロングレースとラストロール）、そしてキューブ 1、2、4 のギャモン価値。</p>
+<p>「公開」のツールチップが手順を示します — 各数値を頭の中で見積もり、<em>公開</em>を押し、外れた数値をクリックします。盤面には、出題されたスコアが空の盤で表示されます。</p>
+<p>各列には、参照テーブル (<a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">参照データパネル</span></a> のテーブル) がその面について定義しているマスだけが並びます。2a-2a では 3 つの数、多くても 14 個、スコアが同点のときは 1 列だけです。どちらの面も定義しない行はカードに現れないため、当てる必要のある「該当なし」のマスはありません。スコアでのキューブの判断には両方の面が必要なので、両面が置かれています。補正済みのテイクポイントは両プレイヤーのギャモン値を組み合わせ、あなたのダブルが通るかどうかを決めるのは相手のテイクポイントです。</p>
+<p><strong>Pip count</strong> は <strong>両方</strong> のサイドのピップ数を尋ねます。問題が開いている間はボードのピップカウントは隠されます。「答えを見る」はそれを表示します — <code class="docutils literal notranslate"><span class="pre">p</span></code> で <strong>ピップカウントを隠していても</strong> です。そうしないと答えが見えず、練習が検証不能になるからです。これは隠蔽であって設定ではなく、あなたの選択は変更されず、次の問題で元に戻ります。<em>Board</em> ソースは表示中のポジションについて、一問だけ出題します。<em>Database</em> ソースは問題ごとに新しいポジションを引き、ボードに持ち込みます。</p>
+<p><strong>Bearoff</strong> は<strong>両者の EPC</strong> を尋ねます。実効ピップ数、すなわちピップ数に、余分な目で上がる駒の無駄を加えたものです。エンジンが厳密である領域であり、EPC がピップ数と本当に異なる領域でもあります。</p>
+<p>問題はすべて<strong>生成</strong>されます。エンジンは種局面から数回の出目を進め、その瞬間の局面が問題になります。無作為に置いただけの盤面には、本物のベアオフが持つ空き点・低い積み・非対称さがありません。種は <em>Vivier</em>（完了したベアイン、そこから 0〜10 プライ）、<em>Plateau</em>（表示中の局面、そこから 1〜4 プライ。0 にはなりません。今見たばかりだからです）、<em>Base</em>（閲覧中の一覧の局面をそのまま。すでに実在の局面です）から来ます。</p>
+<p>この練習の領域は、<strong>両者の駒がすべて自陣内</strong>、各サイド <strong>4〜15 個</strong>で残りは上がり済み、キューブは中央、マネープレイです。ここに入らない種は<strong>理由を告げて拒否</strong>され、何も始まりません。黙って合わせることはしません。接触が切れるまで打ち進めれば、あなたが選んでいない局面を渡すことになるからです。空の盤面だけは例外で、そのときは定型から出題し、パネルがその理由を告げます。</p>
+<p>この練習には片側ベアオフ表が必要です。背後で生成中のあいだ（<a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">設定</span></a> を参照）は、答えのない問題を出す代わりにその旨を告げます。</p>
+<p><strong>Évaluation</strong>は局面の価値を問います。<strong>手番側の勝率</strong>（パーセント）と<strong>キューブアクション</strong>——<em>Pas de double</em>、<em>Double, prend</em>、<em>Double, passe</em>のいずれか——です。Eval パネルが示す二つの数値を、示す前に問うものです。対象は<strong>あらゆる局面</strong>で、レースでも接触のある局面でもよく、<strong>マネーゲーム</strong>で行います。</p>
+<p>Bearoff と同じく、問題は<strong>生成</strong>されます。種は<em>Vivier</em>（接触が解けたばかりの局面から、エンジンが 0〜10 手を指したもの）、<em>Plateau</em>（表示中の局面から 1〜4 手。種のスコアにかかわらず、キューブ中央のマネーゲームとして出題）、または<em>Base</em>（表示中のリストの局面をそのまま）から得ます。ベースの局面は、マネーゲームのキューブ判断——ダイスなしで、キューブが中央か手番側にある——である場合にだけ使われ、そうでなければ次の局面を引きます。どれも該当しなければ、練習はそう伝えます。対局の局面でない盤——各サイド 15 個の駒がない、または終わった対局——は<strong>理由を示して拒否</strong>されます。空の盤では問題は定型から作られます。</p>
+<p>正解はエンジンのものです。局面が含まれていれば両者のベアオフデータベース、それ以外ではすべて標準の深さの gammonNet で、どちらが答えたかをパネルが示します。推定は一切しません。エンジンが評価しない局面は出題されません。</p>
+<p><strong>Décision</strong> は<strong>解析済み</strong>の判断を出題します。表示中のリストの局面（この練習の唯一のソース）と、その局面が持つ判断（チェッカープレイまたはキューブアクション）で、判定するのは保存された分析です。分析のない局面は出題されず、一度出題した局面はセッション中に再び出ません。リストを使い切るとパネルがそう伝えます。データベースが開いていない場合や、リストに解析済みの局面がない場合、この練習は<strong>理由を示して拒否</strong>し、何も始まりません。</p>
+<p><strong>オープニング</strong>は、ランチャーで選んだロールに応じて、<strong>あるスコアでの対局の最初の二つのロールの一方</strong>を出題します。<em>1投目</em>では手番のプレイヤーのオープニング、<em>2投目</em>では、そのスコアでの<strong>最善と同等のオープニング</strong>（ブックが追うものから選ばれる）を盤上で打ち終えた局面での相手の返しです。手は、blunderDB に内蔵され独自のロールアウトで計算された<strong>オープニングブック</strong>に照らして判定されます。ブックはグリッドの各スコア（双方 2 ～ 7 ポイント、差は最大 1 ポイント、および 1 対 2 または 1 対 4 ポイントのクロフォード局、双方向）について、15 通りのオープニングのロールと、そのスコアでの最善と同等のオープニングの後の返しを収めています。ブックはこの練習の唯一の出典です。</p>
+<p>スコアは<strong>カテゴリ</strong>ごとに抽選されます（<em>Money</em>、<em>DMP</em>、<em>Gammon save</em>、<em>Gammon go</em>）。4-awayから7-awayまででは最善手がスコアによってほとんど変わらない一方、この4つの状況はプレーが異なるためです。出題文にはスコアの横にカテゴリ名が表示されます。</p>
+<p><em>Évaluation</em>、<em>Décision</em>、<em>Ouverture</em> の問題が答えを待つあいだ、分析パネルは隠されます。そこに答えが書いてあるからです。</p>
+</section>
+<section id="repondre">
+<h3>答える<a class="headerlink" href="#repondre" title="この見出しへのリンク"></a></h3>
+<p>解答方式は練習の性質であって設定ではありません。<strong>数える・覚えている</strong>ものは伏せて開き、<strong>見積もる</strong>ものは入力します。そこでは誤差の大きさこそが学びだからです。</p>
+<p><em>Scores</em> と <em>Pip count</em> は <strong>自己申告</strong> です。暗算して「答えを見る」をクリックすると、正解が表示されます。このとき各数字は <strong>既定で正解</strong> です。間違えたものをクリックして <strong>ミス</strong> の印を付け（キーボードでは <em>Tab</em> のあとに <em>Space</em> で同じ操作）、もう一度クリックすると印が消えます。何も入力しません。ピップ数やテーブルのマスは正しいか間違いかのどちらかで、書き込んでも読む以上に学べることはないからです。</p>
+<p><em>Bearoff</em> は<strong>入力</strong>方式です。二つの EPC を書き、« Valider » が半ピップの許容で判定します。半ピップは EPC がレースの判断を変える粒度です。正解は書いたものの横に出ます。判定するのはアプリで、チェックするものはありません。誤差は<strong>符号つき</strong>で記録されます。過大評価と過小評価は別物であり、平均を出すのは集計の役目です。</p>
+<p><em>Évaluation</em>は一つの問題に二つの操作をまとめます。勝率は<strong>入力</strong>し、符号付きの誤差も含めて 5 ポイント以内で判定されます。キューブアクションは<strong>選択</strong>します——クリックはボタンを保持するだけで判定はせず、« Valider » で両方を一度に判定します。キューブに許容誤差はありません。エンジンの判定が正しいとするボタンだけが正解で、<em>ダブルには強すぎる</em>局面の答えは<em>Pas de double</em>です。欄で<em>Enter</em>を押すと、キューブアクションが未選択のあいだはそこへ移動し、選択後は判定します。解答後、パネルは正解——四通りの判定——とその出所、そして局面に厳密な EPC があれば<strong>両者の EPC</strong>を表示します。EPC はここでは決して問われません。専用の練習があるからです。記録は二つの数値を別々に数えます。局面の見積もりは正しくても、キューブの読みを誤ることがあるからです。</p>
+<p><em>Décision</em> は<strong>選択</strong>方式です。チェッカーの判断では、<strong>盤上で手を打ちます</strong>。駒をクリックすると、まだ使っていない最初のダイス（左、次に右）で動き、そのダイスで動かせなければ次のダイスで動きます。どのダイスでも動かせなければ何も起こりません。駒をドラッグすることもできます。ダイスをクリックすると、まだ使っていないダイスの順序が入れ替わり、手が完成していれば判定に回ります。盤面を右クリックすると、打ったステップが戻ります。パネルでは « Annuler le pas » がダイス一つ分だけ戻り、« Recommencer » が問題の示すとおりの局面に戻します。表記欄には、入力した手（<code class="docutils literal notranslate"><span class="pre">13/7</span> <span class="pre">8/7</span></code>、棋譜の表記）も使えます。ステップは一打ごとに盤上に置かれ、欄が赤くなればそのステップは打てないことを示し、 ENTER で完成した手全体を確定します。パネルにフォーカスがあるときは、 BACKSPACE でステップを一つ取り消し、 ESC で手をやり直します。 ENTER は、ボタン以外ならフォーカスがどこにあっても、完成した手全体を確定します。キューブの判断では <em>ノーダブル</em>、<em>ダブル、テイク</em>、<em>ダブル、パス</em> のいずれかをクリックします。そのクリックが答えです。</p>
+<p>採点は三つの結末を区別します。混同すれば嘘になります。<strong>不正な手</strong> は選択の誤りではなく、ルール違反です。<strong>合法だがエンジンが評価しなかった手</strong> は判断の誤りではありません。値段がないだけで、損は何もつきません。評価された手は、分析が示す分だけミリポイントで損をします。正解は、評価されていて損のない手だけです。最善手はどの場合も表示されます。</p>
+<p><em>オープニング</em>も<strong>選んで</strong>答えます。<em>判断</em>と同じく、手を盤上で打ち、同じ操作、同じ表記欄を使います。パネルは打つロールとスコアを示し、先に打つのは<em>あなた</em>です。手が<strong>正解</strong>となるのは<strong>最善手と同等</strong>のときです。良い手は一つとは限らず、ブックが区別できない上位のグループがあります（<a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">オープニングブック：差、95 % 信頼区間、同等</span></a> を参照）。手を打つと、パネルはそれに<em>正解</em>または<em>不正解</em>の印を付け、ブックの候補の表を表示します。各候補の最善手との<strong>差</strong>、その差の<strong>95 % 信頼区間</strong>、そして<strong>同等</strong>の表示で、あなたの手は強調表示されます。ブックが順位を付けていない場合は、差なしで末尾に追加されます。これらの数値を出した対局数とロールアウトの設定は、表のツールチップにあります。<em>2投目</em>では、出題文がすでに打たれたオープニングの手を示します。ログはオープニングと返しを別々に数えます。オープニングを知っていても、返しを誤ることがあるからです。</p>
+<p>時計は問題の表示で動きだし、« Révéler »、« Valider »、<em>Décision</em> のキューブアクションのクリック、または <em>Ouverture</em> で手を打った時点で止まります。次の問題は解答中に用意されるので、あなたの時間に含まれることはありません。失点のチェックも計時されません。制限を設けた場合、時間切れまで答えのなかった問題は自動的に開き、<strong>時間切れ</strong>として数えられます。数値はすべて誤りとなり、その時間は中央値に入りません。与えられなかった答えは測らないからです。時間切れの判断は最善手を表示し、セッションの PR には入りません。</p>
+<p>「次へ」は問題を記録し、次を出題します。答えが表示されたあとは、欄やボタンの外で ENTER を押しても同じで、次の問題がなければ「終了」になります。セッションに決まった長さはありません: 「終了」（ジャーナルに書き込む）または「やめる」（破棄する）まで続きます。すべてのボタンはパネルのヘッダーバンドにあり、課題、問題番号、タイマーと並びます：「やめる」、「終了」、そして常に端に、問題の操作（「公開」、「判定」または「次へ」）。盤は問題とその答えを示すだけで、操作は一切持ちません。</p>
+<p>問題が盤上に出ているあいだは、開いていてもいなくても、リストをたどるキーでリストは送られません。« Suivante »、« Terminer »、« Quitter » のいずれかまで、問題が盤を保持します。</p>
+</section>
+<section id="le-journal-et-le-bilan">
+<h3>ジャーナルと集計<a class="headerlink" href="#le-journal-et-le-bilan" title="この見出しへのリンク"></a></h3>
+<p>終了したセッションはデータベース自体に保存され — つまりファイルに付いて行き — 上限はありません。待機中、パネルは練習ごとに一行を表示します：セッション数、ミス率、中央値の時間、そして十セッションを超えると <strong>傾向</strong>、つまり直近十セッションのミス率とすべてのセッションのミス率との差です — 負なら上達しています。</p>
+<p><em>Décision</em> では、この行に前回のセッションの <strong>PR</strong> も表示されます。統計が実戦に用いるのと同じ式 — 判定された判断についての、正規化エクイティの平均誤差 × 500 — で計算されます。練習の PR 6 とマッチの PR 6 は、同じ尺度で同じものを測っています。</p>
+<p>エクササイズ名をクリックすると<strong>数値の種類ごと</strong>の内訳が開きます: « Point de prise 4 · dernier lancer, 6 / 9 »。この内訳こそがジャーナルの値打ちであり、面ではなく種類で数えます: 同じ表の同じマスは、どちらの側から見ても 1 つの弱点です。</p>
+<p>「判断」の問題は、ジャーナルにポジション、与えた答え、そのコスト(ミリポイント)を保持します。そのため「判断」の詳細には、間違えたすべてのポジションに対して、それぞれ 1 回ずつ、最近間違えたものから順に作用する 3 つのボタンがあります。時間切れの問題は間違いとして数えます。</p>
+<ul class="simple">
+<li><p><strong>間違えた問題をやり直す</strong> — 間違えたポジションが閲覧リストになり、その上で「判断」セッションが再開されます。</p></li>
+<li><p><strong>間違いのAnkiデッキ</strong> — これらのポジションの Anki デッキ。</p></li>
+<li><p><strong>間違いのコレクション</strong> — これらのポジションのコレクション。</p></li>
+</ul>
+<p>デッキとコレクションの名前は「判断の間違い」に当日の日付を付けたものです。コマンドラインでは、<code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">missed</span></code> が同じリストを返し、それをデッキ(<code class="docutils literal notranslate"><span class="pre">--deck</span></code>)またはコレクション(<code class="docutils literal notranslate"><span class="pre">--collection</span></code>)にします。<code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">sessions</span></code> はジャーナルを読み直します(<a class="reference internal" href="cli_entrainement.html#cli-training"><span class="std std-ref">training — トレーニングジャーナル</span></a> を参照)。</p>
+</section>
+</section>
+<section id="panneau-duel">
+<span id="id3"></span><h2>デュエルパネル<a class="headerlink" href="#panneau-duel" title="この見出しへのリンク"></a></h2>
+<p><strong>デュエル</strong>パネルは、blunderDB を審判（Arbiter）として、ボットを相手にマッチ全体を対局します。サイコロを振り、ルールを適用し、スコアと時計を管理します。<code class="docutils literal notranslate"><span class="pre">CTRL-H</span></code>、ツールバーの「対局」ボタン、または<code class="docutils literal notranslate"><span class="pre">duel</span></code>コマンドで開きます。データベースを開いておく必要があります。デュエルは判断のたびにそこへ書き込まれます。</p>
+<p>デュエルが開いていないとき、パネルにはデュエルごとに記憶されるフォームと、あれば中断中のデュエルの一覧が表示されます。ヘッダーバンドには、<strong>スタート</strong>、開始局面が求める選択、<strong>持ち時間</strong>、そして末尾の「プレイ」が並びます。</p>
+<ul class="simple">
+<li><p><strong>スタート</strong>:初期局面、または盤面上の局面です。盤面から始める場合、局面は Eval パネルと同じように編集します(同じ下書き盤面、同じ操作)。チェッカー、キューブとその持ち主、ダイス(プレイヤー側に置くと、そのプレイヤーに手番を与えます)、そしてスコアです。</p></li>
+<li><p><strong>ダイス</strong>(ダイスのある盤面からのスタート):既定の「盤面のダイス」は置かれた出目をそのままプレイし、「振り直す」は審判にもう一度振らせます。</p></li>
+<li><p><strong>キューブの判断</strong>(プレイするダイスのない盤面からのスタートで、手番のプレイヤーがダブルできる場合、または盤面でダブルが提示されている場合):既定の「キューブの前」は、この判断から始めます。手番のプレイヤーがダブルするか振るか、あるいは相手が提示されたダブルに答えます。「キューブの後」は直接ロールに進み、提示されたダブルはこのときテイクされます。</p></li>
+<li><p><strong>持ち時間</strong>:持ち時間なし、<strong>Standard</strong>(1 ポイントあたり 2 分 + 12 秒)、<strong>Speed</strong>(1 ポイントあたり 0.4 分、つまり 5 ポイントマッチで 2 分、+ 10 秒)、または保存した持ち時間から選びます。</p></li>
+</ul>
+<p>フォームは 1 行に 1 つの設定です。</p>
+<ul class="simple">
+<li><p><strong>マッチ</strong>（1〜25ポイント）、または<strong>マネーセッション</strong>（ジャコビーは任意）。</p></li>
+<li><p><strong>スコア</strong>:各プレイヤーに足りないポイントで、既定はマッチ長(マッチの開始)です。「1 (クロフォード)」はクロフォードゲーム、「1 (ポストクロフォード)」はそれに続くゲームです。盤面から始める場合、これらのフィールドと盤面のスコアは同じものです。一方を変えるともう一方も変わり、マネーの盤面はマネーのセッションになります。<strong>1 ゲームのみ</strong>は、スコアを練習するために、最初のゲームの終わりでデュエルを止めます。書き込まれるマッチはそのゲームだけを数えます。</p></li>
+<li><p><strong>持ち時間</strong>(持ち時間を選んだとき):<strong>1 ポイントあたりの分</strong>と、秒単位の<strong>ディレイ</strong>です。各プレイヤーは、1 ポイントあたりの分 × マッチ長を持ちます(開始スコアからの場合はそれより少なく、残りをプレイする平均の長さになります)。各手番では、まずディレイが進み、次に持ち時間が減ります。使い切った持ち時間はゼロのままで、経過時間は記録され続けるか、マッチの負けになります。名前を付けて「保存」すると、この 2 つの数値がメニューの持ち時間としてユーザー設定に保存されます。「削除」は選んだ保存済みの持ち時間を取り除きます。マネーのセッションは持ち時間なしでプレイします。</p></li>
+<li><p><strong>手番</strong>（プレイヤー1または2）と<strong>ボットのレベル</strong>（<code class="docutils literal notranslate"><span class="pre">instant</span></code>、<code class="docutils literal notranslate"><span class="pre">normal</span></code>、<code class="docutils literal notranslate"><span class="pre">thorough</span></code>。解析と同じ）。セレクターは各レベルの深さを示します（例：「instant（0手読み）」「normal（2手読み、枝刈りあり）」）。深いほど強く、遅くなります。</p></li>
+<li><p><strong>あなたの名前</strong>と<strong>マッチを保存</strong>：チェックを外すと、終了したデュエルはマッチにならず破棄されます。</p></li>
+<li><p><strong>ピップカウント</strong>:チェックを外すと、ツールバーのボタンや<code class="docutils literal notranslate"><span class="pre">P</span></code>を使っても、デュエルの間ピップカウントは隠れたままです。デュエルを出ると元に戻ります。</p></li>
+</ul>
+<p>「再開」は、中断中のデュエルを同じ時点、同じ今後のサイコロで開き直します。時計は止まっていました。</p>
+<p>中断中のデュエルはそのデータベースから出ません。データベースのエクスポートはそれを含みません。今後のダイスは終了前にどの経路からも出てはならないためです。終了したデュエルは他の Match と同じようにエクスポートされます。</p>
+<p>デュエルは盤面上で対局します。パネルには、トランスクリプトと同じ2列のマッチシートと、持ち時間が進行中のときは時計が表示されます。ヘッダーバンドには、プレイヤー名、次に求められる操作が示され、右側に「マッチを放棄」「マッチを一時停止」「マッチを取り消す」が置かれます。ポイントマッチは最後まで終えたものだけが保存されます。未完のマッチを保存する終了はありません。スコアとキューブは盤面のものです。タブを折りたたんでも、スコアと時計はステータスバーに残ります。作成時に審判が公開したダイスのシードの SHA-256 フィンガープリントは、ヘッダーバンドの案内のツールチップに表示され、終了したマッチの出自にもシードとともに表示されます。盤面は<strong>デュエル</strong>モードになります。ライブラリは閲覧できず、編集、Eval パネル、ほかのタブ(<a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">参照データパネル</span></a>を除く)は開かず、エンジンは沈黙します。評価も候補も出ません。残るのはパイル(<code class="docutils literal notranslate"><span class="pre">B</span></code>)、ピップカウント(<code class="docutils literal notranslate"><span class="pre">P</span></code>。デュエルのために隠している場合を除く)、ヘルプだけです。</p>
+<ul class="simple">
+<li><p>ロールの前は、盤面、ダイス、またはチェッカーをクリックすると振られます。キューブをクリックしたときだけダブルを提案し、盤面が「ダブル」か「キャンセル」かを尋ねます。キューブが使えないときは、ロールは自動です。</p></li>
+<li><p>ボットのダブルを受けると、盤面が「テイク」か「パス」かを尋ねます。</p></li>
+<li><p>チェッカーをクリックすると、まだ空いている左のダイスですぐに動かし、左のダイスで動かせないときはもう一方で動かします。バーのチェッカーはエンターし、ゾロ目は4回のクリックで動かします。チェッカーは目的地へドラッグすることもできます。合法な手の歩だけが通ります。</p></li>
+<li><p>ダイスは使うと灰色になります。ゾロ目では各ダイスが2歩に当たり、1歩目で半分だけ薄くなります。手が完成するとすべてのダイスが灰色になり、ルール上使えないダイスも含みます。</p></li>
+<li><p>手が完成していないあいだは、ダイスをクリックすると、まだ使っていないダイスの順序が入れ替わります。盤面を右クリックすると、動かしたチェッカーがすべて戻ります（<code class="docutils literal notranslate"><span class="pre">BACKSPACE</span></code>でも同じです）。何も動かしていなければ、デュエルのメニューが開きます。</p></li>
+<li><p>完成した手は、ダイスのクリック、盤面の「確定」、または<code class="docutils literal notranslate"><span class="pre">ENTER</span></code>か<code class="docutils literal notranslate"><span class="pre">SPACE</span></code>で確定します。そのあとは何も戻せません。</p></li>
+<li><p>ボットはすぐに応答し、その手は盤上でゆっくり再生されます。</p></li>
+<li><p>盤面の外、自分の手の外の盤面、またはチェッカーをまだ動かしていない盤面を右クリックすると、デュエルのメニューが開きます。局面をパイルに載せる／外す、シングル、ギャモン、バックギャモンでの投了（自分の手番で、確認のあと）、マッチの放棄、一時停止、取り消しです。このメニューには評価も編集もありません。</p></li>
+<li><p>「マッチを放棄」は、確認のあと、いつでもマッチ全体を放棄します。進行中のゲームは、相手をマッチの長さに届かせるポイントで相手のものとなり、マッチは相手の勝ちとして保存されます。マネーゲームでは、進行中のゲームはキューブの値でのシングル負け（ジャコビールールの有無を問いません）となり、セッションが終わります。マッチを失う持ち時間設定で持ち時間が尽きると、そのプレイヤーがマッチを放棄したものとみなされます。</p></li>
+<li><p>「マッチを一時停止」はデュエルを保留にし、時計を止めます。同じところから再開できます。「マッチを取り消す」は確認のあとデュエルを破棄し、何も保存しません。</p></li>
+<li><p>盤面の外でダブルクリックすると、<code class="docutils literal notranslate"><span class="pre">B</span></code>と同じように局面がパイルに載り、または外れます。それを示すのは、盤面の隅のブックマークだけです。</p></li>
+</ul>
+<p>各判断は、持ち時間の有無にかかわらず所要時間を持ちます。投了にはマッチに記録される所要時間がありません。</p>
+<p>終了するとマッチが書き込まれ、その分析が始まり、マッチタブがそのマッチで開きます。コマンドラインでは、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">duel</span></code>が同じデュエルを操作します（<a class="reference internal" href="cli_matchs.html#cli-duel"><span class="std std-ref">duel — デュエルをプレイする</span></a>を参照）。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="manuel_eval.html" class="btn btn-neutral float-left" title="評価" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="manuel_partage.html" class="btn btn-neutral float-right" title="インポート、出所、共有" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

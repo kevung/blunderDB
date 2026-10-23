@@ -1,0 +1,332 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>統計 &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="データベースの管理" href="cli_admin.html" />
+    <link rel="prev" title="学習、レッスン、トレーニング" href="cli_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/cli_stats.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_stats.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_stats.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_stats.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_stats.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/cli_stats.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">一般的な構文</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">利用可能なコマンド</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">インポート、エクスポート、転送</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">ライブラリ: 検索、一覧、コレクション</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">マッチ、トーナメント、ゲーム</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">解析とエンジン</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">学習、レッスン、トレーニング</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">統計</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stats-erreurs-recurrentes">stats — 繰り返されるミス</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">データベースの管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">ワークフロー例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">終了コード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+      <li class="breadcrumb-item active">統計</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="cli-stats-chapitre"></span><h1>統計<a class="headerlink" href="#statistiques" title="この見出しへのリンク"></a></h1>
+<section id="stats-erreurs-recurrentes">
+<span id="cli-stats"></span><h2>stats — 繰り返されるミス<a class="headerlink" href="#stats-erreurs-recurrentes" title="この見出しへのリンク"></a></h2>
+<p>フィルターのミスをプランとテーマごとにまとめ、コストの大きい順に並べます。Stats パネルの Errors タブにある「繰り返されるミス」の表です（<a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Stats パネル</span></a>を参照）。全体の統計は引き続き <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> で取得します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code> — このプレイヤーの判断のみ。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opponent</span> <span class="pre">&lt;nom&gt;</span></code> — この対戦相手と対戦したマッチのみ。<code class="docutils literal notranslate"><span class="pre">--player</span></code>と併用すると、もう一方の席。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> と同じフィルターです。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — テキストで表示するグループ数（既定は 20、<code class="docutils literal notranslate"><span class="pre">0</span></code> ですべて）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON は各グループをすべてのポジションの一覧とともに出力します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> — 最もコストの高い3グループのポジションから無作為に引いて表示します（<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>、既定は20）。これらはクイズと <code class="docutils literal notranslate"><span class="pre">quiz_grade</span></code> が判定する識別子です。JSONでは <code class="docutils literal notranslate"><span class="pre">Quiz</span></code> フィールド。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;名前&gt;</span></code> — その名前のAnkiデッキを作り、最もコストの高い3グループのすべてのポジションを入れます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--group</span> <span class="pre">&lt;順位&gt;</span></code> — <code class="docutils literal notranslate"><span class="pre">--quiz</span></code> または <code class="docutils literal notranslate"><span class="pre">--deck</span></code> と併用：最初の3グループの代わりに、その順位（最もコストの高いものが1）のグループ。</p></li>
+</ul>
+<p>チェッカープレイのテーマは <code class="docutils literal notranslate"><span class="pre">gammon</span></code>、<code class="docutils literal notranslate"><span class="pre">blots</span></code>、<code class="docutils literal notranslate"><span class="pre">point</span></code>、<code class="docutils literal notranslate"><span class="pre">passive</span></code> のいずれかで、キューブのテーマは <code class="docutils literal notranslate"><span class="pre">offer_missed</span></code>、<code class="docutils literal notranslate"><span class="pre">offer_premature</span></code>、<code class="docutils literal notranslate"><span class="pre">answer_wrong_pass</span></code>、<code class="docutils literal notranslate"><span class="pre">answer_wrong_take</span></code> のいずれかです。どのルールも名付けないミスは順位から外れ、プランごとに1行で別に一覧されます(JSON では <code class="docutils literal notranslate"><span class="pre">Unthemed</span></code> フィールド)。説明文が判断を下すのは60 mp以上、つまり<em>ミス</em>のしきい値より上だけだからです。<em>COST (PR)</em> 列は、そのグループがフィルターの PR に占める割合です。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--group<span class="w"> </span><span class="m">1</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Mon pire groupe"</span>
+</pre></div>
+</div>
+<p><strong>stats plan</strong> — フィルターの学習プラン。ダッシュボードの <em>学習プラン</em>カード（<a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">学習プラン</span></a> を参照）と同じで、誤りのファミリー（プラン × テーマ）を回収可能 MWC、つまりその誤りにわたる損失マイナス難しさの合計の順に並べ、95 % 区間を付けます。ファミリーがプランに入るのは、数値化された誤りが 5 件以上で、区間がゼロより上のときです。それ以外は別に、要確認として挙げられます（JSON ではフィールド <code class="docutils literal notranslate"><span class="pre">Tentative</span></code>）。テーマのない誤りと MWC のない誤り（フリーゲーム）は数えられるだけです（<code class="docutils literal notranslate"><span class="pre">Unthemed</span></code>、<code class="docutils literal notranslate"><span class="pre">Unpriced</span></code>）。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code> と同じフィルターオプションに加えて、次があります。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — テキストで表示するファミリーの数（既定は 10、<code class="docutils literal notranslate"><span class="pre">0</span></code> ですべて）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code>（<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>、既定は 20）、<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;名前&gt;</span></code> — <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code> と同様に、上位 3 ファミリーのポジションに対して働きます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — これらのファミリーの学習キューを、1 行に 1 ポジションで、基準プレイヤーとの差が最も大きいものから表示します（JSON：<code class="docutils literal notranslate"><span class="pre">Queue</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--family</span> <span class="pre">&lt;順位&gt;</span></code> — <code class="docutils literal notranslate"><span class="pre">--quiz</span></code>、<code class="docutils literal notranslate"><span class="pre">--deck</span></code>、<code class="docutils literal notranslate"><span class="pre">--queue</span></code> と併用：上位 3 ファミリーの代わりに、この順位のファミリー（1 が先頭）。</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--family<span class="w"> </span><span class="m">2</span><span class="w"> </span>--queue
+</pre></div>
+</div>
+<p><strong>stats effect</strong> — 学習済みの各ファミリーの前後。ダッシュボードの<em>学習の前後</em>カード（<a class="reference internal" href="manuel_stats.html#avant-apres-etude"><span class="std std-ref">学習の前後</span></a> を参照）と同じです。そのポジションのいずれかに対する最初の学習アクションの日付、その日の前後それぞれの、プランと種類が同じ 100 判断あたりの MWC 損失率、ゲインとその 95 % 区間、そして判定（<code class="docutils literal notranslate"><span class="pre">improved</span></code>、<code class="docutils literal notranslate"><span class="pre">worse</span></code>、<code class="docutils literal notranslate"><span class="pre">undetermined</span></code>、ウィンドウあたり 30 判断未満は <code class="docutils literal notranslate"><span class="pre">insufficient</span></code>）を示します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats biases</strong> — フィルターの符号付きバイアス。<em>符号付きバイアス</em>カード（<a class="reference internal" href="manuel_stats.html#biais-signes"><span class="std std-ref">符号付きバイアス</span></a> を参照）と同じです。テイク／パス、ダブル（全体とスコア別）、ブロットについて、それぞれ二つのカウントとそのコスト、バイアス、95 % 区間、判定（<code class="docutils literal notranslate"><span class="pre">too_much</span></code>、<code class="docutils literal notranslate"><span class="pre">too_little</span></code>、<code class="docutils literal notranslate"><span class="pre">balanced</span></code>、20 判断未満は <code class="docutils literal notranslate"><span class="pre">insufficient</span></code>）を示します。フリーゲームには専用の <code class="docutils literal notranslate"><span class="pre">money</span></code> 行があり、ポストクロフォードのスコアは 1 ポイントとして読みます。再現できなかったチェッカームーブの割合は表の下に示されます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code> と同じフィルターオプション（<code class="docutils literal notranslate"><span class="pre">--player</span></code>、<code class="docutils literal notranslate"><span class="pre">--opponent</span></code>、<code class="docutils literal notranslate"><span class="pre">--tournament</span></code>、<code class="docutils literal notranslate"><span class="pre">--from</span></code>、<code class="docutils literal notranslate"><span class="pre">--to</span></code>、<code class="docutils literal notranslate"><span class="pre">--decision-type</span></code>、<code class="docutils literal notranslate"><span class="pre">--format</span></code>）。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats tournament</strong> — あるプレイヤーのトーナメントの総括で、トーナメントパネルの <em>総括</em> ボタンと同じものです（<a class="reference internal" href="manuel_tournois.html#bilan-tournoi"><span class="std std-ref">トーナメントの総括</span></a> を参照）。PR と MWC 損失（7 ポイント換算）を直前 365 日の普段のレベルと比べ、ラウンド別、マッチ内での判断の順位別、スコア別（<code class="docutils literal notranslate"><span class="pre">dmp</span></code>、<code class="docutils literal notranslate"><span class="pre">crawford</span></code>、<code class="docutils literal notranslate"><span class="pre">post_crawford</span></code>、<code class="docutils literal notranslate"><span class="pre">other</span></code>）、テンポ別（<code class="docutils literal notranslate"><span class="pre">quick</span></code>、<code class="docutils literal notranslate"><span class="pre">considered</span></code>）に示します。それぞれに 95 % 区間と判定（<code class="docutils literal notranslate"><span class="pre">worse</span></code>、<code class="docutils literal notranslate"><span class="pre">better</span></code>、<code class="docutils literal notranslate"><span class="pre">usual</span></code>、区間がない場合、片側が 20 判断未満の場合、または普段のマッチが 5 未満の場合は <code class="docutils literal notranslate"><span class="pre">insufficient</span></code>）が付き、続いてトーナメントのミスの類型が最大三つ示されます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span>...<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>text<span class="p">|</span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--player</span></code> を指定しない場合、プレーヤーはトーナメントの対局に最も多く登場する人です。<code class="docutils literal notranslate"><span class="pre">--player</span></code> は繰り返して指定でき、複数のプレーヤーを 1 回の呼び出しで確認できます。JSON では、プレーヤーが 1 人ならオブジェクト、2 人以上なら指定した順のリストになります。プレーヤー数が変わるスクリプトは、常にリストを返す <code class="docutils literal notranslate"><span class="pre">stats.tournamentReviews</span></code> ルート (または <code class="docutils literal notranslate"><span class="pre">GetTournamentReviews</span></code>) を使います。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Bob"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats training</strong> — 判断クイズの PR、マッチの PR、Anki の定着率を、Stats パネルの <em>トレーニング</em> タブと同様に、暦のウィンドウごとにまとめて表示します(<a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Stats パネル</span></a> を参照)。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">week|month</span></code> — 暦のウィンドウ(既定は <code class="docutils literal notranslate"><span class="pre">week</span></code>)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;名前&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;YYYY-MM-DD&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;YYYY-MM-DD&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — マッチのフィルタ。クイズと Anki のジャーナルにはプレイヤーがありません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON にはクイズのセッション一覧も含まれます。テキストと JSON のどちらも、プレイプラン別のクイズPRを出力します。</p></li>
+</ul>
+<p>各系列はサンプル数を保持します。判断のないウィンドウは、テキストでは破線、JSON ではカウント 0 となり、値としてのゼロにはなりません。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--window<span class="w"> </span>month<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats h2h</strong> — 2 人のプレイヤーの直接対決です。2 人が一緒に戦ったマッチ、各マッチおよび全体での各自の PR、最後まで行われたマッチの勝敗を示します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats contrast</strong> — 2人のプレイヤーがどちらも打った局面のうち、一方がうまく打ち（エラーのしきい値未満）、もう一方がそうでなかったもの。差が大きい順に並びます。プレイヤーは、その局面での最悪の手で判定されます。<code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code>はテキストの先頭N行を残し、JSONは<code class="docutils literal notranslate"><span class="pre">position_id</span></code>を含むすべてを返します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats windows</strong> — 移動するカレンダー期間での PR です。月ごとに 1 行で、各行はその月と期間内のそれ以前の月を対象にします( <code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">month</span></code> 、 <code class="docutils literal notranslate"><span class="pre">quarter</span></code> 、または月数)。</p>
+<p><code class="docutils literal notranslate"><span class="pre">--by-phase</span></code>は各ウィンドウをゲームフェーズ（オープニング、ミドルゲーム、レース、ベアオフ…）ごとに分割します。各行の下に、フェーズごとにマッチ数、決定数、PR を示す行が付き、ウィンドウに限定した <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">breakdown</span></code>のフェーズ別内訳と同じ数値です。ウィンドウ内に集計された決定のないフェーズは表示されません。HTTP デーモンは、<code class="docutils literal notranslate"><span class="pre">stats.prByWindow</span></code>リクエストに <code class="docutils literal notranslate"><span class="pre">&quot;byPhase&quot;:</span> <span class="pre">true</span></code>が含まれるとき、これらを <code class="docutils literal notranslate"><span class="pre">per_phase</span></code>で返します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--window<span class="w"> </span>quarter<span class="o">]</span><span class="w"> </span><span class="o">[</span>--by-phase<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats ranking</strong> — PR によるプレイヤーの順位です。PR が低い順で、カウントされた判断が <code class="docutils literal notranslate"><span class="pre">--min-decisions</span></code> 以上(既定は 500)のプレイヤーが対象です。PR が等しい 2 人は同じ順位になります。 <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code> は上位 N 人を残します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span><span class="m">20</span><span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats engines</strong> — データベースにある解析エンジンを、<code class="docutils literal notranslate"><span class="pre">--engine</span></code> が受け付ける正確な名前で表示します。Stats パネルの <em>エンジン</em> メニューと同じ選択肢です。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>engines<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>共通オプション:</strong> <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code> 、 <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;YYYY-MM-DD&gt;</span></code> 、 <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;YYYY-MM-DD&gt;</span></code> 、 <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> 、 <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> 、さらに出所フィルタの <code class="docutils literal notranslate"><span class="pre">--engine</span> <span class="pre">&lt;名前&gt;</span></code> (解析エンジン、正確な名前)と <code class="docutils literal notranslate"><span class="pre">--min-depth</span> <span class="pre">&lt;n&gt;</span></code> (解析の最小深度)があり、 <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> と <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code> も受け付けます。 <code class="docutils literal notranslate"><span class="pre">h2h</span></code> と <code class="docutils literal notranslate"><span class="pre">windows</span></code> はマッチごとの統計を読むため、各判断に対して働く出所フィルタは拒否します。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--window<span class="w"> </span>quarter<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--min-depth<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p><strong>stats matches</strong> — コーパスの数値が数えるマッチ。フィルタの下で、そのプレイヤー(<code class="docutils literal notranslate"><span class="pre">--player</span></code> なしでは全プレイヤー)に数えられた判断があるマッチを、古いものから新しいものへ並べます。その識別子は <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span> <span class="pre">--ids</span></code> に渡せます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2025</span>-03-31
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--ids<span class="w"> </span><span class="m">12</span>,15,31
+</pre></div>
+</div>
+<p><strong>stats tournaments</strong> — ダッシュボードのトーナメント数が数えるトーナメント：フィルターのもとでプレイヤー（<code class="docutils literal notranslate"><span class="pre">--player</span></code> がなければ任意のプレイヤー）のカウントされた判断を含むもの、ID 順。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats progression</strong> — 各マッチの PR を日付順に、各トーナメントの PR と直近 N 件の判断の移動 PR を表示します。Stats パネルの <em>Progression</em> タブに相当します(<a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Stats パネル</span></a> を参照)。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> と同じフィルタです。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON にはマッチ、トーナメント、移動 PR が含まれます。</p></li>
+</ul>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats breakdown</strong> — フィルタの PR を、ゲームのフェーズ、ゲームプラン、コメントタグ、スコア(アウェイ対アウェイ)、キューブアクションごとに分け、キューブミスの方向も示します。Stats パネルの <em>内訳</em> タブに相当します(<a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Stats パネル</span></a> を参照)。オプションは <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">progression</span></code> と同じです。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats summary</strong> — 識別子を一切含まないフィルターのレベル：件数、PR（チェッカー、キューブ）とその 95 % 区間、7 ポイントマッチあたりの MWC 損失、ゲームフェーズ別・スコア別の PR で、各行に件数と区間が付きます。ポジション、マッチ、トーナメント、対戦相手、タグは一切現れず、最も高くついた決定も含まれません。公開プロフィールや名刺が何も漏らさずに示せる内容です。HTTP デーモンは <code class="docutils literal notranslate"><span class="pre">stats.summary</span></code>ルートでこれを提供し、<code class="docutils literal notranslate"><span class="pre">stats.compute</span></code> は変わりません。オプションは <code class="docutils literal notranslate"><span class="pre">--player</span></code>、<code class="docutils literal notranslate"><span class="pre">--tournament</span></code>、<code class="docutils literal notranslate"><span class="pre">--from</span></code>、<code class="docutils literal notranslate"><span class="pre">--to</span></code>、<code class="docutils literal notranslate"><span class="pre">--decision-type</span></code>、<code class="docutils literal notranslate"><span class="pre">--format</span></code> で、<code class="docutils literal notranslate"><span class="pre">--window</span></code> はありません。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats report</strong> — Stats パネルの HTML レポート(<a class="reference internal" href="manuel_stats.html#rapport-html"><span class="std std-ref">HTML レポート</span></a> を参照)です。フィルタの指標と、コストの大きい上位 10 件の判断を図とともに、ブラウザーが PDF として印刷できる単一の自己完結ファイルにまとめます。HTTP デーモンは同じジェネレーターから、ルート <code class="docutils literal notranslate"><span class="pre">stats.report</span></code>で提供します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--html<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--html</span></code> — 必須:HTML が唯一の形式です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span> <span class="pre">&lt;fichier&gt;</span></code> — 書き出すファイルです(デフォルト:標準出力)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">&lt;code&gt;</span></code> — レポートの言語:<code class="docutils literal notranslate"><span class="pre">fr</span></code>、<code class="docutils literal notranslate"><span class="pre">en</span></code>、<code class="docutils literal notranslate"><span class="pre">de</span></code>、<code class="docutils literal notranslate"><span class="pre">el</span></code>、<code class="docutils literal notranslate"><span class="pre">es</span></code>、<code class="docutils literal notranslate"><span class="pre">fi</span></code>、<code class="docutils literal notranslate"><span class="pre">it</span></code>、<code class="docutils literal notranslate"><span class="pre">ja</span></code>、<code class="docutils literal notranslate"><span class="pre">ru</span></code>(デフォルトは <code class="docutils literal notranslate"><span class="pre">en</span></code>)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — フィルタ:レポートはその対象範囲を明示します。</p></li>
+</ul>
+<p>図はここでは既定のパレットで描かれます。画面で選んだボードのパレットを使うのはグラフィカルアプリケーションだけです。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--output<span class="w"> </span>rapport.html
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--lang<span class="w"> </span>fr
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="cli_entrainement.html" class="btn btn-neutral float-left" title="学習、レッスン、トレーニング" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="cli_admin.html" class="btn btn-neutral float-right" title="データベースの管理" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

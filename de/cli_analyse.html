@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analyse und Engine &mdash; blunderDB 0.46.1 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=fd310db5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=9bf55d28"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Studium, Lektionen und Training" href="cli_entrainement.html" />
+    <link rel="prev" title="Matches, Turniere und Partien" href="cli_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Sprachen">
+  <a href="../fr/cli_analyse.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_analyse.html" lang="en" hreflang="en">English</a>
+  <span class="current" lang="de" aria-current="true">Deutsch</span>
+  <a href="../el/cli_analyse.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_analyse.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_analyse.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_analyse.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_analyse.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_analyse.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Erste Schritte</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download und Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Benutzerhandbuch</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referenz</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Handbuch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriken und Lernwerkzeuge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste der Befehle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Tastenkürzel</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Befehlszeilenschnittstelle (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Einführung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Allgemeine Syntax</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Verfügbare Befehle</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Importieren, exportieren, übertragen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Bibliothek: Suche, Listen, Sammlungen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Matches, Turniere und Partien</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Analyse und Engine</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#analyze-rattrapage-gammonnet">analyze — gammonNet-Nachholanalyse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rollout-rollout-d-une-position">rollout — Rollout einer Stellung</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#epc-calculatrice-epc">epc — EPC-Rechner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gnubgid-id-gnubg">gnubgid — GNUbg-ID</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cubematrix-matrice-du-videau">cubematrix — Dopplerwürfel-Matrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#capture-position-depuis-une-capture-d-ecran">capture — Stellung aus einem Screenshot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bearoff-bases-de-sortie">bearoff — Bearoff-Datenbanken</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#openingbook-quel-coup-a-ce-score">openingbook — Welcher Zug bei diesem Spielstand?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Studium, Lektionen und Training</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Statistiken</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Datenbankverwaltung</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Workflow-Beispiele</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Rückgabecodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Häufig gestellte Fragen (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-Modus (Server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-Vertrag</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anhänge</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anhang: Fortgeschrittene Nutzung der Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anhang Windows: Was tun, wenn Windows den Start blockiert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-Anhang: Mögliche Blockierung von blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anhang: Datenbankschema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versionsverlauf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Über blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Befehlszeilenschnittstelle (CLI)</a></li>
+      <li class="breadcrumb-item active">Analyse und Engine</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-et-moteur">
+<span id="cli-analyse-chapitre"></span><h1>Analyse und Engine<a class="headerlink" href="#analyse-et-moteur" title="Link to this heading"></a></h1>
+<section id="analyze-rattrapage-gammonnet">
+<h2>analyze — gammonNet-Nachholanalyse<a class="headerlink" href="#analyze-rattrapage-gammonnet" title="Link to this heading"></a></h2>
+<p>Schreibt eine gammonNet-Analyse für jede Stellung, die keine hat — das Nachholen für eine Bibliothek, die vor dieser Funktion aufgebaut wurde (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). Es ist dieselbe Operation wie der automatische Lauf nach einem Import und die Zeile „Positionen ohne Analyse“ der Registerkarte <em>Wartung</em> der grafischen Oberfläche sowie der Endpunkt <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.analyzeMissing</span></code> des <code class="docutils literal notranslate"><span class="pre">serve</span></code>-Daemons für einen Tenant — drei verschiedene Formen derselben Operation, nicht drei getrennte Logiken (siehe <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-Modus (Server)</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Datenbank (erforderlich).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Suchtiefe (Standard: 2, der kanonische Parameter).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Beschneidungsbreite (Standard: 12, der kanonische Parameter).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Anzahl der je Zugentscheidung behaltenen Kandidatenzüge (Standard: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Anzahl der parallel analysierten Stellungen (Standard: die Anzahl der Prozessorkerne des Rechners). Bleiben weniger Stellungen als Kerne übrig (ein kurzes Match, das Ende des Stapels), verteilt sich jede Suche auf die freien Kerne; das Ergebnis ändert sich um kein Bit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — Beschränkt den Durchlauf auf die Stellungen eines einzigen Matches (0, die Vorgabe, bedeutet die gesamte Bibliothek).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> — <strong>Schreibt nichts</strong>: vergleicht gammonNet mit den importierten Analysen, statt Lücken zu füllen (siehe unten).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--stale</span></code> — Analysiert die Stellungen neu, deren gammonNet-Analyse veraltet ist — von einer früheren Engine-Version oder mit einer anderen Tiefe als <code class="docutils literal notranslate"><span class="pre">--ply</span></code> geschrieben — statt Lücken zu füllen. Eine Stellung, die auch eine XG-, GNUbg- oder BGBlitz-Analyse trägt, wird nie angetastet.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Mit <code class="docutils literal notranslate"><span class="pre">--compare</span></code>: hält nach so vielen Stellungen an (0 = alle).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Ausgabeformat: <code class="docutils literal notranslate"><span class="pre">text</span></code> (Standard, mit Fortschrittsanzeige) oder <code class="docutils literal notranslate"><span class="pre">json</span></code> (ein einziges Zusammenfassungsdokument, am Ende ausgegeben).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rollout</span></code> — Spielt die von <code class="docutils literal notranslate"><span class="pre">--query</span></code> gewählten Stellungen per Rollout aus, anstatt Lücken zu füllen (siehe unten).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — Mit <code class="docutils literal notranslate"><span class="pre">--rollout</span></code> die zu spielenden Stellungen, in der Abfragesprache der Suche (<code class="docutils literal notranslate"><span class="pre">search</span> <span class="pre">--query-help</span></code>); leer: alle.</p></li>
+</ul>
+<p><strong>Ein ohne Analyse importiertes Match erhält damit ein Performance Rating.</strong> Das betrifft ein online gespieltes Match oder eine Jellyfish-<code class="docutils literal notranslate"><span class="pre">.mat</span></code>-Datei, die niemand durch XG geschickt hat. blunderDB kannte die Stellungen und die gespielten Züge, aber nichts sagte, was sie wert waren; nach dem Lauf wird der tatsächlich gespielte Zug mit gammonNets Rangfolge verglichen, und die Differenz fließt in das PR und alle übrigen Kennzahlen ein. Der gespielte Zug stammt aus der Zugtabelle des Matches, beim Import geschrieben, ob die Datei nun eine Analyse trug oder nicht — er wird nie geraten.</p>
+<p>Eine mit einer älteren Version analysierte Datenbank muss nicht neu bewertet werden: <a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a> berechnet die Spalten aus dem bereits Gespeicherten neu und gibt diesen Matches ihr PR zurück.</p>
+<p><strong>Nur ein Match</strong> (<code class="docutils literal notranslate"><span class="pre">--match</span></code>). Mit der Kennung, die <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span></code> anzeigt, durchläuft der Stapel nur die Stellungen dieses Matches: dieselbe Lückenregel, dieselben Garantien, engerer Umfang. Ein soeben importiertes Match erhält seine Analysen, ohne dass der Rest der Bibliothek durchlaufen wird, und ein korrigiertes und ein zweites Mal analysiertes Match kostet nur die durch die Korrektur entstandenen Stellungen, da alle übrigen bereits eine Analyse tragen. Die Option lässt sich weder mit <code class="docutils literal notranslate"><span class="pre">--stale</span></code> noch mit <code class="docutils literal notranslate"><span class="pre">--compare</span></code> kombinieren, die beide Stellungen betrachten, die bereits eine Analyse haben: beides zugleich zu verlangen ist ein Fehler und kein stillschweigend ignorierter Umfang.</p>
+<p><strong>Die Parallelität</strong> (<code class="docutils literal notranslate"><span class="pre">--jobs</span></code>). Die Stellungen eines Durchlaufs sind voneinander unabhängig — keine Suche speist die nächste — also werden sie auf <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> Threads verteilt, jeder mit seinem eigenen Evaluator. Die geschriebenen Analysen sind <strong>identisch, unabhängig vom Wert von</strong> <code class="docutils literal notranslate"><span class="pre">--jobs</span></code>; nur die Rechenzeit ändert sich. <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">1</span></code> lässt den Rechner für anderes frei. Der Abbruch ist davon nicht betroffen: Ctrl-C hält den Durchlauf vor jeder neuen Stellung an, und alles bereits Berechnete wird geschrieben.</p>
+<p><strong>Die Lückenregel</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>). Eine Stellung, die bereits eine Analyse trägt — XG, GNUbg, BGBlitz oder ein früherer gammonNet-Durchlauf —, wird nie angetastet, welche Engine auch immer fehlt. Nur eine Stellung <strong>ohne jede</strong> Analyse wird geschrieben. Der Befehl kann daher jederzeit gefahrlos erneut gestartet und sauber unterbrochen werden: Ctrl-C bricht ab, ohne etwas bereits Geschriebenes zu verlieren, und der nächste Lauf setzt genau dort fort, wo der vorige aufgehört hat — kein Journal ist nötig, da „die Stellungen ohne Analyse“ bei jedem Start neu berechnet werden.</p>
+<p><strong>Beispiel:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...</span>
+<span class="c1">#   1/1204 (0%)</span>
+<span class="c1">#   61/1204 (5%)</span>
+<span class="c1">#   ...</span>
+<span class="c1">#   1204/1204 (100%)</span>
+<span class="c1"># Done.</span>
+
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--jobs<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Un seul match, celui qui vient d'être importé</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<p><strong>Rollouts im Stapel</strong> (<code class="docutils literal notranslate"><span class="pre">--rollout</span></code>). Jede von <code class="docutils literal notranslate"><span class="pre">--query</span></code> gewählte Stellung wird durch einen <a class="reference internal" href="#cli-rollout"><span class="std std-ref">Rollout</span></a> gespielt, eine nach der anderen auf allen Kernen, und der Rollout wird neben ihrer Analyse gespeichert, nie an deren Stelle. Der Wert ist eine Voreinstellung — <code class="docutils literal notranslate"><span class="pre">fast</span></code> (216 Partien, bei 7 abgebrochen) oder <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 Partien, bei 11 abgebrochen) — oder freie Einstellungen: eine optionale Voreinstellung, dann <code class="docutils literal notranslate"><span class="pre">games=</span></code>, <code class="docutils literal notranslate"><span class="pre">min-games=</span></code>, <code class="docutils literal notranslate"><span class="pre">truncation=</span></code>, <code class="docutils literal notranslate"><span class="pre">jsd=</span></code>, <code class="docutils literal notranslate"><span class="pre">ply=</span></code>, <code class="docutils literal notranslate"><span class="pre">candidates=</span></code>, <code class="docutils literal notranslate"><span class="pre">seed=</span></code>, durch Kommas getrennt. Eine Stellung, die bereits einen Rollout mit denselben Einstellungen trägt, wird übersprungen: Ein mit Strg-C unterbrochener Lauf setzt dort fort, wo er stehen geblieben ist, wobei die laufende Stellung ganz verworfen wird. Eine Stellung, die nur ein Rollout analysiert, wird von der Suche über diesen gefunden; eine bereits analysierte Stellung behält die Spalten ihrer Analyse.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span>fast<span class="w"> </span>--query<span class="w"> </span><span class="s1">'E&gt;80'</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span><span class="s1">'standard,ply=1'</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">'c'</span>
+</pre></div>
+</div>
+<p id="analyze-compare"><code class="docutils literal notranslate"><span class="pre">--compare</span></code>: <strong>was ist gammonNet auf Ihrer Datenbank wert?</strong></p>
+<p>Die Genauigkeit des Programms wird anderswo an Referenzkorpora und an der exakten Auswürfeltabelle gemessen. Keine dieser Messungen beantwortet die Frage, die ein Benutzer wirklich hat und die <strong>seine</strong> Stellungen betrifft: wo widerspricht das eingebaute Programm bei den aus XG importierten Partien der Analyse, die mit der Datei kam, und was würde dieser Widerspruch kosten?</p>
+<p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> antwortet und <strong>schreibt nichts</strong>. Das ist keine Vorsichtsmaßnahme, sondern der Sinn des Befehls: ADR-0013 schützt eine importierte Analyse bedingungslos, und der Vergleich lässt sich daher auf einer Datenbank ausführen, die man gerade nicht überschrieben sehen will.</p>
+<p>Der Bericht gibt:</p>
+<ul class="simple">
+<li><p>die <strong>Übereinstimmungsrate</strong> bei der besten Antwort, getrennt nach Steinzügen und Dopplerentscheidungen — beide haben nichts miteinander zu tun, und eine einzige Rate würde verbergen, welche von beiden nachlässt;</p></li>
+<li><p>die <strong>Kosten des Widerspruchs</strong>, bewertet auf der Skala der importierten Analyse: was der von gammonNet bevorzugte Zug <em>nach dem importierten Programm</em> wert ist, abzüglich dessen, was dessen eigener bester Zug wert ist. Diese Richtung ist die einzige, die beide Programme gemeinsam beziffern können; einen Widerspruch zweimal zu bewerten lüde dazu ein, die kleinere der beiden Zahlen zu lesen;</p></li>
+<li><p>die Aufschlüsselung <strong>nach Spielphase</strong>, die sagt, <em>wo</em> die Widersprüche sitzen;</p></li>
+<li><p>die zehn teuersten Widersprüche, Stellung für Stellung.</p></li>
+</ul>
+<p>Zwei Programme schreiben denselben Zug verschieden — XG schreibt „13/7“, wo gammonNet „13/8 8/7“ schreibt, Schläge werden auf der einen Seite markiert und auf der anderen nicht, Wiederholung wird manchmal zu „(2)“ zusammengezogen. Diese Unterschiede sind Dialekt, nicht Widerspruch: der Vergleich führt beide Schreibweisen auf eine kanonische Form zurück, bevor er sie vergleicht. Ohne das zeigte ein Testkorpus 78,8 % Übereinstimmung statt 93,2 % — fünfzehn Punkte falscher Widersprüche.</p>
+<p>Ein Zug, den das importierte Programm <strong>nicht</strong> aufgeführt hat, lässt sich auf dessen Skala nicht bewerten: er zählt als Widerspruch mit Kosten null statt mit erfundenen Kosten.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparer sur un échantillon de 500 positions</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--compare<span class="w"> </span>--limit<span class="w"> </span><span class="m">500</span>
+
+<span class="c1"># compared: 118 decision(s)  (refused 2, failed 0)</span>
+<span class="c1"># same best answer: 93.2% (110/118)</span>
+<span class="c1">#   checker play:   93.7% (59/63)</span>
+<span class="c1">#   cube decision:  92.7% (51/55)</span>
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+<section id="rollout-rollout-d-une-position">
+<span id="cli-rollout"></span><h2>rollout — Rollout einer Stellung<a class="headerlink" href="#rollout-rollout-d-une-position" title="Link to this heading"></a></h2>
+<p>Spielt eine Stellung sehr oft mit gammonNet aus, um zu entscheiden, was eine Suche nicht entscheidet: zwei Züge, die nur wenige Tausendstel auseinanderliegen, oder eine Doppler-Entscheidung, bei der das Modell zögert. Mit Würfeln werden seine Züge gespielt (die besten in der Tiefe des Rollouts, mindestens 2 Ply, oder die mit <code class="docutils literal notranslate"><span class="pre">--move</span></code> genannten); ohne Würfel seine Doppler-Entscheidung (Kein Doppel und Doppel/Annahme; Doppel/Aufgabe ist genau +1 wert). Die Stellung stammt aus einer XGID oder einer OGID oder aus einer Datenbank (<code class="docutils literal notranslate"><span class="pre">--db</span></code> und <code class="docutils literal notranslate"><span class="pre">--id</span></code>); ohne <code class="docutils literal notranslate"><span class="pre">--store</span></code> wird nichts gespeichert.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;position&gt;<span class="w"> </span><span class="o">[</span>--store<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--preset</span></code> — Ausgangseinstellung: <code class="docutils literal notranslate"><span class="pre">fast</span></code> (Standard: 216 Partien, nach 7 Halbzügen abgebrochen, Stopp bei JSD 3 nach 108) oder <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 Partien, nach 11 abgebrochen, Stopp bei JSD 3 nach 324). Beide spielen mit 0 Ply — das Netz allein, für Züge, Doppler und Blätter; <code class="docutils literal notranslate"><span class="pre">--ply</span> <span class="pre">1</span></code> oder mehr spielt tiefer, bei mehrfach längerer Zeit. Die folgenden Optionen überschreiben sie einzeln.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--games</span></code>, <code class="docutils literal notranslate"><span class="pre">--min-games</span></code>, <code class="docutils literal notranslate"><span class="pre">--truncation</span></code>, <code class="docutils literal notranslate"><span class="pre">--jsd</span></code>, <code class="docutils literal notranslate"><span class="pre">--ply</span></code>, <code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Die Parameter des Rollouts (<code class="docutils literal notranslate"><span class="pre">--truncation</span> <span class="pre">0</span></code> spielt jede Partie bis zum Ende, <code class="docutils literal notranslate"><span class="pre">--jsd</span> <span class="pre">0</span></code> hält nie vor dem Ende an).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move</span></code> — Ein zu spielender Zug, in blunderDB-Notation (wiederholbar).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> — Startwert der Würfel, standardmäßig fest: derselbe Befehl liefert dieselben Zahlen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Parallel gespielte Partien (Standard: eine pro Kern); nur die Laufzeit ändert sich.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Ausgabeformat: <code class="docutils literal notranslate"><span class="pre">text</span></code> oder <code class="docutils literal notranslate"><span class="pre">json</span></code> (Standard: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--id</span></code> — Die Datenbank und die Kennung der zu spielenden Stellung, anstelle einer XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--store</span></code> — Speichert den abgeschlossenen Rollout an der Stellung, als zweite Analyse mit eigenen Einstellungen, neben der importierten oder berechneten Analyse, die er nie ersetzt. Ein abgebrochener Rollout wird nicht gespeichert; von zwei Rollouts mit denselben Einstellungen bleibt die längere Serie erhalten, ein Rollout mit anderen Einstellungen kommt daneben hinzu.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--list</span></code> — Zeigt die auf der Position gespeicherten Rollouts an, vom neuesten zum ältesten, statt einen auszuspielen.</p></li>
+</ul>
+<p>Alle Kandidaten spielen dieselben Würfel, das Glück jedes Wurfs wird aus dem Ergebnis jeder Partie herausgerechnet (Varianzreduktion), die ersten beiden Würfe werden stratifiziert, und eine Partie endet dort, wo die Two-Sided-Bearoff-Datenbank sie abdeckt. Jede Zeile nennt das Equity, sein 95-%-Intervall, die Zahl der gespielten Partien und die JSD, den Abstand zum Besten in Standardabweichungen der Differenz. Der Doppler wird während der Partien gespielt: Die Rangfolge ist verlässlicher als das absolute Equity. Strg-C zeigt, was die beendeten Partien ergeben haben.</p>
+<p><strong>Beispiele:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--move<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span>--move<span class="w"> </span><span class="s1">'24/23 13/10'</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--preset<span class="w"> </span>standard<span class="w"> </span>--store
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--list
+</pre></div>
+</div>
+</section>
+<section id="epc-calculatrice-epc">
+<h2>epc — EPC-Rechner<a class="headerlink" href="#epc-calculatrice-epc" title="Link to this heading"></a></h2>
+<p>Berechnet den Effective Pip Count, die Gewinnwahrscheinlichkeit und das Money-Doppler-Urteil einer per XGID oder OGID (OpenGammon) angegebenen Auswürfelstellung. Reine Berechnung: Es ist keine Datenbankdatei beteiligt.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Ausgabeformat: <code class="docutils literal notranslate"><span class="pre">text</span></code> oder <code class="docutils literal notranslate"><span class="pre">json</span></code> (Standard: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — Optionale zweiseitige Bearoff-Datenbank (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>), die die eingebaute TS-06-06 erweitert (wird auch aus der Umgebungsvariablen <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code> gelesen). Die breiteste gültige Datenbank gewinnt; eine ungültige Datei wird mit einer Warnung ignoriert.</p></li>
+</ul>
+<p><strong>Regime.</strong> In dem Bereich, den die zweiseitige Datenbank abdeckt, sind die Gewinnwahrscheinlichkeit und die Money-Doppler-Analyse (cubeless, ND, D/T, D/P, Urteil) <strong>exakt</strong>. Außerhalb wird die Gewinnwahrscheinlichkeit <strong>geschätzt</strong> (Faltung der einseitigen Wurfverteilungen plus einer kalibrierten Korrektur) und mit ihrer gemessenen Fehlergrenze angezeigt; das Doppler-Urteil wird bewusst nie geschätzt (siehe <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>).</p>
+<p><strong>Beispiele:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact : six pions ou moins de chaque côté</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'</span>
+
+<span class="c1"># Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">'XGID=…'</span>
+</pre></div>
+</div>
+</section>
+<section id="gnubgid-id-gnubg">
+<span id="cli-gnubgid"></span><h2>gnubgid — GNUbg-ID<a class="headerlink" href="#gnubgid-id-gnubg" title="Link to this heading"></a></h2>
+<p>Schreibt die Kennung, die GNU Backgammon für eine als XGID oder OGID gegebene Stellung anzeigt: die <strong>Stellungs-ID</strong> (das Brett, aus Sicht des Spielers am Zug) und die <strong>Match-ID</strong> (Würfel, Stand, Dopplerwürfel), durch einen Doppelpunkt verbunden, wie GNU Backgammon sie kopiert. Reine Berechnung: keine Datenbankdatei ist beteiligt. Die Matchlänge und die Punktestände werden aus den Abständen zum Matchende abgeleitet, die die Stellung trägt, wie es die XGID tut.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Ausgabeformat: <code class="docutils literal notranslate"><span class="pre">text</span></code> oder <code class="docutils literal notranslate"><span class="pre">json</span></code> (Standard: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Beispiele:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+</section>
+<section id="cubematrix-matrice-du-videau">
+<span id="cli-cubematrix"></span><h2>cubematrix — Dopplerwürfel-Matrix<a class="headerlink" href="#cubematrix-matrice-du-videau" title="Link to this heading"></a></h2>
+<p>Liefert das Dopplerwürfel-Urteil einer Stellung bei <strong>jedem Punktestand</strong> eines Matches: für jede <em>away × away</em>-Zelle, ob die Stellung ein Doppel ist und ob sie angenommen wird. Reine Berechnung: keine Datenbank wird geöffnet, die Stellung kommt als XGID oder als OGID (OpenGammon).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Ausgabeformat: <code class="docutils literal notranslate"><span class="pre">text</span></code> oder <code class="docutils literal notranslate"><span class="pre">json</span></code> (Standard: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Matchlänge, die das Raster abdeckt, von 1 bis 25 (Standard: 7).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Suchtiefe jeder Zelle, <code class="docutils literal notranslate"><span class="pre">0</span></code> oder <code class="docutils literal notranslate"><span class="pre">2</span></code> (Standard: 2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Anzahl der vom Beschneidungsnetz behaltenen Kandidatenzüge (Standard: 12).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Parallel laufende Suchen (Standard: eine pro Kern). Das Raster ist unabhängig vom Wert identisch; nur die Zeit ändert sich.</p></li>
+</ul>
+<p>Der eigene Punktestand der Stellung wird ignoriert — das Raster ersetzt ihn —, ihr <strong>Dopplerwürfel</strong> aber bleibt erhalten: gefragt wird, bei welchem Punktestand man <em>diesen</em> Würfel drehen würde. Das Raster gilt durchgehend nach Crawford.</p>
+<p>Jede Zelle ist eine eigene Suche, denn die Engine berücksichtigt den Punktestand: eine einzige, durch verschiedene Match-Equities gelesene Suche wäre genau dort falsch, wo der Punktestand zählt.</p>
+<p><strong>Beispiele:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grille d'un match en 5 points</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--match-length<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'</span>
+
+<span class="c1"># Les équités de chaque case, pour un script</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p>Ausgabe <code class="docutils literal notranslate"><span class="pre">text</span></code>: ein Raster, dessen Zeilen die dem Spieler am Zug noch fehlenden Punkte sind und dessen Spalten die des Gegners, dann die Legende der Kürzel <code class="docutils literal notranslate"><span class="pre">ND</span></code> / <code class="docutils literal notranslate"><span class="pre">DT</span></code> / <code class="docutils literal notranslate"><span class="pre">DP</span></code> / <code class="docutils literal notranslate"><span class="pre">TG</span></code> und der Grund jeder abgelehnten Zelle.</p>
+</section>
+<section id="capture-position-depuis-une-capture-d-ecran">
+<h2>capture — Stellung aus einem Screenshot<a class="headerlink" href="#capture-position-depuis-une-capture-d-ecran" title="Link to this heading"></a></h2>
+<p>Liest die Stellung, die ein Screenshot eines eXtreme-Gammon-Bretts (Standardthema) zeigt: Steine, Bar, abgetragene Steine (was auf fünfzehn fehlt), Würfel, Spieler am Zug und Doppler. Das Bild (PNG, JPEG oder GIF) kann mehr als das Brett enthalten; ist es größer als ein 4K-Bildschirm (3840×2160), wird es vor dem Lesen verkleinert. Der Spielstand wird nie gelesen. Was das Lesen nicht entscheiden kann, wird als Zweifel aufgeführt und nie geraten: verdeckter Pfeil, Stapel höher als die fünf Steine, die XG nebeneinander zeichnet, unlesbare Würfel.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>&lt;image&gt;
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Ausgabeformat: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> oder <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (Standard: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> und <code class="docutils literal notranslate"><span class="pre">--save</span></code> — Speichert die Stellung als einzelne Stellung in der Datenbank.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span></code> — Der Spielstand, den der Screenshot nicht zeigt: <code class="docutils literal notranslate"><span class="pre">money</span></code> oder die Away-Stände beider Spieler, der von Spieler 1 (unten) zuerst, zum Beispiel <code class="docutils literal notranslate"><span class="pre">2a/5a</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--turn</span></code> — Der Spieler am Zug, <code class="docutils literal notranslate"><span class="pre">1</span></code> (unten) oder <code class="docutils literal notranslate"><span class="pre">2</span></code> (oben), wenn keine Würfel ihn zeigen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Speichert trotz der Zweifel der Lesung, sobald das Brett geprüft ist. Es ersetzt weder <code class="docutils literal notranslate"><span class="pre">--score</span></code> noch <code class="docutils literal notranslate"><span class="pre">--turn</span></code>: <code class="docutils literal notranslate"><span class="pre">--save</span></code> lehnt ab, solange der Spielstand oder der Zug ohne Würfel nicht angegeben ist, und nennt die fehlende Option.</p></li>
+</ul>
+<p><strong>Beispiele:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--format<span class="w"> </span>xgid<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>2a/5a<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>money<span class="w"> </span>--turn<span class="w"> </span><span class="m">2</span><span class="w"> </span>videau.png
+</pre></div>
+</div>
+<p>Der Daemon bietet dasselbe Lesen an: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/positions.fromImage</span></code> mit <code class="docutils literal notranslate"><span class="pre">{&quot;data&quot;:</span> <span class="pre">&quot;&lt;Bild</span> <span class="pre">in</span> <span class="pre">Base64&gt;&quot;}</span></code>. Er lehnt ein Bild ab, das größer als ein 4K-Bildschirm ist, statt es zu verkleinern, und liest nur zwei Bilder gleichzeitig.</p>
+</section>
+<section id="bearoff-bases-de-sortie">
+<h2>bearoff — Bearoff-Datenbanken<a class="headerlink" href="#bearoff-bases-de-sortie" title="Link to this heading"></a></h2>
+<p>Erzeugt und verwaltet die Bearoff-Datenbanken. Nichts wird heruntergeladen und nichts ist eingebettet: eine Tabelle wird hier berechnet und gegen den Fingerabdruck geprüft, den gnubg für ihren Bereich erzeugt. Kein Unterbefehl spricht mit einer Datenbank — eine Bearoff-Tabelle ist Arithmetik über das Spiel, nicht über jemandes Stellungen — also nimmt keiner <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>&lt;file.bd&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>delete<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Der Bereich wird wie unter <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> geschrieben: <code class="docutils literal notranslate"><span class="pre">6x9</span></code> für die zweiseitige Tabelle mit neun Steinen je Spieler, <code class="docutils literal notranslate"><span class="pre">os8</span></code> für die einseitige Tabelle über acht Punkte (<code class="docutils literal notranslate"><span class="pre">os</span></code> allein bedeutet <code class="docutils literal notranslate"><span class="pre">os6</span></code>).</p>
+<p>Die beiden Familien beantworten nicht dieselbe Frage. Eine <strong>zweiseitige</strong> Tabelle erweitert den Bereich, in dem Gewinnwahrscheinlichkeit und Doppler-Urteil exakt sind; eine <strong>einseitige</strong> erweitert, wie weit von zu Hause ein Stein stehen darf, ohne dass der EPC verstummt (bis zu zehn Punkte).</p>
+<p><strong>generate.</strong> Nennt Größe, Speicherbedarf und geschätzte Dauer vor dem Start und zeigt dann den Prozentsatz und die gemessene Restzeit.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--ts</span></code> — Zu berechnender zweiseitiger Bereich, zum Beispiel <code class="docutils literal notranslate"><span class="pre">6x9</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--os</span></code> — Zu berechnender einseitiger Bereich, als Punktzahl: 6 bis 12. Genau eines von beiden ist erforderlich.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cores</span></code> — Zu nutzende Kerne (Standard: alle bis auf einen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> — Wohin geschrieben wird (Standard: das Datenverzeichnis der Anwendung).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> — Keine Fortschrittszeile.</p></li>
+</ul>
+<p><strong>STRG-C pausiert.</strong> Das Signal wird abgefangen: der Zustand wird neben der Tabelle abgelegt, und derselbe Befehl erneut ausgeführt setzt dort fort, statt alles neu zu berechnen. Eine halbe Stunde Arithmetik ist es wert, aufgeschrieben zu werden. <code class="docutils literal notranslate"><span class="pre">bearoff</span> <span class="pre">delete</span></code> wirft eine wartende Fortsetzung weg. Nur der zweiseitige Durchlauf pausiert; der einseitige ist sequentiell, und <code class="docutils literal notranslate"><span class="pre">--cores</span></code> bringt ihm nichts.</p>
+<p><strong>list.</strong> Beziffert jeden Bereich — Größe, Speicher, Dauer auf dieser Maschine — und sagt, welche schon vorhanden sind, mit ihrem Urteil, und welche einen pausierten Lauf haben. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> für ein Skript, <code class="docutils literal notranslate"><span class="pre">--cores</span></code> um die Annahme der Schätzung zu ändern.</p>
+<p><strong>verify.</strong> Antwortet <code class="docutils literal notranslate"><span class="pre">verified</span></code> (dieselben Bytes wie die Referenz), <code class="docutils literal notranslate"><span class="pre">unverified</span></code> (wohlgeformt, aber für diesen Bereich ist kein Fingerabdruck hinterlegt) oder <code class="docutils literal notranslate"><span class="pre">corrupt</span></code> (die Datei widerspricht sich selbst). Endet im letzten Fall mit einem Fehler: dieser Befehl ist dafür gemacht, in einem Skript zu stehen.</p>
+<p><strong>delete.</strong> Entfernt die Tabelle, die wartende Fortsetzung und die Überreste eines abgestorbenen Laufs. Ein Standardbereich wird beim nächsten Start der Anwendung neu berechnet, ein breiterer nicht.</p>
+<p><strong>Beispiele:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ce que cette machine a, et ce que chaque domaine coûterait</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x9<span class="w"> </span>--cores<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># OS-08 : l'EPC répond alors jusqu'à un pion sur la 8</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--os<span class="w"> </span><span class="m">8</span>
+
+<span class="c1"># Sur un serveur, dans le volume que lit le démon</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+</section>
+<section id="openingbook-quel-coup-a-ce-score">
+<span id="cli-openingbook"></span><h2>openingbook — Welcher Zug bei diesem Spielstand?<a class="headerlink" href="#openingbook-quel-coup-a-ce-score" title="Link to this heading"></a></h2>
+<p>Die Übung <em>Eröffnung</em> des Trainings-Panels (siehe <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Training-Panel</span></a>) auf der Kommandozeile: der Eröffnungszug (1st roll) oder die Antwort (2nd roll) einer Partie bei einem Spielstand, gezogen aus dem eingebetteten Eröffnungsbuch und gegen dieses beurteilt. Jeder Zug, der mit dem besten gleichwertig (tied) ist, ist richtig (siehe <a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">Eröffnungsbuch: Differenz, 95-%-KI und Gleichwertigkeit</span></a>). Es wird keine Datenbank gelesen oder geschrieben.</p>
+<p><strong>openingbook status</strong> — Die Zahl der Zeilen des Buches und seine Spielstände.</p>
+<p><strong>openingbook question</strong> — Zieht eine Frage: den Eröffnungswurf und den Spielstand, mit der XGID der Eröffnungsstellung; mit <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code> den Antwortwurf in der Stellung, die ein mit dem besten bei diesem Spielstand gleichwertiger Eröffnungszug hinterlässt, mit diesem Zug und der XGID der Antwortstellung.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">first|second</span></code> — Der zu spielende Wurf: <code class="docutils literal notranslate"><span class="pre">first</span></code> (die Eröffnung, Standard) oder <code class="docutils literal notranslate"><span class="pre">second</span></code> (die Antwort).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span> <span class="pre">&lt;liste&gt;</span></code> — Zu ziehende Spielstände, durch Kommas getrennt: <code class="docutils literal notranslate"><span class="pre">4-2</span></code> (der Antwortende bei 4 Punkten, der Eröffner bei 2), <code class="docutils literal notranslate"><span class="pre">1-2</span></code> (Crawford-Spiel), <code class="docutils literal notranslate"><span class="pre">1-1</span></code> (das DMP, Doppel-Matchpunkt), <code class="docutils literal notranslate"><span class="pre">money</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opening</span> <span class="pre">&lt;liste&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--reply</span> <span class="pre">&lt;liste&gt;</span></code> — Zu ziehende Eröffnungs- oder Antwortwürfe (<code class="docutils literal notranslate"><span class="pre">31,65</span></code>); <code class="docutils literal notranslate"><span class="pre">--reply</span></code> nur mit <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span> <span class="pre">&lt;n&gt;</span></code> — Reproduzierbare Ziehung (0 = zufällig).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--book</span> <span class="pre">&lt;fichier&gt;</span></code> — Ein <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code>- oder <code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code>-Buch anstelle des eingebetteten Buches.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Ausgabeformat.</p></li>
+</ul>
+<p><strong>openingbook answer</strong> — Beurteilt einen Zug und zeigt jeden Kandidaten gegen den besten: Differenz, 95-%-KI und « tied » (gleichwertig), in auf den Spielstand normierter Equity, mit der Zahl der Partien und der Rollout-Einstellung. Ohne <code class="docutils literal notranslate"><span class="pre">--after</span></code> ist der Zug die Eröffnung; mit <code class="docutils literal notranslate"><span class="pre">--reply</span></code> und <code class="docutils literal notranslate"><span class="pre">--after</span></code> ist der Zug die Antwort, die nach diesem Eröffnungszug gespielt wird, derjenige, den die Frage <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code> nennt.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--score<span class="w"> </span>&lt;score&gt;<span class="w"> </span><span class="o">[</span>--reply<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--after<span class="w"> </span>&lt;coup&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;coup&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Beispiele:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2,2-4
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span><span class="s1">'8/5 6/5'</span>
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--roll<span class="w"> </span>second<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--reply<span class="w"> </span><span class="m">21</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span>--after<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span><span class="s1">'13/11 6/5'</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_matchs.html" class="btn btn-neutral float-left" title="Matches, Turniere und Partien" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="cli_entrainement.html" class="btn btn-neutral float-right" title="Studium, Lektionen und Training" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

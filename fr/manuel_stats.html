@@ -1,0 +1,989 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statistiques &mdash; Documentation blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=08c23abd"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="Évaluation" href="manuel_eval.html" />
+    <link rel="prev" title="Tournois" href="manuel_tournois.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Languages">
+  <span class="current" lang="fr" aria-current="true">Français</span>
+  <a href="../en/manuel_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_stats.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_stats.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_stats.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_stats.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_stats.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_stats.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Prise en main</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guide utilisateur</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Référence</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Manuel</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Prise en main et interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyse, commentaires et recherche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Matchs et transcription</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Tournois</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Statistiques</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-stats">Panneau Stats</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ouverture-du-panneau">Ouverture du panneau</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#barre-de-filtre">Barre de filtre</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#toggle-pr-mwc">Toggle PR / MWC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-rapport-html">Le rapport HTML</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-tableau-de-bord">Onglet Tableau de bord</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-progression">Onglet Progression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-erreurs">Onglet Erreurs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#entrainement-dans-le-temps">Entraînement dans le temps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-ventilations">Onglet Ventilations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#etude-et-jeu-reel">Étude et jeu réel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-joueurs">Onglet Joueurs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regle-d-agregation">Règle d’agrégation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mwc-limitations">MWC : limitations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Évaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Entraînement, Anki et duel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Import, origine et partage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Métriques et outils d’étude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interface en ligne de commande (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossaire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Mode headless (serveur)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrat d’API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Annexes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Annexe Windows : que faire si Windows bloque le lancement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historique des versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">À propos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Manuel</a></li>
+      <li class="breadcrumb-item active">Statistiques</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="manuel-stats"></span><h1>Statistiques<a class="headerlink" href="#statistiques" title="Lien vers cette rubrique"></a></h1>
+<section id="panneau-stats">
+<span id="stats"></span><h2>Panneau Stats<a class="headerlink" href="#panneau-stats" title="Lien vers cette rubrique"></a></h2>
+<section id="introduction">
+<h3>Introduction<a class="headerlink" href="#introduction" title="Lien vers cette rubrique"></a></h3>
+<p>Le panneau <strong>Stats</strong> permet d’analyser son niveau de jeu et de suivre sa
+progression dans le temps à partir des positions importées dans la base de
+données. Il calcule et affiche les indicateurs <strong>PR</strong> (<em>Performance Rating</em>) et
+<strong>MWC cost</strong> (Match Winning Chance cost) pour l’ensemble des positions ou un
+sous-ensemble filtré.</p>
+<p>Le panneau Stats est particulièrement utile pour :</p>
+<ul class="simple">
+<li><p><strong>situer son niveau</strong> par rapport aux bandes de niveau (<em>Classe mondiale</em>,
+<em>Expert</em>, <em>Avancé</em>…) grâce au PR global ;</p></li>
+<li><p><strong>suivre sa progression</strong> tournoi après tournoi ou match après match grâce
+aux graphiques de l’onglet Progression ;</p></li>
+<li><p><strong>identifier ses points faibles</strong> : onglet Erreurs pour voir la répartition
+entre coups joués et décisions de videau, et la distribution des magnitudes
+d’erreur ;</p></li>
+<li><p><strong>comparer les joueurs de la base</strong> entre eux, une ligne par joueur, grâce à
+l’onglet Joueurs — utile pour suivre une compétition entière ;</p></li>
+<li><p><strong>accéder directement aux positions concernées</strong> en cliquant sur n’importe
+quel indicateur (drill-down).</p></li>
+</ul>
+<p>La définition, la formule, l’incertitude et les limites de chaque chiffre du
+panneau sont réunies dans <a class="reference internal" href="metriques.html#metriques"><span class="std std-ref">Métriques et outils d’étude</span></a>.</p>
+</section>
+<section id="ouverture-du-panneau">
+<h3>Ouverture du panneau<a class="headerlink" href="#ouverture-du-panneau" title="Lien vers cette rubrique"></a></h3>
+<p>Pour ouvrir le panneau Stats :</p>
+<ul class="simple">
+<li><p>Appuyer sur <em>CTRL-D</em>.</p></li>
+<li><p>Saisir la commande <code class="docutils literal notranslate"><span class="pre">stats</span></code> ou <code class="docutils literal notranslate"><span class="pre">st</span></code> dans la ligne de commande.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le panneau se rafraîchit automatiquement à chaque modification du filtre.
+Il ne recalcule pas les statistiques lors d’un simple basculement PR ↔ MWC :
+les deux métriques sont calculées simultanément par le backend.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3>Barre de filtre<a class="headerlink" href="#barre-de-filtre" title="Lien vers cette rubrique"></a></h3>
+<p>La barre de filtre, en haut du panneau, permet de restreindre le calcul à un
+sous-ensemble de positions.</p>
+<section id="perspective-joueur">
+<h4>Perspective joueur<a class="headerlink" href="#perspective-joueur" title="Lien vers cette rubrique"></a></h4>
+<p>Le champ <strong>Joueur</strong> filtre les statistiques selon le joueur analysé. Taper
+quelques lettres réduit la liste aux noms qui les contiennent ; un clic ou
+<em>Entrée</em> choisit le joueur, <strong>✕</strong> ou un champ vidé revient à toutes les
+perspectives.</p>
+<p>Le filtre est <strong>un seul</strong> pour tous les onglets du panneau et il est conservé
+d’une session à l’autre. Il se règle aussi depuis les autres panneaux : le nom
+d’un joueur dans l’en-tête d’un match ou dans la barre au-dessus du plateau
+ouvre toutes ses statistiques (tournois et dates sont vidés), et le bouton
+<strong>Stats</strong> de l’en-tête d’un tournoi ouvre celles de ce tournoi entier (dates
+vidées, joueur conservé). Une date de fin antérieure à la date de début est
+refusée : le champ reprend la date appliquée.</p>
+</section>
+<section id="filtres-disponibles">
+<h4>Filtres disponibles<a class="headerlink" href="#filtres-disponibles" title="Lien vers cette rubrique"></a></h4>
+<ul class="simple">
+<li><p><strong>Tournoi(s)</strong> — restriction à un ou plusieurs tournois. Plusieurs tournois
+peuvent être sélectionnés simultanément.</p></li>
+<li><p><strong>Dates</strong> — plage temporelle (<em>De</em> … <em>À</em>). Si seule la date de début est
+renseignée, les positions plus récentes sont incluses.</p></li>
+<li><p><strong>Type de décision</strong> — Tous / Coups joués / Décisions de videau.</p></li>
+<li><p><strong>Longueur de match</strong> — restriction à des longueurs de match précises (1, 3,
+5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées.</p></li>
+<li><p><strong>Moteur</strong> et <strong>Profondeur min.</strong> — ne garder que les décisions analysées par
+un moteur donné, ou au moins à une profondeur donnée, en plis. Le menu
+<em>Moteur</em> propose les moteurs présents dans les analyses de la base
+(eXtreme Gammon, GNU Backgammon…).</p></li>
+</ul>
+<p>Un bouton <strong>↺ Réinitialiser</strong> remet tous les filtres à zéro, sauf le joueur.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Les filtres sont persistés dans la configuration de blunderDB
+(<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) et sont restaurés à la prochaine ouverture.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3>Toggle PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Lien vers cette rubrique"></a></h3>
+<p>Le bouton <strong>PR / MWC</strong> en haut du panneau bascule la métrique affichée dans
+tous les onglets.</p>
+<p><strong>PR (Performance Rating)</strong></p>
+<blockquote>
+<div><p>L’erreur moyenne d’équité par décision comptée, multipliée par 500 comme
+le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d’équité perdue
+par décision, soit 10 millipoints (mpt). La règle de comptage exacte —
+quelles décisions entrent au dénominateur, comment le score est converti —
+est celle de <a class="reference internal" href="metriques.html#metrique-pr"><span class="std std-ref">PR (Performance Rating)</span></a>.</p>
+<p>Les bandes de niveau que le panneau dessine derrière la courbe de
+progression sont un <strong>repère indicatif propre à blunderDB</strong> : aucune
+publication ne fait autorité sur ces seuils. La borne haute de chaque
+bande est exclue : un PR de 4 est <em>Avancé</em>, pas <em>Expert</em>.</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Niveau</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Classe mondiale</p></td>
+<td><p>&lt; 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>2 – 4</p></td>
+</tr>
+<tr class="row-even"><td><p>Avancé</p></td>
+<td><p>4 – 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>Intermédiaire</p></td>
+<td><p>6 – 9</p></td>
+</tr>
+<tr class="row-even"><td><p>Occasionnel</p></td>
+<td><p>9 – 12</p></td>
+</tr>
+<tr class="row-odd"><td><p>Débutant</p></td>
+<td><p>≥ 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Probabilité cumulée de victoire de match perdue à cause des erreurs, sur
+l’ensemble du jeu de données filtré. Calculé à partir de la MET courante de
+la base, par défaut la Kazaross-XG2 embarquée dans blunderDB. Une analyse au
+score de match calculée avec une autre table est « MET différente » et reste
+hors des statistiques.</p>
+<div class="admonition caution">
+<p class="admonition-title">Prudence</p>
+<p>Le MWC cost <strong>n’est pas applicable</strong> aux positions <em>money-game</em> (sans
+enjeu de match). Ces positions sont exclues du calcul MWC.
+Les valeurs MWC dépendent de la MET utilisée ; elles ne sont pas
+directement comparables entre logiciels utilisant des METs différentes.</p>
+</div>
+</div></blockquote>
+<p id="perte-mwc-7pts"><strong>Perte MWC (éq. 7 pts)</strong></p>
+<blockquote>
+<div><p>La probabilité de gagner le match qu’un joueur a perdue sur l’ensemble de ses
+décisions — pions, videau, prise ou refus, avec videau — ramenée à un match
+en 7 points. Pour un match en <em>N</em> points où le joueur a perdu <em>L</em> de MWC :</p>
+<blockquote>
+<div><p>L₇ = L × √(7 / N)</p>
+</div></blockquote>
+<p>Pour un match en 7 points, c’est la perte de MWC du match, celle
+qu’affiche eXtreme Gammon. La racine vient du modèle de la formule FIBS : à
+force égale, la perte d’un joueur croît comme la racine de la longueur du
+match. 7 points est la longueur de référence parce que c’est la plus
+courante en tournoi.</p>
+<p>Elle se lit comme la part de match perdue face à un joueur parfait : 12,3 %
+veut dire qu’au lieu de 50 % de chances contre le moteur, le joueur n’en
+avait plus que 37,7 % sur un match en 7 points. L’infobulle en donne la
+lecture en Elo face au moteur, en inversant la formule FIBS :
+D = (2000 / √7) × log₁₀(q / (1 − q)), avec
+q = 0,5 − L₇. Au-delà d’une perte de 49 %, la formule n’a plus
+de valeur finie : l’Elo affiché est alors un plafond (« ≤ »). Les deux
+chiffres classent les joueurs dans le même ordre.</p>
+<p>Elle complète le PR sans le remplacer : le PR divise les erreurs par un
+nombre de décisions, et ce nombre dépend de ce que l’on compte comme
+décision (coups forcés, décisions de videau évidentes). La perte MWC ne
+compte aucune décision : chaque erreur pèse ce qu’elle a coûté au score où
+elle a été commise.</p>
+<p>Sur plusieurs matchs (statistiques d’un joueur, d’un tournoi), les pertes et
+les racines des longueurs s’additionnent avant le rapport :
+L₇ = √7 × ΣL / Σ√N. Un match en 7 points
+pèse donc plus qu’un match en 1 point, et un seul match donne sa propre
+valeur.</p>
+<p>Un match isolé est très bruité : quelques grosses erreurs suffisent à le
+faire varier du simple au double. Le badge et le bilan d’un match
+(<a class="reference internal" href="manuel_matchs.html#bilan-match"><span class="std std-ref">bilan du match</span></a>) donnent l’intervalle à 95 % en rééchantillonnant ses
+parties ; un agrégat (statistiques d’un joueur, d’un tournoi) le donne en
+rééchantillonnant ses matchs ; sans filtre joueur, les deux sièges d’un match
+forment une seule unité, puisqu’ils jouent les mêmes positions. Il faut au
+moins trois parties, ou trois matchs, et qu’elles ne donnent pas toutes la
+même perte : sinon pas d’intervalle. Une ligne par match des statistiques
+n’en a donc pas : c’est une seule unité. Ne classez pas des joueurs sur un
+seul match.</p>
+<div class="admonition caution">
+<p class="admonition-title">Prudence</p>
+<p>Une partie <em>money-game</em> n’a pas de longueur de match : la perte MWC
+(éq. 7 pts) n’y est pas définie et le panneau l’indique au lieu
+d’afficher un nombre. Comme le MWC cost, elle dépend de la MET.</p>
+</div>
+<p>Le troisième choix du bouton, <strong>MWC 7 pts</strong>, trace cette perte dans l’onglet
+Progression, et l’affiche sur les cartes du tableau de bord et dans la
+comparaison pions/videau de l’onglet Erreurs, découpée en pions et videau
+sur les mêmes matchs (les deux parts s’additionnent). Le classement des
+joueurs a sa colonne. Les graphiques sans équivalent 7 points (par action de
+videau) gardent le MWC cost.</p>
+</div></blockquote>
+<p>Le basculement PR ↔ MWC est instantané : aucun recalcul backend n’est
+effectué.</p>
+</section>
+<section id="le-rapport-html">
+<span id="rapport-html"></span><h3>Le rapport HTML<a class="headerlink" href="#le-rapport-html" title="Lien vers cette rubrique"></a></h3>
+<p>Le bouton <strong>Rapport HTML</strong> de l’en-tête du panneau produit un document
+<strong>autonome</strong> : un seul fichier, sans image externe, sans feuille de style
+distante, sans script. Les diagrammes y sont des SVG en ligne, dessinés par le
+même rendu que le plateau à l’écran, avec votre palette. Il s’ouvre dans
+n’importe quel navigateur, s’envoie par courriel, et <strong>s’imprime en PDF par le
+navigateur lui-même</strong> — ce qui évite d’embarquer un générateur de PDF pour
+produire ce que tout le monde a déjà.</p>
+<p>Il contient les indicateurs du périmètre courant (positions, matchs, décisions
+comptées, PR global, pions et videau), puis les <strong>dix décisions les plus
+coûteuses</strong>, chacune avec son diagramme, son coût, le match d’où elle vient et
+le meilleur coup lorsqu’une analyse le donne.</p>
+<p>Le document est construit par le moteur, pas par l’écran : la ligne de commande
+(<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">report</span> <span class="pre">--html</span></code>, voir <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Erreurs récurrentes</span></a>) et le démon HTTP (route
+<code class="docutils literal notranslate"><span class="pre">stats.report</span></code>) produisent le même rapport, dans l’une des neuf langues de
+l’interface. Seule l’application graphique dessine les diagrammes avec la
+palette du plateau ; les deux autres emploient la palette par défaut.</p>
+<p>Le rapport porte le <strong>filtre courant</strong> du panneau Stats. Un rapport qui ne dit
+pas son périmètre est un rapport dont les chiffres ne veulent rien dire :
+réglez le filtre — un tournoi, une plage de dates, un joueur — avant de le
+produire.</p>
+</section>
+<section id="onglet-tableau-de-bord">
+<h3>Onglet Tableau de bord<a class="headerlink" href="#onglet-tableau-de-bord" title="Lien vers cette rubrique"></a></h3>
+<p>L’onglet <strong>Tableau de bord</strong> donne une vue synthétique des indicateurs clés.
+Il se lit de haut en bas : les cartes de niveau, puis ce qui se travaille (plan
+d’étude, top blunders), puis les lectures (PR glissant, avant/après l’étude,
+biais signés). L’explication de chaque carte est dans l’info-bulle de son
+titre.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_stats_dashboard.png"><img alt="Onglet Tableau de bord du panneau Stats" src="_images/panel_stats_dashboard.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">L’onglet Tableau de bord : PR global, PR pions, PR videau.</span><a class="headerlink" href="#id2" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+<section id="cartes-de-niveau">
+<h4>Cartes de niveau<a class="headerlink" href="#cartes-de-niveau" title="Lien vers cette rubrique"></a></h4>
+<p>Trois cartes affichent le PR (ou MWC) pour :</p>
+<ul class="simple">
+<li><p><strong>PR global</strong> — toutes les décisions (pions + videau) ;</p></li>
+<li><p><strong>PR pions</strong> — décisions de pions seulement ;</p></li>
+<li><p><strong>PR videau</strong> — décisions de videau seulement.</p></li>
+</ul>
+<p>Cliquer sur une carte charge dans le panneau d’analyse les positions du
+sous-ensemble correspondant (drill-down). Une quatrième carte, <strong>Perte MWC (éq.
+7 pts)</strong>, donne cette perte quel que soit le choix du bouton PR / MWC, avec son
+intervalle ; elle ne charge rien.</p>
+<p>Sous les cartes, la ligne des totaux compte les tournois, les matchs et les
+décisions du filtre. Le nombre de tournois ouvre ces tournois dans le panneau
+Tournois : un tournoi seul s’ouvre directement ; plusieurs restreignent la
+liste, qui porte alors le bouton « N tournois ouverts depuis les Stats × » : il
+rend la liste complète.</p>
+<p>Le nombre de décisions ouvre leurs positions ; le nombre
+de matchs ouvre ces matchs dans le panneau Matchs, sauf quand un type de
+décision ou un filtre de provenance est actif : il compte alors moins de
+matchs que la liste n’en ouvrirait et reste un simple nombre.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le nombre total de décisions est affiché en bas de chaque carte au survol.</p>
+</div>
+</section>
+<section id="plan-d-etude">
+<span id="plan-etude"></span><h4>Plan d’étude<a class="headerlink" href="#plan-d-etude" title="Lien vers cette rubrique"></a></h4>
+<p>La carte <strong>Plan d’étude</strong> répond à « que dois-je travailler maintenant ? ».
+Les erreurs récurrentes (onglet Erreurs) disent où le filtre a perdu le plus ;
+elles ne disent pas où l’étude rapporte le plus. Une famille de positions
+réellement difficiles coûte cher à tout le monde, et trois erreurs ne font pas
+une tendance. Le plan corrige les deux.</p>
+<ul class="simple">
+<li><p>Une <strong>famille</strong> est un groupe des erreurs récurrentes : un plan de jeu, une
+nature de décision (pions ou videau) et un thème. Les erreurs sans thème
+n’en forment pas : elles n’indiquent rien à étudier.</p></li>
+<li><p>Chaque erreur est chiffrée en <strong>MWC</strong>, comme dans le panneau Match : sa
+perte ℓ, et sa <em>difficulté</em> d, la perte qu’un joueur de référence aurait
+subie dans la même position (voir la difficulté par décision du panneau
+Match). Une erreur en partie libre n’a pas de MWC : elle est seulement
+comptée, « non chiffrée ».</p></li>
+<li><p>Le <strong>MWC récupérable</strong> d’une famille est la somme de ℓ − d sur ses erreurs :
+la fréquence de la famille multipliée par sa perte moyenne au-delà de la
+difficulté. C’est ce que vous regagneriez en jouant ces positions comme le
+joueur de référence. Une famille d’erreurs évitables monte, une famille de
+positions où tout le monde se trompe descend.</p></li>
+<li><p>L”<strong>intervalle à 95 %</strong> accompagne chaque chiffre. Une famille entre au plan
+à partir de <strong>5 erreurs</strong> et d’un intervalle entièrement au-dessus de zéro ;
+le plan est classé par la borne basse de l’intervalle, si bien qu’à
+récupérable égal la famille la mieux établie passe devant. Les autres sont
+nommées sous la liste, <strong>à confirmer</strong>, sans rang : le plan ne vous pousse
+pas vers du bruit. La même ligne compte les erreurs <strong>hors plan</strong> (sans
+thème, non chiffrées).</p></li>
+</ul>
+<p>Chaque ligne du plan montre son rang, la famille, une barre dont la longueur
+est son MWC récupérable rapporté à celui de la première, ce MWC avec son
+intervalle, et le nombre d’erreurs. Chaque compte de positions du plan (par
+famille, à confirmer, hors plan) est cliquable : il charge exactement ces
+positions dans la liste.</p>
+<p>Chaque famille propose trois gestes : <strong>Étudier</strong> ouvre la file d’étude sur
+ses positions, l’écart au joueur de référence le plus grand d’abord ; <strong>Quiz</strong>
+lance l’exercice Décision du panneau <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Entraînement</span></a>
+sur vingt d’entre elles ; <strong>Anki</strong> en fait un paquet de cartes. En tête de la
+carte, <strong>Quiz sur les trois premières familles</strong> tire vingt positions parmi
+celles des trois familles de tête. Le plan suit le filtre du panneau : réglez
+le joueur pour obtenir <em>votre</em> plan. En ligne de commande :
+<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">plan</span></code> (voir <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Erreurs récurrentes</span></a>).</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="avant-apres-etude"></span><h4>Avant/après l’étude<a class="headerlink" href="#avant-apres-l-etude" title="Lien vers cette rubrique"></a></h4>
+<p>La carte <strong>Avant/après l’étude</strong> ferme la boucle du plan : ce que vous avez
+travaillé coûte-t-il moins en match réel ? Sans elle, l’étude se juge à
+l’impression ; avec elle, une famille qui ne bouge pas malgré le travail dit
+qu’il faut changer de méthode, et une famille en progrès peut céder sa place
+dans le plan.</p>
+<ul class="simple">
+<li><p>Une famille (celle du plan) est <strong>étudiée</strong> à la date de la première action
+d’étude sur l’une de ses positions : la marque « étudiée » de la file
+d’étude, une révision Anki, une réponse en quiz. Créer une carte ou ranger
+une position en collection n’en est pas une.</p></li>
+<li><p>Pour chaque famille étudiée, la carte compare deux <strong>fenêtres</strong> : les matchs
+joués avant ce jour et ceux joués après (le jour même est écarté). Dans
+chacune, le <strong>taux de perte</strong> est la MWC perdue par les erreurs de la
+famille, rapportée à toutes les décisions du même plan de jeu et de la même
+nature, et affichée en points de MWC pour 100 décisions.</p></li>
+<li><p>Le <strong>gain</strong> est le taux d’avant moins celui d’après, avec son intervalle à
+95 %. Le verdict n’est « en progrès » (ou « en recul ») que si chaque
+fenêtre compte au moins <strong>30 décisions</strong> et que l’intervalle exclut zéro ;
+sinon il reste « indéterminé » ou « trop peu de décisions ».</p></li>
+</ul>
+<p>À côté de chaque fenêtre, la colonne <strong>Positions</strong> compte les positions
+distinctes de ses décisions et les ouvre d’un clic ; le nombre entre
+parenthèses reste celui des décisions, dénominateur du taux.</p>
+<p>C’est un changement, pas un effet : une famille est étudiée parce qu’elle
+coûtait, et une part du gain est une régression vers la moyenne ; rien ne
+contrôle les adversaires, le format ni les dés. En ligne de commande :
+<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">effect</span></code> (voir <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Erreurs récurrentes</span></a>).</p>
+</section>
+<section id="biais-signes">
+<span id="id1"></span><h4>Biais signés<a class="headerlink" href="#biais-signes" title="Lien vers cette rubrique"></a></h4>
+<p>La carte <strong>Biais signés</strong> dit dans quel sens vous vous trompez, pas seulement
+combien. « Vous prenez trop » se corrige mieux qu’un PR : la règle à revoir
+est nommée. Chaque biais est la part de décisions fautives dans un sens moins
+la part fautive dans l’autre, avec son intervalle à 95 % ; un penchant n’est
+nommé qu’à partir de <strong>20 décisions</strong> et d’un intervalle qui exclut zéro.</p>
+<ul class="simple">
+<li><p><strong>Prise / refus</strong> — sur les réponses au videau : prises fautives (le bot
+refuse) moins refus fautifs (le bot prend). C’est exactement votre taux de
+prise moins celui du bot sur les mêmes positions.</p></li>
+<li><p><strong>Doubles</strong> — sur les décisions de doubler : doubles prématurés (le bot ne
+double pas, ou la position est trop bonne pour doubler) moins doubles
+manqués. Le même biais est donné <strong>par score</strong> (votre away, celui de
+l’adversaire, un score post-Crawford compté à 1 point ; la partie libre
+dans sa propre case), pour les scores qui comptent assez de décisions.</p></li>
+<li><p><strong>Blots</strong> — sur les coups de pions avec contact : les coups qui laissent plus
+de blots que le meilleur coup moins ceux qui en laissent moins. Un coup est
+reconnu par le plateau qu’il laisse, quelle que soit son écriture
+(« 13/7(2) », « 8/5*/4 ») ; un coup que le générateur de coups ne sait
+toujours pas rejouer est écarté, et la part des coups écartés est donnée
+sous le tableau. Le biais compte les blots sans peser leur exposition : un
+blot hors de portée compte autant qu’un blot exposé.</p></li>
+</ul>
+<p>À côté de chaque compte, son coût en millipoints dit si le penchant coûte ;
+une position jouée dans plusieurs matchs y compte avec le coup joué dans
+chacun. Les biais suivent le filtre du panneau. En ligne de commande :
+<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">biases</span></code> (voir <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Erreurs récurrentes</span></a>).</p>
+<p>Chaque compte de décisions (toutes, d’un sens, de l’autre) est suivi d’une
+colonne <strong>Positions</strong> : les positions distinctes de ces décisions, qu’un clic
+ouvre. Une position jouée dans plusieurs matchs y compte une décision par
+match, mais une seule position.</p>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4>PR glissant sur N dernières décisions<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Lien vers cette rubrique"></a></h4>
+<p>Une ligne de valeurs PR (ou MWC) calculées sur les <em>N</em> dernières décisions
+(N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente.
+Les valeurs grisées correspondent à un N supérieur au nombre de décisions
+disponibles.</p>
+<p>Cliquer sur une valeur charge les <em>N</em> dernières positions correspondantes.</p>
+</section>
+<section id="top-blunders">
+<h4>Top blunders<a class="headerlink" href="#top-blunders" title="Lien vers cette rubrique"></a></h4>
+<p>La liste des 10 pires erreurs (ou MWC cost), triées par magnitude décroissante.
+Cliquer sur une ligne charge la position concernée dans le panneau d’analyse.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3>Onglet Progression<a class="headerlink" href="#onglet-progression" title="Lien vers cette rubrique"></a></h3>
+<p>L’onglet <strong>Progression</strong> présente l’évolution du niveau dans le temps.</p>
+<p>En tête de l’onglet, un <strong>objectif</strong> : « PR &lt; 5 d’ici douze semaines ». Une
+cible, une échéance, et une tendance qui dit où l’on va — rien de plus. Un
+objectif qui se mettrait à noter, à féliciter ou à rappeler serait une autre
+fonctionnalité, et pas celle-ci.</p>
+<p>Le bouton <strong>Proposer</strong> suggère une cible à partir du niveau actuel : la borne
+basse de la bande où vous êtes, c’est-à-dire l’entrée dans la bande suivante.
+Proposer « un peu mieux » ne s’ancrerait à rien ; proposer un palier en dit
+un — passer d’intermédiaire à avancé se voit et se raconte.</p>
+<p>La <strong>tendance</strong> est un ajustement par les moindres carrés sur le PR de vos
+matchs, projeté à l’échéance. Elle refuse de se prononcer sous trois matchs :
+tracer une droite entre deux points serait une affirmation qu’on ne peut pas
+tenir. Et la phrase le dit à chaque fois — <em>une tendance n’est pas une
+prédiction</em>.</p>
+<p>L’objectif est enregistré dans les <strong>métadonnées de la base</strong>, pas dans la
+configuration : il porte sur cette bibliothèque-là, et suit donc le fichier
+plutôt que la machine. Aucun changement de schéma : <code class="docutils literal notranslate"><span class="pre">metadata</span></code> est déjà une
+table de clés et de valeurs, lisible par <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> comme par le démon.</p>
+<section id="courbe-par-tournoi">
+<h4>Courbe par tournoi<a class="headerlink" href="#courbe-par-tournoi" title="Lien vers cette rubrique"></a></h4>
+<p>Un graphique en ligne affiche le PR (ou MWC) de chaque tournoi : un point par
+tournoi, étiqueté de son nom, dans l’ordre chronologique de sa date — à défaut,
+celle de son plus ancien match (axe Y : valeur de la métrique). Des bandes de
+couleur matérialisent les seuils de niveau.</p>
+<p>Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :</p>
+<ul class="simple">
+<li><p><strong>Ouvrir le tournoi</strong> — ouvre le tournoi dans le panneau Tournois.</p></li>
+<li><p><strong>Ouvrir les positions</strong> — charge toutes les positions du tournoi dans le
+panneau d’analyse.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4>Scatter plot par match<a class="headerlink" href="#scatter-plot-par-match" title="Lien vers cette rubrique"></a></h4>
+<p>Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC).
+La taille du point est proportionnelle au nombre de décisions dans le match.
+Un match sans date n’y figure pas.</p>
+<p>Cliquer sur un point ouvre un menu contextuel :</p>
+<ul class="simple">
+<li><p><strong>Ouvrir le match</strong> — ouvre le match dans le panneau des matchs.</p></li>
+<li><p><strong>Ouvrir les positions</strong> — charge toutes les positions du match dans le
+panneau d’analyse.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3>Onglet Erreurs<a class="headerlink" href="#onglet-erreurs" title="Lien vers cette rubrique"></a></h3>
+<p>L’onglet <strong>Erreurs</strong> décompose les sources d’erreurs.</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_stats_errors.png"><img alt="Onglet Erreurs du panneau Stats" src="_images/panel_stats_errors.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">L’onglet Erreurs : répartition du PR par action de videau.</span><a class="headerlink" href="#id3" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+<section id="erreurs-recurrentes">
+<h4>Erreurs récurrentes<a class="headerlink" href="#erreurs-recurrentes" title="Lien vers cette rubrique"></a></h4>
+<p>En tête de l’onglet, un tableau regroupe les erreurs du filtre courant — donc
+celles d’un seul joueur quand un joueur est filtré — par <strong>plan de jeu</strong> et par
+<strong>thème</strong>, la plus coûteuse d’abord. Il répond à la question « où est-ce que je
+perds le plus ? » : par exemple, « tenue · trop de blots ».</p>
+<ul class="simple">
+<li><p>Une <strong>erreur</strong> est une décision comptée dont le coût atteint le seuil
+<em>Erreur</em> de la bibliothèque.</p></li>
+<li><p>Le <strong>plan de jeu</strong> est celui du joueur au trait, tel que l’onglet
+Ventilations le présente.</p></li>
+<li><p>Le <strong>thème</strong> d’un coup de pions est celui que nomment les règles de la
+phrase d’explication du <a class="reference internal" href="manuel_bibliotheque.html#panneau-analyse"><span class="std std-ref">panneau Analyse</span></a> : gammon
+sous-estimé, trop de blots, point non fait, trop passif. Celui d’une
+décision de videau est le sens de l’erreur, comme dans la direction des
+erreurs de videau ci-dessous : double manqué, double prématuré, passe à
+tort, prise à tort.</p></li>
+<li><p>Une erreur qu’aucune règle ne nomme avec assurance n’est pas devinée : elle
+sort du classement et apparaît à part, sous le tableau, en une ligne par
+plan de jeu (« sans thème identifié : N erreurs, coût X »), cliquable elle
+aussi. Ce reste est souvent le plus lourd, car l’explication ne se prononce
+qu’à partir de 60 mp, au-dessus du seuil <em>Erreur</em> : classé avec les autres,
+il coifferait un tableau qui ne dirait rien.</p></li>
+<li><p>Le <strong>coût</strong> est la part du PR du filtre que le groupe représente : la
+formule du PR appliquée aux erreurs du groupe, rapportée à toutes les
+décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR.</p></li>
+</ul>
+<p>Cliquer sur un groupe, ou sur son nombre d’erreurs, charge ses positions, de
+la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
+comme le plan de jeu, c’est une étiquette dérivée, non modifiable. En ligne de
+commande : <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">recurring</span></code> (voir <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Erreurs récurrentes</span></a>).</p>
+<p>Chaque ligne propose trois gestes pour passer de l’erreur à l’étude :
+<strong>Quiz sur ce groupe</strong> lance l’exercice Décision du panneau
+<a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Entraînement</span></a> sur les positions du groupe,
+<strong>Paquet Anki</strong> en fait un paquet de cartes, <strong>Collection</strong> les range dans une
+nouvelle collection. Au-dessus du tableau, <strong>Quiz de mes trois pires groupes</strong>
+tire vingt positions au hasard parmi celles des trois groupes les plus
+coûteux. En ligne de commande, <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span> <span class="pre">--quiz</span></code> tire ces
+positions et <code class="docutils literal notranslate"><span class="pre">--deck</span></code> crée le paquet.</p>
+</section>
+<section id="repartition-par-action-de-videau">
+<h4>Répartition par action de videau<a class="headerlink" href="#repartition-par-action-de-videau" title="Lien vers cette rubrique"></a></h4>
+<p>Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision
+de videau : <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Chaque barre
+indique également le nombre de décisions et le taux de blunders en infobulle.</p>
+<p>Cliquer sur une barre charge les positions correspondant à cette action de
+videau, <strong>uniquement celles avec une erreur</strong> (drill-down).</p>
+</section>
+<section id="direction-des-erreurs-de-videau">
+<h4>Direction des erreurs de videau<a class="headerlink" href="#direction-des-erreurs-de-videau" title="Lien vers cette rubrique"></a></h4>
+<p>La répartition ci-dessus indique <em>combien</em> coûtent les décisions de videau ;
+ce tableau indique dans <em>quel sens</em> elles se trompent.</p>
+<p>Une position de videau porte deux décisions prises par deux joueurs
+différents, présentées ici en deux lignes :</p>
+<ul class="simple">
+<li><p><strong>Offrir</strong> — le joueur qui tient le videau double ou ne double pas. Ses
+erreurs sont les <strong>doubles manqués</strong> (il fallait doubler) et les <strong>doubles
+prématurés</strong> (il ne fallait pas).</p></li>
+<li><p><strong>Répondre</strong> — le joueur à qui le videau est offert prend ou passe. Ses
+erreurs sont les <strong>passes à tort</strong> (une prise correcte a été passée) et les
+<strong>prises à tort</strong> (une passe correcte a été prise).</p></li>
+</ul>
+<p>Les deux lignes restent séparées à dessein : un joueur peut parfaitement
+doubler tard <em>et</em> prendre large, et un indicateur unique appellerait cela
+« équilibré » en perdant les deux moitiés de l’information.</p>
+<p>Chaque case affiche le nombre de décisions ; l’infobulle donne l’équité perdue
+cumulée. Cliquer sur une case charge les positions correspondantes. Une case à
+zéro n’est pas cliquable.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ce tableau compte des décisions, il ne porte pas de jugement. À partir de
+quel écart une tendance mérite d’être nommée dépend de l’effectif et d’un
+point de référence, qui ne sont pas des données du moteur.</p>
+</div>
+</section>
+<section id="repartition-checker-cube">
+<h4>Répartition Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Lien vers cette rubrique"></a></h4>
+<p>Un diagramme comparatif place côte à côte le PR des coups joués et des
+décisions de videau. Cliquer sur une barre charge les positions du
+sous-ensemble avec erreur.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4>Histogramme des magnitudes d’erreur<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Lien vers cette rubrique"></a></h4>
+<p>Un histogramme distribue les erreurs selon leur magnitude en millipoints
+(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur
+une barre charge les positions de la tranche.</p>
+</section>
+</section>
+<section id="entrainement-dans-le-temps">
+<span id="stats-entrainement"></span><h3>Entraînement dans le temps<a class="headerlink" href="#entrainement-dans-le-temps" title="Lien vers cette rubrique"></a></h3>
+<p>L’onglet <strong>Entraînement</strong> met côte à côte, sur les mêmes fenêtres
+calendaires — la <strong>semaine</strong> ou le <strong>mois</strong>, au choix — trois séries qui
+mesurent la progression par trois chemins :</p>
+<ul class="simple">
+<li><p>le <strong>PR du quiz</strong> : celui des sessions de l’exercice Décision du panneau
+Entraînement, pondéré par le nombre de décisions jugées. Il est calculé sur
+l’échelle du PR réel, donc comparable à lui ;</p></li>
+<li><p>le <strong>PR des matchs</strong> du filtre courant, pondéré par le nombre de décisions ;</p></li>
+<li><p>la <strong>rétention Anki</strong> : la part des révisions de cartes déjà apprises
+notées <em>Difficile</em> ou mieux, lue sur l’axe de droite (en %).</p></li>
+</ul>
+<p>Sous le graphique, le <strong>PR du quiz par plan de jeu</strong> range les décisions du
+quiz tirées de positions de la bibliothèque, les pires plans d’abord, avec le
+PR de la dernière fenêtre où le plan a été joué.</p>
+<p>Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
+valeur : une fenêtre sans échantillon n’a pas de valeur — un tiret, pas un
+zéro. Le nombre de décisions de matchs d’une fenêtre ouvre leurs positions. Le filtre ne restreint que les matchs ; le journal du quiz et celui
+d’Anki sont les vôtres et ne portent pas de joueur. Rien n’est enregistré en
+plus : les trois séries sont relues dans les journaux existants. En ligne de
+commande : <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">training</span></code> (voir <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Erreurs récurrentes</span></a>).</p>
+</section>
+<section id="onglet-ventilations">
+<h3>Onglet Ventilations<a class="headerlink" href="#onglet-ventilations" title="Lien vers cette rubrique"></a></h3>
+<p>L’onglet <strong>Ventilations</strong> découpe les mêmes décisions que les chiffres globaux
+selon quatre axes. Aucun d’eux ne redéfinit ce qui compte comme une décision :
+ce serait un second PR sous le même nom.</p>
+<ul class="simple">
+<li><p><strong>Par phase de partie</strong> — ouverture, milieu de partie, course, sortie des
+pions. C’est ce qui répond à « mon PR en course contre mon PR en contact ».
+L’étiquette est calculée depuis le plateau (voir <a class="reference internal" href="manuel_bibliotheque.html#panneau-recherche"><span class="std std-ref">Panneau Recherche</span></a>) ;
+une base dont les phases n’ont jamais été calculées range tout sous <em>Non
+classée</em>, et <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> la remplit.</p></li>
+<li><p><strong>Par plan de jeu</strong> — course, blitz, tenue, backgame, amorce contre
+amorce… C’est la ventilation pour laquelle le classificateur existe : « où
+est-ce que je perds le plus ? », plan par plan. Même étiquette dérivée que
+la phase, mêmes réserves, et <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> la remplit de la même
+façon.</p></li>
+<li><p><strong>Par étiquette</strong> — les <code class="docutils literal notranslate"><span class="pre">#mot</span></code> écrits dans les commentaires. Une position
+peut en porter plusieurs : <strong>ces lignes ne s’additionnent pas au total</strong>, et
+le panneau le dit sous le tableau. Une étiquette qualifie, elle ne partitionne
+pas.</p></li>
+<li><p><strong>Par score</strong> — l’écart au but des deux camps, lu du côté du joueur au trait,
+donc du côté de celui qui décide. La ligne <em>Money</em> est la partie d’argent.
+Une cellule sans intervalle est <strong>grisée avec son effectif visible</strong>
+plutôt que cachée (voir ci-dessous).</p></li>
+</ul>
+<p>Les colonnes <strong>Positions</strong> et <strong>Bourdes</strong> comptent des positions distinctes, et
+chaque chiffre est un lien : un clic charge exactement ces positions dans le
+panneau d’analyse, comme les compteurs de la barre d’état. <em>Bourdes</em> compte les
+positions où au moins une décision est une bourde. Une position jouée dans
+plusieurs matchs (une ouverture, par exemple) n’y compte qu’une fois ; la
+colonne <strong>Décisions</strong> la compte à chaque fois, car c’est le dénominateur du PR.</p>
+<p>Chaque ligne porte son <strong>intervalle de confiance à 95 %</strong> (colonne <em>IC 95 %</em>),
+qui remplace le seuil fixe de dix décisions : il dit ce que vaut un PR, pas
+seulement combien de décisions le portent. Il rééchantillonne les <strong>matchs</strong> de
+la sélection, pas les décisions ni les parties : les parties d’un match
+partagent adversaire, séance et fatigue, et les compter comme indépendantes
+donnerait un intervalle trop étroit ; sans filtre joueur, les deux sièges d’un
+match forment une seule unité. Une ligne qui repose sur moins de trois matchs,
+ou dont tous les matchs donnent le même PR, n’a pas d’intervalle et est grisée,
+même avec beaucoup de décisions : deux matchs ne disent rien de la dispersion,
+et des matchs identiques disent qu’ils s’accordent, pas que le PR est exact. Pour l’étude : une
+famille de positions dont l’intervalle reste au-dessus de votre PR global est
+une faiblesse établie ; une ligne à l’intervalle large ne justifie pas encore un
+plan de travail. Le PR global du tableau de bord porte le même intervalle, sous
+sa carte.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Dans la ventilation par score, un score post-Crawford est lu comme
+1-away : la partie Crawford et les parties post-Crawford au même score
+tombent dans la même cellule.</p>
+</div>
+</section>
+<section id="etude-et-jeu-reel">
+<h3>Étude et jeu réel<a class="headerlink" href="#etude-et-jeu-reel" title="Lien vers cette rubrique"></a></h3>
+<p>La commande <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">study</span> <span class="pre">--days</span> <span class="pre">30</span></code> met côte à côte, plan de
+jeu par plan de jeu, trois nombres : combien de <strong>positions distinctes</strong> ont
+été révisées sur la période, quel était le PR <strong>avant</strong> elle, quel est le PR
+<strong>depuis</strong>.</p>
+<p>Trois nombres, et pas un quatrième. Il n’y a <strong>ni colonne de gain ni flèche</strong>,
+parce que rien ici ne contrôle quoi que ce soit : le joueur a pu rencontrer
+des adversaires plus forts, changer de format, ou simplement jouer plus de
+courses ce mois-ci. Le rapprochement est celui du lecteur ; une colonne qui
+annoncerait un effet affirmerait une causalité que ces données ne portent pas.
+Les nombres, eux, sont exacts.</p>
+<p>Les révisions sont comptées en <strong>positions distinctes</strong> : une carte revue
+quatre fois dans le mois est une position étudiée, et compter les répétitions
+ferait passer un mois de bachotage pour un mois de couverture. Les décisions
+du PR, elles, sont toutes comptées — chacune a été prise une fois. Un PR
+appuyé sur moins de dix décisions s’affiche <code class="docutils literal notranslate"><span class="pre">—</span></code>, avec son effectif visible à
+côté.</p>
+</section>
+<section id="onglet-joueurs">
+<h3>Onglet Joueurs<a class="headerlink" href="#onglet-joueurs" title="Lien vers cette rubrique"></a></h3>
+<p>Les cinq onglets précédents décrivent <strong>un</strong> joueur ; l’onglet <strong>Joueurs</strong> les
+compare tous. Il affiche une ligne par joueur de la base, ce qui répond au
+besoin d’un organisateur suivant une compétition entière plutôt qu’un joueur en
+particulier.</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_stats_players.png"><img alt="Onglet Joueurs du panneau Stats" src="_images/panel_stats_players.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">L’onglet Joueurs : une ligne par joueur, triable par n’importe quelle
+colonne.</span><a class="headerlink" href="#id4" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+<p>Colonnes, dans l’ordre :</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Colonne</p></th>
+<th class="head"><p>Signification</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Joueur</p></td>
+<td><p>Le nom <strong>tel qu’il figure dans les matchs</strong>. Un joueur enregistré sous deux orthographes apparaît sur deux lignes, sauf si l’une est un alias de l’autre (section Corpus des paramètres) : la ligne porte alors le nom canonique.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Matchs</p></td>
+<td><p>Nombre de matchs disputés dans la période retenue.</p></td>
+</tr>
+<tr class="row-even"><td><p>V–D</p></td>
+<td><p>Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne compte ni l’une ni l’autre : V + D peut donc être inférieur au nombre de matchs.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Décisions</p></td>
+<td><p>Nombre de décisions comptées — le dénominateur du PR. C’est la colonne qui dit ce que valent les taux voisins : un PR calculé sur douze décisions ne signifie rien.</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>Performance Rating global.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PR pions, PR videau</p></td>
+<td><p>Le PR ventilé par type de décision.</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie</p></td>
+<td><p>Snowie Error Rate (voir <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</span></a>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Blunders</p></td>
+<td><p>Nombre d’erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut). Cliquer sur ce nombre charge ces positions dans le panneau d’analyse.</p></td>
+</tr>
+<tr class="row-even"><td><p>Chance</p></td>
+<td><p>Chance moyenne par lancer, en millipoints (mpt), signée : positive si les dés ont été favorables.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Utilisation :</p>
+<ul class="simple">
+<li><p><strong>Trier</strong> — cliquez sur un en-tête de colonne. Le tableau s’ouvre trié par PR
+croissant, meilleur joueur en tête, et retient d’une session à l’autre le
+dernier tri choisi. Les joueurs dont rien n’a été mesuré
+restent en bas quel que soit le sens du tri : un zéro faute de données n’est
+pas une performance parfaite.</p></li>
+<li><p><strong>Filtrer par colonne</strong> — la ligne de champs sous les en-têtes filtre chaque
+colonne : un morceau de nom pour le texte, une borne pour les nombres
+(<code class="docutils literal notranslate"><span class="pre">&gt;=500</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;500</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;2.5</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=2</span></code>), un intervalle (<code class="docutils literal notranslate"><span class="pre">3-7</span></code>) ou une
+valeur exacte (<code class="docutils literal notranslate"><span class="pre">5</span></code>). Un champ illisible est encadré de rouge et ne filtre
+rien ; une valeur jamais mesurée ne passe aucune borne. Les filtres de colonne
+durent le temps de la session. Le <strong>classement</strong> des joueurs se lit ainsi :
+tri par PR, colonne <em>Décisions</em> filtrée par <code class="docutils literal notranslate"><span class="pre">&gt;=500</span></code>. Tous les tableaux du
+panneau Stats — ventilations, corpus, erreurs récurrentes, temps de
+réflexion, entraînement, biais, effet de l’étude — se trient et se filtrent
+de la même façon.</p></li>
+<li><p><strong>Ouvrir le détail d’un joueur</strong> — cliquez sur une ligne. Le joueur est
+sélectionné dans la barre de filtres et l’affichage bascule sur l’onglet
+Tableau de bord.</p></li>
+<li><p><strong>Ouvrir ses décisions</strong> — le nombre de décisions ouvre leurs positions, sous
+les filtres du tableau. Le nombre de matchs et le bilan V–D restent de simples
+nombres : ils comptent aussi les matchs sans décision analysée, qu’aucune
+liste de matchs ne reproduit.</p></li>
+<li><p><strong>Restreindre la période</strong> — les filtres de dates, de tournois et de longueur
+de match s’appliquent normalement, ce qui permet de borner le tableau aux
+dates d’une compétition.</p></li>
+<li><p><strong>Comparer deux joueurs</strong> — cochez la case de la première colonne sur deux
+lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à
+face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne
+sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.</p></li>
+<li><p><strong>Voir les positions où l’un a mieux joué</strong> — le bouton du bloc de comparaison
+liste les positions que les deux joueurs ont eu à jouer et où l’un a bien joué
+(en dessous du seuil Erreur de la bibliothèque) et l’autre non, l’écart le plus
+large d’abord ; le joueur est jugé sur son pire coup de la position. <em>Ouvrir
+ces positions</em> les charge dans la vue analyse. La ligne de commande et le
+serveur donnent la même liste (<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">contrast</span></code>).</p></li>
+<li><p><strong>Noter les coups d’abord</strong> — la liste ne compare que les coups dont l’erreur
+est notée, et aucun import ne les note : la notation se fait sur demande. Tant
+qu’il en reste à noter, le bloc en donne le nombre avec un bouton <em>Noter les
+coups</em> ; la ligne de commande fait la même chose avec <code class="docutils literal notranslate"><span class="pre">repair</span> <span class="pre">--move-errors</span></code>.</p></li>
+</ul>
+<p>Dans ce bloc, <strong>seuls les taux reçoivent un verdict</strong>, et le meilleur des deux
+est mis en gras. Trois indicateurs n’en reçoivent jamais, et il vaut de dire
+pourquoi. La <strong>chance</strong> n’est pas une qualité : un joueur plus chanceux n’est
+pas meilleur. Les <strong>matchs, le bilan et les décisions</strong> situent ce que les taux
+valent, mais les mettre en compétition ferait gagner celui qui a simplement
+joué davantage. Le <strong>nombre de blunders</strong> ne se compare pas brut — douze sur
+mille décisions valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une
+ligne <em>Blunders / 100 déc.</em> qui, elle, se compare, et laisse le compte à côté
+comme contexte.</p>
+<p>Une égalité n’est pas une victoire : elle n’est mise en gras d’aucun côté. Un
+taux qui n’a rien derrière lui s’affiche « — » et ne départage rien.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Dans cet onglet, le choix du <strong>type de décision</strong> est désactivé : le tableau
+ventile déjà les décisions de pions et de videau en colonnes distinctes. Le
+joueur de la barre de filtres reste actif : le tableau montre toujours tous
+les joueurs, et la ligne de celui-ci est mise en évidence et amenée à
+l’écran.</p>
+</div>
+<p>Deux vues de
+corpus figurent dans l’onglet <strong>Corpus</strong> du panneau, en ligne de
+commande et par l’API du démon (voir <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Erreurs récurrentes</span></a>) : le <strong>face-à-face</strong> de deux joueurs (matchs communs, PR de
+chacun, bilan) et le <strong>PR par fenêtre calendaire</strong> glissante (1, 3, 6 ou 12 mois).
+L’onglet Corpus calcule chaque vue à la demande, sous le
+filtre courant. Le <strong>classement</strong> par PR se lit dans l’onglet Joueurs, trié par PR
+et filtré sur la colonne <em>Décisions</em> ; la ligne de commande et l’API le donnent
+aussi (<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">ranking</span></code>). Un <strong>filtre de provenance</strong> (champs <em>Moteur</em> et <em>Profondeur
+min.</em> de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte
+sur chaque décision, et les chiffres qu’il touche sont alors recalculés depuis
+les décisions. Le face-à-face et le PR par fenêtre ne l’acceptent pas : tant
+qu’il est actif, ils refusent de se calculer. Comme le reste de la barre, il
+est conservé d’une session à l’autre.</p>
+<p>Dans l’onglet Corpus, chaque ligne ouvre ce qu’elle résume. Le bilan du
+face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le bouton
+« N matchs ouverts depuis les Stats × » : il rend la liste complète ; une ligne
+de face-à-face ouvre son match. Le premier joueur du face-à-face est d’emblée
+celui de la barre de filtres. Une ligne de fenêtre et son nombre de décisions
+ouvrent ses positions, son nombre de matchs ouvre les matchs. Un compte de positions du panneau Stats, quel que soit
+l’onglet, quitte d’abord le match en cours avant d’ouvrir sa liste ; la commande
+<code class="docutils literal notranslate"><span class="pre">m</span></code> rouvre ensuite le match au coup sauvegardé.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre
+avec zéro. C’est notamment le cas de la colonne Chance pour tout match
+importé avant la version 2.15.0 du schéma : la chance n’était alors pas
+conservée, et rien ne permet de la reconstituer après coup. Réimporter le
+fichier source ne suffit pas : l’import y reconnaît un doublon et n’applique
+que les marques d’étude nouvellement levées (le rapport en donne le nombre).
+Il faut supprimer le match, puis le réimporter. Les formats
+qui ne la transportent pas (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) n’en fourniront jamais.</p>
+</div>
+</section>
+<section id="regle-d-agregation">
+<h3>Règle d’agrégation<a class="headerlink" href="#regle-d-agregation" title="Lien vers cette rubrique"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Le PR d’un tournoi (ou d’un sous-ensemble quelconque) est calculé par
+la règle <strong>somme/somme</strong> — jamais comme moyenne des PR individuels des
+matchs.</p>
+<p>Formule :</p>
+<div class="math notranslate nohighlight">
+\[PR_{tournoi} = 500 \times \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\]</div>
+<p><strong>Exemple :</strong> un joueur dispute deux matchs dans un tournoi —</p>
+<ul class="simple">
+<li><p>Match A : 10 décisions, 0,100 d’équité perdue → PR = 5,0</p></li>
+<li><p>Match B : 90 décisions, 0,540 d’équité perdue → PR = 3,0</p></li>
+</ul>
+<p>Moyenne naïve des PR : (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(incorrect)</em></p>
+<p>Règle somme/somme : 500 × 0,640 / (10 + 90) = <strong>3,2</strong> <em>(correct)</em></p>
+<p>La règle somme/somme est la seule qui résiste à la variation de longueur
+des matchs (un match en 21 points pèse plus qu’un match en 1 point).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3>MWC : limitations<a class="headerlink" href="#mwc-limitations" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Par défaut, le MWC cost est calculé à partir de la <strong>MET Kazaross-XG2</strong>, table de
+référence de facto dans le backgammon compétitif. Les résultats ne sont
+pas directement comparables avec des logiciels utilisant d’autres METs.
+C’est la même table, lue par le même point d’entrée, que celle dont
+l’évaluateur embarqué se sert pour ses décisions de videau au score : les
+statistiques et le moteur ne peuvent pas diverger là-dessus. Elle donne ses
+valeurs propres jusqu’à 25 points à faire de chaque côté ; au-delà, elle est
+prolongée par une table de Zadeh calculée comme celle de GNUbg, jusqu’à 64.</p></li>
+<li><p>Les positions <em>money-game</em> (sans score de match) sont <strong>exclues</strong> du
+calcul MWC. Si votre base de données contient beaucoup de positions
+money-game, le MWC cost peut être sous-estimé ou indisponible.</p></li>
+<li><p>Le MWC cost est cumulatif sur l’ensemble du jeu de données filtré — pas
+un indicateur par décision. Il mesure l’impact total de vos erreurs sur
+vos chances de victoire.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="manuel_tournois.html" class="btn btn-neutral float-left" title="Tournois" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="manuel_eval.html" class="btn btn-neutral float-right" title="Évaluation" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

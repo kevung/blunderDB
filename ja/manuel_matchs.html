@@ -1,0 +1,289 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>マッチと記譜 &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="トーナメント" href="manuel_tournois.html" />
+    <link rel="prev" title="分析、コメント、検索" href="manuel_bibliotheque.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/manuel_matchs.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_matchs.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_matchs.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_matchs.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_matchs.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_matchs.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_matchs.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/manuel_matchs.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">マニュアル</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">はじめにとインターフェース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">分析、コメント、検索</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">マッチと記譜</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-matchs">マッチパネル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-transcription">記譜パネル</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">トーナメント</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">統計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">評価</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">トレーニング、Anki、デュエル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">インポート、出所、共有</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">マニュアル</a></li>
+      <li class="breadcrumb-item active">マッチと記譜</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="matchs-et-transcription">
+<span id="manuel-matchs"></span><h1>マッチと記譜<a class="headerlink" href="#matchs-et-transcription" title="この見出しへのリンク"></a></h1>
+<section id="panneau-matchs">
+<span id="id1"></span><h2>マッチパネル<a class="headerlink" href="#panneau-matchs" title="この見出しへのリンク"></a></h2>
+<p><strong>マッチ</strong> パネル（<em>CTRL-Tab</em>）はインポートしたマッチを一覧表示します。マッチをダブルクリックする（または <em>Enter</em> を押す）と、その手を辿ることができます。<code class="docutils literal notranslate"><span class="pre">m</span></code> コマンドは最後に閲覧したマッチのナビゲーションを再開します。</p>
+<p>パネル上部のフィルタ欄(<em>/</em> で移動、<em>Esc</em> でクリア)は、プレイヤー、イベント、会場、トーナメント、日付のいずれかが入力したテキストを含むマッチだけを残します。フィルタと列の並べ替えはデータベースが行い、リストはスクロールに応じてページ単位で読み込まれ、「n / N マッチ」のカウンタが読み込み済みの割合を示します。リスト内でプレイヤー、日付、トーナメントを修正すると、編集した行だけが更新されます。</p>
+<p>リストが空のとき、パネルは <strong>インポート… (Ctrl+I)</strong> を提案します。データベースが開かれていない場合は代わりに <strong>データベースを開く…</strong> を、<strong>ウェルカム画面に戻る</strong> とともに提案します。テキストフィルターがリストを空にした場合は <strong>フィルターを解除</strong> を提案します。空の Stats、コレクション、Anki パネルにも同じボタンが表示されます。</p>
+<p>ユーザーは次のことができます：</p>
+<ul class="simple">
+<li><p><em>左</em> キーと <em>右</em> キーを使ってマッチの手を辿る、</p></li>
+<li><p><em>PageUp</em> キーと <em>PageDown</em> キーを使ってゲーム間を移動する、</p></li>
+<li><p><em>CTRL-L</em> を押して手の分析（チェッカーとキューブ）を表示する、</p></li>
+<li><p><em>d</em> キーでチェッカーの手の分析とキューブの分析を切り替える、</p></li>
+<li><p>分析の中で実際にプレイされた手が強調表示されているのを確認する、</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ss</span></code> コマンドでマッチのポジションの中を検索する（例： <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;80</span></code> ）。その後 <em>Esc</em> で検討中の手に戻ります（ <a class="reference internal" href="manuel_bibliotheque.html#panneau-recherche"><span class="std std-ref">検索パネル</span></a> を参照）。</p></li>
+</ul>
+<p>各マッチで最後に閲覧したポジションは記憶され、自動的に復元されます。パネルを表示または非表示にするには、<em>CTRL-Tab</em> を押すか <code class="docutils literal notranslate"><span class="pre">match</span></code> コマンドを実行します。</p>
+<p>行の<strong>⊕</strong>ボタンは、そのマッチをファイルから補完します。裏で新しいことは何も起きていません。同じマッチを別の形式で取り込み直せば、すでにその場で補完されるからです。正準ハッシュが同じマッチだと認識し、二つめのファイルの解析やコメントが最初のものを補います。ボタンがもたらすのは「見つかること」です。取り込みが補完でもあるとは、誰も推測しません。続く報告が、どちらが起きたかを述べます——「取り込み：1」ではなく「補完：1」と。</p>
+<p>各マッチは、マッチ一覧の ⬇ ボタン、またはマッチのシートの ⋯ メニューにある <em>.mat をエクスポート</em> から、Jellyfish 形式の <code class="docutils literal notranslate"><span class="pre">.mat</span></code> 記譜としてエクスポートできます。</p>
+<p>マッチをクリックすると、そのシートが開きます。ヘッダーの1行には、プレイヤー、最終スコア(勝者は太字で、名前はポインターを合わせると表示)、長さ、持ち時間設定(ある場合)、日付が並び、トーナメント、ラウンド、会場はポインターを合わせると表示されます。右側には、動画のあるマッチの 🎞 アイコン、<strong>レビュー</strong>ボタン、そして <em>.mat をエクスポート</em>、<em>記譜を編集</em>、<em>マッチを削除</em> を収めた ⋯ メニューがあります。続いて、<a class="reference internal" href="#bilan-match"><span class="std std-ref">マッチの総括</span></a> の要約が置かれ、その下にタブバーが並びます。<strong>棋譜</strong>(ゲームごとに手を一覧し、手をクリックするとそこへレビューが移ります)、<strong>グラフ</strong>、<strong>見直し</strong>、<strong>詳細</strong>、<strong>情報</strong>、<strong>統計</strong>です。選んだタブはパネルの残りの高さをすべて使って単独でスクロールし、ヘッダーと要約はその場に残ります。タブにフォーカスがあるときは、左右の矢印キーで前後のタブに移ります。開いたままにしたタブは次のマッチでも開いたままです。内容のないタブは表示されません。分析のないマッチには<strong>見直し</strong>も<strong>詳細</strong>もなく、損失も所要時間も分からないマッチには<strong>グラフ</strong>がありません。</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_match_sheet.png"><img alt="マッチのシート、グラフタブ" src="_images/panel_match_sheet.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">マッチのシート：ヘッダー、プレイヤーごとの総括の要約、そして<em>グラフ</em>タブ。ポインターを合わせた判断が見えています。</span><a class="headerlink" href="#id3" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+<p>記譜の各手には、その<strong>重大度</strong>が付きます。エラーには<code class="docutils literal notranslate"><span class="pre">?</span></code>、ブランダーには<code class="docutils literal notranslate"><span class="pre">??</span></code>、行の余白に色付きの線、そして印にポインターを重ねるとその手のコストがエクイティで表示されます。しきい値はデータベース自身のもの (<a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">設定</span></a>) で、統計が数えるのと同じものです。手は実際に指されたとおりに判定されます。マッチ内で同じ局面が二度指されれば、二つの判定を受けます。解析が評価しない手には印が付きません。</p>
+<p>各ゲームの見出しは、展開されているかどうかにかかわらず、その印を数えます。開かなくても、どのゲームにブランダーがあるかがわかります。カウントをクリックすると、それらのポジションが分析パネルに読み込まれます。</p>
+<p>マッチが分析済みの場合、記譜には <strong>MWC</strong> 列が加わります。これは判断が失わせたマッチの勝率をパーセントで示したもので、損失のない判断は <code class="docutils literal notranslate"><span class="pre">0</span></code>、分析が採点しない判断や、スコアがマッチのエクイティ表に値を持たない判断(マネーゲーム、統計対象外の判断)はダッシュになります。<strong>MWC</strong> の見出しをクリックすると、各ゲームの手が損失の大きい順、小さい順、マッチの順の順に切り替わります。採点されない判断は最後に置かれ、この並べ替えは所要時間による並べ替えに代わります。<strong>グラフ</strong>タブには、所要時間のグラフと同じ判断の軸の上に、全幅の二つのグラフが並びます。一つは判断ごとの棒、もう一つは各プレイヤーの累積損失で、その合計で止まります(最初のプレイヤーは実線、二人目は点線)。各グラフにはタイトル、凡例、左側の目盛りがあり、軸の下に各ゲームの番号(第1局、第2局…)が示され、点線がゲームの切れ目を表します。採点されない判断には、棒の根元に高さのない小さな目印が付きます。判断にポインターを合わせるか、矢印キーで順に移動する(Home キーと End キーで両端へ移動)と、その判断がすべてのグラフと記譜の該当行で強調され、ゲーム、手、プレイヤー、損失がツールチップに表示されます。ツールチップは、グラフの枠内に全体が収まる側に置かれ、幅の狭いパネルでも同様です。クリックまたは Enter キーでレビューがそこに移動します。所要時間のグラフでも同様です。各グラフの凡例では、各プレイヤーの名前がチェックボックスになっています（キーボードでもマウスでも操作できます）。チェックを外すと、そのプレイヤーの印が3つのグラフすべてから消えます（設定は共通です）。ホバー、クリック、矢印キーは、もう一方のプレイヤーの判断にのみ作用します（クリックは最も近い表示中の判断を選びます）。最後にチェックされているプレイヤーは外せず、どのマッチも両プレイヤーにチェックが入った状態で開きます。インターフェースの外では、<code class="docutils literal notranslate"><span class="pre">match</span> <span class="pre">--format</span> <span class="pre">json</span></code> が <code class="docutils literal notranslate"><span class="pre">decision_losses</span></code> を追加し(手ごとに一つの項目で、採点されない手では <code class="docutils literal notranslate"><span class="pre">mwc_loss</span></code> が <code class="docutils literal notranslate"><span class="pre">null</span></code>)、<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> は採点された手ごとに「MWC loss」の行を、<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">summary</span></code> はプレイヤーごとの合計を追加します。</p>
+<p><strong>難度と避けられたミス。</strong> 損失は手がいくら損をしたかを示しますが、正しい手を見つけるのが難しかったかどうかは示しません。<strong>MWC</strong> の隣の <strong>難度</strong> 列は、決定の<em>難度</em>を示します。同じ局面で<em>基準プレイヤー</em>が平均して被るマッチ勝率の損失です。この基準プレイヤーは完璧には指しません。各選択肢を、コストが高いほど低い確率で選びます。π(i) は exp(−Δᵢ/τ) に比例し、Δᵢ は最善手に対する選択肢 i のコストで、正規化エクイティで表します。難度は d = Σ π(i)·Δᵢ で、損失と同様に決定時のスコアとキューブで MWC に換算します。つまり同じ単位、マッチ勝率のパーセントで表されます。選択肢は、チェッカープレイでは分析の候補手、キューブを持つ側ではノーダブルとダブル(最善の応手に対して)、ダブルを受ける側ではテイクとパスです。温度 τ は 0,025 です。2 択で最も難しい決定は差が約 0,032 のもので、0,01 間隔の候補が 5 つある局面は、PR 約 6 のプレイヤーの平均的なミスに相当します。これは強いプレイヤーを想定した事前値で、結果を調べる前に固定されています。</p>
+<p>読み方。明白な決定や強制された決定の難度は、特別な閾値で区別しなくても<code class="docutils literal notranslate"><span class="pre">0</span></code>に近くなり、数千分の一の差に複数の選択肢が並ぶ接戦の決定では大きくなります。難度を大きく上回る損失は、局面では言い訳のできないミスです。難度に近い損失は、良いプレイヤーでも犯すミスです。損失がデータベースのミス閾値に達し、かつ難度がその 10 分の 1 を超えない決定は<strong>避けられたミス</strong>で、損失の横の<code class="docutils literal notranslate"><span class="pre">!</span></code>とバーの上の点で示されます。2 択の決定なら、基準プレイヤーは 10 回に 1 回もそのミスをしません。決定ごとのグラフでは、難度は各バー上の横線で表されます。線をはるかに超えて伸びるバーは、避けられたミスを示します。</p>
+<p><strong>詳細</strong>タブの表は、各プレイヤーについて、MWC 損失の合計(マッチ一覧と同じ値)と採点された判断の数、さらに損失と難度のある判断について次の項目を示します。合計の<strong>難度</strong>、MWC での<strong>超過</strong> Σ(損失 − 難度)(基準プレイヤーを超えて失った分で、より良く指した場合は負)、<strong>比率</strong> 合計損失 / 合計難度(1 は基準プレイヤーと同じ水準、2 は 2 倍の損失)、そして<strong>避けられたミス</strong>の数です。合計難度が 0,5 % 未満の場合、比率は表示されません。易しすぎるマッチでは雑音しか測れないためで、超過は残ります。</p>
+<p>これを見る理由。PR と MWC 損失には、プレイの質と出会った局面の難しさという 2 つが混ざっています。複雑な局面を作る相手は他方のミスを増やし、純粋なレースのマッチはそれを減らします。難度はこの両方の影響を補正します。超過と比率は、プレイヤーを<em>その人の</em>局面で期待できた水準と比べます。学習では、ミスを仕分けします。避けられたミスは不注意や覚え違いのルールで、最初に見直すべきもので、直しやすいことが多いです。難しい決定での損失は基礎的な取り組み(ロールアウト、原則、基準局面)に属し、マッチの評価への影響は小さくなります。</p>
+<p>不確実性と限界。難度はプレイヤーモデルと τ に依存し、これらは一度固定されています。どちらかを変えると、すべての数値が変わります。難度が知っているのは分析が残した候補手だけです(XG では少数、GNU Backgammon ではフィルタ次第)。存在しない選択肢は重みを持たないため、難度は下限になります。分析自体の誤差も引き継ぎ、特に浅い深さで顕著です。1 つのマッチでは、超過と比率は少数の決定に基づき、マッチごとに大きくばらつきます。傾向を示すもので、順位付けではありません。難度は損失が採点された決定についてのみ計算され、それ以外はダッシュになります。インターフェース外では、<code class="docutils literal notranslate"><span class="pre">match</span> <span class="pre">--format</span> <span class="pre">json</span></code> は <code class="docutils literal notranslate"><span class="pre">decision_losses</span></code> の各エントリに <code class="docutils literal notranslate"><span class="pre">difficulty</span></code> と <code class="docutils literal notranslate"><span class="pre">avoidable</span></code> を、プレイヤーごとの要約を <code class="docutils literal notranslate"><span class="pre">difficulty_summary</span></code> の下に持ちます。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> は「Difficulty」と「Avoidable error」の行を、<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">summary</span></code> は難度、超過、比率、避けられたミスの数を加えます。</p>
+<p id="bilan-match"><strong>マッチの総括</strong> レビューは、マッチの後に誰もが抱く三つの問いに、プレイヤーごとに答えます。何を見直すか、負けたのはダイスのせいかプレイのせいか、そしてミスは焦りから来るのか知識の欠落から来るのか。しきい値は、結果を何も見る前に定めてあります。</p>
+<p>シートの先頭、タブの上に、要約がプレイヤーを左右に並べます(パネルが狭いときは上下に並べます)。表示されるのは、名前(累積グラフでそのプレイヤーを示す線の種類つき)、PR、マッチの MWC 損失で、終了したマッチでは運の判定が平易な言葉(「プレイで勝った」「ダイスで負けた」など)で示され、その後に補正後の結果だけが続きます。PR にポインターを合わせるとその区間が、判定に合わせると補正後の結果の構成要素が表示されます。残りは二つのタブに分かれます。<strong>詳細</strong>タブは区間、7点に換算した損失、運を示し、<strong>見直し</strong>タブは見直すべき判断と、ミスが急いだものか熟考したものかの内訳を示します。</p>
+<ul class="simple">
+<li><p><strong>PR と 7 ポイント換算の MWC 損失、およびその 95 % 区間</strong>。マッチのゲームを再標本化して計算します。7 ポイント換算の損失は、マッチの損失を 7 ポイントマッチの尺度に直したもの(L₇、<a class="reference internal" href="metriques.html"><span class="doc">指標と学習ツール</span></a> を参照)で、長さの異なるマッチを比較するために使います。要約に表示されるのはマッチ自体の損失だけです。ゲームが 3 つ必要で、それより短いマッチではハイフンを表示します。区間が広いのは、1 マッチでは実力を判断できないことを意味します。1 つの値で結論を出さず、ほかのマッチと比較してください。</p></li>
+<li><p><strong>運で補正した結果</strong> は、終了したマッチについて表示します。<em>結果</em> は勝敗（勝ち 100 %、負け 0 %）から開始時の勝率（0-0 で 50 %）を引いたものです。<em>純運</em> は、自分のロールの運から相手のロールの運を引いたもので、各ロールをその局面のスコアとキューブでの MWC に換算します。損失と同じ扱いです。補正した結果は、結果から純運を引いたものです。負けたマッチでこれが正なら、ダイスが決めたことになり、負ならプレイが決めたことになります。<em>ミス差</em>（相手の損失から自分の損失を引いたもの）は、補正した結果が推定する量で、運が完全に測れていれば 2 つの数字は一致します。測定された運のないロール（運のないファイル、未解析のロール）がある場合はカバー率が示されます。測定されたロールが 1 つもない場合、およびマネーゲームでは、この行は表示されません。</p></li>
+<li><p><strong>見直すべき 3 つの判断</strong> は、自分のミス（データベースのしきい値）のうち、損失の <em>回避可能な部分</em>（損失 − 難度）が最も大きいものです。つまり、損失にその回避可能性を掛けたものです。基準プレイヤーでも犯したであろうミスは、見直しの時間に値しません。まず手の届いたものを見直します。判断をクリックすると、記録の一行と同じように表示されます。</p></li>
+<li><p><strong>急いだミスと熟考したミス</strong> は、マッチが判断の所要時間を保持している場合に表示します。このマッチでの同じ種類（チェッカーまたはキューブ）の自分の判断の中央値より速く指されたミスは急いだもの、それ以外は熟考したものです。中央値はこのマッチでの自分自身のものなので、ペースには依存せず、速さとミスに関係がなければミスは半々に分かれるはずです。急いだミスが多数なら規律（これらの局面でゆっくり指す）、熟考したミスが多数なら知識（その局面群を学ぶ）が必要です。</p></li>
+</ul>
+<p><strong>詳細</strong>タブは、先に説明した損失と難度の表で終わります。<code class="docutils literal notranslate"><span class="pre">match</span> <span class="pre">--format</span> <span class="pre">summary</span></code> は同じ総括を出力し、サーバーは <code class="docutils literal notranslate"><span class="pre">/v1/stats.matchReview</span></code> で提供します。</p>
+<p>マッチが判断の所要時間を保持している場合(ボットと対戦したマッチ)、記譜には数字に揃えた三つの列が加わります。<strong>キューブ</strong>(キューブ判断。ロールの前、またはキューブの行そのもので行われたもの)、<strong>プレイ</strong>(チェッカーの手)、そして<strong>時計</strong>で、手番のプレイヤーがマッチの開始からこの手を含めて消費した時間です。並べ替えの設定には左右されません。持ち時間設定がある場合、この列は<strong>持ち時間残り</strong>になり、手の後にそのプレイヤーの時計に残っている時間を示します。値はデュエルの審判と同じ数え方(ターンごとの猶予、超過時に残りを零に戻す)で計算されます。マッチの情報とそのヘッダーには、持ち時間設定(プリセット、猶予、超過時の扱い)と各プレイヤーの時間の持ち分が示され、残りポイントごとに持ち時間を数える場合は開始時のスコアに換算されます。<strong>プレイ</strong>の見出しをクリックすると、各ゲームの手が長い順、短い順、マッチの順の順に切り替わります。所要時間のないセル(そのターンにキューブ判断がない、または審判だけが指した手)にはダッシュが入り、それらの手は最後に置かれます。時計は最初の手からゼロで始まります。<strong>グラフ</strong>タブは要約から始まり、そこには各プレイヤーの合計、チェッカーの手とキューブ判断ごとの平均、マッチに持ち時間設定がある場合は持ち時間が先に尽きたプレイヤーの印(デュエルが記録するのはそのプレイヤーだけです)が表示され、グラフはマッチの進行に沿って各判断の所要時間を示します。レビューでは、指された判断の所要時間が分析の下に控えめに表示されます。検索では <code class="docutils literal notranslate"><span class="pre">tm&gt;30</span></code>(秒単位)で絞り込め、<code class="docutils literal notranslate"><span class="pre">E&gt;x</span></code>と組み合わせられます。<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">tm&gt;30</span> <span class="pre">E&gt;80</span></code> は、長く考えたのに誤りだった手を残します。所要時間と誤りは同じ手のものです。<strong>統計</strong>タブは、繰り返される誤りの下で時間と誤りを掛け合わせます。プレイヤーと所要時間が既知の帯(5秒未満、5〜15秒、15〜30秒、30秒超)ごとに、判断数、平均誤り、ブランダーの割合を示します。誤りが記録されていない判断は件数に数えますが平均には入れません。</p>
+<p><strong>局面</strong> 列はそれらの決定の異なる局面を数え、クリックで開きます。表とそのリンクは、パネルのフィルターを使わず、データベースのすべての計時された決定を読みます。</p>
+<p>ここで対局した、デュエルから生まれたマッチは、手が1つもなくても、シートの<strong>情報</strong>タブに、見出し<strong>出所</strong>の下で出所を1行で示します。「ここで対局」、続いて該当する場合は、マッチを失う持ち時間設定で持ち時間が尽きたプレイヤーを添えた「時間切れ負け」、または中断したデュエルが未完のまま残したマッチの「終了前に中断」、持ち時間、先に持ち時間が尽きたプレイヤー、そしてボットのレベルと、その方策を提供した gammonNet のバージョンです。クリックすると、開始局面（初期配置または選択した XGID）、公開されたダイスのシードとその SHA-256 が展開されます。これをデュエル作成時に公開されたフィンガープリントと照合し、一致すれば、シードを使って blunderDB を信頼せずにすべての出目を再計算できます。ここで対局していないマッチには出所がなく、その<strong>情報</strong>タブにこの見出しはありません。</p>
+<p>シートの<strong>情報</strong>タブは、マッチのヘッダーを再掲します。元ファイルがプレイヤーとセッションについて記していれば、それも加えます — eXtreme Gammon のファイルは必ず記しています：各プレイヤーの Elo レーティングと括弧内の経験、記録者、マネーゲームの Jacoby と Beaver のルール、ファイルを書いたプログラム。これらの情報はマッチと一緒にエクスポートされます。既にあるファイルを再インポートすると、それを持たなかったマッチに与えられ、既に持っているものは何も置き換えられません。コマンドラインの <code class="docutils literal notranslate"><span class="pre">match</span></code>コマンドでも表示されます。eXtreme Gammon ファイルのマッチのヘッダーとフッターのコメントはマッチのコメントになり、記録者の名前で署名されます（ファイルに記録者がない場合は <code class="docutils literal notranslate"><span class="pre">XG</span></code>）。時計とエクイティ表はインポートされません。シートはコメントの横にこの作成者を表示し、エクスポートはコメントとともにそれをコピーします。コメントを編集すると、<strong>あなたの名前</strong>（設定）で署名されます。</p>
+<p>マッチがソースファイルを示しているとき、<strong>ソースファイル</strong> の行に ⟲ ボタンが付きます。このボタンはファイルを読み直し、新規インポートと同じようにマッチの局面・解析・エラーを書き直し、その後入力したもの（トーナメント、名前、プレイヤーの入れ替え、コメント、トランスクリプション、動画とマーク）とファイルより深い解析はすべて保持します。ファイルと一致するマッチはステータスバーにそう表示し、そうでなければ確認ダイアログが局面の変わる手の数と前後の解析済みの手の割合を示します。その後、ステータスバーはコレクション・カード・レッスンが保持する局面に残ったコメントの数を示します。ファイルが見つからない場合、もうこのマッチを含まない場合、その手からファイルのどちらのプレイヤーかを判別できない場合、修復は拒否されます。<code class="docutils literal notranslate"><span class="pre">match</span> <span class="pre">repair</span></code> コマンドも同じことを行い、<code class="docutils literal notranslate"><span class="pre">match</span> <span class="pre">repair</span> <span class="pre">--list</span></code> はファイルと異なるマッチを見つけます。</p>
+<p>動画から書き起こしたマッチは、その<strong>ソース</strong>を保持します。http(s) の URL（たとえば YouTube）またはファイルパスです。<strong>情報</strong>セクションの<strong>動画</strong>行で編集できます。URL またはパスを入力して <em>ENTER</em> を押し、<strong>ファイル…</strong> で動画を選び、<strong>切り離す</strong>でソースを外します。ソースを持つマッチは、シートのヘッダーに 🎞 アイコンを表示し、動画上の目印を持つ各判断は、記譜の自分の行に同じアイコンを表示します。アイコンをクリックするか、その判断がレビュー中のものであるときに <em>v</em> を押すと、動画はダイスを振る 1 秒前に移動します。ファイルの場合は動画が盤の横に開き（パネルに戻してある場合はシートの上）、<em>[</em>と<em>]</em>で速度を調整できます。YouTube のソースの場合はブラウザがタイムスタンプ付きのリンクを開きます。見つからないファイルはペインから再指定でき、webview が再生できない形式は、インストールすべきパッケージとともにそこに表示されます（<a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">ダウンロードとインストール</span></a>を参照）。ソースのないマッチは変わりません。</p>
+<p>パネルのツールバーにある<strong>プレイヤー管理</strong>ボタンを押すと、データベース内のすべてのプレイヤーを一覧表示するウィンドウが開きます。各プレイヤーにはマッチ数（数をクリックすると、そのマッチがパネルに表示されます）と別名が示されます。統合するには、同一プレイヤーの表記のバリエーションを選択し、残す正規の名前（入力するか、その行の ✓ をクリック）を選んでから統合します。ウィンドウは開いたままなので続けて統合でき、<strong>閉じる</strong>（または <em>Esc</em>）で閉じます。統合はバリエーションごとに一つの別名を作ります。マッチはファイルの名前を保ちますが、統計、プレイヤーの表、検索 <code class="docutils literal notranslate"><span class="pre">pl&quot;…&quot;</span></code> はすべてのバリエーションを一人のプレイヤーとして読み、以降のインポートは正規の名前を記録します。別名（<em>×</em>）をクリックすると、それが削除されて統合は元に戻ります。設定の<strong>コーパス</strong>タブと同じです。</p>
+<p id="joueur-principal">行の星（☆）は、データベースの持ち主である<strong>メインプレイヤー</strong>を指定します。メインプレイヤーはデータベースに記憶され、常に一覧の先頭に置かれます。星はすぐに塗りつぶされ、そのプレイヤーが2番手であるマッチの数を表示し（クリックで一覧表示）、続いて<strong>入れ替え</strong>がそれらをすべて一度に入れ替えます。入れ替えが一つでも失敗した場合、どのマッチも入れ替えられません。入れ替えたマッチは、解析、エラー、コメント、ビデオの目印、書き起こし、トーナメントをそのまま保ちます。メインプレイヤーはすべての別名で認識され、以降のインポートは形式を問わず、完了した書き起こしと同じようにそのプレイヤーを1番手に置きます。gammonNet との対戦マッチは席順を保ちます。書き起こしの下書きが開いているマッチや blunderDB で対戦したマッチは入れ替えられず、その数は別に示されます。</p>
+<p>メインプレイヤーに関わる統合（その名前に別名を追加した場合や、その名前を別の名前に統合し、その名前がそのプレイヤーを指す場合）は、それだけでは何も入れ替えません。バナーが、統合後に入れ替えが残るマッチとともに再び表示され、<strong>入れ替え</strong>で確定するか、メインプレイヤーを解除する<strong>解除</strong>で取りやめます。入れ替えが残っている間は、塗りつぶされた星（★）をクリックするとこのバナーが再び開きます。残っていなければ、何も戻さずにメインプレイヤーが解除されます。</p>
+<p>マッチが開かれると、ボードの上に<strong>情報バー</strong>が表示されます：対戦しているプレイヤー（<em>プレイヤー1</em>対<em>プレイヤー2</em>）と、マッチの背景情報（イベント、開催地、ラウンド、日付、マッチの長さ。これらの情報が利用可能な場合）を示します。このバーはマッチモード以外でも表示されます：研究中のポジション（検索、コレクション、または直接アクセスによるもの）が1つまたは複数のマッチから来ている場合、その<strong>由来</strong> ―― 最初に該当するマッチと、必要に応じてマウスを合わせると他を一覧表示する「+N」バッジ ―― を示します。どのマッチも参照しない、単独でインポートされたポジションは何も表示しません。</p>
+<p><strong>検索</strong>タブと<strong>Eval</strong>タブは、ボードを作業用ボードに置き換えます。ボード上部のバナーがそれを示し（「検索ボード」「評価ボード」）、画面にない局面を説明してしまう間は情報バーが非表示になります。分析に戻ると、調べていた局面が復元されます。</p>
+<p>マッチを含むデータベースを開くと、<strong>マッチ</strong> パネルがすぐに表示され、レビューは直接最初のポジションから始まるため、すぐにナビゲーションを開始できます。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>データベースは、一度に1つのウィンドウでのみ書き込みモードで開くことができます。別のblunderDBウィンドウで既に開かれているデータベースを開くと、<strong>読み取り専用</strong>で開きます：ナビゲーション、検索、解析は引き続き可能ですが、あらゆる変更は無効になり、タイトルバーに「[読み取り専用]」と表示されます。</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>利用可能なショートカットについては <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">キーボードショートカット</span></a> を参照してください。</p>
+</div>
+</section>
+<section id="panneau-transcription">
+<span id="id2"></span><h2>記譜パネル<a class="headerlink" href="#panneau-transcription" title="この見出しへのリンク"></a></h2>
+<p><strong>記譜</strong>パネル（<em>CTRL-SHIFT-T</em>、<code class="docutils literal notranslate"><span class="pre">transcribe</span></code> または <code class="docutils literal notranslate"><span class="pre">tr</span></code> コマンド）は、目の前にあるマッチ — マッチシートや録画 — を入力し、ライブラリのマッチにするためのものです。入力されるのは<strong>下書き</strong>です。下書きはデータベースの中にあり、閉じても開き直すことができ、マッチとして保存されるまでは統計にも検索にも入りません。</p>
+<p>パネルはデータベースの<strong>下書き一覧</strong>から開きます。最終更新、対局者、マッチ長、アクション数、そしてすでに作られたマッチ(<code class="docutils literal notranslate"><span class="pre">#</span></code>に続く識別子)または「マッチなし」の表示です。クリックで下書きが開き、バーの<strong>下書き</strong>ボタンで一覧に戻ります。<strong>新規転記</strong>ボタンは作成フォームを開きます。<strong>インポート</strong>ボタンは <code class="docutils literal notranslate"><span class="pre">.mat</span></code> ファイルまたは記譜ドキュメント(JSON)を開いて下書きにし、すぐに開きます。拒否されたファイルは理由を表示し、何も作成しません。</p>
+<p>一覧はキーボードでもたどれます。<em>下</em>と<em>上</em>(または<em>j</em>と<em>k</em>)で強調行が動き、<em>ENTER</em>で強調された下書きが開き、<em>n</em>でフォームが開きます。最初の下書きは開いた時点で強調されており、それは最後に更新されたものです。昨日の作業を再開するのに要するのは二打鍵、<em>CTRL-SHIFT-T</em>のあと<em>ENTER</em>です。</p>
+<p>フォームが尋ねるのは一つだけ、<strong>マッチの長さ</strong>です。値 <code class="docutils literal notranslate"><span class="pre">0</span></code> はマネーゲームを表し、<em>Jacoby</em> と <em>Beaver</em> のチェックボックスを表示します。この欄は最後に変更された下書きの長さで開き、下書きが一つもなければ 7 で開きます。プレイヤー名は尋ねられません。下書きは両者を <em>プレイヤー 1</em> と <em>プレイヤー 2</em> と呼び、一覧には「名称未設定」と表示されます。</p>
+<p>打ち込まれた内容から導かれるもの——マッチ長(または「マネー」)、スコア、進行中のゲームがそうであるときの<em>クロフォード</em>の表示、ゲーム番号、キューブの状態(その値と、中央にあるか誰が持っているか)、手番の側——は盤の上の<strong>マッチバー</strong>に表示されます。誰の手番かを問うとき、視線はすでにそこにあるからです。期待される行動のほうは<strong>ステータスバー</strong>に言葉で書かれます。「Kévin のダイス」「ダブルへの Alice の応答」。</p>
+<p>パネルの先頭にある<strong>下書きバー</strong>は、三つのグループに分かれています。左の<strong>下書き</strong>は一覧に戻ります。中央には入力中に使うもの、つまり盤の向き、二つの取り消し矢印、<strong>動画</strong>、<strong>メタデータ</strong>が並びます。右には下書きを自分自身から抜け出させる操作と、<strong>⋯</strong>メニューがあります。パネルが狭いときは、入力欄が二行目に移ります。</p>
+<p><strong>プレイヤー1は盤の下側に留まります</strong>。手番が誰であっても変わりません。転記中の試合は進行中のゲームです。手番は半手ごとに入れ替わり、それに追随すると盤が一手ごとに反転してしまいます——いま見ていた駒が上に移り、目は毎回同じ道筋をたどり直すことになります。手番は左右に入れ替わる<strong>サイコロ</strong>で読みます。バーの ⇅ ボタンは盤を反転させ、プレイヤー2を下に表示します。下書きは変更されず、閉じれば表示は元の向きに戻ります。メタデータ欄の<em>プレイヤーを入れ替え</em>ボタンとは別物です。そちらは文書そのものの中で両プレイヤーを入れ替えます。</p>
+<p>バーの<strong>メタデータ</strong>ボタンを押すと、下書きのヘッダーをいつでも開けます。二人のプレイヤー名（データベースの選手から自動補完されます）、イベント、場所、ラウンド、日付（既定は当日）、記録者（既定はデータベースの利用者）、そして保存時にマッチを結び付けるトーナメントです。空欄のままなら、新しいマッチはインポート時と同じく、そのイベント名のトーナメントに分類されます。必須の項目はありません。名前のない下書きも、空のヘッダーのまま保存も書き出しもできます。<strong>プレイヤーを入れ替え</strong>ボタンは二つの名前を入れ替え、すべてのアクションを反対の手番に移し、盤面を反転させます。同じマッチを反対側から読んだものです。</p>
+<p>開くと、フォームが入力欄の代わりに表示されます。サイコロ、パレット、候補手は隠れ、トランスクリプトは表示されたまま、ビデオもそのままの位置に残ります。同じボタンまたは <em>Esc</em> で入力欄に戻ります。</p>
+<p><strong>マッチ長</strong>も同じ画面でいつでも変更できます。スコア、クロフォードゲーム、そして基準（長さが<code class="docutils literal notranslate"><span class="pre">0</span></code>ならマネーゲームとなり、<em>Jacoby</em>と<em>Beaver</em>のチェックボックスが現れます）が下書きの端から端まで計算し直され、マッチが決した後に記録されたアクションには「終了後」の印が付きます。削除されるものは一つもありません。マッチ長は局面の同一性の一部です。保存したあとで長さを変えて保存し直すと、まったく新しい局面が書き込まれ（解析が必要になります）、古い局面は何にも参照されなくなった時点で消えます。</p>
+<p>バーの下で、下書きは三つの領域を占めます。マウス操作の<strong>パレット</strong>、<strong>候補手</strong>、そして<strong>記譜</strong>です。三つの配置はパネルの幅で決まります。広いパネル——下部ドック——では三つが横に並び、パレットが左に来ます。中くらいのパネルでは候補手が上を占め、記譜は出目の三角形の右に残る場所に入ります。狭いパネルでは三つが順に続きます。候補手、パレット、記譜の順です——そこでは三角形と記譜を横に並べると記譜の第二列が切れてしまうので並べません。ドックを数十ピクセル広げれば両者は並びます。いずれの場合も規則は同じです。出目の二つの枠と候補手の一行目のあいだには何も入らず、候補手は少なくとも五行がスクロールなしで読めます。</p>
+<p>パレットは入力されるにつれて二つのダイスを示します。それをクリックすると、<em>BACKSPACE</em>と同じく消去されます。ゲームは最初の手から始まり、それはオープニングロールの勝者が指します。その二つのダイスはこのロールと同じように、プレイヤー1のダイス、次にプレイヤー2のダイスの順に入力し、大きいほうがその側に手を与え、その側が両方のダイスを使います。手はそのあと、ほかの手と同じく候補から選びます。テーブルで振り直される同数はトランスクリプトしません。ゾロ目で入力された最初の手はそのまま記録され、オープニングロールはゾロ目になりえないため「矛盾するダイス」と印が付きます。最初の手より前のキューブのダブルは「不可能なキューブ行動」と印が付きます。ゲーム終了後に記入されたキューブ行動にも同じ印が付きます。それは終了したゲームに残り、新しいゲームを開かず、手で削除します。</p>
+<p>二つ目のダイスが落ちるや否や、その出目の<strong>合法手</strong>がすべて列挙され、内蔵エンジンによって順位づけられ、最初の一つが選択されます。ポインターを重ねるか選ぶまで、盤には何も描きません。一覧は手、そのエクイティ、最善手との差を示します。転記とは見た手を見分けることであって、それを裁くことではありません——そのためには<strong>評価</strong>パネルがあります。この順位づけは評価であり、表示はされますがデータベースには決して書き込まれません。エンジンが使えないときは順位なしで列挙され、一覧はそれを冒頭で告げます。</p>
+<p>合法手がまったくない出目は、それだけで<strong>ダンス</strong>を記録する：入力する手なしで手番が相手に移る。ダンスした出目が問題でないとき、<em>f</em>キーは手番のプレイヤーがダンスしたことだけを伝える：バーからエンターできない最初の出目を、ゾロ目以外を優先して入力する。バーにチェッカーがない場合、またはすべての出目でエンターできるホームボードの前では、何も入力せず、ステータスバーがそう伝える。</p>
+<p><strong>ホイール</strong>は次または前の候補手を選びます。一覧の上でも盤の上でも同じで、視線は盤に残り矢印が流れていきます。これは記法を読むより速く手を見分けます。行をクリックすると選択、ダブルクリックで確定します。</p>
+<p>ロールのマスの左、およびシアターモードのバーにあるインジケーターが、いまキー入力が何をするかを示します。文書の末尾では<strong>入力</strong>、書き込み済みのアクションでは<strong>N手目を編集</strong>、続いて ENTER が確定する手と数字キーの働きです。どのキーもロックされません。書き込み済みのアクションでも末尾でも、<em>j</em>/<em>k</em>と矢印キーで解析の行を選び、盤面で指し、数字キーでダイスを入力します。入力では、あらかじめ選ばれた行(解析の先頭)が盤面に描かれ、次のロールの数字キーがそれを記録してから次の判断を開きます。書き込み済みのアクションでは、数字キーがそのロールをその場で入力し直し、ENTER が修正を確定します。カーソルは次の判断へ移り、それ以降の局面は再計算されます。End で文書の末尾に戻ります。</p>
+<p>21 通りの出目の三角形は、出目の 2 つのマスの下、キーボードの隣に置かれます。キーボードの代わりではありません。数字 2 つはクリックの 2 倍速いままであり、三角形はマウスに手を置いて書き起こす人のためにあります。出目ごとにマスはひとつ、決して 2 つではありません。3-1 と 1-3 は同じ出目です。</p>
+<p>盤上で指す手はすべて、キーボードで入力するか三角形をクリックして選ぶロールから始まります。ダイスが入力されていなければ、盤は何も指しません。2つのダイスが入力されると、盤はそのロールの合法手に制限されます。これは文書の末尾でも、カーソルがダイスを読み込んだ再読込みのアクションでも同じです。チェッカーをクリックすると左のダイスで指され、左のダイスで指せない場合は次のダイスで指されます。ドラッグすると移動先に置かれます。指したダイスは灰色になり、未使用のダイスをクリックすると入れ替わり、Backspace、または手全体を取り消す盤上の右クリックで手を取り消せます。指した各ステップは、それを含む候補だけをリストに残し、その先頭が事前選択されます。これは遠い手のための操作で、12番目の候補まで下りると13回のキー操作が必要になるところを省けます。最初のステップから、選択中の候補手の矢印は盤面から消え、指している手と混ざらないようになります。手を取り消すか記録すると、矢印は戻ります。</p>
+<p>完了した手は確定によってのみ記録されます。確定とは、灰色になったダイスのクリック、ENTER、または次のロール(数字または三角形のマス)で、次のロールの場合は入力されたままのダイスで先に記録されます。再読込みのアクションでは、そのアクションを置き換えます。</p>
+<p>不正な手は、指されたとおりに、ボタンもモード切替もなしで転記されます。合法手が提示しないドラッグは、離した場所にチェッカーを置きます。合法手が出発しない地点からでも、手番側のチェッカーがあれば同様です。手はそこでルールの外に出ます。以降は、クリックでもドラッグでも自由に指され、候補リストはそのことを示す1行に置き換わり、確定により入力したダイス、ステップ、到達した盤が書き込まれます。Backspace は最後のステップを取り消し、ルール外の唯一のステップを取り消すとリストが戻ります。</p>
+<p>手はトランスクリプトでキーボードからも入力できます。手(またはダンス、未記録の手)のセルをダブルクリックすると、ダイスと表記があらかじめ入力されたフィールド <code class="docutils literal notranslate"><span class="pre">62:</span> <span class="pre">24/18</span> <span class="pre">13/11</span></code> に変わります。ここではロールと手をまとめて修正できます。先頭に <code class="docutils literal notranslate"><span class="pre">ダイス:</span></code> を付けなければ手だけが入力され(<code class="docutils literal notranslate"><span class="pre">13/7</span> <span class="pre">8/7*</span></code>、<code class="docutils literal notranslate"><span class="pre">bar/22</span></code>、<code class="docutils literal notranslate"><span class="pre">6/off</span></code>、<code class="docutils literal notranslate"><span class="pre">13/7(2)</span></code>)、セルのダイスはそのままです。ENTER は書かれていたものの代わりに両方を記録し、ESC は何も書かずにセルを閉じます。読み取れないダイス(<code class="docutils literal notranslate"><span class="pre">72:</span></code>)や手を示さないテキストはフィールドを開いたままにし、ステータスバーがそのことを伝えます。そのダイスでは不正な手は記録されて印が付き、別の手に置き換えられることはありません。<em>e</em> キーでもカーソルのセルが同じように開きます。入力中の点線のセルも、2つのダイスが入力されるとすぐに同じように開きます。</p>
+<p>自由なドラッグまたは記法で入力された手がたまたま合法であれば、それは普通の手のままです——比較は得られた盤で行われ、操作の出どころでは決してありません。そうでなければトランスクリプトに「非合法な手」と記され、<code class="docutils literal notranslate"><span class="pre">.mat</span></code>書き出しはファイルを書く前に警告しますが、決して拒みません。</p>
+<p>ルール外の手が残した盤面は、その手が指された局面に対してのみ有効です。トランスクリプトの上方での修正がその局面を変えると、手のステップは新しい局面から再生され、以降のすべての局面に修正が反映されます。</p>
+<p>盤面の矢印は、カーソル位置の判断に書かれた手を、その判断が持つ局面の上で指し直したもので、灰色で描かれます。そこではもう指せない一歩 — 上流の修正で空になった出発点、相手が押さえたポイント、バーに残されたチェッカー、インナーボードの外にチェッカーがあるままのベアオフ、修正された出目ではどのダイスでも払えない距離 — も、書かれたポイントから赤い破線で描かれ、出発点は丸で囲まれ、セルには「不正な手」の印が付きます。一歩ずつは不正でなくても再生が不正と判断した手は、全体が赤になります。エンジンの手がその代わりになることはありません。リストの行は、ポインターを重ねたとき、またはホイール・キー・クリックで選んだときだけ、その矢印を青で描きます。</p>
+<p>ダイスの行にある<strong>ダブル</strong>、<strong>テイク</strong>、<strong>パス</strong>、<strong>投了</strong>の並びは、キューブの四つの操作をマウスにもたらします。二つのダイスと合わせて、それらは「手番の側は何をしたか」というただ一つの問いへの五つの答えです。並びは誰の番かを告げます。手番の側が告げる——ダブル、投了——か、相手の側が答える——テイク、パス——かであって、四つが同時に並ぶことはなく、その操作が何にも答えないボタンは消えたままです。一方キーボードは決して何も拒みません。消えたボタンは差し出さない標的であって、禁じられた操作ではありません。「投了」はまだ何も記録しません。並びは三つの水準——シングル、ギャモン、バックギャモン——と、ESC キーを重ねる「取消」に変わります。キーボードでは<em>r</em>のあと<em>1</em>、<em>2</em>、<em>3</em>のいずれかを押し、<em>ENTER</em>はシングルになります。盤に描かれたキューブはこれらの操作の第二の標的です。それをクリックするとダブルを提案します。申し出の前では答えません——テイクとパスは対称な二つの答えであり、並びの中に共に住み、それぞれ一クリックです。</p>
+<p><strong>ステータスバー</strong>は下書きが何を待っているかを一言で告げます。自動的に記録されたダンス、ゲームの最初の手、ダブルへの応答待ち、投了後の水準待ち、その場での訂正、出目が変わって「要確認」となった手です。何もすることのない操作にもそこで答えます——「取り消すものがありません」「カーソルの下にアクションがありません」——一秒半のあいだ。ある行動が残した不整合のほうは、誤りのあるセルがある場所、すなわちトランスクリプトの冒頭で知らされます。</p>
+<p>ゲームはパス、投了、または十五個目の駒の上がり(シングル、ギャモン、バックギャモンに、キューブの値を掛けたもの)で終わります。スコア、クロフォードゲーム、マッチの終わりはそのときマッチバーに現れ、次のゲームの最初の手が待たれます。</p>
+<p>ゲームのスコアは前のゲームから導かれるものですが、テーブルで別のスコアが申告された場合は別です。トランスクリプトでゲームの見出しのスコアをダブルクリックすると、あらかじめ入力された入力欄に変わります。そこにゲームが実際に行われたスコア（<code class="docutils literal notranslate"><span class="pre">3-2</span></code>、<code class="docutils literal notranslate"><span class="pre">3–2</span></code>、<code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">2</span></code>）を入力します。ENTER で記録し、ESC は何も書かずに入力欄を閉じ、空にして確定すると導かれたスコアに戻ります。ゲームはそのスコアで行われます。クロフォードゲーム、マッチの終わり、以降のゲームはそこから導かれ、保存されたマッチも<code class="docutils literal notranslate"><span class="pre">.mat</span></code>ファイルもそのスコアを持ちます。導かれたスコアと異なるスコアは印が付き、ツールチップが導かれたスコアを示し、ゲームの最初のアクションに不整合「申告スコアの不一致」が付きます。マネーゲームには申告するスコアがありません。</p>
+<p>試合の途中から始めた記録は、クロフォードゲームの後から始まることがあります。最初のゲームが、一方のプレイヤーがマッチまであと1点の状態で始まるとき、その見出しに<em>ポストクロフォード</em>のチェックボックスが表示されます。チェックすると、そのゲームはクロフォードゲームではなく、キューブは通常のルールで使え、以後クロフォードゲームはありません。チェックしない場合、またはあと1点のプレイヤーがいない場合、クロフォードゲームは通常どおりスコアから導かれます。保存された試合はこの宣言を保持し、<code class="docutils literal notranslate"><span class="pre">.mat</span></code>ファイルは見出し行<code class="docutils literal notranslate"><span class="pre">;</span> <span class="pre">[Crawford</span> <span class="pre">&quot;PostCrawford&quot;]</span></code>に書き出し、blunderDB はそれを読み戻します。gnubg はこれを無視し、この最初のゲームをクロフォードゲームとして数えます。</p>
+<p>トランスクリプトはパネルの右半分を占めます。対局者ごとに一列、手番ごとに一行、キューブの行動とゲームの終わりは行った側の列に入ります。カーソルのセルは枠で囲まれます。カーソルを動かすと、盤は指されたアクションの局面に戻り、記録された手が選択された状態でその候補手が示されます。不整合(非合法な手、二重手番、不可能なキューブ行動、マッチ終了後の行動、矛盾するダイス、未記録の手、申告スコアの不一致)はそのセルを飾ります。ツールチップには違反した規則と原因となったものが示されます(「キューブ: Bob は保持していない」)。未記録の手は読み直された<code class="docutils literal notranslate"><span class="pre">.mat</span></code>ファイルの場合です。gnubg は打たれた手を保っていないとき <code class="docutils literal notranslate"><span class="pre">???</span></code> と書きます。出目は分かっていて手が分からないので、そのセルにカーソルを置くとその出目の手が示され、補うことができます。二重手番は、手番が抜けている側の列に、破線で囲まれた空のセルを残します。カーソルはそこで止まり、クリックでそこへ移動でき、抜けた手番（たとえば削除した判断）はそこで入力します。ゲームは折りたたまれ、カーソルのあるものが開いています。</p>
+<p><strong>入力中の内容はトランスクリプトに描かれる</strong>。破線で、実際に書き込まれる位置そのものに示される。ダイスは入力されるそばから、手のノーテーションは選択されるとすぐに、そしてそのアクションが属する手番の列に現れる。訂正は置き換えるセルを覆い、挿入は両隣のあいだにセルを開き、新しい入力は進行中のゲームの末尾に現れる。確定前には下書きに何も書き込まれない。読んでいるものと文書が語ることとが食い違うことはない。</p>
+<p>訂正とは、いま居るセルの上で打つことである。カーソルがアクションの上にあるとき、数字はその出目をその場で打ち直し、4つのキューブ操作もまた訂正として働く。パスの上で<em>t</em>——または<strong>テイク</strong>ボタン——を押すと、パスを削除してから挿入することなく、パスの<strong>代わりに</strong>テイクが書き込まれる。ゲームはそこから再び進行する。テイクの直後、ダブルした側にセルが開き、ゲームの続きはいつもどおりそこに入力され、ゲームが終わるまで次のゲームの最初の手の前に挿入される。この最初の手は、そのゲームが始まったときのスコアを保ち、それを明示する。再開したゲームの終わりが別のスコアを与える場合、その差が印される。同じキーは、挿入が開いたばかりのセルも埋める。<em>i</em>のあとに<em>d</em>で、対象のアクションの前にダブルが挿入される。</p>
+<p><strong>最後の</strong>アクションに戻ることは、記譜が書き進められている場所に戻ることである。その上で打った数字はまだその出目を訂正するが、その出目を打ち直すと、次の数字がアクションを確定して次の決定を開く。ENTER も同じくそれを確定する。以降の決定は、最初のときと同じく、そのあとに追加されていく。</p>
+<p>ゲームの <strong>最初の手</strong> に <strong>別の出目</strong> を入力すると、誰が先手かを改めて決めます。プレイヤー1のダイスを先に、プレイヤー2のダイスを次に入力し、大きいほうが勝ちます — 大きいダイスが先なら手はボード下側のプレイヤー1に、小さいダイスが先なら上側のプレイヤー2に渡ります。新しい出目の最初の候補が事前選択され、その手は要確認となります。 <strong>同じ出目</strong> をどちらの順で入力し直しても何も変わりません。出目を変えずに最初の手をもう一方のプレイヤーに渡すには <em>s</em> を使います。ダイスの順はサイドに従い、その順が示さないサイドが指した最初の手は「ダイスの不整合」として印されます。ゲームの残りはサイドを保ちます。</p>
+<p><strong>文書の途中への挿入は挿入を続ける</strong>。確定すると続きに空のセルが開き、次のアクションもまた挿入され、後続のアクションを上書きしない。これによって、テイクであるべきだったパスなど、ゲームの終わり全体を後から補いながら、次のゲームについてすでに入力した分を失わずに済む。ゲームが終わるか、カーソルを動かすと挿入は終わる。そのときカーソルは次のゲームの最初の手に置かれる。</p>
+<p><strong>Del</strong>（または<em>x</em>）は編集中の決定を取り除き、訂正できる状態で直前の決定へ戻る。書き込まれたセルの上ではアクションが消え、開いている挿入や文書の末尾で入力した出目の上では、その入力が破棄される。Del を繰り返し押すと、こうして消しながらトランスクリプトをさかのぼる。後続のアクションは手番を保ち、削除によって残った二重手番には印が付くが、カーソルはそこへ戻されない。</p>
+<p>セルを右クリックすると、そのアクションの訂正——前に挿入、後に挿入、削除、手番の入替——が開き、ついでにカーソルがそこへ移ります。これらは<em>i</em>、<em>a</em>、<em>x</em>、<em>s</em>のキーと同じ操作であり、ブラウザのメニューが外されるのはそこだけです。ほかの場所にボタンはありません。「カーソルの下のアクション」に作用するボタンは、見えているとは限らないセルを狙うことになりますが、右クリックは自分のセルを名指すからです。</p>
+<p>下書きバーの二つだけの出口は、「⋯」メニューの後ろ、右端にあります。「<strong>完了</strong>」(CTRL-ENTER)はマッチをライブラリに書き込み、下書きを解放します。新しい局面だけの分析がただちに始まり、進捗と中止はステータスバーに表示されます。「<strong>破棄</strong>」はマッチを作らずに下書きを削除します。確認を求められるのは一度も完了していない下書きだけです。そこに書かれたものがすべて失われるからです。その横で、バーは「完了」が何をするか(新しいマッチか、マッチ #<em>n</em>の置き換えか)を示します。下書き自体の保全については何も示しません。下書きは操作のたびにデータベースへ書き込まれ、一覧に戻っても後で再開できるよう残ります。</p>
+<p>バーの<strong>⋯</strong>メニューには、書き出されるとおりの Jellyfish ファイルを、その列が揃ったままでいられるだけの幅の窓で開き、複写するボタンを添える「<strong>.mat text</strong>」と、同じファイルをディスクに書く「<strong>.mat を書き出す</strong>」があります。二つの矢印<strong>↶</strong>と<strong>↷</strong>は、<em>CTRL-Z</em>および<em>CTRL-SHIFT-Z</em>と同じく取り消しとやり直しを行います。</p>
+<p>記譜したマッチの解析が中断された場合（解析中にアプリケーションを閉じたとき）、次にデータベースを開いたときにステータスバーがそれを知らせ、続きを実行するか尋ねます。この中断について記録は何も残りません。未解析の局面が残っているかぎり提案は繰り返し現れ、再開される解析はそのマッチだけを対象とし、ライブラリ全体には及びません。</p>
+<p>不整合のある下書きも、警告のあとで完了されます。何も拒否されません。違法な手は指されたとおりに書き出され、gnubg と XG がそれを指摘し(「Invalid move」)、以後は食い違うという警告が付きます。</p>
+<p>ライブラリのマッチを修正するには、マッチ一覧の ⌨ ボタン、またはその詳細の「<strong>記譜を編集</strong>」が、そのマッチから下書きを開きます。すでに開かれている下書きがあれば、それを開き直します。下書きはマッチにつき一つだけです。この下書きを完了すると、マッチは同じ識別子のまま置き換えられます。変更のない操作のポジションは、コメント、分析、カードを保ちます。インポート済みのマッチ（XG、GnuBG、BGF）は <code class="docutils literal notranslate"><span class="pre">.mat</span></code> に含まれない分析とコメントを持っています。開く前に、最大でどれだけあるか、そして下書きを完了するとそれらが失われうることがダイアログで示されます。</p>
+<p>試合は<strong>動画から</strong>書き起こすこともできます。下書きバーの<strong>動画</strong>ボタンはメニューを開きます。ディスク上の動画を選ぶ<strong>ローカルファイル…</strong>、メニュー内に開くフィールドにアドレスを貼り付ける<strong>YouTube リンク…</strong>、ソースを外す、区切られた<strong>動画を外す</strong>です。メニューにあるのはソースだけです。シアターモードと動画の配置は、動画の上のバーのボタンで切り替えます。このボタンは動画が読み込まれている間表示されます。<em>ECHAP</em>かほかの場所のクリックでメニューが閉じ、入力がパネルに戻ります。ソースが添付されていない間、パネルは上記のとおりで、欄も追加のキーもありません。ソースを添付すると、ボタンにはその短い名前(ファイル名、または「YouTube」)が表示され、動画が盤の横に表示されます。見つからないファイルは、動画の<strong>ファイルを選択…</strong>で再指定します。YouTube の動画がすでに添付されている場合、<strong>YouTube リンク…</strong>はそのアドレスを選択した状態で開き、貼り付けると置き換わります。開き直した下書きは、この端末で最後にいた位置で一時停止した動画を取り戻し、なければ最後のマークの数秒前に戻ります。カーソルは入力に備えてトランスクリプトの末尾に留まり、再生が別のアクションに入って初めて再生を追います。</p>
+<p><strong>盤の横の動画。</strong> 動画が開いている間、盤の領域は分割されます。左に動画、右に盤が並び、縦のバーをドラッグしてどちらかを広げることができます。幅はセッションをまたいで保持されます。動画は縦横比を保ち、与えられた場所をできるだけ広く使います。動画の上のバーのボタンで、動画をパネルのトランスクリプトの上に戻したり、盤の横に戻したりできます。この選択も保持されます。パネルでは、動画の下のバーをドラッグして高さを調整でき、入力欄が見えなくなるほど押し出すことはありません。場所を切り替えてもファイルは再起動されず、再生は同じ時点から続きます。YouTube の動画は、元の時点で一時停止の状態で再開します。動画、そのコントロール、または区切りバーをクリックしても、キーボードはパネルに残ります。入力のキー、動画のキー、そして盤を回転させる <em>CTRL-←</em> / <em>CTRL-→</em> はそのまま効きます。</p>
+<p><strong>動画の側。</strong> 動画は初期状態で盤の左に置かれ、右へ移せます。パネルに戻すボタンの隣にある ⇄ ボタンは、クリックひとつで側を切り替えます。動画の上端にある小さなハンドルをつかんでドラッグすることもできます。領域の左右の半分が光り、どちらかの上で離すとそこに動画が置かれます。<em>ESC</em>か、領域の外で離すと取り消されます。盤そのものは動かせません。盤の上でのドラッグはチェッカーを動かします。側はセッションをまたいで記憶され、幅はどちらの側でも動画の幅のままです。ハンドルとボタンはキーボードをパネルに残します。</p>
+<p id="transcription-theatre"><strong>シアターモード。</strong>試合を大きく見るには、<em>F11</em>、または動画の上のバーにあるボタン（動画をパネルに戻すボタンの左）を使います。ウィンドウが全画面になり、動画が画面全体を占めます。その上の右下隅に小さな盤面が浮かびます。記譜中の局面、入力済みのダイス、盤面で進行中の手、メインの盤面と同じ矢印を示し、その手の表記は盤面の見出しに表示されます。手はメインの盤面と同じように指します。チェッカーをクリックまたはドラッグし、ダイスをクリックして入れ替えるか確定し、盤面を右クリックしてやり直します。盤面はドラッグで移動できますが、ダイスが入力済みのときは見出しをドラッグします（盤面そのものはその手を指すため）。見出しのボタンの一つで三段階に大きさを変え、もう一つでタブに折りたたみ、タブから再び開けます。位置と大きさは記憶されます。折りたたんだ場合は、次にシアターモードに入るときに再び開きます。キーボードはパネルのものがそのまま使えます。ダイス、候補手、確定、カーソル、動画のキー（<em>SPACE</em>、<em>[</em>、<em>]</em>など）はそのまま働き、盤面やボタンがフォーカスを奪うことはありません。ビデオ操作の列はここでは隠れているため、<em>r</em>を押すと、動画の上に投了の三つの水準を示す小さなウィンドウが開きます。<em>1</em>、<em>2</em>、<em>3</em>またはクリックで選び、<em>ENTER</em>はシングルとなり、<em>ESC</em>はシアターモードを離れずに取り消します。<em>F11</em>、<em>ESC</em>、または右上のボタンでシアターモードを終了し、ウィンドウは元の状態に戻ります。シアターモードでは<em>ESC</em>は終了に使われ、<em>BACKSPACE</em>が入力済みのダイスを消します。動画を外す、下書きを離れる、タブを切り替える、のいずれでも終了します。プレーヤーには独自の全画面表示はなく、YouTube も同様です。画面を切り替えるのはシアターモードだけです。このモードは動画が添付された記譜でのみ使えます。</p>
+<p>動画がある場合、<strong>新しい</strong>アクションにはそれぞれ<strong>時刻マーク</strong>が付きます。ロールの時刻は最初のダイスキーで、アクションの時刻は確定で設定され、どちらも操作の瞬間に動画から読み取られます。その場での修正は時刻マークを変更しません。アクションの時刻を設定するのは明示的な確定だけです。<em>ENTER</em>、候補のダブルクリック、盤上で完了した手がそれに当たります。次のロールの数字やキューブ操作も手を確定しますが、時刻は設定しません。誤った時刻を受け取る代わりに、その手はアクションの時刻を持たないままになり、ステータスバーがそれを知らせます。事前にダイスを入力せずに盤上で完了した手には、ロールの時刻がありません。コマの判断に時刻を付けるには、手が映像で完了した時点で <em>ENTER</em> で確定します。<em>v</em> は後から現在の時刻をカーソルのアクションの時刻に、<em>SHIFT-V</em> はロールの時刻に設定します。<em>SPACE</em>で動画を再生・一時停止し、<em>SHIFT-←</em>と<em>SHIFT-→</em>で 5 秒、<em>CTRL-SHIFT-←</em>と<em>CTRL-SHIFT-→</em>で 1 秒移動します。<em>[</em>で再生を遅くし、<em>]</em>で速くします。刻みは 0.25 で、範囲は 0.25× から 4× です。YouTube の動画では、プレーヤーが提供する速度のみ、最大 2× まで使えます。速度が 1× でないときは動画の隅に表示され、新しいソースは 1× から始まります。</p>
+<p>横向きに撮影された動画は、動画バーの ⟳ ボタン（シアターモードのバーにもあります）または <em>o</em> で向きを直せます。押すたびに 90° ずつ、0° から 270° まで回転します。ファイルの動画でも YouTube のフレームでも、画像は全体が表示されたままです。角度は下書きごとにこのコンピューターにのみ保存され、データベースには書き込まれません。</p>
+<p>時刻マークから判断の<strong>所要時間</strong>が導かれます。コマの判断はロールから手の終わりまで、キューブの判断は直前のアクションからロールまで、ダブルまたは応答は直前のアクションからそれ自身までです。時刻マークを持つセルは控えめな点で示され、そのツールチップにはロール、手、所要時間が表示されます(「ロール 12:34, 手 12:51, 17 s」)。分析パネルは、Duel で対局した試合と同様に、カーソルのアクションの所要時間を表示します。動画の順序に反する時刻マークは、他のマークが先へ進めるようできるだけ少なく選ばれ、他の不整合と同様に表示され、それに依存する所要時間は不明のままになります。セル上にカーソルを置く(手または所要時間のクリック、<em>h</em>、<em>l</em>)と、そのアクションのロールの1秒前に動画が移動します。ロールに時刻がない場合は、そのアクションの1秒前です。一時停止中のプレーヤーは一時停止のままです。</p>
+<p>下書きに動画またはタイムコードがあると、トランスクリプトの各プレイヤーの右に<strong>所要時間</strong>の列が加わります。判断にかかった時間を秒で(1分を超えると分と秒で)示し、中黒に続けて、ロールの前のキューブの判断を示します。アクションの時刻がない手も空欄にはなりません。所要時間はロールから次の手の最初の時刻(そのロール、またはキューブの操作)までで推定され、計測値として表示されます。ツールチップには推定であると表示されます。これはダイスを拾って振る時間を含む上限値です。キューブの判断は推定されません。前の手のアクションの時刻がなければ所要時間は不明のままで、ステータスバーはその手で <em>v</em> を押して計測するよう促します。再生中、カーソルはタイムコードが付いた部分で<strong>動画に追従</strong>します。各アクションは自分のロールから(なければ前のアクションから)次のアクションの開始まで動画を受け持ち、カーソルは再生が入ったアクションに移ります。最後のタイムコードを過ぎると、一度だけトランスクリプトの末尾に戻ります。入力中や動画の一時停止中は動かず、この移動は元に戻す履歴には入りません。手で置いたカーソルは、再生がそのアクションを出ない限り選んだアクションに留まります。アクションの時刻がない手をクリックし、動画を再生して、手の終わりに <em>v</em> を押すと、その手が時刻を受け取ります。終わりのない最後のアクションでは、ロールから10秒間そこに留まり、その後トランスクリプトの末尾に戻ります。そこでは数字キーが次のロールを開き、インジケーターがそれを示します。</p>
+<p>アプリケーション自体は動画をデコードしません。再生できる形式は webview が対応するものです。webview が再生できない形式や、10 秒たっても webview から情報が返らないファイルは、ペインにそのコンテナと、Linux ではインストールすべき GStreamer プラグインとともに表示されます。H.264 と AAC の MP4 には <code class="docutils literal notranslate"><span class="pre">gst-plugins-good</span></code>(MP4 デマルチプレクサ、AAC 解析)、<code class="docutils literal notranslate"><span class="pre">gst-plugins-bad</span></code> と <code class="docutils literal notranslate"><span class="pre">gst-libav</span></code>(H.264 と AAC のデコーダ)が必要です。Arch では <code class="docutils literal notranslate"><span class="pre">gst-plugins-good</span> <span class="pre">gst-plugins-bad</span> <span class="pre">gst-libav</span></code>、Debian と Ubuntu では <code class="docutils literal notranslate"><span class="pre">gstreamer1.0-plugins-good</span> <span class="pre">gstreamer1.0-plugins-bad</span> <span class="pre">gstreamer1.0-libav</span></code>、Fedora では <code class="docutils literal notranslate"><span class="pre">gstreamer1-plugins-good</span> <span class="pre">gstreamer1-plugins-bad-free</span> <span class="pre">gstreamer1-libav</span></code>(後者は RPM Fusion 由来)です。<a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">ダウンロードとインストール</span></a> を参照してください。</p>
+<p>止まってしまった動画(シークが完了しない、再生中に画像が動かない)は、3 秒後に再読み込みされ、指定した時点から同じ速度で、以前と同じく再生または一時停止の状態で再開します。3 回再読み込みしても効果がない場合は、パネルがその旨を表示し、再試行を提案します。</p>
+<p>多重化に問題のある <code class="docutils literal notranslate"><span class="pre">.webm</span></code> や <code class="docutils literal notranslate"><span class="pre">.mkv</span></code> ファイルでは、一部のシークで動画が止まります。ファイル内の画像グループがキーフレームでない画像から始まり、webview はそれを単独でデコードできないためです。yt-dlp でダウンロードしたファイルがこれに当たることがあります。このようなファイルを開くと、blunderDB はファイルのインデックス(グループごとに数キロバイト)を読み、問題のあるシークが見つかれば、ファイルを再エンコードせずに修復するコマンドをコピーできる形でパネルに表示します:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ffmpeg<span class="w"> </span>-i<span class="w"> </span><span class="s1">'ronde 4.webm'</span><span class="w"> </span>-map<span class="w"> </span><span class="m">0</span><span class="w"> </span>-c<span class="w"> </span>copy<span class="w"> </span>-cluster_time_limit<span class="w"> </span><span class="m">30000</span><span class="w"> </span><span class="s1">'ronde 4.remux.webm'</span>
+</pre></div>
+</div>
+<p>このコマンドは元のファイルの隣にコピーを書き出します。その後、このコピーをマッチまたはトランスクリプトに関連付けてください。<code class="docutils literal notranslate"><span class="pre">.webm</span></code> や <code class="docutils literal notranslate"><span class="pre">.mkv</span></code> で 3 回の再読み込みの後にパネルが再生をあきらめたときも、同じコマンドが表示されます。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>利用可能なショートカットについては <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">キーボードショートカット</span></a> を参照してください。</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="manuel_bibliotheque.html" class="btn btn-neutral float-left" title="分析、コメント、検索" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="manuel_tournois.html" class="btn btn-neutral float-right" title="トーナメント" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

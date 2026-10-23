@@ -1,0 +1,311 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>マッチ、トーナメント、ゲーム &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="解析とエンジン" href="cli_analyse.html" />
+    <link rel="prev" title="ライブラリ: 検索、一覧、コレクション" href="cli_bibliotheque.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/cli_matchs.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_matchs.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_matchs.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_matchs.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_matchs.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_matchs.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_matchs.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/cli_matchs.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">一般的な構文</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">利用可能なコマンド</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">インポート、エクスポート、転送</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">ライブラリ: 検索、一覧、コレクション</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">マッチ、トーナメント、ゲーム</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#match-afficher-un-match">match — マッチを表示する</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tournament-lire-un-tournoi-dirige">tournament — 運営した大会を読む</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transcribe-rejouer-une-transcription">transcribe — 記譜を再生する</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#duel-jouer-un-duel">duel — デュエルをプレイする</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">解析とエンジン</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">学習、レッスン、トレーニング</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">統計</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">データベースの管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">ワークフロー例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">終了コード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+      <li class="breadcrumb-item active">マッチ、トーナメント、ゲーム</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="matchs-tournois-et-parties">
+<span id="cli-matchs-chapitre"></span><h1>マッチ、トーナメント、ゲーム<a class="headerlink" href="#matchs-tournois-et-parties" title="この見出しへのリンク"></a></h1>
+<section id="match-afficher-un-match">
+<h2>match — マッチを表示する<a class="headerlink" href="#match-afficher-un-match" title="この見出しへのリンク"></a></h2>
+<p>インポートしたマッチのポジションと解析を表示します。<code class="docutils literal notranslate"><span class="pre">text</span></code>と<code class="docutils literal notranslate"><span class="pre">summary</span></code>の出力では、元ファイルがマッチについて記していれば、ヘッダーにそれが示されます：各プレイヤーの Elo レーティングと経験、記録者、マネーゲームの Jacoby と Beaver のルール、ファイルを書いたプログラム。<code class="docutils literal notranslate"><span class="pre">json</span></code>の出力では<code class="docutils literal notranslate"><span class="pre">match</span></code>オブジェクトに含まれます。</p>
+<p>マッチが判断の所要時間を保持している場合(ボット相手に指したマッチ、デュエルを参照)、<code class="docutils literal notranslate"><span class="pre">text</span></code> 出力は各判断の所要時間をキューブ判断を分けて示し、<code class="docutils literal notranslate"><span class="pre">summary</span></code> 出力は各プレイヤーの合計と平均を、持ち時間が先に尽きたプレイヤーの印付きで示します。<code class="docutils literal notranslate"><span class="pre">json</span></code> 出力には <code class="docutils literal notranslate"><span class="pre">decision_ms</span></code> と <code class="docutils literal notranslate"><span class="pre">cube_decision_ms</span></code> が含まれます。不明な所要時間は書き出されません。<code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">timeerrors</span></code>は、プレイヤーと所要時間の帯(5秒未満、5〜15秒、15〜30秒、30秒超)ごとに、判断数、平均誤り、ブランダーの割合を示します。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>はその行を返します。 <code class="docutils literal notranslate"><span class="pre">--ids</span></code>（カンマ区切りのマッチ ID）はこの表をそれらのマッチに限定します。トーナメントやセッションの振り返りに使います。</p>
+<p>ここでデュエルとして対局したマッチについて、<code class="docutils literal notranslate"><span class="pre">text</span></code> と <code class="docutils literal notranslate"><span class="pre">summary</span></code> の出力はその出自を追加します。開始局面、公開されたダイスのシードとその SHA-256（デュエル作成時に公開されたフィンガープリントと照合するもの）、マッチの終わり方（最後まで対局、終了前に中断、または時間切れ負けとその当事者）、持ち時間、先に持ち時間が尽きたプレイヤー、ボット（レベル、gammonNet のバージョン）です。ここで対局していないマッチについては <code class="docutils literal notranslate"><span class="pre">Origin:</span> <span class="pre">not</span> <span class="pre">played</span> <span class="pre">here</span></code> と書きます。<code class="docutils literal notranslate"><span class="pre">json</span></code> の出力では出自が <code class="docutils literal notranslate"><span class="pre">origin</span></code>（<code class="docutils literal notranslate"><span class="pre">lost_on_time</span></code> を含む）に入り、ここで対局していないマッチでは <code class="docutils literal notranslate"><span class="pre">null</span></code> です。サーバーは <code class="docutils literal notranslate"><span class="pre">/v1/matches.origin</span></code> で提供し、出自のないマッチには <code class="docutils literal notranslate"><span class="pre">null</span></code>、存在しないマッチには 404 を返します。</p>
+<p>分析済みのマッチでは、各手で失われたマッチの勝率(<code class="docutils literal notranslate"><span class="pre">mwc_loss</span></code>、小数で、0,0123 は 1,23 % に当たり、採点されない手では <code class="docutils literal notranslate"><span class="pre">null</span></code>)も同じ経路をたどります。<code class="docutils literal notranslate"><span class="pre">json</span></code> 出力は一覧を <code class="docutils literal notranslate"><span class="pre">decision_losses</span></code> の下に持ち、<code class="docutils literal notranslate"><span class="pre">text</span></code> は採点された手に <code class="docutils literal notranslate"><span class="pre">MWC</span> <span class="pre">loss</span></code> の行を加え、<code class="docutils literal notranslate"><span class="pre">summary</span></code> はプレイヤーごとの合計を示します。これはマッチ一覧の MWC 損失に等しい値です。各エントリは難度(<code class="docutils literal notranslate"><span class="pre">difficulty</span></code>、同じ局面での基準プレイヤーの期待損失で、単位は同じ、採点されない手では <code class="docutils literal notranslate"><span class="pre">null</span></code>)と、避けられたミスを示す <code class="docutils literal notranslate"><span class="pre">avoidable</span></code> も持ちます。<code class="docutils literal notranslate"><span class="pre">json</span></code> 出力は <code class="docutils literal notranslate"><span class="pre">difficulty_summary</span></code> (プレイヤーごと: <code class="docutils literal notranslate"><span class="pre">difficulty</span></code>、<code class="docutils literal notranslate"><span class="pre">excess</span></code>、<code class="docutils literal notranslate"><span class="pre">ratio</span></code>、<code class="docutils literal notranslate"><span class="pre">avoidable</span></code>)を、<code class="docutils literal notranslate"><span class="pre">text</span></code> は <code class="docutils literal notranslate"><span class="pre">Difficulty</span></code> と <code class="docutils literal notranslate"><span class="pre">Avoidable</span> <span class="pre">error</span></code> の行を、<code class="docutils literal notranslate"><span class="pre">summary</span></code> は <code class="docutils literal notranslate"><span class="pre">Difficulty</span></code> セクションを加えます。サーバーはこれを <code class="docutils literal notranslate"><span class="pre">/v1/stats.matchDecisionLosses</span></code> で提供します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">summary</span></code> は <code class="docutils literal notranslate"><span class="pre">Review</span></code> セクション、すなわちマッチの総括(<a class="reference internal" href="manuel_matchs.html#bilan-match"><span class="std std-ref">マッチの総括</span></a>)で終わります。プレイヤーごとに、PR とそのゲームにわたる 95 % 区間、7 ポイントに換算した MWC 損失とそのゲームにわたる区間、運で補正した結果(結果、ネットの運、ミスの差、ダイスのカバー率を含む)、見直すべき 3 つのミス(ゲーム、手、損失、回避可能な割合)、そしてミスの急いだものと熟考したものへの内訳を示します。サーバーは <code class="docutils literal notranslate"><span class="pre">/v1/stats.matchReview</span></code> で提供します。<code class="docutils literal notranslate"><span class="pre">stats</span></code> では、全体の PR と、フェーズ別、ラベル別、スコア別の行が、マッチにわたる 95 % 区間(列 <code class="docutils literal notranslate"><span class="pre">95</span> <span class="pre">%</span> <span class="pre">CI</span></code>)を持ち、<code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code> には <code class="docutils literal notranslate"><span class="pre">L7</span></code> 列があります。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>&lt;file&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — データベース（必須）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — 表示するマッチのID（必須）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">json</span></code>、<code class="docutils literal notranslate"><span class="pre">text</span></code>、または <code class="docutils literal notranslate"><span class="pre">summary</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">json</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code> — 出力ファイル（デフォルト：標準出力）。</p></li>
+</ul>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>summary
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>text
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>match1.json
+</pre></div>
+</div>
+<p><strong>match repair</strong> — マッチのカードの <strong>情報</strong> タブが示すソースファイルから、そのマッチの局面・解析・エラーを書き直します。マッチは ID、トーナメント、保存されたとおりのプレイヤー名（エイリアス、修正、入れ替え）、日付、コメント、動画とマーク、トランスクリプション、局面に書かれたコメントを保持します。修復によって離れる局面に残されたコメントは、同じ手についてファイルが示す局面に移ります。ただし、コレクション、Anki カード、レッスンがその局面をまだ保持している場合、コメントはそこに残り、レポートがその数を示します。ファイルより深い解析（インポート後に実行したロールアウト）や手で修正した解析は残ります。ファイルとすでに一致するマッチは書き直されません。<code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> は何も書かずに変更内容を示します。<code class="docutils literal notranslate"><span class="pre">--list</span></code> はソースファイルを持つすべてのマッチを調べ、それと異なるものを、局面が変わる手の数と前後の解析済みの手の割合とともに示し、ファイルが見つからないものも示します。何も書き込みません。相対パスはデータベースのフォルダー、次に現在のフォルダーから探します。ファイルが見つからない場合、ファイルがもうそのマッチを含まない場合（その指紋が保存されたマッチのものでない場合）、保存された手からファイルのどちらのプレイヤーかを判別できない場合、修復は拒否されます。サーバーは <code class="docutils literal notranslate"><span class="pre">/v1/matches.repair</span></code>で提供し、ソースファイルはリクエストで送信されます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">(</span>--id<span class="w"> </span>&lt;ID&gt;<span class="w"> </span><span class="o">[</span>--dry-run<span class="o">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--list<span class="o">)</span><span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>text<span class="p">|</span>json<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--list
+./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--dry-run
+./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span>
+</pre></div>
+</div>
+</section>
+<section id="tournament-lire-un-tournoi-dirige">
+<h2>tournament — 運営した大会を読む<a class="headerlink" href="#tournament-lire-un-tournoi-dirige" title="この見出しへのリンク"></a></h2>
+<p>グラフィカルインターフェースなしで、運営中のトーナメントを読み取ります。トーナメントを対話的に運営するのは Nicomaque エンジンのコンソールの役目です。これらのサブコマンドは<strong>読み取り</strong>のみで、入力を待つものはなく、書き込むのは<code class="docutils literal notranslate"><span class="pre">move</span></code>と<code class="docutils literal notranslate"><span class="pre">confirm</span></code>だけです。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>tournament<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>サブコマンド：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — データベース内の運営済み大会と、その状態、エンジンのバージョン、それぞれが属するイベント（なければ空欄）、最後の決定の日付。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verify</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — 運営を再生し、残っている警告をすべて報告します。警告が残っていれば<strong>エラー終了</strong>します。これは大会後の点検であり、シーズン分のデータベースにこれを流すスクリプトが欲しいのは終了コードであって、絞り込むための一行ではありません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">standings</span> <span class="pre">--id</span> <span class="pre">N</span></code> — 賞金を含む順位表を CSV で、インターフェイスの言語で出力します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ranking</span> <span class="pre">--season</span> <span class="pre">[--rencontre</span> <span class="pre">N]</span> <span class="pre">[--from</span> <span class="pre">AAAA-MM-JJ]</span> <span class="pre">[--to</span> <span class="pre">AAAA-MM-JJ]</span> <span class="pre">[--points</span> <span class="pre">25,18,15]</span> <span class="pre">[--participation</span> <span class="pre">P]</span> <span class="pre">[--elo]</span> <span class="pre">[--format</span> <span class="pre">csv|json]</span></code> — シーズンランキング。イベントまたは期間の終了済みの大会を対象とします（両端を含み、大会の日付で判定。フィルターがなければ運営したすべての大会）。各順位は配点表によってポイントに換算され（優勝者が先頭。既定は 25、18、15、12、10、8、6、4、2、1）、さらに参加した大会ごとに <code class="docutils literal notranslate"><span class="pre">--participation</span></code> が加わります。同順位は、占める順位の平均を分け合います。大会をまたいで、人物は名前で識別されます。<code class="docutils literal notranslate"><span class="pre">--elo</span></code> は、シーズンの対戦をやり直して算出したクラブ Elo（FIBS の式、初期値 1500）を加えます。CSV は 1 人 1 行、大会ごとに 1 列のポイント列を出力します。終了していない大会は一覧に載りますが、ポイントにはなりません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--id</span> <span class="pre">N|--rencontre</span> <span class="pre">N</span> <span class="pre">[--out</span> <span class="pre">&lt;フォルダー&gt;]</span></code> — 種目の HTML 表示ページ（<code class="docutils literal notranslate"><span class="pre">--id</span></code>）、またはイベントの壁面ページ（<code class="docutils literal notranslate"><span class="pre">--rencontre</span></code>：どの種目が使っていてもテーブルごとに1行）。どちらか一方が必須です。<code class="docutils literal notranslate"><span class="pre">--out</span></code> なしなら標準出力へ、指定するとそのフォルダーに書き出され、以後そこが運営またはイベントのフォルダーになります。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">N</span></code> — 生のイベントジャーナル。エンジンのツールで再生できます。ジャーナルは運営のすべての真実であり、順位表もトーナメント表も警告もそこから再生されます。この出力を読むツールに blunderDB は一切不要です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">move</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">--match</span> <span class="pre">M</span> <span class="pre">--table</span> <span class="pre">T</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — 進行中のマッチのテーブルを変更します。グリッドでセルを別のセルへドラッグするのと同じ操作です。移動先のテーブルが使用中なら、2 つのマッチがテーブルを<strong>入れ替え</strong>ます。使用停止中のテーブルは拒否されます。イベント内で、テーブルが別の種目に使われている場合は、2 つの種目の間で入れ替えます。テーブルの変更はそれぞれのログに記録されます。進行中の各マッチのテーブルを表示します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hall</span> <span class="pre">--rencontre</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — イベントのすべてのテーブルです。どの種目が使っているかにかかわらずテーブルごとに 1 行（種目、マッチ、プレイヤー）を示し、続けてすべての種目の提案を一つの列で示し（<code class="docutils literal notranslate"><span class="pre">proposal</span></code>）、最も長く待っているプレイヤーが先になります。最後に、テーブルまたは空いているプレイヤーがないために保留されている試合を理由とともに示します（<code class="docutils literal notranslate"><span class="pre">held</span></code>）。Direction の<em>すべてのテーブル</em>ビューが表示するグリッドです。イベントに会場がある場合、テーブルは会場ごとにまとめられ、名前を持つテーブルには名前が表示されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">proposals</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — エンジンの番号付き提案リスト：試合、抽選、フェーズの移行、棄権したグループ進出者の繰り上げ。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">confirm</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">--n</span> <span class="pre">K</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — <code class="docutils literal notranslate"><span class="pre">proposals</span></code> の番号 K の提案を、パネルの <em>開始</em> と同じように確定し、続くリストを表示します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tables</span> <span class="pre">--rencontre</span> <span class="pre">N|--tournament</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — テーブルのプロパティ（名前、会場、予約済み、割り当て先）と、イベントの各種目が行われる会場（<code class="docutils literal notranslate"><span class="pre">--rencontre</span></code>）、または単独で行われる種目のプロパティ（<code class="docutils literal notranslate"><span class="pre">--tournament</span></code>）を表示します。読み取り専用で、書き込みは <code class="docutils literal notranslate"><span class="pre">call</span></code> を通じて行います（<code class="docutils literal notranslate"><span class="pre">rencontres.setTables</span></code>、<code class="docutils literal notranslate"><span class="pre">rencontres.setEventRooms</span></code>、<code class="docutils literal notranslate"><span class="pre">directions.setTables</span></code>）。</p></li>
+</ul>
+<p><strong>共通オプション:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code>（必須）、<code class="docutils literal notranslate"><span class="pre">--id</span></code>（<code class="docutils literal notranslate"><span class="pre">list</span></code>、<code class="docutils literal notranslate"><span class="pre">ranking</span></code>、<code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--rencontre</span></code>、<code class="docutils literal notranslate"><span class="pre">hall</span></code>、<code class="docutils literal notranslate"><span class="pre">tables</span></code> 以外で必須）、<code class="docutils literal notranslate"><span class="pre">--format</span></code>。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>tournament<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>standings<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>&gt;<span class="w"> </span>classement.csv
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--season<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2026</span>-12-31<span class="w"> </span>--elo<span class="w"> </span>&gt;<span class="w"> </span>saison.csv
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>page<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--out<span class="w"> </span>/tmp/affichage
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>page<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span><span class="w"> </span>--out<span class="w"> </span>/tmp/evenement
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>&gt;<span class="w"> </span>journal.json
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>move<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--match<span class="w"> </span>m4<span class="w"> </span>--table<span class="w"> </span><span class="m">7</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>hall<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>tables<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>proposals<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>confirm<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--n<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+<section id="transcribe-rejouer-une-transcription">
+<span id="cli-transcribe"></span><h2>transcribe — 記譜を再生する<a class="headerlink" href="#transcribe-rejouer-une-transcription" title="この見出しへのリンク"></a></h2>
+<p>記譜を再生し、再生が見つけたものを報告します。ソースは<code class="docutils literal notranslate"><span class="pre">.mat</span></code>ファイル、ライブラリのマッチ、記譜の下書きのいずれか一つだけです。マッチはエクスポート時に生成される<code class="docutils literal notranslate"><span class="pre">.mat</span></code>を通して読まれるため、再生されるのはエクスポートが含むはずのものです。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--mat<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--check<span class="o">]</span><span class="w"> </span><span class="o">[</span>--render<span class="w"> </span>&lt;sortie&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--match<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--check
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--draft<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--check
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--match<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--edit<span class="w"> </span><span class="o">[</span>--accept-losses<span class="o">]</span>
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--draft<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--finish<span class="p">|</span>--abandon
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--materialize<span class="w"> </span>&lt;document.json&gt;
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--import<span class="w"> </span>&lt;fichier.mat<span class="p">|</span>document.json&gt;
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--mat</span></code> — 再生する<code class="docutils literal notranslate"><span class="pre">.mat</span></code>ファイル。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — データベース。<code class="docutils literal notranslate"><span class="pre">--match</span></code> および <code class="docutils literal notranslate"><span class="pre">--draft</span></code> 用。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — 再生するライブラリのマッチの識別子。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--draft</span></code> — 再生する記譜の下書きの識別子。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--check</span></code> — 見つかった不整合を列挙する（既定の動作）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--render</span></code> — 記譜をこのパスに<code class="docutils literal notranslate"><span class="pre">.mat</span></code>として書き戻す。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">text</span></code>（デフォルト）または<code class="docutils literal notranslate"><span class="pre">json</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--edit</span></code> — <code class="docutils literal notranslate"><span class="pre">--match</span></code> に対して下書きを開きます(すでに開かれている下書きがあればそれを返します)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--accept-losses</span></code> — 取り込み済みのマッチに対する <code class="docutils literal notranslate"><span class="pre">--edit</span></code> と併用:その分析とコメントが失われうることを受け入れます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--finish</span></code> — <code class="docutils literal notranslate"><span class="pre">--draft</span></code> を完了します:そのマッチを書き込むか、開いた元のマッチを置き換え、下書きを解放します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--abandon</span></code> — <code class="docutils literal notranslate"><span class="pre">--draft</span></code> を破棄します:マッチを作らずに削除します。開いた元のマッチはそのまま残ります。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--yes</span></code> — マッチを一度も生み出していない下書きに <code class="docutils literal notranslate"><span class="pre">--abandon</span></code> を使うとき、その中に書かれたすべてが失われることを確認します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--materialize</span></code> — サイコロを含む JSON ドキュメント(<code class="docutils literal notranslate"><span class="pre">header</span></code> と <code class="docutils literal notranslate"><span class="pre">actions</span></code>)を、一度にマッチとして書き込むか、まったく書き込まないか。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — 新しい下書きを開く元となる <code class="docutils literal notranslate"><span class="pre">.mat</span></code> ファイルまたは JSON の転記ドキュメント。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--check</span></code> は各不整合を、アクション番号とそれが属するゲームとともに示します。不正な手、同じプレイヤーが続けて二手、不可能なキューブ操作、マッチ終了後のアクション、自身のダイスを使っていない手、ゾロ目で指されたゲームの最初の手(オープニングロールはゾロ目になりえません)、記録されていない手、そして申告スコアの不一致です。記録されていない手とは、gnubg が実際に指された手を残さなかったときに書く <code class="docutils literal notranslate"><span class="pre">???</span></code> のセルであり、ダンスではありません。申告スコアの不一致とは、スコア行が前のゲームから導かれるものと異なるゲームであり、書かれたスコアで再生されます。</p>
+<p>不整合は<strong>報告されるだけで、けっして拒否の理由になりません</strong>。不整合を理由に何かが拒まれることはなく、再生が何を見つけても終了コードは 0 のままです。ゼロ以外の終了コードは本当の失敗を示します — 読めないファイル、開けないデータベース、書き込めない出力です。所見に基づいて動作させたいスクリプトは<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>で読み取ります。そこでは壊れたファイルと不正な手を含むゲームが混同されません。</p>
+<p><code class="docutils literal notranslate"><span class="pre">--render</span></code> は記譜を<code class="docutils literal notranslate"><span class="pre">.mat</span></code>として書き戻します。これにより、テストの外で実際のファイルについて往復変換を確認できます。</p>
+<p><code class="docutils literal notranslate"><span class="pre">--materialize</span></code> は、よそから届いたアクションのドキュメントが表すマッチを、下書きを経ずに書き込みます。ルールは厳密に適用されます。最初に拒否されたアクションがあると、コマンドはその順位(0 から数えます)と理由を示して失敗し、何も書き込まれません。ドキュメントの判断時間(<code class="docutils literal notranslate"><span class="pre">decision_ms</span></code>、<code class="docutils literal notranslate"><span class="pre">cube_decision_ms</span></code>)は各手に引き継がれます。</p>
+<p><code class="docutils literal notranslate"><span class="pre">--import</span></code> は <code class="docutils literal notranslate"><span class="pre">.mat</span></code> ファイルまたは JSON の転記ドキュメント（<code class="docutils literal notranslate"><span class="pre">header</span></code>、<code class="docutils literal notranslate"><span class="pre">actions</span></code>、任意で <code class="docutils literal notranslate"><span class="pre">format_version</span></code> と <code class="docutils literal notranslate"><span class="pre">next_score</span></code>。下書きが保存される形式）から新しい下書きを開きます。ファイルの不整合は、どの下書きとも同じく保持され、マークされます。<code class="docutils literal notranslate"><span class="pre">--finish</span></code> がマッチを書き込む前に修正します。どの再生でも読めないファイル（読めない JSON、未知のアクション種別、盤外のプレイヤー・ダイス・ポイント、ゲームのない <code class="docutils literal notranslate"><span class="pre">.mat</span></code>）はコマンドを失敗させ、下書きを開きません。</p>
+<p>書き込みを行う他のオプションは三つだけで、記譜パネルと同じメソッドを通します。<code class="docutils literal notranslate"><span class="pre">--edit</span></code> は既存のマッチに対して下書きを開き、<code class="docutils literal notranslate"><span class="pre">--finish</span></code> はそれを完了し(マッチは同じ識別子のまま置き換えられます)、<code class="docutils literal notranslate"><span class="pre">--abandon</span></code> はマッチを作らずに下書きを削除します。一度も完了していない下書きには <code class="docutils literal notranslate"><span class="pre">--yes</span></code> が必要で、書かれた内容はすべて失われます。取り込み済みのマッチは <code class="docutils literal notranslate"><span class="pre">.mat</span></code> に含まれない分析とコメントを持っています。<code class="docutils literal notranslate"><span class="pre">--edit</span></code> は最大でその件数を示し、<code class="docutils literal notranslate"><span class="pre">--accept-losses</span></code> がなければ拒否します。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--mat<span class="w"> </span>match.mat<span class="w"> </span>--check
+
+<span class="c1"># match.mat: 7 point match, 4 game(s), 203 action(s)</span>
+<span class="c1">#   Final score: 9-2</span>
+<span class="c1"># Inconsistencies: none</span>
+</pre></div>
+</div>
+</section>
+<section id="duel-jouer-un-duel">
+<span id="cli-duel"></span><h2>duel — デュエルをプレイする<a class="headerlink" href="#duel-jouer-un-duel" title="この見出しへのリンク"></a></h2>
+<p>インターフェースなしで、1 回の呼び出しにつき 1 アクションずつデュエルを進めます。呼び出しごとに別プロセスとなり、データベースからデュエルを再開し、1 アクションを進めて書き戻します。この方法で進めたデュエルのムーブの所要時間は不明であり、ゼロではありません。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>duel<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">(</span>--length<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>--money<span class="w"> </span><span class="o">[</span>--jacoby<span class="o">])</span><span class="w"> </span><span class="o">[</span>--side1<span class="w"> </span>&lt;côté&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--side2<span class="w"> </span>&lt;côté&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--length<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="o">[</span>--start<span class="w"> </span>&lt;XGID&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--away<span class="w"> </span>&lt;j1&gt;,&lt;j2&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--reroll<span class="o">]</span><span class="w"> </span><span class="o">[</span>--after-cube<span class="o">]</span><span class="w"> </span><span class="o">[</span>--single-game<span class="o">]</span><span class="w"> </span><span class="o">[</span>--minutes-per-point<span class="w"> </span>&lt;min&gt;<span class="w"> </span>--delay<span class="w"> </span>&lt;s&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>move<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--play<span class="w"> </span><span class="s2">"24/18 13/11"</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>roll<span class="p">|</span>double<span class="p">|</span>take<span class="p">|</span>pass<span class="p">|</span>resign<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>forfeit<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--side<span class="w"> </span><span class="m">1</span><span class="p">|</span><span class="m">2</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>contribute<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--side<span class="w"> </span><span class="m">1</span><span class="p">|</span><span class="m">2</span><span class="w"> </span>--value<span class="w"> </span>&lt;texte&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>stop<span class="p">|</span>discard<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+</pre></div>
+</div>
+<p><strong>サブコマンド：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span></code>— デュエルを開始し、外部サイドの最初の判断まで進めます。<code class="docutils literal notranslate"><span class="pre">--length</span></code>(1~25 ポイント)または<code class="docutils literal notranslate"><span class="pre">--money</span></code>、<code class="docutils literal notranslate"><span class="pre">--start</span></code>(スタートの XGID)、<code class="docutils literal notranslate"><span class="pre">--name1</span></code>と<code class="docutils literal notranslate"><span class="pre">--name2</span></code>、<code class="docutils literal notranslate"><span class="pre">--side1</span></code>と<code class="docutils literal notranslate"><span class="pre">--side2</span></code>(<code class="docutils literal notranslate"><span class="pre">external</span></code>、または<code class="docutils literal notranslate"><span class="pre">instant</span></code>、<code class="docutils literal notranslate"><span class="pre">normal</span></code>、<code class="docutils literal notranslate"><span class="pre">thorough</span></code>を伴う<code class="docutils literal notranslate"><span class="pre">bot:&lt;レベル&gt;</span></code>、または背後でプレイするボットを申告する外部サイドを表す<code class="docutils literal notranslate"><span class="pre">external:&lt;構成&gt;&#64;&lt;エンジン&gt;</span></code>。マッチの由来はそれを、証明されたものではなく申告されたものとして記録します)を指定できます。<code class="docutils literal notranslate"><span class="pre">--discard-at-end</span></code>は、マッチを書き込まずに終了時に下書きを破棄します。<code class="docutils literal notranslate"><span class="pre">--combined-seed</span></code>は、各外部サイドがシードへの寄与を行うまでダイスを振りません。<code class="docutils literal notranslate"><span class="pre">--away</span></code>は、最初のゲームのスコアを足りないポイントで<code class="docutils literal notranslate"><span class="pre">プレイヤー1,プレイヤー2</span></code>の形で指定し(<code class="docutils literal notranslate"><span class="pre">1</span></code>:クロフォードゲーム、<code class="docutils literal notranslate"><span class="pre">0</span></code>:その後の 1 ポイント)、<code class="docutils literal notranslate"><span class="pre">--start</span></code>のスコアを置き換えます。<code class="docutils literal notranslate"><span class="pre">--start</span></code>がなければ、ゲームはこのスコアで初期局面から始まります。<code class="docutils literal notranslate"><span class="pre">--reroll</span></code>は、<code class="docutils literal notranslate"><span class="pre">--start</span></code>が持つ出目を振り直します。<code class="docutils literal notranslate"><span class="pre">--after-cube</span></code>は、スタートのキューブの判断の後から始めます(手番のプレイヤーはすぐに振り、提示されたダブルはテイクされます)。既定ではデュエルはその前から始まり、提示されたダブルは相手の答えを待ちます。<code class="docutils literal notranslate"><span class="pre">--single-game</span></code>は、最初のゲームの終わりでデュエルを止め、そのゲームだけをマッチとして書き込みます。<code class="docutils literal notranslate"><span class="pre">--minutes-per-point</span></code>と<code class="docutils literal notranslate"><span class="pre">--delay</span></code>は持ち時間を定めます。各プレイヤーの持ち時間をマッチの 1 ポイントあたりの分(Standard は 2、Speed は 0.4)で、手ごとのディレイを秒(12、10)で指定します。<code class="docutils literal notranslate"><span class="pre">--time-out</span></code>(<code class="docutils literal notranslate"><span class="pre">continue</span></code>または<code class="docutils literal notranslate"><span class="pre">lose_match</span></code>)は、持ち時間を使い切ったときの扱いです。ルール上認められないスタート(チェッカー、マッチ長を超えるスコア、両プレイヤーがクロフォードゲーム、キューブ)は、理由とともに拒否されます。2 つのボットの場合、マッチ全体がこの呼び出しの中で行われます(<code class="docutils literal notranslate"><span class="pre">--side1</span> <span class="pre">bot:instant</span> <span class="pre">--side2</span> <span class="pre">bot:instant</span></code>)。2 つのボットの間のマネーゲームのセッションは、1 ゲームのみの場合を除き、終わらないため拒否されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span></code>— スコア、デュエルが待っているもの、ムーブの場合は合法的なプレイを表示します。サイコロのシードは終了前には表示されず、フィンガープリントがその代わりとなります。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code>— 保留中のデュエル。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">roll</span></code>、<code class="docutils literal notranslate"><span class="pre">move</span></code>、<code class="docutils literal notranslate"><span class="pre">double</span></code>、<code class="docutils literal notranslate"><span class="pre">take</span></code>、<code class="docutils literal notranslate"><span class="pre">pass</span></code>、<code class="docutils literal notranslate"><span class="pre">resign</span></code>— デュエルが待っているサイドの 1 アクション(<code class="docutils literal notranslate"><span class="pre">--side</span> <span class="pre">1|2</span></code> で指定)。<code class="docutils literal notranslate"><span class="pre">--play</span></code>はムーブを記法で、任意の順序で渡します。<code class="docutils literal notranslate"><span class="pre">--level</span></code>(1~3)はリザインの価値を、<code class="docutils literal notranslate"><span class="pre">--revision</span></code>はデュエルが進んでいる場合にアクションを拒否します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contribute</span></code>— 結合シードへの外部サイドの寄与(<code class="docutils literal notranslate"><span class="pre">--side</span> <span class="pre">1|2</span></code>、<code class="docutils literal notranslate"><span class="pre">--value</span></code>、1~64 バイト)。最初のロールの前に一度だけ行えます。最後の寄与でダイスが始まります。ロールは、封印されたシードを鍵とし、各サイドの寄与をその長さを前置して並べたものに対する HMAC-SHA256 から得られ、マッチの由来は寄与を持ちます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forfeit</span></code> — <code class="docutils literal notranslate"><span class="pre">--side</span></code> のサイド（必須）がマッチを放棄します。進行中のゲームは、相手サイドをマッチの長さに届かせるポイントで相手のものとなり（マネーゲームではキューブの値でのシングル）、マッチは相手の勝ちとして保存されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code> — マネーゲームのセッションを終了し、そのマッチを現状のまま保存します。進行中のゲームは勝者なしです。ポイントマッチは拒否されます。最後まで終えたものだけが保存されます（<code class="docutils literal notranslate"><span class="pre">forfeit</span></code>、<code class="docutils literal notranslate"><span class="pre">discard</span></code>）。終了は放棄ではありません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discard</span></code>— デュエルを破棄します。何も書き込まれません。</p></li>
+</ul>
+<p>すべてのサブコマンドが <code class="docutils literal notranslate"><span class="pre">--db</span></code> と <code class="docutils literal notranslate"><span class="pre">--format</span></code>(<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>)を受け付けます。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-left" title="ライブラリ: 検索、一覧、コレクション" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="cli_analyse.html" class="btn btn-neutral float-right" title="解析とエンジン" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

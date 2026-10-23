@@ -1,0 +1,473 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Primeros pasos e interfaz &mdash; documentación de blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3bdc4af3"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="Análisis, comentarios y búsqueda" href="manuel_bibliotheque.html" />
+    <link rel="prev" title="Manual" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Idiomas">
+  <a href="../fr/manuel_interface.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_interface.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_interface.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_interface.html" lang="el" hreflang="el">Ελληνικά</a>
+  <span class="current" lang="es" aria-current="true">Español</span>
+  <a href="../fi/manuel_interface.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_interface.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_interface.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_interface.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Primeros pasos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guía del usuario</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referencia</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Manual</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Primeros pasos e interfaz</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Introducción</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interactions-principales">Interacciones principales</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#description-de-l-interface">Descripción de la interfaz</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglets-de-vues">Pestañas de vistas</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plusieurs-bibliotheques-ouvertes">Varias bibliotecas abiertas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comparer-et-echanger-le-panneau-autres-bases">Comparar e intercambiar: el panel Otras bases</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuración</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dossier-surveille">Carpeta vigilada</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#synchroniser-deux-machines">Sincronizar dos máquinas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assistant-et-mcp">Asistente y MCP</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">Visitas guiadas y base de ejemplo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#navigation-dans-les-positions">Navegación por las posiciones</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edition-de-positions">Edición de posiciones</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-ligne-de-commande">La línea de comandos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-palette-de-commandes">La paleta de comandos</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Análisis, comentarios y búsqueda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Partidas y transcripción</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Torneos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Estadísticas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Evaluación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Entrenamiento, Anki y duelo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Importación, origen y distribución</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Métricas y herramientas de estudio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Atajos de teclado</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaz de línea de comandos (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrato de la API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anexo Windows: qué hacer si Windows bloquea el inicio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historial de versiones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Acerca de</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Manual</a></li>
+      <li class="breadcrumb-item active">Primeros pasos e interfaz</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="prise-en-main-et-interface">
+<span id="manuel-interface"></span><h1>Primeros pasos e interfaz<a class="headerlink" href="#prise-en-main-et-interface" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Introducción<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>blunderDB es un programa para crear bases de datos de posiciones de backgammon. Su principal fortaleza es ofrecer un único lugar donde agregar las posiciones que un jugador ha encontrado (en línea, en torneos) y poder reestudiarlas filtrándolas según diversos filtros combinables de forma arbitraria. blunderDB también puede usarse para crear catálogos de posiciones de referencia.</p>
+<p>Las posiciones se almacenan en una base de datos representada por un archivo <em>.db</em>. La aplicación de escritorio abre este archivo directamente, nunca una dirección de red: el <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">modo servidor</span></a> es otro modo del mismo binario, y se pasa de uno a otro exportando o migrando la base, no apuntando la aplicación hacia una URL.</p>
+</section>
+<section id="interactions-principales">
+<h2>Interacciones principales<a class="headerlink" href="#interactions-principales" title="Link to this heading"></a></h2>
+<p>Las principales interacciones posibles con blunderDB son:</p>
+<ul class="simple">
+<li><p>añadir una nueva posición,</p></li>
+<li><p>modificar una posición existente,</p></li>
+<li><p>copiar la imagen del tablero al portapapeles (PNG) mediante <strong>CTRL-X</strong>, o con el análisis completo mediante <strong>CTRL-X CTRL-X</strong>,</p></li>
+<li><p>eliminar una posición existente,</p></li>
+<li><p>buscar una o varias posiciones,</p></li>
+<li><p>importar partidos desde diferentes fuentes (XG, GNUbg, BGBlitz, Jellyfish, HedgeHog), incluidos los comentarios de los archivos XG,</p></li>
+<li><p>navegar por las jugadas de una partida importada,</p></li>
+<li><p>organizar las posiciones en colecciones,</p></li>
+<li><p>organizar las partidas en torneos.</p></li>
+</ul>
+<p>El usuario puede etiquetar libremente las posiciones mediante etiquetas y anotarlas con comentarios.</p>
+</section>
+<section id="description-de-l-interface">
+<h2>Descripción de la interfaz<a class="headerlink" href="#description-de-l-interface" title="Link to this heading"></a></h2>
+<p>La interfaz de blunderDB se compone, de arriba abajo, de:</p>
+<ul class="simple">
+<li><p>[arriba] la barra de herramientas, que reúne todas las principales operaciones que pueden realizarse sobre la base de datos,</p></li>
+<li><p>[en el centro] la zona de visualización principal, que permite mostrar o editar posiciones de backgammon,</p></li>
+<li><p>[abajo] la barra de estado, que presenta diversa información sobre la base de datos o la posición actual, e integra la línea de comandos.</p></li>
+</ul>
+<p>Pueden mostrarse paneles para:</p>
+<ul class="simple">
+<li><p>mostrar los datos de análisis asociados a la posición actual procedentes de eXtreme Gammon (XG), GNUbg o BGBlitz,</p></li>
+<li><p>mostrar, añadir o modificar comentarios,</p></li>
+<li><p>buscar y filtrar posiciones según criterios combinables,</p></li>
+<li><p>mostrar y gestionar las colecciones de posiciones (panel de colecciones),</p></li>
+<li><p>mostrar la lista de partidas importadas y navegar por las jugadas de una partida (panel de partidas),</p></li>
+<li><p>mostrar y gestionar los torneos (panel de torneos),</p></li>
+<li><p>mostrar las estadísticas de rendimiento (panel Stats),</p></li>
+<li><p>evaluar cualquier posición con gammonNet (panel Eval) y, en bearoff, calcular su EPC (Effective Pip Count),</p></li>
+<li><p>entrenarse con ejercicios de cálculo (panel Entrenamiento),</p></li>
+<li><p>estudiar las posiciones mediante repetición espaciada (panel Anki),</p></li>
+<li><p>jugar una partida completa contra el Bot (panel Duel, véase <a class="reference internal" href="manuel_entrainement.html#panneau-duel"><span class="std std-ref">Panel Duelo</span></a>),</p></li>
+<li><p>transcribir un partido a mano (panel Transcripción),</p></li>
+<li><p>consultar las tablas del marcador — MET, puntos de toma, valores del gammon, números de Neil — (panel Datos de referencia, véase <a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">Panel Datos de referencia</span></a>),</p></li>
+<li><p>comparar la posición con las otras bases abiertas e intercambiar con ellas (panel Otras bases, véase <a class="reference internal" href="#vue-ailleurs"><span class="std std-ref">Comparar e intercambiar: el panel Otras bases</span></a>),</p></li>
+<li><p>ver los metadatos de la base de datos (panel Metadatos).</p></li>
+</ul>
+<p>La altura del panel se ajusta arrastrando su asa; es la misma de una pestaña a otra.</p>
+<p>Un clic derecho en una pestaña del panel ofrece <em>Ocultar esta pestaña</em>. En cuanto hay una pestaña oculta, aparece un botón <em>∨</em> (<em>Pestañas ocultas</em>) a la derecha de la fila: lista las pestañas ocultas, y un clic en <em>Mostrar: …</em> devuelve una. Las pestañas ocultas se conservan de una sesión a otra.</p>
+<p>Pueden mostrarse ventanas modales para:</p>
+<ul class="simple">
+<li><p>mostrar la ayuda de blunderDB, cuyo campo de búsqueda (<em>/</em> coloca en él el cursor) selecciona las apariciones del texto introducido, sin distinguir mayúsculas ni acentos (<em>ENTRAR</em> pasa a la siguiente, <em>MAYÚS-ENTRAR</em> a la anterior),</p></li>
+<li><p>mostrar el catálogo de visitas guiadas (ver <a class="reference internal" href="#visites-guidees"><span class="std std-ref">Visitas guiadas y base de ejemplo</span></a>),</p></li>
+<li><p>configurar la exportación de la base de datos,</p></li>
+<li><p>configurar blunderDB, en particular el idioma de la interfaz (véase <a class="reference internal" href="#configuration"><span class="std std-ref">Configuración</span></a>).</p></li>
+</ul>
+<p>La zona de visualización principal pone a disposición del usuario:</p>
+<ul class="simple">
+<li><p>un tablero para mostrar o editar una posición de backgammon,</p></li>
+<li><p>el nivel y el propietario del cubo,</p></li>
+<li><p>el pip count de cada jugador,</p></li>
+<li><p>la puntuación de cada jugador,</p></li>
+<li><p>los dados a jugar. Si no se muestra ningún valor en los dados, la posición de los dados indica qué jugador tiene el turno y que la posición es una decisión de cubo. Cuando la decisión de cubo es una respuesta a un doblaje (aceptar/pasar), el cubo propuesto se muestra en el centro del tablero, con el valor ofrecido.</p></li>
+</ul>
+<p id="board-menu-contextuel">Un clic derecho en el tablero abre un menú contextual. Los dos gestos más habituales, <em>Evaluar esta posición</em> (en el panel Eval) y <em>Copiar la imagen</em> (el equivalente de <em>CTRL-X</em>), están en el primer nivel; los demás se guardan en submenús marcados con ▸ — <em>Copiar / compartir</em> (con <strong>guardar la imagen en un fichero</strong> en SVG o PNG), <em>Anotar</em>, <em>Navegar</em> (posiciones vecinas, nueva vista), <em>Analizar</em> (espejo, rollouts), <em>Entrenar</em> (mazo Anki, desafío) y <em>Gestionar</em> (guardar, papelera). El menú se construye a partir de un catálogo de acciones compartido con las listas de partidas, de torneos y de colecciones, y solo ofrece las acciones que se aplican a la posición mostrada: véase <a class="reference internal" href="manuel_bibliotheque.html#menu-contextuel-actions"><span class="std std-ref">Menú contextual</span></a> para el detalle de los submenús y la navegación con el teclado. Durante una jugada hecha en el tablero (cuestionario, Transcripción), un clic derecho en el tablero retoma toda la jugada sin tocar la posición; el menú solo se abre ahí antes del primer paso. En edición y en Eval, donde el clic derecho en el tablero coloca fichas, el menú se abre con un clic derecho fuera del tablero — fuera de los dados, del cubo y de los marcadores — y empieza por <em>Borrar la posición</em> (como <em>RETROCESO</em>) y <em>Posición inicial</em>, que coloca las fichas de una partida nueva, seguidas de las acciones que valen para un borrador.</p>
+<p>El portapapeles es el gesto corriente; guardar es la otra necesidad — la ilustración de un artículo, de un mensaje de foro, de una lección. El <strong>SVG</strong> se ofrece porque el tablero lo es: es la forma que sobrevive a una ampliación, la que se pone en un documento sin desenfocarla. El PNG deriva de él, igual que la copia al portapapeles: un solo renderizado, tres destinos, así que ninguno puede divergir de los demás. En el panel Búsqueda y en Eval, el botón derecho ya sirve para poner las fichas del otro color: el menú se queda ahí fuera del tablero, como más arriba. Véase <a class="reference internal" href="manuel_eval.html#eval-amener-position"><span class="std std-ref">Llevar una posición al panel Eval</span></a> para llevar una posición al panel Eval.</p>
+<p>La barra de estado está estructurada de izquierda a derecha con la siguiente información:</p>
+<ul class="simple">
+<li><p>la línea de comandos, accesible pulsando la tecla <em>ESPACIO</em>,</p></li>
+<li><p>un mensaje informativo relacionado con una operación realizada por el usuario,</p></li>
+<li><p>el índice de la posición actual, seguido del número de posiciones en la biblioteca actual (o la información de jugada/partida al navegar por un partido),</p></li>
+<li><p>el <strong>contador de la biblioteca</strong> — «412 posiciones · 38 blunders · 5 partidos» — donde cada número <strong>abre lo que cuenta</strong>: las posiciones, la búsqueda <code class="docutils literal notranslate"><span class="pre">E&gt;</span></code> con el umbral de la biblioteca (lanzada al instante, como si se hubiera escrito, y guardada en el historial de búsquedas), o la lista de partidos. Cuando la lista en pantalla no es toda la biblioteca (búsqueda, colección, partido), la cifra de blunders se escribe «12 / 340 blunders»: los blunders de esa lista, luego los de la biblioteca, con el mismo umbral; una lista de más de 20 000 posiciones no se cuenta y conserva solo el total. Una cifra que no se puede seguir es una decoración. El umbral de los blunders es el de la biblioteca, ajustado en la pestaña <em>Biblioteca</em> de la configuración y compartido con las estadísticas: dos umbrales harían decir dos cosas a la misma palabra. El contador promete exactamente lo que abre su enlace, incluso para una posición jugada de varias maneras, que vale su coste más elevado. En una biblioteca muy grande (más de 200 000 filas) el contador no recorre las tablas: un número precedido de «≈» es una estimación (una cota superior, pues las filas eliminadas dejan huecos). Si las posiciones son estimadas, el número de blunders, que no tiene una estimación honesta, es la última cuenta exacta, conservada mientras ninguna escritura pueda cambiarla. Tras una importación o una modificación aparece como «?» mientras se hace una nueva cuenta en segundo plano, y luego vuelve por sí solo; una biblioteca abierta en solo lectura no vuelve a contar y conserva «?» hasta que la instancia que escribe en ella haya rehecho la cuenta. El enlace lanza la búsqueda, que da la cuenta exacta. Los dos números de blunders son enlaces distintos: el primero lanza la subbúsqueda <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;</span></code> en la lista en pantalla, el segundo la búsqueda en toda la biblioteca; cuando solo se muestra el total, hay un único enlace.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>En el caso de posiciones resultantes de una búsqueda del usuario, el número de posiciones indicado en la barra de estado corresponde al número de posiciones filtradas.</p>
+</div>
+<p>La pestaña <strong>Anki</strong> lleva una <strong>insignia</strong> cuando hay tarjetas por repasar, en todos los mazos. Esa cifra es la razón de abrir la pestaña; no tiene nada que hacer detrás de ella. Cero no muestra nada: una insignia que dice «0» es ruido.</p>
+<p>El comando <code class="docutils literal notranslate"><span class="pre">log</span></code> abre el <strong>registro de actividad</strong>: las últimas doscientas líneas del archivo de registro, un botón para copiarlas — lo necesario para adjuntar un informe a un aviso — y otro para abrir la carpeta que las contiene. El registro no se filtra ni se reformatea: un registro que se embellece es un registro que ya no se puede citar.</p>
+<p>El comando <code class="docutils literal notranslate"><span class="pre">grid</span></code> abre la <strong>hoja de contactos</strong>: la lista recorrida — resultados de una búsqueda, biblioteca, colección — como una cuadrícula de minitableros, dibujados como el tablero, en páginas de veinticuatro. Se abre en la página de la posición actual, cuya miniatura aparece enmarcada; un clic o <em>INTRO</em> sobre una miniatura abre su posición en el tablero y cierra la hoja, y se recorre por completo con el teclado (véase <a class="reference internal" href="raccourcis.html#raccourcis-contact-sheet"><span class="std std-ref">Hoja de contactos</span></a>). No se abre ni en modo edición ni en un match, que se recorre por sus jugadas.</p>
+<p>En el <strong>historial de búsquedas</strong> del panel Búsqueda, cada token de un comando guardado se muestra como una etiqueta con nombre — <em>Sin contacto</em>, <em>Error de jugada</em> — en vez de un token pelado. El comando exacto queda en la ayuda emergente, porque es el que se relanza; y un token que blunderDB no reconoce se muestra <strong>tal cual</strong> en vez de traducido a lo más parecido.</p>
+</section>
+<section id="onglets-de-vues">
+<span id="onglets-vues"></span><h2>Pestañas de vistas<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>Bajo la barra de herramientas, una barra de pestañas permite trabajar con varias <strong>vistas</strong> en paralelo. Cada vista es un espacio de trabajo independiente que conserva su propia lista de posiciones, el índice de la posición actual, la posición mostrada, el análisis y la jugada seleccionada, el panel activo, el comentario en curso, así como el contexto de navegación en una partida. Así es posible, por ejemplo, mantener una búsqueda abierta en una vista mientras se recorre una partida en otra.</p>
+<ul class="simple">
+<li><p><strong>Crear una vista</strong>: hacer clic en el botón <em>+</em> de la barra de pestañas (llamado <em>+ Nueva vista</em> mientras solo haya una vista) o pulsar <em>CTRL-T</em>. La nueva vista comienza como una copia de la vista actual.</p></li>
+<li><p><strong>Cerrar una vista</strong>: hacer clic en la cruz de la pestaña o pulsar <em>CTRL-W</em>. La última vista no se puede cerrar; la cruz solo se dibuja en las pestañas del grupo activo, cuando tiene más de una vista. Cerrar la vista activa muestra la última pestaña restante.</p></li>
+<li><p><strong>Cambiar de vista</strong>: hacer clic en una pestaña, pulsar <em>CTRL-Re Pág</em> / <em>CTRL-Av Pág</em> (o <em>MAYÚS-J</em> / <em>MAYÚS-K</em>) para pasar a la vista anterior / siguiente, o <em>CTRL-1</em> a <em>CTRL-9</em> para ir directamente a la n-ésima vista de la biblioteca activa.</p></li>
+<li><p><strong>Renombrar una vista</strong>: hacer doble clic en la pestaña del grupo activo, escribir el nuevo nombre y validar con <em>INTRO</em>; salir del campo también valida, <em>ESC</em> cancela. Un nombre vacío deja el anterior.</p></li>
+</ul>
+<p>Una vista dejada en el panel Eval vuelve a él tal como se dejó: con su tablero borrador y, al salir del panel, con la posición que estudiaba. El último tablero borrador del panel Eval también es propio de cada vista.</p>
+<p>Las vistas se guardan con el estado de sesión de la base de datos y se restauran al reabrirla.</p>
+<section id="plusieurs-bibliotheques-ouvertes">
+<span id="groupes-bibliotheques"></span><h3>Varias bibliotecas abiertas<a class="headerlink" href="#plusieurs-bibliotheques-ouvertes" title="Link to this heading"></a></h3>
+<p>Varias bases de datos pueden permanecer abiertas al mismo tiempo. Cada una forma un <strong>grupo</strong> de pestañas: en la barra, un encabezado de color lleva el nombre del archivo, seguido de las vistas de esa biblioteca, cuyo borde superior retoma el mismo color. Solo una biblioteca está activa a la vez: es la que leen y escriben los paneles, la búsqueda, las importaciones y el asistente.</p>
+<p>Con una sola biblioteca abierta, la barra no muestra ningún encabezado: solo el título de la ventana nombra la base. Mientras haya una sola vista en total, la barra tampoco dibuja ninguna pestaña: solo queda el botón <em>+ Nueva vista</em>. La información emergente de un encabezado de grupo da la ruta completa del archivo.</p>
+<ul class="simple">
+<li><p><strong>Abrir una biblioteca en un nuevo grupo</strong>: botón <em>⧉ Otra biblioteca</em> a la derecha de la barra de pestañas (solo <em>⧉</em> en cuanto hay dos grupos abiertos), <em>CTRL-MAYÚS-O</em>, o el comando <code class="docutils literal notranslate"><span class="pre">open_group</span></code> (<code class="docutils literal notranslate"><span class="pre">og</span></code>). La biblioteca activa hasta entonces sigue abierta en su grupo. <em>CTRL-O</em>, en cambio, reemplaza la biblioteca del grupo activo; la ayuda emergente del botón <em>Abrir</em> de la barra de herramientas recuerda ambos atajos.</p></li>
+<li><p><strong>Cambiar de biblioteca</strong>: hacer clic en una pestaña de otro grupo activa su biblioteca y esa vista de una sola vez; hacer clic en el encabezado del grupo lo devuelve a la vista donde se dejó. <em>CTRL-MAYÚS-Re Pág</em> / <em>CTRL-MAYÚS-Av Pág</em> pasan a la biblioteca anterior / siguiente; <em>CTRL-Re Pág</em> / <em>CTRL-Av Pág</em> (o <em>MAYÚS-J</em> / <em>MAYÚS-K</em>) recorren las vistas de todos los grupos de forma consecutiva.</p></li>
+<li><p><strong>Cerrar un grupo</strong>: la cruz de su encabezado cierra la biblioteca y sus vistas. Cerrar el grupo activo muestra su vecino; la barra de estado nombra la biblioteca cerrada y la mostrada.</p></li>
+<li><p><strong>Reordenar</strong>: arrastrar una pestaña la coloca antes o después de otra pestaña del mismo grupo (una línea del color de acento marca el lugar); arrastrar la cabecera de un grupo mueve el grupo entero, con todas sus vistas, antes o después de otro grupo. Una vista pertenece a su biblioteca: soltarla sobre otro grupo se rechaza y no cambia nada. El orden de las vistas es el de los atajos <em>CTRL-1</em> … <em>CTRL-9</em> y se conserva con la sesión; el orden de los grupos vale para la sesión en curso.</p></li>
+</ul>
+<p>El botón <em>+</em> que crea una vista está unido a la derecha de la última pestaña del grupo activo: la nueva vista se une a ese grupo y aparece donde se ha hecho clic. La barra se reparte en dos zonas: a la izquierda los grupos y sus pestañas, a la derecha, alineadas al borde, las herramientas (otra biblioteca, pantalla dividida).</p>
+<p>Pasar de un grupo a otro nunca mueve el tablero: en cuanto hay dos bibliotecas abiertas, el sitio de la barra de información de la posición (bajo las pestañas) queda reservado, vacío cuando el grupo mostrado no tiene nada que decir en ella.</p>
+<p>El encabezado del grupo activo lleva el nombre en blanco sobre su color; los de los demás grupos, el nombre sobre el fondo de la barra, subrayado en la parte superior con su color. Se suceden seis colores: un séptimo grupo retoma el primero. Las vistas se numeran dentro de su biblioteca: una base abierta en un nuevo grupo empieza en «#1», y <em>CTRL-1</em> … <em>CTRL-9</em> apuntan a las vistas del grupo activo. Cuando las pestañas ya no caben en el ancho de la ventana, las pestañas se reducen primero (el nombre acaba en puntos suspensivos, el nombre completo está en la información emergente) hasta un ancho mínimo; más allá, la barra se desplaza (rueda del ratón, o el cambio de vista que trae la pestaña mostrada a la pantalla). Aparecen entonces flechas <em>‹</em> y <em>›</em> en los dos bordes de la fila: un clic desplaza un paso, una pulsación mantenida desplaza de forma continua, y la flecha se atenúa al final de la lista. Un degradado marca el borde donde hay pestañas ocultas. El botón <em>∨</em> de las herramientas, a la derecha, visible a partir de dos vistas, abre el menú <em>Todas las vistas</em>: las vistas de cada biblioteca, con la actual marcada; un clic activa la vista y su grupo.</p>
+<p>El cambio es inmediato: cada grupo conserva en memoria sus vistas, su lista de posiciones, la posición actual, los criterios de búsqueda (incluso mientras se escriben, sin haber lanzado la búsqueda), la lista de matches, los contadores y el desplazamiento de cada lista del panel, y los recupera sin releer la base. Una biblioteca abierta en un nuevo grupo parte de un formulario de búsqueda en blanco: los matches y torneos elegidos en un grupo nunca se aplican en otro. El trabajo en curso también lo acompaña: un borrador de transcripción, una lección, una revisión de Anki, la cola de estudio y la Dirección abierta se encuentran tal como se dejaron. Lo que pudo cambiar durante la ausencia se relee justo después de mostrarse: los contadores siempre, la lista de matches si su número ha cambiado o si una tarea en segundo plano ha escrito en la biblioteca durante la ausencia. Las listas propias de cada base (colecciones, torneos, mazos de Anki, borradores, Duelos, historial de búsqueda, filtros guardados) se releen en la biblioteca mostrada.</p>
+<p>Un mismo archivo no se abre en dos grupos: al reabrirlo se muestra el grupo que ya lo contiene.</p>
+<p>Las tareas en segundo plano siguen ligadas a su biblioteca: una importación de archivos de matches, la carpeta vigilada y el análisis GammonNet por lotes continúan en el grupo donde empezaron cuando se muestra otro, y nunca escriben en la biblioteca mostrada. Su progreso y su informe permanecen en su grupo: mientras no se muestra, su encabezado lleva un indicador, que parpadea mientras la tarea trabaja y queda fijo cuando termina. Al volver al grupo, el indicador desaparece, la barra de estado dice lo que hizo la tarea y se relee la lista de matches. El análisis automático que sigue a una importación se lanza en la biblioteca de la importación. La carpeta vigilada pertenece al grupo donde se inició: los archivos de matches se importan allí en segundo plano, mientras que una base por fusionar o un texto de posición espera a que ese grupo vuelva a mostrarse. Cerrar un grupo detiene sus tareas y su vigilancia.</p>
+<p><strong>Copiar de una biblioteca a otra.</strong> Una fila arrastrada sobre la cabecera de otro grupo se copia allí, en un sentido o en el otro: una partida de la lista de partidas, una colección de la lista de colecciones, una posición de una colección abierta, la posición mostrada (se toma por su contador «n / N» en la barra de estado) o la lección que se está leyendo (por su nombre en la barra de la lección). La cabecera de destino se rodea de un punteado. La copia es la del comando <code class="docutils literal notranslate"><span class="pre">transfer</span></code>: la selección de una exportación, fusionada por la importación nativa, con los análisis, los comentarios y las jugadas realizadas; una colección se lleva sus posiciones, una partida su transcripción. Lo que la biblioteca de llegada ya contiene no se vuelve a copiar: copiar de A a B y luego de B a A no crea ningún duplicado, y nada allí dice de dónde viene la copia. La copia se ejecuta en segundo plano, ligada al grupo de llegada: su cabecera lleva la pastilla y, al volver, la barra de estado dice cuántas posiciones y partidas son nuevas y cuántas ya estaban.</p>
+<p>El <strong>lote</strong> reúne filas de varias bases para copiarlas de una vez; vive en el panel Otras bases (véase <a class="reference internal" href="#vue-ailleurs"><span class="std std-ref">Comparar e intercambiar: el panel Otras bases</span></a>).</p>
+<p>El <strong>candado</strong> de una cabecera, <em>Proteger de copias</em>, protege su base: ya no se copia nada en ella, ni arrastrando, ni desde el panel Otras bases, ni por el lote o el menú contextual, y la barra de estado lo dice. La protección no afecta ni a las importaciones ni a las modificaciones hechas en la base; un segundo clic la levanta. Se recuerda por archivo de una sesión a otra, en las preferencias de blunderDB y no en la base: al reabrirla se protege de nuevo.</p>
+<p>El cambio de grupo sigue rechazado, con el clic como con el teclado, con un mensaje en la barra de estado que nombra la causa y dice dónde detenerla, cuando lo que se ejecuta sigue a la pantalla: un rollout, cuyo resultado se muestra sobre la posición del tablero (<code class="docutils literal notranslate"><span class="pre">rollout</span> <span class="pre">stop</span></code>); la visualización de un torneo, que sirve la biblioteca mostrada en la red del club (se detiene en la Dirección); un Duelo en curso, que ocupa el tablero y sus vistas; una sesión de entrenamiento, cuyo cronómetro y registro no siguen a ningún grupo; y, por último, mientras dura, la importación de archivos que solo la interfaz sabe leer (textos de posición, importados uno a uno) o la fusión de una base. Al cerrar blunderDB solo se guarda la sesión de la biblioteca activa, y no la lista de grupos: en el siguiente arranque, blunderDB reabre la última base activa.</p>
+</section>
+<section id="comparer-et-echanger-le-panneau-autres-bases">
+<span id="vue-ailleurs"></span><h3>Comparar e intercambiar: el panel Otras bases<a class="headerlink" href="#comparer-et-echanger-le-panneau-autres-bases" title="Link to this heading"></a></h3>
+<p>El panel <strong>Otras bases</strong> (<em>CTRL-MAYÚS-A</em>) es el puesto de intercambio entre las bases abiertas en grupos: dice, para la posición mostrada, lo que saben de ella las otras bases, y permite copiarla de una a otra. La posición se encuentra allí por su identidad de tablero (su hash), no por su número: un mismo número designa dos posiciones distintas en dos bases. Con una sola base abierta, el panel lo explica y propone <em>Abrir una base para intercambiar</em> (<em>CTRL-MAYÚS-O</em>); sin posición mostrada, lo dice y no lee nada.</p>
+<p>Cada otra base tiene su bloque, bordeado con el color de su grupo. Su cabecera dice si contiene la posición: <em>presente</em>, <em>ausente</em> o <em>presente con otro análisis</em> cuando su mejor jugada no es la de la base activa. Dos botones intercambian la posición: <em>Copiar a …</em> la copia de la base activa en esta, <em>Recuperar de …</em> la copia de esta en la base activa, con su análisis, sus comentarios y sus jugadas. Una copia nunca sobrescribe el análisis que la base de llegada ya tiene: el bloque lo escribe, <em>Análisis conservado allí</em>, antes y después de la copia. Una posición aún en borrador debe guardarse primero. Siguen bloques titulados, plegables:</p>
+<ul class="simple">
+<li><p><strong>su análisis</strong>: la mejor jugada, o la mejor acción de cubo, y el motor que la encontró. Un análisis valorado con una tabla de equidad de partida distinta de la de la biblioteca activa lleva la mención <em>otra MET</em>;</p></li>
+<li><p><strong>sus comentarios</strong>, cada uno con su autor, o su firmante y el estado de la firma, como en el <a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">panel de comentarios</span></a>;</p></li>
+<li><p><strong>las partidas en las que se jugó la posición</strong>: jugadores, torneo, fecha, número de jugada, jugada o decisión realizada y su coste. El veredicto (<em>buena</em>, <em>error</em>, <em>pifia</em>) se emite con los umbrales de la biblioteca <strong>activa</strong>, no con los de la otra; un coste calculado con otra MET no se compara y queda marcado como <em>otra MET</em>. A partir de 50 partidas, se listan las 50 importadas más recientemente y se indica el total;</p></li>
+<li><p><strong>sus posiciones cercanas</strong>, las cinco más próximas, en miniaturas con su distancia; este bloque está plegado cuando la base contiene la posición, desplegado en caso contrario.</p></li>
+</ul>
+<p><em>Abrir allí</em>, un clic en una partida o en una miniatura activa el grupo de esa base y muestra en él la posición. Leer no escribe nada en ninguna base. El pie del panel recuerda los umbrales del juicio, y <em>⟳ Releer las bases</em> relee las otras bases.</p>
+<p><strong>La selección.</strong> Cuando un partido, un torneo, una colección o una lección está seleccionado en su panel, un bloque al principio del panel lo nombra y dice, para cada otra base, si ya lo contiene, con lo que contiene allí (partidas, partidos, posiciones o pasos), y propone los mismos <em>Copiar a …</em> y <em>Recuperar de …</em>. El partido se reconoce por su huella, aunque se haya importado de otro formato; el torneo, la colección y la lección por su nombre, como una copia los fusiona.</p>
+<p><strong>Deshacer.</strong> Cada copia que ha añadido algo a la base de llegada, posición, partido, torneo, colección o lote, por el panel, el menú contextual, un arrastre o la pantalla dividida, entra en el historial de copias de la sesión: la barra de estado propone <em>Deshacer la copia (n)</em>, que retoma la más reciente, luego la anterior, hasta el cierre de blunderDB. Deshacer solo retira lo que la copia ha creado: una posición, un partido o un torneo que la base ya tenía se queda, y una colección del mismo nombre solo pierde las posiciones que la copia le ha añadido. Una anulación se rechaza, y lo dice, si lo que la copia ha creado ha cambiado desde entonces (un comentario, una colección, un partido guardado en el torneo) o si el grupo ha abierto otra base. Una copia que ha creado una lección no se deshace: retirar sus posiciones cortaría sus pasos.</p>
+<p><strong>El lote</strong>, al pie del panel, reúne filas de varias bases para copiarlas de una vez. <em>MAYÚS-B</em> pone en él la posición mostrada, o la retira, como <em>b</em> para la Pila; el grupo <em>Enviar</em> del menú contextual le añade una posición, una partida o un torneo, y una fila arrastrada sobre el lote también entra. Cada fila se retira con un clic en ×. Se elige la <em>Base de llegada</em>, luego <em>Copiar el lote a …</em>; el título del lote, arrastrado sobre la cabecera de un grupo, también lo copia allí. Un torneo sale con todas sus partidas; una partida copiada sola solo lleva la ficha de su torneo. El lote vive en memoria, nunca en una base: cerrar un grupo retira sus filas, y desaparece al cerrar blunderDB.</p>
+<p>El servidor no tiene <em>Copiar a</em>: un tenant no escribe en otro; la ruta <code class="docutils literal notranslate"><span class="pre">across.transferPull</span></code> hace allí la copia de <em>Recuperar de</em>, y <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">transfer</span></code> la hace en línea de comandos.</p>
+<p><strong>El intercambio en el sitio.</strong> La tecla <em>x</em> muestra, en lugar del tablero, en el mismo lugar y con el mismo tamaño, la posición de la otra biblioteca, bajo una banda de su color que recuerda su nombre, su mejor jugada y el número de sus comentarios. Mantenida, la tecla devuelve el tablero al soltarla; pulsada brevemente, el intercambio permanece mostrado hasta la siguiente pulsación. Cambiar de posición o de ventana también devuelve el tablero. El grupo activo, la vista y la lista no cambian. La posición mostrada es, por defecto, la misma posición en la primera otra biblioteca que la contiene; el botón <em>Mostrar con x</em> bajo una miniatura del panel Otras bases elige en cambio esa vecina, hasta <em>Dejar de mostrar con x</em> o un cambio de grupo.</p>
+<p><strong>La pantalla dividida.</strong> En una pantalla grande, el botón ◫ de la barra de pestañas (<em>CTRL-MAYÚS-X</em>) corta en dos solo la zona del tablero. Cada panel lleva una biblioteca abierta y conserva su lado: el grupo activo a la izquierda al abrirla, la primera otra biblioteca a la derecha (la misma, si solo hay una; la cabecera dice entonces <em>misma biblioteca</em>). El panel activo está vivo, rodeado del color de su grupo. El otro está congelado y atenuado: el tablero de su biblioteca donde se dejó, el análisis de la posición y su comentario; nada de lo que muestra se escribe en ninguna parte. Cada panel muestra su propio contador <em>n / N</em>.</p>
+<p>Un clic en el panel congelado, o <em>CTRL-ALT-←</em> / <em>CTRL-ALT-→</em>, activa su biblioteca; el contorno pasa al otro lado y nada más se mueve. Con una sola biblioteca, las dos vistas intercambian sus posiciones, salvo en modo match: un match reproducido no tiene lista donde encontrar la posición, y la barra de estado lo dice. Barra de herramientas, pestañas, paneles y barra de estado quedan en un solo ejemplar y hablan siempre de la biblioteca activa: su pastilla y su nombre preceden las pestañas de los paneles y el mensaje de la barra de estado, y el título de la ventana la nombra. El teclado, <em>CTRL-S</em>, las importaciones y los comandos van al panel activo. Durante un Duelo, una sesión de entrenamiento o una importación, el cambio se rechaza: el panel pulsado tiembla y la barra de estado dice por qué. Mientras un cambio de biblioteca no ha terminado, un segundo se ignora, y <em>CTRL-S</em>, la actualización y la supresión de una posición se rechazan.</p>
+<p>Arrastrar el contador de un panel, o el tablero del panel congelado, sobre el otro panel copia la posición en la biblioteca de ese panel, con su análisis y su comentario, salvo si su base está protegida de copias; la copia entra en el historial que <em>Deshacer</em> retoma. A partir de 1600 píxeles de ancho, el panel de pestañas queda al lado de los tableros; entre 1280 y 1600, pasa debajo; por debajo de 1280, la pantalla dividida se rechaza y se propone el intercambio in situ (<em>x</em>), y se cierra si la ventana se vuelve demasiado estrecha. La pantalla dividida y la biblioteca de cada lado se recuperan en la sesión siguiente.</p>
+</section>
+</section>
+<section id="configuration">
+<span id="id1"></span><h2>Configuración<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>El botón de configuración (icono en forma de rueda dentada) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB. Está organizada en diez pestañas:</p>
+<ul class="simple">
+<li><p><strong>Interfaz</strong> — tema, idioma, escala de visualización, posición del panel, paso de PageUp / PageDown (10, 50, 100, 500 o 1 000 posiciones, o el 10 % de la lista), registros, comprobación de actualizaciones, su nombre y posiciones vecinas;</p></li>
+<li><p><strong>Colores del tablero</strong> — los colores del tablero;</p></li>
+<li><p><strong>Biblioteca</strong> — lo que pertenece a la base de datos abierta: los umbrales de error y de blunder, descritos más abajo;</p></li>
+<li><p><strong>Mantenimiento</strong> — el estado de salud de la base de datos, una línea por operación, descrito más abajo;</p></li>
+<li><p><strong>Corpus</strong> — los duplicados al importar, los alias de jugadores y de eventos y la búsqueda de duplicados probables (véase la importación de partidas);</p></li>
+<li><p><strong>Bearoff</strong> — las tablas de bearoff utilizadas por el panel Eval;</p></li>
+<li><p><strong>gammonNet</strong> — los ajustes del evaluador integrado, descritos más abajo;</p></li>
+<li><p><strong>Carpeta vigilada</strong> — la importación automática de los partidos que llegan a una carpeta, descrita más abajo;</p></li>
+<li><p><strong>Asistente y MCP</strong> — el servidor MCP local y el asistente interno, descritos a continuación;</p></li>
+<li><p><strong>Identidad del emisor</strong> — la clave que firma tus marcas de origen, descrita en la sección <a class="reference internal" href="manuel_partage.html#diffusion-controlee"><span class="std std-ref">Distribuir una base de datos: origen y contraseña</span></a>.</p></li>
+</ul>
+<p>La pestaña <em>Interfaz</em> empieza con un <strong>tema</strong>: <em>seguir el sistema</em>, <em>claro</em>, <em>oscuro</em>, <em>contraste alto</em> o <em>imprimible</em>. El tema ajusta los colores de la interfaz y <strong>propone una paleta de tablero</strong> — una interfaz oscura alrededor de un tablero claro no es un tema oscuro, es la mitad de uno, ya que el tablero ocupa la mayor parte de la ventana.</p>
+<p>Usted conserva la última palabra, y el mecanismo lo garantiza en vez de prometerlo: la pestaña <em>Colores</em> sigue ajustando el tablero directamente, y un color elegido después del tema es suyo. Al arrancar solo se aplican los tokens de la interfaz, nunca la paleta del tablero — la que usted ha ajustado ya está cargada, y reescribirla en cada lanzamiento borraría su trabajo una sesión cada vez. Véase <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md">ADR-0038</a>.</p>
+<p><em>Seguir el sistema</em> es el valor por defecto: obedece a la preferencia claro/oscuro del escritorio, incluso cuando cambia a mitad de sesión. Una herramienta no impone su claro o su oscuro a un escritorio que ya ha decidido.</p>
+<p>La pestaña <em>Interfaz</em> permite también elegir el idioma entre inglés, francés, alemán, italiano, español, finés, japonés, griego y ruso. Toda la interfaz (barra de herramientas, paneles, mensajes, ayuda) se traduce al idioma seleccionado. La elección de idioma se guarda y se conserva de una sesión a otra.</p>
+<p>La pestaña <em>Biblioteca</em> reúne lo que pertenece al archivo abierto y no a la máquina. Está vacía mientras no haya ninguna base de datos abierta, y lo dice.</p>
+<p>Lleva en primer lugar los dos <strong>umbrales</strong> que deciden el vocabulario de toda la aplicación: una decisión es un <strong>error</strong> en cuanto su coste alcanza el umbral de error, y ese error es un <strong>blunder</strong> en cuanto alcanza el umbral de blunder. Todo blunder es un error, así que el primer umbral no puede superar al segundo, y blunderDB rechaza el par invertido. Los valores se introducen en equidad — «0,080» — la unidad de todas las tablas; la línea de comandos, por su parte, habla en milipuntos, de modo que el umbral 0,080 se escribe <code class="docutils literal notranslate"><span class="pre">E&gt;80</span></code> en una búsqueda.</p>
+<p>Estos umbrales siguen al archivo, no al ordenador: la misma base de datos cuenta los mismos blunders dondequiera que se abra, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> los muestra, y <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">edit</span> <span class="pre">--error-threshold</span></code> / <code class="docutils literal notranslate"><span class="pre">--blunder-threshold</span></code> los ajusta. No viajan en una exportación: un umbral es un hábito de lectura, no un hecho de las posiciones.</p>
+<p>Se proponen tres <strong>preajustes</strong> con un solo clic, cada uno con el nombre del programa que trazó esa línea: blunderDB (0,050 / 0,100), XG (0,020 / 0,080) y gnubg (0,040 / 0,080). Por defecto, una biblioteca lee 0,050 y 0,100.</p>
+<p>Lo que cambian, en pantalla: el número de blunders del contador de la barra de estado y la búsqueda que prepara su enlace, las columnas «Errores» y «Blunders» de las estadísticas y de la tabla de jugadores, las marcas de las jugadas en la ficha de un match (<a class="reference internal" href="manuel_matchs.html#panneau-matchs"><span class="std std-ref">Panel de Partidas</span></a>), y la lista de posiciones que blunderDB propone revisar después de una importación.</p>
+<p>La línea <strong>Espacio recuperable</strong> de la pestaña <em>Mantenimiento</em> incluye el botón <strong>Compactar</strong>, que recupera el espacio en disco dejado por las eliminaciones (partidas, torneos, purgas): la base de datos nunca se reduce sola al eliminar datos, hay que pedir esta compactación explícitamente. La operación puede tardar en una base grande. La copia compactada se escribe junto al archivo y luego lo reemplaza: se necesita, temporalmente, aproximadamente el tamaño de la base de datos en espacio libre en su volumen, y no en memoria RAM. Si otro programa tiene la base abierta (una segunda instancia en solo lectura, por ejemplo), el archivo no se reemplaza: la base se compacta en el lugar, lo que requiere aproximadamente el doble de su tamaño en espacio libre, y un archivo temporal va a la carpeta temporal del sistema, o a la que designa la variable de entorno <code class="docutils literal notranslate"><span class="pre">SQLITE_TMPDIR</span></code>: con un <code class="docutils literal notranslate"><span class="pre">/tmp</span></code> pequeño, apúntela al volumen de la base. blunderDB se niega a iniciar la operación, con un mensaje que dice qué falta (espacio en disco, o menos de 512 MB de memoria disponible), en lugar de arriesgar una compactación interrumpida. Se pide una confirmación antes de lanzar la operación. El resultado — el espacio ganado, en megabytes — se muestra después en la barra de estado. La misma operación está disponible en línea de comandos mediante <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>).</p>
+<p>Tras una compactación en el sitio, blunderDB comprueba que el archivo se ha reducido de verdad. En Windows, el sistema se niega a acortar un archivo que otro programa mantiene abierto de ciertas maneras: la compactación termina entonces con un mensaje que lo indica — cierre el otro programa y vuelva a lanzarla — en lugar de anunciar una ganancia que no se ha producido.</p>
+<p>El botón <strong>Abrir la carpeta de registros</strong>, en la pestaña <em>Interfaz</em>, abre la carpeta que contiene el registro de la aplicación — útil para adjuntar detalles a un informe de error, sobre todo cuando blunderDB se ha iniciado desde un acceso directo o un doble clic, sin terminal asociada que muestre nada.</p>
+<p>La casilla <strong>Buscar actualizaciones al iniciar</strong>, de la misma pestaña, desactivada por defecto, consulta una vez por arranque la página de últimas versiones del repositorio de GitHub y muestra en la barra de estado un mensaje si hay una versión más reciente — nunca una ventana que impida trabajar. Esta comprobación queda automáticamente desactivada en una instalación hecha mediante un gestor de paquetes (Flatpak, Homebrew, un paquete de la distribución…): entonces es ese canal el que gestiona las actualizaciones, no blunderDB.</p>
+<p>Dos ajustes de la pestaña <em>Interfaz</em> gobiernan la clasificación de las <strong>posiciones vecinas</strong> (token <code class="docutils literal notranslate"><span class="pre">like</span></code>, véase <a class="reference internal" href="manuel_bibliotheque.html#panneau-recherche"><span class="std std-ref">Panel de Búsqueda</span></a>): el número de vecinas devueltas, y la distancia máxima más allá de la cual una posición deja de serlo. Esta distancia vale cero por defecto, es decir, ningún límite: la escala depende de la fase de la partida, y un valor elegido aquí se leería como una medida. El token <code class="docutils literal notranslate"><span class="pre">like&lt;12</span></code> impone la suya para una búsqueda, sin tocar el ajuste.</p>
+<p>La pestaña <em>Colores del tablero</em> permite personalizar los colores del tablero. Cada elemento dispone de su propio selector de color: el fondo, el borde, las flechas claras y oscuras, las fichas del jugador 1 y del jugador 2, los dados, los puntos de los dados y el cubo de dobles. El botón <em>Restablecer</em> devuelve todos los colores predeterminados. Al igual que el idioma, los colores elegidos se conservan de una sesión a otra.</p>
+<p>La pestaña <em>Bearoff</em> gestiona las tablas de bearoff del panel Eval (véase <a class="reference internal" href="manuel_eval.html#panneau-epc"><span class="std std-ref">Panel Eval</span></a>). <strong>No están ni incrustadas en el ejecutable ni se descargan</strong>: blunderDB las calcula en la máquina que las usa, y el resultado es idéntico byte a byte a lo que produce gnubg — la huella SHA-256 se verifica antes de aceptar una tabla.</p>
+<p>Las dos tablas corrientes (TS-06-06 para el veredicto de cubo, OS-06 para el EPC) se calculan en el primer arranque, en segundo plano y sin preguntar: unos seis segundos en un núcleo, durante los cuales la aplicación se usa normalmente. El panel Eval solo lo menciona si se pone allí una posición que necesita una tabla que aún no está lista.</p>
+<p>La pestaña muestra el dominio activo y su origen, el estado de la tabla de un lado que lee el EPC, la carpeta donde vive todo esto, y la lista de las tablas presentes con su tamaño y su veredicto. Cada fila se elimina individualmente, tras confirmación.</p>
+<p><strong>Verificada o sin verificar.</strong> Una tabla <em>verificada</em> tiene exactamente los bytes que gnubg produce para su dominio: su huella SHA-256 figura en blunderDB y se ha vuelto a encontrar. Las huellas registradas para las tablas one-sided (OS-06 a OS-10) son las que produce la herramienta <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> de GNUbg 1.08. Una tabla <em>sin verificar</em> está bien formada pero su dominio no tiene huella registrada — no se le reprocha nada, simplemente nadie la ha comparado con la referencia. Una tabla <em>corrupta</em> se contradice a sí misma y nunca se lee; se recalcula.</p>
+<p><strong>Calcular una tabla más amplia.</strong> El dominio se elige en una lista de dos familias, junto con el número de núcleos a dedicarle (por defecto todos menos uno, para que la máquina siga siendo utilizable):</p>
+<ul class="simple">
+<li><p><strong>cubo exacto (dos lados)</strong>, de TS-06-06 a TS-06-15: amplía el dominio donde la probabilidad de victoria y el veredicto de cubo se leen en lugar de estimarse;</p></li>
+<li><p><strong>EPC fuera del cuadro (un lado)</strong>, de OS-06 a OS-10: amplía la distancia a la que una ficha puede estar sin que el bloque EPC se calle. Este barrido solo lee posiciones más pequeñas que la que calcula, así que es secuencial por construcción y el número de núcleos no le sirve de nada — el selector lo dice atenuándose.</p></li>
+</ul>
+<p>Antes de lanzar nada, la pestaña indica tres cifras para el dominio elegido: el tamaño en disco, la memoria necesaria durante el cálculo y el tiempo que debería tardar <em>en esta máquina</em>. Este último empieza como estimación y se vuelve medida: cada cálculo suficientemente amplio registra su propia velocidad y la conserva. Un dominio que la memoria disponible no permite se ofrece atenuado, con la razón — «harían falta 24 GB y quedan 12» es una respuesta, una fila ausente no lo sería.</p>
+<p>Como orden de magnitud, en una máquina de dieciséis hilos: TS-06-09 pesa 191 MB y tarda una decena de segundos, TS-06-11 pesa 1,2 GB y unos minutos, TS-06-13 supera lo que la mayoría de las máquinas pueden mantener en memoria. Del lado de un lado, en un núcleo: OS-07 pesa 4,9 MB y tarda 17 s, OS-08 15 MB y 1 min 20, OS-10 117 MB y media hora.</p>
+<p><strong>Pausa y reanudación.</strong> Durante el cálculo, el progreso muestra el tiempo restante <em>medido</em> y dos botones distintos: <em>Pausa</em> y <em>Cancelar</em>. La pausa escribe el estado del cálculo junto a la tabla; relanzarlo continúa donde se detuvo en lugar de empezar de nuevo. Cancelar no guarda nada. Cerrar la ventana de configuración no interrumpe nada — el cálculo continúa en segundo plano.</p>
+<p>Un cálculo en pausa se reencuentra en el siguiente arranque, con su nombre y su cifra («TS-06-09 interrumpida al 43 %»), con <em>Reanudar</em> y <em>Eliminar</em>. Nada se reinicia solo: es el usuario quien pidió la parada.</p>
+<p>La pestaña permite por último apuntar a un archivo <code class="docutils literal notranslate"><span class="pre">.bd</span></code> de dos lados externo, por ejemplo una base producida por el propio gnubg: gana la tabla con el dominio más amplio.</p>
+<p id="onglet-maintenance">La pestaña <strong>Mantenimiento</strong> muestra el estado de salud de la base: una línea por operación, con su recuento, su última ejecución (fecha y resultado: terminada, cancelada o fallida) y su acción. Solo el cálculo de las partidas sin estadísticas se lanza solo, al abrir.</p>
+<ul class="simple">
+<li><p><strong>Posiciones sin análisis</strong> — las posiciones que no tienen ningún análisis; la acción es el análisis gammonNet descrito más abajo. Las posiciones que gammonNet se niega a evaluar (una danza, un marcador fuera de la tabla de partida) permanecen en este recuento, que por tanto no llega necesariamente a cero.</p></li>
+<li><p><strong>Análisis gammonNet obsoletos</strong> — descritos más abajo.</p></li>
+<li><p><strong>Partidas sin estadísticas</strong> — las partidas cuyas estadísticas aún no están calculadas; la acción las calcula todas. Una base abierta en escritura que las tiene las calcula por sí misma en segundo plano, por lotes: la barra de estado muestra el progreso de esta línea y su botón de cancelación, los distintivos de los torneos y la pestaña Jugadores del panel Estadísticas esperan al final del cálculo, y el resto de la aplicación sigue siendo utilizable. Abrir otra base lo detiene. En solo lectura, o en línea de comandos, la primera lectura de las estadísticas las calcula, lo que puede ser largo en una base grande: el panel Estadísticas muestra entonces ese número, que abre esta pestaña.</p></li>
+<li><p><strong>Columnas de análisis</strong> — las columnas que consultan la búsqueda y las estadísticas son una proyección de los análisis almacenados, que permanecen intactos: la acción las recalcula sin reimportar nada.</p></li>
+<li><p><strong>Errores de los movimientos jugados</strong> — puntúa los movimientos jugados que aún no tienen error.</p></li>
+<li><p><strong>Análisis en formato antiguo</strong> — reescribe en formato binario los análisis que una versión anterior almacenaba en JSON.</p></li>
+<li><p><strong>Papelera</strong> — el número de entradas de la papelera, que la abre.</p></li>
+<li><p><strong>Espacio recuperable</strong> — el espacio libre del archivo, que la compactación descrita más arriba devuelve al disco.</p></li>
+</ul>
+<p>Un recuento costoso (lee una tabla entera) espera al botón <strong>Contar</strong>. Un recuento de posiciones abre esas posiciones en la lista; el de las partidas sin estadísticas abre esas partidas en el panel de partidas. Una operación se ejecuta en segundo plano: su progreso y un botón de cancelación se muestran en la barra de estado, y solo se ejecuta a la vez una operación que escribe en la base de datos — un análisis gammonNet, un rollout u otra operación de mantenimiento en curso hace rechazar la siguiente, con el nombre de la que ocupa la base. En una base abierta en solo lectura, las acciones están desactivadas. Las mismas operaciones existen en línea de comandos (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">maintenance</span></code>).</p>
+<p>La pestaña <strong>gammonNet</strong> ajusta el evaluador integrado (véase <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md">ADR-0011</a>). En ella se regulan dos profundidades de búsqueda, con nombre propio y guardadas por separado — bajar una nunca modifica la otra:</p>
+<ul class="simple">
+<li><p><strong>Profundidad de visualización</strong> — la comodidad interactiva durante la edición del tablero; nunca se escribe en la base.</p></li>
+<li><p><strong>Profundidad de análisis</strong> — lo que el lote de análisis posterior a la importación escribe en el Análisis de una posición.</p></li>
+</ul>
+<p>Ambas valen por defecto <strong>2-ply</strong>, la configuración canónica. El menú marca con un ⚠ las profundidades 3-ply y 4-ply, cuyo coste por posición supera con mucho el de 2-ply. La pestaña ofrece también la <strong>poda</strong> (por defecto <code class="docutils literal notranslate"><span class="pre">k=12</span></code>) y el <strong>número de jugadas candidatas mostradas</strong> (por defecto 10), así como una casilla <strong>analizar automáticamente tras la importación</strong> que, una vez activada, comprueba después de cada importación si quedan posiciones <strong>sin ningún análisis</strong> (ni gammonNet, ni XG, ni GNUbg, ni BGBlitz — la regla es « una evaluación solo rellena un hueco », nunca un reemplazo) y, en su caso, lanza en segundo plano un análisis gammonNet a la profundidad de análisis configurada. La línea <strong>Posiciones sin análisis</strong> de la pestaña <em>Mantenimiento</em> relanza manualmente el mismo repaso, útil para una biblioteca constituida antes de que existiera esta función.</p>
+<p>Una aceptación o un rechazo es evaluado por gammonNet sobre la decisión del que dobla, antes del doble. Un veredicto gammonNet escrito sobre tal respuesta por una versión anterior de blunderDB juzgaba el redoble del receptor: se elimina al abrir la biblioteca, o al importar una base que lo contiene. La aceptación o el rechazo vuelve a ser una posición sin análisis, ausente de las estadísticas hasta que la línea <em>Posiciones sin análisis</em> de la pestaña <em>Mantenimiento</em> (o el análisis automático tras la importación) la reevalúe.</p>
+<p>La línea <strong>Análisis gammonNet obsoletos</strong> de la pestaña <em>Mantenimiento</em> cubre el caso inverso: una posición ya analizada por gammonNet, pero cuyo análisis almacenado fue escrito por una versión de motor más antigua que la que se ejecuta, o a una profundidad distinta de la profundidad de análisis configurada más arriba, se señala allí como obsoleta y se reevalúa. Una posición que además lleva un análisis XG, GNUbg o BGBlitz nunca es tocada por este lote, sea cual sea su contenido gammonNet — la protección de <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a> sigue siendo incondicional. El recuento de las posiciones obsoletas lee cada análisis gammonNet de la base: espera al botón <strong>Contar</strong>. El lote recalcula su propia lista en el momento de empezar.</p>
+<p>Ambos lotes son <strong>acotados, visibles y cancelables, nunca un demonio silencioso</strong>: su profundidad, su progreso (<code class="docutils literal notranslate"><span class="pre">posiciones</span> <span class="pre">analizadas</span> <span class="pre">/</span> <span class="pre">total</span></code>, desde <code class="docutils literal notranslate"><span class="pre">0</span></code> al iniciar) y un botón de cancelación aparecen en la barra de estado durante toda su duración, y desaparecen una vez terminados en favor de un mensaje que resume el resultado — cuántas posiciones fueron <strong>analizadas</strong>, cuántas fueron <strong>rechazadas</strong> (una posición que gammonNet declina evaluar, como una puntuación de partida fuera del alcance de su tabla, lo cual nunca es un fallo) y cuántas <strong>fallaron</strong> (reintentadas, sin cambios, en la siguiente ejecución). Cerrar la aplicación durante uno u otro no pierde nada: cada posición analizada se escribe sobre la marcha, y la siguiente ejecución retoma exactamente donde el análisis se había detenido, sin ningún registro que llevar. La cancelación, como el cierre, interrumpe también la posición que se está calculando, que queda sin análisis.</p>
+<p>Solo un trabajo escribe en la biblioteca a la vez: un lote gammonNet, un rollout almacenado o una operación de mantenimiento. Un lote o una operación lanzados desde la pestaña <em>Mantenimiento</em> se rechazan mientras haya otro trabajo en curso, y la barra de estado nombra ese trabajo; el lote que lanza una importación, una transcripción o un duelo espera, en cambio, a que termine, y la barra de estado lo anuncia como « en espera » hasta que arranca.</p>
+<p id="rollout-reglage">La misma pestaña contiene el <strong>ajuste de los rollouts</strong> lanzados desde el panel Análisis (véase <a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Rollouts</span></a>), conservado de una sesión a otra: <strong>Rápido</strong> (216 partidas, truncadas a 7 medias jugadas), <strong>Estándar</strong> (1296 partidas, truncadas a 11 medias jugadas) o <strong>Libre</strong>, donde se pueden editar todos los parámetros — truncamiento, partidas mínimas y máximas (múltiplos de 36), límite de JSD, profundidad (ply), número de candidatas, semilla y número de procesos.</p>
+<p><strong>Tabla de equidad de partido de la base.</strong> En la parte inferior de la pestaña, la lista <strong>Tabla de equidad de partido (MET) de la base</strong> elige la tabla con la que gammonNet valora los marcadores de partido: Kazaross-XG2, integrada y por defecto, o una tabla importada de un archivo <code class="docutils literal notranslate"><span class="pre">.xml</span></code> de GNUbg mediante el botón <strong>Importar una MET .xml…</strong>. La elección pertenece a la base, no a la aplicación: abrir otra base es recuperar su tabla. Solo se leen las tablas explícitas (no las tablas paramétricas <code class="docutils literal notranslate"><span class="pre">zadeh</span></code> o <code class="docutils literal notranslate"><span class="pre">mec</span></code>); más allá de la longitud de una tabla importada, la tabla integrada toma el relevo. Una tabla se identifica por sus valores, no por su nombre: importar el <code class="docutils literal notranslate"><span class="pre">Kazaross-XG2.xml</span></code> de GNUbg no añade nada, es la tabla integrada. Cada análisis calculado por gammonNet registra la tabla con la que se calculó; los análisis importados (XG, GNUbg, BGBlitz) se consideran calculados con Kazaross-XG2. Un análisis a un marcador de partido calculado con una tabla distinta de la actual se marca como <strong>MET distinta</strong> en el panel de análisis y se excluye de las estadísticas (promedios de error, PR, clasificaciones, cara a cara); un análisis en money game nunca lo es. Cambiar de tabla no reescribe ningún análisis: solo cambia lo que retienen las comparaciones.</p>
+<p>La evaluación en directo del panel y la matriz del cubo se valoran con la tabla de la base, como los análisis que guarda. Una tabla viaja con los análisis que la citan: la exportación de una base se la lleva, y la importación de una base la añade a la base que la recibe, sin duplicados (una tabla ya presente se reconoce por sus valores) y sin hacerla actual. Un análisis de gammonNet sustituido por el de otro motor (XG, GNUbg) vuelve a considerarse calculado con Kazaross-XG2.</p>
+<p><strong>Un partido importado sin análisis obtiene así un PR.</strong> Es el caso de un partido jugado en línea, o de un fichero Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, que nadie ha pasado por XG: blunderDB conocía sus posiciones y las jugadas realizadas, pero ningún análisis decía cuánto valían. Una vez pasado el lote, la jugada realmente hecha se compara con la clasificación de gammonNet y la diferencia alimenta el PR, la tasa de error, las peores decisiones y todos los demás indicadores, exactamente como en un partido analizado por XG. La comparación no inventa nada: la jugada realizada viene de la tabla de jugadas del partido, escrita en la importación, llevara el fichero un análisis o no.</p>
+<p>Una base analizada con una versión anterior a esta no necesita volver a evaluarse: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> recalcula las columnas a partir de los análisis y las jugadas ya almacenados y devuelve su PR a esos partidos (véase <a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a>).</p>
+<p>Una reserva honesta: una posición se identifica por su estructura, de modo que una posición encontrada dos veces — bien jugada una vez, mal la otra — solo lleva una diferencia, la de su primera aparición registrada. No es propio de este cálculo: una biblioteca XG tiene exactamente la misma forma.</p>
+<section id="dossier-surveille">
+<span id="id2"></span><h3>Carpeta vigilada<a class="headerlink" href="#dossier-surveille" title="Link to this heading"></a></h3>
+<p>La pestaña <strong>Carpeta vigilada</strong> pide a blunderDB que mire una carpeta mientras se ejecuta e importe cada fichero de partido que <strong>aparezca</strong> en ella. Jugar una sesión en eXtreme Gammon, volver a blunderDB, y encontrar los partidos ya ahí.</p>
+<p>Nada se adivina. Mientras no se designe una carpeta no hay vigilancia: blunderDB no empieza a leer un directorio porque haya supuesto dónde viven sus partidos. El botón <strong>Proponer</strong> mira los lugares habituales de esta máquina y solo propone uno si existe de verdad; si no, lo dice, y designar la carpeta le corresponde a usted.</p>
+<p>Tres puntos merecen conocerse antes de marcar la casilla:</p>
+<ul class="simple">
+<li><p><strong>Solo se importan los ficheros que aparecen.</strong> Lo que la carpeta ya contiene cuando arranca la vigilancia se registra como conocido y se deja en paz: apuntar una vigilancia a cuatro años de partidos no debe importarlos todos. Para importar lo que hay, use la importación de carpeta, que existe para eso — y ambas se componen muy bien, la importación primero, la vigilancia después.</p></li>
+<li><p><strong>Un fichero se importa solo cuando su tamaño se ha estabilizado.</strong> Un partido que otro programa está escribiendo crece de un vistazo a otro; importarlo a medio escribir daría un error de análisis sobre el que nadie puede actuar. blunderDB espera, pues, a ver dos veces el mismo fichero sin cambios.</p></li>
+<li><p><strong>La importación es silenciosa.</strong> Estaba estudiando una posición cuando llegaron sus partidas: quitarle la pantalla sería el peor momento. El modo, la búsqueda activa, la pestaña y la posición mostrada no se mueven; la lista de posiciones no se recarga y muestra las partidas nuevas en la próxima recarga. La importación se hace sin ventana, y la barra de estado muestra un banner con el recuento de partidas importadas, omitidas (duplicados) y fallidas, con un botón que abre el informe completo si lo desea. Todo lo demás es idéntico a una importación manual: los mismos duplicados detectados, el mismo lote de importación, el mismo análisis automático si está activado.</p></li>
+</ul>
+<p>El intervalo por defecto es de diez segundos; el mínimo es de dos. La carpeta no se recorre recursivamente: una carpeta vigilada es el sitio donde una herramienta deposita sus partidos, no un árbol que explorar. Un recurso de red desmontado no detiene la vigilancia ni hace que su contenido pase por nuevo a su regreso.</p>
+<p>La misma vigilancia existe en línea de comandos, con <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;carpeta&gt;</span> <span class="pre">--watch</span></code> (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>): es la forma que puede usar un servidor, una tarea programada o un script.</p>
+</section>
+<section id="synchroniser-deux-machines">
+<span id="id3"></span><h3>Sincronizar dos máquinas<a class="headerlink" href="#synchroniser-deux-machines" title="Link to this heading"></a></h3>
+<p>Copiar la base <code class="docutils literal notranslate"><span class="pre">.db</span></code> de una máquina a otra, o guardarla en una carpeta sincronizada (Syncthing, Dropbox…), acaba dañándola: SQLite escribe junto a la base archivos de diario que una sincronización de archivos copia en desorden. blunderDB sincroniza en cambio dos bibliotecas mediante <strong>exportaciones incrementales</strong> depositadas en una carpeta que la otra máquina <strong>vigila</strong>. El transporte es a su elección — Syncthing, memoria USB, correo electrónico: no hay servidor ni cuenta.</p>
+<ul class="simple">
+<li><p>En la máquina A, en la ventana de exportación, elija <em>Toda la biblioteca</em>, marque <em>Solo lo nuevo desde la última exportación a esta carpeta</em> y designe la carpeta con <strong>Elegir la carpeta…</strong>. Cada exportación escribe allí un archivo <code class="docutils literal notranslate"><span class="pre">sync-&lt;machine&gt;-&lt;date&gt;.db</span></code> que contiene solo lo que ha entrado en la biblioteca desde la exportación anterior a esa misma carpeta; la primera lo contiene todo.</p></li>
+<li><p>En la máquina B, convierta esa carpeta en la <a class="reference internal" href="#dossier-surveille"><span class="std std-ref">carpeta vigilada</span></a>. Cada archivo <code class="docutils literal notranslate"><span class="pre">.db</span></code> que aparece en ella se fusiona sin vista previa, como con la importación de una base: una posición ya conocida no se duplica, una partida ya conocida se reconoce, las colecciones y las lecciones se fusionan por su nombre.</p></li>
+<li><p>Haga lo mismo en el otro sentido, con una segunda carpeta.</p></li>
+</ul>
+<p>Lo que conviene saber:</p>
+<ul class="simple">
+<li><p><strong>La marca de «última sincronización» está en quien exporta</strong>, una por carpeta de destino, y solo avanza cuando el archivo está completo. La máquina que recibe no registra nada. Una exportación que falla deja la marca en su sitio: la siguiente lleva las mismas filas.</p></li>
+<li><p><strong>La sincronización se hace solo por adición.</strong> Una eliminación no se propaga: eliminar una partida en A no la elimina en B. Una modificación in situ tampoco: un comentario reescrito, una partida renombrada, un análisis rehecho en una posición ya enviada. Salen las posiciones, partidas, torneos, colecciones, lecciones y comentarios entrados desde la última exportación; una colección vuelve a salir también cuando se le ha añadido una posición, y una posición cuando se le ha añadido un comentario. Un comentario reescrito no vuelve a salir, porque la máquina que recibe nunca reemplaza un texto que ya tiene: para transmitir una corrección, añádala como un comentario nuevo. Los filtros guardados y los mazos de Anki no forman parte: una exportación de <em>Toda la biblioteca</em> sin la casilla los incluye.</p></li>
+<li><p><strong>Lo que una máquina ha recibido vuelve una vez a la otra</strong>, puesto que es nuevo en su biblioteca; la otra lo reconoce sin añadir nada, y el siguiente intercambio está vacío.</p></li>
+<li><p><strong>Un archivo llegado mientras blunderDB estaba cerrado no se pierde</strong>: al iniciarse la vigilancia, cada <code class="docutils literal notranslate"><span class="pre">.db</span></code> ya presente en la carpeta se fusiona, a diferencia de los archivos de partidas. La máquina que recibe no anota lo que ha leído; por tanto, en cada inicio vuelve a fusionar todos los archivos que la carpeta aún contiene, sin añadir nada, pero al precio del tiempo de releerlos. Elimine de vez en cuando los archivos <code class="docutils literal notranslate"><span class="pre">sync-…</span></code> ya recibidos para que este inicio siga siendo rápido.</p></li>
+<li><p><strong>Una exportación incremental nunca sobrescribe un archivo.</strong> El archivo anterior quizá contenga filas que la otra máquina aún no ha recibido: una exportación a un nombre de archivo ya ocupado se rechaza. Indique la carpeta, y cada exportación toma allí un nombre nuevo.</p></li>
+<li><p><strong>Un archivo reescrito con un nombre ya visto se fusiona de nuevo</strong>: la vigilancia reconoce un archivo por su nombre, su tamaño y su fecha de modificación.</p></li>
+<li><p><strong>La biblioteca abierta nunca se fusiona consigo misma</strong>: si se encuentra en la carpeta vigilada, la vigilancia la omite.</p></li>
+<li><p><strong>Una exportación que ha tenido que descartar filas</strong> (señaladas en el registro) no hace avanzar la marca: la siguiente las reintenta, con todo lo que las sigue.</p></li>
+<li><p><strong>Una exportación nunca se ve a medio escribir</strong>: se escribe con un nombre oculto y luego se renombra de golpe. Un archivo protegido con contraseña (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) no es recogido por la vigilancia, que no puede pedir la contraseña.</p></li>
+</ul>
+<p>En línea de comandos, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span> <span class="pre">--incremental</span> <span class="pre">--file</span> <span class="pre">&lt;carpeta&gt;</span></code> por un lado y <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;carpeta&gt;</span> <span class="pre">--watch</span></code> por el otro (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>). El servidor acepta <code class="docutils literal notranslate"><span class="pre">&quot;incremental&quot;:</span> <span class="pre">true</span></code> en <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> (véase <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modo headless (servidor)</span></a>).</p>
+</section>
+<section id="assistant-et-mcp">
+<span id="assistant-mcp"></span><h3>Asistente y MCP<a class="headerlink" href="#assistant-et-mcp" title="Link to this heading"></a></h3>
+<p>La pestaña <strong>Asistente y MCP</strong> regula dos cosas, ambas desactivadas por defecto.</p>
+<p>El <strong>servidor MCP local</strong> ofrece las herramientas de blunderDB (búsqueda, lectura de una posición y de su análisis, estadísticas de un jugador, cuestionarios…) a un asistente que habla el Model Context Protocol, como Claude Desktop o Claude Code, mientras la ventana esté abierta. Solo escucha en esta máquina, en la dirección <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;/mcp</span></code> (puerto 8765 por defecto), y rechaza una petición procedente de una página web. Añade dos herramientas de visualización: abrir una vista sobre una búsqueda y mostrar una posición. Las herramientas solo leen, salvo si <strong>Permitir la escritura</strong> está marcada: entonces pueden guardar una posición, comentarla, crear y llenar una colección, calificar una tarjeta Anki y guardar un rollout junto al análisis de una posición; nada se borra. Sin ventana abierta, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">mcp</span></code> sirve las mismas herramientas (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>).</p>
+<p>El <strong>asistente interno</strong> es un cliente de esas mismas herramientas. No incorpora ningún modelo: se dirige a un proveedor compatible con OpenAI — Ollama en esta máquina por defecto, o Groq, OpenRouter, Gemini, Anthropic u otra dirección. Es remota toda dirección fuera de esta máquina, sea cual sea el proveedor elegido: sus frases y los resultados de las herramientas salen entonces de la máquina, la pestaña lo indica y espera su acuerdo para esa dirección concreta; otra dirección lo vuelve a pedir. La clave de API va al llavero del sistema, nunca a la base de datos ni al archivo de ajustes. El modelo propuesto por defecto para Ollama, <code class="docutils literal notranslate"><span class="pre">qwen2.5:7b</span></code>, es un punto de partida, no una recomendación: no se hace ninguna recomendación de modelo sin una puntuación del banco de medición incluido con el código fuente.</p>
+<p>Una vez activado, el asistente es una subpestaña <strong>Asistente</strong> del panel Búsqueda. Una frase — «mis errores de más de 50 milipuntos en la carrera» — abre una nueva vista con su nombre, lanza en ella la búsqueda y cambia a ella; sus tokens permanecen en el historial de búsquedas. Lo que devuelven las herramientas procede de la base; lo que escribe el modelo se marca como <strong>Texto libre del modelo</strong>. El asistente solo propone una modificación si la casilla <strong>Dejar que el asistente proponga cambios (cada uno confirmado)</strong> está marcada — un ajuste distinto de la escritura del servidor MCP local — y cada modificación que prepara se muestra y solo se realiza tras <strong>Confirmar</strong>.</p>
+<p>La ventana de configuración también incluye ajustes de visualización de la interfaz. Un control deslizante de <strong>escala de la interfaz</strong> permite agrandar o reducir todos los elementos, lo que resulta útil en pantallas de alta densidad o para mejorar la legibilidad. Los atajos CTRL-+, CTRL– y CTRL-0 ajustan la misma escala, como en un navegador. Un menú <strong>posición de los paneles</strong> determina la ubicación de los paneles (búsqueda, partidas, análisis) con respecto al tablero: <em>abajo</em>, <em>al lado</em> o <em>automática</em> (en este caso el lado se elige en las pantallas anchas para aprovechar mejor el espacio disponible). Como los demás ajustes, estas opciones se conservan de una sesión a otra.</p>
+</section>
+</section>
+<section id="visites-guidees-et-base-d-exemple">
+<span id="visites-guidees"></span><h2>Visitas guiadas y base de ejemplo<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
+<p>Para facilitar la toma de contacto, blunderDB ofrece <strong>visitas guiadas</strong> de la interfaz. El catálogo de visitas se abre desde la barra de herramientas o con el comando <code class="docutils literal notranslate"><span class="pre">tutorial</span></code> (alias <code class="docutils literal notranslate"><span class="pre">tour</span></code>). Hay siete visitas disponibles: una visita general de la interfaz, y visitas dedicadas a la búsqueda de posiciones, a la revisión de partidos, a la revisión de torneos, al panel Eval, al repaso Anki y a las estadísticas. Cada visita resalta los elementos correspondientes de la interfaz, paso a paso, abre de paso el panel del que habla, y puede repetirse en cualquier momento. En el primer arranque, la visita general se propone automáticamente.</p>
+<p>El comando <code class="docutils literal notranslate"><span class="pre">demo</span></code> carga una <strong>base de ejemplo</strong> que permite descubrir las funcionalidades de la herramienta sin importar las propias partidas: tres partidas (dos de ellas agrupadas en un torneo) analizadas por eXtreme Gammon, BGBlitz y gammonNet, tres colecciones temáticas, comentarios etiquetados (<code class="docutils literal notranslate"><span class="pre">#blunder</span></code>, <code class="docutils literal notranslate"><span class="pre">#cube</span></code>) y un mazo Anki con su registro de repasos. Los jugadores, el torneo y el lugar son ficticios. Las visitas guiadas se apoyan en esta base cuando no hay ninguna base abierta.</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="navigation-positions"></span><h2>Navegación por las posiciones<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<p>Por defecto, blunderDB permite:</p>
+<ul class="simple">
+<li><p>recorrer las distintas posiciones de la biblioteca actual — que nunca se carga de una vez: blunderDB solo mantiene la lista de identificadores y carga las posiciones por ventanas de cincuenta alrededor de la que se muestra, de modo que una base de varias decenas de miles de posiciones se abre tan rápido como una pequeña,</p></li>
+<li><p>mostrar la información de análisis asociada a una posición,</p></li>
+<li><p>mostrar, añadir y modificar los comentarios de una posición.</p></li>
+</ul>
+<p>El botón <strong>Ir a la posición</strong> de la barra de herramientas abre una ventana donde escribir directamente el índice de una posición para saltar a ella, sin tener que desplazarse. Es el equivalente gráfico del comando <code class="docutils literal notranslate"><span class="pre">[number]</span></code> de la línea de comandos (véase <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Posiciones y navegación</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Consulte <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Atajos de teclado</span></a> para ver los atajos disponibles.</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="edition-positions"></span><h2>Edición de posiciones<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<p>Pulsar la tecla <em>TAB</em> abre el panel de búsqueda y permite editar una posición en el tablero para añadirla a la base de datos o para definir una estructura de posición que buscar. La distribución de las fichas, el cubo, la puntuación y el turno pueden modificarse con el ratón (véase <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Editar una posición</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Consulte <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Atajos de teclado</span></a> para ver los atajos disponibles.</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="ligne-commande"></span><h2>La línea de comandos<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>La línea de comandos, integrada en la barra de estado, permite realizar todas las funcionalidades de blunderDB disponibles en la interfaz gráfica: operaciones generales sobre la base de datos, navegación por las posiciones, visualización del análisis o de los comentarios, búsqueda de posiciones según filtros… Tras una primera toma de contacto con la interfaz, se recomienda utilizar progresivamente la línea de comandos, que permite un uso potente y fluido de blunderDB, especialmente para las funcionalidades de búsqueda de posiciones.</p>
+<p>Para abrir la línea de comandos, pulse la tecla <em>ESPACIO</em>. Para enviar una consulta y cerrar la línea de comandos, pulse la tecla <em>INTRO</em>.</p>
+<p>blunderDB ejecuta las consultas enviadas por el usuario siempre que sean válidas y modifica inmediatamente el estado de la base de datos si procede. No se requieren acciones de guardado explícitas por parte del usuario.</p>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Consulte la <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">lista de comandos</span></a> para ver la lista de comandos disponibles en la línea de comandos.</p>
+</div>
+</section>
+<section id="la-palette-de-commandes">
+<span id="palette-commandes"></span><h2>La paleta de comandos<a class="headerlink" href="#la-palette-de-commandes" title="Link to this heading"></a></h2>
+<p>La paleta de comandos (<em>CTRL-MAYÚS-P</em>) encuentra por un nombre aproximado lo que ya no se sabe dónde buscar: un comando de la línea de comandos, una pestaña, un filtro de la biblioteca o un match. Las letras tecleadas deben aparecer en orden, no necesariamente juntas, sin distinguir mayúsculas ni acentos: «mtzcb» encuentra la matriz del cubo, «lyon» los matches de un torneo de Lyon.</p>
+<p>Las flechas eligen, <em>INTRO</em> ejecuta, <em>ESC</em> cierra. Un comando se ejecuta como si se hubiera tecleado; <code class="docutils literal notranslate"><span class="pre">s</span></code> y <code class="docutils literal notranslate"><span class="pre">ss</span></code> abren la línea de comandos para escribir en ella los filtros; un filtro se ejecuta como con un doble clic en la biblioteca; un match se abre como con un doble clic en el panel de matches.</p>
+<p>Cuando hay una Dirección abierta, la paleta añade el torneo: jugadores, mesas, matches en curso y pruebas (véase <a class="reference internal" href="manuel_tournois.html#direction-recherche"><span class="std std-ref">la búsqueda rápida</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="Manual" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="manuel_bibliotheque.html" class="btn btn-neutral float-right" title="Análisis, comentarios y búsqueda" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

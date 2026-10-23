@@ -1,0 +1,306 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Allenamento, Anki e duello &mdash; Documentazione blunderDB 0.46.1 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e6b008ef"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="Importazione, origine e condivisione" href="manuel_partage.html" />
+    <link rel="prev" title="Valutazione" href="manuel_eval.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Lingue">
+  <a href="../fr/manuel_entrainement.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_entrainement.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_entrainement.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_entrainement.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_entrainement.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_entrainement.html" lang="fi" hreflang="fi">Suomi</a>
+  <span class="current" lang="it" aria-current="true">Italiano</span>
+  <a href="../ja/manuel_entrainement.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_entrainement.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <p class="caption" role="heading"><span class="caption-text">Primi passi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guida utente</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Riferimento</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Manuale</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Primi passi e interfaccia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analisi, commenti e ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Match e trascrizione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Tornei</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Statistiche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Valutazione</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Allenamento, Anki e duello</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-anki">Pannello Anki</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-entrainement">Pannello Allenamento</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-lanceur">L’avvio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-six-exercices">I sei esercizi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repondre">Rispondere</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-journal-et-le-bilan">Il diario e il bilancio</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-duel">Pannello Duello</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Importazione, origine e condivisione</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriche e strumenti di studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Elenco dei comandi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Scorciatoie da tastiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaccia a riga di comando (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modalità headless (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contratto API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendici</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Appendice Windows: cosa fare se Windows blocca l’avvio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Cronologia delle versioni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Informazioni</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Manuale</a></li>
+      <li class="breadcrumb-item active">Allenamento, Anki e duello</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="entrainement-anki-et-duel">
+<span id="manuel-entrainement"></span><h1>Allenamento, Anki e duello<a class="headerlink" href="#entrainement-anki-et-duel" title="Link to this heading"></a></h1>
+<section id="panneau-anki">
+<span id="id1"></span><h2>Pannello Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<p>Il pannello <strong>Anki</strong> (<em>CTRL-K</em>) permette di studiare le posizioni tramite ripetizione dilazionata utilizzando l’algoritmo FSRS. L’utente può creare mazzi a partire da raccolte o risultati di ricerca.</p>
+<p><strong>Creazione di mazzi:</strong> Fare clic su <strong>+ Nuovo mazzo</strong> per creare un mazzo a partire da una collezione o dai risultati di ricerca correnti. I mazzi basati su una ricerca si sincronizzano automaticamente all’attivazione della scheda Anki.</p>
+<p><strong>Un mazzo di schede di punteggio.</strong> La terza sorgente, <em>Schede di punteggio</em>, non chiede altro che un nome: blunderDB riempie il mazzo con i 36 punteggi non ordinati da 2 a 9 away, e la carta di un punteggio è la scheda che l”<a class="reference internal" href="#panneau-entrainement"><span class="std std-ref">esercizio Punteggi</span></a> mostra — punti di presa e valori di gammon, entrambe le facce. Questo mazzo esiste solo se lo si crea: 36 carte in scadenza il primo giorno sono un debito di ripasso, e lo si contrae di proposito. Il pulsante di sincronizzazione lo rigenera.</p>
+<p>I due posti non fanno lo stesso lavoro. L’esercizio Punteggi fa ritrovare quei numeri <strong>sotto l’orologio</strong> e ne misura la velocità; il mazzo li fa <strong>durare nel tempo</strong> e non ne misura nulla. Le due storie restano separate: il registro dell’Allenamento ignora i ripassi di Anki, e le statistiche di Anki ignorano le sessioni di Allenamento.</p>
+<p><strong>Un mazzo selezionato prende l’intestazione del pannello</strong>: il suo nome, il numero delle sue posizioni, che un clic apre, e il numero di carte in scadenza; a destra, le impostazioni (⚙), l’azzeramento (↻), <em>Allenamento</em> e <em>Studia</em>. ← torna all’elenco dei mazzi.</p>
+<p><strong>Esportare verso Anki:</strong> il pulsante ⤓ di una riga dell’elenco scrive il mazzo come file <strong>.apkg</strong>, che l’applicazione Anki importa su computer o telefono (AnkiDroid, AnkiMobile). Ogni posizione diventa una carta a due facce: sul fronte il tavoliere, il punteggio visto dal giocatore di turno (in basso), il cubo e i dadi; sul retro la mossa migliore o la decisione di cubo giusta, la sua equity e l’errore della mossa giocata. Le etichette seguono la lingua dell’interfaccia. Il mazzo è esportato così com’è, senza sincronizzazione, e l’esportazione non scrive nulla nella base. Reimportare in Anki un’esportazione più recente aggiorna le carte invece di duplicarle. Da riga di comando: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span> <span class="pre">export</span></code>, che esporta anche una collezione (vedi <a class="reference internal" href="cli.html"><span class="doc">Interfaccia a riga di comando (CLI)</span></a>).</p>
+<p><strong>Ripasso:</strong> Selezionare un mazzo poi fare clic su <em>Study</em> (o fare doppio clic su un mazzo) per iniziare il ripasso delle carte in scadenza. Una carta di posizione mostra la posizione sul tavoliere; una carta di punteggio annuncia il punteggio e lascia il tavoliere com’è. Valutate il vostro ricordo con i tasti <em>1</em> (Da rivedere), <em>2</em> (Difficile), <em>3</em> (Corretto), o <em>4</em> (Facile). Premere <em>Esc</em> per fermarsi e tornare all’elenco dei mazzi.</p>
+<p><strong>Annullare una valutazione.</strong> Il pulsante <em>Annulla</em>, sotto i pulsanti di valutazione, o il tasto <em>u</em>, riprende l’ultima valutazione della sessione: la carta ritrova esattamente lo stato che aveva prima (scadenza, intervallo, stabilità, difficoltà, numero di ripassi e dimenticanze), la valutazione esce dal registro dei ripassi e la carta torna sullo schermo per essere valutata di nuovo. Ripetuto, risale la sessione valutazione dopo valutazione. Quando la sessione termina, <em>Annulla</em> resta nella banda del mazzo fino alla sessione successiva: anche l’ultima valutazione può essere ripresa, e il ripasso riprende da quella carta. Un ripasso registrato prima della versione 2.42.0 dello schema non può essere annullato: lo stato precedente non era conservato. Da riga di comando: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span> <span class="pre">card</span> <span class="pre">--action</span> <span class="pre">undo</span></code> (vedi <a class="reference internal" href="cli.html"><span class="doc">Interfaccia a riga di comando (CLI)</span></a>).</p>
+<p>Due conteggi portano nomi distinti: la colonna <strong>In scadenza</strong> dell’elenco conta tutte le carte la cui scadenza è passata, comprese le carte sospese o sepolte; il conteggio <em>in scadenza</em> dell’intestazione considera solo quelle disponibili adesso, e può quindi essere più piccolo.</p>
+<p>I conteggi di Anki sono collegamenti: un clic sulle carte in scadenza, nuove, in apprendimento o in ripasso della barra, o su un valore delle colonne <strong>Carte</strong>, <strong>Nuove</strong> e <strong>In scadenza</strong> dell’elenco, carica le posizioni corrispondenti. Allo stesso modo, in un torneo aperto, il numero di posizioni apre esattamente quelle posizioni.</p>
+<p><strong>Le decisioni di cubo fanno due carte, concatenate.</strong> Una decisione di cubo è due domande — «raddoppio?», poi «presa?» — e blunderDB le registra da sempre come due posizioni. Un mazzo che ne seleziona una sola metà riceve l’altra: la decisione è completata, non ampliata. E quando entrambe sono dovute, la seconda arriva <strong>immediatamente</strong> dopo la prima.</p>
+<p>Ciascuna conserva il proprio voto e il proprio calendario: non sono due tempi di una stessa carta, sono due carte. La concatenazione non anticipa alcuna scadenza — ordina le carte già dovute, nulla di più. Nascendo insieme, sono dovute insieme la prima volta, ed è lì che serve.</p>
+<p><strong>Mostrare la risposta:</strong> La carta pone una domanda — quale mossa giocare, o quale azione di cubo. Riflettere, poi premere <em>SPAZIO</em> (o cliccare sulla zona nascosta) per svelare la risposta: l’analisi registrata della posizione, così come la presenta la scheda Analisi. Appare sotto i pulsanti di valutazione, che restano al loro posto e a portata di mano. Cliccare su una mossa dell’elenco la mostra sul tavoliere.</p>
+<p>Nulla vi obbliga a svelare la risposta per valutare: se siete sicuri di voi, i tasti da <em>1</em> a <em>4</em> restano attivi. La risposta si rimaschera alla carta successiva, ma non se cambiate semplicemente scheda — andate a consultare il pannello Eval o il commento della posizione, vi aspetterà al ritorno.</p>
+<p>Una posizione priva di analisi registrata lo indica direttamente, senza zona nascosta.</p>
+<p><strong>Rispondere sul tavoliere.</strong> Per impostazione predefinita, vi valutate da soli. Nelle Impostazioni di un mazzo di posizioni, spuntate <em>Rispondere sul tavoliere</em>: per una carta di pedine, giocate allora la mossa sul tavoliere, come nell’esercizio Decisione (un clic su una pedina la gioca con il primo dado non giocato, un clic sui dadi scambia i dadi rimasti, il clic destro riprende i passi), poi la mossa completa si convalida con un clic sui dadi o con INVIO. Il motore giudica la mossa rispetto all’analisi registrata, svela la risposta e <strong>propone una valutazione</strong>: <em>Facile</em> per una buona risposta rapida, <em>Corretto</em> per una buona risposta più lenta, <em>Difficile</em> per un errore sotto la soglia del blunder, <em>Da rivedere</em> per un blunder o una mossa illegale. La valutazione proposta è evidenziata; mantenete il controllo e valutate ciò che volete con <em>1</em> a <em>4</em>. Una mossa legale che l’analisi non classifica non propone nulla. Le carte di cubo, le carte di punteggio e i mazzi di schede di punteggio restano in autovalutazione. Svelare la risposta senza giocare abbandona la mossa.</p>
+<p><strong>Limitare la sessione.</strong> Per impostazione predefinita una sessione di ripasso arriva fino in fondo alle carte in scadenza. Puoi limitarla a un numero di carte, per mazzo, nelle Impostazioni: spunta <em>Limita la sessione</em> e indica quante carte deve servire una sessione. Quando il limite è raggiunto, la sessione si ferma dicendolo — il messaggio distingue «limite raggiunto, ancora tante carte in scadenza» da una coda davvero esaurita. Per continuare comunque c’è l’allenamento libero: propone altre posizioni senza modificare nulla della pianificazione.</p>
+<p>Un limite di <strong>0</strong> non serve alcuna carta: è uno stato a sé, utile per congelare un mazzo il tempo di preparare un torneo, e non è la stessa cosa di «nessun limite». Il pulsante <em>Study</em> è allora inattivo.</p>
+<p>Il limite riguarda la <strong>sessione</strong>, non la giornata. Un mazzo di blunderDB è costruito su una raccolta o su una ricerca: è un corpus finito, introdotto in poche sessioni, il cui volume quotidiano è già limitato dalla sua dimensione. Un tetto giornaliero non morderebbe mai, oppure creerebbe un arretrato su un mazzo che stava in una sessione.</p>
+<p><strong>Allenamento libero (cram):</strong> Il pulsante <em>Allenamento</em>, accanto a <em>Studia</em>, avvia una sessione di allenamento libero: posizioni casuali del mazzo vi vengono presentate senza tener conto della pianificazione FSRS. Questa modalità <strong>non modifica mai il piano di ripasso dilazionato</strong> — ideale per scaldarsi prima di un torneo o ripassare intensamente un mazzo tematico senza disturbarne la pianificazione. Una pastiglia <em>Libero</em> sostituisce lo stato della carta e un pulsante <em>Avanti</em> (tasti da <em>1</em> a <em>4</em>) fa scorrere le posizioni. <em>Esc</em> torna all’elenco senza registrare una sessione interrotta.</p>
+<p><strong>Mettere da parte una carta, senza votarla.</strong> Durante un ripasso, un clic destro sull’intestazione della carta offre tre gesti che la tolgono dalla sessione senza dire nulla allo scheduler:</p>
+<ul class="simple">
+<li><p><strong>Sospendere</strong> — la carta conserva il suo calendario e non risale finché è sospesa. È il modo di mettere da parte una carta sbagliata, o non ancora utile, senza perdere lo storico che vi è legato.</p></li>
+<li><p><strong>Rinviare</strong> — la carta sparisce fino all’indomani. A differenza della sospensione, questo non dice nulla sul suo valore: è per quella appena vista altrove, o che si preferisce non incrociare due volte in una serata.</p></li>
+<li><p><strong>Togliere</strong> — la carta lascia il mazzo, previa conferma. La posizione resta nella base: un mazzo è una lista di studio sulla biblioteca, mai una sua copia.</p></li>
+</ul>
+<p>Nessuno di questi tre gesti registra un voto: una carta messa da parte non è una carta risposta, e non conta nel totale della sessione.</p>
+<p><strong>Registro dei ripassi.</strong> Nelle Impostazioni di un mazzo, il pulsante <em>Registro dei ripassi</em> mostra ciò che è stato <strong>detto</strong> allo scheduler — data, posizione, voto, stato, intervallo concesso — in contrasto con ciò che prevede. È l’unico posto dove si vede un voto inserito per errore. Lì non si corregge: il calendario resta fuori portata, e proprio questa regola rende utile il registro — il passato non si riscrive, ma si può conoscere.</p>
+<p><strong>Arresto/Ripresa:</strong> Potete interrompere una sessione di ripasso in qualsiasi momento con <em>Esc</em>. Il pulsante diventa <em>Riprendi</em> e mostra i vostri progressi. Fate clic su di esso per riprendere da dove vi siete fermati.</p>
+<p><strong>Gestione dei mazzi:</strong> Usare i pulsanti d’azione per rinominare, sincronizzare, reimpostare o eliminare i mazzi (viene chiesta conferma per queste ultime due azioni). I parametri FSRS (ritenzione obiettivo, intervallo massimo, casualità) si possono configurare per mazzo nelle Impostazioni (icona a ingranaggio).</p>
+<p><strong>Ritenzione: l’obiettivo e la misura.</strong> La <em>ritenzione obiettivo</em> è la tua scelta sul compromesso fra carico di lavoro e qualità del richiamo: più è alta, più gli intervalli si accorciano e più ripassi. Accanto, le Impostazioni mostrano la <strong>ritenzione misurata</strong> sui tuoi stessi ripassi — un’informazione, mai un comando: blunderDB non modifica il tuo obiettivo per inseguire il tuo tasso di successo. Sotto una ventina di ripassi la misura non viene mostrata: si leggerebbe come un fatto mentre è solo rumore.</p>
+<p>Cambiare la ritenzione <strong>non è retroattivo</strong>: ogni carta adotta il nuovo ritmo al ripasso successivo, e le scadenze già fissate non si spostano. L’effetto è quindi graduale, e invisibile il giorno stesso.</p>
+<p>L”<em>intervallo massimo</em> limita la spaziatura. Un mazzo creato di recente parte da un anno: una posizione che l’algoritmo rimanderebbe di diversi anni ha lasciato il mazzo senza che tu l’abbia deciso, e il tuo stesso gioco cambia più in fretta di così. I mazzi più vecchi conservano il valore che avevano.</p>
+</section>
+<section id="panneau-entrainement">
+<span id="id2"></span><h2>Pannello Allenamento<a class="headerlink" href="#panneau-entrainement" title="Link to this heading"></a></h2>
+<p>Il pannello <strong>Anki</strong> fa ripassare ciò che si <strong>ricorda</strong>; il pannello <strong>Allenamento</strong> fa lavorare ciò che si <strong>calcola</strong>, sotto l’orologio. Si apre con <code class="docutils literal notranslate"><span class="pre">CTRL-J</span></code>, con il pulsante della barra degli strumenti posto subito dopo « Position aléatoire », oppure con il comando <code class="docutils literal notranslate"><span class="pre">train</span></code>. La scheda di punteggio appartiene a entrambi: si calcola qui e si ricorda in un <a class="reference internal" href="#panneau-anki"><span class="std std-ref">mazzo di schede di punteggio</span></a>.</p>
+<p>A riposo, il pannello mostra l’avvio e il bilancio delle sessioni passate.</p>
+<section id="le-lanceur">
+<h3>L’avvio<a class="headerlink" href="#le-lanceur" title="Link to this heading"></a></h3>
+<p>Tre impostazioni, una per riga; «Iniziare» è in fondo alla fascia di intestazione:</p>
+<ul class="simple">
+<li><p>l”<strong>esercizio</strong> — <em>Punteggi</em>, <em>Conteggio dei pip</em>, <em>Bearoff</em>, <em>Valutazione</em>, <em>Decisione</em> o <em>Apertura</em>;</p></li>
+<li><p>la <strong>sorgente</strong> della domanda, quando l’esercizio ne ha più d’una — <em>Vivier</em> (forme canoniche dell’esercizio), <em>Plateau</em> (la posizione così com’è) o <em>Base</em> (una posizione della lista sfogliata);</p></li>
+<li><p>per <em>Apertura</em>, al posto della sorgente, il <strong>tiro</strong> da giocare — <em>1° tiro</em> (1st roll, la mossa d’apertura) o <em>2° tiro</em> (2nd roll, la risposta); <em>1° tiro</em> per impostazione predefinita;</p></li>
+<li><p>per <em>Apertura</em> ancora, la <strong>modalità</strong>, esclusiva: <em>Categorie XG</em> (predefinita) estrae tra le <strong>categorie</strong> selezionate — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (chi apre a 1 away Crawford, chi risponde a 2 away) e <em>Gammon go</em> (l’inverso), selezionate di default; <em>Match a 5</em> estrae un punteggio, con pari peso, tra quelli del libro in cui ogni giocatore è a 1-5 away, senza scelta del punteggio. Una categoria, o la modalità <em>Match a 5</em>, che il libro non contiene è disattivata;</p></li>
+<li><p>il <strong>limite per domanda</strong> — nessuno, 15, 30 o 60 secondi.</p></li>
+</ul>
+<p>La sorgente o il tiro scelti sono ricordati per ogni esercizio, da una sessione all’altra.</p>
+<p>L’elenco sfogliato può provenire dagli <em>errori ricorrenti</em> del pannello Stats: un clic su «Quiz su questo gruppo» lo sostituisce con le posizioni del gruppo e avvia l’esercizio Decisione.</p>
+<p><code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">scores</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">pips</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">bearoff</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">evaluation</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">decision</span></code> e <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">opening</span></code> aprono il pannello e avviano direttamente; <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">tp</span></code> e <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">takepoint</span></code> sono sinonimi di <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">scores</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">epc</span></code> di <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">bearoff</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">quiz</span></code> di <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">decision</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">ouverture</span></code> e <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">book</span></code> di <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">opening</span></code>.</p>
+</section>
+<section id="les-six-exercices">
+<h3>I sei esercizi<a class="headerlink" href="#les-six-exercices" title="Link to this heading"></a></h3>
+<p><strong>Scores</strong> estrae a sorte uno dei 36 punteggi non ordinati da 2 a 9 away e mostra una <strong>scheda di punteggio</strong>: due colonne — <em>Vous</em> (lei) e <em>L’adversaire</em> (l’avversario) — e sette righe — il punto di presa al cubo 2 e poi al cubo 4, ciascuno in corsa lunga e all’ultimo lancio, poi il valore del gammon ai cubi 1, 2 e 4.</p>
+<p>Il suggerimento a comparsa di «Rivelare» ricorda il gesto — stimare ogni numero a mente, poi <em>Rivelare</em>, poi premere quelli sbagliati — e la scacchiera mostra il punteggio estratto su un tavolo vuoto.</p>
+<p>Ogni colonna riporta solo le caselle che le tabelle di riferimento — quelle del <a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">pannello Dati di riferimento</span></a> — definiscono per la sua faccia: tre numeri a 2a-2a, quattordici al massimo, e una sola colonna a punteggio pari. Una riga che nessuna delle due facce definisce non compare sulla scheda, quindi non c’è nessuna casella «non applicabile» da indovinare. Le due facce ci sono perché una decisione di videau a un dato punteggio ha bisogno di entrambe: il punto di presa corretto combina i valori del gammon dei due giocatori, ed è il punto di presa dell’avversario a dire se il tuo raddoppio passa.</p>
+<p><strong>Conteggio dei pip</strong> chiede il conteggio delle pedine dei <strong>due</strong> lati. Il pipcount del tavoliere è nascosto finché la domanda è aperta; «Rivela» lo mostra — <strong>anche se avevate nascosto il pipcount</strong> con <code class="docutils literal notranslate"><span class="pre">p</span></code>, altrimenti la risposta resterebbe invisibile e l’esercizio non verificabile. È una maschera e non un’impostazione: la vostra scelta non viene modificata, e riprende il controllo dalla domanda successiva. La fonte <em>Tavoliere</em> pone una domanda sulla posizione visualizzata, e una sola; la fonte <em>Database</em> estrae una nuova posizione a ogni domanda e la porta sul tavoliere.</p>
+<p><strong>Bearoff</strong> chiede l”<strong>EPC dei due lati</strong> — il conteggio effettivo, quello che aggiunge al pipcount lo spreco delle pedine che escono con punti in eccesso. È il dominio in cui il motore è esatto, e quello in cui l’EPC si distingue davvero dal conteggio delle pedine.</p>
+<p>Ogni domanda è <strong>generata</strong>: il motore parte da un seme e gioca qualche lancio, e l’istantanea è ciò che vi viene posto. Un piazzamento a caso non avrebbe i buchi, le pile basse e le asimmetrie di un vero bearoff. Il seme viene dal <em>Vivier</em> (un rientro completato, poi da zero a dieci mezze mosse), dal <em>Plateau</em> (la posizione mostrata, poi da una a quattro mezze mosse — mai zero, dato che l’avete appena vista) o dalla <em>Base</em> (una posizione della lista sfogliata, così com’è: è già reale).</p>
+<p>Il dominio dell’esercizio: <strong>entrambi i lati interamente nella loro casa</strong>, da <strong>4 a 15 pedine</strong> per lato e le altre uscite, cubo al centro, partita a soldi. Un seme che non vi rientra è <strong>rifiutato dicendolo</strong>, e non si avvia nulla — nessun adattamento silenzioso: continuare a giocare finché il contatto si rompe vi darebbe una posizione che non avete scelto. Una tavola vuota fa eccezione: la domanda viene allora dal vivaio, e il pannello dice perché.</p>
+<p>L’esercizio ha bisogno della tabella di bearoff a un lato; finché viene generata in secondo piano (vedi <a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">Configurazione</span></a>), lo dice invece di porre una domanda senza risposta.</p>
+<p><strong>Évaluation</strong> chiede quanto vale una posizione: la <strong>probabilità di vittoria del giocatore di turno</strong>, in percentuale, e l”<strong>azione di cubo</strong> — <em>Pas de double</em>, <em>Double, prend</em> o <em>Double, passe</em>. Sono i due numeri che mostra il pannello Eval, chiesti prima di essere mostrati. Il dominio è <strong>qualsiasi posizione</strong>: una corsa come una posizione di contatto, in <strong>partita a soldi</strong>.</p>
+<p>Come per Bearoff, la domanda è <strong>generata</strong>: il seme viene dal <em>Vivier</em> (una posizione in cui il contatto si è appena rotto, poi da zero a dieci mezze mosse giocate dal motore), dal <em>Plateau</em> (la posizione visualizzata, poi da una a quattro mezze mosse; la domanda si pone in partita a soldi, con il cubo al centro, qualunque sia il punteggio del seme) o dalla <em>Base</em> (una posizione dell’elenco sfogliato, così com’è). Una posizione della base va bene solo se è una decisione di cubo in partita a soldi — senza dadi, con il cubo al centro o al giocatore di turno —; altrimenti l’estrazione passa alla successiva, e quando nessuna va bene, l’esercizio lo dice. Una tavola che non è una posizione di partita — non quindici pedine per parte, o una partita finita — <strong>viene rifiutata dicendolo</strong>; con una tavola vuota la domanda viene dal vivaio.</p>
+<p>La verità è quella del motore: la base di bearoff a due parti quando la posizione vi figura, gammonNet alla sua profondità canonica ovunque altrove, e il pannello dice quale ha risposto. Nulla è stimato: una posizione che il motore non valuta non viene proposta.</p>
+<p><strong>Décision</strong> pone una decisione <strong>già analizzata</strong>: una posizione della lista sfogliata — la sua sola fonte — con la decisione che porta, mossa di pedine o azione di cubo, e giudica l’analisi registrata. Una posizione senza analisi non pone domande, e una posizione già posta non torna nella sessione; quando la lista è esaurita, il pannello lo dice. Senza base aperta, o senza posizione analizzata nella lista, l’esercizio <strong>rifiuta dicendo perché</strong>, e nulla parte.</p>
+<p><strong>Apertura</strong> pone <strong>uno dei primi due tiri di una partita a un punteggio</strong>, secondo il tiro scelto nell’avvio: con il <em>1° tiro</em>, l’apertura del giocatore di turno; con il <em>2° tiro</em>, la risposta dell’avversario nella posizione che lascia una <strong>mossa d’apertura alla pari con la migliore a quel punteggio</strong>, scelta tra quelle che il libro segue e già giocata sulla tavola. La mossa è giudicata rispetto al <strong>libro d’apertura</strong> integrato in blunderDB, calcolato con i suoi rollout: per ogni punteggio della sua griglia — da 2 a 7 punti per parte, con al massimo un punto di scarto, e la partita Crawford a 1 contro 2 o 4 punti, in entrambi i sensi —, i quindici tiri d’apertura, poi le risposte dopo le mosse d’apertura alla pari con la migliore a quel punteggio. Il libro è l’unica fonte dell’esercizio.</p>
+<p>I punteggi sono estratti per <strong>categorie</strong> (<em>Money</em>, <em>DMP</em>, <em>Gammon save</em>, <em>Gammon go</em>), perché da 4-away a 7-away le mosse migliori cambiano appena da un punteggio all’altro, mentre queste quattro situazioni si giocano in modo diverso. La consegna nomina la categoria accanto al punteggio.</p>
+<p>Finché una domanda di <em>Évaluation</em>, di <em>Décision</em> o di <em>Ouverture</em> attende la sua risposta, il pannello Analisi resta mascherato: porta la risposta.</p>
+</section>
+<section id="repondre">
+<h3>Rispondere<a class="headerlink" href="#repondre" title="Link to this heading"></a></h3>
+<p>La modalità di risposta è una proprietà dell’esercizio, mai un’impostazione: ciò che si <strong>conta o si recita</strong> si dichiara, ciò che si <strong>stima</strong> si scrive — perché lì la dimensione dell’errore è la lezione.</p>
+<p><em>Punteggi</em> e <em>Conteggio dei pip</em> si <strong>dichiarano</strong>: calcolate a mente, fate clic su «Rivela», e la verità viene mostrata. Ogni numero è allora <strong>giusto per impostazione predefinita</strong> — fate clic su quello che avete sbagliato per segnarlo come <strong>errore</strong> (<em>Tab</em> poi <em>Spazio</em> fa lo stesso gesto da tastiera), e un secondo clic annulla il segno. Non si digita nulla: un conteggio di pedine o una casella di tabella è giusto o sbagliato, e scriverlo non insegna niente di più che leggerlo.</p>
+<p><em>Bearoff</em> si <strong>scrive</strong>: scrivete i due EPC, « Valider » li giudica a mezzo punto — la granularità alla quale l’EPC cambia una decisione di corsa — e la verità appare accanto a ciò che avete scritto. È l’applicazione che giudica, non c’è nulla da spuntare. Lo scarto è registrato <strong>con il suo segno</strong>: sopravvalutare non è sottovalutare, ed è il bilancio a farne una media.</p>
+<p><em>Évaluation</em> unisce i due gesti in una stessa domanda. La probabilità di vittoria si <strong>digita</strong> e si giudica con cinque punti di margine, scarto con segno compreso; l’azione di cubo si <strong>sceglie</strong> — il clic trattiene il pulsante senza giudicare nulla, e « Valider » giudica entrambi in una volta. Il cubo non ha tolleranza: è giusto solo il pulsante che il verdetto del motore rende giusto, e a una posizione <em>troppo forte per raddoppiare</em> si risponde <em>Pas de double</em>. <em>Invio</em> nel campo porta all’azione di cubo finché non è scelta, poi convalida. Dopo la risposta, il pannello mostra la verità — il verdetto in quattro esiti —, la sua fonte, e l”<strong>EPC dei due lati</strong> quando la posizione ne ha uno esatto; l’EPC non viene mai chiesto qui, ha il suo esercizio. Il diario conta i due numeri separatamente: si può stimare bene una posizione e leggere male il suo cubo.</p>
+<p><em>Décision</em> si <strong>sceglie</strong>. Su una decisione di pedine, <strong>gioca la mossa sulla tavola</strong>: un clic su una pedina la gioca con il primo dado non ancora giocato (il dado di sinistra, poi quello di destra), o con il successivo se il primo non può spostarla; se nessun dado può, non si muove nulla. Si può anche trascinare la pedina. Un clic sui dadi inverte i dadi ancora da giocare e, a mossa completa, la fa giudicare. Il clic destro sulla tavola riprende i passi giocati. Nel pannello, « Annuler le pas » torna indietro di un dado e « Recommencer » rimette la posizione come la domanda la pone. Il campo di notazione accetta anche la mossa digitata (<code class="docutils literal notranslate"><span class="pre">13/7</span> <span class="pre">8/7</span></code>, la notazione della trascrizione): i passi vengono posati sulla tavola a ogni battuta, un campo arrossato segnala che un passo non è giocabile, e INVIO convalida la mossa completa. Con il focus sul pannello, BACKSPACE annulla un passo e ESC ricomincia la mossa; INVIO convalida la mossa completa ovunque sia il focus, tranne su un pulsante. Su una decisione di cubo, clicca <em>Nessun raddoppio</em>, <em>Raddoppio, presa</em> o <em>Raddoppio, passo</em>: il clic è la risposta.</p>
+<p>La correzione distingue tre esiti, e confonderli mentirebbe. Una <strong>mossa illegale</strong> non è una mossa mal scelta: è un errore di regole. Una <strong>mossa legale che il motore non ha classificato</strong> non è un errore di giudizio: semplicemente non ha prezzo, e non costa nulla. Una mossa classificata costa quello che l’analisi dice, in millipunti. È giusta solo una mossa classificata e senza costo; la mossa migliore è mostrata in ogni caso.</p>
+<p><em>Apertura</em> si <strong>sceglie</strong> anch’essa, con la mossa giocata sulla tavola come in <em>Decisione</em> — stessi gesti, stesso campo di notazione. Il pannello dice il tiro da giocare e il punteggio, <em>voi</em> per primi. Una mossa è <strong>giusta</strong> quando è <strong>alla pari con la migliore</strong>: non c’è una sola buona mossa, ma un gruppo di testa che il libro non sa distinguere (vedi <a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">Libro d’apertura: scarto, IC 95 % e parità</span></a>). Giocata la mossa, il pannello la segna <em>Giusto</em> o <em>Sbagliato</em> e mostra la tabella dei candidati del libro: lo <strong>scarto</strong> di ciascuno dalla migliore, l”<strong>IC 95 %</strong> di questo scarto e la dicitura <strong>alla pari</strong>, con la vostra mossa evidenziata — aggiunta in fondo, senza scarto, quando il libro non la classifica. Il numero di partite e l’impostazione del rollout che hanno prodotto queste cifre sono nel suggerimento della tabella. Con il <em>2° tiro</em>, la consegna nomina la mossa d’apertura già giocata. Il registro conta a parte l’apertura e la risposta: si possono conoscere le aperture e rispondere male.</p>
+<p>Il cronometro parte alla comparsa della domanda e si ferma a « Révéler », a « Valider », al clic di un’azione di cubo di <em>Décision</em> o alla mossa giocata di <em>Ouverture</em>; la domanda successiva si prepara mentre rispondete, quindi non è mai cronometrata con la vostra. Spuntare i falli non è cronometrato nemmeno. Con un limite, una domanda rimasta senza risposta alla scadenza si rivela da sola e conta <strong>fuori tempo</strong>: tutti i suoi numeri sono sbagliati, e il suo tempo non entra nella mediana — non si misura una risposta che non è stata data. Una decisione fuori tempo mostra la mossa migliore, e non entra nel PR della sessione.</p>
+<p>«Successiva» registra la domanda e ne pone un’altra; INVIO, fuori da un campo o da un pulsante, fa lo stesso una volta mostrata la risposta, o «Termina» se non c’è una domanda successiva. La sessione non ha una durata fissata: dura fino a «Termina», che la scrive nel diario, o «Esci», che la scarta. Tutti i pulsanti sono nella fascia di intestazione del pannello, con l’esercizio, il numero della domanda e il cronometro: «Esci», «Termina» e, sempre in fondo, l’azione della domanda («Rivelare», «Verifica» o «Successiva»). Il tavoliere mostra la domanda e la sua risposta, non porta alcun comando.</p>
+<p>Finché una domanda è posta sulla tavola, rivelata o no, i tasti che scorrono la lista non la fanno scorrere: la domanda tiene la tavola fino a « Suivante », « Terminer » o « Quitter ».</p>
+</section>
+<section id="le-journal-et-le-bilan">
+<h3>Il diario e il bilancio<a class="headerlink" href="#le-journal-et-le-bilan" title="Link to this heading"></a></h3>
+<p>Le sessioni terminate sono conservate nel database stesso — seguono quindi il file — e senza limite. A riposo, il pannello mostra una riga per esercizio: il numero di sessioni, il tasso di errori, il tempo mediano e, oltre dieci sessioni, la <strong>tendenza</strong>, cioè lo scarto tra il tasso di errori delle ultime dieci sessioni e quello di tutte — negativo, state migliorando.</p>
+<p>Per <em>Décision</em>, la riga dà anche il <strong>PR</strong> dell’ultima sessione, calcolato con la formula che le statistiche applicano al gioco reale — 500 × errore medio in equità normalizzata, sulle decisioni giudicate. Un PR di allenamento di 6 e un PR di incontro di 6 misurano la stessa cosa sulla stessa scala.</p>
+<p>Facendo clic sul nome dell’esercizio si apre il dettaglio <strong>per tipo di numero</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». È questo dettaglio a dare valore al diario, e conta per tipo e non per faccia: la stessa casella della stessa tabella, vista da un lato o dall’altro, è una sola debolezza.</p>
+<p>Una domanda di <em>Decisione</em> conserva nel registro la sua posizione, la risposta data e il suo costo in millipunti. Il dettaglio di <em>Decisione</em> include quindi tre pulsanti che agiscono su tutte le posizioni sbagliate, ciascuna una volta, la sbagliata più di recente per prima — una domanda scaduta conta come sbagliata:</p>
+<ul class="simple">
+<li><p><strong>Riprendi i miei errori</strong> — le posizioni sbagliate diventano la lista scorsa e una sessione <em>Decisione</em> riparte su di esse;</p></li>
+<li><p><strong>Mazzo Anki degli errori</strong> — un mazzo Anki con queste posizioni;</p></li>
+<li><p><strong>Collezione degli errori</strong> — una collezione con queste posizioni.</p></li>
+</ul>
+<p>Il mazzo e la collezione si chiamano «Errori in Decisione» seguito dalla data odierna. Da riga di comando, <code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">missed</span></code> restituisce la stessa lista e ne fa un mazzo (<code class="docutils literal notranslate"><span class="pre">--deck</span></code>) o una collezione (<code class="docutils literal notranslate"><span class="pre">--collection</span></code>), e <code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">sessions</span></code> rilegge il registro (vedi <a class="reference internal" href="cli_entrainement.html#cli-training"><span class="std std-ref">training — Il registro di allenamento</span></a>).</p>
+</section>
+</section>
+<section id="panneau-duel">
+<span id="id3"></span><h2>Pannello Duello<a class="headerlink" href="#panneau-duel" title="Link to this heading"></a></h2>
+<p>Il pannello <strong>Duello</strong> fa giocare un intero match contro il Bot, con blunderDB come Arbitro: tira i dadi, impone le regole e tiene il punteggio e gli orologi. Si apre con <code class="docutils literal notranslate"><span class="pre">CTRL-H</span></code>, con il pulsante «Gioca» della barra degli strumenti o con il comando <code class="docutils literal notranslate"><span class="pre">duel</span></code>. Deve essere aperta una base di dati: il Duello vi viene scritto dopo ogni decisione.</p>
+<p>Senza Duello aperto, il pannello mostra il modulo, memorizzato da un Duello all’altro, e, se ce ne sono, l’elenco dei Duelli in sospeso. La fascia di intestazione porta la <strong>Partenza</strong>, le scelte che la posizione di partenza richiede, la <strong>cadenza</strong> e «Gioca» alla sua estremità:</p>
+<ul class="simple">
+<li><p><strong>Partenza</strong>: la posizione iniziale o la posizione del tavoliere. Partendo dal tavoliere, questo si modifica come nel pannello Eval (stesso tavoliere bozza, stessi gesti): le pedine, il cubo e il suo proprietario, i dadi — posati dal lato di un giocatore, gli danno il turno — e il punteggio.</p></li>
+<li><p><strong>Dadi</strong> (partenza da un tavoliere con dadi): «Dadi del tavoliere», predefinito, gioca il lancio posato; «Rilancia» fa tirare di nuovo l’Arbitro.</p></li>
+<li><p><strong>Decisione di cubo</strong> (partenza da un tavoliere senza dadi da giocare, quando il giocatore di turno può raddoppiare o un raddoppio è offerto sul tavoliere): «Prima del cubo», predefinito, comincia da questa decisione — il giocatore di turno raddoppia o lancia, oppure l’avversario risponde al raddoppio offerto; «Dopo il cubo» passa direttamente al lancio, e un raddoppio offerto viene allora accettato.</p></li>
+<li><p><strong>Cadenza</strong>: nessuna cadenza, <strong>Standard</strong> (2 min per punto + 12 s), <strong>Speed</strong> (0,4 min per punto, cioè 2 min per un match a 5 punti, + 10 s) o una cadenza salvata.</p></li>
+</ul>
+<p>Il modulo, un’impostazione per riga:</p>
+<ul class="simple">
+<li><p><strong>Match</strong> da 1 a 25 punti, oppure <strong>sessione money</strong> (Jacoby a scelta).</p></li>
+<li><p><strong>Punteggio</strong>: ciò che manca a ciascun giocatore, per impostazione predefinita la lunghezza del match (inizio di match); «1 (Crawford)» è la partita Crawford, «1 (post-Crawford)» una partita che la segue. Partendo dal tavoliere, questi campi e il punteggio del tavoliere sono una cosa sola: cambiarne uno cambia l’altro, e un tavoliere a soldi dà una sessione a soldi. <strong>Una sola partita</strong> ferma il Duello alla fine della sua prima partita, per allenarsi su un punteggio: il Match scritto conta solo quella partita.</p></li>
+<li><p><strong>Cadenza</strong> (una cadenza scelta): <strong>minuti per punto</strong> e <strong>ritardo</strong> in secondi. Ogni giocatore dispone di minuti per punto × lunghezza del match (meno, da un punteggio di partenza: la lunghezza media ancora da giocare); a ogni turno scorre prima il ritardo, poi la riserva. Una riserva esaurita resta a zero, e il tempo trascorso continua a essere annotato, oppure fa perdere il match. Un nome e «Salva» conservano i due numeri come cadenza del menu, nelle impostazioni dell’utente; «Elimina» toglie la cadenza salvata scelta. Una sessione a soldi si gioca senza cadenza.</p></li>
+<li><p><strong>Lato giocato</strong> (giocatore 1 o 2) e <strong>livello del Bot</strong> (<code class="docutils literal notranslate"><span class="pre">instant</span></code>, <code class="docutils literal notranslate"><span class="pre">normal</span></code>, <code class="docutils literal notranslate"><span class="pre">thorough</span></code>, quelli dell’analisi). Il selettore indica la profondità di ogni livello, per esempio «instant (0-ply)» o «normal (2-ply, potato)»; più profondo è più forte e più lento.</p></li>
+<li><p><strong>Il tuo nome</strong> e <strong>Salva il match</strong>: se deselezionato, il Duello terminato viene scartato invece di diventare un Match.</p></li>
+<li><p><strong>Pipcount</strong>: deselezionato, il pipcount resta nascosto durante il Duello, anche con il pulsante della barra degli strumenti o <code class="docutils literal notranslate"><span class="pre">P</span></code>; ricompare all’uscita dal Duello.</p></li>
+</ul>
+<p>«Riprendi» riapre un Duello sospeso nello stesso punto, con gli stessi dadi a venire; i suoi orologi erano fermi.</p>
+<p>Un Duello sospeso non lascia la sua base: l’esportazione della base non lo porta con sé, perché i suoi dadi a venire non devono uscire per nessuna via prima della fine. Un Duello terminato si esporta come qualsiasi Match.</p>
+<p>Il Duello si gioca sul tavoliere. Il pannello mostra il foglio del match in due colonne, come la Trascrizione, e gli orologi quando corre una cadenza; la sua fascia di intestazione nomina i giocatori, dice ciò che è atteso e porta a destra «Abbandona il match», «Metti in pausa», «Annulla il match». Un match a punti si salva solo intero: nessun arresto conserva un match incompiuto. Il punteggio e il cubo sono quelli del tavoliere; il punteggio e gli orologi restano nella barra di stato quando la scheda è ripiegata. L’impronta SHA-256 del seme dei dadi, pubblicata dall’Arbitro alla creazione, si legge nel suggerimento a comparsa dell’invito della fascia di intestazione, e con il seme nell’origine del Match terminato. Il tavoliere passa in modalità <strong>DUELLO</strong>: la libreria non si sfoglia più, la modifica, il pannello Eval e le altre schede non si aprono, salvo il <a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">pannello Dati di riferimento</span></a>, e il motore tace — nessuna valutazione, nessun candidato. Restano solo la Pila (<code class="docutils literal notranslate"><span class="pre">B</span></code>), il pipcount (<code class="docutils literal notranslate"><span class="pre">P</span></code>, salvo se è nascosto per il Duello) e la guida.</p>
+<ul class="simple">
+<li><p>Prima del lancio, un clic sulla scacchiera, sui dadi o su una pedina li lancia; solo un clic sul cubo propone di raddoppiare, e la scacchiera chiede «Raddoppia» o «Annulla». Quando il cubo non è disponibile, il lancio è automatico.</p></li>
+<li><p>Di fronte a un raddoppio del Bot, la scacchiera chiede «Accetta» o «Rifiuta».</p></li>
+<li><p>Un clic su una pedina la gioca subito con il dado di sinistra ancora libero, o con l’altro quando quello di sinistra non può giocarla; una pedina sulla barra entra, un doppio si gioca con quattro clic. Una pedina può anche essere trascinata verso la sua destinazione. Passano solo i passi di una mossa legale.</p></li>
+<li><p>Un dado si attenua quando è giocato; su un doppio, ogni dado vale due passi e si vela a metà dopo il primo. La mossa completa attenua tutti i dadi, compresi quelli che la regola non permette di giocare.</p></li>
+<li><p>Finché la mossa non è completa, un clic sui dadi inverte i dadi ancora da giocare. Il clic destro sulla scacchiera riprende tutte le pedine giocate (anche <code class="docutils literal notranslate"><span class="pre">BACKSPACE</span></code>); senza pedine giocate, apre il menu del Duello.</p></li>
+<li><p>La mossa completa si convalida con un clic sui dadi, con «Convalida» sulla scacchiera, o con <code class="docutils literal notranslate"><span class="pre">INVIO</span></code> o <code class="docutils literal notranslate"><span class="pre">SPAZIO</span></code>. Dopo non si riprende nulla.</p></li>
+<li><p>Il Bot risponde subito; le sue mosse vengono rigiocate sul tavoliere, lentamente.</p></li>
+<li><p>Il clic destro fuori dalla scacchiera, o sulla scacchiera fuori dalla sua mossa o senza pedine giocate, apre il menu del Duello: mettere la posizione sulla Pila o toglierla, abbandonare la partita per un semplice, un gammon o un backgammon (al proprio turno, dopo conferma), abbandonare il match, metterlo in pausa, annullarlo. Questo menu non offre né valutazione né modifica.</p></li>
+<li><p>«Abbandona il match» cede l’intero match, in qualsiasi momento e dopo conferma: la partita in corso va all’avversario per i punti che lo portano alla lunghezza, e il Match viene salvato come vinto da lui. In money, la partita in corso è persa come semplice, al valore del cubo (con o senza regola Jacoby), e la sessione si chiude. Sotto una cadenza che fa perdere il match, una riserva esaurita vale l’abbandono del match da parte di quel giocatore.</p></li>
+<li><p>«Metti in pausa» sospende il Duello, orologi fermi; riprende dallo stesso punto. «Annulla il match» lo scarta, dopo conferma: non viene salvato nulla.</p></li>
+<li><p>Un doppio clic fuori dalla scacchiera mette la posizione sulla Pila, o la toglie, come <code class="docutils literal notranslate"><span class="pre">B</span></code>; solo il segnalibro all’angolo della scacchiera lo mostra.</p></li>
+</ul>
+<p>Ogni decisione porta la sua durata, con o senza cadenza. Un abbandono non ha una durata registrata nel Match.</p>
+<p>Alla fine il Match viene scritto, la sua analisi parte e la scheda Partite si apre su di esso. Da riga di comando, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">duel</span></code> pilota lo stesso Duello (vedi <a class="reference internal" href="cli_matchs.html#cli-duel"><span class="std std-ref">duel — Giocare un Duello</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="manuel_eval.html" class="btn btn-neutral float-left" title="Valutazione" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="manuel_partage.html" class="btn btn-neutral float-right" title="Importazione, origine e condivisione" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

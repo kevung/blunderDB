@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>解析とエンジン &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="学習、レッスン、トレーニング" href="cli_entrainement.html" />
+    <link rel="prev" title="マッチ、トーナメント、ゲーム" href="cli_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/cli_analyse.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_analyse.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_analyse.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_analyse.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_analyse.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_analyse.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_analyse.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/cli_analyse.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">一般的な構文</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">利用可能なコマンド</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">インポート、エクスポート、転送</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">ライブラリ: 検索、一覧、コレクション</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">マッチ、トーナメント、ゲーム</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">解析とエンジン</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#analyze-rattrapage-gammonnet">analyze — gammonNet の補完分析</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rollout-rollout-d-une-position">rollout — 局面のロールアウト</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#epc-calculatrice-epc">epc — EPC 計算機</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gnubgid-id-gnubg">gnubgid — GNUbg ID</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cubematrix-matrice-du-videau">cubematrix — キューブ判断のマトリクス</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#capture-position-depuis-une-capture-d-ecran">capture — スクリーンショットからの局面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bearoff-bases-de-sortie">bearoff — ベアオフ・データベース</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#openingbook-quel-coup-a-ce-score">openingbook — このスコアでどの手か</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">学習、レッスン、トレーニング</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">統計</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">データベースの管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">ワークフロー例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">終了コード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+      <li class="breadcrumb-item active">解析とエンジン</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-et-moteur">
+<span id="cli-analyse-chapitre"></span><h1>解析とエンジン<a class="headerlink" href="#analyse-et-moteur" title="この見出しへのリンク"></a></h1>
+<section id="analyze-rattrapage-gammonnet">
+<h2>analyze — gammonNet の補完分析<a class="headerlink" href="#analyze-rattrapage-gammonnet" title="この見出しへのリンク"></a></h2>
+<p>解析を一つも持たないポジションごとに gammonNet 解析を書き込みます——この機能が存在する前に構築されたライブラリを追いつかせるための補完です（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>、<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>）。これはインポート後の自動起動や、GUI の<em>メンテナンス</em>タブの「解析のないポジション」の行、そして <code class="docutils literal notranslate"><span class="pre">serve</span></code> デーモンのテナント向けエンドポイント <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.analyzeMissing</span></code> と同じ操作です——同じ操作の三つの異なる形であって、三つの別々のロジックではありません（<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照）。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — データベース（必須）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — 探索深さ（デフォルト：2、標準パラメータ）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — 枝刈りの幅（デフォルト：12、標準パラメータ）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — チェッカープレイの判断ごとに保持する候補手の数（デフォルト：10）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — 並列に分析するポジションの数（デフォルト：マシンのコア数）。ポジションの残りがコア数より少ないとき（短いマッチ、バッチの終盤）は、各探索が空いているコアに分散されます。結果は 1 ビットも変わりません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — 処理を単一のマッチの局面だけに限定します（既定値の 0 はライブラリ全体を意味します）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> — <strong>何も書かない</strong>：穴を埋めるのではなく、gammonNet をインポート済みの解析と比較する（下記参照）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--stale</span></code> — 欠けている部分を埋める代わりに、gammonNet の解析が古くなっているポジション（エンジンの以前のバージョンで書き込まれたもの、または <code class="docutils literal notranslate"><span class="pre">--ply</span></code> と異なる深さのもの）を再解析します。XG、GNUbg、BGBlitz の解析も持つポジションには一切手を加えません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — <code class="docutils literal notranslate"><span class="pre">--compare</span></code> と併用：この数の局面で打ち切る（0 はすべて）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">text</span></code>（デフォルト、進捗表示付き）または<code class="docutils literal notranslate"><span class="pre">json</span></code>（最後に出力される1つの要約文書）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rollout</span></code> — 欠けた解析を補う代わりに、<code class="docutils literal notranslate"><span class="pre">--query</span></code> が選ぶ局面のロールアウトを行います（後述）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — <code class="docutils literal notranslate"><span class="pre">--rollout</span></code> と併用して、プレイする局面を検索のクエリ言語（<code class="docutils literal notranslate"><span class="pre">search</span> <span class="pre">--query-help</span></code>）で指定します。空の場合はすべて。</p></li>
+</ul>
+<p><strong>解析なしで取り込んだマッチにも PR が付くようになりました。</strong>オンラインで指したマッチや、XG を通していない Jellyfish の <code class="docutils literal notranslate"><span class="pre">.mat</span></code> ファイルがこれに当たります。blunderDB は局面と指された手を知っていましたが、それがどれだけの価値かを語るものがありませんでした。バッチが走ると、実際に指された手が gammonNet の順位づけと比較され、その差が PR とそのほかすべての指標に反映されます。指された手はマッチの手のテーブル、すなわち取り込み時に書かれたものから来ます。ファイルが解析を持っていたかどうかによらず、推測されることはありません。</p>
+<p>本バージョンより前に解析したデータベースを評価し直す必要はありません。<a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a> が既存のデータから列を計算し直し、それらのマッチに PR を取り戻します。</p>
+<p><strong>マッチを一つだけ</strong> (<code class="docutils literal notranslate"><span class="pre">--match</span></code>)。<code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span></code> が表示する識別子を指定すると、処理はそのマッチの局面だけをたどります。空白を埋める規則も保証も同じで、範囲だけが狭くなります。取り込んだばかりのマッチは、ライブラリの残りを走査することなく解析を得られ、修正してから二度目に解析したマッチは、修正が生み出した局面の分しか費用がかかりません。他の局面はすでに解析を持っているからです。このオプションは <code class="docutils literal notranslate"><span class="pre">--stale</span></code> とも <code class="docutils literal notranslate"><span class="pre">--compare</span></code> とも組み合わせられません。どちらもすでに解析を持つ局面を見るものであり、両方を求めることは、黙って無視される範囲ではなく誤りです。</p>
+<p><strong>並列処理</strong>（<code class="docutils literal notranslate"><span class="pre">--jobs</span></code>）。バッチ内のポジションは互いに独立しており——どの探索も次の探索に影響しない——そのため <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> 個のスレッドに分配され、各スレッドは独自の評価器を持ちます。書き込まれる分析は <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> の値に<strong>かかわらず同一</strong>で、変わるのは計算時間だけです。<code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">1</span></code> はマシンを他の用途のために空けておきます。キャンセルは影響を受けません：Ctrl-C は新しいポジションに入る前にバッチを停止し、すでに計算済みのものはすべて書き込まれます。</p>
+<p><strong>穴のルール</strong>（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>）。 すでに分析を持つポジション——XG、GNUbg、BGBlitz、あるいは以前の gammonNet の実行によるもの——は、どのエンジンの分析が欠けていようと決して触られません。書き込まれるのは<strong>分析を一つも持たない</strong>ポジションだけです。したがってこのコマンドは危険なくいつでも再実行でき、きれいに中断できます：Ctrl-C は書き込み済みの内容を一切失わずに中止し、次回の実行は前回が止まった正確にその場所から再開します——「分析のないポジション」は起動のたびに再計算されるため、ジャーナルは一切不要です。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...</span>
+<span class="c1">#   1/1204 (0%)</span>
+<span class="c1">#   61/1204 (5%)</span>
+<span class="c1">#   ...</span>
+<span class="c1">#   1204/1204 (100%)</span>
+<span class="c1"># Done.</span>
+
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--jobs<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Un seul match, celui qui vient d'être importé</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<p><strong>バッチロールアウト</strong>（<code class="docutils literal notranslate"><span class="pre">--rollout</span></code>）。<code class="docutils literal notranslate"><span class="pre">--query</span></code> が選んだ各局面は<a class="reference internal" href="#cli-rollout"><span class="std std-ref">ロールアウト</span></a>でプレイされ、すべてのコアで一つずつ順に処理されます。ロールアウトは解析の隣に記録され、解析の代わりになることはありません。値はプリセット（<code class="docutils literal notranslate"><span class="pre">fast</span></code>（216 ゲーム、7 で打ち切り）または <code class="docutils literal notranslate"><span class="pre">standard</span></code>（1296 ゲーム、11 で打ち切り））か、自由な設定（任意のプリセットに続けて <code class="docutils literal notranslate"><span class="pre">games=</span></code>、<code class="docutils literal notranslate"><span class="pre">min-games=</span></code>、<code class="docutils literal notranslate"><span class="pre">truncation=</span></code>、<code class="docutils literal notranslate"><span class="pre">jsd=</span></code>、<code class="docutils literal notranslate"><span class="pre">ply=</span></code>、<code class="docutils literal notranslate"><span class="pre">candidates=</span></code>、<code class="docutils literal notranslate"><span class="pre">seed=</span></code> をカンマ区切りで指定）です。同じ設定のロールアウトをすでに持つ局面はスキップされます。Ctrl-C で中断した実行は止まったところから再開し、処理中の局面は丸ごと破棄されます。ロールアウトだけが解析した局面は検索でそのロールアウトを通じて見つかり、すでに解析済みの局面はその解析の列を保ちます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span>fast<span class="w"> </span>--query<span class="w"> </span><span class="s1">'E&gt;80'</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span><span class="s1">'standard,ply=1'</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">'c'</span>
+</pre></div>
+</div>
+<p id="analyze-compare"><code class="docutils literal notranslate"><span class="pre">--compare</span></code>：<strong>あなたのライブラリで gammonNet はどれだけのものか</strong></p>
+<p>エンジンの精度は、参照コーパスと正確なベアオフ表に対して別の場所で測定されている。しかしそのどちらも、利用者が実際に抱いている問い——<strong>自分の</strong>局面についての問い——には答えない：XG からインポートしたマッチにおいて、組み込みエンジンはファイルに付いてきた解析とどこで食い違い、その食い違いは何を犠牲にするのか。</p>
+<p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> はそれに答え、<strong>何も書かない</strong>。これは用心ではなくコマンドの要点である：ADR-0013 はインポートされた解析を無条件に守るので、この比較は絶対に上書きされたくないライブラリの上でこそ実行できる。</p>
+<p>報告が与えるもの：</p>
+<ul class="simple">
+<li><p>最善手の<strong>一致率</strong>。チェッカープレイとキューブ判断を分けて示す——両者は無関係であり、単一の率ではどちらが崩れているかが隠れてしまう；</p></li>
+<li><p><strong>食い違いの代償</strong>。インポートされた解析自身の尺度で値を付ける：gammonNet が選ぶ手が<em>インポート元のエンジンによれば</em>どれだけの価値か、そこからそのエンジン自身の最善手の価値を引いたもの。この向きだけが両エンジンで共通に値付けできる。食い違いを二度値付けすれば、小さいほうの数字を読む誘惑を招く；</p></li>
+<li><p><strong>ゲームの段階ごと</strong>の内訳。食い違いが<em>どこに</em>集まっているかを語るのはこれである；</p></li>
+<li><p>最も代償の大きい十件の食い違いを、局面ごとに。</p></li>
+</ul>
+<p>二つのエンジンは同じ手を違うように書く——XG が「13/7」と書くところを gammonNet は「13/8 8/7」と書き、ヒットは一方では印が付き他方では付かず、繰り返しは「(2)」に縮められることもある。これらは方言であって食い違いではない：比較は両方の記法を正準形に直してから突き合わせる。それをしないと、あるテストコーパスは 93,2 % ではなく 78,8 % の一致を示した——十五ポイントの偽の食い違いである。</p>
+<p>インポート元のエンジンが<strong>挙げていない</strong>手は、その尺度で値付けできない：でっち上げた代償ではなく、代償ゼロの食い違いとして数える。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparer sur un échantillon de 500 positions</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--compare<span class="w"> </span>--limit<span class="w"> </span><span class="m">500</span>
+
+<span class="c1"># compared: 118 decision(s)  (refused 2, failed 0)</span>
+<span class="c1"># same best answer: 93.2% (110/118)</span>
+<span class="c1">#   checker play:   93.7% (59/63)</span>
+<span class="c1">#   cube decision:  92.7% (51/55)</span>
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+<section id="rollout-rollout-d-une-position">
+<span id="cli-rollout"></span><h2>rollout — 局面のロールアウト<a class="headerlink" href="#rollout-rollout-d-une-position" title="この見出しへのリンク"></a></h2>
+<p>gammonNet で局面を何度も繰り返しプレイし、探索では決着がつかないもの、つまり差が数千分の一ほどの二つの手や、モデルが迷うキューブ判断を決着させます。ダイスありの場合はその手がプレイされ（ロールアウトの深さでの最善手で少なくとも 2 ply、または <code class="docutils literal notranslate"><span class="pre">--move</span></code> で指定した手）、ダイスなしの場合はそのキューブ判断（ノーダブルとダブル/テイク。ダブル/パスはちょうど +1）がプレイされます。局面は XGID または OGID、あるいはデータベース（<code class="docutils literal notranslate"><span class="pre">--db</span></code> と <code class="docutils literal notranslate"><span class="pre">--id</span></code>）から取得され、<code class="docutils literal notranslate"><span class="pre">--store</span></code> がなければ何も記録されません。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;position&gt;<span class="w"> </span><span class="o">[</span>--store<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--preset</span></code> — 初期設定：<code class="docutils literal notranslate"><span class="pre">fast</span></code>\ （既定：7 ハーフムーブで打ち切る 216 ゲーム、108 ゲーム後に JSD 3 で停止）または <code class="docutils literal notranslate"><span class="pre">standard</span></code>\ （11 で打ち切る 1296 ゲーム、324 ゲーム後に JSD 3 で停止）。どちらも 0 ply でプレイします。つまり手、キューブ、末端のすべてでネットワークだけを使います。<code class="docutils literal notranslate"><span class="pre">--ply</span> <span class="pre">1</span></code> 以上ではより深くプレイし、時間は数倍かかります。以降のオプションが一つずつこれを上書きします。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--games</span></code>、<code class="docutils literal notranslate"><span class="pre">--min-games</span></code>、<code class="docutils literal notranslate"><span class="pre">--truncation</span></code>、<code class="docutils literal notranslate"><span class="pre">--jsd</span></code>、<code class="docutils literal notranslate"><span class="pre">--ply</span></code>、<code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — ロールアウトのパラメータ（<code class="docutils literal notranslate"><span class="pre">--truncation</span> <span class="pre">0</span></code> は各ゲームを最後までプレイし、<code class="docutils literal notranslate"><span class="pre">--jsd</span> <span class="pre">0</span></code> は終了前には決して停止しません）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move</span></code> — プレイする手を blunderDB 表記で指定します（繰り返し指定可）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> — ダイスのシード。既定では固定で、同じコマンドは同じ数列を返します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — 並列でプレイするゲーム数（既定：コアごとに一つ）。変わるのは所要時間だけです。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code>— 出力形式。<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>（既定：<code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code>、<code class="docutils literal notranslate"><span class="pre">--id</span></code> — XGID の代わりに、プレイする局面のデータベースと識別子。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--store</span></code> — 完了したロールアウトを、独自の設定を持つ第二の分析として、インポートまたは評価された分析の横にポジションへ記録します。それを置き換えることはありません。中断されたロールアウトは記録されません。同じ設定の二つのロールアウトでは長い方の系列が残り、別の設定のロールアウトは横に追加されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--list</span></code> — ロールアウトを実行する代わりに、そのポジションに保存されたロールアウトを新しい順に表示します。</p></li>
+</ul>
+<p>すべての候補が同じダイスでプレイされ、各ロールの運は各ゲームの結果から取り除かれ（分散削減）、最初の二回のロールは層別化され、ゲームは two-sided ベアオフデータベースがカバーする地点で停止します。各行にはエクイティ、その 95 % 区間、プレイしたゲーム数、JSD（差の標準偏差で表した最善手との差）が示されます。キューブはゲーム中にプレイされるため、順位は絶対エクイティよりも信頼できます。Ctrl-C を押すと、終了したゲームで確立された結果が表示されます。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--move<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span>--move<span class="w"> </span><span class="s1">'24/23 13/10'</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--preset<span class="w"> </span>standard<span class="w"> </span>--store
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--list
+</pre></div>
+</div>
+</section>
+<section id="epc-calculatrice-epc">
+<h2>epc — EPC 計算機<a class="headerlink" href="#epc-calculatrice-epc" title="この見出しへのリンク"></a></h2>
+<p>XGID または OGID（OpenGammon）で与えられたベアオフ局面について、Effective Pip Count、勝率、マネーゲームのキューブ判断を計算します。純粋な計算であり、データベースファイルは一切関わりません。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — 内蔵の TS-06-06 を広げる任意の two-sided ベアオフデータベース（<code class="docutils literal notranslate"><span class="pre">.bd</span></code>。環境変数 <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code> からも読まれます）。有効なもののうち最も広いデータベースが優先されます。無効なファイルは警告のうえ無視されます。</p></li>
+</ul>
+<p><strong>動作モード。</strong>two-sided データベースが覆う範囲では、勝率とマネーゲームのキューブ分析（cubeless、ND、D/T、D/P、判断）は<strong>厳密</strong>です。その外側では勝率は<strong>推定</strong>となり（one-sided のロール分布の畳み込みに較正済みの補正を加えたもの）、実測した誤差幅とともに表示されます。キューブの判断は意図的に決して推定しません（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a> を参照）。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact : six pions ou moins de chaque côté</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'</span>
+
+<span class="c1"># Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">'XGID=…'</span>
+</pre></div>
+</div>
+</section>
+<section id="gnubgid-id-gnubg">
+<span id="cli-gnubgid"></span><h2>gnubgid — GNUbg ID<a class="headerlink" href="#gnubgid-id-gnubg" title="この見出しへのリンク"></a></h2>
+<p>XGID または OGID で与えた局面について、GNU Backgammon が表示する識別子を出力します。<strong>局面 ID</strong> (手番側から見た盤面) と <strong>マッチ ID</strong> (キューブ、スコア、ダイス) を、GNU Backgammon がコピーするのと同じようにコロンで連結します。純粋な計算で、データベースファイルは関与しません。マッチの長さとスコアは、XGID と同様に、局面が持つ残りポイント数から導かれます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
+</ul>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+</section>
+<section id="cubematrix-matrice-du-videau">
+<span id="cli-cubematrix"></span><h2>cubematrix — キューブ判断のマトリクス<a class="headerlink" href="#cubematrix-matrice-du-videau" title="この見出しへのリンク"></a></h2>
+<p>ある局面のキューブ判断を、マッチの<strong>あらゆるスコア</strong>で示します。<em>away × away</em> の各セルについて、ダブルすべきか、テイクすべきかを返します。純粋な計算であり、データベースは開かれません。局面は XGID または OGID（OpenGammon）で渡します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code>— 出力形式。<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>（既定：<code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code>— グリッドが覆うマッチ長。1 から 25 まで（既定：7）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code>— 各セルの探索深さ。<code class="docutils literal notranslate"><span class="pre">0</span></code> または <code class="docutils literal notranslate"><span class="pre">2</span></code>（既定：2）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code>— 枝刈りネットワークが残す候補手の数（既定：12）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code>— 並列に走らせる探索の数（既定：コアあたり 1 つ）。値によらずグリッドは同一で、変わるのは時間だけです。</p></li>
+</ul>
+<p>局面自身のスコアは無視され、グリッドがそれを置き換えますが、<strong>キューブ</strong>はそのまま保たれます。問いは「どのスコアなら<em>この</em>キューブを回すか」です。グリッドは全体がクロフォード後のものです。</p>
+<p>エンジンはスコアを考慮するため、各セルはそれぞれ独立した探索です。ひとつの探索を異なるマッチ・エクイティで読み替えると、まさにスコアが効くところで誤った答えになります。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grille d'un match en 5 points</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--match-length<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'</span>
+
+<span class="c1"># Les équités de chaque case, pour un script</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">text</span></code>出力：行が手番側の残り必要点、列が相手の残り必要点であるグリッドに続き、<code class="docutils literal notranslate"><span class="pre">ND</span></code> / <code class="docutils literal notranslate"><span class="pre">DT</span></code> / <code class="docutils literal notranslate"><span class="pre">DP</span></code> / <code class="docutils literal notranslate"><span class="pre">TG</span></code> の凡例と、評価できなかった各セルの理由が並びます。</p>
+</section>
+<section id="capture-position-depuis-une-capture-d-ecran">
+<h2>capture — スクリーンショットからの局面<a class="headerlink" href="#capture-position-depuis-une-capture-d-ecran" title="この見出しへのリンク"></a></h2>
+<p>eXtreme Gammon のボード（デフォルトテーマ）のスクリーンショットが示す局面を読み取ります。チェッカー、バー、ベアオフ済みのチェッカー（15 に足りない分）、ダイス、手番、キューブが対象です。画像（PNG、JPEG、GIF）にはボード以外が写っていても構いません。4K 画面（3840×2160）より大きい画像は、読み取りの前に縮小されます。スコアは読み取りません。読み取りで判断できないものは疑義として一覧表示され、推測されることはありません。隠れた矢印、XG が横に並べて描く 5 個を超える積み上げ、判読できないダイスなどです。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>&lt;image&gt;
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力形式： <code class="docutils literal notranslate"><span class="pre">text</span></code>、 <code class="docutils literal notranslate"><span class="pre">json</span></code>、 <code class="docutils literal notranslate"><span class="pre">xgid</span></code> （デフォルト： <code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> と <code class="docutils literal notranslate"><span class="pre">--save</span></code> — 局面を個別の局面としてデータベースに保存します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span></code> — キャプチャに写らないスコア。<code class="docutils literal notranslate"><span class="pre">money</span></code>、または両プレイヤーのアウェイスコアで、プレイヤー1（下側）を先に書きます。例: <code class="docutils literal notranslate"><span class="pre">2a/5a</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--turn</span></code> — ダイスが写っていないときの手番。<code class="docutils literal notranslate"><span class="pre">1</span></code>（下側）または <code class="docutils literal notranslate"><span class="pre">2</span></code>（上側）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — 盤面を確認したうえで、読み取りの疑いがあっても保存します。<code class="docutils literal notranslate"><span class="pre">--score</span></code>や <code class="docutils literal notranslate"><span class="pre">--turn</span></code>の代わりにはなりません。スコア、またはダイスがないときの手番が指定されるまで <code class="docutils literal notranslate"><span class="pre">--save</span></code>は拒否し、足りないオプションを示します。</p></li>
+</ul>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--format<span class="w"> </span>xgid<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>2a/5a<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>money<span class="w"> </span>--turn<span class="w"> </span><span class="m">2</span><span class="w"> </span>videau.png
+</pre></div>
+</div>
+<p>デーモンも同じ読み取りを提供します：<code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/positions.fromImage</span></code> に <code class="docutils literal notranslate"><span class="pre">{&quot;data&quot;:</span> <span class="pre">&quot;&lt;base64</span> <span class="pre">の画像&gt;&quot;}</span></code> を渡します。4K 画面より大きい画像は縮小せずに拒否し、同時に読み取る画像は2枚までです。</p>
+</section>
+<section id="bearoff-bases-de-sortie">
+<h2>bearoff — ベアオフ・データベース<a class="headerlink" href="#bearoff-bases-de-sortie" title="この見出しへのリンク"></a></h2>
+<p>ベアオフ・データベースを作り、管理します。ダウンロードも埋め込みもありません。表はここで計算し、その領域に対して gnubg が出す指紋と照合します。どのサブコマンドもデータベースには触れません — ベアオフの表はゲームについての算術であって、誰かの局面についてのものではないからです — したがって <code class="docutils literal notranslate"><span class="pre">--db</span></code> を取るものはありません。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>&lt;file.bd&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>delete<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>領域は <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> と同じ書き方です。1 人あたり 9 個の駒の両面表なら <code class="docutils literal notranslate"><span class="pre">6x9</span></code>、八点の片面表なら <code class="docutils literal notranslate"><span class="pre">os8</span></code>（<code class="docutils literal notranslate"><span class="pre">os</span></code> だけなら <code class="docutils literal notranslate"><span class="pre">os6</span></code> と同じ）。</p>
+<p>二つの系統は同じ問いに答えるものではありません。<strong>両面</strong> の表は、勝率とキューブ判定が厳密になる範囲を広げます。<strong>片面</strong> の表は、EPC が黙らずに済む駒の距離を広げます（最大十点）。</p>
+<p><strong>generate.</strong> 開始前に大きさ・必要メモリ・推定時間を示し、そのあと進捗率と実測の残り時間を表示します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--ts</span></code> — 計算する両面領域。例えば <code class="docutils literal notranslate"><span class="pre">6x9</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--os</span></code> — 計算する片面領域を点数で指定します。6 から 12。二つのうち、ちょうど一方が必要です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cores</span></code> — 使うコア数（既定：1 つを除く全部）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> — 書き込み先（既定：アプリケーションのデータフォルダー）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> — 進捗行を出しません。</p></li>
+</ul>
+<p><strong>CTRL-C は一時停止です。</strong> シグナルを捕まえ、状態を表の隣に書き出します。同じコマンドをもう一度実行すると、すべてを計算し直すのではなく止まったところから続きます。30 分の算術は書き留める価値があります。<code class="docutils literal notranslate"><span class="pre">bearoff</span> <span class="pre">delete</span></code> は待機中の再開を捨てます。一時停止できるのは両面の走査だけです。片面の走査は逐次的で、<code class="docutils literal notranslate"><span class="pre">--cores</span></code> は役に立ちません。</p>
+<p><strong>list.</strong> 各領域を数字で示し — 大きさ、メモリ、この計算機での時間 — どれがすでに存在するか（判定つき）、どれに一時停止中の計算があるかを述べます。スクリプト用には <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>、推定の前提を変えるには <code class="docutils literal notranslate"><span class="pre">--cores</span></code> を使います。</p>
+<p><strong>verify.</strong> <code class="docutils literal notranslate"><span class="pre">verified</span></code>（参照と同じバイト列）、<code class="docutils literal notranslate"><span class="pre">unverified</span></code>（形は正しいが、その領域の指紋が登録されていない）、<code class="docutils literal notranslate"><span class="pre">corrupt</span></code>（ファイルが自分自身と矛盾する）のいずれかを返します。最後の場合はエラーで終了します。このコマンドはスクリプトに置くために作られています。</p>
+<p><strong>delete.</strong> 表、待機中の再開、死んだ計算の残骸を取り除きます。既定の領域はアプリケーションの次回起動で再計算されますが、より広い領域はされません。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ce que cette machine a, et ce que chaque domaine coûterait</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x9<span class="w"> </span>--cores<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># OS-08 : l'EPC répond alors jusqu'à un pion sur la 8</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--os<span class="w"> </span><span class="m">8</span>
+
+<span class="c1"># Sur un serveur, dans le volume que lit le démon</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+</section>
+<section id="openingbook-quel-coup-a-ce-score">
+<span id="cli-openingbook"></span><h2>openingbook — このスコアでどの手か<a class="headerlink" href="#openingbook-quel-coup-a-ce-score" title="この見出しへのリンク"></a></h2>
+<p>トレーニングパネルの練習<em>オープニング</em>（<a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">トレーニングパネル</span></a> を参照）をコマンドラインで行います。あるスコアでの対局のオープニングの手（1st roll）または返し（2nd roll）を、内蔵のオープニングブックから出題し、そのブックに照らして判定します。最善手と同等（tied）の手はすべて正解です（<a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">オープニングブック：差、95 % 信頼区間、同等</span></a> を参照）。データベースの読み書きは行いません。</p>
+<p><strong>openingbook status</strong> — ブックの行数とそのスコア。</p>
+<p><strong>openingbook question</strong> — 問題を1つ出題します。オープニングのロールとスコアを、オープニング局面の XGID とともに示します。<code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code> を付けると、そのスコアでの最善と同等のオープニングの後の局面での返しのロールを、その手と返しの局面の XGID とともに示します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">first|second</span></code> — 出題するロール。<code class="docutils literal notranslate"><span class="pre">first</span></code>（オープニング、既定）または<code class="docutils literal notranslate"><span class="pre">second</span></code>（返し）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span> <span class="pre">&lt;liste&gt;</span></code> — 出題するスコア（カンマ区切り）: <code class="docutils literal notranslate"><span class="pre">4-2</span></code>（応答側が4ポイント、オープナーが2）、<code class="docutils literal notranslate"><span class="pre">1-2</span></code>（クロフォードゲーム）、<code class="docutils literal notranslate"><span class="pre">1-1</span></code>（DMP、ダブルマッチポイント）、<code class="docutils literal notranslate"><span class="pre">money</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opening</span> <span class="pre">&lt;liste&gt;</span></code>、<code class="docutils literal notranslate"><span class="pre">--reply</span> <span class="pre">&lt;liste&gt;</span></code> — 出題するオープニングまたは返しのロール（<code class="docutils literal notranslate"><span class="pre">31,65</span></code>）。<code class="docutils literal notranslate"><span class="pre">--reply</span></code> は <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code> と併用する場合のみ。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span> <span class="pre">&lt;n&gt;</span></code> — 再現できる抽選（0 = ランダム）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--book</span> <span class="pre">&lt;fichier&gt;</span></code> — 内蔵のブックの代わりに <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> または <code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code> のブックを使います。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — 出力形式。</p></li>
+</ul>
+<p><strong>openingbook answer</strong> — 手を判定し、各候補を最善手と比べて表示します。差、95 % 信頼区間、「tied」（同等）を、スコアで正規化したエクイティで示し、対局数とロールアウトの設定も添えます。<code class="docutils literal notranslate"><span class="pre">--after</span></code> を付けない場合、その手はオープニングです。<code class="docutils literal notranslate"><span class="pre">--reply</span></code> と <code class="docutils literal notranslate"><span class="pre">--after</span></code> を付けた場合、その手はそのオープニングの手の後に打つ返しで、<code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code> の問題が示す手です。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--score<span class="w"> </span>&lt;score&gt;<span class="w"> </span><span class="o">[</span>--reply<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--after<span class="w"> </span>&lt;coup&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;coup&gt;'</span>
+</pre></div>
+</div>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2,2-4
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span><span class="s1">'8/5 6/5'</span>
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--roll<span class="w"> </span>second<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--reply<span class="w"> </span><span class="m">21</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span>--after<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span><span class="s1">'13/11 6/5'</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="cli_matchs.html" class="btn btn-neutral float-left" title="マッチ、トーナメント、ゲーム" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="cli_entrainement.html" class="btn btn-neutral float-right" title="学習、レッスン、トレーニング" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,306 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harjoittelu, Anki ja kaksintaistelu &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Tuonti, alkuperä ja jakaminen" href="manuel_partage.html" />
+    <link rel="prev" title="Arviointi" href="manuel_eval.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/manuel_entrainement.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_entrainement.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_entrainement.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_entrainement.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_entrainement.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/manuel_entrainement.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_entrainement.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_entrainement.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Käyttöopas</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Aloitus ja käyttöliittymä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyysi, kommentit ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Ottelut ja litterointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Turnaukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Tilastot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Arviointi</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Harjoittelu, Anki ja kaksintaistelu</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-anki">Anki-paneeli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-entrainement">Harjoittelu-paneeli</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-lanceur">Aloitin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-six-exercices">Kuusi harjoitusta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repondre">Vastaaminen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-journal-et-le-bilan">Päiväkirja ja yhteenveto</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-duel">Kaksintaistelu-paneeli</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Tuonti, alkuperä ja jakaminen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Käyttöopas</a></li>
+      <li class="breadcrumb-item active">Harjoittelu, Anki ja kaksintaistelu</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="entrainement-anki-et-duel">
+<span id="manuel-entrainement"></span><h1>Harjoittelu, Anki ja kaksintaistelu<a class="headerlink" href="#entrainement-anki-et-duel" title="Link to this heading"></a></h1>
+<section id="panneau-anki">
+<span id="id1"></span><h2>Anki-paneeli<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<p><strong>Anki-paneeli</strong> (<em>CTRL-K</em>) mahdollistaa asemien opiskelun välitoistolla FSRS-algoritmia käyttäen. Käyttäjä voi luoda pakkoja kokoelmista tai hakutuloksista.</p>
+<p><strong>Pakkojen luominen:</strong> Napsauta <strong>+ Uusi pakka</strong> luodaksesi pakan kokoelmasta tai nykyisistä hakutuloksista. Hakuun perustuvat pakat synkronoituvat automaattisesti, kun Anki-välilehti avataan.</p>
+<p><strong>Tilannekorttien pakka.</strong> Kolmas lähde, <em>Tilannekortit</em>, ei pyydä muuta kuin nimen: blunderDB täyttää pakan 36:lla järjestämättömällä tilanteella väliltä 2–9 away, ja tilanteen kortti on sama taulukko, jonka <a class="reference internal" href="#panneau-entrainement"><span class="std std-ref">Tilanteet-harjoitus</span></a> näyttää — hyväksymispisteet ja gammon-arvot, molemmat puolet. Tämä pakka on olemassa vain, jos luot sen: 36 ensimmäisenä päivänä erääntyvää korttia on kertausvelkaa, ja se otetaan tietoisesti. Synkronointipainike luo pakan uudelleen.</p>
+<p>Nämä kaksi paikkaa eivät tee samaa työtä. Tilanteet-harjoitus panee palauttamaan nämä luvut <strong>kellon käydessä</strong> ja mittaa nopeuden; pakka panee ne <strong>kestämään ajassa</strong> eikä mittaa siitä mitään. Kaksi tarinaa pysyvät erillään: Harjoittelun loki ei näe Anki-kertauksia, eivätkä Ankin tilastot näe harjoitteluistuntoja.</p>
+<p><strong>Valittu pakka ottaa paneelin otsikon haltuunsa</strong>: sen nimi, asemien määrä, jonka napsautus avaa, ja erääntyvien korttien määrä; oikealla ovat asetukset (⚙), nollaus (↻), <em>Harjoittele</em> ja <em>Opiskele</em>. ← palaa pakkaluetteloon.</p>
+<p><strong>Vie Ankiin:</strong> luettelon rivin painike ⤓ kirjoittaa pakan <strong>.apkg</strong>-tiedostoksi, jonka Anki-sovellus tuo tietokoneella tai puhelimella (AnkiDroid, AnkiMobile). Jokaisesta asemasta tulee kaksipuolinen kortti: etupuolella lauta, tilanne vuorossa olevan pelaajan kannalta (alhaalla), kuutio ja nopat; takapuolella paras siirto tai oikea kuutiopäätös, sen equity ja pelatun siirron virhe. Tekstit seuraavat käyttöliittymän kieltä. Pakka viedään sellaisenaan, ilman synkronointia, eikä vienti kirjoita tietokantaan mitään. Uudemman viennin tuominen Ankiin päivittää kortit sen sijaan, että monistaisi ne. Komentorivillä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span> <span class="pre">export</span></code>, joka vie myös kokoelman (katso <a class="reference internal" href="cli.html"><span class="doc">Komentoriviliittymä (CLI)</span></a>).</p>
+<p><strong>Kertaaminen:</strong> Valitse pakka ja napsauta <em>Opiskele</em> (tai kaksoisnapsauta pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Asemakortti näyttää aseman laudalla; tuloskortti ilmoittaa tuloksen ja jättää laudan ennalleen. Arvioi muistamisesi näppäimillä <em>1</em> (Uudelleen), <em>2</em> (Vaikea), <em>3</em> (Hyvä) tai <em>4</em> (Helppo). Paina <em>Esc</em> lopettaaksesi ja palataksesi pakkaluetteloon.</p>
+<p><strong>Arvion kumoaminen.</strong> Arviointipainikkeiden alla oleva <em>Kumoa</em>-painike tai näppäin <em>u</em> peruu istunnon viimeisimmän arvion: kortti palaa täsmälleen tilaan, joka sillä oli ennen (eräpäivä, väli, vakaus, vaikeus, kertausten ja unohdusten määrä), arvio poistuu kertauslokista ja kortti palaa näytölle arvioitavaksi uudelleen. Toistettuna se palaa istunnossa taaksepäin arvio kerrallaan. Kun istunto päättyy, <em>Kumoa</em> pysyy pakan palkissa seuraavaan istuntoon asti: myös viimeisimmän arvion voi peruuttaa, ja kertaus jatkuu tältä kortilta. Ennen skeeman versiota 2.42.0 tallennettua kertausta ei voi kumota: aiempaa tilaa ei säilytetty. Komentorivillä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span> <span class="pre">card</span> <span class="pre">--action</span> <span class="pre">undo</span></code> (katso <a class="reference internal" href="cli.html"><span class="doc">Komentoriviliittymä (CLI)</span></a>).</p>
+<p>Kahdella luvulla on eri nimet: luettelon sarake <strong>Erääntyneet</strong> laskee kaikki kortit, joiden eräpäivä on mennyt, myös keskeytetyt ja haudatut; otsikon <em>erääntyvät</em>-luku laskee vain tällä hetkellä käytettävissä olevat kortit ja voi siksi olla pienempi.</p>
+<p>Anki-luvut ovat linkkejä: napsautus palkin erääntyviin, uusiin, opeteltaviin tai kerrattaviin kortteihin tai luettelon sarakkeiden <strong>Kortit</strong>, <strong>Uudet</strong> ja <strong>Erääntyneet</strong> arvoon lataa vastaavat asemat. Samoin avoimessa turnauksessa asemien määrä avaa täsmälleen nuo asemat.</p>
+<p><strong>Kuutiopäätöksistä tulee kaksi korttia, ketjutettuina.</strong> Kuutiopäätös on kaksi kysymystä — ”tuplaus?”, sitten ”hyväksy?” — ja blunderDB on aina tallentanut ne kahtena asemana. Pakka, joka valitsee vain toisen puolikkaan, saa toisenkin: päätös täydennetään, ei laajenneta. Ja kun molemmat ovat vuorossa, toinen tulee <strong>heti</strong> ensimmäisen jälkeen.</p>
+<p>Kumpikin säilyttää oman arvosanansa ja oman aikataulunsa: nämä eivät ole yhden kortin kaksi vaihetta, vaan kaksi korttia. Ketjutus ei aikaista mitään eräpäivää — se järjestää jo erääntyneet kortit, ei muuta. Koska ne syntyvät yhdessä, ne erääntyvät yhdessä ensimmäisellä kerralla, ja juuri siinä siitä on hyötyä.</p>
+<p><strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen — mikä siirto pelataan tai mikä kuutiotoimi tehdään. Mieti, ja paina sitten <em>VÄLILYÖNTI</em> (tai napsauta peitettyä aluetta) paljastaaksesi vastauksen: aseman tallennetun analyysin sellaisena kuin Analyysi-välilehti sen esittää. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät paikoillaan ja ulottuvilla. Listan siirron napsauttaminen näyttää sen laudalla.</p>
+<p>Mikään ei pakota paljastamaan vastausta arviointia varten: jos olet varma, näppäimet <em>1</em>–<em>4</em> pysyvät käytössä. Vastaus peittyy uudelleen seuraavan kortin kohdalla, mutta ei silloin, kun vain vaihdat välilehteä — käy katsomassa Eval-paneelia tai aseman kommenttia, vastaus odottaa palatessasi.</p>
+<p>Asema, jolla ei ole tallennettua analyysiä, ilmoittaa sen suoraan ilman peitettyä aluetta.</p>
+<p><strong>Vastaaminen laudalla.</strong> Oletuksena arvioit itse itsesi. Valitse asemapakan asetuksissa <em>Vastaa laudalla</em>: nappulakortilla pelaat siirron laudalla kuten Päätös-harjoituksessa (napsautus nappulaa pelaa sen ensimmäisellä pelaamattomalla nopalla, napsautus nopilla vaihtaa jäljellä olevat nopat, oikea napsautus perii askeleet takaisin), ja valmis siirto vahvistetaan napsauttamalla noppia tai painamalla ENTER. Moottori arvioi siirron tallennettua analyysia vasten, paljastaa vastauksen ja <strong>ehdottaa arvosanaa</strong>: <em>Helppo</em> nopeasta oikeasta vastauksesta, <em>Hyvä</em> hitaammasta oikeasta, <em>Vaikea</em> blunder-rajan alittavasta virheestä, <em>Uudelleen</em> blunderista tai laittomasta siirrosta. Ehdotettu arvosana korostetaan; hallinta pysyy sinulla ja arvioit haluamasi näppäimillä <em>1</em>–<em>4</em>. Laillinen siirto, jota analyysi ei luokittele, ei ehdota mitään. Kuutiokortit, tuloskortit ja tulostaulukkopakat pysyvät itsearvioituina. Vastauksen paljastaminen pelaamatta luovuttaa siirron.</p>
+<p><strong>Istunnon rajaaminen.</strong> Oletuksena kertausistunto käy läpi kaikki erääntyneet kortit. Voit rajata sen korttimäärään pakkakohtaisesti Asetuksissa: rastita <em>Rajaa istunto</em> ja ilmoita, montako korttia istunnon tulee tarjota. Kun raja täyttyy, istunto päättyy ja kertoo siitä — viesti erottaa tilanteen ”raja täynnä, näin monta korttia yhä erääntyneenä” aidosti tyhjästä jonosta. Jos haluat silti jatkaa, vapaa harjoittelu on olemassa: se tarjoaa muita asemia muuttamatta aikataulusta mitään.</p>
+<p>Raja <strong>0</strong> ei tarjoa yhtään korttia: se on oma tilansa, hyödyllinen pakan jäädyttämiseen turnaukseen valmistautumisen ajaksi, eikä se ole sama asia kuin ”ei rajaa”. <em>Opiskele</em>-painike on tällöin pois käytöstä.</p>
+<p>Raja koskee <strong>istuntoa</strong>, ei päivää. blunderDB-pakka rakentuu kokoelman tai haun varaan: se on äärellinen aineisto, joka esitellään muutamassa istunnossa ja jonka päivittäistä määrää sen koko jo rajaa. Päiväkatto ei puraisi koskaan, tai sitten se loisi ruuhkan pakalle, joka mahtui yhteen istuntoon.</p>
+<p><strong>Vapaa harjoittelu (cram):</strong> <em>Harjoittele</em>-painike <em>Opiskele</em>-painikkeen vieressä aloittaa vapaan harjoittelusession: sinulle näytetään satunnaisia asemia pakasta FSRS-aikataulusta riippumatta. Tämä tila <strong>ei koskaan muuta kertausaikataulua</strong> — ihanteellinen lämmittelyyn ennen turnausta tai teemapakan tehokkaaseen kertaamiseen ilman, että sen järjestys häiriintyy. <em>Vapaa</em>-merkki korvaa kortin tilan, ja <em>Seuraava</em>-painike (näppäimet <em>1</em>–<em>4</em>) selaa asemia. <em>Esc</em> palaa luetteloon tallentamatta keskeytettyä sessiota.</p>
+<p><strong>Kortin siirtäminen syrjään ilman arvosanaa.</strong> Kertauksen aikana kortin otsikon oikea napsautus tarjoaa kolme elettä, jotka poistavat sen istunnosta kertomatta ajoittajalle mitään:</p>
+<ul class="simple">
+<li><p><strong>Keskeytä</strong> — kortti säilyttää aikataulunsa eikä tule enää esiin niin kauan kuin se on keskeytettynä. Näin siirretään syrjään väärä tai vielä hyödytön kortti menettämättä siihen liittyvää historiaa.</p></li>
+<li><p><strong>Hautaa</strong> — kortti katoaa seuraavaan päivään asti. Toisin kuin keskeytys, tämä ei sano mitään sen arvosta: se on sille, jonka on juuri nähnyt muualla tai jota ei halua kohdata kahdesti samana iltana.</p></li>
+<li><p><strong>Poista</strong> — kortti lähtee pakasta vahvistuksen jälkeen. Asema itse jää tietokantaan: pakka on opiskelulista kirjaston yli, ei koskaan sen kopio.</p></li>
+</ul>
+<p>Mikään näistä kolmesta ei kirjaa arvosanaa: syrjään siirretty kortti ei ole vastattu kortti, eikä se lasketa istunnon summaan.</p>
+<p><strong>Kertausloki.</strong> Pakan asetuksissa <em>Kertausloki</em>-painike näyttää, mitä ajoittajalle <strong>kerrottiin</strong> — päivä, asema, arvosana, tila, myönnetty väli — vastakohtana sille, mitä se suunnittelee. Vain täällä näkee vahingossa annetun arvosanan. Siellä sitä ei voi korjata: aikataulu pysyy ulottumattomissa, ja juuri se sääntö tekee lokista hyödyllisen — menneisyyttä ei voi kirjoittaa uusiksi, mutta sen voi tietää.</p>
+<p><strong>Keskeytys/Jatkaminen:</strong> Voit keskeyttää kertausistunnon milloin tahansa näppäimellä <em>Esc</em>. Painike muuttuu muotoon <em>Jatka</em> ja näyttää edistymisesi. Napsauta sitä jatkaaksesi siitä, mihin jäit.</p>
+<p><strong>Pakkojen hallinta:</strong> Toimintopainikkeilla voi nimetä uudelleen, synkronoida, nollata tai poistaa pakkoja (kahdesta viimeksi mainitusta pyydetään vahvistus). FSRS-parametrit (tavoitepysyvyys, enimmäisväli, satunnaisuus) asetetaan pakkakohtaisesti Asetuksissa (rattikuvake).</p>
+<p><strong>Pysyvyys: tavoite ja mittaus.</strong> <em>Tavoitepysyvyys</em> on sinun valintasi työmäärän ja mieleenpalautuksen laadun välisessä vaihtokaupassa: mitä korkeampi se on, sitä lyhyemmiksi välit käyvät ja sitä enemmän kertaat. Sen rinnalla Asetukset näyttävät <strong>mitatun pysyvyyden</strong> omista kertauksistasi — tieto, ei koskaan ohjaus: blunderDB ei muuta tavoitettasi jahdatakseen onnistumisprosenttiasi. Alle parinkymmenen kertauksen mittausta ei näytetä: se luettaisiin tosiasiaksi, vaikka se on pelkkää kohinaa.</p>
+<p>Pysyvyyden muuttaminen <strong>ei vaikuta taannehtivasti</strong>: kukin kortti omaksuu uuden tahdin seuraavassa kertauksessaan, eivätkä jo asetetut eräpäivät siirry. Vaikutus on siis vähittäinen eikä näy samana päivänä.</p>
+<p><em>Enimmäisväli</em> rajaa välistyksen. Äskettäin luotu pakka lähtee vuodesta: asema, jonka algoritmi siirtäisi useiden vuosien päähän, on poistunut pakasta ilman että olet niin päättänyt, ja oma pelisi muuttuu sitä nopeammin. Vanhemmat pakat säilyttävät sen arvon, joka niillä oli.</p>
+</section>
+<section id="panneau-entrainement">
+<span id="id2"></span><h2>Harjoittelu-paneeli<a class="headerlink" href="#panneau-entrainement" title="Link to this heading"></a></h2>
+<p><strong>Anki</strong>-paneeli kertaa sitä, mikä <strong>muistetaan</strong>; <strong>Harjoittelu</strong>-paneeli harjoittaa sitä, mikä <strong>lasketaan</strong>, kellon käydessä. Se avautuu näppäimillä <code class="docutils literal notranslate"><span class="pre">CTRL-J</span></code>, työkalupalkin painikkeesta heti kohdan « Position aléatoire » jälkeen tai komennolla <code class="docutils literal notranslate"><span class="pre">train</span></code>. Tilannekortti kuuluu molempiin: se lasketaan täällä ja muistetaan <a class="reference internal" href="#panneau-anki"><span class="std std-ref">tilannekorttien pakassa</span></a>.</p>
+<p>Levossa paneeli näyttää aloittimen ja aiempien istuntojen yhteenvedon.</p>
+<section id="le-lanceur">
+<h3>Aloitin<a class="headerlink" href="#le-lanceur" title="Link to this heading"></a></h3>
+<p>Kolme asetusta, yksi per rivi; ”Aloita” on otsikkokaistan päässä:</p>
+<ul class="simple">
+<li><p><strong>harjoitus</strong> — <em>Tulokset</em>, <em>Pipit</em>, <em>Bearoff</em>, <em>Arviointi</em>, <em>Päätös</em> tai <em>Avaus</em>;</p></li>
+<li><p>kysymyksen <strong>lähde</strong>, kun harjoituksella on useita — <em>Vivier</em> (harjoituksen vakiomuodot), <em>Plateau</em> (asema sellaisenaan) tai <em>Base</em> (asema selatusta luettelosta);</p></li>
+<li><p><em>Avaus</em>-harjoituksessa lähteen sijaan pelattava <strong>heitto</strong> — <em>1. heitto</em> (1st roll, avaussiirto) tai <em>2. heitto</em> (2nd roll, vastaus); oletuksena <em>1. heitto</em>;</p></li>
+<li><p><em>Avaus</em>-harjoituksessa lisäksi <strong>tila</strong>, joista vain yksi on valittuna: <em>XG-luokat</em> (oletus) arpoo valittujen <strong>luokkien</strong> joukosta — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (avaaja 1 away Crawford, vastaaja 2 away) ja <em>Gammon go</em> (päinvastoin), jotka on valittu oletuksena; <em>Ottelu viiteen</em> arpoo yhden tilanteen yhtä suurin painoin niistä, jotka kirja sisältää ja joissa kumpikin pelaaja on 1–5 away, ilman tilanteen valintaa. Luokka tai <em>Ottelu viiteen</em> -tila, jota kirja ei sisällä, on harmaana;</p></li>
+<li><p><strong>aikaraja kysymystä kohti</strong> — ei rajaa, 15, 30 tai 60 sekuntia.</p></li>
+</ul>
+<p>Valittu lähde tai heitto muistetaan kullekin harjoitukselle istunnosta toiseen.</p>
+<p>Selattava luettelo voi tulla Tilastot-paneelin <em>toistuvista virheistä</em>: napsautus kohtaan ”Tietovisa tästä ryhmästä” korvaa sen ryhmän asemilla ja käynnistää Päätös-harjoituksen.</p>
+<p><code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">scores</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">pips</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">bearoff</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">evaluation</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">decision</span></code> ja <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">opening</span></code> avaavat paneelin ja aloittavat suoraan; <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">tp</span></code> ja <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">takepoint</span></code> ovat <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">scores</span></code>:n synonyymejä, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">epc</span></code> on <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">bearoff</span></code>:n, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">quiz</span></code> <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">decision</span></code>:n sekä <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">ouverture</span></code> ja <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">book</span></code> <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">opening</span></code>:n synonyymi.</p>
+</section>
+<section id="les-six-exercices">
+<h3>Kuusi harjoitusta<a class="headerlink" href="#les-six-exercices" title="Link to this heading"></a></h3>
+<p><strong>Scores</strong> arpoo yhden 36 järjestämättömästä tilanteesta väliltä 2–9 away ja näyttää <strong>tilannekortin</strong>: kaksi saraketta — <em>Vous</em> (sinä) ja <em>L’adversaire</em> (vastustaja) — ja seitsemän riviä — hyväksymispiste kuutiolla 2 ja sitten kuutiolla 4, kumpikin pitkälle kilpajuoksulle ja viimeiselle heitolle, sitten gammonin arvo kuutioilla 1, 2 ja 4.</p>
+<p>”Paljasta”-painikkeen työkaluvihje muistuttaa kulusta — arvioi jokainen luku päässäsi, sitten <em>Paljasta</em>, sitten napsauta ne jotka menivät pieleen — ja lauta näyttää arvotun tilanteen tyhjällä pöydällä.</p>
+<p>Jokaisessa sarakkeessa on vain ne ruudut, jotka viitetaulukot — <a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">Viitetiedot-paneelin</span></a> taulukot — määrittävät sen puolelle: kolme lukua tilanteessa 2a-2a, enintään neljätoista, ja vain yksi sarake tasatilanteessa. Rivi, jota kumpikaan puoli ei määritä, ei näy kortilla, joten ei ole mitään ”ei sovellu” -ruutua arvattavaksi. Molemmat puolet ovat mukana, koska kuutiopäätös pistetilanteessa tarvitsee molemmat: korjattu ottopiste yhdistää kummankin pelaajan gammonarvot, ja vastustajan ottopiste kertoo, menevätkö tuplasi läpi.</p>
+<p><strong>Pipit</strong> kysyy <strong>molempien</strong> osapuolten pip-luvun. Laudan pip-luku on piilotettu niin kauan kuin kysymys on auki; ”Paljasta” näyttää sen — <strong>vaikka olisit piilottanut pip-luvun</strong> näppäimellä <code class="docutils literal notranslate"><span class="pre">p</span></code>, sillä muuten vastaus jäisi näkymättömiin eikä harjoitusta voisi tarkistaa. Kyse on peitteestä eikä asetuksesta: omaa valintaasi ei muuteta, ja se palaa voimaan seuraavassa kysymyksessä. Lähde <em>Lauta</em> esittää yhden kysymyksen näytetystä asemasta, ja vain yhden; lähde <em>Tietokanta</em> arpoo uuden aseman joka kysymykseen ja tuo sen laudalle.</p>
+<p><strong>Bearoff</strong> kysyy <strong>molempien osapuolten EPC:tä</strong> — tehollista pip-lukua, joka lisää pip-laskentaan niiden nappuloiden hukan, jotka poistuvat yli tarpeen. Tällä alueella moottori on tarkka, ja juuri täällä EPC eroaa todella pip-laskennasta.</p>
+<p>Jokainen kysymys <strong>luodaan</strong>: moottori lähtee siemenestä ja pelaa muutaman heiton, ja tilannekuva on kysymys. Satunnainen sijoittelu ei toisi mukanaan oikean ulosvientiaseman aukkoja, matalia pinoja eikä epäsymmetriaa. Siemen tulee <em>Vivier</em>-varannosta (valmis kotiintuonti, sitten nollasta kymmeneen puolisiirtoa), <em>Plateau</em>-laudalta (näytöllä oleva asema, sitten yhdestä neljään puolisiirtoa — ei koskaan nolla, koska olet juuri nähnyt sen) tai <em>Base</em>-kirjastosta (asema selatusta luettelosta sellaisenaan: se on jo todellinen).</p>
+<p>Harjoituksen alue: <strong>molemmat osapuolet kokonaan omalla kotialueellaan</strong>, <strong>4–15 nappulaa</strong> puolta kohden ja loput ulos vietyinä, tuplauskuutio keskellä, rahapeli. Siemen, joka ei sovi, <strong>hylätään nimeltä mainiten</strong>, eikä mitään käynnisty — ei hiljaista sopeutusta: pelaaminen kunnes kosketus katkeaa antaisi sinulle aseman, jota et valinnut. Tyhjä lauta on poikkeus: kysymys tulee silloin varannosta, ja paneeli kertoo miksi.</p>
+<p>Harjoitus tarvitsee yksipuolisen bearoff-taulukon; niin kauan kuin sitä luodaan taustalla (katso <a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">Asetukset</span></a>), se sanoo sen sen sijaan että esittäisi kysymyksen ilman vastausta.</p>
+<p><strong>Évaluation</strong> kysyy, mitä asema on arvoinen: <strong>vuorossa olevan pelaajan voittomahdollisuuden</strong> prosentteina ja <strong>kuutiopäätöksen</strong> — <em>Pas de double</em>, <em>Double, prend</em> tai <em>Double, passe</em>. Ne ovat ne kaksi lukua, jotka Eval-paneeli näyttää, kysyttyinä ennen kuin ne näytetään. Alue on <strong>mikä tahansa asema</strong>: kilpajuoksu yhtä lailla kuin kontaktiasema, <strong>rahapelissä</strong>.</p>
+<p>Kuten Bearoffissa, kysymys <strong>luodaan</strong>: siemen tulee kohdasta <em>Vivier</em> (asema, jossa kontakti on juuri katkennut, ja sen jälkeen nollasta kymmeneen moottorin pelaamaa puolisiirtoa), kohdasta <em>Plateau</em> (näytetty asema, ja sen jälkeen yhdestä neljään puolisiirtoa; kysymys esitetään rahapelissä kuutio keskellä, olipa siemenen pistetilanne mikä tahansa) tai kohdasta <em>Base</em> (selattavan luettelon asema sellaisenaan). Tietokannan asema kelpaa vain, jos se on rahapelin kuutiopäätös — ilman noppia, kuutio keskellä tai vuorossa olevalla pelaajalla —; muuten arvonta siirtyy seuraavaan, ja kun mikään ei kelpaa, harjoitus kertoo sen. Lauta, joka ei ole peliasema — ei viittätoista nappulaa kummallakin puolella, tai päättynyt peli — <strong>hylätään syy kertoen</strong>; tyhjällä laudalla kysymys tulee varannosta.</p>
+<p>Totuus on moottorin: kaksipuolinen bearoff-tietokanta, kun asema on siinä, muualla gammonNet kanonisella syvyydellään, ja paneeli kertoo, kumpi vastasi. Mitään ei arvioida karkeasti: asemaa, jota moottori ei arvioi, ei kysytä.</p>
+<p><strong>Décision</strong> esittää <strong>jo analysoidun</strong> päätöksen: selattavan luettelon aseman — sen ainoan lähteen — ja päätöksen, jota asema kantaa, nappulasiirron tai kuutiopäätöksen, ja tallennettu analyysi arvioi. Asema ilman analyysiä ei esitä kysymystä, eikä kerran kysytty asema palaa istunnossa; kun luettelo on käyty läpi, paneeli kertoo sen. Ilman avointa tietokantaa tai ilman analysoitua asemaa luettelossa harjoitus <strong>kieltäytyy ja kertoo syyn</strong>, eikä mitään aloiteta.</p>
+<p><strong>Avaus</strong> asettaa <strong>pelin kahdesta ensimmäisestä heitosta toisen tietyllä pistetilanteella</strong> aloittimessa valitun heiton mukaan: <em>1. heitolla</em> vuorossa olevan pelaajan avaus; <em>2. heitolla</em> vastustajan vastaus asemassa, jonka <strong>kyseisen pistetilanteen parhaan kanssa tasoissa oleva avaussiirto</strong> jättää, kirjan seuraamista siirroista valittuna ja valmiiksi laudalla pelattuna. Siirto arvioidaan blunderDB:hen upotettua <strong>avauskirjaa</strong> vasten, joka on laskettu sen omilla rollouteilla: jokaiselle sen ruudukon pistetilanteelle — 2–7 pistettä kummallakin puolella, enintään yhden pisteen erolla, sekä Crawford-peli tilanteissa 1 vastaan 2 tai 4 pistettä, kumpaankin suuntaan — viisitoista avausheittoa, sitten vastaukset kyseisen pistetilanteen parhaan kanssa tasoissa olevien avaussiirtojen jälkeen. Kirja on harjoituksen ainoa lähde.</p>
+<p>Tilanteet arvotaan <strong>kategorioittain</strong> (<em>Money</em>, <em>DMP</em>, <em>Gammon save</em>, <em>Gammon go</em>), koska 4-awaysta 7-awayhin parhaat siirrot muuttuvat tuskin lainkaan tilanteesta toiseen, kun taas nämä neljä tilannetta pelataan eri tavoin. Tehtävä nimeää kategorian tilanteen vieressä.</p>
+<p>Kun <em>Évaluation</em>-, <em>Décision</em>- tai <em>Ouverture</em>-kysymys odottaa vastaustaan, analyysipaneeli pysyy peitettynä: se kantaa vastauksen.</p>
+</section>
+<section id="repondre">
+<h3>Vastaaminen<a class="headerlink" href="#repondre" title="Link to this heading"></a></h3>
+<p>Vastaustapa on harjoituksen ominaisuus, ei koskaan asetus: se mitä <strong>lasketaan tai muistetaan</strong> paljastetaan, se mitä <strong>arvioidaan</strong> kirjoitetaan — sillä siellä virheen suuruus on opetus.</p>
+<p><em>Tulokset</em> ja <em>Pipit</em> <strong>ilmoitetaan</strong>: lasket päässäsi, napsautat ”Paljasta”, ja totuus ilmestyy. Jokainen luku on silloin <strong>oletuksena oikein</strong> — napsautat sitä, jonka menit väärin, merkitäksesi sen <strong>virheeksi</strong> (<em>Sarkain</em> ja sitten <em>Välilyönti</em> tekee saman näppäimistöltä), ja toinen napsautus poistaa merkinnän. Mitään ei kirjoiteta: pip-luku tai taulukon solu on oikein tai väärin, eikä sen kirjoittaminen opeta enempää kuin sen lukeminen.</p>
+<p><em>Bearoff</em> <strong>kirjoitetaan</strong>: kirjoitat molemmat EPC-luvut, « Valider » arvioi ne puolen pipin tarkkuudella — se on tarkkuus, jolla EPC muuttaa kilpajuoksun ratkaisun — ja totuus ilmestyy kirjoittamasi viereen. Sovellus arvioi, mitään ei tarvitse rastittaa. Poikkeama kirjataan <strong>etumerkkeineen</strong>: yliarviointi ei ole aliarviointia, ja yhteenveto tekee siitä keskiarvon.</p>
+<p><em>Évaluation</em> yhdistää molemmat eleet samaan kysymykseen. Voittomahdollisuus <strong>kirjoitetaan</strong> ja arvioidaan viiden prosenttiyksikön tarkkuudella, etumerkillinen poikkeama mukaan lukien; kuutiopäätös <strong>valitaan</strong> — napsautus pitää painikkeen arvioimatta mitään, ja « Valider » arvioi molemmat kerralla. Kuutiolla ei ole toleranssia: oikein on vain se painike, jonka moottorin tuomio tekee oikeaksi, ja asemaan, joka on <em>liian hyvä tuplaamiseen</em>, vastataan <em>Pas de double</em>. <em>Enter</em> kentässä vie kuutiopäätökseen niin kauan kuin sitä ei ole valittu, ja hyväksyy sen jälkeen. Vastauksen jälkeen paneeli näyttää totuuden — neljän lopputuloksen tuomion —, sen lähteen ja <strong>molempien osapuolten EPC:n</strong>, kun asemalla on tarkka EPC; EPC:tä ei koskaan kysytä tässä, sillä on oma harjoituksensa. Päiväkirja laskee kaksi lukua erikseen: aseman voi arvioida hyvin ja lukea sen kuution väärin.</p>
+<p><em>Décision</em> <strong>valitaan</strong>. Nappulasiirrossa <strong>pelaa siirto laudalla</strong>: nappulan napsautus pelaa sen ensimmäisellä vielä pelaamattomalla nopalla (ensin vasen, sitten oikea noppa) tai seuraavalla, jos ensimmäinen ei voi siirtää sitä; jos mikään noppa ei voi, mikään ei liiku. Nappulan voi myös vetää. Noppien napsautus vaihtaa vielä pelaamattomien noppien järjestyksen ja lähettää valmiin siirron arvioitavaksi. Oikea napsautus laudalla ottaa pelatut askeleet takaisin. Paneelissa « Annuler le pas » peruu yhden nopan ja « Recommencer » palauttaa aseman sellaisena kuin kysymys sen esittää. Merkintäkenttä hyväksyy myös kirjoitetun siirron (<code class="docutils literal notranslate"><span class="pre">13/7</span> <span class="pre">8/7</span></code>, litteroinnin merkintätapa): askeleet asetetaan laudalle jokaisella näppäilyllä, punaiseksi muuttunut kenttä kertoo, ettei jokin askel ole pelattavissa, ja ENTER vahvistaa koko siirron. Kun paneelilla on fokus, ASKELPALAUTIN kumoaa yhden askeleen ja ESC aloittaa siirron alusta; ENTER vahvistaa koko siirron missä tahansa fokus onkin, painiketta lukuun ottamatta. Kuutiopäätöksessä napsauta <em>Ei tuplausta</em>, <em>Tuplaus, hyväksy</em> tai <em>Tuplaus, luovuta</em>: napsautus on vastaus.</p>
+<p>Korjaus pitää kolme lopputulosta erillään, ja niiden sekoittaminen valehtelisi. <strong>Sääntöjenvastainen siirto</strong> ei ole huonosti valittu siirto — se on sääntövirhe. <strong>Laillinen siirto, jota moottori ei arvioinut</strong>, ei ole arviointivirhe: sillä ei yksinkertaisesti ole hintaa, eikä se maksa mitään. Arvioitu siirto maksaa sen, minkä analyysi sanoo, millipisteinä. Oikein on vain arvioitu siirto, joka ei maksa mitään; paras siirto näytetään joka tapauksessa.</p>
+<p><em>Avaus</em> <strong>valitaan</strong> myös, siirto pelataan laudalla kuten <em>Päätös</em>-harjoituksessa — samat eleet, sama merkintäkenttä. Paneeli kertoo pelattavan heiton ja pistetilanteen, <em>te</em> ensin. Siirto on <strong>oikea</strong>, kun se on <strong>tasoissa parhaan kanssa</strong>: hyviä siirtoja ei ole vain yksi, vaan kärkiryhmä, jota kirja ei osaa erottaa toisistaan (ks. <a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">Avauskirja: ero, 95 %:n luottamusväli ja tasoissa olo</span></a>). Kun siirto on pelattu, paneeli merkitsee sen <em>Oikein</em> tai <em>Väärin</em> ja näyttää kirjan ehdokkaiden taulukon: kunkin <strong>eron</strong> parhaaseen, tämän eron <strong>95 %:n luottamusvälin</strong> ja merkinnän <strong>tasoissa</strong>, siirtonne korostettuna — lisättynä alimmaiseksi ilman eroa, kun kirja ei luokittele sitä. Näiden lukujen tuottaneiden pelien lukumäärä ja rolloutin asetus ovat taulukon työkaluvihjeessä. <em>2. heitolla</em> tehtävänanto nimeää jo pelatun avaussiirron. Loki laskee avauksen ja vastauksen erikseen: avauksensa voi osata ja vastata huonosti.</p>
+<p>Kello käynnistyy kysymyksen ilmestyessä ja pysähtyy kohdassa « Révéler », « Valider », <em>Décision</em>-harjoituksen kuutiopäätöksen napsautuksessa tai <em>Ouverture</em>-harjoituksen pelatussa siirrossa; seuraava kysymys valmistellaan sillä aikaa kun vastaat, joten sitä ei koskaan mitata sinun kanssasi. Virheiden rastittamista ei myöskään mitata. Rajan kanssa määräajassa vastaamatta jäänyt kysymys paljastuu itsestään ja lasketaan <strong>myöhästyneeksi</strong>: kaikki sen luvut ovat väärin, eikä sen aika mene mediaaniin — vastausta jota ei annettu ei mitata. Myöhästynyt päätös näyttää parhaan siirron, eikä se mene istunnon PR:ään.</p>
+<p>”Seuraava” tallentaa kysymyksen ja esittää uuden; ENTER kentän tai painikkeen ulkopuolella tekee saman, kun vastaus on näkyvissä, tai ”Lopeta”, jos seuraavaa kysymystä ei ole. Istunnolla ei ole kiinteää pituutta: se kestää kunnes ”Lopeta”, joka kirjoittaa sen päiväkirjaan, tai ”Poistu”, joka hylkää sen. Kaikki painikkeet ovat paneelin otsikkokaistalla harjoituksen, kysymyksen numeron ja ajastimen kanssa: ”Poistu”, ”Lopeta”, ja aina päässä kysymyksen toiminto (”Paljasta”, ”Tarkista” tai ”Seuraava”). Lauta näyttää kysymyksen ja sen vastauksen, se ei kanna yhtään säädintä.</p>
+<p>Kun kysymys on esitetty laudalla, paljastettuna tai ei, luetteloa selaavat näppäimet eivät vieritä sitä: kysymys pitää laudan, kunnes valitaan « Suivante », « Terminer » tai « Quitter ».</p>
+</section>
+<section id="le-journal-et-le-bilan">
+<h3>Päiväkirja ja yhteenveto<a class="headerlink" href="#le-journal-et-le-bilan" title="Link to this heading"></a></h3>
+<p>Päättyneet istunnot säilyvät itse tietokannassa — ne siis seuraavat tiedostoa — eikä niillä ole ylärajaa. Levossa paneeli näyttää yhden rivin harjoitusta kohti: istuntojen määrän, virheprosentin, mediaaniajan ja, kymmenestä istunnosta alkaen, <strong>suuntauksen</strong>, eli eron kymmenen viimeisen istunnon virheprosentin ja kaikkien istuntojen virheprosentin välillä — negatiivisena edistyt.</p>
+<p><em>Décision</em>-harjoituksessa rivi antaa myös viimeisen istunnon <strong>PR:n</strong>, joka lasketaan samalla kaavalla kuin tilastot laskevat oikealle pelille — 500 × keskimääräinen virhe normalisoituna ekviteettinä arvioiduista päätöksistä. Harjoittelun PR 6 ja ottelun PR 6 mittaavat samaa asiaa samalla asteikolla.</p>
+<p>Harjoituksen nimeä napsauttamalla avautuu erittely <strong>lukutyypeittäin</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». Juuri tämä erittely tekee päiväkirjasta hyödyllisen, ja se laskee tyypin eikä puolen mukaan: saman taulukon sama ruutu, kummalta puolelta tahansa katsottuna, on yksi ja sama heikkous.</p>
+<p><em>Päätös</em>-kysymys säilyttää päiväkirjassa asemansa, annetun vastauksen ja sen hinnan millipisteinä. <em>Päätös</em>-harjoituksen tiedot sisältävät siksi kolme painiketta, jotka toimivat kaikilla epäonnistuneilla asemilla, kukin kerran, viimeksi epäonnistunut ensin — aikarajan ylittänyt kysymys lasketaan epäonnistuneeksi:</p>
+<ul class="simple">
+<li><p><strong>Kertaa virheeni</strong> — epäonnistuneista asemista tulee selattava lista, ja <em>Päätös</em>-istunto alkaa uudelleen niillä;</p></li>
+<li><p><strong>Virheiden Anki-pakka</strong> — Anki-pakka näistä asemista;</p></li>
+<li><p><strong>Virheiden kokoelma</strong> — kokoelma näistä asemista.</p></li>
+</ul>
+<p>Pakan ja kokoelman nimi on ”Päätöksen virheet” ja perässä päivän päivämäärä. Komentorivillä <code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">missed</span></code> antaa saman listan ja tekee siitä pakan (<code class="docutils literal notranslate"><span class="pre">--deck</span></code>) tai kokoelman (<code class="docutils literal notranslate"><span class="pre">--collection</span></code>), ja <code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">sessions</span></code> lukee päiväkirjan uudelleen (katso <a class="reference internal" href="cli_entrainement.html#cli-training"><span class="std std-ref">training — Harjoituspäiväkirja</span></a>).</p>
+</section>
+</section>
+<section id="panneau-duel">
+<span id="id3"></span><h2>Kaksintaistelu-paneeli<a class="headerlink" href="#panneau-duel" title="Link to this heading"></a></h2>
+<p><strong>Kaksintaistelu</strong>-paneeli pelaa kokonaisen ottelun Bottia vastaan, blunderDB:n toimiessa Tuomarina: se heittää nopat, valvoo sääntöjä sekä pitää kirjaa tilanteesta ja kelloista. Se avautuu näppäimillä <code class="docutils literal notranslate"><span class="pre">CTRL-H</span></code>, työkalupalkin «Pelaa»-painikkeella tai <code class="docutils literal notranslate"><span class="pre">duel</span></code>-komennolla. Tietokannan on oltava auki: Kaksintaistelu kirjoitetaan siihen jokaisen päätöksen jälkeen.</p>
+<p>Ilman avointa Kaksintaistelua paneeli näyttää lomakkeen, joka muistetaan Kaksintaistelusta toiseen, ja, jos niitä on, keskeytettyjen Kaksintaistelujen luettelon. Otsikkokaistalla ovat <strong>Lähtö</strong>, lähtöaseman vaatimat valinnat, <strong>aikataulu</strong> ja sen päässä ”Pelaa”:</p>
+<ul class="simple">
+<li><p><strong>Lähtö</strong>: alkuasema tai laudan asema. Laudalta lähdettäessä sitä muokataan kuten Eval-paneelissa (sama luonnoslauta, samat eleet): nappulat, kuutio ja sen omistaja, nopat — pelaajan puolelle asetettuina ne antavat hänelle vuoron — ja tulos.</p></li>
+<li><p><strong>Nopat</strong> (lähtö laudalta, jolla on nopat): ”Laudan nopat”, oletus, pelaa asetetun heiton; ”Heitä uudelleen” antaa Erotuomarin arpoa sen uudelleen.</p></li>
+<li><p><strong>Kuutiopäätös</strong> (lähtö laudalta ilman pelattavia noppia, kun vuorossa oleva pelaaja voi tuplata tai laudalla on tarjottu tuplaus): ”Ennen kuutiota”, oletus, alkaa tästä päätöksestä — vuorossa oleva pelaaja tuplaa tai heittää, tai vastustaja vastaa tarjottuun tuplaukseen; ”Kuution jälkeen” siirtyy suoraan heittoon, jolloin tarjottu tuplaus hyväksytään.</p></li>
+<li><p><strong>Aikataulu</strong>: ei aikataulua, <strong>Standard</strong> (2 min pistettä kohden + 12 s), <strong>Speed</strong> (0,4 min pistettä kohden eli 2 min 5 pisteen ottelussa, + 10 s) tai tallennettu aikataulu.</p></li>
+</ul>
+<p>Lomake, yksi asetus riviä kohden:</p>
+<ul class="simple">
+<li><p><strong>Ottelu</strong> 1–25 pisteeseen tai <strong>rahapeli</strong> (Jacoby valinnan mukaan).</p></li>
+<li><p><strong>Tulos</strong>: mitä kultakin pelaajalta puuttuu, oletuksena ottelun pituus (ottelun alku); ”1 (Crawford)” on Crawford-peli, ”1 (post-Crawford)” sitä seuraava peli. Laudalta lähdettäessä nämä kentät ja laudan tulos ovat yksi ja sama: toisen muuttaminen muuttaa toista, ja rahapelilauta tekee rahapelisession. <strong>Vain yksi peli</strong> lopettaa Kaksintaistelun sen ensimmäisen pelin loppuun, tuloksen harjoittelua varten: kirjoitettu Ottelu sisältää vain tämän pelin.</p></li>
+<li><p><strong>Aikataulu</strong> (aikataulu valittu): <strong>minuuttia pistettä kohden</strong> ja <strong>viive</strong> sekunteina. Jokaisella pelaajalla on minuuttia pistettä kohden × ottelun pituus (vähemmän lähtötuloksesta: jäljellä olevan pelattavan keskimääräinen pituus); joka vuorolla viive kuluu ensin, sitten varanto. Loppuun kulunut varanto pysyy nollassa, ja kulunut aika merkitään edelleen, tai se hävittää ottelun. Nimi ja ”Tallenna” säilyttävät kaksi lukua valikon aikatauluna käyttäjän asetuksissa; ”Poista” poistaa valitun tallennetun aikataulun. Rahapelisessio pelataan ilman aikataulua.</p></li>
+<li><p><strong>Pelattu puoli</strong> (pelaaja 1 tai 2) ja <strong>botin taso</strong> (<code class="docutils literal notranslate"><span class="pre">instant</span></code>, <code class="docutils literal notranslate"><span class="pre">normal</span></code>, <code class="docutils literal notranslate"><span class="pre">thorough</span></code>, samat kuin analyysissä). Valitsin kertoo kunkin tason syvyyden, esimerkiksi ”instant (0-ply)” tai ”normal (2-ply, karsittu)”; syvempi on vahvempi ja hitaampi.</p></li>
+<li><p><strong>Nimesi</strong> ja <strong>Tallenna ottelu</strong>: kun valinta on poistettu, päättynyt Kaksintaistelu hylätään sen sijaan, että siitä tulisi Ottelu.</p></li>
+<li><p><strong>Pipcount</strong>: kun valinta on poistettu, pipcount pysyy piilossa Kaksintaistelun ajan, myös työkalupalkin painikkeesta tai <code class="docutils literal notranslate"><span class="pre">P</span></code>-näppäimestä; se palaa Kaksintaistelun päättyessä.</p></li>
+</ul>
+<p>«Jatka peliä» avaa keskeytetyn Kaksintaistelun uudelleen samasta kohdasta, samoilla tulevilla nopilla; sen kellot olivat pysähdyksissä.</p>
+<p>Keskeytetty Kaksintaistelu ei lähde tietokannastaan: tietokannan vienti ei ota sitä mukaan, koska sen tulevat nopanheitot eivät saa päästä ulos millään tiellä ennen loppua. Päättynyt Kaksintaistelu lähtee kuten mikä tahansa Match.</p>
+<p>Kaksintaistelu pelataan laudalla. Paneeli näyttää ottelulomakkeen kahdessa sarakkeessa kuten Transkriptio ja kellot aikataulun ollessa käynnissä; sen otsikkokaista nimeää pelaajat, kertoo mitä odotetaan ja kantaa oikealla ”Luovuta ottelu”, ”Tauota ottelu”, ”Peru ottelu”. Pisteottelu tallennetaan vain kokonaisena: mikään lopetus ei säilytä keskeneräistä ottelua. Tulos ja kuutio ovat laudan; tulos ja kellot pysyvät tilarivillä, kun välilehti on suljettu. Noppien siemenen SHA-256-sormenjälki, jonka Erotuomari julkaisee heti luonnissa, luetaan otsikkokaistan kehotteen työkaluvihjeestä ja siemenen kanssa päättyneen Ottelun alkuperästä. Lauta siirtyy <strong>KAKSINTAISTELU</strong>-tilaan: kirjastoa ei voi selata, muokkaus, Eval-paneeli ja muut välilehdet eivät avaudu, lukuun ottamatta <a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">Viitetiedot-paneelia</span></a>, ja moottori vaikenee — ei arviointia, ei ehdokkaita. Jäljelle jäävät vain Pino (<code class="docutils literal notranslate"><span class="pre">B</span></code>), pipcount (<code class="docutils literal notranslate"><span class="pre">P</span></code>, ellei sitä ole piilotettu Kaksintaistelun ajaksi) ja ohje.</p>
+<ul class="simple">
+<li><p>Ennen heittoa lautaan, noppiin tai nappulaan napsauttaminen heittää ne; vain kuutioon napsauttaminen ehdottaa tuplausta, ja lauta kysyy ”Tuplaa” tai ”Peruuta”. Kun kuutio ei ole käytettävissä, heitto tapahtuu automaattisesti.</p></li>
+<li><p>Botin tuplauksen edessä lauta kysyy ”Ota vastaan” tai ”Luovuta”.</p></li>
+<li><p>Napsautus nappulaan pelaa sen heti vasemmalla vielä vapaalla nopalla tai toisella, kun vasen ei voi pelata sitä; barilla oleva nappula tulee sisään, tuplaheitto pelataan neljällä napsautuksella. Nappulan voi myös vetää kohteeseensa. Vain laillisen siirron askeleet menevät läpi.</p></li>
+<li><p>Noppa harmaantuu, kun se on pelattu; tuplaheitossa kumpikin noppa vastaa kahta askelta ja himmenee puoliksi ensimmäisen jälkeen. Valmis siirto harmaannuttaa kaikki nopat, myös ne, joita sääntö ei salli pelata.</p></li>
+<li><p>Niin kauan kuin siirto ei ole valmis, noppiin napsauttaminen vaihtaa vielä pelaamatta olevien noppien järjestyksen. Oikea napsautus laudalla ottaa takaisin kaikki pelatut nappulat (myös <code class="docutils literal notranslate"><span class="pre">BACKSPACE</span></code>); jos nappuloita ei ole pelattu, se avaa Kaksintaistelun valikon.</p></li>
+<li><p>Täysi siirto vahvistetaan napsauttamalla noppia, painikkeella ”Vahvista” laudalla tai näppäimellä <code class="docutils literal notranslate"><span class="pre">ENTER</span></code> tai <code class="docutils literal notranslate"><span class="pre">VÄLILYÖNTI</span></code>. Sen jälkeen mitään ei voi ottaa takaisin.</p></li>
+<li><p>Botti vastaa heti; sen siirrot toistetaan laudalla hitaasti.</p></li>
+<li><p>Oikea napsautus laudan ulkopuolella tai laudalla siirron ulkopuolella tai kun nappuloita ei ole pelattu avaa Kaksintaistelun valikon: aseman lisääminen pinoon tai poistaminen sieltä, pelin luovuttaminen yksinkertaisena, gammonina tai backgammonina (omalla vuorolla, vahvistuksen jälkeen), ottelun luovuttaminen, tauotus, peruminen. Valikko ei tarjoa arviointia eikä muokkausta.</p></li>
+<li><p>”Luovuta ottelu” luovuttaa koko ottelun milloin tahansa vahvistuksen jälkeen: käynnissä oleva peli menee vastustajalle niillä pisteillä, jotka vievät hänet ottelun pituuteen, ja ottelu tallennetaan hänen voittamakseen. Rahapelissä käynnissä oleva peli hävitään yksinkertaisena kuution arvolla (Jacoby-säännöllä tai ilman) ja sessio päättyy. Ottelun häviämiseen johtavalla aikataululla loppunut varaus vastaa sitä, että pelaaja luovuttaa ottelun.</p></li>
+<li><p>”Tauota ottelu” keskeyttää kaksintaistelun kellot pysäytettyinä; se jatkuu samasta kohdasta. ”Peru ottelu” hylkää sen vahvistuksen jälkeen: mitään ei tallenneta.</p></li>
+<li><p>Kaksoisnapsautus laudan ulkopuolella lisää aseman pinoon tai poistaa sen sieltä kuten <code class="docutils literal notranslate"><span class="pre">B</span></code>; vain laudan kulmassa oleva kirjanmerkki näyttää sen.</p></li>
+</ul>
+<p>Jokaisella päätöksellä on kestonsa, ajankäytöllä tai ilman. Luovutuksella ei ole Otteluun tallennettua kestoa.</p>
+<p>Lopuksi Ottelu kirjoitetaan, sen analyysi käynnistyy ja Ottelut-välilehti avautuu siihen. Komentoriviltä <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">duel</span></code> ohjaa samaa Kaksintaistelua (katso <a class="reference internal" href="cli_matchs.html#cli-duel"><span class="std std-ref">duel — Pelaa Kaksintaistelu</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_eval.html" class="btn btn-neutral float-left" title="Arviointi" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_partage.html" class="btn btn-neutral float-right" title="Tuonti, alkuperä ja jakaminen" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,337 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>分析、コメント、検索 &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="マッチと記譜" href="manuel_matchs.html" />
+    <link rel="prev" title="はじめにとインターフェース" href="manuel_interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/manuel_bibliotheque.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_bibliotheque.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_bibliotheque.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_bibliotheque.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_bibliotheque.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_bibliotheque.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_bibliotheque.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/manuel_bibliotheque.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">マニュアル</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">はじめにとインターフェース</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">分析、コメント、検索</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-analyse">分析パネル</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rollouts">ロールアウト</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-commentaires">コメントパネル</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-tags">タグ</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#menu-contextuel">コンテキストメニュー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-corbeille">ごみ箱</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-recherche">検索パネル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-collections">コレクションパネル</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lecons">レッスン</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">マッチと記譜</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">トーナメント</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">統計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">評価</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">トレーニング、Anki、デュエル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">インポート、出所、共有</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">マニュアル</a></li>
+      <li class="breadcrumb-item active">分析、コメント、検索</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-commentaires-et-recherche">
+<span id="manuel-bibliotheque"></span><h1>分析、コメント、検索<a class="headerlink" href="#analyse-commentaires-et-recherche" title="この見出しへのリンク"></a></h1>
+<section id="panneau-analyse">
+<span id="id1"></span><h2>分析パネル<a class="headerlink" href="#panneau-analyse" title="この見出しへのリンク"></a></h2>
+<p><strong>分析</strong> パネル（<em>CTRL-L</em>）は、eXtreme Gammon（XG）、GNUbg、BGBlitz、または gammonNet からインポートした現在のポジションの分析データを表示します。最良の選択肢（チェッカーの手またはキューブの判断）を、そのエクイティ値と対応するエラーと共に提示します。<em>d</em> キーでチェッカーの手の分析とキューブの分析を切り替えられます。マッチを辿っているときは、実際にプレイされた手が選択肢のリストで強調表示されます。パネルを表示または非表示にするには、<em>CTRL-L</em> を押すか <code class="docutils literal notranslate"><span class="pre">list</span></code> コマンドを実行します。</p>
+<p>解析のない局面はそのことを示し、<strong>評価</strong>ボタンで Eval パネルに開けます。</p>
+<p>ツールバーの<strong>チャレンジ</strong>ボタン（pip カウントのボタンの後、キー<em>m</em>）は、局面を閲覧しながら解析を見る前に自分の答えを決めるためのものです：検索結果、マッチのレビュー、自分のミスの復習。有効にすると、パネルの解析全体（チェッカーとキューブ）を灰色の領域で覆い、領域をクリックすると表示されます。局面が変わるたびに覆いが戻ります。チャレンジは表示上のマスクであり、表示してもデータベースには何も記録されません。設定は pip カウントと同様に、blunderDB を閉じるまで保持されます。マッチのレビューでは、チャレンジは手の一覧の記号、損失、難度も隠します。表示中の手のものは、その解析とともに表示されます。</p>
+<p>表の下に、打った判断が何を損したのか、なぜかを述べる <strong>一文</strong> が出ることがあります。「120 mp の損：着手はブロットを三個残しますが、13/7 8/7 なら一個です。」六つの測定可能な規則から作られます — 露出、作った／逃した自陣のポイント、手放したギャモン率、得より高くつく安全、そしてキューブの誤りの二つの向き（ダブルが遅すぎる／早すぎる、テイクが甘すぎる／パスが固すぎる）です。</p>
+<p>肝心なのは <strong>黙る</strong> という規則です。文が出るのは、規則が確信をもって当てはまり、しかも各エンジンが誤りだと一致する閾値を超えた損失のときだけです。それ以外のときは文が出ません。空の枠も「わかりません」もありません。誤った説明は説明がないより高くつきます。不正確なことを教えてしまうからです。</p>
+<p>同じ文は、誤りを犯したその場にも添えられます。<strong>Anki カード</strong>の裏面では公開された分析の下に、決定の練習の<strong>クイズの判定</strong>ではmp単位のコストの下に表示されます。ここでも沈黙の規則は同じです。正しい手や、どの規則でも説明できない誤りには、何も追加されません。</p>
+<p>ある局面を<strong>複数のエンジン</strong>が判断している場合、パネル上部の帯がそれらを並べます。エンジンごとに 1 行で、深さとその答え——キューブの判断、あるいはそのエンジン自身の最善手——を示します。まず一致しているかどうかを述べますが、この帯を正当化するのは不一致のほうです。「XG はダブル・テイク、gammonNet はダブルしない」が一目で読めます。以前は二つの表を斜めに見比べる必要がありました。</p>
+<p>あるエンジンの最善手とは、<strong>そのエンジンにとっての</strong>最善手です。候補手の一覧はエンジンを問わずエクイティ順に並んでいるので、その先頭はどのエンジンの最善手でもありません。</p>
+<p>この帯は、実際に複数のエンジンがある場合にだけ現れ、このパネルにしか存在しません。Eval パネルが示すのは<strong>ひとつ</strong>の判断、すなわち内蔵エンジンの判断です（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md">ADR-0017</a>）。比較の居場所はそこにはありません。</p>
+<p>手はボード上で読むとおりに書かれます。ここでも Eval パネルと同じです：最も進んでいないチェッカーが先に動き、<strong>1 つのチェッカーが複数のダイスを続けて使う場合は一度だけ書かれます</strong>——同じチェッカーで打った 64 は <code class="docutils literal notranslate"><span class="pre">24/14</span></code> と読み、到着時にヒットすれば <code class="docutils literal notranslate"><span class="pre">24/14*</span></code> です。経路の詳細が再び現れるのは、それが何かを付け加えるときだけです：<em>途中で</em>のヒットはその経由点を保ち、<code class="docutils literal notranslate"><span class="pre">24/18*</span> <span class="pre">18/14</span></code> と書きます。そうしなければ 18 でのヒットが表記から消えてしまうからです。</p>
+<p>インポートされた解析のエクイティは Eval パネルと同じ規則に従います：列は自身の参照系を明示します——解析対象のポジションのスコアに応じて「Equity (money)」または「Equity (match)」であり、スケールを示さない単なる「Equity」にはなりません。マネーゲームのポジションで有効な<strong>Jacoby</strong>ルールと<strong>Beaver</strong>ルールも、キューブ判断テーブルの下にバッジとして表示されます。</p>
+<section id="rollouts">
+<span id="id2"></span><h3>ロールアウト<a class="headerlink" href="#rollouts" title="この見出しへのリンク"></a></h3>
+<p><strong>解析</strong>パネルは局面を<strong>ロールアウト</strong>できます。選んだ各ムーブ、またはキューブの各アクションから数百ゲームをプレイし、直接評価ではほとんど差が出ない二つの選択肢を区別します。候補ムーブの表で、<em>Ctrl+クリック</em>はムーブを選択に追加または除外し、<em>Shift+クリック</em>はクリックしたムーブまで選択を広げます。通常のクリックはこれまでどおり一つのムーブだけを選択します。選択範囲、または別のムーブ(そのムーブが選択になります)の上での<strong>右クリック</strong>でメニューが開き、<strong>ロールアウト(標準)</strong>を選ぶと、選択したムーブのロールアウトを選んだ設定ですぐに開始します。キューブの判断では、右クリックで判断全体をロールアウトします。パネルの<em>Shift+R</em>キーも同じ動作で(選択がなければ局面の上位候補をロールアウトします)、<code class="docutils literal notranslate"><span class="pre">rollout</span></code>コマンド(別名 <code class="docutils literal notranslate"><span class="pre">ro</span></code>)も同様です。ロールアウト中は、表の下の細いバーがプレイ済みのゲーム数を示します。<strong>キャンセル</strong>、メニューの<strong>ロールアウトをキャンセル</strong>、<em>Esc</em>、または再度<em>Shift+R</em>で、何も書き込まずに停止します。設定(<strong>高速</strong>、<strong>標準</strong>、<strong>自由</strong>)は、設定の<strong>gammonNet</strong>タブで選びます(<a class="reference internal" href="manuel_interface.html#rollout-reglage"><span class="std std-ref">設定</span></a> を参照)。</p>
+<p>同じメニューには<strong>局面と解析をコピー</strong>があり、<em>CTRL-X CTRL-X</em>がコピーする画像（盤面と候補手リストの上位、またはキューブ解析全体）をコピーします。手が選択されると、二つ目の項目<strong>局面と選択した手をコピー</strong>が追加されます。画像には選択した手だけが順位順に残り、各手には全候補の中での順位と、選択内の最善手ではなく局面の最善手からの差が付きます。キューブの判断では最初の項目だけが表示されます。解析表のセルはテキストとして選択されないため、選択のクリックで反転表示が残りません。</p>
+<p>結果は<strong>解析の隣に保存され、解析を置き換えることはありません</strong>。インポートした解析は変更されません。ロールアウトした各ムーブは、表の自身の行に結果を持ちます。局面にロールアウトがある場合だけ表示される<strong>Rollout</strong>列に、エクイティと 95 % 信頼区間の半幅がエクイティ列の尺度で示されます。セルにカーソルを重ねると詳細が表示されます。標準偏差、<strong>JSD</strong>(最善手との差を差の標準偏差で表したもの。上限に達するとそのムーブは決着し、それ以上プレイされません)、ゲーム数、そして<strong>設定</strong>(エンジンとパラメータの完全なシグネチャ。シグネチャが同じ二つのロールアウトは同じ数値です)です。ロールアウトは、ムーブの優劣がついた時点で停止します。ムーブ行を持たないキューブ判断のロールアウトは、判断の下に表として表示されます。ロールアウトはゲームの中でキューブをプレイします。順位は信頼できますが、絶対的なエクイティはやや劣り、ブロックがそのことを注記します。ビーバーはプレイしません。<em>ダブル/テイク</em>の行は単純なテイクのもので、ビーバールールのマネーゲームの局面でも同様です(直接解析ではビーバーを数えます)。データベースにない局面はロールアウトできますが、保存されません。</p>
+<p><code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">search</span></code> コマンドは、表示中の一覧(検索結果、マッチ、またはコレクション)のうち、このロールアウトをまだ持たない局面を一つずつロールアウトします。開始前に、確認ダイアログで総数が示されます。各局面は完了するたびに書き込まれます。キャンセルしても完了分は保持され、再実行すると中断した箇所から再開します。進行状況は、パネルを閉じても残ります。</p>
+<p>別のインスタンスの blunderDB が保持しているために<strong>読み取り専用</strong>で開かれたデータベースは、保存されることになるロールアウトを最初から拒否します。最初のゲームをプレイする前に、メッセージでそのことが示されます。</p>
+</section>
+</section>
+<section id="panneau-commentaires">
+<span id="id3"></span><h2>コメントパネル<a class="headerlink" href="#panneau-commentaires" title="この見出しへのリンク"></a></h2>
+<p><strong>コメント</strong>パネル(<em>CTRL-P</em>)は、現在のポジションに関連付けられたコメントを表示、追加、編集します。ポジションには、異なる人が書いた複数のコメントを付けられます。すべてがスレッドとして新しい順に表示され、それぞれに著者名が付き、自分のコメントが先頭に来ます。XG ファイルからインポートされたコメントは、対応するポジションに自動的に関連付けられます。<em>CTRL-P</em> を押すか、<code class="docutils literal notranslate"><span class="pre">comment</span></code> コマンドを実行すると、パネルの表示と非表示が切り替わります。</p>
+<p>コメントに帰属する名前は、環境設定の <em>インターフェース</em> タブにある<strong>あなたの名前</strong>欄で設定します。空の場合、コメントには作者が付きません。XG インポートのコメントは <code class="docutils literal notranslate"><span class="pre">XG</span></code> に、マッチファイルのコメントはその書き起こし者に帰属します。コメントを書き直すと、あなたに帰属します。検索 <code class="docutils literal notranslate"><span class="pre">au&quot;Alice&quot;</span></code> は、Alice がコメントしたポジションを残します。インターフェース以外では、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">add</span> <span class="pre">--author</span></code> がその作者に帰属するコメントを書き込み、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">list</span></code> がそれを読み出します（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）。この名前は自由テキストであり、後述の署名と違って何も証明しません。</p>
+<p>ファイルから来たコメントには<strong>出所ラベル</strong>が付く（<code class="docutils literal notranslate"><span class="pre">XG</span></code>、<code class="docutils literal notranslate"><span class="pre">GNU</span> <span class="pre">BG</span></code>、<code class="docutils literal notranslate"><span class="pre">BGF</span></code>、出所が記録されていない場合は<em>インポート</em>）。自分で書いたコメントには付かない。それが通常の場合であり、すべての行に印を付けても雑音にしかならないからである。インポートされたコメントを編集すると、それは自分のものになる：編集後、その文はあなたのものである。</p>
+<p>この区別は別の場所にも現れる：マッチを削除しても、<strong>自分が</strong>書き込んだ局面はもう消えない。逆に、元ファイルから取り込まれたメモは、それを持ち込んだマッチとともに消える。</p>
+<p>透かし付きでエクスポートされたデータベースで受け取ったコメントには、発行者の<strong>署名</strong>が付きます。スレッドには「<em>発行者</em> のコメント」と表示され、続けてその鍵のフィンガープリントが、先頭に ✓ を付けて表示されます。同じ名前の人は二人いても、同じフィンガープリントの人はいません。発行者から伝えられたものと比べてください。</p>
+<p>署名された内容と一致しなくなったコメントは保持されますが、⚠ <em>未検証</em> と表示されます。ファイル内でテキストまたは作者が変更された場合、コメントが別のポジションに移された場合、またはポジションの識別情報がその後修正された場合です。署名はポジションの識別情報を対象とするためです。 <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> があるポジションの Crawford 標識を調整して（必要なら対になるポジションと統合して）、またはマッチの修復があなたのメモを修正後のポジションへ移したとき、そのポジションが持つ署名付きコメントは、テキストが変わっていなくても検証できなくなります。 <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> はその件数を表示します。blunderDB が読み取れない署名は ⚠ <em>署名を読み取れません</em> と表示されます。署名付きコメントを編集すると署名が外れ、その文はあなたのものになります。</p>
+<p>別のデータベースから受け取ったコメントは出所を保ちます。作者が書いたメモは、あなたのメモと同様、マッチを削除してもそのポジションを保持します。XG ファイル由来の注記は <code class="docutils literal notranslate"><span class="pre">XG</span></code> のラベルを保ち、マッチとともに消えます。これは、すでにコメントに署名する版の blunderDB でエクスポートされたデータベースに当てはまります。より古いファイル由来のコメントには <em>インポート済み</em> のラベルが付き、マッチとともに消えます。 <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">list</span></code> は、出所を <em>Origin</em> 列に、署名を <em>Signed by</em> 列に表示します。</p>
+<section id="les-tags">
+<span id="tags"></span><h3>タグ<a class="headerlink" href="#les-tags" title="この見出しへのリンク"></a></h3>
+<p><strong>タグ</strong>とは、コメントに書いた <code class="docutils literal notranslate"><span class="pre">#語</span></code> のことです。何も宣言しませんし、どのテーブルにも保持されません。これは意図したものです。語彙はあなた自身の文章であり、タグを付ける前に宣言を求めれば、習慣が事務手続きに変わってしまいます。</p>
+<p>足りなかったのはもう半分でした。すなわち、自分が築いた語彙を<strong>見る</strong>ことと、綴りを思い出す代わりにタグをクリックすることです。<code class="docutils literal notranslate"><span class="pre">tags</span></code> コマンド、またはパネルの見出し帯の <code class="docutils literal notranslate"><span class="pre">#</span></code> ボタンが語彙のウィンドウを開きます。このデータベースのタグが、それぞれそれを持つ<strong>局面の数</strong>とともに並び、クリックすれば対応する検索が走ります。リストの下には、このデータベースがまだ使っていない推奨タグが並びます。バックギャモンの文献から取った語彙（<code class="docutils literal notranslate"><span class="pre">#blitz</span></code>、<code class="docutils literal notranslate"><span class="pre">#prime</span></code>、<code class="docutils literal notranslate"><span class="pre">#holding</span></code>、<code class="docutils literal notranslate"><span class="pre">#backgame</span></code>、<code class="docutils literal notranslate"><span class="pre">#containment</span></code>、<code class="docutils literal notranslate"><span class="pre">#crunch</span></code>、<code class="docutils literal notranslate"><span class="pre">#ace-point</span></code>、<code class="docutils literal notranslate"><span class="pre">#timing</span></code> など）で、提案であって強制ではありません。この一覧にないタグも、あるタグとまったく同じだけの価値があります。</p>
+<p>入力中に <code class="docutils literal notranslate"><span class="pre">#</span></code> を打つと、<strong>このデータベース</strong>がすでに使っているタグが、続いて推奨タグが提示されます。ある日は <code class="docutils literal notranslate"><span class="pre">#back-game</span></code>、翌日は <code class="docutils literal notranslate"><span class="pre">#backgame</span></code> と書いてしまうのを防ぐのはこれだけです。</p>
+<p>タグ検索はコマンドラインで <code class="docutils literal notranslate"><span class="pre">#prime</span></code> と書きます。これは<strong>区切りを見る</strong>検索です。<code class="docutils literal notranslate"><span class="pre">#prime</span></code> は <code class="docutils literal notranslate"><span class="pre">#priming</span></code> を拾いません。部分文字列を探す通常のテキスト検索には、この二つを見分けられません。タグを複数書くと<strong>重なります</strong>。<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">#prime</span> <span class="pre">#backgame</span></code> は両方を持つ局面を求めます。局面は複数のタグを持てるので、二つ挙げれば「両方」以外の意味になりません。局面がひとつの値しか持たないフェーズや出所のフィルタとは逆で、そちらでは二つ挙げれば「どちらか」の意味にしかなりません。</p>
+<p>同じ一覧は、インターフェースの外からも <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tags</span></code> で得られます（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）。</p>
+</section>
+</section>
+<section id="menu-contextuel">
+<span id="menu-contextuel-actions"></span><h2>コンテキストメニュー<a class="headerlink" href="#menu-contextuel" title="この見出しへのリンク"></a></h2>
+<p>右クリック、または <em>MENU</em> キー、またはフォーカスのある行での <em>SHIFT-F10</em> は、盤面で狙った局面でもコレクション内のその行でも同じメニューを開き、マッチ、トーナメント、コレクションの一覧の行では同じ形のメニューを開きます。局面に対する最も一般的な 2 つの操作、<em>この局面を評価</em>と<em>画像をコピー</em>は第 1 階層にあり、その他は ▸ の付いたサブメニューにまとめられています。</p>
+<ul class="simple">
+<li><p><strong>コピー / 共有</strong>: 画像 (<em>CTRL-X</em>)、XGID のみ、GNUbg ID (GNU Backgammon が <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">gnubgid</span></code> で受け付ける局面 ID とマッチ ID。<code class="docutils literal notranslate"><span class="pre">gnubgid</span></code> コマンドでも得られます)、局面とその解析のテキスト (<em>CTRL-C</em>)、解析付きの画像、SVG または PNG で保存した画像。マッチでは <code class="docutils literal notranslate"><span class="pre">.mat</span></code> エクスポート。</p></li>
+<li><p><strong>注釈</strong>: <em>コメント</em>は局面に対するコメントパネルを開きます。<em>#タグを追加…</em>は <code class="docutils literal notranslate"><span class="pre">#</span></code> を入力した状態でコマンドラインを開き、<em>ENTER</em> で <code class="docutils literal notranslate"><span class="pre">#</span></code> コマンドと同じようにタグを追加します (<a class="reference internal" href="#tags"><span class="std std-ref">タグ</span></a> を参照)。<em>確認済みにする</em>と<em>確認済みを外す</em>は学習キューの印を付けたり外したりします。</p></li>
+<li><p><strong>移動</strong>: <em>近い局面</em>、<em>同じ構造の局面</em>(盤面全体での構造検索)、<em>この手でマッチを開く</em>(その局面を指した最初のマッチを該当の手で開きます。どのマッチも通っていなければステータスバーが知らせます)、<em>新しいビュー</em>。</p></li>
+<li><p><strong>解析</strong>: 局面、その鏡像、または新しいタブでの評価。<em>高速ロールアウト</em>と<em>標準ロールアウト</em>は <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">fast</span></code> および <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">standard</span></code> と同じです (<a class="reference internal" href="#rollouts"><span class="std std-ref">ロールアウト</span></a> を参照)。</p></li>
+<li><p><strong>練習</strong>: 局面を Anki のデッキに追加します。<em>この局面でチャレンジ</em>はチャレンジ (<em>m</em>) を有効にし、解析を隠します。</p></li>
+<li><p><strong>管理</strong>: 検索盤面または Eval の下書きの<em>保存</em>(<em>CTRL-S</em>)、データベースの局面の<em>ゴミ箱へ移動</em>(<em>Del</em>)。マッチでは、トランスクリプトの編集、プレイヤーの入れ替え、変更、ゴミ箱への移動。トーナメントでは、変更または削除。コレクションでは、変更またはゴミ箱への移動。</p></li>
+<li><p><strong>送る</strong>：<em>ポジションを … へコピー</em>、<em>マッチを … へコピー</em>、<em>トーナメントを … へコピー</em>。開いている他のデータベースごとに一項目あり、「他のデータベース」パネルと同じコピーで、<em>元に戻す</em>で取り消せます。<em>ロットに追加</em>。ポジションには、<em>コレクションに追加 …</em>もあり、データベースのコレクションごとに一項目あります（<a class="reference internal" href="manuel_interface.html#vue-ailleurs"><span class="std std-ref">比較と交換：「他のデータベース」パネル</span></a> を参照）。</p></li>
+</ul>
+<p>適用できる操作だけが表示されます。下書きは注釈もゴミ箱への移動もできず、検索盤面は評価できず、データベースにない局面はどの Anki デッキにも入らず、操作のないサブメニューは消えます。操作にショートカットがある場合は、その右側に表示されます。キーボードでは、<em>↑</em> と <em>↓</em> で階層内を移動し、<em>→</em> でサブメニューを最初の操作で開き、<em>←</em> で戻り、<em>ESC</em> でサブメニュー、次にメニューを閉じます。</p>
+</section>
+<section id="la-corbeille">
+<span id="corbeille"></span><h2>ごみ箱<a class="headerlink" href="#la-corbeille" title="この見出しへのリンク"></a></h2>
+<p>ポジション、コレクション、コメント、Anki カード、マッチの削除は<strong>ごみ箱</strong>を経由します。削除は実際に行われますが、消えるもののコピーが三十日間保たれます。<code class="docutils literal notranslate"><span class="pre">trash</span></code> コマンドがそれらを一覧するウィンドウを開き、各項目に<em>復元</em>と<em>削除</em>、そして<em>ごみ箱を空にする</em>ボタンが付きます。</p>
+<p>復元されたポジションは<strong>解析とコメント</strong>とともに戻ります — 何もない状態で戻すのは名ばかりの復元です —。「学習済み」マークと、そのポジションで答えたトレーニングの回答も戻ります。元の番号に戻りますが、その間に同じポジションが保存されていれば、そちらが保持されます。ポジションは一つしか存在しないからです。そのポジションは、足りないマーク、回答、コメントを受け取り、解析があればそれを保ちます。番号が別のポジションに使われていれば、新しい番号を受け取ります。コレクションはそのリストとともに戻ります。含まれていたポジションは削除されていません — コレクションはそれらへのビューです。</p>
+<p>削除されたマッチは、ゲーム、手、その解析、他に何も保持していないポジションを、ソースファイルのメモとともに持ち去ります。ゴミ箱はそれらすべてを保持します。復元すると、元の番号と元のインポート日で、ゲーム、手、統計とともに戻り、インポートのジャーナルが再びそのマッチを指します。削除で消えたポジションは復元されたポジションと同じように戻り、ライブラリに残ったポジションは現在の状態のままです。トーナメントの中の位置に戻ります。トーナメントが削除されていれば、トーナメントなしで戻ります。ディレクションの枠がまだ存在し、同じ対戦相手どうしで、空いていれば、その枠にも戻ります。そうでなければ枠はディレクターのものであり、マッチは枠なしで戻ります。これらの場合、ステータスバーがそれを知らせます。別のマッチがその番号を使っている場合、またはその間に同じファイル指紋のマッチがインポートされた場合、復元は拒否され、エントリはゴミ箱に残ります。指紋のないマッチ(手入力したもの、blunderDB で対局したもの)はこの方法で比較されません。</p>
+<p>三十日より古いものは <code class="docutils literal notranslate"><span class="pre">vacuum</span></code> コマンドが削除するのであって、データベースを開くことではない：<code class="docutils literal notranslate"><span class="pre">vacuum</span></code> をしないことは、すべてを取っておくことである。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>ごみ箱は持ち運ばれません。エクスポートはごみ箱を含みません。</p>
+</div>
+</section>
+<section id="panneau-recherche">
+<span id="id4"></span><h2>検索パネル<a class="headerlink" href="#panneau-recherche" title="この見出しへのリンク"></a></h2>
+<p><strong>検索</strong> パネル（<em>CTRL-F</em> または <em>TAB</em>）では、自由に組み合わせ可能な条件に従ってポジションをフィルターできます。チェッカーの構造、キューブの判断の種類、エラーの大きさ、日付、タグなどです。<em>TAB</em> キーは検索パネルとポジションエディターを同時に開き、ボード上で検索するチェッカーの構造を定義できます。</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_search.png"><img alt="検索パネル" src="_images/panel_search.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Search パネル：数値フィルター、盤上のチェッカーストラクチャー、<em>最低限</em>/<em>除く</em>タブ。</span><a class="headerlink" href="#id7" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+<p>フィルターは <strong>条件</strong> サブタブで設定します。検索で何も見つからないときは、ステータスバーだけでなくパネルにも「一致する局面がありません」と表示され、<strong>フィルターを消去</strong> ボタンが現れます。</p>
+<p>表示中のポジションの中から検索するには、フィルターを続けた <code class="docutils literal notranslate"><span class="pre">ss</span></code> コマンドを使用します（例：<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>、<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>）。<code class="docutils literal notranslate"><span class="pre">ss</span></code> は画面上のリストの中を検索します。直前の検索結果、開いているコレクション、またはレビュー中のマッチのポジションが対象で、コマンドを直接入力しても検索パネル（<em>TAB</em>）から入力しても同じです。パネルの <em>現在の結果内を検索</em> チェックボックスも同じ規則に従います。<em>新しいタブで開く</em> チェックボックスは、現在のビューではなく新しいビューに結果を表示します（<a class="reference internal" href="manuel_interface.html#onglets-vues"><span class="std std-ref">ビュータブ</span></a> を参照）。コレクションとマッチでは <code class="docutils literal notranslate"><span class="pre">s</span></code> は拒否されます。ライブラリ全体を検索して、表示中のリストを置き換えてしまうからです。</p>
+<p>コレクションまたはマッチから実行した <code class="docutils literal notranslate"><span class="pre">ss</span></code> 検索の結果は、入力欄にもフォーカスのあるパネルにも閉じるもの（たとえば分析で選択した手）がなければ、 <em>Esc</em> を一度押すだけで抜けられます。blunderDB はコレクション全体、またはマッチの検討中の手に戻り、離れたポジションに戻ります。この戻り方は <code class="docutils literal notranslate"><span class="pre">ss</span></code> のあとだけです。コレクションやマッチから開いた検索パネルで実行した <code class="docutils literal notranslate"><span class="pre">s</span></code> はライブラリ全体を検索し、 <em>Esc</em> で元のリストには戻りません。</p>
+<p>大規模なデータベースでの検索は、件数を数える前に表示されます。最初の結果ページがすぐに表示され、総数が分かるまでステータスバーに経過時間とともに「検索中…」が表示されます。総数が分かると、一覧の暫定的な長さが置き換えられます。同時に実行される検索は 1 つだけで、別の検索を始めると前の検索は破棄されます。<em>Esc</em> は実行中の検索を中断し、データベースの走査を止めます。最初のページがすでに表示されていた場合は、そのページだけが残り、ステータスバーがその旨を伝えます。</p>
+<p>このパネルでは、検索する <strong>判断タイプ</strong> を明示的に制御できます。 <em>指定なし</em> （フィルタなし）、 <em>チェッカー</em> （チェッカーの判断）、または <em>キューブ</em> （キューブの判断）です。 <em>キューブ</em> を選択すると、2つ目のリストでサブタイプを指定できます。 <em>すべて</em> 、 <em>ダブル / ノーダブル</em> （手番のプレイヤーがダブルするかを判断する）、または <em>テイク / パス</em> （相手のダブルへの応答）です。この制御は盤面と同期しています。盤面上でダイスやキューブを変更すると判断タイプが更新され、その逆も同様です。 <em>テイク / パス</em> モードでは、キューブが提示された値で盤面の中央に表示されます。この値は引き続き編集できます。</p>
+<p><strong>ゲームの段階</strong>——序盤、中盤、レース、ベアオフ——は、blunderDB が盤面だけから計算するラベルである。編集はできず、コマンドラインの <code class="docutils literal notranslate"><span class="pre">ph:</span></code> トークンで検索できる（<code class="docutils literal notranslate"><span class="pre">ph:race</span></code>、繰り返し可：<code class="docutils literal notranslate"><span class="pre">ph:race</span> <span class="pre">ph:bearoff</span></code>）。四つの境界のうち三つは GNU Backgammon がネットワークを振り分けるのに使うものであり、四つ目、すなわち序盤の終わりは blunderDB の取り決めである：どちらの側も出発点から四つを超える駒を動かしておらず、ベアオフした駒がなく、バーにも駒がない限り、局面はまだ序盤にある。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>このラベルは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> コマンドで再計算される。このバージョンで初めて開かれたデータベースでは、その開いた時点で一度だけ計算される。段階が一度も計算されていないデータベースは <code class="docutils literal notranslate"><span class="pre">ph:</span></code> に対して何も返さない——誤った答えではなく、何も返さない。</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">like</span></code> トークンは絞り込むのではなく<strong>並べ替え</strong>ます。これがあると、結果は目標局面からの距離の昇順に並びます。<code class="docutils literal notranslate"><span class="pre">like</span></code> は現在の局面、<code class="docutils literal notranslate"><span class="pre">like42</span></code> は番号42の局面です。ほかのトークンは、そうして並んだ集合を絞り込みます。<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like42</span> <span class="pre">E&gt;80</span></code> は「42の近傍のうち、自分が間違えたもの」と読めます。距離は二つの局面を隔てるチェッカーの移動量、すなわちチェッカーピップで表す輸送距離であり、視点は手番の側です。</p>
+<p>近傍とは同じ <strong>問題</strong> であって、同じ絵柄ではありません。並べ替えは目標のクラスの内側で行われます。すなわち、同じ決定の種類、キューブの決定であれば同じ形式（マネーかマッチか）、そして目標自身とは別のマッチです。同じゲームの中で前後に並ぶ局面は、最も近い構造でありながら決して近傍ではないからです。ダイス、スコア、キューブはクラスの外に残り、必要なときは通常のトークンで絞り込みます。<code class="docutils literal notranslate"><span class="pre">like42*</span></code> はクラスをすべての決定の種類と両方の形式に広げますが、目標のマッチを含めることはありません。<code class="docutils literal notranslate"><span class="pre">like&lt;12</span></code> は十二チェッカーピップを超えるものを除きます。何も見つからない並べ替えは、無関係な十局面ではなく、空のリストを返し、そう告げます。</p>
+<p><strong>編集</strong>モードでは、<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like</span></code> は<strong>描かれた</strong>盤を目標にします。覚えている局面をおおよそ描いて実行すれば、ライブラリが答えます。構造による検索が正確な描画を要求するのに対して、です。このとき盤は模様ではなく局面として読まれます。空のままにしたポイントは上がった駒として数えられ、これは実在の局面には正しく、描きかけの盤では計算を狂わせます。</p>
+<p>それぞれの近傍は、どの局面に近いのかとともに、解析表の下に距離を示します。見ているものが近傍なのか偶然の一致なのかは、これで判断できます。上限があるのもそのためです。並べ替えはコマンドラインを通さずにも起動できます。すなわち <em>CTRL-SHIFT-L</em>、または盤のコンテキストメニューの<strong>近い局面</strong>という項目です。</p>
+<p>トークン<code class="docutils literal notranslate"><span class="pre">n</span></code>は<strong>遭遇</strong>を数えます。<code class="docutils literal notranslate"><span class="pre">n&gt;3</span></code>は、データベースで（すべての対局とすべてのプレイヤーを合わせて）少なくとも3回出現した局面を残します。これは「何を間違えたか」とは別の問いです。20回出現してそのうち19回うまく打たれた局面は、それでも暗記しておくべき局面です。数えるのは対局ではなく判断です。同じ局面が1つの対局に2回出れば、判断が2つあったので2と数えます。プレイヤーフィルターと組み合わせると、そのプレイヤーの出現だけを数えます。<code class="docutils literal notranslate"><span class="pre">n&gt;3</span> <span class="pre">pl!&quot;Alice&quot;</span></code>はAliceが少なくとも3回打つことになった局面を、<code class="docutils literal notranslate"><span class="pre">pl&quot;Alice&quot;</span></code>は彼女が戦った対局の局面を残します。<code class="docutils literal notranslate"><span class="pre">op&quot;Bob&quot;</span></code>も同様に、数をBobとの対局に限ります。</p>
+<p><strong>戦型</strong> はフェーズと並ぶ二つ目の派生ラベルで、保存済みフィルタの束では立てられない問いに答えます。「ホールディングゲームでの自分のミスを見せてくれ」です。トークンは <code class="docutils literal notranslate"><span class="pre">gt:</span></code>、繰り返し可（<code class="docutils literal notranslate"><span class="pre">gt:holding</span> <span class="pre">gt:mutualholding</span></code>）、<strong>手番の側</strong> から見た、その判断が置かれていた戦型です。</p>
+<p>認識される十の戦型を、規則が処理する順に、狭いものから広いものへ並べます：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">race</span></code> — 双方の最後尾のチェッカーがすれ違い、もはや接触は起こりえません。GNU Backgammon の境界です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bearin</span></code> — 手番の側が自陣にチェッカーを戻している一方で、相手はまだその自陣にアンカーを持っています。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crunch</span></code> — 手番の側が自分の 1 番・2 番ポイントの外に持つチェッカーが六個以下です。GNU Backgammon の規則で、閾値はその作者のものです。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">backgame</span></code> — 相手陣に二つ以上のアンカー。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acepoint</span></code> — アンカーは相手のエースポイントの一つだけで、ピップで二十以上の遅れ。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blitz</span></code> — 自陣を三ポイント以上作り、相手はバー上か、その自陣に打てるブロットがある。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">primevprime</span></code> — 双方が四ポイント以上のプライムを持ち、それぞれ相手のプライムの背後にチェッカーを閉じ込められている。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutualholding</span></code> — 双方が高いアンカーを持つ。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">holding</span></code> — 手番の側が高いアンカーを持ち、相手は持たない。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contact</span></code> — 接触があり、上のどの戦型にも当てはまらない。序盤はここに入ります。</p></li>
+</ul>
+<p>このうち三つの規則は GNU Backgammon 自身のもので、出典があります。残りは <strong>blunderDB の取り決め</strong> です。バックギャモンの文献は戦型を語りますが、その境界に数字を与えてはおらず、この問題について分類器間の一致度の測定も公表されていません。出典のない閾値 — ブリッツの自陣三ポイント、プライムの四ポイント、エースポイントゲームのピップ二十の遅れ — はしたがってコードに隠さずここに書かれ、版が付けられています。変えて <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> を走らせれば、データベース全体が付け直されます。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>局面ごとに保持されるラベルは一つ、手番の側のものだけです。派生ラベルは決して編集できず、真実として書き出されることもなく、戦型を一度も計算していないデータベースは <code class="docutils literal notranslate"><span class="pre">gt:</span></code> に何も返しません — <code class="docutils literal notranslate"><span class="pre">ph:</span></code> と同じです。</p>
+</div>
+<p><strong>フラグ付き</strong>フィルターは、マッチの元となったソフトウェアでフラグを付けた局面を抽出します。この情報を生成するのは eXtreme Gammon のみで、<code class="docutils literal notranslate"><span class="pre">.xg</span></code> ファイルに手ごとに記録されます。blunderDB はインポート時にこれを読み取り、保持します。フラグ付きのキューブ判断は 2 つのフラグ付き局面、すなわちダブルとテイク/パスを生成します。これは、元ファイルが 1 つの判断として記録するものを blunderDB が 2 つに分割するためです。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>フラグは遡及しません。すでにデータベースにあるマッチはこの情報を持ちません。この情報は元ファイルにしか存在しないためです。該当する <code class="docutils literal notranslate"><span class="pre">.xg</span></code> ファイルを再インポートするだけで十分です。インポートは重複を検出し、フラグ以外は何も追加せず、既存のコメントや解析には手を触れません。フラグは blunderDB から付けることも外すこともできません。一時的な作業リストには、コレクションをお使いください。</p>
+</div>
+<p><strong>コメント</strong>フィルターは、局面に付けられたコメントを 3 つの排他的なモードで検索します。<em>テキストを含む</em>はコメント本文から 1 つ以上の語を検索します（入力欄、語は <code class="docutils literal notranslate"><span class="pre">;</span></code> で区切り、いずれか 1 つが一致すれば可）。<em>コメントあり</em>は内容を問わずコメントの付いた局面をすべて残します。<em>コメントなし</em>は逆に注釈のない局面を残します。誤差やデータの日付による絞り込みと組み合わせると、これから注釈を付けるべき局面の一覧を作るのに便利です。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>マッチファイル（XG、GNUbg）からインポートされたコメントもコメントとして数える。自分のものだけに絞るには、コマンドラインに <code class="docutils literal notranslate"><span class="pre">co:user</span></code> トークンを加える（<code class="docutils literal notranslate"><span class="pre">co:xg</span></code>、<code class="docutils literal notranslate"><span class="pre">co:gnubg</span></code>、<code class="docutils literal notranslate"><span class="pre">co:bgf</span></code>、<code class="docutils literal notranslate"><span class="pre">co:unknown</span></code> が他の出所を指す）。なお、<em>マッチ</em>や<em>トーナメント</em>に付いたコメントは対象外である：それらはマッチやトーナメントを注釈するものであり、その局面を注釈するものではない。</p>
+</div>
+<p><strong>マッチ＆トーナメント</strong> フィルターは、数値IDを入力する方式ではなく、共通のセレクター（モーダルウィンドウ）を利用します。マッチ用とトーナメント用の2つのチェックボックスリストがあり、それぞれテキストで絞り込めます（マッチはプレイヤー、日付、イベント、トーナメントは名前、日付、開催地）。<em>すべて</em> / <em>なし</em> ボタンは、現在絞り込まれているサブセットにのみ作用します。トーナメントをチェックすると、そのメンバーであるマッチがマッチリスト内で自動的にチェックされ（グレー表示になり）、トーナメントがそのマッチ全体の集合に相当することが視覚的にわかります。</p>
+<p>検索パネルの帯には <em>検索条件</em>（フィルター）| <em>履歴</em> | <em>保存済み</em> の切り替えがあり（内部アシスタントが有効なときは4つ目の <em>アシスタント</em> も加わります）、<em>検索条件</em> では右端に <strong>検索</strong> ボタンがあります。<strong>履歴</strong> タブには、過去の検索がその日付とコマンドとともに一覧表示されます：クリックすると検索が選択され、関連するポジションがボード上に表示されます。ダブルクリックすると再実行されます。各エントリはフィルターライブラリに保存する（ブックマークアイコン、フィルターに名前を付けて）か、削除できます。<strong>保存済み</strong> タブには <strong>フィルターライブラリ</strong> が含まれます：保存済みのフィルターをダブルクリックすると、対応する検索を再実行できます（<a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">付録：フィルターの高度な使い方</span></a> を参照）。<code class="docutils literal notranslate"><span class="pre">history</span></code> コマンド（別名 <code class="docutils literal notranslate"><span class="pre">hi</span></code>）は検索パネルを開きます。</p>
+<p>ライブラリのフィルターの星をクリックすると <strong>ピン留め</strong> されます。ピン留めしたフィルターは、どのタブを開いていてもパネル上部にチップとして表示され、ライブラリの順に番号が付きます。チップをクリックするとフィルターが実行され、 <code class="docutils literal notranslate"><span class="pre">ALT-1</span></code> … <code class="docutils literal notranslate"><span class="pre">ALT-9</span></code> を押すと、NORMAL または EDIT モードのどの画面からでも、パネルを開かずにその順位のピン留めフィルターが実行されます。このときフィルターはダブルクリックと同じ問いを、駒の配置も含めて投げます。ピン留めはデータベースに属します。名前を変えたフィルターには付いたまま、削除したフィルターとともに消え、ライブラリのエクスポートには含まれません。</p>
+<p>再実行した検索は順位付けを保ちます。<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like42</span></code>は局面 42 を基準に、<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like</span></code>は検索と一緒に保存された盤面（閲覧していた局面、または描いた盤面）を基準に順位付けします。盤面を保存していない項目は画面上の盤面に対して再実行されず、ステータスバーにその旨が表示されます。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>利用可能なフィルターの一覧については <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">コマンド一覧</span></a> を参照してください。</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="id5"></span><h2>コレクションパネル<a class="headerlink" href="#panneau-collections" title="この見出しへのリンク"></a></h2>
+<figure class="align-default" id="id8">
+<a class="reference internal image-reference" href="_images/panel_collections.png"><img alt="コレクションパネル" src="_images/panel_collections.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Collections パネル：名前、ポジション数、説明、最終更新日時。</span><a class="headerlink" href="#id8" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+<p>Collections、Tournaments、Anki、Transcription の各パネルでは、ヘッダーの <strong>+</strong> ボタンと、それが作成するものの名前（<strong>+ 新規コレクション</strong>、<strong>+ 新規トーナメント</strong>、<strong>+ 新規デッキ</strong>、<strong>+ 新規記譜</strong>）が唯一の作成操作で、入力欄が開きます。Collections と Tournaments のパネルでは、<em>Esc</em> または <strong>キャンセル</strong> で閉じます。マッチ一覧では、⌨ アイコンでマッチの記譜を開き、✎ アイコンでそのメタデータを修正します。</p>
+<p><strong>コレクション</strong>パネル（<em>CTRL-B</em>）で局面のコレクションを管理します。コレクションは作成、名前の変更、削除ができます。局面の追加や取り除き（<em>Del</em> キー、確認を求められます）も可能です。コレクションをダブルクリックすると、<em>左</em>キーと<em>右</em>キーでその局面をたどれます。 <code class="docutils literal notranslate"><span class="pre">ss</span></code> コマンドは開いているコレクションの局面の中を検索し、その後 <em>Esc</em> でコレクションに戻ります（ <a class="reference internal" href="#panneau-recherche"><span class="std std-ref">検索パネル</span></a> を参照）。コレクションの並び順、およびコレクション内の局面の並び順は、ドラッグ＆ドロップで変更できます。<em>CTRL-B</em> を押すか <code class="docutils literal notranslate"><span class="pre">collection</span></code> コマンドを実行するとパネルの表示・非表示が切り替わります。</p>
+<p>開いたコレクションの見出しでは、局面数がリンクになっており、最初の局面から閲覧に戻します。<strong>このコレクションに含む</strong>のチェックボックスで、表示中の局面を追加または削除します。空のリストでは<strong>+ 新しいコレクション</strong>を提案します。</p>
+<p><strong>パイル</strong>は「あとで見直す」操作のコレクションです。盤面の外でのダブルクリック、<em>b</em>キー、またはツールバーのブックマークボタンで、表示中の局面がパイルに載り、同じ操作で外れます。盤面の隅のブックマークが、その局面がパイルにあることを、ほかのメッセージなしで示します。この操作は、局面が表示されるすべての場所で使えます。レビュー、検索、編集、Eval、トランスクリプト、クイズ、デュエルです。盤面のリセットは、右クリックのメニュー（<a class="reference internal" href="manuel_interface.html#board-menu-contextuel"><span class="std std-ref">盤面のメニュー</span></a>を参照）から行います。パイルは通常のコレクションで、ほかと同じように名前の変更、並べ替え、エクスポート、空にすることができます。初回の使用時に作成され、削除された場合は作り直されます。まだライブラリにない局面（検索盤面や評価盤面の下書き）は、単独で持ち込んだ局面と同じようにその場でライブラリに書き込まれ、そのあとパイルに載ります。コマンドラインでは<code class="docutils literal notranslate"><span class="pre">collection</span> <span class="pre">pile</span></code>で同じ操作を行います。</p>
+<p>コレクションは <strong>生きた</strong> ものにできます。その内容は手作りのリストではなく <strong>検索</strong> の結果になり、開くたびに再評価されます。コレクション見出しの ◇ ボタンが直近の検索でそれを生きたものにし、◈ はすでにそうであることを示します。同じボタンでリストに戻せます。生きたものにしても何も壊れません。含まれていた局面は戻ったときにそのまま残っています。</p>
+<p>ライブコレクションに表示される ❄ ボタンは、そのコレクションを<strong>固定</strong>します。その時点で検索が選ぶポジションが、検索の順序のまま通常のコレクションの内容となり、クエリは消去されます。ライブになる前に保持していたポジションは置き換えられます。</p>
+<p>このバージョンがもう知らないトークンを含む問い合わせを持つ生きたコレクションは、データベース全体を返すのではなく、<strong>開くことを拒み</strong> そう告げます。保存された絞り込みが決して起こしてはならない唯一の故障が、黙って広がることだからです。</p>
+<p>ライブコレクションは、データベースの<strong>エクスポート後もライブのまま</strong>です。クエリはコレクションと共に運ばれ、受け取った側でファイル内のポジションに対して再評価されます。エクスポートがコレクションのポジションを含める場合、エクスポート時点でクエリが選ぶポジションが含まれます（上限は 5,000 ポジション）。ポジション、マッチ、トーナメントを番号で指定するクエリは、ファイル内の番号に書き換えられます。そのいずれかがファイルに含まれない場合、コレクションは<strong>固定</strong>され、エクスポート時点でクエリが選ぶポジションを持って書き出されます。</p>
+<p>ライブコレクションに基づく間隔反復デッキは、セッションを開くたびにそのクエリを再実行します。前回以降に検索が選んだポジションがデッキに加わり、すでにあるカードはスケジュールを保ちます。評価は 5,000 ポジションの<strong>上限</strong>で制限されます。クエリがそれより多く選んだ場合、検索の順序で最初のものだけがデッキに入り、ステータスバーが実際に選ばれたポジション数とともにそれを知らせます。</p>
+<p id="positions-reference">ヘッダーの<strong>提案…</strong>ボタンは<strong>参照ポジション</strong>を開きます。これは学習すべきポジションの短いリストで、それぞれが多くのミスを要約するようにあなたのミスの中から選ばれます。最悪のミス 10 件を学習すると、同じ問題の 10 通りの変形や、他について何も教えない特異なポジションになりがちです。参照ポジションは、構造の近いあなたの複数のミスの中心にあり、その教訓がすべてに役立ちます。</p>
+<ul class="simple">
+<li><p>ミスは<a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">学習プラン</span></a>のものです。MWC で数値化され、ファミリー(ゲームプラン、性質、テーマ)ごとに整理されます。同じファミリーの 2 つのミスは、<code class="docutils literal notranslate"><span class="pre">like</span></code> 距離で最大 12 チェッカーステップ以内なら<strong>隣接</strong>しています。キューブのミスの隣接は同じスコアのものだけです。</p></li>
+<li><p>各ポジションの価値は、その隣接ポジションと自身の<strong>回収可能な MWC</strong>(損失から難易度を引いたもの)、つまりその教訓がすべてに役立つ場合に得られるものです。<strong>僅差</strong>の教訓(2 番目の選択肢のコストが半ミス未満)や<strong>不安定</strong>な判定(別の深さやロールアウトが異なる結果を示す)は半分として数えられます。裏付けるロールアウトがあれば表示されます。 各行の先頭の数字はカバーする MWC で、理由は教訓が半分として数えられるときに数えられる値を示します。</p></li>
+<li><p>リストは<strong>多様</strong>です。選ばれたポジションは隣接ポジションをカバーし、それらは以降のポジションに何ももたらさず、提案されるポジションにほぼ重複するものはありません。<strong>処理済み</strong>のポジション(コメント付き、コレクション内、Anki カード、または「学習済み」マーク付き)は提案されず、その隣接ポジションはカバー済みとみなされます。</p></li>
+</ul>
+<p><strong>範囲</strong>はデータベース全体、現在のマッチ、トーナメント、または統計パネルのフィルターで、プレイヤーはこのフィルターのものです。<strong>サイズ</strong>は 10、20、50 ポジションです。各行には、ファミリー、キューブの場合はスコア、カバーする MWC とその理由が表示されます。理由とは、要約するミスとマッチの数、あなたの判断の中でのファミリーの大きさ、自身の回収可能分、2 番目の選択肢との差です。行をクリックするとポジションが開き、チェックしたボックスはワンクリックで<strong>コレクション</strong>、<strong>Anki デッキ</strong>、または<strong>クイズ</strong>になります。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span> <span class="pre">suggest</span></code>(<a class="reference internal" href="cli_bibliotheque.html#cli-collection"><span class="std std-ref">collection — コレクションを管理する</span></a>を参照)を使います。</p>
+<section id="lecons">
+<span id="id6"></span><h3>レッスン<a class="headerlink" href="#lecons" title="この見出しへのリンク"></a></h3>
+<p><strong>レッスン</strong>とは、コーチが生徒のために一度だけ書き、データベースファイルで渡すステップの並びです(<a class="reference internal" href="cli.html"><span class="doc">コマンドラインインターフェース（CLI）</span></a> の <code class="docutils literal notranslate"><span class="pre">lesson</span> <span class="pre">export</span></code> コマンドを参照)。各ステップにはタイトルとテキストがあり、コレクション、ポジション、その両方、またはどちらも表示しないことができます。<code class="docutils literal notranslate"><span class="pre">le</span></code> コマンドはデータベースのレッスンをステータスバーに一覧表示し、<code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">2</span></code> はレッスン 2 を開き、<code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span></code> はレッスンエディタを開きます。</p>
+<p>すると盤の上に<strong>読み取りバー</strong>が表示されます。レッスン名、ステップ番号、タイトル、そしてテキストです。<em>前へ</em>と<em>次へ</em>でステップを切り替えます。ステップは、表示するコレクションまたはポジションを盤に呼び出し、それを通常の操作で閲覧できます。<em>閉じる</em>でレッスンを終了します。コレクションまたはポジションが削除されたステップも、テキストは残ります。</p>
+<p>バーの<em>ステップ完了</em>ボックスは、現在のステップを完了としてマークします。もう一度クリックするとマークが外れ、バーは完了したステップの数を表示します。何かを書き込む操作はこれだけです。レッスンを読む、ステップを変える、レッスンを開くといった操作では、到達したステップも開いたことも記録されません。マークは開いているデータベース(生徒のもの)に書き込まれ、どのエクスポートにも含まれません。レッスンを含むファイルをインポートするとそのレッスンが作成され、同じ名前のレッスンがすでにある場合は変更されません。</p>
+<p><strong>レッスンエディタ</strong>は、<code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span></code> (レッスン 2 なら <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span> <span class="pre">2</span></code>) または閲覧バーの<em>編集</em>ボタンで開きます。左にレッスンの一覧と新規作成用のフィールド、右に選択したレッスンの名前と説明、続いてそのステップが表示されます。各ステップにはタイトル、テキスト、一覧から選ぶコレクション、ポジションがあります。<em>現在のポジション</em>はボード上に表示中のポジションをステップに付け、<em>ポジションを外す</em>はそれを外します。<em>ステップを保存</em>は変更を書き込み、矢印でステップを 1 つ移動でき、<em>ステップを追加</em>は末尾に 1 つ追加します。<em>読む</em>はエディタを閉じてレッスンを最初のステップで開きます。<em>Webページとして書き出す</em>はレッスンを単体の HTML ファイル 1 つに保存します(タイトル、説明、各ステップのテキストとボード、各ポジションの保存済み解析をクイズの答えのように折りたたんだもの、フッターの透かしの出所)。そのまま公開でき、スクリプトもネットワーク呼び出しも含みません。<em>削除</em>はレッスンとそのステップを消しますが、ステップが表示していたコレクションやポジションには触れません。レッスンはコマンドラインや API からも作成・変更できます(<a class="reference internal" href="mode_headless.html#headless-lecons"><span class="std std-ref">レッスン</span></a>)。</p>
+<p>バックアップ（エクスポートウィンドウまたはコマンドラインによるライブラリ全体のエクスポート）は、すべてのレッスンを持ち出します。エクスポートウィンドウでは、<em>レッスン</em>の行でレッスンを一つずつ選びます。チェックを入れたレッスンは、その手順が示すコレクションとポジションとともに出力され、ファイルは他のエクスポートと同様に透かしを付けたり、パスワードで保護したり（<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>）できます。このチェックボックスがない部分エクスポート（ポジション、コレクション、マッチの選択）では、レッスンは持ち出されません。</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="manuel_interface.html" class="btn btn-neutral float-left" title="はじめにとインターフェース" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="manuel_matchs.html" class="btn btn-neutral float-right" title="マッチと記譜" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

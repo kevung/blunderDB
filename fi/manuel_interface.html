@@ -1,0 +1,473 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aloitus ja käyttöliittymä &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Analyysi, kommentit ja haku" href="manuel_bibliotheque.html" />
+    <link rel="prev" title="Käyttöopas" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/manuel_interface.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_interface.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_interface.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_interface.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_interface.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/manuel_interface.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_interface.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_interface.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Käyttöopas</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Aloitus ja käyttöliittymä</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">Johdanto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#interactions-principales">Päätoiminnot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#description-de-l-interface">Käyttöliittymän kuvaus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglets-de-vues">Näkymävälilehdet</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plusieurs-bibliotheques-ouvertes">Useita avoimia kirjastoja</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comparer-et-echanger-le-panneau-autres-bases">Vertaa ja vaihda: Muut tietokannat -paneeli</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Asetukset</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dossier-surveille">Valvottu kansio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#synchroniser-deux-machines">Kahden koneen synkronointi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assistant-et-mcp">Avustaja ja MCP</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">Opastetut kierrokset ja esimerkkitietokanta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#navigation-dans-les-positions">Asemien selaaminen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edition-de-positions">Asemien muokkaus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-ligne-de-commande">Komentorivi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-palette-de-commandes">Komentopaletti</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyysi, kommentit ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Ottelut ja litterointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Turnaukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Tilastot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Arviointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Harjoittelu, Anki ja kaksintaistelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Tuonti, alkuperä ja jakaminen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Käyttöopas</a></li>
+      <li class="breadcrumb-item active">Aloitus ja käyttöliittymä</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="prise-en-main-et-interface">
+<span id="manuel-interface"></span><h1>Aloitus ja käyttöliittymä<a class="headerlink" href="#prise-en-main-et-interface" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Johdanto<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>blunderDB on ohjelmisto backgammon-asemien tietokantojen luomiseen. Sen tärkein vahvuus on tarjota yksi paikka koota asemat, joita pelaaja on kohdannut (verkossa, turnauksissa), ja mahdollisuus tutkia näitä asemia uudelleen suodattamalla niitä erilaisilla mielivaltaisesti yhdisteltävillä suodattimilla. blunderDB:tä voi käyttää myös viiteasemien luettelojen luomiseen.</p>
+<p>Asemat tallennetaan tietokantaan, jota edustaa <em>.db</em>-tiedosto. Työpöytäsovellus avaa tämän tiedoston suoraan, ei koskaan verkko-osoitetta: <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">palvelintila</span></a> on saman binäärin toinen tila, ja toisesta toiseen siirrytään viemällä tai migroimalla tietokanta, ei osoittamalla sovellusta URL-osoitteeseen.</p>
+</section>
+<section id="interactions-principales">
+<h2>Päätoiminnot<a class="headerlink" href="#interactions-principales" title="Link to this heading"></a></h2>
+<p>blunderDB:n keskeiset mahdolliset toiminnot ovat:</p>
+<ul class="simple">
+<li><p>lisätä uusi asema,</p></li>
+<li><p>muokata olemassa olevaa asemaa,</p></li>
+<li><p>kopioida laudan kuva leikepöydälle (PNG) näppäimillä <strong>CTRL-X</strong>, tai täydellisen analyysin kanssa näppäimillä <strong>CTRL-X CTRL-X</strong>,</p></li>
+<li><p>poistaa olemassa oleva asema,</p></li>
+<li><p>hakea yksi tai useampi asema,</p></li>
+<li><p>tuoda otteluita eri lähteistä (XG, GNUbg, BGBlitz, Jellyfish, HedgeHog), mukaan lukien kommentit XG-tiedostoista,</p></li>
+<li><p>navigoida tuodun ottelun siirroissa,</p></li>
+<li><p>järjestää asemat kokoelmiin,</p></li>
+<li><p>järjestää ottelut turnauksiin.</p></li>
+</ul>
+<p>Käyttäjä voi vapaasti merkitä asemat tunnisteilla ja varustaa ne kommenteilla.</p>
+</section>
+<section id="description-de-l-interface">
+<h2>Käyttöliittymän kuvaus<a class="headerlink" href="#description-de-l-interface" title="Link to this heading"></a></h2>
+<p>blunderDB:n käyttöliittymä koostuu ylhäältä alas seuraavista:</p>
+<ul class="simple">
+<li><p>[ylhäällä] työkalupalkki, joka kokoaa kaikki tietokantaan kohdistuvat keskeiset toiminnot,</p></li>
+<li><p>[keskellä] pääesitysalue, joka mahdollistaa backgammon-asemien näyttämisen tai muokkaamisen,</p></li>
+<li><p>[alhaalla] tilarivi, joka esittää erilaisia tietoja tietokannasta tai nykyisestä asemasta ja sisältää komentorivin.</p></li>
+</ul>
+<p>Paneeleita voidaan näyttää seuraaviin tarkoituksiin:</p>
+<ul class="simple">
+<li><p>näyttää nykyiseen asemaan liittyvät analyysitiedot lähteistä eXtreme Gammon (XG), GNUbg tai BGBlitz,</p></li>
+<li><p>näyttää, lisätä tai muokata kommentteja,</p></li>
+<li><p>hakea ja suodattaa asemia yhdisteltävillä kriteereillä,</p></li>
+<li><p>näyttää ja hallita asemakokoelmia (kokoelmapaneeli),</p></li>
+<li><p>näyttää tuotujen otteluiden luettelo ja navigoida ottelun siirroissa (ottelupaneeli),</p></li>
+<li><p>näyttää ja hallita turnauksia (turnauspaneeli),</p></li>
+<li><p>näyttää suoritustilastot (Stats-paneeli),</p></li>
+<li><p>arvioida mikä tahansa asema gammonNetillä (Eval-paneeli) ja laskea bearoffissa sen EPC (Effective Pip Count),</p></li>
+<li><p>harjoitella laskutehtävillä (Harjoittelu-paneeli),</p></li>
+<li><p>opiskella asemia välitoistolla (Anki-paneeli),</p></li>
+<li><p>pelata kokonainen ottelu Bottia vastaan (Duel-paneeli, ks. <a class="reference internal" href="manuel_entrainement.html#panneau-duel"><span class="std std-ref">Kaksintaistelu-paneeli</span></a>),</p></li>
+<li><p>litteroida ottelu käsin (Litterointi-paneeli),</p></li>
+<li><p>tarkastella pistetilanteen taulukoita — MET, ottopisteet, gammonin arvot, Neilin luvut — (Viitetiedot-paneeli, ks. <a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">Viitetiedot-paneeli</span></a>),</p></li>
+<li><p>vertaa asemaa muihin avoimiin tietokantoihin ja vaihda niiden kanssa (Muut tietokannat -paneeli, katso <a class="reference internal" href="#vue-ailleurs"><span class="std std-ref">Vertaa ja vaihda: Muut tietokannat -paneeli</span></a>),</p></li>
+<li><p>näyttävät tietokannan metatiedot (Metatiedot-paneeli).</p></li>
+</ul>
+<p>Paneelin korkeutta säädetään vetämällä sen kahvaa; se pysyy samana välilehdeltä toiselle.</p>
+<p>Paneelin välilehden oikea napsautus tarjoaa kohdan <em>Piilota tämä välilehti</em>. Heti kun välilehti on piilotettu, rivin oikealle puolelle ilmestyy <em>∨</em>-painike (<em>Piilotetut välilehdet</em>): se luettelee piilotetut välilehdet, ja napsautus kohtaan <em>Näytä: …</em> tuo yhden takaisin. Piilotetut välilehdet säilyvät istunnosta toiseen.</p>
+<p>Modaali-ikkunoita voidaan näyttää seuraaviin tarkoituksiin:</p>
+<ul class="simple">
+<li><p>näyttää blunderDB:n ohje, jonka hakukenttä (<em>/</em> siirtää kohdistimen sinne) valitsee kirjoitetun tekstin esiintymät kirjainkoosta ja aksenteista riippumatta (<em>ENTER</em> siirtyy seuraavaan, <em>MAJ-ENTER</em> edelliseen),</p></li>
+<li><p>näyttää opastettujen kierrosten luettelon (katso <a class="reference internal" href="#visites-guidees"><span class="std std-ref">Opastetut kierrokset ja esimerkkitietokanta</span></a>),</p></li>
+<li><p>määrittää tietokannan viennin asetukset,</p></li>
+<li><p>määrittää blunderDB:n asetuksia, erityisesti käyttöliittymän kielen (katso <a class="reference internal" href="#configuration"><span class="std std-ref">Asetukset</span></a>).</p></li>
+</ul>
+<p>Pääesitysalue tarjoaa käyttäjälle:</p>
+<ul class="simple">
+<li><p>laudan backgammon-aseman näyttämiseen tai muokkaamiseen,</p></li>
+<li><p>kuution tason ja omistajan,</p></li>
+<li><p>kunkin pelaajan pip-luvun,</p></li>
+<li><p>kunkin pelaajan pistetilanteen,</p></li>
+<li><p>pelattavat nopat. Jos nopilla ei näy arvoja, noppien sijainti osoittaa, kummalla pelaajalla on vuoro ja että asema on kuutiopäätös. Kun kuutiopäätös on vastaus tuplaukseen (hyväksy/luovuta), tarjottu kuutio näytetään laudan keskellä tarjotulla arvolla.</p></li>
+</ul>
+<p id="board-menu-contextuel">Laudan oikea napsautus avaa kontekstivalikon. Kaksi yleisintä toimintoa, <em>Arvioi tämä asema</em> (Eval-paneelissa) ja <em>Kopioi kuva</em> (<em>CTRL-X</em>:n vastine), ovat ensimmäisellä tasolla; muut on sijoitettu ▸-merkittyihin alavalikoihin — <em>Kopioi / jaa</em> (mukaan lukien <strong>kuvan tallennus tiedostoon</strong> SVG- tai PNG-muodossa), <em>Merkitse</em>, <em>Siirry</em> (naapuriasemat, uusi näkymä), <em>Analysoi</em> (peilikuva, rollout-laskennat), <em>Harjoittele</em> (Anki-pakka, haaste) ja <em>Hallitse</em> (tallenna, roskakori). Valikko rakennetaan toimintoluettelosta, jonka se jakaa ottelu-, turnaus- ja kokoelmaluetteloiden kanssa, ja se tarjoaa vain näytettyyn asemaan sopivat toiminnot: alavalikoiden yksityiskohdat ja näppäimistöllä liikkumisen kerrotaan kohdassa <a class="reference internal" href="manuel_bibliotheque.html#menu-contextuel-actions"><span class="std std-ref">Kontekstivalikko</span></a>. Laudalla pelatun siirron aikana (tietovisa, Transkriptio) oikea napsautus laudalla aloittaa koko siirron alusta koskematta asemaan; valikko avautuu siellä vasta ennen ensimmäistä askelta. Muokkauksessa ja Evalissa, joissa oikea napsautus laudalla asettaa nappuloita, valikko avautuu oikealla napsautuksella laudan ulkopuolella — noppien, kuution ja pistetilanteiden ulkopuolella — ja alkaa kohdilla <em>Tyhjennä asema</em> (kuten <em>ASKELPALAUTIN</em>) ja <em>Aloitusasema</em>, joka asettaa uuden pelin nappulat, joita seuraavat luonnoslautaan sopivat toiminnot.</p>
+<p>Leikepöytä on arkinen ele; tallentaminen on se toinen tarve — kuvitus artikkeliin, foorumiviestiin, oppituntiin. <strong>SVG</strong> tarjotaan siksi, että lauta on sellainen: se on muoto, joka kestää suurentamisen, se jonka voi panna asiakirjaan sumentumatta. PNG johdetaan siitä, kuten leikepöydälle kopiointikin: yksi renderöinti, kolme määränpäätä, joten yksikään ei voi ajautua muista erilleen. Haku-paneelissa ja Evalissa oikea painike asettaa jo toisen värin nappuloita: valikko pysyy siellä laudan ulkopuolella, kuten edellä. Katso <a class="reference internal" href="manuel_eval.html#eval-amener-position"><span class="std std-ref">Aseman tuominen Eval-paneeliin</span></a> aseman tuomisesta Eval-paneeliin.</p>
+<p>Tilarivi on jäsennelty vasemmalta oikealle seuraavin tiedoin:</p>
+<ul class="simple">
+<li><p>komentorivi, joka avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä,</p></li>
+<li><p>käyttäjän suorittamaan toimintoon liittyvä tiedotusviesti,</p></li>
+<li><p>nykyisen aseman järjestysnumeron, jota seuraa asemien määrä nykyisessä kirjastossa (tai siirto-/pelitiedot ottelua selattaessa),</p></li>
+<li><p><strong>kirjastolaskurin</strong> — ”412 asemaa · 38 blunderia · 5 ottelua” — jossa jokainen luku <strong>avaa sen, mitä se laskee</strong>: asemat, kirjaston kynnyksellä tehdyn <code class="docutils literal notranslate"><span class="pre">E&gt;</span></code>-haun (käynnistyy heti, kuin se olisi kirjoitettu, ja tallentuu hakuhistoriaan) tai otteluluettelon. Kun näytön luettelo ei ole koko kirjasto (haku, kokoelma, ottelu), blunderien luku kirjoitetaan ”12 / 340 blunderia”: tämän luettelon blunderit ja sitten kirjaston blunderit samalla kynnyksellä; yli 20 000 aseman luetteloa ei lasketa, vaan siitä näkyy vain kokonaisluku. Luku, jota ei voi seurata, on koriste. Blunderin kynnys on kirjaston oma, säädetty asetusten <em>Kirjasto</em>-välilehdellä ja jaettu tilastojen kanssa: kaksi kynnystä saisi saman sanan tarkoittamaan kahta asiaa. Laskuri lupaa täsmälleen sen, minkä linkki avaa, myös sellaisen aseman osalta, joka on pelattu useilla eri tavoilla ja joka on suurimman kustannuksensa arvoinen. Hyvin suuressa kirjastossa (yli 200 000 riviä) laskuri ei käy taulukoita läpi: ”≈”-merkillä alkava luku on arvio (yläraja, koska poistetut rivit jättävät aukkoja). Jos positiot ovat arvioita, blunderien määrä, jolle ei ole rehellistä arviota, on viimeisin tarkka laskenta, joka säilyy niin kauan kuin mikään kirjoitus ei voi muuttaa sitä. Tuonnin tai muokkauksen jälkeen se näkyy muodossa ”?”, kun uusi laskenta tehdään taustalla, ja palaa sitten itsestään; vain luku -tilassa avattu kirjasto ei laske uudelleen ja näyttää ”?”, kunnes siihen kirjoittava instanssi on laskenut uudelleen. Linkki käynnistää haun, joka antaa tarkan määrän. Kaksi blunder-lukua ovat erilliset linkit: ensimmäinen käynnistää alihaun <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;</span></code> näkyvässä luettelossa, toinen haun koko kirjastosta; kun vain kokonaismäärä näkyy, linkkejä on yksi.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Käyttäjän haun tuloksena saaduissa asemissa tilarivillä näkyvä asemien määrä vastaa suodatettujen asemien määrää.</p>
+</div>
+<p><strong>Anki</strong>-välilehti kantaa <strong>merkkiä</strong>, kun kortteja on kerrattavana, kaikki pakat mukaan lukien. Tuo luku on syy avata välilehti; sillä ei ole asiaa sen taakse. Nolla ei näytä mitään: ”0”:aa näyttävä merkki on kohinaa.</p>
+<p>Komento <code class="docutils literal notranslate"><span class="pre">log</span></code> avaa <strong>toimintalokin</strong>: lokitiedoston kaksisataa viimeistä riviä, painikkeen niiden kopioimiseen — juuri sen mitä raportin liittäminen ilmoitukseen vaatii — ja toisen kansion avaamiseen. Lokia ei suodateta eikä muotoilla uudelleen: siistitty loki ei enää kelpaa lainaukseksi.</p>
+<p>Komento <code class="docutils literal notranslate"><span class="pre">grid</span></code> avaa <strong>vedosarkin</strong>: selattavan luettelon — haun tulokset, kirjasto, kokoelma — pienoislautojen ruudukkona, piirrettyinä kuten lauta, kahdenkymmenenneljän sivuina. Se avautuu nykyisen aseman sivulle, ja aseman pienoiskuva on kehystetty; napsautus tai <em>ENTER</em> pienoiskuvan kohdalla avaa sen aseman laudalle ja sulkee sarkin, ja sitä voi selata kokonaan näppäimistöllä (katso <a class="reference internal" href="raccourcis.html#raccourcis-contact-sheet"><span class="std std-ref">Vedosarkki</span></a>). Se ei avaudu muokkaustilassa eikä ottelussa, jota selataan sen siirtojen mukaan.</p>
+<p>Hakupaneelin <strong>hakuhistoriassa</strong> tallennetun komennon jokainen tunnus näkyy nimettynä merkkinä — <em>Ei kontaktia</em>, <em>Siirtovirhe</em> — paljaan tunnuksen sijaan. Tarkka komento jää työkaluvihjeeseen, sillä juuri se ajetaan uudelleen; ja tunnus jota blunderDB ei tunnista näkyy <strong>sellaisenaan</strong> eikä lähimmäksi käännettynä.</p>
+</section>
+<section id="onglets-de-vues">
+<span id="onglets-vues"></span><h2>Näkymävälilehdet<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>Työkalupalkin alla oleva välilehtipalkki mahdollistaa työskentelyn useiden <strong>näkymien</strong> kanssa rinnakkain. Jokainen näkymä on itsenäinen työtila, joka säilyttää oman asemaluettelonsa, nykyisen aseman indeksin, näytetyn aseman, analyysin ja valitun siirron, aktiivisen paneelin, käynnissä olevan kommentin sekä ottelun navigointikontekstin. Näin voi esimerkiksi pitää haun auki yhdessä näkymässä ja selata samalla ottelua toisessa.</p>
+<ul class="simple">
+<li><p><strong>Näkymän luominen</strong>: napsauta välilehtipalkin <em>+</em>-painiketta (nimeltään <em>+ Uusi näkymä</em>, kunhan näkymiä on vain yksi) tai paina <em>CTRL-T</em>. Uusi näkymä käynnistyy nykyisen näkymän kopiona.</p></li>
+<li><p><strong>Näkymän sulkeminen</strong>: napsauta välilehden ruksia tai paina <em>CTRL-W</em>. Viimeistä näkymää ei voi sulkea; rasti piirretään vain aktiivisen ryhmän välilehtiin, kun siinä on useampi kuin yksi näkymä. Aktiivisen näkymän sulkeminen näyttää viimeisen jäljellä olevan välilehden.</p></li>
+<li><p><strong>Näkymän vaihtaminen</strong>: napsauta välilehteä, paina <em>CTRL-Page Up</em> / <em>CTRL-Page Down</em> (tai <em>VAIHTO-J</em> / <em>VAIHTO-K</em>) siirtyäksesi edelliseen / seuraavaan näkymään, tai <em>CTRL-1</em>–<em>CTRL-9</em> siirtyäksesi suoraan aktiivisen kirjaston n:nteen näkymään.</p></li>
+<li><p><strong>Näkymän uudelleennimeäminen</strong>: kaksoisnapsauta aktiivisen ryhmän välilehteä, kirjoita uusi nimi ja vahvista painamalla <em>ENTER</em>; kentästä poistuminen vahvistaa myös, <em>ESC</em> peruu. Tyhjä nimi jättää vanhan.</p></li>
+</ul>
+<p>Eval-paneeliin jätetty näkymä palaa siihen sellaisena kuin se jätettiin: luonnoslautoineen ja, paneelista poistuttaessa, tutkimansa aseman kera. Myös Eval-paneelin viimeisin luonnoslauta on kunkin näkymän oma.</p>
+<p>Näkymät tallennetaan tietokannan istuntotilan mukana ja palautetaan sen uudelleenavauksen yhteydessä.</p>
+<section id="plusieurs-bibliotheques-ouvertes">
+<span id="groupes-bibliotheques"></span><h3>Useita avoimia kirjastoja<a class="headerlink" href="#plusieurs-bibliotheques-ouvertes" title="Link to this heading"></a></h3>
+<p>Useita tietokantoja voi pitää auki samanaikaisesti. Jokainen muodostaa välilehtien <strong>ryhmän</strong>: palkissa värillinen otsikko näyttää tiedoston nimen, ja sen perässä ovat kyseisen kirjaston näkymät, joiden yläreuna toistaa saman värin. Vain yksi kirjasto on aktiivinen kerrallaan: sitä lukevat ja kirjoittavat paneelit, haku, tuonnit ja avustaja.</p>
+<p>Kun vain yksi kirjasto on auki, palkissa ei ole otsikkoa: vain ikkunan otsikko nimeää tietokannan. Niin kauan kuin näkymiä on yhteensä vain yksi, palkki ei piirrä myöskään välilehteä: jäljelle jää vain <em>+ Uusi näkymä</em> -painike. Ryhmäotsikon työkaluvihje kertoo tiedoston koko polun.</p>
+<ul class="simple">
+<li><p><strong>Kirjaston avaaminen uuteen ryhmään</strong>: välilehtipalkin oikealla puolella oleva painike <em>⧉ Toinen kirjasto</em> (pelkkä <em>⧉</em>, kun kaksi ryhmää on auki), <em>CTRL-VAIHTO-O</em> tai komento <code class="docutils literal notranslate"><span class="pre">open_group</span></code> (<code class="docutils literal notranslate"><span class="pre">og</span></code>). Siihen asti aktiivinen kirjasto pysyy auki omassa ryhmässään. <em>CTRL-O</em> sen sijaan korvaa aktiivisen ryhmän kirjaston; työkalupalkin <em>Avaa</em>-painikkeen vihje muistuttaa molemmista pikanäppäimistä.</p></li>
+<li><p><strong>Kirjaston vaihtaminen</strong>: toisen ryhmän välilehden napsautus aktivoi sen kirjaston ja kyseisen näkymän yhdellä eleellä; ryhmän otsikon napsautus palauttaa sen näkymään, johon se jäi. <em>CTRL-VAIHTO-Page Up</em> / <em>CTRL-VAIHTO-Page Down</em> siirtävät edelliseen / seuraavaan kirjastoon; <em>CTRL-Page Up</em> / <em>CTRL-Page Down</em> (tai <em>VAIHTO-J</em> / <em>VAIHTO-K</em>) käyvät läpi kaikkien ryhmien näkymät peräkkäin.</p></li>
+<li><p><strong>Ryhmän sulkeminen</strong>: sen otsikon rasti sulkee kirjaston ja sen näkymät. Aktiivisen ryhmän sulkeminen näyttää sen naapurin; tilarivi nimeää suljetun kirjaston ja näytettävän kirjaston.</p></li>
+<li><p><strong>Järjestely</strong>: välilehden vetäminen siirtää sen saman ryhmän toisen välilehden eteen tai taakse (korostusvärinen viiva näyttää paikan); ryhmän otsakkeen vetäminen siirtää koko ryhmän kaikkine näkymineen toisen ryhmän eteen tai taakse. Näkymä kuuluu kirjastolleen: sen pudottaminen toiseen ryhmään evätään eikä muuta mitään. Näkymien järjestys on sama kuin pikanäppäimillä <em>CTRL-1</em> … <em>CTRL-9</em> ja se tallentuu istunnon mukana; ryhmien järjestys on voimassa käynnissä olevassa istunnossa.</p></li>
+</ul>
+<p>Näkymän luova <em>+</em>-painike on kiinnitetty aktiivisen ryhmän viimeisen välilehden oikealle puolelle: uusi näkymä liittyy tuohon ryhmään ja ilmestyy sinne, mihin napsautettiin. Palkki jakautuu kahteen alueeseen: vasemmalla ryhmät ja niiden välilehdet, oikealla, reunaan tasattuina, työkalut (toinen kirjasto, jaettu näyttö).</p>
+<p>Siirtyminen ryhmästä toiseen ei koskaan siirrä lautaa: kun kaksi kirjastoa on auki, aseman tietopalkin paikka (välilehtien alla) pysyy varattuna, tyhjänä silloin, kun näkyvällä ryhmällä ei ole siihen mitään sanottavaa.</p>
+<p>Aktiivisen ryhmän otsikossa nimi on valkoisella sen värin päällä; muiden ryhmien otsikoissa nimi on palkin taustalla, yläreunasta värillä alleviivattuna. Kuusi väriä seuraa toisiaan: seitsemäs ryhmä ottaa taas ensimmäisen. Näkymät numeroidaan kirjastonsa sisällä: uuteen ryhmään avattu tietokanta alkaa numerosta ”#1”, ja <em>CTRL-1</em> … <em>CTRL-9</em> osoittavat aktiivisen ryhmän näkymiin. Kun välilehdet eivät enää mahdu ikkunan leveyteen, välilehdet kutistuvat ensin (nimi päättyy kolmeen pisteeseen, koko nimi on työkaluvihjeessä) vähimmäisleveyteen asti; sen jälkeen palkki vierittyy (hiiren rulla tai näkymän vaihto, joka tuo näytettävän välilehden näkyviin). Rivin molempiin reunoihin ilmestyvät silloin nuolet <em>‹</em> ja <em>›</em>: napsautus vierittää askeleen, pitkä painallus vierittää jatkuvasti ja nuoli harmaantuu luettelon päässä. Häivytys merkitsee reunan, jossa välilehtiä on piilossa. Työkalujen <em>∨</em>-painike oikealla, näkyvissä kahdesta näkymästä alkaen, avaa <em>Kaikki näkymät</em> -valikon: jokaisen kirjaston näkymät, nykyinen merkittynä; napsautus aktivoi näkymän ja sen ryhmän.</p>
+<p>Vaihto on välitön: jokainen ryhmä säilyttää muistissa näkymänsä, sijaintiluettelonsa, nykyisen sijainnin, hakuehdot (vaikka niitä vielä kirjoitettaisiin, ilman että hakua on käynnistetty), ottelulistan, laskurit ja paneelin jokaisen luettelon vierityksen, ja palauttaa ne lukematta tietokantaa uudelleen. Uuteen ryhmään avattu kirjasto alkaa tyhjästä hakulomakkeesta: yhdessä ryhmässä valitut ottelut ja turnaukset eivät koskaan päde toisessa. Käynnissä oleva työkin seuraa mukana: litteroinnin luonnos, oppitunti, Anki-kertaus, opiskelujono ja avoin Johtaminen löytyvät sellaisina kuin ne jätettiin. Poissaolon aikana mahdollisesti muuttunut luetaan uudelleen heti näytön jälkeen: laskurit aina, ottelulista jos otteluiden määrä on muuttunut tai jos taustatehtävä on kirjoittanut kirjastoon poissaolon aikana. Kullekin tietokannalle ominaiset luettelot (kokoelmat, turnaukset, Anki-pakat, luonnokset, Kaksintaistelut, hakuhistoria, tallennetut suodattimet) luetaan uudelleen näytettävässä kirjastossa.</p>
+<p>Samaa tiedostoa ei avata kahteen ryhmään: sen uudelleen avaaminen näyttää ryhmän, jolla se jo on.</p>
+<p>Taustatehtävät pysyvät sidottuina kirjastoonsa: ottelutiedostojen tuonti, valvottu kansio ja GammonNetin eräanalyysi jatkuvat ryhmässä, jossa ne alkoivat, kun toinen ryhmä näytetään, eivätkä ne koskaan kirjoita näytettävään kirjastoon. Niiden eteneminen ja raportti pysyvät omassa ryhmässään: kunnes ryhmä näytetään, sen otsikossa on merkki, joka vilkkuu tehtävän työskennellessä ja muuttuu pysyväksi tehtävän valmistuttua. Kun ryhmään palataan, merkki poistuu, tilarivi kertoo mitä tehtävä teki ja ottelulista luetaan uudelleen. Tuonnin jälkeinen automaattinen analyysi käynnistyy tuonnin kirjastossa. Valvottu kansio kuuluu ryhmälle, jossa se käynnistettiin: ottelutiedostot tuodaan sinne taustalla, kun taas yhdistettävä tietokanta tai asemateksti odottaa, että kyseinen ryhmä näytetään uudelleen. Ryhmän sulkeminen pysäyttää sen tehtävät ja valvonnan.</p>
+<p><strong>Kopiointi kirjastosta toiseen.</strong> Toisen ryhmän otsikon päälle vedetty rivi kopioidaan sinne, kumpaan suuntaan tahansa: ottelu otteluluettelosta, kokoelma kokoelmaluettelosta, asema avoimesta kokoelmasta, näytetty asema (siihen tartutaan tilarivin laskurista ”n / N”) tai luettavana oleva oppitunti (sen nimestä oppituntipalkissa). Kohdeotsikon ympärille tulee pisteviiva. Kopio on sama kuin komennon <code class="docutils literal notranslate"><span class="pre">transfer</span></code>: viennin valinta, jonka natiivi tuonti yhdistää, analyyseineen, kommentteineen ja pelattuine siirtoineen; kokoelma vie asemansa mukanaan, ottelu transkriptionsa. Mitä vastaanottava kirjasto jo sisältää, ei kopioida uudelleen: kopiointi A:sta B:hen ja sitten B:stä A:han ei luo kaksoiskappaletta, eikä mikään siellä kerro, mistä kopio tuli. Kopiointi tapahtuu taustalla, sidottuna vastaanottavaan ryhmään: sen otsikossa on merkki, ja palattaessa tilarivi kertoo, montako asemaa ja ottelua on uusia ja montako oli jo ennestään.</p>
+<p><strong>Erä</strong> kokoaa rivejä useista tietokannoista kopioitavaksi kerralla; se elää Muut tietokannat -paneelissa (katso <a class="reference internal" href="#vue-ailleurs"><span class="std std-ref">Vertaa ja vaihda: Muut tietokannat -paneeli</span></a>).</p>
+<p>Otsikon <strong>lukko</strong>, <em>Suojaa kopioilta</em>, suojaa sen tietokannan: siihen ei enää kopioida mitään, ei vetämällä, ei Muut tietokannat -paneelista, ei erän eikä kontekstivalikon kautta, ja tilarivi kertoo sen. Suojaus ei koske tuonteja eikä tietokannassa tehtyjä muutoksia; toinen napsautus poistaa sen. Se muistetaan tiedostokohtaisesti istunnosta toiseen blunderDB:n asetuksissa eikä tietokannassa: uudelleen avattuna se on taas suojattu.</p>
+<p>Ryhmän vaihto evätään edelleen, sekä napsauttamalla että näppäimistöllä, tilarivin viestillä, joka nimeää syyn ja kertoo, mistä sen voi pysäyttää, kun käynnissä oleva seuraa näyttöä: rollout, jonka tulos näytetään laudan asemassa (<code class="docutils literal notranslate"><span class="pre">rollout</span> <span class="pre">stop</span></code>); turnauksen näyttö, joka tarjoaa näytettävän kirjaston kerhon verkossa (se pysäytetään Johtamisessa); käynnissä oleva Kaksintaistelu, joka varaa laudan ja sen näkymät; harjoitusistunto, jonka ajastin ja loki eivät seuraa mitään ryhmää; ja lopuksi, sen keston ajan, sellaisten tiedostojen tuonti, joita vain käyttöliittymä osaa lukea (asematekstit, tuodaan yksi kerrallaan) tai tietokannan yhdistäminen. Kun blunderDB suljetaan, tallennetaan vain aktiivisen kirjaston istunto, ei ryhmien luetteloa: seuraavalla käynnistyksellä blunderDB avaa uudelleen viimeksi aktiivisen tietokannan.</p>
+</section>
+<section id="comparer-et-echanger-le-panneau-autres-bases">
+<span id="vue-ailleurs"></span><h3>Vertaa ja vaihda: Muut tietokannat -paneeli<a class="headerlink" href="#comparer-et-echanger-le-panneau-autres-bases" title="Link to this heading"></a></h3>
+<p><strong>Muut tietokannat</strong> -paneeli (<em>CTRL-VAIHTO-A</em>) on ryhmissä avoimien tietokantojen vaihtopiste: se kertoo näytetystä asemasta, mitä muut tietokannat siitä tietävät, ja antaa kopioida sen tietokannasta toiseen. Asema löydetään siellä laudan identiteetin (tiivisteen) eikä numeron perusteella: sama numero tarkoittaa kahdessa tietokannassa kahta eri asemaa. Jos vain yksi tietokanta on auki, paneeli selittää sen ja tarjoaa <em>Avaa tietokanta vaihtoa varten</em> (<em>CTRL-VAIHTO-O</em>); jos asemaa ei ole näytetty, se kertoo sen eikä lue mitään.</p>
+<p>Jokaisella muulla tietokannalla on oma lohkonsa, jonka reunus on sen ryhmän värinen. Sen otsikko kertoo, sisältääkö se aseman: <em>läsnä</em>, <em>puuttuu</em> tai <em>läsnä toisella analyysillä</em>, kun sen paras siirto ei ole aktiivisen tietokannan. Kaksi painiketta vaihtaa aseman: <em>Kopioi kohteeseen …</em> kopioi sen aktiivisesta tietokannasta tähän, <em>Nouda kohteesta …</em> kopioi sen tästä aktiiviseen tietokantaan analyyseineen, kommentteineen ja pelattuine siirtoineen. Kopio ei koskaan ylikirjoita analyysiä, jonka kohdetietokanta jo pitää hallussaan: lohko kirjoittaa sen, <em>Analyysi säilytetty siellä</em>, ennen kopiota ja sen jälkeen. Vielä luonnoksena oleva asema on ensin tallennettava. Sen jälkeen tulevat otsikoidut, supistettavat lohkot:</p>
+<ul class="simple">
+<li><p><strong>sen analyysi</strong>: paras siirto tai paras kuutiotoiminto ja sen löytänyt moottori. Analyysi, joka on arvotettu muulla kuin aktiivisen kirjaston ottelutasoitustaulukolla, saa merkinnän <em>muu MET</em>;</p></li>
+<li><p><strong>sen kommentit</strong>, kukin kirjoittajansa tai allekirjoittajansa ja allekirjoituksen tilan kanssa, kuten <a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">kommenttipaneelissa</span></a>;</p></li>
+<li><p><strong>ottelut, joissa asema on pelattu</strong>: pelaajat, turnaus, päivämäärä, siirron numero, pelattu siirto tai päätös ja niiden hinta. Tuomio (<em>hyvä</em>, <em>virhe</em>, <em>möhläys</em>) annetaan <strong>aktiivisen</strong> kirjaston kynnysarvoilla, ei toisen kirjaston; toisella MET:llä laskettua hintaa ei verrata, vaan se pysyy merkittynä <em>muu MET</em>. Yli 50 ottelun kohdalla luetellaan 50 viimeksi tuotua ja kokonaismäärä ilmoitetaan;</p></li>
+<li><p><strong>sen lähiasemat</strong>, viisi lähintä, pikkukuvina etäisyyksineen; tämä lohko on supistettu, kun tietokanta sisältää aseman, muuten laajennettu.</p></li>
+</ul>
+<p><em>Avaa siellä</em>, napsautus ottelua tai pikkukuvaa aktivoi kyseisen tietokannan ryhmän ja näyttää aseman siinä. Lukeminen ei kirjoita mitään mihinkään tietokantaan. Paneelin alaosa muistuttaa arvioinnin kynnyksistä, ja <em>⟳ Lue tietokannat uudelleen</em> lukee muut tietokannat uudelleen.</p>
+<p><strong>Valinta.</strong> Kun ottelu, turnaus, kokoelma tai oppitunti on valittu omassa paneelissaan, paneelin yläosan lohko nimeää sen ja kertoo jokaisesta muusta tietokannasta, sisältääkö se sen jo, sekä mitä se siellä sisältää (pelejä, otteluita, asemia tai vaiheita), ja tarjoaa samat <em>Kopioi kohteeseen …</em> ja <em>Nouda kohteesta …</em>. Ottelu tunnistetaan sormenjäljestään, vaikka se olisi tuotu toisesta formaatista; turnaus, kokoelma ja oppitunti nimestään, kuten kopio yhdistää ne.</p>
+<p><strong>Kumoa.</strong> Jokainen kopio, joka on lisännyt jotakin kohdetietokantaan, aseman, ottelun, turnauksen, kokoelman tai erän, paneelin, kontekstivalikon, vedon tai jaetun näytön kautta, tulee istunnon kopiohistoriaan: tilarivi tarjoaa <em>Kumoa kopio (n)</em>, joka peruu tuoreimman, sitten edellisen, kunnes blunderDB suljetaan. Kumoaminen poistaa vain sen, minkä kopio loi: asema, ottelu tai turnaus, jonka tietokanta jo piti, jää, ja samanniminen kokoelma menettää vain ne asemat, jotka kopio lisäsi siihen. Kumoaminen evätään, ja se kertoo sen, jos kopion luoma on sen jälkeen muuttunut (kommentti, kokoelma, turnaukseen sijoitettu ottelu) tai jos ryhmä on avannut toisen tietokannan. Oppitunnin luonutta kopiota ei voi kumota: sen asemien poistaminen katkaisisi sen vaiheet.</p>
+<p><strong>Erä</strong> paneelin alaosassa kokoaa rivejä useista tietokannoista kopioitavaksi kerralla. <em>VAIHTO-B</em> lisää siihen näytetyn aseman tai poistaa sen, kuten <em>b</em> Pinolle; kontekstivalikon ryhmä <em>Lähetä</em> lisää siihen aseman, ottelun tai turnauksen, ja erään vedetty rivi menee myös sinne. Jokainen rivi poistetaan napsauttamalla ×. Valitaan <em>Kohdetietokanta</em>, sitten <em>Kopioi erä kohteeseen …</em>; erän otsikko vedettynä ryhmän otsikon päälle kopioi sen myös sinne. Turnaus lähtee kaikkine otteluineen; yksin kopioitu ottelu vie mukanaan vain turnauksensa kortin. Erä elää muistissa, ei koskaan tietokannassa: ryhmän sulkeminen poistaa sen rivit, ja se katoaa, kun blunderDB suljetaan.</p>
+<p>Palvelimella ei ole <em>Kopioi kohteeseen</em> -toimintoa: tenant ei kirjoita toisen luo; reitti <code class="docutils literal notranslate"><span class="pre">across.transferPull</span></code> tekee siellä <em>Nouda kohteesta</em> -kopion, ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">transfer</span></code> tekee sen komentorivillä.</p>
+<p><strong>Vaihto paikan päällä.</strong> Näppäin <em>x</em> näyttää laudan tilalla, samassa paikassa ja samankokoisena, toisen kirjaston aseman, sen värisen nauhan alla, joka muistuttaa sen nimestä, parhaasta siirrosta ja kommenttien määrästä. Pohjassa pidettynä näppäin palauttaa laudan, kun se vapautetaan; lyhyesti painettuna vaihto pysyy näkyvissä seuraavaan painallukseen asti. Myös aseman tai ikkunan vaihtaminen palauttaa laudan. Aktiivinen ryhmä, näkymä ja luettelo eivät muutu. Näytetty asema on oletuksena sama asema ensimmäisessä sen sisältävässä toisessa kirjastossa; Muut tietokannat -paneelin pikkukuvan alla oleva painike <em>Näytä x:llä</em> valitsee sen sijaan kyseisen naapurin, kunnes <em>Lopeta näyttö x:llä</em> tai ryhmä vaihtuu.</p>
+<p><strong>Jaettu näyttö.</strong> Suurella näytöllä välilehtipalkin painike ◫ (<em>CTRL-VAIHTO-X</em>) jakaa kahtia pelkän laudan alueen. Kukin ruutu kantaa avointa kirjastoa ja pitää puolensa: aktiivinen ryhmä vasemmalla avattaessa, ensimmäinen muu kirjasto oikealla (sama, jos kirjastoja on vain yksi; otsake sanoo silloin <em>sama kirjasto</em>). Aktiivinen ruutu on elävä ja sen ryhmän värillä reunustettu. Toinen on jäädytetty ja himmennetty: sen kirjaston lauta siinä, mihin se jätettiin, aseman analyysi ja kommentti; mitään sen näyttämää ei kirjoiteta minnekään. Kukin ruutu näyttää oman laskurinsa <em>n / N</em>.</p>
+<p>Napsautus jäädytetyssä ruudussa tai <em>CTRL-ALT-←</em> / <em>CTRL-ALT-→</em> aktivoi sen kirjaston; reunus siirtyy toiselle puolelle eikä mikään muu liiku. Yhdellä kirjastolla kaksi näkymää vaihtavat asemansa, paitsi ottelutilassa: toistettavalla ottelulla ei ole luetteloa, josta asema löytyisi, ja tilarivi kertoo sen. Työkalupalkki, välilehdet, paneelit ja tilarivi pysyvät yhtenä kappaleena ja puhuvat aina aktiivisen kirjaston puolesta: sen väripiste ja nimi edeltävät paneelien välilehtiä ja tilarivin viestiä, ja ikkunan otsikko nimeää sen. Näppäimistö, <em>CTRL-S</em>, tuonnit ja komennot menevät aktiiviseen ruutuun. Duelin, harjoitusistunnon tai tuonnin aikana vaihto evätään: napsautettu ruutu tärisee ja tilarivi kertoo syyn. Niin kauan kuin kirjaston vaihto on kesken, toinen vaihto ohitetaan, ja <em>CTRL-S</em>, aseman päivitys ja poisto evätään.</p>
+<p>Ruudun laskurin tai jäädytetyn ruudun laudan vetäminen toisen ruudun päälle kopioi aseman analyyseineen ja kommentteineen tuon ruudun kirjastoon, ellei sen tietokantaa ole suojattu kopioilta; kopio liittyy historiaan, jonka <em>Kumoa</em> peruu. 1600 pikselin leveydestä alkaen paneeli pysyy lautojen vieressä; 1280–1600 pikselissä se siirtyy niiden alle; alle 1280 pikselissä jaettu näyttö evätään ja tarjotaan paikallista vaihtoa (<em>x</em>), ja se sulkeutuu, jos ikkuna käy liian kapeaksi. Jaettu näyttö ja kummankin puolen kirjasto palautetaan seuraavassa istunnossa.</p>
+</section>
+</section>
+<section id="configuration">
+<span id="id1"></span><h2>Asetukset<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu kymmeneen välilehteen:</p>
+<ul class="simple">
+<li><p><strong>Käyttöliittymä</strong> — teema, kieli, näytön skaalaus, paneelin sijainti, PageUp / PageDown -askel (10, 50, 100, 500 tai 1 000 asemaa tai 10 % luettelosta), lokit, päivitysten tarkistus, oma nimesi ja naapuriasemat;</p></li>
+<li><p><strong>Laudan värit</strong> — laudan värit;</p></li>
+<li><p><strong>Kirjasto</strong> — se, mikä kuuluu avoinna olevaan tietokantaan: virheen ja blunderin kynnykset, jotka kuvataan alla;</p></li>
+<li><p><strong>Ylläpito</strong> — tietokannan kunto, yksi rivi kutakin toimenpidettä kohti, kuvataan alla;</p></li>
+<li><p><strong>Korpus</strong> — kaksoiskappaleet tuonnissa, pelaajien ja tapahtumien aliakset sekä todennäköisten kaksoiskappaleiden haku (katso otteluiden tuonti);</p></li>
+<li><p><strong>Bearoff</strong> — Eval-paneelin käyttämät ulosmenotaulukot;</p></li>
+<li><p><strong>gammonNet</strong> — sisäänrakennetun evaluaattorin asetukset, kuvattu alla;</p></li>
+<li><p><strong>Valvottu kansio</strong> — kansioon saapuvien otteluiden automaattinen tuonti, kuvattu alla;</p></li>
+<li><p><strong>Avustaja ja MCP</strong> — paikallinen MCP-palvelin ja sisäinen avustaja, kuvattu alla;</p></li>
+<li><p><strong>Merkitsijän identiteetti</strong> — avain, jolla alkuperämerkintäsi allekirjoitetaan; kuvattu luvussa <a class="reference internal" href="manuel_partage.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>.</p></li>
+</ul>
+<p><em>Käyttöliittymä</em>-välilehti alkaa <strong>teemalla</strong>: <em>seuraa järjestelmää</em>, <em>vaalea</em>, <em>tumma</em>, <em>suuri kontrasti</em> tai <em>tulostettava</em>. Teema asettaa käyttöliittymän värit ja <strong>ehdottaa lautapalettia</strong> — tumma käyttöliittymä vaalean laudan ympärillä ei ole tumma teema vaan puolikas, sillä lauta täyttää suurimman osan ikkunasta.</p>
+<p>Sinulla on viimeinen sana, ja mekanismi takaa sen sen sijaan että lupaisi: <em>Värit</em>-välilehti säätää edelleen lautaa suoraan, ja teeman jälkeen valittu väri on sinun. Käynnistyksessä sovelletaan vain käyttöliittymän symboleja, ei koskaan lautapalettia — asettamasi on jo ladattu, ja sen ylikirjoittaminen joka käynnistyksessä pyyhkisi työsi istunto kerrallaan. Katso <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md">ADR-0038</a>.</p>
+<p><em>Seuraa järjestelmää</em> on oletus: se noudattaa työpöydän vaalea/tumma-asetusta, myös kun se muuttuu kesken istunnon. Työkalu ei tyrkytä vaaleaansa tai tummaansa työpöydälle joka on jo päättänyt.</p>
+<p><em>Käyttöliittymä</em>-välilehdellä voi myös valita kielen: englanti, ranska, saksa, italia, espanja, suomi, japani, kreikka tai venäjä. Koko käyttöliittymä (työkalurivi, paneelit, viestit, ohje) käännetään valitulle kielelle. Kielivalinta tallennetaan ja säilyy istunnosta toiseen.</p>
+<p><em>Kirjasto</em>-välilehti kokoaa sen, mikä kuuluu avoinna olevaan tiedostoon eikä koneeseen. Se on tyhjä niin kauan kuin yhtään tietokantaa ei ole avattu, ja se sanoo sen.</p>
+<p>Se kantaa ensiksi kahta <strong>kynnystä</strong>, jotka ratkaisevat koko sovelluksen sanaston: päätös on <strong>virhe</strong> heti kun sen kustannus yltää virhekynnykseen, ja tuo virhe on <strong>blunder</strong> heti kun se yltää blunderin kynnykseen. Jokainen blunder on virhe, joten ensimmäinen kynnys ei voi ylittää toista, ja blunderDB kieltäytyy käänteisestä parista. Arvot syötetään equitynä — ”0,080” — kaikkien taulukoiden yksikkönä; komentorivi puolestaan puhuu millipisteinä, joten kynnys 0,080 kirjoitetaan haussa <code class="docutils literal notranslate"><span class="pre">E&gt;80</span></code>.</p>
+<p>Nämä kynnykset seuraavat tiedostoa, eivät tietokonetta: sama tietokanta laskee samat blunderit kaikkialla, missä se avataan, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> näyttää ne ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">edit</span> <span class="pre">--error-threshold</span></code> / <code class="docutils literal notranslate"><span class="pre">--blunder-threshold</span></code> säätää niitä. Ne eivät kulje mukana viennissä: kynnys on lukutapa, ei asemien ominaisuus.</p>
+<p>Kolme <strong>esiasetusta</strong> on tarjolla yhdellä napsautuksella, kukin sen ohjelman nimellä, joka on vetänyt tuon rajan: blunderDB (0,050 / 0,100), XG (0,020 / 0,080) ja gnubg (0,040 / 0,080). Oletuksena kirjasto lukee 0,050 ja 0,100.</p>
+<p>Mitä ne muuttavat näytöllä: tilarivin laskurin blunderien määrän ja haun, jonka sen linkki valmistelee, tilastojen ja pelaajataulukon sarakkeet ”Virheet” ja ”Blunderit”, siirtojen merkinnät ottelun tietonäkymässä (<a class="reference internal" href="manuel_matchs.html#panneau-matchs"><span class="std std-ref">Ottelupaneeli</span></a>) sekä luettelon asemista, joita blunderDB tarjoaa katsottavaksi tuonnin jälkeen.</p>
+<p><em>Ylläpito</em>-välilehden <strong>Vapautettava tila</strong> -rivillä on painike <strong>Tiivistä</strong>, joka vapauttaa poistojen (ottelut, turnaukset, siivoukset) jättämän levytilan: tietokanta ei koskaan pienene itsestään, kun tietoja poistetaan, joten tiivistys on pyydettävä erikseen. Toimenpide voi kestää suurella tietokannalla. Tiivistetty kopio kirjoitetaan tiedoston viereen ja korvaa sen sitten: väliaikaisesti tarvitaan noin tietokannan koon verran vapaata levytilaa sen asemalla, ei keskusmuistia. Jos jokin toinen ohjelma pitää tietokannan auki (esimerkiksi toinen vain luku -tilassa oleva instanssi), tiedostoa ei korvata: tietokanta tiivistetään paikallaan, mikä vaatii noin kaksinkertaisen koon verran vapaata tilaa, ja väliaikainen tiedosto menee järjestelmän väliaikaiseen kansioon tai ympäristömuuttujan <code class="docutils literal notranslate"><span class="pre">SQLITE_TMPDIR</span></code> osoittamaan kansioon: pienellä <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>-kansiolla osoita se tietokannan asemalle. blunderDB kieltäytyy aloittamasta, ja viesti kertoo, mikä puuttuu (levytila tai alle 512 Mt käytettävissä olevaa muistia), sen sijaan että riskeerattaisiin keskeytyvä tiivistys. Ennen toimenpiteen käynnistämistä pyydetään vahvistus. Tulos — saavutettu tila megatavuina — näytetään sen jälkeen tilarivillä. Sama toimenpide on käytettävissä komentoriviltä komennolla <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (ks. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>).</p>
+<p>Paikallaan tehdyn tiivistyksen jälkeen blunderDB tarkistaa, että tiedosto todella pieneni. Windowsissa järjestelmä kieltäytyy lyhentämästä tiedostoa, jota toinen ohjelma pitää auki tietyllä tavalla: tiivistys päättyy silloin ilmoitukseen, joka kertoo tämän — sulje toinen ohjelma ja käynnistä tiivistys uudelleen — sen sijaan, että se ilmoittaisi säästöstä, jota ei syntynyt.</p>
+<p><em>Käyttöliittymä</em>-välilehden <strong>Avaa lokikansio</strong> -painike avaa kansion, jossa sovelluksen loki sijaitsee — kätevää, kun vikailmoitukseen halutaan liittää yksityiskohtia, erityisesti kun blunderDB on käynnistetty pikakuvakkeesta tai kaksoisnapsautuksella ilman päätettä, joka näyttäisi mitään.</p>
+<p>Samaisen välilehden <strong>Tarkista päivitykset käynnistyksessä</strong> -valintaruutu, oletuksena pois päältä, kysyy kerran käynnistystä kohden GitHub-arkiston julkaisusivulta ja näyttää tilarivillä viestin, jos uudempi versio on saatavilla — ei koskaan ikkunaa, joka estäisi työskentelyn. Tarkistus pysyy automaattisesti pois päältä asennuksessa, joka on tehty paketinhallinnan kautta (Flatpak, Homebrew, jakelun paketti…): silloin päivityksistä huolehtii se kanava eikä blunderDB itse.</p>
+<p>Kaksi <em>Käyttöliittymä</em>-välilehden asetusta ohjaa <strong>naapuriasemien</strong> järjestämistä (tunnus <code class="docutils literal notranslate"><span class="pre">like</span></code>, ks. <a class="reference internal" href="manuel_bibliotheque.html#panneau-recherche"><span class="std std-ref">Hakupaneeli</span></a>): palautettavien naapureiden määrä ja enimmäisetäisyys, jonka takana asema lakkaa olemasta naapuri. Tämä etäisyys on oletuksena nolla, siis ilman kattoa: mittakaava riippuu pelin vaiheesta, ja tässä valittu arvo luettaisiin mittaukseksi. Tunnus <code class="docutils literal notranslate"><span class="pre">like&lt;12</span></code> asettaa omansa yhtä hakua varten, asetukseen koskematta.</p>
+<p><em>Laudan värit</em> -välilehdellä voi mukauttaa laudan värejä. Jokaisella osalla on oma värivalitsimensa: tausta, reunus, vaaleat ja tummat kolmiot, pelaajan 1 ja pelaajan 2 nappulat, nopat, noppien silmäluvut ja tuplauskuutio. <em>Palauta</em>-painike palauttaa kaikki oletusvärit. Kielen tavoin valitut värit säilyvät istunnosta toiseen.</p>
+<p><em>Bearoff</em>-välilehti hallitsee Eval-paneelin ulosmenotaulukoita (ks. <a class="reference internal" href="manuel_eval.html#panneau-epc"><span class="std std-ref">Eval-paneeli</span></a>). Niitä <strong>ei ole upotettu ohjelmatiedostoon eikä niitä ladata</strong>: blunderDB laskee ne koneella, joka niitä käyttää, ja tulos on tavu tavulta sama kuin gnubg:n tuottama — SHA-256-tiiviste tarkistetaan ennen kuin taulukko hyväksytään.</p>
+<p>Kaksi tavallista taulukkoa (TS-06-06 tuplausratkaisulle, OS-06 EPC:lle) lasketaan ensimmäisellä käynnistyksellä taustalla ja kysymättä: noin kuusi sekuntia yhdellä ytimellä, joiden aikana sovellusta käytetään normaalisti. Eval-paneeli mainitsee siitä vain, jos siihen asetetaan asema, joka tarvitsee vielä valmistumatonta taulukkoa.</p>
+<p>Välilehti näyttää aktiivisen alueen ja sen alkuperän, EPC:n lukeman yksipuolisen taulukon tilan, kansion jossa kaikki tämä sijaitsee, ja luettelon olemassa olevista taulukoista kokoineen ja tuomioineen. Jokainen rivi poistetaan erikseen, vahvistuksen jälkeen.</p>
+<p><strong>Varmennettu vai varmentamaton.</strong> <em>Varmennetulla</em> taulukolla on täsmälleen ne tavut, jotka gnubg tuottaa sen alueelle: sen SHA-256-sormenjälki on blunderDB:ssä ja se löytyi uudelleen. Yksipuolisille taulukoille (OS-06–OS-10) tallennetut sormenjäljet ovat ne, jotka GNUbg 1.08:n <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>-työkalu tuottaa. <em>Varmentamaton</em> taulukko on hyvin muodostettu, mutta sen alueelle ei ole tallennettua sormenjälkeä — sitä ei moitita mistään, kukaan ei vain ole verrannut sitä viitteeseen. <em>Vioittunut</em> taulukko on ristiriidassa itsensä kanssa eikä sitä koskaan lueta; se lasketaan uudelleen.</p>
+<p><strong>Laajemman taulukon laskeminen.</strong> Alue valitaan kahden perheen luettelosta yhdessä sille annettavien ytimien määrän kanssa (oletuksena kaikki paitsi yksi, jotta kone pysyy käytettävänä):</p>
+<ul class="simple">
+<li><p><strong>tarkka kuutio (kaksipuolinen)</strong>, TS-06-06:sta TS-06-15:een: laajentaa aluetta, jolla voittotodennäköisyys ja kuution tuomio luetaan eikä arvioida;</p></li>
+<li><p><strong>EPC kotialueen ulkopuolella (yksipuolinen)</strong>, OS-06:sta OS-10:een: laajentaa sitä, kuinka kaukana kotoa nappula saa olla ilman että EPC-lohko vaikenee. Tämä ajo lukee vain laskettavaa pienempiä asemia, joten se on rakenteeltaan peräkkäinen eikä ydinmäärä hyödytä sitä — valitsin sanoo sen harmaantumalla.</p></li>
+</ul>
+<p>Ennen kuin mitään aloitetaan, välilehti kertoo valitulle alueelle kolme lukua: koon levyllä, laskennan aikana tarvittavan muistin ja ajan, jonka sen pitäisi viedä <em>tällä koneella</em>. Viimeksi mainittu alkaa arviona ja muuttuu mittaukseksi: jokainen riittävän laaja ajo kirjaa oman nopeutensa ja säilyttää sen. Alue, jota käytettävissä oleva muisti ei salli, tarjotaan harmaana ja perusteluineen — ”tarvittaisiin 24 Gt, jäljellä on 12” on vastaus, puuttuva rivi ei olisi.</p>
+<p>Suuruusluokkana kuudentoista säikeen koneella: TS-06-09 painaa 191 Mt ja vie kymmenkunta sekuntia, TS-06-11 painaa 1,2 Gt ja muutaman minuutin, TS-06-13 ylittää sen mitä useimmat koneet pystyvät pitämään muistissa. Yksipuolisella puolella, yhdellä ytimellä: OS-07 painaa 4,9 Mt ja vie 17 s, OS-08 15 Mt ja 1 min 20, OS-10 117 Mt ja puoli tuntia.</p>
+<p><strong>Tauko ja jatkaminen.</strong> Laskennan aikana edistyminen näyttää <em>mitatun</em> jäljellä olevan ajan ja kaksi erillistä painiketta: <em>Tauko</em> ja <em>Peruuta</em>. Tauko kirjoittaa laskennan tilan taulukon viereen; uudelleen käynnistäminen jatkaa siitä mihin jäätiin sen sijaan että aloitettaisiin alusta. Peruuttaminen ei säilytä mitään. Asetusikkunan sulkeminen ei keskeytä mitään — laskenta jatkuu taustalla.</p>
+<p>Tauolle jätetty laskenta löytyy seuraavalta käynnistykseltä, nimettynä ja lukuineen (”TS-06-09 keskeytyi kohdassa 43 %”), painikkeineen <em>Jatka</em> ja <em>Poista</em>. Mikään ei käynnisty itsestään uudelleen: käyttäjä pyysi pysäytystä.</p>
+<p>Välilehti sallii lopuksi osoittaa ulkoiseen kaksipuoliseen <code class="docutils literal notranslate"><span class="pre">.bd</span></code>-tiedostoon, esimerkiksi gnubg:n itsensä tuottamaan tietokantaan: laajimman alueen taulukko voittaa.</p>
+<p id="onglet-maintenance"><strong>Ylläpito</strong>-välilehti näyttää tietokannan kunnon: yksi rivi toimintoa kohden, sen määrä, viimeisin suoritus (päivämäärä ja tulos: valmis, peruttu tai epäonnistunut) ja toiminto. Vain tilastottomien otteluiden laskenta käynnistyy itsestään, avattaessa.</p>
+<ul class="simple">
+<li><p><strong>Positiot ilman analyysiä</strong> — positiot, joilla ei ole mitään analyysiä; toiminto on alempana kuvattu gammonNet-analyysi. Positiot, joita gammonNet kieltäytyy arvioimasta (tanssi, ottelutaulukon ulkopuolinen pistetilanne), pysyvät tässä luvussa, joka ei siis välttämättä pääse nollaan.</p></li>
+<li><p><strong>Vanhentuneet gammonNet-analyysit</strong> — kuvataan alempana.</p></li>
+<li><p><strong>Ottelut ilman tilastoja</strong> — ottelut, joiden tilastoja ei ole vielä laskettu; toiminto laskee ne kaikki. Kirjoitettavaksi avattu tietokanta, jossa niitä on, laskee ne itse taustalla, erissä: tilarivi näyttää tämän rivin edistymisen ja sen peruutuspainikkeen, turnausten merkit ja Tilastot-paneelin Pelaajat-välilehti odottavat laskennan loppua, ja muu sovellus pysyy käytettävissä. Toisen tietokannan avaaminen pysäyttää sen. Vain luku -tilassa tai komentorivillä tilastojen ensimmäinen luku laskee ne, mikä voi kestää kauan suuressa tietokannassa: Tilastot-paneeli näyttää silloin tämän määrän, joka avaa tämän välilehden.</p></li>
+<li><p><strong>Analyysisarakkeet</strong> — haku ja tilastot kyselevät sarakkeita, jotka ovat tallennettujen analyysien projektio, ja analyysit itse pysyvät koskemattomina: toiminto laskee sarakkeet uudelleen tuomatta mitään uudelleen.</p></li>
+<li><p><strong>Pelattujen siirtojen virheet</strong> — arvioi pelatut siirrot, joilla ei vielä ole virhettä.</p></li>
+<li><p><strong>Vanhan muodon analyysit</strong> — kirjoittaa binäärimuotoon uudelleen analyysit, jotka aiempi versio tallensi JSON-muodossa.</p></li>
+<li><p><strong>Roskakori</strong> — roskakorin merkintöjen määrä; sitä napsauttamalla roskakori avautuu.</p></li>
+<li><p><strong>Vapautettava tila</strong> — tiedoston vapaa tila, jonka yllä kuvattu tiivistys palauttaa levylle.</p></li>
+</ul>
+<p>Kallis laskenta (se lukee kokonaisen taulun) odottaa painiketta <strong>Laske</strong>. Positioiden lukumäärä avaa kyseiset positiot luettelossa; tilastoitta olevien otteluiden lukumäärä avaa kyseiset ottelut ottelupaneelissa. Toimenpide suoritetaan taustalla: sen eteneminen ja peruutuspainike näkyvät tilarivillä, ja kerrallaan suoritetaan vain yksi tietokantaan kirjoittava toimenpide — käynnissä oleva gammonNet-analyysi, rollout tai toinen ylläpitotoimenpide saa seuraavan hylätyksi, ja viestissä mainitaan tietokannan varannut toimenpide. Vain luku -tilassa avatussa tietokannassa toiminnot on poistettu käytöstä. Samat toimenpiteet ovat saatavilla komentoriviltä (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">maintenance</span></code>).</p>
+<p><strong>gammonNet</strong>-välilehti säätää sisäänrakennettua evaluaattoria (katso <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md">ADR-0011</a>). Siinä on kaksi säädettävää hakusyvyyttä, jotka on nimetty ja tallennetaan erikseen — toisen alentaminen ei koskaan muuta toista:</p>
+<ul class="simple">
+<li><p><strong>Näyttösyvyys</strong> — interaktiivinen mukavuus lautaa muokattaessa; ei koskaan kirjoiteta tietokantaan.</p></li>
+<li><p><strong>Analyysisyvyys</strong> — se, mitä tuonnin jälkeinen analyysierä kirjoittaa aseman Analyysiin.</p></li>
+</ul>
+<p>Molempien oletusarvo on <strong>2-ply</strong>, kanoninen asetus. Valikko merkitsee ⚠-merkillä syvyydet 3-ply ja 4-ply, joiden kustannus asemaa kohti ylittää reilusti 2-ply:n. Välilehdellä voi säätää myös <strong>karsinnan</strong> (oletus <code class="docutils literal notranslate"><span class="pre">k=12</span></code>) ja <strong>näytettävien ehdokassiirtojen määrän</strong> (oletus 10) sekä valintaruudun <strong>analysoi automaattisesti tuonnin jälkeen</strong>, joka käyttöön otettuna tarkistaa jokaisen tuonnin jälkeen, onko jäljellä asemia <strong>ilman yhtään analyysiä</strong> (ei gammonNet-, XG-, GNUbg- eikä BGBlitz-analyysiä — sääntö on « evaluointi täyttää vain aukon », ei koskaan korvaa), ja tarvittaessa käynnistää taustalla gammonNet-analyysin määritetyllä analyysisyvyydellä. <em>Ylläpito</em>-välilehden rivi <strong>Positiot ilman analyysiä</strong> käynnistää saman täydennyksen käsin uudelleen, mikä on hyödyllistä kirjastolle, joka on koottu ennen tämän toiminnon olemassaoloa.</p>
+<p>gammonNet arvioi oton tai luopumisen tuplaajan päätöksestä, ennen tuplausta. gammonNet-arvio, jonka blunderDB:n aiempi versio oli kirjoittanut tällaiseen vastaukseen, arvioi vastaanottajan uudelleentuplauksen: se poistetaan kirjastoa avattaessa tai sen sisältävää tietokantaa tuotaessa. Otto tai luopuminen muuttuu jälleen positioksi ilman analyysiä, jota tilastoissa ei ole, ennen kuin <em>Ylläpito</em>-välilehden rivi <em>Positiot ilman analyysiä</em> (tai automaattinen analyysi tuonnin jälkeen) arvioi sen uudelleen.</p>
+<p><em>Ylläpito</em>-välilehden rivi <strong>Vanhentuneet gammonNet-analyysit</strong> kattaa päinvastaisen tapauksen: asema, jonka gammonNet on jo analysoinut, mutta jonka tallennetun analyysin on kirjoittanut käynnissä olevaa vanhempi moottoriversio tai muulla kuin yllä määritetyllä analyysisyvyydellä, merkitään siellä vanhentuneeksi ja arvioidaan uudelleen. Tämä erä ei koskaan koske asemaan, jolla on lisäksi XG-, GNUbg- tai BGBlitz-analyysi, sen gammonNet-sisällöstä riippumatta — <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a> suoja pysyy ehdoton. Vanhentuneiden positioiden lukumäärä lukee tietokannan jokaisen gammonNet-analyysin: se odottaa painiketta <strong>Laske</strong>. Erä laskee oman luettelonsa uudelleen käynnistyessään.</p>
+<p>Molemmat erät ovat <strong>rajattuja, näkyviä ja peruutettavissa, eivät koskaan hiljainen daemon</strong>: niiden syvyys, niiden edistyminen (<code class="docutils literal notranslate"><span class="pre">analysoidut</span> <span class="pre">asemat</span> <span class="pre">/</span> <span class="pre">yhteensä</span></code>, alkaen <code class="docutils literal notranslate"><span class="pre">0</span></code>:sta käynnistettäessä) ja peruutuspainike näkyvät tilarivillä koko niiden keston ajan ja katoavat, kun ne on valmis, ja niiden tilalle tulee tuloksen yhteenveto — kuinka monta positiota <strong>analysoitiin</strong>, kuinka monta <strong>hylättiin</strong> (positio, jota gammonNet kieltäytyy arvioimasta, kuten sen taulukon kattavuuden ulkopuolella oleva ottelutulos, mikä ei koskaan ole virhe) ja kuinka monta <strong>epäonnistui</strong> (yritetään uudelleen muuttumattomana seuraavalla ajolla). Sovelluksen sulkeminen kummankaan aikana ei hukkaa mitään: jokainen analysoitu positio kirjoitetaan sitä mukaa, ja seuraava ajo jatkaa täsmälleen siitä, mihin analyysi jäi, ilman minkäänlaista lokia. Peruutus samoin kuin sulkeminen keskeyttää myös parhaillaan laskettavan aseman, joka jää ilman analyysiä.</p>
+<p>Kirjastoon kirjoittaa kerrallaan vain yksi työ: gammonNet-erä, tallennettu rollout tai ylläpitotoimenpide. <em>Ylläpito</em>-välilehdeltä käynnistetty erä tai toimenpide hylätään, kun toinen työ on käynnissä, ja tilarivi nimeää sen työn; tuonnin, litteroinnin tai kaksintaistelun käynnistämä erä sen sijaan odottaa toisen päättymistä, ja tilarivi ilmoittaa sen « odottavaksi » kunnes se alkaa.</p>
+<p id="rollout-reglage">Samalla välilehdellä on Analyysi-paneelista käynnistettävien <strong>rolloutien asetus</strong> (ks. <a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Rolloutit</span></a>), joka säilyy istunnosta toiseen: <strong>Nopea</strong> (216 peliä, katkaistu 7 puolisiirtoon), <strong>Vakio</strong> (1296 peliä, katkaistu 11 puolisiirtoon) tai <strong>Vapaa</strong>, jossa kaikkia parametreja voi muokata — katkaisu, pelien vähimmäis- ja enimmäismäärä (36:n monikertoja), JSD-raja, syvyys (ply), ehdokkaiden määrä, siemenluku ja prosessien määrä.</p>
+<p><strong>Tietokannan ottelun pääomataulukko.</strong> Välilehden alareunassa oleva luettelo <strong>Tietokannan ottelun pääomataulukko (MET)</strong> valitsee taulukon, jolla gammonNet arvottaa ottelutilanteet: Kazaross-XG2, sisäänrakennettu ja oletus, tai GNUbg:n <code class="docutils literal notranslate"><span class="pre">.xml</span></code>-tiedostosta tuotu taulukko painikkeella <strong>Tuo .xml-MET…</strong>. Valinta kuuluu tietokannalle, ei sovellukselle: toisen tietokannan avaaminen palauttaa sen taulukon. Vain eksplisiittiset taulukot luetaan (ei parametrisia <code class="docutils literal notranslate"><span class="pre">zadeh</span></code>- tai <code class="docutils literal notranslate"><span class="pre">mec</span></code>-taulukoita); tuodun taulukon pituuden jälkeen sisäänrakennettu taulukko ottaa vastuun. Taulukko tunnistetaan arvoistaan, ei nimestään: GNUbg:n <code class="docutils literal notranslate"><span class="pre">Kazaross-XG2.xml</span></code>-tiedoston tuonti ei lisää mitään, se on sisäänrakennettu taulukko. Jokainen gammonNetin laskema analyysi tallentaa taulukon, jolla se laskettiin; tuotujen analyysien (XG, GNUbg, BGBlitz) oletetaan laskettu Kazaross-XG2:lla. Ottelutilanteen analyysi, joka on laskettu muulla kuin nykyisellä taulukolla, merkitään analyysipaneelissa merkinnällä <strong>Eri MET</strong> ja jätetään pois tilastoista (virheiden keskiarvot, PR, rankingit, kaksinpelit); rahapelianalyysia ei koskaan. Taulukon vaihtaminen ei kirjoita mitään analyysia uudelleen: vain se muuttuu, mitä vertailut ottavat huomioon.</p>
+<p>Paneelin suora arviointi ja tuplausmatriisi arvotetaan tietokannan taulukolla, kuten sen tallentamat analyysit. Taulukko kulkee niiden analyysien mukana, jotka viittaavat siihen: tietokannan vienti ottaa sen mukaan, ja tietokannan tuonti lisää sen vastaanottavaan tietokantaan ilman kaksoiskappaletta (jo olemassa oleva taulukko tunnistetaan sen arvoista) ja tekemättä siitä nykyistä. gammonNet-analyysi, joka korvataan toisen moottorin (XG, GNUbg) analyysilla, katsotaan jälleen lasketuksi Kazaross-XG2:lla.</p>
+<p><strong>Ilman analyysiä tuotu ottelu saa näin PR-luvun.</strong> Näin on verkossa pelatun ottelun tai Jellyfish-<code class="docutils literal notranslate"><span class="pre">.mat</span></code>-tiedoston laita, kun kukaan ei ole ajanut sitä XG:n läpi: blunderDB tunsi asemat ja pelatut siirrot, mutta mikään analyysi ei kertonut mitä ne olivat arvoltaan. Erän ajon jälkeen todella pelattua siirtoa verrataan gammonNetin järjestykseen, ja ero syöttää PR:n, virheprosentin, pahimmat päätökset ja kaikki muut mittarit, aivan kuten XG:n analysoimassa ottelussa. Vertailu ei keksi mitään: pelattu siirto tulee ottelun omasta siirtotaulusta, joka kirjoitetaan tuonnissa riippumatta siitä kantoiko tiedosto analyysin.</p>
+<p>Tätä vanhemmalla versiolla analysoitua tietokantaa ei tarvitse arvioida uudelleen: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> laskee sarakkeet uudelleen jo tallennetuista analyyseistä ja siirroista ja palauttaa noille otteluille niiden PR:n (katso <a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a>).</p>
+<p>Rehellinen varaus: asema tunnistetaan rakenteestaan, joten kahdesti kohdattu asema — kerran hyvin, kerran huonosti pelattu — kantaa vain yhden eron, ensimmäisen kirjatun esiintymänsä eron. Tämä ei ole tälle laskennalle ominaista: XG-kirjastolla on täsmälleen sama muoto.</p>
+<section id="dossier-surveille">
+<span id="id2"></span><h3>Valvottu kansio<a class="headerlink" href="#dossier-surveille" title="Link to this heading"></a></h3>
+<p><strong>Valvottu kansio</strong> -välilehti pyytää blunderDB:tä katsomaan kansiota käydessään ja tuomaan jokaisen ottelutiedoston, joka siihen <strong>ilmestyy</strong>. Pelaat istunnon eXtreme Gammonissa, palaat blunderDB:hen, ja ottelut ovat jo siellä.</p>
+<p>Mitään ei arvata. Ennen kuin kansio on nimetty, valvontaa ei ole: blunderDB ei ryhdy lukemaan hakemistoa siksi, että se arveli mistä ottelusi löytyvät. <strong>Ehdota</strong>-painike katsoo tämän koneen tavanomaisia paikkoja ja tarjoaa jonkin vain jos se todella on olemassa; muuten se sanoo niin, ja kansion nimeäminen jää sinulle.</p>
+<p>Kolme asiaa kannattaa tietää ennen ruudun rastittamista:</p>
+<ul class="simple">
+<li><p><strong>Vain ilmestyvät tiedostot tuodaan.</strong> Se mitä kansiossa jo on valvonnan alkaessa kirjataan tunnetuksi ja jätetään rauhaan: valvonnan osoittaminen neljän vuoden otteluihin ei saa tuoda niitä kaikkia. Paikalla olevan tuomiseen on kansion tuonti, joka on sitä varten — ja nämä kaksi sopivat hyvin yhteen: ensin tuonti, sitten valvonta.</p></li>
+<li><p><strong>Tiedosto tuodaan vasta kun sen koko on vakiintunut.</strong> Ottelu, jota toinen ohjelma kirjoittaa, kasvaa vilkaisusta toiseen; puoliksi kirjoitettuna tuotuna siitä tulisi jäsennysvirhe, jolle kukaan ei voi mitään. blunderDB odottaa siis näkevänsä saman tiedoston kahdesti muuttumattomana.</p></li>
+<li><p><strong>Tuonti on hiljainen.</strong> Tutkit asemaa, kun ottelusi saapuivat: näytön ottaminen sinulta olisi pahin mahdollinen hetki. Tila, aktiivinen haku, välilehti ja näytettävä asema eivät muutu; asemaluetteloa ei ladata uudelleen, ja se näyttää uudet ottelut seuraavan uudelleenlatauksen yhteydessä. Tuonti tehdään ilman ikkunaa, ja tilapalkki näyttää bannerin, jossa on tuotujen, ohitettujen (kaksoiskappaleet) ja epäonnistuneiden otteluiden määrä, sekä painikkeen, joka avaa halutessasi täydellisen raportin. Kaikki muu on samaa kuin käsin tehdyssä tuonnissa: samat kaksoiskappaleet tunnistetaan, sama tuontierä, sama automaattinen analyysi, jos se on käytössä.</p></li>
+</ul>
+<p>Oletusväli on kymmenen sekuntia; alaraja kaksi. Kansiota ei käydä läpi rekursiivisesti: valvottu kansio on paikka johon työkalu pudottaa ottelunsa, ei tutkittava puu. Irrotettu verkkojako ei pysäytä valvontaa eikä saa sisältöään käymään uudesta palatessaan.</p>
+<p>Sama valvonta on olemassa komentorivillä komennolla <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;kansio&gt;</span> <span class="pre">--watch</span></code> (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>): se on muoto, jota palvelin, ajastettu tehtävä tai skripti voi käyttää.</p>
+</section>
+<section id="synchroniser-deux-machines">
+<span id="id3"></span><h3>Kahden koneen synkronointi<a class="headerlink" href="#synchroniser-deux-machines" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">.db</span></code>-tietokannan kopioiminen koneelta toiselle tai sen pitäminen synkronoidussa kansiossa (Syncthing, Dropbox…) vahingoittaa sitä lopulta: SQLite kirjoittaa tietokannan viereen lokitiedostoja, jotka tiedostosynkronointi kopioi väärässä järjestyksessä. blunderDB synkronoi sen sijaan kaksi kirjastoa <strong>inkrementaalisilla vienneillä</strong>, jotka tallennetaan kansioon, jota toinen kone <strong>valvoo</strong>. Siirtotavan valitset itse — Syncthing, USB-tikku, sähköposti: palvelinta tai tiliä ei tarvita.</p>
+<ul class="simple">
+<li><p>Valitse koneella A vientiikkunassa <em>Koko kirjasto</em>, rastita <em>Vain uusi edellisen tähän kansioon tehdyn viennin jälkeen</em> ja osoita kansio painikkeella <strong>Valitse kansio…</strong>. Jokainen vienti kirjoittaa sinne tiedoston <code class="docutils literal notranslate"><span class="pre">sync-&lt;machine&gt;-&lt;date&gt;.db</span></code>, joka sisältää vain sen, mikä on tullut kirjastoon samaan kansioon tehdyn edellisen viennin jälkeen; ensimmäinen sisältää kaiken.</p></li>
+<li><p>Tee koneella B tästä kansiosta <a class="reference internal" href="#dossier-surveille"><span class="std std-ref">valvottu kansio</span></a>. Jokainen sinne ilmestyvä <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedosto yhdistetään ilman esikatselua, samoin kuin tietokannan tuonnissa: jo tunnettua asemaa ei kahdenneta, jo tunnettu ottelu tunnistetaan, kokoelmat ja oppitunnit yhdistetään nimensä perusteella.</p></li>
+<li><p>Toimi samoin toiseen suuntaan toisen kansion kanssa.</p></li>
+</ul>
+<p>Hyvä tietää:</p>
+<ul class="simple">
+<li><p><strong>Merkki ”viimeinen synkronointi” on viejän luona</strong>, yksi kutakin kohdekansiota kohti, ja se siirtyy eteenpäin vain, kun tiedosto on valmis. Vastaanottava kone ei tallenna mitään. Epäonnistunut vienti jättää merkin paikalleen: seuraava vienti sisältää samat rivit.</p></li>
+<li><p><strong>Synkronointi tapahtuu vain lisäämällä.</strong> Poisto ei leviä: ottelun poistaminen koneelta A ei poista sitä koneelta B. Ei myöskään paikallaan tehty muutos: uudelleen kirjoitettu kommentti, uudelleen nimetty ottelu, jo lähetetylle asemalle uudelleen tehty analyysi. Lähtevät viimeisen viennin jälkeen lisätyt asemat, ottelut, turnaukset, kokoelmat, oppitunnit ja kommentit; kokoelma lähtee uudelleen myös silloin, kun siihen on lisätty asema, ja asema silloin, kun siihen on lisätty kommentti. Uudelleen kirjoitettu kommentti ei lähde uudelleen, koska vastaanottava kone ei koskaan korvaa tekstiä, joka sillä jo on: välittääksesi korjauksen lisää se uutena kommenttina. Tallennetut suodattimet ja Anki-pakat eivät kuulu mukaan: kohteen <em>Koko kirjasto</em> vienti ilman valintaruutua sisältää ne.</p></li>
+<li><p><strong>Mitä kone on vastaanottanut, lähtee kerran takaisin toiselle</strong>, koska se on uutta sen kirjastossa; toinen tunnistaa sen lisäämättä mitään, ja seuraava vaihto on tyhjä.</p></li>
+<li><p><strong>Tiedosto, joka saapui blunderDB:n ollessa suljettuna, ei katoa</strong>: valvonnan käynnistyessä jokainen kansiossa jo oleva <code class="docutils literal notranslate"><span class="pre">.db</span></code> yhdistetään, toisin kuin ottelutiedostot. Vastaanottava kone ei merkitse muistiin, mitä se on lukenut; se yhdistää siis jokaisella käynnistyksellä uudelleen kaikki kansiossa yhä olevat tiedostot lisäämättä mitään, mutta niiden uudelleenlukemisen ajan hinnalla. Poista jo vastaanotetut <code class="docutils literal notranslate"><span class="pre">sync-…</span></code>-tiedostot aika ajoin, jotta tämä käynnistys pysyy nopeana.</p></li>
+<li><p><strong>Inkrementaalinen vienti ei koskaan korvaa tiedostoa.</strong> Edellinen tiedosto saattaa sisältää rivejä, joita toinen kone ei ole vielä saanut: vienti jo käytössä olevaan tiedostonimeen hylätään. Valitse kansio, niin jokainen vienti saa siellä uuden nimen.</p></li>
+<li><p><strong>Jo nähdyllä nimellä uudelleen kirjoitettu tiedosto yhdistetään uudelleen</strong>: valvonta tunnistaa tiedoston nimen, koon ja muokkausajan perusteella.</p></li>
+<li><p><strong>Avointa kirjastoa ei koskaan yhdistetä itseensä</strong>: jos se on valvotussa kansiossa, valvonta ohittaa sen.</p></li>
+<li><p><strong>Vienti, jonka oli jätettävä rivejä syrjään</strong> (ilmoitetaan lokissa), ei siirrä merkkiä eteenpäin: seuraava yrittää niitä uudelleen kaiken niiden jälkeen tulevan kanssa.</p></li>
+<li><p><strong>Vientiä ei koskaan nähdä puoliksi kirjoitettuna</strong>: se kirjoitetaan piilotetulla nimellä ja nimetään sitten uudelleen kerralla. Salasanalla suojattua tiedostoa (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) valvonta ei poimi, koska se ei voi kysyä salasanaa.</p></li>
+</ul>
+<p>Komentoriviltä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span> <span class="pre">--incremental</span> <span class="pre">--file</span> <span class="pre">&lt;kansio&gt;</span></code> toisella puolella ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;kansio&gt;</span> <span class="pre">--watch</span></code> toisella (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>). Palvelin hyväksyy kentän <code class="docutils literal notranslate"><span class="pre">&quot;incremental&quot;:</span> <span class="pre">true</span></code> osoitteessa <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> (katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>).</p>
+</section>
+<section id="assistant-et-mcp">
+<span id="assistant-mcp"></span><h3>Avustaja ja MCP<a class="headerlink" href="#assistant-et-mcp" title="Link to this heading"></a></h3>
+<p>Välilehti <strong>Avustaja ja MCP</strong> säätää kahta asiaa, jotka kumpikin ovat oletuksena pois päältä.</p>
+<p><strong>Paikallinen MCP-palvelin</strong> tarjoaa blunderDB:n työkalut (haku, aseman ja sen analyysin luku, pelaajan tilastot, tietovisat…) Model Context Protocolia puhuvalle avustajalle, kuten Claude Desktopille tai Claude Codelle, niin kauan kuin ikkuna on auki. Se kuuntelee vain tällä koneella osoitteessa <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;/mcp</span></code> (oletusportti 8765) ja hylkää verkkosivulta tulevan pyynnön. Se lisää kaksi näyttötyökalua: näkymän avaaminen hakuun ja aseman näyttäminen. Työkalut vain lukevat, paitsi jos <strong>Salli kirjoittaminen</strong> on valittuna: silloin ne voivat tallentaa aseman, kommentoida sitä, luoda ja täyttää kokoelman, arvioida Anki-kortin ja tallentaa rolloutin aseman analyysin viereen; mitään ei poisteta. Ilman avointa ikkunaa <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">mcp</span></code> tarjoaa samat työkalut (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>).</p>
+<p><strong>Sisäinen avustaja</strong> on näiden samojen työkalujen asiakas. Mallia ei ole mukana: se käyttää OpenAI-yhteensopivaa palveluntarjoajaa — oletuksena Ollamaa tällä koneella, tai Groqia, OpenRouteria, Geminiä, Anthropicia tai jotakin muuta osoitetta. Etänä on jokainen tämän koneen ulkopuolinen osoite, valitusta palveluntarjoajasta riippumatta: lauseesi ja työkalujen tulokset poistuvat silloin koneelta, välilehti kertoo tämän ja odottaa suostumustasi juuri tälle osoitteelle; toinen osoite kysyy uudelleen. API-avain tallennetaan järjestelmän avainnippuun, ei koskaan tietokantaan tai asetustiedostoon. Ollamalle oletuksena ehdotettu malli, <code class="docutils literal notranslate"><span class="pre">qwen2.5:7b</span></code>, on lähtökohta, ei suositus: mitään mallisuositusta ei anneta ilman lähdekoodin mukana toimitetun mittauskokeen tulosta.</p>
+<p>Kun avustaja on otettu käyttöön, se on Haku-paneelin <strong>Avustaja</strong>-alivälilehti. Lause — ”yli 50 millipisteen virheeni kisassa” — avaa sen mukaan nimetyn uuden näkymän, suorittaa haun siinä ja siirtyy siihen; sen tunnisteet jäävät hakuhistoriaan. Työkalujen palauttama tieto tulee tietokannasta; mallin kirjoittama on merkitty tekstillä <strong>Mallin vapaata tekstiä</strong>. Avustaja ehdottaa muutoksen vain, jos valintaruutu <strong>Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)</strong> on valittuna — asetus on erillinen paikallisen MCP-palvelimen kirjoittamisesta — ja jokainen sen valmistelema muutos näytetään, ja se tehdään vasta painikkeella <strong>Vahvista</strong>.</p>
+<p>Asetusikkuna sisältää myös käyttöliittymän näyttöasetukset. <strong>Käyttöliittymän skaalaus</strong> -liukusäätimellä voi suurentaa tai pienentää kaikkia käyttöliittymän elementtejä, mistä on hyötyä korkean tarkkuuden näytöillä tai luettavuuden parantamiseksi. Pikanäppäimet CTRL-+, CTRL– ja CTRL-0 säätävät samaa skaalausta kuin selaimessa. <strong>Paneelien sijainti</strong> -valikko määrittää, missä paneelit (haku, ottelut, analyysi) näkyvät suhteessa lautaan: <em>alhaalla</em>, <em>sivulla</em> tai <em>automaattinen</em> (sivu valitaan tällöin leveillä näytöillä käytettävissä olevan tilan parempaa hyödyntämistä varten). Muiden asetusten tavoin nämä valinnat säilyvät istunnosta toiseen.</p>
+</section>
+</section>
+<section id="visites-guidees-et-base-d-exemple">
+<span id="visites-guidees"></span><h2>Opastetut kierrokset ja esimerkkitietokanta<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
+<p>Käytön aloittamisen helpottamiseksi blunderDB tarjoaa käyttöliittymästä <strong>opastettuja kierroksia</strong>. Kierrosten luettelo avataan työkalupalkista tai komennolla <code class="docutils literal notranslate"><span class="pre">tutorial</span></code> (alias <code class="docutils literal notranslate"><span class="pre">tour</span></code>). Käytettävissä on seitsemän kierrosta: yleinen käyttöliittymäkierros sekä asemien hakuun, otteluiden tarkasteluun, turnausten tarkasteluun, Eval-paneeliin, Anki-kertaukseen ja tilastoihin keskittyvät kierrokset. Jokainen kierros korostaa käyttöliittymän asianmukaiset elementit vaihe vaiheelta, avaa matkan varrella sen paneelin, josta se puhuu, ja sen voi toistaa milloin tahansa. Ensimmäisellä käynnistyskerralla yleinen kierros tarjotaan automaattisesti.</p>
+<p>Komento <code class="docutils literal notranslate"><span class="pre">demo</span></code> lataa <strong>esimerkkitietokannan</strong>, jonka avulla voit tutustua työkalun ominaisuuksiin tuomatta omia pelejäsi: kolme ottelua (joista kaksi on koottu turnaukseksi), jotka eXtreme Gammon, BGBlitz ja gammonNet ovat analysoineet, kolme aihekohtaista kokoelmaa, tunnisteilla merkittyjä kommentteja (<code class="docutils literal notranslate"><span class="pre">#blunder</span></code>, <code class="docutils literal notranslate"><span class="pre">#cube</span></code>) sekä Anki-pakka kertauslokeineen. Pelaajat, turnaus ja paikka ovat keksittyjä. Opastetut kierrokset käyttävät tätä tietokantaa, kun mitään tietokantaa ei ole avattu.</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="navigation-positions"></span><h2>Asemien selaaminen<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<p>Oletuksena blunderDB mahdollistaa seuraavat:</p>
+<ul class="simple">
+<li><p>selata nykyisen kirjaston eri asemia — sitä ei koskaan ladata yhtenä möhkäleenä: blunderDB pitää siitä vain tunnisteiden listaa ja lataa asemat viidenkymmenen ikkunoissa näytettävän aseman ympäriltä, joten kymmenientuhansien asemien tietokanta aukeaa yhtä nopeasti kuin pienikin,</p></li>
+<li><p>näyttää asemaan liittyvät analyysitiedot,</p></li>
+<li><p>näyttää, lisätä ja muokata aseman kommentteja.</p></li>
+</ul>
+<p>Työkalurivin painike <strong>Siirry asemaan</strong> avaa ikkunan, johon voi kirjoittaa suoraan aseman järjestysnumeron ja hypätä siihen ilman vierittämistä. Se on komentorivin <code class="docutils literal notranslate"><span class="pre">[number]</span></code>-komennon graafinen vastine (katso <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Asemat ja navigointi</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso saatavilla olevat pikanäppäimet kohdasta <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Näppäimistöoikotiet</span></a>.</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="edition-positions"></span><h2>Asemien muokkaus<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<p><em>TAB</em>-näppäimen painaminen avaa hakupaneelin ja mahdollistaa aseman muokkaamisen laudalla sen lisäämiseksi tietokantaan tai haettavan asemarakenteen määrittämiseksi. Pelinappuloiden, kuution, pistetilanteen ja vuoron jakaumaa voi muokata hiirellä (katso <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Muokkaa asemaa</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso saatavilla olevat pikanäppäimet kohdasta <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Näppäimistöoikotiet</span></a>.</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="ligne-commande"></span><h2>Komentorivi<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>Tilariviin upotettu komentorivi mahdollistaa kaikkien graafisessa käyttöliittymässä saatavilla olevien blunderDB:n toimintojen suorittamisen: yleiset tietokantatoiminnot, asemissa navigointi, analyysin ja/tai kommenttien näyttäminen, asemien haku suodattimilla… Kun käyttöliittymä on tullut tutuksi, suositellaan vähitellen siirtymistä komentorivin käyttöön, joka mahdollistaa blunderDB:n tehokkaan ja sujuvan käytön, erityisesti asemahakutoiminnoissa.</p>
+<p>Avaa komentorivi painamalla <em>VÄLILYÖNTI</em>-näppäintä. Lähetä kysely ja sulje komentorivi painamalla <em>ENTER</em>-näppäintä.</p>
+<p>blunderDB suorittaa käyttäjän lähettämät kyselyt edellyttäen, että ne ovat kelvollisia, ja muuttaa tarvittaessa tietokannan tilaa välittömästi. Käyttäjältä ei vaadita erillisiä tallennustoimia.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso komentorivillä käytettävissä olevien komentojen luettelo kohdasta <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">komentoluettelo</span></a>.</p>
+</div>
+</section>
+<section id="la-palette-de-commandes">
+<span id="palette-commandes"></span><h2>Komentopaletti<a class="headerlink" href="#la-palette-de-commandes" title="Link to this heading"></a></h2>
+<p>Komentopaletti (<em>CTRL-SHIFT-P</em>) löytää likimääräisellä nimellä sen, mitä ei enää tiedä mistä etsiä: komentorivin komennon, välilehden, kirjaston suodattimen tai ottelun. Kirjoitettujen kirjainten on esiinnyttävä järjestyksessä, ei välttämättä vierekkäin, isoista kirjaimista ja aksenteista välittämättä: ”kmtrs” löytää kuutiomatriisin, ”lyon” Lyonin turnauksen ottelut.</p>
+<p>Nuolinäppäimet valitsevat, <em>ENTER</em> suorittaa, <em>ESC</em> sulkee. Komento suoritetaan kuin se olisi kirjoitettu; <code class="docutils literal notranslate"><span class="pre">s</span></code> ja <code class="docutils literal notranslate"><span class="pre">ss</span></code> avaavat komentorivin suodattimien kirjoittamista varten; suodatin suoritetaan kuin kaksoisnapsautuksella kirjastossa; ottelu avautuu kuin kaksoisnapsautuksella Otteluiden paneelissa.</p>
+<p>Kun Direction on auki, paletti lisää siihen turnauksen: pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut (ks. <a class="reference internal" href="manuel_tournois.html#direction-recherche"><span class="std std-ref">pikahaku</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="Käyttöopas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_bibliotheque.html" class="btn btn-neutral float-right" title="Analyysi, kommentit ja haku" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,550 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Библиотека: поиск, списки, коллекции &mdash; документация blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=ee48f470"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Матчи, турниры и партии" href="cli_matchs.html" />
+    <link rel="prev" title="Импорт, экспорт, перенос" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/cli_bibliotheque.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_bibliotheque.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_bibliotheque.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_bibliotheque.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_bibliotheque.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_bibliotheque.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_bibliotheque.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_bibliotheque.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Метрики и инструменты для изучения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Общий синтаксис</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Доступные команды</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Импорт, экспорт, перенос</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Библиотека: поиск, списки, коллекции</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#search-rechercher-des-positions">search — Поиск позиций</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-lister-le-contenu">list — Список содержимого</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#collection-gerer-les-collections">collection — Управление коллекциями</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comment-les-commentaires-d-une-position">comment — Комментарии к позиции</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#elsewhere-ailleurs-une-position-dans-d-autres-bases">elsewhere — В других местах: позиция в других базах</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trash-la-corbeille">trash — Корзина</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Матчи, турниры и партии</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Анализ и движок</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Изучение, уроки и тренировка</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Статистика</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Администрирование базы данных</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Примеры рабочих процессов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Коды возврата</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Интерфейс командной строки (CLI)</a></li>
+      <li class="breadcrumb-item active">Библиотека: поиск, списки, коллекции</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bibliotheque-recherche-listes-collections">
+<span id="cli-bibliotheque-chapitre"></span><h1>Библиотека: поиск, списки, коллекции<a class="headerlink" href="#bibliotheque-recherche-listes-collections" title="Ссылка на этот заголовок"></a></h1>
+<section id="search-rechercher-des-positions">
+<h2>search — Поиск позиций<a class="headerlink" href="#search-rechercher-des-positions" title="Ссылка на этот заголовок"></a></h2>
+<p>Поиск позиций в базе данных по комбинируемым критериям.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Основные параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> или <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">table</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Максимальное количество результатов (0 = без ограничений).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--offset</span></code> — Пропустить первые n результатов, прежде чем начать отсчёт; вместе с <code class="docutils literal notranslate"><span class="pre">--limit</span></code> это постраничный вывод.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Экспортировать результаты в новую базу данных.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> — Показывает список токенов, понятных <code class="docutils literal notranslate"><span class="pre">--query</span></code>, и на этом останавливается. Никакая база не открывается: <code class="docutils literal notranslate"><span class="pre">--db</span></code> не нужен.</p></li>
+</ul>
+<p><strong>Доступные фильтры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision</span></code> — Тип решения: <code class="docutils literal notranslate"><span class="pre">checker</span></code> или <code class="docutils literal notranslate"><span class="pre">cube</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dice</span></code> — Бросок кубиков. <code class="docutils literal notranslate"><span class="pre">5,3</span></code> ищет позиции, где оба кубика совпадают (в любом порядке). <code class="docutils literal notranslate"><span class="pre">5</span></code> ищет позиции, где 5 выпадает на одном из кубиков (значение второго кубика игнорируется). Подразумевает <code class="docutils literal notranslate"><span class="pre">--decision</span> <span class="pre">checker</span></code>, если значение <code class="docutils literal notranslate"><span class="pre">--decision</span></code> не указано.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--pip-max</span></code> — Диапазон разницы пипкаунта.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code> — Диапазон процента побед (%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube</span></code> — Значение куба.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score1</span></code> / <code class="docutils literal notranslate"><span class="pre">--score2</span></code> — Счёт игроков.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Длина матча.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> — Порог по тому, <strong>во сколько обходится ошибка в позиции</strong>: разрыв между лучшим ходом и вторым или наибольшая из трёх ошибок куба. В <strong>очках эквити</strong> — <code class="docutils literal notranslate"><span class="pre">--error-min</span> <span class="pre">0.1</span></code> оставляет позиции, где ошибка стоит не менее одной десятой очка. О том, что было в них сыграно, он ничего не говорит.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--move-error-max</span></code> — Порог по ошибке хода, <strong>фактически сыгранного</strong> игроком 1. В <strong>тысячных долях эквити</strong> (миллипоинтах): <code class="docutils literal notranslate"><span class="pre">--move-error-min</span> <span class="pre">50</span></code>, то есть одна двадцатая очка. Это токен <code class="docutils literal notranslate"><span class="pre">E</span></code> грамматики поиска, записанный как есть.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-analysis</span></code> — Только позиции с анализом.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Минимальное количество снятых шашек (игрок 1/2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Фильтр по идентификаторам матчей (через запятую).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Фильтр по идентификаторам турниров (через запятую).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Фильтр по идентификаторам позиций: интервал <code class="docutils literal notranslate"><span class="pre">2,7</span></code> (позиции с 2 по 7) или явный список через точку с запятой <code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Только позиции, импортированные отдельно, то есть те, которые вы добавили сами, а не пришедшие с импортом матча.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--flagged</span></code> — Только позиции, помеченные (<em>flag</em>) для изучения в исходной программе (пометки eXtreme Gammon). Не действует задним числом: уже импортированные матчи нужно импортировать заново, чтобы получить их пометки.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-comment</span></code> — Только позиции с комментарием. Происхождение не различается: и заметка, набранная вручную, и комментарий, пришедший с импортом матча, считаются одинаково. Комментарии матча или турнира не просматриваются.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--no-comment</span></code> — Только позиции без комментария. Взаимоисключающе с <code class="docutils literal notranslate"><span class="pre">--has-comment</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comment-origin</span> <span class="pre">&lt;o1,o2&gt;</span></code> — только позиции с комментарием одного из этих происхождений: <code class="docutils literal notranslate"><span class="pre">user</span></code>, <code class="docutils literal notranslate"><span class="pre">xg</span></code>, <code class="docutils literal notranslate"><span class="pre">gnubg</span></code>, <code class="docutils literal notranslate"><span class="pre">bgf</span></code>, <code class="docutils literal notranslate"><span class="pre">unknown</span></code> (<code class="docutils literal notranslate"><span class="pre">co:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comment-author</span> <span class="pre">&lt;имя&gt;</span></code> — только позиции с комментарием, приписанным этому имени (имя целиком, регистр не учитывается).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--phase</span> <span class="pre">&lt;p1,p2&gt;</span></code> — только позиции этих фаз игры: <code class="docutils literal notranslate"><span class="pre">opening</span></code>, <code class="docutils literal notranslate"><span class="pre">middlegame</span></code>, <code class="docutils literal notranslate"><span class="pre">race</span></code>, <code class="docutils literal notranslate"><span class="pre">bearoff</span></code> (<code class="docutils literal notranslate"><span class="pre">ph:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--game-type</span> <span class="pre">&lt;t1,t2&gt;</span></code> — только позиции этих игровых планов: <code class="docutils literal notranslate"><span class="pre">race</span></code>, <code class="docutils literal notranslate"><span class="pre">bearin</span></code>, <code class="docutils literal notranslate"><span class="pre">crunch</span></code>, <code class="docutils literal notranslate"><span class="pre">backgame</span></code>, <code class="docutils literal notranslate"><span class="pre">acepoint</span></code>, <code class="docutils literal notranslate"><span class="pre">blitz</span></code>, <code class="docutils literal notranslate"><span class="pre">primevprime</span></code>, <code class="docutils literal notranslate"><span class="pre">mutualholding</span></code>, <code class="docutils literal notranslate"><span class="pre">holding</span></code>, <code class="docutils literal notranslate"><span class="pre">contact</span></code> (<code class="docutils literal notranslate"><span class="pre">gt:</span></code>). Фаза и план — метки, выводимые из доски, которые <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> пересчитывает; неизвестное значение приводит к ошибке команды.</p></li>
+</ul>
+<p>Фильтры корпуса относятся к матчу, в котором встретилась позиция; каждый равнозначен токену языка запросов (<a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Фильтры поиска</span></a>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code> — Матчи, в которых играл этот игрок, с любой из сторон; регистр не учитывается, а <code class="docutils literal notranslate"><span class="pre">*</span></code> заменяет любую последовательность символов (<code class="docutils literal notranslate"><span class="pre">pl&quot;…&quot;</span></code>). С <code class="docutils literal notranslate"><span class="pre">--seat-only</span></code> — только решения, принятые этим игроком (<code class="docutils literal notranslate"><span class="pre">pl!&quot;…&quot;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opponent</span> <span class="pre">&lt;nom&gt;</span></code> — Вместе с <code class="docutils literal notranslate"><span class="pre">--player</span></code> — матчи против этого соперника; сам по себе — имя с любой из сторон (<code class="docutils literal notranslate"><span class="pre">op&quot;…&quot;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-name</span> <span class="pre">&lt;nom&gt;</span></code> — Матчи турниров с этим названием (<code class="docutils literal notranslate"><span class="pre">tn&quot;…&quot;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--round</span> <span class="pre">&lt;r1,r2&gt;</span></code> — Матчи этих раундов (<code class="docutils literal notranslate"><span class="pre">rd:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-lengths</span> <span class="pre">&lt;expr&gt;</span></code> — Длина матча: <code class="docutils literal notranslate"><span class="pre">7</span></code>, <code class="docutils literal notranslate"><span class="pre">5,9</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;5</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;9</span></code> (<code class="docutils literal notranslate"><span class="pre">ml</span></code>). Не путать с <code class="docutils literal notranslate"><span class="pre">--match-length</span></code>, который сопровождает счёт позиции.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-date</span> <span class="pre">&lt;expr&gt;</span></code> — Дата матча: <code class="docutils literal notranslate"><span class="pre">2024</span></code>, <code class="docutils literal notranslate"><span class="pre">2024-01..2024-12</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;2024-06</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;2024-06</span></code> (<code class="docutils literal notranslate"><span class="pre">md</span></code>); это не дата анализа.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pr</span> <span class="pre">&lt;expr&gt;</span></code> — PR матча для игрока, принявшего решение: <code class="docutils literal notranslate"><span class="pre">&gt;8</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;5</span></code>, <code class="docutils literal notranslate"><span class="pre">4,9</span></code> (<code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span> <span class="pre">&lt;v1,v2&gt;</span></code> — Движки и глубины записанного анализа: <code class="docutils literal notranslate"><span class="pre">xg</span></code>, <code class="docutils literal notranslate"><span class="pre">gnubg</span></code>, <code class="docutils literal notranslate"><span class="pre">bgblitz</span></code>, <code class="docutils literal notranslate"><span class="pre">hedgehog</span></code>, <code class="docutils literal notranslate"><span class="pre">gammonnet</span></code>, <code class="docutils literal notranslate"><span class="pre">3ply</span></code>, <code class="docutils literal notranslate"><span class="pre">3ply+</span></code>, <code class="docutils literal notranslate"><span class="pre">book</span></code>, <code class="docutils literal notranslate"><span class="pre">rollout</span></code> (<code class="docutils literal notranslate"><span class="pre">ad:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube-response</span> <span class="pre">&lt;type&gt;</span></code> — Только один тип решения по кубу: <code class="docutils literal notranslate"><span class="pre">double</span></code> (Double / No Double) или <code class="docutils literal notranslate"><span class="pre">takepass</span></code> (Take / Pass).</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> и <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> измеряют не одно и то же и <strong>принимают не одну и ту же единицу</strong>: множитель равен тысяче. Первый задаётся в очках эквити (<code class="docutils literal notranslate"><span class="pre">0.1</span></code>), два других — в тысячных (<code class="docutils literal notranslate"><span class="pre">100</span></code>): одно очко стоит 1000 тысячных. На вопрос «где я ошибся» отвечает <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code>; <code class="docutils literal notranslate"><span class="pre">--error-min</span></code> отвечает на вопрос «какие позиции были каверзными».</p>
+</div>
+<p><strong>Что печатает search:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">table</span></code> (по умолчанию) даёт по строке на позицию: идентификатор, счёт, значение куба, тип решения, бросок, лучшее решение и его эквити. Два последних столбца остаются пустыми для позиции без анализа.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 5 position(s)
+
+ID  Score  Cube  Type  Dice  Best Move  Equity
+--  -----  ----  ----  ----  ---------  ------
+2   7-7    0     cube        No Double  -0.005
+4   7-7    0     cube        No Double  -0.027
+6   7-7    0     cube        No Double  -0.161
+8   7-7    0     cube        No Double  0.256
+10  7-7    0     cube        No Double  -0.234
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> выдаёт массив тех же позиций. Поля: <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">xgid</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">cube</span></code>, <code class="docutils literal notranslate"><span class="pre">decision_type</span></code> (<code class="docutils literal notranslate"><span class="pre">checker</span></code> или <code class="docutils literal notranslate"><span class="pre">cube</span></code>) и <code class="docutils literal notranslate"><span class="pre">dice</span></code>, всегда присутствуют; <code class="docutils literal notranslate"><span class="pre">best_move</span></code> и <code class="docutils literal notranslate"><span class="pre">equity</span></code> появляются, только если у позиции есть анализ, который их задаёт. Строка <code class="docutils literal notranslate"><span class="pre">Found</span> <span class="pre">n</span> <span class="pre">position(s)</span></code> идёт в поток ошибок: стандартный вывод содержит только JSON.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">5266</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">4</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"cube"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"decision_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checker"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"dice"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"best_move"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10/3"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"equity"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.565</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">xgid</span></code> печатает по одному XGID в строке, с префиксом <code class="docutils literal notranslate"><span class="pre">XGID=</span></code>, и <strong>ничего больше</strong> в стандартный вывод. Предпочитается XGID, записанный вместе с анализом, так как он несёт длину матча источника; иначе он создаётся заново по доске. Тот же XGID есть в поле <code class="docutils literal notranslate"><span class="pre">xgid</span></code> JSON.</p>
+<p><strong>Язык запросов:</strong></p>
+<p>Приведённые выше флаги покрывают лишь часть фильтров. <code class="docutils literal notranslate"><span class="pre">--query</span></code> даёт доступ к языку запросов приложения — тому же, что и в командной строке, — и, следовательно, ко всем фильтрам, которые не рисуются на доске: шаблон хода, текст комментария, дата добавления, эквити, исключённые броски, зоны и блоты.</p>
+<p>Грамматика записана лишь в одном месте — <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Фильтры поиска</span></a>. Её таблица даёт каждый токен, его форму и соответствующий ему флаг <code class="docutils literal notranslate"><span class="pre">search</span></code>, когда такой существует. Эта страница её не повторяет.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s p&gt;30 E&gt;50'</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s m"13/11" t"blunder" pl"Alice" T&gt;2026/01/01'</span>
+</pre></div>
+</div>
+<p>Упорядочивание соседей позиции идёт через ту же грамматику: <code class="docutils literal notranslate"><span class="pre">--query</span> <span class="pre">'s</span> <span class="pre">like42'</span></code> — отдельно или с другими токенами, сужающими упорядоченное множество.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> напоминает этот список, не открывая базы:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ ./blunderdb search --query-help
+blunderdb search --query — the interface's query language
+
+A query is the same text the application's command bar takes:
+  s cube p&gt;30 E&gt;50        cube decisions, 30+ pips behind, 50+ millipoints of error
+  s m"13/11" T&gt;2026/01/01 played 13/11, imported this year
+
+Flags (no value):
+  cube score   match the cube / the score of the position on the board
+  d            match the decision type (checker or cube)
+  …
+
+Ranges — each takes x&gt;n, x&lt;n or xa,b (lower-case: you; upper-case: the opponent):
+  p P          pip count difference / absolute pip count
+  …
+  E            error of the played move, in millipoints
+  T            creation date, T&gt;2026/01/01
+
+Values:
+  t"tag"       comment text (";" separates alternatives)
+  …
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--query</span></code> заменяет флаги фильтрации, а не дополняет их: их сочетание отклоняется с указанием конфликтующего флага. Флаги, определяющие, <em>где</em> искать и <em>как</em> показывать — <code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span></code>, <code class="docutils literal notranslate"><span class="pre">--limit</span></code>, <code class="docutils literal notranslate"><span class="pre">--offset</span></code>, <code class="docutils literal notranslate"><span class="pre">--export</span></code> — остаются в силе.</p>
+<p>Токен, который ничем не распознан, приводит к ошибке команды, а не к молчаливому сужению поиска. Два ограничения вытекают из отсутствия доски в командной строке: рисунок шашек напечатать нельзя, а пять токенов, читающих доску — <code class="docutils literal notranslate"><span class="pre">cube</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">D</span></code>/<code class="docutils literal notranslate"><span class="pre">D1</span></code> и <code class="docutils literal notranslate"><span class="pre">x</span></code>, — сравниваются здесь с пустой доской. Поиск, которому нужен один из них, записывается <strong>целиком</strong> флагами, поскольку <code class="docutils literal notranslate"><span class="pre">--query</span></code> с ними не сочетается — например, решения по кубу с отставанием в 30 пипов и ошибкой не менее 50 миллипоинтов:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--pip-min<span class="w"> </span><span class="m">30</span><span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">50</span>
+</pre></div>
+</div>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--individual
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--tournament-ids<span class="w"> </span><span class="m">1</span><span class="w"> </span>--export<span class="w"> </span>cubes.db
+
+<span class="c1"># 6-5 dans les deux ordres, puis un 6 sur l'un des deux dés</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>,5
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>
+
+<span class="c1"># Pagination</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--offset<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+<section id="list-lister-le-contenu">
+<h2>list — Список содержимого<a class="headerlink" href="#list-lister-le-contenu" title="Ссылка на этот заголовок"></a></h2>
+<p>Отображает содержимое базы данных.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span>&lt;n&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--offset<span class="w"> </span>&lt;n&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Типы:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — Список импортированных матчей.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — Список турниров.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — Список позиций (по умолчанию 10; <code class="docutils literal notranslate"><span class="pre">--offset</span> <span class="pre">&lt;n&gt;</span></code> пропускает первые <em>n</em>). Читается только показываемое окно, каким бы ни был размер базы. С <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> становится <strong>табличным экспортом</strong>: одна строка на позицию с её XGID, фазой, счётом, кубом, пипами и производными столбцами анализа.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">imports</span></code> — Записанные импорты, от новых к старым: идентификатор, дата, формат, источник, матчи импортированные / пропущенные / обогащённые, нечитаемые файлы и новые позиции. С <code class="docutils literal notranslate"><span class="pre">--batch</span> <span class="pre">&lt;id&gt;</span></code> показывается <strong>полный отчёт</strong> одного импорта: отмеченные позиции, позиции без анализа, PR по этой партии и её пять худших решений (см. <a class="reference internal" href="guide_utilisateur.html#compte-rendu-import"><span class="std std-ref">Отчёт об импорте</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Отчёт со статистикой производительности: PR / Snowie ER / MWC (глобально, шашки, куб), скользящий PR за последние N решений, худшие ошибки, разбивка по действиям куба и гистограмма величин ошибок.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">players</span></code> — Сравнительная таблица, <strong>по строке на каждого игрока</strong> базы: матчи, победы/поражения, учтённые решения, PR общий / шашки / куб, Snowie ER, ошибки, бландеры и удача. Это командный аналог вкладки «Игроки» панели статистики.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">moves</span></code> — <strong>Табличный экспорт</strong> записанных ходов, по одному на строку, с матчем, которому они принадлежат, повторённым в каждой строке: идентификаторы, дата, игроки, длина, номер и тип хода, позиция, кости, сыгранный ход, действие с кубом, удача. Требуется <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analyses</span></code> — <strong>Табличный экспорт</strong> сохранённых анализов, по одному на строку: движок, глубина, лучший ход и его эквити, ошибка сыгранного хода, лучшее действие с кубом и его ошибка, шесть долей выигрыша. Требуется <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tags</span></code> — Словарь тегов базы: каждое <code class="docutils literal notranslate"><span class="pre">#слово</span></code>, написанное в комментарии, с числом <strong>позиций</strong>, которые его несут, от самого используемого к менее используемому. В базе без единого тега показывает рекомендуемый словарь вместо пустого списка (см. <a class="reference internal" href="manuel_bibliotheque.html#tags"><span class="std std-ref">Теги</span></a>). Принимает <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> и <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">study</span></code> — по игровым планам: различные позиции, повторённые в колодах Anki за последние <code class="docutils literal notranslate"><span class="pre">--days</span></code> дней (по умолчанию 30), и PR матчей, сыгранных до и после этого срока, каждый со своим числом решений; PR, опирающийся менее чем на десять решений, отображается как «—». Три числа рядом, а не эффект: ничто здесь не учитывает соперников, формат или кости. Принимает <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> и <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+</ul>
+<section id="exports-tabulaires">
+<span id="export-tabulaire"></span><h3>Табличные экспорты<a class="headerlink" href="#exports-tabulaires" title="Ссылка на этот заголовок"></a></h3>
+<p>Три типа — <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">moves</span></code> и <code class="docutils literal notranslate"><span class="pre">analyses</span></code> — экспортируются в CSV для notebook, таблицы или скрипта:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>positions.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>moves<span class="w">     </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>moves.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>analyses<span class="w">  </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>analyses.csv
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> действует <strong>только если вы его передали</strong>. Значение по умолчанию (10) существует, чтобы <code class="docutils literal notranslate"><span class="pre">list</span></code> в терминале не прокручивал всю базу; экспорт же уходит в файл, который читает программа, и молча обрезать его на десяти строках было бы ловушкой, незаметной до тех пор, пока цифры не окажутся неверными.</p>
+<p><strong>Столбцы — это контракт.</strong> Notebook или скрипт, написанный под эти имена, должен продолжать работать: столбцы добавляются в конец, никогда не переименовываются и не переставляются. Все эквити — в <strong>целых миллипунктах</strong>, потому что так они хранятся и потому что дробное число в CSV приглашает локаль его переформатировать.</p>
+<p><strong>Parquet не предлагается</strong>, и это измеренное, а не догматическое решение: колоночная библиотека весит несколько мегабайт в бинарнике, за размером которого следят, тогда как всё, ради чего существует этот экспорт, читает CSV одной строкой (<code class="docutils literal notranslate"><span class="pre">pd.read_csv</span></code>, <code class="docutils literal notranslate"><span class="pre">polars.read_csv</span></code>, <code class="docutils literal notranslate"><span class="pre">read.csv</span></code>, таблица). Parquet оправдывает себя на десятках миллионов строк; десятилетняя библиотека нард насчитывает сто тысяч. Если однажды разница окажется измеримой на настоящей базе, именно это измерение и откроет вопрос заново.</p>
+<p>К этим экспортам прилагается <strong>пример notebook для Jupyter</strong> (<code class="docutils literal notranslate"><span class="pre">notebooks/blunderdb-analyse.ipynb</span></code> в репозитории): PR во времени, распределение величин ошибок, десять худших решений с их XGID. Он не использует ничего, кроме этих трёх CSV-файлов, и <strong>выполняется каждую ночь в непрерывной интеграции</strong> — notebook, который никто не запускает, это notebook, переставший работать так, что никто об этом не знает.</p>
+<p><strong>Опции</strong> (только для типа <code class="docutils literal notranslate"><span class="pre">stats</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Отображаемая метрика: <code class="docutils literal notranslate"><span class="pre">pr</span></code> или <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Ограничить указанным игроком.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Ограничить одним или несколькими идентификаторами турниров (через запятую).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Дата начала (ГГГГ-ММ-ДД).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Дата окончания (ГГГГ-ММ-ДД).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Тип решения: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> или <code class="docutils literal notranslate"><span class="pre">cube</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Количество перечисляемых худших ошибок (по умолчанию: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--engine</span></code> / <code class="docutils literal notranslate"><span class="pre">--min-depth</span></code> — учитывать только решения, проанализированные этим движком (точное имя, как записано) или как минимум на этой глубине (в плаях); принимаются также типом <code class="docutils literal notranslate"><span class="pre">players</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Параметры</strong> (только тип <code class="docutils literal notranslate"><span class="pre">matches</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — Оставляет только матчи, в которых игрок, событие, место, раунд, турнир или дата содержит этот текст (без учёта регистра).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ids</span></code> — Оставляет только эти идентификаторы матчей, через запятую (те, что печатает <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">matches</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sort</span></code> — Порядок: <code class="docutils literal notranslate"><span class="pre">date</span></code> (по умолчанию, сначала самые новые), <code class="docutils literal notranslate"><span class="pre">date_asc</span></code>, <code class="docutils literal notranslate"><span class="pre">length_asc</span></code>, <code class="docutils literal notranslate"><span class="pre">length_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">player1</span></code>, <code class="docutils literal notranslate"><span class="pre">player1_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">player2</span></code>, <code class="docutils literal notranslate"><span class="pre">player2_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">tournament_desc</span></code> или <code class="docutils literal notranslate"><span class="pre">opponent</span></code>.</p></li>
+</ul>
+<p>Фильтрацию и сортировку выполняет база данных, как в панели «Матчи»; указанный итог — это число оставленных матчей. Сервер предоставляет их на <code class="docutils literal notranslate"><span class="pre">/v1/matches.list</span></code> (поля <code class="docutils literal notranslate"><span class="pre">text</span></code> и <code class="docutils literal notranslate"><span class="pre">sort</span></code>) и <code class="docutils literal notranslate"><span class="pre">/v1/matches.count</span></code>.</p>
+<p><strong>Опции</strong> (только для типа <code class="docutils literal notranslate"><span class="pre">imports</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--batch</span></code> — Идентификатор партии: показывает её полный отчёт вместо списка.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — С <code class="docutils literal notranslate"><span class="pre">--batch</span></code>: <strong>очередь разбора</strong> пакета вместо его отчёта — позиции, заслуживающие второго взгляда, в том порядке, в каком их проходить (см. <a class="reference internal" href="guide_utilisateur.html#file-etude"><span class="std std-ref">Очередь разбора</span></a>). Сначала решения, которые чего-то стоили, затем позиции, отмеченные в исходной программе, затем спорные решения о кубе; позиция встречается лишь один раз.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p>Измеряемая половина отчёта пересчитывается при каждом вызове: партия, позиции которой с тех пор были проанализированы, возвращает сегодняшние цифры, а не цифры дня импорта.</p>
+<p><strong>Опции</strong> (только для типа <code class="docutils literal notranslate"><span class="pre">players</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> / <code class="docutils literal notranslate"><span class="pre">--to</span></code> — Границы дат (ГГГГ-ММ-ДД), например дни соревнования.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Ограничить одним или несколькими ID турниров.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> или <code class="docutils literal notranslate"><span class="pre">csv</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--player</span></code> и <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> к этому типу <strong>не</strong> применяются: таблица охватывает всех игроков и уже разносит шашки и куб по отдельным столбцам.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Прочерк «—» (в CSV — пустое поле) означает величину, которая <strong>никогда не измерялась</strong>, и её не следует путать с нулём. Так обстоит дело с удачей для любого матча, импортированного до версии схемы 2.15.0, а также для форматов, которые её не переносят (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>): чтобы её получить, импортируйте исходные файлы заново. Столбец <code class="docutils literal notranslate"><span class="pre">luck_rolls</span></code> показывает, по скольким броскам взято среднее.</p>
+</div>
+<p>Каждый тип выводит по блоку на элемент, предваряя их найденным итогом. Последняя строка сообщает, какое окно показано: оно ограничено <code class="docutils literal notranslate"><span class="pre">--limit</span></code> (по умолчанию 10 для позиций) и сдвинуто <code class="docutils literal notranslate"><span class="pre">--offset</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 3859 position(s):
+
+ID: 1
+  Score: 7-7
+  Player on roll: 0
+  Decision: Checker play
+
+ID: 2
+  Score: 7-7
+  Player on roll: 0
+  Decision: Cube action
+
+…
+
+(Showing 1-10 of 3859 positions, use --offset and --limit to see more)
+</pre></div>
+</div>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les imports enregistrés, puis le compte rendu de l'un d'eux</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span>
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--metric<span class="w"> </span>mwc<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--format<span class="w"> </span>json
+
+<span class="c1"># Un tableau par joueur, borné aux dates d'une compétition</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-03-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2026</span>-03-08
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="collection-gerer-les-collections">
+<span id="cli-collection"></span><h2>collection — Управление коллекциями<a class="headerlink" href="#collection-gerer-les-collections" title="Ссылка на этот заголовок"></a></h2>
+<p>Управляет коллекциями — наборами позиций, выбранных вручную на панели Коллекции интерфейса. Каждая подкоманда принимает <code class="docutils literal notranslate"><span class="pre">--db</span></code>; <code class="docutils literal notranslate"><span class="pre">list</span></code> и <code class="docutils literal notranslate"><span class="pre">show</span></code> принимают <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> (по умолчанию), <code class="docutils literal notranslate"><span class="pre">json</span></code> или <code class="docutils literal notranslate"><span class="pre">csv</span></code>, как и <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Список коллекций: id, название, число позиций, описание.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Позиции коллекции: id, индекс (номер, начиная с 1, отображаемый в строке состояния интерфейса), счёт, тип решения и XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;имя&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;текст&gt;]</span> <span class="pre">[--query</span> <span class="pre">&lt;запрос&gt;]</span></code> — Создаёт пустую коллекцию или, с <code class="docutils literal notranslate"><span class="pre">--query</span></code>, сразу живую коллекцию. Запрос, содержащий токен, не распознаваемый ни одним правилом, отклоняется до того, как что-либо будет записано.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--query</span> <span class="pre">&lt;запрос&gt;</span></code> — Делает коллекцию <strong>живой</strong>: её содержимое становится результатом поиска, пересчитываемым при каждом открытии. Запрос пишется на собственной грамматике поиска приложения (см. <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Фильтры поиска</span></a>). <code class="docutils literal notranslate"><span class="pre">--clear</span></code> возвращает её к списку, составленному вручную, сохраняя содержавшиеся в ней позиции.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">freeze</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Фиксирует живую коллекцию: позиции, которые её запрос выбирает сейчас, становятся её содержимым, а запрос стирается. Отклоняется для коллекции, которая не является живой.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evaluate</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Читает идентификаторы позиций коллекции, заново выполняя сейчас запрос живой коллекции. Ответ ограничен объявленным потолком в 5 000 позиций (<code class="docutils literal notranslate"><span class="pre">--limit</span></code> его понижает) и всегда содержит реальное число позиций и признак <code class="docutils literal notranslate"><span class="pre">truncated</span></code>: никогда не бывает молчаливого усечения. В текстовом режиме идентификаторы идут в стандартный вывод, а счётчик — в вывод ошибок.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pile</span> <span class="pre">[--position-id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">|</span> <span class="pre">--xgid</span> <span class="pre">&lt;XGID&gt;]</span></code> — Кладёт позицию в Стопку (коллекцию «вернуться позже») или убирает её оттуда, если она там уже есть; позиция, заданная через XGID и отсутствующая в базе, сначала записывается в неё как позиция, принесённая отдельно. Без позиции выводит Стопку.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rename</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--name</span> <span class="pre">&lt;имя&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;текст&gt;]</span></code> — Переименовывает коллекцию (описание сохраняется, если оно не задано).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--confirm]</span></code> — Удаляет коллекцию; её позиции остаются в базе.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;файл.db&gt;</span> <span class="pre">[--analysis=false]</span> <span class="pre">[--comments=false]</span> <span class="pre">[--matches=false]</span> <span class="pre">[--transcriptions=false]</span> <span class="pre">[--aliases=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;текст&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;текст&gt;]</span> <span class="pre">[--password</span> <span class="pre">&lt;пароль&gt;]</span></code> — Экспортирует одну или несколько коллекций в новый файл базы тем же экспортёром, что и окно экспорта графического интерфейса и <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>: в файл попадают также матчи, в которых сыграны позиции, вместе с их расшифровками и псевдонимами их игроков и событий (о водяном знаке и пароле см. команду <code class="docutils literal notranslate"><span class="pre">export</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">suggest</span> <span class="pre">[--player</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--match</span> <span class="pre">&lt;ids&gt;]</span> <span class="pre">[--tournament</span> <span class="pre">&lt;ids&gt;]</span> <span class="pre">[--from</span> <span class="pre">&lt;date&gt;]</span> <span class="pre">[--to</span> <span class="pre">&lt;date&gt;]</span> <span class="pre">[--decision-type</span> <span class="pre">all|checker|cube]</span> <span class="pre">[--size</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--collection</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--deck</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Предлагает <strong>опорные позиции</strong> среди ошибок фильтра: те, чей урок покрывает наибольшую возвращаемую MWC соседних ошибок, без почти-дубликатов и без уже разобранных позиций (см. <a class="reference internal" href="manuel_bibliotheque.html#positions-reference"><span class="std std-ref">positions de référence</span></a>). По умолчанию <code class="docutils literal notranslate"><span class="pre">--size</span></code> равен 20, максимум 50. Ничего не записывается без <code class="docutils literal notranslate"><span class="pre">--collection</span></code>, который помещает предложенные позиции в новую коллекцию, или <code class="docutils literal notranslate"><span class="pre">--deck</span></code>, который превращает их в колоду Anki. Каждая строка указывает семейство, счёт для опорной позиции с кубом, сводимые ею ошибки и матчи, покрытую MWC и её причину (которая даёт учитываемое значение, когда урок считается за половину); <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> возвращает те же компоненты.</p></li>
+</ul>
+<p>XGID, показываемый <code class="docutils literal notranslate"><span class="pre">show</span></code>, — это тот, что сохранён вместе с анализом позиции, если он есть (импорт BGF и XGP); иначе он генерируется из доски точно так же, как <em>Копировать позицию</em> в интерфейсе — длина матча тогда берётся как больший из двух оставшихся счётов, поскольку сохранённая позиция не хранит настоящую.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Found 2 collection(s):</span>
+<span class="c1">#</span>
+<span class="c1"># ID  Name              Positions  Description</span>
+<span class="c1"># --  ----              ---------  -----------</span>
+<span class="c1"># 1   Ouvertures blitz  0          À revoir</span>
+<span class="c1"># 2   Videaux ratés     0</span>
+</pre></div>
+</div>
+<p>База без коллекций отвечает <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">collections</span> <span class="pre">found</span> <span class="pre">in</span> <span class="pre">database</span></code> и всё равно завершается с кодом 0.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures blitz"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>rename<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--confirm
+
+<span class="c1"># Exporter deux collections, marquées de leur origine</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>,4<span class="w"> </span>--out<span class="w"> </span>ouvertures.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont - 12 mars 2026"</span>
+
+<span class="c1"># Dix positions de référence d'Alice sur un tournoi, gardées en collection</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>suggest<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--tournament<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--size<span class="w"> </span><span class="m">10</span><span class="w"> </span>--collection<span class="w"> </span><span class="s2">"Références : open de mars"</span>
+</pre></div>
+</div>
+</section>
+<section id="comment-les-commentaires-d-une-position">
+<h2>comment — Комментарии к позиции<a class="headerlink" href="#comment-les-commentaires-d-une-position" title="Ссылка на этот заголовок"></a></h2>
+<p>У позиции может быть сколько угодно комментариев, каждый приписан своему автору (свободный текст). Комментарий, полученный в экспорте с отметкой происхождения, несёт также подпись своего отправителя: <code class="docutils literal notranslate"><span class="pre">list</span></code> показывает её в столбце <em>Signed by</em> — имя, отпечаток и <code class="docutils literal notranslate"><span class="pre">(unverified)</span></code>, если она больше не соответствует подписанному, — а происхождение в столбце <em>Origin</em> (пусто для комментария, написанного в blunderDB).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>comment<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">--position</span> <span class="pre">N</span> <span class="pre">--text</span> <span class="pre">T</span> <span class="pre">[--author</span> <span class="pre">A]</span></code> — Добавляет комментарий к позиции N, приписанный A (без <code class="docutils literal notranslate"><span class="pre">--author</span></code> у него нет автора).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">[--position</span> <span class="pre">N]</span> <span class="pre">[--author</span> <span class="pre">A]</span></code> — Выводит комментарии позиции или всей базы, при необходимости только одного автора.</p></li>
+</ul>
+<p><strong>Общие параметры:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code> (обязательный); <code class="docutils literal notranslate"><span class="pre">list</span></code> принимает <code class="docutils literal notranslate"><span class="pre">--format</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>comment<span class="w"> </span>add<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"Videau trop tôt"</span><span class="w"> </span>--author<span class="w"> </span>Alice
+./blunderdb<span class="w"> </span>comment<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span>
+./blunderdb<span class="w"> </span>comment<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--author<span class="w"> </span>Alice<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="elsewhere-ailleurs-une-position-dans-d-autres-bases">
+<h2>elsewhere — В других местах: позиция в других базах<a class="headerlink" href="#elsewhere-ailleurs-une-position-dans-d-autres-bases" title="Ссылка на этот заголовок"></a></h2>
+<p>Ищет позицию по её хешу Zobrist в других файлах базы, переданных той же команде, и возвращает для каждого из них то, что он о ней знает: её анализ, комментарии, матчи, в которых позиция была сыграна (игроки, длина, дата, сыгранный ход и его цена), и ближайшие к ней позиции (то же ранжирование, что и у токена <code class="docutils literal notranslate"><span class="pre">like</span></code> в поиске, в пипсах перемещённых шашек).</p>
+<p>Цена хода, сыгранного в другом месте, оценивается по порогам ошибки и блундера базы <code class="docutils literal notranslate"><span class="pre">--db</span></code>, но никогда по порогам читаемой базы: <code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">blunder</span></code>, <code class="docutils literal notranslate"><span class="pre">good</span></code> или <code class="docutils literal notranslate"><span class="pre">unscored</span></code> при отсутствии анализа. Анализ, выполненный при счёте матча с другой таблицей эквити матча, чем текущая таблица <code class="docutils literal notranslate"><span class="pre">--db</span></code>, помечается; его цены в матче показываются, но не оцениваются (<code class="docutils literal notranslate"><span class="pre">other-met</span></code>), как и везде в blunderDB. Остальные файлы открываются только для чтения: в них ничего не записывается, а база в папке только для чтения (сетевой ресурс, флешка, монтирование) читается как есть, без создания файла рядом. Нечитаемый файл (отсутствует, более ранней или более новой версии, не база blunderDB) отмечается строкой <code class="docutils literal notranslate"><span class="pre">Not</span> <span class="pre">read:</span></code> под его именем (поле <code class="docutils literal notranslate"><span class="pre">error</span></code> в JSON) и пропускается: остальные файлы отвечают, а команда завершается с ненулевым кодом, только если не удалось прочитать ни один. Файл более ранней версии отклоняется (однократное открытие в blunderDB обновляет его), как и файл более новой версии (обновите blunderDB). Если позиция сыграна более чем в 50 матчах, читаются только 50 последних импортированных: вывод сообщает об этом и даёт общее число (<code class="docutils literal notranslate"><span class="pre">matchesTotal</span></code> и <code class="docutils literal notranslate"><span class="pre">playsTruncated</span></code> в JSON).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--other<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--other<span class="w"> </span>&lt;fichier&gt;...<span class="o">]</span><span class="w"> </span><span class="o">(</span>--position<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--xgid<span class="w"> </span>X<span class="w"> </span><span class="p">|</span><span class="w"> </span>--zobrist<span class="w"> </span>H<span class="w"> </span><span class="p">|</span><span class="w"> </span>--match<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--tournament<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--collection<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--lesson<span class="w"> </span>N<span class="o">)</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> (обязательно) — База, которая оценивает: её пороги и её таблица эквити.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--other</span></code> (обязательно, можно повторять) — Файл базы, в котором нужно искать.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position</span> <span class="pre">N</span></code> — Позиция по её идентификатору в <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--xgid</span> <span class="pre">X</span></code> — Позиция по её XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--zobrist</span> <span class="pre">H</span></code> — Позиция по её хешу (десятичному); тогда её соседи ищутся только в базах, которые её содержат.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span> <span class="pre">N</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">N</span></code>, <code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">N</span></code>, <code class="docutils literal notranslate"><span class="pre">--lesson</span> <span class="pre">N</span></code> — Вместо позиции — матч, турнир, коллекция или урок из <code class="docutils literal notranslate"><span class="pre">--db</span></code>: команда сообщает, содержит ли его каждая другая база, под ключом, по которому его слила бы копия (отпечаток матча, даже импортированного из другого формата; иначе имя), с его идентификатором там и тем, что он содержит (партии, матчи, позиции или шаги).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--neighbours</span> <span class="pre">N</span></code> — Число соседей на базу (по умолчанию: 5, 0: нет, не более 50).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--max-distance</span> <span class="pre">D</span></code> — Отбрасывает соседей, удалённых более чем на D пипсов перемещённых шашек (0: без предела).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+</ul>
+<p>Демон предоставляет те же чтения через арендаторов: <code class="docutils literal notranslate"><span class="pre">across.positionElsewhere</span></code> и <code class="docutils literal notranslate"><span class="pre">across.objectElsewhere</span></code> (см. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>).</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--tournament<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>a.db<span class="w"> </span>--other<span class="w"> </span>b.db<span class="w"> </span>--xgid<span class="w"> </span><span class="s2">"XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--zobrist<span class="w"> </span><span class="m">1234567890</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="trash-la-corbeille">
+<h2>trash — Корзина<a class="headerlink" href="#trash-la-corbeille" title="Ссылка на этот заголовок"></a></h2>
+<p>Что было удалено и чем это вернуть. Удаление остаётся удалением: сначала записывается JSON-снимок исчезающего, и больше ничто в базе не знает, что эта таблица существует — ни фильтр поиска, ни статистика, ни правило хранения.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>trash<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Что лежит в корзине, от недавно удалённого к более старому.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">restore</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Возвращает запись N и убирает её из корзины.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discard</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Удаляет запись N сразу, не восстанавливая её.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">empty</span> <span class="pre">[--older-than</span> <span class="pre">Д]</span></code> — Очищает корзину или только то, что старше Д дней.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--kind</span> <span class="pre">K</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Удаляет объект <strong>через корзину</strong>, чтобы действие можно было отменить. <code class="docutils literal notranslate"><span class="pre">K</span></code> — это <code class="docutils literal notranslate"><span class="pre">position</span></code>, <code class="docutils literal notranslate"><span class="pre">collection</span></code>, <code class="docutils literal notranslate"><span class="pre">comment</span></code> или <code class="docutils literal notranslate"><span class="pre">match</span></code>.</p></li>
+</ul>
+<p><strong>Общие параметры:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code> (обязательный), <code class="docutils literal notranslate"><span class="pre">--kind</span></code>, <code class="docutils literal notranslate"><span class="pre">--limit</span></code> (по умолчанию 50), <code class="docutils literal notranslate"><span class="pre">--format</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code>). Для <code class="docutils literal notranslate"><span class="pre">list</span></code> параметр <code class="docutils literal notranslate"><span class="pre">--kind</span></code> сужает список до одного типа объектов: <code class="docutils literal notranslate"><span class="pre">position</span></code>, <code class="docutils literal notranslate"><span class="pre">collection</span></code>, <code class="docutils literal notranslate"><span class="pre">comment</span></code>, <code class="docutils literal notranslate"><span class="pre">match</span></code> или <code class="docutils literal notranslate"><span class="pre">anki_card</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">delete</span></code> по-прежнему удаляет <strong>без</strong> страховки: скрипт, удаляющий позицию, ожидает, что она исчезнет, а тихо оставленный снимок растил бы файл, роста которого никто не просил. Отмену сохраняет именно <code class="docutils literal notranslate"><span class="pre">trash</span> <span class="pre">delete</span></code>.</p>
+</div>
+<p>Восстановление позиции снова проходит через дедупликацию Зобриста: дубликат не создаётся никогда. Восстановленная позиция получает обратно свой прежний номер; если та же позиция тем временем была сохранена, остаётся она, и она получает то, чего ей не хватает. Восстановленный матч тоже сохраняет свой прежний номер, со своими партиями, ходами, анализами и позициями; он отклоняется, если этот номер занят другим матчем или если тем временем был импортирован матч с тем же отпечатком файла. То, что успешное восстановление не смогло вернуть, — занятое или исчезнувшее место в Дирекции, удалённый турнир, — сообщается предупреждением.</p>
+<p>Всё старше тридцати дней удаляет <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> — никогда не открытие базы.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supprimer une position en gardant l'annulation</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--kind<span class="w"> </span>position<span class="w"> </span>--id<span class="w"> </span><span class="m">412</span>
+
+<span class="c1"># Voir la corbeille, puis remettre une entrée</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>restore<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+
+<span class="c1"># Ne garder que ce qui a moins de trente jours</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>empty<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--older-than<span class="w"> </span><span class="m">30</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="Импорт, экспорт, перенос" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="cli_matchs.html" class="btn btn-neutral float-right" title="Матчи, турниры и партии" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tilastot &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Tietokannan hallinta" href="cli_admin.html" />
+    <link rel="prev" title="Opiskelu, oppitunnit ja harjoittelu" href="cli_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/cli_stats.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_stats.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_stats.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/cli_stats.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_stats.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_stats.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Yleinen syntaksi</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Käytettävissä olevat komennot</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Tuonti, vienti, siirto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Kirjasto: haku, luettelot, kokoelmat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Ottelut, turnaukset ja pelit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analyysi ja pelimoottori</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Opiskelu, oppitunnit ja harjoittelu</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Tilastot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stats-erreurs-recurrentes">stats — Toistuvat virheet</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Tietokannan hallinta</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Työnkulkuesimerkkejä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Komentoriviliittymä (CLI)</a></li>
+      <li class="breadcrumb-item active">Tilastot</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="cli-stats-chapitre"></span><h1>Tilastot<a class="headerlink" href="#statistiques" title="Link to this heading"></a></h1>
+<section id="stats-erreurs-recurrentes">
+<span id="cli-stats"></span><h2>stats — Toistuvat virheet<a class="headerlink" href="#stats-erreurs-recurrentes" title="Link to this heading"></a></h2>
+<p>Ryhmittelee suodattimen virheet pelisuunnitelman ja teeman mukaan, kallein ensin: Stats-paneelin Errors-välilehden <em>Toistuvat virheet</em> -taulukko (ks. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Stats-paneeli</span></a>). Yleiset tilastot pysyvät komennon <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> alla.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code> — Vain tämän pelaajan päätökset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opponent</span> <span class="pre">&lt;nom&gt;</span></code> — Vain tätä pelaajaa vastaan pelatut ottelut; <code class="docutils literal notranslate"><span class="pre">--player</span></code>-valitsimen kanssa toinen paikka.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Sama suodatin kuin komennossa <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Tekstinä näytettävien ryhmien määrä (oletus 20, <code class="docutils literal notranslate"><span class="pre">0</span></code> kaikille).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON sisältää jokaisen ryhmän sekä täydellisen asemaluettelon.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> — Arpoo asemia kolmen kalleimman ryhmän asemista (<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>, oletus 20) ja tulostaa ne: nämä ovat tunnisteet, jotka tietovisa ja <code class="docutils literal notranslate"><span class="pre">quiz_grade</span></code> arvioivat. JSON:ssa kenttä <code class="docutils literal notranslate"><span class="pre">Quiz</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;nimi&gt;</span></code> — Luo tämännimisen Anki-pakan, joka täytetään kolmen kalleimman ryhmän kaikilla asemilla.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--group</span> <span class="pre">&lt;sija&gt;</span></code> — <code class="docutils literal notranslate"><span class="pre">--quiz</span></code>- tai <code class="docutils literal notranslate"><span class="pre">--deck</span></code>-valinnan kanssa: tämän sijan ryhmä (1 on kallein) kolmen ensimmäisen sijaan.</p></li>
+</ul>
+<p>Nappulasiirron teema on <code class="docutils literal notranslate"><span class="pre">gammon</span></code>, <code class="docutils literal notranslate"><span class="pre">blots</span></code>, <code class="docutils literal notranslate"><span class="pre">point</span></code> tai <code class="docutils literal notranslate"><span class="pre">passive</span></code>; kuutioteema on <code class="docutils literal notranslate"><span class="pre">offer_missed</span></code>, <code class="docutils literal notranslate"><span class="pre">offer_premature</span></code>, <code class="docutils literal notranslate"><span class="pre">answer_wrong_pass</span></code> tai <code class="docutils literal notranslate"><span class="pre">answer_wrong_take</span></code>. Virheet, joita mikään sääntö ei nimeä, jäävät pois luokituksesta: ne luetellaan erikseen, yksi rivi pelisuunnitelmaa kohti (<code class="docutils literal notranslate"><span class="pre">Unthemed</span></code>-kenttä JSONissa), koska selitys ottaa kantaa vasta 60 mp:stä alkaen, <em>Virhe</em>-kynnyksen yläpuolella. <em>COST (PR)</em> -sarake on osuus suodattimen PR:stä, jonka ryhmä edustaa.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--group<span class="w"> </span><span class="m">1</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Mon pire groupe"</span>
+</pre></div>
+</div>
+<p><strong>stats plan</strong> — Suodattimen opintosuunnitelma, kuten kojelaudan <em>Opintosuunnitelma</em>-kortti (ks. <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">Opintosuunnitelma</span></a>): virheperheet (pelisuunnitelma × teema) järjestettynä takaisin saatavan MWC:n mukaan, eli virheiden tappion ja vaikeuden erotuksen summana, 95 %:n luottamusvälillä. Perhe pääsee suunnitelmaan 5 mitatusta virheestä alkaen ja kun väli on nollan yläpuolella; muut luetellaan erikseen, vahvistettavina (<code class="docutils literal notranslate"><span class="pre">Tentative</span></code>-kenttä JSONissa). Teemattomat virheet ja ne, joilla ei ole MWC:tä (vapaa peli), vain lasketaan (<code class="docutils literal notranslate"><span class="pre">Unthemed</span></code>, <code class="docutils literal notranslate"><span class="pre">Unpriced</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Samat suodatinvalinnat kuin <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code>, sekä:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Tekstinä näytettävien perheiden määrä (oletus 10, <code class="docutils literal notranslate"><span class="pre">0</span></code> kaikille).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> (<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>, oletus 20), <code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;nimi&gt;</span></code> — Kuten <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code>, kolmen ensimmäisen perheen asemilla.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — Tulostaa näiden perheiden opiskelujonon, yksi asema riville, suurin ero viitepelaajaan ensin (JSON: <code class="docutils literal notranslate"><span class="pre">Queue</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--family</span> <span class="pre">&lt;sija&gt;</span></code> — Valitsimien <code class="docutils literal notranslate"><span class="pre">--quiz</span></code>, <code class="docutils literal notranslate"><span class="pre">--deck</span></code> tai <code class="docutils literal notranslate"><span class="pre">--queue</span></code> kanssa: tämän sijan perhe (1 ensimmäinen) kolmen ensimmäisen sijaan.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--family<span class="w"> </span><span class="m">2</span><span class="w"> </span>--queue
+</pre></div>
+</div>
+<p><strong>stats effect</strong> — Jokaisen opiskellun perheen ennen/jälkeen, kuten koontinäytön <em>Ennen/jälkeen opiskelun</em> -kortti (ks. <a class="reference internal" href="manuel_stats.html#avant-apres-etude"><span class="std std-ref">Ennen/jälkeen opiskelun</span></a>): jollakin sen asemista tehdyn ensimmäisen opiskelutoimen päivä, sen suunnitelman ja lajin tappioaste MWC:nä sataa päätöstä kohti ennen ja jälkeen kyseisen päivän, hyöty ja sen 95 %:n väli sekä tuomio (<code class="docutils literal notranslate"><span class="pre">improved</span></code>, <code class="docutils literal notranslate"><span class="pre">worse</span></code>, <code class="docutils literal notranslate"><span class="pre">undetermined</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> alle 30 päätöksellä ikkunaa kohti).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats biases</strong> — Suodattimen etumerkilliset vinoumat, kuten <em>Etumerkilliset vinoumat</em> -kortti (ks. <a class="reference internal" href="manuel_stats.html#biais-signes"><span class="std std-ref">Etumerkilliset vinoumat</span></a>): otto/hylkäys, tuplaukset (yhteensä ja tilanteen mukaan) ja blotit, kullakin kaksi lukua ja niiden hinta, vinouma, sen 95 %:n väli ja tuomio (<code class="docutils literal notranslate"><span class="pre">too_much</span></code>, <code class="docutils literal notranslate"><span class="pre">too_little</span></code>, <code class="docutils literal notranslate"><span class="pre">balanced</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> alle 20 päätöksellä). Vapaalla pelillä on oma <code class="docutils literal notranslate"><span class="pre">money</span></code>-rivinsä, ja Crawfordin jälkeinen tilanne luetaan yhtenä pisteenä; osuus nappulasiirroista, joita ei voitu toistaa, annetaan taulukon alla.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Samat suodatinvalinnat kuin <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code> (<code class="docutils literal notranslate"><span class="pre">--player</span></code>, <code class="docutils literal notranslate"><span class="pre">--opponent</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats tournament</strong> — Turnauksen yhteenveto yhdelle pelaajalle, kuten Turnaukset-paneelin <em>Yhteenveto</em>-painike (ks. <a class="reference internal" href="manuel_tournois.html#bilan-tournoi"><span class="std std-ref">turnauksen yhteenveto</span></a>): PR ja MWC-tappio (7 pisteen ekv.) edeltävien 365 päivän tavanomaiseen tasoon verrattuna, kierroksittain, päätöksen järjestysluvun mukaan ottelussa, pistetilanteen (<code class="docutils literal notranslate"><span class="pre">dmp</span></code>, <code class="docutils literal notranslate"><span class="pre">crawford</span></code>, <code class="docutils literal notranslate"><span class="pre">post_crawford</span></code>, <code class="docutils literal notranslate"><span class="pre">other</span></code>) ja tahdin (<code class="docutils literal notranslate"><span class="pre">quick</span></code>, <code class="docutils literal notranslate"><span class="pre">considered</span></code>) mukaan, kummallakin 95 %:n luottamusväli ja tuomio (<code class="docutils literal notranslate"><span class="pre">worse</span></code>, <code class="docutils literal notranslate"><span class="pre">better</span></code>, <code class="docutils literal notranslate"><span class="pre">usual</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> ilman väliä, alle 20 päätöksellä toisella puolella tai alle 5 tavanomaisella ottelulla), sitten enintään kolme turnauksen virheperhettä.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span>...<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>text<span class="p">|</span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p>Ilman <code class="docutils literal notranslate"><span class="pre">--player</span></code>-valitsinta pelaaja on se, joka esiintyy turnauksen useimmissa otteluissa. <code class="docutils literal notranslate"><span class="pre">--player</span></code> voidaan toistaa, jolloin useita pelaajia tarkastellaan yhdellä kutsulla. JSON-muodossa yksi pelaaja antaa objektin ja kaksi tai useampi listan pyydetyssä järjestyksessä; skripti, jonka pelaajamäärä vaihtelee, käyttää reittiä <code class="docutils literal notranslate"><span class="pre">stats.tournamentReviews</span></code> (tai <code class="docutils literal notranslate"><span class="pre">GetTournamentReviews</span></code>), joka palauttaa aina listan.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Bob"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats training</strong> — Päätösvisan PR, otteluiden PR ja Ankin pysyvyys, koottuna kalenteri-ikkunoittain kuten Stats-paneelin <em>Harjoittelu</em>-välilehti (katso <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Stats-paneeli</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">week|month</span></code> — Kalenteri-ikkuna (oletus <code class="docutils literal notranslate"><span class="pre">week</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nimi&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;VVVV-KK-PP&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;VVVV-KK-PP&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Otteluiden suodatin; visan ja Ankin lokit eivät sisällä pelaajaa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON sisältää myös visaistuntojen luettelon; teksti ja JSON antavat visan PR:n pelisuunnitelman mukaan.</p></li>
+</ul>
+<p>Jokainen sarja säilyttää otoskokonsa: ikkuna ilman päätöksiä on tekstissä viiva ja JSONissa nollalukumäärä, ei koskaan nolla-arvo.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--window<span class="w"> </span>month<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats h2h</strong> — Kaksi pelaajaa toisiaan vastaan: heidän yhdessä pelaamansa ottelut, kummankin PR jokaisessa ottelussa ja yhteensä sekä loppuun asti pelattujen otteluiden tase.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats contrast</strong> — Paikat, jotka kaksi pelaajaa kumpikin joutui pelaamaan ja joissa toinen pelasi hyvin (Virhe-kynnyksen alapuolella) ja toinen ei, suurin ero ensin; pelaaja arvioidaan paikan huonoimman siirtonsa mukaan. <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code> säilyttää tekstin N ensimmäistä riviä; JSON antaa kaiken, <code class="docutils literal notranslate"><span class="pre">position_id</span></code>-arvoineen.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats windows</strong> — PR liukuvalla kalenteri-ikkunalla: yksi rivi kuukautta kohden, jokainen kattaa kyseisen kuukauden ja ikkunan aiemmat kuukaudet (<code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">month</span></code>, <code class="docutils literal notranslate"><span class="pre">quarter</span></code> tai kuukausien lukumäärä).</p>
+<p><code class="docutils literal notranslate"><span class="pre">--by-phase</span></code> jakaa jokaisen ikkunan pelivaiheittain (avaus, keskipeli, kilpajuoksu, ulospelaaminen…): jokaisen rivin alle yksi rivi vaihetta kohden otteluineen, päätöksineen ja PR:ineen, samat luvut kuin <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">breakdown</span></code> -komennon vaihejaottelu ikkunaan rajattuna; vaihe, jolla ei ole ikkunassa yhtään laskettua päätöstä, ei näy. HTTP-palvelu palauttaa ne kentässä <code class="docutils literal notranslate"><span class="pre">per_phase</span></code>, kun <code class="docutils literal notranslate"><span class="pre">stats.prByWindow</span></code>-pyynnössä on <code class="docutils literal notranslate"><span class="pre">&quot;byPhase&quot;:</span> <span class="pre">true</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--window<span class="w"> </span>quarter<span class="o">]</span><span class="w"> </span><span class="o">[</span>--by-phase<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats ranking</strong> — Pelaajien sijoitus PR:n mukaan, pienin ensin, niiden joukossa, joilla on vähintään <code class="docutils literal notranslate"><span class="pre">--min-decisions</span></code> laskettua päätöstä (oletuksena 500); kaksi yhtä suurta PR:ää jakavat sijan. <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code> säilyttää N ensimmäistä.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span><span class="m">20</span><span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats engines</strong> — Tietokannassa olevat analyysimoottorit täsmälleen sillä nimellä, jota <code class="docutils literal notranslate"><span class="pre">--engine</span></code> odottaa; sama valinta kuin Stats-paneelin <em>Moottori</em>-valikossa.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>engines<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Yhteiset valinnat:</strong> <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;VVVV-KK-PP&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;VVVV-KK-PP&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> sekä alkuperäsuodatin <code class="docutils literal notranslate"><span class="pre">--engine</span> <span class="pre">&lt;nimi&gt;</span></code> (analyysimoottori, tarkka nimi) ja <code class="docutils literal notranslate"><span class="pre">--min-depth</span> <span class="pre">&lt;n&gt;</span></code> (analyysin vähimmäissyvyys), jotka myös <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> ja <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code> hyväksyvät. <code class="docutils literal notranslate"><span class="pre">h2h</span></code> ja <code class="docutils literal notranslate"><span class="pre">windows</span></code> lukevat ottelukohtaiset tilastot ja hylkäävät alkuperäsuodattimen, joka koskee jokaista päätöstä.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--window<span class="w"> </span>quarter<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--min-depth<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p><strong>stats matches</strong> — Ottelut, jotka korpuksen luku laskee: ne, joissa pelaajalla (jokaisella pelaajalla ilman <code class="docutils literal notranslate"><span class="pre">--player</span></code>) on suodattimen alla laskettu päätös, vanhimmasta uusimpaan. Niiden tunnisteet annetaan komennolle <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span> <span class="pre">--ids</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2025</span>-03-31
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--ids<span class="w"> </span><span class="m">12</span>,15,31
+</pre></div>
+</div>
+<p><strong>stats tournaments</strong> — Turnaukset, jotka Koontinäkymän turnausmäärä laskee: ne, joissa on pelaajan (ilman <code class="docutils literal notranslate"><span class="pre">--player</span></code>-valitsinta kenen tahansa pelaajan) laskettu päätös suodattimen alla, tunnisteen mukaan.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats progression</strong> — Jokaisen ottelun PR päivämäärän mukaisessa järjestyksessä, jokaisen turnauksen PR ja liukuva PR viimeisiltä N päätökseltä: Stats-paneelin <em>Progression</em>-välilehti (katso <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Stats-paneeli</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Sama suodatin kuin komennossa <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON sisältää ottelut, turnaukset ja liukuvat PR:t.</p></li>
+</ul>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats breakdown</strong> — Suodattimen PR eriteltynä pelivaiheen, pelisuunnitelman, kommenttitunnisteen, tuloksen (away vastaan away) ja tuplauskuution toiminnon mukaan sekä tuplausvirheiden suunnalla: Stats-paneelin <em>Erittelyt</em>-välilehti (katso <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Stats-paneeli</span></a>). Valitsimet ovat samat kuin komennossa <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">progression</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats summary</strong> — Suodattimen taso ilman yhtään tunnistetta: määrät, PR (nappulat, tuplauskuutio) ja sen 95 %:n väli, MWC-menetys 7 pisteen ottelua kohden, PR pelivaiheittain ja tilanteittain, jokainen rivi määrineen ja väleineen. Siinä ei näy yhtään asemaa, ottelua, turnausta, vastustajaa eikä tunnistetta, eikä kalleimpia päätöksiä: se on se, minkä julkinen profiili tai käyntikortti voi näyttää paljastamatta mitään. HTTP-palvelu tarjoaa sen reitillä <code class="docutils literal notranslate"><span class="pre">stats.summary</span></code>; <code class="docutils literal notranslate"><span class="pre">stats.compute</span></code> pysyy ennallaan. Valitsimet ovat <code class="docutils literal notranslate"><span class="pre">--player</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> ja <code class="docutils literal notranslate"><span class="pre">--format</span></code>; <code class="docutils literal notranslate"><span class="pre">--window</span></code>-valitsinta ei ole.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats report</strong> — Stats-paneelin HTML-raportti (katso <a class="reference internal" href="manuel_stats.html#rapport-html"><span class="std std-ref">HTML-raportti</span></a>): suodattimen tunnusluvut ja sen kymmenen kallointa päätöstä kaavioineen yhtenä itsenäisenä tiedostona, jonka selain tulostaa PDF:ksi. HTTP-palvelu tarjoaa sen reitillä <code class="docutils literal notranslate"><span class="pre">stats.report</span></code> samasta generaattorista.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--html<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--html</span></code> — Pakollinen: HTML on ainoa muoto.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span> <span class="pre">&lt;fichier&gt;</span></code> — Kirjoitettava tiedosto (oletus: vakiotuloste).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">&lt;code&gt;</span></code> — Raportin kieli: <code class="docutils literal notranslate"><span class="pre">fr</span></code>, <code class="docutils literal notranslate"><span class="pre">en</span></code>, <code class="docutils literal notranslate"><span class="pre">de</span></code>, <code class="docutils literal notranslate"><span class="pre">el</span></code>, <code class="docutils literal notranslate"><span class="pre">es</span></code>, <code class="docutils literal notranslate"><span class="pre">fi</span></code>, <code class="docutils literal notranslate"><span class="pre">it</span></code>, <code class="docutils literal notranslate"><span class="pre">ja</span></code> tai <code class="docutils literal notranslate"><span class="pre">ru</span></code> (oletus <code class="docutils literal notranslate"><span class="pre">en</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Suodatin: raportti nimeää rajauksensa.</p></li>
+</ul>
+<p>Kaaviot piirretään siinä oletuspaletilla; vain graafinen sovellus käyttää näytöllä valittua laudan palettia.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--output<span class="w"> </span>rapport.html
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--lang<span class="w"> </span>fr
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_entrainement.html" class="btn btn-neutral float-left" title="Opiskelu, oppitunnit ja harjoittelu" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_admin.html" class="btn btn-neutral float-right" title="Tietokannan hallinta" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,337 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analyysi, kommentit ja haku &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Ottelut ja litterointi" href="manuel_matchs.html" />
+    <link rel="prev" title="Aloitus ja käyttöliittymä" href="manuel_interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/manuel_bibliotheque.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_bibliotheque.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_bibliotheque.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_bibliotheque.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_bibliotheque.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/manuel_bibliotheque.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_bibliotheque.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_bibliotheque.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Käyttöopas</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Aloitus ja käyttöliittymä</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Analyysi, kommentit ja haku</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-analyse">Analyysipaneeli</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rollouts">Rolloutit</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-commentaires">Kommenttipaneeli</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-tags">Tunnisteet</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#menu-contextuel">Kontekstivalikko</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-corbeille">Roskakori</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-recherche">Hakupaneeli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-collections">Kokoelmapaneeli</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lecons">Oppitunnit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Ottelut ja litterointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Turnaukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Tilastot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Arviointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Harjoittelu, Anki ja kaksintaistelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Tuonti, alkuperä ja jakaminen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Käyttöopas</a></li>
+      <li class="breadcrumb-item active">Analyysi, kommentit ja haku</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-commentaires-et-recherche">
+<span id="manuel-bibliotheque"></span><h1>Analyysi, kommentit ja haku<a class="headerlink" href="#analyse-commentaires-et-recherche" title="Link to this heading"></a></h1>
+<section id="panneau-analyse">
+<span id="id1"></span><h2>Analyysipaneeli<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
+<p><strong>Analyysipaneeli</strong> (<em>CTRL-L</em>) näyttää nykyisen aseman analyysitiedot, jotka on tuotu lähteistä eXtreme Gammon (XG), GNUbg, BGBlitz tai gammonNet. Se esittää parhaat vaihtoehdot (pelinappulasiirrot tai kuutiopäätökset) niiden ekviteettiarvoineen ja vastaavine virheineen. <em>d</em>-näppäin vaihtaa pelinappulasiirtojen analyysin ja kuutioanalyysin välillä. Ottelussa navigoitaessa todella pelattu siirto korostetaan vaihtoehtojen luettelossa. Näytä tai piilota paneeli painamalla <em>CTRL-L</em> tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
+<p>Asema, jolla ei ole analyysia, kertoo sen, ja <strong>Arvioi</strong>-painike avaa sen Eval-paneelissa.</p>
+<p>Työkalupalkin <strong>Haaste</strong>-painike, pip-laskurin painikkeen jälkeen (näppäin <em>m</em>), auttaa ratkaisemaan kannan ennen analyysin näkemistä asemia selatessa: hakutulokset, ottelun läpikäynti, omien virheiden kertaus. Päällä se peittää paneelin koko analyysin, nappulasiirrot ja kuution, harmaalla alueella; napsautus alueeseen paljastaa sen. Alue palaa jokaisella aseman vaihdolla. Haaste on näyttömaski: paljastaminen ei tallenna tietokantaan mitään. Asetus säilyy blunderDB:n sulkemiseen asti, kuten pip-laskurin asetus. Ottelun läpikäynnissä haaste piilottaa myös siirtoluettelon merkinnät, menetykset ja vaikeuden; näytetyn siirron omat paljastuvat sen analyysin kanssa.</p>
+<p>Taulukoiden alla <strong>lause</strong> kertoo joskus, mitä pelattu päätös maksoi ja miksi: ”Menetät 120 mp: pelattu siirto jättää kolme yksinäistä nappulaa, kun 13/7 8/7 jättää vain yhden.” Se syntyy kuudesta mitattavasta säännöstä — alttiudesta, tehdystä tai menetetystä kotipisteestä, luovutetuista gammon-mahdollisuuksista, turvallisuudesta joka maksaa enemmän kuin tuottaa, ja kuutiovirheen kahdesta suunnasta (tuplaus liian myöhään tai liian aikaisin, liian löysä hyväksyntä tai liian tiukka luovutus).</p>
+<p>Tärkein sääntö on <strong>vaikeneminen</strong>: lause ilmestyy vain, kun sääntö pätee varmasti, ja virheestä joka ylittää kynnyksen, josta lähtien moottorit ovat yhtä mieltä siitä että kyseessä on virhe. Muulloin lausetta ei ole — ei tyhjää kehystä eikä ”emme tiedä”. Väärä selitys maksaa enemmän kuin ei selitystä: se opettaa jotain epätarkkaa.</p>
+<p>Sama lause seuraa virhettä siellä, missä juuri teit sen: <strong>Anki-kortin</strong> takapuolella paljastetun analyysin alla ja Päätös-harjoituksen <strong>tietovisan arviossa</strong> mp-kustannuksen alla. Samat vaikenemisen säännöt pätevät: oikea siirto tai virhe, jota mikään sääntö ei selitä, ei lisää mitään.</p>
+<p>Kun asemaa on arvioinut <strong>useampi moottori</strong>, paneelin yläreunan palkki asettaa ne rinnakkain: yksi rivi moottoria kohden, sen syvyys ja sen vastaus — kuutiotuomio tai sen oma paras siirto. Se kertoo ensin ovatko ne samaa mieltä, ja juuri erimielisyys sen oikeuttaa: ”XG sanoo tuplaus, otto; gammonNet sanoo ei tuplausta” luetaan yhdellä silmäyksellä, siinä missä ennen piti verrata kahta taulukkoa vinottain.</p>
+<p>Moottorin paras siirto on <strong>sen moottorin</strong> paras: ehdokaslista on lajiteltu ekviteetin mukaan kaikki moottorit sekaisin, joten sen ensimmäinen alkio ei ole kenenkään paras siirto erityisesti.</p>
+<p>Palkki ilmestyy vain kun moottoreita todella on useampi, ja se on olemassa vain tässä paneelissa: Eval-paneeli esittää <strong>yhden</strong> päätöksen, sisäänrakennetun moottorin (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md">ADR-0017</a>), eikä vertailulla olisi siellä sijaa.</p>
+<p>Siirrot kirjoitetaan niin kuin ne luetaan laudalta, täällä kuten Eval-paneelissakin: vähiten edennyt nappula liikkuu ensin, ja <strong>nappula, joka käyttää useamman nopan peräkkäin, kirjoitetaan vain kerran</strong> — samalla nappulalla pelattu 64 luetaan <code class="docutils literal notranslate"><span class="pre">24/14</span></code>, ja <code class="docutils literal notranslate"><span class="pre">24/14*</span></code>, jos se lyö perille tullessaan. Ketjun yksityiskohdat näkyvät vain silloin, kun ne kertovat jotakin lisää: <em>matkan varrella</em> tehty lyönti säilyttää välipisteensä, <code class="docutils literal notranslate"><span class="pre">24/18*</span> <span class="pre">18/14</span></code>, muuten lyönti pisteessä 18 katoaisi merkinnästä.</p>
+<p>Tuodun analyysin ekviteetti noudattaa samaa sääntöä kuin Eval-paneeli: sarake ilmoittaa oman viitekehyksensä, ”Equity (money)” tai ”Equity (match)” analysoidun aseman pistetilanteen mukaan, ei koskaan pelkkää ”Equity”-sanaa kertomatta asteikkoa. Money game -asemassa voimassa olevat <strong>Jacoby</strong>- ja <strong>Beaver</strong>-säännöt näytetään myös pieninä merkkeinä kuutiopäätöstaulukon alla.</p>
+<section id="rollouts">
+<span id="id2"></span><h3>Rolloutit<a class="headerlink" href="#rollouts" title="Link to this heading"></a></h3>
+<p><strong>Analyysi</strong>-paneeli osaa <strong>rollata</strong> aseman: pelata satoja pelejä jokaisesta valitusta siirrosta tai jokaisesta kuutiotoiminnosta, jotta voidaan erottaa kaksi vaihtoehtoa, joita suora arvio tuskin erottaa. Ehdokassiirtojen taulukossa <em>Ctrl+napsautus</em> lisää siirron valintaan tai poistaa sen ja <em>Vaihto+napsautus</em> laajentaa valinnan napsautettuun siirtoon; tavallinen napsautus valitsee yhden siirron kuten aina. <strong>Oikea napsautus</strong> valinnan päällä — tai toisen siirron päällä, josta tulee valinta — avaa valikon, jonka kohta <strong>Rollout (Vakio)</strong> käynnistää heti valittujen siirtojen rolloutin valitulla asetuksella. Kuutiopäätöksessä oikea napsautus rollaa koko päätöksen. Paneelin <em>Vaihto+R</em>-näppäin tekee saman (ilman valintaa se rollaa aseman parhaat ehdokkaat), samoin komento <code class="docutils literal notranslate"><span class="pre">rollout</span></code> (alias <code class="docutils literal notranslate"><span class="pre">ro</span></code>). Rolloutin aikana taulukon alla oleva ohut palkki seuraa pelattuja pelejä; <strong>Peruuta</strong>, valikon kohta <strong>Peruuta rollout</strong>, <em>Esc</em> tai uusi <em>Vaihto+R</em> pysäyttää sen kirjoittamatta mitään. Asetus — <strong>Nopea</strong>, <strong>Vakio</strong> tai <strong>Vapaa</strong> — valitaan asetusten <strong>gammonNet</strong>-välilehdellä (ks. <a class="reference internal" href="manuel_interface.html#rollout-reglage"><span class="std std-ref">asetukset</span></a>).</p>
+<p>Samassa valikossa on <strong>Kopioi asema ja analyysi</strong>, kuva jonka <em>CTRL-X CTRL-X</em> kopioi: lauta ja siirtolistan kärki tai koko kuutioanalyysi. Heti kun siirto on valittu, valikkoon tulee toinen kohta, <strong>Kopioi asema ja valitut siirrot</strong>: kuvaan jäävät vain nämä siirrot sijoitusjärjestyksessä, kukin sijallaan kaikkien ehdokkaiden joukossa ja virheellään suhteessa aseman parhaaseen siirtoon, ei valinnan parhaaseen. Kuutiopäätöksessä näkyy vain ensimmäinen. Analyysitaulukoiden soluja ei voi valita tekstinä: valintanapsautukset eivät jätä niihin korostusta.</p>
+<p>Tulos <strong>tallennetaan analyysin viereen, ei koskaan sen tilalle</strong>: tuotua analyysia ei muuteta. Jokainen rollattu siirto kantaa tuloksensa omalla taulukkorivillään <strong>Rollout</strong>-sarakkeessa, joka ilmestyy vain, kun asemalla on rollout: ekvitiivi ja sen 95 %:n luottamusvälin puolileveys ekvitiivisarakkeen asteikolla. Solun päälle vienti antaa yksityiskohdat: keskihajonnan, <strong>JSD</strong>:n (etäisyys parhaaseen siirtoon eron keskihajontoina: rajasta alkaen siirto on ratkaistu eikä sitä enää pelata), pelien määrän ja <strong>Asetukset</strong> — moottorin ja parametrien täydellisen allekirjoituksen: kaksi samalla allekirjoituksella tehtyä rolloutia ovat samat luvut. Rollout päättyy heti, kun siirrot on erotettu toisistaan. Kuutiopäätöksen rollout, jolla ei ole siirtoriviä, näytetään taulukkona päätöksen alla. Rollout pelaa kuution peleissään: järjestys on luotettava, absoluuttinen ekvitiivi hieman vähemmän, minkä lohko muistuttaa. Se ei pelaa beaveria: sen rivi <em>tuplaus, vastaanotto</em> on tavallisen vastaanoton rivi, myös money-asemassa Beaver-säännön alla, jossa suora analyysi laskee beaverin. Asema, jota ei ole tietokannassa, voidaan rollata, mutta sitä ei tallenneta.</p>
+<p>Komento <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">search</span></code> rollaa yksi kerrallaan näytetyn luettelon asemat — hakutulokset, ottelu tai kokoelma —, joilla ei vielä ole tätä rolloutia; vahvistus kertoo kokonaismäärän ennen aloittamista. Jokainen asema kirjoitetaan heti kun se on valmis: peruuttaminen säilyttää tehdyn, ja uudelleenkäynnistys jatkaa siitä, mihin jäätiin. Eteneminen säilyy paneelin sulkemisen yli.</p>
+<p><strong>Vain luku</strong> -tilassa avattu tietokanta, koska toinen blunderDB-instanssi pitää sitä, hylkää heti rolloutin, joka tallennettaisiin: viesti kertoo siitä ennen kuin ensimmäistäkään peliä pelataan.</p>
+</section>
+</section>
+<section id="panneau-commentaires">
+<span id="id3"></span><h2>Kommenttipaneeli<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
+<p><strong>Kommentit</strong>-paneeli (<em>CTRL-P</em>) näyttää, lisää ja muokkaa nykyiseen positioon liittyviä kommentteja. Positiolla voi olla useita eri henkilöiden kirjoittamia kommentteja: kaikki näytetään ketjuna uusimmasta vanhimpaan, kunkin tekijän nimen kanssa, ja omat kommenttisi ovat ensimmäisinä. XG-tiedostoista tuodut kommentit liitetään automaattisesti vastaaviin positioihin. Paina <em>CTRL-P</em> tai suorita komento <code class="docutils literal notranslate"><span class="pre">comment</span></code> näyttääksesi tai piilottaaksesi paneelin.</p>
+<p>Kommenttiisi liitettävä nimi asetetaan asetuksissa, <em>Käyttöliittymä</em>-välilehden <strong>Nimesi</strong>-kentässä; jos se on tyhjä, kommenteillasi ei ole kirjoittajaa. XG-tuonnin kommentit liitetään nimeen <code class="docutils literal notranslate"><span class="pre">XG</span></code>, ottelutiedoston kommentit sen kirjaajaan. Kommentin uudelleenkirjoittaminen liittää sen sinuun. Haku <code class="docutils literal notranslate"><span class="pre">au&quot;Alice&quot;</span></code> säilyttää asemat, joita Alice on kommentoinut; käyttöliittymän ulkopuolella <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">add</span> <span class="pre">--author</span></code> kirjoittaa kommentin, joka on liitetty kyseiseen kirjoittajaan, ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">list</span></code> lukee ne takaisin (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>). Tämä nimi on vapaata tekstiä: se ei todista mitään, toisin kuin jäljempänä kuvattu allekirjoitus.</p>
+<p>Jokainen tiedostosta tullut kommentti kantaa <strong>alkuperämerkintää</strong> (<code class="docutils literal notranslate"><span class="pre">XG</span></code>, <code class="docutils literal notranslate"><span class="pre">GNU</span> <span class="pre">BG</span></code>, <code class="docutils literal notranslate"><span class="pre">BGF</span></code>, tai <em>tuotu</em>, kun alkuperää ei koskaan tallennettu). Itse kirjoittamasi kommentit eivät kanna sellaista: se on tavallinen tapaus, ja jokaisen rivin merkitseminen olisi vain kohinaa. Tuodun kommentin muokkaaminen tekee siitä sinun: muokkauksen jälkeen lause on sinun.</p>
+<p>Ero näkyy muuallakin: ottelun poistaminen ei enää tuhoa asemaa, johon <strong>sinä</strong> olit kirjoittanut. Lähdetiedostosta poimittu muistiinpano sen sijaan katoaa yhä sen ottelun mukana, joka sen toi.</p>
+<p>Alkuperämerkinnällä viedystä tietokannasta saatu kommentti sisältää merkitsijänsä <strong>allekirjoituksen</strong>: ketju näyttää tekstin ”<em>merkitsijän</em> kommentti”, jonka perässä on hänen avaimensa sormenjälki ja edessä ✓. Kahdella henkilöllä voi olla sama nimi mutta ei sama sormenjälki: vertaa sitä siihen, jonka merkitsijä on sinulle ilmoittanut.</p>
+<p>Kommentti, joka ei enää vastaa allekirjoitettua, säilytetään mutta merkitään ⚠ <em>vahvistamaton</em>: tiedostossa muutettu teksti tai kirjoittaja, toiseen asemaan siirretty kommentti tai asema, jonka tunniste on sittemmin korjattu. Allekirjoitus kattaa nimittäin aseman tunnisteen: kun <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> asettaa aseman Crawford-merkin uudelleen (ja yhdistää aseman tarvittaessa kaksoiskappaleensa kanssa) tai kun ottelun korjaus siirtää muistiinpanosi korjatulle asemalle, sen allekirjoitetut kommentit eivät enää tarkistu, vaikka niiden teksti ei ole muuttunut; <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> ilmoittaa niiden määrän. Allekirjoitus, jota blunderDB ei osaa lukea, näytetään ⚠ <em>allekirjoitus ei ole luettavissa</em>. Allekirjoitetun kommentin muokkaaminen poistaa allekirjoituksen: lause on silloin sinun.</p>
+<p>Toisesta tietokannasta saatu kommentti säilyttää alkuperänsä: kirjoittajansa kirjoittama muistiinpano pitää asemansa, kun ottelu poistetaan, kuten omasi; XG-tiedostosta peräisin oleva huomautus säilyttää tunnisteensa <code class="docutils literal notranslate"><span class="pre">XG</span></code> ja katoaa ottelun mukana. Tämä pätee tietokantaan, jonka on viennyt blunderDB:n versio, joka jo allekirjoittaa kommentit; vanhemmasta tiedostosta tuleva kommentti saa tunnisteen <em>tuotu</em> ja katoaa ottelun mukana. <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">list</span></code> antaa alkuperän sarakkeessaan <em>Origin</em> ja allekirjoituksen sarakkeessaan <em>Signed by</em>.</p>
+<section id="les-tags">
+<span id="tags"></span><h3>Tunnisteet<a class="headerlink" href="#les-tags" title="Link to this heading"></a></h3>
+<p><strong>Tunniste</strong> on kommenttiin kirjoitettu <code class="docutils literal notranslate"><span class="pre">#sana</span></code>. Mikään ei ilmoita sitä, mikään taulu ei säilytä sitä, ja se on tarkoituksellista: sanasto on sinun omaa proosaasi, ja ilmoituksen vaatiminen ennen tunnisteen käyttöä muuttaisi tavan paperityöksi.</p>
+<p>Puuttui toinen puoli: <strong>nähdä</strong> se sanasto, jonka on itselleen rakentanut, ja napsauttaa tunnistetta sen sijaan että muistelisi miten sen kirjoitti. Komento <code class="docutils literal notranslate"><span class="pre">tags</span></code> tai paneelin otsakepalkin <code class="docutils literal notranslate"><span class="pre">#</span></code>-painike avaa sanastoikkunan: tämän tietokannan tunnisteet, kukin sitä kantavien <strong>asemien määrän</strong> kanssa, napsautettavina vastaavan haun käynnistämiseksi. Listan alla ovat suositellut tunnisteet, joita tämä tietokanta ei vielä käytä — backgammon-kirjallisuudesta poimittu sanasto (<code class="docutils literal notranslate"><span class="pre">#blitz</span></code>, <code class="docutils literal notranslate"><span class="pre">#prime</span></code>, <code class="docutils literal notranslate"><span class="pre">#holding</span></code>, <code class="docutils literal notranslate"><span class="pre">#backgame</span></code>, <code class="docutils literal notranslate"><span class="pre">#containment</span></code>, <code class="docutils literal notranslate"><span class="pre">#crunch</span></code>, <code class="docutils literal notranslate"><span class="pre">#ace-point</span></code>, <code class="docutils literal notranslate"><span class="pre">#timing</span></code>…), ehdotettu eikä koskaan pakotettu: listalta puuttuva tunniste on täsmälleen yhtä arvokas kuin listalla oleva.</p>
+<p>Kirjoittaessa <code class="docutils literal notranslate"><span class="pre">#</span></code> ehdottaa niitä tunnisteita, joita <strong>tämä tietokanta</strong> jo käyttää, ja sitten suositeltuja. Juuri se estää kirjoittamasta <code class="docutils literal notranslate"><span class="pre">#back-game</span></code> yhtenä päivänä ja <code class="docutils literal notranslate"><span class="pre">#backgame</span></code> seuraavana — mitä mikään muu ei huomaisi.</p>
+<p>Tunnistehaku kirjoitetaan komentorivillä muodossa <code class="docutils literal notranslate"><span class="pre">#prime</span></code>. Se on <strong>rajattu</strong>: <code class="docutils literal notranslate"><span class="pre">#prime</span></code> ei löydä sanaa <code class="docutils literal notranslate"><span class="pre">#priming</span></code>, kun taas tavallinen tekstihaku, joka etsii osamerkkijonoa, ei osaa erottaa niitä. Useat tunnisteet <strong>kasautuvat</strong> — <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">#prime</span> <span class="pre">#backgame</span></code> pyytää asemat, jotka kantavat molemmat — koska asema kantaa useita tunnisteita: kahden nimeäminen voi tarkoittaa vain ”molempia”. Tämä on päinvastoin kuin vaihe- tai alkuperäsuodattimessa, jossa asemalla on vain yksi arvo ja kahden arvon nimeäminen voi tarkoittaa vain ”jompaakumpaa”.</p>
+<p>Sama lista saadaan käyttöliittymän ulkopuolella komennolla <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tags</span></code> (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>).</p>
+</section>
+</section>
+<section id="menu-contextuel">
+<span id="menu-contextuel-actions"></span><h2>Kontekstivalikko<a class="headerlink" href="#menu-contextuel" title="Link to this heading"></a></h2>
+<p>Oikea napsautus — tai <em>MENU</em>-näppäin, tai <em>VAIHTO-F10</em> kohdistetulla rivillä — avaa saman valikon asemalle, olipa se osoitettu laudalla tai kokoelman rivillä, ja samanmuotoisen valikon ottelu-, turnaus- tai kokoelmaluettelon riville. Aseman kaksi yleisintä toimintoa, <em>Arvioi tämä asema</em> ja <em>Kopioi kuva</em>, ovat ensimmäisellä tasolla; muut on sijoitettu alivalikoihin, jotka on merkitty ▸:</p>
+<ul class="simple">
+<li><p><strong>Kopioi / jaa</strong>: kuva (<em>CTRL-X</em>), pelkkä XGID, GNUbg-tunnus (aseman tunnus ja ottelun tunnus, jotka GNU Backgammon hyväksyy komennossa <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">gnubgid</span></code>, saatavilla myös komennolla <code class="docutils literal notranslate"><span class="pre">gnubgid</span></code>), asema ja sen analyysi tekstinä (<em>CTRL-C</em>), kuva analyysin kanssa, kuva tallennettuna SVG- tai PNG-muodossa; ottelulle sen <code class="docutils literal notranslate"><span class="pre">.mat</span></code>-vienti.</p></li>
+<li><p><strong>Merkitse</strong>: <em>Kommentoi</em> avaa Kommentit-paneelin asemalle; <em>Lisää #tunniste…</em> avaa komentorivin merkillä <code class="docutils literal notranslate"><span class="pre">#</span></code>, ja <em>ENTER</em> lisää tunnisteet kuten <code class="docutils literal notranslate"><span class="pre">#</span></code>-komento (katso <a class="reference internal" href="#tags"><span class="std std-ref">Tunnisteet</span></a>); <em>Merkitse nähdyksi</em> ja <em>Poista merkintä</em> asettavat tai poistavat opiskelujonon merkinnän.</p></li>
+<li><p><strong>Siirry</strong>: <em>Naapuriasemat</em>, <em>Saman rakenteen asemat</em> (rakennehaku koko laudalla), <em>Avaa ottelu tästä siirrosta</em> (ensimmäinen ottelu, jossa asema on pelattu, avataan kyseisen siirron kohdalta; tilarivi kertoo, jos yksikään ei ole käynyt siinä), <em>Uusi näkymä</em>.</p></li>
+<li><p><strong>Analysoi</strong>: arvioi asema, sen peilikuva tai uudessa välilehdessä; <em>Nopea rollout</em> ja <em>Tavallinen rollout</em>, kuten <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">fast</span></code> ja <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">standard</span></code> (katso <a class="reference internal" href="#rollouts"><span class="std std-ref">Rolloutit</span></a>).</p></li>
+<li><p><strong>Harjoittele</strong>: lisää asema Anki-pakkaan; <em>Haaste tästä asemasta</em> ottaa haasteen (<em>m</em>) käyttöön, ja se piilottaa analyysin.</p></li>
+<li><p><strong>Hallitse</strong>: <em>Tallenna</em> (<em>CTRL-S</em>) hakulaudan tai Evalin luonnos, <em>Siirrä roskakoriin</em> (<em>Del</em>) tietokannan asema; ottelulle muokataan sen litteraattia, vaihdetaan pelaajat, muokataan sitä tai siirretään se roskakoriin; turnaukselle muokataan tai poistetaan se; kokoelmalle muokataan tai siirretään se roskakoriin.</p></li>
+<li><p><strong>Lähetä</strong>: <em>Kopioi asema kohteeseen …</em>, <em>Kopioi ottelu kohteeseen …</em> tai <em>Kopioi turnaus kohteeseen …</em>, yksi kohta kutakin muuta avointa tietokantaa kohti, sama kopio kuin Muut tietokannat -paneelissa, jonka <em>Kumoa</em> peruu; <em>Lisää erään</em>; aseman kohdalla <em>Lisää kokoelmaan …</em>, yksi kohta tietokannan kutakin kokoelmaa kohti (katso <a class="reference internal" href="manuel_interface.html#vue-ailleurs"><span class="std std-ref">Vertaa ja vaihda: Muut tietokannat -paneeli</span></a>).</p></li>
+</ul>
+<p>Tarjolla ovat vain sovellettavissa olevat toiminnot: luonnosta ei merkitä eikä siirretä roskakoriin, hakulautaa ei arvioida, tietokannasta puuttuva asema ei pääse mihinkään Anki-pakkaan, ja alivalikko ilman toimintoja katoaa. Toiminnon pikanäppäin, kun sellainen on, kirjoitetaan sen oikealle puolelle. Näppäimistöllä <em>YLÖS</em> ja <em>ALAS</em> kulkevat tason läpi, <em>OIKEA</em> avaa alivalikon sen ensimmäisestä toiminnosta, <em>VASEN</em> palaa takaisin, <em>ESC</em> sulkee alivalikon ja sitten valikon.</p>
+</section>
+<section id="la-corbeille">
+<span id="corbeille"></span><h2>Roskakori<a class="headerlink" href="#la-corbeille" title="Link to this heading"></a></h2>
+<p>Aseman, kokoelman, kommentin, Anki-kortin tai ottelun poisto kulkee <strong>roskakorin</strong> kautta: poisto todella tapahtuu, mutta kopio katoavasta säilytetään kolmekymmentä päivää. Komento <code class="docutils literal notranslate"><span class="pre">trash</span></code> avaa ikkunan, joka listaa ne, kussakin <em>Palauta</em> ja <em>Poista</em>, sekä painikkeen <em>Tyhjennä roskakori</em>.</p>
+<p>Palautettu sijainti palaa <strong>analyysinsa ja kommenttiensa</strong> kanssa — sen palauttaminen paljaana olisi palautus vain nimeltään —, samoin sen ”opiskeltu”-merkintä ja siitä annetut harjoitusvastaukset. Se saa takaisin vanhan numeronsa; jos sama sijainti on tallennettu sillä välin, se säilytetään, koska sijainti on olemassa vain kerran: se saa puuttuvan merkinnän, vastaukset ja kommentit, ja säilyttää analyysinsa, jos sillä on sellainen. Jos sen numero on toisen käytössä, se saa uuden. Kokoelma palaa listansa kanssa; sen sisältämiä sijainteja ei koskaan poistettu — kokoelma on näkymä niihin.</p>
+<p>Poistettu ottelu vie mukanaan pelinsä, siirtonsa, niiden analyysit ja sijainnit, joita mikään muu ei enää pidä, sekä lähdetiedoston muistiinpanot: roskakori säilyttää kaiken tämän. Palautettuna se palaa alkuperäisellä numerollaan ja tuontipäivällään, pelinsä, siirtonsa ja tilastonsa kanssa, ja sen tuonnin loki nimeää sen jälleen; poiston siivoamat sijainnit palaavat kuten palautettu sijainti, kirjastoon jääneet pysyvät sellaisina kuin ne ovat muuttuneet. Se saa takaisin paikkansa turnauksessaan; jos turnaus on poistettu, se palaa ilman turnausta. Se saa takaisin paikkansa johtamisessa, jos se on yhä olemassa, siinä kohtaavat samat pelaajat ja se on vapaa; muuten se jää johtajalle ja ottelu palaa ilman sitä. Näissä tapauksissa tilarivi kertoo sen. Palautus hylätään, ja merkintä jää roskakoriin, jos toinen ottelu käyttää sen numeroa tai jos sillä välin on tuotu ottelu, jolla on sama tiedoston sormenjälki; ottelua ilman sormenjälkeä, syötettyä tai blunderDB:ssä pelattua, ei verrata näin.</p>
+<p>Yli kolmekymmentä päivää vanhat poistaa komento <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>, ei koskaan tietokannan avaaminen: <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>:in tekemättä jättäminen on kaiken säilyttämistä.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Roskakori ei kulje mukana: vienti ei kuljeta sitä.</p>
+</div>
+</section>
+<section id="panneau-recherche">
+<span id="id4"></span><h2>Hakupaneeli<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
+<p><strong>Hakupaneeli</strong> (<em>CTRL-F</em> tai <em>TAB</em>) suodattaa asemia vapaasti yhdisteltävien kriteerien mukaan: pelinappularakenne, kuutiopäätöksen tyyppi, virheen suuruus, päivämäärät, tunnisteet jne. <em>TAB</em>-näppäin avaa samanaikaisesti hakupaneelin ja asemaeditorin, jolloin haettava pelinappularakenne voidaan määrittää suoraan laudalla.</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_search.png"><img alt="Hakupaneeli" src="_images/panel_search.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Hakupaneeli: numeeriset suotimet, pelinappularakenne laudalla, välilehdet <em>Vähintään</em> / <em>Paitsi</em>.</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Suodattimet asetetaan <strong>Ehdot</strong>-alivälilehdellä. Kun haku ei löydä mitään, paneeli kertoo sen (”Mikään asema ei täsmää”) ja tarjoaa <strong>Tyhjennä suodattimet</strong> -painikkeen, eikä vain tilarivi.</p>
+<p>Hae näytetyistä asemista komennolla <code class="docutils literal notranslate"><span class="pre">ss</span></code>, jota seuraavat suodattimet (esim. <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). <code class="docutils literal notranslate"><span class="pre">ss</span></code> hakee näytöllä olevasta luettelosta: edellisen haun tuloksista, avoimesta kokoelmasta tai läpikäytävän ottelun asemista, kirjoitettiinpa komento suoraan tai hakupaneelista (<em>TAB</em>). Paneelin valintaruutu <em>Hae nykyisistä tuloksista</em> noudattaa samaa sääntöä; valintaruutu <em>Avaa uudessa välilehdessä</em> näyttää tulokset uudessa näkymässä (katso <a class="reference internal" href="manuel_interface.html#onglets-vues"><span class="std std-ref">Näkymävälilehdet</span></a>) nykyisen näkymän sijaan. Kokoelmassa ja ottelussa <code class="docutils literal notranslate"><span class="pre">s</span></code> hylätään: se hakisi koko kirjastosta ja korvaisi näytetyn luettelon.</p>
+<p>Kokoelmasta tai ottelusta käynnistetyn <code class="docutils literal notranslate"><span class="pre">ss</span></code>-haun tuloksista poistutaan <em>Esc</em>-näppäimellä yhdellä painalluksella heti, kun kentällä tai kohdistetulla paneelilla ei ole mitään suljettavaa (esimerkiksi analyysissä valittu siirto): blunderDB palaa koko kokoelmaan tai ottelun tarkasteltuun siirtoon ja jätettyyn asemaan. Tämä paluu seuraa vain <code class="docutils literal notranslate"><span class="pre">ss</span></code>-komentoa: kokoelman tai ottelun päälle avatusta hakupaneelista käynnistetty <code class="docutils literal notranslate"><span class="pre">s</span></code> hakee koko kirjastosta, eikä <em>Esc</em> enää palaa jätettyyn luetteloon.</p>
+<p>Suuren tietokannan haku näytetään ennen kuin se on laskettu: ensimmäinen tulossivu tulee heti näkyviin, ja tilarivi näyttää « Haetaan… » ja kuluneen ajan, kunnes kokonaismäärä tiedetään; se korvaa silloin luettelon alustavan pituuden. Kerrallaan on käynnissä vain yksi haku: uuden haun aloittaminen hylkää edellisen. <em>Esc</em> keskeyttää käynnissä olevan haun ja pysäyttää sen tietokannan läpikäynnin; jos ensimmäinen sivu oli jo näkyvissä, se jää yksin näkyviin, ja tilarivi kertoo siitä.</p>
+<p>Paneeli tarjoaa nimenomaisen hallinnan haettavalle <strong>päätöstyypille</strong>: <em>Indifférent</em> (ei suodatinta), <em>Siirto</em> (siirtopäätökset) tai <em>Tuplaus</em> (kuutiopäätökset). Kun <em>Tuplaus</em> on valittuna, toinen luettelo tarkentaa alityypin: <em>Kaikki</em>, <em>Tuplaus / Ei tuplausta</em> (vuorossa olevan pelaajan on päätettävä, tuplaako) tai <em>Hyväksy / Luovuta</em> (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. <em>Hyväksy / Luovuta</em> -tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.</p>
+<p><strong>Pelin vaihe</strong> — avaus, keskipeli, kilpajuoksu, nappuloiden poisto — on merkintä, jonka blunderDB laskee pelkästä laudasta. Sitä ei voi koskaan muokata, ja se on haettavissa komentorivin <code class="docutils literal notranslate"><span class="pre">ph:</span></code>-merkinnällä (<code class="docutils literal notranslate"><span class="pre">ph:race</span></code>, toistettavissa: <code class="docutils literal notranslate"><span class="pre">ph:race</span> <span class="pre">ph:bearoff</span></code>). Kolme sen neljästä rajasta ovat ne, joilla GNU Backgammon ohjaa verkkojaan; neljäs, jossa avaus päättyy, on blunderDB:n käytäntö: asema on yhä avauksessa niin kauan kuin kumpikaan puoli ei ole siirtänyt yli neljää nappulaa lähtöpisteiltään, mitään ei ole poistettu eikä mikään ole palkissa.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Merkinnän laskee uudelleen komento <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code>. Tietokannassa, joka avataan ensimmäistä kertaa tällä versiolla, laskenta tehdään kerran, avattaessa. Tietokanta, jonka vaiheita ei ole koskaan laskettu, ei palauta mitään <code class="docutils literal notranslate"><span class="pre">ph:</span></code>-haulle — ei mitään, väärän vastauksen sijaan.</p>
+</div>
+<p>Tunnus <code class="docutils literal notranslate"><span class="pre">like</span></code> <strong>järjestää</strong> sen sijaan että rajaisi: sen läsnäolo järjestää tuloksen kasvavan etäisyyden mukaan kohdeasemasta — <code class="docutils literal notranslate"><span class="pre">like</span></code> nykyisestä, <code class="docutils literal notranslate"><span class="pre">like42</span></code> siitä, jonka indeksi on 42 — ja muut tunnukset rajaavat näin järjestettyä joukkoa, joten <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like42</span> <span class="pre">E&gt;80</span></code> luetaan ”aseman 42 naapurit, joissa mokasin”. Etäisyys on kuljetusetäisyys nappulapipeinä, se määrä nappuloiden liikettä, joka erottaa kaksi asemaa, vuorossa olevan pelaajan näkökulmasta.</p>
+<p>Naapuri on sama <strong>ongelma</strong>, ei sama kuvio: järjestys otetaan kohteen luokan sisältä — sama päätöksen tyyppi, sama pelimuoto (raha tai ottelu) kuutiopäätöksessä, ja eri ottelu kuin sen oma, sillä asemat, jotka ympäröivät sitä sen omassa pelissä, ovat sen lähimmät rakenteet olematta koskaan sen naapureita. Nopat, tulos ja kuutio jäävät luokan ulkopuolelle; tavalliset tunnukset rajaavat niillä silloin kun halutaan. <code class="docutils literal notranslate"><span class="pre">like42*</span></code> laajentaa luokan kaikkiin päätöstyyppeihin ja molempiin pelimuotoihin, ei koskaan kohteen otteluun; <code class="docutils literal notranslate"><span class="pre">like&lt;12</span></code> hylkää kaiken yli kahdentoista nappulapipin päässä olevan. Järjestys, joka ei löydä mitään, palauttaa tyhjän listan ja sanoo sen, eikä kymmentä asiaankuulumatonta asemaa.</p>
+<p><strong>Muokkaustilassa</strong> <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like</span></code> ottaa kohteekseen <strong>piirretyn</strong> laudan: piirretään suunnilleen se asema, jonka muistaa, käynnistetään, ja kirjasto vastaa — siinä missä rakenteen mukainen haku vaatii tarkan piirroksen. Lauta luetaan silloin asemana eikä kuviona: tyhjäksi jätetty piste lasketaan ulos kannetuiksi nappuloiksi, mikä on oikein todelliselle asemalle ja vääristää laskennan puolittain jätetylle piirrokselle.</p>
+<p>Jokainen naapuri kantaa etäisyytensä analyysitaulukoiden alla, yhdessä sen aseman kanssa, jota se on lähellä. Juuri se tekee mahdolliseksi arvioida, katsooko naapuria vai sattumaa, ja siinä on katon tarkoitus. Järjestyksen voi käynnistää myös ilman komentoriviä: <em>CTRL-SHIFT-L</em> tai laudan pikavalikon kohta <strong>Naapuriasemat</strong>.</p>
+<p>Merkki <code class="docutils literal notranslate"><span class="pre">n</span></code> laskee <strong>kohtaamiset</strong>: <code class="docutils literal notranslate"><span class="pre">n&gt;3</span></code> säilyttää paikat, jotka on kohdattu tietokannassa vähintään kolme kertaa, kaikki ottelut ja kaikki pelaajat yhteensä. Se on eri kysymys kuin ”mitä missasin” — paikka, joka on kohdattu kaksikymmentä kertaa ja pelattu hyvin yhdeksäntoista, on yhä sellainen, joka kannattaa osata ulkoa. Lasketaan päätökset, ei otteluita: sama paikka kahdesti samassa ottelussa lasketaan kahdeksi, koska päätöksiä oli kaksi. Pelaajasuodattimen kanssa lasketaan vain kyseisen pelaajan esiintymät: <code class="docutils literal notranslate"><span class="pre">n&gt;3</span> <span class="pre">pl!&quot;Alice&quot;</span></code> säilyttää paikat, jotka Alice joutui pelaamaan vähintään kolme kertaa, ja <code class="docutils literal notranslate"><span class="pre">pl&quot;Alice&quot;</span></code> ne, jotka olivat hänen pelaamissaan otteluissa; <code class="docutils literal notranslate"><span class="pre">op&quot;Bob&quot;</span></code> rajaa laskennan vastaavasti Bobia vastaan pelattuihin otteluihin.</p>
+<p><strong>Pelisuunnitelma</strong> on toinen johdettu merkintä vaiheen rinnalla, ja se vastaa kysymykseen, jota nippu tallennettuja suodattimia ei osaa esittää: ”näytä virheeni holding gamessa”. Tunnus <code class="docutils literal notranslate"><span class="pre">gt:</span></code>, toistettavissa (<code class="docutils literal notranslate"><span class="pre">gt:holding</span> <span class="pre">gt:mutualholding</span></code>), vuorossa olevan <strong>pelaajan</strong> näkökulmasta — sen suunnitelman, jossa päätös tehtiin.</p>
+<p>Kymmenen tunnistettua suunnitelmaa, siinä järjestyksessä kuin säännöt ne käyvät läpi, tarkimmasta yleisimpään:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">race</span></code> — molempien osapuolten takimmaiset nappulat ovat ohittaneet toisensa: kontakti ei ole enää mahdollinen. GNU Backgammonin raja.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bearin</span></code> — vuorossa oleva kotiuttaa nappuloitaan, kun vastustaja pitää yhä ankkuria hänen kotialueellaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crunch</span></code> — vuorossa olevalla on enintään kuusi nappulaa pisteidensä 1 ja 2 ulkopuolella. GNU Backgammonin sääntö, sen tekijän kynnysarvo.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">backgame</span></code> — kaksi tai useampi ankkuri vastustajan kotialueella.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acepoint</span></code> — yksi ainoa ankkuri, vastustajan ykköspisteellä, vähintään kaksikymmentä pipiä jäljessä.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blitz</span></code> — kolme tai useampi kotipiste tehtynä, ja vastustaja palkilla tai yksinäinen nappula lyötävänä siellä.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">primevprime</span></code> — molemmat pitävät vähintään neljän pisteen muuria, ja kummallakin on nappula loukussa toisen muurin takana.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutualholding</span></code> — molemmat pitävät korkeaa ankkuria.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">holding</span></code> — vuorossa oleva pitää korkeaa ankkuria, vastustaja ei.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contact</span></code> — kontakti, eikä mikään yllä olevista suunnitelmista. Avaus päätyy tänne.</p></li>
+</ul>
+<p>Kolme näistä säännöistä on GNU Backgammonin omia ja lähteistettyjä; loput ovat <strong>blunderDB:n sopimuksia</strong>. Backgammon-kirjallisuus kuvaa pelisuunnitelmat panematta niiden rajoille lukuja, eikä tälle ongelmalle ole julkaistu luokittelijoiden välistä yksimielisyysmittausta. Lähteistämättömät kynnysarvot — kolme kotipistettä blitzille, neljä pistettä muurille, kaksikymmentä pipiä jäljessä ace-point-pelille — todetaan siksi tässä eikä piiloteta koodiin, ja ne on versioitu: muuta ne, aja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code>, ja koko tietokanta merkitään uudelleen.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Asemaa kohti säilytetään yksi merkintä, vuorossa olevan pelaajan. Johdettu merkintä ei ole koskaan muokattavissa eikä sitä viedä koskaan totuutena, ja tietokanta, jonka suunnitelmia ei ole koskaan laskettu, ei palauta <code class="docutils literal notranslate"><span class="pre">gt:</span></code>-haulle mitään — kuten ei <code class="docutils literal notranslate"><span class="pre">ph:</span></code>-haullekaan.</p>
+</div>
+<p>Suodatin <strong>Merkitty</strong> säilyttää asemat, jotka olet merkinnyt ottelun lähdeohjelmassa. Vain eXtreme Gammon tuottaa tämän tiedon, joka tallennetaan siirto siirrolta <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedostoon; blunderDB lukee sen tuonnin yhteydessä ja säilyttää sen. Merkitty tuplauspäätös tuottaa kaksi merkittyä asemaa, tuplauksen ja hyväksynnän/luovutuksen, koska blunderDB jakaa kahtia sen, minkä lähdetiedosto tallentaa yhtenä päätöksenä.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Merkintä ei ole takautuva: tietokannassa jo olevat ottelut eivät sisällä tätä tietoa, koska se on olemassa vain lähdetiedostoissa. Riittää, että tuot kyseisen <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedoston uudelleen — tuonti tunnistaa kaksoiskappaleen eikä lisää muuta kuin merkinnät, koskematta olemassa oleviin kommentteihin tai analyyseihin. Merkintää ei voi asettaa eikä poistaa blunderDB:stä: väliaikaista työlistaa varten käytä mieluummin kokoelmaa.</p>
+</div>
+<p>Suodatin <strong>Kommentti</strong> tutkii asemiin liitettyjä kommentteja kolmessa toisensa poissulkevassa tilassa. <em>sisältää tekstin</em> etsii yhtä tai useampaa sanaa kommenttien tekstistä (syöttökenttä, sanat erotettuna merkillä <code class="docutils literal notranslate"><span class="pre">;</span></code>, vähintään yhden on täsmättävä); <em>on kommentti</em> säilyttää jokaisen aseman, jossa on kommentti, sisällöstä riippumatta; <em>ei kommenttia</em> säilyttää päinvastoin kommentoimattomat asemat — hyödyllistä yhdessä virhe- tai päivämääräsuodattimen kanssa laadittaessa luetteloa siitä, mitä on vielä kommentoitava.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Ottelutiedostosta (XG, GNUbg) tuodut kommentit lasketaan kommenteiksi. Pitääksesi vain omasi lisää komentoriville merkintä <code class="docutils literal notranslate"><span class="pre">co:user</span></code> (<code class="docutils literal notranslate"><span class="pre">co:xg</span></code>, <code class="docutils literal notranslate"><span class="pre">co:gnubg</span></code>, <code class="docutils literal notranslate"><span class="pre">co:bgf</span></code> ja <code class="docutils literal notranslate"><span class="pre">co:unknown</span></code> nimeävät muut alkuperät). Sitä paitsi <em>otteluun</em> tai <em>turnaukseen</em> liitetyt kommentit eivät kuulu tähän: ne kommentoivat ottelua tai turnausta, eivät sen asemia.</p>
+</div>
+<p><strong>Ottelut ja turnaukset</strong> -suodatin perustuu yhteiseen valitsimeen (modaali-ikkuna) numeeristen tunnisteiden kirjoittamisen sijaan: kaksi valintaruutuluetteloa, yksi otteluille ja yksi turnauksille, kumpikin tekstillä suodatettavissa (pelaaja, päivämäärä, tapahtuma otteluille; nimi, päivämäärä, paikka turnauksille), sekä <em>Kaikki</em> / <em>Ei mitään</em> -painikkeet, jotka vaikuttavat vain parhaillaan suodatettuun osajoukkoon. Turnauksen valitseminen valitsee automaattisesti (ja harmaantaa) sen jäsenottelut ottelulistassa, mikä tekee näkyväksi sen, että turnaus vastaa otteluidensa joukkoa.</p>
+<p>Hakupaneelin palkissa on valitsin <em>Kriteerit</em> (suodattimet) | <em>Historia</em> | <em>Tallennetut</em> — sekä neljäs osa, <em>Avustaja</em>, kun sisäinen avustaja on käytössä — ja <em>Kriteerit</em>-näkymässä <strong>Hae</strong>-painike palkin oikeassa päässä. <strong>Historia</strong>-välilehti luettelee aiemmat haut päivämäärineen ja komentoineen: napsautus valitsee haun ja näyttää siihen liittyvän aseman laudalla, kaksoisnapsautus suorittaa sen uudelleen. Kunkin merkinnän voi tallentaa suodatinkirjastoon (kirjanmerkkikuvake, antamalla suodattimelle nimi) tai poistaa. <strong>Tallennetut</strong>-välilehti sisältää <strong>suodatinkirjaston</strong>: kaksoisnapsauta tallennettua suodatinta suorittaaksesi vastaavan haun uudelleen (katso <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Liite: Suodattimien edistynyt käyttö</span></a>). Komento <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) avaa hakupaneelin.</p>
+<p>Kirjaston suodattimen tähti <strong>kiinnittää</strong> sen. Kiinnitetyt suodattimet näkyvät merkkeinä paneelin yläreunassa, mikä tahansa välilehti on auki, numeroituina kirjaston järjestyksessä: merkin napsautus käynnistää suodattimen, ja <code class="docutils literal notranslate"><span class="pre">ALT-1</span></code> … <code class="docutils literal notranslate"><span class="pre">ALT-9</span></code> käynnistävät kyseisen sijan kiinnitetyn suodattimen miltä tahansa näytöltä tilassa NORMAL tai EDIT avaamatta paneelia. Suodatin esittää silloin saman kysymyksen kuin kaksoisnapsautuksella, nappularakenne mukaan lukien. Kiinnitys kuuluu tietokantaan: se seuraa uudelleennimettyä suodatinta, katoaa poistetun suodattimen mukana eikä kulje kirjaston viennin mukana.</p>
+<p>Uudelleen ajettu haku säilyttää järjestyksensä: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like42</span></code> järjestää suhteessa asemaan 42 ja <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like</span></code> suhteessa haun mukana tallennettuun lautaan — siihen, jota selattiin tai joka piirrettiin. Merkintää, johon lautaa ei tallennettu, ei ajeta näytöllä olevaa lautaa vastaan, ja tilarivi kertoo sen.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso saatavilla olevien suodattimien luettelo kohdasta <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">komentoluettelo</span></a>.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="id5"></span><h2>Kokoelmapaneeli<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id8">
+<a class="reference internal image-reference" href="_images/panel_collections.png"><img alt="Kokoelmapaneeli" src="_images/panel_collections.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Kokoelmat-paneeli: nimi, asemien määrä, kuvaus, viimeisin muokkaus.</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Kokoelmat-, Turnaukset-, Anki- ja Litterointi-paneeleissa otsikon <strong>+</strong>-painike, jota seuraa luotavan nimi (<strong>+ Uusi kokoelma</strong>, <strong>+ Uusi turnaus</strong>, <strong>+ Uusi pakka</strong>, <strong>+ Uusi litterointi</strong>), on ainoa luontitapa: se avaa syöttökentän, jonka <em>Esc</em> tai <strong>Peruuta</strong> sulkee Kokoelmat- ja Turnaukset-paneeleissa. Otteluluettelossa ⌨-kuvake avaa ottelun litteroinnin ja ✎-kuvake korjaa sen metatiedot.</p>
+<p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Komento <code class="docutils literal notranslate"><span class="pre">ss</span></code> hakee avoimen kokoelman asemista; <em>Esc</em> palaa sen jälkeen kokoelmaan (katso <a class="reference internal" href="#panneau-recherche"><span class="std std-ref">Hakupaneeli</span></a>). Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code class="docutils literal notranslate"><span class="pre">collection</span></code> näyttääksesi tai piilottaaksesi paneelin.</p>
+<p>Avatun kokoelman otsakkeessa asemien määrä on linkki, joka palauttaa ne selattaviksi ensimmäisestä alkaen; ruutu <strong>tässä kokoelmassa</strong> lisää näytetyn aseman kokoelmaan tai poistaa sen. Tyhjä luettelo tarjoaa <strong>+ Uusi kokoelma</strong> -painikkeen.</p>
+<p><strong>Pino</strong> on ”katso myöhemmin” -eleen kokoelma: kaksoisnapsautus laudan ulkopuolella, näppäin <em>b</em> tai työkalupalkin kirjanmerkkipainike lisää näytetyn aseman pinoon, ja sama ele poistaa sen sieltä. Laudan kulmassa oleva kirjanmerkki kertoo, että asema on pinossa, ilman muuta viestiä. Ele toimii kaikkialla, missä asema on näkyvissä: tarkastelussa, haussa, muokkauksessa, Evalissa, Transkriptiossa, tietovisassa, Kaksintaistelussa. Laudan nollaus tapahtuu oikean painikkeen valikon kautta (ks. <a class="reference internal" href="manuel_interface.html#board-menu-contextuel"><span class="std std-ref">laudan valikko</span></a>). Pino on tavallinen kokoelma — se nimetään uudelleen, järjestetään uudelleen, viedään ja tyhjennetään kuten muutkin; se luodaan ensimmäisellä käyttökerralla ja luodaan uudelleen, jos se on poistettu. Asema, jota ei vielä ole kirjastossa (haku- tai arviointilaudan luonnos), kirjoitetaan sinne heti kuten yksinään tuotu asema ja lisätään sitten pinoon. Komentorivi tekee saman eleen komennolla <code class="docutils literal notranslate"><span class="pre">collection</span> <span class="pre">pile</span></code>.</p>
+<p>Kokoelma voi olla <strong>elävä</strong>: sen sisältö ei ole enää käsin tehty lista vaan <strong>haun</strong> tulos, joka lasketaan uudelleen joka avauksella. Kokoelman otsikon ◇-painike tekee siitä elävän viimeisimmällä haulla; ◈ kertoo sen jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen sisältämät asemat ovat yhä tallella, kun palaat.</p>
+<p>Elävässä kokoelmassa näkyvä painike ❄ <strong>jäädyttää</strong> sen: haun sillä hetkellä valitsemista asemista tulee tavallisen kokoelman sisältö haun järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli ennen sen muuttumista eläväksi, korvataan.</p>
+<p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
+<p>Elävä kokoelma <strong>pysyy elävänä tietokannan viennissä</strong>: sen kysely kulkee sen mukana ja arvioidaan vastaanottajalla uudelleen tiedoston asemia vasten. Kun vienti ottaa mukaan kokoelmien asemat, se ottaa ne, jotka kysely valitsee viennin hetkellä, enintään 5 000 aseman ylärajaan asti. Kysely, joka nimeää asemia, otteluita tai turnauksia numeroilla, kirjoitetaan uudelleen tiedoston numeroille; jos jokin niistä jää tiedoston ulkopuolelle, kokoelma viedään <strong>jäädytettynä</strong> niillä asemilla, jotka kysely valitsee viennin hetkellä.</p>
+<p>Elävään kokoelmaan perustuva harjoituspakka välitetylle toistolle suorittaa kyselynsä uudelleen aina, kun istunto avataan: asemat, jotka haku on valinnut edellisen kerran jälkeen, tulevat siihen, ja jo mukana olevat kortit säilyttävät ajoituksensa. Arviointi rajataan 5 000 aseman <strong>ylärajaan</strong>; kun kysely valitsee enemmän, vain ensimmäiset haun järjestyksessä syöttävät pakkaa, ja tilarivi kertoo tämän yhdessä valittujen asemien todellisen määrän kanssa.</p>
+<p id="positions-reference">Otsikon <strong>Ehdota…</strong>-painike avaa <strong>viiteasemat</strong>: lyhyen luettelon opiskeltavia asemia, jotka on valittu virheidesi joukosta niin, että kukin tiivistää monta. Kymmenen pahimman virheen opiskelu tuottaa usein kymmenen saman ongelman muunnelmaa tai yksittäisiä asemia, jotka eivät opeta mitään muista; viiteasema on usean virheesi keskellä, rakenteeltaan samankaltaisena, ja sen opetus palvelee kaikkia.</p>
+<ul class="simple">
+<li><p>Virheet ovat <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">opintosuunnitelman</span></a> virheitä: ne on mitattu MWC:nä ja ryhmitelty perheisiin (pelisuunnitelma, luonne, teema). Perheen kaksi virhettä ovat <strong>naapureita</strong>, jos niiden <code class="docutils literal notranslate"><span class="pre">like</span></code>-etäisyys on enintään 12 nappulaaskelta; tuplauskuution virheen naapureita ovat vain samassa tilanteessa olevat.</p></li>
+<li><p>Kunkin aseman arvo on sen naapureiden ja sen itsensä <strong>palautettavissa oleva MWC</strong> (menetys miinus vaikeus): se, mitä sen opetus tuottaisi, jos se palvelisi kaikkia. <strong>Tiukka</strong> opetus (toinen valinta maksaa alle puoli virhettä) tai <strong>epävakaa</strong> tuomio (toinen syvyys tai rollout sanoo muuta) lasketaan puoliksi; vahvistava rollout merkitään. Jokaisen rivin alussa oleva luku on katettu MWC; peruste antaa luvun, joka lasketaan, kun oppitunti lasketaan puoliksi.</p></li>
+<li><p>Luettelo on <strong>monipuolinen</strong>: valittu asema kattaa naapurinsa, jotka eivät enää tuota mitään seuraaville, eikä mikään ehdotettu asema ole toisen lähes kaksoiskappale. <strong>Jo käsiteltyä</strong> asemaa — kommentoitua, kokoelmassa olevaa, Anki-korttia tai „opiskelluksi“ merkittyä — ei koskaan ehdoteta, ja sen naapurien katsotaan olevan katettuja.</p></li>
+</ul>
+<p><strong>Laajuus</strong> on koko tietokanta, käynnissä oleva ottelu, turnaus tai Tilastot-paneelin suodatin; pelaaja on tämän suodattimen pelaaja. <strong>Koko</strong> on 10, 20 tai 50 asemaa. Jokainen rivi ilmoittaa perheensä, tilanteensa jos kyse on tuplauskuutiosta, kattamansa MWC:n ja sen perusteen: montako virhettä ja ottelua se tiivistää, perheensä koon päätöstesi joukossa, oman palautettavissa olevan osuutensa ja eron toiseen valintaan. Rivin napsautus avaa aseman; valitut ruudut muuttuvat yhdellä napsautuksella <strong>kokoelmaksi</strong>, <strong>Anki-pakaksi</strong> tai <strong>tietovisaksi</strong>. Komentorivillä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span> <span class="pre">suggest</span></code> (katso <a class="reference internal" href="cli_bibliotheque.html#cli-collection"><span class="std std-ref">collection — Kokoelmien hallinta</span></a>).</p>
+<section id="lecons">
+<span id="id6"></span><h3>Oppitunnit<a class="headerlink" href="#lecons" title="Link to this heading"></a></h3>
+<p><strong>Oppitunti</strong> on vaiheiden sarja, jonka valmentaja kirjoittaa kerran oppilasta varten ja luovuttaa tälle tietokantatiedostossa (katso komento <code class="docutils literal notranslate"><span class="pre">lesson</span> <span class="pre">export</span></code> sivulla <a class="reference internal" href="cli.html"><span class="doc">Komentoriviliittymä (CLI)</span></a>). Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Komento <code class="docutils literal notranslate"><span class="pre">le</span></code> luettelee tietokannan oppitunnit tilarivillä; <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">2</span></code> avaa oppitunnin 2; <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span></code> avaa oppituntieditorin.</p>
+<p>Laudan yläpuolelle ilmestyy silloin <strong>lukupalkki</strong>: oppitunnin nimi, vaiheen numero, otsikko ja sitten teksti. <em>Edellinen</em> ja <em>Seuraava</em> vaihtavat vaihetta; vaihe tuo laudalle kokoelman tai aseman, jonka se näyttää, ja sitä selataan tavallisin elein. <em>Sulje</em> poistuu oppitunnilta. Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä.</p>
+<p>Palkin <em>Vaihe tehty</em> -valintaruutu merkitsee nykyisen vaiheen tehdyksi; toinen napsautus poistaa merkin, ja palkki laskee tehdyt vaiheet. Se on ainoa ele, joka kirjoittaa jotakin: oppitunnin lukeminen, vaiheen vaihtaminen tai oppitunnin avaaminen ei tallenna mitään, ei saavutettua vaihetta eikä avaamista. Merkki kirjoitetaan avattuun tietokantaan, oppilaan omaan, eikä mikään vienti vie sitä mukanaan. Oppitunnin sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa oleva oppitunti jää koskematta.</p>
+<p><strong>Oppituntieditori</strong> avautuu komennolla <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span></code> (<code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span> <span class="pre">2</span></code> oppitunnille 2) tai lukupalkin <em>Muokkaa</em>-painikkeella. Vasemmalla ovat oppituntien luettelo ja kenttä uuden luomiseen; oikealla valitun oppitunnin nimi ja kuvaus, sitten sen vaiheet. Jokaisella vaiheella on otsikko, teksti, luettelosta valittu kokoelma ja asema: <em>Nykyinen asema</em> liittää siihen laudalla näkyvän aseman, <em>Irrota asema</em> poistaa sen. <em>Tallenna vaihe</em> kirjoittaa sen muutokset; nuolet siirtävät sitä yhden askeleen; <em>Lisää vaihe</em> lisää uuden loppuun. <em>Lue</em> sulkee editorin ja avaa oppitunnin sen ensimmäisestä vaiheesta; <em>Vie verkkosivuna</em> tallentaa oppitunnin yhteen itsenäiseen HTML-tiedostoon (otsikko, kuvaus, jokainen vaihe tekstineen ja lautoineen, kunkin aseman tallennettu analyysi taitettuna kuin tietokilpailun vastaus, vesileiman alkuperä alatunnisteessa), valmiina julkaistavaksi sellaisenaan: se ei sisällä skriptiä eikä tee verkkokutsuja; <em>Poista</em> poistaa oppitunnin ja sen vaiheet koskematta kokoelmiin tai asemiin, joita ne näyttivät. Oppitunteja voi luoda ja muokata myös komentoriviltä tai API:n kautta (<a class="reference internal" href="mode_headless.html#headless-lecons"><span class="std std-ref">Oppitunnit</span></a>).</p>
+<p>Varmuuskopio — koko kirjaston vienti vientiikkunasta tai komentoriviltä — vie mukanaan kaikki oppitunnit. Vientiikkunassa rivi <em>Oppitunnit</em> valitsee ne yksi kerrallaan: jokainen valittu oppitunti lähtee mukaan niiden kokoelmien ja asemien kanssa, joita sen vaiheet näyttävät, ja tiedostoon voi lisätä vesileiman tai suojata sen salasanalla (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) kuten minkä tahansa viennin. Ilman tätä ruutua osittainen vienti (asemien, kokoelmien tai otteluiden valinta) ei vie oppitunteja mukanaan.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_interface.html" class="btn btn-neutral float-left" title="Aloitus ja käyttöliittymä" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_matchs.html" class="btn btn-neutral float-right" title="Ottelut ja litterointi" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

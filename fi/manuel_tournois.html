@@ -1,0 +1,305 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Turnaukset &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Tilastot" href="manuel_stats.html" />
+    <link rel="prev" title="Ottelut ja litterointi" href="manuel_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/manuel_tournois.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_tournois.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_tournois.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_tournois.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_tournois.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/manuel_tournois.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_tournois.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_tournois.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Käyttöopas</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Aloitus ja käyttöliittymä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyysi, kommentit ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Ottelut ja litterointi</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Turnaukset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-tournois">Turnauspaneeli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diriger-un-tournoi">Turnauksen johtaminen</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#la-page-direction">Johtamissivu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#la-fiche-de-resultat">Tuloskortti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-menus-contextuels">Kontekstivalikot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-plein-ecran">Koko näyttö</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#la-recherche-rapide">Pikahaku</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-joueurs">Pelaajat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#arbres-emplacements-classement-historique">Kaaviot, paikat, sijoitukset, historia</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-reglages">Asetukset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-epreuves-d-un-evenement">Tapahtuman kilpailut</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#l-affichage-du-tournoi">Turnauksen näyttö</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Tilastot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Arviointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Harjoittelu, Anki ja kaksintaistelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Tuonti, alkuperä ja jakaminen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Käyttöopas</a></li>
+      <li class="breadcrumb-item active">Turnaukset</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tournois">
+<span id="manuel-tournois"></span><h1>Turnaukset<a class="headerlink" href="#tournois" title="Link to this heading"></a></h1>
+<section id="panneau-tournois">
+<span id="id1"></span><h2>Turnauspaneeli<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_tournaments.png"><img alt="Turnauspaneeli" src="_images/panel_tournaments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Turnaukset-paneeli: yksi turnaus per rivi, otteluiden määrä, viitepelaajan PR.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p><strong>Turnauspaneeli</strong> (<em>CTRL-Y</em>) mahdollistaa otteluiden ryhmittelyn turnauksiin järjestelmällistä seurantaa ja tapahtumakohtaista tilastollista analyysiä varten. Turnauksia voi luoda, nimetä uudelleen ja poistaa; otteluita voi liittää niihin. Stats-paneelin tilastoja voi suodattaa turnauksen mukaan. Näytä tai piilota paneeli painamalla <em>CTRL-Y</em>.</p>
+<p><strong>Uusi turnaus</strong> avaa luontikentän, joka saa kohdistuksen; <em>ESC</em> tai <strong>Peruuta</strong> sulkee sen. Otsikkokaistan suodatinkenttä rajaa luetteloa kirjoitettaessa: jokaisen kirjoitetun sanan on löydyttävä nimestä, paikasta tai päivästä, laskuri näyttää »näytetyt / yhteensä» ja <em>ESC</em> tyhjentää kentän. Napsautus korostaa rivin, kaksoisnapsautus tai <em>ENTER</em> avaa turnauksen. Sen otsikossa ovat päivämäärä, paikka ja otteluiden määrä, jonka napsautus muuttaa turnauksen asemien luetteloksi; oikealla ovat muistiinpanot, <strong>Johda</strong> ja <strong>Yhteenveto</strong>. Sen alla ovat sen ottelut, yksi per rivi, ▲ ja ▼ järjestävät uudelleen, ⇄ vaihtaa pelaajia ja × poistaa turnauksesta. Napsautus ottelun kohdalla näyttää taulukon alla sen kortin, saman kuin Ottelut-paneelissa (välilehdet Transkriptio, Kaaviot, Tarkistettavat, Yksityiskohdat, Tiedot, Tilastot); toinen napsautus tai <em>ESC</em> sulkee sen, kaksoisnapsautus tai <em>ENTER</em> avaa ottelun laudalle. Kenttä <strong>Lisää ottelu…</strong> sijoittaa siihen tietokannan ottelun, ja ← palauttaa turnausluetteloon.</p>
+<p>Jokainen rivi alkaa järjestysnumerollaan (#) ja päivämäärällään, kuten Ottelut-paneelissa: luettelo etenee uusimmasta vanhimpaan, ja otsikon napsautus lajittelee sen. Turnaus, jolla ei ole päivämäärää, saa vanhimman ottelunsa päivämäärän harmaana näytettynä; se luetaan, eikä sitä koskaan kirjoiteta tietokantaan. Muokkauslomakkeen päivämääräkenttä pysyy tyhjänä, kunnes siihen kirjoitetaan jotain: luettu päivämäärä näkyy vain harmaana, kentän vieressä, ja tallennus kirjoittaa päivämäärän vain, jos se on kirjoitettu.</p>
+<p>Turnaukset täyttyvät itsestään tuonnissa. XG-, GnuBG- ja BGF-tiedostot nimeävät tapahtumansa; kun uusi ottelu tuodaan, blunderDB sijoittaa sen samannimiseen turnaukseen ja luo turnauksen, jos sitä ei vielä ole. Paikka jää tyhjäksi, ja päivämäärä on vanhimman ottelun päivämäärä, kunnes se syötetään tässä. Tietokannassa jo olevaa ottelua ei koskaan sijoiteta uudelleen: sen tiedoston tuominen uudelleen ei kumoa käsin tehtyä sijoittelua.</p>
+<p>Kunkin turnauksen <strong>PR</strong>- ja <strong>MWC</strong>-sarakkeet näyttävät <strong>viitepelaajan</strong> PR-arvon ja MWC-menetyksen pelkästään tämän omista päätöksistä. Viitepelaaja on tietokannan <a class="reference internal" href="manuel_matchs.html#joueur-principal"><span class="std std-ref">pääpelaaja</span></a>, heti kun jokin hänen analysoiduista päätöksistään lasketaan mukaan turnaukseen, riippumatta ottelujen määrästä: hänet tunnistetaan kaikilla aliaksillaan, joiden päätökset lasketaan yhteen. Jos pääpelaajaa ei ole tai jokin hänen analysoiduista päätöksistään ei ole mukana tässä turnauksessa (analysoimaton ottelu), viitepelaaja on se, joka esiintyy turnauksen useimmissa otteluissa; tasatilanteessa se, joka teki eniten päätöksiä, sitten nimi, joka tulee ensin merkkijärjestyksessä (aksenttimerkillinen kirjain <em>z</em>:n jälkeen). PR ei siis sekoita omaa peliäsi vastustajiesi peliin: kun sinut on nimetty pääpelaajaksi, se kuvastaa yksin sinun suoritustasi jokaisessa turnauksessasi, vaikka siinä olisi vain yksi ottelu. Viitepelaajan nimi näkyy työkaluvihjeenä, kun viet osoittimen arvon päälle.</p>
+<p id="bilan-tournoi"><strong>Turnauksen yhteenveto.</strong> Avoimen turnauksen otsikossa oleva <strong>Yhteenveto</strong>-painike vastaa kysymykseen, jonka esittää itselleen kilpailusta palatessaan: pelasinko omalla tasollani, ja jos en, missä se petti? Pelaaja on oletuksena pääpelaaja, jos tämä on pelannut turnauksessa, muuten sen otteluissa eniten mukana ollut (tasatilanteessa nimi, joka tulee ensin merkkijärjestyksessä); <strong>Pelaaja</strong>-valikosta valitaan toinen. Kynnysarvot vahvistettiin ennen minkään tuloksen tarkastelua.</p>
+<ul class="simple">
+<li><p><strong>Tavanomainen taso</strong> on tämä pelaaja turnausta edeltäneiden 365 päivän pisteotteluissaan (turnauksen päivämäärä tai sen puuttuessa ensimmäisen ottelun päivämäärä), turnauksen omat ottelut pois lukien. Vain aiempi lasketaan: se on taso, jolla saavuttiin paikalle. Vähintään 5 ottelua tarvitaan; muuten taso julistetaan tuntemattomaksi.</p></li>
+<li><p>Turnauksen <strong>PR ja MWC-tappio (7 pisteen ekv.)</strong> tavanomaiseen tasoon verrattuna, kummallakin 95 %:n luottamusväli otteluiden yli. Tuomio — <em>huonompi</em>, <em>parempi</em>, <em>tavanomainen</em> — koskee eroa ja sen omaa väliä; se annetaan vain, kun väli on olemassa ja kummallakin puolella on vähintään 20 päätöstä, muuten se on <em>riittämätön</em>. Kolmen ottelun turnaus sanoo harvoin ”huonompi”: luvut pysyvät näkyvissä, tuomio odottaa todisteita.</p></li>
+<li><p><strong>Kierroksittain</strong>: jokainen ottelu turnauksen järjestyksessä, vastustaja, sen PR (väli pelien yli) ja sen 7 pisteen ekv. -tappio, tavanomaiseen PR:ään verrattuna.</p></li>
+<li><p><strong>Päätöksen järjestysluvun mukaan ottelussa</strong>, 30 päätöksen jaksoissa: jos pitkien otteluiden loppu maksaa tavallista enemmän, kyse on väsymyksestä, jota on harjoiteltava (tauot, rytmi), ei asemaperheestä.</p></li>
+<li><p><strong>Pistetilanteen mukaan</strong>: DMP, Crawford-peli, post-Crawford ja muut pistetilanteet, verrattuna tavanomaisen tason samoihin pistetilanteisiin — kohtiin, joissa virhe ratkaisee ottelun.</p></li>
+<li><p><strong>Tahdin mukaan</strong>: nopeat tai harkitut päätökset, ottelun tämäntyyppisen päätöksen kestojesi mediaanin kummallakin puolella. Näin kello luetaan: aikareserviä ei tallenneta siirto kerrallaan.</p></li>
+<li><p><strong>Turnauksen virheperheet</strong>: enintään kolme opintosuunnitelman perhettä (ks. <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">Opintosuunnitelma</span></a>) rajattuna turnauksen virheisiin, samoilla säännöillä (5 lukuina ilmaistua virhettä, positiivinen alaraja); muut lasketaan ”vahvistettaviksi”. Nämä ovat ensin varattavat harjoitukset.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">tournament</span></code> tulostaa saman yhteenvedon, ja palvelin tarjoaa sen reitillä <code class="docutils literal notranslate"><span class="pre">/v1/stats.tournamentReview</span></code>.</p>
+</section>
+<section id="diriger-un-tournoi">
+<span id="id2"></span><h2>Turnauksen johtaminen<a class="headerlink" href="#diriger-un-tournoi" title="Link to this heading"></a></h2>
+<p>blunderDB osaa <strong>johtaa</strong> turnauksen, ei vain arkistoida sitä. Johtamisen kantaa <strong>Nicomaque</strong>-moottori, tekijänään Nicolas Harmand: se pitää muodon, paritukset, kaaviot ja sijoitukset; blunderDB antaa sille käyttöliittymän ja säilyttää sen ottelut. Johtamisnäkymän otsikon <strong>ⓘ</strong>-painike muistuttaa tästä ja johtaa moottorin repositorioon ja dokumentaatioon.</p>
+<p>Johdettava turnaus valitaan <a class="reference internal" href="#panneau-tournois"><span class="std std-ref">Turnauspaneeli</span></a> -paneelista (<em>CTRL-Y</em>, komento <code class="docutils literal notranslate"><span class="pre">direct</span></code>): avaa turnaus ja valitse <strong>Johda</strong>. Jo johdettu turnaus näyttää tilansa nimensä vieressä ja painike muuttuu muotoon <strong>Avaa johtaminen</strong>. Niin kauan kuin johtaminen on auki, pääalue näyttää turnauksen <strong>laudan sijasta</strong> — blunderDB:n ainoa poikkeus tästä säännöstä; mille tahansa muulle välilehdelle siirtyminen tuo laudan takaisin. <strong>Poistu johtamisesta</strong> näkymän otsikossa tai <strong>Sulje johtaminen</strong> paneelissa sulkee sen.</p>
+<p>Johtamisella on kolme tilaa: <strong>valmistelussa</strong>, kunnes yhtään ottelua ei ole aloitettu, sitten <strong>käynnissä</strong>, ja <strong>päättynyt</strong>, kun turnaus on suljettu ja sijoitukset lukittu. Suljetun turnauksen voi avata uudelleen, ja se kysyy vahvistusta: loppusijoitus lakkaa olemasta lopullinen.</p>
+<p>Kaikki päätetty kirjoitetaan <strong>lokiin</strong>, eikä mitään muuta kirjoiteta. Sijoitukset, kaaviot, ehdotukset ja varoitukset toistetaan tästä lokista joka avauksella: sähkökatko ei maksa mitään, eikä korjaus koskaan pyyhi tapahtunutta — se lisätään siihen.</p>
+<section id="la-page-direction">
+<h3>Johtamissivu<a class="headerlink" href="#la-page-direction" title="Link to this heading"></a></h3>
+<p>Täällä johtaja viettää suurimman osan ajastaan. Ylhäältä alas: moottorin <strong>varoitukset</strong>, jotka pysyvät näkyvissä eivätkä koskaan estä mitään; <strong>pöytäruudukko</strong>, jonka otsikkorivillä on <strong>Tulosta lomake</strong> -painike parituksille; <strong>viimeisin päätös</strong>; <strong>ehdotuslista</strong>; ja vapaat pelaajat. Ruudukko tulee ennen listaa: pitkä lista ei koskaan työnnä sitä pois näytöltä. Näppäimistöllä sivun ensimmäinen <em>TAB</em>-pysäkki on ”Siirry jonoon”, joka siirtää kohdistuksen jonoon ruudukon läpi kulkematta; jono muistuttaa otsikkonsa alla pikanäppäimistään (<em>J</em> ja <em>K</em>, <em>ENTER</em>, <em>VASEN</em> ja <em>OIKEA</em>).</p>
+<p>Näkymä täyttää pääalueen koko leveyden, ja jokainen välilehti vierittyy erikseen: kun välilehdestä poistuu ja palaa, tai siirtyy kilpailusta toiseen, paikka on se, johon sen jätti. Painikkeet ja kentät ovat vähintään 44 pikseliä korkeita, jotta niihin osuu tarkkuutta vaatimatta tiskin ääressä; ruudukon sarakkeiden määrä seuraa alueen leveyttä, ei ikkunan. <strong>Asetuksissa</strong> jokainen osio taittuu otsikkoonsa, ja Asetusten <strong>Avaa selaimessa</strong> -painike sekä otsikkorivin <strong>Seinäsivu</strong>-painike avaavat seinäsivun yhdellä napsautuksella, kun tulostuskansio on valittu; tilarivi näyttää kirjoitetun tiedoston polun. Ilmoittautuminen, myöhästynyt, seuraava vaihe, arvonta, ottelun aloitus ja päättäminen jättävät myös sinne palautteen (”Sophie Martin ilmoittautui — 16 ilmoittautunutta”).</p>
+<p>Turnauksen johto avautuu <strong>Pelaajiin</strong>, kunnes turnaus on aloitettu, sen jälkeen <strong>Johto</strong>-välilehdelle, ja uudelleen avattaessa välilehdelle, jolle se jäi. Sovelluksen uudelleenlatauksen tai uudelleenkäynnistyksen jälkeen viimeksi avoinna ollut johto avautuu itsestään samalle välilehdelle. Toinen napsautus kohtaan <em>Johda</em> tai <em>Avaa johto</em> näkymän latautuessa ohitetaan.</p>
+<p>Ehdotetun kierroksen voi ilmoittaa ennen sen käynnistämistä: <strong>Tuleva kierros…</strong> <em>Tulosta lomake</em> -painikkeen vieressä kysyy tulostettavan päivän ja kellonajan (”maanantai 21.9. klo 20”) ja tulostaa jonon parien arkin merkittynä ”ilmoitetuksi”. Mitään ei käynnistetä eikä kirjoiteta lokiin: kierros käynnistetään sinä päivänä, aikanaan. Vapaata pöytää odottavalla parilla on pöytänumeron paikalla viiva.</p>
+<p>Turnausnäkymän yläreunassa <strong>kellopalkki</strong> mahtuu yhdelle riville: kellonaika, ensimmäisestä käynnistetystä ottelusta kulunut aika, pelatut ja käynnissä olevat ottelut, havaittu tahti minuutteina pistettä kohden suunniteltuun verrattuna, hitaat ottelut, seuraava tauko ja <strong>arvioitu loppu</strong>. Arvioitu loppu on moottorin ennuste: se toistaa lokin, pelaa turnauksen loppuun viisitoista kertaa suunnitellulla tahdilla, ja palkki näyttää mediaanin ilmoitettujen taukojen jälkeen siirrettynä. Yö, jota ei ole ilmoitettu tauoksi, lasketaan siis peliajaksi. Kellonaika, joka ei ole tältä päivältä, näyttää päivänsä.</p>
+<p>Toisesta päivästä alkaen kulunut aika vaihtuu <strong>pelipäiväksi</strong> (ensimmäisen käynnistetyn ottelun päivä on päivä 1) ja <strong>peliajaksi</strong>: ajaksi, jolloin vähintään yksi ottelu oli käynnissä, ilman öitä ja taukoja, joina yksikään pöytä ei pelannut. Päätetyllä turnauksella ei ole enää kellopalkkia.</p>
+<p>Ehdotus vahvistetaan <strong>yhdellä napsautuksella</strong> <em>Aloita</em>-painikkeesta. <strong>Aloita kaikki</strong> vahvistaa kahdella napsautuksella ne ehdotukset, joilla on pöytä, näytettyään ensin niiden listan; <em>Vahvista</em> on tuon listan alussa. Parit ilman pöytää jäävät listaan merkinnällä ”ei vapaata pöytää”: kierrostilassa kierros pysyy auki, kunnes kaikki sen pelaajat ovat mukana. Varasija tasatilanteessa olevien kesken odottaa myös johtajan valintaa, ja vaiheen vaihto sen mukana. ”Ohita toistaiseksi” ei kirjoita mitään: moottori on deterministinen, ja ehdotus palaa samanlaisena seuraavalla kerralla. <em>Muodosta pari käsin</em> on aina tarjolla — moottori ehdottaa, johtaja päättää.</p>
+<p>Käsin paritettu ottelu ilman pöytänumeroa saa ensimmäisen vapaan pöydän; pöytä, jolla on ottelu käynnissä, hylätään. Jos kaikki pöydät on varattu, ottelu käynnistetään silti, ja sen ruutu näkyy ruudukon lopussa merkinnällä ”ei pöytää”, kunnes se siirretään pöytään.</p>
+<p>Ehdotus voi kantaa moottorin huomautuksen: vapaata pöytää ei ole, tai ottelun odotettu päättyminen osuisi tauolle. Se on aloitettavissa kummassakin tapauksessa. Kun vaihe toimii <strong>mikrokierroksin</strong>, lista näyttää jäljellä olevan ajan seuraavaan erään; määräajan tullen ehdotukset ilmestyvät itsestään, eikä mikään käynnisty itsekseen.</p>
+</section>
+<section id="la-fiche-de-resultat">
+<h3>Tuloskortti<a class="headerlink" href="#la-fiche-de-resultat" title="Link to this heading"></a></h3>
+<p>Napsautus varattuun pöytään avaa ottelun kortin. Siinä on kaksi suurta kohdetta: <strong>kummankin pelaajan nimi</strong>. Voittajan napsauttaminen kirjaa tuloksen — kaksi napsautusta kaikkiaan, pöytä mukaan lukien. Voittaja on ainoa vaadittu tieto; tulos on vapaa, toinen, molemmat tai ei kumpaakaan. Näppäimistöllä <em>VASEN</em> tai <em>OIKEA</em> valitsee voittajan ja <em>ENTER</em> kirjaa hänet. Kortti sulkeutuu vasta, kun tulos on kirjoitettu: virhe jättää sen auki viestineen.</p>
+<p>Kortin <strong>⋯</strong>-painike avaa harvoin tarvittavat toiminnot: luovutuksen (forfait) — jokainen painike nimeää poissaolevan ja voittajan —, vapaan huomautuksen (”aika loppui”, ”keskeytetty syystä…”), ottelun siirron toiselle pöydälle ja sen mitätöinnin. Luovutus ja mitätöinti vahvistetaan; luovutus <strong>Ilmoita luovutus</strong> -painikkeella, joka tarjoaa samalla kortilla myös häviäjän poistamista. Varattuun pöytään siirrettynä ottelu vaihtaa pöytänsä pöydän haltijan kanssa: kaksi ottelua ei koskaan jaa pöytää, ja sama ele palauttaa ne paikoilleen. Jos vanha loki on jättänyt kaksi samalle pöydälle, ruudukko näyttää molemmat ruudut merkittyinä, kunnes toinen siirretään.</p>
+<p>Heti huomattu kirjausvirhe perutaan kahdella napsautuksella ruudukon alta: <strong>Korjaa</strong> viimeisin päätös, sitten oikea voittaja (<em>CTRL-Z</em> avaa saman peruutuksen). Vanhempi korjaus tehdään <a class="reference internal" href="#direction-historique"><span class="std std-ref">historiasta</span></a>.</p>
+</section>
+<section id="les-menus-contextuels">
+<span id="direction-menus"></span><h3>Kontekstivalikot<a class="headerlink" href="#les-menus-contextuels" title="Link to this heading"></a></h3>
+<p>Napsautus hiiren oikealla, <em>MENU</em>-näppäin tai <em>SHIFT-F10</em> Direction-sivun kohteella avaa sen tavalliset toiminnot ilman kortin kautta kiertämistä: ruudukon ruutu (vapaa tai varattu), pelaaja (<strong>Pelaajat</strong>-välilehti, vapaat pelaajat), kaavion paikka, paikka, jonon ehdotus, historian rivi. Valikko avautuu kohteen kohdalle; <em>YLÖS</em> ja <em>ALAS</em> liikkuvat siinä, <em>ENTER</em> valitsee, <em>ESC</em> sulkee sen ja palauttaa kohdistuksen kohteeseen.</p>
+<ul class="simple">
+<li><p>Varattu ruutu: kirjaa tulos, kumman tahansa luovutus, vaihda pöytää (varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään), peruuta ottelu, kunkin pelaajan historia.</p></li>
+<li><p>Vapaa ruutu: aloita tässä valittu pariutus, poista pöytä käytöstä tai palauta se käyttöön (tapahtuman pöydät). Toiselle kilpailulle varattu pöytä ei tarjoa mitään.</p></li>
+<li><p>Pelaaja: kirjaa käynnissä olevan ottelun tulos, siirry hänen pöytäänsä, historia, pariuta käsin toisen vapaan pelaajan kanssa, siirry toiseen kilpailuun, jossa hän myös pelaa, merkitse poissaolevaksi tai paikalla olevaksi, vetäydy nyt tai ottelun jälkeen, ilmoita uudelleen, korjaa tiedot.</p></li>
+<li><p>Paikka ilman ottelua: liitä tuotu ottelu, jota tämä paikka odottaa.</p></li>
+<li><p>Pariutus: aloita, aloita pöydässä…, vaihda pituutta…, pari toisin (nämä kolme valintaa avaavat käsin pariuttamisen kahden pelaajan, pariutuksen pituuden ja pöydän kanssa), ohita toistaiseksi, tulosta kierroksen lehti.</p></li>
+<li><p>Historian rivi: korjaa tai mitätöi, lisää huomautus, suodata toisen pelaajan mukaan.</p></li>
+</ul>
+<p>Luovutus, ottelun peruutus ja pelaajan vetäytyminen säilyttävät vahvistuksen, joka niillä on kortissa ja rivien painikkeissa. Kun toiminto on käynnissä, toimivat valinnat näkyvät harmaina kuten painikkeet. Vain yksi valikko on auki kerrallaan: toisen avaaminen sulkee ensimmäisen.</p>
+<p>Näppäimistöllä ruudukko vie vain yhden <em>TAB</em>-pysähdyksen: jokainen ruutu, myös vapaa, saa kohdistuksen, ja <em>VASEN</em>, <em>OIKEA</em>, <em>YLÖS</em>, <em>ALAS</em>, <em>HOME</em> ja <em>END</em> siirtävät ruudusta toiseen. Numero avaa kyseisen numeron pöydän kortin; yli 9:n pöydässä toinen numero kirjoitetaan 0,4 sekunnin kuluessa. <em>M</em> avaa kortin pöytäkentässä, ja myös <em>X</em>, olipa kortti jo auki tai ei: varattuun pöytään osoittaminen vaihtaa kaksi ottelua keskenään.</p>
+<p>Hiirellä varattu ruutu <strong>vedetään</strong> toisen päälle: vapaaseen ruutuun ottelu vaihtaa pöytää; varattuun ruutuun rivi ”Pöytä 3 ↔ Pöytä 7?” pyytää vahvistamaan kahden ottelun <strong>vaihdon</strong>. Haamukuva seuraa osoitinta ja kohderuutu korostuu; <em>ESC</em> peruu eleen, eikä mitään kirjoiteta ennen kuin osoitin vapautetaan ruudun päällä. Käytöstä poistettu pöytä hylätään, ja tilarivi kertoo syyn. Komentorivillä <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span> <span class="pre">move</span></code> tekee saman siirron tai vaihdon (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>).</p>
+</section>
+<section id="le-plein-ecran">
+<span id="direction-plein-ecran"></span><h3>Koko näyttö<a class="headerlink" href="#le-plein-ecran" title="Link to this heading"></a></h3>
+<p>Turnauksenjohdon sivun <em>F11</em>-näppäin tai oikean alakulman painike asettaa sivun koko näytön tilaan: työkalupalkki, välilehdet, lauta, paneeli ja tilapalkki katoavat ja koko ikkuna annetaan turnauksenjohdolle. Tila säilyy johdon välilehtien (Johto, Pelaajat, Historia, …) välillä. Avoin valikko tai kortti sulkeutuu ensin näppäimellä <em>ESC</em>; toinen <em>ESC</em> tai <em>F11</em> poistuu koko näytöstä ja palauttaa ikkunan aiempaan tilaansa. Tila päättyy myös sivulta poistuttaessa, vaihtamalla sovelluksen välilehteä tai sulkemalla johdon.</p>
+</section>
+<section id="la-recherche-rapide">
+<span id="direction-recherche"></span><h3>Pikahaku<a class="headerlink" href="#la-recherche-rapide" title="Link to this heading"></a></h3>
+<p>Direction-sivun <em>/</em>-näppäin avaa paletin pelkästään turnaukselle: avoimen tapahtuman pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut, tai pelkän kilpailun, kun se ei ole missään tapahtumassa. Kirjoitetaan nimi, seura tai pöydän numero (”4” tai ”t4”); pöydässä olevat pelaajat tulevat ennen vapaita pelaajia. <em>ENTER</em> vie kohteeseen: pelaaja ottelussa, ottelu tai varattu pöytä avaavat pöydän kortin, vapaa pöytä saa kohdistuksen ruudukossa, vapaa pelaaja näytetään <strong>Pelaajat</strong>-välilehdellä nimellään suodatettuna, kilpailusta tulee nykyinen välilehti. Tapahtuman toisen kilpailun tulos vaihtaa ensin kilpailua. <em>ESC</em> sulkee avaamatta mitään, ja syöttökentässä näppäin pysyy vinoviivana. <em>CTRL-SHIFT-P</em> avaa täyden paletin, jossa turnaus on myös mukana.</p>
+</section>
+<section id="les-joueurs">
+<h3>Pelaajat<a class="headerlink" href="#les-joueurs" title="Link to this heading"></a></h3>
+<p><strong>Pelaajat</strong>-välilehti ilmoittaa, korjaa ja poistaa. Ilmoittautumiskenttä säilyttää kohdistuksen ja tyhjenee jokaisen nimen jälkeen: kaksikymmentä pelaajaa ilmoitetaan pelkällä näppäimistöllä. Täydennys tarjoaa tietokannan pelaajia; yhden valitseminen lukitsee sen tarkan kirjoitusasun, jonka hänen ottelunsa kantavat, ja esitäyttää luokituksen hänen PR:llään.</p>
+<p><strong>Hakemisto</strong> kokoaa kaikkien tietokannan johdettujen turnausten osallistujat, nimen mukaan yhdistettyinä, viimeisimmän ilmoittautumisen seuran ja luokituksen kera. Sitä ei koskaan tallenneta: johtamisen poistaminen poistaa siitä sen osallistujat. Aiemman turnauksen osallistujien ottaminen on yksi napsautus, olipa heitä kuinka monta tahansa; hakemisto kopioidaan CSV:nä tai tallennetaan tiedostoon (<strong>Tallenna…</strong>), ja se luetaan takaisin liitettynä.</p>
+<p>Nelinpeliturnaus ilmoittaa pareja: ruutu <strong>Pari</strong> lisää parin toisen nimen, seuran ja luokituksen. Pari pelaa nimellä ”A / B”, jota myös sen ottelut kantavat; sen luokitus on kahden keskiarvo, ja kenttään <strong>Parin luokitus</strong> syötetty arvo korvaa sen. Hakemisto säilyttää kaksi henkilöä, ei koskaan paria.</p>
+<p>Ennen <strong>Ilmoita</strong>-painiketta liitetyn CSV:n esikatselu luettelee lukukelvottomat rivit – ei nimeä, ei erotinta kun muilla riveillä on, luokitus joka ei ole luku – sekä kaksoiskappaleet, liitetyn sisällä tai jo ilmoitetun pelaajan kanssa. Kaksoiskappaletta ei ilmoiteta, ellei sen ruutua valita.</p>
+<p>Luettelon suodatuskenttä säilyttää tekstinsä, kun kilpailua vaihdetaan: niin kauan kuin se on käytössä, sen viereen tulee <strong>suodatin: …</strong> -merkki, jonka rasti tyhjentää sen.</p>
+<p>Arvonnan jälkeen saapuva <strong>myöhästyjä</strong> ottaa vapaan vapaakierroksen, jos kaaviossa on sellainen, ja käyttöliittymä kirjoittaa kentän viereen, mihin hän tulee mukaan, ennen vahvistusta. Jos vapaata paikkaa ei ole, hänet ilmoitetaan silti ja näkymä kertoo, mihin vaiheeseen hän tulee. Jo tehtyä arvontaa ei koskaan tehdä uudelleen.</p>
+<p>Poistuminen tapahtuu <em>heti</em> tai <em>käynnissä olevan ottelun jälkeen</em>, sen mukaan lähteekö pelaaja saman tien vai pelaako loppuun; se vahvistetaan <strong>Poista</strong>-painikkeella, joka ei ole punainen, koska mitään ei poisteta.</p>
+<p>Pelaajaa, joka jää pois yhdestä kierroksesta, ei tarvitse vetää pois: <strong>Merkitse poissaolevaksi</strong> hänen rivillään avaa pienen lomakkeen nimen alle — <em>kunnes</em> tiettyyn kellonaikaan (esitäytetty seuraavaan tuntiin), tai, kun kuluva vaihe on kierroksittainen sveitsiläinen, <em>kierrokseen asti</em> sen numerolla. Moottori lakkaa tällöin vain parittamasta häntä, mutta hänen sijansa, elämänsä ja paikkansa taulukossa pysyvät niinä, jotka hän on ansainnut — poissaolo ei ole luovutus. <strong>Palaa</strong> hänen rivillään poistaa poissaolon yhdellä klikkauksella, ennen ilmoitettua määräaikaa tai sen jälkeen.</p>
+<p>Vetäytyneen pelaajan tietojen korjaaminen — nimi, seura, luokitus — jättää hänet vetäytyneeksi. Paluu on oma toimintonsa: <strong>Palauta</strong> hänen rivillään. Hänet paritetaan taas, niillä tuloksilla ja elämillä jotka hänellä oli lähtiessään; vetäytymisessä luovutuksella hävityt ottelut pysyvät hävittyinä.</p>
+<p>Ryhmästä jatkoon päässyt, joka vetäytyy ennen seuraavan vaiheen arvontaa, jättää paikan vapaaksi. Lista ehdottaa silloin <strong>varasijaa</strong>: hänen ryhmänsä seuraava, joka ei ole jatkoon päässyt eikä vetäytynyt ja jolla on eniten ryhmävoittoja, ottaa hänen paikkansa. Tasatilanteessa lista ehdottaa jokaista heistä ja johtaja valitsee; ”Seuraava vaihe” ilman varasijaa jättää paikan vapaakierrokseksi. Kun kaavio on arvottu, vetäytynyt häviää ottelunsa luovutuksella.</p>
+</section>
+<section id="arbres-emplacements-classement-historique">
+<h3>Kaaviot, paikat, sijoitukset, historia<a class="headerlink" href="#arbres-emplacements-classement-historique" title="Link to this heading"></a></h3>
+<p><strong>Kaaviot</strong>-välilehti piirtää pudotuspelikaaviot yhdistäviin viivoineen ensimmäiseltä kierrokselta finaaliin, lohdutuskaavion pääkaavion viereen ja sveitsiläisessä järjestelmässä elämätaulukon. Alkulohko luetaan tulosten ristiintaulukkona. Vielä arpomaton kaavio näyttää harmaan runkonsa. Jo pelattu ottelu näyttää tuloksensa; moottorin ilmoittama ottelu merkitään paikalleen. Välilehden nimen vieressä oleva piste osoittaa, että kaavio on käynnissä.</p>
+<p><strong>Paikan napsauttaminen</strong> (tai Enter kohdistetulla paikalla) avaa siihen saman kortin kuin pöytäruudukossa: käynnissä olevan ottelun voittaja kirjataan kahdella napsautuksella, ja päättynyt ottelu korjataan napsauttamalla oikean voittajan nimeä.</p>
+<p id="direction-emplacements"><strong>Ottelut</strong>-välilehti (otsikkona ”Paikat”) yhdistää turnauksen kirjastoon. Jokainen turnauksen ottelu on paikka, joka täytetään kahdella tavalla: litteroimalla ottelu heti (<a class="reference internal" href="manuel_matchs.html#panneau-transcription"><span class="std std-ref">Litterointipaneeli</span></a>) tai liittämällä siihen jo tuotu ottelu. <strong>Mitään ei liitetä päättelemällä</strong>: nimien yhteensattuma on ehdotus hyväksyttäväksi, osittaista osumaa ei edes ehdoteta, ja jos liitetyn ottelun tiedosto on ristiriidassa kirjatun tuloksen kanssa, ero näytetään ratkaisematta sitä — turnauksen aikana johtajan sana pätee.</p>
+<p><strong>Sijoitukset</strong>-välilehti näyttää nykyiset sijoitukset osio kerrallaan, kunkin pelaajan tuloksineen (voitot–tappiot) ja palkintoineen, kun palkintopotti on asetettu. Prosentteina annettu asteikko maksetaan kokonaisina yksikköinä suurimman jäännöksen menetelmällä: jokainen summa katkaistaan yksikköön, ja yksiköt, jotka puuttuvat pyöristetystä jaettavasta summasta, menevät yksi kerrallaan sijoille, joiden desimaaliosa on suurin (tasatilanteessa paremmin sijoittuneelle); kiinteinä summina annettu asteikko maksetaan sellaisenaan. Kaksi tasapisteissä olevaa jakavat sijan ja palkinnon. Poistunut pelaaja säilyttää sijan, jonka hänen tiensä hänelle antaa, merkinnällä ”poistui” ja tuloksellaan tai sillä kaavion kohdalla, johon hän jäi. <strong>Sulje turnaus</strong> lukitsee loppusijoituksen. Sijoitukset kopioidaan CSV:nä käyttöliittymän kielellä, osion ja kunkin viimeisimmän vaiheen, johon hän on päässyt, kera tai tallennetaan tiedostoon: <strong>Tallenna…</strong> avaa järjestelmän valintaikkunan ehdotetulla nimellä, turnaus sekä sana ”sijoitukset” ja päivän päivämäärä, ja tiedosto sisältää täsmälleen kopioidun CSV:n. Komentorivillä <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span> <span class="pre">standings</span></code> kirjoittaa saman CSV:n. Pelaajan nimi on linkki: se avaa pelaajaan rajatun Historian, jossa jokainen hänen tuloksensa voidaan korjata.</p>
+<p>Sulkeminen ilman käynnissä olevia otteluita on yksi napsautus; kun kaikki on pelattu, jono tarjoaa myös <strong>Sulje turnaus</strong> -ehdotuksen, joka käynnistetään kuten muutkin ehdotukset. Jos otteluita on käynnissä, Sijoitukset kertoo niiden määrän ja odottaa toista napsautusta paikan päällä: sulkeminen lukitsee sijoitukset ilman niitä, eikä niiden tulosta voi enää kirjata. <strong>Avaa uudelleen</strong> vahvistetaan samalla tavalla; lopullinen sijoitus lakkaa silloin olemasta lopullinen, ja uudelleenavaus jää lokiin.</p>
+<p id="direction-historique"><strong>Historia</strong>-välilehti on loki selkokielisenä: rivi päätöstä kohti, järjestyksessä, suodatettavissa pelaajan tai ottelun mukaan. Sitä johtaja lukee uudelleen kiistan jälkeen, ja siellä vanhempi päätös korjataan tai kommentoidaan. Tulosrivi nimeää molemmat pelaajat: voittajan ja hänen vastustajansa.</p>
+<p>Tuloksen rivillä <strong>Korjaa</strong> avaa sen alle saman korjauksen kuin viimeisimmälle päätökselle: napsauta oikeaa voittajaa, tarvittaessa tuloksen kanssa. Alkuperäinen tulos pysyy paikallaan lokissa, korjaus lisätään siihen, ja sarjataulukko ottaa sen heti huomioon.</p>
+</section>
+<section id="les-reglages">
+<h3>Asetukset<a class="headerlink" href="#les-reglages" title="Link to this heading"></a></h3>
+<p><strong>Asetukset</strong>-välilehti avautuu <strong>nimettyihin muotoihin</strong>: kuusi käyttövalmista seuraturnausta, joista ensimmäistä suositellaan. Yhden valitseminen riittää aloittamiseen; kentät pysyvät muokattavina jälkeenpäin.</p>
+<p>Täällä asetetaan: vaiheet (<strong>Lisää vaihe</strong> lisää sen muiden perään; jo avattua vaihetta ei voi poistaa) ja niiden ottelupituus, finaalin pituus, kaavion pituudet kierroksittain (”15, 13, 11” luetaan viimeisestä kierroksesta taaksepäin), <strong>loppupituus</strong> (pidemmät ottelut, kun elossa olevia pelaajia on enää tietty määrä), <strong>mikrokierrokset</strong> (parita erissä N minuutin välein), pöytien määrä, suunniteltu tahti minuutteina pistettä kohden (oletus 8; kellopalkki ja arvioitu loppu lähtevät siitä), päivän tauot, palkintopotti (osallistumismaksu, seuran pidätys, asteikko osioittain) ja näyttökansio.</p>
+<p><strong>Kaaviolla</strong> on kolme valintaruutua: <strong>Lohdutuskaavio</strong> (sen hävinneet pelaavat toisen kaavion, oma osionsa sijoituksissa), <strong>Sovittelu</strong> (lohdutuskaavion voittaja pelaa pääkaavion voittajaa vastaan; ruutu näkyy vain lohdutuskaavion kanssa) ja <strong>Lataus</strong> (tuplapudotuksessa pääkaavion voittaja on voitettava kahdesti; ruutu näkyy vain sovittelun kanssa). Lohdutuskaaviolla on omat sijoituksensa vain palkintoasteikon kanssa: niin kauan kuin osion <em>Lohdutuskaavio</em> asteikko on tyhjä, Asetukset muistuttavat siitä. <strong>Lohkot</strong>-vaihe asetetaan lohkojen koolla (oletus 4) ja jatkoon pääsevien määrällä lohkoa kohden (oletus 2).</p>
+<p>Sveitsiläisen vaiheen <strong>vaihtoraja</strong> on jäljellä olevien elämien summa, jonka kohdalla siirrytään kaavioon. Jos alkuelämien summa (pelaajat × elämät) on jo pienempi tai yhtä suuri kuin vaihtoraja, sveitsiläinen vaihe ohitettaisiin: Asetukset huomauttavat siitä ennen ensimmäistä käynnistystä.</p>
+<p>Asetukset ovat käytettävissä <strong>turnauksen aikana</strong>: vaihtorajan laskeminen kello 22 aiemmin lopettamiseksi tai lohdutusturnauksen lisääminen lauantai-iltana, kunhan kaaviota ei ole arvottu. Se, mikä on silloin lukittu, näkyy harmaana syineen: avatun vaiheen formaatti, sen jakamien elämien määrä ja vaiheen arvonnasta alkaen sen lohkojen koko ja jatkoon pääsevien määrä. Tallennus turnauksen aikana näyttää ensin luettelon muutoksista ja pyytää vahvistusta. Se, minkä moottori hylkää, näkyy siinä syineen, eikä silloin tallenneta mitään: näin käy jo arvotun kaavion lohdutusturnaukselle, sovittelulle tai lataukselle.</p>
+<p>Pöytä, jonka lauta on rikki, ilmoitetaan kohdassa <strong>Käytöstä poistetut pöydät</strong>: sen numerot pilkuilla eroteltuina (”7, 12”). Moottori ei enää jaa sitä, ja ruudukko näyttää sen poissa käytöstä; pöytien määrän laskeminen poistaisi viimeisen pöydän, ei rikkinäistä. Jos käytöstä poistetussa pöydässä on ottelu käynnissä, muutosluettelo kertoo sen ja nimeää vapaan pöydän, johon sen voi siirtää ottelukortista.</p>
+<p><strong>Sijoitukset</strong> (seeding) on valinta, oletuksena pois: moottorin tutkimus päätyy siihen, ettei suojattuja sijoituksia käytetä, mikä on backgammonin nykyinen tapa. Päällä pelaajat asetetaan luokituksen mukaan.</p>
+</section>
+<section id="les-epreuves-d-un-evenement">
+<h3>Tapahtuman kilpailut<a class="headerlink" href="#les-epreuves-d-un-evenement" title="Link to this heading"></a></h3>
+<p>Useat samoilla pöydillä pelattavat kilpailut — pääkilpailu, speed, nelinpeli — kootaan <strong>tapahtumaan</strong> Asetusten alussa (supistettuna otsikkoonsa, kun kilpailu on liitetty siihen; <strong>Tapahtuman asetukset</strong> -painike <strong>Kaikki pöydät</strong> -välilehdellä johtaa sinne): <strong>Luo ja liitä…</strong> luo tapahtuman pöytämäärineen, <strong>Liitä…</strong> lisää siihen johdetun kilpailun. Liittäminen näyttää ensin, mikä muuttuu: kilpailun pöydät muuttuvat tapahtuman pöydiksi. <strong>Irrota tapahtumasta</strong> palauttaa kilpailun itselleen lokeineen ja pöytineen; <strong>Poista tapahtuma</strong> siirtää sen vahvistuksen jälkeen roskakoriin ja irrottaa sen kilpailut poistamatta yhtäkään.</p>
+<p>Tapahtumassa mikään kilpailu ei ehdota pöytää, jossa toinen pelaa: ruudukko näyttää nämä pöydät varattuina kilpailun nimen kanssa, ja paritus ilman vapaata pöytää odottaa. Käytöstä poistettu pöytä merkitään kerran, tapahtumassa, ja se koskee kaikkia sen kilpailuja; yhden kilpailun Asetuksissa muutettu pöytämäärä, käytöstä poistetut pöydät ja tauot koskevat myös tapahtumaa, ja muutosluettelo nimeää muut kilpailut.</p>
+<p><strong>Pöytien ominaisuudet</strong> asetetaan Tapahtuma-paneelissa: taulukko, jossa on yksi rivi pöytää kohti, pöydän <strong>nimi</strong> (esimerkiksi ”Stream”), <strong>sali</strong> (vapaa nimike), <strong>Varattu</strong>-valintaruutu ja pelaajat, joille pöytä on <strong>Osoitettu</strong>, valittuina tapahtuman kilpailuihin ilmoittautuneiden joukosta. Neljänkymmenen pöydän kohdalla <em>Pöydät N–M, sali</em> asettaa salin koko välille yhdellä kertaa; <strong>Tallenna</strong> kirjoittaa vain pöydät, joilla on jokin ominaisuus, muut pysyvät tavallisina pöytinä. Varattua pöytää ei koskaan ehdoteta, mutta sille voi silti sijoittaa ottelun käsin käynnistyksellä, siirrolla tai vetämällä ja pudottamalla. Osoitettu pöytä saa ensin haltijansa ottelun, kun se on vapaa; muuten ottelu saa tavallisen pöydän, ja haltijoidensa otteluiden ulkopuolella se käyttäytyy kuin varattu pöytä. Kaksi eri pöytien haltijaa, jotka kohtaavat, pelaavat kahdesta pienemmällä.</p>
+<p><strong>Sali</strong> on joukko pöytiä, joilla on sama nimike: ”sali A” pöydille 1–20, ”sali B” seuraaville. Kunkin liitetyn kilpailun Asetuksissa <em>Salit, joissa tämä kilpailu pelataan</em> valitsee salit, joissa se pelataan: DMP salissa B, speed salissa A. Jos mitään ruutua ei ole valittu, kyse on kaikista pöydistä; kilpailu ei saa ehdotuksia saliensa ulkopuolelle eikä voi siirtää sinne ottelua. Sellaisen salin poistaminen, jossa on kilpailun käynnissä oleva ottelu, evätään, ja pöytä nimetään. Yksin pelattava kilpailu asettaa samat pöytien ominaisuudet omissa Asetuksissaan, ilman kilpailun saleja.</p>
+<p><strong>Kauden sijoitus</strong> Tapahtuma-paneelissa laskee yhteen tapahtuman päättyneet kilpailut: kukin sija tuottaa <strong>Pisteytyksen</strong> pisteet (voittaja ensin, oletuksena 25, 18, 15, 12, 10, 8, 6, 4, 2, 1), ja tasapisteissä olevat jakavat keskenään haltuunsa ottamiensa sijojen keskiarvon. Henkilö tunnistetaan kilpailusta toiseen nimen perusteella. <strong>Seuran Elo</strong> lisää sarakkeen: jokainen aloittaa 1500:sta ja kauden ottelut pelataan uudelleen järjestyksessä FIBS-kaavan mukaan. <strong>Laske</strong> näyttää sijoituksen, <strong>Kopioi CSV:nä</strong> kopioi sen yhdellä pistesarakkeella kilpailua kohti. Päättymätön kilpailu ei tuota mitään.</p>
+<p>Tapahtuman kilpailun Johdon avaaminen avaa myös muut: Johdon yläreunaan ilmestyy välilehti jokaista kilpailua kohti, kussakin oma yhteenveto — odottavat ehdotukset, käynnissä olevat ottelut, hälytys jos sellainen on. Kilpailun vaihtaminen on yksi napsautus sen välilehteen, ilman vahvistusta; jätetty kilpailu ei sulkeudu eikä toista mitään, se pysyy juuri sellaisena kuin se jätettiin. Tapahtuman ulkopuolisella turnauksella on vain yksi kilpailu: ei välilehteä näytettäväksi. Kun vaihdat sovelluksen toiseen välilehteen ja palaat Turnauksiin, Johto palautuu sellaisena kuin sen jätit: sama kilpailu tai <em>Kaikki pöydät</em>, ja sama näkymän välilehti.</p>
+<p>Välilehti <strong>Kaikki pöydät</strong>, kilpailujen vasemmalla puolella, näyttää tapahtuman kaikki pöydät yhdessä ruudukossa: yksi ruutu pöytää kohden, mikä kilpailu sitä sitten pitääkin, merkittynä kilpailunsa nimellä ja värillä. Tuloskortti, pikavalikot, näppäimistö ja vedä ja pudota toimivat siellä kuten kilpailun ruudukossa, ja jokainen ele kohdistuu ruudun kilpailuun. Ottelun vetäminen toisen kilpailun pöydälle vaihtaa ottelut keskenään vahvistuksen jälkeen, joka nimeää molemmat kilpailut. Ruudukon alla kaikkien kilpailujen ehdotukset muodostavat yhden jonon, kukin merkittynä kilpailullaan ja omalla <em>Käynnistä</em>-painikkeellaan: pisimpään odottaneet pelaajat tulevat ensin, joten kilpailu ei odota toisen kierroksen loppua. Ottelu ilman pöytää — kaikki pöydät varattu tai pelaaja kiinni toisen kilpailun ottelussa — seuraa jonossa syineen ilman <em>Käynnistä</em>-painiketta, kunnes pöytä tai pelaaja vapautuu. Kilpailun tai näkymävälilehden napsauttaminen poistuu <em>Kaikista pöydistä</em>.</p>
+<p>Kun tapahtumalla on useita saleja, ruudukko ryhmitellään saleittain kunkin nimen alle. Pöydän nimi näytetään sen numeron vieressä, varatulle pöydälle lippu ja osoitetulle pöydälle tähti, jota seuraavat haltijat; myös ehdotukset nimeävät pöydän.</p>
+<p>Sama henkilö voi pelata useita tapahtuman kilpailuja: kaksi samannimistä osallistujaa ovat sama henkilö, ja nelinpeliparissa kumpikin jäsen lasketaan. Niin kauan kuin hän pelaa yhdessä kilpailussa, muut eivät ehdota häntä, ja niiden <em>Odottaa</em>-lista kertoo, missä hän pelaa: ”pelaa pääkilpailussa, pöytä 4”. Häntä odottava kaavion ottelu jää jonoon, ja sen käynnistäminen hylätään niin kauan kuin hän pelaa. Käsin pariuttaminen on edelleen sallittua: ottelu alkaa, ja sen ruudussa on sama merkintä.</p>
+</section>
+<section id="l-affichage-du-tournoi">
+<h3>Turnauksen näyttö<a class="headerlink" href="#l-affichage-du-tournoi" title="Link to this heading"></a></h3>
+<p>Turnausta katsotaan. <strong>Näyttökansion</strong> valitseminen asetuksista riittää kertaheitolla: blunderDB kirjoittaa sinne itsenäisen HTML-sivun uudelleen jokaisen muutoksen kohdalla, ja sivu latautuu itsestään. Se aukeaa offline-tilassa, toisella näytöllä tai heijastettuna, eikä lataa ulkopuolisia resursseja. <em>Avaa selaimessa</em> näyttää sen heti.</p>
+<p>Pelaajat voivat seurata turnausta myös puhelimellaan. Johdon asetuksissa osio <strong>Näytä seuran verkossa</strong> käynnistää pienen verkkopalvelimen johtajan koneella (oletusportti 8770, muutettavissa) ja näyttää sen osoitteen <strong>QR-koodin</strong> sekä osoitteen selkotekstinä: samaan verkkoon yhdistetty puhelin skannaa sen ja näkee tämän turnauksen näyttösivun — kaavion, pariutukset, tulokset ja sijoitukset. Sivu päivittyy itsestään kymmenen sekunnin välein; syötetty tulos ilmestyy sinne koskematta mihinkään. <em>Avaa tällä koneella</em> avaa sen koneen selaimessa. <em>Lopeta näyttäminen</em> sulkee palvelimen, joka sulkeutuu myös blunderDB:n sulkeutuessa.</p>
+<p>Näyttö on pois päältä, kunnes johtaja kytkee sen päälle, ja se on <strong>vain luettavissa</strong>: se tarjoaa vain tämän turnauksen sivun, ei muuta tietokannan dataa, eikä siihen voi syöttää mitään. <strong>Salasanaa ei ole</strong>: kuka tahansa paikallisverkossa voi lukea sivun (nimet, pariutukset, tulokset) — sen, minkä seinänäyttö jo näyttää salille. Palvelin kuuntelee vain ehdotetussa osoitteessa ja tällä koneella. Koneella, joka on yhdistetty useaan verkkoon, luettelo tarjoaa sen osoitteet: ensin yksityisten verkkojen (<code class="docutils literal notranslate"><span class="pre">192.168.x.x</span></code>, <code class="docutils literal notranslate"><span class="pre">10.x.x.x</span></code>, <code class="docutils literal notranslate"><span class="pre">172.16.x.x</span></code>–<code class="docutils literal notranslate"><span class="pre">172.31.x.x</span></code>), sitten virtuaaliverkkojen (kontit, VPN) osoitteet. <strong>Yksityisten alueiden ulkopuolinen</strong> osoite merkitään varoituksella: sivu voisi siellä olla luettavissa seuran ulkopuolellakin. Ilman lähiverkkoa paneeli kertoo sen eikä piirrä QR-koodia. Näyttö pysähtyy, kun toinen tiedosto avataan, luodaan tai suljetaan. Näytön käynnistäminen jo varatussa portissa kertoo sen selvästi ja jättää käynnissä olevan näytön rauhaan; sen uudelleenkäynnistys omassa portissaan korvaa sen heti.</p>
+<p>Johtajan koneen <strong>palomuurin</strong> on päästettävä valittu portti läpi: Windows pyytää lupaa ensimmäisellä käynnistyksellä, Linux-järjestelmän palomuuri estää portin sanomatta mitään. Puhelimien puolestaan on oltava samassa verkossa kuin kone. Puhelimessa sivu mahtuu näytön leveyteen (taulukot vierivät itse) ja jos näyttö on pysäytetty tai tavoittamattomissa, se kirjoittaa ”Affichage interrompu : données de HH:MM” sen sijaan, että antaisi ymmärtää olevansa ajan tasalla.</p>
+<p><strong>Parituslomake</strong> asetetaan ilmoittautumispöydälle: yksi napsautus <em>Tulosta lomake</em> avaa järjestelmän tulostusikkunan. Rivi ottelua kohti — kaksi pelaajaa, pituus, pöytä, kaksi tyhjää ruutua tulokselle — ja kolmenkymmenenkahden pelaajan kierros mahtuu yhdelle A4-sivulle.</p>
+<p>Tapahtumalla on oma tulostuskansionsa, valittu kerran sen Asetuspaneelissa samalla <em>Valitse kansio</em> -painikkeella: blunderDB kirjoittaa sinne <code class="docutils literal notranslate"><span class="pre">index.html</span></code>-tiedoston, tapahtuman <strong>seinäsivun</strong> — yksi rivi per pöytä, riippumatta siitä mikä kilpailu sitä käyttää, kunkin kilpailun ilmoitetuilla kierroksilla ja linkillä sen omalle sivulle — ja jokainen liitetty kilpailu kirjoittaa omansa alikansioon. Toiminto missä tahansa tapahtuman kilpailussa uudistaa seinäsivun; liitetyn kilpailun oma kansio säilyy mutta jää huomiotta niin kauan kuin se pysyy tapahtumassa.</p>
+<p>Kun kilpailu on pudotuspelivaiheessa ja pudotuspelikaavio on arvottu, sen seinäsivu ja tapahtuman seinäsivu näyttävät puun suurena, kaukaa luettavana: yksi sarake kierrosta kohden, ja lohdutussarjaan putoavat häviäjät katkoviivalla. Sivu vaihtaa näkymää itsestään ilman skriptiä tavallisen sisältönsä (tapahtumalla pöydät) ja jokaisen pudotuspelivaiheessa olevan kilpailun puun välillä, kahdentoista sekunnin ajan kutakin; se latautuu aina uudelleen kolmenkymmenen sekunnin välein ja jatkaa kiertoa siitä, mihin se jäi. Kilpailulla, jolla ei ole pudotuspelikaaviota — esimerkiksi sveitsiläisellä vaiheella — ei ole puuta, ja sivu pysyy entisellään.</p>
+<p>Otsikon ”Pelaanko?” alla kilpailun sivu ja tapahtuman seinäsivu nimeävät pelaajat, jotka eivät pelaa juuri nyt, siten kuin moottori ne sijoittaa: ”pudonnut”, kun pelattavia otteluita ei enää ole, ”jatkoon” sen vaiheen nimen kanssa, johon pelaaja siirtyy, ”ei vielä ratkennut”, kun hänen kohtalonsa riippuu vaiheen päättymisestä tai varasijasta, jota johtaja ei ole ratkaissut, ”vapaakierros — tulee mukaan kierroksella N” pelaajalle, joka on arvottu kaavioon ilman vastustajaa, kunnes hän on pelannut, ”vapaakierros — pelaa taas kierroksella N” sveitsiläisen kierroksen vapaalle, ja ”voittaja”. Turnauksen päätyttyä tilanne luetaan sarjataulukosta.</p>
+<p>Käyttöliittymän ulkopuolella alikomento <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span></code> lukee johdetun turnauksen ilman graafista käyttöliittymää: <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">verify</span></code>, <code class="docutils literal notranslate"><span class="pre">standings</span></code>, <code class="docutils literal notranslate"><span class="pre">page</span></code> ja <code class="docutils literal notranslate"><span class="pre">export</span></code>; <code class="docutils literal notranslate"><span class="pre">proposals</span></code> näyttää moottorin numeroidun jonon, ja <code class="docutils literal notranslate"><span class="pre">confirm</span></code> vahvistaa yhden sen kohdista, varasija mukaan lukien; <code class="docutils literal notranslate"><span class="pre">ranking</span> <span class="pre">--season</span></code> laskee yhteen tapahtuman tai ajanjakson suljetut turnaukset kauden sijoitukseksi sijakohtaisella pisteytyksellä ja halutessa seuran Elolla (kaksi samannimistä osallistujaa samassa suljetussa kilpailussa saa sijoituksen hylätyksi, koska se tunnistaa henkilön nimestä); <code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--rencontre</span></code> kirjoittaa tapahtuman seinäsivun yhden kilpailun sivun sijaan; <code class="docutils literal notranslate"><span class="pre">hall</span></code> tulostaa tapahtuman <em>Kaikki pöydät</em> -ruudukon ja sen jonon, <code class="docutils literal notranslate"><span class="pre">tables</span></code> pöytien ominaisuudet ja kilpailujen salit. Katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_matchs.html" class="btn btn-neutral float-left" title="Ottelut ja litterointi" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_stats.html" class="btn btn-neutral float-right" title="Tilastot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

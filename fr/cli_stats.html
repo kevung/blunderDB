@@ -1,0 +1,443 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statistiques &mdash; Documentation blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=08c23abd"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="Administration de la base" href="cli_admin.html" />
+    <link rel="prev" title="Étude, leçons et entraînement" href="cli_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Languages">
+  <span class="current" lang="fr" aria-current="true">Français</span>
+  <a href="../en/cli_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_stats.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_stats.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_stats.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_stats.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_stats.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_stats.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Prise en main</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guide utilisateur</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Référence</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Métriques et outils d’étude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Raccourcis clavier</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Interface en ligne de commande (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Syntaxe générale</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Commandes disponibles</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Importer, exporter, transférer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Bibliothèque : recherche, listes, collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Matchs, tournois et parties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analyse et moteur</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Étude, leçons et entraînement</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Statistiques</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stats-erreurs-recurrentes">stats — Erreurs récurrentes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Administration de la base</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Exemples de flux de travail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Codes de retour</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossaire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Mode headless (serveur)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrat d’API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Annexes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Annexe Windows : que faire si Windows bloque le lancement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historique des versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">À propos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Interface en ligne de commande (CLI)</a></li>
+      <li class="breadcrumb-item active">Statistiques</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="cli-stats-chapitre"></span><h1>Statistiques<a class="headerlink" href="#statistiques" title="Lien vers cette rubrique"></a></h1>
+<section id="stats-erreurs-recurrentes">
+<span id="cli-stats"></span><h2>stats — Erreurs récurrentes<a class="headerlink" href="#stats-erreurs-recurrentes" title="Lien vers cette rubrique"></a></h2>
+<p>Regroupe les erreurs d’un filtre par plan de jeu et par thème, la plus
+coûteuse d’abord : le tableau <em>Erreurs récurrentes</em> de l’onglet Erreurs du
+panneau Stats (voir <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Panneau Stats</span></a>). Les statistiques globales restent sous
+<code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code> — Uniquement les décisions de ce joueur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opponent</span> <span class="pre">&lt;nom&gt;</span></code> — Uniquement les matchs joués contre ce joueur ; avec
+<code class="docutils literal notranslate"><span class="pre">--player</span></code>, l’autre siège.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Le même filtre que
+<code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Nombre de groupes affichés en texte (défaut 20, <code class="docutils literal notranslate"><span class="pre">0</span></code> pour
+tous).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Le JSON porte chaque groupe avec la liste complète
+de ses positions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> — Tire au hasard des positions parmi celles des trois groupes
+les plus coûteux (<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>, défaut 20) et les affiche : ce sont
+les identifiants que le quiz et <code class="docutils literal notranslate"><span class="pre">quiz_grade</span></code> jugent. En JSON, champ
+<code class="docutils literal notranslate"><span class="pre">Quiz</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;nom&gt;</span></code> — Crée un paquet Anki de ce nom, rempli de toutes les
+positions des trois groupes les plus coûteux.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--group</span> <span class="pre">&lt;rang&gt;</span></code> — Avec <code class="docutils literal notranslate"><span class="pre">--quiz</span></code> ou <code class="docutils literal notranslate"><span class="pre">--deck</span></code> : le groupe de ce rang
+(1 pour le plus coûteux) au lieu des trois premiers.</p></li>
+</ul>
+<p>Un thème de coup de pions est <code class="docutils literal notranslate"><span class="pre">gammon</span></code>, <code class="docutils literal notranslate"><span class="pre">blots</span></code>, <code class="docutils literal notranslate"><span class="pre">point</span></code> ou
+<code class="docutils literal notranslate"><span class="pre">passive</span></code> ; un thème de videau est <code class="docutils literal notranslate"><span class="pre">offer_missed</span></code>, <code class="docutils literal notranslate"><span class="pre">offer_premature</span></code>,
+<code class="docutils literal notranslate"><span class="pre">answer_wrong_pass</span></code> ou <code class="docutils literal notranslate"><span class="pre">answer_wrong_take</span></code>. Les erreurs qu’aucune règle ne
+nomme sortent du classement : elles sont listées à part, une ligne par plan de
+jeu (champ <code class="docutils literal notranslate"><span class="pre">Unthemed</span></code> en JSON), parce que l’explication ne se prononce qu’à
+partir de 60 mp, au-dessus du seuil <em>Erreur</em>. La colonne <em>COST (PR)</em> est la
+part du PR du filtre que le groupe représente.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--group<span class="w"> </span><span class="m">1</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Mon pire groupe"</span>
+</pre></div>
+</div>
+<p><strong>stats plan</strong> — Le plan d’étude du filtre, comme la carte <em>Plan d’étude</em> du
+tableau de bord (voir <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">Plan d’étude</span></a>) : les familles d’erreurs (plan de jeu
+× thème) classées par MWC récupérable, la somme sur leurs erreurs de la perte
+moins la difficulté, avec un intervalle à 95 %. Une famille entre au plan à
+partir de 5 erreurs chiffrées et d’un intervalle au-dessus de zéro ; les
+autres sont listées à part, à confirmer (champ <code class="docutils literal notranslate"><span class="pre">Tentative</span></code> en JSON). Les
+erreurs sans thème et celles sans MWC (partie libre) sont seulement comptées
+(<code class="docutils literal notranslate"><span class="pre">Unthemed</span></code>, <code class="docutils literal notranslate"><span class="pre">Unpriced</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Mêmes options de filtre que <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code>, plus :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Nombre de familles affichées en texte (défaut 10, <code class="docutils literal notranslate"><span class="pre">0</span></code>
+pour toutes).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> (<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>, défaut 20), <code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;nom&gt;</span></code> — Comme pour
+<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code>, sur les positions des trois premières familles.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — Affiche la file d’étude de ces familles, une position par
+ligne, l’écart au joueur de référence le plus grand d’abord (JSON :
+<code class="docutils literal notranslate"><span class="pre">Queue</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--family</span> <span class="pre">&lt;rang&gt;</span></code> — Avec <code class="docutils literal notranslate"><span class="pre">--quiz</span></code>, <code class="docutils literal notranslate"><span class="pre">--deck</span></code> ou <code class="docutils literal notranslate"><span class="pre">--queue</span></code> : la famille
+de ce rang (1 pour la première) au lieu des trois premières.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--family<span class="w"> </span><span class="m">2</span><span class="w"> </span>--queue
+</pre></div>
+</div>
+<p><strong>stats effect</strong> — L’avant/après de chaque famille étudiée, comme la carte
+<em>Avant/après l’étude</em> du tableau de bord (voir <a class="reference internal" href="manuel_stats.html#avant-apres-etude"><span class="std std-ref">Avant/après l’étude</span></a>) : la
+date de la première action d’étude sur l’une de ses positions, le taux de perte
+en MWC pour 100 décisions de son plan et de sa nature avant et après ce jour,
+le gain et son intervalle à 95 %, et le verdict (<code class="docutils literal notranslate"><span class="pre">improved</span></code>, <code class="docutils literal notranslate"><span class="pre">worse</span></code>,
+<code class="docutils literal notranslate"><span class="pre">undetermined</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> sous 30 décisions par fenêtre).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats biases</strong> — Les biais signés du filtre, comme la carte <em>Biais signés</em>
+(voir <a class="reference internal" href="manuel_stats.html#biais-signes"><span class="std std-ref">Biais signés</span></a>) : prise/refus, doubles (sur l’ensemble et par
+score) et blots, chacun avec ses deux comptes et leur coût, le biais, son
+intervalle à 95 % et le verdict (<code class="docutils literal notranslate"><span class="pre">too_much</span></code>, <code class="docutils literal notranslate"><span class="pre">too_little</span></code>, <code class="docutils literal notranslate"><span class="pre">balanced</span></code>,
+<code class="docutils literal notranslate"><span class="pre">insufficient</span></code> sous 20 décisions). La partie libre a sa ligne <code class="docutils literal notranslate"><span class="pre">money</span></code> et un
+score post-Crawford se lit à 1 point ; la part des coups de pions qui n’ont pas
+pu être rejoués est donnée sous le tableau.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Mêmes options de filtre que <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code> (<code class="docutils literal notranslate"><span class="pre">--player</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--opponent</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats tournament</strong> — Le bilan d’un tournoi pour un joueur, comme le bouton
+<em>Bilan</em> du panneau Tournois (voir <a class="reference internal" href="manuel_tournois.html#bilan-tournoi"><span class="std std-ref">bilan du tournoi</span></a>) : PR et perte MWC
+(éq. 7 pts) face au niveau habituel des 365 jours précédents, par ronde, par
+rang de la décision dans le match, par score (<code class="docutils literal notranslate"><span class="pre">dmp</span></code>, <code class="docutils literal notranslate"><span class="pre">crawford</span></code>,
+<code class="docutils literal notranslate"><span class="pre">post_crawford</span></code>, <code class="docutils literal notranslate"><span class="pre">other</span></code>) et par rythme (<code class="docutils literal notranslate"><span class="pre">quick</span></code>, <code class="docutils literal notranslate"><span class="pre">considered</span></code>), chacun
+avec son intervalle à 95 % et un verdict (<code class="docutils literal notranslate"><span class="pre">worse</span></code>, <code class="docutils literal notranslate"><span class="pre">better</span></code>, <code class="docutils literal notranslate"><span class="pre">usual</span></code>,
+<code class="docutils literal notranslate"><span class="pre">insufficient</span></code> sans intervalle, sous 20 décisions d’un côté ou sous 5 matchs
+habituels), puis au plus trois familles d’erreurs du tournoi.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span>...<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>text<span class="p">|</span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p>Sans <code class="docutils literal notranslate"><span class="pre">--player</span></code>, le joueur est le plus présent dans les matchs du tournoi.
+<code class="docutils literal notranslate"><span class="pre">--player</span></code> se répète pour passer plusieurs joueurs en un appel. En JSON, un
+seul joueur donne un objet et deux ou plus une liste, dans l’ordre demandé ; un
+script dont le nombre de joueurs varie utilise la route <code class="docutils literal notranslate"><span class="pre">stats.tournamentReviews</span></code>
+(ou <code class="docutils literal notranslate"><span class="pre">GetTournamentReviews</span></code>), qui rend toujours une liste.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Bob"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats training</strong> — Le PR du quiz Décision, le PR des matchs et la rétention
+Anki, repliés par fenêtre calendaire, comme l’onglet <em>Entraînement</em> du panneau
+Stats (voir <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Panneau Stats</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">week|month</span></code> — La fenêtre calendaire (défaut <code class="docutils literal notranslate"><span class="pre">week</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Le filtre des
+matchs ; les journaux du quiz et d’Anki ne portent pas de joueur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Le JSON porte aussi la liste des sessions de quiz ;
+le texte et le JSON donnent le PR du quiz par plan de jeu.</p></li>
+</ul>
+<p>Chaque série garde son nombre d’échantillons : une fenêtre sans décision y est
+un tiret en texte, un compte nul en JSON, jamais un zéro.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--window<span class="w"> </span>month<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats h2h</strong> — Deux joueurs l’un contre l’autre : les matchs qu’ils ont
+disputés ensemble, le PR de chacun dans chaque match et sur l’ensemble, et le
+bilan des matchs menés à terme.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats contrast</strong> — Les positions que deux joueurs ont tous deux eu à jouer et
+où l’un a bien joué (sous le seuil Erreur) et l’autre non, l’écart le plus large
+d’abord ; un joueur est jugé sur son pire coup de la position. <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code>
+garde les N premières lignes du texte ; le JSON donne tout, avec les
+<code class="docutils literal notranslate"><span class="pre">position_id</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats windows</strong> — Le PR sur une fenêtre calendaire glissante : une ligne par
+mois, chacune couvrant ce mois et les précédents de la fenêtre
+(<code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">month</span></code>, <code class="docutils literal notranslate"><span class="pre">quarter</span></code> ou un nombre de mois).</p>
+<p><code class="docutils literal notranslate"><span class="pre">--by-phase</span></code> découpe chaque fenêtre par phase de jeu (ouverture, milieu de
+partie, course, sortie…) : sous chaque ligne, une ligne par phase avec ses
+matchs, ses décisions et son PR, les mêmes chiffres que la ventilation par
+phase de <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">breakdown</span></code> restreinte à la fenêtre ; une phase sans décision
+comptée dans la fenêtre n’y figure pas. Le démon HTTP les rend dans
+<code class="docutils literal notranslate"><span class="pre">per_phase</span></code> quand la requête <code class="docutils literal notranslate"><span class="pre">stats.prByWindow</span></code> porte <code class="docutils literal notranslate"><span class="pre">&quot;byPhase&quot;:</span> <span class="pre">true</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--window<span class="w"> </span>quarter<span class="o">]</span><span class="w"> </span><span class="o">[</span>--by-phase<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats ranking</strong> — Le classement des joueurs par PR, le plus bas en tête,
+parmi ceux qui ont au moins <code class="docutils literal notranslate"><span class="pre">--min-decisions</span></code> décisions comptées (500 par
+défaut) ; deux PR égaux partagent un rang. <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code> garde les N premiers.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span><span class="m">20</span><span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats engines</strong> — Les moteurs d’analyse présents dans la base, sous le nom
+exact que <code class="docutils literal notranslate"><span class="pre">--engine</span></code> attend ; le même choix que le menu <em>Moteur</em> du panneau
+Stats.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>engines<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options communes:</strong> <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code>, et le filtre de provenance <code class="docutils literal notranslate"><span class="pre">--engine</span> <span class="pre">&lt;nom&gt;</span></code> (le
+moteur d’analyse, nom exact) et <code class="docutils literal notranslate"><span class="pre">--min-depth</span> <span class="pre">&lt;n&gt;</span></code> (la profondeur minimale de
+l’analyse), que <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> et <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code> acceptent
+aussi. <code class="docutils literal notranslate"><span class="pre">h2h</span></code> et <code class="docutils literal notranslate"><span class="pre">windows</span></code> lisent les statistiques par match et refusent le
+filtre de provenance, qui porte sur chaque décision.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--window<span class="w"> </span>quarter<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--min-depth<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p><strong>stats matches</strong> — Les matchs qu’un chiffre du corpus compte : ceux où le
+joueur (tout joueur sans <code class="docutils literal notranslate"><span class="pre">--player</span></code>) a une décision comptée sous le filtre,
+du plus ancien au plus récent. Leurs identifiants se passent à
+<code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span> <span class="pre">--ids</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2025</span>-03-31
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--ids<span class="w"> </span><span class="m">12</span>,15,31
+</pre></div>
+</div>
+<p><strong>stats tournaments</strong> — Les tournois que compte le nombre de tournois du
+Tableau de bord : ceux qui portent une décision comptée du joueur (de tout
+joueur sans <code class="docutils literal notranslate"><span class="pre">--player</span></code>) sous le filtre, par identifiant.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats progression</strong> — Le PR de chaque match par ordre de date, le PR de
+chaque tournoi et le PR glissant sur les N dernières décisions : l’onglet
+<em>Progression</em> du panneau Stats (voir <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Panneau Stats</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Le même filtre
+que <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Le JSON porte les matchs, les tournois et les PR
+glissants.</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats breakdown</strong> — Le PR du filtre ventilé par phase de jeu, plan de jeu,
+étiquette de commentaire, score (away contre away) et action de videau, avec la
+direction des erreurs de videau : l’onglet <em>Ventilations</em> du panneau Stats (voir
+<a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Panneau Stats</span></a>). Les options sont celles de <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">progression</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats summary</strong> — Le niveau du filtre sans aucun identifiant : effectifs, PR
+(pions, videau) et son intervalle à 95 %, perte de MWC par match en 7 points,
+PR par phase de jeu et par score, chaque ligne avec son effectif et son
+intervalle. Aucune position, aucun match, tournoi, adversaire ni étiquette n’y
+figure, ni les décisions les plus coûteuses : c’est ce qu’un profil public ou
+une carte de visite peut montrer sans rien divulguer. Le démon HTTP le sert à
+la route <code class="docutils literal notranslate"><span class="pre">stats.summary</span></code> ; <code class="docutils literal notranslate"><span class="pre">stats.compute</span></code> reste inchangé. Les options sont <code class="docutils literal notranslate"><span class="pre">--player</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> et <code class="docutils literal notranslate"><span class="pre">--format</span></code> ;
+il n’a pas de <code class="docutils literal notranslate"><span class="pre">--window</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats report</strong> — Le rapport HTML du panneau Stats (voir <a class="reference internal" href="manuel_stats.html#rapport-html"><span class="std std-ref">Le rapport HTML</span></a>) :
+les indicateurs du filtre et ses dix décisions les plus coûteuses avec leur
+diagramme, en un seul fichier autonome que le navigateur imprime en PDF. Le
+démon HTTP le sert à la route <code class="docutils literal notranslate"><span class="pre">stats.report</span></code>, du même générateur.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--html<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--html</span></code> — Obligatoire : le HTML est le seul format.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span> <span class="pre">&lt;fichier&gt;</span></code> — Le fichier écrit (défaut : la sortie standard).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">&lt;code&gt;</span></code> — La langue du rapport : <code class="docutils literal notranslate"><span class="pre">fr</span></code>, <code class="docutils literal notranslate"><span class="pre">en</span></code>, <code class="docutils literal notranslate"><span class="pre">de</span></code>, <code class="docutils literal notranslate"><span class="pre">el</span></code>,
+<code class="docutils literal notranslate"><span class="pre">es</span></code>, <code class="docutils literal notranslate"><span class="pre">fi</span></code>, <code class="docutils literal notranslate"><span class="pre">it</span></code>, <code class="docutils literal notranslate"><span class="pre">ja</span></code> ou <code class="docutils literal notranslate"><span class="pre">ru</span></code> (défaut <code class="docutils literal notranslate"><span class="pre">en</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Le filtre : le
+rapport nomme son périmètre.</p></li>
+</ul>
+<p>Les diagrammes y sont dessinés avec la palette par défaut ; seule l’application
+graphique emploie la palette du plateau choisie à l’écran.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--output<span class="w"> </span>rapport.html
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--lang<span class="w"> </span>fr
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="cli_entrainement.html" class="btn btn-neutral float-left" title="Étude, leçons et entraînement" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="cli_admin.html" class="btn btn-neutral float-right" title="Administration de la base" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,468 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Komentoriviliittymä (CLI) &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Tuonti, vienti, siirto" href="cli_import_export.html" />
+    <link rel="prev" title="Näppäimistöoikotiet" href="raccourcis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/cli.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/cli.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Komentoriviliittymä (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#syntaxe-generale">Yleinen syntaksi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-disponibles">Käytettävissä olevat komennot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Tuonti, vienti, siirto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Kirjasto: haku, luettelot, kokoelmat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Ottelut, turnaukset ja pelit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analyysi ja pelimoottori</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Opiskelu, oppitunnit ja harjoittelu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Tilastot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Tietokannan hallinta</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">Työnkulkuesimerkkejä</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">Turnaushakemiston tuonti</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">Säännöllinen varmuuskopiointi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">Virheiden analysointi</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Komentoriviliittymä (CLI)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="interface-en-ligne-de-commande-cli">
+<span id="cli"></span><h1>Komentoriviliittymä (CLI)<a class="headerlink" href="#interface-en-ligne-de-commande-cli" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2>Johdanto<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>blunderDB sisältää täydellisen komentoriviliittymän (CLI) samassa suoritettavassa tiedostossa kuin graafinen käyttöliittymä. CLI on erityisen hyödyllinen seuraaviin tarkoituksiin:</p>
+<ul class="simple">
+<li><p><strong>ottelujen massatuonti</strong>: koko hakemistollinen ottelutiedostoja (XG, SGF, MAT, BGF…) tuodaan yhdellä komennolla,</p></li>
+<li><p><strong>automaatio</strong>: blunderDB:n integrointi shell-skripteihin säännöllisiä varmuuskopioita, ajastettuja vientejä tai käsittelyputkia varten,</p></li>
+<li><p><strong>palvelinkäyttö</strong>: tietokantojen hallinta koneilla, joilla ei ole graafista ympäristöä,</p></li>
+<li><p><strong>nopea tarkastus</strong>: tietokannan sisällön tai eheyden tarkistaminen käynnistämättä graafista käyttöliittymää.</p></li>
+</ul>
+<p>CLI käyttää täsmälleen samaa tietokantamuotoa kuin graafinen käyttöliittymä: molemmat kirjoittavat samaa tiedostoa, eikä mitään tarvitse synkronoida.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p><strong>Jos sovellus on auki samalla kun skripti kirjoittaa.</strong> Tiedosto on WAL-tilassa: luku ei koskaan estä kirjoitusta, ja molemmat ohjelmat työskentelevät samassa tietokannassa toisiaan häiritsemättä. Kaksi kirjoitusta sen sijaan seuraavat toisiaan — jälkimmäinen odottaa kirjoituslukkoa (kymmenen sekuntia lausetta kohti ja muutama uudelleenyritys päälle) eikä epäonnistu ennen kuin odotusaika on kulunut umpeen, jolloin viesti mainitsee SQLiten:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: failed to import match: sqlite: save match: database is locked (5) (SQLITE_BUSY)
+</pre></div>
+</div>
+<p>Graafinen käyttöliittymä ei tarkkaile tiedostoa: se näyttää edelleen sitä, minkä oli ladannut, kunnes <code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code> lataa asemat uudelleen. Mitään ei menetetä, mutta näyttö on tietokantaa jäljessä.</p>
+</div>
+</section>
+<section id="syntaxe-generale">
+<h2>Yleinen syntaksi<a class="headerlink" href="#syntaxe-generale" title="Link to this heading"></a></h2>
+<p>Tila tunnistetaan automaattisesti: jos ensimmäinen argumentti on CLI-komento, blunderDB käynnistyy headless-tilassa, muuten se käynnistää graafisen käyttöliittymän.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># GUI</span>
+./blunderdb
+
+<span class="c1"># CLI</span>
+./blunderdb<span class="w"> </span>&lt;command&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Tämän sivun esimerkeissä kirjoitetaan <code class="docutils literal notranslate"><span class="pre">./blunderdb</span></code>: binääri sellaisena kuin se ladataan, kutsuttuna siitä kansiosta, jossa se sijaitsee. Paketista asennettuna tai <code class="docutils literal notranslate"><span class="pre">PATH</span></code>-kansiosta linkitettynä (katso <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">Lataaminen ja asentaminen</span></a>) se on yksinkertaisesti <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code>.</p>
+<p>Totuusarvoiset valitsimet, joiden kohdalla lukee ”oletus: kyllä”, poistetaan käytöstä muodolla <code class="docutils literal notranslate"><span class="pre">--option=false</span></code> — <code class="docutils literal notranslate"><span class="pre">--recursive=false</span></code>, <code class="docutils literal notranslate"><span class="pre">--analysis=false</span></code>. Välilyönnillä erotettua muotoa ei ole: <code class="docutils literal notranslate"><span class="pre">--recursive</span> <span class="pre">false</span></code> jättää valitsimen oletusarvoonsa ja käsittelee sanaa <code class="docutils literal notranslate"><span class="pre">false</span></code> yhtenä argumenttina liikaa.</p>
+</section>
+<section id="commandes-disponibles">
+<h2>Käytettävissä olevat komennot<a class="headerlink" href="#commandes-disponibles" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Komento</p></th>
+<th class="head"><p>Kuvaus</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>create</p></td>
+<td><p>Luo uusi tietokanta.</p></td>
+</tr>
+<tr class="row-odd"><td><p>import</p></td>
+<td><p>Tuo tietoja (ottelu, asema, erä).</p></td>
+</tr>
+<tr class="row-even"><td><p>export</p></td>
+<td><p>Vie tietoja.</p></td>
+</tr>
+<tr class="row-odd"><td><p>transfer</p></td>
+<td><p>Kopioi osan kirjastosta toiseen ilman välitiedostoa.</p></td>
+</tr>
+<tr class="row-even"><td><p>identity</p></td>
+<td><p>Näyttää tai siirtää liikkeeseenlaskijan identiteetin (vesileimojen allekirjoitusavain).</p></td>
+</tr>
+<tr class="row-odd"><td><p>open</p></td>
+<td><p>Muuntaa salasanalla suojatun tiedoston (.dbx) tavalliseksi tietokannaksi.</p></td>
+</tr>
+<tr class="row-even"><td><p>search</p></td>
+<td><p>Hae asemia suodattimilla.</p></td>
+</tr>
+<tr class="row-odd"><td><p>list</p></td>
+<td><p>Näytä tietokannan sisältö.</p></td>
+</tr>
+<tr class="row-even"><td><p>match</p></td>
+<td><p>Näytä ottelun asemat ja analyysit.</p></td>
+</tr>
+<tr class="row-odd"><td><p>transcribe</p></td>
+<td><p>Toistaa litteroinnin ja raportoi, mitä toisto löytää.</p></td>
+</tr>
+<tr class="row-even"><td><p>duel</p></td>
+<td><p>Pelaa kaksintaistelua yksi toiminto kutsua kohden (luonti, siirto, kuutio, luovutus, lopetus).</p></td>
+</tr>
+<tr class="row-odd"><td><p>collection</p></td>
+<td><p>Hallitsee kokoelmia (luettelo, sisältö, luonti, uudelleennimeäminen, poisto, vienti).</p></td>
+</tr>
+<tr class="row-even"><td><p>study</p></td>
+<td><p>Opiskelujono: pelaajan, johon verrataan, käsittelemättömät blunderit sekä merkintä ”nähty”.</p></td>
+</tr>
+<tr class="row-odd"><td><p>lesson</p></td>
+<td><p>Hallitsee oppitunteja (järjestetyt vaiheet, jotka näyttävät kokoelmia ja asemia) ja vie ne.</p></td>
+</tr>
+<tr class="row-even"><td><p>anki</p></td>
+<td><p>Välitoistopakat (luettelo, tilastot, ennuste, synkronointi).</p></td>
+</tr>
+<tr class="row-odd"><td><p>stats</p></td>
+<td><p>Tilastot, jotka lasketaan erikseen komennosta <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> (toistuvat virheet, sijoitus, raportti…).</p></td>
+</tr>
+<tr class="row-even"><td><p>training</p></td>
+<td><p>Harjoittelupäiväkirja (istunnot, ohitetut asemat).</p></td>
+</tr>
+<tr class="row-odd"><td><p>comment</p></td>
+<td><p>Lukee ja lisää aseman kommentit, jotka on liitetty kirjoittajaansa.</p></td>
+</tr>
+<tr class="row-even"><td><p>elsewhere</p></td>
+<td><p>Mitä muut tietokannat tietävät asemasta, ja sen naapurit niissä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cubematrix</p></td>
+<td><p>Aseman kuutiotuomio ottelun jokaisessa pistetilanteessa.</p></td>
+</tr>
+<tr class="row-even"><td><p>rollout</p></td>
+<td><p>Pelaa aseman loppuun asti erottaakseen sen siirrot tai tuplauspäätöksen toisistaan (XGID tai OGID).</p></td>
+</tr>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Laskee ulosajoaseman (XGID tai OGID) Effective Pip Countin ja kuutiotuomion.</p></td>
+</tr>
+<tr class="row-even"><td><p>gnubgid</p></td>
+<td><p>Kirjoittaa asemalle GNU Backgammonin antaman aseman tunnuksen ja ottelun tunnuksen (XGID tai OGID).</p></td>
+</tr>
+<tr class="row-odd"><td><p>capture</p></td>
+<td><p>Lukee aseman, jonka eXtreme Gammon -laudan kuvakaappaus näyttää.</p></td>
+</tr>
+<tr class="row-even"><td><p>openingbook</p></td>
+<td><p>Avaussiirto tai pelin vastaus tiettyyn pistetilanteeseen, poimittu upotetusta avauskirjasta ja arvioitu sitä vasten.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bearoff</p></td>
+<td><p>Luo, listaa, tarkistaa ja poistaa bearoff-tietokantoja.</p></td>
+</tr>
+<tr class="row-even"><td><p>analyze</p></td>
+<td><p>Kirjoittaa gammonNet-analyysin jokaiselle asemalle, jolla ei ole yhtään analyysiä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tournament</p></td>
+<td><p>Lukee johdetun turnauksen (sijoitukset, kaaviot, sivut) ja vahvistaa sen ehdotukset.</p></td>
+</tr>
+<tr class="row-even"><td><p>players</p></td>
+<td><p>Pelaajan kirjoitusasut (aliakset), pelaajien yhdistäminen ja vaihtaminen keskenään.</p></td>
+</tr>
+<tr class="row-odd"><td><p>events</p></td>
+<td><p>Tapahtuman kirjoitusasut (aliakset).</p></td>
+</tr>
+<tr class="row-even"><td><p>trash</p></td>
+<td><p>Roskakori: luettelo, palautus, peruutettavissa oleva poisto.</p></td>
+</tr>
+<tr class="row-odd"><td><p>info</p></td>
+<td><p>Näytä tietokannan metatiedot.</p></td>
+</tr>
+<tr class="row-even"><td><p>edit</p></td>
+<td><p>Muokkaa tietokannan metatietoja ja kynnysarvoja.</p></td>
+</tr>
+<tr class="row-odd"><td><p>verify</p></td>
+<td><p>Tarkista tietokannan eheys.</p></td>
+</tr>
+<tr class="row-even"><td><p>vacuum</p></td>
+<td><p>Tiivistää tietokantatiedoston ja ottaa vapautuneen tilan takaisin.</p></td>
+</tr>
+<tr class="row-odd"><td><p>met</p></td>
+<td><p>Luettelee ja tuo tietokannan ottelun ekviteettitaulukon ja valitsee sen.</p></td>
+</tr>
+<tr class="row-even"><td><p>reencode</p></td>
+<td><p>Kirjoittaa analyysit uudelleen tiiviiseen muotoon.</p></td>
+</tr>
+<tr class="row-odd"><td><p>repair</p></td>
+<td><p>Laskee uudelleen sen, minkä tietokanta johtaa siitä mitä se tallentaa.</p></td>
+</tr>
+<tr class="row-even"><td><p>maintenance</p></td>
+<td><p>Tietokannan terveydentila: laskurit, toiminnot ja viimeisimmät ajot.</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete</p></td>
+<td><p>Poista tietoja.</p></td>
+</tr>
+<tr class="row-even"><td><p>healthcheck</p></td>
+<td><p>Kysyy käynnissä olevalta <code class="docutils literal notranslate"><span class="pre">serve</span></code>-taustaprosessilta: paluukoodi 0, jos se on valmis.</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcp</p></td>
+<td><p>Tarjoaa tietokannan työkalut tekoälyavustajalle (Model Context Protocol).</p></td>
+</tr>
+<tr class="row-even"><td><p>completion</p></td>
+<td><p>Tulostaa shell-täydennysskriptin (bash, zsh, fish).</p></td>
+</tr>
+<tr class="row-odd"><td><p>help</p></td>
+<td><p>Näytä ohje.</p></td>
+</tr>
+<tr class="row-even"><td><p>version</p></td>
+<td><p>Näytä versio.</p></td>
+</tr>
+<tr class="row-odd"><td><p>serve, migrate, call</p></td>
+<td><p>Palvelintila ja siirto PostgreSQL:ään: ks. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Jokainen komento hyväksyy <code class="docutils literal notranslate"><span class="pre">--help</span></code>-valitsimen yksityiskohtaisen ohjeen näyttämiseksi.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cli_import_export.html">Tuonti, vienti, siirto</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#create-creer-une-base-de-donnees">create — Luo tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#import-importer-des-donnees">import — Tuo tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#export-exporter-des-donnees">export — Vie tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#transfer-copier-d-une-bibliotheque-a-une-autre">transfer — Kopiointi kirjastosta toiseen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#identity-identite-d-emetteur">identity — Liikkeeseenlaskijan identiteetti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#open-ouvrir-un-fichier-protege">open — Suojatun tiedoston avaaminen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_bibliotheque.html">Kirjasto: haku, luettelot, kokoelmat</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#search-rechercher-des-positions">search — Hae asemia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#list-lister-le-contenu">list — Luettele sisältö</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#collection-gerer-les-collections">collection — Kokoelmien hallinta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#comment-les-commentaires-d-une-position">comment — Position kommentit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#elsewhere-ailleurs-une-position-dans-d-autres-bases">elsewhere — Muualla: asema muissa tietokannoissa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#trash-la-corbeille">trash — Roskakori</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_matchs.html">Ottelut, turnaukset ja pelit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_matchs.html#match-afficher-un-match">match — Näytä ottelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_matchs.html#tournament-lire-un-tournoi-dirige">tournament — Johdetun turnauksen lukeminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_matchs.html#transcribe-rejouer-une-transcription">transcribe — Toista litterointi uudelleen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_matchs.html#duel-jouer-un-duel">duel — Pelaa Kaksintaistelu</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_analyse.html">Analyysi ja pelimoottori</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#analyze-rattrapage-gammonnet">analyze — gammonNet-täydennysanalyysi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#rollout-rollout-d-une-position">rollout — Aseman rollout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#epc-calculatrice-epc">epc — EPC-laskin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#gnubgid-id-gnubg">gnubgid — GNUbg-tunnus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#cubematrix-matrice-du-videau">cubematrix — Tuplauskuution matriisi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#capture-position-depuis-une-capture-d-ecran">capture — Asema kuvakaappauksesta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#bearoff-bases-de-sortie">bearoff — Bearoff-tietokannat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#openingbook-quel-coup-a-ce-score">openingbook — Mikä siirto tällä pistetilanteella?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_entrainement.html">Opiskelu, oppitunnit ja harjoittelu</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_entrainement.html#study-la-file-d-etude-transversale">study — Tuonnit ylittävä opiskelujono</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_entrainement.html#lesson-gerer-les-lecons">lesson — Hallitse oppitunteja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_entrainement.html#anki-paquets-de-repetition-espacee">anki — Välitoistopakat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_entrainement.html#training-le-journal-d-entrainement">training — Harjoituspäiväkirja</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_stats.html">Tilastot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_stats.html#stats-erreurs-recurrentes">stats — Toistuvat virheet</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_admin.html">Tietokannan hallinta</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#info-metadonnees-de-la-base">info — Tietokannan metatiedot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#edit-modifier-les-metadonnees">edit — Muokkaa metatietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#verify-verifier-l-integrite">verify — Tarkista eheys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#vacuum-compacter-la-base-de-donnees">vacuum — Tietokannan tiivistäminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#met-la-table-d-equite-de-match-de-la-base">met — Tietokannan ottelun pääomataulukko</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#reencode-reecrire-les-analyses-au-format-compact">reencode — Analyysien uudelleenkirjoitus kompaktiin muotoon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#maintenance-l-etat-de-sante-de-la-base">maintenance — Tietokannan terveydentila</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#players-les-graphies-d-un-joueur">players — Pelaajan kirjoitusasut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#events-les-graphies-d-un-evenement">events — Tapahtuman kirjoitusasut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#repair-recalculer-ce-qui-est-derive">repair — Laske uudelleen se, mikä on johdettua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#delete-supprimer-des-donnees">delete — Poista tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#healthcheck-sonder-un-demon">healthcheck — Taustaprosessin tarkistus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#mcp-offrir-la-base-a-un-assistant-ia">mcp — Tietokannan tarjoaminen tekoälyavustajalle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#completion-completion-shell">completion — Shell-täydennys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#version-afficher-la-version">version — Näytä versio</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="exemples-de-flux-de-travail">
+<h2>Työnkulkuesimerkkejä<a class="headerlink" href="#exemples-de-flux-de-travail" title="Link to this heading"></a></h2>
+<section id="import-d-un-repertoire-de-tournoi">
+<h3>Turnaushakemiston tuonti<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Open de Paris 2025"</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs_open_paris/
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>stats
+</pre></div>
+</div>
+</section>
+<section id="sauvegarde-reguliere">
+<h3>Säännöllinen varmuuskopiointi<a class="headerlink" href="#sauvegarde-reguliere" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.db
+</pre></div>
+</div>
+</section>
+<section id="analyse-des-erreurs">
+<h3>Virheiden analysointi<a class="headerlink" href="#analyse-des-erreurs" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les positions délicates, puis celles de videau</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span>--export<span class="w"> </span>blunders.db
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.05<span class="w"> </span>--export<span class="w"> </span>cube_errors.db
+
+<span class="c1"># Les coups réellement fautifs : au moins 100 millièmes d'équité perdus</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">100</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+</section>
+<section id="codes-de-retour">
+<h2>Paluukoodit<a class="headerlink" href="#codes-de-retour" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> — Onnistui.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> — Virhe.</p></li>
+</ul>
+<p>Tämä tekee CLI:stä sopivan käytettäväksi skripteissä virheenkäsittelyn kanssa:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"OK"</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"KO"</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="raccourcis.html" class="btn btn-neutral float-left" title="Näppäimistöoikotiet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_import_export.html" class="btn btn-neutral float-right" title="Tuonti, vienti, siirto" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

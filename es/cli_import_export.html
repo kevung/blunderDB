@@ -1,0 +1,459 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Importar, exportar, transferir &mdash; documentación de blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3bdc4af3"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="Biblioteca: búsqueda, listas, colecciones" href="cli_bibliotheque.html" />
+    <link rel="prev" title="Interfaz de línea de comandos (CLI)" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Idiomas">
+  <a href="../fr/cli_import_export.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_import_export.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_import_export.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_import_export.html" lang="el" hreflang="el">Ελληνικά</a>
+  <span class="current" lang="es" aria-current="true">Español</span>
+  <a href="../fi/cli_import_export.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_import_export.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_import_export.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_import_export.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Primeros pasos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guía del usuario</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referencia</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Métricas y herramientas de estudio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Atajos de teclado</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Interfaz de línea de comandos (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Introducción</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Sintaxis general</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Comandos disponibles</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Importar, exportar, transferir</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-creer-une-base-de-donnees">create — Crear una base de datos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#import-importer-des-donnees">import — Importar datos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export-exporter-des-donnees">export — Exportar datos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transfer-copier-d-une-bibliotheque-a-une-autre">transfer — Copiar de una biblioteca a otra</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identity-identite-d-emetteur">identity — Identidad de emisor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#open-ouvrir-un-fichier-protege">open — Abrir un archivo protegido</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Biblioteca: búsqueda, listas, colecciones</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Partidas, torneos y juegos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Análisis y motor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Estudio, lecciones y entrenamiento</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Estadísticas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Administración de la base de datos</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Ejemplos de flujos de trabajo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Códigos de salida</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrato de la API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anexo Windows: qué hacer si Windows bloquea el inicio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historial de versiones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Acerca de</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Interfaz de línea de comandos (CLI)</a></li>
+      <li class="breadcrumb-item active">Importar, exportar, transferir</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-exporter-transferer">
+<span id="cli-import-export-chapitre"></span><h1>Importar, exportar, transferir<a class="headerlink" href="#importer-exporter-transferer" title="Link to this heading"></a></h1>
+<section id="create-creer-une-base-de-donnees">
+<h2>create — Crear una base de datos<a class="headerlink" href="#create-creer-une-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Crea un nuevo archivo de base de datos con metadatos opcionales.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--user<span class="w"> </span>&lt;name&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--description<span class="w"> </span>&lt;text&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--force<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Ruta del archivo de base de datos a crear (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Nombre del propietario de la base de datos.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Descripción de la base de datos.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Sobrescribir el archivo si ya existe.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato de salida: <code class="docutils literal notranslate"><span class="pre">text</span></code> (por defecto) o <code class="docutils literal notranslate"><span class="pre">json</span></code> (ruta, versión, usuario, descripción, fecha de creación).</p></li>
+</ul>
+<p>La extensión <code class="docutils literal notranslate"><span class="pre">.db</span></code> se añade automáticamente si falta. Los directorios superiores se crean si es necesario.</p>
+<p><strong>Ejemplo:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>mes_matchs.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Matchs de tournoi 2025"</span>
+</pre></div>
+</div>
+</section>
+<section id="import-importer-des-donnees">
+<h2>import — Importar datos<a class="headerlink" href="#import-importer-des-donnees" title="Link to this heading"></a></h2>
+<p>Importa archivos de partidas o de posiciones en la base de datos.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Ruta de la base de datos (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Tipo de importación: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code> o <code class="docutils literal notranslate"><span class="pre">batch</span></code> (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Archivo a importar (para <code class="docutils literal notranslate"><span class="pre">match</span></code> y <code class="docutils literal notranslate"><span class="pre">position</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Directorio a importar (para <code class="docutils literal notranslate"><span class="pre">batch</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--recursive</span></code> — Explorar recursivamente los subdirectorios (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">batch</span></code>: no se detiene, e importa cada fichero de partido <strong>a medida que aparece</strong> en <code class="docutils literal notranslate"><span class="pre">--dir</span></code> (Ctrl-C para parar).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch-every</span></code> — Cada cuánto mira <code class="docutils literal notranslate"><span class="pre">--watch</span></code> (por defecto: 10s, mínimo 2s).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--resume</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">batch</span></code>: reanuda el lote con este número (mostrado al inicio de la importación, o <code class="docutils literal notranslate"><span class="pre">batch_id</span></code> en JSON). Los archivos con la misma ruta, tamaño y fecha que en su registro se omiten sin leerse, los de mismo contenido se leen pero no se analizan; los archivos con error se reintentan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato de salida: <code class="docutils literal notranslate"><span class="pre">text</span></code> (por defecto) o <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> — Falla si al menos un elemento (<code class="docutils literal notranslate"><span class="pre">position</span></code> o <code class="docutils literal notranslate"><span class="pre">batch</span></code>) no se pudo importar, incluso si otros tuvieron éxito.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> — Omite un partido ya presente en la base sin tomar sus análisis más profundos (las marcas de estudio se siguen aplicando). Por defecto, un duplicado sustituye cada análisis guardado por el suyo cuando es estrictamente más profundo, y la línea lo indica: <code class="docutils literal notranslate"><span class="pre">DUPLICATE</span> <span class="pre">(N</span> <span class="pre">analyses</span> <span class="pre">deepened)</span></code>.</p></li>
+</ul>
+<p>Una decisión cuyo análisis contiene un valor que no es un número finito (NaN o infinito) se importa sin ese análisis, y el resto de la partida entra con normalidad; el informe del lote indica su número (<code class="docutils literal notranslate"><span class="pre">Decisions</span> <span class="pre">imported</span> <span class="pre">without</span> <span class="pre">their</span> <span class="pre">analysis</span></code>).</p>
+<p>El código de retorno obedece a cuatro reglas:</p>
+<ul class="simple">
+<li><p><strong>nada fue reconocido</strong> — cada archivo falló — : error, se pase o no <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>;</p></li>
+<li><p><strong>solo duplicados</strong> — cada archivo ya estaba en la base — : éxito. Un directorio relanzado sin ningún archivo nuevo, la noche ordinaria de un script, termina en 0 con <code class="docutils literal notranslate"><span class="pre">duplicates</span></code> como único contador distinto de cero;</p></li>
+<li><p><strong>fallo parcial</strong> (algunos elementos importados, otros rechazados): error solo si se pasa <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>;</p></li>
+<li><p>al menos un elemento nuevo importado, sin <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>: éxito, con los archivos rechazados listados en la tabla.</p></li>
+</ul>
+<section id="surveiller-un-dossier">
+<h3>Vigilar una carpeta<a class="headerlink" href="#surveiller-un-dossier" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> convierte la importación de directorio en una vigilancia: el comando no devuelve el control e importa cada fichero de partido que <strong>aparece</strong> en la carpeta. Es la forma sin interfaz de la <a class="reference internal" href="manuel_interface.html#dossier-surveille"><span class="std std-ref">carpeta vigilada</span></a> de la aplicación.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Importer ce que le dossier contient déjà, puis surveiller ce qui arrive</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches<span class="w"> </span>--watch
+</pre></div>
+</div>
+<p>Solo se importan los ficheros que aparecen: lo que la carpeta contiene al arrancar se registra como conocido y se deja en paz — apuntar una vigilancia a cuatro años de partidos no debe importarlos todos. Los dos comandos anteriores se componen, pues, exactamente como uno espera.</p>
+<p>Un fichero se importa solo cuando su <strong>tamaño se ha estabilizado</strong>, es decir, visto dos veces sin cambios: un partido que otro programa está escribiendo crece de una mirada a la siguiente, e importarlo a medio escribir daría un error de sintaxis sobre el que nadie puede actuar. La carpeta no se recorre recursivamente. Un recurso de red que se ha vuelto ilegible no detiene la vigilancia, y su contenido no pasa por nuevo cuando vuelve.</p>
+<p>Una base <code class="docutils literal notranslate"><span class="pre">.db</span></code> que aparece en la carpeta se fusiona como con <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--type</span> <span class="pre">database</span></code>: así llega la exportación incremental de otra máquina (véase <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Sincronizar dos máquinas</span></a>).</p>
+<p>Ctrl-C para entre dos ficheros, nunca en medio de uno: el fichero en curso termina su importación y su informe se muestra antes de que el comando devuelva el control.</p>
+</section>
+<section id="import-d-un-match">
+<h3>Importar una partida<a class="headerlink" href="#import-d-un-match" title="Link to this heading"></a></h3>
+<p>Formatos compatibles: eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>), GNUbg (<code class="docutils literal notranslate"><span class="pre">.sgf</span></code>), Jellyfish (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>), BGBlitz (<code class="docutils literal notranslate"><span class="pre">.bgf</span></code>) y HedgeHog (<code class="docutils literal notranslate"><span class="pre">.ogxm</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg
+
+<span class="c1"># Successfully imported match (ID: 1)</span>
+<span class="c1">#</span>
+<span class="c1"># Match Details:</span>
+<span class="c1">#   Players: Kévin Unger vs Maxence Job</span>
+<span class="c1">#   Event: HSBT Paris 2023</span>
+<span class="c1">#   Match Length: 7</span>
+<span class="c1">#   Games: 7</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> entrega los mismos campos en un único documento:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"match"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kévin Unger"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Maxence Job"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"event"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HSBT Paris 2023"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris, Fédération Française de Bridge"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_length"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"games"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="import-de-positions">
+<h3>Importar posiciones<a class="headerlink" href="#import-de-positions" title="Link to this heading"></a></h3>
+<p>Importa posiciones desde un archivo de texto, <strong>una posición JSON por línea</strong>. Es exactamente lo que escribe <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">positions</span></code>: los dos comandos se corresponden, una exportación se reimporta tal cual, sin retocar nada.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>position<span class="w"> </span>--file<span class="w"> </span>positions.txt
+
+<span class="c1"># Successfully imported 4 positions</span>
+</pre></div>
+</div>
+<p>Una línea, tal como la produce <code class="docutils literal notranslate"><span class="pre">export</span></code> — el tablero ocupa la mayor parte, veintiséis puntos seguidos del bearoff:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{"id":1,"board":{"points":[{"checkers":0,"color":0},{"checkers":1,"color":1},…],"bearoff":[0,0]},"cube":{"owner":-1,"value":0},"dice":[0,0],"score":[7,7],"player_on_roll":0,"decision_type":1,"has_jacoby":0,"has_beaver":0,"individually_imported":true,"flagged":false}
+</pre></div>
+</div>
+<p>El análisis y los comentarios no viajan por este formato: transporta la posición, nada más. Para mover una biblioteca entera, hay que usar <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>.</p>
+</section>
+<section id="import-d-une-base">
+<h3>Importación de una base<a class="headerlink" href="#import-d-une-base" title="Link to this heading"></a></h3>
+<p>Fusiona otra base blunderDB (<em>.db</em>) en la de <code class="docutils literal notranslate"><span class="pre">--db</span></code>, según las reglas de la fusión de la aplicación de escritorio y de <code class="docutils literal notranslate"><span class="pre">imports.db</span></code> en modo servidor (<a class="reference internal" href="guide_utilisateur.html#guide-fusionner-base"><span class="std std-ref">Fusionar una base de datos</span></a>): posiciones, partidas, torneos, colecciones, lecciones, mazos Anki, borradores y alias, así como la Dirección de los torneos y su Encuentro. Importar dos veces el mismo archivo no cambia nada. La salida de texto cuenta las partidas añadidas y las ya presentes, las Direcciones y Encuentros releídos, y nombra las colecciones vivas congeladas o dejadas sobre una lista manual, y las familias que la base es demasiado antigua para contener.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>club.db
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>club.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="import-par-lot">
+<h3>Importación por lotes<a class="headerlink" href="#import-par-lot" title="Link to this heading"></a></h3>
+<p>Importa todos los archivos de partidas de un directorio en una sola operación. Es el método más eficiente para importar un gran número de partidas.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--recursive<span class="o">=</span><span class="nb">false</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--fail-on-error
+</pre></div>
+</div>
+<p>Una tabla resumen indica para cada archivo si la importación tuvo éxito (✓), falló (✗) o fue un duplicado (⊘). Un duplicado no cuenta como un fallo, y un lote que solo contiene duplicados es un éxito (véanse las reglas anteriores).</p>
+<p>Cada archivo del lote queda registrado (ruta, tamaño, fecha, SHA-256, partida obtenida o error). El número del lote se muestra al inicio; si la importación se interrumpe, <code class="docutils literal notranslate"><span class="pre">--resume</span></code> la continúa sin volver a analizar lo ya decidido. Con <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>, el objeto final incluye <code class="docutils literal notranslate"><span class="pre">batch_id</span></code> y el array <code class="docutils literal notranslate"><span class="pre">journal</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--resume<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Batch importing from: ./matchs/ (recursive: true)
+
+Found 3 match file(s) to import
+
+[1/3] Importing: 02_NDT_FR.txt... ERROR: failed to parse file: ingest: parse gnubg file: invalid MAT file: no match header found
+[2/3] Importing: test.mat... DUPLICATE
+[3/3] Importing: test.xg... OK (ID: 1, 341 positions)
+
+====================================================================
+IMPORT SUMMARY
+====================================================================
+Status  File           ID  Player 1     Player 2     Games  Positions  Error
+------  ----           --  --------     --------     -----  ---------  -----
+✗       02_NDT_FR.txt                                0      0          failed to parse file: ingest: ...
+⊘       test.mat                                     0      0
+✓       test.xg        1   Kévin Unger  Maxence Job  7      341
+--------------------------------------------------------------------
+Total: 3 files | Success: 1 | Duplicates: 1 | Failed: 1 | Positions imported: 341
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> da lo mismo, explotable por un script: un objeto por archivo en <code class="docutils literal notranslate"><span class="pre">files</span></code>, luego los totales. Una noche tranquila deja solo <code class="docutils literal notranslate"><span class="pre">duplicates</span></code> distinto de cero y <code class="docutils literal notranslate"><span class="pre">failed</span></code> en cero, y el código de retorno en 0; solo un lote donde nada fue reconocido termina en error.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"files"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02_NDT_FR.txt"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"failed to parse file: …"</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test.xg"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">"positions"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"duplicates"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"failed"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"positions_imported"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="export-exporter-des-donnees">
+<h2>export — Exportar datos<a class="headerlink" href="#export-exporter-des-donnees" title="Link to this heading"></a></h2>
+<p>Exporta el contenido de la base de datos a archivos.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span>--file<span class="w"> </span>&lt;output&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de datos de origen (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Tipo de exportación: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> o <code class="docutils literal notranslate"><span class="pre">mat</span></code> (exportación de una o varias partidas en transcripción Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Archivo de salida (obligatorio, salvo para <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code> utilizado con <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Directorio de salida para la exportación <code class="docutils literal notranslate"><span class="pre">.mat</span></code> por lotes (varias partidas, un archivo por partida; sin <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, se exportan todas las partidas).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Incluir los análisis (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Incluir los comentarios (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Incluir la biblioteca de filtros (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--played-moves</span></code> — Incluir las jugadas realizadas (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--matches</span></code> — Incluir las partidas (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--transcriptions</span></code> — Incluir el borrador de transcripción de cada partida exportada (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--aliases</span></code> — Incluir los alias de jugadores y eventos que escriben las partidas exportadas, para que la fusión de jugadores las siga (predeterminado: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collections</span></code> — Incluir las colecciones (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournaments</span></code> — Incluir los torneos (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decks</span></code> — Incluir los mazos Anki (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lessons</span></code> — Incluir las lecciones, con las colecciones y las posiciones que muestran sus pasos (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--anki-history</span></code> — Llevar el historial de repaso de los mazos exportados: el estado de cada tarjeta y el registro de sus repasos (por defecto: sí).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code> — IDs de las colecciones a exportar (separados por comas, vacío = todas).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — IDs de las partidas a exportar (separados por comas, vacío = todas).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — IDs de los torneos a exportar (separados por comas, vacío = todos).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck-ids</span></code> — IDs de los mazos de Anki a exportar con sus posiciones (separados por comas, vacío = todos).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lesson-ids</span></code> — IDs de las lecciones que exportar (separados por comas, vacío = todas).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Envuelve el resultado en un contenedor cifrado (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark</span></code> — Escribe una declaración de origen <strong>firmada</strong> en el archivo exportado (véase <a class="reference internal" href="manuel_partage.html#diffusion-controlee"><span class="std std-ref">Distribuir una base de datos: origen y contraseña</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark-note</span></code> — Texto libre asociado a la filigrana (condiciones de uso, contacto); se usa con <code class="docutils literal notranslate"><span class="pre">--watermark</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato de salida: <code class="docutils literal notranslate"><span class="pre">text</span></code> (por defecto) o <code class="docutils literal notranslate"><span class="pre">json</span></code> (un documento que resume la exportación: ruta, tamaño en bytes, recuentos).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--incremental</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code>: exporta solo lo que ha entrado en la biblioteca desde la última exportación incremental a la misma carpeta, y luego avanza esa marca en la base exportada. <code class="docutils literal notranslate"><span class="pre">--file</span></code> puede ser entonces una carpeta, donde se crea un archivo <code class="docutils literal notranslate"><span class="pre">sync-&lt;machine&gt;-&lt;date&gt;.db</span></code> (véase <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Sincronizar dos máquinas</span></a>). Un nombre de archivo ya ocupado se rechaza: el archivo existente contiene el delta anterior, que la otra máquina quizá aún no ha fusionado.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sync-cursor</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--incremental</span></code>: nombre de la marca leída y avanzada, en lugar de la carpeta de destino.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plan</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code> o <code class="docutils literal notranslate"><span class="pre">matches</span></code>: cuenta, familia por familia, lo que escribiría la exportación, sin escribir ningún archivo (<code class="docutils literal notranslate"><span class="pre">--file</span></code> es entonces opcional). Los recuentos son los que la exportación informa después; se nombran las colecciones vivas que saldrían congeladas y los mazos «recherche» cuya fuente perdería una parte. Con otro tipo, la opción se rechaza.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plan-ids</span> <span class="pre">&lt;famille&gt;</span></code> — Como <code class="docutils literal notranslate"><span class="pre">--plan</span></code>, pero devuelve una página de los identificadores detrás de un recuento: <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">comments</span></code> (las posiciones que los llevan), <code class="docutils literal notranslate"><span class="pre">matches</span></code>, <code class="docutils literal notranslate"><span class="pre">tournaments</span></code>, <code class="docutils literal notranslate"><span class="pre">directions</span></code> (los torneos cuya Dirección se exporta con ellos), <code class="docutils literal notranslate"><span class="pre">rencontres</span></code> (los eventos que se exportan con uno de sus torneos), <code class="docutils literal notranslate"><span class="pre">collections</span></code>, <code class="docutils literal notranslate"><span class="pre">lessons</span></code>, <code class="docutils literal notranslate"><span class="pre">ankiDecks</span></code>, <code class="docutils literal notranslate"><span class="pre">transcriptions</span></code> o <code class="docutils literal notranslate"><span class="pre">filters</span></code>. <code class="docutils literal notranslate"><span class="pre">--offset</span></code> y <code class="docutils literal notranslate"><span class="pre">--limit</span></code> eligen la página (1000 identificadores como máximo).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code> exporta toda la biblioteca, igual que la exportación del servidor y que la ventana de exportación cuando la lista mostrada es la biblioteca: posiciones, partidas, torneos (con su Dirección: diario, parejas, mesas y vinculación de las partidas exportadas; su evento se exporta en cuanto se exporta uno de sus torneos), colecciones, lecciones, mazos de Anki, transcripciones, alias y filtros. Una opción en <code class="docutils literal notranslate"><span class="pre">false</span></code> quita su familia (<code class="docutils literal notranslate"><span class="pre">--collections=false</span></code>); una lista de IDs la restringe a esos elementos y la incluye. Un borrador de transcripción se exporta con la partida que produjo; un borrador que aún no ha producido ninguna partida solo se exporta si se exportan todas las partidas. <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">matches</span></code> también lleva el borrador de cada partida.</p>
+<p><strong>Ejemplos:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde.db
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--file<span class="w"> </span>positions.txt
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--file<span class="w"> </span>selection.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">1</span>,3,5
+
+<span class="c1"># .mat : un match, puis plusieurs (ou tous) dans un répertoire</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span><span class="w"> </span>--file<span class="w"> </span>match5.mat
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span>,9,12<span class="w"> </span>--dir<span class="w"> </span>sorties/
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--dir<span class="w"> </span>sorties/
+
+<span class="c1"># Ce qui est nouveau depuis le dernier export vers ce dossier, pour une</span>
+<span class="c1"># autre machine qui le surveille</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--incremental<span class="w"> </span>--file<span class="w"> </span>~/Sync/vers-portable/
+
+<span class="c1"># .dbx : filigrané et protégé par mot de passe</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>cours.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>cours-diffusion.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont — 12 mars 2026"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark-note<span class="w"> </span><span class="s2">"Merci de ne pas rediffuser."</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret
+</pre></div>
+</div>
+<p>Una filigrana se firma con la identidad de emisor local (véase el comando <code class="docutils literal notranslate"><span class="pre">identity</span></code> más abajo): es infalsificable, pero no inamovible — el archivo sigue siendo una base SQLite ordinaria. No protege nada, solo indica de dónde viene el archivo. Una contraseña protege el <em>transporte</em> del archivo (la copia extraviada, el adjunto enviado por error), no la base en sí: cualquiera que haya recibido la contraseña puede abrirla. blunderDB nunca registra nada del lado del destinatario (ningún registro, ningún diario) — véase <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-mark-origin-and-nothing-else.md">ADR-0007</a>.</p>
+</section>
+<section id="transfer-copier-d-une-bibliotheque-a-une-autre">
+<span id="cli-transfer"></span><h2>transfer — Copiar de una biblioteca a otra<a class="headerlink" href="#transfer-copier-d-une-bibliotheque-a-une-autre" title="Link to this heading"></a></h2>
+<p>Copia una parte de una biblioteca en otra, sin archivo intermedio que manipular. La selección es la de <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>; la fusión es la de la importación de una base <code class="docutils literal notranslate"><span class="pre">.db</span></code>: una posición que el destino ya posee no se añade por segunda vez (se reconoce por su hash), sus análisis y comentarios se fusionan, y una partida, una colección, una lección o un mazo Anki ya presente no se duplica. Copiar de A a B y luego de B a A no crea, por tanto, ningún duplicado.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>&lt;source.db&gt;<span class="w"> </span>--to<span class="w"> </span>&lt;destination.db&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Biblioteca de origen (obligatoria; debe existir y tener el esquema de esta versión de blunderDB). Una biblioteca más antigua se rechaza, porque actualizarla sería escribir en ella: ábrala una vez en blunderDB. Una biblioteca más reciente también se rechaza: actualice blunderDB.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Biblioteca de destino (obligatorio; se crea si no existe). No puede ser la de origen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code>, <code class="docutils literal notranslate"><span class="pre">--comments</span></code>, <code class="docutils literal notranslate"><span class="pre">--played-moves</span></code>, <code class="docutils literal notranslate"><span class="pre">--matches</span></code>, <code class="docutils literal notranslate"><span class="pre">--transcriptions</span></code>, <code class="docutils literal notranslate"><span class="pre">--aliases</span></code>, <code class="docutils literal notranslate"><span class="pre">--collections</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournaments</span></code>, <code class="docutils literal notranslate"><span class="pre">--decks</span></code>, <code class="docutils literal notranslate"><span class="pre">--lessons</span></code> — Como en <code class="docutils literal notranslate"><span class="pre">export</span></code>: una opción a <code class="docutils literal notranslate"><span class="pre">false</span></code> excluye su familia (por defecto: sí para todas).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--deck-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--lesson-ids</span></code> — Una lista de IDs del origen restringe su familia a esos elementos y la incluye. Un ID que el origen no contiene es un error, y no se copia nada.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — <code class="docutils literal notranslate"><span class="pre">text</span></code> (por defecto) o <code class="docutils literal notranslate"><span class="pre">json</span></code> (lo leído en el origen y lo que el destino ha tomado de él).</p></li>
+</ul>
+<p><strong>Qué posiciones se envían.</strong> Sin lista de IDs, se envían todas las posiciones del origen, archivadas o no. En cuanto se da una lista de IDs, solo se envían las posiciones que alcanzan las familias retenidas (los miembros de una colección, las jugadas de una partida, los pasos de una lección, las tarjetas de un mazo), con sus análisis y sus comentarios. Una colección se envía siempre con sus miembros. Una partida nombrada con <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> lleva la ficha de su torneo (nombre, fecha, lugar), pero no las demás partidas de ese torneo; con <code class="docutils literal notranslate"><span class="pre">--tournaments=false</span></code>, llega sin torneo.</p>
+<p>No se escribe nada que indique de dónde viene la copia: ni marca de agua, ni registro de importación, ni metadatos del origen; el destino conserva los suyos y el origen no recibe nada. La biblioteca de filtros y el historial de revisión de los mazos Anki no se copian: un mazo llega sin historial, y un mazo del mismo nombre ya presente conserva el suyo.</p>
+<p><strong>Ejemplos:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Toute une bibliothèque dans une autre</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>club.db<span class="w"> </span>--to<span class="w"> </span>perso.db
+
+<span class="c1"># Deux collections et leurs positions, rien d'autre</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>club.db<span class="w"> </span>--to<span class="w"> </span>perso.db<span class="w"> </span>--collection-ids<span class="w"> </span><span class="m">3</span>,7<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--matches<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--tournaments<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--lessons<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--decks<span class="o">=</span><span class="nb">false</span>
+
+<span class="c1"># Un match, ses positions et son tournoi, en retour</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>perso.db<span class="w"> </span>--to<span class="w"> </span>club.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--collections<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--lessons<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--decks<span class="o">=</span><span class="nb">false</span>
+</pre></div>
+</div>
+<p>El servidor ofrece la misma transferencia entre dos tenants, extraída por el tenant que recibe (véase <a class="reference internal" href="mode_headless.html#mode-headless-transfert"><span class="std std-ref">Extraer una copia de un tenant de lectura</span></a>).</p>
+</section>
+<section id="identity-identite-d-emetteur">
+<h2>identity — Identidad de emisor<a class="headerlink" href="#identity-identite-d-emetteur" title="Link to this heading"></a></h2>
+<p>Muestra o traslada su <strong>identidad de emisor</strong>: la clave Ed25519 que firma cada filigrana. Se crea por sí sola al colocar la primera filigrana; no hay nada que configurar. Pertenece a una persona, no a una base de datos: todo lo que usted marca lleva una única huella pública.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>identity
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jean Dupont"</span>
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--export<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--import<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span></code> — Cambia el nombre mostrado de la identidad.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Exporta la identidad a un archivo <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Importa una identidad desde un archivo <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--passphrase</span></code> — Frase de contraseña opcional que protege el archivo exportado/importado (la identidad local queda deliberadamente sin proteger).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato de salida: <code class="docutils literal notranslate"><span class="pre">text</span></code> (por defecto) o <code class="docutils literal notranslate"><span class="pre">json</span></code> (nombre, huella, ruta de almacenamiento).</p></li>
+</ul>
+<p>El archivo exportado permite a cualquiera que lo posea firmar en su nombre — no lo comparta. Renombrar solo cambia una etiqueta: los archivos ya marcados conservan el nombre con el que fueron sellados y siguen verificándose.</p>
+</section>
+<section id="open-ouvrir-un-fichier-protege">
+<h2>open — Abrir un archivo protegido<a class="headerlink" href="#open-ouvrir-un-fichier-protege" title="Link to this heading"></a></h2>
+<p>Convierte un archivo protegido por contraseña (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) en una base ordinaria. La contraseña se pide una sola vez; después es un archivo normal.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret
+./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret<span class="w"> </span>--file<span class="w"> </span>./mon-cours.db
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Archivo <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> que se va a abrir (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Contraseña del contenedor (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Ruta de salida para la base ordinaria (por defecto: mismo nombre, extensión <code class="docutils literal notranslate"><span class="pre">.db</span></code>).</p></li>
+</ul>
+<p>Lo que protege la contraseña: el <em>transporte</em> del archivo — la copia olvidada en una carpeta de descargas, el adjunto enviado por error. No la base: cualquiera que haya recibido la contraseña puede abrirla. La cabecera del contenedor está en claro, de modo que <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> lee el origen de un archivo protegido sin su contraseña.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="cli.html" class="btn btn-neutral float-left" title="Interfaz de línea de comandos (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="Biblioteca: búsqueda, listas, colecciones" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

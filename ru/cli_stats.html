@@ -1,0 +1,332 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Статистика &mdash; документация blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=ee48f470"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Администрирование базы данных" href="cli_admin.html" />
+    <link rel="prev" title="Изучение, уроки и тренировка" href="cli_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/cli_stats.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_stats.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_stats.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_stats.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_stats.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_stats.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Метрики и инструменты для изучения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Общий синтаксис</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Доступные команды</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Импорт, экспорт, перенос</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Библиотека: поиск, списки, коллекции</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Матчи, турниры и партии</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Анализ и движок</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Изучение, уроки и тренировка</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Статистика</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stats-erreurs-recurrentes">stats — Повторяющиеся ошибки</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Администрирование базы данных</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Примеры рабочих процессов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Коды возврата</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Интерфейс командной строки (CLI)</a></li>
+      <li class="breadcrumb-item active">Статистика</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="cli-stats-chapitre"></span><h1>Статистика<a class="headerlink" href="#statistiques" title="Ссылка на этот заголовок"></a></h1>
+<section id="stats-erreurs-recurrentes">
+<span id="cli-stats"></span><h2>stats — Повторяющиеся ошибки<a class="headerlink" href="#stats-erreurs-recurrentes" title="Ссылка на этот заголовок"></a></h2>
+<p>Группирует ошибки фильтра по плану игры и по теме, начиная с самой дорогой: таблица <em>Повторяющиеся ошибки</em> на вкладке Errors панели Stats (см. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Панель Stats</span></a>). Глобальная статистика остаётся в <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code> — Только решения этого игрока.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opponent</span> <span class="pre">&lt;nom&gt;</span></code> — Только матчи, сыгранные против этого игрока; вместе с <code class="docutils literal notranslate"><span class="pre">--player</span></code> — другое место.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Тот же фильтр, что и у <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Число групп, выводимых текстом (по умолчанию 20, <code class="docutils literal notranslate"><span class="pre">0</span></code> — все).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON содержит каждую группу с полным списком её позиций.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> — Случайно выбирает позиции из позиций трёх самых затратных групп (<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>, по умолчанию 20) и выводит их: это идентификаторы, которые оценивают викторина и <code class="docutils literal notranslate"><span class="pre">quiz_grade</span></code>. В JSON — поле <code class="docutils literal notranslate"><span class="pre">Quiz</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;имя&gt;</span></code> — Создаёт колоду Anki с этим именем, заполненную всеми позициями трёх самых затратных групп.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--group</span> <span class="pre">&lt;ранг&gt;</span></code> — Вместе с <code class="docutils literal notranslate"><span class="pre">--quiz</span></code> или <code class="docutils literal notranslate"><span class="pre">--deck</span></code>: группа этого ранга (1 — самая затратная) вместо первых трёх.</p></li>
+</ul>
+<p>Тема хода фишками — <code class="docutils literal notranslate"><span class="pre">gammon</span></code>, <code class="docutils literal notranslate"><span class="pre">blots</span></code>, <code class="docutils literal notranslate"><span class="pre">point</span></code> или <code class="docutils literal notranslate"><span class="pre">passive</span></code>; тема куба — <code class="docutils literal notranslate"><span class="pre">offer_missed</span></code>, <code class="docutils literal notranslate"><span class="pre">offer_premature</span></code>, <code class="docutils literal notranslate"><span class="pre">answer_wrong_pass</span></code> или <code class="docutils literal notranslate"><span class="pre">answer_wrong_take</span></code>. Ошибки, которые не называет ни одно правило, выходят из рейтинга: они перечисляются отдельно, по одной строке на план игры (поле <code class="docutils literal notranslate"><span class="pre">Unthemed</span></code> в JSON), потому что пояснение высказывается только от 60 mp, выше порога <em>Ошибка</em>. Столбец <em>COST (PR)</em> — доля PR фильтра, которую составляет группа.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--group<span class="w"> </span><span class="m">1</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Mon pire groupe"</span>
+</pre></div>
+</div>
+<p><strong>stats plan</strong> — План обучения для фильтра, как карточка <em>План обучения</em> на панели (см. <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">План обучения</span></a>): семейства ошибок (план игры × тема), упорядоченные по возвратимому MWC — сумме по их ошибкам потери за вычетом сложности, — с 95-процентным интервалом. Семейство попадает в план начиная с 5 оценённых ошибок и при интервале выше нуля; остальные перечислены отдельно, как требующие подтверждения (поле <code class="docutils literal notranslate"><span class="pre">Tentative</span></code> в JSON). Ошибки без темы и без MWC (свободная партия) лишь подсчитываются (<code class="docutils literal notranslate"><span class="pre">Unthemed</span></code>, <code class="docutils literal notranslate"><span class="pre">Unpriced</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Те же параметры фильтра, что и у <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code>, плюс:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Число семейств, показываемых в тексте (по умолчанию 10, <code class="docutils literal notranslate"><span class="pre">0</span></code> — все).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> (<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>, по умолчанию 20), <code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;имя&gt;</span></code> — Как для <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code>, на позициях трёх первых семейств.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — Выводит очередь изучения этих семейств, по одной позиции в строке, сначала с наибольшим отставанием от эталонного игрока (JSON: <code class="docutils literal notranslate"><span class="pre">Queue</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--family</span> <span class="pre">&lt;ранг&gt;</span></code> — С <code class="docutils literal notranslate"><span class="pre">--quiz</span></code>, <code class="docutils literal notranslate"><span class="pre">--deck</span></code> или <code class="docutils literal notranslate"><span class="pre">--queue</span></code>: семейство этого ранга (1 — первое) вместо трёх первых.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--family<span class="w"> </span><span class="m">2</span><span class="w"> </span>--queue
+</pre></div>
+</div>
+<p><strong>stats effect</strong> — До/после каждого изученного семейства, как карточка <em>До/после обучения</em> на панели (см. <a class="reference internal" href="manuel_stats.html#avant-apres-etude"><span class="std std-ref">До/после обучения</span></a>): дата первого учебного действия над одной из его позиций, уровень потерь в MWC на 100 решений его плана и характера до и после этого дня, выигрыш и его 95-процентный интервал и вердикт (<code class="docutils literal notranslate"><span class="pre">improved</span></code>, <code class="docutils literal notranslate"><span class="pre">worse</span></code>, <code class="docutils literal notranslate"><span class="pre">undetermined</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> при менее чем 30 решениях в окне).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats biases</strong> — Знаковые смещения фильтра, как карточка <em>Знаковые смещения</em> (см. <a class="reference internal" href="manuel_stats.html#biais-signes"><span class="std std-ref">Знаковые смещения</span></a>): принятие/отказ, удвоения (в целом и по счёту) и блоты, у каждого два счёта и их цена, смещение, его 95-процентный интервал и вердикт (<code class="docutils literal notranslate"><span class="pre">too_much</span></code>, <code class="docutils literal notranslate"><span class="pre">too_little</span></code>, <code class="docutils literal notranslate"><span class="pre">balanced</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> при менее чем 20 решениях). У свободной партии своя строка <code class="docutils literal notranslate"><span class="pre">money</span></code>, а счёт после Кроуфорда читается как 1 очко; доля ходов шашек, которые не удалось воспроизвести, указана под таблицей.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Те же параметры фильтра, что и у <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code> (<code class="docutils literal notranslate"><span class="pre">--player</span></code>, <code class="docutils literal notranslate"><span class="pre">--opponent</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats tournament</strong> — Итог турнира для одного игрока, как кнопка <em>Итог</em> панели «Турниры» (см. <a class="reference internal" href="manuel_tournois.html#bilan-tournoi"><span class="std std-ref">итог турнира</span></a>): PR и потеря MWC (экв. 7 очков) в сравнении с обычным уровнем предыдущих 365 дней, по турам, по порядковому номеру решения в матче, по счёту (<code class="docutils literal notranslate"><span class="pre">dmp</span></code>, <code class="docutils literal notranslate"><span class="pre">crawford</span></code>, <code class="docutils literal notranslate"><span class="pre">post_crawford</span></code>, <code class="docutils literal notranslate"><span class="pre">other</span></code>) и по темпу (<code class="docutils literal notranslate"><span class="pre">quick</span></code>, <code class="docutils literal notranslate"><span class="pre">considered</span></code>), каждый со своим 95-процентным интервалом и вердиктом (<code class="docutils literal notranslate"><span class="pre">worse</span></code>, <code class="docutils literal notranslate"><span class="pre">better</span></code>, <code class="docutils literal notranslate"><span class="pre">usual</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> без интервала, при менее чем 20 решениях с одной стороны или менее чем 5 обычных матчах), затем не более трёх семейств ошибок турнира.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span>...<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>text<span class="p">|</span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p>Без <code class="docutils literal notranslate"><span class="pre">--player</span></code> игрок — тот, кто участвовал в наибольшем числе матчей турнира. <code class="docutils literal notranslate"><span class="pre">--player</span></code> можно повторять, чтобы разобрать нескольких игроков за один вызов. В JSON один игрок даёт объект, два и более — список в запрошенном порядке; скрипт с переменным числом игроков использует маршрут <code class="docutils literal notranslate"><span class="pre">stats.tournamentReviews</span></code> (или <code class="docutils literal notranslate"><span class="pre">GetTournamentReviews</span></code>), который всегда возвращает список.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Bob"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats training</strong> — PR викторины «Решение», PR матчей и удержание Anki, свёрнутые по календарным окнам, как вкладка <em>Тренировка</em> панели Stats (см. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Панель Stats</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">week|month</span></code> — Календарное окно (по умолчанию <code class="docutils literal notranslate"><span class="pre">week</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;имя&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;ГГГГ-ММ-ДД&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;ГГГГ-ММ-ДД&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Фильтр матчей; журналы викторины и Anki не содержат игрока.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON также содержит список сессий викторины; текст и JSON выводят PR викторины по плану игры.</p></li>
+</ul>
+<p>Каждый ряд хранит число своих выборок: окно без решений в тексте — прочерк, в JSON — нулевой счёт, но никогда не нулевое значение.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--window<span class="w"> </span>month<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats h2h</strong> — Два игрока друг против друга: матчи, которые они сыграли вместе, PR каждого в каждом матче и в целом, а также итог доведённых до конца матчей.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats contrast</strong> — Позиции, которые оба игрока должны были играть и в которых один сыграл хорошо (ниже порога Ошибки), а другой нет; сначала наибольшая разница; игрок оценивается по своему худшему ходу в позиции. <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code> оставляет первые N строк текста; JSON выдаёт всё, со значениями <code class="docutils literal notranslate"><span class="pre">position_id</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats windows</strong> — PR на скользящем календарном окне: одна строка на месяц, каждая охватывает этот месяц и предыдущие месяцы окна (<code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">month</span></code>, <code class="docutils literal notranslate"><span class="pre">quarter</span></code> или число месяцев).</p>
+<p><code class="docutils literal notranslate"><span class="pre">--by-phase</span></code> разбивает каждое окно по фазам игры (дебют, миттельшпиль, гонка, вывод…): под каждой строкой — по строке на фазу с её матчами, решениями и PR, те же цифры, что и разбивка по фазам в <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">breakdown</span></code>, ограниченная окном; фаза без засчитанных решений в окне не показывается. HTTP-демон возвращает их в <code class="docutils literal notranslate"><span class="pre">per_phase</span></code>, когда запрос <code class="docutils literal notranslate"><span class="pre">stats.prByWindow</span></code> содержит <code class="docutils literal notranslate"><span class="pre">&quot;byPhase&quot;:</span> <span class="pre">true</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--window<span class="w"> </span>quarter<span class="o">]</span><span class="w"> </span><span class="o">[</span>--by-phase<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats ranking</strong> — Рейтинг игроков по PR, от наименьшего, среди тех, у кого не меньше <code class="docutils literal notranslate"><span class="pre">--min-decisions</span></code> учтённых решений (по умолчанию 500); два равных PR делят одно место. <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code> оставляет первых N.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span><span class="m">20</span><span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats engines</strong> — Движки анализа, присутствующие в базе, под точным именем, которое ожидает <code class="docutils literal notranslate"><span class="pre">--engine</span></code>; тот же выбор, что в меню <em>Движок</em> панели Stats.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>engines<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Общие параметры:</strong> <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;ГГГГ-ММ-ДД&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;ГГГГ-ММ-ДД&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code>, а также фильтр происхождения <code class="docutils literal notranslate"><span class="pre">--engine</span> <span class="pre">&lt;имя&gt;</span></code> (движок анализа, точное имя) и <code class="docutils literal notranslate"><span class="pre">--min-depth</span> <span class="pre">&lt;n&gt;</span></code> (минимальная глубина анализа), которые принимают также <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> и <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code>. <code class="docutils literal notranslate"><span class="pre">h2h</span></code> и <code class="docutils literal notranslate"><span class="pre">windows</span></code> читают статистику по матчам и отвергают фильтр происхождения, который относится к каждому решению.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--window<span class="w"> </span>quarter<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--min-depth<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p><strong>stats matches</strong> — Матчи, которые учитывает показатель корпуса: те, где у игрока (у любого игрока без <code class="docutils literal notranslate"><span class="pre">--player</span></code>) есть решение, учтённое под фильтром, от самого старого к самому новому. Их идентификаторы передаются в <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span> <span class="pre">--ids</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2025</span>-03-31
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--ids<span class="w"> </span><span class="m">12</span>,15,31
+</pre></div>
+</div>
+<p><strong>stats tournaments</strong> — Турниры, которые считает число турниров на «Панели»: те, где есть учтённое решение игрока (любого игрока без <code class="docutils literal notranslate"><span class="pre">--player</span></code>) под фильтром, по идентификатору.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats progression</strong> — PR каждого матча в порядке дат, PR каждого турнира и скользящий PR по последним N решениям: вкладка <em>Progression</em> панели Stats (см. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Панель Stats</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Тот же фильтр, что и у <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — JSON содержит матчи, турниры и скользящие PR.</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats breakdown</strong> — PR фильтра в разбивке по фазе игры, плану игры, метке комментария, счёту (away против away) и действию с кубом, с направлением ошибок с кубом: вкладка <em>Разбивки</em> панели Stats (см. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Панель Stats</span></a>). Параметры те же, что у <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">progression</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats summary</strong> — Уровень фильтра без каких-либо идентификаторов: количества, PR (шашки, куб) и его 95-процентный интервал, потеря MWC на матч до 7 очков, PR по фазам игры и по счёту, каждая строка со своим количеством и интервалом. В нём нет ни позиций, ни матчей, турниров, соперников или меток, ни самых дорогих решений: это то, что может показать публичный профиль или визитная карточка, ничего не раскрывая. HTTP-демон отдаёт его по маршруту <code class="docutils literal notranslate"><span class="pre">stats.summary</span></code>; <code class="docutils literal notranslate"><span class="pre">stats.compute</span></code> не меняется. Параметры: <code class="docutils literal notranslate"><span class="pre">--player</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> и <code class="docutils literal notranslate"><span class="pre">--format</span></code>; параметра <code class="docutils literal notranslate"><span class="pre">--window</span></code> нет.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats report</strong> — HTML-отчёт панели Stats (см. <a class="reference internal" href="manuel_stats.html#rapport-html"><span class="std std-ref">Отчёт в HTML</span></a>): показатели фильтра и его десять самых дорогих решений с диаграммой в одном автономном файле, который браузер печатает в PDF. HTTP-демон отдаёт его по маршруту <code class="docutils literal notranslate"><span class="pre">stats.report</span></code> из того же генератора.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--html<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--html</span></code> — Обязателен: HTML — единственный формат.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span> <span class="pre">&lt;fichier&gt;</span></code> — Записываемый файл (по умолчанию: стандартный вывод).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">&lt;code&gt;</span></code> — Язык отчёта: <code class="docutils literal notranslate"><span class="pre">fr</span></code>, <code class="docutils literal notranslate"><span class="pre">en</span></code>, <code class="docutils literal notranslate"><span class="pre">de</span></code>, <code class="docutils literal notranslate"><span class="pre">el</span></code>, <code class="docutils literal notranslate"><span class="pre">es</span></code>, <code class="docutils literal notranslate"><span class="pre">fi</span></code>, <code class="docutils literal notranslate"><span class="pre">it</span></code>, <code class="docutils literal notranslate"><span class="pre">ja</span></code> или <code class="docutils literal notranslate"><span class="pre">ru</span></code> (по умолчанию <code class="docutils literal notranslate"><span class="pre">en</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Фильтр: отчёт называет свою область.</p></li>
+</ul>
+<p>Диаграммы в нём рисуются с палитрой по умолчанию; палитру доски, выбранную на экране, использует только графическое приложение.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--output<span class="w"> </span>rapport.html
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--lang<span class="w"> </span>fr
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="cli_entrainement.html" class="btn btn-neutral float-left" title="Изучение, уроки и тренировка" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="cli_admin.html" class="btn btn-neutral float-right" title="Администрирование базы данных" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

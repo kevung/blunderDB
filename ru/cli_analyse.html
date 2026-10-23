@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Анализ и движок &mdash; документация blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=ee48f470"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Изучение, уроки и тренировка" href="cli_entrainement.html" />
+    <link rel="prev" title="Матчи, турниры и партии" href="cli_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/cli_analyse.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_analyse.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_analyse.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_analyse.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_analyse.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_analyse.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_analyse.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_analyse.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Метрики и инструменты для изучения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Общий синтаксис</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Доступные команды</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Импорт, экспорт, перенос</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Библиотека: поиск, списки, коллекции</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Матчи, турниры и партии</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Анализ и движок</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#analyze-rattrapage-gammonnet">analyze — Догоняющий анализ gammonNet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rollout-rollout-d-une-position">rollout — Rollout позиции</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#epc-calculatrice-epc">epc — Калькулятор EPC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gnubgid-id-gnubg">gnubgid — ID GNUbg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cubematrix-matrice-du-videau">cubematrix — Матрица куба</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#capture-position-depuis-une-capture-d-ecran">capture — Позиция по скриншоту</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bearoff-bases-de-sortie">bearoff — Базы бироффа</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#openingbook-quel-coup-a-ce-score">openingbook — Какой ход при этом счёте?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Изучение, уроки и тренировка</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Статистика</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Администрирование базы данных</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Примеры рабочих процессов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Коды возврата</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Интерфейс командной строки (CLI)</a></li>
+      <li class="breadcrumb-item active">Анализ и движок</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-et-moteur">
+<span id="cli-analyse-chapitre"></span><h1>Анализ и движок<a class="headerlink" href="#analyse-et-moteur" title="Ссылка на этот заголовок"></a></h1>
+<section id="analyze-rattrapage-gammonnet">
+<h2>analyze — Догоняющий анализ gammonNet<a class="headerlink" href="#analyze-rattrapage-gammonnet" title="Ссылка на этот заголовок"></a></h2>
+<p>Записывает анализ gammonNet для каждой позиции, у которой его нет — доделывание для библиотеки, созданной до появления этой функции (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). Это та же операция, что и автоматический запуск после импорта, строка «Позиции без анализа» вкладки <em>Обслуживание</em> графического интерфейса и конечная точка <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.analyzeMissing</span></code> демона <code class="docutils literal notranslate"><span class="pre">serve</span></code> для тенанта — три разные формы одной и той же операции, а не три отдельные логики (см. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Глубина поиска (по умолчанию: 2, канонический параметр).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Ширина отсечения (по умолчанию: 12, канонический параметр).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Число кандидатных ходов, сохраняемых для каждого решения о ходе (по умолчанию: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Число позиций, анализируемых параллельно (по умолчанию: число ядер машины). Когда позиций осталось меньше, чем ядер (короткий матч, конец пакета), каждый поиск распределяется по свободным ядрам; результат не меняется ни на один бит.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — Ограничивает пакет позициями одного матча (0, значение по умолчанию, означает всю библиотеку).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> — <strong>Ничего не пишет</strong>: сравнивает gammonNet с импортированными анализами вместо заполнения пробелов (см. ниже).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--stale</span></code> — Повторно анализирует позиции, анализ gammonNet которых устарел — записан более ранней версией движка или на иной глубине, чем <code class="docutils literal notranslate"><span class="pre">--ply</span></code> — вместо заполнения пробелов. Позиция, несущая также анализ XG, GNUbg или BGBlitz, никогда не затрагивается.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — С <code class="docutils literal notranslate"><span class="pre">--compare</span></code>: останавливается после указанного числа позиций (0 = все).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию, с индикацией хода выполнения) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (единый итоговый документ, выводимый в конце).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rollout</span></code> — Делает rollout позиций, выбранных <code class="docutils literal notranslate"><span class="pre">--query</span></code>, вместо заполнения пропусков (см. ниже).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — С <code class="docutils literal notranslate"><span class="pre">--rollout</span></code>: позиции для игры, на языке запросов поиска (<code class="docutils literal notranslate"><span class="pre">search</span> <span class="pre">--query-help</span></code>); пусто — все.</p></li>
+</ul>
+<p><strong>Матч, импортированный без анализа, теперь получает PR.</strong> Это случай матча, сыгранного онлайн, или файла Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, который никто не пропускал через XG. blunderDB знал его позиции и сыгранные ходы, но ничто не говорило, чего они стоят; после прогона фактически сыгранный ход сравнивается с ранжированием gammonNet, и разница питает PR и все остальные показатели. Сыгранный ход берётся из таблицы ходов самого матча, записанной при импорте, независимо от того, нёс ли файл анализ, — он никогда не угадывается.</p>
+<p>Базу, проанализированную более ранней версией, не нужно переоценивать: <a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a> пересчитывает столбцы по тому, что уже хранится, и возвращает этим матчам их PR.</p>
+<p><strong>Только один матч</strong> (<code class="docutils literal notranslate"><span class="pre">--match</span></code>). С идентификатором, который выводит <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span></code>, пакет проходит только по позициям этого матча: то же правило пробела, те же гарантии, более узкая область. Только что импортированный матч получает свои анализы без обхода остальной библиотеки, а исправленный и проанализированный во второй раз матч стоит лишь тех позиций, которые создало исправление, поскольку все остальные уже несут анализ. Параметр не сочетается ни с <code class="docutils literal notranslate"><span class="pre">--stale</span></code>, ни с <code class="docutils literal notranslate"><span class="pre">--compare</span></code>: оба смотрят на позиции, у которых анализ уже есть, поэтому запрос обоих — ошибка, а не молча проигнорированная область.</p>
+<p><strong>Параллелизм</strong> (<code class="docutils literal notranslate"><span class="pre">--jobs</span></code>). Позиции пакета независимы — ни один поиск не влияет на следующий — поэтому они распределяются по <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> потокам, каждый со своим собственным оценщиком. Записанные анализы <strong>идентичны при любом значении</strong> <code class="docutils literal notranslate"><span class="pre">--jobs</span></code>; меняется только время вычислений. <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">1</span></code> оставляет машину свободной для других задач. Отмена не затрагивается: Ctrl-C останавливает пакет перед любой новой позицией, и всё уже вычисленное записывается.</p>
+<p><strong>Правило пробела</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>). Позиция, уже имеющая анализ — XG, GNUbg, BGBlitz или предыдущий проход gammonNet, — никогда не затрагивается, какого бы движка ни недоставало. Записывается только позиция <strong>без какого-либо</strong> анализа. Поэтому команду можно без риска перезапускать в любой момент и корректно прерывать: Ctrl-C отменяет её, не теряя ничего из уже записанного, а следующий запуск возобновляет работу ровно с того места, где остановился предыдущий, — никакого журнала не нужно, ведь «позиции без анализа» пересчитываются при каждом запуске.</p>
+<p><strong>Пример:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...</span>
+<span class="c1">#   1/1204 (0%)</span>
+<span class="c1">#   61/1204 (5%)</span>
+<span class="c1">#   ...</span>
+<span class="c1">#   1204/1204 (100%)</span>
+<span class="c1"># Done.</span>
+
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--jobs<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Un seul match, celui qui vient d'être importé</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<p><strong>Rollout пакетом</strong> (<code class="docutils literal notranslate"><span class="pre">--rollout</span></code>). Каждая позиция, выбранная <code class="docutils literal notranslate"><span class="pre">--query</span></code>, играется <a class="reference internal" href="#cli-rollout"><span class="std std-ref">rollout</span></a>, одна за другой на всех ядрах, и rollout записывается рядом с её анализом, а не вместо него. Значение — пресет: <code class="docutils literal notranslate"><span class="pre">fast</span></code> (216 партий, усечённых на 7) или <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 партий, усечённых на 11) — либо свободные настройки: необязательный пресет, затем <code class="docutils literal notranslate"><span class="pre">games=</span></code>, <code class="docutils literal notranslate"><span class="pre">min-games=</span></code>, <code class="docutils literal notranslate"><span class="pre">truncation=</span></code>, <code class="docutils literal notranslate"><span class="pre">jsd=</span></code>, <code class="docutils literal notranslate"><span class="pre">ply=</span></code>, <code class="docutils literal notranslate"><span class="pre">candidates=</span></code>, <code class="docutils literal notranslate"><span class="pre">seed=</span></code>, через запятую. Позиция, уже имеющая rollout с теми же настройками, пропускается: запуск, прерванный Ctrl-C, продолжается с того места, где остановился, а текущая позиция отбрасывается целиком. Позиция, которую анализирует только rollout, находится поиском через него; уже проанализированная позиция сохраняет столбцы своего анализа.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span>fast<span class="w"> </span>--query<span class="w"> </span><span class="s1">'E&gt;80'</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span><span class="s1">'standard,ply=1'</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">'c'</span>
+</pre></div>
+</div>
+<p id="analyze-compare"><code class="docutils literal notranslate"><span class="pre">--compare</span></code>: <strong>чего стоит gammonNet на вашей базе?</strong></p>
+<p>Точность движка измеряется в другом месте — на эталонных корпусах и на точной таблице снятия. Ни одно из этих измерений не отвечает на вопрос, который пользователь задаёт на самом деле и который касается <strong>его</strong> позиций: в матчах, импортированных из XG, где встроенный движок расходится с анализом, пришедшим вместе с файлом, и во что это расхождение обошлось бы?</p>
+<p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> отвечает и <strong>ничего не пишет</strong>. Это не предосторожность, а смысл команды: ADR-0013 защищает импортированный анализ безусловно, и потому сравнение можно запустить на базе, которую совсем не хочется видеть переписанной.</p>
+<p>Отчёт даёт:</p>
+<ul class="simple">
+<li><p><strong>долю совпадений</strong> по лучшему ответу, отдельно для ходов шашками и решений по кубу — эти две вещи никак не связаны, и единая доля скрыла бы, какая из них проседает;</p></li>
+<li><p><strong>стоимость расхождения</strong>, оценённую по шкале импортированного анализа: чего стоит предпочитаемый gammonNet ход <em>по мнению импортированного движка</em>, минус то, чего стоит его собственный лучший ход. Это направление — единственное, которое оба движка могут оценить вместе; оценивать расхождение дважды значило бы приглашать читать меньшее из двух чисел;</p></li>
+<li><p>разбивку <strong>по фазе игры</strong>, которая и говорит, <em>где</em> расхождения сосредоточены;</p></li>
+<li><p>десять самых дорогих расхождений, позиция за позицией.</p></li>
+</ul>
+<p>Два движка пишут один и тот же ход по-разному — XG пишет «13/7» там, где gammonNet пишет «13/8 8/7», удары помечаются с одной стороны и не помечаются с другой, повтор иногда сворачивается в «(2)». Эти различия — диалект, а не расхождение: сравнение приводит обе записи к канонической форме, прежде чем сравнивать. Без этого тестовый корпус показывал 78,8 % совпадений вместо 93,2 % — пятнадцать пунктов ложных расхождений.</p>
+<p>Ход, который импортированный движок <strong>не</strong> перечислил, нельзя оценить по его шкале: он считается расхождением нулевой стоимости, а не стоимости выдуманной.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparer sur un échantillon de 500 positions</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--compare<span class="w"> </span>--limit<span class="w"> </span><span class="m">500</span>
+
+<span class="c1"># compared: 118 decision(s)  (refused 2, failed 0)</span>
+<span class="c1"># same best answer: 93.2% (110/118)</span>
+<span class="c1">#   checker play:   93.7% (59/63)</span>
+<span class="c1">#   cube decision:  92.7% (51/55)</span>
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+<section id="rollout-rollout-d-une-position">
+<span id="cli-rollout"></span><h2>rollout — Rollout позиции<a class="headerlink" href="#rollout-rollout-d-une-position" title="Ссылка на этот заголовок"></a></h2>
+<p>Играет позицию большое число раз с помощью gammonNet, чтобы решить то, чего не решает поиск: два хода, отличающихся на тысячные доли, или решение по кубу, в котором модель колеблется. С кубиками играются её ходы (лучшие на глубине rollout, не менее 2 ply, или названные через <code class="docutils literal notranslate"><span class="pre">--move</span></code>); без кубиков — её решение по кубу (Без удвоения и Удвоение/Принять; Удвоение/Отказ стоит ровно +1). Позиция берётся из XGID или OGID либо из базы (<code class="docutils literal notranslate"><span class="pre">--db</span></code> и <code class="docutils literal notranslate"><span class="pre">--id</span></code>); без <code class="docutils literal notranslate"><span class="pre">--store</span></code> ничего не записывается.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;position&gt;<span class="w"> </span><span class="o">[</span>--store<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--preset</span></code> — Исходная настройка: <code class="docutils literal notranslate"><span class="pre">fast</span></code> (по умолчанию: 216 партий, усечённых на 7 полуходах, остановка при JSD 3 после 108) или <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 партий, усечённых на 11, остановка при JSD 3 после 324). Обе играют на 0 ply — одна сеть, для ходов, куба и листьев; <code class="docutils literal notranslate"><span class="pre">--ply</span> <span class="pre">1</span></code> и больше играет глубже, со временем в несколько раз больше. Следующие опции заменяют её по одной.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--games</span></code>, <code class="docutils literal notranslate"><span class="pre">--min-games</span></code>, <code class="docutils literal notranslate"><span class="pre">--truncation</span></code>, <code class="docutils literal notranslate"><span class="pre">--jsd</span></code>, <code class="docutils literal notranslate"><span class="pre">--ply</span></code>, <code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Параметры rollout (<code class="docutils literal notranslate"><span class="pre">--truncation</span> <span class="pre">0</span></code> доигрывает каждую партию до конца, <code class="docutils literal notranslate"><span class="pre">--jsd</span> <span class="pre">0</span></code> никогда не останавливается до конца).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move</span></code> — Ход, который нужно сыграть, в нотации blunderDB (можно повторять).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> — Зерно кубиков, по умолчанию фиксированное: одна и та же команда даёт те же числа.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Партии, играемые параллельно (по умолчанию: по одной на ядро); меняется только время.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--id</span></code> — База и идентификатор позиции, которую нужно сыграть, вместо XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--store</span></code> — Записывает завершённый роллаут в позицию как второй анализ со своими настройками, рядом с импортированным или вычисленным анализом, который он никогда не заменяет. Прерванный роллаут не записывается; из двух роллаутов с одинаковыми настройками сохраняется более длинная серия, а роллаут с другими настройками добавляется рядом.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--list</span></code> — Выводит сохранённые для позиции роллауты, от новых к старым, вместо того чтобы проводить новый.</p></li>
+</ul>
+<p>Все кандидаты играют одними и теми же кубиками, удача каждого броска вычитается из результата каждой партии (снижение дисперсии), первые два броска стратифицируются, а партия останавливается там, где её покрывает two-sided база окончания игры. Каждая строка даёт эквити, его 95 %-й интервал, число сыгранных партий и JSD — отставание от лучшего в стандартных отклонениях разности. Куб разыгрывается во время партий: рейтинг надёжнее абсолютного эквити. Ctrl-C показывает то, что установили завершённые партии.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--move<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span>--move<span class="w"> </span><span class="s1">'24/23 13/10'</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--preset<span class="w"> </span>standard<span class="w"> </span>--store
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--list
+</pre></div>
+</div>
+</section>
+<section id="epc-calculatrice-epc">
+<h2>epc — Калькулятор EPC<a class="headerlink" href="#epc-calculatrice-epc" title="Ссылка на этот заголовок"></a></h2>
+<p>Вычисляет Effective Pip Count, вероятность выигрыша и вердикт по кубу для игры на деньги для позиции выброса, заданной XGID или OGID (OpenGammon). Чистое вычисление: никакой файл базы не задействован.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — Необязательная двусторонняя база выброса (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>), расширяющая встроенную TS-06-06 (читается также из переменной окружения <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>). Побеждает самая широкая корректная база; неверный файл игнорируется с предупреждением.</p></li>
+</ul>
+<p><strong>Режимы.</strong> В области, покрытой двусторонней базой, вероятность выигрыша и анализ куба для игры на деньги (cubeless, ND, D/T, D/P, вердикт) <strong>точны</strong>. За её пределами вероятность выигрыша <strong>оценивается</strong> (свёртка односторонних распределений бросков плюс откалиброванная поправка) и выводится с измеренной погрешностью; вердикт по кубу намеренно никогда не оценивается (см. <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>).</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact : six pions ou moins de chaque côté</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'</span>
+
+<span class="c1"># Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">'XGID=…'</span>
+</pre></div>
+</div>
+</section>
+<section id="gnubgid-id-gnubg">
+<span id="cli-gnubgid"></span><h2>gnubgid — ID GNUbg<a class="headerlink" href="#gnubgid-id-gnubg" title="Ссылка на этот заголовок"></a></h2>
+<p>Выводит идентификатор, который GNU Backgammon показывает для позиции, заданной как XGID или OGID: <strong>ID позиции</strong> (доска со стороны игрока, чей ход) и <strong>ID матча</strong> (куб, счёт, кости), соединённые двоеточием так, как GNU Backgammon их копирует. Чистое вычисление: файл базы данных не задействован. Длина матча и счёт выводятся из расстояний до победы, которые несёт позиция, как это делает XGID.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+</section>
+<section id="cubematrix-matrice-du-videau">
+<span id="cli-cubematrix"></span><h2>cubematrix — Матрица куба<a class="headerlink" href="#cubematrix-matrice-du-videau" title="Ссылка на этот заголовок"></a></h2>
+<p>Даёт вердикт куба для позиции при <strong>любом счёте</strong> матча: для каждой клетки <em>away × away</em> — удваивать ли и принимать ли. Чистое вычисление: никакая база данных не открывается, позиция передаётся через XGID или OGID (OpenGammon).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Длина матча, которую покрывает сетка, от 1 до 25 (по умолчанию: 7).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Глубина поиска для каждой клетки, <code class="docutils literal notranslate"><span class="pre">0</span></code> или <code class="docutils literal notranslate"><span class="pre">2</span></code> (по умолчанию: 2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Число ходов-кандидатов, оставляемых сетью отсечения (по умолчанию: 12).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Число параллельных поисков (по умолчанию: по одному на ядро). Сетка одинакова при любом значении; меняется только время.</p></li>
+</ul>
+<p>Собственный счёт позиции игнорируется — сетка его заменяет — но её <strong>куб</strong> сохраняется: вопрос в том, при каком счёте стоит повернуть <em>этот</em> куб. Сетка всюду построена для положения после Кроуфорда.</p>
+<p>Каждая клетка — отдельный поиск, потому что движок учитывает счёт: единственный поиск, прочитанный через разные матчевые эквити, был бы неверен именно там, где счёт важен.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grille d'un match en 5 points</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--match-length<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'</span>
+
+<span class="c1"># Les équités de chaque case, pour un script</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p>Вывод <code class="docutils literal notranslate"><span class="pre">text</span></code>: сетка, строки которой — очки, которых ещё не хватает игроку на ходу, а столбцы — очки соперника, затем легенда обозначений <code class="docutils literal notranslate"><span class="pre">ND</span></code> / <code class="docutils literal notranslate"><span class="pre">DT</span></code> / <code class="docutils literal notranslate"><span class="pre">DP</span></code> / <code class="docutils literal notranslate"><span class="pre">TG</span></code> и причина для каждой отклонённой клетки.</p>
+</section>
+<section id="capture-position-depuis-une-capture-d-ecran">
+<h2>capture — Позиция по скриншоту<a class="headerlink" href="#capture-position-depuis-une-capture-d-ecran" title="Ссылка на этот заголовок"></a></h2>
+<p>Считывает позицию, показанную на скриншоте доски eXtreme Gammon (тема по умолчанию): шашки, бар, снятые шашки (то, чего не хватает до пятнадцати), кости, сторона, которой ходить, и куб. Изображение (PNG, JPEG или GIF) может содержать не только доску; если оно больше экрана 4K (3840×2160), его уменьшают перед считыванием. Счёт никогда не считывается. То, что считывание не может определить, перечисляется как сомнение и никогда не угадывается: скрытая стрелка, стопка выше пяти шашек, которые XG рисует рядом, нечитаемые кости.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>&lt;image&gt;
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> или <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> и <code class="docutils literal notranslate"><span class="pre">--save</span></code> — Сохраняет позицию в базе как отдельную позицию.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span></code> — Счёт, которого снимок не показывает: <code class="docutils literal notranslate"><span class="pre">money</span></code> или счета Away обоих игроков, сначала игрока 1 (внизу), например <code class="docutils literal notranslate"><span class="pre">2a/5a</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--turn</span></code> — Игрок на ходу, <code class="docutils literal notranslate"><span class="pre">1</span></code> (внизу) или <code class="docutils literal notranslate"><span class="pre">2</span></code> (вверху), когда кости его не показывают.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Сохраняет несмотря на сомнения чтения, после проверки доски. Он не заменяет ни <code class="docutils literal notranslate"><span class="pre">--score</span></code>, ни <code class="docutils literal notranslate"><span class="pre">--turn</span></code>: <code class="docutils literal notranslate"><span class="pre">--save</span></code> отказывает, пока не задан счёт или очередь хода без костей, и называет недостающую опцию.</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--format<span class="w"> </span>xgid<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>2a/5a<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>money<span class="w"> </span>--turn<span class="w"> </span><span class="m">2</span><span class="w"> </span>videau.png
+</pre></div>
+</div>
+<p>Демон предоставляет то же считывание: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/positions.fromImage</span></code> с <code class="docutils literal notranslate"><span class="pre">{&quot;data&quot;:</span> <span class="pre">&quot;&lt;изображение</span> <span class="pre">в</span> <span class="pre">base64&gt;&quot;}</span></code>. Он отклоняет изображение больше экрана 4K, а не уменьшает его, и считывает не более двух изображений одновременно.</p>
+</section>
+<section id="bearoff-bases-de-sortie">
+<h2>bearoff — Базы бироффа<a class="headerlink" href="#bearoff-bases-de-sortie" title="Ссылка на этот заголовок"></a></h2>
+<p>Создаёт базы бироффа и управляет ими. Ничего не загружается и ничего не встроено: таблица вычисляется здесь и сверяется с отпечатком, который gnubg производит для её области. Ни одна подкоманда не обращается к базе данных — таблица бироффа есть арифметика об игре, а не о чьих-либо позициях, — поэтому ни одна не принимает <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>&lt;file.bd&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>delete<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Область записывается как в <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>: <code class="docutils literal notranslate"><span class="pre">6x9</span></code> для двусторонней таблицы с девятью шашками у игрока, <code class="docutils literal notranslate"><span class="pre">os8</span></code> для односторонней таблицы на восемь пунктов (одно <code class="docutils literal notranslate"><span class="pre">os</span></code> означает <code class="docutils literal notranslate"><span class="pre">os6</span></code>).</p>
+<p>Два семейства отвечают на разные вопросы. <strong>Двусторонняя</strong> таблица расширяет область, где вероятность выигрыша и вердикт куба точны; <strong>односторонняя</strong> расширяет расстояние, на котором может стоять шашка без того, чтобы EPC умолк (до десяти пунктов).</p>
+<p><strong>generate.</strong> Называет размер, память и оценку времени до начала, затем показывает процент и измеренное оставшееся время.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--ts</span></code> — Вычисляемая двусторонняя область, например <code class="docutils literal notranslate"><span class="pre">6x9</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--os</span></code> — Вычисляемая односторонняя область, числом пунктов: от 6 до 12. Требуется ровно одно из двух.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cores</span></code> — Используемые ядра (по умолчанию: все, кроме одного).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> — Куда писать (по умолчанию: каталог данных приложения).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> — Без строки прогресса.</p></li>
+</ul>
+<p><strong>CTRL-C ставит на паузу.</strong> Сигнал перехватывается: состояние записывается рядом с таблицей, и та же команда, запущенная снова, продолжает с места остановки, а не пересчитывает всё. Полчаса арифметики стоит записать. <code class="docutils literal notranslate"><span class="pre">bearoff</span> <span class="pre">delete</span></code> выбрасывает отложенное продолжение. На паузу встаёт только двусторонний проход; односторонний последователен, и <code class="docutils literal notranslate"><span class="pre">--cores</span></code> ему ничего не даёт.</p>
+<p><strong>list.</strong> Оценивает каждую область — размер, память, время на этой машине — и говорит, какие уже есть, с их вердиктом, и у каких есть приостановленный проход. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> для сценария, <code class="docutils literal notranslate"><span class="pre">--cores</span></code> чтобы изменить допущение оценки.</p>
+<p><strong>verify.</strong> Отвечает <code class="docutils literal notranslate"><span class="pre">verified</span></code> (те же байты, что у эталона), <code class="docutils literal notranslate"><span class="pre">unverified</span></code> (корректная, но для этой области отпечаток не записан) или <code class="docutils literal notranslate"><span class="pre">corrupt</span></code> (файл противоречит сам себе). В последнем случае завершается с ошибкой: эта команда сделана для сценария.</p>
+<p><strong>delete.</strong> Удаляет таблицу, отложенное продолжение и остатки погибшего прохода. Область по умолчанию пересчитывается при следующем запуске приложения; более широкая — нет.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ce que cette machine a, et ce que chaque domaine coûterait</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x9<span class="w"> </span>--cores<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># OS-08 : l'EPC répond alors jusqu'à un pion sur la 8</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--os<span class="w"> </span><span class="m">8</span>
+
+<span class="c1"># Sur un serveur, dans le volume que lit le démon</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+</section>
+<section id="openingbook-quel-coup-a-ce-score">
+<span id="cli-openingbook"></span><h2>openingbook — Какой ход при этом счёте?<a class="headerlink" href="#openingbook-quel-coup-a-ce-score" title="Ссылка на этот заголовок"></a></h2>
+<p>Упражнение <em>Дебют</em> панели Тренировки (см. <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Панель Тренировка</span></a>) в командной строке: дебютный ход (1st roll) или ответ (2nd roll) партии при некотором счёте, вытягиваемый из встроенной дебютной книги и оцениваемый по ней. Любой ход на равных (tied) с лучшим считается верным (см. <a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">Дебютная книга: разрыв, 95 %-й ДИ и равенство</span></a>). База не читается и не записывается.</p>
+<p><strong>openingbook status</strong> — Число строк книги и её счета.</p>
+<p><strong>openingbook question</strong> — Вытягивает вопрос: дебютный бросок и счёт с XGID дебютной позиции; с <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code> — бросок ответа в позиции, которую оставляет дебютный ход, равный лучшему при этом счёте, с этим ходом и XGID позиции ответа.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">first|second</span></code> — Бросок, который нужно сыграть: <code class="docutils literal notranslate"><span class="pre">first</span></code> (дебют, по умолчанию) или <code class="docutils literal notranslate"><span class="pre">second</span></code> (ответ).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span> <span class="pre">&lt;liste&gt;</span></code> — Счета для розыгрыша, через запятую: <code class="docutils literal notranslate"><span class="pre">4-2</span></code> (отвечающий на 4 очках, открывающий на 2), <code class="docutils literal notranslate"><span class="pre">1-2</span></code> (игра Кроуфорда), <code class="docutils literal notranslate"><span class="pre">1-1</span></code> (DMP, двойное матч-очко), <code class="docutils literal notranslate"><span class="pre">money</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opening</span> <span class="pre">&lt;liste&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--reply</span> <span class="pre">&lt;liste&gt;</span></code> — Дебютные или ответные броски для розыгрыша (<code class="docutils literal notranslate"><span class="pre">31,65</span></code>); <code class="docutils literal notranslate"><span class="pre">--reply</span></code> только вместе с <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span> <span class="pre">&lt;n&gt;</span></code> — Воспроизводимый розыгрыш (0 = случайный).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--book</span> <span class="pre">&lt;fichier&gt;</span></code> — Книга <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> или <code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code> вместо встроенной.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Формат вывода.</p></li>
+</ul>
+<p><strong>openingbook answer</strong> — Оценивает ход и показывает каждого кандидата в сравнении с лучшим: разрыв, 95 %-й ДИ и « tied » (на равных), в эквити, нормированной по счёту, с числом партий и настройкой роллаута. Без <code class="docutils literal notranslate"><span class="pre">--after</span></code> ход является дебютом; с <code class="docutils literal notranslate"><span class="pre">--reply</span></code> и <code class="docutils literal notranslate"><span class="pre">--after</span></code> ход является ответом, сыгранным после этого дебютного хода, — тем, который называет вопрос <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--score<span class="w"> </span>&lt;score&gt;<span class="w"> </span><span class="o">[</span>--reply<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--after<span class="w"> </span>&lt;coup&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;coup&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2,2-4
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span><span class="s1">'8/5 6/5'</span>
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--roll<span class="w"> </span>second<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--reply<span class="w"> </span><span class="m">21</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span>--after<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span><span class="s1">'13/11 6/5'</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="cli_matchs.html" class="btn btn-neutral float-left" title="Матчи, турниры и партии" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="cli_entrainement.html" class="btn btn-neutral float-right" title="Изучение, уроки и тренировка" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

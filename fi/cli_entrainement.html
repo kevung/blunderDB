@@ -1,0 +1,295 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Opiskelu, oppitunnit ja harjoittelu &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Tilastot" href="cli_stats.html" />
+    <link rel="prev" title="Analyysi ja pelimoottori" href="cli_analyse.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/cli_entrainement.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_entrainement.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_entrainement.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_entrainement.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_entrainement.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/cli_entrainement.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_entrainement.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_entrainement.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Yleinen syntaksi</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Käytettävissä olevat komennot</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Tuonti, vienti, siirto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Kirjasto: haku, luettelot, kokoelmat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Ottelut, turnaukset ja pelit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analyysi ja pelimoottori</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Opiskelu, oppitunnit ja harjoittelu</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#study-la-file-d-etude-transversale">study — Tuonnit ylittävä opiskelujono</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lesson-gerer-les-lecons">lesson — Hallitse oppitunteja</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#anki-paquets-de-repetition-espacee">anki — Välitoistopakat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#training-le-journal-d-entrainement">training — Harjoituspäiväkirja</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Tilastot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Tietokannan hallinta</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Työnkulkuesimerkkejä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Komentoriviliittymä (CLI)</a></li>
+      <li class="breadcrumb-item active">Opiskelu, oppitunnit ja harjoittelu</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="etude-lecons-et-entrainement">
+<span id="cli-entrainement-chapitre"></span><h1>Opiskelu, oppitunnit ja harjoittelu<a class="headerlink" href="#etude-lecons-et-entrainement" title="Link to this heading"></a></h1>
+<section id="study-la-file-d-etude-transversale">
+<h2>study — Tuonnit ylittävä opiskelujono<a class="headerlink" href="#study-la-file-d-etude-transversale" title="Link to this heading"></a></h2>
+<p>Luettelee tietokannan vertailupelaajan blunderit kaikista tuonneista, joita mikään ei ole vielä käsitellyt: ei kommenttia, ei Anki-korttia, ei kuulu mihinkään kokoelmaan eikä ole merkittyä »nähdyksi» (ks. <a class="reference internal" href="guide_utilisateur.html#file-etude-transversale"><span class="std std-ref">Blunderit, joita mikään ei ole vielä käsitellyt</span></a>). Jokainen aliskomento ottaa <code class="docutils literal notranslate"><span class="pre">--db</span></code>-valitsimen.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>study<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Alikomennot:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">queue</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Jono kalleimmasta halvimpaan; enintään viisikymmentä asemaa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mark</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Merkitsee aseman nähdyksi: se poistuu jonosta. Merkintä on tietokannan dataa, jota ei koskaan viedä.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unmark</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Poistaa merkinnän: asema palaa jonoon.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Kertoo, onko asemassa merkintä.</p></li>
+</ul>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>study<span class="w"> </span>queue<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>study<span class="w"> </span>mark<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1234</span>
+</pre></div>
+</div>
+</section>
+<section id="lesson-gerer-les-lecons">
+<h2>lesson — Hallitse oppitunteja<a class="headerlink" href="#lesson-gerer-les-lecons" title="Link to this heading"></a></h2>
+<p>Hallitsee oppitunteja: järjestettyjä vaiheiden sarjoja, jotka valmentaja kirjoittaa kerran oppilasta varten. Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Oppitunti luovutetaan <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedostossa (alikomento <code class="docutils literal notranslate"><span class="pre">export</span></code>) ja luetaan graafisessa käyttöliittymässä komennolla <code class="docutils literal notranslate"><span class="pre">:le</span></code>. Jokainen alikomento ottaa vastaan valitsimen <code class="docutils literal notranslate"><span class="pre">--db</span></code>; <code class="docutils literal notranslate"><span class="pre">list</span></code> ja <code class="docutils literal notranslate"><span class="pre">show</span></code> hyväksyvät valitsimen <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> (oletus) tai <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>lesson<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Alikomennot:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Luettelee oppitunnit: tunnus, nimi, vaiheiden määrä.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Oppitunnin vaiheet järjestyksessä: vaiheen tunnus, otsikko, teksti sekä näytetty kokoelma ja asema.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;nom&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Luo tyhjän oppitunnin.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--name</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Nimeää oppitunnin uudelleen tai muuttaa sen kuvausta; antamatta jätetty säilyy.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--confirm</span></code> — Poistaa oppitunnin ja sen vaiheet lopullisesti (oppitunneilla ei ole roskakoria). Kokoelmat ja asemat, joita sen vaiheet näyttivät, jäävät tietokantaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--title</span> <span class="pre">&lt;titre&gt;]</span> <span class="pre">[--text</span> <span class="pre">&lt;texte&gt;</span> <span class="pre">|</span> <span class="pre">--text-file</span> <span class="pre">&lt;fichier&gt;]</span> <span class="pre">[--collection</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--position</span> <span class="pre">&lt;id&gt;]</span></code> — Lisää vaiheen oppitunnin loppuun.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--title</span> <span class="pre">…]</span> <span class="pre">[--text</span> <span class="pre">…</span> <span class="pre">|</span> <span class="pre">--text-file</span> <span class="pre">…]</span> <span class="pre">[--collection</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--position</span> <span class="pre">&lt;id&gt;]</span></code> — Muokkaa vaihetta; vain annetut kentät muuttuvat, <code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">0</span></code> tai <code class="docutils literal notranslate"><span class="pre">--position</span> <span class="pre">0</span></code> poistaa sen, mitä vaihe näytti.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span></code> — Poistaa vaiheen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reorder</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--steps</span> <span class="pre">&lt;id,id,…&gt;</span></code> — Asettaa vaiheiden järjestyksen; luettelossa on oltava kaikki oppitunnin vaiheet.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;fichier&gt;</span> <span class="pre">[--analysis=false]</span> <span class="pre">[--comments=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--password</span> <span class="pre">&lt;mot</span> <span class="pre">de</span> <span class="pre">passe&gt;]</span></code> — Vie yhden tai useamman oppitunnin sekä kokoelmat ja asemat, joita niiden vaiheet näyttävät, uuteen tietokantatiedostoon; valitsimella <code class="docutils literal notranslate"><span class="pre">--password</span></code> tiedosto on suojattu <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (vesileimasta katso komento <code class="docutils literal notranslate"><span class="pre">export</span></code>). Valitsimella <code class="docutils literal notranslate"><span class="pre">--html</span></code> (yksi oppitunti, <code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">fr|en|de|el|es|fi|it|ja|ru</span></code>) <code class="docutils literal notranslate"><span class="pre">--out</span></code> on itsenäinen HTML-sivu: otsikko, kuvaus, jokainen vaihe tekstineen ja lautoineen, kunkin aseman tallennettu analyysi taitettuna kuin tietokilpailun vastaus ja alatunnisteessa tietokannan vesileiman alkuperä, jos sellainen on. Tiedosto ei sisällä skriptiä eikä verkko-osoitetta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--undo]</span></code> — Merkitsee vaiheen tehdyksi tässä tietokannassa tai poistaa merkin valitsimella <code class="docutils literal notranslate"><span class="pre">--undo</span></code>: tämä on oppituntia lukevan etenemistä, eikä mikään vienti vie sitä mukanaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">progress</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Näyttää oppitunnin tehdyiksi merkityt vaiheet eleen päivämäärän kanssa.</p></li>
+</ul>
+<p>Oppitunnin sisältävän tiedoston tuonti luo oppitunnin vaiheineen; oppituntiin, jonka nimi on jo tietokannassa, ei kosketa, joten saman tiedoston tuonti uudelleen ei muuta mitään. Oppitunnin lukeminen ei tallenna mitään lukijan puolelle; vain <code class="docutils literal notranslate"><span class="pre">done</span></code> kirjoittaa hänen etenemisensä.</p>
+<p>Koko kirjaston vienti (<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>) sisältää kaikki oppitunnit sekä sen, mitä niiden vaiheet näyttävät; osittainen vienti sisältää vain nimetyt oppitunnit komennolla <code class="docutils literal notranslate"><span class="pre">lesson</span> <span class="pre">export</span></code>.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>lesson<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jouer contre un prime"</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span>add-step<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--lesson<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--title<span class="w"> </span><span class="s2">"Le temps"</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"Comptez les pips."</span><span class="w"> </span>--collection<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Remettre la leçon à un élève, protégée et marquée de son origine</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--out<span class="w"> </span>lecon.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret<span class="w"> </span>--watermark<span class="w"> </span><span class="s2">"Cours du 12 mars"</span>
+</pre></div>
+</div>
+</section>
+<section id="anki-paquets-de-repetition-espacee">
+<h2>anki — Välitoistopakat<a class="headerlink" href="#anki-paquets-de-repetition-espacee" title="Link to this heading"></a></h2>
+<p>Tarkastelee ja ylläpitää käyttöliittymän Anki-paneelin välitoistopakkoja (FSRS). Kortin kertaaminen vaatii laudan ja tapahtuu käyttöliittymässä; CLI listaa, mittaa ja synkronoi uudelleen.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Alikomennot:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">decks</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Pakkojen luettelo: lähde, korttien määrä, erääntyneet kortit, uudet kortit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Pakan kertaustilastot: yhteensä, uudet, opittavana, kerrattavat, nyt erääntyvät, sekä sen FSRS-parametrit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forecast</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--days</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Erääntyvät kortit kalenteripäivittäin (UTC) seuraavien <code class="docutils literal notranslate"><span class="pre">n</span></code> päivän aikana (oletus 30, enintään 365); päivä 0 sisältää kaikki myöhässä olevat kortit; <code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code> (oletus) kattaa kaikki pakat.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sync</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span></code> — Lisää kortin jokaiselle pakan lähteen asemalle, jolla ei vielä ole korttia; olemassa olevat kortit säilyttävät ajoituksensa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retention</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — pakan mitattu muistiinjäänti verrattuna omistajan valitsemaan tavoitteeseen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">card</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--action</span> <span class="pre">suspend|unsuspend|bury|remove|undo</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — kohdistuu yhteen korttiin. <em>Hyllytys</em> siirtää sen syrjään historiaa menettämättä (se ei enää tule vastaan istunnossa); <em>hautaus</em> piilottaa sen seuraavaan päivään sanomatta mitään sen arvosta; <em>poisto</em> poistaa sen pakasta — asema itse jää kirjastoon, sillä pakka on vain sen päälle asetettu opiskelulista. <em>undo</em> kumoaa kortin viimeisimmän arvion, jolloin kortti palaa tilaan ennen sitä arviota, ja näyttää tämän tilan. Jos kumottavaa arviota ei ole, komento kieltäytyy: ”the card has no review to undo”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — kertausloki, tuorein ensin (<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code>, oletus, kattaa kaikki pakat; <code class="docutils literal notranslate"><span class="pre">--limit</span></code> on oletuksena 20). Loki on se, mitä ajoittajalle todella kerrottiin, vastakohtana sille, mitä se tänään suunnittelee: ainoa paikka, jossa vahingossa annettu arvosana näkyy.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">|</span> <span class="pre">--collection</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;tiedosto.apkg&gt;</span> <span class="pre">[--format</span> <span class="pre">apkg]</span> <span class="pre">[--lang</span> <span class="pre">&lt;kieli&gt;]</span></code> — Kirjoittaa pakan tai kokoelman Anki-paketiksi <strong>.apkg</strong>, jonka Anki-sovellus tuo tietokoneella tai puhelimella: yksi kortti asemaa kohden, etupuolella lauta, tilanne, kuutio ja nopat, takapuolella paras siirto tai oikea kuutiopäätös, sen equity ja pelatun siirron virhe, tekstit kielellä <code class="docutils literal notranslate"><span class="pre">--lang</span></code> (oletus <code class="docutils literal notranslate"><span class="pre">en</span></code>). Elävä kokoelma arvioidaan viennin hetkellä, ylärajansa puitteissa. Vienti ei kirjoita tietokantaan mitään; Ankiin tuotu uusi vienti päivittää korttinsa sen sijaan, että monistaisi ne. Daemon tarjoaa saman tiedoston osoitteessa <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/anki.exportApkg</span></code>.</p></li>
+</ul>
+<p>Kokoelmaan perustuva pakka lukee kokoelmansa uudelleen; elävään kokoelmaan perustuva pakka suorittaa kyselynsä uudelleen samalla 5 000 aseman ylärajalla ja ilmoittaa virhetulosteessa typistetystä lähteestä. Hakuun perustuva pakka säilyttää haun sellaisena kuin graafinen käyttöliittymä sen tallensi (komento, lauta ja tuolloin löytyneiden asemien tunnisteet): hakukielioppi elää graafisessa käyttöliittymässä, joten CLI synkronoi uudelleen tallennetuista tunnisteista ja ilmoittaa siitä virhetulosteessa — avaa pakka graafisessa käyttöliittymässä suorittaaksesi itse haun uudelleen.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>decks<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>forecast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--days<span class="w"> </span><span class="m">14</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>sync<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span><span class="nb">suspend</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span>undo
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>log<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">50</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--out<span class="w"> </span>paquet.apkg<span class="w"> </span>--lang<span class="w"> </span>fr
+
+<span class="c1"># Day         Due</span>
+<span class="c1"># ---         ---</span>
+<span class="c1"># 2026-09-02  12</span>
+<span class="c1"># 2026-09-03  4</span>
+<span class="c1"># ...</span>
+<span class="c1">#</span>
+<span class="c1"># 37 card(s) due over 14 day(s)</span>
+</pre></div>
+</div>
+</section>
+<section id="training-le-journal-d-entrainement">
+<span id="cli-training"></span><h2>training — Harjoituspäiväkirja<a class="headerlink" href="#training-le-journal-d-entrainement" title="Link to this heading"></a></h2>
+<p>Lukee uudelleen Harjoitus-välilehden päiväkirjan (katso <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Harjoittelu-paneeli</span></a>) ja tekee epäonnistuneista kysymyksistä kertausaineistoa. Päiväkirjan kirjoittaa graafinen sovellus tai daemonin asiakas reitin <code class="docutils literal notranslate"><span class="pre">training.save</span></code> kautta; komentorivi ei esitä kysymyksiä.</p>
+<p><strong>training sessions</strong> — Istunnot, uusin ensin, tunnisteineen; PR on olemassa vain <em>Päätös</em>-harjoitukselle.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>sessions<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--exercise</span> <span class="pre">&lt;nimi&gt;</span></code> — Yksi harjoitus: <code class="docutils literal notranslate"><span class="pre">scores</span></code>, <code class="docutils literal notranslate"><span class="pre">pips</span></code>, <code class="docutils literal notranslate"><span class="pre">bearoff</span></code>, <code class="docutils literal notranslate"><span class="pre">evaluation</span></code> tai <code class="docutils literal notranslate"><span class="pre">decision</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Istuntojen määrä (oletus 20; 0 = kaikki).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Tulostusmuoto.</p></li>
+</ul>
+<p><strong>training missed</strong> — Epäonnistuneet asemat, kukin kerran, viimeksi epäonnistunut ensin; aikarajan ylittänyt kysymys lasketaan epäonnistuneeksi. Vain <em>Päätös</em>-kysymykset säilyttävät asemansa.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--exercise</span> <span class="pre">&lt;nimi&gt;</span></code> — Yhden harjoituksen istunnot.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--session</span> <span class="pre">&lt;id&gt;</span></code> — Yksi istunto (<code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">sessions</span></code> -komennon tunniste).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Asemien määrä (oletus 0 = kaikki).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;nimi&gt;</span></code> — Luo näistä asemista Anki-pakan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">&lt;nimi&gt;</span></code> — Luo näistä asemista kokoelman.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Tulostusmuoto; JSON-muodossa <code class="docutils literal notranslate"><span class="pre">PositionIDs</span></code> sekä <code class="docutils literal notranslate"><span class="pre">DeckID</span></code> tai <code class="docutils literal notranslate"><span class="pre">CollectionID</span></code>, kun ne luodaan.</p></li>
+</ul>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>sessions<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--exercise<span class="w"> </span>decision
+./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--session<span class="w"> </span><span class="m">12</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Ratés de lundi"</span>
+./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--collection<span class="w"> </span><span class="s2">"Mes ratés"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_analyse.html" class="btn btn-neutral float-left" title="Analyysi ja pelimoottori" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_stats.html" class="btn btn-neutral float-right" title="Tilastot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

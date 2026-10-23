@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analyysi ja pelimoottori &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Opiskelu, oppitunnit ja harjoittelu" href="cli_entrainement.html" />
+    <link rel="prev" title="Ottelut, turnaukset ja pelit" href="cli_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/cli_analyse.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_analyse.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_analyse.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_analyse.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_analyse.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/cli_analyse.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_analyse.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_analyse.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Yleinen syntaksi</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Käytettävissä olevat komennot</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Tuonti, vienti, siirto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Kirjasto: haku, luettelot, kokoelmat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Ottelut, turnaukset ja pelit</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Analyysi ja pelimoottori</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#analyze-rattrapage-gammonnet">analyze — gammonNet-täydennysanalyysi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rollout-rollout-d-une-position">rollout — Aseman rollout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#epc-calculatrice-epc">epc — EPC-laskin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gnubgid-id-gnubg">gnubgid — GNUbg-tunnus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cubematrix-matrice-du-videau">cubematrix — Tuplauskuution matriisi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#capture-position-depuis-une-capture-d-ecran">capture — Asema kuvakaappauksesta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bearoff-bases-de-sortie">bearoff — Bearoff-tietokannat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#openingbook-quel-coup-a-ce-score">openingbook — Mikä siirto tällä pistetilanteella?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Opiskelu, oppitunnit ja harjoittelu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Tilastot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Tietokannan hallinta</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Työnkulkuesimerkkejä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Komentoriviliittymä (CLI)</a></li>
+      <li class="breadcrumb-item active">Analyysi ja pelimoottori</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-et-moteur">
+<span id="cli-analyse-chapitre"></span><h1>Analyysi ja pelimoottori<a class="headerlink" href="#analyse-et-moteur" title="Link to this heading"></a></h1>
+<section id="analyze-rattrapage-gammonnet">
+<h2>analyze — gammonNet-täydennysanalyysi<a class="headerlink" href="#analyze-rattrapage-gammonnet" title="Link to this heading"></a></h2>
+<p>Kirjoittaa gammonNet-analyysin jokaiselle positiolle, jolla ei ole yhtään — täydennys kirjastolle, joka on koottu ennen tämän toiminnon olemassaoloa (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). Se on sama toimenpide kuin automaattinen ajo tuonnin jälkeen ja graafisen käyttöliittymän <em>Ylläpito</em>-välilehden rivi « Positiot ilman analyysiä » sekä <code class="docutils literal notranslate"><span class="pre">serve</span></code>-daemonin päätepiste <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.analyzeMissing</span></code> yhdelle tenantille — kolme eri muotoa samasta toimenpiteestä, ei kolmea erillistä logiikkaa (ks. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Tietokanta (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Hakusyvyys (oletus: 2, kanoninen asetus).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Karsinnan leveys (oletus: 12, kanoninen asetus).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Siirtopäätöstä kohden säilytettävien ehdokassiirtojen määrä (oletus: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Rinnakkain analysoitavien asemien määrä (oletus: koneen ydinten määrä). Kun asemia on jäljellä vähemmän kuin ytimiä (lyhyt matsi, erän loppu), jokainen haku jakautuu vapaille ytimille; tulos ei muutu bittiäkään.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — Rajaa erän yhden ottelun asemiin (0, oletusarvo, tarkoittaa koko kirjastoa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> — <strong>Ei kirjoita mitään</strong>: vertaa gammonNetia tuotuihin analyyseihin aukkojen täyttämisen sijaan (katso alta).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--stale</span></code> — Analysoi uudelleen asemat, joiden gammonNet-analyysi on vanhentunut — moottorin aiemman version kirjoittama tai eri syvyydellä kuin <code class="docutils literal notranslate"><span class="pre">--ply</span></code> — sen sijaan, että täytettäisiin aukkoja. Asemaa, jolla on myös XG-, GNUbg- tai BGBlitz-analyysi, ei koskaan kosketa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Yhdessä <code class="docutils literal notranslate"><span class="pre">--compare</span></code>:n kanssa: pysähtyy tämän asemamäärän jälkeen (0 = kaikki).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> (oletus, edistymisen kanssa) tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (yksi yhteenvetoasiakirja, tulostetaan lopussa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rollout</span></code> — Pelaa <code class="docutils literal notranslate"><span class="pre">--query</span></code>-valitsimen valitsemat asemat rolloutilla aukkojen täyttämisen sijaan (katso alla).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — <code class="docutils literal notranslate"><span class="pre">--rollout</span></code>-valitsimen kanssa pelattavat asemat haun kyselykielellä (<code class="docutils literal notranslate"><span class="pre">search</span> <span class="pre">--query-help</span></code>); tyhjänä kaikki.</p></li>
+</ul>
+<p><strong>Ilman analyysiä tuotu ottelu saa näin PR-luvun.</strong> Näin on verkossa pelatun ottelun tai Jellyfish-<code class="docutils literal notranslate"><span class="pre">.mat</span></code>-tiedoston laita, kun kukaan ei ole ajanut sitä XG:n läpi. blunderDB tunsi asemat ja pelatut siirrot, mutta mikään ei kertonut mitä ne olivat arvoltaan; erän ajon jälkeen todella pelattua siirtoa verrataan gammonNetin järjestykseen, ja ero syöttää PR:n ja kaikki muut mittarit. Pelattu siirto tulee ottelun omasta siirtotaulusta, joka kirjoitetaan tuonnissa riippumatta siitä kantoiko tiedosto analyysin — sitä ei koskaan arvata.</p>
+<p>Tätä vanhemmalla versiolla analysoitua tietokantaa ei tarvitse arvioida uudelleen: <a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a> laskee sarakkeet uudelleen jo tallennetusta ja palauttaa noille otteluille niiden PR:n.</p>
+<p><strong>Vain yksi ottelu</strong> (<code class="docutils literal notranslate"><span class="pre">--match</span></code>). Tunnisteella, jonka <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span></code> näyttää, erä käy läpi vain kyseisen ottelun asemat: sama aukkosääntö, samat takeet, kapeampi kattavuus. Juuri tuotu ottelu saa analyysinsä ilman että muuta kirjastoa käydään läpi, ja korjattu ja toistamiseen analysoitu ottelu maksaa vain korjauksen luomat asemat, koska kaikilla muilla on jo analyysi. Valitsinta ei voi yhdistää <code class="docutils literal notranslate"><span class="pre">--stale</span></code>- eikä <code class="docutils literal notranslate"><span class="pre">--compare</span></code>-valitsimeen, jotka molemmat katsovat asemia joilla jo on analyysi: molempien pyytäminen on virhe eikä hiljaisesti ohitettu kattavuus.</p>
+<p><strong>Rinnakkaisuus</strong> (<code class="docutils literal notranslate"><span class="pre">--jobs</span></code>). Erän asemat ovat toisistaan riippumattomia — mikään haku ei vaikuta seuraavaan — joten ne jaetaan <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> säikeelle, joista jokaisella on oma evaluaattorinsa. Kirjoitetut analyysit ovat <strong>identtiset riippumatta siitä, mikä arvo on annettu valitsimelle</strong> <code class="docutils literal notranslate"><span class="pre">--jobs</span></code>; vain laskenta-aika muuttuu. <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">1</span></code> jättää koneen vapaaksi muuhun käyttöön. Keskeytys ei muutu: Ctrl-C pysäyttää erän ennen jokaista uutta asemaa, ja kaikki jo laskettu kirjoitetaan.</p>
+<p><strong>Aukkosääntö</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>). Asemaan, jolla on jo analyysi — XG, GNUbg, BGBlitz tai aiempi gammonNet-ajo — ei koskaan kosketa riippumatta siitä, mikä moottori puuttuu. Vain asema, jolla <strong>ei ole yhtään</strong> analyysiä, kirjoitetaan. Komennon voi siis käynnistää uudelleen milloin tahansa ilman riskiä ja keskeyttää siististi: Ctrl-C peruuttaa menettämättä mitään jo kirjoitettua, ja seuraava ajo jatkaa täsmälleen siitä, mihin edellinen jäi — lokia ei tarvita, koska « asemat ilman analyysiä » lasketaan uudelleen jokaisella käynnistyksellä.</p>
+<p><strong>Esimerkki:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...</span>
+<span class="c1">#   1/1204 (0%)</span>
+<span class="c1">#   61/1204 (5%)</span>
+<span class="c1">#   ...</span>
+<span class="c1">#   1204/1204 (100%)</span>
+<span class="c1"># Done.</span>
+
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--jobs<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Un seul match, celui qui vient d'être importé</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<p><strong>Erä-rolloutit</strong> (<code class="docutils literal notranslate"><span class="pre">--rollout</span></code>). Jokainen <code class="docutils literal notranslate"><span class="pre">--query</span></code>-valitsimen valitsema asema pelataan <a class="reference internal" href="#cli-rollout"><span class="std std-ref">rolloutilla</span></a>, yksi kerrallaan kaikilla ytimillä, ja rollout tallennetaan analyysin viereen, ei koskaan sen tilalle. Arvo on esiasetus — <code class="docutils literal notranslate"><span class="pre">fast</span></code> (216 peliä, katkaistu 7:ään) tai <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 peliä, katkaistu 11:een) — tai vapaat asetukset: valinnainen esiasetus, sitten <code class="docutils literal notranslate"><span class="pre">games=</span></code>, <code class="docutils literal notranslate"><span class="pre">min-games=</span></code>, <code class="docutils literal notranslate"><span class="pre">truncation=</span></code>, <code class="docutils literal notranslate"><span class="pre">jsd=</span></code>, <code class="docutils literal notranslate"><span class="pre">ply=</span></code>, <code class="docutils literal notranslate"><span class="pre">candidates=</span></code>, <code class="docutils literal notranslate"><span class="pre">seed=</span></code>, pilkuilla erotettuina. Asema, jolla on jo rollout samoilla asetuksilla, ohitetaan: Ctrl-C:llä keskeytetty ajo jatkuu siitä, mihin se jäi, ja kesken oleva asema hylätään kokonaan. Aseman, jota vain rollout analysoi, haku löytää sen kautta; jo analysoitu asema säilyttää analyysinsa sarakkeet.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span>fast<span class="w"> </span>--query<span class="w"> </span><span class="s1">'E&gt;80'</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span><span class="s1">'standard,ply=1'</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">'c'</span>
+</pre></div>
+</div>
+<p id="analyze-compare"><code class="docutils literal notranslate"><span class="pre">--compare</span></code>: <strong>mitä gammonNet on arvoltaan sinun kirjastossasi?</strong></p>
+<p>Moottorin tarkkuus mitataan muualla vertailukorpuksia ja tarkkaa poistotaulua vasten. Kumpikaan mittaus ei vastaa siihen kysymykseen, joka käyttäjällä oikeasti on ja joka koskee <strong>hänen</strong> asemiaan: XG:stä tuoduissa otteluissa, missä sisäänrakennettu moottori on eri mieltä kuin tiedoston mukana tullut analyysi, ja mitä tuo erimielisyys maksaisi?</p>
+<p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> vastaa, eikä <strong>kirjoita mitään</strong>. Se ei ole varotoimi vaan komennon koko idea: ADR-0013 suojaa tuotua analyysiä ehdoitta, joten vertailun voi ajaa kirjastoon, jota ei missään nimessä halua kirjoitettavan uusiksi.</p>
+<p>Raportti antaa:</p>
+<ul class="simple">
+<li><p><strong>yksimielisyysasteen</strong> parhaasta vastauksesta, eriteltynä nappulasiirtoihin ja kuutiopäätöksiin — näillä kahdella ei ole mitään tekemistä toistensa kanssa, ja yksi luku peittäisi kumpi niistä pettää;</p></li>
+<li><p><strong>erimielisyyden hinnan</strong>, arvotettuna tuodun analyysin omalla asteikolla: mitä gammonNetin suosima siirto on arvoltaan <em>tuodun moottorin mukaan</em>, vähennettynä sen oman parhaan siirron arvolla. Tämä suunta on ainoa, jonka molemmat moottorit voivat yhdessä laskea; erimielisyyden hinnoittelu kahdesti houkuttelisi lukemaan pienemmän luvuista;</p></li>
+<li><p>erittelyn <strong>pelin vaiheen mukaan</strong>, joka kertoo <em>missä</em> erimielisyydet ovat;</p></li>
+<li><p>kymmenen kalleinta erimielisyyttä, asema kerrallaan.</p></li>
+</ul>
+<p>Kaksi moottoria kirjoittaa saman siirron eri tavoin — XG kirjoittaa ”13/7” siinä missä gammonNet kirjoittaa ”13/8 8/7”, syönnit merkitään toisella puolella eikä toisella, toisto tiivistetään joskus muotoon ”(2)”. Nämä erot ovat murretta eivätkä erimielisyyttä: vertailu palauttaa molemmat merkinnät kanoniseen muotoon ennen vertaamista. Ilman sitä testikorpus näytti 78,8 % yksimielisyyttä 93,2 %:n sijaan — viisitoista prosenttiyksikköä valheellisia erimielisyyksiä.</p>
+<p>Siirtoa, jota tuotu moottori <strong>ei</strong> ole listannut, ei voi hinnoitella sen asteikolla: se lasketaan nollakustannuksiseksi erimielisyydeksi eikä keksityksi kustannukseksi.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparer sur un échantillon de 500 positions</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--compare<span class="w"> </span>--limit<span class="w"> </span><span class="m">500</span>
+
+<span class="c1"># compared: 118 decision(s)  (refused 2, failed 0)</span>
+<span class="c1"># same best answer: 93.2% (110/118)</span>
+<span class="c1">#   checker play:   93.7% (59/63)</span>
+<span class="c1">#   cube decision:  92.7% (51/55)</span>
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+<section id="rollout-rollout-d-une-position">
+<span id="cli-rollout"></span><h2>rollout — Aseman rollout<a class="headerlink" href="#rollout-rollout-d-une-position" title="Link to this heading"></a></h2>
+<p>Pelaa aseman suuren määrän kertoja gammonNetillä ratkaistakseen sen, mitä haku ei ratkaise: kaksi siirtoa, joiden ero on muutama tuhannesosa, tai tuplauspäätös, jossa malli epäröi. Nopilla pelataan sen siirrot (parhaat rolloutin syvyydellä, vähintään 2 ply, tai <code class="docutils literal notranslate"><span class="pre">--move</span></code>-valitsimella nimetyt); ilman noppia sen tuplauspäätös (Ei tuplausta ja Tuplaus/Hyväksy; Tuplaus/Hylkää on täsmälleen +1). Asema tulee XGID:stä tai OGID:stä tai tietokannasta (<code class="docutils literal notranslate"><span class="pre">--db</span></code> ja <code class="docutils literal notranslate"><span class="pre">--id</span></code>); ilman <code class="docutils literal notranslate"><span class="pre">--store</span></code>-valitsinta mitään ei tallenneta.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;position&gt;<span class="w"> </span><span class="o">[</span>--store<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--preset</span></code> — Lähtöasetus: <code class="docutils literal notranslate"><span class="pre">fast</span></code> (oletus: 216 peliä katkaistuna 7 puolisiirtoon, pysäytys JSD 3:ssa 108:n jälkeen) tai <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 peliä katkaistuna 11:een, pysäytys JSD 3:ssa 324:n jälkeen). Molemmat pelaavat 0 plyllä — pelkällä verkolla siirroissa, tuplauksessa ja lehdissä; <code class="docutils literal notranslate"><span class="pre">--ply</span> <span class="pre">1</span></code> tai enemmän pelaa syvemmälle, moninkertaisella ajalla. Seuraavat valitsimet korvaavat sen yksi kerrallaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--games</span></code>, <code class="docutils literal notranslate"><span class="pre">--min-games</span></code>, <code class="docutils literal notranslate"><span class="pre">--truncation</span></code>, <code class="docutils literal notranslate"><span class="pre">--jsd</span></code>, <code class="docutils literal notranslate"><span class="pre">--ply</span></code>, <code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Rolloutin parametrit (<code class="docutils literal notranslate"><span class="pre">--truncation</span> <span class="pre">0</span></code> pelaa jokaisen pelin loppuun, <code class="docutils literal notranslate"><span class="pre">--jsd</span> <span class="pre">0</span></code> ei pysähdy koskaan ennen loppua).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move</span></code> — Pelattava siirto blunderDB:n merkinnällä (toistettavissa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> — Noppien siemenluku, oletuksena kiinteä: sama komento antaa samat luvut.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Rinnakkain pelattavat pelit (oletus: yksi ydintä kohti); vain aika muuttuu.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--id</span></code> — Tietokanta ja pelattavan aseman tunniste XGID:n sijaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--store</span></code> — Tallentaa valmiin rolloutin asemaan toisena analyysinä omine asetuksineen, tuodun tai lasketun analyysin rinnalle, jota se ei koskaan korvaa. Keskeytettyä rolloutia ei tallenneta; kahdesta samoilla asetuksilla tehdystä rolloutista säilytetään pidempi sarja, ja muilla asetuksilla tehty rollout lisätään rinnalle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--list</span></code> — Näyttää asemaan tallennetut rolloutit uusimmasta vanhimpaan sen sijaan, että pelaisi uuden.</p></li>
+</ul>
+<p>Kaikki vaihtoehdot pelaavat samoilla nopilla, jokaisen heiton onni poistetaan kunkin pelin tuloksesta (varianssin vähennys), kaksi ensimmäistä heittoa stratifioidaan ja peli päättyy siihen, missä two-sided-bearoff-tietokanta kattaa sen. Jokainen rivi antaa ekvityn, sen 95 %:n välin, pelattujen pelien määrän ja JSD:n, eron parhaaseen erotuksen keskihajontoina. Tuplauskuutiota pelataan pelien aikana: sijoitus on luotettavampi kuin absoluuttinen ekvity. Ctrl-C näyttää, mitä päättyneet pelit ovat osoittaneet.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--move<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span>--move<span class="w"> </span><span class="s1">'24/23 13/10'</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--preset<span class="w"> </span>standard<span class="w"> </span>--store
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--list
+</pre></div>
+</div>
+</section>
+<section id="epc-calculatrice-epc">
+<h2>epc — EPC-laskin<a class="headerlink" href="#epc-calculatrice-epc" title="Link to this heading"></a></h2>
+<p>Laskee XGID:nä tai OGID:nä (OpenGammon) annetun ulosajoaseman Effective Pip Countin, voittotodennäköisyyden ja rahapelin kuutiotuomion. Puhdas laskenta: mikään tietokantatiedosto ei ole mukana.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — Valinnainen kaksipuolinen bearoff-tietokanta (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>), joka laajentaa sisäänrakennettua TS-06-06:ta (luetaan myös ympäristömuuttujasta <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>). Laajin kelvollinen tietokanta voittaa; kelvoton tiedosto ohitetaan varoituksella.</p></li>
+</ul>
+<p><strong>Toimintatilat.</strong> Kaksipuolisen tietokannan kattamalla alueella voittotodennäköisyys ja rahapelin kuutioanalyysi (cubeless, ND, D/T, D/P, tuomio) ovat <strong>tarkkoja</strong>. Sen ulkopuolella voittotodennäköisyys <strong>arvioidaan</strong> (yksipuolisten heittojakaumien konvoluutio ja kalibroitu korjaus) ja näytetään mitatun virhemarginaalinsa kanssa; kuutiotuomiota ei tarkoituksella arvioida koskaan (katso <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>).</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact : six pions ou moins de chaque côté</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'</span>
+
+<span class="c1"># Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">'XGID=…'</span>
+</pre></div>
+</div>
+</section>
+<section id="gnubgid-id-gnubg">
+<span id="cli-gnubgid"></span><h2>gnubgid — GNUbg-tunnus<a class="headerlink" href="#gnubgid-id-gnubg" title="Link to this heading"></a></h2>
+<p>Kirjoittaa tunnuksen, jonka GNU Backgammon näyttää XGID:nä tai OGID:nä annetulle asemalle: <strong>aseman tunnus</strong> (lauta siltä puolelta nähtynä, jolla on vuoro) ja <strong>ottelun tunnus</strong> (tuplauskuutio, pistetilanne, nopat), kaksoispisteellä yhdistettynä, kuten GNU Backgammon ne kopioi. Puhdasta laskentaa: tietokantatiedostoa ei tarvita. Ottelun pituus ja pistetilanteet johdetaan aseman mukanaan kantamista etäisyyksistä maaliin, kuten XGID tekee.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+</section>
+<section id="cubematrix-matrice-du-videau">
+<span id="cli-cubematrix"></span><h2>cubematrix — Tuplauskuution matriisi<a class="headerlink" href="#cubematrix-matrice-du-videau" title="Link to this heading"></a></h2>
+<p>Antaa aseman kuutiotuomion <strong>jokaisessa ottelun pistetilanteessa</strong>: kullekin <em>away × away</em> -ruudulle sen, tuplataanko asema ja otetaanko tuplaus vastaan. Puhdasta laskentaa: mitään tietokantaa ei avata, asema tulee XGID- tai OGID-muodossa (OpenGammon).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Ottelun pituus, jonka ruudukko kattaa, väliltä 1–25 (oletus: 7).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Kunkin ruudun hakusyvyys, <code class="docutils literal notranslate"><span class="pre">0</span></code> tai <code class="docutils literal notranslate"><span class="pre">2</span></code> (oletus: 2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Karsintaverkon säilyttämien ehdokassiirtojen määrä (oletus: 12).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Rinnakkain ajettavat haut (oletus: yksi ydintä kohden). Ruudukko on sama arvosta riippumatta; vain aika muuttuu.</p></li>
+</ul>
+<p>Aseman oma pistetilanne ohitetaan — ruudukko korvaa sen — mutta sen <strong>kuutio</strong> säilyy: kysymys on, missä pistetilanteessa kääntäisin <em>tämän</em> kuution. Ruudukko on kauttaaltaan Crawfordin jälkeinen.</p>
+<p>Jokainen ruutu on oma hakunsa, koska moottori ottaa pistetilanteen huomioon: yksi ainoa haku luettuna eri otteluekviteettien läpi olisi väärässä juuri siellä, missä pistetilanne merkitsee.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grille d'un match en 5 points</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--match-length<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'</span>
+
+<span class="c1"># Les équités de chaque case, pour un script</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p>Tuloste <code class="docutils literal notranslate"><span class="pre">text</span></code>: ruudukko, jonka rivit ovat vuorossa olevan pelaajan vielä tarvitsemat pisteet ja sarakkeet vastustajan, sitten lyhenteiden <code class="docutils literal notranslate"><span class="pre">ND</span></code> / <code class="docutils literal notranslate"><span class="pre">DT</span></code> / <code class="docutils literal notranslate"><span class="pre">DP</span></code> / <code class="docutils literal notranslate"><span class="pre">TG</span></code> selitteet ja kunkin hylätyn ruudun syy.</p>
+</section>
+<section id="capture-position-depuis-une-capture-d-ecran">
+<h2>capture — Asema kuvakaappauksesta<a class="headerlink" href="#capture-position-depuis-une-capture-d-ecran" title="Link to this heading"></a></h2>
+<p>Lukee asemän, jonka eXtreme Gammon -laudan kuvakaappaus (oletusteema) näyttää: nappulat, baari, pois pelatut nappulat (viidestätoista puuttuva määrä), nopat, vuorossa oleva pelaaja ja kuutio. Kuva (PNG, JPEG tai GIF) voi sisältää muutakin kuin laudan; 4K-näyttöä (3840×2160) suurempi kuva pienennetään ennen lukemista. Pistetilannetta ei koskaan lueta. Mitä lukeminen ei pysty ratkaisemaan, luetellaan epäilyksenä eikä sitä koskaan arvata: piilossa oleva nuoli, pino joka on korkeampi kuin viisi nappulaa, jotka XG piirtää vierekkäin, lukukelvottomat nopat.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>&lt;image&gt;
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> tai <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> ja <code class="docutils literal notranslate"><span class="pre">--save</span></code> — Tallentaa position tietokantaan yksittäisenä asemana.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span></code> — Pistetilanne, jota kuvakaappaus ei näytä: <code class="docutils literal notranslate"><span class="pre">money</span></code> tai molempien pelaajien Away-pisteet, pelaajan 1 (alhaalla) ensin, esimerkiksi <code class="docutils literal notranslate"><span class="pre">2a/5a</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--turn</span></code> — Vuorossa oleva pelaaja, <code class="docutils literal notranslate"><span class="pre">1</span></code> (alhaalla) tai <code class="docutils literal notranslate"><span class="pre">2</span></code> (ylhäällä), kun mikään noppa ei näytä sitä.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Tallentaa lukemisen epävarmuuksista huolimatta, kun lauta on tarkistettu. Se ei korvaa <code class="docutils literal notranslate"><span class="pre">--score</span></code>- eikä <code class="docutils literal notranslate"><span class="pre">--turn</span></code>-valitsinta: <code class="docutils literal notranslate"><span class="pre">--save</span></code> kieltäytyy niin kauan kuin pistetilannetta tai vuoroa ilman noppia ei ole annettu, ja nimeää puuttuvan valitsimen.</p></li>
+</ul>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--format<span class="w"> </span>xgid<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>2a/5a<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>money<span class="w"> </span>--turn<span class="w"> </span><span class="m">2</span><span class="w"> </span>videau.png
+</pre></div>
+</div>
+<p>Daemon tarjoaa saman lukemisen: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/positions.fromImage</span></code> ja <code class="docutils literal notranslate"><span class="pre">{&quot;data&quot;:</span> <span class="pre">&quot;&lt;kuva</span> <span class="pre">base64-muodossa&gt;&quot;}</span></code>. Se hylkää 4K-näyttöä suuremman kuvan pienentämisen sijaan ja lukee vain kaksi kuvaa kerrallaan.</p>
+</section>
+<section id="bearoff-bases-de-sortie">
+<h2>bearoff — Bearoff-tietokannat<a class="headerlink" href="#bearoff-bases-de-sortie" title="Link to this heading"></a></h2>
+<p>Luo ja hallinnoi bearoff-tietokantoja. Mitään ei ladata eikä mitään ole upotettu: taulukko lasketaan täällä ja tarkistetaan sitä sormenjälkeä vasten, jonka gnubg tuottaa sen alueelle. Yksikään alikomento ei puhu tietokannan kanssa — bearoff-taulukko on aritmetiikkaa pelistä, ei kenenkään asemista — joten yksikään ei ota <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>&lt;file.bd&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>delete<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Alue kirjoitetaan kuten <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>-työkalussa: <code class="docutils literal notranslate"><span class="pre">6x9</span></code> kaksipuoliselle taulukolle yhdeksällä nappulalla pelaajaa kohden, <code class="docutils literal notranslate"><span class="pre">os8</span></code> kahdeksan pisteen yksipuoliselle taulukolle (pelkkä <code class="docutils literal notranslate"><span class="pre">os</span></code> tarkoittaa <code class="docutils literal notranslate"><span class="pre">os6</span></code>).</p>
+<p>Kaksi perhettä eivät vastaa samaan kysymykseen. <strong>Kaksipuolinen</strong> taulukko laajentaa aluetta, jolla voittotodennäköisyys ja kuution tuomio ovat tarkkoja; <strong>yksipuolinen</strong> laajentaa sitä, kuinka kaukana kotoa nappula saa olla ilman että EPC vaikenee (enintään kymmenen pistettä).</p>
+<p><strong>generate.</strong> Kertoo koon, muistintarpeen ja arvioidun ajan ennen aloitusta, sitten näyttää prosenttiosuuden ja mitatun jäljellä olevan ajan.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--ts</span></code> — Laskettava kaksipuolinen alue, esimerkiksi <code class="docutils literal notranslate"><span class="pre">6x9</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--os</span></code> — Laskettava yksipuolinen alue pisteiden määränä: 6–12. Näistä kahdesta tarvitaan täsmälleen yksi.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cores</span></code> — Käytettävät ytimet (oletus: kaikki paitsi yksi).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> — Minne kirjoitetaan (oletus: sovelluksen datakansio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> — Ei edistymisriviä.</p></li>
+</ul>
+<p><strong>CTRL-C keskeyttää tauolle.</strong> Signaali otetaan kiinni: tila kirjoitetaan taulukon viereen, ja sama komento uudelleen ajettuna jatkaa siitä mihin jäi sen sijaan että laskisi kaiken uudelleen. Puoli tuntia aritmetiikkaa kannattaa kirjoittaa muistiin. <code class="docutils literal notranslate"><span class="pre">bearoff</span> <span class="pre">delete</span></code> heittää odottavan jatkon pois. Vain kaksipuolinen ajo menee tauolle; yksipuolinen on peräkkäinen eikä <code class="docutils literal notranslate"><span class="pre">--cores</span></code> hyödytä sitä.</p>
+<p><strong>list.</strong> Hinnoittelee jokaisen alueen — koko, muisti, aika tällä koneella — ja kertoo mitkä ovat jo olemassa, tuomioineen, ja millä on tauolla oleva ajo. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> skriptiä varten, <code class="docutils literal notranslate"><span class="pre">--cores</span></code> arvion oletuksen muuttamiseen.</p>
+<p><strong>verify.</strong> Vastaa <code class="docutils literal notranslate"><span class="pre">verified</span></code> (samat tavut kuin viitteessä), <code class="docutils literal notranslate"><span class="pre">unverified</span></code> (hyvin muodostettu, mutta alueelle ei ole tallennettu sormenjälkeä) tai <code class="docutils literal notranslate"><span class="pre">corrupt</span></code> (tiedosto on ristiriidassa itsensä kanssa). Päättyy virheeseen viimeisessä tapauksessa: tämä komento on tehty skriptiin pantavaksi.</p>
+<p><strong>delete.</strong> Poistaa taulukon, odottavan jatkon ja kuolleen ajon jäänteet. Oletusalue lasketaan uudelleen sovelluksen seuraavalla käynnistyksellä; laajempaa ei.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ce que cette machine a, et ce que chaque domaine coûterait</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x9<span class="w"> </span>--cores<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># OS-08 : l'EPC répond alors jusqu'à un pion sur la 8</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--os<span class="w"> </span><span class="m">8</span>
+
+<span class="c1"># Sur un serveur, dans le volume que lit le démon</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+</section>
+<section id="openingbook-quel-coup-a-ce-score">
+<span id="cli-openingbook"></span><h2>openingbook — Mikä siirto tällä pistetilanteella?<a class="headerlink" href="#openingbook-quel-coup-a-ce-score" title="Link to this heading"></a></h2>
+<p>Harjoittelu-paneelin <em>Avaus</em>-harjoitus (ks. <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Harjoittelu-paneeli</span></a>) komentoriviltä: pelin avaussiirto (1st roll) tai vastaus (2nd roll) tietyllä pistetilanteella, arvotaan upotetusta avauskirjasta ja arvioidaan sitä vasten. Jokainen parhaan kanssa tasoissa oleva (tied) siirto on oikea (ks. <a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">Avauskirja: ero, 95 %:n luottamusväli ja tasoissa olo</span></a>). Tietokantaa ei lueta eikä kirjoiteta.</p>
+<p><strong>openingbook status</strong> — Kirjan rivien lukumäärä ja sen pistetilanteet.</p>
+<p><strong>openingbook question</strong> — Arpoo kysymyksen: avausheiton ja pistetilanteen sekä avausaseman XGID:n; <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>-valitsimella vastausheiton asemassa, jonka kyseisen pistetilanteen parhaan kanssa tasoissa oleva avaussiirto jättää, sekä tämän siirron ja vastausaseman XGID:n.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">first|second</span></code> — Pelattava heitto: <code class="docutils literal notranslate"><span class="pre">first</span></code> (avaus, oletus) tai <code class="docutils literal notranslate"><span class="pre">second</span></code> (vastaus).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span> <span class="pre">&lt;liste&gt;</span></code> — Arvottavat pistetilanteet pilkulla erotettuina: <code class="docutils literal notranslate"><span class="pre">4-2</span></code> (vastaaja 4 pisteessä, aloittaja 2:ssa), <code class="docutils literal notranslate"><span class="pre">1-2</span></code> (Crawford-peli), <code class="docutils literal notranslate"><span class="pre">1-1</span></code> (DMP, kaksoisottelupiste), <code class="docutils literal notranslate"><span class="pre">money</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opening</span> <span class="pre">&lt;liste&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--reply</span> <span class="pre">&lt;liste&gt;</span></code> — Arvottavat avaus- tai vastausheitot (<code class="docutils literal notranslate"><span class="pre">31,65</span></code>); <code class="docutils literal notranslate"><span class="pre">--reply</span></code> vain <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>-valitsimen kanssa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span> <span class="pre">&lt;n&gt;</span></code> — Toistettavissa oleva arvonta (0 = satunnainen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--book</span> <span class="pre">&lt;fichier&gt;</span></code> — <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code>- tai <code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code>-kirja upotetun kirjan sijaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Tulostusmuoto.</p></li>
+</ul>
+<p><strong>openingbook answer</strong> — Arvioi siirron ja näyttää jokaisen ehdokkaan parhaaseen verrattuna: eron, 95 %:n luottamusvälin ja « tied » (tasoissa), pistetilanteeseen normalisoidussa pääomassa, pelien lukumäärän ja rolloutin asetuksen kanssa. Ilman <code class="docutils literal notranslate"><span class="pre">--after</span></code>-valitsinta siirto on avaus; <code class="docutils literal notranslate"><span class="pre">--reply</span></code>- ja <code class="docutils literal notranslate"><span class="pre">--after</span></code>-valitsimilla siirto on se vastaus, joka pelataan tämän avaussiirron jälkeen, eli se, jonka <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>-kysymys nimeää.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--score<span class="w"> </span>&lt;score&gt;<span class="w"> </span><span class="o">[</span>--reply<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--after<span class="w"> </span>&lt;coup&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;coup&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2,2-4
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span><span class="s1">'8/5 6/5'</span>
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--roll<span class="w"> </span>second<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--reply<span class="w"> </span><span class="m">21</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span>--after<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span><span class="s1">'13/11 6/5'</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_matchs.html" class="btn btn-neutral float-left" title="Ottelut, turnaukset ja pelit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_entrainement.html" class="btn btn-neutral float-right" title="Opiskelu, oppitunnit ja harjoittelu" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

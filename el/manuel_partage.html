@@ -1,0 +1,280 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Εισαγωγή, προέλευση και διαμοιρασμός &mdash; Τεκμηρίωση του blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9e57d487"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Μετρικές και εργαλεία μελέτης" href="metriques.html" />
+    <link rel="prev" title="Εξάσκηση, Anki και μονομαχία" href="manuel_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/manuel_partage.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_partage.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_partage.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/manuel_partage.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_partage.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_partage.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_partage.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_partage.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Πρώτα βήματα και διεπαφή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Ανάλυση, σχόλια και αναζήτηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Αγώνες και μεταγραφή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Τουρνουά</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Στατιστικά</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Αξιολόγηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Εξάσκηση, Anki και μονομαχία</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Εισαγωγή, προέλευση και διαμοιρασμός</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">Εισαγωγή: τι γράφεται, τι δεν γράφεται ποτέ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-metadonnees">Πίνακας Μεταδεδομένων</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#marquer-une-base-de-son-origine">Σήμανση μιας βάσης με την προέλευσή της</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identite-d-emetteur">Ταυτότητα εκδότη</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">Προστασία μιας βάσης με κωδικό πρόσβασης</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lire-l-origine-d-un-fichier">Ανάγνωση της προέλευσης ενός αρχείου</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#publier-une-base-pour-d-autres">Δημοσίευση μιας βάσης για άλλους</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Μετρικές και εργαλεία μελέτης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Εγχειρίδιο</a></li>
+      <li class="breadcrumb-item active">Εισαγωγή, προέλευση και διαμοιρασμός</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="import-origine-et-partage">
+<span id="manuel-partage"></span><h1>Εισαγωγή, προέλευση και διαμοιρασμός<a class="headerlink" href="#import-origine-et-partage" title="Link to this heading"></a></h1>
+<section id="import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">
+<span id="import-regles"></span><h2>Εισαγωγή: τι γράφεται, τι δεν γράφεται ποτέ<a class="headerlink" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais" title="Link to this heading"></a></h2>
+<p>Η εισαγωγή ενός αγώνα, μιας θέσης ή μιας άλλης βάσης προσθέτει ό,τι λείπει· δεν αντικαθιστά ό,τι υπάρχει ήδη.</p>
+<ul class="simple">
+<li><p><strong>Μια θέση δεν διπλασιάζεται ποτέ.</strong> Είναι η ταυτότητά της — πούλια, κύβος, ζάρια, σκορ — που την αναγνωρίζει, ποτέ το αρχείο από το οποίο προέρχεται: η ίδια θέση που συναντάται σε δύο αγώνες παραμένει μία μόνο γραμμή.</p></li>
+<li><p><strong>Η εισαγωγή μιας βάσης διαβάζει ξανά ό,τι γράφει μια εξαγωγή.</strong> Τις θέσεις, με τις αναλύσεις και τα σχόλιά τους, αλλά και τα ματς (μαζί με παρτίδες και κινήσεις), τα τουρνουά με τη Διεύθυνση και τη Συνάντησή τους, τα πρόχειρα μεταγραφής, τα ψευδώνυμα, τις συλλογές, τα μαθήματα και τις τράπουλες Anki: βλ. <a class="reference internal" href="guide_utilisateur.html#guide-fusionner-base"><span class="std std-ref">Συγχώνευση βάσης δεδομένων</span></a>. Τίποτα δεν αντικαθίσταται: ένα ματς που υπάρχει ήδη δεν αντιγράφεται ξανά, ένα ομώνυμο τουρνουά δέχεται τα ματς χωρίς να αλλάξει η ημερομηνία του γεγονότος (η ημερομηνία τελευταίας τροποποίησής του προχωρά, αφού δέχεται νέα ματς), ένα τουρνουά που έχει ήδη τη Διεύθυνσή του την κρατά και μένει εκτός της εισαγόμενης Συνάντησης, ένα ματς που έχει ήδη τοποθετηθεί σε άλλο τουρνουά ή σε άλλη θέση του πίνακα παραμένει εκεί, και ό,τι η βάση είχε ήδη αποφασίσει παραμένει όπως το αποφάσισε. Τα τουρνουά, οι Διευθύνσεις, οι Συναντήσεις, τα πρόχειρα μεταγραφής και τα ψευδώνυμα που δημιουργεί η εισαγωγή κρατούν τις αρχικές τους ημερομηνίες· οι συλλογές, τα μαθήματα και οι τράπουλες Anki που δημιουργούνται δεν τις κρατούν.</p></li>
+<li><p><strong>Μία ανάλυση ανά μηχανισμό.</strong> Το eXtreme Gammon, το GNUbg, το BGBlitz και ο ενσωματωμένος αξιολογητής συνυπάρχουν πάνω στην ίδια θέση, και ο πίνακας Ανάλυσης δείχνει την προέλευση της καθεμιάς. Η εισαγωγή της μιας δεν σβήνει την άλλη.</p></li>
+<li><p><strong>Μια εισαγμένη ανάλυση δεν υπολογίζεται ποτέ ξανά.</strong> Το blunderDB την αποθηκεύει ως έχει, με την ετικέτα επιπέδου της («3-ply», «XG Roller++», «Book»), τα equity, τα σφάλματα, τις πιθανότητές της και την τύχη της ζαριάς. Ο κανόνας είναι «μια αξιολόγηση συμπληρώνει μόνο ένα κενό»: η αυτόματη ανάλυση μετά την εισαγωγή επισκέπτεται μόνο τις θέσεις <strong>χωρίς καμία</strong> ανάλυση, και η επανανάλυση των παρωχημένων αναλύσεων gammonNet αφήνει άθικτη κάθε θέση που φέρει εισαγμένη ανάλυση (βλ. <a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">Ρυθμίσεις</span></a>).</p></li>
+<li><p><strong>Η επανεισαγωγή ενός ήδη αποθηκευμένου ματς φέρνει μόνο ό,τι είναι βαθύτερο.</strong> Το ματς αναγνωρίζεται από το παιχνίδι του (παίκτες, μήκος, ζάρια, κινήσεις, κύβος), όχι από την ανάλυσή του: κανένα ματς, παιχνίδι ή κίνηση δεν ξαναγράφεται. Οι σημάνσεις του αρχικού λογισμικού προστίθενται, και μια ανάλυση βαθύτερη από την αποθηκευμένη την αντικαθιστά, θέση προς θέση — μια έκδοση Roller++ του ίδιου ματς αντικαθιστά την έκδοση 3-ply, όποια κι αν είναι η σειρά εισαγωγής· σε ίσο ή μικρότερο βάθος, η αποθηκευμένη ανάλυση μένει. Η επανεισαγωγή του ίδιου αρχείου επομένως δεν ξαναγράφει τίποτα. Η αναφορά εισαγωγής ξεχωρίζει τα διπλότυπα που δεν έφεραν τίποτα από εκείνα που εμβάθυναν αναλύσεις. Στη γραμμή εντολών, το <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> παραλείπει ένα διπλότυπο χωρίς να κρατήσει τίποτα πέρα από τις σημάνσεις. Ένα ματς που διακόπηκε και αργότερα ολοκληρώθηκε (περισσότερα παιχνίδια) δεν είναι το ίδιο ματς: εισάγεται ως δεύτερο ματς.</p></li>
+<li><p><strong>Μια μη αναγνώσιμη ανάλυση δεν εμποδίζει την εισαγωγή του αγώνα.</strong> Μια απόφαση της οποίας η ανάλυση περιέχει τιμή που δεν είναι πεπερασμένος αριθμός (NaN ή άπειρο, όπως περιέχουν ορισμένα αρχεία XG) εισάγεται χωρίς αυτή την ανάλυση· ο υπόλοιπος αγώνας εισάγεται κανονικά και η αναφορά εισαγωγής μετρά τις αποφάσεις που αφορά.</p></li>
+<li><p><strong>Ένας αγώνας που υπάρχει ήδη με άλλα ονόματα επισημαίνεται, δεν συγχωνεύεται ποτέ.</strong> Τα δύο αποτυπώματα αγώνα περιέχουν τα ονόματα των παικτών: το «Martin A.» και το «Alice Martin» δίνουν δύο αγώνες. Η εισαγωγή συγκρίνει επίσης τα ζάρια (μήκος, αρχικό σκορ, ζάρια κάθε παρτίδας) και επισημαίνει, κάτω από τη γραμμή του αρχείου και στην αναφορά, τον αγώνα που υπάρχει ήδη στη βάση με άλλα ονόματα και έχει τα ίδια ζάρια. Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code> απαριθμεί αυτά τα ζεύγη σε υπάρχουσα βάση, καθώς και τους κομμένους αγώνες και τη μακρύτερη εκδοχή τους.</p></li>
+<li><p><strong>Ένα όνομα γνωστό με άλλη γραφή καταγράφεται με το κανονικό του όνομα.</strong> Ένα <em>ψευδώνυμο</em> λέει ότι το «Martin A.» είναι άλλη γραφή του «Alice Martin» (ή ότι ένα όνομα διοργάνωσης είναι άλλη γραφή ενός άλλου). Κατά την εισαγωγή, τα ονόματα των παικτών και της διοργάνωσης αντικαθίστανται από το κανονικό τους όνομα, και ο αγώνας τοποθετείται στο τουρνουά της κανονικής διοργάνωσης. Τα αποτυπώματα του αγώνα κρατούν τα ονόματα του αρχείου: ένα αρχείο που εισήχθη πριν υπάρξει το ψευδώνυμό του αναγνωρίζεται λοιπόν πάντα. Ένας αγώνας με ζάρια ίδια με αυτά ενός αγώνα της βάσης και με ονόματα που διαφέρουν μόνο κατά γνωστά ψευδώνυμα δεν είναι δεύτερος αγώνας: οι αναλύσεις του εμπλουτίζουν αυτόν που είναι αποθηκευμένος.</p></li>
+</ul>
+<p>Τα ψευδώνυμα διαχειρίζονται στην καρτέλα <strong>Σώμα αγώνων</strong> των ρυθμίσεων: επιλέξτε <strong>Παίκτες</strong> ή <strong>Διοργανώσεις</strong>, πληκτρολογήστε το ψευδώνυμο και το κανονικό όνομα ή αφαιρέστε ένα ψευδώνυμο από τη λίστα. Το <strong>Πρόταση</strong> παραθέτει τα ονόματα που διαφέρουν μόνο σε πεζά/κεφαλαία, τόνους, στίξη ή σειρά λέξεων· τίποτα δεν εφαρμόζεται χωρίς κλικ στο <strong>Εφαρμογή</strong>. Η ίδια καρτέλα περιέχει το πλαίσιο <strong>Παράλειψη διπλοτύπων κατά την εισαγωγή</strong> (το αντίστοιχο του <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code>, για τη συνεδρία) και την αναζήτηση των <strong>πιθανών διπλοτύπων</strong> μιας υπάρχουσας βάσης, αυτή του <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code>: κάθε ζεύγος δίνεται με τους αριθμούς αγώνων του, τίποτα δεν συγχωνεύεται. Κάτω από ένα ζεύγος με τα ίδια ζάρια, το <strong>Δημιουργία αυτών των ψευδωνύμων</strong> καταχωρίζει με ένα κλικ τα ψευδώνυμα παικτών που θα έκαναν τους δύο αγώνες να ονομάζουν τους ίδιους παίκτες, με τη γραφή του πιο πρόσφατου αγώνα να γίνεται το ψευδώνυμο: μία μόνο πρόταση όταν ένα όνομα είναι κοινό και στους δύο, αλλιώς δύο — θέση προς θέση, μετά χιαστί — από τις οποίες επιλέγεται αυτή που λέει ποιος είναι ποιος. Στη γραμμή εντολών: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">players</span> <span class="pre">alias</span></code> και <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">events</span> <span class="pre">alias</span></code>.</p>
+<ul class="simple">
+<li><p><strong>Ένας φάκελος εισάγεται παράλληλα.</strong> Τα αρχεία διαβάζονται σε πολλούς πυρήνες ταυτόχρονα και γράφονται κατά ομάδες, πάντα με τη σειρά του φακέλου: οι αριθμοί των αγώνων δεν εξαρτώνται από το μηχάνημα. Ένα αρχείο πανομοιότυπο, byte προς byte, με αρχείο που έχει ήδη διαβαστεί από τον ίδιο φάκελο δεν διαβάζεται ξανά: μετράει ως διπλότυπο. Η ακύρωση σταματά την εισαγωγή στην τρέχουσα ομάδα· ό,τι είχε ήδη γραφτεί παραμένει.</p></li>
+<li><p><strong>Η πρόοδος μετριέται σε θέσεις ανά δευτερόλεπτο.</strong> Το παράθυρο εισαγωγής δείχνει το ποσοστό που έχει διαβαστεί, τον ρυθμό, τον εκτιμώμενο χρόνο που απομένει και τις τρέχουσες μετρήσεις (εισηγμένα, διπλότυπα, με σφάλμα). Η <strong>Ελαχιστοποίηση</strong> το τοποθετεί στη γραμμή κατάστασης, από όπου ένα σήμα το ανοίγει ξανά: η εισαγωγή συνεχίζεται ενώ εργάζεστε, και το παράθυρο επιστρέφει μόνο του με την αναφορά στο τέλος. Τα πρώτα εκατό σφάλματα παρατίθενται· τα υπόλοιπα μετρώνται, και το αρχείο καταγραφής της εφαρμογής τα κατονομάζει όλα. Στη γραμμή εντολών, το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span></code> εμφανίζει την ίδια πρόοδο στην έξοδο σφαλμάτων, και το <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> την επιστρέφει στο τελικό αντικείμενο (<code class="docutils literal notranslate"><span class="pre">progress</span></code>).</p></li>
+<li><p><strong>Κάθε αρχείο μιας εισαγωγής καταγράφεται, και μια διακοπείσα εισαγωγή μπορεί να συνεχιστεί.</strong> Για κάθε αρχείο, το ημερολόγιο της παρτίδας κρατά τη διαδρομή, το μέγεθος, την ημερομηνία τροποποίησης, το αποτύπωμα SHA-256 και το αποτέλεσμα: νέος αγώνας (με τον αριθμό του), διπλότυπο (με τον αγώνα που το καλύπτει), εμπλουτισμένος αγώνας ή σφάλμα (με το μήνυμα). Μια ακυρωμένη ή διακοπείσα εισαγωγή συνεχίζεται χωρίς να επαναληφθεί ό,τι έχει ήδη αποφασιστεί: ένα αρχείο με την ίδια διαδρομή, το ίδιο μέγεθος και την ίδια ημερομηνία παραλείπεται χωρίς να διαβαστεί· ένα αρχείο με το ίδιο περιεχόμενο διαβάζεται αλλά δεν αναλύεται· ένα αρχείο με σφάλμα επαναδοκιμάζεται. Στην εφαρμογή, το παράθυρο λήξης της εισαγωγής παραθέτει το ημερολόγιο (ένα αρχείο ανά γραμμή, με το αποτέλεσμά του και το μήνυμα ενός σφάλματος· ένα αρχείο που επαναδοκιμάστηκε δείχνει την τελευταία του έκβαση), και μια γραμμή που έδωσε αγώνα τον ανοίγει. Μια <strong>ακυρωμένη</strong> εισαγωγή αφήνει το παράθυρο ανοιχτό με το κουμπί <strong>Συνέχεια</strong>. Στη γραμμή εντολών, το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;φάκελος&gt;</span> <span class="pre">--resume</span> <span class="pre">&lt;παρτίδα&gt;</span></code> συνεχίζει την παρτίδα της οποίας ο αριθμός εμφανίστηκε στην αρχή της εισαγωγής, και το <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> επιστρέφει το ημερολόγιο στο τελικό αντικείμενο (<code class="docutils literal notranslate"><span class="pre">journal</span></code>). Ο διακομιστής δέχεται το <code class="docutils literal notranslate"><span class="pre">resume</span></code> στο αίτημα του <code class="docutils literal notranslate"><span class="pre">imports.batch</span></code> και επιστρέφει το ημερολόγιο μέσω του <code class="docutils literal notranslate"><span class="pre">imports.files</span></code>. Το ημερολόγιο είναι δεδομένο της εισαγωγής: το άνοιγμα ή η ανάγνωση μιας βάσης δεν γράφει τίποτα σε αυτό.</p></li>
+<li><p><strong>Μια εισαγωγή που διακόπηκε από τον τερματισμό της εφαρμογής συνεχίζεται από το παράθυρο.</strong> Η εντολή <code class="docutils literal notranslate"><span class="pre">:resume</span></code> απαριθμεί τις εισαγωγές που τίποτα δεν ολοκλήρωσε· επιλέγετε αυτήν που θα συνεχίσετε και υποδεικνύετε ξανά τον φάκελο ή τα αρχεία, όπως το <code class="docutils literal notranslate"><span class="pre">--dir</span></code> στη γραμμή εντολών. Το ημερολόγιο της δέσμης αποφασίζει τι δεν διαβάζεται ξανά.</p></li>
+<li><p><strong>Ένας μεγάλος φάκελος εισάγεται σε μαζική λειτουργία.</strong> Από 200 αρχεία και πάνω, το blunderDB γράφει με μεγαλύτερη κρυφή μνήμη και λιγότερα σημεία ελέγχου. Αν η βάση δεν περιέχει ακόμη καμία θέση, πηγαίνει πιο μακριά: τα ευρετήρια αναζήτησης ξαναχτίζονται μόνο στο τέλος και οι εγγραφές δεν συγχρονίζονται πλέον στον δίσκο. Μια διακοπή ρεύματος κατά τη διάρκεια μιας τέτοιας εισαγωγής μπορεί τότε να καταστρέψει τη βάση: πρέπει να δημιουργηθεί ξανά και να ξαναγίνει η εισαγωγή. Ένα απότομο σταμάτημα του προγράμματος, αντίθετα, αφήνει μόνο ευρετήρια που λείπουν, τα οποία ξαναχτίζει το επόμενο άνοιγμα (το αρχείο καταγραφής το αναφέρει).</p></li>
+<li><p><strong>Τι δεν γράφει ποτέ το blunderDB</strong>: μια τύχη που υπολογίστηκε ξανά — διαβάζεται από το αρχείο προέλευσης ή μένει άγνωστη — και ένα rollout που δεν εκτέλεσε το ίδιο: τα δεδομένα rollout ενός αρχείου <code class="docutils literal notranslate"><span class="pre">.xg</span></code> δεν ανοίγονται. Αποθηκεύονται μόνο τα rollout που παράγει το blunderDB (<a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Rollouts</span></a>), δίπλα στην ανάλυση.</p></li>
+</ul>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2>Πίνακας Μεταδεδομένων<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
+<p>Το πάνελ <strong>Μεταδεδομένα</strong> (<em>CTRL-M</em>) εμφανίζει τις γενικές πληροφορίες της τρέχουσας βάσης δεδομένων: <em>Χρήστης</em>, ημερομηνία δημιουργίας (<em>Δημιουργήθηκε</em>), <em>Έκδοση</em> του σχήματος και <em>Περιγραφή</em>. Ο χρήστης, η ημερομηνία και η περιγραφή τροποποιούνται επιτόπου και αποθηκεύονται όταν φεύγετε από το πεδίο· η έκδοση είναι μόνο για ανάγνωση. Προσβάσιμο και μέσω της εντολής <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+<p>Εμφανίζει επίσης, <strong>όταν υπάρχει</strong>, την προέλευση της βάσης — βλ. <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a>. Μια συνηθισμένη βάση δεν εμφανίζει αυτή την ενότητα.</p>
+</section>
+<section id="diffuser-une-base-origine-et-mot-de-passe">
+<span id="diffusion-controlee"></span><h2>Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Link to this heading"></a></h2>
+<p>Ένας δάσκαλος που διανέμει μια βάση θέσεων διαθέτει δύο μηχανισμούς, ανεξάρτητους μεταξύ τους, και οι δύο προαιρετικοί και επιλεγόμενοι <strong>κατά την εξαγωγή</strong>: να σημάνει το αρχείο με την προέλευσή του και να το προστατεύσει με κωδικό πρόσβασης.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Κανένας από τους δύο δεν παρακολουθεί την τύχη του αρχείου. Το blunderDB <strong>δεν καταγράφει τίποτε από την πλευρά εκείνου που λαμβάνει τη βάση</strong>: το άνοιγμα μιας σημασμένης βάσης είναι ακριβώς σαν το άνοιγμα οποιασδήποτε άλλης, και πουθενά δεν καταγράφεται ποιος την άνοιξε, πότε, ούτε από πού προέρχεται το περιεχόμενό της.</p>
+</div>
+<section id="marquer-une-base-de-son-origine">
+<h3>Σήμανση μιας βάσης με την προέλευσή της<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Link to this heading"></a></h3>
+<p>Το παράθυρο εξαγωγής χωράει σε μία μόνο οθόνη: μια λωρίδα κεφαλίδας — ο αριθμός των εξαγόμενων θέσεων, <strong>Ακύρωση</strong> και <strong>Εξαγωγή…</strong> — και μετά ένα πλέγμα, με μία γραμμή ανά οικογένεια και το πλήθος της. Αυτά τα πλήθη είναι ακριβή: διαβάζονται από τον διακομιστή σε κάθε αλλαγή πλαισίου, στην ίδια επιλογή με την εξαγωγή, και είναι όσα θα περιέχει το αρχείο. Το αρχείο επιλέγεται τελευταίο, μετά το <strong>Εξαγωγή…</strong>· αν κλείσετε αυτή την επιλογή χωρίς όνομα, επιστρέφετε στο πλέγμα. Στη συνέχεια εμφανίζεται μια ένδειξη προόδου για όσο διαρκεί η εγγραφή, το παράθυρο κλείνει από μόνο του και το αποτέλεσμα εμφανίζεται στη γραμμή κατάστασης.</p>
+<p>Εννέα σημεία αξίζουν προσοχή:</p>
+<ul class="simple">
+<li><p><strong>Το εύρος</strong>: από μια λίστα — μια αναζήτηση, μια συλλογή —, η γραμμή <em>Εύρος</em> επιλέγει ανάμεσα στην <em>Τρέχουσα λίστα</em> και στην <em>Ολόκληρη η βιβλιοθήκη</em>. Η τρέχουσα λίστα εξάγει τις θέσεις της, και η γραμμή <em>Αγώνες</em> προτείνει μόνο εκείνους στους οποίους παίχτηκαν αυτές οι θέσεις· κάθε αγώνας που είναι τσεκαρισμένος φεύγει με όλες τις θέσεις του. Από τη βιβλιοθήκη, το εύρος είναι η βιβλιοθήκη.</p></li>
+<li><p><strong>Ολόκληρη η βιβλιοθήκη</strong> είναι η εξαγωγή του διακομιστή και της <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>: όλες οι οικογένειες είναι εξαρχής τσεκαρισμένες, οι τράπουλες Anki με το ιστορικό επανάληψής τους, και οι μεταγραφές που βρίσκονται σε εξέλιξη φεύγουν μαζί με τα υπόλοιπα.</p></li>
+<li><p><strong>Ο συγχρονισμός</strong>: με το <em>Ολόκληρη η βιβλιοθήκη</em>, η γραμμή <em>Συγχρονισμός</em> προτείνει <em>Μόνο ό,τι είναι νέο από την τελευταία εξαγωγή σε αυτόν τον φάκελο</em> και το κουμπί <strong>Επιλογή φακέλου…</strong>. Το αρχείο δεν ζητείται πλέον: γράφεται σε αυτόν τον φάκελο με νέο όνομα, και τα σύνολα είναι εκείνα του νέου υλικού (βλ. <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Συγχρονισμός δύο υπολογιστών</span></a>).</p></li>
+<li><p><strong>Ένας αγώνας φεύγει με το πρόχειρο μεταγραφής του</strong>, κάτω από το πλαίσιο <em>Μεταγραφές</em> της γραμμής <em>Αγώνες</em>, εξαρχής τσεκαρισμένο· οι αγώνες που μεταφέρει επίσης ένα τουρνουά. Ένα πρόχειρο που δεν έχει ακόμη παραγάγει αγώνα φεύγει μόνο με ολόκληρη τη βιβλιοθήκη. Ένας αγώνας ή μια μεταγραφή συνδεδεμένα με τοπικό βίντεο μεταφέρουν μόνο το όνομα του αρχείου, χωρίς τον φάκελό του, που ο παραλήπτης επανατοποθετεί στο δικό του αντίγραφο· ένας σύνδεσμος ιστού φεύγει ως έχει. Το αρχείο από το οποίο εισήχθη ένας αγώνας φεύγει επίσης μόνο με το όνομά του.</p></li>
+<li><p><strong>Ένας αγώνας φεύγει με τα ψευδώνυμα των παικτών και του γεγονότος του</strong>: το πλαίσιο <em>Ψευδώνυμα</em>, εξαρχής τσεκαρισμένο, κάνει τη συγχώνευση παικτών να ακολουθεί, και ο παραλήπτης διαβάζει έναν συγχωνευμένο παίκτη ως έναν. Ένα ψευδώνυμο που δεν ονομάζει κανέναν από τους εξαγόμενους αγώνες μένει σε εσάς.</p></li>
+<li><p><strong>Μια συλλογή της οποίας οι θέσεις δεν βρίσκονται όλες στη λίστα φτάνει κομμένη.</strong> Η λίστα των συλλογών εμφανίζει, για καθεμία, το μέρος που καλύπτεται («12/40») και το επισημαίνει με κόκκινο όταν είναι μερικό. Το πλαίσιο <em>+ οι θέσεις τους</em> μεταφέρει τις θέσεις των συλλογών που είναι τσεκαρισμένες: αυτές μιας λίστας φτιαγμένης με το χέρι, αυτές που επιλέγει το ερώτημα μιας ζωντανής συλλογής. Μια ζωντανή συλλογή της οποίας το ερώτημα αναφέρει γραμμές που το αρχείο δεν περιέχει <strong>φεύγει παγωμένη</strong>: φτάνει ως η λίστα που επιλέγει σήμερα το ερώτημά της, και η λίστα την επισημαίνει με κόκκινο «παγωμένη» μαζί με μια σημείωση· αν τσεκάρετε <em>+ οι θέσεις τους</em>, μένει ζωντανή.</p></li>
+<li><p><strong>Ένα τουρνουά φεύγει πάντα με τους αγώνες του</strong>: χωρίς αυτούς, ο σύνδεσμος τουρνουά–αγώνα δεν υπάρχει και το τουρνουά θα έφτανε άδειο. Η επιλογή ενός τουρνουά παίρνει μαζί και τους αγώνες του, ακόμη κι αν το πλαίσιο των αγώνων είναι ξεμαρκαρισμένο ή περιορισμένο σε άλλους. Φεύγει επίσης με τη Διεύθυνσή του — ημερολόγιο, ζεύγη, τραπέζια και σύνδεση των εξαγόμενων αγώνων — και η Συνάντησή του φεύγει μόλις φύγει ένα από τα τουρνουά της· ο φάκελος εξόδου της Διεύθυνσης μένει σε εσάς. Η Διεύθυνση βρίσκεται ανοίγοντας το αρχείο ή εισάγοντάς το σε άλλη βάση.</p></li>
+<li><p><strong>Μια τράπουλα Anki φεύγει με τις θέσεις της</strong>, ως καινούργιο αντίγραφο μελέτης. Το πλαίσιο <em>με το ιστορικό μου</em> μεταφέρει επιπλέον την κατάσταση κάθε κάρτας και το αρχείο καταγραφής των επαναλήψεών της: ένα αντίγραφο ασφαλείας, ή οι τράπουλές σας μεταφερμένες σε άλλο μηχάνημα. Είναι ξετσεκαρισμένο για μια λίστα, τσεκαρισμένο για τη βιβλιοθήκη.</p></li>
+<li><p><strong>Τα αποθηκευμένα φίλτρα</strong> δεν εξάγουν περιεχόμενο αλλά τις δικές σας αναζητήσεις, άχρηστες στη βάση κάποιου άλλου· το πλαίσιο είναι ξετσεκαρισμένο για μια λίστα. Ένα φίλτρο που υποδεικνύει μια θέση, έναν αγώνα ή ένα τουρνουά με τον αριθμό του αριθμείται εκ νέου για το αρχείο· αν υποδεικνύει κάτι που δεν φεύγει, μένει σε εσάς.</p></li>
+</ul>
+<p>Οι συλλογές, τα μαθήματα, οι μεταγραφές, οι τράπουλες Anki, τα ψευδώνυμα και τα τουρνουά φεύγουν με τις ημερομηνίες δημιουργίας και προσθήκης που φέρουν σε εσάς, όχι με την ημερομηνία της εξαγωγής.</p>
+<p>Τα πεδία <em>Χρήστης</em>, <em>Περιγραφή</em> και <em>Ημερομηνία δημιουργίας</em> περιγράφουν το <strong>παραγόμενο αρχείο</strong>· είναι προσυμπληρωμένα από τη βάση προέλευσης.</p>
+<p>Η επιλογή <strong>Υδατογράφημα</strong> εμφανίζει δύο πεδία:</p>
+<ul class="simple">
+<li><p><strong>Προέλευση</strong> — τι είναι αυτό το αρχείο και από πού προέρχεται, με δικά σας λόγια: «Μάθημα του Jean Dupont — 12 Μαρτίου 2026». Το πεδίο αυτό είναι <strong>υποχρεωτικό</strong>: όσο είναι κενό, περιβάλλεται από κόκκινο περίγραμμα και το κουμπί εξαγωγής παραμένει ανενεργό.</p></li>
+<li><p><strong>Σημείωση</strong>, προαιρετική — όροι χρήσης, διεύθυνση επικοινωνίας, ένα αίτημα να μην αναδιανεμηθεί.</p></li>
+</ul>
+<p>Η σήμανση υπογράφεται με την ταυτότητα εκδότη σας. Είναι επομένως <strong>αναλλοίωτη και μη πλαστογραφήσιμη</strong>: κανείς δεν μπορεί να την τροποποιήσει ούτε να κατασκευάσει μία στο όνομά σας. Δεν είναι όμως <strong>ανεξίτηλη</strong> — το αρχείο που διανέμεται είναι μια συνηθισμένη βάση SQLite και το blunderDB είναι ελεύθερο λογισμικό. Δεν εμποδίζει τίποτε: λέει από πού προέρχεται το αρχείο.</p>
+<p>Τα σχόλια που έχετε γράψει υπογράφονται με την ίδια ταυτότητα: ο παραλήπτης βλέπει ότι προέρχονται από εσάς και αν αλλοιώθηκαν στην πορεία (βλ. <a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">Πίνακας Σχολίων</span></a>). Ένα σχόλιο που φέρει ήδη την υπογραφή άλλου εκδότη την κρατά. Η γραμμή κατάστασης αναφέρει, στο τέλος της εξαγωγής, πόσα από τα σχόλιά σας υπογράφηκαν· μια εξαγωγή χωρίς σήμανση δεν υπογράφει κανένα.</p>
+</section>
+<section id="identite-d-emetteur">
+<h3>Ταυτότητα εκδότη<a class="headerlink" href="#identite-d-emetteur" title="Link to this heading"></a></h3>
+<p>Οι σημάνσεις υπογράφονται με την <strong>ταυτότητα εκδότη</strong> σας, η οποία δημιουργείται από μόνη της την πρώτη φορά που σημαίνετε ένα αρχείο· δεν χρειάζεται καμία ρύθμιση. Ανήκει σε ένα πρόσωπο και όχι σε μια βάση: όλα σας τα αρχεία φέρουν το ίδιο δημόσιο αποτύπωμα, της μορφής <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>Μπορείτε να γνωστοποιήσετε αυτό το αποτύπωμα στους παραλήπτες σας ώστε να επαληθεύουν ότι ένα αρχείο προέρχεται πράγματι από εσάς. Η ταυτότητα μεταφέρεται από τον έναν υπολογιστή στον άλλο με ένα μόνο αρχείο (επέκταση <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), ενδεχομένως προστατευμένο με συνθηματική φράση. <strong>Το αρχείο αυτό επιτρέπει την υπογραφή στο όνομά σας: μην το μοιράζεστε.</strong></p>
+<p>Στις ρυθμίσεις (εικονίδιο γραναζιού της γραμμής εργαλείων), η καρτέλα <em>Ταυτότητα εκδότη</em> εμφανίζει το όνομα και το αποτύπωμά σας και προσφέρει <em>Αποθήκευση ταυτότητας…</em>, <em>Φόρτωση ταυτότητας…</em> και <em>Αναδημιουργία…</em>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Προειδοποίηση</p>
+<p><strong>Η αναδημιουργία δεν ανακαλεί τίποτε.</strong> Μια σήμανση ενσωματώνει το δημόσιο κλειδί που την υπέγραψε: επαληθεύεται επομένως για πάντα, από μόνη της. Αν το αρχείο ταυτότητάς σας διέρρευσε, όποιος το κατέχει θα μπορεί να συνεχίσει να υπογράφει με το παλιό σας αποτύπωμα, και οι σημάνσεις αυτές θα παραμένουν έγκυρες.</p>
+<p>Αυτό που σας προστατεύει μετά από μια διαρροή δεν είναι λογισμικό: είναι να δημοσιοποιήσετε το νέο σας αποτύπωμα και να αποκηρύξετε το παλιό απέναντι στους παραλήπτες σας.</p>
+<p>Η αναδημιουργία αντικαθιστά το τρέχον κλειδί· το blunderDB προτείνει να το αποθηκεύσετε πριν το αντικαταστήσει.</p>
+</div>
+</section>
+<section id="proteger-une-base-par-un-mot-de-passe">
+<h3>Προστασία μιας βάσης με κωδικό πρόσβασης<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Link to this heading"></a></h3>
+<p>Ο κωδικός πληκτρολογείται κρυμμένος, εδώ όπως και κατά το άνοιγμα ενός προστατευμένου αρχείου· το εικονίδιο σε σχήμα ματιού τον εμφανίζει <strong>όσο το κρατάτε πατημένο</strong> και τον κρύβει ξανά μόλις το αφήσετε.</p>
+<p>Η επιλογή <strong>Κωδικός</strong> παράγει αρχείο με επέκταση <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — ακόμη κι αν το όνομα που επιλέχθηκε στο παράθυρο αποθήκευσης τελειώνει σε <code class="docutils literal notranslate"><span class="pre">.db</span></code>. Για να το ανοίξετε, χρησιμοποιήστε το συνηθισμένο άνοιγμα βάσης: το παράθυρο επιλογής δέχεται εξίσου <code class="docutils literal notranslate"><span class="pre">.db</span></code> και <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. Το blunderDB ζητά τότε τον κωδικό και εγκαθιστά δίπλα μια συνηθισμένη βάση· μετά δεν ζητείται τίποτε άλλο.</p>
+<p>Το παράθυρο προτείνει τη <strong>διαγραφή του προστατευμένου αρχείου μετά το άνοιγμα</strong>: διαφορετικά διατηρείτε το ίδιο περιεχόμενο με δύο ονόματα. Το πλαίσιο δεν είναι επιλεγμένο εξ ορισμού — το προστατευμένο αρχείο παραμένει δικό σας αν σκοπεύετε να το διαβιβάσετε — και η διαγραφή γίνεται μόνο μετά από επιτυχές άνοιγμα.</p>
+<div class="admonition warning">
+<p class="admonition-title">Προειδοποίηση</p>
+<p>Ο κωδικός προστατεύει τη <strong>μεταφορά</strong> του αρχείου, όχι τη βάση. Εμποδίζει έναν τρίτο να ανοίξει ένα αρχείο ξεχασμένο σε έναν φάκελο λήψεων ή ένα συνημμένο που προωθήθηκε κατά λάθος. Δεν προστατεύει από εκείνον στον οποίο δώσατε τον κωδικό.</p>
+</div>
+<p>Ο κωδικός επαληθεύεται σε <strong>κάθε</strong> άνοιγμα, ακόμη και όταν το αρχείο έχει ήδη ανοιχτεί προηγουμένως σε αυτόν τον υπολογιστή.</p>
+<p>Τεχνικά, η βάση κρυπτογραφείται με <strong>AES-256 σε λειτουργία GCM</strong>, με κλειδί που παράγεται από τον κωδικό μέσω <strong>Argon2id</strong> (64 MiB μνήμης, 3 περάσματα, 4 νήματα) και τυχαίο αλάτι ξεχωριστό για κάθε αρχείο. Η λειτουργία GCM πιστοποιεί το σύνολο: ένας λανθασμένος κωδικός εντοπίζεται ως τέτοιος, όπως και κάθε αλλοίωση του κρυπτογραφημένου αρχείου — ποτέ δεν καταλήγει κανείς σιωπηλά με κατεστραμμένη βάση.</p>
+<p>Η κεφαλίδα του προστατευμένου αρχείου παραμένει <strong>μη κρυπτογραφημένη</strong>: η προέλευσή του παραμένει αναγνώσιμη χωρίς τον κωδικό.</p>
+</section>
+<section id="lire-l-origine-d-un-fichier">
+<h3>Ανάγνωση της προέλευσης ενός αρχείου<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Link to this heading"></a></h3>
+<p>Στην εφαρμογή, ανοίξτε το αρχείο και εμφανίστε τον πίνακα <strong>Μεταδεδομένα</strong> (εντολή <code class="docutils literal notranslate"><span class="pre">meta</span></code>). Στην κορυφή του πίνακα εμφανίζεται μια ενότητα <strong>Προέλευση</strong>, μόνο για ανάγνωση, που δείχνει τι καταχωρήθηκε, από ποιον, πότε, και την κατάσταση της υπογραφής:</p>
+<ul class="simple">
+<li><p>«✓ σημάνθηκε από εσάς»: το αρχείο φέρει τη δική σας σήμανση, ανέπαφη·</p></li>
+<li><p>«✓ η υπογραφή επαληθεύτηκε»: η σήμανση είναι ανέπαφη και προέρχεται από άλλο κλειδί — συγκρίνετε το αποτύπωμά της με εκείνο που σας γνωστοποίησε ο δημιουργός·</p></li>
+<li><p>«⚠ μη έγκυρη υπογραφή»: το έγγραφο τροποποιήθηκε ή πλαστογραφήθηκε.</p></li>
+</ul>
+<p>Η ενότητα αυτή δεν εμφανίζεται σε μια συνηθισμένη βάση.</p>
+<p>Από τη γραμμή εντολών, το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">αρχείο.db</span></code> εμφανίζει την προέλευση και την κατάσταση της υπογραφής, <strong>χωρίς ποτέ να γράφει στο αρχείο</strong>. Η εντολή λειτουργεί και σε προστατευμένο αρχείο, χωρίς τον κωδικό. Βλ. <code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> για τις επιλογές <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> και <code class="docutils literal notranslate"><span class="pre">--password</span></code> της <code class="docutils literal notranslate"><span class="pre">export</span></code>, καθώς και για τις <code class="docutils literal notranslate"><span class="pre">identity</span></code> και <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+</section>
+<section id="publier-une-base-pour-d-autres">
+<span id="partager-une-base"></span><h3>Δημοσίευση μιας βάσης για άλλους<a class="headerlink" href="#publier-une-base-pour-d-autres" title="Link to this heading"></a></h3>
+<p>Μια σημασμένη βάση διανέμεται όπως οποιοδήποτε αρχείο — ηλεκτρονικό ταχυδρομείο, προσωπικός ιστότοπος, στικάκι USB. Το blunderDB <strong>δεν παρέχει καμία υπηρεσία</strong>: ούτε αποθετήριο, ούτε φιλοξενούμενο κατάλογο, ούτε λογαριασμό. Είναι άμεση συνέπεια της σχεδίασής του: τίποτα δεν καταγράφεται ποτέ από την πλευρά εκείνου που λαμβάνει ένα αρχείο, και δεν θα υπήρχε λοιπόν τίποτα να αναφερθεί σε μια υπηρεσία, ακόμη κι αν υπήρχε.</p>
+<p>Αυτό που κάνει μια δημοσιευμένη βάση χρήσιμη σε κάποιον άλλο περιορίζεται σε τέσσερα πεδία, όλα ήδη παρόντα:</p>
+<ul class="simple">
+<li><p><strong>Χρήστης</strong> — ποιος τη συγκρότησε, με το όνομα που θέλετε να αναφέρεται.</p></li>
+<li><p><strong>Περιγραφή</strong> — τι περιέχει η βάση, σε μία φράση που χωράει σε μια λίστα: «240 αποφάσεις κύβου στο σκορ, σχολιασμένες, ενδιάμεσο επίπεδο».</p></li>
+<li><p><strong>Προέλευση</strong> (του υδατογραφήματος) — τι είναι αυτό το αρχείο και για ποιον παρήχθη. Είναι το πρώτο που διαβάζει ο παραλήπτης στον πίνακα <em>Μεταδεδομένα</em>.</p></li>
+<li><p><strong>Αποτύπωμα εκδότη</strong> — δημοσιεύστε το δίπλα στο αρχείο, όχι μέσα του: συγκρίνοντάς το ο παραλήπτης επαληθεύει ότι το αρχείο προέρχεται από εσάς και όχι από κάποιον που πήρε το όνομά σας.</p></li>
+</ul>
+<p>Μια βάση που δημοσιεύεται χωρίς υδατογράφημα παραμένει απολύτως χρήσιμη· είναι απλώς ανώνυμη, και ο πίνακας <em>Μεταδεδομένα</em> δεν εμφανίζει τότε καμία ενότητα <em>Προέλευση</em>.</p>
+<p>Για να γίνει γνωστή μια βάση, η κατηγορία <em>Show and tell</em> των <a class="reference external" href="https://github.com/kevung/blunderDB/discussions">συζητήσεων του αποθετηρίου</a> χρησιμεύει ως ευρετήριο: είναι μια λίστα που τηρούν όσοι δημοσιεύουν, όχι μια υπηρεσία που παρέχει το blunderDB. Η ανακοίνωση μιας βάσης εκεί απαιτεί τον σύνδεσμο, τα τέσσερα παραπάνω πεδία και το αποτύπωμα.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_entrainement.html" class="btn btn-neutral float-left" title="Εξάσκηση, Anki και μονομαχία" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="metriques.html" class="btn btn-neutral float-right" title="Μετρικές και εργαλεία μελέτης" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

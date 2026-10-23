@@ -1,0 +1,311 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Αγώνες, τουρνουά και παρτίδες &mdash; Τεκμηρίωση του blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9e57d487"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Ανάλυση και μηχανή" href="cli_analyse.html" />
+    <link rel="prev" title="Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές" href="cli_bibliotheque.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/cli_matchs.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_matchs.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_matchs.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/cli_matchs.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_matchs.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_matchs.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_matchs.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_matchs.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Μετρικές και εργαλεία μελέτης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Γενική σύνταξη</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Διαθέσιμες εντολές</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Εισαγωγή, εξαγωγή, μεταφορά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Αγώνες, τουρνουά και παρτίδες</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#match-afficher-un-match">match — Εμφάνιση αγώνα</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tournament-lire-un-tournoi-dirige">tournament — Ανάγνωση διευθυνόμενου τουρνουά</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transcribe-rejouer-une-transcription">transcribe — Αναπαραγωγή μιας μεταγραφής</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#duel-jouer-un-duel">duel — Παίξτε μια Μονομαχία</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Ανάλυση και μηχανή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Μελέτη, μαθήματα και εξάσκηση</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Στατιστικά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Διαχείριση της βάσης δεδομένων</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Παραδείγματα ροών εργασίας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Κωδικοί εξόδου</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+      <li class="breadcrumb-item active">Αγώνες, τουρνουά και παρτίδες</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="matchs-tournois-et-parties">
+<span id="cli-matchs-chapitre"></span><h1>Αγώνες, τουρνουά και παρτίδες<a class="headerlink" href="#matchs-tournois-et-parties" title="Link to this heading"></a></h1>
+<section id="match-afficher-un-match">
+<h2>match — Εμφάνιση αγώνα<a class="headerlink" href="#match-afficher-un-match" title="Link to this heading"></a></h2>
+<p>Εμφανίζει τις θέσεις και τις αναλύσεις ενός εισαγμένου ματς. Στην έξοδο <code class="docutils literal notranslate"><span class="pre">text</span></code> και <code class="docutils literal notranslate"><span class="pre">summary</span></code>, η κεφαλίδα επαναλαμβάνει ό,τι λέει το αρχείο προέλευσης για το ματς όταν το λέει: βαθμολογία Elo και εμπειρία κάθε παίκτη, μεταγραφέα, κανόνες Jacoby και Beaver μιας ελεύθερης παρτίδας, πρόγραμμα που έγραψε το αρχείο· η έξοδος <code class="docutils literal notranslate"><span class="pre">json</span></code> τα φέρει στο αντικείμενο <code class="docutils literal notranslate"><span class="pre">match</span></code>.</p>
+<p>Όταν ο αγώνας έχει κρατήσει τη διάρκεια των αποφάσεών του (αγώνας που παίχτηκε εναντίον bot, βλ. το Duel), η έξοδος <code class="docutils literal notranslate"><span class="pre">text</span></code> δίνει τη διάρκεια κάθε απόφασης, χωριστά αυτή του κύβου, και η έξοδος <code class="docutils literal notranslate"><span class="pre">summary</span></code> το σύνολο και τον μέσο όρο κάθε παίκτη, με τη σήμανση του παίκτη του οποίου το απόθεμα τελείωσε πρώτο· η έξοδος <code class="docutils literal notranslate"><span class="pre">json</span></code> περιέχει τα <code class="docutils literal notranslate"><span class="pre">decision_ms</span></code> και <code class="docutils literal notranslate"><span class="pre">cube_decision_ms</span></code>. Μια άγνωστη διάρκεια δεν γράφεται. Το <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">timeerrors</span></code> δίνει, ανά παίκτη και ζώνη διάρκειας (κάτω από 5 s, 5 έως 15 s, 15 έως 30 s, πάνω από 30 s), τον αριθμό αποφάσεων, το μέσο λάθος και το ποσοστό blunders· το <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> δίνει τις γραμμές. Το <code class="docutils literal notranslate"><span class="pre">--ids</span></code> (αναγνωριστικά αγώνων χωρισμένα με κόμματα) περιορίζει τον πίνακα σε αυτούς τους αγώνες: η ανασκόπηση ενός τουρνουά ή μιας συνεδρίας.</p>
+<p>Για ένα ματς που παίχτηκε εδώ σε Μονομαχία, οι έξοδοι <code class="docutils literal notranslate"><span class="pre">text</span></code> και <code class="docutils literal notranslate"><span class="pre">summary</span></code> προσθέτουν την προέλευσή του: την αφετηρία, τον αποκαλυμμένο σπόρο των ζαριών και το SHA-256 του, προς σύγκριση με το αποτύπωμα που δημοσιεύτηκε κατά τη δημιουργία της Μονομαχίας, το τέλος του ματς (παίχτηκε ως το τέλος, διακόπηκε πριν το τέλος, ή χάθηκε στον χρόνο και από ποιον), τον ρυθμό, τον παίκτη του οποίου το απόθεμα εξαντλήθηκε πρώτο και το Bot (επίπεδο, έκδοση gammonNet). Για ένα ματς που δεν παίχτηκε εδώ, γράφουν <code class="docutils literal notranslate"><span class="pre">Origin:</span> <span class="pre">not</span> <span class="pre">played</span> <span class="pre">here</span></code>. Η έξοδος <code class="docutils literal notranslate"><span class="pre">json</span></code> φέρει την προέλευση στο <code class="docutils literal notranslate"><span class="pre">origin</span></code> (μαζί με το <code class="docutils literal notranslate"><span class="pre">lost_on_time</span></code>), <code class="docutils literal notranslate"><span class="pre">null</span></code> για ματς που δεν παίχτηκε εδώ. Ο διακομιστής την παρέχει μέσω <code class="docutils literal notranslate"><span class="pre">/v1/matches.origin</span></code>: <code class="docutils literal notranslate"><span class="pre">null</span></code> για ματς χωρίς προέλευση, 404 για ματς που δεν υπάρχει.</p>
+<p>Για έναν αναλυμένο αγώνα, η απώλεια πιθανοτήτων νίκης στον αγώνα κάθε κίνησης (<code class="docutils literal notranslate"><span class="pre">mwc_loss</span></code>, ένα κλάσμα: 0,0123 ισούται με 1,23 %, <code class="docutils literal notranslate"><span class="pre">null</span></code> για μη βαθμολογημένη κίνηση) ακολουθεί την ίδια διαδρομή: η έξοδος <code class="docutils literal notranslate"><span class="pre">json</span></code> φέρει τη λίστα κάτω από το <code class="docutils literal notranslate"><span class="pre">decision_losses</span></code>, το <code class="docutils literal notranslate"><span class="pre">text</span></code> προσθέτει μια γραμμή <code class="docutils literal notranslate"><span class="pre">MWC</span> <span class="pre">loss</span></code> στις βαθμολογημένες κινήσεις και το <code class="docutils literal notranslate"><span class="pre">summary</span></code> δίνει το σύνολο ανά παίκτη, ίσο με την απώλεια MWC της λίστας αγώνων. Κάθε εγγραφή φέρει επίσης τη δυσκολία της (<code class="docutils literal notranslate"><span class="pre">difficulty</span></code>, η αναμενόμενη απώλεια ενός παίκτη αναφοράς στην ίδια θέση, ίδια μονάδα, <code class="docutils literal notranslate"><span class="pre">null</span></code> για μη βαθμολογημένη κίνηση) και το <code class="docutils literal notranslate"><span class="pre">avoidable</span></code> για αποφεύξιμο λάθος· η έξοδος <code class="docutils literal notranslate"><span class="pre">json</span></code> προσθέτει το <code class="docutils literal notranslate"><span class="pre">difficulty_summary</span></code> (ανά παίκτη: <code class="docutils literal notranslate"><span class="pre">difficulty</span></code>, <code class="docutils literal notranslate"><span class="pre">excess</span></code>, <code class="docutils literal notranslate"><span class="pre">ratio</span></code>, <code class="docutils literal notranslate"><span class="pre">avoidable</span></code>), το <code class="docutils literal notranslate"><span class="pre">text</span></code> τις γραμμές <code class="docutils literal notranslate"><span class="pre">Difficulty</span></code> και <code class="docutils literal notranslate"><span class="pre">Avoidable</span> <span class="pre">error</span></code>, το <code class="docutils literal notranslate"><span class="pre">summary</span></code> μια ενότητα <code class="docutils literal notranslate"><span class="pre">Difficulty</span></code>. Ο διακομιστής την εξυπηρετεί μέσω <code class="docutils literal notranslate"><span class="pre">/v1/stats.matchDecisionLosses</span></code>.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">summary</span></code> τελειώνει με μια ενότητα <code class="docutils literal notranslate"><span class="pre">Review</span></code>, τον απολογισμό του αγώνα (<a class="reference internal" href="manuel_matchs.html#bilan-match"><span class="std std-ref">απολογισμός αγώνα</span></a>): ανά παίκτη, το PR και το διάστημά του 95 % επί των παρτίδων, η απώλεια MWC αναγμένη σε 7 πόντους και το διάστημά της επί των παρτίδων, το αποτέλεσμα προσαρμοσμένο στην τύχη (με το αποτέλεσμα, την καθαρή τύχη, τη διαφορά των λαθών και την κάλυψη των ζαριών), τα τρία λάθη προς επανεξέταση (παρτίδα, κίνηση, απώλεια και αποφευκτό μέρος) και η κατανομή των λαθών σε βιαστικά και σκεπτόμενα. Ο διακομιστής το σερβίρει μέσω <code class="docutils literal notranslate"><span class="pre">/v1/stats.matchReview</span></code>. Στο <code class="docutils literal notranslate"><span class="pre">stats</span></code>, το συνολικό PR και οι γραμμές ανά φάση, ανά ετικέτα και ανά σκορ φέρουν το διάστημά τους 95 % επί των αγώνων (στήλη <code class="docutils literal notranslate"><span class="pre">95</span> <span class="pre">%</span> <span class="pre">CI</span></code>), και το <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code> μια στήλη <code class="docutils literal notranslate"><span class="pre">L7</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>&lt;file&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — ID του αγώνα προς εμφάνιση (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">json</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code> ή <code class="docutils literal notranslate"><span class="pre">summary</span></code> (προεπιλογή: <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code> — Αρχείο εξόδου (προεπιλογή: τυπική έξοδος).</p></li>
+</ul>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>summary
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>text
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>match1.json
+</pre></div>
+</div>
+<p><strong>match repair</strong> — Ξαναγράφει τις θέσεις, τις αναλύσεις και τα λάθη ενός αγώνα από το αρχείο προέλευσής του, εκείνο που ονομάζει η καρτέλα <strong>Πληροφορίες</strong> της κάρτας του. Ο αγώνας διατηρεί το αναγνωριστικό του, το τουρνουά του, τα ονόματα των παικτών όπως είναι αποθηκευμένα (ψευδώνυμα, διορθώσεις, εναλλαγή), την ημερομηνία του, το σχόλιό του, το βίντεο και τα σημάδια του, τη μεταγραφή του και τα σχόλια που γράφτηκαν στις θέσεις του: ένα σχόλιο σε θέση που εγκαταλείπει η επισκευή μεταφέρεται σε εκείνη που ονομάζει το αρχείο για την ίδια κίνηση, εκτός αν μια συλλογή, μια κάρτα Anki ή ένα μάθημα κρατά ακόμη αυτή τη θέση· τότε το σχόλιο μένει εκεί και η αναφορά το μετρά. Μια ανάλυση βαθύτερη από του αρχείου (ένα rollout που έτρεξε μετά την εισαγωγή) ή διορθωμένη με το χέρι παραμένει. Ένας αγώνας ήδη σύμφωνος με το αρχείο του δεν ξαναγράφεται. Το <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> λέει τι θα άλλαζε χωρίς να γράψει τίποτα. Το <code class="docutils literal notranslate"><span class="pre">--list</span></code> εξετάζει όλους τους αγώνες που ονομάζουν αρχείο προέλευσης και δίνει όσους διαφέρουν από αυτό, με τον αριθμό των κινήσεων των οποίων αλλάζει η θέση και το ποσοστό των αναλυμένων κινήσεων πριν και μετά, καθώς και όσους το αρχείο τους δεν βρίσκεται· δεν γράφει τίποτα. Μια σχετική διαδρομή αναζητείται από τον φάκελο της βάσης και έπειτα από τον τρέχοντα φάκελο. Η επισκευή απορρίπτεται όταν το αρχείο δεν βρίσκεται, δεν περιέχει πλέον τον αγώνα (το αποτύπωμά του δεν είναι πλέον εκείνο του αποθηκευμένου αγώνα) ή όταν οι αποθηκευμένες κινήσεις δεν δείχνουν ποιος παίκτης του αρχείου είναι ποιος. Ο διακομιστής την προσφέρει μέσω <code class="docutils literal notranslate"><span class="pre">/v1/matches.repair</span></code>, με το αρχείο προέλευσης να αποστέλλεται στο αίτημα.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">(</span>--id<span class="w"> </span>&lt;ID&gt;<span class="w"> </span><span class="o">[</span>--dry-run<span class="o">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--list<span class="o">)</span><span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>text<span class="p">|</span>json<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--list
+./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--dry-run
+./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span>
+</pre></div>
+</div>
+</section>
+<section id="tournament-lire-un-tournoi-dirige">
+<h2>tournament — Ανάγνωση διευθυνόμενου τουρνουά<a class="headerlink" href="#tournament-lire-un-tournoi-dirige" title="Link to this heading"></a></h2>
+<p>Διαβάζει ένα διευθυνόμενο τουρνουά χωρίς γραφική διεπαφή. Η διεξαγωγή ενός τουρνουά με διαδραστικό τρόπο είναι δουλειά της κονσόλας της μηχανής Nicomaque· αυτές οι υποεντολές <strong>διαβάζουν</strong>, καμία δεν περιμένει είσοδο, και μόνο οι <code class="docutils literal notranslate"><span class="pre">move</span></code> και <code class="docutils literal notranslate"><span class="pre">confirm</span></code> γράφουν.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>tournament<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Υποεντολές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Τα διευθυνόμενα τουρνουά της βάσης, με την κατάστασή τους, την έκδοση της μηχανής, τη διοργάνωση στην οποία ανήκει καθένα (κενό αν καμία) και την ημερομηνία της τελευταίας απόφασης.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verify</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Ξαναπαίζει τη διεύθυνση και αναφέρει κάθε εναπομείνασα προειδοποίηση. <strong>Τερματίζει με σφάλμα</strong> αν μείνει έστω μία: είναι ο έλεγχος μετά το τουρνουά, και ένα σενάριο που τον τρέχει στις βάσεις μιας σεζόν θέλει κωδικό εξόδου, όχι μια γραμμή προς φιλτράρισμα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">standings</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Η κατάταξη σε CSV, με τα έπαθλα, στη γλώσσα της διεπαφής.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ranking</span> <span class="pre">--season</span> <span class="pre">[--rencontre</span> <span class="pre">N]</span> <span class="pre">[--from</span> <span class="pre">AAAA-MM-JJ]</span> <span class="pre">[--to</span> <span class="pre">AAAA-MM-JJ]</span> <span class="pre">[--points</span> <span class="pre">25,18,15]</span> <span class="pre">[--participation</span> <span class="pre">P]</span> <span class="pre">[--elo]</span> <span class="pre">[--format</span> <span class="pre">csv|json]</span></code> — Η κατάταξη σεζόν: τα ολοκληρωμένα τουρνουά μιας διοργάνωσης ή μιας περιόδου (τα όρια συμπεριλαμβάνονται, με βάση την ημερομηνία του τουρνουά· χωρίς φίλτρο, όλα τα διευθυνόμενα τουρνουά), με κάθε θέση να μετατρέπεται σε βαθμούς από την κλίμακα (πρώτος ο νικητής· από προεπιλογή 25, 18, 15, 12, 10, 8, 6, 4, 2, 1), συν <code class="docutils literal notranslate"><span class="pre">--participation</span></code> ανά τουρνουά που παίχτηκε. Οι ισοβαθμούντες μοιράζονται τον μέσο όρο των θέσεων που καταλαμβάνουν. Ένα πρόσωπο αναγνωρίζεται από τουρνουά σε τουρνουά από το όνομά του. Το <code class="docutils literal notranslate"><span class="pre">--elo</span></code> προσθέτει ένα Elo συλλόγου που αναπαίζεται στους αγώνες της σεζόν (τύπος FIBS, εκκίνηση στο 1500). Το CSV δίνει μία γραμμή ανά πρόσωπο και μία στήλη βαθμών ανά τουρνουά· ένα μη ολοκληρωμένο τουρνουά εμφανίζεται στη λίστα αλλά δεν αποφέρει τίποτα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--id</span> <span class="pre">N|--rencontre</span> <span class="pre">N</span> <span class="pre">[--out</span> <span class="pre">&lt;φάκελος&gt;]</span></code> — Η σελίδα HTML προβολής ενός αγωνίσματος (<code class="docutils literal notranslate"><span class="pre">--id</span></code>), ή η σελίδα τοίχου μιας διοργάνωσης (<code class="docutils literal notranslate"><span class="pre">--rencontre</span></code>: μία γραμμή ανά τραπέζι, όποιο αγώνισμα κι αν το κατέχει). Ακριβώς ένα από τα δύο απαιτείται. Χωρίς <code class="docutils literal notranslate"><span class="pre">--out</span></code> πηγαίνει στην τυπική έξοδο· με αυτό, γράφεται στον φάκελο, ο οποίος γίνεται ο φάκελος της διεύθυνσης ή της διοργάνωσης.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Το ακατέργαστο ημερολόγιο γεγονότων, αναπαράξιμο από τα εργαλεία της μηχανής. Το ημερολόγιο είναι όλη η αλήθεια μιας διεύθυνσης: η κατάταξη, οι πίνακες και οι προειδοποιήσεις αναπαράγονται από αυτό. Ένα εργαλείο που διαβάζει αυτή την έξοδο δεν χρειάζεται καθόλου το blunderDB.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">move</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">--match</span> <span class="pre">M</span> <span class="pre">--table</span> <span class="pre">T</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Αλλάζει το τραπέζι ενός αγώνα σε εξέλιξη, όπως η μεταφορά ενός κελιού πάνω σε άλλο στο πλέγμα. Αν το τραπέζι προορισμού είναι κατειλημμένο, οι δύο αγώνες <strong>ανταλλάσσουν</strong> τραπέζια· ένα τραπέζι εκτός λειτουργίας απορρίπτεται. Σε μια διοργάνωση, αν το τραπέζι είναι κατειλημμένο από άλλο αγώνισμα, η ανταλλαγή γίνεται μεταξύ των δύο αγωνισμάτων: μια αλλαγή τραπεζιού γράφεται στο ημερολόγιο καθενός. Εμφανίζει το τραπέζι κάθε αγώνα σε εξέλιξη.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hall</span> <span class="pre">--rencontre</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Όλα τα τραπέζια μιας εκδήλωσης: μία γραμμή ανά τραπέζι, όποια διοργάνωση κι αν το κατέχει (διοργάνωση, αγώνας, παίκτες), έπειτα οι προτάσεις όλων των διοργανώσεων σε μία ενιαία ουρά (<code class="docutils literal notranslate"><span class="pre">proposal</span></code>), πρώτα οι παίκτες που περιμένουν περισσότερο, και τέλος οι αγώνες που κρατούνται λόγω έλλειψης τραπεζιού ή ελεύθερου παίκτη (<code class="docutils literal notranslate"><span class="pre">held</span></code>, με την αιτία τους). Είναι το πλέγμα που δείχνει η προβολή <em>Όλα τα τραπέζια</em> της Διεύθυνσης. Τα τραπέζια ομαδοποιούνται ανά αίθουσα όταν η εκδήλωση έχει αίθουσες, και φέρουν όνομα όταν έχουν.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">proposals</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Η αριθμημένη λίστα προτάσεων της μηχανής: αγώνες, κληρώσεις, αλλαγή φάσης, επαναφορά ενός αποσυρθέντος προκριθέντα ομίλου.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">confirm</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">--n</span> <span class="pre">K</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Επιβεβαιώνει την πρόταση με αριθμό K του <code class="docutils literal notranslate"><span class="pre">proposals</span></code>, όπως το <em>Έναρξη</em> στον πίνακα, και μετά εμφανίζει τη λίστα που ακολουθεί.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tables</span> <span class="pre">--rencontre</span> <span class="pre">N|--tournament</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Οι ιδιότητες των τραπεζιών (όνομα, αίθουσα, δεσμευμένο, ορισμένο για) και οι αίθουσες όπου παίζεται κάθε αγώνισμα μιας διοργάνωσης (<code class="docutils literal notranslate"><span class="pre">--rencontre</span></code>), ή οι ιδιότητες ενός αγωνίσματος που παίζεται μόνο του (<code class="docutils literal notranslate"><span class="pre">--tournament</span></code>). Μόνο ανάγνωση: η εγγραφή γίνεται μέσω του <code class="docutils literal notranslate"><span class="pre">call</span></code> (<code class="docutils literal notranslate"><span class="pre">rencontres.setTables</span></code>, <code class="docutils literal notranslate"><span class="pre">rencontres.setEventRooms</span></code>, <code class="docutils literal notranslate"><span class="pre">directions.setTables</span></code>).</p></li>
+</ul>
+<p><strong>Κοινές επιλογές:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code> (υποχρεωτικό), <code class="docutils literal notranslate"><span class="pre">--id</span></code> (υποχρεωτικό εκτός από τα <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">ranking</span></code>, <code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--rencontre</span></code>, <code class="docutils literal notranslate"><span class="pre">hall</span></code> και <code class="docutils literal notranslate"><span class="pre">tables</span></code>), <code class="docutils literal notranslate"><span class="pre">--format</span></code>.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>tournament<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>standings<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>&gt;<span class="w"> </span>classement.csv
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--season<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2026</span>-12-31<span class="w"> </span>--elo<span class="w"> </span>&gt;<span class="w"> </span>saison.csv
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>page<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--out<span class="w"> </span>/tmp/affichage
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>page<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span><span class="w"> </span>--out<span class="w"> </span>/tmp/evenement
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>&gt;<span class="w"> </span>journal.json
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>move<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--match<span class="w"> </span>m4<span class="w"> </span>--table<span class="w"> </span><span class="m">7</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>hall<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>tables<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>proposals<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>confirm<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--n<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+<section id="transcribe-rejouer-une-transcription">
+<span id="cli-transcribe"></span><h2>transcribe — Αναπαραγωγή μιας μεταγραφής<a class="headerlink" href="#transcribe-rejouer-une-transcription" title="Link to this heading"></a></h2>
+<p>Αναπαράγει μια μεταγραφή και αναφέρει τι βρίσκει σε αυτήν η επανάληψη. Η πηγή είναι ένα αρχείο <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, ένας αγώνας της βιβλιοθήκης ή ένα πρόχειρο μεταγραφής — ακριβώς ένα από τα τρία. Ένας αγώνας διαβάζεται μέσω του <code class="docutils literal notranslate"><span class="pre">.mat</span></code> που θα παρήγαγε κατά την εξαγωγή: αυτό που αναπαράγεται είναι επομένως αυτό που θα περιείχε μια εξαγωγή.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--mat<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--check<span class="o">]</span><span class="w"> </span><span class="o">[</span>--render<span class="w"> </span>&lt;sortie&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--match<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--check
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--draft<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--check
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--match<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--edit<span class="w"> </span><span class="o">[</span>--accept-losses<span class="o">]</span>
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--draft<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--finish<span class="p">|</span>--abandon
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--materialize<span class="w"> </span>&lt;document.json&gt;
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--import<span class="w"> </span>&lt;fichier.mat<span class="p">|</span>document.json&gt;
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--mat</span></code> — Αρχείο <code class="docutils literal notranslate"><span class="pre">.mat</span></code> προς αναπαραγωγή.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων, για τα <code class="docutils literal notranslate"><span class="pre">--match</span></code> και <code class="docutils literal notranslate"><span class="pre">--draft</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — Αναγνωριστικό του αγώνα της βιβλιοθήκης προς αναπαραγωγή.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--draft</span></code> — Αναγνωριστικό του πρόχειρου μεταγραφής προς αναπαραγωγή.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--check</span></code> — Παραθέτει τις ασυνέπειες που βρέθηκαν (προεπιλεγμένη συμπεριφορά).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--render</span></code> — Ξαναγράφει τη μεταγραφή σε <code class="docutils literal notranslate"><span class="pre">.mat</span></code> σε αυτή τη διαδρομή.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--edit</span></code> — Ανοίγει ένα προσχέδιο στο <code class="docutils literal notranslate"><span class="pre">--match</span></code> (ή επιστρέφει αυτό που είναι ήδη ανοιχτό σε αυτό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--accept-losses</span></code> — Με το <code class="docutils literal notranslate"><span class="pre">--edit</span></code> σε εισαγμένο αγώνα: δέχεται ότι οι αναλύσεις και τα σχόλιά του μπορεί να χαθούν.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--finish</span></code> — Ολοκληρώνει το <code class="docutils literal notranslate"><span class="pre">--draft</span></code>: γράφει τον αγώνα του ή αντικαθιστά αυτόν από τον οποίο ανοίχτηκε, και ελευθερώνει το προσχέδιο.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--abandon</span></code> — Εγκαταλείπει το <code class="docutils literal notranslate"><span class="pre">--draft</span></code>: το διαγράφει χωρίς αγώνα· ένας αγώνας από τον οποίο ανοίχτηκε μένει όπως είναι.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--yes</span></code> — Με το <code class="docutils literal notranslate"><span class="pre">--abandon</span></code> σε προσχέδιο που δεν παρήγαγε ποτέ αγώνα: επιβεβαιώνει ότι ό,τι έχει γραφτεί σε αυτό χάνεται.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--materialize</span></code> — Έγγραφο JSON (<code class="docutils literal notranslate"><span class="pre">header</span></code> και <code class="docutils literal notranslate"><span class="pre">actions</span></code>, με τα ζάρια) που γράφεται ως αγώνας με μία κίνηση, ή καθόλου.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Αρχείο <code class="docutils literal notranslate"><span class="pre">.mat</span></code> ή έγγραφο μεταγραφής JSON πάνω στο οποίο ανοίγει νέο προσχέδιο.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--check</span></code> ονομάζει κάθε ασυνέπεια με τον αριθμό της ενέργειας και την παρτίδα στην οποία βρίσκεται: παράνομη κίνηση, δύο σειρές στη σειρά για τον ίδιο παίκτη, αδύνατη ενέργεια κύβου, ενέργεια πέρα από το τέλος του αγώνα, κίνηση της οποίας τα βήματα δεν χρησιμοποιούν τα δικά της ζάρια, πρώτη κίνηση παρτίδας με διπλή ζαριά, που καμία ζαριά έναρξης δεν μπορεί να είναι, μη καταγεγραμμένη κίνηση — το κελί <code class="docutils literal notranslate"><span class="pre">???</span></code> που γράφει το gnubg όταν δεν κράτησε την κίνηση που παίχτηκε, και που δεν είναι χορός, ασυνεπές δηλωμένο σκορ — μια παρτίδα της οποίας η γραμμή σκορ δεν είναι αυτή που δίνουν οι προηγούμενες παρτίδες, και που ξαναπαίζεται με το γραμμένο σκορ.</p>
+<p>Μια ασυνέπεια <strong>αναφέρεται, ποτέ δεν αντιτάσσεται</strong>: τίποτα δεν απορρίπτεται εξαιτίας της και ο κωδικός εξόδου παραμένει 0 ό,τι κι αν βρει η επανάληψη. Ένας μη μηδενικός κωδικός σημαίνει πραγματική αποτυχία — αρχείο που δεν διαβάζεται, βάση που δεν ανοίγει, έξοδος που δεν μπορεί να γραφτεί. Ένα σενάριο που θέλει να ενεργήσει βάσει των ευρημάτων τα διαβάζει με <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>, όπου ένα χαλασμένο αρχείο και μια παρτίδα που περιέχει παράνομη κίνηση δεν συγχέονται.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--render</span></code> ξαναγράφει τη μεταγραφή σε <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, πράγμα που επιτρέπει τον έλεγχο της μετάβασης και επιστροφής σε πραγματικό αρχείο, εκτός των δοκιμών.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">--materialize</span></code> γράφει, χωρίς προσχέδιο, τον αγώνα που παίζει ένα έγγραφο ενεργειών που προήλθε από αλλού. Οι κανόνες εφαρμόζονται αυστηρά: η πρώτη ενέργεια που απορρίπτεται κάνει την εντολή να αποτύχει με τη σειρά της (από το 0) και τον λόγο της, και τίποτα δεν γράφεται. Οι διάρκειες απόφασης του εγγράφου (<code class="docutils literal notranslate"><span class="pre">decision_ms</span></code>, <code class="docutils literal notranslate"><span class="pre">cube_decision_ms</span></code>) μεταφέρονται στις κινήσεις.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">--import</span></code> ανοίγει νέο προσχέδιο πάνω σε αρχείο <code class="docutils literal notranslate"><span class="pre">.mat</span></code> ή σε έγγραφο μεταγραφής JSON (<code class="docutils literal notranslate"><span class="pre">header</span></code>, <code class="docutils literal notranslate"><span class="pre">actions</span></code> και προαιρετικά <code class="docutils literal notranslate"><span class="pre">format_version</span></code> και <code class="docutils literal notranslate"><span class="pre">next_score</span></code>, η μορφή με την οποία αποθηκεύεται ένα προσχέδιο). Οι ασυνέπειες του αρχείου διατηρούνται και επισημαίνονται, όπως σε κάθε προσχέδιο: διορθώνονται πριν το <code class="docutils literal notranslate"><span class="pre">--finish</span></code> γράψει το ματς. Ένα αρχείο που καμία αναπαραγωγή δεν μπορεί να διαβάσει — μη αναγνώσιμο JSON, άγνωστο είδος ενέργειας, παίκτης, ζάρι ή σημείο εκτός ταμπλό, <code class="docutils literal notranslate"><span class="pre">.mat</span></code> χωρίς παρτίδα — κάνει την εντολή να αποτύχει και δεν ανοίγει κανένα προσχέδιο.</p>
+<p>Μόνο τρεις άλλες επιλογές γράφουν, με τις ίδιες μεθόδους όπως ο πίνακας Μεταγραφή: το <code class="docutils literal notranslate"><span class="pre">--edit</span></code> ανοίγει ένα προσχέδιο σε υπάρχοντα αγώνα, το <code class="docutils literal notranslate"><span class="pre">--finish</span></code> το ολοκληρώνει — ο αγώνας αντικαθίσταται με το ίδιο αναγνωριστικό — και το <code class="docutils literal notranslate"><span class="pre">--abandon</span></code> διαγράφει ένα προσχέδιο χωρίς αγώνα, και απαιτεί <code class="docutils literal notranslate"><span class="pre">--yes</span></code> για προσχέδιο που δεν ολοκληρώθηκε ποτέ, το οποίο παίρνει μαζί του ό,τι έχει γραφτεί σε αυτό. Ένας εισαγμένος αγώνας φέρει αναλύσεις και σχόλια που ένα <code class="docutils literal notranslate"><span class="pre">.mat</span></code> δεν φέρει: το <code class="docutils literal notranslate"><span class="pre">--edit</span></code> δίνει το πολύ τον αριθμό τους και αρνείται χωρίς <code class="docutils literal notranslate"><span class="pre">--accept-losses</span></code>.</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--mat<span class="w"> </span>match.mat<span class="w"> </span>--check
+
+<span class="c1"># match.mat: 7 point match, 4 game(s), 203 action(s)</span>
+<span class="c1">#   Final score: 9-2</span>
+<span class="c1"># Inconsistencies: none</span>
+</pre></div>
+</div>
+</section>
+<section id="duel-jouer-un-duel">
+<span id="cli-duel"></span><h2>duel — Παίξτε μια Μονομαχία<a class="headerlink" href="#duel-jouer-un-duel" title="Link to this heading"></a></h2>
+<p>Παίζει μια Μονομαχία χωρίς διεπαφή, μία Ενέργεια ανά κλήση. Κάθε κλήση είναι δική της διεργασία: ξαναπαίρνει τη Μονομαχία από τη βάση, παίζει μία Ενέργεια και την ξαναγράφει. Οι διάρκειες των κινήσεων μιας Μονομαχίας που παίζεται έτσι είναι άγνωστες, ποτέ μηδενικές.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>duel<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">(</span>--length<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>--money<span class="w"> </span><span class="o">[</span>--jacoby<span class="o">])</span><span class="w"> </span><span class="o">[</span>--side1<span class="w"> </span>&lt;côté&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--side2<span class="w"> </span>&lt;côté&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--length<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="o">[</span>--start<span class="w"> </span>&lt;XGID&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--away<span class="w"> </span>&lt;j1&gt;,&lt;j2&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--reroll<span class="o">]</span><span class="w"> </span><span class="o">[</span>--after-cube<span class="o">]</span><span class="w"> </span><span class="o">[</span>--single-game<span class="o">]</span><span class="w"> </span><span class="o">[</span>--minutes-per-point<span class="w"> </span>&lt;min&gt;<span class="w"> </span>--delay<span class="w"> </span>&lt;s&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>move<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--play<span class="w"> </span><span class="s2">"24/18 13/11"</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>roll<span class="p">|</span>double<span class="p">|</span>take<span class="p">|</span>pass<span class="p">|</span>resign<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>forfeit<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--side<span class="w"> </span><span class="m">1</span><span class="p">|</span><span class="m">2</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>contribute<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--side<span class="w"> </span><span class="m">1</span><span class="p">|</span><span class="m">2</span><span class="w"> </span>--value<span class="w"> </span>&lt;texte&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>stop<span class="p">|</span>discard<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+</pre></div>
+</div>
+<p><strong>Υποεντολές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span></code> — Ξεκινά μια Μονομαχία και παίζει μέχρι την πρώτη απόφαση μιας εξωτερικής Πλευράς. <code class="docutils literal notranslate"><span class="pre">--length</span></code> (1 έως 25 πόντοι) ή <code class="docutils literal notranslate"><span class="pre">--money</span></code>· <code class="docutils literal notranslate"><span class="pre">--start</span></code> (XGID της Εκκίνησης)· <code class="docutils literal notranslate"><span class="pre">--name1</span></code> και <code class="docutils literal notranslate"><span class="pre">--name2</span></code>· <code class="docutils literal notranslate"><span class="pre">--side1</span></code> και <code class="docutils literal notranslate"><span class="pre">--side2</span></code> (<code class="docutils literal notranslate"><span class="pre">external</span></code> ή <code class="docutils literal notranslate"><span class="pre">bot:&lt;επίπεδο&gt;</span></code> με <code class="docutils literal notranslate"><span class="pre">instant</span></code>, <code class="docutils literal notranslate"><span class="pre">normal</span></code> ή <code class="docutils literal notranslate"><span class="pre">thorough</span></code> ή <code class="docutils literal notranslate"><span class="pre">external:&lt;διαμόρφωση&gt;&#64;&lt;μηχανή&gt;</span></code>, μια εξωτερική Πλευρά που δηλώνει το Bot που παίζει πίσω της: η προέλευση του Αγώνα το καταγράφει ως δηλωμένο, όχι επιβεβαιωμένο)· το <code class="docutils literal notranslate"><span class="pre">--discard-at-end</span></code> απορρίπτει το πρόχειρο στο τέλος αντί να γράψει τον Αγώνα· το <code class="docutils literal notranslate"><span class="pre">--combined-seed</span></code> δεν ρίχνει κανένα ζάρι πριν από τη συνεισφορά κάθε εξωτερικής Πλευράς στον σπόρο. Το <code class="docutils literal notranslate"><span class="pre">--away</span></code> δίνει το σκορ του πρώτου παιχνιδιού σε πόντους που λείπουν, <code class="docutils literal notranslate"><span class="pre">παίκτης1,παίκτης2</span></code> (<code class="docutils literal notranslate"><span class="pre">1</span></code>: το παιχνίδι Crawford, <code class="docutils literal notranslate"><span class="pre">0</span></code>: ένας πόντος μετά από αυτό), και αντικαθιστά εκείνο του <code class="docutils literal notranslate"><span class="pre">--start</span></code>· χωρίς <code class="docutils literal notranslate"><span class="pre">--start</span></code>, το παιχνίδι ξεκινά από την αρχική θέση με αυτό το σκορ. Το <code class="docutils literal notranslate"><span class="pre">--reroll</span></code> κάνει να ξαναριχτεί η ριξιά που φέρει το <code class="docutils literal notranslate"><span class="pre">--start</span></code>· το <code class="docutils literal notranslate"><span class="pre">--after-cube</span></code> ξεκινά μετά την απόφαση κύβου της Εκκίνησης (ο παίκτης με τη σειρά ρίχνει αμέσως, ο προσφερόμενος διπλασιασμός γίνεται δεκτός) — από προεπιλογή η Μονομαχία ξεκινά πριν από αυτήν, και ο προσφερόμενος διπλασιασμός περιμένει την απάντηση του αντιπάλου. Το <code class="docutils literal notranslate"><span class="pre">--single-game</span></code> σταματά τη Μονομαχία στο τέλος του πρώτου παιχνιδιού της, που γράφεται μόνο του ως Αγώνας. Τα <code class="docutils literal notranslate"><span class="pre">--minutes-per-point</span></code> και <code class="docutils literal notranslate"><span class="pre">--delay</span></code> ορίζουν τον ρυθμό: η εφεδρεία κάθε παίκτη σε λεπτά ανά πόντο του αγώνα (Standard 2, Speed 0,4) και η καθυστέρηση ανά κίνηση σε δευτερόλεπτα (12, 10)· το <code class="docutils literal notranslate"><span class="pre">--time-out</span></code> (<code class="docutils literal notranslate"><span class="pre">continue</span></code> ή <code class="docutils literal notranslate"><span class="pre">lose_match</span></code>) τι κάνει μια εξαντλημένη εφεδρεία. Μια Εκκίνηση που οι κανόνες δεν επιτρέπουν (πούλια, σκορ πέρα από το μήκος, δύο παίκτες στο παιχνίδι Crawford, κύβος) απορρίπτεται με τον λόγο της. Με δύο Bot, ολόκληρος ο αγώνας παίζεται σε αυτή την κλήση (<code class="docutils literal notranslate"><span class="pre">--side1</span> <span class="pre">bot:instant</span> <span class="pre">--side2</span> <span class="pre">bot:instant</span></code>)· μια συνεδρία με χρήματα μεταξύ δύο Bot απορρίπτεται, επειδή δεν θα τελείωνε ποτέ, εκτός από ένα μόνο παιχνίδι.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span></code> — Το σκορ, τι περιμένει η Μονομαχία και, για μια κίνηση, τα νόμιμα παιχνίδια. Ο σπόρος των ζαριών δεν εμφανίζεται ποτέ πριν από το τέλος: το αποτύπωμα τον αντιπροσωπεύει.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Οι Μονομαχίες σε αναστολή.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">roll</span></code>, <code class="docutils literal notranslate"><span class="pre">move</span></code>, <code class="docutils literal notranslate"><span class="pre">double</span></code>, <code class="docutils literal notranslate"><span class="pre">take</span></code>, <code class="docutils literal notranslate"><span class="pre">pass</span></code>, <code class="docutils literal notranslate"><span class="pre">resign</span></code> — Μία Ενέργεια της Πλευράς που περιμένει η Μονομαχία (<code class="docutils literal notranslate"><span class="pre">--side</span> <span class="pre">1|2</span></code> για να την κατονομάσετε)· το <code class="docutils literal notranslate"><span class="pre">--play</span></code> δίνει την κίνηση σε σημειογραφία, με όποια σειρά θέλετε· το <code class="docutils literal notranslate"><span class="pre">--level</span></code> (1 έως 3) την αξία μιας παραίτησης· το <code class="docutils literal notranslate"><span class="pre">--revision</span></code> απορρίπτει την Ενέργεια αν η Μονομαχία έχει προχωρήσει.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contribute</span></code> — Η συνεισφορά μιας εξωτερικής Πλευράς στον συνδυασμένο σπόρο (<code class="docutils literal notranslate"><span class="pre">--side</span> <span class="pre">1|2</span></code>, <code class="docutils literal notranslate"><span class="pre">--value</span></code>, 1 έως 64 bytes), μία μόνο φορά, πριν από την πρώτη ρίψη· η τελευταία συνεισφορά ξεκινά τα ζάρια. Οι ρίψεις προκύπτουν τότε από το HMAC-SHA256 του σφραγισμένου σπόρου πάνω στη συνεισφορά κάθε Πλευράς, με προηγούμενο το μήκος της, και η προέλευση του Αγώνα φέρει τις συνεισφορές.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forfeit</span></code> — Η Πλευρά <code class="docutils literal notranslate"><span class="pre">--side</span></code> (υποχρεωτική) εγκαταλείπει το ματς: η τρέχουσα παρτίδα πηγαίνει στην άλλη Πλευρά με τους πόντους που τη φέρνουν στο μήκος (στο παιχνίδι με χρήματα, μια απλή στην αξία του κύβου), και το Ματς εγγράφεται ως κερδισμένο από αυτήν.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code> — Διακόπτει μια συνεδρία με χρήματα και εγγράφει το Ματς της όπως είναι, την τρέχουσα παρτίδα χωρίς νικητή. Ένα ματς σε πόντους απορρίπτεται: εγγράφεται μόνο ολόκληρο (<code class="docutils literal notranslate"><span class="pre">forfeit</span></code>, <code class="docutils literal notranslate"><span class="pre">discard</span></code>). Η διακοπή δεν είναι εγκατάλειψη.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discard</span></code> — Απορρίπτει τη Μονομαχία: δεν γράφεται τίποτα.</p></li>
+</ul>
+<p>Όλες δέχονται <code class="docutils literal notranslate"><span class="pre">--db</span></code> και <code class="docutils literal notranslate"><span class="pre">--format</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> ή <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-left" title="Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_analyse.html" class="btn btn-neutral float-right" title="Ανάλυση και μηχανή" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

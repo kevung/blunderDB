@@ -1,0 +1,585 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Στατιστικά &mdash; Τεκμηρίωση του blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9e57d487"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Αξιολόγηση" href="manuel_eval.html" />
+    <link rel="prev" title="Τουρνουά" href="manuel_tournois.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/manuel_stats.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/manuel_stats.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_stats.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_stats.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_stats.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_stats.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Πρώτα βήματα και διεπαφή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Ανάλυση, σχόλια και αναζήτηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Αγώνες και μεταγραφή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Τουρνουά</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Στατιστικά</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-stats">Πίνακας Stats</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Εισαγωγή</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ouverture-du-panneau">Άνοιγμα του πίνακα</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#barre-de-filtre">Γραμμή φίλτρου</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#toggle-pr-mwc">Εναλλαγή PR / MWC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-rapport-html">Η αναφορά HTML</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-tableau-de-bord">Καρτέλα Πίνακας</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-progression">Καρτέλα Progression</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-erreurs">Καρτέλα Erreurs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#entrainement-dans-le-temps">Η εκπαίδευση στον χρόνο</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-ventilations">Καρτέλα Αναλύσεις</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#etude-et-jeu-reel">Μελέτη και πραγματικό παιχνίδι</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-joueurs">Καρτέλα Παίκτες</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regle-d-agregation">Κανόνας συνάθροισης</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mwc-limitations">MWC: περιορισμοί</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Αξιολόγηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Εξάσκηση, Anki και μονομαχία</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Εισαγωγή, προέλευση και διαμοιρασμός</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Μετρικές και εργαλεία μελέτης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Εγχειρίδιο</a></li>
+      <li class="breadcrumb-item active">Στατιστικά</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="manuel-stats"></span><h1>Στατιστικά<a class="headerlink" href="#statistiques" title="Link to this heading"></a></h1>
+<section id="panneau-stats">
+<span id="stats"></span><h2>Πίνακας Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
+<section id="introduction">
+<h3>Εισαγωγή<a class="headerlink" href="#introduction" title="Link to this heading"></a></h3>
+<p>Ο πίνακας <strong>Stats</strong> επιτρέπει την ανάλυση του επιπέδου παιχνιδιού και την παρακολούθηση της προόδου στο χρόνο με βάση τις θέσεις που έχουν εισαχθεί στη βάση δεδομένων. Υπολογίζει και εμφανίζει τους δείκτες <strong>PR</strong> (<em>Performance Rating</em>) και <strong>MWC cost</strong> (Match Winning Chance cost) για το σύνολο των θέσεων ή για ένα φιλτραρισμένο υποσύνολο.</p>
+<p>Ο πίνακας Stats είναι ιδιαίτερα χρήσιμος για:</p>
+<ul class="simple">
+<li><p><strong>τον προσδιορισμό του επιπέδου σας</strong> σε σχέση με τις ζώνες επιπέδου (<em>Παγκόσμια κλάση</em>, <em>Ειδικός</em>, <em>Προχωρημένος</em>…) χάρη στο συνολικό PR·</p></li>
+<li><p><strong>την παρακολούθηση της προόδου σας</strong> τουρνουά προς τουρνουά ή αγώνα προς αγώνα χάρη στα γραφήματα της καρτέλας Progression·</p></li>
+<li><p><strong>τον εντοπισμό των αδυναμιών σας</strong>: η καρτέλα Erreurs εμφανίζει την κατανομή μεταξύ κινήσεων πουλιών και αποφάσεων κύβου, καθώς και την κατανομή των μεγεθών σφάλματος·</p></li>
+<li><p><strong>σύγκριση των παικτών της βάσης</strong> μεταξύ τους, μία γραμμή ανά παίκτη, μέσω της καρτέλας Παίκτες — χρήσιμο για την παρακολούθηση μιας ολόκληρης διοργάνωσης·</p></li>
+<li><p><strong>την άμεση πρόσβαση στις σχετικές θέσεις</strong> κάνοντας κλικ σε οποιονδήποτε δείκτη (drill-down).</p></li>
+</ul>
+<p>Ο ορισμός, ο τύπος, η αβεβαιότητα και τα όρια κάθε αριθμού του πίνακα συγκεντρώνονται στο <a class="reference internal" href="metriques.html#metriques"><span class="std std-ref">Μετρικές και εργαλεία μελέτης</span></a>.</p>
+</section>
+<section id="ouverture-du-panneau">
+<h3>Άνοιγμα του πίνακα<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
+<p>Για να ανοίξετε τον πίνακα Stats:</p>
+<ul class="simple">
+<li><p>Πατήστε <em>CTRL-D</em>.</p></li>
+<li><p>Πληκτρολογήστε την εντολή <code class="docutils literal notranslate"><span class="pre">stats</span></code> ή <code class="docutils literal notranslate"><span class="pre">st</span></code> στη γραμμή εντολών.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο πίνακας ανανεώνεται αυτόματα σε κάθε τροποποίηση του φίλτρου. Δεν επανυπολογίζει τα στατιστικά κατά την απλή εναλλαγή PR ↔ MWC: και οι δύο μετρικές υπολογίζονται ταυτόχρονα από το backend.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3>Γραμμή φίλτρου<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
+<p>Η γραμμή φίλτρου, στο επάνω μέρος του πίνακα, επιτρέπει τον περιορισμό του υπολογισμού σε ένα υποσύνολο θέσεων.</p>
+<section id="perspective-joueur">
+<h4>Οπτική γωνία παίκτη<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
+<p>Το πεδίο <strong>Παίκτης</strong> φιλτράρει τα στατιστικά ανά αναλυόμενο παίκτη. Πληκτρολογώντας μερικά γράμματα η λίστα περιορίζεται στα ονόματα που τα περιέχουν· ένα κλικ ή <em>Enter</em> επιλέγει τον παίκτη, το <strong>✕</strong> ή ένα κενό πεδίο επαναφέρει όλες τις οπτικές γωνίες.</p>
+<p>Το φίλτρο είναι <strong>ένα και μοναδικό</strong> για όλες τις καρτέλες του πάνελ και διατηρείται από τη μία συνεδρία στην άλλη. Ρυθμίζεται επίσης από τα άλλα πάνελ: το όνομα ενός παίκτη στην κεφαλίδα ενός αγώνα ή στη γραμμή πάνω από το ταμπλό ανοίγει όλα τα στατιστικά του (τα τουρνουά και οι ημερομηνίες καθαρίζονται), και το κουμπί <strong>Stats</strong> στην κεφαλίδα ενός τουρνουά ανοίγει εκείνα ολόκληρου του τουρνουά (οι ημερομηνίες καθαρίζονται, ο παίκτης διατηρείται). Μια ημερομηνία λήξης προγενέστερη της ημερομηνίας έναρξης απορρίπτεται: το πεδίο παίρνει ξανά την εφαρμοσμένη ημερομηνία.</p>
+</section>
+<section id="filtres-disponibles">
+<h4>Διαθέσιμα φίλτρα<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Τουρνουά</strong> — περιορισμός σε ένα ή περισσότερα τουρνουά. Μπορούν να επιλεγούν πολλά τουρνουά ταυτόχρονα.</p></li>
+<li><p><strong>Ημερομηνίες</strong> — χρονικό εύρος (<em>Από</em> … <em>Έως</em>). Αν συμπληρωθεί μόνο η ημερομηνία έναρξης, περιλαμβάνονται οι πιο πρόσφατες θέσεις.</p></li>
+<li><p><strong>Τύπος απόφασης</strong> — Όλα / Κινήσεις πουλιών / Αποφάσεις κύβου.</p></li>
+<li><p><strong>Διάρκεια αγώνα</strong> — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, 7, 9, 11, 13, 15, 21 πόντοι). Μπορούν να συνδυαστούν πολλά μήκη.</p></li>
+<li><p><strong>Μηχανή</strong> και <strong>Ελάχ. βάθος</strong> — κρατούνται μόνο οι αποφάσεις που αναλύθηκαν από μια δεδομένη μηχανή, ή τουλάχιστον σε ένα δεδομένο βάθος, σε plies. Το μενού <em>Μηχανή</em> προτείνει τις μηχανές που υπάρχουν στις αναλύσεις της βάσης (eXtreme Gammon, GNU Backgammon…).</p></li>
+</ul>
+<p>Ένα κουμπί <strong>↺ Επαναφορά</strong> μηδενίζει όλα τα φίλτρα, εκτός από τον παίκτη.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Τα φίλτρα αποθηκεύονται στις ρυθμίσεις του blunderDB (<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) και επαναφέρονται κατά το επόμενο άνοιγμα.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3>Εναλλαγή PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
+<p>Το κουμπί <strong>PR / MWC</strong> στο επάνω μέρος του πίνακα εναλλάσσει την εμφανιζόμενη μετρική σε όλες τις καρτέλες.</p>
+<p><strong>PR (Performance Rating)</strong></p>
+<blockquote>
+<div><p>Το μέσο σφάλμα equity ανά μετρούμενη απόφαση, πολλαπλασιασμένο επί 500 όπως κάνουν το eXtreme Gammon και το GNUbg: ένα PR 5,0 ισοδυναμεί με 0,010 χαμένου equity ανά απόφαση, δηλαδή 10 χιλιοστοπόντους (mpt). Ο ακριβής κανόνας μέτρησης — ποιες αποφάσεις μπαίνουν στον παρονομαστή, πώς μετατρέπεται το σκορ — είναι αυτός του <a class="reference internal" href="metriques.html#metrique-pr"><span class="std std-ref">PR (Performance Rating)</span></a>.</p>
+<p>Οι ζώνες επιπέδου που ο πίνακας σχεδιάζει πίσω από την καμπύλη προόδου είναι ένα <strong>ενδεικτικό σημείο αναφοράς του ίδιου του blunderDB</strong>: καμία δημοσίευση δεν αποτελεί αυθεντία για αυτά τα κατώφλια. Το άνω όριο κάθε ζώνης εξαιρείται: ένα PR ίσο με 4 είναι <em>Προχωρημένος</em>, όχι <em>Ειδικός</em>.</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επίπεδο</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Παγκόσμια κλάση</p></td>
+<td><p>&lt; 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>2 – 4</p></td>
+</tr>
+<tr class="row-even"><td><p>Προχωρημένος</p></td>
+<td><p>4 – 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>Μέσος</p></td>
+<td><p>6 – 9</p></td>
+</tr>
+<tr class="row-even"><td><p>Περιστασιακός</p></td>
+<td><p>9 – 12</p></td>
+</tr>
+<tr class="row-odd"><td><p>Αρχάριος</p></td>
+<td><p>≥ 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Σωρευτική πιθανότητα νίκης αγώνα που χάνεται εξαιτίας των σφαλμάτων, σε ολόκληρο το φιλτραρισμένο σύνολο δεδομένων. Υπολογίζεται με βάση την τρέχουσα MET της βάσης, από προεπιλογή τη Kazaross-XG2 που είναι ενσωματωμένη στο blunderDB. Μια ανάλυση στο σκορ αγώνα που υπολογίστηκε με άλλον πίνακα είναι «διαφορετική MET» και μένει εκτός των στατιστικών.</p>
+<div class="admonition caution">
+<p class="admonition-title">Προσοχή</p>
+<p>Το MWC cost <strong>δεν εφαρμόζεται</strong> στις θέσεις <em>money-game</em> (χωρίς διακύβευμα αγώνα). Αυτές οι θέσεις εξαιρούνται από τον υπολογισμό MWC. Οι τιμές MWC εξαρτώνται από τη MET που χρησιμοποιείται· δεν είναι άμεσα συγκρίσιμες μεταξύ λογισμικών που χρησιμοποιούν διαφορετικές METs.</p>
+</div>
+</div></blockquote>
+<p id="perte-mwc-7pts"><strong>Απώλεια MWC (ισοδ. 7 πόντων)</strong></p>
+<blockquote>
+<div><p>Η πιθανότητα νίκης στον αγώνα που ένας παίκτης έχασε στο σύνολο των αποφάσεών του — πούλια, κύβος, αποδοχή ή άρνηση, με κύβο — αναγόμενη σε αγώνα 7 πόντων. Για αγώνα <em>N</em> πόντων όπου ο παίκτης έχασε <em>L</em> MWC:</p>
+<blockquote>
+<div><p>L₇ = L × √(7 / N)</p>
+</div></blockquote>
+<p>Για αγώνα 7 πόντων, είναι η απώλεια MWC του αγώνα, αυτή που εμφανίζει το eXtreme Gammon. Η ρίζα προέρχεται από το μοντέλο του τύπου FIBS: με ίση δύναμη, η απώλεια ενός παίκτη αυξάνεται όπως η ρίζα του μήκους του αγώνα. Οι 7 πόντοι είναι το μήκος αναφοράς επειδή είναι το πιο συνηθισμένο στα τουρνουά.</p>
+<p>Διαβάζεται ως το μερίδιο του αγώνα που χάθηκε απέναντι σε τέλειο παίκτη: το 12,3 % σημαίνει ότι αντί για 50 % πιθανότητες απέναντι στη μηχανή, ο παίκτης είχε μόνο 37,7 % σε αγώνα 7 πόντων. Το tooltip δίνει την ανάγνωση σε Elo απέναντι στη μηχανή, αντιστρέφοντας τον τύπο FIBS: D = (2000 / √7) × log₁₀(q / (1 − q)), με q = 0,5 − L₇. Πέρα από απώλεια 49 %, ο τύπος δεν έχει πεπερασμένη τιμή: το εμφανιζόμενο Elo είναι τότε ανώτατο όριο («≤»). Οι δύο αριθμοί κατατάσσουν τους παίκτες με την ίδια σειρά.</p>
+<p>Συμπληρώνει το PR χωρίς να το αντικαθιστά: το PR διαιρεί τα λάθη με έναν αριθμό αποφάσεων, και αυτός ο αριθμός εξαρτάται από το τι θεωρείται απόφαση (αναγκαστικές κινήσεις, προφανείς αποφάσεις κύβου). Η απώλεια MWC δεν μετρά καμία απόφαση: κάθε λάθος ζυγίζει όσο κόστισε στο σκορ όπου έγινε.</p>
+<p>Σε πολλούς αγώνες (στατιστικά ενός παίκτη ή ενός τουρνουά), οι απώλειες και οι ρίζες των μηκών προστίθενται πριν από τον λόγο: L₇ = √7 × ΣL / Σ√N. Ένας αγώνας 7 πόντων ζυγίζει λοιπόν περισσότερο από έναν αγώνα 1 πόντου, και ένας μόνο αγώνας δίνει τη δική του τιμή.</p>
+<p>Ένας μεμονωμένος αγώνας έχει μεγάλο θόρυβο: μερικά μεγάλα λάθη αρκούν για να διπλασιαστεί η τιμή. Το σήμα και ο απολογισμός του αγώνα (<a class="reference internal" href="manuel_matchs.html#bilan-match"><span class="std std-ref">απολογισμός αγώνα</span></a>) δίνουν το διάστημα 95 % με επαναδειγματοληψία των παρτίδων του· ένα σύνολο (στατιστικά παίκτη ή τουρνουά) το δίνει με επαναδειγματοληψία των αγώνων του· χωρίς φίλτρο παίκτη, οι δύο θέσεις ενός αγώνα αποτελούν μία μονάδα, αφού παίζουν τις ίδιες θέσεις. Χρειάζονται τουλάχιστον τρεις παρτίδες ή τρεις αγώνες, και να μη δίνουν όλοι την ίδια απώλεια: αλλιώς δεν υπάρχει διάστημα. Μια γραμμή ανά αγώνα στα στατιστικά δεν έχει επομένως διάστημα: είναι μία μόνο μονάδα. Μην κατατάσσετε παίκτες βάσει ενός μόνο αγώνα.</p>
+<div class="admonition caution">
+<p class="admonition-title">Προσοχή</p>
+<p>Μια παρτίδα <em>money-game</em> δεν έχει μήκος αγώνα: η απώλεια MWC (ισοδ. 7 πόντων) δεν ορίζεται εκεί και το πάνελ το δηλώνει αντί να εμφανίσει αριθμό. Όπως το κόστος MWC, εξαρτάται από το MET.</p>
+</div>
+<p>Η τρίτη επιλογή του κουμπιού, <strong>MWC 7 pts</strong>, σχεδιάζει αυτή την απώλεια στην καρτέλα Πρόοδος, και την εμφανίζει στις κάρτες του πίνακα ελέγχου και στη σύγκριση πούλια/κύβου της καρτέλας Λάθη, αναλυμένη σε πούλια και κύβο στους ίδιους αγώνες (τα δύο μέρη αθροίζονται). Η κατάταξη των παικτών έχει τη δική της στήλη. Τα γραφήματα χωρίς ισοδύναμο 7 πόντων (ανά ενέργεια κύβου) κρατούν το MWC cost.</p>
+</div></blockquote>
+<p>Η εναλλαγή PR ↔ MWC είναι ακαριαία: δεν πραγματοποιείται κανένας επανυπολογισμός στο backend.</p>
+</section>
+<section id="le-rapport-html">
+<span id="rapport-html"></span><h3>Η αναφορά HTML<a class="headerlink" href="#le-rapport-html" title="Link to this heading"></a></h3>
+<p>Το κουμπί <strong>Αναφορά HTML</strong> στην κεφαλίδα του πίνακα παράγει ένα <strong>αυτόνομο</strong> έγγραφο: ένα μόνο αρχείο, χωρίς εξωτερική εικόνα, χωρίς απομακρυσμένο φύλλο στυλ, χωρίς σενάριο. Τα διαγράμματα είναι ενσωματωμένο SVG, σχεδιασμένα από τον ίδιο μηχανισμό με το ταμπλό στην οθόνη, με τη δική σας παλέτα. Ανοίγει σε οποιονδήποτε περιηγητή, ταξιδεύει με ηλεκτρονικό ταχυδρομείο, και <strong>τυπώνεται σε PDF από τον ίδιο τον περιηγητή</strong> — πράγμα που αποφεύγει την ενσωμάτωση γεννήτριας PDF για κάτι που όλοι έχουν ήδη.</p>
+<p>Περιέχει τους δείκτες του τρέχοντος εύρους (θέσεις, αγώνες, μετρημένες αποφάσεις, PR συνολικό, κινήσεων και κύβου), έπειτα τις <strong>δέκα πιο ακριβές αποφάσεις</strong>, καθεμιά με το διάγραμμά της, το κόστος της, τον αγώνα από τον οποίο προέρχεται και την καλύτερη κίνηση όταν μια ανάλυση τη δίνει.</p>
+<p>Το έγγραφο κατασκευάζεται από τη μηχανή, όχι από την οθόνη: η γραμμή εντολών (<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">report</span> <span class="pre">--html</span></code>, βλ. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Επαναλαμβανόμενα λάθη</span></a>) και ο δαίμονας HTTP (διαδρομή <code class="docutils literal notranslate"><span class="pre">stats.report</span></code>) παράγουν την ίδια αναφορά, σε μία από τις εννέα γλώσσες της διεπαφής. Μόνο η γραφική εφαρμογή σχεδιάζει τα διαγράμματα με την παλέτα του ταμπλό· οι άλλες δύο χρησιμοποιούν την προεπιλεγμένη παλέτα.</p>
+<p>Η αναφορά φέρει το <strong>τρέχον φίλτρο</strong> του πίνακα Στατιστικών. Μια αναφορά που δεν δηλώνει το εύρος της είναι μια αναφορά της οποίας οι αριθμοί δεν σημαίνουν τίποτα: ρυθμίστε το φίλτρο — ένα τουρνουά, ένα εύρος ημερομηνιών, έναν παίκτη — πριν την παραγάγετε.</p>
+</section>
+<section id="onglet-tableau-de-bord">
+<h3>Καρτέλα Πίνακας<a class="headerlink" href="#onglet-tableau-de-bord" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Πίνακας</strong> δίνει μια συνθετική εικόνα των βασικών δεικτών. Διαβάζεται από πάνω προς τα κάτω: οι κάρτες επιπέδου, μετά ό,τι δουλεύεται (πλάνο μελέτης, top blunders), μετά οι αναγνώσεις (κυλιόμενο PR, πριν/μετά τη μελέτη, προσημασμένες μεροληψίες). Η εξήγηση κάθε κάρτας βρίσκεται στο εργαλειοδείκτη (tooltip) του τίτλου της.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_stats_dashboard.png"><img alt="Καρτέλα Πίνακας του πίνακα Stats" src="_images/panel_stats_dashboard.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Η καρτέλα Πίνακας: συνολικό PR, PR πουλιών, PR κύβου.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="cartes-de-niveau">
+<h4>Κάρτες επιπέδου<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
+<p>Τρεις κάρτες εμφανίζουν το PR (ή το MWC) για:</p>
+<ul class="simple">
+<li><p><strong>PR Συνολικό</strong> — όλες τις αποφάσεις (κινήσεις + κύβος)·</p></li>
+<li><p><strong>PR πουλιών</strong> — μόνο τις αποφάσεις κινήσεων·</p></li>
+<li><p><strong>PR Κύβος</strong> — μόνο τις αποφάσεις κύβου.</p></li>
+</ul>
+<p>Κάνοντας κλικ σε μια κάρτα φορτώνονται στον πίνακα ανάλυσης οι θέσεις του αντίστοιχου υποσυνόλου (drill-down). Μια τέταρτη κάρτα, <strong>Απώλεια MWC (ισοδ. 7 πόντων)</strong>, δίνει αυτή την απώλεια ανεξάρτητα από την επιλογή του κουμπιού PR / MWC, με το διάστημά της· δεν φορτώνει τίποτα.</p>
+<p>Κάτω από τις κάρτες, η γραμμή συνόλων μετρά τα τουρνουά, τους αγώνες και τις αποφάσεις του φίλτρου. Ο αριθμός των τουρνουά ανοίγει αυτά τα τουρνουά στο πάνελ Τουρνουά: ένα μόνο τουρνουά ανοίγει απευθείας· περισσότερα περιορίζουν τη λίστα, η οποία φέρει τότε το κουμπί « N τουρνουά ανοιγμένα από τα Στατιστικά × »: αυτό επαναφέρει την πλήρη λίστα.</p>
+<p>Ο αριθμός των αποφάσεων ανοίγει τις θέσεις τους· ο αριθμός των αγώνων ανοίγει αυτούς τους αγώνες στο πάνελ Αγώνες, εκτός όταν είναι ενεργός ένας τύπος απόφασης ή ένα φίλτρο προέλευσης: μετρά τότε λιγότερους αγώνες από όσους θα άνοιγε η λίστα και μένει απλός αριθμός.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο συνολικός αριθμός των αποφάσεων εμφανίζεται στο κάτω μέρος κάθε κάρτας κατά την αιώρηση του δείκτη.</p>
+</div>
+</section>
+<section id="plan-d-etude">
+<span id="plan-etude"></span><h4>Πλάνο μελέτης<a class="headerlink" href="#plan-d-etude" title="Link to this heading"></a></h4>
+<p>Η κάρτα <strong>Πλάνο μελέτης</strong> απαντά στο «τι πρέπει να δουλέψω τώρα;». Τα επαναλαμβανόμενα λάθη (καρτέλα Erreurs) δείχνουν πού έχασε περισσότερο το φίλτρο· δεν δείχνουν πού αποδίδει περισσότερο η μελέτη. Μια οικογένεια πραγματικά δύσκολων θέσεων κοστίζει ακριβά σε όλους, και τρία λάθη δεν κάνουν τάση. Το πλάνο διορθώνει και τα δύο.</p>
+<ul class="simple">
+<li><p>Μια <strong>οικογένεια</strong> είναι μια ομάδα επαναλαμβανόμενων λαθών: ένα σχέδιο παιχνιδιού, ένα είδος απόφασης (πούλια ή κύβος) και ένα θέμα. Τα λάθη χωρίς θέμα δεν σχηματίζουν οικογένεια: δεν υποδεικνύουν τίποτα προς μελέτη.</p></li>
+<li><p>Κάθε λάθος αποτιμάται σε <strong>MWC</strong>, όπως στον πίνακα Match: η απώλειά του ℓ και η <em>δυσκολία</em> του d, η απώλεια που θα είχε υποστεί ένας παίκτης αναφοράς στην ίδια θέση (βλ. τη δυσκολία ανά απόφαση του πίνακα Match). Ένα λάθος σε ελεύθερο παιχνίδι δεν έχει MWC: απλώς μετριέται, «μη αποτιμημένο».</p></li>
+<li><p>Το <strong>ανακτήσιμο MWC</strong> μιας οικογένειας είναι το άθροισμα του ℓ − d στα λάθη της: η συχνότητα της οικογένειας επί τη μέση απώλειά της πέρα από τη δυσκολία. Είναι όσα θα κερδίζατε παίζοντας αυτές τις θέσεις όπως ο παίκτης αναφοράς. Μια οικογένεια αποφεύξιμων λαθών ανεβαίνει, μια οικογένεια θέσεων όπου όλοι κάνουν λάθος κατεβαίνει.</p></li>
+<li><p>Το <strong>διάστημα 95 %</strong> συνοδεύει κάθε αριθμό. Μια οικογένεια μπαίνει στο πλάνο από <strong>5 λάθη</strong> και ένα διάστημα εξ ολοκλήρου πάνω από το μηδέν· το πλάνο ταξινομείται με το κάτω όριο του διαστήματος, ώστε σε ίσο ανακτήσιμο να προηγείται η πιο τεκμηριωμένη οικογένεια. Οι υπόλοιπες αναφέρονται κάτω από τη λίστα, <strong>προς επιβεβαίωση</strong>, χωρίς κατάταξη: το πλάνο δεν σας ωθεί προς τον θόρυβο. Η ίδια γραμμή μετράει τα λάθη <strong>εκτός πλάνου</strong> (χωρίς θέμα, χωρίς αριθμητική εκτίμηση).</p></li>
+</ul>
+<p>Κάθε γραμμή του πλάνου δείχνει την κατάταξή της, την οικογένεια, μια μπάρα της οποίας το μήκος είναι το ανακτήσιμο MWC της σε σχέση με αυτό της πρώτης, αυτό το MWC με το διάστημά του, και τον αριθμό των λαθών. Κάθε πλήθος θέσεων του πλάνου (ανά οικογένεια, προς επιβεβαίωση, εκτός πλάνου) είναι κλικαρίσιμο: φορτώνει στη λίστα ακριβώς αυτές τις θέσεις.</p>
+<p>Κάθε οικογένεια προσφέρει τρεις ενέργειες: το <strong>Μελέτη</strong> ανοίγει την ουρά μελέτης με τις θέσεις της, πρώτη η μεγαλύτερη απόκλιση από τον παίκτη αναφοράς· το <strong>Κουίζ</strong> ξεκινά την άσκηση Απόφαση του πίνακα <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Εκπαίδευση</span></a> με είκοσι από αυτές· το <strong>Anki</strong> τις κάνει πακέτο καρτών. Στην κορυφή της κάρτας, το <strong>Κουίζ στις τρεις πρώτες οικογένειες</strong> επιλέγει είκοσι θέσεις από τις τρεις κορυφαίες οικογένειες. Το πλάνο ακολουθεί το φίλτρο του πίνακα: ορίστε τον παίκτη για να έχετε <em>το δικό σας</em> πλάνο. Στη γραμμή εντολών: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">plan</span></code> (βλ. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Επαναλαμβανόμενα λάθη</span></a>).</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="avant-apres-etude"></span><h4>Πριν/μετά τη μελέτη<a class="headerlink" href="#avant-apres-l-etude" title="Link to this heading"></a></h4>
+<p>Η κάρτα <strong>Πριν/μετά τη μελέτη</strong> κλείνει τον κύκλο του πλάνου: αυτό που δουλέψατε σάς κοστίζει λιγότερο σε πραγματικούς αγώνες; Χωρίς αυτήν, η μελέτη κρίνεται με την εντύπωση· με αυτήν, μια οικογένεια που δεν κινείται παρά τη δουλειά δείχνει ότι πρέπει να αλλάξετε μέθοδο, και μια οικογένεια που βελτιώνεται μπορεί να παραχωρήσει τη θέση της στο πλάνο.</p>
+<ul class="simple">
+<li><p>Μια οικογένεια (αυτή του πλάνου) θεωρείται <strong>μελετημένη</strong> από την ημερομηνία της πρώτης ενέργειας μελέτης σε μία από τις θέσεις της: το σημάδι «μελετημένο» της ουράς μελέτης, μια επανάληψη Anki, μια απάντηση σε κουίζ. Η δημιουργία κάρτας ή η ταξινόμηση μιας θέσης σε συλλογή δεν μετράει.</p></li>
+<li><p>Για κάθε μελετημένη οικογένεια, η κάρτα συγκρίνει δύο <strong>παράθυρα</strong>: τους αγώνες που παίχτηκαν πριν από εκείνη την ημέρα και όσους παίχτηκαν μετά (η ίδια η ημέρα αποκλείεται). Σε καθένα, ο <strong>ρυθμός απώλειας</strong> είναι το MWC που χάθηκε από τα λάθη της οικογένειας, σε σχέση με όλες τις αποφάσεις του ίδιου σχεδίου παιχνιδιού και της ίδιας φύσης, και εμφανίζεται σε μονάδες MWC ανά 100 αποφάσεις.</p></li>
+<li><p>Το <strong>κέρδος</strong> είναι ο ρυθμός πριν μείον τον ρυθμό μετά, με το διάστημά του στο 95 %. Η κρίση είναι «βελτίωση» (ή «επιδείνωση») μόνο αν κάθε παράθυρο έχει τουλάχιστον <strong>30 αποφάσεις</strong> και το διάστημα αποκλείει το μηδέν· διαφορετικά μένει «αδιευκρίνιστο» ή «πολύ λίγες αποφάσεις».</p></li>
+</ul>
+<p>Δίπλα σε κάθε παράθυρο, η στήλη <strong>Θέσεις</strong> μετρά τις διακριτές θέσεις των αποφάσεών του και τις ανοίγει με ένα κλικ· ο αριθμός σε παρένθεση παραμένει ο αριθμός των αποφάσεων, ο παρονομαστής του ρυθμού.</p>
+<p>Είναι μια αλλαγή, όχι ένα αποτέλεσμα: μια οικογένεια μελετάται επειδή κόστιζε, και μέρος του κέρδους είναι οπισθοδρόμηση προς τον μέσο όρο· τίποτα δεν ελέγχει τους αντιπάλους, τη μορφή ή τα ζάρια. Στη γραμμή εντολών: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">effect</span></code> (βλ. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Επαναλαμβανόμενα λάθη</span></a>).</p>
+</section>
+<section id="biais-signes">
+<span id="id1"></span><h4>Προσημασμένες μεροληψίες<a class="headerlink" href="#biais-signes" title="Link to this heading"></a></h4>
+<p>Η κάρτα <strong>Προσημασμένες μεροληψίες</strong> λέει προς ποια κατεύθυνση κάνετε λάθος, όχι μόνο πόσο. Το «δέχεστε υπερβολικά» διορθώνεται καλύτερα από ένα PR: ο κανόνας προς αναθεώρηση κατονομάζεται. Κάθε μεροληψία είναι το ποσοστό των εσφαλμένων αποφάσεων προς τη μία κατεύθυνση μείον το ποσοστό προς την άλλη, με το διάστημά της στο 95 %· μια τάση κατονομάζεται μόνο από <strong>20 αποφάσεις</strong> και με διάστημα που αποκλείει το μηδέν.</p>
+<ul class="simple">
+<li><p><strong>Αποδοχή / απόρριψη</strong> — στις απαντήσεις στον κύβο: εσφαλμένες αποδοχές (το bot απορρίπτει) μείον εσφαλμένες απορρίψεις (το bot δέχεται). Είναι ακριβώς το ποσοστό αποδοχής σας μείον αυτό του bot στις ίδιες θέσεις.</p></li>
+<li><p><strong>Διπλασιασμοί</strong> — στις αποφάσεις διπλασιασμού: πρόωροι διπλασιασμοί (το bot δεν διπλασιάζει, ή η θέση είναι πολύ καλή για διπλασιασμό) μείον χαμένοι διπλασιασμοί. Η ίδια μεροληψία δίνεται <strong>ανά σκορ</strong> (το away σας, του αντιπάλου, ένα σκορ μετά το Crawford μετράει ως 1 πόντος· το ελεύθερο παιχνίδι στο δικό του κελί), για τα σκορ με αρκετές αποφάσεις.</p></li>
+<li><p><strong>Blots</strong> — στις κινήσεις πουλιών με επαφή: οι κινήσεις που αφήνουν περισσότερα blots από την καλύτερη κίνηση μείον όσες αφήνουν λιγότερα. Μια κίνηση αναγνωρίζεται από το ταμπλό που αφήνει, όπως κι αν γράφεται («13/7(2)», «8/5*/4»)· μια κίνηση που η γεννήτρια κινήσεων εξακολουθεί να μην μπορεί να αναπαράγει απορρίπτεται, και το ποσοστό των κινήσεων που απορρίφθηκαν δίνεται κάτω από τον πίνακα. Η μεροληψία μετράει τα blots χωρίς να ζυγίζει την έκθεσή τους: ένα blot εκτός εμβέλειας μετράει όσο ένα εκτεθειμένο.</p></li>
+</ul>
+<p>Δίπλα σε κάθε μέτρηση, το κόστος της σε χιλιοστά του πόντου δείχνει αν η τάση κοστίζει· μια θέση που παίχτηκε σε πολλά ματς μετράει εκεί με την κίνηση που παίχτηκε σε καθένα. Οι μεροληψίες ακολουθούν το φίλτρο του πίνακα. Στη γραμμή εντολών: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">biases</span></code> (βλ. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Επαναλαμβανόμενα λάθη</span></a>).</p>
+<p>Κάθε μέτρηση αποφάσεων (όλες, προς τη μία κατεύθυνση, προς την άλλη) ακολουθείται από μια στήλη <strong>Θέσεις</strong>: τις διακριτές θέσεις αυτών των αποφάσεων, που ανοίγουν με ένα κλικ. Μια θέση που παίχτηκε σε πολλά ματς μετρά μία απόφαση ανά ματς, αλλά μία μόνο θέση.</p>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4>Κυλιόμενο PR στις τελευταίες N αποφάσεις<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
+<p>Μια γραμμή τιμών PR (ή MWC) που υπολογίζονται στις τελευταίες <em>N</em> αποφάσεις (N = 5, 10, 50, 100, 250, 500, 1000) επιτρέπει τη μέτρηση της πρόσφατης τάσης. Οι αχνές τιμές αντιστοιχούν σε N μεγαλύτερο από τον αριθμό των διαθέσιμων αποφάσεων.</p>
+<p>Κάνοντας κλικ σε μια τιμή φορτώνονται οι τελευταίες <em>N</em> αντίστοιχες θέσεις.</p>
+</section>
+<section id="top-blunders">
+<h4>Κορυφαία σφάλματα (Top blunders)<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
+<p>Η λίστα των 10 χειρότερων σφαλμάτων (ή MWC cost), ταξινομημένων κατά φθίνον μέγεθος. Κάνοντας κλικ σε μια γραμμή φορτώνεται η σχετική θέση στον πίνακα ανάλυσης.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3>Καρτέλα Progression<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Progression</strong> παρουσιάζει την εξέλιξη του επιπέδου στο χρόνο.</p>
+<p>Στην κορυφή της καρτέλας, ένας <strong>στόχος</strong>: «PR &lt; 5 μέσα σε δώδεκα εβδομάδες». Ένας στόχος, μια προθεσμία, και μια τάση που λέει προς τα πού πάτε — τίποτα παραπάνω. Ένας στόχος που θα άρχιζε να βαθμολογεί, να συγχαίρει ή να υπενθυμίζει θα ήταν άλλη λειτουργία, όχι αυτή.</p>
+<p>Το κουμπί <strong>Πρόταση</strong> προτείνει έναν στόχο από το τρέχον επίπεδο: το κάτω όριο της ζώνης όπου βρίσκεστε, δηλαδή την είσοδο στην επόμενη. Το να προτείνεις «λίγο καλύτερα» δεν θα αγκυρωνόταν πουθενά· το να προτείνεις μια ζώνη λέει κάτι — το πέρασμα από μέσο σε προχωρημένο φαίνεται και λέγεται.</p>
+<p>Η <strong>τάση</strong> είναι προσαρμογή ελαχίστων τετραγώνων στο PR των αγώνων σας, προβαλλόμενη στην προθεσμία. Αρνείται να αποφανθεί κάτω από τρεις αγώνες: το να χαράξεις ευθεία ανάμεσα σε δύο σημεία θα ήταν ισχυρισμός που δεν στέκει. Και η φράση το λέει κάθε φορά — <em>μια τάση δεν είναι πρόβλεψη</em>.</p>
+<p>Ο στόχος αποθηκεύεται στα <strong>μεταδεδομένα της βάσης</strong>, όχι στη διαμόρφωση: αφορά αυτή τη βιβλιοθήκη, άρα ακολουθεί το αρχείο και όχι το μηχάνημα. Καμία αλλαγή σχήματος: το <code class="docutils literal notranslate"><span class="pre">metadata</span></code> είναι ήδη πίνακας κλειδιών/τιμών, αναγνώσιμος από το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> όπως και από τον δαίμονα.</p>
+<section id="courbe-par-tournoi">
+<h4>Γραμμικό γράφημα ανά τουρνουά<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
+<p>Ένα γράφημα γραμμής εμφανίζει το PR (ή MWC) κάθε τουρνουά: ένα σημείο ανά τουρνουά, με το όνομά του ως ετικέτα, με τη χρονολογική σειρά της ημερομηνίας του — ελλείψει αυτής, εκείνης του παλαιότερου αγώνα του (άξονας Y: τιμή της μετρικής). Έγχρωμες ζώνες σημειώνουν τα όρια επιπέδου.</p>
+<p>Κάνοντας κλικ σε ένα σημείο του γραφήματος ανοίγει ένα μενού περιβάλλοντος με δύο επιλογές:</p>
+<ul class="simple">
+<li><p><strong>Άνοιγμα τουρνουά</strong> — ανοίγει το τουρνουά στον πίνακα Τουρνουά.</p></li>
+<li><p><strong>Άνοιγμα θέσεων</strong> — φορτώνει όλες τις θέσεις του τουρνουά στον πίνακα ανάλυσης.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4>Διάγραμμα διασποράς ανά αγώνα<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
+<p>Ένα διάγραμμα διασποράς αναπαριστά κάθε αγώνα (άξονας X: ημερομηνία, άξονας Y: PR ή MWC). Το μέγεθος του σημείου είναι ανάλογο του αριθμού αποφάσεων στον αγώνα. Ένας αγώνας χωρίς ημερομηνία δεν εμφανίζεται.</p>
+<p>Κάνοντας κλικ σε ένα σημείο ανοίγει ένα μενού περιβάλλοντος:</p>
+<ul class="simple">
+<li><p><strong>Άνοιγμα αγώνα</strong> — ανοίγει τον αγώνα στον πίνακα αγώνων.</p></li>
+<li><p><strong>Άνοιγμα θέσεων</strong> — φορτώνει όλες τις θέσεις του αγώνα στον πίνακα ανάλυσης.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3>Καρτέλα Erreurs<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Erreurs</strong> αναλύει τις πηγές των σφαλμάτων.</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_stats_errors.png"><img alt="Καρτέλα Errors του πίνακα Stats" src="_images/panel_stats_errors.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Η καρτέλα Errors: κατανομή του PR ανά ενέργεια κύβου.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="erreurs-recurrentes">
+<h4>Επαναλαμβανόμενα λάθη<a class="headerlink" href="#erreurs-recurrentes" title="Link to this heading"></a></h4>
+<p>Στην κορυφή της καρτέλας, ένας πίνακας ομαδοποιεί τα λάθη του τρέχοντος φίλτρου — άρα μόνο ενός παίκτη όταν έχει φιλτραριστεί ένας παίκτης — ανά <strong>σχέδιο παιχνιδιού</strong> και ανά <strong>θέμα</strong>, με πρώτο το πιο δαπανηρό. Απαντά στο ερώτημα «πού χάνω τα περισσότερα;»: για παράδειγμα, «κράτημα · πολλά blots».</p>
+<ul class="simple">
+<li><p>Ένα <strong>λάθος</strong> είναι μια μετρημένη απόφαση της οποίας το κόστος φτάνει το όριο <em>Λάθος</em> της βιβλιοθήκης.</p></li>
+<li><p>Το <strong>σχέδιο παιχνιδιού</strong> είναι αυτό του παίκτη που έχει σειρά, όπως το παρουσιάζει η καρτέλα Αναλύσεις.</p></li>
+<li><p>Το <strong>θέμα</strong> μιας κίνησης πούλιων είναι αυτό που ονομάζουν οι κανόνες της πρότασης εξήγησης του <a class="reference internal" href="manuel_bibliotheque.html#panneau-analyse"><span class="std std-ref">Πίνακα Ανάλυσης</span></a>: υποτιμημένο gammon, πολλά blots, σημείο που δεν έγινε, υπερβολικά παθητικό. Το θέμα μιας απόφασης κύβου είναι η κατεύθυνση του λάθους, όπως στην κατεύθυνση των λαθών κύβου παρακάτω: χαμένο διπλασιασμό, πρόωρο διπλασιασμό, λανθασμένο πάσο, λανθασμένη αποδοχή.</p></li>
+<li><p>Ένα λάθος που κανένας κανόνας δεν ονομάζει με βεβαιότητα δεν εικάζεται: βγαίνει από την κατάταξη και εμφανίζεται χωριστά, κάτω από τον πίνακα, σε μία γραμμή ανά σχέδιο παιχνιδιού («χωρίς αναγνωρισμένο θέμα: N λάθη, κόστος X»), επίσης με δυνατότητα κλικ. Αυτό το υπόλοιπο είναι συχνά το βαρύτερο, επειδή η εξήγηση εκφέρεται μόνο από 60 mp και πάνω, πάνω από το όριο <em>Λάθος</em>: κατατεταγμένο με τα άλλα, θα βρισκόταν επικεφαλής ενός πίνακα που δεν θα έλεγε τίποτα.</p></li>
+<li><p>Το <strong>κόστος</strong> είναι το μερίδιο του PR του φίλτρου που αντιπροσωπεύει η ομάδα: ο τύπος του PR εφαρμοσμένος στα λάθη της ομάδας, σε σχέση με όλες τις μετρημένες αποφάσεις. Τα κόστη των ομάδων δεν ξεπερνούν λοιπόν ποτέ το PR.</p></li>
+</ul>
+<p>Το κλικ σε μια ομάδα, ή στον αριθμό των λαθών της, φορτώνει τις θέσεις της, από την πιο δαπανηρή στη λιγότερο δαπανηρή. Το θέμα υπολογίζεται εκ νέου σε κάθε εμφάνιση και δεν αποθηκεύεται ποτέ: όπως το σχέδιο παιχνιδιού, είναι μια παράγωγη ετικέτα που δεν επεξεργάζεται. Στη γραμμή εντολών: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">recurring</span></code> (βλ. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Επαναλαμβανόμενα λάθη</span></a>).</p>
+<p>Κάθε γραμμή προσφέρει τρεις τρόπους για να περάσετε από το λάθος στη μελέτη: το <strong>Κουίζ για αυτή την ομάδα</strong> ξεκινά την άσκηση Απόφαση του πίνακα <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Εκπαίδευση</span></a> με τις θέσεις της ομάδας, η <strong>Τράπουλα Anki</strong> φτιάχνει από αυτές μια τράπουλα καρτών, η <strong>Συλλογή</strong> τις βάζει σε μια νέα συλλογή. Πάνω από τον πίνακα, το <strong>Κουίζ για τις τρεις χειρότερες ομάδες μου</strong> κληρώνει είκοσι θέσεις από εκείνες των τριών πιο δαπανηρών ομάδων. Στη γραμμή εντολών, το <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span> <span class="pre">--quiz</span></code> κληρώνει αυτές τις θέσεις και το <code class="docutils literal notranslate"><span class="pre">--deck</span></code> δημιουργεί την τράπουλα.</p>
+</section>
+<section id="repartition-par-action-de-videau">
+<h4>Κατανομή ανά ενέργεια κύβου<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
+<p>Ένα ραβδόγραμμα εμφανίζει το PR (ή το MWC) για κάθε τύπο απόφασης κύβου: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Κάθε ράβδος υποδεικνύει επίσης τον αριθμό των αποφάσεων και το ποσοστό σφαλμάτων σε επεξηγηματική ετικέτα.</p>
+<p>Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις που αντιστοιχούν σε αυτή την ενέργεια κύβου, <strong>μόνο εκείνες με σφάλμα</strong> (drill-down).</p>
+</section>
+<section id="direction-des-erreurs-de-videau">
+<h4>Κατεύθυνση των λαθών κύβου<a class="headerlink" href="#direction-des-erreurs-de-videau" title="Link to this heading"></a></h4>
+<p>Η παραπάνω κατανομή δείχνει <em>πόσο</em> κοστίζουν οι αποφάσεις κύβου· ο πίνακας αυτός δείχνει προς <em>ποια κατεύθυνση</em> σφάλλουν.</p>
+<p>Μια θέση κύβου φέρει δύο αποφάσεις που λαμβάνονται από δύο διαφορετικούς παίκτες, οι οποίες παρουσιάζονται εδώ σε δύο γραμμές:</p>
+<ul class="simple">
+<li><p><strong>Προσφορά</strong> — ο παίκτης που κατέχει τον κύβο διπλασιάζει ή όχι. Τα λάθη του είναι τα <strong>χαμένα διπλασιάσματα</strong> (έπρεπε να διπλασιάσει) και τα <strong>πρόωρα διπλασιάσματα</strong> (δεν έπρεπε).</p></li>
+<li><p><strong>Απάντηση</strong> — ο παίκτης στον οποίο προσφέρεται ο κύβος δέχεται ή πασάρει. Τα λάθη του είναι τα <strong>λανθασμένα πάσα</strong> (μια σωστή αποδοχή πασαρίστηκε) και οι <strong>λανθασμένες αποδοχές</strong> (ένα σωστό πάσο έγινε αποδεκτό).</p></li>
+</ul>
+<p>Οι δύο γραμμές παραμένουν χωριστές σκόπιμα: ένας παίκτης μπορεί κάλλιστα να διπλασιάζει αργά <em>και</em> να δέχεται χαλαρά, και ένας ενιαίος δείκτης θα το αποκαλούσε «ισορροπημένο» χάνοντας και τα δύο μισά της πληροφορίας.</p>
+<p>Κάθε κελί εμφανίζει το πλήθος των αποφάσεων· το tooltip δίνει τη συσσωρευμένη χαμένη ισοδυναμία. Το κλικ σε ένα κελί φορτώνει τις αντίστοιχες θέσεις. Ένα κελί με μηδέν δεν είναι κλικαρίσιμο.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο πίνακας αυτός μετρά αποφάσεις, δεν κρίνει. Από ποια απόκλιση και έπειτα μια τάση αξίζει να ονομαστεί εξαρτάται από το μέγεθος του δείγματος και από ένα σημείο αναφοράς, που δεν είναι δεδομένα της μηχανής.</p>
+</div>
+</section>
+<section id="repartition-checker-cube">
+<h4>Σύγκριση Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<p>Ένα συγκριτικό διάγραμμα τοποθετεί δίπλα-δίπλα το PR των κινήσεων πουλιών και των αποφάσεων κύβου. Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις του υποσυνόλου με σφάλμα.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4>Ιστόγραμμα των μεγεθών σφάλματος<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<p>Ένα ιστόγραμμα κατανέμει τα σφάλματα σύμφωνα με το μέγεθός τους σε millipoints (mpt, διαστήματα: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις του διαστήματος.</p>
+</section>
+</section>
+<section id="entrainement-dans-le-temps">
+<span id="stats-entrainement"></span><h3>Η εκπαίδευση στον χρόνο<a class="headerlink" href="#entrainement-dans-le-temps" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Εκπαίδευση</strong> τοποθετεί δίπλα-δίπλα, στα ίδια ημερολογιακά παράθυρα — την <strong>εβδομάδα</strong> ή τον <strong>μήνα</strong>, κατ” επιλογήν — τρεις σειρές που μετρούν την πρόοδο με τρεις τρόπους:</p>
+<ul class="simple">
+<li><p>το <strong>PR του κουίζ</strong>: αυτό των συνεδριών της άσκησης Απόφαση του πίνακα Εκπαίδευση, σταθμισμένο με τον αριθμό των κριθεισών αποφάσεων. Υπολογίζεται στην κλίμακα του πραγματικού PR, άρα είναι συγκρίσιμο με αυτό·</p></li>
+<li><p>το <strong>PR των αγώνων</strong> του τρέχοντος φίλτρου, σταθμισμένο με τον αριθμό των αποφάσεων·</p></li>
+<li><p>η <strong>διατήρηση του Anki</strong>: το ποσοστό των επαναλήψεων ήδη μαθημένων καρτών που βαθμολογήθηκαν <em>Δύσκολο</em> ή καλύτερα, στον δεξιό άξονα (σε %).</p></li>
+</ul>
+<p>Κάτω από το γράφημα, το <strong>PR κουίζ ανά πλάνο παιχνιδιού</strong> απαριθμεί τις αποφάσεις του κουίζ από θέσεις της βιβλιοθήκης, με τα χειρότερα πλάνα πρώτα, μαζί με το PR του τελευταίου παραθύρου στο οποίο παίχτηκε το πλάνο.</p>
+<p>Σε παρένθεση, ο αριθμός των αποφάσεων ή των επαναλήψεων πίσω από κάθε τιμή: ένα παράθυρο χωρίς δείγματα δεν έχει τιμή — παύλα, όχι μηδέν. Ο αριθμός των αποφάσεων αγώνων ενός παραθύρου ανοίγει τις θέσεις τους. Το φίλτρο περιορίζει μόνο τους αγώνες· το ημερολόγιο του κουίζ και του Anki είναι δικά σας και δεν φέρουν παίκτη. Τίποτα άλλο δεν καταγράφεται: οι τρεις σειρές διαβάζονται ξανά από τα υπάρχοντα ημερολόγια. Στη γραμμή εντολών: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">training</span></code> (βλ. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Επαναλαμβανόμενα λάθη</span></a>).</p>
+</section>
+<section id="onglet-ventilations">
+<h3>Καρτέλα Αναλύσεις<a class="headerlink" href="#onglet-ventilations" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Αναλύσεις</strong> τεμαχίζει τις ίδιες αποφάσεις που μετρούν τα συνολικά μεγέθη κατά τέσσερις άξονες. Κανένας δεν επαναπροσδιορίζει τι μετρά ως απόφαση: θα ήταν ένα δεύτερο PR με το ίδιο όνομα.</p>
+<ul class="simple">
+<li><p><strong>Ανά φάση παιχνιδιού</strong> — άνοιγμα, μέσο παιχνίδι, κούρσα, μάζεμα. Αυτό απαντά στο «το PR μου στην κούρσα έναντι του PR μου στην επαφή». Η ετικέτα υπολογίζεται από το ταμπλό (βλ. <a class="reference internal" href="manuel_bibliotheque.html#panneau-recherche"><span class="std std-ref">Πίνακας Αναζήτησης</span></a>)· μια βάση της οποίας οι φάσεις δεν υπολογίστηκαν ποτέ τα κατατάσσει όλα ως <em>Αταξινόμητη</em>, και η <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> τη συμπληρώνει.</p></li>
+<li><p><strong>Ανά σχέδιο παιχνιδιού</strong> — κούρσα, blitz, άγκυρα, backgame, φράγμα κατά φράγματος… Αυτή είναι η ανάλυση για την οποία υπάρχει ο ταξινομητής: «πού χάνω περισσότερα;», σχέδιο προς σχέδιο. Ίδια παράγωγη ετικέτα με τη φάση, ίδιες επιφυλάξεις, και το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> τη γεμίζει με τον ίδιο τρόπο.</p></li>
+<li><p><strong>Ανά ετικέτα</strong> — τα <code class="docutils literal notranslate"><span class="pre">#λέξη</span></code> γραμμένα στα σχόλια. Μια θέση μπορεί να φέρει πολλές: <strong>αυτές οι γραμμές δεν αθροίζονται στο σύνολο</strong>, και ο πίνακας το λέει από κάτω. Μια ετικέτα χαρακτηρίζει, δεν διαμερίζει.</p></li>
+<li><p><strong>Ανά σκορ</strong> — οι πόντοι που λείπουν και στα δύο στρατόπεδα, διαβασμένοι από την πλευρά του παίκτη που παίζει, δηλαδή από την πλευρά αυτού που αποφασίζει. Η γραμμή <em>Money</em> είναι το παιχνίδι για χρήματα. Ένα κελί με λιγότερες από δέκα αποφάσεις είναι <strong>γκριζαρισμένο με το πλήθος του ορατό</strong> αντί να κρύβεται: πολύ λίγες για να διαβαστούν, αλλά η παράλειψη παραμένει επαληθεύσιμη.</p></li>
+</ul>
+<p>Οι στήλες <strong>Θέσεις</strong> και <strong>Σοβαρά λάθη</strong> μετρούν διακριτές θέσεις, και κάθε αριθμός είναι σύνδεσμος: ένα κλικ φορτώνει ακριβώς αυτές τις θέσεις στον πίνακα ανάλυσης, όπως οι μετρητές της γραμμής κατάστασης. Το <em>Σοβαρά λάθη</em> μετράει τις θέσεις όπου τουλάχιστον μία απόφαση είναι σοβαρό λάθος. Μια θέση που παίχτηκε σε πολλούς αγώνες (ένα άνοιγμα, για παράδειγμα) μετράει εκεί μόνο μία φορά· η στήλη <strong>Αποφάσεις</strong> την μετράει κάθε φορά, διότι είναι ο παρονομαστής του PR.</p>
+<p>Κάθε γραμμή φέρει το <strong>διάστημα εμπιστοσύνης 95 %</strong> της (στήλη <em>ΔΕ 95 %</em>), που αντικαθιστά το σταθερό όριο των δέκα αποφάσεων: λέει πόσο αξίζει ένα PR, όχι μόνο πόσες αποφάσεις το στηρίζουν. Κάνει επαναδειγματοληψία των <strong>αγώνων</strong> της επιλογής, όχι των αποφάσεων ούτε των παρτίδων: οι παρτίδες ενός αγώνα μοιράζονται αντίπαλο, συνεδρία και κόπωση, και η μέτρησή τους ως ανεξάρτητων θα έδινε υπερβολικά στενό διάστημα· χωρίς φίλτρο παίκτη, οι δύο θέσεις ενός αγώνα αποτελούν μία μονάδα. Μια γραμμή που στηρίζεται σε λιγότερους από τρεις αγώνες, ή της οποίας όλοι οι αγώνες δίνουν το ίδιο PR, δεν έχει διάστημα και εμφανίζεται αχνή, ακόμη και με πολλές αποφάσεις: δύο αγώνες δεν λένε τίποτα για τη διασπορά, και πανομοιότυποι αγώνες λένε ότι συμφωνούν, όχι ότι το PR είναι ακριβές. Για τη μελέτη: μια οικογένεια θέσεων της οποίας το διάστημα μένει πάνω από το συνολικό σας PR είναι τεκμηριωμένη αδυναμία· μια γραμμή με πλατύ διάστημα δεν δικαιολογεί ακόμη πρόγραμμα μελέτης. Το συνολικό PR του πίνακα ελέγχου φέρει το ίδιο διάστημα, κάτω από την κάρτα του.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Στην ανάλυση ανά σκορ, ένα σκορ μετά το Crawford διαβάζεται ως 1-away: το παιχνίδι Crawford και τα παιχνίδια μετά το Crawford στο ίδιο σκορ καταλήγουν στο ίδιο κελί.</p>
+</div>
+</section>
+<section id="etude-et-jeu-reel">
+<h3>Μελέτη και πραγματικό παιχνίδι<a class="headerlink" href="#etude-et-jeu-reel" title="Link to this heading"></a></h3>
+<p>Η εντολή <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">study</span> <span class="pre">--days</span> <span class="pre">30</span></code> βάζει δίπλα-δίπλα τρεις αριθμούς, σχέδιο προς σχέδιο: πόσες <strong>διακριτές θέσεις</strong> επαναλήφθηκαν στην περίοδο, ποιο ήταν το PR <strong>πριν</strong> από αυτήν, ποιο είναι το PR <strong>έκτοτε</strong>.</p>
+<p>Τρεις αριθμοί, και όχι τέταρτος. Δεν υπάρχει <strong>ούτε στήλη κέρδους ούτε βέλος</strong>, γιατί τίποτα εδώ δεν ελέγχει τίποτα: ο παίκτης μπορεί να συνάντησε ισχυρότερους αντιπάλους, να άλλαξε μορφή, ή απλώς να έπαιξε περισσότερες κούρσες αυτόν τον μήνα. Η σύγκριση ανήκει στον αναγνώστη· μια στήλη που θα ανήγγελλε αποτέλεσμα θα ισχυριζόταν αιτιότητα που αυτά τα δεδομένα δεν φέρουν. Οι αριθμοί, πάντως, είναι ακριβείς.</p>
+<p>Οι επαναλήψεις μετρώνται σε <strong>διακριτές θέσεις</strong>: μια κάρτα που επαναλήφθηκε τέσσερις φορές τον μήνα είναι μία θέση που μελετήθηκε, και το να μετρηθούν οι επαναλήψεις θα έκανε έναν μήνα παπαγαλίας να μοιάζει με μήνα κάλυψης. Οι αποφάσεις του PR, αντίθετα, μετρώνται όλες — καθεμιά πάρθηκε μία φορά. Ένα PR που στηρίζεται σε λιγότερες από δέκα αποφάσεις εμφανίζεται <code class="docutils literal notranslate"><span class="pre">—</span></code>, με το δείγμα του ορατό δίπλα.</p>
+</section>
+<section id="onglet-joueurs">
+<h3>Καρτέλα Παίκτες<a class="headerlink" href="#onglet-joueurs" title="Link to this heading"></a></h3>
+<p>Οι πέντε προηγούμενες καρτέλες περιγράφουν <strong>έναν</strong> παίκτη· η καρτέλα <strong>Παίκτες</strong> τους συγκρίνει όλους. Εμφανίζει μια γραμμή ανά παίκτη της βάσης, πράγμα που απαντά στην ανάγκη ενός διοργανωτή που παρακολουθεί ένα ολόκληρο τουρνουά αντί για έναν παίκτη.</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_stats_players.png"><img alt="Καρτέλα Players του πίνακα Stats" src="_images/panel_stats_players.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Η καρτέλα Players: μία γραμμή ανά παίκτη, ταξινομήσιμη κατά οποιαδήποτε στήλη.</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Στήλες, με τη σειρά:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Στήλη</p></th>
+<th class="head"><p>Σημασία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Παίκτης</p></td>
+<td><p>Το όνομα <strong>όπως εμφανίζεται στους αγώνες</strong>. Ένας παίκτης καταχωρισμένος με δύο γραφές εμφανίζεται σε δύο γραμμές, εκτός αν η μία είναι ψευδώνυμο της άλλης (ενότητα Σώμα αγώνων των ρυθμίσεων): η γραμμή φέρει τότε το κανονικό όνομα.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Αγώνες</p></td>
+<td><p>Πλήθος αγώνων που παίχτηκαν στην επιλεγμένη περίοδο.</p></td>
+</tr>
+<tr class="row-even"><td><p>Ν–Η</p></td>
+<td><p>Νίκες και ήττες. Ένας ημιτελής αγώνας (κολοβωμένο αρχείο, εγκατάλειψη) δεν μετρά ούτε ως νίκη ούτε ως ήττα: το Ν + Η μπορεί επομένως να είναι μικρότερο από το πλήθος των αγώνων.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Αποφάσεις</p></td>
+<td><p>Πλήθος μετρημένων αποφάσεων — ο παρονομαστής του PR. Είναι η στήλη που λέει τι αξίζουν οι διπλανοί δείκτες: ένα PR υπολογισμένο σε δώδεκα αποφάσεις δεν σημαίνει τίποτα.</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>Συνολικό Performance Rating.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PR πουλιών, PR κύβου</p></td>
+<td><p>Το PR αναλυμένο ανά τύπο απόφασης.</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie</p></td>
+<td><p>Snowie Error Rate (βλ. <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Σοβαρά λάθη</p></td>
+<td><p>Πλήθος σφαλμάτων που φτάνουν το κατώφλι blunder της βιβλιοθήκης (0,100 EMG εξ ορισμού). Ένα κλικ σε αυτόν τον αριθμό φορτώνει αυτές τις θέσεις στο πάνελ ανάλυσης.</p></td>
+</tr>
+<tr class="row-even"><td><p>Τύχη</p></td>
+<td><p>Μέση τύχη ανά ζαριά, σε millipoints (mpt), με πρόσημο: θετική αν τα ζάρια ήταν ευνοϊκά.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Χρήση:</p>
+<ul class="simple">
+<li><p><strong>Ταξινόμηση</strong> — κάντε κλικ σε μια κεφαλίδα στήλης. Ο πίνακας ανοίγει ταξινομημένος κατά αύξον PR, με τον καλύτερο παίκτη πρώτο, και θυμάται από τη μία συνεδρία στην άλλη την τελευταία ταξινόμηση που επιλέχθηκε. Οι παίκτες για τους οποίους δεν μετρήθηκε τίποτα παραμένουν στο κάτω μέρος όποια και αν είναι η φορά της ταξινόμησης: ένα μηδέν ελλείψει δεδομένων δεν είναι τέλεια απόδοση.</p></li>
+<li><p><strong>Φιλτράρισμα ανά στήλη</strong> — η γραμμή πεδίων κάτω από τις κεφαλίδες φιλτράρει κάθε στήλη: ένα κομμάτι ονόματος για το κείμενο, ένα όριο για τους αριθμούς (<code class="docutils literal notranslate"><span class="pre">&gt;=500</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;500</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;2.5</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=2</span></code>), ένα διάστημα (<code class="docutils literal notranslate"><span class="pre">3-7</span></code>) ή μια ακριβή τιμή (<code class="docutils literal notranslate"><span class="pre">5</span></code>). Ένα μη αναγνώσιμο πεδίο περιβάλλεται με κόκκινο και δεν φιλτράρει τίποτα· μια τιμή που δεν μετρήθηκε ποτέ δεν περνά κανένα όριο. Τα φίλτρα στηλών διαρκούν όσο η συνεδρία. Η <strong>κατάταξη</strong> των παικτών διαβάζεται έτσι: ταξινόμηση κατά PR, στήλη <em>Αποφάσεις</em> φιλτραρισμένη με <code class="docutils literal notranslate"><span class="pre">&gt;=500</span></code>. Όλοι οι πίνακες του πάνελ Stats — αναλύσεις, σώμα δεδομένων, επαναλαμβανόμενα λάθη, χρόνος σκέψης, εξάσκηση, μεροληψία, αποτέλεσμα της μελέτης — ταξινομούνται και φιλτράρονται με τον ίδιο τρόπο.</p></li>
+<li><p><strong>Άνοιγμα λεπτομερειών παίκτη</strong> — κάντε κλικ σε μια γραμμή. Ο παίκτης επιλέγεται στη γραμμή φίλτρων και η προβολή μεταβαίνει στην καρτέλα Πίνακας.</p></li>
+<li><p><strong>Άνοιγμα των αποφάσεών του</strong> — ο αριθμός των αποφάσεων ανοίγει τις θέσεις τους, υπό τα φίλτρα του πίνακα. Ο αριθμός των αγώνων και το ισοζύγιο Ν–Η μένουν απλοί αριθμοί: μετρούν και τους αγώνες χωρίς αναλυμένη απόφαση, που καμία λίστα αγώνων δεν αναπαράγει.</p></li>
+<li><p><strong>Περιορισμός της περιόδου</strong> — τα φίλτρα ημερομηνιών, τουρνουά και μήκους αγώνα ισχύουν κανονικά, πράγμα που επιτρέπει τον περιορισμό του πίνακα στις ημερομηνίες μιας διοργάνωσης.</p></li>
+<li><p><strong>Σύγκριση δύο παικτών</strong> — τσεκάρετε το κουτί της πρώτης στήλης σε δύο γραμμές. Πάνω από τον πίνακα εμφανίζεται ένα πλαίσιο που παραθέτει τους δείκτες τους αντικριστά· τσεκάροντας τρίτο παίκτη αντικαθίσταται ο παλαιότερος από τους δύο. Το κουτί δεν επιλέγει τη γραμμή: το τσεκάρισμα συγκρίνει, το κλικ ανοίγει τη λεπτομέρεια.</p></li>
+<li><p><strong>Δείτε τις θέσεις όπου ο ένας έπαιξε καλύτερα</strong> — το κουμπί του μπλοκ σύγκρισης παραθέτει τις θέσεις που έπρεπε να παίξουν και οι δύο παίκτες και όπου ο ένας έπαιξε καλά (κάτω από το όριο Σφάλματος της βιβλιοθήκης) και ο άλλος όχι, με τη μεγαλύτερη διαφορά πρώτη· ο παίκτης κρίνεται από την χειρότερη κίνησή του στη θέση. Το <em>Άνοιγμα αυτών των θέσεων</em> τις φορτώνει στην προβολή ανάλυσης. Η γραμμή εντολών και ο διακομιστής δίνουν την ίδια λίστα (<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">contrast</span></code>).</p></li>
+<li><p><strong>Πρώτα βαθμολόγηση των κινήσεων</strong> — η λίστα συγκρίνει μόνο κινήσεις των οποίων το σφάλμα έχει βαθμολογηθεί, και καμία εισαγωγή δεν τις βαθμολογεί: η βαθμολόγηση γίνεται κατόπιν αιτήματος. Όσο απομένουν κινήσεις προς βαθμολόγηση, το μπλοκ δίνει τον αριθμό τους με ένα κουμπί <em>Βαθμολόγηση κινήσεων</em>· η γραμμή εντολών κάνει το ίδιο με <code class="docutils literal notranslate"><span class="pre">repair</span> <span class="pre">--move-errors</span></code>.</p></li>
+</ul>
+<p>Στο πλαίσιο αυτό <strong>μόνο οι ρυθμοί παίρνουν ετυμηγορία</strong>, και ο καλύτερος από τους δύο μπαίνει με έντονα. Τρεις δείκτες δεν παίρνουν ποτέ, και αξίζει να ειπωθεί γιατί. Η <strong>τύχη</strong> δεν είναι προσόν: ένας πιο τυχερός παίκτης δεν είναι καλύτερος. Οι <strong>αγώνες, το ρεκόρ και οι αποφάσεις</strong> δείχνουν τι αξίζουν οι ρυθμοί, αλλά αν τα βάζαμε σε ανταγωνισμό θα κέρδιζε όποιος απλώς έπαιξε περισσότερο. Το <strong>πλήθος των blunder</strong> δεν συγκρίνεται ωμό — δώδεκα στις χίλιες αποφάσεις είναι καλύτερα από δέκα στις εκατό —, γι” αυτό το πλαίσιο προσθέτει μια γραμμή <em>Blunder / 100 αποφ.</em> που όντως συγκρίνεται, και αφήνει το πλήθος δίπλα ως συμφραζόμενο.</p>
+<p>Η ισοπαλία δεν είναι νίκη: δεν μπαίνει με έντονα σε καμία πλευρά. Ένας ρυθμός χωρίς τίποτα από πίσω εμφανίζεται ως «—» και δεν κρίνει τίποτα.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Σε αυτή την καρτέλα, η επιλογή του <strong>τύπου απόφασης</strong> είναι απενεργοποιημένη: ο πίνακας κατανέμει ήδη τις αποφάσεις πουλιών και κύβου σε ξεχωριστές στήλες. Ο παίκτης της γραμμής φίλτρων παραμένει ενεργός: ο πίνακας δείχνει πάντα όλους τους παίκτες, και η γραμμή αυτού του παίκτη επισημαίνεται και φέρνεται στην οθόνη.</p>
+</div>
+<p>Δύο όψεις του σώματος δεδομένων υπάρχουν στην καρτέλα <strong>Corpus</strong> του πάνελ, στη γραμμή εντολών και μέσω του API του δαίμονα (βλ. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Επαναλαμβανόμενα λάθη</span></a>): το <strong>πρόσωπο με πρόσωπο</strong> δύο παικτών (κοινοί αγώνες, PR του καθενός, απολογισμός) και το κυλιόμενο <strong>PR ανά ημερολογιακό παράθυρο</strong> (1, 3, 6 ή 12 μήνες). Η καρτέλα Corpus υπολογίζει κάθε όψη κατά απαίτηση, υπό το τρέχον φίλτρο. Η <strong>κατάταξη</strong> κατά PR διαβάζεται στην καρτέλα Παίκτες, ταξινομημένη κατά PR και φιλτραρισμένη στη στήλη <em>Αποφάσεις</em>· η γραμμή εντολών και το API την παρέχουν επίσης (<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">ranking</span></code>). Ένα <strong>φίλτρο προέλευσης</strong> (πεδία <em>Μηχανή</em> και <em>Ελάχ. βάθος</em> της γραμμής φίλτρων) περιορίζει τα στατιστικά στις αποφάσεις που αναλύθηκαν έτσι· αφορά κάθε απόφαση και τα νούμερα που επηρεάζει υπολογίζονται τότε εκ νέου από τις αποφάσεις. Το πρόσωπο με πρόσωπο και το PR ανά παράθυρο δεν το δέχονται: όσο είναι ενεργό, αρνούνται να υπολογιστούν. Όπως και η υπόλοιπη γραμμή, διατηρείται από τη μία συνεδρία στην άλλη.</p>
+<p>Στην καρτέλα Corpus, κάθε γραμμή ανοίγει ό,τι συνοψίζει. Το ισοζύγιο της αντιπαράθεσης ανοίγει τους αγώνες του στο πάνελ Αγώνες, που φέρει τότε το κουμπί «N αγώνες ανοιγμένοι από τα Stats ×»: επαναφέρει ολόκληρη τη λίστα· μια γραμμή αντιπαράθεσης ανοίγει τον αγώνα της. Ο πρώτος παίκτης της αντιπαράθεσης είναι εξαρχής εκείνος της γραμμής φίλτρων. Μια γραμμή παραθύρου και ο αριθμός αποφάσεών της ανοίγουν τις θέσεις της, ο αριθμός αγώνων της ανοίγει τους αγώνες. Ένας αριθμός θέσεων του πάνελ Stats, σε οποιαδήποτε καρτέλα, βγαίνει πρώτα από τον τρέχοντα αγώνα πριν ανοίξει τη λίστα του· η εντολή <code class="docutils literal notranslate"><span class="pre">m</span></code> ξανανοίγει έπειτα τον αγώνα στην αποθηκευμένη κίνηση.</p>
+<div class="admonition important">
+<p class="admonition-title">Σημαντικό</p>
+<p>Μια παύλα («—») σημαίνει τιμή που <strong>δεν μετρήθηκε ποτέ</strong>, να μη συγχέεται με το μηδέν. Αυτό ισχύει ιδίως για τη στήλη Τύχη σε κάθε αγώνα που εισήχθη πριν από την έκδοση 2.15.0 του σχήματος: η τύχη δεν διατηρούνταν τότε, και τίποτα δεν επιτρέπει την εκ των υστέρων ανασύστασή της. Η επανεισαγωγή του αρχείου προέλευσης δεν αρκεί: η εισαγωγή αναγνωρίζει διπλότυπο και εφαρμόζει μόνο τις σημάνσεις μελέτης που ανατέθηκαν εκ νέου (η αναφορά δίνει τον αριθμό τους). Ο αγώνας πρέπει να διαγραφεί και έπειτα να εισαχθεί ξανά. Οι μορφές που δεν τη μεταφέρουν (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) δεν θα τη δώσουν ποτέ.</p>
+</div>
+</section>
+<section id="regle-d-agregation">
+<h3>Κανόνας συνάθροισης<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Σημαντικό</p>
+<p>Το PR ενός τουρνουά (ή οποιουδήποτε υποσυνόλου) υπολογίζεται με τον κανόνα <strong>άθροισμα/άθροισμα</strong> — ποτέ ως μέσος όρος των επιμέρους PR των αγώνων.</p>
+<p>Τύπος:</p>
+<div class="math notranslate nohighlight">
+\[PR_{tournoi} = 500 \times \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\]</div>
+<p><strong>Παράδειγμα:</strong> ένας παίκτης παίζει δύο αγώνες σε ένα τουρνουά —</p>
+<ul class="simple">
+<li><p>Αγώνας A: 10 αποφάσεις, 0,100 χαμένης ισοδυναμίας → PR = 5,0</p></li>
+<li><p>Αγώνας B: 90 αποφάσεις, 0,540 χαμένης ισοδυναμίας → PR = 3,0</p></li>
+</ul>
+<p>Αφελής μέσος όρος των PR: (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(λανθασμένο)</em></p>
+<p>Κανόνας άθροισμα/άθροισμα: 500 × 0,640 / (10 + 90) = <strong>3,2</strong> <em>(σωστό)</em></p>
+<p>Ο κανόνας άθροισμα/άθροισμα είναι ο μόνος που χειρίζεται σωστά τη διακύμανση του μήκους των αγώνων (ένας αγώνας 21 πόντων ζυγίζει περισσότερο από έναν αγώνα 1 πόντου).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3>MWC: περιορισμοί<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Από προεπιλογή, το MWC cost υπολογίζεται από τη <strong>MET Kazaross-XG2</strong>, τον de facto πίνακα αναφοράς στο αγωνιστικό τάβλι. Τα αποτελέσματα δεν είναι άμεσα συγκρίσιμα με λογισμικά που χρησιμοποιούν άλλα MET. Είναι ο ίδιος πίνακας, διαβασμένος από το ίδιο σημείο εισόδου, με εκείνον που χρησιμοποιεί ο ενσωματωμένος αξιολογητής για τις αποφάσεις κύβου του στο σκορ: τα στατιστικά και η μηχανή δεν μπορούν να αποκλίνουν σε αυτό. Δίνει δικές του τιμές έως 25 πόντους προς κατάκτηση από κάθε πλευρά· πέρα από εκεί, επεκτείνεται με έναν πίνακα Zadeh υπολογισμένο όπως αυτόν του GNUbg, μέχρι τους 64.</p></li>
+<li><p>Οι θέσεις <em>money-game</em> (χωρίς σκορ αγώνα) <strong>εξαιρούνται</strong> από τον υπολογισμό MWC. Αν η βάση δεδομένων σας περιέχει πολλές θέσεις money-game, το MWC cost μπορεί να υποεκτιμηθεί ή να μην είναι διαθέσιμο.</p></li>
+<li><p>Το MWC cost είναι σωρευτικό σε ολόκληρο το φιλτραρισμένο σύνολο δεδομένων — όχι δείκτης ανά απόφαση. Μετρά τη συνολική επίδραση των σφαλμάτων σας στις πιθανότητες νίκης σας.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_tournois.html" class="btn btn-neutral float-left" title="Τουρνουά" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_eval.html" class="btn btn-neutral float-right" title="Αξιολόγηση" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

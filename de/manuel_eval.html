@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bewertung &mdash; blunderDB 0.46.1 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=fd310db5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=9bf55d28"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Training, Anki und Duell" href="manuel_entrainement.html" />
+    <link rel="prev" title="Statistiken" href="manuel_stats.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Sprachen">
+  <a href="../fr/manuel_eval.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_eval.html" lang="en" hreflang="en">English</a>
+  <span class="current" lang="de" aria-current="true">Deutsch</span>
+  <a href="../el/manuel_eval.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_eval.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_eval.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_eval.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_eval.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_eval.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Erste Schritte</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download und Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Benutzerhandbuch</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referenz</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Handbuch</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Erste Schritte und Oberfläche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyse, Kommentare und Suche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Matches und Transkription</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Turniere</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Statistiken</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Bewertung</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-eval">Eval-Panel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#matrice-du-videau">Dopplerwürfel-Matrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#panneau-donnees-de-reference">Panel Referenzdaten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#amener-une-position-dans-le-panneau-eval">Eine Stellung in das Eval-Panel bringen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-eval">Methodik und Annahmen des Eval-Panels</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Training, Anki und Duell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Import, Herkunft und Weitergabe</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriken und Lernwerkzeuge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste der Befehle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Tastenkürzel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Befehlszeilenschnittstelle (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Häufig gestellte Fragen (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-Modus (Server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-Vertrag</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anhänge</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anhang: Fortgeschrittene Nutzung der Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anhang Windows: Was tun, wenn Windows den Start blockiert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-Anhang: Mögliche Blockierung von blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anhang: Datenbankschema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versionsverlauf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Über blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Handbuch</a></li>
+      <li class="breadcrumb-item active">Bewertung</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="evaluation">
+<span id="manuel-eval"></span><h1>Bewertung<a class="headerlink" href="#evaluation" title="Link to this heading"></a></h1>
+<section id="panneau-eval">
+<span id="panneau-epc"></span><h2>Eval-Panel<a class="headerlink" href="#panneau-eval" title="Link to this heading"></a></h2>
+<p>Das Panel <strong>Eval</strong> (<em>STRG-E</em>) bewertet live jede Stellung, die auf dem Brett steht, ganz gleich welche; bei einer Ausspielstellung spezialisiert es sich und berechnet zusätzlich den EPC (Effective Pip Count). Es wird aktiviert, indem man <em>STRG-E</em> drückt, auf den Reiter Eval im unteren Panel klickt, oder den Befehl <code class="docutils literal notranslate"><span class="pre">eval</span></code> ausführt; <code class="docutils literal notranslate"><span class="pre">epc</span></code>, sein früherer Name, öffnet es ebenfalls. Das Panel hieß zunächst <em>EPC</em>, dann <em>Bearoff</em>, bevor es zu <em>Eval</em> wurde — hier ist also zu suchen, was eine frühere Version das Bearoff-Panel nannte, wobei der Name nur noch den Konfigurationsreiter der Ausspieltabellen bezeichnet.</p>
+<p>Das Panel zeigt stets die <strong>einzige Entscheidung</strong>, die die auf dem Brett gelegte Stellung verlangt — nie zwei zugleich — und die dazugehörigen Fakten. Jede Größe wird in der Achse gelesen, die zu ihr passt, statt in einer einzigen aufgezwungenen Achse: Die Gewinn-, Gammon- und Backgammon-Wahrscheinlichkeit und die Cubeless-Equity jedes Spielers, <em>vor dem Wurf</em> berechnet, werden <strong>je Spieler</strong> gelesen (unten, oben, dann Δ), links von der Doppler-Entscheidung, solange keine Würfel gelegt sind. Fakten und Entscheidung bleiben nebeneinander: Die Doppler-Entscheidung rutscht nie unter die Zahlen, die sie begründen, unabhängig von der Sprache der Oberfläche und der Stellung auf dem Brett. Sobald Würfel gelegt sind, wechseln dieselben Werte <em>vor dem Wurf</em> die Achse: Sie werden <strong>für die Seite am Zug</strong> gelesen, am Kopf der Liste der Kandidatenzüge, als kursive Zeile <em>vor dem Wurf</em> — kein weiterer Kandidatenzug, sondern ein Bezugspunkt, an dem jeder Zug gemessen wird. Der Abstand zwischen dieser Zeile und einem Zug enthält das Glück des Wurfs, nie das Verdienst des Zugs, und sie trägt deshalb keine Fehlerspalte. Bei einer reinen Bearoff-Stellung trägt eine zweite Tabelle, stets <strong>je Spieler</strong> und stets vorhanden, mit oder ohne gelegte Würfel, den EPC, den Pip-Count, das Wastage, die durchschnittliche Wurfzahl und die Standardabweichung; diese fünf Spalten wandern nie. Die beiden Tabellen sind gestapelt und teilen dasselbe Spaltenraster: gleiche Ränder, gleiche Spaltenmarken, eine einzige Spalte mit Farbpunkten — sie lesen sich wie ein einziges Objekt mit zwei Etagen. Über den Tabellen trägt das Kopfband den Titel, das Regime-Badge und die Nennung der Engine (die Tiefe der letzten Bewertung steht ebenfalls dort), rechts dann das Kontrollkästchen <em>Challenge</em> und die Schaltfläche <em>Zur Datenbank hinzufügen</em>. Solange gammonNet nichts geliefert hat, sagt das Panel es in einer Zeile: „Bewertung…“, oder „Stellung aufbauen“ auf einem leeren Brett.</p>
+<p>Nur die Liste der Kandidatenzüge scrollt — auch die Zeile <em>vor dem Wurf</em> bleibt über ihr angeheftet; der Rest des Panels (Fakten, Badge, Doppler-Entscheidung) bleibt stets sichtbar, ohne besondere Einstellung der Panelgröße.</p>
+<p>Die Faktentabelle und die Entscheidung werden von gammonNet berechnet, eingebettet, ohne XG und ohne gnubg. Die Berechnung folgt der Stellung, ohne je die Oberfläche einzufrieren: Eine 0-Ply-Tiefe erscheint sofort bei jeder Eingabe; dann, nach einer halben Sekunde Ruhe, ersetzt sie eine tiefere Bewertung im Hintergrund (standardmäßig 2 Ply, einstellbar im Reiter <em>gammonNet</em> der Einstellungen) — jede neue Eingabe bricht diese Hintergrundberechnung ab. Die im Badge-Band angezeigte Tiefe, oder bei einer Rennstellung innerhalb des Regime-Badges, ist stets diejenige, die den gezeigten Wert tatsächlich erzeugt hat, nie die angeforderte; sie wird nicht in jeder Zeile wiederholt, da eine Live-Bewertung für alle Züge dieselbe Tiefe teilt. Die Equity der Kandidatenzüge und der Doppler-Entscheidung folgt dem Spielstand der Stellung: Im Money-Game wird sie in Punkten ausgedrückt, bei einem Matchstand in <strong>normalisierter Equity</strong> — derselben Skala wie XG und GNU Backgammon, auf der der Gewinn des aktuellen Dopplerwerts +1 und sein Verlust −1 zählt — nie in derselben Tabelle gemischt. Die Spaltenüberschrift nennt es ausdrücklich, statt die Skala erraten zu lassen: „Equity (money)“ im Money Game, „Equity (match)“ bei einem Matchstand. Sie berücksichtigt den <strong>lebenden Dopplerwürfel</strong>: Die Suche bewertet jede Endstellung mit dem Dopplermodell (Janowski, gemessene Effizienz) im Dopplerzustand der Stellung, wie es XG und GNU Backgammon in der <em>cubeful</em>-Bewertung tun. Das macht beim Spielstand die Effekte Gammon-Go und Gammon-Save sichtbar — bei 4-away/2-away zieht der zurückliegende Spieler bei einer Eröffnung 6-4 8/2 6/2, weil sein frühes Doppeln dem Gammon den Wert des Matches gibt, was eine Bewertung ohne Doppler nicht sehen kann. Die Zeile <em>vor dem Wurf</em> bleibt dagegen eine <strong>Cubeless-Equity</strong>: Das ist eine Tatsache der Stellung, keine Entscheidung. Die Bewertung wird nie gespeichert: Sie ist eine Berechnung, keine Analyse. Ein Klick auf einen Kandidatenzug zeigt ihn als Pfeile auf dem Brett, genau wie im Analyse-Panel. Die dezente Schaltfläche <strong>?</strong> im Badge-Band führt zum Repository der Engine <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>; die vollständige Nennung (Strehl-Netz, gammonNet-Konfiguration) steht in den Danksagungen der Hilfe.</p>
+<p>Das Panel <strong>rollt</strong> die Stellung wie das Panel Analyse (siehe <a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Rollouts</span></a>): <em>Strg+Klick</em> und <em>Umschalt+Klick</em> wählen Züge aus, der Rechtsklick öffnet dasselbe Menü — Rollout, Kopie der Stellung und der Bewertung oder der Stellung und der ausgewählten Züge —, <em>Umschalt+R</em> startet oder stoppt das Rollout und <em>Esc</em> bricht es ab; ein dünner Balken folgt den gespielten Partien, und jeder gerollte Zug trägt sein Ergebnis in der Spalte <strong>Rollout</strong> (ohne Würfel, unter der Würfelentscheidung). Da das Brett ein Entwurf ist, wird das Rollout nie gespeichert: Es wird im Speicher gespielt, ohne geöffnete Datenbank wie bei einer schreibgeschützten Datenbank, und sein Ergebnis wird nur angezeigt, solange das Brett unverändert bleibt. Ein vor einer Änderung des Bretts gestartetes Rollout wird auf der neuen Stellung nicht angezeigt.</p>
+<p>Die Schaltfläche <strong>Zur Datenbank hinzufügen</strong> am Ende der Badge-Leiste, nach dem Kontrollkästchen <em>Challenge</em>, speichert die auf dem Brett liegende Stellung in der Datenbank; <em>STRG-S</em>, der Befehl <code class="docutils literal notranslate"><span class="pre">w</span></code> und die Schaltfläche <em>Position speichern</em> der Werkzeugleiste tun dasselbe. Die für dieses Brett angezeigte gammonNet-Bewertung (die Züge, wenn die Würfel gesetzt sind, sonst der Doppler, mit ihrer Tiefe) wird mit der Stellung gespeichert, so wie die Stapelanalyse sie geschrieben hätte: Die Suche <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span> <span class="pre">ad:gammonnet</span></code> findet diese Stellungen (auf der Kommandozeile <code class="docutils literal notranslate"><span class="pre">--individual</span></code> mit <code class="docutils literal notranslate"><span class="pre">--analysis</span> <span class="pre">gammonnet</span></code>). War die Stellung bereits mit einer Analyse in der Datenbank (importiert, gammonNet mit anderer Tiefe, Rollout), bleibt diese Analyse unverändert, und die Statusleiste meldet, dass die angezeigte Bewertung nicht gespeichert wurde; ohne angezeigte Bewertung (Engine läuft noch oder Stellung abgelehnt) wird nur die Stellung geschrieben, ebenso wenn sich die Match-Equity-Tabelle seit der Berechnung geändert hat, was die Statusleiste meldet. Ist die automatische gammonNet-Analyse aktiviert, startet danach ihr Stapel, wie nach einem Import. Die Statusleiste nennt die Nummer der Stellung, auch wenn sie schon in der Datenbank war: Sie ist dann als einzeln importiert markiert, und der Filter <em>Einzeln importiert</em> (<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>) findet sie. Das Panel bleibt auf demselben Brett geöffnet, das ein Entwurfsbrett bleibt: Man kann einen Stein verschieben und die Variante hinzufügen, und das Verlassen des Panels führt zu dem zurück, was man untersuchte. Die Schaltfläche ist deaktiviert, solange keine Datenbank geöffnet ist oder die Stellung nicht gespeichert werden kann (zum Beispiel die Startstellung des Panels, in der der obere Spieler alle Steine abgetragen hat); ihr Tooltip nennt den Grund.</p>
+<p>Der Benutzer bearbeitet die Stellung der Steine auf dem gesamten Brett, genau wie im Bearbeitungsmodus: Linksklick setzt einen Stein des unteren Spielers, Rechtsklick einen Stein des oberen Spielers. Die zweite Tabelle, die des Rennens, erscheint nur, wenn die entstandene Stellung ein reines Bearoff ist (alle Steine beider Spieler in ihrem Heimfeld); bei jeder anderen Stellung antwortet nur die Tabelle der vier gemeinsamen Spalten (Gewinn, Gammon, Backgammon, Cubeless), und die Entscheidung betrifft die Steine oder einen generischen Doppler, je nachdem, ob Würfel gelegt sind.</p>
+<p>In jeder Faktentabelle eine Zeile pro Spieler — gekennzeichnet durch seinen Farbpunkt, der schwarze Spieler steht immer unten. Die erste trägt, solange keine Würfel gelegt sind, Gewinn, Gammon, Backgammon (Wahrscheinlichkeiten, ohne das %-Zeichen) und die Cubeless-Equity des Spielers; die zweite, bei einer Bearoff-Stellung und mit oder ohne gelegte Würfel, den EPC, den Pip-Count, das Wastage (Differenz zwischen EPC und Pip-Count), die durchschnittliche Wurfzahl und die Standardabweichung. Wenn beide Spieler vergleichbare Werte haben, gibt eine Zeile <strong>Δ</strong> die <em>vorzeichenbehafteten</em> Differenzen an (unten − oben: negativ, wenn der schwarze Spieler vorne liegt). Außerhalb einer Rennstellung lässt das Legen von Würfeln daher die Faktentabellen selbst verschwinden: Die vier Spalten, die sie trugen, haben soeben die Achse gewechselt, zur Seite am Zug, an den Kopf der Zugliste.</p>
+<p>Die Doppler-Entscheidung hat immer dieselbe Form, woher die Zahlen auch stammen — exakte Tabelle, bewertetes Regime oder gewöhnliche gammonNet-Bewertung: <strong>eine Zeile pro Option</strong>, in der Reihenfolge <em>kein Doppeln</em>, <em>Doppeln/Take</em>, <em>Doppeln/Pass</em>, mit ihrer Equity im Bezugssystem der Stellung und ihrem Abstand zur besten Option. Die Reihenfolge ändert sich nie, anders als bei der Zugliste: Die drei Optionen tragen einen Namen, man liest also den Namen, nicht den Rang. Die beste erkennt man an ihrer Hervorhebung und an ihrer leer gelassenen Abstandszelle. Wurde der Doppler bereits gedreht, lauten die Optionen <em>kein Redoppeln</em>, <em>Redoppeln/Take</em>, <em>Redoppeln/Pass</em>.</p>
+<p>Eine letzte Zeile gibt das <strong>Urteil</strong>. Es nimmt vier Werte an: <em>kein Doppeln</em>, <em>Doppeln, nehmen</em>, <em>Doppeln, passen</em> und <em>zu gut zum Doppeln</em>, Letzteres, wenn das Weiterspielen der Stellung mehr einbringt als das Kassieren des Punktes: Doppeln wäre dann ein Fehler aus dem umgekehrten Grund wie beim einfachen <em>kein Doppeln</em>. Es ist auch die einzige Stelle, an der das Panel sagt, dass es <strong>kein</strong> Urteil gibt, statt eine laufende Berechnung vorzutäuschen:</p>
+<ul class="simple">
+<li><p><em>keine Entscheidung</em> — das Regime hat keinen Anspruch darauf; das Würfel-Urteil wird nie geschätzt (siehe das Badge <em>geschätzt</em>);</p></li>
+<li><p><em>bei diesem Stand nicht auswertbar</em> — die Engine lehnt die Stellung ab, typischerweise ein Spielstand außerhalb des Horizonts der Match-Equity-Tabelle, also eine Seite mit mehr als 64 zu spielenden Punkten;</p></li>
+<li><p><em>gegnerischer Doppler</em> und <em>Doppler tot (Crawford)</em> — der Doppler kann nicht gedreht werden. Die Equities bleiben zur Orientierung angezeigt, aber keine Option trägt einen Abstand: Ein Fehler ist das, was eine Wahl kostet, und es gibt keine Wahl.</p></li>
+</ul>
+<p>Im Money Game erscheinen die auf der Position aktiven Regeln <strong>Jacoby</strong> und <strong>Beaver</strong> unter der Doppelwürfeltabelle, als kleine Badges neben dem Urteil, das sie verändern: Das Urteil „kein Doppeln“ einer Position unter der Jacoby-Regel ist nicht dieselbe Berechnung wie ohne sie, und nichts anderes auf dem Bildschirm sagte das aus.</p>
+<p>Unter der <strong>Beaver</strong>-Regel gilt die Zeile <em>Doppeln, Annehmen</em> die beste Antwort des Gegners außer dem Aufgeben: annehmen oder <em>beavern</em> — sofort zurückdoppeln und den Würfel behalten, sodass die Partie um das Vierfache des Einsatzes gespielt wird —, worauf der Doppelnde mit einem <em>Raccoon</em> antwortet (das Achtfache des Einsatzes, Würfel bei ihm), wenn es sich für ihn lohnt. Urteil und Fehler werden in dieser Zeile abgelesen, wie ohne die Regel; im Match gilt die Regel nicht.</p>
+<p>Ein drittes Abzeichen, <strong>Max. Verdopplung</strong>, erscheint, wenn die Quellkennung den Verdopplungswürfel deckelt — bei Matchstand ebenso wie im Money Game. Dieses beschreibt nicht die darüber gezeigte Berechnung: Der eingebaute Evaluator modelliert keine Obergrenze, das Urteil gilt also für einen freien Verdopplungswürfel. Genau deshalb steht das Abzeichen dort: Ein gedeckelter Verdopplungswürfel ist der eine sichtbare Grund, aus dem blunderDB und eXtreme Gammon zur selben Stellung zwei verschiedene Urteile verkünden können.</p>
+<p>Der <strong>Spieler am Zug</strong> und die <strong>Position des Dopplers</strong> werden direkt auf dem Brett bearbeitet, wie im Bearbeitungsmodus: Ein Klick auf das Bearoff-/Score-Rechteck eines Spielers macht ihn zum Spieler am Zug; ein Klick auf den Doppler wechselt zyklisch zentriert → Besitz unten → Besitz oben (Rechtsklick in umgekehrter Richtung). Der Wert des Dopplers bleibt fest — im Money-Game werden die Equities in Einheiten des aktuellen Dopplers ausgedrückt, nur sein Besitzer zählt. Die Analyse wird sofort neu berechnet. Im geschätzten Regime ist das Badge selbst anklickbar und öffnet direkt den Reiter <em>Bearoff</em> der Einstellungen; sein Tooltip erklärt, warum (Würfel-Urteil nicht schätzbar, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>) und wie sich der exakte Bereich erweitern lässt.</p>
+<p>Auch der <strong>Spielstand</strong> wird direkt auf dem Brett bearbeitet, wie im Bearbeitungsmodus: Linksklick auf das Score-Rechteck eines Spielers verringert die Zahl seiner noch benötigten Punkte, Rechtsklick erhöht sie. Verlässt man den <em>Money</em>-Spielstand (-1, -1) durch Bearbeiten nur einer Seite, wird die andere Seite automatisch auf denselben Wert gesetzt, statt einen inkonsistenten Spielstand stehen zu lassen. Bei einer Bearoff-Stellung im Regime <em>exakt</em> lässt der Wechsel von einem Money-Spielstand zu einem Matchstand die Gewinnwahrscheinlichkeit unverändert (ein Wert aus der Datenbank, gültig in jedem Bezugssystem), schaltet aber die angezeigte Equity und das Würfel-Urteil auf die des Regimes <em>bewertet</em> um — die exakte Tabelle ist konstruktionsbedingt Money und kann die beim Matchstand gestellte Frage nicht beantworten. Das Badge wird dann zusammengesetzt („exakt (Gewinn) · bewertet (Würfel)“), um dies ausdrücklich zu sagen.</p>
+<p>Die <strong>Würfel</strong> schließlich werden auf dieselbe Weise bearbeitet, und sie entscheiden, welche Frage gestellt wird: gelegte Würfel ergeben eine Steinentscheidung (die Liste der Kandidatenzüge), keine Würfel eine Doppler-Entscheidung. Ein Linksklick auf einen Würfel erhöht seinen Wert (6 springt auf 1), ein Rechtsklick verringert ihn (1 springt auf 6); ein Klick auf einen Würfel auf einem Brett ohne Würfel legt zwei auf einmal — ein einzelner Würfel wäre weder eine Steinentscheidung noch eine Doppler-Entscheidung. Ein Klick auf das Rechteck eines Spielers entfernt die Würfel, um eine Doppler-Frage zu stellen, und der nächste Klick auf einen Würfel legt sie wieder so hin, wie sie waren.</p>
+<p><em>RÜCKTASTE</em> oder <em>Position löschen</em> im Menü eines Rechtsklicks außerhalb des Bretts löscht die Stellung: leeres Brett, Money-Spielstand (-1, -1), keine gelegten Würfel — panel-eigene Werte des Eval-Panels, die sich von denen des Bearbeitungsmodus unterscheiden (7 überall, Würfel 3-1), um mit dem übereinzustimmen, was das Panel standardmäßig anzeigt. <em>Startposition</em> setzt im selben Menü die Steine eines neuen Spiels auf dieselben Werte.</p>
+<section id="matrice-du-videau">
+<span id="eval-matrice-videau"></span><h3>Dopplerwürfel-Matrix<a class="headerlink" href="#matrice-du-videau" title="Link to this heading"></a></h3>
+<p>Eine Dopplerwürfel-Entscheidung ist keine Eigenschaft des Bretts. Dieselben Steine, derselbe Pipstand, sind bei 2-away/4-away ein Doppel und bei 4-away/2-away keines; wer die Money-Antwort gelernt hat, hat eine Zelle eines Rasters gelernt. Das Eval-Panel zeigt die Zelle, die die Stellung trägt; die <strong>Dopplerwürfel-Matrix</strong> zeigt das ganze Raster.</p>
+<p>Der Befehl <code class="docutils literal notranslate"><span class="pre">cm</span></code> öffnet sie für die angezeigte Stellung. Jede Zelle gibt das Urteil bei einem Punktestand: die Zeile ist die Zahl der Punkte, die dem Spieler am Zug noch fehlen, die Spalte die des Gegners. Die vier Urteile lauten <em>KD</em> (kein Doppel), <em>DA</em> (Doppel, Annahme), <em>DP</em> (Doppel, Pass) und <em>ZG</em> (zu gut); eine von der Engine abgelehnte Zelle trägt ein Fragezeichen und nennt beim Überfahren den Grund sowie die drei Equities der Zelle. Drei Matchlängen stehen zur Wahl: 5, 7 und 9 Punkte.</p>
+<p>Das Feld des Punktestands, den die Position tatsächlich trägt, ist umrahmt, und seine Zeilen- und Spaltenköpfe sind unterstrichen: Das Lesen beginnt dort, „mein Feld und alles darum herum“. Umrahmt wird es, sobald beide <em>Away</em>-Punktestände der Position in das angezeigte Raster passen; ein Wechsel der Länge verschiebt den Rahmen oder entfernt ihn. Eine Money-Position, das Crawford-Spiel oder ein <em>Away</em> jenseits des Rasters bezeichnen kein Feld: Es gibt kein Feld zu zeigen, und ein ungefähres zu zeigen wäre falsch.</p>
+<p>Der eigene Punktestand der Stellung wird durch den jeder Zelle ersetzt; ihr <strong>Dopplerwürfel</strong> bleibt erhalten. Das Raster beantwortet, bei welchem Punktestand man <em>diesen</em> Würfel drehen würde, nicht was eine zentrierte Stellung täte. Es gilt durchgehend nach Crawford: im Crawford-Spiel ist der Würfel nicht im Spiel, und eine Spalte „Sie dürfen nicht doppeln“ würde nichts über die Stellung sagen.</p>
+<p>Jede Zelle ist eine eigene Suche. Die Engine berücksichtigt den Punktestand — bei 2-away spielt sie nicht dieselbe Partie wie bei 7-away —, also wäre eine einzige, durch verschiedene Match-Equities gelesene Suche genau dort falsch, wo der Punktestand zählt. Das Raster erscheint zuerst mit 0-Ply und wird dann in der eingestellten Anzeigetiefe neu berechnet, sobald das Fenster ruht: dieselbe Eskalation wie im Rest des Panels, für ein 9-Punkte-Raster von etwa anderthalb Sekunden.</p>
+<p>Dasselbe Raster wird außerhalb der Oberfläche mit dem Befehl <a class="reference internal" href="cli_analyse.html#cli-cubematrix"><span class="std std-ref">cubematrix</span></a> der Kommandozeile berechnet.</p>
+</section>
+<section id="panneau-donnees-de-reference">
+<span id="panneau-reference"></span><h3>Panel Referenzdaten<a class="headerlink" href="#panneau-donnees-de-reference" title="Link to this heading"></a></h3>
+<p>Das Panel <strong>Referenzdaten</strong> vereint die Tabellen des Spielstands. Es öffnet sich mit <em>STRG-UMSCHALT-R</em> oder dem Befehl <code class="docutils literal notranslate"><span class="pre">ref</span></code>, auch ohne geöffnete Datenbank. Die Befehle <code class="docutils literal notranslate"><span class="pre">met</span></code>, <code class="docutils literal notranslate"><span class="pre">tp2</span></code>, <code class="docutils literal notranslate"><span class="pre">tp4</span></code> und ihre Varianten <code class="docutils literal notranslate"><span class="pre">_live</span></code> / <code class="docutils literal notranslate"><span class="pre">_last</span></code>, <code class="docutils literal notranslate"><span class="pre">gv1</span></code>, <code class="docutils literal notranslate"><span class="pre">gv2</span></code> und <code class="docutils literal notranslate"><span class="pre">gv4</span></code> öffnen es im Reiter der gewünschten Tabelle (MET, Take-Points oder Gammon-Werte; die Varianten derselben Familie öffnen denselben Reiter). Die Zeilen und Spalten sind die zum Matchgewinn fehlenden Punkte: Die Zeile ist der Spieler, von dem die Rede ist, die Spalte sein Gegner. Fünf Reiter:</p>
+<ul class="simple">
+<li><p><strong>MET</strong> — die Match-Equity-Tabelle Kazaross-XG2, von 1 bis 15 fehlenden Punkten, als Prozent der Chancen, das Match zu gewinnen;</p></li>
+<li><p><strong>Take Points</strong> — beim Würfel 2 (von 2 bis 9 fehlenden Punkten) und beim Würfel 4 (von 3 bis 9), jeweils in zwei nebeneinanderliegenden Raster: langes Rennen (lebendiger Würfel) und letzter Wurf (toter Würfel);</p></li>
+<li><p><strong>Gammon-Werte</strong> — bei den Würfeln 1, 2 und 4;</p></li>
+<li><p><strong>Zusammengefasst</strong> — ein Raster von 2 bis 9 fehlenden Punkten, mit einer Legende oben, die die Anordnung jedes Feldes erläutert. Jedes Feld trägt drei Zeilen: den Take Point beim Würfel 2 (lebendig / tot), beim Würfel 4 (lebendig / tot), dann die Gammon-Werte bei den Würfeln 1, 2 und 4, in abgeschwächter Farbe. Ein Strich kennzeichnet einen Wert, den die Tabelle bei diesem Spielstand nicht definiert;</p></li>
+<li><p><strong>Neils Zahlen</strong> — eine Kopfrechen-Abkürzung der MET, von Neil Kazaross.</p></li>
+</ul>
+<p><strong>Neils Zahlen.</strong> Die Equity des Führenden wird geschätzt als E ≃ 50 % + (Punktedifferenz) × Neil(<em>n</em>), wobei <em>n</em> die Zahl der fehlenden Punkte des <strong>Zurückliegenden</strong> ist. Der Tab gibt die Zahl für jedes <em>n</em> von 3 bis 25 an, als ganze Zahl mit exaktem Bruch (6½ bei 7, 5⅔ bei 9, 5⅓ bei 10, 4¾ bei 12; ohne Bruchzeichen „3 5⁄12“): die Ankerpunkte (10 bei 3 fehlenden Punkten, 9 bei 4, 8 bei 5, 7 bei 6, 6 bei 8, 5 bei 11, 4 bei 15, 3½ bei 19 und 3 bei 25) stehen in aufrechter Schrift, die Zwischenwerte, durch lineare Interpolation zwischen zwei Ankern gewonnen, kursiv. Zum Beispiel ergibt sich bei 3 fehlenden Punkten gegen 5 die Schätzung 50 + 2 × 8 = 66 %, und die MET liefert 64,8 %. Der Tab zeigt die Zeile der Zahlen, dann ein Raster Führender × Zurückliegender, von 2 bis 15 fehlenden Punkten: jedes Feld gibt die Schätzung und, klein, ihre Abweichung von der MET Kazaross-XG2 an, um zu zeigen, wo die Abkürzung abweicht. Die Abkürzung gilt nicht, wenn der Führende bei 1 oder 2 fehlenden Punkten steht: die Zeile des Führenden bei 2 fehlenden Punkten zeigt den MET-Wert, in abgeschwächter Farbe und ohne Abweichung.</p>
+</section>
+<section id="amener-une-position-dans-le-panneau-eval">
+<span id="eval-amener-position"></span><h3>Eine Stellung in das Eval-Panel bringen<a class="headerlink" href="#amener-une-position-dans-le-panneau-eval" title="Link to this heading"></a></h3>
+<p>Das Panel öffnet sich standardmäßig mit einer Bearoff-Stellung, doch die Untersuchung geht meist von einer bereits vorliegenden Stellung aus. Vier Gesten bringen sie dorthin:</p>
+<ul class="simple">
+<li><p><strong>Rechtsklick auf das Brett</strong>, in einem Analyse-Panel oder während der Navigation in einem Match, dann <em>Diese Position auswerten</em>: Das Eval-Panel öffnet sich direkt mit dieser Stellung, so wie sie angezeigt wird; <em>Das Spiegelbild dieser Position auswerten</em> öffnet sie dort aus der Sicht der anderen Seite. Das Kontextmenü erscheint weder im Eval-Panel noch im Suchpanel, wo die rechte Maustaste bereits zum Setzen der Steine der anderen Farbe dient.</p></li>
+<li><p><strong>Rechtsklick auf das Brett, dann</strong> <em>In einem neuen Tab auswerten</em>: Eine neue Ansicht namens <em>Variante von #n</em> (n ist die Nummer der ursprünglichen Ansicht) öffnet sich im Eval-Panel mit der angezeigten Stellung, in der sich Varianten frei aufbauen lassen. Die ursprüngliche Ansicht behält ihre Stellung, ihre Liste und ihre Analyse. Diese Wahl wird im Transkriptions-Panel nicht angeboten.</p></li>
+<li><p><strong>CTRL-C, dann CTRL-V</strong>: die Stellung aus dem Analyse-Panel kopieren und dann einmal im Eval-Panel einfügen. Das Einfügen akzeptiert auch eine Kennung von anderswo — eine XGID (eXtreme Gammon, GNU Backgammon, eine andere blunderDB-Instanz) oder eine OGID (OpenGammon): Sie muss nur in der Zwischenablage liegen.</p></li>
+<li><p><strong>Der Befehl</strong> <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">XGID=…</span></code> (oder <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">OGID=…</span></code>) für den Fall, dass die Kennung nicht in der Zwischenablage steht, sondern in einer Nachricht, in einem im Terminal gelesenen Forum oder von einem Skript erzeugt wurde. Es ist derselbe Befehl wie <code class="docutils literal notranslate"><span class="pre">import</span></code> allein: ohne Argument öffnet er eine Dateiauswahl, mit Argument liest er die Kennung. Der Weg ist danach mit dem des Einfügens identisch — dieselbe Lesung, dieselbe Deduplizierung, dasselbe Öffnen der importierten Stellung.</p></li>
+</ul>
+<p>Eine OGID trägt nur eine Stellung: keine Auswertung, keinen Kommentar. Die Stellung kommt also ohne Analyse an, genau wie eine nackte XGID, und der eingebaute Evaluator kann die Lücke danach füllen.</p>
+<p>In einer OGID erkennt man das Crawford-Spiel am <code class="docutils literal notranslate"><span class="pre">C</span></code> hinter der Matchlänge (<code class="docutils literal notranslate"><span class="pre">7C</span></code>): Fehlt es, ist ein Spieler, dem ein Punkt zum Sieg fehlt, bereits nach dem Crawford-Spiel.</p>
+<p><strong>Ein Screenshot des Bretts</strong> (eXtreme Gammon, Standardthema) lässt sich auf drei Arten einlesen: das Bild einfügen (<em>CTRL-V</em>), auf das Fenster ziehen oder mit <em>CTRL-I</em> öffnen (<code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>). Es wird keine Datenbank benötigt. Die gelesene Position landet auf dem Bearbeitungsbrett und ist nur ein Vorschlag: Punkte und Doppler, bei denen sich die Lesung nicht sicher ist, werden orange umkreist; ein Zweifel, der sich nicht umkreisen lässt (die Richtung des Bretts, wenn die Punktnummern außerhalb des Bildes liegen, unlesbare Würfel), und was ein Screenshot nie zeigt (der Spielstand, der Spieler am Zug bei verdeckten Würfeln), werden in der Statusleiste genannt. Korrigieren Sie das Brett wie gewohnt und speichern Sie dann mit der üblichen Geste: vorher wird nichts gespeichert. Ein Bild, auf dem kein bekanntes Brett erkannt wird, wird abgelehnt, der Grund steht in der Statusleiste. Dieselbe Lesung gibt es auf der Kommandozeile (<code class="docutils literal notranslate"><span class="pre">capture</span></code>).</p>
+<p>Das Brett des Eval-Panels ist ein Entwurf: Die Stellung kommt ohne ihre Datenbankkennung dort an, sodass keine hier vorgenommene Änderung den Datensatz überschreiben kann, aus dem sie stammt. Alle üblichen Bearbeitungen des Bretts bleiben dort verfügbar (Steine, Doppler, Würfel, Spielstand), und die Bewertung folgt jeder Änderung.</p>
+<p>In der Gegenrichtung kopiert <em>CTRL-C</em> das Brett des Eval-Panels in die Zwischenablage, mit einer aus den gesetzten Steinen neu berechneten XGID — also direkt in eXtreme Gammon oder in eine andere blunderDB-Instanz einfügbar. Nur die Stellung reist mit: Die vom Panel angezeigte Bewertung ist kein Datensatz der Datenbank und begleitet die Kopie nicht.</p>
+<p>Beim Verlassen des Eval-Panels wird die zuvor betrachtete Stellung wiederhergestellt: Der Entwurf wird nie von selbst gespeichert.</p>
+<p>Wenn die Stellung ein reines Bearoff ist (alle Steine beider Spieler in ihrem Heimfeld) und keine Würfel gelegt sind, zeigt die Doppler-Entscheidung für den Spieler am Zug:</p>
+<ul class="simple">
+<li><p>im Regime <em>exakt</em>: die Money-Equities (Cubeless, ohne Doppeln, Doppeln/Take, Doppeln/Pass) und das <strong>Money-Würfel-Urteil</strong> (kein Doppeln, Doppeln/Take, Doppeln/Pass oder zu gut zum Doppeln) — außerhalb eines Matchstands, siehe oben für den Fall des Matchstands,</p></li>
+<li><p>im Regime <em>bewertet</em>: dieselben Equities und dasselbe Urteil mit vier Werten, aber <strong>von gammonNet gespielt</strong> (Suche + Janowski-Dopplermodell) statt aus einer Tabelle gelesen — verfügbar <strong>auch beim Matchstand</strong>, was das geschätzte Regime nie bieten konnte;</p></li>
+<li><p>im Regime <em>geschätzt</em>: Das Würfel-Urteil wird dann bewusst nicht angezeigt — nur die Gewinnwahrscheinlichkeit in der Faktentabelle, begleitet von ihrer Fehlermarge, bleibt verfügbar.</p></li>
+</ul>
+<p>Sobald auf einer Rennstellung Würfel gelegt sind, verschwindet diese Doppler-Entscheidung <em>vor dem Wurf</em> — das Brett verlangt dann eine Zugentscheidung, keine Doppler-Entscheidung —, doch die Gewinnwahrscheinlichkeit bleibt ein Fakt der Stellung, keine Entscheidung: Sie wandert in die Zeile <em>vor dem Wurf</em> am Kopf der Zugliste, neben den EPC, der seinerseits direkt links davon angezeigt bleibt.</p>
+<p>Ein Badge zeigt das Regime an: <strong>exakt</strong> (Wert aus einer zweiseitigen Datenbank gelesen), <strong>bewertet · &lt;Tiefe&gt;</strong> (von gammonNet gespielt — die angezeigte Tiefe ist diejenige, die den gezeigten Wert tatsächlich erzeugt hat), <strong>geschätzt ± Marge</strong> oder, beim Matchstand im exakten Bereich, <strong>exakt (Gewinn) · bewertet (Würfel)</strong> — siehe oben. Das exakte Regime hat überall Vorrang, wo es verfügbar ist; andernfalls erscheint das bewertete Regime, sobald es fertig gerechnet hat, und ersetzt an Ort und Stelle das während des Wartens gezeigte geschätzte Regime. Siehe <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Methodik und Annahmen des Eval-Panels</span></a> für die genaue Definition der drei Regime und ihrer Annahmen.</p>
+<p><strong>Die exakte Domäne erweitern.</strong> Die beim ersten Start berechnete Tabelle deckt 6 Steine je Seite ab. Zwei Wege darüber hinaus, im Reiter <em>Bearoff</em> der Konfiguration:</p>
+<ul class="simple">
+<li><p>eine breitere zweiseitige Tabelle berechnen — bis TS-06-15, wenn die Maschine den Speicher dafür hat. Der Reiter nennt Größe, Speicher und Dauer auf dieser Maschine vor dem Start, und die Berechnung lässt sich pausieren und fortsetzen. Eine abgebrochene Berechnung hinterlässt eine <code class="docutils literal notranslate"><span class="pre">.part</span></code>-Datei, die nie als Tabelle gelesen wird;</p></li>
+<li><p>eine beliebige Two-Sided-<code class="docutils literal notranslate"><span class="pre">.bd</span></code>-Datei von gnubg angeben. Die Datenbank mit dem größten Bereich hat automatisch Vorrang.</p></li>
+</ul>
+<p><strong>Das Brett des Panels ist ein Entwurf, und es wird gemerkt.</strong> Wer das Eval-Panel verlässt und zurückkehrt, findet die Stellung wieder, auf der er es verlassen hat, nicht das voreingestellte Ausspielbrett: dieses wird nur beim ersten Öffnen in einer Sitzung gezeigt. Eine aus der Datenbank ins Panel geschickte Stellung sticht diese Erinnerung, und <em>RÜCKTASTE</em> stellt jederzeit das Standardbrett wieder her. Dabei wird nichts in die Datenbank geschrieben — der Entwurf hat keine Stellungsidentität, und seine Bewertung wird bei der Ankunft neu berechnet statt mitgeführt.</p>
+<p><strong>Challenge-Modus.</strong> Das Kontrollkästchen <em>Challenge</em> im Kopfband aktiviert einen Trainingsmodus: Bei jeder Änderung der Stellung werden die Werte dreier Zonen verdeckt (ersetzt durch „···“); ein Klick auf eine Zone deckt nur diese Zone auf. Ohne Würfel sind das die Zeile des unteren Spielers, die Zeile des oberen Spielers und die Doppler-Entscheidung — die Δ-Zeile erscheint erst, wenn beide Spielerzeilen aufgedeckt sind. Der Entscheidungsblock behält dabei seine drei Zeilen: Es sind seine Werte, sein Urteil und die Hervorhebung der besten Option, die verschwinden, da sich die Übung sonst durch die Suche nach der fetten Zeile lösen ließe. Sind auf einer Rennstellung Würfel gelegt, wird die EPC-Zeile jedes Spielers wie zuvor verdeckt, doch die dritte Zone umfasst dann die Zeile <em>vor dem Wurf</em> und die Zugliste <strong>zusammen</strong>: Da die Liste vom besten zum schlechtesten Zug sortiert ist, würde ihr teilweises Aufdecken bereits die Antwort verraten. Sind Würfel außerhalb einer Rennstellung gelegt, umfasst diese eine Zone allein alles, was das Panel anzeigt. So kann man üben, den EPC jeder Seite zu schätzen und sich dann zum Doppler oder zum zu spielenden Zug zu äußern, bevor man nachprüft. Die Einstellung wird gespeichert.</p>
+<p id="eval-sans-base"><strong>Ohne geöffnete Datenbank.</strong> Das Eval-Panel braucht keine Datenbank: Sobald der Startbildschirm geschlossen ist, lässt sich dort eine Stellung aufbauen, einfügen (<em>CTRL-V</em>) und bearbeiten, bewerten, rollouten und als Text (<em>CTRL-C</em>) oder als Bild kopieren (<em>CTRL-X</em>, und <em>CTRL-X CTRL-X</em> mit der Bewertung). Das Kontextmenü im Panel bietet außerdem <em>Bild speichern (SVG)…</em> und <em>Bild speichern (PNG)…</em> an. Das Brett des Reiters Suche ist ebenfalls ein Entwurfsbrett: Es lässt sich ohne Datenbank bearbeiten und nimmt eine eingefügte Stellung auf, und man wechselt zwischen beiden, ohne etwas zu verlieren; die Suche selbst erfordert jedoch eine Datenbank. Nur <em>Zur Datenbank hinzufügen</em> und <em>CTRL-S</em> erfordern im Panel eine Datenbank, und die Statusleiste weist darauf hin. Im Hintergrund wird keine Datenbank angelegt. Im Eval-Panel wie im Reiter Suche legt der Befehl <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">XGID=…</span></code> (oder <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">OGID=…</span></code>) die Stellung ohne Datenbank auf das Entwurfsbrett. Der Reiter <strong>Training</strong> öffnet sich ebenfalls ohne Datenbank: <em>Scores</em>, <em>Steine</em>, <em>Bearoff</em> und <em>Bewertung</em> stehen zur Verfügung, <em>Entscheidung</em> ist mit angezeigtem Grund deaktiviert, und die beendete Sitzung wird nicht gespeichert (das Journal weist darauf hin). Die Turnierleitung erfordert eine geöffnete Datenbank.</p>
+<p>Um das Eval-Panel zu schließen, drücken Sie <em>CTRL-E</em> oder wechseln Sie zu einem anderen Tab.</p>
+</section>
+<section id="methodologie-et-hypotheses-du-panneau-eval">
+<span id="epc-methodologie"></span><h3>Methodik und Annahmen des Eval-Panels<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-eval" title="Link to this heading"></a></h3>
+<p>Jeder vom Panel angezeigte Wert beruht auf präzisen Annahmen, die hier erschöpfend dargelegt werden.</p>
+<p><strong>Bereich.</strong> Die <em>Rennzone</em> — Gewinnwahrscheinlichkeit und Doppler-Urteil — behandelt nur reine Auswürfelstellungen: alle verbleibenden Steine beider Spieler im eigenen Heimfeld. Die Stellung wird <em>vor dem Wurf</em> bewertet; gesetzte Würfel werden ignoriert.</p>
+<p>Die <strong>EPC-Blöcke</strong> gehen ihrerseits weiter: eine Seite bekommt ihren EPC, sobald ihr entferntester Stein in die geladene einseitige Tabelle passt. Mit der Standardtabelle (sechs Punkte) ist das die alte Heimfeld-Regel; mit einer Tabelle mit acht Punkten, im Reiter <em>Bearoff</em> berechnet, wird eine Seite mit einem Stein auf dem 8-Punkt behandelt wie jede andere. Nichts wird extrapoliert: ein Stein einen Punkt zu weit hat schlicht keinen EPC, genau wie ein Stein auf dem 7-Punkt zuvor keinen hatte. Ist die antwortende Tabelle nicht die mit sechs Punkten, erscheint ihr Name in der Ecke des Rennblocks („OS-08“) — ohne ihn läse man standardmäßig „sechs“ und hielte die Seite für ganz zu Hause.</p>
+<p><strong>EPC-Blöcke (immer exakt).</strong> EPC, mittlere Wurfzahl und Standardabweichung stammen aus der exakten Verteilung der Wurfzahl zum Auswürfeln aller Steine, gelesen aus GNUbgs einseitiger Datenbank (6 bis 10 Punkte, 15 Steine, auf der Maschine berechnet). EPC = mittlere Würfe × 49/6 (49/6 ≈ 8,167 ist der exakte Mittelwert der Pips je Wurf, Pasch vierfach gezählt); Wastage = EPC − Pipzahl. Die einzige Idealisierung ist das <em>einseitig optimale Spiel</em>: jeder Spieler minimiert die eigenen Würfe und ignoriert den Gegner — das ist die übliche Definition des EPC.</p>
+<p><strong>Gewinnwahrscheinlichkeit, exaktes Regime.</strong> Direktes Lesen aus der größten verfügbaren Two-Sided-Datenbank (TS-06-06, beim ersten Start berechnet, externe Datei, oder TS-06-11, im Reiter <em>Bearoff</em> berechnet). Diese Datenbanken sind das Ergebnis einer vollständigen Rückwärtsanalyse unter optimalem Two-Sided-Spiel beider Seiten: keine zusätzliche Annahme, Fehler beschränkt auf die Quantisierung (&lt; 0,002 %).</p>
+<p><strong>Gewinnwahrscheinlichkeit, geschätztes Regime.</strong> Außerhalb des Bereichs der Datenbank: Die Wahrscheinlichkeit wird durch Faltung der beiden One-Sided-Verteilungen ermittelt (der Spieler am Zug gewinnt, wenn seine Wurfzahl kleiner oder gleich der des Gegners ist) und anschließende Anwendung einer festen polynomialen Korrektur, offline gegen die TS-06-11-Datenbank kalibriert. Drei Annahmen:</p>
+<ul class="simple">
+<li><p><strong>Unabhängigkeit</strong> der beiden Abtragprozesse — im Rennen strukturell gegeben, ohne Kontakt gibt es keinerlei Interaktion;</p></li>
+<li><p><strong>optimales One-Sided-Spiel beider Seiten</strong> — das ist <em>die Approximation</em>: In Wirklichkeit weicht der zurückliegende Spieler ab, um auf Varianz zu spielen, und der Führende, um auf Sicherheit zu spielen. Der gemessene Effekt ist eine antisymmetrische Verzerrung (die Faltung übertreibt den Vorsprung des Führenden), die die Korrektur statistisch auffängt;</p></li>
+<li><p>die <strong>Korrektur</strong> wurde auf dem Bereich des Orakels kalibriert und validiert (bis 11 Steine pro Spieler). Gemessener Restfehler: Standardabweichung 0,05 %, 99. Perzentil 0,17 %, beobachtetes Maximum 0,9 % (in Prozentpunkten der Gewinnwahrscheinlichkeit). <strong>Jenseits von 11 Steinen pro Spieler ist diese Schranke extrapoliert</strong> — die Tendenz ist monoton, aber kein Orakel bestätigt sie.</p></li>
+</ul>
+<p><strong>Equities und Würfel-Urteil (nur exaktes Regime).</strong> Die angezeigten Equities sind die des <strong>Money-Game ohne Jacoby</strong>, im Referenzrahmen der Bearoff-Literatur. Im Bereich ≤ 11 Steine pro Spieler sind Gammons unmöglich (jede Seite hat bereits mindestens 4 Steine abgetragen): Das ist keine Approximation. Das Urteil (kein Doppeln / Doppeln, Take / Doppeln, Pass) wird exakt aus den gespeicherten Equities rekonstruiert, nach der Regel von GNUbg, Zug für Zug gegen dessen Analyse validiert.</p>
+<div class="admonition note">
+<p class="admonition-title">Bemerkung</p>
+<p>Die Cubeful-Equities setzen ein <strong>optimales Spiel mit dem Verdopplungswürfel beider Seiten bis zum Ende</strong> voraus: Künftige Redoubles werden vollständig bewertet (vollständige Rückwärtsanalyse). In den sehr volatilen Rennen am Partieende frisst die Kaskade der Redoubles fast den gesamten Vorteil der Seite am Zug auf — die Equities „ohne Doppeln“ und „Doppeln/Take“ können dann nahe null liegen, wo eine Engine wie XG, deren Würfelmodell diese Kaskade nicht bewertet, Werte nahe dem Dead Cube anzeigt (zum Beispiel 2 Steine auf Punkt 3 gegen 2 Steine auf Punkt 2: 62 % der Partien gewonnen, exaktes D/T +0,006 gegenüber +0,475 bei XG). Die angezeigte <strong>Entscheidung</strong> hingegen stimmt mit der der Engines überein.</p>
+</div>
+<p><strong>Gewinnwahrscheinlichkeit und Urteil, bewertetes Regime.</strong> Außerhalb des exakten Bereichs stammt die Gewinnwahrscheinlichkeit aus der Rohausgabe von gammonNet (Suche mit 0 Ply, dann in der konfigurierten Tiefe, nie aus einer Tabelle gelesen) und das Urteil aus einem auf diese Ausgabe angewandten Janowski-„Decide“ — die Suche <em>spielt</em> die Trajektorie, statt eine Momentaufnahme davon zusammenzufassen; genau das konnte das geschätzte Regime nicht (siehe unten), und es erlaubt, als einziges der drei Regime neben dem exakten, ein Urteil <strong>beim Matchstand</strong>.</p>
+<p>Dieses Regime wurde gemessen, nicht nur angenommen, gegen die eingebettete zweiseitige Tabelle (<code class="docutils literal notranslate"><span class="pre">TestEvalMeasure</span></code>, 4000 gesampelte Money-Entscheidungen, kanonische Parameter 2 Ply k=12): Übereinstimmung des Money-Urteils <strong>93,4 %</strong> (3735/4000), aufgeschlüsselt nach Abstand zum Take-Point von gammonNet — 61,1 % bei weniger als 1 % vom Take-Point (die Zone, die am empfindlichsten für einen Münzwurf ist), 88,3 % zwischen 1 und 5 %, 91,5 % zwischen 5 und 10 %, 94,0 % zwischen 10 und 20 %, 94,4 % darüber. Abweichung der Gewinnwahrscheinlichkeit: Mittelwert 0,85 %, Median 0,44 %, 95. Perzentil 3,21 %, Maximum 8,30 %. Abweichung der Cubeful-Equity: Mittelwert 0,039, Median 0,018, 95. Perzentil 0,151, Maximum 0,406. Die Form ist die erwartete: Der Großteil der Abweichung konzentriert sich genau am Take-Point, wo zwei legitim verschiedene Methoden bei einer knappen Entscheidung am stärksten auseinandergehen — kein diffuser Fehler, der überall Equity kosten würde.</p>
+<p>Diese Messung bezieht sich auf <strong>Money</strong>-Entscheidungen im Rennen. Für das Urteil beim Spielstand — das nur dieses Regime zu liefern vermag — und für Kontaktstellungen liegt keine veröffentlichte Messung vor: Das Vorstehende überträgt sich nicht auf diese Fälle.</p>
+<p><strong>Warum nicht tiefer als 2 Ply?</strong> Weil die Messung sagt, dass es nichts einbringt. Eine Steinentscheidung bei 3 Ply wertet das Netz <strong>vierzehnmal öfter</strong> aus als bei 2 Ply (159 000 Auswertungen gegen 11 400, Mittel über zwanzig echte Entscheidungen) und dauert etwa vierzehnmal so lange (3,9 s gegen 0,27 s auf einem einzigen Kern derselben Maschine). Über vierzig echte, in beiden Tiefen wiederholte Entscheidungen änderte die tiefere Suche <strong>zweimal</strong> ihre Meinung, und beide Male war der Gewinn, den sie sich selbst zuschrieb, höchstens 0,0002 normalisierte Äquität: zwei Größenordnungen unter 0,020, der Schwelle, ab der eXtreme Gammon überhaupt von einem Fehler spricht. Pro Entscheidung, alle Fälle zusammen, beträgt der Gewinn 0,0000.</p>
+<p>Die 2 Ply bleiben also der Standard; 3 und 4 Ply werden im Reiter <em>gammonNet</em> der Konfiguration gewählt. Bei 3 und 4 Ply vergleicht, wie in GNUbg, nur die Wurzel mehrere Züge: An jedem inneren Knoten ist die gewählte Antwort die beste bei 0 Ply, und nur sie wird tiefer durchsucht. Das heißt nicht, dass 3 Ply allgemein wertlos wäre, sondern nur, dass es auf <em>diesem</em> Netz, mit diesem Filter, das Warten dessen nicht bezahlt, der vor einem Panel sitzt. Die Messung ist reproduzierbar (<code class="docutils literal notranslate"><span class="pre">TestThreePlyMeasure</span></code>), und die Schlussfolgerung ist neu zu treffen, wenn sich das Netz ändert.</p>
+<p><strong>Warum gibt es das geschätzte Urteil nicht?</strong> Das Folgende betrifft speziell die Methode per <em>Faltung</em> (geschätztes Regime), nicht das oben beschriebene bewertete Regime: Die Cubeful-Equity ist ein Problem der <em>Trajektorie</em> (wann doppeln?), das keine statistische Zusammenfassung der Stellung erfasst — das beste gemessene statische Modell lässt einen Restfehler (Standardabweichung 0,016 Equity, Maximum 0,20), der ausreicht, um alle knappen Entscheidungen umzukehren. Ebenso wurde die Umrechnung des Urteils auf den Matchstand über eine Match-Equity-Tabelle als unzureichend gemessen (12 % der Entscheidungen weichen von der 2-ply-Analyse von GNUbg ab, mit echten Blunders). Da ein mit Nachdruck angezeigtes falsches Urteil schlimmer ist als gar kein Urteil, durfte die Faltung nie ein Urteil anzeigen — diese Lücke füllt eine Suche, die die Trajektorie spielt, kein statistischer Abriss.</p>
+<div class="admonition note">
+<p class="admonition-title">Bemerkung</p>
+<p>Die Bearoff-Datenbanken sind unveränderliche mathematische Tabellen. blunderDB berechnet sie selbst, identisch zu GNUbgs Werkzeug <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> — Byte für Byte — im Reiter <em>Bearoff</em> der Konfiguration oder mit <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">generate</span></code>.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_stats.html" class="btn btn-neutral float-left" title="Statistiken" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="manuel_entrainement.html" class="btn btn-neutral float-right" title="Training, Anki und Duell" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tournaments &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=804ed6bf"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Statistics" href="manuel_stats.html" />
+    <link rel="prev" title="Matches and transcription" href="manuel_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Languages">
+  <a href="../fr/manuel_tournois.html" lang="fr" hreflang="fr">Français</a>
+  <span class="current" lang="en" aria-current="true">English</span>
+  <a href="../de/manuel_tournois.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_tournois.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_tournois.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_tournois.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_tournois.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_tournois.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_tournois.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">User Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Getting started and interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analysis, comments and search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Matches and transcription</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tournaments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-tournois">Tournaments Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diriger-un-tournoi">Directing a tournament</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#la-page-direction">The Directing page</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#la-fiche-de-resultat">The result card</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-menus-contextuels">The context menus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-plein-ecran">Full screen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#la-recherche-rapide">Quick search</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-joueurs">The players</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#arbres-emplacements-classement-historique">Brackets, slots, standings, history</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-reglages">The settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-epreuves-d-un-evenement">The competitions of an event</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#l-affichage-du-tournoi">Displaying a tournament</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Training, Anki and duel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Import, origin and sharing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metrics and study tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">List of commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless mode (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API contract</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows Annex: what to do if Windows blocks the launch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Annex: Statistics model — XG / gnuBG / blunderDB alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Version history</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">About</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Manual</a></li>
+      <li class="breadcrumb-item active">Tournaments</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tournois">
+<span id="manuel-tournois"></span><h1>Tournaments<a class="headerlink" href="#tournois" title="Link to this heading"></a></h1>
+<section id="panneau-tournois">
+<span id="id1"></span><h2>Tournaments Panel<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_tournaments.png"><img alt="Tournaments Panel" src="_images/panel_tournaments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">The Tournaments panel: one tournament per row, number of matches, reference player’s PR.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The <strong>Tournaments</strong> panel (<em>CTRL-Y</em>) groups matches into tournaments for organised tracking and per-event statistical analysis. Tournaments can be created, renamed, and deleted; matches can be assigned to them. Stats panel statistics can be filtered by tournament. Press <em>CTRL-Y</em> to show or hide the panel.</p>
+<p><strong>New tournament</strong> opens the creation field, which takes focus; <em>ESC</em> or <strong>Cancel</strong> closes it. The filter field, in the header strip, narrows the list as you type: every word typed must appear in the name, the venue or the date, the counter reads “shown / total” and <em>ESC</em> clears the field. A click highlights a row, a double-click or <em>ENTER</em> opens the tournament. Its header shows the date, the venue and the number of matches, which a click turns into the list of the tournament’s positions; on the right, the notes, <strong>Direct</strong> and <strong>Review</strong>. Below, its matches, one per line, which ▲ and ▼ reorder, which ⇄ swaps the players of and which × removes from the tournament. A click on a match shows its sheet under the table, the same as in the Matches panel (Transcript, Charts, Review, Details, Info, Stats tabs); a second click or <em>ESC</em> closes it, a double-click or <em>ENTER</em> opens the match on the board. The <strong>Add a match…</strong> field files a match from the database there, and ← returns to the tournament list.</p>
+<p>Each row starts with its rank (#) and its date, as in the Matches panel: the list runs from the most recent to the oldest, and a click on a header sorts it. A tournament without a date takes that of its oldest match, shown greyed out; it is read, never written to the database. The date field of the edit form stays empty until something is typed in it: the date read appears only greyed out, beside the field, and saving writes a date only if one was typed.</p>
+<p>Tournaments fill themselves on import. XG, GnuBG and BGF files name their event; when a new match is imported, blunderDB files it in the tournament of that name and creates the tournament if it does not exist yet. The location stays empty, and the date is that of the oldest match until you enter one here. A match already in the database is never refiled: re-importing its file does not undo filing done by hand.</p>
+<p>The <strong>PR</strong> and <strong>MWC</strong> columns of each tournament show the PR and the MWC loss of the <strong>reference player</strong>, on that player’s decisions only. This is the database’s <a class="reference internal" href="manuel_matchs.html#joueur-principal"><span class="std std-ref">main player</span></a> as soon as one of his or her analysed decisions counts in the tournament, whatever the number of matches: the player is recognized under all of his or her aliases, whose decisions are added together. Without a main player, or if none of his or her analysed decisions counts in this tournament (unanalysed match), it is the player appearing in the greatest number of the tournament’s matches; in case of a tie, the one who made the most decisions, then the name that comes first in character order (an accented letter after <em>z</em>). The PR therefore does not mix your play with your opponents’: once designated as main player, it reflects your performance alone in each of your tournaments, even a single-match one. The reference player’s name appears in a tooltip when hovering over the value.</p>
+<p id="bilan-tournoi"><strong>Tournament review.</strong> The <strong>Review</strong> button, in the header of an open tournament, answers the question one asks coming home from an event: did I play at my level, and if not, where did it give way? The player defaults to the main player if he or she played in the tournament, otherwise the one most present in its matches (in case of a tie, the name that comes first in character order); the <strong>Player</strong> menu picks another. The thresholds were fixed before any results were examined.</p>
+<ul class="simple">
+<li><p><strong>The usual level</strong> is this player over their point matches of the 365 days before the tournament (its date, or failing that the date of its first match), the tournament’s own excluded. Only the before counts: it is the level one had on arriving. At least 5 matches are needed; otherwise it is declared unknown.</p></li>
+<li><p><strong>PR and MWC loss (7-pt eq.)</strong> of the tournament against the usual level, each with its 95% interval over the matches. The verdict — <em>worse</em>, <em>better</em>, <em>usual</em> — concerns the difference and its own interval; it is given only with an interval and at least 20 decisions on each side, otherwise it reads <em>insufficient</em>. A three-match tournament rarely says “worse”: the figures stay visible, the verdict waits for the evidence.</p></li>
+<li><p><strong>By round</strong>: each match in tournament order, with the opponent, its PR (interval over the games) and its 7-pt eq. loss, against the usual PR.</p></li>
+<li><p><strong>By rank of the decision in the match</strong>, in bands of 30 decisions: if the end of long matches costs more than usual, it is fatigue that needs work (breaks, rhythm), not a family of positions.</p></li>
+<li><p><strong>By score</strong>: DMP, Crawford game, post-Crawford and other scores, against the same scores of the usual level — the points where a mistake decides the match.</p></li>
+<li><p><strong>By pace</strong>: quick or considered decisions, on either side of the median of your times for this type of decision in the match. This is how the clock is read: the time reserve is not recorded move by move.</p></li>
+<li><p><strong>Tournament error families</strong>: at most three families of the study plan (see <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">Study plan</span></a>) restricted to the tournament’s errors, with the same rules (5 quantified errors, positive lower bound); the others are counted “to confirm”. These are the sessions to schedule first.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">tournament</span></code> prints the same review, and the server serves it through <code class="docutils literal notranslate"><span class="pre">/v1/stats.tournamentReview</span></code>.</p>
+</section>
+<section id="diriger-un-tournoi">
+<span id="id2"></span><h2>Directing a tournament<a class="headerlink" href="#diriger-un-tournoi" title="Link to this heading"></a></h2>
+<p>blunderDB can <strong>direct</strong> a tournament, not merely file it away. The directing is carried by the <strong>Nicomaque</strong> engine, by Nicolas Harmand: it holds the format, the pairings, the brackets and the standings; blunderDB gives it an interface and keeps its matches. The <strong>ⓘ</strong> button on the Direction’s header recalls that credit and leads to the engine’s repository and documentation.</p>
+<p>A directed tournament is chosen in the <a class="reference internal" href="#panneau-tournois"><span class="std std-ref">Tournaments Panel</span></a> panel (<em>CTRL-Y</em>, <code class="docutils literal notranslate"><span class="pre">direct</span></code> command): open a tournament, then <strong>Direct</strong>. A tournament already directed shows its state beside its name and the button becomes <strong>Open the direction</strong>. While a direction is open, the main area shows the tournament <strong>in place of the board</strong> — blunderDB’s only exception to that rule; switching to any other tab brings the board back. <strong>Leave the direction</strong>, in the view’s header, or <strong>Close the direction</strong>, in the panel, closes it.</p>
+<p>A direction has three states: <strong>in preparation</strong> while no match has been launched, <strong>under way</strong> afterwards, <strong>closed</strong> once the tournament is closed and the standings are frozen. Reopening a closed tournament is possible, and asks for confirmation: the final standings stop being final.</p>
+<p>Everything decided is written into a <strong>journal</strong>, and nothing else is. The standings, the brackets, the proposals and the warnings are replayed from that journal at every open: a power cut costs nothing, and a correction never erases what happened — it is added to it.</p>
+<section id="la-page-direction">
+<h3>The Directing page<a class="headerlink" href="#la-page-direction" title="Link to this heading"></a></h3>
+<p>This is where the director spends most of their time. From top to bottom: the engine’s <strong>warnings</strong>, which stay visible and never block anything; the <strong>table grid</strong>, whose header carries the <strong>Print the sheet</strong> button for the pairings; the <strong>last decision</strong>; the <strong>proposal queue</strong>; and the free players. The grid comes before the queue: a long queue never pushes it off the screen. On the keyboard, the first <em>TAB</em> stop in the page is “Go to the queue”, which puts the focus on the queue without crossing the grid; the queue recalls its shortcuts under its title (<em>J</em> and <em>K</em>, <em>ENTER</em>, <em>LEFT</em> and <em>RIGHT</em>).</p>
+<p>The view fills the whole width of the main area, and each tab scrolls on its own: leaving a tab and coming back, or switching from one competition to another, restores the position where you left it. Buttons and fields are at least 44 pixels tall, so they can be hit without precision at the desk; the number of columns of the grid follows the width of the area, not that of the window. In <strong>Settings</strong>, each section folds onto its title, and the <strong>Open in the browser</strong> button in Settings and the <strong>Wall page</strong> button in the header open the wall page in one click once an output folder is chosen; the status bar gives the path of the file written. Registration, late arrival, next phase, draw, starting a match and closing also leave a confirmation there (“Sophie Martin registered — 16 registered”).</p>
+<p>A Direction opens on its <strong>Players</strong> until the tournament is started, then on the <strong>Direction</strong> tab, and on the tab where it was left when it is reopened. After a reload or a restart of the application, the last open Direction reopens by itself, on the same tab. A second click on <em>Direct</em> or <em>Open the direction</em> while the view is loading is ignored.</p>
+<p>A proposed round can be announced before it is launched: <strong>Upcoming round…</strong>, next to <em>Print the sheet</em>, asks for the date and time to print (“Monday 21/09, 8 pm”) and prints the sheet of the pairings in the queue, marked “announced”. Nothing is launched or written to the log: the round is launched on the day, at its time. A pairing waiting for a free table carries a dash instead of the table number.</p>
+<p>At the top of the tournament view, the <strong>clock strip</strong> fits on one line: the time, the time elapsed since the first launched match, the matches played and running, the observed pace in minutes per point against the planned pace, the slow matches, the next break and the <strong>estimated end</strong>. The estimated end is the engine’s forecast: it replays the log, finishes the tournament fifteen times at the planned pace, and the strip gives the median, pushed past the declared breaks. A night that is not declared as a break therefore counts as play. A time that is not today’s carries its day.</p>
+<p>From the second day on, the elapsed time gives way to the <strong>day of play</strong> (the day of the first launched match is day 1) and to the <strong>playing time</strong>: the time during which at least one match was running, without the nights or the gaps when no table was playing. A closed tournament has no clock strip any more.</p>
+<p>A proposal is confirmed with <strong>one click</strong> on <em>Launch</em>. <strong>Launch all</strong> confirms, in two clicks, the proposals that have a table, after showing their list; <em>Confirm</em> sits at the head of that list. Pairings without a table stay in the queue, marked “no free table”: in rounds mode, a round stays open until all its players are engaged in it. A repechage between tied players also waits for the director’s choice, and the phase change with it. “Ignore for now” writes nothing: the engine is deterministic, and the proposal comes back identical at the next call. <em>Pair by hand</em> is offered at all times — the engine proposes, the director decides.</p>
+<p>A match paired by hand without a table number takes the first free table; a table where a match is in progress is refused. If all the tables are taken, it is started anyway and its cell appears at the end of the grid, “no table”, until it is moved to a table.</p>
+<p>A proposal may carry a remark from the engine: no free table, or a match expected to end during a break. It stays launchable in both cases. When a phase runs in <strong>micro-rounds</strong>, the queue shows the time left before the next batch; at the deadline the proposals appear by themselves, and nothing launches on its own.</p>
+</section>
+<section id="la-fiche-de-resultat">
+<h3>The result card<a class="headerlink" href="#la-fiche-de-resultat" title="Link to this heading"></a></h3>
+<p>A click on a busy table opens the match’s card. It shows two large targets: the <strong>names of the two players</strong>. Clicking the one who won records the result — two clicks in all, table included. The winner is the only thing required; the score is free, either one, both or neither. On the keyboard, <em>LEFT</em> or <em>RIGHT</em> picks the winner and <em>ENTER</em> records it. The card closes only once the result is written: a failure leaves it open, with its message.</p>
+<p>The <strong>⋯</strong> button on the card unfolds what is rarely needed: the forfeit — each button names the absent player and the one who wins —, a free remark (“lost on time”, “abandoned because of…”), moving the match to another table, and cancelling it. The forfeit and the cancellation are confirmed; the forfeit by a <strong>Declare forfeit</strong> button, which also offers to withdraw the loser from the same card. Moved to a busy table, the match swaps its table with the one who occupies it: two matches never share a table, and the same gesture puts them back. If an old log left two on one table, the grid shows both cells, flagged, until one of them is moved.</p>
+<p>A typing mistake seen at once is taken back in two clicks below the grid: <strong>Correct</strong> the last decision, then the right winner (<em>CTRL-Z</em> opens the same take-back). An older correction is made from the <a class="reference internal" href="#direction-historique"><span class="std std-ref">history</span></a>.</p>
+</section>
+<section id="les-menus-contextuels">
+<span id="direction-menus"></span><h3>The context menus<a class="headerlink" href="#les-menus-contextuels" title="Link to this heading"></a></h3>
+<p>A right click, the <em>MENU</em> key or <em>SHIFT-F10</em> on an object of the Direction page opens its usual actions without going through the card: a cell of the grid (free or busy), a player (<strong>Players</strong> tab, free players), a bracket slot, a slot, a proposal of the queue, a history row. The menu opens on the object; <em>UP</em> and <em>DOWN</em> move through it, <em>ENTER</em> picks, <em>ESC</em> closes it and returns the focus to the object.</p>
+<ul class="simple">
+<li><p>Occupied cell: enter the result, forfeit by either player, change table (aiming at an occupied table swaps the two matches), cancel the match, history of each player.</p></li>
+<li><p>Free cell: start the selected pairing here, take the table out of service, or put it back in service (tables of an event). A table reserved for another competition offers nothing.</p></li>
+<li><p>Player: enter the result of their current match, go to their table, history, pair by hand with another free player, go to the other competition where they also play, mark absent or present, withdraw now or after their match, re-enter, edit the details.</p></li>
+<li><p>Slot without a match: attach an imported match that this slot is waiting for.</p></li>
+<li><p>Pairing: start, start at a table…, change the length…, pair differently (these three entries open the manual pairing with the two players, the length and the table of the pairing), ignore for now, print the round sheet.</p></li>
+<li><p>History row: correct or cancel, add a remark, filter on one of the players.</p></li>
+</ul>
+<p>Forfeit, cancelling a match and withdrawing a player keep the confirmation they have in the card and in the row buttons. While an action is running, the entries that act are greyed out, like the buttons. Only one menu is open at a time: opening a second closes the first.</p>
+<p>With the keyboard, the grid takes only one <em>TAB</em> stop: each cell takes focus, free ones included, and <em>LEFT</em>, <em>RIGHT</em>, <em>UP</em>, <em>DOWN</em>, <em>HOME</em> and <em>END</em> move from one cell to another. A digit opens the card of the table with that number; for a table beyond 9, type the second digit within 0.4 s. <em>M</em> opens the card on the table field, and so does <em>X</em>, whether the card is already open or not: aiming at an occupied table swaps the two matches.</p>
+<p>With the mouse, <strong>drag</strong> an occupied cell onto another: on a free cell the match changes table; on an occupied cell, a line “Table 3 ↔ Table 7?” asks you to confirm the <strong>swap</strong> of the two matches. A ghost follows the pointer and the target cell is outlined; <em>ESC</em> cancels the gesture, and nothing is written until the pointer is released over a cell. An out-of-service table is refused, and the status bar gives the reason. On the command line, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span> <span class="pre">move</span></code> does the same move or swap (see <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>).</p>
+</section>
+<section id="le-plein-ecran">
+<span id="direction-plein-ecran"></span><h3>Full screen<a class="headerlink" href="#le-plein-ecran" title="Link to this heading"></a></h3>
+<p>The <em>F11</em> key on the Direction page, or the button at the bottom right, puts it in full screen: the toolbar, the tabs, the board, the panel and the status bar disappear and the whole window goes to the tournament director. The mode carries across the direction’s tabs (Direction, Players, History, …). An open menu or card closes first on <em>ESC</em>; a second <em>ESC</em>, or <em>F11</em>, leaves full screen and returns the window to its previous state. Leaving the page, by switching the application tab or closing the direction, ends it too.</p>
+</section>
+<section id="la-recherche-rapide">
+<span id="direction-recherche"></span><h3>Quick search<a class="headerlink" href="#la-recherche-rapide" title="Link to this heading"></a></h3>
+<p>The <em>/</em> key on the Direction page opens the palette on the tournament alone: players, tables, running matches and competitions of the open event, or of the competition alone when it is in no event. Type a name, a club or a table number (“4” or “t4”); players at a table come before free players. <em>ENTER</em> takes you to the object: a player in a match, a match or an occupied table open the table’s card, a free table is focused in the grid, a free player is shown in the <strong>Players</strong> tab filtered on their name, a competition becomes the current tab. A result from another competition of the event switches competition first. <em>ESC</em> closes without opening anything, and the key stays a slash in an input field. <em>CTRL-SHIFT-P</em> opens the full palette, which also contains the tournament.</p>
+</section>
+<section id="les-joueurs">
+<h3>The players<a class="headerlink" href="#les-joueurs" title="Link to this heading"></a></h3>
+<p>The <strong>Players</strong> tab enters, corrects and withdraws. The entry field keeps the focus and empties after each name: twenty players are entered from the keyboard alone. Autocompletion offers the players of the database; choosing one fixes the exact spelling their matches carry and pre-fills their rating with their PR.</p>
+<p>The <strong>directory</strong> gathers the entrants of every directed tournament of the database, de-duplicated by name, with the club and the rating of their last entry. It is never stored: deleting a direction takes its entrants out of it. Taking the entrants of a previous tournament is one click, whatever their number; the directory is copied as CSV or saved to a file (<strong>Save…</strong>), and reads back pasted.</p>
+<p>A doubles competition enters pairs: the <strong>Pair</strong> box adds the partner’s name, club and rating. The pair plays under the name “A / B”, which its matches carry too; its rating is the mean of the two, and a value typed in <strong>Pair rating</strong> replaces it. The directory keeps the two persons, never the pair.</p>
+<p>Before <strong>Enter them</strong>, the preview of a pasted CSV lists the unreadable lines — no name, no separator when the other lines have one, a rating that is not a number — and the duplicates, within the paste or with a player already entered. A duplicate is not entered unless its box is ticked.</p>
+<p>The list’s filter field keeps its text when you switch competition: while it is active, a <strong>filter: …</strong> chip appears next to it, and its cross clears it.</p>
+<p>A <strong>latecomer</strong> arriving after the draw takes a free bye if the bracket still offers one, and the interface writes beside the field where they will enter before it is validated. With no free place, they are entered all the same and the view says which phase they will enter. No draw already made is ever redone.</p>
+<p>A withdrawal happens <em>now</em> or <em>after their current match</em>, depending on whether the player leaves at once or finishes what they are playing; it is confirmed by a <strong>Withdraw</strong> button, not red since nothing is deleted.</p>
+<p>A player missing a round does not need to be withdrawn: <strong>Mark absent</strong>, on their row, opens a small form under their name — <em>until</em> a time (pre-filled with the next hour), or, when the current phase is a round-by-round Swiss, <em>until round</em> with its number. The engine then simply stops pairing them, but their rank, lives and place in the bracket stay whatever they have earned — an absence is not a forfeit. <strong>Return</strong>, on their row, lifts the absence in one click, before or after the declared deadline.</p>
+<p>Correcting the entry of a withdrawn player — their name, club, rating — leaves them withdrawn. Their return is a gesture of its own: <strong>Reinstate</strong>, on their line. They are paired again, with the results and lives they had when they left; the matches lost by forfeit at their withdrawal stay lost.</p>
+<p>A pool qualifier who withdraws before the next phase is drawn leaves a place open. The queue then proposes a <strong>repechage</strong>: the next player of their pool, neither qualified nor withdrawn, with the most pool wins, takes their place. Among tied players, the queue proposes each of them and the director chooses; “Next phase” without a repechage leaves the place as a bye. Once the bracket is drawn, the withdrawn player loses their match by forfeit.</p>
+</section>
+<section id="arbres-emplacements-classement-historique">
+<h3>Brackets, slots, standings, history<a class="headerlink" href="#arbres-emplacements-classement-historique" title="Link to this heading"></a></h3>
+<p>The <strong>Brackets</strong> tab draws the brackets with their connecting lines, from the first round to the final, the consolation next to the main bracket, and, for a Swiss phase, the lives table. A pool reads as a cross table of results. A bracket not yet drawn shows its greyed-out skeleton. A match already played carries its result; a match the engine flags is marked in place. A dot next to the tab name shows that a bracket is running.</p>
+<p><strong>Clicking a seat</strong> (or pressing Enter on a focused one) opens on it the same card as on the table grid: the winner of a running match is entered in two clicks, and a finished match is corrected by clicking the name of the true winner.</p>
+<p id="direction-emplacements">The <strong>Matches</strong> tab (titled “Slots”) links the tournament to the library. Every match of the tournament is a slot, which can be filled in two ways: transcribing the match on the spot (<a class="reference internal" href="manuel_matchs.html#panneau-transcription"><span class="std std-ref">Transcription Panel</span></a>), or attaching a match already imported. <strong>Nothing is attached by inference</strong>: a coincidence of names is a suggestion to accept, a partial match is not even suggested, and if the file of an attached match contradicts the recorded result, the disagreement is shown without being resolved — during a tournament, the director’s word stands.</p>
+<p>The <strong>Standings</strong> tab shows the current standings, section by section, with each player’s record (wins–losses) and the prizes when a prize fund is set. A scale in percentages is paid in whole units, by the largest remainder method: each amount is truncated to the unit, then the units missing to reach the sum to distribute, rounded, go one by one to the places whose decimal part is largest (on a tie, to the better ranked); a scale in fixed amounts is paid as it is. Two tied players share the place and the prize. A withdrawn player keeps the rank their run earned, marked “withdrawn” with their record or the point in the bracket where they stopped. <strong>Close the tournament</strong> freezes the final standings. The standings are copied as CSV, in the language of the interface, with the section and the last phase each player entered, or saved to a file: <strong>Save…</strong> opens the system dialog on a proposed name, the tournament followed by the word “standings” and today’s date, and the file holds exactly the copied CSV. On the command line, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span> <span class="pre">standings</span></code> writes the same CSV. A player’s name is a link: it opens the History filtered on that player, where each of their results can be corrected.</p>
+<p>Closing with no match under way is one click; when everything has been played, the queue also offers <strong>Close the tournament</strong>, which is launched like any other proposal. With matches under way, the Standings say how many and wait for a second click in place: closing freezes the standings without them, and their result can no longer be entered. <strong>Reopen</strong> is confirmed the same way; the final standings then stop being final, and the reopening stays in the log.</p>
+<p id="direction-historique">The <strong>History</strong> tab is the journal in plain words: one line per decision, in order, filterable by player or by match. It is what a director re-reads after a dispute, and it is where an older decision is corrected or annotated. A result line names both players: the winner, then their opponent.</p>
+<p><strong>Correct</strong>, on a result’s line, opens below it the same take-back as the last decision: click the right winner, with the score if needed. The original result stays in its place in the log, the correction is added to it, and the standings take it into account at once.</p>
+</section>
+<section id="les-reglages">
+<h3>The settings<a class="headerlink" href="#les-reglages" title="Link to this heading"></a></h3>
+<p>The <strong>Settings</strong> tab opens on <strong>named formats</strong>: six club tournaments ready to use, the first of which is recommended. Choosing one is enough to begin; the fields stay editable afterwards.</p>
+<p>Set here: the phases (<strong>Add a phase</strong> adds it after the others; a phase already opened cannot be removed) and their match length, that of the final, the lengths round by round of a bracket (“15, 13, 11” reads from the last round backwards), the <strong>ending length</strong> (longer matches from a number of players still alive), the <strong>micro-rounds</strong> (pairing in batches every N minutes), the number of tables, the planned pace in minutes per point (8 by default; the clock strip and the estimated end start from it), the breaks of the day, the prize fund (entry fee, the club’s retention, a scale per section) and the display folder.</p>
+<p>A <strong>bracket</strong> has three boxes: <strong>Consolation</strong> (its losers play a second bracket, a separate section in the standings), <strong>Reconciliation</strong> (the consolation winner plays the main bracket winner; the box only appears with the consolation) and <strong>Recharge</strong> (in double elimination, the main bracket winner must be beaten twice; the box only appears with the reconciliation). A consolation has standings of its own only with a prize scale: as long as the <em>Consolation</em> section’s scale is empty, the Settings say so. A <strong>Pools</strong> phase is set by the size of its pools (4 by default) and the number of qualifiers per pool (2 by default).</p>
+<p>A Swiss phase’s <strong>switch</strong> is the sum of remaining lives from which play moves on to the bracket. If the sum of starting lives (players × lives) is already less than or equal to the switch, the Swiss phase would be skipped: the Settings flag it before the first launch.</p>
+<p>The settings stay reachable <strong>during a tournament</strong>: lowering the switch at 22:00 to finish earlier, adding a consolation on the Saturday evening, as long as the bracket has not been drawn. What is then frozen is greyed out with its reason: the format of an opened phase, the number of lives it has handed out and, once a phase is drawn, its pool size and number of qualifiers. Saving during a tournament first shows the list of what will change, and asks for confirmation. What the engine refuses appears there with its reason, and nothing is saved: that is the case for the consolation, the reconciliation or the recharge of a bracket already drawn.</p>
+<p>A table with a broken board is declared in <strong>Tables out of service</strong>: its numbers, separated by commas (“7, 12”). The engine no longer assigns it, and the grid shows it as out of service; lowering the number of tables would remove the last one, not the broken one. If a match is under way on a table taken out of service, the list of what will change says so and names a free table to move it to, from the match card.</p>
+<p><strong>Seeding</strong> is an option, off by default: the engine’s study concludes “no protected seeds”, which is the current culture of backgammon. Switched on, players are placed by rating.</p>
+</section>
+<section id="les-epreuves-d-un-evenement">
+<h3>The competitions of an event<a class="headerlink" href="#les-epreuves-d-un-evenement" title="Link to this heading"></a></h3>
+<p>Several competitions played on the same tables — a main, a speed, doubles — are grouped in an <strong>Event</strong>, at the top of the Settings (collapsed to its title when the competition is attached to it; the <strong>Event settings</strong> button of the <em>All tables</em> tab leads there): <strong>Create and attach…</strong> creates the event with its number of tables, <strong>Attach…</strong> adds a directed competition to it. Attaching first shows what will change: the competition’s tables become the event’s. <strong>Detach from the event</strong> gives the competition back to itself, with its log and its tables; <strong>Delete the event</strong>, after confirmation, moves it to the trash and detaches its competitions without deleting any.</p>
+<p>In an event, no competition proposes a table where another is playing: the grid shows those tables as in use, with the competition’s name, and a pairing with no free table waits. A table out of service is ticked once, in the event, and applies to every competition; the number of tables, the tables out of service and the breaks changed in one competition’s Settings apply to the event as well, and the list of what will change names the other competitions.</p>
+<p>The <strong>table properties</strong> are set in the Event panel: a grid with one row per table, with its <strong>name</strong> (“Stream”, for example), its <strong>room</strong> (a free label), a <strong>Reserved</strong> checkbox and the players it is <strong>Assigned to</strong>, chosen among those registered in the event’s competitions. For forty tables, <em>Tables from N to M, room</em> sets a room on a whole range in one go; <strong>Save</strong> only writes the tables that carry a property, the others remain ordinary tables. A reserved table is never proposed, but a match can still be placed on it by hand, through a launch, a move or a drag-and-drop. An assigned table first receives its holder’s match, when it is free; otherwise the match gets an ordinary table, and outside its holders’ matches it behaves like a reserved table. Two holders of different tables who meet play on the lower-numbered of the two.</p>
+<p>A <strong>room</strong> is the set of tables that carry the same label: “room A” for tables 1 to 20, “room B” for the following ones. In the Settings of each attached competition, <em>Rooms this competition plays in</em> ticks the rooms where it plays: the DMP in B, the speed in A. With no box ticked, it is all the tables; a competition receives no proposal outside its rooms and cannot move a match there. Removing a room that carries a match in progress of the competition is refused, naming the table. A competition that plays alone sets the same table properties in its own Settings, without competition rooms.</p>
+<p>The <strong>Season ranking</strong>, in the Event panel, adds up the closed competitions of the event: each place earns the points of the <strong>Scale</strong> (winner first, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1 by default), and ties share the average of the places they occupy. A person is recognised from one competition to the next by name. <strong>Club Elo</strong> adds a column: everyone starts at 1500 and the season’s matches are replayed in order, using the FIBS formula. <strong>Calculate</strong> shows the ranking, <strong>Copy as CSV</strong> copies it with one column of points per competition. A competition that is not closed earns nothing.</p>
+<p>Opening the Direction of a competition in an event opens the others too: a tab per competition appears at the top of the Direction, each with its summary — pending proposals, matches under way, an alert if there is one. Switching competitions is a click on its tab, with no confirmation; the competition left behind does not close and replays nothing, it stays exactly as it was left. A tournament outside any event has only one competition: no tab to show. Switching to another tab of the application and coming back to Tournaments restores the Direction as it was left: the same competition or <em>All tables</em>, and the same tab of the view.</p>
+<p>The <strong>All tables</strong> tab, left of the events, shows every table of the event in a single grid: one cell per table, whatever event holds it, marked with that event’s name and colour. The result card, context menus, keyboard and drag and drop work there as in an event’s grid, and each gesture goes to the event of its cell. Dragging a match onto a table held by another event swaps the two matches after a confirmation that names both events. Below the grid, the proposals of every event form a single queue, each marked with its event and with its own <em>Launch</em> button: the players who have waited longest come first, so that one event does not wait for the end of another’s round. A match with no table — every table taken, or a player held by a match of another event — follows the queue with its reason and no <em>Launch</em> button, until a table or the player frees up. Clicking an event or a view tab leaves <em>All tables</em>.</p>
+<p>When the event has several rooms, the grid is grouped by room, under the name of each. A table’s name is displayed next to its number, with a flag for a reserved table and a star followed by the holders for an assigned table; proposals also name the table.</p>
+<p>One person may play several events of the event: two Participants with the same name are the same person, and for a doubles pair each of the two members counts. While they play in one event, the others do not propose them, and their <em>Waiting</em> list says where they play: “plays in the main event, table 4”. A bracket match waiting for them stays in the queue, and launching it is refused while they play. Pairing by hand remains allowed: the match starts, and its grid cell carries the same note.</p>
+</section>
+<section id="l-affichage-du-tournoi">
+<h3>Displaying a tournament<a class="headerlink" href="#l-affichage-du-tournoi" title="Link to this heading"></a></h3>
+<p>A tournament is watched. Choosing a <strong>display folder</strong> in the Settings is enough once and for all: blunderDB rewrites a standalone HTML page there at every change, and the page reloads itself. It opens offline, on a second screen or projected, and loads no outside resource. <em>Open in the browser</em> shows it at once.</p>
+<p>Players can also follow the tournament on their phone. In the Direction’s Settings, the <strong>Show on the club network</strong> section starts a small web server on the director’s machine (port 8770 by default, changeable) and shows the <strong>QR code</strong> of its address, with the plain address next to it: a phone connected to the same network scans it and sees this tournament’s display page — bracket, pairings, results, standings. The page updates itself every ten seconds; a result entered appears there without touching anything. <em>Open on this machine</em> opens it in the computer’s browser. <em>Stop showing</em> shuts the server down, which also stops when blunderDB is closed.</p>
+<p>The display is off until the director turns it on, and it is <strong>read-only</strong>: it serves only this tournament’s page, no other data from the database, and nothing can be entered through it. There is <strong>no password</strong>: anyone on the local network can read the page (names, pairings, results) — what a wall screen already shows the room. The server listens only on the proposed address and on this machine. On a machine connected to several networks, a list offers its addresses: first those of private networks (<code class="docutils literal notranslate"><span class="pre">192.168.x.x</span></code>, <code class="docutils literal notranslate"><span class="pre">10.x.x.x</span></code>, <code class="docutils literal notranslate"><span class="pre">172.16.x.x</span></code> to <code class="docutils literal notranslate"><span class="pre">172.31.x.x</span></code>), then those of virtual networks (containers, VPN). An address <strong>outside the private ranges</strong> is flagged with a warning: the page might be readable beyond the club there. Without a local network, the panel says so and draws no QR code. The display stops when another file is opened, created or closed. Starting the display on a port that is already taken says so plainly and leaves the running display untouched; restarting it on its own port replaces it at once.</p>
+<p>The <strong>firewall</strong> of the director’s machine must let the chosen port in: Windows asks for permission on first launch, while the firewall of a Linux system blocks the port silently. The phones, for their part, must be on the same network as the machine. On a phone, the page fits the screen width (the tables scroll on their own) and, if the display is stopped or unreachable, it writes “Affichage interrompu : données de HH:MM” instead of suggesting it is up to date.</p>
+<p>The <strong>pairing sheet</strong> goes on the welcome desk: one click on <em>Print the sheet</em> opens the system’s print dialog. One line per match — the two players, the length, the table, two empty boxes for the score — and a round of thirty-two players fits on one A4 page.</p>
+<p>An event has its own output folder, chosen once in its Settings panel with the same <em>Choose folder</em> button: blunderDB writes <code class="docutils literal notranslate"><span class="pre">index.html</span></code> there, the event’s <strong>wall page</strong> — one line per table, whichever competition occupies it, with each competition’s announced rounds and a link to its own page — and each attached competition writes its own into a subfolder. A gesture in any competition of the event regenerates the wall page; an attached competition’s own folder is kept but ignored as long as it stays in the event.</p>
+<p>When a competition is in a bracket phase and the bracket has been drawn, its wall page and the event’s show the tree large, readable from a distance: one column per round, with the losers who drop into the consolation drawn dashed. The page scrolls through its views by itself, without any script, between its usual content (the tables, for the event) and the tree of each competition in a bracket, twelve seconds each; it always reloads every thirty seconds and resumes the rotation where it was. A competition with no bracket — a Swiss phase, for instance — has no tree and the page stays as it was.</p>
+<p>Under the heading “Am I playing?”, an event’s page and the wall page of the festival name the players who are not playing right now, as the engine places them: “eliminated” once they have no match left to play, “qualified” with the name of the phase the player enters, “not decided yet” when their fate depends on the end of the phase or on a repechage the director has not settled, “bye — enters at round N” for a player drawn without an opponent in the bracket, until they have played, “bye — plays again in round N” for the bye of a Swiss round, and “winner”. The standings take over once the tournament is over.</p>
+<p>Outside the interface, the <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span></code> sub-command reads a directed tournament without a graphical interface: <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">verify</span></code>, <code class="docutils literal notranslate"><span class="pre">standings</span></code>, <code class="docutils literal notranslate"><span class="pre">page</span></code> and <code class="docutils literal notranslate"><span class="pre">export</span></code>; <code class="docutils literal notranslate"><span class="pre">proposals</span></code> shows the engine’s queue, numbered, and <code class="docutils literal notranslate"><span class="pre">confirm</span></code> confirms one of them, repechage included; <code class="docutils literal notranslate"><span class="pre">ranking</span> <span class="pre">--season</span></code> adds up the closed tournaments of an event or of a period into a season ranking, using a scale of points per place and, optionally, a club Elo (two entrants with the same name in one closed competition make the ranking refuse, since it knows a person by name); <code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--rencontre</span></code> writes an event’s wall page instead of a single competition’s page; <code class="docutils literal notranslate"><span class="pre">hall</span></code> prints an event’s <em>All tables</em> grid and its queue, <code class="docutils literal notranslate"><span class="pre">tables</span></code> the tables’ properties and the competitions’ rooms. See <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_matchs.html" class="btn btn-neutral float-left" title="Matches and transcription" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_stats.html" class="btn btn-neutral float-right" title="Statistics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

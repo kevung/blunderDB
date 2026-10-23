@@ -1,0 +1,459 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tuonti, vienti, siirto &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Kirjasto: haku, luettelot, kokoelmat" href="cli_bibliotheque.html" />
+    <link rel="prev" title="Komentoriviliittymä (CLI)" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/cli_import_export.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_import_export.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_import_export.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_import_export.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_import_export.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/cli_import_export.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_import_export.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_import_export.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Yleinen syntaksi</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Käytettävissä olevat komennot</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Tuonti, vienti, siirto</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-creer-une-base-de-donnees">create — Luo tietokanta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#import-importer-des-donnees">import — Tuo tietoja</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export-exporter-des-donnees">export — Vie tietoja</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transfer-copier-d-une-bibliotheque-a-une-autre">transfer — Kopiointi kirjastosta toiseen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identity-identite-d-emetteur">identity — Liikkeeseenlaskijan identiteetti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#open-ouvrir-un-fichier-protege">open — Suojatun tiedoston avaaminen</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Kirjasto: haku, luettelot, kokoelmat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Ottelut, turnaukset ja pelit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analyysi ja pelimoottori</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Opiskelu, oppitunnit ja harjoittelu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Tilastot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Tietokannan hallinta</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Työnkulkuesimerkkejä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Komentoriviliittymä (CLI)</a></li>
+      <li class="breadcrumb-item active">Tuonti, vienti, siirto</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-exporter-transferer">
+<span id="cli-import-export-chapitre"></span><h1>Tuonti, vienti, siirto<a class="headerlink" href="#importer-exporter-transferer" title="Link to this heading"></a></h1>
+<section id="create-creer-une-base-de-donnees">
+<h2>create — Luo tietokanta<a class="headerlink" href="#create-creer-une-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Luo uusi tietokantatiedosto valinnaisilla metatiedoilla.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--user<span class="w"> </span>&lt;name&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--description<span class="w"> </span>&lt;text&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--force<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Luotavan tietokantatiedoston polku (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Tietokannan omistajan nimi.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Tietokannan kuvaus.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Korvaa tiedosto, jos se on jo olemassa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> (oletus) tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (polku, versio, käyttäjä, kuvaus, luontipäivä).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">.db</span></code>-pääte lisätään automaattisesti, jos se puuttuu. Ylähakemistot luodaan tarvittaessa.</p>
+<p><strong>Esimerkki:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>mes_matchs.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Matchs de tournoi 2025"</span>
+</pre></div>
+</div>
+</section>
+<section id="import-importer-des-donnees">
+<h2>import — Tuo tietoja<a class="headerlink" href="#import-importer-des-donnees" title="Link to this heading"></a></h2>
+<p>Tuo ottelu- tai asematiedostoja tietokantaan.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Tietokannan polku (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Tuontityyppi: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code> tai <code class="docutils literal notranslate"><span class="pre">batch</span></code> (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Tuotava tiedosto (tyypeille <code class="docutils literal notranslate"><span class="pre">match</span></code> ja <code class="docutils literal notranslate"><span class="pre">position</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Tuotava hakemisto (tyypille <code class="docutils literal notranslate"><span class="pre">batch</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--recursive</span></code> — Selaa alihakemistot rekursiivisesti (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> — Yhdessä <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">batch</span></code>-valitsimen kanssa: ei pysähdy, vaan tuo jokaisen ottelutiedoston <strong>heti kun se ilmestyy</strong> hakemistoon <code class="docutils literal notranslate"><span class="pre">--dir</span></code> (Ctrl-C lopettaa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch-every</span></code> — Kuinka usein <code class="docutils literal notranslate"><span class="pre">--watch</span></code> katsoo (oletus: 10s, alaraja 2s).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--resume</span></code> — Valitsimen <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">batch</span></code> kanssa: jatkaa tämän numeroista erää (näytetään tuonnin alussa, tai <code class="docutils literal notranslate"><span class="pre">batch_id</span></code> JSON-muodossa). Tiedostot, joilla on sama polku, koko ja päivämäärä kuin sen lokissa, ohitetaan lukematta, ne joilla on sama sisältö luetaan mutta niitä ei analysoida; virheelliset tiedostot yritetään uudelleen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> (oletus) tai <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> — Epäonnistuu, jos edes yhtä kohdetta (<code class="docutils literal notranslate"><span class="pre">position</span></code> tai <code class="docutils literal notranslate"><span class="pre">batch</span></code>) ei voitu tuoda, vaikka muut onnistuisivat.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> — Ohittaa jo tietokannassa olevan ottelun ottamatta sen syvempiä analyyseja (opiskelumerkinnät tuodaan silti). Oletuksena kaksoiskappale korvaa kunkin tallennetun analyysin omallaan, kun se on aidosti syvempi, ja rivi kertoo sen: <code class="docutils literal notranslate"><span class="pre">DUPLICATE</span> <span class="pre">(N</span> <span class="pre">analyses</span> <span class="pre">deepened)</span></code>.</p></li>
+</ul>
+<p>Päätös, jonka analyysissä on arvo, joka ei ole äärellinen luku (NaN tai ääretön), tuodaan ilman tätä analyysiä, ja muu ottelu tuodaan tavalliseen tapaan; erän raportti kertoo niiden määrän (<code class="docutils literal notranslate"><span class="pre">Decisions</span> <span class="pre">imported</span> <span class="pre">without</span> <span class="pre">their</span> <span class="pre">analysis</span></code>).</p>
+<p>Paluukoodi noudattaa neljää sääntöä:</p>
+<ul class="simple">
+<li><p><strong>mitään ei tunnistettu</strong> (jokainen tiedosto epäonnistui): virhe, oli <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> annettu tai ei;</p></li>
+<li><p><strong>pelkkiä kaksoiskappaleita</strong> (jokainen tiedosto oli jo tietokannassa): onnistuminen. Hakemisto, joka ajetaan uudelleen ilman uutta tiedostoa — skriptin tavallinen yö — päättyy koodiin 0, ja <code class="docutils literal notranslate"><span class="pre">duplicates</span></code> on ainoa nollasta poikkeava;</p></li>
+<li><p><strong>osittainen epäonnistuminen</strong> (osa kohteista tuotiin, osa hylättiin): virhe vain, jos <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> on annettu;</p></li>
+<li><p>vähintään yksi uusi kohde tuotiin ilman <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>-valitsinta: onnistuminen, ja hylätyt tiedostot luetellaan taulukossa.</p></li>
+</ul>
+<section id="surveiller-un-dossier">
+<h3>Kansion valvonta<a class="headerlink" href="#surveiller-un-dossier" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> muuttaa hakemistotuonnin valvonnaksi: komento ei palaa, vaan tuo jokaisen ottelutiedoston, joka kansioon <strong>ilmestyy</strong>. Se on sovelluksen <a class="reference internal" href="manuel_interface.html#dossier-surveille"><span class="std std-ref">valvotun kansion</span></a> käyttöliittymätön muoto.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Importer ce que le dossier contient déjà, puis surveiller ce qui arrive</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches<span class="w"> </span>--watch
+</pre></div>
+</div>
+<p>Vain ilmestyvät tiedostot tuodaan: se mitä kansiossa on käynnistyshetkellä kirjataan tunnetuksi ja jätetään rauhaan — valvonnan osoittaminen neljän vuoden otteluihin ei saa tuoda niitä kaikkia. Yllä olevat kaksi komentoa siis täydentävät toisiaan juuri niin kuin toivoisi.</p>
+<p>Tiedosto tuodaan vasta kun sen <strong>koko on vakiintunut</strong>, eli se on nähty kahdesti muuttumattomana: ottelu, jota toinen ohjelma kirjoittaa, kasvaa katsomasta toiseen, ja puoliksi kirjoitettuna tuotuna siitä tulisi syntaksivirhe, jolle kukaan ei voi mitään. Kansiota ei käydä läpi rekursiivisesti. Lukukelvottomaksi muuttunut verkkojako ei pysäytä valvontaa, eikä sen sisältö käy uudesta sen palatessa.</p>
+<p>Kansioon ilmestyvä <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tietokanta yhdistetään samoin kuin komennolla <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--type</span> <span class="pre">database</span></code>: näin toisen koneen inkrementaalinen vienti saapuu (katso <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Kahden koneen synkronointi</span></a>).</p>
+<p>Ctrl-C pysäyttää tiedostojen välissä, ei koskaan kesken yhden: tuotava tiedosto viedään loppuun ja sen raportti tulostetaan ennen kuin komento palaa.</p>
+</section>
+<section id="import-d-un-match">
+<h3>Ottelun tuonti<a class="headerlink" href="#import-d-un-match" title="Link to this heading"></a></h3>
+<p>Tuetut muodot: eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>), GNUbg (<code class="docutils literal notranslate"><span class="pre">.sgf</span></code>), Jellyfish (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>), BGBlitz (<code class="docutils literal notranslate"><span class="pre">.bgf</span></code>) ja HedgeHog (<code class="docutils literal notranslate"><span class="pre">.ogxm</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg
+
+<span class="c1"># Successfully imported match (ID: 1)</span>
+<span class="c1">#</span>
+<span class="c1"># Match Details:</span>
+<span class="c1">#   Players: Kévin Unger vs Maxence Job</span>
+<span class="c1">#   Event: HSBT Paris 2023</span>
+<span class="c1">#   Match Length: 7</span>
+<span class="c1">#   Games: 7</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> antaa samat kentät yhtenä dokumenttina:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"match"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kévin Unger"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Maxence Job"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"event"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HSBT Paris 2023"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris, Fédération Française de Bridge"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_length"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"games"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="import-de-positions">
+<h3>Asemien tuonti<a class="headerlink" href="#import-de-positions" title="Link to this heading"></a></h3>
+<p>Tuo asemia tekstitiedostosta, <strong>yksi JSON-asema riviä kohti</strong>. Tämä on täsmälleen se, mitä <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">positions</span></code> kirjoittaa: komennot vastaavat toisiaan, ja vienti tuodaan takaisin sellaisenaan ilman mitään muokkausta.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>position<span class="w"> </span>--file<span class="w"> </span>positions.txt
+
+<span class="c1"># Successfully imported 4 positions</span>
+</pre></div>
+</div>
+<p>Yksi rivi sellaisena kuin <code class="docutils literal notranslate"><span class="pre">export</span></code> sen tuottaa — lauta vie siitä valtaosan, kaksikymmentäkuusi pistettä ja niiden perässä ulos kannetut nappulat:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{"id":1,"board":{"points":[{"checkers":0,"color":0},{"checkers":1,"color":1},…],"bearoff":[0,0]},"cube":{"owner":-1,"value":0},"dice":[0,0],"score":[7,7],"player_on_roll":0,"decision_type":1,"has_jacoby":0,"has_beaver":0,"individually_imported":true,"flagged":false}
+</pre></div>
+</div>
+<p>Analyysit ja kommentit eivät kulje tässä muodossa: se kantaa aseman, ei mitään muuta. Kokonaisen kirjaston siirtämiseen tarvitaan <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>.</p>
+</section>
+<section id="import-d-une-base">
+<h3>Tietokannan tuonti<a class="headerlink" href="#import-d-une-base" title="Link to this heading"></a></h3>
+<p>Yhdistää toisen blunderDB-tietokannan (<em>.db</em>) <code class="docutils literal notranslate"><span class="pre">--db</span></code>:n tietokantaan työpöytäsovelluksen yhdistämisen ja palvelintilan <code class="docutils literal notranslate"><span class="pre">imports.db</span></code>:n sääntöjen mukaan (<a class="reference internal" href="guide_utilisateur.html#guide-fusionner-base"><span class="std std-ref">Tietokannan yhdistäminen</span></a>): positiot, ottelut, turnaukset, kokoelmat, oppitunnit, Anki-pakat, luonnokset ja aliakset sekä turnausten Johto ja niiden Kohtaaminen. Saman tiedoston tuominen kahdesti ei muuta mitään. Tekstitulosteessa lasketaan lisätyt ja jo olemassa olleet ottelut sekä takaisin luetut Johdot ja Kohtaamiset, ja nimetään jäädytetyt tai käsin tehdylle listalle jätetyt elävät kokoelmat ja ne perheet, joita tietokanta on liian vanha sisältämään.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>club.db
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>club.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="import-par-lot">
+<h3>Erätuonti<a class="headerlink" href="#import-par-lot" title="Link to this heading"></a></h3>
+<p>Tuo kaikki hakemiston ottelutiedostot yhdellä toimenpiteellä. Tämä on tehokkain tapa tuoda suuri määrä otteluita.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--recursive<span class="o">=</span><span class="nb">false</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--fail-on-error
+</pre></div>
+</div>
+<p>Yhteenvetotaulukko näyttää jokaisen tiedoston kohdalla, onnistuiko tuonti (✓), epäonnistuiko (✗) vai oliko kyseessä kaksoiskappale (⊘). Kaksoiskappaletta ei lasketa epäonnistumiseksi, ja erä, jossa on pelkkiä kaksoiskappaleita, on onnistuminen (ks. säännöt yllä).</p>
+<p>Jokainen erän tiedosto kirjataan lokiin (polku, koko, päivämäärä, SHA-256, saatu ottelu tai virhe). Erän numero näytetään alussa; jos tuonti keskeytyy, <code class="docutils literal notranslate"><span class="pre">--resume</span></code> jatkaa sitä analysoimatta uudelleen jo päätettyä. Valitsimella <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> lopullinen olio sisältää kentän <code class="docutils literal notranslate"><span class="pre">batch_id</span></code> ja taulukon <code class="docutils literal notranslate"><span class="pre">journal</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--resume<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Batch importing from: ./matchs/ (recursive: true)
+
+Found 3 match file(s) to import
+
+[1/3] Importing: 02_NDT_FR.txt... ERROR: failed to parse file: ingest: parse gnubg file: invalid MAT file: no match header found
+[2/3] Importing: test.mat... DUPLICATE
+[3/3] Importing: test.xg... OK (ID: 1, 341 positions)
+
+====================================================================
+IMPORT SUMMARY
+====================================================================
+Status  File           ID  Player 1     Player 2     Games  Positions  Error
+------  ----           --  --------     --------     -----  ---------  -----
+✗       02_NDT_FR.txt                                0      0          failed to parse file: ingest: ...
+⊘       test.mat                                     0      0
+✓       test.xg        1   Kévin Unger  Maxence Job  7      341
+--------------------------------------------------------------------
+Total: 3 files | Success: 1 | Duplicates: 1 | Failed: 1 | Positions imported: 341
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> antaa samat tiedot skriptille sopivassa muodossa: yksi olio tiedostoa kohti kentässä <code class="docutils literal notranslate"><span class="pre">files</span></code>, sitten kokonaissummat. Rauhallisen yön jäljiltä <code class="docutils literal notranslate"><span class="pre">duplicates</span></code> on ainoa nollasta poikkeava, <code class="docutils literal notranslate"><span class="pre">failed</span></code> on nolla ja paluukoodi on 0; vain erä, jossa mitään ei tunnistettu, päättyy virheeseen.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"files"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02_NDT_FR.txt"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"failed to parse file: …"</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test.xg"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">"positions"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"duplicates"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"failed"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"positions_imported"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="export-exporter-des-donnees">
+<h2>export — Vie tietoja<a class="headerlink" href="#export-exporter-des-donnees" title="Link to this heading"></a></h2>
+<p>Vie tietokannan sisältö tiedostoihin.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span>--file<span class="w"> </span>&lt;output&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Lähdetietokanta (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Vientityyppi: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> tai <code class="docutils literal notranslate"><span class="pre">mat</span></code> (yhden tai useamman ottelun vienti Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> -transkriptioon) (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Tulostiedosto (pakollinen, paitsi <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code> -vaihtoehdolle yhdessä <code class="docutils literal notranslate"><span class="pre">--dir</span></code> kanssa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Erävientinä tehtävän <code class="docutils literal notranslate"><span class="pre">.mat</span></code>-viennin tulostushakemisto (useita otteluita, yksi tiedosto ottelua kohden; ilman <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> viedään kaikki ottelut).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Sisällytä analyysit (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Sisällytä kommentit (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Sisällytä suodatinkirjasto (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--played-moves</span></code> — Sisällytä pelatut siirrot (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--matches</span></code> — Sisällytä ottelut (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--transcriptions</span></code> — Sisällytä kunkin viedyn ottelun litterointiluonnos (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--aliases</span></code> — Sisällytä pelaajien ja tapahtumien aliakset, joita viedyt ottelut kirjoittavat, jotta pelaajien yhdistäminen seuraa niitä (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collections</span></code> — Sisällytä kokoelmat (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournaments</span></code> — Sisällytä turnaukset (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decks</span></code> — Sisällytä Anki-pakat (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lessons</span></code> — Sisällytä oppitunnit sekä kokoelmat ja asemat, jotka niiden vaiheet näyttävät (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--anki-history</span></code> — Vie mukana viedyn pakan kertaushistoria: kunkin kortin tila ja sen kertausten loki (oletus: kyllä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code> — Vietävien kokoelmien tunnukset (pilkulla eroteltuna, tyhjä = kaikki).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Vietävien otteluiden tunnukset (pilkulla eroteltuna, tyhjä = kaikki).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Vietävien turnausten tunnukset (pilkulla eroteltuna, tyhjä = kaikki).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck-ids</span></code> — Asemineen vietävien Anki-pakkojen tunnukset (pilkulla eroteltuna, tyhjä = kaikki).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lesson-ids</span></code> — Viedyistä oppitunneista tunnisteet (pilkuilla erotettuina, tyhjä = kaikki).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Kääri tuloksen salattuun säiliöön (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark</span></code> — Kirjoittaa <strong>allekirjoitetun</strong> alkuperäilmoituksen vietyyn tiedostoon (katso <a class="reference internal" href="manuel_partage.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark-note</span></code> — Vesileimaan liitettävä vapaa teksti (käyttöehdot, yhteystieto); käytetään yhdessä <code class="docutils literal notranslate"><span class="pre">--watermark</span></code>-valitsimen kanssa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> (oletus) tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (vientiä kokoava asiakirja: polku, koko tavuina, määrät).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--incremental</span></code> — Valitsimen <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code> kanssa: vie vain sen, mikä on tullut kirjastoon samaan kansioon tehdyn edellisen inkrementaalisen viennin jälkeen, ja siirtää sitten tätä merkkiä eteenpäin viedyssä tietokannassa. <code class="docutils literal notranslate"><span class="pre">--file</span></code> voi tällöin olla kansio, johon luodaan tiedosto <code class="docutils literal notranslate"><span class="pre">sync-&lt;machine&gt;-&lt;date&gt;.db</span></code> (katso <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Kahden koneen synkronointi</span></a>). Jo käytössä oleva tiedostonimi hylätään: paikalla oleva tiedosto sisältää edellisen muutoserän, jota toinen kone ei ehkä ole vielä yhdistänyt.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sync-cursor</span></code> — Valitsimen <code class="docutils literal notranslate"><span class="pre">--incremental</span></code> kanssa: luetun ja eteenpäin siirretyn merkin nimi kohdekansion sijaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plan</span></code> — Valitsimilla <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code> tai <code class="docutils literal notranslate"><span class="pre">matches</span></code>: laskee perhe kerrallaan, mitä vienti kirjoittaisi, kirjoittamatta tiedostoa (<code class="docutils literal notranslate"><span class="pre">--file</span></code> on tällöin valinnainen). Luvut ovat samat, jotka vienti raportoi jälkeenpäin; jäädytettyinä lähtevät elävät kokoelmat ja „recherche“-pakat, joiden lähde menettäisi osan, nimetään. Muun tyypin kanssa valinta hylätään.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plan-ids</span> <span class="pre">&lt;famille&gt;</span></code> — Kuten <code class="docutils literal notranslate"><span class="pre">--plan</span></code>, mutta palauttaa sivun luvun takana olevia tunnisteita: <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">comments</span></code> (ne asemat, jotka niitä kantavat), <code class="docutils literal notranslate"><span class="pre">matches</span></code>, <code class="docutils literal notranslate"><span class="pre">tournaments</span></code>, <code class="docutils literal notranslate"><span class="pre">directions</span></code> (turnaukset, joiden johto viedään mukana), <code class="docutils literal notranslate"><span class="pre">rencontres</span></code> (tapahtumat, jotka viedään jonkin turnauksensa mukana), <code class="docutils literal notranslate"><span class="pre">collections</span></code>, <code class="docutils literal notranslate"><span class="pre">lessons</span></code>, <code class="docutils literal notranslate"><span class="pre">ankiDecks</span></code>, <code class="docutils literal notranslate"><span class="pre">transcriptions</span></code> tai <code class="docutils literal notranslate"><span class="pre">filters</span></code>. <code class="docutils literal notranslate"><span class="pre">--offset</span></code> ja <code class="docutils literal notranslate"><span class="pre">--limit</span></code> valitsevat sivun (enintään 1000 tunnistetta).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code> vie koko kirjaston, kuten palvelimen vienti ja vientiikkuna, kun näytetty luettelo on kirjasto: asemat, ottelut, turnaukset (johtoineen: loki, parit, pöydät ja viedyn ottelun liittäminen; niiden tapahtuma viedään heti, kun yksi sen turnauksista viedään), kokoelmat, oppitunnit, Anki-pakat, litteroinnit, aliakset ja suodattimet. Arvoon <code class="docutils literal notranslate"><span class="pre">false</span></code> asetettu valitsin poistaa oman ryhmänsä (<code class="docutils literal notranslate"><span class="pre">--collections=false</span></code>); tunnusluettelo rajaa ryhmän näihin kohteisiin ja sisällyttää sen. Litterointiluonnos viedään sen ottelun mukana, jonka se tuotti; luonnos, josta ei vielä ole syntynyt ottelua, viedään vain, jos kaikki ottelut viedään. <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">matches</span></code> ottaa mukaan myös kunkin ottelun luonnoksen.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde.db
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--file<span class="w"> </span>positions.txt
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--file<span class="w"> </span>selection.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">1</span>,3,5
+
+<span class="c1"># .mat : un match, puis plusieurs (ou tous) dans un répertoire</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span><span class="w"> </span>--file<span class="w"> </span>match5.mat
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span>,9,12<span class="w"> </span>--dir<span class="w"> </span>sorties/
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--dir<span class="w"> </span>sorties/
+
+<span class="c1"># Ce qui est nouveau depuis le dernier export vers ce dossier, pour une</span>
+<span class="c1"># autre machine qui le surveille</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--incremental<span class="w"> </span>--file<span class="w"> </span>~/Sync/vers-portable/
+
+<span class="c1"># .dbx : filigrané et protégé par mot de passe</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>cours.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>cours-diffusion.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont — 12 mars 2026"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark-note<span class="w"> </span><span class="s2">"Merci de ne pas rediffuser."</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret
+</pre></div>
+</div>
+<p>Vesileima allekirjoitetaan paikallisella liikkeeseenlaskijan identiteetillä (katso <code class="docutils literal notranslate"><span class="pre">identity</span></code>-komento alla): sitä ei voi väärentää, mutta sen voi poistaa — tiedosto pysyy tavallisena SQLite-tietokantana. Se ei suojaa mitään, se vain kertoo, mistä tiedosto on peräisin. Salasana suojaa tiedoston <em>kuljetusta</em> (kadonnut kopio, vahingossa lähetetty liite), ei itse tietokantaa: kuka tahansa salasanan saanut voi avata sen. blunderDB ei koskaan kirjaa mitään vastaanottajan puolelle (ei rekisteriä, ei lokia) — katso <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-mark-origin-and-nothing-else.md">ADR-0007</a>.</p>
+</section>
+<section id="transfer-copier-d-une-bibliotheque-a-une-autre">
+<span id="cli-transfer"></span><h2>transfer — Kopiointi kirjastosta toiseen<a class="headerlink" href="#transfer-copier-d-une-bibliotheque-a-une-autre" title="Link to this heading"></a></h2>
+<p>Kopioi osan kirjastosta toiseen ilman käsiteltävää välitiedostoa. Valinta on sama kuin komennossa <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>; yhdistäminen on sama kuin <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tietokannan tuonnissa: asemaa, jonka kohde jo omistaa, ei lisätä toiseen kertaan (se tunnistetaan sen tiivisteestä), sen analyysit ja kommentit yhdistetään, eikä jo olemassa olevaa ottelua, kokoelmaa, oppituntia tai Anki-pakkaa kahdenneta. A:sta B:hen ja sitten B:stä A:han kopioiminen ei siis luo kaksoiskappaleita.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>&lt;source.db&gt;<span class="w"> </span>--to<span class="w"> </span>&lt;destination.db&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Lähdekirjasto (pakollinen; sen on oltava olemassa ja sen skeeman on vastattava tämän blunderDB-version skeemaa). Vanhempi kirjasto hylätään, koska sen päivittäminen tarkoittaisi siihen kirjoittamista: avaa se kerran blunderDB:ssä. Myös uudempi kirjasto hylätään: päivitä blunderDB.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Kohdekirjasto (pakollinen; luodaan, jos sitä ei ole). Se ei voi olla lähde.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code>, <code class="docutils literal notranslate"><span class="pre">--comments</span></code>, <code class="docutils literal notranslate"><span class="pre">--played-moves</span></code>, <code class="docutils literal notranslate"><span class="pre">--matches</span></code>, <code class="docutils literal notranslate"><span class="pre">--transcriptions</span></code>, <code class="docutils literal notranslate"><span class="pre">--aliases</span></code>, <code class="docutils literal notranslate"><span class="pre">--collections</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournaments</span></code>, <code class="docutils literal notranslate"><span class="pre">--decks</span></code>, <code class="docutils literal notranslate"><span class="pre">--lessons</span></code> — Kuten komennossa <code class="docutils literal notranslate"><span class="pre">export</span></code>: arvoon <code class="docutils literal notranslate"><span class="pre">false</span></code> asetettu valinta poistaa oman ryhmänsä (oletus: kyllä kaikille).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--deck-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--lesson-ids</span></code> — Lähteen ID-luettelo rajaa oman ryhmänsä näihin kohteisiin ja sisällyttää sen. ID, jota lähde ei sisällä, on virhe, eikä mitään kopioida.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — <code class="docutils literal notranslate"><span class="pre">text</span></code> (oletus) tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (mitä lähteestä luettiin ja mitä kohde siitä otti).</p></li>
+</ul>
+<p><strong>Mitkä asemat siirtyvät.</strong> Ilman ID-luetteloa kaikki lähteen asemat siirtyvät, järjestetyt tai ei. Heti kun ID-luettelo annetaan, siirtyvät vain ne asemat, jotka valitut ryhmät tavoittavat (kokoelman jäsenet, ottelun siirrot, oppitunnin vaiheet, pakan kortit) analyyseineen ja kommentteineen. Kokoelma siirtyy aina jäsenineen. <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>-valitsimella nimetty ottelu tuo mukanaan turnauksensa tiedot (nimi, päivämäärä, paikka), mutta ei saman turnauksen muita otteluita; valitsimella <code class="docutils literal notranslate"><span class="pre">--tournaments=false</span></code> se saapuu ilman turnausta.</p>
+<p>Mitään ei kirjoiteta, joka kertoisi, mistä kopio tulee: ei vesileimaa, ei tuontilokia, ei lähteen metatietoja; kohde säilyttää omansa, eikä lähde saa mitään. Suodatinkirjastoa ja Anki-pakkojen kertaushistoriaa ei kopioida: pakka saapuu ilman historiaa, ja jo olemassa oleva samanniminen pakka säilyttää omansa.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Toute une bibliothèque dans une autre</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>club.db<span class="w"> </span>--to<span class="w"> </span>perso.db
+
+<span class="c1"># Deux collections et leurs positions, rien d'autre</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>club.db<span class="w"> </span>--to<span class="w"> </span>perso.db<span class="w"> </span>--collection-ids<span class="w"> </span><span class="m">3</span>,7<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--matches<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--tournaments<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--lessons<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--decks<span class="o">=</span><span class="nb">false</span>
+
+<span class="c1"># Un match, ses positions et son tournoi, en retour</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>perso.db<span class="w"> </span>--to<span class="w"> </span>club.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--collections<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--lessons<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--decks<span class="o">=</span><span class="nb">false</span>
+</pre></div>
+</div>
+<p>Palvelin tarjoaa saman siirron kahden tenantin välillä, vastaanottavan tenantin vetämänä (ks. <a class="reference internal" href="mode_headless.html#mode-headless-transfert"><span class="std std-ref">Kopion vetäminen luetusta tenantista</span></a>).</p>
+</section>
+<section id="identity-identite-d-emetteur">
+<h2>identity — Liikkeeseenlaskijan identiteetti<a class="headerlink" href="#identity-identite-d-emetteur" title="Link to this heading"></a></h2>
+<p>Näyttää tai siirtää <strong>liikkeeseenlaskijan identiteettisi</strong>: Ed25519-avaimen, joka allekirjoittaa jokaisen vesileiman. Se syntyy itsestään ensimmäisen vesileiman yhteydessä; mitään ei tarvitse asettaa. Se kuuluu henkilölle, ei tietokannalle: kaikki merkitsemäsi kantaa yhtä ja samaa julkista sormenjälkeä.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>identity
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jean Dupont"</span>
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--export<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--import<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span></code> — Vaihtaa identiteetin näyttönimen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Vie identiteetin <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>-tiedostoon.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Tuo identiteetin <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>-tiedostosta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--passphrase</span></code> — Valinnainen tunnuslause, joka suojaa viedyn/tuodun tiedoston (paikallinen identiteetti jätetään tarkoituksella suojaamatta).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> (oletus) tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (nimi, sormenjälki, tallennuspolku).</p></li>
+</ul>
+<p>Viety tiedosto antaa kenelle tahansa sen haltijalle mahdollisuuden allekirjoittaa sinun nimissäsi — älä jaa sitä. Uudelleennimeäminen muuttaa vain nimilapun: jo merkityt tiedostot säilyttävät nimen, jolla ne sinetöitiin, ja ne todentuvat edelleen.</p>
+</section>
+<section id="open-ouvrir-un-fichier-protege">
+<h2>open — Suojatun tiedoston avaaminen<a class="headerlink" href="#open-ouvrir-un-fichier-protege" title="Link to this heading"></a></h2>
+<p>Muuntaa salasanalla suojatun tiedoston (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) tavalliseksi tietokannaksi. Salasanaa kysytään vain kerran; sen jälkeen kyseessä on tavallinen tiedosto.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret
+./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret<span class="w"> </span>--file<span class="w"> </span>./mon-cours.db
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Avattava <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedosto (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Säiliön salasana (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Tavallisen tietokannan tulostuspolku (oletus: sama nimi, pääte <code class="docutils literal notranslate"><span class="pre">.db</span></code>).</p></li>
+</ul>
+<p>Mitä salasana suojaa: tiedoston <em>kuljetusta</em> — latauskansioon unohtunutta kopiota, vahingossa lähetettyä liitettä. Ei tietokantaa: kuka tahansa salasanan saanut voi avata sen. Säiliön otsake on selkokielinen, joten <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> lukee suojatun tiedoston alkuperän ilman salasanaa.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli.html" class="btn btn-neutral float-left" title="Komentoriviliittymä (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="Kirjasto: haku, luettelot, kokoelmat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

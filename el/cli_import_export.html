@@ -1,0 +1,459 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Εισαγωγή, εξαγωγή, μεταφορά &mdash; Τεκμηρίωση του blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9e57d487"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές" href="cli_bibliotheque.html" />
+    <link rel="prev" title="Διεπαφή γραμμής εντολών (CLI)" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/cli_import_export.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_import_export.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_import_export.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/cli_import_export.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_import_export.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_import_export.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_import_export.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_import_export.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Μετρικές και εργαλεία μελέτης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Γενική σύνταξη</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Διαθέσιμες εντολές</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Εισαγωγή, εξαγωγή, μεταφορά</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-creer-une-base-de-donnees">create — Δημιουργία βάσης δεδομένων</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#import-importer-des-donnees">import — Εισαγωγή δεδομένων</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export-exporter-des-donnees">export — Εξαγωγή δεδομένων</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transfer-copier-d-une-bibliotheque-a-une-autre">transfer — Αντιγραφή από μια βιβλιοθήκη σε άλλη</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identity-identite-d-emetteur">identity — Ταυτότητα εκδότη</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#open-ouvrir-un-fichier-protege">open — Άνοιγμα προστατευμένου αρχείου</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Αγώνες, τουρνουά και παρτίδες</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Ανάλυση και μηχανή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Μελέτη, μαθήματα και εξάσκηση</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Στατιστικά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Διαχείριση της βάσης δεδομένων</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Παραδείγματα ροών εργασίας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Κωδικοί εξόδου</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+      <li class="breadcrumb-item active">Εισαγωγή, εξαγωγή, μεταφορά</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="importer-exporter-transferer">
+<span id="cli-import-export-chapitre"></span><h1>Εισαγωγή, εξαγωγή, μεταφορά<a class="headerlink" href="#importer-exporter-transferer" title="Link to this heading"></a></h1>
+<section id="create-creer-une-base-de-donnees">
+<h2>create — Δημιουργία βάσης δεδομένων<a class="headerlink" href="#create-creer-une-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Δημιουργεί ένα νέο αρχείο βάσης δεδομένων με προαιρετικά μεταδεδομένα.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--user<span class="w"> </span>&lt;name&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--description<span class="w"> </span>&lt;text&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--force<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Διαδρομή του αρχείου βάσης δεδομένων προς δημιουργία (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Όνομα του κατόχου της βάσης.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Περιγραφή της βάσης.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Αντικατάσταση του αρχείου αν υπάρχει ήδη.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (διαδρομή, έκδοση, χρήστης, περιγραφή, ημερομηνία δημιουργίας).</p></li>
+</ul>
+<p>Η επέκταση <code class="docutils literal notranslate"><span class="pre">.db</span></code> προστίθεται αυτόματα αν λείπει. Οι γονικοί κατάλογοι δημιουργούνται όταν χρειάζεται.</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>mes_matchs.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Matchs de tournoi 2025"</span>
+</pre></div>
+</div>
+</section>
+<section id="import-importer-des-donnees">
+<h2>import — Εισαγωγή δεδομένων<a class="headerlink" href="#import-importer-des-donnees" title="Link to this heading"></a></h2>
+<p>Εισάγει αρχεία αγώνων ή θέσεων στη βάση δεδομένων.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Διαδρομή της βάσης δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Τύπος εισαγωγής: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code> ή <code class="docutils literal notranslate"><span class="pre">batch</span></code> (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Αρχείο προς εισαγωγή (για <code class="docutils literal notranslate"><span class="pre">match</span></code> και <code class="docutils literal notranslate"><span class="pre">position</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Κατάλογος προς εισαγωγή (για <code class="docutils literal notranslate"><span class="pre">batch</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--recursive</span></code> — Αναδρομική σάρωση των υποκαταλόγων (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> — Με <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">batch</span></code>: δεν σταματά, και εισάγει κάθε αρχείο αγώνα <strong>μόλις εμφανιστεί</strong> στο <code class="docutils literal notranslate"><span class="pre">--dir</span></code> (Ctrl-C για διακοπή).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch-every</span></code> — Πόσο συχνά κοιτάζει το <code class="docutils literal notranslate"><span class="pre">--watch</span></code> (προεπιλογή: 10s, κατώτατο 2s).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--resume</span></code> — Με <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">batch</span></code>: συνεχίζει την παρτίδα με αυτόν τον αριθμό (εμφανίζεται στην αρχή της εισαγωγής, ή <code class="docutils literal notranslate"><span class="pre">batch_id</span></code> σε JSON). Τα αρχεία με την ίδια διαδρομή, το ίδιο μέγεθος και την ίδια ημερομηνία όπως στο ημερολόγιό της παραλείπονται χωρίς να διαβαστούν, εκείνα με το ίδιο περιεχόμενο διαβάζονται αλλά δεν αναλύονται· τα αρχεία με σφάλμα επαναδοκιμάζονται.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> — Αποτυγχάνει αν έστω ένα στοιχείο (<code class="docutils literal notranslate"><span class="pre">position</span></code> ή <code class="docutils literal notranslate"><span class="pre">batch</span></code>) δεν εισήχθη, ακόμη κι αν άλλα πέτυχαν.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> — Παραλείπει ένα ματς που υπάρχει ήδη στη βάση χωρίς να κρατήσει τις βαθύτερες αναλύσεις του (οι σημάνσεις μελέτης εφαρμόζονται κανονικά). Από προεπιλογή, ένα διπλότυπο αντικαθιστά κάθε αποθηκευμένη ανάλυση με τη δική του όταν αυτή είναι αυστηρά βαθύτερη, και η γραμμή το δείχνει: <code class="docutils literal notranslate"><span class="pre">DUPLICATE</span> <span class="pre">(N</span> <span class="pre">analyses</span> <span class="pre">deepened)</span></code>.</p></li>
+</ul>
+<p>Μια απόφαση της οποίας η ανάλυση περιέχει τιμή που δεν είναι πεπερασμένος αριθμός (NaN ή άπειρο) εισάγεται χωρίς αυτή την ανάλυση, και ο υπόλοιπος αγώνας εισάγεται κανονικά· η αναφορά της παρτίδας δίνει τον αριθμό τους (<code class="docutils literal notranslate"><span class="pre">Decisions</span> <span class="pre">imported</span> <span class="pre">without</span> <span class="pre">their</span> <span class="pre">analysis</span></code>).</p>
+<p>Ο κωδικός επιστροφής υπακούει σε τέσσερις κανόνες:</p>
+<ul class="simple">
+<li><p><strong>τίποτα δεν αναγνωρίστηκε</strong> — κάθε αρχείο απέτυχε —: σφάλμα, είτε δοθεί το <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> είτε όχι·</p></li>
+<li><p><strong>μόνο διπλότυπα</strong> — κάθε αρχείο υπήρχε ήδη στη βάση —: επιτυχία. Ένας κατάλογος που ξανατρέχει χωρίς νέο αρχείο, η συνηθισμένη νύχτα ενός σεναρίου, βγαίνει με 0 και μόνο το <code class="docutils literal notranslate"><span class="pre">duplicates</span></code> μη μηδενικό·</p></li>
+<li><p><strong>μερική αποτυχία</strong> (ορισμένα στοιχεία εισήχθησαν, άλλα απορρίφθηκαν): σφάλμα μόνο αν δοθεί το <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>·</p></li>
+<li><p>τουλάχιστον ένα νέο στοιχείο εισήχθη, χωρίς <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>: επιτυχία, με τα απορριφθέντα αρχεία να παρατίθενται στον πίνακα.</p></li>
+</ul>
+<section id="surveiller-un-dossier">
+<h3>Παρακολούθηση φακέλου<a class="headerlink" href="#surveiller-un-dossier" title="Link to this heading"></a></h3>
+<p>Το <code class="docutils literal notranslate"><span class="pre">--watch</span></code> μετατρέπει την εισαγωγή καταλόγου σε παρακολούθηση: η εντολή δεν επιστρέφει και εισάγει κάθε αρχείο αγώνα που <strong>εμφανίζεται</strong> στον φάκελο. Είναι η μορφή χωρίς διεπαφή του <a class="reference internal" href="manuel_interface.html#dossier-surveille"><span class="std std-ref">παρακολουθούμενου φακέλου</span></a> της εφαρμογής.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Importer ce que le dossier contient déjà, puis surveiller ce qui arrive</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches<span class="w"> </span>--watch
+</pre></div>
+</div>
+<p>Εισάγονται μόνο τα αρχεία που εμφανίζονται: ό,τι περιέχει ο φάκελος κατά την εκκίνηση καταγράφεται ως γνωστό και αφήνεται ήσυχο — το να στρέψεις μια παρακολούθηση σε τέσσερα χρόνια αγώνων δεν πρέπει να τους εισαγάγει όλους. Οι δύο παραπάνω εντολές συνδυάζονται λοιπόν ακριβώς όπως θα ήλπιζε κανείς.</p>
+<p>Ένα αρχείο εισάγεται μόνο αφού <strong>σταθεροποιηθεί το μέγεθός του</strong>, δηλαδή αφού το δούμε δύο φορές αμετάβλητο: ένας αγώνας που γράφει ένα άλλο πρόγραμμα μεγαλώνει από τη μια ματιά στην άλλη, και το να τον εισαγάγεις μισογραμμένο θα έδινε ένα συντακτικό σφάλμα με το οποίο κανείς δεν μπορεί να κάνει τίποτα. Ο φάκελος δεν διατρέχεται αναδρομικά. Ένα δικτυακό κοινόχρηστο που έγινε μη αναγνώσιμο δεν σταματά την παρακολούθηση, και το περιεχόμενό του δεν περνά για νέο όταν επιστρέψει.</p>
+<p>Μια βάση <code class="docutils literal notranslate"><span class="pre">.db</span></code> που εμφανίζεται στον φάκελο συγχωνεύεται όπως με την <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--type</span> <span class="pre">database</span></code>: έτσι φτάνει η σταδιακή εξαγωγή ενός άλλου υπολογιστή (βλ. <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Συγχρονισμός δύο υπολογιστών</span></a>).</p>
+<p>Το Ctrl-C σταματά ανάμεσα σε δύο αρχεία, ποτέ στη μέση ενός: το αρχείο που εισάγεται ολοκληρώνεται και η αναφορά του εμφανίζεται πριν επιστρέψει η εντολή.</p>
+</section>
+<section id="import-d-un-match">
+<h3>Εισαγωγή αγώνα<a class="headerlink" href="#import-d-un-match" title="Link to this heading"></a></h3>
+<p>Υποστηριζόμενες μορφές: eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>), GNUbg (<code class="docutils literal notranslate"><span class="pre">.sgf</span></code>), Jellyfish (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>), BGBlitz (<code class="docutils literal notranslate"><span class="pre">.bgf</span></code>) και HedgeHog (<code class="docutils literal notranslate"><span class="pre">.ogxm</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg
+
+<span class="c1"># Successfully imported match (ID: 1)</span>
+<span class="c1">#</span>
+<span class="c1"># Match Details:</span>
+<span class="c1">#   Players: Kévin Unger vs Maxence Job</span>
+<span class="c1">#   Event: HSBT Paris 2023</span>
+<span class="c1">#   Match Length: 7</span>
+<span class="c1">#   Games: 7</span>
+</pre></div>
+</div>
+<p>Η <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> δίνει τα ίδια πεδία σε ένα μόνο έγγραφο:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"match"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kévin Unger"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Maxence Job"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"event"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HSBT Paris 2023"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris, Fédération Française de Bridge"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_length"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"games"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="import-de-positions">
+<h3>Εισαγωγή θέσεων<a class="headerlink" href="#import-de-positions" title="Link to this heading"></a></h3>
+<p>Εισάγει θέσεις από αρχείο κειμένου, <strong>μία θέση JSON ανά γραμμή</strong>. Είναι ακριβώς αυτό που γράφει η <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">positions</span></code>: οι δύο εντολές αντιστοιχούν η μία στην άλλη, μια εξαγωγή επανεισάγεται ως έχει, χωρίς καμία τροποποίηση.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>position<span class="w"> </span>--file<span class="w"> </span>positions.txt
+
+<span class="c1"># Successfully imported 4 positions</span>
+</pre></div>
+</div>
+<p>Μια γραμμή, όπως την παράγει η <code class="docutils literal notranslate"><span class="pre">export</span></code> — το ταμπλό καταλαμβάνει το μεγαλύτερο μέρος της, είκοσι έξι σημεία ακολουθούμενα από τα βγαλμένα πούλια:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{"id":1,"board":{"points":[{"checkers":0,"color":0},{"checkers":1,"color":1},…],"bearoff":[0,0]},"cube":{"owner":-1,"value":0},"dice":[0,0],"score":[7,7],"player_on_roll":0,"decision_type":1,"has_jacoby":0,"has_beaver":0,"individually_imported":true,"flagged":false}
+</pre></div>
+</div>
+<p>Η ανάλυση και τα σχόλια δεν ταξιδεύουν με αυτή τη μορφή: μεταφέρει τη θέση, τίποτα άλλο. Για να μετακινήσετε ολόκληρη βιβλιοθήκη, χρειάζεται η <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>.</p>
+</section>
+<section id="import-d-une-base">
+<h3>Εισαγωγή βάσης<a class="headerlink" href="#import-d-une-base" title="Link to this heading"></a></h3>
+<p>Συγχωνεύει μια άλλη βάση blunderDB (<em>.db</em>) σε αυτή του <code class="docutils literal notranslate"><span class="pre">--db</span></code>, με τους κανόνες της συγχώνευσης της εφαρμογής επιφάνειας εργασίας και του <code class="docutils literal notranslate"><span class="pre">imports.db</span></code> σε λειτουργία διακομιστή (<a class="reference internal" href="guide_utilisateur.html#guide-fusionner-base"><span class="std std-ref">Συγχώνευση βάσης δεδομένων</span></a>): θέσεις, ματς, τουρνουά, συλλογές, μαθήματα, τράπουλες Anki, πρόχειρα και ψευδώνυμα, καθώς και τη Διεύθυνση των τουρνουά και τη Συνάντησή τους. Η διπλή εισαγωγή του ίδιου αρχείου δεν αλλάζει τίποτα. Η έξοδος κειμένου μετρά τα ματς που προστέθηκαν και αυτά που υπήρχαν ήδη, τις Διευθύνσεις και τις Συναντήσεις που διαβάστηκαν ξανά, και ονομάζει τις ζωντανές συλλογές που πάγωσαν ή έμειναν σε χειροκίνητη λίστα, και τις οικογένειες που η βάση είναι πολύ παλιά για να φέρει.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>club.db
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>club.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="import-par-lot">
+<h3>Μαζική εισαγωγή<a class="headerlink" href="#import-par-lot" title="Link to this heading"></a></h3>
+<p>Εισάγει όλα τα αρχεία αγώνων ενός καταλόγου σε μία μόνο ενέργεια. Είναι η πιο αποδοτική μέθοδος για την εισαγωγή μεγάλου αριθμού αγώνων.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--recursive<span class="o">=</span><span class="nb">false</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--fail-on-error
+</pre></div>
+</div>
+<p>Ένας συνοπτικός πίνακας δείχνει για κάθε αρχείο αν η εισαγωγή πέτυχε (✓), απέτυχε (✗) ή ήταν διπλότυπο (⊘). Ένα διπλότυπο δεν μετράει ως αποτυχία, και μια δέσμη που δεν περιέχει παρά διπλότυπα είναι επιτυχία (βλ. τους κανόνες παραπάνω).</p>
+<p>Κάθε αρχείο της παρτίδας καταγράφεται (διαδρομή, μέγεθος, ημερομηνία, SHA-256, αγώνας που προέκυψε ή σφάλμα). Ο αριθμός της παρτίδας εμφανίζεται στην αρχή· αν η εισαγωγή διακοπεί, το <code class="docutils literal notranslate"><span class="pre">--resume</span></code> τη συνεχίζει χωρίς να αναλύσει ξανά ό,τι έχει ήδη αποφασιστεί. Με <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>, το τελικό αντικείμενο περιέχει το <code class="docutils literal notranslate"><span class="pre">batch_id</span></code> και τον πίνακα <code class="docutils literal notranslate"><span class="pre">journal</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--resume<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Batch importing from: ./matchs/ (recursive: true)
+
+Found 3 match file(s) to import
+
+[1/3] Importing: 02_NDT_FR.txt... ERROR: failed to parse file: ingest: parse gnubg file: invalid MAT file: no match header found
+[2/3] Importing: test.mat... DUPLICATE
+[3/3] Importing: test.xg... OK (ID: 1, 341 positions)
+
+====================================================================
+IMPORT SUMMARY
+====================================================================
+Status  File           ID  Player 1     Player 2     Games  Positions  Error
+------  ----           --  --------     --------     -----  ---------  -----
+✗       02_NDT_FR.txt                                0      0          failed to parse file: ingest: ...
+⊘       test.mat                                     0      0
+✓       test.xg        1   Kévin Unger  Maxence Job  7      341
+--------------------------------------------------------------------
+Total: 3 files | Success: 1 | Duplicates: 1 | Failed: 1 | Positions imported: 341
+</pre></div>
+</div>
+<p>Η <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> δίνει το ίδιο πράγμα, αξιοποιήσιμο από σενάριο: ένα αντικείμενο ανά αρχείο στο <code class="docutils literal notranslate"><span class="pre">files</span></code>, και έπειτα τα σύνολα. Μια ήσυχη νύχτα αφήνει μόνο το <code class="docutils literal notranslate"><span class="pre">duplicates</span></code> μη μηδενικό και το <code class="docutils literal notranslate"><span class="pre">failed</span></code> στο μηδέν, και τον κωδικό επιστροφής στο 0· μόνο μια δέσμη όπου τίποτα δεν αναγνωρίστηκε βγαίνει με σφάλμα.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"files"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02_NDT_FR.txt"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"failed to parse file: …"</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test.xg"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">"positions"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"duplicates"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"failed"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"positions_imported"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="export-exporter-des-donnees">
+<h2>export — Εξαγωγή δεδομένων<a class="headerlink" href="#export-exporter-des-donnees" title="Link to this heading"></a></h2>
+<p>Εξάγει το περιεχόμενο της βάσης σε αρχεία.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span>--file<span class="w"> </span>&lt;output&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση προέλευσης (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Τύπος εξαγωγής: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> ή <code class="docutils literal notranslate"><span class="pre">mat</span></code> (εξαγωγή ενός ή περισσότερων αγώνων σε μεταγραφή Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Αρχείο εξόδου (υποχρεωτικό, εκτός από το <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code> που χρησιμοποιείται με το <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Κατάλογος εξόδου για την ομαδική εξαγωγή <code class="docutils literal notranslate"><span class="pre">.mat</span></code> (πολλοί αγώνες, ένα αρχείο ανά αγώνα· χωρίς <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, εξάγονται όλοι οι αγώνες).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Συμπερίληψη των αναλύσεων (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Συμπερίληψη των σχολίων (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Συμπερίληψη της βιβλιοθήκης φίλτρων (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--played-moves</span></code> — Συμπερίληψη των παιγμένων κινήσεων (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--matches</span></code> — Συμπερίληψη των αγώνων (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--transcriptions</span></code> — Συμπερίληψη του πρόχειρου απομαγνητοφώνησης κάθε εξαγόμενου αγώνα (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--aliases</span></code> — Συμπερίληψη των ψευδωνύμων παικτών και διοργανώσεων που γράφουν οι εξαγόμενοι αγώνες, ώστε η συγχώνευση παικτών να τους ακολουθεί (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collections</span></code> — Συμπερίληψη των συλλογών (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournaments</span></code> — Συμπερίληψη των τουρνουά (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decks</span></code> — Συμπερίληψη των τραπουλών Anki (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lessons</span></code> — Συμπερίληψη των μαθημάτων, με τις συλλογές και τις θέσεις που δείχνουν τα βήματά τους (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--anki-history</span></code> — Μεταφορά του ιστορικού επανάληψης των εξαγόμενων τραπουλών: της κατάστασης κάθε κάρτας και του αρχείου καταγραφής των επαναλήψεών της (προεπιλογή: ναι).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code> — IDs συλλογών προς εξαγωγή (χωρισμένα με κόμματα, κενό = όλες).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — IDs αγώνων προς εξαγωγή (χωρισμένα με κόμματα, κενό = όλα).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — IDs τουρνουά προς εξαγωγή (χωρισμένα με κόμματα, κενό = όλα).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck-ids</span></code> — IDs των τράπουλων Anki που εξάγονται μαζί με τις θέσεις τους (χωρισμένα με κόμματα, κενό = όλες).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lesson-ids</span></code> — IDs των μαθημάτων προς εξαγωγή (χωρισμένα με κόμματα, κενό = όλα).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Τυλίγει το αποτέλεσμα σε κρυπτογραφημένο κοντέινερ (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark</span></code> — Γράφει μια <strong>υπογεγραμμένη</strong> δήλωση προέλευσης στο εξαγόμενο αρχείο (βλ. <a class="reference internal" href="manuel_partage.html#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark-note</span></code> — Ελεύθερο κείμενο συνδεδεμένο με το υδατογράφημα (όροι χρήσης, επικοινωνία)· χρησιμοποιείται μαζί με το <code class="docutils literal notranslate"><span class="pre">--watermark</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (ένα έγγραφο που συνοψίζει την εξαγωγή: διαδρομή, μέγεθος σε bytes, πλήθη).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--incremental</span></code> — Με <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code>: εξάγει μόνο ό,τι έχει μπει στη βιβλιοθήκη από την τελευταία σταδιακή εξαγωγή προς τον ίδιο φάκελο και στη συνέχεια προωθεί αυτό το σημάδι στην εξαγόμενη βάση. Το <code class="docutils literal notranslate"><span class="pre">--file</span></code> μπορεί τότε να είναι φάκελος, όπου δημιουργείται ένα αρχείο <code class="docutils literal notranslate"><span class="pre">sync-&lt;machine&gt;-&lt;date&gt;.db</span></code> (βλ. <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Συγχρονισμός δύο υπολογιστών</span></a>). Ένα όνομα αρχείου που υπάρχει ήδη απορρίπτεται: το υπάρχον αρχείο περιέχει το προηγούμενο δέλτα, που ο άλλος υπολογιστής ίσως δεν έχει ακόμη συγχωνεύσει.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sync-cursor</span></code> — Με <code class="docutils literal notranslate"><span class="pre">--incremental</span></code>: όνομα του σημαδιού που διαβάζεται και προωθείται, στη θέση του φακέλου προορισμού.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plan</span></code> — Με <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code> ή <code class="docutils literal notranslate"><span class="pre">matches</span></code>: μετρά, οικογένεια ανά οικογένεια, όσα θα έγραφε η εξαγωγή, χωρίς να γράψει αρχείο (το <code class="docutils literal notranslate"><span class="pre">--file</span></code> είναι τότε προαιρετικό). Τα πλήθη είναι αυτά που αναφέρει στη συνέχεια η εξαγωγή· κατονομάζονται οι ζωντανές συλλογές που θα έφευγαν παγωμένες και οι τράπουλες «recherche» των οποίων η πηγή θα έχανε ένα μέρος. Με άλλον τύπο, η επιλογή απορρίπτεται.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--plan-ids</span> <span class="pre">&lt;famille&gt;</span></code> — Όπως το <code class="docutils literal notranslate"><span class="pre">--plan</span></code>, αλλά επιστρέφει μια σελίδα με τα αναγνωριστικά πίσω από ένα πλήθος: <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">comments</span></code> (οι θέσεις που τα φέρουν), <code class="docutils literal notranslate"><span class="pre">matches</span></code>, <code class="docutils literal notranslate"><span class="pre">tournaments</span></code>, <code class="docutils literal notranslate"><span class="pre">directions</span></code> (τα τουρνουά των οποίων η Διεύθυνση εξάγεται μαζί τους), <code class="docutils literal notranslate"><span class="pre">rencontres</span></code> (οι διοργανώσεις που εξάγονται μαζί με ένα από τα τουρνουά τους), <code class="docutils literal notranslate"><span class="pre">collections</span></code>, <code class="docutils literal notranslate"><span class="pre">lessons</span></code>, <code class="docutils literal notranslate"><span class="pre">ankiDecks</span></code>, <code class="docutils literal notranslate"><span class="pre">transcriptions</span></code> ή <code class="docutils literal notranslate"><span class="pre">filters</span></code>. Τα <code class="docutils literal notranslate"><span class="pre">--offset</span></code> και <code class="docutils literal notranslate"><span class="pre">--limit</span></code> επιλέγουν τη σελίδα (έως 1000 αναγνωριστικά).</p></li>
+</ul>
+<p>Το <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">database</span></code> εξάγει ολόκληρη τη βιβλιοθήκη, όπως η εξαγωγή του διακομιστή και όπως το παράθυρο εξαγωγής όταν η εμφανιζόμενη λίστα είναι η βιβλιοθήκη: θέσεις, αγώνες, τουρνουά (με τη Διεύθυνσή τους: ημερολόγιο, ζεύγη, τραπέζια και σύνδεση των εξαγόμενων αγώνων· η διοργάνωσή τους εξάγεται μόλις εξαχθεί ένα από τα τουρνουά της), συλλογές, μαθήματα, τράπουλες Anki, απομαγνητοφωνήσεις, ψευδώνυμα και φίλτρα. Μια επιλογή με τιμή <code class="docutils literal notranslate"><span class="pre">false</span></code> αφαιρεί την αντίστοιχη ομάδα (<code class="docutils literal notranslate"><span class="pre">--collections=false</span></code>)· μια λίστα IDs την περιορίζει σε αυτά τα στοιχεία και την περιλαμβάνει. Ένα πρόχειρο απομαγνητοφώνησης εξάγεται μαζί με τον αγώνα που παρήγαγε· ένα πρόχειρο που δεν έχει ακόμη παραγάγει αγώνα εξάγεται μόνο αν εξάγονται όλοι οι αγώνες. Το <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">matches</span></code> μεταφέρει επίσης το πρόχειρο κάθε αγώνα.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde.db
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--file<span class="w"> </span>positions.txt
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--file<span class="w"> </span>selection.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">1</span>,3,5
+
+<span class="c1"># .mat : un match, puis plusieurs (ou tous) dans un répertoire</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span><span class="w"> </span>--file<span class="w"> </span>match5.mat
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span>,9,12<span class="w"> </span>--dir<span class="w"> </span>sorties/
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--dir<span class="w"> </span>sorties/
+
+<span class="c1"># Ce qui est nouveau depuis le dernier export vers ce dossier, pour une</span>
+<span class="c1"># autre machine qui le surveille</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--incremental<span class="w"> </span>--file<span class="w"> </span>~/Sync/vers-portable/
+
+<span class="c1"># .dbx : filigrané et protégé par mot de passe</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>cours.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>cours-diffusion.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont — 12 mars 2026"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark-note<span class="w"> </span><span class="s2">"Merci de ne pas rediffuser."</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret
+</pre></div>
+</div>
+<p>Ένα υδατογράφημα υπογράφεται με την τοπική ταυτότητα εκδότη (βλ. την εντολή <code class="docutils literal notranslate"><span class="pre">identity</span></code> παρακάτω): είναι απαραχάρακτο, αλλά όχι ανεξάλειπτο — το αρχείο παραμένει μια συνηθισμένη βάση SQLite. Δεν προστατεύει τίποτα, δηλώνει μόνο από πού προέρχεται το αρχείο. Ένας κωδικός προστατεύει τη <em>μεταφορά</em> του αρχείου (το ξεχασμένο αντίγραφο, το συνημμένο που στάλθηκε κατά λάθος), όχι την ίδια τη βάση: όποιος έλαβε τον κωδικό μπορεί να την ανοίξει. Το blunderDB δεν καταγράφει ποτέ τίποτα στην πλευρά του παραλήπτη (κανένα μητρώο, κανένα ημερολόγιο) — βλ. <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-mark-origin-and-nothing-else.md">ADR-0007</a>.</p>
+</section>
+<section id="transfer-copier-d-une-bibliotheque-a-une-autre">
+<span id="cli-transfer"></span><h2>transfer — Αντιγραφή από μια βιβλιοθήκη σε άλλη<a class="headerlink" href="#transfer-copier-d-une-bibliotheque-a-une-autre" title="Link to this heading"></a></h2>
+<p>Αντιγράφει ένα μέρος μιας βιβλιοθήκης σε μια άλλη, χωρίς ενδιάμεσο αρχείο προς διαχείριση. Η επιλογή είναι αυτή του <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>· η συγχώνευση είναι αυτή της εισαγωγής μιας βάσης <code class="docutils literal notranslate"><span class="pre">.db</span></code>: μια θέση που ο προορισμός διαθέτει ήδη δεν προστίθεται δεύτερη φορά (αναγνωρίζεται από το hash της), οι αναλύσεις και τα σχόλιά της συγχωνεύονται, και ένας αγώνας, μια συλλογή, ένα μάθημα ή μια τράπουλα Anki που υπάρχει ήδη δεν διπλασιάζεται. Η αντιγραφή από το Α στο Β και μετά από το Β στο Α δεν δημιουργεί επομένως κανένα διπλότυπο.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>&lt;source.db&gt;<span class="w"> </span>--to<span class="w"> </span>&lt;destination.db&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Βιβλιοθήκη προέλευσης (υποχρεωτικό· πρέπει να υπάρχει και να έχει το σχήμα αυτής της έκδοσης του blunderDB). Μια παλαιότερη βιβλιοθήκη απορρίπτεται, επειδή η αναβάθμισή της θα σήμαινε εγγραφή σε αυτήν: ανοίξτε την μία φορά στο blunderDB. Μια νεότερη βιβλιοθήκη απορρίπτεται επίσης: ενημερώστε το blunderDB.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Βιβλιοθήκη προορισμού (υποχρεωτικό· δημιουργείται αν δεν υπάρχει). Δεν μπορεί να είναι η προέλευση.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code>, <code class="docutils literal notranslate"><span class="pre">--comments</span></code>, <code class="docutils literal notranslate"><span class="pre">--played-moves</span></code>, <code class="docutils literal notranslate"><span class="pre">--matches</span></code>, <code class="docutils literal notranslate"><span class="pre">--transcriptions</span></code>, <code class="docutils literal notranslate"><span class="pre">--aliases</span></code>, <code class="docutils literal notranslate"><span class="pre">--collections</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournaments</span></code>, <code class="docutils literal notranslate"><span class="pre">--decks</span></code>, <code class="docutils literal notranslate"><span class="pre">--lessons</span></code> — Όπως στο <code class="docutils literal notranslate"><span class="pre">export</span></code>: μια επιλογή με τιμή <code class="docutils literal notranslate"><span class="pre">false</span></code> αφαιρεί την οικογένειά της (προεπιλογή: ναι για όλες).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--deck-ids</span></code>, <code class="docutils literal notranslate"><span class="pre">--lesson-ids</span></code> — Μια λίστα IDs της προέλευσης περιορίζει την οικογένειά της σε αυτά τα στοιχεία και την περιλαμβάνει. Ένα ID που η προέλευση δεν περιέχει είναι σφάλμα, και δεν αντιγράφεται τίποτα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (ό,τι διαβάστηκε από την προέλευση και ό,τι πήρε από αυτήν ο προορισμός).</p></li>
+</ul>
+<p><strong>Ποιες θέσεις μεταφέρονται.</strong> Χωρίς λίστα IDs, μεταφέρονται όλες οι θέσεις της προέλευσης, ταξινομημένες ή όχι. Μόλις δοθεί μια λίστα IDs, μεταφέρονται μόνο οι θέσεις που προσεγγίζονται από τις επιλεγμένες οικογένειες (τα μέλη μιας συλλογής, οι κινήσεις ενός αγώνα, τα βήματα ενός μαθήματος, οι κάρτες μιας τράπουλας), με τις αναλύσεις και τα σχόλιά τους. Μια συλλογή μεταφέρεται πάντα με τα μέλη της. Ένας αγώνας που ονομάζεται με το <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> φέρνει το δελτίο του τουρνουά του (όνομα, ημερομηνία, τόπος), αλλά όχι τους άλλους αγώνες αυτού του τουρνουά· με το <code class="docutils literal notranslate"><span class="pre">--tournaments=false</span></code>, φτάνει χωρίς τουρνουά.</p>
+<p>Δεν γράφεται τίποτα που να λέει από πού προέρχεται το αντίγραφο: ούτε υδατογράφημα, ούτε αρχείο καταγραφής εισαγωγής, ούτε μεταδεδομένα της προέλευσης· ο προορισμός κρατά τα δικά του και η προέλευση δεν λαμβάνει τίποτα. Η βιβλιοθήκη φίλτρων και το ιστορικό επανάληψης των τραπουλών Anki δεν αντιγράφονται: μια τράπουλα φτάνει χωρίς ιστορικό, και μια τράπουλα με το ίδιο όνομα που υπάρχει ήδη κρατά το δικό της.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Toute une bibliothèque dans une autre</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>club.db<span class="w"> </span>--to<span class="w"> </span>perso.db
+
+<span class="c1"># Deux collections et leurs positions, rien d'autre</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>club.db<span class="w"> </span>--to<span class="w"> </span>perso.db<span class="w"> </span>--collection-ids<span class="w"> </span><span class="m">3</span>,7<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--matches<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--tournaments<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--lessons<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--decks<span class="o">=</span><span class="nb">false</span>
+
+<span class="c1"># Un match, ses positions et son tournoi, en retour</span>
+./blunderdb<span class="w"> </span>transfer<span class="w"> </span>--from<span class="w"> </span>perso.db<span class="w"> </span>--to<span class="w"> </span>club.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--collections<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--lessons<span class="o">=</span><span class="nb">false</span><span class="w"> </span>--decks<span class="o">=</span><span class="nb">false</span>
+</pre></div>
+</div>
+<p>Ο διακομιστής προσφέρει την ίδια μεταφορά μεταξύ δύο tenants, που τραβά ο tenant που λαμβάνει (βλ. <a class="reference internal" href="mode_headless.html#mode-headless-transfert"><span class="std std-ref">Τράβηγμα αντιγράφου από έναν tenant ανάγνωσης</span></a>).</p>
+</section>
+<section id="identity-identite-d-emetteur">
+<h2>identity — Ταυτότητα εκδότη<a class="headerlink" href="#identity-identite-d-emetteur" title="Link to this heading"></a></h2>
+<p>Εμφανίζει ή μετακινεί την <strong>ταυτότητα εκδότη</strong> σας: το κλειδί Ed25519 που υπογράφει κάθε υδατογράφημα. Δημιουργείται από μόνη της με το πρώτο υδατογράφημα που τίθεται· δεν υπάρχει τίποτα να ρυθμίσετε. Ανήκει σε ένα πρόσωπο, όχι σε μια βάση δεδομένων: ό,τι σημαίνετε φέρει ένα και μόνο δημόσιο αποτύπωμα.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>identity
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jean Dupont"</span>
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--export<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--import<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span></code> — Αλλάζει το εμφανιζόμενο όνομα της ταυτότητας.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Εξάγει την ταυτότητα σε αρχείο <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Εισάγει μια ταυτότητα από αρχείο <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--passphrase</span></code> — Προαιρετική φράση πρόσβασης που προστατεύει το εξαγόμενο/εισαγόμενο αρχείο (η τοπική ταυτότητα παραμένει σκόπιμα απροστάτευτη).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (όνομα, αποτύπωμα, διαδρομή αποθήκευσης).</p></li>
+</ul>
+<p>Το εξαγόμενο αρχείο επιτρέπει σε όποιον το κατέχει να υπογράφει στο όνομά σας — μην το μοιράζεστε. Η μετονομασία αλλάζει μόνο μια ετικέτα: τα ήδη σημασμένα αρχεία διατηρούν το όνομα με το οποίο σφραγίστηκαν και εξακολουθούν να επαληθεύονται.</p>
+</section>
+<section id="open-ouvrir-un-fichier-protege">
+<h2>open — Άνοιγμα προστατευμένου αρχείου<a class="headerlink" href="#open-ouvrir-un-fichier-protege" title="Link to this heading"></a></h2>
+<p>Μετατρέπει ένα αρχείο προστατευμένο με κωδικό (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) σε συνηθισμένη βάση. Ο κωδικός ζητείται μία μόνο φορά· έπειτα πρόκειται για κανονικό αρχείο.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret
+./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret<span class="w"> </span>--file<span class="w"> </span>./mon-cours.db
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Το αρχείο <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> προς άνοιγμα (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Ο κωδικός του κοντέινερ (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Διαδρομή εξόδου για τη συνηθισμένη βάση (προεπιλογή: ίδιο όνομα, κατάληξη <code class="docutils literal notranslate"><span class="pre">.db</span></code>).</p></li>
+</ul>
+<p>Τι προστατεύει ο κωδικός: τη <em>μεταφορά</em> του αρχείου — το αντίγραφο που ξεχάστηκε σε έναν φάκελο λήψεων, το συνημμένο που στάλθηκε κατά λάθος. Όχι τη βάση: όποιος έλαβε τον κωδικό μπορεί να την ανοίξει. Η κεφαλίδα του κοντέινερ είναι σε καθαρό κείμενο, ώστε το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> να διαβάζει την προέλευση ενός προστατευμένου αρχείου χωρίς τον κωδικό του.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli.html" class="btn btn-neutral float-left" title="Διεπαφή γραμμής εντολών (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-right" title="Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

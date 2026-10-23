@@ -1,0 +1,295 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Изучение, уроки и тренировка &mdash; документация blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=ee48f470"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Статистика" href="cli_stats.html" />
+    <link rel="prev" title="Анализ и движок" href="cli_analyse.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/cli_entrainement.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_entrainement.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_entrainement.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_entrainement.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_entrainement.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_entrainement.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_entrainement.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_entrainement.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Метрики и инструменты для изучения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Общий синтаксис</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Доступные команды</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Импорт, экспорт, перенос</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Библиотека: поиск, списки, коллекции</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Матчи, турниры и партии</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Анализ и движок</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Изучение, уроки и тренировка</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#study-la-file-d-etude-transversale">study — Сквозная очередь для изучения</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lesson-gerer-les-lecons">lesson — Управление уроками</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#anki-paquets-de-repetition-espacee">anki — Колоды интервального повторения</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#training-le-journal-d-entrainement">training — Журнал тренировок</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Статистика</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Администрирование базы данных</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Примеры рабочих процессов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Коды возврата</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Интерфейс командной строки (CLI)</a></li>
+      <li class="breadcrumb-item active">Изучение, уроки и тренировка</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="etude-lecons-et-entrainement">
+<span id="cli-entrainement-chapitre"></span><h1>Изучение, уроки и тренировка<a class="headerlink" href="#etude-lecons-et-entrainement" title="Ссылка на этот заголовок"></a></h1>
+<section id="study-la-file-d-etude-transversale">
+<h2>study — Сквозная очередь для изучения<a class="headerlink" href="#study-la-file-d-etude-transversale" title="Ссылка на этот заголовок"></a></h2>
+<p>Перечисляет блундеры опорного игрока базы по всем импортам вместе, которые пока ничем не обработаны: без комментария, без карточки Anki, вне любой коллекции и без пометки «просмотрено» (см. <a class="reference internal" href="guide_utilisateur.html#file-etude-transversale"><span class="std std-ref">Блундеры, которые пока ничем не обработаны</span></a>). Каждая подкоманда принимает <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>study<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">queue</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Очередь, от самой дорогой к наименее дорогой; не более пятидесяти позиций.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mark</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Помечает позицию как просмотренную: она покидает очередь. Пометка — это данные базы, она никогда не экспортируется.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unmark</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Снимает пометку: позиция возвращается в очередь.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Показывает, есть ли у позиции отметка.</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>study<span class="w"> </span>queue<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>study<span class="w"> </span>mark<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1234</span>
+</pre></div>
+</div>
+</section>
+<section id="lesson-gerer-les-lecons">
+<h2>lesson — Управление уроками<a class="headerlink" href="#lesson-gerer-les-lecons" title="Ссылка на этот заголовок"></a></h2>
+<p>Управляет уроками: упорядоченными последовательностями шагов, которые тренер пишет один раз для ученика. У каждого шага есть заголовок и текст, и он может показывать коллекцию, позицию, и то и другое или ничего. Урок передаётся в файле <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (подкоманда <code class="docutils literal notranslate"><span class="pre">export</span></code>) и читается в графическом интерфейсе командой <code class="docutils literal notranslate"><span class="pre">:le</span></code>. Каждая подкоманда принимает <code class="docutils literal notranslate"><span class="pre">--db</span></code>; <code class="docutils literal notranslate"><span class="pre">list</span></code> и <code class="docutils literal notranslate"><span class="pre">show</span></code> принимают <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>lesson<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Список уроков: id, имя, число шагов.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Шаги урока по порядку: id шага, заголовок, текст, показываемые коллекция и позиция.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;nom&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Создаёт пустой урок.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--name</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Переименовывает урок или меняет его описание; не указанное сохраняется.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--confirm</span></code> — Удаляет урок и его шаги безвозвратно (для уроков нет корзины). Коллекции и позиции, которые показывали его шаги, остаются в базе.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--title</span> <span class="pre">&lt;titre&gt;]</span> <span class="pre">[--text</span> <span class="pre">&lt;texte&gt;</span> <span class="pre">|</span> <span class="pre">--text-file</span> <span class="pre">&lt;fichier&gt;]</span> <span class="pre">[--collection</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--position</span> <span class="pre">&lt;id&gt;]</span></code> — Добавляет шаг в конец урока.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--title</span> <span class="pre">…]</span> <span class="pre">[--text</span> <span class="pre">…</span> <span class="pre">|</span> <span class="pre">--text-file</span> <span class="pre">…]</span> <span class="pre">[--collection</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--position</span> <span class="pre">&lt;id&gt;]</span></code> — Изменяет шаг; меняются только указанные поля, <code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">0</span></code> или <code class="docutils literal notranslate"><span class="pre">--position</span> <span class="pre">0</span></code> убирают то, что показывал шаг.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span></code> — Удаляет шаг.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reorder</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--steps</span> <span class="pre">&lt;id,id,…&gt;</span></code> — Задаёт порядок шагов; список должен содержать все шаги урока.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;fichier&gt;</span> <span class="pre">[--analysis=false]</span> <span class="pre">[--comments=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--password</span> <span class="pre">&lt;mot</span> <span class="pre">de</span> <span class="pre">passe&gt;]</span></code> — Экспортирует один или несколько уроков вместе с коллекциями и позициями, которые показывают их шаги, в новый файл базы; с <code class="docutils literal notranslate"><span class="pre">--password</span></code> файл представляет собой защищённый <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (о водяном знаке см. команду <code class="docutils literal notranslate"><span class="pre">export</span></code>). С <code class="docutils literal notranslate"><span class="pre">--html</span></code> (один урок, <code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">fr|en|de|el|es|fi|it|ja|ru</span></code>) <code class="docutils literal notranslate"><span class="pre">--out</span></code> — автономная HTML-страница: заголовок, описание, каждый шаг с текстом и доской, сохранённый анализ каждой позиции, свёрнутый как ответ викторины, и в нижнем колонтитуле происхождение водяного знака базы, если он есть. В файле нет ни скриптов, ни сетевых адресов.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--undo]</span></code> — Отмечает шаг как выполненный в этой базе или снимает отметку с <code class="docutils literal notranslate"><span class="pre">--undo</span></code>: это прогресс читающего урок, и ни один экспорт его не переносит.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">progress</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Показывает шаги урока, отмеченные как выполненные, с датой жеста.</p></li>
+</ul>
+<p>Импорт файла, содержащего урок, создаёт его вместе с шагами; урок, имя которого уже есть в базе, не затрагивается, поэтому повторный импорт того же файла ничего не меняет. Чтение урока ничего не записывает у читающего; только <code class="docutils literal notranslate"><span class="pre">done</span></code> записывает его прогресс.</p>
+<p>Экспорт всей библиотеки (<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>) включает все уроки вместе с тем, что показывают их шаги; частичный экспорт включает только названные уроки, командой <code class="docutils literal notranslate"><span class="pre">lesson</span> <span class="pre">export</span></code>.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>lesson<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jouer contre un prime"</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span>add-step<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--lesson<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--title<span class="w"> </span><span class="s2">"Le temps"</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"Comptez les pips."</span><span class="w"> </span>--collection<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Remettre la leçon à un élève, protégée et marquée de son origine</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--out<span class="w"> </span>lecon.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret<span class="w"> </span>--watermark<span class="w"> </span><span class="s2">"Cours du 12 mars"</span>
+</pre></div>
+</div>
+</section>
+<section id="anki-paquets-de-repetition-espacee">
+<h2>anki — Колоды интервального повторения<a class="headerlink" href="#anki-paquets-de-repetition-espacee" title="Ссылка на этот заголовок"></a></h2>
+<p>Просматривает и обслуживает колоды интервального повторения (FSRS) панели Anki интерфейса. Повторение карточки требует доски и остаётся в интерфейсе; CLI выводит список, измеряет и ресинхронизирует.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">decks</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Список колод: источник, число карточек, карточки к повторению, новые карточки.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Статистика повторения колоды: всего, новых, изучаемых, к пересмотру, к повторению сейчас, и её параметры FSRS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forecast</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--days</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Карточки, наступающие по календарным дням (UTC) на <code class="docutils literal notranslate"><span class="pre">n</span></code> ближайших дней (по умолчанию 30, максимум 365); день 0 включает все просроченные карточки; <code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code> (по умолчанию) охватывает все колоды.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sync</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span></code> — Добавляет карточку для каждой позиции источника колоды, у которой её ещё нет; существующие карточки сохраняют своё расписание.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retention</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — измеренное удержание колоды в сравнении с целью, выбранной её владельцем.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">card</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--action</span> <span class="pre">suspend|unsuspend|bury|remove|undo</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — действует на одну карточку. <em>Приостановка</em> откладывает её, не теряя историю (она больше не выпадает в сеансе); <em>закапывание</em> прячет её до следующего дня, ничего не говоря о её ценности; <em>удаление</em> убирает её из колоды — сама позиция остаётся в библиотеке, ведь колода лишь список изучения поверх неё. <em>undo</em> отменяет последнюю оценку карточки, которая возвращается в состояние до этой оценки, и выводит это состояние. Если отменять нечего, команда отказывается: «the card has no review to undo».</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — журнал повторений, самые свежие сначала (<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code>, по умолчанию, охватывает все колоды; <code class="docutils literal notranslate"><span class="pre">--limit</span></code> по умолчанию 20). Журнал — это то, что планировщику действительно сообщили, в отличие от того, что он планирует сегодня: единственное место, где видна оценка, введённая по ошибке.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">|</span> <span class="pre">--collection</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;файл.apkg&gt;</span> <span class="pre">[--format</span> <span class="pre">apkg]</span> <span class="pre">[--lang</span> <span class="pre">&lt;язык&gt;]</span></code> — Записывает колоду или коллекцию в пакет Anki <strong>.apkg</strong>, который приложение Anki импортирует на компьютере или телефоне: одна карточка на позицию, на лицевой стороне доска, счёт, куб и кости, на обороте лучший ход или верное решение по кубу, его эквити и ошибка сыгранного хода, подписи на языке <code class="docutils literal notranslate"><span class="pre">--lang</span></code> (по умолчанию <code class="docutils literal notranslate"><span class="pre">en</span></code>). Живая коллекция вычисляется при экспорте, в пределах своего потолка. Экспорт ничего не записывает в базу; повторный экспорт, импортированный в Anki, обновляет её карточки вместо того, чтобы их дублировать. Демон отдаёт тот же файл по <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/anki.exportApkg</span></code>.</p></li>
+</ul>
+<p>Колода, основанная на коллекции, заново читает свою коллекцию; основанная на живой коллекции, она заново выполняет её запрос под тем же потолком в 5 000 позиций и сообщает в выводе ошибок об усечённом источнике. Колода, основанная на поиске, сохраняет поиск таким, каким его записал графический интерфейс (команда, доска и идентификаторы позиций, найденных в тот момент): грамматика поиска живёт в графическом интерфейсе, поэтому CLI пересинхронизируется по записанным идентификаторам и сообщает об этом в выводе ошибок — откройте колоду в графическом интерфейсе, чтобы заново выполнить сам поиск.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>decks<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>forecast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--days<span class="w"> </span><span class="m">14</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>sync<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span><span class="nb">suspend</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span>undo
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>log<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">50</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--out<span class="w"> </span>paquet.apkg<span class="w"> </span>--lang<span class="w"> </span>fr
+
+<span class="c1"># Day         Due</span>
+<span class="c1"># ---         ---</span>
+<span class="c1"># 2026-09-02  12</span>
+<span class="c1"># 2026-09-03  4</span>
+<span class="c1"># ...</span>
+<span class="c1">#</span>
+<span class="c1"># 37 card(s) due over 14 day(s)</span>
+</pre></div>
+</div>
+</section>
+<section id="training-le-journal-d-entrainement">
+<span id="cli-training"></span><h2>training — Журнал тренировок<a class="headerlink" href="#training-le-journal-d-entrainement" title="Ссылка на этот заголовок"></a></h2>
+<p>Перечитывает журнал вкладки «Тренировка» (см. <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Панель Тренировка</span></a>) и превращает неверно решённые вопросы в материал для повторения. Журнал пишет графическое приложение или клиент демона через маршрут <code class="docutils literal notranslate"><span class="pre">training.save</span></code>; командная строка вопросов не задаёт.</p>
+<p><strong>training sessions</strong> — Сеансы, самый недавний первым, с их идентификатором; PR существует только для «Решения».</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>sessions<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--exercise</span> <span class="pre">&lt;имя&gt;</span></code> — Одно упражнение: <code class="docutils literal notranslate"><span class="pre">scores</span></code>, <code class="docutils literal notranslate"><span class="pre">pips</span></code>, <code class="docutils literal notranslate"><span class="pre">bearoff</span></code>, <code class="docutils literal notranslate"><span class="pre">evaluation</span></code> или <code class="docutils literal notranslate"><span class="pre">decision</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Число сеансов (по умолчанию 20; 0 = все).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Формат вывода.</p></li>
+</ul>
+<p><strong>training missed</strong> — Позиции с ошибками, каждая один раз, последняя ошибочная первой; вопрос, не уложившийся в срок, считается ошибочным. Только вопросы «Решения» сохраняют свою позицию.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--exercise</span> <span class="pre">&lt;имя&gt;</span></code> — Сеансы одного упражнения.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--session</span> <span class="pre">&lt;id&gt;</span></code> — Один сеанс (идентификатор из <code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">sessions</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Число позиций (по умолчанию 0 = все).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;имя&gt;</span></code> — Создаёт колоду Anki из этих позиций.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">&lt;имя&gt;</span></code> — Создаёт коллекцию из этих позиций.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Формат вывода; в JSON — <code class="docutils literal notranslate"><span class="pre">PositionIDs</span></code>, а также <code class="docutils literal notranslate"><span class="pre">DeckID</span></code> или <code class="docutils literal notranslate"><span class="pre">CollectionID</span></code>, когда они созданы.</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>sessions<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--exercise<span class="w"> </span>decision
+./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--session<span class="w"> </span><span class="m">12</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Ratés de lundi"</span>
+./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--collection<span class="w"> </span><span class="s2">"Mes ratés"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="cli_analyse.html" class="btn btn-neutral float-left" title="Анализ и движок" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="cli_stats.html" class="btn btn-neutral float-right" title="Статистика" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

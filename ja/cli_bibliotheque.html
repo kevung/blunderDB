@@ -1,0 +1,550 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ライブラリ: 検索、一覧、コレクション &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="マッチ、トーナメント、ゲーム" href="cli_matchs.html" />
+    <link rel="prev" title="インポート、エクスポート、転送" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/cli_bibliotheque.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_bibliotheque.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_bibliotheque.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_bibliotheque.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_bibliotheque.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_bibliotheque.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_bibliotheque.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/cli_bibliotheque.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">一般的な構文</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">利用可能なコマンド</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">インポート、エクスポート、転送</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ライブラリ: 検索、一覧、コレクション</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#search-rechercher-des-positions">search — ポジションを検索する</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-lister-le-contenu">list — 内容を一覧表示する</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#collection-gerer-les-collections">collection — コレクションを管理する</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comment-les-commentaires-d-une-position">comment — ポジションのコメント</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#elsewhere-ailleurs-une-position-dans-d-autres-bases">elsewhere — 他所: 他のデータベースにある局面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trash-la-corbeille">trash — ごみ箱</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">マッチ、トーナメント、ゲーム</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">解析とエンジン</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">学習、レッスン、トレーニング</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">統計</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">データベースの管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">ワークフロー例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">終了コード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+      <li class="breadcrumb-item active">ライブラリ: 検索、一覧、コレクション</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bibliotheque-recherche-listes-collections">
+<span id="cli-bibliotheque-chapitre"></span><h1>ライブラリ: 検索、一覧、コレクション<a class="headerlink" href="#bibliotheque-recherche-listes-collections" title="この見出しへのリンク"></a></h1>
+<section id="search-rechercher-des-positions">
+<h2>search — ポジションを検索する<a class="headerlink" href="#search-rechercher-des-positions" title="この見出しへのリンク"></a></h2>
+<p>組み合わせ可能な条件でデータベース内のポジションを検索します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>主なオプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — データベース（必須）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">table</span></code>、<code class="docutils literal notranslate"><span class="pre">json</span></code>、または <code class="docutils literal notranslate"><span class="pre">xgid</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">table</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — 結果の最大件数（0 = 無制限）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--offset</span></code> — 数え始める前に最初の n 件の結果を飛ばします。<code class="docutils literal notranslate"><span class="pre">--limit</span></code> と組み合わせればページネーションになります。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — 結果を新しいデータベースにエクスポートする。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> — <code class="docutils literal notranslate"><span class="pre">--query</span></code> が解釈するトークンの一覧を表示して、そこで終了します。データベースは開かれないので、<code class="docutils literal notranslate"><span class="pre">--db</span></code> は不要です。</p></li>
+</ul>
+<p><strong>利用可能なフィルター：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision</span></code> — 決定の種類：<code class="docutils literal notranslate"><span class="pre">checker</span></code> または <code class="docutils literal notranslate"><span class="pre">cube</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dice</span></code> — ダイスの目。<code class="docutils literal notranslate"><span class="pre">5,3</span></code> は両方のダイスが一致するポジションを検索します（順序不問）。<code class="docutils literal notranslate"><span class="pre">5</span></code> はいずれかのダイスに5が現れるポジションを検索します（もう一方のダイスの値は無視されます）。<code class="docutils literal notranslate"><span class="pre">--decision</span></code> の値が指定されていない場合は <code class="docutils literal notranslate"><span class="pre">--decision</span> <span class="pre">checker</span></code> を意味します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--pip-max</span></code> — ピップカウント差の範囲。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code> — 勝率の範囲（%）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube</span></code> — キューブの値。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score1</span></code> / <code class="docutils literal notranslate"><span class="pre">--score2</span></code> — プレイヤーのスコア。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — マッチの長さ。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> — <strong>そのポジションで間違えたときの代償</strong>に対するしきい値です。最善手と次善手の差、またはキューブの3つのエラーのうち最大のものを指します。単位は<strong>エクイティのポイント</strong>です——<code class="docutils literal notranslate"><span class="pre">--error-min</span> <span class="pre">0.1</span></code> は、間違えると少なくとも 0.1 ポイントを失うポジションを残します。そこで実際に何が打たれたかについては何も言いません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--move-error-max</span></code> — プレイヤー1が<strong>実際に打った</strong>手のエラーに対するしきい値です。単位は<strong>エクイティの千分の1</strong>（ミリポイント）です。<code class="docutils literal notranslate"><span class="pre">--move-error-min</span> <span class="pre">50</span></code> は 0.05 ポイントにあたります。これは検索文法の <code class="docutils literal notranslate"><span class="pre">E</span></code> トークンそのもので、同じ書き方をします。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-analysis</span></code> — 分析のあるポジションのみ。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — ベアオフした最小チェッカー数（プレイヤー1/2）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — マッチIDでフィルタリングする（カンマ区切り）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — トーナメントIDでフィルタリングする（カンマ区切り）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — ポジションIDでフィルタリングする：範囲 <code class="docutils literal notranslate"><span class="pre">2,7</span></code>（ポジション2から7）、またはセミコロン区切りの明示的なリスト <code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — 単独でインポートされた局面のみ。つまり、マッチのインポートで入ったものではなく、自分で追加した局面です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--flagged</span></code> — 元のソフトウェアで学習用にフラグを立てた局面のみ（eXtreme Gammon のフラグ）。遡及はしません。すでにインポート済みの対戦は、フラグを取り込むために再インポートが必要です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-comment</span></code> — コメントの付いた局面のみ。由来は区別しません。手で書いたメモも、マッチのインポートで入ってきたコメントも、どちらも数えます。マッチやトーナメントのコメントは参照しません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--no-comment</span></code> — コメントのない局面のみ。<code class="docutils literal notranslate"><span class="pre">--has-comment</span></code> とは排他です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comment-origin</span> <span class="pre">&lt;o1,o2&gt;</span></code> — これらの由来のコメントを持つポジションのみ：<code class="docutils literal notranslate"><span class="pre">user</span></code>、<code class="docutils literal notranslate"><span class="pre">xg</span></code>、<code class="docutils literal notranslate"><span class="pre">gnubg</span></code>、<code class="docutils literal notranslate"><span class="pre">bgf</span></code>、<code class="docutils literal notranslate"><span class="pre">unknown</span></code>（<code class="docutils literal notranslate"><span class="pre">co:</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comment-author</span> <span class="pre">&lt;名前&gt;</span></code> — この名前に帰属するコメントを持つポジションのみ（名前の全体一致、大文字小文字は無視）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--phase</span> <span class="pre">&lt;p1,p2&gt;</span></code> — これらのゲームの段階のポジションのみ：<code class="docutils literal notranslate"><span class="pre">opening</span></code>、<code class="docutils literal notranslate"><span class="pre">middlegame</span></code>、<code class="docutils literal notranslate"><span class="pre">race</span></code>、<code class="docutils literal notranslate"><span class="pre">bearoff</span></code>（<code class="docutils literal notranslate"><span class="pre">ph:</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--game-type</span> <span class="pre">&lt;t1,t2&gt;</span></code> — これらのゲームプランのポジションのみ：<code class="docutils literal notranslate"><span class="pre">race</span></code>、<code class="docutils literal notranslate"><span class="pre">bearin</span></code>、<code class="docutils literal notranslate"><span class="pre">crunch</span></code>、<code class="docutils literal notranslate"><span class="pre">backgame</span></code>、<code class="docutils literal notranslate"><span class="pre">acepoint</span></code>、<code class="docutils literal notranslate"><span class="pre">blitz</span></code>、<code class="docutils literal notranslate"><span class="pre">primevprime</span></code>、<code class="docutils literal notranslate"><span class="pre">mutualholding</span></code>、<code class="docutils literal notranslate"><span class="pre">holding</span></code>、<code class="docutils literal notranslate"><span class="pre">contact</span></code>（<code class="docutils literal notranslate"><span class="pre">gt:</span></code>）。段階とプランは盤面から導かれるラベルで、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> が再計算します。未知の値を指定するとコマンドは失敗します。</p></li>
+</ul>
+<p>コーパスのフィルターは、局面が見つかったマッチに対して働きます。それぞれがクエリ言語のトークン( <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">検索フィルタ</span></a> )に相当します。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code> — このプレイヤーがどちらの側であれ対戦したマッチ。大文字小文字は区別されず、 <code class="docutils literal notranslate"><span class="pre">*</span></code> は任意の文字列に代わります( <code class="docutils literal notranslate"><span class="pre">pl&quot;…&quot;</span></code> )。 <code class="docutils literal notranslate"><span class="pre">--seat-only</span></code> を付けると、このプレイヤーが下した判断だけが対象になります( <code class="docutils literal notranslate"><span class="pre">pl!&quot;…&quot;</span></code> )。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opponent</span> <span class="pre">&lt;nom&gt;</span></code> — <code class="docutils literal notranslate"><span class="pre">--player</span></code> と併用すると、この対戦相手とのマッチ。単独では、どちらの側であれその名前のマッチ( <code class="docutils literal notranslate"><span class="pre">op&quot;…&quot;</span></code> )。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-name</span> <span class="pre">&lt;nom&gt;</span></code> — この名前のトーナメントのマッチ( <code class="docutils literal notranslate"><span class="pre">tn&quot;…&quot;</span></code> )。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--round</span> <span class="pre">&lt;r1,r2&gt;</span></code> — これらのラウンドのマッチ( <code class="docutils literal notranslate"><span class="pre">rd:</span></code> )。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-lengths</span> <span class="pre">&lt;expr&gt;</span></code> — マッチの長さ: <code class="docutils literal notranslate"><span class="pre">7</span></code> 、 <code class="docutils literal notranslate"><span class="pre">5,9</span></code> 、 <code class="docutils literal notranslate"><span class="pre">&gt;5</span></code> 、 <code class="docutils literal notranslate"><span class="pre">&lt;9</span></code> ( <code class="docutils literal notranslate"><span class="pre">ml</span></code> )。局面のスコアに付く <code class="docutils literal notranslate"><span class="pre">--match-length</span></code> と混同しないでください。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-date</span> <span class="pre">&lt;expr&gt;</span></code> — マッチの日付: <code class="docutils literal notranslate"><span class="pre">2024</span></code> 、 <code class="docutils literal notranslate"><span class="pre">2024-01..2024-12</span></code> 、 <code class="docutils literal notranslate"><span class="pre">&gt;2024-06</span></code> 、 <code class="docutils literal notranslate"><span class="pre">&lt;2024-06</span></code> ( <code class="docutils literal notranslate"><span class="pre">md</span></code> )。解析の日付ではありません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pr</span> <span class="pre">&lt;expr&gt;</span></code> — 判断を下したプレイヤーのマッチの PR: <code class="docutils literal notranslate"><span class="pre">&gt;8</span></code> 、 <code class="docutils literal notranslate"><span class="pre">&lt;5</span></code> 、 <code class="docutils literal notranslate"><span class="pre">4,9</span></code> ( <code class="docutils literal notranslate"><span class="pre">pr</span></code> )。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span> <span class="pre">&lt;v1,v2&gt;</span></code> — 記録された解析のエンジンと深さ: <code class="docutils literal notranslate"><span class="pre">xg</span></code> 、 <code class="docutils literal notranslate"><span class="pre">gnubg</span></code> 、 <code class="docutils literal notranslate"><span class="pre">bgblitz</span></code> 、 <code class="docutils literal notranslate"><span class="pre">hedgehog</span></code> 、 <code class="docutils literal notranslate"><span class="pre">gammonnet</span></code> 、 <code class="docutils literal notranslate"><span class="pre">3ply</span></code> 、 <code class="docutils literal notranslate"><span class="pre">3ply+</span></code> 、 <code class="docutils literal notranslate"><span class="pre">book</span></code> 、 <code class="docutils literal notranslate"><span class="pre">rollout</span></code> ( <code class="docutils literal notranslate"><span class="pre">ad:</span></code> )。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube-response</span> <span class="pre">&lt;type&gt;</span></code> — キューブ判断の種類を 1 つだけ: <code class="docutils literal notranslate"><span class="pre">double</span></code> (Double / No Double)または <code class="docutils literal notranslate"><span class="pre">takepass</span></code> (Take / Pass)。</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> と <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> は同じものを測っておらず、<strong>単位も同じではありません</strong>。その差は1000倍です。前者はエクイティのポイント（<code class="docutils literal notranslate"><span class="pre">0.1</span></code>）で指定し、あとの2つは千分の1（<code class="docutils literal notranslate"><span class="pre">100</span></code>）で指定します——1ポイントは 1000 の千分の1です。「どこで間違えたのか」に答えるのは <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> で、「どのポジションが難しかったのか」に答えるのは <code class="docutils literal notranslate"><span class="pre">--error-min</span></code> です。</p>
+</div>
+<p><strong>search が出力するもの：</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">table</span></code>（デフォルト）は、ポジションごとに1行を出します。識別子、スコア、キューブの値、決定の種類、出目、最善の決定とそのエクイティです。分析のないポジションでは、最後の2列は空のままになります。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 5 position(s)
+
+ID  Score  Cube  Type  Dice  Best Move  Equity
+--  -----  ----  ----  ----  ---------  ------
+2   7-7    0     cube        No Double  -0.005
+4   7-7    0     cube        No Double  -0.027
+6   7-7    0     cube        No Double  -0.161
+8   7-7    0     cube        No Double  0.256
+10  7-7    0     cube        No Double  -0.234
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> は同じ局面の配列を返します。フィールドは <code class="docutils literal notranslate"><span class="pre">id</span></code>、<code class="docutils literal notranslate"><span class="pre">xgid</span></code>、<code class="docutils literal notranslate"><span class="pre">score</span></code>、<code class="docutils literal notranslate"><span class="pre">cube</span></code>、<code class="docutils literal notranslate"><span class="pre">decision_type</span></code>(<code class="docutils literal notranslate"><span class="pre">checker</span></code> または <code class="docutils literal notranslate"><span class="pre">cube</span></code>)、<code class="docutils literal notranslate"><span class="pre">dice</span></code> で、常に存在します。<code class="docutils literal notranslate"><span class="pre">best_move</span></code> と <code class="docutils literal notranslate"><span class="pre">equity</span></code> は、それらを与える解析が局面にある場合にのみ現れます。<code class="docutils literal notranslate"><span class="pre">Found</span> <span class="pre">n</span> <span class="pre">position(s)</span></code> の行はエラー出力に出ます。標準出力には JSON だけが出ます。</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">5266</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">4</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"cube"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"decision_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checker"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"dice"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"best_move"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10/3"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"equity"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.565</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">xgid</span></code> は 1 行に 1 つの XGID を、接頭辞 <code class="docutils literal notranslate"><span class="pre">XGID=</span></code> 付きで出力し、標準出力には<strong>それ以外何も出しません</strong>。解析とともに記録された XGID が優先されます。そこにはソースのマッチ長が含まれているためです。なければ盤面から再生成されます。同じ XGID が JSON の <code class="docutils literal notranslate"><span class="pre">xgid</span></code> フィールドにも入ります。</p>
+<p><strong>クエリ言語:</strong></p>
+<p>上記のフラグが扱えるのはフィルターの一部だけです。<code class="docutils literal notranslate"><span class="pre">--query</span></code> は、アプリケーションのクエリ言語——コマンドバーのもの——へのアクセスを与えます。したがって、盤面に描かれないすべてのフィルター、すなわち手のパターン、コメント本文、追加日、エクイティ、除外するダイス、ゾーン、ブロットが使えます。</p>
+<p>文法が書かれている場所は1つだけ、<a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">検索フィルタ</span></a> です。その表が、各トークン、その形、そして対応する <code class="docutils literal notranslate"><span class="pre">search</span></code> のフラグ（存在する場合）を示します。このページはそれを繰り返しません。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s p&gt;30 E&gt;50'</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s m"13/11" t"blunder" pl"Alice" T&gt;2026/01/01'</span>
+</pre></div>
+</div>
+<p>局面の近傍の並べ替えも同じ文法を通ります。<code class="docutils literal notranslate"><span class="pre">--query</span> <span class="pre">'s</span> <span class="pre">like42'</span></code> を単独で、あるいは並んだ集合を絞り込む他のトークンを続けて使います。</p>
+<p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> は、データベースを開かずにその一覧を示します：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ ./blunderdb search --query-help
+blunderdb search --query — the interface's query language
+
+A query is the same text the application's command bar takes:
+  s cube p&gt;30 E&gt;50        cube decisions, 30+ pips behind, 50+ millipoints of error
+  s m"13/11" T&gt;2026/01/01 played 13/11, imported this year
+
+Flags (no value):
+  cube score   match the cube / the score of the position on the board
+  d            match the decision type (checker or cube)
+  …
+
+Ranges — each takes x&gt;n, x&lt;n or xa,b (lower-case: you; upper-case: the opponent):
+  p P          pip count difference / absolute pip count
+  …
+  E            error of the played move, in millipoints
+  T            creation date, T&gt;2026/01/01
+
+Values:
+  t"tag"       comment text (";" separates alternatives)
+  …
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--query</span></code>はフィルターのフラグに加わるのではなく、それらを置き換えます。両方を組み合わせると、問題のフラグ名を挙げて拒否されます。<em>どこを</em>探すか、<em>どのように</em>表示するかを指定するフラグ — <code class="docutils literal notranslate"><span class="pre">--db</span></code>、<code class="docutils literal notranslate"><span class="pre">--format</span></code>、<code class="docutils literal notranslate"><span class="pre">--limit</span></code>、<code class="docutils literal notranslate"><span class="pre">--offset</span></code>、<code class="docutils literal notranslate"><span class="pre">--export</span></code> — は引き続き使えます。</p>
+<p>どの規則も認識しないトークンは、検索を黙って絞り込むのではなく、コマンドを失敗させます。コマンドラインに盤面がないことから、2つの制限が生じます。チェッカーの配置パターンは入力できません。また、盤面を読む5つのトークン——<code class="docutils literal notranslate"><span class="pre">cube</span></code>、<code class="docutils literal notranslate"><span class="pre">score</span></code>、<code class="docutils literal notranslate"><span class="pre">d</span></code>、<code class="docutils literal notranslate"><span class="pre">D</span></code>/<code class="docutils literal notranslate"><span class="pre">D1</span></code>、<code class="docutils literal notranslate"><span class="pre">x</span></code>——は、ここでは空の盤面と比較されます。これらのいずれかを必要とする検索は、<code class="docutils literal notranslate"><span class="pre">--query</span></code> がそれらと組み合わせられないため、<strong>すべて</strong>フラグで書きます — 例えば、30 ピップ遅れている状況でのキューブの決定のうち、少なくとも 50 ミリポイントのエラーがあるものは次のようになります：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--pip-min<span class="w"> </span><span class="m">30</span><span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">50</span>
+</pre></div>
+</div>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--individual
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--tournament-ids<span class="w"> </span><span class="m">1</span><span class="w"> </span>--export<span class="w"> </span>cubes.db
+
+<span class="c1"># 6-5 dans les deux ordres, puis un 6 sur l'un des deux dés</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>,5
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>
+
+<span class="c1"># Pagination</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--offset<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+<section id="list-lister-le-contenu">
+<h2>list — 内容を一覧表示する<a class="headerlink" href="#list-lister-le-contenu" title="この見出しへのリンク"></a></h2>
+<p>データベースの内容を表示します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span>&lt;n&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--offset<span class="w"> </span>&lt;n&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>タイプ：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — インポートされたマッチのリスト。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — トーナメントのリスト。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — ポジションの一覧（既定は 10 件。<code class="docutils literal notranslate"><span class="pre">--offset</span> <span class="pre">&lt;n&gt;</span></code> で先頭の <em>n</em> 件を飛ばします）。データベースの大きさにかかわらず、読み込むのは表示する範囲だけです。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> を付けると<strong>表形式のエクスポート</strong>になります：ポジションごとに 1 行で、XGID、局面、スコア、キューブ、ピップ、導出された分析列を含みます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">imports</span></code> — 記録されたインポートを新しい順に一覧する：識別子、日付、形式、ソース、取り込まれた／飛ばされた／補強されたマッチ、読めなかったファイル、新しい局面。<code class="docutils literal notranslate"><span class="pre">--batch</span> <span class="pre">&lt;id&gt;</span></code> を付けると一つのインポートの<strong>完全な報告</strong>を表示する：マーク済みの局面、解析のない局面、そのロットの PR、最も損の大きい五つの判断（<a class="reference internal" href="guide_utilisateur.html#compte-rendu-import"><span class="std std-ref">インポート報告</span></a> を参照）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — パフォーマンス統計レポート：PR / Snowie ER / MWC（全体、チェッカー、ダブリングキューブ）、直近N手の決定に対する移動平均PR、トップブランダー、ダブリングキューブアクション別の内訳、エラーの大きさのヒストグラム。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">players</span></code> — データベースの<strong>プレイヤーごとに1行</strong>の比較表：対戦数、勝敗、集計された判断数、PR の全体／チェッカー／キューブ、Snowie ER、エラー数、ブランダー数、運。統計パネルのプレイヤータブに対応するコマンドライン版です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">moves</span></code>— 記録された手の<strong>表形式エクスポート</strong>。1 行に 1 手、その手が属するマッチを各行に繰り返して載せます。識別子、日付、対戦者、マッチ長、手数と種類、局面、出目、指した手、キューブの行動、運。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> が必要です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analyses</span></code>— 保存された解析の<strong>表形式エクスポート</strong>。1 行に 1 件で、エンジン、深さ、最善手とそのエクイティ、指した手の誤差、最善のキューブ行動とその誤差、六つの勝率が並びます。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> が必要です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tags</span></code>— データベースのタグ語彙。コメントに書かれた各 <code class="docutils literal notranslate"><span class="pre">#語</span></code> と、それを持つ<strong>局面</strong>の数を、よく使う順に並べます。タグがひとつもないデータベースでは、空のリストではなく推奨語彙を表示します（<a class="reference internal" href="manuel_bibliotheque.html#tags"><span class="std std-ref">タグ</span></a> を参照）。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> と <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> を受け付けます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">study</span></code> — ゲームプランごとに、直近 <code class="docutils literal notranslate"><span class="pre">--days</span></code> 日間（既定：30）に Anki デッキで復習された異なるポジションと、その前およびそれ以降に指されたマッチの PR を、それぞれの判断数とともに示します。判断が10未満に基づく PR は「—」と表示されます。並んだ三つの数字であって効果ではありません。対戦相手、形式、ダイスは一切考慮されていません。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> と <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> を受け付けます。</p></li>
+</ul>
+<section id="exports-tabulaires">
+<span id="export-tabulaire"></span><h3>表形式のエクスポート<a class="headerlink" href="#exports-tabulaires" title="この見出しへのリンク"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">positions</span></code>、<code class="docutils literal notranslate"><span class="pre">moves</span></code>、<code class="docutils literal notranslate"><span class="pre">analyses</span></code> の三つの型は、notebook や表計算、スクリプトのために CSV で書き出せます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>positions.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>moves<span class="w">     </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>moves.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>analyses<span class="w">  </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>analyses.csv
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> は<strong>明示的に指定したときだけ</strong>効きます。既定値 10 は、端末に出す <code class="docutils literal notranslate"><span class="pre">list</span></code> がデータベース全体を流してしまわないためのものです。エクスポートはプログラムが読むファイルへ行くので、黙って 10 行で切ると、数字がおかしくなるまで誰も気づかない罠になります。</p>
+<p><strong>列は契約です。</strong>これらの名前に対して書かれた notebook やスクリプトは動き続けなければなりません。列は末尾に追加され、名前が変わることも順序が変わることもありません。エクイティはすべて<strong>整数のミリポイント</strong>です。保存形式がそうであることに加え、CSV 中の小数はロケールに書式を変えさせる誘いになるからです。</p>
+<p><strong>Parquet は提供しません。</strong>教条ではなく計測に基づく判断です。列指向ライブラリはサイズを注視している実行ファイルに数メガバイトを足しますが、このエクスポートの用途はどれも CSV を一行で読めます（<code class="docutils literal notranslate"><span class="pre">pd.read_csv</span></code>、<code class="docutils literal notranslate"><span class="pre">polars.read_csv</span></code>、<code class="docutils literal notranslate"><span class="pre">read.csv</span></code>、表計算）。Parquet が効くのは数千万行の規模で、十年もののバックギャモンのライブラリは十万行です。いつか実際のデータベースでその差が測れたなら、その計測こそがこの判断を開き直すものです。</p>
+<p>これらのエクスポートには<strong>Jupyter のサンプル notebook</strong>が付属します（リポジトリの <code class="docutils literal notranslate"><span class="pre">notebooks/blunderdb-analyse.ipynb</span></code>）。時系列の PR、誤差の大きさの分布、XGID 付きの最悪の判断 10 件を扱います。使うのはその三つの CSV だけで、<strong>毎晩の継続的インテグレーションで実行されます</strong>。誰も走らせない notebook は、誰にも気づかれないまま動かなくなった notebook だからです。</p>
+<p><strong>オプション</strong>（<code class="docutils literal notranslate"><span class="pre">stats</span></code> タイプのみ）：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — 表示するメトリック：<code class="docutils literal notranslate"><span class="pre">pr</span></code> または <code class="docutils literal notranslate"><span class="pre">mwc</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">pr</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — 指定したプレイヤーに限定する。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — 1つまたは複数のトーナメントIDに限定する（カンマ区切り）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — 開始日（YYYY-MM-DD）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — 終了日（YYYY-MM-DD）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — 決定の種類：<code class="docutils literal notranslate"><span class="pre">all</span></code>、<code class="docutils literal notranslate"><span class="pre">checker</span></code> または <code class="docutils literal notranslate"><span class="pre">cube</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">all</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — リストする最悪のエラーの数（デフォルト：10）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--engine</span></code> / <code class="docutils literal notranslate"><span class="pre">--min-depth</span></code> — そのエンジン（記録されたとおりの正確な名前）で、または少なくともその深さ（ply）で分析された判断のみを数えます。<code class="docutils literal notranslate"><span class="pre">players</span></code> タイプでも受け付けられます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
+</ul>
+<p><strong>オプション</strong> (タイプ <code class="docutils literal notranslate"><span class="pre">matches</span></code> のみ):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — プレイヤー、イベント、会場、ラウンド、トーナメント、日付のいずれかがこのテキストを含むマッチだけを残します(大文字小文字は区別しません)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ids</span></code> — 指定したマッチ ID だけを残します（カンマ区切り。<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">matches</span></code> が出力する ID）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sort</span></code> — 並び順：<code class="docutils literal notranslate"><span class="pre">date</span></code> (既定、新しい順)、 <code class="docutils literal notranslate"><span class="pre">date_asc</span></code>、<code class="docutils literal notranslate"><span class="pre">length_asc</span></code>、<code class="docutils literal notranslate"><span class="pre">length_desc</span></code>、<code class="docutils literal notranslate"><span class="pre">player1</span></code>、<code class="docutils literal notranslate"><span class="pre">player1_desc</span></code>、<code class="docutils literal notranslate"><span class="pre">player2</span></code>、<code class="docutils literal notranslate"><span class="pre">player2_desc</span></code>、<code class="docutils literal notranslate"><span class="pre">tournament</span></code>、<code class="docutils literal notranslate"><span class="pre">tournament_desc</span></code>、<code class="docutils literal notranslate"><span class="pre">opponent</span></code>。</p></li>
+</ul>
+<p>フィルタと並べ替えはマッチパネルと同様にデータベースが行い、表示される合計は残ったマッチの数です。サーバーは <code class="docutils literal notranslate"><span class="pre">/v1/matches.list</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> と <code class="docutils literal notranslate"><span class="pre">sort</span></code> フィールド)と <code class="docutils literal notranslate"><span class="pre">/v1/matches.count</span></code> で提供します。</p>
+<p><strong>オプション</strong>（<code class="docutils literal notranslate"><span class="pre">imports</span></code> タイプのみ）：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--batch</span></code> — ロットの識別子：一覧の代わりにその完全な報告を表示する。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code>— <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">imports</span> <span class="pre">--batch</span></code> と併用します。報告の代わりに、その取り込みの<strong>学習キュー</strong>、すなわち見直す価値のある局面を、たどるべき順に返します（<a class="reference internal" href="guide_utilisateur.html#file-etude"><span class="std std-ref">学習キュー</span></a> を参照）。まず損失を生んだ判断、次に元のソフトで印の付いた局面、最後に際どいキューブ判断。ひとつの局面は一度しか現れません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力フォーマット：<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>（デフォルト：<code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
+</ul>
+<p>報告の測定部分は呼び出しのたびに再計算される：以後に局面が解析されたロットは、インポート当日の数字ではなく今日の数字を返す。</p>
+<p><strong>オプション</strong>（<code class="docutils literal notranslate"><span class="pre">players</span></code> タイプのみ）：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> / <code class="docutils literal notranslate"><span class="pre">--to</span></code> — 日付の範囲（YYYY-MM-DD）。たとえば大会の開催日。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — 1つまたは複数のトーナメント ID に絞り込みます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — 出力形式：<code class="docutils literal notranslate"><span class="pre">text</span></code>、<code class="docutils literal notranslate"><span class="pre">json</span></code>、<code class="docutils literal notranslate"><span class="pre">csv</span></code>（既定：<code class="docutils literal notranslate"><span class="pre">text</span></code>）。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--player</span></code> と <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> はこのタイプには<strong>適用されません</strong>。表はすべてのプレイヤーを対象とし、チェッカーとキューブはすでに別の列に分けているからです。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>ダッシュ「—」（CSV では空欄）は<strong>一度も測定されていない</strong>値を示すもので、ゼロと混同してはいけません。スキーマのバージョン 2.15.0 より前にインポートしたすべての対戦の運、および運を運ばない形式（BGF、Jellyfish の <code class="docutils literal notranslate"><span class="pre">.mat</span></code>）がこれにあたります。取得するには元ファイルを再インポートしてください。<code class="docutils literal notranslate"><span class="pre">luck_rolls</span></code> 列は、その平均が何回のロールに基づくかを示します。</p>
+</div>
+<p>各タイプは要素ごとに 1 ブロックを出力し、その前に見つかった総数を表示します。最後の行は表示中の範囲を示します。範囲は<code class="docutils literal notranslate"><span class="pre">--limit</span></code>（ポジションの既定値は 10）で切り詰められ、<code class="docutils literal notranslate"><span class="pre">--offset</span></code>でずらされます：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 3859 position(s):
+
+ID: 1
+  Score: 7-7
+  Player on roll: 0
+  Decision: Checker play
+
+ID: 2
+  Score: 7-7
+  Player on roll: 0
+  Decision: Cube action
+
+…
+
+(Showing 1-10 of 3859 positions, use --offset and --limit to see more)
+</pre></div>
+</div>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les imports enregistrés, puis le compte rendu de l'un d'eux</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span>
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--metric<span class="w"> </span>mwc<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--format<span class="w"> </span>json
+
+<span class="c1"># Un tableau par joueur, borné aux dates d'une compétition</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-03-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2026</span>-03-08
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="collection-gerer-les-collections">
+<span id="cli-collection"></span><h2>collection — コレクションを管理する<a class="headerlink" href="#collection-gerer-les-collections" title="この見出しへのリンク"></a></h2>
+<p>コレクション——グラフィカルインターフェースの Collections パネルで手動で選んだポジションの集合——を管理します。各サブコマンドは<code class="docutils literal notranslate"><span class="pre">--db</span></code>を取ります。<code class="docutils literal notranslate"><span class="pre">list</span></code>と<code class="docutils literal notranslate"><span class="pre">show</span></code>は、<code class="docutils literal notranslate"><span class="pre">list</span></code>コマンドと同様に<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code>（デフォルト）、<code class="docutils literal notranslate"><span class="pre">json</span></code>、<code class="docutils literal notranslate"><span class="pre">csv</span></code>を受け付けます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>サブコマンド：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — コレクションのリスト：id、名前、ポジション数、説明。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — コレクションのポジション：id、index（グラフィカルインターフェースのステータスバーに表示される1始まりの番号）、score、決定の種類、XGID。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;名前&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;テキスト&gt;]</span> <span class="pre">[--query</span> <span class="pre">&lt;クエリ&gt;]</span></code> — 空のコレクションを作成します。<code class="docutils literal notranslate"><span class="pre">--query</span></code> を指定すると、最初からライブコレクションとして作成します。どのルールにも認識されないトークンを含むクエリは、何かが書き込まれる前に拒否されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--query</span> <span class="pre">&lt;クエリ&gt;</span></code> — コレクションを<strong>生きた</strong>ものにします。その内容は検索の結果となり、開くたびに再評価されます。クエリはアプリケーション自身の検索文法で書きます（<a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">検索フィルタ</span></a>を参照）。<code class="docutils literal notranslate"><span class="pre">--clear</span></code> は手作業の一覧に戻し、それまで含んでいた局面を保ちます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">freeze</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — ライブコレクションを固定します。クエリがその時点で選ぶポジションがコレクションの内容となり、クエリは消去されます。ライブでないコレクションでは拒否されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evaluate</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — コレクションのポジションの識別子を読み取り、ライブコレクションの場合はそのクエリを今あらためて実行します。応答は宣言された上限である 5,000 ポジションで制限され（<code class="docutils literal notranslate"><span class="pre">--limit</span></code> で下げられます）、常にポジションの実際の数と <code class="docutils literal notranslate"><span class="pre">truncated</span></code> フラグを返します。黙って切り詰めることはありません。テキスト形式では、識別子は標準出力に、件数は標準エラー出力に送られます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pile</span> <span class="pre">[--position-id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">|</span> <span class="pre">--xgid</span> <span class="pre">&lt;XGID&gt;]</span></code> — ポジションをパイル（「後で見直す」コレクション）に載せ、すでに載っていれば外します。XGID で指定したポジションがデータベースにない場合は、まず単独で取り込んだポジションとして書き込まれます。ポジションを指定しない場合はパイルを表示します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rename</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--name</span> <span class="pre">&lt;nom&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — コレクションの名前を変更します（説明が指定されない場合は既存のものが保持されます）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--confirm]</span></code> — コレクションを削除します。ポジション自体はデータベースに残ります。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;ファイル.db&gt;</span> <span class="pre">[--analysis=false]</span> <span class="pre">[--comments=false]</span> <span class="pre">[--matches=false]</span> <span class="pre">[--transcriptions=false]</span> <span class="pre">[--aliases=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;テキスト&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;テキスト&gt;]</span> <span class="pre">[--password</span> <span class="pre">&lt;パスワード&gt;]</span></code> — 1つ以上のコレクションを新しいデータベースファイルにエクスポートします。グラフィカルインターフェースのエクスポート画面や <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code> と同じエクスポート処理を通るため、ファイルにはそれらのポジションがプレイされたマッチも、文字起こしや、プレイヤーとイベントのエイリアスとともに含まれます(透かしとパスワードについては <code class="docutils literal notranslate"><span class="pre">export</span></code> コマンドを参照)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">suggest</span> <span class="pre">[--player</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--match</span> <span class="pre">&lt;ids&gt;]</span> <span class="pre">[--tournament</span> <span class="pre">&lt;ids&gt;]</span> <span class="pre">[--from</span> <span class="pre">&lt;date&gt;]</span> <span class="pre">[--to</span> <span class="pre">&lt;date&gt;]</span> <span class="pre">[--decision-type</span> <span class="pre">all|checker|cube]</span> <span class="pre">[--size</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--collection</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--deck</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — フィルターに含まれるミスの中から<strong>参照ポジション</strong>を提案します。隣接するミスの回収可能な MWC を最も多くカバーする教訓を持ち、ほぼ重複するものや処理済みのポジションを含まないものです(<a class="reference internal" href="manuel_bibliotheque.html#positions-reference"><span class="std std-ref">参照ポジション</span></a>を参照)。<code class="docutils literal notranslate"><span class="pre">--size</span></code> の既定値は 20、最大は 50 です。<code class="docutils literal notranslate"><span class="pre">--collection</span></code>(提案されたポジションを新しいコレクションに入れる)または <code class="docutils literal notranslate"><span class="pre">--deck</span></code>(Anki デッキにする)がなければ何も書き込まれません。各行には、ファミリー、キューブ参照のスコア、要約するミスとマッチ、カバーする MWC と、その理由(教訓が半分として数えられるときに数えられる値を示します)が表示されます。<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> は同じ要素を返します。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">show</span></code>が表示する XGID は、存在する場合はポジションの分析とともに記録されたもの（BGF および XGP インポート）です。存在しない場合は、グラフィカルインターフェースの<em>ポジションをコピー</em>と全く同じ方法でボードから生成されます——このときマッチの長さは残り2つのスコアのうち大きい方になります。記録されたポジションは実際の値を保持していないためです。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Found 2 collection(s):</span>
+<span class="c1">#</span>
+<span class="c1"># ID  Name              Positions  Description</span>
+<span class="c1"># --  ----              ---------  -----------</span>
+<span class="c1"># 1   Ouvertures blitz  0          À revoir</span>
+<span class="c1"># 2   Videaux ratés     0</span>
+</pre></div>
+</div>
+<p>コレクションのないデータベースは <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">collections</span> <span class="pre">found</span> <span class="pre">in</span> <span class="pre">database</span></code> と応答しますが、それでも終了コード 0 で終わります。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures blitz"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>rename<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--confirm
+
+<span class="c1"># Exporter deux collections, marquées de leur origine</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>,4<span class="w"> </span>--out<span class="w"> </span>ouvertures.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont - 12 mars 2026"</span>
+
+<span class="c1"># Dix positions de référence d'Alice sur un tournoi, gardées en collection</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>suggest<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--tournament<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--size<span class="w"> </span><span class="m">10</span><span class="w"> </span>--collection<span class="w"> </span><span class="s2">"Références : open de mars"</span>
+</pre></div>
+</div>
+</section>
+<section id="comment-les-commentaires-d-une-position">
+<h2>comment — ポジションのコメント<a class="headerlink" href="#comment-les-commentaires-d-une-position" title="この見出しへのリンク"></a></h2>
+<p>ポジションには好きなだけコメントを付けられ、それぞれ作者に帰属します（自由テキスト）。透かし付きエクスポートで受け取ったコメントには、さらに発行者の署名が付きます。 <code class="docutils literal notranslate"><span class="pre">list</span></code> は、<em>Signed by</em> 列に名前、フィンガープリント、署名された内容と一致しなくなった場合は <code class="docutils literal notranslate"><span class="pre">(unverified)</span></code> を表示し、<em>Origin</em> 列に出所を表示します（blunderDB で書かれたコメントでは空）。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>comment<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>サブコマンド：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">--position</span> <span class="pre">N</span> <span class="pre">--text</span> <span class="pre">T</span> <span class="pre">[--author</span> <span class="pre">A]</span></code> — ポジション N に、A に帰属するコメントを追加します（<code class="docutils literal notranslate"><span class="pre">--author</span></code> を省略すると作者なしになります）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">[--position</span> <span class="pre">N]</span> <span class="pre">[--author</span> <span class="pre">A]</span></code> — ポジション、またはデータベース全体のコメントを一覧表示します。必要に応じて、特定の著者のコメントだけに絞れます。</p></li>
+</ul>
+<p><strong>共通オプション:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code>(必須)。<code class="docutils literal notranslate"><span class="pre">list</span></code> は <code class="docutils literal notranslate"><span class="pre">--format</span></code>(<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>)を受け付けます。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>comment<span class="w"> </span>add<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"Videau trop tôt"</span><span class="w"> </span>--author<span class="w"> </span>Alice
+./blunderdb<span class="w"> </span>comment<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span>
+./blunderdb<span class="w"> </span>comment<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--author<span class="w"> </span>Alice<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="elsewhere-ailleurs-une-position-dans-d-autres-bases">
+<h2>elsewhere — 他所: 他のデータベースにある局面<a class="headerlink" href="#elsewhere-ailleurs-une-position-dans-d-autres-bases" title="この見出しへのリンク"></a></h2>
+<p>同じコマンドに渡された他のデータベースファイルから、Zobrist ハッシュで局面を検索し、それぞれについて分かっていることを返します。解析、コメント、その局面がプレイされたマッチ（プレイヤー、長さ、日付、指された手とそのコスト）、そして最も近い局面（検索の<code class="docutils literal notranslate"><span class="pre">like</span></code>トークンと同じ順位付けで、動かしたチェッカーのピップ数）です。</p>
+<p>他所で指された手のコストは、読み込んだデータベースのしきい値ではなく、常に<code class="docutils literal notranslate"><span class="pre">--db</span></code>のデータベースのエラーおよびブランダーのしきい値で判定されます。結果は<code class="docutils literal notranslate"><span class="pre">error</span></code>、<code class="docutils literal notranslate"><span class="pre">blunder</span></code>、<code class="docutils literal notranslate"><span class="pre">good</span></code>、解析がなければ<code class="docutils literal notranslate"><span class="pre">unscored</span></code>です。<code class="docutils literal notranslate"><span class="pre">--db</span></code>の現在のテーブルとは別のマッチエクイティテーブルでマッチスコアにおいて行われた解析には印が付きます。そのマッチでのコストは表示されますが判定されません（<code class="docutils literal notranslate"><span class="pre">other-met</span></code>）。これは blunderDB の他の場所と同じです。他のファイルは読み取り専用で開かれ、何も書き込まれません。読み取り専用のフォルダ（ネットワーク共有、USB メモリ、マウント）にあるデータベースも、横にファイルを作ることなくそのまま読まれます。読めないファイル（存在しない、以前または新しいバージョン、blunderDB のデータベースではない）は、その名前の下に<code class="docutils literal notranslate"><span class="pre">Not</span> <span class="pre">read:</span></code>の行で報告されて（JSON では<code class="docutils literal notranslate"><span class="pre">error</span></code>フィールド）スキップされます。他のファイルは通常どおり応答し、どれも読めなかった場合に限り、コマンドは 0 以外の終了コードを返します。以前のバージョンのファイルは拒否されます（blunderDB で一度開くと更新されます）。新しいバージョンのファイルも拒否されます（blunderDB を更新してください）。局面が指された試合が 50 を超えると、最後にインポートされた 50 試合だけが読まれます。出力はそのことを総数とともに示します（JSON では<code class="docutils literal notranslate"><span class="pre">matchesTotal</span></code>と<code class="docutils literal notranslate"><span class="pre">playsTruncated</span></code>）。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--other<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--other<span class="w"> </span>&lt;fichier&gt;...<span class="o">]</span><span class="w"> </span><span class="o">(</span>--position<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--xgid<span class="w"> </span>X<span class="w"> </span><span class="p">|</span><span class="w"> </span>--zobrist<span class="w"> </span>H<span class="w"> </span><span class="p">|</span><span class="w"> </span>--match<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--tournament<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--collection<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--lesson<span class="w"> </span>N<span class="o">)</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code>（必須）— 判定を行うデータベース。そのしきい値とエクイティテーブルを使います。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--other</span></code>（必須、繰り返し指定可）— 検索対象のデータベースファイル。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position</span> <span class="pre">N</span></code> — <code class="docutils literal notranslate"><span class="pre">--db</span></code>内の識別子による局面の指定。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--xgid</span> <span class="pre">X</span></code> — XGID による局面の指定。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--zobrist</span> <span class="pre">H</span></code> — ハッシュ（10 進数）による局面の指定。この場合、近傍局面はその局面を持つデータベースの中だけで検索されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span> <span class="pre">N</span></code>、<code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">N</span></code>、<code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">N</span></code>、<code class="docutils literal notranslate"><span class="pre">--lesson</span> <span class="pre">N</span></code> — ポジションの代わりに、<code class="docutils literal notranslate"><span class="pre">--db</span></code> のマッチ、トーナメント、コレクション、レッスンを指定します。コマンドは、他の各データベースがそれを持っているかどうかを、コピーが統合するときのキー（マッチはフィンガープリントで、別の形式からインポートされたものも対象。それ以外は名前）のもとに、そこでの識別子と含まれるもの（ゲーム、マッチ、ポジション、ステップ）とともに表示します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--neighbours</span> <span class="pre">N</span></code> — データベースごとの近傍局面の数（デフォルト: 5、0: なし、最大 50）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--max-distance</span> <span class="pre">D</span></code> — 動かしたチェッカーのピップ数が D を超えて離れた近傍局面を除外します（0: 上限なし）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — <code class="docutils literal notranslate"><span class="pre">text</span></code>（デフォルト）または<code class="docutils literal notranslate"><span class="pre">json</span></code>。</p></li>
+</ul>
+<p>デーモンはテナントをまたいで同じ読み取りを提供します: <code class="docutils literal notranslate"><span class="pre">across.positionElsewhere</span></code> と <code class="docutils literal notranslate"><span class="pre">across.objectElsewhere</span></code>（<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a>を参照）。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--tournament<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>a.db<span class="w"> </span>--other<span class="w"> </span>b.db<span class="w"> </span>--xgid<span class="w"> </span><span class="s2">"XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--zobrist<span class="w"> </span><span class="m">1234567890</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="trash-la-corbeille">
+<h2>trash — ごみ箱<a class="headerlink" href="#trash-la-corbeille" title="この見出しへのリンク"></a></h2>
+<p>何が削除され、それを何で戻せるか。削除はやはり削除である：消えるものの JSON スナップショットが先に書かれ、そのテーブルの存在をデータベースの他の何も知らない——検索フィルタも、統計も、保持規則も。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>trash<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>サブコマンド：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — ごみ箱の中身を、最近削除したものから順に。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">restore</span> <span class="pre">--id</span> <span class="pre">N</span></code> — 項目 N を戻し、ごみ箱から取り除く。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discard</span> <span class="pre">--id</span> <span class="pre">N</span></code> — 項目 N を復元せずに今すぐ削除する。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">empty</span> <span class="pre">[--older-than</span> <span class="pre">D]</span></code> — ごみ箱を空にする、または D 日より古いものだけを消す。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--kind</span> <span class="pre">K</span> <span class="pre">--id</span> <span class="pre">N</span></code> — 取り消せるように、<strong>ごみ箱を経由して</strong>オブジェクトを削除する。<code class="docutils literal notranslate"><span class="pre">K</span></code> は <code class="docutils literal notranslate"><span class="pre">position</span></code>、<code class="docutils literal notranslate"><span class="pre">collection</span></code>、<code class="docutils literal notranslate"><span class="pre">comment</span></code>、<code class="docutils literal notranslate"><span class="pre">match</span></code> のいずれか。</p></li>
+</ul>
+<p><strong>共通オプション：</strong><code class="docutils literal notranslate"><span class="pre">--db</span></code>（必須）、<code class="docutils literal notranslate"><span class="pre">--kind</span></code>、<code class="docutils literal notranslate"><span class="pre">--limit</span></code>（既定 50）、<code class="docutils literal notranslate"><span class="pre">--format</span></code>（<code class="docutils literal notranslate"><span class="pre">text</span></code> または <code class="docutils literal notranslate"><span class="pre">json</span></code>）。<code class="docutils literal notranslate"><span class="pre">list</span></code> では、<code class="docutils literal notranslate"><span class="pre">--kind</span></code> で一覧を一種類のオブジェクトに絞り込めます：<code class="docutils literal notranslate"><span class="pre">position</span></code>、<code class="docutils literal notranslate"><span class="pre">collection</span></code>、<code class="docutils literal notranslate"><span class="pre">comment</span></code>、<code class="docutils literal notranslate"><span class="pre">match</span></code>、<code class="docutils literal notranslate"><span class="pre">anki_card</span></code>。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">delete</span></code> は今も<strong>網なしで</strong>削除する：局面を削除するスクリプトはそれが消えることを期待しており、黙ってスナップショットを残せば、誰も大きくしてくれと頼んでいないファイルが太る。取り消しを残すのは <code class="docutils literal notranslate"><span class="pre">trash</span> <span class="pre">delete</span></code> のほうである。</p>
+</div>
+<p>局面の復元は Zobrist 重複排除を再び通ります。重複を作ることは決してありません。復元された局面は元の番号に戻ります。その間に同じ局面が保存されていれば、そちらが保持され、足りないものを受け取ります。復元されたマッチも元の番号のまま、そのゲーム、手、解析、局面とともに戻ります。他のマッチがその番号を使っている場合、またはその間にファイルのフィンガープリントが同じマッチがインポートされた場合は拒否されます。復元が成功しても元に戻せなかったもの(使用済みまたは消えたディレクションの枠、削除されたトーナメント)は警告で知らされます。</p>
+<p>三十日より古いものは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> が削除する——データベースを開いたときには決して削除しない。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supprimer une position en gardant l'annulation</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--kind<span class="w"> </span>position<span class="w"> </span>--id<span class="w"> </span><span class="m">412</span>
+
+<span class="c1"># Voir la corbeille, puis remettre une entrée</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>restore<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+
+<span class="c1"># Ne garder que ce qui a moins de trente jours</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>empty<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--older-than<span class="w"> </span><span class="m">30</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="インポート、エクスポート、転送" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="cli_matchs.html" class="btn btn-neutral float-right" title="マッチ、トーナメント、ゲーム" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

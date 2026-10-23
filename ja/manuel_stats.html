@@ -1,0 +1,585 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>統計 &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="評価" href="manuel_eval.html" />
+    <link rel="prev" title="トーナメント" href="manuel_tournois.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/manuel_stats.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_stats.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_stats.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_stats.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_stats.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/manuel_stats.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">マニュアル</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">はじめにとインターフェース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">分析、コメント、検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">マッチと記譜</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">トーナメント</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">統計</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-stats">Stats パネル</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">はじめに</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ouverture-du-panneau">パネルを開く</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#barre-de-filtre">フィルターバー</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#toggle-pr-mwc">PR / MWC の切り替え</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-rapport-html">HTML レポート</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-tableau-de-bord">ダッシュボード タブ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-progression">Progression タブ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-erreurs">Erreurs タブ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#entrainement-dans-le-temps">時間経過でのトレーニング</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-ventilations">内訳タブ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#etude-et-jeu-reel">学習と実戦</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-joueurs">プレイヤータブ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regle-d-agregation">集計ルール</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mwc-limitations">MWC：制限事項</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">評価</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">トレーニング、Anki、デュエル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">インポート、出所、共有</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">マニュアル</a></li>
+      <li class="breadcrumb-item active">統計</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="manuel-stats"></span><h1>統計<a class="headerlink" href="#statistiques" title="この見出しへのリンク"></a></h1>
+<section id="panneau-stats">
+<span id="stats"></span><h2>Stats パネル<a class="headerlink" href="#panneau-stats" title="この見出しへのリンク"></a></h2>
+<section id="introduction">
+<h3>はじめに<a class="headerlink" href="#introduction" title="この見出しへのリンク"></a></h3>
+<p><strong>Stats</strong> パネルでは、データベースにインポートされたポジションをもとに、自分のプレイレベルを分析し、時間の経過に伴う上達を追跡できます。すべてのポジションまたはフィルターされた部分集合について、<strong>PR</strong>（<em>Performance Rating</em>）と<strong>MWC cost</strong>（Match Winning Chance cost）の指標を計算して表示します。</p>
+<p>Stats パネルは特に次の用途に役立ちます：</p>
+<ul class="simple">
+<li><p>全体の PR を使って、レベル帯（<em>ワールドクラス</em>、<em>エキスパート</em>、<em>上級者</em>など）に対して<strong>自分のレベルを把握する</strong>。</p></li>
+<li><p>Progression タブのグラフを使って、トーナメントごと、またはマッチごとに <strong>自分の上達を追跡する</strong> ；</p></li>
+<li><p><strong>自分の弱点を特定する</strong> ：Erreurs タブで、プレイした手とキューブの判断の内訳、およびエラーの大きさの分布を確認できます ；</p></li>
+<li><p><strong>データベースのプレイヤー同士を比較する</strong>——プレイヤータブで、1人につき1行。大会全体を追うのに向いています。</p></li>
+<li><p>任意の指標をクリックすることで、<strong>該当するポジションに直接アクセスする</strong>（ドリルダウン）。</p></li>
+</ul>
+<p>パネルの各数値の定義、式、不確実性、限界は <a class="reference internal" href="metriques.html#metriques"><span class="std std-ref">指標と学習ツール</span></a> にまとめています。</p>
+</section>
+<section id="ouverture-du-panneau">
+<h3>パネルを開く<a class="headerlink" href="#ouverture-du-panneau" title="この見出しへのリンク"></a></h3>
+<p>Stats パネルを開くには：</p>
+<ul class="simple">
+<li><p><em>CTRL-D</em> を押します。</p></li>
+<li><p>コマンドラインで <code class="docutils literal notranslate"><span class="pre">stats</span></code> または <code class="docutils literal notranslate"><span class="pre">st</span></code> コマンドを入力します。</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>パネルはフィルターを変更するたびに自動的に更新されます。単に PR ↔ MWC を切り替えるだけでは統計を再計算しません。両方の指標はバックエンドによって同時に計算されます。</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3>フィルターバー<a class="headerlink" href="#barre-de-filtre" title="この見出しへのリンク"></a></h3>
+<p>パネル上部のフィルターバーでは、計算をポジションの部分集合に限定できます。</p>
+<section id="perspective-joueur">
+<h4>プレイヤーの視点<a class="headerlink" href="#perspective-joueur" title="この見出しへのリンク"></a></h4>
+<p><strong>プレイヤー</strong>フィールドは、分析対象のプレイヤーで統計を絞り込みます。数文字入力すると、それを含む名前に一覧が絞られます。クリックまたは <em>Enter</em> でプレイヤーを選び、<strong>✕</strong>を押すか欄を空にすると、すべての視点に戻ります。</p>
+<p>フィルターは、パネルのすべてのタブで<strong>ひとつだけ</strong>であり、セッションをまたいで保持されます。他のパネルからも設定できます。マッチのヘッダーや盤面上のバーにあるプレイヤー名でそのプレイヤーのすべての統計が開き（トーナメントと日付は空になります）、トーナメントのヘッダーの<strong>Stats</strong>ボタンでそのトーナメント全体の統計が開きます（日付は空になり、プレイヤーは保持されます）。開始日より前の終了日は拒否され、欄は適用中の日付に戻ります。</p>
+</section>
+<section id="filtres-disponibles">
+<h4>利用可能なフィルター<a class="headerlink" href="#filtres-disponibles" title="この見出しへのリンク"></a></h4>
+<ul class="simple">
+<li><p><strong>トーナメント</strong> — 1 つまたは複数のトーナメントへの限定。複数のトーナメントを同時に選択できます。</p></li>
+<li><p><strong>日付</strong> — 期間の範囲（<em>開始</em> … <em>終了</em>）。開始日のみが指定された場合、それ以降のポジションが含まれます。</p></li>
+<li><p><strong>判断タイプ</strong> — すべて／プレイした手／キューブの判断。</p></li>
+<li><p><strong>マッチ長</strong> — 特定のマッチ長への限定（1、3、5、7、9、11、13、15、21 ポイント）。複数の長さを組み合わせられます。</p></li>
+<li><p><strong>エンジン</strong> と <strong>最小深さ</strong> — 指定したエンジンで、または少なくとも指定した深さ（ply）で分析された判断のみを残します。<em>エンジン</em> メニューには、データベースの解析に現れるエンジン（eXtreme Gammon、GNU Backgammon…）が表示されます。</p></li>
+</ul>
+<p><strong>↺ リセット</strong> ボタンは、プレイヤーを除くすべてのフィルターをゼロに戻します。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>フィルターは blunderDB の設定（<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>）に保存され、次回起動時に復元されます。</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3>PR / MWC の切り替え<a class="headerlink" href="#toggle-pr-mwc" title="この見出しへのリンク"></a></h3>
+<p>パネル上部の <strong>PR / MWC</strong> ボタンは、すべてのタブで表示される指標を切り替えます。</p>
+<p><strong>PR（Performance Rating）</strong></p>
+<blockquote>
+<div><p>カウントした判断 1 回あたりの平均エクイティ誤差を、eXtreme Gammon と GNUbg に倣って 500 倍した値です。PR 5.0 は 1 判断あたり 0.010 のエクイティ損失、つまり 10 ミリポイント (mpt) に相当します。正確なカウント規則（どの判断が分母に入るか、スコアをどう変換するか）は <a class="reference internal" href="metriques.html#metrique-pr"><span class="std std-ref">PR (Performance Rating)</span></a> にあります。</p>
+<p>パネルが進捗曲線の背後に描くレベル帯は、<strong>blunderDB 独自の目安</strong>です。これらのしきい値について権威ある刊行物はありません。各帯の上限は含まれません。PR が 4 の場合は<em>エキスパート</em>ではなく<em>上級者</em>です。</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>レベル</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ワールドクラス</p></td>
+<td><p>&lt; 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>エキスパート</p></td>
+<td><p>2 – 4</p></td>
+</tr>
+<tr class="row-even"><td><p>上級者</p></td>
+<td><p>4 – 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>中級者</p></td>
+<td><p>6 – 9</p></td>
+</tr>
+<tr class="row-even"><td><p>カジュアル</p></td>
+<td><p>9 – 12</p></td>
+</tr>
+<tr class="row-odd"><td><p>初級者</p></td>
+<td><p>≥ 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost（Match Winning Chance cost）</strong></p>
+<blockquote>
+<div><p>エラーのために失われたマッチ勝率の累積で、フィルターされたデータセット全体について計算されます。データベースの現在の MET から計算され、既定は blunderDB に内蔵の Kazaross-XG2 です。別のテーブルで計算されたマッチスコアの分析は「別の MET」となり、統計から除外されます。</p>
+<div class="admonition caution">
+<p class="admonition-title">注意</p>
+<p>MWC cost は <em>money-game</em> のポジション（マッチの懸かりがない）には <strong>適用されません</strong>。これらのポジションは MWC の計算から除外されます。MWC の値は使用される MET に依存します。異なる MET を使用するソフトウェア間では直接比較できません。</p>
+</div>
+</div></blockquote>
+<p id="perte-mwc-7pts"><strong>MWC損失（7ポイント換算）</strong></p>
+<blockquote>
+<div><p>プレイヤーが全ての判断（チェッカープレイ、キューブ、テイクまたはパス、キューブ付き）で失ったマッチの勝率を、7ポイントマッチに換算したものです。<em>N</em>ポイントのマッチでプレイヤーが MWC を <em>L</em> 失った場合:</p>
+<blockquote>
+<div><p>L₇ = L × √(7 / N)</p>
+</div></blockquote>
+<p>7ポイントのマッチでは、これはそのマッチの MWC 損失であり、eXtreme Gammon が表示する値です。平方根は FIBS の式のモデルに由来します。同じ実力であれば、プレイヤーの損失はマッチの長さの平方根に比例して増えます。7ポイントはトーナメントで最も一般的な長さなので、基準の長さとしています。</p>
+<p>完全なプレイヤーに対して失ったマッチの割合として読みます。12.3 % は、エンジンに対する勝率が 50 % のところ、7ポイントマッチで 37.7 % しかなかったことを意味します。ツールチップでは、FIBS の式を逆算して、エンジンに対する Elo として示します。D = (2000 / √7) × log₁₀(q / (1 − q))、ただし q = 0.5 − L₇。損失が 49 % を超えると、式は有限の値を持たなくなり、表示される Elo は上限値（「≤」）になります。2つの数値は、プレイヤーを同じ順序に並べます。</p>
+<p>PR を置き換えるのではなく補完します。PR は誤りを判断の数で割りますが、その数は何を判断として数えるか（強制手、自明なキューブ判断）によって変わります。MWC 損失は判断の数を数えません。各誤りは、それが行われたスコアで実際に失った分だけの重みを持ちます。</p>
+<p>複数のマッチ（プレイヤーやトーナメントの統計）では、損失と長さの平方根をそれぞれ合計してから比を取ります。L₇ = √7 × ΣL / Σ√N。したがって、7ポイントのマッチは1ポイントのマッチより重く、1つのマッチだけならそのマッチ自身の値になります。</p>
+<p>単独のマッチは非常にばらつきが大きく、数回の大きなミスで値が倍近く変わります。バッジとマッチの総括(<a class="reference internal" href="manuel_matchs.html#bilan-match"><span class="std std-ref">マッチの総括</span></a>)は、そのゲームを再標本化して95 %区間を示します。集計(プレイヤーやトーナメントの統計)はマッチを再標本化して示します。プレイヤーフィルタがない場合、マッチの両側の席は同じ局面をプレイするので、1 つの単位になります。少なくとも3ゲームまたは3マッチが必要で、それらがすべて同じ損失になってはいけません。そうでなければ区間はありません。したがって統計のマッチ単位の行にも区間はなく、1 つの単位です。1つのマッチだけでプレイヤーを順位付けしないでください。</p>
+<div class="admonition caution">
+<p class="admonition-title">注意</p>
+<p><em>マネーゲーム</em>にはマッチの長さがないため、MWC 損失（7ポイント換算）は定義されず、パネルは数値を表示する代わりにそのことを示します。MWC コストと同様に、MET に依存します。</p>
+</div>
+<p>ボタンの 3 つ目の選択肢 <strong>MWC 7 pts</strong> は、この損失を Progression タブに描画し、ダッシュボードのカードと Errors タブのチェッカー／キューブ比較に表示します。比較は同じマッチでチェッカーとキューブに分けられます（2 つの部分の和が全体になります）。プレイヤーのランキングにも専用の列があります。7 ポイント換算のないグラフ（キューブアクション別）は MWC cost のままです。</p>
+</div></blockquote>
+<p>PR ↔ MWC の切り替えは瞬時に行われます。バックエンドでの再計算は実行されません。</p>
+</section>
+<section id="le-rapport-html">
+<span id="rapport-html"></span><h3>HTML レポート<a class="headerlink" href="#le-rapport-html" title="この見出しへのリンク"></a></h3>
+<p>パネル見出しの<strong>HTML レポート</strong>ボタンは<strong>自己完結</strong>の文書を作ります。外部画像も、リモートのスタイルシートも、スクリプトも持たない一つのファイルです。図は SVG を直接埋め込んだもので、画面上の盤と同じ描画、同じパレットで描かれます。どのブラウザでも開き、メールで送れ、<strong>ブラウザ自身で PDF に印刷</strong>できます。誰もがすでに持っているものを作るために PDF 生成器を同梱せずに済みます。</p>
+<p>現在の範囲の指標（局面数、マッチ数、計上した判断、総合・チェッカー・キューブの PR）に続いて、<strong>最も損失の大きい 10 の判断</strong>が並びます。それぞれに図、損失、出どころのマッチ、そして解析があれば最善手が付きます。</p>
+<p>このドキュメントは画面ではなくエンジンが作成します。コマンドライン(<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">report</span> <span class="pre">--html</span></code>、<a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — 繰り返されるミス</span></a> を参照)と HTTP デーモン(ルート <code class="docutils literal notranslate"><span class="pre">stats.report</span></code>)は、インターフェースの 9 つの言語のいずれかで同じレポートを生成します。図をボードのパレットで描くのはグラフィカルアプリケーションだけで、ほかの 2 つは既定のパレットを使います。</p>
+<p>レポートは Stats パネルの<strong>現在のフィルタ</strong>を反映します。範囲を述べないレポートは、数字が何も意味しないレポートです。トーナメント、期間、対戦者などのフィルタを整えてから出力してください。</p>
+</section>
+<section id="onglet-tableau-de-bord">
+<h3>ダッシュボード タブ<a class="headerlink" href="#onglet-tableau-de-bord" title="この見出しへのリンク"></a></h3>
+<p><strong>ダッシュボード</strong>タブは主要指標の要約ビューを提供します。上から下へ読みます。レベルカード、次に取り組む内容(学習プラン、top blunders)、次に読み取り(移動 PR、学習の前後、符号付きバイアス)の順です。各カードの説明はそのタイトルのツールチップにあります。</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_stats_dashboard.png"><img alt="Stats パネルの ダッシュボード タブ" src="_images/panel_stats_dashboard.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">ダッシュボード タブ：全体 PR、チェッカー PR、キューブ PR。</span><a class="headerlink" href="#id2" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+<section id="cartes-de-niveau">
+<h4>レベルカード<a class="headerlink" href="#cartes-de-niveau" title="この見出しへのリンク"></a></h4>
+<p>3 つのカードが次の項目について PR（または MWC）を表示します：</p>
+<ul class="simple">
+<li><p><strong>PR 全体</strong> — すべての決定（手＋キューブ）。</p></li>
+<li><p><strong>PR チェッカー</strong> — チェッカーの決定のみ；</p></li>
+<li><p><strong>PR キューブ</strong> — キューブの決定のみ。</p></li>
+</ul>
+<p>カードをクリックすると、対応する部分集合のポジションが分析パネルに読み込まれます（ドリルダウン）。4枚目のカード<strong>MWC損失（7ポイント換算）</strong>は、PR / MWC ボタンの選択にかかわらずこの損失を区間とともに示します。何も読み込みません。</p>
+<p>カードの下の合計行は、フィルターのトーナメント数、マッチ数、判断数を数えます。トーナメント数をクリックすると、それらのトーナメントがトーナメントパネルに開きます。トーナメントが 1 つだけなら直接開き、複数ならリストを絞り込みます。そのときリストには「統計から開いた N 件のトーナメント ×」ボタンが付き、これで全体のリストに戻ります。</p>
+<p>判断数はそのポジションを開き、マッチ数はそれらのマッチをマッチパネルで開きます。ただし判断タイプまたは出所フィルターが有効なときは、一覧が開くよりも少ないマッチ数を数えるため、単なる数値のままです。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>判断の総数は、各カードの下部にマウスオーバー時に表示されます。</p>
+</div>
+</section>
+<section id="plan-d-etude">
+<span id="plan-etude"></span><h4>学習プラン<a class="headerlink" href="#plan-d-etude" title="この見出しへのリンク"></a></h4>
+<p><strong>学習プラン</strong>カードは「今、何に取り組むべきか」に答えます。繰り返しの誤り（Erreurs タブ）は、フィルターがどこで最も失ったかを示しますが、学習がどこで最も報われるかは示しません。本当に難しいポジションのファミリーは誰にとっても高くつき、誤り三つでは傾向とは言えません。プランはその両方を補正します。</p>
+<ul class="simple">
+<li><p><strong>ファミリー</strong>とは、繰り返しの誤りのグループです。プラン、判断の種類（チェッカーかキューブ）、テーマの組です。テーマのない誤りはファミリーを作りません。学習すべきものを何も示さないからです。</p></li>
+<li><p>各誤りは Match パネルと同じく <strong>MWC</strong>で数値化されます。損失 ℓ と、その <em>難しさ</em> d、つまり同じポジションで基準プレイヤーが被ったであろう損失です（Match パネルの判断ごとの難しさを参照）。フリーゲームの誤りには MWC がなく、「数値化なし」として数えられるだけです。</p></li>
+<li><p>ファミリーの <strong>回収可能 MWC</strong>は、その誤りにわたる ℓ − d の合計です。ファミリーの頻度に、難しさを超えた平均損失を掛けたものです。これらのポジションを基準プレイヤーのように指せば取り戻せる量です。避けられる誤りのファミリーは上がり、誰もが間違えるポジションのファミリーは下がります。</p></li>
+<li><p>各数値には <strong>95 % 区間</strong>が付きます。ファミリーがプランに入るのは、<strong>誤り 5 件</strong>以上で、区間が完全にゼロより上にあるときです。プランは区間の下限で並べられるため、回収可能量が同じなら、より確かなファミリーが先に来ます。それ以外は一覧の下に <strong>要確認</strong>として順位なしで挙げられます。プランはノイズへ誘導しません。同じ行は、<strong>プラン外</strong>の誤り(テーマなし、数値化なし)も数えます。</p></li>
+</ul>
+<p>プランの各行には、順位、ファミリー、最初のファミリーの回収可能 MWC に対する比で長さが決まるバー、この MWC とその区間、誤りの件数が表示されます。プランの各局面数（ファミリーごと、要確認、プラン外）はクリックでき、まさにその局面をリストに読み込みます。</p>
+<p>各ファミリーには三つの操作があります。<strong>学習</strong>はそのポジションで学習キューを開き、基準プレイヤーとの差が最も大きいものから並べます。<strong>クイズ</strong>は <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">トレーニング</span></a>パネルの判断練習をそのうち二十件で始めます。<strong>Anki</strong>はカードのデッキを作ります。カードの先頭の <strong>上位 3 ファミリーのクイズ</strong>は、先頭 3 ファミリーのポジションから二十件を出題します。プランはパネルのフィルターに従います。<em>自分の</em>プランを得るにはプレイヤーを設定してください。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">plan</span></code> です（<a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — 繰り返されるミス</span></a> を参照）。</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="avant-apres-etude"></span><h4>学習の前後<a class="headerlink" href="#avant-apres-l-etude" title="この見出しへのリンク"></a></h4>
+<p><strong>学習の前後</strong>カードはプランの輪を閉じます。取り組んだことは、実戦のマッチで損失を減らしたでしょうか。このカードがなければ学習は印象で判断されます。あるなら、作業をしても動かないファミリーは方法を変えるべきだと教え、改善したファミリーはプランの席を譲れます。</p>
+<ul class="simple">
+<li><p>ファミリー（プランのもの）は、そのポジションのいずれかに対する最初の学習アクションの日付に<strong>学習済み</strong>になります。学習キューの「学習済み」マーク、Anki の復習、クイズの回答がそれにあたります。カードを作ることや、ポジションをコレクションに入れることは含まれません。</p></li>
+<li><p>学習済みのファミリーごとに、カードは二つの<strong>ウィンドウ</strong>を比べます。その日より前に行われたマッチと、後に行われたマッチです（当日は除外）。それぞれで<strong>損失率</strong>は、ファミリーの誤りで失われた MWC を、同じプランと同じ種類のすべての判断に対する割合で表したもので、100 判断あたりの MWC ポイントで示されます。</p></li>
+<li><p><strong>ゲイン</strong>は、前の率から後の率を引いた値で、95 % 区間が付きます。判定が「改善」（または「悪化」）になるのは、各ウィンドウが少なくとも <strong>30 判断</strong>を含み、区間がゼロを含まない場合だけです。それ以外は「判定不能」または「判断数不足」のままです。</p></li>
+</ul>
+<p>各期間の横の <strong>局面</strong> 列は、その決定の異なる局面を数え、クリックで開きます。括弧内の数は引き続き決定数で、率の分母です。</p>
+<p>これは変化であって効果ではありません。ファミリーは損失が大きかったから学習されるのであり、ゲインの一部は平均への回帰です。対戦相手、フォーマット、サイコロは何も統制されていません。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">effect</span></code> です（<a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — 繰り返されるミス</span></a> を参照）。</p>
+</section>
+<section id="biais-signes">
+<span id="id1"></span><h4>符号付きバイアス<a class="headerlink" href="#biais-signes" title="この見出しへのリンク"></a></h4>
+<p><strong>符号付きバイアス</strong>カードは、どれだけ間違えるかだけでなく、どちらの方向に間違えるかを示します。「テイクしすぎ」は PR よりも直しやすいものです。見直すべきルールが名指しされるからです。各バイアスは、一方向の誤り判断の割合から、もう一方向の誤り判断の割合を引いたもので、95 % 区間が付きます。傾向が名指しされるのは、<strong>20 判断</strong>以上で、区間がゼロを含まない場合だけです。</p>
+<ul class="simple">
+<li><p><strong>テイク／パス</strong> — キューブへの応答について：誤ったテイク（ボットはパス）から誤ったパス（ボットはテイク）を引いたもの。同じポジションでのあなたのテイク率からボットのテイク率を引いた値と完全に一致します。</p></li>
+<li><p><strong>ダブル</strong> — ダブルの判断について：早すぎるダブル（ボットはダブルしない、またはポジションがダブルには良すぎる）から、見送ったダブルを引いたもの。同じバイアスが<strong>スコア別</strong>（あなたの away、相手の away。ポストクロフォードのスコアは 1 ポイントとして数えます。フリーゲームは別枠）にも示されます。判断数が十分あるスコアが対象です。</p></li>
+<li><p><strong>ブロット</strong> — 接触のあるチェッカームーブについて：最善手よりブロットを多く残す手から、少なく残す手を引いたもの。手は、表記にかかわらず、残るボードで識別されます（「13/7(2)」、「8/5*/4」）。ムーブジェネレーターがなお再現できない手は除外され、除外された手の割合は表の下に示されます。バイアスはブロットの露出を重みづけせずに数えます。射程外のブロットも、露出したブロットと同じ一つとして数えられます。</p></li>
+</ul>
+<p>各カウントの横に、ミリポイント単位のコストがあり、その傾向が損失につながるかどうかがわかります。複数のマッチで指された局面は、それぞれで指された手とともに数えられます。バイアスはパネルのフィルターに従います。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">biases</span></code> です（<a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — 繰り返されるミス</span></a> を参照）。</p>
+<p>各決定数（すべて、一方向、もう一方向）の後には <strong>局面</strong> 列が続きます。それらの決定の異なる局面で、クリックで開きます。複数のマッチで打たれた局面は、マッチごとに一つの決定として数えられますが、局面としては一つです。</p>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4>直近 N 回の判断にわたる移動 PR<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="この見出しへのリンク"></a></h4>
+<p>直近 <em>N</em> 回の判断（N = 5、10、50、100、250、500、1000）について計算された PR（または MWC）値の列により、最近の傾向を把握できます。グレー表示の値は、利用可能な判断数を超える N に対応します。</p>
+<p>値をクリックすると、対応する直近 <em>N</em> 件のポジションが読み込まれます。</p>
+</section>
+<section id="top-blunders">
+<h4>Top blunders<a class="headerlink" href="#top-blunders" title="この見出しへのリンク"></a></h4>
+<p>最悪のエラー（または MWC cost）上位 10 件のリストで、大きさの降順に並べられています。行をクリックすると、該当するポジションが分析パネルに読み込まれます。</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3>Progression タブ<a class="headerlink" href="#onglet-progression" title="この見出しへのリンク"></a></h3>
+<p><strong>Progression</strong> タブは、時間の経過に伴うレベルの推移を示します。</p>
+<p>タブの先頭に<strong>目標</strong>があります。「12 週間で PR &lt; 5」。目標、期限、そしてどこへ向かっているかを告げる傾向。それだけです。採点したり、褒めたり、催促したりし始める目標は、別の機能であってこれではありません。</p>
+<p><strong>候補</strong>ボタンは、現在の水準から目標を提案します。いまいる帯の下限、つまり次の帯への入り口です。「少し良く」では何にも根ざしませんが、段位を提案すれば意味があります。中級から上級に上がることは、目に見えるし語れます。</p>
+<p><strong>傾向</strong>は、あなたのマッチの PR に最小二乗法をあてはめ、期限まで延ばしたものです。3 マッチ未満では何も言いません。2 点の間に直線を引くのは、支えられない主張だからです。そして文言は毎回そう述べます——<em>傾向は予測ではありません</em>。</p>
+<p>目標は設定ではなく<strong>データベースのメタデータ</strong>に保存されます。そのライブラリについての事柄なので、マシンではなくファイルに従います。スキーマの変更はありません。<code class="docutils literal notranslate"><span class="pre">metadata</span></code> はすでにキーと値の表で、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> からもデーモンからも読めます。</p>
+<section id="courbe-par-tournoi">
+<h4>トーナメントごとの曲線<a class="headerlink" href="#courbe-par-tournoi" title="この見出しへのリンク"></a></h4>
+<p>折れ線グラフは各トーナメントの PR（または MWC）を表示します。トーナメントごとに 1 点、名前をラベルとし、日付（なければ最も古いマッチの日付）の時系列順に並びます（Y 軸：指標の値）。色の帯がレベルのしきい値を示します。</p>
+<p>グラフ上の点をクリックすると、2 つのオプションを持つコンテキストメニューが開きます：</p>
+<ul class="simple">
+<li><p><strong>トーナメントを開く</strong> — トーナメントパネルでトーナメントを開きます。</p></li>
+<li><p><strong>ポジションを開く</strong> — トーナメントのすべてのポジションを分析パネルに読み込みます。</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4>マッチごとの散布図<a class="headerlink" href="#scatter-plot-par-match" title="この見出しへのリンク"></a></h4>
+<p>散布図は各マッチを表します（X 軸：日付、Y 軸：PR または MWC）。点の大きさはマッチ内の判断の数に比例します。日付のないマッチは表示されません。</p>
+<p>点をクリックするとコンテキストメニューが開きます：</p>
+<ul class="simple">
+<li><p><strong>対局を開く</strong> — マッチパネルでマッチを開きます。</p></li>
+<li><p><strong>ポジションを開く</strong> — マッチのすべてのポジションを分析パネルに読み込みます。</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3>Erreurs タブ<a class="headerlink" href="#onglet-erreurs" title="この見出しへのリンク"></a></h3>
+<p><strong>Erreurs</strong> タブはエラーの原因を分解して示します。</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_stats_errors.png"><img alt="Stats パネルの Errors タブ" src="_images/panel_stats_errors.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Errors タブ：キューブアクション別の PR 内訳。</span><a class="headerlink" href="#id3" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+<section id="erreurs-recurrentes">
+<h4>繰り返されるミス<a class="headerlink" href="#erreurs-recurrentes" title="この見出しへのリンク"></a></h4>
+<p>タブの先頭にある表は、現在のフィルターのミス（プレイヤーで絞り込んでいれば、そのプレイヤー一人分）を<strong>プラン</strong>と<strong>テーマ</strong>ごとにまとめ、コストの大きい順に並べます。「どこで最も失っているか」に答える表で、たとえば「ホールド・ブロットが多すぎる」のように表示されます。</p>
+<ul class="simple">
+<li><p><strong>ミス</strong>とは、コストがライブラリの「ミス」しきい値に達した、カウント対象の判断です。</p></li>
+<li><p><strong>プラン</strong>は手番のプレイヤーのもので、内訳タブが示すものと同じです。</p></li>
+<li><p>チェッカープレイの<strong>テーマ</strong>は、<a class="reference internal" href="manuel_bibliotheque.html#panneau-analyse"><span class="std std-ref">分析パネル</span></a>の説明文のルールが挙げるものです。ギャモン過小評価、ブロットが多すぎる、ポイント未形成、消極的すぎる、のいずれかです。キューブ判断のテーマはミスの向きで、後述のキューブミスの方向と同じです。ダブル見逃し、早すぎるダブル、誤ったパス、誤ったテイクがあります。</p></li>
+<li><p>どのルールも確信をもって名付けられないミスは、推測されません。順位から外れ、表の下にプランごとに1行で別に表示されます(「テーマ未特定:N件のミス、コストX」)。これもクリックできます。この残りは最も重いことがしばしばです。説明文が判断を下すのは60 mp以上、つまり<em>ミス</em>のしきい値より上だけなので、他と一緒に順位付けすると、何も語らない表の先頭に立ってしまうからです。</p></li>
+<li><p><strong>コスト</strong>は、そのグループがフィルターの PR に占める割合です。グループのミスに PR の式を適用し、カウント対象のすべての判断で割ったものです。したがって、グループのコストの合計が PR を超えることはありません。</p></li>
+</ul>
+<p>グループ、またはそのミス数をクリックすると、そのポジションがコストの大きい順に読み込まれます。テーマは表示のたびに再計算され、保存されません。プランと同様、派生したラベルであり編集できません。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">recurring</span></code> を使います（<a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — 繰り返されるミス</span></a>を参照）。</p>
+<p>各行には、誤りから学習へ進む3つの操作があります。<strong>このグループのクイズ</strong>は、<a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">トレーニング</span></a> パネルの「決定」練習をそのグループのポジションで開始し、<strong>Ankiデッキ</strong>はそれらからカードのデッキを作り、<strong>コレクション</strong>はそれらを新しいコレクションに入れます。表の上の<strong>最悪の3グループのクイズ</strong>は、最もコストの高い3グループのポジションから20個を無作為に引きます。コマンドラインでは、<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span> <span class="pre">--quiz</span></code> がこれらのポジションを引き、<code class="docutils literal notranslate"><span class="pre">--deck</span></code> がデッキを作成します。</p>
+</section>
+<section id="repartition-par-action-de-videau">
+<h4>キューブのアクションごとの内訳<a class="headerlink" href="#repartition-par-action-de-videau" title="この見出しへのリンク"></a></h4>
+<p>棒グラフが各種のキューブの判断について PR（または MWC）を表示します：<em>NoDouble</em>、<em>DoubleTake</em>、<em>DoublePass</em>、<em>TooGood</em>。各バーはツールチップで判断数とブランダー率も示します。</p>
+<p>バーをクリックすると、そのキューブのアクションに対応するポジションのうち <strong>エラーがあるものだけ</strong> が読み込まれます（ドリルダウン）。</p>
+</section>
+<section id="direction-des-erreurs-de-videau">
+<h4>キューブエラーの方向<a class="headerlink" href="#direction-des-erreurs-de-videau" title="この見出しへのリンク"></a></h4>
+<p>上の内訳はキューブの判断が<em>どれだけ</em>損をしたかを示します。この表は<em>どの方向</em>に誤ったかを示します。</p>
+<p>キューブ局面には、別々のプレイヤーが下す2つの判断があり、ここでは2行に分けて示します。</p>
+<ul class="simple">
+<li><p><strong>提示</strong>— キューブを持つ側がダブルするか、しないか。その誤りは<strong>見送ったダブル</strong>（ダブルすべきだった）と<strong>早すぎたダブル</strong>（すべきでなかった）です。</p></li>
+<li><p><strong>応答</strong>— キューブを差し出された側がテイクするかパスするか。その誤りは<strong>誤ったパス</strong>（正しくはテイクだったのにパスした）と<strong>誤ったテイク</strong>（正しくはパスだったのにテイクした）です。</p></li>
+</ul>
+<p>2行を分けているのは意図的です。同じ人が遅めにダブルし、かつ緩めにテイクすることは十分にありえます。単一の指標ではそれを「バランスが取れている」と呼び、情報の両半分を失ってしまいます。</p>
+<p>各セルには判断の件数が表示され、ツールチップには失ったエクイティの累計が出ます。セルをクリックすると該当する局面が読み込まれます。ゼロのセルはクリックできません。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>この表は判断を数えるだけで、評価は下しません。どれだけの偏りから傾向と呼ぶに値するかは、母数と基準点しだいであり、そのどちらもエンジンの持つデータではありません。</p>
+</div>
+</section>
+<section id="repartition-checker-cube">
+<h4>Checker / Cube の内訳<a class="headerlink" href="#repartition-checker-cube" title="この見出しへのリンク"></a></h4>
+<p>比較図が、プレイした手の PR とキューブの判断の PR を並べて表示します。バーをクリックすると、エラーがある部分集合のポジションが読み込まれます。</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4>エラーの大きさのヒストグラム<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="この見出しへのリンク"></a></h4>
+<p>ヒストグラムが、ミリポイント（mpt）で表した大きさに従ってエラーを分布させます（区分：0–5、5–10、10–25、25–50、50–100、≥ 100）。バーをクリックすると、その区分のポジションが読み込まれます。</p>
+</section>
+</section>
+<section id="entrainement-dans-le-temps">
+<span id="stats-entrainement"></span><h3>時間経過でのトレーニング<a class="headerlink" href="#entrainement-dans-le-temps" title="この見出しへのリンク"></a></h3>
+<p><strong>トレーニング</strong> タブは、同じ暦のウィンドウ(<strong>週</strong> または <strong>月</strong>、選択可)の上に、進歩を三つの方法で測る三つの系列を並べて表示します。</p>
+<ul class="simple">
+<li><p><strong>クイズの PR</strong>:トレーニングパネルの判断練習のセッションの PR で、判定した判断の数で重み付けされます。実際の PR と同じ尺度で計算されるため、比較できます。</p></li>
+<li><p>現在のフィルタの <strong>マッチの PR</strong>(判断の数で重み付け)。</p></li>
+<li><p><strong>Anki の定着率</strong>:すでに学習済みのカードの復習のうち、<em>難しい</em> 以上と評価されたものの割合で、右軸(%)で読みます。</p></li>
+</ul>
+<p>グラフの下の<strong>プレイプラン別のクイズPR</strong>は、ライブラリの局面から出題されたクイズの判断を、悪いプランから順に並べ、そのプランを最後にプレイしたウィンドウのPRとともに示します。</p>
+<p>括弧内は各値の背後にある判断または復習の数です。サンプルのないウィンドウには値がなく、ゼロではなく破線になります。ウィンドウのマッチの判断数は、そのポジションを開きます。フィルターが絞り込むのはマッチだけで、クイズと Anki のジャーナルはあなた自身のもので、プレイヤーを持ちません。追加で記録されるものはなく、三つの系列は既存のジャーナルから読み直されます。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">training</span></code> を使います（<a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — 繰り返されるミス</span></a>を参照）。</p>
+</section>
+<section id="onglet-ventilations">
+<h3>内訳タブ<a class="headerlink" href="#onglet-ventilations" title="この見出しへのリンク"></a></h3>
+<p><strong>内訳</strong> タブは、全体の数字が数えるのと同じ判断を四つの軸で切り分けます。どの軸も「何を判断と数えるか」を定義し直しません。それをすれば同じ名前の二つ目の PR になってしまいます。</p>
+<ul class="simple">
+<li><p><strong>ゲームの段階別</strong>——序盤、中盤、レース、ベアオフ。「レースでの PR と接触局面での PR」に答えるのがこれである。ラベルは盤面から計算される（<a class="reference internal" href="manuel_bibliotheque.html#panneau-recherche"><span class="std std-ref">検索パネル</span></a> を参照）。段階が一度も計算されていないデータベースはすべてを<em>未分類</em>に入れ、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> がそれを埋める。</p></li>
+<li><p><strong>戦型別</strong> — レース、ブリッツ、ホールディング、バックゲーム、プライム対プライム……。分類器が存在する理由そのものの内訳です。「どこで最も失っているか」を戦型ごとに示します。フェーズと同じ派生ラベルで、留保も同じ、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> が同じように埋めます。</p></li>
+<li><p><strong>タグ別</strong>——コメントに書かれた <code class="docutils literal notranslate"><span class="pre">#語</span></code>。一つの局面が複数持つことがあり、<strong>これらの行は合計に一致しない</strong>。パネルは表の下にそう書く。タグは性質を述べるものであって、分割するものではない。</p></li>
+<li><p><strong>スコア別</strong>——両陣営の残り点を、手番側、すなわち判断する側から読んだもの。<em>Money</em>行はマネープレイである。判断が十件未満のセルは隠さず<strong>件数を見せたまま灰色にする</strong>：読むには少なすぎるが、省略は検証可能なままである。</p></li>
+</ul>
+<p><strong>局面</strong>列と <strong>大悪手</strong>列は重複しないポジションを数え、各数値はリンクです。クリックすると、ステータスバーのカウンターと同様に、まさにそれらのポジションが分析パネルに読み込まれます。<em>大悪手</em>は、少なくとも一つの判断が大悪手であるポジションを数えます。複数のマッチで指されたポジション(たとえばオープニング)はここでは一度だけ数えられますが、<strong>判断</strong>列は毎回数えます。PR の分母だからです。</p>
+<p>各行は <strong>95 % 信頼区間</strong>（列 <em>95 % CI</em>）を持ち、固定の 10 判断というしきい値に代わります。これは PR にどれだけの価値があるかを示すもので、いくつの判断が支えているかだけではありません。区間は、判断やゲームではなく、選択範囲の <strong>マッチ</strong> を再標本化して求めます。同じマッチのゲームは対戦相手、セッション、疲労を共有しており、独立とみなすと区間が狭くなりすぎるためです。プレイヤーフィルタがない場合、マッチの両側の席は 1 つの単位になります。3 マッチ未満にしか基づかない行、またはすべてのマッチが同じ PR になる行は、判断が多くても区間がなく、グレー表示になります。2 マッチではばらつきについて何も分からず、同一のマッチは互いに一致していることを示すだけで、PR が正確であることを示すわけではないためです。学習のためには、区間が全体の PR を上回り続ける局面群は確立した弱点であり、区間が広い行はまだ学習計画の根拠になりません。ダッシュボードの全体の PR も、カードの下に同じ区間を持ちます。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>スコア別の内訳では、ポストクロフォードのスコアは 1-away として読まれます。同じスコアのクロフォードゲームとポストクロフォードのゲームは、同じセルに入ります。</p>
+</div>
+</section>
+<section id="etude-et-jeu-reel">
+<h3>学習と実戦<a class="headerlink" href="#etude-et-jeu-reel" title="この見出しへのリンク"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">study</span> <span class="pre">--days</span> <span class="pre">30</span></code> は、戦型ごとに三つの数を並べます。その期間に復習した <strong>異なる局面</strong> の数、その期間の <strong>前</strong> の PR、その <strong>後</strong> の PR です。</p>
+<p>三つの数だけで、四つ目はありません。<strong>増減の列も矢印もありません</strong>。ここでは何一つ条件を揃えていないからです。相手が強くなったのかもしれず、形式を変えたのかもしれず、今月はレースを多く打っただけかもしれません。並べて読むのは読者の仕事です。効果を告げる列は、これらのデータが持たない因果を主張することになります。数そのものは正確です。</p>
+<p>復習は <strong>異なる局面</strong> の数で数えます。ひと月に四回復習したカードは学習した局面が一つであり、繰り返しを数えれば詰め込みのひと月が網羅のひと月に見えてしまいます。一方 PR の判断はすべて数えます。どれも一度ずつ下されたからです。十未満の判断に基づく PR は <code class="docutils literal notranslate"><span class="pre">—</span></code> と表示され、その母数が隣に見えます。</p>
+</section>
+<section id="onglet-joueurs">
+<h3>プレイヤータブ<a class="headerlink" href="#onglet-joueurs" title="この見出しへのリンク"></a></h3>
+<p>前の五つのタブは <strong>一人の</strong> プレイヤーを説明します。<strong>Players</strong> タブはそれらすべてを比較します。データベースのプレイヤーごとに一行を表示し、特定のプレイヤーではなく大会全体を追う主催者のニーズに応えます。</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_stats_players.png"><img alt="Stats パネルの Players タブ" src="_images/panel_stats_players.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Players タブ：プレイヤーごとに一行、どの列でも並べ替え可能。</span><a class="headerlink" href="#id4" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+<p>列（左から順に）：</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>列</p></th>
+<th class="head"><p>意味</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>プレイヤー</p></td>
+<td><p><strong>マッチに記載されているとおりの</strong> 名前。二つの綴りで登録されたプレイヤーは二行に表示されますが、一方がもう一方のエイリアスである場合（設定の Corpus セクション）は除きます。その場合、行は正規の名前を示します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>対戦数</p></td>
+<td><p>選ばれた期間に行われた対戦の数。</p></td>
+</tr>
+<tr class="row-even"><td><p>勝–敗</p></td>
+<td><p>勝ちと負け。未了の対戦（記録の途切れ、投了）はどちらにも数えません。したがって勝 + 敗は対戦数より少なくなりえます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>判断数</p></td>
+<td><p>集計された判断の数——PR の分母です。隣の各比率にどれだけの重みがあるかを語る列でもあります。12 の判断から計算した PR には何の意味もありません。</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>全体の Performance Rating。</p></td>
+</tr>
+<tr class="row-odd"><td><p>チェッカー PR、キューブ PR</p></td>
+<td><p>判断の種別ごとに分けた PR。</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie</p></td>
+<td><p>Snowie Error Rate（<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">付録：統計モデル — XG / gnuBG / blunderDB の整合</span></a> を参照）。</p></td>
+</tr>
+<tr class="row-odd"><td><p>ブランダー</p></td>
+<td><p>ライブラリのブランダー閾値（既定では 0.100 EMG）に達したエラーの数。この数をクリックすると、それらの局面が分析パネルに読み込まれます。</p></td>
+</tr>
+<tr class="row-even"><td><p>運</p></td>
+<td><p>1 ロールあたりの平均の運。ミリポイント（mpt）単位の符号付きで、正なら出目に恵まれたことを意味します。</p></td>
+</tr>
+</tbody>
+</table>
+<p>使い方：</p>
+<ul class="simple">
+<li><p><strong>並べ替え</strong>— 列見出しをクリックします。表は PR の昇順、つまり最良のプレイヤーを先頭にして開き、最後に選んだ並べ替えをセッションをまたいで記憶します。何も測定されていないプレイヤーは、並べ替えの向きにかかわらず最下部に留まります。データがないゆえのゼロは、完璧な成績ではないからです。</p></li>
+<li><p><strong>列ごとのフィルター</strong>— 見出しの下の入力欄の行が各列を絞り込みます。テキストは名前の一部、数値は境界（<code class="docutils literal notranslate"><span class="pre">&gt;=500</span></code>、<code class="docutils literal notranslate"><span class="pre">&gt;500</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;2.5</span></code>、<code class="docutils literal notranslate"><span class="pre">&lt;=2</span></code>）、範囲（<code class="docutils literal notranslate"><span class="pre">3-7</span></code>）、または厳密な値（<code class="docutils literal notranslate"><span class="pre">5</span></code>）です。読み取れない欄は赤枠で囲まれ、何も絞り込みません。一度も測定されていない値は、どの境界も通過しません。列フィルターはセッションの間だけ保たれます。プレイヤーの <strong>ランキング</strong> は次のように読みます。PR で並べ替え、<em>判断数</em> 列を <code class="docutils literal notranslate"><span class="pre">&gt;=500</span></code> で絞り込みます。Stats パネルのすべての表（内訳、コーパス、繰り返される誤り、思考時間、トレーニング、バイアス、学習の効果）は、同じ方法で並べ替えと絞り込みができます。</p></li>
+<li><p><strong>プレイヤーの詳細を開く</strong>— 行をクリックします。そのプレイヤーがフィルタバーで選択され、表示は ダッシュボード タブに切り替わります。</p></li>
+<li><p><strong>自分の判断を開く</strong> — 判断数は、表のフィルターのもとでそのポジションを開きます。マッチ数と勝敗の成績は単なる数値のままです。分析済みの判断がないマッチも数えており、それを再現するマッチ一覧はないためです。</p></li>
+<li><p><strong>期間を絞る</strong>— 日付、トーナメント、マッチ長のフィルタは通常どおり効くので、表を大会の開催日に限定できます。</p></li>
+<li><p><strong>2人のプレイヤーを比較する</strong> —— 2つの行で、最初の列のチェックボックスをオンにします。表の上にブロックが現れ、両者の指標を向かい合わせに並べます。3人目をチェックすると、古いほうが置き換わります。チェックボックスは行を選択しません。チェックは比較、クリックは詳細です。</p></li>
+<li><p><strong>一方がより良く打った局面を見る</strong> — 比較ブロックのボタンは、両プレイヤーが打った局面のうち、一方がうまく打ち（ライブラリのエラーのしきい値未満）、もう一方がそうでなかったものを、差の大きい順に一覧にします。プレイヤーは、その局面での最悪の手で判定されます。<em>これらの局面を開く</em>はそれらを分析ビューに読み込みます。コマンドラインとサーバーも同じ一覧を返します（<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">contrast</span></code>）。</p></li>
+<li><p><strong>まず手を採点する</strong> — この一覧は誤差が採点済みの手だけを比較し、どのインポートも手を採点しません。採点は要求時に行われます。採点待ちの手が残っている間、ブロックはその数と <em>手を採点する</em> ボタンを表示します。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">repair</span> <span class="pre">--move-errors</span></code> で同じことができます。</p></li>
+</ul>
+<p>このブロックでは<strong>比率だけが判定を受け</strong>、良いほうが太字になります。3つの指標は決して判定を受けません。その理由は述べておく価値があります。<strong>運</strong>は実力ではありません。運の良いプレイヤーが上手いわけではないからです。<strong>試合数、勝敗、判断数</strong>は比率の重みを示しますが、これらを競わせれば単に多く打った人が勝ってしまいます。<strong>ブランダーの回数</strong>は生のままでは比べられません——1000回の判断で12回は、100回で10回より良いのです。そこでブロックは<em>ブランダー / 100 判断</em>の行を加えます。こちらは比較でき、回数はその横に文脈として残ります。</p>
+<p>同点は勝ちではありません。どちらの側も太字にはなりません。裏づけのない比率は「—」と表示され、何も決めません。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>このタブでは、<strong>判断タイプ</strong>の選択は無効です。表がすでにチェッカーとキューブの判断を別々の列に分けているためです。フィルターバーのプレイヤーは有効なままです。表は常にすべてのプレイヤーを表示し、そのプレイヤーの行が強調されて画面内に移動します。</p>
+</div>
+<p>二つのコーパスビューが、パネルの <strong>Corpus</strong> タブ、コマンドライン、デーモンの API にあります（<a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — 繰り返されるミス</span></a> を参照）。二人のプレイヤーの <strong>直接対決</strong>（共通のマッチ、それぞれの PR、成績）と、スライドする <strong>暦ウィンドウごとの PR</strong>（1、3、6、12 か月）です。Corpus タブは各ビューを、現在のフィルターのもとで要求に応じて計算します。PR による <strong>ランキング</strong> は、プレイヤー タブを PR で並べ替え、<em>判断数</em> 列で絞り込んで読みます。コマンドラインと API もこれを返します（<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">ranking</span></code>）。<strong>由来フィルター</strong>（フィルターバーの <em>エンジン</em> 欄と <em>最小深さ</em> 欄）は、統計をそのように分析された判断に限定します。これは判断ごとに適用され、影響を受ける数字は判断から再計算されます。直接対決とウィンドウごとの PR はこれを受け付けず、有効な間は計算を拒否します。バーのほかの部分と同様に、セッションをまたいで保持されます。</p>
+<p>Corpus タブでは、各行がその要約する内容を開きます。直接対決の成績はそのマッチをマッチパネルで開き、パネルには「Stats から開いた N マッチ ×」ボタンが表示されます。このボタンで一覧全体に戻ります。直接対決の行はそのマッチを開きます。直接対決の最初のプレイヤーは、初めからフィルターバーのプレイヤーです。期間の行とその判断数はそのポジションを開き、そのマッチ数はマッチを開きます。Stats パネルのポジション数は、どのタブでも、一覧を開く前にまず進行中のマッチを離れます。その後 <code class="docutils literal notranslate"><span class="pre">m</span></code> コマンドで、保存された手からマッチを開き直せます。</p>
+<div class="admonition important">
+<p class="admonition-title">重要</p>
+<p>ダッシュ（「—」）は<strong>一度も測定されていない</strong>値を示すもので、ゼロと混同してはいけません。とくに、スキーマのバージョン 2.15.0 より前にインポートしたすべての対戦の「運」列がこれにあたります。当時は運が保存されておらず、後から復元する手立てもありません。元ファイルを再インポートするだけでは足りません。インポートは重複と判断し、新たに付いた学習マークだけを適用します（レポートにその数が出ます）。対戦を削除してから、あらためてインポートしてください。運を運ばない形式（BGF、Jellyfish の <code class="docutils literal notranslate"><span class="pre">.mat</span></code>）からは決して得られません。</p>
+</div>
+</section>
+<section id="regle-d-agregation">
+<h3>集計ルール<a class="headerlink" href="#regle-d-agregation" title="この見出しへのリンク"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">重要</p>
+<p>トーナメント（または任意の部分集合）の PR は <strong>合計／合計</strong> ルールで計算されます。各マッチの個別 PR の平均としては決して計算されません。</p>
+<p>計算式：</p>
+<div class="math notranslate nohighlight">
+\[PR_{tournoi} = 500 \times \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\]</div>
+<p><strong>例：</strong> あるプレイヤーがトーナメントで 2 つのマッチを戦う —</p>
+<ul class="simple">
+<li><p>マッチ A：10 回の決定、失われたエクイティ 0,100 → PR = 5,0</p></li>
+<li><p>マッチ B：90 回の決定、失われたエクイティ 0,540 → PR = 3,0</p></li>
+</ul>
+<p>PR の単純平均：(5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(誤り)</em></p>
+<p>合計／合計ルール：500 × 0,640 / (10 + 90) = <strong>3,2</strong> <em>(正しい)</em></p>
+<p>合計／合計ルールは、マッチ長のばらつきに耐えられる唯一のルールです（21 ポイントのマッチは 1 ポイントのマッチより重みがあります）。</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3>MWC：制限事項<a class="headerlink" href="#mwc-limitations" title="この見出しへのリンク"></a></h3>
+<ul class="simple">
+<li><p>既定では、MWC コストは <strong>Kazaross-XG2 MET</strong> から計算されます。これは競技バックギャモンで事実上の基準となっているテーブルです。ほかの MET を使うソフトウェアとは結果を直接比較できません。これは、内蔵の評価エンジンがスコアに応じたキューブの判断に使うのと同じテーブルで、同じ入口から読み出されます。統計とエンジンがこの点で食い違うことはありません。各サイド25ポイントまでは固有の値を持ち、それを超える分は GNUbg と同じように計算された Zadeh のテーブルで64まで延長されます。</p></li>
+<li><p><em>money-game</em> のポジション（マッチスコアなし）は MWC の計算から <strong>除外</strong> されます。データベースに money-game のポジションが多く含まれている場合、MWC cost は過小評価されるか、利用できないことがあります。</p></li>
+<li><p>MWC cost はフィルターされたデータセット全体にわたる累積であり、判断ごとの指標ではありません。あなたのエラーが勝利の可能性に与えた総合的な影響を測定します。</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="manuel_tournois.html" class="btn btn-neutral float-left" title="トーナメント" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="manuel_eval.html" class="btn btn-neutral float-right" title="評価" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

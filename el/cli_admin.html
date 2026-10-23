@@ -1,0 +1,655 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Διαχείριση της βάσης δεδομένων &mdash; Τεκμηρίωση του blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9e57d487"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Γλωσσάρι" href="glossaire.html" />
+    <link rel="prev" title="Στατιστικά" href="cli_stats.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/cli_admin.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_admin.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_admin.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/cli_admin.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_admin.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_admin.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_admin.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_admin.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Μετρικές και εργαλεία μελέτης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Γενική σύνταξη</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Διαθέσιμες εντολές</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Εισαγωγή, εξαγωγή, μεταφορά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Αγώνες, τουρνουά και παρτίδες</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Ανάλυση και μηχανή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Μελέτη, μαθήματα και εξάσκηση</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Στατιστικά</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Διαχείριση της βάσης δεδομένων</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#info-metadonnees-de-la-base">info — Μεταδεδομένα της βάσης</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#edit-modifier-les-metadonnees">edit — Τροποποίηση μεταδεδομένων</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#verify-verifier-l-integrite">verify — Έλεγχος ακεραιότητας</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vacuum-compacter-la-base-de-donnees">vacuum — Συμπύκνωση της βάσης δεδομένων</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#met-la-table-d-equite-de-match-de-la-base">met — Ο πίνακας ισοτιμίας αγώνα της βάσης</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reencode-reecrire-les-analyses-au-format-compact">reencode — Επανεγγραφή των αναλύσεων σε συμπαγή μορφή</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#maintenance-l-etat-de-sante-de-la-base">maintenance — Η κατάσταση υγείας της βάσης</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#players-les-graphies-d-un-joueur">players — Οι γραφές ενός παίκτη</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#events-les-graphies-d-un-evenement">events — Οι γραφές μιας διοργάνωσης</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repair-recalculer-ce-qui-est-derive">repair — Επανυπολογισμός όσων είναι παράγωγα</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#delete-supprimer-des-donnees">delete — Διαγραφή δεδομένων</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#healthcheck-sonder-un-demon">healthcheck — Έλεγχος ενός δαίμονα</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mcp-offrir-la-base-a-un-assistant-ia">mcp — Προσφορά της βάσης σε έναν βοηθό ΤΝ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#completion-completion-shell">completion — Συμπλήρωση κελύφους</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#version-afficher-la-version">version — Εμφάνιση της έκδοσης</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Παραδείγματα ροών εργασίας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Κωδικοί εξόδου</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+      <li class="breadcrumb-item active">Διαχείριση της βάσης δεδομένων</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="administration-de-la-base">
+<span id="cli-admin-chapitre"></span><h1>Διαχείριση της βάσης δεδομένων<a class="headerlink" href="#administration-de-la-base" title="Link to this heading"></a></h1>
+<section id="info-metadonnees-de-la-base">
+<h2>info — Μεταδεδομένα της βάσης<a class="headerlink" href="#info-metadonnees-de-la-base" title="Link to this heading"></a></h2>
+<p>Εμφανίζει τα μεταδεδομένα και τα στατιστικά μιας βάσης δεδομένων.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--estimate<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (προεπιλογή: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--estimate</span></code> — Απαντά αμέσως σε πολύ μεγάλη βάση: πέρα από 200 000 γραμμές ένας αριθμός είναι εκτίμηση (άνω όριο), αναφέρεται στο <code class="docutils literal notranslate"><span class="pre">approximate</span></code> σε JSON και προηγείται «≈» σε κείμενο, και τα blunders δίνονται μόνο όταν η αποθηκευμένη μέτρησή τους ισχύει ακόμη (αλλιώς χωρίς <code class="docutils literal notranslate"><span class="pre">blunder_count</span></code>). Από προεπιλογή μετράται κάθε γραμμή· η μέτρηση των blunders αποθηκεύεται στη βάση και ξαναγίνεται μετά από κάθε εγγραφή που μπορεί να την αλλάξει (εισαγωγή, ανάλυση, διαγραφή, αλλαγή ορίου).</p></li>
+</ul>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Database Information</span>
+<span class="c1"># ==================================================</span>
+<span class="c1"># Path: /home/jean/bg/base.db</span>
+<span class="c1">#</span>
+<span class="c1"># Metadata:</span>
+<span class="c1">#   Version: 2.31.0</span>
+<span class="c1">#   User: Jean</span>
+<span class="c1">#   Description: Matchs de tournoi 2025</span>
+<span class="c1">#   Date of Creation: 2026-09-06 02:43:51</span>
+<span class="c1">#</span>
+<span class="c1"># Statistics:</span>
+<span class="c1">#   Positions: 3859</span>
+<span class="c1">#   Analyses: 3855</span>
+<span class="c1">#   Matches: 11</span>
+<span class="c1">#   Games: 61</span>
+<span class="c1">#   Moves: 3766</span>
+<span class="c1">#   Blunders: 142</span>
+<span class="c1">#</span>
+<span class="c1"># Thresholds (millipoints):</span>
+<span class="c1">#   Error: 50</span>
+<span class="c1">#   Blunder: 100</span>
+</pre></div>
+</div>
+<p>Η <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> προσθέτει την προέλευση του αρχείου — το <code class="docutils literal notranslate"><span class="pre">issuance</span></code> φέρει το υδατογράφημα, αν υπάρχει, και την ταυτότητα εκδότη αυτού του υπολογιστή:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"issuance"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"watermarked"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"issuerFingerprint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1186-57FA-060C-9378"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"issuerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unger"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"library_settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"errorThresholdMP"</span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"blunderThresholdMP"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"database_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.31.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"dateOfCreation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-09-06 02:43:51"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Matchs de tournoi 2025"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jean"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/home/jean/bg/base.db"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"analysis_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3855</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"blunder_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">142</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"match_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3766</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"position_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3859</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="edit-modifier-les-metadonnees">
+<h2>edit — Τροποποίηση μεταδεδομένων<a class="headerlink" href="#edit-modifier-les-metadonnees" title="Link to this heading"></a></h2>
+<p>Τροποποιεί το όνομα χρήστη, την περιγραφή ή τα κατώφλια μιας βάσης δεδομένων.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Νέο όνομα χρήστη.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Νέα περιγραφή.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--clear-user</span></code> — Διαγραφή του ονόματος χρήστη.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--clear-description</span></code> — Διαγραφή της περιγραφής.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--error-threshold</span></code> — Κατώφλι σφάλματος, σε χιλιοστά του πόντου: μια απόφαση που κοστίζει τουλάχιστον τόσο είναι σφάλμα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--blunder-threshold</span></code> — Κατώφλι blunder, σε χιλιοστά του πόντου: ένα σφάλμα που κοστίζει τουλάχιστον τόσο είναι blunder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (<code class="docutils literal notranslate"><span class="pre">{&quot;changes&quot;:</span> <span class="pre">[...]}</span></code>).</p></li>
+</ul>
+<p>Απαιτείται τουλάχιστον μία επιλογή τροποποίησης.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Marie"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Ma collection"</span>
+./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--clear-description
+./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--error-threshold<span class="w"> </span><span class="m">20</span><span class="w"> </span>--blunder-threshold<span class="w"> </span><span class="m">80</span>
+</pre></div>
+</div>
+</section>
+<section id="verify-verifier-l-integrite">
+<h2>verify — Έλεγχος ακεραιότητας<a class="headerlink" href="#verify-verifier-l-integrite" title="Link to this heading"></a></h2>
+<p>Ελέγχει την ακεραιότητα της βάσης δεδομένων και, προαιρετικά, συγκρίνει έναν αγώνα με το αρχείο προέλευσής του.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--match<span class="w"> </span>&lt;id&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--mat<span class="w"> </span>&lt;file.mat&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — ID του αγώνα προς έλεγχο.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mat</span></code> — Αρχείο MAT προς σύγκριση (χρησιμοποιείται με <code class="docutils literal notranslate"><span class="pre">--match</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (στατιστικά, ορφανές γραμμές, απόκλιση σχήματος, και ο έλεγχος του ματς αν υπάρχει).</p></li>
+</ul>
+<p>Χωρίς την επιλογή <code class="docutils literal notranslate"><span class="pre">--match</span></code>, η εντολή εμφανίζει τα γενικά στατιστικά της βάσης. Με το <code class="docutils literal notranslate"><span class="pre">--match</span></code>, ελέγχει τα δεδομένα του αγώνα και μπορεί να τα συγκρίνει με το αρχικό αρχείο προέλευσης.</p>
+<p>Κάθε εκτέλεση ελέγχει επίσης την ακεραιότητα αναφορών: μετρά τις ορφανές γραμμές — παρτίδες χωρίς αγώνα, κινήσεις χωρίς παρτίδα, αναλύσεις κίνησης χωρίς κίνηση, αναλύσεις χωρίς θέση, εγγραφές του ημερολογίου επανάληψης χωρίς τράπουλα ή χωρίς θέση, ερωτήσεις προπόνησης χωρίς συνεδρία — και εμφανίζει μια γραμμή <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> με το σύνολο, αν υπάρχουν. Μια υγιής βάση απαντά <code class="docutils literal notranslate"><span class="pre">Orphaned</span> <span class="pre">rows:</span> <span class="pre">none</span></code>. Ορφανές γραμμές μπορεί να παραμένουν σε μια βάση που γράφτηκε από έκδοση η οποία δεν επέβαλλε τα ξένα κλειδιά σε κάθε σύνδεση, ή πριν το ημερολόγιο επανάληψης αποκτήσει τα δικά του· δεν ανήκουν σε κανέναν αγώνα ούτε σε καμία τράπουλα και απλώς πιάνουν χώρο. Η εντολή τερματίζει και πάλι με κωδικό εξόδου 0.</p>
+<p>Κάθε εκτέλεση συγκρίνει επίσης το σχήμα με το DDL αναφοράς και απαριθμεί τους πίνακες, τις στήλες και τα ευρετήρια που λείπουν από τη βάση. Το άνοιγμα μιας βάσης προσθέτει ό,τι λείπει όταν μπορεί και απλώς καταγράφει ό,τι δεν μπορεί να προσθέσει (συνήθως ένα ευρετήριο <code class="docutils literal notranslate"><span class="pre">UNIQUE</span></code> που διπλές γραμμές το εμποδίζουν να ξαναχτιστεί): εδώ γίνεται ορατό αυτό το κενό, και ένα ερώτημα που κατονομάζει ένα από αυτά τα στοιχεία αποτυγχάνει μέχρι να διορθωθεί η αιτία. Μια υγιής βάση απαντά <code class="docutils literal notranslate"><span class="pre">Schema:</span> <span class="pre">matches</span> <span class="pre">the</span> <span class="pre">reference</span> <span class="pre">DDL</span></code>. Όπως και οι ορφανές γραμμές, μια απόκλιση σχήματος είναι διαπίστωση, όχι αποτυχία: ο κωδικός εξόδου παραμένει 0.</p>
+<p>Κάθε εκτέλεση ελέγχει τέλος τους κανόνες που ορίζει η τρέχουσα DDL αλλά που η SQLite δεν μπορεί να προσθέσει σε έναν ήδη υπάρχοντα πίνακα: τους περιορισμούς εύρους <code class="docutils literal notranslate"><span class="pre">CHECK</span></code> (ζάρια από 0 έως 6, κύβος και pips μη αρνητικά, 0 έως 15 πούλια εκτός, βαθμολογία επανάληψης από 1 έως 4), το hash Zobrist που δεν θα έπρεπε ποτέ να λείπει από μια γραμμή και τη μοναδικότητα μιας ανάλυσης ανά θέση. Μια βάση που δημιουργήθηκε από την έκδοση σχήματος 2.18.0 και μετά τους επιβάλλει· μια παλαιότερη μπορεί να περιέχει ακόμη γραμμές που μια νέα βάση θα απέρριπτε, και αυτές μετρώνται εδώ, κανόνα προς κανόνα. Μια υγιής βάση απαντά <code class="docutils literal notranslate"><span class="pre">Constraints:</span> <span class="pre">every</span> <span class="pre">row</span> <span class="pre">satisfies</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">DDL</span></code>. Άλλη μια διαπίστωση: τίποτα δεν επιδιορθώνεται και ο κωδικός εξόδου παραμένει 0.</p>
+<p>Κάθε εκτέλεση υπολογίζει τέλος εκ νέου τους δύο αποκανονικοποιημένους μετρητές, <code class="docutils literal notranslate"><span class="pre">match.game_count</span></code> και <code class="docutils literal notranslate"><span class="pre">game.move_count</span></code>, από τις γραμμές που ισχυρίζονται ότι μετρούν, και αναφέρει πόσοι διαφωνούν και κατά πόσο στη χειρότερη περίπτωση. Και οι δύο γράφονται μία φορά, κατά την εισαγωγή, από ό,τι περιείχε το <strong>αρχείο πηγής</strong>, και είναι αυτοί που εμφανίζουν η λίστα αγώνων και η προβολή παρτίδας: μια μικρή απόκλιση είναι συνήθως μια εισαγωγή που παρέλειψε ό,τι δεν μπορούσε να μετατρέψει. Τίποτα δεν ξαναγράφεται — η αντικατάσταση του μετρητή με ό,τι αποθηκεύτηκε θα έσβηνε ακριβώς την απόκλιση που αξίζει να δει κανείς. Μια υγιής βάση απαντά <code class="docutils literal notranslate"><span class="pre">Counters:</span> <span class="pre">game_count</span> <span class="pre">and</span> <span class="pre">move_count</span> <span class="pre">agree</span> <span class="pre">with</span> <span class="pre">the</span> <span class="pre">rows</span></code>.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">1</span><span class="w"> </span>--mat<span class="w"> </span>original.mat
+</pre></div>
+</div>
+<p><strong>Να χρησιμοποιηθεί ως δικλείδα.</strong> Ο κωδικός εξόδου είναι 0 ό,τι κι αν βρει η εντολή: η <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> είναι αυτή που φέρει την ετυμηγορία, και ένα σενάριο πρέπει να διαβάσει το ίδιο τους μετρητές.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"analysis_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3855</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"blunder_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">142</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"match_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3766</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"position_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3859</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"orphans"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"games_without_match"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"moves_without_game"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_analyses_without_move"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"analyses_without_position"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"reviews_without_deck"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"reviews_without_position"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"training_items_without_session"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"orphan_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"schema_drift"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"missing_tables"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"missing_columns"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"missing_indexes"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"schema_drift_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"constraint_violations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"position.zobrist_hash NOT NULL"</span><span class="p">,</span><span class="w"> </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"position.dice_1 BETWEEN 0 AND 6"</span><span class="p">,</span><span class="w"> </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"constraint_violation_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"counter_drift"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"matches_with_wrong_game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"games_with_wrong_move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">53</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"worst_game_count_gap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"worst_move_count_gap"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"counter_drift_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">53</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Τρία πεδία αξίζουν συναγερμό: τα <code class="docutils literal notranslate"><span class="pre">orphan_total</span></code>, <code class="docutils literal notranslate"><span class="pre">schema_drift_count</span></code> και <code class="docutils literal notranslate"><span class="pre">constraint_violation_total</span></code>. Όταν δεν είναι μηδενικά, περιγράφουν βάση που χρειάζεται επισκευή.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.orphan_total == 0 and .schema_drift_count == 0 and .constraint_violation_total == 0'</span>
+</pre></div>
+</div>
+<p>Το <code class="docutils literal notranslate"><span class="pre">counter_drift_total</span></code> δεν ανήκει σε αυτά, και το παραπάνω παράδειγμα το δείχνει: η βάση που το παρήγαγε μόλις είχε εισαχθεί και εμφανίζει ήδη 53 παρτίδες των οποίων ο μετρητής κινήσεων διαφέρει από αυτό που περιέχουν οι γραμμές. Οι μετρητές αυτοί προέρχονται από το αρχείο πηγής, όχι από τη βάση· μια απόκλιση αφηγείται την εισαγωγή, δεν σημαίνει αλλοίωση. Κοιτάξτε τον, μη τον χρησιμοποιείτε ως κατώφλι.</p>
+</section>
+<section id="vacuum-compacter-la-base-de-donnees">
+<h2>vacuum — Συμπύκνωση της βάσης δεδομένων<a class="headerlink" href="#vacuum-compacter-la-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Ανακτά τον χώρο στον δίσκο που άφησαν οι διαγραφές (αγώνες, τουρνουά, εκκαθαρίσεις): η SQLite δεν μικραίνει ποτέ μόνη της το αρχείο όταν διαγράφονται δεδομένα, πρέπει να της ζητηθεί ρητά. Είναι ο μόνος τρόπος να ξεκινήσει μια συμπύκνωση — δεν συμβαίνει ποτέ αυτόματα στο άνοιγμα μιας βάσης, γιατί το κόστος της είναι απρόβλεπτο σε μεγάλη βάση.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>vacuum<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (<code class="docutils literal notranslate"><span class="pre">{&quot;size_before&quot;,</span> <span class="pre">&quot;size_after&quot;,</span> <span class="pre">&quot;reclaimed&quot;}</span></code>, σε bytes).</p></li>
+</ul>
+<p>Η εντολή ξεκινά με ένα <code class="docutils literal notranslate"><span class="pre">wal_checkpoint(TRUNCATE)</span></code> ώστε το μέγεθος που εμφανίζεται πριν από τη συμπύκνωση να είναι ειλικρινές, ελέγχει ότι δίπλα στο αρχείο απομένει ελεύθερος χώρος περίπου ίσος με το μέγεθός του, γράφει τη συμπυκνωμένη βάση σε ένα αντίγραφο (<code class="docutils literal notranslate"><span class="pre">VACUUM</span> <span class="pre">INTO</span></code>) που στη συνέχεια αντικαθιστά το αρχείο, και έπειτα εκτελεί ένα <code class="docutils literal notranslate"><span class="pre">ANALYZE</span></code> για να ανανεώσει τα στατιστικά που χρησιμοποιεί ο σχεδιαστής ερωτημάτων. Αν ένα άλλο πρόγραμμα έχει ανοιχτή τη βάση, το αρχείο δεν αντικαθίσταται: η εντολή συμπυκνώνει επιτόπου (<code class="docutils literal notranslate"><span class="pre">VACUUM</span></code>), κάτι που απαιτεί περίπου το διπλάσιο του μεγέθους του αρχείου σε ελεύθερο χώρο. Αν λείπει χώρος στον δίσκο, η εντολή αρνείται να ξεκινήσει με ρητό μήνυμα αντί να διακινδυνεύσει μια διακοπείσα συμπύκνωση.</p>
+<p>Πριν από τη συμπύκνωση, κάθε ανάλυση που μια προηγούμενη έκδοση έχει ακόμη αποθηκευμένη σε JSON ξαναγράφεται στη συμπαγή δυαδική μορφή (βλ. <code class="docutils literal notranslate"><span class="pre">reencode</span></code>).</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>vacuum<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Compacting database...</span>
+<span class="c1">#   Before: 128.4 MiB</span>
+<span class="c1">#   After:  41.2 MiB</span>
+<span class="c1">#   Reclaimed: 87.2 MiB</span>
+</pre></div>
+</div>
+</section>
+<section id="met-la-table-d-equite-de-match-de-la-base">
+<h2>met — Ο πίνακας ισοτιμίας αγώνα της βάσης<a class="headerlink" href="#met-la-table-d-equite-de-match-de-la-base" title="Link to this heading"></a></h2>
+<p>Εμφανίζει, εισάγει ή επιλέγει τον πίνακα ισοτιμίας αγώνα (MET) με τον οποίο το gammonNet αξιολογεί τα σκορ αγώνα της βάσης: Kazaross-XG2, ενσωματωμένος και προεπιλεγμένος, ή ρητός πίνακας σε μορφή <code class="docutils literal notranslate"><span class="pre">.xml</span></code> του GNUbg. Κάθε υπολογισμένη ανάλυση καταγράφει τον πίνακά της· μια ανάλυση σε σκορ αγώνα που υπολογίστηκε με πίνακα διαφορετικό από τον τρέχοντα εξαιρείται από τα στατιστικά. Η αλλαγή πίνακα δεν ξαναγράφει καμία ανάλυση.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>met<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--import<span class="w"> </span>&lt;fichier.xml&gt;<span class="w"> </span><span class="o">[</span>--current<span class="o">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--use<span class="w"> </span>&lt;id&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Εισάγει έναν πίνακα <code class="docutils literal notranslate"><span class="pre">.xml</span></code> του GNUbg. Ένας πίνακας που υπάρχει ήδη, ή είναι πανομοιότυπος με τον Kazaross-XG2, δεν προστίθεται δεύτερη φορά.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--current</span></code> — Με το <code class="docutils literal notranslate"><span class="pre">--import</span></code>: κάνει τον εισαγόμενο πίνακα τρέχοντα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--use</span></code> — Κάνει τρέχοντα τον πίνακα με τον δοθέντα αναγνωριστικό αριθμό· το <code class="docutils literal notranslate"><span class="pre">0</span></code> επιστρέφει στον Kazaross-XG2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+</ul>
+<p>Η εντολή εμφανίζει στη συνέχεια τους πίνακες της βάσης, με τον τρέχοντα σημειωμένο με <code class="docutils literal notranslate"><span class="pre">*</span></code>. Ο δαίμονας εκθέτει τις ίδιες λειτουργίες στις διαδρομές <code class="docutils literal notranslate"><span class="pre">met.list</span></code>, <code class="docutils literal notranslate"><span class="pre">met.import</span></code>, <code class="docutils literal notranslate"><span class="pre">met.setCurrent</span></code> και <code class="docutils literal notranslate"><span class="pre">met.ofAnalysis</span></code>, περιορισμένες στον tenant του καλούντος.</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>met<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--import<span class="w"> </span>Rockwell-Kazaross.xml<span class="w"> </span>--current
+
+<span class="c1">#     0  Kazaross-XG2</span>
+<span class="c1"># *   1  Rockwell/Kazaross 25 point MET</span>
+</pre></div>
+</div>
+</section>
+<section id="reencode-reecrire-les-analyses-au-format-compact">
+<h2>reencode — Επανεγγραφή των αναλύσεων σε συμπαγή μορφή<a class="headerlink" href="#reencode-reecrire-les-analyses-au-format-compact" title="Link to this heading"></a></h2>
+<p>Οι αναλύσεις αποθηκεύονται σε συμπαγή δυαδική μορφή, περίπου στο μισό μέγεθος του συμπιεσμένου JSON των προηγούμενων εκδόσεων και πολλές φορές ταχύτερη στην επανανάγνωση. Μια βάση που δημιουργήθηκε πριν από αυτή τη μορφή παραμένει αναγνώσιμη ως έχει: οι παλαιότερες αναλύσεις της μετατρέπονται όταν ξαναγράφονται (μια εισαγωγή που τις εμπλουτίζει, ένα <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>). Το <code class="docutils literal notranslate"><span class="pre">reencode</span></code> τις μετατρέπει όλες, χωρίς συμπύκνωση του αρχείου: χρήσιμο όταν ο δίσκος δεν έχει χώρο για το συμπυκνωμένο αντίγραφο που γράφει ένα <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>, ή σε διακομιστή PostgreSQL, που δεν έχει <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>reencode<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (<code class="docutils literal notranslate"><span class="pre">{&quot;rewritten&quot;}</span></code>, το πλήθος των αναλύσεων που ξαναγράφτηκαν).</p></li>
+</ul>
+<p>Η μετατροπή προχωρά σε παρτίδες των 2 000 αναλύσεων, κάθε μία στη δική της συναλλαγή. Αν διακοπεί, συνεχίζει στην επόμενη εκτέλεση από το σημείο όπου σταμάτησε: οι ήδη μετατρεμμένες αναλύσεις παραλείπονται χωρίς να ξαναδιαβαστούν. Μια μη αναγνώσιμη ανάλυση αφήνεται ως έχει και αναφέρεται στο ημερολόγιο. Δεν ξεκινά ποτέ από μόνη της. Ο δαίμονας εκθέτει την ίδια λειτουργία στη διαδρομή <code class="docutils literal notranslate"><span class="pre">maintenance.reencode</span></code>, περιορισμένη στο tenant του καλούντος.</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>reencode<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1">#   Analyses rewritten: 15623468</span>
+</pre></div>
+</div>
+</section>
+<section id="maintenance-l-etat-de-sante-de-la-base">
+<h2>maintenance — Η κατάσταση υγείας της βάσης<a class="headerlink" href="#maintenance-l-etat-de-sante-de-la-base" title="Link to this heading"></a></h2>
+<p>Μία γραμμή ανά λειτουργία συντήρησης: τι μετράει, η ενέργειά της και η τελευταία της εκτέλεση. Τίποτα δεν ξεκινά από μόνο του: ούτε κατά το άνοιγμα της βάσης ούτε κατά την ανάγνωση της κατάστασης.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>maintenance<span class="w"> </span>status<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+./blunderdb<span class="w"> </span>maintenance<span class="w"> </span>count<span class="w"> </span>&lt;opération&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+./blunderdb<span class="w"> </span>maintenance<span class="w"> </span>ids<span class="w"> </span>&lt;opération&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+./blunderdb<span class="w"> </span>maintenance<span class="w"> </span>run<span class="w"> </span>&lt;opération&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+</pre></div>
+</div>
+<p><strong>Υποεντολές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span></code> — Όλες οι λειτουργίες, με τους δωρεάν μετρητές και την τελευταία εκτέλεση της καθεμιάς. Ένας δαπανηρός μετρητής εμφανίζει <code class="docutils literal notranslate"><span class="pre">(count</span> <span class="pre">on</span> <span class="pre">demand)</span></code>: το <code class="docutils literal notranslate"><span class="pre">count</span></code> τον υπολογίζει.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">count</span></code> — Υπολογίζει τον μετρητή μιας λειτουργίας, όποιο κι αν είναι το κόστος.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ids</span></code> — Εμφανίζει τους αναγνωριστικούς αριθμούς που μετράει η λειτουργία (θέσεις ή αγώνες). Το πλήθος τους είναι η απάντηση του <code class="docutils literal notranslate"><span class="pre">count</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run</span></code> — Εκτελεί την ενέργεια μιας λειτουργίας και την καταγράφει ως τελευταία της εκτέλεση (ολοκληρώθηκε, ακυρώθηκε ή απέτυχε). Το Ctrl-C τη σταματά ανάμεσα σε δύο παρτίδες.</p></li>
+</ul>
+<p><strong>Λειτουργίες:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 40.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Λειτουργία</p></th>
+<th class="head"><p>Μετρητής</p></th>
+<th class="head"><p>Ενέργεια</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">analysis.missing</span></code></p></td>
+<td><p>Θέσεις χωρίς καμία ανάλυση, κατά απαίτηση.</p></td>
+<td><p>Η εντολή <code class="docutils literal notranslate"><span class="pre">analyze</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stats.matches</span></code></p></td>
+<td><p>Αγώνες χωρίς στατιστικά ανά αγώνα.</p></td>
+<td><p>Τα υπολογίζει.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">analysis.columns</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Υπολογίζει ξανά τις στήλες που προκύπτουν από τις αναλύσεις.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">moves.errors</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Καταγράφει το σφάλμα των παιγμένων κινήσεων που δεν έχουν.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">analysis.legacy</span></code></p></td>
+<td><p>—</p></td>
+<td><p>Ξαναγράφει τις αναλύσεις στη συμπαγή μορφή (<code class="docutils literal notranslate"><span class="pre">reencode</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">trash</span></code></p></td>
+<td><p>Εγγραφές του κάδου.</p></td>
+<td><p>Η εντολή <code class="docutils literal notranslate"><span class="pre">trash</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vacuum</span></code></p></td>
+<td><p>Ελεύθερα byte του αρχείου (SQLite).</p></td>
+<td><p>Η εντολή <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+</ul>
+<p>Η τελευταία εκτέλεση αποθηκεύεται στη βάση, μαζί με τις ρυθμίσεις της· μια εξαγωγή δεν τη μεταφέρει. Μία μόνο λειτουργία εκτελείται κάθε φορά. Ο δαίμονας εκθέτει τις ίδιες υποεντολές στις διαδρομές <code class="docutils literal notranslate"><span class="pre">maintenance.status</span></code>, <code class="docutils literal notranslate"><span class="pre">maintenance.count</span></code>, <code class="docutils literal notranslate"><span class="pre">maintenance.ids</span></code>, <code class="docutils literal notranslate"><span class="pre">maintenance.run</span></code> (ως ροή NDJSON, ακυρώσιμη μέσω <code class="docutils literal notranslate"><span class="pre">maintenance.cancel</span></code>), περιορισμένες στον tenant του καλούντος· μια λειτουργία που ζητείται ενώ τρέχει ανάλυση gammonNet ή rollout για αυτόν τον tenant απορρίπτεται.</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>maintenance<span class="w"> </span>run<span class="w"> </span>stats.matches<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1">#   stats.matches: done, 1204 changed</span>
+</pre></div>
+</div>
+</section>
+<section id="players-les-graphies-d-un-joueur">
+<h2>players — Οι γραφές ενός παίκτη<a class="headerlink" href="#players-les-graphies-d-un-joueur" title="Link to this heading"></a></h2>
+<p>Το ίδιο πρόσωπο υπογράφει μερικές φορές με διαφορετικούς τρόπους από αρχείο σε αρχείο («Doe J.», «John Doe»). Ένα <strong>ψευδώνυμο</strong> λέει ότι ένα όνομα είναι άλλη γραφή ενός κανονικού ονόματος. Οι αγώνες που υπάρχουν ήδη στη βάση κρατούν τα ονόματα που γράφουν τα αρχεία τους· τα στατιστικά, ο πίνακας Παίκτες και η αναζήτηση <code class="docutils literal notranslate"><span class="pre">pl&quot;…&quot;</span></code> διαβάζουν όλες τις γραφές ως ένα πρόσωπο, και κάθε επόμενη εισαγωγή καταγράφει το κανονικό όνομα. Η συγχώνευση παικτών του παραθύρου των αγώνων δημιουργεί τα ίδια ψευδώνυμα.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>players<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>&lt;add<span class="p">|</span>list<span class="p">|</span>remove<span class="p">|</span>suggest&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>arguments<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Ενέργειες:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">ALIAS</span> <span class="pre">CANONIQUE</span></code> — Το <code class="docutils literal notranslate"><span class="pre">ALIAS</span></code> γίνεται γραφή του <code class="docutils literal notranslate"><span class="pre">CANONIQUE</span></code>. Ένα κανονικό όνομα που είναι το ίδιο ψευδώνυμο ακολουθείται μέχρι το δικό του κανονικό, και τα ψευδώνυμα που στόχευαν το <code class="docutils literal notranslate"><span class="pre">ALIAS</span></code> περνούν στο <code class="docutils literal notranslate"><span class="pre">CANONIQUE</span></code>: ένα μόνο επίπεδο, ποτέ αλυσίδα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Τα ψευδώνυμα, ταξινομημένα κατά κανονικό όνομα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove</span> <span class="pre">ALIAS</span></code> — Ξεχνά ένα ψευδώνυμο· τερματίζει με σφάλμα αν δεν ήταν ψευδώνυμο.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">suggest</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Προτείνει τα ονόματα που διαφέρουν μόνο σε πεζά/κεφαλαία, τόνους, στίξη ή σειρά λέξεων, με κανονική τη συχνότερη γραφή. Τίποτα δεν καταγράφεται: κάθε πρόταση γράφεται ως η εντολή <code class="docutils literal notranslate"><span class="pre">add</span></code> που θα την εφάρμοζε.</p></li>
+</ul>
+<p><strong>Αποτυπώματα.</strong> Τα αποτυπώματα ενός αγώνα (<code class="docutils literal notranslate"><span class="pre">match_hash</span></code>, <code class="docutils literal notranslate"><span class="pre">canonical_hash</span></code>) κρατούν τα ονόματα του αρχείου: το ψευδώνυμο εφαρμόζεται μετά από αυτά, μόνο στα καταγεγραμμένα ονόματα. Ένα αρχείο που εισήχθη πριν υπάρξει το ψευδώνυμό του αναγνωρίζεται λοιπόν πάντα στην επόμενη εισαγωγή. Ένας αγώνας που εισάγεται με άλλη γραφή, με ζάρια ίδια με αυτά ενός αγώνα της βάσης και με ονόματα που διαφέρουν μόνο κατά γνωστά ψευδώνυμα, αναγνωρίζεται ως ο ίδιος αγώνας: οι αναλύσεις του εμπλουτίζουν τον υπάρχοντα, δεν δημιουργείται δεύτερος αγώνας.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>players<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>add<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span><span class="s2">"Doe J."</span><span class="w"> </span><span class="s2">"John Doe"</span>
+./blunderdb<span class="w"> </span>players<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>suggest<span class="w"> </span>--db<span class="w"> </span>base.db
+</pre></div>
+</div>
+<p><strong>players merge</strong> — Η συγχώνευση παικτών του παραθύρου των αγώνων, με τον ίδιο κώδικα με τη διαδρομή <code class="docutils literal notranslate"><span class="pre">matches.mergePlayers</span></code> του δαίμονα: κάθε όνομα γίνεται γραφή του κανονικού ονόματος, όπως άλλα τόσα <code class="docutils literal notranslate"><span class="pre">players</span> <span class="pre">alias</span> <span class="pre">add</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>players<span class="w"> </span>merge<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--into<span class="w"> </span>&lt;CANONIQUE&gt;<span class="w"> </span>&lt;NOM&gt;<span class="w"> </span><span class="o">[</span>&lt;NOM&gt;...<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>players swap</strong> — Η αντιμετάθεση των δύο παικτών ενός αγώνα, που το αρχείο είχε ονομάσει με λάθος σειρά (διαδρομή <code class="docutils literal notranslate"><span class="pre">matches.swapPlayers</span></code>). Καμία θέση και καμία ανάλυση δεν αλλάζει: κάθε παίκτης κρατά τα στατιστικά του, στην άλλη θέση. Η αντιμετάθεση απορρίπτεται όσο ένα πρόχειρο μεταγραφής είναι ανοιχτό στον αγώνα, καθώς και για αγώνα που παίχτηκε στο blunderDB.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>players<span class="w"> </span>swap<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>&lt;ID_MATCH&gt;
+</pre></div>
+</div>
+<p><strong>players main</strong> — Ο κύριος παίκτης του παραθύρου των αγώνων (διαδρομές <code class="docutils literal notranslate"><span class="pre">players.main.*</span></code>). Χωρίς όνομα, εμφανίζει τον κύριο παίκτη· με όνομα, τον ορίζει και αντιστρέφει σε μία μόνο συναλλαγή όλους τους αγώνες όπου αυτός ή ένα από τα ψευδώνυμά του είναι ο παίκτης 2· κάθε επόμενη εισαγωγή τον τοποθετεί ως παίκτη 1. Το <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> εμφανίζει τους αγώνες που θα αντιστραφούν χωρίς να αλλάξει τίποτα· το <code class="docutils literal notranslate"><span class="pre">--clear</span></code> αφαιρεί τον κύριο παίκτη χωρίς να αντιστρέψει τίποτα πίσω. Ένας αγώνας με ανοιχτό προσχέδιο μεταγραφής, ή παιγμένος στο blunderDB, μένει ως έχει και παρατίθεται χωριστά.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>players<span class="w"> </span>main<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>--dry-run<span class="o">]</span><span class="w"> </span><span class="o">[</span>&lt;NOM&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>players<span class="w"> </span>main<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--clear
+</pre></div>
+</div>
+<p><strong>players matches</strong> — Τα αναγνωριστικά των αγώνων ενός παίκτη, σε οποιαδήποτε από τις δύο θέσεις και υπό όλα τα ψευδώνυμά του (διαδρομή <code class="docutils literal notranslate"><span class="pre">players.matchIds</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>players<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>&lt;NOM&gt;
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>players<span class="w"> </span>merge<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--into<span class="w"> </span><span class="s2">"John Doe"</span><span class="w"> </span><span class="s2">"Doe J."</span><span class="w"> </span><span class="s2">"J. Doe"</span>
+./blunderdb<span class="w"> </span>players<span class="w"> </span>swap<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span><span class="m">42</span>
+./blunderdb<span class="w"> </span>players<span class="w"> </span>main<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dry-run<span class="w"> </span><span class="s2">"John Doe"</span>
+</pre></div>
+</div>
+</section>
+<section id="events-les-graphies-d-un-evenement">
+<h2>events — Οι γραφές μιας διοργάνωσης<a class="headerlink" href="#events-les-graphies-d-un-evenement" title="Link to this heading"></a></h2>
+<p>Οι ίδιες ενέργειες με το <code class="docutils literal notranslate"><span class="pre">players</span> <span class="pre">alias</span></code>, για τα ονόματα διοργανώσεων (το πεδίο Event ενός αρχείου). Κατά την εισαγωγή, ένας αγώνας του οποίου η διοργάνωση είναι ψευδώνυμο τοποθετείται στο τουρνουά με το κανονικό όνομα.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>events<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>add<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span><span class="s2">"Open 2025"</span><span class="w"> </span><span class="s2">"Open d'automne 2025"</span>
+./blunderdb<span class="w"> </span>events<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+</pre></div>
+</div>
+</section>
+<section id="repair-recalculer-ce-qui-est-derive">
+<span id="cli-repair"></span><h2>repair — Επανυπολογισμός όσων είναι παράγωγα<a class="headerlink" href="#repair-recalculer-ce-qui-est-derive" title="Link to this heading"></a></h2>
+<p>Επανυπολογίζει ό,τι η βάση αντλεί από όσα αποθηκεύει: τις βαθμωτές στήλες κάθε ανάλυσης από την ίδια την ανάλυση, της οποίας δεν είναι παρά μια προβολή· τη φάση και τον τύπο παιχνιδιού κάθε θέσης από το ταμπλό της· και τον δείκτη Crawford κάθε σκορ από τον αγώνα από τον οποίο προέρχεται η θέση, ή από το XGID με το οποίο μπήκε. Οι αναλύσεις δεν θίγονται: αυτό που ξαναγίνεται είναι οι τιμές που είχαν εξαχθεί από αυτές.</p>
+<p>Μια βάση που έλαβε αναλύσεις μέσω εισαγωγής άλλης βάσης (<code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">--type</span> <span class="pre">database</span></code>, και μέσω παρακολουθούμενου φακέλου συγχρονισμού) με έκδοση προγενέστερη από αυτήν διατηρεί αυτές τις αναλύσεις χωρίς τις στήλες τους, ή με εκείνες της ανάλυσης που αντικατέστησαν: τα blunders τους δεν μετρώνται και οι αναγκαστικές κινήσεις τους θεωρούνται αποφάσεις. Το <code class="docutils literal notranslate"><span class="pre">repair</span></code> συγκρίνει αυτές τις στήλες με ό,τι δίνει η αποθηκευμένη ανάλυση και ξαναφτιάχνει όσες διαφέρουν· το ίδιο περιεχόμενο μετράει τότε σαν να είχε έρθει μέσω <code class="docutils literal notranslate"><span class="pre">transfer</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> — ένας μετρητής ανά πέρασμα: <code class="docutils literal notranslate"><span class="pre">repaired</span></code> (στήλες ανάλυσης), <code class="docutils literal notranslate"><span class="pre">phases</span></code> (θέσεις που αναταξινομήθηκαν) και <code class="docutils literal notranslate"><span class="pre">crawford</span></code> (θέσεις με νέο hash) και <code class="docutils literal notranslate"><span class="pre">signatures_unverified</span></code> (υπογεγραμμένα σχόλια που ένας νέος κατακερματισμός αφήνει μη επαληθευμένα: μια υπογραφή καλύπτει την ταυτότητα της θέσης). Ο καθένας δίνει τον αριθμό των γραμμών που άλλαξαν πραγματικά. Με το <code class="docutils literal notranslate"><span class="pre">--stats</span></code> προστίθεται το <code class="docutils literal notranslate"><span class="pre">match_stats</span></code> (αγώνες που υπολογίστηκαν ξανά). Με το <code class="docutils literal notranslate"><span class="pre">--move-errors</span></code> προστίθεται το <code class="docutils literal notranslate"><span class="pre">move_errors</span></code> (βαθμολογημένες κινήσεις).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--stats</span></code> — Υπολογίζει επίσης εκ νέου, από το μηδέν, τα στατιστικά ανά αγώνα.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move-errors</span></code> — Γράφει επίσης, για κάθε κίνηση που παίχτηκε, το equity που έχασε σε σχέση με την καλύτερη κίνηση, διαβασμένο από την ανάλυση της θέσης της (στήλη <code class="docutils literal notranslate"><span class="pre">error_mp</span></code> του πίνακα κινήσεων). Το πέρασμα συνεχίζεται: αν διακοπεί, ξαναρχίζει από εκεί που σταμάτησε· σε πολύ μεγάλη βιβλιοθήκη διαρκεί αρκετά λεπτά. Στην πλευρά του διακομιστή: <code class="docutils literal notranslate"><span class="pre">matches.scoreMoves</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--duplicates</span></code> — Δεν εκτελεί κανένα από τα περάσματα: απαριθμεί τα ζεύγη αγώνων που τα ζάρια δείχνουν πανομοιότυπα, χωρίς να συγχωνεύσει τίποτα (βλ. παρακάτω).</p></li>
+</ul>
+<p>Τα στατιστικά ανά αγώνα είναι, για κάθε παίκτη κάθε αγώνα, οι αποφάσεις του, το αθροιστικό του σφάλμα, το PR του, τα blunder του, η τύχη του και η κυρίαρχη προέλευση των αναλύσεών του· τα στατιστικά τα διαβάζουν αντί να ξαναδιατρέχουν κάθε απόφαση. Γράφονται μαζί με τον αγώνα κατά την εισαγωγή και σβήνονται σε κάθε αλλαγή που τα μεταβάλλει (διαγραφή αγώνα, εναλλαγή παικτών, τροποποίηση της ανάλυσης μιας από τις θέσεις του, μετακίνηση του ορίου blunder)· η επόμενη ανάγνωση υπολογίζει ό,τι λείπει. Μια βάση που μετατράπηκε από προηγούμενη έκδοση τα υπολογίζει μία φορά, στο πρώτο άνοιγμα. Το <code class="docutils literal notranslate"><span class="pre">--stats</span></code> τα ξαναφτιάχνει όλα: η λύση αν αυτή η τήρηση λογαριασμών κάποτε πάει στραβά.</p>
+<p><strong>Πιθανά διπλότυπα.</strong> Το <code class="docutils literal notranslate"><span class="pre">repair</span> <span class="pre">--duplicates</span></code> συγκρίνει τους αγώνες με βάση τα ζάρια τους, ποτέ με βάση τα ονόματά τους. Αναφέρονται δύο περιπτώσεις: ίδιο μήκος, ίδιο αρχικό σκορ και ίδια ζάρια σε κάθε παρτίδα με άλλα ονόματα παικτών, και ένας αγώνας του οποίου τα ζάρια επεκτείνουν αυτά ενός άλλου — αγώνας που διακόπηκε και μετά ολοκληρώθηκε. Κάτω από ένα ζεύγος με τα ίδια ζάρια, η έξοδος κειμένου δίνει τις εντολές <code class="docutils literal notranslate"><span class="pre">players</span> <span class="pre">alias</span> <span class="pre">add</span></code> που θα έκαναν τους δύο αγώνες να ονομάζουν τους ίδιους παίκτες: μία μόνο ανάγνωση όταν ένα όνομα είναι κοινό και στους δύο (το άλλο όνομα μπορεί να είναι μόνο ο άλλος παίκτης), αλλιώς δύο — θέση προς θέση, μετά χιαστί — αριθμημένες, από τις οποίες πρέπει να εκτελεστεί μόνο μία. Η γραφή του πιο πρόσφατου αγώνα γίνεται το ψευδώνυμο, αυτή του παλαιότερου το κανονικό όνομα. Το <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> επιστρέφει <code class="docutils literal notranslate"><span class="pre">{&quot;suspects&quot;:</span> <span class="pre">[...]}</span></code>, κάθε ζεύγος με <code class="docutils literal notranslate"><span class="pre">kind</span></code> (<code class="docutils literal notranslate"><span class="pre">same_dice</span></code> ή <code class="docutils literal notranslate"><span class="pre">longer</span></code>), <code class="docutils literal notranslate"><span class="pre">matchId</span></code>, <code class="docutils literal notranslate"><span class="pre">otherId</span></code>, <code class="docutils literal notranslate"><span class="pre">players</span></code>, <code class="docutils literal notranslate"><span class="pre">otherPlayers</span></code> και, για ζεύγος με τα ίδια ζάρια, <code class="docutils literal notranslate"><span class="pre">pairings</span></code>: η λίστα των αναγνώσεων, καθεμία με τα <code class="docutils literal notranslate"><span class="pre">aliases</span></code> της (<code class="docutils literal notranslate"><span class="pre">alias</span></code>, <code class="docutils literal notranslate"><span class="pre">canonical</span></code>). Ένας αγώνας που εισήχθη πριν υπάρξει το αποτύπωμα ζαριών το λαμβάνει στην πορεία· αυτή είναι η μόνη εγγραφή αυτής της λειτουργίας.</p>
+<p>Χρήσιμη μετά από διόρθωση του τρόπου με τον οποίο διαβάζεται μια εισηγμένη ανάλυση. Έχει ήδη συμβεί δύο φορές. Ο εισαγωγέας XG γράφει ένα «χωρίς διπλασιασμό» με δύο τρόπους, και ο δεύτερος εκλαμβανόταν ως πραγματικός διπλασιασμός — η στήλη έφερε τότε το σφάλμα ενός διπλασιασμού που ποτέ δεν έγινε. Και μια ανάλυση που το ίδιο το blunderDB είχε υπολογίσει δεν ήξερε ποια κίνηση είχε παιχτεί, οπότε ένας αγώνας που εισήχθη χωρίς ανάλυση κρατούσε μηδενικό σφάλμα παντού και PR 0,00· η στήλη ξαναϋπολογίζεται από τις κινήσεις του αγώνα. Η διόρθωση της ανάγνωσης δεν αλλάζει τίποτα στις ήδη γραμμένες γραμμές· αυτή η εντολή τις ξαναφτιάχνει.</p>
+<p>Το πέρασμα του Crawford, αντιθέτως, αγγίζει τις ίδιες τις θέσεις. Σκορ <code class="docutils literal notranslate"><span class="pre">1</span></code> σημαίνει «μένει ένας πόντος, και αυτή η παρτίδα ΕΙΝΑΙ η παρτίδα Crawford»· <code class="docutils literal notranslate"><span class="pre">0</span></code> σημαίνει «μένει ένας πόντος, η παρτίδα Crawford είναι πίσω μας». Όσο οι εισαγωγείς δεν έγραφαν αυτή τη διάκριση, κάθε θέση μετά το Crawford καταγραφόταν ως θέση Crawford, και άρα διαβαζόταν με νεκρό κύβο — εκεί ακριβώς όπου αυτός που χάνει διπλασιάζει στην πραγματικότητα με την πρώτη ευκαιρία. Η διόρθωση του σκορ αλλάζει τον κατακερματισμό της θέσης: η γραμμή λοιπόν ξανακατακερματίζεται και συγχωνεύεται με τη σωστή δίδυμή της αν η βάση κρατά ήδη μία — η ανάλυση, τα σχόλια, οι συλλογές, οι κάρτες Anki και το ημερολόγιο επαναλήψεών τους, οι κινήσεις του αγώνα και οι καταχωρίσεις του κάδου απορριμμάτων που την κατονομάζουν ακολουθούν τη γραμμή που επιβιώνει. Μια θέση την οποία δεν δείχνει κανένας αγώνας διορθώνεται μόνο με τον λόγο του XGID που έφερε από άλλο πρόγραμμα (XG, BGBlitz…): όταν το πεδίο Crawford αυτού του XGID λέει ότι η παρτίδα δεν είναι η παρτίδα Crawford, και το XGID περιγράφει πράγματι αυτή τη θέση. Προς την αντίθετη κατεύθυνση, μια θέση χωρίς αγώνα, αποθηκευμένη με <code class="docutils literal notranslate"><span class="pre">0</span></code> και από τις δύο πλευρές, περνά σε <code class="docutils literal notranslate"><span class="pre">1</span></code> όταν το XGID που έφερε είναι ενός αγώνα 1 πόντου και την περιγράφει: η μόνη παρτίδα ενός αγώνα 1 πόντου ξεκινά έναν πόντο πριν από τον στόχο, άρα είναι η παρτίδα Crawford, όπως τη γράφουν οι εισαγωγείς. Το DMP μετά την παρτίδα Crawford ενός μακρύτερου αγώνα μένει στο <code class="docutils literal notranslate"><span class="pre">0</span></code>: το XGID του δίνει το μήκος αυτού του αγώνα. Ένα XGID που το blunderDB ξανάγραψε μόνο του απλώς επαναλαμβάνει το αποθηκευμένο σκορ και δεν αποδεικνύει τίποτα. Κάθε άλλη θέση χωρίς αγώνα μένει ως έχει: τίποτα δεν αντιφάσκει με όσα δηλώνει το σκορ της.</p>
+<p>Τίποτα δεν την ενεργοποιεί αυτόματα, και αυτό είναι σκόπιμο: το να ξαναγράφονται οι στήλες ανάλυσης όλων, ή να ξανακατακερματίζονται θέσεις, με το απλό άνοιγμα μιας βάσης δεν είναι κάτι που ένα εργαλείο πρέπει να κάνει πίσω από την πλάτη του χρήστη του.</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># 42 analyses repaired.</span>
+<span class="c1"># 7 positions reclassified.</span>
+<span class="c1"># 3 positions rehashed onto the right Crawford sentinel.</span>
+</pre></div>
+</div>
+</section>
+<section id="delete-supprimer-des-donnees">
+<h2>delete — Διαγραφή δεδομένων<a class="headerlink" href="#delete-supprimer-des-donnees" title="Link to this heading"></a></h2>
+<p>Διαγράφει έναν αγώνα και όλα τα σχετικά δεδομένα (παρτίδες, κινήσεις, αναλύσεις).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--confirm<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Βάση δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Τύπος διαγραφής: <code class="docutils literal notranslate"><span class="pre">match</span></code> (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — ID του στοιχείου προς διαγραφή (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--confirm</span></code> — Διαγραφή χωρίς αίτημα επιβεβαίωσης.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Μορφή εξόδου: <code class="docutils literal notranslate"><span class="pre">text</span></code> (προεπιλογή) ή <code class="docutils literal notranslate"><span class="pre">json</span></code> (<code class="docutils literal notranslate"><span class="pre">{&quot;match_id&quot;:</span> <span class="pre">N,</span> <span class="pre">&quot;deleted&quot;:</span> <span class="pre">true}</span></code>).</p></li>
+</ul>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Confirmation interactive, puis sans confirmation (scripts)</span>
+./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--confirm
+</pre></div>
+</div>
+</section>
+<section id="healthcheck-sonder-un-demon">
+<h2>healthcheck — Έλεγχος ενός δαίμονα<a class="headerlink" href="#healthcheck-sonder-un-demon" title="Link to this heading"></a></h2>
+<p>Ρωτά έναν δαίμονα <code class="docutils literal notranslate"><span class="pre">serve</span></code> σε λειτουργία (βλ. <a class="reference internal" href="mode_headless.html"><span class="doc">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>) αν είναι διαθέσιμος: ένα αίτημα <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code>, κωδικός επιστροφής <code class="docutils literal notranslate"><span class="pre">0</span></code> αν ο δαίμονας απαντά 200 (αποθήκευση προσβάσιμη, σχήμα στην αναμενόμενη έκδοση), <code class="docutils literal notranslate"><span class="pre">1</span></code> αλλιώς — αποθήκευση μη προσβάσιμη, ξεπερασμένο σχήμα ή τίποτα δεν ακούει στη διεύθυνση. Δεν ανοίγει κανένα αρχείο βάσης.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>healthcheck<span class="w"> </span><span class="o">[</span>--addr<span class="w"> </span>host:port<span class="o">]</span><span class="w"> </span><span class="o">[</span>--timeout<span class="w"> </span>2s<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--addr</span></code> — Διεύθυνση στην οποία ακούει ο δαίμονας (προεπιλογή <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, αλλιώς <code class="docutils literal notranslate"><span class="pre">:8080</span></code>). Μια διεύθυνση χωρίς host (<code class="docutils literal notranslate"><span class="pre">:8080</span></code>) ή με γενικό host (<code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code>, <code class="docutils literal notranslate"><span class="pre">[::]</span></code>) ελέγχεται μέσω της διεπαφής loopback.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--timeout</span></code> — Χρόνος μετά τον οποίο ο έλεγχος εγκαταλείπει (<code class="docutils literal notranslate"><span class="pre">2s</span></code> από προεπιλογή).</p></li>
+</ul>
+<p>Είναι η εντολή που εκτελεί το <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> της εικόνας container (εικόνα <em>distroless</em>, χωρίς <code class="docutils literal notranslate"><span class="pre">curl</span></code>)· το δυαδικό <code class="docutils literal notranslate"><span class="pre">serve</span></code> που χτίζεται από το <code class="docutils literal notranslate"><span class="pre">cmd/serve</span></code> την καταλαβαίνει επίσης. Είναι εξίσου χρήσιμη σε ένα script ή σε μια μονάδα systemd.</p>
+<p><strong>Παράδειγμα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="p">&amp;</span>
+./blunderdb<span class="w"> </span>healthcheck<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"démon disponible"</span>
+
+<span class="c1"># ready</span>
+</pre></div>
+</div>
+<p>Σε περίπτωση αποτυχίας εμφανίζεται η αιτία, την οποία το <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">inspect</span></code> αναπαράγει για ένα container <code class="docutils literal notranslate"><span class="pre">unhealthy</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
+</pre></div>
+</div>
+</section>
+<section id="mcp-offrir-la-base-a-un-assistant-ia">
+<h2>mcp — Προσφορά της βάσης σε έναν βοηθό ΤΝ<a class="headerlink" href="#mcp-offrir-la-base-a-un-assistant-ia" title="Link to this heading"></a></h2>
+<p>Εξυπηρετεί τα εργαλεία της βάσης σε έναν βοηθό ΤΝ μέσω του <em>Model Context Protocol</em>, στην τυπική είσοδο και έξοδο: ο βοηθός εκκινεί την εντολή. Τα εργαλεία αναζητούν θέσεις στη γραμματική της γραμμής εντολών, διαβάζουν μια θέση και την ανάλυσή της, εξηγούν ένα λάθος, υπολογίζουν τα στατιστικά ενός παίκτη, απαριθμούν αγώνες, τουρνουά και συλλογές και θέτουν ένα κουίζ. Μόνο διαβάζουν, εκτός αν δοθεί <code class="docutils literal notranslate"><span class="pre">--write</span></code>. Ο πλήρης κατάλογος και το ισοδύναμο HTTP του δαίμονα: <a class="reference internal" href="mode_headless.html#headless-mcp"><span class="std std-ref">Εργαλεία για έναν βοηθό ΤΝ (MCP)</span></a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>mcp<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span><span class="o">[</span>--write<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Αρχείο βάσης δεδομένων (υποχρεωτικό).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--write</span></code> — Προσφέρει επίσης τα εργαλεία που γράφουν: αποθήκευση θέσης, σχολιασμός της, δημιουργία και συμπλήρωση συλλογής. Τίποτα δεν διαγράφεται.</p></li>
+</ul>
+<p>Όπως η <code class="docutils literal notranslate"><span class="pre">call</span></code>, η εντολή μεταφέρει το σχήμα μιας παλαιότερης βάσης κατά το άνοιγμα, ακόμη και χωρίς <code class="docutils literal notranslate"><span class="pre">--write</span></code>.</p>
+<p><strong>Παράδειγμα:</strong> δήλωση της βάσης στο Claude Code.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>claude<span class="w"> </span>mcp<span class="w"> </span>add<span class="w"> </span>blunderdb<span class="w"> </span>--<span class="w"> </span>blunderdb<span class="w"> </span>mcp<span class="w"> </span>--db<span class="w"> </span>/chemin/vers/base.db
+</pre></div>
+</div>
+</section>
+<section id="completion-completion-shell">
+<h2>completion — Συμπλήρωση κελύφους<a class="headerlink" href="#completion-completion-shell" title="Link to this heading"></a></h2>
+<p>Εμφανίζει στην τυπική έξοδο ένα σενάριο συμπλήρωσης για τα ονόματα των υποεντολών. Η λίστα εντολών που ενσωματώνεται σε κάθε σενάριο παράγεται από τον ίδιο πίνακα που διαβάζουν και το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">help</span></code> και η δρομολόγηση του <code class="docutils literal notranslate"><span class="pre">main.go</span></code> (<code class="docutils literal notranslate"><span class="pre">handlers()</span></code>): έτσι μια νέα υποεντολή προσφέρεται από τη συμπλήρωση μόλις συνδεθεί, χωρίς τίποτα να χρειάζεται χειροκίνητη συντήρηση.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>completion<span class="w"> </span>&lt;bash<span class="p">|</span>zsh<span class="p">|</span>fish&gt;
+</pre></div>
+</div>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># bash</span>
+<span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>blunderdb<span class="w"> </span>completion<span class="w"> </span>bash<span class="o">)</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/bash_completion.d/blunderdb<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+
+<span class="c1"># zsh : un répertoire déjà sur $fpath</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>&gt;<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">fpath</span><span class="p">[1]</span><span class="si">}</span><span class="s2">/_blunderdb"</span>
+
+<span class="c1"># fish</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>fish<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">source</span>
+</pre></div>
+</div>
+<p>Τα πακέτα το εγκαθιστούν αυτόματα: το <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code> (nfpm) και το πακέτο AUR παράγουν τα τρία σενάρια από το πακεταρισμένο εκτελέσιμο κατά τη στιγμή της κατασκευής, και το Homebrew cask εκτελεί <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">completion</span> <span class="pre">&lt;shell&gt;</span></code> μία φορά κατά την εγκατάσταση μέσω <code class="docutils literal notranslate"><span class="pre">generate_completions_from_executable</span></code>. Τίποτα δεν αποθηκεύεται στο αποθετήριο, οπότε η συμπλήρωση δεν μπορεί ποτέ να αποκλίνει από τον πίνακα υποεντολών.</p>
+</section>
+<section id="version-afficher-la-version">
+<h2>version — Εμφάνιση της έκδοσης<a class="headerlink" href="#version-afficher-la-version" title="Link to this heading"></a></h2>
+<p>Εμφανίζει την έκδοση του blunderDB και την έκδοση του σχήματος βάσης δεδομένων που γράφει αυτό το εκτελέσιμο· είναι το πρώτο πράγμα που επισυνάπτεται σε μια αναφορά σφάλματος.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>version
+<span class="c1"># blunderDB version 0.36.0 (database schema 2.31.0)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_stats.html" class="btn btn-neutral float-left" title="Στατιστικά" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="glossaire.html" class="btn btn-neutral float-right" title="Γλωσσάρι" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

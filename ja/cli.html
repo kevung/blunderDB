@@ -1,0 +1,468 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>コマンドラインインターフェース（CLI） &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="インポート、エクスポート、転送" href="cli_import_export.html" />
+    <link rel="prev" title="キーボードショートカット" href="raccourcis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/cli.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/cli.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">コマンドラインインターフェース（CLI）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#syntaxe-generale">一般的な構文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-disponibles">利用可能なコマンド</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">インポート、エクスポート、転送</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">ライブラリ: 検索、一覧、コレクション</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">マッチ、トーナメント、ゲーム</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">解析とエンジン</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">学習、レッスン、トレーニング</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">統計</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">データベースの管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">ワークフロー例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">トーナメントディレクトリのインポート</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">定期バックアップ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">エラー分析</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">終了コード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">コマンドラインインターフェース（CLI）</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="interface-en-ligne-de-commande-cli">
+<span id="cli"></span><h1>コマンドラインインターフェース（CLI）<a class="headerlink" href="#interface-en-ligne-de-commande-cli" title="この見出しへのリンク"></a></h1>
+<section id="introduction">
+<h2>はじめに<a class="headerlink" href="#introduction" title="この見出しへのリンク"></a></h2>
+<p>blunderDBはグラフィカルインターフェースと同じ実行ファイルに完全なコマンドラインインターフェース（CLI）を搭載しています。CLIは特に以下の用途に便利です：</p>
+<ul class="simple">
+<li><p><strong>マッチの一括インポート</strong>：1つのコマンドでマッチファイル（XG、SGF、MAT、BGF…）のディレクトリ全体をインポートする、</p></li>
+<li><p><strong>自動化</strong>：定期的なバックアップ、スケジュールされたエクスポート、または処理パイプラインのためにblunderDBをシェルスクリプトに統合する、</p></li>
+<li><p><strong>サーバー使用</strong>：グラフィカル環境のないマシンでデータベースを管理する、</p></li>
+<li><p><strong>クイック検査</strong>：グラフィカルインターフェースを起動せずにデータベースのコンテンツや整合性を確認する。</p></li>
+</ul>
+<p>CLI はグラフィカルインターフェースとまったく同じデータベース形式を共有しています。どちらも同じファイルに書き込むので、同期するものは何もありません。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><strong>スクリプトが書き込んでいる間にアプリケーションが開いている場合。</strong>ファイルは WAL モードです。読み取りが書き込みを妨げることはなく、2つのプログラムは互いに邪魔をせず同じデータベースを扱えます。一方、2つの書き込みは順番に処理されます。あとの書き込みは書き込みロックを待ち（1文につき10秒、さらに数回の再試行）、待ち時間が尽きたときにだけ失敗します。そのときのメッセージには SQLite の名が現れます：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: failed to import match: sqlite: save match: database is locked (5) (SQLITE_BUSY)
+</pre></div>
+</div>
+<p>グラフィカルインターフェースはファイルを監視しません。<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code> でポジションを読み込み直すまで、読み込んだ内容を表示し続けます。何も失われませんが、画面はデータベースより遅れています。</p>
+</div>
+</section>
+<section id="syntaxe-generale">
+<h2>一般的な構文<a class="headerlink" href="#syntaxe-generale" title="この見出しへのリンク"></a></h2>
+<p>モードは自動的に検出されます：最初の引数がCLIコマンドであれば、blunderDBはヘッドレスモードで起動し、そうでなければグラフィカルインターフェースを起動します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># GUI</span>
+./blunderdb
+
+<span class="c1"># CLI</span>
+./blunderdb<span class="w"> </span>&lt;command&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>このページの例は <code class="docutils literal notranslate"><span class="pre">./blunderdb</span></code> と書いています。ダウンロードしたままのバイナリを、それが置かれているフォルダから呼び出す形です。パッケージでインストールした場合や、<code class="docutils literal notranslate"><span class="pre">PATH</span></code> にあるフォルダからリンクしている場合（<a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">ダウンロードとインストール</span></a>を参照）は、単に <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> と呼び出します。</p>
+<p>「デフォルト：はい」と書かれた真偽値のオプションは、<code class="docutils literal notranslate"><span class="pre">--option=false</span></code> の形で無効にします——<code class="docutils literal notranslate"><span class="pre">--recursive=false</span></code>、<code class="docutils literal notranslate"><span class="pre">--analysis=false</span></code> のようにです。空白で区切る形は存在しません。<code class="docutils literal notranslate"><span class="pre">--recursive</span> <span class="pre">false</span></code> はオプションをデフォルト値のままにし、<code class="docutils literal notranslate"><span class="pre">false</span></code> を余分な引数として扱います。</p>
+</section>
+<section id="commandes-disponibles">
+<h2>利用可能なコマンド<a class="headerlink" href="#commandes-disponibles" title="この見出しへのリンク"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>コマンド</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>create</p></td>
+<td><p>新しいデータベースを作成する。</p></td>
+</tr>
+<tr class="row-odd"><td><p>import</p></td>
+<td><p>データをインポートする（マッチ、ポジション、バッチ）。</p></td>
+</tr>
+<tr class="row-even"><td><p>export</p></td>
+<td><p>データをエクスポートする。</p></td>
+</tr>
+<tr class="row-odd"><td><p>transfer</p></td>
+<td><p>ライブラリの一部を、中間ファイルなしで別のライブラリにコピーします。</p></td>
+</tr>
+<tr class="row-even"><td><p>identity</p></td>
+<td><p>発行者アイデンティティ（透かしの署名鍵）を表示または移動します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>open</p></td>
+<td><p>パスワードで保護されたファイル（.dbx）を通常のデータベースに変換します。</p></td>
+</tr>
+<tr class="row-even"><td><p>search</p></td>
+<td><p>フィルターでポジションを検索する。</p></td>
+</tr>
+<tr class="row-odd"><td><p>list</p></td>
+<td><p>データベースの内容を表示する。</p></td>
+</tr>
+<tr class="row-even"><td><p>match</p></td>
+<td><p>マッチのポジションと分析を表示する。</p></td>
+</tr>
+<tr class="row-odd"><td><p>transcribe</p></td>
+<td><p>記譜を再生し、再生で見つかった内容を報告します。</p></td>
+</tr>
+<tr class="row-even"><td><p>duel</p></td>
+<td><p>デュエルを 1 回の呼び出しにつき 1 アクションずつ進めます（作成、手、キューブ、放棄、終了）。</p></td>
+</tr>
+<tr class="row-odd"><td><p>collection</p></td>
+<td><p>コレクションを管理します（一覧、内容、作成、名前変更、削除、エクスポート）。</p></td>
+</tr>
+<tr class="row-even"><td><p>study</p></td>
+<td><p>学習キュー：基準プレイヤーの未処理のブランダーと、「確認済み」の印。</p></td>
+</tr>
+<tr class="row-odd"><td><p>lesson</p></td>
+<td><p>レッスン（コレクションやポジションを示す順序付きのステップ）を管理し、書き出します。</p></td>
+</tr>
+<tr class="row-even"><td><p>anki</p></td>
+<td><p>間隔反復デッキ（一覧、統計、予測、同期）。</p></td>
+</tr>
+<tr class="row-odd"><td><p>stats</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> とは別に計算される統計（繰り返されるエラー、ランキング、レポートなど）。</p></td>
+</tr>
+<tr class="row-even"><td><p>training</p></td>
+<td><p>トレーニングの記録（セッション、間違えたポジション）。</p></td>
+</tr>
+<tr class="row-odd"><td><p>comment</p></td>
+<td><p>ポジションのコメントを、その作者に帰属させて読み取り、追加します。</p></td>
+</tr>
+<tr class="row-even"><td><p>elsewhere</p></td>
+<td><p>他のデータベースがある局面について知っていること、およびそこでの近傍局面。</p></td>
+</tr>
+<tr class="row-odd"><td><p>cubematrix</p></td>
+<td><p>マッチの各スコアにおける、ポジションのキューブの判定。</p></td>
+</tr>
+<tr class="row-even"><td><p>ロールアウト</p></td>
+<td><p>局面を最後までプレイして、候補手またはキューブ判断を比較します（XGID または OGID）。</p></td>
+</tr>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>ベアオフ局面（XGID または OGID）の Effective Pip Count とキューブ判断を計算します。</p></td>
+</tr>
+<tr class="row-even"><td><p>gnubgid</p></td>
+<td><p>GNU Backgammon が局面に与える局面 ID とマッチ ID を出力します (XGID または OGID)。</p></td>
+</tr>
+<tr class="row-odd"><td><p>capture</p></td>
+<td><p>eXtreme Gammon の盤面のスクリーンショットに写っている局面を読み取ります。</p></td>
+</tr>
+<tr class="row-even"><td><p>openingbook</p></td>
+<td><p>あるスコアでの対局のオープニングの手または返し。内蔵のオープニングブックから引き、それに照らして判定します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>bearoff</p></td>
+<td><p>ベアオフ・データベースを作成、一覧表示、検証、削除します。</p></td>
+</tr>
+<tr class="row-even"><td><p>analyze</p></td>
+<td><p>分析を一つも持たないポジションごとに gammonNet 分析を書き込みます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>tournament</p></td>
+<td><p>運営されているトーナメント（順位、トーナメント表、ページ）を読み取り、その提案を確定します。</p></td>
+</tr>
+<tr class="row-even"><td><p>players</p></td>
+<td><p>プレイヤーの表記（エイリアス）、プレイヤーの統合と入れ替え。</p></td>
+</tr>
+<tr class="row-odd"><td><p>events</p></td>
+<td><p>イベント名の表記（エイリアス）。</p></td>
+</tr>
+<tr class="row-even"><td><p>trash</p></td>
+<td><p>ごみ箱：一覧、復元、取り消し可能な削除。</p></td>
+</tr>
+<tr class="row-odd"><td><p>info</p></td>
+<td><p>データベースのメタデータを表示する。</p></td>
+</tr>
+<tr class="row-even"><td><p>edit</p></td>
+<td><p>データベースのメタデータと閾値を編集する。</p></td>
+</tr>
+<tr class="row-odd"><td><p>verify</p></td>
+<td><p>データベースの整合性を確認する。</p></td>
+</tr>
+<tr class="row-even"><td><p>vacuum</p></td>
+<td><p>データベースファイルを最適化し、解放された領域を回収します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>met</p></td>
+<td><p>データベースのマッチエクイティテーブルを一覧し、インポートし、選択します。</p></td>
+</tr>
+<tr class="row-even"><td><p>reencode</p></td>
+<td><p>分析をコンパクトな形式で書き直します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>repair</p></td>
+<td><p>データベースが保存内容から導くものを再計算します。</p></td>
+</tr>
+<tr class="row-even"><td><p>maintenance</p></td>
+<td><p>データベースの健全性：カウンタ、アクション、最新の実行。</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete</p></td>
+<td><p>データを削除する。</p></td>
+</tr>
+<tr class="row-even"><td><p>healthcheck</p></td>
+<td><p>稼働中の<code class="docutils literal notranslate"><span class="pre">serve</span></code>デーモンに問い合わせ、準備ができていれば終了コード 0 を返します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcp</p></td>
+<td><p>データベースのツールを AI アシスタントに提供します（Model Context Protocol）。</p></td>
+</tr>
+<tr class="row-even"><td><p>completion</p></td>
+<td><p>シェル補完スクリプト（bash、zsh、fish）を表示する。</p></td>
+</tr>
+<tr class="row-odd"><td><p>help</p></td>
+<td><p>ヘルプを表示する。</p></td>
+</tr>
+<tr class="row-even"><td><p>version</p></td>
+<td><p>バージョンを表示する。</p></td>
+</tr>
+<tr class="row-odd"><td><p>serve, migrate, call</p></td>
+<td><p>サーバーモードと PostgreSQL への移行：<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照。</p></td>
+</tr>
+</tbody>
+</table>
+<p>各コマンドは <code class="docutils literal notranslate"><span class="pre">--help</span></code> オプションで詳細なヘルプを表示できます。</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cli_import_export.html">インポート、エクスポート、転送</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#create-creer-une-base-de-donnees">create — データベースを作成する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#import-importer-des-donnees">import — データをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#export-exporter-des-donnees">export — データをエクスポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#transfer-copier-d-une-bibliotheque-a-une-autre">transfer — ライブラリから別のライブラリへコピーする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#identity-identite-d-emetteur">identity — 発行者アイデンティティ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_import_export.html#open-ouvrir-un-fichier-protege">open — 保護されたファイルを開く</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_bibliotheque.html">ライブラリ: 検索、一覧、コレクション</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#search-rechercher-des-positions">search — ポジションを検索する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#list-lister-le-contenu">list — 内容を一覧表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#collection-gerer-les-collections">collection — コレクションを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#comment-les-commentaires-d-une-position">comment — ポジションのコメント</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#elsewhere-ailleurs-une-position-dans-d-autres-bases">elsewhere — 他所: 他のデータベースにある局面</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_bibliotheque.html#trash-la-corbeille">trash — ごみ箱</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_matchs.html">マッチ、トーナメント、ゲーム</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_matchs.html#match-afficher-un-match">match — マッチを表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_matchs.html#tournament-lire-un-tournoi-dirige">tournament — 運営した大会を読む</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_matchs.html#transcribe-rejouer-une-transcription">transcribe — 記譜を再生する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_matchs.html#duel-jouer-un-duel">duel — デュエルをプレイする</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_analyse.html">解析とエンジン</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#analyze-rattrapage-gammonnet">analyze — gammonNet の補完分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#rollout-rollout-d-une-position">rollout — 局面のロールアウト</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#epc-calculatrice-epc">epc — EPC 計算機</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#gnubgid-id-gnubg">gnubgid — GNUbg ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#cubematrix-matrice-du-videau">cubematrix — キューブ判断のマトリクス</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#capture-position-depuis-une-capture-d-ecran">capture — スクリーンショットからの局面</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#bearoff-bases-de-sortie">bearoff — ベアオフ・データベース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_analyse.html#openingbook-quel-coup-a-ce-score">openingbook — このスコアでどの手か</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_entrainement.html">学習、レッスン、トレーニング</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_entrainement.html#study-la-file-d-etude-transversale">study — 横断学習キュー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_entrainement.html#lesson-gerer-les-lecons">lesson — レッスンの管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_entrainement.html#anki-paquets-de-repetition-espacee">anki — 間隔反復デッキ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_entrainement.html#training-le-journal-d-entrainement">training — トレーニングジャーナル</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_stats.html">統計</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_stats.html#stats-erreurs-recurrentes">stats — 繰り返されるミス</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_admin.html">データベースの管理</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#info-metadonnees-de-la-base">info — データベースのメタデータ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#edit-modifier-les-metadonnees">edit — メタデータを編集する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#verify-verifier-l-integrite">verify — 整合性を確認する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#vacuum-compacter-la-base-de-donnees">vacuum — データベースを最適化する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#met-la-table-d-equite-de-match-de-la-base">met — データベースのマッチエクイティテーブル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#reencode-reecrire-les-analyses-au-format-compact">reencode — 分析をコンパクトな形式で書き直す</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#maintenance-l-etat-de-sante-de-la-base">maintenance — データベースの健全性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#players-les-graphies-d-un-joueur">players — プレイヤー名の表記</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#events-les-graphies-d-un-evenement">events — イベント名の表記</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#repair-recalculer-ce-qui-est-derive">repair — 導かれたものを再計算する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#delete-supprimer-des-donnees">delete — データを削除する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#healthcheck-sonder-un-demon">healthcheck — デーモンを確認する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#mcp-offrir-la-base-a-un-assistant-ia">mcp — データベースを AI アシスタントに提供する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#completion-completion-shell">completion ――― シェル補完</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_admin.html#version-afficher-la-version">version — バージョンを表示する</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="exemples-de-flux-de-travail">
+<h2>ワークフロー例<a class="headerlink" href="#exemples-de-flux-de-travail" title="この見出しへのリンク"></a></h2>
+<section id="import-d-un-repertoire-de-tournoi">
+<h3>トーナメントディレクトリのインポート<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="この見出しへのリンク"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Open de Paris 2025"</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs_open_paris/
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>stats
+</pre></div>
+</div>
+</section>
+<section id="sauvegarde-reguliere">
+<h3>定期バックアップ<a class="headerlink" href="#sauvegarde-reguliere" title="この見出しへのリンク"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.db
+</pre></div>
+</div>
+</section>
+<section id="analyse-des-erreurs">
+<h3>エラー分析<a class="headerlink" href="#analyse-des-erreurs" title="この見出しへのリンク"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les positions délicates, puis celles de videau</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span>--export<span class="w"> </span>blunders.db
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.05<span class="w"> </span>--export<span class="w"> </span>cube_errors.db
+
+<span class="c1"># Les coups réellement fautifs : au moins 100 millièmes d'équité perdus</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">100</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+</section>
+<section id="codes-de-retour">
+<h2>終了コード<a class="headerlink" href="#codes-de-retour" title="この見出しへのリンク"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> — 成功。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> — エラー。</p></li>
+</ul>
+<p>これにより、エラー処理を含むスクリプトでCLIを使用できます：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"OK"</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"KO"</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="raccourcis.html" class="btn btn-neutral float-left" title="キーボードショートカット" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="cli_import_export.html" class="btn btn-neutral float-right" title="インポート、エクスポート、転送" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

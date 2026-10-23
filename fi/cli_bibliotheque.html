@@ -1,0 +1,550 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kirjasto: haku, luettelot, kokoelmat &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Ottelut, turnaukset ja pelit" href="cli_matchs.html" />
+    <link rel="prev" title="Tuonti, vienti, siirto" href="cli_import_export.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/cli_bibliotheque.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_bibliotheque.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_bibliotheque.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_bibliotheque.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_bibliotheque.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/cli_bibliotheque.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_bibliotheque.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_bibliotheque.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Yleinen syntaksi</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Käytettävissä olevat komennot</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Tuonti, vienti, siirto</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Kirjasto: haku, luettelot, kokoelmat</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#search-rechercher-des-positions">search — Hae asemia</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-lister-le-contenu">list — Luettele sisältö</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#collection-gerer-les-collections">collection — Kokoelmien hallinta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#comment-les-commentaires-d-une-position">comment — Position kommentit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#elsewhere-ailleurs-une-position-dans-d-autres-bases">elsewhere — Muualla: asema muissa tietokannoissa</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trash-la-corbeille">trash — Roskakori</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Ottelut, turnaukset ja pelit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analyysi ja pelimoottori</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Opiskelu, oppitunnit ja harjoittelu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Tilastot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Tietokannan hallinta</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Työnkulkuesimerkkejä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Komentoriviliittymä (CLI)</a></li>
+      <li class="breadcrumb-item active">Kirjasto: haku, luettelot, kokoelmat</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bibliotheque-recherche-listes-collections">
+<span id="cli-bibliotheque-chapitre"></span><h1>Kirjasto: haku, luettelot, kokoelmat<a class="headerlink" href="#bibliotheque-recherche-listes-collections" title="Link to this heading"></a></h1>
+<section id="search-rechercher-des-positions">
+<h2>search — Hae asemia<a class="headerlink" href="#search-rechercher-des-positions" title="Link to this heading"></a></h2>
+<p>Hae asemia tietokannasta yhdisteltävien kriteerien avulla.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Pääasialliset valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Tietokanta (pakollinen).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> tai <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">table</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Tulosten enimmäismäärä (0 = rajoittamaton).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--offset</span></code> — Ohita n ensimmäistä tulosta ennen kuin laskeminen alkaa; yhdessä <code class="docutils literal notranslate"><span class="pre">--limit</span></code>-valitsimen kanssa tämä on sivutus.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Vie tulokset uuteen tietokantaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> — Näyttää luettelon tunnuksista, jotka <code class="docutils literal notranslate"><span class="pre">--query</span></code> ymmärtää, eikä tee muuta. Yhtään tietokantaa ei avata: <code class="docutils literal notranslate"><span class="pre">--db</span></code> on tarpeeton.</p></li>
+</ul>
+<p><strong>Käytettävissä olevat suodattimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision</span></code> — Päätöstyyppi: <code class="docutils literal notranslate"><span class="pre">checker</span></code> tai <code class="docutils literal notranslate"><span class="pre">cube</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dice</span></code> — Nopanheitto. <code class="docutils literal notranslate"><span class="pre">5,3</span></code> hakee asemat, joissa molemmat nopat täsmäävät (järjestyksellä ei ole väliä). <code class="docutils literal notranslate"><span class="pre">5</span></code> hakee asemat, joissa 5 esiintyy jommassakummassa nopassa (toisen nopan arvo jätetään huomiotta). Sisältää <code class="docutils literal notranslate"><span class="pre">--decision</span> <span class="pre">checker</span></code>, jos <code class="docutils literal notranslate"><span class="pre">--decision</span></code>-arvoa ei ole annettu.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--pip-max</span></code> — Pip-eron väli.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code> — Voittoprosentin väli (%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube</span></code> — Tuplauskuution arvo.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score1</span></code> / <code class="docutils literal notranslate"><span class="pre">--score2</span></code> — Pelaajien pisteet.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Ottelun pituus.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> — Kynnys sille, <strong>mitä virhe asemassa maksaa</strong>: parhaan ja toiseksi parhaan siirron välinen ero tai suurin kolmesta kuutiovirheestä. Yksikkönä <strong>equity-pisteet</strong> — <code class="docutils literal notranslate"><span class="pre">--error-min</span> <span class="pre">0.1</span></code> poimii asemat, joissa erehtyminen maksaa vähintään kymmenesosan pisteestä. Se ei kerro mitään siitä, mitä asemassa on pelattu.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--move-error-max</span></code> — Kynnys pelaajan 1 <strong>tosiasiallisesti pelaaman</strong> siirron virheelle. Yksikkönä <strong>equityn tuhannesosat</strong> (millipisteet): <code class="docutils literal notranslate"><span class="pre">--move-error-min</span> <span class="pre">50</span></code> on kahdeskymmenesosa pistettä. Tämä on hakukieliopin tunnus <code class="docutils literal notranslate"><span class="pre">E</span></code> sellaisenaan kirjoitettuna.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-analysis</span></code> — Vain asemat, joissa on analyysi.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Vähimmäismäärä ulospelattuja nappuloita (pelaaja 1/2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Suodata otteluiden tunnusten mukaan (pilkulla eroteltuna).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Suodata turnausten tunnusten mukaan (pilkulla eroteltuna).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Suodata asemien tunnusten mukaan: väli <code class="docutils literal notranslate"><span class="pre">2,7</span></code> (asemat 2–7) tai puolipisteillä eroteltu eksplisiittinen luettelo <code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Vain erikseen tuodut asemat, eli ne jotka lisäsit itse, eikä niitä jotka ottelun tuonti toi mukanaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--flagged</span></code> — Vain asemat, jotka on merkitty (<em>flag</em>) tutkittaviksi alkuperäisessä ohjelmassa (eXtreme Gammonin merkinnät). Ei takautuva: jo tuodut ottelut on tuotava uudelleen, jotta merkinnät saadaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-comment</span></code> — Vain asemat, joissa on kommentti. Alkuperää ei eroteta: käsin kirjoitettu muistiinpano ja ottelun tuonnin mukana tullut kommentti lasketaan molemmat. Ottelun tai turnauksen kommentteja ei katsota.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--no-comment</span></code> — Vain asemat ilman kommenttia. Toisensa poissulkeva <code class="docutils literal notranslate"><span class="pre">--has-comment</span></code>-valitsimen kanssa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comment-origin</span> <span class="pre">&lt;o1,o2&gt;</span></code> — Vain asemat, joissa on kommentti näistä alkuperistä: <code class="docutils literal notranslate"><span class="pre">user</span></code>, <code class="docutils literal notranslate"><span class="pre">xg</span></code>, <code class="docutils literal notranslate"><span class="pre">gnubg</span></code>, <code class="docutils literal notranslate"><span class="pre">bgf</span></code>, <code class="docutils literal notranslate"><span class="pre">unknown</span></code> (<code class="docutils literal notranslate"><span class="pre">co:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comment-author</span> <span class="pre">&lt;nimi&gt;</span></code> — Vain asemat, joissa on tähän nimeen liitetty kommentti (koko nimi, kirjainkoolla ei väliä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--phase</span> <span class="pre">&lt;p1,p2&gt;</span></code> — Vain asemat, jotka ovat näissä pelin vaiheissa: <code class="docutils literal notranslate"><span class="pre">opening</span></code>, <code class="docutils literal notranslate"><span class="pre">middlegame</span></code>, <code class="docutils literal notranslate"><span class="pre">race</span></code>, <code class="docutils literal notranslate"><span class="pre">bearoff</span></code> (<code class="docutils literal notranslate"><span class="pre">ph:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--game-type</span> <span class="pre">&lt;t1,t2&gt;</span></code> — Vain asemat, jotka kuuluvat näihin pelisuunnitelmiin: <code class="docutils literal notranslate"><span class="pre">race</span></code>, <code class="docutils literal notranslate"><span class="pre">bearin</span></code>, <code class="docutils literal notranslate"><span class="pre">crunch</span></code>, <code class="docutils literal notranslate"><span class="pre">backgame</span></code>, <code class="docutils literal notranslate"><span class="pre">acepoint</span></code>, <code class="docutils literal notranslate"><span class="pre">blitz</span></code>, <code class="docutils literal notranslate"><span class="pre">primevprime</span></code>, <code class="docutils literal notranslate"><span class="pre">mutualholding</span></code>, <code class="docutils literal notranslate"><span class="pre">holding</span></code>, <code class="docutils literal notranslate"><span class="pre">contact</span></code> (<code class="docutils literal notranslate"><span class="pre">gt:</span></code>). Vaihe ja suunnitelma ovat laudasta johdettuja tunnisteita, jotka <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> laskee uudelleen; tuntematon arvo saa komennon epäonnistumaan.</p></li>
+</ul>
+<p>Korpussuodattimet koskevat ottelua, jossa positio on kohdattu; kukin vastaa kyselykielen yhtä tunnistetta (<a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Hakusuodattimet</span></a>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code> — Ottelut, joissa tämä pelaaja pelasi, kummalla puolella tahansa; kirjainkoolla ei ole merkitystä ja <code class="docutils literal notranslate"><span class="pre">*</span></code> korvaa minkä tahansa merkkijonon (<code class="docutils literal notranslate"><span class="pre">pl&quot;…&quot;</span></code>). Valitsimella <code class="docutils literal notranslate"><span class="pre">--seat-only</span></code> vain tämän pelaajan tekemät päätökset (<code class="docutils literal notranslate"><span class="pre">pl!&quot;…&quot;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opponent</span> <span class="pre">&lt;nom&gt;</span></code> — Valitsimen <code class="docutils literal notranslate"><span class="pre">--player</span></code> kanssa ottelut tätä vastustajaa vastaan; yksinään nimi kummalla puolella tahansa (<code class="docutils literal notranslate"><span class="pre">op&quot;…&quot;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-name</span> <span class="pre">&lt;nom&gt;</span></code> — Tämännimisten turnausten ottelut (<code class="docutils literal notranslate"><span class="pre">tn&quot;…&quot;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--round</span> <span class="pre">&lt;r1,r2&gt;</span></code> — Näiden kierrosten ottelut (<code class="docutils literal notranslate"><span class="pre">rd:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-lengths</span> <span class="pre">&lt;expr&gt;</span></code> — Ottelun pituus: <code class="docutils literal notranslate"><span class="pre">7</span></code>, <code class="docutils literal notranslate"><span class="pre">5,9</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;5</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;9</span></code> (<code class="docutils literal notranslate"><span class="pre">ml</span></code>). Ei pidä sekoittaa valitsimeen <code class="docutils literal notranslate"><span class="pre">--match-length</span></code>, joka kuuluu position tulokseen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-date</span> <span class="pre">&lt;expr&gt;</span></code> — Ottelun päivämäärä: <code class="docutils literal notranslate"><span class="pre">2024</span></code>, <code class="docutils literal notranslate"><span class="pre">2024-01..2024-12</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;2024-06</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;2024-06</span></code> (<code class="docutils literal notranslate"><span class="pre">md</span></code>); se ei ole analyysin päivämäärä.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pr</span> <span class="pre">&lt;expr&gt;</span></code> — Päätöksen tehneen pelaajan ottelun PR: <code class="docutils literal notranslate"><span class="pre">&gt;8</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;5</span></code>, <code class="docutils literal notranslate"><span class="pre">4,9</span></code> (<code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span> <span class="pre">&lt;v1,v2&gt;</span></code> — Tallennetun analyysin moottorit ja syvyydet: <code class="docutils literal notranslate"><span class="pre">xg</span></code>, <code class="docutils literal notranslate"><span class="pre">gnubg</span></code>, <code class="docutils literal notranslate"><span class="pre">bgblitz</span></code>, <code class="docutils literal notranslate"><span class="pre">hedgehog</span></code>, <code class="docutils literal notranslate"><span class="pre">gammonnet</span></code>, <code class="docutils literal notranslate"><span class="pre">3ply</span></code>, <code class="docutils literal notranslate"><span class="pre">3ply+</span></code>, <code class="docutils literal notranslate"><span class="pre">book</span></code>, <code class="docutils literal notranslate"><span class="pre">rollout</span></code> (<code class="docutils literal notranslate"><span class="pre">ad:</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube-response</span> <span class="pre">&lt;type&gt;</span></code> — Vain yksi tuplauskuution päätöstyyppi: <code class="docutils literal notranslate"><span class="pre">double</span></code> (Double / No Double) tai <code class="docutils literal notranslate"><span class="pre">takepass</span></code> (Take / Pass).</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Varoitus</p>
+<p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> ja <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> eivät mittaa samaa asiaa eivätkä <strong>ota samaa yksikköä</strong>: kerroin on tuhat. Ensimmäinen annetaan equity-pisteinä (<code class="docutils literal notranslate"><span class="pre">0.1</span></code>), kaksi muuta tuhannesosina (<code class="docutils literal notranslate"><span class="pre">100</span></code>) — yksi piste on 1000 tuhannesosaa. <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> vastaa kysymykseen ”missä tein virheen”; <code class="docutils literal notranslate"><span class="pre">--error-min</span></code> vastaa kysymykseen ”mitkä asemat olivat hankalia”.</p>
+</div>
+<p><strong>Mitä search tulostaa:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">table</span></code> (oletus) antaa yhden rivin asemaa kohti: tunniste, tulos, kuution arvo, päätöksen tyyppi, heitto, paras päätös ja sen equity. Kaksi viimeistä saraketta jäävät tyhjiksi asemalla, jolla ei ole analyysia.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 5 position(s)
+
+ID  Score  Cube  Type  Dice  Best Move  Equity
+--  -----  ----  ----  ----  ---------  ------
+2   7-7    0     cube        No Double  -0.005
+4   7-7    0     cube        No Double  -0.027
+6   7-7    0     cube        No Double  -0.161
+8   7-7    0     cube        No Double  0.256
+10  7-7    0     cube        No Double  -0.234
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> antaa taulukon samoista asemista. Kentät ovat <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">xgid</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">cube</span></code>, <code class="docutils literal notranslate"><span class="pre">decision_type</span></code> (<code class="docutils literal notranslate"><span class="pre">checker</span></code> tai <code class="docutils literal notranslate"><span class="pre">cube</span></code>) ja <code class="docutils literal notranslate"><span class="pre">dice</span></code>, aina mukana; <code class="docutils literal notranslate"><span class="pre">best_move</span></code> ja <code class="docutils literal notranslate"><span class="pre">equity</span></code> näkyvät vain, jos asemalla on analyysi, joka antaa ne. Rivi <code class="docutils literal notranslate"><span class="pre">Found</span> <span class="pre">n</span> <span class="pre">position(s)</span></code> menee virhetulosteeseen: vakiotuloste sisältää vain JSONin.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">5266</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">4</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"cube"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"decision_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checker"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"dice"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"best_move"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10/3"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"equity"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.565</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">xgid</span></code> tulostaa yhden XGID:n riville, etuliitteellä <code class="docutils literal notranslate"><span class="pre">XGID=</span></code>, ja <strong>ei mitään muuta</strong> vakiotulosteeseen. Analyysin mukana tallennettu XGID on etusijalla, koska se kantaa lähteen ottelun pituuden; muuten se luodaan uudelleen laudasta. Sama XGID on JSONin kentässä <code class="docutils literal notranslate"><span class="pre">xgid</span></code>.</p>
+<p><strong>Kyselykieli:</strong></p>
+<p>Yllä olevat valitsimet kattavat vain osan suodattimista. <code class="docutils literal notranslate"><span class="pre">--query</span></code> antaa pääsyn sovelluksen kyselykieleen — komentorivin kieleen — ja siten kaikkiin suodattimiin, joita ei piirretä laudalle: siirtokuvio, kommenttiteksti, lisäyspäivä, equity, poissuljetut heitot, vyöhykkeet ja blotit.</p>
+<p>Kielioppi on kirjoitettu vain yhteen paikkaan, <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Hakusuodattimet</span></a>. Sen taulukko antaa jokaisen tunnuksen, sen muodon ja sitä vastaavan <code class="docutils literal notranslate"><span class="pre">search</span></code>-valitsimen silloin kun sellainen on olemassa. Tämä sivu ei toista sitä.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s p&gt;30 E&gt;50'</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s m"13/11" t"blunder" pl"Alice" T&gt;2026/01/01'</span>
+</pre></div>
+</div>
+<p>Aseman naapurien järjestäminen kulkee saman kieliopin kautta: <code class="docutils literal notranslate"><span class="pre">--query</span> <span class="pre">'s</span> <span class="pre">like42'</span></code>, yksin tai muiden tunnusten seuraamana rajaamassa järjestettyä joukkoa.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> muistuttaa luettelosta avaamatta yhtään tietokantaa:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ ./blunderdb search --query-help
+blunderdb search --query — the interface's query language
+
+A query is the same text the application's command bar takes:
+  s cube p&gt;30 E&gt;50        cube decisions, 30+ pips behind, 50+ millipoints of error
+  s m"13/11" T&gt;2026/01/01 played 13/11, imported this year
+
+Flags (no value):
+  cube score   match the cube / the score of the position on the board
+  d            match the decision type (checker or cube)
+  …
+
+Ranges — each takes x&gt;n, x&lt;n or xa,b (lower-case: you; upper-case: the opponent):
+  p P          pip count difference / absolute pip count
+  …
+  E            error of the played move, in millipoints
+  T            creation date, T&gt;2026/01/01
+
+Values:
+  t"tag"       comment text (";" separates alternatives)
+  …
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--query</span></code> korvaa suodatinvalitsimet sen sijaan että täydentäisi niitä: niiden yhdistäminen hylätään, ja virheellinen valitsin nimetään. Valitsimet, jotka kertovat <em>mistä</em> haetaan ja <em>miten</em> näytetään — <code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span></code>, <code class="docutils literal notranslate"><span class="pre">--limit</span></code>, <code class="docutils literal notranslate"><span class="pre">--offset</span></code>, <code class="docutils literal notranslate"><span class="pre">--export</span></code> — pysyvät voimassa.</p>
+<p>Tunnus, jota mikään ei tunnista, kaataa komennon sen sijaan että kaventaisi hakua hiljaisesti. Kaksi rajoitusta seuraa siitä, ettei komentorivillä ole lautaa: nappulakuviota ei voi kirjoittaa, ja viisi laudalta lukevaa tunnusta — <code class="docutils literal notranslate"><span class="pre">cube</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">D</span></code>/<code class="docutils literal notranslate"><span class="pre">D1</span></code> ja <code class="docutils literal notranslate"><span class="pre">x</span></code> — vertautuvat täällä tyhjään lautaan. Haku, joka tarvitsee jotakin näistä, kirjoitetaan <strong>kokonaan</strong> valitsimilla, koska <code class="docutils literal notranslate"><span class="pre">--query</span></code> ei yhdisty niihin — esimerkiksi kuutiopäätökset, joissa pip-ero on vähintään 30 ja virhe vähintään 50 millipistettä:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--pip-min<span class="w"> </span><span class="m">30</span><span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">50</span>
+</pre></div>
+</div>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--individual
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--tournament-ids<span class="w"> </span><span class="m">1</span><span class="w"> </span>--export<span class="w"> </span>cubes.db
+
+<span class="c1"># 6-5 dans les deux ordres, puis un 6 sur l'un des deux dés</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>,5
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>
+
+<span class="c1"># Pagination</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--offset<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+<section id="list-lister-le-contenu">
+<h2>list — Luettele sisältö<a class="headerlink" href="#list-lister-le-contenu" title="Link to this heading"></a></h2>
+<p>Näytä tietokannan sisältö.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span>&lt;n&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--offset<span class="w"> </span>&lt;n&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Tyypit:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — Luettelo tuoduista otteluista.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — Luettelo turnauksista.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — Luettelo asemista (oletuksena 10; <code class="docutils literal notranslate"><span class="pre">--offset</span> <span class="pre">&lt;n&gt;</span></code> ohittaa ensimmäiset <em>n</em>). Vain näytettävä ikkuna luetaan, oli tietokanta minkä kokoinen tahansa. Valinnalla <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> siitä tulee <strong>taulukkovienti</strong>: yksi rivi asemaa kohden, jossa on sen XGID, vaihe, tilanne, tuplauskuutio, pipit ja johdetut analyysisarakkeet.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">imports</span></code> — Tallennetut tuonnit, uusimmasta vanhimpaan: tunniste, päivämäärä, muoto, lähde, tuodut / ohitetut / rikastetut ottelut, lukukelvottomat tiedostot ja uudet asemat. Valitsimella <code class="docutils literal notranslate"><span class="pre">--batch</span> <span class="pre">&lt;id&gt;</span></code> näytetään yhden tuonnin <strong>täysi raportti</strong>: merkityt asemat, asemat ilman analyysiä, kyseisen erän PR ja sen viisi huonointa päätöstä (katso <a class="reference internal" href="guide_utilisateur.html#compte-rendu-import"><span class="std std-ref">Tuontiraportti</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Suorituskykytilastojen raportti: PR / Snowie ER / MWC (kokonais, nappulat, kuutio), liukuva PR viimeisten N päätöksen osalta, pahimmat virheet, jakauma kuutiotoiminnoittain ja virhesuuruuksien histogrammi.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">players</span></code> — Vertailutaulukko, <strong>yksi rivi kutakin tietokannan pelaajaa kohden</strong>: ottelut, voitot/tappiot, lasketut päätökset, PR yhteensä / nappulat / kuutio, Snowie ER, virheet, karkeat virheet ja tuuri. Tämä on tilastopaneelin Pelaajat-välilehden komentorivivastine.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">moves</span></code> — Kirjattujen siirtojen <strong>taulukkovienti</strong>, yksi riviä kohden, ottelu johon ne kuuluvat toistettuna joka rivillä: tunnisteet, päivämäärä, pelaajat, pituus, siirron numero ja tyyppi, asema, nopat, pelattu siirto, kuutiotoiminto, onni. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> vaaditaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analyses</span></code> — Tallennettujen analyysien <strong>taulukkovienti</strong>, yksi riviä kohden: moottori, syvyys, paras siirto ja sen ekviteetti, pelatun siirron virhe, paras kuutiotoiminto ja sen virhe, kuusi voittoprosenttia. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> vaaditaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tags</span></code> — Tietokannan tunnistesanasto: jokainen kommenttiin kirjoitettu <code class="docutils literal notranslate"><span class="pre">#sana</span></code> ja niiden <strong>asemien</strong> määrä, jotka sitä kantavat, käytetyimmästä alkaen. Tietokannassa, jossa ei ole yhtään tunnistetta, näytetään suositeltu sanasto tyhjän listan sijaan (katso <a class="reference internal" href="manuel_bibliotheque.html#tags"><span class="std std-ref">Tunnisteet</span></a>). Hyväksyy <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> ja <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">study</span></code> — Pelisuunnitelmittain: erilliset asemat, jotka on kerrattu Anki-pakoissa viimeisten <code class="docutils literal notranslate"><span class="pre">--days</span></code> päivän aikana (oletus: 30), sekä sitä ennen ja sen jälkeen pelattujen ottelujen PR, kummankin päätösten määrän kera; alle kymmeneen päätökseen perustuva PR näytetään ”—”. Kolme lukua rinnakkain, ei vaikutus: mikään ei ota huomioon vastustajia, muotoa tai noppia. Hyväksyy <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> ja <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+</ul>
+<section id="exports-tabulaires">
+<span id="export-tabulaire"></span><h3>Taulukkoviennit<a class="headerlink" href="#exports-tabulaires" title="Link to this heading"></a></h3>
+<p>Kolme tyyppiä — <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">moves</span></code> ja <code class="docutils literal notranslate"><span class="pre">analyses</span></code> — viedään CSV:ksi notebookia, taulukkolaskentaa tai skriptiä varten:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>positions.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>moves<span class="w">     </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>moves.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>analyses<span class="w">  </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>analyses.csv
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> pätee <strong>vain jos annat sen</strong>. Sen oletusarvo (10) on olemassa, jottei päätteelle tulostettu <code class="docutils literal notranslate"><span class="pre">list</span></code> vierittäisi koko tietokantaa ohi; vienti sen sijaan menee tiedostoon, jota ohjelma lukee, ja sen katkaiseminen hiljaisesti kymmeneen riviin olisi ansa, jota kukaan ei huomaa ennen kuin luvut ovat väärin.</p>
+<p><strong>Sarakkeet ovat sopimus.</strong> Näitä nimiä vasten kirjoitetun notebookin tai skriptin täytyy toimia jatkossakin: sarakkeita lisätään loppuun, niitä ei koskaan nimetä uudelleen eikä järjestetä uudelleen. Kaikki ekviteetit ovat <strong>kokonaislukumillipisteinä</strong>, koska niin ne tallennetaan ja koska liukuluku CSV:ssä houkuttelee lokaalia muotoilemaan sen uudelleen.</p>
+<p><strong>Parquetia ei tarjota</strong>, ja se on mitattu eikä dogmaattinen valinta: sarakepohjainen kirjasto painaa useita megatavuja binäärissä, jonka kokoa seurataan, kun taas kaikki mihin tämä vienti on tarkoitettu lukee CSV:tä yhdellä rivillä (<code class="docutils literal notranslate"><span class="pre">pd.read_csv</span></code>, <code class="docutils literal notranslate"><span class="pre">polars.read_csv</span></code>, <code class="docutils literal notranslate"><span class="pre">read.csv</span></code>, taulukkolaskenta). Parquet ansaitsee paikkansa kymmenillä miljoonilla riveillä; kymmenen vuotta vanha backgammon-kirjasto sisältää satatuhatta. Jos jonain päivänä ero on mitattavissa oikealla tietokannalla, juuri se mittaus avaa asian uudelleen.</p>
+<p>Näiden vientien mukana tulee <strong>esimerkkinotebook Jupyterille</strong> (<code class="docutils literal notranslate"><span class="pre">notebooks/blunderdb-analyse.ipynb</span></code> repositoriossa): PR ajan mittaan, virheiden suuruuksien jakauma, kymmenen pahinta päätöstä XGID:eineen. Se käyttää vain noita kolmea CSV-tiedostoa, ja se <strong>ajetaan joka yö jatkuvassa integraatiossa</strong> — notebook jota kukaan ei aja on notebook joka on lakannut toimimasta kenenkään huomaamatta.</p>
+<p><strong>Valitsimet</strong> (vain tyyppi <code class="docutils literal notranslate"><span class="pre">stats</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Näytettävä mittari: <code class="docutils literal notranslate"><span class="pre">pr</span></code> tai <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Rajaa ilmoitettuun pelaajaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Rajaa yhteen tai useampaan turnauksen tunnukseen (pilkulla eroteltuna).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Aloituspäivä (VVVV-KK-PP).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Lopetuspäivä (VVVV-KK-PP).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Päätöstyyppi: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> tai <code class="docutils literal notranslate"><span class="pre">cube</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Lueteltavien pahimpien virheiden määrä (oletus: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--engine</span></code> / <code class="docutils literal notranslate"><span class="pre">--min-depth</span></code> — Laskee vain ne päätökset, jotka tämä moottori on analysoinut (tarkka nimi sellaisena kuin se on tallennettu) tai vähintään tällä syvyydellä (plyinä); hyväksytään myös tyypille <code class="docutils literal notranslate"><span class="pre">players</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Valinnat</strong> (vain tyyppi <code class="docutils literal notranslate"><span class="pre">matches</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — Säilyttää vain ottelut, joissa pelaaja, tapahtuma, paikka, kierros, turnaus tai päivämäärä sisältää tämän tekstin (kirjainkoolla ei ole väliä).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ids</span></code> — Säilyttää vain nämä ottelutunnukset, pilkuilla erotettuina (ne, jotka <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">matches</span></code> tulostaa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sort</span></code> — Järjestys: <code class="docutils literal notranslate"><span class="pre">date</span></code> (oletus, uusin ensin), <code class="docutils literal notranslate"><span class="pre">date_asc</span></code>, <code class="docutils literal notranslate"><span class="pre">length_asc</span></code>, <code class="docutils literal notranslate"><span class="pre">length_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">player1</span></code>, <code class="docutils literal notranslate"><span class="pre">player1_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">player2</span></code>, <code class="docutils literal notranslate"><span class="pre">player2_desc</span></code>, <code class="docutils literal notranslate"><span class="pre">tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">tournament_desc</span></code> tai <code class="docutils literal notranslate"><span class="pre">opponent</span></code>.</p></li>
+</ul>
+<p>Suodatuksen ja lajittelun tekee tietokanta, kuten Ottelut-paneelissa; ilmoitettu kokonaismäärä on säilytettyjen otteluiden määrä. Palvelin tarjoaa ne osoitteissa <code class="docutils literal notranslate"><span class="pre">/v1/matches.list</span></code> (kentät <code class="docutils literal notranslate"><span class="pre">text</span></code> ja <code class="docutils literal notranslate"><span class="pre">sort</span></code>) ja <code class="docutils literal notranslate"><span class="pre">/v1/matches.count</span></code>.</p>
+<p><strong>Valitsimet</strong> (vain tyyppi <code class="docutils literal notranslate"><span class="pre">imports</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--batch</span></code> — Erän tunniste: näyttää sen täyden raportin luettelon sijaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — Yhdessä <code class="docutils literal notranslate"><span class="pre">--batch</span></code>-valitsimen kanssa: erän <strong>opiskelujono</strong> sen raportin sijaan — asemat, jotka ansaitsevat toisen katseen, siinä järjestyksessä kuin ne käydään läpi (katso <a class="reference internal" href="guide_utilisateur.html#file-etude"><span class="std std-ref">Opiskelujono</span></a>). Ensin päätökset, jotka maksoivat jotain, sitten lähdeohjelmassa merkityt asemat, sitten tiukat kuutiopäätökset; asema esiintyy vain kerran.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p>Raportin mitattu puolisko lasketaan uudelleen joka kutsulla: erä, jonka asemat on sittemmin analysoitu, palauttaa tämän päivän luvut, ei tuontipäivän lukuja.</p>
+<p><strong>Valitsimet</strong> (vain tyyppi <code class="docutils literal notranslate"><span class="pre">players</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> / <code class="docutils literal notranslate"><span class="pre">--to</span></code> — Päivämäärärajat (VVVV-KK-PP), esimerkiksi kilpailun päivät.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Rajaa yhteen tai useampaan turnaustunnukseen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Tulostusmuoto: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> tai <code class="docutils literal notranslate"><span class="pre">csv</span></code> (oletus: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--player</span></code> ja <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> <strong>eivät</strong> koske tätä tyyppiä: taulukko kattaa kaikki pelaajat ja erittelee nappulat ja kuution jo omiin sarakkeisiinsa.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Viiva ”—” (CSV:ssä tyhjä kenttä) merkitsee arvoa, jota <strong>ei ole koskaan mitattu</strong>; sitä ei pidä sekoittaa nollaan. Näin on tuurin kohdalla kaikissa otteluissa, jotka tuotiin ennen skeemaversiota 2.15.0, sekä muodoissa, jotka eivät sitä kuljeta (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>): tuo lähdetiedostot uudelleen saadaksesi sen. Sarake <code class="docutils literal notranslate"><span class="pre">luck_rolls</span></code> kertoo, kuinka monesta heitosta keskiarvo on laskettu.</p>
+</div>
+<p>Kukin tyyppi tulostaa yhden lohkon kohdetta kohden, ja ensin löydettyjen kokonaismäärän. Viimeinen rivi kertoo, mikä ikkuna näytetään: <code class="docutils literal notranslate"><span class="pre">--limit</span></code> rajaa sen (asemille oletus 10) ja <code class="docutils literal notranslate"><span class="pre">--offset</span></code> siirtää sitä:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 3859 position(s):
+
+ID: 1
+  Score: 7-7
+  Player on roll: 0
+  Decision: Checker play
+
+ID: 2
+  Score: 7-7
+  Player on roll: 0
+  Decision: Cube action
+
+…
+
+(Showing 1-10 of 3859 positions, use --offset and --limit to see more)
+</pre></div>
+</div>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les imports enregistrés, puis le compte rendu de l'un d'eux</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span>
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--metric<span class="w"> </span>mwc<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--format<span class="w"> </span>json
+
+<span class="c1"># Un tableau par joueur, borné aux dates d'une compétition</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-03-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2026</span>-03-08
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="collection-gerer-les-collections">
+<span id="cli-collection"></span><h2>collection — Kokoelmien hallinta<a class="headerlink" href="#collection-gerer-les-collections" title="Link to this heading"></a></h2>
+<p>Hallitsee kokoelmia, näitä käyttöliittymän Kokoelmat-paneelissa käsin valittuja asemajoukkoja. Jokainen alikomento ottaa parametrin <code class="docutils literal notranslate"><span class="pre">--db</span></code>; <code class="docutils literal notranslate"><span class="pre">list</span></code> ja <code class="docutils literal notranslate"><span class="pre">show</span></code> hyväksyvät parametrin <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> (oletus), <code class="docutils literal notranslate"><span class="pre">json</span></code> tai <code class="docutils literal notranslate"><span class="pre">csv</span></code>, kuten <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Alikomennot:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Kokoelmien luettelo: tunnus, nimi, asemien määrä, kuvaus.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Kokoelman asemat: tunnus, indeksi (käyttöliittymän tilarivillä näytetty 1-pohjainen numero), pistetilanne, päätöstyyppi ja XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;nimi&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;teksti&gt;]</span> <span class="pre">[--query</span> <span class="pre">&lt;kysely&gt;]</span></code> — Luo tyhjän kokoelman tai, <code class="docutils literal notranslate"><span class="pre">--query</span></code>-valitsimella, heti elävän kokoelman. Kysely, jonka tunnusta mikään sääntö ei tunnista, hylätään ennen kuin mitään kirjoitetaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--query</span> <span class="pre">&lt;kysely&gt;</span></code> — Tekee kokoelmasta <strong>elävän</strong>: sen sisällöksi tulee haun tulos, joka lasketaan uudelleen joka avauskerralla. Kysely kirjoitetaan sovelluksen omalla hakukieliopilla (katso <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Hakusuodattimet</span></a>). <code class="docutils literal notranslate"><span class="pre">--clear</span></code> palauttaa sen käsin tehdyksi listaksi ja säilyttää sen sisältämät asemat.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">freeze</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Jäädyttää elävän kokoelman: kyselyn juuri nyt valitsemat asemat tulevat sen sisällöksi ja kysely tyhjennetään. Hylätään kokoelmalta, joka ei ole elävä.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evaluate</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Lukee kokoelman asemien tunnisteet ja suorittaa nyt uudelleen elävän kokoelman kyselyn. Vastaus rajataan ilmoitettuun 5 000 aseman ylärajaan (<code class="docutils literal notranslate"><span class="pre">--limit</span></code> laskee sitä) ja siinä on aina asemien todellinen määrä sekä <code class="docutils literal notranslate"><span class="pre">truncated</span></code>-merkki: ei koskaan äänetöntä typistämistä. Tekstitilassa tunnisteet menevät vakiotulosteeseen ja lukumäärä virhetulosteeseen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pile</span> <span class="pre">[--position-id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">|</span> <span class="pre">--xgid</span> <span class="pre">&lt;XGID&gt;]</span></code> — Lisää aseman Pinoon (kokoelma ”palaa tähän myöhemmin”) tai poistaa sen sieltä, jos se on siellä; XGID:llä annettu asema, jota ei ole tietokannassa, kirjoitetaan ensin siihen yksin tuotuna asemana. Ilman asemaa tulostaa Pinon.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rename</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--name</span> <span class="pre">&lt;nom&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Nimeää kokoelman uudelleen (kuvaus säilyy, jos sitä ei anneta).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--confirm]</span></code> — Poistaa kokoelman; sen asemat säilyvät tietokannassa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;tiedosto.db&gt;</span> <span class="pre">[--analysis=false]</span> <span class="pre">[--comments=false]</span> <span class="pre">[--matches=false]</span> <span class="pre">[--transcriptions=false]</span> <span class="pre">[--aliases=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;teksti&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;teksti&gt;]</span> <span class="pre">[--password</span> <span class="pre">&lt;salasana&gt;]</span></code> — Vie yhden tai useamman kokoelman uuteen tietokantatiedostoon samalla viejällä kuin graafisen käyttöliittymän vientiikkuna ja <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>: tiedostoon tulevat myös ottelut, joissa asemat pelattiin, niiden litteroinnit sekä pelaajien ja tapahtumien aliakset (vesileiman ja salasanan osalta katso komento <code class="docutils literal notranslate"><span class="pre">export</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">suggest</span> <span class="pre">[--player</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--match</span> <span class="pre">&lt;ids&gt;]</span> <span class="pre">[--tournament</span> <span class="pre">&lt;ids&gt;]</span> <span class="pre">[--from</span> <span class="pre">&lt;date&gt;]</span> <span class="pre">[--to</span> <span class="pre">&lt;date&gt;]</span> <span class="pre">[--decision-type</span> <span class="pre">all|checker|cube]</span> <span class="pre">[--size</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--collection</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--deck</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Ehdottaa <strong>viiteasemia</strong> suodattimen virheiden joukosta: niitä, joiden opetus kattaa eniten naapurivirheiden palautettavissa olevaa MWC:tä, ilman lähes kaksoiskappaleita ja ilman jo käsiteltyä asemaa (katso <a class="reference internal" href="manuel_bibliotheque.html#positions-reference"><span class="std std-ref">positions de référence</span></a>). <code class="docutils literal notranslate"><span class="pre">--size</span></code> on oletuksena 20, enintään 50. Mitään ei kirjoiteta ilman <code class="docutils literal notranslate"><span class="pre">--collection</span></code>-valitsinta, joka tallentaa ehdotetut asemat uuteen kokoelmaan, tai <code class="docutils literal notranslate"><span class="pre">--deck</span></code>-valitsinta, joka tekee niistä Anki-pakan. Jokainen rivi ilmoittaa perheen, tuplauskuution viiteaseman tilanteen, tiivistämät virheet ja ottelut, katetun MWC:n ja sen perusteen (joka antaa luvun, joka lasketaan, kun oppitunti lasketaan puoliksi); <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> palauttaa samat osat.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">show</span></code>-komennon näyttämä XGID on aseman analyysin yhteydessä tallennettu XGID, jos sellainen on olemassa (BGF- ja XGP-tuonnit); muutoin se generoidaan laudalta täsmälleen samoin kuin käyttöliittymän <em>Kopioi asema</em> -toiminto tekee — ottelun pituudeksi tulee tällöin suurempi kahdesta jäljellä olevasta pistemäärästä, sillä tallennettu asema ei säilytä todellista ottelun pituutta.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Found 2 collection(s):</span>
+<span class="c1">#</span>
+<span class="c1"># ID  Name              Positions  Description</span>
+<span class="c1"># --  ----              ---------  -----------</span>
+<span class="c1"># 1   Ouvertures blitz  0          À revoir</span>
+<span class="c1"># 2   Videaux ratés     0</span>
+</pre></div>
+</div>
+<p>Tietokanta, jossa ei ole yhtään kokoelmaa, vastaa <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">collections</span> <span class="pre">found</span> <span class="pre">in</span> <span class="pre">database</span></code> ja päättyy silti paluukoodiin 0.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures blitz"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>rename<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--confirm
+
+<span class="c1"># Exporter deux collections, marquées de leur origine</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>,4<span class="w"> </span>--out<span class="w"> </span>ouvertures.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont - 12 mars 2026"</span>
+
+<span class="c1"># Dix positions de référence d'Alice sur un tournoi, gardées en collection</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>suggest<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--tournament<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--size<span class="w"> </span><span class="m">10</span><span class="w"> </span>--collection<span class="w"> </span><span class="s2">"Références : open de mars"</span>
+</pre></div>
+</div>
+</section>
+<section id="comment-les-commentaires-d-une-position">
+<h2>comment — Position kommentit<a class="headerlink" href="#comment-les-commentaires-d-une-position" title="Link to this heading"></a></h2>
+<p>Asemalla voi olla niin monta kommenttia kuin halutaan, kukin liitettynä kirjoittajaansa (vapaa teksti). Alkuperämerkinnällä viedystä tiedostosta saatu kommentti sisältää lisäksi merkitsijänsä allekirjoituksen: <code class="docutils literal notranslate"><span class="pre">list</span></code> näyttää sen sarakkeessa <em>Signed by</em> — nimi, sormenjälki ja <code class="docutils literal notranslate"><span class="pre">(unverified)</span></code>, jos se ei enää vastaa allekirjoitettua —, ja alkuperän sarakkeessa <em>Origin</em> (tyhjä blunderDB:ssä kirjoitetulle kommentille).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>comment<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Alikomennot:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">--position</span> <span class="pre">N</span> <span class="pre">--text</span> <span class="pre">T</span> <span class="pre">[--author</span> <span class="pre">A]</span></code> — Lisää kommentin positioon N, liitettynä kirjoittajaan A (ilman <code class="docutils literal notranslate"><span class="pre">--author</span></code>-valitsinta sillä ei ole kirjoittajaa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">[--position</span> <span class="pre">N]</span> <span class="pre">[--author</span> <span class="pre">A]</span></code> — Luettelee position tai koko tietokannan kommentit, tarvittaessa vain yhden tekijän kommentit.</p></li>
+</ul>
+<p><strong>Yhteiset valitsimet:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code> (pakollinen); <code class="docutils literal notranslate"><span class="pre">list</span></code> hyväksyy valitsimen <code class="docutils literal notranslate"><span class="pre">--format</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>comment<span class="w"> </span>add<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"Videau trop tôt"</span><span class="w"> </span>--author<span class="w"> </span>Alice
+./blunderdb<span class="w"> </span>comment<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span>
+./blunderdb<span class="w"> </span>comment<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--author<span class="w"> </span>Alice<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="elsewhere-ailleurs-une-position-dans-d-autres-bases">
+<h2>elsewhere — Muualla: asema muissa tietokannoissa<a class="headerlink" href="#elsewhere-ailleurs-une-position-dans-d-autres-bases" title="Link to this heading"></a></h2>
+<p>Hakee aseman Zobrist-tiivisteen perusteella muista samalle komennolle annetuista tietokantatiedostoista ja palauttaa kustakin sen, mitä se asemasta tietää: analyysin, kommentit, ottelut, joissa asema on pelattu (pelaajat, pituus, päivämäärä, pelattu siirto ja sen hinta), sekä lähimmät asemat (sama järjestys kuin haun <code class="docutils literal notranslate"><span class="pre">like</span></code>-tunnuksella, siirrettyjen nappuloiden pipeinä).</p>
+<p>Muualla pelatun siirron hinta arvioidaan tietokannan <code class="docutils literal notranslate"><span class="pre">--db</span></code> virhe- ja blunder-kynnysarvoilla, ei koskaan luetun tietokannan omilla: <code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">blunder</span></code>, <code class="docutils literal notranslate"><span class="pre">good</span></code> tai <code class="docutils literal notranslate"><span class="pre">unscored</span></code> ilman analyysia. Ottelutilanteessa tehty analyysi, jonka ekviteettitaulukko on eri kuin <code class="docutils literal notranslate"><span class="pre">--db</span></code>:n nykyinen taulukko, merkitään; sen ottelukustannukset näytetään mutta niitä ei arvioida (<code class="docutils literal notranslate"><span class="pre">other-met</span></code>), kuten kaikkialla muuallakin blunderDB:ssä. Muut tiedostot avataan vain luettavina: niihin ei kirjoiteta mitään, ja vain luettavassa kansiossa (verkkolevy, muistitikku, liitos) oleva tietokanta luetaan sellaisenaan luomatta sen viereen tiedostoa. Tiedosto, jota ei voi lukea (puuttuu, on aiempaa tai uudempaa versiota tai ei ole blunderDB-tietokanta), ilmoitetaan nimensä alla <code class="docutils literal notranslate"><span class="pre">Not</span> <span class="pre">read:</span></code>-rivillä (kenttä <code class="docutils literal notranslate"><span class="pre">error</span></code> JSONissa) ja ohitetaan: muut tiedostot vastaavat, ja komento palauttaa nollasta poikkeavan poistumiskoodin vain, jos mitään ei voitu lukea. Aiemman version tiedosto hylätään (sen avaaminen kerran blunderDB:ssä päivittää sen), samoin uudemman version tiedosto (päivitä blunderDB). Jos asema on pelattu yli 50 ottelussa, vain 50 viimeksi tuotua luetaan: tuloste kertoo sen ja kokonaismäärän (<code class="docutils literal notranslate"><span class="pre">matchesTotal</span></code> ja <code class="docutils literal notranslate"><span class="pre">playsTruncated</span></code> JSONissa).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--other<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--other<span class="w"> </span>&lt;fichier&gt;...<span class="o">]</span><span class="w"> </span><span class="o">(</span>--position<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--xgid<span class="w"> </span>X<span class="w"> </span><span class="p">|</span><span class="w"> </span>--zobrist<span class="w"> </span>H<span class="w"> </span><span class="p">|</span><span class="w"> </span>--match<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--tournament<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--collection<span class="w"> </span>N<span class="w"> </span><span class="p">|</span><span class="w"> </span>--lesson<span class="w"> </span>N<span class="o">)</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Valitsimet:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> (pakollinen) — Arvioiva tietokanta: sen kynnysarvot ja ekviteettitaulukko.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--other</span></code> (pakollinen, toistettavissa) — Haettava tietokantatiedosto.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position</span> <span class="pre">N</span></code> — Asema <code class="docutils literal notranslate"><span class="pre">--db</span></code>:n tunnisteen mukaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--xgid</span> <span class="pre">X</span></code> — Asema XGID:n mukaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--zobrist</span> <span class="pre">H</span></code> — Asema tiivisteensä mukaan (desimaali); sen naapureita haetaan silloin vain tietokannoista, jotka sen sisältävät.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span> <span class="pre">N</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">N</span></code>, <code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">N</span></code>, <code class="docutils literal notranslate"><span class="pre">--lesson</span> <span class="pre">N</span></code> — Aseman sijasta ottelu, turnaus, kokoelma tai oppitunti tietokannasta <code class="docutils literal notranslate"><span class="pre">--db</span></code>: komento kertoo, sisältääkö jokainen muu tietokanta sen, siinä avaimessa, jonka alle kopio sen yhdistäisi (ottelun sormenjälki, vaikka se olisi tuotu toisesta formaatista; muuten nimi), sen tunnisteen siellä ja sen sisällön (pelejä, otteluita, asemia tai vaiheita).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--neighbours</span> <span class="pre">N</span></code> — Naapureiden määrä tietokantaa kohti (oletus: 5, 0: ei yhtään, enintään 50).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--max-distance</span> <span class="pre">D</span></code> — Hylkää naapurit, jotka ovat yli D siirrettyjen nappuloiden pipin päässä (0: ei ylärajaa).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — <code class="docutils literal notranslate"><span class="pre">text</span></code> (oletus) tai <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+</ul>
+<p>Daemon tarjoaa samat haut vuokraajien yli: <code class="docutils literal notranslate"><span class="pre">across.positionElsewhere</span></code> ja <code class="docutils literal notranslate"><span class="pre">across.objectElsewhere</span></code> (katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>).</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--position<span class="w"> </span><span class="m">412</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--tournament<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>a.db<span class="w"> </span>--other<span class="w"> </span>b.db<span class="w"> </span>--xgid<span class="w"> </span><span class="s2">"XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"</span>
+./blunderdb<span class="w"> </span>elsewhere<span class="w"> </span>--db<span class="w"> </span>moi.db<span class="w"> </span>--other<span class="w"> </span>club.db<span class="w"> </span>--zobrist<span class="w"> </span><span class="m">1234567890</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="trash-la-corbeille">
+<h2>trash — Roskakori<a class="headerlink" href="#trash-la-corbeille" title="Link to this heading"></a></h2>
+<p>Mitä on poistettu ja millä sen saa takaisin. Poisto on yhä poisto: JSON-tilannekuva katoavasta kirjoitetaan ensin, eikä mikään muu tietokannassa tiedä tuon taulun olemassaolosta — ei hakusuodatin, ei tilasto, ei säilytyssääntö.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>trash<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Alikomennot:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Mitä roskakorissa on, uusimmasta poistosta vanhimpaan.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">restore</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Palauttaa merkinnän N ja poistaa sen roskakorista.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discard</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Poistaa merkinnän N heti, palauttamatta sitä.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">empty</span> <span class="pre">[--older-than</span> <span class="pre">P]</span></code> — Tyhjentää roskakorin tai vain sen, mikä on yli P päivää vanhaa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--kind</span> <span class="pre">K</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Poistaa kohteen <strong>roskakorin kautta</strong>, jotta teon voi perua. <code class="docutils literal notranslate"><span class="pre">K</span></code> on <code class="docutils literal notranslate"><span class="pre">position</span></code>, <code class="docutils literal notranslate"><span class="pre">collection</span></code>, <code class="docutils literal notranslate"><span class="pre">comment</span></code> tai <code class="docutils literal notranslate"><span class="pre">match</span></code>.</p></li>
+</ul>
+<p><strong>Yhteiset valitsimet:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code> (pakollinen), <code class="docutils literal notranslate"><span class="pre">--kind</span></code>, <code class="docutils literal notranslate"><span class="pre">--limit</span></code> (oletus 50), <code class="docutils literal notranslate"><span class="pre">--format</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> tai <code class="docutils literal notranslate"><span class="pre">json</span></code>). Komennolle <code class="docutils literal notranslate"><span class="pre">list</span></code> <code class="docutils literal notranslate"><span class="pre">--kind</span></code> rajaa luettelon yhteen objektityyppiin: <code class="docutils literal notranslate"><span class="pre">position</span></code>, <code class="docutils literal notranslate"><span class="pre">collection</span></code>, <code class="docutils literal notranslate"><span class="pre">comment</span></code>, <code class="docutils literal notranslate"><span class="pre">match</span></code> tai <code class="docutils literal notranslate"><span class="pre">anki_card</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">delete</span></code> poistaa yhä <strong>ilman</strong> turvaverkkoa: skripti, joka poistaa aseman, odottaa sen katoavan, ja hiljainen tilannekuvan jättäminen kasvattaisi tiedostoa, jonka kasvua kukaan ei pyytänyt. <code class="docutils literal notranslate"><span class="pre">trash</span> <span class="pre">delete</span></code> on se, joka säilyttää perumisen.</p>
+</div>
+<p>Aseman palautus kulkee uudelleen Zobrist-deduplikoinnin läpi: se ei koskaan luo kaksoiskappaletta. Palautettu asema saa takaisin vanhan numeronsa; jos sama asema on tallennettu sillä välin, se säilytetään, ja se saa sen, mikä siltä puuttuu. Palautettu ottelu saa myös takaisin alkuperäisen numeronsa pelineen, siirtoineen, analyyseineen ja asemineen; se evätään, jos toinen ottelu käyttää tätä numeroa tai jos välillä on tuotu ottelu, jolla on sama tiedostosormenjälki. Se, mitä onnistunut palautus ei voinut palauttaa — varattu tai kadonnut paikka johtamisessa, poistettu turnaus — ilmoitetaan varoituksella.</p>
+<p>Yli kolmekymmentä päivää vanhat poistaa <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> — ei koskaan tietokannan avaaminen.</p>
+<p><strong>Esimerkkejä:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supprimer une position en gardant l'annulation</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--kind<span class="w"> </span>position<span class="w"> </span>--id<span class="w"> </span><span class="m">412</span>
+
+<span class="c1"># Voir la corbeille, puis remettre une entrée</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>restore<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+
+<span class="c1"># Ne garder que ce qui a moins de trente jours</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>empty<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--older-than<span class="w"> </span><span class="m">30</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_import_export.html" class="btn btn-neutral float-left" title="Tuonti, vienti, siirto" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_matchs.html" class="btn btn-neutral float-right" title="Ottelut, turnaukset ja pelit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

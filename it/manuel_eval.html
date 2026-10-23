@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valutazione &mdash; Documentazione blunderDB 0.46.1 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e6b008ef"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="Allenamento, Anki e duello" href="manuel_entrainement.html" />
+    <link rel="prev" title="Statistiche" href="manuel_stats.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Lingue">
+  <a href="../fr/manuel_eval.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_eval.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_eval.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_eval.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_eval.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_eval.html" lang="fi" hreflang="fi">Suomi</a>
+  <span class="current" lang="it" aria-current="true">Italiano</span>
+  <a href="../ja/manuel_eval.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_eval.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <p class="caption" role="heading"><span class="caption-text">Primi passi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guida utente</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Riferimento</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Manuale</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Primi passi e interfaccia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analisi, commenti e ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Match e trascrizione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Tornei</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Statistiche</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Valutazione</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-eval">Pannello Eval</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#matrice-du-videau">Matrice del cubo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#panneau-donnees-de-reference">Pannello Dati di riferimento</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#amener-une-position-dans-le-panneau-eval">Portare una posizione nel pannello Eval</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-eval">Metodologia e ipotesi del pannello Eval</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Allenamento, Anki e duello</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Importazione, origine e condivisione</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriche e strumenti di studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Elenco dei comandi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Scorciatoie da tastiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaccia a riga di comando (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modalità headless (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contratto API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendici</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Appendice Windows: cosa fare se Windows blocca l’avvio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Cronologia delle versioni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Informazioni</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Manuale</a></li>
+      <li class="breadcrumb-item active">Valutazione</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="evaluation">
+<span id="manuel-eval"></span><h1>Valutazione<a class="headerlink" href="#evaluation" title="Link to this heading"></a></h1>
+<section id="panneau-eval">
+<span id="panneau-epc"></span><h2>Pannello Eval<a class="headerlink" href="#panneau-eval" title="Link to this heading"></a></h2>
+<p>Il pannello <strong>Eval</strong> (<em>CTRL-E</em>) valuta in tempo reale qualunque posizione si trovi sul tavoliere; su una posizione di bearoff si specializza e calcola inoltre l’EPC (Effective Pip Count). Si attiva premendo <em>CTRL-E</em>, facendo clic sulla scheda Eval del pannello inferiore, oppure eseguendo il comando <code class="docutils literal notranslate"><span class="pre">eval</span></code>; anche <code class="docutils literal notranslate"><span class="pre">epc</span></code>, il suo vecchio nome, lo apre. Il pannello si è chiamato <em>EPC</em>, poi <em>Bearoff</em>, prima di diventare <em>Eval</em> — è dunque qui che va cercato ciò che una versione precedente chiamava il pannello Bearoff, il nome non designando più che la scheda di configurazione delle tabelle di uscita.</p>
+<p>Il pannello mostra sempre l”<strong>unica decisione</strong> che la posizione posta sul tavoliere richiede — mai due alla volta — e i fatti che l’accompagnano. Ogni grandezza si legge nell’asse che le conviene anziché in un asse unico imposto: la probabilità di vittoria, di gammon, di backgammon e l’equità cubeless di ciascun giocatore, calcolate <em>prima del lancio</em>, si leggono <strong>per giocatore</strong> (basso, alto, poi Δ), a sinistra della decisione di cubo, quando nessun dado è impostato. I fatti e la decisione restano fianco a fianco: la decisione di cubo non finisce mai sotto i numeri che la giustificano, qualunque siano la lingua dell’interfaccia e la posizione sul tavoliere. Non appena dei dadi sono impostati, questi stessi valori <em>prima del lancio</em> cambiano asse: si leggono <strong>al tiro</strong>, in testa alla lista delle mosse candidate, sotto forma di una riga in corsivo <em>prima del lancio</em> — non una mossa candidata in più, ma un riferimento rispetto al quale leggere ogni mossa. Lo scarto tra questa riga e una mossa contiene la fortuna del tiro, mai il merito della mossa, e la riga non porta quindi alcuna colonna di errore. Su una posizione di bearoff puro, una seconda tabella, sempre <strong>per giocatore</strong> e sempre presente, dadi impostati o meno, porta l’EPC, il pip count, il wastage, il numero medio di lanci e la deviazione standard; queste cinque colonne non migrano mai. Le due tabelle sono impilate e condividono la stessa griglia di colonne: stessi bordi, stessi riferimenti di colonna, una sola colonna di pallini — si leggono come un unico oggetto a due piani. Sopra le tabelle, la fascia di intestazione porta il titolo, il badge di regime e l’attribuzione del motore (vi figura anche la profondità dell’ultima valutazione), poi, a destra, la casella <em>Sfida</em> e il pulsante <em>Aggiungi al database</em>. Finché gammonNet non ha restituito nulla, il pannello lo dice in una riga: «Valutazione…», o «Imposta una posizione» su un tavoliere vuoto.</p>
+<p>Solo la lista delle mosse candidate scorre — anche la riga <em>prima del lancio</em> resta fissata sopra di essa; il resto del pannello (fatti, badge, decisione di cubo) resta sempre visibile, senza alcuna regolazione particolare della dimensione del pannello.</p>
+<p>La tabella dei fatti e la decisione sono calcolate da gammonNet, integrato, senza XG né gnubg. Il calcolo segue la posizione senza mai bloccare l’interfaccia: una profondità 0-ply viene mostrata immediatamente a ogni gesto, poi, dopo mezzo secondo di immobilità, una valutazione più profonda (2 ply per impostazione predefinita, regolabile nella scheda <em>gammonNet</em> della configurazione) la sostituisce in background — qualsiasi nuovo gesto annulla questo calcolo di fondo. La profondità mostrata nella fascia dei badge, o all’interno del badge di regime su una posizione di corsa, è sempre quella che ha effettivamente prodotto il numero mostrato, mai quella richiesta; non si ripete su ogni riga, poiché una valutazione in diretta condivide la stessa profondità per tutte le mosse. L’equità delle mosse candidate e della decisione di cubo segue il punteggio della posizione: in money game è espressa in punti, a un punteggio di match in <strong>equità normalizzata</strong> — la stessa scala di XG e GNU Backgammon, in cui vincere il valore del cubo corrente vale +1 e perderlo −1 — mai mescolate in una stessa tabella. L’intestazione della colonna lo dichiara esplicitamente invece di lasciare indovinare la scala: «Equity (money)» in money game, «Equity (match)» a un punteggio di match. Tiene conto del <strong>cubo vivo</strong>: la ricerca valorizza ogni posizione finale con il modello di cubo (Janowski, efficienza misurata) nello stato del cubo della posizione, come fanno XG e GNU Backgammon nella valutazione <em>cubeful</em>. È ciò che rende visibili al punteggio gli effetti gammon-go e gammon-save — a 4-away/2-away, il giocatore in svantaggio gioca 8/2 6/2 su un 6-4 di apertura perché il suo raddoppio anticipato darà al gammon il valore del match, cosa che una valutazione senza cubo non può vedere. La riga <em>prima del lancio</em>, invece, resta un’equità <strong>cubeless</strong>: è un fatto della posizione, non una decisione. La valutazione non viene mai registrata: è un calcolo, non un’analisi. Cliccare una mossa candidata la mostra sul tavoliere sotto forma di frecce, esattamente come nel pannello Analisi. Il discreto pulsante <strong>?</strong>, nella fascia dei badge, conduce al repository del motore <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>; l’attribuzione completa (rete Strehl, configurazione gammonNet) figura nei Ringraziamenti dell’aiuto.</p>
+<p>Il pannello <strong>rolla</strong> la posizione come il pannello Analisi (vedi <a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Rollout</span></a>): <em>Ctrl+clic</em> e <em>Maiusc+clic</em> selezionano le mosse, il clic destro apre lo stesso menu — rollout, copia della posizione e della valutazione, o della posizione e delle mosse selezionate —, <em>Maiusc+R</em> avvia o ferma il rollout e <em>Esc</em> lo annulla; una barra sottile segue le partite giocate, e ogni mossa rollata porta il suo risultato nella colonna <strong>Rollout</strong> (senza dadi, sotto la decisione di cubo). Poiché la tavola è una bozza, il rollout non viene mai registrato: si gioca in memoria, senza database aperto come su un database in sola lettura, e il suo risultato è mostrato solo finché la tavola resta la stessa. Un rollout avviato prima di una modifica della tavola non viene mostrato sulla nuova posizione.</p>
+<p>Il pulsante <strong>Aggiungi al database</strong>, in fondo alla banda di badge, dopo la casella <em>Sfida</em>, registra nel database la posizione messa sul tavoliere; <em>CTRL-S</em>, il comando <code class="docutils literal notranslate"><span class="pre">w</span></code> e il pulsante <em>Salva posizione</em> della barra degli strumenti fanno lo stesso. La valutazione gammonNet mostrata per questo tavoliere (le mosse quando i dadi sono posati, il cubo altrimenti, con la sua profondità) viene registrata con la posizione, così come l’analisi in batch l’avrebbe scritta: la ricerca <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span> <span class="pre">ad:gammonnet</span></code> ritrova queste posizioni (sulla riga di comando, <code class="docutils literal notranslate"><span class="pre">--individual</span></code> con <code class="docutils literal notranslate"><span class="pre">--analysis</span> <span class="pre">gammonnet</span></code>). Se la posizione figurava già nel database con un’analisi (importata, gammonNet a un’altra profondità, rollout), quell’analisi viene conservata così com’è e la barra di stato dice che la valutazione mostrata non è stata registrata; senza valutazione mostrata (motore in corso o posizione rifiutata), viene scritta solo la posizione, così come se la tabella di equità di partita è cambiata dopo il calcolo, cosa che la barra di stato segnala. Se l’analisi automatica gammonNet è attiva, il suo batch parte poi, come dopo un’importazione. La barra di stato annuncia il numero della posizione, anche quando figurava già nel database: è allora contrassegnata come importata singolarmente, e il filtro <em>Importata singolarmente</em> (<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>) la ritrova. Il pannello resta aperto sullo stesso tavoliere, che resta un tavoliere bozza: si può spostare una pedina e aggiungere la variante, e uscire dal pannello riporta a ciò che si stava studiando. Il pulsante è disattivato finché non c’è alcun database aperto, o finché la posizione non può essere registrata (per esempio la posizione iniziale del pannello, in cui il giocatore in alto ha fatto uscire tutte le sue pedine); il suo suggerimento ne dà il motivo.</p>
+<p>L’utente modifica la posizione delle pedine sull’intero tavoliere, esattamente come in modalità di modifica: il clic sinistro posiziona una pedina del giocatore in basso, il clic destro una pedina del giocatore in alto. La seconda tabella, quella della corsa, compare solo quando la posizione ottenuta è un bearoff puro (tutte le pedine di entrambi i giocatori nella propria tavola); su qualsiasi altra posizione risponde soltanto la tabella delle quattro colonne comuni (vittoria, gammon, backgammon, cubeless), e la decisione riguarda le pedine o un cubo generico a seconda che dei dadi siano impostati.</p>
+<p>In ciascuna tabella dei fatti, una riga per giocatore — contrassegnata dal suo pallino colorato, con il giocatore nero sempre in basso. La prima porta, finché nessun dado è impostato, la vittoria, il gammon, il backgammon (probabilità, senza il segno %) e l’equità cubeless del giocatore; la seconda, su una posizione di bearoff e dadi impostati o meno, l’EPC, il pip count, il wastage (differenza tra l’EPC e il pip count), il numero medio di lanci e la deviazione standard. Quando entrambi i giocatori hanno valori da confrontare, una riga <strong>Δ</strong> fornisce le differenze <em>con segno</em> (basso − alto: negativo quando il giocatore nero è in vantaggio). Fuori da una posizione di corsa, impostare dei dadi fa quindi scomparire le tabelle dei fatti stesse: le quattro colonne che portavano hanno appena cambiato asse, al tiro, in testa alla lista delle mosse.</p>
+<p>La decisione di cubo ha sempre la stessa forma, qualunque sia l’origine dei numeri — tabella esatta, regime valutato o valutazione gammonNet ordinaria: <strong>una riga per opzione</strong>, nell’ordine <em>nessun raddoppio</em>, <em>raddoppio/prende</em>, <em>raddoppio/passa</em>, con la sua equità nel riferimento della posizione e il suo scarto rispetto all’opzione migliore. L’ordine non cambia mai, a differenza della lista delle mosse: le tre opzioni portano un nome, ed è quindi il nome che si legge, non il rango. La migliore si riconosce dalla sua evidenziazione e dalla sua cella di scarto lasciata vuota. Quando il cubo è già stato girato, le opzioni si leggono <em>nessun riraddoppio</em>, <em>riraddoppio/prende</em>, <em>riraddoppio/passa</em>.</p>
+<p>Un’ultima riga dà il <strong>verdetto</strong>. Assume quattro valori: <em>nessun raddoppio</em>, <em>raddoppio, prende</em>, <em>raddoppio, passa</em> e <em>troppo forte per raddoppiare</em>, quest’ultimo quando giocare la posizione rende più che incassare il punto: raddoppiare sarebbe allora un errore per la ragione opposta a quella del semplice <em>nessun raddoppio</em>. È anche l’unico punto in cui il pannello dice che <strong>non</strong> c’è verdetto, anziché lasciar credere a un calcolo in corso:</p>
+<ul class="simple">
+<li><p><em>nessuna decisione</em> — il regime non ne ha diritto; il verdetto di cubo non viene mai stimato (vedere il badge <em>stimato</em>);</p></li>
+<li><p><em>non valutabile a questo punteggio</em> — il motore rifiuta la posizione, tipicamente un punteggio fuori dall’orizzonte della tabella di equità di match, cioè un lato a più di 64 punti da fare;</p></li>
+<li><p><em>cubo dell’avversario</em> e <em>cubo morto (Crawford)</em> — il cubo non può essere girato. Le equità restano visualizzate, a titolo indicativo, ma nessuna opzione porta uno scarto: un errore è ciò che costa una scelta, e qui non c’è scelta.</p></li>
+</ul>
+<p>In money game, le regole <strong>Jacoby</strong> e <strong>Beaver</strong> attive sulla posizione compaiono sotto la tabella del cubo, in piccoli badge accanto al verdetto che modificano: il verdetto «no double» di una posizione sotto la regola Jacoby non è lo stesso calcolo di quello senza di essa, e nient’altro sullo schermo lo indicava.</p>
+<p>Con la regola <strong>Beaver</strong>, la riga <em>raddoppio, accetta</em> vale la migliore risposta dell’avversario diversa dall’abbandono: accettare, oppure fare <em>beaver</em> — ribattere subito il raddoppio tenendo il cubo, giocando così la partita al quadruplo della posta —, e chi ha raddoppiato risponde allora con un <em>raccoon</em> (otto volte la posta, cubo dalla sua parte) quando gli conviene. Il verdetto e gli errori si leggono su questa riga, come senza la regola; a un punteggio di match la regola non si applica.</p>
+<p>Un terzo distintivo, <strong>Cubo max</strong>, compare quando l’identificatore di origine limita il cubo — sia a un punteggio di incontro sia nel money game. Quello non descrive il calcolo mostrato sopra: il valutatore integrato non modella un tetto, quindi il verdetto è quello di un cubo libero. È proprio per questo che il distintivo c’è: un cubo limitato è l’unica ragione visibile per cui blunderDB ed eXtreme Gammon possono annunciare due verdetti diversi sulla stessa posizione.</p>
+<p>Il <strong>giocatore al tiro</strong> e la <strong>posizione del cubo</strong> si modificano direttamente sul tavoliere, come in modalità di modifica: cliccare il rettangolo bearoff/punteggio di un giocatore gli assegna il tiro; cliccare il cubo lo fa ruotare centrato → posseduto in basso → posseduto in alto (clic destro in senso inverso). Il valore del cubo resta fissato — in money game le equità sono espresse in unità del cubo corrente, conta solo il suo proprietario. L’analisi viene ricalcolata immediatamente. In regime stimato, il badge stesso è cliccabile e apre direttamente la scheda <em>Bearoff</em> della configurazione; il suo tooltip spiega perché (verdetto di cubo non stimabile, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>) e come estendere il dominio esatto.</p>
+<p>Anche il <strong>punteggio</strong> si modifica direttamente sul tavoliere, come in modalità di modifica: il clic sinistro sul rettangolo del punteggio di un giocatore decrementa il suo numero di punti da fare, il clic destro lo incrementa. Uscire dal punteggio <em>money</em> (-1, -1) modificando un solo campo allinea automaticamente l’altro campo sullo stesso valore anziché lasciare un punteggio incoerente. Su una posizione di bearoff in regime <em>esatto</em>, passare da un punteggio money a un punteggio di match lascia la probabilità di vittoria così com’è (una lettura dal database, valida qualunque sia il riferimento) ma fa passare l’equità e il verdetto di cubo mostrati a quelli del regime <em>valutato</em> — essendo la tabella esatta money per costruzione, non sa rispondere alla domanda posta al punteggio. Il badge diventa allora composito (« esatto (vittoria) · valutato (cubo) ») per dirlo esplicitamente.</p>
+<p>I <strong>dadi</strong>, infine, si modificano allo stesso modo, e sono loro a decidere la domanda posta: dadi impostati fanno una decisione di pedine (l’elenco delle mosse candidate), nessun dado una decisione di cubo. Un clic sinistro su un dado ne aumenta il valore (il 6 torna a 1), un clic destro lo diminuisce (l’1 torna a 6); cliccare un dado su un tavoliere che non ne ha ne imposta due in un colpo solo — un dado singolo non sarebbe né una decisione di pedine né una decisione di cubo. Cliccare il rettangolo di un giocatore toglie i dadi per porre una domanda di cubo, e il clic successivo su un dado li rimette com’erano.</p>
+<p><em>BACKSPACE</em>, o <em>Cancella la posizione</em> nel menu di un clic destro fuori dal tavoliere, cancella la posizione: tavoliere vuoto, punteggio money (-1, -1), nessun dado impostato — valori propri del pannello Eval, diversi da quelli usati in modalità di modifica (7 ovunque, dadi 3-1), per restare coerenti con ciò che il pannello mostra per impostazione predefinita. <em>Posizione iniziale</em>, nello stesso menu, dispone le pedine di una partita nuova su questi stessi valori.</p>
+<section id="matrice-du-videau">
+<span id="eval-matrice-videau"></span><h3>Matrice del cubo<a class="headerlink" href="#matrice-du-videau" title="Link to this heading"></a></h3>
+<p>Una decisione di cubo non è una proprietà della dama. Le stesse pedine, lo stesso conteggio dei pip, si raddoppiano a 2-away/4-away e non si raddoppiano a 4-away/2-away; chi ha imparato la risposta money ha imparato una sola casella di una griglia. Il pannello Eval mostra la casella che la posizione porta; la <strong>matrice del cubo</strong> mostra l’intera griglia.</p>
+<p>Il comando <code class="docutils literal notranslate"><span class="pre">cm</span></code> la apre sulla posizione visualizzata. Ogni casella dà il verdetto a un punteggio: la riga è il numero di punti che restano da fare al giocatore di turno, la colonna quelli dell’avversario. I quattro verdetti si scrivono <em>ND</em> (niente raddoppio), <em>DP</em> (raddoppio, presa), <em>DR</em> (raddoppio, rifiuto) e <em>TB</em> (troppo buono); una casella rifiutata dal motore porta un punto interrogativo e spiega perché al passaggio del mouse, che dà anche le tre equità della casella. Sono proposte tre lunghezze di incontro: 5, 7 e 9 punti.</p>
+<p>La casella del punteggio che la posizione porta davvero è incorniciata, e le sue intestazioni di riga e di colonna sottolineate: la lettura parte da lì, «la mia casella, e ciò che la circonda». Lo è non appena i due punteggi <em>away</em> della posizione entrano nella griglia mostrata; cambiare lunghezza la sposta o la toglie. Una posizione money, la partita Crawford o un <em>away</em> oltre la griglia non ne indicano alcuna: non c’è casella da mostrare, e mostrarne una approssimativa sarebbe falso.</p>
+<p>Il punteggio della posizione è sostituito da quello di ogni casella; il suo <strong>cubo</strong> è conservato. La griglia risponde a quale punteggio girerei <em>questo</em> cubo, non a ciò che farebbe una posizione centrata. È post-Crawford da un capo all’altro: durante la partita Crawford il cubo non è in gioco, e una colonna di «non potete raddoppiare» non direbbe nulla sulla posizione.</p>
+<p>Ogni casella è una ricerca a sé. Il motore tiene conto del punteggio — non gioca la stessa partita a 2-away e a 7-away — quindi una sola ricerca riletta attraverso equità di incontro diverse sarebbe falsa esattamente dove il punteggio conta. La griglia arriva prima in 0-ply, poi si ricalcola alla profondità di visualizzazione configurata una volta che la finestra è a riposo: la stessa escalation del resto del pannello, per una griglia da 9 punti che costa circa un secondo e mezzo.</p>
+<p>La stessa griglia si calcola fuori dall’interfaccia, con il comando <a class="reference internal" href="cli_analyse.html#cli-cubematrix"><span class="std std-ref">cubematrix</span></a> della riga di comando.</p>
+</section>
+<section id="panneau-donnees-de-reference">
+<span id="panneau-reference"></span><h3>Pannello Dati di riferimento<a class="headerlink" href="#panneau-donnees-de-reference" title="Link to this heading"></a></h3>
+<p>Il pannello <strong>Dati di riferimento</strong> riunisce le tabelle del punteggio. Si apre con <em>CTRL-MAIUSC-R</em> o il comando <code class="docutils literal notranslate"><span class="pre">ref</span></code>, senza database aperto. I comandi <code class="docutils literal notranslate"><span class="pre">met</span></code>, <code class="docutils literal notranslate"><span class="pre">tp2</span></code>, <code class="docutils literal notranslate"><span class="pre">tp4</span></code> e le loro varianti <code class="docutils literal notranslate"><span class="pre">_live</span></code> / <code class="docutils literal notranslate"><span class="pre">_last</span></code>, <code class="docutils literal notranslate"><span class="pre">gv1</span></code>, <code class="docutils literal notranslate"><span class="pre">gv2</span></code> e <code class="docutils literal notranslate"><span class="pre">gv4</span></code> lo aprono sulla scheda della tabella richiesta (MET, Punti di take o Valori del gammon; le varianti di una stessa famiglia aprono la stessa scheda). Le righe e le colonne sono i punti che mancano per vincere la partita: la riga è il giocatore di cui si parla, la colonna il suo avversario. Cinque schede:</p>
+<ul class="simple">
+<li><p><strong>MET</strong> — la tabella di equità di match Kazaross-XG2, da 1 a 15 punti mancanti, in percentuale di probabilità di vincere il match;</p></li>
+<li><p><strong>Punti di presa</strong> — al videau 2 (da 2 a 9 punti mancanti) e al videau 4 (da 3 a 9), ciascuno in due griglie affiancate: corsa lunga (videau vivo) e ultimo tiro (videau morto);</p></li>
+<li><p><strong>Valori del gammon</strong> — ai videau 1, 2 e 4;</p></li>
+<li><p><strong>Aggregato</strong> — una griglia da 2 a 9 punti mancanti con una legenda in testa che ricorda l’organizzazione di ogni casella. Ogni casella porta tre righe: il punto di presa al videau 2 (vivo / morto), al videau 4 (vivo / morto), poi i valori del gammon ai videau 1, 2 e 4, in colore attenuato. Un trattino indica un valore che la tabella non definisce a quel punteggio;</p></li>
+<li><p><strong>Numeri di Neil</strong> — una scorciatoia mentale della MET, dovuta a Neil Kazaross.</p></li>
+</ul>
+<p><strong>I numeri di Neil.</strong> L’equità di chi è in vantaggio si stima con E ≃ 50% + (differenza di punteggio) × Neil(<em>n</em>), dove <em>n</em> è il numero di punti mancanti di chi è <strong>in svantaggio</strong>. La scheda dà il numero per ogni <em>n</em> da 3 a 25, in intero e frazione esatta (6½ a 7, 5⅔ a 9, 5⅓ a 10, 4¾ a 12; senza glifo di frazione, «3 5⁄12»): i punti di ancoraggio (10 a 3 punti mancanti, 9 a 4, 8 a 5, 7 a 6, 6 a 8, 5 a 11, 4 a 15, 3½ a 19 e 3 a 25) sono in tondo, i valori intermedi, ottenuti per interpolazione lineare tra due ancoraggi, in corsivo. Per esempio, a 3 punti mancanti contro 5, la stima è 50 + 2 × 8 = 66%, e la MET dà 64,8%. La scheda mostra la riga dei numeri, poi una griglia chi è in vantaggio × chi è in svantaggio, da 2 a 15 punti mancanti: ogni casella dà la stima e, in piccolo, il suo scarto rispetto alla MET Kazaross-XG2, per vedere dove la scorciatoia si discosta. La scorciatoia non regge quando chi è in vantaggio è a 1 o 2 punti dalla fine: la riga di chi è in vantaggio a 2 punti mostra il valore della MET, in colore attenuato e senza scarto.</p>
+</section>
+<section id="amener-une-position-dans-le-panneau-eval">
+<span id="eval-amener-position"></span><h3>Portare una posizione nel pannello Eval<a class="headerlink" href="#amener-une-position-dans-le-panneau-eval" title="Link to this heading"></a></h3>
+<p>Il pannello si apre per impostazione predefinita su una posizione di bearoff, ma lo studio parte più spesso da una posizione già in mano. Quattro gesti ve la portano:</p>
+<ul class="simple">
+<li><p><strong>Clic destro sul tavoliere</strong>, in un pannello di analisi o durante la navigazione di un match, poi <em>Valuta questa posizione</em>: il pannello Eval si apre direttamente su questa posizione, così come è visualizzata; <em>Valuta lo specchio di questa posizione</em> ve la apre vista dall’altro lato. Il menu contestuale non compare nel pannello Eval né nel pannello Ricerca, dove il tasto destro serve già a collocare le pedine dell’altro colore.</p></li>
+<li><p><strong>Clic destro sulla scacchiera, poi</strong> <em>Valuta in una nuova scheda</em>: una nuova vista, chiamata <em>Variante di #n</em> (n è il numero della vista d’origine), si apre nel pannello Eval sulla posizione visualizzata, dove impostare liberamente delle varianti. La vista d’origine conserva la sua posizione, la sua lista e la sua analisi. Questa scelta non è offerta nel pannello Trascrizione.</p></li>
+<li><p><strong>CTRL-C poi CTRL-V</strong>: copiare la posizione dal pannello di analisi, poi incollarla una volta nel pannello Eval. L’incollaggio accetta anche un identificatore proveniente da altrove — un XGID (eXtreme Gammon, GNU Backgammon, un’altra istanza di blunderDB) o un OGID (OpenGammon): basta che sia negli appunti.</p></li>
+<li><p><strong>Il comando</strong> <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">XGID=…</span></code> (o <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">OGID=…</span></code>) per il caso in cui l’identificatore non è negli appunti ma in un messaggio, su un forum letto in un terminale, o prodotto da uno script. È lo stesso verbo di <code class="docutils literal notranslate"><span class="pre">import</span></code> da solo: senza argomento apre un selettore di file, con un argomento legge l’identificatore. Il percorso è poi identico a quello dell’incollaggio — stessa lettura, stessa deduplicazione, stessa apertura della posizione importata.</p></li>
+</ul>
+<p>Un OGID porta solo una posizione: né valutazione, né commento. La posizione arriva quindi senza analisi, esattamente come un XGID nudo, e il valutatore integrato può colmare il vuoto in seguito.</p>
+<p>In un OGID, la partita Crawford si riconosce dalla <code class="docutils literal notranslate"><span class="pre">C</span></code> che segue la lunghezza dell’incontro (<code class="docutils literal notranslate"><span class="pre">7C</span></code>): senza di essa, un giocatore a un punto dalla meta è dopo la Crawford.</p>
+<p><strong>Una schermata della scacchiera</strong> (eXtreme Gammon, tema predefinito) si legge in tre modi: incollare l’immagine (<em>CTRL-V</em>), trascinarla sulla finestra o aprirla con <em>CTRL-I</em> (<code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>). Non serve alcun database. La posizione letta arriva sulla scacchiera di modifica ed è solo una proposta: i punti e il videau di cui la lettura non è sicura sono cerchiati di arancione; un dubbio che non si può cerchiare (il verso della scacchiera quando i numeri dei punti sono fuori dall’immagine, dadi illeggibili) e ciò che una schermata non mostra mai (il punteggio, il giocatore di turno quando i dadi sono nascosti) sono indicati nella barra di stato. Correggi la scacchiera come al solito, poi salva con il gesto abituale: nulla viene salvato prima. Un’immagine in cui non si riconosce alcuna scacchiera nota viene rifiutata, con il motivo nella barra di stato. La stessa lettura esiste da riga di comando (<code class="docutils literal notranslate"><span class="pre">capture</span></code>).</p>
+<p>Il tavoliere del pannello Eval è una bozza: la posizione vi arriva senza il suo identificativo di database, in modo che nessuna modifica fatta qui possa riscrivere il record da cui proviene. Tutte le consuete modifiche del tavoliere vi restano disponibili (pedine, cubo, dadi, punteggio), e la valutazione segue ogni modifica.</p>
+<p>Nell’altro senso, <em>CTRL-C</em> copia il tavoliere del pannello Eval negli appunti, con un XGID ricalcolato dalle pedine posizionate — quindi incollabile direttamente in eXtreme Gammon o in un’altra istanza di blunderDB. Viaggia soltanto la posizione: la valutazione mostrata dal pannello non è un record del database e non accompagna la copia.</p>
+<p>Uscendo dal pannello Eval, la posizione consultata in precedenza viene ripristinata: la bozza non viene mai salvata da sola.</p>
+<p>Quando la posizione è un bearoff puro (tutte le pedine di entrambi i giocatori nella propria tavola) e nessun dado è impostato, la decisione di cubo mostra, per il giocatore al tiro:</p>
+<ul class="simple">
+<li><p>in regime <em>esatto</em>: le equità money (cubeless, senza raddoppio, raddoppio/prende, raddoppio/passa) e il <strong>verdetto di cubo money</strong> (nessun raddoppio, raddoppio/prende, raddoppio/passa o troppo forte per raddoppiare) — fuori dal punteggio di match, vedere sopra per il caso del punteggio,</p></li>
+<li><p>in regime <em>valutato</em>: le stesse equità e lo stesso verdetto a quattro valori, ma <strong>giocati da gammonNet</strong> (ricerca + modello di cubo Janowski) anziché letti in una tabella — disponibili <strong>anche al punteggio di match</strong>, ciò che il regime stimato non ha mai potuto offrire;</p></li>
+<li><p>in regime <em>stimato</em>: il verdetto di cubo non viene allora volutamente mostrato — resta disponibile soltanto la probabilità di vittoria, nella tabella dei fatti, accompagnata dal suo margine d’errore.</p></li>
+</ul>
+<p>Non appena dei dadi sono impostati su una posizione di corsa, questa decisione di cubo <em>prima del lancio</em> scompare — il tavoliere richiede allora una decisione di pedine, non di cubo — ma la probabilità di vittoria, dal canto suo, resta un fatto della posizione, non una decisione: raggiunge la riga <em>prima del lancio</em> in testa alla lista delle mosse, accanto all’EPC che, invece, resta visualizzato subito a sinistra.</p>
+<p>Un badge indica il regime: <strong>esatto</strong> (valore letto in un database two-sided), <strong>valutato · &lt;profondità&gt;</strong> (giocato da gammonNet — la profondità mostrata è quella che ha effettivamente prodotto il numero mostrato), <strong>stimato ± margine</strong>, oppure, al punteggio di match nel dominio esatto, <strong>esatto (vittoria) · valutato (cubo)</strong> — vedere sopra. Il regime esatto prevale ovunque sia disponibile; altrimenti il regime valutato compare non appena ha finito di calcolare, sostituendo sul posto il regime stimato mostrato durante l’attesa. Vedere <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Metodologia e ipotesi del pannello Eval</span></a> per la definizione precisa dei tre regimi e delle loro ipotesi.</p>
+<p><strong>Allargare il dominio esatto.</strong> La tabella calcolata al primo avvio copre 6 pedine per parte. Due modi per andare oltre, nella scheda <em>Bearoff</em> della configurazione:</p>
+<ul class="simple">
+<li><p>calcolare una tabella a due lati più ampia — fino a TS-06-15 se la macchina ha la memoria per farlo. La scheda dichiara la dimensione, la memoria e il tempo su questa macchina prima di cominciare, e il calcolo si mette in pausa e si riprende. Un calcolo annullato lascia un file <code class="docutils literal notranslate"><span class="pre">.part</span></code> che non viene mai letto come una tabella;</p></li>
+<li><p>indicare un qualsiasi file <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided di gnubg. Il database con il dominio più ampio prevale automaticamente.</p></li>
+</ul>
+<p><strong>Il tavoliere del pannello è una bozza, e viene ricordato.</strong> Uscire dal pannello Eval e tornarci ritrova la posizione su cui lo si è lasciato, non il tavoliere di bearoff predefinito: quello viene servito solo alla prima apertura del pannello in una sessione. Inviare al pannello una posizione dal database prevale su questo ricordo, e <em>BACKSPACE</em> restituisce il tavoliere predefinito in qualsiasi momento. Nulla viene scritto nel database per strada: la bozza non ha identità di posizione, e la sua valutazione viene ricalcolata all’arrivo anziché trasportata.</p>
+<p><strong>Modalità sfida.</strong> La casella <em>Sfida</em>, nella fascia di intestazione, attiva una modalità di allenamento: a ogni modifica della posizione, i valori di tre zone vengono nascosti (sostituiti da « ··· »); un clic su una zona rivela soltanto quella zona. Senza dadi, si tratta della riga del giocatore in basso, della riga del giocatore in alto e della decisione di cubo — la riga Δ compare solo una volta rivelate entrambe le righe dei giocatori. Il blocco di decisione conserva allora le sue tre righe: sono i suoi valori, il suo verdetto e l’evidenziazione dell’opzione migliore a scomparire, altrimenti l’esercizio si risolverebbe cercando la riga in grassetto. Con dadi impostati su una posizione di corsa, la riga EPC di ciascun giocatore si nasconde come prima, ma la terza zona copre allora la riga <em>prima del lancio</em> e la lista delle mosse <strong>insieme</strong>: essendo la lista ordinata dalla mossa migliore alla peggiore, rivelarla parzialmente darebbe già la risposta. Con dadi impostati fuori da una posizione di corsa, questa stessa zona unica copre da sola tutto ciò che il pannello mostra. Ci si può così allenare a stimare l’EPC di ciascun campo, poi a pronunciarsi sul cubo o sulla mossa da giocare, prima di verificare. L’impostazione viene memorizzata.</p>
+<p id="eval-sans-base"><strong>Senza database aperto.</strong> Il pannello Eval non ha bisogno di un database: una volta chiusa la schermata iniziale, vi si può impostare, incollare (<em>CTRL-V</em>) e modificare una posizione, valutarla, farne il rollout e copiarla come testo (<em>CTRL-C</em>) o come immagine (<em>CTRL-X</em>, e <em>CTRL-X CTRL-X</em> con la valutazione). Il clic destro nel pannello propone anche <em>Salvare l’immagine (SVG)…</em> e <em>Salvare l’immagine (PNG)…</em>. Anche la scacchiera della scheda Ricerca è una bozza: si modifica e riceve un incolla senza database, e si passa dall’una all’altra senza perdere nulla; avviare la ricerca, invece, richiede un database. Solo <em>Aggiungi al database</em> e <em>CTRL-S</em> richiedono un database nel pannello, e la barra di stato lo segnala. Nessun database viene creato in background. Nel pannello Eval, come nella scheda Ricerca, il comando <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">XGID=…</span></code> (o <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">OGID=…</span></code>) colloca la posizione sulla scacchiera bozza, senza database. Anche la scheda <strong>Allenamento</strong> si apre senza database: <em>Punteggi</em>, <em>Pedine</em>, <em>Bearoff</em> e <em>Valutazione</em> sono disponibili, <em>Decisione</em> è disattivata con il motivo mostrato, e la sessione terminata non viene registrata (il diario lo indica). La Direzione del torneo richiede un database aperto.</p>
+<p>Per chiudere il pannello Eval, premere <em>CTRL-E</em> o passare a un’altra scheda.</p>
+</section>
+<section id="methodologie-et-hypotheses-du-panneau-eval">
+<span id="epc-methodologie"></span><h3>Metodologia e ipotesi del pannello Eval<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-eval" title="Link to this heading"></a></h3>
+<p>Ogni valore mostrato dal pannello si basa su ipotesi precise, enunciate qui in modo esaustivo.</p>
+<p><strong>Dominio.</strong> La <em>zona corsa</em> — probabilità di vittoria e verdetto del cubo — tratta solo il bearoff puro: tutte le pedine rimaste dei due giocatori nella loro casa. La posizione è valutata <em>prima del lancio</em>; i dadi eventualmente posati sono ignorati.</p>
+<p>I <strong>blocchi EPC</strong>, invece, vanno oltre: un lato ottiene il suo EPC non appena la sua pedina più lontana entra nella tabella a un lato caricata. Con la tabella predefinita (sei punti) è la vecchia regola della casa; con una tabella a otto punti, calcolata dalla scheda <em>Bearoff</em>, un lato con una pedina sull’8 è trattato come gli altri. Nulla è estrapolato: una pedina un punto troppo lontana semplicemente non ha EPC, esattamente come una pedina sul 7 non ne aveva prima. Quando la tabella che ha risposto non è quella a sei punti, il suo nome compare nell’angolo del blocco corsa (« OS-08 ») — senza di esso si leggerebbe « sei » per difetto e si crederebbe il lato interamente rientrato.</p>
+<p><strong>Blocchi EPC (sempre esatti).</strong> L’EPC, il numero medio di lanci e la deviazione standard provengono dalla distribuzione esatta del numero di lanci per far uscire tutte le pedine, letta nella base a un lato di GNUbg (da 6 a 10 punti, 15 pedine, calcolata sulla macchina). EPC = lanci medi × 49/6 (49/6 ≈ 8,167 è la media esatta di pip per lancio, doppi contati quattro volte); wastage = EPC − pip count. L’unica idealizzazione è il <em>gioco ottimale a un lato</em>: ogni giocatore minimizza i propri lanci ignorando l’avversario — è la definizione standard dell’EPC.</p>
+<p><strong>Probabilità di vittoria, regime esatto.</strong> Lettura diretta nel database two-sided disponibile più ampio (TS-06-06 calcolata al primo avvio, file esterno, o TS-06-11 calcolata dalla scheda <em>Bearoff</em>). Questi database risultano da un’analisi retrograda completa sotto gioco two-sided ottimale di entrambi i campi: nessuna ipotesi supplementare, errore limitato alla quantizzazione (&lt; 0,002 %).</p>
+<p><strong>Probabilità di vittoria, regime stimato.</strong> Fuori dal dominio del database: la probabilità si ottiene convolvendo le due distribuzioni one-sided (il giocatore al tiro vince se il suo numero di lanci è inferiore o uguale a quello dell’avversario), poi applicando una correzione polinomiale fissa, calibrata offline rispetto al database TS-06-11. Tre ipotesi:</p>
+<ul class="simple">
+<li><p><strong>indipendenza</strong> dei due processi di uscita — strutturale in corsa, senza contatto non c’è alcuna interazione;</p></li>
+<li><p><strong>gioco one-sided ottimale di entrambi i campi</strong> — è <em>l’approssimazione</em>: in realtà il giocatore in svantaggio devia per giocare la varianza e chi conduce per la sicurezza. L’effetto misurato è un bias antisimmetrico (la convoluzione esagera il vantaggio di chi conduce) che la correzione assorbe statisticamente;</p></li>
+<li><p>la <strong>correzione</strong> è stata calibrata e validata sul dominio dell’oracolo (fino a 11 pedine per giocatore). Errore residuo misurato: deviazione standard 0,05 %, 99º percentile 0,17 %, massimo osservato 0,9 % (in punti di probabilità di vittoria). <strong>Oltre 11 pedine per giocatore, questo limite è estrapolato</strong> — la tendenza è monotona ma nessun oracolo la certifica.</p></li>
+</ul>
+<p><strong>Equità e verdetto di cubo (solo regime esatto).</strong> Le equità mostrate sono quelle del <strong>money game, senza Jacoby</strong>, nel riferimento della letteratura del bearoff. Nel dominio ≤ 11 pedine per giocatore i gammon sono impossibili (ogni campo ha già fatto uscire almeno 4 pedine): non è un’approssimazione. Il verdetto (nessun raddoppio / raddoppio, prende / raddoppio, passa) è ricostruito esattamente dalle equità memorizzate, secondo la regola di GNUbg, validata punto per punto rispetto alla sua analisi.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Le equità cubeful presuppongono un <strong>gioco di cubo ottimale di entrambi i campi fino alla fine</strong>: i recube futuri sono integralmente valorizzati (analisi retrograda completa). Nelle corse molto volatili di fine partita, la cascata di recube consuma quasi tutto il vantaggio del campo al tiro — le equità « senza raddoppio » e « raddoppio/prende » possono allora essere vicine allo zero là dove un motore come XG, il cui modello di cubo non valorizza questa cascata, mostra valori vicini al dead cube (per esempio 2 pedine sulla punta 3 contro 2 pedine sulla punta 2: 62 % di vittoria, D/T esatto +0,006 contro +0,475 per XG). La <strong>decisione</strong> mostrata, invece, coincide con quella dei motori.</p>
+</div>
+<p><strong>Probabilità di vittoria e verdetto, regime valutato.</strong> Fuori dal dominio esatto, la probabilità di vittoria proviene dall’output grezzo di gammonNet (ricerca a 0 ply, poi alla profondità configurata, mai letta in una tabella), e il verdetto da un «Decide» Janowski applicato a questo output — la ricerca <em>gioca</em> la traiettoria anziché riassumerne un’istantanea, ed è proprio ciò che il regime stimato non poteva fare (vedi più sotto) e permette, unico dei tre regimi insieme all’esatto, un verdetto <strong>al punteggio di match</strong>.</p>
+<p>Questo regime è stato misurato, non soltanto supposto, rispetto alla tabella two-sided integrata (<code class="docutils literal notranslate"><span class="pre">TestEvalMeasure</span></code>, 4000 decisioni money campionate, parametri canonici 2 ply k=12): accordo del verdetto money <strong>93,4 %</strong> (3735/4000), ripartito per distanza dal punto di presa di gammonNet — 61,1 % a meno dell’1 % dal punto di presa (la zona più sensibile a un testa o croce), 88,3 % tra l’1 e il 5 %, 91,5 % tra il 5 e il 10 %, 94,0 % tra il 10 e il 20 %, 94,4 % oltre. Scarto di probabilità di vittoria: media 0,85 %, mediana 0,44 %, 95º percentile 3,21 %, massimo 8,30 %. Scarto di equità cubeful: media 0,039, mediana 0,018, 95º percentile 0,151, massimo 0,406. La forma è quella attesa: l’essenziale del disaccordo si concentra esattamente al punto di presa, dove due metodi legittimamente diversi divergono di più su una decisione serrata — non un errore diffuso che costerebbe equità ovunque.</p>
+<p>Questa misura riguarda decisioni <strong>money</strong>, in corsa. Il verdetto al punteggio di match — che solo questo regime sa rendere — e le posizioni di contatto non hanno una misura pubblicata: quanto precede non si trasferisce a questi casi.</p>
+<p><strong>Perché non più profondo di 2 ply?</strong> Perché la misura dice che non rende nulla. Una decisione di pedine a 3 ply valuta la rete <strong>quattordici volte di più</strong> che a 2 ply (159 000 valutazioni contro 11 400, media su venti decisioni reali) e richiede circa quattordici volte più tempo (3,9 s contro 0,27 s su un solo core della stessa macchina). Su quaranta decisioni reali rigiocate a entrambe le profondità, la ricerca più profonda ha cambiato idea <strong>due volte</strong>, e in entrambi i casi il guadagno che si attribuiva valeva al massimo 0,0002 di equità normalizzata: due ordini di grandezza sotto 0,020, la soglia a partire dalla quale eXtreme Gammon parla di errore. Per decisione, tutti i casi insieme, il guadagno è 0,0000.</p>
+<p>I 2 ply restano quindi l’impostazione predefinita; 3 e 4 ply si scelgono nella scheda <em>gammonNet</em> della configurazione. A 3 e 4 ply, come in GNUbg, solo la radice confronta più mosse: a ogni nodo interno, la risposta mantenuta è la migliore a 0 ply, e solo essa viene approfondita. Non si tratta di dire che 3 ply non valga nulla in generale, ma che su <em>questa</em> rete, con questo filtro, non vale l’attesa di chi sta davanti a un pannello. La misura è riproducibile (<code class="docutils literal notranslate"><span class="pre">TestThreePlyMeasure</span></code>) e la conclusione sarà rigiudicata se la rete cambia.</p>
+<p><strong>Perché il verdetto stimato non esiste?</strong> Quanto segue riguarda specificamente il metodo per <em>convoluzione</em> (regime stimato), non il regime valutato descritto sopra: l’equità cubeful è un problema di <em>traiettoria</em> (quando raddoppiare), che nessun riassunto statistico della posizione riesce a catturare — il miglior modello statico misurato lascia un errore residuo (deviazione standard 0,016 di equità, massimo 0,20) sufficiente a invertire tutte le decisioni serrate. Allo stesso modo, la conversione del verdetto al punteggio del match tramite una tabella di equità di match è risultata insufficiente (12 % di disaccordi con l’analisi 2-ply di GNUbg, con veri blunder). Poiché un verdetto sbagliato mostrato con sicurezza è peggio di nessun verdetto, la convoluzione non ha mai avuto il diritto di mostrare un verdetto — è una ricerca che gioca la traiettoria, non un riassunto statistico, a colmare questa lacuna.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Le basi di bearoff sono tabelle matematiche immutabili. blunderDB le calcola da sé, identiche allo strumento <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> di GNUbg — byte per byte — nella scheda <em>Bearoff</em> della configurazione o con <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">generate</span></code>.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="manuel_stats.html" class="btn btn-neutral float-left" title="Statistiche" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="manuel_entrainement.html" class="btn btn-neutral float-right" title="Allenamento, Anki e duello" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

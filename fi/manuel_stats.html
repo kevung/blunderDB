@@ -1,0 +1,585 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tilastot &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Arviointi" href="manuel_eval.html" />
+    <link rel="prev" title="Turnaukset" href="manuel_tournois.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/manuel_stats.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_stats.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_stats.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/manuel_stats.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_stats.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_stats.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Käyttöopas</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Aloitus ja käyttöliittymä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyysi, kommentit ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Ottelut ja litterointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Turnaukset</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tilastot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-stats">Stats-paneeli</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Johdanto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ouverture-du-panneau">Paneelin avaaminen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#barre-de-filtre">Suodatinpalkki</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#toggle-pr-mwc">PR / MWC -vaihto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-rapport-html">HTML-raportti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-tableau-de-bord">Yleiskatsaus-välilehti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-progression">Progression-välilehti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-erreurs">Erreurs-välilehti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#entrainement-dans-le-temps">Harjoittelu ajan myötä</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-ventilations">Erittelyt-välilehti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#etude-et-jeu-reel">Harjoittelu ja oikea peli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-joueurs">Pelaajat-välilehti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regle-d-agregation">Yhdistämissääntö</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mwc-limitations">MWC: rajoitukset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Arviointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Harjoittelu, Anki ja kaksintaistelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Tuonti, alkuperä ja jakaminen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Käyttöopas</a></li>
+      <li class="breadcrumb-item active">Tilastot</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="manuel-stats"></span><h1>Tilastot<a class="headerlink" href="#statistiques" title="Link to this heading"></a></h1>
+<section id="panneau-stats">
+<span id="stats"></span><h2>Stats-paneeli<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
+<section id="introduction">
+<h3>Johdanto<a class="headerlink" href="#introduction" title="Link to this heading"></a></h3>
+<p><strong>Stats-paneeli</strong> mahdollistaa oman pelitason analysoinnin ja kehityksen seuraamisen ajan myötä tietokantaan tuotujen asemien perusteella. Se laskee ja näyttää tunnusluvut <strong>PR</strong> (<em>Performance Rating</em>) ja <strong>MWC cost</strong> (Match Winning Chance cost) kaikille asemille tai suodatetulle osajoukolle.</p>
+<p>Stats-paneeli on erityisen hyödyllinen seuraaviin tarkoituksiin:</p>
+<ul class="simple">
+<li><p><strong>oman tason arviointi</strong> tasovyöhykkeisiin nähden (<em>Maailmanluokka</em>, <em>Ekspertti</em>, <em>Edistynyt</em>…) kokonais-PR:n avulla;</p></li>
+<li><p><strong>oman kehityksen seuranta</strong> turnaus turnaukselta tai ottelu ottelulta Progression-välilehden kaavioiden avulla;</p></li>
+<li><p><strong>omien heikkouksien tunnistaminen</strong>: Erreurs-välilehti näyttää jakauman pelinappulasiirtojen ja kuutiopäätösten välillä sekä virheiden suuruusjakauman;</p></li>
+<li><p><strong>vertailla tietokannan pelaajia</strong> keskenään, yksi rivi pelaajaa kohden, Pelaajat-välilehdellä — kätevä kokonaisen kilpailun seuraamiseen;</p></li>
+<li><p><strong>siirtyminen suoraan asiaankuuluviin asemiin</strong> napsauttamalla mitä tahansa tunnuslukua (drill-down).</p></li>
+</ul>
+<p>Paneelin jokaisen luvun määritelmä, kaava, epävarmuus ja rajat on koottu sivulle <a class="reference internal" href="metriques.html#metriques"><span class="std std-ref">Mittarit ja opiskelutyökalut</span></a>.</p>
+</section>
+<section id="ouverture-du-panneau">
+<h3>Paneelin avaaminen<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
+<p>Avaa Stats-paneeli näin:</p>
+<ul class="simple">
+<li><p>Paina <em>CTRL-D</em>.</p></li>
+<li><p>Kirjoita komento <code class="docutils literal notranslate"><span class="pre">stats</span></code> tai <code class="docutils literal notranslate"><span class="pre">st</span></code> komentoriville.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Paneeli päivittyy automaattisesti aina, kun suodatinta muutetaan. Se ei laske tilastoja uudelleen pelkän PR ↔ MWC -vaihdon yhteydessä: backend laskee molemmat mittarit samanaikaisesti.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3>Suodatinpalkki<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
+<p>Paneelin yläosassa oleva suodatinpalkki mahdollistaa laskennan rajaamisen asemien osajoukkoon.</p>
+<section id="perspective-joueur">
+<h4>Pelaajanäkökulma<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
+<p><strong>Pelaaja</strong>-kenttä suodattaa tilastot analysoidun pelaajan mukaan. Muutaman kirjaimen kirjoittaminen supistaa luettelon niitä sisältäviin nimiin; napsautus tai <em>Enter</em> valitsee pelaajan, <strong>✕</strong> tai tyhjennetty kenttä palauttaa kaikki näkökulmat.</p>
+<p>Suodatin on <strong>yksi ja sama</strong> paneelin kaikille välilehdille ja se säilyy istunnosta toiseen. Sen voi asettaa myös muista paneeleista: pelaajan nimi ottelun otsikossa tai laudan yläpuolisessa palkissa avaa kaikki hänen tilastonsa (turnaukset ja päivämäärät tyhjennetään), ja turnauksen otsikon <strong>Stats</strong>-painike avaa koko kyseisen turnauksen tilastot (päivämäärät tyhjennetään, pelaaja säilyy). Alkupäivää aikaisempi loppupäivä hylätään: kenttä palauttaa voimassa olevan päivämäärän.</p>
+</section>
+<section id="filtres-disponibles">
+<h4>Saatavilla olevat suodattimet<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Turnaukset</strong> — rajaus yhteen tai useampaan turnaukseen. Useita turnauksia voi valita samanaikaisesti.</p></li>
+<li><p><strong>Päivämäärät</strong> — aikaväli (<em>Alkaen</em> … <em>Asti</em>). Jos vain alkupäivä on asetettu, uudemmat asemat sisällytetään.</p></li>
+<li><p><strong>Päätöstyyppi</strong> — Kaikki / Pelinappulasiirrot / Kuutiopäätökset.</p></li>
+<li><p><strong>Ottelun pituus</strong> — rajaus tiettyihin ottelupituuksiin (1, 3, 5, 7, 9, 11, 13, 15, 21 pistettä). Useita pituuksia voi yhdistää.</p></li>
+<li><p><strong>Moottori</strong> ja <strong>Vähimmäissyvyys</strong> — säilytä vain tietyn moottorin tai tiettyä syvyyttä vähintään analysoimat päätökset, plyinä. <em>Moottori</em>-valikko tarjoaa tietokannan analyyseissa esiintyvät moottorit (eXtreme Gammon, GNU Backgammon…).</p></li>
+</ul>
+<p><strong>↺ Palauta</strong>-painike tyhjentää kaikki suodattimet pelaajaa lukuun ottamatta.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Suodattimet tallennetaan blunderDB:n asetuksiin (<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) ja palautetaan seuraavalla käynnistyskerralla.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3>PR / MWC -vaihto<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
+<p>Paneelin yläosassa oleva <strong>PR / MWC</strong> -painike vaihtaa kaikissa välilehdissä näytettävän mittarin.</p>
+<p><strong>PR (Performance Rating)</strong></p>
+<blockquote>
+<div><p>Keskimääräinen equity-virhe laskettua päätöstä kohden kerrottuna 500:lla, kuten eXtreme Gammon ja GNUbg tekevät: PR 5,0 vastaa 0,010 menetettyä equitya päätöstä kohden, eli 10 millipistettä (mpt). Tarkka laskentasääntö — mitkä päätökset kuuluvat nimittäjään, miten pistetilanne muunnetaan — on sivulla <a class="reference internal" href="metriques.html#metrique-pr"><span class="std std-ref">PR (Performance Rating)</span></a>.</p>
+<p>Tasovyöhykkeet, jotka paneeli piirtää kehityskäyrän taakse, ovat <strong>blunderDB:n oma suuntaa antava viitekehys</strong>: yksikään julkaisu ei ole näiden rajojen auktoriteetti. Kunkin vyöhykkeen yläraja on poissulkeva: PR 4 on <em>Edistynyt</em>, ei <em>Ekspertti</em>.</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Taso</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Maailmanluokka</p></td>
+<td><p>&lt; 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>2 – 4</p></td>
+</tr>
+<tr class="row-even"><td><p>Edistynyt</p></td>
+<td><p>4 – 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>Keskitaso</p></td>
+<td><p>6 – 9</p></td>
+</tr>
+<tr class="row-even"><td><p>Harrastelija</p></td>
+<td><p>9 – 12</p></td>
+</tr>
+<tr class="row-odd"><td><p>Aloittelija</p></td>
+<td><p>≥ 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Virheiden vuoksi menetetty kumulatiivinen ottelun voittotodennäköisyys koko suodatetussa aineistossa. Laskettu tietokannan nykyisellä MET:llä, oletuksena blunderDB:hen sisältyvällä Kazaross-XG2:lla. Toisella taulukolla laskettu ottelun pistetilanteen analyysi on ”eri MET” ja jää tilastojen ulkopuolelle.</p>
+<div class="admonition caution">
+<p class="admonition-title">Varoitus</p>
+<p>MWC cost <strong>ei sovellu</strong> <em>money-game</em> -asemiin (joissa ei ole ottelupanosta). Nämä asemat jätetään pois MWC-laskennasta. MWC-arvot riippuvat käytetystä MET:stä; ne eivät ole suoraan vertailukelpoisia eri MET:ejä käyttävien ohjelmistojen välillä.</p>
+</div>
+</div></blockquote>
+<p id="perte-mwc-7pts"><strong>MWC-tappio (7 pisteen ekv.)</strong></p>
+<blockquote>
+<div><p>Todennäköisyys voittaa ottelu, jonka pelaaja on menettänyt kaikilla päätöksillään — siirrot, tuplauskuutio, kuution ottaminen tai hylkääminen — suhteutettuna 7 pisteen otteluun. <em>N</em> pisteen ottelussa, jossa pelaaja on menettänyt <em>L</em> MWC:tä:</p>
+<blockquote>
+<div><p>L₇ = L × √(7 / N)</p>
+</div></blockquote>
+<p>7 pisteen ottelussa tämä on ottelun MWC-tappio, sama jonka eXtreme Gammon näyttää. Neliöjuuri tulee FIBS-kaavan mallista: yhtä vahvalla pelaajalla tappio kasvaa ottelun pituuden neliöjuuren mukaan. 7 pistettä on vertailupituus, koska se on turnauksissa yleisin.</p>
+<p>Se luetaan täydelliseen pelaajaan nähden menetettynä osuutena ottelusta: 12,3 % tarkoittaa, että 50 %:n voittomahdollisuuden sijaan moottoria vastaan pelaajalla oli enää 37,7 % 7 pisteen ottelussa. Työkaluvihje antaa saman Elo-lukuna moottoria vastaan kääntämällä FIBS-kaavan: D = (2000 / √7) × log₁₀(q / (1 − q)), missä q = 0,5 − L₇. 49 %:n tappion jälkeen kaavalla ei ole enää äärellistä arvoa: näytetty Elo on silloin yläraja (»≤«). Kumpikin luku asettaa pelaajat samaan järjestykseen.</p>
+<p>Se täydentää PR:ää korvaamatta sitä: PR jakaa virheet päätösten lukumäärällä, ja tämä lukumäärä riippuu siitä, mitä päätöksenä pidetään (pakotetut siirrot, ilmeiset kuutiopäätökset). MWC-tappio ei laske päätöksiä: kukin virhe painaa sen, mitä se maksoi tilanteessa, jossa se tehtiin.</p>
+<p>Usean ottelun yli (pelaajan tai turnauksen tilastot) tappiot ja pituuksien neliöjuuret lasketaan yhteen ennen suhdetta: L₇ = √7 × ΣL / Σ√N. 7 pisteen ottelu painaa siis enemmän kuin 1 pisteen ottelu, ja yksittäinen ottelu antaa oman arvonsa.</p>
+<p>Yksittäinen ottelu on hyvin kohinainen: muutama iso virhe riittää kaksinkertaistamaan arvon. Merkki ja ottelun yhteenveto (<a class="reference internal" href="manuel_matchs.html#bilan-match"><span class="std std-ref">ottelun yhteenveto</span></a>) antavat 95 %:n välin otostamalla sen pelit uudelleen; kooste (pelaajan tai turnauksen tilastot) antaa sen otostamalla ottelunsa uudelleen; ilman pelaajasuodatinta ottelun kaksi paikkaa muodostavat yhden yksikön, koska ne pelaavat samat asemat. Tarvitaan vähintään kolme peliä tai kolme ottelua, eivätkä ne saa kaikki antaa samaa tappiota: muuten väliä ei ole. Tilastojen ottelukohtaisella rivillä sitä ei siis ole: se on yksi yksikkö. Älä järjestä pelaajia yhden ottelun perusteella.</p>
+<div class="admonition caution">
+<p class="admonition-title">Varoitus</p>
+<p><em>Money-game</em>-pelillä ei ole ottelun pituutta: MWC-tappiota (7 pisteen ekv.) ei ole siinä määritelty, ja paneeli ilmoittaa sen numeron näyttämisen sijaan. Kuten MWC-kustannus, se riippuu MET:stä.</p>
+</div>
+<p>Painikkeen kolmas valinta, <strong>MWC 7 pts</strong>, piirtää tämän tappion Kehitys-välilehdelle ja näyttää sen koontinäytön korteissa sekä Virheet-välilehden siirto-/kuutiovertailussa, jaettuna siirtoihin ja kuutioon samoissa otteluissa (osat summautuvat). Pelaajien sijoituksella on oma sarakkeensa. Kaaviot, joilla ei ole 7 pisteen vastinetta (kuutiotoiminnon mukaan), säilyttävät MWC cost -arvon.</p>
+</div></blockquote>
+<p>PR ↔ MWC -vaihto on välitön: backend ei suorita uudelleenlaskentaa.</p>
+</section>
+<section id="le-rapport-html">
+<span id="rapport-html"></span><h3>HTML-raportti<a class="headerlink" href="#le-rapport-html" title="Link to this heading"></a></h3>
+<p>Paneelin otsikon <strong>HTML-raportti</strong>-painike tuottaa <strong>itsenäisen</strong> asiakirjan: yksi tiedosto, ei ulkoista kuvaa, ei etätyylitiedostoa, ei skriptiä. Kaaviot ovat upotettua SVG:tä, piirretty samalla piirtimellä kuin lauta näytöllä, sinun paletillasi. Se aukeaa missä tahansa selaimessa, kulkee sähköpostitse ja <strong>tulostuu PDF:ksi itse selaimesta</strong> — mikä säästää PDF-generaattorin mukaan ottamiselta sellaisen tuottamiseen, joka kaikilla jo on.</p>
+<p>Se sisältää nykyisen alueen tunnusluvut (asemat, ottelut, lasketut päätökset, kokonais-, siirto- ja kuutio-PR), sitten <strong>kymmenen kalleinta päätöstä</strong>, kukin kaavionsa, kustannuksensa, sen ottelun josta se tulee, ja parhaan siirron kun analyysi sen antaa.</p>
+<p>Asiakirjan rakentaa moottori, ei näyttö: komentorivi (<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">report</span> <span class="pre">--html</span></code>, katso <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Toistuvat virheet</span></a>) ja HTTP-palvelu (reitti <code class="docutils literal notranslate"><span class="pre">stats.report</span></code>) tuottavat saman raportin jollakin käyttöliittymän yhdeksästä kielestä. Vain graafinen sovellus piirtää kaaviot laudan paletilla; kaksi muuta käyttävät oletuspalettia.</p>
+<p>Raportti kantaa Tilastot-paneelin <strong>nykyistä suodatinta</strong>. Raportti joka ei kerro aluettaan on raportti jonka luvut eivät merkitse mitään: aseta suodatin — turnaus, päivämääräväli, pelaaja — ennen kuin tuotat sen.</p>
+</section>
+<section id="onglet-tableau-de-bord">
+<h3>Yleiskatsaus-välilehti<a class="headerlink" href="#onglet-tableau-de-bord" title="Link to this heading"></a></h3>
+<p><strong>Yleiskatsaus</strong>-välilehti antaa tiiviin kuvan keskeisistä tunnusluvuista. Se luetaan ylhäältä alas: tasokortit, sitten se, mitä työstetään (opintosuunnitelma, top blunders), sitten tulkinnat (liukuva PR, ennen/jälkeen opiskelun, etumerkilliset vinoumat). Jokaisen kortin selitys on sen otsikon vihjekuplassa.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_stats_dashboard.png"><img alt="Stats-paneelin Yleiskatsaus-välilehti" src="_images/panel_stats_dashboard.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Yleiskatsaus-välilehti: kokonais-PR, pelinappula-PR, kuutio-PR.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="cartes-de-niveau">
+<h4>Tasokortit<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
+<p>Kolme korttia näyttää PR:n (tai MWC:n) seuraaville:</p>
+<ul class="simple">
+<li><p><strong>PR Yhteensä</strong> — kaikki päätökset (nappulasiirrot + kuutio);</p></li>
+<li><p><strong>Pelinappula-PR</strong> — vain nappulapäätökset;</p></li>
+<li><p><strong>PR Kuutio</strong> — vain kuutiopäätökset.</p></li>
+</ul>
+<p>Kortin napsauttaminen lataa analyysipaneeliin vastaavan osajoukon asemat (drill-down). Neljäs kortti, <strong>MWC-tappio (7 pisteen ekv.)</strong>, antaa tämän tappion riippumatta PR / MWC -painikkeen valinnasta, välillään; se ei lataa mitään.</p>
+<p>Korttien alla summarivi laskee suodattimen turnaukset, ottelut ja päätökset. Turnausten määrä avaa nämä turnaukset Turnaukset-paneelissa: yksittäinen turnaus avautuu suoraan; useampi rajaa luettelon, jossa on silloin painike « N turnausta avattu tilastoista × »: se palauttaa koko luettelon.</p>
+<p>Päätösten määrä avaa niiden asemat; otteluiden määrä avaa nuo ottelut Ottelut-paneelissa, paitsi kun päätöstyyppi tai alkuperäsuodatin on käytössä: silloin se laskee vähemmän otteluita kuin luettelo avaisi ja jää pelkäksi luvuksi.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Päätösten kokonaismäärä näytetään kunkin kortin alaosassa, kun osoitin on sen päällä.</p>
+</div>
+</section>
+<section id="plan-d-etude">
+<span id="plan-etude"></span><h4>Opintosuunnitelma<a class="headerlink" href="#plan-d-etude" title="Link to this heading"></a></h4>
+<p><strong>Opintosuunnitelma</strong>-kortti vastaa kysymykseen ”mitä minun pitäisi harjoitella nyt?”. Toistuvat virheet (Erreurs-välilehti) kertovat, missä suodatin hävisi eniten; ne eivät kerro, missä opiskelu tuottaa eniten. Perheellinen todella vaikeita asemia maksaa kaikille paljon, eivätkä kolme virhettä tee trendiä. Suunnitelma korjaa molemmat.</p>
+<ul class="simple">
+<li><p><strong>Perhe</strong> on toistuvien virheiden ryhmä: pelisuunnitelma, päätöksen laji (nappulat tai kuutio) ja teema. Teemattomat virheet eivät muodosta perhettä: ne eivät osoita mitään opiskeltavaa.</p></li>
+<li><p>Jokainen virhe mitataan <strong>MWC</strong>:nä kuten Match-paneelissa: sen tappio ℓ ja sen <em>vaikeus</em> d, eli tappio, jonka viitepelaaja olisi kärsinyt samassa asemassa (ks. Match-paneelin päätöskohtainen vaikeus). Vapaan pelin virheellä ei ole MWC:tä: se vain lasketaan, ”mittaamattomana”.</p></li>
+<li><p>Perheen <strong>takaisin saatava MWC</strong> on ℓ − d:n summa sen virheiden yli: perheen esiintymistiheys kerrottuna sen keskimääräisellä vaikeuden ylittävällä tappiolla. Se on se, minkä saisit takaisin pelaamalla nämä asemat kuten viitepelaaja. Vältettävien virheiden perhe nousee, asemien perhe, joissa kaikki erehtyvät, laskee.</p></li>
+<li><p><strong>95 %:n luottamusväli</strong> seuraa jokaista lukua. Perhe pääsee suunnitelmaan <strong>5 virheestä</strong> alkaen ja kun väli on kokonaan nollan yläpuolella; suunnitelma järjestetään välin alarajan mukaan, joten yhtä suuressa takaisin saatavassa parhaiten perusteltu perhe kulkee edellä. Muut mainitaan luettelon alla, <strong>vahvistettavina</strong>, ilman sijaa: suunnitelma ei työnnä sinua kohinaan. Sama rivi laskee <strong>suunnitelman ulkopuoliset</strong> virheet (ilman teemaa, arvioimattomat).</p></li>
+</ul>
+<p>Suunnitelman jokainen rivi näyttää sijansa, perheen, palkin, jonka pituus on sen takaisin saatava MWC suhteessa ensimmäisen vastaavaan, tämän MWC:n välineen kanssa ja virheiden määrän. Jokainen suunnitelman asemamäärä (perheittäin, vahvistettavat, suunnitelman ulkopuoliset) on napsautettava: se lataa luetteloon täsmälleen nämä asemat.</p>
+<p>Jokainen perhe tarjoaa kolme toimintoa: <strong>Opiskele</strong> avaa opiskelujonon sen asemilla, suurin ero viitepelaajaan ensin; <strong>Tietovisa</strong> käynnistää <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Harjoittelu</span></a>-paneelin Päätös-harjoituksen kahdellakymmenellä niistä; <strong>Anki</strong> tekee niistä korttipakan. Kortin yläosassa <strong>Tietovisa kolmesta ensimmäisestä perheestä</strong> poimii kaksikymmentä asemaa kolmen kärkiperheen asemista. Suunnitelma seuraa paneelin suodatinta: aseta pelaaja saadaksesi <em>oman</em> suunnitelmasi. Komentorivillä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">plan</span></code> (ks. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Toistuvat virheet</span></a>).</p>
+</section>
+<section id="avant-apres-l-etude">
+<span id="avant-apres-etude"></span><h4>Ennen/jälkeen opiskelun<a class="headerlink" href="#avant-apres-l-etude" title="Link to this heading"></a></h4>
+<p><strong>Ennen/jälkeen opiskelun</strong> -kortti sulkee suunnitelman kehän: maksaako se, mitä olet harjoitellut, sinulle vähemmän oikeissa otteluissa? Ilman sitä opiskelua arvioidaan tuntumalla; sen kanssa perhe, joka ei liiku työstä huolimatta, kertoo, että menetelmää on vaihdettava, ja edistyvä perhe voi luovuttaa paikkansa suunnitelmassa.</p>
+<ul class="simple">
+<li><p>Perhe (suunnitelman perhe) on <strong>opiskeltu</strong> siitä päivästä, jona johonkin sen asemaan kohdistuu ensimmäinen opiskelutoimi: opiskelujonon ”opiskeltu”-merkintä, Anki-kertaus tai tietovisan vastaus. Kortin luominen tai aseman lisääminen kokoelmaan ei lasketa.</p></li>
+<li><p>Jokaiselle opiskellulle perheelle kortti vertaa kahta <strong>ikkunaa</strong>: ennen kyseistä päivää pelattuja otteluita ja sen jälkeen pelattuja (itse päivä jätetään pois). Kummassakin <strong>tappioaste</strong> on perheen virheiden hävitty MWC suhteessa kaikkiin saman pelisuunnitelman ja saman lajin päätöksiin, ja se esitetään MWC-pisteinä sataa päätöstä kohti.</p></li>
+<li><p><strong>Hyöty</strong> on aiempi aste miinus myöhempi aste, 95 %:n välin kanssa. Tuomio on ”parantunut” (tai ”heikentynyt”) vain, jos kummassakin ikkunassa on vähintään <strong>30 päätöstä</strong> ja väli ei sisällä nollaa; muuten se jää tilaan ”epäselvä” tai ”liian vähän päätöksiä”.</p></li>
+</ul>
+<p>Kunkin ikkunan vieressä sarake <strong>Asemat</strong> laskee sen päätösten erilliset asemat ja avaa ne napsautuksella; suluissa oleva luku on yhä päätösten määrä, osuuden nimittäjä.</p>
+<p>Tämä on muutos, ei vaikutus: perhe opiskellaan, koska se maksoi, ja osa hyödystä on regressiota kohti keskiarvoa; mikään ei kontrolloi vastustajia, formaattia tai noppia. Komentoriviltä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">effect</span></code> (ks. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Toistuvat virheet</span></a>).</p>
+</section>
+<section id="biais-signes">
+<span id="id1"></span><h4>Etumerkilliset vinoumat<a class="headerlink" href="#biais-signes" title="Link to this heading"></a></h4>
+<p><strong>Etumerkilliset vinoumat</strong> -kortti kertoo, mihin suuntaan erehdyt, ei vain kuinka paljon. ”Otat liikaa” korjautuu paremmin kuin PR: tarkistettava sääntö on nimetty. Jokainen vinouma on virheellisten päätösten osuus yhteen suuntaan miinus virheellisten osuus toiseen suuntaan, 95 %:n välin kanssa; taipumus nimetään vasta <strong>20 päätöksestä</strong> alkaen ja kun väli ei sisällä nollaa.</p>
+<ul class="simple">
+<li><p><strong>Ottaminen / hylkääminen</strong> — kuution vastauksissa: virheelliset otot (botti hylkää) miinus virheelliset hylkäykset (botti ottaa). Tämä on täsmälleen oma ottoprosenttisi miinus botin ottoprosentti samoissa asemissa.</p></li>
+<li><p><strong>Tuplaukset</strong> — tuplauspäätöksissä: ennenaikaiset tuplaukset (botti ei tuplaa, tai asema on liian hyvä tuplattavaksi) miinus väliin jääneet tuplaukset. Sama vinouma annetaan <strong>tilanteen mukaan</strong> (oma away, vastustajan away, Crawfordin jälkeinen tilanne lasketaan yhdeksi pisteeksi; vapaa peli omassa ruudussaan) tilanteille, joissa on tarpeeksi päätöksiä.</p></li>
+<li><p><strong>Blotit</strong> — kontaktillisissa nappulasiirroissa: siirrot, jotka jättävät enemmän blotteja kuin paras siirto, miinus ne, jotka jättävät vähemmän. Siirto tunnistetaan sen jättämästä laudasta, olipa se kirjoitettu miten tahansa (”13/7(2)”, ”8/5*/4”); siirto, jota siirtogeneraattori ei edelleenkään osaa toistaa, hylätään, ja hylättyjen siirtojen osuus annetaan taulukon alla. Vinouma laskee blotit painottamatta niiden altistusta: ulottumattomissa oleva blotti lasketaan yhtä paljon kuin alttiina oleva.</p></li>
+</ul>
+<p>Jokaisen luvun vieressä sen hinta millipisteinä kertoo, maksaako taipumus; useassa ottelussa pelattu asema lasketaan siinä kussakin pelatulla siirrolla. Vinoumat seuraavat paneelin suodatinta. Komentoriviltä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">biases</span></code> (ks. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Toistuvat virheet</span></a>).</p>
+<p>Jokaista päätösmäärää (kaikki, yhteen suuntaan, toiseen suuntaan) seuraa sarake <strong>Asemat</strong>: näiden päätösten erilliset asemat, jotka napsautus avaa. Useassa ottelussa pelattu asema lasketaan yhdeksi päätökseksi ottelua kohden, mutta yhdeksi asemaksi.</p>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4>Liukuva PR viimeisten N päätöksen perusteella<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
+<p>Rivi PR- (tai MWC-) arvoja, jotka on laskettu viimeisten <em>N</em> päätöksen perusteella (N = 5, 10, 50, 100, 250, 500, 1000), mahdollistaa viimeaikaisen kehityssuunnan mittaamisen. Harmaannetut arvot vastaavat N:ää, joka on suurempi kuin käytettävissä olevien päätösten määrä.</p>
+<p>Arvon napsauttaminen lataa vastaavat viimeiset <em>N</em> asemaa.</p>
+</section>
+<section id="top-blunders">
+<h4>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
+<p>Luettelo 10 pahimmasta virheestä (tai MWC cost), lajiteltuna suuruuden mukaan laskevasti. Rivin napsauttaminen lataa kyseisen aseman analyysipaneeliin.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3>Progression-välilehti<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
+<p><strong>Progression</strong>-välilehti esittää tason kehityksen ajan myötä.</p>
+<p>Välilehden yläreunassa <strong>tavoite</strong>: ”PR &lt; 5 kahdessatoista viikossa”. Tavoite, määräaika ja suuntaus joka kertoo mihin ollaan menossa — ei muuta. Tavoite joka alkaisi arvostella, onnitella tai muistuttaa olisi eri toiminto, ei tämä.</p>
+<p><strong>Ehdota</strong>-painike ehdottaa tavoitetta nykytasosta: sen vyöhykkeen alarajaa jossa olet, eli seuraavaan siirtymistä. ”Vähän parempaa” ehdottaminen ei ankkuroituisi mihinkään; portaan ehdottaminen sanoo jotain — keskitasolta edistyneeksi siirtyminen näkyy ja kerrotaan.</p>
+<p><strong>Suuntaus</strong> on pienimmän neliösumman sovitus otteluidesi PR-lukuihin, projisoituna määräaikaan. Se kieltäytyy lausumasta alle kolmen ottelun: suoran vetäminen kahden pisteen välille olisi väite jota ei voi pitää. Ja lause sanoo sen joka kerta — <em>suuntaus ei ole ennuste</em>.</p>
+<p>Tavoite tallennetaan <strong>tietokannan metatietoihin</strong>, ei asetuksiin: se koskee sitä kirjastoa, joten se seuraa tiedostoa eikä konetta. Ei skeemamuutosta: <code class="docutils literal notranslate"><span class="pre">metadata</span></code> on jo avain/arvo-taulu, jonka lukevat sekä <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> että demoni.</p>
+<section id="courbe-par-tournoi">
+<h4>Turnauskohtainen viivakaavio<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
+<p>Viivakaavio näyttää jokaisen turnauksen PR:n (tai MWC:n): yksi piste turnausta kohden, nimellään merkittynä, turnauksen päivämäärän mukaisessa aikajärjestyksessä — sen puuttuessa vanhimman ottelun päivämäärän mukaan (Y-akseli: mittarin arvo). Värilliset kaistat osoittavat tasorajat.</p>
+<p>Kaavion pisteen napsauttaminen avaa pikavalikon, jossa on kaksi vaihtoehtoa:</p>
+<ul class="simple">
+<li><p><strong>Avaa turnaus</strong> — avaa turnauksen Turnaukset-paneelissa.</p></li>
+<li><p><strong>Avaa asemat</strong> — lataa turnauksen kaikki asemat analyysipaneeliin.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4>Ottelukohtainen hajontakaavio<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
+<p>Hajontakaavio esittää jokaisen ottelun (X-akseli: päivämäärä, Y-akseli: PR tai MWC). Pisteen koko on verrannollinen ottelun päätösten määrään. Ottelu, jolla ei ole päivämäärää, ei näy kaaviossa.</p>
+<p>Pisteen napsauttaminen avaa pikavalikon:</p>
+<ul class="simple">
+<li><p><strong>Avaa ottelu</strong> — avaa ottelun Ottelut-paneelissa.</p></li>
+<li><p><strong>Avaa asemat</strong> — lataa ottelun kaikki asemat analyysipaneeliin.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3>Erreurs-välilehti<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
+<p><strong>Erreurs</strong>-välilehti erittelee virheiden lähteet.</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_stats_errors.png"><img alt="Stats-paneelin Errors-välilehti" src="_images/panel_stats_errors.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Errors-välilehti: PR:n jakautuminen kuutiotoiminnon mukaan.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="erreurs-recurrentes">
+<h4>Toistuvat virheet<a class="headerlink" href="#erreurs-recurrentes" title="Link to this heading"></a></h4>
+<p>Välilehden alussa taulukko ryhmittelee nykyisen suodattimen virheet — eli yhden pelaajan virheet, kun pelaaja on suodatettu — <strong>pelisuunnitelman</strong> ja <strong>teeman</strong> mukaan, kallein ensin. Se vastaa kysymykseen ”missä menetän eniten?”: esimerkiksi ”pito · liikaa blotteja”.</p>
+<ul class="simple">
+<li><p><strong>Virhe</strong> on laskettu päätös, jonka kustannus yltää kirjaston <em>Virhe</em>-rajaan.</p></li>
+<li><p><strong>Pelisuunnitelma</strong> on vuorossa olevan pelaajan, sellaisena kuin Erittelyt-välilehti sen esittää.</p></li>
+<li><p>Nappulasiirron <strong>teema</strong> on se, jonka <a class="reference internal" href="manuel_bibliotheque.html#panneau-analyse"><span class="std std-ref">Analyysipaneelin</span></a> selityslauseen säännöt nimeävät: gammon aliarvioitu, liikaa blotteja, pistettä ei tehty, liian passiivinen. Kuutiopäätöksen teema on virheen suunta, kuten jäljempänä kuutiovirheiden suunnassa: ohitettu tuplaus, ennenaikainen tuplaus, virheellinen pass, virheellinen take.</p></li>
+<li><p>Virhettä, jota mikään sääntö ei nimeä varmasti, ei arvata: se jää pois luokituksesta ja näkyy erikseen taulukon alla, yhtenä rivinä pelisuunnitelmaa kohti (»tunnistamatonta teemaa ei ole: N virhettä, hinta X»), sekin napsautettavana. Tämä jäännös on usein raskain, koska selitys ottaa kantaa vasta 60 mp:stä alkaen, <em>Virhe</em>-kynnyksen yläpuolella: muiden joukossa luokiteltuna se johtaisi taulukkoa, joka ei kertoisi mitään.</p></li>
+<li><p><strong>Kustannus</strong> on osuus suodattimen PR:stä, jonka ryhmä edustaa: ryhmän virheisiin sovellettu PR-kaava suhteutettuna kaikkiin laskettuihin päätöksiin. Ryhmien kustannukset eivät siis koskaan ylitä PR:ää.</p></li>
+</ul>
+<p>Ryhmää tai sen virheiden määrää napsauttamalla ladataan sen asemat, kalleimmasta halvimpaan. Teema lasketaan uudelleen jokaisella näytöllä eikä sitä tallenneta koskaan: pelisuunnitelman tavoin se on johdettu tunniste, jota ei voi muokata. Komentoriviltä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">recurring</span></code> (ks. <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Toistuvat virheet</span></a>).</p>
+<p>Jokainen rivi tarjoaa kolme tapaa siirtyä virheestä opiskeluun: <strong>Tietovisa tästä ryhmästä</strong> käynnistää <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Harjoittelu</span></a>-paneelin Päätös-harjoituksen ryhmän asemilla, <strong>Anki-pakka</strong> tekee niistä korttipakan, <strong>Kokoelma</strong> tallentaa ne uuteen kokoelmaan. Taulukon yläpuolella <strong>Tietovisa kolmesta pahimmasta ryhmästäni</strong> arpoo kaksikymmentä asemaa kolmen kalleimman ryhmän asemista. Komentorivillä <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span> <span class="pre">--quiz</span></code> arpoo nämä asemat ja <code class="docutils literal notranslate"><span class="pre">--deck</span></code> luo pakan.</p>
+</section>
+<section id="repartition-par-action-de-videau">
+<h4>Jakauma kuutiotoimen mukaan<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
+<p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
+<p>Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, <strong>vain ne, joissa on virhe</strong> (drill-down).</p>
+</section>
+<section id="direction-des-erreurs-de-videau">
+<h4>Kuutiovirheiden suunta<a class="headerlink" href="#direction-des-erreurs-de-videau" title="Link to this heading"></a></h4>
+<p>Yllä oleva jakauma kertoo, <em>paljonko</em> kuutiopäätökset maksavat; tämä taulukko kertoo, <em>mihin suuntaan</em> ne menevät pieleen.</p>
+<p>Kuutioasemaan liittyy kaksi eri pelaajan tekemää päätöstä, jotka esitetään tässä kahtena rivinä:</p>
+<ul class="simple">
+<li><p><strong>Tarjoaminen</strong> — kuutiota hallussaan pitävä pelaaja tuplaa tai jättää tuplaamatta. Hänen virheitään ovat <strong>jääneet tuplaukset</strong> (olisi pitänyt tuplata) ja <strong>ennenaikaiset tuplaukset</strong> (ei olisi pitänyt).</p></li>
+<li><p><strong>Vastaaminen</strong> — pelaaja, jolle kuutio tarjotaan, ottaa vastaan tai luovuttaa. Hänen virheitään ovat <strong>virheelliset luovutukset</strong> (oikea vastaanotto luovutettiin) ja <strong>virheelliset vastaanotot</strong> (oikea luovutus otettiin vastaan).</p></li>
+</ul>
+<p>Kaksi riviä pidetään erillään tarkoituksella: pelaaja voi aivan hyvin tuplata myöhään <em>ja</em> ottaa vastaan löysästi, ja yksi ainoa tunnusluku kutsuisi sitä ”tasapainoiseksi” ja hukkaisi tiedon molemmat puoliskot.</p>
+<p>Kussakin ruudussa näkyy päätösten määrä; työkaluvihje antaa kertyneen menetetyn equityn. Ruudun napsautus lataa vastaavat asemat. Nollassa oleva ruutu ei ole napsautettava.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Tämä taulukko laskee päätöksiä, se ei tuomitse. Se, mistä erosta alkaen taipumus ansaitsee nimen, riippuu otoskoosta ja vertailukohdasta, eivätkä ne ole moottorin tietoja.</p>
+</div>
+</section>
+<section id="repartition-checker-cube">
+<h4>Checker / Cube -vertailu<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<p>Vertailukaavio asettaa rinnakkain pelinappulasiirtojen ja kuutiopäätösten PR:n. Pylvään napsauttaminen lataa osajoukon asemat, joissa on virhe.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4>Virheiden suuruusjakauman histogrammi<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<p>Histogrammi jakaa virheet niiden suuruuden mukaan millipisteinä (mpt, luokat: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Pylvään napsauttaminen lataa luokan asemat.</p>
+</section>
+</section>
+<section id="entrainement-dans-le-temps">
+<span id="stats-entrainement"></span><h3>Harjoittelu ajan myötä<a class="headerlink" href="#entrainement-dans-le-temps" title="Link to this heading"></a></h3>
+<p><strong>Harjoittelu</strong>-välilehti asettaa rinnakkain samoissa kalenteri-ikkunoissa — valintasi mukaan <strong>viikko</strong> tai <strong>kuukausi</strong> — kolme sarjaa, jotka mittaavat edistymistä kolmella tavalla:</p>
+<ul class="simple">
+<li><p><strong>visan PR</strong>: Harjoittelu-paneelin Päätös-harjoituksen istuntojen PR, painotettuna arvioitujen päätösten määrällä. Se lasketaan todellisen PR:n asteikolla, joten se on vertailukelpoinen sen kanssa;</p></li>
+<li><p>nykyisen suodattimen <strong>otteluiden PR</strong>, painotettuna päätösten määrällä;</p></li>
+<li><p><strong>Ankin pysyvyys</strong>: jo opittujen korttien kertausten osuus, jotka on arvioitu <em>Vaikea</em> tai paremmaksi, luettuna oikealta akselilta (%).</p></li>
+</ul>
+<p>Kaavion alla <strong>visan PR pelisuunnitelman mukaan</strong> listaa kirjaston asemista arvotut visan päätökset, huonoimmat suunnitelmat ensin, sekä viimeisen ikkunan PR:n, jossa suunnitelmaa pelattiin.</p>
+<p>Sulkeissa kunkin arvon takana oleva päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa — viiva, ei nolla. Ikkunan otteluiden päätösten määrä avaa niiden asemat. Suodatin rajaa vain ottelut; visan ja Ankin lokit ovat omiasi eivätkä sisällä pelaajaa. Mitään ei tallenneta lisää: kolme sarjaa luetaan olemassa olevista lokeista. Komentorivillä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">stats</span> <span class="pre">training</span></code> (katso <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Toistuvat virheet</span></a>).</p>
+</section>
+<section id="onglet-ventilations">
+<h3>Erittelyt-välilehti<a class="headerlink" href="#onglet-ventilations" title="Link to this heading"></a></h3>
+<p><strong>Erittelyt</strong>-välilehti jakaa samat päätökset, jotka kokonaisluvut laskevat, neljälle akselille. Yksikään niistä ei määrittele uudelleen, mikä on päätös: se olisi toinen PR samalla nimellä.</p>
+<ul class="simple">
+<li><p><strong>Pelin vaiheen mukaan</strong> — avaus, keskipeli, kilpajuoksu, nappuloiden poisto. Tämä vastaa kysymykseen ”PR:ni kilpajuoksussa verrattuna PR:ääni kontaktissa”. Merkintä lasketaan laudasta (katso <a class="reference internal" href="manuel_bibliotheque.html#panneau-recherche"><span class="std std-ref">Hakupaneeli</span></a>); tietokanta, jonka vaiheita ei ole koskaan laskettu, sijoittaa kaiken kohtaan <em>Luokittelematon</em>, ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> täyttää sen.</p></li>
+<li><p><strong>Pelisuunnitelman mukaan</strong> — kilpajuoksu, blitz, ankkuri, backgame, muuri muuria vastaan… Tämä on se erittely, jota varten luokittelija on olemassa: ”missä häviän eniten?”, suunnitelma suunnitelmalta. Sama johdettu merkintä kuin vaiheella, samat varaukset, ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> täyttää sen samoin.</p></li>
+<li><p><strong>Merkinnän mukaan</strong> — kommentteihin kirjoitetut <code class="docutils literal notranslate"><span class="pre">#sana</span></code>. Asemalla voi olla useita: <strong>nämä rivit eivät summaudu kokonaismäärään</strong>, ja paneeli sanoo sen taulukon alla. Merkintä nimeää, se ei jaa osiin.</p></li>
+<li><p><strong>Tilanteen mukaan</strong> — molempien puolten puuttuvat pisteet, luettuna vuorossa olevan puolelta, siis päättäjän puolelta. <em>Money</em>-rivi on raha peli. Alle kymmenen päätöksen solu on <strong>harmaannettu, määrä yhä näkyvissä</strong>, eikä piilotettu: liian vähän luettavaksi, mutta puute pysyy tarkistettavana.</p></li>
+</ul>
+<p><strong>Asemat</strong>- ja <strong>Törkeät virheet</strong>-sarakkeet laskevat erillisiä asemia, ja jokainen luku on linkki: napsautus lataa täsmälleen nämä asemat analyysipaneeliin, kuten tilarivin laskurit. <em>Törkeät virheet</em> laskee asemat, joissa vähintään yksi päätös on törkeä virhe. Useassa ottelussa pelattu asema (esimerkiksi avaus) lasketaan siinä vain kerran; <strong>Päätökset</strong>-sarake laskee sen joka kerta, koska se on PR:n nimittäjä.</p>
+<p>Jokaisella rivillä on <strong>95 %:n luottamusväli</strong> (sarake <em>95 %:n LV</em>), joka korvaa kiinteän kymmenen päätöksen kynnyksen: se kertoo, mitä PR on arvoltaan, ei vain montako päätöstä sen takana on. Se tekee uudelleenotannan valinnan <strong>otteluista</strong>, ei päätöksistä eikä peleistä: ottelun pelit jakavat vastustajan, istunnon ja väsymyksen, ja niiden laskeminen riippumattomiksi antaisi liian kapean välin; ilman pelaajasuodatinta ottelun kaksi paikkaa muodostavat yhden yksikön. Rivi, joka perustuu alle kolmeen otteluun tai jonka ottelut antavat kaikki saman PR:n, on ilman väliä ja himmennetty, vaikka päätöksiä olisi paljon: kaksi ottelua ei kerro hajonnasta mitään, ja identtiset ottelut kertovat vain, että ne ovat samaa mieltä, ei että PR olisi tarkka. Opiskeluun: asemaperhe, jonka väli pysyy kokonais-PR:si yläpuolella, on todettu heikkous; rivi, jolla on leveä väli, ei vielä oikeuta opintosuunnitelmaa. Koontinäytön kokonais-PR:llä on sama väli kortin alla.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Pistekohtaisessa erittelyssä Crawford-jälkeinen tilanne luetaan 1-away-tilanteeksi: Crawford-peli ja Crawford-jälkeiset pelit samalla pistetilanteella päätyvät samaan soluun.</p>
+</div>
+</section>
+<section id="etude-et-jeu-reel">
+<h3>Harjoittelu ja oikea peli<a class="headerlink" href="#etude-et-jeu-reel" title="Link to this heading"></a></h3>
+<p>Komento <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">study</span> <span class="pre">--days</span> <span class="pre">30</span></code> asettaa kolme lukua rinnakkain, pelisuunnitelma kerrallaan: kuinka monta <strong>eri asemaa</strong> jaksolla kerrattiin, mikä PR oli <strong>ennen</strong> sitä, mikä PR on <strong>sen jälkeen</strong>.</p>
+<p>Kolme lukua, eikä neljättä. <strong>Ei hyötysaraketta eikä nuolta</strong>, koska mikään tässä ei vakioi mitään: pelaaja on voinut kohdata vahvempia vastustajia, vaihtaa formaattia tai yksinkertaisesti pelata enemmän kilpajuoksuja tänä kuussa. Yhteys on lukijan tekemä; efektiä julistava sarake väittäisi syy-yhteyttä, jota nämä tiedot eivät kanna. Luvut sen sijaan ovat tarkkoja.</p>
+<p>Kertaukset lasketaan <strong>eri asemina</strong>: neljä kertaa kuussa kerrattu kortti on yksi opiskeltu asema, ja toistojen laskeminen saisi kuukauden pänttäämisen näyttämään kuukauden kattavuudelta. PR:n päätökset sen sijaan lasketaan kaikki — jokainen tehtiin kerran. Alle kymmeneen päätökseen nojaava PR näkyy merkkinä <code class="docutils literal notranslate"><span class="pre">—</span></code>, otoskoko näkyvissä vieressä.</p>
+</section>
+<section id="onglet-joueurs">
+<h3>Pelaajat-välilehti<a class="headerlink" href="#onglet-joueurs" title="Link to this heading"></a></h3>
+<p>Viisi edellistä välilehteä kuvaavat <strong>yhtä</strong> pelaajaa; <strong>Pelaajat</strong>-välilehti vertaa kaikkia. Se näyttää yhden rivin kutakin tietokannan pelaajaa kohti, mikä vastaa koko kilpailua seuraavan järjestäjän tarpeeseen yksittäisen pelaajan sijaan.</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_stats_players.png"><img alt="Stats-paneelin Players-välilehti" src="_images/panel_stats_players.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Players-välilehti: yksi rivi per pelaaja, lajiteltavissa minkä tahansa sarakkeen mukaan.</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Sarakkeet järjestyksessä:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Sarake</p></th>
+<th class="head"><p>Merkitys</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Pelaaja</p></td>
+<td><p>Nimi <strong>sellaisena kuin se otteluissa esiintyy</strong>. Kahdella kirjoitusasulla tallentunut pelaaja näkyy kahdella rivillä, ellei toinen ole toisen alias (asetusten Korpus-osio): rivillä on silloin kanoninen nimi.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ottelut</p></td>
+<td><p>Valitulla ajanjaksolla pelattujen otteluiden määrä.</p></td>
+</tr>
+<tr class="row-even"><td><p>V–T</p></td>
+<td><p>Voitot ja tappiot. Kesken jäänyt ottelu (katkennut loki, luovutus) ei laske kumpaakaan: V + T voi siis olla pienempi kuin otteluiden määrä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Päätökset</p></td>
+<td><p>Laskettujen päätösten määrä — PR:n nimittäjä. Tämä sarake kertoo, mitä viereiset luvut ovat arvoltaan: kahdestatoista päätöksestä laskettu PR ei merkitse mitään.</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>Kokonais-Performance Rating.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nappula-PR, kuutio-PR</p></td>
+<td><p>PR eriteltynä päätöstyypin mukaan.</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie</p></td>
+<td><p>Snowie Error Rate (katso <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Karkeat virheet</p></td>
+<td><p>Kirjaston blunderin kynnykseen yltävien virheiden määrä (oletuksena 0,100 EMG). Tämän luvun napsauttaminen lataa nämä asemat analyysipaneeliin.</p></td>
+</tr>
+<tr class="row-even"><td><p>Tuuri</p></td>
+<td><p>Keskimääräinen tuuri heittoa kohden, millipisteinä (mpt), etumerkillä: positiivinen, jos nopat olivat suotuisat.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Käyttö:</p>
+<ul class="simple">
+<li><p><strong>Järjestä</strong> — napsauta sarakeotsikkoa. Taulukko avautuu nousevan PR:n mukaan, paras pelaaja ensin, ja muistaa viimeksi valitun järjestyksen istunnosta toiseen. Pelaajat, joista ei ole mitattu mitään, pysyvät alimpina järjestyssuunnasta riippumatta: tiedon puutteesta johtuva nolla ei ole täydellinen suoritus.</p></li>
+<li><p><strong>Suodata sarakkeittain</strong> — otsikoiden alla oleva kenttärivi suodattaa kunkin sarakkeen: nimen osa tekstille, raja numeroille (<code class="docutils literal notranslate"><span class="pre">&gt;=500</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;500</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;2.5</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=2</span></code>), väli (<code class="docutils literal notranslate"><span class="pre">3-7</span></code>) tai tarkka arvo (<code class="docutils literal notranslate"><span class="pre">5</span></code>). Lukukelvoton kenttä saa punaisen kehyksen eikä suodata mitään; arvo, jota ei ole koskaan mitattu, ei läpäise mitään rajaa. Sarakesuodattimet kestävät istunnon ajan. Pelaajien <strong>sijoitus</strong> luetaan näin: järjestys PR:n mukaan, <em>Päätökset</em>-sarake suodatettuna <code class="docutils literal notranslate"><span class="pre">&gt;=500</span></code>. Kaikki Stats-paneelin taulukot — erittelyt, korpus, toistuvat virheet, miettimisaika, harjoittelu, vinouma, opiskelun vaikutus — järjestetään ja suodatetaan samalla tavalla.</p></li>
+<li><p><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Yleiskatsaus-välilehdelle.</p></li>
+<li><p><strong>Avaa omat päätöksensä</strong> — päätösten määrä avaa niiden asemat taulukon suodattimien alla. Otteluiden määrä ja V–H-tase pysyvät pelkkinä lukuina: ne laskevat myös ottelut, joissa ei ole analysoitua päätöstä, eikä mikään otteluluettelo toista niitä.</p></li>
+<li><p><strong>Rajaa ajanjaksoa</strong> — päivämäärä-, turnaus- ja ottelupituussuodattimet toimivat tavalliseen tapaan, joten taulukon voi rajata yhden kilpailun päiviin.</p></li>
+<li><p><strong>Vertaa kahta pelaajaa</strong> — rastita ensimmäisen sarakkeen ruutu kahdella rivillä. Taulukon yläpuolelle ilmestyy lohko, joka asettaa heidän lukunsa vastakkain; kolmannen pelaajan rastittaminen korvaa vanhemman kahdesta. Ruutu ei valitse riviä: rastitus vertaa, napsautus avaa tiedot.</p></li>
+<li><p><strong>Katso paikat, joissa toinen pelasi paremmin</strong> — vertailulohkon painike listaa paikat, jotka molemmat pelaajat joutuivat pelaamaan ja joissa toinen pelasi hyvin (kirjaston Virhe-kynnyksen alapuolella) ja toinen ei, suurin ero ensin; pelaaja arvioidaan paikan huonoimman siirtonsa mukaan. <em>Avaa nämä paikat</em> lataa ne analyysinäkymään. Komentorivi ja palvelin antavat saman listan (<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">contrast</span></code>).</p></li>
+<li><p><strong>Pisteytä siirrot ensin</strong> — luettelo vertaa vain siirtoja, joiden virhe on pisteytetty, eikä mikään tuonti pisteytä niitä: pisteytys tehdään pyynnöstä. Niin kauan kuin pisteytettäviä on jäljellä, lohko näyttää niiden määrän ja painikkeen <em>Pisteytä siirrot</em>; komentorivi tekee saman komennolla <code class="docutils literal notranslate"><span class="pre">repair</span> <span class="pre">--move-errors</span></code>.</p></li>
+</ul>
+<p>Lohkossa <strong>vain suhdeluvut saavat tuomion</strong>, ja parempi kahdesta lihavoidaan. Kolme lukua ei saa sitä koskaan, ja syy kannattaa sanoa. <strong>Onni</strong> ei ole ansio: onnekkaampi pelaaja ei ole parempi. <strong>Ottelut, tulos ja päätökset</strong> kertovat mitä suhdeluvut ovat arvoltaan, mutta niiden kilpailuttaminen antaisi voiton sille, joka vain pelasi enemmän. <strong>Blundereiden määrää</strong> ei verrata raakana — kaksitoista tuhannesta päätöksestä on parempi kuin kymmenen sadasta —, joten lohko lisää rivin <em>Blunderit / 100 päät.</em>, joka on vertailukelpoinen, ja jättää määrän viereen taustaksi.</p>
+<p>Tasatulos ei ole voitto: sitä ei lihavoida kummallakaan puolella. Suhdeluku, jonka takana ei ole mitään, näkyy merkkinä ”—” eikä ratkaise mitään.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Tässä välilehdessä <strong>päätöstyypin</strong> valinta on pois käytöstä: taulukko jakaa nappula- ja kuutiopäätökset jo erillisiin sarakkeisiin. Suodatinpalkin pelaaja pysyy aktiivisena: taulukko näyttää aina kaikki pelaajat, ja tämän pelaajan rivi korostetaan ja tuodaan näkyviin.</p>
+</div>
+<p>Paneelin <strong>Corpus</strong>-välilehdellä, komentorivillä ja daemonin API:n kautta (katso <a class="reference internal" href="cli_stats.html#cli-stats"><span class="std std-ref">stats — Toistuvat virheet</span></a>) on kaksi korpusnäkymää: kahden pelaajan <strong>kasvokkain</strong>-vertailu (yhteiset ottelut, kummankin PR, tase) ja liukuva <strong>PR kalenteri-ikkunassa</strong> (1, 3, 6 tai 12 kuukautta). Corpus-välilehti laskee kunkin näkymän pyydettäessä nykyisen suodattimen alla. <strong>Sijoitus</strong> PR:n mukaan luetaan Pelaajat-välilehdeltä järjestettynä PR:n mukaan ja suodatettuna <em>Päätökset</em>-sarakkeelta; komentorivi ja API antavat sen myös (<code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">ranking</span></code>). <strong>Alkuperäsuodatin</strong> (suodatinpalkin kentät <em>Moottori</em> ja <em>Vähimmäissyvyys</em>) rajaa tilastot niin analysoituihin päätöksiin; se koskee jokaista päätöstä, ja sen koskettamat luvut lasketaan silloin uudelleen päätöksistä. Kasvokkain-vertailu ja ikkunakohtainen PR eivät hyväksy sitä: niin kauan kuin se on aktiivinen, ne kieltäytyvät laskemasta. Kuten muu palkki, se säilyy istunnosta toiseen.</p>
+<p>Corpus-välilehdellä jokainen rivi avaa sen, minkä se tiivistää. Kaksinpelin tase avaa sen ottelut Ottelut-paneelissa, jossa on silloin painike ”N ottelua avattu Statsista ×”: se palauttaa koko luettelon; kaksinpelirivi avaa ottelunsa. Kaksinpelin ensimmäinen pelaaja on alun perin suodatinpalkin pelaaja. Aikaikkunan rivi ja sen päätösten määrä avaavat sen asemat, sen otteluiden määrä avaa ottelut. Stats-paneelin asemien määrä, millä välilehdellä tahansa, poistuu ensin käynnissä olevasta ottelusta ennen luettelonsa avaamista; komento <code class="docutils literal notranslate"><span class="pre">m</span></code> avaa ottelun sen jälkeen uudelleen tallennetun siirron kohdalla.</p>
+<div class="admonition important">
+<p class="admonition-title">Tärkeä</p>
+<p>Viiva (”—”) merkitsee arvoa, jota <strong>ei ole koskaan mitattu</strong>; sitä ei pidä sekoittaa nollaan. Näin on erityisesti Tuuri-sarakkeen kohdalla kaikissa otteluissa, jotka tuotiin ennen skeemaversiota 2.15.0: tuuria ei silloin tallennettu, eikä mikään salli sen palauttamista jälkikäteen. Lähdetiedoston tuominen uudelleen ei riitä: tuonti tunnistaa kaksoiskappaleen ja ottaa käyttöön vain uudet opiskelumerkinnät (raportti kertoo niiden määrän). Ottelu on poistettava ja tuotava sitten uudelleen. Muodot, jotka eivät sitä kuljeta (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>), eivät sitä koskaan tarjoa.</p>
+</div>
+</section>
+<section id="regle-d-agregation">
+<h3>Yhdistämissääntö<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Tärkeä</p>
+<p>Turnauksen (tai minkä tahansa osajoukon) PR lasketaan <strong>summa/summa</strong>-säännöllä — ei koskaan yksittäisten otteluiden PR:ien keskiarvona.</p>
+<p>Kaava:</p>
+<div class="math notranslate nohighlight">
+\[PR_{turnaus} = 500 \times \frac{\sum_{i} \text{virhe}_i}{\text{päätösten kokonaismäärä}}\]</div>
+<p><strong>Esimerkki:</strong> pelaaja pelaa kaksi ottelua turnauksessa —</p>
+<ul class="simple">
+<li><p>Ottelu A: 10 päätöstä, 0,100 ekviteettiä menetetty → PR = 5,0</p></li>
+<li><p>Ottelu B: 90 päätöstä, 0,540 ekviteettiä menetetty → PR = 3,0</p></li>
+</ul>
+<p>Naiivi PR:ien keskiarvo: (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(virheellinen)</em></p>
+<p>Summa/summa-sääntö: 500 × 0,640 / (10 + 90) = <strong>3,2</strong> <em>(oikein)</em></p>
+<p>Summa/summa-sääntö on ainoa, joka käsittelee oikein otteluiden vaihtelevat pituudet (21 pisteen ottelu painaa enemmän kuin 1 pisteen ottelu).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3>MWC: rajoitukset<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Oletuksena MWC cost lasketaan <strong>Kazaross-XG2-MET</strong>:stä, kilpailullisen backgammonin de facto -viitetaulukosta. Tulokset eivät ole suoraan verrattavissa ohjelmistoihin, jotka käyttävät muita METejä. Se on sama taulukko, luettuna saman sisääntulokohdan kautta, jota sisäänrakennettu arviointimoottori käyttää pistetilanteen mukaisiin kuutiopäätöksiinsä: tilastot ja moottori eivät voi poiketa toisistaan tässä. Se antaa omat arvonsa 25 tehtävään pisteeseen asti kummallakin puolella; sen ylitse sitä jatketaan Zadehin taulukolla, joka lasketaan kuten GNUbg:ssä, 64 pisteeseen asti.</p></li>
+<li><p><em>Money-game</em> -asemat (joissa ei ole ottelun pistetilannetta) <strong>jätetään pois</strong> MWC-laskennasta. Jos tietokantasi sisältää paljon money-game-asemia, MWC cost voi olla aliarvioitu tai ei käytettävissä.</p></li>
+<li><p>MWC cost on kumulatiivinen koko suodatetussa aineistossa — ei päätöskohtainen tunnusluku. Se mittaa virheidesi kokonaisvaikutusta voittomahdollisuuksiisi.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_tournois.html" class="btn btn-neutral float-left" title="Turnaukset" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_eval.html" class="btn btn-neutral float-right" title="Arviointi" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

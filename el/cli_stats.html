@@ -1,0 +1,332 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Στατιστικά &mdash; Τεκμηρίωση του blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9e57d487"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Διαχείριση της βάσης δεδομένων" href="cli_admin.html" />
+    <link rel="prev" title="Μελέτη, μαθήματα και εξάσκηση" href="cli_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/cli_stats.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_stats.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_stats.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/cli_stats.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_stats.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_stats.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_stats.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_stats.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Μετρικές και εργαλεία μελέτης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Γενική σύνταξη</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Διαθέσιμες εντολές</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Εισαγωγή, εξαγωγή, μεταφορά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Βιβλιοθήκη: αναζήτηση, λίστες, συλλογές</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Αγώνες, τουρνουά και παρτίδες</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Ανάλυση και μηχανή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Μελέτη, μαθήματα και εξάσκηση</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Στατιστικά</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stats-erreurs-recurrentes">stats — Επαναλαμβανόμενα λάθη</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Διαχείριση της βάσης δεδομένων</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Παραδείγματα ροών εργασίας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Κωδικοί εξόδου</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+      <li class="breadcrumb-item active">Στατιστικά</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="statistiques">
+<span id="cli-stats-chapitre"></span><h1>Στατιστικά<a class="headerlink" href="#statistiques" title="Link to this heading"></a></h1>
+<section id="stats-erreurs-recurrentes">
+<span id="cli-stats"></span><h2>stats — Επαναλαμβανόμενα λάθη<a class="headerlink" href="#stats-erreurs-recurrentes" title="Link to this heading"></a></h2>
+<p>Ομαδοποιεί τα λάθη ενός φίλτρου ανά σχέδιο παιχνιδιού και ανά θέμα, με πρώτο το πιο δαπανηρό: ο πίνακας <em>Επαναλαμβανόμενα λάθη</em> της καρτέλας Errors του πίνακα Stats (βλ. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>). Τα καθολικά στατιστικά παραμένουν στο <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code> — Μόνο οι αποφάσεις αυτού του παίκτη.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opponent</span> <span class="pre">&lt;nom&gt;</span></code> — Μόνο οι αγώνες που παίχτηκαν εναντίον αυτού του παίκτη· με το <code class="docutils literal notranslate"><span class="pre">--player</span></code>, η άλλη θέση.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Το ίδιο φίλτρο με το <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Αριθμός ομάδων που εμφανίζονται σε κείμενο (προεπιλογή 20, <code class="docutils literal notranslate"><span class="pre">0</span></code> για όλες).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Το JSON περιέχει κάθε ομάδα με την πλήρη λίστα των θέσεών της.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> — Κληρώνει τυχαία θέσεις από εκείνες των τριών πιο δαπανηρών ομάδων (<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>, προεπιλογή 20) και τις εμφανίζει: είναι τα αναγνωριστικά που κρίνουν το κουίζ και το <code class="docutils literal notranslate"><span class="pre">quiz_grade</span></code>. Σε JSON, το πεδίο <code class="docutils literal notranslate"><span class="pre">Quiz</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;όνομα&gt;</span></code> — Δημιουργεί μια τράπουλα Anki με αυτό το όνομα, γεμάτη με όλες τις θέσεις των τριών πιο δαπανηρών ομάδων.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--group</span> <span class="pre">&lt;κατάταξη&gt;</span></code> — Με το <code class="docutils literal notranslate"><span class="pre">--quiz</span></code> ή το <code class="docutils literal notranslate"><span class="pre">--deck</span></code>: η ομάδα αυτής της κατάταξης (1 για την πιο δαπανηρή) αντί για τις τρεις πρώτες.</p></li>
+</ul>
+<p>Ένα θέμα κίνησης πούλιων είναι <code class="docutils literal notranslate"><span class="pre">gammon</span></code>, <code class="docutils literal notranslate"><span class="pre">blots</span></code>, <code class="docutils literal notranslate"><span class="pre">point</span></code> ή <code class="docutils literal notranslate"><span class="pre">passive</span></code>· ένα θέμα κύβου είναι <code class="docutils literal notranslate"><span class="pre">offer_missed</span></code>, <code class="docutils literal notranslate"><span class="pre">offer_premature</span></code>, <code class="docutils literal notranslate"><span class="pre">answer_wrong_pass</span></code> ή <code class="docutils literal notranslate"><span class="pre">answer_wrong_take</span></code>. Τα λάθη που κανένας κανόνας δεν ονομάζει βγαίνουν από την κατάταξη: παρατίθενται χωριστά, μία γραμμή ανά σχέδιο παιχνιδιού (πεδίο <code class="docutils literal notranslate"><span class="pre">Unthemed</span></code> στο JSON), επειδή η εξήγηση εκφέρεται μόνο από 60 mp και πάνω, πάνω από το όριο <em>Λάθος</em>. Η στήλη <em>COST (PR)</em> είναι το μερίδιο του PR του φίλτρου που αντιπροσωπεύει η ομάδα.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>recurring<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--group<span class="w"> </span><span class="m">1</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Mon pire groupe"</span>
+</pre></div>
+</div>
+<p><strong>stats plan</strong> — Το πλάνο μελέτης του φίλτρου, όπως η κάρτα <em>Πλάνο μελέτης</em> του ταμπλό (βλ. <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">Πλάνο μελέτης</span></a>): οι οικογένειες λαθών (σχέδιο παιχνιδιού × θέμα) ταξινομημένες κατά ανακτήσιμο MWC, το άθροισμα της απώλειας μείον τη δυσκολία στα λάθη τους, με διάστημα 95 %. Μια οικογένεια μπαίνει στο πλάνο από 5 αποτιμημένα λάθη και ένα διάστημα πάνω από το μηδέν· οι υπόλοιπες αναφέρονται χωριστά, προς επιβεβαίωση (πεδίο <code class="docutils literal notranslate"><span class="pre">Tentative</span></code> στο JSON). Τα λάθη χωρίς θέμα και αυτά χωρίς MWC (ελεύθερο παιχνίδι) απλώς μετριούνται (<code class="docutils literal notranslate"><span class="pre">Unthemed</span></code>, <code class="docutils literal notranslate"><span class="pre">Unpriced</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Ίδιες επιλογές φίλτρου με το <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code>, συν:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Αριθμός οικογενειών που εμφανίζονται σε κείμενο (προεπιλογή 10, <code class="docutils literal notranslate"><span class="pre">0</span></code> για όλες).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiz</span></code> (<code class="docutils literal notranslate"><span class="pre">--quiz-size</span> <span class="pre">&lt;n&gt;</span></code>, προεπιλογή 20), <code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;όνομα&gt;</span></code> — Όπως στο <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code>, στις θέσεις των τριών πρώτων οικογενειών.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — Εμφανίζει την ουρά μελέτης αυτών των οικογενειών, μία θέση ανά γραμμή, πρώτη η μεγαλύτερη απόκλιση από τον παίκτη αναφοράς (JSON: <code class="docutils literal notranslate"><span class="pre">Queue</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--family</span> <span class="pre">&lt;θέση&gt;</span></code> — Με <code class="docutils literal notranslate"><span class="pre">--quiz</span></code>, <code class="docutils literal notranslate"><span class="pre">--deck</span></code> ή <code class="docutils literal notranslate"><span class="pre">--queue</span></code>: η οικογένεια αυτής της θέσης (1 για την πρώτη) αντί για τις τρεις πρώτες.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--quiz<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>plan<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--family<span class="w"> </span><span class="m">2</span><span class="w"> </span>--queue
+</pre></div>
+</div>
+<p><strong>stats effect</strong> — Το πριν/μετά κάθε μελετημένης οικογένειας, όπως η κάρτα <em>Πριν/μετά τη μελέτη</em> του πίνακα ελέγχου (βλ. <a class="reference internal" href="manuel_stats.html#avant-apres-etude"><span class="std std-ref">Πριν/μετά τη μελέτη</span></a>): η ημερομηνία της πρώτης ενέργειας μελέτης σε μία από τις θέσεις της, ο ρυθμός απώλειας σε MWC ανά 100 αποφάσεις του πλάνου και της φύσης της πριν και μετά από εκείνη την ημέρα, το κέρδος και το διάστημά του στο 95 %, και η κρίση (<code class="docutils literal notranslate"><span class="pre">improved</span></code>, <code class="docutils literal notranslate"><span class="pre">worse</span></code>, <code class="docutils literal notranslate"><span class="pre">undetermined</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> κάτω από 30 αποφάσεις ανά παράθυρο).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats biases</strong> — Οι προσημασμένες μεροληψίες του φίλτρου, όπως η κάρτα <em>Προσημασμένες μεροληψίες</em> (βλ. <a class="reference internal" href="manuel_stats.html#biais-signes"><span class="std std-ref">Προσημασμένες μεροληψίες</span></a>): αποδοχή/απόρριψη, διπλασιασμοί (συνολικά και ανά σκορ) και blots, καθένα με τις δύο μετρήσεις του και το κόστος τους, τη μεροληψία, το διάστημά της στο 95 % και την κρίση (<code class="docutils literal notranslate"><span class="pre">too_much</span></code>, <code class="docutils literal notranslate"><span class="pre">too_little</span></code>, <code class="docutils literal notranslate"><span class="pre">balanced</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> κάτω από 20 αποφάσεις). Το ελεύθερο παιχνίδι έχει τη δική του γραμμή <code class="docutils literal notranslate"><span class="pre">money</span></code> και ένα σκορ μετά το Crawford διαβάζεται ως 1 πόντος· το ποσοστό των κινήσεων πουλιών που δεν μπόρεσαν να αναπαραχθούν δίνεται κάτω από τον πίνακα.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Ίδιες επιλογές φίλτρου με το <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">recurring</span></code> (<code class="docutils literal notranslate"><span class="pre">--player</span></code>, <code class="docutils literal notranslate"><span class="pre">--opponent</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>effect<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>biases<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats tournament</strong> — Ο απολογισμός ενός τουρνουά για έναν παίκτη, όπως το κουμπί <em>Απολογισμός</em> του πίνακα Τουρνουά (βλ. <a class="reference internal" href="manuel_tournois.html#bilan-tournoi"><span class="std std-ref">ισοζύγιο του τουρνουά</span></a>): PR και απώλεια MWC (ισοδ. 7 πόντων) σε σχέση με το συνηθισμένο επίπεδο των 365 προηγούμενων ημερών, ανά γύρο, ανά σειρά της απόφασης στον αγώνα, ανά σκορ (<code class="docutils literal notranslate"><span class="pre">dmp</span></code>, <code class="docutils literal notranslate"><span class="pre">crawford</span></code>, <code class="docutils literal notranslate"><span class="pre">post_crawford</span></code>, <code class="docutils literal notranslate"><span class="pre">other</span></code>) και ανά ρυθμό (<code class="docutils literal notranslate"><span class="pre">quick</span></code>, <code class="docutils literal notranslate"><span class="pre">considered</span></code>), καθένα με το διάστημά του 95 % και μια κρίση (<code class="docutils literal notranslate"><span class="pre">worse</span></code>, <code class="docutils literal notranslate"><span class="pre">better</span></code>, <code class="docutils literal notranslate"><span class="pre">usual</span></code>, <code class="docutils literal notranslate"><span class="pre">insufficient</span></code> χωρίς διάστημα, κάτω από 20 αποφάσεις στη μία πλευρά ή κάτω από 5 συνηθισμένους αγώνες), και έπειτα το πολύ τρεις οικογένειες λαθών του τουρνουά.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span>...<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>text<span class="p">|</span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p>Χωρίς <code class="docutils literal notranslate"><span class="pre">--player</span></code>, ο παίκτης είναι αυτός που συμμετέχει στα περισσότερα ματς του τουρνουά. Το <code class="docutils literal notranslate"><span class="pre">--player</span></code> επαναλαμβάνεται για να αναλυθούν περισσότεροι παίκτες με μία κλήση. Στο JSON, ένας παίκτης δίνει αντικείμενο και δύο ή περισσότεροι λίστα, με τη σειρά που ζητήθηκε· ένα σενάριο με μεταβλητό αριθμό παικτών χρησιμοποιεί τη διαδρομή <code class="docutils literal notranslate"><span class="pre">stats.tournamentReviews</span></code> (ή <code class="docutils literal notranslate"><span class="pre">GetTournamentReviews</span></code>), που επιστρέφει πάντα λίστα.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournament<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--player<span class="w"> </span><span class="s2">"Bob"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats training</strong> — Το PR του κουίζ Απόφασης, το PR των αγώνων και η διατήρηση του Anki, ομαδοποιημένα ανά ημερολογιακό παράθυρο, όπως η καρτέλα <em>Εκπαίδευση</em> του πίνακα Stats (βλ. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">week|month</span></code> — Το ημερολογιακό παράθυρο (προεπιλογή <code class="docutils literal notranslate"><span class="pre">week</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;όνομα&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;ΕΕΕΕ-ΜΜ-ΗΗ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;ΕΕΕΕ-ΜΜ-ΗΗ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Το φίλτρο των αγώνων· τα ημερολόγια του κουίζ και του Anki δεν φέρουν παίκτη.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Το JSON περιέχει επίσης τη λίστα των συνεδριών κουίζ· το κείμενο και το JSON δίνουν το PR κουίζ ανά πλάνο παιχνιδιού.</p></li>
+</ul>
+<p>Κάθε σειρά διατηρεί το πλήθος των δειγμάτων της: ένα παράθυρο χωρίς αποφάσεις είναι παύλα στο κείμενο και μηδενικό πλήθος στο JSON, ποτέ μηδενική τιμή.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>training<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--window<span class="w"> </span>month<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats h2h</strong> — Δύο παίκτες ο ένας απέναντι στον άλλον: οι αγώνες που έπαιξαν μαζί, το PR του καθενός σε κάθε αγώνα και συνολικά, και ο απολογισμός των αγώνων που ολοκληρώθηκαν.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats contrast</strong> — Οι θέσεις που δύο παίκτες έπρεπε και οι δύο να παίξουν και όπου ο ένας έπαιξε καλά (κάτω από το όριο Σφάλματος) και ο άλλος όχι, με τη μεγαλύτερη διαφορά πρώτη· ο παίκτης κρίνεται από την χειρότερη κίνησή του στη θέση. Το <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code> κρατά τις πρώτες N γραμμές του κειμένου· το JSON δίνει τα πάντα, με τα <code class="docutils literal notranslate"><span class="pre">position_id</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--player<span class="w"> </span>&lt;nom&gt;<span class="w"> </span>--opponent<span class="w"> </span>&lt;nom&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats windows</strong> — Το PR σε κυλιόμενο ημερολογιακό παράθυρο: μία γραμμή ανά μήνα, καθεμία καλύπτει αυτόν τον μήνα και τους προηγούμενους του παραθύρου (<code class="docutils literal notranslate"><span class="pre">--window</span> <span class="pre">month</span></code>, <code class="docutils literal notranslate"><span class="pre">quarter</span></code> ή έναν αριθμό μηνών).</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">--by-phase</span></code> χωρίζει κάθε παράθυρο ανά φάση παιχνιδιού (άνοιγμα, μέσο παιχνίδι, κούρσα, μάζεμα…): κάτω από κάθε γραμμή, μία γραμμή ανά φάση με τους αγώνες της, τις αποφάσεις της και το PR της, τα ίδια νούμερα με την ανάλυση ανά φάση του <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">breakdown</span></code> περιορισμένη στο παράθυρο· μια φάση χωρίς μετρημένη απόφαση στο παράθυρο δεν εμφανίζεται. Ο δαίμονας HTTP τα επιστρέφει στο <code class="docutils literal notranslate"><span class="pre">per_phase</span></code> όταν το αίτημα <code class="docutils literal notranslate"><span class="pre">stats.prByWindow</span></code> φέρει <code class="docutils literal notranslate"><span class="pre">&quot;byPhase&quot;:</span> <span class="pre">true</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--player<span class="w"> </span>&lt;nom&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--window<span class="w"> </span>quarter<span class="o">]</span><span class="w"> </span><span class="o">[</span>--by-phase<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats ranking</strong> — Η κατάταξη των παικτών κατά PR, με το χαμηλότερο πρώτο, ανάμεσα σε όσους έχουν τουλάχιστον <code class="docutils literal notranslate"><span class="pre">--min-decisions</span></code> μετρημένες αποφάσεις (500 από προεπιλογή)· δύο ίσα PR μοιράζονται την ίδια θέση. Το <code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">N</span></code> κρατά τους πρώτους N.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="o">]</span><span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span><span class="m">20</span><span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>stats engines</strong> — Οι μηχανές ανάλυσης που υπάρχουν στη βάση, με το ακριβές όνομα που περιμένει το <code class="docutils literal notranslate"><span class="pre">--engine</span></code>· η ίδια επιλογή με το μενού <em>Μηχανή</em> του πίνακα Stats.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>engines<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>json<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Κοινές επιλογές:</strong> <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;ΕΕΕΕ-ΜΜ-ΗΗ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;ΕΕΕΕ-ΜΜ-ΗΗ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code>, και το φίλτρο προέλευσης <code class="docutils literal notranslate"><span class="pre">--engine</span> <span class="pre">&lt;όνομα&gt;</span></code> (η μηχανή ανάλυσης, ακριβές όνομα) και <code class="docutils literal notranslate"><span class="pre">--min-depth</span> <span class="pre">&lt;n&gt;</span></code> (το ελάχιστο βάθος ανάλυσης), που τα δέχονται επίσης τα <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code> και <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code>. Τα <code class="docutils literal notranslate"><span class="pre">h2h</span></code> και <code class="docutils literal notranslate"><span class="pre">windows</span></code> διαβάζουν τα στατιστικά ανά αγώνα και απορρίπτουν το φίλτρο προέλευσης, το οποίο αφορά κάθε απόφαση.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>h2h<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>contrast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--opponent<span class="w"> </span><span class="s2">"Bob"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>windows<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--window<span class="w"> </span>quarter<span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--min-decisions<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--min-depth<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p><strong>stats matches</strong> — Οι αγώνες που μετρά ένας αριθμός του σώματος: εκείνοι όπου ο παίκτης (κάθε παίκτης χωρίς <code class="docutils literal notranslate"><span class="pre">--player</span></code>) έχει μια μετρημένη απόφαση υπό το φίλτρο, από τον παλαιότερο στον πιο πρόσφατο. Τα αναγνωριστικά τους περνούν στο <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span> <span class="pre">--ids</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2025</span>-03-31
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--ids<span class="w"> </span><span class="m">12</span>,15,31
+</pre></div>
+</div>
+<p><strong>stats tournaments</strong> — Τα τουρνουά που μετρά ο αριθμός τουρνουά του Πίνακα ελέγχου: όσα περιέχουν μια μετρημένη απόφαση του παίκτη (οποιουδήποτε παίκτη χωρίς <code class="docutils literal notranslate"><span class="pre">--player</span></code>) υπό το φίλτρο, κατά αναγνωριστικό.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--from<span class="w"> </span><span class="m">2025</span>-01-01
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>tournaments<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats progression</strong> — Το PR κάθε αγώνα με σειρά ημερομηνίας, το PR κάθε τουρνουά και το κυλιόμενο PR στις τελευταίες N αποφάσεις: η καρτέλα <em>Progression</em> του πίνακα Stats (βλ. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Το ίδιο φίλτρο με το <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">stats</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Το JSON περιέχει τους αγώνες, τα τουρνουά και τα κυλιόμενα PR.</p></li>
+</ul>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>progression<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats breakdown</strong> — Το PR του φίλτρου αναλυμένο ανά φάση παιχνιδιού, πλάνο παιχνιδιού, ετικέτα σχολίου, σκορ (away έναντι away) και ενέργεια κύβου, με την κατεύθυνση των λαθών κύβου: η καρτέλα <em>Αναλύσεις</em> του πίνακα Stats (βλ. <a class="reference internal" href="manuel_stats.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>). Οι επιλογές είναι οι ίδιες με του <code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">progression</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>breakdown<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats summary</strong> — Το επίπεδο του φίλτρου χωρίς κανένα αναγνωριστικό: πλήθη, PR (πούλια, κύβος) και το διάστημα 95 % του, απώλεια MWC ανά αγώνα 7 πόντων, PR ανά φάση παιχνιδιού και ανά σκορ, κάθε γραμμή με το πλήθος και το διάστημά της. Δεν εμφανίζεται καμία θέση, κανένας αγώνας, τουρνουά, αντίπαλος ή ετικέτα, ούτε οι πιο δαπανηρές αποφάσεις: είναι ό,τι μπορεί να δείξει ένα δημόσιο προφίλ ή μια επαγγελματική κάρτα χωρίς να αποκαλύψει τίποτα. Ο δαίμονας HTTP το εξυπηρετεί στη διαδρομή <code class="docutils literal notranslate"><span class="pre">stats.summary</span></code>· το <code class="docutils literal notranslate"><span class="pre">stats.compute</span></code> μένει αμετάβλητο. Οι επιλογές είναι <code class="docutils literal notranslate"><span class="pre">--player</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> και <code class="docutils literal notranslate"><span class="pre">--format</span></code>· δεν υπάρχει <code class="docutils literal notranslate"><span class="pre">--window</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>summary<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<p><strong>stats report</strong> — Η αναφορά HTML του πίνακα Stats (βλ. <a class="reference internal" href="manuel_stats.html#rapport-html"><span class="std std-ref">Η αναφορά HTML</span></a>): οι δείκτες του φίλτρου και οι δέκα πιο δαπανηρές αποφάσεις του με το διάγραμμά τους, σε ένα αυτόνομο αρχείο που ο περιηγητής εκτυπώνει σε PDF. Ο δαίμονας HTTP το σερβίρει στη διαδρομή <code class="docutils literal notranslate"><span class="pre">stats.report</span></code>, από την ίδια γεννήτρια.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span>--html<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--html</span></code> — Υποχρεωτικό: το HTML είναι η μόνη μορφή.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span> <span class="pre">&lt;fichier&gt;</span></code> — Το αρχείο που γράφεται (προεπιλογή: τυπική έξοδος).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">&lt;code&gt;</span></code> — Η γλώσσα της αναφοράς: <code class="docutils literal notranslate"><span class="pre">fr</span></code>, <code class="docutils literal notranslate"><span class="pre">en</span></code>, <code class="docutils literal notranslate"><span class="pre">de</span></code>, <code class="docutils literal notranslate"><span class="pre">el</span></code>, <code class="docutils literal notranslate"><span class="pre">es</span></code>, <code class="docutils literal notranslate"><span class="pre">fi</span></code>, <code class="docutils literal notranslate"><span class="pre">it</span></code>, <code class="docutils literal notranslate"><span class="pre">ja</span></code> ή <code class="docutils literal notranslate"><span class="pre">ru</span></code> (προεπιλογή <code class="docutils literal notranslate"><span class="pre">en</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span> <span class="pre">&lt;nom&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--tournament</span> <span class="pre">&lt;ids&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;AAAA-MM-JJ&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--decision-type</span> <span class="pre">all|checker|cube</span></code> — Το φίλτρο: η αναφορά κατονομάζει την εμβέλειά της.</p></li>
+</ul>
+<p>Τα διαγράμματα σχεδιάζονται εκεί με την προεπιλεγμένη παλέτα· μόνο η γραφική εφαρμογή χρησιμοποιεί την παλέτα του ταμπλό που επιλέγεται στην οθόνη.</p>
+<p><strong>Παραδείγματα:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--output<span class="w"> </span>rapport.html
+./blunderdb<span class="w"> </span>stats<span class="w"> </span>report<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--html<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span><span class="w"> </span>--lang<span class="w"> </span>fr
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli_entrainement.html" class="btn btn-neutral float-left" title="Μελέτη, μαθήματα και εξάσκηση" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli_admin.html" class="btn btn-neutral float-right" title="Διαχείριση της βάσης δεδομένων" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

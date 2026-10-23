@@ -1,0 +1,337 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análisis, comentarios y búsqueda &mdash; documentación de blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3bdc4af3"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="Partidas y transcripción" href="manuel_matchs.html" />
+    <link rel="prev" title="Primeros pasos e interfaz" href="manuel_interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Idiomas">
+  <a href="../fr/manuel_bibliotheque.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_bibliotheque.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_bibliotheque.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_bibliotheque.html" lang="el" hreflang="el">Ελληνικά</a>
+  <span class="current" lang="es" aria-current="true">Español</span>
+  <a href="../fi/manuel_bibliotheque.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_bibliotheque.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_bibliotheque.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_bibliotheque.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Primeros pasos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guía del usuario</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referencia</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Primeros pasos e interfaz</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Análisis, comentarios y búsqueda</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-analyse">Panel de Análisis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rollouts">Rollouts</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-commentaires">Panel de Comentarios</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-tags">Las etiquetas</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#menu-contextuel">Menú contextual</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-corbeille">La papelera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-recherche">Panel de Búsqueda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-collections">Panel de Colecciones</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lecons">Lecciones</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Partidas y transcripción</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Torneos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Estadísticas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Evaluación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Entrenamiento, Anki y duelo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Importación, origen y distribución</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Métricas y herramientas de estudio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Atajos de teclado</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaz de línea de comandos (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrato de la API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anexo Windows: qué hacer si Windows bloquea el inicio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historial de versiones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Acerca de</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Manual</a></li>
+      <li class="breadcrumb-item active">Análisis, comentarios y búsqueda</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-commentaires-et-recherche">
+<span id="manuel-bibliotheque"></span><h1>Análisis, comentarios y búsqueda<a class="headerlink" href="#analyse-commentaires-et-recherche" title="Link to this heading"></a></h1>
+<section id="panneau-analyse">
+<span id="id1"></span><h2>Panel de Análisis<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
+<p>El panel <strong>Análisis</strong> (<em>CTRL-L</em>) muestra los datos de análisis de la posición actual importados desde eXtreme Gammon (XG), GNUbg, BGBlitz o gammonNet. Presenta las mejores alternativas (jugadas de fichas o decisiones de cubo) con sus valores de equidad y los errores correspondientes. La tecla <em>d</em> alterna entre el análisis de las jugadas de fichas y el análisis del cubo. Durante la navegación por una partida, la jugada realmente jugada se resalta en la lista de alternativas. Pulse <em>CTRL-L</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">list</span></code> para mostrar u ocultar el panel.</p>
+<p>Una posición sin análisis lo indica, con un botón <strong>Evaluar</strong> que la abre en el panel Eval.</p>
+<p>El botón <strong>Desafío</strong> de la barra de herramientas, situado tras el del pipcount (tecla <em>m</em>), sirve para decidirse antes de ver el análisis al recorrer posiciones: resultados de una búsqueda, revisión de un match, repaso de los propios errores. Activado, cubre con una zona gris todo el análisis del panel, fichas y cubo; un clic en la zona lo revela. Vuelve en cada cambio de posición. El desafío es una máscara de visualización: revelar no guarda nada en la base. El ajuste se mantiene hasta cerrar blunderDB, como el del pipcount. En la revisión de un match, el desafío oculta también las marcas, las pérdidas y la dificultad de la lista de jugadas; las de la jugada mostrada se revelan con su análisis.</p>
+<p>Bajo las tablas, una <strong>frase</strong> dice a veces lo que costó la decisión jugada y por qué: «Pierde 120 mp: la jugada realizada deja tres fichas sueltas donde 13/7 8/7 solo deja una.» Procede de seis reglas medibles — la exposición, un punto de la casa hecho o perdido, las posibilidades de gammon abandonadas, una seguridad que cuesta más de lo que aporta, y los dos sentidos de un error de cubo (doblar demasiado tarde o demasiado pronto, aceptar demasiado amplio o pasar demasiado estricto).</p>
+<p>La regla que importa es la del <strong>silencio</strong>: la frase solo aparece cuando una regla se aplica con confianza, y sobre un error que supera el umbral a partir del cual los motores coinciden en que lo es. El resto del tiempo no hay frase — ni marco vacío, ni «no lo sabemos». Una explicación equivocada cuesta más que ninguna: enseña algo inexacto.</p>
+<p>La misma frase acompaña al error allí donde acaba de cometerlo: al dorso de una <strong>tarjeta Anki</strong>, bajo el análisis revelado, y en el <strong>veredicto del quiz</strong> del ejercicio Decisión, bajo el coste en mp. Rigen las mismas reglas de silencio: una jugada correcta, o un error que ninguna regla explica, no añade nada.</p>
+<p>Cuando una posición ha sido juzgada por <strong>varios motores</strong>, una franja en la cabecera del panel los pone lado a lado: una línea por motor, con su profundidad y su respuesta — el veredicto de cubo, o su propia mejor jugada. Dice primero si coinciden, y es la discrepancia lo que la justifica: «XG dice doblar, tomar; gammonNet dice no doblar» se lee de un vistazo, donde había que comparar dos tablas en diagonal.</p>
+<p>La mejor jugada de un motor es la mejor <strong>de ese motor</strong>: la lista de jugadas candidatas está ordenada por equidad, con todos los motores mezclados, así que su primer elemento no es la mejor jugada de ninguno en particular.</p>
+<p>La franja aparece solo si de verdad hay varios motores, y existe únicamente en este panel: el panel Eval presenta <strong>una</strong> decisión, la del motor integrado (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md">ADR-0017</a>), y una comparación no tendría sitio allí.</p>
+<p>Las jugadas se escriben como se leen en el tablero, aquí igual que en el panel Eval: la ficha menos avanzada se mueve primero, y <strong>una ficha que encadena varios dados se escribe una sola vez</strong> — un 64 jugado con la misma ficha se lee <code class="docutils literal notranslate"><span class="pre">24/14</span></code>, y <code class="docutils literal notranslate"><span class="pre">24/14*</span></code> si golpea al llegar. El detalle del encadenamiento solo reaparece cuando dice algo más: un golpe <em>por el camino</em> conserva su punto de paso, <code class="docutils literal notranslate"><span class="pre">24/18*</span> <span class="pre">18/14</span></code>, sin lo cual el golpe en el 18 desaparecería de la notación.</p>
+<p>La equidad de un análisis importado sigue la misma regla que el panel Eval: la columna indica su propio marco de referencia, «Equity (money)» o «Equity (match)» según el marcador de la posición analizada, nunca un simple «Equity» mudo sobre la escala. Las reglas <strong>Jacoby</strong> y <strong>Beaver</strong> activas en una posición de money game también se muestran, en insignias bajo la tabla de decisión del cubo.</p>
+<section id="rollouts">
+<span id="id2"></span><h3>Rollouts<a class="headerlink" href="#rollouts" title="Link to this heading"></a></h3>
+<p>El panel <strong>Análisis</strong> sabe <strong>rodar</strong> una posición: jugar cientos de partidas a partir de cada jugada elegida, o de cada acción de cubo, para desempatar dos opciones que la evaluación directa apenas separa. En la tabla de jugadas candidatas, <em>Ctrl+clic</em> añade o quita una jugada de la selección y <em>Mayús+clic</em> la extiende hasta la jugada pulsada; el clic simple selecciona una sola jugada, como de costumbre. Un <strong>clic derecho</strong> sobre la selección — o sobre otra jugada, que pasa a ser la selección — abre un menú cuya entrada <strong>Rollout (Estándar)</strong> lanza enseguida el rollout de las jugadas seleccionadas con el ajuste elegido. En una decisión de cubo, el clic derecho rueda la decisión entera. La tecla <em>Mayús+R</em> del panel hace lo mismo (sin selección, rueda las mejores candidatas de la posición), como el comando <code class="docutils literal notranslate"><span class="pre">rollout</span></code> (alias <code class="docutils literal notranslate"><span class="pre">ro</span></code>). Durante el rollout, una barra fina bajo la tabla sigue las partidas jugadas; <strong>Cancelar</strong>, la entrada <strong>Cancelar el rollout</strong> del menú, <em>Esc</em> o <em>Mayús+R</em> de nuevo lo detienen sin escribir nada. El ajuste — <strong>Rápido</strong>, <strong>Estándar</strong> o <strong>Libre</strong> — se elige en la pestaña <strong>gammonNet</strong> de la configuración (véase <a class="reference internal" href="manuel_interface.html#rollout-reglage"><span class="std std-ref">configuración</span></a>).</p>
+<p>El mismo menú ofrece <strong>Copiar la posición y el análisis</strong>, la imagen que copia <em>CTRL-X CTRL-X</em>: el tablero y el principio de la lista de jugadas, o el análisis del cubo completo. En cuanto se selecciona una jugada, se añade una segunda entrada, <strong>Copiar la posición y las jugadas seleccionadas</strong>: la imagen solo conserva esas jugadas, en el orden de la clasificación, cada una precedida de su rango entre todos los candidatos y con su diferencia respecto a la mejor jugada de la posición, no a la mejor de la selección. En una decisión de cubo, solo aparece la primera. Las celdas de las tablas de análisis no se seleccionan como texto: los clics de selección no dejan resaltado en ellas.</p>
+<p>El resultado se <strong>almacena junto al análisis, nunca en su lugar</strong>: un análisis importado no se modifica. Cada jugada rodada lleva su resultado en su propia fila de la tabla, en una columna <strong>Rollout</strong> que solo aparece cuando la posición tiene un rollout: la equidad y la semianchura de su intervalo de confianza del 95 %, en la escala de la columna de equidad. Pasar el cursor por la celda da el detalle: la desviación típica, la <strong>JSD</strong> (la distancia a la mejor jugada en desviaciones típicas de la diferencia: a partir del límite, la jugada queda decidida y deja de jugarse), el número de partidas y la <strong>Configuración</strong> — el motor y la firma completa de los parámetros: dos rollouts con la misma firma son los mismos números. El rollout se detiene en cuanto las jugadas quedan desempatadas. El rollout de una decisión de cubo, que no tiene fila de jugada, se muestra como una tabla bajo la decisión. Un rollout juega el cubo en sus partidas: la clasificación es fiable, la equidad absoluta algo menos, lo que el bloque recuerda. No juega el beaver: su fila <em>doblar, aceptar</em> es la de una simple aceptación, incluso en una posición de money bajo la regla Beaver, donde el análisis directo cuenta el beaver. Una posición que no está en la base se puede rodar, pero no se almacena.</p>
+<p>El comando <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">search</span></code> rueda, una tras otra, las posiciones de la lista mostrada — resultados de búsqueda, partido o colección — que aún no llevan este rollout; una confirmación da el total antes de empezar. Cada posición se escribe en cuanto termina: cancelar conserva lo hecho, y volver a lanzar retoma donde se detuvo. El avance sobrevive al cierre del panel.</p>
+<p>Una base abierta <strong>en solo lectura</strong>, porque otra instancia de blunderDB la mantiene, rechaza de entrada un rollout que se almacenaría: un mensaje lo dice antes de que se juegue la primera partida.</p>
+</section>
+</section>
+<section id="panneau-commentaires">
+<span id="id3"></span><h2>Panel de Comentarios<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
+<p>El panel <strong>Comentarios</strong> (<em>CTRL-P</em>) muestra, añade y modifica los comentarios asociados a la posición actual. Una posición puede llevar varios, escritos por personas distintas: todos se muestran en hilo, del más reciente al más antiguo, cada uno con el nombre de su autor, y los suyos van primero. Los comentarios importados desde archivos XG se asocian automáticamente a las posiciones correspondientes. Pulse <em>CTRL-P</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">comment</span></code> para mostrar u ocultar el panel.</p>
+<p>El nombre atribuido a sus comentarios se configura en las preferencias, pestaña <em>Interfaz</em>, campo <strong>Su nombre</strong>; si está vacío, sus comentarios no llevan autor. Los comentarios de una importación XG se atribuyen a <code class="docutils literal notranslate"><span class="pre">XG</span></code>, los de un archivo de partida a su transcriptor. Reescribir un comentario se lo atribuye a usted. La búsqueda <code class="docutils literal notranslate"><span class="pre">au&quot;Alice&quot;</span></code> retiene las posiciones que Alice ha comentado; fuera de la interfaz, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">add</span> <span class="pre">--author</span></code> escribe un comentario atribuido a ese autor y <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">list</span></code> los vuelve a leer (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>). Este nombre es texto libre: no certifica nada, a diferencia de la firma descrita más abajo.</p>
+<p>Cada comentario procedente de un archivo lleva una <strong>etiqueta de procedencia</strong> (<code class="docutils literal notranslate"><span class="pre">XG</span></code>, <code class="docutils literal notranslate"><span class="pre">GNU</span> <span class="pre">BG</span></code>, <code class="docutils literal notranslate"><span class="pre">BGF</span></code>, o <em>importado</em> cuando la procedencia nunca se registró). Los comentarios que usted escribió no llevan ninguna: es el caso corriente, y señalarlo en cada línea sería ruido. Modificar un comentario importado se lo atribuye: tras la modificación, la frase es suya.</p>
+<p>Esta distinción se nota en otro sitio: borrar una partida ya no destruye una posición sobre la que <strong>usted</strong> había escrito. Una nota tomada del archivo de origen sí desaparece con la partida que la trajo.</p>
+<p>Un comentario recibido en una base exportada con marca de origen lleva la <strong>firma</strong> de su emisor: el hilo muestra «comentario de <em>emisor</em>» seguido de la huella de su clave, precedido de ✓. Dos personas pueden llevar el mismo nombre, no la misma huella: compárela con la que el emisor le comunicó.</p>
+<p>Un comentario que ya no corresponde a lo que se firmó se conserva pero se marca ⚠ <em>no verificado</em>: texto o autor modificado en el archivo, comentario movido a otra posición, o posición cuya identidad se ha corregido desde entonces. En efecto, la firma cubre la identidad de la posición: cuando <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> reajusta el centinela de Crawford de una posición (y la fusiona si hace falta con su gemela), o cuando la reparación de una partida mueve sus notas a la posición corregida, los comentarios firmados que lleva ya no se verifican, aunque su texto no haya cambiado; <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> indica su número. Una firma que blunderDB no sabe leer se muestra ⚠ <em>firma ilegible</em>. Modificar un comentario firmado retira la firma: la frase pasa a ser suya.</p>
+<p>Un comentario recibido de otra base conserva su procedencia: una nota que su autor había escrito retiene su posición cuando se elimina una partida, como las suyas; una observación que procedía de un archivo XG conserva su etiqueta <code class="docutils literal notranslate"><span class="pre">XG</span></code> y desaparece con la partida. Esto vale para una base exportada por una versión de blunderDB que ya firma los comentarios; procedente de un archivo más antiguo, un comentario lleva la etiqueta <em>importado</em> y desaparece con la partida. <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">list</span></code> da la procedencia en su columna <em>Origin</em> y la firma en su columna <em>Signed by</em>.</p>
+<section id="les-tags">
+<span id="tags"></span><h3>Las etiquetas<a class="headerlink" href="#les-tags" title="Link to this heading"></a></h3>
+<p>Una <strong>etiqueta</strong> es una <code class="docutils literal notranslate"><span class="pre">#palabra</span></code> escrita en un comentario. Nada la declara, ninguna tabla la contiene, y es deliberado: el vocabulario es su propia prosa, y exigir una declaración antes de poder etiquetar convertiría un hábito en papeleo.</p>
+<p>Lo que faltaba era la otra mitad: <strong>ver</strong> el vocabulario que uno se ha construido, y hacer clic en una etiqueta en vez de recordar cómo se escribía. El comando <code class="docutils literal notranslate"><span class="pre">tags</span></code>, o el botón <code class="docutils literal notranslate"><span class="pre">#</span></code> de la cabecera del panel, abre la ventana del vocabulario: las etiquetas de esta base, cada una con el <strong>número de posiciones</strong> que la llevan, pulsables para lanzar la búsqueda correspondiente. Bajo la lista figuran las etiquetas recomendadas que la base aún no usa — un vocabulario tomado de la literatura del backgammon (<code class="docutils literal notranslate"><span class="pre">#blitz</span></code>, <code class="docutils literal notranslate"><span class="pre">#prime</span></code>, <code class="docutils literal notranslate"><span class="pre">#holding</span></code>, <code class="docutils literal notranslate"><span class="pre">#backgame</span></code>, <code class="docutils literal notranslate"><span class="pre">#containment</span></code>, <code class="docutils literal notranslate"><span class="pre">#crunch</span></code>, <code class="docutils literal notranslate"><span class="pre">#ace-point</span></code>, <code class="docutils literal notranslate"><span class="pre">#timing</span></code>…), sugerido y nunca impuesto: una etiqueta ausente de esa lista vale exactamente lo mismo que una que figure en ella.</p>
+<p>Al escribir, un <code class="docutils literal notranslate"><span class="pre">#</span></code> propone las etiquetas que <strong>esta base</strong> ya usa, y luego las recomendadas. Es lo que evita escribir <code class="docutils literal notranslate"><span class="pre">#back-game</span></code> un día y <code class="docutils literal notranslate"><span class="pre">#backgame</span></code> al siguiente, algo que nada más detectaría.</p>
+<p>La búsqueda por etiqueta se escribe <code class="docutils literal notranslate"><span class="pre">#prime</span></code> en la línea de comandos. Es <strong>delimitada</strong>: <code class="docutils literal notranslate"><span class="pre">#prime</span></code> no encuentra <code class="docutils literal notranslate"><span class="pre">#priming</span></code>, mientras que una búsqueda de texto ordinaria, que busca una subcadena, no sabe distinguirlas. Varias etiquetas se <strong>acumulan</strong> — <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">#prime</span> <span class="pre">#backgame</span></code> pide las posiciones que llevan ambas — porque una posición lleva varias etiquetas: nombrar dos solo puede querer decir «las dos». Es lo contrario del filtro de fase o de procedencia, donde una posición solo tiene un valor y nombrar dos valores solo puede querer decir «una u otra».</p>
+<p>La misma lista se obtiene fuera de la interfaz con <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tags</span></code> (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>).</p>
+</section>
+</section>
+<section id="menu-contextuel">
+<span id="menu-contextuel-actions"></span><h2>Menú contextual<a class="headerlink" href="#menu-contextuel" title="Link to this heading"></a></h2>
+<p>Un clic derecho — o la tecla <em>MENU</em>, o <em>MAYÚS-F10</em> sobre la fila con el foco — abre el mismo menú sobre una posición, ya se la apunte en el tablero o en su fila de una colección, y un menú de la misma forma sobre una fila de la lista de partidas, torneos o colecciones. Los dos gestos más habituales sobre una posición, <em>Evaluar esta posición</em> y <em>Copiar la imagen</em>, están en el primer nivel; los demás se ordenan en submenús, marcados con ▸:</p>
+<ul class="simple">
+<li><p><strong>Copiar / compartir</strong>: la imagen (<em>CTRL-X</em>), el XGID solo, el ID GNUbg (el ID de posición y el ID de partida que GNU Backgammon acepta en <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">gnubgid</span></code>, también dados por el comando <code class="docutils literal notranslate"><span class="pre">gnubgid</span></code>), la posición y su análisis en texto (<em>CTRL-C</em>), la imagen con el análisis, la imagen guardada en SVG o PNG; para una partida, su exportación <code class="docutils literal notranslate"><span class="pre">.mat</span></code>.</p></li>
+<li><p><strong>Anotar</strong>: <em>Comentar</em> abre el panel de Comentarios sobre la posición; <em>Añadir una etiqueta #…</em> abre la línea de comandos sobre <code class="docutils literal notranslate"><span class="pre">#</span></code>, e <em>INTRO</em> añade las etiquetas como el comando <code class="docutils literal notranslate"><span class="pre">#</span></code> (véase <a class="reference internal" href="#tags"><span class="std std-ref">Las etiquetas</span></a>); <em>Marcar como vista</em> y <em>Desmarcar</em> ponen o quitan la marca de la cola de estudio.</p></li>
+<li><p><strong>Navegar</strong>: <em>Posiciones vecinas</em>, <em>Posiciones de la misma estructura</em> (la búsqueda por estructura en todo el tablero), <em>Abrir la partida en esta jugada</em> (la primera partida que jugó la posición, abierta en la jugada correspondiente; la barra de estado avisa cuando ninguna pasó por ella), <em>Nueva vista</em>.</p></li>
+<li><p><strong>Analizar</strong>: evaluar la posición, su espejo, o en una pestaña nueva; <em>Rollout rápido</em> y <em>Rollout estándar</em>, como <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">fast</span></code> y <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">standard</span></code> (véase <a class="reference internal" href="#rollouts"><span class="std std-ref">Rollouts</span></a>).</p></li>
+<li><p><strong>Entrenar</strong>: añadir la posición a un mazo de Anki; <em>Desafío sobre esta posición</em> activa el desafío (<em>m</em>), que oculta el análisis.</p></li>
+<li><p><strong>Gestionar</strong>: <em>Guardar</em> (<em>CTRL-S</em>) el borrador del tablero de búsqueda o de Eval, <em>Mover a la papelera</em> (<em>Supr</em>) una posición de la base; para una partida, editar su transcripción, intercambiar los jugadores, modificarla o moverla a la papelera; para un torneo, modificarlo o eliminarlo; para una colección, modificarla o moverla a la papelera.</p></li>
+<li><p><strong>Enviar</strong>: <em>Copiar la posición a …</em>, <em>Copiar la partida a …</em> o <em>Copiar el torneo a …</em>, una entrada por cada otra base abierta, la misma copia que el panel Otras bases, que <em>Deshacer</em> retoma; <em>Añadir al lote</em>; para una posición, <em>Añadir a la colección …</em>, una entrada por colección de la base (véase <a class="reference internal" href="manuel_interface.html#vue-ailleurs"><span class="std std-ref">Comparar e intercambiar: el panel Otras bases</span></a>).</p></li>
+</ul>
+<p>Solo se ofrecen las acciones que se aplican: un borrador no se anota ni va a la papelera, el tablero de búsqueda no se evalúa, una posición ausente de la base no entra en ningún mazo de Anki, y un submenú sin acción desaparece. El atajo de una acción, cuando lo tiene, se escribe a su derecha. Con el teclado, <em>ARRIBA</em> y <em>ABAJO</em> recorren un nivel, <em>DERECHA</em> abre el submenú sobre su primera acción, <em>IZQUIERDA</em> vuelve, <em>ESC</em> cierra el submenú y luego el menú.</p>
+</section>
+<section id="la-corbeille">
+<span id="corbeille"></span><h2>La papelera<a class="headerlink" href="#la-corbeille" title="Link to this heading"></a></h2>
+<p>Eliminar una posición, una colección, un comentario, una tarjeta Anki o un partido (match) pasa por una <strong>papelera</strong>: la eliminación se produce, pero una copia de lo que desaparece se conserva treinta días. El comando <code class="docutils literal notranslate"><span class="pre">trash</span></code> abre la ventana que los lista, cada uno con <em>Restaurar</em> y <em>Eliminar</em>, y un botón <em>Vaciar la papelera</em>.</p>
+<p>Una posición restaurada vuelve con <strong>su análisis y sus comentarios</strong> — devolverla desnuda sería una restauración solo de nombre —, su marca «estudiada» y las respuestas de entrenamiento dadas sobre ella. Recupera su antiguo número; si la misma posición se ha guardado entretanto, se conserva esa, porque una posición solo existe una vez: recibe la marca, las respuestas y los comentarios que le faltan, y conserva su análisis si tiene una. Si su número lo ocupa otra, recibe uno nuevo. Una colección vuelve con su lista; las posiciones que contenía nunca se habían eliminado — una colección es una vista sobre ellas.</p>
+<p>Un match eliminado se lleva sus partidas, sus jugadas, sus análisis y las posiciones que ya nada retiene, con las notas del archivo de origen: la papelera lo guarda todo. Restaurado, vuelve con su número y su fecha de importación originales, con sus partidas, sus jugadas y sus estadísticas, y el diario de su importación vuelve a nombrarlo; las posiciones que la eliminación había purgado vuelven como una posición restaurada, las que quedaron en la biblioteca siguen como han quedado. Recupera su lugar en su torneo; si el torneo se ha eliminado, vuelve fuera de torneo. Recupera su plaza de Dirección si aún existe, enfrenta a los mismos jugadores y está libre; si no, se queda con el director y el match vuelve sin ella. En esos casos, la barra de estado lo indica. La restauración se rechaza, y la entrada permanece en la papelera, si otro match ocupa su número, o si entretanto se ha importado un match con la misma huella de archivo; un match sin huella, introducido o jugado en blunderDB, no se compara así.</p>
+<p>Lo que tiene más de treinta días lo elimina el comando <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>, nunca la apertura de una base: no hacer <code class="docutils literal notranslate"><span class="pre">vacuum</span></code> es conservarlo todo.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>La papelera no viaja: una exportación no la lleva consigo.</p>
+</div>
+</section>
+<section id="panneau-recherche">
+<span id="id4"></span><h2>Panel de Búsqueda<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
+<p>El panel <strong>Búsqueda</strong> (<em>CTRL-F</em> o <em>TAB</em>) permite filtrar las posiciones según criterios libremente combinables: estructura de fichas, tipo de decisión de cubo, magnitud del error, fechas, etiquetas, etc. La tecla <em>TAB</em> abre simultáneamente el panel de búsqueda y el editor de posición, lo que permite definir una estructura de fichas que buscar directamente en el tablero.</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_search.png"><img alt="Panel de Búsqueda" src="_images/panel_search.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">El panel Búsqueda: filtros numéricos, estructura de fichas en el tablero, pestañas <em>Al menos</em> / <em>Excepto</em>.</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Los filtros se ajustan en la subpestaña <strong>Criterios</strong>. Cuando una búsqueda no encuentra nada, el panel lo indica («Ninguna posición coincide») con un botón <strong>Borrar filtros</strong>, en lugar de limitarse a la barra de estado.</p>
+<p>Para buscar entre las posiciones mostradas, use el comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> seguido de filtros (p. ej.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). <code class="docutils literal notranslate"><span class="pre">ss</span></code> busca en la lista en pantalla: los resultados de la búsqueda anterior, la colección abierta o las posiciones del partido en revisión, tanto si el comando se escribe directamente como desde el panel de búsqueda (<em>TAB</em>). La casilla <em>Buscar en los resultados actuales</em> del panel sigue la misma regla; la casilla <em>Abrir en una nueva pestaña</em> muestra los resultados en una nueva vista (véase <a class="reference internal" href="manuel_interface.html#onglets-vues"><span class="std std-ref">Pestañas de vistas</span></a>) en lugar de la vista actual. En una colección y en un partido, <code class="docutils literal notranslate"><span class="pre">s</span></code> se rechaza: buscaría en toda la biblioteca y reemplazaría la lista mostrada.</p>
+<p>Los resultados de una búsqueda <code class="docutils literal notranslate"><span class="pre">ss</span></code> lanzada desde una colección o una partida se abandonan con <em>Esc</em>, con una sola pulsación en cuanto ni un campo ni el panel que tiene el foco tiene algo que cerrar (una jugada seleccionada en el análisis, por ejemplo): blunderDB vuelve a la colección completa, o a la partida en la jugada estudiada, y a la posición que se dejó. Esta vuelta solo sigue a <code class="docutils literal notranslate"><span class="pre">ss</span></code>: <code class="docutils literal notranslate"><span class="pre">s</span></code>, lanzada desde el panel de búsqueda abierto sobre una colección o una partida, busca en toda la biblioteca, y <em>Esc</em> ya no devuelve a la lista que se dejó.</p>
+<p>Una búsqueda en una base grande se muestra antes de contarse: la primera página de resultados aparece de inmediato, y la barra de estado indica « Buscando… » con el tiempo transcurrido hasta que se conoce el total; este sustituye entonces la longitud provisional de la lista. Solo se ejecuta una búsqueda a la vez: iniciar otra abandona la anterior. <em>Esc</em> interrumpe la búsqueda en curso y detiene su recorrido de la base; si la primera página ya estaba mostrada, queda sola, y la barra de estado lo indica.</p>
+<p>El panel ofrece un control explícito del <strong>tipo de decisión</strong> buscado: <em>Indiferente</em> (ningún filtro), <em>Fichas</em> (decisiones de jugada) o <em>Cubo</em> (decisiones de cubo). Cuando se selecciona <em>Cubo</em>, una segunda lista precisa el subtipo: <em>Todos</em>, <em>Doblar / No doblar</em> (el jugador con el turno debe decidir si doblar) o <em>Aceptar / Pasar</em> (respuesta a un doblaje del rival). El control está sincronizado con el tablero: modificar los dados o el cubo en el tablero actualiza el tipo de decisión, y viceversa. En modo <em>Aceptar / Pasar</em>, el cubo se muestra en el centro del tablero con el valor ofrecido; ese valor sigue siendo editable.</p>
+<p>La <strong>fase de la partida</strong> — apertura, medio juego, carrera, retirada de fichas — es una etiqueta que blunderDB calcula únicamente a partir del tablero. Nunca es editable y se puede buscar con el token <code class="docutils literal notranslate"><span class="pre">ph:</span></code> de la línea de comandos (<code class="docutils literal notranslate"><span class="pre">ph:race</span></code>, repetible: <code class="docutils literal notranslate"><span class="pre">ph:race</span> <span class="pre">ph:bearoff</span></code>). Tres de sus cuatro fronteras son las que GNU Backgammon emplea para dirigir sus redes; la cuarta, donde termina la apertura, es una convención de blunderDB: una posición sigue en la apertura mientras ninguno de los dos bandos haya movido más de cuatro fichas de sus puntos de partida, no se haya retirado ninguna y ninguna esté en la barra.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>La etiqueta la recalcula el comando <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code>. En una base abierta por primera vez con esta versión, el cálculo se hace una vez, al abrirla. Una base cuyas fases nunca se han calculado no devuelve nada para <code class="docutils literal notranslate"><span class="pre">ph:</span></code> — nada, en lugar de una respuesta falsa.</p>
+</div>
+<p>El token <code class="docutils literal notranslate"><span class="pre">like</span></code> <strong>ordena</strong> en vez de restringir: su presencia clasifica el resultado por distancia creciente a una posición objetivo — <code class="docutils literal notranslate"><span class="pre">like</span></code> la actual, <code class="docutils literal notranslate"><span class="pre">like42</span></code> la de índice 42 — y los demás tokens restringen el conjunto así ordenado, de modo que <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like42</span> <span class="pre">E&gt;80</span></code> se lee «las vecinas de la 42 donde fallé». La distancia es una distancia de transporte en pips de ficha, la cantidad de movimiento de fichas que separa dos posiciones, vista del jugador que mueve.</p>
+<p>Una vecina es el mismo <strong>problema</strong>, no el mismo dibujo: la clasificación se toma dentro de la clase del objetivo — mismo tipo de decisión, mismo régimen (dinero o partido) para una decisión de cubo, y un partido distinto del suyo, pues las posiciones que la rodean en su propia partida son sus estructuras más cercanas sin ser jamás sus vecinas. Los dados, el marcador y el cubo quedan fuera de la clase; los tokens ordinarios los filtran cuando se quiere. <code class="docutils literal notranslate"><span class="pre">like42*</span></code> amplía la clase a todos los tipos de decisión y a ambos regímenes, nunca al partido del objetivo; <code class="docutils literal notranslate"><span class="pre">like&lt;12</span></code> descarta lo que está a más de doce pips de ficha. Una clasificación que no encuentra nada devuelve una lista vacía y lo dice, en vez de diez posiciones sin relación.</p>
+<p>En modo <strong>edición</strong>, <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like</span></code> toma por objetivo el tablero <strong>dibujado</strong>: se dibuja aproximadamente la posición que uno recuerda, se lanza, y la biblioteca responde — allí donde la búsqueda por estructura exige el dibujo exacto. El tablero se lee entonces como una posición y no como un patrón: un punto dejado vacío cuenta como fichas retiradas, lo cual es exacto para una posición real y falsea el cálculo para un dibujo dejado a medias.</p>
+<p>Cada vecina lleva su distancia bajo las tablas de análisis, junto con la posición de la que está cerca. Es lo que permite juzgar si uno mira una vecina o una coincidencia, y es la razón de ser del límite. La clasificación se lanza también sin pasar por la línea de comandos: <em>CTRL-MAYÚS-L</em>, o la entrada <strong>Posiciones vecinas</strong> del menú contextual del tablero.</p>
+<p>El token <code class="docutils literal notranslate"><span class="pre">n</span></code> cuenta los <strong>encuentros</strong>: <code class="docutils literal notranslate"><span class="pre">n&gt;3</span></code> conserva las posiciones encontradas al menos tres veces en la base, todas las partidas y todos los jugadores juntos. Es otra pregunta distinta de «qué he fallado» — una posición encontrada veinte veces y bien jugada diecinueve sigue siendo la que hay que saber de memoria. Se cuentan decisiones, no partidas: la misma posición dos veces en una partida cuenta por dos, porque eran dos decisiones. Combinado con un filtro de jugador, solo cuenta las apariciones de ese jugador: <code class="docutils literal notranslate"><span class="pre">n&gt;3</span> <span class="pre">pl!&quot;Alice&quot;</span></code> conserva las posiciones que Alice tuvo que jugar al menos tres veces, y <code class="docutils literal notranslate"><span class="pre">pl&quot;Alice&quot;</span></code> las de las partidas que disputó; <code class="docutils literal notranslate"><span class="pre">op&quot;Bob&quot;</span></code> restringe igualmente el recuento a las partidas contra Bob.</p>
+<p>El <strong>plan de juego</strong> es una segunda etiqueta derivada, junto a la fase, y responde a la pregunta que un paquete de filtros guardados no sabe plantear: «muéstrame mis errores en holding game». Token <code class="docutils literal notranslate"><span class="pre">gt:</span></code>, repetible (<code class="docutils literal notranslate"><span class="pre">gt:holding</span> <span class="pre">gt:mutualholding</span></code>), desde el punto de vista del <strong>jugador que mueve</strong> — el plan en el que se tomaba la decisión.</p>
+<p>Los diez planes reconocidos, en el orden en que las reglas los agotan, del más específico al más general:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">race</span></code> — las fichas más atrasadas de ambos bandos se han cruzado: ya no es posible ningún contacto. Frontera de GNU Backgammon.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bearin</span></code> — el jugador que mueve está entrando las fichas mientras el adversario aún mantiene un ancla en su casa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crunch</span></code> — el jugador que mueve tiene como mucho seis fichas fuera de sus puntos 1 y 2. Regla de GNU Backgammon, umbral de su autor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">backgame</span></code> — dos o más anclas en la casa del adversario.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acepoint</span></code> — una sola ancla, en el punto uno del adversario, con al menos veinte pips de retraso.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blitz</span></code> — tres o más puntos de la casa hechos, y el adversario en la barra o con una ficha suelta que golpear en esa casa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">primevprime</span></code> — ambos bandos mantienen un bloqueo de al menos cuatro puntos, y cada uno tiene una ficha atrapada tras el del otro.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutualholding</span></code> — ambos bandos mantienen un ancla alta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">holding</span></code> — el jugador que mueve mantiene un ancla alta, el adversario no.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contact</span></code> — contacto, y ninguno de los planes anteriores. La apertura acaba aquí.</p></li>
+</ul>
+<p>Tres de estas reglas son las de GNU Backgammon y están documentadas; las demás son <strong>convenciones de blunderDB</strong>. La literatura del backgammon describe los planes de juego sin cifrar sus fronteras, y no se ha publicado ninguna medida de acuerdo entre clasificadores para este problema. Los umbrales no documentados — tres puntos de casa para un blitz, cuatro puntos para un bloqueo, veinte pips de retraso para un ace-point game — se enuncian por tanto aquí en vez de esconderse en el código, y están versionados: cámbielos, ejecute <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code>, y toda la base se reetiqueta.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Se conserva una sola etiqueta por posición, la del jugador que mueve. Una etiqueta derivada nunca es editable, nunca se exporta como verdad, y una base cuyos planes nunca se han calculado no devuelve nada para <code class="docutils literal notranslate"><span class="pre">gt:</span></code> — igual que para <code class="docutils literal notranslate"><span class="pre">ph:</span></code>.</p>
+</div>
+<p>El filtro <strong>Marcada</strong> conserva las posiciones que ha marcado en el programa de origen de la partida. Solo eXtreme Gammon produce esta información, registrada jugada a jugada en el archivo <code class="docutils literal notranslate"><span class="pre">.xg</span></code>; blunderDB la lee al importar y la conserva. Una decisión de cubo marcada da dos posiciones marcadas, el doblez y la aceptación/paso, ya que blunderDB divide en dos lo que el archivo de origen registra como una sola decisión.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>El marcado no es retroactivo: las partidas ya presentes en la base no contienen esta información, puesto que solo existe en los archivos de origen. Basta con volver a importar el archivo <code class="docutils literal notranslate"><span class="pre">.xg</span></code> correspondiente — la importación detecta el duplicado y no añade nada más que las marcas, sin tocar los comentarios ni los análisis existentes. El marcado no puede ponerse ni quitarse desde blunderDB: para una lista de trabajo temporal, utilice más bien una colección.</p>
+</div>
+<p>El filtro <strong>Comentario</strong> consulta los comentarios asociados a las posiciones según tres modos exclusivos. <em>contiene el texto</em> busca una o varias palabras en el texto de los comentarios (campo de entrada, palabras separadas por <code class="docutils literal notranslate"><span class="pre">;</span></code>, al menos una debe coincidir); <em>tiene un comentario</em> conserva toda posición que lleve un comentario, sea cual sea su contenido; <em>sin comentario</em> conserva por el contrario las posiciones no anotadas — útil, combinado con un filtro de error o de fecha, para elaborar la lista de lo que queda por comentar.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Los comentarios importados de un archivo de partida (XG, GNUbg) cuentan como comentarios. Para quedarse solo con los suyos, añada el token <code class="docutils literal notranslate"><span class="pre">co:user</span></code> en la línea de comandos (<code class="docutils literal notranslate"><span class="pre">co:xg</span></code>, <code class="docutils literal notranslate"><span class="pre">co:gnubg</span></code>, <code class="docutils literal notranslate"><span class="pre">co:bgf</span></code> y <code class="docutils literal notranslate"><span class="pre">co:unknown</span></code> designan las demás procedencias). Además, los comentarios asociados a una <em>partida</em> o a un <em>torneo</em> no se ven afectados: anotan la partida o el torneo, no sus posiciones.</p>
+</div>
+<p>El filtro <strong>Partidas y Torneos</strong> se apoya en un selector común (ventana modal) en lugar de la introducción de identificadores numéricos: dos listas de casillas, una para las partidas y otra para los torneos, cada una filtrable por texto (jugador, fecha, evento para las partidas; nombre, fecha, lugar para los torneos), con botones <em>Todo</em> / <em>Ninguno</em> que solo actúan sobre el subconjunto actualmente filtrado. Marcar un torneo marca automáticamente (y atenúa) sus partidas miembro en la lista de partidas, dejando patente que un torneo equivale al conjunto de sus partidas.</p>
+<p>La banda del panel de búsqueda lleva un selector <em>Criterios</em> (los filtros) | <em>Historial</em> | <em>Guardados</em> — con un cuarto segmento, <em>Asistente</em>, cuando el asistente interno está activado — y, en <em>Criterios</em>, el botón <strong>Buscar</strong> en su extremo derecho. La pestaña <strong>Historial</strong> enumera las búsquedas anteriores con su fecha y su comando: un clic selecciona una búsqueda y muestra la posición asociada en el tablero, un doble clic la vuelve a ejecutar. Cada entrada puede guardarse en la biblioteca de filtros (icono de marcador, dándole un nombre al filtro) o eliminarse. La pestaña <strong>Guardados</strong> contiene la <strong>biblioteca de filtros</strong>: hacer doble clic en un filtro guardado para relanzar la búsqueda correspondiente (véase <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Anexo: Uso avanzado de los filtros</span></a>). El comando <code class="docutils literal notranslate"><span class="pre">history</span></code> (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) abre el panel de búsqueda.</p>
+<p>La estrella de un filtro de la biblioteca lo <strong>fija</strong>. Los filtros fijados aparecen como etiquetas en la parte superior del panel, sea cual sea la pestaña abierta, numeradas en el orden de la biblioteca: un clic en una etiqueta lanza el filtro, y <code class="docutils literal notranslate"><span class="pre">ALT-1</span></code> … <code class="docutils literal notranslate"><span class="pre">ALT-9</span></code> lanzan el filtro fijado de ese rango desde cualquier pantalla en modo NORMAL o EDIT, sin abrir el panel. El filtro plantea entonces la misma pregunta que con el doble clic, estructura de fichas incluida. La fijación pertenece a la base: sigue al filtro renombrado, desaparece con el filtro eliminado y no viaja con la exportación de la biblioteca.</p>
+<p>Una búsqueda relanzada conserva su clasificación: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like42</span></code> clasifica respecto a la posición 42, y <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like</span></code> respecto al tablero guardado con la búsqueda — el que se estaba consultando o dibujando. Una entrada que no guardó tablero no se relanza contra el de la pantalla, y la barra de estado lo indica.</p>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Consulte la <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">lista de comandos</span></a> para ver la lista de filtros disponibles.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="id5"></span><h2>Panel de Colecciones<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id8">
+<a class="reference internal image-reference" href="_images/panel_collections.png"><img alt="Panel de Colecciones" src="_images/panel_collections.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">El panel Colecciones: nombre, número de posiciones, descripción, última modificación.</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>En los paneles Colecciones, Torneos, Anki y Transcripción, el botón <strong>+</strong> de la cabecera, seguido del nombre de lo que crea (<strong>+ Nueva colección</strong>, <strong>+ Nuevo torneo</strong>, <strong>+ Nuevo mazo</strong>, <strong>+ Nueva transcripción</strong>), es el único gesto de creación: abre el campo de entrada, que <em>Esc</em> o <strong>Cancelar</strong> cierra en los paneles Colecciones y Torneos. En la lista de partidos, el icono ⌨ abre la transcripción del partido y el icono ✎ corrige sus metadatos.</p>
+<p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> busca entre las posiciones de la colección abierta; <em>Esc</em> vuelve después a la colección (véase <a class="reference internal" href="#panneau-recherche"><span class="std std-ref">Panel de Búsqueda</span></a>). El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code class="docutils literal notranslate"><span class="pre">collection</span></code> para mostrar u ocultar el panel.</p>
+<p>En la cabecera de una colección abierta, el número de posiciones es un enlace que las vuelve a poner en el recorrido, desde la primera; la casilla <strong>en esta colección</strong> añade o quita la posición mostrada. Una lista vacía propone <strong>+ Nueva colección</strong>.</p>
+<p>La <strong>Pila</strong> es la colección del gesto «revisar más tarde»: un doble clic fuera del tablero, la tecla <em>b</em> o el botón de marcador de la barra de herramientas pone la posición mostrada en la Pila, y el mismo gesto la retira. Un marcador en la esquina del tablero indica que la posición está en ella, sin otro mensaje. El gesto vale en todas partes donde se muestra una posición: revisión, búsqueda, edición, Eval, Transcripción, cuestionario, Duelo. La vuelta a cero del tablero pasa por el menú del clic derecho (véase <a class="reference internal" href="manuel_interface.html#board-menu-contextuel"><span class="std std-ref">menú del tablero</span></a>). La Pila es una colección ordinaria — renombrada, reordenada, exportada, vaciada como cualquier otra; se crea en el primer uso y se vuelve a crear si se ha eliminado. Una posición que aún no está en la biblioteca (un borrador del tablero de búsqueda o de evaluación) se escribe allí al instante, como una posición aportada sola, y luego se pone en la Pila. La línea de comandos hace el mismo gesto con <code class="docutils literal notranslate"><span class="pre">collection</span> <span class="pre">pile</span></code>.</p>
+<p>Una colección puede estar <strong>viva</strong>: su contenido ya no es una lista hecha a mano sino el resultado de una <strong>búsqueda</strong>, reevaluado cada vez que se abre. El botón ◇ en la cabecera de la colección la hace viva con la última búsqueda lanzada; ◈ indica que ya lo está, y el mismo botón le devuelve su lista. Nada se destruye al hacerla viva: las posiciones que contenía siguen ahí al volver atrás.</p>
+<p>El botón ❄, visible en una colección viva, la <strong>congela</strong>: las posiciones que la búsqueda selecciona en ese instante pasan a ser el contenido de una colección ordinaria, en el orden de la búsqueda, y la consulta se borra. Las posiciones que contenía antes de ser viva se sustituyen.</p>
+<p>Una colección viva cuya consulta lleva un token que esta versión ya no conoce <strong>se niega a abrirse</strong> y lo dice, en vez de devolver toda la base. Es el único fallo que un filtro guardado no debe tener: ensancharse en silencio.</p>
+<p>Una colección viva <strong>sigue viva en una exportación</strong> de la base: su consulta viaja con ella y se reevalúa, en el destinatario, sobre las posiciones del archivo. Cuando la exportación lleva las posiciones de las colecciones, lleva las que la consulta selecciona en el momento de la exportación, hasta el tope de 5000 posiciones. Una consulta que designa posiciones, partidas o torneos por su número se reescribe con los números del archivo; si alguno queda fuera del archivo, la colección se exporta <strong>congelada</strong>, con las posiciones que la consulta selecciona en el momento de la exportación.</p>
+<p>Un mazo de repetición espaciada basado en una colección viva reproduce su consulta cada vez que se abre una sesión: las posiciones que la búsqueda selecciona desde la última vez entran en él, y las tarjetas que ya estaban conservan su planificación. Una evaluación está acotada por un <strong>tope</strong> de 5.000 posiciones; cuando la consulta selecciona más, solo las primeras, en el orden de la búsqueda, alimentan el mazo, y la barra de estado lo indica junto con el número real de posiciones seleccionadas.</p>
+<p id="positions-reference">El botón <strong>Proponer…</strong> del encabezado abre las <strong>posiciones de referencia</strong>: una lista corta de posiciones para estudiar, elegida entre sus errores para que cada una resuma muchos. Estudiar los diez peores errores suele dar diez variantes de un mismo problema, o posiciones singulares que no enseñan nada sobre las demás; una posición de referencia está en el centro de varios de sus errores, de estructura parecida, y su lección sirve para todos.</p>
+<ul class="simple">
+<li><p>Los errores son los del <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">plan de estudio</span></a>: cifrados en MWC y ordenados por familia (plan de juego, naturaleza, tema). Dos errores de una familia son <strong>vecinos</strong> a lo sumo a 12 pasos de ficha de distancia <code class="docutils literal notranslate"><span class="pre">like</span></code>; un error de cubo solo tiene como vecinos los del mismo marcador.</p></li>
+<li><p>Cada posición vale el <strong>MWC recuperable</strong> (pérdida menos dificultad) de sus vecinas y de ella misma: lo que aportaría su lección si sirviera para todas. Una lección <strong>ajustada</strong> (la segunda opción cuesta menos de medio error) o un veredicto <strong>inestable</strong> (otra profundidad o un rollout dice otra cosa) cuenta por la mitad; se señala un rollout que lo confirma. La cifra al principio de cada línea es el MWC cubierto; el motivo da la cifra contada cuando la lección cuenta por la mitad.</p></li>
+<li><p>La lista es <strong>variada</strong>: una posición elegida cubre a sus vecinas, que ya no aportan nada a las siguientes, y ninguna posición propuesta es un casi-duplicado de otra. Una posición <strong>ya tratada</strong> — comentada, en una colección, una tarjeta de Anki o marcada como «estudiada» — nunca se propone, y sus vecinas se consideran cubiertas.</p></li>
+</ul>
+<p>El <strong>alcance</strong> es toda la base de datos, la partida en curso, un torneo o el filtro del panel Estadísticas; el jugador es el de ese filtro. El <strong>tamaño</strong> es de 10, 20 o 50 posiciones. Cada línea indica su familia, su marcador si se trata del cubo, el MWC que cubre y su motivo: cuántos errores y partidas resume, el tamaño de su familia entre sus decisiones, su propio recuperable, la diferencia con la segunda opción. Hacer clic en una línea abre la posición; las casillas marcadas se convierten con un clic en una <strong>colección</strong>, un <strong>mazo de Anki</strong> o un <strong>quiz</strong>. En línea de comandos: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span> <span class="pre">suggest</span></code> (véase <a class="reference internal" href="cli_bibliotheque.html#cli-collection"><span class="std std-ref">collection — Gestionar las colecciones</span></a>).</p>
+<section id="lecons">
+<span id="id6"></span><h3>Lecciones<a class="headerlink" href="#lecons" title="Link to this heading"></a></h3>
+<p>Una <strong>lección</strong> es una secuencia de pasos que un entrenador escribe una sola vez para un alumno y le entrega en un archivo de base (véase el comando <code class="docutils literal notranslate"><span class="pre">lesson</span> <span class="pre">export</span></code> de <a class="reference internal" href="cli.html"><span class="doc">Interfaz de línea de comandos (CLI)</span></a>). Cada paso tiene un título, un texto y puede mostrar una colección, una posición, ambas o ninguna. El comando <code class="docutils literal notranslate"><span class="pre">le</span></code> lista las lecciones de la base en la barra de estado; <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">2</span></code> abre la lección 2; <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span></code> abre el editor de lecciones.</p>
+<p>Aparece entonces una <strong>barra de lectura</strong> encima del tablero: nombre de la lección, número del paso, título y luego el texto. <em>Anterior</em> y <em>Siguiente</em> cambian de paso; el paso lleva al tablero la colección o la posición que muestra, que se recorre después con los gestos habituales. <em>Cerrar</em> sale de la lección. Un paso cuya colección o posición se ha eliminado conserva su texto.</p>
+<p>La casilla <em>Paso hecho</em> de la barra marca el paso actual como hecho; un segundo clic quita la marca, y la barra cuenta los pasos hechos. Es el único gesto que escribe algo: leer una lección, cambiar de paso o abrirla no registra nada, ni el paso alcanzado ni la apertura. La marca se escribe en la base abierta, la del alumno, y ninguna exportación la incluye. Importar un archivo que contiene una lección la crea; una lección del mismo nombre ya presente no se toca.</p>
+<p><strong>El editor de lecciones</strong> se abre con <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span></code> (<code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span> <span class="pre">2</span></code> sobre la lección 2) o con el botón <em>Editar</em> de la barra de lectura. A la izquierda, la lista de lecciones y un campo para crear una; a la derecha, el nombre y la descripción de la lección elegida, luego sus pasos. Cada paso tiene un título, un texto, una colección elegida en la lista y una posición: <em>Posición actual</em> le adjunta la posición mostrada en el tablero, <em>Quitar la posición</em> se la retira. <em>Guardar el paso</em> escribe sus cambios; las flechas lo desplazan un lugar; <em>Añadir un paso</em> añade uno al final. <em>Leer</em> cierra el editor y abre la lección en su primer paso; <em>Exportar como página web</em> guarda la lección en un único archivo HTML autónomo (título, descripción, cada paso con su texto y su tablero, el análisis guardado de cada posición plegado como la respuesta de un cuestionario, el origen de la marca de agua al pie), listo para publicar tal cual: no contiene ningún script ni hace ninguna llamada de red; <em>Eliminar</em> borra la lección y sus pasos, sin tocar las colecciones ni las posiciones que mostraban. Las lecciones también se crean y se modifican por la línea de comandos o por la API (<a class="reference internal" href="mode_headless.html#headless-lecons"><span class="std std-ref">Las lecciones</span></a>).</p>
+<p>Una copia de seguridad —la exportación de toda la biblioteca desde la ventana de exportación o por la línea de comandos— se lleva todas las lecciones. En la ventana de exportación, la fila <em>Lecciones</em> las elige una a una: cada lección marcada sale con las colecciones y las posiciones que muestran sus pasos, y el archivo puede llevar marca de agua o protegerse con contraseña (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) como cualquier exportación. Sin esta casilla, una exportación parcial (una selección de posiciones, de colecciones o de partidas) no se lleva las lecciones.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="manuel_interface.html" class="btn btn-neutral float-left" title="Primeros pasos e interfaz" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="manuel_matchs.html" class="btn btn-neutral float-right" title="Partidas y transcripción" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

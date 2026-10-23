@@ -1,0 +1,280 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Импорт, происхождение и распространение &mdash; документация blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=ee48f470"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Метрики и инструменты для изучения" href="metriques.html" />
+    <link rel="prev" title="Тренировка, Anki и дуэль" href="manuel_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/manuel_partage.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_partage.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_partage.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_partage.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_partage.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_partage.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_partage.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_partage.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Руководство</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Начало работы и интерфейс</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Анализ, комментарии и поиск</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Матчи и запись</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Турниры</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Статистика</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Оценка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Тренировка, Anki и дуэль</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Импорт, происхождение и распространение</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">Импорт: что записывается, а что — никогда</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-metadonnees">Панель метаданных</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">Распространение базы: происхождение и пароль</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#marquer-une-base-de-son-origine">Пометить базу её происхождением</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identite-d-emetteur">Идентичность автора</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">Защита базы паролем</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lire-l-origine-d-un-fichier">Как прочитать происхождение файла</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#publier-une-base-pour-d-autres">Публикация базы для других</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Метрики и инструменты для изучения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Руководство</a></li>
+      <li class="breadcrumb-item active">Импорт, происхождение и распространение</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="import-origine-et-partage">
+<span id="manuel-partage"></span><h1>Импорт, происхождение и распространение<a class="headerlink" href="#import-origine-et-partage" title="Ссылка на этот заголовок"></a></h1>
+<section id="import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">
+<span id="import-regles"></span><h2>Импорт: что записывается, а что — никогда<a class="headerlink" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais" title="Ссылка на этот заголовок"></a></h2>
+<p>Импорт матча, позиции или другой базы добавляет то, чего не хватает; он не заменяет того, что уже есть.</p>
+<ul class="simple">
+<li><p><strong>Позиция никогда не дублируется.</strong> Её узнаёт её идентичность — шашки, куб, кости, счёт, — а не файл, из которого она пришла: одна и та же позиция, встреченная в двух матчах, остаётся одной строкой.</p></li>
+<li><p><strong>Импорт базы считывает всё, что записывает экспорт.</strong> Позиции с их анализами и комментариями, а также матчи (включая партии и ходы), турниры с их Руководством и Встречей, черновики транскрипций, псевдонимы, коллекции, уроки и колоды Anki: см. <a class="reference internal" href="guide_utilisateur.html#guide-fusionner-base"><span class="std std-ref">Объединение базы данных</span></a>. Ничто не перезаписывается: уже имеющийся матч повторно не копируется, одноимённый турнир получает матчи без смены даты события (дата его последнего изменения сдвигается вперёд, так как он получает новые матчи), турнир, у которого уже есть Руководство, сохраняет его и остаётся вне импортированной Встречи, матч, уже размещённый в другом турнире или на другом месте таблицы, остаётся там, а то, что база уже решила, остаётся за её решением. Турниры, Руководства, Встречи, черновики транскрипций и псевдонимы, создаваемые импортом, сохраняют свои исходные даты; создаваемые коллекции, уроки и колоды Anki их не сохраняют.</p></li>
+<li><p><strong>По одному анализу на движок.</strong> eXtreme Gammon, GNUbg, BGBlitz и встроенный оценщик уживаются на одной и той же позиции, и панель Анализа указывает происхождение каждого из них. Импорт одного не стирает другой.</p></li>
+<li><p><strong>Импортированный анализ никогда не пересчитывается.</strong> blunderDB хранит его как есть, с меткой уровня («3-ply», «XG Roller++», «Book»), эквити, ошибками, вероятностями и удачей броска. Правило гласит: «оценка лишь заполняет пробел»: автоматический анализ после импорта посещает только позиции <strong>без какого-либо</strong> анализа, а повторный анализ устаревших анализов gammonNet оставляет нетронутой любую позицию, несущую импортированный анализ (см. <a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">Конфигурация</span></a>).</p></li>
+<li><p><strong>Повторный импорт уже сохранённого матча приносит только более глубокое.</strong> Матч распознаётся по игре (игроки, длина, кости, ходы, куб), а не по анализу: ни матч, ни партия, ни ход не перезаписываются. Пометки, поставленные в исходной программе, добавляются, а анализ глубже сохранённого заменяет его, позиция за позицией — версия Roller++ того же матча заменяет версию 3-ply независимо от порядка импорта; при равной или меньшей глубине сохранённый анализ остаётся. Поэтому повторный импорт того же файла ничего не перезаписывает. Отчёт об импорте отличает дубликаты, не принёсшие ничего, от тех, что углубили анализы. В командной строке <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> пропускает дубликат, не беря из него ничего, кроме пометок. Матч, оборванный и позже дополненный (больше партий), — это не тот же матч: он импортируется как второй матч.</p></li>
+<li><p><strong>Нечитаемый анализ не мешает импорту матча.</strong> Решение, анализ которого содержит значение, не являющееся конечным числом (NaN или бесконечность, встречающиеся в некоторых файлах XG), импортируется без этого анализа; остальная часть матча импортируется как обычно, а отчёт об импорте подсчитывает затронутые решения.</p></li>
+<li><p><strong>Матч, уже имеющийся под другими именами, отмечается, но никогда не объединяется.</strong> Два отпечатка матча содержат имена игроков: «Martin A.» и «Alice Martin» дают два матча. Импорт также сравнивает кости (длина, начальный счёт, кости каждой партии) и сообщает под строкой файла и в отчёте о матче, уже имеющемся в базе под другими именами, чьи кости он содержит. <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code> перечисляет эти пары в существующей базе, а также обрезанные матчи и их более длинную версию.</p></li>
+<li><p><strong>Имя, известное под другим написанием, записывается под своим каноническим именем.</strong> <em>Псевдоним</em> означает, что «Martin A.» — другое написание «Alice Martin» (или что название события — другое написание другого). При импорте имена игроков и события заменяются их каноническим именем, а матч помещается в турнир канонического события. Отпечатки матча сохраняют имена из файла: файл, импортированный до появления его псевдонима, поэтому всегда распознаётся. Матч, кубики которого совпадают с кубиками матча в базе, а имена различаются лишь известными псевдонимами, не является вторым матчем: его анализы обогащают уже сохранённый.</p></li>
+</ul>
+<p>Псевдонимы управляются на вкладке <strong>Корпус</strong> настроек: выбрать <strong>Игроки</strong> или <strong>События</strong>, ввести псевдоним и каноническое имя или удалить псевдоним из списка. <strong>Предложить</strong> перечисляет имена, различающиеся только регистром, диакритикой, пунктуацией или порядком слов; ничего не применяется без щелчка по <strong>Применить</strong>. Та же вкладка содержит флажок <strong>Пропускать дубликаты при импорте</strong> (эквивалент <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code>, на время сеанса) и поиск <strong>вероятных дубликатов</strong> существующей базы, тот же, что у <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code>: каждая пара указывается номерами матчей, ничего не объединяется. Под парой с одинаковыми костями <strong>Создать эти псевдонимы</strong> одним щелчком записывает псевдонимы игроков, после которых оба матча называли бы одних и тех же игроков, причём написание более нового матча становится псевдонимом: одно предложение, когда имя общее для обоих, иначе два — место за местом, затем крест-накрест, — из которых выбирают то, что говорит, кто есть кто. В командной строке: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">players</span> <span class="pre">alias</span></code> и <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">events</span> <span class="pre">alias</span></code>.</p>
+<ul class="simple">
+<li><p><strong>Папка импортируется параллельно.</strong> Файлы читаются сразу на нескольких ядрах и записываются группами, всегда в порядке папки: номера матчей не зависят от машины. Файл, побайтно совпадающий с уже прочитанным файлом той же папки, не читается повторно: он считается дубликатом. Отмена останавливает импорт на текущей группе; уже записанное остаётся.</p></li>
+<li><p><strong>Прогресс измеряется в позициях в секунду.</strong> Окно импорта показывает прочитанный процент, скорость, оценку оставшегося времени и текущие счётчики (импортировано, дубликаты, с ошибкой). <strong>Свернуть</strong> убирает его в строку состояния, откуда значок открывает его снова: импорт продолжается, пока вы работаете, а окно само возвращается с отчётом в конце. Первые сто ошибок перечислены; остальные подсчитаны, и журнал приложения называет их все. В командной строке <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span></code> показывает тот же прогресс в стандартном потоке ошибок, а <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> возвращает его в итоговом объекте (<code class="docutils literal notranslate"><span class="pre">progress</span></code>).</p></li>
+<li><p><strong>Каждый файл импорта записывается в журнал, а прерванный импорт можно возобновить.</strong> Для каждого файла журнал пакета хранит путь, размер, дату изменения, отпечаток SHA-256 и результат: новая партия (с её номером), дубликат (с партией, которая его покрывает), дополненная партия или ошибка (с сообщением). Отменённый или оборванный импорт продолжается без повторения уже решённого: файл с тем же путём, размером и датой пропускается без чтения; файл с тем же содержимым читается, но не анализируется; файл с ошибкой повторяется. В приложении окно завершения импорта перечисляет журнал (один файл на строку, с его результатом и сообщением об ошибке; повторно обработанный файл показывает последний исход), а строка, давшая партию, открывает её. <strong>Отменённый</strong> импорт оставляет окно открытым с кнопкой <strong>Продолжить</strong>. В командной строке <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;папка&gt;</span> <span class="pre">--resume</span> <span class="pre">&lt;пакет&gt;</span></code> возобновляет пакет, номер которого был показан в начале импорта, а <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> возвращает журнал в итоговом объекте (<code class="docutils literal notranslate"><span class="pre">journal</span></code>). Сервер принимает <code class="docutils literal notranslate"><span class="pre">resume</span></code> в запросе <code class="docutils literal notranslate"><span class="pre">imports.batch</span></code> и возвращает журнал через <code class="docutils literal notranslate"><span class="pre">imports.files</span></code>. Журнал — данные импорта: открытие или чтение базы ничего в него не пишет.</p></li>
+<li><p><strong>Импорт, прерванный остановкой приложения, возобновляется из окна.</strong> Команда <code class="docutils literal notranslate"><span class="pre">:resume</span></code> перечисляет импорты, которые ничто не завершило; выберите нужный, затем снова укажите папку или файлы, как <code class="docutils literal notranslate"><span class="pre">--dir</span></code> в командной строке. Журнал пакета решает, что не читается повторно.</p></li>
+<li><p><strong>Большая папка импортируется в пакетном режиме.</strong> Начиная с 200 файлов, blunderDB пишет с увеличенным кешем и реже делает контрольные точки. Если в базе ещё нет ни одной позиции, он идёт дальше: поисковые индексы перестраиваются только в конце, а запись больше не синхронизируется с диском. Отключение питания во время такого импорта может тогда повредить базу: её нужно создать заново и повторить импорт. Аварийное завершение программы, напротив, оставляет лишь отсутствующие индексы, которые перестраиваются при следующем открытии (журнал сообщает об этом).</p></li>
+<li><p><strong>Что blunderDB никогда не записывает</strong>: пересчитанное везение — оно читается из исходного файла или остаётся неизвестным — и роллаут, который он не запускал сам: данные роллаута из файла <code class="docutils literal notranslate"><span class="pre">.xg</span></code> не открываются. Сохраняются только роллауты, которые создаёт сам blunderDB (<a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Роллауты</span></a>), рядом с анализом.</p></li>
+</ul>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2>Панель метаданных<a class="headerlink" href="#panneau-metadonnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Метаданные</strong> (<em>CTRL-M</em>) показывает общие сведения о текущей базе данных: <em>Пользователь</em>, дату создания (<em>Создано</em>), <em>Версию</em> схемы и <em>Описание</em>. Пользователь, дата и описание изменяются на месте и сохраняются при выходе из поля; версия доступна только для чтения. Доступна также командой <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+<p>Она также показывает, <strong>если она есть</strong>, происхождение базы — см. <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a>. У обычной базы этот раздел не отображается.</p>
+</section>
+<section id="diffuser-une-base-origine-et-mot-de-passe">
+<span id="diffusion-controlee"></span><h2>Распространение базы: происхождение и пароль<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Ссылка на этот заголовок"></a></h2>
+<p>У преподавателя, раздающего базу позиций, есть два независимых друг от друга механизма, оба необязательные и выбираемые <strong>в момент экспорта</strong>: пометить файл его происхождением и защитить его паролем.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Ни один из них не отслеживает дальнейшую судьбу файла. blunderDB <strong>ничего не записывает на стороне получателя базы</strong>: открыть помеченную базу — то же самое, что открыть любую другую, и нигде не фиксируется, кто её открыл, когда и откуда взялось её содержимое.</p>
+</div>
+<section id="marquer-une-base-de-son-origine">
+<h3>Пометить базу её происхождением<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Ссылка на этот заголовок"></a></h3>
+<p>Окно экспорта умещается на одном экране: полоса заголовка — число экспортируемых позиций, <strong>Отмена</strong> и <strong>Экспорт…</strong> — затем сетка, по одной строке на семейство с его количеством. Эти количества точны: они читаются с сервера при каждом изменении флажка, на том же отборе, что и экспорт, и это именно то, что будет в файле. Файл выбирается последним, после <strong>Экспорт…</strong>; если закрыть этот выбор без имени, происходит возврат к сетке. На время записи поверх появляется индикатор хода, окно закрывается само, а результат отображается в строке состояния.</p>
+<p>Девять пунктов заслуживают внимания:</p>
+<ul class="simple">
+<li><p><strong>Охват</strong>: из списка — поиска, коллекции — строка <em>Охват</em> выбирает между <em>Текущий список</em> и <em>Вся библиотека</em>. Текущий список экспортирует свои позиции, а строка <em>Матчи</em> предлагает только те матчи, в которых эти позиции были сыграны; каждый отмеченный матч уходит со всеми своими позициями. Из библиотеки охват — это библиотека.</p></li>
+<li><p><strong>Вся библиотека</strong> — это экспорт сервера и <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>: все семейства отмечены изначально, колоды Anki с их историей повторений, а текущие транскрипции уходят вместе с остальным.</p></li>
+<li><p><strong>Синхронизация</strong>: при выборе <em>Вся библиотека</em> строка <em>Синхронизация</em> предлагает <em>Только новое с последнего экспорта в эту папку</em> и кнопку <strong>Выбрать папку…</strong>. Файл тогда больше не запрашивается: он записывается в эту папку под новым именем, а счётчики относятся к новому (см. <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Синхронизация двух компьютеров</span></a>).</p></li>
+<li><p><strong>Матч уходит со своим черновиком записи</strong> — под флажком <em>Транскрипции</em> строки <em>Матчи</em>, отмеченным изначально; так же уходят матчи, которые уносит и турнир. Черновик, который ещё не дал матча, уходит только со всей библиотекой. Матч или транскрипция, связанные с локальным видео, уносят только имя файла, без его папки, которую получатель заново указывает на своей копии; веб-ссылка уходит как есть. Файл, из которого был импортирован матч, также уходит только по имени.</p></li>
+<li><p><strong>Матч уходит с псевдонимами своих игроков и своего события</strong>: флажок <em>Псевдонимы</em>, отмеченный изначально, заставляет слияние игроков следовать за матчем, и получатель читает объединённого игрока как одного. Псевдоним, который не называет никого из экспортируемых матчей, остаётся у вас.</p></li>
+<li><p><strong>Коллекция, чьи позиции не все входят в список, приходит усечённой.</strong> Список коллекций показывает для каждой охваченную долю («12/40») и отмечает её красным, когда она неполная. Флажок <em>+ их позиции</em> уносит позиции отмеченных коллекций: позиции списка, составленного вручную, и те, что выбирает запрос живой коллекции. Живая коллекция, чей запрос называет строки, которых нет в файле, <strong>уходит замороженной</strong>: она приходит списком того, что запрос выбирает сегодня, а список отмечает её красным как «заморожена» с примечанием; флажок <em>+ их позиции</em> оставляет её живой.</p></li>
+<li><p><strong>Турнир всегда уходит вместе со своими матчами</strong>: без них связи турнир–матч не существует, и турнир пришёл бы пустым. Отметка турнира забирает его матчи, даже если флажок матчей снят или ограничен другими. Он уходит и со своим Руководством — журнал, пары, столы и привязка экспортируемых матчей, — а его Встреча уходит, как только уходит один из её турниров; выходная папка Руководства остаётся у вас. Руководство находится при открытии файла или при его импорте в другую базу.</p></li>
+<li><p><strong>Колода Anki уходит со своими позициями</strong> — как новая учебная копия. Флажок <em>с моей историей</em> уносит дополнительно состояние каждой карточки и журнал её повторений: резервная копия или ваши колоды, перенесённые на другую машину. Для списка он снят, для библиотеки отмечен.</p></li>
+<li><p><strong>Сохранённые фильтры</strong> экспортируют не содержимое, а ваши собственные поиски, бесполезные в чужой базе; для списка флажок снят. Фильтр, указывающий позицию, матч или турнир по его номеру, перенумеровывается для файла; если он указывает на то, что не уходит, он остаётся у вас.</p></li>
+</ul>
+<p>Коллекции, уроки, транскрипции, колоды Anki, псевдонимы и турниры уходят с теми датами создания и добавления, которые они имеют у вас, а не с датой экспорта.</p>
+<p>Поля <em>Пользователь</em>, <em>Описание</em> и <em>Дата создания</em> описывают <strong>создаваемый файл</strong>; они предзаполнены из исходной базы.</p>
+<p>Если отметить <strong>Водяной знак</strong>, появятся два поля:</p>
+<ul class="simple">
+<li><p><strong>Происхождение</strong> — что это за файл и откуда он, вашими словами: «Курс Жана Дюпона — 12 марта 2026 года». Это поле <strong>обязательное</strong>: пока оно пусто, оно обведено красным, а кнопка экспорта остаётся неактивной.</p></li>
+<li><p><strong>Примечание</strong>, необязательное — условия использования, контактный адрес, просьба не распространять дальше.</p></li>
+</ul>
+<p>Отметка подписана вашей идентичностью автора. Поэтому она <strong>неизменяема и неподделываема</strong>: никто не может её изменить или изготовить от вашего имени. Зато она <strong>не является неудаляемой</strong> — распространяемый файл представляет собой обычную базу SQLite, а blunderDB — свободная программа. Она ничему не препятствует: она говорит, откуда файл.</p>
+<p>Написанные вами комментарии подписываются той же идентичностью: получатель видит, что они от вас и не были ли изменены по дороге (см. <a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">Панель комментариев</span></a>). Комментарий, уже несущий подпись другого отправителя, сохраняет её. Строка состояния сообщает в конце экспорта, сколько ваших комментариев подписано; экспорт без отметки не подписывает ни одного.</p>
+</section>
+<section id="identite-d-emetteur">
+<h3>Идентичность автора<a class="headerlink" href="#identite-d-emetteur" title="Ссылка на этот заголовок"></a></h3>
+<p>Отметки подписываются вашей <strong>идентичностью автора</strong>, которая создаётся сама при первой пометке файла; настраивать ничего не нужно. Она принадлежит человеку, а не базе: все ваши файлы несут один и тот же публичный отпечаток вида <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>Вы можете сообщить этот отпечаток получателям, чтобы они убедились, что файл действительно от вас. Идентичность переносится с одного компьютера на другой одним файлом (расширение <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), при желании защищённым парольной фразой. <strong>Этот файл позволяет подписывать от вашего имени: не передавайте его.</strong></p>
+<p>В настройках (значок шестерёнки на панели инструментов) вкладка <em>Идентичность автора</em> показывает ваше имя и отпечаток и предлагает <em>Сохранить идентичность…</em>, <em>Загрузить идентичность…</em> и <em>Создать заново…</em>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p><strong>Создание заново ничего не отзывает.</strong> Отметка несёт в себе публичный ключ, которым она подписана, поэтому проверяется сама по себе и всегда. Если ваш файл идентичности утёк, тот, у кого он есть, сможет и дальше подписывать под вашим прежним отпечатком, и такие отметки останутся действительными.</p>
+<p>После утечки вас защищает не программа: нужно опубликовать новый отпечаток и объявить прежний недействительным перед вашими получателями.</p>
+<p>Создание заново перезаписывает текущий ключ; blunderDB предлагает сохранить его перед заменой.</p>
+</div>
+</section>
+<section id="proteger-une-base-par-un-mot-de-passe">
+<h3>Защита базы паролем<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Ссылка на этот заголовок"></a></h3>
+<p>Пароль вводится скрытым — и здесь, и при открытии защищённого файла; значок в виде глаза показывает его, <strong>пока его удерживают нажатым</strong>, и снова скрывает, как только его отпускают.</p>
+<p>Если отметить <strong>Пароль</strong>, будет создан файл с расширением <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — даже если имя, выбранное в окне сохранения, оканчивается на <code class="docutils literal notranslate"><span class="pre">.db</span></code>. Чтобы открыть его, используйте обычное открытие базы: окно выбора принимает и <code class="docutils literal notranslate"><span class="pre">.db</span></code>, и <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. Затем blunderDB запрашивает пароль и устанавливает рядом обычную базу; после этого больше ничего не спрашивается.</p>
+<p>Окно предлагает <strong>удалить защищённый файл после открытия</strong>: иначе одно и то же содержимое останется у вас под двумя именами. По умолчанию флажок снят — защищённый файл остаётся у вас, если вы собираетесь его передать, — а удаление происходит только после успешного открытия.</p>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p>Пароль защищает файл <strong>при передаче</strong>, а не саму базу. Он мешает постороннему открыть файл, забытый в папке загрузок, или вложение, пересланное по ошибке. Он не защищает от того, кому вы сообщили пароль.</p>
+</div>
+<p>Пароль проверяется при <strong>каждом</strong> открытии, в том числе если файл уже открывали на этом компьютере ранее.</p>
+<p>Технически база шифруется алгоритмом <strong>AES-256 в режиме GCM</strong>, ключ выводится из пароля функцией <strong>Argon2id</strong> (64 МиБ памяти, 3 прохода, 4 потока), соль случайна и своя для каждого файла. Режим GCM аутентифицирует всё целиком: неверный пароль распознаётся как таковой, равно как и любое изменение зашифрованного файла — молча испорченной базы не получится никогда.</p>
+<p>Заголовок защищённого файла остаётся <strong>открытым</strong>: его происхождение читается и без пароля.</p>
+</section>
+<section id="lire-l-origine-d-un-fichier">
+<h3>Как прочитать происхождение файла<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Ссылка на этот заголовок"></a></h3>
+<p>В приложении откройте файл и покажите панель <strong>Метаданные</strong> (команда <code class="docutils literal notranslate"><span class="pre">meta</span></code>). В верхней части панели появится раздел <strong>Происхождение</strong>, доступный только для чтения; он сообщает, что было записано, кем, когда и в каком состоянии подпись:</p>
+<ul class="simple">
+<li><p>«✓ помечено вами»: файл несёт вашу отметку в целости;</p></li>
+<li><p>«✓ подпись проверена»: отметка нетронута и сделана другим ключом — сравните её отпечаток с тем, который сообщил вам автор;</p></li>
+<li><p>«⚠ подпись недействительна»: документ был изменён или подделан.</p></li>
+</ul>
+<p>У обычной базы этот раздел не появляется.</p>
+<p>В командной строке <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">файл.db</span></code> показывает происхождение и состояние подписи, <strong>никогда не записывая в файл</strong>. Команда работает и с защищённым файлом, без пароля. См. <code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> про параметры <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> и <code class="docutils literal notranslate"><span class="pre">--password</span></code> команды <code class="docutils literal notranslate"><span class="pre">export</span></code>, а также про <code class="docutils literal notranslate"><span class="pre">identity</span></code> и <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+</section>
+<section id="publier-une-base-pour-d-autres">
+<span id="partager-une-base"></span><h3>Публикация базы для других<a class="headerlink" href="#publier-une-base-pour-d-autres" title="Ссылка на этот заголовок"></a></h3>
+<p>Помеченная база распространяется как любой файл — по почте, с личного сайта, на флешке. blunderDB <strong>не предоставляет никакой службы</strong>: ни хранилища, ни размещённого каталога, ни учётной записи. Это прямое следствие его устройства: на стороне того, кто получает файл, никогда ничего не записывается, и сообщать службе было бы нечего, даже если бы она существовала.</p>
+<p>То, что делает опубликованную базу пригодной для другого, сводится к четырём полям, и все они уже есть:</p>
+<ul class="simple">
+<li><p><strong>Пользователь</strong> — кто её собрал, под тем именем, которое вы хотите видеть указанным.</p></li>
+<li><p><strong>Описание</strong> — что база содержит, одной фразой, помещающейся в список: «240 решений по кубу при счёте, с комментариями, средний уровень».</p></li>
+<li><p><strong>Происхождение</strong> (водяного знака) — что это за файл и для кого он был сделан. Это первое, что получатель читает в панели <em>Метаданные</em>.</p></li>
+<li><p><strong>Отпечаток издателя</strong> — публикуйте его рядом с файлом, а не внутри: сравнивая его, получатель убеждается, что файл пришёл от вас, а не от того, кто взял ваше имя.</p></li>
+</ul>
+<p>База, опубликованная без водяного знака, остаётся вполне пригодной; она просто анонимна, и панель <em>Метаданные</em> не показывает тогда раздела <em>Происхождение</em>.</p>
+<p>Чтобы о базе узнали, категория <em>Show and tell</em> <a class="reference external" href="https://github.com/kevung/blunderDB/discussions">обсуждений репозитория</a> служит указателем: это список, который ведут сами публикующие, а не служба, оказываемая blunderDB. Чтобы объявить там базу, нужны ссылка, четыре поля выше и отпечаток.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="manuel_entrainement.html" class="btn btn-neutral float-left" title="Тренировка, Anki и дуэль" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="metriques.html" class="btn btn-neutral float-right" title="Метрики и инструменты для изучения" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

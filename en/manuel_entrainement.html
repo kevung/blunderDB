@@ -1,0 +1,305 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Training, Anki and duel &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=804ed6bf"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Import, origin and sharing" href="manuel_partage.html" />
+    <link rel="prev" title="Evaluation" href="manuel_eval.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Languages">
+  <a href="../fr/manuel_entrainement.html" lang="fr" hreflang="fr">Français</a>
+  <span class="current" lang="en" aria-current="true">English</span>
+  <a href="../de/manuel_entrainement.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_entrainement.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_entrainement.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_entrainement.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_entrainement.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_entrainement.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_entrainement.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">User Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Getting started and interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analysis, comments and search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Matches and transcription</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Tournaments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Evaluation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Training, Anki and duel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-anki">Anki Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-entrainement">Training Panel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#le-lanceur">The launcher</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-six-exercices">The six exercises</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repondre">Answering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-journal-et-le-bilan">The journal and the summary</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-duel">Duel panel</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Import, origin and sharing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metrics and study tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">List of commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless mode (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API contract</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendices</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows Annex: what to do if Windows blocks the launch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Annex: Statistics model — XG / gnuBG / blunderDB alignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Version history</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">About</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Manual</a></li>
+      <li class="breadcrumb-item active">Training, Anki and duel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="entrainement-anki-et-duel">
+<span id="manuel-entrainement"></span><h1>Training, Anki and duel<a class="headerlink" href="#entrainement-anki-et-duel" title="Link to this heading"></a></h1>
+<section id="panneau-anki">
+<span id="id1"></span><h2>Anki Panel<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<p>The <strong>Anki</strong> panel (<em>CTRL-K</em>) allows studying positions with spaced repetition using the FSRS algorithm. Users can create decks from collections or search results.</p>
+<p><strong>Creating decks:</strong> Click <strong>+ New deck</strong> to create a deck from a collection or the current search results. Search-based decks sync automatically when the Anki tab is activated.</p>
+<p><strong>A deck of score sheets.</strong> The third source, <em>Score sheets</em>, asks for nothing but a name: blunderDB fills the deck with the 36 unordered scores from 2 to 9 away, and the card of a score is the sheet the <a class="reference internal" href="#panneau-entrainement"><span class="std std-ref">Scores exercise</span></a> displays — take points and gammon values, both faces. That deck exists only if you create it: 36 cards due on the first day are a review debt, and it is contracted on purpose. The sync button regenerates it.</p>
+<p>The two places do not do the same work. The Scores exercise makes you retrieve those numbers <strong>against the clock</strong> and measures the speed; the deck makes them <strong>last over time</strong> and measures none of it. The two histories stay apart: the Training journal ignores Anki reviews, and Anki’s statistics ignore Training sessions.</p>
+<p><strong>A selected deck takes over the panel header</strong>: its name, the number of its positions, which a click opens, and the number of due cards; on the right, the settings (⚙), the reset (↻), <em>Cram</em> and <em>Study</em>. ← returns to the deck list.</p>
+<p><strong>Export to Anki:</strong> the ⤓ button of a row of the list writes the deck as an <strong>.apkg</strong> file, which the Anki application imports on a computer or a phone (AnkiDroid, AnkiMobile). Each position becomes a two-sided card: on the front the board, the score as seen by the player on roll (placed at the bottom), the cube and the dice; on the back the best move or right cube decision, its equity and the played move’s error. The labels follow the interface language. The deck is exported as it stands, without a sync, and the export writes nothing to the database. Re-importing a later export into Anki updates the cards instead of duplicating them. On the command line: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span> <span class="pre">export</span></code>, which also exports a collection (see <a class="reference internal" href="cli.html"><span class="doc">Command Line Interface (CLI)</span></a>).</p>
+<p><strong>Reviewing:</strong> Select a deck then click <em>Study</em> (or double-click a deck) to start reviewing due cards. A position card shows the position on the board; a score card announces the score and leaves the board as it is. Rate your recall with keys <em>1</em> (Again), <em>2</em> (Hard), <em>3</em> (Good), or <em>4</em> (Easy). Press <em>Esc</em> to stop and return to the deck list.</p>
+<p><strong>Undoing a rating.</strong> The <em>Undo</em> button, under the rating buttons, or the <em>u</em> key, takes back the session’s last rating: the card gets back exactly the state it had before (due date, interval, stability, difficulty, number of reviews and lapses), the rating leaves the review log, and the card returns to the screen to be rated again. Repeated, it works back through the session rating by rating. When the session ends, <em>Undo</em> stays in the deck strip until the next session: the last rating can be taken back too, and the review resumes on that card. A review recorded before schema version 2.42.0 cannot be undone: the earlier state was not kept. On the command line: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span> <span class="pre">card</span> <span class="pre">--action</span> <span class="pre">undo</span></code> (see <a class="reference internal" href="cli.html"><span class="doc">Command Line Interface (CLI)</span></a>).</p>
+<p>Two counts carry distinct names: the <strong>Past due</strong> column of the list counts every card whose due date has passed, suspended or buried cards included; the <em>due</em> count in the header counts only those available now, and can therefore be smaller.</p>
+<p>Anki counts are links: a click on the due, new, learning or review cards of the strip, or on a value in the <strong>Cards</strong>, <strong>New</strong> and <strong>Past due</strong> columns of the list, loads the matching positions. Likewise, in an open tournament, the number of positions opens exactly those positions.</p>
+<p><strong>Cube decisions make two cards, chained.</strong> A cube decision is two questions — “double?”, then “take?” — and blunderDB has always stored them as two positions. A deck that selects only one half gets the other: the decision is completed, not enlarged. And when both are due, the second comes <strong>immediately</strong> after the first.</p>
+<p>Each keeps its own grade and its own schedule: these are not two stages of one card, they are two cards. Chaining advances no due date — it orders the cards already due, nothing more. Both being born together, they are due together the first time, and that is where it serves.</p>
+<p><strong>Showing the answer:</strong> The card asks a question — which move to play, or which cube action. Think, then press <em>SPACE</em> (or click the masked area) to reveal the answer: the recorded analysis of the position, as the Analysis tab presents it. It appears below the rating buttons, which stay in place and within reach. Clicking a move in the list shows it on the board.</p>
+<p>Nothing forces you to reveal the answer in order to rate: if you are sure of yourself, the <em>1</em> to <em>4</em> keys stay active. The answer is masked again on the next card, but not if you simply switch tabs — go and consult the Eval panel or the position’s comment, it will be waiting for you when you return.</p>
+<p>A position without a recorded analysis says so directly, with no masked area.</p>
+<p><strong>Answering on the board.</strong> By default you grade yourself. In the Settings of a position deck, tick <em>Answer on the board</em>: for a checker card you then play the move on the board, as in the Decision exercise (a click on a checker plays it with the first unplayed die, a click on the dice swaps the remaining dice, a right click takes the steps back), then the complete move is validated by a click on the dice or with ENTER. The engine judges the move against the stored analysis, reveals the answer and <strong>proposes a grade</strong>: <em>Easy</em> for a quick correct answer, <em>Good</em> for a slower correct one, <em>Hard</em> for an error under the blunder threshold, <em>Again</em> for a blunder or an illegal move. The proposed grade is highlighted; you stay in control and grade what you want with <em>1</em> to <em>4</em>. A legal move the analysis does not rank proposes nothing. Cube cards, score cards and decks of score sheets stay self-graded. Revealing the answer without playing gives up the move.</p>
+<p><strong>Limiting the session.</strong> By default a review session runs through every card that is due. You can cap it at a number of cards, per deck, in the Settings: tick <em>Limit session</em> and give how many cards a session should serve. When the limit is reached the session stops and says so — the message tells “limit reached, so many cards still due” apart from a queue that is genuinely empty. To carry on anyway, free drill is there: it serves other positions without changing anything in the schedule.</p>
+<p>A limit of <strong>0</strong> serves no card at all: it is a state in its own right, useful to freeze a deck while preparing for a tournament, and it is not the same thing as “no limit”. The <em>Study</em> button is then disabled.</p>
+<p>The limit applies to the <strong>session</strong>, not to the day. A blunderDB deck is built on a collection or on a search: it is a finite corpus, introduced over a few sessions, whose daily volume is already bounded by its size. A daily cap would never bite, or else would build a backlog on a deck that fitted in a single session.</p>
+<p><strong>Free drill (cram):</strong> The <em>Cram</em> button, next to <em>Study</em>, starts a free-drill session: random positions from the deck are shown to you regardless of the FSRS schedule. This mode <strong>never alters the spaced-repetition plan</strong> — ideal for warming up before a tournament or intensively reviewing a themed deck without disturbing its ordering. A <em>Free</em> badge replaces the card state and a <em>Next</em> button (keys <em>1</em> to <em>4</em>) cycles through the positions. <em>Esc</em> returns to the list without saving an interrupted session.</p>
+<p><strong>Setting a card aside, without grading it.</strong> During a review, a right-click on the card’s header offers three gestures that take it out of the session without telling the scheduler anything:</p>
+<ul class="simple">
+<li><p><strong>Suspend</strong> — the card keeps its schedule and never comes up again while suspended. It is how a card that is wrong, or not useful yet, is set aside without losing the history attached to it.</p></li>
+<li><p><strong>Bury</strong> — the card disappears until the next day. Unlike suspending, this says nothing about its worth: it is for the one you have just seen elsewhere, or would rather not meet twice in an evening.</p></li>
+<li><p><strong>Remove</strong> — the card leaves the deck, after confirmation. The position itself stays in the database: a deck is a study list over the library, never a copy of it.</p></li>
+</ul>
+<p>None of these three records a grade: a card set aside is not a card answered, and it does not count towards the session’s total.</p>
+<p><strong>Review log.</strong> In a deck’s Settings, the <em>Review log</em> button shows what the scheduler was <strong>told</strong> — date, position, grade, state, granted interval — as opposed to what it plans. It is the only place a grade entered by mistake can be seen. It cannot be corrected there: the schedule stays out of reach, and that rule is precisely what makes the log useful — the past cannot be rewritten, but it can be known.</p>
+<p><strong>Pause/Resume:</strong> You can interrupt a review session at any time with <em>Esc</em>. The button changes to <em>Resume</em> and shows your progress. Click it to pick up where you left off.</p>
+<p><strong>Deck management:</strong> Use the action buttons to rename, synchronise, reset or delete decks (a confirmation is asked for the last two). The FSRS parameters (target retention, maximum interval, fuzz) can be set per deck in the Settings (gear icon).</p>
+<p><strong>Retention: the target and the measurement.</strong> The <em>target retention</em> is your own choice on the trade-off between workload and quality of recall: the higher it is, the shorter the intervals and the more you review. Alongside it, the Settings show the <strong>measured retention</strong> over your own reviews — information, never a control loop: blunderDB does not change your target to chase your success rate. Below some twenty reviews the measurement is not shown: it would read as a fact when it is only noise.</p>
+<p>Changing the retention <strong>is not retroactive</strong>: each card takes up the new pace at its next review, and the due dates already set do not move. The effect is therefore gradual, and invisible on the day itself.</p>
+<p>The <em>maximum interval</em> bounds the spacing. A recently created deck starts at one year: a position the algorithm would push back by several years has left the deck without you deciding so, and your own game changes faster than that. Older decks keep the value they had.</p>
+</section>
+<section id="panneau-entrainement">
+<span id="id2"></span><h2>Training Panel<a class="headerlink" href="#panneau-entrainement" title="Link to this heading"></a></h2>
+<p>The <strong>Anki</strong> panel reviews what is <strong>retained</strong>; the <strong>Training</strong> panel drills what is <strong>calculated</strong>, against the clock. It opens with <code class="docutils literal notranslate"><span class="pre">CTRL-J</span></code>, with the toolbar button placed right after « Position aléatoire », or with the <code class="docutils literal notranslate"><span class="pre">train</span></code> command. The score sheet belongs to both: it is calculated here and retained in a <a class="reference internal" href="#panneau-anki"><span class="std std-ref">deck of score sheets</span></a>.</p>
+<p>At rest, the panel shows the launcher and the summary of past sessions.</p>
+<section id="le-lanceur">
+<h3>The launcher<a class="headerlink" href="#le-lanceur" title="Link to this heading"></a></h3>
+<p>Three settings, one per line; “Start” is at the end of the header band:</p>
+<ul class="simple">
+<li><p>the <strong>exercise</strong> — <em>Scores</em>, <em>Pip count</em>, <em>Bearoff</em>, <em>Evaluation</em>, <em>Decision</em> or <em>Opening</em>;</p></li>
+<li><p>the <strong>source</strong> of the question, when the exercise has several — <em>Vivier</em> (canonical shapes of the exercise), <em>Plateau</em> (the position as it stands) or <em>Base</em> (a position of the browsed list);</p></li>
+<li><p>for <em>Opening</em>, instead of the source, the <strong>roll</strong> to play — <em>1st roll</em> (the opening move) or <em>2nd roll</em> (the reply); <em>1st roll</em> by default;</p></li>
+<li><p>for <em>Opening</em> again, the <strong>mode</strong>, exclusive: <em>XG categories</em> (the default) draws among the ticked <strong>categories</strong> — <em>Money</em>, <em>DMP</em>, <em>Gammon save</em> (the opener 1-away Crawford, the replier 2-away) and <em>Gammon go</em> (the reverse), ticked by default; <em>Match to 5</em> draws one score, with equal weight, among those the book holds where each player is 1 to 5 away, with no choice of score. A category, or the <em>Match to 5</em> mode, that the book does not hold is greyed out;</p></li>
+<li><p>the <strong>limit per question</strong> — none, 15, 30 or 60 seconds.</p></li>
+</ul>
+<p>The chosen source, or roll, is remembered for each exercise, from one session to the next.</p>
+<p>The browsed list can come from the <em>recurring errors</em> of the Stats panel: a click on “Quiz this group” replaces it with the group’s positions and starts the Decision exercise.</p>
+<p><code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">scores</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">pips</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">bearoff</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">evaluation</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">decision</span></code> and <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">opening</span></code> open the panel and start straight away; <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">tp</span></code> and <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">takepoint</span></code> are synonyms of <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">scores</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">epc</span></code> of <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">bearoff</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">quiz</span></code> of <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">decision</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">ouverture</span></code> and <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">book</span></code> of <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">opening</span></code>.</p>
+</section>
+<section id="les-six-exercices">
+<h3>The six exercises<a class="headerlink" href="#les-six-exercices" title="Link to this heading"></a></h3>
+<p><strong>Scores</strong> draws one of the 36 unordered scores from 2 to 9 away and shows a <strong>score card</strong>: two columns — <em>Vous</em> (you) and <em>L’adversaire</em> (the opponent) — and seven rows — the take point at cube 2 then at cube 4, each for a long race and for the last roll, then the gammon value at cubes 1, 2 and 4.</p>
+<p>The tooltip of “Reveal” recalls the gesture — work each number out in your head, then <em>Reveal</em>, then click the ones you missed — and the board shows the score drawn on an empty table.</p>
+<p>Each column carries only the cells the reference tables — those of the <a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">Reference data panel</span></a> — define for its face: three numbers at 2a-2a, fourteen at most, and a single column at a level score. A row neither face defines does not appear on the card — so there is no “n/a” cell to guess. Both faces are there because a cube decision at a score needs both: the corrected take point combines both players’ gammon values, and it is the opponent’s take point that says whether your double passes.</p>
+<p><strong>Pip count</strong> asks for the pip count of <strong>both</strong> sides. The board’s pip count is hidden while the question is open; “Reveal” shows it — <strong>even if you had hidden the pip count</strong> with <code class="docutils literal notranslate"><span class="pre">p</span></code>, since the answer would otherwise stay invisible and the exercise unverifiable. It is a mask and not a setting: your own choice is not changed, and it takes over again at the next question. The <em>Board</em> source asks one question about the position shown, and only one; the <em>Database</em> source draws a new position for every question and brings it onto the board.</p>
+<p><strong>Bearoff</strong> asks for the <strong>EPC of both sides</strong> — the effective pip count, the one that adds to the pip count the wastage of the chequers that come off with pips to spare. It is the domain where the engine is exact, and the one where the EPC really differs from the pip count.</p>
+<p>Every question is <strong>generated</strong>: the engine starts from a seed and plays a few rolls, and it is the snapshot that is put to you. A random placement would not have the gaps, the low stacks and the asymmetries of a real bear-off. The seed comes from the <em>Vivier</em> (a completed bear-in, then zero to ten plies), from the <em>Plateau</em> (the position on screen, then one to four plies — never zero, since you have just seen it) or from the <em>Base</em> (a position of the browsed list, as it is: it is already real).</p>
+<p>The exercise’s domain: <strong>both sides entirely in their home board</strong>, <strong>4 to 15 chequers</strong> a side and the rest borne off, cube centred, money play. A seed that does not fit is <strong>refused by name</strong>, and nothing starts — no silent adaptation: playing on until contact breaks would hand you a position you did not choose. An empty board is the exception: the question then comes from the pool, and the panel says why.</p>
+<p>The exercise needs the one-sided bear-off table; while it is still being generated in the background (see <a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">Configuration</span></a>), it says so rather than asking a question with no answer.</p>
+<p><strong>Évaluation</strong> asks what a position is worth: the <strong>win chance of the player on roll</strong>, as a percentage, and the <strong>cube action</strong> — <em>Pas de double</em>, <em>Double, prend</em> or <em>Double, passe</em>. These are the two numbers the Eval panel shows, asked before they are shown. The domain is <strong>any position</strong>: a race as well as a contact position, in <strong>money play</strong>.</p>
+<p>As for Bearoff, the question is <strong>generated</strong>: the seed comes from the <em>Vivier</em> (a position where contact has just broken, then zero to ten plies played by the engine), from the <em>Plateau</em> (the position displayed, then one to four plies; the question is asked in money play with the cube centred, whatever the seed’s score) or from the <em>Base</em> (a position of the browsed list, as it is). A library position qualifies only if it is a money-play cube decision — no dice, the cube centred or held by the player on roll —; otherwise the draw moves on to the next one, and when none qualifies, the exercise says so. A board that is not a game position — not fifteen chequers a side, or a finished game — is <strong>refused with a sentence that says so</strong>; an empty board makes the question come from the pool.</p>
+<p>The truth is the engine’s: the two-sided bear-off database when the position is in it, gammonNet at its canonical depth everywhere else, and the panel says which one answered. Nothing is estimated: a position the engine does not evaluate is not asked.</p>
+<p><strong>Décision</strong> asks a decision that is <strong>already analysed</strong>: a position of the browsed list — its only source — with the decision it carries, a checker play or a cube action, and the stored analysis is the judge. A position without an analysis asks no question, and a position once asked does not come back in the session; when the list is exhausted, the panel says so. With no database open, or with no analysed position in the list, the exercise <strong>refuses and says why</strong>, and nothing starts.</p>
+<p><strong>Opening</strong> sets <strong>one of the first two rolls of a game at a score</strong>, according to the roll chosen in the launcher: with <em>1st roll</em>, the opening of the player on roll; with <em>2nd roll</em>, the opponent’s reply in the position left by an <strong>opening move tied with the best at that score</strong>, drawn from those the book follows and already played on the board. The move is judged against the <strong>opening book</strong> embedded in blunderDB, computed by its own rollouts: for every score of its grid — from 2 to 7 points on each side, at most one point apart, and the Crawford game at 1-away against 2- or 4-away, both ways — the fifteen opening rolls, then the replies after the opening moves tied with the best at that score. The book is the exercise’s only source.</p>
+<p>Scores are drawn by <strong>category</strong> (<em>Money</em>, <em>DMP</em>, <em>Gammon save</em>, <em>Gammon go</em>), because from 4-away to 7-away the best plays barely change from one score to the next, whereas these four situations play differently. The prompt names the category next to the score.</p>
+<p>While an <em>Évaluation</em>, <em>Décision</em> or <em>Ouverture</em> question awaits its answer, the Analysis panel is masked: it carries the answer.</p>
+</section>
+<section id="repondre">
+<h3>Answering<a class="headerlink" href="#repondre" title="Link to this heading"></a></h3>
+<p>The answer mode is a property of the exercise, never a setting: what is <strong>counted or recalled</strong> is declared, what is <strong>estimated</strong> is entered — because there, the size of the error is the lesson.</p>
+<p><em>Scores</em> and <em>Pip count</em> are <strong>declared</strong>: you work it out in your head, you click “Reveal”, and the truth appears. Every number is then <strong>right by default</strong> — you click the one you got wrong to mark it a <strong>fault</strong> (<em>Tab</em> then <em>Space</em> does the same from the keyboard), and a second click clears the mark. Nothing is typed: a pip count or a table cell is right or wrong, and writing it teaches nothing that reading it does not.</p>
+<p><em>Bearoff</em> is <strong>entered</strong>: you write the two EPCs, « Valider » grades them to within half a pip — the granularity at which the EPC changes a race decision — and the truth appears next to what you wrote. The application judges, there is nothing to tick. The deviation is recorded <strong>with its sign</strong>: overestimating is not underestimating, and it is the summary that makes an average of it.</p>
+<p><em>Évaluation</em> mixes both gestures in a single question. The win chance is <strong>entered</strong> and graded to within five points, signed deviation included; the cube action is <strong>chosen</strong> — the click keeps the button without grading anything, and « Valider » grades both at once. The cube has no tolerance: only the button the engine’s verdict makes right is right, and a position <em>too good to double</em> is answered <em>Pas de double</em>. <em>Enter</em> in the field leads to the cube action while it is not chosen, then validates. After the answer, the panel shows the truth — the verdict in four outcomes —, its source, and the <strong>EPC of both sides</strong> when the position has an exact one; the EPC is never asked here, it has its own exercise. The journal counts the two numbers apart: one can estimate a position well and misread its cube.</p>
+<p><em>Décision</em> is <strong>chosen</strong>. On a checker decision, <strong>play the move on the board</strong>: a click on a checker plays it with the first die not yet played (the left die, then the right one), or with the next if the first cannot move it; if no die can, nothing moves. You can also drag the checker. A click on the dice swaps the dice still to play, and has the move graded once it is complete. A right click on the board takes back the steps played. In the panel, « Annuler le pas » goes back one die and « Recommencer » restores the position as the question poses it. The notation field also accepts the move typed (<code class="docutils literal notranslate"><span class="pre">13/7</span> <span class="pre">8/7</span></code>, the transcription notation): the steps are placed on the board on each keystroke, a field turned red says a step cannot be played, and ENTER validates the complete move. With the panel focused, BACKSPACE undoes a step and ESC restarts the move; ENTER validates the complete move wherever the focus is, except on a button. On a cube decision, click <em>No double</em>, <em>Double, take</em> or <em>Double, pass</em>: the click is the answer.</p>
+<p>The correction keeps three outcomes apart, and collapsing them would lie. An <strong>illegal move</strong> is not a badly chosen move — it is a rules mistake. A <strong>legal move the engine never ranked</strong> is not an error of judgement: it simply has no price, and costs nothing. A ranked move costs what the analysis says it costs, in millipoints. Only a ranked move with no cost is right; the best move is shown in every case.</p>
+<p><em>Opening</em> is also <strong>chosen</strong>, the move played on the board as in <em>Decision</em> — same gestures, same notation field. The panel states the roll to play and the score, <em>you</em> first. A move is <strong>right</strong> when it is <strong>tied with the best</strong>: there is not a single good move, but a leading group the book cannot tell apart (see <a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">Opening book: gap, 95 % CI and tie</span></a>). Once the move is played, the panel marks it <em>Right</em> or <em>Wrong</em> and shows the table of the book’s candidates: the <strong>gap</strong> of each to the best, the <strong>95 % CI</strong> of that gap and the mention <strong>tied</strong>, your move highlighted — added at the bottom, without a gap, when the book does not rank it. The number of games and the rollout setting that produced these figures are in the table’s tooltip. With <em>2nd roll</em>, the prompt names the opening move already played. The log counts the opening and the reply apart: one can know one’s openings and reply badly.</p>
+<p>The clock starts when the question appears and stops at « Révéler », at « Valider », at the click of a <em>Décision</em> cube action or at the move played in <em>Ouverture</em>; the next question is prepared while you answer, so it is never timed with yours. Ticking faults is not timed either. With a limit, a question still unanswered at the deadline reveals itself and counts <strong>out of time</strong>: every one of its numbers is wrong, and its time does not enter the median — one does not measure an answer that was not given. A decision out of time shows the best move, and does not enter the session’s PR.</p>
+<p>“Next” records the question and asks another; ENTER, outside a field or a button, does the same once the answer is shown, or “Finish” if there is no next question. The session has no fixed length: it runs until “Finish”, which writes it to the journal, or “Leave”, which discards it. Every button is in the panel’s header band, with the exercise, the question number and the timer: “Leave”, “Finish”, then, always at the end, the question’s action (“Reveal”, “Check” or “Next”). The board shows the question and its answer; it carries no control.</p>
+<p>While a question is set on the board, revealed or not, the keys that browse the list do not scroll it: the question keeps the board until « Suivante », « Terminer » or « Quitter ».</p>
+</section>
+<section id="le-journal-et-le-bilan">
+<h3>The journal and the summary<a class="headerlink" href="#le-journal-et-le-bilan" title="Link to this heading"></a></h3>
+<p>Finished sessions are kept in the database itself — so they travel with the file — and without any cap. At rest, the panel shows one line per exercise: the number of sessions, the fault rate, the median time and, from ten sessions on, the <strong>trend</strong>, that is the gap between the fault rate of the last ten sessions and that of all of them — negative, you are improving.</p>
+<p>For <em>Décision</em>, the line also gives the <strong>PR</strong> of the last session, computed by the formula the statistics apply to real play — 500 × mean error in normalised equity, over the graded decisions. A training PR of 6 and a match PR of 6 measure the same thing on the same scale.</p>
+<p>Clicking the exercise’s name unfolds the detail <strong>by number type</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». That detail is what makes the journal worth keeping, and it counts by type and not by face: the same cell of the same table, seen from either side, is one single weakness.</p>
+<p>A <em>Decision</em> question keeps in the log its position, the answer given and its cost in millipoints. The <em>Decision</em> detail therefore carries three buttons that act on all the missed positions, each once, most recently missed first — a question that timed out counts as missed:</p>
+<ul class="simple">
+<li><p><strong>Retake my misses</strong> — the missed positions become the list browsed and a <em>Decision</em> session restarts on them;</p></li>
+<li><p><strong>Anki deck of misses</strong> — an Anki deck of these positions;</p></li>
+<li><p><strong>Collection of misses</strong> — a collection of these positions.</p></li>
+</ul>
+<p>The deck and the collection are named “Decision misses” followed by today’s date. On the command line, <code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">missed</span></code> returns the same list and makes a deck (<code class="docutils literal notranslate"><span class="pre">--deck</span></code>) or a collection (<code class="docutils literal notranslate"><span class="pre">--collection</span></code>) of it, and <code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">sessions</span></code> reads the log back (see <a class="reference internal" href="cli_entrainement.html#cli-training"><span class="std std-ref">training — The training log</span></a>).</p>
+</section>
+</section>
+<section id="panneau-duel">
+<span id="id3"></span><h2>Duel panel<a class="headerlink" href="#panneau-duel" title="Link to this heading"></a></h2>
+<p>The <strong>Duel</strong> panel plays a whole match against the Bot, with blunderDB as Arbiter: it rolls the dice, enforces the rules, and keeps the score and the clocks. It opens with <code class="docutils literal notranslate"><span class="pre">CTRL-H</span></code>, with the “Play” button of the toolbar, or with the <code class="docutils literal notranslate"><span class="pre">duel</span></code> command. A database must be open: the Duel is written to it after each decision.</p>
+<p>With no Duel open, the panel shows the form, remembered from one Duel to the next, and, if there are any, the list of suspended Duels. The header band carries the <strong>Start</strong>, the choices the starting position calls for, the <strong>time control</strong>, and “Play” at its end:</p>
+<ul class="simple">
+<li><p><strong>Start</strong>: the initial position, or the position on the board. Starting from the board, it is edited as in the Eval panel (same scratch board, same gestures): the checkers, the cube and its owner, the dice — placed on a player’s side, they give that player the turn — and the score.</p></li>
+<li><p><strong>Dice</strong> (start from a board carrying dice): “Board dice”, the default, plays the roll as set; “Reroll” has the Referee draw it again.</p></li>
+<li><p><strong>Cube decision</strong> (start from a board with no dice to play, when the player on roll can double or a double is offered on the board): “Before the cube”, the default, begins with that decision — the player on roll doubles or rolls, or the opponent answers the offered double; “After the cube” goes straight to the roll, an offered double then being taken.</p></li>
+<li><p><strong>Time control</strong>: none, <strong>Standard</strong> (2 min per point + 12 s), <strong>Speed</strong> (0.4 min per point, i.e. 2 min for a 5-point match, + 10 s), or a saved time control.</p></li>
+</ul>
+<p>The form, one setting per line:</p>
+<ul class="simple">
+<li><p><strong>Match</strong> of 1 to 25 points, or <strong>money session</strong> (Jacoby optional).</p></li>
+<li><p><strong>Score</strong>: what each player still needs, by default the match length (start of a match); “1 (Crawford)” is the Crawford game, “1 (post-Crawford)” a game that follows it. Starting from the board, these fields and the board’s score are one and the same: changing one changes the other, and a money board makes a money session. <strong>Single game</strong> stops the Duel at the end of its first game, to practise a score: the Match written counts only that game.</p></li>
+<li><p><strong>Time control</strong> (a time control chosen): <strong>minutes per point</strong> and <strong>delay</strong> in seconds. Each player has minutes per point × match length (less, from a starting score: the average length left to play); on each turn, the delay runs down first, then the reserve. An exhausted reserve stays at zero, and the elapsed time keeps being noted, or loses the match. A name and “Save” keep the two numbers as a time control of the menu, in the user’s settings; “Delete” removes the saved time control chosen. A money session is played without a time control.</p></li>
+<li><p><strong>Side played</strong> (player 1 or 2) and <strong>Bot level</strong> (<code class="docutils literal notranslate"><span class="pre">instant</span></code>, <code class="docutils literal notranslate"><span class="pre">normal</span></code>, <code class="docutils literal notranslate"><span class="pre">thorough</span></code>, those of the analysis). The selector states each level’s depth, for example “instant (0-ply)” or “normal (2-ply, pruned)”; deeper plays stronger and slower.</p></li>
+<li><p><strong>Your name</strong> and <strong>Record the match</strong>: when unchecked, the finished Duel is discarded instead of becoming a Match.</p></li>
+<li><p><strong>Pipcount</strong>: unchecked, the pipcount stays hidden during the Duel, even through the toolbar button or <code class="docutils literal notranslate"><span class="pre">P</span></code>; it returns when the Duel ends.</p></li>
+</ul>
+<p>“Resume” reopens a suspended Duel at the same point, with the same upcoming dice; its clocks were stopped.</p>
+<p>A suspended Duel does not leave its database: exporting the database does not take it along, because its upcoming dice must leave by no route before the end. A finished Duel travels like any Match.</p>
+<p>The Duel is played on the board. The panel shows the match sheet in two columns, like the Transcription, and the clocks when a time control is running; its header band names the players, says what is expected, and carries on the right “Forfeit match”, “Pause match”, “Cancel match”. A match in points is recorded only whole: no stop keeps an unfinished match. The score and the cube are those of the board; the score and the clocks stay in the status bar when the tab is collapsed. The SHA-256 fingerprint of the dice seed, published by the Referee at creation, can be read in the tooltip of the header band’s prompt, then with the seed in the origin of the finished Match. The board switches to <strong>DUEL</strong> mode: the library can no longer be browsed, editing, the Eval panel and the other tabs do not open, except the <a class="reference internal" href="manuel_eval.html#panneau-reference"><span class="std std-ref">Reference data panel</span></a>, and the engine falls silent — no evaluation, no candidate. Only the Pile (<code class="docutils literal notranslate"><span class="pre">B</span></code>), the pipcount (<code class="docutils literal notranslate"><span class="pre">P</span></code>, unless it is hidden for the Duel) and help remain.</p>
+<ul class="simple">
+<li><p>Before the roll, a click on the board, on the dice or on a checker rolls them; only a click on the cube offers to double, and the board asks “Double” or “Cancel”. When the cube is not available, the roll is automatic.</p></li>
+<li><p>Facing a double from the Bot, the board asks “Take” or “Pass”.</p></li>
+<li><p>A click on a checker plays it at once with the left die that is still free, or with the other one when the left die cannot play it; a checker on the bar enters, a double is played in four clicks. A checker can also be dragged to its destination. Only the steps of a legal move go through.</p></li>
+<li><p>A die greys out when it is played; on a double, each die stands for two steps and is half veiled after the first. A complete move greys out every die, including those the rules do not allow to be played.</p></li>
+<li><p>As long as the move is not complete, a click on the dice swaps the dice still to be played. A right-click on the board takes back all the checkers played (<code class="docutils literal notranslate"><span class="pre">BACKSPACE</span></code> too); with no checker played, it opens the Duel menu.</p></li>
+<li><p>The complete move is validated by a click on the dice, by “Validate” on the board, or by <code class="docutils literal notranslate"><span class="pre">ENTER</span></code> or <code class="docutils literal notranslate"><span class="pre">SPACE</span></code>. Nothing can be taken back afterwards.</p></li>
+<li><p>The Bot answers immediately; its moves are replayed on the board, slowly.</p></li>
+<li><p>A right-click outside the board, or on the board outside its move or with no checker played, opens the Duel menu: put the position on the Pile or take it off, resign the game for a single game, a gammon or a backgammon (on one’s turn, after confirmation), forfeit the match, pause it, cancel it. This menu offers neither evaluation nor editing.</p></li>
+<li><p>“Forfeit match” gives the whole match up, at any moment and after confirmation: the game in progress goes to the opponent for the points that bring them to the length, and the Match is written as won by them. In money play, the game in progress is lost as a single game at the cube’s value (Jacoby rule or not) and the session ends. Under a time control that loses the match, a reserve that runs out counts as that player forfeiting the match.</p></li>
+<li><p>“Pause match” puts the Duel on hold, clocks stopped; it resumes where it stopped. “Cancel match” discards it, after confirmation: nothing of it is written.</p></li>
+<li><p>A double-click outside the board puts the position on the Pile, or takes it off, like <code class="docutils literal notranslate"><span class="pre">B</span></code>; only the bookmark in the corner of the board shows it.</p></li>
+</ul>
+<p>Each decision carries its duration, with or without a time control. A resignation has no duration recorded in the Match.</p>
+<p>At the end, the Match is written, its analysis starts and the Matches tab opens on it. On the command line, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">duel</span></code> drives the same Duel (see <a class="reference internal" href="cli_matchs.html#cli-duel"><span class="std std-ref">duel — Play a Duel</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_eval.html" class="btn btn-neutral float-left" title="Evaluation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_partage.html" class="btn btn-neutral float-right" title="Import, origin and sharing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

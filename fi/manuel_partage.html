@@ -1,0 +1,280 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tuonti, alkuperä ja jakaminen &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Mittarit ja opiskelutyökalut" href="metriques.html" />
+    <link rel="prev" title="Harjoittelu, Anki ja kaksintaistelu" href="manuel_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/manuel_partage.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_partage.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_partage.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_partage.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_partage.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/manuel_partage.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_partage.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_partage.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Käyttöopas</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Aloitus ja käyttöliittymä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyysi, kommentit ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Ottelut ja litterointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Turnaukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Tilastot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Arviointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Harjoittelu, Anki ja kaksintaistelu</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tuonti, alkuperä ja jakaminen</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">Tuonti: mitä kirjoitetaan ja mitä ei koskaan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-metadonnees">Metatietopaneeli</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">Tietokannan jakaminen: alkuperä ja salasana</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#marquer-une-base-de-son-origine">Tietokannan merkitseminen alkuperällään</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identite-d-emetteur">Merkitsijän identiteetti</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">Tietokannan suojaaminen salasanalla</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lire-l-origine-d-un-fichier">Tiedoston alkuperän lukeminen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#publier-une-base-pour-d-autres">Tietokannan julkaiseminen muille</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Käyttöopas</a></li>
+      <li class="breadcrumb-item active">Tuonti, alkuperä ja jakaminen</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="import-origine-et-partage">
+<span id="manuel-partage"></span><h1>Tuonti, alkuperä ja jakaminen<a class="headerlink" href="#import-origine-et-partage" title="Link to this heading"></a></h1>
+<section id="import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">
+<span id="import-regles"></span><h2>Tuonti: mitä kirjoitetaan ja mitä ei koskaan<a class="headerlink" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais" title="Link to this heading"></a></h2>
+<p>Ottelun, aseman tai toisen tietokannan tuonti lisää sen, mikä puuttuu; se ei korvaa sitä, mikä on jo olemassa.</p>
+<ul class="simple">
+<li><p><strong>Asemaa ei koskaan kahdenneta.</strong> Sen tunnistaa sen identiteetti — nappulat, kuutio, nopat, pistetilanne — ei koskaan tiedosto, josta se tulee: sama asema kahdessa eri ottelussa pysyy yhtenä ainoana rivinä.</p></li>
+<li><p><strong>Tietokannan tuominen lukee takaisin kaiken, minkä vienti kirjoittaa.</strong> Positiot analyyseineen ja kommentteineen, mutta myös ottelut (pelit ja siirrot mukaan lukien), turnaukset Johtoineen ja Kohtaamisineen, litterointiluonnokset, aliakset, kokoelmat, oppitunnit ja Anki-pakat: ks. <a class="reference internal" href="guide_utilisateur.html#guide-fusionner-base"><span class="std std-ref">Tietokannan yhdistäminen</span></a>. Mitään ei ylikirjoiteta: jo olemassa olevaa ottelua ei kopioida uudelleen, samanniminen turnaus saa ottelut muuttamatta tapahtuman päivämäärää (sen viimeisimmän muokkauksen päivämäärä etenee, koska se saa uusia otteluita), turnaus, jolla on jo Johtonsa, säilyttää sen ja jää tuodun Kohtaamisen ulkopuolelle, jo toiseen turnaukseen tai taulukon toiseen paikkaan sijoitettu ottelu pysyy siellä, ja se, minkä tietokanta oli jo päättänyt, pysyy sen päättämänä. Tuonnin luomat turnaukset, Johdot, Kohtaamiset, litterointiluonnokset ja aliakset säilyttävät alkuperäiset päivämääränsä; luodut kokoelmat, oppitunnit ja Anki-pakat eivät säilytä niitä.</p></li>
+<li><p><strong>Yksi analyysi moottoria kohti.</strong> eXtreme Gammon, GNUbg, BGBlitz ja sisäänrakennettu evaluaattori elävät rinnakkain samassa asemassa, ja Analyysi-paneeli kertoo kunkin alkuperän. Yhden tuonti ei pyyhi toista pois.</p></li>
+<li><p><strong>Tuotua analyysiä ei koskaan lasketa uudelleen.</strong> blunderDB tallentaa sen sellaisenaan, tasotunnisteineen (« 3-ply », « XG Roller++ », « Book »), ekvitteineen, virheineen, todennäköisyyksineen ja nopanheiton onnineen. Sääntö on « evaluointi täyttää vain aukon »: automaattinen analyysi tuonnin jälkeen käy läpi vain asemat, joilla ei ole <strong>mitään</strong> analyysiä, ja vanhentuneiden gammonNet-analyysien uudelleenanalyysi jättää koskemattomaksi jokaisen aseman, jolla on tuotu analyysi (ks. <a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">Asetukset</span></a>).</p></li>
+<li><p><strong>Jo tallennetun ottelun tuominen uudelleen tuo vain syvemmän.</strong> Ottelu tunnistetaan pelistään (pelaajat, pituus, nopat, siirrot, kuutio), ei analyysistään: yhtään ottelua, peliä tai siirtoa ei kirjoiteta uudelleen. Lähdeohjelmassa asetetut merkinnät lisätään, ja tallennettua syvempi analyysi korvaa sen asema asemalta — saman ottelun Roller++-versio korvaa 3-ply-version tuontijärjestyksestä riippumatta; samalla tai pienemmällä syvyydellä tallennettu analyysi säilyy. Saman tiedoston tuominen uudelleen ei siis kirjoita mitään uudelleen. Tuontiraportti erottaa kaksoiskappaleet, jotka eivät tuoneet mitään, niistä, jotka syvensivät analyyseja. Komentorivillä <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> ohittaa kaksoiskappaleen ottamatta siitä muuta kuin merkinnät. Katkaistu ja myöhemmin täydennetty ottelu (enemmän pelejä) ei ole sama ottelu: se tuodaan toisena otteluna.</p></li>
+<li><p><strong>Lukukelvoton analyysi ei estä ottelun tuontia.</strong> Päätös, jonka analyysissä on arvo, joka ei ole äärellinen luku (NaN tai ääretön, joita joissakin XG-tiedostoissa on), tuodaan ilman tätä analyysiä; muu ottelu tuodaan tavalliseen tapaan, ja tuontiraportti laskee kyseiset päätökset.</p></li>
+<li><p><strong>Jo toisilla nimillä olemassa oleva ottelu raportoidaan, mutta sitä ei koskaan yhdistetä.</strong> Kaksi ottelun sormenjälkeä sisältävät pelaajien nimet: ”Martin A.” ja ”Alice Martin” ovat kaksi ottelua. Tuonti vertaa myös noppia (pituus, alkutilanne, kunkin pelin nopat) ja raportoi tiedoston rivin alla ja raportissa tietokannassa jo toisilla nimillä olevan ottelun, jonka nopat sillä on. <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code> luettelee nämä parit olemassa olevasta tietokannasta sekä katkaistut ottelut ja niiden pidemmän version.</p></li>
+<li><p><strong>Toisella kirjoitusasulla tunnettu nimi tallennetaan kanonisella nimellään.</strong> <em>Alias</em> kertoo, että ”Martin A.” on ”Alice Martinin” toinen kirjoitusasu (tai että tapahtuman nimi on toisen nimen toinen kirjoitusasu). Tuonnissa pelaajien ja tapahtuman nimet korvataan kanonisella nimellään, ja ottelu sijoitetaan kanonisen tapahtuman turnaukseen. Ottelun sormenjäljet säilyttävät tiedoston nimet: ennen aliaksen olemassaoloa tuotu tiedosto tunnistetaan siksi aina. Ottelu, jonka nopat ovat tietokannassa olevan ottelun nopat ja jonka nimet eroavat vain tunnettujen aliasten osalta, ei ole toinen ottelu: sen analyysit rikastavat tallennettua.</p></li>
+</ul>
+<p>Aliakset hallitaan asetusten <strong>Korpus</strong>-välilehdellä: valitse <strong>Pelaajat</strong> tai <strong>Tapahtumat</strong>, kirjoita alias ja kanoninen nimi tai poista alias luettelosta. <strong>Ehdota</strong> luettelee nimet, jotka eroavat vain kirjainkoon, aksenttien, välimerkkien tai sanajärjestyksen osalta; mitään ei oteta käyttöön ilman napsautusta <strong>Käytä</strong>. Samalla välilehdellä on valintaruutu <strong>Ohita kaksoiskappaleet tuonnissa</strong> (<code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code>-valitsimen vastine, istunnon ajaksi) ja olemassa olevan tietokannan <strong>todennäköisten kaksoiskappaleiden</strong> haku, sama kuin <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code>: jokainen pari annetaan ottelunumeroillaan, mitään ei yhdistetä. Samoilla nopilla olevan parin alla <strong>Luo nämä aliakset</strong> tallentaa yhdellä napsautuksella pelaaja-aliakset, joiden jälkeen molemmat ottelut nimeäisivät samat pelaajat, ja uudemman ottelun kirjoitusasusta tulee alias: vain yksi ehdotus, kun nimi on yhteinen molemmille, muuten kaksi — paikka paikalta, sitten ristiin — joista valitaan se, joka kertoo, kuka on kuka. Komentoriviltä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">players</span> <span class="pre">alias</span></code> ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">events</span> <span class="pre">alias</span></code>.</p>
+<ul class="simple">
+<li><p><strong>Kansio tuodaan rinnakkain.</strong> Tiedostot luetaan usealla ytimellä yhtä aikaa ja kirjoitetaan ryhmittäin, aina kansion järjestyksessä: otteluiden numerot eivät riipu koneesta. Tiedostoa, joka on tavu tavulta sama kuin samasta kansiosta jo luettu tiedosto, ei lueta uudelleen: se lasketaan kaksoiskappaleeksi. Peruuttaminen pysäyttää tuonnin meneillään olevaan ryhmään; jo kirjoitettu säilyy.</p></li>
+<li><p><strong>Edistyminen luetaan asemina sekunnissa.</strong> Tuontiikkuna näyttää luetun prosenttiosuuden, nopeuden, arvioidun jäljellä olevan ajan ja juoksevat määrät (tuodut, kaksoiskappaleet, virheelliset). <strong>Pienennä</strong> siirtää sen tilariville, josta merkki avaa sen uudelleen: tuonti jatkuu sillä aikaa kun työskentelet, ja ikkuna palaa lopuksi itsestään raportin kanssa. Sata ensimmäistä virhettä luetellaan; loput lasketaan, ja sovelluksen loki nimeää ne kaikki. Komentorivillä <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span></code> näyttää saman edistymisen virhetulosteessa, ja <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> palauttaa sen lopullisessa oliossa (<code class="docutils literal notranslate"><span class="pre">progress</span></code>).</p></li>
+<li><p><strong>Jokainen tuonnin tiedosto kirjataan lokiin, ja keskeytynyt tuonti voidaan jatkaa.</strong> Erän loki säilyttää jokaisesta tiedostosta polun, koon, muokkauspäivämäärän, SHA-256-sormenjäljen ja tuloksen: uusi ottelu (numeroineen), kaksoiskappale (sen kattavan ottelun kera), rikastettu ottelu tai virhe (viestin kera). Peruttu tai katkennut tuonti jatkuu toistamatta jo päätettyä: tiedosto, jolla on sama polku, koko ja päivämäärä, ohitetaan lukematta; tiedosto, jolla on sama sisältö, luetaan mutta sitä ei analysoida; virheellinen tiedosto yritetään uudelleen. Sovelluksessa tuonnin päätösikkuna luettelee lokin (yksi tiedosto riviä kohti, tuloksineen ja virheen viestineen; uudelleen yritetty tiedosto näyttää viimeisen lopputuloksensa), ja ottelun tuottanut rivi avaa sen. <strong>Peruttu</strong> tuonti jättää ikkunan auki <strong>Jatka</strong>-painikkeen kanssa. Komentorivillä <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;kansio&gt;</span> <span class="pre">--resume</span> <span class="pre">&lt;erä&gt;</span></code> jatkaa erää, jonka numero näytettiin tuonnin alussa, ja <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> palauttaa lokin lopullisessa oliossa (<code class="docutils literal notranslate"><span class="pre">journal</span></code>). Palvelin hyväksyy kentän <code class="docutils literal notranslate"><span class="pre">resume</span></code> pyynnössä <code class="docutils literal notranslate"><span class="pre">imports.batch</span></code> ja palauttaa lokin kutsulla <code class="docutils literal notranslate"><span class="pre">imports.files</span></code>. Loki on tuonnin tietoa: tietokannan avaaminen tai lukeminen ei kirjoita siihen mitään.</p></li>
+<li><p><strong>Sovelluksen pysähtymisen katkaisema tuonti jatkuu ikkunasta.</strong> Komento <code class="docutils literal notranslate"><span class="pre">:resume</span></code> luettelee tuonnit, joita mikään ei ole päättänyt; valitse jatkettava ja osoita sitten kansio tai tiedostot uudelleen, kuten <code class="docutils literal notranslate"><span class="pre">--dir</span></code> komentoriviltä. Erän loki ratkaisee, mitä ei lueta uudelleen.</p></li>
+<li><p><strong>Suuri kansio tuodaan massatilassa.</strong> 200 tiedostosta alkaen blunderDB kirjoittaa suuremmalla välimuistilla ja harvemmilla tarkistuspisteillä. Jos tietokannassa ei ole vielä yhtään asemaa, se menee pidemmälle: hakuindeksit rakennetaan uudelleen vasta lopuksi, eikä kirjoituksia enää synkronoida levylle. Sähkökatko tällaisen tuonnin aikana voi silloin vahingoittaa tietokantaa: se on luotava uudelleen ja tuonti käynnistettävä uudestaan. Ohjelman äkillinen pysähtyminen sen sijaan jättää vain puuttuvia indeksejä, jotka seuraava avaus rakentaa uudelleen (loki kertoo siitä).</p></li>
+<li><p><strong>Mitä blunderDB ei koskaan kirjoita</strong>: uudelleen laskettu onni — se luetaan lähdetiedostosta tai jää tuntemattomaksi — ja rollout, jota se ei ole itse ajanut: <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedoston rollout-tietoja ei avata. Vain blunderDB:n itse tuottamat rollutit (<a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Rolloutit</span></a>) tallennetaan analyysin viereen.</p></li>
+</ul>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2>Metatietopaneeli<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
+<p><strong>Metatiedot</strong>-paneeli (<em>CTRL-M</em>) näyttää nykyisen tietokannan yleistiedot: <em>Käyttäjä</em>, luontipäivä (<em>Luotu</em>), skeeman <em>Versio</em> ja <em>Kuvaus</em>. Käyttäjä, päivämäärä ja kuvaus muokataan paikan päällä ja tallennetaan kentästä poistuttaessa; versio on vain luettavissa. Saatavilla myös komennolla <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+<p>Se näyttää myös tietokannan alkuperän, <strong>jos sellainen on</strong> — ks. <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>. Tavallisessa tietokannassa tätä osiota ei näy.</p>
+</section>
+<section id="diffuser-une-base-origine-et-mot-de-passe">
+<span id="diffusion-controlee"></span><h2>Tietokannan jakaminen: alkuperä ja salasana<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Link to this heading"></a></h2>
+<p>Asemakokoelmaa jakavalla opettajalla on käytössään kaksi toisistaan riippumatonta mekanismia, molemmat vapaaehtoisia ja <strong>vientihetkellä</strong> valittavia: tiedoston merkitseminen alkuperällään ja sen suojaaminen salasanalla.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Kumpikaan ei seuraa, mitä tiedostolle tapahtuu. blunderDB <strong>ei tallenna mitään tietokannan vastaanottajan puolella</strong>: merkityn tietokannan avaaminen on täsmälleen samanlaista kuin minkä tahansa muun avaaminen, eikä missään kirjata, kuka sen avasi, milloin, tai mistä sen sisältö on peräisin.</p>
+</div>
+<section id="marquer-une-base-de-son-origine">
+<h3>Tietokannan merkitseminen alkuperällään<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Link to this heading"></a></h3>
+<p>Vientiikkuna mahtuu yhdelle näytölle: otsikkokaista — viedyt asemat, <strong>Peruuta</strong> ja <strong>Vie…</strong> — ja sen alla ruudukko, jossa on yksi rivi kutakin ryhmää kohti lukumäärineen. Nämä luvut ovat tarkkoja: ne luetaan palvelimelta jokaisen ruudun muutoksen jälkeen samasta valinnasta kuin itse vienti, ja ne ovat sitä, mitä tiedosto tulee sisältämään. Tiedosto valitaan viimeisenä, painikkeen <strong>Vie…</strong> jälkeen; valinnan sulkeminen ilman nimeä palauttaa ruudukkoon. Kirjoituksen ajaksi päälle tulee edistymisilmaisin, ikkuna sulkeutuu itsestään ja tulos näkyy tilarivillä.</p>
+<p>Yhdeksän kohtaa ansaitsee huomiota:</p>
+<ul class="simple">
+<li><p><strong>Laajuus</strong>: luettelosta — hausta, kokoelmasta — rivi <em>Laajuus</em> valitsee vaihtoehdoista <em>Nykyinen luettelo</em> ja <em>Koko kirjasto</em>. Nykyinen luettelo vie asemansa, ja rivi <em>Ottelut</em> tarjoaa vain ne ottelut, joissa nämä asemat on pelattu; jokainen valittu ottelu lähtee kaikkine asemineen. Kirjastosta käsin laajuus on kirjasto.</p></li>
+<li><p><strong>Koko kirjasto</strong> on palvelimen ja komennon <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code> vienti: kaikki ryhmät on valittu valmiiksi, Anki-pakat kertaushistorioineen, ja kesken olevat litteroinnit lähtevät muun mukana.</p></li>
+<li><p><strong>Synkronointi</strong>: kun valittuna on <em>Koko kirjasto</em>, rivillä <em>Synkronointi</em> on valinta <em>Vain uusi edellisen tähän kansioon tehdyn viennin jälkeen</em> ja painike <strong>Valitse kansio…</strong>. Tiedostoa ei silloin enää kysytä: se kirjoitetaan tähän kansioon uudella nimellä, ja määrät ovat uuden aineiston määriä (katso <a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Kahden koneen synkronointi</span></a>).</p></li>
+<li><p><strong>Ottelu lähtee litterointiluonnoksensa kanssa</strong>, rivin <em>Ottelut</em> ruudun <em>Litteroinnit</em> alla, joka on valittu valmiiksi; samoin ottelut, jotka myös turnaus vie mukanaan. Luonnos, joka ei ole vielä tuottanut ottelua, lähtee vain koko kirjaston mukana. Paikalliseen videoon liitetty ottelu tai litterointi vie mukanaan vain tiedoston nimen ilman kansiota, jonka vastaanottaja sijoittaa uudelleen omaan kopioonsa; verkkolinkki lähtee sellaisenaan. Tiedosto, josta ottelu tuotiin, lähtee niin ikään vain nimellä.</p></li>
+<li><p><strong>Ottelu lähtee pelaajiensa ja tapahtumansa aliaksineen</strong>: valmiiksi valittu ruutu <em>Aliakset</em> saa pelaajien yhdistämisen seuraamaan mukana, ja vastaanottaja lukee yhdistetyn pelaajan yhtenä. Alias, joka ei nimeä ketään viedyistä otteluista, jää teille.</p></li>
+<li><p><strong>Kokoelma, jonka kaikki asemat eivät ole luettelossa, saapuu typistettynä.</strong> Kokoelmaluettelo näyttää kustakin katetun osuuden (”12/40”) ja merkitsee sen punaisella, kun se on osittainen. Ruutu <em>+ niiden asemat</em> vie valittujen kokoelmien asemat: käsin tehdyn luettelon asemat ja ne, jotka elävän kokoelman kysely valitsee. Elävä kokoelma, jonka kysely viittaa riveihin, joita tiedosto ei sisällä, <strong>viedään jäädytettynä</strong>: se saapuu luettelona siitä, mitä sen kysely valitsee nyt, ja luettelo merkitsee sen punaisella ”jäädytetyksi” sekä huomautuksella; ruutu <em>+ niiden asemat</em> pitää sen elävänä.</p></li>
+<li><p><strong>Turnaus lähtee aina otteluidensa mukana</strong>: ilman niitä turnauksen ja ottelun välistä yhteyttä ei ole, ja turnaus saapuisi tyhjänä. Turnauksen valitseminen vie sen ottelut mukanaan, vaikka otteluiden ruutu olisi tyhjä tai rajattu muihin. Se lähtee myös Johtonsa mukana — päiväkirja, parit, pöydät ja viedyn ottelujen liitokset — ja sen Kohtaaminen lähtee heti, kun jokin sen turnauksista lähtee; Johdon tulostekansio jää teille. Johto löytyy avaamalla tiedosto tai tuomalla se toiseen tietokantaan.</p></li>
+<li><p><strong>Anki-pakka lähtee asemineen</strong>, uutena opiskelukopiona. Ruutu <em>historiani kanssa</em> vie lisäksi kunkin kortin tilan ja sen kertausten lokin: varmuuskopion tai toiselle koneelle siirretyt pakkanne. Se on valitsematta luettelolle ja valittuna kirjastolle.</p></li>
+<li><p><strong>Tallennetut suodattimet</strong> eivät vie sisältöä vaan omia hakujanne, joista ei ole hyötyä jonkun toisen tietokannassa; ruutu on valitsematta luettelolle. Suodatin, joka viittaa asemaan, otteluun tai turnaukseen sen numerolla, numeroidaan tiedostoa varten uudelleen; jos se viittaa johonkin, joka ei lähde, se jää teille.</p></li>
+</ul>
+<p>Kokoelmat, oppitunnit, litteroinnit, Anki-pakat, aliakset ja turnaukset lähtevät niillä luonti- ja lisäyspäivämäärillä, jotka niillä on teillä, eivät viennin päivämäärällä.</p>
+<p>Kentät <em>Käyttäjä</em>, <em>Kuvaus</em> ja <em>Luontipäivä</em> kuvaavat <strong>tuotettua tiedostoa</strong>; ne esitäytetään lähdetietokannasta.</p>
+<p>Kun valitset <strong>Vesileima</strong>, esiin tulee kaksi kenttää:</p>
+<ul class="simple">
+<li><p><strong>Alkuperä</strong> — mikä tämä tiedosto on ja mistä se on peräisin, omin sanoin: ”Jean Dupontin kurssi — 12. maaliskuuta 2026”. Tämä kenttä on <strong>pakollinen</strong>: niin kauan kuin se on tyhjä, sen reunus on punainen ja vientipainike pysyy ei-aktiivisena.</p></li>
+<li><p><strong>Huomautus</strong>, valinnainen — käyttöehdot, yhteysosoite, pyyntö olla jakamatta eteenpäin.</p></li>
+</ul>
+<p>Merkintä allekirjoitetaan merkitsijän identiteetilläsi. Se on siten <strong>muuttumaton ja väärentämätön</strong>: kukaan ei voi muuttaa sitä eikä valmistaa sellaista sinun nimissäsi. Se ei sen sijaan ole <strong>poistamaton</strong> — jaettu tiedosto on tavallinen SQLite-tietokanta ja blunderDB on vapaa ohjelmisto. Merkintä ei estä mitään: se kertoo, mistä tiedosto on peräisin.</p>
+<p>Kirjoittamasi kommentit allekirjoitetaan samalla identiteetillä: vastaanottaja näkee, että ne ovat peräisin sinulta, ja onko niitä muutettu matkalla (katso <a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">Kommenttipaneeli</span></a>). Kommentti, jolla on jo toisen merkitsijän allekirjoitus, säilyttää sen. Tilarivi kertoo viennin lopussa, kuinka monta kommenttiasi allekirjoitettiin; merkitön vienti ei allekirjoita yhtään.</p>
+</section>
+<section id="identite-d-emetteur">
+<h3>Merkitsijän identiteetti<a class="headerlink" href="#identite-d-emetteur" title="Link to this heading"></a></h3>
+<p>Merkinnät allekirjoitetaan <strong>merkitsijän identiteetilläsi</strong>, joka syntyy itsestään ensimmäisellä kerralla, kun merkitset tiedoston; mitään ei tarvitse määrittää. Se kuuluu henkilölle eikä tietokannalle: kaikissa tiedostoissasi on sama julkinen sormenjälki muotoa <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>Voit kertoa tämän sormenjäljen vastaanottajillesi, jotta he voivat varmistaa tiedoston tulevan todella sinulta. Identiteetti siirtyy koneelta toiselle yhtenä tiedostona (pääte <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), haluttaessa salalauseella suojattuna. <strong>Tällä tiedostolla voi allekirjoittaa sinun nimissäsi: älä jaa sitä.</strong></p>
+<p>Asetuksissa (työkalurivin rataskuvake) <em>Merkitsijän identiteetti</em> -välilehti näyttää nimesi ja sormenjälkesi ja tarjoaa toiminnot <em>Tallenna identiteetti…</em>, <em>Lataa identiteetti…</em> ja <em>Luo uusi…</em>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Varoitus</p>
+<p><strong>Uuden luominen ei mitätöi mitään.</strong> Merkintä sisältää sen allekirjoittaneen julkisen avaimen: se todentuu siis ikuisesti, aivan itsekseen. Jos identiteettitiedostosi on vuotanut, sen haltija voi jatkaa allekirjoittamista vanhalla sormenjäljelläsi, ja nuo merkinnät pysyvät pätevinä.</p>
+<p>Vuodon jälkeen sinua ei suojaa ohjelmisto: suoja on siinä, että julkaiset uuden sormenjälkesi ja ilmoitat vastaanottajillesi vanhan pätemättömäksi.</p>
+<p>Uuden luominen korvaa nykyisen avaimen; blunderDB tarjoaa mahdollisuutta tallentaa se ennen korvaamista.</p>
+</div>
+</section>
+<section id="proteger-une-base-par-un-mot-de-passe">
+<h3>Tietokannan suojaaminen salasanalla<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Link to this heading"></a></h3>
+<p>Salasana kirjoitetaan peitettynä, sekä tässä että suojattua tiedostoa avattaessa; silmäkuvake näyttää sen <strong>niin kauan kuin sitä pidetään painettuna</strong> ja peittää sen taas heti, kun ote irrotetaan.</p>
+<p>Kun valitset <strong>Salasana</strong>, syntyy tiedosto, jonka pääte on <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — myös silloin, kun tallennusikkunassa valittu nimi päättyy <code class="docutils literal notranslate"><span class="pre">.db</span></code>. Avaa se tavallisella tietokannan avaamisella: valintaikkuna hyväksyy sekä <code class="docutils literal notranslate"><span class="pre">.db</span></code>- että <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedostot. blunderDB kysyy tällöin salasanaa ja asentaa viereen tavallisen tietokannan; sen jälkeen mitään ei enää kysytä.</p>
+<p>Ikkuna tarjoaa mahdollisuutta <strong>poistaa suojattu tiedosto avaamisen jälkeen</strong>: muuten sama sisältö jää talteen kahdella nimellä. Ruutu ei ole oletuksena valittuna — suojattu tiedosto jää sinulle, jos aiot välittää sen eteenpäin — ja poisto tapahtuu vasta onnistuneen avaamisen jälkeen.</p>
+<div class="admonition warning">
+<p class="admonition-title">Varoitus</p>
+<p>Salasana suojaa tiedoston <strong>siirron ajaksi</strong>, ei itse tietokantaa. Se estää sivullista avaamasta latauskansioon unohtunutta tiedostoa tai vahingossa edelleen lähetettyä liitettä. Se ei suojaa siltä, jolle olet antanut salasanan.</p>
+</div>
+<p>Salasana tarkistetaan <strong>joka</strong> avauskerralla, myös silloin kun tiedosto on jo aiemmin avattu tällä koneella.</p>
+<p>Teknisesti tietokanta salataan <strong>AES-256:lla GCM-tilassa</strong>, ja avain johdetaan salasanasta <strong>Argon2id</strong>-funktiolla (64 MiB muistia, 3 kierrosta, 4 säiettä) käyttäen satunnaista, tiedostokohtaista suolaa. GCM-tila todentaa kokonaisuuden: väärä salasana havaitaan sellaiseksi, samoin mikä tahansa salatun tiedoston muuttaminen — vioittunutta tietokantaa ei koskaan saada hiljaisesti.</p>
+<p>Suojatun tiedoston otsake pysyy <strong>salaamattomana</strong>: sen alkuperä on luettavissa ilman salasanaa.</p>
+</section>
+<section id="lire-l-origine-d-un-fichier">
+<h3>Tiedoston alkuperän lukeminen<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Link to this heading"></a></h3>
+<p>Avaa sovelluksessa tiedosto ja näytä <strong>Metatiedot</strong>-paneeli (komento <code class="docutils literal notranslate"><span class="pre">meta</span></code>). Paneelin yläosaan ilmestyy vain luettava <strong>Alkuperä</strong>-osio, joka kertoo, mitä on kirjattu, kenen toimesta, milloin, ja missä tilassa allekirjoitus on:</p>
+<ul class="simple">
+<li><p>”✓ sinun merkitsemäsi”: tiedostossa on oma merkintäsi ehjänä;</p></li>
+<li><p>”✓ allekirjoitus varmennettu”: merkintä on ehjä ja peräisin toisesta avaimesta — vertaa sen sormenjälkeä siihen, jonka tekijä on sinulle kertonut;</p></li>
+<li><p>”⚠ virheellinen allekirjoitus”: asiakirjaa on muutettu tai se on väärennetty.</p></li>
+</ul>
+<p>Tavallisessa tietokannassa tätä osiota ei näy.</p>
+<p>Komentoriviltä <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">tiedosto.db</span></code> näyttää alkuperän ja allekirjoituksen tilan <strong>kirjoittamatta koskaan tiedostoon</strong>. Komento toimii myös suojatulle tiedostolle ilman salasanaa. Ks. <code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> komennon <code class="docutils literal notranslate"><span class="pre">export</span></code> valitsimista <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> ja <code class="docutils literal notranslate"><span class="pre">--password</span></code> sekä komennoista <code class="docutils literal notranslate"><span class="pre">identity</span></code> ja <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+</section>
+<section id="publier-une-base-pour-d-autres">
+<span id="partager-une-base"></span><h3>Tietokannan julkaiseminen muille<a class="headerlink" href="#publier-une-base-pour-d-autres" title="Link to this heading"></a></h3>
+<p>Merkitty tietokanta jaetaan kuin mikä tahansa tiedosto — sähköpostilla, omalla sivustolla, USB-tikulla. blunderDB <strong>ei tarjoa mitään palvelua</strong>: ei varastoa, ei isännöityä luetteloa, ei tiliä. Se seuraa suoraan sen rakenteesta: tiedoston vastaanottajan puolella ei koskaan kirjata mitään, joten palvelulle ei olisi mitään ilmoitettavaa, vaikka sellainen olisi.</p>
+<p>Se, mikä tekee julkaistusta tietokannasta toisen käytettävän, tiivistyy neljään kenttään, jotka ovat kaikki jo olemassa:</p>
+<ul class="simple">
+<li><p><strong>Käyttäjä</strong> — kuka sen kokosi, sillä nimellä, jonka haluat mainittavan.</p></li>
+<li><p><strong>Kuvaus</strong> — mitä tietokanta sisältää, yhdessä lauseessa, joka mahtuu luetteloon: «240 tuplauspäätöstä tilanteessa, kommentoituna, keskitaso».</p></li>
+<li><p><strong>Alkuperä</strong> (vesileimasta) — mikä tämä tiedosto on ja kenelle se tuotettiin. Se on ensimmäinen asia, jonka vastaanottaja lukee <em>Metatiedot</em>-paneelista.</p></li>
+<li><p><strong>Myöntäjän sormenjälki</strong> — julkaise se tiedoston vierellä, ei sen sisällä: sitä vertaamalla vastaanottaja varmistaa, että tiedosto tulee sinulta eikä joltakulta, joka on ottanut nimesi.</p></li>
+</ul>
+<p>Ilman vesileimaa julkaistu tietokanta on täysin käyttökelpoinen; se on vain nimetön, eikä <em>Metatiedot</em>-paneeli näytä silloin <em>Alkuperä</em>-osiota.</p>
+<p>Tietokannan tunnetuksi tekemiseen <a class="reference external" href="https://github.com/kevung/blunderDB/discussions">varaston keskustelujen</a> <em>Show and tell</em> -kategoria toimii hakemistona: se on julkaisijoiden ylläpitämä lista, ei blunderDB:n tarjoama palvelu. Sinne ilmoittaminen vaatii linkin, yllä olevat neljä kenttää ja sormenjäljen.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_entrainement.html" class="btn btn-neutral float-left" title="Harjoittelu, Anki ja kaksintaistelu" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="metriques.html" class="btn btn-neutral float-right" title="Mittarit ja opiskelutyökalut" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

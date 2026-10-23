@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arviointi &mdash; blunderDB 0.46.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=917ba0b9"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Harjoittelu, Anki ja kaksintaistelu" href="manuel_entrainement.html" />
+    <link rel="prev" title="Tilastot" href="manuel_stats.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/manuel_eval.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_eval.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_eval.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_eval.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_eval.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/manuel_eval.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_eval.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_eval.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Käyttöopas</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Aloitus ja käyttöliittymä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyysi, kommentit ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Ottelut ja litterointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Turnaukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Tilastot</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Arviointi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-eval">Eval-paneeli</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#matrice-du-videau">Tuplauskuution matriisi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#panneau-donnees-de-reference">Viitetiedot-paneeli</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#amener-une-position-dans-le-panneau-eval">Aseman tuominen Eval-paneeliin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-eval">Eval-paneelin metodologia ja oletukset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Harjoittelu, Anki ja kaksintaistelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Tuonti, alkuperä ja jakaminen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Mittarit ja opiskelutyökalut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Käyttöopas</a></li>
+      <li class="breadcrumb-item active">Arviointi</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="evaluation">
+<span id="manuel-eval"></span><h1>Arviointi<a class="headerlink" href="#evaluation" title="Link to this heading"></a></h1>
+<section id="panneau-eval">
+<span id="panneau-epc"></span><h2>Eval-paneeli<a class="headerlink" href="#panneau-eval" title="Link to this heading"></a></h2>
+<p><strong>Eval</strong>-paneeli (<em>CTRL-E</em>) arvioi reaaliajassa laudalle asetetun aseman, oli se mikä tahansa; bearoff-asemassa se erikoistuu ja laskee lisäksi EPC:n (Effective Pip Count). Se avataan painamalla <em>CTRL-E</em>, napsauttamalla alapaneelin Eval-välilehteä tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">eval</span></code>; myös sen vanha nimi <code class="docutils literal notranslate"><span class="pre">epc</span></code> avaa paneelin. Paneelin nimi oli ensin <em>EPC</em>, sitten <em>Bearoff</em>, ennen kuin siitä tuli <em>Eval</em> — täältä on siis etsittävä sitä, mitä aiempi versio kutsui Bearoff-paneeliksi, sillä tuo nimi tarkoittaa enää bearoff-taulukoiden asetusvälilehteä.</p>
+<p>Paneeli näyttää aina sen <strong>ainoan päätöksen</strong>, jota laudalle asetettu asema vaatii — ei koskaan kahta yhtä aikaa — sekä siihen liittyvät faktat. Kukin suure luetaan sille sopivalla akselilla yhden pakotetun akselin sijaan: kummankin pelaajan voitto-, gammon- ja backgammon-todennäköisyys sekä cubeless-ekviteetti, jotka lasketaan <em>ennen heittoa</em>, luetaan <strong>pelaajakohtaisesti</strong> (ala, ylä, sitten Δ) kuutiopäätöksen vasemmalla puolella, kun noppia ei ole asetettu. Faktat ja päätös pysyvät vierekkäin: kuutiopäätös ei koskaan siirry sitä perustelevien lukujen alapuolelle, olipa käyttöliittymän kieli tai laudan asema mikä tahansa. Heti kun noppia asetetaan, nämä samat <em>ennen heittoa</em> -arvot vaihtavat akselia: ne luetaan <strong>vuorossa olevan pelaajan kannalta</strong> ehdokassiirtojen luettelon kärjessä kursivoituna <em>ennen heittoa</em> -rivinä — ei yhtenä ehdokassiirtona lisää, vaan kiintopisteenä, jota vasten kukin siirto luetaan. Tämän rivin ja siirron välinen ero sisältää heiton tuurin, ei koskaan siirron ansiota, eikä sillä siksi ole virhesaraketta. Puhtaassa bearoff-asemassa toinen taulukko, aina <strong>pelaajakohtainen</strong> ja aina läsnä, nopat asetettuina tai ei, sisältää EPC:n, pip countin, wastagen, keskimääräisen heittomäärän ja keskihajonnan; nämä viisi saraketta eivät koskaan siirry. Kaksi taulukkoa on pinottu ja ne jakavat saman sarakeruudukon: samat reunat, samat sarakemerkit, yksi ainoa pistesarake — ne luetaan yhtenä kaksikerroksisena kokonaisuutena. Taulukoiden yläpuolella otsikkokaista sisältää otsikon, tilamerkin ja moottorin attribuution (myös viimeisimmän evaluoinnin syvyys näkyy siinä), ja oikealla <em>Haaste</em>-valintaruudun ja <em>Lisää tietokantaan</em> -painikkeen. Niin kauan kuin gammonNet ei ole palauttanut mitään, paneeli sanoo sen yhdellä rivillä: ”Arvioidaan…”, tai ”Aseta asema” tyhjällä laudalla.</p>
+<p>Vain ehdokassiirtojen luettelo vierii — myös <em>ennen heittoa</em> -rivi pysyy kiinnitettynä sen yläpuolella; muu paneeli (faktat, merkki, kuutiopäätös) pysyy aina näkyvissä ilman erityistä paneelin koon säätöä.</p>
+<p>Faktataulukon ja päätöksen laskee sisäänrakennettu gammonNet ilman XG:tä tai gnubg:tä. Laskenta seuraa asemaa jäädyttämättä koskaan käyttöliittymää: 0-ply-syvyys näytetään heti jokaisen eleen jälkeen, ja puolen sekunnin paikallaanolon jälkeen syvempi evaluointi (oletuksena 2 plyä, säädettävissä asetusten <em>gammonNet</em>-välilehdellä) korvaa sen taustalla — mikä tahansa uusi ele peruuttaa tämän taustalaskennan. Merkkikaistalla tai kilpajuoksuasemassa tilamerkin sisällä näytetty syvyys on aina se, joka todella tuotti näytetyn luvun, ei koskaan pyydetty syvyys; sitä ei toisteta joka rivillä, koska reaaliaikainen evaluointi käyttää samaa syvyyttä kaikille siirroille. Ehdokassiirtojen ja kuutiopäätöksen ekviteetti noudattaa aseman pistetilannetta: money gamessa se ilmaistaan pisteinä, ottelun pistetilanteessa <strong>normalisoituna ekviteettinä</strong> — samalla asteikolla kuin XG:ssä ja GNU Backgammonissa, jossa nykyisen kuution arvon voittaminen on +1 ja sen häviäminen −1 — eikä niitä koskaan sekoiteta samassa taulukossa. Sarakkeen otsikko ilmoittaa sen selvästi sen sijaan, että asteikko jätettäisiin arvattavaksi: ”Equity (money)” money gamessa, ”Equity (match)” ottelun pistetilanteessa. Se ottaa huomioon <strong>elävän kuution</strong>: haku arvostaa jokaista loppuasemaa kuutiomallilla (Janowski, mitattu tehokkuus) aseman kuutiotilassa, samaan tapaan kuin XG ja GNU Backgammon tekevät <em>cubeful</em>-arvioinnissa. Tämä tekee gammon-go- ja gammon-save-vaikutukset näkyviksi pistetilanteessa — pistetilanteessa 4-away/2-away jäljessä oleva pelaaja pelaa 8/2 6/2 avaussiirrolla 6-4, koska varhainen tuplaus antaa gammonille ottelun arvon, mitä kuutioton arviointi ei näe. <em>Ennen heittoa</em> -rivi puolestaan pysyy <strong>cubeless</strong>-ekviteettinä: se on aseman fakta, ei päätös. Evaluointia ei koskaan tallenneta: kyseessä on laskenta, ei analyysi. Ehdokassiirron napsauttaminen näyttää sen laudalla nuolina, täsmälleen kuten Analyysipaneelissa. Huomaamaton <strong>?</strong>-painike merkkikaistalla vie moottorin <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a> -tietovarastoon; täydellinen attribuutio (Strehlin verkko, gammonNet-kokoonpano) on ohjeen Kiitokset-osiossa.</p>
+<p>Paneeli <strong>rollaa</strong> aseman kuten Analyysi-paneeli (ks. <a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Rolloutit</span></a>): <em>Ctrl+napsautus</em> ja <em>Vaihto+napsautus</em> valitsevat siirtoja, oikea napsautus avaa saman valikon — rollout, aseman ja arvion kopiointi tai aseman ja valittujen siirtojen kopiointi —, <em>Vaihto+R</em> käynnistää tai pysäyttää rolloutin ja <em>Esc</em> peruuttaa sen; ohut palkki seuraa pelattuja pelejä, ja jokainen rollattu siirto näyttää tuloksensa <strong>Rollout</strong>-sarakkeessa (ilman noppia, kuutiopäätöksen alla). Koska lauta on luonnos, rolloutia ei koskaan tallenneta: se pelataan muistissa, ilman avattua kantaa kuten vain luku -kannassa, ja sen tulos näkyy vain niin kauan kuin lauta pysyy samana. Ennen laudan muutosta käynnistetty rollout ei näy uudessa asemassa.</p>
+<p><strong>Lisää tietokantaan</strong> -painike merkkirivin lopussa <em>Haaste</em>-valintaruudun jälkeen tallentaa laudalla olevan aseman tietokantaan; <em>CTRL-S</em>, komento <code class="docutils literal notranslate"><span class="pre">w</span></code> ja työkalupalkin <em>Tallenna asema</em> -painike tekevät saman. Tälle laudalle näytetty gammonNet-arvio (siirrot, kun nopat on asetettu, muuten kuutio, syvyyksineen) tallennetaan aseman mukana sellaisena kuin eräanalyysi olisi sen kirjoittanut: haku <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span> <span class="pre">ad:gammonnet</span></code> löytää nämä asemat (komentorivillä <code class="docutils literal notranslate"><span class="pre">--individual</span></code> ja <code class="docutils literal notranslate"><span class="pre">--analysis</span> <span class="pre">gammonnet</span></code>). Jos asema oli jo tietokannassa analyysin kanssa (tuotu, gammonNet toisella syvyydellä, rollout), analyysi säilytetään sellaisenaan ja tilapalkki kertoo, ettei näytettyä arviota tallennettu; jos arviota ei näytetä (moottori on käynnissä tai asema hylättiin), vain asema kirjoitetaan, samoin jos ottelun equity-taulukko on muuttunut laskennan jälkeen, minkä tilapalkki ilmoittaa. Jos gammonNet-automaattianalyysi on käytössä, sen erä käynnistyy sen jälkeen, kuten tuonnin jälkeen. Tilapalkki ilmoittaa aseman numeron, myös silloin kun asema oli jo tietokannassa: se merkitään silloin erikseen tuoduksi, ja <em>Erikseen tuotu</em>-suodatin (<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>) löytää sen. Paneeli pysyy avoinna samalla laudalla, joka pysyy luonnoslautana: nappulaa voi siirtää ja muunnelman lisätä, ja paneelista poistuminen palauttaa siihen, mitä tutkittiin. Painike on pois käytöstä, kun tietokantaa ei ole avattu tai asemaa ei voi tallentaa (esimerkiksi paneelin aloitusasema, jossa ylempi pelaaja on kantanut kaikki nappulansa ulos); sen työkaluvihje kertoo syyn.</p>
+<p>Käyttäjä muokkaa nappuloiden asemaa koko laudalla täsmälleen kuten muokkaustilassa: vasen napsautus asettaa alapelaajan nappulan, oikea napsautus yläpelaajan nappulan. Toinen, kilpajuoksun taulukko ilmestyy vain, kun saatu asema on puhdas bearoff (molempien pelaajien kaikki nappulat kotikentässään); missä tahansa muussa asemassa vain neljän yhteisen sarakkeen taulukko (voitto, gammon, backgammon, cubeless) reagoi, ja päätös koskee nappuloita tai yleistä kuutiota sen mukaan, onko noppia asetettu.</p>
+<p>Kussakin faktataulukossa on yksi rivi pelaajaa kohden — tunnistettavissa värillisestä pisteestä, musta pelaaja aina alimpana. Ensimmäinen sisältää, niin kauan kuin noppia ei ole asetettu, pelaajan voiton, gammonin ja backgammonin (todennäköisyydet ilman %-merkkiä) sekä cubeless-ekviteetin; toinen, bearoff-asemassa nopat asetettuina tai ei, EPC:n, pip countin, wastagen (EPC:n ja pip countin erotus), keskimääräisen heittomäärän ja keskihajonnan. Kun molemmilla pelaajilla on vertailtavia arvoja, <strong>Δ</strong>-rivi antaa <em>etumerkilliset</em> erotukset (ala − ylä: negatiivinen, kun musta pelaaja on edellä). Muussa kuin kilpajuoksuasemassa noppien asettaminen kadottaa siis itse faktataulukot: niiden neljä saraketta vaihtoivat juuri akselia vuorossa olevan pelaajan kannalle siirtoluettelon kärkeen.</p>
+<p>Kuutiopäätöksellä on aina sama muoto lukujen alkuperästä riippumatta — tarkka taulukko, evaluoitu tila tai tavallinen gammonNet-evaluointi: <strong>yksi rivi vaihtoehtoa kohden</strong>, järjestyksessä <em>ei tuplausta</em>, <em>tuplaus/ota</em>, <em>tuplaus/ohita</em>, kullakin ekviteettinsä aseman viitekehyksessä ja erotuksensa parhaaseen vaihtoehtoon. Järjestys ei koskaan muutu, toisin kuin siirtoluettelossa: kolmella vaihtoehdolla on nimi, joten luetaan nimeä, ei sijaa. Parhaan tunnistaa korostuksesta ja tyhjäksi jätetystä erotussolusta. Kun kuutio on jo käännetty, vaihtoehdot ovat <em>ei uudelleentuplausta</em>, <em>uudelleentuplaus/ota</em>, <em>uudelleentuplaus/ohita</em>.</p>
+<p>Viimeinen rivi antaa <strong>päätöksen</strong>. Sillä on neljä arvoa: <em>ei tuplausta</em>, <em>tuplaus, ota</em>, <em>tuplaus, ohita</em> ja <em>liian hyvä tuplattavaksi</em>, viimeksi mainittu silloin, kun aseman pelaaminen tuottaa enemmän kuin pisteen lunastaminen: tuplaaminen olisi tällöin virhe päinvastaisesta syystä kuin tavallisessa <em>ei tuplausta</em> -tapauksessa. Tämä on myös ainoa paikka, jossa paneeli sanoo, ettei päätöstä <strong>ole</strong>, sen sijaan että antaisi ymmärtää laskennan olevan kesken:</p>
+<ul class="simple">
+<li><p><em>ei päätöstä</em> — tila ei oikeuta siihen; kuutiopäätöstä ei koskaan arvioida (katso <em>arvioitu</em>-merkki);</p></li>
+<li><p><em>ei evaluoitavissa tässä pistetilanteessa</em> — moottori hylkää aseman, tyypillisesti pistetilanteen, joka on match-ekviteettitaulukon horisontin ulkopuolella, toisin sanoen jommallakummalla puolella on yli 64 pistettä tehtävänä;</p></li>
+<li><p><em>vastustajan kuutio</em> ja <em>kuollut kuutio (Crawford)</em> — kuutiota ei voi kääntää. Ekviteetit näytetään edelleen tiedoksi, mutta millään vaihtoehdolla ei ole erotusta: virhe on se, mitä valinta maksaa, eikä valintaa ole.</p></li>
+</ul>
+<p>Money gamessa asemassa voimassa olevat <strong>Jacoby</strong>- ja <strong>Beaver</strong>-säännöt näkyvät kuutiotaulukon alla, pieninä merkkeinä sen päätöksen vieressä, jota ne muuttavat: aseman ”ei tuplausta” -päätös Jacoby-säännön alaisena ei ole sama laskelma kuin ilman sitä, eikä mikään muu näytöllä kertonut sitä.</p>
+<p><strong>Beaver</strong>-säännön alla rivi <em>tuplaus, otto</em> on vastustajan paras vastaus luovuttamista lukuun ottamatta: otto tai <em>beaver</em> — välitön takaisintuplaus kuutio itsellä pitäen, jolloin peli pelataan nelinkertaisesta panoksesta —, ja tuplaaja vastaa tällöin <em>raccoonilla</em> (kahdeksankertainen panos, kuutio hänellä), kun se kannattaa hänelle. Ratkaisu ja virheet luetaan tältä riviltä kuten ilman sääntöä; ottelun pistetilanteessa sääntö ei ole voimassa.</p>
+<p>Kolmas merkki, <strong>Kuution katto</strong>, ilmestyy, kun lähdetunniste rajaa kuution — sekä ottelutilanteessa että money gamessa. Se ei kuvaa yllä näkyvää laskentaa: sisäänrakennettu arviointi ei mallinna kattoa, joten tuomio koskee vapaata kuutiota. Juuri siksi merkki on siinä: katolla rajattu kuutio on ainoa näkyvä syy, jonka takia blunderDB ja eXtreme Gammon voivat ilmoittaa samasta asemasta kaksi eri tuomiota.</p>
+<p><strong>Vuorossa olevaa pelaajaa</strong> ja <strong>kuution sijaintia</strong> muokataan suoraan laudalla kuten muokkaustilassa: pelaajan bearoff/pistetilanne-suorakulmion napsauttaminen antaa vuoron hänelle; kuution napsauttaminen kierrättää tilat keskellä → alapelaajan hallussa → yläpelaajan hallussa (oikea painike vastakkaiseen suuntaan). Kuution arvo pysyy kiinnitettynä — money gamessa ekviteetit ilmaistaan nykyisen kuution yksiköissä, vain sen omistajalla on merkitystä. Analyysi lasketaan heti uudelleen. Arvioidussa tilassa itse merkki on napsautettavissa ja avaa suoraan asetusten <em>Bearoff</em>-välilehden; sen työkaluvihje selittää miksi (kuutiopäätöstä ei voi arvioida, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>) ja miten tarkkaa aluetta laajennetaan.</p>
+<p>Myös <strong>pistetilannetta</strong> muokataan suoraan laudalla kuten muokkaustilassa: vasen napsautus pelaajan pistetilannesuorakulmioon vähentää hänen tarvitsemiensa pisteiden määrää, oikea napsautus lisää sitä. Kun <em>money</em>-pistetilanteesta (-1, -1) poistutaan muokkaamalla vain toista puolta, toinen puoli tasataan automaattisesti samaan arvoon epäjohdonmukaisen pistetilanteen sijaan. Bearoff-asemassa <em>tarkassa</em> tilassa siirtyminen money-pistetilanteesta ottelun pistetilanteeseen jättää voittotodennäköisyyden ennalleen (tietokannasta luettu arvo, joka pätee viitekehyksestä riippumatta), mutta vaihtaa näytetyn ekviteetin ja kuutiopäätöksen <em>evaluoidun</em> tilan arvoihin — tarkka taulukko on rakenteeltaan money-taulukko, eikä se osaa vastata pistetilanteessa esitettyyn kysymykseen. Merkistä tulee tällöin yhdistelmä (« tarkka (voitto) · evaluoitu (kuutio) »), jotta tämä sanotaan suoraan.</p>
+<p>Myös <strong>nopat</strong> muokataan samalla tavalla, ja juuri ne ratkaisevat, mikä kysymys esitetään: asetetut nopat tekevät nappulapäätöksen (ehdokassiirtojen listan), noppien puuttuminen kuutiopäätöksen. Vasen napsautus nopalla kasvattaa sen arvoa (6 palaa 1:een), oikea napsautus pienentää sitä (1 palaa 6:een); nopan napsauttaminen laudalla, jolla ei ole noppia, asettaa kaksi kerralla — yksi noppa ei olisi nappulapäätös eikä kuutiopäätös. Pelaajan suorakulmion napsauttaminen poistaa nopat kuutiokysymyksen esittämiseksi, ja seuraava napsautus nopalla palauttaa ne ennalleen.</p>
+<p><em>ASKELPALAUTIN</em> tai <em>Tyhjennä asema</em> laudan ulkopuolella avautuvassa oikean painikkeen valikossa tyhjentää aseman: tyhjä lauta, money-pistetilanne (-1, -1), ei asetettuja noppia — Eval-paneelin omat arvot, jotka eroavat muokkaustilan arvoista (7 molemmilla, nopat 3-1), jotta ne pysyvät johdonmukaisina paneelin oletusnäytön kanssa. <em>Aloitusasema</em> samassa valikossa asettaa uuden pelin nappulat samoihin arvoihin.</p>
+<section id="matrice-du-videau">
+<span id="eval-matrice-videau"></span><h3>Tuplauskuution matriisi<a class="headerlink" href="#matrice-du-videau" title="Link to this heading"></a></h3>
+<p>Kuutiopäätös ei ole laudan ominaisuus. Samat nappulat ja sama pip-luku tuplataan tilanteessa 2-away/4-away eikä tuplata tilanteessa 4-away/2-away; se joka on oppinut money-vastauksen on oppinut yhden ruudun ruudukosta. Eval-paneeli näyttää sen ruudun, jonka asema kantaa; <strong>tuplauskuution matriisi</strong> näyttää koko ruudukon.</p>
+<p>Komento <code class="docutils literal notranslate"><span class="pre">cm</span></code> avaa sen näytöllä olevalle asemalle. Kukin ruutu antaa tuomion yhdessä pistetilanteessa: rivi on vuorossa olevan pelaajan vielä tarvitsemien pisteiden määrä, sarake vastustajan. Neljä tuomiota kirjoitetaan <em>ET</em> (ei tuplausta), <em>TO</em> (tuplaus, otto), <em>TP</em> (tuplaus, pass) ja <em>LH</em> (liian hyvä); moottorin hylkäämässä ruudussa on kysymysmerkki, ja osoitin kertoo syyn sekä ruudun kolme ekviteettiä. Tarjolla on kolme ottelupituutta: 5, 7 ja 9 pistettä.</p>
+<p>Ruutu, joka vastaa aseman todellista pistetilannetta, on kehystetty ja sen rivi- ja sarakeotsikot alleviivattu: lukeminen alkaa siitä, ”minun ruutuni ja sen ympäristö”. Kehys ilmestyy heti, kun aseman molemmat <em>away</em>-tilanteet mahtuvat näytettyyn ruudukkoon; pituuden vaihtaminen siirtää kehyksen tai poistaa sen. Money-asema, Crawford-peli tai ruudukon ulkopuolelle jäävä <em>away</em> eivät osoita mitään ruutua: näytettävää ruutua ei ole, ja likimääräisen näyttäminen olisi väärin.</p>
+<p>Aseman pistetilanne korvataan kunkin ruudun tilanteella; sen <strong>kuutio</strong> säilyy. Ruudukko vastaa kysymykseen, missä pistetilanteessa kääntäisin <em>tämän</em> kuution, ei siihen mitä keskitetty asema tekisi. Se on kauttaaltaan Crawfordin jälkeinen: Crawford-pelissä kuutio ei ole pelissä, eikä sarake ”et saa tuplata” kertoisi asemasta mitään.</p>
+<p>Jokainen ruutu on oma hakunsa. Moottori ottaa pistetilanteen huomioon — se ei pelaa samaa peliä tilanteessa 2-away kuin 7-away — joten yksi ainoa haku luettuna eri otteluekviteettien läpi olisi väärässä juuri siellä, missä pistetilanne merkitsee. Ruudukko saapuu ensin 0-plyllä ja laskeutuu uudelleen määritetyllä näyttösyvyydellä, kun ikkuna on levossa: sama porrastus kuin muualla paneelissa, ja 9 pisteen ruudukko maksaa noin puolitoista sekuntia.</p>
+<p>Sama ruudukko lasketaan käyttöliittymän ulkopuolella komentorivin komennolla <a class="reference internal" href="cli_analyse.html#cli-cubematrix"><span class="std std-ref">cubematrix</span></a>.</p>
+</section>
+<section id="panneau-donnees-de-reference">
+<span id="panneau-reference"></span><h3>Viitetiedot-paneeli<a class="headerlink" href="#panneau-donnees-de-reference" title="Link to this heading"></a></h3>
+<p><strong>Viitetiedot</strong>-paneeli kokoaa pistetilanteen taulukot. Se avautuu näppäimillä <em>CTRL-VAIHTO-R</em> tai komennolla <code class="docutils literal notranslate"><span class="pre">ref</span></code>, ilman avattua tietokantaa. Komennot <code class="docutils literal notranslate"><span class="pre">met</span></code>, <code class="docutils literal notranslate"><span class="pre">tp2</span></code>, <code class="docutils literal notranslate"><span class="pre">tp4</span></code> ja niiden muunnelmat <code class="docutils literal notranslate"><span class="pre">_live</span></code> / <code class="docutils literal notranslate"><span class="pre">_last</span></code>, <code class="docutils literal notranslate"><span class="pre">gv1</span></code>, <code class="docutils literal notranslate"><span class="pre">gv2</span></code> ja <code class="docutils literal notranslate"><span class="pre">gv4</span></code> avaavat sen pyydetyn taulukon välilehdelle (MET, Ottopisteet tai Gammonin arvot; saman perheen muunnelmat avaavat saman välilehden). Rivit ja sarakkeet ovat ottelun voittamiseen tarvittavat pisteet: rivi on pelaaja, josta puhutaan, sarake hänen vastustajansa. Viisi välilehteä:</p>
+<ul class="simple">
+<li><p><strong>MET</strong> — Kazaross-XG2-ottelun tasapainotaulukko, 1–15 puuttuvaa pistettä, prosentteina ottelun voittamisen todennäköisyydestä;</p></li>
+<li><p><strong>Ottopisteet</strong> — kuutiolla 2 (2–9 puuttuvaa pistettä) ja kuutiolla 4 (3–9), kumpikin kahtena vierekkäisenä ruudukkona: pitkä kilpajuoksu (elävä kuutio) ja viimeinen heitto (kuollut kuutio);</p></li>
+<li><p><strong>Gammonarvot</strong> — kuutioilla 1, 2 ja 4;</p></li>
+<li><p><strong>Koottu</strong> — 2–9 puuttuvan pisteen ruudukko, jonka yläpuolella selite muistuttaa ruudun järjestyksestä. Jokaisessa ruudussa on kolme riviä: ottopiste kuutiolla 2 (elävä / kuollut), kuutiolla 4 (elävä / kuollut), sitten gammonarvot kuutioilla 1, 2 ja 4 himmennetyllä värillä. Viiva merkitsee arvoa, jota taulukko ei määritä tällä pistetilanteella;</p></li>
+<li><p><strong>Neilin luvut</strong> — MET:n päässälaskuoikotie, Neil Kazarossin kehittämä.</p></li>
+</ul>
+<p><strong>Neilin luvut.</strong> Johtavan pelaajan ekviteetti arvioidaan kaavalla E ≃ 50 % + (pistero) × Neil(<em>n</em>), jossa <em>n</em> on <strong>perässä olevan</strong> puuttuvien pisteiden määrä. Välilehti antaa luvun jokaiselle <em>n</em>:lle 3:sta 25:een kokonaislukuna ja tarkkana murtolukuna (6½ seitsemällä, 5⅔ yhdeksällä, 5⅓ kymmenellä, 4¾ kahdellatoista; ilman murtolukumerkkiä ”3 5⁄12”): ankkuripisteet (10 kolmella puuttuvalla pisteellä, 9 neljällä, 8 viidellä, 7 kuudella, 6 kahdeksalla, 5 yhdellätoista, 4 viidellätoista, 3½ yhdeksällätoista ja 3 kahdellakymmenelläviidellä) ovat pystykirjaimin, kahden ankkurin välillä lineaarisesti interpoloidut väliarvot kursiivilla. Esimerkiksi kolmella puuttuvalla pisteellä viittä vastaan arvio on 50 + 2 × 8 = 66 %, ja MET antaa 64,8 %. Välilehti näyttää lukujen rivin ja sitten ruudukon johtava × perässä oleva, 2–15 puuttuvaa pistettä: jokainen ruutu antaa arvion ja pienellä sen eron Kazaross-XG2-MET:iin, jotta nähdään, missä oikotie poikkeaa. Oikotie ei päde, kun johtajalla puuttuu 1 tai 2 pistettä: kahden puuttuvan pisteen johtajan rivi näyttää MET-arvon himmennetyllä värillä ja ilman eroa.</p>
+</section>
+<section id="amener-une-position-dans-le-panneau-eval">
+<span id="eval-amener-position"></span><h3>Aseman tuominen Eval-paneeliin<a class="headerlink" href="#amener-une-position-dans-le-panneau-eval" title="Link to this heading"></a></h3>
+<p>Paneeli avautuu oletuksena bearoff-asemaan, mutta tutkiminen alkaa useimmiten jo käsillä olevasta asemasta. Neljä elettä tuo sen paneeliin:</p>
+<ul class="simple">
+<li><p><strong>Oikea napsautus laudalla</strong> analyysipaneelissa tai ottelua selattaessa ja sitten <em>Arvioi tämä asema</em>: Eval-paneeli avautuu suoraan tähän asemaan sellaisena kuin se näytetään; <em>Arvioi tämän aseman peilikuva</em> avaa sen siihen toisen puolen näkökulmasta. Pikavalikko ei ilmesty Eval-paneelissa eikä Hakupaneelissa, joissa oikea painike on jo varattu toisen värin nappuloiden asettamiseen.</p></li>
+<li><p><strong>Napsauta lautaa hiiren oikealla painikkeella ja valitse</strong> <em>Arvioi uudessa välilehdessä</em>: uusi näkymä nimeltä <em>Muunnelma näkymästä #n</em> (n on alkuperäisen näkymän numero) avautuu Eval-paneeliin näytetyssä asemassa, jossa muunnelmia voi asetella vapaasti. Alkuperäinen näkymä säilyttää asemansa, luettelonsa ja analyysinsa. Tätä valintaa ei tarjota Transkriptio-paneelissa.</p></li>
+<li><p><strong>CTRL-C ja sitten CTRL-V</strong>: kopioi asema analyysipaneelista ja liitä se sitten Eval-paneelissa. Liittäminen hyväksyy myös muualta tulevan tunnisteen — XGID:n (eXtreme Gammon, GNU Backgammon, toinen blunderDB-instanssi) tai OGID:n (OpenGammon): riittää, että se on leikepöydällä.</p></li>
+<li><p><strong>Komento</strong> <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">XGID=…</span></code> (tai <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">OGID=…</span></code>) siihen tapaukseen, ettei tunniste ole leikepöydällä vaan viestissä, päätteessä luetulla foorumilla tai skriptin tuottamana. Se on sama verbi kuin pelkkä <code class="docutils literal notranslate"><span class="pre">import</span></code>: ilman argumenttia se avaa tiedostovalitsimen, argumentin kanssa se lukee tunnisteen. Polku on sen jälkeen sama kuin liittämisessä — sama luku, sama kaksoiskappaleiden poisto, sama tuodun aseman avaus.</p></li>
+</ul>
+<p>OGID kantaa vain aseman: ei arviota eikä kommenttia. Asema saapuu siis ilman analyysiä, aivan kuten paljas XGID, ja sisäänrakennettu arviointi voi täyttää aukon jälkikäteen.</p>
+<p>OGID:ssä Crawford-peli tunnistetaan ottelun pituuden perässä olevasta <code class="docutils literal notranslate"><span class="pre">C</span></code>-kirjaimesta (<code class="docutils literal notranslate"><span class="pre">7C</span></code>): ilman sitä pelaaja, jolta puuttuu yksi piste voittoon, on jo Crawford-pelin jälkeen.</p>
+<p><strong>Laudan kuvakaappaus</strong> (eXtreme Gammon, oletusteema) luetaan kolmella tavalla: liitä kuva (<em>CTRL-V</em>), vedä se ikkunaan tai avaa se <em>CTRL-I</em>:llä (<code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>). Tietokantaa ei tarvita. Luettu asema tulee muokkauslaudalle ja on vain ehdotus: pisteet ja kuutio, joista lukeminen ei ole varma, ympyröidään oranssilla; epävarmuus, jota ei voi ympyröidä (laudan suunta, kun pisteiden numerot jäävät kuvan ulkopuolelle, lukukelvottomat nopat), ja se, mitä kuvakaappaus ei koskaan näytä (pistetilanne, vuorossa oleva pelaaja noppien ollessa piilossa), nimetään tilarivillä. Korjaa lauta tavalliseen tapaan ja tallenna tavallisella eleellä: mitään ei tallenneta ennen sitä. Kuva, josta ei tunnisteta tuntematonta lautaa, hylätään, ja syy näkyy tilarivillä. Sama lukeminen on käytettävissä komentorivillä (<code class="docutils literal notranslate"><span class="pre">capture</span></code>).</p>
+<p>Eval-paneelin lauta on luonnos: asema saapuu sinne ilman tietokantatunnistettaan, joten mikään täällä tehty muutos ei voi kirjoittaa uudelleen tietuetta, josta se on peräisin. Kaikki tavalliset laudan muokkaukset ovat siinä käytettävissä (nappulat, kuutio, nopat, pistetilanne), ja evaluointi seuraa jokaista muutosta.</p>
+<p>Toiseen suuntaan <em>CTRL-C</em> kopioi Eval-paneelin laudan leikepöydälle asetetuista nappuloista uudelleen lasketun XGID:n kera — joten sen voi liittää suoraan eXtreme Gammoniin tai toiseen blunderDB-instanssiin. Vain asema matkustaa: paneelin näyttämä evaluointi ei ole tietokannan tietue eikä seuraa kopion mukana.</p>
+<p>Eval-paneelista poistuttaessa aiemmin tarkasteltu asema palautetaan: luonnosta ei koskaan tallenneta itsestään.</p>
+<p>Kun asema on puhdas bearoff (molempien pelaajien kaikki nappulat kotikentässään) eikä noppia ole asetettu, kuutiopäätös näyttää vuorossa olevalle pelaajalle:</p>
+<ul class="simple">
+<li><p><em>tarkassa</em> tilassa: money-ekviteetit (cubeless, ei tuplausta, tuplaus/ota, tuplaus/ohita) ja <strong>money-kuutiopäätöksen</strong> (ei tuplausta, tuplaus/ota, tuplaus/ohita tai liian hyvä tuplattavaksi) — ottelun pistetilanteen ulkopuolella, katso yllä pistetilanteen tapaus,</p></li>
+<li><p><em>evaluoidussa</em> tilassa: samat ekviteetit ja sama neljän arvon päätös, mutta <strong>gammonNetin pelaamina</strong> (haku + Janowskin kuutiomalli) taulukosta lukemisen sijaan — käytettävissä <strong>myös ottelun pistetilanteessa</strong>, mitä arvioitu tila ei ole koskaan voinut tarjota;</p></li>
+<li><p><em>arvioidussa</em> tilassa: kuutiopäätöstä ei tällöin tarkoituksella näytetä — vain voittotodennäköisyys faktataulukossa virhemarginaaleineen jää käytettäväksi.</p></li>
+</ul>
+<p>Heti kun kilpajuoksuasemaan asetetaan noppia, tämä <em>ennen heittoa</em> -kuutiopäätös katoaa — lauta pyytää tällöin nappulapäätöstä, ei kuutiopäätöstä — mutta voittotodennäköisyys pysyy aseman faktana, ei päätöksenä: se siirtyy <em>ennen heittoa</em> -riville siirtoluettelon kärkeen EPC:n viereen, joka puolestaan pysyy näkyvissä aivan vasemmalla.</p>
+<p>Merkki ilmaisee tilan: <strong>tarkka</strong> (two-sided-tietokannasta luettu arvo), <strong>evaluoitu · &lt;syvyys&gt;</strong> (gammonNetin pelaama — näytetty syvyys on se, joka todella tuotti näytetyn luvun), <strong>arvioitu ± marginaali</strong> tai, ottelun pistetilanteessa tarkalla alueella, <strong>tarkka (voitto) · evaluoitu (kuutio)</strong> — katso yllä. Tarkka tila voittaa kaikkialla, missä se on käytettävissä; muuten evaluoitu tila näytetään heti, kun laskenta on valmis, ja se korvaa paikallaan odotuksen aikana näytetyn arvioidun tilan. Katso <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Eval-paneelin metodologia ja oletukset</span></a> kolmen tilan ja niiden oletusten täsmällinen määritelmä.</p>
+<p><strong>Tarkan alueen laajentaminen.</strong> Ensimmäisellä käynnistyksellä laskettu taulukko kattaa 6 nappulaa puolellaan. Kaksi tapaa mennä pidemmälle, asetusten <em>Bearoff</em>-välilehdellä:</p>
+<ul class="simple">
+<li><p>laskea laajempi kaksipuolinen taulukko — TS-06-15:een asti, jos koneella on siihen muistia. Välilehti kertoo koon, muistin ja ajan tällä koneella ennen aloitusta, ja laskenta menee tauolle ja jatkuu. Peruttu laskenta jättää <code class="docutils literal notranslate"><span class="pre">.part</span></code>-tiedoston, jota ei koskaan lueta taulukkona;</p></li>
+<li><p>osoita mikä tahansa gnubg:n two-sided <code class="docutils literal notranslate"><span class="pre">.bd</span></code>-tiedosto. Alueeltaan laajin tietokanta voittaa automaattisesti.</p></li>
+</ul>
+<p><strong>Paneelin lauta on luonnos, ja se muistetaan.</strong> Eval-paneelista poistuminen ja sinne palaaminen löytää aseman, johon se jätettiin, ei oletusarvoista ulosmenolautaa: se tarjotaan vain, kun paneeli avataan istunnossa ensimmäisen kerran. Tietokannasta paneeliin lähetetty asema voittaa tämän muistin, ja <em>ASKELPALAUTIN</em> palauttaa oletuslaudan milloin tahansa. Matkan varrella ei kirjoiteta mitään tietokantaan — luonnoksella ei ole aseman identiteettiä, ja sen arvio lasketaan perillä uudelleen sen sijaan että se kuljetettaisiin mukana.</p>
+<p><strong>Haastetila.</strong> Otsikkokaistan <em>Haaste</em>-valintaruutu ottaa käyttöön harjoittelutilan: jokaisen aseman muutoksen jälkeen kolmen alueen arvot piilotetaan (korvataan merkinnällä « ··· »); alueen napsautus paljastaa vain kyseisen alueen. Ilman noppia alueet ovat alapelaajan rivi, yläpelaajan rivi ja kuutiopäätös — Δ-rivi ilmestyy vasta, kun molemmat pelaajarivit on paljastettu. Päätöslohko säilyttää tällöin kolme riviään: sen arvot, päätös ja parhaan vaihtoehdon korostus katoavat, muuten harjoitus ratkeaisi etsimällä lihavoitu rivi. Kun kilpajuoksuasemaan on asetettu noppia, kummankin pelaajan EPC-rivi piilotetaan kuten ennenkin, mutta kolmas alue kattaa tällöin <em>ennen heittoa</em> -rivin ja siirtoluettelon <strong>yhdessä</strong>: koska luettelo on järjestetty parhaasta siirrosta huonoimpaan, sen osittainen paljastaminen antaisi jo vastauksen. Kun noppia on asetettu muuhun kuin kilpajuoksuasemaan, tämä sama yksi alue kattaa yksinään kaiken, mitä paneeli näyttää. Näin voi harjoitella kummankin puolen EPC:n arviointia ja sitten kuutio- tai siirtopäätöksen tekemistä ennen tarkistusta. Asetus muistetaan.</p>
+<p id="eval-sans-base"><strong>Ilman avattua tietokantaa.</strong> Eval-paneeli ei tarvitse tietokantaa: kun aloitusnäyttö on suljettu, siinä voi asettaa, liittää (<em>CTRL-V</em>) ja muokata aseman, arvioida sen, ajaa sille rolloutin ja kopioida sen tekstinä (<em>CTRL-C</em>) tai kuvana (<em>CTRL-X</em>, ja <em>CTRL-X CTRL-X</em> arvioinnin kanssa). Paneelin hiiren oikean painikkeen valikossa on myös <em>Tallenna kuva (SVG)…</em> ja <em>Tallenna kuva (PNG)…</em>. Haku-välilehden lauta on myös luonnoslauta: sitä voi muokata ja siihen voi liittää ilman tietokantaa, ja laudasta toiseen voi siirtyä menettämättä mitään; haun käynnistäminen sen sijaan vaatii tietokannan. Vain <em>Lisää tietokantaan</em> ja <em>CTRL-S</em> vaativat paneelissa tietokannan, ja tilarivi kertoo siitä. Tietokantaa ei luoda taustalla. Eval-paneelissa kuten Haku-välilehdelläkin komento <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">XGID=…</span></code> (tai <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">OGID=…</span></code>) asettaa aseman luonnoslaudalle ilman tietokantaa. Myös <strong>Harjoittelu</strong>-välilehti avautuu ilman tietokantaa: <em>Pisteet</em>, <em>Nappulat</em>, <em>Bearoff</em> ja <em>Arviointi</em> ovat käytettävissä, <em>Päätös</em> on poissa käytöstä ja syy näytetään, eikä päättynyttä istuntoa tallenneta (loki kertoo siitä). Turnauksen johto edellyttää avattua tietokantaa.</p>
+<p>Sulje Eval-paneeli painamalla <em>CTRL-E</em> tai vaihtamalla toiseen välilehteen.</p>
+</section>
+<section id="methodologie-et-hypotheses-du-panneau-eval">
+<span id="epc-methodologie"></span><h3>Eval-paneelin metodologia ja oletukset<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-eval" title="Link to this heading"></a></h3>
+<p>Jokainen paneelin näyttämä arvo perustuu täsmällisiin oletuksiin, jotka esitetään tässä tyhjentävästi.</p>
+<p><strong>Alue.</strong> <em>Kilpa-alue</em> — voittotodennäköisyys ja kuution tuomio — kattaa vain puhtaat bearoffit: molempien pelaajien kaikki jäljellä olevat nappulat omalla kotialueellaan. Asema arvioidaan <em>ennen heittoa</em>; asetetut nopat jätetään huomiotta.</p>
+<p><strong>EPC-lohkot</strong> sen sijaan yltävät pidemmälle: puoli saa EPC:nsä heti kun sen kaukaisin nappula mahtuu ladattuun yksipuoliseen taulukkoon. Oletustaulukolla (kuusi pistettä) tämä on vanha kotialuesääntö; kahdeksan pisteen taulukolla, joka lasketaan <em>Bearoff</em>-välilehdeltä, puolta jonka nappula on 8-pisteellä kohdellaan kuten muitakin. Mitään ei ekstrapoloida: yhden pisteen liian kaukana oleva nappula ei yksinkertaisesti saa EPC:tä, aivan kuten 7-pisteen nappula ei saanut sitä ennen. Kun vastannut taulukko ei ole kuuden pisteen taulukko, sen nimi näkyy kilpalohkon kulmassa (”OS-08”) — ilman sitä luettaisiin oletuksena ”kuusi” ja uskottaisiin puolen olevan kokonaan kotona.</p>
+<p><strong>EPC-lohkot (aina tarkkoja).</strong> EPC, keskimääräinen heittojen määrä ja keskihajonta tulevat tarkasta jakaumasta heittojen määrälle, joka tarvitaan kaikkien nappuloiden ulos saamiseen, luettuna GNUbg:n yksipuolisesta tietokannasta (6–10 pistettä, 15 nappulaa, koneella laskettu). EPC = keskimääräiset heitot × 49/6 (49/6 ≈ 8,167 on tarkka pippien keskiarvo heittoa kohden, tuplat laskettuna neljästi); wastage = EPC − pippiluku. Ainoa idealisointi on <em>yksipuolinen optimaalinen peli</em>: kumpikin pelaaja minimoi omat heittonsa vastustajasta välittämättä — se on EPC:n vakiomääritelmä.</p>
+<p><strong>Voittotodennäköisyys, tarkka tila.</strong> Suora luku laajimmasta käytettävissä olevasta two-sided-tietokannasta (ensimmäisellä käynnistyksellä laskettu TS-06-06, ulkoinen tiedosto tai <em>Bearoff</em>-välilehdeltä laskettu TS-06-11). Nämä tietokannat ovat tulosta täydellisestä taaksepäin etenevästä analyysistä molempien puolten optimaalisella two-sided-pelillä: ei lisäoletuksia, virhe rajoittuu kvantisointiin (&lt; 0,002 %).</p>
+<p><strong>Voittotodennäköisyys, arvioitu tila.</strong> Tietokannan alueen ulkopuolella: todennäköisyys saadaan konvoloimalla kaksi one-sided-jakaumaa (vuorossa oleva pelaaja voittaa, jos hänen heittomääränsä on pienempi tai yhtä suuri kuin vastustajan) ja soveltamalla sitten kiinteää polynomikorjausta, joka on kalibroitu etukäteen TS-06-11-tietokantaa vasten. Kolme oletusta:</p>
+<ul class="simple">
+<li><p>kahden ulosottoprosessin <strong>riippumattomuus</strong> — rakenteellinen ominaisuus kilpajuoksussa: ilman kontaktia ei ole mitään vuorovaikutusta;</p></li>
+<li><p><strong>molempien puolten optimaalinen one-sided-peli</strong> — tämä on <em>approksimaatio</em>: todellisuudessa jäljessä oleva pelaaja poikkeaa siitä pelatakseen varianssia ja johdossa oleva pelatakseen varman päälle. Mitattu vaikutus on antisymmetrinen harha (konvoluutio liioittelee johtajan etumatkaa), jonka korjaus absorboi tilastollisesti;</p></li>
+<li><p><strong>korjaus</strong> on kalibroitu ja validoitu oraakkelin alueella (enintään 11 nappulaa pelaajaa kohden). Mitattu jäännösvirhe: keskihajonta 0,05 %, 99. persentiili 0,17 %, suurin havaittu 0,9 % (voittotodennäköisyyden prosenttiyksikköinä). <strong>Kun nappuloita on pelaajaa kohden yli 11, tämä raja on ekstrapoloitu</strong> — suuntaus on monotoninen, mutta mikään oraakkeli ei todenna sitä.</p></li>
+</ul>
+<p><strong>Ekviteetit ja kuutiopäätös (vain tarkka tila).</strong> Näytetyt ekviteetit ovat <strong>money gamen, ilman Jacobya</strong>, bearoff-kirjallisuuden viitekehyksessä. Alueella ≤ 11 nappulaa pelaajaa kohden gammonit ovat mahdottomia (kumpikin puoli on jo ottanut ulos vähintään 4 nappulaa): tämä ei ole approksimaatio. Päätös (ei tuplausta / tuplaus, ota / tuplaus, ohita) rekonstruoidaan tarkasti tallennetuista ekviteeteista GNUbg:n säännön mukaan, joka on validoitu kohta kohdalta sen analyysiä vasten.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Cubeful-ekviteetit olettavat <strong>molempien puolten optimaalisen kuutiopelin loppuun asti</strong>: tulevat uudelleentuplaukset arvostetaan täysimääräisesti (täydellinen taaksepäin etenevä analyysi). Pelin lopun hyvin epävakaissa kilpajuoksuissa uudelleentuplausten ketju syö lähes koko vuorossa olevan puolen edun — ekviteetit « ei tuplausta » ja « tuplaus/ota » voivat tällöin olla lähellä nollaa siinä, missä XG:n kaltainen moottori, jonka kuutiomalli ei arvosta tätä ketjua, näyttää dead cubea lähellä olevia arvoja (esimerkiksi 2 nappulaa pisteessä 3 vastaan 2 nappulaa pisteessä 2: 62 %:n voittotodennäköisyys, tarkka D/T +0,006, XG:llä +0,475). Näytetty <strong>päätös</strong> sitä vastoin yhtyy moottoreiden päätökseen.</p>
+</div>
+<p><strong>Voittotodennäköisyys ja päätös, arvioitu tila.</strong> Tarkan alueen ulkopuolella voittotodennäköisyys tulee gammonNetin raakatulosteesta (0-ply-haku, sitten asetetulla syvyydellä, ei koskaan taulukosta luettuna) ja päätös tähän tulosteeseen sovelletusta Janowskin « Decide »-mallista — haku <em>pelaa</em> trajektorin sen sijaan, että tiivistäisi siitä hetkellisen tilannekuvan, mikä on täsmälleen se, mitä estimoitu tila ei voinut tehdä (katso alempana), ja mahdollistaa, ainoana kolmesta tilasta tarkan ohella, päätöksen <strong>ottelun pistetilanteessa</strong>.</p>
+<p>Tämä tila on mitattu, ei vain oletettu, sisäänrakennettua two-sided-taulukkoa vasten (<code class="docutils literal notranslate"><span class="pre">TestEvalMeasure</span></code>, 4000 satunnaisotannalla poimittua money-päätöstä, kanoniset parametrit 2 plyä k=12): money-päätösten yhtäpitävyys <strong>93,4 %</strong> (3735/4000), eriteltynä etäisyyden mukaan gammonNetin ottopisteestä — 61,1 % alle 1 %:n päässä ottopisteestä (kolikonheitolle herkin alue), 88,3 % välillä 1–5 %, 91,5 % välillä 5–10 %, 94,0 % välillä 10–20 %, 94,4 % sen yli. Voittotodennäköisyyden ero: keskiarvo 0,85 %, mediaani 0,44 %, 95. persentiili 3,21 %, maksimi 8,30 %. Cubeful-ekviteetin ero: keskiarvo 0,039, mediaani 0,018, 95. persentiili 0,151, maksimi 0,406. Muoto on odotettu: valtaosa erimielisyydestä keskittyy täsmälleen ottopisteeseen, jossa kaksi perustellusti erilaista menetelmää eroavat eniten tiukassa päätöksessä — ei hajanainen virhe, joka maksaisi ekviteettiä kaikkialla.</p>
+<p>Tämä mittaus koskee <strong>money</strong>-päätöksiä kilpajuoksussa. Ottelun pistetilanteen mukaisesta tuomiosta — jonka vain tämä tila osaa antaa — ja kontaktiasemista ei ole julkaistua mittausta: edellä sanottu ei siirry näihin tapauksiin.</p>
+<p><strong>Miksi ei syvemmälle kuin 2 plytä?</strong> Koska mittaus sanoo, ettei se tuota mitään. Nappulapäätös 3 plyllä arvioi verkkoa <strong>neljätoista kertaa enemmän</strong> kuin 2 plyllä (159 000 arviointia vastaan 11 400, keskiarvo kahdestakymmenestä oikeasta päätöksestä) ja kestää noin neljätoista kertaa kauemmin (3,9 s vastaan 0,27 s saman koneen yhdellä ytimellä). Neljästäkymmenestä molemmilla syvyyksillä toistetusta oikeasta päätöksestä syvempi haku muutti mielensä <strong>kahdesti</strong>, ja molemmilla kerroilla hyöty, jonka se itselleen luki, oli korkeintaan 0,0002 normalisoitua ekviteettiä: kaksi kertaluokkaa alle 0,020:n, sen kynnyksen, jonka jälkeen eXtreme Gammon ylipäätään puhuu virheestä. Päätöstä kohti, kaikki tapaukset yhdessä, hyöty on 0,0000.</p>
+<p>2 plyä pysyy siis oletuksena; 3 ja 4 plyä valitaan asetusten <em>gammonNet</em>-välilehdeltä. 3 ja 4 plyllä, kuten GNUbg:ssa, vain juuri vertailee useita siirtoja: jokaisessa sisäsolmussa valittu vastaus on paras 0 plyllä, ja vain sitä haetaan syvemmälle. Tämä ei sano, että 3 plytä olisi yleisesti arvoton, vaan että <em>tällä</em> verkolla, tällä suodattimella, se ei maksa paneelin ääressä istuvan odotusta. Mittaus on toistettavissa (<code class="docutils literal notranslate"><span class="pre">TestThreePlyMeasure</span></code>), ja johtopäätös ratkaistaan uudelleen, jos verkko muuttuu.</p>
+<p><strong>Miksi arvioitua päätöstä ei ole?</strong> Seuraava koskee nimenomaan <em>konvoluutio</em>-menetelmää (arvioitu tila), ei yllä kuvattua evaluoitua tilaa: cubeful-ekviteetti on <em>trajektoriongelma</em> (milloin tuplata), jota mikään aseman tilastollinen tiivistelmä ei tavoita — paras mitattu staattinen malli jättää jäännösvirheen (ekviteetin keskihajonta 0,016, maksimi 0,20), joka riittää kääntämään kaikki tiukat päätökset. Samoin päätöksen muuntaminen ottelun pistetilanteeseen match-ekviteettitaulukon avulla mitattiin riittämättömäksi (12 % erimielisyyksiä GNUbg:n 2-ply-analyysin kanssa, mukana todellisia blundereita). Koska itsevarmasti näytetty väärä päätös on pahempi kuin ei päätöstä lainkaan, konvoluutiolla ei ole koskaan ollut oikeutta näyttää päätöstä — tämän aukon täyttää haku, joka pelaa trajektorin, ei tilastollinen tiivistelmä.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Bearoff-tietokannat ovat muuttumattomia matemaattisia taulukoita. blunderDB laskee ne itse, samoin kuin GNUbg:n <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>-työkalu — tavu tavulta — asetusten <em>Bearoff</em>-välilehdellä tai komennolla <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">generate</span></code>.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_stats.html" class="btn btn-neutral float-left" title="Tilastot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel_entrainement.html" class="btn btn-neutral float-right" title="Harjoittelu, Anki ja kaksintaistelu" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,311 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partidas, torneos y juegos &mdash; documentación de blunderDB - 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3bdc4af3"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="Análisis y motor" href="cli_analyse.html" />
+    <link rel="prev" title="Biblioteca: búsqueda, listas, colecciones" href="cli_bibliotheque.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Idiomas">
+  <a href="../fr/cli_matchs.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_matchs.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_matchs.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_matchs.html" lang="el" hreflang="el">Ελληνικά</a>
+  <span class="current" lang="es" aria-current="true">Español</span>
+  <a href="../fi/cli_matchs.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_matchs.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli_matchs.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_matchs.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Primeros pasos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guía del usuario</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referencia</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Métricas y herramientas de estudio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Atajos de teclado</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Interfaz de línea de comandos (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Introducción</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Sintaxis general</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Comandos disponibles</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Importar, exportar, transferir</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Biblioteca: búsqueda, listas, colecciones</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Partidas, torneos y juegos</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#match-afficher-un-match">match — Mostrar una partida</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tournament-lire-un-tournoi-dirige">tournament — Leer un torneo dirigido</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transcribe-rejouer-une-transcription">transcribe — Reproducir una transcripción</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#duel-jouer-un-duel">duel — Jugar un Duelo</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Análisis y motor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Estudio, lecciones y entrenamiento</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Estadísticas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Administración de la base de datos</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Ejemplos de flujos de trabajo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Códigos de salida</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrato de la API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anexo Windows: qué hacer si Windows bloquea el inicio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historial de versiones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Acerca de</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Interfaz de línea de comandos (CLI)</a></li>
+      <li class="breadcrumb-item active">Partidas, torneos y juegos</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="matchs-tournois-et-parties">
+<span id="cli-matchs-chapitre"></span><h1>Partidas, torneos y juegos<a class="headerlink" href="#matchs-tournois-et-parties" title="Link to this heading"></a></h1>
+<section id="match-afficher-un-match">
+<h2>match — Mostrar una partida<a class="headerlink" href="#match-afficher-un-match" title="Link to this heading"></a></h2>
+<p>Muestra las posiciones y análisis de un partido importado. En la salida <code class="docutils literal notranslate"><span class="pre">text</span></code> y <code class="docutils literal notranslate"><span class="pre">summary</span></code>, la cabecera recoge lo que el archivo de origen dice del partido cuando lo dice: clasificación Elo y experiencia de cada jugador, transcriptor, reglas Jacoby y Beaver de una partida libre, programa que escribió el archivo; la salida <code class="docutils literal notranslate"><span class="pre">json</span></code> las lleva en el objeto <code class="docutils literal notranslate"><span class="pre">match</span></code>.</p>
+<p>Cuando la partida conservó la duración de sus decisiones (una partida jugada contra un bot, véase el Duelo), la salida <code class="docutils literal notranslate"><span class="pre">text</span></code> da la duración de cada decisión, la del cubo aparte, y la salida <code class="docutils literal notranslate"><span class="pre">summary</span></code> el total y la media de cada jugador, con la marca del jugador cuya reserva se agotó primero; la salida <code class="docutils literal notranslate"><span class="pre">json</span></code> incluye <code class="docutils literal notranslate"><span class="pre">decision_ms</span></code> y <code class="docutils literal notranslate"><span class="pre">cube_decision_ms</span></code>. Una duración desconocida no se escribe. <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">timeerrors</span></code> da, por jugador y banda de duración (menos de 5 s, de 5 a 15 s, de 15 a 30 s, más de 30 s), el número de decisiones, el error medio y la proporción de blunders; <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> entrega las filas. <code class="docutils literal notranslate"><span class="pre">--ids</span></code> (identificadores de partidas separados por comas) restringe la tabla a esas partidas: la revisión de un torneo o de una sesión.</p>
+<p>Para un match jugado aquí en un Duelo, las salidas <code class="docutils literal notranslate"><span class="pre">text</span></code> y <code class="docutils literal notranslate"><span class="pre">summary</span></code> añaden su origen: el inicio, la semilla de los dados revelada y su SHA-256, para comparar con la huella publicada al crear el Duelo, el final del match (jugado hasta el final, detenido antes del final, o perdido por tiempo y por quién), la cadencia, el jugador cuya reserva se agotó primero y el Bot (nivel, versión de gammonNet). Para un match que no se jugó aquí, escriben <code class="docutils literal notranslate"><span class="pre">Origin:</span> <span class="pre">not</span> <span class="pre">played</span> <span class="pre">here</span></code>. La salida <code class="docutils literal notranslate"><span class="pre">json</span></code> lleva el origen en <code class="docutils literal notranslate"><span class="pre">origin</span></code> (incluido <code class="docutils literal notranslate"><span class="pre">lost_on_time</span></code>), <code class="docutils literal notranslate"><span class="pre">null</span></code> para un match que no se jugó aquí. El servidor lo sirve mediante <code class="docutils literal notranslate"><span class="pre">/v1/matches.origin</span></code>: <code class="docutils literal notranslate"><span class="pre">null</span></code> para un match sin origen, 404 para un match que no existe.</p>
+<p>Para una partida analizada, la pérdida de posibilidades de ganar la partida de cada jugada (<code class="docutils literal notranslate"><span class="pre">mwc_loss</span></code>, una fracción: 0,0123 equivale a 1,23 %, <code class="docutils literal notranslate"><span class="pre">null</span></code> para una jugada no puntuada) sigue el mismo camino: la salida <code class="docutils literal notranslate"><span class="pre">json</span></code> lleva la lista bajo <code class="docutils literal notranslate"><span class="pre">decision_losses</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code> añade una línea <code class="docutils literal notranslate"><span class="pre">MWC</span> <span class="pre">loss</span></code> a las jugadas puntuadas y <code class="docutils literal notranslate"><span class="pre">summary</span></code> da el total por jugador, igual a la pérdida de MWC de la lista de partidas. Cada entrada lleva también su dificultad (<code class="docutils literal notranslate"><span class="pre">difficulty</span></code>, la pérdida esperada de un jugador de referencia en la misma posición, misma unidad, <code class="docutils literal notranslate"><span class="pre">null</span></code> para una jugada no puntuada) y <code class="docutils literal notranslate"><span class="pre">avoidable</span></code> para un error evitable; la salida <code class="docutils literal notranslate"><span class="pre">json</span></code> añade <code class="docutils literal notranslate"><span class="pre">difficulty_summary</span></code> (por jugador: <code class="docutils literal notranslate"><span class="pre">difficulty</span></code>, <code class="docutils literal notranslate"><span class="pre">excess</span></code>, <code class="docutils literal notranslate"><span class="pre">ratio</span></code>, <code class="docutils literal notranslate"><span class="pre">avoidable</span></code>), <code class="docutils literal notranslate"><span class="pre">text</span></code> las líneas <code class="docutils literal notranslate"><span class="pre">Difficulty</span></code> y <code class="docutils literal notranslate"><span class="pre">Avoidable</span> <span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">summary</span></code> una sección <code class="docutils literal notranslate"><span class="pre">Difficulty</span></code>. El servidor la sirve por <code class="docutils literal notranslate"><span class="pre">/v1/stats.matchDecisionLosses</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">summary</span></code> termina con una sección <code class="docutils literal notranslate"><span class="pre">Review</span></code>, el balance del partido (<a class="reference internal" href="manuel_matchs.html#bilan-match"><span class="std std-ref">balance del partido</span></a>): por jugador, el PR y su intervalo del 95 % sobre las partidas, la pérdida MWC reducida a 7 puntos y su intervalo sobre las partidas, el resultado ajustado por la suerte (con el resultado, la suerte neta, la diferencia de errores y la cobertura de los dados), los tres errores por revisar (partida, jugada, pérdida y parte evitable) y el reparto de los errores entre precipitados y reflexionados. El servidor lo sirve mediante <code class="docutils literal notranslate"><span class="pre">/v1/stats.matchReview</span></code>. En <code class="docutils literal notranslate"><span class="pre">stats</span></code>, el PR global y las filas por fase, por etiqueta y por marcador llevan su intervalo del 95 % sobre los partidos (columna <code class="docutils literal notranslate"><span class="pre">95</span> <span class="pre">%</span> <span class="pre">CI</span></code>), y <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code> una columna <code class="docutils literal notranslate"><span class="pre">L7</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>&lt;file&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de datos (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — ID de la partida a mostrar (obligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato de salida: <code class="docutils literal notranslate"><span class="pre">json</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code> o <code class="docutils literal notranslate"><span class="pre">summary</span></code> (por defecto: <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code> — Archivo de salida (por defecto: salida estándar).</p></li>
+</ul>
+<p><strong>Ejemplos:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>summary
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>text
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>match1.json
+</pre></div>
+</div>
+<p><strong>match repair</strong> — Reescribe las posiciones, los análisis y los errores de una partida a partir de su archivo fuente, el que nombra la pestaña <strong>Info</strong> de su ficha. La partida conserva su identificador, su torneo, los nombres de los jugadores tal como están guardados (alias, correcciones, intercambio), su fecha, su comentario, su vídeo y sus marcas, su transcripción y los comentarios escritos en sus posiciones: un comentario dejado en una posición que la reparación abandona pasa a la que el archivo nombra para la misma jugada, salvo si una colección, una tarjeta Anki o una lección aún conserva esa posición; el comentario se queda entonces allí y el informe lo cuenta. Un análisis más profundo que el del archivo (un rollout lanzado desde la importación) o corregido a mano se mantiene. Una partida ya conforme a su archivo no se reescribe. <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> dice lo que cambiaría sin escribir nada. <code class="docutils literal notranslate"><span class="pre">--list</span></code> recorre todas las partidas que nombran un archivo fuente y da las que difieren de él, con el número de jugadas cuya posición cambia y la proporción de jugadas analizadas antes y después, así como aquellas cuyo archivo no se encuentra; no escribe nada. Una ruta relativa se busca desde la carpeta de la base y luego desde la carpeta actual. La reparación se rechaza cuando el archivo no se encuentra, ya no contiene la partida (su huella ya no es la de la partida guardada) o cuando las jugadas guardadas no permiten saber qué jugador del archivo es cuál. El servidor la ofrece mediante <code class="docutils literal notranslate"><span class="pre">/v1/matches.repair</span></code>, con el archivo fuente enviado en la petición.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">(</span>--id<span class="w"> </span>&lt;ID&gt;<span class="w"> </span><span class="o">[</span>--dry-run<span class="o">]</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>--list<span class="o">)</span><span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>text<span class="p">|</span>json<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--list
+./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--dry-run
+./blunderdb<span class="w"> </span>match<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span>
+</pre></div>
+</div>
+</section>
+<section id="tournament-lire-un-tournoi-dirige">
+<h2>tournament — Leer un torneo dirigido<a class="headerlink" href="#tournament-lire-un-tournoi-dirige" title="Link to this heading"></a></h2>
+<p>Lee un torneo dirigido sin interfaz gráfica. Dirigir un torneo de forma interactiva es función de la consola del motor Nicomaque; estos subcomandos <strong>leen</strong>, ninguno espera una entrada, y solo <code class="docutils literal notranslate"><span class="pre">move</span></code> y <code class="docutils literal notranslate"><span class="pre">confirm</span></code> escriben.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>tournament<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Subcomandos:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Los torneos dirigidos de la base, con su estado, la versión del motor, el evento al que pertenece cada uno (vacío si ninguno) y la fecha de la última decisión.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verify</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Vuelve a reproducir la dirección y señala cualquier aviso residual. <strong>Sale con error</strong> si queda alguno: es la verificación posterior al torneo, y un script que la pasa sobre las bases de una temporada quiere un código de retorno, no una línea que filtrar.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">standings</span> <span class="pre">--id</span> <span class="pre">N</span></code> — La clasificación en CSV, premios incluidos, en el idioma de la interfaz.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ranking</span> <span class="pre">--season</span> <span class="pre">[--rencontre</span> <span class="pre">N]</span> <span class="pre">[--from</span> <span class="pre">AAAA-MM-JJ]</span> <span class="pre">[--to</span> <span class="pre">AAAA-MM-JJ]</span> <span class="pre">[--points</span> <span class="pre">25,18,15]</span> <span class="pre">[--participation</span> <span class="pre">P]</span> <span class="pre">[--elo]</span> <span class="pre">[--format</span> <span class="pre">csv|json]</span></code> — La clasificación de temporada: los torneos cerrados de un evento o de un período (límites incluidos, según la fecha del torneo; sin filtro, todos los torneos dirigidos), con cada puesto convertido en puntos por el baremo (el ganador primero; por defecto 25, 18, 15, 12, 10, 8, 6, 4, 2, 1), más <code class="docutils literal notranslate"><span class="pre">--participation</span></code> por torneo jugado. Los empatados se reparten la media de los puestos que ocupan. Una persona se reconoce de un torneo al siguiente por su nombre. <code class="docutils literal notranslate"><span class="pre">--elo</span></code> añade un Elo de club recalculado sobre los partidos de la temporada (fórmula de FIBS, partiendo de 1500). El CSV da una fila por persona y una columna de puntos por torneo; un torneo no cerrado aparece en la lista pero no aporta nada.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--id</span> <span class="pre">N|--rencontre</span> <span class="pre">N</span> <span class="pre">[--out</span> <span class="pre">&lt;carpeta&gt;]</span></code> — La página HTML de visualización de una prueba (<code class="docutils literal notranslate"><span class="pre">--id</span></code>), o la página mural de un evento (<code class="docutils literal notranslate"><span class="pre">--rencontre</span></code>: una línea por mesa, sea cual sea la prueba que la ocupa). Se requiere exactamente uno de los dos. Sin <code class="docutils literal notranslate"><span class="pre">--out</span></code> sale por la salida estándar; con él, se escribe en la carpeta, que pasa a ser la de la dirección o la del evento.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">N</span></code> — El registro de eventos en bruto, reproducible por las herramientas del motor. El registro es toda la verdad de una dirección: la clasificación, los cuadros y los avisos se reproducen a partir de él. Una herramienta que lea esta salida no necesita blunderDB en absoluto.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">move</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">--match</span> <span class="pre">M</span> <span class="pre">--table</span> <span class="pre">T</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Cambia la mesa de un partido en curso, como arrastrar una casilla sobre otra en la cuadrícula. Si la mesa de destino está ocupada, los dos partidos <strong>intercambian</strong> sus mesas; una mesa fuera de servicio se rechaza. En un evento, si la mesa está ocupada por otra prueba, el intercambio se hace entre las dos pruebas: un cambio de mesa se escribe en el registro de cada una. Muestra la mesa de cada partido en curso.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hall</span> <span class="pre">--rencontre</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Todas las mesas de un evento: una línea por mesa, sea cual sea la prueba que la ocupa (prueba, match, jugadores), luego las propuestas de todas las pruebas en una sola cola (<code class="docutils literal notranslate"><span class="pre">proposal</span></code>), primero los jugadores que esperan desde hace más tiempo, y por último los matches retenidos por falta de mesa o de jugador libre (<code class="docutils literal notranslate"><span class="pre">held</span></code>, con su motivo). Es la cuadrícula que muestra la vista <em>Todas las mesas</em> de la Dirección. Las mesas se agrupan por sala cuando el evento tiene salas, y llevan su nombre cuando lo tienen.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">proposals</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — La cola de propuestas del motor, numerada: partidos, sorteos, cambio de fase, repesca de un clasificado de grupo retirado.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">confirm</span> <span class="pre">--id</span> <span class="pre">N</span> <span class="pre">--n</span> <span class="pre">K</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Confirma la propuesta número K de <code class="docutils literal notranslate"><span class="pre">proposals</span></code>, como <em>Lanzar</em> en el panel, y después muestra la cola que sigue.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tables</span> <span class="pre">--rencontre</span> <span class="pre">N|--tournament</span> <span class="pre">N</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Las propiedades de las mesas (nombre, sala, reservada, asignada a) y las salas donde juega cada prueba de un evento (<code class="docutils literal notranslate"><span class="pre">--rencontre</span></code>), o las propiedades de una prueba que juega sola (<code class="docutils literal notranslate"><span class="pre">--tournament</span></code>). Solo lectura: la escritura pasa por <code class="docutils literal notranslate"><span class="pre">call</span></code> (<code class="docutils literal notranslate"><span class="pre">rencontres.setTables</span></code>, <code class="docutils literal notranslate"><span class="pre">rencontres.setEventRooms</span></code>, <code class="docutils literal notranslate"><span class="pre">directions.setTables</span></code>).</p></li>
+</ul>
+<p><strong>Opciones comunes:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code> (obligatorio), <code class="docutils literal notranslate"><span class="pre">--id</span></code> (obligatorio salvo para <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">ranking</span></code>, <code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--rencontre</span></code>, <code class="docutils literal notranslate"><span class="pre">hall</span></code> y <code class="docutils literal notranslate"><span class="pre">tables</span></code>), <code class="docutils literal notranslate"><span class="pre">--format</span></code>.</p>
+<p><strong>Ejemplos:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>tournament<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>standings<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>&gt;<span class="w"> </span>classement.csv
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>ranking<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--season<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2026</span>-12-31<span class="w"> </span>--elo<span class="w"> </span>&gt;<span class="w"> </span>saison.csv
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>page<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--out<span class="w"> </span>/tmp/affichage
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>page<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span><span class="w"> </span>--out<span class="w"> </span>/tmp/evenement
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>&gt;<span class="w"> </span>journal.json
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>move<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--match<span class="w"> </span>m4<span class="w"> </span>--table<span class="w"> </span><span class="m">7</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>hall<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>tables<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rencontre<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>proposals<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>tournament<span class="w"> </span>confirm<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--n<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+<section id="transcribe-rejouer-une-transcription">
+<span id="cli-transcribe"></span><h2>transcribe — Reproducir una transcripción<a class="headerlink" href="#transcribe-rejouer-une-transcription" title="Link to this heading"></a></h2>
+<p>Reproduce una transcripción e informa de lo que la relectura encuentra en ella. La fuente es un archivo <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, un partido de la biblioteca o un borrador de transcripción — exactamente una de las tres. Un partido se lee mediante el <code class="docutils literal notranslate"><span class="pre">.mat</span></code> que produciría al exportarlo: lo que se reproduce es, pues, lo que contendría una exportación.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--mat<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>--check<span class="o">]</span><span class="w"> </span><span class="o">[</span>--render<span class="w"> </span>&lt;sortie&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--match<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--check
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--draft<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--check
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--match<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--edit<span class="w"> </span><span class="o">[</span>--accept-losses<span class="o">]</span>
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--draft<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--finish<span class="p">|</span>--abandon
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--materialize<span class="w"> </span>&lt;document.json&gt;
+./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--import<span class="w"> </span>&lt;fichier.mat<span class="p">|</span>document.json&gt;
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--mat</span></code> — Archivo <code class="docutils literal notranslate"><span class="pre">.mat</span></code> que se reproduce.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de datos, para <code class="docutils literal notranslate"><span class="pre">--match</span></code> y <code class="docutils literal notranslate"><span class="pre">--draft</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — Identificador del partido de la biblioteca que se reproduce.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--draft</span></code> — Identificador del borrador de transcripción que se reproduce.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--check</span></code> — Lista las incoherencias encontradas (comportamiento por defecto).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--render</span></code> — Reescribe la transcripción como <code class="docutils literal notranslate"><span class="pre">.mat</span></code> en esta ruta.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato de salida: <code class="docutils literal notranslate"><span class="pre">text</span></code> (por defecto) o <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--edit</span></code> — Abre un borrador sobre el <code class="docutils literal notranslate"><span class="pre">--match</span></code> (o devuelve el que ya está abierto sobre él).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--accept-losses</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--edit</span></code> sobre un partido importado: acepta que sus análisis y comentarios puedan perderse.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--finish</span></code> — Termina el <code class="docutils literal notranslate"><span class="pre">--draft</span></code>: escribe su partido, o sustituye aquel del que se abrió, y libera el borrador.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--abandon</span></code> — Abandona el <code class="docutils literal notranslate"><span class="pre">--draft</span></code>: lo elimina sin partido; un partido del que se abrió queda tal cual.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--yes</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--abandon</span></code> sobre un borrador que nunca produjo un partido: confirma que todo lo escrito en él se pierde.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--materialize</span></code> — Documento JSON (<code class="docutils literal notranslate"><span class="pre">header</span></code> y <code class="docutils literal notranslate"><span class="pre">actions</span></code>, dados incluidos) que se escribe como partido de una sola vez, o no se escribe en absoluto.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Archivo <code class="docutils literal notranslate"><span class="pre">.mat</span></code> o documento de transcripción JSON sobre el que abrir un nuevo borrador.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--check</span></code> nombra cada incoherencia con el número de la acción y la partida en la que se encuentra: jugada ilegal, dos turnos seguidos del mismo jugador, acción de cubo imposible, acción más allá del final del partido, jugada cuyos pasos no utilizan sus propios dados, primera jugada de una partida con un doble, que ninguna tirada de apertura puede ser, jugada no registrada — la celda <code class="docutils literal notranslate"><span class="pre">???</span></code> que gnubg escribe cuando no ha conservado la jugada realizada, y que no es un baile, marcador anunciado incoherente — una partida cuya línea de marcador no es la que dan las partidas anteriores, rejugada con el marcador escrito.</p>
+<p>Una incoherencia se <strong>informa, nunca se opone</strong>: nada se rechaza por ella y el código de salida sigue siendo 0 sea lo que sea que encuentre la relectura. Un código distinto de 0 señala un fallo real — archivo ilegible, base que no se abre, salida imposible de escribir. Un script que quiera actuar sobre las observaciones las lee en <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>, donde un archivo roto y una partida que contiene una jugada ilegal no se confunden.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--render</span></code> reescribe la transcripción como <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, lo que permite comprobar la ida y vuelta sobre un archivo real, fuera de las pruebas.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--materialize</span></code> escribe, sin borrador, el partido que juega un documento de acciones llegado de otra parte. Las reglas se aplican estrictamente: la primera acción rechazada hace fracasar el comando con su rango (a partir de 0) y su motivo, y no se escribe nada. Las duraciones de decisión del documento (<code class="docutils literal notranslate"><span class="pre">decision_ms</span></code>, <code class="docutils literal notranslate"><span class="pre">cube_decision_ms</span></code>) se trasladan a las jugadas.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--import</span></code> abre un nuevo borrador sobre un archivo <code class="docutils literal notranslate"><span class="pre">.mat</span></code> o sobre un documento de transcripción JSON (<code class="docutils literal notranslate"><span class="pre">header</span></code>, <code class="docutils literal notranslate"><span class="pre">actions</span></code> y, opcionalmente, <code class="docutils literal notranslate"><span class="pre">format_version</span></code> y <code class="docutils literal notranslate"><span class="pre">next_score</span></code>, la forma en que se guarda un borrador). Las incoherencias del archivo se conservan y se marcan, como en todo borrador: se corrigen antes de que <code class="docutils literal notranslate"><span class="pre">--finish</span></code> escriba el match. Un archivo que ninguna relectura puede leer — JSON ilegible, tipo de acción desconocido, jugador, dado o punto fuera del tablero, <code class="docutils literal notranslate"><span class="pre">.mat</span></code> sin partida — hace fallar el comando y no abre ningún borrador.</p>
+<p>Solo otras tres opciones escriben, con los mismos métodos que el panel Transcripción: <code class="docutils literal notranslate"><span class="pre">--edit</span></code> abre un borrador sobre un partido existente, <code class="docutils literal notranslate"><span class="pre">--finish</span></code> lo termina —el partido se sustituye con el mismo identificador— y <code class="docutils literal notranslate"><span class="pre">--abandon</span></code> elimina un borrador sin partido, y exige <code class="docutils literal notranslate"><span class="pre">--yes</span></code> para un borrador nunca terminado, que se lleva todo lo escrito en él. Un partido importado lleva análisis y comentarios que un <code class="docutils literal notranslate"><span class="pre">.mat</span></code> no lleva: <code class="docutils literal notranslate"><span class="pre">--edit</span></code> da como máximo su número y se niega sin <code class="docutils literal notranslate"><span class="pre">--accept-losses</span></code>.</p>
+<p><strong>Ejemplo:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>transcribe<span class="w"> </span>--mat<span class="w"> </span>match.mat<span class="w"> </span>--check
+
+<span class="c1"># match.mat: 7 point match, 4 game(s), 203 action(s)</span>
+<span class="c1">#   Final score: 9-2</span>
+<span class="c1"># Inconsistencies: none</span>
+</pre></div>
+</div>
+</section>
+<section id="duel-jouer-un-duel">
+<span id="cli-duel"></span><h2>duel — Jugar un Duelo<a class="headerlink" href="#duel-jouer-un-duel" title="Link to this heading"></a></h2>
+<p>Juega un Duelo sin interfaz, una Acción por llamada. Cada llamada es su propio proceso: retoma el Duelo desde la base, juega una Acción y la vuelve a escribir. Las duraciones de las jugadas de un Duelo jugado así son desconocidas, nunca nulas.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>duel<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">(</span>--length<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>--money<span class="w"> </span><span class="o">[</span>--jacoby<span class="o">])</span><span class="w"> </span><span class="o">[</span>--side1<span class="w"> </span>&lt;côté&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--side2<span class="w"> </span>&lt;côté&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--length<span class="w"> </span>&lt;n&gt;<span class="w"> </span><span class="o">[</span>--start<span class="w"> </span>&lt;XGID&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--away<span class="w"> </span>&lt;j1&gt;,&lt;j2&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--reroll<span class="o">]</span><span class="w"> </span><span class="o">[</span>--after-cube<span class="o">]</span><span class="w"> </span><span class="o">[</span>--single-game<span class="o">]</span><span class="w"> </span><span class="o">[</span>--minutes-per-point<span class="w"> </span>&lt;min&gt;<span class="w"> </span>--delay<span class="w"> </span>&lt;s&gt;<span class="o">]</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>move<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--play<span class="w"> </span><span class="s2">"24/18 13/11"</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>roll<span class="p">|</span>double<span class="p">|</span>take<span class="p">|</span>pass<span class="p">|</span>resign<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>forfeit<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--side<span class="w"> </span><span class="m">1</span><span class="p">|</span><span class="m">2</span>
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>contribute<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--side<span class="w"> </span><span class="m">1</span><span class="p">|</span><span class="m">2</span><span class="w"> </span>--value<span class="w"> </span>&lt;texte&gt;
+./blunderdb<span class="w"> </span>duel<span class="w"> </span>stop<span class="p">|</span>discard<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;
+</pre></div>
+</div>
+<p><strong>Subcomandos:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span></code> — Inicia un Duelo y juega hasta la primera decisión de un Lado externo. <code class="docutils literal notranslate"><span class="pre">--length</span></code> (1 a 25 puntos) o <code class="docutils literal notranslate"><span class="pre">--money</span></code>; <code class="docutils literal notranslate"><span class="pre">--start</span></code> (XGID de la Salida); <code class="docutils literal notranslate"><span class="pre">--name1</span></code> y <code class="docutils literal notranslate"><span class="pre">--name2</span></code>; <code class="docutils literal notranslate"><span class="pre">--side1</span></code> y <code class="docutils literal notranslate"><span class="pre">--side2</span></code> (<code class="docutils literal notranslate"><span class="pre">external</span></code> o <code class="docutils literal notranslate"><span class="pre">bot:&lt;nivel&gt;</span></code> con <code class="docutils literal notranslate"><span class="pre">instant</span></code>, <code class="docutils literal notranslate"><span class="pre">normal</span></code> o <code class="docutils literal notranslate"><span class="pre">thorough</span></code>, o <code class="docutils literal notranslate"><span class="pre">external:&lt;configuración&gt;&#64;&lt;motor&gt;</span></code>, un Lado externo que declara el Bot que juega tras él: el origen del Match lo registra como declarado, no atestiguado); <code class="docutils literal notranslate"><span class="pre">--discard-at-end</span></code> descarta el borrador al final en lugar de escribir el Match; <code class="docutils literal notranslate"><span class="pre">--combined-seed</span></code> no lanza ningún dado antes de la aportación de cada Lado externo a la semilla. <code class="docutils literal notranslate"><span class="pre">--away</span></code> da el marcador de la primera partida en puntos que faltan, <code class="docutils literal notranslate"><span class="pre">jugador1,jugador2</span></code> (<code class="docutils literal notranslate"><span class="pre">1</span></code>: la partida Crawford, <code class="docutils literal notranslate"><span class="pre">0</span></code>: un punto después de ella), y sustituye al de <code class="docutils literal notranslate"><span class="pre">--start</span></code>; sin <code class="docutils literal notranslate"><span class="pre">--start</span></code>, la partida parte de la posición inicial con este marcador. <code class="docutils literal notranslate"><span class="pre">--reroll</span></code> hace que se saque de nuevo la tirada que lleva <code class="docutils literal notranslate"><span class="pre">--start</span></code>; <code class="docutils literal notranslate"><span class="pre">--after-cube</span></code> empieza después de la decisión de cubo de la Salida (el jugador con el turno tira enseguida, un doble ofrecido se acepta) — por defecto el Duelo empieza antes de ella, y un doble ofrecido espera la respuesta del adversario. <code class="docutils literal notranslate"><span class="pre">--single-game</span></code> detiene el Duelo al final de su primera partida, escrita sola como Match. <code class="docutils literal notranslate"><span class="pre">--minutes-per-point</span></code> y <code class="docutils literal notranslate"><span class="pre">--delay</span></code> fijan la cadencia: la reserva de cada jugador en minutos por punto del match (Standard 2, Speed 0,4) y el retardo por jugada en segundos (12, 10); <code class="docutils literal notranslate"><span class="pre">--time-out</span></code> (<code class="docutils literal notranslate"><span class="pre">continue</span></code> o <code class="docutils literal notranslate"><span class="pre">lose_match</span></code>) lo que hace una reserva agotada. Una Salida que las reglas no admiten (fichas, marcador fuera de la longitud, dos jugadores en partida Crawford, cubo) se rechaza con su motivo. Con dos Bots, el match se juega entero en esta llamada (<code class="docutils literal notranslate"><span class="pre">--side1</span> <span class="pre">bot:instant</span> <span class="pre">--side2</span> <span class="pre">bot:instant</span></code>); una sesión de dinero entre dos Bots se rechaza, porque nunca terminaría, salvo en una sola partida.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span></code> — El marcador, lo que espera el Duelo y, para una jugada, las jugadas legales. La semilla de los dados no se muestra nunca antes del final: la huella la representa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Los Duelos en suspenso.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">roll</span></code>, <code class="docutils literal notranslate"><span class="pre">move</span></code>, <code class="docutils literal notranslate"><span class="pre">double</span></code>, <code class="docutils literal notranslate"><span class="pre">take</span></code>, <code class="docutils literal notranslate"><span class="pre">pass</span></code>, <code class="docutils literal notranslate"><span class="pre">resign</span></code> — Una Acción del Lado que espera el Duelo (<code class="docutils literal notranslate"><span class="pre">--side</span> <span class="pre">1|2</span></code> para nombrarlo); <code class="docutils literal notranslate"><span class="pre">--play</span></code> da la jugada en notación, en el orden que se quiera; <code class="docutils literal notranslate"><span class="pre">--level</span></code> (1 a 3) el valor de un abandono; <code class="docutils literal notranslate"><span class="pre">--revision</span></code> rechaza la Acción si el Duelo ha avanzado.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contribute</span></code> — La aportación de un Lado externo a la semilla combinada (<code class="docutils literal notranslate"><span class="pre">--side</span> <span class="pre">1|2</span></code>, <code class="docutils literal notranslate"><span class="pre">--value</span></code>, de 1 a 64 bytes), una sola vez, antes de la primera tirada; la última aportación pone en marcha los dados. Las tiradas salen entonces del HMAC-SHA256 de la semilla sellada sobre la aportación de cada Lado precedida de su longitud, y el origen del Partido lleva las aportaciones.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forfeit</span></code> — El Lado <code class="docutils literal notranslate"><span class="pre">--side</span></code> (obligatorio) abandona el match: la partida en curso va al otro Lado por los puntos que lo llevan a la longitud (en dinero, una simple al valor del cubo), y el Match se guarda como ganado por él.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop</span></code> — Detiene una sesión por dinero y guarda su Match tal como está, la partida en curso sin ganador. Un match a puntos se rechaza: solo se guarda entero (<code class="docutils literal notranslate"><span class="pre">forfeit</span></code>, <code class="docutils literal notranslate"><span class="pre">discard</span></code>). Detener no es abandonar.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discard</span></code> — Descarta el Duelo: no se escribe nada.</p></li>
+</ul>
+<p>Todas aceptan <code class="docutils literal notranslate"><span class="pre">--db</span></code> y <code class="docutils literal notranslate"><span class="pre">--format</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> o <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="cli_bibliotheque.html" class="btn btn-neutral float-left" title="Biblioteca: búsqueda, listas, colecciones" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="cli_analyse.html" class="btn btn-neutral float-right" title="Análisis y motor" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

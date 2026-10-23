@@ -1,0 +1,305 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="de" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Turniere &mdash; blunderDB 0.46.1 Dokumentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=fd310db5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=9bf55d28"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+    <link rel="next" title="Statistiken" href="manuel_stats.html" />
+    <link rel="prev" title="Matches und Transkription" href="manuel_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Dokumentation durchsuchen" aria-label="Dokumentation durchsuchen" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Sprachen">
+  <a href="../fr/manuel_tournois.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_tournois.html" lang="en" hreflang="en">English</a>
+  <span class="current" lang="de" aria-current="true">Deutsch</span>
+  <a href="../el/manuel_tournois.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_tournois.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_tournois.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_tournois.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_tournois.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_tournois.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Erste Schritte</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download und Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Benutzerhandbuch</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referenz</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Handbuch</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Erste Schritte und Oberfläche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyse, Kommentare und Suche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Matches und Transkription</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Turniere</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-tournois">Turnier-Panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diriger-un-tournoi">Ein Turnier leiten</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#la-page-direction">Die Leitungsseite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#la-fiche-de-resultat">Die Ergebniskarte</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-menus-contextuels">Die Kontextmenüs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#le-plein-ecran">Vollbild</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#la-recherche-rapide">Die Schnellsuche</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-joueurs">Die Spieler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#arbres-emplacements-classement-historique">Tableaus, Plätze, Wertung, Verlauf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-reglages">Die Einstellungen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#les-epreuves-d-un-evenement">Die Wettbewerbe einer Veranstaltung</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#l-affichage-du-tournoi">Die Anzeige des Turniers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Statistiken</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Bewertung</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Training, Anki und Duell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Import, Herkunft und Weitergabe</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriken und Lernwerkzeuge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste der Befehle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Tastenkürzel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Befehlszeilenschnittstelle (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Häufig gestellte Fragen (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-Modus (Server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-Vertrag</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anhänge</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anhang: Fortgeschrittene Nutzung der Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anhang Windows: Was tun, wenn Windows den Start blockiert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-Anhang: Mögliche Blockierung von blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anhang: Datenbankschema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Anhang: Statistikmodell — Abgleich XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versionsverlauf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Über blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Handbuch</a></li>
+      <li class="breadcrumb-item active">Turniere</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tournois">
+<span id="manuel-tournois"></span><h1>Turniere<a class="headerlink" href="#tournois" title="Link to this heading"></a></h1>
+<section id="panneau-tournois">
+<span id="id1"></span><h2>Turnier-Panel<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_tournaments.png"><img alt="Turnier-Panel" src="_images/panel_tournaments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Das Turniere-Panel: ein Turnier pro Zeile, Anzahl der Matches, PR des Referenzspielers.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Das Panel <strong>Turniere</strong> (<em>CTRL-Y</em>) ermöglicht es, Matches in Turnieren zu gruppieren, um eine organisierte Nachverfolgung und eine statistische Analyse pro Veranstaltung zu ermöglichen. Turniere können erstellt, umbenannt und gelöscht werden; Matches können ihnen zugeordnet werden. Die Statistiken des Stats-Panels können nach Turnier gefiltert werden. Drücken Sie <em>CTRL-Y</em>, um das Panel ein- oder auszublenden.</p>
+<p><strong>Neues Turnier</strong> öffnet das Anlegefeld, das den Fokus erhält; <em>ESC</em> oder <strong>Abbrechen</strong> schließt es. Das Filterfeld in der Kopfzeile schränkt die Liste beim Tippen ein: jedes eingegebene Wort muss in Name, Ort oder Datum vorkommen, der Zähler zeigt „angezeigt / gesamt“ und <em>ESC</em> leert das Feld. Ein Klick hebt eine Zeile hervor, ein Doppelklick oder <em>EINGABE</em> öffnet das Turnier. Seine Kopfzeile zeigt Datum, Ort und Anzahl der Matches, die ein Klick in die Liste der Stellungen des Turniers verwandelt; rechts stehen die Notizen, <strong>Leiten</strong> und <strong>Bilanz</strong>. Darunter seine Matches, eines pro Zeile, die ▲ und ▼ umordnen, bei denen ⇄ die Spieler vertauscht und die × aus dem Turnier entfernt. Ein Klick auf ein Match zeigt unter der Tabelle sein Blatt, dasselbe wie im Match-Panel (Reiter Transkript, Diagramme, Zu prüfen, Details, Info, Statistik); ein zweiter Klick oder <em>ESC</em> schließt es, ein Doppelklick oder <em>EINGABE</em> öffnet das Match auf dem Brett. Das Feld <strong>Match hinzufügen …</strong> legt dort ein Match der Datenbank ab, und ← führt zur Turnierliste zurück.</p>
+<p>Jede Zeile beginnt mit ihrem Rang (#) und ihrem Datum, wie im Matches-Panel: Die Liste reicht vom neuesten zum ältesten Eintrag, und ein Klick auf eine Spaltenüberschrift sortiert sie. Ein Turnier ohne Datum übernimmt das seines ältesten Matches, grau dargestellt; es wird nur gelesen, nie in die Datenbank geschrieben. Das Datumsfeld des Bearbeitungsformulars bleibt leer, solange nichts eingegeben wird: Das gelesene Datum erscheint nur grau, neben dem Feld, und beim Speichern wird nur ein eingegebenes Datum geschrieben.</p>
+<p>Turniere füllen sich beim Import von selbst. XG-, GnuBG- und BGF-Dateien benennen ihr Ereignis; beim Import eines neuen Matches ordnet blunderDB es dem Turnier dieses Namens zu und legt es an, falls es noch nicht existiert. Der Ort bleibt leer, und das Datum ist das des ältesten Matches, bis man hier eines einträgt. Ein bereits in der Datenbank vorhandenes Match wird nie neu zugeordnet: Ein erneuter Import seiner Datei macht die manuelle Zuordnung nicht rückgängig.</p>
+<p>Die Spalten <strong>PR</strong> und <strong>MWC</strong> jedes Turniers zeigen den PR und den MWC-Verlust des <strong>Referenzspielers</strong>, allein auf dessen Entscheidungen. Das ist der <a class="reference internal" href="manuel_matchs.html#joueur-principal"><span class="std std-ref">Hauptspieler</span></a> der Datenbank, sobald eine seiner analysierten Entscheidungen im Turnier zählt, unabhängig von der Zahl seiner Matches: Er wird unter allen seinen Aliasen erkannt, deren Entscheidungen sich addieren. Ohne Hauptspieler oder wenn keine seiner analysierten Entscheidungen in diesem Turnier zählt (nicht analysiertes Match), ist es der Spieler, der in den meisten Matches des Turniers vorkommt; bei Gleichstand derjenige mit den meisten Entscheidungen, dann der Name, der in der Zeichenreihenfolge zuerst kommt (ein Buchstabe mit Akzent nach <em>z</em>). Der PR vermischt Ihr Spiel also nicht mit dem Ihrer Gegner: Sobald Sie als Hauptspieler festgelegt sind, spiegelt er in jedem Ihrer Turniere, selbst bei nur einem Match, allein Ihre Leistung wider. Der Name des Referenzspielers erscheint als Tooltip, wenn Sie den Wert überfahren.</p>
+<p id="bilan-tournoi"><strong>Turnier-Bilanz.</strong> Die Schaltfläche <strong>Bilanz</strong> in der Kopfzeile eines geöffneten Turniers beantwortet die Frage, die man sich nach einem Turnier stellt: Habe ich auf meinem Niveau gespielt, und wenn nicht, wo ist es eingebrochen? Standardmäßig ist der Spieler der Hauptspieler, wenn er im Turnier gespielt hat, sonst derjenige, der in dessen Matches am häufigsten vorkommt (bei Gleichstand der Name, der in der Zeichenreihenfolge zuerst kommt); das Menü <strong>Spieler</strong> wählt einen anderen. Die Schwellen wurden festgelegt, bevor irgendwelche Ergebnisse untersucht wurden.</p>
+<ul class="simple">
+<li><p><strong>Das übliche Niveau</strong> ist dieser Spieler in seinen Punktematches der 365 Tage vor dem Turnier (dessen Datum, ersatzweise das seines ersten Matches), die Matches des Turniers ausgenommen. Nur das Vorher zählt: Es ist das Niveau, mit dem man angekommen ist. Mindestens 5 Matches sind nötig; andernfalls gilt es als unbekannt.</p></li>
+<li><p><strong>PR und MWC-Verlust (7-Punkte-Äq.)</strong> des Turniers gegenüber dem üblichen Niveau, jeweils mit ihrem 95-%-Intervall über die Matches. Das Urteil — <em>schlechter</em>, <em>besser</em>, <em>wie üblich</em> — betrifft die Differenz und ihr eigenes Intervall; es wird nur mit einem Intervall und mindestens 20 Entscheidungen auf jeder Seite gefällt, sonst lautet es <em>unzureichend</em>. Ein Turnier mit drei Matches sagt selten „schlechter“: Die Zahlen bleiben sichtbar, das Urteil wartet auf den Beweis.</p></li>
+<li><p><strong>Pro Runde</strong>: jedes Match in der Reihenfolge des Turniers, mit Gegner, seinem PR (Intervall über die Spiele) und seinem 7-Punkte-Äq.-Verlust, gegenüber dem üblichen PR.</p></li>
+<li><p><strong>Nach Rang der Entscheidung im Match</strong>, in Abschnitten zu 30 Entscheidungen: Kostet das Ende langer Matches mehr als üblich, ist es die Ermüdung, an der man arbeiten muss (Pausen, Rhythmus), nicht eine Positionsfamilie.</p></li>
+<li><p><strong>Nach Spielstand</strong>: DMP, Crawford-Spiel, Post-Crawford und andere Spielstände, gegenüber denselben Spielständen des üblichen Niveaus — die Punkte, an denen ein Fehler das Match entscheidet.</p></li>
+<li><p><strong>Nach Tempo</strong>: schnelle oder bedachte Entscheidungen, beiderseits des Medians Ihrer Zeiten für diese Art von Entscheidung im Match. So lässt sich die Uhr lesen: Die Zeitreserve wird nicht Zug für Zug aufgezeichnet.</p></li>
+<li><p><strong>Fehlerfamilien des Turniers</strong>: höchstens drei Familien des Studienplans (siehe <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">Lernplan</span></a>), beschränkt auf die Fehler des Turniers, mit denselben Regeln (5 bezifferte Fehler, positive untere Grenze); die übrigen werden als „zu bestätigen“ gezählt. Das sind die Einheiten, die zuerst einzuplanen sind.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">tournament</span></code> gibt dieselbe Bilanz aus, und der Server liefert sie über <code class="docutils literal notranslate"><span class="pre">/v1/stats.tournamentReview</span></code>.</p>
+</section>
+<section id="diriger-un-tournoi">
+<span id="id2"></span><h2>Ein Turnier leiten<a class="headerlink" href="#diriger-un-tournoi" title="Link to this heading"></a></h2>
+<p>blunderDB kann ein Turnier <strong>leiten</strong> und nicht nur ablegen. Die Leitung trägt die Engine <strong>Nicomaque</strong> von Nicolas Harmand: Sie hält das Format, die Paarungen, die Tableaus und die Wertung; blunderDB gibt ihr eine Oberfläche und bewahrt ihre Matches. Die Schaltfläche <strong>ⓘ</strong> in der Kopfzeile der Leitung erinnert an diesen Dank und führt zum Repository und zur Dokumentation der Engine.</p>
+<p>Ein geleitetes Turnier wird im Panel <a class="reference internal" href="#panneau-tournois"><span class="std std-ref">Turnier-Panel</span></a> gewählt (<em>STRG-Y</em>, Befehl <code class="docutils literal notranslate"><span class="pre">direct</span></code>): ein Turnier öffnen, dann <strong>Leiten</strong>. Ein bereits geleitetes Turnier zeigt seinen Zustand neben dem Namen, und die Schaltfläche heißt dann <strong>Leitung öffnen</strong>. Solange eine Leitung offen ist, zeigt der Hauptbereich das Turnier <strong>anstelle des Bretts</strong> — die einzige Ausnahme von dieser Regel in blunderDB; jeder andere Reiter holt das Brett zurück. <strong>Leitung verlassen</strong> in der Kopfzeile der Ansicht oder <strong>Leitung schließen</strong> im Panel schließen sie.</p>
+<p>Eine Leitung hat drei Zustände: <strong>in Vorbereitung</strong>, solange kein Match gestartet wurde, danach <strong>laufend</strong>, und <strong>abgeschlossen</strong>, sobald das Turnier beendet und die Wertung fixiert ist. Ein abgeschlossenes Turnier lässt sich wieder öffnen, mit Rückfrage: Die Endwertung ist dann nicht mehr endgültig.</p>
+<p>Alles Entschiedene wird in ein <strong>Journal</strong> geschrieben, und sonst nichts. Wertung, Tableaus, Vorschläge und Warnungen werden bei jedem Öffnen aus diesem Journal abgespielt: Ein Stromausfall kostet nichts, und eine Korrektur löscht nie, was geschehen ist — sie kommt hinzu.</p>
+<section id="la-page-direction">
+<h3>Die Leitungsseite<a class="headerlink" href="#la-page-direction" title="Link to this heading"></a></h3>
+<p>Hier verbringt die Turnierleitung die meiste Zeit. Von oben nach unten: die <strong>Warnungen</strong> der Engine, die sichtbar bleiben und nie etwas blockieren; das <strong>Tischraster</strong>, dessen Kopfzeile die Schaltfläche <strong>Blatt drucken</strong> für die Paarungen trägt; die <strong>letzte Entscheidung</strong>; die <strong>Vorschlagsliste</strong>; und die freien Spieler. Das Raster steht vor der Liste: Eine lange Liste schiebt es nie aus dem Bildschirm. Auf der Tastatur ist der erste <em>TAB</em>-Halt der Seite „Zur Warteschlange“, der den Fokus auf die Warteschlange setzt, ohne das Raster zu durchqueren; die Warteschlange erinnert unter ihrem Titel an ihre Kürzel (<em>J</em> und <em>K</em>, <em>EINGABE</em>, <em>LINKS</em> und <em>RECHTS</em>).</p>
+<p>Die Ansicht nimmt die gesamte Breite des Hauptbereichs ein, und jeder Reiter scrollt für sich: Verlässt man einen Reiter und kehrt zurück oder wechselt von einem Wettbewerb zum anderen, wird die zuletzt verlassene Position wiederhergestellt. Schaltflächen und Felder sind mindestens 44 Pixel hoch, damit man sie am Tisch ohne Zielgenauigkeit trifft; die Spaltenzahl des Rasters folgt der Breite des Bereichs, nicht der des Fensters. In den <strong>Einstellungen</strong> lässt sich jeder Abschnitt auf seinen Titel zusammenklappen, und die Schaltfläche <strong>Im Browser öffnen</strong> der Einstellungen sowie die Schaltfläche <strong>Wandseite</strong> in der Kopfzeile öffnen die Wandseite mit einem Klick, sobald ein Ausgabeordner gewählt ist; die Statusleiste zeigt den Pfad der geschriebenen Datei. Anmeldung, Nachzügler, nächste Phase, Auslosung, Start eines Matches und Abschluss hinterlassen dort ebenfalls eine Rückmeldung („Sophie Martin angemeldet — 16 Angemeldete“).</p>
+<p>Eine Turnierleitung öffnet sich auf ihren <strong>Spielern</strong>, solange das Turnier nicht gestartet ist, danach auf dem Reiter <strong>Turnierleitung</strong>, und beim erneuten Öffnen auf dem Reiter, auf dem sie verlassen wurde. Nach einem Neuladen oder einem Neustart der Anwendung öffnet sich die zuletzt geöffnete Turnierleitung von selbst wieder, auf demselben Reiter. Ein zweiter Klick auf <em>Leiten</em> oder <em>Turnierleitung öffnen</em>, während die Ansicht lädt, wird ignoriert.</p>
+<p>Eine vorgeschlagene Runde lässt sich ankündigen, bevor sie gestartet wird: <strong>Kommende Runde…</strong> neben <em>Blatt drucken</em> fragt nach dem zu druckenden Datum und der Uhrzeit („Montag 21.09., 20 Uhr“) und druckt das Blatt mit den Paarungen der Warteschlange, als „angekündigt“ markiert. Nichts wird gestartet oder ins Protokoll geschrieben: Die Runde wird am Tag selbst zu ihrer Zeit gestartet. Eine Paarung, die auf einen freien Tisch wartet, trägt statt der Tischnummer einen Strich.</p>
+<p>Oben in der Turnieransicht passt die <strong>Uhrleiste</strong> in eine Zeile: die Uhrzeit, die seit dem ersten gestarteten Match verstrichene Zeit, die gespielten und laufenden Matches, das beobachtete Tempo in Minuten pro Punkt gegenüber dem geplanten, die langsamen Matches, die nächste Pause und das <strong>voraussichtliche Ende</strong>. Das voraussichtliche Ende ist die Prognose der Engine: Sie spielt das Protokoll nach, beendet das Turnier fünfzehnmal im geplanten Tempo, und die Leiste zeigt den Median, hinter die eingetragenen Pausen verschoben. Eine Nacht, die nicht als Pause eingetragen ist, zählt daher als Spielzeit. Eine Uhrzeit, die nicht von heute ist, trägt ihren Tag.</p>
+<p>Ab dem zweiten Tag weicht die verstrichene Zeit dem <strong>Spieltag</strong> (der Tag des ersten gestarteten Matches ist Tag 1) und der <strong>Spielzeit</strong>: der Zeit, in der mindestens ein Match lief, ohne die Nächte und ohne die Lücken, in denen kein Tisch spielte. Ein abgeschlossenes Turnier hat keine Uhrleiste mehr.</p>
+<p>Ein Vorschlag wird mit <strong>einem Klick</strong> auf <em>Starten</em> bestätigt. <strong>Alle starten</strong> bestätigt in zwei Klicks die Vorschläge, die einen Tisch haben, nachdem ihre Liste gezeigt wurde; <em>Bestätigen</em> steht am Kopf dieser Liste. Paarungen ohne Tisch bleiben in der Liste, markiert mit „kein freier Tisch“: Im Rundenmodus bleibt eine Runde offen, solange nicht alle ihre Spieler darin eingesetzt sind. Ein Nachrücken unter Gleichplatzierten wartet ebenfalls auf die Wahl der Leitung, und der Phasenwechsel mit ihm. „Vorerst übergehen“ schreibt nichts: Die Engine ist deterministisch, und der Vorschlag kommt beim nächsten Aufruf unverändert zurück. <em>Von Hand paaren</em> steht jederzeit offen — die Engine schlägt vor, die Leitung entscheidet.</p>
+<p>Ein von Hand gepaartes Match ohne Tischnummer erhält den ersten freien Tisch; ein Tisch, an dem ein Match läuft, wird abgelehnt. Sind alle Tische belegt, wird es trotzdem gestartet, und sein Feld erscheint am Ende des Rasters als „ohne Tisch“, bis es auf einen Tisch verschoben wird.</p>
+<p>Ein Vorschlag kann eine Anmerkung der Engine tragen: kein freier Tisch, oder ein Matchende, das in eine Pause fiele. Startbar bleibt er in beiden Fällen. Läuft eine Phase in <strong>Mikrorunden</strong>, zeigt die Liste die verbleibende Zeit bis zum nächsten Block; zum Termin erscheinen die Vorschläge von selbst, und nichts startet von allein.</p>
+</section>
+<section id="la-fiche-de-resultat">
+<h3>Die Ergebniskarte<a class="headerlink" href="#la-fiche-de-resultat" title="Link to this heading"></a></h3>
+<p>Ein Klick auf einen besetzten Tisch öffnet die Karte des Matches. Sie zeigt zwei große Flächen: die <strong>Namen der beiden Spieler</strong>. Ein Klick auf den Sieger trägt das Ergebnis ein — zwei Klicks insgesamt, Tisch inbegriffen. Verlangt wird nur der Sieger; das Ergebnis ist frei, eines von beiden, beide oder keines. Per Tastatur wählt <em>LINKS</em> oder <em>RECHTS</em> den Sieger und <em>EINGABE</em> trägt ihn ein. Die Karte schließt sich erst, wenn das Ergebnis geschrieben ist: Bei einem Fehler bleibt sie mit ihrer Meldung offen.</p>
+<p>Die Schaltfläche <strong>⋯</strong> der Karte klappt auf, was selten gebraucht wird: die Aufgabe (Forfait) — jede Schaltfläche nennt den Abwesenden und den Gewinner —, eine freie Bemerkung („Zeit überschritten“, „aufgegeben wegen…“), das Verschieben des Matches an einen anderen Tisch und seine Annullierung. Aufgabe und Annullierung werden bestätigt; die Aufgabe über eine Schaltfläche <strong>Aufgabe erklären</strong>, die in derselben Karte auch anbietet, den Verlierer zurückzuziehen. Auf einen besetzten Tisch verschoben, tauscht das Match seinen Tisch mit dem dortigen: Zwei Matches teilen sich nie einen Tisch, und dieselbe Geste stellt sie wieder her. Hat ein altes Protokoll zwei an einen Tisch gesetzt, zeigt das Raster beide Felder markiert, bis eines verschoben wird.</p>
+<p>Ein sofort bemerkter Eingabefehler wird unter dem Raster in zwei Klicks zurückgenommen: die letzte Entscheidung <strong>korrigieren</strong>, dann den richtigen Sieger (<em>STRG-Z</em> öffnet dieselbe Rücknahme). Eine ältere Korrektur erfolgt über den <a class="reference internal" href="#direction-historique"><span class="std std-ref">Verlauf</span></a>.</p>
+</section>
+<section id="les-menus-contextuels">
+<span id="direction-menus"></span><h3>Die Kontextmenüs<a class="headerlink" href="#les-menus-contextuels" title="Link to this heading"></a></h3>
+<p>Ein Rechtsklick, die Taste <em>MENU</em> oder <em>UMSCHALT-F10</em> auf einem Objekt der Direction-Seite öffnet dessen übliche Aktionen, ohne den Umweg über die Karte: ein Feld des Rasters (frei oder besetzt), ein Spieler (Reiter <strong>Spieler</strong>, freie Spieler), ein Platz im Tableau, ein Platz, ein Vorschlag der Liste, eine Zeile des Verlaufs. Das Menü öffnet sich am Objekt; <em>OBEN</em> und <em>UNTEN</em> bewegen sich darin, <em>EINGABE</em> wählt, <em>ESC</em> schließt es und gibt den Fokus an das Objekt zurück.</p>
+<ul class="simple">
+<li><p>Belegtes Feld: Ergebnis eintragen, Aufgabe des einen oder anderen Spielers, Tisch wechseln (ein belegter Zieltisch tauscht die beiden Matches), Match abbrechen, Verlauf jedes Spielers.</p></li>
+<li><p>Freies Feld: die ausgewählte Ansetzung hier starten, den Tisch außer Betrieb nehmen oder wieder in Betrieb nehmen (Tische einer Veranstaltung). Ein für einen anderen Wettbewerb reservierter Tisch bietet nichts an.</p></li>
+<li><p>Spieler: das Ergebnis seines laufenden Matches eintragen, zu seinem Tisch wechseln, Verlauf, von Hand mit einem anderen freien Spieler ansetzen, in das andere Turnier wechseln, in dem er ebenfalls spielt, als abwesend oder anwesend markieren, jetzt oder nach seinem Match zurückziehen, wieder anmelden, die Angaben korrigieren.</p></li>
+<li><p>Platz ohne Match: ein importiertes Match zuordnen, auf das dieser Platz wartet.</p></li>
+<li><p>Ansetzung: starten, an einem Tisch starten…, die Länge ändern…, anders paaren (diese drei Einträge öffnen die manuelle Ansetzung mit den beiden Spielern, der Länge und dem Tisch der Ansetzung), vorerst ignorieren, das Rundenblatt drucken.</p></li>
+<li><p>Verlaufszeile: korrigieren oder annullieren, eine Anmerkung hinzufügen, auf einen der Spieler filtern.</p></li>
+</ul>
+<p>Aufgabe, Abbruch eines Matches und Zurückziehen eines Spielers behalten die Bestätigung, die sie in der Karte und in den Zeilenschaltflächen haben. Während eine Aktion läuft, sind die Einträge, die etwas auslösen, wie die Schaltflächen ausgegraut. Es ist immer nur ein Menü geöffnet: Ein zweites zu öffnen schließt das erste.</p>
+<p>Per Tastatur nimmt das Raster nur einen <em>TAB</em>-Halt ein: Jedes Feld, auch freie, erhält den Fokus, und <em>LINKS</em>, <em>RECHTS</em>, <em>OBEN</em>, <em>UNTEN</em>, <em>POS1</em> und <em>ENDE</em> wechseln von einem Feld zum anderen. Eine Ziffer öffnet die Karte des Tisches mit dieser Nummer; bei einem Tisch über 9 wird die zweite Ziffer innerhalb von 0,4 s getippt. <em>M</em> öffnet die Karte auf dem Tischfeld, und <em>X</em> ebenso, ob die Karte schon geöffnet ist oder nicht: Ein belegter Zieltisch tauscht die beiden Matches.</p>
+<p>Mit der Maus <strong>zieht</strong> man ein belegtes Feld auf ein anderes: auf ein freies Feld wechselt das Match den Tisch; auf ein belegtes Feld fragt eine Zeile „Tisch 3 ↔ Tisch 7?“ nach der Bestätigung des <strong>Tauschs</strong> der beiden Matches. Ein Geisterbild folgt dem Zeiger und das Zielfeld wird umrandet; <em>ESC</em> bricht die Geste ab, und es wird nichts geschrieben, bevor der Zeiger über einem Feld losgelassen wird. Ein Tisch außer Betrieb wird abgelehnt, die Statusleiste nennt den Grund. In der Kommandozeile führt <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span> <span class="pre">move</span></code> dieselbe Verschiebung oder denselben Tausch aus (siehe <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Befehlszeilenschnittstelle (CLI)</span></a>).</p>
+</section>
+<section id="le-plein-ecran">
+<span id="direction-plein-ecran"></span><h3>Vollbild<a class="headerlink" href="#le-plein-ecran" title="Link to this heading"></a></h3>
+<p>Die Taste <em>F11</em> auf der Seite Turnierleitung oder die Schaltfläche unten rechts schaltet sie in den Vollbildmodus: Symbolleiste, Reiter, Brett, Panel und Statusleiste verschwinden, und das ganze Fenster gehört der Turnierleitung. Der Modus bleibt über die Reiter der Turnierleitung hinweg erhalten (Leitung, Spieler, Verlauf, …). Ein geöffnetes Menü oder eine geöffnete Karte schließt sich zuerst mit <em>ESC</em>; ein zweites <em>ESC</em> oder <em>F11</em> beendet den Vollbildmodus und stellt den vorherigen Fensterzustand wieder her. Auch das Verlassen der Seite, durch Wechsel des Anwendungsreiters oder Schließen der Leitung, beendet ihn.</p>
+</section>
+<section id="la-recherche-rapide">
+<span id="direction-recherche"></span><h3>Die Schnellsuche<a class="headerlink" href="#la-recherche-rapide" title="Link to this heading"></a></h3>
+<p>Die Taste <em>/</em> auf der Direction-Seite öffnet die Palette nur für das Turnier: Spieler, Tische, laufende Matches und Wettbewerbe der geöffneten Veranstaltung, oder des einzelnen Wettbewerbs, wenn er in keiner Veranstaltung liegt. Man tippt einen Namen, einen Verein oder eine Tischnummer („4“ oder „t4“); Spieler an einem Tisch stehen vor freien Spielern. <em>EINGABE</em> führt zum Objekt: Ein Spieler in einem Match, ein Match oder ein besetzter Tisch öffnen die Karte des Tisches, ein freier Tisch erhält den Fokus im Raster, ein freier Spieler erscheint im Reiter <strong>Spieler</strong>, auf seinen Namen gefiltert, ein Wettbewerb wird zum aktuellen Reiter. Ein Treffer aus einem anderen Wettbewerb der Veranstaltung wechselt zuerst den Wettbewerb. <em>ESC</em> schließt, ohne etwas zu öffnen, und in einem Eingabefeld bleibt die Taste ein Schrägstrich. <em>STRG-UMSCHALT-P</em> öffnet die vollständige Palette, die das Turnier ebenfalls enthält.</p>
+</section>
+<section id="les-joueurs">
+<h3>Die Spieler<a class="headerlink" href="#les-joueurs" title="Link to this heading"></a></h3>
+<p>Der Reiter <strong>Spieler</strong> meldet an, korrigiert und zieht zurück. Das Meldefeld behält den Fokus und leert sich nach jedem Namen: Zwanzig Spieler werden allein über die Tastatur gemeldet. Die Autovervollständigung bietet die Spieler der Datenbank an; wer einen wählt, legt die genaue Schreibweise fest, die dessen Matches tragen, und übernimmt seinen PR als Wertung.</p>
+<p>Das <strong>Verzeichnis</strong> fasst die Teilnehmer aller geleiteten Turniere der Datenbank zusammen, nach Namen entdoppelt, mit Verein und Wertung ihrer letzten Meldung. Es wird nie gespeichert: Wird eine Leitung gelöscht, verschwinden ihre Teilnehmer daraus. Die Teilnehmer eines früheren Turniers zu übernehmen ist ein Klick, wie viele es auch sind; das Verzeichnis wird als CSV kopiert oder in einer Datei gespeichert (<strong>Speichern…</strong>) und eingefügt wieder eingelesen.</p>
+<p>Ein Doppelturnier meldet Paare an: das Kästchen <strong>Paar</strong> fügt Name, Verein und Wertung des Partners hinzu. Das Paar spielt unter dem Namen „A / B“, den auch seine Matches tragen; seine Wertung ist der Mittelwert der beiden, und ein unter <strong>Wertung des Paars</strong> eingegebener Wert ersetzt ihn. Das Verzeichnis behält die beiden Personen, nie das Paar.</p>
+<p>Vor <strong>Aufnehmen</strong> listet die Vorschau einer eingefügten CSV die unlesbaren Zeilen auf – ohne Namen, ohne Trennzeichen, wenn die anderen Zeilen eines haben, eine Wertung, die keine Zahl ist – sowie die Duplikate, innerhalb des Eingefügten oder mit einem bereits angemeldeten Spieler. Ein Duplikat wird nicht angemeldet, es sei denn, sein Kästchen wird angekreuzt.</p>
+<p>Das Filterfeld der Liste behält seinen Text, wenn man den Wettbewerb wechselt: Solange es aktiv ist, erscheint daneben ein Chip <strong>Filter: …</strong>, dessen Kreuz ihn löscht.</p>
+<p>Ein <strong>Nachzügler</strong>, der nach der Auslosung kommt, nimmt ein freies Freilos, wenn das Tableau eines bietet, und die Oberfläche schreibt neben das Feld, wo er einsteigt, bevor bestätigt wird. Ist kein Platz frei, wird er dennoch gemeldet, und die Ansicht sagt, in welcher Phase er einsteigt. Keine bereits erfolgte Auslosung wird wiederholt.</p>
+<p>Ein Rückzug erfolgt <em>jetzt</em> oder <em>nach dem laufenden Match</em>, je nachdem, ob der Spieler sofort geht oder zu Ende spielt; er wird über eine Schaltfläche <strong>Zurückziehen</strong> bestätigt, die nicht rot ist, da nichts gelöscht wird.</p>
+<p>Ein Spieler, der eine Runde verpasst, muss nicht zurückgezogen werden: <strong>Abwesend melden</strong>, auf seiner Zeile, öffnet ein kleines Formular unter seinem Namen — <em>bis</em> zu einer Uhrzeit (vorausgefüllt mit der nächsten vollen Stunde), oder, wenn die laufende Phase ein Schweizer System nach Runden ist, <em>bis Runde</em> mit ihrer Nummer. Der Motor hört dann einfach auf, ihn zu paaren, aber sein Rang, seine Leben und sein Platz im Tableau bleiben die, die er sich erspielt hat — eine Abwesenheit ist kein Forfait. <strong>Zurück</strong>, auf seiner Zeile, hebt die Abwesenheit mit einem Klick auf, vor oder nach der erklärten Frist.</p>
+<p>Die Korrektur der Karte eines zurückgezogenen Spielers — Name, Verein, Wertung — lässt ihn zurückgezogen. Seine Rückkehr ist eine eigene Geste: <strong>Wieder aufnehmen</strong>, in seiner Zeile. Er wird wieder gepaart, mit den Ergebnissen und Leben, die er beim Rückzug hatte; die beim Rückzug durch Forfait verlorenen Matches bleiben verloren.</p>
+<p>Ein Gruppenqualifizierter, der sich vor der Auslosung der nächsten Phase zurückzieht, hinterlässt einen freien Platz. Die Liste schlägt dann ein <strong>Nachrücken</strong> vor: Der Nächste seiner Gruppe, weder qualifiziert noch zurückgezogen, mit den meisten Gruppensiegen nimmt seinen Platz ein. Unter Gleichplatzierten schlägt die Liste jeden von ihnen vor, und die Leitung wählt; „Nächste Phase“ ohne Nachrücken lässt den Platz als Freilos. Sobald das Tableau ausgelost ist, verliert der Zurückgezogene sein Match durch Aufgabe.</p>
+</section>
+<section id="arbres-emplacements-classement-historique">
+<h3>Tableaus, Plätze, Wertung, Verlauf<a class="headerlink" href="#arbres-emplacements-classement-historique" title="Link to this heading"></a></h3>
+<p>Der Reiter <strong>Turnierbäume</strong> zeichnet die Turnierbäume mit ihren Verbindungslinien, von der ersten Runde bis zum Finale, die Trostrunde neben dem Hauptbaum und, für ein Schweizer System, die Lebenstabelle. Eine Gruppe wird als Kreuztabelle der Ergebnisse gelesen. Ein noch nicht ausgelostes Turnier zeigt sein ausgegrautes Gerüst. Ein bereits gespieltes Match trägt sein Ergebnis; ein vom Motor gemeldetes Match ist an Ort und Stelle markiert. Ein Punkt neben dem Namen des Reiters zeigt an, dass ein Turnierbaum läuft.</p>
+<p><strong>Ein Klick auf einen Platz</strong> (oder die Eingabetaste auf einem fokussierten Platz) öffnet darauf dieselbe Karte wie im Tischraster: Der Sieger eines laufenden Matches wird mit zwei Klicks erfasst, und ein beendetes Match wird korrigiert, indem man den Namen des wahren Siegers anklickt.</p>
+<p id="direction-emplacements">Der Reiter <strong>Matches</strong> (betitelt „Plätze“) verbindet das Turnier mit der Bibliothek. Jedes Match des Turniers ist ein Platz, der auf zwei Wegen gefüllt wird: das Match sofort transkribieren (<a class="reference internal" href="manuel_matchs.html#panneau-transcription"><span class="std std-ref">Transkriptions-Panel</span></a>) oder ein bereits importiertes Match daran hängen. <strong>Nichts wird durch Schlussfolgerung angehängt</strong>: Eine Namensgleichheit ist ein Vorschlag zum Annehmen, eine teilweise Übereinstimmung wird nicht einmal vorgeschlagen, und widerspricht die Datei eines angehängten Matches dem eingetragenen Ergebnis, wird die Abweichung gezeigt, ohne aufgelöst zu werden — während eines Turniers gilt das Wort der Leitung.</p>
+<p>Der Reiter <strong>Wertung</strong> zeigt die laufende Wertung, Abschnitt für Abschnitt, mit der Bilanz jedes Spielers (Siege–Niederlagen) und den Preisen, sofern ein Preisgeld eingestellt ist. Eine Staffel in Prozent wird in ganzen Einheiten ausgezahlt, nach dem Verfahren der größten Reste: Jeder Betrag wird auf die Einheit abgeschnitten, dann gehen die Einheiten, die zur gerundeten zu verteilenden Summe fehlen, einzeln an die Plätze mit dem größten Nachkommaanteil (bei Gleichstand an den besser platzierten); eine Staffel mit festen Beträgen wird unverändert ausgezahlt. Zwei Gleichplatzierte teilen sich Platz und Preis. Ein zurückgezogener Spieler behält den Rang, den ihm sein Weg einbringt, vermerkt als „zurückgezogen“ mit seiner Bilanz oder der Stelle im Tableau, an der er aufgehört hat. <strong>Turnier abschließen</strong> fixiert die Endwertung. Die Wertung wird als CSV kopiert, in der Sprache der Oberfläche, mit dem Abschnitt und der letzten Phase, in die jeder eingetreten ist, oder in einer Datei gespeichert: <strong>Speichern …</strong> öffnet den Dialog des Systems mit einem vorgeschlagenen Namen, dem Turnier gefolgt vom Wort „rangliste“ und dem heutigen Datum, und die Datei enthält genau die kopierte CSV. Auf der Kommandozeile schreibt <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span> <span class="pre">standings</span></code> dieselbe CSV. Der Name eines Spielers ist ein Link: Er öffnet den auf diesen Spieler gefilterten Verlauf, in dem jedes seiner Ergebnisse korrigiert werden kann.</p>
+<p>Ohne laufendes Match ist das Abschließen ein Klick; sind alle Partien gespielt, bietet die Liste auch <strong>Turnier abschließen</strong> an, das wie jeder andere Vorschlag gestartet wird. Laufen noch Matches, nennt die Wertung ihre Zahl und wartet vor Ort auf einen zweiten Klick: das Abschließen friert die Wertung ohne sie ein, und ihr Ergebnis lässt sich nicht mehr eintragen. <strong>Wieder öffnen</strong> wird ebenso bestätigt; die Endwertung ist dann nicht mehr endgültig, und das Wiederöffnen bleibt im Journal.</p>
+<p id="direction-historique">Der Reiter <strong>Verlauf</strong> ist das Journal im Klartext: eine Zeile je Entscheidung, in der Reihenfolge, filterbar nach Spieler oder Match. Das liest eine Turnierleitung nach einem Einspruch nach, und dort wird eine ältere Entscheidung korrigiert oder mit einer Notiz versehen. Eine Ergebniszeile nennt beide Spieler: den Sieger, dann seinen Gegner.</p>
+<p><strong>Korrigieren</strong> in der Zeile eines Ergebnisses öffnet darunter dieselbe Rücknahme wie bei der letzten Entscheidung: den richtigen Sieger anklicken, bei Bedarf mit dem Ergebnis. Das ursprüngliche Ergebnis bleibt an seiner Stelle im Journal, die Korrektur kommt hinzu, und die Rangliste berücksichtigt sie sofort.</p>
+</section>
+<section id="les-reglages">
+<h3>Die Einstellungen<a class="headerlink" href="#les-reglages" title="Link to this heading"></a></h3>
+<p>Der Reiter <strong>Einstellungen</strong> öffnet sich mit <strong>benannten Formaten</strong>: sechs gebrauchsfertige Vereinsturniere, das erste davon empfohlen. Eines zu wählen genügt zum Anfangen; die Felder bleiben danach änderbar.</p>
+<p>Hier wird eingestellt: die Phasen (<strong>Phase hinzufügen</strong> fügt sie nach den anderen an; eine bereits geöffnete Phase lässt sich nicht entfernen) und ihre Matchlänge, die des Finales, die Längen Runde für Runde eines Tableaus („15, 13, 11“ liest sich von der letzten Runde rückwärts), die <strong>Endlänge</strong> (längere Matches ab einer Zahl noch im Rennen befindlicher Spieler), die <strong>Mikrorunden</strong> (alle N Minuten gruppenweise auslosen), die Anzahl der Tische, das geplante Tempo in Minuten pro Punkt (standardmäßig 8; Uhrleiste und voraussichtliches Ende gehen davon aus), die Pausen des Tages, das Preisgeld (Startgeld, Einbehalt des Vereins, Verteilung je Abschnitt) und der Anzeigeordner.</p>
+<p>Ein <strong>Tableau</strong> hat drei Kästchen: <strong>Trostrunde</strong> (seine Verlierer spielen ein zweites Tableau, ein eigener Abschnitt in der Wertung), <strong>Versöhnung</strong> (der Sieger der Trostrunde spielt gegen den Sieger des Haupttableaus; das Kästchen erscheint nur mit der Trostrunde) und <strong>Nachladen</strong> (im Doppel-K.-o. muss der Sieger des Haupttableaus zweimal geschlagen werden; das Kästchen erscheint nur mit der Versöhnung). Eine Trostrunde hat nur mit einer Preisstaffel eine eigene Wertung: Solange die Staffel des Abschnitts <em>Trostrunde</em> leer ist, weisen die Einstellungen darauf hin. Eine Phase <strong>Gruppen</strong> wird über die Gruppengröße (standardmäßig 4) und die Zahl der Qualifizierten pro Gruppe (standardmäßig 2) eingestellt.</p>
+<p>Die <strong>Umschaltung</strong> einer Schweizer Phase ist die Summe der verbleibenden Leben, ab der zum Tableau gewechselt wird. Ist die Summe der Anfangsleben (Spieler × Leben) bereits kleiner oder gleich der Umschaltung, würde die Schweizer Phase übersprungen: Die Einstellungen weisen vor dem ersten Start darauf hin.</p>
+<p>Die Einstellungen bleiben <strong>während eines Turniers</strong> erreichbar: die Umschaltung um 22 Uhr senken, um früher fertig zu werden, am Samstagabend eine Trostrunde hinzufügen, solange das Tableau nicht ausgelost ist. Was dann feststeht, ist mit seinem Grund ausgegraut: das Format einer eröffneten Phase, die Zahl der Leben, die sie vergeben hat, und, sobald eine Phase ausgelost ist, ihre Poolgröße und ihre Zahl an Qualifizierten. Speichern während eines Turniers zeigt zuerst die Liste dessen, was sich ändert, und fragt nach Bestätigung. Was die Engine ablehnt, erscheint dort mit seinem Grund, und dann wird nichts gespeichert: so bei der Trostrunde, der Versöhnung oder der Aufladung eines bereits ausgelosten Tableaus.</p>
+<p>Ein Tisch mit kaputtem Brett wird unter <strong>Tische außer Betrieb</strong> eingetragen: seine Nummern, durch Kommas getrennt („7, 12“). Die Engine vergibt ihn nicht mehr, und das Raster zeigt ihn als nicht verfügbar; die Anzahl der Tische zu senken würde den letzten entfernen, nicht den kaputten. Läuft auf einem außer Betrieb gesetzten Tisch ein Match, sagt es die Liste der Änderungen und nennt einen freien Tisch, auf den es sich über die Matchkarte verlegen lässt.</p>
+<p>Die <strong>Setzliste</strong> ist eine Option, standardmäßig aus: Die Studie der Engine kommt zu „keine geschützten Setzplätze“, was der heutigen Backgammon-Kultur entspricht. Eingeschaltet werden die Spieler nach Wertung gesetzt.</p>
+</section>
+<section id="les-epreuves-d-un-evenement">
+<h3>Die Wettbewerbe einer Veranstaltung<a class="headerlink" href="#les-epreuves-d-un-evenement" title="Link to this heading"></a></h3>
+<p>Mehrere Wettbewerbe an denselben Tischen — ein Haupt-, ein Speed-, ein Doppelwettbewerb — werden in einer <strong>Veranstaltung</strong> zusammengefasst, am Anfang der Einstellungen (auf ihren Titel eingeklappt, wenn der Wettbewerb ihr zugeordnet ist; die Schaltfläche <strong>Einstellungen der Veranstaltung</strong> des Reiters <em>Alle Tische</em> führt dorthin): <strong>Anlegen und zuordnen…</strong> legt die Veranstaltung mit ihrer Tischzahl an, <strong>Zuordnen…</strong> fügt ihr einen geleiteten Wettbewerb hinzu. Das Zuordnen zeigt zuerst, was sich ändert: die Tische des Wettbewerbs werden die der Veranstaltung. <strong>Von der Veranstaltung lösen</strong> gibt den Wettbewerb sich selbst zurück, mit Protokoll und Tischen; <strong>Veranstaltung löschen</strong> legt sie nach Bestätigung in den Papierkorb und löst ihre Wettbewerbe, ohne einen zu löschen.</p>
+<p>In einer Veranstaltung schlägt kein Wettbewerb einen Tisch vor, an dem ein anderer spielt: das Raster zeigt diese Tische als belegt, mit dem Namen des Wettbewerbs, und eine Paarung ohne freien Tisch wartet. Ein gesperrter Tisch wird einmal angekreuzt, in der Veranstaltung, und gilt für alle Wettbewerbe; Tischzahl, gesperrte Tische und Pausen, die in den Einstellungen eines Wettbewerbs geändert werden, gelten auch für die Veranstaltung, und die Liste der Änderungen nennt die anderen Wettbewerbe.</p>
+<p>Die <strong>Tischeigenschaften</strong> werden im Panel Veranstaltung eingestellt: eine Tabelle mit einer Zeile pro Tisch, mit seinem <strong>Namen</strong> („Stream“ zum Beispiel), seinem <strong>Saal</strong> (einer frei wählbaren Bezeichnung), einem Kästchen <strong>Reserviert</strong> und den Spielern, denen er <strong>Zugewiesen</strong> ist, ausgewählt unter den Angemeldeten der Wettbewerbe der Veranstaltung. Bei vierzig Tischen setzt <em>Tische von N bis M, Saal</em> einen Saal mit einem Handgriff auf einen ganzen Bereich; <strong>Speichern</strong> schreibt nur die Tische, die eine Eigenschaft tragen, die anderen bleiben gewöhnliche Tische. Ein reservierter Tisch wird nie vorgeschlagen, aber ein Match kann von Hand darauf gelegt werden, durch einen Start, eine Verschiebung oder Drag-and-drop. Ein zugewiesener Tisch erhält zuerst das Match seines Inhabers, wenn er frei ist; sonst bekommt das Match einen gewöhnlichen Tisch, und außerhalb der Matches seiner Inhaber verhält er sich wie ein reservierter Tisch. Zwei Inhaber verschiedener Tische, die aufeinandertreffen, spielen am kleineren der beiden.</p>
+<p>Ein <strong>Saal</strong> ist die Menge der Tische, die dieselbe Bezeichnung tragen: „Saal A“ für die Tische 1 bis 20, „Saal B“ für die folgenden. In den Einstellungen jedes angehängten Wettbewerbs hakt <em>Säle, in denen dieser Wettbewerb gespielt wird</em> die Säle ab, in denen er spielt: das DMP in B, das Speed in A. Ist nichts angehakt, sind es alle Tische; ein Wettbewerb erhält keinen Vorschlag außerhalb seiner Säle und kann dort kein Match verschieben. Das Entfernen eines Saals, der ein laufendes Match des Wettbewerbs trägt, wird abgelehnt, unter Nennung des Tisches. Ein Wettbewerb, der allein gespielt wird, stellt dieselben Tischeigenschaften in seinen eigenen Einstellungen ein, ohne Wettbewerbssäle.</p>
+<p>Die <strong>Saisonwertung</strong> im Panel Veranstaltung summiert die abgeschlossenen Wettbewerbe der Veranstaltung: Jeder Platz bringt die Punkte der <strong>Skala</strong> (der Sieger zuerst, standardmäßig 25, 18, 15, 12, 10, 8, 6, 4, 2, 1), und Punktgleiche teilen sich den Durchschnitt der Plätze, die sie belegen. Eine Person wird von einem Wettbewerb zum nächsten am Namen erkannt. <strong>Club-Elo</strong> fügt eine Spalte hinzu: Jeder startet bei 1500, und die Matches der Saison werden der Reihe nach nach der FIBS-Formel neu gespielt. <strong>Berechnen</strong> zeigt die Wertung an, <strong>Als CSV kopieren</strong> kopiert sie mit einer Punktespalte pro Wettbewerb. Ein nicht abgeschlossener Wettbewerb bringt nichts ein.</p>
+<p>Die Leitung eines Wettbewerbs einer Veranstaltung zu öffnen, öffnet auch die anderen: oben in der Leitung erscheint ein Reiter je Wettbewerb, jeder mit seiner Zusammenfassung — wartende Vorschläge, laufende Partien, ein Hinweis, falls es einen gibt. Den Wettbewerb zu wechseln ist ein Klick auf seinen Reiter, ohne Bestätigung; der verlassene Wettbewerb wird nicht geschlossen und nichts wird neu abgespielt, er bleibt genau so, wie er verlassen wurde. Ein Turnier außerhalb jeder Veranstaltung hat nur einen Wettbewerb: kein Reiter zu zeigen. Wer zu einem anderen Reiter der Anwendung wechselt und zu Turniere zurückkehrt, findet die Leitung so vor, wie er sie verlassen hat: denselben Wettbewerb oder <em>Alle Tische</em> und denselben Reiter der Ansicht.</p>
+<p>Der Reiter <strong>Alle Tische</strong> links neben den Wettbewerben zeigt alle Tische der Veranstaltung in einem einzigen Raster: ein Feld pro Tisch, gleich welcher Wettbewerb ihn belegt, gekennzeichnet mit Namen und Farbe seines Wettbewerbs. Ergebniskarte, Kontextmenüs, Tastatur und Ziehen und Ablegen funktionieren dort wie im Raster eines Wettbewerbs, und jede Geste richtet sich an den Wettbewerb ihres Feldes. Zieht man ein Match auf einen Tisch eines anderen Wettbewerbs, werden die beiden Matches nach einer Bestätigung, die beide Wettbewerbe nennt, getauscht. Unter dem Raster bilden die Vorschläge aller Wettbewerbe eine einzige Warteschlange, jeder mit seinem Wettbewerb gekennzeichnet und mit eigener Schaltfläche <em>Starten</em>: Die Spieler, die am längsten warten, kommen zuerst, sodass ein Wettbewerb nicht auf das Ende der Runde eines anderen wartet. Ein Match ohne Tisch — alle Tische belegt oder ein Spieler in einem Match eines anderen Wettbewerbs — folgt der Warteschlange mit seinem Grund und ohne Schaltfläche <em>Starten</em>, bis ein Tisch oder der Spieler frei wird. Ein Klick auf einen Wettbewerb oder einen Ansichtsreiter verlässt <em>Alle Tische</em>.</p>
+<p>Hat die Veranstaltung mehrere Säle, wird das Raster nach Saal gruppiert, unter dem Namen jedes Saals. Der Name eines Tisches wird neben seiner Nummer angezeigt, mit einer Fahne für einen reservierten Tisch und einem Stern gefolgt von den Inhabern für einen zugewiesenen Tisch; die Vorschläge nennen den Tisch ebenfalls.</p>
+<p>Eine Person kann mehrere Wettbewerbe der Veranstaltung spielen: Zwei Teilnehmer mit demselben Namen sind dieselbe Person, und bei einem Doppelpaar zählt jedes der beiden Mitglieder. Solange sie in einem Wettbewerb spielt, schlagen die anderen sie nicht vor, und ihre Liste <em>Wartend</em> sagt, wo sie spielt: „spielt im Hauptturnier, Tisch 4“. Ein Tableau-Match, das auf sie wartet, bleibt in der Warteschlange, und sein Start wird abgelehnt, solange sie spielt. Das Paaren von Hand bleibt erlaubt: Das Match beginnt, und sein Feld im Raster trägt denselben Hinweis.</p>
+</section>
+<section id="l-affichage-du-tournoi">
+<h3>Die Anzeige des Turniers<a class="headerlink" href="#l-affichage-du-tournoi" title="Link to this heading"></a></h3>
+<p>Ein Turnier wird angesehen. Einen <strong>Anzeigeordner</strong> in den Einstellungen zu wählen genügt ein für alle Mal: blunderDB schreibt dort bei jeder Änderung eine eigenständige HTML-Seite neu, und die Seite lädt sich selbst nach. Sie öffnet sich offline, auf einem zweiten Bildschirm oder per Beamer, und lädt keine externe Ressource. <em>Im Browser öffnen</em> zeigt sie sofort.</p>
+<p>Die Spieler können das Turnier auch auf ihrem Telefon verfolgen. In den Einstellungen der Turnierleitung startet der Abschnitt <strong>Im Clubnetz anzeigen</strong> einen kleinen Webserver auf dem Rechner des Turnierleiters (Port 8770 standardmäßig, änderbar) und zeigt den <strong>QR-Code</strong> seiner Adresse, daneben die Adresse im Klartext: Ein Telefon im selben Netz scannt ihn und sieht die Anzeigeseite dieses Turniers — Baum, Paarungen, Ergebnisse, Rangliste. Die Seite aktualisiert sich alle zehn Sekunden von selbst; ein eingetragenes Ergebnis erscheint dort, ohne dass jemand etwas anfassen muss. <em>Auf diesem Rechner öffnen</em> öffnet sie im Browser des Rechners. <em>Anzeige beenden</em> schließt den Server, der sich auch beim Schließen von blunderDB beendet.</p>
+<p>Die Anzeige ist ausgeschaltet, solange der Turnierleiter sie nicht einschaltet, und sie ist <strong>schreibgeschützt</strong>: Sie liefert nur die Seite dieses Turniers, keine anderen Daten der Datenbank, und es lässt sich nichts eingeben. Es gibt <strong>kein Passwort</strong>: Jeder im lokalen Netz kann die Seite lesen (Namen, Paarungen, Ergebnisse) — was eine Wandanzeige dem Saal ohnehin zeigt. Der Server lauscht nur auf der vorgeschlagenen Adresse und auf diesem Rechner. Bei einem Rechner, der mit mehreren Netzen verbunden ist, bietet eine Liste seine Adressen an: zuerst die privater Netze (<code class="docutils literal notranslate"><span class="pre">192.168.x.x</span></code>, <code class="docutils literal notranslate"><span class="pre">10.x.x.x</span></code>, <code class="docutils literal notranslate"><span class="pre">172.16.x.x</span></code> bis <code class="docutils literal notranslate"><span class="pre">172.31.x.x</span></code>), dann die virtueller Netze (Container, VPN). Eine Adresse <strong>außerhalb der privaten Bereiche</strong> wird mit einer Warnung gekennzeichnet: Die Seite könnte dort über den Verein hinaus lesbar sein. Ohne lokales Netz sagt das Panel es und zeichnet keinen QR-Code. Die Anzeige endet, wenn eine andere Datei geöffnet, erstellt oder geschlossen wird. Wird die Anzeige auf einem bereits belegten Port gestartet, sagt das klar und lässt die laufende Anzeige unberührt; ein erneuter Start auf dem eigenen Port ersetzt sie sofort.</p>
+<p>Die <strong>Firewall</strong> des Rechners des Turnierleiters muss den gewählten Port durchlassen: Windows fragt beim ersten Start nach der Erlaubnis, die Firewall eines Linux-Systems blockiert den Port stillschweigend. Die Telefone ihrerseits müssen sich im selben Netz wie der Rechner befinden. Auf einem Telefon passt die Seite in die Bildschirmbreite (die Tabellen scrollen von selbst) und schreibt, wenn die Anzeige angehalten oder nicht erreichbar ist, „Affichage interrompu : données de HH:MM“, statt den Eindruck zu erwecken, sie sei aktuell.</p>
+<p>Das <strong>Paarungsblatt</strong> liegt auf dem Empfangstisch: Ein Klick auf <em>Blatt drucken</em> öffnet den Druckdialog des Systems. Eine Zeile je Match — die beiden Spieler, die Länge, der Tisch, zwei leere Kästchen für das Ergebnis — und eine Runde mit zweiunddreißig Spielern passt auf eine A4-Seite.</p>
+<p>Eine Veranstaltung hat ihren eigenen Ausgabeordner, einmal gewählt in ihrem Einstellungsfeld mit derselben Schaltfläche <em>Ordner wählen</em>: blunderDB schreibt dort <code class="docutils literal notranslate"><span class="pre">index.html</span></code>, die <strong>Wandseite</strong> der Veranstaltung — eine Zeile pro Tisch, gleich welcher Wettbewerb ihn belegt, mit den angekündigten Runden jedes Wettbewerbs und einem Link zu dessen eigener Seite — und jeder zugeordnete Wettbewerb schreibt seine eigene in einen Unterordner. Eine Handlung in einem beliebigen Wettbewerb der Veranstaltung erzeugt die Wandseite neu; der eigene Ordner eines zugeordneten Wettbewerbs bleibt erhalten, wird aber ignoriert, solange er in der Veranstaltung bleibt.</p>
+<p>Befindet sich ein Wettbewerb in einer Tableau-Phase und ist das Tableau ausgelost, zeigen seine Wandseite und die der Veranstaltung den Baum groß und aus der Ferne lesbar: eine Spalte pro Runde, die Verlierer, die in die Trostrunde wechseln, gestrichelt. Die Seite wechselt von selbst und ohne Skript zwischen ihrem üblichen Inhalt (bei der Veranstaltung die Tische) und dem Baum jedes Wettbewerbs im Tableau, jeweils zwölf Sekunden lang; sie lädt immer alle dreißig Sekunden neu und setzt den Wechsel dort fort, wo er war. Ein Wettbewerb ohne Tableau – etwa eine Schweizer Phase – hat keinen Baum, und die Seite bleibt wie zuvor.</p>
+<p>Unter der Überschrift „Spiele ich?“ nennen die Seite eines Wettbewerbs und die Wandseite der Veranstaltung die Spieler, die gerade nicht spielen, so wie die Engine sie einordnet: „ausgeschieden“, sobald kein Match mehr zu spielen ist, „qualifiziert“ mit dem Namen der Phase, in die der Spieler eintritt, „noch nicht entschieden“, wenn sein Schicksal vom Ende der Phase oder von einem Nachrücken abhängt, das die Leitung noch nicht entschieden hat, „Freilos — steigt in Runde N ein“ für einen Spieler, der im Tableau ohne Gegner gelost wurde, solange er noch nicht gespielt hat, „Freilos — spielt wieder in Runde N“ für das Freilos einer Schweizer Runde, und „Sieger“. Nach Ende des Turniers übernimmt die Rangliste.</p>
+<p>Außerhalb der Oberfläche liest der Unterbefehl <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">tournament</span></code> ein geleitetes Turnier ohne grafische Oberfläche: <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">verify</span></code>, <code class="docutils literal notranslate"><span class="pre">standings</span></code>, <code class="docutils literal notranslate"><span class="pre">page</span></code> und <code class="docutils literal notranslate"><span class="pre">export</span></code>; <code class="docutils literal notranslate"><span class="pre">proposals</span></code> zeigt die nummerierte Liste der Engine, und <code class="docutils literal notranslate"><span class="pre">confirm</span></code> bestätigt einen Eintrag, Nachrücken eingeschlossen; <code class="docutils literal notranslate"><span class="pre">ranking</span> <span class="pre">--season</span></code> summiert die abgeschlossenen Turniere einer Veranstaltung oder eines Zeitraums zu einer Saisonwertung, mit einer Punkteskala pro Platz und, nach Wahl, einem Club-Elo (zwei Teilnehmer gleichen Namens in einem abgeschlossenen Wettbewerb lassen die Wertung scheitern, da sie eine Person am Namen erkennt); <code class="docutils literal notranslate"><span class="pre">page</span> <span class="pre">--rencontre</span></code> schreibt die Wandseite einer Veranstaltung statt der Seite eines einzelnen Wettbewerbs; <code class="docutils literal notranslate"><span class="pre">hall</span></code> druckt das Raster <em>Alle Tische</em> einer Veranstaltung und ihre Liste, <code class="docutils literal notranslate"><span class="pre">tables</span></code> die Eigenschaften der Tische und die Räume der Wettbewerbe. Siehe <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Befehlszeilenschnittstelle (CLI)</span></a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel_matchs.html" class="btn btn-neutral float-left" title="Matches und Transkription" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Zurück</a>
+        <a href="manuel_stats.html" class="btn btn-neutral float-right" title="Statistiken" accesskey="n" rel="next">Weiter <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

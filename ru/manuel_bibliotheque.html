@@ -1,0 +1,337 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Анализ, комментарии и поиск &mdash; документация blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=ee48f470"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Матчи и запись" href="manuel_matchs.html" />
+    <link rel="prev" title="Начало работы и интерфейс" href="manuel_interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/manuel_bibliotheque.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_bibliotheque.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_bibliotheque.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_bibliotheque.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_bibliotheque.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_bibliotheque.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_bibliotheque.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_bibliotheque.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Руководство</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Начало работы и интерфейс</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Анализ, комментарии и поиск</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-analyse">Панель анализа</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rollouts">Роллауты</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-commentaires">Панель комментариев</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#les-tags">Теги</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#menu-contextuel">Контекстное меню</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-corbeille">Корзина</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-recherche">Панель поиска</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-collections">Панель коллекций</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lecons">Уроки</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Матчи и запись</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Турниры</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Статистика</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Оценка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Тренировка, Anki и дуэль</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_partage.html">Импорт, происхождение и распространение</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Метрики и инструменты для изучения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Руководство</a></li>
+      <li class="breadcrumb-item active">Анализ, комментарии и поиск</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-commentaires-et-recherche">
+<span id="manuel-bibliotheque"></span><h1>Анализ, комментарии и поиск<a class="headerlink" href="#analyse-commentaires-et-recherche" title="Ссылка на этот заголовок"></a></h1>
+<section id="panneau-analyse">
+<span id="id1"></span><h2>Панель анализа<a class="headerlink" href="#panneau-analyse" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Анализ</strong> (<em>CTRL-L</em>) отображает данные анализа текущей позиции, импортированные из eXtreme Gammon (XG), GNUbg, BGBlitz или gammonNet. Отображаются лучшие альтернативы (ходы шашками или решения куба) с их значениями эквити и соответствующими ошибками. Клавиша <em>d</em> переключает между анализом ходов шашками и анализом куба. При навигации по матчу фактически сыгранный ход выделяется в списке альтернатив. Нажмите <em>CTRL-L</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">list</span></code> для отображения или скрытия панели.</p>
+<p>Позиция без анализа сообщает об этом и предлагает кнопку <strong>Оценить</strong>, которая открывает её в панели Eval.</p>
+<p>Кнопка <strong>Испытание</strong> на панели инструментов, после кнопки подсчёта pip (клавиша <em>m</em>), позволяет принять решение до того, как увидеть анализ, при просмотре позиций: результаты поиска, разбор матча, повторение своих ошибок. Включённая, она закрывает серой зоной весь анализ панели, ходы шашек и куб; щелчок по зоне открывает его. Зона возвращается при каждой смене позиции. Испытание — это маска отображения: открытие ничего не записывает в базу. Настройка действует до закрытия blunderDB, как и настройка подсчёта pip. При разборе матча испытание скрывает также пометки, потери и сложность в списке ходов; пометки показанного хода открываются вместе с его анализом.</p>
+<p>Под таблицами иногда появляется <strong>фраза</strong>, говорящая, чего стоило сыгранное решение и почему: «Вы теряете 120 mp: сыгранный ход оставляет три блота там, где 13/7 8/7 оставляет только один.» Она порождается шестью измеримыми правилами — открытость, сделанный или упущенный пункт дома, отданные шансы на гаммон, безопасность, которая стоит дороже, чем даёт, и два направления ошибки по кубу (дубль слишком поздно или слишком рано, слишком свободное взятие или слишком тесный пас).</p>
+<p>Главное правило — <strong>молчание</strong>: фраза появляется, только когда правило применимо уверенно, и при ошибке выше порога, начиная с которого движки согласны, что это ошибка. В остальное время фразы нет — ни пустой рамки, ни «мы не знаем». Неверное объяснение стоит дороже, чем его отсутствие: оно учит неточному.</p>
+<p>То же предложение сопровождает ошибку там, где вы её только что совершили: на обороте <strong>карточки Anki</strong>, под раскрытым анализом, и в <strong>вердикте викторины</strong> упражнения «Решение», под стоимостью в mp. Здесь действуют те же правила молчания: верный ход или ошибка, которую не объясняет ни одно правило, ничего не добавляют.</p>
+<p>Когда позицию оценили <strong>несколько движков</strong>, полоса в верхней части панели ставит их рядом: по строке на движок, с его глубиной и его ответом — вердиктом по кубу или его собственным лучшим ходом. Сначала она говорит, согласны ли они, и оправдывает её именно расхождение: «XG говорит удвоение, приём; gammonNet говорит без удвоения» читается с одного взгляда там, где раньше приходилось сличать две таблицы по диагонали.</p>
+<p>Лучший ход движка — это лучший ход <strong>этого движка</strong>: список кандидатов отсортирован по эквити вперемешку по всем движкам, поэтому его первый элемент ни для кого в отдельности не лучший.</p>
+<p>Полоса появляется, только если движков действительно несколько, и существует лишь в этой панели: панель Eval показывает <strong>одно</strong> решение — встроенного движка (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md">ADR-0017</a>), и сравнению там не место.</p>
+<p>Ходы записываются так, как они читаются на доске, здесь так же, как в панели Eval: наименее продвинутая шашка ходит первой, и <strong>шашка, использующая подряд несколько костей, записывается только один раз</strong> — 64, сыгранное одной и той же шашкой, читается <code class="docutils literal notranslate"><span class="pre">24/14</span></code>, а <code class="docutils literal notranslate"><span class="pre">24/14*</span></code>, если она бьёт по прибытии. Подробности цепочки появляются вновь лишь тогда, когда они говорят что-то ещё: удар <em>по пути</em> сохраняет свой промежуточный пункт, <code class="docutils literal notranslate"><span class="pre">24/18*</span> <span class="pre">18/14</span></code>, иначе удар на 18 исчез бы из записи.</p>
+<p>Эквити импортированного анализа подчиняется тому же правилу, что и панель Eval: столбец указывает свой референциал — «Equity (money)» или «Equity (match)» — в зависимости от счёта анализируемой позиции, а не просто «Equity» без указания шкалы. Правила <strong>Jacoby</strong> и <strong>Beaver</strong>, действующие на позиции money game, также отображаются в виде значков под таблицей решения по кубу.</p>
+<section id="rollouts">
+<span id="id2"></span><h3>Роллауты<a class="headerlink" href="#rollouts" title="Ссылка на этот заголовок"></a></h3>
+<p>Панель <strong>Анализ</strong> умеет <strong>прокатывать</strong> позицию: играть сотни партий от каждого выбранного хода или каждого действия с кубом, чтобы различить два варианта, которые прямая оценка почти не разделяет. В таблице ходов-кандидатов <em>Ctrl+клик</em> добавляет ход в выделение или убирает его, а <em>Shift+клик</em> расширяет выделение до нажатого хода; обычный клик выделяет один ход, как обычно. <strong>Правый клик</strong> по выделению — или по другому ходу, который становится выделением, — открывает меню, пункт которого <strong>Rollout (Стандартный)</strong> сразу запускает роллаут выделенных ходов с выбранной настройкой. На решении о кубе правый клик прокатывает решение целиком. Клавиша <em>Shift+R</em> панели делает то же (без выделения она прокатывает лучших кандидатов позиции), как и команда <code class="docutils literal notranslate"><span class="pre">rollout</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">ro</span></code>). Во время роллаута тонкая полоса под таблицей отслеживает сыгранные партии; <strong>Отмена</strong>, пункт меню <strong>Отменить роллаут</strong>, <em>Esc</em> или повторное <em>Shift+R</em> останавливают его, ничего не записывая. Настройка — <strong>Быстрый</strong>, <strong>Стандартный</strong> или <strong>Свободный</strong> — выбирается на вкладке <strong>gammonNet</strong> конфигурации (см. <a class="reference internal" href="manuel_interface.html#rollout-reglage"><span class="std std-ref">конфигурация</span></a>).</p>
+<p>То же меню предлагает <strong>Копировать позицию и анализ</strong> — изображение, которое копирует <em>CTRL-X CTRL-X</em>: доску и начало списка ходов или весь анализ куба. Как только выбран ход, добавляется второй пункт, <strong>Копировать позицию и выбранные ходы</strong>: изображение сохраняет только эти ходы в порядке ранжирования, каждый со своим местом среди всех кандидатов и со своей ошибкой относительно лучшего хода позиции, а не лучшего из выбранных. На решении о кубе показан только первый. Ячейки таблиц анализа не выделяются как текст: щелчки выбора не оставляют на них подсветки.</p>
+<p>Результат <strong>хранится рядом с анализом, а не вместо него</strong>: импортированный анализ не изменяется. Каждый прокатанный ход несёт свой результат в собственной строке таблицы, в столбце <strong>Rollout</strong>, который появляется только когда у позиции есть роллаут: эквити и полуширина его 95-процентного доверительного интервала в шкале столбца эквити. При наведении на ячейку показываются подробности: стандартное отклонение, <strong>JSD</strong> (расстояние до лучшего хода в стандартных отклонениях разности: начиная с предела ход считается решённым и больше не разыгрывается), число партий и <strong>Конфигурация</strong> — движок и полная сигнатура параметров: два роллаута с одной сигнатурой дают одни и те же числа. Роллаут останавливается, как только ходы различены. Роллаут решения о кубе, у которого нет строки хода, показывается таблицей под решением. Роллаут играет куб в своих партиях: ранжирование надёжно, абсолютное эквити чуть менее, о чём напоминает блок. Он не играет бивер: его строка <em>удвоение, принятие</em> — строка простого принятия, даже в позиции money при правиле Beaver, где прямой анализ учитывает бивер. Позицию, которой нет в базе, можно прокатать, но не сохранить.</p>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">search</span></code> прокатывает одну за другой позиции отображаемого списка — результаты поиска, матч или коллекцию, — у которых этого роллаута ещё нет; подтверждение сообщает общее число перед началом. Каждая позиция записывается, как только закончена: отмена сохраняет сделанное, а повторный запуск продолжает с места остановки. Ход выполнения сохраняется при закрытии панели.</p>
+<p>База, открытая <strong>только для чтения</strong>, потому что её удерживает другой экземпляр blunderDB, сразу отклоняет роллаут, который был бы сохранён: сообщение об этом выводится до того, как сыграна первая партия.</p>
+</section>
+</section>
+<section id="panneau-commentaires">
+<span id="id3"></span><h2>Панель комментариев<a class="headerlink" href="#panneau-commentaires" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Комментарии</strong> (<em>CTRL-P</em>) показывает, добавляет и изменяет комментарии, связанные с текущей позицией. У позиции может быть несколько комментариев, написанных разными людьми: все они показываются лентой, от новых к старым, каждый с именем автора, а ваши идут первыми. Комментарии, импортированные из файлов XG, автоматически связываются с соответствующими позициями. Нажмите <em>CTRL-P</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">comment</span></code>, чтобы показать или скрыть панель.</p>
+<p>Имя, приписываемое вашим комментариям, задаётся в настройках, на вкладке <em>Интерфейс</em>, в поле <strong>Ваше имя</strong>; если оно пустое, у ваших комментариев нет автора. Комментарии из импорта XG приписываются <code class="docutils literal notranslate"><span class="pre">XG</span></code>, комментарии из файла матча — его транскриптору. Переписанный комментарий приписывается вам. Поиск <code class="docutils literal notranslate"><span class="pre">au&quot;Alice&quot;</span></code> оставляет позиции, которые прокомментировала Alice; вне интерфейса <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">add</span> <span class="pre">--author</span></code> записывает комментарий, приписанный этому автору, а <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">list</span></code> считывает их обратно (см. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>). Это имя — свободный текст: оно ничего не удостоверяет, в отличие от подписи, описанной ниже.</p>
+<p>Каждый комментарий, пришедший из файла, несёт <strong>метку происхождения</strong> (<code class="docutils literal notranslate"><span class="pre">XG</span></code>, <code class="docutils literal notranslate"><span class="pre">GNU</span> <span class="pre">BG</span></code>, <code class="docutils literal notranslate"><span class="pre">BGF</span></code> или <em>импортировано</em>, когда происхождение не было записано). Комментарии, написанные вами, метки не несут: это обычный случай, и помечать каждую строку было бы шумом. Правка импортированного комментария делает его вашим: после правки фраза — ваша.</p>
+<p>Это различие видно и в другом месте: удаление матча больше не уничтожает позицию, на которой писали <strong>вы</strong>. Заметка, взятая из исходного файла, по-прежнему исчезает вместе с матчем, который её принёс.</p>
+<p>Комментарий, полученный в базе, экспортированной с отметкой происхождения, несёт <strong>подпись</strong> своего отправителя: в ветке отображается «комментарий от <em>отправителя</em>», затем отпечаток его ключа, а перед ним ✓. Два человека могут носить одно имя, но не один отпечаток: сравните его с тем, который отправитель сообщил вам.</p>
+<p>Комментарий, который больше не соответствует подписанному, сохраняется, но помечается ⚠ <em>не проверен</em>: изменённый в файле текст или автор, комментарий, перенесённый на другую позицию, или позиция, чья идентичность с тех пор исправлена. Подпись действительно охватывает идентичность позиции: когда <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> пересчитывает маркер Crawford позиции (и при необходимости сливает её с двойником) или когда исправление матча переносит ваши заметки на исправленную позицию, подписанные комментарии, которые она несёт, больше не проверяются, хотя их текст не менялся; <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> сообщает их число. Подпись, которую blunderDB не умеет читать, отображается как ⚠ <em>подпись нечитаема</em>. Изменение подписанного комментария снимает подпись: фраза становится вашей.</p>
+<p>Комментарий, полученный из другой базы, сохраняет своё происхождение: заметка, написанная её автором, удерживает свою позицию при удалении матча, как и ваши; замечание из файла XG сохраняет метку <code class="docutils literal notranslate"><span class="pre">XG</span></code> и исчезает вместе с матчем. Это относится к базе, экспортированной версией blunderDB, которая уже подписывает комментарии; пришедший из более старого файла комментарий получает метку <em>импортирован</em> и исчезает вместе с матчем. <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">comment</span> <span class="pre">list</span></code> выводит происхождение в столбце <em>Origin</em> и подпись в столбце <em>Signed by</em>.</p>
+<section id="les-tags">
+<span id="tags"></span><h3>Теги<a class="headerlink" href="#les-tags" title="Ссылка на этот заголовок"></a></h3>
+<p><strong>Тег</strong> — это <code class="docutils literal notranslate"><span class="pre">#слово</span></code>, написанное в комментарии. Ничто его не объявляет, никакая таблица его не хранит, и это сделано намеренно: словарь — это ваша собственная проза, а требование объявить тег перед использованием превратило бы привычку в бумажную работу.</p>
+<p>Не хватало другой половины: <strong>видеть</strong> словарь, который ты себе построил, и щёлкнуть по тегу вместо того, чтобы вспоминать, как ты его писал. Команда <code class="docutils literal notranslate"><span class="pre">tags</span></code> или кнопка <code class="docutils literal notranslate"><span class="pre">#</span></code> в заголовке панели открывает окно словаря: теги этой базы, каждый с числом <strong>позиций</strong>, которые его несут, — по щелчку запускается соответствующий поиск. Под списком идут рекомендуемые теги, которых база ещё не использует, — словарь, взятый из литературы по нардам (<code class="docutils literal notranslate"><span class="pre">#blitz</span></code>, <code class="docutils literal notranslate"><span class="pre">#prime</span></code>, <code class="docutils literal notranslate"><span class="pre">#holding</span></code>, <code class="docutils literal notranslate"><span class="pre">#backgame</span></code>, <code class="docutils literal notranslate"><span class="pre">#containment</span></code>, <code class="docutils literal notranslate"><span class="pre">#crunch</span></code>, <code class="docutils literal notranslate"><span class="pre">#ace-point</span></code>, <code class="docutils literal notranslate"><span class="pre">#timing</span></code>…), предложенный и никогда не навязанный: тег, отсутствующий в этом списке, стоит ровно столько же, сколько тег из него.</p>
+<p>При наборе <code class="docutils literal notranslate"><span class="pre">#</span></code> предлагает теги, которые <strong>эта база</strong> уже использует, а затем рекомендуемые. Именно это не даёт написать <code class="docutils literal notranslate"><span class="pre">#back-game</span></code> в один день и <code class="docutils literal notranslate"><span class="pre">#backgame</span></code> в другой — больше ничто этого не поймает.</p>
+<p>Поиск по тегу пишется как <code class="docutils literal notranslate"><span class="pre">#prime</span></code> в командной строке. Он <strong>разграничен</strong>: <code class="docutils literal notranslate"><span class="pre">#prime</span></code> не находит <code class="docutils literal notranslate"><span class="pre">#priming</span></code>, тогда как обычный текстовый поиск, ищущий подстроку, их не различает. Несколько тегов <strong>складываются</strong> — <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">#prime</span> <span class="pre">#backgame</span></code> запрашивает позиции, несущие оба, — потому что позиция несёт несколько тегов: назвать два может значить только «оба». Это обратно фильтру фазы или происхождения, где у позиции лишь одно значение и назвать два значения может значить только «то или другое».</p>
+<p>Тот же список доступен вне интерфейса командой <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tags</span></code> (см. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>).</p>
+</section>
+</section>
+<section id="menu-contextuel">
+<span id="menu-contextuel-actions"></span><h2>Контекстное меню<a class="headerlink" href="#menu-contextuel" title="Ссылка на этот заголовок"></a></h2>
+<p>Щелчок правой кнопкой — или клавиша <em>MENU</em>, или <em>SHIFT-F10</em> на строке с фокусом — открывает одно и то же меню на позиции, будь она выбрана на доске или на своей строке в коллекции, и меню той же формы на строке списка матчей, турниров или коллекций. Два самых частых действия над позицией, <em>Оценить эту позицию</em> и <em>Копировать изображение</em>, находятся на первом уровне; остальные собраны в подменю, отмеченные значком ▸:</p>
+<ul class="simple">
+<li><p><strong>Копировать / поделиться</strong>: изображение (<em>CTRL-X</em>), один только XGID, ID GNUbg (ID позиции и ID матча, которые GNU Backgammon принимает в <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">gnubgid</span></code>, их выдаёт и команда <code class="docutils literal notranslate"><span class="pre">gnubgid</span></code>), позиция и её анализ в виде текста (<em>CTRL-C</em>), изображение с анализом, изображение, сохранённое в SVG или PNG; для матча его экспорт <code class="docutils literal notranslate"><span class="pre">.mat</span></code>.</p></li>
+<li><p><strong>Аннотировать</strong>: <em>Комментировать</em> открывает панель комментариев на позиции; <em>Добавить #метку…</em> открывает командную строку на <code class="docutils literal notranslate"><span class="pre">#</span></code>, а <em>ENTER</em> добавляет метки, как команда <code class="docutils literal notranslate"><span class="pre">#</span></code> (см. <a class="reference internal" href="#tags"><span class="std std-ref">Теги</span></a>); <em>Отметить как просмотренную</em> и <em>Снять отметку</em> ставят или снимают отметку очереди изучения.</p></li>
+<li><p><strong>Перейти</strong>: <em>Соседние позиции</em>, <em>Позиции той же структуры</em> (поиск по структуре на всей доске), <em>Открыть матч на этом ходу</em> (первый матч, сыгравший позицию, открывается на нужном ходу; строка состояния сообщает, если ни один через неё не проходил), <em>Новый вид</em>.</p></li>
+<li><p><strong>Анализ</strong>: оценить позицию, её зеркальный образ или в новой вкладке; <em>Быстрый роллаут</em> и <em>Стандартный роллаут</em>, как <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">fast</span></code> и <code class="docutils literal notranslate"><span class="pre">ro</span> <span class="pre">standard</span></code> (см. <a class="reference internal" href="#rollouts"><span class="std std-ref">Роллауты</span></a>).</p></li>
+<li><p><strong>Тренировка</strong>: добавить позицию в колоду Anki; <em>Вызов на этой позиции</em> включает вызов (<em>m</em>), скрывающий анализ.</p></li>
+<li><p><strong>Управление</strong>: <em>Сохранить</em> (<em>CTRL-S</em>) черновик доски поиска или Eval, <em>Переместить в корзину</em> (<em>Del</em>) позицию базы; для матча — править его запись, поменять игроков местами, изменить его или переместить в корзину; для турнира — изменить или удалить его; для коллекции — изменить её или переместить в корзину.</p></li>
+<li><p><strong>Отправить</strong>: <em>Копировать позицию в …</em>, <em>Копировать матч в …</em> или <em>Копировать турнир в …</em>, по одному пункту на каждую другую открытую базу, то же копирование, что и в панели «Другие базы», которое отменяет <em>Отменить</em>; <em>Добавить в набор</em>; для позиции — <em>Добавить в коллекцию …</em>, по одному пункту на каждую коллекцию базы (см. <a class="reference internal" href="manuel_interface.html#vue-ailleurs"><span class="std std-ref">Сравнение и обмен: панель «Другие базы»</span></a>).</p></li>
+</ul>
+<p>Предлагаются только применимые действия: черновик не аннотируется и не отправляется в корзину, доска поиска не оценивается, позиция, отсутствующая в базе, не попадает ни в одну колоду Anki, а подменю без действий исчезает. Сочетание клавиш действия, если оно есть, пишется справа от него. С клавиатуры <em>ВВЕРХ</em> и <em>ВНИЗ</em> перемещаются по уровню, <em>ВПРАВО</em> открывает подменю на его первом действии, <em>ВЛЕВО</em> возвращает назад, <em>ESC</em> закрывает подменю, а затем меню.</p>
+</section>
+<section id="la-corbeille">
+<span id="corbeille"></span><h2>Корзина<a class="headerlink" href="#la-corbeille" title="Ссылка на этот заголовок"></a></h2>
+<p>Удаление позиции, коллекции, комментария, карточки Anki или матча проходит через <strong>корзину</strong>: удаление действительно происходит, но копия исчезнувшего хранится тридцать дней. Команда <code class="docutils literal notranslate"><span class="pre">trash</span></code> открывает окно со списком, где для каждого элемента есть <em>Восстановить</em> и <em>Удалить</em>, а также кнопка <em>Очистить корзину</em>.</p>
+<p>Восстановленная позиция возвращается со <strong>своим анализом и комментариями</strong> — вернуть её голой значило бы восстановить лишь по названию, — со своей отметкой «изучено» и с ответами тренировки, данными на ней. Она получает обратно свой прежний номер; если та же позиция тем временем была сохранена, остаётся она, поскольку позиция существует лишь однажды: она получает недостающие отметку, ответы и комментарии и сохраняет свой анализ, если он у неё есть. Если её номер занят другой, она получает новый. Коллекция возвращается со своим списком; позиции, которые она содержала, никогда не удалялись — коллекция лишь вид на них.</p>
+<p>Удалённый матч уносит свои партии, ходы, их анализы и позиции, которые больше ничто не удерживает, вместе с заметками из исходного файла: корзина хранит всё это. Восстановленный, он возвращается под своим исходным номером и с исходной датой импорта, со своими партиями, ходами и статистикой, и журнал его импорта снова его называет; позиции, удалённые при удалении матча, возвращаются как восстановленная позиция, оставшиеся в библиотеке остаются такими, какими стали. Он возвращается на своё место в турнире; если турнир удалён, он возвращается вне турнира. Он возвращается на своё место в Дирекции, если оно ещё существует, сводит тех же игроков и свободно; иначе оно остаётся за директором, и матч возвращается без него. В этих случаях строка состояния сообщает об этом. Восстановление отклоняется, и запись остаётся в корзине, если другой матч занимает его номер или если тем временем был импортирован матч с тем же отпечатком файла; матч без отпечатка, введённый вручную или сыгранный в blunderDB, так не сравнивается.</p>
+<p>Всё старше тридцати дней удаляет команда <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>, а не открытие базы: не делать <code class="docutils literal notranslate"><span class="pre">vacuum</span></code> — значит хранить всё.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Корзина не путешествует: экспорт её не переносит.</p>
+</div>
+</section>
+<section id="panneau-recherche">
+<span id="id4"></span><h2>Панель поиска<a class="headerlink" href="#panneau-recherche" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Поиск</strong> (<em>CTRL-F</em> или <em>TAB</em>) фильтрует позиции по свободно комбинируемым критериям: структура шашек, тип решения куба, величина ошибки, даты, метки и т.д. Клавиша <em>TAB</em> одновременно открывает панель поиска и редактор позиций, позволяя задать структуру шашек непосредственно на доске.</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_search.png"><img alt="Панель поиска" src="_images/panel_search.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Поиска: числовые фильтры, структура шашек на доске, вкладки <em>Не менее</em> / <em>Кроме</em>.</span><a class="headerlink" href="#id7" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<p>Фильтры задаются на подвкладке <strong>Критерии</strong>. Если поиск ничего не нашёл, панель сообщает об этом («Ни одна позиция не подходит») и показывает кнопку <strong>Очистить фильтры</strong>, а не ограничивается строкой состояния.</p>
+<p>Чтобы искать среди показанных позиций, используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). <code class="docutils literal notranslate"><span class="pre">ss</span></code> ищет в списке на экране: в результатах предыдущего поиска, в открытой коллекции или в позициях матча, просматриваемого в данный момент, независимо от того, набрана ли команда напрямую или из панели поиска (<em>TAB</em>). Флажок <em>Поиск в текущих результатах</em> панели следует тому же правилу; флажок <em>Открыть в новой вкладке</em> выводит результаты в новом представлении (см. <a class="reference internal" href="manuel_interface.html#onglets-vues"><span class="std std-ref">Вкладки представлений</span></a>), а не в текущем. В коллекции и в матче <code class="docutils literal notranslate"><span class="pre">s</span></code> отклоняется: он искал бы по всей библиотеке и заменил бы показанный список.</p>
+<p>Из результатов поиска <code class="docutils literal notranslate"><span class="pre">ss</span></code>, запущенного из коллекции или матча, выходят клавишей <em>Esc</em> — одним нажатием, как только ни поле, ни панель с фокусом не имеют чего закрыть (например, выбранного в анализе хода): blunderDB возвращается ко всей коллекции или к матчу на изучаемом ходе, и к оставленной позиции. Этот возврат следует только за <code class="docutils literal notranslate"><span class="pre">ss</span></code>: <code class="docutils literal notranslate"><span class="pre">s</span></code>, запущенный из панели поиска, открытой над коллекцией или матчем, ищет по всей библиотеке, и <em>Esc</em> больше не возвращает к оставленному списку.</p>
+<p>Поиск в большой базе показывается до того, как он подсчитан: первая страница результатов появляется сразу, а строка состояния показывает « Поиск… » с прошедшим временем, пока общее число неизвестно; затем оно заменяет временную длину списка. Одновременно выполняется только один поиск: запуск другого прерывает предыдущий. <em>Esc</em> прерывает выполняющийся поиск и останавливает его просмотр базы; если первая страница уже показана, она остаётся одна, и строка состояния сообщает об этом.</p>
+<p>Панель предлагает явное управление искомым <strong>типом решения</strong>: <em>Безразлично</em> (без фильтра), <em>Шашки</em> (решения по ходу) или <em>Куб</em> (решения по кубу). Когда выбран <em>Куб</em>, второй список уточняет подтип: <em>Все</em>, <em>Дабл / Без дабла</em> (игрок на ходу должен решить, удваивать ли) или <em>Тейк / Пас</em> (ответ на удвоение соперника). Управление синхронизировано с доской: изменение костей или куба на доске обновляет тип решения, и наоборот. В режиме <em>Тейк / Пас</em> куб отображается в центре доски на предложенном значении; это значение остаётся редактируемым.</p>
+<p><strong>Фаза игры</strong> — дебют, миттельшпиль, гонка, снятие шашек — это метка, которую blunderDB вычисляет по одной только доске. Она никогда не редактируется и доступна для поиска через маркер командной строки <code class="docutils literal notranslate"><span class="pre">ph:</span></code> (<code class="docutils literal notranslate"><span class="pre">ph:race</span></code>, повторяемый: <code class="docutils literal notranslate"><span class="pre">ph:race</span> <span class="pre">ph:bearoff</span></code>). Три из четырёх её границ — те, что GNU Backgammon использует для выбора своих сетей; четвёртая, где заканчивается дебют, — соглашение blunderDB: позиция всё ещё в дебюте, пока ни одна из сторон не сдвинула более четырёх шашек с исходных пунктов, ни одна не снята и ни одна не стоит на баре.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Метку пересчитывает команда <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code>. В базе, открытой впервые этой версией, расчёт делается один раз, при открытии. База, фазы которой никогда не вычислялись, не возвращает ничего для <code class="docutils literal notranslate"><span class="pre">ph:</span></code> — ничего, а не ложный ответ.</p>
+</div>
+<p>Токен <code class="docutils literal notranslate"><span class="pre">like</span></code> <strong>упорядочивает</strong>, а не сужает: его присутствие располагает результат по возрастанию расстояния до целевой позиции — <code class="docutils literal notranslate"><span class="pre">like</span></code> до текущей, <code class="docutils literal notranslate"><span class="pre">like42</span></code> до позиции с номером 42 — а остальные токены сужают упорядоченное таким образом множество, так что <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like42</span> <span class="pre">E&gt;80</span></code> читается «соседи 42-й, где я ошибся». Расстояние — это транспортное расстояние в шашко-пипсах, объём движения шашек, разделяющий две позиции, с точки зрения игрока на ходу.</p>
+<p>Соседняя позиция — это та же <strong>задача</strong>, а не тот же рисунок: упорядочивание берётся внутри класса цели — тот же тип решения, тот же режим (на деньги или матч) для решения о кубе, и матч, отличный от её собственного, ибо позиции, окружающие её в её же партии, — её ближайшие структуры, но никогда не её соседи. Кубики, счёт и куб остаются вне класса; обычные токены фильтруют по ним, когда это нужно. <code class="docutils literal notranslate"><span class="pre">like42*</span></code> расширяет класс на все типы решений и на оба режима, но никогда на матч цели; <code class="docutils literal notranslate"><span class="pre">like&lt;12</span></code> отбрасывает всё, что дальше двенадцати шашко-пипсов. Упорядочивание, ничего не нашедшее, возвращает пустой список и сообщает об этом, а не десять несвязанных позиций.</p>
+<p>В режиме <strong>редактирования</strong> <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like</span></code> берёт целью <strong>нарисованную</strong> доску: достаточно нарисовать примерно ту позицию, которую помнишь, запустить — и библиотека ответит, там где поиск по структуре требует точного рисунка. Доска тогда читается как позиция, а не как узор: оставленный пустым пункт считается выведенными шашками, что верно для настоящей позиции и искажает расчёт для наполовину нарисованной доски.</p>
+<p>Каждый сосед несёт своё расстояние под таблицами анализа, вместе с позицией, к которой он близок. Именно это позволяет судить, смотрим ли мы на соседа или на совпадение, и именно в этом смысл предела. Упорядочивание запускается и без командной строки: <em>CTRL-SHIFT-L</em> или пункт <strong>Соседние позиции</strong> контекстного меню доски.</p>
+<p>Токен <code class="docutils literal notranslate"><span class="pre">n</span></code> считает <strong>встречи</strong>: <code class="docutils literal notranslate"><span class="pre">n&gt;3</span></code> оставляет позиции, встретившиеся в базе не менее трёх раз, по всем матчам и всем игрокам вместе. Это другой вопрос, чем «что я упустил» — позиция, встретившаяся двадцать раз и хорошо сыгранная девятнадцать, по-прежнему та, которую нужно знать наизусть. Считаются решения, а не матчи: одна и та же позиция дважды в одном матче считается за две, потому что решений было два. В сочетании с фильтром игрока считаются только вхождения этого игрока: <code class="docutils literal notranslate"><span class="pre">n&gt;3</span> <span class="pre">pl!&quot;Alice&quot;</span></code> оставляет позиции, которые Alice пришлось играть не менее трёх раз, а <code class="docutils literal notranslate"><span class="pre">pl&quot;Alice&quot;</span></code> — позиции матчей, которые она сыграла; <code class="docutils literal notranslate"><span class="pre">op&quot;Bob&quot;</span></code> так же ограничивает подсчёт матчами против Bob.</p>
+<p><strong>План игры</strong> — вторая производная метка, рядом с фазой, и она отвечает на вопрос, который набор сохранённых фильтров задать не может: «покажи мои ошибки в холдинг-гейме». Токен <code class="docutils literal notranslate"><span class="pre">gt:</span></code>, повторяемый (<code class="docutils literal notranslate"><span class="pre">gt:holding</span> <span class="pre">gt:mutualholding</span></code>), с точки зрения <strong>игрока на ходу</strong> — того плана, в котором принималось решение.</p>
+<p>Десять распознаваемых планов, в порядке, в каком правила их разбирают, от самого частного к самому общему:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">race</span></code> — самые задние шашки обеих сторон разошлись: контакт больше невозможен. Граница GNU Backgammon.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bearin</span></code> — игрок на ходу заводит шашки домой, пока соперник ещё держит якорь в его доме.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crunch</span></code> — у игрока на ходу не более шести шашек вне его пунктов 1 и 2. Правило GNU Backgammon, порог его автора.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">backgame</span></code> — два и более якоря в доме соперника.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acepoint</span></code> — единственный якорь, на первом пункте соперника, при отставании не менее двадцати пипсов.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blitz</span></code> — сделано три и более пункта дома, и соперник на баре или с блотом под удар в этом доме.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">primevprime</span></code> — обе стороны держат прайм не менее чем из четырёх пунктов, и у каждой есть шашка, запертая за праймом другой.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutualholding</span></code> — обе стороны держат высокий якорь.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">holding</span></code> — игрок на ходу держит высокий якорь, соперник — нет.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contact</span></code> — контакт, и ни один из планов выше. Дебют попадает сюда.</p></li>
+</ul>
+<p>Три из этих правил — собственные правила GNU Backgammon, и у них есть источник; остальные — <strong>соглашения blunderDB</strong>. Литература по нардам описывает планы игры, не назначая чисел их границам, и для этой задачи не опубликовано ни одного измерения согласия между классификаторами. Поэтому пороги без источника — три пункта дома для блица, четыре пункта для прайма, двадцать пипсов отставания для ace-point game — записаны здесь, а не спрятаны в коде, и они версионированы: измените их, запустите <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code>, и вся база будет размечена заново.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>На позицию сохраняется одна метка — метка игрока на ходу. Производная метка никогда не редактируется, никогда не экспортируется как истина, и база, планы которой ни разу не вычислялись, ничего не возвращает по <code class="docutils literal notranslate"><span class="pre">gt:</span></code> — так же, как по <code class="docutils literal notranslate"><span class="pre">ph:</span></code>.</p>
+</div>
+<p>Фильтр <strong>Отмеченная</strong> оставляет позиции, которые вы отметили в исходной программе матча. Эту информацию создаёт только eXtreme Gammon, записывая её ход за ходом в файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code>; blunderDB читает её при импорте и сохраняет. Отмеченное решение по кубу даёт две отмеченные позиции — дабл и тейк/пас, поскольку blunderDB разделяет надвое то, что исходный файл записывает как одно решение.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Отметка не действует задним числом: матчи, уже находящиеся в базе, не содержат этой информации, поскольку она существует только в исходных файлах. Достаточно повторно импортировать соответствующий файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code> — импорт обнаружит дубликат и не добавит ничего, кроме отметок, не затрагивая существующие комментарии и анализы. Отметку нельзя ни поставить, ни снять из blunderDB: для временного рабочего списка используйте лучше коллекцию.</p>
+</div>
+<p>Фильтр <strong>Комментарий</strong> обращается к комментариям, привязанным к позициям, в трёх взаимоисключающих режимах. <em>содержит текст</em> ищет одно или несколько слов в тексте комментариев (поле ввода, слова разделяются знаком <code class="docutils literal notranslate"><span class="pre">;</span></code>, достаточно совпадения одного); <em>есть комментарий</em> оставляет любую позицию с комментарием, независимо от его содержания; <em>без комментария</em> оставляет, напротив, позиции без аннотаций — удобно в сочетании с фильтром по ошибке или дате, чтобы составить список того, что осталось прокомментировать.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Комментарии, импортированные из файла матча (XG, GNUbg), считаются комментариями. Чтобы оставить только свои, добавьте маркер <code class="docutils literal notranslate"><span class="pre">co:user</span></code> в командной строке (<code class="docutils literal notranslate"><span class="pre">co:xg</span></code>, <code class="docutils literal notranslate"><span class="pre">co:gnubg</span></code>, <code class="docutils literal notranslate"><span class="pre">co:bgf</span></code> и <code class="docutils literal notranslate"><span class="pre">co:unknown</span></code> называют остальные источники). Впрочем, комментарии, привязанные к <em>матчу</em> или <em>турниру</em>, здесь ни при чём: они комментируют матч или турнир, а не его позиции.</p>
+</div>
+<p>Фильтр <strong>Матчи и турниры</strong> опирается на общий селектор (модальное окно), а не на ввод числовых идентификаторов: два списка с флажками — один для матчей и один для турниров, каждый из которых можно фильтровать по тексту (игрок, дата, событие — для матчей; название, дата, место — для турниров), с кнопками <em>Все</em> / <em>Ничего</em>, действующими только на текущее отфильтрованное подмножество. Установка флажка турнира автоматически отмечает (и делает неактивными) его матчи-участники в списке матчей, наглядно показывая, что турнир эквивалентен множеству своих матчей.</p>
+<p>Полоса панели поиска несёт переключатель <em>Критерии</em> (фильтры) | <em>История</em> | <em>Сохранённые</em> — с четвёртым сегментом, <em>Ассистент</em>, когда включён встроенный ассистент, — и, на вкладке <em>Критерии</em>, кнопку <strong>Искать</strong> на её правом конце. Вкладка <strong>История</strong> перечисляет прошлые поиски с их датой и командой: щелчок выбирает поиск и показывает связанную позицию на доске, двойной щелчок выполняет его заново. Каждую запись можно сохранить в библиотеку фильтров (значок закладки, с присвоением фильтру имени) или удалить. Вкладка <strong>Сохранённые</strong> содержит <strong>библиотеку фильтров</strong>: дважды щёлкните по сохранённому фильтру, чтобы повторить соответствующий поиск (см. <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Приложение: Расширенное использование фильтров</span></a>). Команда <code class="docutils literal notranslate"><span class="pre">history</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">hi</span></code>) открывает панель поиска.</p>
+<p>Звёздочка фильтра библиотеки <strong>закрепляет</strong> его. Закреплённые фильтры отображаются метками вверху панели, какая бы вкладка ни была открыта, и пронумерованы в порядке библиотеки: щелчок по метке запускает фильтр, а <code class="docutils literal notranslate"><span class="pre">ALT-1</span></code> … <code class="docutils literal notranslate"><span class="pre">ALT-9</span></code> запускают закреплённый фильтр с этим номером с любого экрана в режиме NORMAL или EDIT, не открывая панель. Фильтр задаёт тогда тот же вопрос, что и при двойном щелчке, включая структуру шашек. Закрепление принадлежит базе: оно следует за переименованным фильтром, исчезает вместе с удалённым и не переносится при экспорте библиотеки.</p>
+<p>Повторно запущенный поиск сохраняет своё ранжирование: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like42</span></code> ранжирует относительно позиции 42, а <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">like</span></code> — относительно доски, сохранённой вместе с поиском, то есть просматриваемой или нарисованной. Запись, в которой доска не сохранилась, не запускается против доски на экране, и строка состояния сообщает об этом.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">список команд</span></a> для списка доступных фильтров.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="id5"></span><h2>Панель коллекций<a class="headerlink" href="#panneau-collections" title="Ссылка на этот заголовок"></a></h2>
+<figure class="align-default" id="id8">
+<a class="reference internal image-reference" href="_images/panel_collections.png"><img alt="Панель коллекций" src="_images/panel_collections.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Коллекций: название, число позиций, описание, дата последнего изменения.</span><a class="headerlink" href="#id8" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<p>В панелях «Коллекции», «Турниры», Anki и «Транскрипция» кнопка <strong>+</strong> в заголовке, за которой следует название создаваемого (<strong>+ Новая коллекция</strong>, <strong>+ Новый турнир</strong>, <strong>+ Новая колода</strong>, <strong>+ Новая запись</strong>), — единственный жест создания: она открывает поле ввода, которое <em>Esc</em> или <strong>Отмена</strong> закрывает в панелях «Коллекции» и «Турниры». В списке матчей значок ⌨ открывает транскрипцию матча, а значок ✎ исправляет его метаданные.</p>
+<p>Панель <strong>Коллекции</strong> (<em>CTRL-B</em>) позволяет управлять коллекциями позиций. Коллекции можно создавать, переименовывать и удалять. Позиции можно в них добавлять и убирать (клавиша <em>Del</em>, спрашивается подтверждение). Двойной клик по коллекции даёт пройти её позиции клавишами <em>ВЛЕВО</em> и <em>ВПРАВО</em>. Команда <code class="docutils literal notranslate"><span class="pre">ss</span></code> ищет среди позиций открытой коллекции; затем <em>Esc</em> возвращает к коллекции (см. <a class="reference internal" href="#panneau-recherche"><span class="std std-ref">Панель поиска</span></a>). Порядок коллекций и позиций внутри коллекции меняется перетаскиванием. Нажмите <em>CTRL-B</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">collection</span></code>, чтобы показать или скрыть панель.</p>
+<p>В заголовке открытой коллекции число позиций — ссылка, которая снова открывает их для просмотра, с первой; флажок <strong>в этой коллекции</strong> добавляет или убирает показанную позицию. Пустой список предлагает <strong>+ Новая коллекция</strong>.</p>
+<p><strong>Стопка</strong> — коллекция жеста «пересмотреть позже»: двойной щелчок вне доски, клавиша <em>b</em> или кнопка закладки на панели инструментов кладёт показанную позицию в Стопку, а тот же жест убирает её оттуда. Закладка в углу доски показывает, что позиция лежит в ней, без других сообщений. Жест действует везде, где показана позиция: в разборе, поиске, редактировании, Eval, Записи, викторине, Дуэли. Сброс доски выполняется через меню правого щелчка (см. <a class="reference internal" href="manuel_interface.html#board-menu-contextuel"><span class="std std-ref">меню доски</span></a>). Стопка — обычная коллекция: её переименовывают, переупорядочивают, экспортируют и очищают, как любую другую; она создаётся при первом использовании и создаётся заново, если была удалена. Позиция, которой ещё нет в библиотеке (черновик доски поиска или оценки), сразу записывается туда, как позиция, принесённая отдельно, а затем кладётся в Стопку. Командная строка делает тот же жест командой <code class="docutils literal notranslate"><span class="pre">collection</span> <span class="pre">pile</span></code>.</p>
+<p>Подборка может быть <strong>живой</strong>: её содержимое — уже не собранный вручную список, а результат <strong>поиска</strong>, пересчитываемый при каждом открытии. Кнопка ◇ в заголовке подборки делает её живой по последнему выполненному поиску; ◈ говорит, что она уже такова, и та же кнопка возвращает ей список. Ничего не разрушается: позиции, которые она содержала, останутся на месте при возврате.</p>
+<p>Кнопка ❄, видимая у живой коллекции, <strong>фиксирует</strong> её: позиции, выбранные поиском в этот момент, становятся содержимым обычной коллекции в порядке поиска, а запрос стирается. Позиции, которые она содержала до того, как стала живой, заменяются.</p>
+<p>Живая подборка, чей запрос несёт токен, которого эта версия уже не знает, <strong>отказывается открываться</strong> и говорит об этом, вместо того чтобы вернуть всю базу. Это единственная поломка, которой не должно быть у сохранённого фильтра: молча расшириться.</p>
+<p>Живая коллекция <strong>остаётся живой в экспорте</strong> базы: её запрос переносится вместе с ней и заново вычисляется у получателя по позициям файла. Когда экспорт уносит позиции коллекций, он уносит те, которые запрос выбирает в момент экспорта, не более 5 000 позиций. Запрос, который указывает позиции, матчи или турниры по номеру, переписывается на номера файла; если какой-либо из них остаётся вне файла, коллекция выгружается <strong>замороженной</strong>, с позициями, которые запрос выбирает в момент экспорта.</p>
+<p>Колода интервального повторения, основанная на живой коллекции, заново выполняет её запрос при каждом открытии сеанса: позиции, которые поиск выбирает с прошлого раза, попадают в неё, а уже имеющиеся карточки сохраняют своё расписание. Оценка ограничена <strong>потолком</strong> в 5 000 позиций; когда запрос выбирает больше, колоду пополняют только первые, в порядке поиска, и строка состояния сообщает об этом вместе с реальным числом выбранных позиций.</p>
+<p id="positions-reference">Кнопка <strong>Предложить…</strong> в заголовке открывает <strong>опорные позиции</strong>: короткий список позиций для изучения, выбранных среди ваших ошибок так, чтобы каждая обобщала многие. Изучение десяти худших ошибок часто даёт десять вариантов одной и той же проблемы или единичные позиции, ничему не учащие в отношении остальных; опорная позиция находится в центре нескольких ваших ошибок со схожей структурой, и её урок служит всем.</p>
+<ul class="simple">
+<li><p>Ошибки берутся из <a class="reference internal" href="manuel_stats.html#plan-etude"><span class="std std-ref">плана обучения</span></a>: выражены в MWC и сгруппированы по семействам (план игры, характер, тема). Две ошибки семейства являются <strong>соседними</strong>, если расстояние между ними по <code class="docutils literal notranslate"><span class="pre">like</span></code> не превышает 12 шагов шашек; у ошибки с кубом соседние только ошибки с тем же счётом.</p></li>
+<li><p>Каждая позиция стоит <strong>возвращаемую MWC</strong> (потеря минус сложность) её соседей и её самой: то, что принёс бы её урок, если бы служил всем. <strong>Тесный</strong> урок (второй выбор стоит меньше половины ошибки) или <strong>нестабильный</strong> вердикт (другая глубина или ролаут говорит иное) считается за половину; подтверждающий ролаут отмечается. Число в начале каждой строки — покрытая MWC; причина указывает значение, которое учитывается, когда урок считается за половину.</p></li>
+<li><p>Список <strong>разнообразен</strong>: выбранная позиция покрывает своих соседей, которые больше ничего не дают последующим, и ни одна предложенная позиция не является почти-дубликатом другой. <strong>Уже разобранная</strong> позиция — с комментарием, в коллекции, карточка Anki или помеченная «изучена» — никогда не предлагается, а её соседи считаются покрытыми.</p></li>
+</ul>
+<p><strong>Охват</strong> — вся база, текущий матч, турнир или фильтр панели «Статистика»; игрок — это игрок данного фильтра. <strong>Размер</strong> — 10, 20 или 50 позиций. Каждая строка указывает своё семейство, свой счёт, если это позиция с кубом, покрываемую MWC и её причину: сколько ошибок и матчей она обобщает, размер её семейства среди ваших решений, её собственную возвращаемую часть, отрыв от второго выбора. Щелчок по строке открывает позицию; отмеченные флажки одним щелчком превращаются в <strong>коллекцию</strong>, <strong>колоду Anki</strong> или <strong>викторину</strong>. В командной строке: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span> <span class="pre">suggest</span></code> (см. <a class="reference internal" href="cli_bibliotheque.html#cli-collection"><span class="std std-ref">collection — Управление коллекциями</span></a>).</p>
+<section id="lecons">
+<span id="id6"></span><h3>Уроки<a class="headerlink" href="#lecons" title="Ссылка на этот заголовок"></a></h3>
+<p><strong>Урок</strong> — это последовательность шагов, которую тренер пишет один раз для ученика и передаёт ему в файле базы (см. команду <code class="docutils literal notranslate"><span class="pre">lesson</span> <span class="pre">export</span></code> в <a class="reference internal" href="cli.html"><span class="doc">Интерфейс командной строки (CLI)</span></a>). У каждого шага есть заголовок и текст, и он может показывать коллекцию, позицию, и то и другое или ничего. Команда <code class="docutils literal notranslate"><span class="pre">le</span></code> выводит уроки базы в строке состояния; <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">2</span></code> открывает урок 2; <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span></code> открывает редактор уроков.</p>
+<p>Над доской появляется <strong>панель чтения</strong>: название урока, номер шага, заголовок, затем текст. <em>Назад</em> и <em>Далее</em> переключают шаг; шаг выводит на доску показываемую им коллекцию или позицию, которую затем просматривают обычными жестами. <em>Закрыть</em> завершает урок. Шаг, коллекция или позиция которого удалена, сохраняет свой текст.</p>
+<p>Флажок <em>Шаг выполнен</em> на панели отмечает текущий шаг как выполненный; повторный щелчок снимает отметку, а панель считает выполненные шаги. Это единственный жест, который что-либо записывает: чтение урока, смена шага или открытие урока ничего не сохраняют, ни достигнутый шаг, ни факт открытия. Отметка записывается в открытую базу, то есть в базу ученика, и ни один экспорт её не переносит. Импорт файла, содержащего урок, создаёт его; уже имеющийся урок с тем же именем не затрагивается.</p>
+<p><strong>Редактор уроков</strong> открывается командой <code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span></code> (<code class="docutils literal notranslate"><span class="pre">le</span> <span class="pre">edit</span> <span class="pre">2</span></code> для урока 2) или кнопкой <em>Изменить</em> на панели чтения. Слева — список уроков и поле для создания нового; справа — название и описание выбранного урока, затем его шаги. У каждого шага есть заголовок, текст, коллекция, выбранная из списка, и позиция: <em>Текущая позиция</em> прикрепляет к нему позицию, показанную на доске, <em>Отвязать позицию</em> убирает её. <em>Сохранить шаг</em> записывает его изменения; стрелки сдвигают его на одно место; <em>Добавить шаг</em> добавляет новый в конец. <em>Читать</em> закрывает редактор и открывает урок на первом шаге; <em>Экспортировать как веб-страницу</em> сохраняет урок в одном автономном HTML-файле (заголовок, описание, каждый шаг с текстом и доской, сохранённый анализ каждой позиции, свёрнутый как ответ викторины, происхождение водяного знака в нижнем колонтитуле), который можно публиковать как есть: в нём нет ни скриптов, ни сетевых вызовов; <em>Удалить</em> стирает урок и его шаги, не затрагивая коллекции и позиции, которые они показывали. Уроки можно также создавать и изменять из командной строки или через API (<a class="reference internal" href="mode_headless.html#headless-lecons"><span class="std std-ref">Уроки</span></a>).</p>
+<p>Резервная копия — экспорт всей библиотеки из окна экспорта или из командной строки — уносит все уроки. В окне экспорта строка <em>Уроки</em> выбирает их по одному: каждый отмеченный урок уходит с коллекциями и позициями, которые показывают его шаги, а файл может получить водяной знак или быть защищён паролем (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>), как любой экспорт. Без этого флажка частичный экспорт (выборка позиций, коллекций или матчей) уроки не уносит.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="manuel_interface.html" class="btn btn-neutral float-left" title="Начало работы и интерфейс" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="manuel_matchs.html" class="btn btn-neutral float-right" title="Матчи и запись" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

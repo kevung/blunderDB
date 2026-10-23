@@ -1,0 +1,527 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Import, origine et partage &mdash; Documentation blunderDB 0.46.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=08c23abd"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="Métriques et outils d’étude" href="metriques.html" />
+    <link rel="prev" title="Entraînement, Anki et duel" href="manuel_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Languages">
+  <span class="current" lang="fr" aria-current="true">Français</span>
+  <a href="../en/manuel_partage.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_partage.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_partage.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_partage.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_partage.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_partage.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel_partage.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/manuel_partage.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Prise en main</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guide utilisateur</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Référence</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">Manuel</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">Prise en main et interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">Analyse, commentaires et recherche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">Matchs et transcription</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">Tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">Statistiques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">Évaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">Entraînement, Anki et duel</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Import, origine et partage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">Import : ce qui est écrit, ce qui ne l’est jamais</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-metadonnees">Panneau Métadonnées</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">Diffuser une base : origine et mot de passe</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#marquer-une-base-de-son-origine">Marquer une base de son origine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identite-d-emetteur">Identité d’émetteur</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">Protéger une base par un mot de passe</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lire-l-origine-d-un-fichier">Lire l’origine d’un fichier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#publier-une-base-pour-d-autres">Publier une base pour d’autres</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Métriques et outils d’étude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interface en ligne de commande (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossaire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Mode headless (serveur)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrat d’API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Annexes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Annexe Windows : que faire si Windows bloque le lancement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historique des versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">À propos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">Manuel</a></li>
+      <li class="breadcrumb-item active">Import, origine et partage</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="import-origine-et-partage">
+<span id="manuel-partage"></span><h1>Import, origine et partage<a class="headerlink" href="#import-origine-et-partage" title="Lien vers cette rubrique"></a></h1>
+<section id="import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">
+<span id="import-regles"></span><h2>Import : ce qui est écrit, ce qui ne l’est jamais<a class="headerlink" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais" title="Lien vers cette rubrique"></a></h2>
+<p>Importer un match, une position ou une autre base ajoute ce qui manque ; cela
+ne remplace pas ce qui est déjà là.</p>
+<ul class="simple">
+<li><p><strong>Une position n’est jamais dupliquée.</strong> C’est son identité — pions, videau,
+dés, score — qui la reconnaît, jamais le fichier d’où elle vient : la même
+position rencontrée dans deux matchs reste une seule ligne.</p></li>
+<li><p><strong>Importer une base relit tout ce qu’un export écrit.</strong> Les positions, avec
+leurs analyses et commentaires, mais aussi les matchs (parties et coups
+compris), les tournois avec leur Direction et leur Rencontre, les brouillons
+de transcription, les alias, les collections, les leçons et les paquets
+Anki : voir <a class="reference internal" href="guide_utilisateur.html#guide-fusionner-base"><span class="std std-ref">Fusionner une base de données</span></a>.
+Rien n’est écrasé : un match déjà présent n’est pas recopié, un tournoi du même
+nom reçoit les matchs sans changer la date de l’événement (sa date de dernière
+modification avance, puisqu’il reçoit de nouveaux matchs), un tournoi qui a
+déjà sa Direction la garde et reste hors de la Rencontre importée, un match
+déjà rangé dans un autre tournoi ou une autre place du tableau y reste, et ce
+que la base décidait déjà reste décidé par elle. Les tournois, Directions, Rencontres, brouillons de transcription et
+alias créés par l’import gardent leurs dates d’origine ; les collections,
+leçons et paquets Anki créés n’en gardent pas.</p></li>
+<li><p><strong>Une analyse par moteur.</strong> eXtreme Gammon, GNUbg, BGBlitz et l’évaluateur
+embarqué cohabitent sur une même position, et le panneau Analyse indique
+l’origine de chacune. Importer l’une n’efface pas l’autre.</p></li>
+<li><p><strong>Une analyse importée n’est jamais recalculée.</strong> blunderDB la range telle
+quelle, avec son étiquette de niveau (« 3-ply », « XG Roller++ », « Book »),
+ses équités, ses erreurs, ses probabilités et la chance du lancer. La règle
+est « une évaluation ne comble qu’un trou » : l’analyse automatique après
+import ne visite que les positions sans <strong>aucune</strong> analyse, et
+la réanalyse des analyses gammonNet périmées laisse intacte toute position portant
+une analyse importée (voir <a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">Configuration</span></a>).</p></li>
+<li><p><strong>Réimporter un match déjà présent n’apporte que du plus profond.</strong> Le match
+est reconnu à son jeu (joueurs, longueur, dés, coups, videau), pas à son
+analyse : aucun match, partie ni coup n’est réécrit. Les marques posées dans
+le logiciel d’origine sont ajoutées, et une analyse plus profonde que celle
+rangée la remplace, position par position — une version Roller++ du même
+match remplace la version 3-ply, quel que soit l’ordre d’import ; à
+profondeur égale ou moindre, l’analyse rangée reste. Réimporter le même
+fichier ne réécrit donc rien. Le rapport d’import distingue les doublons qui
+n’apportaient rien de ceux qui ont approfondi des analyses. En ligne de
+commande, <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> ignore un doublon sans rien en reprendre
+d’autre que les marques. Un match tronqué puis complété (plus de parties)
+n’est pas le même match : il est importé comme un second match.</p></li>
+<li><p><strong>Une analyse illisible n’empêche pas l’import du match.</strong> Une décision dont
+l’analyse contient une valeur qui n’est pas un nombre fini (NaN ou infini,
+que portent certains fichiers XG) est importée sans cette analyse ; le reste
+du match entre normalement, et le rapport d’import compte les décisions
+concernées.</p></li>
+<li><p><strong>Un match déjà présent sous d’autres noms est signalé, jamais fusionné.</strong>
+Les deux empreintes de match portent les noms des joueurs : « Martin A. » et
+« Alice Martin » font deux matchs. L’import compare aussi les dés (longueur,
+score initial, dés de chaque partie) et signale, sous la ligne du fichier et
+dans le rapport, le match déjà en base sous d’autres noms dont il a les dés.
+<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code> liste ces paires dans une base existante,
+ainsi que les matchs tronqués et leur version plus longue.</p></li>
+<li><p><strong>Un nom connu sous une autre graphie est enregistré sous son nom canonique.</strong>
+Un <em>alias</em> dit que « Martin A. » est une autre graphie d”« Alice Martin » (ou
+qu’un nom d’événement en est un autre). À l’import, les noms des joueurs et de
+l’événement sont remplacés par leur nom canonique, et le match rangé dans le
+tournoi de l’événement canonique. Les empreintes du match gardent les noms du
+fichier : un fichier importé avant que son alias existe se reconnaît donc
+toujours. Un match dont les dés sont ceux d’un match en base, et dont les noms
+ne diffèrent que par des alias connus, n’est pas un second match : ses
+analyses enrichissent celui qui est rangé.</p></li>
+</ul>
+<p>Les alias se gèrent dans l’onglet <strong>Corpus</strong> des paramètres : choisir
+<strong>Joueurs</strong> ou <strong>Événements</strong>, saisir l’alias et le nom canonique, ou retirer un
+alias de la liste. <strong>Proposer</strong> liste les noms qui ne diffèrent que par la
+casse, les accents, la ponctuation ou l’ordre des mots ; rien n’est appliqué
+sans un clic sur <strong>Appliquer</strong>. Le même onglet porte la case <strong>Ignorer les
+doublons à l’import</strong> (l’équivalent de <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code>, pour la session)
+et la recherche des <strong>doublons probables</strong> d’une base existante, celle de
+<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code> : chaque paire est donnée par ses numéros de
+match, rien n’est fusionné. Sous une paire aux mêmes dés, <strong>Créer ces alias</strong>
+enregistre en un clic les alias de joueur qui feraient nommer aux deux matchs
+les mêmes joueurs, la graphie du match le plus récent devenant l’alias : une
+seule proposition quand un nom est commun aux deux, sinon deux — siège pour
+siège, puis croisée — dont on choisit celle qui dit qui est qui. En ligne de commande : <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">players</span> <span class="pre">alias</span></code>
+et <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">events</span> <span class="pre">alias</span></code>.</p>
+<ul class="simple">
+<li><p><strong>Un dossier s’importe en parallèle.</strong> Les fichiers sont lus sur plusieurs
+cœurs à la fois et écrits par groupes, toujours dans l’ordre du dossier : les
+numéros de match ne dépendent pas de la machine. Un fichier identique, octet
+pour octet, à un fichier déjà lu du même dossier n’est pas relu : il est
+compté comme doublon. Annuler arrête l’import au groupe en cours ; ce qui
+était déjà écrit reste.</p></li>
+<li><p><strong>La progression se lit en positions par seconde.</strong> La fenêtre d’import
+donne le pourcentage lu, le débit, le temps restant estimé et les comptes en
+cours (importés, doublons, en erreur). <strong>Réduire</strong> la range dans la barre de
+statut, d’où une pastille la rouvre : l’import continue pendant que vous
+travaillez, et la fenêtre revient d’elle-même avec le rapport à la fin. Les
+cent premières erreurs sont listées ; les suivantes sont comptées, et le
+journal de l’application les nomme toutes. En ligne de commande,
+<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span></code> affiche la même progression sur la sortie
+d’erreur, et <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> la rend dans l’objet final (<code class="docutils literal notranslate"><span class="pre">progress</span></code>).</p></li>
+<li><p><strong>Chaque fichier d’un import est journalisé, et un import interrompu se
+reprend.</strong> Pour chaque fichier, le journal du lot garde le chemin, la
+taille, la date de modification, l’empreinte SHA-256 et le résultat : match
+nouveau (avec son numéro), doublon (avec le match qui le couvre), match
+enrichi, ou erreur (avec le message). Un import annulé ou coupé se continue
+sans reprendre ce qui est déjà décidé : un fichier de même chemin, même
+taille et même date est sauté sans être lu ; un fichier de même contenu est
+lu mais pas analysé ; un fichier en erreur est retenté. Dans l’application, la fenêtre de fin d’import liste le journal (un
+fichier par ligne, avec son résultat et le message d’une erreur ; un
+fichier retenté montre sa dernière issue), et une ligne qui a donné un match
+l’ouvre. Un import <strong>annulé</strong> laisse la fenêtre ouverte avec le bouton
+<strong>Reprendre</strong>. En ligne de commande, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span>
+<span class="pre">&lt;dossier&gt;</span> <span class="pre">--resume</span> <span class="pre">&lt;lot&gt;</span></code> reprend le lot dont le numéro a été affiché au
+départ de l’import, et <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> rend le journal dans l’objet final
+(<code class="docutils literal notranslate"><span class="pre">journal</span></code>). Le serveur accepte <code class="docutils literal notranslate"><span class="pre">resume</span></code> dans la requête de
+<code class="docutils literal notranslate"><span class="pre">imports.batch</span></code> et rend le journal par <code class="docutils literal notranslate"><span class="pre">imports.files</span></code>. Le journal est
+une donnée de l’import : ouvrir ou lire une base n’y écrit rien.</p></li>
+<li><p><strong>Un import coupé par l’arrêt de l’application se reprend depuis la
+fenêtre.</strong> La commande <code class="docutils literal notranslate"><span class="pre">:resume</span></code> liste les imports que rien n’a terminé ;
+on choisit celui à continuer, puis on désigne à nouveau le dossier ou les
+fichiers, comme <code class="docutils literal notranslate"><span class="pre">--dir</span></code> en ligne de commande. Le journal du lot décide
+de ce qui n’est pas relu.</p></li>
+<li><p><strong>Un gros dossier s’importe en mode masse.</strong> À partir de 200 fichiers,
+blunderDB écrit avec un cache plus grand et moins de points de contrôle. Si
+la base ne contient encore aucune position, il va plus loin : les index de
+recherche ne sont reconstruits qu’à la fin, et les écritures ne sont plus
+synchronisées sur le disque. Une coupure de courant pendant un tel import
+peut alors abîmer la base : il faut la recréer et relancer l’import. Un
+arrêt brutal du programme, lui, laisse seulement des index absents, que
+l’ouverture suivante reconstruit (le journal le signale).</p></li>
+<li><p><strong>Ce que blunderDB n’écrit jamais</strong> : une chance recalculée — elle est lue
+dans le fichier source, ou reste inconnue — et un rollout qu’il n’a pas
+lancé lui-même : les données d’un rollout contenues dans un fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code>
+ne sont pas ouvertes. Seuls les rollouts que blunderDB produit
+(<a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">Rollouts</span></a>) sont stockés, à côté de l’analyse.</p></li>
+</ul>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2>Panneau Métadonnées<a class="headerlink" href="#panneau-metadonnees" title="Lien vers cette rubrique"></a></h2>
+<p>Le panneau <strong>Métadonnées</strong> (<em>CTRL-M</em>) affiche les informations générales de
+la base de données courante : <em>Utilisateur</em>, date de création (<em>Créé</em>),
+<em>Version</em> du schéma et <em>Description</em>. L’utilisateur, la date et la description
+se modifient sur place et s’enregistrent en quittant le champ ; la version est
+en lecture seule. Accessible aussi via la commande <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+<p>Il affiche également, <strong>lorsqu’elle existe</strong>, l’origine de la base — voir
+<a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a>. Une base ordinaire n’affiche pas cette section.</p>
+</section>
+<section id="diffuser-une-base-origine-et-mot-de-passe">
+<span id="diffusion-controlee"></span><h2>Diffuser une base : origine et mot de passe<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Lien vers cette rubrique"></a></h2>
+<p>Un enseignant qui distribue une base de positions dispose de deux mécanismes,
+indépendants l’un de l’autre, tous deux facultatifs et choisis <strong>au moment de
+l’export</strong> : marquer le fichier de son origine, et le protéger par un mot de
+passe.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Aucun des deux ne suit ce que devient le fichier. blunderDB <strong>n’enregistre
+rien du côté de celui qui reçoit la base</strong> : ouvrir une base marquée est
+exactement comme ouvrir n’importe quelle autre, et rien nulle part ne
+consigne qui l’a ouverte, quand, ni d’où vient son contenu.</p>
+</div>
+<section id="marquer-une-base-de-son-origine">
+<h3>Marquer une base de son origine<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Lien vers cette rubrique"></a></h3>
+<p>La fenêtre d’export tient en un seul écran : une bande d’en-tête — le nombre
+de positions exportées, <strong>Annuler</strong> et <strong>Exporter…</strong> — puis une grille, une
+ligne par famille avec son compte. Ces comptes sont exacts : ils sont lus
+auprès du serveur à chaque changement de case, sur la même sélection que
+l’export, et sont ce que le fichier contiendra (le nombre de positions de la
+bande d’en-tête, les commentaires, les matchs, les transcriptions, les alias,
+les tournois, les collections, les leçons, les paquets, les filtres). Le fichier
+se choisit en dernier, après <strong>Exporter…</strong> ; fermer ce choix sans nom revient à
+la grille. Une progression
+se superpose ensuite le temps de l’écriture, la fenêtre se ferme d’elle-même et
+le résultat s’affiche dans la barre d’état.</p>
+<p>Neuf points méritent l’attention :</p>
+<ul class="simple">
+<li><p><strong>La portée</strong> : depuis une liste — une recherche, une collection —, la ligne
+<em>Portée</em> choisit entre la <em>Liste courante</em> et <em>Toute la bibliothèque</em>. La
+liste courante exporte ses positions, et la ligne <em>Matchs</em> ne propose que
+ceux où ces positions ont été jouées ; chaque match coché part avec toutes
+ses positions. Depuis la bibliothèque, la portée est la bibliothèque.</p></li>
+<li><p><strong>Toute la bibliothèque</strong> est l’export du serveur et de
+<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code> : toutes les familles sont cochées d’emblée, les
+paquets Anki avec leur historique de révision, et les transcriptions en
+cours partent avec le reste.</p></li>
+<li><p><strong>La synchronisation</strong> : avec <em>Toute la bibliothèque</em>, la ligne
+<em>Synchronisation</em> propose <em>Seulement ce qui est nouveau depuis le dernier
+export vers ce dossier</em> et le bouton <strong>Choisir le dossier…</strong>. Le fichier
+n’est alors plus demandé : il est écrit dans ce dossier sous un nom neuf, et
+les comptes sont ceux de ce qui est nouveau (voir
+<a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">Synchroniser deux machines</span></a>).</p></li>
+<li><p><strong>Un match part avec son brouillon de transcription</strong>, sous la case
+<em>Transcriptions</em> de la ligne <em>Matchs</em>, cochée d’emblée ; les matchs qu’un
+tournoi emporte aussi. Un brouillon qui n’a pas encore produit de match ne
+part qu’avec la bibliothèque entière. Un match ou une transcription liés à
+une vidéo locale n’emportent que le nom du fichier, sans son dossier, que le
+destinataire relocalise sur sa propre copie ; un lien web part tel quel. Le
+fichier d’où un match a été importé ne part aussi que par son nom.</p></li>
+<li><p><strong>Un match part avec les alias de ses joueurs et de son événement</strong> : la
+case <em>Alias</em>, cochée d’emblée, fait suivre la fusion de joueurs, et le
+destinataire lit un joueur fusionné comme un seul. Un alias qui ne nomme
+personne des matchs exportés reste chez vous.</p></li>
+<li><p><strong>Une collection dont toutes les positions ne sont pas dans la liste arrive
+tronquée.</strong> La liste des collections affiche, pour chacune, la part couverte
+(« 12/40 ») et la signale en rouge lorsqu’elle est partielle. La case
+<em>+ leurs positions</em> emporte les positions des collections cochées : celles
+d’une liste faite à la main, celles que la requête d’une collection vivante
+sélectionne. Une collection vivante dont la requête désigne des lignes que le
+fichier ne contient pas <strong>part figée</strong> : elle arrive comme la liste de ce que
+sa requête sélectionne aujourd’hui, et la liste la marque « figée » en rouge
+avec une note ; cocher <em>+ leurs positions</em> la laisse vivante.</p></li>
+<li><p><strong>Un tournoi part toujours avec ses matchs</strong> : sans eux, le lien
+tournoi–match n’existe pas et le tournoi arriverait vide. Cocher un tournoi
+emporte ses matchs, même si la case des matchs est décochée ou restreinte à
+d’autres. Il part aussi avec sa Direction — journal, paires, tables et
+rattachement des matchs exportés — et sa Rencontre part dès qu’un de ses
+tournois part ; le dossier de sortie de la Direction reste chez vous. La
+Direction se retrouve en ouvrant le fichier, ou en l’important dans une
+autre base.</p></li>
+<li><p><strong>Un paquet Anki part avec ses positions</strong>, en copie d’étude neuve. La case
+<em>avec mon historique</em> emporte en plus l’état de chaque carte et le journal
+de ses révisions : une sauvegarde, ou vos paquets passés sur une autre
+machine. Elle est décochée pour une liste, cochée pour la bibliothèque.</p></li>
+<li><p><strong>Les filtres enregistrés</strong> n’exportent pas du contenu mais vos propres
+recherches, sans utilité dans la base de quelqu’un d’autre ; la case est
+décochée pour une liste. Un filtre qui désigne une position, un match ou un
+tournoi par son numéro est renuméroté pour le fichier ; s’il en désigne un
+qui ne part pas, il reste chez vous.</p></li>
+</ul>
+<p>Les collections, leçons, transcriptions, paquets Anki, alias et tournois partent
+avec les dates de création et d’ajout qu’ils portent chez vous, non avec la date
+de l’export.</p>
+<p>Les champs <em>Utilisateur</em>, <em>Description</em> et <em>Date de création</em> décrivent le
+<strong>fichier produit</strong> ; ils sont préremplis depuis la base source.</p>
+<p>Cocher <strong>Filigrane</strong> fait apparaître deux champs :</p>
+<ul class="simple">
+<li><p><strong>Origine</strong> — ce qu’est ce fichier et d’où il vient, dans vos mots :
+« Cours de Jean Dupont — 12 mars 2026 ». Ce champ est <strong>obligatoire</strong> : tant
+qu’il est vide, il est bordé de rouge et le bouton d’export reste inactif.</p></li>
+<li><p><strong>Note</strong>, facultative — conditions d’utilisation, adresse de contact, une
+demande de ne pas rediffuser.</p></li>
+</ul>
+<p>La marque est signée avec votre identité d’émetteur. Elle est donc
+<strong>inaltérable et infalsifiable</strong> : nul ne peut la modifier, ni en fabriquer une
+à votre nom. Elle n’est en revanche <strong>pas ineffaçable</strong> — le fichier distribué
+est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle
+n’empêche rien : elle dit d’où vient le fichier.</p>
+<p>Les commentaires que vous avez écrits sont signés avec la même identité : le
+destinataire voit qu’ils viennent de vous, et s’ils ont été altérés en chemin
+(voir <a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">Panneau Commentaires</span></a>). Un commentaire qui porte déjà la signature
+d’un autre émetteur la garde. La barre d’état dit, à la fin de l’export, combien
+de vos commentaires ont été signés ; un export sans marque n’en signe aucun.</p>
+</section>
+<section id="identite-d-emetteur">
+<h3>Identité d’émetteur<a class="headerlink" href="#identite-d-emetteur" title="Lien vers cette rubrique"></a></h3>
+<p>Les marques sont signées avec votre <strong>identité d’émetteur</strong>, créée toute seule
+la première fois que vous marquez un fichier ; il n’y a rien à configurer. Elle
+appartient à une personne et non à une base : tous vos fichiers portent la même
+empreinte publique, de la forme <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>Vous pouvez communiquer cette empreinte à vos destinataires pour qu’ils
+vérifient qu’un fichier vient bien de vous. L’identité se transporte d’un poste
+à l’autre en un seul fichier (extension <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), éventuellement protégé par
+une phrase secrète. <strong>Ce fichier permet de signer en votre nom : ne le partagez
+pas.</strong></p>
+<p>Dans les préférences (icône engrenage de la barre d’outils), l’onglet <em>Identité
+d’émetteur</em> affiche votre nom et votre empreinte, et propose <em>Enregistrer
+l’identité…</em>, <em>Charger une identité…</em> et <em>Régénérer…</em>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Avertissement</p>
+<p><strong>Régénérer ne révoque rien.</strong> Un filigrane embarque la clé publique qui l’a
+signé : il se vérifie donc pour toujours, tout seul. Si votre fichier
+d’identité a fuité, celui qui le détient pourra continuer à signer sous votre
+ancienne empreinte, et ces marques resteront valides.</p>
+<p>Ce qui vous protège après une fuite n’est pas logiciel : c’est de publier
+votre nouvelle empreinte et de désavouer l’ancienne auprès de vos
+destinataires.</p>
+<p>La régénération écrase la clé actuelle ; blunderDB propose de l’enregistrer
+avant de la remplacer.</p>
+</div>
+</section>
+<section id="proteger-une-base-par-un-mot-de-passe">
+<h3>Protéger une base par un mot de passe<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Lien vers cette rubrique"></a></h3>
+<p>Le mot de passe se saisit masqué, ici comme à l’ouverture d’un fichier protégé ;
+l’icône en forme d’œil l’affiche <strong>tant qu’on la maintient enfoncée</strong>, et le
+masque de nouveau dès qu’on relâche.</p>
+<p>Cocher <strong>Mot de passe</strong> produit un fichier d’extension <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — y compris si
+le nom choisi dans la fenêtre d’enregistrement finit en <code class="docutils literal notranslate"><span class="pre">.db</span></code>. Pour
+l’ouvrir, utilisez l’ouverture de base habituelle : la fenêtre de sélection
+accepte aussi bien les <code class="docutils literal notranslate"><span class="pre">.db</span></code> que les <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. blunderDB demande
+alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien
+n’est demandé.</p>
+<p>La fenêtre propose de <strong>supprimer le fichier protégé une fois ouvert</strong> : sans
+cela vous conservez le même contenu sous deux noms. La case n’est pas cochée par
+défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et
+la suppression n’a lieu qu’après une ouverture réussie.</p>
+<div class="admonition warning">
+<p class="admonition-title">Avertissement</p>
+<p>Le mot de passe protège le <strong>transport</strong> du fichier, pas la base. Il empêche
+un tiers d’ouvrir un fichier qui traîne dans un dossier de téléchargement ou
+une pièce jointe transférée par erreur. Il ne protège pas de celui à qui vous
+avez donné le mot de passe.</p>
+</div>
+<p>Le mot de passe est vérifié à <strong>chaque</strong> ouverture, y compris lorsque le fichier
+a déjà été ouvert auparavant sur ce poste.</p>
+<p>Techniquement, la base est chiffrée par <strong>AES-256 en mode GCM</strong>, avec une clé
+dérivée du mot de passe par <strong>Argon2id</strong> (64 Mio de mémoire, 3 passes, 4 fils),
+et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie
+l’ensemble : un mot de passe erroné est détecté comme tel, et toute altération du
+fichier chiffré l’est également — on n’obtient jamais une base corrompue en
+silence.</p>
+<p>L’en-tête du fichier protégé reste <strong>en clair</strong> : son origine demeure lisible
+sans le mot de passe.</p>
+</section>
+<section id="lire-l-origine-d-un-fichier">
+<h3>Lire l’origine d’un fichier<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Lien vers cette rubrique"></a></h3>
+<p>Dans l’application, ouvrez le fichier et affichez le panneau <strong>Métadonnées</strong>
+(commande <code class="docutils literal notranslate"><span class="pre">meta</span></code>). Une section <strong>Origine</strong> apparaît en tête du panneau, en
+lecture seule, indiquant ce qui a été inscrit, par qui, quand, et l’état de la
+signature :</p>
+<ul class="simple">
+<li><p>« ✓ marquée par vous » : le fichier porte votre marque,
+intacte ;</p></li>
+<li><p>« ✓ signature vérifiée » : la marque est intacte et vient d’une autre clé —
+comparez son empreinte à celle que le producteur vous a communiquée ;</p></li>
+<li><p>« ⚠ signature invalide » : le document a été modifié ou contrefait.</p></li>
+</ul>
+<p>Cette section n’apparaît pas sur une base ordinaire.</p>
+<p>En ligne de commande, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">fichier.db</span></code> affiche l’origine et
+l’état de la signature, <strong>sans jamais écrire dans le fichier</strong>. La commande
+fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
+<code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> pour les options <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> et <code class="docutils literal notranslate"><span class="pre">--password</span></code> de
+<code class="docutils literal notranslate"><span class="pre">export</span></code>, ainsi que pour <code class="docutils literal notranslate"><span class="pre">identity</span></code> et <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+</section>
+<section id="publier-une-base-pour-d-autres">
+<span id="partager-une-base"></span><h3>Publier une base pour d’autres<a class="headerlink" href="#publier-une-base-pour-d-autres" title="Lien vers cette rubrique"></a></h3>
+<p>Une base marquée se distribue comme n’importe quel fichier — courriel, site
+personnel, clé USB. blunderDB <strong>ne fournit aucun service</strong> : ni dépôt, ni
+catalogue hébergé, ni compte. C’est une conséquence directe de sa conception :
+rien n’est jamais enregistré du côté de celui qui reçoit un fichier, et il n’y
+aurait donc rien à faire remonter à un service, même s’il en existait un.</p>
+<p>Ce qui rend une base publiée utilisable par quelqu’un d’autre tient à quatre
+champs, tous déjà là :</p>
+<ul class="simple">
+<li><p><strong>Utilisateur</strong> — qui l’a constituée, sous le nom que vous voulez voir cité.</p></li>
+<li><p><strong>Description</strong> — ce que la base contient, en une phrase qui tienne dans une
+liste : « 240 décisions de videau au score, commentées, niveau intermédiaire ».</p></li>
+<li><p><strong>Origine</strong> (du filigrane) — ce qu’est ce fichier et pour qui il a été
+produit. C’est ce que le destinataire lit en premier dans le panneau
+<em>Métadonnées</em>.</p></li>
+<li><p><strong>Empreinte d’émetteur</strong> — publiez-la à côté du fichier, pas dedans : c’est
+en la comparant que le destinataire vérifie que le fichier vient de vous et
+non de quelqu’un qui a repris votre nom.</p></li>
+</ul>
+<p>Une base publiée sans filigrane reste parfaitement utilisable ; elle est
+simplement anonyme, et le panneau <em>Métadonnées</em> n’affiche alors aucune section
+<em>Origine</em>.</p>
+<p>Pour faire connaître une base, la catégorie <em>Show and tell</em> des <a class="reference external" href="https://github.com/kevung/blunderDB/discussions">discussions du
+dépôt</a> sert d’annuaire :
+c’est une liste tenue par ceux qui publient, pas un service rendu par
+blunderDB. Y annoncer une base demande le lien, les quatre champs ci-dessus et
+l’empreinte.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="manuel_entrainement.html" class="btn btn-neutral float-left" title="Entraînement, Anki et duel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="metriques.html" class="btn btn-neutral float-right" title="Métriques et outils d’étude" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

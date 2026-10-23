@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analisi e motore &mdash; Documentazione blunderDB 0.46.1 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e6b008ef"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="Studio, lezioni e allenamento" href="cli_entrainement.html" />
+    <link rel="prev" title="Incontri, tornei e partite" href="cli_matchs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Lingue">
+  <a href="../fr/cli_analyse.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_analyse.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_analyse.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_analyse.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_analyse.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_analyse.html" lang="fi" hreflang="fi">Suomi</a>
+  <span class="current" lang="it" aria-current="true">Italiano</span>
+  <a href="../ja/cli_analyse.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_analyse.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <p class="caption" role="heading"><span class="caption-text">Primi passi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guida utente</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Riferimento</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manuale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriche e strumenti di studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Elenco dei comandi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Scorciatoie da tastiera</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Interfaccia a riga di comando (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Introduzione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Sintassi generale</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Comandi disponibili</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Importare, esportare, trasferire</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Libreria: ricerca, elenchi, raccolte</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Incontri, tornei e partite</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Analisi e motore</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#analyze-rattrapage-gammonnet">analyze — Recupero gammonNet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rollout-rollout-d-une-position">rollout — Rollout di una posizione</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#epc-calculatrice-epc">epc — Calcolatrice EPC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gnubgid-id-gnubg">gnubgid — ID GNUbg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cubematrix-matrice-du-videau">cubematrix — Matrice del cubo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#capture-position-depuis-une-capture-d-ecran">capture — Posizione da uno screenshot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bearoff-bases-de-sortie">bearoff — Basi di bearoff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#openingbook-quel-coup-a-ce-score">openingbook — Quale mossa a questo punteggio?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_entrainement.html">Studio, lezioni e allenamento</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Statistiche</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Amministrazione del database</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Esempi di flusso di lavoro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Codici di uscita</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modalità headless (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contratto API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendici</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Appendice Windows: cosa fare se Windows blocca l’avvio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Cronologia delle versioni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Informazioni</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Interfaccia a riga di comando (CLI)</a></li>
+      <li class="breadcrumb-item active">Analisi e motore</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analyse-et-moteur">
+<span id="cli-analyse-chapitre"></span><h1>Analisi e motore<a class="headerlink" href="#analyse-et-moteur" title="Link to this heading"></a></h1>
+<section id="analyze-rattrapage-gammonnet">
+<h2>analyze — Recupero gammonNet<a class="headerlink" href="#analyze-rattrapage-gammonnet" title="Link to this heading"></a></h2>
+<p>Scrive un’analisi gammonNet per ogni posizione che non ne ha alcuna — il recupero di una libreria costituita prima che questa funzione esistesse (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). È la stessa operazione dell’esecuzione automatica dopo un’importazione e della riga « Posizioni senza analisi » della scheda <em>Manutenzione</em> dell’interfaccia grafica, e dell’endpoint <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.analyzeMissing</span></code> del demone <code class="docutils literal notranslate"><span class="pre">serve</span></code> per un tenant — tre forme diverse della stessa operazione, non tre logiche distinte (vedi <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modalità headless (server)</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Database (obbligatorio).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Profondità di ricerca (predefinito: 2, il parametro canonico).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Ampiezza di potatura (predefinito: 12, il parametro canonico).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Numero di mosse candidate conservate per ogni decisione di movimento (predefinito: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Numero di posizioni analizzate in parallelo (predefinito: il numero di core della macchina). Quando restano meno posizioni che core (un match breve, la fine del lotto), ogni ricerca si ripartisce sui core liberi; il risultato non cambia di un solo bit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — Limita il lotto alle posizioni di una sola partita (0, il valore predefinito, significa l’intera biblioteca).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> — <strong>Non scrive nulla</strong>: confronta gammonNet con le analisi importate invece di colmare buchi (vedi sotto).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--stale</span></code> — Rianalizza le posizioni la cui analisi gammonNet è obsoleta — scritta da una versione precedente del motore, o a una profondità diversa da <code class="docutils literal notranslate"><span class="pre">--ply</span></code> — invece di colmare le lacune. Una posizione che porta anche un’analisi XG, GNUbg o BGBlitz non viene mai toccata.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--compare</span></code>, si ferma dopo questo numero di posizioni (0 = tutte).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato di output: <code class="docutils literal notranslate"><span class="pre">text</span></code> (predefinito, con avanzamento) o <code class="docutils literal notranslate"><span class="pre">json</span></code> (un unico documento riassuntivo, stampato alla fine).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--rollout</span></code> — Fa un rollout delle posizioni scelte da <code class="docutils literal notranslate"><span class="pre">--query</span></code> invece di colmare le lacune (vedi sotto).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> — Con <code class="docutils literal notranslate"><span class="pre">--rollout</span></code>, le posizioni da giocare, nel linguaggio di query della ricerca (<code class="docutils literal notranslate"><span class="pre">search</span> <span class="pre">--query-help</span></code>); vuoto, tutte.</p></li>
+</ul>
+<p><strong>Un incontro importato senza analisi ottiene così un PR.</strong> È il caso di un incontro giocato online, o di un file Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, che nessuno ha fatto passare da XG. blunderDB ne conosceva le posizioni e le mosse giocate, ma nulla diceva quanto valessero; una volta passato il lotto, la mossa effettivamente giocata è confrontata con la classifica di gammonNet e lo scarto alimenta il PR e tutti gli altri indicatori. La mossa giocata proviene dalla tabella delle mosse dell’incontro, scritta all’importazione, che il file portasse un’analisi o no — non è mai indovinata.</p>
+<p>Un database analizzato con una versione precedente a questa non ha bisogno di essere rivalutato: <a class="reference internal" href="cli_admin.html#cli-repair"><span class="std std-ref">repair</span></a> ricalcola le colonne a partire da ciò che è già in archivio e restituisce il loro PR a quegli incontri.</p>
+<p><strong>Una sola partita</strong> (<code class="docutils literal notranslate"><span class="pre">--match</span></code>). Con l’identificatore mostrato da <code class="docutils literal notranslate"><span class="pre">list</span> <span class="pre">--type</span> <span class="pre">matches</span></code>, il lotto percorre solo le posizioni di quella partita: stessa regola del vuoto, stesse garanzie, ambito più ristretto. Una partita appena importata riceve le sue analisi senza che il resto della biblioteca venga percorso, e una partita corretta e poi analizzata una seconda volta costa solo le posizioni create dalla correzione, poiché tutte le altre portano già un’analisi. L’opzione non si combina né con <code class="docutils literal notranslate"><span class="pre">--stale</span></code> né con <code class="docutils literal notranslate"><span class="pre">--compare</span></code>, che guardano entrambe posizioni che hanno già un’analisi: chiedere entrambe è un errore, anziché un ambito silenziosamente ignorato.</p>
+<p><strong>Il parallelismo</strong> (<code class="docutils literal notranslate"><span class="pre">--jobs</span></code>). Le posizioni di un lotto sono indipendenti — nessuna ricerca informa la successiva — quindi vengono distribuite su <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> thread, ciascuno con il proprio valutatore. Le analisi scritte sono <strong>identiche qualunque sia il valore di</strong> <code class="docutils literal notranslate"><span class="pre">--jobs</span></code>; cambia solo il tempo di calcolo. <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">1</span></code> lascia la macchina libera per altro. L’annullamento non ne è influenzato: Ctrl-C ferma il lotto prima di qualsiasi nuova posizione, e tutto ciò che era già stato calcolato viene scritto.</p>
+<p><strong>La regola della lacuna</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>). Una posizione che porta già un’analisi — XG, GNUbg, BGBlitz o un precedente passaggio di gammonNet — non viene mai toccata, qualunque sia il motore mancante. Viene scritta soltanto una posizione <strong>senza alcuna</strong> analisi. Il comando può quindi essere rilanciato in qualsiasi momento senza rischi, e interrotto in modo pulito: Ctrl-C annulla senza perdere nulla di quanto già scritto, e l’esecuzione successiva riprende esattamente da dove la precedente si era fermata — non serve alcun registro, poiché « le posizioni senza analisi » vengono ricalcolate a ogni avvio.</p>
+<p><strong>Esempio:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...</span>
+<span class="c1">#   1/1204 (0%)</span>
+<span class="c1">#   61/1204 (5%)</span>
+<span class="c1">#   ...</span>
+<span class="c1">#   1204/1204 (100%)</span>
+<span class="c1"># Done.</span>
+
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--jobs<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Un seul match, celui qui vient d'être importé</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">12</span>
+</pre></div>
+</div>
+<p><strong>Rollout in blocco</strong> (<code class="docutils literal notranslate"><span class="pre">--rollout</span></code>). Ogni posizione scelta da <code class="docutils literal notranslate"><span class="pre">--query</span></code> viene giocata da un <a class="reference internal" href="#cli-rollout"><span class="std std-ref">rollout</span></a>, una dopo l’altra su tutti i core, e il rollout viene registrato accanto alla sua analisi, mai al suo posto. Il valore è un preset — <code class="docutils literal notranslate"><span class="pre">fast</span></code> (216 partite troncate a 7) o <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 partite troncate a 11) — oppure impostazioni libere: un preset facoltativo, poi <code class="docutils literal notranslate"><span class="pre">games=</span></code>, <code class="docutils literal notranslate"><span class="pre">min-games=</span></code>, <code class="docutils literal notranslate"><span class="pre">truncation=</span></code>, <code class="docutils literal notranslate"><span class="pre">jsd=</span></code>, <code class="docutils literal notranslate"><span class="pre">ply=</span></code>, <code class="docutils literal notranslate"><span class="pre">candidates=</span></code>, <code class="docutils literal notranslate"><span class="pre">seed=</span></code>, separati da virgole. Una posizione che porta già un rollout con le stesse impostazioni viene saltata: un’esecuzione interrotta con Ctrl-C riprende da dove si era fermata, la posizione in corso essendo scartata per intero. Una posizione analizzata solo da un rollout viene trovata dalla ricerca attraverso di esso; una posizione già analizzata conserva le colonne della sua analisi.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span>fast<span class="w"> </span>--query<span class="w"> </span><span class="s1">'E&gt;80'</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--rollout<span class="w"> </span><span class="s1">'standard,ply=1'</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">'c'</span>
+</pre></div>
+</div>
+<p id="analyze-compare"><code class="docutils literal notranslate"><span class="pre">--compare</span></code>: <strong>quanto vale gammonNet sulla tua base?</strong></p>
+<p>La precisione del motore è misurata altrove su corpus di riferimento e sulla tavola di uscita esatta. Nessuna di quelle misure risponde alla domanda che un utente si pone davvero, che riguarda le <strong>sue</strong> posizioni: sulle partite importate da XG, dove il motore integrato è in disaccordo con l’analisi arrivata col file, e quanto costerebbe quel disaccordo?</p>
+<p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> risponde, e <strong>non scrive nulla</strong>. Non è una precauzione ma il senso del comando: l’ADR-0013 protegge incondizionatamente un’analisi importata, e il confronto può quindi essere lanciato su una base che proprio non si vuole vedere riscritta.</p>
+<p>Il resoconto dà:</p>
+<ul class="simple">
+<li><p>il <strong>tasso di accordo</strong> sulla migliore risposta, separato tra mosse di pedine e decisioni di cubo — le due non hanno nulla a che vedere e un tasso unico nasconderebbe quale delle due cede;</p></li>
+<li><p>il <strong>costo del disaccordo</strong>, prezzato sulla scala dell’analisi importata: quanto vale la mossa preferita da gammonNet <em>secondo il motore importato</em>, meno quanto vale la sua stessa mossa migliore. Questo verso è il solo che i due motori possano cifrare insieme; prezzare un disaccordo due volte inviterebbe a leggere il minore dei due numeri;</p></li>
+<li><p>la ripartizione <strong>per fase di gioco</strong>, che è ciò che dice <em>dove</em> si concentrano i disaccordi;</p></li>
+<li><p>i dieci disaccordi più costosi, posizione per posizione.</p></li>
+</ul>
+<p>Due motori scrivono la stessa mossa in modo diverso — XG scrive «13/7» dove gammonNet scrive «13/8 8/7», le prese sono segnate da un lato e non dall’altro, la ripetizione è talvolta condensata in «(2)». Queste differenze sono dialetto e non disaccordo: il confronto riporta entrambe le notazioni a una forma canonica prima di compararle. Senza di ciò, un corpus di prova mostrava il 78,8 % di accordo invece del 93,2 % — quindici punti di falsi disaccordi.</p>
+<p>Una mossa che il motore importato <strong>non</strong> ha elencato non può essere prezzata sulla sua scala: conta come un disaccordo di costo nullo anziché di un costo inventato.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparer sur un échantillon de 500 positions</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--compare<span class="w"> </span>--limit<span class="w"> </span><span class="m">500</span>
+
+<span class="c1"># compared: 118 decision(s)  (refused 2, failed 0)</span>
+<span class="c1"># same best answer: 93.2% (110/118)</span>
+<span class="c1">#   checker play:   93.7% (59/63)</span>
+<span class="c1">#   cube decision:  92.7% (51/55)</span>
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+<section id="rollout-rollout-d-une-position">
+<span id="cli-rollout"></span><h2>rollout — Rollout di una posizione<a class="headerlink" href="#rollout-rollout-d-une-position" title="Link to this heading"></a></h2>
+<p>Gioca una posizione un gran numero di volte con gammonNet, per decidere ciò che una ricerca non decide: due mosse a pochi millesimi di distanza, o una decisione di cubo su cui il modello esita. Con i dadi si giocano le sue mosse (le migliori alla profondità del rollout, almeno 2 ply, o quelle indicate con <code class="docutils literal notranslate"><span class="pre">--move</span></code>); senza dadi, la sua decisione di cubo (Non raddoppiare e Raddoppio/Prendo; Raddoppio/Passo vale esattamente +1). La posizione proviene da un XGID o da un OGID, o da un database (<code class="docutils literal notranslate"><span class="pre">--db</span></code> e <code class="docutils literal notranslate"><span class="pre">--id</span></code>); senza <code class="docutils literal notranslate"><span class="pre">--store</span></code>, nulla viene registrato.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;position&gt;<span class="w"> </span><span class="o">[</span>--store<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--preset</span></code> — Impostazione di partenza: <code class="docutils literal notranslate"><span class="pre">fast</span></code> (predefinito: 216 partite troncate a 7 semimosse, arresto a JSD 3 dopo 108) o <code class="docutils literal notranslate"><span class="pre">standard</span></code> (1296 partite troncate a 11, arresto a JSD 3 dopo 324). Entrambi giocano a 0 ply — la sola rete, per le mosse, il cubo e le foglie; <code class="docutils literal notranslate"><span class="pre">--ply</span> <span class="pre">1</span></code> o più gioca più in profondità, con un tempo più volte maggiore. Le opzioni seguenti lo sostituiscono una a una.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--games</span></code>, <code class="docutils literal notranslate"><span class="pre">--min-games</span></code>, <code class="docutils literal notranslate"><span class="pre">--truncation</span></code>, <code class="docutils literal notranslate"><span class="pre">--jsd</span></code>, <code class="docutils literal notranslate"><span class="pre">--ply</span></code>, <code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — I parametri del rollout (<code class="docutils literal notranslate"><span class="pre">--truncation</span> <span class="pre">0</span></code> gioca ogni partita fino in fondo, <code class="docutils literal notranslate"><span class="pre">--jsd</span> <span class="pre">0</span></code> non si ferma mai prima della fine).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move</span></code> — Una mossa da giocare, in notazione blunderDB (ripetibile).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> — Seme dei dadi, fisso per impostazione predefinita: lo stesso comando dà gli stessi numeri.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Partite giocate in parallelo (predefinito: una per core); cambia solo il tempo.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato di uscita: <code class="docutils literal notranslate"><span class="pre">text</span></code> o <code class="docutils literal notranslate"><span class="pre">json</span></code> (predefinito: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--id</span></code> — Il database e l’identificatore della posizione da giocare, al posto di un XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--store</span></code> — Registra il rollout terminato sulla posizione, come una seconda analisi con le proprie impostazioni, accanto all’analisi importata o valutata, che non sostituisce mai. Un rollout interrotto non viene registrato; di due rollout con le stesse impostazioni si conserva la serie più lunga, e un rollout con altre impostazioni si aggiunge accanto.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--list</span></code> — Mostra i rollout salvati sulla posizione, dal più recente al più vecchio, invece di eseguirne uno.</p></li>
+</ul>
+<p>Tutti i candidati giocano gli stessi dadi, la fortuna di ogni lancio viene tolta dal risultato di ogni partita (riduzione della varianza), i primi due lanci sono stratificati e una partita si ferma dove il database di bearoff two-sided la copre. Ogni riga riporta l’equity, il suo intervallo al 95 %, il numero di partite giocate e la JSD, il divario dal migliore in deviazioni standard della differenza. Il cubo viene giocato durante le partite: la classifica è più affidabile dell’equity assoluta. Ctrl-C mostra ciò che le partite terminate hanno stabilito.</p>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>rollout<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--move<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span>--move<span class="w"> </span><span class="s1">'24/23 13/10'</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--preset<span class="w"> </span>standard<span class="w"> </span>--store
+./blunderdb<span class="w"> </span>rollout<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--list
+</pre></div>
+</div>
+</section>
+<section id="epc-calculatrice-epc">
+<h2>epc — Calcolatrice EPC<a class="headerlink" href="#epc-calculatrice-epc" title="Link to this heading"></a></h2>
+<p>Calcola l’Effective Pip Count, la probabilità di vittoria e il verdetto di cubo money di una posizione di uscita data tramite XGID o tramite OGID (OpenGammon). Calcolo puro: non è coinvolto alcun file di database.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato di output: <code class="docutils literal notranslate"><span class="pre">text</span></code> o <code class="docutils literal notranslate"><span class="pre">json</span></code> (predefinito: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — Database bearoff two-sided facoltativo (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) che amplia il TS-06-06 integrato (letto anche dalla variabile d’ambiente <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>). Vince il database valido più ampio; un file non valido viene ignorato con un avviso.</p></li>
+</ul>
+<p><strong>Regimi.</strong> Nel dominio coperto dal database two-sided, la probabilità di vittoria e l’analisi money del cubo (cubeless, ND, D/T, D/P, verdetto) sono <strong>esatte</strong>. Al di fuori, la probabilità di vittoria è <strong>stimata</strong> (convoluzione delle distribuzioni di lanci one-sided più una correzione calibrata) e mostrata con il suo margine d’errore misurato; il verdetto di cubo non viene volutamente mai stimato (vedere <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>).</p>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact : six pions ou moins de chaque côté</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'</span>
+
+<span class="c1"># Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">'XGID=…'</span>
+</pre></div>
+</div>
+</section>
+<section id="gnubgid-id-gnubg">
+<span id="cli-gnubgid"></span><h2>gnubgid — ID GNUbg<a class="headerlink" href="#gnubgid-id-gnubg" title="Link to this heading"></a></h2>
+<p>Scrive l’identificativo che GNU Backgammon mostra per una posizione data come XGID o OGID: l”<strong>ID di posizione</strong> (la scacchiera, vista dal lato del giocatore di turno) e l”<strong>ID di match</strong> (cubo, punteggio, dadi), uniti da due punti come li copia GNU Backgammon. Calcolo puro: nessun file di database è coinvolto. La lunghezza del match e i punteggi sono ricavati dalle distanze dalla meta che la posizione porta, come fa l’XGID.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato di output: <code class="docutils literal notranslate"><span class="pre">text</span></code> o <code class="docutils literal notranslate"><span class="pre">json</span></code> (predefinito: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'</span>
+./blunderdb<span class="w"> </span>gnubgid<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+</section>
+<section id="cubematrix-matrice-du-videau">
+<span id="cli-cubematrix"></span><h2>cubematrix — Matrice del cubo<a class="headerlink" href="#cubematrix-matrice-du-videau" title="Link to this heading"></a></h2>
+<p>Dà il verdetto del cubo di una posizione a <strong>tutti i punteggi</strong> di un incontro: per ogni casella <em>away × away</em>, se la posizione si raddoppia e se si prende. Calcolo puro: nessun database viene aperto, la posizione arriva tramite il suo XGID o il suo OGID (OpenGammon).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID|OGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato di uscita: <code class="docutils literal notranslate"><span class="pre">text</span></code> o <code class="docutils literal notranslate"><span class="pre">json</span></code> (predefinito: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Lunghezza dell’incontro coperta dalla griglia, da 1 a 25 (predefinito: 7).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Profondità di ricerca di ogni casella, <code class="docutils literal notranslate"><span class="pre">0</span></code> o <code class="docutils literal notranslate"><span class="pre">2</span></code> (predefinito: 2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Numero di mosse candidate mantenute dalla rete di potatura (predefinito: 12).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Ricerche eseguite in parallelo (predefinito: una per core). La griglia è identica qualunque sia il valore; cambia solo il tempo.</p></li>
+</ul>
+<p>Il punteggio proprio della posizione è ignorato — la griglia lo sostituisce — ma il suo <strong>cubo</strong> è conservato: la domanda posta è a quale punteggio girerei <em>questo</em> cubo. La griglia è post-Crawford da un capo all’altro.</p>
+<p>Ogni casella è una ricerca a sé, perché il motore tiene conto del punteggio: una sola ricerca riletta attraverso equità di incontro diverse sarebbe falsa esattamente dove il punteggio conta.</p>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grille d'un match en 5 points</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--match-length<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'</span>
+
+<span class="c1"># Les équités de chaque case, pour un script</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p>Uscita <code class="docutils literal notranslate"><span class="pre">text</span></code>: una griglia le cui righe sono i punti ancora necessari al giocatore di turno e le cui colonne sono quelli dell’avversario, poi la legenda delle sigle <code class="docutils literal notranslate"><span class="pre">ND</span></code> / <code class="docutils literal notranslate"><span class="pre">DT</span></code> / <code class="docutils literal notranslate"><span class="pre">DP</span></code> / <code class="docutils literal notranslate"><span class="pre">TG</span></code> e il motivo di ogni casella rifiutata.</p>
+</section>
+<section id="capture-position-depuis-une-capture-d-ecran">
+<h2>capture — Posizione da uno screenshot<a class="headerlink" href="#capture-position-depuis-une-capture-d-ecran" title="Link to this heading"></a></h2>
+<p>Legge la posizione mostrata da uno screenshot di una scacchiera di eXtreme Gammon (tema predefinito): pedine, barra, pedine uscite (ciò che manca a quindici), dadi, giocatore di turno e cubo. L’immagine (PNG, JPEG o GIF) può contenere altro oltre alla scacchiera; se è più grande di uno schermo 4K (3840×2160), viene ridotta prima della lettura. Il punteggio non viene mai letto. Ciò che la lettura non può stabilire è elencato come dubbio, mai indovinato: freccia nascosta, pila più alta delle cinque pedine che XG disegna affiancate, dadi illeggibili.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span>&lt;image&gt;
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Formato di output: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> o <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (predefinito: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> e <code class="docutils literal notranslate"><span class="pre">--save</span></code> — Salva la posizione nel database come posizione individuale.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span></code> — Il punteggio, che la schermata non mostra: <code class="docutils literal notranslate"><span class="pre">money</span></code>, oppure i punteggi Away dei due giocatori, prima quello del giocatore 1 (in basso), per esempio <code class="docutils literal notranslate"><span class="pre">2a/5a</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--turn</span></code> — Il giocatore di turno, <code class="docutils literal notranslate"><span class="pre">1</span></code> (in basso) o <code class="docutils literal notranslate"><span class="pre">2</span></code> (in alto), quando nessun dado lo mostra.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Salva nonostante i dubbi della lettura, dopo aver verificato la scacchiera. Non sostituisce né <code class="docutils literal notranslate"><span class="pre">--score</span></code> né <code class="docutils literal notranslate"><span class="pre">--turn</span></code>: <code class="docutils literal notranslate"><span class="pre">--save</span></code> rifiuta finché il punteggio, o il turno senza dadi, non è fornito, e nomina l’opzione mancante.</p></li>
+</ul>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>capture<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--format<span class="w"> </span>xgid<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>2a/5a<span class="w"> </span>capture.png
+./blunderdb<span class="w"> </span>capture<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--save<span class="w"> </span>--score<span class="w"> </span>money<span class="w"> </span>--turn<span class="w"> </span><span class="m">2</span><span class="w"> </span>videau.png
+</pre></div>
+</div>
+<p>Il daemon offre la stessa lettura: <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/positions.fromImage</span></code> con <code class="docutils literal notranslate"><span class="pre">{&quot;data&quot;:</span> <span class="pre">&quot;&lt;immagine</span> <span class="pre">in</span> <span class="pre">base64&gt;&quot;}</span></code>. Rifiuta un’immagine più grande di uno schermo 4K invece di ridurla, e legge solo due immagini alla volta.</p>
+</section>
+<section id="bearoff-bases-de-sortie">
+<h2>bearoff — Basi di bearoff<a class="headerlink" href="#bearoff-bases-de-sortie" title="Link to this heading"></a></h2>
+<p>Fabbrica e gestisce le basi di bearoff. Nulla viene scaricato e nulla è incorporato: una tabella si calcola qui e si verifica contro l’impronta che gnubg produce per il suo dominio. Nessun sotto-comando parla con una base di dati — una tabella di bearoff è aritmetica sul gioco, non sulle posizioni di qualcuno — quindi nessuno prende <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>&lt;file.bd&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>delete<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Il dominio si scrive come sotto <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>: <code class="docutils literal notranslate"><span class="pre">6x9</span></code> per la tabella a due lati con nove pedine per giocatore, <code class="docutils literal notranslate"><span class="pre">os8</span></code> per la tabella a un lato su otto punti (<code class="docutils literal notranslate"><span class="pre">os</span></code> da solo vale <code class="docutils literal notranslate"><span class="pre">os6</span></code>).</p>
+<p>Le due famiglie non rispondono alla stessa domanda. Una tabella a <strong>due lati</strong> amplia il dominio in cui la probabilità di vittoria e il verdetto del cubo sono esatti; una tabella a <strong>un lato</strong> amplia la distanza a cui una pedina può trovarsi senza che l’EPC taccia (fino a dieci punti).</p>
+<p><strong>generate.</strong> Dichiara la dimensione, la memoria e il tempo stimato prima di iniziare, poi mostra la percentuale e il tempo rimanente misurato.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--ts</span></code> — Dominio a due lati da calcolare, per esempio <code class="docutils literal notranslate"><span class="pre">6x9</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--os</span></code> — Dominio a un lato da calcolare, in numero di punti: da 6 a 12. È richiesto esattamente uno dei due.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cores</span></code> — Core da usare (predefinito: tutti tranne uno).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> — Dove scrivere (predefinito: la cartella dati dell’applicazione).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> — Nessuna riga di avanzamento.</p></li>
+</ul>
+<p><strong>CTRL-C mette in pausa.</strong> Il segnale viene catturato: lo stato è scritto accanto alla tabella e lo stesso comando rilanciato riprende da dove si era fermato invece di ricalcolare tutto. Mezz’ora di aritmetica merita di essere scritta. <code class="docutils literal notranslate"><span class="pre">bearoff</span> <span class="pre">delete</span></code> getta via una ripresa in attesa. Solo il passaggio a due lati si mette in pausa; quello a un lato è sequenziale e <code class="docutils literal notranslate"><span class="pre">--cores</span></code> non gli serve.</p>
+<p><strong>list.</strong> Quantifica ogni dominio — dimensione, memoria, tempo su questa macchina — e dice quali sono già presenti, con il loro verdetto, e quali hanno un calcolo in pausa. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> per uno script, <code class="docutils literal notranslate"><span class="pre">--cores</span></code> per cambiare l’ipotesi della stima.</p>
+<p><strong>verify.</strong> Risponde <code class="docutils literal notranslate"><span class="pre">verified</span></code> (gli stessi byte del riferimento), <code class="docutils literal notranslate"><span class="pre">unverified</span></code> (ben formata, ma nessuna impronta è registrata per quel dominio) o <code class="docutils literal notranslate"><span class="pre">corrupt</span></code> (il file si contraddice). Esce con errore nell’ultimo caso: questo comando è fatto per stare in uno script.</p>
+<p><strong>delete.</strong> Rimuove la tabella, la ripresa in attesa e i resti di un calcolo morto. Un dominio predefinito viene ricalcolato al prossimo avvio dell’applicazione; uno più ampio no.</p>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ce que cette machine a, et ce que chaque domaine coûterait</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x9<span class="w"> </span>--cores<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># OS-08 : l'EPC répond alors jusqu'à un pion sur la 8</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--os<span class="w"> </span><span class="m">8</span>
+
+<span class="c1"># Sur un serveur, dans le volume que lit le démon</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+</section>
+<section id="openingbook-quel-coup-a-ce-score">
+<span id="cli-openingbook"></span><h2>openingbook — Quale mossa a questo punteggio?<a class="headerlink" href="#openingbook-quel-coup-a-ce-score" title="Link to this heading"></a></h2>
+<p>L’esercizio <em>Apertura</em> del pannello Allenamento (vedi <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Pannello Allenamento</span></a>) da riga di comando: la mossa d’apertura (1st roll) o la risposta (2nd roll) di una partita a un punteggio, estratta dal libro d’apertura integrato e giudicata rispetto ad esso. Ogni mossa alla pari (tied) con la migliore è giusta (vedi <a class="reference internal" href="metriques.html#metrique-livre-ouverture"><span class="std std-ref">Libro d’apertura: scarto, IC 95 % e parità</span></a>). Nessuna base viene letta né scritta.</p>
+<p><strong>openingbook status</strong> — Il numero di righe del libro e i suoi punteggi.</p>
+<p><strong>openingbook question</strong> — Estrae una domanda: il tiro d’apertura e il punteggio, con l’XGID della posizione d’apertura; con <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>, il tiro di risposta nella posizione che lascia una mossa d’apertura alla pari con la migliore a quel punteggio, con quella mossa e l’XGID della posizione di risposta.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">first|second</span></code> — Il tiro da giocare: <code class="docutils literal notranslate"><span class="pre">first</span></code> (l’apertura, predefinito) o <code class="docutils literal notranslate"><span class="pre">second</span></code> (la risposta).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score</span> <span class="pre">&lt;liste&gt;</span></code> — Punteggi da estrarre, separati da virgole: <code class="docutils literal notranslate"><span class="pre">4-2</span></code> (chi risponde a 4 punti, chi apre a 2), <code class="docutils literal notranslate"><span class="pre">1-2</span></code> (partita Crawford), <code class="docutils literal notranslate"><span class="pre">1-1</span></code> (il DMP, double match point), <code class="docutils literal notranslate"><span class="pre">money</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--opening</span> <span class="pre">&lt;liste&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">--reply</span> <span class="pre">&lt;liste&gt;</span></code> — Tiri d’apertura o di risposta da estrarre (<code class="docutils literal notranslate"><span class="pre">31,65</span></code>); <code class="docutils literal notranslate"><span class="pre">--reply</span></code> solo con <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span> <span class="pre">&lt;n&gt;</span></code> — Estrazione riproducibile (0 = a caso).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--book</span> <span class="pre">&lt;fichier&gt;</span></code> — Un libro <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> o <code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code> al posto del libro integrato.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Formato di output.</p></li>
+</ul>
+<p><strong>openingbook answer</strong> — Giudica una mossa e mostra ogni candidata rispetto alla migliore: scarto, IC 95 % e « tied » (alla pari), in equity normalizzata al punteggio, con il numero di partite e l’impostazione del rollout. Senza <code class="docutils literal notranslate"><span class="pre">--after</span></code>, la mossa è l’apertura; con <code class="docutils literal notranslate"><span class="pre">--reply</span></code> e <code class="docutils literal notranslate"><span class="pre">--after</span></code>, la mossa è la risposta giocata dopo quella mossa d’apertura, quella che nomina la domanda <code class="docutils literal notranslate"><span class="pre">--roll</span> <span class="pre">second</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--score<span class="w"> </span>&lt;score&gt;<span class="w"> </span><span class="o">[</span>--reply<span class="w"> </span>&lt;jet&gt;<span class="w"> </span>--after<span class="w"> </span>&lt;coup&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;coup&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2,2-4
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span><span class="s1">'8/5 6/5'</span>
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>question<span class="w"> </span>--roll<span class="w"> </span>second<span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2
+./blunderdb<span class="w"> </span>openingbook<span class="w"> </span>answer<span class="w"> </span>--opening<span class="w"> </span><span class="m">31</span><span class="w"> </span>--reply<span class="w"> </span><span class="m">21</span><span class="w"> </span>--score<span class="w"> </span><span class="m">4</span>-2<span class="w"> </span>--after<span class="w"> </span><span class="s1">'8/5 6/5'</span><span class="w"> </span><span class="s1">'13/11 6/5'</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="cli_matchs.html" class="btn btn-neutral float-left" title="Incontri, tornei e partite" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="cli_entrainement.html" class="btn btn-neutral float-right" title="Studio, lezioni e allenamento" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

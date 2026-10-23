@@ -1,0 +1,280 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>インポート、出所、共有 &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="指標と学習ツール" href="metriques.html" />
+    <link rel="prev" title="トレーニング、Anki、デュエル" href="manuel_entrainement.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/manuel_partage.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel_partage.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel_partage.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel_partage.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel_partage.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel_partage.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel_partage.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/manuel_partage.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">マニュアル</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel_interface.html">はじめにとインターフェース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_bibliotheque.html">分析、コメント、検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_matchs.html">マッチと記譜</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_tournois.html">トーナメント</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_stats.html">統計</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_eval.html">評価</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel_entrainement.html">トレーニング、Anki、デュエル</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">インポート、出所、共有</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">インポート：何が書き込まれ、何が決して書き込まれないか</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#panneau-metadonnees">メタデータパネル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">データベースの配布：出所とパスワード</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#marquer-une-base-de-son-origine">データベースに出所を記載する</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#identite-d-emetteur">発行者の識別情報</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">データベースをパスワードで保護する</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lire-l-origine-d-un-fichier">ファイルの出所を読む</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#publier-une-base-pour-d-autres">データベースを他者に公開する</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="manuel.html">マニュアル</a></li>
+      <li class="breadcrumb-item active">インポート、出所、共有</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="import-origine-et-partage">
+<span id="manuel-partage"></span><h1>インポート、出所、共有<a class="headerlink" href="#import-origine-et-partage" title="この見出しへのリンク"></a></h1>
+<section id="import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">
+<span id="import-regles"></span><h2>インポート：何が書き込まれ、何が決して書き込まれないか<a class="headerlink" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais" title="この見出しへのリンク"></a></h2>
+<p>マッチ、ポジション、あるいは別のデータベースをインポートすると、足りないものが追加されます。すでにあるものが置き換えられることはありません。</p>
+<ul class="simple">
+<li><p><strong>ポジションが重複することはありません。</strong>それを見分けるのは、チェッカー、キューブ、ダイス、スコアからなるその同一性であって、由来するファイルではありません。二つのマッチで出会った同じポジションは、1 行のままです。</p></li>
+<li><p><strong>データベースのインポートは、エクスポートが書き出すすべてを読み戻します。</strong>解析とコメントを含むポジションのほか、マッチ（ゲームと手を含む）、運営と対戦会を伴うトーナメント、文字起こしの下書き、エイリアス、コレクション、レッスン、Anki デッキも対象です（<a class="reference internal" href="guide_utilisateur.html#guide-fusionner-base"><span class="std std-ref">データベースの統合</span></a> を参照）。何も上書きされません。すでに存在するマッチは再コピーされず、同名のトーナメントはイベントの日付を変えずにマッチを受け取り（受け取る新しいマッチの分、最終更新日は進みます）、すでに運営を持つトーナメントはそれを保ちつつインポートされた対戦会の外に置かれ、すでに別のトーナメントや表の別の位置に振り分けられているマッチはそこに残り、データベースがすでに決めていたことはその決定のまま残ります。インポートが作成するトーナメント、運営、対戦会、文字起こしの下書き、エイリアスは元の日付を保ちます。作成されるコレクション、レッスン、Anki デッキは保ちません。</p></li>
+<li><p><strong>エンジンごとに 1 つの分析。</strong>eXtreme Gammon、GNUbg、BGBlitz、および内蔵の評価エンジンは同じポジションの上で共存し、分析パネルはそれぞれの出所を示します。一方をインポートしても他方が消えることはありません。</p></li>
+<li><p><strong>インポートされた解析は決して再計算されません。</strong> blunderDB はそれをそのまま保存します。レベルのラベル（「3-ply」「XG Roller++」「Book」）、エクイティ、エラー、確率、そしてロールの運も含まれます。ルールは「評価は穴を埋めるだけ」です。インポート後の自動解析は、解析を<strong>一つも</strong>持たないポジションだけを対象とし、古い gammonNet 解析の再解析は、インポートされた解析を持つポジションにはいっさい手を触れません（<a class="reference internal" href="manuel_interface.html#configuration"><span class="std std-ref">設定</span></a> を参照）。</p></li>
+<li><p><strong>既に保存されているマッチを再インポートしても、より深い解析だけが加わります。</strong>マッチは解析ではなくプレイ（プレイヤー、長さ、ダイス、手、キューブ）で識別されます。マッチ、ゲーム、手は一切書き換えられません。元のソフトウェアで付けたマークは追加され、保存済みより深い解析はポジションごとにそれを置き換えます — 同じマッチの Roller++ 版は、インポートの順序にかかわらず 3-ply 版を置き換えます。深さが同じか浅い場合は、保存済みの解析が残ります。したがって同じファイルを再インポートしても何も書き換えられません。インポートレポートは、何ももたらさなかった重複と解析を深めた重複を区別します。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> が重複をスキップし、マーク以外は何も取り込みません。途中で切れて後に完結したマッチ（ゲーム数が多い）は同じマッチではなく、2 つ目のマッチとしてインポートされます。</p></li>
+<li><p><strong>読めない解析があってもマッチのインポートは止まりません。</strong>解析に有限の数ではない値（一部の XG ファイルに含まれる NaN や無限大）を含む判断は、その解析なしでインポートされます。マッチの残りは通常どおり取り込まれ、インポートレポートが該当する判断の数を示します。</p></li>
+<li><p><strong>すでに別の名前で存在するマッチは、報告されるだけで統合されません。</strong>2つのマッチのフィンガープリントにはプレイヤー名が含まれるため、「Martin A.」と「Alice Martin」は2つのマッチになります。インポートはダイス(長さ、初期スコア、各ゲームのダイス)も比較し、ファイルの行の下とレポートに、同じダイスを持つ、別の名前ですでにデータベースにあるマッチを報告します。<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code>は、既存のデータベースにあるこれらのペアを、途中で切れたマッチとその長いバージョンとともに一覧表示します。</p></li>
+<li><p><strong>別の表記で知られている名前は、正規の名前で記録されます。</strong><em>別名</em>は、「Martin A.」が「Alice Martin」の別の表記である（またはあるイベント名が別のイベント名の別の表記である）ことを示します。インポート時、プレイヤーとイベントの名前は正規の名前に置き換えられ、マッチは正規のイベントのトーナメントに入ります。マッチのフィンガープリントはファイルの名前を保つため、別名が存在する前にインポートされたファイルも常に認識されます。ダイスがデータベース内のマッチと同じで、名前が既知の別名だけで異なるマッチは、二つ目のマッチではありません。その解析は、保存済みのマッチを補強します。</p></li>
+</ul>
+<p>別名は設定の<strong>コーパス</strong>タブで管理します。<strong>プレイヤー</strong>または<strong>イベント</strong>を選び、別名と正規名を入力するか、一覧から別名を削除します。<strong>提案</strong>は、大文字小文字、アクセント、句読点、語順だけが異なる名前を一覧にします。<strong>適用</strong>をクリックするまで何も適用されません。同じタブには、チェックボックス<strong>インポート時に重複をスキップ</strong>（セッション中の <code class="docutils literal notranslate"><span class="pre">--skip-duplicates</span></code> に相当）と、既存のデータベースの<strong>重複の可能性</strong>の検索（<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span> <span class="pre">--duplicates</span></code> と同じもの）があります。各ペアはマッチ番号で示され、何も統合されません。ダイスが同一のペアの下で、<strong>これらの別名を作成</strong>は、2つのマッチに同じプレイヤーを名指しさせるプレイヤー別名を1クリックで登録し、より新しいマッチの表記が別名になります。両方に共通の名前が1つある場合は提案が1つだけ、そうでなければ2つ(席ごと、次に交差)で、誰が誰かを示す方を選びます。コマンドラインでは <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">players</span> <span class="pre">alias</span></code> と <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">events</span> <span class="pre">alias</span></code> を使います。</p>
+<ul class="simple">
+<li><p><strong>フォルダーは並列でインポートされます。</strong> ファイルは複数のコアで同時に読み込まれ、常にフォルダーの順序でグループごとに書き込まれます。マッチ番号はマシンに依存しません。同じフォルダーですでに読み込んだファイルとバイト単位で同一のファイルは再読み込みされず、重複として数えられます。キャンセルすると処理中のグループでインポートが止まり、すでに書き込まれた内容は残ります。</p></li>
+<li><p><strong>進捗は 1 秒あたりのポジション数で表されます。</strong> インポートウィンドウには、読み込んだ割合、処理速度、推定残り時間、現在の件数（インポート済み、重複、エラー）が表示されます。<strong>最小化</strong>するとステータスバーに収まり、そこのチップから再び開けます。作業中もインポートは続き、終了時にはウィンドウがレポートとともに自動的に戻ります。最初の 100 件のエラーが一覧表示され、それ以降は件数のみ表示されます。すべてのエラーはアプリケーションのログに記録されます。コマンドラインでは、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span></code>が同じ進捗を標準エラー出力に表示し、<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>は最終オブジェクト（<code class="docutils literal notranslate"><span class="pre">progress</span></code>）でそれを返します。</p></li>
+<li><p><strong>インポートの各ファイルはジャーナルに記録され、中断されたインポートは再開できます。</strong> 各ファイルについて、バッチのジャーナルはパス、サイズ、更新日時、SHA-256 フィンガープリント、結果を保持します。結果は、新規マッチ(その番号付き)、重複(それを含むマッチ付き)、補強されたマッチ、またはエラー(メッセージ付き)のいずれかです。キャンセルまたは中断されたインポートは、判定済みの内容をやり直さずに続行されます。パス・サイズ・日付が同じファイルは読み込まずにスキップされ、内容が同じファイルは読み込まれますが解析されません。エラーになったファイルは再試行されます。アプリケーションでは、インポート終了ウィンドウがジャーナルを一覧表示し(1 行に 1 ファイル、結果とエラーのメッセージ付き。再試行されたファイルは最後の結果を表示)、マッチが得られた行はそれを開きます。<strong>キャンセル</strong>されたインポートでは、ウィンドウが開いたまま残り、<strong>再開</strong>ボタンが表示されます。コマンドラインでは、 <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;フォルダ&gt;</span> <span class="pre">--resume</span> <span class="pre">&lt;バッチ&gt;</span></code> が、インポート開始時に番号が表示されたバッチを再開し、 <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> は最終オブジェクトにジャーナル(<code class="docutils literal notranslate"><span class="pre">journal</span></code>)を返します。サーバーは <code class="docutils literal notranslate"><span class="pre">imports.batch</span></code> のリクエストで <code class="docutils literal notranslate"><span class="pre">resume</span></code> を受け付け、 <code class="docutils literal notranslate"><span class="pre">imports.files</span></code> でジャーナルを返します。ジャーナルはインポートのデータです。データベースを開いたり読んだりしても、そこには何も書き込まれません。</p></li>
+<li><p><strong>アプリケーションの停止で途切れたインポートは、ウィンドウから再開できます。</strong> <code class="docutils literal notranslate"><span class="pre">:resume</span></code> コマンドは完了していないインポートを一覧します。続けるものを選び、コマンドラインの <code class="docutils literal notranslate"><span class="pre">--dir</span></code> と同様に、フォルダまたはファイルをもう一度指定します。バッチのジャーナルが、再読み込みしないものを決めます。</p></li>
+<li><p><strong>大きなフォルダーは一括モードでインポートされます。</strong> 200 ファイル以上の場合、blunderDB はより大きなキャッシュと少ないチェックポイントで書き込みます。データベースにまだポジションがひとつもない場合はさらに進め、検索インデックスは最後にのみ再構築され、書き込みはディスクに同期されなくなります。このようなインポート中の停電はデータベースを損傷することがあり、その場合はデータベースを作り直してインポートをやり直す必要があります。一方、プログラムの異常終了で残るのはインデックスの欠落だけで、次に開いたときに再構築されます（ログに記録されます）。</p></li>
+<li><p><strong>blunderDB が決して書き込まないもの</strong>:再計算されたラック(ソースファイルから読み取られるか、不明のまま)と、自身で実行していないロールアウト。<code class="docutils literal notranslate"><span class="pre">.xg</span></code> ファイルに含まれるロールアウトのデータは開かれません。blunderDB 自身が生成するロールアウト(<a class="reference internal" href="manuel_bibliotheque.html#rollouts"><span class="std std-ref">ロールアウト</span></a>)だけが、分析の隣に保存されます。</p></li>
+</ul>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2>メタデータパネル<a class="headerlink" href="#panneau-metadonnees" title="この見出しへのリンク"></a></h2>
+<p><strong>Metadata</strong> パネル（<em>CTRL-M</em>）は、現在のデータベースの一般情報を表示します：<em>ユーザー</em>、作成日（<em>作成</em>）、スキーマの <em>バージョン</em>、<em>説明</em>。ユーザー、日付、説明はその場で編集でき、欄を離れると保存されます。バージョンは読み取り専用です。コマンド <code class="docutils literal notranslate"><span class="pre">meta</span></code> からも開けます。</p>
+<p>また、<strong>存在する場合に限り</strong>データベースの出所も表示します（<a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a>を参照）。通常のデータベースではこの区画は表示されません。</p>
+</section>
+<section id="diffuser-une-base-origine-et-mot-de-passe">
+<span id="diffusion-controlee"></span><h2>データベースの配布：出所とパスワード<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="この見出しへのリンク"></a></h2>
+<p>ポジションのデータベースを配る指導者には、互いに独立した二つの仕組みがあります。どちらも任意で、<strong>エクスポート時</strong>に選びます。ファイルに出所を記載すること、そしてパスワードで保護することです。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>どちらもファイルのその後を追跡しません。blunderDB は<strong>データベースを受け取った側では何も記録しません</strong>。記載のあるデータベースを開く操作は、ほかのどのデータベースを開く場合とまったく同じで、誰がいつ開いたのか、内容がどこから来たのかは、どこにも残りません。</p>
+</div>
+<section id="marquer-une-base-de-son-origine">
+<h3>データベースに出所を記載する<a class="headerlink" href="#marquer-une-base-de-son-origine" title="この見出しへのリンク"></a></h3>
+<p>エクスポートウィンドウは一画面に収まります。ヘッダー帯（エクスポートするポジション数、<strong>キャンセル</strong>、<strong>エクスポート…</strong>）と、その下にファミリーごとに一行ずつ件数を示すグリッドが並びます。これらの件数は正確です。ボックスを変えるたびにサーバーから、エクスポートと同じ選択に対して読み取られ、ファイルに入る内容そのものです。ファイルは最後に、<strong>エクスポート…</strong>の後で選びます。名前を付けずにこの選択を閉じると、グリッドに戻ります。書き込みの間は進行状況が重なって表示され、ウィンドウは自動的に閉じ、結果はステータスバーに表示されます。</p>
+<p>注意すべき点が九つあります：</p>
+<ul class="simple">
+<li><p><strong>範囲</strong>：リスト（検索やコレクション）からは、<em>範囲</em>の行で<em>現在のリスト</em>と<em>ライブラリ全体</em>のどちらかを選びます。現在のリストはそのポジションをエクスポートし、<em>マッチ</em>の行にはこれらのポジションがプレイされたマッチだけが表示されます。チェックを入れたマッチは、そのすべてのポジションとともに出力されます。ライブラリからは、範囲はライブラリです。</p></li>
+<li><p><strong>ライブラリ全体</strong>は、サーバーと <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code> のエクスポートです。すべてのファミリーが最初からチェックされ、Anki デッキは復習履歴付きで、進行中の書き起こしも残りとともに出力されます。</p></li>
+<li><p><strong>同期</strong>：<em>ライブラリ全体</em>を選ぶと、<em>同期</em>の行に<em>このフォルダーへの前回のエクスポート以降の新しいものだけ</em>と<strong>フォルダーを選択…</strong>ボタンが表示されます。このときファイルは尋ねられません。そのフォルダーに新しい名前で書き込まれ、件数は新しいものの件数です（<a class="reference internal" href="manuel_interface.html#synchroniser-deux-machines"><span class="std std-ref">2台のマシンを同期する</span></a>を参照）。</p></li>
+<li><p><strong>マッチは記譜の下書きとともに出力されます</strong>。これは<em>マッチ</em>の行の<em>書き起こし</em>のチェックボックスで、最初からチェックされています。トーナメントが持ち出すマッチも同様です。まだマッチを生成していない下書きは、ライブラリ全体とともにのみ出力されます。ローカルの動画にリンクされたマッチや書き起こしは、フォルダーを除いたファイル名だけを持ち出し、受け取る側が自分のコピー上で場所を指定し直します。Web リンクはそのまま出力されます。マッチのインポート元のファイルも、名前だけが出力されます。</p></li>
+<li><p><strong>マッチは、その選手とイベントの別名とともに出力されます</strong>。最初からチェックされている<em>別名</em>のチェックボックスにより、選手の統合も引き継がれ、受け取る側は統合された選手を一人として読み取ります。エクスポートされるマッチの誰も指していない別名は、手元に残ります。</p></li>
+<li><p><strong>ポジションの一部しかリストにないコレクションは、切り詰められて届きます。</strong>コレクションの一覧には、それぞれの対象範囲の割合（「12/40」）が表示され、部分的な場合は赤で示されます。<em>+ その局面</em>のチェックボックスは、チェックを入れたコレクションのポジションを持ち出します。手作業で作ったリストのポジションや、ライブコレクションのクエリが選ぶポジションです。ファイルに含まれない行をクエリが指すライブコレクションは、<strong>固定されて出ます</strong>。現時点でクエリが選ぶ一覧として届き、一覧では赤で「固定」と注記付きで示されます。<em>+ その局面</em>にチェックを入れると、ライブのまま保てます。</p></li>
+<li><p><strong>トーナメントは常にそのマッチと一緒に書き出されます</strong>: マッチがなければトーナメントとマッチの関連が存在せず、トーナメントは空の状態で届きます。トーナメントにチェックを入れると、マッチのボックスがオフでも他のマッチに限定されていても、そのマッチが一緒に書き出されます。運営（ジャーナル、ペア、テーブル、書き出されたマッチの紐付け）も一緒に書き出され、対戦会はそのトーナメントの一つが書き出された時点で書き出されます。運営の出力フォルダーは手元に残ります。運営はファイルを開くか、別のデータベースにインポートすると確認できます。</p></li>
+<li><p><strong>Anki デッキはそのポジションとともに出力されます</strong>。新しい学習用コピーとしてです。<em>学習履歴を含める</em>のチェックボックスは、さらに各カードの状態とその復習のログを持ち出します。バックアップや、別のマシンに移したデッキのためのものです。リストでは未チェック、ライブラリではチェック済みです。</p></li>
+<li><p><strong>保存されたフィルター</strong>はコンテンツではなくあなた自身の検索をエクスポートするもので、他人のデータベースでは役に立ちません。リストでは未チェックです。ポジション、マッチ、トーナメントを番号で指すフィルターは、ファイルのために番号が振り直されます。出力されないものを指している場合は、手元に残ります。</p></li>
+</ul>
+<p>コレクション、レッスン、文字起こし、Anki デッキ、エイリアス、トーナメントは、エクスポート日ではなく、お手元で持っている作成日と追加日のまま書き出されます。</p>
+<p><em>ユーザー</em>、<em>説明</em>、<em>作成日</em>のフィールドは<strong>生成されたファイル</strong>を記述します。元のデータベースから事前に入力されています。</p>
+<p><strong>透かし</strong>にチェックを入れると、二つのフィールドが現れます。</p>
+<ul class="simple">
+<li><p><strong>出所</strong>：このファイルが何であり、どこから来たのかを、ご自身の言葉で記します。「Jean Dupont の講座 — 2026年3月12日」。このフィールドは<strong>必須</strong>です。空の間は赤い枠で囲まれ、エクスポートボタンは無効のままです。</p></li>
+<li><p><strong>備考</strong>（任意） — 利用条件、連絡先、再配布しないでほしいという依頼など。</p></li>
+</ul>
+<p>記載はあなたの発行者の識別情報で署名されます。したがって<strong>改変も偽造もできません</strong>。誰も内容を書き換えられず、あなたの名前で作ることもできません。一方で<strong>消せないわけではありません</strong>。配布されるファイルはごく普通の SQLite データベースであり、blunderDB は自由ソフトウェアだからです。記載は何かを禁じるものではなく、ファイルの出所を告げるだけです。</p>
+<p>あなたが書いたコメントは同じ識別情報で署名されます。受取人は、それがあなたからのものであること、また途中で改変されていないことを確認できます（<a class="reference internal" href="manuel_bibliotheque.html#panneau-commentaires"><span class="std std-ref">コメントパネル</span></a> を参照）。すでに別の発行者の署名が付いたコメントは、その署名を保ちます。ステータスバーには、エクスポートの終了時に、署名されたコメントの件数が表示されます。マークなしのエクスポートでは何も署名されません。</p>
+</section>
+<section id="identite-d-emetteur">
+<h3>発行者の識別情報<a class="headerlink" href="#identite-d-emetteur" title="この見出しへのリンク"></a></h3>
+<p>記載はあなたの<strong>発行者の識別情報</strong>で署名されます。これは初めてファイルに記載したときに自動で作られ、設定は不要です。データベースではなく人に属するので、あなたのすべてのファイルが<code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>のような同じ公開フィンガープリントを持ちます。</p>
+<p>このフィンガープリントを配布先に伝えておけば、ファイルが本当にあなたから来たものかを確認してもらえます。識別情報は一つのファイル（拡張子<code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>）として別のパソコンへ持ち運べ、必要ならパスフレーズで保護できます。<strong>このファイルがあればあなたの名前で署名できます。共有しないでください。</strong></p>
+<p>設定（ツールバーの歯車アイコン）の<em>発行者の識別情報</em>タブには、名前とフィンガープリントが表示され、<em>識別情報を保存…</em>、<em>識別情報を読み込む…</em>、<em>再生成…</em>が用意されています。</p>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p><strong>再生成しても、何かが失効するわけではありません。</strong>記載には署名に使われた公開鍵が埋め込まれているため、それ自体でいつまでも検証できます。識別情報のファイルが漏れた場合、それを持つ人は古いフィンガープリントで署名し続けられ、その記載は有効なままです。</p>
+<p>漏洩のあとにあなたを守るのはソフトウェアではありません。新しいフィンガープリントを公表し、古いものはもう自分のものではないと配布先に伝えることです。</p>
+<p>再生成は現在の鍵を上書きします。blunderDB は置き換える前に保存するかどうかを尋ねます。</p>
+</div>
+</section>
+<section id="proteger-une-base-par-un-mot-de-passe">
+<h3>データベースをパスワードで保護する<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="この見出しへのリンク"></a></h3>
+<p>パスワードは伏せ字で入力します。保護されたファイルを開くときも同じです。目の形のアイコンは<strong>押している間だけ</strong>パスワードを表示し、離すとすぐにまた隠します。</p>
+<p><strong>パスワード</strong>にチェックを入れると、拡張子 <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> のファイルが生成されます。保存ウィンドウで選んだ名前が <code class="docutils literal notranslate"><span class="pre">.db</span></code> で終わっていても同じです。開くには通常のデータベースを開く操作を使います。選択ウィンドウは <code class="docutils literal notranslate"><span class="pre">.db</span></code> と <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> のどちらも受け付けます。blunderDB はそこでパスワードを求め、隣に通常のデータベースを作成します。その後は何も求められません。</p>
+<p>ウィンドウでは<strong>開いたあとに保護ファイルを削除する</strong>ことも選べます。そうしなければ、同じ内容を二つの名前で持ち続けることになります。このチェックは既定では入っていません（渡すつもりなら保護ファイルは手元に残ります）。削除は開くことに成功したあとにだけ行われます。</p>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p>パスワードが守るのはファイルの<strong>受け渡し</strong>であって、データベースそのものではありません。ダウンロードフォルダーに置き忘れたファイルや、誤って転送された添付ファイルを第三者が開くのを防ぎます。パスワードを教えた相手からは守れません。</p>
+</div>
+<p>パスワードは<strong>開くたびに</strong>検証されます。そのパソコンで以前に開いたことがあるファイルでも同じです。</p>
+<p>技術的には、データベースは<strong>AES-256 の GCM モード</strong>で暗号化され、鍵はパスワードから<strong>Argon2id</strong>（メモリ 64 MiB、3 パス、4 スレッド）で導出されます。ソルトはファイルごとに無作為です。GCM モードは全体を認証するため、誤ったパスワードはそれと判別され、暗号化ファイルの改変も同様に検出されます。壊れたデータベースが黙って開かれることはありません。</p>
+<p>保護ファイルのヘッダーは<strong>平文のまま</strong>です。出所はパスワードなしでも読めます。</p>
+</section>
+<section id="lire-l-origine-d-un-fichier">
+<h3>ファイルの出所を読む<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="この見出しへのリンク"></a></h3>
+<p>アプリケーションでファイルを開き、<strong>メタデータ</strong>パネルを表示します（コマンド<code class="docutils literal notranslate"><span class="pre">meta</span></code>）。パネルの先頭に読み取り専用の<strong>出所</strong>の区画が現れ、何が記載されたか、誰が、いつ、そして署名の状態が示されます。</p>
+<ul class="simple">
+<li><p>「✓ あなたが印を付けた」：ファイルにはあなたの印がそのまま残っています。</p></li>
+<li><p>「✓ 署名を検証しました」：記載は無傷で、別の鍵によるものです。作成者から伝えられたフィンガープリントと見比べてください。</p></li>
+<li><p>「⚠ 署名が無効です」：文書が改変されたか、偽造されています。</p></li>
+</ul>
+<p>通常のデータベースではこの区画は表示されません。</p>
+<p>コマンドラインでは、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">fichier.db</span></code>が出所と署名の状態を表示します。<strong>ファイルに書き込むことは決してありません</strong>。保護されたファイルにもパスワードなしで使えます。<code class="docutils literal notranslate"><span class="pre">export</span></code>の<code class="docutils literal notranslate"><span class="pre">--watermark</span></code>と<code class="docutils literal notranslate"><span class="pre">--password</span></code>、および<code class="docutils literal notranslate"><span class="pre">identity</span></code>と<code class="docutils literal notranslate"><span class="pre">open</span></code>については<code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code>を参照してください。</p>
+</section>
+<section id="publier-une-base-pour-d-autres">
+<span id="partager-une-base"></span><h3>データベースを他者に公開する<a class="headerlink" href="#publier-une-base-pour-d-autres" title="この見出しへのリンク"></a></h3>
+<p>印の付いたデータベースは他のどんなファイルとも同じように配布される——電子メール、個人サイト、USB メモリ。blunderDB は<strong>いかなるサービスも提供しない</strong>：リポジトリも、ホストされたカタログも、アカウントもない。これは設計から直接導かれる：ファイルを受け取った側では何も記録されないのだから、たとえサービスがあったとしても報告するものが何もない。</p>
+<p>公開されたデータベースを他人が使えるものにするのは、すでに存在する四つの欄に尽きる：</p>
+<ul class="simple">
+<li><p><strong>ユーザー</strong>——誰が構築したか。名前として挙げてほしい表記で書く。</p></li>
+<li><p><strong>説明</strong>——データベースの中身を、一覧に収まる一文で：「スコアでのキューブ判断 240 件、コメント付き、中級」。</p></li>
+<li><p><strong>出所</strong>（透かしの）——このファイルが何であり、誰のために作られたか。受け取った側が<em>メタデータ</em>パネルで最初に読むものである。</p></li>
+<li><p><strong>発行者の指紋</strong>——ファイルの中ではなく、ファイルの傍らに公開する：受け取った側はそれを照合して、そのファイルがあなたから来たものであり、あなたの名を騙る誰かからのものではないことを確かめる。</p></li>
+</ul>
+<p>透かしなしで公開されたデータベースも完全に使える。ただ匿名であるというだけで、<em>メタデータ</em>パネルには<em>出所</em>の節が現れない。</p>
+<p>データベースを知ってもらうには、<a class="reference external" href="https://github.com/kevung/blunderDB/discussions">リポジトリのディスカッション</a> の <em>Show and tell</em> カテゴリが目録の役を果たす：公開する人たち自身が保つ一覧であって、blunderDB が提供するサービスではない。そこで告知するには、リンクと上の四つの欄と指紋が要る。</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="manuel_entrainement.html" class="btn btn-neutral float-left" title="トレーニング、Anki、デュエル" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="metriques.html" class="btn btn-neutral float-right" title="指標と学習ツール" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学習、レッスン、トレーニング &mdash; blunderDB 0.46.1 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=19546d11"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="統計" href="cli_stats.html" />
+    <link rel="prev" title="解析とエンジン" href="cli_analyse.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/cli_entrainement.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_entrainement.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_entrainement.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_entrainement.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_entrainement.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_entrainement.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli_entrainement.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/cli_entrainement.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">指標と学習ツール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">一般的な構文</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">利用可能なコマンド</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">インポート、エクスポート、転送</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">ライブラリ: 検索、一覧、コレクション</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">マッチ、トーナメント、ゲーム</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">解析とエンジン</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">学習、レッスン、トレーニング</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#study-la-file-d-etude-transversale">study — 横断学習キュー</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lesson-gerer-les-lecons">lesson — レッスンの管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#anki-paquets-de-repetition-espacee">anki — 間隔反復デッキ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#training-le-journal-d-entrainement">training — トレーニングジャーナル</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">統計</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">データベースの管理</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">ワークフロー例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">終了コード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+      <li class="breadcrumb-item active">学習、レッスン、トレーニング</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="etude-lecons-et-entrainement">
+<span id="cli-entrainement-chapitre"></span><h1>学習、レッスン、トレーニング<a class="headerlink" href="#etude-lecons-et-entrainement" title="この見出しへのリンク"></a></h1>
+<section id="study-la-file-d-etude-transversale">
+<h2>study — 横断学習キュー<a class="headerlink" href="#study-la-file-d-etude-transversale" title="この見出しへのリンク"></a></h2>
+<p>データベースの基準プレイヤーのブランダーのうち、まだ何も処理されていないものを、すべてのインポートをまとめて一覧表示します。コメントなし、Anki カードなし、どのコレクションにも属さず、「見た」の印もないものです(<a class="reference internal" href="guide_utilisateur.html#file-etude-transversale"><span class="std std-ref">まだ何も処理されていないブランダー</span></a>を参照)。各サブコマンドは<code class="docutils literal notranslate"><span class="pre">--db</span></code>を受け付けます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>study<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>サブコマンド：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">queue</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code>— キュー。コストの大きいものから小さいものへ、最大 50 局面。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mark</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code>— 局面に見た印を付けます。局面はキューから外れます。印はデータベースのデータで、エクスポートされません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unmark</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code>— 印を外します。局面はキューに戻ります。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code>— 局面にマークが付いているかどうかを示します。</p></li>
+</ul>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>study<span class="w"> </span>queue<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>study<span class="w"> </span>mark<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1234</span>
+</pre></div>
+</div>
+</section>
+<section id="lesson-gerer-les-lecons">
+<h2>lesson — レッスンの管理<a class="headerlink" href="#lesson-gerer-les-lecons" title="この見出しへのリンク"></a></h2>
+<p>レッスンを管理します。レッスンとは、コーチが生徒のために一度だけ書く、順序付けられたステップの並びです。各ステップにはタイトルとテキストがあり、コレクション、ポジション、その両方、またはどちらも表示しないことができます。レッスンは <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> ファイルで渡され(サブコマンド <code class="docutils literal notranslate"><span class="pre">export</span></code>)、グラフィカルインターフェースでは <code class="docutils literal notranslate"><span class="pre">:le</span></code> コマンドで読みます。すべてのサブコマンドは <code class="docutils literal notranslate"><span class="pre">--db</span></code> を取り、<code class="docutils literal notranslate"><span class="pre">list</span></code> と <code class="docutils literal notranslate"><span class="pre">show</span></code> は <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code>(既定)または <code class="docutils literal notranslate"><span class="pre">json</span></code> を受け付けます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>lesson<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>サブコマンド：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — レッスンの一覧:id、名前、ステップ数。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — レッスンのステップを順に表示します。ステップ id、タイトル、テキスト、表示されるコレクションとポジション。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;nom&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — 空のレッスンを作成します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--name</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — レッスンの名前を変更するか、説明を変更します。指定しなかったものは保持されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--confirm</span></code> — レッスンとそのステップを完全に削除します(レッスンにはごみ箱がありません)。ステップが表示していたコレクションとポジションはデータベースに残ります。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--title</span> <span class="pre">&lt;titre&gt;]</span> <span class="pre">[--text</span> <span class="pre">&lt;texte&gt;</span> <span class="pre">|</span> <span class="pre">--text-file</span> <span class="pre">&lt;fichier&gt;]</span> <span class="pre">[--collection</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--position</span> <span class="pre">&lt;id&gt;]</span></code> — レッスンの末尾にステップを追加します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--title</span> <span class="pre">…]</span> <span class="pre">[--text</span> <span class="pre">…</span> <span class="pre">|</span> <span class="pre">--text-file</span> <span class="pre">…]</span> <span class="pre">[--collection</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--position</span> <span class="pre">&lt;id&gt;]</span></code> — ステップを変更します。指定したフィールドだけが変わり、<code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">0</span></code> または <code class="docutils literal notranslate"><span class="pre">--position</span> <span class="pre">0</span></code> を指定すると、ステップが表示していたものが外れます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span></code> — ステップを削除します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reorder</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--steps</span> <span class="pre">&lt;id,id,…&gt;</span></code> — ステップの順序を設定します。リストにはレッスンのすべてのステップを指定します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;fichier&gt;</span> <span class="pre">[--analysis=false]</span> <span class="pre">[--comments=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--password</span> <span class="pre">&lt;mot</span> <span class="pre">de</span> <span class="pre">passe&gt;]</span></code> — 1 つまたは複数のレッスンを、そのステップが表示するコレクションとポジションとともに、新しいデータベースファイルへエクスポートします。<code class="docutils literal notranslate"><span class="pre">--password</span></code> を指定すると、ファイルは保護された <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> になります(透かしについては <code class="docutils literal notranslate"><span class="pre">export</span></code> コマンドを参照)。<code class="docutils literal notranslate"><span class="pre">--html</span></code> を付けると(レッスンは 1 つのみ。言語は <code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">fr|en|de|el|es|fi|it|ja|ru</span></code> で選びます)、<code class="docutils literal notranslate"><span class="pre">--out</span></code> は単体の HTML ページになります。タイトル、説明、各ステップのテキストとボード、各ポジションの保存済み解析(クイズの答えのように折りたたみ)、そしてデータベースに透かしがあればフッターにその出所が入ります。ファイルにはスクリプトもネットワークアドレスも含まれません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--undo]</span></code> — このデータベースでステップを完了としてマークするか、<code class="docutils literal notranslate"><span class="pre">--undo</span></code> でマークを外します。これはレッスンを読む人の進捗であり、どのエクスポートにも含まれません。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">progress</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — 完了とマークされたレッスンのステップを、その操作の日付とともに表示します。</p></li>
+</ul>
+<p>レッスンを含むファイルをインポートすると、そのレッスンがステップごと作成されます。同じ名前のレッスンがすでにデータベースにある場合は変更されないため、同じファイルを再度インポートしても何も変わりません。レッスンを読んでも、読む側には何も記録されません。進捗を書き込むのは <code class="docutils literal notranslate"><span class="pre">done</span></code> だけです。</p>
+<p>ライブラリ全体のエクスポート( <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code> )には、すべてのレッスンがそのステップが表示する内容とともに含まれます。部分エクスポートに含まれるのは、<code class="docutils literal notranslate"><span class="pre">lesson</span> <span class="pre">export</span></code> で名前を指定したレッスンだけです。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>lesson<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jouer contre un prime"</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span>add-step<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--lesson<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--title<span class="w"> </span><span class="s2">"Le temps"</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"Comptez les pips."</span><span class="w"> </span>--collection<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Remettre la leçon à un élève, protégée et marquée de son origine</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--out<span class="w"> </span>lecon.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret<span class="w"> </span>--watermark<span class="w"> </span><span class="s2">"Cours du 12 mars"</span>
+</pre></div>
+</div>
+</section>
+<section id="anki-paquets-de-repetition-espacee">
+<h2>anki — 間隔反復デッキ<a class="headerlink" href="#anki-paquets-de-repetition-espacee" title="この見出しへのリンク"></a></h2>
+<p>グラフィカルインターフェースの Anki パネルが持つ間隔反復デッキ（FSRS）を確認・維持します。カードの復習にはボードが必要なため、グラフィカルインターフェース側で行います。CLI は一覧表示、計測、再同期を行います。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>サブコマンド：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">decks</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — デッキのリスト：ソース、カード数、期限が来ているカード数、新規カード数。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — デッキの復習統計：合計、新規、学習中、要復習、現在期限が来ているもの、および FSRS パラメータ。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forecast</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--days</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — 今後 <code class="docutils literal notranslate"><span class="pre">n</span></code>日間（デフォルト30、最大365）について、暦日（UTC）ごとに期限を迎えるカード数。0日目には期限切れのカードがすべて含まれます。<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code>（デフォルト）はすべてのデッキを対象とします。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sync</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span></code> — デッキのソースに含まれる各ポジションについて、まだカードがなければ追加します。既存のカードのスケジュールはそのまま保持されます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retention</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code>— 所有者が選んだ目標と比べた、デッキの実測保持率。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">card</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--action</span> <span class="pre">suspend|unsuspend|bury|remove|undo</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code>— 一枚のカードに作用します。<em>保留</em>は履歴を失わずに脇へ置きます（以後セッションに出ません）。<em>埋める</em>は価値については何も言わずに翌日まで隠します。<em>削除</em>はデッキから取り除きます。ポジション自体はライブラリに残ります。デッキはその上に重ねた学習リストにすぎないからです。<em>undo</em>はカードの最後の評価を取り消し、カードはその評価の前の状態に戻り、その状態を表示します。取り消す評価がない場合、コマンドは拒否します：「the card has no review to undo」。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code>— 復習の記録。新しいものが先です（<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code>が既定で、すべてのデッキが対象。<code class="docutils literal notranslate"><span class="pre">--limit</span></code>の既定は 20）。記録はスケジューラーに実際に伝えられた内容であり、今日の予定とは別物です。誤って入力した評点が見える唯一の場所です。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">|</span> <span class="pre">--collection</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;file.apkg&gt;</span> <span class="pre">[--format</span> <span class="pre">apkg]</span> <span class="pre">[--lang</span> <span class="pre">&lt;lang&gt;]</span></code> — デッキまたはコレクションを Anki パッケージ <strong>.apkg</strong>として書き出します。Anki アプリがパソコンや電話で取り込めます。1 局面につき 1 枚のカードで、表に盤面・スコア・キューブ・ダイス、裏に最善手または正しいキューブ判断、そのエクイティ、実際の手の誤差を載せ、ラベルは <code class="docutils literal notranslate"><span class="pre">--lang</span></code>の言語です（既定は <code class="docutils literal notranslate"><span class="pre">en</span></code>）。ライブコレクションは書き出し時に上限の範囲で評価されます。書き出しはデータベースに何も書き込みません。再度書き出したものを Anki に取り込むと、カードは重複せずに更新されます。デーモンは同じファイルを <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/anki.exportApkg</span></code>で提供します。</p></li>
+</ul>
+<p>コレクションに基づくデッキは、そのコレクションを読み直します。ライブコレクションに基づくデッキは、同じ上限である 5,000 ポジションのもとでそのクエリを再実行し、切り詰められたソースを標準エラー出力に知らせます。検索に基づくデッキは、グラフィカルインターフェースが記録した検索（コマンド、ボード、その時点で見つかったポジションの識別子）をそのまま保持します。検索の文法はグラフィカルインターフェース側にしかないため、CLI は記録された識別子から再同期し、その旨を標準エラー出力に表示します。検索そのものを再実行するには、グラフィカルインターフェースでデッキを開いてください。</p>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>decks<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>forecast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--days<span class="w"> </span><span class="m">14</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>sync<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span><span class="nb">suspend</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span>undo
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>log<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">50</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--out<span class="w"> </span>paquet.apkg<span class="w"> </span>--lang<span class="w"> </span>fr
+
+<span class="c1"># Day         Due</span>
+<span class="c1"># ---         ---</span>
+<span class="c1"># 2026-09-02  12</span>
+<span class="c1"># 2026-09-03  4</span>
+<span class="c1"># ...</span>
+<span class="c1">#</span>
+<span class="c1"># 37 card(s) due over 14 day(s)</span>
+</pre></div>
+</div>
+</section>
+<section id="training-le-journal-d-entrainement">
+<span id="cli-training"></span><h2>training — トレーニングジャーナル<a class="headerlink" href="#training-le-journal-d-entrainement" title="この見出しへのリンク"></a></h2>
+<p>「トレーニング」タブのジャーナル(<a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">トレーニングパネル</span></a> を参照)を読み直し、間違えた問題を復習の材料にします。ジャーナルはグラフィカルアプリケーション、またはデーモンのクライアントが <code class="docutils literal notranslate"><span class="pre">training.save</span></code> ルート経由で書き込みます。コマンドラインは問題を出しません。</p>
+<p><strong>training sessions</strong> — セッションを新しい順に、識別子付きで表示します。PR があるのは「判断」だけです。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>sessions<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--exercise</span> <span class="pre">&lt;名前&gt;</span></code> — 単一の演習:<code class="docutils literal notranslate"><span class="pre">scores</span></code>、<code class="docutils literal notranslate"><span class="pre">pips</span></code>、<code class="docutils literal notranslate"><span class="pre">bearoff</span></code>、<code class="docutils literal notranslate"><span class="pre">evaluation</span></code>、<code class="docutils literal notranslate"><span class="pre">decision</span></code> のいずれか。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — セッション数(既定 20、0 = すべて)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — 出力形式。</p></li>
+</ul>
+<p><strong>training missed</strong> — 間違えたポジションを、それぞれ 1 回ずつ、最近間違えたものから順に表示します。時間切れの問題は間違いとして数えます。ポジションを保持するのは「判断」の問題だけです。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--exercise</span> <span class="pre">&lt;名前&gt;</span></code> — 単一の演習のセッション。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--session</span> <span class="pre">&lt;id&gt;</span></code> — 単一のセッション(<code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">sessions</span></code> の識別子)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — ポジション数(既定 0 = すべて)。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;名前&gt;</span></code> — これらのポジションから Anki デッキを作成します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">&lt;名前&gt;</span></code> — これらのポジションからコレクションを作成します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — 出力形式。JSON では <code class="docutils literal notranslate"><span class="pre">PositionIDs</span></code> に加え、作成された場合は <code class="docutils literal notranslate"><span class="pre">DeckID</span></code> または <code class="docutils literal notranslate"><span class="pre">CollectionID</span></code> を返します。</p></li>
+</ul>
+<p><strong>例：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>sessions<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--exercise<span class="w"> </span>decision
+./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--session<span class="w"> </span><span class="m">12</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Ratés de lundi"</span>
+./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--collection<span class="w"> </span><span class="s2">"Mes ratés"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="cli_analyse.html" class="btn btn-neutral float-left" title="解析とエンジン" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="cli_stats.html" class="btn btn-neutral float-right" title="統計" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Studio, lezioni e allenamento &mdash; Documentazione blunderDB 0.46.1 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e6b008ef"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="Statistiche" href="cli_stats.html" />
+    <link rel="prev" title="Analisi e motore" href="cli_analyse.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Lingue">
+  <a href="../fr/cli_entrainement.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli_entrainement.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli_entrainement.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli_entrainement.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli_entrainement.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli_entrainement.html" lang="fi" hreflang="fi">Suomi</a>
+  <span class="current" lang="it" aria-current="true">Italiano</span>
+  <a href="../ja/cli_entrainement.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli_entrainement.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <p class="caption" role="heading"><span class="caption-text">Primi passi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guida utente</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Riferimento</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manuale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metriques.html">Metriche e strumenti di studio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Elenco dei comandi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Scorciatoie da tastiera</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="cli.html">Interfaccia a riga di comando (CLI)</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">Introduzione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">Sintassi generale</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="cli.html#commandes-disponibles">Comandi disponibili</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cli_import_export.html">Importare, esportare, trasferire</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_bibliotheque.html">Libreria: ricerca, elenchi, raccolte</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_matchs.html">Incontri, tornei e partite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_analyse.html">Analisi e motore</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Studio, lezioni e allenamento</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#study-la-file-d-etude-transversale">study — La coda di studio trasversale</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lesson-gerer-les-lecons">lesson — Gestire le lezioni</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#anki-paquets-de-repetition-espacee">anki — Mazzi di ripetizione dilazionata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#training-le-journal-d-entrainement">training — Il registro di allenamento</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli_stats.html">Statistiche</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_admin.html">Amministrazione del database</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">Esempi di flusso di lavoro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">Codici di uscita</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modalità headless (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contratto API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendici</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Appendice Windows: cosa fare se Windows blocca l’avvio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Cronologia delle versioni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Informazioni</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="cli.html">Interfaccia a riga di comando (CLI)</a></li>
+      <li class="breadcrumb-item active">Studio, lezioni e allenamento</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="etude-lecons-et-entrainement">
+<span id="cli-entrainement-chapitre"></span><h1>Studio, lezioni e allenamento<a class="headerlink" href="#etude-lecons-et-entrainement" title="Link to this heading"></a></h1>
+<section id="study-la-file-d-etude-transversale">
+<h2>study — La coda di studio trasversale<a class="headerlink" href="#study-la-file-d-etude-transversale" title="Link to this heading"></a></h2>
+<p>Elenca i blunder del giocatore di riferimento del database, tutte le importazioni insieme, che nulla ha ancora trattato: senza commento, senza carta Anki, fuori da ogni collezione e senza segno «visto» (vedi <a class="reference internal" href="guide_utilisateur.html#file-etude-transversale"><span class="std std-ref">I blunder che nulla ha ancora trattato</span></a>). Ogni sottocomando accetta <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>study<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Sottocomandi:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">queue</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — La coda, dal più costoso al meno costoso; al massimo cinquanta posizioni.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mark</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Segna la posizione come vista: esce dalla coda. Il segno è un dato del database, mai esportato.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unmark</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Rimuove il segno: la posizione torna nella coda.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Indica se la posizione porta il segno.</p></li>
+</ul>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>study<span class="w"> </span>queue<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+./blunderdb<span class="w"> </span>study<span class="w"> </span>mark<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1234</span>
+</pre></div>
+</div>
+</section>
+<section id="lesson-gerer-les-lecons">
+<h2>lesson — Gestire le lezioni<a class="headerlink" href="#lesson-gerer-les-lecons" title="Link to this heading"></a></h2>
+<p>Gestisce le lezioni: sequenze ordinate di passi che un coach scrive una sola volta per un allievo. Ogni passo ha un titolo, un testo e può mostrare una collezione, una posizione, entrambe o nessuna. Una lezione si consegna in un file <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> (sottocomando <code class="docutils literal notranslate"><span class="pre">export</span></code>) e si legge nell’interfaccia grafica con il comando <code class="docutils literal notranslate"><span class="pre">:le</span></code>. Ogni sottocomando accetta <code class="docutils literal notranslate"><span class="pre">--db</span></code>; <code class="docutils literal notranslate"><span class="pre">list</span></code> e <code class="docutils literal notranslate"><span class="pre">show</span></code> accettano <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> (predefinito) o <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>lesson<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Sottocomandi:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Elenca le lezioni: id, nome, numero di passi.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — I passi di una lezione, in ordine: id del passo, titolo, testo, collezione e posizione mostrate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;nom&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Crea una lezione vuota.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--name</span> <span class="pre">&lt;nom&gt;]</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Rinomina una lezione o ne cambia la descrizione; ciò che non è indicato viene conservato.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--confirm</span></code> — Elimina la lezione e i suoi passi, in modo definitivo (per le lezioni non esiste un cestino). Le collezioni e le posizioni che i suoi passi mostravano restano nel database.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--title</span> <span class="pre">&lt;titre&gt;]</span> <span class="pre">[--text</span> <span class="pre">&lt;texte&gt;</span> <span class="pre">|</span> <span class="pre">--text-file</span> <span class="pre">&lt;fichier&gt;]</span> <span class="pre">[--collection</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--position</span> <span class="pre">&lt;id&gt;]</span></code> — Aggiunge un passo alla fine della lezione.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edit-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--title</span> <span class="pre">…]</span> <span class="pre">[--text</span> <span class="pre">…</span> <span class="pre">|</span> <span class="pre">--text-file</span> <span class="pre">…]</span> <span class="pre">[--collection</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--position</span> <span class="pre">&lt;id&gt;]</span></code> — Modifica un passo; cambiano solo i campi indicati, <code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">0</span></code> o <code class="docutils literal notranslate"><span class="pre">--position</span> <span class="pre">0</span></code> tolgono ciò che il passo mostrava.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove-step</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span></code> — Rimuove un passo.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reorder</span> <span class="pre">--lesson</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--steps</span> <span class="pre">&lt;id,id,…&gt;</span></code> — Imposta l’ordine dei passi; l’elenco indica tutti i passi della lezione.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;fichier&gt;</span> <span class="pre">[--analysis=false]</span> <span class="pre">[--comments=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--password</span> <span class="pre">&lt;mot</span> <span class="pre">de</span> <span class="pre">passe&gt;]</span></code> — Esporta una o più lezioni, con le collezioni e le posizioni che i loro passi mostrano, in un nuovo file di database; con <code class="docutils literal notranslate"><span class="pre">--password</span></code>, il file è un <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> protetto (per la filigrana vedi il comando <code class="docutils literal notranslate"><span class="pre">export</span></code>). Con <code class="docutils literal notranslate"><span class="pre">--html</span></code> (una sola lezione, <code class="docutils literal notranslate"><span class="pre">--lang</span> <span class="pre">fr|en|de|el|es|fi|it|ja|ru</span></code>), <code class="docutils literal notranslate"><span class="pre">--out</span></code> è una pagina HTML autonoma: titolo, descrizione, ogni passo con il suo testo e la sua scacchiera, l’analisi salvata di ogni posizione ripiegata come la risposta di un quiz e, a piè di pagina, l’origine della filigrana del database, se ne ha una. Il file non contiene alcuno script né indirizzo di rete.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">--step</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--undo]</span></code> — Segna un passo come fatto in questo database, o toglie il segno con <code class="docutils literal notranslate"><span class="pre">--undo</span></code>: è il progresso di chi legge la lezione, e nessuna esportazione lo porta con sé.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">progress</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Mostra i passi della lezione segnati come fatti, con la data del gesto.</p></li>
+</ul>
+<p>Importare un file che contiene una lezione la crea con i suoi passi; una lezione il cui nome esiste già nel database non viene toccata, per cui reimportare lo stesso file non cambia nulla. Leggere una lezione non registra nulla presso chi la legge; solo <code class="docutils literal notranslate"><span class="pre">done</span></code> scrive il suo progresso.</p>
+<p>L’esportazione dell’intera libreria (<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>) include tutte le lezioni con ciò che i loro passi mostrano; un’esportazione parziale include solo quelle indicate per nome, tramite <code class="docutils literal notranslate"><span class="pre">lesson</span> <span class="pre">export</span></code>.</p>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>lesson<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jouer contre un prime"</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span>add-step<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--lesson<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--title<span class="w"> </span><span class="s2">"Le temps"</span><span class="w"> </span>--text<span class="w"> </span><span class="s2">"Comptez les pips."</span><span class="w"> </span>--collection<span class="w"> </span><span class="m">3</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Remettre la leçon à un élève, protégée et marquée de son origine</span>
+./blunderdb<span class="w"> </span>lesson<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--out<span class="w"> </span>lecon.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret<span class="w"> </span>--watermark<span class="w"> </span><span class="s2">"Cours du 12 mars"</span>
+</pre></div>
+</div>
+</section>
+<section id="anki-paquets-de-repetition-espacee">
+<h2>anki — Mazzi di ripetizione dilazionata<a class="headerlink" href="#anki-paquets-de-repetition-espacee" title="Link to this heading"></a></h2>
+<p>Consulta e mantiene i mazzi di ripetizione dilazionata (FSRS) del pannello Anki dell’interfaccia grafica. La revisione di una carta richiede il board e resta nell’interfaccia grafica; la CLI elenca, misura e risincronizza.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Sottocomandi:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">decks</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Elenco dei mazzi: sorgente, numero di carte, carte in scadenza, carte nuove.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Statistiche di revisione di un mazzo: totale, nuove, in apprendimento, da rivedere, in scadenza ora, e i suoi parametri FSRS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forecast</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--days</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Carte in scadenza per giorno civile (UTC) sui prossimi <code class="docutils literal notranslate"><span class="pre">n</span></code> giorni (predefinito 30, massimo 365); il giorno 0 assorbe tutte le carte in ritardo; <code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code> (predefinito) copre tutti i mazzi.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sync</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span></code> — Aggiunge una carta per ogni posizione della sorgente del mazzo che non ne ha ancora una; le carte esistenti conservano la loro pianificazione.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retention</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — ritenzione misurata di un mazzo, confrontata con l’obiettivo scelto dal suo proprietario.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">card</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--action</span> <span class="pre">suspend|unsuspend|bury|remove|undo</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — agisce su una carta. <em>Sospendere</em> la mette da parte senza perderne lo storico (non esce più in sessione); <em>seppellire</em> la nasconde fino al giorno dopo, senza dire nulla del suo valore; <em>rimuovere</em> la cancella dal mazzo — la posizione resta nella libreria, essendo un mazzo solo una lista di studio posata sopra. <em>undo</em> annulla l’ultima valutazione della carta, che ritrova lo stato precedente a quella valutazione, e mostra tale stato. Senza valutazione da annullare, il comando rifiuta: «the card has no review to undo».</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — il registro delle revisioni, la più recente per prima (<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code>, l’impostazione predefinita, copre tutti i mazzi; <code class="docutils literal notranslate"><span class="pre">--limit</span></code> vale 20 per impostazione predefinita). Il registro è ciò che è stato realmente detto al pianificatore, in opposizione a ciò che prevede oggi: l’unico posto in cui si vede un voto inserito per errore.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">|</span> <span class="pre">--collection</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;file.apkg&gt;</span> <span class="pre">[--format</span> <span class="pre">apkg]</span> <span class="pre">[--lang</span> <span class="pre">&lt;lingua&gt;]</span></code> — Scrive un mazzo, o una collezione, come pacchetto Anki <strong>.apkg</strong> che l’applicazione Anki importa su computer o telefono: una carta per posizione, con tavoliere, punteggio, cubo e dadi sul fronte, e la mossa migliore o la decisione di cubo giusta, la sua equity e l’errore della mossa giocata sul retro, con le etichette nella lingua <code class="docutils literal notranslate"><span class="pre">--lang</span></code> (<code class="docutils literal notranslate"><span class="pre">en</span></code> per impostazione predefinita). Una collezione viva è valutata all’esportazione, entro il suo tetto. L’esportazione non scrive nulla nella base; una nuova esportazione importata in Anki aggiorna le sue carte invece di duplicarle. Il daemon serve lo stesso file su <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/anki.exportApkg</span></code>.</p></li>
+</ul>
+<p>Un mazzo basato su una raccolta rilegge la sua raccolta; basato su una raccolta viva, riesegue la sua interrogazione sotto lo stesso tetto di 5.000 posizioni e segnala sullo standard error una sorgente troncata. Un mazzo basato su una ricerca conserva la ricerca così come l’ha salvata l’interfaccia grafica (comando, tavola e identificatori delle posizioni trovate in quel momento): la grammatica di ricerca vive nell’interfaccia grafica, quindi la CLI risincronizza a partire dagli identificatori salvati e lo segnala sullo standard error — aprite il mazzo nell’interfaccia grafica per rieseguire la ricerca stessa.</p>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>decks<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>forecast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--days<span class="w"> </span><span class="m">14</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>sync<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span><span class="nb">suspend</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span>undo
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>log<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">50</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--out<span class="w"> </span>paquet.apkg<span class="w"> </span>--lang<span class="w"> </span>fr
+
+<span class="c1"># Day         Due</span>
+<span class="c1"># ---         ---</span>
+<span class="c1"># 2026-09-02  12</span>
+<span class="c1"># 2026-09-03  4</span>
+<span class="c1"># ...</span>
+<span class="c1">#</span>
+<span class="c1"># 37 card(s) due over 14 day(s)</span>
+</pre></div>
+</div>
+</section>
+<section id="training-le-journal-d-entrainement">
+<span id="cli-training"></span><h2>training — Il registro di allenamento<a class="headerlink" href="#training-le-journal-d-entrainement" title="Link to this heading"></a></h2>
+<p>Rilegge il registro della scheda Allenamento (vedi <a class="reference internal" href="manuel_entrainement.html#panneau-entrainement"><span class="std std-ref">Pannello Allenamento</span></a>) e trasforma le domande sbagliate in materiale da ripassare. Il registro è scritto dall’applicazione grafica, o da un client del demone tramite la route <code class="docutils literal notranslate"><span class="pre">training.save</span></code>; la riga di comando non pone domande.</p>
+<p><strong>training sessions</strong> — Le sessioni, la più recente per prima, con il loro identificatore; il PR esiste solo per <em>Decisione</em>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>sessions<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--exercise</span> <span class="pre">&lt;nome&gt;</span></code> — Un solo esercizio: <code class="docutils literal notranslate"><span class="pre">scores</span></code>, <code class="docutils literal notranslate"><span class="pre">pips</span></code>, <code class="docutils literal notranslate"><span class="pre">bearoff</span></code>, <code class="docutils literal notranslate"><span class="pre">evaluation</span></code> o <code class="docutils literal notranslate"><span class="pre">decision</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Numero di sessioni (predefinito 20; 0 = tutte).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Formato di output.</p></li>
+</ul>
+<p><strong>training missed</strong> — Le posizioni sbagliate, ciascuna una volta, la sbagliata più di recente per prima; una domanda scaduta conta come sbagliata. Solo le domande di <em>Decisione</em> conservano la loro posizione.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>&lt;fichier&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Opzioni:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--exercise</span> <span class="pre">&lt;nome&gt;</span></code> — Le sessioni di un solo esercizio.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--session</span> <span class="pre">&lt;id&gt;</span></code> — Una sola sessione (un identificatore di <code class="docutils literal notranslate"><span class="pre">training</span> <span class="pre">sessions</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span> <span class="pre">&lt;n&gt;</span></code> — Numero di posizioni (predefinito 0 = tutte).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">&lt;nome&gt;</span></code> — Crea un mazzo Anki con queste posizioni.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection</span> <span class="pre">&lt;nome&gt;</span></code> — Crea una collezione con queste posizioni.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text|json</span></code> — Formato di output; in JSON, <code class="docutils literal notranslate"><span class="pre">PositionIDs</span></code>, e <code class="docutils literal notranslate"><span class="pre">DeckID</span></code> o <code class="docutils literal notranslate"><span class="pre">CollectionID</span></code> quando vengono creati.</p></li>
+</ul>
+<p><strong>Esempi:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>training<span class="w"> </span>sessions<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--exercise<span class="w"> </span>decision
+./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--session<span class="w"> </span><span class="m">12</span><span class="w"> </span>--deck<span class="w"> </span><span class="s2">"Ratés de lundi"</span>
+./blunderdb<span class="w"> </span>training<span class="w"> </span>missed<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--collection<span class="w"> </span><span class="s2">"Mes ratés"</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="cli_analyse.html" class="btn btn-neutral float-left" title="Analisi e motore" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="cli_stats.html" class="btn btn-neutral float-right" title="Statistiche" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
