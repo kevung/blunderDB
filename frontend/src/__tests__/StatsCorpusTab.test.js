@@ -83,7 +83,7 @@ describe('StatsFilterBar — provenance', () => {
     });
 
     test('a calculation whose library left before its answer lowers « Loading » and frees the buttons', async () => {
-        /** @type {(v: unknown) => void} */
+        /** @type {(v: any) => void} */
         let answer = () => {};
         vi.mocked(PRByWindow).mockImplementationOnce(() => new Promise((r) => (answer = r)));
         const { container } = render(StatsCorpusTab, { props: { filter } });

@@ -33,7 +33,7 @@ export function confirmAction(message, { confirmLabel = '', cancelLabel = '', ch
     confirmModalStore.set({ message, confirmLabel, cancelLabel, choices, tone });
     const mark = libraryOnScreenMark();
     return new Promise((resolve) => {
-        pendingResolve = (/** @type {unknown} */ answer) => resolve(answer && libraryStillOnScreen(mark) ? answer : false);
+        pendingResolve = (/** @type {unknown} */ answer) => resolve(/** @type {boolean} */ (answer && libraryStillOnScreen(mark) ? answer : false));
     });
 }
 
