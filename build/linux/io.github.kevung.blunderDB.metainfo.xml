@@ -86,6 +86,11 @@
   </branding>
 
   <releases>
+    <release version="0.46.1" date="2026-10-23">
+      <description>
+        <p>Lists of matches, tournaments, collections, lessons and statistics refresh after any write, including a copy from another open database.</p>
+      </description>
+    </release>
     <release version="0.46.0" date="2026-10-23">
       <description>
         <ul>
