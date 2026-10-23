@@ -3552,6 +3552,7 @@
         "busyRollout": "Rollout kirjoittaa aktiiviseen kirjastoon: odota sen päättymistä tai pysäytä se (rollout stop) ennen kirjaston vaihtamista",
         "busyImport": "Tuonti kirjoittaa aktiiviseen kirjastoon tiedosto kerrallaan: odota sen päättymistä ennen kuin vaihdat kirjastoa",
         "switching": "Kirjaston vaihto on käynnissä: odota sen päättymistä",
+        "answerDropped": "Näytöllä oleva kirjasto vaihtui sillä välin: vahvistusta ei sovellettu",
         "jobRunning": "Taustatehtävä on käynnissä tässä kirjastossa",
         "jobDone": "Taustatehtävä päättyi tässä kirjastossa: näytä se nähdäksesi tuloksen",
         "busyDisplay": "Turnaus näytetään kerhon verkossa: lopeta näyttäminen (Johtaminen, Näytä seuran verkossa) ennen kirjaston vaihtamista",

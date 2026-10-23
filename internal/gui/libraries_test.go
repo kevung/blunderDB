@@ -300,3 +300,29 @@ func TestLibraryGroups_RolloutOfAListReadInAnotherGroupIsRefused(t *testing.T) {
 		t.Errorf("a rollout started: %+v", st)
 	}
 }
+
+// Each Wails call runs on its own goroutine: a switch asked while a rollout of
+// a list is being started either lands before the check (refused) or finds the
+// rollout registered (busy), never between the two.
+func TestLibraryGroups_SwitchDuringRolloutStartCannotSlipIn(t *testing.T) {
+	a, _ := twoGroups(t)
+	switched := make(chan error, 1)
+	a.rolloutClaimHook = func() {
+		go func() { switched <- a.ActivateLibraryGroup(2) }()
+		select {
+		case err := <-switched:
+			switched <- err
+		case <-time.After(200 * time.Millisecond):
+		}
+	}
+	_, startErr := a.StartRolloutIDs([]int64{1}, rollout.Fast(), 1)
+	switchErr := <-switched
+	a.stopDatabaseJobs(time.Second)
+	if startErr == nil && switchErr == nil {
+		t.Fatal("the rollout of a list read in group 1 started and the switch to group 2 went through")
+	}
+	var busy *database.BusyError
+	if startErr == nil && !errors.As(switchErr, &busy) {
+		t.Errorf("switch during the start: err = %v, want a BusyError", switchErr)
+	}
+}

@@ -12,10 +12,11 @@
  */
 
 import { must } from './helpers/must.js';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { get } from 'svelte/store';
 import { confirmAction, chooseAction, resolveConfirm, confirmModalStore } from '../services/confirmService.js';
 import { libraryReplaced, groupSwitchingStore } from '../stores/groupActivityStore.js';
+import { statusBarTextStore } from '../stores/uiStore.js';
 
 describe('confirmAction / resolveConfirm', () => {
     test('resolves true when confirmed', async () => {
@@ -24,6 +25,15 @@ describe('confirmAction / resolveConfirm', () => {
         resolveConfirm(true);
         await expect(pending).resolves.toBe(true);
         expect(get(confirmModalStore)).toBeNull();
+    });
+
+    test('a no after a switch leaves the status bar alone', async () => {
+        const p = confirmAction('Delete?');
+        statusBarTextStore.set('');
+        libraryReplaced();
+        resolveConfirm(false);
+        expect(await p).toBe(false);
+        expect(get(statusBarTextStore)).toBe('');
     });
 
     test('resolves false when cancelled', async () => {
@@ -44,9 +54,11 @@ describe('confirmAction / resolveConfirm', () => {
 
     test('confirmed after another library came on screen, it says no: what it confirms is of the library left', async () => {
         const p = confirmAction('Roll out these 42 positions?');
+        statusBarTextStore.set('');
         libraryReplaced();
         resolveConfirm(true);
         expect(await p).toBe(false);
+        await vi.waitFor(() => expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.answerDropped', i18nParams: null }));
         const c = chooseAction('Open or merge?', [{ value: 'merge', label: 'Merge' }]);
         libraryReplaced();
         resolveConfirm('merge');
@@ -55,10 +67,12 @@ describe('confirmAction / resolveConfirm', () => {
 
     test('confirmed while a switch is in flight, it says no', async () => {
         const p = confirmAction('Delete?');
+        statusBarTextStore.set('');
         groupSwitchingStore.set(true);
         try {
             resolveConfirm(true);
             expect(await p).toBe(false);
+            await vi.waitFor(() => expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'libraryGroups.answerDropped' }));
         } finally {
             groupSwitchingStore.set(false);
         }

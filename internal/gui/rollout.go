@@ -153,7 +153,7 @@ func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) (int
 	if err != nil {
 		return 0, err
 	}
-	return a.startRolloutBatch(settings, func(ctx context.Context) (*database.RolloutPlan, error) {
+	return a.startRolloutBatch(settings, nil, func(ctx context.Context) (*database.RolloutPlan, error) {
 		return a.db.PlanRollout(ctx, filters, settings)
 	})
 }
@@ -175,30 +175,48 @@ func (a *App) StartRolloutIDs(ids []int64, settings rollout.Settings, group int)
 	if a.db == nil {
 		return 0, errors.New("rollout: no database is open")
 	}
-	if group != a.activeGroup() {
-		return 0, ErrListOfAnotherLibrary
-	}
 	if err := a.db.RefuseReadOnly(); err != nil {
 		return 0, err
 	}
-	return a.startRolloutBatch(settings, func(ctx context.Context) (*database.RolloutPlan, error) {
+	onScreen := func() error {
+		a.libs.init()
+		if group != a.libs.active {
+			return ErrListOfAnotherLibrary
+		}
+		return nil
+	}
+	return a.startRolloutBatch(settings, onScreen, func(ctx context.Context) (*database.RolloutPlan, error) {
 		return a.db.PlanRolloutIDs(ctx, ids, settings)
 	})
 }
 
 // startRolloutBatch runs the batch gather selects, refusing while a gammonNet
-// batch runs.
-func (a *App) startRolloutBatch(settings rollout.Settings, gather func(context.Context) (*database.RolloutPlan, error)) (int64, error) {
+// batch runs. onScreen, when set, vets the group on screen; it runs under
+// libs.mu together with the rollout's registration, so that no switch slips
+// between the check and the moment libraryBusy sees the rollout.
+func (a *App) startRolloutBatch(settings rollout.Settings, onScreen func() error, gather func(context.Context) (*database.RolloutPlan, error)) (int64, error) {
+	a.libs.mu.Lock()
+	if onScreen != nil {
+		if err := onScreen(); err != nil {
+			a.libs.mu.Unlock()
+			return 0, err
+		}
+	}
+	if hook := a.rolloutClaimHook; hook != nil {
+		hook()
+	}
 	a.roMu.Lock()
 	a.gnBatchMu.Lock()
 	gammonNetRunning := a.gnBatchDone != nil
 	a.gnBatchMu.Unlock()
 	a.roMu.Unlock()
 	if gammonNetRunning {
+		a.libs.mu.Unlock()
 		return 0, &database.BusyError{Job: database.JobGammonNet}
 	}
 
 	ctx, stopped, job := a.beginRollout(RolloutStatus{Running: true, Kind: "batch", MaxGames: settings.MaxGames})
+	a.libs.mu.Unlock()
 	go func() {
 		defer close(stopped)
 		defer recoverBackground(a.ctx, "rollout batch")

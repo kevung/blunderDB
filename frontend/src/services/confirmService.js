@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import { libraryOnScreenMark, libraryStillOnScreen } from '../stores/libraryEpoch.js';
+import { tMsg } from '../i18n';
 
 /**
  * Promise-based confirm/cancel dialog (WarningModal in "confirm" mode). Kept
@@ -17,7 +18,8 @@ let pendingResolve = null;
  * still pending when a new one starts resolves false first, so a stale
  * confirmation never fires. So does one answered after another library came
  * on screen: what it confirms names rows (ids read, a list counted) of the
- * library left, and acting on them would write into the one coming.
+ * library left, and acting on them would write into the one coming; the status
+ * bar then says the answer was dropped.
  *
  * @param {string} message
  * @param {{confirmLabel?: string, cancelLabel?: string, choices?: {value: string, label: string, primary?: boolean}[], tone?: 'danger' | 'primary'}} [options]
@@ -33,7 +35,15 @@ export function confirmAction(message, { confirmLabel = '', cancelLabel = '', ch
     confirmModalStore.set({ message, confirmLabel, cancelLabel, choices, tone });
     const mark = libraryOnScreenMark();
     return new Promise((resolve) => {
-        pendingResolve = (/** @type {unknown} */ answer) => resolve(/** @type {boolean} */ (answer && libraryStillOnScreen(mark) ? answer : false));
+        pendingResolve = (/** @type {unknown} */ answer) => {
+            // A yes turned into a no says so: the user answered yes and sees nothing happen.
+            if (answer && !libraryStillOnScreen(mark)) {
+                // Imported late: uiStore derives from confirmModalStore.
+                void import('../stores/uiStore.js').then(({ statusBarTextStore }) => statusBarTextStore.set(tMsg('libraryGroups.answerDropped')));
+                answer = false;
+            }
+            resolve(/** @type {boolean} */ (answer));
+        };
     });
 }
 

@@ -402,7 +402,8 @@ export async function startRolloutOfSearch(settings) {
     const problem = settingsProblem(settings);
     if (problem) return refuse(problem);
     // The group the ids are read in: the backend refuses them once another is on screen, where
-    // they would name other positions (the confirmation below leaves time for a switch).
+    // they would name other positions. The reads below are awaited, and a switch can land
+    // between them and the start.
     const group = get(activeGroupId);
     // A paged list (a collection, search results) holds no ids of its own: read whole first.
     const ids = (await withDisplayedPositionIDs((listed) => listed)) ?? [];
@@ -423,7 +424,9 @@ export async function startRolloutOfSearch(settings) {
     if (get(activeGroupId) !== group) return refuse(get(t)('rollout.listOfAnotherLibrary'));
     try {
         rolloutStore.update((s) => ({ ...s, error: '' }));
-        await startJob(() => StartRolloutIDs(ids, wire, group));
+        // Never sent while a switch rebinds the handle: the ids name rows of the library on screen.
+        const started = await writingOnScreen(async () => (await startJob(() => StartRolloutIDs(ids, wire, group)), true));
+        if (!started) return refuse(get(t)('libraryGroups.switching'));
         rolloutStore.update((s) => ({ ...idleRollout(), job: s.job, running: true, kind: 'batch', total, revision: s.revision }));
         await syncRolloutStatus();
         return '';

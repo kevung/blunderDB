@@ -48,6 +48,10 @@ type App struct {
 	// Wails: a test has no window to listen on. Atomic because a test sets
 	// it while a queued batch may already be emitting.
 	emitHook atomic.Pointer[func(name string, payload ...any)]
+	// rolloutClaimHook, when set, runs between a batch rollout's check of
+	// the group on screen and its registration: a test's window for a
+	// concurrent switch.
+	rolloutClaimHook func()
 
 	// gnEvalMu/gnEvalCancel govern the Eval panel's at-rest search
 	// (gammonnet_eval.go); gnLivePool is its shared searcher.

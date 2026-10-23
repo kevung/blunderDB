@@ -3552,6 +3552,7 @@
         "busyRollout": "A rollout is writing the active library: wait for it or stop it (rollout stop) before switching library",
         "busyImport": "An import is writing the active library file by file: wait for it to finish before switching library",
         "switching": "A library switch is in progress: wait for it to finish",
+        "answerDropped": "The library on screen changed meanwhile: the confirmation was not applied",
         "jobRunning": "A background task is working in this library",
         "jobDone": "A background task finished in this library: show it to see the result",
         "busyDisplay": "The tournament is shown on the club network: stop showing it (Direction, Show on the club network) before switching library",

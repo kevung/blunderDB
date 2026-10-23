@@ -55,7 +55,7 @@ const { databasePathStore } = await import('../stores/databaseStore.js');
 const { rolloutStore, rolloutChoiceStore, idleRollout } = await import('../stores/rolloutStore.js');
 const { analysisStore, selectedMoveStore } = await import('../stores/analysisStore.js');
 const { statusBarTextStore } = await import('../stores/uiStore.js');
-const { activeGroupId, groupSwitchingStore } = await import('../stores/groupActivityStore.js');
+const { activeGroupId, groupSwitchingStore, libraryReplaced } = await import('../stores/groupActivityStore.js');
 const RolloutResults = (await import('../components/RolloutResults.svelte')).default;
 const RolloutSettings = (await import('../components/RolloutSettings.svelte')).default;
 const RolloutStrip = (await import('../components/RolloutStrip.svelte')).default;
@@ -548,7 +548,9 @@ describe('command', () => {
 
     test('a switch of group during the confirmation refuses the ids read in the group left', async () => {
         const readIn = get(activeGroupId);
+        // As switchGroup does: the backend exchanges the handles, then the screen follows.
         confirmAction.mockImplementationOnce(async () => {
+            libraryReplaced();
             activeGroupId.set(readIn + 1);
             return true;
         });
@@ -559,6 +561,20 @@ describe('command', () => {
             expect(startIDs).not.toHaveBeenCalled();
         } finally {
             activeGroupId.set(readIn);
+        }
+    });
+
+    test('the ids of the list are not sent while a switch rebinds the handle', async () => {
+        confirmAction.mockImplementationOnce(async () => {
+            groupSwitchingStore.set(true);
+            return true;
+        });
+        try {
+            await runRolloutCommand('search');
+            await waitFor(() => expect(get(rolloutStore).error).toBeTruthy());
+            expect(startIDs).not.toHaveBeenCalled();
+        } finally {
+            groupSwitchingStore.set(false);
         }
     });
 
