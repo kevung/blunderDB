@@ -343,9 +343,9 @@ describe('the Search criteria and the Matches list of a group', () => {
         expect(get(matchPanelRefreshTriggerStore)).toBe(bumps);
 
         await activateGroup(groupB);
-        await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 20)));
-        // B's list was never read: it is now.
-        expect(get(matchPanelRefreshTriggerStore)).toBe(bumps + 1);
+        // B's list was never read: it is now. Waited for, not timed: under a loaded suite
+        // the frame and the timer can land before the repaint is scheduled.
+        await vi.waitFor(() => expect(get(matchPanelRefreshTriggerStore)).toBe(bumps + 1));
     });
 });
 
