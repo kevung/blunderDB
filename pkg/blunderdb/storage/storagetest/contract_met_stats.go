@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -49,7 +48,7 @@ func testMETDifferentLeftOut(t *testing.T, s storage.Storage) {
 
 	retained("built-in current, nothing tagged", 2, "Abe", "Ann", "Bea", "Bob")
 
-	id, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Rockwell-Kazaross", Digest: "rk", Source: "<met/>"})
+	id, err := mt.Save(ctx, "", ValidMET("Rockwell-Kazaross", 4))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -140,7 +139,7 @@ func testMETMixedMatchLeavesThePlayersTable(t *testing.T, s storage.Storage) {
 		}
 	}
 
-	id, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Rockwell-Kazaross", Digest: "rk", Source: "<met/>"})
+	id, err := mt.Save(ctx, "", ValidMET("Rockwell-Kazaross", 4))
 	if err != nil {
 		t.Fatal(err)
 	}

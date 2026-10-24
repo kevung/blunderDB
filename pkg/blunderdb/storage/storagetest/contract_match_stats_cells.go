@@ -140,7 +140,7 @@ func testMatchStatsMETClearedInvalidates(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	_, pos := statsFixtureMatch(t, s, 0, "Ann", "Abe")
 	mt := s.MatchEquityTables()
-	id, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Rockwell-Kazaross", Digest: "rk", Source: "<met/>"})
+	id, err := mt.Save(ctx, "", ValidMET("Rockwell-Kazaross", 4))
 	if err != nil {
 		t.Fatal(err)
 	}
