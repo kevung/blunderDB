@@ -457,6 +457,23 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_PositionAnalysis"
+  /v1/analyses.put:
+    post:
+      operationId: analyses.put
+      tags: [analyses]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/analysisSaveReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/analyses.queueStatus:
     post:
       operationId: analyses.queueStatus

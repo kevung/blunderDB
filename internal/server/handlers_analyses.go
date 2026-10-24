@@ -23,14 +23,26 @@ func (s *Server) analysisRoutes() []route {
 		// Gauges of the analysis queue: positions with and without an
 		// analysis, and the counters of the tenant's running or last sweep.
 		{http.MethodPost, "/v1/analyses.queueStatus", rpc(s.analysisQueueStatus)},
+		// The save a user's analysis goes through: folded into what the
+		// position carries, as the GUI and the CLI save it.
 		{http.MethodPost, "/v1/analyses.save", rpcVoid(func(ctx context.Context, scope string, req analysisSaveReq) error {
+			if req.Analysis == nil {
+				return errMissing("analysis")
+			}
+			return storage.SaveMergedAnalysis(ctx, as(), scope, req.PositionID, *req.Analysis)
+		})},
+		// The analysis as given, replacing the stored one: the storage
+		// contract's Save, which the remote backend relays.
+		{http.MethodPost, "/v1/analyses.put", rpcVoid(func(ctx context.Context, scope string, req analysisSaveReq) error {
 			if req.Analysis == nil {
 				return errMissing("analysis")
 			}
 			return as().Save(ctx, scope, req.PositionID, req.Analysis)
 		})},
+		// The analysis with what the matches played at the position, as the
+		// GUI and the CLI read it.
 		{http.MethodPost, "/v1/analyses.load", rpc(func(ctx context.Context, scope string, req positionIDReq) (*domain.PositionAnalysis, error) {
-			return as().Load(ctx, scope, req.PositionID)
+			return storage.LoadAnalysisWithPlayed(ctx, s.opts.Storage, scope, req.PositionID)
 		})},
 		// Analyses of the listed positions, in id order; an id without one is
 		// skipped, as positions.loadByIds does.

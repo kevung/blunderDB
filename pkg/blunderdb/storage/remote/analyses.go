@@ -11,17 +11,25 @@ type positionIDReq struct {
 	PositionID int64 `json:"positionId"`
 }
 
+// Save relays analyses.put, which replaces the stored analysis as the
+// contract says; analyses.save folds it into the stored one.
 func (s analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
-	return s.c.call(ctx, scope, "analyses.save", struct {
+	return s.c.call(ctx, scope, "analyses.put", struct {
 		PositionID int64                    `json:"positionId"`
 		Analysis   *domain.PositionAnalysis `json:"analysis"`
 	}{positionID, a}, nil)
 }
 
+// Load reads analyses.loadByIds for the one position: analyses.load adds
+// the moves the matches played there, which the contract's Load does not.
 func (s analysisStore) Load(ctx context.Context, scope string, positionID int64) (*domain.PositionAnalysis, error) {
-	var a *domain.PositionAnalysis
-	if err := s.c.call(ctx, scope, "analyses.load", positionIDReq{positionID}, &a); err != nil {
+	byID, err := s.LoadMany(ctx, scope, []int64{positionID})
+	if err != nil {
 		return nil, err
+	}
+	a := byID[positionID]
+	if a == nil {
+		return nil, storage.ErrNotFound
 	}
 	return a, nil
 }
@@ -52,7 +60,7 @@ func (s analysisStore) RepairDenormalisedColumns(ctx context.Context, scope stri
 	return r.Repaired, err
 }
 
-// SaveMany has no batch route: it asks analyses.save once per analysis.
+// SaveMany has no batch route: it asks analyses.put once per analysis.
 func (s analysisStore) SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error {
 	return storage.SaveAnalysesEach(ctx, s, scope, analyses)
 }

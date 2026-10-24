@@ -151,7 +151,7 @@ func (d *Database) positionAnalysisPage(offset int) ([]Position, map[int64]*Posi
 			checkerMoves = append(checkerMoves, mv.CheckerMove)
 			cubeActions = append(cubeActions, mv.CubeAction)
 		}
-		mergePlayedActions(a, checkerMoves, cubeActions)
+		storage.MergePlayedActions(a, checkerMoves, cubeActions)
 		if len(a.AllCubeAnalyses) > 0 {
 			engine.SortCubeAnalysesByEngine(a.AllCubeAnalyses)
 		}

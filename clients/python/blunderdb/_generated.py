@@ -94,6 +94,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/analyses.loadByIds — JSON."
         return self._call("/v1/analyses.loadByIds", payload)
 
+    def analyses_put(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/analyses.put — JSON."
+        return self._call("/v1/analyses.put", payload)
+
     def analyses_queue_status(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/analyses.queueStatus — hand-written handler — see openapi.yaml."
         return self._call("/v1/analyses.queueStatus", payload)
