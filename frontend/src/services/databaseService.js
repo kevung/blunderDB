@@ -1,6 +1,7 @@
 import { writable, get } from 'svelte/store';
 import { SaveDatabaseDialog, OpenDatabaseDialog, PrepareDemoDatabase, LibraryGroupHolding } from '../../wailsjs/go/gui/App.js';
 import {
+    IsOpenDatabase,
     RecreateDatabase,
     CheckDatabaseVersion,
     OpenDatabase,
@@ -92,6 +93,17 @@ function showNoDatabaseOpen() {
 }
 
 /**
+ * After a failed Setup or Open: no library on screen only if the backend no longer carries the
+ * one it had. A refusal before any change (the file open in another group, a path refused) keeps
+ * it, and so does the screen.
+ * @param {string} previous the path on screen before the attempt
+ */
+async function showWhatFailedLeft(previous) {
+    if (previous && (await IsOpenDatabase(previous).catch(() => false))) return;
+    showNoDatabaseOpen();
+}
+
+/**
  * The library group holding filePath, 0 when none (or when the backend cannot say).
  * @param {string} filePath
  */
@@ -156,6 +168,7 @@ function getMajorVersion(/** @type {string} */ version) {
 
 export async function newDatabase() {
     logger.log('newDatabase');
+    const previous = get(databasePathStore);
     let setupFailed = false;
     try {
         const filePath = await SaveDatabaseDialog();
@@ -206,7 +219,7 @@ export async function newDatabase() {
     } catch (error) {
         logger.error('Error opening file dialog:', error);
         setStatusBarMessage(tMsg('commands.errorCreatingDb'));
-        if (setupFailed) showNoDatabaseOpen();
+        if (setupFailed) await showWhatFailedLeft(previous);
     } finally {
         statusBarModeStore.set('NORMAL');
     }
@@ -309,18 +322,24 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
     // after restoreSessionState's microtasks and overwrite the EVAL/EDIT mode
     // it re-enters.
     statusBarModeStore.set('NORMAL');
+    const previous = get(databasePathStore);
     let openFailed = false;
     try {
-        resetAnalysisAndCommentStores();
-        resetAnkiStores();
-        resetTranscriptionStores();
-
-        (await import('../stores/directionStore.js')).forgetDirection();
+        const { forgetDirection } = await import('../stores/directionStore.js');
+        // Once the backend carries the library coming, never before: a refused open leaves the
+        // screen on the library it kept.
+        const forgetLibraryLeft = () => {
+            resetAnalysisAndCommentStores();
+            resetAnkiStores();
+            resetTranscriptionStores();
+            forgetDirection();
+        };
         let opened = true;
         try {
             // In place, the group's handle changes library: a switch would photograph the wrong
             // one, and a write still on its way would land in the library coming.
-            if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), libraryReplaced(), true))) === true;
+            if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), libraryReplaced(), forgetLibraryLeft(), true))) === true;
+            else forgetLibraryLeft();
         } catch (error) {
             // Refused (a job or a write holds the library): the backend kept it, so does the screen.
             if (isBusyError(error)) {
@@ -377,7 +396,7 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         setStatusBarMessage(tMsg('commands.errorOpeningDb'));
         statusBarModeStore.set('NORMAL');
         // A failure after a successful open leaves the database open, and its path displayed.
-        if (openFailed) showNoDatabaseOpen();
+        if (openFailed) await showWhatFailedLeft(previous);
     }
 }
 

@@ -114,7 +114,7 @@
     // fields of one row form a blur group: tabbing between them keeps editing.
     const collectionEdit = createInlineEdit({
         blurGroup: 'tr, .desc-bar',
-        onSave: async (id, draft) => {
+        onSave: async (id, draft, mark) => {
             const collection = collections.find((c) => c.id === id) || (activeCollection?.id === id ? activeCollection : null);
             if (!collection) return;
             const newName = draft.name.trim() || collection.name;
@@ -125,7 +125,7 @@
                 return;
             }
             try {
-                await UpdateCollection(collection.id, newName, newDesc);
+                if (!(await writingOnLibrary(mark, async () => (await UpdateCollection(collection.id, newName, newDesc), true)))) return;
                 await loadCollections();
                 if (activeCollection && activeCollection.id === collection.id) {
                     activeCollectionStore.set({ ...activeCollection, name: newName, description: newDesc });

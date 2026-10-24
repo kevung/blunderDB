@@ -9,7 +9,7 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
 vi.mock('../stores/directionStore', () => ({
     hallEnterResult: vi.fn(async () => null),
-    hallEnterForfeit: vi.fn(async () => null),
+    hallEnterForfeit: vi.fn(async () => ({})),
     hallMoveMatch: vi.fn(async () => null),
     hallCancelMatch: vi.fn(async () => null),
     hallConfirmProposal: vi.fn(async () => null),

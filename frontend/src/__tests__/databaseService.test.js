@@ -20,6 +20,7 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     RecreateDatabase: vi.fn(),
+    IsOpenDatabase: vi.fn(() => Promise.resolve(false)),
     CheckDatabaseVersion: vi.fn(),
     OpenDatabase: vi.fn(),
     GetDatabaseVersion: vi.fn(),
@@ -55,6 +56,7 @@ import { libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { tMsg } from '../i18n';
 import {
     RecreateDatabase,
+    IsOpenDatabase,
     CheckDatabaseVersion,
     OpenDatabase,
     GetDatabaseVersion,
@@ -205,6 +207,18 @@ describe('newDatabase', () => {
         expect(get(statusBarModeStore)).toBe('NORMAL');
         expect(loadAllPositions).not.toHaveBeenCalled();
         expect(get(databasePathStore)).toBe('');
+    });
+
+    test('a creation refused before any change leaves the library the backend kept on screen', async () => {
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
+        databasePathStore.set('/tmp/old.db');
+        vi.mocked(RecreateDatabase).mockRejectedValueOnce(new Error('already open in another group'));
+        vi.mocked(IsOpenDatabase).mockResolvedValueOnce(true);
+
+        await newDatabase();
+
+        expect(IsOpenDatabase).toHaveBeenCalledWith('/tmp/old.db');
+        expect(get(databasePathStore)).toBe('/tmp/old.db');
     });
 });
 

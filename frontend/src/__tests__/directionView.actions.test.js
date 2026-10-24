@@ -21,6 +21,7 @@ import { directionStore, openDirectionIdStore } from '../stores/directionStore.j
 import { resolveConfirm } from '../services/confirmService.js';
 import { statusBarTextStore } from '../stores/uiStore.js';
 import { t } from '../i18n';
+import { HoldLibrary } from '../stores/libraryHold.js';
 
 const tr = (/** @type {string} */ k, /** @type {any} */ p = undefined) => get(t)(k, p);
 const players = [
@@ -166,6 +167,16 @@ describe('la fiche de résultat', () => {
         await fireEvent.click(screen.getByTestId('direction-result-winner-a'));
         await flush();
         expect(DB.EnterResult).toHaveBeenCalledWith(1, 'm1', 'pa', 7, 3, '');
+    });
+
+    test('un résultat non envoyé (la bibliothèque a changé) laisse la fiche ouverte et le dit', async () => {
+        await openCard();
+        vi.mocked(HoldLibrary).mockRejectedValueOnce(new Error('library replaced'));
+        await fireEvent.click(screen.getByTestId('direction-result-winner-b'));
+        await flush();
+        expect(DB.EnterResult).not.toHaveBeenCalled();
+        expect(status()).toMatchObject({ i18nKey: 'libraryGroups.writeDropped' });
+        expect(screen.getByTestId('direction-result-card')).toBeTruthy();
     });
 
     test('un résultat refusé reste sur la fiche et le dit', async () => {

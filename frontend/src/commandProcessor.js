@@ -19,6 +19,7 @@ import { startStudyBacklog } from './services/studyQueueService.js';
 // The search-token grammar lives in searchFilterService.js (shared with the "retour" replay);
 // re-exported so existing importers keep their path.
 import { parseSearchTokens, stripQuotedTokens } from './services/searchFilterService.js';
+import { writingOnScreen } from './stores/groupActivityStore.js';
 export { stripQuotedTokens };
 
 // The App wires one handler per command family; any of them may be absent.
@@ -350,7 +351,8 @@ function insertTags(tags) {
         // NOTE: SaveComment expects the position *id*, not the array index.
         const positionId = positionsStore.idAt(get(currentPositionIndexStore));
         if (positionId != null) {
-            SaveComment(positionId, updatedText);
+            // Never sent while a switch rebinds the handle; a switch begun after waits for it.
+            void writingOnScreen(() => SaveComment(positionId, updatedText));
         }
         return updatedText;
     });

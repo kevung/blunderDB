@@ -1,7 +1,7 @@
 <script>
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import NewButton from './panels/NewButton.svelte';
-    import { onMount } from 'svelte';
+    import { onMount, untrack } from 'svelte';
     import {
         ankiDecksStore,
         selectedAnkiDeckStore,
@@ -19,7 +19,7 @@
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { statusBarTextStore, activeTabStore } from '../stores/uiStore';
-    import { databaseLoadedStore, libraryChangedStore } from '../stores/databaseStore';
+    import { databaseLoadedStore, libraryChangedStore, databasePathStore } from '../stores/databaseStore';
     import { collectionsStore } from '../stores/collectionStore';
     import { positionsStore } from '../stores/positionStore';
     import { listOriginStore } from '../stores/listOriginStore.js';
@@ -40,7 +40,7 @@
     import ExplanationLine from './ExplanationLine.svelte';
     import AnswerMask from './AnswerMask.svelte';
     import { buildScoreCard, UNORDERED_SCORES } from '../services/scoreCard.js';
-    import { readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
+    import { readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary, libraryOnScreenMark } from '../stores/groupActivityStore.js';
 
     // Read-only store mirrors.
     let decks = $derived($ankiDecksStore || []);
@@ -120,11 +120,11 @@
 
     // Edit deck (name + description inline)
     const deckEdit = createInlineEdit({
-        onSave: async (deckId, draft) => {
+        onSave: async (deckId, draft, mark) => {
             const deck = decks.find((d) => d.id === deckId);
             if (!deck) return;
             try {
-                await UpdateAnkiDeck(deck.id, draft.name.trim() || deck.name, draft.description);
+                if (!(await writingOnLibrary(mark, async () => (await UpdateAnkiDeck(deck.id, draft.name.trim() || deck.name, draft.description), true)))) return;
                 await anki.loadDecks();
             } catch (e) {
                 statusBarTextStore.set(tMsg('common.errorWithMsg', { msg: e }));
@@ -208,8 +208,19 @@
     // The cards graded in this sitting, last on top: what « Annuler » walks back.
     // Kept once the sitting ends, so its last grade stays undoable from the
     // deck's band until another sitting starts.
-    /** @type {import("../services/ankiService.js").Card[]} */
+    /** @typedef {import("../services/ankiService.js").Card & { mark: { epoch: number, path: string } }} GradedCard a card and the library it was graded in */
+    /** @type {GradedCard[]} */
     let gradedCards = $state([]);
+    // A grade belongs to the library it was given in: once another is on screen, an undo would
+    // name a card of that other library.
+    $effect(() => {
+        void $libraryChangedStore;
+        void $databasePathStore;
+        untrack(() => {
+            const live = gradedCards.filter((g) => g.mark.epoch === libraryOnScreenMark());
+            if (live.length !== gradedCards.length) gradedCards = live;
+        });
+    });
     let canUndoFromList = $derived(gradedCards.length > 0 && !!selectedDeck && gradedCards[gradedCards.length - 1].card.deckId === selectedDeck.id);
     // Cram (free drill): serves random cards without touching the FSRS schedule.
     let cramMode = $state(false);
@@ -343,7 +354,7 @@
         // Counted when given, not once the next card is on the board: the next card shows before
         // its board has loaded, and a grade given on it then must not overtake this one's count.
         const count = ++reviewSessionCount;
-        const graded = reviewCard;
+        const graded = { ...reviewCard, mark: libraryMark() };
         let next;
         try {
             // In cram mode the rating is ignored — just advance, never schedule.
@@ -394,7 +405,7 @@
         if (viewMode !== 'review' && !canUndoFromList) return;
         const card = gradedCards[gradedCards.length - 1];
         try {
-            await anki.undoReview(card);
+            if (!(await writingOnLibrary(card.mark, async () => (await anki.undoReview(card), true)))) return;
             if (viewMode !== 'review') {
                 // Back into the sitting, on the card whose grade was taken back.
                 ankiPausedSessionStore.set(null);

@@ -84,7 +84,8 @@
     /** @param {Tournament} tournament */
     async function startDirecting(tournament) {
         try {
-            await createDirection(tournament.id, defaultConfig(tournament.name));
+            // null: not created, and the status bar already says why.
+            if ((await createDirection(tournament.id, defaultConfig(tournament.name))) === null) return;
             statusBarTextStore.set(tMsg('direction.settings.created'));
         } catch (e) {
             logger.error('direction: create failed', e);
@@ -159,11 +160,11 @@
 
     // Edit tournament (name, date, location in one row)
     const tournamentEdit = createInlineEdit({
-        onSave: async (id, draft) => {
+        onSave: async (id, draft, mark) => {
             const name = draft.name.trim();
             if (!name) return false; // a tournament keeps its name until a new one is typed
             try {
-                await UpdateTournament(id, name, draft.date.trim(), draft.location.trim());
+                if (!(await writingOnLibrary(mark, async () => (await UpdateTournament(id, name, draft.date.trim(), draft.location.trim()), true)))) return;
                 await loadTournaments();
                 if (selectedTournament && selectedTournament.id === id) {
                     // The effective date is derived by the database: only the
@@ -188,9 +189,9 @@
 
     // Match comment editing (one cell of the matches table)
     const matchCommentEdit = createInlineEdit({
-        onSave: async (matchId, comment) => {
+        onSave: async (matchId, comment, mark) => {
             try {
-                await UpdateMatchComment(matchId, comment);
+                if (!(await writingOnLibrary(mark, async () => (await UpdateMatchComment(matchId, comment), true)))) return;
                 tournamentMatchesStore.set(tournamentMatches.map((m) => (m.id === matchId ? /** @type {any} */ ({ ...m, comment }) : m)));
             } catch (error) {
                 logger.error('Error saving match comment:', error);
@@ -200,10 +201,10 @@
 
     // Tournament comment editing (detail header)
     const tournamentCommentEdit = createInlineEdit({
-        onSave: async (tournamentId, comment) => {
+        onSave: async (tournamentId, comment, mark) => {
             if (!selectedTournament || selectedTournament.id !== tournamentId) return;
             try {
-                await UpdateTournamentComment(tournamentId, comment);
+                if (!(await writingOnLibrary(mark, async () => (await UpdateTournamentComment(tournamentId, comment), true)))) return;
                 selectedTournamentStore.set(/** @type {any} */ ({ ...selectedTournament, comment }));
             } catch (error) {
                 logger.error('Error saving tournament comment:', error);

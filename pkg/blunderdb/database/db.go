@@ -492,8 +492,11 @@ func (d *Database) setup(path string, erase bool) (err error) {
 	}
 	// Erased only once its write lock is ours: never under another instance.
 	if erase {
-		if err := os.Remove(path); err != nil && !errors.Is(err, fs.ErrNotExist) {
-			slog.Warn("erasing the file to recreate failed", "path", path, "err", err)
+		// The journal files go too: a WAL left beside the new file would be replayed into it.
+		for _, f := range []string{path, path + "-wal", path + "-shm"} {
+			if err := os.Remove(f); err != nil && !errors.Is(err, fs.ErrNotExist) {
+				slog.Warn("erasing the file to recreate failed", "path", f, "err", err)
+			}
 		}
 	}
 

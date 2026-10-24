@@ -153,10 +153,10 @@
 
     // Inline tournament editing (autocomplete over the known tournaments)
     const tournamentEdit = createInlineEdit({
-        onSave: async (matchId, value) => {
+        onSave: async (matchId, value, mark) => {
             const name = value.trim();
             try {
-                await SetMatchTournamentByName(matchId, name);
+                if (!(await writingOnLibrary(mark, async () => (await SetMatchTournamentByName(matchId, name), true)))) return;
                 await matchListStore.refreshRow(matchId);
                 await loadTournaments();
                 statusBarTextStore.set(name ? tMsg('match.tournamentSet', { name }) : tMsg('match.tournamentCleared'));
@@ -169,9 +169,9 @@
 
     // Inline match editing (player names, date) — one draft object per row
     const matchEdit = createInlineEdit({
-        onSave: async (matchId, draft) => {
+        onSave: async (matchId, draft, mark) => {
             try {
-                await UpdateMatch(matchId, draft.player1, draft.player2, draft.date);
+                if (!(await writingOnLibrary(mark, async () => (await UpdateMatch(matchId, draft.player1, draft.player2, draft.date), true)))) return;
                 await matchListStore.refreshRow(matchId);
                 statusBarTextStore.set(tMsg('match.matchUpdated'));
             } catch (error) {
@@ -282,9 +282,9 @@
 
     // Inline match comment editing (detail pane, metadata view)
     const commentEdit = createInlineEdit({
-        onSave: async (matchId, text) => {
+        onSave: async (matchId, text, mark) => {
             try {
-                await UpdateMatchComment(matchId, text);
+                if (!(await writingOnLibrary(mark, async () => (await UpdateMatchComment(matchId, text), true)))) return;
                 // The backend signs the edit with « Votre nom »; read back who it names.
                 const comment_author = (await GetMatchByID(matchId))?.comment_author || '';
                 if (detailMatch && detailMatch.id === matchId) Object.assign(detailMatch, { comment: text, comment_author });

@@ -10,6 +10,7 @@
     import { dbMutationCounterStore, matchPanelRefreshTriggerStore } from '../stores/uiStore';
     import { logger } from '../utils/logger.js';
     import { t, tMsg } from '../i18n';
+    import { writingOnScreen } from '../stores/groupActivityStore.js';
 
     let { visible = false, onClose } = $props();
 
@@ -69,7 +70,11 @@
     async function restore(entry) {
         busy = true;
         try {
-            const result = await RestoreFromTrash(entry.id);
+            const result = await writingOnScreen(() => RestoreFromTrash(entry.id));
+            if (result === undefined) {
+                setStatusBarMessage(tMsg('libraryGroups.switching'));
+                return;
+            }
             setStatusBarMessage(tMsg(restoredMessageKey(result?.warnings ?? []), { what: entry.label }));
             dbMutationCounterStore.update((n) => n + 1);
             // The match panel reloads on its own trigger, not on the mutation counter.
@@ -88,7 +93,10 @@
     async function discard(entry) {
         busy = true;
         try {
-            await DiscardFromTrash(entry.id);
+            if (!(await writingOnScreen(async () => (await DiscardFromTrash(entry.id), true)))) {
+                setStatusBarMessage(tMsg('libraryGroups.switching'));
+                return;
+            }
             await load();
         } catch (error) {
             logger.error('discard failed:', error);

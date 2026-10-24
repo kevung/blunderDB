@@ -8,6 +8,7 @@ import { tMsg } from '../i18n';
 import { statusBarTextStore } from '../stores/uiStore.js';
 import { quizOnIds, deckFromIds, collectionFromIds } from './recurringStudy.js';
 import { logger } from '../utils/logger.js';
+import { libraryMark } from '../stores/groupActivityStore.js';
 
 /**
  * Les positions ratées à Décision, la plus récemment ratée d'abord.
@@ -35,20 +36,23 @@ export async function retakeMissed() {
 
 /** Un paquet Anki des ratés. */
 export async function missedToDeck() {
+    // The ids are read below, awaited: the deck goes to the library they were read in.
+    const mark = libraryMark();
     const ids = await missedDecisionIds();
     if (!ids.length) {
         statusBarTextStore.set(tMsg('commands.noPositionsFound'));
         return false;
     }
-    return deckFromIds(missedStudyName(), ids);
+    return deckFromIds(missedStudyName(), ids, mark);
 }
 
 /** Une collection des ratés. */
 export async function missedToCollection() {
+    const mark = libraryMark();
     const ids = await missedDecisionIds();
     if (!ids.length) {
         statusBarTextStore.set(tMsg('commands.noPositionsFound'));
         return false;
     }
-    return collectionFromIds(missedStudyName(), ids);
+    return collectionFromIds(missedStudyName(), ids, mark);
 }

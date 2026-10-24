@@ -2,6 +2,7 @@ package database
 
 import (
 	"errors"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -91,5 +92,26 @@ func TestRecreateDatabase_RefusedWhileHeld(t *testing.T) {
 	}
 	if got, err := d.GetAllCollections(); err != nil || len(got) != 0 {
 		t.Fatalf("collections after recreate: %v, %v", got, err)
+	}
+}
+
+// A recreation erases the journal files left beside the old one: the new library replays none.
+func TestRecreateDatabase_ErasesOrphanJournal(t *testing.T) {
+	t.Parallel()
+	path := filepath.Join(t.TempDir(), "a.db")
+	for _, f := range []string{path, path + "-wal", path + "-shm"} {
+		if err := os.WriteFile(f, []byte("orphan"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	d := NewDatabase()
+	t.Cleanup(func() { _ = d.Close() })
+	if err := d.RecreateDatabase(path); err != nil {
+		t.Fatalf("recreate over an orphan journal: %v", err)
+	}
+	for _, f := range []string{path + "-wal", path + "-shm"} {
+		if b, err := os.ReadFile(f); err == nil && string(b) == "orphan" {
+			t.Fatalf("%s still holds the orphan journal", f)
+		}
 	}
 }

@@ -8,14 +8,17 @@
 //     {/if}
 //
 // `draft` is what `start(id, value)` was given (a string, or an object for a multi-field row).
-// `onSave` receives a plain snapshot; returning `false` keeps the row in edit mode.
+// `onSave` receives a plain snapshot; returning `false` keeps the row in edit mode. It also
+// receives the mark of the library the row was in when its edit began (libraryMark): the id
+// names a row of that library, and writingOnLibrary sends the write to it only.
 
 import { untrack } from 'svelte';
+import { libraryMark } from '../stores/groupActivityStore.js';
 
 /**
  * @template T
  * @param {object} opts
- * @param {(id: any, draft: T) => (void | boolean | Promise<void | boolean>)} opts.onSave
+ * @param {(id: any, draft: T, mark: { epoch: number, path: string }) => (void | boolean | Promise<void | boolean>)} opts.onSave
  *   Persist the draft. Return `false` to stay in edit mode.
  * @param {(id: any) => void} [opts.onCancel] Called after an edit is abandoned.
  * @param {string} [opts.blurGroup] CSS selector of the element grouping the
@@ -27,9 +30,11 @@ export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
     let editingId = $state(null);
     let draft = $state('');
     let saving = false;
+    let mark = libraryMark();
 
     function start(id, value = '') {
         editingId = id;
+        mark = libraryMark();
         draft = typeof value === 'object' && value !== null ? { ...value } : value;
     }
 
@@ -44,7 +49,7 @@ export function createInlineEdit({ onSave, onCancel, blurGroup } = {}) {
         saving = true;
         const id = editingId;
         try {
-            const keep = await onSave?.(id, snapshot());
+            const keep = await onSave?.(id, snapshot(), mark);
             if (keep === false) return false;
             // The edit may have been cancelled or restarted while awaiting.
             if (untrack(() => editingId) === id) {

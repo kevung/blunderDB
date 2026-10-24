@@ -53,9 +53,9 @@ export async function quizOnPlan(rank) {
  * Un paquet Anki de ces positions, rangé comme un paquet de recherche : les ids
  * restent avec lui.
  * @param {string} name @param {number[]} ids
+ * @param {{ epoch: number, path: string }} [mark] the library the ids were read in (libraryMark)
  */
-export async function deckFromIds(name, ids) {
-    const mark = libraryMark();
+export async function deckFromIds(name, ids, mark = libraryMark()) {
     try {
         if (!(await writingOnLibrary(mark, async () => (await CreateStudyDeck(name, ids), true)))) return false;
         await loadDecks();
@@ -71,9 +71,9 @@ export async function deckFromIds(name, ids) {
 /**
  * Une collection de ces positions.
  * @param {string} name @param {number[]} ids
+ * @param {{ epoch: number, path: string }} [mark] the library the ids were read in (libraryMark)
  */
-export async function collectionFromIds(name, ids) {
-    const mark = libraryMark();
+export async function collectionFromIds(name, ids, mark = libraryMark()) {
     try {
         // Both writes in the library the ids were read in: a switch between them would fill a
         // collection of another library.

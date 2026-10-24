@@ -13,6 +13,7 @@ vi.mock('../services/recurringStudy.js', () => ({
 import { retakeMissed, missedToDeck, missedToCollection, missedStudyName } from '../services/trainingMissed.js';
 import { LoadTrainingMissed } from '../../wailsjs/go/database/Database.js';
 import { quizOnIds, deckFromIds, collectionFromIds } from '../services/recurringStudy.js';
+import { libraryReplaced, libraryStillOnScreen } from '../stores/groupActivityStore.js';
 
 beforeEach(() => vi.clearAllMocks());
 
@@ -26,9 +27,22 @@ describe('trainingMissed', () => {
     test('un paquet et une collection des ratés portent un nom daté', async () => {
         await missedToDeck();
         await missedToCollection();
-        expect(deckFromIds).toHaveBeenCalledWith(missedStudyName(), [12, 7]);
-        expect(collectionFromIds).toHaveBeenCalledWith(missedStudyName(), [12, 7]);
+        expect(deckFromIds).toHaveBeenCalledWith(missedStudyName(), [12, 7], expect.objectContaining({ epoch: expect.any(Number) }));
+        expect(collectionFromIds).toHaveBeenCalledWith(missedStudyName(), [12, 7], expect.objectContaining({ epoch: expect.any(Number) }));
         expect(missedStudyName(new Date('2026-10-04T12:00:00Z'))).toContain('2026-10-04');
+    });
+
+    test('un paquet et une collection vont à la bibliothèque où les ratés ont été lus', async () => {
+        vi.mocked(LoadTrainingMissed).mockImplementation(async () => (libraryReplaced(), [12, 7]));
+        await missedToDeck();
+        await missedToCollection();
+        vi.mocked(LoadTrainingMissed).mockImplementation(() => Promise.resolve([12, 7]));
+        const deckMark = vi.mocked(deckFromIds).mock.calls[0][2];
+        const collectionMark = vi.mocked(collectionFromIds).mock.calls[0][2];
+        expect(deckMark).toEqual(expect.objectContaining({ epoch: expect.any(Number) }));
+        expect(collectionMark).toEqual(expect.objectContaining({ epoch: expect.any(Number) }));
+        expect(libraryStillOnScreen(/** @type {any} */ (deckMark)?.epoch)).toBe(false);
+        expect(libraryStillOnScreen(/** @type {any} */ (collectionMark)?.epoch)).toBe(false);
     });
 
     test('sans raté, ni paquet ni collection', async () => {

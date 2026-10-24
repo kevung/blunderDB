@@ -337,11 +337,14 @@
     /** @param {DirectionConfig} next */
     async function apply(next) {
         try {
-            await saveDirectionConfig(/** @type {number} */ ($openDirectionIdStore), next);
+            // null: not written (the status bar already says why).
+            if ((await saveDirectionConfig(/** @type {number} */ ($openDirectionIdStore), next)) === null) return false;
             statusBarTextStore.set(tMsg('direction.settings.saved'));
+            return true;
         } catch (e) {
             logger.error('direction: saving configuration failed', e);
             statusBarTextStore.set(tMsg('direction.settings.errorSaving'));
+            return false;
         }
     }
 
@@ -471,7 +474,8 @@
     async function act(fn, key, done) {
         busy = true;
         try {
-            await fn();
+            // null: the gesture was not sent, and the status bar already says why.
+            if ((await fn()) === null) return false;
             const message = done?.();
             if (message) statusBarTextStore.set(message);
             return true;
@@ -489,7 +493,7 @@
     /** @type {(m: string, w: string, note: string) => Promise<boolean>} */
     const onForfeit = async (/** @type {string} */ m, /** @type {string} */ w, /** @type {string} */ note, /** @type {unknown} */ _cell, /** @type {string | undefined} */ withdrawLoser) =>
         act(async () => {
-            await enterForfeit(m, w, note);
+            if ((await enterForfeit(m, w, note)) === null) return null;
             if (!withdrawLoser) return;
             // Le forfait est acquis : un retrait refusé se dit à part, sans le défaire.
             try {
@@ -634,14 +638,14 @@
     /** @type {(slot: string, matchId: number) => Promise<boolean>} */
     const onAttach = (slot, matchId) =>
         act(async () => {
-            await attachMatchToSlot(slot, matchId);
+            if ((await attachMatchToSlot(slot, matchId)) === null) return null;
             slotRows = await slots();
             unattached = await unattachedMatches();
         }, 'direction.slots.error');
     /** @type {(slot: string) => Promise<boolean>} */
     const onDetach = (slot) =>
         act(async () => {
-            await detachMatchFromSlot(slot);
+            if ((await detachMatchFromSlot(slot)) === null) return null;
             slotRows = await slots();
             unattached = await unattachedMatches();
         }, 'direction.slots.error');
@@ -714,7 +718,7 @@
     async function confirmAll() {
         busy = true;
         try {
-            await confirmAllProposals();
+            if ((await confirmAllProposals()) === null) return;
             statusBarTextStore.set(tMsg('direction.feedback.allLaunched'));
         } catch (e) {
             logger.error('direction: confirm all failed', e);

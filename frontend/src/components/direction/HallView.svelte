@@ -38,7 +38,7 @@
     /** @type {(m: string, w: string, note: string, c?: HallCellLike, withdrawLoser?: string) => Promise<boolean>} */
     const onForfeit = (m, w, note, c, withdrawLoser) =>
         act(async () => {
-            await hallEnterForfeit(tidOf(c), m, w, note);
+            if ((await hallEnterForfeit(tidOf(c), m, w, note)) === null) return null;
             if (!withdrawLoser) return;
             // Le forfait est acquis : un retrait refusé se dit à part, sans le défaire.
             try {

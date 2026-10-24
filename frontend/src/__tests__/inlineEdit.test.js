@@ -45,7 +45,7 @@ describe('createInlineEdit', () => {
 
         await edit.save();
 
-        expect(onSave).toHaveBeenCalledWith(3, { name: 'y' });
+        expect(onSave).toHaveBeenCalledWith(3, { name: 'y' }, expect.anything());
         expect(edit.editingId).toBeNull();
         expect(edit.draft).toBe('');
     });
@@ -105,7 +105,7 @@ describe('createInlineEdit', () => {
         expect(enter.stopPropagation).toHaveBeenCalled();
         expect(enter.preventDefault).toHaveBeenCalled();
         await Promise.resolve();
-        expect(onSave).toHaveBeenCalledWith(1, 'a');
+        expect(onSave).toHaveBeenCalledWith(1, 'a', expect.anything());
 
         edit.start(2, 'b');
         const esc = key('Escape');
@@ -126,7 +126,7 @@ describe('createInlineEdit', () => {
         edit.start(1, 'a');
         edit.onBlur({ target: null });
         await Promise.resolve();
-        expect(onSave).toHaveBeenCalledWith(1, 'a');
+        expect(onSave).toHaveBeenCalledWith(1, 'a', expect.anything());
     });
 
     test('onBlur with a blurGroup keeps editing while focus stays inside the group', async () => {
@@ -148,6 +148,6 @@ describe('createInlineEdit', () => {
         must(document.getElementById('outside')).focus();
         edit.onBlur({ target: a });
         vi.runAllTimers();
-        expect(onSave).toHaveBeenCalledWith(1, { name: 'n' });
+        expect(onSave).toHaveBeenCalledWith(1, { name: 'n' }, expect.anything());
     });
 });

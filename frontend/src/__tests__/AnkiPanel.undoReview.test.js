@@ -42,6 +42,7 @@ import AnkiPanel from '../components/AnkiPanel.svelte';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, ankiReviewActionStore, ankiPausedSessionStore } from '../stores/ankiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarTextStore } from '../stores/uiStore.js';
+import { libraryReplaced } from '../stores/groupActivityStore.js';
 
 const POSITION = { id: 10, dice: [6, 1], cube: { value: 0, owner: -1 }, score: [-1, -1], player_on_roll: 0 };
 const CARD = (id) => ({ card: { id, state: 0 }, position: { ...POSITION, id: 10 + id } });
@@ -128,6 +129,19 @@ describe('undoing a grade', () => {
         ankiReviewActionStore.set('undo');
         await settle();
         expect(db.UndoAnkiReview).toHaveBeenCalledWith(1);
+    });
+
+    test('a grade given in another library is not undone in the one on screen', async () => {
+        const { container, undo } = await reviewing();
+        await fireEvent.click(container.querySelectorAll('.btn-rating')[2]);
+        await settle();
+        libraryReplaced();
+        databasePathStore.set('/tmp/other.db');
+        await settle();
+        ankiReviewActionStore.set('undo');
+        await settle();
+        expect(db.UndoAnkiReview).not.toHaveBeenCalled();
+        expect(undo.disabled).toBe(true);
     });
 
     test('the named refusal says there is nothing to undo', async () => {

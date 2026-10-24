@@ -9,6 +9,7 @@ import { showImportedPosition } from './importService.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
+import { writingOnScreen } from '../stores/groupActivityStore.js';
 
 // Lire une Leçon : chaque étape amène sur le plateau la collection ou la position qu'elle
 // montre, par les gestes qui existent déjà (ouvrir une collection, aller à une position). La
@@ -90,7 +91,7 @@ export async function toggleStepDone(stepId) {
     if (!lesson) return;
     const done = !!get(lessonDoneStore)[stepId];
     try {
-        await SetLessonStepDone(stepId, !done);
+        if (!(await writingOnScreen(async () => (await SetLessonStepDone(stepId, !done), true)))) return;
         await loadDoneSteps(lesson.id);
     } catch (error) {
         logger.error('could not mark the step:', error);
