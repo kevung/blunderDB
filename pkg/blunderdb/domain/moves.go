@@ -300,7 +300,11 @@ func boardKey(p *Position) string {
 	for i := 0; i <= 25; i++ {
 		pt := p.Board.Points[i]
 		b.WriteByte(byte('a' + pt.Checkers))
-		b.WriteByte(byte('0' + pt.Color + 1)) // None(-1)→'0', Black→'1', White→'2'
+		col := pt.Color
+		if pt.Checkers == 0 {
+			col = None // an empty point's colour is stale data, not board state
+		}
+		b.WriteByte(byte('0' + col + 1)) // None(-1)→'0', Black→'1', White→'2'
 	}
 	b.WriteByte(byte('a' + p.Board.Bearoff[Black]))
 	b.WriteByte(byte('a' + p.Board.Bearoff[White]))
