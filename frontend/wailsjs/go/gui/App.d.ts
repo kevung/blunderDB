@@ -105,6 +105,8 @@ export function IsDirectory(arg1:string):Promise<boolean>;
 
 export function LegalMoves(arg1:domain.Position):Promise<Array<domain.LegalPlay>>;
 
+export function LibrariesWrittenElsewhere():Promise<Array<number>>;
+
 export function LibraryGroupHolding(arg1:string):Promise<number>;
 
 export function ListLibraryGroups():Promise<Array<gui.LibraryGroup>>;

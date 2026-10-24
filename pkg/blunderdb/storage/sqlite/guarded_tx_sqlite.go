@@ -3,7 +3,9 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -44,8 +46,16 @@ func (t *connTx) end(stmt string) error {
 	}
 	t.done = true
 	_, err := t.conn.ExecContext(context.Background(), stmt)
-	if err != nil && stmt == "COMMIT" {
-		_, _ = t.conn.ExecContext(context.Background(), "ROLLBACK")
+	if err != nil {
+		rollbackErr := err
+		if stmt == "COMMIT" {
+			_, rollbackErr = t.conn.ExecContext(context.Background(), "ROLLBACK")
+		}
+		if rollbackErr != nil && !strings.Contains(rollbackErr.Error(), "no transaction is active") {
+			// A connection whose transaction could not end must not go back
+			// to the pool still inside it.
+			_ = t.conn.Raw(func(any) error { return driver.ErrBadConn })
+		}
 	}
 	_ = t.conn.Close()
 	return err

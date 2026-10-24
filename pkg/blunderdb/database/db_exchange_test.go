@@ -119,6 +119,8 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"importBatchID": true, "importBatchCounts": true, "importJournal": true,
 		"migrationProgress": true, "convertBatchSize": true, "afterActionColumnDrop": true,
 		"skipDuplicates": true, "commentAuthor": true, "directionMem": true,
+		// How the handle opens its next pool; the open pool, watched or not, moves with db.
+		"watchWrites": true,
 		// A running recount is cancelled by the generation bump.
 		"recount": true,
 		// The handle's report stays with it; a running fill is cancelled by the bump.

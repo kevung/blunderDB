@@ -151,3 +151,25 @@ func TestDSN_AccentedPathOpensTheRightFile(t *testing.T) {
 		t.Errorf("PRAGMA foreign_keys = %d (err %v), want 1: the query was lost", fk, err)
 	}
 }
+
+// The watch of WrittenElsewhere reads under a lock the desktop's poll and the
+// pool's commits share: it never waits for a writer, and never switches the
+// journal mode.
+func TestWatchDSN_NoBusyWaitNoWAL(t *testing.T) {
+	got := dsnPragmas(t, watchDSN("/tmp/lib.db"))
+	var busy bool
+	for _, p := range got {
+		if strings.HasPrefix(p, "journal_mode") {
+			t.Errorf("watch DSN switches the journal mode: %q", p)
+		}
+		if strings.HasPrefix(p, "busy_timeout") {
+			busy = true
+			if p != "busy_timeout(0)" {
+				t.Errorf("watch DSN busy_timeout = %q, want busy_timeout(0)", p)
+			}
+		}
+	}
+	if !busy {
+		t.Error("watch DSN carries no busy_timeout")
+	}
+}

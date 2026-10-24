@@ -122,6 +122,17 @@ type LocalFile interface {
 	VacuumInto(ctx context.Context, target string) (int64, error)
 }
 
+// WriteWatcher is what a backend over a file that other processes may write
+// offers: whether one of them committed since the previous call, the
+// backend's own commits left out. Only the SQLite backend implements it — a
+// CLI or a serve daemon may write the file a desktop has open. PostgreSQL has
+// no equivalent on purpose: concurrent writers are its normal state, and none
+// of its clients holds a view to keep fresh (a client asserting it finds
+// none, and has nothing to read again). Read-only (ADR-0007).
+type WriteWatcher interface {
+	WrittenElsewhere(ctx context.Context) (bool, error)
+}
+
 // ErrVacuumNotShrunk is a Vacuum whose pages were compacted but whose file
 // kept its size: the operating system refused the truncation (Windows does
 // while another program maps the file) and SQLite carries on without error.

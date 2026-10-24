@@ -46,10 +46,23 @@ var _ storage.Storage = (*Storage)(nil)
 
 // Open opens (or creates) the SQLite database at dsn and returns a Storage
 // that owns the connection. dsn ":memory:" yields an in-memory database.
+// The pool is not watched (WrittenElsewhere reports nothing): the watch is for
+// the desktop, which opens its libraries through OpenDB.
 func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, error) {
+	return open(ctx, dsn, opts, false)
+}
+
+// open is Open, with a pool opened by OpenDB when watch.
+func open(ctx context.Context, dsn string, opts *storage.Options, watch bool) (*Storage, error) {
 	// Encode the PRAGMAs into the DSN so the driver applies them to *every*
 	// connection the pool opens; a post-Open `PRAGMA` configures only one.
-	db, err := sql.Open("sqlite", DSN(dsn))
+	var db *sql.DB
+	var err error
+	if watch {
+		db, err = OpenDB(dsn)
+	} else {
+		db, err = sql.Open("sqlite", DSN(dsn))
+	}
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: open %q: %w", dsn, err)
 	}
@@ -162,11 +175,29 @@ func mmapSizeFor(goos string) string {
 //     "file:" URI (SQLITE_OPEN_URI is set by the driver). Windows forbids
 //     '?' in file names, so this only ever happens on Unix.
 func DSN(path string) string {
+	return dsn(path, path != ":memory:", true)
+}
+
+// watchDSN is the DSN of the watch of WrittenElsewhere, a connection that
+// must never write: no switch to WAL, and no busy wait, since it reads under
+// the watch's lock (in a commit hook, in the desktop's poll); a read refused
+// at once only costs a change reported too many.
+func watchDSN(path string) string {
+	return dsn(path, false, false)
+}
+
+// dsn is DSN, with the switch to WAL only when wal and busy_timeout 0 unless
+// busyWait.
+func dsn(path string, wal, busyWait bool) string {
 	q := url.Values{}
 	for _, p := range perConnPragmas {
-		q.Add("_pragma", p[0]+"("+p[1]+")")
+		v := p[1]
+		if p[0] == "busy_timeout" && !busyWait {
+			v = "0"
+		}
+		q.Add("_pragma", p[0]+"("+v+")")
 	}
-	if path != ":memory:" {
+	if wal {
 		q.Add("_pragma", "journal_mode(WAL)")
 	}
 	base, sep := path, "?"

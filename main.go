@@ -110,6 +110,8 @@ func runMigrate() {
 func runGUI(startupFilePath string) {
 	initLogging("gui")
 	db := database.NewDatabase()
+	// The desktop polls its libraries for writes made by another process.
+	database.WatchWrittenElsewhere(db)
 	cfg := NewConfig()
 
 	// Load the configuration file

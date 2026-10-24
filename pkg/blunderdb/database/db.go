@@ -38,6 +38,7 @@ type Database struct {
 	searchSeq         int                                 // key of the next entry of searchCancels
 	gate              *jobGate                            // the library's job slot, shared with borrowed handles; guarded by cancelMu
 	borrowed          bool                                // lent by Borrow: Close lets the library go without closing it
+	watchWrites       bool                                // the pool is opened watched (WatchWrittenElsewhere); guarded by mu
 	exchanging        bool                                // an Exchange is moving the library; guarded by cancelMu
 	replacing         bool                                // an Open or Setup is taking another file; guarded by cancelMu
 	holds             map[int64]time.Time                 // the writes holding the library (HoldLibrary); guarded by cancelMu
@@ -524,7 +525,7 @@ func (d *Database) setup(path string, erase bool) (err error) {
 	// after sql.Open configures only the one connection it lands on; with a
 	// pool the others ran with foreign_keys=OFF and DeleteMatch skipped ON
 	// DELETE CASCADE, leaving orphans.
-	d.db, err = sql.Open("sqlite", sqlite.DSN(path))
+	d.db, err = d.openPool(path)
 	if err != nil {
 		return err
 	}
@@ -611,7 +612,7 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	// after sql.Open configures only the one connection it lands on; with a
 	// pool the others ran with foreign_keys=OFF and DeleteMatch skipped ON
 	// DELETE CASCADE, leaving orphans.
-	d.db, err = sql.Open("sqlite", sqlite.DSN(path))
+	d.db, err = d.openPool(path)
 	if err != nil {
 		return err
 	}
