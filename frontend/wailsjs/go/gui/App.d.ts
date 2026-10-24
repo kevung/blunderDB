@@ -39,6 +39,8 @@ export function CancelGammonNetBatch():Promise<void>;
 
 export function CancelLibraryImport(arg1:number):Promise<void>;
 
+export function CancelLibraryOpen():Promise<void>;
+
 export function CancelMaintenance():Promise<void>;
 
 export function CancelRollout():Promise<void>;

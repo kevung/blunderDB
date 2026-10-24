@@ -24,6 +24,9 @@ vi.mock('../../wailsjs/go/gui/App.js', () => {
         }),
         CloseLibraryGroup: vi.fn(async () => {
             calls.push('CloseLibraryGroup');
+        }),
+        CancelLibraryOpen: vi.fn(async () => {
+            calls.push('CancelLibraryOpen');
         })
     };
 });
@@ -39,10 +42,14 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     // No counts unless a test gives some: the counts store then empties, as with no backend.
     GetDatabaseStatsEstimate: vi.fn(() => Promise.reject(new Error('no counts')))
 }));
+const listeners = vi.hoisted(() => /** @type {Map<string, (p: any) => void>} */ (new Map()));
 const titles = vi.hoisted(() => /** @type {string[]} */ ([]));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     WindowSetTitle: vi.fn((/** @type {string} */ title) => titles.push(title)),
-    EventsOn: vi.fn(() => () => {})
+    EventsOn: vi.fn((/** @type {string} */ name, /** @type {(p: any) => void} */ fn) => {
+        listeners.set(name, fn);
+        return () => listeners.delete(name);
+    })
 }));
 
 import { viewStore } from '../stores/viewStore.js';
@@ -106,6 +113,24 @@ beforeEach(async () => {
 });
 
 describe('library groups', () => {
+    test('the migration of a library opened in a new group is shown and Escape cancels it', async () => {
+        const { OpenLibraryGroup } = await import('../../wailsjs/go/gui/App.js');
+        OpenLibraryGroup.mockImplementationOnce(async () => {
+            listeners.get('library-open:progress')?.({ phase: 'analysis', done: 3, total: 9 });
+            expect(get(statusBarTextStore)).toMatchObject({
+                i18nKey: 'libraryGroups.migrating',
+                i18nParams: { phase: 'analysis', done: 3, total: 9 }
+            });
+            window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+            throw new Error('context canceled');
+        });
+        const groups = get(groupIdsStore).length;
+        await expect(openInNewGroup('/libs/stale.db')).rejects.toThrow('canceled');
+        expect(calls).toContain('CancelLibraryOpen');
+        expect(get(groupIdsStore).length).toBe(groups);
+        expect(listeners.has('library-open:progress')).toBe(false);
+    });
+
     test('a library opened in a new group leaves the first one waiting, photographed', async () => {
         const before = get(activeGroupId);
         await openInNewGroup('/libs/b.db');

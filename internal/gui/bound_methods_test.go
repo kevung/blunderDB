@@ -11,6 +11,7 @@ import (
 // webview without a deliberate update here.
 var boundAppMethods = []string{
 	"ActivateLibraryGroup",
+	"CancelLibraryOpen",
 	"CloseLibraryGroup",
 	"ElsewhereInGroups",
 	"ElsewhereObjectInGroups",

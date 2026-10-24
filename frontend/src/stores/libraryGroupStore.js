@@ -5,8 +5,9 @@
 // returns, without a request; what may be stale is refreshed once the group is on screen.
 
 import { writable, derived, get } from 'svelte/store';
-import { OpenLibraryGroup, ActivateLibraryGroup, CloseLibraryGroup } from '../../wailsjs/go/gui/App.js';
-import { WindowSetTitle } from '../../wailsjs/runtime/runtime.js';
+import { OpenLibraryGroup, ActivateLibraryGroup, CloseLibraryGroup, CancelLibraryOpen } from '../../wailsjs/go/gui/App.js';
+import { WindowSetTitle, EventsOn } from '../../wailsjs/runtime/runtime.js';
+import { closeOnEscape } from '../services/escapeService.js';
 import { viewStore } from './viewStore.js';
 import { positionsStore } from './positionStore.js';
 import { databasePathStore, libraryChanged, libraryTitle } from './databaseStore.js';
@@ -229,12 +230,32 @@ export async function openInNewGroup(path) {
 }
 
 /**
+ * OpenLibraryGroup, with the migration a stale file triggers shown in the status bar and
+ * cancelled by Escape (the open then rejects and no group is added).
+ * @param {string} path
+ */
+async function openWithMigrationProgress(path) {
+    const off = EventsOn('library-open:progress', (/** @type {{ phase: string, done: number, total: number }} */ p) => {
+        statusBarTextStore.set(tMsg('libraryGroups.migrating', { phase: p.phase, done: p.done, total: p.total }));
+    });
+    const offEscape = closeOnEscape(() => {
+        CancelLibraryOpen().catch((err) => logger.error('Error calling CancelLibraryOpen:', err));
+    });
+    try {
+        return await OpenLibraryGroup(path);
+    } finally {
+        off?.();
+        offEscape();
+    }
+}
+
+/**
  * openInNewGroup under the switch lock.
  * @param {string} path
  */
 async function openGroup(path) {
     const leaving = get(activeGroupId);
-    const group = await OpenLibraryGroup(path);
+    const group = await openWithMigrationProgress(path);
     if (group) libraryReplaced();
     if (!group || group.id === leaving) return;
     const photo = photograph(null);
