@@ -62,6 +62,11 @@ type Route struct {
 	// Gesture is true for the versioned gestures built with rpcGesture: they
 	// require If-Match (428 without it) and answer 409 when it is stale.
 	Gesture bool
+
+	// Description is the "API:" comment written above the route in its
+	// handler table (apiDescription): what the route does, said where it is
+	// coded.
+	Description string
 }
 
 const (
@@ -127,7 +132,7 @@ func Parse(dir string) (*Model, error) {
 	fset := token.NewFileSet()
 	files := make(map[string]*ast.File, len(srcPaths))
 	for _, p := range srcPaths {
-		f, err := parser.ParseFile(fset, p, nil, 0)
+		f, err := parser.ParseFile(fset, p, nil, parser.ParseComments)
 		if err != nil {
 			return nil, fmt.Errorf("openapigen: parse %s: %w", p, err)
 		}
@@ -154,7 +159,7 @@ func Parse(dir string) (*Model, error) {
 
 	var routes []Route
 	for path, f := range files {
-		rs, err := extractRoutes(f, types, loopPatterns)
+		rs, err := extractRoutes(fset, f, types, loopPatterns)
 		if err != nil {
 			return nil, fmt.Errorf("openapigen: %s: %w", path, err)
 		}

@@ -73,7 +73,22 @@ var analysisMergeSelectSQL = `SELECT data, ` + sqlshared.ActionLabelSQL("best_cu
 const cubeResponseSQL = `UPDATE position SET is_cube_response = 1 WHERE id = ?`
 
 // Merge — see storage.AnalysisStore.
+//
+// The read, the merge and the write share one transaction (BEGIN IMMEDIATE
+// when the caller holds none): a writer committing between a read outside it
+// and the write would see its merge overwritten.
 func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int64, played *storage.PlayedActions, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
+	wrote := false
+	err := withTx(ctx, s.db, func(tx execer) error {
+		var err error
+		wrote, err = (&analysisStore{db: tx}).mergeIn(ctx, positionID, played, merge)
+		return err
+	})
+	return wrote, err
+}
+
+// mergeIn is Merge's body, run on the store of the transaction Merge holds.
+func (s *analysisStore) mergeIn(ctx context.Context, positionID int64, played *storage.PlayedActions, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
 	var (
 		data      []byte
 		stored    storedPlayedColumns

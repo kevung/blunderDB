@@ -12,10 +12,33 @@ type positionIDReq struct {
 }
 
 func (s analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
-	return s.c.call(ctx, scope, "analyses.save", struct {
-		PositionID int64                    `json:"positionId"`
-		Analysis   *domain.PositionAnalysis `json:"analysis"`
-	}{positionID, a}, nil)
+	return s.c.call(ctx, scope, "analyses.save", analysisSaveReq{positionID, a}, nil)
+}
+
+// SaveMerged relays analyses.merge: the daemon folds the analysis into the
+// stored one in its own transaction (storage.MergeSaver).
+func (s analysisStore) SaveMerged(ctx context.Context, scope string, positionID int64, a domain.PositionAnalysis) error {
+	return s.c.call(ctx, scope, "analyses.merge", analysisSaveReq{positionID, &a}, nil)
+}
+
+// LoadWithPlayed relays analyses.load with withPlayed: the daemon joins the
+// moves the matches played, a table this backend does not serve
+// (storage.PlayedLoader).
+func (s analysisStore) LoadWithPlayed(ctx context.Context, scope string, positionID int64) (*domain.PositionAnalysis, error) {
+	var a *domain.PositionAnalysis
+	req := struct {
+		PositionID int64 `json:"positionId"`
+		WithPlayed bool  `json:"withPlayed"`
+	}{positionID, true}
+	if err := s.c.call(ctx, scope, "analyses.load", req, &a); err != nil {
+		return nil, err
+	}
+	return a, nil
+}
+
+type analysisSaveReq struct {
+	PositionID int64                    `json:"positionId"`
+	Analysis   *domain.PositionAnalysis `json:"analysis"`
 }
 
 func (s analysisStore) Load(ctx context.Context, scope string, positionID int64) (*domain.PositionAnalysis, error) {

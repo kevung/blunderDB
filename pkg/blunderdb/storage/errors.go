@@ -29,6 +29,10 @@ var (
 	// ErrBusy — another writer held the database past the backend's wait:
 	// nothing was written, and the same request may succeed when retried.
 	ErrBusy = errors.New("storage: busy")
+
+	// ErrUnsupported — the backend does not serve this method (the remote
+	// backend, for a method with no /v1 route). It also matches ErrInternal.
+	ErrUnsupported = errors.New("storage: method not served by this backend")
 )
 
 // The refusals of MatchStore.SwapPlayers. Both match ErrInvalid; their

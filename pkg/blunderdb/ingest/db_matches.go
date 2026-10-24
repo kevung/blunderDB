@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"sort"
 	"strings"
 
@@ -239,6 +240,7 @@ func mergeMatchRows(ctx context.Context, tx storage.Stores, scope string, source
 	}
 
 	var created []int64
+	reached := map[int64]bool{}
 	for _, m := range src {
 		if err := ctx.Err(); err != nil {
 			return err
@@ -254,7 +256,7 @@ func mergeMatchRows(ctx context.Context, tx storage.Stores, scope string, source
 				continue
 			}
 		}
-		id, err := copyMatch(ctx, tx, scope, source, m, targetOf)
+		id, err := copyMatch(ctx, tx, scope, source, m, targetOf, reached)
 		if err != nil {
 			return err
 		}
@@ -283,6 +285,9 @@ func mergeMatchRows(ctx context.Context, tx storage.Stores, scope string, source
 		res.Matches++
 		created = append(created, id)
 	}
+	if err := foldReachedMoves(ctx, tx, scope, reached); err != nil {
+		return err
+	}
 	// The per-seat tallies, in the same transaction as the moves: a library
 	// never holds a match whose stats a reader must wait for.
 	if len(created) > 0 {
@@ -296,7 +301,7 @@ func mergeMatchRows(ctx context.Context, tx storage.Stores, scope string, source
 // copyMatch writes one source match, its games, moves and move analyses into
 // the target and returns its new id. Each source stream is drained before the
 // next opens: a nested iterator would hold the source's connection.
-func copyMatch(ctx context.Context, tx storage.Stores, scope string, source storage.Stores, m *domain.Match, targetOf map[int64]int64) (int64, error) {
+func copyMatch(ctx context.Context, tx storage.Stores, scope string, source storage.Stores, m *domain.Match, targetOf map[int64]int64, reached map[int64]bool) (int64, error) {
 	mc := *m
 	mc.ID = 0
 	mc.TournamentID = nil // filed by AddMatch, through the tournament map
@@ -351,6 +356,9 @@ func copyMatch(ctx context.Context, tx storage.Stores, scope string, source stor
 			return 0, fmt.Errorf("ingest: import move of match %d: %w", m.ID, err)
 		}
 		moveMap[mv.ID] = nid
+		if mvc.PositionID != 0 {
+			reached[mvc.PositionID] = true
+		}
 	}
 
 	var analyses []*domain.MoveAnalysis
@@ -374,6 +382,62 @@ func copyMatch(ctx context.Context, tx storage.Stores, scope string, source stor
 		}
 	}
 	return id, nil
+}
+
+// foldReachedMoves folds the moves now recorded against each reached position
+// into its analysis when that analysis names no played action, as an export
+// with the played moves would have: the analyses were written before the
+// matches, so without that fold their derived columns (errors, cube response,
+// the moves' scores) would ignore the moves just copied. An analysis that
+// names a played action is left as it is — it came from a library that
+// recorded its plays, in its own vocabulary (Double/Take where the move table
+// says Double) — and so is one that cannot be decoded.
+func foldReachedMoves(ctx context.Context, tx storage.Stores, scope string, reached map[int64]bool) error {
+	if len(reached) == 0 {
+		return nil
+	}
+	ids := make([]int64, 0, len(reached))
+	for id := range reached {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	// LoadMany leaves an undecodable analysis out instead of failing.
+	held, err := tx.Analyses().LoadMany(ctx, scope, ids)
+	if err != nil {
+		return fmt.Errorf("ingest: read the analyses the imported matches reach: %w", err)
+	}
+	moves, err := tx.Matches().MovesByPositions(ctx, scope, ids)
+	if err != nil {
+		return fmt.Errorf("ingest: read the moves of the imported matches: %w", err)
+	}
+	for _, id := range ids {
+		if a := held[id]; a == nil || foldedPlayedMoves(a, moves[id]) == nil {
+			continue
+		}
+		if _, err := tx.Analyses().Merge(ctx, scope, id, nil, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+			if existing == nil {
+				return nil
+			}
+			return foldedPlayedMoves(existing, moves[id])
+		}); err != nil {
+			return fmt.Errorf("ingest: fold the played moves into position %d: %w", id, err)
+		}
+	}
+	return nil
+}
+
+// foldedPlayedMoves returns a copy of a with moves folded into its played
+// lists, or nil when a already names a played action or the moves add none.
+func foldedPlayedMoves(a *domain.PositionAnalysis, moves []*domain.Move) *domain.PositionAnalysis {
+	if a.PlayedMove != "" || a.PlayedCubeAction != "" || len(a.PlayedMoves) > 0 || len(a.PlayedCubeActions) > 0 {
+		return nil
+	}
+	folded := *a
+	foldPlayedMoves(&folded, moves)
+	if len(folded.PlayedMoves) == 0 && len(folded.PlayedCubeActions) == 0 {
+		return nil
+	}
+	return &folded
 }
 
 func mergeTranscriptions(ctx context.Context, tx storage.Stores, scope string, source storage.Stores, res *MatchMerge) error {
