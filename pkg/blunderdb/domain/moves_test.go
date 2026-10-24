@@ -257,3 +257,21 @@ func TestLegalMovesDedupIgnoresEmptyPointColour(t *testing.T) {
 		})
 	}
 }
+
+// The kept spelling of equivalent plays is the big step first, whatever the colour.
+func TestLegalMovesCanonicalSpelling(t *testing.T) {
+	cases := []struct {
+		d    [2]int
+		want string
+	}{{[2]int{5, 2}, "13/8 8/6"}, {[2]int{6, 2}, "13/7 7/5"}, {[2]int{3, 2}, "8/5 5/3"}}
+	for _, c := range cases {
+		for _, mover := range []int{Black, White} {
+			pos := InitializePosition()
+			pos.PlayerOnRoll = mover
+			pos.Dice = c.d
+			if !notationSet(LegalMoves(&pos))[c.want] {
+				t.Errorf("dice %v mover %d: %q missing", c.d, mover, c.want)
+			}
+		}
+	}
+}

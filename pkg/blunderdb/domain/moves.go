@@ -109,10 +109,10 @@ func LegalMoves(p *Position) []LegalPlay {
 		}
 	}
 
-	// Among plays reaching the same board, keep the smallest mover-relative
-	// notation (plain string order), so the spelling does not depend on colour
-	// or enumeration order.
+	// Among plays reaching the same board, keep the canonical one (betterPath),
+	// so the spelling does not depend on colour or enumeration order.
 	at := map[string]int{}
+	var steps [][]CheckerStep
 	var plays []LegalPlay
 	for _, t := range terminals {
 		if len(t.steps) != maxUsed {
@@ -124,15 +124,51 @@ func LegalMoves(p *Position) []LegalPlay {
 		lp := LegalPlay{Steps: t.steps, Result: t.pos, Notation: notation(t.steps, mover)}
 		key := boardKey(&t.pos)
 		if i, ok := at[key]; ok {
-			if lp.Notation < plays[i].Notation {
+			if betterPath(t.steps, steps[i], mover) {
 				plays[i] = lp
+				steps[i] = t.steps
 			}
 			continue
 		}
 		at[key] = len(plays)
+		steps = append(steps, t.steps)
 		plays = append(plays, lp)
 	}
 	return plays
+}
+
+// betterPath orders two step sequences reaching one board, in mover-relative
+// numbers: the larger first step wins (13/8 8/6 over 13/11 11/6), then the
+// larger (from, to) pairs in turn; bar counts as 25 and off as 0.
+func betterPath(a, b []CheckerStep, mover int) bool {
+	rel := func(idx int) int {
+		switch idx {
+		case Off:
+			return 0
+		case BlackBar, WhiteBar:
+			return 25
+		}
+		if mover == White {
+			return 25 - idx
+		}
+		return idx
+	}
+	for i := 0; i < len(a) && i < len(b); i++ {
+		fa, ta, fb, tb := rel(a[i].From), rel(a[i].To), rel(b[i].From), rel(b[i].To)
+		if pa, pb := fa-ta, fb-tb; pa != pb {
+			return pa > pb
+		}
+	}
+	for i := 0; i < len(a) && i < len(b); i++ {
+		fa, ta, fb, tb := rel(a[i].From), rel(a[i].To), rel(b[i].From), rel(b[i].To)
+		if fa != fb {
+			return fa > fb
+		}
+		if ta != tb {
+			return ta > tb
+		}
+	}
+	return false
 }
 
 // singleMoves lists the legal single-die moves in pos for mover. If mover has
