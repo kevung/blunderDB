@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"POT-Creation-Date: 2026-10-24 23:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1564,17 +1564,12 @@ msgstr ""
 
 #: ../../source/manuel_stats.rst:747
 msgid ""
-"**Noter les coups d'abord** — la liste ne compare que les coups dont "
-"l'erreur est notée, et aucun import ne les note : la notation se fait sur"
-" demande. Tant qu'il en reste à noter, le bloc en donne le nombre avec un"
-" bouton *Noter les coups* ; la ligne de commande fait la même chose avec "
-"``repair --move-errors``."
-msgstr ""
-"**まず手を採点する** — "
-"この一覧は誤差が採点済みの手だけを比較し、どのインポートも手を採点しません。採点は要求時に行われます。採点待ちの手が残っている間、ブロックはその数と"
-" *手を採点する* ボタンを表示します。コマンドラインでは ``repair --move-errors`` で同じことができます。"
+"**Coups non chiffrés** — un coup qu'aucun candidat de l'analyse ne nomme "
+"n'a pas d'erreur : la liste le laisse de côté, et le bloc en donne le "
+"nombre."
+msgstr "**評価されない手** — 解析のどの候補にも含まれない手にはエラーがありません。リストはその手を除外し、ブロックがその数を示します。"
 
-#: ../../source/manuel_stats.rst:752
+#: ../../source/manuel_stats.rst:750
 msgid ""
 "Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
 " deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
@@ -1594,14 +1589,14 @@ msgstr ""
 "は生のままでは比べられません——1000回の判断で12回は、100回で10回より良いのです。そこでブロックは\\ *ブランダー / 100 "
 "判断*\\ の行を加えます。こちらは比較でき、回数はその横に文脈として残ります。"
 
-#: ../../source/manuel_stats.rst:762
+#: ../../source/manuel_stats.rst:760
 msgid ""
 "Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
 "côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
 "rien."
 msgstr "同点は勝ちではありません。どちらの側も太字にはなりません。裏づけのない比率は「—」と表示され、何も決めません。"
 
-#: ../../source/manuel_stats.rst:766
+#: ../../source/manuel_stats.rst:764
 msgid ""
 "Dans cet onglet, le choix du **type de décision** est désactivé : le "
 "tableau ventile déjà les décisions de pions et de videau en colonnes "
@@ -1612,7 +1607,7 @@ msgstr ""
 "このタブでは、\\ **判断タイプ**\\ "
 "の選択は無効です。表がすでにチェッカーとキューブの判断を別々の列に分けているためです。フィルターバーのプレイヤーは有効なままです。表は常にすべてのプレイヤーを表示し、そのプレイヤーの行が強調されて画面内に移動します。"
 
-#: ../../source/manuel_stats.rst:772
+#: ../../source/manuel_stats.rst:770
 msgid ""
 "Deux vues de corpus figurent dans l'onglet **Corpus** du panneau, en "
 "ligne de commande et par l'API du démon (voir :ref:`cli_stats`) : le "
@@ -1638,7 +1633,7 @@ msgstr ""
 "欄）は、統計をそのように分析された判断に限定します。これは判断ごとに適用され、影響を受ける数字は判断から再計算されます。直接対決とウィンドウごとの"
 " PR はこれを受け付けず、有効な間は計算を拒否します。バーのほかの部分と同様に、セッションをまたいで保持されます。"
 
-#: ../../source/manuel_stats.rst:786
+#: ../../source/manuel_stats.rst:784
 msgid ""
 "Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du "
 "face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le "
@@ -1656,7 +1651,7 @@ msgstr ""
 " パネルのポジション数は、どのタブでも、一覧を開く前にまず進行中のマッチを離れます。その後 ``m`` "
 "コマンドで、保存された手からマッチを開き直せます。"
 
-#: ../../source/manuel_stats.rst:796
+#: ../../source/manuel_stats.rst:794
 msgid ""
 "Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
 "confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
@@ -1673,11 +1668,11 @@ msgstr ""
 "より前にインポートしたすべての対戦の「運」列がこれにあたります。当時は運が保存されておらず、後から復元する手立てもありません。元ファイルを再インポートするだけでは足りません。インポートは重複と判断し、新たに付いた学習マークだけを適用します（レポートにその数が出ます）。対戦を削除してから、あらためてインポートしてください。運を運ばない形式（BGF、Jellyfish"
 " の ``.mat``）からは決して得られません。"
 
-#: ../../source/manuel_stats.rst:806
+#: ../../source/manuel_stats.rst:804
 msgid "Règle d'agrégation"
 msgstr "集計ルール"
 
-#: ../../source/manuel_stats.rst:809
+#: ../../source/manuel_stats.rst:807
 msgid ""
 "Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
 "règle **somme/somme** — jamais comme moyenne des PR individuels des "
@@ -1686,11 +1681,11 @@ msgstr ""
 "トーナメント（または任意の部分集合）の PR は **合計／合計** ルールで計算されます。各マッチの個別 PR "
 "の平均としては決して計算されません。"
 
-#: ../../source/manuel_stats.rst:813
+#: ../../source/manuel_stats.rst:811
 msgid "Formule :"
 msgstr "計算式："
 
-#: ../../source/manuel_stats.rst:815
+#: ../../source/manuel_stats.rst:813
 msgid ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
@@ -1698,37 +1693,37 @@ msgstr ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
 
-#: ../../source/manuel_stats.rst:819
+#: ../../source/manuel_stats.rst:817
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
 msgstr "**例：** あるプレイヤーがトーナメントで 2 つのマッチを戦う —"
 
-#: ../../source/manuel_stats.rst:821
+#: ../../source/manuel_stats.rst:819
 msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
 msgstr "マッチ A：10 回の決定、失われたエクイティ 0,100 → PR = 5,0"
 
-#: ../../source/manuel_stats.rst:822
+#: ../../source/manuel_stats.rst:820
 msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
 msgstr "マッチ B：90 回の決定、失われたエクイティ 0,540 → PR = 3,0"
 
-#: ../../source/manuel_stats.rst:824
+#: ../../source/manuel_stats.rst:822
 msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
 msgstr "PR の単純平均：(5,0 + 3,0) / 2 = **4,0** *(誤り)*"
 
-#: ../../source/manuel_stats.rst:826
+#: ../../source/manuel_stats.rst:824
 msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
 msgstr "合計／合計ルール：500 × 0,640 / (10 + 90) = **3,2** *(正しい)*"
 
-#: ../../source/manuel_stats.rst:828
+#: ../../source/manuel_stats.rst:826
 msgid ""
 "La règle somme/somme est la seule qui résiste à la variation de longueur "
 "des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
 msgstr "合計／合計ルールは、マッチ長のばらつきに耐えられる唯一のルールです（21 ポイントのマッチは 1 ポイントのマッチより重みがあります）。"
 
-#: ../../source/manuel_stats.rst:832
+#: ../../source/manuel_stats.rst:830
 msgid "MWC : limitations"
 msgstr "MWC：制限事項"
 
-#: ../../source/manuel_stats.rst:834
+#: ../../source/manuel_stats.rst:832
 msgid ""
 "Par défaut, le MWC cost est calculé à partir de la **MET Kazaross-XG2**, "
 "table de référence de facto dans le backgammon compétitif. Les résultats "
@@ -1745,7 +1740,7 @@ msgstr ""
 "を使うソフトウェアとは結果を直接比較できません。これは、内蔵の評価エンジンがスコアに応じたキューブの判断に使うのと同じテーブルで、同じ入口から読み出されます。統計とエンジンがこの点で食い違うことはありません。各サイド25ポイントまでは固有の値を持ち、それを超える分は"
 " GNUbg と同じように計算された Zadeh のテーブルで64まで延長されます。"
 
-#: ../../source/manuel_stats.rst:843
+#: ../../source/manuel_stats.rst:841
 msgid ""
 "Les positions *money-game* (sans score de match) sont **exclues** du "
 "calcul MWC. Si votre base de données contient beaucoup de positions "
@@ -1754,7 +1749,7 @@ msgstr ""
 "*money-game* のポジション（マッチスコアなし）は MWC の計算から **除外** されます。データベースに money-game "
 "のポジションが多く含まれている場合、MWC cost は過小評価されるか、利用できないことがあります。"
 
-#: ../../source/manuel_stats.rst:847
+#: ../../source/manuel_stats.rst:845
 msgid ""
 "Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
 "un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
@@ -1763,3 +1758,19 @@ msgstr ""
 "MWC cost "
 "はフィルターされたデータセット全体にわたる累積であり、判断ごとの指標ではありません。あなたのエラーが勝利の可能性に与えた総合的な影響を測定します。"
 
+#~ msgid ""
+#~ "**Noter les coups d'abord** — la "
+#~ "liste ne compare que les coups "
+#~ "dont l'erreur est notée, et aucun "
+#~ "import ne les note : la notation"
+#~ " se fait sur demande. Tant qu'il "
+#~ "en reste à noter, le bloc en "
+#~ "donne le nombre avec un bouton "
+#~ "*Noter les coups* ; la ligne de"
+#~ " commande fait la même chose avec "
+#~ "``repair --move-errors``."
+#~ msgstr ""
+#~ "**まず手を採点する** — "
+#~ "この一覧は誤差が採点済みの手だけを比較し、どのインポートも手を採点しません。採点は要求時に行われます。採点待ちの手が残っている間、ブロックはその数と"
+#~ " *手を採点する* ボタンを表示します。コマンドラインでは ``repair --move-"
+#~ "errors`` で同じことができます。"

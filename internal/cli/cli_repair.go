@@ -22,7 +22,6 @@ func (cli *CLI) runRepair(args []string) error {
 	dbPath := repairCmd.String("db", "", "Path to the database file (required)")
 	format := repairCmd.String("format", "text", "Output format: text or json")
 	rebuildStats := repairCmd.Bool("stats", false, "Also recompute the per-match statistics (PR, decisions, blunders, luck of each seat) from scratch")
-	moveErrors := repairCmd.Bool("move-errors", false, "Also write the equity error of every played move (stored in the move table) from its position's analysis; resumable, long on a large library")
 	duplicates := repairCmd.Bool("duplicates", false,
 		"Only list the pairs of matches whose dice say they are one: same dice under other player names, or a truncated match and its longer version (nothing is merged)")
 
@@ -52,7 +51,6 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("  blunderdb repair --db database.db")
 		fmt.Println("  blunderdb repair --db database.db --format json")
 		fmt.Println("  blunderdb repair --db database.db --stats")
-		fmt.Println("  blunderdb repair --db database.db --move-errors")
 		fmt.Println("  blunderdb repair --db database.db --duplicates")
 	}
 
@@ -102,15 +100,6 @@ func (cli *CLI) runRepair(args []string) error {
 		matchStatsReport = &matchStats
 	}
 
-	scoredMoves := 0
-	var scoredMovesReport *int
-	if *moveErrors {
-		if scoredMoves, err = cli.db.ScoreMoves(); err != nil {
-			return fmt.Errorf("repair failed: %w", err)
-		}
-		scoredMovesReport = &scoredMoves
-	}
-
 	if formatLower == "json" {
 		return printJSON(struct {
 			Repaired   int  `json:"repaired"`
@@ -118,8 +107,7 @@ func (cli *CLI) runRepair(args []string) error {
 			Crawford   int  `json:"crawford"`
 			Unverified int  `json:"signatures_unverified"`
 			MatchStats *int `json:"match_stats,omitempty"`
-			MoveErrors *int `json:"move_errors,omitempty"`
-		}{repaired, phases, crawford, unverified, matchStatsReport, scoredMovesReport})
+		}{repaired, phases, crawford, unverified, matchStatsReport})
 	}
 	switch repaired {
 	case 0:
@@ -154,9 +142,6 @@ func (cli *CLI) runRepair(args []string) error {
 	}
 	if *rebuildStats {
 		fmt.Printf("Per-match statistics recomputed for %d matches.\n", matchStats)
-	}
-	if *moveErrors {
-		fmt.Printf("Equity error written for %d moves.\n", scoredMoves)
 	}
 	return nil
 }

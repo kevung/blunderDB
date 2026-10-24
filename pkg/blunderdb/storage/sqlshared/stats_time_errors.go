@@ -69,6 +69,13 @@ func (s *StatsStore) TimeErrors(ctx context.Context, scope string, matchIDs []in
 	return out, nil
 }
 
+// scoredMoveCols reads what PlayScorer needs from a move and its position's
+// analysis, joined as mv and a.
+func scoredMoveCols(d Dialect) string {
+	return `mv.id, COALESCE(mv.position_id, 0), ` + ActionLabelOrEmptyFor(d, "mv.move_type") + `,
+	COALESCE(mv.checker_move, ''), ` + ActionLabelOrEmptyFor(d, "mv.cube_action") + `, a.data`
+}
+
 // walkTimedDecisions hands each timed decision on with its player's name, its
 // duration band and its analysis blob. It is the one reading of the timed
 // decisions, shared by TimeErrors and the "time_band" selection, so a list
@@ -76,10 +83,9 @@ func (s *StatsStore) TimeErrors(ctx context.Context, scope string, matchIDs []in
 // decisions of those Matches alone.
 func (s *StatsStore) walkTimedDecisions(ctx context.Context, scope string, matchIDs []int64, visit func(name string, bucket int, mv *domain.Move, data []byte)) error {
 	tenant, args := s.DB.TenantFilter("mv", scope)
-	// Scored by the caller rather than read from move.error_mp: no analysis
-	// path writes that column, and only timed (Duel) plays are decoded, so the
-	// cost stays with the few rows the table reads and nothing is added to the
-	// import.
+	// Scored by the caller from the blob, the way the search's E filter
+	// scores a play: only timed (Duel) plays are decoded, so the cost stays
+	// with the few rows the table reads and nothing is added to the import.
 	query := `SELECT COALESCE(m.player1_name, ''), COALESCE(m.player2_name, ''), mv.player,
 			mv.decision_ms, mv.cube_decision_ms, ` + scoredMoveCols(s.DB) + `
 		 FROM move mv JOIN game g ON g.id = mv.game_id JOIN match m ON m.id = g.match_id

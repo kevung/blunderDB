@@ -4144,7 +4144,6 @@ Operations:
   analysis.missing
   stats.matches
   analysis.columns
-  moves.errors
   analysis.legacy
   trash
   vacuum
@@ -4179,7 +4178,6 @@ Operations:
   analysis.missing
   stats.matches
   analysis.columns
-  moves.errors
   analysis.legacy
   trash
   vacuum
@@ -4214,7 +4212,6 @@ Operations:
   analysis.missing
   stats.matches
   analysis.columns
-  moves.errors
   analysis.legacy
   trash
   vacuum
@@ -4249,7 +4246,6 @@ Operations:
   analysis.missing
   stats.matches
   analysis.columns
-  moves.errors
   analysis.legacy
   trash
   vacuum
@@ -4617,8 +4613,6 @@ Options:
     	Only list the pairs of matches whose dice say they are one: same dice under other player names, or a truncated match and its longer version (nothing is merged)
   -format string
     	Output format: text or json (default "text")
-  -move-errors
-    	Also write the equity error of every played move (stored in the move table) from its position's analysis; resumable, long on a large library
   -stats
     	Also recompute the per-match statistics (PR, decisions, blunders, luck of each seat) from scratch
 
@@ -4626,7 +4620,6 @@ Examples:
   blunderdb repair --db database.db
   blunderdb repair --db database.db --format json
   blunderdb repair --db database.db --stats
-  blunderdb repair --db database.db --move-errors
   blunderdb repair --db database.db --duplicates
 ```
 
@@ -4920,9 +4913,8 @@ played well and the other did not: the widest gap first. A player's error on
 a position is their worst play of it; "well" means below the library's Error
 threshold. Open the positions with --format json (position_id).
 
-Only scored plays are compared, and no import scores them: run
-`blunderdb repair --db <file> --move-errors` first. The count of plays still
-unscored is printed (unscored_moves in JSON).
+A play its position's analysis cannot price (no candidate names it) is left
+out; their count is printed (unscored_moves in JSON).
 
 Options:
   -db string

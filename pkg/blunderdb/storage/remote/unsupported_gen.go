@@ -91,7 +91,6 @@ var Unsupported = []string{
 	"MatchStore.Reinstate",
 	"MatchStore.ReplaceHeader",
 	"MatchStore.RescorePositionMoves",
-	"MatchStore.ScoreMoves",
 	"MatchStore.SetDiceHash",
 	"MatchStore.SwapRefusal",
 	"MetadataStore.Load",
@@ -445,10 +444,6 @@ func (matchStore) ReplaceHeader(_ context.Context, _ string, _ int64, _ *domain.
 
 func (matchStore) RescorePositionMoves(_ context.Context, _ string, _ int64) error {
 	return unsupported("MatchStore.RescorePositionMoves")
-}
-
-func (matchStore) ScoreMoves(_ context.Context, _ string, _ int64, _ int) (r0 int64, r1 int, err error) {
-	return r0, r1, unsupported("MatchStore.ScoreMoves")
 }
 
 func (matchStore) SetDiceHash(_ context.Context, _ string, _ int64, _ string) error {

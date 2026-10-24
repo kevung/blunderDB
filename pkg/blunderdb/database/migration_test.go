@@ -2521,11 +2521,18 @@ func TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition(t *testing.T) {
 			t.Fatalf("prepare v2.17.0 database (%s): %v", stmt, err)
 		}
 	}
+	// The rows are told apart by id: the open derives every column of an
+	// analysis from its blob again, so none of them can mark a row.
+	var keptID int64
 	for _, action := range []string{"superseded", "kept"} {
-		if _, err := raw.Exec(
+		res, err := raw.Exec(
 			`INSERT INTO analysis (position_id, data, best_cube_action) VALUES (?, ?, ?)`,
-			posID, []byte(`{}`), action); err != nil {
+			posID, []byte(`{}`), action)
+		if err != nil {
 			t.Fatalf("plant analysis %q: %v", action, err)
+		}
+		if keptID, err = res.LastInsertId(); err != nil {
+			t.Fatal(err)
 		}
 	}
 	raw.Close()
@@ -2541,18 +2548,18 @@ func TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition(t *testing.T) {
 	}
 
 	var rows int
-	var kept string
+	var kept int64
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE position_id = ?`, posID).Scan(&rows); err != nil {
 		t.Fatal(err)
 	}
 	if rows != 1 {
 		t.Fatalf("analyses for the position after migration: got %d, want 1", rows)
 	}
-	if err := d.db.QueryRow(`SELECT best_cube_action FROM analysis WHERE position_id = ?`, posID).Scan(&kept); err != nil {
+	if err := d.db.QueryRow(`SELECT id FROM analysis WHERE position_id = ?`, posID).Scan(&kept); err != nil {
 		t.Fatal(err)
 	}
-	if kept != "kept" {
-		t.Errorf("the surviving analysis is %q, want the last one written (%q)", kept, "kept")
+	if kept != keptID {
+		t.Errorf("the surviving analysis is %d, want the last one written (%d)", kept, keptID)
 	}
 
 	// The index is unique now, so the state cannot come back.
@@ -3815,7 +3822,6 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	}
 	dropMultiPlayed(t, d)
 	for _, stmt := range []string{
-		`ALTER TABLE move DROP COLUMN error_mp`,
 		`DROP INDEX idx_analysis_met`,
 		`ALTER TABLE analysis DROP COLUMN met_id`,
 		`DROP TABLE lesson_progress`,
@@ -3853,7 +3859,9 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 		`DROP TABLE action_label`,
 		`UPDATE move SET cube_action = 'Unknown(-1)' WHERE id = (SELECT MIN(id) FROM move WHERE move_type = 'cube')`,
 		`UPDATE move SET cube_action = NULL WHERE id = (SELECT MAX(id) FROM move WHERE move_type = 'cube')`,
-		`UPDATE analysis SET best_cube_action = 'Doppel, Annahme' WHERE id = (SELECT MIN(id) FROM analysis)`,
+		// On a move: the open derives an analysis's best_cube_action from its
+		// blob again (2.50.0), whatever label the conversion left there.
+		`UPDATE move SET cube_action = 'Doppel, Annahme' WHERE id = (SELECT MIN(id) FROM move WHERE move_type = 'cube' AND cube_action IS NOT NULL AND cube_action <> 'Unknown(-1)')`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
 			t.Fatalf("%s: %v", stmt, err)
@@ -3886,8 +3894,8 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
 		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
 	}
-	if !columnExists(t, d.db, "move", "error_mp") || !columnExists(t, d.db, "analysis", "met_id") {
-		t.Fatal("move.error_mp and analysis.met_id should exist after migration")
+	if !columnExists(t, d.db, "analysis", "met_id") {
+		t.Fatal("analysis.met_id should exist after migration")
 	}
 	for _, c := range []struct {
 		table, column string
@@ -3920,78 +3928,6 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	}
 	if !tableExists(d.db, "lesson_progress") || !tableExists(d.db, "match_equity_table") || !tableExists(d.db, "study_mark") {
 		t.Fatal("lesson_progress, match_equity_table and study_mark should exist after migration")
-	}
-	var scored int
-	if err := d.db.QueryRow(`SELECT COUNT(*) FROM move WHERE error_mp IS NOT NULL`).Scan(&scored); err != nil || scored != 0 {
-		t.Fatalf("moves scored by the open = %d, %v; want 0", scored, err)
-	}
-
-	ctx := context.Background()
-	ms := d.store.Matches()
-	var next int64
-	total := 0
-	for {
-		n, k, err := ms.ScoreMoves(ctx, "", next, 7)
-		if err != nil {
-			t.Fatalf("ScoreMoves: %v", err)
-		}
-		if n == 0 {
-			break
-		}
-		next, total = n, total+k
-	}
-	if total == 0 {
-		t.Fatal("the pass scored no move of an analysed match")
-	}
-	var matchID int64
-	if err := d.db.QueryRow(`SELECT id FROM match LIMIT 1`).Scan(&matchID); err != nil {
-		t.Fatal(err)
-	}
-	stored := map[int64]sql.NullInt64{}
-	func() {
-		rows, err := d.db.Query(`SELECT id, error_mp FROM move`)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer rows.Close()
-		for rows.Next() {
-			var id int64
-			var e sql.NullInt64
-			if err := rows.Scan(&id, &e); err != nil {
-				t.Fatal(err)
-			}
-			stored[id] = e
-		}
-		if err := rows.Err(); err != nil {
-			t.Fatal(err)
-		}
-	}()
-	checked := 0
-	for mv, err := range ms.MovesByMatch(ctx, "", matchID) {
-		if err != nil {
-			t.Fatal(err)
-		}
-		got := stored[mv.ID]
-		switch {
-		case mv.ErrorMP == nil && got.Valid:
-			t.Errorf("move %d: stored %d, read path unscored", mv.ID, got.Int64)
-		case mv.ErrorMP != nil && (!got.Valid || got.Int64 != int64(*mv.ErrorMP)):
-			t.Errorf("move %d: stored %v, read path %d", mv.ID, got, *mv.ErrorMP)
-		}
-		checked++
-	}
-	if checked == 0 {
-		t.Fatal("the match has no move")
-	}
-	if n, _, err := ms.ScoreMoves(ctx, "", 0, 1000); err != nil {
-		t.Fatalf("second pass: %v", err)
-	} else if n != 0 {
-		// Only analysed plays the analysis cannot score are visited again.
-		var unscorable int
-		_ = d.db.QueryRow(`SELECT COUNT(*) FROM move mv JOIN analysis a ON a.position_id = mv.position_id WHERE mv.error_mp IS NULL`).Scan(&unscorable)
-		if unscorable == 0 {
-			t.Errorf("second pass visited move %d with nothing left to score", n)
-		}
 	}
 }
 
@@ -5364,5 +5300,84 @@ func TestMigrate_2_48_0_to_2_49_0_MultiPlayed(t *testing.T) {
 	var triggers int
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'trigger' AND name LIKE 'multi_played_move_%'`).Scan(&triggers); err != nil || triggers != 3 {
 		t.Fatalf("multi_played triggers after migration: %d (%v), want 3", triggers, err)
+	}
+}
+
+// TestMigrate_2_49_0_to_2_50_0_RederivesColumns opens a 2.49.0 library whose
+// derived columns are stale (as an older matching or a library import left
+// them), which still carries move.error_mp and materialised match_stats, and
+// checks the open derives every analysis and move column again from the
+// blobs, drops the column, and empties the statistics.
+func TestMigrate_2_49_0_to_2_50_0_RederivesColumns(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2490_rederive.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	if _, err := d.ImportXGMatch("testdata/charlot1-charlot2_7p_2025-11-08-2305.xg"); err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+	if _, err := d.RebuildMatchStats(); err != nil {
+		t.Fatalf("RebuildMatchStats: %v", err)
+	}
+	type derived struct{ analysis, moves string }
+	snapshot := func() derived {
+		var s derived
+		if err := d.db.QueryRow(`SELECT group_concat(id || ':' || COALESCE(best_move_equity_error, 'n') || ':' || COALESCE(cube_error, 'n') || ':' || is_forced, ',') FROM (SELECT * FROM analysis ORDER BY id)`).Scan(&s.analysis); err != nil {
+			t.Fatal(err)
+		}
+		if err := d.db.QueryRow(`SELECT group_concat(id || ':' || COALESCE(decision_error_mp, 'n') || ':' || is_close_cube, ',') FROM (SELECT * FROM move ORDER BY id)`).Scan(&s.moves); err != nil {
+			t.Fatal(err)
+		}
+		return s
+	}
+	want := snapshot()
+	var stats int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match_stats`).Scan(&stats); err != nil || stats == 0 {
+		t.Fatalf("match_stats before migration: %d rows (%v), want some", stats, err)
+	}
+	for _, stmt := range []string{
+		`UPDATE analysis SET best_move_equity_error = 999999, cube_error = 999999, is_forced = 1 - is_forced`,
+		`UPDATE move SET decision_error_mp = 999999, is_close_cube = 1 - is_close_cube`,
+		`ALTER TABLE move ADD COLUMN error_mp INTEGER`,
+		`UPDATE metadata SET value = '2.49.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if snapshot() == want {
+		t.Fatal("the planted staleness changed nothing")
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.49.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	got := snapshot()
+	if got.analysis != want.analysis {
+		t.Error("analysis columns after migration differ from those derived from the blobs")
+	}
+	if got.moves != want.moves {
+		t.Error("move decision columns after migration differ from those derived from the blobs")
+	}
+	if columnExists(t, d.db, "move", "error_mp") {
+		t.Error("move.error_mp still exists after migration")
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match_stats`).Scan(&stats); err != nil || stats != 0 {
+		t.Errorf("match_stats after migration: %d rows (%v), want none", stats, err)
+	}
+	var owed int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, rederivePendingKey).Scan(&owed); err != nil || owed != 0 {
+		t.Errorf("derivation still owed after the open: %d (%v)", owed, err)
 	}
 }

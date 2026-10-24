@@ -245,7 +245,6 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.origin                       JSON
      POST /v1/matches.repair                       custom
      POST /v1/matches.save                         JSON
-     POST /v1/matches.scoreMoves                   JSON
      POST /v1/matches.setLastVisitedPosition       JSON
      POST /v1/matches.setVideoSource               JSON
      POST /v1/matches.swapPlayers                  JSON

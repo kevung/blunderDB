@@ -277,8 +277,6 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"MatchEquityTable/KeptByTrash", testMETKeptByTrash},
 		{"ActionLabel/ReadBackVerbatim", testActionLabelsReadBackVerbatim},
 		{"ActionLabel/SelectsByBestCubeAction", testActionLabelSelectsByBestCubeAction},
-		{"Match/ScoreMovesResumes", testScoreMovesResumes},
-		{"Match/ScoreAllMoves", testScoreAllMoves},
 		{"Analysis/ReencodeSkipsBinary", testReencodeSkipsBinary},
 		{"Rencontre/TableSettings", testTableSettingsRencontre},
 		{"Rencontre/TournamentTableSettings", testTableSettingsTournament},

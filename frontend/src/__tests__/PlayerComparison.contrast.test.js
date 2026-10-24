@@ -4,10 +4,8 @@ import { must } from './helpers/must.js';
 
 const contrast = vi.fn();
 const load = vi.fn();
-const score = vi.fn();
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    PlayerContrast: (/** @type {any[]} */ ...args) => contrast(...args),
-    ScoreMoves: (/** @type {any[]} */ ...args) => score(...args)
+    PlayerContrast: (/** @type {any[]} */ ...args) => contrast(...args)
 }));
 vi.mock('../services/positionLoader.js', () => ({ loadPositionsFromSelection: (/** @type {any[]} */ ...args) => load(...args) }));
 
@@ -19,7 +17,6 @@ afterEach(() => {
     cleanup();
     contrast.mockReset();
     load.mockReset();
-    score.mockReset();
 });
 
 describe('PlayerComparison contrast', () => {
@@ -52,17 +49,11 @@ describe('PlayerComparison contrast', () => {
         expect(container.querySelector('[data-testid="player-contrast"] button')).toBeNull();
     });
 
-    test('offers to score the plays an import left unscored, then reloads', async () => {
-        contrast
-            .mockResolvedValueOnce({ common_positions: 0, positions: [], unscored_moves: 9 })
-            .mockResolvedValueOnce({ common_positions: 4, positions: [{ position_id: 7, well_played: 'b' }], unscored_moves: 0 });
-        score.mockResolvedValue(9);
+    test('counts the plays the analysis cannot price, with no pass to run', async () => {
+        contrast.mockResolvedValue({ common_positions: 4, positions: [{ position_id: 7, well_played: 'b' }], unscored_moves: 3 });
         const { container } = render(PlayerComparison, { a: row('Alice'), b: row('Bob') });
         await fireEvent.click(must(container.querySelector('[data-testid="player-contrast"] button')));
         await waitFor(() => expect(container.querySelector('[data-testid="contrast-unscored"]')).not.toBeNull());
-        await fireEvent.click(must(container.querySelector('[data-testid="player-contrast"] button')));
-        await waitFor(() => expect(contrast).toHaveBeenCalledTimes(2));
-        expect(score).toHaveBeenCalledTimes(1);
-        await waitFor(() => expect(container.querySelector('[data-testid="contrast-unscored"]')).toBeNull());
+        expect(container.querySelectorAll('[data-testid="player-contrast"] button')).toHaveLength(1);
     });
 });

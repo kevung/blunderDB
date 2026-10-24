@@ -17,10 +17,9 @@ type PlayerContrast struct {
 	// Positions are the contrasting ones, the widest gap between the two
 	// players first.
 	Positions []ContrastPosition `json:"positions"`
-	// UnscoredMoves counts the two players' analysed plays whose error is not
-	// written yet: the contrast leaves them out until the explicit ScoreMoves
-	// pass (repair --move-errors) runs, since no import writes it. A play the
-	// analysis cannot price stays counted after that pass.
+	// UnscoredMoves counts the two players' analysed plays whose error the
+	// analysis cannot price (no candidate names the play): the contrast
+	// leaves them out.
 	UnscoredMoves int `json:"unscored_moves"`
 }
 

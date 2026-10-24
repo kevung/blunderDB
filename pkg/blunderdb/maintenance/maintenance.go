@@ -26,8 +26,6 @@ const (
 	// AnalysisColumns recomputes the scalar columns every analysis carries
 	// beside its blob. Counting would cost the action itself.
 	AnalysisColumns Kind = "analysis.columns"
-	// MovesErrors scores the played moves that have no error yet.
-	MovesErrors Kind = "moves.errors"
 	// AnalysisLegacy rewrites the analyses stored in the JSON format of
 	// older releases in the binary one (ADR-0070).
 	AnalysisLegacy Kind = "analysis.legacy"
@@ -142,16 +140,6 @@ var specs = []spec{
 		run: func(ctx context.Context, st storage.Storage, scope string, o Opts) (int, error) {
 			defer begin(o)()
 			return st.Analyses().RepairDenormalisedColumns(ctx, scope)
-		},
-	},
-	{
-		kind: MovesErrors, tier: TierNone,
-		run: func(ctx context.Context, st storage.Storage, scope string, o Opts) (int, error) {
-			var progress func(int)
-			if o.Progress != nil {
-				progress = func(scored int) { o.Progress(scored, 0) }
-			}
-			return storage.ScoreAllMoves(ctx, st.Matches(), scope, o.Before, progress)
 		},
 	},
 	{

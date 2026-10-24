@@ -100,6 +100,7 @@ var migrationSteps = []migrationStep{
 	{"2.46.0", "2.47.0", (*Database).migrate_2_46_0_to_2_47_0},
 	{"2.47.0", "2.48.0", (*Database).migrate_2_47_0_to_2_48_0},
 	{"2.48.0", "2.49.0", (*Database).migrate_2_48_0_to_2_49_0},
+	{"2.49.0", "2.50.0", (*Database).migrate_2_49_0_to_2_50_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -227,6 +228,11 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	// After the provenance pass: it reads analysis_engine to tell gammonNet's
 	// verdicts on take/pass rows from the other engines'.
 	if err := d.finishAnsweredDoubles(ctx); err != nil {
+		return err
+	}
+	// After the provenance pass and the answered doubles too: the columns
+	// are derived from the rows those passes leave.
+	if err := d.finishRederivedColumns(ctx); err != nil {
 		return err
 	}
 	// An older shape of match_stats rows is a schema repair, not a fill:

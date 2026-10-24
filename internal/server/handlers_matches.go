@@ -147,11 +147,6 @@ func (s *Server) matchRoutes() []route {
 			}
 			return duplicatesResp{Suspects: out}, err
 		})},
-		// The per-move errors written from the analyses (repair --move-errors).
-		{http.MethodPost, "/v1/matches.scoreMoves", rpc(func(ctx context.Context, scope string, _ struct{}) (scoreMovesResp, error) {
-			n, err := storage.ScoreAllMoves(ctx, ms(), scope, nil, nil)
-			return scoreMovesResp{Scored: n}, err
-		})},
 		{http.MethodPost, "/v1/matches.byPosition", rpc(func(ctx context.Context, scope string, req positionIDReq) (matchesByPositionResp, error) {
 			if req.PositionID <= 0 {
 				return matchesByPositionResp{}, errMissing("positionId")
@@ -250,9 +245,4 @@ func (s *Server) exportMatchMATHandler(w http.ResponseWriter, r *http.Request) {
 // duplicatesResp lists the suspected duplicate pairs of /v1/matches.duplicates.
 type duplicatesResp struct {
 	Suspects []domain.DuplicateSuspect `json:"suspects"`
-}
-
-// scoreMovesResp reports how many moves had their error written.
-type scoreMovesResp struct {
-	Scored int `json:"scored"`
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"POT-Creation-Date: 2026-10-24 23:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -1801,19 +1801,14 @@ msgstr ""
 
 #: ../../source/manuel_stats.rst:747
 msgid ""
-"**Noter les coups d'abord** — la liste ne compare que les coups dont "
-"l'erreur est notée, et aucun import ne les note : la notation se fait sur"
-" demande. Tant qu'il en reste à noter, le bloc en donne le nombre avec un"
-" bouton *Noter les coups* ; la ligne de commande fait la même chose avec "
-"``repair --move-errors``."
+"**Coups non chiffrés** — un coup qu'aucun candidat de l'analyse ne nomme "
+"n'a pas d'erreur : la liste le laisse de côté, et le bloc en donne le "
+"nombre."
 msgstr ""
-"**Score the plays first** — the list only compares plays whose error is "
-"scored, and no import scores them: scoring is done on request. While some"
-" remain to be scored, the block gives their number with a *Score the "
-"plays* button; the command line does the same with ``repair --move-"
-"errors``."
+"**Unpriced plays** — a play that no candidate of the analysis names has "
+"no error: the list leaves it out, and the block gives their number."
 
-#: ../../source/manuel_stats.rst:752
+#: ../../source/manuel_stats.rst:750
 msgid ""
 "Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
 " deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
@@ -1836,7 +1831,7 @@ msgstr ""
 " dec.* line, which does compare, and leaves the count beside it as "
 "context."
 
-#: ../../source/manuel_stats.rst:762
+#: ../../source/manuel_stats.rst:760
 msgid ""
 "Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
 "côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
@@ -1845,7 +1840,7 @@ msgstr ""
 "A tie is not a win: it is set in bold on neither side. A rate with "
 "nothing behind it shows as “—” and decides nothing."
 
-#: ../../source/manuel_stats.rst:766
+#: ../../source/manuel_stats.rst:764
 msgid ""
 "Dans cet onglet, le choix du **type de décision** est désactivé : le "
 "tableau ventile déjà les décisions de pions et de videau en colonnes "
@@ -1858,7 +1853,7 @@ msgstr ""
 "of the filter bar stays active: the table always shows all the players, "
 "and this player's row is highlighted and scrolled into view."
 
-#: ../../source/manuel_stats.rst:772
+#: ../../source/manuel_stats.rst:770
 msgid ""
 "Deux vues de corpus figurent dans l'onglet **Corpus** du panneau, en "
 "ligne de commande et par l'API du démon (voir :ref:`cli_stats`) : le "
@@ -1889,7 +1884,7 @@ msgstr ""
 "not accept it: while it is active, they refuse to compute. Like the rest "
 "of the bar, it is kept from one session to the next."
 
-#: ../../source/manuel_stats.rst:786
+#: ../../source/manuel_stats.rst:784
 msgid ""
 "Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du "
 "face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le "
@@ -1911,7 +1906,7 @@ msgstr ""
 "match before opening its list; the ``m`` command then reopens the match "
 "at the saved move."
 
-#: ../../source/manuel_stats.rst:796
+#: ../../source/manuel_stats.rst:794
 msgid ""
 "Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
 "confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
@@ -1932,11 +1927,11 @@ msgstr ""
 "match must be deleted, then imported again. Formats that do not carry it "
 "(BGF, Jellyfish ``.mat``) never will."
 
-#: ../../source/manuel_stats.rst:806
+#: ../../source/manuel_stats.rst:804
 msgid "Règle d'agrégation"
 msgstr "Aggregation rule"
 
-#: ../../source/manuel_stats.rst:809
+#: ../../source/manuel_stats.rst:807
 msgid ""
 "Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
 "règle **somme/somme** — jamais comme moyenne des PR individuels des "
@@ -1945,11 +1940,11 @@ msgstr ""
 "The PR of a tournament (or any subset) is computed using the **sum/sum** "
 "rule — never as an average of individual match PRs."
 
-#: ../../source/manuel_stats.rst:813
+#: ../../source/manuel_stats.rst:811
 msgid "Formule :"
 msgstr "Formula:"
 
-#: ../../source/manuel_stats.rst:815
+#: ../../source/manuel_stats.rst:813
 msgid ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
@@ -1957,27 +1952,27 @@ msgstr ""
 "PR_{tournament} = 500 \\times \\frac{\\sum_{i} "
 "\\text{error}_i}{\\text{total number of decisions}}"
 
-#: ../../source/manuel_stats.rst:819
+#: ../../source/manuel_stats.rst:817
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
 msgstr "**Example:** a player plays two matches in a tournament —"
 
-#: ../../source/manuel_stats.rst:821
+#: ../../source/manuel_stats.rst:819
 msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
 msgstr "Match A: 10 decisions, 0.100 of lost equity → PR = 5.0"
 
-#: ../../source/manuel_stats.rst:822
+#: ../../source/manuel_stats.rst:820
 msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
 msgstr "Match B: 90 decisions, 0.540 of lost equity → PR = 3.0"
 
-#: ../../source/manuel_stats.rst:824
+#: ../../source/manuel_stats.rst:822
 msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
 msgstr "Naive average of PRs: (5.0 + 3.0) / 2 = **4.0** *(incorrect)*"
 
-#: ../../source/manuel_stats.rst:826
+#: ../../source/manuel_stats.rst:824
 msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
 msgstr "Sum/sum rule: 500 × 0.640 / (10 + 90) = **3.2** *(correct)*"
 
-#: ../../source/manuel_stats.rst:828
+#: ../../source/manuel_stats.rst:826
 msgid ""
 "La règle somme/somme est la seule qui résiste à la variation de longueur "
 "des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
@@ -1985,11 +1980,11 @@ msgstr ""
 "The sum/sum rule is the only one that handles varying match lengths "
 "correctly (a 21-point match carries more weight than a 1-point match)."
 
-#: ../../source/manuel_stats.rst:832
+#: ../../source/manuel_stats.rst:830
 msgid "MWC : limitations"
 msgstr "MWC: limitations"
 
-#: ../../source/manuel_stats.rst:834
+#: ../../source/manuel_stats.rst:832
 msgid ""
 "Par défaut, le MWC cost est calculé à partir de la **MET Kazaross-XG2**, "
 "table de référence de facto dans le backgammon compétitif. Les résultats "
@@ -2010,7 +2005,7 @@ msgstr ""
 "side; beyond that, it is extended by a Zadeh table computed the same way "
 "as GNUbg's, up to 64."
 
-#: ../../source/manuel_stats.rst:843
+#: ../../source/manuel_stats.rst:841
 msgid ""
 "Les positions *money-game* (sans score de match) sont **exclues** du "
 "calcul MWC. Si votre base de données contient beaucoup de positions "
@@ -2020,7 +2015,7 @@ msgstr ""
 "MWC computation. If your database contains many money-game positions, the"
 " MWC cost may be underestimated or unavailable."
 
-#: ../../source/manuel_stats.rst:847
+#: ../../source/manuel_stats.rst:845
 msgid ""
 "Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
 "un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
@@ -2030,3 +2025,24 @@ msgstr ""
 "decision indicator. It measures the total impact of your errors on your "
 "winning chances."
 
+#~ msgid ""
+#~ "**Noter les coups d'abord** — la "
+#~ "liste ne compare que les coups "
+#~ "dont l'erreur est notée, et aucun "
+#~ "import ne les note : la notation"
+#~ " se fait sur demande. Tant qu'il "
+#~ "en reste à noter, le bloc en "
+#~ "donne le nombre avec un bouton "
+#~ "*Noter les coups* ; la ligne de"
+#~ " commande fait la même chose avec "
+#~ "``repair --move-errors``."
+#~ msgstr ""
+#~ "**Score the plays first** — the "
+#~ "list only compares plays whose error "
+#~ "is scored, and no import scores "
+#~ "them: scoring is done on request. "
+#~ "While some remain to be scored, "
+#~ "the block gives their number with "
+#~ "a *Score the plays* button; the "
+#~ "command line does the same with "
+#~ "``repair --move-errors``."

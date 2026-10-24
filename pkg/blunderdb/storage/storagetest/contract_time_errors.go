@@ -76,7 +76,7 @@ func assertTimeErrorsMatchScope(t *testing.T, s storage.Storage, matchID int64, 
 
 // testStatsTimeErrorsScoredByAnalysis pins that an analysis written after the
 // Match, as the end of a Duel writes it, scores the table at once: no separate
-// pass over move.error_mp stands between the analysis and the mean error.
+// scoring pass stands between the analysis and the mean error.
 func testStatsTimeErrorsScoredByAnalysis(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	ms := func(v int64) *int64 { return &v }

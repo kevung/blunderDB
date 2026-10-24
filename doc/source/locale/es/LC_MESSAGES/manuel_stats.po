@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 12:52+0200\n"
+"POT-Creation-Date: 2026-10-24 23:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1830,19 +1830,14 @@ msgstr ""
 
 #: ../../source/manuel_stats.rst:747
 msgid ""
-"**Noter les coups d'abord** — la liste ne compare que les coups dont "
-"l'erreur est notée, et aucun import ne les note : la notation se fait sur"
-" demande. Tant qu'il en reste à noter, le bloc en donne le nombre avec un"
-" bouton *Noter les coups* ; la ligne de commande fait la même chose avec "
-"``repair --move-errors``."
+"**Coups non chiffrés** — un coup qu'aucun candidat de l'analyse ne nomme "
+"n'a pas d'erreur : la liste le laisse de côté, et le bloc en donne le "
+"nombre."
 msgstr ""
-"**Puntuar primero las jugadas** — la lista solo compara las jugadas cuyo "
-"error está puntuado, y ninguna importación las puntúa: la puntuación se "
-"hace a petición. Mientras quedan jugadas por puntuar, el bloque indica su"
-" número con un botón *Puntuar las jugadas*; la línea de comandos hace lo "
-"mismo con ``repair --move-errors``."
+"**Jugadas sin valorar** — una jugada que ningún candidato del análisis "
+"nombra no tiene error: la lista la deja de lado y el bloque da su número."
 
-#: ../../source/manuel_stats.rst:752
+#: ../../source/manuel_stats.rst:750
 msgid ""
 "Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des"
 " deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il "
@@ -1865,7 +1860,7 @@ msgstr ""
 "eso el bloque añade una línea *Blunders / 100 dec.* que sí se compara, y "
 "deja el recuento al lado como contexto."
 
-#: ../../source/manuel_stats.rst:762
+#: ../../source/manuel_stats.rst:760
 msgid ""
 "Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun "
 "côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage "
@@ -1874,7 +1869,7 @@ msgstr ""
 "Un empate no es una victoria: no se pone en negrita en ningún lado. Una "
 "tasa sin nada detrás se muestra como «—» y no decide nada."
 
-#: ../../source/manuel_stats.rst:766
+#: ../../source/manuel_stats.rst:764
 msgid ""
 "Dans cet onglet, le choix du **type de décision** est désactivé : le "
 "tableau ventile déjà les décisions de pions et de videau en colonnes "
@@ -1888,7 +1883,7 @@ msgstr ""
 "muestra siempre todos los jugadores, y la fila de este se resalta y se "
 "lleva a la pantalla."
 
-#: ../../source/manuel_stats.rst:772
+#: ../../source/manuel_stats.rst:770
 msgid ""
 "Deux vues de corpus figurent dans l'onglet **Corpus** du panneau, en "
 "ligne de commande et par l'API du démon (voir :ref:`cli_stats`) : le "
@@ -1920,7 +1915,7 @@ msgstr ""
 "aceptan: mientras está activo, se niegan a calcularse. Como el resto de "
 "la barra, se conserva de una sesión a otra."
 
-#: ../../source/manuel_stats.rst:786
+#: ../../source/manuel_stats.rst:784
 msgid ""
 "Dans l'onglet Corpus, chaque ligne ouvre ce qu'elle résume. Le bilan du "
 "face-à-face ouvre ses matchs dans le panneau Matchs, qui porte alors le "
@@ -1942,7 +1937,7 @@ msgstr ""
 "pestaña, sale primero de la partida en curso antes de abrir su lista; el "
 "comando ``m`` reabre después la partida en la jugada guardada."
 
-#: ../../source/manuel_stats.rst:796
+#: ../../source/manuel_stats.rst:794
 msgid ""
 "Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
 "confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
@@ -1963,11 +1958,11 @@ msgstr ""
 "Hay que eliminar la partida y luego volver a importarla. Los formatos que"
 " no la transportan (BGF, Jellyfish ``.mat``) no la aportarán nunca."
 
-#: ../../source/manuel_stats.rst:806
+#: ../../source/manuel_stats.rst:804
 msgid "Règle d'agrégation"
 msgstr "Regla de agregación"
 
-#: ../../source/manuel_stats.rst:809
+#: ../../source/manuel_stats.rst:807
 msgid ""
 "Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
 "règle **somme/somme** — jamais comme moyenne des PR individuels des "
@@ -1977,11 +1972,11 @@ msgstr ""
 "regla **suma/suma**, nunca como media de los PR individuales de las "
 "partidas."
 
-#: ../../source/manuel_stats.rst:813
+#: ../../source/manuel_stats.rst:811
 msgid "Formule :"
 msgstr "Fórmula:"
 
-#: ../../source/manuel_stats.rst:815
+#: ../../source/manuel_stats.rst:813
 msgid ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
@@ -1989,27 +1984,27 @@ msgstr ""
 "PR_{torneo} = 500 \\times \\frac{\\sum_{i} \\text{error}_i}{\\text{número"
 " total de decisiones}}"
 
-#: ../../source/manuel_stats.rst:819
+#: ../../source/manuel_stats.rst:817
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
 msgstr "**Ejemplo:** un jugador disputa dos partidas en un torneo —"
 
-#: ../../source/manuel_stats.rst:821
+#: ../../source/manuel_stats.rst:819
 msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
 msgstr "Partida A: 10 decisiones, 0,100 de equidad perdida → PR = 5,0"
 
-#: ../../source/manuel_stats.rst:822
+#: ../../source/manuel_stats.rst:820
 msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
 msgstr "Partida B: 90 decisiones, 0,540 de equidad perdida → PR = 3,0"
 
-#: ../../source/manuel_stats.rst:824
+#: ../../source/manuel_stats.rst:822
 msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
 msgstr "Media ingenua de los PR: (5,0 + 3,0) / 2 = **4,0** *(incorrecto)*"
 
-#: ../../source/manuel_stats.rst:826
+#: ../../source/manuel_stats.rst:824
 msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
 msgstr "Regla suma/suma: 500 × 0,640 / (10 + 90) = **3,2** *(correcto)*"
 
-#: ../../source/manuel_stats.rst:828
+#: ../../source/manuel_stats.rst:826
 msgid ""
 "La règle somme/somme est la seule qui résiste à la variation de longueur "
 "des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
@@ -2018,11 +2013,11 @@ msgstr ""
 "longitud de los matches (un match a 21 puntos pesa más que un match a 1 "
 "punto)."
 
-#: ../../source/manuel_stats.rst:832
+#: ../../source/manuel_stats.rst:830
 msgid "MWC : limitations"
 msgstr "MWC: limitaciones"
 
-#: ../../source/manuel_stats.rst:834
+#: ../../source/manuel_stats.rst:832
 msgid ""
 "Par défaut, le MWC cost est calculé à partir de la **MET Kazaross-XG2**, "
 "table de référence de facto dans le backgammon compétitif. Les résultats "
@@ -2043,7 +2038,7 @@ msgstr ""
 "valores hasta 25 puntos por hacer de cada lado; más allá, se prolonga con"
 " una tabla de Zadeh calculada como la de GNUbg, hasta 64."
 
-#: ../../source/manuel_stats.rst:843
+#: ../../source/manuel_stats.rst:841
 msgid ""
 "Les positions *money-game* (sans score de match) sont **exclues** du "
 "calcul MWC. Si votre base de données contient beaucoup de positions "
@@ -2053,7 +2048,7 @@ msgstr ""
 "del cálculo de MWC. Si su base de datos contiene muchas posiciones de "
 "money-game, el MWC cost puede estar subestimado o no estar disponible."
 
-#: ../../source/manuel_stats.rst:847
+#: ../../source/manuel_stats.rst:845
 msgid ""
 "Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
 "un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
@@ -2063,3 +2058,25 @@ msgstr ""
 "indicador por decisión. Mide el impacto total de sus errores sobre sus "
 "posibilidades de victoria."
 
+#~ msgid ""
+#~ "**Noter les coups d'abord** — la "
+#~ "liste ne compare que les coups "
+#~ "dont l'erreur est notée, et aucun "
+#~ "import ne les note : la notation"
+#~ " se fait sur demande. Tant qu'il "
+#~ "en reste à noter, le bloc en "
+#~ "donne le nombre avec un bouton "
+#~ "*Noter les coups* ; la ligne de"
+#~ " commande fait la même chose avec "
+#~ "``repair --move-errors``."
+#~ msgstr ""
+#~ "**Puntuar primero las jugadas** — la "
+#~ "lista solo compara las jugadas cuyo "
+#~ "error está puntuado, y ninguna "
+#~ "importación las puntúa: la puntuación se"
+#~ " hace a petición. Mientras quedan "
+#~ "jugadas por puntuar, el bloque indica"
+#~ " su número con un botón *Puntuar "
+#~ "las jugadas*; la línea de comandos "
+#~ "hace lo mismo con ``repair --move-"
+#~ "errors``."

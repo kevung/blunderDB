@@ -762,8 +762,6 @@ statistiques se lance tout seul, à l'ouverture.
 * **Colonnes d'analyse** — les colonnes que la recherche et les statistiques
   interrogent sont une projection des analyses stockées, lesquelles restent
   intactes : l'action les recalcule sans rien réimporter.
-* **Erreurs des coups joués** — note les coups joués qui n'ont pas encore
-  d'erreur.
 * **Analyses à l'ancien format** — réécrit au format binaire les analyses
   qu'une version antérieure stockait en JSON.
 * **Corbeille** — le nombre d'entrées de la corbeille, qui l'ouvre.

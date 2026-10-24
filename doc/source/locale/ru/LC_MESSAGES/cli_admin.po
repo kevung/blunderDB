@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 10:06+0200\n"
+"POT-Creation-Date: 2026-10-24 23:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -35,17 +35,17 @@ msgstr "Отображает метаданные и статистику баз
 #: ../../source/cli_admin.rst:15 ../../source/cli_admin.rst:102
 #: ../../source/cli_admin.rst:136 ../../source/cli_admin.rst:272
 #: ../../source/cli_admin.rst:317 ../../source/cli_admin.rst:357
-#: ../../source/cli_admin.rst:417 ../../source/cli_admin.rst:559
-#: ../../source/cli_admin.rst:660 ../../source/cli_admin.rst:690
-#: ../../source/cli_admin.rst:733
+#: ../../source/cli_admin.rst:416 ../../source/cli_admin.rst:558
+#: ../../source/cli_admin.rst:654 ../../source/cli_admin.rst:684
+#: ../../source/cli_admin.rst:727
 msgid "**Options:**"
 msgstr "**Параметры:**"
 
 #: ../../source/cli_admin.rst:17 ../../source/cli_admin.rst:104
 #: ../../source/cli_admin.rst:138 ../../source/cli_admin.rst:274
 #: ../../source/cli_admin.rst:319 ../../source/cli_admin.rst:359
-#: ../../source/cli_admin.rst:419 ../../source/cli_admin.rst:561
-#: ../../source/cli_admin.rst:662
+#: ../../source/cli_admin.rst:418 ../../source/cli_admin.rst:560
+#: ../../source/cli_admin.rst:656
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — База данных (обязательно)."
 
@@ -75,8 +75,8 @@ msgstr ""
 "способной его изменить (импорт, анализ, удаление, смена порога)."
 
 #: ../../source/cli_admin.rst:28 ../../source/cli_admin.rst:118
-#: ../../source/cli_admin.rst:191 ../../source/cli_admin.rst:669
-#: ../../source/cli_admin.rst:761
+#: ../../source/cli_admin.rst:191 ../../source/cli_admin.rst:663
+#: ../../source/cli_admin.rst:755
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
@@ -376,8 +376,8 @@ msgstr ""
 "JSON, перезаписывается в компактном двоичном формате (см. ``reencode``)."
 
 #: ../../source/cli_admin.rst:292 ../../source/cli_admin.rst:332
-#: ../../source/cli_admin.rst:370 ../../source/cli_admin.rst:430
-#: ../../source/cli_admin.rst:641 ../../source/cli_admin.rst:702
+#: ../../source/cli_admin.rst:370 ../../source/cli_admin.rst:429
+#: ../../source/cli_admin.rst:635 ../../source/cli_admin.rst:696
 msgid "**Exemple:**"
 msgstr "**Пример:**"
 
@@ -592,14 +592,6 @@ msgid "Recalcule les colonnes tirées des analyses."
 msgstr "Пересчитывает столбцы, получаемые из анализов."
 
 #: ../../source/cli_admin.rst:1
-msgid "``moves.errors``"
-msgstr "``moves.errors``"
-
-#: ../../source/cli_admin.rst:1
-msgid "Note l'erreur des coups joués qui n'en ont pas."
-msgstr "Записывает ошибку сыгранных ходов, у которых её нет."
-
-#: ../../source/cli_admin.rst:1
 msgid "``analysis.legacy``"
 msgstr "``analysis.legacy``"
 
@@ -631,11 +623,11 @@ msgstr "Свободные байты файла (SQLite)."
 msgid "La commande ``vacuum``."
 msgstr "Команда ``vacuum``."
 
-#: ../../source/cli_admin.rst:420
+#: ../../source/cli_admin.rst:419
 msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json``."
 
-#: ../../source/cli_admin.rst:422
+#: ../../source/cli_admin.rst:421
 msgid ""
 "La dernière exécution est rangée dans la base, avec ses réglages ; un "
 "export ne l'emporte pas. Une seule opération tourne à la fois. Le démon "
@@ -653,11 +645,11 @@ msgstr ""
 "вызывающего; операция, запрошенная во время анализа gammonNet или "
 "роллаута для этого тенанта, отклоняется."
 
-#: ../../source/cli_admin.rst:439
+#: ../../source/cli_admin.rst:438
 msgid "players — Les graphies d'un joueur"
 msgstr "players — Написания имени игрока"
 
-#: ../../source/cli_admin.rst:441
+#: ../../source/cli_admin.rst:440
 msgid ""
 "Une même personne signe parfois de plusieurs façons d'un fichier à "
 "l'autre (« Doe J. », « John Doe »). Un **alias** dit qu'un nom est une "
@@ -675,11 +667,11 @@ msgstr ""
 "импорт записывает каноническое имя. Объединение игроков в окне матчей "
 "создаёт те же псевдонимы."
 
-#: ../../source/cli_admin.rst:453
+#: ../../source/cli_admin.rst:452
 msgid "**Actions:**"
 msgstr "**Действия:**"
 
-#: ../../source/cli_admin.rst:455
+#: ../../source/cli_admin.rst:454
 msgid ""
 "``add ALIAS CANONIQUE`` — ``ALIAS`` devient une graphie de ``CANONIQUE``."
 " Un canonique qui est lui-même un alias est suivi jusqu'à son propre "
@@ -691,13 +683,13 @@ msgstr ""
 "собственного канонического, а псевдонимы, указывавшие на ``ALIAS``, "
 "переходят на ``CANONIQUE``: один уровень, никогда не цепочка."
 
-#: ../../source/cli_admin.rst:459
+#: ../../source/cli_admin.rst:458
 msgid "``list [--format text|json]`` — Les alias, rangés par nom canonique."
 msgstr ""
 "``list [--format text|json]`` — Псевдонимы, упорядоченные по "
 "каноническому имени."
 
-#: ../../source/cli_admin.rst:460
+#: ../../source/cli_admin.rst:459
 msgid ""
 "``remove ALIAS`` — Oublie un alias ; sort en erreur si ce n'en était pas "
 "un."
@@ -705,7 +697,7 @@ msgstr ""
 "``remove ALIAS`` — Забывает псевдоним; завершается ошибкой, если это не "
 "был псевдоним."
 
-#: ../../source/cli_admin.rst:461
+#: ../../source/cli_admin.rst:460
 msgid ""
 "``suggest [--format text|json]`` — Propose les noms qui ne diffèrent que "
 "par la casse, les accents, la ponctuation ou l'ordre des mots, avec pour "
@@ -717,7 +709,7 @@ msgstr ""
 " написанием в качестве канонического. Ничего не записывается: каждое "
 "предложение оформлено как команда ``add``, которая его применила бы."
 
-#: ../../source/cli_admin.rst:466
+#: ../../source/cli_admin.rst:465
 msgid ""
 "**Empreintes.** Les empreintes d'un match (``match_hash``, "
 "``canonical_hash``) gardent les noms du fichier : l'alias s'applique "
@@ -737,7 +729,7 @@ msgstr ""
 "распознаётся как тот же матч: его анализы обогащают существующий, второй "
 "матч не создаётся."
 
-#: ../../source/cli_admin.rst:479
+#: ../../source/cli_admin.rst:478
 msgid ""
 "**players merge** — La fusion de joueurs de la fenêtre des matchs, du "
 "même code que la route ``matches.mergePlayers`` du démon : chaque nom "
@@ -749,7 +741,7 @@ msgstr ""
 "написанием канонического имени, как столько же команд ``players alias "
 "add``."
 
-#: ../../source/cli_admin.rst:487
+#: ../../source/cli_admin.rst:486
 msgid ""
 "**players swap** — L'inversion des deux joueurs d'un match, que le "
 "fichier avait nommés dans le mauvais ordre (route "
@@ -764,7 +756,7 @@ msgstr ""
 "статистику, на другом месте. Обмен отклоняется, пока для матча открыт "
 "черновик транскрипции, а также для матча, сыгранного в blunderDB."
 
-#: ../../source/cli_admin.rst:497
+#: ../../source/cli_admin.rst:496
 msgid ""
 "**players main** — Le joueur principal de la fenêtre des matchs (routes "
 "``players.main.*``). Sans nom, affiche le joueur principal ; avec un nom,"
@@ -784,7 +776,7 @@ msgstr ""
 "ничего не переставляя обратно. Матч с открытым черновиком транскрипции "
 "или сыгранный в blunderDB остаётся как есть и перечисляется отдельно."
 
-#: ../../source/cli_admin.rst:510
+#: ../../source/cli_admin.rst:509
 msgid ""
 "**players matches** — Les identifiants des matchs d'un joueur, à l'un ou "
 "l'autre siège et sous tous ses alias (route ``players.matchIds``)."
@@ -792,11 +784,11 @@ msgstr ""
 "**players matches** — Идентификаторы матчей игрока, за любую из двух "
 "сторон и под всеми его псевдонимами (маршрут ``players.matchIds``)."
 
-#: ../../source/cli_admin.rst:524
+#: ../../source/cli_admin.rst:523
 msgid "events — Les graphies d'un événement"
 msgstr "events — Написания названия события"
 
-#: ../../source/cli_admin.rst:526
+#: ../../source/cli_admin.rst:525
 msgid ""
 "Les mêmes actions que ``players alias``, pour les noms d'événement (le "
 "champ Event d'un fichier). À l'import, un match dont l'événement est un "
@@ -806,11 +798,11 @@ msgstr ""
 " файла). При импорте матч, событие которого является псевдонимом, "
 "помещается в турнир с каноническим названием."
 
-#: ../../source/cli_admin.rst:538
+#: ../../source/cli_admin.rst:537
 msgid "repair — Recalculer ce qui est dérivé"
 msgstr "repair — Пересчитать то, что выведено"
 
-#: ../../source/cli_admin.rst:540
+#: ../../source/cli_admin.rst:539
 msgid ""
 "Recalcule ce que la base tire de ce qu'elle stocke : les colonnes "
 "scalaires de chaque analyse à partir de l'analyse elle-même, dont elles "
@@ -827,7 +819,7 @@ msgstr ""
 "пришла. Сами анализы не трогаются: переделываются значения, которые из "
 "них были выведены."
 
-#: ../../source/cli_admin.rst:547
+#: ../../source/cli_admin.rst:546
 msgid ""
 "Une base qui a reçu des analyses par l'import d'une autre base (``import "
 "--type database``, y compris par un dossier de synchronisation surveillé)"
@@ -847,7 +839,7 @@ msgstr ""
 "содержимое тогда учитывается так, как если бы оно пришло через "
 "``transfer``."
 
-#: ../../source/cli_admin.rst:562
+#: ../../source/cli_admin.rst:561
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un "
 "compteur par passe : ``repaired`` (colonnes d'analyse), ``phases`` "
@@ -855,8 +847,7 @@ msgid ""
 "``signatures_unverified`` (commentaires signés qu'un réhachage laisse non"
 " vérifiés : une signature couvre l'identité de la position). Chacun dit "
 "le nombre de lignes réellement changées. Avec ``--stats``, s'y ajoute "
-"``match_stats`` (matchs recalculés) ; avec ``--move-errors``, "
-"``move_errors`` (coups notés)."
+"``match_stats`` (matchs recalculés)."
 msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` — по "
 "одному счётчику на проход: ``repaired`` (столбцы анализа), ``phases`` "
@@ -864,28 +855,13 @@ msgstr ""
 "хешем), и ``signatures_unverified`` (подписанные комментарии, которые "
 "пересчёт хеша оставляет непроверенными: подпись охватывает идентичность "
 "позиции). Каждый показывает число реально изменённых строк. С ``--stats``"
-" добавляется ``match_stats`` (пересчитанные матчи). С ``--move-errors`` "
-"добавляется ``move_errors`` (оценённые ходы)."
+" добавляется ``match_stats`` (пересчитанные матчи)."
 
-#: ../../source/cli_admin.rst:569
+#: ../../source/cli_admin.rst:568
 msgid "``--stats`` — Recalcule aussi, de zéro, les statistiques par match."
 msgstr "``--stats`` — Также пересчитывает с нуля статистику по матчам."
 
-#: ../../source/cli_admin.rst:570
-msgid ""
-"``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a "
-"cédée face au meilleur coup, lue dans l'analyse de sa position (colonne "
-"``error_mp`` de la table des coups). La passe est reprenable : "
-"interrompue, elle reprend où elle s'était arrêtée ; sur une très grande "
-"base elle dure plusieurs minutes. Côté serveur : ``matches.scoreMoves``."
-msgstr ""
-"``--move-errors`` — Также записывает для каждого сыгранного хода эквити, "
-"уступленное по сравнению с лучшим ходом, считанное из анализа его позиции"
-" (столбец ``error_mp`` таблицы ходов). Проход возобновляем: после "
-"прерывания он продолжается с места остановки; на очень большой библиотеке"
-" занимает несколько минут. На стороне сервера: ``matches.scoreMoves``."
-
-#: ../../source/cli_admin.rst:575
+#: ../../source/cli_admin.rst:569
 msgid ""
 "``--duplicates`` — Ne lance aucune des passes : liste les paires de "
 "matchs que les dés disent identiques, sans rien fusionner (voir ci-"
@@ -894,7 +870,7 @@ msgstr ""
 "``--duplicates`` — Не запускает ни один из проходов: перечисляет пары "
 "матчей, которые по костям совпадают, ничего не объединяя (см. ниже)."
 
-#: ../../source/cli_admin.rst:578
+#: ../../source/cli_admin.rst:572
 msgid ""
 "Les statistiques par match sont, pour chaque joueur de chaque match, ses "
 "décisions, son erreur cumulée, son PR, ses blunders, sa chance et la "
@@ -918,7 +894,7 @@ msgstr ""
 "переделывает всю: средство на случай, если этот учёт когда-нибудь "
 "собьётся."
 
-#: ../../source/cli_admin.rst:588
+#: ../../source/cli_admin.rst:582
 #, no-python-brace-format
 msgid ""
 "**Doublons probables.** ``repair --duplicates`` compare les matchs par "
@@ -957,7 +933,7 @@ msgstr ""
 "появления отпечатка костей, получает его попутно; это единственная запись"
 " этого режима."
 
-#: ../../source/cli_admin.rst:604
+#: ../../source/cli_admin.rst:598
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
@@ -978,7 +954,7 @@ msgstr ""
 "пересчитывается по ходам матча. Исправление чтения ничего не меняет в уже"
 " записанных строках; эта команда их переделывает."
 
-#: ../../source/cli_admin.rst:614
+#: ../../source/cli_admin.rst:608
 msgid ""
 "La passe Crawford, elle, touche les positions elles-mêmes. Un score à "
 "``1`` signifie « un point à faire, et cette partie EST la Crawford » ; "
@@ -1027,7 +1003,7 @@ msgstr ""
 "сохранённый счёт и ничего не доказывает. Любая другая позиция без матча "
 "остаётся как есть: ничто не противоречит тому, что объявляет её счёт."
 
-#: ../../source/cli_admin.rst:636
+#: ../../source/cli_admin.rst:630
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -1038,29 +1014,29 @@ msgstr ""
 "столбцы анализа у всех или перехешировать позиции при одном лишь открытии"
 " базы — не то, что инструмент должен делать за спиной пользователя."
 
-#: ../../source/cli_admin.rst:652
+#: ../../source/cli_admin.rst:646
 msgid "delete — Supprimer des données"
 msgstr "delete — Удалить данные"
 
-#: ../../source/cli_admin.rst:654
+#: ../../source/cli_admin.rst:648
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Удаляет матч и все связанные данные (партии, ходы, анализы)."
 
-#: ../../source/cli_admin.rst:663
+#: ../../source/cli_admin.rst:657
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Тип удаления: ``match`` (обязательно)."
 
-#: ../../source/cli_admin.rst:664
+#: ../../source/cli_admin.rst:658
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Идентификатор элемента для удаления (обязательно)."
 
-#: ../../source/cli_admin.rst:665
+#: ../../source/cli_admin.rst:659
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Удалить без запроса подтверждения."
 
-#: ../../source/cli_admin.rst:666
+#: ../../source/cli_admin.rst:660
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1069,11 +1045,11 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli_admin.rst:678
+#: ../../source/cli_admin.rst:672
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Проверка демона"
 
-#: ../../source/cli_admin.rst:680
+#: ../../source/cli_admin.rst:674
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1087,7 +1063,7 @@ msgstr ""
 "хранилище недоступно, схема устарела или по адресу никто не слушает. Файл"
 " базы данных не открывается."
 
-#: ../../source/cli_admin.rst:692
+#: ../../source/cli_admin.rst:686
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -1098,7 +1074,7 @@ msgstr ""
 "обобщённым хостом (``0.0.0.0``, ``[::]``) проверяется через петлевой "
 "интерфейс."
 
-#: ../../source/cli_admin.rst:695
+#: ../../source/cli_admin.rst:689
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -1106,7 +1082,7 @@ msgstr ""
 "``--timeout`` — Время, по истечении которого проверка прекращается (по "
 "умолчанию ``2s``)."
 
-#: ../../source/cli_admin.rst:697
+#: ../../source/cli_admin.rst:691
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1118,7 +1094,7 @@ msgstr ""
 "``cmd/serve``, тоже её понимает. Она так же пригодна для скрипта или "
 "юнита systemd."
 
-#: ../../source/cli_admin.rst:711
+#: ../../source/cli_admin.rst:705
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1126,11 +1102,11 @@ msgstr ""
 "При неудаче выводится причина, которую ``docker inspect`` показывает для "
 "контейнера в состоянии ``unhealthy``:"
 
-#: ../../source/cli_admin.rst:719
+#: ../../source/cli_admin.rst:713
 msgid "mcp — Offrir la base à un assistant IA"
 msgstr "mcp — Предоставить базу ИИ-ассистенту"
 
-#: ../../source/cli_admin.rst:721
+#: ../../source/cli_admin.rst:715
 msgid ""
 "Sert les outils de la base à un assistant IA par le *Model Context "
 "Protocol*, sur l'entrée et la sortie standard : c'est l'assistant qui "
@@ -1149,11 +1125,11 @@ msgstr ""
 "только читают, кроме случая ``--write``. Полный список и HTTP-эквивалент "
 "демона: :ref:`headless_mcp`."
 
-#: ../../source/cli_admin.rst:735
+#: ../../source/cli_admin.rst:729
 msgid "``--db`` — Fichier de base de données (obligatoire)."
 msgstr "``--db`` — Файл базы данных (обязательно)."
 
-#: ../../source/cli_admin.rst:736
+#: ../../source/cli_admin.rst:730
 msgid ""
 "``--write`` — Offre aussi les outils qui écrivent : enregistrer une "
 "position, la commenter, créer et remplir une collection. Rien n'efface."
@@ -1162,7 +1138,7 @@ msgstr ""
 "позицию, прокомментировать её, создать и наполнить коллекцию. Ничего не "
 "удаляется."
 
-#: ../../source/cli_admin.rst:739
+#: ../../source/cli_admin.rst:733
 msgid ""
 "Comme ``call``, la commande migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."
@@ -1170,15 +1146,15 @@ msgstr ""
 "Как и ``call``, команда при открытии переносит схему старой базы, даже "
 "без ``--write``."
 
-#: ../../source/cli_admin.rst:742
+#: ../../source/cli_admin.rst:736
 msgid "**Exemple:** déclarer la base à Claude Code."
 msgstr "**Пример:** объявить базу в Claude Code."
 
-#: ../../source/cli_admin.rst:749
+#: ../../source/cli_admin.rst:743
 msgid "completion — Complétion shell"
 msgstr "completion — Автодополнение оболочки"
 
-#: ../../source/cli_admin.rst:751
+#: ../../source/cli_admin.rst:745
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -1193,7 +1169,7 @@ msgstr ""
 "(``handlers()``): новая подкоманда предлагается автодополнением сразу "
 "после подключения, и ничего не нужно поддерживать вручную."
 
-#: ../../source/cli_admin.rst:775
+#: ../../source/cli_admin.rst:769
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -1210,11 +1186,11 @@ msgstr ""
 "фиксируется в репозитории, поэтому автодополнение никогда не может "
 "разойтись с таблицей подкоманд."
 
-#: ../../source/cli_admin.rst:783
+#: ../../source/cli_admin.rst:777
 msgid "version — Afficher la version"
 msgstr "version — Показать версию"
 
-#: ../../source/cli_admin.rst:785
+#: ../../source/cli_admin.rst:779
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -1222,3 +1198,32 @@ msgid ""
 msgstr ""
 "Выводит версию blunderDB и версию схемы базы данных, которую записывает "
 "этот бинарный файл; это первое, что нужно приложить к отчёту об ошибке."
+
+#~ msgid "``moves.errors``"
+#~ msgstr "``moves.errors``"
+
+#~ msgid "Note l'erreur des coups joués qui n'en ont pas."
+#~ msgstr "Записывает ошибку сыгранных ходов, у которых её нет."
+
+#~ msgid ""
+#~ "``--move-errors`` — Écrit aussi, pour"
+#~ " chaque coup joué, l'équité qu'il a"
+#~ " cédée face au meilleur coup, lue "
+#~ "dans l'analyse de sa position (colonne"
+#~ " ``error_mp`` de la table des coups)."
+#~ " La passe est reprenable : "
+#~ "interrompue, elle reprend où elle "
+#~ "s'était arrêtée ; sur une très "
+#~ "grande base elle dure plusieurs minutes."
+#~ " Côté serveur : ``matches.scoreMoves``."
+#~ msgstr ""
+#~ "``--move-errors`` — Также записывает для"
+#~ " каждого сыгранного хода эквити, "
+#~ "уступленное по сравнению с лучшим ходом,"
+#~ " считанное из анализа его позиции "
+#~ "(столбец ``error_mp`` таблицы ходов). Проход"
+#~ " возобновляем: после прерывания он "
+#~ "продолжается с места остановки; на очень"
+#~ " большой библиотеке занимает несколько "
+#~ "минут. На стороне сервера: "
+#~ "``matches.scoreMoves``."

@@ -340,5 +340,10 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   triggers on `move` keep it on every write; the existing rows are filled
   with FORCE lifted, as in `049`. SQLite's side is
   `sqlite.multiPlayedTriggers`, the same definition (`sqlshared.MultiPlayedSQL`).
+- `053_rederive_columns.sql` — drops `move.error_mp`, which only the player
+  contrast read (it reads `move.decision_error_mp` now). The analysis and
+  per-move decision columns are derived again and `match_stats` emptied by
+  `recountDecisions`, rerun by bumping `goBackfillsGeneration` to `5`; the
+  SQLite side is `migrate_2_49_0_to_2_50_0`.
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.49.0.

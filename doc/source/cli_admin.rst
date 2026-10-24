@@ -409,7 +409,6 @@ ni en lisant l'état.
    "``analysis.missing``", "Positions sans aucune analyse, à la demande.", "La commande ``analyze``."
    "``stats.matches``", "Matchs sans statistiques par match.", "Les calcule."
    "``analysis.columns``", "—", "Recalcule les colonnes tirées des analyses."
-   "``moves.errors``", "—", "Note l'erreur des coups joués qui n'en ont pas."
    "``analysis.legacy``", "—", "Réécrit les analyses au format compact (``reencode``)."
    "``trash``", "Entrées de la corbeille.", "La commande ``trash``."
    "``vacuum``", "Octets libres du fichier (SQLite).", "La commande ``vacuum``."
@@ -565,13 +564,8 @@ contenu compte alors comme s'il était venu par ``transfer``.
   (commentaires signés qu'un réhachage laisse non vérifiés : une signature
   couvre l'identité de la position). Chacun dit le nombre de lignes réellement
   changées. Avec ``--stats``, s'y ajoute ``match_stats``
-  (matchs recalculés) ; avec ``--move-errors``, ``move_errors`` (coups notés).
+  (matchs recalculés).
 * ``--stats`` — Recalcule aussi, de zéro, les statistiques par match.
-* ``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a
-  cédée face au meilleur coup, lue dans l'analyse de sa position (colonne
-  ``error_mp`` de la table des coups). La passe est reprenable : interrompue,
-  elle reprend où elle s'était arrêtée ; sur une très grande base elle dure
-  plusieurs minutes. Côté serveur : ``matches.scoreMoves``.
 * ``--duplicates`` — Ne lance aucune des passes : liste les paires de matchs
   que les dés disent identiques, sans rien fusionner (voir ci-dessous).
 

@@ -22,7 +22,8 @@ const recountPagesPerBatch = 20
 
 // recountDecisions recomputes the analysis columns 042 changed the rules of
 // (is_forced, is_close_cube, best_move_equity_error) and the per-move columns
-// 044 added, for every tenant, and drops the match_stats rows (cells and
+// 044 added, for every tenant, and again for 053 (the played move matched to
+// a candidate by the board it leaves, countedExpr changed), and drops the match_stats rows (cells and
 // positions cascade) that summarise what changed. It also drops them all in
 // its first batch: the DELETE of 042 and 043 ran on a connection carrying no
 // tenant, which FORCEd row-level security shows no row. One of

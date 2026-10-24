@@ -413,13 +413,6 @@ var schemaStatements = []string{
 		checker_move TEXT,
 		cube_action INTEGER,
 		luck_mp INTEGER,
-		-- The equity this play gave up against the best one, in non-negative
-		-- millipoints (domain.Move.ErrorMP), stored so that a statistic over
-		-- the plays of one player reads a column instead of decoding every
-		-- analysis. NULL means unscored: no analysis, a play absent from the
-		-- candidates, or a row older than the column that the resumable pass
-		-- (MatchStore.ScoreMoves) has not reached yet.
-		error_mp INTEGER,
 		-- The error and the close-cube flag the statistics count this
 		-- decision by (sqlshared/played_decisions.go): the analysis's
 		-- cube_error / best_move_equity_error and is_close_cube, scored

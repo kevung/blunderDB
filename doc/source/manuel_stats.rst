@@ -744,10 +744,8 @@ Utilisation :
   large d'abord ; le joueur est jugé sur son pire coup de la position. *Ouvrir
   ces positions* les charge dans la vue analyse. La ligne de commande et le
   serveur donnent la même liste (``stats contrast``).
-* **Noter les coups d'abord** — la liste ne compare que les coups dont l'erreur
-  est notée, et aucun import ne les note : la notation se fait sur demande. Tant
-  qu'il en reste à noter, le bloc en donne le nombre avec un bouton *Noter les
-  coups* ; la ligne de commande fait la même chose avec ``repair --move-errors``.
+* **Coups non chiffrés** — un coup qu'aucun candidat de l'analyse ne nomme n'a
+  pas d'erreur : la liste le laisse de côté, et le bloc en donne le nombre.
 
 Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des deux
 est mis en gras. Trois indicateurs n'en reçoivent jamais, et il vaut de dire

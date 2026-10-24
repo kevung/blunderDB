@@ -310,7 +310,7 @@ const goBackfillsKey = "go_backfills"
 // goBackfillsGeneration names the set of Go-side passes. Bump it when a pass
 // is added or must run again: a library that recorded an older generation
 // runs them once more.
-const goBackfillsGeneration = "4"
+const goBackfillsGeneration = "5"
 
 // runGoBackfills runs, once per library, the passes the SQL chain cannot:
 // each lifts FORCE, which takes an ACCESS EXCLUSIVE lock on the tables it

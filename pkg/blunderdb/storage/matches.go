@@ -258,17 +258,8 @@ type MatchStore interface {
 	// carries when its matches are left unnamed.
 	MatchIDsReachedBy(ctx context.Context, scope string, positionIDs []int64) ([]int64, error)
 
-	// ScoreMoves writes move.error_mp (domain.Move.ErrorMP) for at most limit
-	// unscored moves past the id after whose position carries an analysis,
-	// in id order, and returns the id of the last move it examined (0 when
-	// none is left) and how many it scored. A play the analysis cannot score
-	// stays NULL. It is the resumable pass that scores a library older than
-	// the column: the caller loops from 0 on the id it gets back, and a pass
-	// interrupted and restarted skips what it already wrote.
-	ScoreMoves(ctx context.Context, scope string, after int64, limit int) (next int64, scored int, err error)
-
-	// RescorePositionMoves rewrites move.error_mp, and the decision error the
-	// statistics count (move.decision_error_mp, move.is_close_cube), for every
+	// RescorePositionMoves rewrites the decision error the statistics count
+	// (move.decision_error_mp, move.is_close_cube) for every
 	// move played from the position, from its current analysis (NULL when it
 	// has none, or when a play is absent from it): an analysis written or
 	// replaced, or moves pointed at another position, make them stale. The
@@ -333,35 +324,4 @@ func (f *DiceFolder) Flush() (MatchDice, bool) {
 	done := *f.cur
 	f.cur = nil
 	return done, true
-}
-
-// ScoreBatchSize bounds the moves one ScoreMoves call examines.
-const ScoreBatchSize = 5000
-
-// ScoreAllMoves runs the MatchStore.ScoreMoves pass over the whole scope and
-// returns how many moves it scored. before, when non-nil, runs around each
-// batch (the GUI's wrapper takes its lock there); it returns the function that
-// ends the batch. progress, when non-nil, receives the running total.
-func ScoreAllMoves(ctx context.Context, store MatchStore, scope string, before func() func(), progress func(scored int)) (int, error) {
-	var next int64
-	total := 0
-	for {
-		done := func() {}
-		if before != nil {
-			done = before()
-		}
-		n, k, err := store.ScoreMoves(ctx, scope, next, ScoreBatchSize)
-		done()
-		if err != nil {
-			return total, err
-		}
-		total += k
-		if progress != nil {
-			progress(total)
-		}
-		if n == 0 {
-			return total, nil
-		}
-		next = n
-	}
 }
