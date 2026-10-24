@@ -2,7 +2,6 @@ package apkg
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"html"
 	"io"
@@ -65,20 +64,36 @@ func Export(ctx context.Context, st storage.Storage, scope string, src Source, l
 		Modified:        now,
 	}
 	seen := map[string]bool{}
-	for i := range positions {
-		p := &positions[i]
-		a, err := st.Analyses().Load(ctx, scope, p.ID)
-		if err != nil && !errors.Is(err, storage.ErrNotFound) {
-			return nil, fmt.Errorf("apkg: analysis of position %d: %w", p.ID, err)
+	var kept []*domain.Position
+	for start := 0; start < len(positions); start += loadBatch {
+		batch := positions[start:min(start+loadBatch, len(positions))]
+		ids := make([]int64, len(batch))
+		for i := range batch {
+			ids[i] = batch[i].ID
 		}
-		n, m := card(p, a, lang)
-		// One note per position: a position listed twice is one card.
-		if seen[n.GUID] {
-			continue
+		analyses, err := st.Analyses().LoadMany(ctx, scope, ids)
+		if err != nil {
+			return nil, fmt.Errorf("apkg: analyses: %w", err)
 		}
-		seen[n.GUID] = true
-		pkg.Notes = append(pkg.Notes, n)
-		pkg.Media = append(pkg.Media, m)
+		for i := range batch {
+			p := &batch[i]
+			n := note(p, analyses[p.ID], lang)
+			// One note per position: a position listed twice is one card.
+			if seen[n.GUID] {
+				continue
+			}
+			seen[n.GUID] = true
+			pkg.Notes = append(pkg.Notes, n)
+			kept = append(kept, p)
+		}
+	}
+	// The boards are drawn as the zip is written, one at a time.
+	pkg.Media = func(yield func(Media) bool) {
+		for _, p := range kept {
+			if !yield(board(p)) {
+				return
+			}
+		}
 	}
 	res.Notes = len(pkg.Notes)
 	res.Total = max(res.Total, res.Notes)
@@ -164,10 +179,20 @@ func NoteGUID(p *domain.Position) string {
 	return fmt.Sprintf("blunderdb-%016x", engine.ZobristHash(p))
 }
 
-// card writes one position's note and its board image.
-func card(p *domain.Position, a *domain.PositionAnalysis, lang string) (Note, Media) {
+// imageName is the file name of a position's board image.
+func imageName(p *domain.Position) string {
+	return fmt.Sprintf("blunderdb-%016x.svg", engine.ZobristHash(p))
+}
+
+// board is a position's board image.
+func board(p *domain.Position) Media {
+	return Media{Name: imageName(p), Data: []byte(report.Diagram(p))}
+}
+
+// note writes one position's note.
+func note(p *domain.Position, a *domain.PositionAnalysis, lang string) Note {
 	hash := engine.ZobristHash(p)
-	img := fmt.Sprintf("blunderdb-%016x.svg", hash)
+	img := imageName(p)
 	ident := fmt.Sprintf("%016x", hash)
 	if a != nil && a.XGID != "" {
 		ident = a.XGID
@@ -177,7 +202,7 @@ func card(p *domain.Position, a *domain.PositionAnalysis, lang string) (Note, Me
 	if p.DecisionType == domain.CubeAction {
 		kind = "cube"
 	}
-	n := Note{
+	return Note{
 		GUID: NoteGUID(p),
 		Fields: []string{
 			html.EscapeString(ident),
@@ -187,7 +212,6 @@ func card(p *domain.Position, a *domain.PositionAnalysis, lang string) (Note, Me
 		},
 		Tags: []string{"blunderDB", "blunderDB::" + kind},
 	}
-	return n, Media{Name: img, Data: []byte(report.Diagram(p))}
 }
 
 // away names a player's distance from match end. The domain stores a 1-away

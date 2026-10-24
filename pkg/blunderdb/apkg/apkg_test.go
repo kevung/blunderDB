@@ -4,8 +4,10 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -426,6 +428,28 @@ func TestOneAwayNamesCrawfordAndPostCrawford(t *testing.T) {
 		}
 		if strings.Contains(all, "0 away") {
 			t.Errorf("%s: a post-Crawford score reads as 0 away", c.lang)
+		}
+	}
+}
+
+// TestPackageBytesAreStable pins the whole package, zip entries in order
+// included: a change to how the package is assembled must not change what
+// Anki receives.
+func TestPackageBytesAreStable(t *testing.T) {
+	golden := map[string]string{
+		"deck":     "e484efcef559f3161930270c59628900aca4ebbd65654f476d6602ee9efdc6b9",
+		"handMade": "379561f0d691dcf5593d6ff590f2105f173a46756f87b7e0a589f89726a862e4",
+		"living":   "af1df3bd09849b8f0e3c401e43eefdfc69fbaab0baee27b743ec191e5aa20d6c",
+	}
+	f := setup(t)
+	for name, src := range map[string]apkg.Source{
+		"deck":     {DeckID: f.deckID},
+		"handMade": {CollectionID: f.handMade},
+		"living":   {CollectionID: f.living},
+	} {
+		data, _ := export(t, f, src, stamp)
+		if got := fmt.Sprintf("%x", sha256.Sum256(data)); got != golden[name] {
+			t.Errorf("%s package sha256 = %s, want %s", name, got, golden[name])
 		}
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"iter"
 	"os"
 	"regexp"
 	"strconv"
@@ -49,8 +50,8 @@ type Package struct {
 	DeckName        string
 	DeckDescription string
 	Notes           []Note
-	Media           []Media
-	Modified        time.Time // the notes' modification time: newer updates them on re-import
+	Media           iter.Seq[Media] // drawn as the zip is written, so no board is kept
+	Modified        time.Time       // the notes' modification time: newer updates them on re-import
 }
 
 // Write writes p as an .apkg: a zip holding collection.anki2 (schema 11), the
@@ -64,12 +65,16 @@ func Write(ctx context.Context, w io.Writer, p Package) error {
 	if err := zipFile(zw, "collection.anki2", col); err != nil {
 		return err
 	}
-	index := make(map[string]string, len(p.Media))
-	for i, m := range p.Media {
-		key := strconv.Itoa(i)
-		index[key] = m.Name
-		if err := zipFile(zw, key, m.Data); err != nil {
-			return err
+	index := map[string]string{}
+	if p.Media != nil {
+		i := 0
+		for m := range p.Media {
+			key := strconv.Itoa(i)
+			i++
+			index[key] = m.Name
+			if err := zipFile(zw, key, m.Data); err != nil {
+				return err
+			}
 		}
 	}
 	mediaJSON, err := json.Marshal(index)
