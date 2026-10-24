@@ -505,6 +505,12 @@ export function directionSessionState() {
     return { openId: memory.openId, tabs: { ...memory.tabs } };
 }
 
+/** Abandonne l'écriture de session en attente : elle décrirait l'écran d'une base quittée. */
+export function dropPendingSessionSave() {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = null;
+}
+
 /** Demande l'écriture de la session : sans elle, un rechargement ne verrait rien de ceci. */
 function scheduleSessionSave() {
     if (saveTimer) clearTimeout(saveTimer);

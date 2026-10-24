@@ -115,3 +115,31 @@ func TestRecreateDatabase_ErasesOrphanJournal(t *testing.T) {
 		}
 	}
 }
+
+// A recreation refused because another instance holds the file leaves no
+// library claimed open: the handle it closed is not reported as carrying it.
+func TestRecreateDatabase_RefusedReadOnlyLeavesNothingOpen(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "x.db")
+	writer := NewDatabase()
+	if err := writer.SetupDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = writer.Close() })
+	reader := NewDatabase()
+	if err := reader.OpenDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = reader.Close() })
+	if !reader.readOnly {
+		t.Fatal("the second handle must be read-only")
+	}
+	if err := reader.RecreateDatabase(path); err == nil {
+		t.Fatal("recreate under another instance's lock: want a refusal")
+	}
+	if reader.IsOpenDatabase(path) {
+		t.Fatal("after a refused recreate, the handle claims the library still open")
+	}
+	if reader.conn() != nil {
+		t.Fatal("after a refused recreate, a closed handle is left behind")
+	}
+}

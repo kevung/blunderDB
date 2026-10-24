@@ -32,7 +32,9 @@ through.
    the same `beginReplace`: refused while a write holds the library, and the file is erased only
    after the handle let the previous library go and took the file's write lock, so no write
    lands in an erased file and no other instance loses its file. Its `-wal` and `-shm` go with
-   it: a journal left beside the new file would be replayed into it.
+   it: a journal left beside the new file would be replayed into it, and a file that cannot be
+   erased stops the recreation. Every refusal of a Setup or an Open past the closing of the
+   previous handle leaves nothing claimed open (`IsOpenDatabase` answers false).
 2. **The path names the library**, not the generation: no file is open in two groups, and the
    frontend knows the path synchronously at the moment it reads the rows, where the generation
    would cost a round trip. A file recreated or reopened under the same path is covered by the
@@ -80,7 +82,9 @@ A write sent at the gesture that reads its ids, with no await before it, goes th
 `writingOnScreen`: not sent while a switch is in flight, and a switch begun after it waits for
 it in `writesInFlight`. These are the `#` tags saved into the comment (`commandProcessor`), the
 comments of `CommentPanel`, a lesson step marked done, a restore or a discard from the trash,
-and the rollout of the position on the board. The other writes of the library panels (a
+the rollout of the position on the board, and the session state (`saveSessionState`, written
+only if the library it read the screen of is still on screen; the Direction's pending save is
+dropped before an open or a creation). The other writes of the library panels (a
 creation, a reorder, a click on a row) send no id read before a wait and carry no guard: a
 switch does not wait for them.
 
@@ -89,6 +93,7 @@ Direction's `act`, its settings and the creation of a Direction then show no suc
 and keep their sheet open, leaving `libraryGroups.writeDropped` in the status bar. An open or a
 creation refused before any change (`ErrLibraryAlreadyOpen`, a path refused) leaves the screen
 on the library the backend kept (`IsOpenDatabase`), and the screen forgets the library left only
-once the backend carries the one coming. The
+once the backend carries the one coming — or, on a failure that lost it, once that is known
+(`libraryReplaced`, then the analysis, comment, Anki, transcription, Lesson, Duel, Direction). The
 tests have no backend: `test-setup.js` grants the hold (`stores/libraryHold.js`), and a test of
 a refusal makes `HoldLibrary` reject.

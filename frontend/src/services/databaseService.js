@@ -83,6 +83,15 @@ function resetAnalysisAndCommentStores() {
     searchEmptyStore.set(false);
 }
 
+// What the screen holds of the library left: the analysis, the comment, Anki, the transcription,
+// the Lesson, the Duel and the Direction. Forgotten once the backend no longer carries it.
+async function forgetLibraryLeft() {
+    resetAnalysisAndCommentStores();
+    resetAnkiStores();
+    resetTranscriptionStores();
+    (await import('../stores/directionStore.js')).forgetDirection();
+}
+
 // The backend closes the open database before trying another and leaves none open when the
 // attempt fails: nothing is open then, so the path, the title and the counter say so.
 function showNoDatabaseOpen() {
@@ -100,6 +109,9 @@ function showNoDatabaseOpen() {
  */
 async function showWhatFailedLeft(previous) {
     if (previous && (await IsOpenDatabase(previous).catch(() => false))) return;
+    // The backend let the library go: reads begun before belong to it, and so does the screen.
+    libraryReplaced();
+    await forgetLibraryLeft();
     showNoDatabaseOpen();
 }
 
@@ -176,6 +188,8 @@ export async function newDatabase() {
             // Creating would erase a library a group holds open.
             setStatusBarMessage(tMsg('libraryGroups.alreadyOpen', { name: getFilenameFromPath(filePath) }));
         } else if (filePath) {
+            // A session save still waiting describes the screen of the library left.
+            (await import('../stores/directionStore.js')).dropPendingSessionSave();
             let created;
             try {
                 // The handle changes library, perhaps under the same path: like an open, under the
@@ -194,9 +208,7 @@ export async function newDatabase() {
                 setStatusBarMessage(tMsg('libraryGroups.switching'));
                 return;
             }
-            resetAnalysisAndCommentStores();
-            resetAnkiStores();
-            resetTranscriptionStores();
+            await forgetLibraryLeft();
             databasePathStore.set(filePath);
             databaseReadOnlyStore.set(false);
             forgetPaneCopyInto(get(activeGroupId));
@@ -325,21 +337,16 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
     const previous = get(databasePathStore);
     let openFailed = false;
     try {
-        const { forgetDirection } = await import('../stores/directionStore.js');
-        // Once the backend carries the library coming, never before: a refused open leaves the
-        // screen on the library it kept.
-        const forgetLibraryLeft = () => {
-            resetAnalysisAndCommentStores();
-            resetAnkiStores();
-            resetTranscriptionStores();
-            forgetDirection();
-        };
+        // A session save still waiting describes the screen of the library left.
+        (await import('../stores/directionStore.js')).dropPendingSessionSave();
         let opened = true;
         try {
             // In place, the group's handle changes library: a switch would photograph the wrong
-            // one, and a write still on its way would land in the library coming.
-            if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), libraryReplaced(), forgetLibraryLeft(), true))) === true;
-            else forgetLibraryLeft();
+            // one, and a write still on its way would land in the library coming. The screen
+            // forgets the library left once the backend carries the one coming, never before: a
+            // refused open leaves it on the library it kept.
+            if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), libraryReplaced(), await forgetLibraryLeft(), true))) === true;
+            else await forgetLibraryLeft();
         } catch (error) {
             // Refused (a job or a write holds the library): the backend kept it, so does the screen.
             if (isBusyError(error)) {

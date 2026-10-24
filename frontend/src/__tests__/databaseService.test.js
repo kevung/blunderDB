@@ -209,6 +209,17 @@ describe('newDatabase', () => {
         expect(get(databasePathStore)).toBe('');
     });
 
+    test('a failed creation that lost the library forgets what the screen held of it', async () => {
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
+        databasePathStore.set('/tmp/old.db');
+        commentTextStore.set('of the old library');
+        vi.mocked(RecreateDatabase).mockRejectedValueOnce(new Error('disk full'));
+
+        await newDatabase();
+
+        expect(get(commentTextStore)).toBe('');
+    });
+
     test('a creation refused before any change leaves the library the backend kept on screen', async () => {
         vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
         databasePathStore.set('/tmp/old.db');
@@ -319,6 +330,18 @@ describe('openDatabaseByPath', () => {
         expect(WindowSetTitle).toHaveBeenLastCalledWith('blunderDB');
         expect(refreshLibraryCounts).toHaveBeenCalledTimes(1);
         expect(SaveLastDatabasePath).not.toHaveBeenCalled();
+    });
+
+    test('a failed open that lost the library forgets what the screen held of it', async () => {
+        databasePathStore.set('/tmp/old.db');
+        commentTextStore.set('of the old library');
+        ankiDecksStore.set(/** @type {any} */ ([{ id: 1 }]));
+        vi.mocked(OpenDatabase).mockRejectedValueOnce(new Error('corrupt'));
+
+        await openDatabaseByPath('/tmp/bad.db');
+
+        expect(get(commentTextStore)).toBe('');
+        expect(get(ankiDecksStore)).toEqual([]);
     });
 
     test('an open refused by a write holding the library keeps the library on screen, and says so', async () => {

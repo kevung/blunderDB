@@ -480,7 +480,25 @@ func (d *Database) setup(path string, erase bool) (err error) {
 		if err := d.db.Close(); err != nil {
 			slog.Warn("closing the previously open database failed", "err", err)
 		}
+		// Closed: never left behind for a caller to reach ("sql: database is closed").
+		d.db = nil
 	}
+
+	// On any error below, roll back to a clean "never opened" state: a leaked
+	// lock or handle would wedge every later Setup/Open, and a path left in
+	// openPath would claim a library still open. Named return, so each
+	// `return err` is covered, the refusals of the lock and the erasure too.
+	defer func() {
+		if err != nil {
+			if d.db != nil {
+				d.db.Close()
+				d.db = nil
+			}
+			d.releaseFileLock()
+			return
+		}
+		d.path = path
+	}()
 
 	// Creating/erasing a database requires the write lock. If another instance
 	// holds it we cannot wipe the file underneath it — refuse rather than open
@@ -494,26 +512,12 @@ func (d *Database) setup(path string, erase bool) (err error) {
 	if erase {
 		// The journal files go too: a WAL left beside the new file would be replayed into it.
 		for _, f := range []string{path, path + "-wal", path + "-shm"} {
-			if err := os.Remove(f); err != nil && !errors.Is(err, fs.ErrNotExist) {
-				slog.Warn("erasing the file to recreate failed", "path", f, "err", err)
+			if err = os.Remove(f); err != nil && !errors.Is(err, fs.ErrNotExist) {
+				return fmt.Errorf("recreate %q: erasing %s: %w", path, filepath.Base(f), err)
 			}
 		}
+		err = nil
 	}
-
-	// On any error below, roll back to a clean "never opened" state: a leaked
-	// lock or handle would wedge every later Setup/Open. Named return, so each
-	// `return err` is covered.
-	defer func() {
-		if err != nil {
-			if d.db != nil {
-				d.db.Close()
-				d.db = nil
-			}
-			d.releaseFileLock()
-			return
-		}
-		d.path = path
-	}()
 
 	// The PRAGMAs (foreign_keys=ON, busy_timeout, WAL, …) travel in the DSN
 	// so the driver replays them on EVERY pooled connection. A PRAGMA run
@@ -579,6 +583,8 @@ func (d *Database) OpenDatabase(path string) (err error) {
 		if err := d.db.Close(); err != nil {
 			slog.Warn("closing the previously open database failed", "err", err)
 		}
+		// Closed: never left behind for a caller to reach ("sql: database is closed").
+		d.db = nil
 	}
 
 	// Take the single-writer lock first; if another instance holds it, open

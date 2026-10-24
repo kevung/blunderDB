@@ -50,6 +50,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
+import { groupSwitchingStore } from '../stores/groupActivityStore.js';
 
 const pos = (id) => ({ id, board: { points: [], bearoff: [0, 0] }, dice: [1, 2], score: [0, 0] });
 const library = [pos(1), pos(2), pos(3)];
@@ -233,5 +234,17 @@ describe('saveSessionState (à la fermeture)', () => {
         bindings.SaveSessionState.mockRejectedValue(new Error('disk full'));
 
         await expect(saveSessionState()).resolves.toBeUndefined();
+    });
+});
+
+describe('saveSessionState during a switch', () => {
+    test('writes nothing while the handle may already carry the library coming', async () => {
+        groupSwitchingStore.set(true);
+        try {
+            await saveSessionState();
+        } finally {
+            groupSwitchingStore.set(false);
+        }
+        expect(bindings.SaveSessionState).not.toHaveBeenCalled();
     });
 });

@@ -11,11 +11,15 @@ import { librarySource, searchSource, positionsStore } from '../stores/positionS
 import { setStatusBarMessage } from './databaseService.js';
 import { getSearchState, setSearchState } from './positionService.js';
 import { logger } from '../utils/logger.js';
+import { libraryOnScreenMark, libraryStillOnScreen, writingOnScreen } from '../stores/groupActivityStore.js';
 
 // The session persists a descriptor (the search that produced each list, the id of the position
 // shown), never the ids: its size does not depend on the number of positions.
 export async function saveSessionState() {
     if (!get(databasePathStore)) return;
+    // The state is read off the screen: it is written to the library the screen shows, never
+    // during a switch (the backend may carry the library coming), never after one.
+    const mark = libraryOnScreenMark();
 
     try {
         const currentPositionIndex = get(currentPositionIndexStore);
@@ -32,7 +36,8 @@ export async function saveSessionState() {
             viewsJSON: JSON.stringify({ ...JSON.parse(viewStore.serialize()), direction: directionSessionState() })
         };
 
-        await SaveSessionState(sessionState);
+        if (!libraryStillOnScreen(mark)) return;
+        if ((await writingOnScreen(async () => (await SaveSessionState(sessionState), true))) === undefined) return;
         logger.log('Session state saved');
     } catch (error) {
         logger.error('Error saving session state:', error);
