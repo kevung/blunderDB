@@ -8,7 +8,7 @@ import (
 )
 
 // goldenZstdBlobs are three analysis blobs exactly as they sit in the
-// embedded demo database (internal/gui/demo.db.gz, analysis ids 330, 409 and
+// sample library fixture (testdata/library.db.gz, analysis ids 330, 409 and
 // 275 — the smallest, the median and the largest of its 723 rows), written by
 // klauspost/compress v1.18.7 with analysis_dict.bin. They are copied here as
 // bytes, not regenerated, so a later version of the library, or a new

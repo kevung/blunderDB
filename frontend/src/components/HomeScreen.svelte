@@ -1,8 +1,7 @@
 <script>
-    // L'écran d'accueil, sans base ouverte : quatre chemins nommés par ce qu'ils
+    // L'écran d'accueil, sans base ouverte : trois chemins nommés par ce qu'ils
     // apportent. « Importer mes matchs » enchaîne base neuve, fichiers, compte rendu.
-    import { openModal, MODAL } from '../stores/uiStore';
-    import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase } from '../services/databaseService.js';
+    import { newDatabase, openDatabase, openDatabaseByPath } from '../services/databaseService.js';
     import { importPosition } from '../services/importService.js';
     import { GetLastDatabasePath } from '../../wailsjs/go/main/Config.js';
     import { PathExists } from '../../wailsjs/go/gui/App.js';
@@ -44,7 +43,7 @@
     }
 </script>
 
-<div class="home" data-tour="home">
+<div class="home">
     <h1>{$t('home.title')}</h1>
     <p class="lede">{$t('home.lede')}</p>
 
@@ -52,16 +51,6 @@
         <button type="button" class="choice primary" onclick={importMyMatches}>
             <span class="choice-title">{$t('home.importTitle')}</span>
             <span class="choice-note">{$t('home.importNote')}</span>
-        </button>
-
-        <button type="button" class="choice" onclick={loadDemoDatabase}>
-            <span class="choice-title">{$t('home.demoTitle')}</span>
-            <span class="choice-note">{$t('home.demoNote')}</span>
-        </button>
-
-        <button type="button" class="choice" onclick={() => openModal(MODAL.TOUR)}>
-            <span class="choice-title">{$t('home.tourTitle')}</span>
-            <span class="choice-note">{$t('home.tourNote')}</span>
         </button>
 
         <button type="button" class="choice" onclick={openDatabase}>

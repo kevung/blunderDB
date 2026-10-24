@@ -163,8 +163,6 @@ export function PickTranscriptionFile():Promise<string>;
 
 export function PickTranscriptionVideo():Promise<string>;
 
-export function PrepareDemoDatabase():Promise<string>;
-
 export function QueueGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function QueueGammonNetBatchIn(arg1:number,arg2:number,arg3:number,arg4:number):Promise<void>;

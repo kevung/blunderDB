@@ -25,7 +25,7 @@
     import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen, homeDismissedStore } from './stores/uiStore.js';
     import { transcriptionWheelStore } from './stores/transcriptionStore.js';
 
-    import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp, setStatusBarMessage } from './services/databaseService.js';
+    import { newDatabase, openDatabase, openDatabaseByPath, exitApp, setStatusBarMessage } from './services/databaseService.js';
     import {
         showPosition,
         boardFollowsLibraryIndex,
@@ -88,7 +88,6 @@
     import ModalHost from './components/ModalHost.svelte';
     import { initCommandProcessor, processCommand } from './commandProcessor.js';
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
-    import { maybeRunFirstRunTour } from './services/tourService.js';
     import StudyQueueBar from './components/StudyQueueBar.svelte';
     import LessonBar from './components/LessonBar.svelte';
     import { startTrainingSession } from './services/trainingTabService.js';
@@ -383,7 +382,6 @@
             onToggleHelp: toggleHelpModal,
             onNewDatabase: newDatabase,
             onOpenDatabase: openDatabase,
-            onLoadDemo: loadDemoDatabase,
             onImportDatabase: importDatabase,
             onExportDatabase: exportDatabase,
             importPosition,
@@ -442,9 +440,6 @@
             panelHeight = panelHeightValue();
             panelWidth = get(panelWidthStore);
         });
-
-        // First launch only: the guided-tour catalog, also offered by the home screen.
-        maybeRunFirstRunTour();
 
         // The watched folder, fire and forget: a vanished folder must not delay startup.
         initFolderWatch();
@@ -551,7 +546,7 @@
     <div class="chrome"><BoardSituationBanner /></div>
 
     <div class="body" class:side={isSidePanel}>
-        <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
+        <div class="scrollable-content" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
             {#if $activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}
                 <div class="exclude-structure-badge">EXCLUDE</div>
             {/if}
@@ -577,12 +572,7 @@
             use:resizable={{ side: isSidePanel, size: isSidePanel ? appliedPanelWidth : appliedPanelHeight, onResize: setPanelSize, onCommit: savePanelSize }}
         ></div>
 
-        <div
-            class="panel-wrapper"
-            class:side={isSidePanel}
-            data-tour="panels"
-            style={isSidePanel ? `width: ${appliedPanelWidth}px;` : $duelFoldedStore ? 'height: auto;' : `height: ${appliedPanelHeight}px;`}
-        >
+        <div class="panel-wrapper" class:side={isSidePanel} style={isSidePanel ? `width: ${appliedPanelWidth}px;` : $duelFoldedStore ? 'height: auto;' : `height: ${appliedPanelHeight}px;`}>
             <TabbedPanel
                 onLoadPositionsByFilters={loadPositionsByFilters}
                 onCloseAnalysis={toggleAnalysisPanel}

@@ -28,7 +28,7 @@ import (
 // three analysed matches, collections, a study deck) behind the /v1 engine.
 func demoServer(t *testing.T, o internalserver.Options) *internalserver.Server {
 	t.Helper()
-	src, err := os.Open(filepath.Join("..", "..", "..", "internal", "gui", "demo.db.gz"))
+	src, err := os.Open(filepath.Join("..", "..", "..", "testdata", "library.db.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}

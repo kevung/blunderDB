@@ -27,8 +27,6 @@ Opérations globales
    "export_db, edb", "Exporte la sélection courante vers une nouvelle base de données."
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."
-   "tutorial, tour", "Ouvre le catalogue des visites guidées de l'interface."
-   "demo", "Charge une base d'exemple (matchs, tournoi, collections, commentaires, paquet Anki, analyses) pour découvrir l'outil."
    "meta", "Affiche les métadonnées de la base de données."
    "eval, epc", "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict de videau en bearoff). ``epc`` est l'ancien nom de ce panneau, conservé."
    "transcribe, tr", "Ouvre le panneau Transcription : les brouillons de matchs en cours de saisie, et de quoi en commencer un."

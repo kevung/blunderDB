@@ -25,11 +25,11 @@ const preAutoincrementComment = `CREATE TABLE comment (
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`
 
-// copyDemoDatabase writes the sample library the GUI embeds to path: a real
+// copyDemoDatabase writes the sample library fixture (testdata/library.db.gz) to path: a real
 // library, with comments of every origin and the triggers a release carries.
 func copyDemoDatabase(t *testing.T, path string) {
 	t.Helper()
-	f, err := os.Open(filepath.Join("internal", "gui", "demo.db.gz"))
+	f, err := os.Open(filepath.Join("testdata", "library.db.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}

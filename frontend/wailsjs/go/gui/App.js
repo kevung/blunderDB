@@ -310,9 +310,6 @@ export function PickTranscriptionVideo() {
   return window['go']['gui']['App']['PickTranscriptionVideo']();
 }
 
-export function PrepareDemoDatabase() {
-  return window['go']['gui']['App']['PrepareDemoDatabase']();
-}
 
 export function QueueGammonNetBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['QueueGammonNetBatch'](arg1, arg2, arg3);

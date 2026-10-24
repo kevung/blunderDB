@@ -17,7 +17,7 @@ import (
 // behind the /v1 engine the MCP tools call.
 func demoEngine(t testing.TB) http.Handler {
 	t.Helper()
-	src, err := os.Open(filepath.Join("..", "..", "..", "internal", "gui", "demo.db.gz"))
+	src, err := os.Open(filepath.Join("..", "..", "..", "testdata", "library.db.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}

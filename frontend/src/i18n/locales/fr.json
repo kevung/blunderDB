@@ -197,165 +197,10 @@
         "togglePipcount": "Afficher/masquer le pipcount",
         "toggleAnalysisChallenge": "Défi : masquer l'analyse",
         "updatePosition": "Mettre à jour la position",
-        "tour": "Visites guidées",
         "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés",
         "training": "Entraînement",
         "pile": "Mettre sur la Pile / l'en retirer",
         "duel": "Jouer"
-    },
-    "tour": {
-        "next": "Suivant",
-        "prev": "Précédent",
-        "done": "Terminer",
-        "start": "Démarrer",
-        "catalogTitle": "Visites guidées",
-        "catalogDesc": "Visites rapides de l'interface — rejouables à tout moment.",
-        "loadDemo": "Charger des données de démo",
-        "demoHint": "Explorez une base d'exemple : 3 matchs, un tournoi, des collections, des commentaires et un paquet Anki.",
-        "general": {
-            "title": "Tour général",
-            "desc": "Un aperçu rapide de l'interface.",
-            "welcome": {
-                "title": "Bienvenue dans blunderDB",
-                "body": "Une visite rapide de l'interface. Échap pour quitter."
-            },
-            "toolbar": {
-                "title": "Barre d'outils",
-                "body": "Bases, imports, navigation, paramètres et aide."
-            },
-            "board": {
-                "title": "Le plateau",
-                "body": "Éditez les positions ici : cliquez pour poser les pions, réglez dés, videau et score."
-            },
-            "panels": {
-                "title": "Panneaux",
-                "body": "Analyse, commentaires, recherche, stats, collections, matchs et tournois."
-            },
-            "commandline": {
-                "title": "Ligne de commande",
-                "body": "Appuyez sur Espace pour la ligne de commande. Tapez « s » pour rechercher, « ? » pour l'aide."
-            },
-            "help": {
-                "title": "Aide",
-                "body": "Le manuel complet (ou touche « ? »)."
-            },
-            "done": {
-                "title": "C'est parti !",
-                "body": "Rejouez les visites via l'icône chapeau, ou la commande « tutorial »."
-            }
-        },
-        "search": {
-            "title": "Rechercher des positions",
-            "desc": "Trouvez des positions par structure, filtres et stats.",
-            "intro": {
-                "title": "Recherche",
-                "body": "Trouvez des positions par structure, filtres et statistiques."
-            },
-            "tab": {
-                "title": "Filtres de recherche",
-                "body": "Combinez les filtres : pip count, pions, scores, taux de gain, dés et plus."
-            },
-            "structure": {
-                "title": "Par structure",
-                "body": "Composez une position pour en trouver d'autres de même structure."
-            },
-            "commandline": {
-                "title": "Ligne de commande",
-                "body": "Ou Espace puis par ex. « s w>50 p>30 ». « ? » liste les filtres."
-            }
-        },
-        "matches": {
-            "title": "Revoir des matchs",
-            "desc": "Importez et revoyez des matchs complets.",
-            "intro": {
-                "title": "Matchs",
-                "body": "Importez des matchs complets (XG, GnuBG, BGBlitz) et revoyez-les."
-            },
-            "tab": {
-                "title": "Vos matchs",
-                "body": "Matchs importés, avec PR et perte de MWC par joueur."
-            },
-            "review": {
-                "title": "Parcourir",
-                "body": "Choisissez un match pour parcourir ses coups et étudier les erreurs."
-            }
-        },
-        "tournaments": {
-            "title": "Revoir des tournois",
-            "desc": "Regroupez des matchs et suivez vos performances.",
-            "intro": {
-                "title": "Tournois",
-                "body": "Regroupez des matchs en tournois pour suivre vos performances."
-            },
-            "tab": {
-                "title": "Vos tournois",
-                "body": "Gérez les événements et revoyez les résultats par joueur."
-            },
-            "drill": {
-                "title": "Explorer",
-                "body": "Passez d'un tournoi à ses matchs et positions."
-            }
-        },
-        "eval": {
-            "title": "Panneau Eval",
-            "desc": "Évaluer la position affichée.",
-            "intro": {
-                "title": "Évaluer une position",
-                "body": "blunderDB embarque son propre évaluateur : pas besoin d'une analyse importée pour savoir ce que vaut une position."
-            },
-            "tab": {
-                "title": "L'onglet Eval",
-                "body": "Ctrl+E. Il donne le meilleur coup, la décision de videau et le compte de pips effectif (EPC)."
-            },
-            "position": {
-                "title": "La position évaluée",
-                "body": "C'est toujours celle du plateau : posez les pions, les dés et le score, l'évaluation suit."
-            },
-            "scale": {
-                "title": "Money ou match",
-                "body": "À l'argent l'équité est en points ; au score elle est normalisée — ±1 vaut le videau courant gagné ou perdu."
-            }
-        },
-        "anki": {
-            "title": "Révision Anki",
-            "desc": "Réviser ses positions par répétition espacée.",
-            "intro": {
-                "title": "Réviser ses erreurs",
-                "body": "Un paquet de révision transforme les positions ratées en cartes, et vous les représente au bon moment."
-            },
-            "tab": {
-                "title": "L'onglet Anki",
-                "body": "Ctrl+K. On y crée un paquet, on le révise, et on suit ce qui reste à voir."
-            },
-            "deck": {
-                "title": "Construire un paquet",
-                "body": "Un paquet part d'une recherche ou d'une collection : il se resynchronise quand la base change."
-            },
-            "review": {
-                "title": "Répondre à une carte",
-                "body": "La réponse reste masquée jusqu'à ce que vous la demandiez ; votre note règle la prochaine échéance."
-            }
-        },
-        "stats": {
-            "title": "Statistiques",
-            "desc": "Lire son niveau et sa progression.",
-            "intro": {
-                "title": "Mesurer son jeu",
-                "body": "Les statistiques portent sur les matchs importés avec leur analyse — c'est là que se lit le niveau."
-            },
-            "tab": {
-                "title": "L'onglet Stats",
-                "body": "Ctrl+D. Quatre vues : tableau de bord, erreurs, progression et joueurs."
-            },
-            "pr": {
-                "title": "Le PR",
-                "body": "L'erreur moyenne par décision, en millipoints. Plus il est bas, mieux c'est ; il se compare à celui d'XG."
-            },
-            "filters": {
-                "title": "Restreindre la mesure",
-                "body": "Période, adversaire, longueur de match, tournoi : chaque filtre recalcule tout le tableau."
-            }
-        }
     },
     "help": {
         "tabManual": "Manuel",
@@ -2144,10 +1989,6 @@
         "lede": "Votre base de positions de backgammon : importez vos matchs, cherchez ce que vous voulez revoir, mesurez ce que vous jouez.",
         "importTitle": "Importer mes matchs",
         "importNote": "Une base neuve, vos fichiers XG, GNU Backgammon, Jellyfish ou BGBlitz, et votre PR avec vos pires décisions en deux minutes.",
-        "demoTitle": "Ouvrir la base d'exemple",
-        "demoNote": "Trois matchs, des collections, des commentaires et un paquet Anki : de quoi tout essayer sans rien apporter.",
-        "tourTitle": "Visite guidée",
-        "tourNote": "Le tour de l'interface, panneau par panneau.",
         "openTitle": "Ouvrir une base",
         "openNote": "Un fichier .db que vous avez déjà.",
         "resume": "Reprendre {name}",
@@ -3122,10 +2963,8 @@
             "comment": "Afficher les commentaires",
             "quit": "Fermer blunderDB",
             "help": "Aide",
-            "tutorial": "Visites guidées",
             "trash": "Corbeille",
             "resume": "Reprendre un import interrompu",
-            "demo": "Charger la base d'exemple",
             "e": "Charger toutes les positions",
             "s": "Chercher des positions",
             "ss": "Chercher parmi les positions affichées",

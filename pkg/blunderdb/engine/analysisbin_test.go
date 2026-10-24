@@ -28,7 +28,7 @@ import (
 // database, as the current release writes them.
 func demoAnalysisBlobs(t testing.TB) map[int64][]byte {
 	t.Helper()
-	gz, err := os.Open(filepath.Join("..", "..", "..", "internal", "gui", "demo.db.gz"))
+	gz, err := os.Open(filepath.Join("..", "..", "..", "testdata", "library.db.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}

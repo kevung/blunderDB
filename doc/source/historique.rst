@@ -370,7 +370,6 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - Panneau de recherche : contrôle explicite du type de décision (Pions / Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; le videau proposé est affiché au centre du plateau pour les décisions de prise/passe.
 - Recherche d'une position par son identifiant (filtre ``id``).
 - Correction de l'attribution de l'erreur de videau au joueur 1.
-- Voir :ref:`visites_guidees`.
 
 0.22.0 (2026-06-02)
 -------------------

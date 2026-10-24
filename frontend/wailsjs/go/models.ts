@@ -5523,7 +5523,6 @@ export namespace main {
 	    panel_width?: number;
 	    panel_heights?: Record<string, number>;
 	    page_step?: string;
-	    tour_seen?: boolean;
 	    tab_order?: string[];
 	    duel_form?: string;
 	    hidden_tabs?: string[];
@@ -5576,7 +5575,6 @@ export namespace main {
 	        this.panel_width = source["panel_width"];
 	        this.panel_heights = source["panel_heights"];
 	        this.page_step = source["page_step"];
-	        this.tour_seen = source["tour_seen"];
 	        this.tab_order = source["tab_order"];
 	        this.duel_form = source["duel_form"];
 	        this.hidden_tabs = source["hidden_tabs"];

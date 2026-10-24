@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 22:49+0200\n"
+"POT-Creation-Date: 2026-10-25 00:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -111,26 +111,6 @@ msgstr "help, he, h"
 #: ../../source/cmd_mode.rst:1
 msgid "Ouvre l'aide de blunderDB."
 msgstr "Abre la ayuda de blunderDB."
-
-#: ../../source/cmd_mode.rst:1
-msgid "tutorial, tour"
-msgstr "tutorial, tour"
-
-#: ../../source/cmd_mode.rst:1
-msgid "Ouvre le catalogue des visites guidées de l'interface."
-msgstr "Abre el catálogo de visitas guiadas de la interfaz."
-
-#: ../../source/cmd_mode.rst:1
-msgid "demo"
-msgstr "demo"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"Charge une base d'exemple (matchs, tournoi, collections, commentaires, "
-"paquet Anki, analyses) pour découvrir l'outil."
-msgstr ""
-"Carga una base de ejemplo (partidas, torneo, colecciones, comentarios, "
-"mazo Anki, análisis) para descubrir la herramienta."
 
 #: ../../source/cmd_mode.rst:1
 msgid "meta"
@@ -318,7 +298,7 @@ msgstr ""
 "reúne las tablas del cubo a 1, 2 y 4: estos tres comandos abren la misma "
 "pestaña."
 
-#: ../../source/cmd_mode.rst:49
+#: ../../source/cmd_mode.rst:47
 msgid "Positions et navigation"
 msgstr "Posiciones y navegación"
 
@@ -545,7 +525,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:80
+#: ../../source/cmd_mode.rst:78
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -591,11 +571,11 @@ msgstr ""
 "Buscar entre las posiciones mostradas: resultados actuales, colección "
 "abierta o partida en revisión."
 
-#: ../../source/cmd_mode.rst:96
+#: ../../source/cmd_mode.rst:94
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
-#: ../../source/cmd_mode.rst:98
+#: ../../source/cmd_mode.rst:96
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -610,7 +590,7 @@ msgstr ""
 "cuando existe, la opción de ``search`` que hace lo mismo (ver "
 ":ref:`cli`); un guion señala un filtro que solo la gramática expresa."
 
-#: ../../source/cmd_mode.rst:105
+#: ../../source/cmd_mode.rst:103
 msgid ""
 "Six jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -630,7 +610,7 @@ msgstr ""
 "se comparan con un tablero vacío; son las opciones de la tercera columna "
 "las que hay que emplear ahí."
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -640,7 +620,7 @@ msgstr ""
 "resultado por distancia creciente a una posición objetivo, y todos los "
 "demás tokens restringen el conjunto así ordenado."
 
-#: ../../source/cmd_mode.rst:118
+#: ../../source/cmd_mode.rst:116
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -650,11 +630,11 @@ msgstr ""
 "*milipuntos* de la tabla siguiente: ``E>100`` conserva las jugadas que "
 "costaron al menos una décima de punto, valiendo un punto 1000 milésimas."
 
-#: ../../source/cmd_mode.rst:122
+#: ../../source/cmd_mode.rst:120
 msgid "Deux recherches complètes :"
 msgstr "Dos búsquedas completas:"
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:122
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -663,7 +643,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — más de 30 pips de retraso, entre 40 % y 60 % de "
 "probabilidad de victoria, sin comentario."
 
-#: ../../source/cmd_mode.rst:126
+#: ../../source/cmd_mode.rst:124
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1922,7 +1902,7 @@ msgstr ""
 " la clase del objetivo a todos los tipos de decisión y a los dos "
 "regímenes, dinero y partida. Véase :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:242
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1941,11 +1921,11 @@ msgstr ""
 " figura en ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:247
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribir desde un terminal"
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:249
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1964,7 +1944,7 @@ msgstr ""
 " la revisión devuelta por la llamada anterior; cada llamada es su propia "
 "sesión, sin ``sessionId`` ni deshacer de una llamada a otra."
 
-#: ../../source/cmd_mode.rst:262
+#: ../../source/cmd_mode.rst:260
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 
@@ -2186,3 +2166,22 @@ msgstr "Borra el historial de comandos."
 
 #~ msgid "Chercher des positions avec des filtres."
 #~ msgstr "Buscar posiciones con filtros."
+
+#~ msgid "tutorial, tour"
+#~ msgstr "tutorial, tour"
+
+#~ msgid "Ouvre le catalogue des visites guidées de l'interface."
+#~ msgstr "Abre el catálogo de visitas guiadas de la interfaz."
+
+#~ msgid "demo"
+#~ msgstr "demo"
+
+#~ msgid ""
+#~ "Charge une base d'exemple (matchs, "
+#~ "tournoi, collections, commentaires, paquet "
+#~ "Anki, analyses) pour découvrir l'outil."
+#~ msgstr ""
+#~ "Carga una base de ejemplo (partidas, "
+#~ "torneo, colecciones, comentarios, mazo Anki,"
+#~ " análisis) para descubrir la herramienta."
+

@@ -69,7 +69,6 @@ From `frontend/package.json`; the built bundle is embedded in the binary.
 | [Svelte](https://svelte.dev) | 5 | MIT | (c) 2016-2025 Svelte Contributors | UI framework (compiled in; the compiler itself does not ship) |
 | [two.js](https://two.js.org) | 0.8 | MIT | (c) 2012-2025 @jonobr1 | Board rendering |
 | [Chart.js](https://www.chartjs.org) | 4 | MIT | (c) 2014-2024 Chart.js Contributors | Statistics charts |
-| [driver.js](https://driverjs.com) | 1.8 | MIT (`license` field of its `package.json`; text in [its repository](https://github.com/kamranahmedse/driver.js)) | Kamran Ahmed | Guided tour |
 | [Vite](https://vite.dev) | 8 | MIT | VoidZero Inc. and Vite contributors | Build tool only; nothing of it ships |
 
 ## 4. Fonts
@@ -113,7 +112,7 @@ named in §§1-3: Kévin Unger (gammonNet, blunderDB), bgfparser contributors,
 Jack Christensen (pgx), Lea Anthony (Wails), open-spaced-repetition (go-fsrs),
 Adrian-George Bostan (xdg), Zalando SE (go-keyring), Model Context Protocol a Series of LF Projects, LLC
 (go-sdk, for its MIT-licensed code), Svelte Contributors, @jonobr1 (two.js),
-Chart.js Contributors, Kamran Ahmed (driver.js).
+Chart.js Contributors.
 
 ### BSD-3-Clause — The Go Authors, The Sqlite Authors, The Libc Authors, Klaus Post, WAKAYAMA Shirou
 

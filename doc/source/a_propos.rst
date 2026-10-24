@@ -116,8 +116,7 @@ L'essentiel :
   <https://github.com/open-spaced-repetition/go-fsrs>`__ (MIT) ;
 
 * côté interface : `Svelte <https://svelte.dev>`__, `two.js
-  <https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et
-  `driver.js <https://driverjs.com>`__ (MIT) ;
+  <https://two.js.org>`__ et `Chart.js <https://www.chartjs.org>`__ (MIT) ;
 
 * les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto Sans
   JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL Open Font

@@ -4,8 +4,7 @@
 // (engine.MarshalAnalysisBinary); analysis_dict.bin, the dictionary of the
 // legacy JSON blobs, is frozen and only read.
 //
-// The corpus is the repository's own fixtures under testdata/ plus the demo
-// database. It is split 80/20 deterministically; the dictionary is trained on
+// The corpus is the repository's own fixtures under testdata/. It is split 80/20 deterministically; the dictionary is trained on
 // the train split with `zstd --train`, and the ratio reported is measured on
 // the held-out split only (docs/recherche/P11-compression-blobs.md).
 //
@@ -19,14 +18,12 @@ package main
 
 import (
 	"bytes"
-	"compress/gzip"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/binary"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -51,7 +48,6 @@ func run() error {
 	dictSize := flag.Int("dict-size", 32768, "trained dictionary size in bytes (zstd --maxdict)")
 	out := flag.String("out", "pkg/blunderdb/engine/analysis_bin_dict.bin", "where to write the trained dictionary")
 	testdataDir := flag.String("testdata", "testdata", "directory of match/position fixtures to import for the corpus")
-	demoGz := flag.String("demo", "internal/gui/demo.db.gz", "gzip-compressed demo database to fold into the corpus")
 	level := flag.Int("level", 19, "zstd level to measure the resulting dictionary at (informational only)")
 	flag.Parse()
 
@@ -59,7 +55,7 @@ func run() error {
 		return fmt.Errorf("the zstd CLI is required to train the dictionary (offline only, not a runtime dependency): %w", err)
 	}
 
-	blobs, err := collectCorpus(*testdataDir, *demoGz)
+	blobs, err := collectCorpus(*testdataDir)
 	if err != nil {
 		return err
 	}
@@ -104,8 +100,8 @@ func run() error {
 
 // collectCorpus decompresses every real analysis JSON blob reachable from
 // the repo's own fixtures: match files under testdataDir (re-imported into a
-// scratch database) and the embedded demo database.
-func collectCorpus(testdataDir, demoGz string) ([][]byte, error) {
+// scratch database).
+func collectCorpus(testdataDir string) ([][]byte, error) {
 	var blobs [][]byte
 
 	tmp, err := os.MkdirTemp("", "train-analysis-dict-corpus-*")
@@ -131,19 +127,6 @@ func collectCorpus(testdataDir, demoGz string) ([][]byte, error) {
 	}
 	blobs = append(blobs, fromScratch...)
 
-	if demoGz != "" {
-		demoPath, cleanup, err := decompressDemoDB(demoGz, tmp)
-		if err != nil {
-			return nil, err
-		}
-		defer cleanup()
-		fromDemo, err := extractAnalysisBlobs(demoPath)
-		if err != nil {
-			return nil, err
-		}
-		blobs = append(blobs, fromDemo...)
-	}
-
 	return blobs, nil
 }
 
@@ -166,30 +149,6 @@ func importMatchFixtures(d *database.Database, dir string) error {
 		}
 		return nil
 	})
-}
-
-// decompressDemoDB gunzips the embedded demo database (same shape as
-// internal/gui.PrepareDemoDatabase) to a scratch file under dir.
-func decompressDemoDB(gzPath, dir string) (path string, cleanup func(), err error) {
-	f, err := os.Open(gzPath)
-	if err != nil {
-		return "", nil, err
-	}
-	defer f.Close()
-	gz, err := gzip.NewReader(f)
-	if err != nil {
-		return "", nil, err
-	}
-	defer gz.Close()
-	data, err := io.ReadAll(gz)
-	if err != nil {
-		return "", nil, err
-	}
-	out := filepath.Join(dir, "demo.db")
-	if err := os.WriteFile(out, data, 0o644); err != nil {
-		return "", nil, err
-	}
-	return out, func() {}, nil
 }
 
 // extractAnalysisBlobs reads and decompresses every analysis.data row of the

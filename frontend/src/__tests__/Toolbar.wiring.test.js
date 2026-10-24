@@ -81,7 +81,6 @@ const EXPECTED = [
     positionService.showDuelPanel,
     clipboardService.copyBoardImage,
     MODAL.CONFIG,
-    MODAL.TOUR,
     keyboardService.toggleHelpModal
 ];
 

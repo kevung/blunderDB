@@ -105,7 +105,6 @@ var boundAppMethods = []string{
 	"YouTubeWatchURL",
 	"PickIdentityFile",
 	"ReleaseMedia",
-	"PrepareDemoDatabase",
 	"ReadFileContent",
 	"RegenerateIssuerIdentity",
 	"SaveBoardImageDialog",

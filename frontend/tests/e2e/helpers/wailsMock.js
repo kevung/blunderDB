@@ -252,12 +252,7 @@ export async function installWailsMock(page, overrides = {}) {
                             LoadConfig: () => Promise.resolve({}),
                             GetStatsFilter: asyncNull,
                             SaveStatsFilter: asyncVoid,
-                            SaveConfig: asyncVoid,
-                            // Treat the tour as already seen so the first-run catalog modal
-                            // does not auto-open and intercept clicks. Specs that test the
-                            // tour open the catalog explicitly.
-                            GetTourSeen: () => Promise.resolve(true),
-                            SaveTourSeen: asyncVoid
+                            SaveConfig: asyncVoid
                         },
                         'config'
                     ),

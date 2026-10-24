@@ -308,7 +308,7 @@
     }
 </script>
 
-<div class="status-bar" data-testid="status-bar" data-tour="statusbar">
+<div class="status-bar" data-testid="status-bar">
     {#if showInput}
         <div class="command-input-row">
             {#if suggestions.length > 0}

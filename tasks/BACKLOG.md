@@ -71,7 +71,7 @@ propre issue le jour où il est lancé.
   - propres au fichier, à mettre derrière `LocalFile` ou à garder sur le handle : la session
     d'import en bloc `sqlite.BeginBulk` (`db_import_pipeline.go`), la vérification
     (`CountOrphans`, `CheckSchema`, `CheckConstraints`, `CheckCounters`, `db_verify.go`),
-    `Exchange`/`Borrow` qui partagent le pool, et `RawConn` (`scripts/demodb`).
+    `Exchange`/`Borrow` qui partagent le pool, et `RawConn`.
   Ouvrir un tenant distant demande une garde d'ouverture sur `store`, un point d'entrée qui
   reçoit une `storage.Storage`, les lectures du premier groupe par le contrat, et les
   opérations du second refusées (comme `Vacuum`, `errVacuumNotLocal`) sur un store sans

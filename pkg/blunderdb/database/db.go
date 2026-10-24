@@ -389,7 +389,7 @@ func (d *Database) conn() *sql.DB {
 }
 
 // RawConn returns d's underlying *sql.DB handle for maintenance scripts and
-// tests (e.g. scripts/demodb). A function, not a method, so the Wails binding
+// tests. A function, not a method, so the Wails binding
 // never exposes it. Never call it from GUI-reachable code; add a named method.
 func RawConn(d *Database) *sql.DB {
 	return d.conn()

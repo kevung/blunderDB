@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net"
 	"net/http"
-	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -79,12 +79,7 @@ func TestLiveEngineFollowsTheOpenFile(t *testing.T) {
 	a := NewApp(db)
 	t.Cleanup(a.stopMCP)
 	open := func() {
-		path, err := a.PrepareDemoDatabase()
-		if err != nil {
-			t.Fatal(err)
-		}
-		t.Cleanup(func() { _ = os.Remove(path) })
-		if err := db.OpenDatabase(path); err != nil {
+		if err := db.SetupDatabase(filepath.Join(t.TempDir(), "file.db")); err != nil {
 			t.Fatal(err)
 		}
 	}
