@@ -531,6 +531,28 @@ describe('command', () => {
         expect(cancelRollout).toHaveBeenCalled();
     });
 
+    test('a job that ends before the start call returns keeps its outcome', async () => {
+        startRollout.mockImplementationOnce(async () => {
+            handlers['rollout:done']({ job: 1, positionId: 7, stored: true });
+            return 1;
+        });
+        await runRolloutCommand('fast');
+        const s = get(rolloutStore);
+        expect(s.running).toBe(false);
+        expect(s.outcome).toEqual({ type: 'done', positionId: 7, stored: true });
+    });
+
+    test('a batch that ends before the start call returns keeps its outcome', async () => {
+        startIDs.mockImplementationOnce(async () => {
+            handlers['rollout-batch:done']({ job: 1, total: 3 });
+            return 1;
+        });
+        await runRolloutCommand('search');
+        await waitFor(() => expect(startIDs).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(get(rolloutStore).outcome?.type).toBe('batch-done'));
+        expect(get(rolloutStore).running).toBe(false);
+    });
+
     test('rollout search rolls out exactly the list on screen, after asking with the total', async () => {
         await runRolloutCommand('search');
         await waitFor(() => expect(startIDs).toHaveBeenCalledTimes(1));
