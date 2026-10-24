@@ -7,7 +7,7 @@ import { positionStore } from '../stores/positionStore.js';
 import { statusBarTextStore, activeTabStore } from '../stores/uiStore.js';
 import { withDisplayedPositionIDs } from './modeMachine.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { libraryWritten, writingOnScreen, readOfLibrary, isLibraryLeft, activeGroupId } from '../stores/groupActivityStore.js';
+import { libraryWritten, writingOnScreen, readOfLibrary, isLibraryLeft, activeGroupId, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { confirmAction } from './confirmService.js';
 import { tMsg, t } from '../i18n';
 import { logger } from '../utils/logger.js';
@@ -405,6 +405,7 @@ export async function startRolloutOfSearch(settings) {
     // they would name other positions. The reads below are awaited, and a switch can land
     // between them and the start.
     const group = get(activeGroupId);
+    const mark = libraryMark();
     // A paged list (a collection, search results) holds no ids of its own: read whole first.
     const ids = (await withDisplayedPositionIDs((listed) => listed)) ?? [];
     const wire = settingsForWire(settings);
@@ -421,12 +422,11 @@ export async function startRolloutOfSearch(settings) {
     }
     const ok = await confirmAction(get(t)('rollout.batchConfirm', { total, listed: ids.length, depth: `${wire.max_games}` }), { confirmLabel: get(t)('rollout.start') });
     if (!ok) return '';
-    if (get(activeGroupId) !== group) return refuse(get(t)('rollout.listOfAnotherLibrary'));
     try {
         rolloutStore.update((s) => ({ ...s, error: '' }));
-        // Never sent while a switch rebinds the handle: the ids name rows of the library on screen.
-        const started = await writingOnScreen(async () => (await startJob(() => StartRolloutIDs(ids, wire, group)), true));
-        if (!started) return refuse(get(t)('libraryGroups.switching'));
+        // The ids name rows of the library they were read in: sent to that one only.
+        const started = await writingOnLibrary(mark, async () => (await startJob(() => StartRolloutIDs(ids, wire, group)), true));
+        if (!started) return refuse(get(t)('rollout.listOfAnotherLibrary'));
         rolloutStore.update((s) => ({ ...idleRollout(), job: s.job, running: true, kind: 'batch', total, revision: s.revision }));
         await syncRolloutStatus();
         return '';

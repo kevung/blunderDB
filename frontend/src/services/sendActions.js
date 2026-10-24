@@ -5,7 +5,7 @@
  */
 
 import { get } from 'svelte/store';
-import { activeGroupId } from '../stores/groupActivityStore.js';
+import { activeGroupId, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { tabGroupsStore } from '../stores/libraryGroupStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { copyToGroup, addToBasket } from './transferService.js';
@@ -37,9 +37,11 @@ export function sendContext(kind, id, label) {
         addToLot: () => addToBasket(item())
     };
     if (kind !== 'position') return { otherBases: otherBases(), do: handlers };
+    // The menu reads the id and the collections now and acts on a later click.
+    const mark = libraryMark();
     handlers.addToCollection = async (/** @type {{ id: number, name: string }} */ c) => {
         try {
-            await AddPositionToCollection(c.id, id);
+            if (!(await writingOnLibrary(mark, async () => (await AddPositionToCollection(c.id, id), true)))) return;
             setStatusBarMessage(tMsg('collection.positionAdded'));
         } catch (error) {
             logger.error('adding the position to a collection failed:', error);

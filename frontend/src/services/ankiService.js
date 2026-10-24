@@ -42,7 +42,7 @@ import { showPosition, leaveStudiedModeForList } from './positionService.js';
 import { parseFilters } from '../commandProcessor.js';
 import { buildSearchFilterPayload } from './searchFilterService.js';
 import { logger } from '../utils/logger.js';
-import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
+import { readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 
 // ---------------------------------------------------------------------------
 // Pure helpers
@@ -296,6 +296,7 @@ export async function syncAllDecksAndReload() {
 
 /**
  * Create a deck and fill it from its source.
+ * @param {{ name: string, sourceType: string, sourceId: number, lastSearch?: any, positionIds?: number[], origin?: any }} spec
  * @returns {Promise<number>} the new deck's id
  */
 export async function createDeck({ name, sourceType, sourceId, lastSearch = null, positionIds = [], origin = null }) {
@@ -334,15 +335,21 @@ export async function refreshDeckStats(/** @type {number} */ deckId) {
 /**
  * Add one position's card to a deck. SyncWithPositions is `INSERT OR IGNORE`,
  * so this is safe on any sourceType and never touches the other cards.
+ * Whether it was written: the ids name rows of the library of mark (libraryMark), taken where
+ * they were read.
+ * @param {number} deckId
+ * @param {number} positionId
+ * @param {{ epoch: number, path: string }} [mark]
  */
-export async function addPositionToDeck(/** @type {number} */ deckId, /** @type {number} */ positionId) {
-    await SyncAnkiDeckWithPositions(deckId, [positionId]);
+export async function addPositionToDeck(deckId, positionId, mark = libraryMark()) {
+    if (!(await writingOnLibrary(mark, async () => (await SyncAnkiDeckWithPositions(deckId, [positionId]), true)))) return false;
     // Refresh the visible stats only if this is the deck currently open in
     // the Anki panel — otherwise there is nothing on screen to update, and
     // stomping a different deck's stats with these would be a bug.
     if (get(selectedAnkiDeckStore)?.id === deckId) {
         await refreshDeckStats(deckId);
     }
+    return true;
 }
 
 /**

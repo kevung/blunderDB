@@ -26,7 +26,7 @@
 import { get } from 'svelte/store';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore } from '../stores/positionStore.js';
-import { groupSwitchingStore } from '../stores/groupActivityStore.js';
+import { groupSwitchingStore, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { emptyAnalysis, evalVerdictStore } from '../stores/analysisStore.js';
 import { SaveDisplayedEvaluation } from '../../wailsjs/go/database/Database.js';
 import { statusBarModeStore } from '../stores/uiStore.js';
@@ -82,6 +82,8 @@ export async function saveScratchBoard() {
 
     const analysis = { ...emptyAnalysis(), xgid: generateXGID(position) };
 
+    // The verdict names the saved row by id: it goes to the library the board was saved in.
+    const mark = libraryMark();
     let existed = false;
     const id = await savePositionAndAnalysis(
         position,
@@ -94,7 +96,7 @@ export async function saveScratchBoard() {
     );
     if (id == null) return null;
     logger.log('saveScratchBoard:', id, existed ? '(already stored)' : '(new)');
-    if (verdict) await saveVerdict(id, existed, verdict);
+    if (verdict) await writingOnLibrary(mark, async () => (await saveVerdict(id, existed, verdict), true));
 
     if (!existed) await joinLibraryBehindScratchBoard(id);
     await maybeAutoAnalyzeAfterImport();

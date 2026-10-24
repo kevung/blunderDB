@@ -7,6 +7,7 @@ import { activeTabStore } from '../stores/uiStore';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { fileImportReportStore, showFileImportModalStore, fileImportModeStore } from '../stores/importModalStore.js';
 import { logger } from '../utils/logger.js';
+import { libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { tMsg } from '../i18n';
 
 // La file d'étude post-import : amène une position à la fois sur le plateau,
@@ -94,8 +95,9 @@ export async function startStudyPlanQueue(filter, rank) {
 export async function markCurrentStudied() {
     const entry = get(studyQueueCurrentStore);
     if (!entry) return;
+    const mark = libraryMark();
     try {
-        await SetPositionStudied(entry.positionId, true);
+        if (!(await writingOnLibrary(mark, async () => (await SetPositionStudied(entry.positionId, true), true)))) return;
         studiedMarks.set(entry.positionId, true);
         studyQueueLastMarkedStore.set(entry.positionId);
     } catch (error) {
@@ -110,8 +112,9 @@ export async function markCurrentStudied() {
 export async function unmarkLastStudied() {
     const id = get(studyQueueLastMarkedStore);
     if (!id) return;
+    const mark = libraryMark();
     try {
-        await SetPositionStudied(id, false);
+        if (!(await writingOnLibrary(mark, async () => (await SetPositionStudied(id, false), true)))) return;
         studiedMarks.set(id, false);
         studyQueueLastMarkedStore.set(0);
         setStatusBarMessage(tMsg('studyQueue.unmarked'));
@@ -126,11 +129,12 @@ export async function unmarkLastStudied() {
  * marque que la file, sans passer à la suivante.
  * @param {number} positionId
  * @param {boolean} studied
+ * @param {{ epoch: number, path: string }} [mark] the library positionId was read in (libraryMark)
  */
-export async function setPositionStudied(positionId, studied) {
+export async function setPositionStudied(positionId, studied, mark = libraryMark()) {
     if (!positionId) return;
     try {
-        await SetPositionStudied(positionId, studied);
+        if (!(await writingOnLibrary(mark, async () => (await SetPositionStudied(positionId, studied), true)))) return;
         studiedMarks.set(positionId, studied);
         setStatusBarMessage(tMsg(studied ? 'studyQueue.marked' : 'studyQueue.unmarked'));
     } catch (error) {

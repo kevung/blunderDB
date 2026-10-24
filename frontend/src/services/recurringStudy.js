@@ -11,6 +11,7 @@ import { loadPositionsFromSelection } from './positionLoader.js';
 import { startTrainingSession } from './trainingTabService.js';
 import { loadDecks } from './ankiService.js';
 import { statsFilterStore } from '../stores/statsStore.js';
+import { libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { logger } from '../utils/logger.js';
 
 /** Combien de positions le quiz des pires groupes en tire. */
@@ -54,8 +55,9 @@ export async function quizOnPlan(rank) {
  * @param {string} name @param {number[]} ids
  */
 export async function deckFromIds(name, ids) {
+    const mark = libraryMark();
     try {
-        await CreateStudyDeck(name, ids);
+        if (!(await writingOnLibrary(mark, async () => (await CreateStudyDeck(name, ids), true)))) return false;
         await loadDecks();
         statusBarTextStore.set(tMsg('stats.recurringDeckCreated', { name, n: ids.length }));
         return true;
@@ -71,9 +73,16 @@ export async function deckFromIds(name, ids) {
  * @param {string} name @param {number[]} ids
  */
 export async function collectionFromIds(name, ids) {
+    const mark = libraryMark();
     try {
-        const id = await CreateCollection(name, '');
-        await AddPositionsToCollection(id, ids);
+        // Both writes in the library the ids were read in: a switch between them would fill a
+        // collection of another library.
+        const written = await writingOnLibrary(mark, async () => {
+            const id = await CreateCollection(name, '');
+            await AddPositionsToCollection(id, ids);
+            return true;
+        });
+        if (!written) return false;
         statusBarTextStore.set(tMsg('stats.recurringCollectionCreated', { name, n: ids.length }));
         return true;
     } catch (error) {

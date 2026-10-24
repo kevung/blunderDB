@@ -25,14 +25,16 @@ import { sendContext } from './sendActions.js';
 import { mirrorPosition } from '../utils/boardGeometry.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
+import { libraryMark } from '../stores/groupActivityStore.js';
 
 /**
  * @param {{ id: number, name: string }} deck
  * @param {number} positionId
+ * @param {{ epoch: number, path: string }} [mark] the library positionId was read in (libraryMark)
  */
-export async function addPositionToAnkiDeck(deck, positionId) {
+export async function addPositionToAnkiDeck(deck, positionId, mark = libraryMark()) {
     try {
-        await anki.addPositionToDeck(deck.id, positionId);
+        if (!(await anki.addPositionToDeck(deck.id, positionId, mark))) return;
         setStatusBarMessage(tMsg('status.positionAddedToDeck', { deck: deck.name }));
     } catch (err) {
         logger.error('Failed to add the position to the Anki deck:', err);
@@ -63,6 +65,8 @@ positionStore.subscribe((position) => {
  */
 export function positionContext({ displayPosition = () => get(positionStore), positionId = get(positionStore)?.id ?? 0 } = {}) {
     const send = sendContext('position', positionId, `#${positionId}`);
+    // The menu reads positionId now and acts on a later click: the write goes to this library.
+    const mark = libraryMark();
     return {
         otherBases: send.otherBases,
         collections: send.collections,
@@ -89,8 +93,8 @@ export function positionContext({ displayPosition = () => get(positionStore), po
                 commandTextStore.set('#');
                 showCommandInputStore.set(true);
             },
-            markStudied: () => setPositionStudied(positionId, true),
-            unmarkStudied: () => setPositionStudied(positionId, false),
+            markStudied: () => setPositionStudied(positionId, true, mark),
+            unmarkStudied: () => setPositionStudied(positionId, false, mark),
             neighbours: () => rankNeighboursOfCurrentPosition(),
             openMatchAtMove: () => openMatchAtPosition(positionId),
             // A structure search on this board, as `s` on the search board asks it.
@@ -98,7 +102,7 @@ export function positionContext({ displayPosition = () => get(positionStore), po
             newView: () => viewStore.addView(),
             rolloutFast: () => runRolloutCommand('fast'),
             rolloutStandard: () => runRolloutCommand('standard'),
-            addToAnkiDeck: (deck) => addPositionToAnkiDeck(deck, positionId),
+            addToAnkiDeck: (deck) => addPositionToAnkiDeck(deck, positionId, mark),
             challenge: () => toggleAnalysisChallenge(),
             save: () => saveCurrentPosition(),
             trash: () => deletePosition(),

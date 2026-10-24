@@ -68,7 +68,7 @@ import {
     fileImportGroupStore,
     fileImportBusyStore
 } from '../stores/importModalStore.js';
-import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore, libraryWritten, libraryMark, libraryStillOnScreen } from '../stores/groupActivityStore.js';
+import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore, libraryWritten, libraryMark, libraryStillOnScreen, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 
@@ -372,6 +372,8 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
     // One call checks existence AND writes: SaveIndividualPosition dedups on
     // the Zobrist hash and records individual provenance even for a known
     // position (ADR-0002).
+    // The analysis and the comment name the saved row by id: they go to the library it was saved in.
+    const mark = libraryMark();
     let saveResult;
     try {
         saveResult = await SaveIndividualPosition(/** @type {Position} */ (/** @type {unknown} */ (positionData)));
@@ -392,23 +394,27 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
         logger.log('Position already exists with ID:', positionID);
         try {
             parsedAnalysis.positionId = positionID;
-            await SaveAnalysis(positionID, /** @type {PositionAnalysis} */ (/** @type {unknown} */ (parsedAnalysis)));
+            const mergedComment = await writingOnLibrary(mark, async () => {
+                await SaveAnalysis(positionID, /** @type {PositionAnalysis} */ (/** @type {unknown} */ (parsedAnalysis)));
 
-            let existingComment = await LoadComment(positionID);
-            const newComment = parsedAnalysis.comment || '';
-            const trimmedExisting = (existingComment || '').trim();
-            const trimmedNew = newComment.trim();
-            let mergedComment = trimmedExisting;
+                let existingComment = await LoadComment(positionID);
+                const newComment = parsedAnalysis.comment || '';
+                const trimmedExisting = (existingComment || '').trim();
+                const trimmedNew = newComment.trim();
+                let merged = trimmedExisting;
 
-            if (trimmedNew && !trimmedExisting.includes(trimmedNew)) {
-                if (trimmedExisting) {
-                    mergedComment = `${trimmedExisting}\n\n${trimmedNew}`;
-                } else {
-                    mergedComment = trimmedNew;
+                if (trimmedNew && !trimmedExisting.includes(trimmedNew)) {
+                    if (trimmedExisting) {
+                        merged = `${trimmedExisting}\n\n${trimmedNew}`;
+                    } else {
+                        merged = trimmedNew;
+                    }
                 }
-            }
 
-            await SaveComment(positionID, mergedComment);
+                await SaveComment(positionID, merged);
+                return merged;
+            });
+            if (mergedComment === undefined) return null;
             logger.log('Analysis and comment updated for position ID:', positionID);
             setStatusBarMessage(announce(positionID, true, tMsg('status.positionMerged')));
 
@@ -431,8 +437,12 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
 
         positionData.id = positionID;
         parsedAnalysis.positionId = positionID;
-        await SaveAnalysis(positionID, /** @type {PositionAnalysis} */ (/** @type {unknown} */ (parsedAnalysis)));
-        await SaveComment(positionID, parsedAnalysis.comment ?? '');
+        const written = await writingOnLibrary(mark, async () => {
+            await SaveAnalysis(positionID, /** @type {PositionAnalysis} */ (/** @type {unknown} */ (parsedAnalysis)));
+            await SaveComment(positionID, parsedAnalysis.comment ?? '');
+            return true;
+        });
+        if (!written) return null;
         logger.log('Analysis and comment saved for position ID:', positionID);
 
         if (reload) await reloadPositions();

@@ -61,7 +61,7 @@ vi.mock('../services/positionService.js', () => ({ sendPositionToEval: vi.fn() }
 vi.mock('../services/clipboardService.js', () => ({ copyBoardWithAnalysisImage: vi.fn() }));
 vi.mock('../services/ankiService.js', () => ({
     loadDecks: vi.fn(() => Promise.resolve()),
-    addPositionToDeck: vi.fn(() => Promise.resolve())
+    addPositionToDeck: vi.fn(() => Promise.resolve(true))
 }));
 
 import { sendPositionToEval } from '../services/positionService.js';
@@ -176,7 +176,7 @@ describe('Board context menu', () => {
         deckItem.click();
         await tick();
 
-        expect(anki.addPositionToDeck).toHaveBeenCalledWith(7, 42);
+        expect(anki.addPositionToDeck).toHaveBeenCalledWith(7, 42, expect.objectContaining({ path: expect.any(String) }));
         // The status bar holds a deferred i18n descriptor (tMsg), not a
         // resolved string — see i18n/index.js — so check its key/params
         // rather than the rendered text.
