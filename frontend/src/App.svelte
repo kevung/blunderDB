@@ -102,6 +102,7 @@
     import { activeGroupId, activateGroup, openInNewGroup } from './stores/libraryGroupStore.js';
     import { initFolderWatch } from './services/watchService.js';
     import { initMCPHost } from './services/mcpHostService.js';
+    import { initOutsideWrites, stopOutsideWrites } from './services/outsideWritesService.js';
     import { initTheme } from './stores/themeStore.js';
 
     /** @type {HTMLElement | undefined} */
@@ -449,6 +450,8 @@
         initFolderWatch();
         // The localhost MCP server, if the user enabled it; fire and forget as well.
         initMCPHost();
+        // What the CLI or a serve daemon writes to an open library reaches the panels.
+        initOutsideWrites();
 
         // A database handed on the command line (file association, Exec=blunderDB %f) takes
         // priority over the remembered one.
@@ -498,6 +501,7 @@
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('paste', handlePasteEvent);
         unsubscribePositions();
+        stopOutsideWrites();
     });
 </script>
 

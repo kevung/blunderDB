@@ -349,6 +349,13 @@ bibliothèque affichée.
 Un même fichier ne s'ouvre pas dans deux groupes : le rouvrir affiche le
 groupe qui le tient déjà.
 
+Ce qu'un autre programme écrit dans une bibliothèque ouverte — ``blunderdb``
+en ligne de commande, un serveur ``blunderdb serve`` sur le même fichier —
+est relu aussi : quand la fenêtre revient au premier plan, ou quelques
+secondes après la fin de l'écriture, et au plus toutes les dix secondes
+pendant un long import. Une bibliothèque d'un autre groupe est relue à son
+retour.
+
 Les tâches de fond restent attachées à leur bibliothèque : un import de
 fichiers de matchs, le dossier surveillé et l'analyse GammonNet par lots
 continuent dans le groupe où ils ont commencé quand on en affiche un autre, et

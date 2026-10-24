@@ -194,6 +194,10 @@ export function LegalMoves(arg1) {
   return window['go']['gui']['App']['LegalMoves'](arg1);
 }
 
+export function LibrariesWrittenElsewhere() {
+  return window['go']['gui']['App']['LibrariesWrittenElsewhere']();
+}
+
 export function LibraryGroupHolding(arg1) {
   return window['go']['gui']['App']['LibraryGroupHolding'](arg1);
 }

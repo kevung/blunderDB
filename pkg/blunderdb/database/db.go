@@ -431,7 +431,7 @@ func (d *Database) Close() error {
 	if !wasReadOnly {
 		_, _ = d.db.Exec(`PRAGMA optimize`)
 	}
-	err := d.db.Close()
+	err := sqlite.CloseDB(d.db)
 	d.db = nil
 	return err
 }
@@ -451,7 +451,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
 	if d.db != nil {
-		if err := d.db.Close(); err != nil {
+		if err := sqlite.CloseDB(d.db); err != nil {
 			slog.Warn("closing the previously open database failed", "err", err)
 		}
 	}
@@ -471,7 +471,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	defer func() {
 		if err != nil {
 			if d.db != nil {
-				d.db.Close()
+				_ = sqlite.CloseDB(d.db)
 				d.db = nil
 			}
 			d.releaseFileLock()
@@ -485,7 +485,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	// after sql.Open configures only the one connection it lands on; with a
 	// pool the others ran with foreign_keys=OFF and DeleteMatch skipped ON
 	// DELETE CASCADE, leaving orphans.
-	d.db, err = sql.Open("sqlite", sqlite.DSN(path))
+	d.db, err = sqlite.OpenDB(path)
 	if err != nil {
 		return err
 	}
@@ -537,7 +537,7 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
 	if d.db != nil {
-		if err := d.db.Close(); err != nil {
+		if err := sqlite.CloseDB(d.db); err != nil {
 			slog.Warn("closing the previously open database failed", "err", err)
 		}
 	}
@@ -552,7 +552,7 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	defer func() {
 		if err != nil {
 			if d.db != nil {
-				d.db.Close()
+				_ = sqlite.CloseDB(d.db)
 				d.db = nil
 			}
 			d.releaseFileLock()
@@ -566,7 +566,7 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	// after sql.Open configures only the one connection it lands on; with a
 	// pool the others ran with foreign_keys=OFF and DeleteMatch skipped ON
 	// DELETE CASCADE, leaving orphans.
-	d.db, err = sql.Open("sqlite", sqlite.DSN(path))
+	d.db, err = sqlite.OpenDB(path)
 	if err != nil {
 		return err
 	}

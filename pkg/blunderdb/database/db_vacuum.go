@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -123,7 +122,7 @@ func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (b
 	}
 
 	_, _ = d.db.Exec(`PRAGMA wal_checkpoint(TRUNCATE)`)
-	if err := d.db.Close(); err != nil {
+	if err := sqlite.CloseDB(d.db); err != nil {
 		slog.Warn("vacuum: closing the database before the swap", "err", err)
 	}
 	d.db = nil
@@ -163,13 +162,13 @@ func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (b
 // caller holds. The schema is the one the closed handle had, so there is no
 // chain to run.
 func (d *Database) reopenAfterSwap(path string) error {
-	db, err := sql.Open("sqlite", sqlite.DSN(path))
+	db, err := sqlite.OpenDB(path)
 	if err != nil {
 		return err
 	}
 	sqlite.ConfigurePool(db, path)
 	if err := db.Ping(); err != nil {
-		db.Close()
+		_ = sqlite.CloseDB(db)
 		return err
 	}
 	d.db = db

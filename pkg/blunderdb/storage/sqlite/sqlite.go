@@ -49,7 +49,7 @@ var _ storage.Storage = (*Storage)(nil)
 func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, error) {
 	// Encode the PRAGMAs into the DSN so the driver applies them to *every*
 	// connection the pool opens; a post-Open `PRAGMA` configures only one.
-	db, err := sql.Open("sqlite", DSN(dsn))
+	db, err := OpenDB(dsn)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: open %q: %w", dsn, err)
 	}
@@ -230,7 +230,7 @@ func (s *Storage) Close() error {
 	// connection) is a cheap targeted ANALYZE. Best-effort: a failure must
 	// not turn a normal shutdown into an error.
 	_, _ = s.sqlDB.Exec(`PRAGMA optimize`)
-	return s.sqlDB.Close()
+	return CloseDB(s.sqlDB)
 }
 
 // writeLockSQL writes nothing yet takes the database's write lock.

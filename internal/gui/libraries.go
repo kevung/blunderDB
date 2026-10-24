@@ -138,6 +138,34 @@ func (a *App) ListLibraryGroups() []LibraryGroup {
 	return out
 }
 
+// LibrariesWrittenElsewhere returns the groups whose library another process
+// (the CLI, a serve daemon) wrote since the previous call; the desktop's own
+// writes are left out, it reads them again already. Reads only. A group whose
+// file cannot be read now is left out and asked again next time.
+func (a *App) LibrariesWrittenElsewhere() []int {
+	a.libs.mu.Lock()
+	defer a.libs.mu.Unlock()
+	a.libs.init()
+	out := []int{}
+	ask := func(id int, d *database.Database) {
+		written, err := database.WrittenElsewhere(d)
+		if err != nil {
+			slog.Debug("watching a library for outside writes", "group", id, "err", err)
+		}
+		if written {
+			out = append(out, id)
+		}
+	}
+	if a.db != nil {
+		ask(a.libs.active, a.db)
+	}
+	for id, d := range a.libs.parked {
+		ask(id, d)
+	}
+	sort.Ints(out)
+	return out
+}
+
 // libraryBusy refuses a switch while a job that follows the screen runs. The
 // background jobs (an import, the watched folder, a gammonNet batch) run on a
 // handle borrowed from their library and keep it through a switch; a rollout
