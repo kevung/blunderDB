@@ -3551,6 +3551,7 @@
         "openLabel": "Weitere Bibliothek",
         "busyRollout": "Ein Rollout schreibt in die aktive Bibliothek: Warten Sie auf sein Ende oder stoppen Sie ihn (rollout stop), bevor Sie die Bibliothek wechseln",
         "busyImport": "Ein Import schreibt Datei für Datei in die aktive Bibliothek: Warten Sie sein Ende ab, bevor Sie die Bibliothek wechseln",
+        "busyWrite": "Eine Änderung wird gerade in die aktive Bibliothek geschrieben: Versuchen Sie es gleich noch einmal",
         "switching": "Ein Bibliothekswechsel läuft: Warten Sie sein Ende ab",
         "answerDropped": "Die angezeigte Bibliothek hat sich inzwischen geändert: Die Bestätigung wurde nicht angewendet",
         "writeDropped": "Die angezeigte Bibliothek hat sich inzwischen geändert: Die Änderung wurde nicht geschrieben",

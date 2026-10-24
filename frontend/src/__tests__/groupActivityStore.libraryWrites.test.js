@@ -31,6 +31,23 @@ describe('a write naming the rows of the library it read them in', () => {
         expect(ReleaseLibrary).toHaveBeenCalledWith(7);
     });
 
+    it('a switch begun after it waits for the backend to let go', async () => {
+        const released = deferred();
+        vi.mocked(ReleaseLibrary).mockImplementationOnce(() => released.promise.then(() => undefined));
+        /** @type {string[]} */
+        const order = [];
+        const written = writingOnLibrary(libraryMark(), async () => (order.push('write'), true));
+        await Promise.resolve();
+        await Promise.resolve();
+        const next = holdingSwitch(async () => (order.push('switch'), true));
+        await new Promise((r) => setTimeout(r, 0));
+        expect(order).toEqual(['write']);
+        order.push('release');
+        released.resolve();
+        await Promise.all([written, next]);
+        expect(order).toEqual(['write', 'release', 'switch']);
+    });
+
     it('is let go even when it fails', async () => {
         await expect(writingOnLibrary(libraryMark(), () => Promise.reject(new Error('boom')))).rejects.toThrow('boom');
         expect(ReleaseLibrary).toHaveBeenCalledWith(7);

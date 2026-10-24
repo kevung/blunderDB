@@ -3551,6 +3551,7 @@
         "openLabel": "Toinen kirjasto",
         "busyRollout": "Rollout kirjoittaa aktiiviseen kirjastoon: odota sen päättymistä tai pysäytä se (rollout stop) ennen kirjaston vaihtamista",
         "busyImport": "Tuonti kirjoittaa aktiiviseen kirjastoon tiedosto kerrallaan: odota sen päättymistä ennen kuin vaihdat kirjastoa",
+        "busyWrite": "Aktiiviseen kirjastoon kirjoitetaan muutosta: yritä hetken kuluttua uudelleen",
         "switching": "Kirjaston vaihto on käynnissä: odota sen päättymistä",
         "answerDropped": "Näytöllä oleva kirjasto vaihtui sillä välin: vahvistusta ei sovellettu",
         "writeDropped": "Näytöllä oleva kirjasto vaihtui sillä välin: muutosta ei kirjoitettu",

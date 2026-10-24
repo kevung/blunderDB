@@ -1246,6 +1246,10 @@ export function RecommendedTags() {
   return window['go']['database']['Database']['RecommendedTags']();
 }
 
+export function RecreateDatabase(arg1) {
+  return window['go']['database']['Database']['RecreateDatabase'](arg1);
+}
+
 export function ReencodeAnalyses() {
   return window['go']['database']['Database']['ReencodeAnalyses']();
 }

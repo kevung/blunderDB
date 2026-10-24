@@ -19,7 +19,7 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
 }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    SetupDatabase: vi.fn(),
+    RecreateDatabase: vi.fn(),
     CheckDatabaseVersion: vi.fn(),
     OpenDatabase: vi.fn(),
     GetDatabaseVersion: vi.fn(),
@@ -50,9 +50,11 @@ vi.mock('../services/sessionService.js', () => ({
     saveSessionState: vi.fn().mockResolvedValue(undefined)
 }));
 
-import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile, PrepareDemoDatabase } from '../../wailsjs/go/gui/App.js';
+import { SaveDatabaseDialog, OpenDatabaseDialog, PrepareDemoDatabase } from '../../wailsjs/go/gui/App.js';
+import { libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
+import { tMsg } from '../i18n';
 import {
-    SetupDatabase,
+    RecreateDatabase,
     CheckDatabaseVersion,
     OpenDatabase,
     GetDatabaseVersion,
@@ -131,9 +133,8 @@ describe('newDatabase', () => {
 
         await newDatabase();
 
-        expect(DeleteFile).toHaveBeenCalledWith('/tmp/new.db');
         expect(get(databasePathStore)).toBe('/tmp/new.db');
-        expect(SetupDatabase).toHaveBeenCalledWith('/tmp/new.db');
+        expect(RecreateDatabase).toHaveBeenCalledWith('/tmp/new.db');
         expect(WindowSetTitle).toHaveBeenCalledWith('blunderDB - new.db');
         expect(loadAllPositions).toHaveBeenCalled();
         expect(get(statusBarTextStore)).not.toBe('');
@@ -158,24 +159,45 @@ describe('newDatabase', () => {
 
         await newDatabase();
 
-        expect(SetupDatabase).not.toHaveBeenCalled();
+        expect(RecreateDatabase).not.toHaveBeenCalled();
         expect(get(databasePathStore)).toBe('');
     });
 
-    test('DeleteFile failing (no prior file) does not abort database creation', async () => {
-        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
-        vi.mocked(DeleteFile).mockRejectedValue(new Error('ENOENT'));
+    test('a write holding the library refuses the creation: nothing changes on screen, and it is said', async () => {
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/old.db');
+        databasePathStore.set('/tmp/old.db');
+        commentTextStore.set('kept');
+        vi.mocked(RecreateDatabase).mockRejectedValueOnce(new Error('database is busy: write'));
 
         await newDatabase();
 
-        expect(SetupDatabase).toHaveBeenCalledWith('/tmp/new.db');
-        expect(get(statusBarModeStore)).toBe('NORMAL');
+        expect(get(databasePathStore)).toBe('/tmp/old.db');
+        expect(get(commentTextStore)).toBe('kept');
+        expect(get(statusBarTextStore)).toEqual(tMsg('libraryGroups.busyWrite'));
+        expect(loadAllPositions).not.toHaveBeenCalled();
     });
 
-    test('SetupDatabase failing reports the error and still resets the mode', async () => {
+    test('the creation waits for a write still on its way: the write lands in the library it read', async () => {
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/old.db');
+        databasePathStore.set('/tmp/old.db');
+        /** @type {string[]} */
+        const order = [];
+        /** @type {() => void} */
+        let answer = () => {};
+        const answered = new Promise((r) => (answer = () => r(undefined)));
+        const write = writingOnLibrary(libraryMark(), async () => (await answered, order.push('write'), true));
+        vi.mocked(RecreateDatabase).mockImplementationOnce(async () => void order.push('recreate'));
+        const created = newDatabase();
+        await new Promise((r) => setTimeout(r, 0));
+        answer();
+        await Promise.all([write, created]);
+        expect(order).toEqual(['write', 'recreate']);
+    });
+
+    test('a failed creation reports the error and still resets the mode', async () => {
         vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/new.db');
         databasePathStore.set('/tmp/old.db');
-        vi.mocked(SetupDatabase).mockRejectedValue(new Error('disk full'));
+        vi.mocked(RecreateDatabase).mockRejectedValueOnce(new Error('disk full'));
 
         await newDatabase();
 
@@ -282,6 +304,17 @@ describe('openDatabaseByPath', () => {
         expect(get(databasePathStore)).toBe('');
         expect(WindowSetTitle).toHaveBeenLastCalledWith('blunderDB');
         expect(refreshLibraryCounts).toHaveBeenCalledTimes(1);
+        expect(SaveLastDatabasePath).not.toHaveBeenCalled();
+    });
+
+    test('an open refused by a write holding the library keeps the library on screen, and says so', async () => {
+        databasePathStore.set('/tmp/old.db');
+        vi.mocked(OpenDatabase).mockRejectedValueOnce(new Error('database is busy: write'));
+
+        await openDatabaseByPath('/tmp/other.db');
+
+        expect(get(databasePathStore)).toBe('/tmp/old.db');
+        expect(get(statusBarTextStore)).toEqual(tMsg('libraryGroups.busyWrite'));
         expect(SaveLastDatabasePath).not.toHaveBeenCalled();
     });
 
@@ -551,7 +584,7 @@ describe('a copy into a group that opens or creates another library', () => {
         activeGroupId.set(2);
         transferHistoryStore.set([{ dst: 2, receipt: 7, name: 'club' }]);
         vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/fresh.db');
-        vi.mocked(SetupDatabase).mockResolvedValue(undefined);
+        vi.mocked(RecreateDatabase).mockResolvedValue(undefined);
         await newDatabase();
         expect(get(transferHistoryStore)).toEqual([]);
     });

@@ -7,9 +7,11 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -440,7 +442,23 @@ func (d *Database) Close() error {
 	return err
 }
 
-func (d *Database) SetupDatabase(path string) (err error) {
+func (d *Database) SetupDatabase(path string) error {
+	return d.setup(path, false)
+}
+
+// RecreateDatabase erases the file at path, if any, and sets a new library up
+// there. The file is erased after the refusals of a Setup (a write holding the
+// library, HoldLibrary) and once the handle has let the previous library go,
+// so that a write never lands in an erased file and a library recreated under
+// its own path is never taken for the one erased.
+func (d *Database) RecreateDatabase(path string) error {
+	if ext := strings.ToLower(filepath.Ext(path)); (ext != ".db" && ext != ".dbx") || !filepath.IsAbs(path) {
+		return fmt.Errorf("recreate %q: only an absolute .db or .dbx path", path)
+	}
+	return d.setup(path, true)
+}
+
+func (d *Database) setup(path string, erase bool) (err error) {
 	if err := d.guardOpen(path); err != nil {
 		return err
 	}
@@ -471,6 +489,12 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	if d.readOnly {
 		d.readOnly = false
 		return fmt.Errorf("database %q is open in another instance; close it before creating/replacing it", path)
+	}
+	// Erased only once its write lock is ours: never under another instance.
+	if erase {
+		if err := os.Remove(path); err != nil && !errors.Is(err, fs.ErrNotExist) {
+			slog.Warn("erasing the file to recreate failed", "path", path, "err", err)
+		}
 	}
 
 	// On any error below, roll back to a clean "never opened" state: a leaked

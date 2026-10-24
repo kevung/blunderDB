@@ -3551,6 +3551,7 @@
         "openLabel": "Otra biblioteca",
         "busyRollout": "Un rollout está escribiendo en la biblioteca activa: espere a que termine o deténgalo (rollout stop) antes de cambiar de biblioteca",
         "busyImport": "Una importación escribe archivo por archivo en la biblioteca activa: espere a que termine antes de cambiar de biblioteca",
+        "busyWrite": "Se está escribiendo un cambio en la biblioteca activa: inténtelo de nuevo en un momento",
         "switching": "Cambio de biblioteca en curso: espere a que termine",
         "answerDropped": "La biblioteca en pantalla ha cambiado entretanto: la confirmación no se ha aplicado",
         "writeDropped": "La biblioteca en pantalla ha cambiado entretanto: el cambio no se ha escrito",

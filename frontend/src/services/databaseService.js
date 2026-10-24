@@ -1,7 +1,7 @@
 import { writable, get } from 'svelte/store';
-import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile, PrepareDemoDatabase, LibraryGroupHolding } from '../../wailsjs/go/gui/App.js';
+import { SaveDatabaseDialog, OpenDatabaseDialog, PrepareDemoDatabase, LibraryGroupHolding } from '../../wailsjs/go/gui/App.js';
 import {
-    SetupDatabase,
+    RecreateDatabase,
     CheckDatabaseVersion,
     OpenDatabase,
     GetDatabaseVersion,
@@ -119,8 +119,18 @@ async function heldByAnotherGroup(filePath) {
 const BUSY_JOB_KEYS = {
     rollout: 'libraryGroups.busyRollout',
     import: 'libraryGroups.busyImport',
-    'tournament-display': 'libraryGroups.busyDisplay'
+    'tournament-display': 'libraryGroups.busyDisplay',
+    write: 'libraryGroups.busyWrite'
 };
+
+/**
+ * Whether the backend refused to change library because a job or a write holds it: then
+ * nothing changed, the library on screen is still the one the backend carries.
+ * @param {unknown} error
+ */
+function isBusyError(error) {
+    return /database is busy/.test(String(error));
+}
 
 /**
  * What the status bar says when a library group cannot open or take over: a job writing the
@@ -153,24 +163,27 @@ export async function newDatabase() {
             // Creating would erase a library a group holds open.
             setStatusBarMessage(tMsg('libraryGroups.alreadyOpen', { name: getFilenameFromPath(filePath) }));
         } else if (filePath) {
-            resetAnalysisAndCommentStores();
-            resetAnkiStores();
-            resetTranscriptionStores();
-
+            let created;
             try {
-                await DeleteFile(filePath);
-                logger.log('Existing file deleted:', filePath);
+                // The handle changes library, perhaps under the same path: like an open, under the
+                // switch lock, so that a write still on its way lands in the library it read. The
+                // backend erases the file only once no write holds it.
+                created = await holdingSwitch(async () => (await RecreateDatabase(filePath), libraryReplaced(), true));
             } catch (error) {
-                logger.log('No existing file to delete or error deleting file:', error);
-            }
-
-            try {
-                await SetupDatabase(filePath);
-                libraryReplaced();
-            } catch (error) {
+                if (isBusyError(error)) {
+                    setStatusBarMessage(libraryGroupError(error));
+                    return;
+                }
                 setupFailed = true;
                 throw error;
             }
+            if (!created) {
+                setStatusBarMessage(tMsg('libraryGroups.switching'));
+                return;
+            }
+            resetAnalysisAndCommentStores();
+            resetAnkiStores();
+            resetTranscriptionStores();
             databasePathStore.set(filePath);
             databaseReadOnlyStore.set(false);
             forgetPaneCopyInto(get(activeGroupId));
@@ -309,6 +322,11 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
             // one, and a write still on its way would land in the library coming.
             if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), libraryReplaced(), true))) === true;
         } catch (error) {
+            // Refused (a job or a write holds the library): the backend kept it, so does the screen.
+            if (isBusyError(error)) {
+                setStatusBarMessage(libraryGroupError(error));
+                return;
+            }
             openFailed = true;
             throw error;
         }

@@ -454,7 +454,7 @@ let directionMark = libraryMark();
  * @param {() => Promise<T>} call
  * @returns {Promise<T | null>}
  */
-async function directed(call) {
+export async function directed(call) {
     return (await writingOnLibrary(directionMark, call)) ?? null;
 }
 
@@ -806,7 +806,7 @@ function clearDirection() {
  * @param {number} [seed]
  */
 export async function createDirection(tournamentId, config, seed = 0) {
-    await CreateDirection(tournamentId, JSON.stringify(config), seed);
+    if (!(await writingOnLibrary(libraryMark(), async () => (await CreateDirection(tournamentId, JSON.stringify(config), seed), true)))) return null;
     await refreshDirectionSummaries();
     return openDirection(tournamentId);
 }
@@ -819,7 +819,7 @@ export async function createDirection(tournamentId, config, seed = 0) {
  * @param {DirectionConfig} config
  */
 export async function saveDirectionConfig(tournamentId, config) {
-    await SetDirectionConfig(tournamentId, JSON.stringify(config));
+    if (!(await directed(async () => (await SetDirectionConfig(tournamentId, JSON.stringify(config)), true)))) return null;
     return refreshDirection();
 }
 
@@ -1109,7 +1109,8 @@ export async function hallGrid() {
  * @returns {Promise<T>}
  */
 async function hallGesture(fn) {
-    const v = await fn();
+    const v = await directed(fn);
+    if (v === null) return null;
     await refreshDirection();
     return v;
 }

@@ -21,7 +21,7 @@ import {
     SeasonCSV
 } from '../../wailsjs/go/database/Database.js';
 import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
-import { refreshDirection } from './directionStore.js';
+import { refreshDirection, directed } from './directionStore.js';
 import { logger } from '../utils/logger.js';
 
 /** @typedef {import('../../wailsjs/go/models').service.RencontreView} RencontreView */
@@ -54,14 +54,15 @@ export async function previewAttach(tournamentId, rencontreId) {
 
 /** @param {number} tournamentId @param {number} rencontreId */
 export async function attachToRencontre(tournamentId, rencontreId) {
-    const r = await AttachToRencontre(tournamentId, rencontreId);
+    const r = await directed(() => AttachToRencontre(tournamentId, rencontreId));
+    if (r === null) return null;
     await refreshDirection();
     return r;
 }
 
 /** @param {number} tournamentId */
 export async function detachFromRencontre(tournamentId) {
-    await DetachFromRencontre(tournamentId);
+    if (!(await directed(async () => (await DetachFromRencontre(tournamentId), true)))) return;
     await refreshDirection();
 }
 
@@ -70,7 +71,7 @@ export async function detachFromRencontre(tournamentId) {
  * @param {number} rencontreId
  */
 export async function trashRencontre(rencontreId) {
-    await TrashRencontre(rencontreId);
+    if (!(await directed(async () => (await TrashRencontre(rencontreId), true)))) return;
     await refreshDirection();
 }
 
@@ -79,7 +80,8 @@ export async function trashRencontre(rencontreId) {
  * @param {number} rencontreId @param {number} table @param {boolean} out
  */
 export async function setTableOutOfService(rencontreId, table, out) {
-    const r = await SetRencontreTableOutOfService(rencontreId, table, out);
+    const r = await directed(() => SetRencontreTableOutOfService(rencontreId, table, out));
+    if (r === null) return null;
     await refreshDirection();
     return r;
 }
@@ -92,7 +94,7 @@ export async function setTableOutOfService(rencontreId, table, out) {
 export async function chooseRencontreOutputDir(rencontreId) {
     const dir = await OpenDirectionOutputDialog();
     if (!dir) return null;
-    return SetRencontreOutputDir(rencontreId, dir);
+    return directed(() => SetRencontreOutputDir(rencontreId, dir));
 }
 
 /**
@@ -100,7 +102,7 @@ export async function chooseRencontreOutputDir(rencontreId) {
  * @param {number} rencontreId
  */
 export async function forgetRencontreOutputDir(rencontreId) {
-    return SetRencontreOutputDir(rencontreId, '');
+    return directed(() => SetRencontreOutputDir(rencontreId, ''));
 }
 
 /**
@@ -116,7 +118,8 @@ export async function writeRencontrePage(rencontreId) {
  * @param {number} rencontreId @param {import('../../wailsjs/go/models').domain.TableSetting[]} settings
  */
 export async function setRencontreTables(rencontreId, settings) {
-    const r = await SetRencontreTables(rencontreId, settings);
+    const r = await directed(() => SetRencontreTables(rencontreId, settings));
+    if (r === null) return null;
     await refreshDirection();
     return r;
 }
@@ -126,7 +129,8 @@ export async function setRencontreTables(rencontreId, settings) {
  * @param {number} rencontreId @param {number} tournamentId @param {string[]} rooms
  */
 export async function setEventRooms(rencontreId, tournamentId, rooms) {
-    const r = await SetEventRooms(rencontreId, tournamentId, rooms);
+    const r = await directed(() => SetEventRooms(rencontreId, tournamentId, rooms));
+    if (r === null) return null;
     await refreshDirection();
     return r;
 }
@@ -136,7 +140,8 @@ export async function setEventRooms(rencontreId, tournamentId, rooms) {
  * @param {number} tournamentId @param {import('../../wailsjs/go/models').domain.TableSetting[]} settings
  */
 export async function setDirectionTables(tournamentId, settings) {
-    const r = await SetDirectionTables(tournamentId, settings);
+    const r = await directed(() => SetDirectionTables(tournamentId, settings));
+    if (r === null) return null;
     await refreshDirection();
     return r;
 }

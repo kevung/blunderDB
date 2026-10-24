@@ -3551,6 +3551,7 @@
         "openLabel": "Altra libreria",
         "busyRollout": "Un rollout sta scrivendo nella libreria attiva: attendine la fine o fermalo (rollout stop) prima di cambiare libreria",
         "busyImport": "Un'importazione scrive file per file nella libreria attiva: attendine la fine prima di cambiare libreria",
+        "busyWrite": "Una modifica è in corso di scrittura nella libreria attiva: riprova tra un istante",
         "switching": "Cambio di libreria in corso: attendine la fine",
         "answerDropped": "La libreria sullo schermo è cambiata nel frattempo: la conferma non è stata applicata",
         "writeDropped": "La libreria sullo schermo è cambiata nel frattempo: la modifica non è stata scritta",

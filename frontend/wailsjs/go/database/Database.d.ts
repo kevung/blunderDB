@@ -645,6 +645,8 @@ export function RebuildMatchStats():Promise<number>;
 
 export function RecommendedTags():Promise<Array<string>>;
 
+export function RecreateDatabase(arg1:string):Promise<void>;
+
 export function ReencodeAnalyses():Promise<database.ReencodeResult>;
 
 export function RefreshSearchStatistics():Promise<void>;

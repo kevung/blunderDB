@@ -83,7 +83,8 @@ export async function writingOnLibrary(mark, fn) {
         try {
             return await fn();
         } finally {
-            ReleaseLibrary(ticket).catch(() => {});
+            // Awaited: until the backend lets go, a switch begun after this write would be refused.
+            await ReleaseLibrary(ticket).catch(() => {});
         }
     });
     if (!held) return dropWrite('libraryGroups.writeDropped');

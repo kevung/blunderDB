@@ -65,3 +65,31 @@ func TestHoldLibrary_NothingOpen(t *testing.T) {
 		t.Fatalf("hold with nothing open: %v", err)
 	}
 }
+
+// A library recreated under its own path while a write holds it is neither
+// erased nor replaced: the write still lands in the file it read.
+func TestRecreateDatabase_RefusedWhileHeld(t *testing.T) {
+	t.Parallel()
+	d, path := openTemp(t, "a.db")
+	if _, err := d.CreateCollection("kept", ""); err != nil {
+		t.Fatal(err)
+	}
+	ticket, err := d.HoldLibrary(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var busy *BusyError
+	if err := d.RecreateDatabase(path); !errors.As(err, &busy) || busy.Job != JobWrite {
+		t.Fatalf("recreate during a held write: %v, want a %s BusyError", err, JobWrite)
+	}
+	if got, err := d.GetAllCollections(); err != nil || len(got) != 1 {
+		t.Fatalf("collections after a refused recreate: %v, %v", got, err)
+	}
+	d.ReleaseLibrary(ticket)
+	if err := d.RecreateDatabase(path); err != nil {
+		t.Fatalf("recreate after release: %v", err)
+	}
+	if got, err := d.GetAllCollections(); err != nil || len(got) != 0 {
+		t.Fatalf("collections after recreate: %v, %v", got, err)
+	}
+}
