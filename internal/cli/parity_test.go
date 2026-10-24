@@ -95,6 +95,7 @@ var serverOnly = map[string]string{
 	// present: SavePosition and the importers do that inside one operation.
 	// A client speaking HTTP has no such operation and needs the pieces.
 	"/v1/analyses.loadByIds":     "the batch face of LoadAnalysis for a client that shows a page of positions at once (a feed, a search result): over HTTP one round trip per position is the cost, where the desktop shows one board at a time and reads its analysis in-process; an exporter reaches the same batch through Storage (AnalysisStore.LoadMany)",
+	"/v1/analyses.put":           "the storage contract's replacing AnalysisStore.Save, relayed by the remote backend; a user's save goes through /v1/analyses.save, which folds it into the stored analysis as SaveAnalysis does",
 	"/v1/anki.reviewsByGameType": "the piece the desktop composes StudyImpact from, exposed on its own so an HTTP client can compose the same figures; the desktop reaches it through Database.StudyImpact rather than by itself (#275)",
 	"/v1/matches.byPosition":     "which matches have a move on a position, asked by a client that keeps positions apart from the matches that reference them (a social layer dropping a position from its library); the desktop deletes through its own retention rules in-process and has no such question",
 	"/v1/matches.createGame":     whyStoragePrimitive,
