@@ -786,6 +786,10 @@ export function History(arg1, arg2, arg3) {
   return window['go']['database']['Database']['History'](arg1, arg2, arg3);
 }
 
+export function HoldLibrary(arg1) {
+  return window['go']['database']['Database']['HoldLibrary'](arg1);
+}
+
 export function ImportBGFMatch(arg1) {
   return window['go']['database']['Database']['ImportBGFMatch'](arg1);
 }
@@ -1256,6 +1260,10 @@ export function RefuseReadOnly() {
 
 export function ReinstateParticipant(arg1, arg2) {
   return window['go']['database']['Database']['ReinstateParticipant'](arg1, arg2);
+}
+
+export function ReleaseLibrary(arg1) {
+  return window['go']['database']['Database']['ReleaseLibrary'](arg1);
 }
 
 export function RemoveAlias(arg1, arg2) {

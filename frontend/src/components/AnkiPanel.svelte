@@ -40,7 +40,7 @@
     import ExplanationLine from './ExplanationLine.svelte';
     import AnswerMask from './AnswerMask.svelte';
     import { buildScoreCard, UNORDERED_SCORES } from '../services/scoreCard.js';
-    import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
+    import { readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 
     // Read-only store mirrors.
     let decks = $derived($ankiDecksStore || []);
@@ -292,9 +292,10 @@
 
     async function deleteDeck(/** @type {import("../services/ankiService.js").Deck} */ deck, /** @type {Event} */ event) {
         event.stopPropagation();
+        const mark = libraryMark();
         if (!(await confirmAction($t('anki.confirmDeleteDeck', { name: deck.name }), { confirmLabel: $t('common.delete') }))) return;
         try {
-            await anki.deleteDeck(deck.id);
+            if (!(await writingOnLibrary(mark, async () => (await anki.deleteDeck(deck.id), true)))) return;
             statusBarTextStore.set(tMsg('anki.deckDeleted', { name: deck.name }));
         } catch (e) {
             fail(e);
@@ -436,18 +437,24 @@
 
     // Removing is the only one not undoable from here.
     async function confirmRemoveCard() {
+        const mark = libraryMark();
         if (!(await confirmAction($t('anki.removeCardConfirm'), { confirmLabel: $t('common.delete') }))) return;
-        await setAside(anki.removeCard, 'anki.cardRemoved');
+        await setAside(anki.removeCard, 'anki.cardRemoved', mark);
     }
 
     /**
      * @param {(card: any, deck: any, opts: any) => Promise<any>} action
      * @param {string} messageKey
+     * @param {{ epoch: number, path: string }} [mark] the library the card was read in
      */
-    async function setAside(action, messageKey) {
+    async function setAside(action, messageKey, mark = libraryMark()) {
         if (!reviewCard || !selectedDeck) return;
+        const card = reviewCard;
+        const deck = selectedDeck;
         try {
-            const next = await action(reviewCard, selectedDeck, { cram: cramMode });
+            const written = await writingOnLibrary(mark, async () => ({ next: await action(card, deck, { cram: cramMode }) }));
+            if (!written) return;
+            const next = written.next;
             statusBarTextStore.set(tMsg(messageKey));
             // Not an answer: the session count does not move.
             if (!next) {
@@ -522,9 +529,10 @@
 
     async function resetDeck(/** @type {import("../services/ankiService.js").Deck} */ deck, /** @type {Event} */ event) {
         event.stopPropagation();
+        const mark = libraryMark();
         if (!(await confirmAction($t('anki.confirmResetDeck', { name: deck.name }), { confirmLabel: $t('common.reset') }))) return;
         try {
-            await anki.resetDeck(deck.id);
+            if (!(await writingOnLibrary(mark, async () => (await anki.resetDeck(deck.id), true)))) return;
             statusBarTextStore.set(tMsg('anki.deckReset', { name: deck.name }));
         } catch (e) {
             fail(e);

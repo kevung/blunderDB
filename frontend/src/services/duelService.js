@@ -17,7 +17,7 @@ import { enterDuelMode, exitDuelMode } from './modeMachine.js';
 import { isLetter, isBareLetter, isShiftLetter } from '../utils/keys.js';
 import { logger } from '../utils/logger.js';
 import { tMsg, translate } from '../i18n';
-import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
+import { readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 
 /** One frame of a Bot's move on the board, in ms. */
 const FRAME_MS = 450;
@@ -265,9 +265,11 @@ export async function confirmForfeitDuel() {
 async function gesture(call, { fresh = false } = {}) {
     if (busy) return;
     busy = true;
+    // A Duel is a row of the library on screen: a gesture never reaches another one.
+    const mark = libraryMark();
     try {
         const before = get(duelStore);
-        const result = await call();
+        const result = await writingOnLibrary(mark, call);
         if (result?.conflict) statusBarTextStore.set(tMsg('duel.conflict'));
         await draw(fresh ? null : before, result);
     } catch (error) {

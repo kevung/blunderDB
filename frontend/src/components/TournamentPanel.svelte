@@ -61,7 +61,7 @@
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
     import { noteSelection, forgetSelection } from '../stores/exchangeObjectStore.js';
-    import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
+    import { readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 
     /** @typedef {import('../../wailsjs/go/models').domain.Tournament} Tournament */
     /** @typedef {import('../../wailsjs/go/models').domain.Match} Match */
@@ -438,9 +438,10 @@
      */
     async function deleteTournamentEntry(tournament, event) {
         event?.stopPropagation();
+        const mark = libraryMark();
         if (!(await confirmAction(get(t)('tournament.confirmDelete', { name: tournament.name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
-            await DeleteTournament(tournament.id);
+            if (!(await writingOnLibrary(mark, async () => (await DeleteTournament(tournament.id), true)))) return;
             await loadTournaments();
             if (selectedTournament && selectedTournament.id === tournament.id) {
                 selectedTournamentStore.set(null);
@@ -514,8 +515,9 @@
 
     /** @param {Match} match */
     async function swapMatchPlayersInTournament(match) {
+        const mark = libraryMark();
         try {
-            await SwapMatchPlayers(match.id);
+            if (!(await writingOnLibrary(mark, async () => (await SwapMatchPlayers(match.id), true)))) return;
         } catch (error) {
             logger.error('Error swapping match players:', error);
             statusBarTextStore.set(tMsg(swapPlayersErrorKey(error, 'tournament.errorSwapping')));

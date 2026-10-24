@@ -62,7 +62,7 @@ import { OpenDirectionOutputDialog, OpenLocalPage, SaveCSV } from '../../wailsjs
 import { language, messageBlock, tMsg } from '../i18n';
 import { statusBarTextStore, activeTabStore } from './uiStore.js';
 import { logger } from '../utils/logger.js';
-import { readOfLibrary, isLibraryLeft } from './groupActivityStore.js';
+import { readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from './groupActivityStore.js';
 
 /*
  * La Direction ouverte (ADR-0047) : une seule à la fois, rien à sauver (chaque décision est
@@ -444,12 +444,27 @@ function announceNewProposals(before, after) {
     statusBarTextStore.set(tMsg('direction.proposals.appeared', { n: after }));
 }
 
+/** The library the open Direction was read in: its writes name that library's rows by id. */
+let directionMark = libraryMark();
+
+/**
+ * Sends a write of the open Direction to the library it was opened in, and to no other; null
+ * when refused (the status bar says why).
+ * @template T
+ * @param {() => Promise<T>} call
+ * @returns {Promise<T | null>}
+ */
+async function directed(call) {
+    return (await writingOnLibrary(directionMark, call)) ?? null;
+}
+
 /**
  * Ouvre la Direction d'un tournoi ; ferme la précédente sans confirmation (rien n'attend d'être écrit).
  * @param {number} tournamentId
  */
 export async function openDirection(tournamentId) {
     openDirectionIdStore.set(tournamentId);
+    directionMark = libraryMark();
     rememberDirectionOpen(tournamentId);
     opening++;
     try {
@@ -686,7 +701,8 @@ export async function freeSlots() {
 export async function addParticipantAtSlot(name, club, rating, section, key) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await AddParticipantAtSlot(id, name, club, Number(rating) || 0, section, key);
+    const view = await directed(() => AddParticipantAtSlot(id, name, club, Number(rating) || 0, section, key));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -756,7 +772,7 @@ export async function chooseDirectionOutputDir() {
     if (id === null) return null;
     const dir = await OpenDirectionOutputDialog();
     if (!dir) return null;
-    await SetDirectionOutputDir(id, dir);
+    if (!(await directed(async () => (await SetDirectionOutputDir(id, dir), true)))) return null;
     await refreshDirection();
     await writeDirectionPage();
     return dir;
@@ -766,7 +782,7 @@ export async function chooseDirectionOutputDir() {
 export async function forgetDirectionOutputDir() {
     const id = get(openDirectionIdStore);
     if (id === null) return;
-    await SetDirectionOutputDir(id, '');
+    if (!(await directed(async () => (await SetDirectionOutputDir(id, ''), true)))) return null;
     return refreshDirection();
 }
 
@@ -830,7 +846,7 @@ export async function previewDirectionConfig(config) {
 export async function enterParticipants(players) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    await EnterParticipants(id, JSON.stringify(players || []));
+    if (!(await directed(async () => (await EnterParticipants(id, JSON.stringify(players || [])), true)))) return null;
     return refreshDirection();
 }
 
@@ -865,7 +881,8 @@ export async function entrySuggestions() {
 export async function addParticipant(name, club, rating) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await AddParticipant(id, name, club, rating);
+    const view = await directed(() => AddParticipant(id, name, club, rating));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -879,7 +896,8 @@ export async function addParticipant(name, club, rating) {
 export async function addPair(members, rating) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await AddPair(id, JSON.stringify(members), rating);
+    const view = await directed(() => AddPair(id, JSON.stringify(members), rating));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -893,7 +911,8 @@ export async function addPair(members, rating) {
 export async function updatePair(participantId, members, rating) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await UpdatePair(id, participantId, JSON.stringify(members), rating);
+    const view = await directed(() => UpdatePair(id, participantId, JSON.stringify(members), rating));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -910,7 +929,8 @@ export async function updatePair(participantId, members, rating) {
 export async function updateParticipant(participantId, name, club, rating) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await UpdateParticipant(id, participantId, name, club, rating);
+    const view = await directed(() => UpdateParticipant(id, participantId, name, club, rating));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -922,7 +942,8 @@ export async function updateParticipant(participantId, name, club, rating) {
 export async function reinstateParticipant(participantId) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await ReinstateParticipant(id, participantId);
+    const view = await directed(() => ReinstateParticipant(id, participantId));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -936,7 +957,8 @@ export async function reinstateParticipant(participantId) {
 export async function withdrawParticipant(participantId, afterCurrent) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await WithdrawParticipant(id, participantId, afterCurrent);
+    const view = await directed(() => WithdrawParticipant(id, participantId, afterCurrent));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -952,7 +974,8 @@ export async function withdrawParticipant(participantId, afterCurrent) {
 export async function makeParticipantAbsent(participantId, until, round) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await MakeParticipantAbsent(id, participantId, until || '', round || 0);
+    const view = await directed(() => MakeParticipantAbsent(id, participantId, until || '', round || 0));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -964,7 +987,8 @@ export async function makeParticipantAbsent(participantId, until, round) {
 export async function makeParticipantAvailable(participantId) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await MakeParticipantAvailable(id, participantId);
+    const view = await directed(() => MakeParticipantAvailable(id, participantId));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -973,11 +997,14 @@ export async function makeParticipantAvailable(participantId) {
  * Supprime la Direction ; le tournoi et ses matchs restent, sans leur emplacement.
  *
  * @param {number} tournamentId
+ * @returns {Promise<boolean>} false when refused: the library it was read in is no longer on screen
  */
 export async function deleteDirection(tournamentId) {
-    await DeleteDirection(tournamentId);
+    const mark = get(openDirectionIdStore) === tournamentId ? directionMark : libraryMark();
+    if (!(await writingOnLibrary(mark, async () => (await DeleteDirection(tournamentId), true)))) return false;
     if (get(openDirectionIdStore) === tournamentId) closeDirection();
-    return refreshDirectionSummaries();
+    await refreshDirectionSummaries();
+    return true;
 }
 
 /**
@@ -989,7 +1016,8 @@ export async function deleteDirection(tournamentId) {
 export async function confirmProposal(action) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await ConfirmProposal(id, JSON.stringify(action));
+    const view = await directed(() => ConfirmProposal(id, JSON.stringify(action)));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -998,7 +1026,8 @@ export async function confirmProposal(action) {
 export async function confirmAllProposals() {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await ConfirmAllProposals(id);
+    const view = await directed(() => ConfirmAllProposals(id));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -1015,7 +1044,8 @@ export async function confirmAllProposals() {
 export async function startMatchManually(a, b, length = 0, table = 0) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await StartMatchManually(id, a, b, length, table);
+    const view = await directed(() => StartMatchManually(id, a, b, length, table));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -1119,7 +1149,8 @@ export const hallConfirmProposal = (tid, action) => hallGesture(() => ConfirmPro
 export async function enterResult(matchId, winner, scoreA = 0, scoreB = 0, note = '') {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await EnterResult(id, matchId, winner, scoreA, scoreB, note);
+    const view = await directed(() => EnterResult(id, matchId, winner, scoreA, scoreB, note));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -1134,7 +1165,8 @@ export async function enterResult(matchId, winner, scoreA = 0, scoreB = 0, note 
 export async function enterForfeit(matchId, winner, note = '') {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await EnterForfeit(id, matchId, winner, note);
+    const view = await directed(() => EnterForfeit(id, matchId, winner, note));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -1148,7 +1180,8 @@ export async function enterForfeit(matchId, winner, note = '') {
 export async function moveMatchToTable(matchId, table) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await MoveMatchToTable(id, matchId, table);
+    const view = await directed(() => MoveMatchToTable(id, matchId, table));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -1161,7 +1194,8 @@ export async function moveMatchToTable(matchId, table) {
 export async function cancelMatch(matchId) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await CancelMatch(id, matchId);
+    const view = await directed(() => CancelMatch(id, matchId));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -1190,7 +1224,8 @@ export async function lastDecision() {
 export async function correctResult(matchId, winner, scoreA = 0, scoreB = 0, note = '') {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await CorrectResult(id, matchId, winner, scoreA, scoreB, note);
+    const view = await directed(() => CorrectResult(id, matchId, winner, scoreA, scoreB, note));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -1232,7 +1267,8 @@ export async function standingsCSV() {
 export async function finishTournament() {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await CloseDirectionBinding(id);
+    const view = await directed(() => CloseDirectionBinding(id));
+    if (!view) return null;
     directionStore.set(view);
     await refreshDirectionSummaries();
     return view;
@@ -1242,7 +1278,8 @@ export async function finishTournament() {
 export async function reopenTournament() {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await ReopenDirectionBinding(id);
+    const view = await directed(() => ReopenDirectionBinding(id));
+    if (!view) return null;
     directionStore.set(view);
     await refreshDirectionSummaries();
     return view;
@@ -1267,7 +1304,8 @@ export async function history(player = '', match = '') {
 export async function addNote(text) {
     const id = get(openDirectionIdStore);
     if (id === null) return null;
-    const view = await AddDirectionNote(id, text);
+    const view = await directed(() => AddDirectionNote(id, text));
+    if (!view) return null;
     directionStore.set(view);
     return view;
 }
@@ -1317,7 +1355,7 @@ export async function unattachedMatches() {
 export async function attachMatchToSlot(slotId, matchId) {
     const id = get(openDirectionIdStore);
     if (id === null) return;
-    await AttachMatchToSlot(id, slotId, matchId);
+    if (!(await directed(async () => (await AttachMatchToSlot(id, slotId, matchId), true)))) return null;
     await refreshDirection();
 }
 
@@ -1329,7 +1367,7 @@ export async function attachMatchToSlot(slotId, matchId) {
 export async function detachMatchFromSlot(slotId) {
     const id = get(openDirectionIdStore);
     if (id === null) return;
-    await DetachMatchFromSlot(id, slotId);
+    if (!(await directed(async () => (await DetachMatchFromSlot(id, slotId), true)))) return null;
     await refreshDirection();
 }
 

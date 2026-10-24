@@ -68,7 +68,7 @@ import {
     fileImportGroupStore,
     fileImportBusyStore
 } from '../stores/importModalStore.js';
-import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore, libraryWritten } from '../stores/groupActivityStore.js';
+import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore, libraryWritten, libraryMark, libraryStillOnScreen } from '../stores/groupActivityStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 
@@ -86,6 +86,8 @@ import { logger } from '../utils/logger.js';
 // Pending import path (module-level)
 /** @type {string | null} */
 let pendingImportPath = null;
+/** The library the pending import was analysed against: it merges into that one only. */
+let pendingImportMark = libraryMark();
 let fileImportCancelled = false;
 
 // Reload the whole position table — the expensive step of an import (every
@@ -157,6 +159,7 @@ export async function importDatabase() {
         showImportProgressModalStore.set(true);
         importModalModeStore.set('analyzing');
         pendingImportPath = importFilePath;
+        pendingImportMark = libraryMark();
 
         try {
             const analysis = await AnalyzeImportDatabase(importFilePath);
@@ -198,6 +201,13 @@ async function handleImportCommitCore() {
         return;
     }
 
+    if (!libraryStillOnScreen(pendingImportMark.epoch)) {
+        // Its analysis counted the rows of another library: merging now would write into the one on screen.
+        showImportProgressModalStore.set(false);
+        pendingImportPath = null;
+        setStatusBarMessage(tMsg('libraryGroups.writeDropped'));
+        return;
+    }
     logger.log('Committing import from:', pendingImportPath);
     importModalModeStore.set('committing');
 
@@ -281,6 +291,7 @@ export async function importDatabaseByPath(importFilePath) {
         showImportProgressModalStore.set(true);
         importModalModeStore.set('analyzing');
         pendingImportPath = importFilePath;
+        pendingImportMark = libraryMark();
 
         try {
             const analysis = await AnalyzeImportDatabase(importFilePath);

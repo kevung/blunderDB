@@ -45,7 +45,7 @@
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { libraryDragAttrs } from '../utils/libraryDrag.js';
-    import { activeGroupId, readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
+    import { activeGroupId, readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 
     /** @typedef {import('../../wailsjs/go/models').database.Collection} Collection */
     /** @typedef {{ id: number }} PositionRow */
@@ -351,13 +351,15 @@
             statusBarTextStore.set(tMsg('collection.noPositionSelected'));
             return;
         }
+        const mark = libraryMark();
         try {
+            const positionId = currentPosition.id;
             if (positionCollectionIds.includes(collectionId)) {
-                await RemovePositionFromCollection(collectionId, currentPosition.id);
+                if (!(await writingOnLibrary(mark, async () => (await RemovePositionFromCollection(collectionId, positionId), true)))) return;
                 positionCollectionIds = positionCollectionIds.filter((id) => id !== collectionId);
                 statusBarTextStore.set(tMsg('collection.positionRemoved'));
             } else {
-                await AddPositionToCollection(collectionId, currentPosition.id);
+                if (!(await writingOnLibrary(mark, async () => (await AddPositionToCollection(collectionId, positionId), true)))) return;
                 positionCollectionIds = [...positionCollectionIds, collectionId];
                 statusBarTextStore.set(tMsg('collection.positionAdded'));
             }
@@ -533,12 +535,17 @@
 
     async function removeSelectedFromCollection() {
         if (!activeCollection || selectedPositionIndices.size === 0) return;
+        const mark = libraryMark();
         if (!(await confirmAction($t('collection.confirmRemove', { count: selectedPositionIndices.size }), { confirmLabel: $t('common.delete') }))) return;
         const sorted = [...selectedPositionIndices].sort((a, b) => b - a);
         try {
-            for (const idx of sorted) {
-                await RemovePositionFromCollection(activeCollection.id, collectionPositions[idx].id);
-            }
+            const collectionId = activeCollection.id;
+            const positionIds = sorted.map((idx) => collectionPositions[idx].id);
+            const removed = await writingOnLibrary(mark, async () => {
+                for (const positionId of positionIds) await RemovePositionFromCollection(collectionId, positionId);
+                return true;
+            });
+            if (!removed) return;
             selectedPositionIndices.clear();
             await refreshRows(activeCollection.id, collectionPositions.length);
             await loadCollections();
@@ -556,8 +563,10 @@
         event.stopPropagation();
         if (!activeCollection) return;
         const positionId = collectionPositions[index].id;
+        const collectionId = activeCollection.id;
+        const mark = libraryMark();
         try {
-            await RemovePositionFromCollection(activeCollection.id, positionId);
+            if (!(await writingOnLibrary(mark, async () => (await RemovePositionFromCollection(collectionId, positionId), true)))) return;
             // The rows after the removed one shift up by one.
             const shifted = [...selectedPositionIndices].filter((i) => i !== index).map((i) => (i > index ? i - 1 : i));
             selectedPositionIndices.clear();
@@ -688,9 +697,11 @@
     /** @param {number} positionId */
     async function removeFromCollectionSingle(positionId) {
         if (!activeCollection) return;
+        const collectionId = activeCollection.id;
+        const mark = libraryMark();
         if (!(await confirmAction($t('collection.confirmRemove', { count: 1 }), { confirmLabel: $t('common.delete') }))) return;
         try {
-            await RemovePositionFromCollection(activeCollection.id, positionId);
+            if (!(await writingOnLibrary(mark, async () => (await RemovePositionFromCollection(collectionId, positionId), true)))) return;
             await refreshRows(activeCollection.id, collectionPositions.length);
             await loadCollections();
             await reopenActive();

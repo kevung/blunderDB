@@ -415,6 +415,8 @@ export function HeadToHeadCtx(arg1:context.Context,arg2:string,arg3:string,arg4:
 
 export function History(arg1:number,arg2:string,arg3:string):Promise<Array<service.HistoryEntry>>;
 
+export function HoldLibrary(arg1:string):Promise<number>;
+
 export function ImportBGFMatch(arg1:string):Promise<number>;
 
 export function ImportBGFPosition(arg1:string):Promise<number>;
@@ -650,6 +652,8 @@ export function RefreshSearchStatistics():Promise<void>;
 export function RefuseReadOnly():Promise<void>;
 
 export function ReinstateParticipant(arg1:number,arg2:string):Promise<service.DirectionView>;
+
+export function ReleaseLibrary(arg1:number):Promise<void>;
 
 export function RemoveAlias(arg1:string,arg2:string):Promise<boolean>;
 

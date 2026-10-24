@@ -3553,6 +3553,7 @@
         "busyImport": "Ein Import schreibt Datei für Datei in die aktive Bibliothek: Warten Sie sein Ende ab, bevor Sie die Bibliothek wechseln",
         "switching": "Ein Bibliothekswechsel läuft: Warten Sie sein Ende ab",
         "answerDropped": "Die angezeigte Bibliothek hat sich inzwischen geändert: Die Bestätigung wurde nicht angewendet",
+        "writeDropped": "Die angezeigte Bibliothek hat sich inzwischen geändert: Die Änderung wurde nicht geschrieben",
         "jobRunning": "Eine Hintergrundaufgabe arbeitet in dieser Bibliothek",
         "jobDone": "Eine Hintergrundaufgabe wurde in dieser Bibliothek beendet: Zeigen Sie sie an, um das Ergebnis zu sehen",
         "busyDisplay": "Das Turnier wird im Clubnetz angezeigt: Beenden Sie die Anzeige (Leitung, Im Clubnetz anzeigen), bevor Sie die Bibliothek wechseln",

@@ -2,7 +2,10 @@
 // Apart from libraryGroupStore so that a job's service can name its group without loading the
 // group machinery (the photographs, the scoped stores).
 import { writable, get } from 'svelte/store';
-import { matchPanelRefreshTriggerStore, dbMutationCounterStore } from './uiStore.js';
+import { matchPanelRefreshTriggerStore, dbMutationCounterStore, statusBarTextStore } from './uiStore.js';
+import { databasePathStore } from './databaseStore.js';
+import { tMsg } from '../i18n';
+import { HoldLibrary, ReleaseLibrary } from './libraryHold.js';
 import { refreshLibraryCounts } from './libraryCountsStore.js';
 import { elsewhereStore, idleElsewhere } from './elsewhereStore.js';
 import { groupSwitchingStore, libraryReplaced, libraryOnScreenMark, libraryStillOnScreen } from './libraryEpoch.js';
@@ -41,6 +44,56 @@ export async function writingOnScreen(fn) {
     } finally {
         writesInFlight.delete(write);
     }
+}
+
+/**
+ * A mark of the library a gesture reads its rows in, taken when it reads them (before a
+ * confirmation, before the reads awaited): writingOnLibrary sends a write naming those rows only
+ * to that library.
+ * @returns {{ epoch: number, path: string }}
+ */
+export function libraryMark() {
+    return { epoch: libraryOnScreenMark(), path: get(databasePathStore) };
+}
+
+/**
+ * Runs fn, a write naming rows by the ids read in the library of mark (libraryMark), only while
+ * that library is the one on screen and the one the backend carries: the backend holds it there
+ * (HoldLibrary) until fn is answered, so neither a switch begun meanwhile nor one begun outside
+ * the screen puts another library under the write. Refused, fn does not run, the status bar says
+ * why, and undefined is returned: fn returns something defined to tell the two apart.
+ * @template T
+ * @param {{ epoch: number, path: string }} mark
+ * @param {() => Promise<T>} fn
+ * @returns {Promise<T | undefined>}
+ */
+export async function writingOnLibrary(mark, fn) {
+    if (get(groupSwitchingStore)) return dropWrite('libraryGroups.switching');
+    if (!libraryStillOnScreen(mark.epoch)) return dropWrite('libraryGroups.writeDropped');
+    let held = true;
+    const result = await writingOnScreen(async () => {
+        /** @type {number} */
+        let ticket;
+        try {
+            ticket = await HoldLibrary(mark.path);
+        } catch {
+            held = false;
+            return undefined;
+        }
+        try {
+            return await fn();
+        } finally {
+            ReleaseLibrary(ticket).catch(() => {});
+        }
+    });
+    if (!held) return dropWrite('libraryGroups.writeDropped');
+    return result;
+}
+
+/** @param {string} key why the write was not sent, said in the status bar */
+function dropWrite(key) {
+    statusBarTextStore.set(tMsg(key));
+    return undefined;
 }
 
 /**

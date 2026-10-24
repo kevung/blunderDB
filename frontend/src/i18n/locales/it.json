@@ -3553,6 +3553,7 @@
         "busyImport": "Un'importazione scrive file per file nella libreria attiva: attendine la fine prima di cambiare libreria",
         "switching": "Cambio di libreria in corso: attendine la fine",
         "answerDropped": "La libreria sullo schermo è cambiata nel frattempo: la conferma non è stata applicata",
+        "writeDropped": "La libreria sullo schermo è cambiata nel frattempo: la modifica non è stata scritta",
         "jobRunning": "Un'attività in background lavora in questa libreria",
         "jobDone": "Un'attività in background è terminata in questa libreria: mostrala per vedere il risultato",
         "busyDisplay": "Il torneo è mostrato sulla rete del club: ferma la visualizzazione (Direzione, Mostra sulla rete del club) prima di cambiare libreria",

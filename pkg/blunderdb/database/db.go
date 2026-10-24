@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/adrg/xdg"
 
@@ -36,6 +37,9 @@ type Database struct {
 	gate              *jobGate                            // the library's job slot, shared with borrowed handles; guarded by cancelMu
 	borrowed          bool                                // lent by Borrow: Close lets the library go without closing it
 	exchanging        bool                                // an Exchange is moving the library; guarded by cancelMu
+	replacing         bool                                // an Open or Setup is taking another file; guarded by cancelMu
+	holds             map[int64]time.Time                 // the writes holding the library (HoldLibrary); guarded by cancelMu
+	holdSeq           int64                               // ticket of the last hold; guarded by cancelMu
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	// convertBatchSize overrides convertBatch, so that a test library of a
 	// few hundred rows still spans several transactions of a table pass.
@@ -440,6 +444,10 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	if err := d.guardOpen(path); err != nil {
 		return err
 	}
+	if err := d.beginReplace(); err != nil {
+		return err
+	}
+	defer d.endReplace()
 	d.switchFile()
 	d.forgetTranscriptSessions()
 	d.forgetDuels()
@@ -526,6 +534,10 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	if err := d.guardOpen(path); err != nil {
 		return err
 	}
+	if err := d.beginReplace(); err != nil {
+		return err
+	}
+	defer d.endReplace()
 	d.switchFile()
 	d.forgetTranscriptSessions()
 	d.forgetDuels()

@@ -19,6 +19,7 @@ import { logger } from '../utils/logger.js';
 import { statusBarTextStore, activeTabStore } from '../stores/uiStore.js';
 import { setTranscription, resetTranscriptionKeys } from '../stores/transcriptionStore.js';
 import { confirmAction } from './confirmService.js';
+import { libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import {
     FinishTranscription,
     AbandonTranscription,
@@ -99,6 +100,7 @@ export async function finishDraft(draft) {
     const id = draft?.id;
     const annotated = draft?.annotated;
     if (id == null || !annotated) return null;
+    const mark = libraryMark();
 
     if (hasInconsistency(annotated)) {
         const go = await confirmAction(/** @type {string} */ (translate('transcription.finishInconsistentWarning')), {
@@ -109,7 +111,8 @@ export async function finishDraft(draft) {
 
     let result;
     try {
-        result = await FinishTranscription(id);
+        result = await writingOnLibrary(mark, () => FinishTranscription(id));
+        if (result === undefined) return null;
     } catch (error) {
         logger.error('Failed to finish a transcription draft:', error);
         statusBarTextStore.set(tMsg('transcription.finishFailed', { error: String(error) }));
@@ -230,6 +233,7 @@ export async function exportDraftMat(draft) {
 export async function abandonDraft(draft) {
     const id = draft?.id;
     if (id == null) return false;
+    const mark = libraryMark();
 
     if (!(await currentMatchID(draft))) {
         const go = await confirmAction(/** @type {string} */ (translate('transcription.abandonConfirm')), {
@@ -239,7 +243,7 @@ export async function abandonDraft(draft) {
     }
 
     try {
-        await AbandonTranscription(id);
+        if (!(await writingOnLibrary(mark, async () => (await AbandonTranscription(id), true)))) return false;
     } catch (error) {
         logger.error('Failed to abandon a transcription draft:', error);
         statusBarTextStore.set(tMsg('transcription.abandonFailed', { error: String(error) }));
@@ -279,6 +283,7 @@ async function currentMatchID(draft) {
  */
 export async function editMatchTranscription(matchId) {
     if (!matchId) return null;
+    const mark = libraryMark();
     try {
         const losses = await MatchTranscriptionLosses(matchId);
         const lossy = losses && !losses.draft_id && losses.imported && losses.analyses + losses.comments > 0;
@@ -288,7 +293,8 @@ export async function editMatchTranscription(matchId) {
             });
             if (!go) return null;
         }
-        const state = await EditMatchTranscription(matchId);
+        const state = await writingOnLibrary(mark, () => EditMatchTranscription(matchId));
+        if (state === undefined) return null;
         setTranscription(state);
         resetTranscriptionKeys();
         activeTabStore.set('transcription');

@@ -3553,6 +3553,7 @@
         "busyImport": "Un import fichier par fichier écrit dans la bibliothèque active : attendez sa fin avant de changer de bibliothèque",
         "switching": "Changement de bibliothèque en cours : attendez qu'il s'achève",
         "answerDropped": "La bibliothèque à l'écran a changé entre-temps : la confirmation n'a pas été appliquée",
+        "writeDropped": "La bibliothèque à l'écran a changé entre-temps : la modification n'a pas été écrite",
         "jobRunning": "Une tâche de fond travaille dans cette bibliothèque",
         "jobDone": "Une tâche de fond s'est terminée dans cette bibliothèque : affichez-la pour voir le résultat",
         "busyDisplay": "Le tournoi est affiché sur le réseau du club : arrêtez l'affichage (Direction, Afficher sur le réseau du club) avant de changer de bibliothèque",

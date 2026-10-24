@@ -3553,6 +3553,7 @@
         "busyImport": "Una importación escribe archivo por archivo en la biblioteca activa: espere a que termine antes de cambiar de biblioteca",
         "switching": "Cambio de biblioteca en curso: espere a que termine",
         "answerDropped": "La biblioteca en pantalla ha cambiado entretanto: la confirmación no se ha aplicado",
+        "writeDropped": "La biblioteca en pantalla ha cambiado entretanto: el cambio no se ha escrito",
         "jobRunning": "Una tarea en segundo plano trabaja en esta biblioteca",
         "jobDone": "Una tarea en segundo plano terminó en esta biblioteca: muéstrela para ver el resultado",
         "busyDisplay": "El torneo se muestra en la red del club: detenga la presentación (Dirección, Mostrar en la red del club) antes de cambiar de biblioteca",

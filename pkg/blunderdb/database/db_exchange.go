@@ -106,6 +106,9 @@ func (d *Database) idleForExchange() error {
 	if d.importCancel != nil {
 		return &BusyError{Job: "import"}
 	}
+	if d.heldLocked() {
+		return &BusyError{Job: JobWrite}
+	}
 	d.exchanging = true
 	return nil
 }

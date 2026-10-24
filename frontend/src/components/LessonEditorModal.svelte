@@ -19,7 +19,7 @@
     import { untrack } from 'svelte';
     import { lessonEditorTargetStore } from '../stores/lessonStore.js';
     import { dbMutationCounterStore } from '../stores/uiStore.js';
-    import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
+    import { readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
     import { positionStore } from '../stores/positionStore.js';
     import { openLesson, refreshOpenLesson } from '../services/lessonService.js';
     import { exportLessonHTML } from '../services/lessonHtmlService.js';
@@ -108,10 +108,14 @@
     }
 
     /** Toute écriture repasse par ici : relire la liste, la leçon, et la leçon en lecture. */
-    async function after(/** @type {() => Promise<unknown>} */ write) {
+    /**
+     * @param {() => Promise<unknown>} write names lessons and steps by the ids read in the library of mark
+     * @param {{ epoch: number, path: string }} [mark] taken before a confirmation, when there is one
+     */
+    async function after(write, mark = libraryMark()) {
         error = '';
         try {
-            await write();
+            if (!(await writingOnLibrary(mark, async () => (await write(), true)))) return;
         } catch (e) {
             fail(e);
         }
@@ -134,8 +138,9 @@
     async function remove() {
         const lesson = lessons.find((l) => l.id === selectedId);
         if (!lesson) return;
+        const mark = libraryMark();
         if (!(await confirmAction(translate('lessonEditor.confirmDelete', { name: lesson.name })))) return;
-        await after(() => DeleteLesson(selectedId));
+        await after(() => DeleteLesson(lesson.id), mark);
     }
 
     const addStep = () => after(() => AddLessonStep(selectedId, translate('lessonEditor.newStepTitle', { n: steps.length + 1 }), '', 0, 0));
@@ -143,8 +148,9 @@
     const saveStep = (/** @type {any} */ s) => after(() => UpdateLessonStep(s.id, s.title, s.text, Number(s.collectionId) || 0, Number(s.positionId) || 0));
 
     async function removeStep(/** @type {any} */ s) {
+        const mark = libraryMark();
         if (!(await confirmAction(translate('lessonEditor.confirmRemoveStep', { title: s.title || s.id })))) return;
-        await after(() => RemoveLessonStep(s.id));
+        await after(() => RemoveLessonStep(s.id), mark);
     }
 
     function move(/** @type {number} */ index, /** @type {number} */ delta) {

@@ -78,6 +78,8 @@ describe('the board’s gestures reach the Arbiter', () => {
         duelBoardPress({ kind: 'none' });
         await tick();
         expect(PlayDuel).toHaveBeenCalledWith(4, 7, { side: 0, kind: 'roll' });
+        // The roll is answered (the library held, then the Arbiter) before the cube is pressed.
+        await new Promise((resolve) => setTimeout(resolve, 0));
         vi.clearAllMocks();
         duelBoardPress({ kind: 'cube' });
         expect(PlayDuel).not.toHaveBeenCalled();

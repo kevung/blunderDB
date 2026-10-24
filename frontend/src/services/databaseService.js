@@ -166,6 +166,7 @@ export async function newDatabase() {
 
             try {
                 await SetupDatabase(filePath);
+                libraryReplaced();
             } catch (error) {
                 setupFailed = true;
                 throw error;

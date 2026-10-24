@@ -46,6 +46,8 @@ import {
     IndexOfPosition
 } from '../../wailsjs/go/database/Database.js';
 import { confirmAction } from '../services/confirmService.js';
+import { HoldLibrary } from '../stores/libraryHold.js';
+import { tMsg } from '../i18n';
 
 /** @param {number[]} ids */
 const pageOf =
@@ -271,6 +273,19 @@ describe('CollectionPanel — detail view', () => {
         expect(get(activeCollectionStore)).toMatchObject({ id: 1 });
     });
 
+    test('a removal the backend refuses, its library no longer under it, writes nothing and says so', async () => {
+        vi.mocked(HoldLibrary).mockRejectedValueOnce(new Error('the library these rows were read in is no longer the open one'));
+        serve([201, 202]);
+        render(CollectionPanel, { props: { onOpenCollection: vi.fn() } });
+        await tick();
+
+        const removeBtn = within(must(document.querySelectorAll('tbody tr')[0])).getByTitle(/remove from collection/i);
+        await fireEvent.click(removeBtn);
+
+        await vi.waitFor(() => expect(get(statusBarTextStore)).toEqual(tMsg('libraryGroups.writeDropped')));
+        expect(RemovePositionFromCollection).not.toHaveBeenCalled();
+    });
+
     test('removing a position row calls the backend and refreshes the list', async () => {
         const onOpenCollection = vi.fn();
         serve([202]);
@@ -281,11 +296,9 @@ describe('CollectionPanel — detail view', () => {
         const firstRow = rows[0];
         const removeBtn = within(firstRow).getByTitle(/remove from collection/i);
         await fireEvent.click(removeBtn);
-        await tick();
-        await tick();
 
         expect(RemovePositionFromCollection).toHaveBeenCalledWith(1, 201);
-        expect(get(collectionPositionsStore)).toEqual([{ id: 202 }]);
+        await vi.waitFor(() => expect(get(collectionPositionsStore)).toEqual([{ id: 202 }]));
     });
 
     test('clicking a row selects and navigates to that position', async () => {

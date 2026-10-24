@@ -86,7 +86,7 @@
     import { databaseLoadedStore, databasePathStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
     import { libraryDragAttrs } from '../utils/libraryDrag.js';
-    import { activeGroupId, readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
+    import { activeGroupId, readOfLibrary, isLibraryLeft, libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 
     /**
      * `embeddedMatchId`: the panel is hosted by another panel (Tournaments) and shows only the sheet of that
@@ -938,10 +938,11 @@
 
     async function deleteMatchEntry(/** @type {Match} */ match, /** @type {Event | undefined} */ event) {
         event?.stopPropagation();
+        const mark = libraryMark();
         if (!(await confirmAction(get(t)('match.confirmDelete', { player1: match.player1_name, player2: match.player2_name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
             // Through the trash: restorable from the `trash` command.
-            await TrashMatch(match.id);
+            if (!(await writingOnLibrary(mark, async () => (await TrashMatch(match.id), true)))) return;
             await loadMatches();
             if (selectedMatch && selectedMatch.id === match.id) {
                 selectedMatch = null;
@@ -966,6 +967,7 @@
 
     // The dry run first: nothing to confirm when the match is its file.
     async function repairFromSource(/** @type {Match} */ match) {
+        const mark = libraryMark();
         try {
             const plan = await RepairMatch(match.id, true);
             if (!repairDiffers(plan)) {
@@ -974,7 +976,8 @@
             }
             const question = get(t)('match.confirmRepair', repairCounts(plan));
             if (!(await confirmAction(question, { confirmLabel: get(t)('match.repair') }))) return;
-            const done = await RepairMatch(match.id, false);
+            const done = await writingOnLibrary(mark, () => RepairMatch(match.id, false));
+            if (!done) return;
             await matchListStore.refreshRow(match.id);
             if (detailMatch && detailMatch.id === match.id) {
                 detailMatch = matches.find((m) => m.id === match.id) || detailMatch;
@@ -990,8 +993,9 @@
 
     async function swapMatchPlayers(/** @type {Match} */ match, /** @type {Event | undefined} */ event) {
         event?.stopPropagation();
+        const mark = libraryMark();
         try {
-            await SwapMatchPlayers(match.id);
+            if (!(await writingOnLibrary(mark, async () => (await SwapMatchPlayers(match.id), true)))) return;
             await matchListStore.refreshRow(match.id);
 
             // If we are currently viewing this match in match mode, update context

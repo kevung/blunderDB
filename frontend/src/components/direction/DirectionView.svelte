@@ -702,8 +702,7 @@
     async function confirm(action) {
         busy = true;
         try {
-            await confirmProposal(action);
-            statusBarTextStore.set(proposalFeedback(action));
+            if (await confirmProposal(action)) statusBarTextStore.set(proposalFeedback(action));
         } catch (e) {
             logger.error('direction: confirm failed', e);
             statusBarTextStore.set(tMsg('direction.proposals.errorConfirm'));
@@ -757,8 +756,7 @@
         try {
             const tid = view?.tournamentId;
             for (const k of Array.from(scrollPositions.keys())) if (k.startsWith(`${tid}:`)) scrollPositions.delete(k);
-            await deleteDirection(/** @type {number} */ ($openDirectionIdStore));
-            statusBarTextStore.set(tMsg('direction.settings.deleted'));
+            if (await deleteDirection(/** @type {number} */ ($openDirectionIdStore))) statusBarTextStore.set(tMsg('direction.settings.deleted'));
         } catch (e) {
             logger.error('direction: delete failed', e);
         }

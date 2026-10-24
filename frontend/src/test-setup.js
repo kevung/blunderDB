@@ -26,3 +26,11 @@ beforeAll(async () => {
         // A file may mock the whole module: then it owns its translations.
     }
 });
+
+// No backend under the tests: the hold of the library a write names (groupActivityStore's
+// writingOnLibrary) is granted. A test of a refusal makes HoldLibrary reject.
+import { vi } from 'vitest';
+vi.mock('./stores/libraryHold.js', () => ({
+    HoldLibrary: vi.fn().mockResolvedValue(1),
+    ReleaseLibrary: vi.fn().mockResolvedValue(undefined)
+}));
