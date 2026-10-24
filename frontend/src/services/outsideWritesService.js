@@ -18,6 +18,8 @@ const pending = new Map();
 /** @type {ReturnType<typeof setInterval> | null} */
 let timer = null;
 let asking = false;
+/** A check asked with now while another was in flight: that one reads at once when answered. */
+let nowRequested = false;
 let started = false;
 
 /**
@@ -26,7 +28,10 @@ let started = false;
  * @param {{ now?: boolean }} [opts]
  */
 export async function checkOutsideWrites({ now = false } = {}) {
-    if (asking) return;
+    if (asking) {
+        nowRequested ||= now;
+        return;
+    }
     asking = true;
     /** @type {number[]} */
     let written = [];
@@ -37,11 +42,13 @@ export async function checkOutsideWrites({ now = false } = {}) {
     } finally {
         asking = false;
     }
+    const flush = now || nowRequested;
+    nowRequested = false;
     const at = Date.now();
     const writing = new Set(written);
     for (const group of writing) if (!pending.has(group)) pending.set(group, at);
     for (const [group, since] of [...pending]) {
-        if (now || !writing.has(group) || at - since >= OUTSIDE_WRITES_MAX_WAIT_MS) {
+        if (flush || !writing.has(group) || at - since >= OUTSIDE_WRITES_MAX_WAIT_MS) {
             pending.delete(group);
             libraryWritten(group);
         }
@@ -77,6 +84,7 @@ export function initOutsideWrites() {
 
 /** Stops asking; what was pending is dropped. */
 export function stopOutsideWrites() {
+    nowRequested = false;
     pending.clear();
     if (!started) return;
     started = false;

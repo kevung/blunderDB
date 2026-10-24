@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -49,9 +50,12 @@ func TestWrittenElsewhere_DesktopAndAnotherProcess(t *testing.T) {
 		t.Fatal("the second desktop handle should fall back to read-only")
 	}
 
+	// The creation of the file (its switch to WAL, the schema) may be
+	// reported once: one read too many.
 	for _, d := range []*Database{gui, reader} {
+		_ = writtenElsewhere(t, d)
 		if writtenElsewhere(t, d) {
-			t.Fatal("the first call takes the mark")
+			t.Fatal("nothing written since: nothing reported")
 		}
 	}
 
@@ -75,5 +79,45 @@ func TestWrittenElsewhere_DesktopAndAnotherProcess(t *testing.T) {
 	}
 	if writtenElsewhere(t, gui) {
 		t.Fatal("a closed handle reports nothing")
+	}
+}
+
+// A library held for writing (a compaction, the end of an import) is not
+// waited for: the call answers at once, and the outside write is reported
+// once the library is let go.
+func TestWrittenElsewhere_DoesNotWaitForAWriter(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "lib.db")
+	gui := NewDatabase()
+	if err := gui.SetupDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	defer gui.Close()
+	serve, err := sqlite.Open(context.Background(), path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer serve.Close()
+	_ = writtenElsewhere(t, gui)
+
+	if err := serve.Metadata().Save(context.Background(), "", map[string]string{"from-serve": "x"}); err != nil {
+		t.Fatal(err)
+	}
+	gui.mu.Lock()
+	answered := make(chan bool, 1)
+	go func() {
+		got, _ := WrittenElsewhere(gui)
+		answered <- got
+	}()
+	select {
+	case got := <-answered:
+		if got {
+			t.Error("a library held for writing is skipped, not read")
+		}
+	case <-time.After(5 * time.Second):
+		t.Error("WrittenElsewhere waited for the writer")
+	}
+	gui.mu.Unlock()
+	if !writtenElsewhere(t, gui) {
+		t.Fatal("the outside write must be reported once the library is let go")
 	}
 }

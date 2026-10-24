@@ -140,8 +140,9 @@ func (a *App) ListLibraryGroups() []LibraryGroup {
 
 // LibrariesWrittenElsewhere returns the groups whose library another process
 // (the CLI, a serve daemon) wrote since the previous call; the desktop's own
-// writes are left out, it reads them again already. Reads only. A group whose
-// file cannot be read now is left out and asked again next time.
+// writes are left out unless they cannot be told apart (one read too many).
+// Reads only, and waits for no library: one held for writing, or whose file
+// cannot be read now, is left out and asked again next time, its change kept.
 func (a *App) LibrariesWrittenElsewhere() []int {
 	a.libs.mu.Lock()
 	defer a.libs.mu.Unlock()

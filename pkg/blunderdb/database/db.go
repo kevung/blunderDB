@@ -431,7 +431,7 @@ func (d *Database) Close() error {
 	if !wasReadOnly {
 		_, _ = d.db.Exec(`PRAGMA optimize`)
 	}
-	err := sqlite.CloseDB(d.db)
+	err := d.db.Close()
 	d.db = nil
 	return err
 }
@@ -451,7 +451,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
 	if d.db != nil {
-		if err := sqlite.CloseDB(d.db); err != nil {
+		if err := d.db.Close(); err != nil {
 			slog.Warn("closing the previously open database failed", "err", err)
 		}
 	}
@@ -471,7 +471,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	defer func() {
 		if err != nil {
 			if d.db != nil {
-				_ = sqlite.CloseDB(d.db)
+				d.db.Close()
 				d.db = nil
 			}
 			d.releaseFileLock()
@@ -537,7 +537,7 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
 	if d.db != nil {
-		if err := sqlite.CloseDB(d.db); err != nil {
+		if err := d.db.Close(); err != nil {
 			slog.Warn("closing the previously open database failed", "err", err)
 		}
 	}
@@ -552,7 +552,7 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	defer func() {
 		if err != nil {
 			if d.db != nil {
-				_ = sqlite.CloseDB(d.db)
+				d.db.Close()
 				d.db = nil
 			}
 			d.releaseFileLock()

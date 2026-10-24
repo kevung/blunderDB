@@ -122,7 +122,7 @@ func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (b
 	}
 
 	_, _ = d.db.Exec(`PRAGMA wal_checkpoint(TRUNCATE)`)
-	if err := sqlite.CloseDB(d.db); err != nil {
+	if err := d.db.Close(); err != nil {
 		slog.Warn("vacuum: closing the database before the swap", "err", err)
 	}
 	d.db = nil
@@ -168,7 +168,7 @@ func (d *Database) reopenAfterSwap(path string) error {
 	}
 	sqlite.ConfigurePool(db, path)
 	if err := db.Ping(); err != nil {
-		_ = sqlite.CloseDB(db)
+		db.Close()
 		return err
 	}
 	d.db = db

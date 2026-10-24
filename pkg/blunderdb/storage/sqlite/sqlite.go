@@ -162,11 +162,17 @@ func mmapSizeFor(goos string) string {
 //     "file:" URI (SQLITE_OPEN_URI is set by the driver). Windows forbids
 //     '?' in file names, so this only ever happens on Unix.
 func DSN(path string) string {
+	return dsn(path, path != ":memory:")
+}
+
+// dsn is DSN, with the switch to WAL only when wal: a connection that must
+// never write (the watch of WrittenElsewhere) leaves the journal mode alone.
+func dsn(path string, wal bool) string {
 	q := url.Values{}
 	for _, p := range perConnPragmas {
 		q.Add("_pragma", p[0]+"("+p[1]+")")
 	}
-	if path != ":memory:" {
+	if wal {
 		q.Add("_pragma", "journal_mode(WAL)")
 	}
 	base, sep := path, "?"
@@ -230,7 +236,7 @@ func (s *Storage) Close() error {
 	// connection) is a cheap targeted ANALYZE. Best-effort: a failure must
 	// not turn a normal shutdown into an error.
 	_, _ = s.sqlDB.Exec(`PRAGMA optimize`)
-	return CloseDB(s.sqlDB)
+	return s.sqlDB.Close()
 }
 
 // writeLockSQL writes nothing yet takes the database's write lock.

@@ -58,6 +58,18 @@ describe('writes another process made to an open library', () => {
         expect(written).toEqual([1, 1]);
     });
 
+    it('a read asked at once during a check in flight is done when that check is answered', async () => {
+        /** @type {(v: number[]) => void} */
+        let answer = () => {};
+        vi.mocked(LibrariesWrittenElsewhere).mockImplementationOnce(() => new Promise((r) => (answer = r)));
+        const inFlight = checkOutsideWrites();
+        await checkOutsideWrites({ now: true });
+        expect(written).toEqual([]);
+        answer([4]);
+        await inFlight;
+        expect(written).toEqual([4]);
+    });
+
     it('nothing written outside: nothing read', async () => {
         await checkOutsideWrites();
         await checkOutsideWrites({ now: true });
