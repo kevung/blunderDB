@@ -32,9 +32,10 @@ func isRouteIdentType(t ast.Expr) bool {
 // extractLoopRoutes, the one shape in this codebase that registers routes
 // from a package-level table in a loop (handlers_imports.go's
 // uploadRoutes/ingestRoutes — see collectLoopSlicePatterns).
-func extractRoutes(f *ast.File, types map[string]typeInfo, loopPatterns map[string][]string) ([]Route, error) {
+func extractRoutes(fset *token.FileSet, f *ast.File, types map[string]typeInfo, loopPatterns map[string][]string) ([]Route, error) {
 	var routes []Route
 	var firstErr error
+	comments := ast.NewCommentMap(fset, f, f.Comments)
 
 	ast.Inspect(f, func(n ast.Node) bool {
 		cl, ok := n.(*ast.CompositeLit)
@@ -54,6 +55,7 @@ func extractRoutes(f *ast.File, types map[string]typeInfo, loopPatterns map[stri
 					return false
 				}
 				if ok {
+					r.Description = apiDescription(comments[eltLit])
 					routes = append(routes, r)
 				}
 			}
@@ -77,6 +79,19 @@ func extractRoutes(f *ast.File, types map[string]typeInfo, loopPatterns map[stri
 
 	routes = append(routes, extractLoopRoutes(f, loopPatterns)...)
 	return routes, nil
+}
+
+// apiDescription is the comment group above a route that opens with "API:",
+// joined on one line without that marker: the text the route's clients read
+// in openapi.yaml. The other comments of a handler table speak to whoever
+// edits it and stay out.
+func apiDescription(groups []*ast.CommentGroup) string {
+	for _, g := range groups {
+		if text, ok := strings.CutPrefix(g.Text(), "API:"); ok {
+			return strings.Join(strings.Fields(text), " ")
+		}
+	}
+	return ""
 }
 
 // routeFromLit builds a Route from a 3-element {method, pattern, handler}

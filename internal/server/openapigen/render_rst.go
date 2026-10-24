@@ -46,6 +46,19 @@ Les méthodes marquées « (ETag) » rendent un en-tête ` + "``ETag``" + `. Le 
 ` + "``If-None-Match``" + ` obtient une réponse ` + "``304``" + ` sans corps tant que rien de ce que la
 méthode lit n'a changé — voir :ref:` + "`headless_direction`" + `.
 
+Enregistrer et lire une analyse
+-------------------------------
+
+` + "``analyses.save``" + ` enregistre l'analyse telle quelle et remplace celle que la
+position portait : rien de l'ancienne n'est gardé. ` + "``analyses.merge``" + ` la fond dans
+l'analyse enregistrée, en une transaction, comme le font le bureau et la ligne de
+commande : les coups candidats des deux (par notation), l'analyse du videau de
+chaque moteur, l'union des coups joués, les rollouts des deux, la date de création
+de l'analyse enregistrée. ` + "``analyses.load``" + ` rend l'analyse telle qu'enregistrée ;
+avec ` + "``withPlayed``" + ` à ` + "``true``" + `, ses coups et actions de videau joués sont joints à ceux
+que les matchs ont joués dans la position, et ses analyses du videau viennent XG
+en tête, comme les lit le bureau.
+
 Repères d'une transcription
 ---------------------------
 

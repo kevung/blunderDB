@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 22:02+0200\n"
+"POT-Creation-Date: 2026-10-24 23:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,11 +42,11 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:436
+#: ../../source/api_reference.rst:438
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:438
+#: ../../source/api_reference.rst:440
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -74,11 +74,11 @@ msgstr ""
 " merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu "
 "menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:450
+#: ../../source/api_reference.rst:452
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:452
+#: ../../source/api_reference.rst:454
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,11 +90,40 @@ msgstr ""
 "rungoton ``304``-vastaus niin kauan kuin mikään metodin lukema ei ole "
 "muuttunut — katso :ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:457
+#: ../../source/api_reference.rst:459
+msgid "Enregistrer et lire une analyse"
+msgstr "Analyysin tallentaminen ja lukeminen"
+
+#: ../../source/api_reference.rst:461
+msgid ""
+"``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
+" la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
+" la fond dans l'analyse enregistrée, en une transaction, comme le font le"
+" bureau et la ligne de commande : les coups candidats des deux (par "
+"notation), l'analyse du videau de chaque moteur, l'union des coups joués,"
+" les rollouts des deux, la date de création de l'analyse enregistrée. "
+"``analyses.load`` rend l'analyse telle qu'enregistrée ; avec "
+"``withPlayed`` à ``true``, ses coups et actions de videau joués sont "
+"joints à ceux que les matchs ont joués dans la position, et ses analyses "
+"du videau viennent XG en tête, comme les lit le bureau."
+msgstr ""
+"``analyses.save`` tallentaa analyysin sellaisenaan ja korvaa aseman "
+"aiemman analyysin: vanhasta ei säily mitään. ``analyses.merge`` yhdistää "
+"sen tallennettuun analyysiin yhdessä transaktiossa, kuten "
+"työpöytäsovellus ja komentorivi tekevät: molempien ehdokassiirrot "
+"(merkintätavan mukaan), kunkin moottorin kuutioanalyysi, pelattujen "
+"siirtojen yhdiste, molempien rolloutit ja tallennetun analyysin "
+"luontipäivä. ``analyses.load`` palauttaa analyysin tallennetussa "
+"muodossa; kun ``withPlayed`` on ``true``, sen pelatut siirrot ja "
+"kuutiotoiminnot yhdistetään niihin, jotka otteluissa pelattiin tässä "
+"asemassa, ja sen kuutioanalyyseistä XG tulee ensin, kuten "
+"työpöytäsovellus ne lukee."
+
+#: ../../source/api_reference.rst:472
 msgid "Repères d'une transcription"
 msgstr "Litteroinnin aikaleimat"
 
-#: ../../source/api_reference.rst:459
+#: ../../source/api_reference.rst:474
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -124,7 +153,7 @@ msgstr ""
 "paikallinen polku), tyhjä merkkijono irrottaa sen; ``set_header`` asettaa"
 " sen myös, kun sen otsake nimeää lähteen, mutta ei koskaan poista sitä."
 
-#: ../../source/api_reference.rst:471
+#: ../../source/api_reference.rst:486
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -140,7 +169,7 @@ msgstr ""
 " ilman toiminnan aikamerkkiä, mitattuna heitosta seuraavan toiminnon "
 "ensimmäiseen hetkeen."
 
-#: ../../source/api_reference.rst:477
+#: ../../source/api_reference.rst:492
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

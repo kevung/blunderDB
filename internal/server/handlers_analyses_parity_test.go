@@ -12,6 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/remote"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -114,19 +115,19 @@ func databaseAnalysisParity(t *testing.T) string {
 	return comparableAnalysis(t, got)
 }
 
-// daemonAnalysisParity runs the parity scenario through /v1/analyses.save and
-// /v1/analyses.load under tenant.
+// daemonAnalysisParity runs the parity scenario through /v1/analyses.merge and
+// /v1/analyses.load with withPlayed under tenant.
 func daemonAnalysisParity(t *testing.T, ts *httptest.Server, st storage.Stores, tenant string) string {
 	t.Helper()
 	pid := seedPlayedPosition(t, st, tenant)
 	for _, a := range parityAnalyses() {
-		resp := postAsTenant(t, ts, tenant, "/v1/analyses.save", analysisSaveReq{PositionID: pid, Analysis: &a})
+		resp := postAsTenant(t, ts, tenant, "/v1/analyses.merge", analysisSaveReq{PositionID: pid, Analysis: &a})
 		resp.Body.Close()
 		if resp.StatusCode != http.StatusOK {
-			t.Fatalf("analyses.save status = %d, want 200", resp.StatusCode)
+			t.Fatalf("analyses.merge status = %d, want 200", resp.StatusCode)
 		}
 	}
-	resp := postAsTenant(t, ts, tenant, "/v1/analyses.load", positionIDReq{PositionID: pid})
+	resp := postAsTenant(t, ts, tenant, "/v1/analyses.load", analysisLoadReq{PositionID: pid, WithPlayed: true})
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("analyses.load status = %d, want 200", resp.StatusCode)
@@ -138,13 +139,74 @@ func daemonAnalysisParity(t *testing.T, ts *httptest.Server, st storage.Stores, 
 	return comparableAnalysis(t, &got)
 }
 
-// TestAnalysesSaveLoad_DatabaseParity_SQLite: the daemon's save folds an
-// analysis into the stored one and its load adds the moves the matches played,
-// exactly as Database.SaveAnalysis and Database.LoadAnalysis do.
+// remoteAnalysisParity runs the parity scenario through the remote backend,
+// as `call --backend remote` does: the shared helpers over /v1.
+func remoteAnalysisParity(t *testing.T, ts *httptest.Server, st storage.Stores, tenant string) string {
+	t.Helper()
+	ctx := context.Background()
+	pid := seedPlayedPosition(t, st, tenant)
+	rs, err := remote.Open(remote.Options{BaseURL: ts.URL, Tenant: tenant})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, a := range parityAnalyses() {
+		if err := storage.SaveMergedAnalysis(ctx, rs.Analyses(), "", pid, a); err != nil {
+			t.Fatalf("SaveMergedAnalysis over remote: %v", err)
+		}
+	}
+	got, err := storage.LoadAnalysisWithPlayed(ctx, rs, "", pid)
+	if err != nil {
+		t.Fatalf("LoadAnalysisWithPlayed over remote: %v", err)
+	}
+	return comparableAnalysis(t, got)
+}
+
+// analysesMergeParity checks the daemon, directly and through the remote
+// backend, against the Database wrapper.
+func analysesMergeParity(t *testing.T, ts *httptest.Server, st storage.Stores, tenant string) {
+	t.Helper()
+	want := databaseAnalysisParity(t)
+	if got := daemonAnalysisParity(t, ts, st, tenant); got != want {
+		t.Errorf("daemon analysis differs from the Database wrapper's:\n daemon: %s\nwrapper: %s", got, want)
+	}
+	if got := remoteAnalysisParity(t, ts, st, tenant); got != want {
+		t.Errorf("remote analysis differs from the Database wrapper's:\n remote: %s\nwrapper: %s", got, want)
+	}
+}
+
+// TestAnalysesSaveLoad_DatabaseParity_SQLite: analyses.merge folds an
+// analysis into the stored one and analyses.load with withPlayed adds the
+// moves the matches played, exactly as Database.SaveAnalysis and
+// Database.LoadAnalysis do.
 func TestAnalysesSaveLoad_DatabaseParity_SQLite(t *testing.T) {
 	ts, srv := newTestServerAndHandler(t)
-	want := databaseAnalysisParity(t)
-	if got := daemonAnalysisParity(t, ts, srv.opts.Storage, testTenant); got != want {
-		t.Errorf("daemon analysis differs from the Database wrapper's:\n daemon: %s\nwrapper: %s", got, want)
+	analysesMergeParity(t, ts, srv.opts.Storage, testTenant)
+}
+
+// TestAnalysesSaveLoad_DefaultsUnchanged: analyses.save replaces the stored
+// analysis and analyses.load without withPlayed answers it as stored, with
+// none of the moves the matches played — what a client that rewrites an
+// analysis whole relies on.
+func TestAnalysesSaveLoad_DefaultsUnchanged(t *testing.T) {
+	ts, srv := newTestServerAndHandler(t)
+	pid := seedPlayedPosition(t, srv.opts.Storage, testTenant)
+	for _, a := range parityAnalyses() {
+		resp := postAsTenant(t, ts, testTenant, "/v1/analyses.save", analysisSaveReq{PositionID: pid, Analysis: &a})
+		resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			t.Fatalf("analyses.save status = %d, want 200", resp.StatusCode)
+		}
+	}
+	resp := postAsTenant(t, ts, testTenant, "/v1/analyses.load", positionIDReq{PositionID: pid})
+	defer resp.Body.Close()
+	var got domain.PositionAnalysis
+	if err := json.NewDecoder(resp.Body).Decode(&got); err != nil {
+		t.Fatal(err)
+	}
+	if got.CheckerAnalysis == nil || len(got.CheckerAnalysis.Moves) != 1 || got.CheckerAnalysis.Moves[0].Move != "13/7 13/10" {
+		t.Errorf("analyses.save did not replace: candidates %+v", got.CheckerAnalysis)
+	}
+	if len(got.PlayedMoves) != 0 || got.PlayedMove != "13/7 13/10" || len(got.PlayedCubeActions) != 0 {
+		t.Errorf("analyses.load joined the played moves: %v / %q / %v", got.PlayedMoves, got.PlayedMove, got.PlayedCubeActions)
 	}
 }

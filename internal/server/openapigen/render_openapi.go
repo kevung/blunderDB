@@ -169,6 +169,9 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 	fmt.Fprintf(b, "    %s:\n", strings.ToLower(r.Method))
 	fmt.Fprintf(b, "      operationId: %s\n", yamlPlainOrQuoted(strings.TrimPrefix(strings.TrimPrefix(r.Pattern, "/v1/"), "/ops/")))
 	fmt.Fprintf(b, "      tags: [%s]\n", r.Family)
+	if r.Description != "" {
+		fmt.Fprintf(b, "      description: %s\n", quoteYAML(r.Description))
+	}
 	fmt.Fprintf(b, "      x-kind: %s\n", r.Kind)
 	if r.IdempotencyKeySupported {
 		b.WriteString("      x-idempotency-key: true\n")

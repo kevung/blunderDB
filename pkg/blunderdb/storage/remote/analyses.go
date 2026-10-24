@@ -11,25 +11,40 @@ type positionIDReq struct {
 	PositionID int64 `json:"positionId"`
 }
 
-// Save relays analyses.put, which replaces the stored analysis as the
-// contract says; analyses.save folds it into the stored one.
 func (s analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
-	return s.c.call(ctx, scope, "analyses.put", struct {
-		PositionID int64                    `json:"positionId"`
-		Analysis   *domain.PositionAnalysis `json:"analysis"`
-	}{positionID, a}, nil)
+	return s.c.call(ctx, scope, "analyses.save", analysisSaveReq{positionID, a}, nil)
 }
 
-// Load reads analyses.loadByIds for the one position: analyses.load adds
-// the moves the matches played there, which the contract's Load does not.
-func (s analysisStore) Load(ctx context.Context, scope string, positionID int64) (*domain.PositionAnalysis, error) {
-	byID, err := s.LoadMany(ctx, scope, []int64{positionID})
-	if err != nil {
+// SaveMerged relays analyses.merge: the daemon folds the analysis into the
+// stored one in its own transaction (storage.MergeSaver).
+func (s analysisStore) SaveMerged(ctx context.Context, scope string, positionID int64, a domain.PositionAnalysis) error {
+	return s.c.call(ctx, scope, "analyses.merge", analysisSaveReq{positionID, &a}, nil)
+}
+
+// LoadWithPlayed relays analyses.load with withPlayed: the daemon joins the
+// moves the matches played, a table this backend does not serve
+// (storage.PlayedLoader).
+func (s analysisStore) LoadWithPlayed(ctx context.Context, scope string, positionID int64) (*domain.PositionAnalysis, error) {
+	var a *domain.PositionAnalysis
+	req := struct {
+		PositionID int64 `json:"positionId"`
+		WithPlayed bool  `json:"withPlayed"`
+	}{positionID, true}
+	if err := s.c.call(ctx, scope, "analyses.load", req, &a); err != nil {
 		return nil, err
 	}
-	a := byID[positionID]
-	if a == nil {
-		return nil, storage.ErrNotFound
+	return a, nil
+}
+
+type analysisSaveReq struct {
+	PositionID int64                    `json:"positionId"`
+	Analysis   *domain.PositionAnalysis `json:"analysis"`
+}
+
+func (s analysisStore) Load(ctx context.Context, scope string, positionID int64) (*domain.PositionAnalysis, error) {
+	var a *domain.PositionAnalysis
+	if err := s.c.call(ctx, scope, "analyses.load", positionIDReq{positionID}, &a); err != nil {
+		return nil, err
 	}
 	return a, nil
 }
@@ -60,7 +75,7 @@ func (s analysisStore) RepairDenormalisedColumns(ctx context.Context, scope stri
 	return r.Repaired, err
 }
 
-// SaveMany has no batch route: it asks analyses.put once per analysis.
+// SaveMany has no batch route: it asks analyses.save once per analysis.
 func (s analysisStore) SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error {
 	return storage.SaveAnalysesEach(ctx, s, scope, analyses)
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 22:02+0200\n"
+"POT-Creation-Date: 2026-10-24 23:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -43,11 +43,11 @@ msgstr ""
 "per un elenco in streaming) e, quando esiste, una nota sull'intestazione "
 "opzionale ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:436
+#: ../../source/api_reference.rst:438
 msgid "Idempotence"
 msgstr "Idempotenza"
 
-#: ../../source/api_reference.rst:438
+#: ../../source/api_reference.rst:440
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -75,11 +75,11 @@ msgstr ""
 "l'effetto — vedi il contrassegno «(Idempotency-Key)» nella tabella qui "
 "sopra. Nessun altro metodo richiede o accetta questa intestazione."
 
-#: ../../source/api_reference.rst:450
+#: ../../source/api_reference.rst:452
 msgid "Lectures conditionnelles"
 msgstr "Letture condizionali"
 
-#: ../../source/api_reference.rst:452
+#: ../../source/api_reference.rst:454
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -91,11 +91,39 @@ msgstr ""
 "finché non è cambiato nulla di ciò che il metodo legge — vedere "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:457
+#: ../../source/api_reference.rst:459
+msgid "Enregistrer et lire une analyse"
+msgstr "Salvare e leggere un'analisi"
+
+#: ../../source/api_reference.rst:461
+msgid ""
+"``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
+" la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
+" la fond dans l'analyse enregistrée, en une transaction, comme le font le"
+" bureau et la ligne de commande : les coups candidats des deux (par "
+"notation), l'analyse du videau de chaque moteur, l'union des coups joués,"
+" les rollouts des deux, la date de création de l'analyse enregistrée. "
+"``analyses.load`` rend l'analyse telle qu'enregistrée ; avec "
+"``withPlayed`` à ``true``, ses coups et actions de videau joués sont "
+"joints à ceux que les matchs ont joués dans la position, et ses analyses "
+"du videau viennent XG en tête, comme les lit le bureau."
+msgstr ""
+"``analyses.save`` salva l'analisi così com'è e sostituisce quella che la "
+"posizione aveva: nulla della vecchia viene conservato. ``analyses.merge``"
+" la fonde con l'analisi salvata, in una transazione, come fanno il "
+"desktop e la riga di comando: le mosse candidate di entrambe (per "
+"notazione), l'analisi del cubo di ogni motore, l'unione delle mosse "
+"giocate, i rollout di entrambe, la data di creazione dell'analisi "
+"salvata. ``analyses.load`` restituisce l'analisi come è salvata; con "
+"``withPlayed`` a ``true``, le sue mosse e azioni di cubo giocate sono "
+"unite a quelle che le partite hanno giocato nella posizione, e le sue "
+"analisi del cubo mettono XG per prima, come le legge il desktop."
+
+#: ../../source/api_reference.rst:472
 msgid "Repères d'une transcription"
 msgstr "Marcatori temporali di una trascrizione"
 
-#: ../../source/api_reference.rst:459
+#: ../../source/api_reference.rst:474
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -126,7 +154,7 @@ msgstr ""
 "imposta anche quando la sua intestazione ne indica una, senza mai "
 "cancellarla."
 
-#: ../../source/api_reference.rst:471
+#: ../../source/api_reference.rst:486
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -142,7 +170,7 @@ msgstr ""
 " una stima: una mossa senza riferimento d'azione, misurata dal tiro al "
 "primo istante dell'azione successiva."
 
-#: ../../source/api_reference.rst:477
+#: ../../source/api_reference.rst:492
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 22:02+0200\n"
+"POT-Creation-Date: 2026-10-24 23:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,11 +41,11 @@ msgstr ""
 "参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の ``Idempotency-"
 "Key`` ヘッダーへの言及を含みます。"
 
-#: ../../source/api_reference.rst:436
+#: ../../source/api_reference.rst:438
 msgid "Idempotence"
 msgstr "冪等性"
 
-#: ../../source/api_reference.rst:438
+#: ../../source/api_reference.rst:440
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -67,11 +67,11 @@ msgstr ""
 " ``positions.save`` です。同じキーで再送された呼び出しは、効果を繰り返さず最初の試行の結果を返します。上の表の"
 "「(Idempotency-Key)」の印を参照してください。それ以外のメソッドはこのヘッダーを必要とせず、受け付けません。"
 
-#: ../../source/api_reference.rst:450
+#: ../../source/api_reference.rst:452
 msgid "Lectures conditionnelles"
 msgstr "条件付き読み取り"
 
-#: ../../source/api_reference.rst:452
+#: ../../source/api_reference.rst:454
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -82,11 +82,35 @@ msgstr ""
 "に付けて送り返すと、メソッドが読み取る内容に変化がない限り、本文のない ``304`` 応答が返ります — "
 ":ref:`headless_direction` を参照してください。"
 
-#: ../../source/api_reference.rst:457
+#: ../../source/api_reference.rst:459
+msgid "Enregistrer et lire une analyse"
+msgstr "解析の保存と読み込み"
+
+#: ../../source/api_reference.rst:461
+msgid ""
+"``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
+" la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
+" la fond dans l'analyse enregistrée, en une transaction, comme le font le"
+" bureau et la ligne de commande : les coups candidats des deux (par "
+"notation), l'analyse du videau de chaque moteur, l'union des coups joués,"
+" les rollouts des deux, la date de création de l'analyse enregistrée. "
+"``analyses.load`` rend l'analyse telle qu'enregistrée ; avec "
+"``withPlayed`` à ``true``, ses coups et actions de videau joués sont "
+"joints à ceux que les matchs ont joués dans la position, et ses analyses "
+"du videau viennent XG en tête, comme les lit le bureau."
+msgstr ""
+"``analyses.save`` "
+"は解析をそのまま保存し、局面が持っていた解析を置き換えます。古い解析は何も残りません。``analyses.merge`` "
+"は、デスクトップ版やコマンドラインと同じく、一つのトランザクションで保存済みの解析に統合します。両者の候補手（表記ごと）、各エンジンのキューブ解析、指された手の和集合、両者のロールアウト、保存済み解析の作成日が残ります。``analyses.load``"
+" は保存されたままの解析を返します。``withPlayed`` を ``true`` "
+"にすると、指された手とキューブアクションに、試合でその局面で指されたものが加わり、キューブ解析は XG "
+"が先頭になります。デスクトップ版の読み方と同じです。"
+
+#: ../../source/api_reference.rst:472
 msgid "Repères d'une transcription"
 msgstr "文字起こしのタイムコード"
 
-#: ../../source/api_reference.rst:459
+#: ../../source/api_reference.rst:474
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -113,7 +137,7 @@ msgstr ""
 "またはローカルパス)を関連付け、空文字列はそれを解除します。``set_header`` "
 "も、ヘッダーが動画ソースを指定している場合はそれを設定しますが、消去することはありません。"
 
-#: ../../source/api_reference.rst:471
+#: ../../source/api_reference.rst:486
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -127,7 +151,7 @@ msgstr ""
 " を伴う ``decision_ms`` "
 "は推定値です。アクションのタイムコードがない手について、ロールから次のアクションの最初の時刻までを測ったものです。"
 
-#: ../../source/api_reference.rst:477
+#: ../../source/api_reference.rst:492
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

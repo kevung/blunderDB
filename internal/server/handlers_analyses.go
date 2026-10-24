@@ -13,6 +13,13 @@ type analysisSaveReq struct {
 	Analysis   *domain.PositionAnalysis `json:"analysis"`
 }
 
+// analysisLoadReq is positionIDReq with the join of the played moves, off
+// by default.
+type analysisLoadReq struct {
+	PositionID int64 `json:"positionId"`
+	WithPlayed bool  `json:"withPlayed,omitempty"`
+}
+
 type positionIDReq struct {
 	PositionID int64 `json:"positionId"`
 }
@@ -23,26 +30,34 @@ func (s *Server) analysisRoutes() []route {
 		// Gauges of the analysis queue: positions with and without an
 		// analysis, and the counters of the tenant's running or last sweep.
 		{http.MethodPost, "/v1/analyses.queueStatus", rpc(s.analysisQueueStatus)},
-		// The save a user's analysis goes through: folded into what the
-		// position carries, as the GUI and the CLI save it.
+		// API: Stores the analysis as given, replacing the one the position
+		// carries: nothing of the stored analysis is kept. To add an analysis
+		// to the stored one, call analyses.merge.
 		{http.MethodPost, "/v1/analyses.save", rpcVoid(func(ctx context.Context, scope string, req analysisSaveReq) error {
-			if req.Analysis == nil {
-				return errMissing("analysis")
-			}
-			return storage.SaveMergedAnalysis(ctx, as(), scope, req.PositionID, *req.Analysis)
-		})},
-		// The analysis as given, replacing the stored one: the storage
-		// contract's Save, which the remote backend relays.
-		{http.MethodPost, "/v1/analyses.put", rpcVoid(func(ctx context.Context, scope string, req analysisSaveReq) error {
 			if req.Analysis == nil {
 				return errMissing("analysis")
 			}
 			return as().Save(ctx, scope, req.PositionID, req.Analysis)
 		})},
-		// The analysis with what the matches played at the position, as the
-		// GUI and the CLI read it.
-		{http.MethodPost, "/v1/analyses.load", rpc(func(ctx context.Context, scope string, req positionIDReq) (*domain.PositionAnalysis, error) {
-			return storage.LoadAnalysisWithPlayed(ctx, s.opts.Storage, scope, req.PositionID)
+		// API: Folds the analysis into the one the position carries, in one
+		// transaction, as the desktop and the CLI save it: the candidate moves
+		// of both (keyed by notation), every engine's cube analysis, the union
+		// of the plays, the rollouts of both, the stored creation date.
+		{http.MethodPost, "/v1/analyses.merge", rpcVoid(func(ctx context.Context, scope string, req analysisSaveReq) error {
+			if req.Analysis == nil {
+				return errMissing("analysis")
+			}
+			return storage.SaveMergedAnalysis(ctx, as(), scope, req.PositionID, *req.Analysis)
+		})},
+		// API: The analysis as stored, 404 when the position has none. With
+		// withPlayed, its played moves and cube actions are joined with those
+		// the matches played at the position, normalised and sorted, and its
+		// cube analyses come XG first, as the desktop and the CLI read it.
+		{http.MethodPost, "/v1/analyses.load", rpc(func(ctx context.Context, scope string, req analysisLoadReq) (*domain.PositionAnalysis, error) {
+			if req.WithPlayed {
+				return storage.LoadAnalysisWithPlayed(ctx, s.opts.Storage, scope, req.PositionID)
+			}
+			return as().Load(ctx, scope, req.PositionID)
 		})},
 		// Analyses of the listed positions, in id order; an id without one is
 		// skipped, as positions.loadByIds does.
