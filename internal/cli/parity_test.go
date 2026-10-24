@@ -148,7 +148,10 @@ var serverOnly = map[string]string{
 // databaseParity is the allow-list. Keep it sorted by method name.
 var databaseParity = map[string]parityEntry{
 	"AddComment":                        {CLI: "comment add", Server: "/v1/comments.add"},
+	"HoldLibrary":                       {Why: "the GUI's guard on a write carrying ids read before a library switch (ADR-0107); the CLI and the daemon never switch library under a running write"},
 	"MatchIDsReachedBy":                 {Why: "feeds the GUI export dialog's list of the matches a filtered list reaches; the CLI and the daemon export the whole library, and ExportDatabase applies the same rule to an unnamed match selection"},
+	"RecreateDatabase":                  {Why: "the GUI's « Nouvelle base » over the path of a library it may hold, under the switch protocol (ADR-0107); the CLI creates a file once with `create`, the daemon bootstraps its store at start-up (Storage.Migrate)"},
+	"ReleaseLibrary":                    {Why: "the GUI's guard on a write carrying ids read before a library switch (ADR-0107); the CLI and the daemon never switch library under a running write"},
 	"SetCommentAuthor":                  {Why: "the signature of the comments this process writes: the desktop sets it from « Votre nom », the CLI from --author; the daemon reads X-User-Name per request instead"},
 	"AddMatchToTournament":              {Server: "/v1/tournaments.addMatch", Why: whyGUIEdit},
 	"BuryAnkiCard":                      {CLI: "anki card", Server: "/v1/anki.buryCard"},
