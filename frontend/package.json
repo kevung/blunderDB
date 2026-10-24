@@ -30,7 +30,7 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/svelte": "^5.4.2",
     "@testing-library/user-event": "^14.6.7",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^4.1.12",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-svelte": "^3.23.0",
@@ -42,7 +42,7 @@
     "svelte-check": "^4.7.6",
     "svelte-eslint-parser": "^1.6.0",
     "vite": "^8.3.5",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   },
   "dependencies": {
     "chart.js": "^4.5.1",
