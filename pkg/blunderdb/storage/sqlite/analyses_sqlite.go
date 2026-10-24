@@ -429,6 +429,15 @@ const repairPageSize = 500
 // never loaded whole. Only rows whose columns actually change are written, so
 // a second run reports 0: the count answers "was anything wrong?".
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string) (int, error) {
+	return s.RepairDenormalisedFrom(ctx, 0, nil)
+}
+
+// RepairDenormalisedFrom is RepairDenormalisedColumns over the analyses past
+// the id after. done, when non-nil, runs once each page is written, with the
+// id of its last analysis and the running count; an error from it stops the
+// pass there. A caller that records that id resumes an interrupted pass
+// without reading again the pages it finished.
+func (s *analysisStore) RepairDenormalisedFrom(ctx context.Context, after int64, done func(lastID int64, repaired int) error) (int, error) {
 	type row struct {
 		id, posID                              int64
 		data                                   []byte
@@ -447,7 +456,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		por, d1, d2 *int64
 	}
 	repaired := 0
-	var lastID int64
+	lastID := after
 	for {
 		var page []row
 		if err := func() error {
@@ -533,6 +542,11 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 			return repaired, fmt.Errorf("sqlite: repair: %w", err)
 		}
 		repaired += n
+		if done != nil {
+			if err := done(lastID, repaired); err != nil {
+				return repaired, err
+			}
+		}
 	}
 }
 

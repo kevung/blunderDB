@@ -3822,6 +3822,7 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	}
 	dropMultiPlayed(t, d)
 	for _, stmt := range []string{
+		`ALTER TABLE move DROP COLUMN error_mp`,
 		`DROP INDEX idx_analysis_met`,
 		`ALTER TABLE analysis DROP COLUMN met_id`,
 		`DROP TABLE lesson_progress`,
@@ -3894,8 +3895,8 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
 		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
 	}
-	if !columnExists(t, d.db, "analysis", "met_id") {
-		t.Fatal("analysis.met_id should exist after migration")
+	if !columnExists(t, d.db, "move", "error_mp") || !columnExists(t, d.db, "analysis", "met_id") {
+		t.Fatal("move.error_mp and analysis.met_id should exist after migration")
 	}
 	for _, c := range []struct {
 		table, column string
@@ -5305,9 +5306,10 @@ func TestMigrate_2_48_0_to_2_49_0_MultiPlayed(t *testing.T) {
 
 // TestMigrate_2_49_0_to_2_50_0_RederivesColumns opens a 2.49.0 library whose
 // derived columns are stale (as an older matching or a library import left
-// them), which still carries move.error_mp and materialised match_stats, and
-// checks the open derives every analysis and move column again from the
-// blobs, drops the column, and empties the statistics.
+// them) and which carries materialised match_stats, and checks the open
+// derives every analysis and move column again from the blobs, keeps the
+// inert move.error_mp an older binary still reads, and empties the
+// statistics.
 func TestMigrate_2_49_0_to_2_50_0_RederivesColumns(t *testing.T) {
 	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "test_v2490_rederive.db")
@@ -5341,7 +5343,6 @@ func TestMigrate_2_49_0_to_2_50_0_RederivesColumns(t *testing.T) {
 	for _, stmt := range []string{
 		`UPDATE analysis SET best_move_equity_error = 999999, cube_error = 999999, is_forced = 1 - is_forced`,
 		`UPDATE move SET decision_error_mp = 999999, is_close_cube = 1 - is_close_cube`,
-		`ALTER TABLE move ADD COLUMN error_mp INTEGER`,
 		`UPDATE metadata SET value = '2.49.0' WHERE key = 'database_version'`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
@@ -5370,8 +5371,8 @@ func TestMigrate_2_49_0_to_2_50_0_RederivesColumns(t *testing.T) {
 	if got.moves != want.moves {
 		t.Error("move decision columns after migration differ from those derived from the blobs")
 	}
-	if columnExists(t, d.db, "move", "error_mp") {
-		t.Error("move.error_mp still exists after migration")
+	if !columnExists(t, d.db, "move", "error_mp") {
+		t.Error("move.error_mp is gone after migration: an older binary still writes it")
 	}
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM match_stats`).Scan(&stats); err != nil || stats != 0 {
 		t.Errorf("match_stats after migration: %d rows (%v), want none", stats, err)
@@ -5379,5 +5380,100 @@ func TestMigrate_2_49_0_to_2_50_0_RederivesColumns(t *testing.T) {
 	var owed int
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, rederivePendingKey).Scan(&owed); err != nil || owed != 0 {
 		t.Errorf("derivation still owed after the open: %d (%v)", owed, err)
+	}
+}
+
+// TestMigrate_2_50_0_RederiveResumes interrupts the 2.50.0 derivation after
+// its first page and checks the mark holds that page's last analysis, then
+// that the next run derives the rest without reading the finished pages
+// again: rows at or below the mark, made stale once more in between, stay
+// as they are.
+func TestMigrate_2_50_0_RederiveResumes(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "rederive_resume.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatal(err)
+	}
+	closeOnCleanup(t, d)
+	for _, f := range []string{"test.xg", "match_with_comment.xg", "charlot1-charlot2_7p_2025-11-08-2305.xg"} {
+		if _, err := d.ImportXGMatch("testdata/" + f); err != nil {
+			t.Fatalf("ImportXGMatch %s: %v", f, err)
+		}
+	}
+	columns := func() map[int64]string {
+		out := map[int64]string{}
+		readColumn(t, d.db, `SELECT id, COALESCE(best_move_equity_error, -1) || ':' || is_forced FROM analysis`, func(rows *sql.Rows) {
+			var id int64
+			var v string
+			if err := rows.Scan(&id, &v); err != nil {
+				t.Fatal(err)
+			}
+			out[id] = v
+		})
+		return out
+	}
+	const stale = "999999:"
+	plant := func(where string) {
+		if _, err := d.db.Exec(`UPDATE analysis SET best_move_equity_error = 999999 WHERE ` + where); err != nil {
+			t.Fatal(err)
+		}
+	}
+	want := columns()
+	var maxID int64
+	if err := d.db.QueryRow(`SELECT MAX(id) FROM analysis`).Scan(&maxID); err != nil {
+		t.Fatal(err)
+	}
+	plant("1 = 1")
+	if _, err := d.db.Exec(`INSERT INTO metadata (key, value) VALUES (?, '0')`, rederivePendingKey); err != nil {
+		t.Fatal(err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	d.SetMigrationProgress(func(phase string, done, _ int) {
+		if phase == rederivePhase && done > 0 {
+			cancel()
+		}
+	})
+	if err := d.finishRederivedColumns(ctx); !errors.Is(err, context.Canceled) {
+		t.Fatalf("interrupted derivation = %v, want context.Canceled", err)
+	}
+	var mark int64
+	if err := d.db.QueryRow(`SELECT CAST(value AS INTEGER) FROM metadata WHERE key = ?`, rederivePendingKey).Scan(&mark); err != nil {
+		t.Fatalf("mark after the interruption: %v", err)
+	}
+	if mark <= 0 || mark >= maxID {
+		t.Fatalf("mark after one page = %d, want inside (0, %d): the fixture needs several pages", mark, maxID)
+	}
+	for id, v := range columns() {
+		if done := id <= mark; done != (v == want[id]) {
+			t.Fatalf("analysis %d after the interruption: %q (derived %v, at or below the mark %v)", id, v, v == want[id], done)
+		}
+	}
+
+	plant("id <= " + strconv.FormatInt(mark, 10))
+	var pages []int
+	d.SetMigrationProgress(func(phase string, done, _ int) {
+		if phase == rederivePhase {
+			pages = append(pages, done)
+		}
+	})
+	if err := d.finishRederivedColumns(context.Background()); err != nil {
+		t.Fatalf("resumed derivation: %v", err)
+	}
+	for id, v := range columns() {
+		switch {
+		case id <= mark && !strings.HasPrefix(v, stale):
+			t.Errorf("analysis %d at or below the mark was read again: %q", id, v)
+		case id > mark && v != want[id]:
+			t.Errorf("analysis %d past the mark = %q, want %q", id, v, want[id])
+		}
+	}
+	if len(pages) == 0 || pages[0] != int(mark) || pages[len(pages)-1] != int(maxID) {
+		t.Errorf("progress of the resumed pass = %v, want from %d to %d", pages, mark, maxID)
+	}
+	var owed int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, rederivePendingKey).Scan(&owed); err != nil || owed != 0 {
+		t.Errorf("derivation still owed after the resumed pass: %d (%v)", owed, err)
 	}
 }

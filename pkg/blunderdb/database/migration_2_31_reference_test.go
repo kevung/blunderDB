@@ -22,8 +22,8 @@ import (
 // referenceMigrate230To231 is the weight wave of the large-library plan
 // (ADR-0071), plus additions EnsureSchema creates from the one schema after
 // the chain: match_equity_table and analysis.met_id (ADR-0068),
-// lesson_progress (ADR-0069) and move.error_mp (dropped since 2.50.0), all
-// added NULL.
+// lesson_progress (ADR-0069) and move.error_mp (inert since 2.50.0),
+// all added NULL.
 //
 // The step rewrites the two date columns 2.30.0 stored as text into Unix
 // seconds. A position whose date is still NULL here (the 2.30.0 backfill not

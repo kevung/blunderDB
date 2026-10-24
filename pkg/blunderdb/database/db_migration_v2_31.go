@@ -34,7 +34,7 @@ var prunedIndexes2_31 = []string{
 // (match_stats_cell, match_stats_position), all added NULL or empty; the
 // open drops the match_stats rows without them (DropOlderShapeMatchStatsSQL),
 // which readers or the stats.matches maintenance line recompute.
-// (move.error_mp is gone from the schema since 2.50.0.)
+// (move.error_mp is inert since 2.50.0.)
 //
 // The step rewrites the two date columns 2.30.0 stored as text into Unix
 // seconds, position.state into its 28 bytes, and the action labels into

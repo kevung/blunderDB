@@ -75,6 +75,7 @@ func write2_30Library(t *testing.T, path string, swap bool) {
 		}
 	}
 	stmts := []string{
+		`ALTER TABLE move DROP COLUMN error_mp`,
 		`DROP INDEX idx_analysis_met`,
 		`ALTER TABLE analysis DROP COLUMN met_id`,
 		`DROP TABLE lesson_progress`,

@@ -413,6 +413,12 @@ var schemaStatements = []string{
 		checker_move TEXT,
 		cube_action INTEGER,
 		luck_mp INTEGER,
+		-- Inert since 2.50.0: nothing writes or reads it (the statistics
+		-- read decision_error_mp). It stays because a blunderDB older than
+		-- 2.50.0 opens a newer library unchanged and still writes and reads
+		-- it; it goes once a minimum reading version turns such binaries
+		-- away.
+		error_mp INTEGER,
 		-- The error and the close-cube flag the statistics count this
 		-- decision by (sqlshared/played_decisions.go): the analysis's
 		-- cube_error / best_move_equity_error and is_close_cube, scored
