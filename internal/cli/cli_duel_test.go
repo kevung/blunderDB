@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -294,5 +295,22 @@ func TestCLI_DuelStartSettings(t *testing.T) {
 		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "7", "--away", away}); err == nil {
 			t.Errorf("--away %s accepted", away)
 		}
+	}
+}
+
+// --play names a play by its board: either spelling of an equivalent path is
+// accepted, a different board is refused.
+func TestStepsOfAcceptsEquivalentSpelling(t *testing.T) {
+	pos := domain.InitializePosition()
+	pos.PlayerOnRoll = domain.Black
+	pos.Dice = [2]int{3, 2}
+	d := &duel.Decision{Kind: duel.DecideMove, Position: pos}
+	for _, n := range []string{"8/6 6/3", "8/5 5/3"} {
+		if _, err := stepsOf(d, n); err != nil {
+			t.Errorf("%q: %v", n, err)
+		}
+	}
+	if _, err := stepsOf(d, "8/6 6/2"); err == nil {
+		t.Error("8/6 6/2 is not a play of 3-2")
 	}
 }

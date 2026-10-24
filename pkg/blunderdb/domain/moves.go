@@ -109,7 +109,10 @@ func LegalMoves(p *Position) []LegalPlay {
 		}
 	}
 
-	seen := map[string]bool{}
+	// Among plays reaching the same board, keep the smallest mover-relative
+	// notation (plain string order), so the spelling does not depend on colour
+	// or enumeration order.
+	at := map[string]int{}
 	var plays []LegalPlay
 	for _, t := range terminals {
 		if len(t.steps) != maxUsed {
@@ -118,12 +121,16 @@ func LegalMoves(p *Position) []LegalPlay {
 		if mustUseLarger && !stepUsesDie(t.steps[0], mover, larger) {
 			continue
 		}
+		lp := LegalPlay{Steps: t.steps, Result: t.pos, Notation: notation(t.steps, mover)}
 		key := boardKey(&t.pos)
-		if seen[key] {
+		if i, ok := at[key]; ok {
+			if lp.Notation < plays[i].Notation {
+				plays[i] = lp
+			}
 			continue
 		}
-		seen[key] = true
-		plays = append(plays, LegalPlay{Steps: t.steps, Result: t.pos, Notation: notation(t.steps, mover)})
+		at[key] = len(plays)
+		plays = append(plays, lp)
 	}
 	return plays
 }

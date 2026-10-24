@@ -120,3 +120,18 @@ func TestQuizPR(t *testing.T) {
 		t.Errorf("no decision gives 0, read with the count: got %v", got)
 	}
 }
+
+// Two spellings of one play reach the same board: both are the same answer.
+func TestGradeCheckerAnswerNotation_EquivalentSpellingIsLegal(t *testing.T) {
+	pos := domain.InitializePosition()
+	pos.PlayerOnRoll = domain.Black
+	pos.Dice = [2]int{3, 2}
+	for _, n := range []string{"8/6 6/3", "8/5 5/3"} {
+		if v := GradeCheckerAnswerNotation(&pos, nil, n); !v.Legal {
+			t.Errorf("%q reaches a legal board but was refused", n)
+		}
+	}
+	if v := GradeCheckerAnswerNotation(&pos, nil, "8/6 6/2"); v.Legal {
+		t.Error("8/6 6/2 uses a 6 and a 2 and must stay illegal for 3-2")
+	}
+}

@@ -96,11 +96,7 @@ func GradeCheckerAnswer(pos *domain.Position, ana *domain.PositionAnalysis, play
 // Accepting a notation the generator does not produce would let the quiz mark
 // an impossible move as merely "unranked".
 func GradeCheckerAnswerNotation(pos *domain.Position, ana *domain.PositionAnalysis, notation string) QuizVerdict {
-	norm := NormalizeMove(notation)
-	for _, play := range domain.LegalMoves(pos) {
-		if !strings.EqualFold(NormalizeMove(play.Notation), norm) {
-			continue
-		}
+	if play, err := ResolvePlay(pos, domain.LegalMoves(pos), notation, MarksHits(notation)); err == nil {
 		return GradeCheckerAnswer(pos, ana, play.Result.Board)
 	}
 	// Not a legal play: still report the best answer, which is the correction

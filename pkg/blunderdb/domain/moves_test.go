@@ -150,11 +150,11 @@ func TestNotationIsMoverRelative(t *testing.T) {
 		if len(blackSet) == 0 || len(whiteSet) == 0 {
 			t.Fatalf("dice %v: expected legal plays for both colours", d)
 		}
-		// Plays reaching the same board collapse into one whose spelling depends on
-		// enumeration order (13/7 8/2 vs 13/7 7/2), so compare counts, not spellings.
-		if len(blackSet) != len(whiteSet) {
-			t.Fatalf("dice %v: black has %d plays, white %d from the symmetric opening\n  black: %v\n  white: %v",
-				d, len(blackSet), len(whiteSet), blackSet, whiteSet)
+		// Equivalent plays collapse to the smallest notation, so on mirror
+		// positions the two colours must name exactly the same plays.
+		if !sameStringSet(blackSet, whiteSet) {
+			t.Fatalf("dice %v: black and white notations disagree from the symmetric opening\n  black: %v\n  white: %v",
+				d, blackSet, whiteSet)
 		}
 	}
 }
@@ -180,6 +180,18 @@ func notationSet(plays []LegalPlay) map[string]bool {
 		out[p.Notation] = true
 	}
 	return out
+}
+
+func sameStringSet(a, b map[string]bool) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for k := range a {
+		if !b[k] {
+			return false
+		}
+	}
+	return true
 }
 
 // Every generated play conserves 15 checkers per side and uses the right number
@@ -212,28 +224,32 @@ func TestLegalMovesInvariants(t *testing.T) {
 // point; two plays reaching the same board must still collapse into one.
 func TestLegalMovesDedupIgnoresEmptyPointColour(t *testing.T) {
 	cases := []struct {
-		name string
-		xgid string
-		want int
-		tint bool
+		name   string
+		xgid   string
+		want   int
+		opener bool // play the initial position, empty points tinted Black, Black on roll
 	}{
-		{"repro1", "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10", 8, false},
-		{"repro2", "XGID=-a-B--E-B-a-dDB--b-bcb----:0:0:1:63:0:0:0:0:10", 14, false},
-		{"empty points tinted Black", "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10", 8, true},
+		{name: "repro1", xgid: "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10", want: 8},
+		{name: "repro2", xgid: "XGID=-a-B--E-B-a-dDB--b-bcb----:0:0:1:63:0:0:0:0:10", want: 14},
+		{name: "opening 5-2, empty points Black", want: 8, opener: true},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			pos, err := DecodeXGID(c.xgid)
-			if err != nil {
-				t.Fatal(err)
+			var pos Position
+			if c.opener {
+				pos = InitializePosition()
+				pos.PlayerOnRoll = Black
+				pos.Dice = [2]int{5, 2}
+			} else {
+				var err error
+				if pos, err = DecodeXGID(c.xgid); err != nil {
+					t.Fatal(err)
+				}
 			}
 			for i := range pos.Board.Points {
 				if pos.Board.Points[i].Checkers == 0 {
 					pos.Board.Points[i].Color = Black
 				}
-			}
-			if c.tint {
-				pos.PlayerOnRoll = Black
 			}
 			if got := len(LegalMoves(&pos)); got != c.want {
 				t.Errorf("got %d plays, want %d", got, c.want)
