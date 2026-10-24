@@ -111,9 +111,12 @@ var (
 	// match. `md:YYYY-MM..YYYY-MM`, `md:YYYY`, `md>YYYY-MM`, `md<YYYY-MM`: its
 	// date, each bound a year, a month or a day. `pr>8`, `pr<5`, `pr4,9`: the
 	// PR of the match for the player who took the decision. `rd:3`: the round.
-	// All matched by shape: `md`, `ml`, `pr` and `rd` start like tokens that
-	// take a bare prefix, and a typo must not become a silent filter.
+	// `aw:4`, `aw:2,5`, `aw<5`, `aw>3`: how many points each player still
+	// needs, in the grammar of `ml`. All matched by shape: `md`, `ml`, `pr` and
+	// `rd` start like tokens that take a bare prefix, and a typo must not
+	// become a silent filter.
 	matchLenRe  = regexp.MustCompile(`^ml(?::\d+(?:,\d+)?|[<>]\d+)$`)
+	awayRe      = regexp.MustCompile(`^aw(?::\d+(?:,\d+)?|[<>]\d+)$`)
 	matchDateRe = regexp.MustCompile(`^md(?::` + dateBound + `(?:\.\.` + dateBound + `)?|[<>]` + dateBound + `)$`)
 	prRe        = regexp.MustCompile(`^pr(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$`)
 	roundRe     = regexp.MustCompile(`^rd:[^\s"';]+$`)
@@ -318,6 +321,7 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	})
 	f.PlayerPRFilter = first(func(s string) bool { return prRe.MatchString(s) })
 	f.MatchLengthFilter = first(func(s string) bool { return matchLenRe.MatchString(s) })
+	f.AwayFilter = first(func(s string) bool { return awayRe.MatchString(s) })
 	f.MatchDateFilter = first(func(s string) bool { return matchDateRe.MatchString(s) })
 	f.WinRateFilter = first(prefix("w"))
 	// `gt:holding` starts with `g` too, and `first` does not skip a claimed
@@ -544,6 +548,7 @@ func Format(f domain.SearchFilters) string {
 	add(f.DateFilter)
 	add(f.PlayerPRFilter)
 	add(f.MatchLengthFilter)
+	add(f.AwayFilter)
 	add(f.MatchDateFilter)
 
 	add(f.SearchText)
@@ -636,6 +641,7 @@ var FieldTokens = map[string]string{
 	"CommentAuthorFilter":           `au"…"`,
 	"RoundFilter":                   "rd:",
 	"MatchLengthFilter":             "ml",
+	"AwayFilter":                    "aw",
 	"MatchDateFilter":               "md",
 	"PlayerPRFilter":                "pr",
 	"AnalysisProvenanceFilter":      "ad:",

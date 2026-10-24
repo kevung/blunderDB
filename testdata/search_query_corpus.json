@@ -434,6 +434,54 @@
       }
     },
     {
+      "command": "s aw<5",
+      "expected": {
+        "awayFilter": "aw<5"
+      }
+    },
+    {
+      "command": "s aw>3",
+      "expected": {
+        "awayFilter": "aw>3"
+      }
+    },
+    {
+      "command": "s aw:2,5",
+      "expected": {
+        "awayFilter": "aw:2,5"
+      }
+    },
+    {
+      "command": "s aw:4",
+      "expected": {
+        "awayFilter": "aw:4"
+      }
+    },
+    {
+      "command": "s aw:1 aw<9",
+      "expected": {
+        "awayFilter": "aw:1"
+      }
+    },
+    {
+      "command": "s aw:abc",
+      "expected": {
+        "awayFilter": ""
+      }
+    },
+    {
+      "command": "s aw:4,",
+      "expected": {
+        "awayFilter": ""
+      }
+    },
+    {
+      "command": "s aw5",
+      "expected": {
+        "awayFilter": ""
+      }
+    },
+    {
       "command": "s md:2024-01..2024-12",
       "expected": {
         "matchDateFilter": "md:2024-01..2024-12"

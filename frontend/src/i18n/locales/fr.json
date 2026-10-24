@@ -3554,6 +3554,7 @@
         "busyWrite": "Une modification est en cours d'écriture dans la bibliothèque active : réessayez dans un instant",
         "switching": "Changement de bibliothèque en cours : attendez qu'il s'achève",
         "migrating": "Migration de la bibliothèque : {phase} {done}/{total} (Échap pour annuler)",
+        "migrationCancelled": "Migration annulée",
         "answerDropped": "La bibliothèque à l'écran a changé entre-temps : la confirmation n'a pas été appliquée",
         "writeDropped": "La bibliothèque à l'écran a changé entre-temps : la modification n'a pas été écrite",
         "jobRunning": "Une tâche de fond travaille dans cette bibliothèque",

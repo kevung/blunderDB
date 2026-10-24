@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-24 22:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1730,6 +1730,28 @@ msgid "``--match-lengths``"
 msgstr "``--match-lengths``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "aw:x"
+msgstr "aw:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Chacun** des deux joueurs est à x points du gain du match, quelle que "
+"soit sa longueur : la fin d'un match en 5 comme en 11. Formes ``aw:4``, "
+"``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises, pour les deux "
+"joueurs). Le Crawford et l'après-Crawford comptent tous deux pour 1 point"
+" (``aw:1`` les retient) ; le money n'est jamais retenu."
+msgstr ""
+"**Cada uno** de los dos jugadores está a x puntos de ganar el match, sea "
+"cual sea su longitud: el final de un match a 5 igual que a 11. Formas "
+"``aw:4``, ``aw:2,5``, ``aw>3`` y ``aw<5`` (límites incluidos, para ambos "
+"jugadores). El Crawford y el post-Crawford cuentan ambos como 1 punto "
+"(``aw:1`` retiene los dos); el money nunca se retiene."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--away``"
+msgstr "``--away``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
 msgstr "md:x..y"
 
@@ -1900,7 +1922,7 @@ msgstr ""
 " la clase del objetivo a todos los tipos de decisión y a los dos "
 "regímenes, dinero y partida. Véase :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:243
+#: ../../source/cmd_mode.rst:244
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1919,11 +1941,11 @@ msgstr ""
 " figura en ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribir desde un terminal"
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:251
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1942,7 +1964,7 @@ msgstr ""
 " la revisión devuelta por la llamada anterior; cada llamada es su propia "
 "sesión, sin ``sessionId`` ni deshacer de una llamada a otra."
 
-#: ../../source/cmd_mode.rst:261
+#: ../../source/cmd_mode.rst:262
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 

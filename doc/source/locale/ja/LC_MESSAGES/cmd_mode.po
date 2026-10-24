@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-10-24 22:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1627,6 +1627,27 @@ msgid "``--match-lengths``"
 msgstr "``--match-lengths``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "aw:x"
+msgstr "aw:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Chacun** des deux joueurs est à x points du gain du match, quelle que "
+"soit sa longueur : la fin d'un match en 5 comme en 11. Formes ``aw:4``, "
+"``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises, pour les deux "
+"joueurs). Le Crawford et l'après-Crawford comptent tous deux pour 1 point"
+" (``aw:1`` les retient) ; le money n'est jamais retenu."
+msgstr ""
+"**両方**\\ のプレイヤーがマッチ勝利まで x ポイント。マッチの長さは問わない：5 ポイントマッチでも 11 "
+"ポイントマッチでも終盤を拾える。形式は ``aw:4``\\ 、\\ ``aw:2,5``\\ 、\\ ``aw>3``\\ 、\\ "
+"``aw<5``\\ （境界を含み、両プレイヤーに適用）。クロフォードとポストクロフォードはどちらも 1 ポイントと数える（\\ ``aw:1``"
+" は両方を拾う）。マネーゲームは決して該当しない。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--away``"
+msgstr "``--away``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
 msgstr "md:x..y"
 
@@ -1789,7 +1810,7 @@ msgstr ""
 "は目標としきい値を組み合わせ、\\ ``like42*`` は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ "
 ":ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:243
+#: ../../source/cmd_mode.rst:244
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1805,11 +1826,11 @@ msgstr ""
 "）が、二重引用符は決して含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ ``ma1;2`` "
 "はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 msgid "Transcrire depuis un terminal"
 msgstr "ターミナルから転記する"
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:251
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1827,7 +1848,7 @@ msgstr ""
 "は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
 "はなく、呼び出しをまたいだ取り消しもできません。"
 
-#: ../../source/cmd_mode.rst:261
+#: ../../source/cmd_mode.rst:262
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

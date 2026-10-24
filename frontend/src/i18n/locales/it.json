@@ -3554,6 +3554,7 @@
         "busyWrite": "Una modifica è in corso di scrittura nella libreria attiva: riprova tra un istante",
         "switching": "Cambio di libreria in corso: attendine la fine",
         "migrating": "Migrazione della libreria: {phase} {done}/{total} (Esc per annullare)",
+        "migrationCancelled": "Migrazione annullata",
         "answerDropped": "La libreria sullo schermo è cambiata nel frattempo: la conferma non è stata applicata",
         "writeDropped": "La libreria sullo schermo è cambiata nel frattempo: la modifica non è stata scritta",
         "jobRunning": "Un'attività in background lavora in questa libreria",

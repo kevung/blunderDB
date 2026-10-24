@@ -3554,6 +3554,7 @@
         "busyWrite": "Se está escribiendo un cambio en la biblioteca activa: inténtelo de nuevo en un momento",
         "switching": "Cambio de biblioteca en curso: espere a que termine",
         "migrating": "Migrando la biblioteca: {phase} {done}/{total} (Esc para cancelar)",
+        "migrationCancelled": "Migración cancelada",
         "answerDropped": "La biblioteca en pantalla ha cambiado entretanto: la confirmación no se ha aplicado",
         "writeDropped": "La biblioteca en pantalla ha cambiado entretanto: el cambio no se ha escrito",
         "jobRunning": "Una tarea en segundo plano trabaja en esta biblioteca",

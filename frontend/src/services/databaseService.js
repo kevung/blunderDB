@@ -170,6 +170,7 @@ export function libraryGroupError(error, context = {}) {
         const job = busy[1] ?? '';
         return BUSY_JOB_KEYS[job] ? tMsg(BUSY_JOB_KEYS[job]) : tMsg('libraryGroups.busy', { job: job || '?' });
     }
+    if (/context canceled/.test(String(error))) return tMsg('libraryGroups.migrationCancelled');
     if (context.switching !== undefined) return tMsg('libraryGroups.switchFailed', { name: context.switching });
     return tMsg('commands.errorOpeningDb');
 }

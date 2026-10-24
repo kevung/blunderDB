@@ -259,6 +259,7 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 	a.libs.opening.Store(fresh)
 	err := fresh.OpenDatabase(path)
 	a.libs.opening.Store(nil)
+	fresh.SetMigrationProgress(nil)
 	if err != nil {
 		_ = fresh.Close()
 		return LibraryGroup{}, err
