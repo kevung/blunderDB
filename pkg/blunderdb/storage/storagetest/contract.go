@@ -179,6 +179,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Stats/DirectionalBiasesPerMatch", testStatsDirectionalBiasesPerMatch},
 		{"Stats/DirectionalBiasesScores", testStatsDirectionalBiasesScores},
 		{"Stats/PlayerContrast", testStatsPlayerContrast},
+		{"Stats/PlayerContrastUnpricedCube", testStatsPlayerContrastUnpricedCube},
 		{"Stats/TrainingAndStudy", testTrainingStatsAndStudy},
 		{"Analyses/RepairDenormalisedColumns", testRepairDenormalisedColumns},
 		{"Analyses/PlayedActionsComeFromTheMatch", testAnalysisTakesPlayedActionsFromTheMatch},

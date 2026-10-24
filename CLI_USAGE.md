@@ -1899,7 +1899,6 @@ database opens, not when the status is read.
 **Operations:** `analysis.missing` (positions without any analysis; action: `analyze`),
 `stats.matches` (matches without per-match statistics; fills them),
 `analysis.columns` (recomputes the columns derived from the analyses),
-`moves.errors` (scores the played moves that have no error yet),
 `analysis.legacy` (rewrites older analyses in the compact format, as `reencode`),
 `trash` (entries in the trash; action: `trash`),
 `vacuum` (free bytes in the SQLite file; action: `vacuum`).

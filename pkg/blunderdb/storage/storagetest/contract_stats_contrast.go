@@ -113,3 +113,93 @@ func testStatsPlayerContrast(t *testing.T, s storage.Storage) {
 		t.Errorf("same player: err = %v, want ErrInvalid", err)
 	}
 }
+
+// testStatsPlayerContrastUnpricedCube pins that a cube decision whose played
+// action prices nothing — no action recorded, or a label no importer could map
+// — leaves its player unscored there: the per-move column reads it 0, and
+// taken at its word that 0 would pair a priced no double with a perfect play
+// and invent a common position.
+func testStatsPlayerContrastUnpricedCube(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	if _, err := s.Stats().DateRange(ctx, ""); errors.Is(err, storage.ErrInternal) {
+		t.Skip("Stats not implemented on this backend")
+	}
+	if err := s.LibrarySettings().Save(ctx, "", storage.LibrarySettings{ErrorThresholdMP: 20, BlunderThresholdMP: 40}); err != nil {
+		t.Fatalf("Save settings: %v", err)
+	}
+	mkGame := func(p1, p2 string, day int) int64 {
+		m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7,
+			MatchDate: time.Date(2025, 6, day, 0, 0, 0, 0, time.UTC)}
+		matchID, err := s.Matches().Save(ctx, "", &m)
+		if err != nil {
+			t.Fatalf("Save match: %v", err)
+		}
+		gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+		if err != nil {
+			t.Fatalf("CreateGame: %v", err)
+		}
+		return gameID
+	}
+	gameAlice, gameBob := mkGame("Alice", "Carol", 1), mkGame("Dave", "Bob", 2)
+
+	// Each position: Alice keeps the cube where Double, Take is right
+	// (150 mp), Bob's cube move carries the unpriced action.
+	n := int32(0)
+	for slot, bob := range []struct {
+		action string
+		played []string
+	}{
+		{"", []string{"No Double"}},
+		{"Unknown(7)", []string{"No Double", "Unknown(7)"}},
+	} {
+		pos := statsDecisionPos(t, slot)
+		pos.DecisionType = domain.CubeAction
+		posID, err := s.Positions().Save(ctx, "", &pos)
+		if err != nil {
+			t.Fatalf("Save cube position (slot %d): %v", slot, err)
+		}
+		for _, mv := range []domain.Move{
+			{GameID: gameAlice, PositionID: posID, Player: 1, CubeAction: "No Double"},
+			{GameID: gameBob, PositionID: posID, Player: -1, CubeAction: bob.action},
+		} {
+			n++
+			mv.MoveNumber, mv.MoveType = n, "cube"
+			if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+				t.Fatalf("CreateMove (slot %d): %v", slot, err)
+			}
+		}
+		a := domain.PositionAnalysis{
+			PlayedCubeActions: bob.played,
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
+				BestCubeAction:          "Double, Take",
+				CubefulNoDoubleEquity:   0.40,
+				CubefulDoubleTakeEquity: 0.55,
+				CubefulDoublePassEquity: 1.00,
+				CubefulNoDoubleError:    -0.150,
+			},
+		}
+		if err := s.Analyses().Save(ctx, "", posID, &a); err != nil {
+			t.Fatalf("Save cube analysis (slot %d): %v", slot, err)
+		}
+	}
+
+	got, err := s.Stats().PlayerContrast(ctx, "", "Alice", "Bob", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("PlayerContrast: %v", err)
+	}
+	if got.CommonPositions != 0 || len(got.Positions) != 0 {
+		t.Errorf("CommonPositions = %d, Positions = %+v, want none: Bob's unpriced cube was scored as a perfect play",
+			got.CommonPositions, got.Positions)
+	}
+	if got.UnscoredMoves != 2 {
+		t.Errorf("UnscoredMoves = %d, want 2: Bob's two unpriced cube decisions", got.UnscoredMoves)
+	}
+	// Alice's no double stays priced: alone, it is hers, not a hole.
+	solo, err := s.Stats().PlayerContrast(ctx, "", "Alice", "Carol", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("PlayerContrast Alice/Carol: %v", err)
+	}
+	if solo.UnscoredMoves != 0 {
+		t.Errorf("Alice/Carol UnscoredMoves = %d, want 0: a no double is priced", solo.UnscoredMoves)
+	}
+}
