@@ -3,12 +3,12 @@ package database
 import (
 	"context"
 	"errors"
-	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -225,7 +225,10 @@ func TestImportFiles_SkippedDuplicateIsJournaledAndResumeSkipsIt(t *testing.T) {
 
 type failingCommitTx struct{ storage.Tx }
 
-func (failingCommitTx) Commit() error { return errors.New("commit refused") }
+func (f failingCommitTx) Commit() error {
+	_ = f.Tx.Rollback()
+	return errors.New("commit refused")
+}
 
 type failingCommitStore struct{ storage.Storage }
 
@@ -255,5 +258,45 @@ func TestImportFiles_JournalFollowsTheGroupTransaction(t *testing.T) {
 	var n int
 	if err := db.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&n); err != nil || n != 0 {
 		t.Errorf("matches after the failed commit: %d (%v)", n, err)
+	}
+}
+
+// The journal lines of a pipeline run are those of its committed groups.
+func TestImportFiles_PipelineJournalsInGroupTransaction(t *testing.T) {
+	t.Parallel()
+	files := pipelineFixture(t)
+	db := newTestDB(t)
+	id, err := db.BeginImportBatch("fixture", "mixed")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ingest.ImportFiles(context.Background(), db.store, files, ingest.PipelineOptions{ImportBatchID: id}); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(journalByPath(t, db, id)); got != len(files) {
+		t.Errorf("journal lines %d, files %d", got, len(files))
+	}
+}
+
+// A file the journal knows by digest, whose match was deleted since, is
+// journaled without a match instead of failing the group.
+func TestImportFiles_KnownFileOfDeletedMatch(t *testing.T) {
+	t.Parallel()
+	files := pipelineFixture(t)[:1]
+	db := newTestDB(t)
+	id, err := db.BeginImportBatch("fixture", "mixed")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = ingest.ImportFiles(context.Background(), db.store, files, ingest.PipelineOptions{
+		ImportBatchID: id,
+		Known:         func(string) (int64, bool) { return 987654, true },
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	e := journalByPath(t, db, id)[files[0]]
+	if e.Outcome != domain.JournalDuplicate || e.MatchID != 0 {
+		t.Errorf("journaled as %+v", e)
 	}
 }

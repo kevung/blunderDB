@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -445,6 +446,13 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 	}
 	if rf.known {
 		o.Status, o.MatchID = FileDuplicate, rf.knownID
+		// The journal can name a match deleted since: its line must not point
+		// at a row that is gone.
+		if o.MatchID != 0 {
+			if _, err := tx.Matches().Get(w.ctx, w.opts.Scope, o.MatchID); errors.Is(err, storage.ErrNotFound) {
+				o.MatchID = 0
+			}
+		}
 		return o, nil
 	}
 	if rf.position != nil {
