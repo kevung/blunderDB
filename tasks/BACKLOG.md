@@ -16,48 +16,10 @@ propre issue le jour où il est lancé.
   Piste : calculer l'empreinte dans la transaction d'import, après une dérivation de provenance
   faite dans cette même transaction (aujourd'hui `backfillAnalysisProvenance` en tourne une à part).
 
-- **Décompte des gaffes de la barre d'état (`MetadataStore.blunderCount`, ~0,17 s par appel
-  sur la même base)** : traité sur une autre branche ; à remesurer après sa fusion.
-
-- **Import/transfert sans les coups joués mais avec les matchs : colonnes calculées trop tôt.**
-  Le transfert et l'import d'une base (`ingest.MergeDBAnalysis`) écrivent les analyses avant
-  les matchs. Quand l'export ne replie pas les coups joués dans l'analyse
-  (`IncludePlayedMoves` à faux, `IncludeMatches` à vrai), les colonnes sont dérivées sans coup
-  joué : erreur nulle, blunder non compté, `is_cube_response` non levé ; les coups arrivent
-  ensuite sans les recalculer. `repair` les rattrape. Piste : re-dériver, à la fin de
-  `copyMatch`, les analyses des positions atteintes (un `Merge` identité par position), au prix
-  d'une lecture par position à chaque import de match.
-- **Bases ayant reçu un import de base avant la correction des colonnes d'analyse.** Leurs
-  analyses importées n'ont pas de colonnes dérivées (blunders non comptés, coups forcés comptés
-  comme décisions) ; `blunderdb repair` les remplit (doc : `cli.rst`, section *repair*). Rien ne
-  le fait à l'ouverture, par le contrat de `RepairDenormalisedColumns`.
-
-- **Colonnes dérivées du coup joué calculées avant l'appariement par plateau.**
-  `engine.PlayedCandidate` apparie désormais le coup joué par le plateau qu'il laisse
-  (`domain.PlayBoards`) : « 6/2 2/1 » qui frappe sur 2 n'est plus le « 6/5 5/1 » de même forme.
-  Les `best_move_error`, `BestMoveUnscored` et `move.decision_error_mp` déjà stockés ont été
-  calculés avec l'ancien appariement (forme seule) et peuvent chiffrer un autre coup. Rien ne les
-  recalcule à l'ouverture ; ils changent à la réécriture de l'analyse, ou sur demande par la
-  réparation des colonnes dénormalisées (`RepairDenormalisedColumns` : commande `repair` de la
-  CLI via `maintenance/maintenance.go:144`, `POST /v1/analyses.repair`). Un recalcul automatique
-  demanderait un pas de migration rejouant `PopulateAnalysisColumns` sur chaque analyse, comme
-  `db_migration_v2_37.go:83`, donc un bump de `DatabaseVersion` : à faire avec le prochain
-  changement de schéma.
-- **Statistiques : le filtre `--engine` par les cellules.** Il lit encore les décisions
-  (copie de la sélection) ; passer par `match_stats_cell` demande le moteur dans la clé des
-  cellules, autant de cellules en plus que de moteurs par match. Mesure de départ :
-  `tasks/mesure-bmab-0.37.md` § 7.2 ter.
-- **Embarqueurs sans blank-import de `database` (gammonGo, `pkg/blunderdb/server/embed.go`).**
-  `st.Migrate` ne passe pas par l'ouverture du wrapper `Database` : une base SQLite 2.31 dont
-  les tables de cellules ont l'ancienne forme n'y est pas reclusterisée (`reclusterDerivedTables`
-  ne tourne qu'avec `EnsureSchema`), et ses statistiques restent lentes jusqu'à une ouverture
-  par blunderDB.
-- **`countedExpr` et les libellés de videau dégénérés** (`sqlshared/stats.go`) : une décision
-  de videau est comptée comme action *active* dès que `move.cube_action` n'est ni `''`, ni
-  `No Double`, ni `NoDouble`. Une valeur `Unknown(D=…,T=…)` écrite par l'importeur XG pour un
-  code non mappé (`ingest/xgmap.go`) passerait donc pour un vrai Double/Take/Pass et entrerait
-  au dénominateur du PR. Aucune occurrence connue dans les corpus. Correctif si ça mord un
-  jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
+- **Statistiques : le filtre `--engine` par les cellules** — décidé : différé (2026-10-24). Il
+  lit encore les décisions (copie de la sélection) ; passer par `match_stats_cell` demande le
+  moteur dans la clé des cellules, autant de cellules en plus que de moteurs par match. Mesure
+  de départ : `tasks/mesure-bmab-0.37.md` § 7.2 ter.
 - **Bureau sur un tenant distant** (ADR-0100, ADR-0095). `Database.store` est typé
   `storage.Storage` et les opérations de fichier passent par `storage.LocalFile`, mais le
   wrapper suppose encore un fichier SQLite ouvert : « une base est ouverte » se lit `d.db !=
@@ -76,10 +38,11 @@ propre issue le jour où il est lancé.
   reçoit une `storage.Storage`, les lectures du premier groupe par le contrat, et les
   opérations du second refusées (comme `Vacuum`, `errVacuumNotLocal`) sur un store sans
   `LocalFile`.
-- **Écarts de parité de l'analyse, côté démon** : `/v1/analyses.save` remplace (`Save`) quand
-  `SaveAnalysis` fusionne, et `/v1/analyses.load` ne joint pas les coups joués de la table
-  `move` que `LoadAnalysis` ajoute ; la fusion du videau d'`ingest.mergeAnalysis` garde sa
-  règle propre (une entrée par moteur sans remplacer celle du même moteur).
+- **Parité de l'analyse : restes** : la fusion du videau d'`ingest.mergeAnalysis` garde sa règle
+  propre (une entrée par moteur sans remplacer celle du même moteur) ; une cible qui a déjà un
+  coup joué ne reçoit pas ceux de la source (fusion des analyses) ; un démon ancien ignore
+  `withPlayed` sans le signaler au client ; le blob d'analyse écrit `Double/Take` là où la table
+  `move` écrit `Double` (double graphie).
 - **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
   `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
   `sqlshared`.
@@ -94,28 +57,23 @@ propre issue le jour où il est lancé.
   Fenêtre de quelques microsecondes, sans verrou de fichier pour la fermer. Prendre un verrou
   exclusif SQLite (`BEGIN EXCLUSIVE` sur une connexion tenue jusqu'au rename) ou un verrou
   consultatif. Effort S-M.
-- **Journal d'import hors transaction** (`ingest.RecordOutcomes`, `ingest/journal.go`) : le
-  journal est écrit après le commit du groupe de fichiers. Un crash entre les deux laisse un
-  match écrit mais non journalisé ; à la reprise le fichier est relu et le match le couvre
-  comme doublon de lui-même. Le journal ne ment pas sur ce qui est en base, mais l'issue
-  « nouveau » est perdue. À faire : écrire les lignes dans la transaction du groupe (le
-  pipeline les produit déjà avant le commit).
-- **`move.error_mp` sans lecteur ni tenue** (`tasks/mesure-bmab-0.37.md` § 9) : seule
-  `repair --move-errors` l'écrit ; ni l'import ni l'analyse n'appellent
-  `RescorePositionMoves`, aucune requête ne la lit. Pour que `E` s'y appuie (SQL exact, sans
-  phase Go), il faut une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de
-  distinguer « pas noté » de « non notable » (NULL ambigu).
+- **`move.error_mp` sans lecteur ni tenue** (`tasks/mesure-bmab-0.37.md` § 9) : la 2.50 la
+  garde inerte (jamais écrite ni lue) ; sa suppression réelle attend la version minimale de
+  lecture ci-dessous. Si `E` devait un jour s'y appuyer (SQL exact, sans phase Go), il faudrait
+  une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de distinguer « pas noté »
+  de « non notable » (NULL ambigu).
 - **PostgreSQL, écriture par tenant** : `positions_postgres.go` enveloppe la `pgconn.PgError`
   dans `ErrConflict` (texte du pilote vers le client, sans oracle) ; `Tournaments().AddMatch`
   avec un match étranger ou absent réussit en silence (UPDATE 0 ligne) ; `Analyses.Save` en
   course avec une suppression rend un autre message (même tenant).
-- **Serveur : quota en octets sous PostgreSQL** : la mesure repose sur
-  `pg_total_relation_size` et `reltuples`, globaux à la base et non au locataire, donc un canal
-  auxiliaire faible (un locataire devine la taille des autres) ; et les 13 `COUNT` par appel
-  ont un coût. À faire : compter par locataire, avec un cache ou un compteur tenu à jour.
-- **Import XG, métadonnées sans colonne** (ADR-0067) : commentaires d'en-tête et de pied de
-  match, horloge, table d'équité (MET) ne sont pas importés ; exigent une colonne (ou
-  `match.metadata`) et, pour les commentaires, que xgparser expose `parseCommentSegment`.
+- **Serveur : quota en octets sous PostgreSQL** — décidé : différé (2026-10-24). La mesure
+  repose sur `pg_total_relation_size` et `reltuples`, globaux à la base et non au locataire, donc
+  un canal auxiliaire faible (un locataire devine la taille des autres) ; et les 13 `COUNT` par
+  appel ont un coût. À faire : compter par locataire, avec un cache ou un compteur tenu à jour.
+- **Import XG, métadonnées sans colonne** (ADR-0067) — décidé : différé (2026-10-24) : les
+  commentaires d'en-tête et de pied de match, l'horloge et la table d'équité (MET) ne sont pas
+  importés. Cible : `match.metadata`, une fois les champs exposés dans xgparser (dont
+  `parseCommentSegment` pour les commentaires).
 - **File d'étude transversale — la requête de la grammaire qui la reproduit.**
   La file (`StudyBacklog`, `sqlshared/importbatches.go`) n'a pas de jeton
   équivalent, pour trois raisons : elle compte les décisions comme Stats (`countedExpr` :
@@ -126,6 +84,7 @@ propre issue le jour où il est lancé.
   le dernier point ; l'égalité exacte demande en plus de choisir lequel des deux sens du
   coût et du décompte fait foi, puis de redéfinir la file sur la grammaire. Cette décision
   passe par Opus, avec un test d'égalité jeton ↔ `StudyBacklog` sur les deux backends.
+  Décidé : différé (2026-10-24), après le filtre `aw` (livré).
 
 - **`MatchEquityTableStore.Save` croit le `Digest` fourni** (`sqlshared/met.go`). Le
   digest est la clé de dédoublonnage et le nom de la table pour `analysis.met_id` ; il est
@@ -137,20 +96,21 @@ propre issue le jour où il est lancé.
   ~15 fixtures des contrats (`storagetest/contract_schema_2_31.go`, `contract_met_*.go`)
   passent des sources factices (`<met/>`, digest `"aaa"`) à réécrire en tables gnubg
   valides, sur les deux backends. Effort S-M, test de contrat « digest incohérent refusé ».
-- **Export `.apkg` : mémoire et allers-retours** (`pkg/blunderdb/apkg`). Les SVG de tous les
-  plateaux sont gardés en mémoire jusqu'à l'écriture du zip, et le daemon tamponne le paquet
-  entier avant de répondre ; écrire chaque média dans le zip au fil des positions (et la
-  collection en flux) bornerait la mémoire d'un gros paquet. Les analyses se chargent une par
-  position (`Analyses().Load`) : N allers-retours sous PostgreSQL, à remplacer par un
-  chargement par lot sur le contrat de stockage.
+- **Export `.apkg` : le démon garde tout en mémoire** (`pkg/blunderdb/apkg`). Les analyses se
+  chargent par lot et les plateaux s'écrivent au fil du zip, mais le démon tamponne encore le
+  paquet entier avant de répondre et la collection n'est pas écrite en flux : la mémoire d'un
+  gros paquet n'est pas bornée.
 
-- **Migration d'une base ouverte dans un nouveau groupe de bibliothèque : ni progression ni
-  annulation.** `OpenLibraryGroup` (`internal/gui/libraries.go`) ouvre le fichier sur un
-  `*Database` neuf : la migration qu'il déclenche ne passe pas par la poignée liée, donc
-  `CancelImport` ne l'atteint pas, et aucun rappel de progression n'est câblé (la poignée liée
-  n'en a pas non plus : `SetMigrationProgress` n'est appelé par aucun mode). Piste : une méthode
-  `App` qui annule l'ouverture en cours d'un groupe, et un émetteur Wails partagé par les deux
-  poignées.
+- **Ouverture d'une base : progression et annulation à compléter.** L'ouverture dans un nouveau
+  groupe de bibliothèque les a, mais CTRL-O (ouverture) n'a ni progression ni annulation. Une
+  annulation faite avant `beginCancellableImport` (`database/db.go`, vers la ligne 651) est
+  perdue. Le commentaire de `Migrator` (`storage/sqlite/migrate_hook.go`, lignes 21-22) dit que
+  `Migrate` laisse une base non fraîche intacte sans migrateur enregistré : faux depuis qu'il
+  reclusterise les tables de cellules (et la ligne 17 parle d'une barre de progression de la GUI
+  que le front n'affiche pas).
+- **Version minimale de lecture** : refuser d'ouvrir une base plus récente que le binaire.
+  Préalable à la suppression réelle de `move.error_mp`. Aujourd'hui une 0.46.1 qui écrit sur une
+  base 2.50 n'est pas re-dérivée (ses analyses écrites n'ont pas les colonnes de la 2.50).
 - **La signature d'un commentaire ne passe ni par l'export JSON ni par le backend `remote`**
   (ADR-0099). `ingest/json.go` n'écrit que texte et auteur ; `remote` n'envoie pas
   `storage.CommentSignatureFromContext` à `comments.add`, que le démon ne lit pas non plus.
@@ -191,27 +151,29 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
 
 ## Ouvert — Frontend
 
-- **Extraire la fiche de `MatchPanel` dans un composant `MatchSheet`**, avant que deux panneaux
-  puissent coexister : le panneau Tournois héberge un `MatchPanel` (`embeddedMatchId`) et chaque
-  effet global y est coupé par un garde `embedded` (liste, tri partagé, clavier, ids DOM `match-tab-*`
-  en double). Ces gardes sont fragiles : un effet ajouté sans garde touche l'état du vrai panneau.
 - **`openPanels` dérivé d'`activeTabStore`** : deux sources de vérité pour le panneau visible
   (`openPanels` est un `writable` séparé dans `stores/uiStore.js`, tenu par
   `services/tabHandler.js`) ; un état incohérent est atteignable (onglet surligné, panneau
   vide). Dériver `openPanels` d'`activeTabStore` et supprimer `tabHandler.js`.
-- **`MatchPanel.svelte` (1 772 lignes)** : en extraire le volet de détail d'un match.
-- **Rollout GUI** : un job instantané peut perdre son bandeau de fin
-  (`startRolloutOfCurrent`, `services/rolloutService.js`, remet `outcome: null` après le
-  démarrage).
+- **`MatchPanel.svelte` (1 772 lignes) : extraire la fiche dans un composant `MatchSheet`**,
+  avant que deux panneaux puissent coexister. Le panneau Tournois héberge un `MatchPanel`
+  (`embeddedMatchId`) et chaque effet global y est coupé par un garde `embedded` (liste, tri
+  partagé, clavier, ids DOM `match-tab-*` en double) ; un effet ajouté sans garde touche l'état
+  du vrai panneau. L'extraction du volet de détail règle les deux.
+- **Rollout GUI : bandeau de fin perdu** si le démarrage suivant est refusé (le job instantané
+  est réglé).
+- **Migration : phases invisibles dans le front.** Seul `blunderdb migrate` émet les phases
+  (environ 22 min sur la base BMAB) ; la GUI n'en affiche aucune.
 - **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections,
   leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la
   GUI n'offre pas ce choix.
 
-- **Restes de GB-C14 (libellés, vocabulaire, gestes)** : pas de bouton « Élargir » ;
-  libellés de groupes de la barre d'outils non faits ; en-tête de panneau non factorisé dans
-  `PanelTable` ; noms de touches en prose non vérifiés dans les huit langues (« SHIFT-Enter »
-  en fi, ja, ru dans l'aide engendrée) ; j/k ne déplacent pas le surlignage du panneau
-  Tournois ; vérifier qu'un « Too good to double » importé n'est plus lu comme *no double*.
+- **Restes de GB-C14 (libellés, vocabulaire, gestes)** : libellés de groupes de la barre
+  d'outils non faits ; en-tête de panneau non factorisé dans `PanelTable` ; noms de touches en
+  prose non vérifiés dans les langues (« SHIFT-Enter » dans les `.po` ru, ja, el et en) ; j/k ne
+  déplacent pas le surlignage du panneau Tournois ; vérifier qu'un « Too good to double » importé
+  n'est plus lu comme *no double*. Le bouton « Élargir » est abandonné (décision du
+  2026-10-24).
 
 ## Ouvert — Tests / CI
 
@@ -276,6 +238,21 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   abordable un regroupement par distance `like` ; le plan d'étude groupe encore par thème seul.
 
 ## Historique — items faits
+
+- **2026-10-24 — lot de la 2.50** (fusionné sur `main`) : filtre de recherche `aw`, les points
+  qu'il reste à marquer à chacun des deux joueurs (#801) ; parité des analyses du démon avec le
+  wrapper, `analyses.save` fusionne, `analyses.merge` et `withPlayed` existent (#803, #804) ;
+  `Migrate` sans migrateur enregistré reclusterise les tables de cellules, ce qui règle les
+  embarqueurs sans blank-import de `database` (#805) ; un job de rollout fini avant le retour de
+  `startJob` garde son bandeau de fin, et undici 8.12.3 (#806) ; une décision de videau compte
+  par son sens et non par ses graphies, `countedExpr` (#807) ; export `.apkg` : analyses par
+  lot et plateaux dessinés au fil du zip (#808) ; le journal d'import s'écrit dans la
+  transaction du groupe (#811) ; `DatabaseVersion` 2.50 : les colonnes d'analyse et de coup
+  sont dérivées à nouveau, ce qui couvre les imports de base et de matchs sans coups joués et
+  l'appariement du coup joué par plateau ; `move.error_mp` reste inerte, `ScoreMoves` est retiré
+  (#812) ; progression et annulation de la migration à l'ouverture dans un nouveau groupe de
+  bibliothèque (#813) ; retrait de la base de démo intégrée et des visites guidées (#814).
+  Retirés comme caducs : le décompte des gaffes de la barre d'état.
 
 - **2026-10-05 — relevé avant 0.37.0, items trouvés faits dans le code** : la valuation du
   videau par lot (sans objet depuis la forme close de `levelSolve`, gammonNet v1.4.0,
