@@ -461,7 +461,6 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 		SkipDuplicates: job.skipDuplicates,
 		OnRead:         meter.Read,
 		OnCommit: func(group []ingest.FileOutcome) {
-			ingest.RecordOutcomes(context.Background(), batches, scope, batchID, group)
 			for _, o := range group {
 				meter.File(o)
 				counts.AnalysesDropped += o.DroppedAnalyses

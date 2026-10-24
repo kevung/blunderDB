@@ -92,7 +92,8 @@ type PipelineOptions struct {
 	// SkipDuplicates skips an exact duplicate outright instead of offering
 	// its deeper analyses to the stored positions (MatchGraph.SkipDuplicates).
 	SkipDuplicates bool
-	// ImportBatchID stamps every written match.
+	// ImportBatchID stamps every written match and, when not 0, receives the
+	// journal line of every file, written in the transaction of its group.
 	ImportBatchID int64
 	// Lock, when set, is taken around each transaction and returns its
 	// unlock. The writer takes it for a group only once every file of the
@@ -493,7 +494,12 @@ func (w *pipelineWriter) flush() error {
 	if w.tx == nil {
 		return nil
 	}
-	err := w.tx.Commit()
+	err := w.journal(w.tx)
+	if err == nil {
+		err = w.tx.Commit()
+	} else {
+		_ = w.tx.Rollback()
+	}
 	w.tx = nil
 	if err != nil {
 		w.release()
@@ -503,6 +509,15 @@ func (w *pipelineWriter) flush() error {
 	w.commitStaged()
 	w.release()
 	return nil
+}
+
+// journal writes the staged outcomes to the batch's journal inside tx, so a
+// file is journalled if and only if what it gave is committed.
+func (w *pipelineWriter) journal(tx storage.Tx) error {
+	if w.opts.ImportBatchID == 0 || len(w.staged) == 0 {
+		return nil
+	}
+	return RecordOutcomes(w.ctx, tx.ImportBatches(), w.opts.Scope, w.opts.ImportBatchID, w.staged)
 }
 
 // commitStaged publishes the staged outcomes once their transaction holds.
@@ -547,15 +562,16 @@ func (w *pipelineWriter) replay(files []*readFile) error {
 			w.abort()
 			o = rf.outcome()
 			o.Status, o.Error = FileFailed, err.Error()
-			// A file refused at write time is decided: record it outside any
-			// transaction, as a group of one with nothing to commit.
-			if w.opts.Lock != nil {
-				w.unlock = w.opts.Lock()
-			}
+			// A file refused at write time is decided: its journal line is a
+			// group of one, with nothing else to commit.
 			w.staged = []FileOutcome{o}
+			if err := w.begin(); err != nil {
+				return err
+			}
 			w.groupSeen = map[[sha256.Size]byte]FileOutcome{rf.digest: o}
-			w.commitStaged()
-			w.release()
+			if err := w.flush(); err != nil {
+				return err
+			}
 			continue
 		}
 		w.staged = append(w.staged, o)

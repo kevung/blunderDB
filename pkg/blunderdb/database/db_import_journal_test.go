@@ -1,7 +1,9 @@
 package database
 
 import (
+	"context"
 	"errors"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -219,4 +221,39 @@ func TestImportFiles_SkippedDuplicateIsJournaledAndResumeSkipsIt(t *testing.T) {
 		}
 	}
 	db.SetSkipDuplicates(false)
+}
+
+type failingCommitTx struct{ storage.Tx }
+
+func (failingCommitTx) Commit() error { return errors.New("commit refused") }
+
+type failingCommitStore struct{ storage.Storage }
+
+func (s failingCommitStore) BeginTx(ctx context.Context) (storage.Tx, error) {
+	tx, err := s.Storage.BeginTx(ctx)
+	return failingCommitTx{tx}, err
+}
+
+// The journal lines belong to the group's transaction: when the commit fails,
+// the matches and the lines vanish together.
+func TestImportFiles_JournalFollowsTheGroupTransaction(t *testing.T) {
+	t.Parallel()
+	files := pipelineFixture(t)
+	db := newTestDB(t)
+	id, err := db.BeginImportBatch("fixture", "mixed")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = ingest.ImportFiles(context.Background(), failingCommitStore{db.store}, files,
+		ingest.PipelineOptions{ImportBatchID: id})
+	if err == nil {
+		t.Fatal("the refused commit should fail the import")
+	}
+	if j := journalByPath(t, db, id); len(j) != 0 {
+		t.Errorf("%d journal lines survive an uncommitted group", len(j))
+	}
+	var n int
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&n); err != nil || n != 0 {
+		t.Errorf("matches after the failed commit: %d (%v)", n, err)
+	}
 }
