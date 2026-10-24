@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -51,13 +53,41 @@ const positionErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.
 //     NULL error and is left out, as XG leaves out a play it never analysed.
 //   - Cube: every double offered, take and pass (the move's own cube action,
 //     not the analysis's: a deduplicated position may have been doubled in
-//     one match and not in another), and a no-double flagged close
-//     (mv.is_close_cube, engine.ComputeIsCloseCube against the move's action).
+//     one match and not in another, see activeCubeActionCodes), and a
+//     no-double flagged close (mv.is_close_cube, engine.ComputeIsCloseCube
+//     against the move's action).
 //
 // A function of the dialect because the two flags are INTEGER 0/1 on SQLite,
 // BOOLEAN on PostgreSQL.
 func countedExpr(d Dialect) string {
-	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + " AND mv.decision_error_mp IS NOT NULL) OR (p.decision_type = 1 AND (" + ActionNotInSQL("mv.cube_action", "", "No Double", "NoDouble") + " OR mv.is_close_cube = 1)))"
+	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + " AND mv.decision_error_mp IS NOT NULL) OR (p.decision_type = 1 AND (mv.cube_action IN (" + activeCubeActionCodes + ") OR mv.is_close_cube = 1)))"
+}
+
+// activeCubeActionCodes lists the codes of the fixed labels that name a
+// double, a take or a pass (engine.CanonicalCubeAction) — a beaver accepts the
+// cube, so it counts as a take. The test is on meaning, not on the spellings of
+// a no-double: a label that is none of these, a degenerate one an importer
+// writes for a code it cannot map ("Unknown(D=…,T=…)") among them, would
+// otherwise pass for a real cube action and enter the PR denominator. A
+// registered label (outside the fixed list) carries no meaning SQL can read
+// and is left out the same way: the only labels an importer writes outside
+// the fixed list are these degenerate ones.
+var activeCubeActionCodes = func() string {
+	var codes []string
+	for code, label := range domain.ActionLabels() {
+		if isActiveCubeLabel(label) {
+			codes = append(codes, strconv.Itoa(code))
+		}
+	}
+	return strings.Join(codes, ", ")
+}()
+
+func isActiveCubeLabel(label string) bool {
+	switch engine.CanonicalCubeAction(label) {
+	case engine.CubeDouble, engine.CubeTake, engine.CubePass:
+		return true
+	}
+	return strings.Contains(strings.ToLower(label), "beaver")
 }
 
 // UnscoredPlaySQL is true for a checker move whose position's analysis cannot
