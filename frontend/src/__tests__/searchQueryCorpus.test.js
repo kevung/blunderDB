@@ -87,6 +87,7 @@ const SHORT_TO_LONG = {
     tnf: 'tournamentNameFilter',
     rdf: 'roundFilter',
     mlf: 'matchLengthFilter',
+    awf: 'awayFilter',
     mdf: 'matchDateFilter',
     prf: 'playerPRFilter',
     dtf: 'decisionTimeFilter',

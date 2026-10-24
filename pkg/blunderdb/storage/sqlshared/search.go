@@ -193,6 +193,19 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	// stay in SQL even in mirror search (and in SQL for cost: a presence filter
 	// is often the only thing narrowing the scan).
 	s.appendClosedListClauses(scope, f, &where, &args)
+	// The away bound is the same for both players, so the mirror of a
+	// position meets it exactly when the position does: SQL even in mirror
+	// search. AwayStoredRange has already folded the Crawford sentinels and
+	// shut money play out, so the stored columns are compared as they are.
+	if f.AwayFilter != "" {
+		lo, hi, hasHi, none := domain.AwayStoredRange(f.AwayFilter)
+		if none {
+			where.WriteString(" AND 0=1")
+		} else {
+			searchfilter.AppendIntRangeSQL("p.score_1", lo, hi, true, hasHi, &where, &args)
+			searchfilter.AppendIntRangeSQL("p.score_2", lo, hi, true, hasHi, &where, &args)
+		}
+	}
 	if err := s.appendCommentAuthorClause(ctx, scope, f, &where, &args); err != nil {
 		return searchWhereClause{}, err
 	}

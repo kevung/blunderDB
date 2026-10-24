@@ -3209,6 +3209,7 @@ export namespace domain {
 	    tournamentNameFilter: string;
 	    roundFilter: string;
 	    matchLengthFilter: string;
+	    awayFilter: string;
 	    matchDateFilter: string;
 	    playerPRFilter: string;
 	    analysisProvenanceFilter: string;
@@ -3278,6 +3279,7 @@ export namespace domain {
 	        this.tournamentNameFilter = source["tournamentNameFilter"];
 	        this.roundFilter = source["roundFilter"];
 	        this.matchLengthFilter = source["matchLengthFilter"];
+	        this.awayFilter = source["awayFilter"];
 	        this.matchDateFilter = source["matchDateFilter"];
 	        this.playerPRFilter = source["playerPRFilter"];
 	        this.analysisProvenanceFilter = source["analysisProvenanceFilter"];

@@ -4701,6 +4701,8 @@ Search for positions in the database using filters.
 Options:
   -analysis string
     	Engines and depths of the stored verdict, comma-separated: xg, gnubg, bgblitz, hedgehog, gammonnet, 3ply, 3ply+, book, rollout (ad:)
+  -away string
+    	Points EACH player still needs, whatever the match length: '4', '2,5' (2 to 5), '>3', '<5'; Crawford and post-Crawford both count 1, money never matches (aw)
   -comment-author string
     	Only positions carrying a comment signed by this author (whole name, any case)
   -comment-origin string

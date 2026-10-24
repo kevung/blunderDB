@@ -57,6 +57,7 @@ type searchFlags struct {
 	tournamentName    *string
 	round             *string
 	matchLengths      *string
+	away              *string
 	matchDate         *string
 	playerPR          *string
 	analysis          *string
@@ -111,6 +112,7 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		tournamentName:    fs.String("tournament-name", "", "Only matches of tournaments with this name (case-insensitive, '*' as a wildcard; tn\"…\")"),
 		round:             fs.String("round", "", "Only matches of these rounds, comma-separated ('*' as a wildcard; rd:)"),
 		matchLengths:      fs.String("match-lengths", "", "Length of the match the position was met in: '7', '5,9' (5 to 9), '>5', '<9' (ml)"),
+		away:              fs.String("away", "", "Points EACH player still needs, whatever the match length: '4', '2,5' (2 to 5), '>3', '<5'; Crawford and post-Crawford both count 1, money never matches (aw)"),
 		matchDate:         fs.String("match-date", "", "Date of the match: '2024', '2024-01..2024-12', '>2024-06', '<2024-06' (md; not the analysis date)"),
 		playerPR:          fs.String("pr", "", "PR of the whole match for the player who took the decision: '>8', '<5', '4,9' (pr)"),
 		analysis:          fs.String("analysis", "", "Engines and depths of the stored verdict, comma-separated: xg, gnubg, bgblitz, hedgehog, gammonnet, 3ply, 3ply+, book, rollout (ad:)"),
@@ -358,6 +360,7 @@ func (f *searchFlags) toFilters() (SearchFilters, error) {
 		TournamentNameFilter:     corpus.TournamentNameFilter,
 		RoundFilter:              corpus.RoundFilter,
 		MatchLengthFilter:        corpus.MatchLengthFilter,
+		AwayFilter:               corpus.AwayFilter,
 		MatchDateFilter:          corpus.MatchDateFilter,
 		PlayerPRFilter:           corpus.PlayerPRFilter,
 		AnalysisProvenanceFilter: corpus.AnalysisProvenanceFilter,
@@ -404,6 +407,7 @@ func (f *searchFlags) corpusFilters() (SearchFilters, error) {
 	out.TournamentNameFilter = quotedToken("tn", *f.tournamentName)
 	out.RoundFilter = joinList(*f.round)
 	out.MatchLengthFilter = comparisonToken("ml", *f.matchLengths, ":")
+	out.AwayFilter = comparisonToken("aw", *f.away, ":")
 	out.MatchDateFilter = comparisonToken("md", *f.matchDate, ":")
 	out.PlayerPRFilter = comparisonToken("pr", *f.playerPR, "")
 	analysis, err := normaliseClosedList(*f.analysis, "--analysis", provenanceValue.MatchString)

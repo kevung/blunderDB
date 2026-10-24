@@ -229,6 +229,9 @@ export function parseSearchTokens(filtersOrCommand, command) {
     // (round, repeatable) and `ad:xg` (engine/depth, repeatable, lower-cased).
     const dateBound = '\\d{4}(?:[-/]\\d{2}(?:[-/]\\d{2})?)?';
     const matchLengthFilter = filters.find((f) => typeof f === 'string' && /^ml(?::\d+(?:,\d+)?|[<>]\d+)$/.test(f)) || '';
+    // `aw:4`, `aw:2,5`, `aw<5`, `aw>3` : les points qu'il reste à marquer à
+    // chacun des deux joueurs, dans la grammaire de `ml`.
+    const awayFilter = filters.find((f) => typeof f === 'string' && /^aw(?::\d+(?:,\d+)?|[<>]\d+)$/.test(f)) || '';
     const matchDateRe = new RegExp(`^md(?::${dateBound}(?:\\.\\.${dateBound})?|[<>]${dateBound})$`);
     const matchDateFilter = filters.find((f) => typeof f === 'string' && matchDateRe.test(f)) || '';
     const decisionTimeFilter = filters.find((f) => typeof f === 'string' && /^tm(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)?)$/.test(f)) || '';
@@ -383,6 +386,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         tournamentNameFilter,
         roundFilter,
         matchLengthFilter,
+        awayFilter,
         matchDateFilter,
         playerPRFilter,
         decisionTimeFilter,
@@ -505,6 +509,7 @@ export function parseSearchCommand(command) {
         tnf: p.tournamentNameFilter,
         rdf: p.roundFilter,
         mlf: p.matchLengthFilter,
+        awf: p.awayFilter,
         mdf: p.matchDateFilter,
         prf: p.playerPRFilter,
         dtf: p.decisionTimeFilter,
@@ -592,6 +597,7 @@ export function replaySearchArgs(command) {
         tournamentNameFilter: f.tnf,
         roundFilter: f.rdf,
         matchLengthFilter: f.mlf,
+        awayFilter: f.awf,
         matchDateFilter: f.mdf,
         playerPRFilter: f.prf,
         decisionTimeFilter: f.dtf,
@@ -720,6 +726,7 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         tournamentNameFilter: pf.tournamentNameFilter || '',
         roundFilter: pf.roundFilter || '',
         matchLengthFilter: pf.matchLengthFilter || '',
+        awayFilter: pf.awayFilter || '',
         matchDateFilter: pf.matchDateFilter || '',
         playerPRFilter: pf.playerPRFilter || '',
         decisionTimeFilter: pf.decisionTimeFilter || '',

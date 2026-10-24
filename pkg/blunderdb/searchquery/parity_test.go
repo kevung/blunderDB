@@ -175,6 +175,9 @@ func randomFilters(rng *rand.Rand) domain.SearchFilters {
 		f.MatchLengthFilter = pick(rng, "ml:7", "ml:5,9", "ml>5", "ml<9")
 	}
 	if maybe() {
+		f.AwayFilter = pick(rng, "aw:4", "aw:2,5", "aw>3", "aw<5", "aw:1")
+	}
+	if maybe() {
 		f.MatchDateFilter = pick(rng, "md:2024-01..2024-12", "md:2024", "md>2024-06", "md<2024/06/30")
 	}
 	if maybe() {
