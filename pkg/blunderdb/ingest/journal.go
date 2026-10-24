@@ -2,7 +2,6 @@ package ingest
 
 import (
 	"context"
-	"log/slog"
 	"os"
 	"time"
 
@@ -39,20 +38,18 @@ func JournalEntry(o FileOutcome) domain.ImportFileEntry {
 	return e
 }
 
-// RecordOutcomes appends a committed group to the batch's journal. A journal
-// that cannot be written costs only the ability to resume: it is logged, never
-// an import failure. batchID 0 (no batch) records nothing.
-func RecordOutcomes(ctx context.Context, batches storage.ImportBatchStore, scope string, batchID int64, group []FileOutcome) {
+// RecordOutcomes appends a group to the batch's journal. The pipeline calls it
+// with the store of the group's own transaction, so a line exists exactly when
+// the group's writes do. batchID 0 (no batch) records nothing.
+func RecordOutcomes(ctx context.Context, batches storage.ImportBatchStore, scope string, batchID int64, group []FileOutcome) error {
 	if batchID == 0 || len(group) == 0 {
-		return
+		return nil
 	}
 	entries := make([]domain.ImportFileEntry, len(group))
 	for i, o := range group {
 		entries[i] = JournalEntry(o)
 	}
-	if err := batches.RecordFiles(ctx, scope, batchID, entries); err != nil {
-		slog.Warn("import journal: recording files failed", "batch", batchID, "err", err)
-	}
+	return batches.RecordFiles(ctx, scope, batchID, entries)
 }
 
 // Journal is a batch's journal loaded to decide what a resumed run skips.

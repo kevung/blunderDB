@@ -56,7 +56,6 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 	var store ingest.TxBeginner = d.store
 	batchID, sqlDB := d.importBatchID, d.db
 	journal := d.importJournal
-	batches := d.store.ImportBatches()
 	positions := d.store.Positions()
 	d.mu.RUnlock()
 
@@ -117,7 +116,6 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 			return d.mu.Unlock
 		},
 		OnCommit: func(group []ingest.FileOutcome) {
-			ingest.RecordOutcomes(context.Background(), batches, "", batchID, group)
 			for _, o := range group {
 				if o.Status == ingest.FileFailed {
 					// The journal is where the full list of refused files
