@@ -35,6 +35,7 @@ type Database struct {
 	searchSeq         int                                 // key of the next entry of searchCancels
 	gate              *jobGate                            // the library's job slot, shared with borrowed handles; guarded by cancelMu
 	borrowed          bool                                // lent by Borrow: Close lets the library go without closing it
+	watchWrites       bool                                // the pool is opened watched (WatchWrittenElsewhere); guarded by mu
 	exchanging        bool                                // an Exchange is moving the library; guarded by cancelMu
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	// convertBatchSize overrides convertBatch, so that a test library of a
@@ -485,7 +486,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	// after sql.Open configures only the one connection it lands on; with a
 	// pool the others ran with foreign_keys=OFF and DeleteMatch skipped ON
 	// DELETE CASCADE, leaving orphans.
-	d.db, err = sqlite.OpenDB(path)
+	d.db, err = d.openPool(path)
 	if err != nil {
 		return err
 	}
@@ -566,7 +567,7 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	// after sql.Open configures only the one connection it lands on; with a
 	// pool the others ran with foreign_keys=OFF and DeleteMatch skipped ON
 	// DELETE CASCADE, leaving orphans.
-	d.db, err = sqlite.OpenDB(path)
+	d.db, err = d.openPool(path)
 	if err != nil {
 		return err
 	}

@@ -17,12 +17,12 @@ func openPair(t *testing.T) (gui, cli *Storage) {
 	t.Helper()
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "lib.db")
-	gui, err := Open(ctx, path, nil)
+	gui, err := open(ctx, path, nil, true)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = gui.Close() })
-	cli, err = Open(ctx, path, nil)
+	cli, err = open(ctx, path, nil, true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -173,18 +173,18 @@ func TestWrittenElsewhere_InterleavedWritesLoseNothing(t *testing.T) {
 func TestWrittenElsewhere_MarkTakenAtOpen(t *testing.T) {
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "lib.db")
-	first, err := Open(ctx, path, nil)
+	first, err := open(ctx, path, nil, true)
 	if err != nil {
 		t.Fatal(err)
 	}
 	_ = first.Close()
 
-	gui, err := Open(ctx, path, nil)
+	gui, err := open(ctx, path, nil, true)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer gui.Close()
-	cli, err := Open(ctx, path, nil)
+	cli, err := open(ctx, path, nil, true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -253,7 +253,7 @@ func TestWrittenElsewhere_ClosedAndMemory(t *testing.T) {
 	if elsewhere(t, gui) {
 		t.Fatal("a closed handle reports nothing")
 	}
-	mem, err := Open(context.Background(), ":memory:", nil)
+	mem, err := open(context.Background(), ":memory:", nil, true)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -261,5 +261,38 @@ func TestWrittenElsewhere_ClosedAndMemory(t *testing.T) {
 	writeMeta(t, mem.sqlDB)
 	if first, second := elsewhere(t, mem), elsewhere(t, mem); first || second {
 		t.Fatal("an in-memory database has no other writer")
+	}
+}
+
+// A connection held across commits (a bulk import) keeps its commit
+// unsettled: an outside write made after its last commit is reported all the
+// same, and the mark is left for the settling.
+func TestWrittenElsewhere_HeldConnectionDelaysNothing(t *testing.T) {
+	gui, cli := openPair(t)
+	ctx := context.Background()
+
+	conn, err := gui.sqlDB.Conn(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := conn.ExecContext(ctx, `INSERT OR REPLACE INTO metadata (key, value) VALUES ('held', 'x')`); err != nil {
+		t.Fatal(err)
+	}
+	writeMeta(t, cli.sqlDB)
+	if !elsewhere(t, gui) {
+		t.Fatal("an outside write after the held connection's commit was not reported")
+	}
+	if err := conn.Close(); err != nil {
+		t.Fatal(err)
+	}
+	// The outside write came between the commit and the settling: they
+	// cannot be told apart, and may be reported once more.
+	_ = elsewhere(t, gui)
+	if elsewhere(t, gui) {
+		t.Fatal("nothing written since: nothing reported")
+	}
+	writeMeta(t, cli.sqlDB)
+	if !elsewhere(t, gui) {
+		t.Fatal("an outside write after the settling was not reported")
 	}
 }

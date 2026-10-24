@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -162,7 +163,12 @@ func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (b
 // caller holds. The schema is the one the closed handle had, so there is no
 // chain to run.
 func (d *Database) reopenAfterSwap(path string) error {
-	db, err := sqlite.OpenDB(path)
+	open := func(path string) (*sql.DB, error) { return sql.Open("sqlite", sqlite.DSN(path)) }
+	if d.watchWrites {
+		// The closed pool's watch may hold a change not reported yet.
+		open = sqlite.ReopenDB
+	}
+	db, err := open(path)
 	if err != nil {
 		return err
 	}

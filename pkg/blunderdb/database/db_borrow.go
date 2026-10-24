@@ -41,6 +41,7 @@ func Borrow(d *Database) (*Database, error) {
 		storeEpoch:    d.storeEpoch,
 		gate:          gate,
 		borrowed:      true,
+		watchWrites:   d.watchWrites,
 	}
 	b.openPath.Store(d.openPath.Load())
 	b.skipDuplicates.Store(d.skipDuplicates.Load())

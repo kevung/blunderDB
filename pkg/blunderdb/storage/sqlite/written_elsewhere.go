@@ -28,23 +28,48 @@ var _ storage.WriteWatcher = (*Storage)(nil)
 //   - In the commit hook the committing connection holds the write lock: no
 //     one else can commit until it lets go. The watch is read there; a move
 //     since the mark is a commit not accounted for, and is reported.
-//   - Once the connection is handed back to the pool, the watch is read
-//     again, then the committing connection's own data_version. If that one
-//     has not moved since the connection left the pool, no other connection
-//     committed meanwhile, so the watch's move is exactly the pool's commit:
-//     the mark follows it. Otherwise the mark stays and the next call reports
-//     a change.
+//   - The committing connection's own data_version is its reference, read
+//     before its first write since it left the pool (reads pay nothing).
+//     Once the connection is handed back to the pool, the watch is read
+//     again, then that own data_version. If it has not moved since the
+//     reference, no other connection committed meanwhile, so the watch's
+//     move is exactly the pool's commit: the mark follows it. Otherwise, or
+//     when the reference could not be read, the mark stays and the next call
+//     reports a change.
+//   - While a commit of the pool is not settled (a connection held across
+//     commits, as a bulk import does), a call compares the watch with the
+//     mark without moving it: a move is reported, the pool's own commits
+//     among it, until the connection comes back.
 //
 // Nothing is ever missed; what cannot be told apart is reported: commits of
-// two connections of the pool at once, a checkpoint or an ANALYZE of another
-// process, a VACUUM. One read too many, never one write missed.
+// two connections of the pool at once, a call made while a commit of the
+// pool is not settled, a checkpoint or an ANALYZE of another process, a
+// VACUUM. One read too many, never one write missed.
 
 // OpenDB opens the database at path (shaped by DSN) as a pool that can tell
 // another process's writes from its own: see WrittenElsewhere. The watch
 // takes its mark at once, so that a write made before the first call is not
 // lost; failing that, the first call reports a change. An in-memory database
 // has no other writer and is opened plainly.
+//
+// The watch costs every write of the pool a few PRAGMA reads; only a pool
+// whose owner asks WrittenElsewhere should be opened this way.
+//
+// database/sql's Conn.Raw hands the pool's wrapper, not the driver's
+// connection: the driver's own interfaces (Backup, Serialize, FileControl…)
+// are reached through its Unwrap.
 func OpenDB(path string) (*sql.DB, error) {
+	return openWatched(path, true)
+}
+
+// ReopenDB is OpenDB for a file whose previous pool was just closed: the
+// watch takes no mark, so the first WrittenElsewhere reports a change and
+// whatever the closed pool's watch had not reported yet is not lost.
+func ReopenDB(path string) (*sql.DB, error) {
+	return openWatched(path, false)
+}
+
+func openWatched(path string, mark bool) (*sql.DB, error) {
 	if path == ":memory:" {
 		return sql.Open("sqlite", DSN(path))
 	}
@@ -52,14 +77,16 @@ func OpenDB(path string) (*sql.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: open %q: %w", path, err)
 	}
-	watchBase, err := sqlitedriver.NewConnector(dsn(path, false))
+	watchBase, err := sqlitedriver.NewConnector(watchDSN(path))
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: open %q: %w", path, err)
 	}
 	w := &writeWatch{base: base, watchBase: watchBase}
-	w.mu.Lock()
-	w.markLocked(context.Background())
-	w.mu.Unlock()
+	if mark {
+		w.mu.Lock()
+		w.markLocked(context.Background())
+		w.mu.Unlock()
+	}
 	return sql.OpenDB(w), nil
 }
 
@@ -115,7 +142,6 @@ func (w *writeWatch) Connect(ctx context.Context) (driver.Conn, error) {
 	if hr, ok := inner.(sqlitedriver.HookRegisterer); ok {
 		hr.RegisterCommitHook(c.committing)
 	}
-	c.look(ctx)
 	return c, nil
 }
 
@@ -220,16 +246,17 @@ func (w *writeWatch) changed(ctx context.Context) (bool, error) {
 	if w.closed {
 		return false, nil
 	}
-	if w.inFlight > 0 {
-		// A commit of the pool is not settled yet: its end will move the
-		// mark, or leave it for the next call to report.
-		report := w.pending
-		w.pending = false
-		return report, nil
-	}
 	v, err := w.readLocked(ctx)
 	if err != nil {
 		return false, err
+	}
+	if w.inFlight > 0 {
+		// A commit of the pool is not settled yet: only its settling may
+		// move the mark over it. A move is reported meanwhile, the pool's
+		// own commit perhaps among it.
+		report := w.pending || !w.known || v != w.mark
+		w.pending = false
+		return report, nil
 	}
 	report := w.pending || !w.known || v != w.mark
 	w.pending, w.mark, w.known = false, v, true
@@ -253,8 +280,9 @@ type watchedConn struct {
 	watch *writeWatch
 	stmt  driver.Stmt // PRAGMA data_version on inner
 
-	// own is the connection's data_version when it left the pool; ownKnown
-	// is false when it could not be read. hooked says it committed since.
+	// own is the connection's data_version before its first write since it
+	// left the pool (see reference); ownKnown is false until it is read.
+	// hooked says it committed since.
 	// All three are touched only by the goroutine database/sql gives the
 	// connection to, the commit hook included.
 	own      int64
@@ -283,6 +311,16 @@ func (c *watchedConn) committing() int32 {
 func (c *watchedConn) look(ctx context.Context) {
 	v, err := readDataVersion(ctx, c.stmt)
 	c.own, c.ownKnown = v, err == nil
+}
+
+// reference takes the connection's own data_version before what may write,
+// once per checkout: settle compares against it. A write that slips past it
+// (a prepared statement run outside a transaction) commits without one, and
+// settle then leaves the mark for the next call to report.
+func (c *watchedConn) reference(ctx context.Context) {
+	if !c.ownKnown {
+		c.look(ctx)
+	}
 }
 
 // settle runs where the connection is idle again after a commit.
@@ -316,6 +354,7 @@ func (c *watchedConn) Begin() (driver.Tx, error) {
 }
 
 func (c *watchedConn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
+	c.reference(ctx)
 	if b, ok := c.inner.(driver.ConnBeginTx); ok {
 		return b.BeginTx(ctx, opts)
 	}
@@ -323,6 +362,7 @@ func (c *watchedConn) BeginTx(ctx context.Context, opts driver.TxOptions) (drive
 }
 
 func (c *watchedConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
+	c.reference(ctx)
 	if e, ok := c.inner.(driver.ExecerContext); ok {
 		return e.ExecContext(ctx, query, args)
 	}
@@ -343,17 +383,19 @@ func (c *watchedConn) Ping(ctx context.Context) error {
 	return nil
 }
 
-// ResetSession runs when the pool hands the connection out again: its own
-// data_version is taken then, the reference settle compares against.
+// ResetSession runs when the pool hands the connection out again: the
+// reference of the previous checkout no longer holds.
 func (c *watchedConn) ResetSession(ctx context.Context) error {
+	c.ownKnown = false
 	if r, ok := c.inner.(driver.SessionResetter); ok {
-		if err := r.ResetSession(ctx); err != nil {
-			return err
-		}
+		return r.ResetSession(ctx)
 	}
-	c.look(ctx)
 	return nil
 }
+
+// Unwrap returns the driver's own connection, for its interfaces the wrapper
+// does not pass through (Backup, Serialize, FileControl…).
+func (c *watchedConn) Unwrap() driver.Conn { return c.inner }
 
 // IsValid runs when the connection comes back to the pool, idle.
 func (c *watchedConn) IsValid() bool {

@@ -19,6 +19,13 @@ func writtenElsewhere(t *testing.T, d *Database) bool {
 	return got
 }
 
+// watched is a Database as the desktop makes it.
+func watched() *Database {
+	d := NewDatabase()
+	WatchWrittenElsewhere(d)
+	return d
+}
+
 func putMeta(t *testing.T, db *sql.DB, key string) {
 	t.Helper()
 	if _, err := db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, 'x')`, key); err != nil {
@@ -31,7 +38,7 @@ func putMeta(t *testing.T, db *sql.DB, key string) {
 // the writer's.
 func TestWrittenElsewhere_DesktopAndAnotherProcess(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "lib.db")
-	gui := NewDatabase()
+	gui := watched()
 	if err := gui.SetupDatabase(path); err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +48,7 @@ func TestWrittenElsewhere_DesktopAndAnotherProcess(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer serve.Close()
-	reader := NewDatabase()
+	reader := watched()
 	if err := reader.OpenDatabase(path); err != nil {
 		t.Fatal(err)
 	}
@@ -87,7 +94,7 @@ func TestWrittenElsewhere_DesktopAndAnotherProcess(t *testing.T) {
 // once the library is let go.
 func TestWrittenElsewhere_DoesNotWaitForAWriter(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "lib.db")
-	gui := NewDatabase()
+	gui := watched()
 	if err := gui.SetupDatabase(path); err != nil {
 		t.Fatal(err)
 	}
@@ -119,5 +126,63 @@ func TestWrittenElsewhere_DoesNotWaitForAWriter(t *testing.T) {
 	gui.mu.Unlock()
 	if !writtenElsewhere(t, gui) {
 		t.Fatal("the outside write must be reported once the library is let go")
+	}
+}
+
+// A Database not asked to watch (the CLI, a script) opens its pool plainly
+// and reports nothing.
+func TestWrittenElsewhere_NotWatchedReportsNothing(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "lib.db")
+	cli := NewDatabase()
+	if err := cli.SetupDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	defer cli.Close()
+	serve, err := sqlite.Open(context.Background(), path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer serve.Close()
+	if err := serve.Metadata().Save(context.Background(), "", map[string]string{"from-serve": "x"}); err != nil {
+		t.Fatal(err)
+	}
+	if writtenElsewhere(t, cli) {
+		t.Fatal("an unwatched handle reports nothing")
+	}
+}
+
+// The pool a compaction reopens after the swap keeps what the closed pool's
+// watch had not reported yet.
+func TestWrittenElsewhere_ReopenAfterSwapKeepsAPendingChange(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "lib.db")
+	gui := watched()
+	if err := gui.SetupDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	defer gui.Close()
+	_ = writtenElsewhere(t, gui)
+	serve, err := sqlite.Open(context.Background(), path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := serve.Metadata().Save(context.Background(), "", map[string]string{"from-serve": "x"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := serve.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	gui.mu.Lock()
+	if err := gui.db.Close(); err != nil {
+		t.Fatal(err)
+	}
+	gui.db = nil
+	err = gui.reopenAfterSwap(path)
+	gui.mu.Unlock()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !writtenElsewhere(t, gui) {
+		t.Fatal("the outside write made before the swap must still be reported")
 	}
 }

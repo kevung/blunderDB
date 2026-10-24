@@ -249,6 +249,7 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 		return LibraryGroup{}, err
 	}
 	fresh := database.NewDatabase()
+	database.WatchWrittenElsewhere(fresh)
 	if err := fresh.OpenDatabase(path); err != nil {
 		return LibraryGroup{}, err
 	}
