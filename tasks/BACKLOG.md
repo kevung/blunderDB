@@ -160,8 +160,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   (`embeddedMatchId`) et chaque effet global y est coupé par un garde `embedded` (liste, tri
   partagé, clavier, ids DOM `match-tab-*` en double) ; un effet ajouté sans garde touche l'état
   du vrai panneau. L'extraction du volet de détail règle les deux.
-- **Rollout GUI : bandeau de fin perdu** si le démarrage suivant est refusé (le job instantané
-  est réglé).
 - **Migration : phases invisibles dans le front.** Seul `blunderdb migrate` émet les phases
   (environ 22 min sur la base BMAB) ; la GUI n'en affiche aucune.
 - **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections,
