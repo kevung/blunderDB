@@ -62,6 +62,10 @@ export function CancelLibraryImport(arg1) {
   return window['go']['gui']['App']['CancelLibraryImport'](arg1);
 }
 
+export function CancelLibraryOpen() {
+  return window['go']['gui']['App']['CancelLibraryOpen']();
+}
+
 export function CancelMaintenance() {
   return window['go']['gui']['App']['CancelMaintenance']();
 }

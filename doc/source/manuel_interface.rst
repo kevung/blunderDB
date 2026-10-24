@@ -283,6 +283,8 @@ le titre de la fenêtre nomme la base. Tant qu'il n'y a qu'une vue en tout, la b
   (``og``). La bibliothèque active jusque-là reste ouverte dans son groupe.
   *CTRL-O* remplace, lui, la bibliothèque du groupe actif ; l'infobulle du
   bouton *Ouvrir* de la barre d'outils rappelle les deux raccourcis.
+  Quand le fichier doit être migré, la barre d'état affiche la progression de
+  la migration ; *Échap* l'annule, et aucun groupe n'est ajouté.
 
 * **Changer de bibliothèque** : cliquer un onglet d'un autre groupe active
   sa bibliothèque et cette vue d'un seul geste ; cliquer l'en-tête du groupe
