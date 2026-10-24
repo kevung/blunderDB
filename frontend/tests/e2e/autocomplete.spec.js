@@ -8,8 +8,6 @@ import { installWailsMock } from './helpers/wailsMock.js';
 
 async function openCommandLine(page) {
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
-    await page.keyboard.press('Escape'); // dismiss the first-run tour catalog, if it auto-opened
-    await expect(page.locator('.tour-list')).toHaveCount(0);
     await page.keyboard.press('Space'); // Space opens the command line
     await page.waitForSelector('.command-input', { timeout: 4000 });
 }

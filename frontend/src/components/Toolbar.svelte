@@ -51,7 +51,7 @@
 
 <!--// https://heroicons.com/-->
 <!-- Un Duel tient le plateau : seuls Jouer, la Pile et l'aide restent (ADR-0072 règle 9). -->
-<div class="toolbar" bind:this={toolbarEl} class:duel-locked={$duelHoldsBoardStore}>
+<div class="toolbar" bind:this={toolbarEl} class:duel-locked={$duelHoldsBoardStore} data-testid="toolbar">
     <button
         onclick={(e) => {
             e.stopPropagation();
