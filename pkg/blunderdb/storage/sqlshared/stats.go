@@ -70,7 +70,8 @@ func countedExpr(d Dialect) string {
 // writes for a code it cannot map ("Unknown(D=…,T=…)") among them, would
 // otherwise pass for a real cube action and enter the PR denominator. A
 // registered label (outside the fixed list) carries no meaning SQL can read
-// and is left out the same way; every importer writes fixed labels only.
+// and is left out the same way: the only labels an importer writes outside
+// the fixed list are these degenerate ones.
 var activeCubeActionCodes = func() string {
 	var codes []string
 	for code, label := range domain.ActionLabels() {
