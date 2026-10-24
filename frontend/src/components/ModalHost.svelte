@@ -179,8 +179,3 @@
     {@const Modal = $loaded.config}
     <Modal visible={$activeModal === MODAL.CONFIG} onClose={() => closeModal()} />
 {/if}
-
-{#if $loaded.tour}
-    {@const Modal = $loaded.tour}
-    <Modal visible={$activeModal === MODAL.TOUR} onClose={() => closeModal()} />
-{/if}

@@ -13,7 +13,7 @@ geste, à consulter au besoin.
 L'écran d'accueil
 -----------------
 
-Tant qu'aucune base n'est ouverte, blunderDB propose quatre chemins plutôt
+Tant qu'aucune base n'est ouverte, blunderDB propose trois chemins plutôt
 qu'un plateau vide :
 
 * **Importer mes matchs** — le chemin principal. Il enchaîne tout seul : une
@@ -22,9 +22,6 @@ qu'un plateau vide :
   « voici votre PR et vos pires décisions » — et, si vous le voulez, la
   :ref:`file d'étude <file_etude>`. C'est la promesse de l'outil tenue en
   deux minutes, plutôt qu'expliquée.
-* **Ouvrir la base d'exemple** — trois matchs, des collections, des
-  commentaires et un paquet Anki : de quoi tout essayer sans rien apporter.
-* **Visite guidée** — le tour de l'interface, panneau par panneau.
 * **Ouvrir une base** — un fichier ``.db`` que vous avez déjà.
 
 La dernière base ouverte est proposée à part, et **seulement si son fichier
@@ -357,31 +354,6 @@ plus de blunderDB pour progresser :
 
 Cette routine ne vaut que si elle est répétée — dix minutes par semaine,
 tenues, valent mieux qu'une remise à plat ponctuelle et abandonnée.
-
-Scénario de démonstration (3 minutes)
-----------------------------------------
-
-Pour présenter blunderDB sans base personnelle, la commande ``demo``
-charge une base d'exemple (positions et matchs fictifs). Le scénario
-suivant se déroule en trois minutes :
-
-#. *0:00* — ``demo`` en ligne de commande (ou le bouton *Ouvrir la base
-   d'exemple* de l'écran d'accueil) charge la base d'exemple.
-
-#. *0:30* — Ouvrir le panneau des matchs (*CTRL-Tab*), ouvrir un match
-   (double-clic), parcourir quelques coups aux
-   flèches, montrer le panneau Analyse (*CTRL-L*) sur un coup joué avec une
-   erreur visible.
-
-#. *1:30* — Commande ``bl`` : la vue bascule directement sur les pires
-   erreurs de la base, toutes positions confondues.
-
-#. *2:15* — Panneau Anki (*CTRL-K*) : créer un paquet à partir de ces
-   positions, lancer une carte en *Étudier* pour montrer le cycle
-   question/réponse/notation.
-
-#. *2:45* — Retour au panneau Stats (*CTRL-D*), onglet Tableau de bord, pour
-   montrer où ce travail se lit dans la durée.
 
 Créer une nouvelle base de données
 ----------------------------------
@@ -1029,11 +1001,6 @@ fonctionnalités supplémentaires, détaillées dans le manuel :
 * **Diffusion filigranée** — un export peut être signé avec votre identité
   d'émetteur (filigrane infalsifiable indiquant l'origine du fichier) et
   protégé par mot de passe pour son transport. Voir :ref:`diffusion_controlee`.
-
-* **Visites guidées et base de démonstration** — la commande ``tour``
-  (alias ``tutorial``) ouvre un catalogue de visites guidées de l'interface,
-  et la commande ``demo`` charge une base d'exemple pour découvrir l'outil
-  sans base de données personnelle. Voir :ref:`visites_guidees`.
 
 * **Charger les pires erreurs** — la commande ``bl`` (ou ``blunders``)
   charge directement les pires erreurs (équité ou MWC) dans la vue

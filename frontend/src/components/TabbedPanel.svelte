@@ -263,7 +263,6 @@
                     class:dragging={draggedIndex === i && isDragging}
                     title={tab.shortcut ? `${$t(tab.labelKey)} (${tab.shortcut})` : $t(tab.labelKey)}
                     data-testid="tab-{tab.id}"
-                    data-tour="tab-{tab.id}"
                     role="tab"
                     aria-selected={$activeTabStore === tab.id}
                     tabindex={rovingIndex === i ? 0 : -1}

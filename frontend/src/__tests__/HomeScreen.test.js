@@ -1,7 +1,7 @@
 /**
- * HomeScreen.test.js — l'écran d'accueil (#284, fiche I.28).
+ * HomeScreen.test.js — l'écran d'accueil.
  *
- * Ce qui est vérifié : les quatre chemins sont là, « importer mes matchs »
+ * Ce qui est vérifié : les trois chemins sont là, « importer mes matchs »
  * enchaîne bien la base neuve ET le sélecteur de fichiers (c'est l'enchaînement
  * qui est la fonctionnalité, pas les deux gestes pris séparément), et la base
  * récente n'est proposée que si son fichier existe encore — un bouton qui
@@ -14,12 +14,10 @@ import { render, screen, cleanup, fireEvent } from '@testing-library/svelte';
 const newDatabase = vi.fn(() => Promise.resolve());
 const openDatabase = vi.fn(() => Promise.resolve());
 const openDatabaseByPath = vi.fn(() => Promise.resolve());
-const loadDemoDatabase = vi.fn(() => Promise.resolve());
 vi.mock('../services/databaseService.js', () => ({
     newDatabase: (/** @type {any[]} */ ...a) => newDatabase(...a),
     openDatabase: (/** @type {any[]} */ ...a) => openDatabase(...a),
     openDatabaseByPath: (/** @type {any[]} */ ...a) => openDatabaseByPath(...a),
-    loadDemoDatabase: (/** @type {any[]} */ ...a) => loadDemoDatabase(...a),
     setStatusBarMessage: vi.fn()
 }));
 
@@ -47,12 +45,12 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("l'écran d'accueil", () => {
-    test('offre les quatre chemins', async () => {
+    test('offre les trois chemins, sans démo ni visite', async () => {
         render(HomeScreen, { props: {} });
         expect(await screen.findByText('Import my matches')).toBeTruthy();
-        expect(screen.getByText('Open the sample database')).toBeTruthy();
-        expect(screen.getByText('Guided tour')).toBeTruthy();
         expect(screen.getByText('Open a database')).toBeTruthy();
+        expect(screen.queryByText('Open the sample database')).toBeNull();
+        expect(screen.queryByText('Guided tour')).toBeNull();
     });
 
     // L'enchaînement EST la fonctionnalité : une base neuve puis les fichiers,

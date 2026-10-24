@@ -91,7 +91,7 @@ make dev              # hot-reload development build
 ./blunderDB serve   --db my.db --addr 127.0.0.1:8080            # headless daemon
 ```
 
-In the desktop app, open or create a `.db` file, then import match files via the toolbar or drag-and-drop. A demo database (`demo` command) and guided tours are built in.
+In the desktop app, open or create a `.db` file, then import match files via the toolbar or drag-and-drop.
 
 ## Tech stack
 

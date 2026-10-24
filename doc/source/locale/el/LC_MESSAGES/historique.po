@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 23:55+0200\n"
+"POT-Creation-Date: 2026-10-25 00:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -3077,7 +3077,7 @@ msgstr ""
 "αρχείο μεμονωμένης θέσης ``.xgp``."
 
 #: ../../source/historique.rst:356 ../../source/historique.rst:362
-#: ../../source/historique.rst:381
+#: ../../source/historique.rst:380
 msgid "Voir :ref:`headless`."
 msgstr "Βλ. :ref:`headless`."
 
@@ -3147,15 +3147,11 @@ msgstr "Αναζήτηση μιας θέσης βάσει του αναγνωρ�
 msgid "Correction de l'attribution de l'erreur de videau au joueur 1."
 msgstr "Διόρθωση της απόδοσης του σφάλματος κύβου στον παίκτη 1."
 
-#: ../../source/historique.rst:373
-msgid "Voir :ref:`visites_guidees`."
-msgstr "Βλ. :ref:`visites_guidees`."
-
-#: ../../source/historique.rst:376
+#: ../../source/historique.rst:375
 msgid "0.22.0 (2026-06-02)"
 msgstr "0.22.0 (2026-06-02)"
 
-#: ../../source/historique.rst:378
+#: ../../source/historique.rst:377
 msgid ""
 "Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
 "l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
@@ -3173,7 +3169,7 @@ msgstr ""
 "SQLite προς PostgreSQL, και ένας γενικός dispatcher ``call`` που παρέχει "
 "πρόσβαση μέσω γραμμής εντολών σε όλες τις λειτουργίες αποθήκευσης."
 
-#: ../../source/historique.rst:379
+#: ../../source/historique.rst:378
 msgid ""
 "Import de positions uniques depuis de nouveaux formats (eXtreme Gammon "
 "``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement"
@@ -3183,7 +3179,7 @@ msgstr ""
 "κείμενο BGBlitz, εγγενής βιβλιοθήκη ``.db``) με εμπλουτισμό των "
 "διπλότυπων μεταξύ μορφών."
 
-#: ../../source/historique.rst:380
+#: ../../source/historique.rst:379
 msgid ""
 "Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base"
 " n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture."
@@ -3192,11 +3188,11 @@ msgstr ""
 "καμία βάση, και ο πίνακας Σχόλια δεν δημιουργεί πλέον βρόχο κατά το "
 "άνοιγμα."
 
-#: ../../source/historique.rst:384
+#: ../../source/historique.rst:383
 msgid "0.21.0 (2026-06-01)"
 msgstr "0.21.0 (2026-06-01)"
 
-#: ../../source/historique.rst:386
+#: ../../source/historique.rst:385
 msgid ""
 "Internationalisation de l'interface : l'intégralité de blunderDB (barre "
 "d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
@@ -3208,7 +3204,7 @@ msgstr ""
 "αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, "
 "ελληνικά ή ρωσικά."
 
-#: ../../source/historique.rst:387
+#: ../../source/historique.rst:386
 msgid ""
 "Ajout d'une fenêtre de configuration, accessible par un bouton en forme "
 "de rouage dans la barre d'outils, permettant de sélectionner la langue."
@@ -3216,19 +3212,19 @@ msgstr ""
 "Προσθήκη παραθύρου ρυθμίσεων, προσβάσιμου μέσω ενός κουμπιού σε σχήμα "
 "γραναζιού στη γραμμή εργαλείων, που επιτρέπει την επιλογή της γλώσσας."
 
-#: ../../source/historique.rst:388
+#: ../../source/historique.rst:387
 msgid "Le choix de la langue est conservé d'une session à l'autre."
 msgstr "Η επιλογή της γλώσσας διατηρείται από τη μία συνεδρία στην άλλη."
 
-#: ../../source/historique.rst:389
+#: ../../source/historique.rst:388
 msgid "Voir :ref:`configuration`."
 msgstr "Βλ. :ref:`configuration`."
 
-#: ../../source/historique.rst:392
+#: ../../source/historique.rst:391
 msgid "0.20.0 (2026-05-31)"
 msgstr "0.20.0 (2026-05-31)"
 
-#: ../../source/historique.rst:394
+#: ../../source/historique.rst:393
 msgid ""
 "Ajout de la structure d'exclusion *Except* au panneau de recherche : "
 "exclut les positions contenant l'un des pions dessinés, avec marqueur « "
@@ -3240,7 +3236,7 @@ msgstr ""
 " είναι κενό» (διπλό κλικ) και απεριόριστο αριθμό πουλιών ανά σημείο "
 "(εντολή ``x``)."
 
-#: ../../source/historique.rst:395
+#: ../../source/historique.rst:394
 msgid ""
 "Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
 "(variante D1, option CLI --dice)."
@@ -3248,7 +3244,7 @@ msgstr ""
 "Προσθήκη της επιλογής «μόνο πρώτο ζάρι» στο φίλτρο ζαριάς (παραλλαγή D1, "
 "επιλογή CLI ``--dice``)."
 
-#: ../../source/historique.rst:396
+#: ../../source/historique.rst:395
 msgid ""
 "Panneau Commentaires : focus automatique du champ de saisie à l'ouverture"
 " et boutons éditer / supprimer toujours visibles."
@@ -3256,7 +3252,7 @@ msgstr ""
 "Πίνακας Σχόλια: αυτόματη εστίαση του πεδίου εισαγωγής κατά το άνοιγμα, "
 "και κουμπιά επεξεργασίας/διαγραφής πάντα ορατά."
 
-#: ../../source/historique.rst:397
+#: ../../source/historique.rst:396
 msgid ""
 "Correction du filtre « Search Text » qui ne trouvait pas tous les tags de"
 " commentaires."
@@ -3264,11 +3260,11 @@ msgstr ""
 "Διόρθωση του φίλτρου «Search Text» που δεν έβρισκε όλες τις ετικέτες "
 "σχολίων."
 
-#: ../../source/historique.rst:400
+#: ../../source/historique.rst:399
 msgid "0.19.0 (2026-05-07)"
 msgstr "0.19.0 (2026-05-07)"
 
-#: ../../source/historique.rst:402
+#: ../../source/historique.rst:401
 msgid ""
 "Ajout du panneau Stats : indicateurs PR (Performance Rating), Snowie "
 "Error Rate et MWC cost (Match Winning Chance cost), barre de filtre "
@@ -3285,7 +3281,7 @@ msgstr ""
 "με καμπύλη ανά τουρνουά και scatter plot ανά αγώνα, καρτέλα Σφάλματα με "
 "κατανομή ανά ενέργεια κύβου και ιστόγραμμα των μεγεθών."
 
-#: ../../source/historique.rst:403
+#: ../../source/historique.rst:402
 msgid ""
 "Drill-down interactif vers les positions / matchs / tournois depuis tous "
 "les indicateurs."
@@ -3293,15 +3289,15 @@ msgstr ""
 "Διαδραστική εμβάθυνση προς τις θέσεις / αγώνες / τουρνουά από όλους τους "
 "δείκτες."
 
-#: ../../source/historique.rst:404
+#: ../../source/historique.rst:403
 msgid "Toggle PR / MWC instantané."
 msgstr "Στιγμιαία εναλλαγή PR / MWC."
 
-#: ../../source/historique.rst:405
+#: ../../source/historique.rst:404
 msgid "Commande CLI list --type stats."
 msgstr "Εντολή CLI list --type stats."
 
-#: ../../source/historique.rst:406
+#: ../../source/historique.rst:405
 msgid ""
 "Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
 "gnuBG (seuil 0.16 d'équité pour les cubes proches)."
@@ -3309,23 +3305,23 @@ msgstr ""
 "Ευθυγράμμιση των δεικτών PR / Snowie ER / MWC με το eXtremeGammon και το "
 "gnuBG (κατώφλι equity 0.16 για κοντινούς κύβους)."
 
-#: ../../source/historique.rst:407
+#: ../../source/historique.rst:406
 msgid "Correction du calcul de cube_error pour les décisions Double/Pass."
 msgstr "Διόρθωση του υπολογισμού του cube_error για τις αποφάσεις Double/Pass."
 
-#: ../../source/historique.rst:408
+#: ../../source/historique.rst:407
 msgid "Documentation du modèle de statistiques (:ref:`stats_parity`)."
 msgstr "Τεκμηρίωση του στατιστικού μοντέλου (:ref:`stats_parity`)."
 
-#: ../../source/historique.rst:409
+#: ../../source/historique.rst:408
 msgid "Voir :ref:`stats`."
 msgstr "Βλ. :ref:`stats`."
 
-#: ../../source/historique.rst:412
+#: ../../source/historique.rst:411
 msgid "0.18.0 (2026-04-20)"
 msgstr "0.18.0 (2026-04-20)"
 
-#: ../../source/historique.rst:414
+#: ../../source/historique.rst:413
 msgid ""
 "Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
 "fichiers spécialisés, extraction de 7 modules de service depuis "
@@ -3335,27 +3331,27 @@ msgstr ""
 " εξειδικευμένα αρχεία, εξαγωγή 7 μονάδων υπηρεσίας από το App.svelte "
 "(4888→469 γραμμές), ενοποίηση των stores modal/πίνακα."
 
-#: ../../source/historique.rst:415
+#: ../../source/historique.rst:414
 msgid "Migration complète vers Svelte 5 runes."
 msgstr "Πλήρης μετάβαση στα Svelte 5 runes."
 
-#: ../../source/historique.rst:416
+#: ../../source/historique.rst:415
 msgid ""
 "Remplacement de 9 modales de tableau par un composant générique "
 "DataTableModal."
 msgstr "Αντικατάσταση 9 modal πίνακα με ένα γενικό στοιχείο DataTableModal."
 
-#: ../../source/historique.rst:417
+#: ../../source/historique.rst:416
 msgid "Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI."
 msgstr "Προσθήκη ESLint + Prettier + vitest (125 δοκιμές frontend) με CI."
 
-#: ../../source/historique.rst:418
+#: ../../source/historique.rst:417
 msgid "Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier)."
 msgstr ""
 "Συμμόρφωση WCAG 2.1 AA (ορατή εστίαση, ρόλοι ARIA, πλοήγηση με "
 "πληκτρολόγιο)."
 
-#: ../../source/historique.rst:419
+#: ../../source/historique.rst:418
 msgid ""
 "Passage du mutex Database en RWMutex pour un meilleur parallélisme en "
 "lecture."
@@ -3363,23 +3359,23 @@ msgstr ""
 "Μετάβαση του mutex της Database σε RWMutex για καλύτερη παραλληλία στην "
 "ανάγνωση."
 
-#: ../../source/historique.rst:420
+#: ../../source/historique.rst:419
 msgid "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN)."
 msgstr "Πλήρης τεκμηρίωση CLI (CLI_USAGE.md + Sphinx FR/EN)."
 
-#: ../../source/historique.rst:421
+#: ../../source/historique.rst:420
 msgid "Réécriture du README."
 msgstr "Επανεγγραφή του README."
 
-#: ../../source/historique.rst:422
+#: ../../source/historique.rst:421
 msgid "Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
 msgstr "Διόρθωση όλων των προειδοποιήσεων ESLint (46→0) και Vite (6→0)."
 
-#: ../../source/historique.rst:425
+#: ../../source/historique.rst:424
 msgid "0.17.0 (2026-04-20)"
 msgstr "0.17.0 (2026-04-20)"
 
-#: ../../source/historique.rst:427
+#: ../../source/historique.rst:426
 #, no-python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
@@ -3389,33 +3385,33 @@ msgstr ""
 "Βελτιστοποίηση αποθήκευσης: συμπίεση zlib των δεδομένων ανάλυσης (~80% "
 "μείωση), συμπαγής κωδικοποίηση θέσεων (~90% μείωση μεγέθους)."
 
-#: ../../source/historique.rst:428
+#: ../../source/historique.rst:427
 msgid "Ajout de 5 index manquants pour améliorer les performances de recherche."
 msgstr "Προσθήκη 5 ελλειπόντων ευρετηρίων για βελτίωση των επιδόσεων αναζήτησης."
 
-#: ../../source/historique.rst:429
+#: ../../source/historique.rst:428
 msgid "Correction de la recherche par erreur de cube."
 msgstr "Διόρθωση της αναζήτησης κατά σφάλμα κύβου."
 
-#: ../../source/historique.rst:430
+#: ../../source/historique.rst:429
 msgid "Correction du mode EDIT après une recherche sans résultats."
 msgstr "Διόρθωση της λειτουργίας EDIT μετά από αναζήτηση χωρίς αποτελέσματα."
 
-#: ../../source/historique.rst:431
+#: ../../source/historique.rst:430
 msgid ""
 "Restauration de l'état du panneau de recherche lors du changement "
 "d'onglets."
 msgstr "Επαναφορά της κατάστασης του πίνακα αναζήτησης κατά την αλλαγή καρτελών."
 
-#: ../../source/historique.rst:432
+#: ../../source/historique.rst:431
 msgid "Suppression de 62 instructions de débogage des chemins critiques."
 msgstr "Αφαίρεση 62 εντολών αποσφαλμάτωσης από κρίσιμες διαδρομές."
 
-#: ../../source/historique.rst:435
+#: ../../source/historique.rst:434
 msgid "0.16.0 (2026-04-18)"
 msgstr "0.16.0 (2026-04-18)"
 
-#: ../../source/historique.rst:437
+#: ../../source/historique.rst:436
 msgid ""
 "Schéma de base de données v2.0.0 : déduplication des positions via hash "
 "Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
@@ -3425,7 +3421,7 @@ msgstr ""
 "αποκανονικοποιημένες στήλες φιλτραρίσματος, προ-φίλτρο μοτίβων bitboard, "
 "καταγραφή WAL (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:438
+#: ../../source/historique.rst:437
 msgid ""
 "Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ "
 "positions."
@@ -3433,7 +3429,7 @@ msgstr ""
 "Μαζική εισαγωγή >=3x ταχύτερη, φιλτραρισμένη αναζήτηση <=100 ms σε 10 "
 "χιλ.+ θέσεις."
 
-#: ../../source/historique.rst:439
+#: ../../source/historique.rst:438
 msgid ""
 "NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts "
 "par les versions plus anciennes ; les anciennes DB sont migrées "
@@ -3443,11 +3439,11 @@ msgstr ""
 "ανοιχτούν από παλαιότερες εκδόσεις· οι παλιές DB μεταβαίνουν αυτόματα "
 "επιτόπου (κάντε πρώτα ένα αντίγραφο ασφαλείας)."
 
-#: ../../source/historique.rst:442
+#: ../../source/historique.rst:441
 msgid "0.15.0 (2026-03-31)"
 msgstr "0.15.0 (2026-03-31)"
 
-#: ../../source/historique.rst:444
+#: ../../source/historique.rst:443
 msgid ""
 "Export de la position en image PNG dans le presse-papier (board seul via "
 "Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
@@ -3455,25 +3451,25 @@ msgstr ""
 "Εξαγωγή της θέσης ως εικόνα PNG στο πρόχειρο (μόνο το ταμπλό με Ctrl+X, ή"
 " το ταμπλό με ανάλυση με Ctrl+X Ctrl+X)."
 
-#: ../../source/historique.rst:447
+#: ../../source/historique.rst:446
 msgid "0.14.0 (2026-03-30)"
 msgstr "0.14.0 (2026-03-30)"
 
-#: ../../source/historique.rst:449
+#: ../../source/historique.rst:448
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr ""
 "Αποκλειστικός πίνακας Anki για μελέτη με επαναλαμβανόμενα διαστήματα "
 "(αλγόριθμος FSRS)."
 
-#: ../../source/historique.rst:450
+#: ../../source/historique.rst:449
 msgid "Import des commentaires depuis les fichiers XG."
 msgstr "Εισαγωγή σχολίων από τα αρχεία XG."
 
-#: ../../source/historique.rst:453
+#: ../../source/historique.rst:452
 msgid "0.13.0 (2026-03-28)"
 msgstr "0.13.0 (2026-03-28)"
 
-#: ../../source/historique.rst:455
+#: ../../source/historique.rst:454
 msgid ""
 "Simplification de l'interface : la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
@@ -3481,25 +3477,25 @@ msgstr ""
 "Απλοποίηση της διεπαφής: η πλοήγηση στους αγώνες και τις συλλογές γίνεται"
 " πλέον απευθείας μέσω των πινάκων."
 
-#: ../../source/historique.rst:456
+#: ../../source/historique.rst:455
 msgid "Ligne de commande intégrée dans la barre d'état."
 msgstr "Γραμμή εντολών ενσωματωμένη στη γραμμή κατάστασης."
 
-#: ../../source/historique.rst:457
+#: ../../source/historique.rst:456
 msgid "Panneau Console renommé en panneau Log. *(Panneau retiré en 0.31.0.)*"
 msgstr ""
 "Ο πίνακας Κονσόλα μετονομάστηκε σε πίνακα Log. *(Ο πίνακας αφαιρέθηκε "
 "στην 0.31.0.)*"
 
-#: ../../source/historique.rst:458
+#: ../../source/historique.rst:457
 msgid "Panneau Bearoff dédié dans le panneau inférieur."
 msgstr "Αποκλειστικός πίνακας Bearoff στον κάτω πίνακα."
 
-#: ../../source/historique.rst:459
+#: ../../source/historique.rst:458
 msgid "Copier/coller de position dans le panneau de recherche."
 msgstr "Αντιγραφή/επικόλληση θέσης στον πίνακα αναζήτησης."
 
-#: ../../source/historique.rst:460
+#: ../../source/historique.rst:459
 msgid ""
 "Glisser-déposer pour réordonner les collections, les positions dans les "
 "collections, et les matchs dans les tournois."
@@ -3507,45 +3503,45 @@ msgstr ""
 "Μεταφορά και απόθεση για την αναδιάταξη συλλογών, θέσεων μέσα στις "
 "συλλογές, και αγώνων μέσα στα τουρνουά."
 
-#: ../../source/historique.rst:461
+#: ../../source/historique.rst:460
 msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
 msgstr "Στήλη τουρνουά στον πίνακα αγώνων με εσωτερική επεξεργασία."
 
-#: ../../source/historique.rst:462
+#: ../../source/historique.rst:461
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr "Αυτόματη εμφάνιση του πίνακα ανάλυσης μετά από μια αναζήτηση."
 
-#: ../../source/historique.rst:465
+#: ../../source/historique.rst:464
 msgid "0.12.0 (2026-03-19)"
 msgstr "0.12.0 (2026-03-19)"
 
-#: ../../source/historique.rst:467
+#: ../../source/historique.rst:466
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 msgstr "Εισαγωγή αρχείων θέσεων eXtreme Gammon (XGP) με ανάλυση."
 
-#: ../../source/historique.rst:470
+#: ../../source/historique.rst:469
 msgid "0.11.0 (2026-03-06)"
 msgstr "0.11.0 (2026-03-06)"
 
-#: ../../source/historique.rst:472
+#: ../../source/historique.rst:471
 msgid "Filtre de recherche dans les positions courantes."
 msgstr "Φίλτρο αναζήτησης μέσα στις τρέχουσες φιλτραρισμένες θέσεις."
 
-#: ../../source/historique.rst:473
+#: ../../source/historique.rst:472
 msgid "Ajout de filtres par match et par tournoi."
 msgstr "Προσθήκη φίλτρων ανά αγώνα και ανά τουρνουά."
 
-#: ../../source/historique.rst:474
+#: ../../source/historique.rst:473
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
 msgstr "Αυτόματος καθαρισμός του ταμπλό κατά το άνοιγμα του πίνακα αναζήτησης."
 
-#: ../../source/historique.rst:477
+#: ../../source/historique.rst:476
 msgid "0.10.0 (2026-02-25)"
 msgstr "0.10.0 (2026-02-25)"
 
-#: ../../source/historique.rst:479
+#: ../../source/historique.rst:478
 msgid ""
 "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) et BGBlitz (BGF/TXT)."
@@ -3553,7 +3549,7 @@ msgstr ""
 "Εισαγωγή αγώνων από eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) και BGBlitz (BGF/TXT)."
 
-#: ../../source/historique.rst:480
+#: ../../source/historique.rst:479
 msgid ""
 "Navigation dans les matchs : parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
@@ -3561,7 +3557,7 @@ msgstr ""
 "Πλοήγηση στους αγώνες: περιήγηση στις κινήσεις ενός εισαγόμενου αγώνα, με"
 " επισήμανση της κίνησης που παίχτηκε."
 
-#: ../../source/historique.rst:481
+#: ../../source/historique.rst:480
 msgid ""
 "Panneau des matchs : liste, tri, édition inline, permutation des joueurs,"
 " assignation de tournoi."
@@ -3569,11 +3565,11 @@ msgstr ""
 "Πίνακας αγώνων: λίστα, ταξινόμηση, εσωτερική επεξεργασία, εναλλαγή "
 "παικτών, ανάθεση τουρνουά."
 
-#: ../../source/historique.rst:482
+#: ../../source/historique.rst:481
 msgid "Import par dossier récursif et import par glisser-déposer."
 msgstr "Εισαγωγή με αναδρομικό φάκελο και εισαγωγή με μεταφορά και απόθεση."
 
-#: ../../source/historique.rst:483
+#: ../../source/historique.rst:482
 msgid ""
 "Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
 "GNUbg intégrée. *(Remplacé en 0.36.0 : la table est calculée sur la "
@@ -3583,15 +3579,15 @@ msgstr ""
 "bearoff του GNUbg. *(Αντικαταστάθηκε στην 0.36.0: ο πίνακας υπολογίζεται "
 "στον υπολογιστή, κανένας δεν είναι πια ενσωματωμένος.)*"
 
-#: ../../source/historique.rst:484
+#: ../../source/historique.rst:483
 msgid "Collections : regroupement personnalisé de positions."
 msgstr "Συλλογές: προσαρμοσμένη ομαδοποίηση θέσεων."
 
-#: ../../source/historique.rst:485
+#: ../../source/historique.rst:484
 msgid "Tournois : regroupement de matchs par événement."
 msgstr "Τουρνουά: ομαδοποίηση αγώνων ανά εκδήλωση."
 
-#: ../../source/historique.rst:486
+#: ../../source/historique.rst:485
 msgid ""
 "Sauvegarde et restauration de l'état de session (dernière recherche, "
 "position courante)."
@@ -3599,19 +3595,19 @@ msgstr ""
 "Αποθήκευση και επαναφορά της κατάστασης συνεδρίας (τελευταία αναζήτηση, "
 "τρέχουσα θέση)."
 
-#: ../../source/historique.rst:487
+#: ../../source/historique.rst:486
 msgid "Migration automatique du schéma de base de données."
 msgstr "Αυτόματη μετάβαση του σχήματος της βάσης δεδομένων."
 
-#: ../../source/historique.rst:488
+#: ../../source/historique.rst:487
 msgid "Affichage multi-moteurs dans l'analyse."
 msgstr "Εμφάνιση πολλαπλών μηχανών στην ανάλυση."
 
-#: ../../source/historique.rst:489
+#: ../../source/historique.rst:488
 msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
 msgstr "Φίλτρο σφαλμάτων/blunders του παίκτη 1 στις αναζητήσεις."
 
-#: ../../source/historique.rst:490
+#: ../../source/historique.rst:489
 msgid ""
 "Export de la base de données avec sélection granulaire (matchs, "
 "collections, tournois, coups joués)."
@@ -3619,152 +3615,152 @@ msgstr ""
 "Εξαγωγή της βάσης δεδομένων με λεπτομερή επιλογή (αγώνες, συλλογές, "
 "τουρνουά, κινήσεις που παίχτηκαν)."
 
-#: ../../source/historique.rst:491
+#: ../../source/historique.rst:490
 msgid "Bouton de navigation dans les matchs."
 msgstr "Κουμπί πλοήγησης στους αγώνες."
 
-#: ../../source/historique.rst:492
+#: ../../source/historique.rst:491
 msgid "Compte de course (pipcount) dans la navigation des matchs."
 msgstr "Εμφάνιση pip count στην πλοήγηση των αγώνων."
 
-#: ../../source/historique.rst:493
+#: ../../source/historique.rst:492
 msgid "Interface en ligne de commande (CLI) complète."
 msgstr "Πλήρης διεπαφή γραμμής εντολών (CLI)."
 
-#: ../../source/historique.rst:494
+#: ../../source/historique.rst:493
 msgid "Réouverture automatique de la dernière base de données."
 msgstr "Αυτόματο άνοιγμα ξανά της τελευταίας βάσης δεδομένων."
 
-#: ../../source/historique.rst:495
+#: ../../source/historique.rst:494
 msgid "Amélioration de la barre d'outils et des icônes."
 msgstr "Βελτίωση της γραμμής εργαλείων και των εικονιδίων."
 
-#: ../../source/historique.rst:498
+#: ../../source/historique.rst:497
 msgid "0.9.0 (2025-11-02)"
 msgstr "0.9.0 (2025-11-02)"
 
-#: ../../source/historique.rst:500
+#: ../../source/historique.rst:499
 msgid "Correction de bug de la bibliothèque de filtres."
 msgstr "Διόρθωση σφάλματος της βιβλιοθήκης φίλτρων."
 
-#: ../../source/historique.rst:501
+#: ../../source/historique.rst:500
 msgid "Import/export de base de données."
 msgstr "Εισαγωγή/εξαγωγή βάσης δεδομένων."
 
-#: ../../source/historique.rst:502
+#: ../../source/historique.rst:501
 msgid "Affichage de flèches pour les coups sélectionnés."
 msgstr "Εμφάνιση βελών για τις επιλεγμένες κινήσεις."
 
-#: ../../source/historique.rst:503
+#: ../../source/historique.rst:502
 msgid "Raccourcis clavier pour l'import/export."
 msgstr "Συντομεύσεις πληκτρολογίου για την εισαγωγή/εξαγωγή."
 
-#: ../../source/historique.rst:506
+#: ../../source/historique.rst:505
 msgid "0.8.0 (2025-05-03)"
 msgstr "0.8.0 (2025-05-03)"
 
-#: ../../source/historique.rst:508
+#: ../../source/historique.rst:507
 msgid "Possibilité de cacher le compte de course."
 msgstr "Δυνατότητα απόκρυψης του pip count."
 
-#: ../../source/historique.rst:509
+#: ../../source/historique.rst:508
 msgid "Chargement d'une position aléatoire."
 msgstr "Φόρτωση τυχαίας θέσης."
 
-#: ../../source/historique.rst:512
+#: ../../source/historique.rst:511
 msgid "0.7.0 (2025-02-16)"
 msgstr "0.7.0 (2025-02-16)"
 
-#: ../../source/historique.rst:514
+#: ../../source/historique.rst:513
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
 msgstr "Υποστήριξη ιαπωνικών και γερμανικών εξαγωγών XG."
 
-#: ../../source/historique.rst:517
+#: ../../source/historique.rst:516
 msgid "0.6.0 (2025-02-13)"
 msgstr "0.6.0 (2025-02-13)"
 
-#: ../../source/historique.rst:519
+#: ../../source/historique.rst:518
 msgid "Ajout de la bibliothèque de filtres."
 msgstr "Προσθήκη βιβλιοθήκης φίλτρων."
 
-#: ../../source/historique.rst:520
+#: ../../source/historique.rst:519
 msgid "Affichage de la version de la base de données dans les métadonnées."
 msgstr "Εμφάνιση της έκδοσης της βάσης δεδομένων στα μεταδεδομένα."
 
-#: ../../source/historique.rst:523
+#: ../../source/historique.rst:522
 msgid "0.5.0 (2025-02-04)"
 msgstr "0.5.0 (2025-02-04)"
 
-#: ../../source/historique.rst:525
+#: ../../source/historique.rst:524
 msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 msgstr "Προσθήκη νέων φίλτρων (καθρέφτης, μη επαφή, jan blot, outfield blot)."
 
-#: ../../source/historique.rst:528
+#: ../../source/historique.rst:527
 msgid "0.4.0 (2025-02-03)"
 msgstr "0.4.0 (2025-02-03)"
 
-#: ../../source/historique.rst:530 ../../source/historique.rst:538
-#: ../../source/historique.rst:545
+#: ../../source/historique.rst:529 ../../source/historique.rst:537
+#: ../../source/historique.rst:544
 msgid "Résolutions de bugs divers."
 msgstr "Διάφορες διορθώσεις σφαλμάτων."
 
-#: ../../source/historique.rst:531
+#: ../../source/historique.rst:530
 msgid "Ajout d'une icône pour blunderDB."
 msgstr "Προσθήκη εικονιδίου για το blunderDB."
 
-#: ../../source/historique.rst:532
+#: ../../source/historique.rst:531
 msgid "Corrections de filtres."
 msgstr "Διορθώσεις φίλτρων."
 
-#: ../../source/historique.rst:533
+#: ../../source/historique.rst:532
 msgid "Ajout du support de MacOS."
 msgstr "Προσθήκη υποστήριξης MacOS."
 
-#: ../../source/historique.rst:536
+#: ../../source/historique.rst:535
 msgid "0.3.0 (2025-01-27)"
 msgstr "0.3.0 (2025-01-27)"
 
-#: ../../source/historique.rst:539
+#: ../../source/historique.rst:538
 msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
 msgstr "Αυτόματη αποθήκευση του μεγέθους του παραθύρου."
 
-#: ../../source/historique.rst:540
+#: ../../source/historique.rst:539
 msgid "Importe les éventuels commentaires depuis XG."
 msgstr "Εισαγωγή τυχόν σχολίων από το XG."
 
-#: ../../source/historique.rst:543
+#: ../../source/historique.rst:542
 msgid "0.2.0 (2025-01-06)"
 msgstr "0.2.0 (2025-01-06)"
 
-#: ../../source/historique.rst:546
+#: ../../source/historique.rst:545
 msgid "Ajout de tables de matchs/TP/GV."
 msgstr "Προσθήκη πινάκων αγώνων/TP/GV."
 
-#: ../../source/historique.rst:547
+#: ../../source/historique.rst:546
 msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
 msgstr "Προσθήκη φίλτρων αναζήτησης (κινήσεις, αποφάσεις ντουμπλέ, ημερομηνία)."
 
-#: ../../source/historique.rst:548
+#: ../../source/historique.rst:547
 msgid "Ajout de métadonnées sur les positions."
 msgstr "Προσθήκη μεταδεδομένων στις θέσεις."
 
-#: ../../source/historique.rst:549
+#: ../../source/historique.rst:548
 msgid "Fonction d'import/export entre instances de blunderDB."
 msgstr "Λειτουργία εισαγωγής/εξαγωγής μεταξύ στιγμιότυπων του blunderDB."
 
-#: ../../source/historique.rst:550
+#: ../../source/historique.rst:549
 msgid "Ajout de fonction de métadonnées sur les bases de données."
 msgstr "Προσθήκη λειτουργίας μεταδεδομένων στις βάσεις δεδομένων."
 
-#: ../../source/historique.rst:551
+#: ../../source/historique.rst:550
 msgid "Introduction des numéros de versions (base de données et application)."
 msgstr "Εισαγωγή αριθμών εκδόσεων (βάσης δεδομένων και εφαρμογής)."
 
-#: ../../source/historique.rst:554
+#: ../../source/historique.rst:553
 msgid "0.1.0 (2024-12-31)"
 msgstr "0.1.0 (2024-12-31)"
 
-#: ../../source/historique.rst:556
+#: ../../source/historique.rst:555
 msgid "Création version bêta."
 msgstr "Έκδοση beta."
 
@@ -3813,4 +3809,7 @@ msgstr "Έκδοση beta."
 #~ "δίνει τους αγώνες που μετράει ένας "
 #~ "αριθμός· η γραμμή ενός πίνακα που "
 #~ "επισημαίνεται με το ποντίκι χρωματίζεται."
+
+#~ msgid "Voir :ref:`visites_guidees`."
+#~ msgstr "Βλ. :ref:`visites_guidees`."
 

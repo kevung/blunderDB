@@ -104,8 +104,6 @@ Des fenêtres modales peuvent s'afficher pour:
   majuscules ni aux accents (*ENTREE* passe à la suivante, *MAJ-ENTREE* à la
   précédente),
 
-* afficher le catalogue des visites guidées (voir :ref:`visites_guidees`),
-
 * paramétrer l'export de la base de données,
 
 * configurer blunderDB, notamment la langue de l'interface (voir
@@ -283,6 +281,8 @@ le titre de la fenêtre nomme la base. Tant qu'il n'y a qu'une vue en tout, la b
   (``og``). La bibliothèque active jusque-là reste ouverte dans son groupe.
   *CTRL-O* remplace, lui, la bibliothèque du groupe actif ; l'infobulle du
   bouton *Ouvrir* de la barre d'outils rappelle les deux raccourcis.
+  Quand le fichier doit être migré, la barre d'état affiche la progression de
+  la migration ; *Échap* l'annule, et aucun groupe n'est ajouté.
 
 * **Changer de bibliothèque** : cliquer un onglet d'un autre groupe active
   sa bibliothèque et cette vue d'un seul geste ; cliquer l'en-tête du groupe
@@ -1075,29 +1075,6 @@ détermine l'emplacement des panneaux (recherche, matchs, analyse) par rapport
 au plateau : *en bas*, *sur le côté* ou *automatique* (le côté est alors choisi
 sur les écrans larges afin de mieux exploiter l'espace disponible). Comme les
 autres réglages, ces choix sont conservés d'une session à l'autre.
-
-.. _visites_guidees:
-
-Visites guidées et base d'exemple
----------------------------------
-
-Pour faciliter la prise en main, blunderDB propose des **visites guidées** de
-l'interface. Le catalogue des visites s'ouvre depuis la barre d'outils ou avec
-la commande ``tutorial`` (alias ``tour``). Sept visites sont disponibles : un
-tour général de l'interface, et des visites dédiées à la recherche de positions,
-à la revue des matchs, à la revue des tournois, au panneau Eval, à la révision
-Anki et aux statistiques. Chaque visite met en évidence les éléments concernés
-de l'interface, étape par étape, ouvre au passage le panneau dont elle parle, et
-peut être rejouée à tout moment. Au premier démarrage, le tour général est
-proposé automatiquement.
-
-La commande ``demo`` charge une **base d'exemple** permettant de découvrir les
-fonctionnalités de l'outil sans importer ses propres parties : trois matchs
-(dont deux regroupés dans un tournoi) analysés par eXtreme Gammon, BGBlitz et
-gammonNet, trois collections thématiques, des commentaires étiquetés
-(``#blunder``, ``#cube``) et un paquet Anki avec son journal de révisions. Les
-joueurs, le tournoi et le lieu sont fictifs. Les visites guidées s'appuient sur
-cette base lorsqu'aucune base n'est ouverte.
 
 .. _navigation_positions:
 

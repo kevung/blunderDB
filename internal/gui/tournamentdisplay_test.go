@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
-	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
@@ -115,24 +115,17 @@ func TestStartTournamentDisplay_OffUntilAskedAndNeedsATournament(t *testing.T) {
 	}
 }
 
-// Over the real engine and the demo file: the page of a directed tournament comes back with an
+// Over the real engine and a directed file: the page of a directed tournament comes back with an
 // ETag, and the same ETag sent back costs a 304 — what the phones poll on.
-func TestDisplayHandler_ServesTheDemoTournamentConditionally(t *testing.T) {
+func TestDisplayHandler_ServesADirectedTournamentConditionally(t *testing.T) {
 	db := database.NewDatabase()
 	a := NewApp(db)
 	t.Cleanup(a.stopDisplay)
-	path, err := a.PrepareDemoDatabase()
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() { _ = os.Remove(path) })
-	if err := db.OpenDatabase(path); err != nil {
-		t.Fatal(err)
-	}
+	openDirectedFile(t, db)
 	t.Cleanup(func() { _ = db.Close() })
 	list, err := db.ListDirections()
 	if err != nil || len(list) == 0 {
-		t.Fatalf("the demo file must hold a Direction: %v %d", err, len(list))
+		t.Fatalf("the file must hold a Direction: %v %d", err, len(list))
 	}
 	id := list[0].TournamentID
 	h := displayHandler(&a.display.engine, id)
@@ -172,15 +165,25 @@ func TestDisplayHandler_ServesTheDemoTournamentConditionally(t *testing.T) {
 	}
 }
 
-// openDemo opens a fresh copy of the demo file in db.
-func openDemo(t *testing.T, a *App, db *database.Database) {
+// openDirectedFile opens, in db, a fresh file holding one directed tournament.
+func openDirectedFile(t *testing.T, db *database.Database) {
 	t.Helper()
-	path, err := a.PrepareDemoDatabase()
+	if err := db.SetupDatabase(filepath.Join(t.TempDir(), "directed.db")); err != nil {
+		t.Fatal(err)
+	}
+	id, err := db.CreateTournament("Salle", "2026-09-12", "")
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { _ = os.Remove(path) })
-	if err := db.OpenDatabase(path); err != nil {
+	cfg := `{"name":"Salle","tables":{"count":4},"phases":[{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous","target":4}]}`
+	if err := db.CreateDirection(id, cfg, 7); err != nil {
+		t.Fatal(err)
+	}
+	var players []string
+	for _, p := range []string{"p0", "p1", "p2", "p3", "p4", "p5"} {
+		players = append(players, `{"id":"`+p+`","name":"Joueur `+p+`"}`)
+	}
+	if err := db.EnterParticipants(id, "["+strings.Join(players, ",")+"]"); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -192,17 +195,17 @@ func TestTournamentDisplay_StopsWhenTheOpenFileChanges(t *testing.T) {
 	a := NewApp(db)
 	t.Cleanup(a.stopDisplay)
 	t.Cleanup(func() { _ = db.Close() })
-	openDemo(t, a, db)
+	openDirectedFile(t, db)
 	list, err := db.ListDirections()
 	if err != nil || len(list) == 0 {
-		t.Fatalf("the demo file must hold a Direction: %v", err)
+		t.Fatalf("the file must hold a Direction: %v", err)
 	}
 	port := freePort(t)
 	st := a.StartTournamentDisplay(TournamentDisplayConfig{TournamentID: list[0].TournamentID, Port: port})
 	if !st.Running {
 		t.Fatalf("display did not start: %s", st.Error)
 	}
-	openDemo(t, a, db)
+	openDirectedFile(t, db)
 	if st := a.GetTournamentDisplayStatus(); st.Running {
 		t.Fatal("the display must stop when another file is opened")
 	}
@@ -238,10 +241,10 @@ func TestLiveEngines_AnswerAfterAVacuumBySwap(t *testing.T) {
 	t.Cleanup(a.stopDisplay)
 	t.Cleanup(a.stopMCP)
 	t.Cleanup(func() { _ = db.Close() })
-	openDemo(t, a, db)
+	openDirectedFile(t, db)
 	list, err := db.ListDirections()
 	if err != nil || len(list) == 0 {
-		t.Fatalf("the demo file must hold a Direction: %v", err)
+		t.Fatalf("the file must hold a Direction: %v", err)
 	}
 	body := fmt.Sprintf(`{"tournamentId":%d}`, list[0].TournamentID)
 	// The assistant reaches the engine as the MCP server does, tenant 1; the display through
@@ -277,10 +280,10 @@ func TestStartTournamentDisplay_ABusyPortKeepsTheRunningDisplay(t *testing.T) {
 	a := NewApp(db)
 	t.Cleanup(a.stopDisplay)
 	t.Cleanup(func() { _ = db.Close() })
-	openDemo(t, a, db)
+	openDirectedFile(t, db)
 	list, err := db.ListDirections()
 	if err != nil || len(list) == 0 {
-		t.Fatalf("the demo file must hold a Direction: %v", err)
+		t.Fatalf("the file must hold a Direction: %v", err)
 	}
 	id := list[0].TournamentID
 	port := freePort(t)

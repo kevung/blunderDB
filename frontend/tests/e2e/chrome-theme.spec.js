@@ -37,7 +37,7 @@ for (const theme of ['light', 'dark']) {
         await expect(page.getByTestId('status-bar-message')).toHaveCSS('color', muted);
 
         // Barre d'outils : ses boutons sont des <button>, qui n'héritent pas l'encre.
-        const toolbar = page.locator('[data-tour="toolbar"]');
+        const toolbar = page.getByTestId('toolbar');
         await expect(toolbar).toHaveCSS('background-color', surfaceAlt);
         await expect(toolbar.locator('button').first()).toHaveCSS('color', text);
 

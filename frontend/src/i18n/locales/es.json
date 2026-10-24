@@ -197,165 +197,10 @@
         "togglePipcount": "Alternar conteo de pips",
         "toggleAnalysisChallenge": "Desafío: ocultar el análisis",
         "updatePosition": "Actualizar posición",
-        "tour": "Visitas guiadas",
         "importDatabaseTip": "Fusionar otra base en esta: las posiciones comunes no se duplican, sus análisis y comentarios se combinan",
         "training": "Entrenamiento",
         "pile": "Poner en la Pila / quitar de la Pila",
         "duel": "Jugar"
-    },
-    "tour": {
-        "next": "Siguiente",
-        "prev": "Atrás",
-        "done": "Hecho",
-        "start": "Iniciar",
-        "catalogTitle": "Visitas guiadas",
-        "catalogDesc": "Haz un recorrido rápido por la interfaz. Puedes repetirlas cuando quieras.",
-        "loadDemo": "Cargar datos de demo",
-        "demoHint": "Explora una base de ejemplo: 3 partidas, un torneo, colecciones, comentarios y un mazo Anki.",
-        "general": {
-            "title": "Visita general",
-            "desc": "Una visión rápida de la interfaz principal.",
-            "welcome": {
-                "title": "Bienvenido a blunderDB",
-                "body": "Esta breve visita te muestra las partes principales de la interfaz. Usa Siguiente y Atrás para navegar, o Esc para salir."
-            },
-            "toolbar": {
-                "title": "Barra de herramientas",
-                "body": "Crea o abre bases de datos, importa partidas y posiciones, navega, y abre los ajustes y la ayuda desde aquí."
-            },
-            "board": {
-                "title": "El tablero",
-                "body": "La posición actual se muestra aquí. Creas y editas posiciones directamente en el tablero: haz clic para colocar fichas, y fija los dados, el cubo y el marcador."
-            },
-            "panels": {
-                "title": "Paneles",
-                "body": "Análisis, comentarios, búsqueda, estadísticas, colecciones, partidas y torneos están en estas pestañas bajo el tablero."
-            },
-            "commandline": {
-                "title": "Barra de estado y línea de comandos",
-                "body": "La barra de estado de abajo muestra información de la posición. Pulsa la barra espaciadora para abrir la línea de comandos y escribe un comando: «s» para buscar, «?» para el manual."
-            },
-            "help": {
-                "title": "Ayuda",
-                "body": "Abre el manual completo en cualquier momento desde este botón (o pulsa «?»)."
-            },
-            "done": {
-                "title": "Todo listo",
-                "body": "Repite cualquier visita desde el icono de birrete en la barra de herramientas, o con el comando «tutorial»."
-            }
-        },
-        "search": {
-            "title": "Buscar posiciones",
-            "desc": "Encuentra posiciones por estructura, filtros y estadísticas.",
-            "intro": {
-                "title": "Búsqueda",
-                "body": "blunderDB permite encontrar posiciones por estructura de fichas, filtros escalares y estadísticas de análisis."
-            },
-            "tab": {
-                "title": "Pestaña Búsqueda",
-                "body": "Abre la pestaña Búsqueda para combinar filtros: pip count, fichas fuera, fichas retrasadas, marcadores, tasas de victoria/gammon, dados y más."
-            },
-            "structure": {
-                "title": "Buscar por estructura",
-                "body": "Compón una posición de referencia en el tablero y luego busca posiciones que compartan esa estructura de fichas."
-            },
-            "commandline": {
-                "title": "Buscar desde la línea de comandos",
-                "body": "Pulsa Espacio y escribe «s» seguido de filtros, p. ej. «s w>50 p>30». Escribe «?» para la referencia completa de filtros."
-            }
-        },
-        "matches": {
-            "title": "Revisar partidas",
-            "desc": "Importa partidas completas y revísalas jugada a jugada.",
-            "intro": {
-                "title": "Partidas",
-                "body": "Importa partidas completas de eXtreme Gammon, GNU Backgammon o BGBlitz y revísalas en contexto."
-            },
-            "tab": {
-                "title": "Pestaña Partidas",
-                "body": "Abre la pestaña Partidas para ver tus partidas importadas, con el PR y la pérdida de MWC de cada jugador."
-            },
-            "review": {
-                "title": "Recorrer una partida",
-                "body": "Selecciona una partida para recorrer sus jugadas; el tablero muestra cada decisión y puedes estudiar los errores por el camino."
-            }
-        },
-        "tournaments": {
-            "title": "Revisar torneos",
-            "desc": "Agrupa partidas en torneos y sigue tu rendimiento.",
-            "intro": {
-                "title": "Torneos",
-                "body": "Agrupa tus partidas en torneos para seguir tu rendimiento a lo largo de los eventos."
-            },
-            "tab": {
-                "title": "Pestaña Torneos",
-                "body": "Abre la pestaña Torneos para gestionar torneos y revisar las entradas y resultados de cada jugador."
-            },
-            "drill": {
-                "title": "Explorar en detalle",
-                "body": "Desde un torneo puedes descender a sus partidas y a las posiciones subyacentes."
-            }
-        },
-        "eval": {
-            "title": "Panel Eval",
-            "desc": "Evaluar la posición mostrada.",
-            "intro": {
-                "title": "Evaluar una posición",
-                "body": "blunderDB lleva su propio evaluador: no hace falta un análisis importado para saber cuánto vale una posición."
-            },
-            "tab": {
-                "title": "La pestaña Eval",
-                "body": "Ctrl+E. Da la mejor jugada, la decisión de cubo y el recuento de pips efectivo (EPC)."
-            },
-            "position": {
-                "title": "La posición evaluada",
-                "body": "Siempre la del tablero: coloque las fichas, los dados y el marcador, y la evaluación sigue."
-            },
-            "scale": {
-                "title": "Money o match",
-                "body": "En money la equidad va en puntos; con marcador está normalizada — ±1 es el cubo actual ganado o perdido."
-            }
-        },
-        "anki": {
-            "title": "Repaso Anki",
-            "desc": "Repasar posiciones por repetición espaciada.",
-            "intro": {
-                "title": "Repasar los errores",
-                "body": "Un mazo de repaso convierte las posiciones falladas en tarjetas y se las vuelve a mostrar en el momento oportuno."
-            },
-            "tab": {
-                "title": "La pestaña Anki",
-                "body": "Ctrl+K. Aquí se crea un mazo, se repasa y se sigue lo que queda por ver."
-            },
-            "deck": {
-                "title": "Construir un mazo",
-                "body": "Un mazo parte de una búsqueda o de una colección: se resincroniza cuando cambia la base."
-            },
-            "review": {
-                "title": "Responder una tarjeta",
-                "body": "La respuesta queda oculta hasta que la pida; su nota fija el próximo vencimiento."
-            }
-        },
-        "stats": {
-            "title": "Estadísticas",
-            "desc": "Leer su nivel y su progreso.",
-            "intro": {
-                "title": "Medir su juego",
-                "body": "Las estadísticas se basan en los partidos importados con su análisis: ahí se ve el nivel."
-            },
-            "tab": {
-                "title": "La pestaña Stats",
-                "body": "Ctrl+D. Cuatro vistas: panel, errores, progresión y jugadores."
-            },
-            "pr": {
-                "title": "El PR",
-                "body": "El error medio por decisión, en milipuntos. Cuanto más bajo, mejor; se compara con el de XG."
-            },
-            "filters": {
-                "title": "Acotar la medida",
-                "body": "Periodo, rival, duración del partido, torneo: cada filtro recalcula toda la tabla."
-            }
-        }
     },
     "help": {
         "tabManual": "Manual",
@@ -2143,10 +1988,6 @@
         "lede": "Su base de posiciones de backgammon: importe sus partidos, busque lo que quiera revisar, mida lo que juega.",
         "importTitle": "Importar mis partidos",
         "importNote": "Una base nueva, sus ficheros de XG, GNU Backgammon, Jellyfish o BGBlitz, y su PR con sus peores decisiones en dos minutos.",
-        "demoTitle": "Abrir la base de ejemplo",
-        "demoNote": "Tres partidos, colecciones, comentarios y un mazo Anki: lo suficiente para probarlo todo sin aportar nada.",
-        "tourTitle": "Visita guiada",
-        "tourNote": "Un recorrido por la interfaz, panel a panel.",
         "openTitle": "Abrir una base",
         "openNote": "Un fichero .db que ya tiene.",
         "resume": "Retomar {name}",
@@ -3121,10 +2962,8 @@
             "comment": "Mostrar los comentarios",
             "quit": "Cerrar blunderDB",
             "help": "Ayuda",
-            "tutorial": "Visitas guiadas",
             "trash": "Papelera",
             "resume": "Reanudar una importación interrumpida",
-            "demo": "Cargar la base de ejemplo",
             "e": "Cargar todas las posiciones",
             "s": "Buscar posiciones",
             "ss": "Buscar entre las posiciones mostradas",
@@ -3550,6 +3389,8 @@
         "busyImport": "Una importación escribe archivo por archivo en la biblioteca activa: espere a que termine antes de cambiar de biblioteca",
         "busyWrite": "Se está escribiendo un cambio en la biblioteca activa: inténtelo de nuevo en un momento",
         "switching": "Cambio de biblioteca en curso: espere a que termine",
+        "migrating": "Migrando la biblioteca: {phase} {done}/{total} (Esc para cancelar)",
+        "migrationCancelled": "Migración cancelada",
         "answerDropped": "La biblioteca en pantalla ha cambiado entretanto: la confirmación no se ha aplicado",
         "writeDropped": "La biblioteca en pantalla ha cambiado entretanto: el cambio no se ha escrito",
         "jobRunning": "Una tarea en segundo plano trabaja en esta biblioteca",

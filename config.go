@@ -202,7 +202,6 @@ type Config struct {
 	// absent from it uses the AnyTabPanelHeight entry if any, else the default height.
 	PanelHeights map[string]int `json:"panel_heights,omitempty"`
 	PageStep     string         `json:"page_step,omitempty"`
-	TourSeen     bool           `json:"tour_seen,omitempty"`
 	// TabOrder is the user's order of TabbedPanel.svelte's tab ids; empty
 	// means the built-in order, which the frontend owns.
 	TabOrder []string `json:"tab_order,omitempty"`
@@ -482,7 +481,6 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.PanelHeight = 0
 	c.PageStep = sanitizePageStep(config.PageStep)
 	config.PageStep = c.PageStep
-	c.TourSeen = config.TourSeen
 	c.TabOrder = config.TabOrder
 	c.DuelForm = config.DuelForm
 	c.HiddenTabs = config.HiddenTabs
@@ -793,17 +791,6 @@ func (c *Config) GetPanelWidth() int {
 // supported range.
 func (c *Config) SavePanelWidth(width int) error {
 	c.PanelWidth = clampPanelWidth(width)
-	return c.SaveConfig(c)
-}
-
-// GetTourSeen reports whether the first-run guided-tour catalog has been shown.
-func (c *Config) GetTourSeen() bool {
-	return c.TourSeen
-}
-
-// SaveTourSeen persists whether the first-run guided-tour catalog has been shown.
-func (c *Config) SaveTourSeen(seen bool) error {
-	c.TourSeen = seen
 	return c.SaveConfig(c)
 }
 

@@ -14,8 +14,7 @@ import { get } from 'svelte/store';
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     SaveDatabaseDialog: vi.fn(),
     OpenDatabaseDialog: vi.fn(),
-    DeleteFile: vi.fn(),
-    PrepareDemoDatabase: vi.fn()
+    DeleteFile: vi.fn()
 }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
@@ -51,7 +50,7 @@ vi.mock('../services/sessionService.js', () => ({
     saveSessionState: vi.fn().mockResolvedValue(undefined)
 }));
 
-import { SaveDatabaseDialog, OpenDatabaseDialog, PrepareDemoDatabase } from '../../wailsjs/go/gui/App.js';
+import { SaveDatabaseDialog, OpenDatabaseDialog } from '../../wailsjs/go/gui/App.js';
 import { libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { tMsg } from '../i18n';
 import {
@@ -75,7 +74,6 @@ import { openDirectionIdStore } from '../stores/directionStore.js';
 import {
     newDatabase,
     openDatabase,
-    loadDemoDatabase,
     openDatabaseByPath,
     exitApp,
     closeWarningModal,
@@ -233,7 +231,7 @@ describe('newDatabase', () => {
     });
 });
 
-// ── openDatabase / loadDemoDatabase (dialog wrappers) ────────────────────────
+// ── openDatabase (dialog wrapper) ────────────────────────
 
 describe('openDatabase', () => {
     test('delegates to openDatabaseByPath with the chosen file', async () => {
@@ -259,34 +257,6 @@ describe('openDatabase', () => {
 
         await expect(openDatabase()).resolves.toBeUndefined();
         expect(get(statusBarTextStore)).not.toBe('');
-    });
-});
-
-describe('loadDemoDatabase', () => {
-    test('decompresses the demo database and opens it', async () => {
-        vi.mocked(PrepareDemoDatabase).mockResolvedValue('/tmp/demo.db');
-
-        await loadDemoDatabase();
-
-        expect(get(databasePathStore)).toBe('/tmp/demo.db');
-        expect(OpenDatabase).toHaveBeenCalledWith('/tmp/demo.db');
-    });
-
-    test('no path returned is a no-op', async () => {
-        vi.mocked(PrepareDemoDatabase).mockResolvedValue('');
-
-        await loadDemoDatabase();
-
-        expect(OpenDatabase).not.toHaveBeenCalled();
-    });
-
-    test('a failure to prepare the demo database reports an error', async () => {
-        vi.mocked(PrepareDemoDatabase).mockRejectedValue(new Error('embed missing'));
-
-        await loadDemoDatabase();
-
-        expect(get(statusBarTextStore)).not.toBe('');
-        expect(OpenDatabase).not.toHaveBeenCalled();
     });
 });
 

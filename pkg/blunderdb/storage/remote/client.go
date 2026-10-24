@@ -52,7 +52,7 @@ func visible(err error) error { return visibleError{err} }
 var ErrUnsupported = errors.New("remote: no /v1 route for this storage method")
 
 // UnsupportedError names the contract method that has no /v1 route. It
-// matches ErrUnsupported and storage.ErrInternal: a caller that only knows
+// matches ErrUnsupported, storage.ErrUnsupported and storage.ErrInternal: a caller that only knows
 // the storage sentinels still sees a failure, never a not-found that reads as
 // an absent row.
 type UnsupportedError struct {
@@ -67,9 +67,9 @@ func (e *UnsupportedError) Error() string {
 // internal: it names a contract method, nothing of the backend behind it.
 func (e *UnsupportedError) ClientMessage() string { return e.Error() }
 
-// Is matches ErrUnsupported and storage.ErrInternal.
+// Is matches ErrUnsupported, storage.ErrUnsupported and storage.ErrInternal.
 func (e *UnsupportedError) Is(target error) bool {
-	return target == ErrUnsupported || target == storage.ErrInternal
+	return target == ErrUnsupported || target == storage.ErrUnsupported || target == storage.ErrInternal
 }
 
 func unsupported(method string) error { return &UnsupportedError{Method: method} }

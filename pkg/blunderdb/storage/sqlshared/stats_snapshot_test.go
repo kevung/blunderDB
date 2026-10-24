@@ -23,7 +23,7 @@ import (
 func TestReadOnlyStatsProbeAndReadShareASnapshot(t *testing.T) {
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "demo.db")
-	src, err := os.Open(filepath.Join("..", "..", "..", "..", "internal", "gui", "demo.db.gz"))
+	src, err := os.Open(filepath.Join("..", "..", "..", "..", "testdata", "library.db.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}

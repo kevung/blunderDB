@@ -115,14 +115,10 @@ export function processCommand(command) {
         callbacks.exitApp?.();
     } else if (command === 'help' || command === 'he' || command === 'h') {
         callbacks.onToggleHelp?.();
-    } else if (command === 'tutorial' || command === 'tour') {
-        openModal(MODAL.TOUR);
     } else if (command === 'trash') {
         openModal(MODAL.TRASH);
     } else if (command === 'resume') {
         openModal(MODAL.RESUME_BATCH);
-    } else if (command === 'demo') {
-        callbacks.onLoadDemo?.();
     } else if (command === 'e') {
         callbacks.onLoadAllPositions?.();
     } else if (command === 'stats' || command === 'st') {

@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import { SaveDatabaseDialog, OpenDatabaseDialog, PrepareDemoDatabase, LibraryGroupHolding } from '../../wailsjs/go/gui/App.js';
+import { SaveDatabaseDialog, OpenDatabaseDialog, LibraryGroupHolding } from '../../wailsjs/go/gui/App.js';
 import {
     IsOpenDatabase,
     RecreateDatabase,
@@ -170,6 +170,7 @@ export function libraryGroupError(error, context = {}) {
         const job = busy[1] ?? '';
         return BUSY_JOB_KEYS[job] ? tMsg(BUSY_JOB_KEYS[job]) : tMsg('libraryGroups.busy', { job: job || '?' });
     }
+    if (/context canceled/.test(String(error))) return tMsg('libraryGroups.migrationCancelled');
     if (context.switching !== undefined) return tMsg('libraryGroups.switchFailed', { name: context.switching });
     return tMsg('commands.errorOpeningDb');
 }
@@ -262,20 +263,6 @@ export async function openDatabaseInNewGroup() {
         await openDatabaseByPath(filePath, { inNewGroup: openInNewGroup });
     } catch (error) {
         logger.error('Error opening a library in a new group:', error);
-        setStatusBarMessage(tMsg('commands.errorOpeningDb'));
-    }
-}
-
-// Load the embedded sample database (a couple of matches + a tournament with
-// analysis) so users — and the guided tours — have real content to explore.
-// Decompresses to a fresh temp file and reuses the normal open flow.
-export async function loadDemoDatabase() {
-    try {
-        const filePath = await PrepareDemoDatabase();
-        if (!filePath) return;
-        await openDatabaseByPath(filePath);
-    } catch (error) {
-        logger.error('Error loading demo database:', error);
         setStatusBarMessage(tMsg('commands.errorOpeningDb'));
     }
 }

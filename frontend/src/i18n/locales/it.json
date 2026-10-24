@@ -197,165 +197,10 @@
         "togglePipcount": "Attiva/disattiva conteggio pip",
         "toggleAnalysisChallenge": "Sfida: nascondi l'analisi",
         "updatePosition": "Aggiorna posizione",
-        "tour": "Tour guidati",
         "importDatabaseTip": "Unisci un altro database a questo: le posizioni comuni non vengono duplicate, le loro analisi e i loro commenti sono combinati",
         "training": "Allenamento",
         "pile": "Metti nella Pila / togli dalla Pila",
         "duel": "Gioca"
-    },
-    "tour": {
-        "next": "Avanti",
-        "prev": "Indietro",
-        "done": "Fine",
-        "start": "Avvia",
-        "catalogTitle": "Tour guidati",
-        "catalogDesc": "Fai un rapido tour dell'interfaccia. Puoi ripeterli in qualsiasi momento.",
-        "loadDemo": "Carica dati demo",
-        "demoHint": "Esplora un database di esempio: 3 partite, un torneo, raccolte, commenti e un mazzo Anki.",
-        "general": {
-            "title": "Tour generale",
-            "desc": "Una rapida panoramica dell'interfaccia principale.",
-            "welcome": {
-                "title": "Benvenuto in blunderDB",
-                "body": "Questo breve tour ti guida tra le parti principali dell'interfaccia. Usa Avanti e Indietro per spostarti, o Esc per uscire."
-            },
-            "toolbar": {
-                "title": "Barra degli strumenti",
-                "body": "Crea o apri database, importa partite e posizioni, naviga, e apri impostazioni e guida da qui."
-            },
-            "board": {
-                "title": "La board",
-                "body": "La posizione corrente è mostrata qui. Crei e modifichi le posizioni direttamente sulla board: fai clic per posizionare le pedine e imposta dadi, cubo e punteggio."
-            },
-            "panels": {
-                "title": "Pannelli",
-                "body": "Analisi, commenti, ricerca, statistiche, collezioni, partite e tornei si trovano in queste schede sotto la board."
-            },
-            "commandline": {
-                "title": "Barra di stato e riga di comando",
-                "body": "La barra di stato in basso mostra le info sulla posizione. Premi la barra spaziatrice per aprire la riga di comando, poi digita un comando: «s» per cercare, «?» per il manuale."
-            },
-            "help": {
-                "title": "Guida",
-                "body": "Apri il manuale completo in qualsiasi momento da questo pulsante (o premi «?»)."
-            },
-            "done": {
-                "title": "Tutto pronto",
-                "body": "Ripeti qualsiasi tour dall'icona del tocco di laurea nella barra degli strumenti, o con il comando «tutorial»."
-            }
-        },
-        "search": {
-            "title": "Cercare posizioni",
-            "desc": "Trova posizioni per struttura, filtri e statistiche.",
-            "intro": {
-                "title": "Ricerca",
-                "body": "blunderDB permette di trovare posizioni per struttura delle pedine, filtri scalari e statistiche di analisi."
-            },
-            "tab": {
-                "title": "Scheda Ricerca",
-                "body": "Apri la scheda Ricerca per combinare filtri: pip count, pedine uscite, pedine arretrate, punteggi, percentuali di vittoria/gammon, dadi e altro."
-            },
-            "structure": {
-                "title": "Cercare per struttura",
-                "body": "Componi una posizione di riferimento sulla board, poi cerca le posizioni che condividono quella struttura delle pedine."
-            },
-            "commandline": {
-                "title": "Cercare dalla riga di comando",
-                "body": "Premi Spazio e digita «s» seguito dai filtri, ad es. «s w>50 p>30». Digita «?» per il riferimento completo dei filtri."
-            }
-        },
-        "matches": {
-            "title": "Rivedere le partite",
-            "desc": "Importa partite complete e rivedile mossa per mossa.",
-            "intro": {
-                "title": "Partite",
-                "body": "Importa partite complete da eXtreme Gammon, GNU Backgammon o BGBlitz e rivedile nel contesto."
-            },
-            "tab": {
-                "title": "Scheda Partite",
-                "body": "Apri la scheda Partite per vedere le tue partite importate, con il PR e la perdita di MWC per ogni giocatore."
-            },
-            "review": {
-                "title": "Scorrere una partita",
-                "body": "Seleziona una partita per scorrere le sue mosse; la board mostra ogni decisione e puoi studiare gli errori lungo il percorso."
-            }
-        },
-        "tournaments": {
-            "title": "Rivedere i tornei",
-            "desc": "Raggruppa le partite in tornei e monitora le prestazioni.",
-            "intro": {
-                "title": "Tornei",
-                "body": "Raggruppa le tue partite in tornei per seguire le tue prestazioni nei vari eventi."
-            },
-            "tab": {
-                "title": "Scheda Tornei",
-                "body": "Apri la scheda Tornei per gestire i tornei e rivedere le voci e i risultati di ogni giocatore."
-            },
-            "drill": {
-                "title": "Esplorare in dettaglio",
-                "body": "Da un torneo puoi scendere fino alle sue partite e alle posizioni sottostanti."
-            }
-        },
-        "eval": {
-            "title": "Pannello Eval",
-            "desc": "Valutare la posizione mostrata.",
-            "intro": {
-                "title": "Valutare una posizione",
-                "body": "blunderDB ha il proprio valutatore: non serve un'analisi importata per sapere quanto vale una posizione."
-            },
-            "tab": {
-                "title": "La scheda Eval",
-                "body": "Ctrl+E. Dà la mossa migliore, la decisione di cubo e il conteggio pip effettivo (EPC)."
-            },
-            "position": {
-                "title": "La posizione valutata",
-                "body": "Sempre quella sulla board: sistemate pedine, dadi e punteggio, la valutazione segue."
-            },
-            "scale": {
-                "title": "Money o match",
-                "body": "Nel money l'equity è in punti; al punteggio è normalizzata — ±1 è il cubo corrente vinto o perso."
-            }
-        },
-        "anki": {
-            "title": "Ripasso Anki",
-            "desc": "Ripassare le posizioni a ripetizione dilazionata.",
-            "intro": {
-                "title": "Ripassare i propri errori",
-                "body": "Un mazzo di ripasso trasforma le posizioni sbagliate in carte e ve le ripropone al momento giusto."
-            },
-            "tab": {
-                "title": "La scheda Anki",
-                "body": "Ctrl+K. Qui si crea un mazzo, lo si ripassa e si segue ciò che resta."
-            },
-            "deck": {
-                "title": "Costruire un mazzo",
-                "body": "Un mazzo parte da una ricerca o da una raccolta: si risincronizza quando il database cambia."
-            },
-            "review": {
-                "title": "Rispondere a una carta",
-                "body": "La risposta resta nascosta finché non la chiedete; il vostro voto fissa la scadenza successiva."
-            }
-        },
-        "stats": {
-            "title": "Statistiche",
-            "desc": "Leggere il proprio livello e i progressi.",
-            "intro": {
-                "title": "Misurare il proprio gioco",
-                "body": "Le statistiche riguardano le partite importate con la loro analisi: è lì che si legge il livello."
-            },
-            "tab": {
-                "title": "La scheda Stats",
-                "body": "Ctrl+D. Quattro viste: cruscotto, errori, progressione e giocatori."
-            },
-            "pr": {
-                "title": "Il PR",
-                "body": "L'errore medio per decisione, in millipunti. Più è basso meglio è; si confronta con quello di XG."
-            },
-            "filters": {
-                "title": "Restringere la misura",
-                "body": "Periodo, avversario, lunghezza del match, torneo: ogni filtro ricalcola l'intera tabella."
-            }
-        }
     },
     "help": {
         "tabManual": "Manuale",
@@ -2143,10 +1988,6 @@
         "lede": "La vostra base di posizioni di backgammon: importate i vostri incontri, cercate ciò che volete rivedere, misurate ciò che giocate.",
         "importTitle": "Importare i miei incontri",
         "importNote": "Una base nuova, i vostri file XG, GNU Backgammon, Jellyfish o BGBlitz, e il vostro PR con le peggiori decisioni in due minuti.",
-        "demoTitle": "Aprire la base d'esempio",
-        "demoNote": "Tre incontri, collezioni, commenti e un mazzo Anki: abbastanza per provare tutto senza portare nulla.",
-        "tourTitle": "Visita guidata",
-        "tourNote": "Un giro dell'interfaccia, pannello per pannello.",
         "openTitle": "Aprire una base",
         "openNote": "Un file .db che avete già.",
         "resume": "Riprendere {name}",
@@ -3121,10 +2962,8 @@
             "comment": "Mostra i commenti",
             "quit": "Chiudi blunderDB",
             "help": "Aiuto",
-            "tutorial": "Visite guidate",
             "trash": "Cestino",
             "resume": "Riprendi un'importazione interrotta",
-            "demo": "Carica il database di esempio",
             "e": "Carica tutte le posizioni",
             "s": "Cerca posizioni",
             "ss": "Cerca tra le posizioni mostrate",
@@ -3550,6 +3389,8 @@
         "busyImport": "Un'importazione scrive file per file nella libreria attiva: attendine la fine prima di cambiare libreria",
         "busyWrite": "Una modifica è in corso di scrittura nella libreria attiva: riprova tra un istante",
         "switching": "Cambio di libreria in corso: attendine la fine",
+        "migrating": "Migrazione della libreria: {phase} {done}/{total} (Esc per annullare)",
+        "migrationCancelled": "Migrazione annullata",
         "answerDropped": "La libreria sullo schermo è cambiata nel frattempo: la conferma non è stata applicata",
         "writeDropped": "La libreria sullo schermo è cambiata nel frattempo: la modifica non è stata scritta",
         "jobRunning": "Un'attività in background lavora in questa libreria",

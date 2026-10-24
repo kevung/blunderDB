@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 23:55+0200\n"
+"POT-Creation-Date: 2026-10-25 00:05+0200\n"
 "PO-Revision-Date: 2026-09-06 00:00+0200\n"
 "Last-Translator: unger <blunderdb@proton.me>\n"
 "Language: en\n"
@@ -2955,7 +2955,7 @@ msgstr ""
 "file."
 
 #: ../../source/historique.rst:356 ../../source/historique.rst:362
-#: ../../source/historique.rst:381
+#: ../../source/historique.rst:380
 msgid "Voir :ref:`headless`."
 msgstr "See :ref:`headless`."
 
@@ -3023,15 +3023,11 @@ msgstr "Searching for a position by its identifier (``id`` filter)."
 msgid "Correction de l'attribution de l'erreur de videau au joueur 1."
 msgstr "Fixed the attribution of the cube error to player 1."
 
-#: ../../source/historique.rst:373
-msgid "Voir :ref:`visites_guidees`."
-msgstr "See :ref:`visites_guidees`."
-
-#: ../../source/historique.rst:376
+#: ../../source/historique.rst:375
 msgid "0.22.0 (2026-06-02)"
 msgstr "0.22.0 (2026-06-02)"
 
-#: ../../source/historique.rst:378
+#: ../../source/historique.rst:377
 msgid ""
 "Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
 "l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
@@ -3048,7 +3044,7 @@ msgstr ""
 "database to PostgreSQL, and a generic ``call`` dispatcher giving command-"
 "line access to every storage operation."
 
-#: ../../source/historique.rst:379
+#: ../../source/historique.rst:378
 msgid ""
 "Import de positions uniques depuis de nouveaux formats (eXtreme Gammon "
 "``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement"
@@ -3058,7 +3054,7 @@ msgstr ""
 "BGBlitz text, native ``.db`` library) with enrichment of duplicates "
 "across formats."
 
-#: ../../source/historique.rst:380
+#: ../../source/historique.rst:379
 msgid ""
 "Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base"
 " n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture."
@@ -3066,11 +3062,11 @@ msgstr ""
 "Fixes: panels no longer raise an error when no database is open, and the "
 "Comments panel no longer loops on opening."
 
-#: ../../source/historique.rst:384
+#: ../../source/historique.rst:383
 msgid "0.21.0 (2026-06-01)"
 msgstr "0.21.0 (2026-06-01)"
 
-#: ../../source/historique.rst:386
+#: ../../source/historique.rst:385
 msgid ""
 "Internationalisation de l'interface : l'intégralité de blunderDB (barre "
 "d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
@@ -3081,7 +3077,7 @@ msgstr ""
 "messages, help) can now be displayed in English, French, German, Italian,"
 " Spanish, Finnish, Japanese, Greek or Russian, as you choose."
 
-#: ../../source/historique.rst:387
+#: ../../source/historique.rst:386
 msgid ""
 "Ajout d'une fenêtre de configuration, accessible par un bouton en forme "
 "de rouage dans la barre d'outils, permettant de sélectionner la langue."
@@ -3089,19 +3085,19 @@ msgstr ""
 "Added a settings window, accessible via a gear-shaped button in the "
 "toolbar, allowing the language to be selected."
 
-#: ../../source/historique.rst:388
+#: ../../source/historique.rst:387
 msgid "Le choix de la langue est conservé d'une session à l'autre."
 msgstr "The language choice is kept from one session to another."
 
-#: ../../source/historique.rst:389
+#: ../../source/historique.rst:388
 msgid "Voir :ref:`configuration`."
 msgstr "See :ref:`configuration`."
 
-#: ../../source/historique.rst:392
+#: ../../source/historique.rst:391
 msgid "0.20.0 (2026-05-31)"
 msgstr "0.20.0 (2026-05-31)"
 
-#: ../../source/historique.rst:394
+#: ../../source/historique.rst:393
 msgid ""
 "Ajout de la structure d'exclusion *Except* au panneau de recherche : "
 "exclut les positions contenant l'un des pions dessinés, avec marqueur « "
@@ -3113,7 +3109,7 @@ msgstr ""
 "marker (double-click) and an unlimited number of checkers per point "
 "(``x`` command)."
 
-#: ../../source/historique.rst:395
+#: ../../source/historique.rst:394
 msgid ""
 "Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
 "(variante D1, option CLI --dice)."
@@ -3121,7 +3117,7 @@ msgstr ""
 "Added the \"first die only\" option to the dice-roll filter (D1 variant, "
 "``--dice`` CLI option)."
 
-#: ../../source/historique.rst:396
+#: ../../source/historique.rst:395
 msgid ""
 "Panneau Commentaires : focus automatique du champ de saisie à l'ouverture"
 " et boutons éditer / supprimer toujours visibles."
@@ -3129,17 +3125,17 @@ msgstr ""
 "Comments panel: automatic focus of the input field on opening, and "
 "edit/delete buttons always visible."
 
-#: ../../source/historique.rst:397
+#: ../../source/historique.rst:396
 msgid ""
 "Correction du filtre « Search Text » qui ne trouvait pas tous les tags de"
 " commentaires."
 msgstr "Fixed the \"Search Text\" filter, which did not find all comment tags."
 
-#: ../../source/historique.rst:400
+#: ../../source/historique.rst:399
 msgid "0.19.0 (2026-05-07)"
 msgstr "0.19.0 (2026-05-07)"
 
-#: ../../source/historique.rst:402
+#: ../../source/historique.rst:401
 msgid ""
 "Ajout du panneau Stats : indicateurs PR (Performance Rating), Snowie "
 "Error Rate et MWC cost (Match Winning Chance cost), barre de filtre "
@@ -3156,7 +3152,7 @@ msgstr ""
 "curve and per-match scatter plot, Errors tab with cube-action breakdown "
 "and error magnitude histogram."
 
-#: ../../source/historique.rst:403
+#: ../../source/historique.rst:402
 msgid ""
 "Drill-down interactif vers les positions / matchs / tournois depuis tous "
 "les indicateurs."
@@ -3164,15 +3160,15 @@ msgstr ""
 "Interactive drill-down to positions / matches / tournaments from all "
 "indicators."
 
-#: ../../source/historique.rst:404
+#: ../../source/historique.rst:403
 msgid "Toggle PR / MWC instantané."
 msgstr "Instant PR / MWC toggle."
 
-#: ../../source/historique.rst:405
+#: ../../source/historique.rst:404
 msgid "Commande CLI list --type stats."
 msgstr "CLI command list --type stats."
 
-#: ../../source/historique.rst:406
+#: ../../source/historique.rst:405
 msgid ""
 "Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
 "gnuBG (seuil 0.16 d'équité pour les cubes proches)."
@@ -3180,23 +3176,23 @@ msgstr ""
 "Alignment of PR / Snowie ER / MWC indicators with eXtremeGammon and gnuBG"
 " (0.16 equity threshold for close cubes)."
 
-#: ../../source/historique.rst:407
+#: ../../source/historique.rst:406
 msgid "Correction du calcul de cube_error pour les décisions Double/Pass."
 msgstr "Fixed cube_error calculation for Double/Pass decisions."
 
-#: ../../source/historique.rst:408
+#: ../../source/historique.rst:407
 msgid "Documentation du modèle de statistiques (:ref:`stats_parity`)."
 msgstr "Documentation of the statistics model (:ref:`stats_parity`)."
 
-#: ../../source/historique.rst:409
+#: ../../source/historique.rst:408
 msgid "Voir :ref:`stats`."
 msgstr "See :ref:`stats`."
 
-#: ../../source/historique.rst:412
+#: ../../source/historique.rst:411
 msgid "0.18.0 (2026-04-20)"
 msgstr "0.18.0 (2026-04-20)"
 
-#: ../../source/historique.rst:414
+#: ../../source/historique.rst:413
 msgid ""
 "Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
 "fichiers spécialisés, extraction de 7 modules de service depuis "
@@ -3206,47 +3202,47 @@ msgstr ""
 "files, extracting 7 service modules out of App.svelte (4888→469 lines), "
 "consolidating modal/panel stores."
 
-#: ../../source/historique.rst:415
+#: ../../source/historique.rst:414
 msgid "Migration complète vers Svelte 5 runes."
 msgstr "Full migration to Svelte 5 runes."
 
-#: ../../source/historique.rst:416
+#: ../../source/historique.rst:415
 msgid ""
 "Remplacement de 9 modales de tableau par un composant générique "
 "DataTableModal."
 msgstr "Replaced 9 table modals with a generic DataTableModal component."
 
-#: ../../source/historique.rst:417
+#: ../../source/historique.rst:416
 msgid "Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI."
 msgstr "Added ESLint + Prettier + vitest (125 frontend tests) with CI."
 
-#: ../../source/historique.rst:418
+#: ../../source/historique.rst:417
 msgid "Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier)."
 msgstr "WCAG 2.1 AA compliance (visible focus, ARIA roles, keyboard navigation)."
 
-#: ../../source/historique.rst:419
+#: ../../source/historique.rst:418
 msgid ""
 "Passage du mutex Database en RWMutex pour un meilleur parallélisme en "
 "lecture."
 msgstr "Switched the Database mutex to an RWMutex for better read parallelism."
 
-#: ../../source/historique.rst:420
+#: ../../source/historique.rst:419
 msgid "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN)."
 msgstr "Complete CLI documentation (CLI_USAGE.md + Sphinx FR/EN)."
 
-#: ../../source/historique.rst:421
+#: ../../source/historique.rst:420
 msgid "Réécriture du README."
 msgstr "Rewrote the README."
 
-#: ../../source/historique.rst:422
+#: ../../source/historique.rst:421
 msgid "Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
 msgstr "Fixed all ESLint (46→0) and Vite (6→0) warnings."
 
-#: ../../source/historique.rst:425
+#: ../../source/historique.rst:424
 msgid "0.17.0 (2026-04-20)"
 msgstr "0.17.0 (2026-04-20)"
 
-#: ../../source/historique.rst:427
+#: ../../source/historique.rst:426
 #, no-python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
@@ -3256,33 +3252,33 @@ msgstr ""
 "Storage optimisation: zlib compression of analysis data (~80% reduction),"
 " compact position encoding (~90% size reduction)."
 
-#: ../../source/historique.rst:428
+#: ../../source/historique.rst:427
 msgid "Ajout de 5 index manquants pour améliorer les performances de recherche."
 msgstr "Added 5 missing indexes to improve search performance."
 
-#: ../../source/historique.rst:429
+#: ../../source/historique.rst:428
 msgid "Correction de la recherche par erreur de cube."
 msgstr "Fixed search by cube error."
 
-#: ../../source/historique.rst:430
+#: ../../source/historique.rst:429
 msgid "Correction du mode EDIT après une recherche sans résultats."
 msgstr "Fixed EDIT mode after a search with no results."
 
-#: ../../source/historique.rst:431
+#: ../../source/historique.rst:430
 msgid ""
 "Restauration de l'état du panneau de recherche lors du changement "
 "d'onglets."
 msgstr "Restoring the search panel's state when switching tabs."
 
-#: ../../source/historique.rst:432
+#: ../../source/historique.rst:431
 msgid "Suppression de 62 instructions de débogage des chemins critiques."
 msgstr "Removed 62 debug statements from critical paths."
 
-#: ../../source/historique.rst:435
+#: ../../source/historique.rst:434
 msgid "0.16.0 (2026-04-18)"
 msgstr "0.16.0 (2026-04-18)"
 
-#: ../../source/historique.rst:437
+#: ../../source/historique.rst:436
 msgid ""
 "Schéma de base de données v2.0.0 : déduplication des positions via hash "
 "Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
@@ -3292,13 +3288,13 @@ msgstr ""
 "denormalised filter columns, bitboard pattern pre-filter, WAL journaling "
 "(:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:438
+#: ../../source/historique.rst:437
 msgid ""
 "Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ "
 "positions."
 msgstr "Batch import >=3x faster, filtered search <=100 ms on 10k+ positions."
 
-#: ../../source/historique.rst:439
+#: ../../source/historique.rst:438
 msgid ""
 "NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts "
 "par les versions plus anciennes ; les anciennes DB sont migrées "
@@ -3307,11 +3303,11 @@ msgstr ""
 "NOTE: DB files created with v0.16.0 cannot be opened by older versions; "
 "old DBs are auto-migrated in place (back up first)."
 
-#: ../../source/historique.rst:442
+#: ../../source/historique.rst:441
 msgid "0.15.0 (2026-03-31)"
 msgstr "0.15.0 (2026-03-31)"
 
-#: ../../source/historique.rst:444
+#: ../../source/historique.rst:443
 msgid ""
 "Export de la position en image PNG dans le presse-papier (board seul via "
 "Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
@@ -3319,23 +3315,23 @@ msgstr ""
 "Export position as PNG image to clipboard (board only via Ctrl+X, or "
 "board with analysis via Ctrl+X Ctrl+X)."
 
-#: ../../source/historique.rst:447
+#: ../../source/historique.rst:446
 msgid "0.14.0 (2026-03-30)"
 msgstr "0.14.0 (2026-03-30)"
 
-#: ../../source/historique.rst:449
+#: ../../source/historique.rst:448
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr "Dedicated Anki panel for spaced repetition study (FSRS algorithm)."
 
-#: ../../source/historique.rst:450
+#: ../../source/historique.rst:449
 msgid "Import des commentaires depuis les fichiers XG."
 msgstr "Import comments from XG files."
 
-#: ../../source/historique.rst:453
+#: ../../source/historique.rst:452
 msgid "0.13.0 (2026-03-28)"
 msgstr "0.13.0 (2026-03-28)"
 
-#: ../../source/historique.rst:455
+#: ../../source/historique.rst:454
 msgid ""
 "Simplification de l'interface : la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
@@ -3343,23 +3339,23 @@ msgstr ""
 "Interface simplification: match and collection navigation is now done "
 "directly through panels."
 
-#: ../../source/historique.rst:456
+#: ../../source/historique.rst:455
 msgid "Ligne de commande intégrée dans la barre d'état."
 msgstr "Command line integrated into the status bar."
 
-#: ../../source/historique.rst:457
+#: ../../source/historique.rst:456
 msgid "Panneau Console renommé en panneau Log. *(Panneau retiré en 0.31.0.)*"
 msgstr "Console panel renamed to Log panel. *(Panel removed in 0.31.0.)*"
 
-#: ../../source/historique.rst:458
+#: ../../source/historique.rst:457
 msgid "Panneau Bearoff dédié dans le panneau inférieur."
 msgstr "Dedicated Bearoff panel in the bottom panel."
 
-#: ../../source/historique.rst:459
+#: ../../source/historique.rst:458
 msgid "Copier/coller de position dans le panneau de recherche."
 msgstr "Copy/paste position in the search panel."
 
-#: ../../source/historique.rst:460
+#: ../../source/historique.rst:459
 msgid ""
 "Glisser-déposer pour réordonner les collections, les positions dans les "
 "collections, et les matchs dans les tournois."
@@ -3367,45 +3363,45 @@ msgstr ""
 "Drag and drop to reorder collections, positions within collections, and "
 "matches within tournaments."
 
-#: ../../source/historique.rst:461
+#: ../../source/historique.rst:460
 msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
 msgstr "Tournament column in the match panel with inline editing."
 
-#: ../../source/historique.rst:462
+#: ../../source/historique.rst:461
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr "Automatic display of the analysis panel after a search."
 
-#: ../../source/historique.rst:465
+#: ../../source/historique.rst:464
 msgid "0.12.0 (2026-03-19)"
 msgstr "0.12.0 (2026-03-19)"
 
-#: ../../source/historique.rst:467
+#: ../../source/historique.rst:466
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 msgstr "Import eXtreme Gammon position files (XGP) with analysis."
 
-#: ../../source/historique.rst:470
+#: ../../source/historique.rst:469
 msgid "0.11.0 (2026-03-06)"
 msgstr "0.11.0 (2026-03-06)"
 
-#: ../../source/historique.rst:472
+#: ../../source/historique.rst:471
 msgid "Filtre de recherche dans les positions courantes."
 msgstr "Filter to search within currently filtered positions."
 
-#: ../../source/historique.rst:473
+#: ../../source/historique.rst:472
 msgid "Ajout de filtres par match et par tournoi."
 msgstr "Add match and tournament filters."
 
-#: ../../source/historique.rst:474
+#: ../../source/historique.rst:473
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
 msgstr "Automatic board clearing when opening the search panel."
 
-#: ../../source/historique.rst:477
+#: ../../source/historique.rst:476
 msgid "0.10.0 (2026-02-25)"
 msgstr "0.10.0 (2026-02-25)"
 
-#: ../../source/historique.rst:479
+#: ../../source/historique.rst:478
 msgid ""
 "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) et BGBlitz (BGF/TXT)."
@@ -3413,7 +3409,7 @@ msgstr ""
 "Match import from eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) and BGBlitz (BGF/TXT)."
 
-#: ../../source/historique.rst:480
+#: ../../source/historique.rst:479
 msgid ""
 "Navigation dans les matchs : parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
@@ -3421,7 +3417,7 @@ msgstr ""
 "Match navigation: browse through moves of an imported match, with played "
 "move highlighting."
 
-#: ../../source/historique.rst:481
+#: ../../source/historique.rst:480
 msgid ""
 "Panneau des matchs : liste, tri, édition inline, permutation des joueurs,"
 " assignation de tournoi."
@@ -3429,11 +3425,11 @@ msgstr ""
 "Match panel: list, sort, inline editing, player swap, tournament "
 "assignment."
 
-#: ../../source/historique.rst:482
+#: ../../source/historique.rst:481
 msgid "Import par dossier récursif et import par glisser-déposer."
 msgstr "Recursive folder import and drag & drop import."
 
-#: ../../source/historique.rst:483
+#: ../../source/historique.rst:482
 msgid ""
 "Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
 "GNUbg intégrée. *(Remplacé en 0.36.0 : la table est calculée sur la "
@@ -3443,33 +3439,33 @@ msgstr ""
 "database. *(Replaced in 0.36.0: the table is now computed on the machine,"
 " none is embedded any more.)*"
 
-#: ../../source/historique.rst:484
+#: ../../source/historique.rst:483
 msgid "Collections : regroupement personnalisé de positions."
 msgstr "Collections: custom position grouping."
 
-#: ../../source/historique.rst:485
+#: ../../source/historique.rst:484
 msgid "Tournois : regroupement de matchs par événement."
 msgstr "Tournaments: group matches by event."
 
-#: ../../source/historique.rst:486
+#: ../../source/historique.rst:485
 msgid ""
 "Sauvegarde et restauration de l'état de session (dernière recherche, "
 "position courante)."
 msgstr "Save and restore session state (last search, current position)."
 
-#: ../../source/historique.rst:487
+#: ../../source/historique.rst:486
 msgid "Migration automatique du schéma de base de données."
 msgstr "Automatic database schema migration."
 
-#: ../../source/historique.rst:488
+#: ../../source/historique.rst:487
 msgid "Affichage multi-moteurs dans l'analyse."
 msgstr "Multi-engine display in analysis."
 
-#: ../../source/historique.rst:489
+#: ../../source/historique.rst:488
 msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
 msgstr "Player 1 error/blunder filter in searches."
 
-#: ../../source/historique.rst:490
+#: ../../source/historique.rst:489
 msgid ""
 "Export de la base de données avec sélection granulaire (matchs, "
 "collections, tournois, coups joués)."
@@ -3477,152 +3473,152 @@ msgstr ""
 "Database export with granular selection (matches, collections, "
 "tournaments, played moves)."
 
-#: ../../source/historique.rst:491
+#: ../../source/historique.rst:490
 msgid "Bouton de navigation dans les matchs."
 msgstr "Match navigation button."
 
-#: ../../source/historique.rst:492
+#: ../../source/historique.rst:491
 msgid "Compte de course (pipcount) dans la navigation des matchs."
 msgstr "Pipcount display in match navigation."
 
-#: ../../source/historique.rst:493
+#: ../../source/historique.rst:492
 msgid "Interface en ligne de commande (CLI) complète."
 msgstr "Complete command-line interface (CLI)."
 
-#: ../../source/historique.rst:494
+#: ../../source/historique.rst:493
 msgid "Réouverture automatique de la dernière base de données."
 msgstr "Automatic reopening of the last database."
 
-#: ../../source/historique.rst:495
+#: ../../source/historique.rst:494
 msgid "Amélioration de la barre d'outils et des icônes."
 msgstr "Improved toolbar and icons."
 
-#: ../../source/historique.rst:498
+#: ../../source/historique.rst:497
 msgid "0.9.0 (2025-11-02)"
 msgstr "0.9.0 (2025-11-02)"
 
-#: ../../source/historique.rst:500
+#: ../../source/historique.rst:499
 msgid "Correction de bug de la bibliothèque de filtres."
 msgstr "Fix filter library bug."
 
-#: ../../source/historique.rst:501
+#: ../../source/historique.rst:500
 msgid "Import/export de base de données."
 msgstr "Database import/export."
 
-#: ../../source/historique.rst:502
+#: ../../source/historique.rst:501
 msgid "Affichage de flèches pour les coups sélectionnés."
 msgstr "Display arrows for selected moves."
 
-#: ../../source/historique.rst:503
+#: ../../source/historique.rst:502
 msgid "Raccourcis clavier pour l'import/export."
 msgstr "Keyboard shortcuts for import/export."
 
-#: ../../source/historique.rst:506
+#: ../../source/historique.rst:505
 msgid "0.8.0 (2025-05-03)"
 msgstr "0.8.0 (2025-05-03)"
 
-#: ../../source/historique.rst:508
+#: ../../source/historique.rst:507
 msgid "Possibilité de cacher le compte de course."
 msgstr "New button to hide pipcount."
 
-#: ../../source/historique.rst:509
+#: ../../source/historique.rst:508
 msgid "Chargement d'une position aléatoire."
 msgstr "Button to load random position."
 
-#: ../../source/historique.rst:512
+#: ../../source/historique.rst:511
 msgid "0.7.0 (2025-02-16)"
 msgstr "0.7.0 (2025-02-16)"
 
-#: ../../source/historique.rst:514
+#: ../../source/historique.rst:513
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
 msgstr "Support Japanese and German XG exports."
 
-#: ../../source/historique.rst:517
+#: ../../source/historique.rst:516
 msgid "0.6.0 (2025-02-13)"
 msgstr "0.6.0 (2025-02-13)"
 
-#: ../../source/historique.rst:519
+#: ../../source/historique.rst:518
 msgid "Ajout de la bibliothèque de filtres."
 msgstr "Add filter library."
 
-#: ../../source/historique.rst:520
+#: ../../source/historique.rst:519
 msgid "Affichage de la version de la base de données dans les métadonnées."
 msgstr "Displaying the database version in the metadata."
 
-#: ../../source/historique.rst:523
+#: ../../source/historique.rst:522
 msgid "0.5.0 (2025-02-04)"
 msgstr "0.5.0 (2025-02-04)"
 
-#: ../../source/historique.rst:525
+#: ../../source/historique.rst:524
 msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 msgstr "Addition of new filters (mirror, non-contact, jan blot, outfield blot)."
 
-#: ../../source/historique.rst:528
+#: ../../source/historique.rst:527
 msgid "0.4.0 (2025-02-03)"
 msgstr "0.4.0 (2025-02-03)"
 
-#: ../../source/historique.rst:530 ../../source/historique.rst:538
-#: ../../source/historique.rst:545
+#: ../../source/historique.rst:529 ../../source/historique.rst:537
+#: ../../source/historique.rst:544
 msgid "Résolutions de bugs divers."
 msgstr "Various bug fixes."
 
-#: ../../source/historique.rst:531
+#: ../../source/historique.rst:530
 msgid "Ajout d'une icône pour blunderDB."
 msgstr "Adding an icon for blunderDB."
 
-#: ../../source/historique.rst:532
+#: ../../source/historique.rst:531
 msgid "Corrections de filtres."
 msgstr "Filter corrections."
 
-#: ../../source/historique.rst:533
+#: ../../source/historique.rst:532
 msgid "Ajout du support de MacOS."
 msgstr "Adding macOS support."
 
-#: ../../source/historique.rst:536
+#: ../../source/historique.rst:535
 msgid "0.3.0 (2025-01-27)"
 msgstr "0.3.0 (2025-01-27)"
 
-#: ../../source/historique.rst:539
+#: ../../source/historique.rst:538
 msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
 msgstr "Automatically saves the window size."
 
-#: ../../source/historique.rst:540
+#: ../../source/historique.rst:539
 msgid "Importe les éventuels commentaires depuis XG."
 msgstr "Imports any comments from XG."
 
-#: ../../source/historique.rst:543
+#: ../../source/historique.rst:542
 msgid "0.2.0 (2025-01-06)"
 msgstr "0.2.0 (2025-01-06)"
 
-#: ../../source/historique.rst:546
+#: ../../source/historique.rst:545
 msgid "Ajout de tables de matchs/TP/GV."
 msgstr "Addition of match/TP/GV tables."
 
-#: ../../source/historique.rst:547
+#: ../../source/historique.rst:546
 msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
 msgstr "Added search filters (moves, cube decisions, date)."
 
-#: ../../source/historique.rst:548
+#: ../../source/historique.rst:547
 msgid "Ajout de métadonnées sur les positions."
 msgstr "Added metadata for positions."
 
-#: ../../source/historique.rst:549
+#: ../../source/historique.rst:548
 msgid "Fonction d'import/export entre instances de blunderDB."
 msgstr "Import/export functionality between blunderDB instances."
 
-#: ../../source/historique.rst:550
+#: ../../source/historique.rst:549
 msgid "Ajout de fonction de métadonnées sur les bases de données."
 msgstr "Added metadata functionality for databases."
 
-#: ../../source/historique.rst:551
+#: ../../source/historique.rst:550
 msgid "Introduction des numéros de versions (base de données et application)."
 msgstr "Introduction of version numbers (database and application)."
 
-#: ../../source/historique.rst:554
+#: ../../source/historique.rst:553
 msgid "0.1.0 (2024-12-31)"
 msgstr "0.1.0 (2024-12-31)"
 
-#: ../../source/historique.rst:556
+#: ../../source/historique.rst:555
 msgid "Création version bêta."
 msgstr "Beta version"
 
@@ -3670,4 +3666,7 @@ msgstr "Beta version"
 #~ " the matches that a figure counts;"
 #~ " the hovered row of a table is"
 #~ " tinted."
+
+#~ msgid "Voir :ref:`visites_guidees`."
+#~ msgstr "See :ref:`visites_guidees`."
 

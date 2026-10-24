@@ -197,165 +197,10 @@
         "togglePipcount": "Toggle Pipcount",
         "toggleAnalysisChallenge": "Challenge: hide the analysis",
         "updatePosition": "Update Position",
-        "tour": "Guided tours",
         "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined",
         "training": "Training",
         "pile": "Put on / take off the Pile",
         "duel": "Play"
-    },
-    "tour": {
-        "next": "Next",
-        "prev": "Back",
-        "done": "Done",
-        "start": "Start",
-        "catalogTitle": "Guided tours",
-        "catalogDesc": "Quick tours of the interface — replay them any time.",
-        "loadDemo": "Load demo data",
-        "demoHint": "Explore a sample database: 3 matches, a tournament, collections, comments and an Anki deck.",
-        "general": {
-            "title": "General tour",
-            "desc": "A quick overview of the interface.",
-            "welcome": {
-                "title": "Welcome to blunderDB",
-                "body": "A quick tour of the interface. Press Esc to exit."
-            },
-            "toolbar": {
-                "title": "Toolbar",
-                "body": "Databases, imports, navigation, settings and help."
-            },
-            "board": {
-                "title": "The board",
-                "body": "Edit positions here: click to place checkers, set the dice, cube and score."
-            },
-            "panels": {
-                "title": "Panels",
-                "body": "Analysis, comments, search, stats, collections, matches and tournaments."
-            },
-            "commandline": {
-                "title": "Command line",
-                "body": "Press Space for the command line. Type 's' to search, '?' for help."
-            },
-            "help": {
-                "title": "Help",
-                "body": "The full manual (or press '?')."
-            },
-            "done": {
-                "title": "All set!",
-                "body": "Replay tours from the cap icon, or the 'tutorial' command."
-            }
-        },
-        "search": {
-            "title": "Searching positions",
-            "desc": "Find positions by structure, filters and stats.",
-            "intro": {
-                "title": "Searching",
-                "body": "Find positions by structure, filters and statistics."
-            },
-            "tab": {
-                "title": "Search filters",
-                "body": "Combine filters: pip count, checkers, scores, win rates, dice and more."
-            },
-            "structure": {
-                "title": "By structure",
-                "body": "Set up a position to find others with the same structure."
-            },
-            "commandline": {
-                "title": "Command line",
-                "body": "Or press Space and type, e.g. 's w>50 p>30'. '?' lists the filters."
-            }
-        },
-        "matches": {
-            "title": "Reviewing matches",
-            "desc": "Import and review full matches.",
-            "intro": {
-                "title": "Matches",
-                "body": "Import full matches (XG, GnuBG, BGBlitz) and review them."
-            },
-            "tab": {
-                "title": "Your matches",
-                "body": "Imported matches, with PR and MWC loss per player."
-            },
-            "review": {
-                "title": "Step through",
-                "body": "Pick a match to replay its moves and study the blunders."
-            }
-        },
-        "tournaments": {
-            "title": "Reviewing tournaments",
-            "desc": "Group matches and track performance.",
-            "intro": {
-                "title": "Tournaments",
-                "body": "Group matches into tournaments to track your performance."
-            },
-            "tab": {
-                "title": "Your tournaments",
-                "body": "Manage events and review per-player results."
-            },
-            "drill": {
-                "title": "Drill down",
-                "body": "Jump from a tournament to its matches and positions."
-            }
-        },
-        "eval": {
-            "title": "Eval panel",
-            "desc": "Evaluate the position on the board.",
-            "intro": {
-                "title": "Evaluating a position",
-                "body": "blunderDB carries its own evaluator: you do not need an imported analysis to know what a position is worth."
-            },
-            "tab": {
-                "title": "The Eval tab",
-                "body": "Ctrl+E. It gives the best move, the cube decision and the effective pip count (EPC)."
-            },
-            "position": {
-                "title": "The position being evaluated",
-                "body": "Always the one on the board: set the checkers, the dice and the score, and the evaluation follows."
-            },
-            "scale": {
-                "title": "Money or match",
-                "body": "At money play equity is in points; at a score it is normalised — ±1 is the current cube won or lost."
-            }
-        },
-        "anki": {
-            "title": "Anki review",
-            "desc": "Review your positions by spaced repetition.",
-            "intro": {
-                "title": "Reviewing your mistakes",
-                "body": "A review deck turns the positions you got wrong into cards and shows them again at the right moment."
-            },
-            "tab": {
-                "title": "The Anki tab",
-                "body": "Ctrl+K. Build a deck here, review it, and follow what is left to see."
-            },
-            "deck": {
-                "title": "Building a deck",
-                "body": "A deck starts from a search or a collection: it resynchronises as the database changes."
-            },
-            "review": {
-                "title": "Answering a card",
-                "body": "The answer stays hidden until you ask for it; your grade sets the next due date."
-            }
-        },
-        "stats": {
-            "title": "Statistics",
-            "desc": "Read your level and your progress.",
-            "intro": {
-                "title": "Measuring your play",
-                "body": "Statistics cover the matches imported with their analysis — that is where the level shows."
-            },
-            "tab": {
-                "title": "The Stats tab",
-                "body": "Ctrl+D. Four views: dashboard, errors, progression and players."
-            },
-            "pr": {
-                "title": "The PR",
-                "body": "The average error per decision, in millipoints. Lower is better; it compares with XG's."
-            },
-            "filters": {
-                "title": "Narrowing the measure",
-                "body": "Period, opponent, match length, tournament: every filter recomputes the whole table."
-            }
-        }
     },
     "help": {
         "tabManual": "Manual",
@@ -2143,10 +1988,6 @@
         "lede": "Your backgammon position database: import your matches, search for what you want to look at again, measure what you play.",
         "importTitle": "Import my matches",
         "importNote": "A fresh database, your XG, GNU Backgammon, Jellyfish or BGBlitz files, and your PR with your worst decisions in two minutes.",
-        "demoTitle": "Open the sample database",
-        "demoNote": "Three matches, collections, comments and an Anki deck: enough to try everything without bringing anything.",
-        "tourTitle": "Guided tour",
-        "tourNote": "A walk through the interface, panel by panel.",
         "openTitle": "Open a database",
         "openNote": "A .db file you already have.",
         "resume": "Reopen {name}",
@@ -3121,10 +2962,8 @@
             "comment": "Show the comments",
             "quit": "Quit blunderDB",
             "help": "Help",
-            "tutorial": "Guided tours",
             "trash": "Trash",
             "resume": "Resume an interrupted import",
-            "demo": "Load the demo database",
             "e": "Load all positions",
             "s": "Search positions",
             "ss": "Search the positions shown",
@@ -3550,6 +3389,8 @@
         "busyImport": "An import is writing the active library file by file: wait for it to finish before switching library",
         "busyWrite": "A change is being written to the active library: try again in a moment",
         "switching": "A library switch is in progress: wait for it to finish",
+        "migrating": "Migrating the library: {phase} {done}/{total} (Esc to cancel)",
+        "migrationCancelled": "Migration cancelled",
         "answerDropped": "The library on screen changed meanwhile: the confirmation was not applied",
         "writeDropped": "The library on screen changed meanwhile: the change was not written",
         "jobRunning": "A background task is working in this library",

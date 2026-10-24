@@ -62,8 +62,6 @@ export function GetTableSorts():Promise<Record<string, main.TableSort>>;
 
 export function GetTheme():Promise<string>;
 
-export function GetTourSeen():Promise<boolean>;
-
 export function GetTrainingSeedSources():Promise<Record<string, string>>;
 
 export function GetUIScale():Promise<number>;
@@ -131,8 +129,6 @@ export function SaveTabPanelHeight(arg1:string,arg2:number):Promise<void>;
 export function SaveTableSort(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function SaveTheme(arg1:string):Promise<void>;
-
-export function SaveTourSeen(arg1:boolean):Promise<void>;
 
 export function SaveTrainingSeedSource(arg1:string,arg2:string):Promise<void>;
 

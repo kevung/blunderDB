@@ -8,6 +8,7 @@ import (
 	"sort"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
@@ -29,6 +30,10 @@ type libraryGroups struct {
 	// handle's before-switch hook then stops nothing, since the jobs run on
 	// borrowed handles that keep their library (borrowLibrary).
 	exchanging atomic.Bool
+	// opening is the handle OpenLibraryGroup is opening, so that
+	// CancelLibraryOpen can stop its migration. Atomic: libs.mu is held for
+	// the whole open, and a cancel must not wait for it.
+	opening atomic.Pointer[database.Database]
 	// shown mirrors active for the before-switch hook, which may run while
 	// libs.mu is held (closing the last group closes the bound handle).
 	shown atomic.Int64
@@ -250,7 +255,13 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 	}
 	fresh := database.NewDatabase()
 	database.WatchWrittenElsewhere(fresh)
-	if err := fresh.OpenDatabase(path); err != nil {
+	fresh.SetMigrationProgress(a.libraryOpenProgress())
+	a.libs.opening.Store(fresh)
+	err := fresh.OpenDatabase(path)
+	a.libs.opening.Store(nil)
+	fresh.SetMigrationProgress(nil)
+	if err != nil {
+		_ = fresh.Close()
 		return LibraryGroup{}, err
 	}
 	if database.OpenPath(a.db) == "" {
@@ -270,6 +281,36 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 	a.libs.setActive(a.libs.next)
 	a.libs.next++
 	return LibraryGroup{ID: a.libs.active, Path: database.OpenPath(a.db), Active: true, ReadOnly: a.db.IsReadOnly()}, nil
+}
+
+// libraryOpenProgressEvent carries {phase, done, total} while a library that
+// needs migrating is opened in a new group.
+const libraryOpenProgressEvent = "library-open:progress"
+
+// libraryOpenProgress is the migration callback of a group being opened.
+// Throttled: a backfill calls back once per batch of rows.
+func (a *App) libraryOpenProgress() func(phase string, done, total int) {
+	var mu sync.Mutex
+	last := time.Time{}
+	return func(phase string, done, total int) {
+		mu.Lock()
+		if time.Since(last) < 200*time.Millisecond && done != total {
+			mu.Unlock()
+			return
+		}
+		last = time.Now()
+		mu.Unlock()
+		a.emitBatch(libraryOpenProgressEvent, map[string]any{"phase": phase, "done": done, "total": total})
+	}
+}
+
+// CancelLibraryOpen stops the migration of the library OpenLibraryGroup is
+// opening; that call then fails with a cancellation and nothing is added.
+// CancelImport only reaches the bound handle, which is not the one migrating.
+func (a *App) CancelLibraryOpen() {
+	if fresh := a.libs.opening.Load(); fresh != nil {
+		fresh.CancelImport()
+	}
 }
 
 // ActivateLibraryGroup makes group id the active one. Nothing is opened,

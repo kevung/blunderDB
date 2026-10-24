@@ -211,7 +211,6 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		PanelPosition:        PanelPositionSide,
 		PanelHeights:         map[string]int{"stats": 520},
 		PanelWidth:           640,
-		TourSeen:             true,
 		TabOrder:             []string{"search", "matches", "analysis"},
 		HiddenTabs:           []string{"tournaments"},
 		BearoffTSPath:        "/home/user/gnubg_ts6x11.bd",
@@ -260,7 +259,6 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		{"PanelPosition", loaded.GetPanelPosition(), original.PanelPosition},
 		{"PanelHeights", loaded.GetTabPanelHeights()["stats"], 520},
 		{"PanelWidth", loaded.GetPanelWidth(), original.PanelWidth},
-		{"TourSeen", loaded.GetTourSeen(), original.TourSeen},
 		{"TabOrder", loaded.GetTabOrder(), original.TabOrder},
 		{"HiddenTabs", loaded.GetHiddenTabs(), original.HiddenTabs},
 		{"BearoffTSPath", loaded.GetBearoffTSPath(), original.BearoffTSPath},
@@ -315,9 +313,6 @@ func TestConfigRoundTripEmptyFieldsKeepDefaults(t *testing.T) {
 	}
 	if got := loaded.GetPanelWidth(); got != DefaultPanelWidth {
 		t.Errorf("GetPanelWidth() = %d, want default %d", got, DefaultPanelWidth)
-	}
-	if got := loaded.GetTourSeen(); got != false {
-		t.Errorf("GetTourSeen() = %v, want false", got)
 	}
 	if got := loaded.GetBearoffTSPath(); got != "" {
 		t.Errorf("GetBearoffTSPath() = %q, want empty", got)

@@ -39,6 +39,8 @@ export function CancelGammonNetBatch():Promise<void>;
 
 export function CancelLibraryImport(arg1:number):Promise<void>;
 
+export function CancelLibraryOpen():Promise<void>;
+
 export function CancelMaintenance():Promise<void>;
 
 export function CancelRollout():Promise<void>;
@@ -160,8 +162,6 @@ export function PickIdentityFile():Promise<domain.IdentityFilePick>;
 export function PickTranscriptionFile():Promise<string>;
 
 export function PickTranscriptionVideo():Promise<string>;
-
-export function PrepareDemoDatabase():Promise<string>;
 
 export function QueueGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 

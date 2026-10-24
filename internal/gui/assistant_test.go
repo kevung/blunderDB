@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -54,12 +54,7 @@ func TestAssistantAskSendsTheKeyringKeyAndReadsTheOpenFile(t *testing.T) {
 	db := database.NewDatabase()
 	a := NewApp(db)
 	t.Cleanup(a.stopAssistant)
-	path, err := a.PrepareDemoDatabase()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.Remove(path)
-	if err := db.OpenDatabase(path); err != nil {
+	if err := db.SetupDatabase(filepath.Join(t.TempDir(), "file.db")); err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()

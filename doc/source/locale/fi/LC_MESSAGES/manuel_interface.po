@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 23:38+0200\n"
+"POT-Creation-Date: 2026-10-25 00:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -277,14 +277,10 @@ msgstr ""
 "edelliseen),"
 
 #: ../../source/manuel_interface.rst:107
-msgid "afficher le catalogue des visites guidées (voir :ref:`visites_guidees`),"
-msgstr "näyttää opastettujen kierrosten luettelon (katso :ref:`visites_guidees`),"
-
-#: ../../source/manuel_interface.rst:109
 msgid "paramétrer l'export de la base de données,"
 msgstr "määrittää tietokannan viennin asetukset,"
 
-#: ../../source/manuel_interface.rst:111
+#: ../../source/manuel_interface.rst:109
 msgid ""
 "configurer blunderDB, notamment la langue de l'interface (voir "
 ":ref:`configuration`)."
@@ -292,27 +288,27 @@ msgstr ""
 "määrittää blunderDB:n asetuksia, erityisesti käyttöliittymän kielen "
 "(katso :ref:`configuration`)."
 
-#: ../../source/manuel_interface.rst:114
+#: ../../source/manuel_interface.rst:112
 msgid "La zone d'affichage principale met à disposition à l'utilisateur:"
 msgstr "Pääesitysalue tarjoaa käyttäjälle:"
 
-#: ../../source/manuel_interface.rst:116
+#: ../../source/manuel_interface.rst:114
 msgid "un plateau afin d'afficher ou d'éditer une position de backgammon,"
 msgstr "laudan backgammon-aseman näyttämiseen tai muokkaamiseen,"
 
-#: ../../source/manuel_interface.rst:118
+#: ../../source/manuel_interface.rst:116
 msgid "le niveau et le propriétaire du cube,"
 msgstr "kuution tason ja omistajan,"
 
-#: ../../source/manuel_interface.rst:120
+#: ../../source/manuel_interface.rst:118
 msgid "le compte de course de chaque joueur,"
 msgstr "kunkin pelaajan pip-luvun,"
 
-#: ../../source/manuel_interface.rst:122
+#: ../../source/manuel_interface.rst:120
 msgid "le score de chaque joueur,"
 msgstr "kunkin pelaajan pistetilanteen,"
 
-#: ../../source/manuel_interface.rst:124
+#: ../../source/manuel_interface.rst:122
 msgid ""
 "les dés à jouer. Si aucune valeur n'est affichée sur les dés, la position"
 " des dés indique quel joueur a le trait et que la position est une "
@@ -325,7 +321,7 @@ msgstr ""
 "kuutiopäätös on vastaus tuplaukseen (hyväksy/luovuta), tarjottu kuutio "
 "näytetään laudan keskellä tarjotulla arvolla."
 
-#: ../../source/manuel_interface.rst:132
+#: ../../source/manuel_interface.rst:130
 msgid ""
 "Un clic droit sur le plateau ouvre un menu contextuel. Les deux gestes "
 "les plus courants, *Évaluer cette position* (dans le panneau Eval) et "
@@ -367,7 +363,7 @@ msgstr ""
 "*ASKELPALAUTIN*) ja *Aloitusasema*, joka asettaa uuden pelin nappulat, "
 "joita seuraavat luonnoslautaan sopivat toiminnot."
 
-#: ../../source/manuel_interface.rst:152
+#: ../../source/manuel_interface.rst:150
 msgid ""
 "Le presse-papier est le geste courant ; enregistrer est l'autre besoin — "
 "l'illustration d'un article, d'un message de forum, d'une leçon. Le "
@@ -390,21 +386,21 @@ msgstr ""
 "ulkopuolella, kuten edellä. Katso :ref:`eval_amener_position` aseman "
 "tuomisesta Eval-paneeliin."
 
-#: ../../source/manuel_interface.rst:162
+#: ../../source/manuel_interface.rst:160
 msgid ""
 "La barre d'état est structurée de gauche à droite par les informations "
 "suivantes:"
 msgstr "Tilarivi on jäsennelty vasemmalta oikealle seuraavin tiedoin:"
 
-#: ../../source/manuel_interface.rst:165
+#: ../../source/manuel_interface.rst:163
 msgid "la ligne de commande, accessible en appuyant sur la touche *ESPACE*,"
 msgstr "komentorivi, joka avataan painamalla *VÄLILYÖNTI*-näppäintä,"
 
-#: ../../source/manuel_interface.rst:167
+#: ../../source/manuel_interface.rst:165
 msgid "un message d'information lié à une opération réalisée par l'utilisateur,"
 msgstr "käyttäjän suorittamaan toimintoon liittyvä tiedotusviesti,"
 
-#: ../../source/manuel_interface.rst:169
+#: ../../source/manuel_interface.rst:167
 msgid ""
 "l'index de la position courante, suivi du nombre de positions dans la "
 "bibliothèque courante (ou les informations de coup/partie lors de la "
@@ -413,7 +409,7 @@ msgstr ""
 "nykyisen aseman järjestysnumeron, jota seuraa asemien määrä nykyisessä "
 "kirjastossa (tai siirto-/pelitiedot ottelua selattaessa),"
 
-#: ../../source/manuel_interface.rst:173
+#: ../../source/manuel_interface.rst:171
 msgid ""
 "le **compteur de bibliothèque** — « 412 positions · 38 blunders · 5 "
 "matchs » — où chaque nombre **ouvre ce qu'il compte** : les positions, la"
@@ -470,7 +466,7 @@ msgstr ""
 "E>`` näkyvässä luettelossa, toinen haun koko kirjastosta; kun vain "
 "kokonaismäärä näkyy, linkkejä on yksi."
 
-#: ../../source/manuel_interface.rst:198
+#: ../../source/manuel_interface.rst:196
 msgid ""
 "Dans le cas de positions issues d'une recherche par l'utilisateur, le "
 "nombre de positions indiqué dans la barre d'état correspond au nombre de "
@@ -479,7 +475,7 @@ msgstr ""
 "Käyttäjän haun tuloksena saaduissa asemissa tilarivillä näkyvä asemien "
 "määrä vastaa suodatettujen asemien määrää."
 
-#: ../../source/manuel_interface.rst:202
+#: ../../source/manuel_interface.rst:200
 msgid ""
 "L'onglet **Anki** porte un **badge** quand des cartes sont à réviser, "
 "tous paquets confondus. Ce chiffre est la raison d'ouvrir l'onglet ; il "
@@ -491,7 +487,7 @@ msgstr ""
 " asiaa sen taakse. Nolla ei näytä mitään: ”0”:aa näyttävä merkki on "
 "kohinaa."
 
-#: ../../source/manuel_interface.rst:207
+#: ../../source/manuel_interface.rst:205
 msgid ""
 "La commande ``log`` ouvre le **journal d'activité** : les deux cents "
 "dernières lignes du fichier de journal, un bouton pour les copier — de "
@@ -505,7 +501,7 @@ msgstr ""
 " suodateta eikä muotoilla uudelleen: siistitty loki ei enää kelpaa "
 "lainaukseksi."
 
-#: ../../source/manuel_interface.rst:213
+#: ../../source/manuel_interface.rst:211
 msgid ""
 "La commande ``grid`` ouvre la **planche-contact** : la liste parcourue — "
 "résultats d'une recherche, bibliothèque, collection — en grille de mini-"
@@ -525,7 +521,7 @@ msgstr ""
 ":ref:`raccourcis_contact_sheet`). Se ei avaudu muokkaustilassa eikä "
 "ottelussa, jota selataan sen siirtojen mukaan."
 
-#: ../../source/manuel_interface.rst:222
+#: ../../source/manuel_interface.rst:220
 msgid ""
 "Dans l'**historique de recherche** du panneau Recherche, chaque jeton "
 "d'une commande enregistrée s'affiche en pastille nommée — *Sans contact*,"
@@ -539,11 +535,11 @@ msgstr ""
 "ajetaan uudelleen; ja tunnus jota blunderDB ei tunnista näkyy "
 "**sellaisenaan** eikä lähimmäksi käännettynä."
 
-#: ../../source/manuel_interface.rst:231
+#: ../../source/manuel_interface.rst:229
 msgid "Onglets de vues"
 msgstr "Näkymävälilehdet"
 
-#: ../../source/manuel_interface.rst:233
+#: ../../source/manuel_interface.rst:231
 msgid ""
 "Sous la barre d'outils, une barre d'onglets permet de travailler avec "
 "plusieurs **vues** en parallèle. Chaque vue est un espace de travail "
@@ -562,7 +558,7 @@ msgstr ""
 "esimerkiksi pitää haun auki yhdessä näkymässä ja selata samalla ottelua "
 "toisessa."
 
-#: ../../source/manuel_interface.rst:241
+#: ../../source/manuel_interface.rst:239
 msgid ""
 "**Créer une vue** : cliquer sur le bouton *+* de la barre d'onglets "
 "(nommé *+ Nouvelle vue* tant qu'il n'y a qu'une vue) ou appuyer sur "
@@ -572,7 +568,7 @@ msgstr ""
 "*+ Uusi näkymä*, kunhan näkymiä on vain yksi) tai paina *CTRL-T*. Uusi "
 "näkymä käynnistyy nykyisen näkymän kopiona."
 
-#: ../../source/manuel_interface.rst:245
+#: ../../source/manuel_interface.rst:243
 msgid ""
 "**Fermer une vue** : cliquer sur la croix de l'onglet ou appuyer sur "
 "*CTRL-W*. La dernière vue ne peut pas être fermée ; la croix n'est "
@@ -584,7 +580,7 @@ msgstr ""
 "välilehtiin, kun siinä on useampi kuin yksi näkymä. Aktiivisen näkymän "
 "sulkeminen näyttää viimeisen jäljellä olevan välilehden."
 
-#: ../../source/manuel_interface.rst:248
+#: ../../source/manuel_interface.rst:246
 msgid ""
 "**Changer de vue** : cliquer sur un onglet, appuyer sur *CTRL-Page préc.*"
 " / *CTRL-Page suiv.* (ou *MAJ-J* / *MAJ-K*) pour passer à la vue "
@@ -596,7 +592,7 @@ msgstr ""
 "seuraavaan näkymään, tai *CTRL-1*–*CTRL-9* siirtyäksesi suoraan "
 "aktiivisen kirjaston n:nteen näkymään."
 
-#: ../../source/manuel_interface.rst:253
+#: ../../source/manuel_interface.rst:251
 msgid ""
 "**Renommer une vue** : double-cliquer sur l'onglet du groupe actif, "
 "saisir le nouveau nom et valider avec *ENTREE* ; quitter le champ valide "
@@ -606,7 +602,7 @@ msgstr ""
 "välilehteä, kirjoita uusi nimi ja vahvista painamalla *ENTER*; kentästä "
 "poistuminen vahvistaa myös, *ESC* peruu. Tyhjä nimi jättää vanhan."
 
-#: ../../source/manuel_interface.rst:257
+#: ../../source/manuel_interface.rst:255
 msgid ""
 "Une vue laissée dans le panneau Eval y revient telle qu'elle a été "
 "laissée : son plateau brouillon, et en sortant du panneau, la position "
@@ -617,7 +613,7 @@ msgstr ""
 "luonnoslautoineen ja, paneelista poistuttaessa, tutkimansa aseman kera. "
 "Myös Eval-paneelin viimeisin luonnoslauta on kunkin näkymän oma."
 
-#: ../../source/manuel_interface.rst:262
+#: ../../source/manuel_interface.rst:260
 msgid ""
 "Les vues sont enregistrées avec l'état de session de la base de données "
 "et restaurées à sa réouverture."
@@ -625,11 +621,11 @@ msgstr ""
 "Näkymät tallennetaan tietokannan istuntotilan mukana ja palautetaan sen "
 "uudelleenavauksen yhteydessä."
 
-#: ../../source/manuel_interface.rst:268
+#: ../../source/manuel_interface.rst:266
 msgid "Plusieurs bibliothèques ouvertes"
 msgstr "Useita avoimia kirjastoja"
 
-#: ../../source/manuel_interface.rst:270
+#: ../../source/manuel_interface.rst:268
 msgid ""
 "Plusieurs bases de données peuvent rester ouvertes en même temps. Chacune"
 " forme un **groupe** d'onglets : dans la barre, un en-tête de couleur "
@@ -644,7 +640,7 @@ msgstr ""
 "toistaa saman värin. Vain yksi kirjasto on aktiivinen kerrallaan: sitä "
 "lukevat ja kirjoittavat paneelit, haku, tuonnit ja avustaja."
 
-#: ../../source/manuel_interface.rst:277
+#: ../../source/manuel_interface.rst:275
 msgid ""
 "Avec une seule bibliothèque ouverte, la barre ne montre aucun en-tête : "
 "seul le titre de la fenêtre nomme la base. Tant qu'il n'y a qu'une vue en"
@@ -657,21 +653,25 @@ msgstr ""
 "yksi, palkki ei piirrä myöskään välilehteä: jäljelle jää vain *+ Uusi "
 "näkymä* -painike. Ryhmäotsikon työkaluvihje kertoo tiedoston koko polun."
 
-#: ../../source/manuel_interface.rst:280
+#: ../../source/manuel_interface.rst:278
 msgid ""
 "**Ouvrir une bibliothèque dans un nouveau groupe** : bouton *⧉ Autre "
 "bibliothèque* à droite de la barre d'onglets (*⧉* seul dès que deux "
 "groupes sont ouverts), *CTRL-MAJ-O*, ou la commande ``open_group`` "
 "(``og``). La bibliothèque active jusque-là reste ouverte dans son groupe."
 " *CTRL-O* remplace, lui, la bibliothèque du groupe actif ; l'infobulle du"
-" bouton *Ouvrir* de la barre d'outils rappelle les deux raccourcis."
+" bouton *Ouvrir* de la barre d'outils rappelle les deux raccourcis. Quand"
+" le fichier doit être migré, la barre d'état affiche la progression de la"
+" migration ; *Échap* l'annule, et aucun groupe n'est ajouté."
 msgstr ""
 "**Kirjaston avaaminen uuteen ryhmään**: välilehtipalkin oikealla puolella"
 " oleva painike *⧉ Toinen kirjasto* (pelkkä *⧉*, kun kaksi ryhmää on "
 "auki), *CTRL-VAIHTO-O* tai komento ``open_group`` (``og``). Siihen asti "
 "aktiivinen kirjasto pysyy auki omassa ryhmässään. *CTRL-O* sen sijaan "
 "korvaa aktiivisen ryhmän kirjaston; työkalupalkin *Avaa*-painikkeen vihje"
-" muistuttaa molemmista pikanäppäimistä."
+" muistuttaa molemmista pikanäppäimistä. Kun tiedosto täytyy migroida, "
+"tilarivi näyttää migraation edistymisen; *Esc* peruuttaa sen, eikä ryhmää"
+" lisätä."
 
 #: ../../source/manuel_interface.rst:287
 msgid ""
@@ -2573,62 +2573,14 @@ msgstr ""
 "säilyvät istunnosta toiseen."
 
 #: ../../source/manuel_interface.rst:1082
-msgid "Visites guidées et base d'exemple"
-msgstr "Opastetut kierrokset ja esimerkkitietokanta"
-
-#: ../../source/manuel_interface.rst:1084
-msgid ""
-"Pour faciliter la prise en main, blunderDB propose des **visites "
-"guidées** de l'interface. Le catalogue des visites s'ouvre depuis la "
-"barre d'outils ou avec la commande ``tutorial`` (alias ``tour``). Sept "
-"visites sont disponibles : un tour général de l'interface, et des visites"
-" dédiées à la recherche de positions, à la revue des matchs, à la revue "
-"des tournois, au panneau Eval, à la révision Anki et aux statistiques. "
-"Chaque visite met en évidence les éléments concernés de l'interface, "
-"étape par étape, ouvre au passage le panneau dont elle parle, et peut "
-"être rejouée à tout moment. Au premier démarrage, le tour général est "
-"proposé automatiquement."
-msgstr ""
-"Käytön aloittamisen helpottamiseksi blunderDB tarjoaa käyttöliittymästä "
-"**opastettuja kierroksia**. Kierrosten luettelo avataan työkalupalkista "
-"tai komennolla ``tutorial`` (alias ``tour``). Käytettävissä on seitsemän "
-"kierrosta: yleinen käyttöliittymäkierros sekä asemien hakuun, otteluiden "
-"tarkasteluun, turnausten tarkasteluun, Eval-paneeliin, Anki-kertaukseen "
-"ja tilastoihin keskittyvät kierrokset. Jokainen kierros korostaa "
-"käyttöliittymän asianmukaiset elementit vaihe vaiheelta, avaa matkan "
-"varrella sen paneelin, josta se puhuu, ja sen voi toistaa milloin "
-"tahansa. Ensimmäisellä käynnistyskerralla yleinen kierros tarjotaan "
-"automaattisesti."
-
-#: ../../source/manuel_interface.rst:1094
-msgid ""
-"La commande ``demo`` charge une **base d'exemple** permettant de "
-"découvrir les fonctionnalités de l'outil sans importer ses propres "
-"parties : trois matchs (dont deux regroupés dans un tournoi) analysés par"
-" eXtreme Gammon, BGBlitz et gammonNet, trois collections thématiques, des"
-" commentaires étiquetés (``#blunder``, ``#cube``) et un paquet Anki avec "
-"son journal de révisions. Les joueurs, le tournoi et le lieu sont "
-"fictifs. Les visites guidées s'appuient sur cette base lorsqu'aucune base"
-" n'est ouverte."
-msgstr ""
-"Komento ``demo`` lataa **esimerkkitietokannan**, jonka avulla voit "
-"tutustua työkalun ominaisuuksiin tuomatta omia pelejäsi: kolme ottelua "
-"(joista kaksi on koottu turnaukseksi), jotka eXtreme Gammon, BGBlitz ja "
-"gammonNet ovat analysoineet, kolme aihekohtaista kokoelmaa, tunnisteilla "
-"merkittyjä kommentteja (``#blunder``, ``#cube``) sekä Anki-pakka "
-"kertauslokeineen. Pelaajat, turnaus ja paikka ovat keksittyjä. Opastetut "
-"kierrokset käyttävät tätä tietokantaa, kun mitään tietokantaa ei ole "
-"avattu."
-
-#: ../../source/manuel_interface.rst:1105
 msgid "Navigation dans les positions"
 msgstr "Asemien selaaminen"
 
-#: ../../source/manuel_interface.rst:1107
+#: ../../source/manuel_interface.rst:1084
 msgid "Par défaut, blunderDB permet de:"
 msgstr "Oletuksena blunderDB mahdollistaa seuraavat:"
 
-#: ../../source/manuel_interface.rst:1109
+#: ../../source/manuel_interface.rst:1086
 msgid ""
 "faire défiler les différentes positions de la bibliothèque courante — qui"
 " n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des "
@@ -2641,15 +2593,15 @@ msgstr ""
 "asemat viidenkymmenen ikkunoissa näytettävän aseman ympäriltä, joten "
 "kymmenientuhansien asemien tietokanta aukeaa yhtä nopeasti kuin pienikin,"
 
-#: ../../source/manuel_interface.rst:1115
+#: ../../source/manuel_interface.rst:1092
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "näyttää asemaan liittyvät analyysitiedot,"
 
-#: ../../source/manuel_interface.rst:1117
+#: ../../source/manuel_interface.rst:1094
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "näyttää, lisätä ja muokata aseman kommentteja."
 
-#: ../../source/manuel_interface.rst:1119
+#: ../../source/manuel_interface.rst:1096
 msgid ""
 "Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre "
 "où saisir directement l'indice d'une position pour y sauter, sans avoir à"
@@ -2661,16 +2613,16 @@ msgstr ""
 "vierittämistä. Se on komentorivin ``[number]``-komennon graafinen vastine"
 " (katso :ref:`cmd_positions`)."
 
-#: ../../source/manuel_interface.rst:1124
-#: ../../source/manuel_interface.rst:1137
+#: ../../source/manuel_interface.rst:1101
+#: ../../source/manuel_interface.rst:1114
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Katso saatavilla olevat pikanäppäimet kohdasta :ref:`raccourcis`."
 
-#: ../../source/manuel_interface.rst:1129
+#: ../../source/manuel_interface.rst:1106
 msgid "Édition de positions"
 msgstr "Asemien muokkaus"
 
-#: ../../source/manuel_interface.rst:1131
+#: ../../source/manuel_interface.rst:1108
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -2684,11 +2636,11 @@ msgstr ""
 "ja vuoron jakaumaa voi muokata hiirellä (katso "
 ":ref:`guide_edit_position`)."
 
-#: ../../source/manuel_interface.rst:1142
+#: ../../source/manuel_interface.rst:1119
 msgid "La ligne de commande"
 msgstr "Komentorivi"
 
-#: ../../source/manuel_interface.rst:1144
+#: ../../source/manuel_interface.rst:1121
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -2707,7 +2659,7 @@ msgstr ""
 " komentorivin käyttöön, joka mahdollistaa blunderDB:n tehokkaan ja "
 "sujuvan käytön, erityisesti asemahakutoiminnoissa."
 
-#: ../../source/manuel_interface.rst:1153
+#: ../../source/manuel_interface.rst:1130
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
@@ -2716,7 +2668,7 @@ msgstr ""
 "Avaa komentorivi painamalla *VÄLILYÖNTI*-näppäintä. Lähetä kysely ja "
 "sulje komentorivi painamalla *ENTER*-näppäintä."
 
-#: ../../source/manuel_interface.rst:1157
+#: ../../source/manuel_interface.rst:1134
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -2727,7 +2679,7 @@ msgstr ""
 "ovat kelvollisia, ja muuttaa tarvittaessa tietokannan tilaa välittömästi."
 " Käyttäjältä ei vaadita erillisiä tallennustoimia."
 
-#: ../../source/manuel_interface.rst:1162
+#: ../../source/manuel_interface.rst:1139
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de "
 "commandes disponible en ligne de commande."
@@ -2735,11 +2687,11 @@ msgstr ""
 "Katso komentorivillä käytettävissä olevien komentojen luettelo kohdasta "
 ":ref:`komentoluettelo <cmd_mode>`."
 
-#: ../../source/manuel_interface.rst:1168
+#: ../../source/manuel_interface.rst:1145
 msgid "La palette de commandes"
 msgstr "Komentopaletti"
 
-#: ../../source/manuel_interface.rst:1170
+#: ../../source/manuel_interface.rst:1147
 msgid ""
 "La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce "
 "que l'on ne sait plus où chercher : une commande de la ligne de commande,"
@@ -2755,7 +2707,7 @@ msgstr ""
 "aksenteista välittämättä: ”kmtrs” löytää kuutiomatriisin, ”lyon” Lyonin "
 "turnauksen ottelut."
 
-#: ../../source/manuel_interface.rst:1177
+#: ../../source/manuel_interface.rst:1154
 msgid ""
 "Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se"
 " lance comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne "
@@ -2769,7 +2721,7 @@ msgstr ""
 "kuin kaksoisnapsautuksella kirjastossa; ottelu avautuu kuin "
 "kaksoisnapsautuksella Otteluiden paneelissa."
 
-#: ../../source/manuel_interface.rst:1182
+#: ../../source/manuel_interface.rst:1159
 msgid ""
 "Quand une Direction est ouverte, la palette y ajoute le tournoi : "
 "joueurs, tables, matchs en cours et épreuves (voir :ref:`la recherche "
@@ -2898,3 +2850,79 @@ msgstr ""
 #~ "pelatut siirrot, joilla ei vielä ole "
 #~ "virhettä."
 
+#~ msgid ""
+#~ "afficher le catalogue des visites "
+#~ "guidées (voir :ref:`visites_guidees`),"
+#~ msgstr ""
+#~ "näyttää opastettujen kierrosten luettelon "
+#~ "(katso :ref:`visites_guidees`),"
+
+#~ msgid "Visites guidées et base d'exemple"
+#~ msgstr "Opastetut kierrokset ja esimerkkitietokanta"
+
+#~ msgid ""
+#~ "Pour faciliter la prise en main, "
+#~ "blunderDB propose des **visites guidées** "
+#~ "de l'interface. Le catalogue des visites"
+#~ " s'ouvre depuis la barre d'outils ou"
+#~ " avec la commande ``tutorial`` (alias "
+#~ "``tour``). Sept visites sont disponibles "
+#~ ": un tour général de l'interface, "
+#~ "et des visites dédiées à la "
+#~ "recherche de positions, à la revue "
+#~ "des matchs, à la revue des "
+#~ "tournois, au panneau Eval, à la "
+#~ "révision Anki et aux statistiques. "
+#~ "Chaque visite met en évidence les "
+#~ "éléments concernés de l'interface, étape "
+#~ "par étape, ouvre au passage le "
+#~ "panneau dont elle parle, et peut "
+#~ "être rejouée à tout moment. Au "
+#~ "premier démarrage, le tour général est"
+#~ " proposé automatiquement."
+#~ msgstr ""
+#~ "Käytön aloittamisen helpottamiseksi blunderDB "
+#~ "tarjoaa käyttöliittymästä **opastettuja "
+#~ "kierroksia**. Kierrosten luettelo avataan "
+#~ "työkalupalkista tai komennolla ``tutorial`` "
+#~ "(alias ``tour``). Käytettävissä on seitsemän"
+#~ " kierrosta: yleinen käyttöliittymäkierros sekä"
+#~ " asemien hakuun, otteluiden tarkasteluun, "
+#~ "turnausten tarkasteluun, Eval-paneeliin, "
+#~ "Anki-kertaukseen ja tilastoihin keskittyvät "
+#~ "kierrokset. Jokainen kierros korostaa "
+#~ "käyttöliittymän asianmukaiset elementit vaihe "
+#~ "vaiheelta, avaa matkan varrella sen "
+#~ "paneelin, josta se puhuu, ja sen "
+#~ "voi toistaa milloin tahansa. Ensimmäisellä "
+#~ "käynnistyskerralla yleinen kierros tarjotaan "
+#~ "automaattisesti."
+
+#~ msgid ""
+#~ "La commande ``demo`` charge une **base"
+#~ " d'exemple** permettant de découvrir les"
+#~ " fonctionnalités de l'outil sans importer"
+#~ " ses propres parties : trois matchs"
+#~ " (dont deux regroupés dans un "
+#~ "tournoi) analysés par eXtreme Gammon, "
+#~ "BGBlitz et gammonNet, trois collections "
+#~ "thématiques, des commentaires étiquetés "
+#~ "(``#blunder``, ``#cube``) et un paquet "
+#~ "Anki avec son journal de révisions. "
+#~ "Les joueurs, le tournoi et le lieu"
+#~ " sont fictifs. Les visites guidées "
+#~ "s'appuient sur cette base lorsqu'aucune "
+#~ "base n'est ouverte."
+#~ msgstr ""
+#~ "Komento ``demo`` lataa **esimerkkitietokannan**, "
+#~ "jonka avulla voit tutustua työkalun "
+#~ "ominaisuuksiin tuomatta omia pelejäsi: kolme"
+#~ " ottelua (joista kaksi on koottu "
+#~ "turnaukseksi), jotka eXtreme Gammon, BGBlitz"
+#~ " ja gammonNet ovat analysoineet, kolme "
+#~ "aihekohtaista kokoelmaa, tunnisteilla merkittyjä "
+#~ "kommentteja (``#blunder``, ``#cube``) sekä "
+#~ "Anki-pakka kertauslokeineen. Pelaajat, turnaus"
+#~ " ja paikka ovat keksittyjä. Opastetut "
+#~ "kierrokset käyttävät tätä tietokantaa, kun "
+#~ "mitään tietokantaa ei ole avattu."

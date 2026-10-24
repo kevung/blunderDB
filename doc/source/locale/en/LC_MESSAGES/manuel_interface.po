@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 23:38+0200\n"
+"POT-Creation-Date: 2026-10-25 00:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -271,14 +271,10 @@ msgstr ""
 "accents (*ENTER* goes to the next, *SHIFT-ENTER* to the previous),"
 
 #: ../../source/manuel_interface.rst:107
-msgid "afficher le catalogue des visites guidées (voir :ref:`visites_guidees`),"
-msgstr "display the catalogue of guided tours (see :ref:`visites_guidees`),"
-
-#: ../../source/manuel_interface.rst:109
 msgid "paramétrer l'export de la base de données,"
 msgstr "configure database export settings,"
 
-#: ../../source/manuel_interface.rst:111
+#: ../../source/manuel_interface.rst:109
 msgid ""
 "configurer blunderDB, notamment la langue de l'interface (voir "
 ":ref:`configuration`)."
@@ -286,27 +282,27 @@ msgstr ""
 "configure blunderDB, in particular the interface language (see "
 ":ref:`configuration`)."
 
-#: ../../source/manuel_interface.rst:114
+#: ../../source/manuel_interface.rst:112
 msgid "La zone d'affichage principale met à disposition à l'utilisateur:"
 msgstr "The main display area provides the user with:"
 
-#: ../../source/manuel_interface.rst:116
+#: ../../source/manuel_interface.rst:114
 msgid "un plateau afin d'afficher ou d'éditer une position de backgammon,"
 msgstr "a board to display or edit a backgammon position,"
 
-#: ../../source/manuel_interface.rst:118
+#: ../../source/manuel_interface.rst:116
 msgid "le niveau et le propriétaire du cube,"
 msgstr "the level and owner of the cube,"
 
-#: ../../source/manuel_interface.rst:120
+#: ../../source/manuel_interface.rst:118
 msgid "le compte de course de chaque joueur,"
 msgstr "the pip count of each player,"
 
-#: ../../source/manuel_interface.rst:122
+#: ../../source/manuel_interface.rst:120
 msgid "le score de chaque joueur,"
 msgstr "the score of each player,"
 
-#: ../../source/manuel_interface.rst:124
+#: ../../source/manuel_interface.rst:122
 msgid ""
 "les dés à jouer. Si aucune valeur n'est affichée sur les dés, la position"
 " des dés indique quel joueur a le trait et que la position est une "
@@ -320,7 +316,7 @@ msgstr ""
 "the offered cube is shown in the centre of the board, at the offered "
 "value."
 
-#: ../../source/manuel_interface.rst:132
+#: ../../source/manuel_interface.rst:130
 msgid ""
 "Un clic droit sur le plateau ouvre un menu contextuel. Les deux gestes "
 "les plus courants, *Évaluer cette position* (dans le panneau Eval) et "
@@ -361,7 +357,7 @@ msgstr ""
 "(like *BACKSPACE*) and *Starting position*, which sets up the checkers of"
 " a new game, followed by the actions that apply to a scratch board."
 
-#: ../../source/manuel_interface.rst:152
+#: ../../source/manuel_interface.rst:150
 msgid ""
 "Le presse-papier est le geste courant ; enregistrer est l'autre besoin — "
 "l'illustration d'un article, d'un message de forum, d'une leçon. Le "
@@ -384,7 +380,7 @@ msgstr ""
 "outside the board there, as above. See :ref:`eval_amener_position` for "
 "bringing a position into the Eval panel."
 
-#: ../../source/manuel_interface.rst:162
+#: ../../source/manuel_interface.rst:160
 msgid ""
 "La barre d'état est structurée de gauche à droite par les informations "
 "suivantes:"
@@ -392,15 +388,15 @@ msgstr ""
 "The status bar is structured from left to right with the following "
 "information:"
 
-#: ../../source/manuel_interface.rst:165
+#: ../../source/manuel_interface.rst:163
 msgid "la ligne de commande, accessible en appuyant sur la touche *ESPACE*,"
 msgstr "the command line, accessible by pressing the *SPACE* key,"
 
-#: ../../source/manuel_interface.rst:167
+#: ../../source/manuel_interface.rst:165
 msgid "un message d'information lié à une opération réalisée par l'utilisateur,"
 msgstr "an informational message related to an operation performed by the user,"
 
-#: ../../source/manuel_interface.rst:169
+#: ../../source/manuel_interface.rst:167
 msgid ""
 "l'index de la position courante, suivi du nombre de positions dans la "
 "bibliothèque courante (ou les informations de coup/partie lors de la "
@@ -409,7 +405,7 @@ msgstr ""
 "the index of the current position, followed by the number of positions in"
 " the current library (or move/game info when navigating a match),"
 
-#: ../../source/manuel_interface.rst:173
+#: ../../source/manuel_interface.rst:171
 msgid ""
 "le **compteur de bibliothèque** — « 412 positions · 38 blunders · 5 "
 "matchs » — où chaque nombre **ouvre ce qu'il compte** : les positions, la"
@@ -466,7 +462,7 @@ msgstr ""
 "across the whole library; when only the total is shown, there is a single"
 " link."
 
-#: ../../source/manuel_interface.rst:198
+#: ../../source/manuel_interface.rst:196
 msgid ""
 "Dans le cas de positions issues d'une recherche par l'utilisateur, le "
 "nombre de positions indiqué dans la barre d'état correspond au nombre de "
@@ -476,7 +472,7 @@ msgstr ""
 "positions indicated in the status bar corresponds to the number of "
 "filtered positions."
 
-#: ../../source/manuel_interface.rst:202
+#: ../../source/manuel_interface.rst:200
 msgid ""
 "L'onglet **Anki** porte un **badge** quand des cartes sont à réviser, "
 "tous paquets confondus. Ce chiffre est la raison d'ouvrir l'onglet ; il "
@@ -487,7 +483,7 @@ msgstr ""
 "deck. That figure is the reason to open the tab; it has no business "
 "behind it. Zero shows nothing: a badge saying “0” is noise."
 
-#: ../../source/manuel_interface.rst:207
+#: ../../source/manuel_interface.rst:205
 msgid ""
 "La commande ``log`` ouvre le **journal d'activité** : les deux cents "
 "dernières lignes du fichier de journal, un bouton pour les copier — de "
@@ -501,7 +497,7 @@ msgstr ""
 " neither filtered nor reformatted: a log you tidy up is a log you can no "
 "longer quote."
 
-#: ../../source/manuel_interface.rst:213
+#: ../../source/manuel_interface.rst:211
 msgid ""
 "La commande ``grid`` ouvre la **planche-contact** : la liste parcourue — "
 "résultats d'une recherche, bibliothèque, collection — en grille de mini-"
@@ -521,7 +517,7 @@ msgstr ""
 ":ref:`raccourcis_contact_sheet`). It does not open in edit mode or in a "
 "match, which is browsed by its moves."
 
-#: ../../source/manuel_interface.rst:222
+#: ../../source/manuel_interface.rst:220
 msgid ""
 "Dans l'**historique de recherche** du panneau Recherche, chaque jeton "
 "d'une commande enregistrée s'affiche en pastille nommée — *Sans contact*,"
@@ -535,11 +531,11 @@ msgstr ""
 "gets re-run; and a token blunderDB does not recognise shows **as it is** "
 "rather than translated to the nearest thing."
 
-#: ../../source/manuel_interface.rst:231
+#: ../../source/manuel_interface.rst:229
 msgid "Onglets de vues"
 msgstr "View Tabs"
 
-#: ../../source/manuel_interface.rst:233
+#: ../../source/manuel_interface.rst:231
 msgid ""
 "Sous la barre d'outils, une barre d'onglets permet de travailler avec "
 "plusieurs **vues** en parallèle. Chaque vue est un espace de travail "
@@ -558,7 +554,7 @@ msgstr ""
 "possible, for example, to keep a search open in one view while browsing a"
 " match in another."
 
-#: ../../source/manuel_interface.rst:241
+#: ../../source/manuel_interface.rst:239
 msgid ""
 "**Créer une vue** : cliquer sur le bouton *+* de la barre d'onglets "
 "(nommé *+ Nouvelle vue* tant qu'il n'y a qu'une vue) ou appuyer sur "
@@ -568,7 +564,7 @@ msgstr ""
 "view* as long as there is only one view) or press *CTRL-T*. The new view "
 "starts as a copy of the current view."
 
-#: ../../source/manuel_interface.rst:245
+#: ../../source/manuel_interface.rst:243
 msgid ""
 "**Fermer une vue** : cliquer sur la croix de l'onglet ou appuyer sur "
 "*CTRL-W*. La dernière vue ne peut pas être fermée ; la croix n'est "
@@ -580,7 +576,7 @@ msgstr ""
 "group, when it has more than one view. Closing the active view shows the "
 "last remaining tab."
 
-#: ../../source/manuel_interface.rst:248
+#: ../../source/manuel_interface.rst:246
 msgid ""
 "**Changer de vue** : cliquer sur un onglet, appuyer sur *CTRL-Page préc.*"
 " / *CTRL-Page suiv.* (ou *MAJ-J* / *MAJ-K*) pour passer à la vue "
@@ -591,7 +587,7 @@ msgstr ""
 "(or *SHIFT-J* / *SHIFT-K*) to go to the previous / next view, or *CTRL-1*"
 " to *CTRL-9* to jump straight to the n-th view of the active library."
 
-#: ../../source/manuel_interface.rst:253
+#: ../../source/manuel_interface.rst:251
 msgid ""
 "**Renommer une vue** : double-cliquer sur l'onglet du groupe actif, "
 "saisir le nouveau nom et valider avec *ENTREE* ; quitter le champ valide "
@@ -601,7 +597,7 @@ msgstr ""
 " name and confirm with *ENTER*; leaving the field also confirms, *ESC* "
 "cancels. An empty name keeps the old one."
 
-#: ../../source/manuel_interface.rst:257
+#: ../../source/manuel_interface.rst:255
 msgid ""
 "Une vue laissée dans le panneau Eval y revient telle qu'elle a été "
 "laissée : son plateau brouillon, et en sortant du panneau, la position "
@@ -612,7 +608,7 @@ msgstr ""
 "scratch board and, on leaving the panel, the position it was studying. "
 "The last scratch board of the Eval panel also belongs to each view."
 
-#: ../../source/manuel_interface.rst:262
+#: ../../source/manuel_interface.rst:260
 msgid ""
 "Les vues sont enregistrées avec l'état de session de la base de données "
 "et restaurées à sa réouverture."
@@ -620,11 +616,11 @@ msgstr ""
 "Views are saved with the database session state and restored when it is "
 "reopened."
 
-#: ../../source/manuel_interface.rst:268
+#: ../../source/manuel_interface.rst:266
 msgid "Plusieurs bibliothèques ouvertes"
 msgstr "Open libraries"
 
-#: ../../source/manuel_interface.rst:270
+#: ../../source/manuel_interface.rst:268
 msgid ""
 "Plusieurs bases de données peuvent rester ouvertes en même temps. Chacune"
 " forme un **groupe** d'onglets : dans la barre, un en-tête de couleur "
@@ -639,7 +635,7 @@ msgstr ""
 "colour. Only one library is active at a time: it is the one the panels, "
 "the search, the imports and the assistant read and write."
 
-#: ../../source/manuel_interface.rst:277
+#: ../../source/manuel_interface.rst:275
 msgid ""
 "Avec une seule bibliothèque ouverte, la barre ne montre aucun en-tête : "
 "seul le titre de la fenêtre nomme la base. Tant qu'il n'y a qu'une vue en"
@@ -652,21 +648,24 @@ msgstr ""
 "bar draws no tab either: only the *+ New view* button remains. The "
 "tooltip of a group header gives the full path of the file."
 
-#: ../../source/manuel_interface.rst:280
+#: ../../source/manuel_interface.rst:278
 msgid ""
 "**Ouvrir une bibliothèque dans un nouveau groupe** : bouton *⧉ Autre "
 "bibliothèque* à droite de la barre d'onglets (*⧉* seul dès que deux "
 "groupes sont ouverts), *CTRL-MAJ-O*, ou la commande ``open_group`` "
 "(``og``). La bibliothèque active jusque-là reste ouverte dans son groupe."
 " *CTRL-O* remplace, lui, la bibliothèque du groupe actif ; l'infobulle du"
-" bouton *Ouvrir* de la barre d'outils rappelle les deux raccourcis."
+" bouton *Ouvrir* de la barre d'outils rappelle les deux raccourcis. Quand"
+" le fichier doit être migré, la barre d'état affiche la progression de la"
+" migration ; *Échap* l'annule, et aucun groupe n'est ajouté."
 msgstr ""
 "**Opening a library in a new group**: the *⧉ Another library* button at "
 "the right of the tab bar (just *⧉* once two groups are open), *CTRL-"
 "SHIFT-O*, or the ``open_group`` command (``og``). The library that was "
 "active stays open in its group. *CTRL-O*, on the other hand, replaces the"
 " library of the active group; the tooltip of the toolbar's *Open* button "
-"recalls both shortcuts."
+"recalls both shortcuts. When the file has to be migrated, the status bar "
+"shows the migration's progress; *Esc* cancels it and no group is added."
 
 #: ../../source/manuel_interface.rst:287
 msgid ""
@@ -2536,60 +2535,14 @@ msgstr ""
 "from one session to the next."
 
 #: ../../source/manuel_interface.rst:1082
-msgid "Visites guidées et base d'exemple"
-msgstr "Guided tours and sample database"
-
-#: ../../source/manuel_interface.rst:1084
-msgid ""
-"Pour faciliter la prise en main, blunderDB propose des **visites "
-"guidées** de l'interface. Le catalogue des visites s'ouvre depuis la "
-"barre d'outils ou avec la commande ``tutorial`` (alias ``tour``). Sept "
-"visites sont disponibles : un tour général de l'interface, et des visites"
-" dédiées à la recherche de positions, à la revue des matchs, à la revue "
-"des tournois, au panneau Eval, à la révision Anki et aux statistiques. "
-"Chaque visite met en évidence les éléments concernés de l'interface, "
-"étape par étape, ouvre au passage le panneau dont elle parle, et peut "
-"être rejouée à tout moment. Au premier démarrage, le tour général est "
-"proposé automatiquement."
-msgstr ""
-"To make getting started easier, blunderDB offers **guided tours** of the "
-"interface. The tour catalogue opens from the toolbar or with the "
-"``tutorial`` command (alias ``tour``). Seven tours are available: a "
-"general tour of the interface, and tours dedicated to searching "
-"positions, reviewing matches, reviewing tournaments, the Eval panel, Anki"
-" review and statistics. Each tour highlights the relevant interface "
-"elements, step by step, opens the panel it talks about along the way, and"
-" can be replayed at any time. On first launch, the general tour is "
-"offered automatically."
-
-#: ../../source/manuel_interface.rst:1094
-msgid ""
-"La commande ``demo`` charge une **base d'exemple** permettant de "
-"découvrir les fonctionnalités de l'outil sans importer ses propres "
-"parties : trois matchs (dont deux regroupés dans un tournoi) analysés par"
-" eXtreme Gammon, BGBlitz et gammonNet, trois collections thématiques, des"
-" commentaires étiquetés (``#blunder``, ``#cube``) et un paquet Anki avec "
-"son journal de révisions. Les joueurs, le tournoi et le lieu sont "
-"fictifs. Les visites guidées s'appuient sur cette base lorsqu'aucune base"
-" n'est ouverte."
-msgstr ""
-"The ``demo`` command loads a **sample database** that lets you explore "
-"the tool's features without importing your own games: three matches (two "
-"of them grouped in a tournament) analysed by eXtreme Gammon, BGBlitz and "
-"gammonNet, three thematic collections, tagged comments (``#blunder``, "
-"``#cube``) and an Anki deck with its review log. The players, the "
-"tournament and the venue are fictional. The guided tours rely on this "
-"database when no database is open."
-
-#: ../../source/manuel_interface.rst:1105
 msgid "Navigation dans les positions"
 msgstr "Browsing positions"
 
-#: ../../source/manuel_interface.rst:1107
+#: ../../source/manuel_interface.rst:1084
 msgid "Par défaut, blunderDB permet de:"
 msgstr "By default, blunderDB allows you to:"
 
-#: ../../source/manuel_interface.rst:1109
+#: ../../source/manuel_interface.rst:1086
 msgid ""
 "faire défiler les différentes positions de la bibliothèque courante — qui"
 " n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des "
@@ -2603,15 +2556,15 @@ msgstr ""
 "displayed, so that a database of several tens of thousands of positions "
 "opens as fast as a small one,"
 
-#: ../../source/manuel_interface.rst:1115
+#: ../../source/manuel_interface.rst:1092
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "displaying the analysis information associated with a position."
 
-#: ../../source/manuel_interface.rst:1117
+#: ../../source/manuel_interface.rst:1094
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "displaying, adding, and modifying comments on a position."
 
-#: ../../source/manuel_interface.rst:1119
+#: ../../source/manuel_interface.rst:1096
 msgid ""
 "Le bouton **Aller à la position** de la barre d'outils ouvre une fenêtre "
 "où saisir directement l'indice d'une position pour y sauter, sans avoir à"
@@ -2623,16 +2576,16 @@ msgstr ""
 "the graphical equivalent of the ``[number]`` command line command (see "
 ":ref:`cmd_positions`)."
 
-#: ../../source/manuel_interface.rst:1124
-#: ../../source/manuel_interface.rst:1137
+#: ../../source/manuel_interface.rst:1101
+#: ../../source/manuel_interface.rst:1114
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Refer to :ref:`raccourcis` for available shortcuts."
 
-#: ../../source/manuel_interface.rst:1129
+#: ../../source/manuel_interface.rst:1106
 msgid "Édition de positions"
 msgstr "Editing positions"
 
-#: ../../source/manuel_interface.rst:1131
+#: ../../source/manuel_interface.rst:1108
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -2646,11 +2599,11 @@ msgstr ""
 "score, and the turn can be modified using the mouse (see "
 ":ref:`guide_edit_position`)."
 
-#: ../../source/manuel_interface.rst:1142
+#: ../../source/manuel_interface.rst:1119
 msgid "La ligne de commande"
 msgstr "The command line"
 
-#: ../../source/manuel_interface.rst:1144
+#: ../../source/manuel_interface.rst:1121
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -2669,7 +2622,7 @@ msgstr ""
 "to gradually use the command line for a powerful and smooth use of "
 "blunderDB, especially for position search functionalities."
 
-#: ../../source/manuel_interface.rst:1153
+#: ../../source/manuel_interface.rst:1130
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
@@ -2678,7 +2631,7 @@ msgstr ""
 "To open the command line, press the *SPACE* key. To submit a query and "
 "close the command line, press the *ENTER* key."
 
-#: ../../source/manuel_interface.rst:1157
+#: ../../source/manuel_interface.rst:1134
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -2689,7 +2642,7 @@ msgstr ""
 " and immediately modifies the state of the database if necessary. There "
 "are no explicit save actions required from the user."
 
-#: ../../source/manuel_interface.rst:1162
+#: ../../source/manuel_interface.rst:1139
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de "
 "commandes disponible en ligne de commande."
@@ -2697,11 +2650,11 @@ msgstr ""
 "Refer to :ref:`list of commands <cmd_mode>` for the list of available "
 "commands in the command line."
 
-#: ../../source/manuel_interface.rst:1168
+#: ../../source/manuel_interface.rst:1145
 msgid "La palette de commandes"
 msgstr "The command palette"
 
-#: ../../source/manuel_interface.rst:1170
+#: ../../source/manuel_interface.rst:1147
 msgid ""
 "La palette de commandes (*CTRL-MAJ-P*) retrouve par un nom approché ce "
 "que l'on ne sait plus où chercher : une commande de la ligne de commande,"
@@ -2717,7 +2670,7 @@ msgstr ""
 "accents: “cbmtx” finds the cube matrix, “lyon” the matches of a "
 "tournament in Lyon."
 
-#: ../../source/manuel_interface.rst:1177
+#: ../../source/manuel_interface.rst:1154
 msgid ""
 "Les flèches choisissent, *ENTREE* lance, *ECHAP* referme. Une commande se"
 " lance comme si elle avait été tapée ; ``s`` et ``ss`` ouvrent la ligne "
@@ -2730,7 +2683,7 @@ msgstr ""
 "filters in it; a filter runs as from a double-click in the library; a "
 "match opens as from a double-click in the Matches panel."
 
-#: ../../source/manuel_interface.rst:1182
+#: ../../source/manuel_interface.rst:1159
 msgid ""
 "Quand une Direction est ouverte, la palette y ajoute le tournoi : "
 "joueurs, tables, matchs en cours et épreuves (voir :ref:`la recherche "
@@ -2869,3 +2822,78 @@ msgstr ""
 #~ "played moves that do not have an"
 #~ " error yet."
 
+#~ msgid ""
+#~ "afficher le catalogue des visites "
+#~ "guidées (voir :ref:`visites_guidees`),"
+#~ msgstr "display the catalogue of guided tours (see :ref:`visites_guidees`),"
+
+#~ msgid "Visites guidées et base d'exemple"
+#~ msgstr "Guided tours and sample database"
+
+#~ msgid ""
+#~ "Pour faciliter la prise en main, "
+#~ "blunderDB propose des **visites guidées** "
+#~ "de l'interface. Le catalogue des visites"
+#~ " s'ouvre depuis la barre d'outils ou"
+#~ " avec la commande ``tutorial`` (alias "
+#~ "``tour``). Sept visites sont disponibles "
+#~ ": un tour général de l'interface, "
+#~ "et des visites dédiées à la "
+#~ "recherche de positions, à la revue "
+#~ "des matchs, à la revue des "
+#~ "tournois, au panneau Eval, à la "
+#~ "révision Anki et aux statistiques. "
+#~ "Chaque visite met en évidence les "
+#~ "éléments concernés de l'interface, étape "
+#~ "par étape, ouvre au passage le "
+#~ "panneau dont elle parle, et peut "
+#~ "être rejouée à tout moment. Au "
+#~ "premier démarrage, le tour général est"
+#~ " proposé automatiquement."
+#~ msgstr ""
+#~ "To make getting started easier, "
+#~ "blunderDB offers **guided tours** of the"
+#~ " interface. The tour catalogue opens "
+#~ "from the toolbar or with the "
+#~ "``tutorial`` command (alias ``tour``). Seven"
+#~ " tours are available: a general tour"
+#~ " of the interface, and tours "
+#~ "dedicated to searching positions, reviewing"
+#~ " matches, reviewing tournaments, the Eval"
+#~ " panel, Anki review and statistics. "
+#~ "Each tour highlights the relevant "
+#~ "interface elements, step by step, opens"
+#~ " the panel it talks about along "
+#~ "the way, and can be replayed at"
+#~ " any time. On first launch, the "
+#~ "general tour is offered automatically."
+
+#~ msgid ""
+#~ "La commande ``demo`` charge une **base"
+#~ " d'exemple** permettant de découvrir les"
+#~ " fonctionnalités de l'outil sans importer"
+#~ " ses propres parties : trois matchs"
+#~ " (dont deux regroupés dans un "
+#~ "tournoi) analysés par eXtreme Gammon, "
+#~ "BGBlitz et gammonNet, trois collections "
+#~ "thématiques, des commentaires étiquetés "
+#~ "(``#blunder``, ``#cube``) et un paquet "
+#~ "Anki avec son journal de révisions. "
+#~ "Les joueurs, le tournoi et le lieu"
+#~ " sont fictifs. Les visites guidées "
+#~ "s'appuient sur cette base lorsqu'aucune "
+#~ "base n'est ouverte."
+#~ msgstr ""
+#~ "The ``demo`` command loads a **sample"
+#~ " database** that lets you explore the"
+#~ " tool's features without importing your "
+#~ "own games: three matches (two of "
+#~ "them grouped in a tournament) analysed"
+#~ " by eXtreme Gammon, BGBlitz and "
+#~ "gammonNet, three thematic collections, tagged"
+#~ " comments (``#blunder``, ``#cube``) and an"
+#~ " Anki deck with its review log. "
+#~ "The players, the tournament and the "
+#~ "venue are fictional. The guided tours"
+#~ " rely on this database when no "
+#~ "database is open."

@@ -62,6 +62,10 @@ export function CancelLibraryImport(arg1) {
   return window['go']['gui']['App']['CancelLibraryImport'](arg1);
 }
 
+export function CancelLibraryOpen() {
+  return window['go']['gui']['App']['CancelLibraryOpen']();
+}
+
 export function CancelMaintenance() {
   return window['go']['gui']['App']['CancelMaintenance']();
 }
@@ -306,9 +310,6 @@ export function PickTranscriptionVideo() {
   return window['go']['gui']['App']['PickTranscriptionVideo']();
 }
 
-export function PrepareDemoDatabase() {
-  return window['go']['gui']['App']['PrepareDemoDatabase']();
-}
 
 export function QueueGammonNetBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['QueueGammonNetBatch'](arg1, arg2, arg3);

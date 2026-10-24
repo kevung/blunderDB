@@ -424,12 +424,13 @@ paths:
     post:
       operationId: analyses.load
       tags: [analyses]
+      description: "The analysis as stored, 404 when the position has none. With withPlayed, its played moves and cube actions are joined with those the matches played at the position, normalised and sorted, and its cube analyses come XG first, as the desktop and the CLI read it."
       x-kind: json
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/positionIDReq"
+              $ref: "#/components/schemas/analysisLoadReq"
       responses:
         "200":
           description: OK
@@ -457,6 +458,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_PositionAnalysis"
+  /v1/analyses.merge:
+    post:
+      operationId: analyses.merge
+      tags: [analyses]
+      description: "Folds the analysis into the one the position carries, in one transaction, as the desktop and the CLI save it: the candidate moves of both (keyed by notation), every engine's cube analysis, the union of the plays, the rollouts of both, the stored creation date."
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/analysisSaveReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/analyses.queueStatus:
     post:
       operationId: analyses.queueStatus
@@ -491,6 +510,7 @@ paths:
     post:
       operationId: analyses.save
       tags: [analyses]
+      description: "Stores the analysis as given, replacing the one the position carries: nothing of the stored analysis is kept. To add an analysis to the stored one, call analyses.merge."
       x-kind: json
       requestBody:
         content:
@@ -8354,6 +8374,15 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/storage_AliasSuggestion"
+    analysisLoadReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
+        withPlayed:
+          type: boolean
+          nullable: true
     analysisSaveReq:
       type: object
       properties:

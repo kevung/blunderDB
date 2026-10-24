@@ -2,14 +2,17 @@ package gui
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
+	_ "modernc.org/sqlite"
 )
 
 func newLibraryFile(t *testing.T, dir, name string, positions int) string {
@@ -337,5 +340,54 @@ func TestLibraryGroups_SwitchDuringRolloutStartCannotSlipIn(t *testing.T) {
 	var busy *database.BusyError
 	if startErr == nil && !errors.As(switchErr, &busy) {
 		t.Errorf("switch during the start: err = %v, want a BusyError", switchErr)
+	}
+}
+
+// A library that must migrate reports its progress while it opens in a new
+// group, and CancelLibraryOpen stops it: the open fails and no group is added.
+func TestOpenLibraryGroup_MigrationProgressAndCancel(t *testing.T) {
+	dir := t.TempDir()
+	pathA := newLibraryFile(t, dir, "a.db", 1)
+	stale := newLibraryFile(t, dir, "stale.db", 3)
+	raw, err := sql.Open("sqlite", stale)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE metadata SET value = '2.30.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	_ = raw.Close()
+
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(func() { a.closeParkedLibraries(); _ = db.Close() })
+	if _, err := a.OpenLibraryGroup(pathA); err != nil {
+		t.Fatal(err)
+	}
+
+	var mu sync.Mutex
+	var phases []string
+	hook := func(name string, payload ...any) {
+		if name != libraryOpenProgressEvent {
+			return
+		}
+		mu.Lock()
+		phases = append(phases, payload[0].(map[string]any)["phase"].(string))
+		mu.Unlock()
+		a.CancelLibraryOpen()
+	}
+	a.emitHook.Store(&hook)
+
+	if _, err := a.OpenLibraryGroup(stale); !errors.Is(err, context.Canceled) {
+		t.Fatalf("cancelled open: %v, want context.Canceled", err)
+	}
+	mu.Lock()
+	n := len(phases)
+	mu.Unlock()
+	if n == 0 {
+		t.Fatal("no progress was emitted while the library migrated")
+	}
+	if groups := a.ListLibraryGroups(); len(groups) != 1 {
+		t.Fatalf("groups after a cancelled open: %+v, want only the first", groups)
 	}
 }

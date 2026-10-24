@@ -26,7 +26,7 @@ for (const theme of ['light', 'dark']) {
         const ink = rgb(THEMES[theme].ui['--color-text']);
         await expect(page.locator('body')).toHaveCSS('color', ink);
 
-        const home = page.locator('[data-tour="home"]');
+        const home = page.locator('.home');
         await expect(home).toBeVisible();
         await expect(home.locator('h1')).toHaveCSS('color', ink);
         const titles = home.locator('.choice-title');

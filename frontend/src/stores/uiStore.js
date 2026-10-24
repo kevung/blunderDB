@@ -75,7 +75,6 @@ export const MODAL = {
     HELP: 'help',
     COMMAND: 'command',
     CONFIG: 'config',
-    TOUR: 'tour',
     TRASH: 'trash',
     RESUME_BATCH: 'resumeBatch',
     LOG: 'log',

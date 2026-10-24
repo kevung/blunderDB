@@ -122,10 +122,6 @@ export function GetTheme() {
   return window['go']['main']['Config']['GetTheme']();
 }
 
-export function GetTourSeen() {
-  return window['go']['main']['Config']['GetTourSeen']();
-}
-
 export function GetTrainingSeedSources() {
   return window['go']['main']['Config']['GetTrainingSeedSources']();
 }
@@ -260,10 +256,6 @@ export function SaveTableSort(arg1, arg2, arg3) {
 
 export function SaveTheme(arg1) {
   return window['go']['main']['Config']['SaveTheme'](arg1);
-}
-
-export function SaveTourSeen(arg1) {
-  return window['go']['main']['Config']['SaveTourSeen'](arg1);
 }
 
 export function SaveTrainingSeedSource(arg1, arg2) {

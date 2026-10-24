@@ -21,6 +21,9 @@ import (
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
 
 	internalserver "github.com/kevung/blunderdb/internal/server"
+	// The fixture is frozen at the schema it was built with; the migrator
+	// brings it to the current one on open, as the daemon's binary does.
+	_ "github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/mcp"
 )
 
@@ -28,7 +31,7 @@ import (
 // three analysed matches, collections, a study deck) behind the /v1 engine.
 func demoServer(t *testing.T, o internalserver.Options) *internalserver.Server {
 	t.Helper()
-	src, err := os.Open(filepath.Join("..", "..", "..", "internal", "gui", "demo.db.gz"))
+	src, err := os.Open(filepath.Join("..", "..", "..", "testdata", "library.db.gz"))
 	if err != nil {
 		t.Fatal(err)
 	}
