@@ -166,6 +166,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Match/VideoRoundTrip", testMatchVideoRoundTrip},
 		{"Stats/AggregateCounts", testStatsAggregateCounts},
 		{"Stats/CubeDirections", testStatsCubeDirections},
+		{"Stats/DegenerateCubeLabelNotCounted", testStatsDegenerateCubeLabelNotCounted},
 		{"Stats/Breakdowns", testStatsBreakdowns},
 		{"Stats/BreakdownPositions", testStatsBreakdownPositions},
 		{"Stats/RecurringErrors", testStatsRecurringErrors},
