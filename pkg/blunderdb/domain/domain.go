@@ -536,6 +536,13 @@ type SearchFilters struct {
 	// inclusive. Read on the match, as position.match_length is never written.
 	MatchLengthFilter string `json:"matchLengthFilter"`
 
+	// AwayFilter is the `aw` token whole (`aw:4`, `aw:2,5`, `aw<5`, `aw>3`):
+	// how many points EACH player still needs, bounds inclusive — the end of
+	// a match whatever its length, which MatchLengthFilter cannot say. Read
+	// as a distance (PointsAway): the sentinels 0 and 1 both count one point,
+	// and money play, having no distance, never matches.
+	AwayFilter string `json:"awayFilter"`
+
 	// MatchDateFilter is the `md:` token whole (`md:YYYY-MM..YYYY-MM`,
 	// `md:YYYY`, `md>YYYY-MM`, `md<YYYY-MM`): the DATE OF THE MATCH, from
 	// position.match_date, bounds inclusive and a month or a year covering its

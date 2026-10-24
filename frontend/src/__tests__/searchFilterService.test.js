@@ -657,3 +657,26 @@ describe('match-level tokens carried to the backend', () => {
         expect(payload.cubeResponseFilter).toBe('takepass');
     });
 });
+
+describe('aw : les points qu’il reste à marquer à chacun des deux joueurs', () => {
+    test.each(['aw<5', 'aw>3', 'aw:2,5', 'aw:4', 'aw:1'])('la barre de commande lit %s et le transmet tel quel', (tok) => {
+        const command = `s ${tok}`;
+        const pf = parseFilters(command.slice(2).split(' '), command);
+        expect(pf.awayFilter).toBe(tok);
+        expect(buildSearchFilterPayload({}, pf, [tok]).awayFilter).toBe(tok);
+        const { args } = /** @type {any} */ (replaySearchArgs(command));
+        expect(args.awayFilter).toBe(tok);
+    });
+
+    test.each(['aw', 'aw5', 'aw:', 'aw:4,', 'aw:x'])('une forme mal écrite (%s) ne devient pas un filtre', (tok) => {
+        const command = `s ${tok}`;
+        expect(parseFilters(command.slice(2).split(' '), command).awayFilter).toBe('');
+    });
+
+    test('aw et ml sont deux filtres distincts', () => {
+        const command = 's ml:11 aw<3';
+        const pf = parseFilters(command.slice(2).split(' '), command);
+        expect(pf.matchLengthFilter).toBe('ml:11');
+        expect(pf.awayFilter).toBe('aw<3');
+    });
+});
