@@ -25,6 +25,12 @@ type positionBundle struct {
 	// for comments nobody signed. A separate list keeps every older record
 	// readable, and an import never signs in the importer's name.
 	CommentAuthors []string `json:"commentAuthors,omitempty"`
+	// CommentSignatures[i] and CommentOrigins[i] are the signature and the
+	// provenance of Comments[i], copied as the producer holds them: the
+	// importer neither signs nor verifies. Absent, a comment is unsigned and
+	// the user's own.
+	CommentSignatures []string `json:"commentSignatures,omitempty"`
+	CommentOrigins    []string `json:"commentOrigins,omitempty"`
 	// MET is the id, within this stream, of the table the analysis was
 	// valued with; absent for the built-in one (ADR-0068, rule 5).
 	MET int64 `json:"met,omitempty"`
@@ -39,6 +45,20 @@ func (b *positionBundle) commentAuthor(i int) string {
 		return b.CommentAuthors[i]
 	}
 	return ""
+}
+
+func (b *positionBundle) commentSignature(i int) string {
+	if i < len(b.CommentSignatures) {
+		return b.CommentSignatures[i]
+	}
+	return ""
+}
+
+func (b *positionBundle) commentOrigin(i int) domain.CommentOrigin {
+	if i < len(b.CommentOrigins) && b.CommentOrigins[i] != "" {
+		return domain.ParseCommentOrigin(b.CommentOrigins[i])
+	}
+	return domain.CommentOriginUser
 }
 
 // flusher is implemented by streaming writers (e.g. http.ResponseWriter) so
@@ -104,6 +124,14 @@ func (e JSONExporter) Export(ctx context.Context, scope string, w io.Writer, _ E
 			}
 			b.Comments = append(b.Comments, c.Text)
 			b.CommentAuthors = append(b.CommentAuthors, c.Author)
+			b.CommentSignatures = append(b.CommentSignatures, c.Signature)
+			b.CommentOrigins = append(b.CommentOrigins, string(c.Origin))
+		}
+		if !slices.ContainsFunc(b.CommentSignatures, func(a string) bool { return a != "" }) {
+			b.CommentSignatures = nil
+		}
+		if !slices.ContainsFunc(b.CommentOrigins, func(o string) bool { return domain.CommentOrigin(o) != domain.CommentOriginUser }) {
+			b.CommentOrigins = nil
 		}
 		if !slices.ContainsFunc(b.CommentAuthors, func(a string) bool { return a != "" }) {
 			b.CommentAuthors = nil
@@ -179,7 +207,10 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 			}
 		}
 		for i, txt := range b.Comments {
-			if _, err := tx.Comments().Add(storage.WithCommentAuthor(ctx, b.commentAuthor(i)), scope, id, txt); err != nil {
+			if err := storage.CheckCarriedAuthor(b.commentAuthor(i), b.commentSignature(i)); err != nil {
+				return sum, err
+			}
+			if _, err := tx.Comments().AddFrom(storage.WithCarriedComment(ctx, b.commentAuthor(i), b.commentSignature(i)), scope, id, txt, b.commentOrigin(i)); err != nil {
 				return sum, err
 			}
 		}

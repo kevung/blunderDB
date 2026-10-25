@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"strings"
 )
 
@@ -61,6 +62,16 @@ func WithCarriedComment(ctx context.Context, author, signature string) context.C
 		ctx = WithCommentAuthor(ctx, author)
 	}
 	return WithCommentSignature(ctx, signature)
+}
+
+// CheckCarriedAuthor refuses, with ErrInvalid, the author of a signed note
+// that no write would accept: the signature covers the name byte for byte, so
+// it cannot be cut to MaxCommentAuthorLen, only refused.
+func CheckCarriedAuthor(author, signature string) error {
+	if strings.TrimSpace(signature) != "" && len([]rune(author)) > MaxCommentAuthorLen {
+		return fmt.Errorf("%w: the author of a signed comment exceeds %d characters", ErrInvalid, MaxCommentAuthorLen)
+	}
+	return nil
 }
 
 // CommentSignatureFromContext returns the signature set by
