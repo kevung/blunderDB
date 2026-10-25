@@ -206,6 +206,10 @@ func (s *Storage) Migrate(ctx context.Context) error {
 		if err := bootstrap(ctx, conn); err != nil {
 			return err
 		}
+	} else if err := checkReaderFloor(ctx, conn); err != nil {
+		// Before any migration: a binary below the floor would write rows
+		// the newer schema never re-derives.
+		return err
 	}
 	if err := migrateForward(ctx, conn); err != nil {
 		return err
@@ -216,7 +220,54 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	if err := runGoBackfills(ctx, conn); err != nil {
 		return err
 	}
-	return setDatabaseVersion(ctx, conn)
+	if err := setDatabaseVersion(ctx, conn); err != nil {
+		return err
+	}
+	return raiseReaderFloor(ctx, conn)
+}
+
+// readerFloor returns the recorded storage.MinReaderVersionKey, "" when the
+// database predates it.
+func readerFloor(ctx context.Context, db execer) (string, error) {
+	var floor string
+	err := db.QueryRow(ctx, `SELECT value FROM metadata WHERE key = $1`, storage.MinReaderVersionKey).Scan(&floor)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("postgres: read %s: %w", storage.MinReaderVersionKey, err)
+	}
+	return floor, nil
+}
+
+// checkReaderFloor refuses a database whose floor is newer than the schema
+// this binary speaks (storage.ErrDatabaseTooNew).
+func checkReaderFloor(ctx context.Context, db execer) error {
+	floor, err := readerFloor(ctx, db)
+	if err != nil {
+		return err
+	}
+	return storage.CheckReaderFloor(floor)
+}
+
+// raiseReaderFloor records storage.RaisedReaderFloor, writing only when the
+// value changes.
+func raiseReaderFloor(ctx context.Context, db execer) error {
+	floor, err := readerFloor(ctx, db)
+	if err != nil {
+		return err
+	}
+	raised := storage.RaisedReaderFloor(floor)
+	if raised == floor {
+		return nil
+	}
+	if _, err := db.Exec(ctx,
+		`INSERT INTO metadata (key, value) VALUES ($1, $2)
+		 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+		storage.MinReaderVersionKey, raised); err != nil {
+		return fmt.Errorf("postgres: record %s: %w", storage.MinReaderVersionKey, err)
+	}
+	return nil
 }
 
 // isFreshDB reports whether the database has no schema yet (no metadata

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-19 00:49+0200\n"
+"POT-Creation-Date: 2026-10-25 02:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -72,15 +72,31 @@ msgstr ""
 " tietokantaa ei enää voi avata blunderDB:n vanhemmilla versioilla, mistä "
 "johtuu etukäteisvarmuuskopioinnin tärkeys."
 
-#: ../../source/annexe_db_scheme.rst:32
+#: ../../source/annexe_db_scheme.rst:31
+msgid ""
+"Une base enregistre aussi, dans ses métadonnées (clé "
+"``min_reader_version``), la version de schéma minimale qu'un blunderDB "
+"doit lire pour l'ouvrir. Une version de blunderDB qui lit un schéma plus "
+"ancien refuse alors d'ouvrir la base, en interface graphique, en ligne de"
+" commande, avec ``serve`` comme avec ``migrate``, et affiche les deux "
+"versions : la base reste intacte."
+msgstr ""
+"Tietokanta tallentaa metatietoihinsa (avain ``min_reader_version``) myös "
+"pienimmän skeemaversion, joka blunderDB:n on luettava avatakseen sen. "
+"blunderDB-versio, joka lukee vanhempaa skeemaa, kieltäytyy tällöin "
+"avaamasta tietokantaa graafisessa käyttöliittymässä, komentorivillä, "
+"``serve``-komennolla kuten ``migrate``-komennollakin, ja näyttää molemmat"
+" versiot: tietokanta säilyy koskemattomana."
+
+#: ../../source/annexe_db_scheme.rst:38
 msgid "Principales tables"
 msgstr "Päätaulut"
 
-#: ../../source/annexe_db_scheme.rst:34
+#: ../../source/annexe_db_scheme.rst:40
 msgid "Le schéma courant s'articule autour des tables suivantes :"
 msgstr "Nykyinen skeema rakentuu seuraavien taulujen ympärille:"
 
-#: ../../source/annexe_db_scheme.rst:36
+#: ../../source/annexe_db_scheme.rst:42
 msgid ""
 "**Positions et analyses** : ``position`` (les positions, dédupliquées), "
 "``analysis`` (les données d'analyse associées) et ``comment`` (les "
@@ -90,7 +106,7 @@ msgstr ""
 "``analysis`` (niihin liittyvät analyysitiedot) ja ``comment`` "
 "(kommentit)."
 
-#: ../../source/annexe_db_scheme.rst:40
+#: ../../source/annexe_db_scheme.rst:46
 msgid ""
 "**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent "
 "les matchs importés, leurs parties, leurs coups et l'analyse de chaque "
@@ -100,7 +116,7 @@ msgstr ""
 "tallentavat tuodut ottelut, niiden pelit, siirrot ja kunkin siirron "
 "analyysin."
 
-#: ../../source/annexe_db_scheme.rst:43
+#: ../../source/annexe_db_scheme.rst:49
 msgid ""
 "**Collections** : ``collection`` et ``collection_position`` (table de "
 "liaison) regroupent des positions choisies manuellement."
@@ -108,11 +124,11 @@ msgstr ""
 "**Kokoelmat**: ``collection`` ja ``collection_position`` (liitostaulu) "
 "ryhmittelevät manuaalisesti valittuja asemia."
 
-#: ../../source/annexe_db_scheme.rst:46
+#: ../../source/annexe_db_scheme.rst:52
 msgid "**Tournois** : ``tournament`` regroupe des matchs en tournois."
 msgstr "**Turnaukset**: ``tournament`` ryhmittelee otteluita turnauksiksi."
 
-#: ../../source/annexe_db_scheme.rst:48
+#: ../../source/annexe_db_scheme.rst:54
 msgid ""
 "**Répétition espacée (Anki)** : ``anki_deck``, ``anki_card`` et "
 "``anki_review_log`` gèrent les paquets, les cartes et le journal des "
@@ -122,7 +138,7 @@ msgstr ""
 "``anki_review_log`` hallitsevat pakkoja, kortteja ja kertausten lokia "
 "(FSRS-algoritmi)."
 
-#: ../../source/annexe_db_scheme.rst:52
+#: ../../source/annexe_db_scheme.rst:58
 msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
@@ -134,11 +150,11 @@ msgstr ""
 "suodatinkirjaston ja ``metadata`` tietokannan metatiedot (mukaan lukien "
 "skeeman version)."
 
-#: ../../source/annexe_db_scheme.rst:58
+#: ../../source/annexe_db_scheme.rst:64
 msgid "Principes de conception"
 msgstr "Suunnitteluperiaatteet"
 
-#: ../../source/annexe_db_scheme.rst:60
+#: ../../source/annexe_db_scheme.rst:66
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
@@ -146,7 +162,7 @@ msgstr ""
 "Skeemasta 2.0.0 alkaen useat suunnitteluratkaisut nopeuttavat hakua ja "
 "pienentävät tiedoston kokoa:"
 
-#: ../../source/annexe_db_scheme.rst:63
+#: ../../source/annexe_db_scheme.rst:69
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -156,7 +172,7 @@ msgstr ""
 "uniikki indeksi, joten sama asema, joka kohdataan useissa tuonneissa, "
 "tallennetaan vain kerran."
 
-#: ../../source/annexe_db_scheme.rst:67
+#: ../../source/annexe_db_scheme.rst:73
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -168,7 +184,7 @@ msgstr ""
 "nappulat, siirto- tai kuutiovirhe, voiton mahdollisuudet…) esilasketaan "
 "omiin sarakkeisiinsa nopeaa suodatusta varten."
 
-#: ../../source/annexe_db_scheme.rst:72
+#: ../../source/annexe_db_scheme.rst:78
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -178,7 +194,7 @@ msgstr ""
 "mahdollistavat erittäin nopean kokonaislukupohjaisen esisuodatuksen "
 "rakennemotiivien hakujen aikana."
 
-#: ../../source/annexe_db_scheme.rst:76
+#: ../../source/annexe_db_scheme.rst:82
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -192,7 +208,7 @@ msgstr ""
 "komennolla ``vacuum`` tai ``reencode``), mikä pienentää tiedostokokoa "
 "merkittävästi."
 
-#: ../../source/annexe_db_scheme.rst:82
+#: ../../source/annexe_db_scheme.rst:88
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."

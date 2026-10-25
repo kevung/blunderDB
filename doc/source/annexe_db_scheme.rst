@@ -28,6 +28,12 @@ d'une base ouverte est visible dans le panneau **Métadonnées** (commande
    versions plus anciennes de blunderDB, d'où l'importance de la sauvegarde
    préalable.
 
+Une base enregistre aussi, dans ses métadonnées (clé ``min_reader_version``),
+la version de schéma minimale qu'un blunderDB doit lire pour l'ouvrir. Une
+version de blunderDB qui lit un schéma plus ancien refuse alors d'ouvrir la
+base, en interface graphique, en ligne de commande, avec ``serve`` comme avec
+``migrate``, et affiche les deux versions : la base reste intacte.
+
 Principales tables
 ------------------
 

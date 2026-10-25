@@ -1053,7 +1053,7 @@ func Bootstrap(ctx context.Context, db *sql.DB) error {
 		domain.DatabaseVersion); err != nil {
 		return fmt.Errorf("sqlite: bootstrap version: %w", err)
 	}
-	return nil
+	return RaiseReaderFloor(ctx, db)
 }
 
 // isFreshDB reports whether db has no schema yet (no metadata table).

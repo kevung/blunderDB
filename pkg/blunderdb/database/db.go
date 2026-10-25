@@ -730,6 +730,9 @@ func (d *Database) openDatabase(ctx context.Context, path string, progress func(
 		if err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&onDisk); err != nil {
 			return fmt.Errorf("cannot open database read-only: reading its version: %w", err)
 		}
+		if err = sqlite.CheckReaderFloor(ctx, d.db); err != nil {
+			return err
+		}
 		if cmp, cerr := compareVersions(onDisk, DatabaseVersion); cerr != nil || cmp != 0 {
 			return fmt.Errorf("cannot open database read-only: its schema is %s and this blunderDB reads %s; "+
 				"close the other instance holding it so this one can open it for writing", onDisk, DatabaseVersion)

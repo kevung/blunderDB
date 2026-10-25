@@ -141,6 +141,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Metadata/Counts", testMetadataCounts},
 		{"Metadata/EstimatedCounts", testMetadataEstimatedCounts},
 		{"Metadata/StoredBytes", testMetadataStoredBytes},
+		{"Metadata/ReaderFloorRefusesAnOlderBinary", testMetadataReaderFloor},
 		{"Training/SaveAndRead", testTrainingSaveAndRead},
 		{"Training/NumberStatsCountByType", testTrainingNumberStatsCountByType},
 		{"Training/DeviationStaysOutOfTheMean", testTrainingDeviationStaysOutOfTheMeanWhenAbsent},

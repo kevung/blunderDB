@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-19 00:49+0200\n"
+"POT-Creation-Date: 2026-10-25 02:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -74,15 +74,31 @@ msgstr ""
 "παλαιότερες εκδόσεις του blunderDB, εξ ου και η σημασία του προηγούμενου "
 "αντιγράφου ασφαλείας."
 
-#: ../../source/annexe_db_scheme.rst:32
+#: ../../source/annexe_db_scheme.rst:31
+msgid ""
+"Une base enregistre aussi, dans ses métadonnées (clé "
+"``min_reader_version``), la version de schéma minimale qu'un blunderDB "
+"doit lire pour l'ouvrir. Une version de blunderDB qui lit un schéma plus "
+"ancien refuse alors d'ouvrir la base, en interface graphique, en ligne de"
+" commande, avec ``serve`` comme avec ``migrate``, et affiche les deux "
+"versions : la base reste intacte."
+msgstr ""
+"Μια βάση καταγράφει επίσης στα μεταδεδομένα της (κλειδί "
+"``min_reader_version``) την ελάχιστη έκδοση σχήματος που πρέπει να "
+"διαβάζει ένα blunderDB για να την ανοίξει. Μια έκδοση του blunderDB που "
+"διαβάζει παλαιότερο σχήμα αρνείται τότε να ανοίξει τη βάση, στη γραφική "
+"διεπαφή, στη γραμμή εντολών, με το ``serve`` όπως και με το ``migrate``, "
+"και εμφανίζει τις δύο εκδόσεις: η βάση παραμένει ανέπαφη."
+
+#: ../../source/annexe_db_scheme.rst:38
 msgid "Principales tables"
 msgstr "Κύριοι πίνακες"
 
-#: ../../source/annexe_db_scheme.rst:34
+#: ../../source/annexe_db_scheme.rst:40
 msgid "Le schéma courant s'articule autour des tables suivantes :"
 msgstr "Το τρέχον σχήμα διαρθρώνεται γύρω από τους ακόλουθους πίνακες:"
 
-#: ../../source/annexe_db_scheme.rst:36
+#: ../../source/annexe_db_scheme.rst:42
 msgid ""
 "**Positions et analyses** : ``position`` (les positions, dédupliquées), "
 "``analysis`` (les données d'analyse associées) et ``comment`` (les "
@@ -91,7 +107,7 @@ msgstr ""
 "**Θέσεις και αναλύσεις**: ``position`` (οι θέσεις, χωρίς διπλότυπα), "
 "``analysis`` (τα σχετικά δεδομένα ανάλυσης) και ``comment`` (τα σχόλια)."
 
-#: ../../source/annexe_db_scheme.rst:40
+#: ../../source/annexe_db_scheme.rst:46
 msgid ""
 "**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent "
 "les matchs importés, leurs parties, leurs coups et l'analyse de chaque "
@@ -101,7 +117,7 @@ msgstr ""
 "αποθηκεύουν τους εισαγόμενους αγώνες, τις παρτίδες τους, τις κινήσεις "
 "τους και την ανάλυση κάθε κίνησης."
 
-#: ../../source/annexe_db_scheme.rst:43
+#: ../../source/annexe_db_scheme.rst:49
 msgid ""
 "**Collections** : ``collection`` et ``collection_position`` (table de "
 "liaison) regroupent des positions choisies manuellement."
@@ -109,11 +125,11 @@ msgstr ""
 "**Συλλογές**: οι ``collection`` και ``collection_position`` (πίνακας "
 "σύνδεσης) ομαδοποιούν θέσεις που επιλέγονται χειροκίνητα."
 
-#: ../../source/annexe_db_scheme.rst:46
+#: ../../source/annexe_db_scheme.rst:52
 msgid "**Tournois** : ``tournament`` regroupe des matchs en tournois."
 msgstr "**Τουρνουά**: ο ``tournament`` ομαδοποιεί αγώνες σε τουρνουά."
 
-#: ../../source/annexe_db_scheme.rst:48
+#: ../../source/annexe_db_scheme.rst:54
 msgid ""
 "**Répétition espacée (Anki)** : ``anki_deck``, ``anki_card`` et "
 "``anki_review_log`` gèrent les paquets, les cartes et le journal des "
@@ -123,7 +139,7 @@ msgstr ""
 "``anki_review_log`` διαχειρίζονται τα πακέτα, τις κάρτες και το αρχείο "
 "καταγραφής επαναλήψεων (αλγόριθμος FSRS)."
 
-#: ../../source/annexe_db_scheme.rst:52
+#: ../../source/annexe_db_scheme.rst:58
 msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
@@ -135,11 +151,11 @@ msgstr ""
 "``filter_library`` τη βιβλιοθήκη φίλτρων, και ο ``metadata`` τα "
 "μεταδεδομένα της βάσης (μεταξύ των οποίων και η έκδοση του σχήματος)."
 
-#: ../../source/annexe_db_scheme.rst:58
+#: ../../source/annexe_db_scheme.rst:64
 msgid "Principes de conception"
 msgstr "Αρχές σχεδιασμού"
 
-#: ../../source/annexe_db_scheme.rst:60
+#: ../../source/annexe_db_scheme.rst:66
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
@@ -147,7 +163,7 @@ msgstr ""
 "Από το σχήμα 2.0.0, αρκετές επιλογές σχεδιασμού επιταχύνουν την αναζήτηση"
 " και μειώνουν το μέγεθος του αρχείου:"
 
-#: ../../source/annexe_db_scheme.rst:63
+#: ../../source/annexe_db_scheme.rst:69
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -157,7 +173,7 @@ msgstr ""
 "Zobrist και ένα μοναδικό ευρετήριο, έτσι ώστε μια ίδια θέση που "
 "συναντάται σε πολλαπλές εισαγωγές να αποθηκεύεται μόνο μία φορά."
 
-#: ../../source/annexe_db_scheme.rst:67
+#: ../../source/annexe_db_scheme.rst:73
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -169,7 +185,7 @@ msgstr ""
 "καθυστερημένα πούλια, σφάλμα κίνησης ή κύβου, πιθανότητες νίκης…) "
 "προϋπολογίζονται σε ειδικές στήλες για γρήγορο φιλτράρισμα."
 
-#: ../../source/annexe_db_scheme.rst:72
+#: ../../source/annexe_db_scheme.rst:78
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -179,7 +195,7 @@ msgstr ""
 "επιτρέπουν ένα πολύ γρήγορο ακέραιο προφιλτράρισμα κατά τις αναζητήσεις "
 "μοτίβων δομής."
 
-#: ../../source/annexe_db_scheme.rst:76
+#: ../../source/annexe_db_scheme.rst:82
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -193,7 +209,7 @@ msgstr ""
 "και μετατρέπονται με ``vacuum`` ή ``reencode``), κάτι που μειώνει "
 "σημαντικά το μέγεθος του αρχείου."
 
-#: ../../source/annexe_db_scheme.rst:82
+#: ../../source/annexe_db_scheme.rst:88
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."

@@ -43,6 +43,13 @@ const (
 
 const (
 	DatabaseVersion = "2.50.0"
+
+	// MinReaderVersion is the oldest schema version a binary must speak to
+	// open a database this binary has opened for writing. Raised only when a
+	// binary of an older schema would write rows the newer one cannot trust:
+	// from 2.50.0 on, an analysis written without the per-move columns of
+	// 2.50 is never re-derived.
+	MinReaderVersion = "2.50.0"
 )
 
 // Anki deck source types

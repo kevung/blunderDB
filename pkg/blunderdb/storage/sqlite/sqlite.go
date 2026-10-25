@@ -330,10 +330,16 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("sqlite: read schema version of non-fresh database: %w", err)
 	}
+	if err := CheckReaderFloor(ctx, s.sqlDB); err != nil {
+		return err
+	}
 	if version == domain.DatabaseVersion {
 		// The layout of the derived tables is not tied to the version: the
 		// wrapper repairs it on every open, so an embedder must get it too.
-		return EnsureSchema(ctx, s.sqlDB)
+		if err := EnsureSchema(ctx, s.sqlDB); err != nil {
+			return err
+		}
+		return RaiseReaderFloor(ctx, s.sqlDB)
 	}
 	return fmt.Errorf("sqlite: database is at schema version %q, need %q, and no migrator is registered (blank-import package database, e.g. `_ \"github.com/kevung/blunderdb/pkg/blunderdb/database\"`, to enable migrating older databases)", version, domain.DatabaseVersion)
 }

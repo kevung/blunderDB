@@ -24,9 +24,10 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"strconv"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
@@ -148,6 +149,11 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	if _, err := parseVersion(dbVersion); err != nil {
 		return fmt.Errorf("database_version %q: %w", dbVersion, err)
 	}
+	// Before any step: a binary below the floor would write rows the newer
+	// schema never re-derives.
+	if err := sqlite.CheckReaderFloor(ctx, d.db); err != nil {
+		return err
+	}
 
 	for dbVersion != DatabaseVersion {
 		step, ok := findMigrationStep(dbVersion)
@@ -255,6 +261,10 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		}
 	}
 
+	if err := sqlite.RaiseReaderFloor(ctx, d.db); err != nil {
+		return err
+	}
+
 	// The chain has ended at DatabaseVersion (or beyond it): every table the
 	// application reads must be there now, whatever the file started as.
 	if err := d.requireTables(requiredTables); err != nil {
@@ -276,46 +286,11 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	return nil
 }
 
-// parseVersion splits a schema version "MAJOR.MINOR.PATCH" into its three
-// numeric components.
-func parseVersion(v string) ([3]int, error) {
-	var out [3]int
-	parts := strings.Split(v, ".")
-	if len(parts) != 3 {
-		return out, fmt.Errorf("want MAJOR.MINOR.PATCH, got %q", v)
-	}
-	for i, p := range parts {
-		n, err := strconv.Atoi(p)
-		if err != nil || n < 0 {
-			return out, fmt.Errorf("component %q of %q is not a non-negative integer", p, v)
-		}
-		out[i] = n
-	}
-	return out, nil
-}
+// parseVersion and compareVersions are storage's, named here for the
+// migration chain's many callers.
+func parseVersion(v string) ([3]int, error) { return storage.ParseSchemaVersion(v) }
 
-// compareVersions orders two schema versions component by component, so that
-// 2.10.0 sorts after 2.9.0 — a plain string comparison puts it before. It
-// returns -1, 0 or +1 as a is older than, equal to or newer than b.
-func compareVersions(a, b string) (int, error) {
-	va, err := parseVersion(a)
-	if err != nil {
-		return 0, err
-	}
-	vb, err := parseVersion(b)
-	if err != nil {
-		return 0, err
-	}
-	for i := range va {
-		switch {
-		case va[i] < vb[i]:
-			return -1, nil
-		case va[i] > vb[i]:
-			return 1, nil
-		}
-	}
-	return 0, nil
-}
+func compareVersions(a, b string) (int, error) { return storage.CompareSchemaVersions(a, b) }
 
 // requiredTables are the tables the application reads on any database it
 // opens, which the chain plus ensureAllTablesExist must have produced. It is

@@ -53,8 +53,10 @@ propre issue le jour où il est lancé.
   exclusif SQLite (`BEGIN EXCLUSIVE` sur une connexion tenue jusqu'au rename) ou un verrou
   consultatif. Effort S-M.
 - **`move.error_mp` sans lecteur ni tenue** (`tasks/mesure-bmab-0.37.md` § 9) : la 2.50 la
-  garde inerte (jamais écrite ni lue) ; sa suppression réelle attend la version minimale de
-  lecture ci-dessous. Si `E` devait un jour s'y appuyer (SQL exact, sans phase Go), il faudrait
+  garde inerte (jamais écrite ni lue) ; la version minimale de lecture
+  (`min_reader_version`, posée à 2.50.0) arrête désormais les binaires qui la lisent, mais
+  pas les 0.46.x et antérieures, qui l'ignorent : à peser avant la suppression réelle.
+  Si `E` devait un jour s'y appuyer (SQL exact, sans phase Go), il faudrait
   une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de distinguer « pas noté »
   de « non notable » (NULL ambigu).
 - **PostgreSQL, écriture par tenant** : `positions_postgres.go` enveloppe la `pgconn.PgError`
@@ -103,9 +105,6 @@ propre issue le jour où il est lancé.
   `Migrate` laisse une base non fraîche intacte sans migrateur enregistré : faux depuis qu'il
   reclusterise les tables de cellules (et la ligne 17 parle d'une barre de progression de la GUI
   que le front n'affiche pas).
-- **Version minimale de lecture** : refuser d'ouvrir une base plus récente que le binaire.
-  Préalable à la suppression réelle de `move.error_mp`. Aujourd'hui une 0.46.1 qui écrit sur une
-  base 2.50 n'est pas re-dérivée (ses analyses écrites n'ont pas les colonnes de la 2.50).
 - **La signature d'un commentaire ne passe ni par l'export JSON ni par le backend `remote`**
   (ADR-0099). `ingest/json.go` n'écrit que texte et auteur ; `remote` n'envoie pas
   `storage.CommentSignatureFromContext` à `comments.add`, que le démon ne lit pas non plus.
