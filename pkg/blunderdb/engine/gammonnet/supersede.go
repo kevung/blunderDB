@@ -73,7 +73,7 @@ func SupersedeEntries(existing *domain.PositionAnalysis, verdict domain.Position
 	if kept.PlayedCubeAction != "" && len(actions) == 0 {
 		actions = []string{kept.PlayedCubeAction}
 	}
-	out.PlayedCubeActions = engine.UnionPlayed(actions, out.PlayedCubeActions)
+	out.PlayedCubeActions = engine.UnionCubeActions(actions, out.PlayedCubeActions)
 
 	out.Rollouts = domain.MergeRollouts(kept.Rollouts, out.Rollouts)
 	return out

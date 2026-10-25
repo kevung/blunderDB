@@ -103,7 +103,8 @@ func RunElsewhereTests(t *testing.T, factory func() storage.Storage) {
 	})
 
 	t.Run("AnotherTableIsFlagged", func(t *testing.T) {
-		metID, err := club.MatchEquityTables().Save(ctx, "", domain.MatchEquityTable{Name: "Club MET", Digest: "club", Source: "<met/>"})
+		clubRow := ValidMET("Club MET", 7)
+		metID, err := club.MatchEquityTables().Save(ctx, "", clubRow)
 		if err != nil {
 			t.Fatalf("Save MET: %v", err)
 		}
@@ -123,7 +124,7 @@ func RunElsewhereTests(t *testing.T, factory func() storage.Storage) {
 		}
 		// The same table here makes it comparable again.
 		same := judge
-		same.METDigest = "club"
+		same.METDigest = clubRow.Digest
 		got, err = storage.Elsewhere(ctx, sources[:1], q, same)
 		if err != nil {
 			t.Fatalf("Elsewhere: %v", err)

@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -299,5 +300,70 @@ func TestVacuum_InPlaceWhileAnotherConnectionHoldsTheFile(t *testing.T) {
 	}
 	if err := other.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&n); err != nil || n == 0 {
 		t.Fatalf("the other connection after the vacuum: %d, %v", n, err)
+	}
+}
+
+// TestVacuum_AnOpenerDuringTheSwapWaitsForTheNewFile: an instance that opens
+// the library between the check that nothing else holds it and the rename
+// waits at the swap gate, then connects to the compacted file — never to the
+// inode the rename unlinks, where whatever it wrote would be lost.
+func TestVacuum_AnOpenerDuringTheSwapWaitsForTheNewFile(t *testing.T) {
+	t.Parallel()
+	d, path := vacuumFixture(t)
+	before := statIdentity(t, path)
+	other := NewDatabase()
+	closeOnCleanup(t, other)
+	opened := make(chan error, 1)
+	d.beforeSwapRename = func() {
+		go func() { opened <- other.OpenDatabase(path) }()
+		select {
+		case err := <-opened:
+			t.Errorf("the open completed inside the swap window (%v)", err)
+			opened <- err
+		case <-time.After(300 * time.Millisecond):
+		}
+	}
+	if _, err := d.Vacuum(); err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	if err := <-opened; err != nil {
+		t.Fatalf("the concurrent open: %v", err)
+	}
+	if after := statIdentity(t, path); os.SameFile(before, after) {
+		t.Fatal("the file was not replaced; the test proves nothing")
+	}
+	if _, err := d.db.Exec(`INSERT INTO metadata (key, value) VALUES ('swap_probe', '1')`); err != nil {
+		t.Fatal(err)
+	}
+	var v string
+	if err := other.db.QueryRow(`SELECT value FROM metadata WHERE key = 'swap_probe'`).Scan(&v); err != nil {
+		t.Fatalf("the concurrent opener does not read the replaced file: %v", err)
+	}
+}
+
+// TestVacuum_InPlaceWhileAnOpenerHoldsTheGate: an instance in the middle of
+// its open holds the swap gate before its connection shows as a -wal; the
+// vacuum does not wait for it, it leaves the file in place.
+func TestVacuum_InPlaceWhileAnOpenerHoldsTheGate(t *testing.T) {
+	t.Parallel()
+	d, path := vacuumFixture(t)
+	gate, err := lockShared(swapGatePathFor(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = gate.release() }()
+	before := statIdentity(t, path)
+	res, err := d.Vacuum()
+	if err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	if after := statIdentity(t, path); !os.SameFile(before, after) {
+		t.Fatal("the file was replaced while an opener held the gate")
+	}
+	if res.SizeAfter >= res.SizeBefore {
+		t.Fatalf("size %d → %d; want the in-place vacuum to shrink it", res.SizeBefore, res.SizeAfter)
+	}
+	if _, err := os.Stat(path + ".vacuum"); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("the compacted copy is still beside the file: %v", err)
 	}
 }

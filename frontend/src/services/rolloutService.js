@@ -121,6 +121,17 @@ async function startJob(call) {
     }
 }
 
+/**
+ * Forgets the previous end once the engine has accepted the next start: a refused start leaves the
+ * banner of the rollout that finished.
+ * @param {Promise<number>} call
+ */
+async function accepted(call) {
+    const job = await call;
+    rolloutStore.update((s) => ({ ...s, outcome: null }));
+    return job;
+}
+
 /** Registers the listeners once for the life of the window; safe to call from every mount. */
 export function ensureRolloutEvents() {
     if (listening) return;
@@ -376,11 +387,11 @@ export async function startRolloutOfCurrent(settings, moves = [], { unsaved = fa
     const pos = get(positionStore);
     const id = unsaved ? 0 : (pos?.id ?? 0);
     try {
-        rolloutStore.update((s) => ({ ...s, error: '', outcome: null, pendingKey: id ? '' : boardKey(pos) }));
+        rolloutStore.update((s) => ({ ...s, error: '', pendingKey: id ? '' : boardKey(pos) }));
         const request = /** @type {import('../../wailsjs/go/models.js').gui.RolloutRequest} */ (
             /** @type {unknown} */ ({ positionId: id, position: id ? undefined : pos, settings: settingsForWire(settings), moves: [...moves], store: id !== 0 })
         );
-        const start = async () => (await startJob(() => StartRollout(request)), true);
+        const start = async () => (await startJob(() => accepted(StartRollout(request))), true);
         // A stored rollout names its position by id: never sent while a switch rebinds the handle.
         const started = id ? await writingOnScreen(start) : await start();
         if (!started) return refuse(get(t)('libraryGroups.switching'));
@@ -424,9 +435,9 @@ export async function startRolloutOfSearch(settings) {
     const ok = await confirmAction(get(t)('rollout.batchConfirm', { total, listed: ids.length, depth: `${wire.max_games}` }), { confirmLabel: get(t)('rollout.start') });
     if (!ok) return '';
     try {
-        rolloutStore.update((s) => ({ ...s, error: '', outcome: null }));
+        rolloutStore.update((s) => ({ ...s, error: '' }));
         // The ids name rows of the library they were read in: sent to that one only.
-        const started = await writingOnLibrary(mark, async () => (await startJob(() => StartRolloutIDs(ids, wire, group)), true));
+        const started = await writingOnLibrary(mark, async () => (await startJob(() => accepted(StartRolloutIDs(ids, wire, group))), true));
         if (!started) return refuse(get(t)('rollout.listOfAnotherLibrary'));
         rolloutStore.update((s) => (s.outcome ? s : { ...idleRollout(), job: s.job, running: true, kind: 'batch', total, revision: s.revision }));
         await syncRolloutStatus();

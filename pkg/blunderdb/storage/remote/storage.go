@@ -16,6 +16,11 @@ type Storage struct {
 
 var _ storage.Storage = (*Storage)(nil)
 
+// PlayedJoinIgnored reports whether the daemon has answered a load with
+// withPlayed without joining the played moves: a daemon older than the
+// field, whose analyses come back without what the matches played.
+func (s *Storage) PlayedJoinIgnored() bool { return s.c.playedIgnored.Load() }
+
 // Open returns a Storage over the daemon at o.BaseURL. It does not contact
 // the daemon; the first method call does.
 func Open(o Options) (*Storage, error) {

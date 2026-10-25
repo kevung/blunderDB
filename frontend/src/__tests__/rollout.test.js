@@ -489,6 +489,14 @@ describe('guards', () => {
         expect(JSON.stringify(get(statusBarTextStore))).toContain('read-only');
     });
 
+    test('the end banner of a finished rollout survives a refused start', async () => {
+        const done = { type: 'done', positionId: 7, stored: true };
+        rolloutStore.update((s) => ({ ...s, job: 3, outcome: done }));
+        startRollout.mockRejectedValueOnce(new Error('database is read-only'));
+        await toggleRollout(['13/7* 8/7']);
+        expect(get(rolloutStore).outcome).toEqual(done);
+    });
+
     test('an event of a replaced job is ignored', async () => {
         const { ensureRolloutEvents } = await import('../services/rolloutService.js');
         ensureRolloutEvents();

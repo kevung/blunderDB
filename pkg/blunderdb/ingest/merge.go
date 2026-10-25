@@ -52,39 +52,11 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 			a.CheckerAnalysis = existing.CheckerAnalysis
 		}
 
-		// Merge doubling cube analysis, keeping all engine analyses.
-		if existing.DoublingCubeAnalysis != nil && a.DoublingCubeAnalysis != nil {
-			existingEngine := existing.DoublingCubeAnalysis.AnalysisEngine
-			incomingEngine := a.DoublingCubeAnalysis.AnalysisEngine
-
-			if existingEngine != incomingEngine && existingEngine != "" && incomingEngine != "" {
-				allCube := make([]domain.DoublingCubeAnalysis, 0)
-				if len(existing.AllCubeAnalyses) > 0 {
-					allCube = append(allCube, existing.AllCubeAnalyses...)
-				} else {
-					allCube = append(allCube, *existing.DoublingCubeAnalysis)
-				}
-				hasIncoming := false
-				for _, ca := range allCube {
-					if ca.AnalysisEngine == incomingEngine {
-						hasIncoming = true
-						break
-					}
-				}
-				if !hasIncoming {
-					allCube = append(allCube, *a.DoublingCubeAnalysis)
-				}
-				engine.SortCubeAnalysesByEngine(allCube)
-				a.AllCubeAnalyses = allCube
-			} else {
-				if len(existing.AllCubeAnalyses) > 0 {
-					a.AllCubeAnalyses = existing.AllCubeAnalyses
-				}
-			}
-		} else if existing.DoublingCubeAnalysis != nil && a.DoublingCubeAnalysis == nil {
-			a.DoublingCubeAnalysis = existing.DoublingCubeAnalysis
-			a.AllCubeAnalyses = existing.AllCubeAnalyses
-		}
+		// Every engine's cube analysis is kept, the incoming one replacing
+		// its own engine's entry (ADR-0013): the rule of a saved analysis.
+		a.DoublingCubeAnalysis, a.AllCubeAnalyses = engine.MergeCubeAnalyses(
+			existing.DoublingCubeAnalysis, existing.AllCubeAnalyses,
+			a.DoublingCubeAnalysis, a.AllCubeAnalyses)
 
 		// Merge played moves.
 		existingPlayedMoves := existing.PlayedMoves
@@ -106,7 +78,7 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 		if a.PlayedCubeAction != "" && len(incomingCubeActions) == 0 {
 			incomingCubeActions = []string{a.PlayedCubeAction}
 		}
-		a.PlayedCubeActions = engine.UnionPlayed(existingCubeActions, incomingCubeActions)
+		a.PlayedCubeActions = engine.UnionCubeActions(existingCubeActions, incomingCubeActions)
 
 		// Rollouts are their own analyses: a caller that does not know them
 		// (an import, the frontend saving what it edited) must not drop them.

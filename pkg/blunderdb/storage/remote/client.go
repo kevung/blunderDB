@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -128,6 +129,9 @@ type client struct {
 	http   *http.Client
 	// idle is how long a body may stay silent; zero means no bound.
 	idle time.Duration
+	// playedIgnored is raised the first time the daemon answers a load with
+	// withPlayed without announcing the join (storage.WithPlayedHeader).
+	playedIgnored atomic.Bool
 }
 
 // idleBody cancels its request when no byte arrives for d, so a daemon that
@@ -319,19 +323,25 @@ func envelopeError(method, code, message string, details map[string]any) error {
 
 // call sends req and decodes the JSON answer into out (nil discards it).
 func (c *client) call(ctx context.Context, scope, method string, req, out any) error {
+	_, err := c.callHeader(ctx, scope, method, req, out)
+	return err
+}
+
+// callHeader is call that also returns the answer's headers.
+func (c *client) callHeader(ctx context.Context, scope, method string, req, out any) (http.Header, error) {
 	resp, err := c.post(ctx, scope, method, req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	if out == nil {
 		_, _ = io.Copy(io.Discard, resp.Body)
-		return nil
+		return resp.Header, nil
 	}
 	if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
-		return visible(fmt.Errorf("%w: %s: decode answer: %w", ErrUnavailable, method, err))
+		return nil, visible(fmt.Errorf("%w: %s: decode answer: %w", ErrUnavailable, method, err))
 	}
-	return nil
+	return resp.Header, nil
 }
 
 // stream sends req and yields each NDJSON line of the answer. A line that is

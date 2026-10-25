@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -408,7 +409,7 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 }
 
 // MergeDBAnalysis writes an imported analysis for positionID as
-// domain.MergeImportedAnalysis decides, and reports whether it wrote. Every
+// engine.MergeImportedAnalysis decides, and reports whether it wrote. Every
 // path that brings a library's analyses into another goes through it, so the
 // columns derived from the analysis (errors, forced, rates, engine) are the
 // store's, whichever path carried them. The read goes through Merge, which
@@ -425,7 +426,7 @@ func MergeDBAnalysis(ctx context.Context, tx storage.Stores, scope string, posit
 			return nil
 		}
 		existingSide := mets.SideOf(existing, existingMET)
-		merged, changed := domain.MergeImportedAnalysis(existing, imported)
+		merged, changed := engine.MergeImportedAnalysis(existing, imported)
 		if !changed {
 			return nil
 		}

@@ -38,11 +38,6 @@ propre issue le jour où il est lancé.
   reçoit une `storage.Storage`, les lectures du premier groupe par le contrat, et les
   opérations du second refusées (comme `Vacuum`, `errVacuumNotLocal`) sur un store sans
   `LocalFile`.
-- **Parité de l'analyse : restes** : la fusion du videau d'`ingest.mergeAnalysis` garde sa règle
-  propre (une entrée par moteur sans remplacer celle du même moteur) ; une cible qui a déjà un
-  coup joué ne reçoit pas ceux de la source (fusion des analyses) ; un démon ancien ignore
-  `withPlayed` sans le signaler au client ; le blob d'analyse écrit `Double/Take` là où la table
-  `move` écrit `Double` (double graphie).
 - **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
   `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
   `sqlshared`.
@@ -160,8 +155,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   (`embeddedMatchId`) et chaque effet global y est coupé par un garde `embedded` (liste, tri
   partagé, clavier, ids DOM `match-tab-*` en double) ; un effet ajouté sans garde touche l'état
   du vrai panneau. L'extraction du volet de détail règle les deux.
-- **Rollout GUI : bandeau de fin perdu** si le démarrage suivant est refusé (le job instantané
-  est réglé).
 - **Migration : phases invisibles dans le front.** Seul `blunderdb migrate` émet les phases
   (environ 22 min sur la base BMAB) ; la GUI n'en affiche aucune.
 - **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections,

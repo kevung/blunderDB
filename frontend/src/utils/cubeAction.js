@@ -12,7 +12,8 @@ function squash(action) {
 export function normalizeCubeAction(action) {
     const s = squash(action);
     if (s.includes('toogood')) return ['nodouble'];
-    if (s.startsWith('nodouble') || s.startsWith('noredouble')) return ['nodouble'];
+    // "Double No" is XG's other spelling, and how older merges stored "No Double".
+    if (s.startsWith('nodouble') || s.startsWith('noredouble') || s.startsWith('doubleno')) return ['nodouble'];
     if (s === 'doubletake') return ['double', 'take'];
     if (s === 'doublepass') return ['double', 'pass'];
     if (s === 'redouble') return ['double'];
