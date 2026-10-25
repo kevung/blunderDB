@@ -286,14 +286,26 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 
 // OpenLibrary opens path in place of the active group's library (CTRL-O), with
 // the migration a stale file needs reported and cancelled like
-// OpenLibraryGroup's. A cancelled open leaves the group without a library.
+// OpenLibraryGroup's. A failed or cancelled open closes the library it
+// replaced; that one is reopened, read-only when another process took its
+// lock meanwhile (IsReadOnly says so), so the group is never left empty.
 func (a *App) OpenLibrary(path string) error {
 	if a.db == nil {
 		return errors.New("no database handle")
 	}
 	ctx, done := a.beginLibraryOpen()
 	defer done()
-	return database.OpenDatabaseContext(a.db, ctx, path, a.libraryOpenProgress())
+	previous := database.OpenPath(a.db)
+	err := database.OpenDatabaseContext(a.db, ctx, path, a.libraryOpenProgress())
+	if err == nil || previous == "" || database.OpenPath(a.db) != "" {
+		return err
+	}
+	// The failure came after the previous library was closed.
+	if rerr := database.OpenDatabaseContext(a.db, context.Background(), previous, nil); rerr != nil {
+		slog.Warn("reopening the previous library failed", "path", previous, "err", rerr)
+		return errors.Join(err, rerr)
+	}
+	return err
 }
 
 // beginLibraryOpen registers the cancel of an open about to start; done

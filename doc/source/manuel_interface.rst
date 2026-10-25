@@ -284,7 +284,10 @@ le titre de la fenêtre nomme la base. Tant qu'il n'y a qu'une vue en tout, la b
   Quand le fichier doit être migré, avec *CTRL-O* comme dans un nouveau
   groupe, la barre d'état affiche l'étape en cours de la migration et sa
   progression ; *Échap* l'annule : aucun groupe n'est ajouté, et *CTRL-O*
-  laisse le groupe actif sans bibliothèque.
+  rouvre la bibliothèque que le groupe actif portait (en lecture seule, avec
+  un message, si une autre fenêtre l'a prise entre-temps). Il en va de même
+  quand l'ouverture échoue, notamment devant une base qui exige un blunderDB
+  plus récent : la barre d'état indique alors la version de schéma requise.
 
 * **Changer de bibliothèque** : cliquer un onglet d'un autre groupe active
   sa bibliothèque et cette vue d'un seul geste ; cliquer l'en-tête du groupe

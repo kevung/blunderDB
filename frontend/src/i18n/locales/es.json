@@ -227,6 +227,7 @@
         "errorClearingHistory": "Error al borrar el historial de comandos.",
         "errorCreatingDb": "Error al crear la nueva base de datos",
         "errorOpeningDb": "Error al abrir la base de datos",
+        "databaseTooNew": "Esta base de datos requiere un blunderDB más reciente (esquema {version} o posterior): actualice blunderDB para abrirla",
         "errorSavingFilter": "Error al guardar el filtro",
         "filterSaved": "Filtro guardado correctamente",
         "goToPosition": "Ir a la posición {n}",
@@ -3409,6 +3410,7 @@
             "rederive_columns": "columnas derivadas"
         },
         "migrationCancelled": "Migración cancelada",
+        "reopenedReadOnly": "«{name}» reabierta en solo lectura: otra ventana la tomó entretanto",
         "answerDropped": "La biblioteca en pantalla ha cambiado entretanto: la confirmación no se ha aplicado",
         "writeDropped": "La biblioteca en pantalla ha cambiado entretanto: el cambio no se ha escrito",
         "jobRunning": "Una tarea en segundo plano trabaja en esta biblioteca",

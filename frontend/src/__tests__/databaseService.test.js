@@ -86,7 +86,7 @@ import {
     setStatusBarMessage
 } from '../services/databaseService.js';
 
-import { databasePathStore } from '../stores/databaseStore.js';
+import { databasePathStore, databaseReadOnlyStore } from '../stores/databaseStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { searchEmptyStore } from '../stores/searchParamsStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, activeModal, MODAL } from '../stores/uiStore.js';
@@ -323,6 +323,42 @@ describe('openDatabaseByPath', () => {
         expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'libraryGroups.migrationCancelled' });
         expect(get(databasePathStore)).toBe('');
         expect(SaveLastDatabasePath).not.toHaveBeenCalled();
+    });
+
+    test('a cancelled open whose previous library was reopened keeps it on screen', async () => {
+        databasePathStore.set('/tmp/old.db');
+        vi.mocked(OpenLibrary).mockRejectedValueOnce(new Error('context canceled'));
+        vi.mocked(IsOpenDatabase).mockResolvedValueOnce(true);
+
+        await openDatabaseByPath('/tmp/stale.db');
+
+        expect(get(databasePathStore)).toBe('/tmp/old.db');
+        expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'libraryGroups.migrationCancelled' });
+    });
+
+    test('a previous library reopened read-only is flagged', async () => {
+        databasePathStore.set('/tmp/old.db');
+        databaseReadOnlyStore.set(false);
+        vi.mocked(OpenLibrary).mockRejectedValueOnce(new Error('corrupt'));
+        vi.mocked(IsOpenDatabase).mockResolvedValueOnce(true);
+        vi.mocked(IsReadOnly).mockResolvedValueOnce(true);
+
+        await openDatabaseByPath('/tmp/bad.db');
+
+        expect(get(databaseReadOnlyStore)).toBe(true);
+        expect(get(databasePathStore)).toBe('/tmp/old.db');
+        expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'libraryGroups.reopenedReadOnly' });
+    });
+
+    test('a database that needs a newer blunderDB is refused with the required version', async () => {
+        databasePathStore.set('/tmp/old.db');
+        vi.mocked(OpenLibrary).mockRejectedValueOnce(
+            new Error('this database requires a newer blunderDB: it needs a blunderDB that reads schema 9.0.0 or later, this one reads 2.50.0; update blunderDB to open it')
+        );
+
+        await openDatabaseByPath('/tmp/new.db');
+
+        expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'commands.databaseTooNew', i18nParams: { version: '9.0.0' } });
     });
 
     test('a failed open that lost the library forgets what the screen held of it', async () => {

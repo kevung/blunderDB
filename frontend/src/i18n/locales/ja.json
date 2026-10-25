@@ -227,6 +227,7 @@
         "errorClearingHistory": "コマンド履歴のクリア中にエラーが発生しました。",
         "errorCreatingDb": "新規データベースの作成中にエラーが発生しました",
         "errorOpeningDb": "データベースを開く際にエラーが発生しました",
+        "databaseTooNew": "このデータベースにはより新しい blunderDB が必要です（スキーマ {version} 以降）。開くには blunderDB を更新してください",
         "errorSavingFilter": "フィルターの保存中にエラーが発生しました",
         "filterSaved": "フィルターを正常に保存しました",
         "goToPosition": "ポジション {n} へ移動",
@@ -3409,6 +3410,7 @@
             "rederive_columns": "派生列"
         },
         "migrationCancelled": "移行を中止しました",
+        "reopenedReadOnly": "「{name}」を読み取り専用で再度開きました：その間に別のウィンドウが使用しました",
         "answerDropped": "その間に画面上のライブラリが切り替わりました。確認は適用されていません",
         "writeDropped": "その間に画面上のライブラリが切り替わりました。変更は書き込まれていません",
         "jobRunning": "このライブラリでバックグラウンドタスクが実行中です",

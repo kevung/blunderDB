@@ -227,6 +227,7 @@
         "errorClearingHistory": "Fehler beim Löschen des Befehlsverlaufs.",
         "errorCreatingDb": "Fehler beim Erstellen der neuen Datenbank",
         "errorOpeningDb": "Fehler beim Öffnen der Datenbank",
+        "databaseTooNew": "Diese Datenbank benötigt ein neueres blunderDB (Schema {version} oder höher): aktualisieren Sie blunderDB, um sie zu öffnen",
         "errorSavingFilter": "Fehler beim Speichern des Filters",
         "filterSaved": "Filter erfolgreich gespeichert",
         "goToPosition": "Zu Position {n} gehen",
@@ -3409,6 +3410,7 @@
             "rederive_columns": "abgeleitete Spalten"
         },
         "migrationCancelled": "Migration abgebrochen",
+        "reopenedReadOnly": "„{name}“ schreibgeschützt wieder geöffnet: ein anderes Fenster hat sie inzwischen belegt",
         "answerDropped": "Die angezeigte Bibliothek hat sich inzwischen geändert: Die Bestätigung wurde nicht angewendet",
         "writeDropped": "Die angezeigte Bibliothek hat sich inzwischen geändert: Die Änderung wurde nicht geschrieben",
         "jobRunning": "Eine Hintergrundaufgabe arbeitet in dieser Bibliothek",

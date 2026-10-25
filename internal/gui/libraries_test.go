@@ -394,7 +394,7 @@ func TestOpenLibraryGroup_MigrationProgressAndCancel(t *testing.T) {
 }
 
 // CTRL-O opens in place with the same progress and cancel as a new group: a
-// cancelled migration fails the open and leaves the group without a library.
+// cancelled migration fails the open and the library it replaced is reopened.
 func TestOpenLibrary_MigrationProgressAndCancel(t *testing.T) {
 	dir := t.TempDir()
 	pathA := newLibraryFile(t, dir, "a.db", 1)
@@ -437,8 +437,8 @@ func TestOpenLibrary_MigrationProgressAndCancel(t *testing.T) {
 	if n == 0 {
 		t.Fatal("no progress was emitted while the library migrated in place")
 	}
-	if got := database.OpenPath(db); got != "" {
-		t.Errorf("a cancelled in-place open left %q open", got)
+	if got := database.OpenPath(db); got != pathA {
+		t.Errorf("after a cancelled in-place open %q is open, want the previous %q", got, pathA)
 	}
 	a.emitHook.Store(nil)
 	if err := a.OpenLibrary(stale); err != nil {

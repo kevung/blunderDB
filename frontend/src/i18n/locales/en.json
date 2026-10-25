@@ -227,6 +227,7 @@
         "errorClearingHistory": "Error clearing command history.",
         "errorCreatingDb": "Error creating new database",
         "errorOpeningDb": "Error opening database",
+        "databaseTooNew": "This database needs a newer blunderDB (it reads schema {version} or later): update blunderDB to open it",
         "errorSavingFilter": "Error saving filter",
         "filterSaved": "Filter saved successfully",
         "goToPosition": "Go to position {n}",
@@ -3409,6 +3410,7 @@
             "rederive_columns": "derived columns"
         },
         "migrationCancelled": "Migration cancelled",
+        "reopenedReadOnly": "\"{name}\" reopened read-only: another window took it meanwhile",
         "answerDropped": "The library on screen changed meanwhile: the confirmation was not applied",
         "writeDropped": "The library on screen changed meanwhile: the change was not written",
         "jobRunning": "A background task is working in this library",

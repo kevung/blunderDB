@@ -227,6 +227,7 @@
         "errorClearingHistory": "Virhe komentohistorian tyhjentämisessä.",
         "errorCreatingDb": "Virhe uuden tietokannan luonnissa",
         "errorOpeningDb": "Virhe tietokannan avaamisessa",
+        "databaseTooNew": "Tämä tietokanta vaatii uudemman blunderDB:n (skeema {version} tai uudempi): päivitä blunderDB avataksesi sen",
         "errorSavingFilter": "Virhe suodattimen tallentamisessa",
         "filterSaved": "Suodatin tallennettu onnistuneesti",
         "goToPosition": "Siirry asemaan {n}",
@@ -3409,6 +3410,7 @@
             "rederive_columns": "johdetut sarakkeet"
         },
         "migrationCancelled": "Migraatio peruutettu",
+        "reopenedReadOnly": "\"{name}\" avattiin uudelleen vain luku -tilassa: toinen ikkuna otti sen välissä",
         "answerDropped": "Näytöllä oleva kirjasto vaihtui sillä välin: vahvistusta ei sovellettu",
         "writeDropped": "Näytöllä oleva kirjasto vaihtui sillä välin: muutosta ei kirjoitettu",
         "jobRunning": "Taustatehtävä on käynnissä tässä kirjastossa",

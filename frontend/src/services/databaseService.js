@@ -108,7 +108,15 @@ function showNoDatabaseOpen() {
  * @param {string} previous the path on screen before the attempt
  */
 async function showWhatFailedLeft(previous) {
-    if (previous && (await IsOpenDatabase(previous).catch(() => false))) return;
+    if (previous && (await IsOpenDatabase(previous).catch(() => false))) {
+        // Reopened after the failure: another process may have taken its write lock meanwhile.
+        if ((await IsReadOnly().catch(() => false)) && !get(databaseReadOnlyStore)) {
+            databaseReadOnlyStore.set(true);
+            WindowSetTitle(libraryTitle(previous, true, translate('commands.readOnlySuffix')));
+            setStatusBarMessage(tMsg('libraryGroups.reopenedReadOnly', { name: getFilenameFromPath(previous) }));
+        }
+        return;
+    }
     // The backend let the library go: reads begun before belong to it, and so does the screen.
     libraryReplaced();
     await forgetLibraryLeft();
@@ -163,6 +171,16 @@ function isCancelled(/** @type {unknown} */ error) {
 }
 
 /**
+ * The refusal of a database that needs a newer blunderDB, worded for the status bar, or null
+ * for any other error. The backend names the schema version the file requires.
+ * @param {unknown} error
+ */
+function tooNewMessage(error) {
+    const m = /requires a newer blunderDB.*?reads schema (\S+) or later/s.exec(String(error));
+    return m ? tMsg('commands.databaseTooNew', { version: m[1] }) : null;
+}
+
+/**
  * What the status bar says when a library group cannot open or take over: a job writing the
  * active library holds it (named, with where to stop it), or the open or the switch failed.
  * @param {unknown} error
@@ -177,6 +195,8 @@ export function libraryGroupError(error, context = {}) {
         return BUSY_JOB_KEYS[job] ? tMsg(BUSY_JOB_KEYS[job]) : tMsg('libraryGroups.busy', { job: job || '?' });
     }
     if (isCancelled(error)) return tMsg('libraryGroups.migrationCancelled');
+    const tooNew = tooNewMessage(error);
+    if (tooNew) return tooNew;
     if (context.switching !== undefined) return tMsg('libraryGroups.switchFailed', { name: context.switching });
     return tMsg('commands.errorOpeningDb');
 }
@@ -400,7 +420,7 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         await restoreSessionState();
     } catch (error) {
         logger.error('Error opening database:', error);
-        setStatusBarMessage(tMsg('commands.errorOpeningDb'));
+        setStatusBarMessage(tooNewMessage(error) ?? tMsg('commands.errorOpeningDb'));
         statusBarModeStore.set('NORMAL');
         // A failure after a successful open leaves the database open, and its path displayed.
         if (openFailed) await showWhatFailedLeft(previous);
