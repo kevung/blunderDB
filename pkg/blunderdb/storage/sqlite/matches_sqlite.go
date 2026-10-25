@@ -576,81 +576,24 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 	return nil
 }
 
-// positionIsHeldSQL reports whether anything still holds a position once the
-// match that referenced it is gone: deleting a match must not destroy the
-// user's work on a position that merely occurred in it. The predicate is
-// stated twice — storage/sqlite and storage/postgres, one per SQL dialect —
-// and must stay identical in both.
-//
-// A position is held by: another match's move; a collection membership; an
-// Anki card; a Lesson step (ADR-0066); a comment with origin = 'user'; the
-// individually_imported mark
-// (ADR-0001); or the source tool's study mark (ADR-0006).
-//
-// Deliberately NOT held by an analysis (every match position has one, so
-// nothing would ever be purged), nor by an imported or 'unknown'-origin
-// comment (the source file's per-move notes, see ingest/xg.go).
-//
-// A WHERE fragment correlated against the outer `position` row, embedded in
-// deleteOrphanedPositions' set-based DELETE.
-const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id)
-	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
-	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id)
-	                       OR EXISTS (SELECT 1 FROM lesson_step         WHERE position_id = position.id)
-	                       OR EXISTS (SELECT 1 FROM comment             WHERE position_id = position.id AND origin = 'user')
-	                       OR position.individually_imported = 1
-	                       OR position.flagged = 1`
-
-// deleteOrphanedPositions removes every position in ids that positionIsHeldSQL
-// says nothing holds any more, as a single set-based DELETE rather than one
-// EXISTS round-trip per id.
+// deleteOrphanedPositions removes every position in ids that nothing holds
+// any more — sqlshared.PurgeOrphanPositions, over a raw handle.
 func deleteOrphanedPositions(ctx context.Context, tx execer, ids []int64) error {
-	if len(ids) == 0 {
-		return nil
-	}
-	placeholders := strings.TrimSuffix(strings.Repeat("?,", len(ids)), ",")
-	args := make([]any, len(ids))
-	for i, id := range ids {
-		args[i] = id
-	}
-	query := fmt.Sprintf(`DELETE FROM position WHERE id IN (%s) AND NOT (%s)`, placeholders, positionIsHeldSQL)
-	if _, err := tx.ExecContext(ctx, query, args...); err != nil {
-		return fmt.Errorf("delete orphaned positions: %w", err)
-	}
-	return nil
+	return sqlshared.PurgeOrphanPositions(ctx, shared{db: tx}, "", ids)
 }
 
-// DeleteCascade removes a match and all of its games, moves and move analyses
-// (via ON DELETE CASCADE), then deletes any position the match referenced that
-// nothing else holds (see positionIsHeldSQL). The cascade and the orphan
-// cleanup run atomically.
-func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) error {
-	err := withTx(ctx, s.db, func(tx execer) error {
-		positionIDs, err := queryInt64s(ctx, tx,
-			`SELECT DISTINCT mv.position_id
-			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
-			 WHERE g.match_id = ? AND mv.position_id IS NOT NULL`, id)
-		if err != nil {
-			return fmt.Errorf("collect positions: %w", err)
-		}
-
-		if _, err := tx.ExecContext(ctx, sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", id); err != nil {
-			return fmt.Errorf("invalidate match stats: %w", err)
-		}
-		// game/move/move_analysis cascade off the match delete.
-		if _, err := tx.ExecContext(ctx, `DELETE FROM match WHERE id = ?`, id); err != nil {
-			return err
-		}
-
-		if err := deleteOrphanedPositions(ctx, tx, positionIDs); err != nil {
-			return err
-		}
-		return RefreshPositionMatchDates(ctx, tx, positionIDs)
-	})
-	if err != nil {
-		return fmt.Errorf("sqlite: delete match %d: %w", id, err)
+// refreshPositionDates is RefreshPositionMatchDates for the shared stores.
+func refreshPositionDates(ctx context.Context, tx sqlshared.Execer, _ string, ids []int64) error {
+	sh, ok := tx.(shared)
+	if !ok {
+		return fmt.Errorf("refresh position match dates: foreign execer %T: %w", tx, storage.ErrInternal)
 	}
-	return nil
+	return RefreshPositionMatchDates(ctx, sh.db, ids)
+}
+
+// DeleteCascade — see sqlshared.DeleteMatchCascade.
+func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) error {
+	return sqlshared.DeleteMatchCascade(ctx, binder{db: s.db}.shared(), scope, id, refreshPositionDates)
 }
 
 // DeleteGames removes a match's games (moves and move analyses cascade off
@@ -684,10 +627,9 @@ func (s *matchStore) DeleteGames(ctx context.Context, scope string, matchID int6
 	return positionIDs, nil
 }
 
-// PurgeOrphanPositions drops the positions in ids that positionIsHeldSQL no
-// longer holds — see storage.MatchStore. It is deleteOrphanedPositions, the
-// half of DeleteCascade a replacement needs on its own, once the new rows are
-// written.
+// PurgeOrphanPositions drops the positions in ids that nothing holds any more
+// — see storage.MatchStore and sqlshared.PurgeOrphanPositions, the half of
+// DeleteCascade a replacement needs on its own, once the new rows are written.
 func (s *matchStore) PurgeOrphanPositions(ctx context.Context, scope string, ids []int64) error {
 	if err := deleteOrphanedPositions(ctx, s.db, ids); err != nil {
 		return fmt.Errorf("sqlite: purge orphan positions: %w", err)
@@ -695,45 +637,9 @@ func (s *matchStore) PurgeOrphanPositions(ctx context.Context, scope string, ids
 	return nil
 }
 
-// SwapPlayers swaps player 1 and player 2 for the match — see
-// storage.MatchStore. Positions are stored from the side on roll, so no
-// position, analysis or played-decision score changes: only what names a seat.
-// A match with a draft open on it, or played here, is refused.
+// SwapPlayers — see sqlshared.SwapMatchPlayers.
 func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) error {
-	err := withTx(ctx, s.db, func(tx execer) error {
-		if err := sqlshared.SwapRefusal(ctx, binder{db: tx}.shared(), scope, id); err != nil {
-			return err
-		}
-		// The seats trade places: each row now describes the other player.
-		if _, err := tx.ExecContext(ctx, sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", id); err != nil {
-			return fmt.Errorf("invalidate match stats: %w", err)
-		}
-		if _, err := tx.ExecContext(ctx,
-			`UPDATE match SET player1_name = player2_name, player2_name = player1_name,
-			                  player1_elo = player2_elo, player2_elo = player1_elo,
-			                  player1_experience = player2_experience,
-			                  player2_experience = player1_experience
-			 WHERE id = ?`, id); err != nil {
-			return fmt.Errorf("swap names: %w", err)
-		}
-		if _, err := tx.ExecContext(ctx,
-			`UPDATE game SET initial_score_1 = initial_score_2,
-			                 initial_score_2 = initial_score_1,
-			                 winner = -winner
-			 WHERE match_id = ?`, id); err != nil {
-			return fmt.Errorf("swap game scores: %w", err)
-		}
-		if _, err := tx.ExecContext(ctx,
-			`UPDATE move SET player = -player
-			 WHERE game_id IN (SELECT id FROM game WHERE match_id = ?)`, id); err != nil {
-			return fmt.Errorf("swap move players: %w", err)
-		}
-		return nil
-	})
-	if err != nil {
-		return fmt.Errorf("sqlite: swap players for match %d: %w", id, err)
-	}
-	return nil
+	return sqlshared.SwapMatchPlayers(ctx, binder{db: s.db}.shared(), scope, id)
 }
 
 // SwapRefusal — see storage.MatchStore.
