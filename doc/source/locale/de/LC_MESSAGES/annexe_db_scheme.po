@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 02:51+0200\n"
+"POT-Creation-Date: 2026-10-25 03:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -82,7 +82,9 @@ msgid ""
 "cette clé : s'il lit un schéma plus ancien que ce minimum, il refuse "
 "d'ouvrir la base, en interface graphique, en ligne de commande, avec "
 "``serve`` comme avec ``migrate``, et affiche les deux versions : la base "
-"reste intacte. Les versions antérieures ignorent cette clé."
+"reste intacte. Une base lue sans être ouverte, source d'un import ou "
+"fichier comparé à la base ouverte, est refusée de même. Les versions "
+"antérieures ignorent cette clé."
 msgstr ""
 "Eine Datenbank speichert in ihren Metadaten (Schlüssel "
 "``min_reader_version``) außerdem die minimale Schemaversion, die ein "
@@ -91,17 +93,19 @@ msgstr ""
 "verweigert es das Öffnen der Datenbank – in der grafischen Oberfläche, "
 "auf der Kommandozeile, mit ``serve`` wie mit ``migrate`` – und zeigt "
 "beide Versionen an: Die Datenbank bleibt unverändert. Frühere Versionen "
-"ignorieren diesen Schlüssel."
+"ignorieren diesen Schlüssel. Eine Datenbank, die gelesen, aber nicht "
+"geöffnet wird – Quelle eines Imports oder mit der geöffneten Datenbank "
+"verglichene Datei –, wird ebenso abgelehnt."
 
-#: ../../source/annexe_db_scheme.rst:39
+#: ../../source/annexe_db_scheme.rst:41
 msgid "Principales tables"
 msgstr "Wichtigste Tabellen"
 
-#: ../../source/annexe_db_scheme.rst:41
+#: ../../source/annexe_db_scheme.rst:43
 msgid "Le schéma courant s'articule autour des tables suivantes :"
 msgstr "Das aktuelle Schema gliedert sich um die folgenden Tabellen:"
 
-#: ../../source/annexe_db_scheme.rst:43
+#: ../../source/annexe_db_scheme.rst:45
 msgid ""
 "**Positions et analyses** : ``position`` (les positions, dédupliquées), "
 "``analysis`` (les données d'analyse associées) et ``comment`` (les "
@@ -111,7 +115,7 @@ msgstr ""
 "Positionen), ``analysis`` (die zugehörigen Analysedaten) und ``comment`` "
 "(die Kommentare)."
 
-#: ../../source/annexe_db_scheme.rst:47
+#: ../../source/annexe_db_scheme.rst:49
 msgid ""
 "**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent "
 "les matchs importés, leurs parties, leurs coups et l'analyse de chaque "
@@ -121,7 +125,7 @@ msgstr ""
 "speichern die importierten Matches, ihre Partien, ihre Züge und die "
 "Analyse jedes Zuges."
 
-#: ../../source/annexe_db_scheme.rst:50
+#: ../../source/annexe_db_scheme.rst:52
 msgid ""
 "**Collections** : ``collection`` et ``collection_position`` (table de "
 "liaison) regroupent des positions choisies manuellement."
@@ -129,11 +133,11 @@ msgstr ""
 "**Sammlungen**: ``collection`` und ``collection_position`` "
 "(Verknüpfungstabelle) fassen manuell ausgewählte Positionen zusammen."
 
-#: ../../source/annexe_db_scheme.rst:53
+#: ../../source/annexe_db_scheme.rst:55
 msgid "**Tournois** : ``tournament`` regroupe des matchs en tournois."
 msgstr "**Turniere**: ``tournament`` fasst Matches zu Turnieren zusammen."
 
-#: ../../source/annexe_db_scheme.rst:55
+#: ../../source/annexe_db_scheme.rst:57
 msgid ""
 "**Répétition espacée (Anki)** : ``anki_deck``, ``anki_card`` et "
 "``anki_review_log`` gèrent les paquets, les cartes et le journal des "
@@ -143,7 +147,7 @@ msgstr ""
 "``anki_review_log`` verwalten die Stapel, die Karten und das Protokoll "
 "der Wiederholungen (FSRS-Algorithmus)."
 
-#: ../../source/annexe_db_scheme.rst:59
+#: ../../source/annexe_db_scheme.rst:61
 msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
@@ -155,11 +159,11 @@ msgstr ""
 "die Filterbibliothek und ``metadata`` die Metadaten der Datenbank "
 "(darunter die Schemaversion)."
 
-#: ../../source/annexe_db_scheme.rst:65
+#: ../../source/annexe_db_scheme.rst:67
 msgid "Principes de conception"
 msgstr "Gestaltungsprinzipien"
 
-#: ../../source/annexe_db_scheme.rst:67
+#: ../../source/annexe_db_scheme.rst:69
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
@@ -167,7 +171,7 @@ msgstr ""
 "Ab Schema 2.0.0 beschleunigen mehrere Gestaltungsentscheidungen die Suche"
 " und verringern die Dateigröße:"
 
-#: ../../source/annexe_db_scheme.rst:70
+#: ../../source/annexe_db_scheme.rst:72
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -177,7 +181,7 @@ msgstr ""
 " und einen eindeutigen Index, sodass ein und dieselbe Position, die in "
 "mehreren Importen vorkommt, nur ein einziges Mal gespeichert wird."
 
-#: ../../source/annexe_db_scheme.rst:74
+#: ../../source/annexe_db_scheme.rst:76
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -190,7 +194,7 @@ msgstr ""
 "Gewinnchancen …) werden in dedizierten Spalten vorberechnet, um ein "
 "schnelles Filtern zu ermöglichen."
 
-#: ../../source/annexe_db_scheme.rst:79
+#: ../../source/annexe_db_scheme.rst:81
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -200,7 +204,7 @@ msgstr ""
 "ermöglichen einen sehr schnellen ganzzahligen Vorfilter bei der Suche "
 "nach Strukturmustern."
 
-#: ../../source/annexe_db_scheme.rst:83
+#: ../../source/annexe_db_scheme.rst:85
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -214,7 +218,7 @@ msgstr ""
 " und werden von ``vacuum`` oder ``reencode`` umgewandelt), was die "
 "Dateigröße stark verringert."
 
-#: ../../source/annexe_db_scheme.rst:89
+#: ../../source/annexe_db_scheme.rst:91
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."

@@ -76,3 +76,49 @@ func TestOpenRefusesADatabaseAboveItsReaderFloor(t *testing.T) {
 		t.Errorf("floor after opening a file without one = %q, want %q", got, domain.MinReaderVersion)
 	}
 }
+
+// TestImportRefusesASourceAboveItsReaderFloor: a .db source a newer blunderDB
+// marked above this binary's schema is refused by the preview and by the
+// import itself, and the target receives nothing.
+func TestImportRefusesASourceAboveItsReaderFloor(t *testing.T) {
+	dir := t.TempDir()
+	src := filepath.Join(dir, "source.db")
+	s := NewDatabase()
+	if err := s.SetupDatabase(src); err != nil {
+		t.Fatal(err)
+	}
+	p := domain.InitializePosition()
+	if _, err := s.SavePosition(&p); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Close(); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := sql.Open("sqlite", src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE metadata SET value = '99.0.0' WHERE key = 'min_reader_version'`); err != nil {
+		t.Fatal(err)
+	}
+	raw.Close()
+
+	target := NewDatabase()
+	if err := target.SetupDatabase(filepath.Join(dir, "target.db")); err != nil {
+		t.Fatal(err)
+	}
+	defer target.Close()
+	if _, err := target.AnalyzeImportDatabase(src); !errors.Is(err, storage.ErrDatabaseTooNew) {
+		t.Errorf("AnalyzeImportDatabase: err = %v, want ErrDatabaseTooNew", err)
+	}
+	if _, err := target.CommitImportDatabase(src); !errors.Is(err, storage.ErrDatabaseTooNew) {
+		t.Errorf("CommitImportDatabase: err = %v, want ErrDatabaseTooNew", err)
+	}
+	var n int
+	if err := target.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	if n != 0 {
+		t.Errorf("target holds %d positions after a refused import, want 0", n)
+	}
+}
