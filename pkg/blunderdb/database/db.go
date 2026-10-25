@@ -34,7 +34,7 @@ type Database struct {
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
 	cancelMu          sync.Mutex                          // guards importCancel, gate (held briefly; taken after mu, never before)
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
-	openCancel        context.CancelFunc                  // cancels the in-flight OpenDatabase from its first line; nil when idle
+	openCancel        *context.CancelFunc                 // cancels the in-flight OpenDatabase from its first line; nil when idle
 	searchCancels     map[int]context.CancelFunc          // in-flight searches, guarded by cancelMu
 	searchSeq         int                                 // key of the next entry of searchCancels
 	gate              *jobGate                            // the library's job slot, shared with borrowed handles; guarded by cancelMu
@@ -357,7 +357,10 @@ func (d *Database) beginCancellableImportFrom(parent context.Context) (context.C
 // the Database wrapper. It is bound to the Wails frontend. No-op when idle.
 func (d *Database) CancelImport() {
 	d.cancelMu.Lock()
-	cancels := []context.CancelFunc{d.importCancel, d.openCancel}
+	cancels := []context.CancelFunc{d.importCancel}
+	if d.openCancel != nil {
+		cancels = append(cancels, *d.openCancel)
+	}
 	d.cancelMu.Unlock()
 	for _, cancel := range cancels {
 		if cancel != nil {
@@ -371,12 +374,16 @@ func (d *Database) CancelImport() {
 // cancel arriving before must still stop the open.
 func (d *Database) beginOpen(parent context.Context) (context.Context, func()) {
 	ctx, cancel := context.WithCancel(parent)
+	slot := &cancel
 	d.cancelMu.Lock()
-	d.openCancel = cancel
+	d.openCancel = slot
 	d.cancelMu.Unlock()
 	return ctx, func() {
+		// A later open may have taken the slot: only this open's own is cleared.
 		d.cancelMu.Lock()
-		d.openCancel = nil
+		if d.openCancel == slot {
+			d.openCancel = nil
+		}
 		d.cancelMu.Unlock()
 		cancel()
 	}
@@ -620,17 +627,19 @@ func (d *Database) setup(path string, erase bool) (err error) {
 // OpenDatabase opens path on d, migrating it to the current schema. It is
 // OpenDatabaseContext without a caller's context; CancelImport stops it.
 func (d *Database) OpenDatabase(path string) error {
-	return OpenDatabaseContext(d, context.Background(), path)
+	return OpenDatabaseContext(d, context.Background(), path, nil)
 }
 
 // OpenDatabaseContext is OpenDatabase stopped by ctx as well as by
-// CancelImport. A function, not a method: Wails binds every method of the
-// bound handle, and a context does not cross the bridge.
-func OpenDatabaseContext(d *Database, ctx context.Context, path string) error {
-	return d.openDatabase(ctx, path)
+// CancelImport, with progress, when non-nil, reporting the migration in place
+// of the handle's own callback (SetMigrationProgress) for this open only. A
+// function, not a method: Wails binds every method of the bound handle, and a
+// context does not cross the bridge.
+func OpenDatabaseContext(d *Database, ctx context.Context, path string, progress func(phase string, done, total int)) error {
+	return d.openDatabase(ctx, path, progress)
 }
 
-func (d *Database) openDatabase(ctx context.Context, path string) (err error) {
+func (d *Database) openDatabase(ctx context.Context, path string, progress func(phase string, done, total int)) (err error) {
 	ctx, openDone := d.beginOpen(ctx)
 	defer openDone()
 	if err := d.guardOpen(path); err != nil {
@@ -645,6 +654,13 @@ func (d *Database) openDatabase(ctx context.Context, path string) (err error) {
 	d.forgetDuels()
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	if progress != nil {
+		// Under mu, which the migration reads it under: set and restored
+		// before any other caller of the handle can see it.
+		prev := d.migrationProgress
+		d.migrationProgress = progress
+		defer func() { d.migrationProgress = prev }()
+	}
 	d.bumpGeneration()
 	d.path = ""
 

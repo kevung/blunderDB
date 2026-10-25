@@ -106,6 +106,10 @@ func (d *Database) idleForExchange() error {
 	if d.importCancel != nil {
 		return &BusyError{Job: "import"}
 	}
+	if d.openCancel != nil {
+		// The handle is changing file: the swap would carry a half-opened one.
+		return &BusyError{Job: "open"}
+	}
 	if d.heldLocked() {
 		return &BusyError{Job: JobWrite}
 	}

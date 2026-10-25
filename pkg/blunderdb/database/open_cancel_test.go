@@ -80,10 +80,41 @@ func TestOpenDatabaseContext_CancelledContext(t *testing.T) {
 	t.Cleanup(func() { _ = d.Close() })
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	if err := OpenDatabaseContext(d, ctx, path); !errors.Is(err, context.Canceled) {
+	if err := OpenDatabaseContext(d, ctx, path, nil); !errors.Is(err, context.Canceled) {
 		t.Fatalf("OpenDatabaseContext with a cancelled context = %v, want context.Canceled", err)
 	}
 	if v := recordedVersion(t, path); v != "2.30.0" {
 		t.Errorf("schema version = %s, want 2.30.0 untouched", v)
+	}
+}
+
+// A handle changing file is not exchanged: the swap would carry a library
+// that is only half open.
+func TestExchange_RefusedWhileOpening(t *testing.T) {
+	path := staleLibrary(t)
+	d, other := NewDatabase(), NewDatabase()
+	t.Cleanup(func() { _ = d.Close(); _ = other.Close() })
+	var swapErr error
+	d.SetBeforeSwitch(func() { swapErr = Exchange(d, other) })
+	if err := d.OpenDatabase(path); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+	var busy *BusyError
+	if !errors.As(swapErr, &busy) || busy.Job != "open" {
+		t.Fatalf("Exchange during an open = %v, want BusyError{open}", swapErr)
+	}
+}
+
+// Two opens overlapping on the slot: the first one's end leaves the second
+// one cancellable.
+func TestBeginOpen_EndClearsOnlyItsOwnSlot(t *testing.T) {
+	d := NewDatabase()
+	_, firstDone := d.beginOpen(context.Background())
+	second, secondDone := d.beginOpen(context.Background())
+	defer secondDone()
+	firstDone()
+	d.CancelImport()
+	if !errors.Is(second.Err(), context.Canceled) {
+		t.Fatalf("second open after the first ended: ctx.Err() = %v, want context.Canceled", second.Err())
 	}
 }

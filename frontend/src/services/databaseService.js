@@ -156,6 +156,11 @@ function isBusyError(error) {
     return /database is busy/.test(String(error));
 }
 
+/** Whether error is an open or a migration the user cancelled (Escape). */
+function isCancelled(/** @type {unknown} */ error) {
+    return /context canceled/.test(String(error));
+}
+
 /**
  * What the status bar says when a library group cannot open or take over: a job writing the
  * active library holds it (named, with where to stop it), or the open or the switch failed.
@@ -170,7 +175,7 @@ export function libraryGroupError(error, context = {}) {
         const job = busy[1] ?? '';
         return BUSY_JOB_KEYS[job] ? tMsg(BUSY_JOB_KEYS[job]) : tMsg('libraryGroups.busy', { job: job || '?' });
     }
-    if (/context canceled/.test(String(error))) return tMsg('libraryGroups.migrationCancelled');
+    if (isCancelled(error)) return tMsg('libraryGroups.migrationCancelled');
     if (context.switching !== undefined) return tMsg('libraryGroups.switchFailed', { name: context.switching });
     return tMsg('commands.errorOpeningDb');
 }
@@ -341,7 +346,7 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
                 return;
             }
             // Escape stopped the migration: say so, and show what the open left behind.
-            if (/context canceled/.test(String(error))) {
+            if (isCancelled(error)) {
                 setStatusBarMessage(libraryGroupError(error));
                 statusBarModeStore.set('NORMAL');
                 await showWhatFailedLeft(previous);

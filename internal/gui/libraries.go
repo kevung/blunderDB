@@ -34,7 +34,8 @@ type libraryGroups struct {
 	// opening cancels the open in flight (OpenLibraryGroup, OpenLibrary), so
 	// that CancelLibraryOpen can stop it, migration included. Set before the
 	// open waits for anything: a cancel that comes early is not lost. Atomic:
-	// libs.mu is held for the whole open, and a cancel must not wait for it.
+	// a cancel must not wait for the open, which may hold libs.mu
+	// (OpenLibraryGroup) or the handle's own locks (both) throughout.
 	opening atomic.Pointer[context.CancelFunc]
 	// shown mirrors active for the before-switch hook, which may run while
 	// libs.mu is held (closing the last group closes the bound handle).
@@ -259,9 +260,7 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 	}
 	fresh := database.NewDatabase()
 	database.WatchWrittenElsewhere(fresh)
-	fresh.SetMigrationProgress(a.libraryOpenProgress())
-	err := database.OpenDatabaseContext(fresh, ctx, path)
-	fresh.SetMigrationProgress(nil)
+	err := database.OpenDatabaseContext(fresh, ctx, path, a.libraryOpenProgress())
 	if err != nil {
 		_ = fresh.Close()
 		return LibraryGroup{}, err
@@ -294,9 +293,7 @@ func (a *App) OpenLibrary(path string) error {
 	}
 	ctx, done := a.beginLibraryOpen()
 	defer done()
-	a.db.SetMigrationProgress(a.libraryOpenProgress())
-	defer a.db.SetMigrationProgress(nil)
-	return database.OpenDatabaseContext(a.db, ctx, path)
+	return database.OpenDatabaseContext(a.db, ctx, path, a.libraryOpenProgress())
 }
 
 // beginLibraryOpen registers the cancel of an open about to start; done
