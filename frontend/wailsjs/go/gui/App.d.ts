@@ -131,6 +131,8 @@ export function OpenExportMatDialog(arg1:string):Promise<string>;
 
 export function OpenImportDatabaseDialog():Promise<string>;
 
+export function OpenLibrary(arg1:string):Promise<void>;
+
 export function OpenLibraryGroup(arg1:string):Promise<gui.LibraryGroup>;
 
 export function OpenLocalPage(arg1:string):Promise<void>;

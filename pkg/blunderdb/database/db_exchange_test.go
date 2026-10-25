@@ -113,7 +113,7 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"mu": true, "cancelMu": true, "switchMu": true, "beforeSwitch": true, "openGuard": true,
 		"transcriptMu": true, "duelMu": true,
 		// Refused while set (idleForExchange) or only alive during one import.
-		"importCancel": true, "exchanging": true, "borrowed": true,
+		"importCancel": true, "openCancel": true, "exchanging": true, "borrowed": true,
 		// Refused while held (heldLocked): a hold never spans a swap.
 		"replacing": true, "holds": true, "holdSeq": true, "searchCancels": true, "searchSeq": true,
 		"importBatchID": true, "importBatchCounts": true, "importJournal": true,

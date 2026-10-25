@@ -38,6 +38,7 @@ const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DYNAMIC_PREFIXES = [
     'status.captureField.', // services/captureService.js: the field name Go's capture reading sends
     'keyNames.', // utils/keyNames.js: t(`keyNames.${key}`)
+    'libraryGroups.migrationPhase.', // services/migrationProgress.js: the migration phase Go reports
     'maintenance.line_', // MaintenanceSettings.svelte, StatusBar.svelte: the line's kind Go sends
     'maintenance.hint_', // MaintenanceSettings.svelte: same
     'maintenance.outcome_', // MaintenanceSettings.svelte: a journal row's outcome

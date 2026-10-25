@@ -1,10 +1,10 @@
 import { writable, get } from 'svelte/store';
-import { SaveDatabaseDialog, OpenDatabaseDialog, LibraryGroupHolding } from '../../wailsjs/go/gui/App.js';
+import { SaveDatabaseDialog, OpenDatabaseDialog, LibraryGroupHolding, OpenLibrary } from '../../wailsjs/go/gui/App.js';
+import { withMigrationProgress } from './migrationProgress.js';
 import {
     IsOpenDatabase,
     RecreateDatabase,
     CheckDatabaseVersion,
-    OpenDatabase,
     GetDatabaseVersion,
     IsReadOnly,
     IsProtectedCopyPath,
@@ -332,12 +332,19 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
             // one, and a write still on its way would land in the library coming. The screen
             // forgets the library left once the backend carries the one coming, never before: a
             // refused open leaves it on the library it kept.
-            if (!inNewGroup) opened = (await holdingSwitch(async () => (await OpenDatabase(filePath), libraryReplaced(), await forgetLibraryLeft(), true))) === true;
+            if (!inNewGroup) opened = (await holdingSwitch(async () => (await withMigrationProgress(() => OpenLibrary(filePath)), libraryReplaced(), await forgetLibraryLeft(), true))) === true;
             else await forgetLibraryLeft();
         } catch (error) {
             // Refused (a job or a write holds the library): the backend kept it, so does the screen.
             if (isBusyError(error)) {
                 setStatusBarMessage(libraryGroupError(error));
+                return;
+            }
+            // Escape stopped the migration: say so, and show what the open left behind.
+            if (/context canceled/.test(String(error))) {
+                setStatusBarMessage(libraryGroupError(error));
+                statusBarModeStore.set('NORMAL');
+                await showWhatFailedLeft(previous);
                 return;
             }
             openFailed = true;

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sync"
 	"testing"
 	"time"
@@ -386,6 +387,97 @@ func TestOpenLibraryGroup_MigrationProgressAndCancel(t *testing.T) {
 	mu.Unlock()
 	if n == 0 {
 		t.Fatal("no progress was emitted while the library migrated")
+	}
+	if groups := a.ListLibraryGroups(); len(groups) != 1 {
+		t.Fatalf("groups after a cancelled open: %+v, want only the first", groups)
+	}
+}
+
+// CTRL-O opens in place with the same progress and cancel as a new group: a
+// cancelled migration fails the open and leaves the group without a library.
+func TestOpenLibrary_MigrationProgressAndCancel(t *testing.T) {
+	dir := t.TempDir()
+	pathA := newLibraryFile(t, dir, "a.db", 1)
+	stale := newLibraryFile(t, dir, "stale.db", 3)
+	raw, err := sql.Open("sqlite", stale)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE metadata SET value = '2.30.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	_ = raw.Close()
+
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(func() { a.closeParkedLibraries(); _ = db.Close() })
+	if err := a.OpenLibrary(pathA); err != nil {
+		t.Fatal(err)
+	}
+
+	var mu sync.Mutex
+	var phases []string
+	hook := func(name string, payload ...any) {
+		if name != libraryOpenProgressEvent {
+			return
+		}
+		mu.Lock()
+		phases = append(phases, payload[0].(map[string]any)["phase"].(string))
+		mu.Unlock()
+		a.CancelLibraryOpen()
+	}
+	a.emitHook.Store(&hook)
+
+	if err := a.OpenLibrary(stale); !errors.Is(err, context.Canceled) {
+		t.Fatalf("cancelled open: %v, want context.Canceled", err)
+	}
+	mu.Lock()
+	n := len(phases)
+	mu.Unlock()
+	if n == 0 {
+		t.Fatal("no progress was emitted while the library migrated in place")
+	}
+	if got := database.OpenPath(db); got != "" {
+		t.Errorf("a cancelled in-place open left %q open", got)
+	}
+	a.emitHook.Store(nil)
+	if err := a.OpenLibrary(stale); err != nil {
+		t.Fatalf("opening again after the cancel: %v", err)
+	}
+}
+
+// A cancel that arrives while the open still waits for the groups' lock is
+// not lost: the open fails once it gets the lock, and no group is added.
+func TestOpenLibraryGroup_CancelWhileWaiting(t *testing.T) {
+	dir := t.TempDir()
+	pathA := newLibraryFile(t, dir, "a.db", 1)
+	pathB := newLibraryFile(t, dir, "b.db", 1)
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(func() { a.closeParkedLibraries(); _ = db.Close() })
+	if _, err := a.OpenLibraryGroup(pathA); err != nil {
+		t.Fatal(err)
+	}
+
+	a.libs.mu.Lock()
+	opened := make(chan error, 1)
+	go func() {
+		_, err := a.OpenLibraryGroup(pathB)
+		opened <- err
+	}()
+	deadline := time.Now().Add(5 * time.Second)
+	for a.libs.opening.Load() == nil {
+		if time.Now().After(deadline) {
+			a.libs.mu.Unlock()
+			t.Fatal("the open never registered its cancel")
+		}
+		runtime.Gosched()
+	}
+	a.CancelLibraryOpen()
+	a.libs.mu.Unlock()
+
+	if err := <-opened; !errors.Is(err, context.Canceled) {
+		t.Fatalf("open cancelled while waiting: %v, want context.Canceled", err)
 	}
 	if groups := a.ListLibraryGroups(); len(groups) != 1 {
 		t.Fatalf("groups after a cancelled open: %+v, want only the first", groups)

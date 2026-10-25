@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -30,10 +31,11 @@ type libraryGroups struct {
 	// handle's before-switch hook then stops nothing, since the jobs run on
 	// borrowed handles that keep their library (borrowLibrary).
 	exchanging atomic.Bool
-	// opening is the handle OpenLibraryGroup is opening, so that
-	// CancelLibraryOpen can stop its migration. Atomic: libs.mu is held for
-	// the whole open, and a cancel must not wait for it.
-	opening atomic.Pointer[database.Database]
+	// opening cancels the open in flight (OpenLibraryGroup, OpenLibrary), so
+	// that CancelLibraryOpen can stop it, migration included. Set before the
+	// open waits for anything: a cancel that comes early is not lost. Atomic:
+	// libs.mu is held for the whole open, and a cancel must not wait for it.
+	opening atomic.Pointer[context.CancelFunc]
 	// shown mirrors active for the before-switch hook, which may run while
 	// libs.mu is held (closing the last group closes the bound handle).
 	shown atomic.Int64
@@ -244,6 +246,8 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 	if a.db == nil {
 		return LibraryGroup{}, errors.New("no database handle")
 	}
+	ctx, done := a.beginLibraryOpen()
+	defer done()
 	a.libs.mu.Lock()
 	defer a.libs.mu.Unlock()
 	a.libs.init()
@@ -256,9 +260,7 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 	fresh := database.NewDatabase()
 	database.WatchWrittenElsewhere(fresh)
 	fresh.SetMigrationProgress(a.libraryOpenProgress())
-	a.libs.opening.Store(fresh)
-	err := fresh.OpenDatabase(path)
-	a.libs.opening.Store(nil)
+	err := database.OpenDatabaseContext(fresh, ctx, path)
 	fresh.SetMigrationProgress(nil)
 	if err != nil {
 		_ = fresh.Close()
@@ -283,8 +285,34 @@ func (a *App) OpenLibraryGroup(path string) (LibraryGroup, error) {
 	return LibraryGroup{ID: a.libs.active, Path: database.OpenPath(a.db), Active: true, ReadOnly: a.db.IsReadOnly()}, nil
 }
 
+// OpenLibrary opens path in place of the active group's library (CTRL-O), with
+// the migration a stale file needs reported and cancelled like
+// OpenLibraryGroup's. A cancelled open leaves the group without a library.
+func (a *App) OpenLibrary(path string) error {
+	if a.db == nil {
+		return errors.New("no database handle")
+	}
+	ctx, done := a.beginLibraryOpen()
+	defer done()
+	a.db.SetMigrationProgress(a.libraryOpenProgress())
+	defer a.db.SetMigrationProgress(nil)
+	return database.OpenDatabaseContext(a.db, ctx, path)
+}
+
+// beginLibraryOpen registers the cancel of an open about to start; done
+// unregisters it, unless a later open has taken the slot.
+func (a *App) beginLibraryOpen() (context.Context, func()) {
+	ctx, cancel := context.WithCancel(context.Background())
+	slot := &cancel
+	a.libs.opening.Store(slot)
+	return ctx, func() {
+		a.libs.opening.CompareAndSwap(slot, nil)
+		cancel()
+	}
+}
+
 // libraryOpenProgressEvent carries {phase, done, total} while a library that
-// needs migrating is opened in a new group.
+// needs migrating is opened, in place or in a new group.
 const libraryOpenProgressEvent = "library-open:progress"
 
 // libraryOpenProgress is the migration callback of a group being opened.
@@ -304,12 +332,12 @@ func (a *App) libraryOpenProgress() func(phase string, done, total int) {
 	}
 }
 
-// CancelLibraryOpen stops the migration of the library OpenLibraryGroup is
-// opening; that call then fails with a cancellation and nothing is added.
-// CancelImport only reaches the bound handle, which is not the one migrating.
+// CancelLibraryOpen stops the open in flight, migration included; that call
+// then fails with a cancellation and, for OpenLibraryGroup, nothing is added.
+// CancelImport only reaches the bound handle, which a new group's open is not.
 func (a *App) CancelLibraryOpen() {
-	if fresh := a.libs.opening.Load(); fresh != nil {
-		fresh.CancelImport()
+	if cancel := a.libs.opening.Load(); cancel != nil {
+		(*cancel)()
 	}
 }
 

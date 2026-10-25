@@ -119,7 +119,7 @@ describe('library groups', () => {
             listeners.get('library-open:progress')?.({ phase: 'analysis', done: 3, total: 9 });
             expect(get(statusBarTextStore)).toMatchObject({
                 i18nKey: 'libraryGroups.migrating',
-                i18nParams: { phase: 'analysis', done: 3, total: 9 }
+                i18nParams: { phase: 'analyses', done: 3, total: 9 }
             });
             window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
             throw new Error('context canceled');

@@ -8,9 +8,9 @@
 import { test, expect, vi, beforeEach } from 'vitest';
 import { get, writable } from 'svelte/store';
 
-vi.mock('../../wailsjs/go/gui/App.js', () => ({ LibraryGroupHolding: vi.fn(async () => 2) }));
-vi.mock('../../wailsjs/go/database/Database.js', () => ({ IsProtectedCopyPath: vi.fn(async () => false), OpenDatabase: vi.fn() }));
-vi.mock('../../wailsjs/runtime/runtime.js', () => ({ WindowSetTitle: vi.fn(), Quit: vi.fn() }));
+vi.mock('../../wailsjs/go/gui/App.js', () => ({ LibraryGroupHolding: vi.fn(async () => 2), OpenLibrary: vi.fn(), CancelLibraryOpen: vi.fn() }));
+vi.mock('../../wailsjs/go/database/Database.js', () => ({ IsProtectedCopyPath: vi.fn(async () => false) }));
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({ WindowSetTitle: vi.fn(), Quit: vi.fn(), EventsOn: vi.fn(() => () => {}) }));
 vi.mock('../stores/libraryGroupStore.js', async () => {
     const { statusBarTextStore } = await import('../stores/uiStore.js');
     return {
@@ -26,24 +26,24 @@ vi.mock('../stores/libraryGroupStore.js', async () => {
 });
 
 import { openDatabaseByPath } from '../services/databaseService.js';
-import { OpenDatabase } from '../../wailsjs/go/database/Database.js';
+import { OpenLibrary } from '../../wailsjs/go/gui/App.js';
 import { statusBarTextStore } from '../stores/uiStore.js';
 
 beforeEach(() => {
     statusBarTextStore.set('');
-    vi.mocked(OpenDatabase).mockClear();
+    vi.mocked(OpenLibrary).mockClear();
 });
 
 test('a refused switch leaves its reason in the status bar', async () => {
     globalThis.__refuse = true;
     await openDatabaseByPath('/libs/b.db');
     expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.duel', i18nParams: null });
-    expect(OpenDatabase).not.toHaveBeenCalled();
+    expect(OpenLibrary).not.toHaveBeenCalled();
 });
 
 test('a switch done says the file is already open in the group shown', async () => {
     globalThis.__refuse = false;
     await openDatabaseByPath('/libs/b.db');
     expect(get(statusBarTextStore)).toEqual({ i18nKey: 'libraryGroups.alreadyOpen', i18nParams: { name: 'b.db' } });
-    expect(OpenDatabase).not.toHaveBeenCalled();
+    expect(OpenLibrary).not.toHaveBeenCalled();
 });

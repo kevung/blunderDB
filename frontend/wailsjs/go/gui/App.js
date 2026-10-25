@@ -246,6 +246,10 @@ export function OpenImportDatabaseDialog() {
   return window['go']['gui']['App']['OpenImportDatabaseDialog']();
 }
 
+export function OpenLibrary(arg1) {
+  return window['go']['gui']['App']['OpenLibrary'](arg1);
+}
+
 export function OpenLibraryGroup(arg1) {
   return window['go']['gui']['App']['OpenLibraryGroup'](arg1);
 }

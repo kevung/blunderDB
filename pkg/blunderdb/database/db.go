@@ -34,6 +34,7 @@ type Database struct {
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
 	cancelMu          sync.Mutex                          // guards importCancel, gate (held briefly; taken after mu, never before)
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
+	openCancel        context.CancelFunc                  // cancels the in-flight OpenDatabase from its first line; nil when idle
 	searchCancels     map[int]context.CancelFunc          // in-flight searches, guarded by cancelMu
 	searchSeq         int                                 // key of the next entry of searchCancels
 	gate              *jobGate                            // the library's job slot, shared with borrowed handles; guarded by cancelMu
@@ -283,7 +284,13 @@ func (d *Database) IsReadOnly() bool {
 // on the running import. The returned done func must be deferred: it clears the
 // registration and releases the context's resources.
 func (d *Database) beginCancellableImport() (context.Context, func()) {
-	ctx, cancel := context.WithCancel(context.Background())
+	return d.beginCancellableImportFrom(context.Background())
+}
+
+// beginCancellableImportFrom is beginCancellableImport under parent: the
+// migration of an open inherits the open's own cancellation.
+func (d *Database) beginCancellableImportFrom(parent context.Context) (context.Context, func()) {
+	ctx, cancel := context.WithCancel(parent)
 	d.cancelMu.Lock()
 	if d.exchanging {
 		// The handle is about to carry another file: the import must not
@@ -316,13 +323,31 @@ func (d *Database) beginCancellableImport() (context.Context, func()) {
 	}
 }
 
-// CancelImport aborts any in-flight import or migration started through the
-// Database wrapper. It is bound to the Wails frontend. No-op when idle.
+// CancelImport aborts any in-flight import, migration or open started through
+// the Database wrapper. It is bound to the Wails frontend. No-op when idle.
 func (d *Database) CancelImport() {
 	d.cancelMu.Lock()
-	cancel := d.importCancel
+	cancels := []context.CancelFunc{d.importCancel, d.openCancel}
 	d.cancelMu.Unlock()
-	if cancel != nil {
+	for _, cancel := range cancels {
+		if cancel != nil {
+			cancel()
+		}
+	}
+}
+
+// beginOpen makes an open cancellable from its first line: the migration
+// context is only created once the file is locked and its pool is up, and a
+// cancel arriving before must still stop the open.
+func (d *Database) beginOpen(parent context.Context) (context.Context, func()) {
+	ctx, cancel := context.WithCancel(parent)
+	d.cancelMu.Lock()
+	d.openCancel = cancel
+	d.cancelMu.Unlock()
+	return ctx, func() {
+		d.cancelMu.Lock()
+		d.openCancel = nil
+		d.cancelMu.Unlock()
 		cancel()
 	}
 }
@@ -562,7 +587,22 @@ func (d *Database) setup(path string, erase bool) (err error) {
 	return nil
 }
 
-func (d *Database) OpenDatabase(path string) (err error) {
+// OpenDatabase opens path on d, migrating it to the current schema. It is
+// OpenDatabaseContext without a caller's context; CancelImport stops it.
+func (d *Database) OpenDatabase(path string) error {
+	return OpenDatabaseContext(d, context.Background(), path)
+}
+
+// OpenDatabaseContext is OpenDatabase stopped by ctx as well as by
+// CancelImport. A function, not a method: Wails binds every method of the
+// bound handle, and a context does not cross the bridge.
+func OpenDatabaseContext(d *Database, ctx context.Context, path string) error {
+	return d.openDatabase(ctx, path)
+}
+
+func (d *Database) openDatabase(ctx context.Context, path string) (err error) {
+	ctx, openDone := d.beginOpen(ctx)
+	defer openDone()
 	if err := d.guardOpen(path); err != nil {
 		return err
 	}
@@ -644,12 +684,20 @@ func (d *Database) OpenDatabase(path string) (err error) {
 			return fmt.Errorf("cannot open database read-only: its schema is %s and this blunderDB reads %s; "+
 				"close the other instance holding it so this one can open it for writing", onDisk, DatabaseVersion)
 		}
+		if err = ctx.Err(); err != nil {
+			return err
+		}
 		d.rebuildStore()
 		return nil
 	}
 
-	migCtx, migDone := d.beginCancellableImport()
+	migCtx, migDone := d.beginCancellableImportFrom(ctx)
 	defer migDone()
+	// A cancel that came before the migration context existed is carried by
+	// ctx: the open fails rather than going on as if nothing was asked.
+	if err = migCtx.Err(); err != nil {
+		return err
+	}
 	if err := d.runMigrationChain(migCtx); err != nil {
 		return err
 	}

@@ -14,14 +14,15 @@ import { get } from 'svelte/store';
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     SaveDatabaseDialog: vi.fn(),
     OpenDatabaseDialog: vi.fn(),
-    DeleteFile: vi.fn()
+    DeleteFile: vi.fn(),
+    OpenLibrary: vi.fn(),
+    CancelLibraryOpen: vi.fn()
 }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     RecreateDatabase: vi.fn(),
     IsOpenDatabase: vi.fn(() => Promise.resolve(false)),
     CheckDatabaseVersion: vi.fn(),
-    OpenDatabase: vi.fn(),
     GetDatabaseVersion: vi.fn(),
     IsReadOnly: vi.fn(),
     IsProtectedCopyPath: vi.fn(),
@@ -31,7 +32,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     WindowSetTitle: vi.fn(),
-    Quit: vi.fn()
+    Quit: vi.fn(),
+    EventsOn: vi.fn(() => () => {})
 }));
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
@@ -50,14 +52,13 @@ vi.mock('../services/sessionService.js', () => ({
     saveSessionState: vi.fn().mockResolvedValue(undefined)
 }));
 
-import { SaveDatabaseDialog, OpenDatabaseDialog } from '../../wailsjs/go/gui/App.js';
+import { SaveDatabaseDialog, OpenDatabaseDialog, OpenLibrary } from '../../wailsjs/go/gui/App.js';
 import { libraryMark, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { tMsg } from '../i18n';
 import {
     RecreateDatabase,
     IsOpenDatabase,
     CheckDatabaseVersion,
-    OpenDatabase,
     GetDatabaseVersion,
     IsReadOnly,
     IsProtectedCopyPath,
@@ -122,7 +123,7 @@ beforeEach(() => {
     vi.mocked(GetDatabaseVersion).mockResolvedValue('2.18.0');
     vi.mocked(IsReadOnly).mockResolvedValue(false);
     vi.mocked(IsProtectedCopyPath).mockResolvedValue(false);
-    vi.mocked(OpenDatabase).mockResolvedValue(undefined);
+    vi.mocked(OpenLibrary).mockResolvedValue(undefined);
 });
 
 // ── newDatabase ───────────────────────────────────────────────────────────────
@@ -240,7 +241,7 @@ describe('openDatabase', () => {
         await openDatabase();
 
         expect(get(databasePathStore)).toBe('/tmp/existing.db');
-        expect(OpenDatabase).toHaveBeenCalledWith('/tmp/existing.db');
+        expect(OpenLibrary).toHaveBeenCalledWith('/tmp/existing.db');
     });
 
     test('a cancelled dialog never touches the database', async () => {
@@ -248,7 +249,7 @@ describe('openDatabase', () => {
 
         await openDatabase();
 
-        expect(OpenDatabase).not.toHaveBeenCalled();
+        expect(OpenLibrary).not.toHaveBeenCalled();
         expect(get(databasePathStore)).toBe('');
     });
 
@@ -290,7 +291,7 @@ describe('a Lesson being read', () => {
 describe('openDatabaseByPath', () => {
     test('a failed open leaves nothing open: empty path, neutral title, counts re-read', async () => {
         databasePathStore.set('/tmp/old.db');
-        vi.mocked(OpenDatabase).mockRejectedValue(new Error('corrupt'));
+        vi.mocked(OpenLibrary).mockRejectedValue(new Error('corrupt'));
         vi.mocked(refreshLibraryCounts).mockClear();
         vi.mocked(WindowSetTitle).mockClear();
 
@@ -302,11 +303,23 @@ describe('openDatabaseByPath', () => {
         expect(SaveLastDatabasePath).not.toHaveBeenCalled();
     });
 
+    test('a migration cancelled by Escape says so and leaves nothing open', async () => {
+        databasePathStore.set('/tmp/old.db');
+        vi.mocked(OpenLibrary).mockRejectedValueOnce(new Error('context canceled'));
+        vi.mocked(SaveLastDatabasePath).mockClear();
+
+        await openDatabaseByPath('/tmp/stale.db');
+
+        expect(get(statusBarTextStore)).toMatchObject({ i18nKey: 'libraryGroups.migrationCancelled' });
+        expect(get(databasePathStore)).toBe('');
+        expect(SaveLastDatabasePath).not.toHaveBeenCalled();
+    });
+
     test('a failed open that lost the library forgets what the screen held of it', async () => {
         databasePathStore.set('/tmp/old.db');
         commentTextStore.set('of the old library');
         ankiDecksStore.set(/** @type {any} */ ([{ id: 1 }]));
-        vi.mocked(OpenDatabase).mockRejectedValueOnce(new Error('corrupt'));
+        vi.mocked(OpenLibrary).mockRejectedValueOnce(new Error('corrupt'));
 
         await openDatabaseByPath('/tmp/bad.db');
 
@@ -316,7 +329,7 @@ describe('openDatabaseByPath', () => {
 
     test('an open refused by a write holding the library keeps the library on screen, and says so', async () => {
         databasePathStore.set('/tmp/old.db');
-        vi.mocked(OpenDatabase).mockRejectedValueOnce(new Error('database is busy: write'));
+        vi.mocked(OpenLibrary).mockRejectedValueOnce(new Error('database is busy: write'));
 
         await openDatabaseByPath('/tmp/other.db');
 
@@ -339,7 +352,7 @@ describe('openDatabaseByPath', () => {
     test('the library counts are refreshed once the database is open, not before', async () => {
         /** @type {string[]} */
         const order = [];
-        vi.mocked(OpenDatabase).mockImplementation(async () => void order.push('open'));
+        vi.mocked(OpenLibrary).mockImplementation(async () => void order.push('open'));
         vi.mocked(refreshLibraryCounts).mockImplementation(() => void order.push('counts'));
 
         await openDatabaseByPath('/tmp/counts.db');
@@ -351,7 +364,7 @@ describe('openDatabaseByPath', () => {
     test('the session (and the Direction in it) is restored only once the database is open', async () => {
         /** @type {string[]} */
         const order = [];
-        vi.mocked(OpenDatabase).mockImplementation(async () => void order.push('open'));
+        vi.mocked(OpenLibrary).mockImplementation(async () => void order.push('open'));
         vi.mocked(restoreSessionState).mockImplementation(async () => void order.push('restore'));
 
         await openDatabaseByPath('/tmp/ordered.db');
@@ -374,7 +387,7 @@ describe('openDatabaseByPath', () => {
         expect(get(protectedCopyPathStore)).toBe('/tmp/protected.blunderdb');
         expect(get(protectedCopyErrorStore)).toBe('');
         expect(get(activeModal)).toBe(MODAL.PROTECTED_COPY);
-        expect(OpenDatabase).not.toHaveBeenCalled();
+        expect(OpenLibrary).not.toHaveBeenCalled();
         // Nothing is persisted as "the" database path until it is unlocked.
         expect(get(databasePathStore)).toBe('');
     });
@@ -443,13 +456,13 @@ describe('openDatabaseByPath', () => {
 
         expect(get(databasePathStore)).toBe('/tmp/normal.db');
         expect(SaveLastDatabasePath).toHaveBeenCalledWith('/tmp/normal.db');
-        expect(OpenDatabase).toHaveBeenCalledWith('/tmp/normal.db');
+        expect(OpenLibrary).toHaveBeenCalledWith('/tmp/normal.db');
         expect(restoreSessionState).toHaveBeenCalled();
         expect(get(statusBarModeStore)).toBe('NORMAL');
     });
 
-    test('OpenDatabase failing reports the error and resets the mode without restoring a session', async () => {
-        vi.mocked(OpenDatabase).mockRejectedValue(new Error('corrupt file'));
+    test('OpenLibrary failing reports the error and resets the mode without restoring a session', async () => {
+        vi.mocked(OpenLibrary).mockRejectedValue(new Error('corrupt file'));
 
         await openDatabaseByPath('/tmp/broken.db');
 

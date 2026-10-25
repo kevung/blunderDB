@@ -18,6 +18,7 @@ var boundAppMethods = []string{
 	"LibrariesWrittenElsewhere",
 	"LibraryGroupHolding",
 	"ListLibraryGroups",
+	"OpenLibrary",
 	"OpenLibraryGroup",
 	"SetLibraryGroupLocked",
 	"TransferToGroup",
