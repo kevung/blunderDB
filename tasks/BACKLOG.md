@@ -46,12 +46,6 @@ propre issue le jour où il est lancé.
   (`storagetest/contract_comments.go`, `contract_collections*.go`). Effort S.
 - **`migrate.Run` par lots avec reprise** (aujourd'hui une transaction unique pour toute la
   copie SQLite→PG, `migrate/migrate.go`) — attendre un besoin terrain.
-- **Course Stat/Rename du vacuum par remplacement** (`database/db_vacuum.go`, `vacuumBySwap`) :
-  l'absence de `-wal` est constatée par `os.Stat` puis le fichier remplacé par `os.Rename` ; un
-  autre processus qui ouvre la base entre les deux lit l'ancien inode et y écrit à perte.
-  Fenêtre de quelques microsecondes, sans verrou de fichier pour la fermer. Prendre un verrou
-  exclusif SQLite (`BEGIN EXCLUSIVE` sur une connexion tenue jusqu'au rename) ou un verrou
-  consultatif. Effort S-M.
 - **`move.error_mp` sans lecteur ni tenue** (`tasks/mesure-bmab-0.37.md` § 9) : la 2.50 la
   garde inerte (jamais écrite ni lue) ; la version minimale de lecture
   (`min_reader_version`, posée à 2.50.0) arrête désormais les binaires qui la lisent, mais
@@ -83,34 +77,29 @@ propre issue le jour où il est lancé.
   passe par Opus, avec un test d'égalité jeton ↔ `StudyBacklog` sur les deux backends.
   Décidé : différé (2026-10-24), après le filtre `aw` (livré).
 
-- **`MatchEquityTableStore.Save` croit le `Digest` fourni** (`sqlshared/met.go`). Le
-  digest est la clé de dédoublonnage et le nom de la table pour `analysis.met_id` ; il est
-  calculé par `engine.MET.Digest()` sur les valeurs parsées, pas sur les octets de `Source`.
-  Les deux appelants le recalculent depuis la source (`mets.Import`, et `mets.Carrier` pour
-  l'export, l'import, la fusion et la migration de bases), mais le contrat ne le garantit
-  pas : un futur appelant pourrait encore enregistrer un digest incohérent. Remède : `Save`
-  parse `Source` (`engine.ParseGnubgMET`), recalcule et refuse `ErrInvalid` sur écart. Les
-  ~15 fixtures des contrats (`storagetest/contract_schema_2_31.go`, `contract_met_*.go`)
-  passent des sources factices (`<met/>`, digest `"aaa"`) à réécrire en tables gnubg
-  valides, sur les deux backends. Effort S-M, test de contrat « digest incohérent refusé ».
 - **Export `.apkg` : le démon garde tout en mémoire** (`pkg/blunderdb/apkg`). Les analyses se
   chargent par lot et les plateaux s'écrivent au fil du zip, mais le démon tamponne encore le
   paquet entier avant de répondre et la collection n'est pas écrite en flux : la mémoire d'un
   gros paquet n'est pas bornée.
 
-- **Ouverture d'une base : progression et annulation à compléter.** L'ouverture dans un nouveau
-  groupe de bibliothèque les a, mais CTRL-O (ouverture) n'a ni progression ni annulation. Une
-  annulation faite avant `beginCancellableImport` (`database/db.go`, vers la ligne 651) est
-  perdue. Le commentaire de `Migrator` (`storage/sqlite/migrate_hook.go`, lignes 21-22) dit que
-  `Migrate` laisse une base non fraîche intacte sans migrateur enregistré : faux depuis qu'il
-  reclusterise les tables de cellules (et la ligne 17 parle d'une barre de progression de la GUI
-  que le front n'affiche pas).
 - **La signature d'un commentaire ne passe ni par l'export JSON ni par le backend `remote`**
   (ADR-0099). `ingest/json.go` n'écrit que texte et auteur ; `remote` n'envoie pas
   `storage.CommentSignatureFromContext` à `comments.add`, que le démon ne lit pas non plus.
   Un commentaire passé par l'un d'eux arrive non signé, ce qui ne trompe personne mais perd
   l'attribution vérifiable. Les porter : un champ `signature` (et `origin`) dans le paquet
   JSON et dans le corps de `comments.add`, recopié tel quel, avec un test de contrat.
+
+- **Plancher de lecture et démon distant, restes.** `remote.Storage.PlayedJoinIgnored()` n'est
+  lu ni par le bureau ni par la CLI (seul un `slog.Warn` signale un démon ancien). Les blobs
+  déjà stockés avec la graphie « Double No » ne sont pas réparés (le front la tolère). La source
+  d'un import `.db` n'est pas comparée à `min_reader_version`. `sqlite.OpenReadOnly` ne contrôle
+  pas le plancher (couvert en pratique par `cli_elsewhere`). `readerFloor`/`raiseReaderFloor`
+  sont dupliqués entre `storage/sqlite` et `storage/postgres` (`sqlshared` pourrait les
+  porter). Le backend `remote` ne couvre pas le cas de contrat du plancher.
+- **Verrou de swap du vacuum : ouvreurs hors périmètre.** Les ouvreurs `serve` SQLite et
+  `migrate` ignorent le verrou de swap du vacuum (et le verrou mono-écrivain).
+- **`go test -tags postgres ./pkg/blunderdb/storage/postgres`** frôle le délai par défaut de
+  900 s (885 s mesurés) : fixer `-timeout` dans le Makefile.
 
 ## Ouvert — Moteur
 
@@ -154,8 +143,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   (`embeddedMatchId`) et chaque effet global y est coupé par un garde `embedded` (liste, tri
   partagé, clavier, ids DOM `match-tab-*` en double) ; un effet ajouté sans garde touche l'état
   du vrai panneau. L'extraction du volet de détail règle les deux.
-- **Migration : phases invisibles dans le front.** Seul `blunderdb migrate` émet les phases
-  (environ 22 min sur la base BMAB) ; la GUI n'en affiche aucune.
 - **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections,
   leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la
   GUI n'offre pas ce choix.
@@ -166,6 +153,10 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   déplacent pas le surlignage du panneau Tournois ; vérifier qu'un « Too good to double » importé
   n'est plus lu comme *no double*. Le bouton « Élargir » est abandonné (décision du
   2026-10-24).
+- **Après un CTRL-O annulé, rouvrir l'ancienne bibliothèque** : aujourd'hui le groupe reste
+  vide, comme pour tout échec d'ouverture.
+- **Message de `ErrDatabaseTooNew` non traduit** : le refus d'une base trop récente s'affiche
+  en anglais.
 
 ## Ouvert — Tests / CI
 
@@ -186,6 +177,8 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   gammonNet en `purego` ~40 min, au-delà des délais locaux usuels. Pour exécuter le noyau arm64
   sans machine dédiée, un `qemu-aarch64` statique (tiré de l'image `tonistiigi/binfmt`) suffit,
   en passant le binaire deux fois (`qemu-aarch64 BIN BIN -test.run …`, argv0 en premier).
+- **`TestVacuum_AnOpenerDuringTheSwapWaitsForTheNewFile`** repose sur un délai de 300 ms : faux
+  vert possible sous charge.
 
 ## Ouvert — Produit / docs
 
@@ -231,6 +224,12 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
 
 ## Historique — items faits
 
+- **2026-10-25 — lot du 2026-10-25** (fusionné sur `main`) : version minimale de lecture et clés
+  de schéma réservées dans `MetadataStore.Save`, plancher contrôlé avant toute écriture de
+  l'ouverture (#815) ; progression et annulation de CTRL-O (#816, #817) et phases de migration
+  affichées dans le front ; bandeau de fin du rollout (#818) ; digest MET recalculé (#819) ;
+  verrou de swap du vacuum (#820) ; restes de parité de l'analyse, mode dégradé sans `withPlayed`
+  (#821).
 - **2026-10-24 — lot de la 2.50** (fusionné sur `main`) : filtre de recherche `aw`, les points
   qu'il reste à marquer à chacun des deux joueurs (#801) ; parité des analyses du démon avec le
   wrapper, `analyses.save` fusionne, `analyses.merge` et `withPlayed` existent (#803, #804) ;
