@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -14,6 +15,11 @@ type commentAddReq struct {
 	// Author signs this comment instead of the request's X-User-Name; empty
 	// keeps the header's.
 	Author string `json:"author,omitempty"`
+	// Signature and Origin are a note written elsewhere, copied as it
+	// stands: a signature is stored verbatim with its author, never
+	// recomputed here; an empty origin is a note the user wrote.
+	Signature string `json:"signature,omitempty"`
+	Origin    string `json:"origin,omitempty"`
 }
 
 type commentUpdateReq struct {
@@ -44,10 +50,16 @@ func (s *Server) commentRoutes() []route {
 	cs := func() storage.CommentStore { return s.opts.Storage.Comments() }
 	return []route{
 		{http.MethodPost, "/v1/comments.add", rpc(func(ctx context.Context, scope string, req commentAddReq) (idResp, error) {
-			if a := storage.NormalizeCommentAuthor(req.Author); a != "" {
+			if strings.TrimSpace(req.Signature) != "" {
+				ctx = storage.WithCarriedComment(ctx, req.Author, req.Signature)
+			} else if a := storage.NormalizeCommentAuthor(req.Author); a != "" {
 				ctx = storage.WithCommentAuthor(ctx, a)
 			}
-			id, err := cs().Add(ctx, scope, req.PositionID, req.Text)
+			if req.Origin == "" {
+				id, err := cs().Add(ctx, scope, req.PositionID, req.Text)
+				return idResp{ID: id}, err
+			}
+			id, err := cs().AddFrom(ctx, scope, req.PositionID, req.Text, domain.CommentOrigin(req.Origin))
 			return idResp{ID: id}, err
 		})},
 		{http.MethodPost, "/v1/comments.update", rpcVoid(func(ctx context.Context, scope string, req commentUpdateReq) error {

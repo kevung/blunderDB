@@ -27,7 +27,6 @@ var Unsupported = []string{
 	"AnkiStore.Sync",
 	"CollectionStore.Coverage",
 	"CollectionStore.Members",
-	"CommentStore.AddFrom",
 	"CommentStore.Rehome",
 	"CommentStore.Upsert",
 	"DirectionStore.AppendEvent",
@@ -188,10 +187,6 @@ func (collectionStore) Coverage(_ context.Context, _ string, _ []int64) (r0 map[
 
 func (collectionStore) Members(_ context.Context, _ string, _ int64) iter.Seq2[*storage.CollectionPosition, error] {
 	return unsupportedSeq[*storage.CollectionPosition]("CollectionStore.Members")
-}
-
-func (commentStore) AddFrom(_ context.Context, _ string, _ int64, _ string, _ domain.CommentOrigin) (r0 int64, err error) {
-	return r0, unsupported("CommentStore.AddFrom")
 }
 
 func (commentStore) Rehome(_ context.Context, _ string, _ int64, _ int64) (r0 int, err error) {

@@ -18,15 +18,34 @@ type textResp struct {
 	Text string `json:"text"`
 }
 
+type commentAddBody struct {
+	PositionID int64  `json:"positionId"`
+	Text       string `json:"text"`
+	Author     string `json:"author,omitempty"`
+	Signature  string `json:"signature,omitempty"`
+	Origin     string `json:"origin,omitempty"`
+}
+
 // Add names the author the context carries; the daemon also reads it from
-// the X-User-Name header, which post sets from the same context.
+// the X-User-Name header, which post sets from the same context. A signature
+// the context carries goes with it, for the daemon to store as it stands.
 func (s commentStore) Add(ctx context.Context, scope string, positionID int64, text string) (int64, error) {
+	return s.add(ctx, scope, positionID, text, "")
+}
+
+// AddFrom is Add with the note's provenance.
+func (s commentStore) AddFrom(ctx context.Context, scope string, positionID int64, text string, origin domain.CommentOrigin) (int64, error) {
+	return s.add(ctx, scope, positionID, text, string(origin))
+}
+
+func (s commentStore) add(ctx context.Context, scope string, positionID int64, text, origin string) (int64, error) {
 	var r idResp
-	err := s.c.call(ctx, scope, "comments.add", struct {
-		PositionID int64  `json:"positionId"`
-		Text       string `json:"text"`
-		Author     string `json:"author,omitempty"`
-	}{positionID, text, storage.CommentAuthorFromContext(ctx)}, &r)
+	err := s.c.call(ctx, scope, "comments.add", commentAddBody{
+		PositionID: positionID, Text: text,
+		Author:    storage.CommentAuthorFromContext(ctx),
+		Signature: storage.CommentSignatureFromContext(ctx),
+		Origin:    origin,
+	}, &r)
 	return r.ID, err
 }
 

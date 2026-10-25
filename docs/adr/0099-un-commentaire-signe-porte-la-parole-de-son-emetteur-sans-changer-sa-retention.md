@@ -63,5 +63,7 @@ note.
 
 - La vérification prouve qu'une clé a signé ces mots, pas qu'elle appartient à la personne
   nommée : comme pour le Filigrane, c'est l'empreinte publiée par l'émetteur qui le dit.
-- L'export JSON et le backend `remote` ne transportent pas encore la signature : un
-  Commentaire écrit à travers eux arrive non signé, ce qui ne trompe personne.
+- L'export JSON (`commentSignatures`, `commentOrigins` à côté de `commentAuthors`) et le
+  corps de `comments.add` (`signature`, `origin`, que le backend `remote` renseigne) portent
+  la signature et l'origine telles quelles ; le démon les écrit sans les recalculer, l'auteur
+  signé étant recopié octet pour octet. Un lecteur ancien ignore ces champs.

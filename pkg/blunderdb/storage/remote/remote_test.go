@@ -68,6 +68,8 @@ var covered = map[string]bool{
 	"Anki/DrawOrderInterleavesTies":                          true,
 	"Anki/FilteredWindowsMatchCounters":                      true,
 	"Anki/ReviewUpdatesScheduling":                           true,
+	"Comment/SignatureCarried":                               true,
+	"Collection/ReorderAndDeleteCascade":                     true,
 	"Collection/CopyPosition":                                true,
 	"Collection/EvaluateUnderCeiling":                        true,
 	"Collection/FilterQueryRoundTrips":                       true,

@@ -723,3 +723,48 @@ func testCollectionUnknownID(t *testing.T, s storage.Storage) {
 		t.Errorf("second Delete: got %v, want ErrNotFound", err)
 	}
 }
+
+// testCollectionReorderAndDeleteCascade: Reorder sets the order List returns,
+// and deleting a collection leaves its former members in no collection.
+func testCollectionReorderAndDeleteCascade(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	a, err := s.Collections().Create(ctx, "", "first", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := s.Collections().Create(ctx, "", "second", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := s.Collections().Reorder(ctx, "", []int64{b, a}); err != nil {
+		t.Fatalf("Reorder: %v", err)
+	}
+	var order []int64
+	for c, err := range s.Collections().List(ctx, "") {
+		if err != nil {
+			t.Fatalf("List: %v", err)
+		}
+		order = append(order, c.ID)
+	}
+	if len(order) != 2 || order[0] != b || order[1] != a {
+		t.Errorf("List after Reorder: got %v, want [%d %d]", order, b, a)
+	}
+
+	cp := checkerPos()
+	pos, err := s.Positions().Save(ctx, "", &cp)
+	if err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	if err := s.Collections().AddPosition(ctx, "", a, pos); err != nil {
+		t.Fatalf("AddPosition: %v", err)
+	}
+	if err := s.Collections().Delete(ctx, "", a); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	for c, err := range s.Collections().CollectionsOf(ctx, "", pos) {
+		if err != nil {
+			t.Fatalf("CollectionsOf: %v", err)
+		}
+		t.Errorf("position still in collection %d after it was deleted", c.ID)
+	}
+}

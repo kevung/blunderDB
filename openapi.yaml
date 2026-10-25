@@ -8522,6 +8522,12 @@ components:
         author:
           type: string
           nullable: true
+        signature:
+          type: string
+          nullable: true
+        origin:
+          type: string
+          nullable: true
     commentIDReq:
       type: object
       properties:

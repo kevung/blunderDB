@@ -234,3 +234,17 @@ func TestMatchMovesByMatch(t *testing.T) {
 		t.Errorf("MovesByMatch on missing match: got %d moves, want 0", n)
 	}
 }
+
+// savePos stores a fresh position with the given decision type and returns its
+// id. The decision type is part of the Zobrist hash, so distinct types yield
+// distinct rows.
+func savePos(t *testing.T, s *sqlite.Storage, decision int) int64 {
+	t.Helper()
+	p := domain.InitializePosition()
+	p.DecisionType = decision
+	id, err := s.Positions().Save(context.Background(), "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	return id
+}
