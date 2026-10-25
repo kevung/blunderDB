@@ -263,8 +263,9 @@ func canonicalPath(p string) string {
 // swapGatePathFor returns the file whose lock orders opening a database
 // against replacing it (vacuumBySwap): an opener holds it shared until its
 // connection is established, the swap exclusively from the check that no
-// connection exists to the rename. Beside the single-writer lock, never
-// beside the database, for the same reasons.
+// connection exists to the rename. It lives beside the single-writer lock,
+// for the same reasons: in the cache directory, or beside the database when
+// that directory cannot be created.
 func swapGatePathFor(dbPath string) string {
 	return strings.TrimSuffix(lockPathFor(dbPath), ".lock") + ".swap"
 }
@@ -272,6 +273,8 @@ func swapGatePathFor(dbPath string) string {
 // enterSwapGate waits until no file replacement of path is under way and
 // keeps one from starting until the returned release runs. A gate that
 // cannot be taken is no reason to refuse the open: it proceeds unguarded.
+// The wait is unbounded: a third party that keeps the gate exclusively keeps
+// OpenDatabase blocked, under d.mu.
 func enterSwapGate(path string) func() {
 	if path == "" || path == ":memory:" {
 		return func() {}

@@ -104,8 +104,8 @@ var errVacuumNotLocal = errors.New("vacuum: the library is not a local file")
 // process (a read-only instance, a sqlite3 shell) is connected: the copy is
 // dropped and errVacuumSwapUnsafe returned. A blunderDB instance opening the
 // file between that check and the rename is held off by the swap gate
-// (swapUnderGate); a program that knows no gate, a sqlite3 shell, is not. A
-// failure after the rename point
+// (swapUnderGate). An opener that knows no gate is not: a sqlite3 shell, the
+// serve daemon (sqlite.Open) and migrate. A failure after the rename point
 // leaves the compacted file in place, which is the whole library.
 func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (before, after int64, err error) {
 	path, err := local.FilePath(ctx)
