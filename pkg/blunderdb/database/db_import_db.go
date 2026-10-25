@@ -335,7 +335,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 						existingAnalysis = *existing
 					}
 					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
-					if _, changed := domain.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
+					if _, changed := engine.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
 						hasNewData = true
 					}
 				}

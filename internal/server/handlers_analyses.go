@@ -54,6 +54,10 @@ func (s *Server) analysisRoutes() []route {
 		// the matches played at the position, normalised and sorted, and its
 		// cube analyses come XG first, as the desktop and the CLI read it.
 		{http.MethodPost, "/v1/analyses.load", rpc(func(ctx context.Context, scope string, req analysisLoadReq) (*domain.PositionAnalysis, error) {
+			// A daemon older than withPlayed ignores the field and answers
+			// the bare analysis: the header is how a client tells the two
+			// apart instead of reading no plays as none played.
+			setResponseHeader(ctx, storage.WithPlayedHeader, "1")
 			if req.WithPlayed {
 				return storage.LoadAnalysisWithPlayed(ctx, s.opts.Storage, scope, req.PositionID)
 			}

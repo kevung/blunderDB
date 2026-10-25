@@ -197,3 +197,16 @@ func TestTooLargeIsNotARateLimit(t *testing.T) {
 		t.Fatalf("413: %v", err)
 	}
 }
+
+// A daemon older than withPlayed answers the bare analysis: the backend must
+// say so, not hand it on as a position nobody played.
+func TestLoadWithPlayedRefusesADaemonThatIgnoresIt(t *testing.T) {
+	rs, _ := fake(t, http.StatusOK, `{"positionId":5,"analysisType":"CheckerMove"}`)
+	pl, ok := rs.Analyses().(storage.PlayedLoader)
+	if !ok {
+		t.Fatal("the remote analysis store is not a PlayedLoader")
+	}
+	if _, err := pl.LoadWithPlayed(context.Background(), "", 5); !errors.Is(err, storage.ErrUnsupported) {
+		t.Fatalf("err = %v, want storage.ErrUnsupported", err)
+	}
+}

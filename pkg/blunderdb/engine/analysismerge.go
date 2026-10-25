@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"slices"
 	"sort"
 	"strings"
 
@@ -163,8 +164,10 @@ func MergeCubeAnalyses(existing *domain.DoublingCubeAnalysis, existingAll []doma
 	return primary, all
 }
 
-// UnionPlayed unions played moves or cube actions in their normal notation
-// (NormalizeMove), sorted; an empty entry is not a play.
+// UnionPlayed unions played checker moves in their normal notation
+// (NormalizeMove), sorted; an empty entry is not a play. Cube actions go
+// through UnionCubeActions: NormalizeMove would turn "No Double" into
+// "Double No".
 func UnionPlayed(existing, incoming []string) []string {
 	set := make(map[string]bool, len(existing)+len(incoming))
 	for _, m := range existing {
@@ -183,4 +186,86 @@ func UnionPlayed(existing, incoming []string) []string {
 	}
 	sort.Strings(out)
 	return out
+}
+
+// UnionCubeActions unions played cube actions, sorted; an empty entry is not
+// a play. The doubler's position is written two ways: the move table says
+// "Double", an importer's analysis says "Double/Take" or "Double/Pass", the
+// offer with its answer. A bare double says nothing the combined label does
+// not, so it is dropped beside one: a reader would otherwise list one double
+// twice.
+func UnionCubeActions(existing, incoming []string) []string {
+	set := make(map[string]bool, len(existing)+len(incoming))
+	combined := false
+	for _, list := range [2][]string{existing, incoming} {
+		for _, a := range list {
+			if a == "" {
+				continue
+			}
+			set[a] = true
+			if isCombinedDouble(a) {
+				combined = true
+			}
+		}
+	}
+	out := make([]string, 0, len(set))
+	for a := range set {
+		if combined && isBareDouble(a) {
+			continue
+		}
+		out = append(out, a)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// isCombinedDouble reports whether a names an offer with its answer.
+func isCombinedDouble(a string) bool {
+	if CanonicalCubeAction(a) != CubeDouble {
+		return false
+	}
+	s := normaliseCubeLabel(a)
+	return strings.Contains(s, "take") || strings.Contains(s, "pass") ||
+		strings.Contains(s, "drop") || strings.Contains(s, "beaver")
+}
+
+// isBareDouble reports whether a names an offer and nothing more.
+func isBareDouble(a string) bool {
+	return CanonicalCubeAction(a) == CubeDouble && !isCombinedDouble(a)
+}
+
+// MergeImportedAnalysis is domain.MergeImportedAnalysis with the plays of both
+// sides: whichever analysis an import keeps, what the source library saw
+// played at the position joins what the target saw, as a save unions them.
+// changed also reports a play the target did not have.
+func MergeImportedAnalysis(existing, imported *domain.PositionAnalysis) (*domain.PositionAnalysis, bool) {
+	merged, changed := domain.MergeImportedAnalysis(existing, imported)
+	if existing == nil || imported == nil {
+		return merged, changed
+	}
+	moves := UnionPlayed(legacyPlayed(existing.PlayedMoves, existing.PlayedMove),
+		legacyPlayed(imported.PlayedMoves, imported.PlayedMove))
+	actions := UnionCubeActions(legacyPlayed(existing.PlayedCubeActions, existing.PlayedCubeAction),
+		legacyPlayed(imported.PlayedCubeActions, imported.PlayedCubeAction))
+	movesDiffer := !slices.Equal(UnionPlayed(legacyPlayed(merged.PlayedMoves, merged.PlayedMove), nil), moves)
+	actionsDiffer := !slices.Equal(UnionCubeActions(legacyPlayed(merged.PlayedCubeActions, merged.PlayedCubeAction), nil), actions)
+	if !movesDiffer && !actionsDiffer {
+		return merged, changed
+	}
+	out := *merged
+	if movesDiffer {
+		out.PlayedMoves, out.PlayedMove = moves, ""
+	}
+	if actionsDiffer {
+		out.PlayedCubeActions, out.PlayedCubeAction = actions, ""
+	}
+	return &out, true
+}
+
+// legacyPlayed is played, or the deprecated single field when played is empty.
+func legacyPlayed(played []string, single string) []string {
+	if single != "" && len(played) == 0 {
+		return []string{single}
+	}
+	return played
 }

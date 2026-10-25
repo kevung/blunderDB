@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -62,5 +63,46 @@ func TestMergeCheckerMovesKeepsTheDeeperEntry(t *testing.T) {
 	got = MergeCheckerMoves(existing, []domain.CheckerMove{{Move: "a", Equity: 0.9, AnalysisDepth: "4-ply"}})
 	if len(got) != 1 || got[0].Equity != 0.9 {
 		t.Errorf("incoming at equal depth did not replace the stored entry: %v", got)
+	}
+}
+
+// The move table's "Double" and an importer's "Double/Take" are one double;
+// "No Double" keeps its words.
+func TestUnionCubeActionsFoldsTheBareDouble(t *testing.T) {
+	got := UnionCubeActions([]string{"Double/Take", "No Double"}, []string{"Double", ""})
+	want := []string{"Double/Take", "No Double"}
+	if !slices.Equal(got, want) {
+		t.Fatalf("UnionCubeActions = %v, want %v", got, want)
+	}
+	if got := UnionCubeActions([]string{"Double"}, []string{"Take"}); !slices.Equal(got, []string{"Double", "Take"}) {
+		t.Fatalf("a bare double with no combined label is kept: %v", got)
+	}
+}
+
+// An import keeps the target's analysis, and still brings the plays the
+// source saw.
+func TestMergeImportedAnalysisUnionsThePlays(t *testing.T) {
+	existing := &domain.PositionAnalysis{
+		AnalysisType:    "CheckerMove",
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{{Move: "13/11 24/23"}}},
+		PlayedMoves:     []string{"13/11 24/23"},
+	}
+	imported := &domain.PositionAnalysis{
+		AnalysisType:    "CheckerMove",
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{{Move: "8/6 6/4"}}},
+		PlayedMoves:     []string{"6/4 8/6"},
+	}
+	got, changed := MergeImportedAnalysis(existing, imported)
+	if !changed || !slices.Equal(got.PlayedMoves, []string{"13/11 24/23", "6/4 8/6"}) {
+		t.Fatalf("changed=%v PlayedMoves=%v", changed, got.PlayedMoves)
+	}
+	if got.CheckerAnalysis.Moves[0].Move != "13/11 24/23" || len(got.CheckerAnalysis.Moves) != 1 {
+		t.Fatalf("the target's analysis must stay: %+v", got.CheckerAnalysis)
+	}
+	if len(existing.PlayedMoves) != 1 {
+		t.Fatalf("existing was mutated: %v", existing.PlayedMoves)
+	}
+	if _, changed := MergeImportedAnalysis(got, &domain.PositionAnalysis{PlayedMoves: []string{"8/6 6/4"}}); changed {
+		t.Fatal("a play the target already holds is no change")
 	}
 }
