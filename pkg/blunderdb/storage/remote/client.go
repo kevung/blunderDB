@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -128,6 +129,9 @@ type client struct {
 	http   *http.Client
 	// idle is how long a body may stay silent; zero means no bound.
 	idle time.Duration
+	// playedIgnored is raised the first time the daemon answers a load with
+	// withPlayed without announcing the join (storage.WithPlayedHeader).
+	playedIgnored atomic.Bool
 }
 
 // idleBody cancels its request when no byte arrives for d, so a daemon that

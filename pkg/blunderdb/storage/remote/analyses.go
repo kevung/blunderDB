@@ -2,7 +2,7 @@ package remote
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -24,9 +24,10 @@ func (s analysisStore) SaveMerged(ctx context.Context, scope string, positionID 
 
 // LoadWithPlayed relays analyses.load with withPlayed: the daemon joins the
 // moves the matches played, a table this backend does not serve
-// (storage.PlayedLoader). A daemon that does not announce the join
-// (storage.WithPlayedHeader) answered the bare analysis: that is refused as
-// unsupported rather than shown as a position nobody played.
+// (storage.PlayedLoader). A daemon older than withPlayed ignores the field
+// and answers the stored analysis alone: it is returned as such, and the
+// daemon's silence about the join (storage.WithPlayedHeader) is logged once
+// per connection and kept for Storage.PlayedJoinIgnored.
 func (s analysisStore) LoadWithPlayed(ctx context.Context, scope string, positionID int64) (*domain.PositionAnalysis, error) {
 	var a *domain.PositionAnalysis
 	req := struct {
@@ -37,8 +38,8 @@ func (s analysisStore) LoadWithPlayed(ctx context.Context, scope string, positio
 	if err != nil {
 		return nil, err
 	}
-	if h.Get(storage.WithPlayedHeader) == "" {
-		return nil, fmt.Errorf("%w: the daemon ignores withPlayed; upgrade it", unsupported("analyses.load withPlayed"))
+	if h.Get(storage.WithPlayedHeader) == "" && s.c.playedIgnored.CompareAndSwap(false, true) {
+		slog.Warn("remote: the daemon ignores withPlayed; analyses are shown without the moves the matches played — upgrade the daemon", "daemon", s.c.base)
 	}
 	return a, nil
 }

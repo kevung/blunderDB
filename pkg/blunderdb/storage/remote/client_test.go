@@ -198,15 +198,22 @@ func TestTooLargeIsNotARateLimit(t *testing.T) {
 	}
 }
 
-// A daemon older than withPlayed answers the bare analysis: the backend must
-// say so, not hand it on as a position nobody played.
-func TestLoadWithPlayedRefusesADaemonThatIgnoresIt(t *testing.T) {
+// A daemon older than withPlayed answers the bare analysis: the backend hands
+// it on and says the plays are missing.
+func TestLoadWithPlayedDegradesOnADaemonThatIgnoresIt(t *testing.T) {
 	rs, _ := fake(t, http.StatusOK, `{"positionId":5,"analysisType":"CheckerMove"}`)
 	pl, ok := rs.Analyses().(storage.PlayedLoader)
 	if !ok {
 		t.Fatal("the remote analysis store is not a PlayedLoader")
 	}
-	if _, err := pl.LoadWithPlayed(context.Background(), "", 5); !errors.Is(err, storage.ErrUnsupported) {
-		t.Fatalf("err = %v, want storage.ErrUnsupported", err)
+	if rs.PlayedJoinIgnored() {
+		t.Fatal("signalled before any load")
+	}
+	a, err := pl.LoadWithPlayed(context.Background(), "", 5)
+	if err != nil || a == nil || a.AnalysisType != "CheckerMove" {
+		t.Fatalf("got %+v, %v; want the analysis as the daemon answered it", a, err)
+	}
+	if !rs.PlayedJoinIgnored() {
+		t.Fatal("the ignored join is not signalled")
 	}
 }

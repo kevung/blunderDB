@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 23:30+0200\n"
+"POT-Creation-Date: 2026-10-25 02:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -42,11 +42,11 @@ msgstr ""
 " with their response shape (JSON, or NDJSON for a streamed list) and, "
 "where it exists, a note of the optional ``Idempotency-Key`` header."
 
-#: ../../source/api_reference.rst:438
+#: ../../source/api_reference.rst:437
 msgid "Idempotence"
 msgstr "Idempotency"
 
-#: ../../source/api_reference.rst:440
+#: ../../source/api_reference.rst:439
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -73,11 +73,11 @@ msgstr ""
 "Key)\" mark in the table above. No other method needs or accepts this "
 "header."
 
-#: ../../source/api_reference.rst:452
+#: ../../source/api_reference.rst:451
 msgid "Lectures conditionnelles"
 msgstr "Conditional reads"
 
-#: ../../source/api_reference.rst:454
+#: ../../source/api_reference.rst:453
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -88,11 +88,11 @@ msgstr ""
 "``If-None-Match`` gets a body-less ``304`` response as long as nothing "
 "the method reads has changed — see :ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:459
+#: ../../source/api_reference.rst:458
 msgid "Enregistrer et lire une analyse"
 msgstr "Saving and reading an analysis"
 
-#: ../../source/api_reference.rst:461
+#: ../../source/api_reference.rst:460
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -103,7 +103,10 @@ msgid ""
 "``analyses.load`` rend l'analyse telle qu'enregistrée ; avec "
 "``withPlayed`` à ``true``, ses coups et actions de videau joués sont "
 "joints à ceux que les matchs ont joués dans la position, et ses analyses "
-"du videau viennent XG en tête, comme les lit le bureau."
+"du videau viennent XG en tête, comme les lit le bureau. Chaque réponse "
+"d'``analyses.load`` porte l'en-tête ``X-Blunderdb-With-Played`` : un "
+"démon qui ne le rend pas ignore ``withPlayed`` et rend l'analyse sans les"
+" coups des matchs."
 msgstr ""
 "``analyses.save`` stores the analysis as given and replaces the one the "
 "position carried: nothing of the old one is kept. ``analyses.merge`` "
@@ -114,12 +117,15 @@ msgstr ""
 " the analysis as stored; with ``withPlayed`` set to ``true``, its played "
 "moves and cube actions are joined with those the matches played in the "
 "position, and its cube analyses come XG first, as the desktop reads them."
+" Every ``analyses.load`` response carries the ``X-Blunderdb-With-Played``"
+" header: a daemon that does not send it ignores ``withPlayed`` and "
+"returns the analysis without the matches' moves."
 
-#: ../../source/api_reference.rst:472
+#: ../../source/api_reference.rst:473
 msgid "Repères d'une transcription"
 msgstr "Timecodes of a transcription"
 
-#: ../../source/api_reference.rst:474
+#: ../../source/api_reference.rst:475
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -149,7 +155,7 @@ msgstr ""
 "``set_header`` also sets it when its header names one, but never clears "
 "it."
 
-#: ../../source/api_reference.rst:486
+#: ../../source/api_reference.rst:487
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -165,7 +171,7 @@ msgstr ""
 "estimate: a play without an action timecode, measured from the roll to "
 "the next action's first instant."
 
-#: ../../source/api_reference.rst:492
+#: ../../source/api_reference.rst:493
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
