@@ -178,6 +178,16 @@ describe('newDatabase', () => {
         expect(loadAllPositions).not.toHaveBeenCalled();
     });
 
+    test('an open in progress refuses the creation with its own wording, not the raw job name', async () => {
+        vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/old.db');
+        databasePathStore.set('/tmp/old.db');
+        vi.mocked(RecreateDatabase).mockRejectedValueOnce(new Error('database is busy: open'));
+
+        await newDatabase();
+
+        expect(get(statusBarTextStore)).toEqual(tMsg('libraryGroups.busyOpen'));
+    });
+
     test('the creation waits for a write still on its way: the write lands in the library it read', async () => {
         vi.mocked(SaveDatabaseDialog).mockResolvedValue('/tmp/old.db');
         databasePathStore.set('/tmp/old.db');

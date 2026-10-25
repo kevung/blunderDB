@@ -3388,6 +3388,7 @@
         "busyRollout": "Un rollout sta scrivendo nella libreria attiva: attendine la fine o fermalo (rollout stop) prima di cambiare libreria",
         "busyImport": "Un'importazione scrive file per file nella libreria attiva: attendine la fine prima di cambiare libreria",
         "busyWrite": "Una modifica è in corso di scrittura nella libreria attiva: riprova tra un istante",
+        "busyOpen": "Una libreria è in apertura: riprova quando sarà aperta",
         "switching": "Cambio di libreria in corso: attendine la fine",
         "migrating": "Migrazione della libreria: {phase} {done}/{total} (Esc per annullare)",
         "migrationPhase": {

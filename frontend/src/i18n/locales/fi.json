@@ -3388,6 +3388,7 @@
         "busyRollout": "Rollout kirjoittaa aktiiviseen kirjastoon: odota sen päättymistä tai pysäytä se (rollout stop) ennen kirjaston vaihtamista",
         "busyImport": "Tuonti kirjoittaa aktiiviseen kirjastoon tiedosto kerrallaan: odota sen päättymistä ennen kuin vaihdat kirjastoa",
         "busyWrite": "Aktiiviseen kirjastoon kirjoitetaan muutosta: yritä hetken kuluttua uudelleen",
+        "busyOpen": "Kirjastoa avataan: yritä uudelleen, kun se on auki",
         "switching": "Kirjaston vaihto on käynnissä: odota sen päättymistä",
         "migrating": "Kirjastoa siirretään: {phase} {done}/{total} (Esc peruuttaa)",
         "migrationPhase": {

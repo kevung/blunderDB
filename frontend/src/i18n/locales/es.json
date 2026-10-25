@@ -3388,6 +3388,7 @@
         "busyRollout": "Un rollout está escribiendo en la biblioteca activa: espere a que termine o deténgalo (rollout stop) antes de cambiar de biblioteca",
         "busyImport": "Una importación escribe archivo por archivo en la biblioteca activa: espere a que termine antes de cambiar de biblioteca",
         "busyWrite": "Se está escribiendo un cambio en la biblioteca activa: inténtelo de nuevo en un momento",
+        "busyOpen": "Se está abriendo una biblioteca: inténtelo de nuevo cuando esté abierta",
         "switching": "Cambio de biblioteca en curso: espere a que termine",
         "migrating": "Migrando la biblioteca: {phase} {done}/{total} (Esc para cancelar)",
         "migrationPhase": {

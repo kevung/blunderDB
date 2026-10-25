@@ -3388,6 +3388,7 @@
         "busyRollout": "A rollout is writing the active library: wait for it or stop it (rollout stop) before switching library",
         "busyImport": "An import is writing the active library file by file: wait for it to finish before switching library",
         "busyWrite": "A change is being written to the active library: try again in a moment",
+        "busyOpen": "A library is being opened: try again once it is open",
         "switching": "A library switch is in progress: wait for it to finish",
         "migrating": "Migrating the library: {phase} {done}/{total} (Esc to cancel)",
         "migrationPhase": {

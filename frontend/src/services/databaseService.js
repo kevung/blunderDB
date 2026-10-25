@@ -144,7 +144,8 @@ const BUSY_JOB_KEYS = {
     rollout: 'libraryGroups.busyRollout',
     import: 'libraryGroups.busyImport',
     'tournament-display': 'libraryGroups.busyDisplay',
-    write: 'libraryGroups.busyWrite'
+    write: 'libraryGroups.busyWrite',
+    open: 'libraryGroups.busyOpen'
 };
 
 /**
