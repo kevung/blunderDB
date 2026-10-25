@@ -25,10 +25,10 @@ func (d *Database) TransferTo(ctx context.Context, dst *Database, opts ExportOpt
 }
 
 // transferWith is TransferTo with two hooks run while both libraries are
-// locked: before ahead of the copy, after once it is written, with its
-// report. The locks keep out the Database methods of either library, not a
+// locked: before ahead of the copy, beforeCommit inside the destination's
+// import transaction once the merge is written, with its summary. The locks keep out the Database methods of either library, not a
 // borrowed handle or another Database on the same file.
-func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportOptions, before func(ctx context.Context) error, after func(ctx context.Context, rep ingest.TransferReport) error) (ingest.TransferReport, error) {
+func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportOptions, before func(ctx context.Context) error, beforeCommit func(ctx context.Context, tx storage.Tx, sum ingest.Summary) error) (ingest.TransferReport, error) {
 	if dst == nil || d == dst {
 		return ingest.TransferReport{}, fmt.Errorf("%w: %w", storage.ErrInvalid, ingest.ErrSelfTransfer)
 	}
@@ -63,20 +63,25 @@ func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportO
 			return ingest.TransferReport{}, err
 		}
 	}
-	rep, err := ingest.Transfer(ctx, ingest.TransferEnd{S: d.store}, ingest.TransferEnd{S: dst.store}, opts, nil)
+	rep, err := ingest.TransferBeforeCommit(ctx, ingest.TransferEnd{S: d.store}, ingest.TransferEnd{S: dst.store}, opts, nil, beforeCommit)
 	if err != nil {
 		return rep, err
 	}
-	// The rows written above carry their blob alone; derive their provenance
-	// now rather than on the next open, as an import of the file would.
+	if transferCommitted != nil {
+		transferCommitted(dst)
+	}
+	// The import derives the provenance of the analyses it writes in the
+	// statements that write them; this pass derives what another writer left
+	// with its blob alone, now rather than on the next open.
 	if err := dst.backfillAnalysisProvenance(ctx); err != nil {
 		return rep, err
 	}
-	if after != nil {
-		return rep, after(ctx, rep)
-	}
 	return rep, nil
 }
+
+// transferCommitted, when a test sets it, runs once the destination's import
+// has committed: the window in which another handle can write to it.
+var transferCommitted func(dst *Database)
 
 // holdForRead counts a reader of d's library among its imports, so that a
 // vacuum is refused while it reads; it is refused itself while one runs.

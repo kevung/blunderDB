@@ -28,7 +28,14 @@ import (
 //   - a comment is appended only when the target doesn't already contain it;
 //   - matches, tournaments, drafts and aliases follow MergeMatches;
 //   - collections follow MergeCollections, the rule the desktop import shares.
-type DBImporter struct{ S storage.Storage }
+type DBImporter struct {
+	S storage.Storage
+	// BeforeCommit, when set, runs inside the import's transaction once
+	// everything is merged and before the commit, so that what it reads of the
+	// destination is what the import wrote and nothing another writer lands
+	// after. An error rolls the import back.
+	BeforeCommit func(ctx context.Context, tx storage.Tx, sum Summary) error
+}
 
 func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog func(Progress)) (Summary, error) {
 	if src.Path == "" {
@@ -228,6 +235,11 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 
 	if err := ctx.Err(); err != nil {
 		return sum, err
+	}
+	if im.BeforeCommit != nil {
+		if err := im.BeforeCommit(ctx, tx, sum); err != nil {
+			return sum, err
+		}
 	}
 	if err := tx.Commit(); err != nil {
 		return sum, err
