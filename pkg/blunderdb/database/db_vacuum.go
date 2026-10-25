@@ -102,7 +102,10 @@ var errVacuumNotLocal = errors.New("vacuum: the library is not a local file")
 // connection to close a WAL database checkpoints and deletes its -wal file,
 // so a -wal still present after this instance closed its own means another
 // process (a read-only instance, a sqlite3 shell) is connected: the copy is
-// dropped and errVacuumSwapUnsafe returned. A failure after the rename point
+// dropped and errVacuumSwapUnsafe returned. A blunderDB instance opening the
+// file between that check and the rename is held off by the swap gate
+// (swapUnderGate). An opener that knows no gate is not: a sqlite3 shell, the
+// serve daemon (sqlite.Open) and migrate. A failure after the rename point
 // leaves the compacted file in place, which is the whole library.
 func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (before, after int64, err error) {
 	path, err := local.FilePath(ctx)
@@ -127,16 +130,7 @@ func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (b
 		slog.Warn("vacuum: closing the database before the swap", "err", err)
 	}
 	d.db = nil
-	swapped := false
-	if _, statErr := os.Stat(path + "-wal"); errors.Is(statErr, os.ErrNotExist) {
-		if err := os.Rename(tmp, path); err == nil {
-			swapped = true
-			_ = os.Remove(path + "-shm")
-			syncDir(filepath.Dir(path))
-		} else {
-			slog.Warn("vacuum: replacing the file failed; vacuuming in place", "err", err)
-		}
-	}
+	swapped := d.swapUnderGate(path, tmp)
 	if !swapped {
 		_ = os.Remove(tmp)
 	}
@@ -157,6 +151,38 @@ func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (b
 		return before, 0, fmt.Errorf("vacuum: %w", err)
 	}
 	return before, fi.Size(), nil
+}
+
+// swapUnderGate renames tmp over path if no connection has the file open,
+// and reports whether it did. The check and the rename happen under the swap
+// gate held exclusively: an instance opening the file in between waits for
+// the rename and opens the new file, instead of connecting to the inode the
+// rename unlinks and writing there at a loss. The gate is only tried, never
+// waited for: an instance in the middle of its open holds it shared, and the
+// file is then not replaced.
+func (d *Database) swapUnderGate(path, tmp string) bool {
+	gate, ok, err := tryLockExclusive(swapGatePathFor(path))
+	if err != nil {
+		slog.Warn("vacuum: swap gate unavailable; vacuuming in place", "err", err)
+		return false
+	}
+	if !ok {
+		return false
+	}
+	defer func() { _ = gate.release() }()
+	if _, statErr := os.Stat(path + "-wal"); !errors.Is(statErr, os.ErrNotExist) {
+		return false
+	}
+	if d.beforeSwapRename != nil {
+		d.beforeSwapRename()
+	}
+	if err := os.Rename(tmp, path); err != nil {
+		slog.Warn("vacuum: replacing the file failed; vacuuming in place", "err", err)
+		return false
+	}
+	_ = os.Remove(path + "-shm")
+	syncDir(filepath.Dir(path))
+	return true
 }
 
 // reopenAfterSwap opens path again as OpenDatabase does, under the d.mu the

@@ -41,6 +41,22 @@ func tryLockExclusive(lockPath string) (*fileLock, bool, error) {
 	return &fileLock{f: f}, true, nil
 }
 
+// lockShared creates/opens lockPath and waits for a shared lock on it
+// (LockFileEx without LOCKFILE_EXCLUSIVE_LOCK): holders of the shared lock
+// exclude one exclusive holder, not each other.
+func lockShared(lockPath string) (*fileLock, error) {
+	f, err := os.OpenFile(lockPath, os.O_CREATE|os.O_RDWR, 0o644)
+	if err != nil {
+		return nil, err
+	}
+	var overlapped windows.Overlapped
+	if err := windows.LockFileEx(windows.Handle(f.Fd()), 0, 0, 1, 0, &overlapped); err != nil {
+		_ = f.Close()
+		return nil, err
+	}
+	return &fileLock{f: f}, nil
+}
+
 // release drops the lock by closing the handle. Safe on a nil/empty lock.
 func (l *fileLock) release() error {
 	if l == nil || l.f == nil {

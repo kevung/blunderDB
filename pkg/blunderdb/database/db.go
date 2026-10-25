@@ -75,6 +75,9 @@ type Database struct {
 	// repair also rebuilds anki_card: ALTER TABLE relaxes no constraint.
 	pendingAnkiCardKinds bool
 	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
+	// beforeSwapRename, when set by a test, runs inside the swap gate just
+	// before vacuumBySwap renames the copy over the file.
+	beforeSwapRename func()
 	// openPath is the file open now, read without mu by IsOpenDatabase:
 	// a watch loop asks it while an import holds the lock.
 	openPath      atomic.Pointer[string]
@@ -255,6 +258,33 @@ func canonicalPath(p string) string {
 		p = real
 	}
 	return filepath.Clean(p)
+}
+
+// swapGatePathFor returns the file whose lock orders opening a database
+// against replacing it (vacuumBySwap): an opener holds it shared until its
+// connection is established, the swap exclusively from the check that no
+// connection exists to the rename. It lives beside the single-writer lock,
+// for the same reasons: in the cache directory, or beside the database when
+// that directory cannot be created.
+func swapGatePathFor(dbPath string) string {
+	return strings.TrimSuffix(lockPathFor(dbPath), ".lock") + ".swap"
+}
+
+// enterSwapGate waits until no file replacement of path is under way and
+// keeps one from starting until the returned release runs. A gate that
+// cannot be taken is no reason to refuse the open: it proceeds unguarded.
+// The wait is unbounded: a third party that keeps the gate exclusively keeps
+// OpenDatabase blocked, under d.mu.
+func enterSwapGate(path string) func() {
+	if path == "" || path == ":memory:" {
+		return func() {}
+	}
+	gate, err := lockShared(swapGatePathFor(path))
+	if err != nil {
+		slog.Warn("swap gate unavailable; opening without it", "path", path, "err", err)
+		return func() {}
+	}
+	return func() { _ = gate.release() }
 }
 
 // releaseFileLock drops the single-writer lock if held.
@@ -591,6 +621,10 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	// Take the single-writer lock first; if another instance holds it, open
 	// read-only rather than race a second writer (ADR-0004).
 	d.acquireFileLock(path)
+	// Held until this open returns: by then its connections exist, and a
+	// swap elsewhere sees them (their -wal) instead of renaming a file
+	// they would keep reading and writing as an unlinked inode.
+	defer enterSwapGate(path)()
 
 	// On any error below, release the lock and handle so a later Setup/Open is
 	// not wedged. Named return covers each `return err`; a no-op when the
