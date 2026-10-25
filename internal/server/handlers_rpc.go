@@ -148,12 +148,23 @@ func rpc[Req any, Resp any](fn func(ctx context.Context, scope string, req Req) 
 			writeStorageError(w, err)
 			return
 		}
-		resp, err := fn(r.Context(), scopeOf(r), req)
+		ctx := context.WithValue(r.Context(), responseHeaderKey{}, w.Header())
+		resp, err := fn(ctx, scopeOf(r), req)
 		if err != nil {
 			writeStorageError(w, err)
 			return
 		}
 		writeJSONResp(w, resp)
+	}
+}
+
+type responseHeaderKey struct{}
+
+// setResponseHeader sets a header on the answer of the rpc handler that runs
+// with ctx; elsewhere it does nothing.
+func setResponseHeader(ctx context.Context, key, value string) {
+	if h, ok := ctx.Value(responseHeaderKey{}).(http.Header); ok {
+		h.Set(key, value)
 	}
 }
 

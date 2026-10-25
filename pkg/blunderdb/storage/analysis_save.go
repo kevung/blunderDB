@@ -48,6 +48,11 @@ func SaveMergedAnalysis(ctx context.Context, store AnalysisStore, scope string, 
 	return store.Save(ctx, scope, positionID, &merged)
 }
 
+// WithPlayedHeader is the response header a daemon sets on analyses.load when
+// it understands withPlayed: one that does not would answer the analysis
+// without the plays, and nothing in the body tells the two apart.
+const WithPlayedHeader = "X-Blunderdb-With-Played"
+
 // PlayedLoader is the capability of a store whose backend joins the played
 // moves to an analysis itself — the remote backend, whose daemon reads the
 // move table it does not serve (/v1/analyses.load with withPlayed).
@@ -128,7 +133,7 @@ func MergeSavedAnalysis(existing *domain.PositionAnalysis, analysis domain.Posit
 	analysis.PlayedMoves = engine.UnionPlayed(
 		playedOrSingle(existing.PlayedMoves, existing.PlayedMove),
 		playedOrSingle(analysis.PlayedMoves, analysis.PlayedMove))
-	analysis.PlayedCubeActions = engine.UnionPlayed(
+	analysis.PlayedCubeActions = engine.UnionCubeActions(
 		playedOrSingle(existing.PlayedCubeActions, existing.PlayedCubeAction),
 		playedOrSingle(analysis.PlayedCubeActions, analysis.PlayedCubeAction))
 	analysis.PlayedMove = ""
@@ -176,24 +181,9 @@ func MergePlayedActions(analysis *domain.PositionAnalysis, checkerMoves, cubeAct
 	}
 	sort.Strings(analysis.PlayedMoves)
 
-	existingCubeActions := make(map[string]bool)
-	for _, a := range analysis.PlayedCubeActions {
-		existingCubeActions[a] = true
-	}
 	// Backward compatibility: include old single PlayedCubeAction field
-	if analysis.PlayedCubeAction != "" {
-		existingCubeActions[analysis.PlayedCubeAction] = true
-	}
-	for _, a := range cubeActions {
-		if a != "" {
-			existingCubeActions[a] = true
-		}
-	}
-	analysis.PlayedCubeActions = make([]string, 0, len(existingCubeActions))
-	for a := range existingCubeActions {
-		analysis.PlayedCubeActions = append(analysis.PlayedCubeActions, a)
-	}
-	sort.Strings(analysis.PlayedCubeActions)
+	analysis.PlayedCubeActions = engine.UnionCubeActions(
+		append(append([]string(nil), analysis.PlayedCubeActions...), analysis.PlayedCubeAction), cubeActions)
 
 	// The old single fields, read by older frontends, hold the first.
 	if len(analysis.PlayedMoves) > 0 {

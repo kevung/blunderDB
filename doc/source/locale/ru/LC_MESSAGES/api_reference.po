@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 23:30+0200\n"
+"POT-Creation-Date: 2026-10-25 02:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -43,11 +43,11 @@ msgstr ""
 " с их формой ответа (JSON или NDJSON для потокового списка) и, если "
 "применимо, упоминанием необязательного заголовка ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:438
+#: ../../source/api_reference.rst:437
 msgid "Idempotence"
 msgstr "Идемпотентность"
 
-#: ../../source/api_reference.rst:440
+#: ../../source/api_reference.rst:439
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -74,11 +74,11 @@ msgstr ""
 "пометку «(Idempotency-Key)» в таблице выше. Ни одному другому методу этот"
 " заголовок не нужен, и они его не принимают."
 
-#: ../../source/api_reference.rst:452
+#: ../../source/api_reference.rst:451
 msgid "Lectures conditionnelles"
 msgstr "Условные чтения"
 
-#: ../../source/api_reference.rst:454
+#: ../../source/api_reference.rst:453
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,11 +90,11 @@ msgstr ""
 "без тела, пока не изменилось ничто из того, что читает метод — см. "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:459
+#: ../../source/api_reference.rst:458
 msgid "Enregistrer et lire une analyse"
 msgstr "Сохранение и чтение анализа"
 
-#: ../../source/api_reference.rst:461
+#: ../../source/api_reference.rst:460
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -105,7 +105,10 @@ msgid ""
 "``analyses.load`` rend l'analyse telle qu'enregistrée ; avec "
 "``withPlayed`` à ``true``, ses coups et actions de videau joués sont "
 "joints à ceux que les matchs ont joués dans la position, et ses analyses "
-"du videau viennent XG en tête, comme les lit le bureau."
+"du videau viennent XG en tête, comme les lit le bureau. Chaque réponse "
+"d'``analyses.load`` porte l'en-tête ``X-Blunderdb-With-Played`` : un "
+"démon qui ne le rend pas ignore ``withPlayed`` et rend l'analyse sans les"
+" coups des matchs."
 msgstr ""
 "``analyses.save`` сохраняет анализ как есть и заменяет тот, что был у "
 "позиции: от старого ничего не остаётся. ``analyses.merge`` объединяет его"
@@ -116,13 +119,15 @@ msgstr ""
 "сохранённом виде; с ``withPlayed`` равным ``true`` его сыгранные ходы и "
 "действия с кубом объединяются с теми, что были сыграны в этой позиции в "
 "матчах, а анализы куба идут с XG первым, как их читает настольное "
-"приложение."
+"приложение. Каждый ответ ``analyses.load`` несёт заголовок ``X-Blunderdb-"
+"With-Played``: демон, который его не отправляет, игнорирует "
+"``withPlayed`` и возвращает анализ без ходов матчей."
 
-#: ../../source/api_reference.rst:472
+#: ../../source/api_reference.rst:473
 msgid "Repères d'une transcription"
 msgstr "Таймкоды транскрипции"
 
-#: ../../source/api_reference.rst:474
+#: ../../source/api_reference.rst:475
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -152,7 +157,7 @@ msgstr ""
 "путь), пустая строка отвязывает его; ``set_header`` тоже задаёт его, "
 "когда его заголовок называет источник, но никогда не стирает."
 
-#: ../../source/api_reference.rst:486
+#: ../../source/api_reference.rst:487
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -167,7 +172,7 @@ msgstr ""
 "вместе с ``decision_estimated`` — это оценка: ход без метки действия, "
 "измеренный от броска до первого момента следующего действия."
 
-#: ../../source/api_reference.rst:492
+#: ../../source/api_reference.rst:493
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

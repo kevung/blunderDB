@@ -465,7 +465,9 @@ chaque moteur, l'union des coups joués, les rollouts des deux, la date de créa
 de l'analyse enregistrée. ``analyses.load`` rend l'analyse telle qu'enregistrée ;
 avec ``withPlayed`` à ``true``, ses coups et actions de videau joués sont joints à ceux
 que les matchs ont joués dans la position, et ses analyses du videau viennent XG
-en tête, comme les lit le bureau.
+en tête, comme les lit le bureau. Chaque réponse d'``analyses.load`` porte l'en-tête
+``X-Blunderdb-With-Played`` : un démon qui ne le rend pas ignore ``withPlayed`` et rend
+l'analyse sans les coups des matchs.
 
 Repères d'une transcription
 ---------------------------

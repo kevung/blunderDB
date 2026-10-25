@@ -335,3 +335,27 @@ func TestMergeAnalysisUpdatePathKeepsExistingCubeAnalysisWhenIncomingHasNone(t *
 		t.Errorf("existing DoublingCubeAnalysis should survive an incoming checker-only update: got %+v", got.DoublingCubeAnalysis)
 	}
 }
+
+// A newer analysis of an engine already in the set replaces that engine's
+// entry, as a save does: the set never keeps the stale one beside the primary.
+func TestMergeAnalysisUpdatePathReplacesTheSameEnginesCubeEntry(t *testing.T) {
+	oldXG := domain.DoublingCubeAnalysis{AnalysisEngine: "XG", BestCubeAction: "No Double"}
+	gnubg := domain.DoublingCubeAnalysis{AnalysisEngine: "gnubg", BestCubeAction: "No Double"}
+	existing := &domain.PositionAnalysis{
+		DoublingCubeAnalysis: &oldXG,
+		AllCubeAnalyses:      []domain.DoublingCubeAnalysis{oldXG, gnubg},
+	}
+	incoming := domain.PositionAnalysis{
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisEngine: "XG", BestCubeAction: "Double, Take"},
+	}
+	got := mergeAnalysis(existing, incoming)
+
+	if got.DoublingCubeAnalysis.BestCubeAction != "Double, Take" || len(got.AllCubeAnalyses) != 2 {
+		t.Fatalf("primary %+v, set %+v", got.DoublingCubeAnalysis, got.AllCubeAnalyses)
+	}
+	for _, ca := range got.AllCubeAnalyses {
+		if ca.AnalysisEngine == "XG" && ca.BestCubeAction != "Double, Take" {
+			t.Errorf("XG's entry in the set is the stale one: %+v", ca)
+		}
+	}
+}

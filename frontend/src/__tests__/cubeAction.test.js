@@ -22,6 +22,7 @@ describe('normalizeCubeAction', () => {
         expect(normalizeCubeAction('Take')).toEqual(['double', 'take']);
         expect(normalizeCubeAction('Pass')).toEqual(['double', 'pass']);
         expect(normalizeCubeAction('No Double')).toEqual(['nodouble']);
+        expect(normalizeCubeAction('Double No')).toEqual(['nodouble']);
         expect(normalizeCubeAction('Double')).toEqual(['double']);
     });
 });
