@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -123,5 +125,28 @@ func TestJSONImportKeepsRollouts(t *testing.T) {
 	}
 	if !got.HasRollout("held") || !got.HasPrimary() {
 		t.Errorf("rollouts %+v, primary %v — want the held rollout beside the imported analysis", got.Rollouts, got.HasPrimary())
+	}
+}
+
+func TestJSONImportRefusesSignedCommentWithOverlongAuthor(t *testing.T) {
+	ctx := context.Background()
+	dst, err := sqlite.Open(ctx, ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dst.Close()
+	p := domain.InitializePosition()
+	pos, err := json.Marshal(positionBundle{
+		Position:          &p,
+		Comments:          []string{"x"},
+		CommentAuthors:    []string{strings.Repeat("a", 121)},
+		CommentSignatures: []string{"sig"},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = JSONImporter{S: dst}.Import(ctx, "", Source{Reader: bytes.NewReader(pos)}, nil)
+	if !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("import: %v; want ErrInvalid", err)
 	}
 }

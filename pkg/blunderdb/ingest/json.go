@@ -207,6 +207,9 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 			}
 		}
 		for i, txt := range b.Comments {
+			if err := storage.CheckCarriedAuthor(b.commentAuthor(i), b.commentSignature(i)); err != nil {
+				return sum, err
+			}
 			if _, err := tx.Comments().AddFrom(storage.WithCarriedComment(ctx, b.commentAuthor(i), b.commentSignature(i)), scope, id, txt, b.commentOrigin(i)); err != nil {
 				return sum, err
 			}

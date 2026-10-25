@@ -50,6 +50,9 @@ func (s *Server) commentRoutes() []route {
 	cs := func() storage.CommentStore { return s.opts.Storage.Comments() }
 	return []route{
 		{http.MethodPost, "/v1/comments.add", rpc(func(ctx context.Context, scope string, req commentAddReq) (idResp, error) {
+			if err := storage.CheckCarriedAuthor(req.Author, req.Signature); err != nil {
+				return idResp{}, err
+			}
 			if strings.TrimSpace(req.Signature) != "" {
 				ctx = storage.WithCarriedComment(ctx, req.Author, req.Signature)
 			} else if a := storage.NormalizeCommentAuthor(req.Author); a != "" {
