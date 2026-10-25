@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 02:43+0200\n"
+"POT-Creation-Date: 2026-10-25 02:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -78,27 +78,29 @@ msgstr ""
 msgid ""
 "Une base enregistre aussi, dans ses métadonnées (clé "
 "``min_reader_version``), la version de schéma minimale qu'un blunderDB "
-"doit lire pour l'ouvrir. Une version de blunderDB qui lit un schéma plus "
-"ancien refuse alors d'ouvrir la base, en interface graphique, en ligne de"
-" commande, avec ``serve`` comme avec ``migrate``, et affiche les deux "
-"versions : la base reste intacte."
+"doit lire pour l'ouvrir. À partir de cette version, blunderDB connaît "
+"cette clé : s'il lit un schéma plus ancien que ce minimum, il refuse "
+"d'ouvrir la base, en interface graphique, en ligne de commande, avec "
+"``serve`` comme avec ``migrate``, et affiche les deux versions : la base "
+"reste intacte. Les versions antérieures ignorent cette clé."
 msgstr ""
 "Un database registra inoltre nei suoi metadati (chiave "
 "``min_reader_version``) la versione minima dello schema che un blunderDB "
-"deve leggere per aprirlo. Una versione di blunderDB che legge uno schema "
-"più vecchio rifiuta allora di aprire il database, nell'interfaccia "
-"grafica, da riga di comando, con ``serve`` come con ``migrate``, e mostra"
-" entrambe le versioni: il database resta intatto."
+"deve leggere per aprirlo. A partire da questa versione, blunderDB conosce"
+" questa chiave: se legge uno schema più vecchio di tale minimo, rifiuta "
+"di aprire il database, nell'interfaccia grafica, da riga di comando, con "
+"``serve`` come con ``migrate``, e mostra entrambe le versioni: il "
+"database resta intatto. Le versioni precedenti ignorano questa chiave."
 
-#: ../../source/annexe_db_scheme.rst:38
+#: ../../source/annexe_db_scheme.rst:39
 msgid "Principales tables"
 msgstr "Tabelle principali"
 
-#: ../../source/annexe_db_scheme.rst:40
+#: ../../source/annexe_db_scheme.rst:41
 msgid "Le schéma courant s'articule autour des tables suivantes :"
 msgstr "Lo schema corrente si articola attorno alle seguenti tabelle:"
 
-#: ../../source/annexe_db_scheme.rst:42
+#: ../../source/annexe_db_scheme.rst:43
 msgid ""
 "**Positions et analyses** : ``position`` (les positions, dédupliquées), "
 "``analysis`` (les données d'analyse associées) et ``comment`` (les "
@@ -107,7 +109,7 @@ msgstr ""
 "**Posizioni e analisi**: ``position`` (le posizioni, deduplicate), "
 "``analysis`` (i dati di analisi associati) e ``comment`` (i commenti)."
 
-#: ../../source/annexe_db_scheme.rst:46
+#: ../../source/annexe_db_scheme.rst:47
 msgid ""
 "**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent "
 "les matchs importés, leurs parties, leurs coups et l'analyse de chaque "
@@ -117,7 +119,7 @@ msgstr ""
 "i match importati, le loro partite, le loro mosse e l'analisi di ciascuna"
 " mossa."
 
-#: ../../source/annexe_db_scheme.rst:49
+#: ../../source/annexe_db_scheme.rst:50
 msgid ""
 "**Collections** : ``collection`` et ``collection_position`` (table de "
 "liaison) regroupent des positions choisies manuellement."
@@ -125,11 +127,11 @@ msgstr ""
 "**Collezioni**: ``collection`` e ``collection_position`` (tabella di "
 "collegamento) raggruppano posizioni scelte manualmente."
 
-#: ../../source/annexe_db_scheme.rst:52
+#: ../../source/annexe_db_scheme.rst:53
 msgid "**Tournois** : ``tournament`` regroupe des matchs en tournois."
 msgstr "**Tornei**: ``tournament`` raggruppa i match in tornei."
 
-#: ../../source/annexe_db_scheme.rst:54
+#: ../../source/annexe_db_scheme.rst:55
 msgid ""
 "**Répétition espacée (Anki)** : ``anki_deck``, ``anki_card`` et "
 "``anki_review_log`` gèrent les paquets, les cartes et le journal des "
@@ -139,7 +141,7 @@ msgstr ""
 "``anki_review_log`` gestiscono i mazzi, le carte e il registro delle "
 "revisioni (algoritmo FSRS)."
 
-#: ../../source/annexe_db_scheme.rst:58
+#: ../../source/annexe_db_scheme.rst:59
 msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
@@ -151,11 +153,11 @@ msgstr ""
 " la libreria di filtri e ``metadata`` i metadati del database (tra cui la"
 " versione dello schema)."
 
-#: ../../source/annexe_db_scheme.rst:64
+#: ../../source/annexe_db_scheme.rst:65
 msgid "Principes de conception"
 msgstr "Principi di progettazione"
 
-#: ../../source/annexe_db_scheme.rst:66
+#: ../../source/annexe_db_scheme.rst:67
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
@@ -163,7 +165,7 @@ msgstr ""
 "A partire dallo schema 2.0.0, diverse scelte di progettazione accelerano "
 "la ricerca e riducono la dimensione del file:"
 
-#: ../../source/annexe_db_scheme.rst:69
+#: ../../source/annexe_db_scheme.rst:70
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -173,7 +175,7 @@ msgstr ""
 "Zobrist e un indice univoco, in modo che una stessa posizione incontrata "
 "in più import venga memorizzata una sola volta."
 
-#: ../../source/annexe_db_scheme.rst:73
+#: ../../source/annexe_db_scheme.rst:74
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -185,7 +187,7 @@ msgstr ""
 "pedine arretrate, errore di mossa o di cubo, probabilità di vittoria…) "
 "sono precalcolati in colonne dedicate per un filtraggio rapido."
 
-#: ../../source/annexe_db_scheme.rst:78
+#: ../../source/annexe_db_scheme.rst:79
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -195,7 +197,7 @@ msgstr ""
 "punti consentono un prefiltro intero molto rapido durante le ricerche di "
 "motivi di struttura."
 
-#: ../../source/annexe_db_scheme.rst:82
+#: ../../source/annexe_db_scheme.rst:83
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -209,7 +211,7 @@ msgstr ""
 "leggibili e vengono convertite da ``vacuum`` o ``reencode``), il che "
 "riduce molto la dimensione del file."
 
-#: ../../source/annexe_db_scheme.rst:88
+#: ../../source/annexe_db_scheme.rst:89
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."

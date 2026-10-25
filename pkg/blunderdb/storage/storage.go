@@ -92,7 +92,10 @@ type Storage interface {
 	// Version reports the schema version recorded in the database.
 	Version(ctx context.Context) (string, error)
 
-	// Migrate brings the database up to the current schema version.
+	// Migrate brings the database up to the current schema version. A
+	// database whose MinReaderVersionKey is newer than the schema this binary
+	// speaks is refused with ErrDatabaseTooNew before any write; otherwise the
+	// floor is raised to domain.MinReaderVersion once the schema is current.
 	Migrate(ctx context.Context) error
 }
 

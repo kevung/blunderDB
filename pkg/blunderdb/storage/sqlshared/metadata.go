@@ -3,6 +3,7 @@ package sqlshared
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math"
 	"slices"
 	"sort"
@@ -70,7 +71,15 @@ func (s *MetadataStore) Load(ctx context.Context, scope string) (map[string]stri
 }
 
 // Save writes the given metadata key/value pairs, replacing existing keys.
+// The schema keys are refused (ErrInvalid): the table is global, so a tenant
+// that set them would decide which binary may open everyone's database. Only
+// SetVersion and the backends' own migration write them.
 func (s *MetadataStore) Save(ctx context.Context, scope string, metadata map[string]string) error {
+	for key := range metadata {
+		if key == metadataVersionKey || key == storage.MinReaderVersionKey {
+			return errf(s.DB, "save metadata", fmt.Errorf("%w: key %q is reserved to the schema", storage.ErrInvalid, key))
+		}
+	}
 	err := s.DB.Transact(ctx, func(tx Execer) error {
 		for key, value := range metadata {
 			if _, err := tx.Exec(ctx, upsertMetadataSQL, key, value); err != nil {

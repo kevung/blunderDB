@@ -29,10 +29,11 @@ d'une base ouverte est visible dans le panneau **Métadonnées** (commande
    préalable.
 
 Une base enregistre aussi, dans ses métadonnées (clé ``min_reader_version``),
-la version de schéma minimale qu'un blunderDB doit lire pour l'ouvrir. Une
-version de blunderDB qui lit un schéma plus ancien refuse alors d'ouvrir la
-base, en interface graphique, en ligne de commande, avec ``serve`` comme avec
-``migrate``, et affiche les deux versions : la base reste intacte.
+la version de schéma minimale qu'un blunderDB doit lire pour l'ouvrir. À partir
+de cette version, blunderDB connaît cette clé : s'il lit un schéma plus ancien
+que ce minimum, il refuse d'ouvrir la base, en interface graphique, en ligne de
+commande, avec ``serve`` comme avec ``migrate``, et affiche les deux versions :
+la base reste intacte. Les versions antérieures ignorent cette clé.
 
 Principales tables
 ------------------

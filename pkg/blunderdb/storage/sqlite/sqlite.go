@@ -88,6 +88,12 @@ func open(ctx context.Context, dsn string, opts *storage.Options, watch bool) (*
 	}
 	st := &Storage{binder: binder{db: db, probe: &writeProbe{}}, sqlDB: db, ownsDB: true, migrationProgress: progress}
 	if !fresh {
+		// Before the first write of the open: a database above the floor is
+		// left exactly as it was.
+		if err := CheckReaderFloor(ctx, db); err != nil {
+			db.Close()
+			return nil, err
+		}
 		if err := st.restoreBulkIndexes(ctx); err != nil {
 			db.Close()
 			return nil, err
