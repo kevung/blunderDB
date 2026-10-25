@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -21,8 +22,17 @@ func (s *MatchEquityTableStore) Save(ctx context.Context, scope string, met doma
 	if name == "" || met.Digest == "" || met.Source == "" {
 		return 0, fmt.Errorf("%s: save match equity table: empty name, digest or source: %w", s.DB.Name(), storage.ErrInvalid)
 	}
+	// The digest names the table by its values: a caller's word for it is not
+	// trusted, or two different tables could share one row.
+	parsed, err := engine.ParseGnubgMET([]byte(met.Source))
+	if err != nil {
+		return 0, fmt.Errorf("%s: save match equity table: source: %v: %w", s.DB.Name(), err, storage.ErrInvalid)
+	}
+	if want := parsed.Digest(); want != met.Digest {
+		return 0, fmt.Errorf("%s: save match equity table: digest %q does not match its source (%q): %w", s.DB.Name(), met.Digest, want, storage.ErrInvalid)
+	}
 	var id int64
-	err := s.DB.Transact(ctx, func(tx Execer) error {
+	err = s.DB.Transact(ctx, func(tx Execer) error {
 		tenant, targs := tx.TenantFilter("", scope)
 		err := tx.QueryRow(ctx, `SELECT id FROM match_equity_table WHERE digest = ? AND `+tenant,
 			append([]any{met.Digest}, targs...)...).Scan(&id)

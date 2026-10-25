@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -209,7 +210,7 @@ func testMETTravelsWithExport(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	unused := domain.MatchEquityTable{Name: "Unused", Digest: "unused-digest", Source: "<met>unused</met>"}
+	unused := ValidMET("Unused", 6)
 	if _, err := mt.Save(ctx, "", unused); err != nil {
 		t.Fatal(err)
 	}
@@ -370,4 +371,18 @@ func testMETKeptByTrash(t *testing.T, s storage.Storage) {
 	if got := ofAnalysis(t, s, restored); got != club {
 		t.Errorf("restored analysis names table %d, want %d", got, club)
 	}
+}
+
+// ValidMET is a small gnubg table named name; the digest follows from its
+// values, so variant tells two tables apart.
+func ValidMET(name string, variant int) domain.MatchEquityTable {
+	v := 0.5 + float64(variant%40)/100
+	src := fmt.Sprintf(`<met><info><name>%s</name><length>2</length></info>
+<pre-crawford-table type="explicit"><row><me>0.5</me><me>%.2f</me></row><row><me>0.3</me><me>0.5</me></row></pre-crawford-table>
+<post-crawford-table player="both" type="explicit"><row><me>0.5</me><me>0.48</me></row></post-crawford-table></met>`, name, v)
+	m, err := engine.ParseGnubgMET([]byte(src))
+	if err != nil {
+		panic(err)
+	}
+	return domain.MatchEquityTable{Name: name, Digest: m.Digest(), Source: src}
 }

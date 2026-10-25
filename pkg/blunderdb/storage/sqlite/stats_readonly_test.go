@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
@@ -472,7 +473,7 @@ func TestPlayerTableMixedMETReadOnlyMatchesWritable(t *testing.T) {
 	if err != nil || len(ids) < 2 {
 		t.Fatalf("PositionIDsByMatch(%d) = %d ids, %v", matchID, len(ids), err)
 	}
-	met, err := w.MatchEquityTables().Save(ctx, "", domain.MatchEquityTable{Name: "Rockwell-Kazaross", Digest: "rk", Source: "<met/>"})
+	met, err := w.MatchEquityTables().Save(ctx, "", testMET(t, "Rockwell-Kazaross"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -498,4 +499,17 @@ func TestPlayerTableMixedMETReadOnlyMatchesWritable(t *testing.T) {
 	if n := matchStatsRows(t, w); n != 0 {
 		t.Errorf("read-only players table wrote %d match_stats rows", n)
 	}
+}
+
+// testMET is a minimal valid gnubg table: Save recomputes its digest.
+func testMET(t *testing.T, name string) domain.MatchEquityTable {
+	t.Helper()
+	src := `<met><info><name>` + name + `</name><length>2</length></info>
+<pre-crawford-table type="explicit"><row><me>0.5</me><me>0.7</me></row><row><me>0.3</me><me>0.5</me></row></pre-crawford-table>
+<post-crawford-table player="both" type="explicit"><row><me>0.5</me><me>0.48</me></row></post-crawford-table></met>`
+	m, err := engine.ParseGnubgMET([]byte(src))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return domain.MatchEquityTable{Name: name, Digest: m.Digest(), Source: src}
 }

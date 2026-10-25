@@ -22,15 +22,26 @@ func testMETLifecycle(t *testing.T, s storage.Storage) {
 	if _, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "x", Digest: "d"}); !errors.Is(err, storage.ErrInvalid) {
 		t.Fatalf("Save without a source = %v, want ErrInvalid", err)
 	}
-	a, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Rockwell-Kazaross", Digest: "aaa", Source: "<met/>"})
+	renamedMET := ValidMET("renamed copy", 1)
+	renamedMET.Name = "renamed copy"
+	jacobs := ValidMET("Jacobs-Trice", 2)
+	if bad := (domain.MatchEquityTable{Name: "x", Digest: "bbb", Source: jacobs.Source}); true {
+		if _, err := mt.Save(ctx, "", bad); !errors.Is(err, storage.ErrInvalid) {
+			t.Fatalf("Save with a digest that is not its source's = %v, want ErrInvalid", err)
+		}
+		if _, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "x", Digest: "d", Source: "<met/>"}); !errors.Is(err, storage.ErrInvalid) {
+			t.Fatalf("Save of a source that is no gnubg table = %v, want ErrInvalid", err)
+		}
+	}
+	a, err := mt.Save(ctx, "", ValidMET("Rockwell-Kazaross", 1))
 	if err != nil {
 		t.Fatal(err)
 	}
-	again, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "renamed copy", Digest: "aaa", Source: "<met/>"})
+	again, err := mt.Save(ctx, "", renamedMET)
 	if err != nil || again != a {
 		t.Fatalf("Save of a digest already held = %d, %v; want %d", again, err, a)
 	}
-	b, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Jacobs-Trice", Digest: "bbb", Source: "<met>b</met>"})
+	b, err := mt.Save(ctx, "", jacobs)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +52,7 @@ func testMETLifecycle(t *testing.T, s storage.Storage) {
 		t.Fatal(err)
 	}
 	cur, err := mt.Current(ctx, "")
-	if err != nil || cur == nil || cur.ID != b || cur.Source != "<met>b</met>" || !cur.Current {
+	if err != nil || cur == nil || cur.ID != b || cur.Source != jacobs.Source || !cur.Current {
 		t.Fatalf("Current after SetCurrent(%d) = %+v, %v", b, cur, err)
 	}
 	list, err := mt.List(ctx, "")
@@ -132,7 +143,7 @@ func testLessonProgress(t *testing.T, s storage.Storage) {
 // tenant's tables, marks its Steps done.
 func checkSchema231Isolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
 	mt := s.MatchEquityTables()
-	id, err := mt.Save(ctx, a, domain.MatchEquityTable{Name: "T", Digest: "same", Source: "<met/>"})
+	id, err := mt.Save(ctx, a, ValidMET("T", 3))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -142,7 +153,7 @@ func checkSchema231Isolation(t *testing.T, ctx context.Context, s storage.Storag
 	if err := mt.SetCurrent(ctx, b, id); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("SetCurrent(%s) on %s's table = %v, want ErrNotFound", b, a, err)
 	}
-	own, err := mt.Save(ctx, b, domain.MatchEquityTable{Name: "T", Digest: "same", Source: "<met/>"})
+	own, err := mt.Save(ctx, b, ValidMET("T", 3))
 	if err != nil || own == id {
 		t.Errorf("Save(%s) of the same digest = %d, %v; want a row of its own", b, own, err)
 	}

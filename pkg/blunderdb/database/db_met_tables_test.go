@@ -112,7 +112,7 @@ func TestImportDatabaseCarriesTheMET(t *testing.T) {
 	d := newBatchTestDB(t)
 	// An unrelated table first, so the receiver's id for Rockwell-Kazaross
 	// is not the source's.
-	if _, err := d.store.MatchEquityTables().Save(context.Background(), "", domain.MatchEquityTable{Name: "Other", Digest: "other", Source: "<met/>"}); err != nil {
+	if _, err := d.store.MatchEquityTables().Save(context.Background(), "", testMET(t, "Other")); err != nil {
 		t.Fatal(err)
 	}
 	rk, err := d.ImportMET("pkg/blunderdb/engine/testdata/met/Rockwell-Kazaross.xml")
@@ -226,4 +226,17 @@ func TestImportDatabaseRecomputesAForgedMETDigest(t *testing.T) {
 	if err != nil || met != carried.ID {
 		t.Errorf("imported analysis names table %d, %v; want the carried table %d, never the built-in one", met, err, carried.ID)
 	}
+}
+
+// testMET is a minimal valid gnubg table: Save recomputes its digest.
+func testMET(t *testing.T, name string) domain.MatchEquityTable {
+	t.Helper()
+	src := `<met><info><name>` + name + `</name><length>2</length></info>
+<pre-crawford-table type="explicit"><row><me>0.5</me><me>0.7</me></row><row><me>0.3</me><me>0.5</me></row></pre-crawford-table>
+<post-crawford-table player="both" type="explicit"><row><me>0.5</me><me>0.48</me></row></post-crawford-table></met>`
+	m, err := engine.ParseGnubgMET([]byte(src))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return domain.MatchEquityTable{Name: name, Digest: m.Digest(), Source: src}
 }

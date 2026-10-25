@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -143,7 +142,7 @@ func testStatsCountDrilldowns(t *testing.T, s storage.Storage) {
 	// One of the Open match's analyses valued with another table than the
 	// current one: the totals keep the match by its other decision, and so
 	// must the lists they open.
-	met, err := s.MatchEquityTables().Save(ctx, "", domain.MatchEquityTable{Name: "Other", Digest: "other", Source: "<met/>"})
+	met, err := s.MatchEquityTables().Save(ctx, "", ValidMET("Other", 5))
 	if err != nil {
 		t.Fatalf("Save MET: %v", err)
 	}
