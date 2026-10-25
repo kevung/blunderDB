@@ -101,26 +101,44 @@ function showNoDatabaseOpen() {
     refreshLibraryCounts();
 }
 
+/** The session save dropped before an open that left the library as it was still describes the screen. */
+async function resumeSessionSave() {
+    try {
+        const { saveSessionState } = await import('./sessionService.js');
+        await saveSessionState();
+    } catch (error) {
+        logger.error('Error saving the session after a failed open:', error);
+    }
+}
+
 /**
  * After a failed Setup or Open: no library on screen only if the backend no longer carries the
  * one it had. A refusal before any change (the file open in another group, a path refused) keeps
  * it, and so does the screen.
  * @param {string} previous the path on screen before the attempt
+ * @returns {Promise<boolean>} whether the library on screen is still carried by the backend
  */
 async function showWhatFailedLeft(previous) {
     if (previous && (await IsOpenDatabase(previous).catch(() => false))) {
-        // Reopened after the failure: another process may have taken its write lock meanwhile.
-        if ((await IsReadOnly().catch(() => false)) && !get(databaseReadOnlyStore)) {
-            databaseReadOnlyStore.set(true);
-            WindowSetTitle(libraryTitle(previous, true, translate('commands.readOnlySuffix')));
-            setStatusBarMessage(tMsg('libraryGroups.reopenedReadOnly', { name: getFilenameFromPath(previous) }));
+        // Reopened after the failure: its write lock may have changed hands meanwhile, either way.
+        const readOnly = await IsReadOnly().catch(() => false);
+        if (readOnly !== get(databaseReadOnlyStore)) {
+            databaseReadOnlyStore.set(readOnly);
+            WindowSetTitle(libraryTitle(previous, readOnly, translate('commands.readOnlySuffix')));
+            if (readOnly) {
+                // Keep the reason of the failure, the status bar holds a single message.
+                const reason = get(statusBarTextStore);
+                const said = typeof reason === 'string' ? reason : reason ? translate(reason.i18nKey, reason.i18nParams ?? undefined) : '';
+                setStatusBarMessage(tMsg('libraryGroups.reopenedReadOnly', { reason: said, name: getFilenameFromPath(previous) }));
+            }
         }
-        return;
+        return true;
     }
     // The backend let the library go: reads begun before belong to it, and so does the screen.
     libraryReplaced();
     await forgetLibraryLeft();
     showNoDatabaseOpen();
+    return false;
 }
 
 /**
@@ -370,7 +388,7 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
             if (isCancelled(error)) {
                 setStatusBarMessage(libraryGroupError(error));
                 statusBarModeStore.set('NORMAL');
-                await showWhatFailedLeft(previous);
+                if (await showWhatFailedLeft(previous)) await resumeSessionSave();
                 return;
             }
             openFailed = true;
@@ -423,7 +441,7 @@ export async function openDatabaseByPath(filePath, { inNewGroup } = {}) {
         setStatusBarMessage(tooNewMessage(error) ?? tMsg('commands.errorOpeningDb'));
         statusBarModeStore.set('NORMAL');
         // A failure after a successful open leaves the database open, and its path displayed.
-        if (openFailed) await showWhatFailedLeft(previous);
+        if (openFailed && (await showWhatFailedLeft(previous))) await resumeSessionSave();
     }
 }
 

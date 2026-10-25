@@ -3410,7 +3410,7 @@
             "rederive_columns": "columnas derivadas"
         },
         "migrationCancelled": "Migración cancelada",
-        "reopenedReadOnly": "«{name}» reabierta en solo lectura: otra ventana la tomó entretanto",
+        "reopenedReadOnly": "{reason} — «{name}» reabierta en solo lectura: otra ventana la tomó entretanto",
         "answerDropped": "La biblioteca en pantalla ha cambiado entretanto: la confirmación no se ha aplicado",
         "writeDropped": "La biblioteca en pantalla ha cambiado entretanto: el cambio no se ha escrito",
         "jobRunning": "Una tarea en segundo plano trabaja en esta biblioteca",

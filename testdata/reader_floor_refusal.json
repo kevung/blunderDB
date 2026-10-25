@@ -1,0 +1,4 @@
+{
+    "floor": "99.0.0",
+    "message": "this database requires a newer blunderDB: it needs a blunderDB that reads schema 99.0.0 or later, this one reads {schema}; update blunderDB to open it"
+}

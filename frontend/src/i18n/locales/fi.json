@@ -3410,7 +3410,7 @@
             "rederive_columns": "johdetut sarakkeet"
         },
         "migrationCancelled": "Migraatio peruutettu",
-        "reopenedReadOnly": "\"{name}\" avattiin uudelleen vain luku -tilassa: toinen ikkuna otti sen välissä",
+        "reopenedReadOnly": "{reason} — \"{name}\" avattiin uudelleen vain luku -tilassa: toinen ikkuna otti sen välissä",
         "answerDropped": "Näytöllä oleva kirjasto vaihtui sillä välin: vahvistusta ei sovellettu",
         "writeDropped": "Näytöllä oleva kirjasto vaihtui sillä välin: muutosta ei kirjoitettu",
         "jobRunning": "Taustatehtävä on käynnissä tässä kirjastossa",

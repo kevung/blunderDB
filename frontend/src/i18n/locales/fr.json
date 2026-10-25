@@ -3410,7 +3410,7 @@
             "rederive_columns": "colonnes dérivées"
         },
         "migrationCancelled": "Migration annulée",
-        "reopenedReadOnly": "« {name} » rouverte en lecture seule : une autre fenêtre l'a prise entre-temps",
+        "reopenedReadOnly": "{reason} — « {name} » rouverte en lecture seule : une autre fenêtre l'a prise entre-temps",
         "answerDropped": "La bibliothèque à l'écran a changé entre-temps : la confirmation n'a pas été appliquée",
         "writeDropped": "La bibliothèque à l'écran a changé entre-temps : la modification n'a pas été écrite",
         "jobRunning": "Une tâche de fond travaille dans cette bibliothèque",

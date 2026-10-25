@@ -3410,7 +3410,7 @@
             "rederive_columns": "derived columns"
         },
         "migrationCancelled": "Migration cancelled",
-        "reopenedReadOnly": "\"{name}\" reopened read-only: another window took it meanwhile",
+        "reopenedReadOnly": "{reason} — \"{name}\" reopened read-only: another window took it meanwhile",
         "answerDropped": "The library on screen changed meanwhile: the confirmation was not applied",
         "writeDropped": "The library on screen changed meanwhile: the change was not written",
         "jobRunning": "A background task is working in this library",

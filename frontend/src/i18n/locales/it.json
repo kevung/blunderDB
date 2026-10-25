@@ -3410,7 +3410,7 @@
             "rederive_columns": "colonne derivate"
         },
         "migrationCancelled": "Migrazione annullata",
-        "reopenedReadOnly": "«{name}» riaperto in sola lettura: un'altra finestra lo ha preso nel frattempo",
+        "reopenedReadOnly": "{reason} — «{name}» riaperto in sola lettura: un'altra finestra lo ha preso nel frattempo",
         "answerDropped": "La libreria sullo schermo è cambiata nel frattempo: la conferma non è stata applicata",
         "writeDropped": "La libreria sullo schermo è cambiata nel frattempo: la modifica non è stata scritta",
         "jobRunning": "Un'attività in background lavora in questa libreria",

@@ -13,6 +13,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	_ "modernc.org/sqlite"
 )
 
@@ -481,5 +482,86 @@ func TestOpenLibraryGroup_CancelWhileWaiting(t *testing.T) {
 	}
 	if groups := a.ListLibraryGroups(); len(groups) != 1 {
 		t.Fatalf("groups after a cancelled open: %+v, want only the first", groups)
+	}
+}
+
+// A refusal that is not a cancel (a database that needs a newer blunderDB)
+// also closes the library it replaced: that one is reopened, with its write
+// lock.
+func TestOpenLibrary_RefusedDatabaseReopensPrevious(t *testing.T) {
+	dir := t.TempDir()
+	pathA := newLibraryFile(t, dir, "a.db", 1)
+	tooNew := newLibraryFile(t, dir, "new.db", 1)
+	raw, err := sql.Open("sqlite", tooNew)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('min_reader_version', '99.0.0')`); err != nil {
+		t.Fatal(err)
+	}
+	_ = raw.Close()
+
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(func() { a.closeParkedLibraries(); _ = db.Close() })
+	if err := a.OpenLibrary(pathA); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.OpenLibrary(tooNew); !errors.Is(err, storage.ErrDatabaseTooNew) {
+		t.Fatalf("open of a too-new database: %v, want ErrDatabaseTooNew", err)
+	}
+	if got := database.OpenPath(db); got != pathA {
+		t.Errorf("after the refusal %q is open, want the previous %q", got, pathA)
+	}
+	if db.IsReadOnly() {
+		t.Error("the previous library was reopened read-only though nobody took its lock")
+	}
+}
+
+// When another process takes the previous library's lock while the open
+// runs, the library comes back read-only.
+func TestOpenLibrary_PreviousReopenedReadOnlyWhenLockTaken(t *testing.T) {
+	dir := t.TempDir()
+	pathA := newLibraryFile(t, dir, "a.db", 1)
+	stale := newLibraryFile(t, dir, "stale.db", 3)
+	raw, err := sql.Open("sqlite", stale)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE metadata SET value = '2.30.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	_ = raw.Close()
+
+	db := database.NewDatabase()
+	a := NewApp(db)
+	t.Cleanup(func() { a.closeParkedLibraries(); _ = db.Close() })
+	if err := a.OpenLibrary(pathA); err != nil {
+		t.Fatal(err)
+	}
+	other := database.NewDatabase()
+	t.Cleanup(func() { _ = other.Close() })
+	var once sync.Once
+	hook := func(name string, _ ...any) {
+		if name != libraryOpenProgressEvent {
+			return
+		}
+		once.Do(func() {
+			if err := other.OpenDatabase(pathA); err != nil {
+				t.Error(err)
+			}
+		})
+		a.CancelLibraryOpen()
+	}
+	a.emitHook.Store(&hook)
+
+	if err := a.OpenLibrary(stale); !errors.Is(err, context.Canceled) {
+		t.Fatalf("cancelled open: %v, want context.Canceled", err)
+	}
+	if got := database.OpenPath(db); got != pathA {
+		t.Fatalf("after the cancel %q is open, want %q", got, pathA)
+	}
+	if !db.IsReadOnly() {
+		t.Error("the previous library was reopened for writing though another handle holds its lock")
 	}
 }

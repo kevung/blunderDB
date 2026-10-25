@@ -3410,7 +3410,7 @@
             "rederive_columns": "派生列"
         },
         "migrationCancelled": "移行を中止しました",
-        "reopenedReadOnly": "「{name}」を読み取り専用で再度開きました：その間に別のウィンドウが使用しました",
+        "reopenedReadOnly": "{reason} — 「{name}」を読み取り専用で再度開きました：その間に別のウィンドウが使用しました",
         "answerDropped": "その間に画面上のライブラリが切り替わりました。確認は適用されていません",
         "writeDropped": "その間に画面上のライブラリが切り替わりました。変更は書き込まれていません",
         "jobRunning": "このライブラリでバックグラウンドタスクが実行中です",
