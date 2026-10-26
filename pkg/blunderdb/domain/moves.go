@@ -142,14 +142,7 @@ func singleMoves(pos *Position, mover, die int) []CheckerStep {
 
 	var moves []CheckerStep
 	home := allInHome(pos, mover)
-	// Walk from the mover's 24-point down to its 1-point, whatever the colour:
-	// the dedup keeps the first play reaching a board, so a colour-dependent
-	// walk would name the same play differently for Black and White.
-	for rel := 24; rel >= 1; rel-- {
-		src := rel
-		if mover == White {
-			src = 25 - rel
-		}
+	for src := 1; src <= 24; src++ {
 		pt := pos.Board.Points[src]
 		if pt.Checkers <= 0 || pt.Color != mover {
 			continue
@@ -302,8 +295,9 @@ func applyStep(pos *Position, mover int, s CheckerStep) Position {
 
 // boardKey is a stable dedup key for a resulting board (no engine dependency, so
 // it stays in the dependency-free domain package). An empty point keys as None
-// whatever colour it carries: a point emptied by the play takes the mover's
-// colour while an untouched one keeps its own, and both are the same board.
+// whatever colour it carries: applyStep leaves a point it empties as None, but
+// an untouched empty point keeps the colour it came with (a zero Point reads as
+// Black), and both are the same board.
 func boardKey(p *Position) string {
 	var b strings.Builder
 	for i := 0; i <= 25; i++ {

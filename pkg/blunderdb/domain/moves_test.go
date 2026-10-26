@@ -1,6 +1,9 @@
 package domain
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -136,7 +139,33 @@ func TestLegalMovesDoublesUseFour(t *testing.T) {
 // rolling the same dice must render the identical SET of notations; only
 // White can catch an absolute-index rendering, since for Black the two
 // numberings coincide.
+// Notation is mover-relative: a play and its mirror image for the other colour
+// read the same, and the two colours reach mirrored boards. Among plays that
+// reach the same board the one kept is the first generated, and generation
+// walks the board in absolute order, so Black and White need not keep the
+// same representative: that choice is fixed by TestLegalMovesOutputIsStable,
+// not compared here.
 func TestNotationIsMoverRelative(t *testing.T) {
+	mirrorStep := func(s CheckerStep) CheckerStep {
+		m := s
+		if s.From == BlackBar {
+			m.From = WhiteBar
+		} else {
+			m.From = 25 - s.From
+		}
+		if s.To != Off {
+			m.To = 25 - s.To
+		}
+		return m
+	}
+	mirrorBoard := func(b [28]int) [28]int {
+		var m [28]int
+		for i := 0; i <= 25; i++ {
+			m[25-i] = -b[i]
+		}
+		m[26], m[27] = b[27], b[26]
+		return m
+	}
 	for _, d := range [][2]int{{3, 1}, {6, 5}, {5, 1}, {6, 1}, {4, 4}} {
 		black := InitializePosition()
 		black.PlayerOnRoll = Black
@@ -145,14 +174,25 @@ func TestNotationIsMoverRelative(t *testing.T) {
 		white.PlayerOnRoll = White
 		white.Dice = d
 
-		blackSet := notationSet(LegalMoves(&black))
-		whiteSet := notationSet(LegalMoves(&white))
-		if len(blackSet) == 0 || len(whiteSet) == 0 {
-			t.Fatalf("dice %v: expected legal plays for both colours", d)
+		blackPlays, whitePlays := LegalMoves(&black), LegalMoves(&white)
+		if len(blackPlays) == 0 || len(blackPlays) != len(whitePlays) {
+			t.Fatalf("dice %v: %d black plays, %d white plays", d, len(blackPlays), len(whitePlays))
 		}
-		if !sameStringSet(blackSet, whiteSet) {
-			t.Fatalf("dice %v: black and white notations disagree from the symmetric opening\n  black: %v\n  white: %v",
-				d, blackSet, whiteSet)
+		whiteBoards := map[[28]int]bool{}
+		for _, pl := range whitePlays {
+			whiteBoards[signedBoard(&pl.Result)] = true
+		}
+		for _, pl := range blackPlays {
+			mirrored := make([]CheckerStep, len(pl.Steps))
+			for i, s := range pl.Steps {
+				mirrored[i] = mirrorStep(s)
+			}
+			if got := notation(mirrored, White); got != pl.Notation {
+				t.Errorf("dice %v: black %q mirrors to white %q", d, pl.Notation, got)
+			}
+			if !whiteBoards[mirrorBoard(signedBoard(&pl.Result))] {
+				t.Errorf("dice %v: no white play mirrors black %q", d, pl.Notation)
+			}
 		}
 	}
 }
@@ -170,26 +210,6 @@ func TestNotationBarIsLowercase(t *testing.T) {
 			t.Errorf("notation %q uses capitalised Bar, want lowercase bar", pl.Notation)
 		}
 	}
-}
-
-func notationSet(plays []LegalPlay) map[string]bool {
-	out := map[string]bool{}
-	for _, p := range plays {
-		out[p.Notation] = true
-	}
-	return out
-}
-
-func sameStringSet(a, b map[string]bool) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for k := range a {
-		if !b[k] {
-			return false
-		}
-	}
-	return true
 }
 
 // Every generated play conserves 15 checkers per side and uses the right number
@@ -285,5 +305,57 @@ func TestLegalMovesDedupIgnoresEmptyPointColour(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+// legalMovesGolden is the digest of LegalMoves over the corpus below, both
+// colours on roll and every roll of the dice. The plays kept, their order and
+// their notation are stored and matched by string (analysis merge, rollouts),
+// so on a position whose empty points carry no colour this output must not
+// move by a byte. Update the digest only with a change that is meant to rename
+// or reorder stored plays.
+const legalMovesGolden = "56ea0622ee5a4515f45704d5f6c16231e6ee46a4269a72158d1b1752d61a6cb6"
+
+func TestLegalMovesOutputIsStable(t *testing.T) {
+	var starts []Position
+	for _, pair := range ogidXGIDPairs(loadOGIDCorpus(t)) {
+		p, err := DecodeXGID(pair[1])
+		if err != nil {
+			t.Fatalf("%s: %v", pair[1], err)
+		}
+		starts = append(starts, p)
+	}
+	opening := InitializePosition()
+	for i := 0; i <= 25; i++ {
+		if opening.Board.Points[i].Checkers == 0 {
+			opening.Board.Points[i].Color = None
+		}
+	}
+	starts = append(starts, opening)
+
+	h := sha256.New()
+	for n, p0 := range starts {
+		for i := 0; i <= 25; i++ {
+			if p0.Board.Points[i].Checkers == 0 && p0.Board.Points[i].Color != None {
+				t.Fatalf("start %d has a coloured empty point %d", n, i)
+			}
+		}
+		for _, mover := range []int{Black, White} {
+			for d1 := 1; d1 <= 6; d1++ {
+				for d2 := 1; d2 <= d1; d2++ {
+					p := p0
+					p.PlayerOnRoll = mover
+					p.Dice = [2]int{d1, d2}
+					fmt.Fprintf(h, "%d|%d|%d%d|", n, mover, d1, d2)
+					for _, pl := range LegalMoves(&p) {
+						fmt.Fprintf(h, "%s;", pl.Notation)
+					}
+					fmt.Fprintln(h)
+				}
+			}
+		}
+	}
+	if got := hex.EncodeToString(h.Sum(nil)); got != legalMovesGolden {
+		t.Fatalf("LegalMoves output changed: digest %s, want %s", got, legalMovesGolden)
 	}
 }
