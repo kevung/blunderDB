@@ -12,6 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/filelock"
 )
 
 // VacuumResult reports the file-size effect of a Vacuum call, in bytes. A
@@ -104,8 +105,8 @@ var errVacuumNotLocal = errors.New("vacuum: the library is not a local file")
 // process (a read-only instance, a sqlite3 shell) is connected: the copy is
 // dropped and errVacuumSwapUnsafe returned. A blunderDB instance opening the
 // file between that check and the rename is held off by the swap gate
-// (swapUnderGate). An opener that knows no gate is not: a sqlite3 shell, the
-// serve daemon (sqlite.Open) and migrate. A failure after the rename point
+// (swapUnderGate), and so is every sqlite.Open (the serve daemon, migrate).
+// An opener that knows no gate is not: a sqlite3 shell. A failure after the rename point
 // leaves the compacted file in place, which is the whole library.
 func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (before, after int64, err error) {
 	path, err := local.FilePath(ctx)
@@ -161,7 +162,7 @@ func (d *Database) vacuumBySwap(ctx context.Context, local storage.LocalFile) (b
 // waited for: an instance in the middle of its open holds it shared, and the
 // file is then not replaced.
 func (d *Database) swapUnderGate(path, tmp string) bool {
-	gate, ok, err := tryLockExclusive(swapGatePathFor(path))
+	gate, ok, err := filelock.TryExclusive(filelock.SwapGatePath(path))
 	if err != nil {
 		slog.Warn("vacuum: swap gate unavailable; vacuuming in place", "err", err)
 		return false
@@ -169,7 +170,7 @@ func (d *Database) swapUnderGate(path, tmp string) bool {
 	if !ok {
 		return false
 	}
-	defer func() { _ = gate.release() }()
+	defer func() { _ = gate.Release() }()
 	if _, statErr := os.Stat(path + "-wal"); !errors.Is(statErr, os.ErrNotExist) {
 		return false
 	}

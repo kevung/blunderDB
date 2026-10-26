@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/filelock"
 )
 
 // TestVacuum_ReclaimsSpaceAfterDeletes: a database inflated by deletions shrinks back down after Vacuum, and the
@@ -314,13 +314,18 @@ func TestVacuum_AnOpenerDuringTheSwapWaitsForTheNewFile(t *testing.T) {
 	other := NewDatabase()
 	closeOnCleanup(t, other)
 	opened := make(chan error, 1)
+	waited, stop := filelock.ObserveWaits(filelock.SwapGatePath(path))
+	defer stop()
 	d.beforeSwapRename = func() {
+		assertGateHeld(t, path)
 		go func() { opened <- other.OpenDatabase(path) }()
+		// The rename waits until the opener is seen blocked at the gate,
+		// or has finished without it: no timing decides.
 		select {
+		case <-waited:
 		case err := <-opened:
-			t.Errorf("the open completed inside the swap window (%v)", err)
+			t.Errorf("the open went through the swap window without waiting at the gate (%v)", err)
 			opened <- err
-		case <-time.After(300 * time.Millisecond):
 		}
 	}
 	if _, err := d.Vacuum(); err != nil {
@@ -347,11 +352,11 @@ func TestVacuum_AnOpenerDuringTheSwapWaitsForTheNewFile(t *testing.T) {
 func TestVacuum_InPlaceWhileAnOpenerHoldsTheGate(t *testing.T) {
 	t.Parallel()
 	d, path := vacuumFixture(t)
-	gate, err := lockShared(swapGatePathFor(path))
+	gate, err := filelock.Shared(filelock.SwapGatePath(path))
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer func() { _ = gate.release() }()
+	defer func() { _ = gate.Release() }()
 	before := statIdentity(t, path)
 	res, err := d.Vacuum()
 	if err != nil {
@@ -365,5 +370,46 @@ func TestVacuum_InPlaceWhileAnOpenerHoldsTheGate(t *testing.T) {
 	}
 	if _, err := os.Stat(path + ".vacuum"); !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("the compacted copy is still beside the file: %v", err)
+	}
+}
+
+// assertGateHeld fails unless the swap gate of path, under the spelling an
+// opener gives, is held exclusively: a shared holder or no holder at all
+// would let this second exclusive attempt through.
+func assertGateHeld(t *testing.T, path string) {
+	t.Helper()
+	gate, ok, err := filelock.TryExclusive(filelock.SwapGatePath(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ok {
+		_ = gate.Release()
+		t.Error("the swap gate an opener of this path waits at is not held")
+	}
+}
+
+// TestVacuum_SwapGateNamedThroughASymbolicLink: an opener names the file by a
+// path through a symbolic link, the vacuum by the one SQLite reports, which
+// resolves it; both must meet at one gate, or the opener connects to the
+// inode the rename unlinks — on macOS the temporary directory itself is such
+// a link.
+func TestVacuum_SwapGateNamedThroughASymbolicLink(t *testing.T) {
+	t.Parallel()
+	d, path := vacuumFixture(t)
+	link := filepath.Join(tempDir(t), "link")
+	if err := os.Symlink(filepath.Dir(path), link); err != nil {
+		t.Skipf("no symbolic link here: %v", err)
+	}
+	gate, err := filelock.Shared(filelock.SwapGatePath(filepath.Join(link, filepath.Base(path))))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = gate.Release() }()
+	before := statIdentity(t, path)
+	if _, err := d.Vacuum(); err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	if after := statIdentity(t, path); !os.SameFile(before, after) {
+		t.Fatal("the file was replaced while an opener held the gate under another spelling")
 	}
 }

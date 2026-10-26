@@ -25,6 +25,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/filelock"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
@@ -52,10 +53,47 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	return open(ctx, dsn, opts, false)
 }
 
+// dsnFilePath is the file a DSN names, the key of its locks: a URI
+// (file:/x.db?mode=rwc, file:///x.db, file:x.db) gives its path, so the serve
+// daemon handed one waits at the gate a vacuum takes under the bare path.
+// An in-memory URI names no file: "".
+func dsnFilePath(dsn string) string {
+	if !strings.HasPrefix(dsn, "file:") {
+		return dsn
+	}
+	u, err := url.Parse(dsn)
+	if err != nil {
+		return strings.TrimPrefix(dsn, "file:")
+	}
+	if u.Query().Get("mode") == "memory" {
+		return ""
+	}
+	// u.Path comes decoded; u.Opaque (file:x.db, file:/x.db) does not.
+	p := u.Path
+	if u.Opaque != "" {
+		p = u.Opaque
+		if dec, err := url.PathUnescape(p); err == nil {
+			p = dec
+		}
+	}
+	if p == ":memory:" || p == "" {
+		return ""
+	}
+	// file:///C:/x.db: the drive follows the slash of an empty authority.
+	if runtime.GOOS == "windows" && len(p) >= 3 && p[0] == '/' && p[2] == ':' {
+		p = p[1:]
+	}
+	return filepath.FromSlash(p)
+}
+
 // open is Open, with a pool opened by OpenDB when watch.
 func open(ctx context.Context, dsn string, opts *storage.Options, watch bool) (*Storage, error) {
 	// Encode the PRAGMAs into the DSN so the driver applies them to *every*
 	// connection the pool opens; a post-Open `PRAGMA` configures only one.
+	// Held until this open returns: by then a connection exists and its -wal
+	// tells a vacuum elsewhere not to rename a new file over this one, which
+	// would leave the pool reading and writing an unlinked inode.
+	defer filelock.EnterSwapGate(dsnFilePath(dsn))()
 	var db *sql.DB
 	var err error
 	if watch {

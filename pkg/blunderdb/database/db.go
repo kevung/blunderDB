@@ -2,9 +2,7 @@ package database
 
 import (
 	"context"
-	"crypto/sha256"
 	"database/sql"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -16,8 +14,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/adrg/xdg"
-
 	_ "modernc.org/sqlite"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
@@ -26,6 +22,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/filelock"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
@@ -75,7 +72,7 @@ type Database struct {
 	// pendingAnkiCardKinds is the same deferral for the 2.23.0 step, whose
 	// repair also rebuilds anki_card: ALTER TABLE relaxes no constraint.
 	pendingAnkiCardKinds bool
-	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
+	lock                 *filelock.Lock // single-writer advisory lock on the open file (nil for :memory:/read-only)
 	// beforeSwapRename, when set by a test, runs inside the swap gate just
 	// before vacuumBySwap renames the copy over the file.
 	beforeSwapRename func()
@@ -189,26 +186,6 @@ func (d *Database) currentGeneration() uint64 {
 	return d.generation
 }
 
-// lockPathFor returns the file whose advisory lock guards a database against a
-// second writer. It lives in the cache directory: a lock file beside the
-// database reads as debris yet can never be unlinked on release (another
-// instance may hold its inode, letting a third lock a fresh file). Named from
-// the absolute path; falls back beside the database if the cache directory
-// cannot be created (ADR-0004).
-func lockPathFor(dbPath string) string {
-	abs, err := filepath.Abs(dbPath)
-	if err != nil {
-		abs = dbPath
-	}
-	dir := filepath.Join(xdg.CacheHome, "blunderDB", "locks")
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		slog.Debug("lock directory unavailable; locking beside the database", "err", err)
-		return dbPath + ".lock"
-	}
-	sum := sha256.Sum256([]byte(abs))
-	return filepath.Join(dir, hex.EncodeToString(sum[:16])+".lock")
-}
-
 // acquireFileLock takes the single-writer advisory lock before a file-backed
 // database is opened. If another instance holds it, d.readOnly is set and the
 // caller must open read-only (ADR-0004: never read-write twice). A lock
@@ -221,7 +198,7 @@ func (d *Database) acquireFileLock(path string) {
 		return
 	}
 	d.openPath.Store(&path)
-	lock, ok, err := tryLockExclusive(lockPathFor(path))
+	lock, ok, err := filelock.TryExclusive(filelock.LockPath(path))
 	if err != nil {
 		slog.Warn("single-instance lock unavailable; opening without it", "path", path, "err", err)
 		return
@@ -261,38 +238,11 @@ func canonicalPath(p string) string {
 	return filepath.Clean(p)
 }
 
-// swapGatePathFor returns the file whose lock orders opening a database
-// against replacing it (vacuumBySwap): an opener holds it shared until its
-// connection is established, the swap exclusively from the check that no
-// connection exists to the rename. It lives beside the single-writer lock,
-// for the same reasons: in the cache directory, or beside the database when
-// that directory cannot be created.
-func swapGatePathFor(dbPath string) string {
-	return strings.TrimSuffix(lockPathFor(dbPath), ".lock") + ".swap"
-}
-
-// enterSwapGate waits until no file replacement of path is under way and
-// keeps one from starting until the returned release runs. A gate that
-// cannot be taken is no reason to refuse the open: it proceeds unguarded.
-// The wait is unbounded: a third party that keeps the gate exclusively keeps
-// OpenDatabase blocked, under d.mu.
-func enterSwapGate(path string) func() {
-	if path == "" || path == ":memory:" {
-		return func() {}
-	}
-	gate, err := lockShared(swapGatePathFor(path))
-	if err != nil {
-		slog.Warn("swap gate unavailable; opening without it", "path", path, "err", err)
-		return func() {}
-	}
-	return func() { _ = gate.release() }
-}
-
 // releaseFileLock drops the single-writer lock if held.
 func (d *Database) releaseFileLock() {
 	d.openPath.Store(nil)
 	if d.lock != nil {
-		if err := d.lock.release(); err != nil {
+		if err := d.lock.Release(); err != nil {
 			slog.Warn("releasing single-instance lock failed", "err", err)
 		}
 		d.lock = nil
@@ -680,7 +630,7 @@ func (d *Database) openDatabase(ctx context.Context, path string, progress func(
 	// Held until this open returns: by then its connections exist, and a
 	// swap elsewhere sees them (their -wal) instead of renaming a file
 	// they would keep reading and writing as an unlinked inode.
-	defer enterSwapGate(path)()
+	defer filelock.EnterSwapGate(path)()
 
 	// On any error below, release the lock and handle so a later Setup/Open is
 	// not wedged. Named return covers each `return err`; a no-op when the

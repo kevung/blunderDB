@@ -2,11 +2,13 @@ package sqlite
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -393,6 +395,18 @@ func (s *Storage) VacuumInto(ctx context.Context, target string) (int64, error) 
 		_ = os.Remove(target)
 		return sizeBefore, fmt.Errorf("vacuum into: %w", err)
 	}
+	// VACUUM INTO writes a rollback-journal file. Every opener of the swapped
+	// file would switch it to WAL on its first connection, and two openers
+	// doing so at once (the vacuuming instance reopening, another one
+	// waiting at the swap gate) deadlock on the lock upgrade, which SQLite
+	// answers SQLITE_BUSY at once, busy_timeout or not. The copy goes in
+	// already in WAL; the closing connection leaves no -wal behind.
+	if err := switchToWAL(ctx, target); err != nil {
+		for _, f := range []string{target, target + "-wal", target + "-shm"} {
+			_ = os.Remove(f)
+		}
+		return sizeBefore, fmt.Errorf("vacuum into: %w", err)
+	}
 	// The copy is created under the umask; it replaces the library, so it
 	// takes the library's permissions (a 0600 file must not come back 0644).
 	fi, err := os.Stat(path)
@@ -404,6 +418,24 @@ func (s *Storage) VacuumInto(ctx context.Context, target string) (int64, error) 
 		return sizeBefore, fmt.Errorf("vacuum into: keeping the file mode: %w", err)
 	}
 	return sizeBefore, nil
+}
+
+// switchToWAL sets the persistent journal mode of the database file at path
+// to WAL, alone on it.
+func switchToWAL(ctx context.Context, path string) error {
+	db, err := sql.Open("sqlite", DSN(path))
+	if err != nil {
+		return err
+	}
+	var mode string
+	err = db.QueryRowContext(ctx, `PRAGMA journal_mode`).Scan(&mode)
+	if cerr := db.Close(); err == nil {
+		err = cerr
+	}
+	if err == nil && !strings.EqualFold(mode, "wal") {
+		err = fmt.Errorf("journal mode %q, want wal", mode)
+	}
+	return err
 }
 
 var _ storage.LocalFile = (*Storage)(nil)
