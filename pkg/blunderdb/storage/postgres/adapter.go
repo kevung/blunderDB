@@ -119,8 +119,7 @@ type poolScope struct {
 }
 
 func (a shared) Transact(ctx context.Context, fn func(sqlshared.Execer) error) error {
-	// The shared stores wrap what Transact returns under the backend's name.
-	return runTx(ctx, a.db, "", func(tx execer) error { return fn(shared{tx}) })
+	return withTx(ctx, a.db, func(tx execer) error { return fn(shared{tx}) })
 }
 
 // pgRows gives pgx.Rows the Close() error signature of database/sql.

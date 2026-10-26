@@ -145,6 +145,13 @@ func (s *tournamentStore) Delete(ctx context.Context, scope string, id int64) er
 // AddMatch appends a match to a tournament at the end of its match order.
 func (s *tournamentStore) AddMatch(ctx context.Context, scope string, tournamentID, matchID int64) error {
 	err := withTx(ctx, s.db, func(tx execer) error {
+		var one int
+		if err := tx.QueryRowContext(ctx, `SELECT 1 FROM tournament WHERE id = ?`, tournamentID).Scan(&one); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return fmt.Errorf("tournament: %w", storage.ErrNotFound)
+			}
+			return err
+		}
 		var maxOrder int
 		if err := tx.QueryRowContext(ctx,
 			`SELECT COALESCE(MAX(tournament_sort_order), -1) FROM match WHERE tournament_id = ?`,

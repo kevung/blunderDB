@@ -24,6 +24,12 @@ func testTournamentAddRemoveMatch(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("Save match 1: %v", err)
 	}
+	if err := s.Tournaments().AddMatch(ctx, "", tID, id1+1_000_000); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("AddMatch of an absent match = %v, want ErrNotFound", err)
+	}
+	if err := s.Tournaments().AddMatch(ctx, "", tID+1_000_000, id1); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("AddMatch to an absent tournament = %v, want ErrNotFound", err)
+	}
 	m2 := domain.Match{Player1Name: "C", Player2Name: "D"}
 	id2, err := s.Matches().Save(ctx, "", &m2)
 	if err != nil {

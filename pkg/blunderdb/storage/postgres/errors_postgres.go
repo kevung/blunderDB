@@ -33,3 +33,10 @@ func referenced(err error) error {
 	}
 	return err
 }
+
+// isForeignKeyViolation reports whether err is PostgreSQL refusing a row for a
+// FOREIGN KEY: the parent the row points at is gone.
+func isForeignKeyViolation(err error) bool {
+	var pe *pgconn.PgError
+	return errors.As(err, &pe) && pe.Code == pgForeignKeyViolation
+}
