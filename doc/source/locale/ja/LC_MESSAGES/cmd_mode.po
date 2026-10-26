@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 11:56+0100\n"
+"POT-Creation-Date: 2026-10-26 12:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -964,6 +964,49 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "mg>x"
+msgstr "mg>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Difficulté de la décision** : l'écart (en millipoints, l'échelle de "
+"``E``) entre le meilleur choix et le suivant dans l'analyse enregistrée "
+"est supérieur à x : une décision évidente. Coup de pions : les deux "
+"meilleurs coups ; double : pas de double contre doubler ; prise : prendre"
+" contre passer. Une position sans analyse ou à un seul candidat ne répond"
+" jamais. ``E`` mesure le joueur, ``mg`` la position : ``E<1 mg<20`` "
+"retient les décisions serrées bien jouées."
+msgstr ""
+"**判断の難しさ**\\ ：保存された解析における最善手と次善手の差（ミリポイント、\\ ``E`` と同じ尺度）が x "
+"を超える。つまり明白な判断。チェッカープレイ：上位 2 手。ダブル：ノーダブル対ダブル。テイク：テイク対パス。解析のないポジションや候補が 1 "
+"つだけのポジションは決して該当しない。\\ ``E`` はプレイヤーを、\\ ``mg`` はポジションを測る：\\ ``E<1 mg<20`` "
+"は正しく打たれた際どい判断を拾う。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--margin``"
+msgstr "``--margin``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "mg<x"
+msgstr "mg<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est inférieur à x "
+"millipoints : une décision serrée."
+msgstr "最善手と次善手の差が x ミリポイント未満：際どい判断。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "mgx,y"
+msgstr "mgx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est compris entre x et y "
+"millipoints, bornes comprises."
+msgstr "最善手と次善手の差が x から y ミリポイント（境界を含む）。"
+
+#: ../../source/cmd_mode.rst:1
 msgid "tm>x"
 msgstr "tm>x"
 
@@ -1839,7 +1882,7 @@ msgstr ""
 "は目標としきい値を組み合わせ、\\ ``like42*`` は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ "
 ":ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:245
+#: ../../source/cmd_mode.rst:248
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1855,11 +1898,11 @@ msgstr ""
 "）が、二重引用符は決して含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ ``ma1;2`` "
 "はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:253
 msgid "Transcrire depuis un terminal"
 msgstr "ターミナルから転記する"
 
-#: ../../source/cmd_mode.rst:252
+#: ../../source/cmd_mode.rst:255
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1877,7 +1920,7 @@ msgstr ""
 "は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
 "はなく、呼び出しをまたいだ取り消しもできません。"
 
-#: ../../source/cmd_mode.rst:263
+#: ../../source/cmd_mode.rst:266
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

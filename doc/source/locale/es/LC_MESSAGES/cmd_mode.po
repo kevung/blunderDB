@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 11:56+0100\n"
+"POT-Creation-Date: 2026-10-26 12:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1048,6 +1048,56 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "mg>x"
+msgstr "mg>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Difficulté de la décision** : l'écart (en millipoints, l'échelle de "
+"``E``) entre le meilleur choix et le suivant dans l'analyse enregistrée "
+"est supérieur à x : une décision évidente. Coup de pions : les deux "
+"meilleurs coups ; double : pas de double contre doubler ; prise : prendre"
+" contre passer. Une position sans analyse ou à un seul candidat ne répond"
+" jamais. ``E`` mesure le joueur, ``mg`` la position : ``E<1 mg<20`` "
+"retient les décisions serrées bien jouées."
+msgstr ""
+"**Dificultad de la decisión**: la diferencia (en milipuntos, la escala de"
+" ``E``) entre la mejor opción y la siguiente en el análisis guardado es "
+"superior a x: una decisión evidente. Jugada de fichas: las dos mejores "
+"jugadas; doblar: no doblar frente a doblar; aceptar: aceptar frente a "
+"pasar. Una posición sin análisis o con un solo candidato nunca se "
+"retiene. ``E`` mide al jugador, ``mg`` la posición: ``E<1 mg<20`` retiene"
+" las decisiones ajustadas bien jugadas."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--margin``"
+msgstr "``--margin``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "mg<x"
+msgstr "mg<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est inférieur à x "
+"millipoints : une décision serrée."
+msgstr ""
+"La diferencia entre la mejor opción y la siguiente es inferior a x "
+"milipuntos: una decisión ajustada."
+
+#: ../../source/cmd_mode.rst:1
+msgid "mgx,y"
+msgstr "mgx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est compris entre x et y "
+"millipoints, bornes comprises."
+msgstr ""
+"La diferencia entre la mejor opción y la siguiente está entre x e y "
+"milipuntos, límites incluidos."
+
+#: ../../source/cmd_mode.rst:1
 msgid "tm>x"
 msgstr "tm>x"
 
@@ -1954,7 +2004,7 @@ msgstr ""
 " la clase del objetivo a todos los tipos de decisión y a los dos "
 "regímenes, dinero y partida. Véase :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:245
+#: ../../source/cmd_mode.rst:248
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1973,11 +2023,11 @@ msgstr ""
 " figura en ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:253
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribir desde un terminal"
 
-#: ../../source/cmd_mode.rst:252
+#: ../../source/cmd_mode.rst:255
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1996,7 +2046,7 @@ msgstr ""
 " la revisión devuelta por la llamada anterior; cada llamada es su propia "
 "sesión, sin ``sessionId`` ni deshacer de una llamada a otra."
 
-#: ../../source/cmd_mode.rst:263
+#: ../../source/cmd_mode.rst:266
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 

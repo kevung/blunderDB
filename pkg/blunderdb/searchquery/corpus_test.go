@@ -91,6 +91,7 @@ var corpusField = map[string]string{
 	"awayFilter":                    "AwayFilter",
 	"opponentAwayFilter":            "OpponentAwayFilter",
 	"crawfordFilter":                "CrawfordFilter",
+	"marginFilter":                  "MarginFilter",
 	"matchDateFilter":               "MatchDateFilter",
 	"playerPRFilter":                "PlayerPRFilter",
 	"analysisProvenanceFilter":      "AnalysisProvenanceFilter",

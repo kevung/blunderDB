@@ -4729,6 +4729,8 @@ Options:
     	Only positions imported on their own, not as part of a match
   -limit int
     	Maximum number of results (0 = no limit)
+  -margin string
+    	Margin between the best choice and the next in the stored analysis, millipoints: '<20' (close), '>100' (obvious), '20,60'; no analysis or a single candidate never matches (mg)
   -match-date string
     	Date of the match: '2024', '2024-01..2024-12', '>2024-06', '<2024-06' (md; not the analysis date)
   -match-ids string

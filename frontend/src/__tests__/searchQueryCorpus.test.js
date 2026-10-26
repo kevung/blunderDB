@@ -93,6 +93,7 @@ const SHORT_TO_LONG = {
     mdf: 'matchDateFilter',
     prf: 'playerPRFilter',
     dtf: 'decisionTimeFilter',
+    mgf: 'marginFilter',
     adf: 'analysisProvenanceFilter',
     crf: 'cubeResponseFilter',
     p1ob: 'player1OutfieldBlotFilter',

@@ -16,6 +16,7 @@
 package searchfilter
 
 import (
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -181,6 +182,26 @@ func AnalysisMatchesEquityFilter(filter string, ana *domain.PositionAnalysis) bo
 		return false
 	}
 	return true
+}
+
+// AnalysisMatchesMarginFilter checks the margin of the decision — the best
+// choice against the next, engine.DecisionMargin, in millipoints rounded as
+// the move error is — against the "mg"-prefixed filter: mg>x, mg<x, mgx,y,
+// bounds inclusive. A decision without a margin never matches.
+func AnalysisMatchesMarginFilter(filter string, ana *domain.PositionAnalysis, isResponse bool) bool {
+	if filter == "" {
+		return true
+	}
+	margin, ok := engine.DecisionMargin(ana, isResponse)
+	if !ok {
+		return false
+	}
+	mn, mx, hasMin, hasMax := ParseFloatFilterExpr(filter, "mg")
+	if !hasMin && !hasMax {
+		return false
+	}
+	millipoints := math.Round(margin * 1000)
+	return (!hasMin || millipoints >= mn) && (!hasMax || millipoints <= mx)
 }
 
 // PlayerName unwraps the player filter the frontend sends whole (`pl"Name"` or

@@ -64,6 +64,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Search/FilterByCommentPresence", testSearchFilterByCommentPresence},
 		{"Search/FilterByFlagged", testSearchFilterByFlagged},
 		{"Search/FilterByAway", testSearchFilterByAway},
+		{"Search/FilterByMargin", testSearchFilterByMargin},
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Analysis/SaveIsAnUpsert", testAnalysisSaveIsAnUpsert},
 		{"Analysis/SaveManyEqualsSave", testAnalysisSaveManyEqualsSave},

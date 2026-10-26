@@ -169,13 +169,13 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	moveErrorInGo := false
 
 	// Decode the compressed analysis blob per row only when a Go-side filter
-	// reads it: move pattern, mirror re-checks, date, equity. The rate, cube
+	// reads it: move pattern, mirror re-checks, date, equity, margin. The rate, cube
 	// and move-error filters run on denormalised SQL columns. MoveErrorFilter
 	// is deliberately NOT a trigger: its Go re-check runs on the mirror path
 	// (already covered) or on the multi-played positions, loaded one by one
 	// after the scan; triggering here decodes every row for nothing.
 	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter ||
-		f.DateFilter != "" || f.EquityFilter != ""
+		f.DateFilter != "" || f.EquityFilter != "" || f.MarginFilter != ""
 
 	// On points shared with the exclusion structure, "Except" wins over "At least":
 	// clear those points from the include filter so the two are not contradictory.
@@ -535,7 +535,8 @@ func (wc searchWhereClause) goPhase(f domain.SearchFilters) bool {
 		f.Player1OutfieldBlotFilter != "" || f.Player2OutfieldBlotFilter != "" ||
 		f.Player1JanBlotFilter != "" || f.Player2JanBlotFilter != "" ||
 		f.SearchText != "" || f.TagFilter != "" ||
-		f.DateFilter != "" || f.EquityFilter != "" || f.MovePatternFilter != ""
+		f.DateFilter != "" || f.EquityFilter != "" || f.MarginFilter != "" ||
+		f.MovePatternFilter != ""
 }
 
 // keysetOrder reports whether the sort is the id alone, so that a chunked
@@ -1050,6 +1051,9 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 				return false, nil
 			}
 			if f.EquityFilter != "" && !searchfilter.AnalysisMatchesEquityFilter(f.EquityFilter, ana) {
+				return false, nil
+			}
+			if !searchfilter.AnalysisMatchesMarginFilter(f.MarginFilter, ana, row.isCubeResponse) {
 				return false, nil
 			}
 			return true, nil

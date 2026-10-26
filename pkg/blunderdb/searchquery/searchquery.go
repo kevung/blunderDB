@@ -106,6 +106,10 @@ var (
 	// `tm>30`, `tm<5`, `tm5,20`: the time the player took over the decision, in
 	// seconds, in the grammar of `E`. Matched by shape: `tm` starts like `tn`
 	// and `t"…"`, and a typo must not become a silent filter.
+	// `mg>100`, `mg<20`, `mg20,60`: the margin between the best choice and
+	// the next, in millipoints, in the grammar of `pr`. Matched by shape: `m`
+	// opens a quoted move pattern, and a typo must not become a silent filter.
+	marginRe       = regexp.MustCompile(`^mg(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$`)
 	decisionTimeRe = regexp.MustCompile(`^tm(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)?)$`)
 	// Match-level tokens. `ml:7`, `ml:5,9`, `ml>5`, `ml<9`: the length of the
 	// match. `md:YYYY-MM..YYYY-MM`, `md:YYYY`, `md>YYYY-MM`, `md<YYYY-MM`: its
@@ -398,7 +402,8 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 		return strings.HasPrefix(s, "E>") || strings.HasPrefix(s, "E<") || moveErrRe.MatchString(s)
 	})
 
-	f.DecisionTimeFilter = first(func(s string) bool { return decisionTimeRe.MatchString(s) })
+	f.DecisionTimeFilter = first(decisionTimeRe.MatchString)
+	f.MarginFilter = first(marginRe.MatchString)
 
 	// Repeatable id lists, joined the way the storage layer expects.
 	f.MatchIDsFilter = joinValues(all(func(s string) bool { return maRe.MatchString(s) }), 2)
@@ -578,6 +583,7 @@ func Format(f domain.SearchFilters) string {
 	add(f.Player2JanBlotFilter)
 	add(f.EquityFilter)
 	add(f.MoveErrorFilter)
+	add(f.MarginFilter)
 	add(f.DecisionTimeFilter)
 	add(f.DateFilter)
 	add(f.PlayerPRFilter)
@@ -665,6 +671,7 @@ var FieldTokens = map[string]string{
 	"Player1JanBlotFilter":          "bj",
 	"Player2JanBlotFilter":          "BJ",
 	"EquityFilter":                  "e",
+	"MarginFilter":                  "mg",
 	"MoveErrorFilter":               "E",
 	"DecisionTimeFilter":            "tm",
 	"DateFilter":                    "T",

@@ -511,6 +511,15 @@ type SearchFilters struct {
 	FlaggedFilter bool `json:"flaggedFilter"`
 
 	MoveErrorFilter string `json:"moveErrorFilter"`
+	// MarginFilter is the `mg` token whole (`mg>100`, `mg<20`, `mg20,60`): how
+	// far, in millipoints, the best choice stands from the next one in the
+	// stored analysis — how hard the decision is, whoever played it, where
+	// MoveErrorFilter scores the play. A checker play compares the two best
+	// candidates; a double/no-double, no double against the double; a
+	// take/pass, take against pass. A position with no analysis or a single
+	// candidate has no margin and never matches.
+	MarginFilter string `json:"marginFilter"`
+
 	// DecisionTimeFilter is the `tm` token whole (`tm>30`, `tm<5`, `tm5,20`):
 	// how long the player on roll took over the decision, in seconds. It keeps
 	// the positions where a recorded play took that long, checker or cube

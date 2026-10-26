@@ -240,6 +240,9 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const crawfordFilter = crawfordGame && crawfordAfter ? 'none' : crawfordGame ? 'game' : crawfordAfter ? 'post' : '';
     const matchDateRe = new RegExp(`^md(?::${dateBound}(?:\\.\\.${dateBound})?|[<>]${dateBound})$`);
     const matchDateFilter = filters.find((f) => typeof f === 'string' && matchDateRe.test(f)) || '';
+    // `mg>100`, `mg<20`, `mg20,60` : l'écart (millipoints) entre le meilleur
+    // choix et le suivant, dans la grammaire de `pr`.
+    const marginFilter = filters.find((f) => typeof f === 'string' && /^mg(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$/.test(f)) || '';
     const decisionTimeFilter = filters.find((f) => typeof f === 'string' && /^tm(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)?)$/.test(f)) || '';
     const playerPRFilter = filters.find((f) => typeof f === 'string' && /^pr(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$/.test(f)) || '';
     const roundFilter = filters
@@ -398,6 +401,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         matchDateFilter,
         playerPRFilter,
         decisionTimeFilter,
+        marginFilter,
         analysisProvenanceFilter,
         positionIDsFilter
     };
@@ -523,6 +527,7 @@ export function parseSearchCommand(command) {
         mdf: p.matchDateFilter,
         prf: p.playerPRFilter,
         dtf: p.decisionTimeFilter,
+        mgf: p.marginFilter,
         adf: p.analysisProvenanceFilter,
         crf: p.cubeResponseFilter,
         p1ob: p.player1OutfieldBlotFilter,
@@ -613,6 +618,7 @@ export function replaySearchArgs(command) {
         matchDateFilter: f.mdf,
         playerPRFilter: f.prf,
         decisionTimeFilter: f.dtf,
+        marginFilter: f.mgf,
         analysisProvenanceFilter: f.adf,
         // Command-line-only tokens: positionService does not re-derive them
         // from `filters`, so a replay would otherwise lose them.
@@ -744,6 +750,7 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         matchDateFilter: pf.matchDateFilter || '',
         playerPRFilter: pf.playerPRFilter || '',
         decisionTimeFilter: pf.decisionTimeFilter || '',
+        marginFilter: pf.marginFilter || '',
         analysisProvenanceFilter: pf.analysisProvenanceFilter || '',
         positionIDsFilter: pf.positionIDsFilter || '',
         restrictToPositionIDs: ''

@@ -3202,6 +3202,7 @@ export namespace domain {
 	    flaggedFilter: boolean;
 	    moveErrorFilter: string;
 	    decisionTimeFilter: string;
+	    marginFilter: string;
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
 	    playerFilter: string;
@@ -3274,6 +3275,7 @@ export namespace domain {
 	        this.flaggedFilter = source["flaggedFilter"];
 	        this.moveErrorFilter = source["moveErrorFilter"];
 	        this.decisionTimeFilter = source["decisionTimeFilter"];
+	        this.marginFilter = source["marginFilter"];
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
 	        this.playerFilter = source["playerFilter"];

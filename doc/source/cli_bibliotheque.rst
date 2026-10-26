@@ -99,6 +99,10 @@ chacun équivaut à un jeton du langage de requête (:ref:`cmd_filter`) :
   l'adversaire, dans les mêmes formes (``AW``).
 * ``--crawford <état>`` — ``game`` : le jeu Crawford (``cr``) ; ``post`` : les
   jeux qui le suivent (``pcr``).
+* ``--margin <expr>`` — L'écart, en millipoints, entre le meilleur choix et le
+  suivant dans l'analyse enregistrée : ``<20`` (décision serrée), ``>100``
+  (évidente), ``20,60`` (``mg``). Une position sans analyse ou à un seul
+  candidat ne répond jamais.
 * ``--match-date <expr>`` — La date du match : ``2024``,
   ``2024-01..2024-12``, ``>2024-06``, ``<2024-06`` (``md``) ; ce n'est pas la
   date de l'analyse.

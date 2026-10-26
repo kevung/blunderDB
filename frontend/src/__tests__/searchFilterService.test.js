@@ -714,3 +714,26 @@ describe('AW, cr et pcr : la distance de l’adversaire et l’état Crawford', 
         expect(pf.opponentAwayFilter).toBe('AW:4');
     });
 });
+
+describe('mg : l’écart entre le meilleur choix et le suivant', () => {
+    test.each(['mg>100', 'mg<20', 'mg20,60', 'mg<12.5'])('la barre de commande lit %s et le transmet tel quel', (tok) => {
+        const command = `s ${tok}`;
+        const pf = parseFilters(command.slice(2).split(' '), command);
+        expect(pf.marginFilter).toBe(tok);
+        expect(buildSearchFilterPayload({}, pf, [tok]).marginFilter).toBe(tok);
+        const { args } = /** @type {any} */ (replaySearchArgs(command));
+        expect(args.marginFilter).toBe(tok);
+    });
+
+    test.each(['mg', 'mg20', 'mg:20', 'mg>x'])('une forme mal écrite (%s) ne devient pas un filtre', (tok) => {
+        const command = `s ${tok}`;
+        expect(parseFilters(command.slice(2).split(' '), command).marginFilter).toBe('');
+    });
+
+    test('mg et E sont deux filtres distincts', () => {
+        const command = 's E<1 mg<20';
+        const pf = parseFilters(command.slice(2).split(' '), command);
+        expect(pf.moveErrorFilter).toBe('E<1');
+        expect(pf.marginFilter).toBe('mg<20');
+    });
+});

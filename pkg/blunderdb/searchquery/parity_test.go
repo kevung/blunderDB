@@ -178,6 +178,9 @@ func randomFilters(rng *rand.Rand) domain.SearchFilters {
 		f.AwayFilter = pick(rng, "aw:4", "aw:2,5", "aw>3", "aw<5", "aw:1")
 	}
 	if maybe() {
+		f.MarginFilter = pick(rng, "mg>100", "mg<20", "mg20,60", "mg<12.5")
+	}
+	if maybe() {
 		f.OpponentAwayFilter = pick(rng, "AW:4", "AW:2,5", "AW>3", "AW<5", "AW:1")
 	}
 	if maybe() {
