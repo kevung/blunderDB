@@ -53,10 +53,6 @@ propre issue le jour où il est lancé.
   Si `E` devait un jour s'y appuyer (SQL exact, sans phase Go), il faudrait
   une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de distinguer « pas noté »
   de « non notable » (NULL ambigu).
-- **PostgreSQL, écriture par tenant** : `positions_postgres.go` enveloppe la `pgconn.PgError`
-  dans `ErrConflict` (texte du pilote vers le client, sans oracle) ; `Tournaments().AddMatch`
-  avec un match étranger ou absent réussit en silence (UPDATE 0 ligne) ; `Analyses.Save` en
-  course avec une suppression rend un autre message (même tenant).
 - **Serveur : quota en octets sous PostgreSQL** — décidé : différé (2026-10-24). La mesure
   repose sur `pg_total_relation_size` et `reltuples`, globaux à la base et non au locataire, donc
   un canal auxiliaire faible (un locataire devine la taille des autres) ; et les 13 `COUNT` par

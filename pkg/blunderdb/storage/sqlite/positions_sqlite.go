@@ -320,7 +320,7 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 		if id, found, lookupErr := s.Exists(ctx, scope, cols.ZobristHash); lookupErr == nil && found && id != p.ID {
 			return fmt.Errorf("sqlite: update position: %w", &storage.DuplicatePositionError{ExistingID: id})
 		}
-		return fmt.Errorf("sqlite: update position: %w: %w", storage.ErrConflict, err)
+		return fmt.Errorf("sqlite: update position: %w", storage.ErrConflict)
 	}
 	if err != nil {
 		return fmt.Errorf("sqlite: update position: %w", err)

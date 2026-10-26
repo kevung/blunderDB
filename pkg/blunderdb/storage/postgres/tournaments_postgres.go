@@ -158,6 +158,9 @@ func (s *tournamentStore) AddMatch(ctx context.Context, scope string, tournament
 		if err := requireOwned(ctx, tx, tenant, "tournament", tournamentID); err != nil {
 			return err
 		}
+		if err := requireOwned(ctx, tx, tenant, "match", matchID); err != nil {
+			return err
+		}
 		var maxOrder int
 		if err := tx.QueryRow(ctx,
 			`SELECT COALESCE(MAX(tournament_sort_order), -1) FROM match
@@ -165,11 +168,15 @@ func (s *tournamentStore) AddMatch(ctx context.Context, scope string, tournament
 			tournamentID, tenant).Scan(&maxOrder); err != nil {
 			maxOrder = -1
 		}
-		if _, err := tx.Exec(ctx,
+		tag, err := tx.Exec(ctx,
 			`UPDATE match SET tournament_id = $1, tournament_sort_order = $2
 			 WHERE id = $3 AND tenant_id = $4`,
-			tournamentID, maxOrder+1, matchID, tenant); err != nil {
+			tournamentID, maxOrder+1, matchID, tenant)
+		if err != nil {
 			return err
+		}
+		if tag.RowsAffected() == 0 {
+			return fmt.Errorf("postgres: match: %w", storage.ErrNotFound)
 		}
 		if _, err := tx.Exec(ctx,
 			`UPDATE tournament SET updated_at = now() WHERE id = $1 AND tenant_id = $2`,

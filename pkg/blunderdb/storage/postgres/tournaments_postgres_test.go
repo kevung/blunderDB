@@ -5,6 +5,7 @@ package postgres_test
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -156,5 +157,28 @@ func TestTournamentSetMatchByName(t *testing.T) {
 	}
 	if _, err := s.Tournaments().TournamentOf(ctx, "", matchID); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("TournamentOf after detach: got %v, want ErrNotFound", err)
+	}
+}
+
+// TestAnalysisSaveOfDeletedPositionRefusal checks that a Save racing a
+// position's deletion, which reaches the foreign key instead of the ownership
+// check, is refused as the ownership check refuses: ErrNotFound, same
+// message, no driver text.
+func TestAnalysisSaveOfDeletedPositionRefusal(t *testing.T) {
+	ctx := context.Background()
+	s, _ := openMatchStore(t)
+	absent := int64(987654321)
+	checked := s.Analyses().Save(ctx, "", absent, &domain.PositionAnalysis{XGID: "X"})
+	raced := s.Analyses().Save(storage.WithFreshPosition(ctx, absent), "", absent, &domain.PositionAnalysis{XGID: "X"})
+	for label, err := range map[string]error{"ownership check": checked, "foreign key": raced} {
+		if !errors.Is(err, storage.ErrNotFound) {
+			t.Errorf("%s: %v, want ErrNotFound", label, err)
+		}
+	}
+	if checked == nil || raced == nil || checked.Error() != raced.Error() {
+		t.Errorf("refusals differ: %v / %v", checked, raced)
+	}
+	if raced != nil && strings.Contains(raced.Error(), "SQLSTATE") {
+		t.Errorf("driver text reaches the client: %v", raced)
 	}
 }
