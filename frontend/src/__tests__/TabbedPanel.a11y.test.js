@@ -10,9 +10,9 @@
  * panel below).
  *
  * Scope note: tests only navigate to tabs whose panel does nothing on mount
- * while its own openPanels flag is unset (matches/tournaments/collections) —
- * see MatchPanel/TournamentPanel/CollectionPanel `visible` guards — so no
- * Wails backend mocking is needed here.
+ * until its tab is the active one (matches/tournaments/collections) — see
+ * MatchPanel/TournamentPanel/CollectionPanel `visible` guards, derived from
+ * activeTabStore — so no Wails backend mocking is needed here.
  */
 
 import { must } from './helpers/must.js';

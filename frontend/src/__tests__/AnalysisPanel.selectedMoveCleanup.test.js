@@ -5,9 +5,8 @@
  * switch (its {#if} pattern — see that file's header comment), never merely
  * hides it. AnalysisPanel used to decide its own "opened"/"closed" moments by
  * watching $openPanels.has(PANEL.ANALYSIS) — but the 'analysis' tab has never
- * driven that flag since the tabHandler.js refactor (applyTabPanels only
- * wires matches/stats/tournaments/collections to a PANEL), so openPanels was
- * always empty for this panel and the effect's "closed" branch — the one that
+ * driven that flag (openPanels only maps matches/stats/tournaments/collections
+ * to a PANEL), so openPanels was always empty for this panel and the effect's "closed" branch — the one that
  * reset selectedMoveStore — never ran.
  *
  * Left stuck, a selected move silently froze keyboard navigation everywhere

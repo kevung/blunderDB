@@ -95,7 +95,6 @@ const onConfirm = vi.fn();
 /** Le panneau Tournois ouvert sur l'onglet Tournois, la liste chargée. */
 async function openTournamentPanel() {
     activeTabStore.set('tournaments');
-    activeTabStore.set('tournaments');
     render(TournamentPanel, { props: {} });
     await screen.findByText('Open de Lyon');
 }
@@ -128,7 +127,6 @@ afterEach(() => {
     cleanup();
     document.body.innerHTML = '';
     activeTabStore.set('analysis');
-    activeTabStore.set('');
     openDirectionIdStore.set(null);
     directionViewLoadedStore.set(false);
     vi.clearAllMocks();
