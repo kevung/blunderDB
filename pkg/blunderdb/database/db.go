@@ -76,9 +76,6 @@ type Database struct {
 	// beforeSwapRename, when set by a test, runs inside the swap gate just
 	// before vacuumBySwap renames the copy over the file.
 	beforeSwapRename func()
-	// beforeSwapGate, when set by a test, runs in OpenDatabase just before
-	// it waits at the swap gate.
-	beforeSwapGate func()
 	// openPath is the file open now, read without mu by IsOpenDatabase:
 	// a watch loop asks it while an import holds the lock.
 	openPath      atomic.Pointer[string]
@@ -633,9 +630,6 @@ func (d *Database) openDatabase(ctx context.Context, path string, progress func(
 	// Held until this open returns: by then its connections exist, and a
 	// swap elsewhere sees them (their -wal) instead of renaming a file
 	// they would keep reading and writing as an unlinked inode.
-	if d.beforeSwapGate != nil {
-		d.beforeSwapGate()
-	}
 	defer filelock.EnterSwapGate(path)()
 
 	// On any error below, release the lock and handle so a later Setup/Open is

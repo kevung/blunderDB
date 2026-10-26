@@ -314,17 +314,18 @@ func TestVacuum_AnOpenerDuringTheSwapWaitsForTheNewFile(t *testing.T) {
 	other := NewDatabase()
 	closeOnCleanup(t, other)
 	opened := make(chan error, 1)
-	atGate := make(chan struct{})
-	other.beforeSwapGate = func() { close(atGate) }
+	waited, stop := filelock.ObserveWaits(filelock.SwapGatePath(path))
+	defer stop()
 	d.beforeSwapRename = func() {
 		assertGateHeld(t, path)
 		go func() { opened <- other.OpenDatabase(path) }()
-		<-atGate
+		// The rename waits until the opener is seen blocked at the gate,
+		// or has finished without it: no timing decides.
 		select {
+		case <-waited:
 		case err := <-opened:
-			t.Errorf("the open went past the gate inside the swap window (%v)", err)
+			t.Errorf("the open went through the swap window without waiting at the gate (%v)", err)
 			opened <- err
-		default:
 		}
 	}
 	if _, err := d.Vacuum(); err != nil {

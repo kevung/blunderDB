@@ -19,7 +19,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -54,9 +53,37 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	return open(ctx, dsn, opts, false)
 }
 
-// beforeSwapGate, when set by a test, runs in open just before it waits at
-// the swap gate. Atomic: other tests open databases in parallel.
-var beforeSwapGate atomic.Pointer[func(dsn string)]
+// dsnFilePath is the file a DSN names, the key of its locks: a URI
+// (file:/x.db?mode=rwc, file:///x.db, file:x.db) gives its path, so the serve
+// daemon handed one waits at the gate a vacuum takes under the bare path.
+// An in-memory URI names no file: "".
+func dsnFilePath(dsn string) string {
+	if !strings.HasPrefix(dsn, "file:") {
+		return dsn
+	}
+	u, err := url.Parse(dsn)
+	if err != nil {
+		return strings.TrimPrefix(dsn, "file:")
+	}
+	if u.Query().Get("mode") == "memory" {
+		return ""
+	}
+	p := u.Opaque
+	if p == "" {
+		p = u.Path
+	}
+	if p == ":memory:" || p == "" {
+		return ""
+	}
+	if dec, err := url.PathUnescape(p); err == nil {
+		p = dec
+	}
+	// file:///C:/x.db: the drive follows the slash of an empty authority.
+	if len(p) >= 3 && p[0] == '/' && p[2] == ':' {
+		p = p[1:]
+	}
+	return filepath.FromSlash(p)
+}
 
 // open is Open, with a pool opened by OpenDB when watch.
 func open(ctx context.Context, dsn string, opts *storage.Options, watch bool) (*Storage, error) {
@@ -65,10 +92,7 @@ func open(ctx context.Context, dsn string, opts *storage.Options, watch bool) (*
 	// Held until this open returns: by then a connection exists and its -wal
 	// tells a vacuum elsewhere not to rename a new file over this one, which
 	// would leave the pool reading and writing an unlinked inode.
-	if hook := beforeSwapGate.Load(); hook != nil {
-		(*hook)(dsn)
-	}
-	defer filelock.EnterSwapGate(dsn)()
+	defer filelock.EnterSwapGate(dsnFilePath(dsn))()
 	var db *sql.DB
 	var err error
 	if watch {

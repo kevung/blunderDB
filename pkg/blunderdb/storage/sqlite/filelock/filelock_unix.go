@@ -41,24 +41,24 @@ func TryExclusive(lockPath string) (*Lock, bool, error) {
 	return &Lock{f: f}, true, nil
 }
 
-// Shared creates/opens lockPath and waits for a shared advisory lock on
-// it: holders of the shared lock exclude one exclusive holder, not each other.
-func Shared(lockPath string) (*Lock, error) {
-	f, err := os.OpenFile(lockPath, os.O_CREATE|os.O_RDWR, 0o644)
-	if err != nil {
-		return nil, err
+// lockShared takes a shared advisory lock on f: holders of the shared lock
+// exclude one exclusive holder, not each other. Without wait it reports
+// false at once when an exclusive holder has it.
+func lockShared(f *os.File, wait bool) (bool, error) {
+	how := unix.LOCK_SH
+	if !wait {
+		how |= unix.LOCK_NB
 	}
 	for {
-		err = unix.Flock(int(f.Fd()), unix.LOCK_SH)
-		if !errors.Is(err, unix.EINTR) {
-			break
+		err := unix.Flock(int(f.Fd()), how)
+		switch {
+		case errors.Is(err, unix.EINTR):
+			continue
+		case errors.Is(err, unix.EWOULDBLOCK):
+			return false, nil
 		}
+		return err == nil, err
 	}
-	if err != nil {
-		_ = f.Close()
-		return nil, err
-	}
-	return &Lock{f: f}, nil
 }
 
 // Release drops the lock by closing the descriptor. Safe on a nil/empty lock.
