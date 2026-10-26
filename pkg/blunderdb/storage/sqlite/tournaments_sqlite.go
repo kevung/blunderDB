@@ -151,10 +151,14 @@ func (s *tournamentStore) AddMatch(ctx context.Context, scope string, tournament
 			tournamentID).Scan(&maxOrder); err != nil {
 			maxOrder = -1
 		}
-		if _, err := tx.ExecContext(ctx,
+		res, err := tx.ExecContext(ctx,
 			`UPDATE match SET tournament_id = ?, tournament_sort_order = ? WHERE id = ?`,
-			tournamentID, maxOrder+1, matchID); err != nil {
+			tournamentID, maxOrder+1, matchID)
+		if err != nil {
 			return err
+		}
+		if n, err := res.RowsAffected(); err == nil && n == 0 {
+			return fmt.Errorf("match: %w", storage.ErrNotFound)
 		}
 		if _, err := tx.ExecContext(ctx,
 			`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID); err != nil {

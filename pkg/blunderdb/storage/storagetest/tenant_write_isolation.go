@@ -447,6 +447,21 @@ func checkOracleTournament(t *testing.T, cx func(scope string) context.Context, 
 		"a's tournament":    s.Tournaments().AddMatch(cx(b), b, tid, mid),
 		"absent tournament": s.Tournaments().AddMatch(cx(b), b, absent, mid),
 	}, tid, absent, mid)
+
+	own, err := s.Tournaments().Create(cx(b), b, "mine", "2026-01-01", "")
+	if err != nil {
+		t.Fatalf("Create(%s): %v", b, err)
+	}
+	foreign := domain.Match{Player1Name: "Owner", Player2Name: "Bob", MatchLength: 5}
+	fid, err := s.Matches().Save(cx(a), a, &foreign)
+	if err != nil {
+		t.Fatalf("Save match(%s): %v", a, err)
+	}
+	absentMatch := fid + 1_000_000
+	sameRefusal(t, map[string]error{
+		"a's match":    s.Tournaments().AddMatch(cx(b), b, own, fid),
+		"absent match": s.Tournaments().AddMatch(cx(b), b, own, absentMatch),
+	}, own, fid, absentMatch)
 }
 
 // checkTrashMatch: a match deleted through the trash and restored by one

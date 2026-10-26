@@ -158,6 +158,9 @@ func (s *tournamentStore) AddMatch(ctx context.Context, scope string, tournament
 		if err := requireOwned(ctx, tx, tenant, "tournament", tournamentID); err != nil {
 			return err
 		}
+		if err := requireOwned(ctx, tx, tenant, "match", matchID); err != nil {
+			return err
+		}
 		var maxOrder int
 		if err := tx.QueryRow(ctx,
 			`SELECT COALESCE(MAX(tournament_sort_order), -1) FROM match

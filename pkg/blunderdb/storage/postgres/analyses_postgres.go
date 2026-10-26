@@ -264,7 +264,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 			c.IsForced != 0, c.IsCloseCube != 0,
 			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate))
 		if err != nil {
-			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
+			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, referenced(err))
 		}
 		if tag.RowsAffected() == 0 {
 			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, storage.ErrNotFound)

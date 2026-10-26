@@ -78,20 +78,27 @@ func (b binder) Training() storage.TrainingStore {
 // fn as an execer; when db is already a transaction the pgx.Tx is a
 // savepoint-backed nested transaction, so fn is atomic in either binding.
 func withTx(ctx context.Context, db execer, fn func(execer) error) error {
+	return runTx(ctx, db, "postgres: ", fn)
+}
+
+// runTx is withTx with the prefix of its own errors given: a caller that
+// wraps them again under "postgres: <what>" passes "", so the message does not
+// carry the backend's name twice.
+func runTx(ctx context.Context, db execer, prefix string, fn func(execer) error) error {
 	b, ok := db.(txBeginner)
 	if !ok {
-		return fmt.Errorf("postgres: execer cannot begin a transaction: %w", storage.ErrInternal)
+		return fmt.Errorf("%sexecer cannot begin a transaction: %w", prefix, storage.ErrInternal)
 	}
 	tx, err := b.Begin(ctx)
 	if err != nil {
-		return fmt.Errorf("postgres: begin tx: %w", err)
+		return fmt.Errorf("%sbegin tx: %w", prefix, err)
 	}
 	defer func() { _ = tx.Rollback(ctx) }()
 	if err := fn(tx); err != nil {
 		return err
 	}
 	if err := tx.Commit(ctx); err != nil {
-		return fmt.Errorf("postgres: commit: %w", err)
+		return fmt.Errorf("%scommit: %w", prefix, err)
 	}
 	return nil
 }
