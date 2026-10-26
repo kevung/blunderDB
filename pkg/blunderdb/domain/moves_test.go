@@ -217,3 +217,73 @@ func TestLegalMovesInvariants(t *testing.T) {
 		}
 	}
 }
+
+// signedBoard is the test's own oracle for "same resulting board": checker
+// counts signed by owner, so the colour an empty point happens to carry cannot
+// tell two boards apart.
+func signedBoard(p *Position) [28]int {
+	var s [28]int
+	for i := 0; i <= 25; i++ {
+		pt := p.Board.Points[i]
+		switch {
+		case pt.Checkers == 0:
+		case pt.Color == Black:
+			s[i] = pt.Checkers
+		case pt.Color == White:
+			s[i] = -pt.Checkers
+		}
+	}
+	s[26], s[27] = p.Board.Bearoff[Black], p.Board.Bearoff[White]
+	return s
+}
+
+// A position read back from storage may carry a colour on its empty points. A
+// point emptied while moving takes the mover's colour, an untouched one keeps
+// its own: two plays reaching the same board must still count once.
+func TestLegalMovesDedupIgnoresEmptyPointColour(t *testing.T) {
+	cases := []struct {
+		name string
+		xgid string
+		want int
+	}{
+		{"5-2", "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10", 8},
+		{"6-3", "XGID=-a-B--E-B-a-dDB--b-bcb----:0:0:1:63:0:0:0:0:10", 14},
+	}
+	for _, c := range cases {
+		base, err := DecodeXGID(c.xgid)
+		if err != nil {
+			t.Fatalf("%s: %v", c.name, err)
+		}
+		starts := []Position{base}
+		if c.name == "5-2" {
+			opening := InitializePosition()
+			opening.Dice = [2]int{5, 2}
+			starts = append(starts, opening)
+		}
+		for _, p0 := range starts {
+			for _, paint := range []int{None, Black, White} {
+				p := p0
+				for i := 0; i <= 25; i++ {
+					if p.Board.Points[i].Checkers == 0 {
+						p.Board.Points[i].Color = paint
+					}
+				}
+				for _, mover := range []int{p0.PlayerOnRoll, 1 - p0.PlayerOnRoll} {
+					p.PlayerOnRoll = mover
+					plays := LegalMoves(&p)
+					seen := map[[28]int]string{}
+					for _, pl := range plays {
+						k := signedBoard(&pl.Result)
+						if prev, dup := seen[k]; dup {
+							t.Errorf("%s paint=%d mover=%d: %q and %q reach the same board", c.name, paint, mover, prev, pl.Notation)
+						}
+						seen[k] = pl.Notation
+					}
+					if mover == p0.PlayerOnRoll && len(plays) != c.want {
+						t.Errorf("%s paint=%d: %d plays, want %d", c.name, paint, len(plays), c.want)
+					}
+				}
+			}
+		}
+	}
+}

@@ -142,7 +142,14 @@ func singleMoves(pos *Position, mover, die int) []CheckerStep {
 
 	var moves []CheckerStep
 	home := allInHome(pos, mover)
-	for src := 1; src <= 24; src++ {
+	// Walk from the mover's 24-point down to its 1-point, whatever the colour:
+	// the dedup keeps the first play reaching a board, so a colour-dependent
+	// walk would name the same play differently for Black and White.
+	for rel := 24; rel >= 1; rel-- {
+		src := rel
+		if mover == White {
+			src = 25 - rel
+		}
 		pt := pos.Board.Points[src]
 		if pt.Checkers <= 0 || pt.Color != mover {
 			continue
@@ -294,13 +301,19 @@ func applyStep(pos *Position, mover int, s CheckerStep) Position {
 }
 
 // boardKey is a stable dedup key for a resulting board (no engine dependency, so
-// it stays in the dependency-free domain package).
+// it stays in the dependency-free domain package). An empty point keys as None
+// whatever colour it carries: a point emptied by the play takes the mover's
+// colour while an untouched one keeps its own, and both are the same board.
 func boardKey(p *Position) string {
 	var b strings.Builder
 	for i := 0; i <= 25; i++ {
 		pt := p.Board.Points[i]
+		color := pt.Color
+		if pt.Checkers == 0 {
+			color = None
+		}
 		b.WriteByte(byte('a' + pt.Checkers))
-		b.WriteByte(byte('0' + pt.Color + 1)) // None(-1)→'0', Black→'1', White→'2'
+		b.WriteByte(byte('0' + color + 1)) // None(-1)→'0', Black→'1', White→'2'
 	}
 	b.WriteByte(byte('a' + p.Board.Bearoff[Black]))
 	b.WriteByte(byte('a' + p.Board.Bearoff[White]))
