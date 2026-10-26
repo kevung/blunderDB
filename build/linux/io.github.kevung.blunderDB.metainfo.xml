@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.47.0" date="2026-10-26">
+      <description>
+        <ul>
+          <li>Databases move to schema 2.50.0: once opened by 0.47.0, a database can no longer be used with 0.46.x or older</li>
+          <li>Opening a database shows the migration's progress and can cancel it; a database newer than the application is refused</li>
+          <li>New search filters: distance to the win for each player (aw, AW), Crawford and post-Crawford (cr, pcr), and decision margin (mg)</li>
+          <li>Writes by the command line or a serve daemon to an open library appear in the interface</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.46.1" date="2026-10-23">
       <description>
         <p>Lists of matches, tournaments, collections, lessons and statistics refresh after any write, including a copy from another open database.</p>

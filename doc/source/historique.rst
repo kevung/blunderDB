@@ -42,6 +42,19 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.47.0 (2026-10-26)
+-------------------
+
+- **Une base ouverte par 0.47.0 ne sert plus aux versions antérieures** : elle passe au schéma 2.50.0, sans retour, et n'est plus utilisable avec blunderDB 0.46.x ou une version plus ancienne. Gardez une copie du fichier avant de l'ouvrir si vous devez encore vous en servir avec une ancienne version. La migration recalcule les colonnes d'analyse et de coup de toute la base (:ref:`annexe_db_migration`).
+- **La migration se suit et s'annule** : avec *CTRL-O* comme dans un nouveau groupe, la barre d'état affiche l'étape en cours et sa progression, et *Échap* l'annule. Après une ouverture annulée ou échouée, *CTRL-O* rouvre la bibliothèque que le groupe portait.
+- **Une base plus récente que le binaire est refusée** : chaque base note la version de schéma minimale qu'un blunderDB doit lire pour l'ouvrir ; en deçà, l'interface, la ligne de commande, ``serve`` et ``migrate`` refusent de l'ouvrir, et un import refuse une source trop récente, avec un message traduit qui donne la version requise. La base reste intacte.
+- **Recherche par distance au gain** : ``aw`` borne les points qu'il reste au joueur pour gagner le match, ``AW`` ceux de l'adversaire, quelle que soit la longueur du match (``aw:2 AW:4``, ``aw<5``) ; ``cr`` retient le jeu Crawford, ``pcr`` les jeux qui le suivent. En ligne de commande : ``--away``, ``--opponent-away`` et ``--crawford game|post``.
+- **Recherche par difficulté de la décision** : ``mg`` borne l'écart, en millipoints, entre le meilleur choix et le suivant dans l'analyse enregistrée (``mg<20`` : une décision serrée, ``mg>100`` : une évidence) ; ``E<1 mg<20`` retient les décisions serrées bien jouées. En ligne de commande : ``--margin``.
+- **Les écritures d'un autre programme sont relues** : ce que ``blunderdb`` en ligne de commande ou un démon ``serve`` écrit dans une bibliothèque ouverte apparaît dans l'interface quand la fenêtre revient au premier plan, ou quelques secondes après la fin de l'écriture.
+- **Retraits** : la base d'exemple (commande ``demo``) et les visites guidées (commande ``tour``) ; le bouton *Noter les coups* de l'onglet *Maintenance*, ``repair --move-errors`` et la route ``matches.scoreMoves``, sans objet puisque l'erreur d'un coup joué est tenue à chaque écriture.
+- **Corrections notables** : une décision de videau compte une fois, quelle que soit sa graphie (« Double No » est lu comme pas de double) ; les coups copiés avec les matchs comptent dans les colonnes d'analyse ; la signature et l'origine d'un commentaire traversent l'export JSON ; l'export ``.apkg`` est plus rapide et consomme moins de mémoire ; le bandeau de fin d'un rollout reste affiché ; le compactage d'une base attend un ``serve`` ou un ``migrate`` ouvert sur le même fichier ; ``analyses.save``, ``analyses.merge`` et ``analyses.load`` du mode serveur se comportent comme l'application ; sur PostgreSQL, une écriture refusée pour un tenant renvoie son erreur.
+- Voir :ref:`cmd_mode`, :ref:`groupes_bibliotheques` et :ref:`cli_bibliotheque_chapitre`.
+
 0.46.0 (2026-10-23)
 -------------------
 
@@ -228,7 +241,7 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - **Les tournois se remplissent à l'import** : un match entre dans le tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est jamais déplacé.
 - **Une seule grammaire de recherche**, désormais lisible depuis la ligne de commande (``blunderdb search --query``) autant que depuis l'application.
 - La ligne de commande gagne ``--format json`` sur neuf commandes, la **complétion pour bash, zsh et fish**, la commande ``repair`` et les sous-commandes ``anki card`` et ``anki log``.
-- Les onglets **Raccourcis** et **Commandes** de l'aide intégrée sont engendrés depuis les pages du manuel qui les décrivent : ils ne peuvent plus prendre de retard sur elles, et deviennent des tableaux, sans encarts. L'onglet **Manuel** de l'aide reste un résumé, distinct du manuel complet en ligne. Trois visites guidées de plus (Eval, Anki, Stats).
+- Les onglets **Raccourcis** et **Commandes** de l'aide intégrée sont engendrés depuis les pages du manuel qui les décrivent : ils ne peuvent plus prendre de retard sur elles, et deviennent des tableaux, sans encarts. L'onglet **Manuel** de l'aide reste un résumé, distinct du manuel complet en ligne. Trois visites guidées de plus (Eval, Anki, Stats). *(Visites guidées retirées en 0.47.0.)*
 - Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et paquet AUR.
 - Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, distingue l'équité *money* de l'équité *match*, et se parcourt au clavier.
 - Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et son annexe, 135 routes), identifiant de corrélation par requête, métriques de travail en vol, compression des flux NDJSON (13,5 % de la taille), et les deux appels qui dépassent le tenant — vidange et purge — passent sous ``/ops/``.
@@ -364,7 +377,7 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 0.23.0 (2026-06-05)
 -------------------
 
-- Ajout de visites guidées de l'interface (tour général, recherche, matchs, tournois), rejouables depuis la barre d'outils ou la commande ``tour``, et d'une base d'exemple chargeable par la commande ``demo`` pour découvrir l'outil sans importer ses propres parties.
+- Ajout de visites guidées de l'interface (tour général, recherche, matchs, tournois), rejouables depuis la barre d'outils ou la commande ``tour``, et d'une base d'exemple chargeable par la commande ``demo`` pour découvrir l'outil sans importer ses propres parties. *(Retirées en 0.47.0.)*
 - Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, dés, videau) depuis la fenêtre de configuration.
 - Autocomplétion de la ligne de commande (touche *TAB*).
 - Panneau de recherche : contrôle explicite du type de décision (Pions / Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; le videau proposé est affiché au centre du plateau pour les décisions de prise/passe.
