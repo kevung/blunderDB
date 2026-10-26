@@ -1563,6 +1563,7 @@
         "bgblitzPosImported": "Позиция BGBlitz успешно импортирована (ID: {posID})",
         "bgblitzPosPasted": "Позиция BGBlitz успешно вставлена (ID: {posID})",
         "errorAnalyzingImport": "Ошибка анализа импорта: {error}",
+        "importSourceTooNew": "Импортируемая база данных требует более новую версию blunderDB (схема {version} или новее): обновите blunderDB, чтобы импортировать её",
         "errorCommittingExport": "Ошибка фиксации экспорта: {error}",
         "errorCommittingImport": "Ошибка фиксации импорта: {error}",
         "errorImportingFormatMatch": "Ошибка импорта матча {formatName}: {error}",

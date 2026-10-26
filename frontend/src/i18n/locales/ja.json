@@ -1563,6 +1563,7 @@
         "bgblitzPosImported": "BGBlitzポジションを正常にインポートしました（ID: {posID}）",
         "bgblitzPosPasted": "BGBlitzポジションを正常に貼り付けました（ID: {posID}）",
         "errorAnalyzingImport": "インポートの分析中にエラーが発生しました：{error}",
+        "importSourceTooNew": "インポートするデータベースにはより新しい blunderDB が必要です（スキーマ {version} 以降）。インポートするには blunderDB を更新してください",
         "errorCommittingExport": "エクスポートのコミット中にエラーが発生しました：{error}",
         "errorCommittingImport": "インポートのコミット中にエラーが発生しました：{error}",
         "errorImportingFormatMatch": "{formatName}マッチのインポート中にエラーが発生しました：{error}",

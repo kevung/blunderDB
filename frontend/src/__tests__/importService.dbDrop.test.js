@@ -102,3 +102,18 @@ describe('classifyDroppedFiles', () => {
         expect(out.unsupported).toEqual(['/a/x.zip']);
     });
 });
+
+describe('an import source newer than the binary', () => {
+    test('the refusal is worded in the active language with the required schema, not shown raw', async () => {
+        const { importDatabase } = await import('../services/importService.js');
+        const { setStatusBarMessage } = await import('../services/databaseService.js');
+        const { OpenImportDatabaseDialog, ShowAlert } = await import('../../wailsjs/go/gui/App.js');
+        const { AnalyzeImportDatabase } = await import('../../wailsjs/go/database/Database.js');
+        const refusal = (await import('../../../testdata/reader_floor_refusal.json')).default;
+        vi.mocked(OpenImportDatabaseDialog).mockResolvedValue('/x/new.db');
+        vi.mocked(AnalyzeImportDatabase).mockRejectedValueOnce(new Error(refusal.message.replace('{schema}', '2.50.0')));
+        await importDatabase();
+        expect(vi.mocked(setStatusBarMessage).mock.calls[0]?.[0]).toMatchObject({ i18nKey: 'status.importSourceTooNew', i18nParams: { version: refusal.floor } });
+        expect(vi.mocked(ShowAlert).mock.calls[0]?.[0]).not.toMatch(/update blunderDB to open it/);
+    });
+});

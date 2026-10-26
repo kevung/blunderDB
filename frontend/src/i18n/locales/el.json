@@ -1563,6 +1563,7 @@
         "bgblitzPosImported": "Η θέση BGBlitz εισήχθη με επιτυχία (ID: {posID})",
         "bgblitzPosPasted": "Η θέση BGBlitz επικολλήθηκε με επιτυχία (ID: {posID})",
         "errorAnalyzingImport": "Σφάλμα κατά την ανάλυση της εισαγωγής: {error}",
+        "importSourceTooNew": "Η βάση προς εισαγωγή απαιτεί νεότερο blunderDB (σχήμα {version} ή νεότερο): ενημερώστε το blunderDB για να την εισαγάγετε",
         "errorCommittingExport": "Σφάλμα κατά την οριστικοποίηση της εξαγωγής: {error}",
         "errorCommittingImport": "Σφάλμα κατά την οριστικοποίηση της εισαγωγής: {error}",
         "errorImportingFormatMatch": "Σφάλμα κατά την εισαγωγή αγώνα {formatName}: {error}",

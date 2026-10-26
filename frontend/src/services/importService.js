@@ -70,6 +70,7 @@ import {
 } from '../stores/importModalStore.js';
 import { activeGroupId, groupOnScreen, noteGroupJob, importForegroundStore, libraryWritten, libraryMark, libraryStillOnScreen, writingOnLibrary } from '../stores/groupActivityStore.js';
 import { setStatusBarMessage } from './databaseService.js';
+import { tooNewMessage } from './readerFloor.js';
 import { logger } from '../utils/logger.js';
 
 /** @typedef {import('../i18n').StatusMessage} StatusMessage */
@@ -181,8 +182,9 @@ export async function importDatabase() {
         }
     } catch (error) {
         logger.error('Error analyzing import:', error);
-        setStatusBarMessage(tMsg('status.errorAnalyzingImport', { error }));
-        await ShowAlert(`Error analyzing import: ${error}`);
+        const tooNew = tooNewMessage(error, 'status.importSourceTooNew');
+        setStatusBarMessage(tooNew ?? tMsg('status.errorAnalyzingImport', { error }));
+        await ShowAlert(tooNew ? translate(tooNew.i18nKey, tooNew.i18nParams) : `Error analyzing import: ${error}`);
         statusBarModeStore.set('NORMAL');
     }
 }
@@ -245,8 +247,9 @@ async function handleImportCommitCore() {
         }
         logger.error('Error committing import:', error);
         showImportProgressModalStore.set(false);
-        setStatusBarMessage(tMsg('status.errorCommittingImport', { error }));
-        await ShowAlert(`Error committing import: ${error}`);
+        const tooNew = tooNewMessage(error, 'status.importSourceTooNew');
+        setStatusBarMessage(tooNew ?? tMsg('status.errorCommittingImport', { error }));
+        await ShowAlert(tooNew ? translate(tooNew.i18nKey, tooNew.i18nParams) : `Error committing import: ${error}`);
         statusBarModeStore.set('NORMAL');
     } finally {
         pendingImportPath = null;
@@ -313,8 +316,9 @@ export async function importDatabaseByPath(importFilePath) {
         }
     } catch (error) {
         logger.error('Error analyzing import:', error);
-        setStatusBarMessage(tMsg('status.errorAnalyzingImport', { error }));
-        await ShowAlert(`Error analyzing import: ${error}`);
+        const tooNew = tooNewMessage(error, 'status.importSourceTooNew');
+        setStatusBarMessage(tooNew ?? tMsg('status.errorAnalyzingImport', { error }));
+        await ShowAlert(tooNew ? translate(tooNew.i18nKey, tooNew.i18nParams) : `Error analyzing import: ${error}`);
         statusBarModeStore.set('NORMAL');
     }
 }
