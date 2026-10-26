@@ -94,7 +94,18 @@ propre issue le jour où il est lancé.
   porter). Le backend `remote` ne couvre pas le cas de contrat du plancher.
 - **Verrou mono-écrivain et `serve` SQLite.** `sqlite.Open` passe la porte de swap du vacuum
   mais ne prend pas le verrou mono-écrivain (ADR-0004) : le démon écrit à côté d'une instance
-  de bureau. Le prendre rendrait le bureau lecture seule tant que le démon tourne ; à décider.
+  de bureau. Le prendre rendrait le bureau lecture seule tant que le démon tourne. Décision de
+  l'utilisateur (lot 2026-10-25b) : pas de verrou mono-écrivain pour `serve` SQLite ; l'entrée
+  reste ouverte.
+- **`mergeWatchedLibraries` et le plancher de lecture** (`frontend/src/services/importService.js`
+  ~906) : un refus de plancher de lecture est compté comme un simple échec, sans être nommé.
+- **Crochet de test global `transferCommitted`** (`database/db_transfer.go`) : variable globale
+  non synchronisée.
+- **`isForeignKeyViolation`** (`storage/postgres/errors_postgres.go`) teste le SQLSTATE 23503 et
+  non le nom de la contrainte : une autre clé étrangère serait prise pour celle attendue.
+- **Préfixe `postgres:` doublé** sur l'erreur de commit d'une suppression de match.
+- **`build.yml`, en-tête** : le commentaire sur la version de la chaîne Go est resté sur un
+  ancien numéro de patch (corrigé en retirant le numéro).
 
 ## Ouvert — Moteur
 
@@ -215,6 +226,8 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
 
 ## Historique — items faits
 
+- **2026-10-25 — lot 2026-10-25b** (fusionné sur `main`) : #823 à #833, #802, #836 et #837.
+  Décision : pas de verrou mono-écrivain pour `serve` SQLite (entrée Backend laissée ouverte).
 - **2026-10-25 — lot du 2026-10-25** (fusionné sur `main`) : version minimale de lecture et clés
   de schéma réservées dans `MetadataStore.Save`, plancher contrôlé avant toute écriture de
   l'ouverture (#815) ; progression et annulation de CTRL-O (#816, #817) et phases de migration

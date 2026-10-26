@@ -26,7 +26,7 @@ func (s *MatchEquityTableStore) Save(ctx context.Context, scope string, met doma
 	// trusted, or two different tables could share one row.
 	parsed, err := engine.ParseGnubgMET([]byte(met.Source))
 	if err != nil {
-		return 0, fmt.Errorf("%s: save match equity table: source: %v: %w", s.DB.Name(), err, storage.ErrInvalid)
+		return 0, fmt.Errorf("%s: save match equity table: source: %w: %w", s.DB.Name(), err, storage.ErrInvalid)
 	}
 	if want := parsed.Digest(); want != met.Digest {
 		return 0, fmt.Errorf("%s: save match equity table: digest %q does not match its source (%q): %w", s.DB.Name(), met.Digest, want, storage.ErrInvalid)

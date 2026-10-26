@@ -18,7 +18,7 @@ env:
   # One statement of each toolchain version for the whole file (B.19, #187):
   # they were repeated 7 and 4 times, and a bump that missed one occurrence
   # built half the matrix on a different compiler without saying so.
-  # GO_VERSION is the toolchain, a supported patch release (#412: 1.27.1); it
+  # GO_VERSION is the toolchain, a supported patch release; it
   # is deliberately ahead of go.mod's `go` line, which states the MINIMUM the
   # dependencies require (1.26.0) because gammonGo embeds pkg/blunderdb/server
   # and inherits it. NODE_VERSION is an LTS line — 23 was an odd-numbered
