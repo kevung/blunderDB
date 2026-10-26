@@ -33,7 +33,9 @@ la version de schéma minimale qu'un blunderDB doit lire pour l'ouvrir. À parti
 de cette version, blunderDB connaît cette clé : s'il lit un schéma plus ancien
 que ce minimum, il refuse d'ouvrir la base, en interface graphique, en ligne de
 commande, avec ``serve`` comme avec ``migrate``, et affiche les deux versions :
-la base reste intacte. Les versions antérieures ignorent cette clé.
+la base reste intacte. Une base lue sans être ouverte, source d'un import ou
+fichier comparé à la base ouverte, est refusée de même. Les versions
+antérieures ignorent cette clé.
 
 Principales tables
 ------------------

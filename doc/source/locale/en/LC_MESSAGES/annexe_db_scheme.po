@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 02:51+0200\n"
+"POT-Creation-Date: 2026-10-25 03:10+0100\n"
 "PO-Revision-Date: 2025-02-13 00:00+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -80,7 +80,9 @@ msgid ""
 "cette clé : s'il lit un schéma plus ancien que ce minimum, il refuse "
 "d'ouvrir la base, en interface graphique, en ligne de commande, avec "
 "``serve`` comme avec ``migrate``, et affiche les deux versions : la base "
-"reste intacte. Les versions antérieures ignorent cette clé."
+"reste intacte. Une base lue sans être ouverte, source d'un import ou "
+"fichier comparé à la base ouverte, est refusée de même. Les versions "
+"antérieures ignorent cette clé."
 msgstr ""
 "A database also records in its metadata (key ``min_reader_version``) the "
 "minimum schema version a blunderDB must read to open it. From this "
@@ -88,17 +90,18 @@ msgstr ""
 "that minimum, it refuses to open the database, in the graphical "
 "interface, on the command line, with ``serve`` as with ``migrate``, and "
 "shows both versions: the database is left untouched. Earlier versions "
-"ignore this key."
+"ignore this key. A database read without being opened, the source of an "
+"import or a file compared with the open one, is refused in the same way."
 
-#: ../../source/annexe_db_scheme.rst:39
+#: ../../source/annexe_db_scheme.rst:41
 msgid "Principales tables"
 msgstr "Main tables"
 
-#: ../../source/annexe_db_scheme.rst:41
+#: ../../source/annexe_db_scheme.rst:43
 msgid "Le schéma courant s'articule autour des tables suivantes :"
 msgstr "The current schema is built around the following tables:"
 
-#: ../../source/annexe_db_scheme.rst:43
+#: ../../source/annexe_db_scheme.rst:45
 msgid ""
 "**Positions et analyses** : ``position`` (les positions, dédupliquées), "
 "``analysis`` (les données d'analyse associées) et ``comment`` (les "
@@ -108,7 +111,7 @@ msgstr ""
 "``analysis`` (the associated analysis data) and ``comment`` (the "
 "comments)."
 
-#: ../../source/annexe_db_scheme.rst:47
+#: ../../source/annexe_db_scheme.rst:49
 msgid ""
 "**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent "
 "les matchs importés, leurs parties, leurs coups et l'analyse de chaque "
@@ -118,7 +121,7 @@ msgstr ""
 "the imported matches, their games, their moves and the analysis of each "
 "move."
 
-#: ../../source/annexe_db_scheme.rst:50
+#: ../../source/annexe_db_scheme.rst:52
 msgid ""
 "**Collections** : ``collection`` et ``collection_position`` (table de "
 "liaison) regroupent des positions choisies manuellement."
@@ -126,11 +129,11 @@ msgstr ""
 "**Collections**: ``collection`` and ``collection_position`` (link table) "
 "group together manually chosen positions."
 
-#: ../../source/annexe_db_scheme.rst:53
+#: ../../source/annexe_db_scheme.rst:55
 msgid "**Tournois** : ``tournament`` regroupe des matchs en tournois."
 msgstr "**Tournaments**: ``tournament`` groups matches into tournaments."
 
-#: ../../source/annexe_db_scheme.rst:55
+#: ../../source/annexe_db_scheme.rst:57
 msgid ""
 "**Répétition espacée (Anki)** : ``anki_deck``, ``anki_card`` et "
 "``anki_review_log`` gèrent les paquets, les cartes et le journal des "
@@ -140,7 +143,7 @@ msgstr ""
 "``anki_review_log`` manage the decks, the cards and the review log (FSRS "
 "algorithm)."
 
-#: ../../source/annexe_db_scheme.rst:59
+#: ../../source/annexe_db_scheme.rst:61
 msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
@@ -152,11 +155,11 @@ msgstr ""
 " library, and ``metadata`` the database metadata (including the schema "
 "version)."
 
-#: ../../source/annexe_db_scheme.rst:65
+#: ../../source/annexe_db_scheme.rst:67
 msgid "Principes de conception"
 msgstr "Design principles"
 
-#: ../../source/annexe_db_scheme.rst:67
+#: ../../source/annexe_db_scheme.rst:69
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
@@ -164,7 +167,7 @@ msgstr ""
 "From schema 2.0.0 onwards, several design choices speed up searches and "
 "reduce the file size:"
 
-#: ../../source/annexe_db_scheme.rst:70
+#: ../../source/annexe_db_scheme.rst:72
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -174,7 +177,7 @@ msgstr ""
 "unique index, so that the same position encountered across several "
 "imports is stored only once."
 
-#: ../../source/annexe_db_scheme.rst:74
+#: ../../source/annexe_db_scheme.rst:76
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -186,7 +189,7 @@ msgstr ""
 "play or cube error, chances of winning, etc.) are precomputed into "
 "dedicated columns for fast filtering."
 
-#: ../../source/annexe_db_scheme.rst:79
+#: ../../source/annexe_db_scheme.rst:81
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -195,7 +198,7 @@ msgstr ""
 "**Bitboard prefilter**: occupancy and point-mask columns enable a very "
 "fast integer prefilter when searching for structure patterns."
 
-#: ../../source/annexe_db_scheme.rst:83
+#: ../../source/annexe_db_scheme.rst:85
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -208,7 +211,7 @@ msgstr ""
 "older analyses, in JSON, remain readable and are converted by ``vacuum`` "
 "or ``reencode``), which greatly reduces the file size."
 
-#: ../../source/annexe_db_scheme.rst:89
+#: ../../source/annexe_db_scheme.rst:91
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."

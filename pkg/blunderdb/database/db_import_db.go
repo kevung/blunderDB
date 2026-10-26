@@ -238,6 +238,11 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		return nil, err
 	}
 	defer importDB.Close()
+	// A source a newer blunderDB marked above this binary's schema may carry
+	// rows this import would misread; it is refused before anything is read.
+	if err := sqlite.CheckReaderFloor(context.Background(), importDB); err != nil {
+		return nil, fmt.Errorf("import database: %w", err)
+	}
 
 	// Check the import database version
 	var importDBVersion string
@@ -626,6 +631,11 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 	defer importDB.Close()
+	// A source a newer blunderDB marked above this binary's schema may carry
+	// rows this import would misread; it is refused before anything is read.
+	if err := sqlite.CheckReaderFloor(context.Background(), importDB); err != nil {
+		return nil, fmt.Errorf("import database: %w", err)
+	}
 	commentCols := readSourceCommentColumns(importDB)
 
 	// Check the import database version

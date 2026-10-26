@@ -270,3 +270,49 @@ func TestStdoutResponseWriterErrorLineFails(t *testing.T) {
 		t.Fatal("error line not seen")
 	}
 }
+
+// TestCallRemoteSaysTheDaemonIgnoresWithPlayed: a daemon older than
+// withPlayed answers the bare analysis; the answer still goes to stdout and
+// stderr says the plays are missing, so a script does not read none played.
+func TestCallRemoteSaysTheDaemonIgnoresWithPlayed(t *testing.T) {
+	ts, _ := newTestServerAndHandler(t)
+	old := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rec := httptest.NewRecorder()
+		ts.Config.Handler.ServeHTTP(rec, r)
+		for k, v := range rec.Header() {
+			if k != http.CanonicalHeaderKey(storage.WithPlayedHeader) {
+				w.Header()[k] = v
+			}
+		}
+		w.WriteHeader(rec.Code)
+		_, _ = w.Write(rec.Body.Bytes())
+	}))
+	t.Cleanup(old.Close)
+	run := func(args ...string) string {
+		t.Helper()
+		out, err := captureStdout(t, func() error {
+			return RunCall(append(args, "--backend", "remote", "--dsn", old.URL))
+		})
+		if err != nil {
+			t.Fatalf("%v: %v (%s)", args, err, out)
+		}
+		return out
+	}
+	run("positions.save", "--json", `{"position":{"decision_type":0}}`)
+	run("analyses.save", "--json", `{"positionId":1,"analysis":{"positionId":1,"analysisType":"CheckerMove"}}`)
+
+	oldErr := os.Stderr
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	os.Stderr = w
+	run("analyses.load", "--json", `{"positionId":1,"withPlayed":true}`)
+	w.Close()
+	os.Stderr = oldErr
+	msg, _ := io.ReadAll(r)
+	r.Close()
+	if !strings.Contains(string(msg), "upgrade the daemon") {
+		t.Fatalf("stderr = %q, want the notice that the daemon ignores withPlayed", msg)
+	}
+}

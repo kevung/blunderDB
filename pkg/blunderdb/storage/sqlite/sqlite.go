@@ -429,6 +429,12 @@ func openReadOnlyMode(ctx context.Context, abs, path string, immutable bool) (*S
 		db.Close()
 		return nil, fmt.Errorf("%s is not a blunderDB database (empty, or no metadata table)", path)
 	}
+	// Read only, yet still refused: rows a newer schema wrote can mean
+	// something this binary would misread, and the file is read to be copied.
+	if err := CheckReaderFloor(ctx, db); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("%s: %w", path, err)
+	}
 	return &Storage{binder: binder{db: db, probe: &writeProbe{}}, sqlDB: db, ownsDB: true}, nil
 }
 

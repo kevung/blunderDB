@@ -53,6 +53,13 @@ func TestContract_Remote(t *testing.T) {
 // covered names the contract cases the remote backend passes: those whose
 // every method has a /v1 route. A case leaves this list only with the route
 // it needs.
+//
+// The reader floor stays out by design, not for want of a route:
+// Metadata/ReaderFloorStampedAndReserved reads MetadataStore.Load, which /v1
+// does not serve, and RunReaderFloor writes the floor by SQL under the store.
+// The floor guards the daemon's own file, checked and raised by the daemon at
+// its open; a remote client writes nothing but through the daemon, and its
+// Migrate already refuses a daemon whose schema is not its own.
 var covered = map[string]bool{
 	"ActionLabel/SelectsByBestCubeAction":                    true,
 	"Aliases/ReadAsOnePerson":                                true,

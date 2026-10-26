@@ -2329,7 +2329,9 @@ en-têtes de ``--header`` (``X-Tenant-ID`` y est refusé : le tenant est
 s'authentifie pas ; le proxy placé devant lui décide : un refus du proxy
 (HTTP 401 ou 403) se lit « refused » et renvoie à ``--header``, une limite
 (HTTP 429, ``rate_limited``) se lit comme telle, et seul un démon injoignable
-ou muet au-delà de ``--timeout`` se lit « daemon unavailable ».
+ou muet au-delà de ``--timeout`` se lit « daemon unavailable ». Un démon plus
+ancien qui ignore ``withPlayed`` rend l'analyse sans les coups joués : la
+réponse sort telle quelle et ``call`` le signale sur la sortie d'erreur.
 
 Une méthode dont le stockage n'a pas de route ``/v1`` (une transaction, un
 service de Direction, de Rencontre, de Duel, de table de match, de

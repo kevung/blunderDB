@@ -169,6 +169,9 @@ func RunCall(args []string) error {
 	// exports would otherwise sit whole in RAM before the first byte.
 	w := newStdoutResponseWriter()
 	srv.Handler().ServeHTTP(w, req)
+	if rs, ok := st.(*remote.Storage); ok && rs.PlayedJoinIgnored() {
+		_, _ = fmt.Fprintf(os.Stderr, "call: daemon %s is older than this blunderDB: analyses came without the moves the matches played; upgrade the daemon\n", effDSN)
+	}
 	// stdout stays the JSON answer alone; the version the next gesture states goes beside it.
 	if v := w.header.Get(versionHeader); v != "" {
 		_, _ = fmt.Fprintf(os.Stderr, "%s: %s\n", versionHeader, v)

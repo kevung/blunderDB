@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 02:51+0200\n"
+"POT-Creation-Date: 2026-10-25 03:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -81,7 +81,9 @@ msgid ""
 "cette clé : s'il lit un schéma plus ancien que ce minimum, il refuse "
 "d'ouvrir la base, en interface graphique, en ligne de commande, avec "
 "``serve`` comme avec ``migrate``, et affiche les deux versions : la base "
-"reste intacte. Les versions antérieures ignorent cette clé."
+"reste intacte. Une base lue sans être ouverte, source d'un import ou "
+"fichier comparé à la base ouverte, est refusée de même. Les versions "
+"antérieures ignorent cette clé."
 msgstr ""
 "База данных также записывает в свои метаданные (ключ "
 "``min_reader_version``) минимальную версию схемы, которую должен читать "
@@ -89,17 +91,19 @@ msgstr ""
 "ключ: если он читает схему старше этого минимума, он отказывается "
 "открывать базу — в графическом интерфейсе, в командной строке, с "
 "``serve`` так же, как с ``migrate``, — и показывает обе версии: база "
-"остаётся нетронутой. Более ранние версии игнорируют этот ключ."
+"остаётся нетронутой. Более ранние версии игнорируют этот ключ. База, "
+"которая читается без открытия, — источник импорта или файл, сравниваемый "
+"с открытой базой, — отклоняется так же."
 
-#: ../../source/annexe_db_scheme.rst:39
+#: ../../source/annexe_db_scheme.rst:41
 msgid "Principales tables"
 msgstr "Основные таблицы"
 
-#: ../../source/annexe_db_scheme.rst:41
+#: ../../source/annexe_db_scheme.rst:43
 msgid "Le schéma courant s'articule autour des tables suivantes :"
 msgstr "Текущая схема строится вокруг следующих таблиц:"
 
-#: ../../source/annexe_db_scheme.rst:43
+#: ../../source/annexe_db_scheme.rst:45
 msgid ""
 "**Positions et analyses** : ``position`` (les positions, dédupliquées), "
 "``analysis`` (les données d'analyse associées) et ``comment`` (les "
@@ -108,7 +112,7 @@ msgstr ""
 "**Позиции и анализ**: ``position`` (позиции, дедуплицированные), "
 "``analysis`` (связанные данные анализа) и ``comment`` (комментарии)."
 
-#: ../../source/annexe_db_scheme.rst:47
+#: ../../source/annexe_db_scheme.rst:49
 msgid ""
 "**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent "
 "les matchs importés, leurs parties, leurs coups et l'analyse de chaque "
@@ -117,7 +121,7 @@ msgstr ""
 "**Матчи**: ``match``, ``game``, ``move`` и ``move_analysis`` хранят "
 "импортированные матчи, их партии, ходы и анализ каждого хода."
 
-#: ../../source/annexe_db_scheme.rst:50
+#: ../../source/annexe_db_scheme.rst:52
 msgid ""
 "**Collections** : ``collection`` et ``collection_position`` (table de "
 "liaison) regroupent des positions choisies manuellement."
@@ -125,11 +129,11 @@ msgstr ""
 "**Коллекции**: ``collection`` и ``collection_position`` (связующая "
 "таблица) объединяют позиции, выбранные вручную."
 
-#: ../../source/annexe_db_scheme.rst:53
+#: ../../source/annexe_db_scheme.rst:55
 msgid "**Tournois** : ``tournament`` regroupe des matchs en tournois."
 msgstr "**Турниры**: ``tournament`` объединяет матчи в турниры."
 
-#: ../../source/annexe_db_scheme.rst:55
+#: ../../source/annexe_db_scheme.rst:57
 msgid ""
 "**Répétition espacée (Anki)** : ``anki_deck``, ``anki_card`` et "
 "``anki_review_log`` gèrent les paquets, les cartes et le journal des "
@@ -139,7 +143,7 @@ msgstr ""
 "``anki_review_log`` управляют колодами, карточками и журналом повторений "
 "(алгоритм FSRS)."
 
-#: ../../source/annexe_db_scheme.rst:59
+#: ../../source/annexe_db_scheme.rst:61
 msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
@@ -150,11 +154,11 @@ msgstr ""
 "историю команд и поисков, ``filter_library`` — библиотеку фильтров, а "
 "``metadata`` — метаданные базы (включая версию схемы)."
 
-#: ../../source/annexe_db_scheme.rst:65
+#: ../../source/annexe_db_scheme.rst:67
 msgid "Principes de conception"
 msgstr "Принципы проектирования"
 
-#: ../../source/annexe_db_scheme.rst:67
+#: ../../source/annexe_db_scheme.rst:69
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
@@ -162,7 +166,7 @@ msgstr ""
 "Начиная со схемы 2.0.0, несколько проектных решений ускоряют поиск и "
 "уменьшают размер файла:"
 
-#: ../../source/annexe_db_scheme.rst:70
+#: ../../source/annexe_db_scheme.rst:72
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -172,7 +176,7 @@ msgstr ""
 "индекс, так что одна и та же позиция, встречающаяся в нескольких "
 "импортах, хранится лишь один раз."
 
-#: ../../source/annexe_db_scheme.rst:74
+#: ../../source/annexe_db_scheme.rst:76
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -184,7 +188,7 @@ msgstr ""
 "хода или куба, шансы на выигрыш…) предварительно вычисляются в выделенных"
 " колонках для быстрой фильтрации."
 
-#: ../../source/annexe_db_scheme.rst:79
+#: ../../source/annexe_db_scheme.rst:81
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -194,7 +198,7 @@ msgstr ""
 "пунктов обеспечивают очень быструю целочисленную предварительную "
 "фильтрацию при поиске структурных шаблонов."
 
-#: ../../source/annexe_db_scheme.rst:83
+#: ../../source/annexe_db_scheme.rst:85
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -207,7 +211,7 @@ msgstr ""
 "анализы в JSON остаются читаемыми и преобразуются командой ``vacuum`` или"
 " ``reencode``), что сильно уменьшает размер файла."
 
-#: ../../source/annexe_db_scheme.rst:89
+#: ../../source/annexe_db_scheme.rst:91
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."
