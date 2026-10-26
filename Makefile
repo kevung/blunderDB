@@ -84,9 +84,10 @@ test-go: frontend/dist
 # — the same command and BLUNDERDB_REQUIRE_PG=1 env var as CI's test-postgres
 # job (.github/workflows/build.yml), so a missing or broken Docker daemon
 # fails loudly here too instead of the suite silently skipping itself (the
-# skip/fatal split is in postgres_test.go).
+# skip/fatal split is in postgres_test.go). The suite runs close to go test's
+# default 900 s timeout, hence the explicit one, the same as CI's.
 test-pg: frontend/dist
-	BLUNDERDB_REQUIRE_PG=1 go test -tags postgres -count=1 \
+	BLUNDERDB_REQUIRE_PG=1 go test -tags postgres -timeout 1200s -count=1 \
 		./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/...
 
 # test-e2e is the Playwright suite (frontend/tests/e2e): it drives a real

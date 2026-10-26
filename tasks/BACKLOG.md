@@ -96,10 +96,9 @@ propre issue le jour où il est lancé.
   pas le plancher (couvert en pratique par `cli_elsewhere`). `readerFloor`/`raiseReaderFloor`
   sont dupliqués entre `storage/sqlite` et `storage/postgres` (`sqlshared` pourrait les
   porter). Le backend `remote` ne couvre pas le cas de contrat du plancher.
-- **Verrou de swap du vacuum : ouvreurs hors périmètre.** Les ouvreurs `serve` SQLite et
-  `migrate` ignorent le verrou de swap du vacuum (et le verrou mono-écrivain).
-- **`go test -tags postgres ./pkg/blunderdb/storage/postgres`** frôle le délai par défaut de
-  900 s (885 s mesurés) : fixer `-timeout` dans le Makefile.
+- **Verrou mono-écrivain et `serve` SQLite.** `sqlite.Open` passe la porte de swap du vacuum
+  mais ne prend pas le verrou mono-écrivain (ADR-0004) : le démon écrit à côté d'une instance
+  de bureau. Le prendre rendrait le bureau lecture seule tant que le démon tourne ; à décider.
 
 ## Ouvert — Moteur
 

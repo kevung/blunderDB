@@ -4,6 +4,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/filelock"
 )
 
 // TestFileLock_SecondInstanceReadOnly verifies the single-writer guard: a second
@@ -89,14 +91,14 @@ func TestFileLock_MemorySkipsLock(t *testing.T) {
 // entirely).
 func assertLockFree(t *testing.T, path string) {
 	t.Helper()
-	lock, ok, err := tryLockExclusive(lockPathFor(path))
+	lock, ok, err := filelock.TryExclusive(filelock.LockPath(path))
 	if err != nil {
 		t.Fatalf("tryLockExclusive: %v", err)
 	}
 	if !ok {
 		t.Fatalf("lock for %q still held", path)
 	}
-	if err := lock.release(); err != nil {
+	if err := lock.Release(); err != nil {
 		t.Fatalf("release probe lock: %v", err)
 	}
 }

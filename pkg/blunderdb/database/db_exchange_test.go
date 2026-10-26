@@ -125,8 +125,9 @@ func TestExchange_EveryFieldIsPlaced(t *testing.T) {
 		"recount": true,
 		// The handle's report stays with it; a running fill is cancelled by the bump.
 		"statsFill": true,
-		// A test seam of the handle's own vacuum.
+		// Test seams of the handle's own vacuum and open.
 		"beforeSwapRename": true,
+		"beforeSwapGate":   true,
 	}
 	typ := reflect.TypeOf(Database{})
 	for i := 0; i < typ.NumField(); i++ {

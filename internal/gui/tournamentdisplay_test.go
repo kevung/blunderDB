@@ -166,9 +166,13 @@ func TestDisplayHandler_ServesADirectedTournamentConditionally(t *testing.T) {
 }
 
 // openDirectedFile opens, in db, a fresh file holding one directed tournament.
+// It closes db before the directory goes: cleanups run last registered first,
+// and Windows refuses to remove a file still open.
 func openDirectedFile(t *testing.T, db *database.Database) {
 	t.Helper()
-	if err := db.SetupDatabase(filepath.Join(t.TempDir(), "directed.db")); err != nil {
+	dir := t.TempDir()
+	t.Cleanup(func() { _ = db.Close() })
+	if err := db.SetupDatabase(filepath.Join(dir, "directed.db")); err != nil {
 		t.Fatal(err)
 	}
 	id, err := db.CreateTournament("Salle", "2026-09-12", "")
