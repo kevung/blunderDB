@@ -294,13 +294,20 @@ func applyStep(pos *Position, mover int, s CheckerStep) Position {
 }
 
 // boardKey is a stable dedup key for a resulting board (no engine dependency, so
-// it stays in the dependency-free domain package).
+// it stays in the dependency-free domain package). An empty point keys as None
+// whatever colour it carries: applyStep leaves a point it empties as None, but
+// an untouched empty point keeps the colour it came with (a zero Point reads as
+// Black), and both are the same board.
 func boardKey(p *Position) string {
 	var b strings.Builder
 	for i := 0; i <= 25; i++ {
 		pt := p.Board.Points[i]
+		color := pt.Color
+		if pt.Checkers == 0 {
+			color = None
+		}
 		b.WriteByte(byte('a' + pt.Checkers))
-		b.WriteByte(byte('0' + pt.Color + 1)) // None(-1)→'0', Black→'1', White→'2'
+		b.WriteByte(byte('0' + color + 1)) // None(-1)→'0', Black→'1', White→'2'
 	}
 	b.WriteByte(byte('a' + p.Board.Bearoff[Black]))
 	b.WriteByte(byte('a' + p.Board.Bearoff[White]))
