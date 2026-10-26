@@ -243,32 +243,40 @@ func TestBuildWhereEffIncludeClearsPointsSharedWithExclude(t *testing.T) {
 	}
 }
 
-// The `aw` filter compares the stored away scores of both players, a lower
-// bound of one point opening at the post-Crawford sentinel 0, and stays in
-// SQL in mirror search.
+// The `aw` and `AW` filters compare the stored away score of the player and
+// of the opponent, a lower bound of one point opening at the post-Crawford
+// sentinel 0; mirror search narrows to either orientation. The Crawford state
+// is the game's, so it stays in SQL in mirror search.
 func TestBuildWhereAwayFilter(t *testing.T) {
 	cases := []struct {
 		f     domain.SearchFilters
 		where string
 		args  []any
 	}{
-		{domain.SearchFilters{AwayFilter: "aw<5"}, "1=1 AND p.score_1 BETWEEN ? AND ? AND p.score_2 BETWEEN ? AND ?", []any{0, 5, 0, 5}},
-		{domain.SearchFilters{AwayFilter: "aw:1"}, "1=1 AND p.score_1 BETWEEN ? AND ? AND p.score_2 BETWEEN ? AND ?", []any{0, 1, 0, 1}},
-		{domain.SearchFilters{AwayFilter: "aw>3"}, "1=1 AND p.score_1 >= ? AND p.score_2 >= ?", []any{3, 3}},
-		{domain.SearchFilters{AwayFilter: "aw:4"}, "1=1 AND p.score_1 = ? AND p.score_2 = ?", []any{4, 4}},
+		{domain.SearchFilters{AwayFilter: "aw<5"}, "1=1 AND p.score_1 BETWEEN ? AND ?", []any{0, 5}},
+		{domain.SearchFilters{AwayFilter: "aw:1"}, "1=1 AND p.score_1 BETWEEN ? AND ?", []any{0, 1}},
+		{domain.SearchFilters{AwayFilter: "aw>3"}, "1=1 AND p.score_1 >= ?", []any{3}},
+		{domain.SearchFilters{AwayFilter: "aw:4"}, "1=1 AND p.score_1 = ?", []any{4}},
 		{domain.SearchFilters{AwayFilter: "aw:0"}, "1=1 AND 0=1", nil},
-		{domain.SearchFilters{AwayFilter: "aw:2,5", MirrorFilter: true}, "1=1 AND p.score_1 BETWEEN ? AND ? AND p.score_2 BETWEEN ? AND ?", []any{2, 5, 2, 5}},
+		{domain.SearchFilters{AwayFilter: "aw:2,5", OpponentAwayFilter: "AW:2,5"}, "1=1 AND p.score_1 BETWEEN ? AND ? AND p.score_2 BETWEEN ? AND ?", []any{2, 5, 2, 5}},
+		{domain.SearchFilters{OpponentAwayFilter: "AW:1"}, "1=1 AND p.score_2 BETWEEN ? AND ?", []any{0, 1}},
+		{domain.SearchFilters{AwayFilter: "aw:2", OpponentAwayFilter: "AW:0"}, "1=1 AND 0=1", nil},
+		{domain.SearchFilters{AwayFilter: "aw:2", OpponentAwayFilter: "AW>4", MirrorFilter: true},
+			"1=1 AND ((1=1 AND p.score_1 = ? AND p.score_2 >= ?) OR (1=1 AND p.score_2 = ? AND p.score_1 >= ?))", []any{2, 4, 2, 4}},
+		{domain.SearchFilters{CrawfordFilter: domain.CrawfordGame}, "1=1 AND (p.score_1 = ? OR p.score_2 = ?)", []any{1, 1}},
+		{domain.SearchFilters{CrawfordFilter: domain.CrawfordAfter, MirrorFilter: true}, "1=1 AND (p.score_1 = ? OR p.score_2 = ?)", []any{0, 0}},
+		{domain.SearchFilters{CrawfordFilter: domain.CrawfordNone}, "1=1 AND 0=1", nil},
 	}
 	for _, c := range cases {
 		wc, err := buildWhereStore().buildWhere(context.Background(), "", c.f)
 		if err != nil {
-			t.Fatalf("%s: buildWhere: %v", c.f.AwayFilter, err)
+			t.Fatalf("%+v: buildWhere: %v", c.f, err)
 		}
 		if wc.where != c.where {
-			t.Errorf("%s: where = %q, want %q", c.f.AwayFilter, wc.where, c.where)
+			t.Errorf("%s/%s/%s: where = %q, want %q", c.f.AwayFilter, c.f.OpponentAwayFilter, c.f.CrawfordFilter, wc.where, c.where)
 		}
 		if fmt.Sprint(wc.args) != fmt.Sprint(c.args) {
-			t.Errorf("%s: args = %v, want %v", c.f.AwayFilter, wc.args, c.args)
+			t.Errorf("%s/%s/%s: args = %v, want %v", c.f.AwayFilter, c.f.OpponentAwayFilter, c.f.CrawfordFilter, wc.args, c.args)
 		}
 	}
 }

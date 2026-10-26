@@ -229,11 +229,20 @@ export function parseSearchTokens(filtersOrCommand, command) {
     // (round, repeatable) and `ad:xg` (engine/depth, repeatable, lower-cased).
     const dateBound = '\\d{4}(?:[-/]\\d{2}(?:[-/]\\d{2})?)?';
     const matchLengthFilter = filters.find((f) => typeof f === 'string' && /^ml(?::\d+(?:,\d+)?|[<>]\d+)$/.test(f)) || '';
-    // `aw:4`, `aw:2,5`, `aw<5`, `aw>3` : les points qu'il reste à marquer à
-    // chacun des deux joueurs, dans la grammaire de `ml`.
+    // `aw:4`, `aw:2,5`, `aw<5`, `aw>3` : les points qu'il reste à marquer au
+    // joueur, dans la grammaire de `ml` ; `AW` de même pour l'adversaire.
     const awayFilter = filters.find((f) => typeof f === 'string' && /^aw(?::\d+(?:,\d+)?|[<>]\d+)$/.test(f)) || '';
+    const opponentAwayFilter = filters.find((f) => typeof f === 'string' && /^AW(?::\d+(?:,\d+)?|[<>]\d+)$/.test(f)) || '';
+    // `cr` le jeu Crawford, `pcr` les jeux qui le suivent ; les deux à la
+    // fois ne retiennent rien.
+    const crawfordGame = filters.includes('cr');
+    const crawfordAfter = filters.includes('pcr');
+    const crawfordFilter = crawfordGame && crawfordAfter ? 'none' : crawfordGame ? 'game' : crawfordAfter ? 'post' : '';
     const matchDateRe = new RegExp(`^md(?::${dateBound}(?:\\.\\.${dateBound})?|[<>]${dateBound})$`);
     const matchDateFilter = filters.find((f) => typeof f === 'string' && matchDateRe.test(f)) || '';
+    // `mg>100`, `mg<20`, `mg20,60` : l'écart (millipoints) entre le meilleur
+    // choix et le suivant, dans la grammaire de `pr`.
+    const marginFilter = filters.find((f) => typeof f === 'string' && /^mg(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$/.test(f)) || '';
     const decisionTimeFilter = filters.find((f) => typeof f === 'string' && /^tm(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)?)$/.test(f)) || '';
     const playerPRFilter = filters.find((f) => typeof f === 'string' && /^pr(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$/.test(f)) || '';
     const roundFilter = filters
@@ -247,7 +256,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
     // Exclude `pl"…"` (player filter), `ph:…` (phase) and `pr…` (PR) — all start
     // with 'p' and none is a pipcount.
     const pipCountFilter = filters.find(
-        (f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && !f.startsWith('pr') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p'))
+        (f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && !f.startsWith('pr') && f !== 'pcr' && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p'))
     );
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
     // Exclude `gt:…` (game type), which starts with 'g' and is no gammon rate:
@@ -387,9 +396,12 @@ export function parseSearchTokens(filtersOrCommand, command) {
         roundFilter,
         matchLengthFilter,
         awayFilter,
+        opponentAwayFilter,
+        crawfordFilter,
         matchDateFilter,
         playerPRFilter,
         decisionTimeFilter,
+        marginFilter,
         analysisProvenanceFilter,
         positionIDsFilter
     };
@@ -510,9 +522,12 @@ export function parseSearchCommand(command) {
         rdf: p.roundFilter,
         mlf: p.matchLengthFilter,
         awf: p.awayFilter,
+        oawf: p.opponentAwayFilter,
+        crwf: p.crawfordFilter,
         mdf: p.matchDateFilter,
         prf: p.playerPRFilter,
         dtf: p.decisionTimeFilter,
+        mgf: p.marginFilter,
         adf: p.analysisProvenanceFilter,
         crf: p.cubeResponseFilter,
         p1ob: p.player1OutfieldBlotFilter,
@@ -598,9 +613,12 @@ export function replaySearchArgs(command) {
         roundFilter: f.rdf,
         matchLengthFilter: f.mlf,
         awayFilter: f.awf,
+        opponentAwayFilter: f.oawf,
+        crawfordFilter: f.crwf,
         matchDateFilter: f.mdf,
         playerPRFilter: f.prf,
         decisionTimeFilter: f.dtf,
+        marginFilter: f.mgf,
         analysisProvenanceFilter: f.adf,
         // Command-line-only tokens: positionService does not re-derive them
         // from `filters`, so a replay would otherwise lose them.
@@ -727,9 +745,12 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         roundFilter: pf.roundFilter || '',
         matchLengthFilter: pf.matchLengthFilter || '',
         awayFilter: pf.awayFilter || '',
+        opponentAwayFilter: pf.opponentAwayFilter || '',
+        crawfordFilter: pf.crawfordFilter || '',
         matchDateFilter: pf.matchDateFilter || '',
         playerPRFilter: pf.playerPRFilter || '',
         decisionTimeFilter: pf.decisionTimeFilter || '',
+        marginFilter: pf.marginFilter || '',
         analysisProvenanceFilter: pf.analysisProvenanceFilter || '',
         positionIDsFilter: pf.positionIDsFilter || '',
         restrictToPositionIDs: ''

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 00:05+0200\n"
+"POT-Creation-Date: 2026-10-26 12:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -1047,6 +1047,57 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "mg>x"
+msgstr "mg>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Difficulté de la décision** : l'écart (en millipoints, l'échelle de "
+"``E``) entre le meilleur choix et le suivant dans l'analyse enregistrée "
+"est supérieur à x : une décision évidente. Coup de pions : les deux "
+"meilleurs coups ; double : pas de double contre doubler ; prise : prendre"
+" contre passer. Une position sans analyse ou à un seul candidat ne répond"
+" jamais. ``E`` mesure le joueur, ``mg`` la position : ``E<1 mg<20`` "
+"retient les décisions serrées bien jouées."
+msgstr ""
+"**Δυσκολία της απόφασης**: η διαφορά (σε millipoints, η κλίμακα του "
+"``E``) ανάμεσα στην καλύτερη επιλογή και την επόμενη στην αποθηκευμένη "
+"ανάλυση είναι μεγαλύτερη από x: μια προφανής απόφαση. Κίνηση πουλιών: οι "
+"δύο καλύτερες κινήσεις· διπλασιασμός: όχι διπλασιασμός έναντι "
+"διπλασιασμού· αποδοχή: αποδοχή έναντι πάσου. Μια θέση χωρίς ανάλυση ή με "
+"έναν μόνο υποψήφιο δεν επιλέγεται ποτέ. Το ``E`` μετρά τον παίκτη, το "
+"``mg`` τη θέση: το ``E<1 mg<20`` κρατά τις οριακές αποφάσεις που "
+"παίχτηκαν σωστά."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--margin``"
+msgstr "``--margin``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "mg<x"
+msgstr "mg<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est inférieur à x "
+"millipoints : une décision serrée."
+msgstr ""
+"Η διαφορά ανάμεσα στην καλύτερη επιλογή και την επόμενη είναι μικρότερη "
+"από x millipoints: μια οριακή απόφαση."
+
+#: ../../source/cmd_mode.rst:1
+msgid "mgx,y"
+msgstr "mgx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est compris entre x et y "
+"millipoints, bornes comprises."
+msgstr ""
+"Η διαφορά ανάμεσα στην καλύτερη επιλογή και την επόμενη είναι μεταξύ x "
+"και y millipoints, με τα όρια να περιλαμβάνονται."
+
+#: ../../source/cmd_mode.rst:1
 msgid "tm>x"
 msgstr "tm>x"
 
@@ -1711,22 +1762,73 @@ msgstr "aw:x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"**Chacun** des deux joueurs est à x points du gain du match, quelle que "
-"soit sa longueur : la fin d'un match en 5 comme en 11. Formes ``aw:4``, "
-"``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises, pour les deux "
-"joueurs). Le Crawford et l'après-Crawford comptent tous deux pour 1 point"
-" (``aw:1`` les retient) ; le money n'est jamais retenu."
+"Le joueur est à x points du gain du match, quelle que soit sa longueur. "
+"Formes ``aw:4``, ``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises). Le "
+"Crawford et l'après-Crawford comptent tous deux pour 1 point (``aw:1`` "
+"les retient) ; le money n'est jamais retenu. Avec ``M``, ``aw`` et ``AW``"
+" s'échangent."
 msgstr ""
-"**Καθένας** από τους δύο παίκτες απέχει x πόντους από τη νίκη του ματς, "
-"όποιο κι αν είναι το μήκος του: το τέλος ενός ματς στους 5 όπως και στους"
-" 11. Μορφές ``aw:4``, ``aw:2,5``, ``aw>3`` και ``aw<5`` (τα όρια "
-"περιλαμβάνονται, και για τους δύο παίκτες). Το Crawford και το "
-"μετά-Crawford μετρούν και τα δύο ως 1 πόντος (το ``aw:1`` τα κρατά και τα"
-" δύο)· το money δεν επιλέγεται ποτέ."
+"Ο παίκτης απέχει x πόντους από τη νίκη του ματς, όποιο κι αν είναι το "
+"μήκος του. Μορφές ``aw:4``, ``aw:2,5``, ``aw>3`` και ``aw<5`` (τα όρια "
+"περιλαμβάνονται). Το Crawford και το μετά-Crawford μετρούν και τα δύο ως "
+"1 πόντος (το ``aw:1`` τα κρατά και τα δύο)· το money δεν επιλέγεται ποτέ."
+" Με το ``M``, τα ``aw`` και ``AW`` ανταλλάσσονται."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--away``"
 msgstr "``--away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "AW:x"
+msgstr "AW:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'adversaire est à x points du gain du match, dans les formes de ``aw``. "
+"``aw:2 AW:4`` : le joueur mène 2-away contre 4-away ; ``aw:4 AW:4`` : les"
+" deux joueurs sont à 4 points."
+msgstr ""
+"Ο αντίπαλος απέχει x πόντους από τη νίκη του ματς, στις μορφές του "
+"``aw``. ``aw:2 AW:4``: ο παίκτης προηγείται 2-away έναντι 4-away· ``aw:4 "
+"AW:4``: και οι δύο παίκτες απέχουν 4 πόντους."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--opponent-away``"
+msgstr "``--opponent-away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "cr"
+msgstr "cr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée dans le jeu Crawford : un joueur est à 1 point, le "
+"videau est mort."
+msgstr ""
+"Η θέση παίζεται στο παιχνίδι Crawford: ένας παίκτης απέχει 1 πόντο, ο "
+"κύβος είναι νεκρός."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford game``"
+msgstr "``--crawford game``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "pcr"
+msgstr "pcr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée après le jeu Crawford : un joueur est à 1 point, le"
+" videau est vivant. ``AW:1 pcr`` : l'adversaire est à 1 point en après-"
+"Crawford. ``cr`` et ``pcr`` ensemble ne retiennent rien."
+msgstr ""
+"Η θέση παίζεται μετά το παιχνίδι Crawford: ένας παίκτης απέχει 1 πόντο, ο"
+" κύβος είναι ζωντανός. ``AW:1 pcr``: ο αντίπαλος απέχει 1 πόντο, μετά το "
+"Crawford. Τα ``cr`` και ``pcr`` μαζί δεν επιλέγουν τίποτα."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford post``"
+msgstr "``--crawford post``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1903,7 +2005,7 @@ msgstr ""
 "και στα δύο καθεστώτα, χρήματα και αγώνας. Δείτε "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:248
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1922,11 +2024,11 @@ msgstr ""
 "και ετικετών: δεν εμφανίζεται σε καμία τιμή, και το ``ma1;2`` δεν είναι "
 "διακριτικό (γράψτε ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:253
 msgid "Transcrire depuis un terminal"
 msgstr "Μεταγραφή από τερματικό"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:255
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1946,7 +2048,7 @@ msgstr ""
 "είναι δική της συνεδρία, χωρίς ``sessionId`` και χωρίς αναίρεση από τη "
 "μία κλήση στην άλλη."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:266
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 
@@ -2187,4 +2289,3 @@ msgstr "Διαγράφει το ιστορικό εντολών."
 #~ "τουρνουά, συλλογές, σχόλια, τράπουλα Anki, "
 #~ "αναλύσεις) για την εξερεύνηση του "
 #~ "εργαλείου."
-

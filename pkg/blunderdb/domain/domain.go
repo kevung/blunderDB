@@ -511,6 +511,15 @@ type SearchFilters struct {
 	FlaggedFilter bool `json:"flaggedFilter"`
 
 	MoveErrorFilter string `json:"moveErrorFilter"`
+	// MarginFilter is the `mg` token whole (`mg>100`, `mg<20`, `mg20,60`): how
+	// far, in millipoints, the best choice stands from the next one in the
+	// stored analysis — how hard the decision is, whoever played it, where
+	// MoveErrorFilter scores the play. A checker play compares the two best
+	// candidates; a double/no-double, no double against the double; a
+	// take/pass, take against pass. A position with no analysis or a single
+	// candidate has no margin and never matches.
+	MarginFilter string `json:"marginFilter"`
+
 	// DecisionTimeFilter is the `tm` token whole (`tm>30`, `tm<5`, `tm5,20`):
 	// how long the player on roll took over the decision, in seconds. It keeps
 	// the positions where a recorded play took that long, checker or cube
@@ -544,11 +553,21 @@ type SearchFilters struct {
 	MatchLengthFilter string `json:"matchLengthFilter"`
 
 	// AwayFilter is the `aw` token whole (`aw:4`, `aw:2,5`, `aw<5`, `aw>3`):
-	// how many points EACH player still needs, bounds inclusive — the end of
-	// a match whatever its length, which MatchLengthFilter cannot say. Read
-	// as a distance (PointsAway): the sentinels 0 and 1 both count one point,
-	// and money play, having no distance, never matches.
-	AwayFilter string `json:"awayFilter"`
+	// how many points the player still needs (player 1, the side on roll as
+	// stored), bounds inclusive — who leads and by how much, whatever the
+	// match length, which MatchLengthFilter cannot say. OpponentAwayFilter is
+	// the `AW` token, the same for the opponent. Read as a distance
+	// (PointsAway): the sentinels 0 and 1 both count one point, and money
+	// play, having no distance, never matches. In mirror search the two swap,
+	// as `o` and `O` do.
+	AwayFilter         string `json:"awayFilter"`
+	OpponentAwayFilter string `json:"opponentAwayFilter"`
+
+	// CrawfordFilter is the game state the `cr` (the Crawford game, cube dead)
+	// and `pcr` (the games after it) tokens ask for: CrawfordGame,
+	// CrawfordAfter, or CrawfordNone for both at once. Kept apart from the
+	// distances so `aw:1` still says "one point to go" in either state.
+	CrawfordFilter string `json:"crawfordFilter"`
 
 	// MatchDateFilter is the `md:` token whole (`md:YYYY-MM..YYYY-MM`,
 	// `md:YYYY`, `md>YYYY-MM`, `md<YYYY-MM`): the DATE OF THE MATCH, from

@@ -3202,6 +3202,7 @@ export namespace domain {
 	    flaggedFilter: boolean;
 	    moveErrorFilter: string;
 	    decisionTimeFilter: string;
+	    marginFilter: string;
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
 	    playerFilter: string;
@@ -3210,6 +3211,8 @@ export namespace domain {
 	    roundFilter: string;
 	    matchLengthFilter: string;
 	    awayFilter: string;
+	    opponentAwayFilter: string;
+	    crawfordFilter: string;
 	    matchDateFilter: string;
 	    playerPRFilter: string;
 	    analysisProvenanceFilter: string;
@@ -3272,6 +3275,7 @@ export namespace domain {
 	        this.flaggedFilter = source["flaggedFilter"];
 	        this.moveErrorFilter = source["moveErrorFilter"];
 	        this.decisionTimeFilter = source["decisionTimeFilter"];
+	        this.marginFilter = source["marginFilter"];
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
 	        this.playerFilter = source["playerFilter"];
@@ -3280,6 +3284,8 @@ export namespace domain {
 	        this.roundFilter = source["roundFilter"];
 	        this.matchLengthFilter = source["matchLengthFilter"];
 	        this.awayFilter = source["awayFilter"];
+	        this.opponentAwayFilter = source["opponentAwayFilter"];
+	        this.crawfordFilter = source["crawfordFilter"];
 	        this.matchDateFilter = source["matchDateFilter"];
 	        this.playerPRFilter = source["playerPRFilter"];
 	        this.analysisProvenanceFilter = source["analysisProvenanceFilter"];

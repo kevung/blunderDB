@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 00:05+0200\n"
+"POT-Creation-Date: 2026-10-26 12:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1048,6 +1048,56 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "mg>x"
+msgstr "mg>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Difficulté de la décision** : l'écart (en millipoints, l'échelle de "
+"``E``) entre le meilleur choix et le suivant dans l'analyse enregistrée "
+"est supérieur à x : une décision évidente. Coup de pions : les deux "
+"meilleurs coups ; double : pas de double contre doubler ; prise : prendre"
+" contre passer. Une position sans analyse ou à un seul candidat ne répond"
+" jamais. ``E`` mesure le joueur, ``mg`` la position : ``E<1 mg<20`` "
+"retient les décisions serrées bien jouées."
+msgstr ""
+"**Dificultad de la decisión**: la diferencia (en milipuntos, la escala de"
+" ``E``) entre la mejor opción y la siguiente en el análisis guardado es "
+"superior a x: una decisión evidente. Jugada de fichas: las dos mejores "
+"jugadas; doblar: no doblar frente a doblar; aceptar: aceptar frente a "
+"pasar. Una posición sin análisis o con un solo candidato nunca se "
+"retiene. ``E`` mide al jugador, ``mg`` la posición: ``E<1 mg<20`` retiene"
+" las decisiones ajustadas bien jugadas."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--margin``"
+msgstr "``--margin``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "mg<x"
+msgstr "mg<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est inférieur à x "
+"millipoints : une décision serrée."
+msgstr ""
+"La diferencia entre la mejor opción y la siguiente es inferior a x "
+"milipuntos: una decisión ajustada."
+
+#: ../../source/cmd_mode.rst:1
+msgid "mgx,y"
+msgstr "mgx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est compris entre x et y "
+"millipoints, bornes comprises."
+msgstr ""
+"La diferencia entre la mejor opción y la siguiente está entre x e y "
+"milipuntos, límites incluidos."
+
+#: ../../source/cmd_mode.rst:1
 msgid "tm>x"
 msgstr "tm>x"
 
@@ -1715,21 +1765,73 @@ msgstr "aw:x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"**Chacun** des deux joueurs est à x points du gain du match, quelle que "
-"soit sa longueur : la fin d'un match en 5 comme en 11. Formes ``aw:4``, "
-"``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises, pour les deux "
-"joueurs). Le Crawford et l'après-Crawford comptent tous deux pour 1 point"
-" (``aw:1`` les retient) ; le money n'est jamais retenu."
+"Le joueur est à x points du gain du match, quelle que soit sa longueur. "
+"Formes ``aw:4``, ``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises). Le "
+"Crawford et l'après-Crawford comptent tous deux pour 1 point (``aw:1`` "
+"les retient) ; le money n'est jamais retenu. Avec ``M``, ``aw`` et ``AW``"
+" s'échangent."
 msgstr ""
-"**Cada uno** de los dos jugadores está a x puntos de ganar el match, sea "
-"cual sea su longitud: el final de un match a 5 igual que a 11. Formas "
-"``aw:4``, ``aw:2,5``, ``aw>3`` y ``aw<5`` (límites incluidos, para ambos "
-"jugadores). El Crawford y el post-Crawford cuentan ambos como 1 punto "
-"(``aw:1`` retiene los dos); el money nunca se retiene."
+"El jugador está a x puntos de ganar el match, sea cual sea su longitud. "
+"Formas ``aw:4``, ``aw:2,5``, ``aw>3`` y ``aw<5`` (límites incluidos). El "
+"Crawford y el post-Crawford cuentan ambos como 1 punto (``aw:1`` retiene "
+"los dos); el money nunca se retiene. Con ``M``, ``aw`` y ``AW`` se "
+"intercambian."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--away``"
 msgstr "``--away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "AW:x"
+msgstr "AW:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'adversaire est à x points du gain du match, dans les formes de ``aw``. "
+"``aw:2 AW:4`` : le joueur mène 2-away contre 4-away ; ``aw:4 AW:4`` : les"
+" deux joueurs sont à 4 points."
+msgstr ""
+"El rival está a x puntos de ganar el match, en las formas de ``aw``. "
+"``aw:2 AW:4``: el jugador va ganando 2-away contra 4-away; ``aw:4 AW:4``:"
+" ambos jugadores están a 4 puntos."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--opponent-away``"
+msgstr "``--opponent-away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "cr"
+msgstr "cr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée dans le jeu Crawford : un joueur est à 1 point, le "
+"videau est mort."
+msgstr ""
+"La posición se juega en la partida Crawford: un jugador está a 1 punto, "
+"el cubo está muerto."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford game``"
+msgstr "``--crawford game``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "pcr"
+msgstr "pcr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée après le jeu Crawford : un joueur est à 1 point, le"
+" videau est vivant. ``AW:1 pcr`` : l'adversaire est à 1 point en après-"
+"Crawford. ``cr`` et ``pcr`` ensemble ne retiennent rien."
+msgstr ""
+"La posición se juega después de la partida Crawford: un jugador está a 1 "
+"punto, el cubo está vivo. ``AW:1 pcr``: el rival está a 1 punto en post-"
+"Crawford. ``cr`` y ``pcr`` juntos no retienen nada."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford post``"
+msgstr "``--crawford post``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1902,7 +2004,7 @@ msgstr ""
 " la clase del objetivo a todos los tipos de decisión y a los dos "
 "regímenes, dinero y partida. Véase :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:248
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1921,11 +2023,11 @@ msgstr ""
 " figura en ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:253
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribir desde un terminal"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:255
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1944,7 +2046,7 @@ msgstr ""
 " la revisión devuelta por la llamada anterior; cada llamada es su propia "
 "sesión, sin ``sessionId`` ni deshacer de una llamada a otra."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:266
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 
@@ -2184,4 +2286,3 @@ msgstr "Borra el historial de comandos."
 #~ "Carga una base de ejemplo (partidas, "
 #~ "torneo, colecciones, comentarios, mazo Anki,"
 #~ " análisis) para descubrir la herramienta."
-

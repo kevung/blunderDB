@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 00:05+0200\n"
+"POT-Creation-Date: 2026-10-26 12:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1031,6 +1031,55 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "mg>x"
+msgstr "mg>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Difficulté de la décision** : l'écart (en millipoints, l'échelle de "
+"``E``) entre le meilleur choix et le suivant dans l'analyse enregistrée "
+"est supérieur à x : une décision évidente. Coup de pions : les deux "
+"meilleurs coups ; double : pas de double contre doubler ; prise : prendre"
+" contre passer. Une position sans analyse ou à un seul candidat ne répond"
+" jamais. ``E`` mesure le joueur, ``mg`` la position : ``E<1 mg<20`` "
+"retient les décisions serrées bien jouées."
+msgstr ""
+"**Сложность решения**: разница (в миллипунктах, шкала ``E``) между лучшим"
+" выбором и следующим в сохранённом анализе больше x: очевидное решение. "
+"Ход шашками: два лучших хода; удвоение: не удваивать против удвоить; "
+"принятие: принять против сдаться. Позиция без анализа или с единственным "
+"кандидатом никогда не отбирается. ``E`` измеряет игрока, ``mg`` — "
+"позицию: ``E<1 mg<20`` отбирает близкие решения, сыгранные верно."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--margin``"
+msgstr "``--margin``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "mg<x"
+msgstr "mg<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est inférieur à x "
+"millipoints : une décision serrée."
+msgstr ""
+"Разница между лучшим выбором и следующим меньше x миллипунктов: близкое "
+"решение."
+
+#: ../../source/cmd_mode.rst:1
+msgid "mgx,y"
+msgstr "mgx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'écart entre le meilleur choix et le suivant est compris entre x et y "
+"millipoints, bornes comprises."
+msgstr ""
+"Разница между лучшим выбором и следующим составляет от x до y "
+"миллипунктов, границы включены."
+
+#: ../../source/cmd_mode.rst:1
 msgid "tm>x"
 msgstr "tm>x"
 
@@ -1687,21 +1736,73 @@ msgstr "aw:x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"**Chacun** des deux joueurs est à x points du gain du match, quelle que "
-"soit sa longueur : la fin d'un match en 5 comme en 11. Formes ``aw:4``, "
-"``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises, pour les deux "
-"joueurs). Le Crawford et l'après-Crawford comptent tous deux pour 1 point"
-" (``aw:1`` les retient) ; le money n'est jamais retenu."
+"Le joueur est à x points du gain du match, quelle que soit sa longueur. "
+"Formes ``aw:4``, ``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises). Le "
+"Crawford et l'après-Crawford comptent tous deux pour 1 point (``aw:1`` "
+"les retient) ; le money n'est jamais retenu. Avec ``M``, ``aw`` et ``AW``"
+" s'échangent."
 msgstr ""
-"**Каждому** из двух игроков осталось x очков до победы в матче, какой бы "
-"ни была его длина: конец матча до 5 так же, как до 11. Формы ``aw:4``, "
-"``aw:2,5``, ``aw>3`` и ``aw<5`` (границы включены, для обоих игроков). "
+"Игроку осталось x очков до победы в матче, какой бы ни была его длина. "
+"Формы ``aw:4``, ``aw:2,5``, ``aw>3`` и ``aw<5`` (границы включены). "
 "Партия Кроуфорда и партии после Кроуфорда обе считаются за 1 очко "
-"(``aw:1`` отбирает обе); игра на деньги никогда не отбирается."
+"(``aw:1`` отбирает обе); игра на деньги никогда не отбирается. С ``M`` "
+"``aw`` и ``AW`` меняются местами."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--away``"
 msgstr "``--away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "AW:x"
+msgstr "AW:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'adversaire est à x points du gain du match, dans les formes de ``aw``. "
+"``aw:2 AW:4`` : le joueur mène 2-away contre 4-away ; ``aw:4 AW:4`` : les"
+" deux joueurs sont à 4 points."
+msgstr ""
+"Сопернику осталось x очков до победы в матче, в формах ``aw``. ``aw:2 "
+"AW:4``: игрок ведёт, 2-away против 4-away; ``aw:4 AW:4``: обоим игрокам "
+"осталось по 4 очка."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--opponent-away``"
+msgstr "``--opponent-away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "cr"
+msgstr "cr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée dans le jeu Crawford : un joueur est à 1 point, le "
+"videau est mort."
+msgstr ""
+"Позиция сыграна в партии Кроуфорда: одному игроку осталось 1 очко, куб "
+"мёртв."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford game``"
+msgstr "``--crawford game``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "pcr"
+msgstr "pcr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée après le jeu Crawford : un joueur est à 1 point, le"
+" videau est vivant. ``AW:1 pcr`` : l'adversaire est à 1 point en après-"
+"Crawford. ``cr`` et ``pcr`` ensemble ne retiennent rien."
+msgstr ""
+"Позиция сыграна после партии Кроуфорда: одному игроку осталось 1 очко, "
+"куб жив. ``AW:1 pcr``: сопернику осталось 1 очко после Кроуфорда. ``cr`` "
+"и ``pcr`` вместе ничего не отбирают."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford post``"
+msgstr "``--crawford post``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1872,7 +1973,7 @@ msgstr ""
 "расширяет класс цели на все типы решений и на оба режима, на деньги и "
 "матч. См. :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:248
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1891,11 +1992,11 @@ msgstr ""
 "встречается ни в одном значении, и ``ma1;2`` не является токеном (пишите "
 "``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:253
 msgid "Transcrire depuis un terminal"
 msgstr "Запись из терминала"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:255
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1915,7 +2016,7 @@ msgstr ""
 "отдельная сессия, без ``sessionId`` и без отмены от одного вызова к "
 "другому."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:266
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 
@@ -2148,4 +2249,3 @@ msgstr "Очищает историю команд."
 #~ "Загружает образец базы данных (матчи, "
 #~ "турнир, коллекции, комментарии, колода Anki,"
 #~ " анализы) для знакомства с инструментом."
-
