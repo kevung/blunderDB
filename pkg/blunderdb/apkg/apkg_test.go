@@ -432,14 +432,16 @@ func TestOneAwayNamesCrawfordAndPostCrawford(t *testing.T) {
 	}
 }
 
-// TestPackageBytesAreStable pins the whole package, zip entries in order
-// included: a change to how the package is assembled must not change what
-// Anki receives.
+// TestPackageBytesAreStable pins what Anki receives — every zip entry, in
+// order, by name and uncompressed bytes: a change to how the package is
+// assembled must not change it. The compressed stream is left out because it
+// belongs to the toolchain's deflate, which changes between Go releases
+// without changing a single byte Anki reads.
 func TestPackageBytesAreStable(t *testing.T) {
 	golden := map[string]string{
-		"deck":     "e484efcef559f3161930270c59628900aca4ebbd65654f476d6602ee9efdc6b9",
-		"handMade": "379561f0d691dcf5593d6ff590f2105f173a46756f87b7e0a589f89726a862e4",
-		"living":   "af1df3bd09849b8f0e3c401e43eefdfc69fbaab0baee27b743ec191e5aa20d6c",
+		"deck":     "6e87943a3fdd273d0715d69577786364f8052945158231756dd7cffc150a1205",
+		"handMade": "b8b9bcfc375a757e0473fd44d19c78eea36d5293d2081426b06166ed6e39c742",
+		"living":   "b45ac0ef3b5ace9d6b51d7e2f73d9388716eaa9fda1c154a853dd61f2fba1f26",
 	}
 	f := setup(t)
 	for name, src := range map[string]apkg.Source{
@@ -448,8 +450,34 @@ func TestPackageBytesAreStable(t *testing.T) {
 		"living":   {CollectionID: f.living},
 	} {
 		data, _ := export(t, f, src, stamp)
-		if got := fmt.Sprintf("%x", sha256.Sum256(data)); got != golden[name] {
+		if got := entriesDigest(t, data); got != golden[name] {
 			t.Errorf("%s package sha256 = %s, want %s", name, got, golden[name])
 		}
 	}
+}
+
+// entriesDigest hashes each entry's name and uncompressed content, in archive
+// order, each length-prefixed so that no two archives collide by shifting a
+// boundary.
+func entriesDigest(t *testing.T, data []byte) string {
+	t.Helper()
+	zr, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	h := sha256.New()
+	for _, e := range zr.File {
+		rc, err := e.Open()
+		if err != nil {
+			t.Fatal(err)
+		}
+		content, err := io.ReadAll(rc)
+		_ = rc.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		fmt.Fprintf(h, "%d:%s%d:", len(e.Name), e.Name, len(content))
+		h.Write(content)
+	}
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
