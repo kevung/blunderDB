@@ -65,7 +65,6 @@
     import { handleZoomKey } from './services/zoomKeys.js';
     import { initPageStep } from './services/pageStepSetting.js';
     import { initRolloutChoice } from './services/rolloutService.js';
-    import { applyTabPanels } from './services/tabHandler.js';
     import { resizable, clampPanelSize } from './utils/resizeHandle.js';
     import { initTabHeights, panelHeightValue, rememberPanelHeight } from './utils/tabHeights.js';
     import { fileDrop } from './utils/fileDrop.js';
@@ -247,7 +246,6 @@
                 // Transcription is a scratch mode too: the board belongs to the draft's Cursor (ADR-0045).
                 if (tab === 'transcription' && $statusBarModeStore !== 'TRANSCRIBE') enterTranscribeMode();
                 else if (!isFirstRun && prevTab === 'transcription' && tab !== 'transcription' && $statusBarModeStore === 'TRANSCRIBE') exitTranscribeMode();
-                applyTabPanels(tab);
             });
         });
     });

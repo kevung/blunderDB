@@ -144,7 +144,7 @@ function resetStores() {
     matchContextStore.set({ ...NO_MATCH });
     analysisStore.set({ checkerAnalysis: { moves: [] } });
     selectedMoveStore.set(null);
-    openPanels.set(new Set());
+    activeTabStore.set('analysis');
     activeCollectionStore.set(null);
     selectedCollectionStore.set(null);
     collectionPositionsStore.set([]);

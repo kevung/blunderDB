@@ -52,7 +52,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     ClipboardGetText: () => Promise.resolve('')
 }));
 
-import { openPanels, PANEL } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { ListMatches, TrashMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
@@ -68,11 +68,11 @@ describe('MatchPanel — deleting a match', () => {
         vi.clearAllMocks();
         window.go = goStub();
         databasePathStore.set('/tmp/test.db');
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
     });
     afterEach(() => {
         cleanup();
-        openPanels.set(new Set());
+        activeTabStore.set('analysis');
         confirmModalStore.set(null);
     });
 

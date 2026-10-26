@@ -134,10 +134,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
 
 ## Ouvert — Frontend
 
-- **`openPanels` dérivé d'`activeTabStore`** : deux sources de vérité pour le panneau visible
-  (`openPanels` est un `writable` séparé dans `stores/uiStore.js`, tenu par
-  `services/tabHandler.js`) ; un état incohérent est atteignable (onglet surligné, panneau
-  vide). Dériver `openPanels` d'`activeTabStore` et supprimer `tabHandler.js`.
 - **`MatchPanel.svelte` (1 772 lignes) : extraire la fiche dans un composant `MatchSheet`**,
   avant que deux panneaux puissent coexister. Le panneau Tournois héberge un `MatchPanel`
   (`embeddedMatchId`) et chaque effet global y est coupé par un garde `embedded` (liste, tri

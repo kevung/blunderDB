@@ -10,9 +10,9 @@
  * panel below).
  *
  * Scope note: tests only navigate to tabs whose panel does nothing on mount
- * while its own openPanels flag is unset (matches/tournaments/collections) —
- * see MatchPanel/TournamentPanel/CollectionPanel `visible` guards — so no
- * Wails backend mocking is needed here.
+ * until its tab is the active one (matches/tournaments/collections) — see
+ * MatchPanel/TournamentPanel/CollectionPanel `visible` guards, derived from
+ * activeTabStore — so no Wails backend mocking is needed here.
  */
 
 import { must } from './helpers/must.js';
@@ -23,7 +23,6 @@ import { tick } from 'svelte';
 
 import TabbedPanel from '../components/TabbedPanel.svelte';
 import { activeTabStore } from '../stores/uiStore.js';
-import { openPanels } from '../stores/uiStore.js';
 
 function noop() {}
 
@@ -41,13 +40,11 @@ function mount() {
 
 beforeEach(() => {
     activeTabStore.set('matches');
-    openPanels.set(new Set());
 });
 
 afterEach(() => {
     cleanup();
     activeTabStore.set('matches');
-    openPanels.set(new Set());
 });
 
 describe('TabbedPanel — l’ordre par défaut', () => {

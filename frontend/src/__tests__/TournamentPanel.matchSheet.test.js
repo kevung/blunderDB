@@ -46,7 +46,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
-import { openPanels, PANEL } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
@@ -62,7 +62,7 @@ beforeEach(() => {
     tournamentMatchesStore.set([]);
     databasePathStore.set('/fake/db.sqlite');
     matchContextStore.set({ isMatchMode: false, matchID: null, movePositions: [], currentIndex: 0, player1Name: '', player2Name: '' });
-    openPanels.set(new Set([PANEL.TOURNAMENT]));
+    activeTabStore.set('tournaments');
     tournamentOpenRequestStore.set(1);
 });
 afterEach(cleanup);

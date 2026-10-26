@@ -99,9 +99,17 @@ export const activeModal = writable(null);
 // hint opens straight onto the Bearoff tab). Consumed once by ConfigModal.
 export const configInitialTabStore = writable(/** @type {string | null} */ (null));
 
-// ── Panel set (multiple panels can be open) ──
-/** @type {import('svelte/store').Writable<Set<string>>} */
-export const openPanels = writable(new Set());
+// ── Panel set, derived from the active tab ──
+// A panel is open exactly when its tab is active: one source of truth, so a highlighted tab
+// never shows an empty panel. Tabs without a PANEL (analysis, comments, …) open none.
+const TAB_PANEL = {
+    matches: PANEL.MATCH,
+    stats: PANEL.STATS,
+    tournaments: PANEL.TOURNAMENT,
+    collections: PANEL.COLLECTION
+};
+/** @type {import('svelte/store').Readable<Set<string>>} */
+export const openPanels = derived(activeTabStore, ($tab) => new Set(TAB_PANEL[$tab] ? [TAB_PANEL[$tab]] : []));
 
 // ── Modal helpers ──
 /** @param {string} name */
@@ -119,30 +127,14 @@ export function toggleModal(name) {
 }
 
 // ── Panel helpers ──
-/** @param {string} name */
+/** Shows `name`'s panel by activating its tab. @param {string} name */
 export function openPanel(name) {
-    openPanels.update((s) => {
-        const next = new Set(s);
-        next.add(name);
-        return next;
-    });
+    const tab = Object.keys(TAB_PANEL).find((t) => TAB_PANEL[t] === name);
+    if (tab) activeTabStore.set(tab);
 }
-/** @param {string} name */
+/** Hides `name`'s panel: leaves its tab for Analysis; a no-op when another tab is active. @param {string} name */
 export function closePanel(name) {
-    openPanels.update((s) => {
-        const next = new Set(s);
-        next.delete(name);
-        return next;
-    });
-}
-/** @param {string} name */
-export function togglePanel(name) {
-    openPanels.update((s) => {
-        const next = new Set(s);
-        if (next.has(name)) next.delete(name);
-        else next.add(name);
-        return next;
-    });
+    if (get(openPanels).has(name)) activeTabStore.set('analysis');
 }
 
 // ── Derived stores (automatic — no manual enumeration) ──

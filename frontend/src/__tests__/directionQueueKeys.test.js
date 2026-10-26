@@ -61,7 +61,7 @@ import { nextPosition, previousPosition, firstPosition, lastPosition } from '../
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import ProposalList from '../components/direction/ProposalList.svelte';
 import ContextMenu from '../components/ContextMenu.svelte';
-import { openPanels, PANEL, activeTabStore } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore.js';
 import { directionViewLoadedStore, openDirectionIdStore } from '../stores/directionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -94,7 +94,6 @@ const onConfirm = vi.fn();
 
 /** Le panneau Tournois ouvert sur l'onglet Tournois, la liste chargée. */
 async function openTournamentPanel() {
-    openPanels.set(new Set([PANEL.TOURNAMENT]));
     activeTabStore.set('tournaments');
     render(TournamentPanel, { props: {} });
     await screen.findByText('Open de Lyon');
@@ -127,8 +126,7 @@ afterEach(() => {
     window.removeEventListener('keydown', handleKeyDown);
     cleanup();
     document.body.innerHTML = '';
-    openPanels.set(new Set());
-    activeTabStore.set('');
+    activeTabStore.set('analysis');
     openDirectionIdStore.set(null);
     directionViewLoadedStore.set(false);
     vi.clearAllMocks();

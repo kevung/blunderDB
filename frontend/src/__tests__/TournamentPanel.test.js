@@ -67,7 +67,7 @@ import { libraryReplaced } from '../stores/groupActivityStore.js';
 import { tMsg } from '../i18n';
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
-import { openPanels, PANEL, statusBarTextStore, dbMutationCounterStore } from '../stores/uiStore.js';
+import { statusBarTextStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore.js';
 import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore, tournamentOpenRequestStore, tournamentIDsFilterStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
@@ -79,7 +79,7 @@ function resetStores() {
     selectedTournamentStore.set(null);
     tournamentMatchesStore.set([]);
     tournamentOpenRequestStore.set(null);
-    openPanels.set(new Set());
+    activeTabStore.set('analysis');
     statusBarTextStore.set('');
     databasePathStore.set('/fake/db.sqlite');
     matchContextStore.set({ isMatchMode: false, matchID: null, movePositions: [], currentIndex: 0, player1Name: '', player2Name: '' });
@@ -121,7 +121,7 @@ afterEach(() => {
 
 /** Render with the panel already open, which is what triggers the load effect. */
 function renderOpen() {
-    openPanels.set(new Set([PANEL.TOURNAMENT]));
+    activeTabStore.set('tournaments');
     return render(TournamentPanel, { props: {} });
 }
 

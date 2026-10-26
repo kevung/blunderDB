@@ -54,7 +54,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveCommand: vi.fn(() => Promise.resolve())
 }));
 
-import { openPanels, PANEL } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches, SetMatchVideoSource } from '../../wailsjs/go/database/Database.js';
@@ -87,14 +87,14 @@ describe('MatchPanel — View in the video', () => {
         state.source = '';
         state.kind = '';
         databasePathStore.set('/tmp/test.db');
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         lastVisitedMatchStore.set({ matchID: 7, currentIndex: 0, gameNumber: 1 });
     });
     afterEach(() => {
         cleanup();
         lastVisitedMatchStore.set({ matchID: null, currentIndex: 0, gameNumber: 1 });
         matchContextStore.set({ isMatchMode: false, matchID: null, currentIndex: 0 });
-        openPanels.set(new Set());
+        activeTabStore.set('analysis');
     });
 
     test('a match without a source shows no video gesture', async () => {

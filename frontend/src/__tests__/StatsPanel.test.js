@@ -11,7 +11,7 @@ import { ComputeStats } from '../../wailsjs/go/database/Database.js';
 
 import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 
-import { openPanels, PANEL, openPanel, closePanel } from '../stores/uiStore.js';
+import { openPanels, PANEL, openPanel, closePanel, activeTabStore } from '../stores/uiStore.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -20,7 +20,7 @@ function resetStores() {
     statsLoadingStore.set(false);
     statsErrorStore.set(null);
     statsMetricStore.set('pr');
-    openPanels.set(new Set());
+    activeTabStore.set('analysis');
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -62,10 +62,10 @@ describe('StatsPanel — panel visibility (via openPanels)', () => {
         expect(get(openPanels).has(PANEL.STATS)).toBe(false);
     });
 
-    test('other panels can be open simultaneously', () => {
+    test('opening another panel closes this one', () => {
         openPanel(PANEL.STATS);
         openPanel(PANEL.MATCH);
-        expect(get(openPanels).has(PANEL.STATS)).toBe(true);
+        expect(get(openPanels).has(PANEL.STATS)).toBe(false);
         expect(get(openPanels).has(PANEL.MATCH)).toBe(true);
     });
 });

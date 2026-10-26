@@ -48,7 +48,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveCommand: vi.fn(() => Promise.resolve())
 }));
 
-import { openPanels, PANEL } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches } from '../../wailsjs/go/database/Database.js';
@@ -65,7 +65,7 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
     beforeEach(() => {
         vi.clearAllMocks();
         databasePathStore.set('/tmp/test.db');
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         // The match was last left on its very first move: that is what makes
         // game 1 the one seeded open.
         lastVisitedMatchStore.set({ matchID: 7, currentIndex: 0, gameNumber: 1 });
@@ -74,7 +74,7 @@ describe('MatchPanel — every game of the transcript collapses, game 1 included
         cleanup();
         lastVisitedMatchStore.set({ matchID: null, currentIndex: 0, gameNumber: 1 });
         matchContextStore.set({ isMatchMode: false, matchID: null, currentIndex: 0 });
-        openPanels.set(new Set());
+        activeTabStore.set('analysis');
     });
 
     test('collapsing game 1 keeps it collapsed', async () => {
