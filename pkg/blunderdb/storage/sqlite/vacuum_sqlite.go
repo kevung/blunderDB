@@ -402,7 +402,9 @@ func (s *Storage) VacuumInto(ctx context.Context, target string) (int64, error) 
 	// answers SQLITE_BUSY at once, busy_timeout or not. The copy goes in
 	// already in WAL; the closing connection leaves no -wal behind.
 	if err := switchToWAL(ctx, target); err != nil {
-		_ = os.Remove(target)
+		for _, f := range []string{target, target + "-wal", target + "-shm"} {
+			_ = os.Remove(f)
+		}
 		return sizeBefore, fmt.Errorf("vacuum into: %w", err)
 	}
 	// The copy is created under the umask; it replaces the library, so it

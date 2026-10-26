@@ -68,18 +68,19 @@ func dsnFilePath(dsn string) string {
 	if u.Query().Get("mode") == "memory" {
 		return ""
 	}
-	p := u.Opaque
-	if p == "" {
-		p = u.Path
+	// u.Path comes decoded; u.Opaque (file:x.db, file:/x.db) does not.
+	p := u.Path
+	if u.Opaque != "" {
+		p = u.Opaque
+		if dec, err := url.PathUnescape(p); err == nil {
+			p = dec
+		}
 	}
 	if p == ":memory:" || p == "" {
 		return ""
 	}
-	if dec, err := url.PathUnescape(p); err == nil {
-		p = dec
-	}
 	// file:///C:/x.db: the drive follows the slash of an empty authority.
-	if len(p) >= 3 && p[0] == '/' && p[2] == ':' {
+	if runtime.GOOS == "windows" && len(p) >= 3 && p[0] == '/' && p[2] == ':' {
 		p = p[1:]
 	}
 	return filepath.FromSlash(p)

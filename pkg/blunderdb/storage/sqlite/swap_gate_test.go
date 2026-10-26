@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -104,6 +105,26 @@ func TestDSNFilePath_InMemoryNamesNoFile(t *testing.T) {
 	for _, dsn := range []string{":memory:", "file::memory:", "file:x?mode=memory&cache=shared"} {
 		if got := dsnFilePath(dsn); got != "" && got != ":memory:" {
 			t.Errorf("dsnFilePath(%q) = %q, want no file", dsn, got)
+		}
+	}
+}
+
+// TestDSNFilePath_DecodesOnceAndKeepsUnixColons: an escape is decoded once,
+// as SQLite does, and only Windows reads /C: as a drive.
+func TestDSNFilePath_DecodesOnceAndKeepsUnixColons(t *testing.T) {
+	cases := map[string]string{
+		"file:///tmp/a%2541.db": "/tmp/a%41.db",
+		"file:/tmp/a%2541.db":   "/tmp/a%41.db",
+	}
+	if runtime.GOOS == "windows" {
+		cases["file:///C:/x.db"] = `C:\x.db`
+	} else {
+		cases["file:/a:b/x.db"] = "/a:b/x.db"
+		cases["file:///a:b/x.db"] = "/a:b/x.db"
+	}
+	for dsn, want := range cases {
+		if got := dsnFilePath(dsn); got != filepath.FromSlash(want) {
+			t.Errorf("dsnFilePath(%q) = %q, want %q", dsn, got, filepath.FromSlash(want))
 		}
 	}
 }
