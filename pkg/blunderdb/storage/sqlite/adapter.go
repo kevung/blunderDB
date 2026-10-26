@@ -23,6 +23,14 @@ type shared struct {
 
 var _ sqlshared.Execer = shared{}
 
+// PositionIsHeldSQL is the retention predicate in SQLite's dialect, a WHERE
+// fragment correlated against `position`. It exists for tests that must check
+// the same definition the purge runs.
+func PositionIsHeldSQL() string {
+	sql, _ := sqlshared.PositionIsHeld(shared{}, "")
+	return sql
+}
+
 // shared returns the binder's execer wrapped for the shared stores.
 func (b binder) shared() sqlshared.Execer { return shared(b) }
 

@@ -14,8 +14,6 @@
 - [ ] A schema change bumps `DatabaseVersion` in `pkg/blunderdb/domain/` and comes
       with a migration in desktop `database`, `storage/sqlite` and
       `storage/postgres/migrations/`, covered by `migration_test.go`.
-- [ ] If the retention predicate (`positionIsHeldSQL`) moved, all three copies moved
-      the same way (`database/db_match.go`, `storage/sqlite/matches_sqlite.go`,
-      `storage/postgres/matches_postgres.go`).
+- [ ] The retention predicate (`positionIsHeldSQL`) is written once, in `storage/sqlshared/match_delete.go`; a backend only supplies its dialect.
 - [ ] Database logic lives on `Database` or the Storage contract and reaches the GUI,
       the CLI and the server alike — no mode-specific fork.

@@ -24,7 +24,8 @@ BGBlitz records an equivalent. Dropping the mark on import loses the user's stud
    are never rewritten. `import --skip-duplicates` (`?skip_duplicates=true`,
    `Database.SetSkipDuplicates`) restores the plain skip, marks still applied.
 6. A flagged position survives the orphan purge on match deletion (see ADR-0001 rule 4 and
-   its three-place retention predicate).
+   its three-place retention predicate, now the single
+   definition in `storage/sqlshared/match_delete.go`).
 
 ## Consequences
 

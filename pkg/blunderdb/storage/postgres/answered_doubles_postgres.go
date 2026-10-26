@@ -87,7 +87,7 @@ func reanchorAnsweredDoublesTx(ctx context.Context, tx pgx.Tx, scope string) (in
 	if err := refreshPositionMatchDates(ctx, tx, tenant, left); err != nil {
 		return 0, err
 	}
-	if err := deleteOrphanedPositions(ctx, tx, tenant, left); err != nil {
+	if err := deleteOrphanedPositions(ctx, tx, scope, left); err != nil {
 		return 0, err
 	}
 	return moved, nil

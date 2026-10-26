@@ -72,10 +72,9 @@ flowchart TD
 
 Two things follow directly from this shape:
 
-- A change to the retention predicate, or to a schema migration, is written
-  once per backend (`database/db_match.go` for the wrapper,
-  `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`)
-  — three copies of the same *predicate*, not three designs.
+- The retention predicate is written once (`storage/sqlshared/match_delete.go`); a
+  backend only supplies its dialect. A schema migration is written once per backend
+  (`storage/sqlite`, `storage/postgres`) — two copies of the same *change*, not two designs.
 - New Storage-level behaviour is exposed to the GUI, the CLI and the server
   from the same call, per the CLI/GUI/server parity invariant in
   `CLAUDE.md` — never forked into a mode-specific helper.
