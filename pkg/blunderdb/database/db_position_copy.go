@@ -43,9 +43,8 @@ type PositionCopyReceipt struct {
 // transaction, after the merge and the provenance its writes derive, before
 // the commit: a write another handle lands on the new position afterwards
 // changes the print, and the take-back refuses rather than remove it. It and
-// TakeBackPositionCopy
-// are functions, not methods, so that the desktop's binding of Database does
-// not offer them to the page.
+// TakeBackPositionCopy are functions, not methods, so that the desktop's
+// binding of Database does not offer them to the page.
 func CopyPosition(ctx context.Context, src, dst *Database, id int64) (PositionCopyReceipt, error) {
 	if src == nil {
 		return PositionCopyReceipt{}, fmt.Errorf("%w: no source library", storage.ErrInvalid)

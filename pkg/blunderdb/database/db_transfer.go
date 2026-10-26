@@ -26,8 +26,9 @@ func (d *Database) TransferTo(ctx context.Context, dst *Database, opts ExportOpt
 
 // transferWith is TransferTo with two hooks run while both libraries are
 // locked: before ahead of the copy, beforeCommit inside the destination's
-// import transaction once the merge is written, with its summary. The locks keep out the Database methods of either library, not a
-// borrowed handle or another Database on the same file.
+// import transaction once the merge is written, with its summary. The locks
+// keep out the Database methods of either library, not a borrowed handle or
+// another Database on the same file.
 func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportOptions, before func(ctx context.Context) error, beforeCommit func(ctx context.Context, tx storage.Tx, sum ingest.Summary) error) (ingest.TransferReport, error) {
 	if dst == nil || d == dst {
 		return ingest.TransferReport{}, fmt.Errorf("%w: %w", storage.ErrInvalid, ingest.ErrSelfTransfer)
