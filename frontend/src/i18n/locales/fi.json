@@ -1563,6 +1563,7 @@
         "bgblitzPosImported": "BGBlitz-positio tuotu onnistuneesti (ID: {posID})",
         "bgblitzPosPasted": "BGBlitz-positio liitetty onnistuneesti (ID: {posID})",
         "errorAnalyzingImport": "Virhe analysoitaessa tuontia: {error}",
+        "importSourceTooNew": "Tuotava tietokanta vaatii uudemman blunderDB:n (skeema {version} tai uudempi): päivitä blunderDB tuodaksesi sen",
         "errorCommittingExport": "Virhe vahvistettaessa vientiä: {error}",
         "errorCommittingImport": "Virhe vahvistettaessa tuontia: {error}",
         "errorImportingFormatMatch": "Virhe tuotaessa {formatName}-ottelua: {error}",

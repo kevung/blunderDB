@@ -1563,6 +1563,7 @@
         "bgblitzPosImported": "Position BGBlitz importée avec succès (ID : {posID})",
         "bgblitzPosPasted": "Position BGBlitz collée avec succès (ID : {posID})",
         "errorAnalyzingImport": "Erreur lors de l'analyse de l'import : {error}",
+        "importSourceTooNew": "La base à importer demande un blunderDB plus récent (schéma {version} ou ultérieur) : mettez blunderDB à jour pour l'importer",
         "errorCommittingExport": "Erreur lors de la validation de l'export : {error}",
         "errorCommittingImport": "Erreur lors de la validation de l'import : {error}",
         "errorImportingFormatMatch": "Erreur lors de l'import du match {formatName} : {error}",

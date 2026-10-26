@@ -1563,6 +1563,7 @@
         "bgblitzPosImported": "Posición BGBlitz importada correctamente (ID: {posID})",
         "bgblitzPosPasted": "Posición BGBlitz pegada correctamente (ID: {posID})",
         "errorAnalyzingImport": "Error al analizar la importación: {error}",
+        "importSourceTooNew": "La base de datos a importar requiere un blunderDB más reciente (esquema {version} o posterior): actualice blunderDB para importarla",
         "errorCommittingExport": "Error al confirmar la exportación: {error}",
         "errorCommittingImport": "Error al confirmar la importación: {error}",
         "errorImportingFormatMatch": "Error al importar la partida {formatName}: {error}",

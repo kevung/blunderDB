@@ -102,3 +102,40 @@ describe('classifyDroppedFiles', () => {
         expect(out.unsupported).toEqual(['/a/x.zip']);
     });
 });
+
+describe('an import source newer than the binary', () => {
+    test('the refusal is worded in the active language with the required schema, not shown raw', async () => {
+        const { importDatabase } = await import('../services/importService.js');
+        const { setStatusBarMessage } = await import('../services/databaseService.js');
+        const { OpenImportDatabaseDialog, ShowAlert } = await import('../../wailsjs/go/gui/App.js');
+        const { AnalyzeImportDatabase } = await import('../../wailsjs/go/database/Database.js');
+        const refusal = (await import('../../../testdata/reader_floor_refusal.json')).default;
+        vi.mocked(OpenImportDatabaseDialog).mockResolvedValue('/x/new.db');
+        vi.mocked(AnalyzeImportDatabase).mockRejectedValueOnce(new Error(refusal.message.replace('{schema}', '2.50.0')));
+        await importDatabase();
+        expect(vi.mocked(setStatusBarMessage).mock.calls[0]?.[0]).toMatchObject({ i18nKey: 'status.importSourceTooNew', i18nParams: { version: refusal.floor } });
+        expect(vi.mocked(ShowAlert).mock.calls[0]?.[0]).not.toMatch(/update blunderDB to open it/);
+    });
+
+    test('a dropped source is refused the same way', async () => {
+        const { importDatabaseByPath } = await import('../services/importService.js');
+        const { setStatusBarMessage } = await import('../services/databaseService.js');
+        const { AnalyzeImportDatabase } = await import('../../wailsjs/go/database/Database.js');
+        const refusal = (await import('../../../testdata/reader_floor_refusal.json')).default;
+        vi.mocked(AnalyzeImportDatabase).mockRejectedValueOnce(new Error(refusal.message.replace('{schema}', '2.50.0')));
+        await importDatabaseByPath('/x/new.db');
+        expect(vi.mocked(setStatusBarMessage).mock.calls[0]?.[0]).toMatchObject({ i18nKey: 'status.importSourceTooNew', i18nParams: { version: refusal.floor } });
+    });
+
+    test('a source that became too new at commit is refused the same way', async () => {
+        const { importDatabaseByPath, handleImportCommit } = await import('../services/importService.js');
+        const { setStatusBarMessage } = await import('../services/databaseService.js');
+        const { AnalyzeImportDatabase, CommitImportDatabase } = await import('../../wailsjs/go/database/Database.js');
+        const refusal = (await import('../../../testdata/reader_floor_refusal.json')).default;
+        vi.mocked(AnalyzeImportDatabase).mockResolvedValueOnce({ toAdd: 1, toMerge: 0, toSkip: 0, total: 1 });
+        await importDatabaseByPath('/x/ok.db');
+        vi.mocked(CommitImportDatabase).mockRejectedValueOnce(new Error(refusal.message.replace('{schema}', '2.50.0')));
+        await handleImportCommit();
+        expect(vi.mocked(setStatusBarMessage).mock.calls.at(-1)?.[0]).toMatchObject({ i18nKey: 'status.importSourceTooNew', i18nParams: { version: refusal.floor } });
+    });
+});

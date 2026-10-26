@@ -29,6 +29,7 @@ import { activeGroupId, groupSwitchingStore, holdingSwitch, libraryReplaced } fr
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { translate, tMsg } from '../i18n';
+import { tooNewMessage } from './readerFloor.js';
 
 export const warningMessageStore = writable('');
 
@@ -186,16 +187,6 @@ function isBusyError(error) {
 /** Whether error is an open or a migration the user cancelled (Escape). */
 function isCancelled(/** @type {unknown} */ error) {
     return /context canceled/.test(String(error));
-}
-
-/**
- * The refusal of a database that needs a newer blunderDB, worded for the status bar, or null
- * for any other error. The backend names the schema version the file requires.
- * @param {unknown} error
- */
-function tooNewMessage(error) {
-    const m = /requires a newer blunderDB.*?reads schema (\S+) or later/s.exec(String(error));
-    return m ? tMsg('commands.databaseTooNew', { version: m[1] }) : null;
 }
 
 /**
