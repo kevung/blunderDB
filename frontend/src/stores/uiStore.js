@@ -102,6 +102,7 @@ export const configInitialTabStore = writable(/** @type {string | null} */ (null
 // ── Panel set, derived from the active tab ──
 // A panel is open exactly when its tab is active: one source of truth, so a highlighted tab
 // never shows an empty panel. Tabs without a PANEL (analysis, comments, …) open none.
+/** @type {Record<string, string>} */
 const TAB_PANEL = {
     matches: PANEL.MATCH,
     stats: PANEL.STATS,
