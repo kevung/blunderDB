@@ -76,7 +76,7 @@ func assertCoherent(t *testing.T, db *sql.DB) {
 		t.Fatalf("%d foreign-key violations after import", violations)
 	}
 	var orphans int
-	if err := db.QueryRow(`SELECT COUNT(*) FROM position WHERE NOT (` + positionIsHeldForTest + `)`).Scan(&orphans); err != nil {
+	if err := db.QueryRow(`SELECT COUNT(*) FROM position WHERE NOT (` + sqlite.PositionIsHeldSQL() + `)`).Scan(&orphans); err != nil {
 		t.Fatal(err)
 	}
 	if orphans > 0 {
@@ -90,16 +90,6 @@ func assertCoherent(t *testing.T, db *sql.DB) {
 		t.Fatalf("integrity_check: %s", check)
 	}
 }
-
-// positionIsHeldForTest mirrors storage/sqlite's positionIsHeldSQL (which is
-// unexported there); a drift shows up as orphans reported here.
-const positionIsHeldForTest = `EXISTS (SELECT 1 FROM move WHERE position_id = position.id)
-	OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
-	OR EXISTS (SELECT 1 FROM anki_card WHERE position_id = position.id)
-	OR EXISTS (SELECT 1 FROM lesson_step WHERE position_id = position.id)
-	OR EXISTS (SELECT 1 FROM comment WHERE position_id = position.id AND origin = 'user')
-	OR position.individually_imported = 1
-	OR position.flagged = 1`
 
 // writeAndCheck writes a mapped match into a fresh store and checks it. A
 // write error is acceptable (the graph may be refused); a half-written

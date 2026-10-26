@@ -24,7 +24,7 @@ single row, and needs to be able to find again the positions they brought in del
 - A database predating the column is backfilled at migration (`migrate_2_12_0_to_2_13_0`) from
   the `move` heuristic, with its false positives (enrich-created positions) and irrecoverable false negatives.
 - The retention predicate is stated in three places (`database/db_match.go`,
-  `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`); they must not drift.
+  `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`); they must not drift. (Since then it has one definition: `storage/sqlshared/match_delete.go`.)
 - Rejected: deriving it from "no `move` row" — inverts under a later match import, wrong for
   enrich-created positions.
 - Rejected: a `source` enum — under dedup origin is a set; an enum makes the value depend on

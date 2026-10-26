@@ -45,6 +45,10 @@ func positionIsHeldSQL(d Dialect, scope string) (string, []any) {
 	return pred, args
 }
 
+// PositionIsHeld exposes positionIsHeldSQL so a test of another package can
+// assert on the one real definition instead of a copy.
+func PositionIsHeld(d Dialect, scope string) (string, []any) { return positionIsHeldSQL(d, scope) }
+
 // PurgeOrphanPositions removes every position in ids (within the scope's
 // tenant) that positionIsHeldSQL says nothing holds any more, as a single
 // set-based DELETE rather than one EXISTS round-trip per id.

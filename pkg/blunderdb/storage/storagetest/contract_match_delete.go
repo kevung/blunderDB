@@ -102,6 +102,8 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	inDeck := inMatch(5, false)
 	ankiCard := inMatch(7, false)
 
+	lessonStep := inMatch(10, false)
+
 	// Flagged for study in the source tool (ADR-0006): deleting a match must
 	// not delete the positions the `fl` filter exists to surface.
 	flaggedPos := provenancePos(6)
@@ -157,6 +159,13 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	if _, err := s.Comments().Add(ctx, "", userCommented, "I keep missing this one"); err != nil {
 		t.Fatalf("Add comment: %v", err)
 	}
+	lesson, err := s.Lessons().Create(ctx, "", "Leçon", "")
+	if err != nil {
+		t.Fatalf("Create lesson: %v", err)
+	}
+	if _, err := s.Lessons().AddStep(ctx, "", lesson, domain.LessonStep{Title: "Étape", PositionID: lessonStep}); err != nil {
+		t.Fatalf("AddStep: %v", err)
+	}
 	deck, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
 	if err != nil {
 		t.Fatalf("CreateDeck: %v", err)
@@ -182,6 +191,7 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		{"in an Anki deck", inDeck, true},
 		{"flagged (ADR-0006)", flagged, true},
 		{"referenced by an Anki card", ankiCard, true},
+		{"shown by a lesson step", lessonStep, true},
 		{"shared with a second, still-live match", sharedWithSecondMatch, true},
 	} {
 		_, err := s.Positions().Load(ctx, "", tc.id)
