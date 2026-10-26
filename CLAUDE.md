@@ -87,9 +87,10 @@ A violation is a bug even when every test passes.
   Provenance and the session rules (`has_jacoby`, `has_beaver`) are not part of the hash, but
   their keys are still drawn in `engine.init`: changing that stream rehashes every database
   (ADR-0001, ADR-0028).
-- **The retention predicate `positionIsHeldSQL` is written twice** — `storage/sqlite/matches_sqlite.go`
-  (GUI and CLI reach it through `Database.DeleteMatch`), `storage/postgres/matches_postgres.go` —
-  and stays identical up to SQL dialect. So does the orphan purge on match deletion.
+- **The retention predicate `positionIsHeldSQL` has one definition**, in
+  `storage/sqlshared/match_delete.go`, with the orphan purge on match deletion; a backend only
+  supplies its `Dialect` (GUI and CLI reach it through `Database.DeleteMatch`). Never copy it
+  into a backend; a new dialect difference goes in `Dialect`, covered by the contract suite.
 - **A schema change** bumps `DatabaseVersion` and adds a `migrate_X_to_Y` step to
   `migrationSteps` (`db_migration.go`; `TestMigrationSteps_ContinuousChain` requires an unbroken
   chain), DDL in `db_schema.go`, the PostgreSQL side under `storage/postgres/migrations/`, and a
