@@ -48,7 +48,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveCommand: vi.fn(() => Promise.resolve())
 }));
 
-import { openPanels, PANEL, matchOpenRequestStore, activeTabStore } from '../stores/uiStore.js';
+import { matchOpenRequestStore, activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { GetMatchMovePositions, SaveLastVisitedPosition } from '../../wailsjs/go/database/Database.js';
@@ -58,14 +58,14 @@ describe('MatchPanel — a match requested from the command palette', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         databasePathStore.set('/tmp/test.db');
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         lastVisitedMatchStore.set({ matchID: null, currentIndex: 0, gameNumber: 1 });
     });
     afterEach(() => {
         cleanup();
         matchOpenRequestStore.set(null);
         matchContextStore.set({ isMatchMode: false, matchID: null, currentIndex: 0 });
-        openPanels.set(new Set());
+        activeTabStore.set('analysis');
     });
 
     test('opens it, on its own moves, and consumes the request', async () => {

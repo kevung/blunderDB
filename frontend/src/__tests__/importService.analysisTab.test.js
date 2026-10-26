@@ -61,7 +61,6 @@ beforeEach(() => {
     positionsStore.set([]);
     activeTabStore.set('matches');
     currentPositionIndexStore.set(0);
-    openPanels.set(new Set());
 });
 
 describe('importSingleFile — panel shown after the import', () => {

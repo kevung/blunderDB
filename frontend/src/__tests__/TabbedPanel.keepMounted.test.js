@@ -42,7 +42,6 @@ import { panels } from '../components/lazyComponents.js';
 import { activeTabStore, homeDismissedStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchListStore, emptyMatchList } from '../stores/matchListStore.js';
-import { applyTabPanels } from '../services/tabHandler.js';
 
 const noop = () => {};
 const settle = async () => {
@@ -52,10 +51,8 @@ const settle = async () => {
     }
 };
 
-/** As App.svelte does on every tab change. */
 async function switchTo(/** @type {string} */ tab) {
     activeTabStore.set(tab);
-    applyTabPanels(tab);
     await settle();
 }
 
@@ -80,7 +77,7 @@ afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
     panels.components.set({});
-    applyTabPanels('analysis');
+    activeTabStore.set('analysis');
     databasePathStore.set('');
     homeDismissedStore.set(false);
 });

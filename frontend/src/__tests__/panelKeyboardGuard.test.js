@@ -68,7 +68,7 @@ import MatchPanel from '../components/MatchPanel.svelte';
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import CollectionPanel from '../components/CollectionPanel.svelte';
 import { registerKeys } from '../services/keyDispatch.js';
-import { openPanels, PANEL } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore } from '../stores/positionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
@@ -87,7 +87,7 @@ beforeEach(() => {
 afterEach(() => {
     cleanup();
     unregisterSpy();
-    openPanels.set(new Set());
+    activeTabStore.set('analysis');
     databasePathStore.set('');
     tournamentsStore.set([]);
     lastVisitedMatchStore.set({ matchID: null, currentIndex: 0, gameNumber: 1 });
@@ -110,7 +110,7 @@ function keyInEditableField(opts) {
 describe('MatchPanel keyboard guard', () => {
     beforeEach(async () => {
         databasePathStore.set('/tmp/test.db');
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         render(MatchPanel);
         await tick();
         await new Promise((resolve) => setTimeout(resolve, 0)); // the list loads before the key handler is installed
@@ -161,7 +161,7 @@ describe('MatchPanel keyboard guard', () => {
 
 describe('TournamentPanel keyboard guard', () => {
     beforeEach(async () => {
-        openPanels.set(new Set([PANEL.TOURNAMENT]));
+        activeTabStore.set('tournaments');
         render(TournamentPanel);
         await tick();
         windowSpy.mockClear();
@@ -211,7 +211,7 @@ describe('TournamentPanel keyboard guard', () => {
 
 describe('CollectionPanel keyboard guard', () => {
     beforeEach(async () => {
-        openPanels.set(new Set([PANEL.COLLECTION]));
+        activeTabStore.set('collections');
         render(CollectionPanel);
         await tick();
         windowSpy.mockClear();

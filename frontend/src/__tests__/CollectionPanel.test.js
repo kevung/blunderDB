@@ -67,7 +67,7 @@ function serveOnce(ids) {
 
 import CollectionPanel from '../components/CollectionPanel.svelte';
 import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore.js';
-import { openPanels, PANEL, statusBarTextStore, statusBarModeStore, currentPositionIndexStore, dbMutationCounterStore } from '../stores/uiStore.js';
+import { statusBarTextStore, statusBarModeStore, currentPositionIndexStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore } from '../stores/positionStore.js';
 
@@ -78,7 +78,7 @@ function resetStores() {
     selectedCollectionStore.set(null);
     collectionPositionsStore.set([]);
     activeCollectionStore.set(null);
-    openPanels.set(new Set());
+    activeTabStore.set('analysis');
     statusBarTextStore.set('');
     statusBarModeStore.set('NORMAL');
     currentPositionIndexStore.set(0);
@@ -342,7 +342,7 @@ describe('CollectionPanel — a partly loaded collection', () => {
 
 describe('CollectionPanel — keyboard shortcuts', () => {
     beforeEach(() => {
-        openPanels.set(new Set([PANEL.COLLECTION]));
+        activeTabStore.set('collections');
     });
 
     test('Escape from the detail view (outside COLLECTION mode) returns to the list', async () => {

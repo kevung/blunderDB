@@ -38,7 +38,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 
 import MatchPanel from '../components/MatchPanel.svelte';
-import { openPanels, PANEL, activeModal, MODAL } from '../stores/uiStore.js';
+import { activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 
 /** @type {HTMLInputElement} */
@@ -48,7 +48,7 @@ beforeEach(() => {
     databasePathStore.set('/tmp/test.db');
     activeModal.set(null);
     // The click-away listener acts only while the panel is shown: PANEL.MATCH is its « visible ».
-    openPanels.set(new Set([PANEL.MATCH]));
+    activeTabStore.set('matches');
     // Stands in for a text field of a dialog: outside the match panel, like every modal.
     field = document.createElement('input');
     field.id = 'a-field-in-a-dialog';
@@ -59,7 +59,7 @@ afterEach(() => {
     cleanup();
     field.remove();
     activeModal.set(null);
-    openPanels.set(new Set());
+    activeTabStore.set('analysis');
 });
 
 describe('MatchPanel click-away handling', () => {

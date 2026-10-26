@@ -89,7 +89,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveCommand: vi.fn(() => Promise.resolve())
 }));
 
-import { openPanels, PANEL } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches, GetMatchDecisionLosses, LoadAnalysis } from '../../wailsjs/go/database/Database.js';
@@ -112,18 +112,22 @@ async function openTranscript() {
 }
 
 describe('MatchPanel — the Transcript carries the MWC loss of every decision', () => {
+    let keepMatches = () => {};
     beforeEach(() => {
         vi.clearAllMocks();
         localStorage.clear();
         databasePathStore.set('/tmp/test.db');
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
+        // A jump to a move switches to Analysis; the panel under test stays shown.
+        keepMatches = activeTabStore.subscribe((t) => t === 'analysis' && activeTabStore.set('matches'));
         lastVisitedMatchStore.set({ matchID: 7, currentIndex: 0, gameNumber: 1 });
     });
     afterEach(() => {
         cleanup();
         lastVisitedMatchStore.set({ matchID: null, currentIndex: 0, gameNumber: 1 });
         matchContextStore.set({ isMatchMode: false, matchID: null, currentIndex: 0 });
-        openPanels.set(new Set());
+        keepMatches();
+        activeTabStore.set('analysis');
     });
 
     const losses = (container) => [...container.querySelectorAll('details.game-section')[0].querySelectorAll('[data-testid="move-loss"]')].map((c) => c.textContent.trim());

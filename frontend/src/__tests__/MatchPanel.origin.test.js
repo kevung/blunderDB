@@ -71,7 +71,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveCommand: vi.fn(() => Promise.resolve())
 }));
 
-import { openPanels, PANEL } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches, GetMatchOrigin, GetMatchMovePositions, GetGamesByMatch } from '../../wailsjs/go/database/Database.js';
@@ -99,14 +99,14 @@ describe('MatchPanel — the origin of a match played here', () => {
         vi.mocked(GetMatchMovePositions).mockImplementation(() => Promise.resolve(MOVES));
         vi.mocked(GetGamesByMatch).mockImplementation(() => Promise.resolve([]));
         databasePathStore.set('/tmp/test.db');
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         lastVisitedMatchStore.set({ matchID: 7, currentIndex: 0, gameNumber: 1 });
     });
     afterEach(() => {
         cleanup();
         lastVisitedMatchStore.set({ matchID: null, currentIndex: 0, gameNumber: 1 });
         matchContextStore.set({ isMatchMode: false, matchID: null, currentIndex: 0 });
-        openPanels.set(new Set());
+        activeTabStore.set('analysis');
     });
 
     test('one line says it was played here, opened onto the revealed seed and its fingerprint', async () => {

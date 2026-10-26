@@ -42,7 +42,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveCommand: vi.fn(() => Promise.resolve())
 }));
 
-import { openPanels, PANEL } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { ListMatches } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
@@ -62,7 +62,7 @@ describe('MatchPanel — the detail pane appears only for a selected match', () 
     beforeEach(() => {
         vi.clearAllMocks();
         databasePathStore.set('/tmp/test.db');
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
     });
     afterEach(cleanup);
 

@@ -23,7 +23,6 @@ import { tick } from 'svelte';
 
 import TabbedPanel from '../components/TabbedPanel.svelte';
 import { activeTabStore } from '../stores/uiStore.js';
-import { openPanels } from '../stores/uiStore.js';
 
 function noop() {}
 
@@ -41,13 +40,11 @@ function mount() {
 
 beforeEach(() => {
     activeTabStore.set('matches');
-    openPanels.set(new Set());
 });
 
 afterEach(() => {
     cleanup();
     activeTabStore.set('matches');
-    openPanels.set(new Set());
 });
 
 describe('TabbedPanel — l’ordre par défaut', () => {

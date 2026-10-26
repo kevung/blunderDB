@@ -37,7 +37,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 
 // ── Stores ───────────────────────────────────────────────────────────────────
-import { openPanels, PANEL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
+import { matchPanelRefreshTriggerStore, activeTabStore } from '../stores/uiStore.js';
 import { lastVisitedMatchStore } from '../stores/positionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -53,7 +53,7 @@ function resetStores() {
     // A database must appear open: MatchPanel only loads when databaseLoadedStore
     // (derived from a non-empty databasePathStore) is true.
     databasePathStore.set('/tmp/test.db');
-    openPanels.set(new Set());
+    activeTabStore.set('analysis');
     matchPanelRefreshTriggerStore.set(0);
     tournamentsStore.set([]);
     lastVisitedMatchStore.set({ matchID: null, currentIndex: 0, gameNumber: 1 });
@@ -69,7 +69,7 @@ describe('MatchPanel — réactivité openPanels', () => {
 
     // ── Test 1 : panel non visible → loadMatches pas appelé ──────────────────
     test('T1 — panel non visible au montage : ListMatches non appelé', async () => {
-        openPanels.set(new Set()); // panel fermé
+        activeTabStore.set('analysis'); // panel fermé
         render(MatchPanel);
         await tick();
         await tick(); // double tick pour laisser les effets async se stabiliser
@@ -82,7 +82,7 @@ describe('MatchPanel — réactivité openPanels', () => {
         render(MatchPanel);
         await tick();
 
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         await tick();
         await tick(); // attendre la résolution des promesses
 
@@ -95,18 +95,18 @@ describe('MatchPanel — réactivité openPanels', () => {
         await tick();
 
         // Première ouverture
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         await tick();
         await tick();
 
         expect(ListMatches).toHaveBeenCalledTimes(1);
 
         // Fermeture
-        openPanels.set(new Set());
+        activeTabStore.set('analysis');
         await tick();
 
         // Réouverture
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         await tick();
         await tick();
 
@@ -119,10 +119,10 @@ describe('MatchPanel — réactivité openPanels', () => {
         await tick();
 
         for (let i = 0; i < 5; i++) {
-            openPanels.set(new Set([PANEL.MATCH]));
+            activeTabStore.set('matches');
             await tick();
             await tick(); // stabilisation async
-            openPanels.set(new Set());
+            activeTabStore.set('analysis');
             await tick();
         }
 
@@ -144,7 +144,7 @@ describe('MatchPanel — matchPanelRefreshTriggerStore', () => {
         await tick();
 
         // Ouvrir le panel (1er appel)
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         await tick();
         await tick();
         expect(ListMatches).toHaveBeenCalledTimes(1);
@@ -174,7 +174,7 @@ describe('MatchPanel — matchPanelRefreshTriggerStore', () => {
         // The panel mounts after the database opened: the trigger already moved and the
         // panel is visible. Neither is news to the panel; it loads exactly once.
         matchPanelRefreshTriggerStore.set(3);
-        openPanels.set(new Set([PANEL.MATCH]));
+        activeTabStore.set('matches');
         render(MatchPanel);
         await tick();
         await tick();
