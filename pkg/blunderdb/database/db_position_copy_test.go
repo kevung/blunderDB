@@ -140,3 +140,34 @@ func TestCopyPosition_ConcurrentDuplicateHasOneCreator(t *testing.T) {
 		}
 	}
 }
+
+// Another handle that writes to the new position once the copy's import has
+// committed writes after the print: the take-back sees it and refuses, rather
+// than counting it as the copy's and removing it.
+func TestCopyPosition_WriteAfterCommitIsNotTheCopys(t *testing.T) {
+	src, dst, id, pos := copyFixture(t)
+	b, err := Borrow(dst)
+	if err != nil {
+		t.Fatalf("Borrow: %v", err)
+	}
+	var injected error
+	transferCommitted = func(*Database) {
+		held, found, err := b.store.Positions().Exists(context.Background(), "", storage.ZobristOf(&pos))
+		if err == nil && found {
+			_, err = b.store.Comments().Add(context.Background(), "", held, "written by another handle")
+		}
+		injected = err
+	}
+	t.Cleanup(func() { transferCommitted = nil })
+	r, err := CopyPosition(context.Background(), src, dst, id)
+	transferCommitted = nil
+	if err != nil || injected != nil || !r.Created {
+		t.Fatalf("CopyPosition: created %v, %v; injected write %v", r.Created, err, injected)
+	}
+	if err := TakeBackPositionCopy(dst, r); !errors.Is(err, ErrPositionChanged) {
+		t.Fatalf("take-back after another handle's write = %v, want ErrPositionChanged", err)
+	}
+	if _, found := heldIn(t, dst, pos); !found {
+		t.Error("the take-back removed the other handle's write")
+	}
+}

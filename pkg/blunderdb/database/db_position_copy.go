@@ -20,7 +20,7 @@ var ErrPositionChanged = errors.New("the copied position has changed since the c
 // PositionCopyReceipt is what CopyPosition wrote, enough to take it back
 // with TakeBackPositionCopy and only that: the position's id and hash in the
 // destination, and a print of the position, its analysis, its comments and
-// every row that holds it, taken right after the copy.
+// every row that holds it, taken in the copy's own transaction.
 type PositionCopyReceipt struct {
 	Report ingest.TransferReport
 	// Created is set when the copy's own transaction inserted the position; a
@@ -39,11 +39,12 @@ type PositionCopyReceipt struct {
 // Whether the copy created the position is the import transaction's own
 // answer (Summary.CreatedPositions), not a look-up around it: dst's lock does
 // not exclude a borrowed handle or another Database on the same file, which
-// write through the same storage. The print is taken once the copy is
-// committed; a write another handle lands on the new position in between is
-// counted as the copy's, and taken back with it. It and TakeBackPositionCopy
-// are functions, not methods, so that the desktop's binding of Database does
-// not offer them to the page.
+// write through the same storage. The print is taken inside the import's
+// transaction, after the merge and the provenance its writes derive, before
+// the commit: a write another handle lands on the new position afterwards
+// changes the print, and the take-back refuses rather than remove it. It and
+// TakeBackPositionCopy are functions, not methods, so that the desktop's
+// binding of Database does not offer them to the page.
 func CopyPosition(ctx context.Context, src, dst *Database, id int64) (PositionCopyReceipt, error) {
 	if src == nil {
 		return PositionCopyReceipt{}, fmt.Errorf("%w: no source library", storage.ErrInvalid)
@@ -57,15 +58,15 @@ func CopyPosition(ctx context.Context, src, dst *Database, id int64) (PositionCo
 		r.Hash = storage.ZobristOf(p)
 		return nil
 	}
-	after := func(ctx context.Context, rep ingest.TransferReport) error {
-		if len(rep.Imported.CreatedPositions) == 0 {
+	beforeCommit := func(ctx context.Context, tx storage.Tx, sum ingest.Summary) error {
+		if len(sum.CreatedPositions) == 0 {
 			return nil
 		}
-		held, found, err := dst.store.Positions().Exists(ctx, "", r.Hash)
-		if err != nil || !found || !slices.Contains(rep.Imported.CreatedPositions, held) {
+		held, found, err := tx.Positions().Exists(ctx, "", r.Hash)
+		if err != nil || !found || !slices.Contains(sum.CreatedPositions, held) {
 			return err
 		}
-		if r.Print, err = positionPrint(ctx, dst.store, held); err != nil {
+		if r.Print, err = positionPrint(ctx, tx, held); err != nil {
 			return err
 		}
 		r.ID, r.Created = held, true
@@ -80,7 +81,7 @@ func CopyPosition(ctx context.Context, src, dst *Database, id int64) (PositionCo
 		IncludeComments:    true,
 		IncludePlayedMoves: true,
 	}
-	rep, err := src.transferWith(ctx, dst, opts, before, after)
+	rep, err := src.transferWith(ctx, dst, opts, before, beforeCommit)
 	r.Report = rep
 	if err != nil {
 		r.Created, r.ID = false, 0

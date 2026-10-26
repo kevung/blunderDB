@@ -57,6 +57,13 @@ var ErrSelfTransfer = errors.New("a library cannot be transferred into itself")
 // caller holding the destination tenant's context reads the source under the
 // source's (row-level security on PostgreSQL).
 func Transfer(ctx context.Context, from, to TransferEnd, opts domain.ExportOptions, prog func(Progress)) (TransferReport, error) {
+	return TransferBeforeCommit(ctx, from, to, opts, prog, nil)
+}
+
+// TransferBeforeCommit is Transfer whose merge runs beforeCommit inside the
+// destination's import transaction, before it commits (DBImporter.BeforeCommit):
+// what it reads of the destination is the merge and only the merge.
+func TransferBeforeCommit(ctx context.Context, from, to TransferEnd, opts domain.ExportOptions, prog func(Progress), beforeCommit func(ctx context.Context, tx storage.Tx, sum Summary) error) (TransferReport, error) {
 	if from.S == to.S && from.Scope == to.Scope {
 		return TransferReport{}, fmt.Errorf("%w: %w", storage.ErrInvalid, ErrSelfTransfer)
 	}
@@ -106,7 +113,7 @@ func Transfer(ctx context.Context, from, to TransferEnd, opts domain.ExportOptio
 		return rep, fmt.Errorf("ingest: transfer: read the source: %w", err)
 	}
 	rep.Exported.Path = ""
-	if rep.Imported, err = (DBImporter{S: to.S}).Import(dstCtx, to.Scope, Source{Format: FormatNativeDB, Path: path}, prog); err != nil {
+	if rep.Imported, err = (DBImporter{S: to.S, BeforeCommit: beforeCommit}).Import(dstCtx, to.Scope, Source{Format: FormatNativeDB, Path: path}, prog); err != nil {
 		return rep, fmt.Errorf("ingest: transfer: merge into the destination: %w", err)
 	}
 	return rep, nil
