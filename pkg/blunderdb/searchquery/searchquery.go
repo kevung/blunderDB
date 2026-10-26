@@ -111,12 +111,13 @@ var (
 	// match. `md:YYYY-MM..YYYY-MM`, `md:YYYY`, `md>YYYY-MM`, `md<YYYY-MM`: its
 	// date, each bound a year, a month or a day. `pr>8`, `pr<5`, `pr4,9`: the
 	// PR of the match for the player who took the decision. `rd:3`: the round.
-	// `aw:4`, `aw:2,5`, `aw<5`, `aw>3`: how many points each player still
-	// needs, in the grammar of `ml`. All matched by shape: `md`, `ml`, `pr` and
-	// `rd` start like tokens that take a bare prefix, and a typo must not
-	// become a silent filter.
+	// `aw:4`, `aw:2,5`, `aw<5`, `aw>3`: how many points the player still needs,
+	// in the grammar of `ml`; `AW` the same for the opponent. All matched by
+	// shape: `md`, `ml`, `pr` and `rd` start like tokens that take a bare
+	// prefix, and a typo must not become a silent filter.
 	matchLenRe  = regexp.MustCompile(`^ml(?::\d+(?:,\d+)?|[<>]\d+)$`)
 	awayRe      = regexp.MustCompile(`^aw(?::\d+(?:,\d+)?|[<>]\d+)$`)
+	oppAwayRe   = regexp.MustCompile(`^AW(?::\d+(?:,\d+)?|[<>]\d+)$`)
 	matchDateRe = regexp.MustCompile(`^md(?::` + dateBound + `(?:\.\.` + dateBound + `)?|[<>]` + dateBound + `)$`)
 	prRe        = regexp.MustCompile(`^pr(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$`)
 	roundRe     = regexp.MustCompile(`^rd:[^\s"';]+$`)
@@ -124,6 +125,32 @@ var (
 	// position and how deep. Any case, kept lower-case.
 	provenanceRe = regexp.MustCompile(`^(?i:ad:(?:[a-z][a-z0-9]*|\d+ply\+?))$`)
 )
+
+// crawfordState reads the `cr` (the Crawford game) and `pcr` (the games after
+// it) tokens. Both at once is contradictory rather than ambiguous: nothing
+// matches, the honest answer.
+func crawfordState(crawford, after bool) string {
+	switch {
+	case crawford && after:
+		return domain.CrawfordNone
+	case crawford:
+		return domain.CrawfordGame
+	case after:
+		return domain.CrawfordAfter
+	}
+	return ""
+}
+
+// parseMatchLevel claims the match-level tokens, each matched by its shape,
+// so none can take a token another rule wants.
+func parseMatchLevel(f *domain.SearchFilters, first func(func(string) bool) string) {
+	shaped := func(re *regexp.Regexp) string { return first(re.MatchString) }
+	f.PlayerPRFilter = shaped(prRe)
+	f.MatchLengthFilter = shaped(matchLenRe)
+	f.AwayFilter = shaped(awayRe)
+	f.OpponentAwayFilter = shaped(oppAwayRe)
+	f.MatchDateFilter = shaped(matchDateRe)
+}
 
 // dateBound is a year, a month or a day: YYYY, YYYY-MM, YYYY-MM-DD (`/` as the
 // separator is read too).
@@ -278,6 +305,7 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	f.MirrorFilter = has("M")
 	f.IndividuallyImportedFilter = has("i")
 	f.FlaggedFilter = has("fl")
+	f.CrawfordFilter = crawfordState(has("cr"), has("pcr"))
 	// Comment presence. Asking for both is contradictory rather than ambiguous;
 	// "none" wins and the search comes back empty, which is the honest answer.
 	switch {
@@ -317,12 +345,9 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	// Numeric ranges. Each reads `x>n`, `x<n` or `xa,b`; the six count filters
 	// below additionally accept a bare `x5`, which means exactly five.
 	f.PipCountFilter = first(func(s string) bool {
-		return strings.HasPrefix(s, "p") && !strings.HasPrefix(s, "pl") && !strings.HasPrefix(s, "ph") && !strings.HasPrefix(s, "pr")
+		return strings.HasPrefix(s, "p") && !strings.HasPrefix(s, "pl") && !strings.HasPrefix(s, "ph") && !strings.HasPrefix(s, "pr") && s != "pcr"
 	})
-	f.PlayerPRFilter = first(func(s string) bool { return prRe.MatchString(s) })
-	f.MatchLengthFilter = first(func(s string) bool { return matchLenRe.MatchString(s) })
-	f.AwayFilter = first(func(s string) bool { return awayRe.MatchString(s) })
-	f.MatchDateFilter = first(func(s string) bool { return matchDateRe.MatchString(s) })
+	parseMatchLevel(&f, first)
 	f.WinRateFilter = first(prefix("w"))
 	// `gt:holding` starts with `g` too, and `first` does not skip a claimed
 	// token: without the exclusion a type search would also carry a
@@ -523,6 +548,15 @@ func Format(f domain.SearchFilters) string {
 	case "none":
 		add("xco")
 	}
+	switch f.CrawfordFilter {
+	case domain.CrawfordGame:
+		add("cr")
+	case domain.CrawfordAfter:
+		add("pcr")
+	case domain.CrawfordNone:
+		add("cr")
+		add("pcr")
+	}
 
 	add(f.PipCountFilter)
 	add(f.Player1AbsolutePipCountFilter)
@@ -549,6 +583,7 @@ func Format(f domain.SearchFilters) string {
 	add(f.PlayerPRFilter)
 	add(f.MatchLengthFilter)
 	add(f.AwayFilter)
+	add(f.OpponentAwayFilter)
 	add(f.MatchDateFilter)
 
 	add(f.SearchText)
@@ -642,6 +677,8 @@ var FieldTokens = map[string]string{
 	"RoundFilter":                   "rd:",
 	"MatchLengthFilter":             "ml",
 	"AwayFilter":                    "aw",
+	"OpponentAwayFilter":            "AW",
+	"CrawfordFilter":                "cr",
 	"MatchDateFilter":               "md",
 	"PlayerPRFilter":                "pr",
 	"AnalysisProvenanceFilter":      "ad:",

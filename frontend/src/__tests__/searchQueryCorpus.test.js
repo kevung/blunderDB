@@ -88,6 +88,8 @@ const SHORT_TO_LONG = {
     rdf: 'roundFilter',
     mlf: 'matchLengthFilter',
     awf: 'awayFilter',
+    oawf: 'opponentAwayFilter',
+    crwf: 'crawfordFilter',
     mdf: 'matchDateFilter',
     prf: 'playerPRFilter',
     dtf: 'decisionTimeFilter',

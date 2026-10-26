@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 00:05+0200\n"
+"POT-Creation-Date: 2026-10-26 11:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1709,22 +1709,73 @@ msgstr "aw:x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"**Chacun** des deux joueurs est à x points du gain du match, quelle que "
-"soit sa longueur : la fin d'un match en 5 comme en 11. Formes ``aw:4``, "
-"``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises, pour les deux "
-"joueurs). Le Crawford et l'après-Crawford comptent tous deux pour 1 point"
-" (``aw:1`` les retient) ; le money n'est jamais retenu."
+"Le joueur est à x points du gain du match, quelle que soit sa longueur. "
+"Formes ``aw:4``, ``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises). Le "
+"Crawford et l'après-Crawford comptent tous deux pour 1 point (``aw:1`` "
+"les retient) ; le money n'est jamais retenu. Avec ``M``, ``aw`` et ``AW``"
+" s'échangent."
 msgstr ""
-"**Ciascuno** dei due giocatori è a x punti dalla vittoria del match, "
-"qualunque sia la sua lunghezza: la fine di un match ai 5 come agli 11. "
-"Forme ``aw:4``, ``aw:2,5``, ``aw>3`` e ``aw<5`` (estremi inclusi, per "
-"entrambi i giocatori). Il Crawford e il post-Crawford contano entrambi "
-"come 1 punto (``aw:1`` li trattiene entrambi); il money non viene mai "
-"trattenuto."
+"Il giocatore è a x punti dalla vittoria del match, qualunque sia la sua "
+"lunghezza. Forme ``aw:4``, ``aw:2,5``, ``aw>3`` e ``aw<5`` (estremi "
+"inclusi). Il Crawford e il post-Crawford contano entrambi come 1 punto "
+"(``aw:1`` li trattiene entrambi); il money non viene mai trattenuto. Con "
+"``M``, ``aw`` e ``AW`` si scambiano."
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--away``"
 msgstr "``--away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "AW:x"
+msgstr "AW:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'adversaire est à x points du gain du match, dans les formes de ``aw``. "
+"``aw:2 AW:4`` : le joueur mène 2-away contre 4-away ; ``aw:4 AW:4`` : les"
+" deux joueurs sont à 4 points."
+msgstr ""
+"L'avversario è a x punti dalla vittoria del match, nelle forme di ``aw``."
+" ``aw:2 AW:4``: il giocatore conduce 2-away contro 4-away; ``aw:4 AW:4``:"
+" entrambi i giocatori sono a 4 punti."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--opponent-away``"
+msgstr "``--opponent-away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "cr"
+msgstr "cr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée dans le jeu Crawford : un joueur est à 1 point, le "
+"videau est mort."
+msgstr ""
+"La posizione è giocata nella partita Crawford: un giocatore è a 1 punto, "
+"il cubo è morto."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford game``"
+msgstr "``--crawford game``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "pcr"
+msgstr "pcr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée après le jeu Crawford : un joueur est à 1 point, le"
+" videau est vivant. ``AW:1 pcr`` : l'adversaire est à 1 point en après-"
+"Crawford. ``cr`` et ``pcr`` ensemble ne retiennent rien."
+msgstr ""
+"La posizione è giocata dopo la partita Crawford: un giocatore è a 1 "
+"punto, il cubo è vivo. ``AW:1 pcr``: l'avversario è a 1 punto nel post-"
+"Crawford. ``cr`` e ``pcr`` insieme non trattengono nulla."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford post``"
+msgstr "``--crawford post``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1897,7 +1948,7 @@ msgstr ""
 "allarga la classe del bersaglio a tutti i tipi di decisione e ai due "
 "regimi, denaro e partita. Vedere :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:245
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1916,11 +1967,11 @@ msgstr ""
 "compare in nessun valore, e ``ma1;2`` non è un token (scrivere ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:250
 msgid "Transcrire depuis un terminal"
 msgstr "Trascrivere da un terminale"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:252
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1940,7 +1991,7 @@ msgstr ""
 "sessione a sé, senza ``sessionId`` né annullamento da una chiamata "
 "all'altra."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:263
 msgid "Commandes diverses"
 msgstr "Comandi vari"
 
@@ -2177,4 +2228,3 @@ msgstr "Cancella la cronologia dei comandi."
 #~ "Carica un database di esempio (partite,"
 #~ " torneo, raccolte, commenti, mazzo Anki,"
 #~ " analisi) per scoprire lo strumento."
-

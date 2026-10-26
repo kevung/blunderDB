@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-25 00:05+0200\n"
+"POT-Creation-Date: 2026-10-26 11:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1614,20 +1614,67 @@ msgstr "aw:x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"**Chacun** des deux joueurs est à x points du gain du match, quelle que "
-"soit sa longueur : la fin d'un match en 5 comme en 11. Formes ``aw:4``, "
-"``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises, pour les deux "
-"joueurs). Le Crawford et l'après-Crawford comptent tous deux pour 1 point"
-" (``aw:1`` les retient) ; le money n'est jamais retenu."
+"Le joueur est à x points du gain du match, quelle que soit sa longueur. "
+"Formes ``aw:4``, ``aw:2,5``, ``aw>3`` et ``aw<5`` (bornes comprises). Le "
+"Crawford et l'après-Crawford comptent tous deux pour 1 point (``aw:1`` "
+"les retient) ; le money n'est jamais retenu. Avec ``M``, ``aw`` et ``AW``"
+" s'échangent."
 msgstr ""
-"**両方**\\ のプレイヤーがマッチ勝利まで x ポイント。マッチの長さは問わない：5 ポイントマッチでも 11 "
-"ポイントマッチでも終盤を拾える。形式は ``aw:4``\\ 、\\ ``aw:2,5``\\ 、\\ ``aw>3``\\ 、\\ "
-"``aw<5``\\ （境界を含み、両プレイヤーに適用）。クロフォードとポストクロフォードはどちらも 1 ポイントと数える（\\ ``aw:1``"
-" は両方を拾う）。マネーゲームは決して該当しない。"
+"プレイヤーがマッチ勝利まで x ポイント。マッチの長さは問わない。形式は ``aw:4``\\ 、\\ ``aw:2,5``\\ 、\\ "
+"``aw>3``\\ 、\\ ``aw<5``\\ （境界を含む）。クロフォードとポストクロフォードはどちらも 1 ポイントと数える（\\ "
+"``aw:1`` は両方を拾う）。マネーゲームは決して該当しない。\\ ``M`` と併用すると ``aw`` と ``AW`` が入れ替わる。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``--away``"
 msgstr "``--away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "AW:x"
+msgstr "AW:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'adversaire est à x points du gain du match, dans les formes de ``aw``. "
+"``aw:2 AW:4`` : le joueur mène 2-away contre 4-away ; ``aw:4 AW:4`` : les"
+" deux joueurs sont à 4 points."
+msgstr ""
+"相手がマッチ勝利まで x ポイント。形式は ``aw`` と同じ。\\ ``aw:2 AW:4``\\ ：プレイヤーが 2-away 対 "
+"4-away でリード。\\ ``aw:4 AW:4``\\ ：両プレイヤーとも 4 ポイント。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--opponent-away``"
+msgstr "``--opponent-away``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "cr"
+msgstr "cr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée dans le jeu Crawford : un joueur est à 1 point, le "
+"videau est mort."
+msgstr "クロフォードゲームで打たれたポジション：一方のプレイヤーが 1 ポイント、キューブは使えない。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford game``"
+msgstr "``--crawford game``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "pcr"
+msgstr "pcr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est jouée après le jeu Crawford : un joueur est à 1 point, le"
+" videau est vivant. ``AW:1 pcr`` : l'adversaire est à 1 point en après-"
+"Crawford. ``cr`` et ``pcr`` ensemble ne retiennent rien."
+msgstr ""
+"クロフォードゲームの後に打たれたポジション：一方のプレイヤーが 1 ポイント、キューブは生きている。\\ ``AW:1 pcr``\\ "
+"：ポストクロフォードで相手が 1 ポイント。\\ ``cr`` と ``pcr`` を同時に指定すると何も該当しない。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--crawford post``"
+msgstr "``--crawford post``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1792,7 +1839,7 @@ msgstr ""
 "は目標としきい値を組み合わせ、\\ ``like42*`` は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ "
 ":ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:245
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``au``, ``m`` et ``t`` "
 "s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des "
@@ -1808,11 +1855,11 @@ msgstr ""
 "）が、二重引用符は決して含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ ``ma1;2`` "
 "はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:250
 msgid "Transcrire depuis un terminal"
 msgstr "ターミナルから転記する"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:252
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1830,7 +1877,7 @@ msgstr ""
 "は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
 "はなく、呼び出しをまたいだ取り消しもできません。"
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:263
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 
@@ -2023,4 +2070,3 @@ msgstr "コマンド履歴を消去します。"
 #~ "tournoi, collections, commentaires, paquet "
 #~ "Anki, analyses) pour découvrir l'outil."
 #~ msgstr "ツールを試すためのサンプルデータベース（マッチ、トーナメント、コレクション、コメント、Anki デッキ、解析）を読み込みます。"
-

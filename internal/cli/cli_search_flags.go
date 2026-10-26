@@ -58,6 +58,8 @@ type searchFlags struct {
 	round             *string
 	matchLengths      *string
 	away              *string
+	opponentAway      *string
+	crawford          *string
 	matchDate         *string
 	playerPR          *string
 	analysis          *string
@@ -112,7 +114,9 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		tournamentName:    fs.String("tournament-name", "", "Only matches of tournaments with this name (case-insensitive, '*' as a wildcard; tn\"…\")"),
 		round:             fs.String("round", "", "Only matches of these rounds, comma-separated ('*' as a wildcard; rd:)"),
 		matchLengths:      fs.String("match-lengths", "", "Length of the match the position was met in: '7', '5,9' (5 to 9), '>5', '<9' (ml)"),
-		away:              fs.String("away", "", "Points EACH player still needs, whatever the match length: '4', '2,5' (2 to 5), '>3', '<5'; Crawford and post-Crawford both count 1, money never matches (aw)"),
+		away:              fs.String("away", "", "Points the player on roll still needs, whatever the match length: '4', '2,5' (2 to 5), '>3', '<5'; Crawford and post-Crawford both count 1, money never matches (aw)"),
+		opponentAway:      fs.String("opponent-away", "", "Points the opponent still needs, as --away (AW)"),
+		crawford:          fs.String("crawford", "", "Game state: 'game' (the Crawford game, cube dead, cr) or 'post' (the games after it, pcr)"),
 		matchDate:         fs.String("match-date", "", "Date of the match: '2024', '2024-01..2024-12', '>2024-06', '<2024-06' (md; not the analysis date)"),
 		playerPR:          fs.String("pr", "", "PR of the whole match for the player who took the decision: '>8', '<5', '4,9' (pr)"),
 		analysis:          fs.String("analysis", "", "Engines and depths of the stored verdict, comma-separated: xg, gnubg, bgblitz, hedgehog, gammonnet, 3ply, 3ply+, book, rollout (ad:)"),
@@ -361,6 +365,8 @@ func (f *searchFlags) toFilters() (SearchFilters, error) {
 		RoundFilter:              corpus.RoundFilter,
 		MatchLengthFilter:        corpus.MatchLengthFilter,
 		AwayFilter:               corpus.AwayFilter,
+		OpponentAwayFilter:       corpus.OpponentAwayFilter,
+		CrawfordFilter:           corpus.CrawfordFilter,
 		MatchDateFilter:          corpus.MatchDateFilter,
 		PlayerPRFilter:           corpus.PlayerPRFilter,
 		AnalysisProvenanceFilter: corpus.AnalysisProvenanceFilter,
@@ -408,6 +414,13 @@ func (f *searchFlags) corpusFilters() (SearchFilters, error) {
 	out.RoundFilter = joinList(*f.round)
 	out.MatchLengthFilter = comparisonToken("ml", *f.matchLengths, ":")
 	out.AwayFilter = comparisonToken("aw", *f.away, ":")
+	out.OpponentAwayFilter = comparisonToken("AW", *f.opponentAway, ":")
+	switch c := strings.ToLower(strings.TrimSpace(*f.crawford)); c {
+	case "", domain.CrawfordGame, domain.CrawfordAfter:
+		out.CrawfordFilter = c
+	default:
+		return out, fmt.Errorf("--crawford: unknown value %q (game, post)", *f.crawford)
+	}
 	out.MatchDateFilter = comparisonToken("md", *f.matchDate, ":")
 	out.PlayerPRFilter = comparisonToken("pr", *f.playerPR, "")
 	analysis, err := normaliseClosedList(*f.analysis, "--analysis", provenanceValue.MatchString)

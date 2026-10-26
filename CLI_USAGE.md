@@ -4694,11 +4694,13 @@ Options:
   -analysis string
     	Engines and depths of the stored verdict, comma-separated: xg, gnubg, bgblitz, hedgehog, gammonnet, 3ply, 3ply+, book, rollout (ad:)
   -away string
-    	Points EACH player still needs, whatever the match length: '4', '2,5' (2 to 5), '>3', '<5'; Crawford and post-Crawford both count 1, money never matches (aw)
+    	Points the player on roll still needs, whatever the match length: '4', '2,5' (2 to 5), '>3', '<5'; Crawford and post-Crawford both count 1, money never matches (aw)
   -comment-author string
     	Only positions carrying a comment signed by this author (whole name, any case)
   -comment-origin string
     	Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown
+  -crawford string
+    	Game state: 'game' (the Crawford game, cube dead, cr) or 'post' (the games after it, pcr)
   -cube int
     	Filter by cube value
   -cube-response string
@@ -4749,6 +4751,8 @@ Options:
     	Skip this many results before the first one returned (paging, with --limit)
   -opponent string
     	With --player, only the matches against this opponent; alone, a name at either seat (op"…")
+  -opponent-away string
+    	Points the opponent still needs, as --away (AW)
   -phase blunderdb repair
     	Only positions in these game phases, comma-separated: opening, middlegame, race, bearoff (derived label, see blunderdb repair)
   -pip-max int

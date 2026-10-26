@@ -388,3 +388,74 @@ func matchesCommentFilters(comment, searchText string, wantedTags []string) bool
 	}
 	return domain.MatchesAllTags(comment, wantedTags)
 }
+
+// appendAwayClauses writes the away and Crawford filters. The Crawford state
+// belongs to the game, so a position and its mirror share it: SQL in every
+// search. `aw` bounds score_1 and `AW` score_2 (positions are stored with the
+// player on roll as player 1). Mirror search decides them in Go on the
+// mirrored board, where the two swap; SQL then only narrows the scan to the
+// rows one orientation or the other can satisfy. AwayStoredRange has already
+// folded the Crawford sentinels and shut money play out, so the stored
+// columns are compared as they are.
+func appendAwayClauses(f domain.SearchFilters, where *strings.Builder, args *[]any) {
+	switch f.CrawfordFilter {
+	case "":
+	case domain.CrawfordGame:
+		where.WriteString(" AND (p.score_1 = ? OR p.score_2 = ?)")
+		*args = append(*args, domain.Crawford, domain.Crawford)
+	case domain.CrawfordAfter:
+		where.WriteString(" AND (p.score_1 = ? OR p.score_2 = ?)")
+		*args = append(*args, domain.PostCrawford, domain.PostCrawford)
+	default:
+		where.WriteString(" AND 0=1")
+	}
+	if f.AwayFilter == "" && f.OpponentAwayFilter == "" {
+		return
+	}
+	cond, condArgs, none := awayCondition(f, "p.score_1", "p.score_2")
+	if none {
+		where.WriteString(" AND 0=1")
+		return
+	}
+	if !f.MirrorFilter {
+		where.WriteString(cond)
+		*args = append(*args, condArgs...)
+		return
+	}
+	mCond, mArgs, _ := awayCondition(f, "p.score_2", "p.score_1")
+	where.WriteString(" AND ((1=1" + cond + ") OR (1=1" + mCond + "))")
+	*args = append(*args, condArgs...)
+	*args = append(*args, mArgs...)
+}
+
+// awayCondition renders `aw` on col and `AW` on oppCol as " AND …" clauses;
+// none reports a token that admits nothing.
+func awayCondition(f domain.SearchFilters, col, oppCol string) (cond string, args []any, none bool) {
+	var b strings.Builder
+	for _, side := range []struct{ tok, prefix, col string }{
+		{f.AwayFilter, "aw", col},
+		{f.OpponentAwayFilter, "AW", oppCol},
+	} {
+		if side.tok == "" {
+			continue
+		}
+		lo, hi, hasHi, n := domain.AwayStoredRange(side.tok, side.prefix)
+		if n {
+			return "", nil, true
+		}
+		searchfilter.AppendIntRangeSQL(side.col, lo, hi, true, hasHi, &b, &args)
+	}
+	return b.String(), args, false
+}
+
+// matchesAwayFilters is appendAwayClauses' away bounds read on a board, for
+// the mirror search that tries each orientation in Go.
+func matchesAwayFilters(pos domain.Position, f domain.SearchFilters) bool {
+	if f.AwayFilter != "" && !domain.AwayAdmits(f.AwayFilter, "aw", pos.Score[0]) {
+		return false
+	}
+	if f.OpponentAwayFilter != "" && !domain.AwayAdmits(f.OpponentAwayFilter, "AW", pos.Score[1]) {
+		return false
+	}
+	return true
+}

@@ -92,10 +92,13 @@ chacun équivaut à un jeton du langage de requête (:ref:`cmd_filter`) :
 * ``--match-lengths <expr>`` — La longueur du match : ``7``, ``5,9``, ``>5``,
   ``<9`` (``ml``). À ne pas confondre avec ``--match-length``, qui accompagne
   le score de la position.
-* ``--away <expr>`` — Les points qu'il reste à marquer à **chacun** des deux
-  joueurs, quelle que soit la longueur du match : ``4``, ``2,5``, ``>3``,
-  ``<5`` (``aw``). Le Crawford et l'après-Crawford comptent pour 1 ; le money
-  n'est jamais retenu.
+* ``--away <expr>`` — Les points qu'il reste à marquer au joueur, quelle que
+  soit la longueur du match : ``4``, ``2,5``, ``>3``, ``<5`` (``aw``). Le
+  Crawford et l'après-Crawford comptent pour 1 ; le money n'est jamais retenu.
+* ``--opponent-away <expr>`` — Les points qu'il reste à marquer à
+  l'adversaire, dans les mêmes formes (``AW``).
+* ``--crawford <état>`` — ``game`` : le jeu Crawford (``cr``) ; ``post`` : les
+  jeux qui le suivent (``pcr``).
 * ``--match-date <expr>`` — La date du match : ``2024``,
   ``2024-01..2024-12``, ``>2024-06``, ``<2024-06`` (``md``) ; ce n'est pas la
   date de l'analyse.

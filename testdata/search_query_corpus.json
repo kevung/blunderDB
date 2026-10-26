@@ -482,6 +482,65 @@
       }
     },
     {
+      "command": "s AW<5",
+      "expected": {
+        "opponentAwayFilter": "AW<5",
+        "awayFilter": ""
+      }
+    },
+    {
+      "command": "s AW>3",
+      "expected": {
+        "opponentAwayFilter": "AW>3"
+      }
+    },
+    {
+      "command": "s AW:2,5",
+      "expected": {
+        "opponentAwayFilter": "AW:2,5"
+      }
+    },
+    {
+      "command": "s aw:2 AW:4",
+      "expected": {
+        "awayFilter": "aw:2",
+        "opponentAwayFilter": "AW:4"
+      }
+    },
+    {
+      "command": "s AW5",
+      "expected": {
+        "opponentAwayFilter": ""
+      }
+    },
+    {
+      "command": "s cr",
+      "expected": {
+        "crawfordFilter": "game",
+        "includeCube": false
+      }
+    },
+    {
+      "command": "s pcr",
+      "expected": {
+        "crawfordFilter": "post"
+      }
+    },
+    {
+      "command": "s cr pcr",
+      "expected": {
+        "crawfordFilter": "none"
+      }
+    },
+    {
+      "command": "s AW:1 pcr p>10",
+      "expected": {
+        "opponentAwayFilter": "AW:1",
+        "crawfordFilter": "post",
+        "pipCountFilter": "p>10"
+      }
+    },
+    {
       "command": "s md:2024-01..2024-12",
       "expected": {
         "matchDateFilter": "md:2024-01..2024-12"

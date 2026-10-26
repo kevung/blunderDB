@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-24 22:49+0200\n"
+"POT-Creation-Date: 2026-10-26 11:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -308,17 +308,32 @@ msgstr ""
 
 #: ../../source/cli_bibliotheque.rst:95
 msgid ""
-"``--away <expr>`` — Les points qu'il reste à marquer à **chacun** des "
-"deux joueurs, quelle que soit la longueur du match : ``4``, ``2,5``, "
-"``>3``, ``<5`` (``aw``). Le Crawford et l'après-Crawford comptent pour 1 "
-"; le money n'est jamais retenu."
+"``--away <expr>`` — Les points qu'il reste à marquer au joueur, quelle "
+"que soit la longueur du match : ``4``, ``2,5``, ``>3``, ``<5`` (``aw``). "
+"Le Crawford et l'après-Crawford comptent pour 1 ; le money n'est jamais "
+"retenu."
 msgstr ""
-"``--away <expr>`` — Die Punkte, die **jeder** der beiden Spieler noch "
-"braucht, unabhängig von der Matchlänge: ``4``, ``2,5``, ``>3``, ``<5`` "
-"(``aw``). Crawford und Post-Crawford zählen als 1; Money wird nie "
-"erfasst."
+"``--away <expr>`` — Die Punkte, die der Spieler noch braucht, unabhängig "
+"von der Matchlänge: ``4``, ``2,5``, ``>3``, ``<5`` (``aw``). Crawford und"
+" Post-Crawford zählen als 1; Money wird nie erfasst."
 
-#: ../../source/cli_bibliotheque.rst:99
+#: ../../source/cli_bibliotheque.rst:98
+msgid ""
+"``--opponent-away <expr>`` — Les points qu'il reste à marquer à "
+"l'adversaire, dans les mêmes formes (``AW``)."
+msgstr ""
+"``--opponent-away <expr>`` — Die Punkte, die der Gegner noch braucht, in "
+"denselben Formen (``AW``)."
+
+#: ../../source/cli_bibliotheque.rst:100
+msgid ""
+"``--crawford <état>`` — ``game`` : le jeu Crawford (``cr``) ; ``post`` : "
+"les jeux qui le suivent (``pcr``)."
+msgstr ""
+"``--crawford <Zustand>`` — ``game``: das Crawford-Spiel (``cr``); "
+"``post``: die Spiele danach (``pcr``)."
+
+#: ../../source/cli_bibliotheque.rst:102
 msgid ""
 "``--match-date <expr>`` — La date du match : ``2024``, "
 "``2024-01..2024-12``, ``>2024-06``, ``<2024-06`` (``md``) ; ce n'est pas "
@@ -327,7 +342,7 @@ msgstr ""
 "``--match-date <expr>`` — Das Matchdatum: ``2024``, ``2024-01..2024-12``,"
 " ``>2024-06``, ``<2024-06`` (``md``); es ist nicht das Analysedatum."
 
-#: ../../source/cli_bibliotheque.rst:102
+#: ../../source/cli_bibliotheque.rst:105
 msgid ""
 "``--pr <expr>`` — Le PR du match du joueur qui a pris la décision : "
 "``>8``, ``<5``, ``4,9`` (``pr``)."
@@ -335,7 +350,7 @@ msgstr ""
 "``--pr <expr>`` — Der PR des Matches für den Spieler, der die "
 "Entscheidung getroffen hat: ``>8``, ``<5``, ``4,9`` (``pr``)."
 
-#: ../../source/cli_bibliotheque.rst:104
+#: ../../source/cli_bibliotheque.rst:107
 msgid ""
 "``--analysis <v1,v2>`` — Moteurs et profondeurs de l'analyse enregistrée "
 ": ``xg``, ``gnubg``, ``bgblitz``, ``hedgehog``, ``gammonnet``, ``3ply``, "
@@ -345,7 +360,7 @@ msgstr ""
 "``xg``, ``gnubg``, ``bgblitz``, ``hedgehog``, ``gammonnet``, ``3ply``, "
 "``3ply+``, ``book``, ``rollout`` (``ad:``)."
 
-#: ../../source/cli_bibliotheque.rst:107
+#: ../../source/cli_bibliotheque.rst:110
 msgid ""
 "``--cube-response <type>`` — Un seul type de décision de videau : "
 "``double`` (Double / No Double) ou ``takepass`` (Take / Pass)."
@@ -353,7 +368,7 @@ msgstr ""
 "``--cube-response <type>`` — Nur ein Typ von Doppler-Entscheidung: "
 "``double`` (Double / No Double) oder ``takepass`` (Take / Pass)."
 
-#: ../../source/cli_bibliotheque.rst:111
+#: ../../source/cli_bibliotheque.rst:114
 msgid ""
 "``--error-min`` et ``--move-error-min`` ne mesurent pas la même chose et "
 "**ne prennent pas la même unité** : le facteur est mille. Le premier se "
@@ -369,11 +384,11 @@ msgstr ""
 "``--move-error-min`` beantwortet „wo habe ich gefehlt“; ``--error-min`` "
 "beantwortet „welche Positionen waren heikel“."
 
-#: ../../source/cli_bibliotheque.rst:118
+#: ../../source/cli_bibliotheque.rst:121
 msgid "**Ce que search imprime:**"
 msgstr "**Was search ausgibt:**"
 
-#: ../../source/cli_bibliotheque.rst:120
+#: ../../source/cli_bibliotheque.rst:123
 msgid ""
 "``--format table`` (le défaut) donne une ligne par position : "
 "l'identifiant, le score, la valeur du videau, le type de décision, le "
@@ -385,7 +400,7 @@ msgstr ""
 "Wurf, die beste Entscheidung und ihre Equity. Die beiden letzten Spalten "
 "bleiben für eine Position ohne Analyse leer."
 
-#: ../../source/cli_bibliotheque.rst:137
+#: ../../source/cli_bibliotheque.rst:140
 msgid ""
 "``--format json`` donne un tableau des mêmes positions. Les champs sont "
 "``id``, ``xgid``, ``score``, ``cube``, ``decision_type`` (``checker`` ou "
@@ -401,7 +416,7 @@ msgstr ""
 "liefert. Die Zeile ``Found n position(s)`` geht auf die Fehlerausgabe: "
 "die Standardausgabe enthält nur das JSON."
 
-#: ../../source/cli_bibliotheque.rst:164
+#: ../../source/cli_bibliotheque.rst:167
 msgid ""
 "``--format xgid`` imprime un XGID par ligne, préfixé de ``XGID=``, et "
 "**rien d'autre** sur la sortie standard. Le XGID enregistré avec "
@@ -415,11 +430,11 @@ msgstr ""
 "andernfalls wird sie aus dem Brett neu erzeugt. Dieselbe XGID steht im "
 "Feld ``xgid`` des JSON."
 
-#: ../../source/cli_bibliotheque.rst:169
+#: ../../source/cli_bibliotheque.rst:172
 msgid "**Le langage de requête:**"
 msgstr "**Die Abfragesprache:**"
 
-#: ../../source/cli_bibliotheque.rst:171
+#: ../../source/cli_bibliotheque.rst:174
 msgid ""
 "Les drapeaux ci-dessus couvrent une partie des filtres seulement. "
 "``--query`` donne accès au langage de requête de l'application — celui de"
@@ -433,7 +448,7 @@ msgstr ""
 "Zugmuster, Kommentartext, Hinzufügungsdatum, Equity, ausgeschlossene "
 "Würfe, Zonen und Blots."
 
-#: ../../source/cli_bibliotheque.rst:177
+#: ../../source/cli_bibliotheque.rst:180
 msgid ""
 "La grammaire n'est écrite qu'à un seul endroit, :ref:`cmd_filter`. Sa "
 "table donne chaque jeton, sa forme, et le drapeau de ``search`` qui lui "
@@ -443,7 +458,7 @@ msgstr ""
 "Tabelle nennt jedes Token, seine Form und die entsprechende Option von "
 "``search``, sofern es eine gibt. Diese Seite wiederholt sie nicht."
 
-#: ../../source/cli_bibliotheque.rst:186
+#: ../../source/cli_bibliotheque.rst:189
 msgid ""
 "Le classement des voisines d'une position passe par la même grammaire : "
 "``--query 's like42'``, seul ou suivi d'autres jetons pour restreindre "
@@ -453,13 +468,13 @@ msgstr ""
 "``--query 's like42'``, allein oder gefolgt von weiteren Token, um die "
 "geordnete Menge einzuschränken."
 
-#: ../../source/cli_bibliotheque.rst:190
+#: ../../source/cli_bibliotheque.rst:193
 msgid "``--query-help`` en rappelle la liste sans ouvrir de base :"
 msgstr ""
 "``--query-help`` ruft die Liste in Erinnerung, ohne eine Datenbank zu "
 "öffnen:"
 
-#: ../../source/cli_bibliotheque.rst:216
+#: ../../source/cli_bibliotheque.rst:219
 msgid ""
 "``--query`` remplace les drapeaux de filtre au lieu de s'y ajouter : les "
 "combiner est refusé, avec le nom du drapeau en cause. Les drapeaux qui "
@@ -471,7 +486,7 @@ msgstr ""
 "Optionen, die sagen, *wo* gesucht und *wie* angezeigt wird — ``--db``, "
 "``--format``, ``--limit``, ``--offset``, ``--export`` — bleiben gültig."
 
-#: ../../source/cli_bibliotheque.rst:221
+#: ../../source/cli_bibliotheque.rst:224
 msgid ""
 "Un jeton que rien ne reconnaît fait échouer la commande plutôt que de "
 "réduire la recherche en silence. Deux limites tiennent à l'absence de "
@@ -493,33 +508,33 @@ msgstr ""
 "mindestens 30 Pips Rückstand und einem Fehler von mindestens 50 "
 "Millipunkten:"
 
-#: ../../source/cli_bibliotheque.rst:234 ../../source/cli_bibliotheque.rst:432
-#: ../../source/cli_bibliotheque.rst:528 ../../source/cli_bibliotheque.rst:584
-#: ../../source/cli_bibliotheque.rst:645 ../../source/cli_bibliotheque.rst:701
+#: ../../source/cli_bibliotheque.rst:237 ../../source/cli_bibliotheque.rst:435
+#: ../../source/cli_bibliotheque.rst:531 ../../source/cli_bibliotheque.rst:587
+#: ../../source/cli_bibliotheque.rst:648 ../../source/cli_bibliotheque.rst:704
 msgid "**Exemples:**"
 msgstr "**Beispiele:**"
 
-#: ../../source/cli_bibliotheque.rst:251
+#: ../../source/cli_bibliotheque.rst:254
 msgid "list — Lister le contenu"
 msgstr "list — Inhalt auflisten"
 
-#: ../../source/cli_bibliotheque.rst:253
+#: ../../source/cli_bibliotheque.rst:256
 msgid "Affiche le contenu de la base de données."
 msgstr "Zeigt den Inhalt der Datenbank an."
 
-#: ../../source/cli_bibliotheque.rst:259
+#: ../../source/cli_bibliotheque.rst:262
 msgid "**Types:**"
 msgstr "**Typen:**"
 
-#: ../../source/cli_bibliotheque.rst:261
+#: ../../source/cli_bibliotheque.rst:264
 msgid "``matches`` — Liste des matchs importés."
 msgstr "``matches`` — Liste der importierten Matches."
 
-#: ../../source/cli_bibliotheque.rst:262
+#: ../../source/cli_bibliotheque.rst:265
 msgid "``tournaments`` — Liste des tournois."
 msgstr "``tournaments`` — Liste der Turniere."
 
-#: ../../source/cli_bibliotheque.rst:263
+#: ../../source/cli_bibliotheque.rst:266
 msgid ""
 "``positions`` — Liste des positions (limité à 10 par défaut ; ``--offset "
 "<n>`` saute les *n* premières). Seule la fenêtre affichée est lue, quelle"
@@ -533,7 +548,7 @@ msgstr ""
 "ein **tabellarischer Export**: eine Zeile pro Position mit XGID, Phase, "
 "Spielstand, Doppler, Pips und den abgeleiteten Analysespalten."
 
-#: ../../source/cli_bibliotheque.rst:269
+#: ../../source/cli_bibliotheque.rst:272
 msgid ""
 "``imports`` — Liste des imports enregistrés, du plus récent au plus "
 "ancien : identifiant, date, format, source, matchs importés / ignorés / "
@@ -549,7 +564,7 @@ msgstr ""
 "Stellungen, Stellungen ohne Analyse, PR über diesen Stapel und dessen "
 "fünf schlechteste Entscheidungen (siehe :ref:`compte_rendu_import`)."
 
-#: ../../source/cli_bibliotheque.rst:275
+#: ../../source/cli_bibliotheque.rst:278
 msgid ""
 "``stats`` — Rapport de statistiques de performance : PR / Snowie ER / MWC"
 " (global, pions, videau), PR glissant sur les N dernières décisions, top "
@@ -561,7 +576,7 @@ msgstr ""
 "Top-Blunders, Aufschlüsselung nach Cube-Aktion und Histogramm der "
 "Fehlergrößen."
 
-#: ../../source/cli_bibliotheque.rst:279
+#: ../../source/cli_bibliotheque.rst:282
 msgid ""
 "``players`` — Tableau comparatif, **une ligne par joueur** de la base : "
 "matchs, victoires/défaites, décisions comptées, PR global / pions / "
@@ -573,7 +588,7 @@ msgstr ""
 "/ Doppler, Snowie ER, Fehler, Blunders und Glück. Das ist das "
 "Kommandozeilen-Gegenstück zum Reiter Spieler des Statistik-Fensters."
 
-#: ../../source/cli_bibliotheque.rst:283
+#: ../../source/cli_bibliotheque.rst:286
 msgid ""
 "``moves`` — **Export tabulaire** des coups enregistrés, un par ligne, "
 "avec le match auquel ils appartiennent recopié sur chaque ligne : "
@@ -585,7 +600,7 @@ msgstr ""
 " Datum, Spieler, Länge, Zugnummer und -art, Stellung, Würfel, gespielter "
 "Zug, Würfelaktion, Glück. ``--format csv`` erforderlich."
 
-#: ../../source/cli_bibliotheque.rst:287
+#: ../../source/cli_bibliotheque.rst:290
 msgid ""
 "``analyses`` — **Export tabulaire** des analyses stockées, une par ligne "
 ": moteur, profondeur, meilleur coup et son équité, erreur du coup joué, "
@@ -597,7 +612,7 @@ msgstr ""
 "gespielten Zuges, beste Würfelaktion und ihr Fehler, die sechs "
 "Gewinnraten. ``--format csv`` erforderlich."
 
-#: ../../source/cli_bibliotheque.rst:291
+#: ../../source/cli_bibliotheque.rst:294
 msgid ""
 "``tags`` — Vocabulaire de tags de la base : chaque ``#mot`` écrit dans un"
 " commentaire, avec le nombre de **positions** qui le portent, du plus "
@@ -611,7 +626,7 @@ msgstr ""
 "empfohlene Vokabular statt einer leeren Liste (siehe :ref:`tags`). "
 "Akzeptiert ``--format json`` und ``--format csv``."
 
-#: ../../source/cli_bibliotheque.rst:296
+#: ../../source/cli_bibliotheque.rst:299
 msgid ""
 "``study`` — Par plan de jeu, les positions distinctes révisées dans les "
 "paquets Anki sur les ``--days`` derniers jours (défaut : 30) et le PR des"
@@ -628,11 +643,11 @@ msgstr ""
 "Gegner, Format und Würfel werden nirgends berücksichtigt. Akzeptiert "
 "``--format json`` und ``--format csv``."
 
-#: ../../source/cli_bibliotheque.rst:306
+#: ../../source/cli_bibliotheque.rst:309
 msgid "Exports tabulaires"
 msgstr "Tabellarische Exporte"
 
-#: ../../source/cli_bibliotheque.rst:308
+#: ../../source/cli_bibliotheque.rst:311
 msgid ""
 "Trois types — ``positions``, ``moves`` et ``analyses`` — s'exportent en "
 "CSV pour un notebook, un tableur ou un script :"
@@ -641,7 +656,7 @@ msgstr ""
 "CSV exportieren, für ein Notebook, eine Tabellenkalkulation oder ein "
 "Skript:"
 
-#: ../../source/cli_bibliotheque.rst:317
+#: ../../source/cli_bibliotheque.rst:320
 msgid ""
 "``--limit`` ne s'applique **que si vous le passez**. Sa valeur par défaut"
 " (10) existe pour qu'un ``list`` affiché dans un terminal ne fasse pas "
@@ -655,7 +670,7 @@ msgstr ""
 " Programm liest, und ihn stillschweigend bei zehn Zeilen abzuschneiden "
 "wäre eine Falle, die niemand bemerkt, bis die Zahlen falsch sind."
 
-#: ../../source/cli_bibliotheque.rst:323
+#: ../../source/cli_bibliotheque.rst:326
 msgid ""
 "**Les colonnes sont un contrat.** Un notebook ou un script écrit contre "
 "ces noms doit continuer de fonctionner : les colonnes s'ajoutent à la "
@@ -670,7 +685,7 @@ msgstr ""
 "eine Fließkommazahl in einer CSV eine Locale einlädt, sie "
 "umzuformatieren."
 
-#: ../../source/cli_bibliotheque.rst:329
+#: ../../source/cli_bibliotheque.rst:332
 msgid ""
 "**Parquet n'est pas proposé**, et c'est mesuré plutôt que dogmatique : "
 "une bibliothèque colonnaire pèse plusieurs mégaoctets dans un binaire "
@@ -691,7 +706,7 @@ msgstr ""
 " echten Datenbank messbar ist, ist diese Messung das, was die Frage "
 "wieder öffnet."
 
-#: ../../source/cli_bibliotheque.rst:337
+#: ../../source/cli_bibliotheque.rst:340
 msgid ""
 "Un **notebook Jupyter d'exemple** accompagne ces exports (``notebooks"
 "/blunderdb-analyse.ipynb`` dans le dépôt) : PR dans le temps, "
@@ -709,19 +724,19 @@ msgstr ""
 "niemand laufen lässt, ist ein Notebook, das aufgehört hat zu "
 "funktionieren, ohne dass es jemand merkt."
 
-#: ../../source/cli_bibliotheque.rst:344
+#: ../../source/cli_bibliotheque.rst:347
 msgid "**Options** (type ``stats`` uniquement) :"
 msgstr "**Optionen** (nur Typ ``stats``) :"
 
-#: ../../source/cli_bibliotheque.rst:346
+#: ../../source/cli_bibliotheque.rst:349
 msgid "``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``)."
 msgstr "``--metric`` — Angezeigte Metrik: ``pr`` oder ``mwc`` (Standard: ``pr``)."
 
-#: ../../source/cli_bibliotheque.rst:347
+#: ../../source/cli_bibliotheque.rst:350
 msgid "``--player`` — Restreindre au joueur indiqué."
 msgstr "``--player`` — Auf den angegebenen Spieler beschränken."
 
-#: ../../source/cli_bibliotheque.rst:348
+#: ../../source/cli_bibliotheque.rst:351
 msgid ""
 "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois (séparés"
 " par des virgules)."
@@ -729,15 +744,15 @@ msgstr ""
 "``--tournament`` — Auf eine oder mehrere Turnier-IDs beschränken (durch "
 "Kommas getrennt)."
 
-#: ../../source/cli_bibliotheque.rst:350
+#: ../../source/cli_bibliotheque.rst:353
 msgid "``--from`` — Date de début (AAAA-MM-JJ)."
 msgstr "``--from`` — Startdatum (JJJJ-MM-TT)."
 
-#: ../../source/cli_bibliotheque.rst:351
+#: ../../source/cli_bibliotheque.rst:354
 msgid "``--to`` — Date de fin (AAAA-MM-JJ)."
 msgstr "``--to`` — Enddatum (JJJJ-MM-TT)."
 
-#: ../../source/cli_bibliotheque.rst:352
+#: ../../source/cli_bibliotheque.rst:355
 msgid ""
 "``--decision-type`` — Type de décision: ``all``, ``checker`` ou ``cube`` "
 "(défaut: ``all``)."
@@ -745,13 +760,13 @@ msgstr ""
 "``--decision-type`` — Entscheidungstyp: ``all``, ``checker`` oder "
 "``cube`` (Standard: ``all``)."
 
-#: ../../source/cli_bibliotheque.rst:354
+#: ../../source/cli_bibliotheque.rst:357
 msgid "``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10)."
 msgstr ""
 "``--top-blunders`` — Anzahl der aufgelisteten schlimmsten Fehler "
 "(Standard: 10)."
 
-#: ../../source/cli_bibliotheque.rst:355
+#: ../../source/cli_bibliotheque.rst:358
 msgid ""
 "``--engine`` / ``--min-depth`` — Ne compte que les décisions analysées "
 "par ce moteur (nom exact, tel qu'enregistré) ou à cette profondeur au "
@@ -761,15 +776,15 @@ msgstr ""
 "dieser Engine (exakter Name, wie gespeichert) oder mindestens in dieser "
 "Tiefe (in Zügen) analysiert wurden; auch vom Typ ``players`` akzeptiert."
 
-#: ../../source/cli_bibliotheque.rst:358 ../../source/cli_bibliotheque.rst:384
+#: ../../source/cli_bibliotheque.rst:361 ../../source/cli_bibliotheque.rst:387
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr "``--format`` — Ausgabeformat: ``text`` oder ``json`` (Standard: ``text``)."
 
-#: ../../source/cli_bibliotheque.rst:360
+#: ../../source/cli_bibliotheque.rst:363
 msgid "**Options** (type ``matches`` uniquement) :"
 msgstr "**Optionen** (nur Typ ``matches``):"
 
-#: ../../source/cli_bibliotheque.rst:362
+#: ../../source/cli_bibliotheque.rst:365
 msgid ""
 "``--query`` — Ne garde que les matchs dont un joueur, l'événement, le "
 "lieu, la manche, le tournoi ou la date contient ce texte (sans tenir "
@@ -779,7 +794,7 @@ msgstr ""
 "Veranstaltung, der Ort, die Runde, das Turnier oder das Datum diesen Text"
 " enthält (ohne Beachtung der Groß-/Kleinschreibung)."
 
-#: ../../source/cli_bibliotheque.rst:365
+#: ../../source/cli_bibliotheque.rst:368
 msgid ""
 "``--ids`` — Ne garde que ces identifiants de match, séparés par des "
 "virgules (ceux qu'imprime ``stats matches``)."
@@ -787,7 +802,7 @@ msgstr ""
 "``--ids`` — Behält nur diese Match-Kennungen, durch Kommas getrennt (die,"
 " die ``stats matches`` ausgibt)."
 
-#: ../../source/cli_bibliotheque.rst:367
+#: ../../source/cli_bibliotheque.rst:370
 msgid ""
 "``--sort`` — Ordre : ``date`` (défaut, le plus récent d'abord), "
 "``date_asc``, ``length_asc``, ``length_desc``, ``player1``, "
@@ -799,7 +814,7 @@ msgstr ""
 "``player1_desc``, ``player2``, ``player2_desc``, ``tournament``, "
 "``tournament_desc`` oder ``opponent``."
 
-#: ../../source/cli_bibliotheque.rst:371
+#: ../../source/cli_bibliotheque.rst:374
 msgid ""
 "Le filtre et le tri sont faits par la base, comme dans le panneau Matchs "
 "; le total annoncé est celui des matchs retenus. Le serveur les offre sur"
@@ -811,11 +826,11 @@ msgstr ""
 "sie unter ``/v1/matches.list`` (Felder ``text`` und ``sort``) und "
 "``/v1/matches.count`` an."
 
-#: ../../source/cli_bibliotheque.rst:375
+#: ../../source/cli_bibliotheque.rst:378
 msgid "**Options** (type ``imports`` uniquement) :"
 msgstr "**Optionen** (nur Typ ``imports``) :"
 
-#: ../../source/cli_bibliotheque.rst:377
+#: ../../source/cli_bibliotheque.rst:380
 msgid ""
 "``--batch`` — Identifiant d'un lot : affiche son compte rendu complet au "
 "lieu de la liste."
@@ -823,7 +838,7 @@ msgstr ""
 "``--batch`` — Kennung eines Stapels: zeigt dessen vollständigen Bericht "
 "statt der Liste."
 
-#: ../../source/cli_bibliotheque.rst:379
+#: ../../source/cli_bibliotheque.rst:382
 msgid ""
 "``--queue`` — Avec ``--batch`` : la **file d'étude** du lot plutôt que "
 "son compte rendu — les positions qui méritent un second regard, dans "
@@ -839,7 +854,7 @@ msgstr ""
 "Ursprungsprogramm markierten Stellungen, dann die knappen "
 "Würfelentscheidungen; eine Stellung erscheint nur einmal."
 
-#: ../../source/cli_bibliotheque.rst:386
+#: ../../source/cli_bibliotheque.rst:389
 msgid ""
 "La moitié mesurée du compte rendu est recalculée à chaque appel : un lot "
 "dont les positions ont été analysées depuis rend les chiffres "
@@ -849,11 +864,11 @@ msgstr ""
 "ein Stapel, dessen Stellungen inzwischen analysiert wurden, liefert die "
 "heutigen Zahlen, nicht die vom Tag des Imports."
 
-#: ../../source/cli_bibliotheque.rst:390
+#: ../../source/cli_bibliotheque.rst:393
 msgid "**Options** (type ``players`` uniquement) :"
 msgstr "**Optionen** (nur Typ ``players``) :"
 
-#: ../../source/cli_bibliotheque.rst:392
+#: ../../source/cli_bibliotheque.rst:395
 msgid ""
 "``--from`` / ``--to`` — Bornes de dates (AAAA-MM-JJ), par exemple les "
 "jours d'une compétition."
@@ -861,11 +876,11 @@ msgstr ""
 "``--from`` / ``--to`` — Datumsgrenzen (JJJJ-MM-TT), etwa die Tage eines "
 "Turniers."
 
-#: ../../source/cli_bibliotheque.rst:394
+#: ../../source/cli_bibliotheque.rst:397
 msgid "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois."
 msgstr "``--tournament`` — Auf eine oder mehrere Turnier-IDs einschränken."
 
-#: ../../source/cli_bibliotheque.rst:395
+#: ../../source/cli_bibliotheque.rst:398
 msgid ""
 "``--format`` — Format de sortie: ``text``, ``json`` ou ``csv`` (défaut: "
 "``text``)."
@@ -873,7 +888,7 @@ msgstr ""
 "``--format`` — Ausgabeformat: ``text``, ``json`` oder ``csv`` (Standard: "
 "``text``)."
 
-#: ../../source/cli_bibliotheque.rst:398
+#: ../../source/cli_bibliotheque.rst:401
 msgid ""
 "``--player`` et ``--decision-type`` ne s'appliquent **pas** à ce type : "
 "le tableau porte sur tous les joueurs et ventile déjà pions et videau en "
@@ -883,7 +898,7 @@ msgstr ""
 " Tabelle umfasst alle Spieler und teilt Steine und Doppler bereits in "
 "getrennte Spalten auf."
 
-#: ../../source/cli_bibliotheque.rst:403
+#: ../../source/cli_bibliotheque.rst:406
 msgid ""
 "Un tiret « — » (champ vide en CSV) signale une valeur **jamais mesurée**,"
 " à ne pas confondre avec zéro. C'est le cas de la chance pour tout match "
@@ -899,7 +914,7 @@ msgstr ""
 "Importieren Sie die Quelldateien erneut, um es zu erhalten. Die Spalte "
 "``luck_rolls`` gibt an, über wie viele Würfe der Mittelwert geht."
 
-#: ../../source/cli_bibliotheque.rst:410
+#: ../../source/cli_bibliotheque.rst:413
 msgid ""
 "Chaque type imprime un bloc par élément, précédé du total trouvé. La "
 "ligne finale rappelle quelle fenêtre est affichée, tronquée par "
@@ -911,11 +926,11 @@ msgstr ""
 " ``--limit`` (Standardwert 10 für Positionen) und verschoben durch "
 "``--offset``:"
 
-#: ../../source/cli_bibliotheque.rst:455
+#: ../../source/cli_bibliotheque.rst:458
 msgid "collection — Gérer les collections"
 msgstr "collection — Sammlungen verwalten"
 
-#: ../../source/cli_bibliotheque.rst:457
+#: ../../source/cli_bibliotheque.rst:460
 msgid ""
 "Gère les collections, ces ensembles de positions choisies à la main dans "
 "le panneau Collections de l'interface graphique. Chaque sous-commande "
@@ -927,12 +942,12 @@ msgstr ""
 "``--db`` entgegen; ``list`` und ``show`` akzeptieren ``--format text`` "
 "(Standard), ``json`` oder ``csv``, wie ``list``."
 
-#: ../../source/cli_bibliotheque.rst:466 ../../source/cli_bibliotheque.rst:574
-#: ../../source/cli_bibliotheque.rst:666
+#: ../../source/cli_bibliotheque.rst:469 ../../source/cli_bibliotheque.rst:577
+#: ../../source/cli_bibliotheque.rst:669
 msgid "**Sous-commandes:**"
 msgstr "**Unterbefehle:**"
 
-#: ../../source/cli_bibliotheque.rst:468
+#: ../../source/cli_bibliotheque.rst:471
 msgid ""
 "``list`` — Liste des collections : id, nom, nombre de positions, "
 "description."
@@ -940,7 +955,7 @@ msgstr ""
 "``list`` — Liste der Sammlungen: id, Name, Anzahl Positionen, "
 "Beschreibung."
 
-#: ../../source/cli_bibliotheque.rst:469
+#: ../../source/cli_bibliotheque.rst:472
 msgid ""
 "``show --id <id>`` — Positions d'une collection : id, index (le numéro "
 "1-based affiché dans la barre d'état de l'interface graphique), score, "
@@ -950,7 +965,7 @@ msgstr ""
 " Nummer, die in der Statusleiste der grafischen Oberfläche angezeigt "
 "wird), Spielstand, Entscheidungstyp und XGID."
 
-#: ../../source/cli_bibliotheque.rst:472
+#: ../../source/cli_bibliotheque.rst:475
 msgid ""
 "``create --name <nom> [--description <texte>] [--query <requête>]`` — "
 "Crée une collection vide ou, avec ``--query``, une collection vivante "
@@ -962,7 +977,7 @@ msgstr ""
 "Sammlung. Eine Abfrage, deren Token von keiner Regel erkannt wird, wird "
 "abgelehnt, bevor etwas geschrieben wird."
 
-#: ../../source/cli_bibliotheque.rst:476
+#: ../../source/cli_bibliotheque.rst:479
 msgid ""
 "``filter --id <id> --query <requête>`` — Rend une collection **vivante** "
 ": son contenu devient le résultat d'une recherche, réévalué chaque fois "
@@ -977,7 +992,7 @@ msgstr ""
 " wieder eine von Hand erstellte Liste und behält die enthaltenen "
 "Stellungen."
 
-#: ../../source/cli_bibliotheque.rst:481
+#: ../../source/cli_bibliotheque.rst:484
 msgid ""
 "``freeze --id <id>`` — Fige une collection vivante : les positions que sa"
 " requête sélectionne maintenant deviennent sa composition, la requête "
@@ -988,7 +1003,7 @@ msgstr ""
 "Abfrage wird gelöscht. Wird bei einer Sammlung abgelehnt, die nicht "
 "lebendig ist."
 
-#: ../../source/cli_bibliotheque.rst:484
+#: ../../source/cli_bibliotheque.rst:487
 msgid ""
 "``evaluate --id <id> [--limit <n>] [--format text|json]`` — Lit les "
 "identifiants des positions d'une collection, en rejouant maintenant la "
@@ -1007,7 +1022,7 @@ msgstr ""
 "gehen die Kennungen auf die Standardausgabe und die Anzahl auf die "
 "Fehlerausgabe."
 
-#: ../../source/cli_bibliotheque.rst:491
+#: ../../source/cli_bibliotheque.rst:494
 msgid ""
 "``pile [--position-id <id> | --xgid <XGID>]`` — Met une position sur la "
 "Pile (la collection « à revoir plus tard »), ou l'en retire quand elle y "
@@ -1021,7 +1036,7 @@ msgstr ""
 "nicht in der Datenbank ist, wird zuerst als einzeln eingebrachte Position"
 " hineingeschrieben. Ohne Position wird der Stapel angezeigt."
 
-#: ../../source/cli_bibliotheque.rst:495
+#: ../../source/cli_bibliotheque.rst:498
 msgid ""
 "``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une "
 "collection (la description est conservée si elle n'est pas donnée)."
@@ -1030,7 +1045,7 @@ msgstr ""
 "Sammlung um (die Beschreibung bleibt erhalten, wenn sie nicht angegeben "
 "wird)."
 
-#: ../../source/cli_bibliotheque.rst:497
+#: ../../source/cli_bibliotheque.rst:500
 msgid ""
 "``delete --id <id> [--confirm]`` — Supprime une collection ; ses "
 "positions restent dans la base."
@@ -1038,7 +1053,7 @@ msgstr ""
 "``delete --id <id> [--confirm]`` — Löscht eine Sammlung; ihre Positionen "
 "bleiben in der Datenbank."
 
-#: ../../source/cli_bibliotheque.rst:499
+#: ../../source/cli_bibliotheque.rst:502
 msgid ""
 "``export --id <id[,id…]> --out <fichier.db> [--analysis=false] "
 "[--comments=false] [--matches=false] [--transcriptions=false] "
@@ -1060,7 +1075,7 @@ msgstr ""
 "ihren Transkriptionen und den Aliasen ihrer Spieler und Turniere (zu "
 "Wasserzeichen und Passwort siehe den Befehl ``export``)."
 
-#: ../../source/cli_bibliotheque.rst:508
+#: ../../source/cli_bibliotheque.rst:511
 msgid ""
 "``suggest [--player <nom>] [--match <ids>] [--tournament <ids>] [--from "
 "<date>] [--to <date>] [--decision-type all|checker|cube] [--size <n>] "
@@ -1091,7 +1106,7 @@ msgstr ""
 "Begründung (die die Zahl nennt, die zählt, wenn die Lehre zur Hälfte "
 "zählt); ``--format json`` liefert dieselben Bestandteile."
 
-#: ../../source/cli_bibliotheque.rst:522
+#: ../../source/cli_bibliotheque.rst:525
 msgid ""
 "Le XGID affiché par ``show`` est celui enregistré avec l'analyse de la "
 "position quand il existe (imports BGF et XGP) ; sinon il est généré "
@@ -1106,7 +1121,7 @@ msgstr ""
 "verbleibenden Spielstände, da eine gespeicherte Position den "
 "tatsächlichen Wert nicht festhält."
 
-#: ../../source/cli_bibliotheque.rst:541
+#: ../../source/cli_bibliotheque.rst:544
 msgid ""
 "Une base sans collection répond ``No collections found in database`` et "
 "sort tout de même avec le code 0."
@@ -1114,11 +1129,11 @@ msgstr ""
 "Eine Datenbank ohne Sammlung antwortet mit ``No collections found in "
 "database`` und endet trotzdem mit dem Exit-Code 0."
 
-#: ../../source/cli_bibliotheque.rst:561
+#: ../../source/cli_bibliotheque.rst:564
 msgid "comment — Les commentaires d'une position"
 msgstr "comment — Die Kommentare einer Position"
 
-#: ../../source/cli_bibliotheque.rst:563
+#: ../../source/cli_bibliotheque.rst:566
 msgid ""
 "Une position porte autant de commentaires qu'on veut, chacun attribué à "
 "son auteur (texte libre). Un commentaire reçu dans un export filigrané "
@@ -1135,7 +1150,7 @@ msgstr ""
 "entspricht —, und die Herkunft in der Spalte *Origin* (leer bei einem in "
 "blunderDB geschriebenen Kommentar)."
 
-#: ../../source/cli_bibliotheque.rst:576
+#: ../../source/cli_bibliotheque.rst:579
 msgid ""
 "``add --position N --text T [--author A]`` — Ajoute un commentaire à la "
 "position N, attribué à A (sans ``--author``, il n'a pas d'auteur)."
@@ -1143,7 +1158,7 @@ msgstr ""
 "``add --position N --text T [--author A]`` — Fügt der Position N einen "
 "Kommentar hinzu, zugeordnet A (ohne ``--author`` hat er keinen Autor)."
 
-#: ../../source/cli_bibliotheque.rst:578
+#: ../../source/cli_bibliotheque.rst:581
 msgid ""
 "``list [--position N] [--author A]`` — Liste les commentaires d'une "
 "position, ou de toute la base, éventuellement ceux d'un seul auteur."
@@ -1152,7 +1167,7 @@ msgstr ""
 "Position oder der gesamten Datenbank auf, gegebenenfalls nur die eines "
 "einzelnen Autors."
 
-#: ../../source/cli_bibliotheque.rst:581
+#: ../../source/cli_bibliotheque.rst:584
 msgid ""
 "**Options communes:** ``--db`` (obligatoire) ; ``list`` accepte "
 "``--format`` (``text`` ou ``json``)."
@@ -1160,11 +1175,11 @@ msgstr ""
 "**Gemeinsame Optionen:** ``--db`` (erforderlich); ``list`` akzeptiert "
 "``--format`` (``text`` oder ``json``)."
 
-#: ../../source/cli_bibliotheque.rst:593
+#: ../../source/cli_bibliotheque.rst:596
 msgid "elsewhere — Ailleurs : une position dans d'autres bases"
 msgstr "elsewhere — Anderswo: eine Stellung in anderen Datenbanken"
 
-#: ../../source/cli_bibliotheque.rst:595
+#: ../../source/cli_bibliotheque.rst:598
 msgid ""
 "Cherche une position, par son hachage Zobrist, dans d'autres fichiers de "
 "base passés à la même commande, et rend pour chacun ce qu'il en sait : "
@@ -1180,7 +1195,7 @@ msgstr ""
 "Zug und seine Kosten), und ihre nächsten Stellungen (dieselbe Rangfolge "
 "wie das ``like``-Token der Suche, in Pips bewegter Steine)."
 
-#: ../../source/cli_bibliotheque.rst:601
+#: ../../source/cli_bibliotheque.rst:604
 msgid ""
 "Le coût d'un coup joué ailleurs est jugé avec les seuils d'erreur et de "
 "blunder de la base ``--db``, jamais avec ceux de la base lue : ``error``,"
@@ -1222,11 +1237,11 @@ msgstr ""
 "wurde, werden nur die 50 zuletzt importierten gelesen: Die Ausgabe sagt "
 "es, mit der Gesamtzahl (``matchesTotal`` und ``playsTruncated`` in JSON)."
 
-#: ../../source/cli_bibliotheque.rst:622
+#: ../../source/cli_bibliotheque.rst:625
 msgid "**Options:**"
 msgstr "**Optionen:**"
 
-#: ../../source/cli_bibliotheque.rst:624
+#: ../../source/cli_bibliotheque.rst:627
 msgid ""
 "``--db`` (obligatoire) — La base qui juge : ses seuils et sa table "
 "d'équité."
@@ -1234,21 +1249,21 @@ msgstr ""
 "``--db`` (erforderlich) — Die beurteilende Datenbank: ihre Schwellenwerte"
 " und ihre Equity-Tabelle."
 
-#: ../../source/cli_bibliotheque.rst:625
+#: ../../source/cli_bibliotheque.rst:628
 msgid "``--other`` (obligatoire, répétable) — Un fichier de base où chercher."
 msgstr ""
 "``--other`` (erforderlich, wiederholbar) — Eine zu durchsuchende "
 "Datenbankdatei."
 
-#: ../../source/cli_bibliotheque.rst:626
+#: ../../source/cli_bibliotheque.rst:629
 msgid "``--position N`` — La position, par son identifiant dans ``--db``."
 msgstr "``--position N`` — Die Stellung, über ihre Kennung in ``--db``."
 
-#: ../../source/cli_bibliotheque.rst:627
+#: ../../source/cli_bibliotheque.rst:630
 msgid "``--xgid X`` — La position, par son XGID."
 msgstr "``--xgid X`` — Die Stellung, über ihre XGID."
 
-#: ../../source/cli_bibliotheque.rst:628
+#: ../../source/cli_bibliotheque.rst:631
 msgid ""
 "``--zobrist H`` — La position, par son hachage (décimal) ; ses voisines "
 "ne sont alors cherchées que dans les bases qui la détiennent."
@@ -1256,7 +1271,7 @@ msgstr ""
 "``--zobrist H`` — Die Stellung, über ihren Hash (dezimal); ihre Nachbarn "
 "werden dann nur in den Datenbanken gesucht, die sie enthalten."
 
-#: ../../source/cli_bibliotheque.rst:630
+#: ../../source/cli_bibliotheque.rst:633
 msgid ""
 "``--match N``, ``--tournament N``, ``--collection N``, ``--lesson N`` — "
 "Au lieu d'une position, un match, un tournoi, une collection ou une leçon"
@@ -1273,7 +1288,7 @@ msgstr ""
 "Format importiert wurde; sonst der Name), mit ihrer Kennung dort und dem,"
 " was sie enthält (Partien, Matches, Positionen oder Schritte)."
 
-#: ../../source/cli_bibliotheque.rst:636
+#: ../../source/cli_bibliotheque.rst:639
 msgid ""
 "``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,"
 " 50 au plus)."
@@ -1281,7 +1296,7 @@ msgstr ""
 "``--neighbours N`` — Anzahl der Nachbarn pro Datenbank (Standard: 5, 0: "
 "keine, höchstens 50)."
 
-#: ../../source/cli_bibliotheque.rst:638
+#: ../../source/cli_bibliotheque.rst:641
 msgid ""
 "``--max-distance D`` — Écarte les voisines à plus de D pips de pions "
 "déplacés (0 : sans plafond)."
@@ -1289,11 +1304,11 @@ msgstr ""
 "``--max-distance D`` — Verwirft Nachbarn, die mehr als D Pips bewegter "
 "Steine entfernt sind (0: keine Obergrenze)."
 
-#: ../../source/cli_bibliotheque.rst:640
+#: ../../source/cli_bibliotheque.rst:643
 msgid "``--format`` — ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — ``text`` (Standard) oder ``json``."
 
-#: ../../source/cli_bibliotheque.rst:642
+#: ../../source/cli_bibliotheque.rst:645
 msgid ""
 "Le démon sert les mêmes lectures à travers les tenants : "
 "``across.positionElsewhere`` et ``across.objectElsewhere`` (voir "
@@ -1303,11 +1318,11 @@ msgstr ""
 "``across.positionElsewhere`` und ``across.objectElsewhere`` (siehe "
 ":ref:`headless`)."
 
-#: ../../source/cli_bibliotheque.rst:655
+#: ../../source/cli_bibliotheque.rst:658
 msgid "trash — La corbeille"
 msgstr "trash — Der Papierkorb"
 
-#: ../../source/cli_bibliotheque.rst:657
+#: ../../source/cli_bibliotheque.rst:660
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -1320,25 +1335,25 @@ msgstr ""
 "diese Tabelle existiert — kein Suchfilter, keine Statistik, keine "
 "Aufbewahrungsregel."
 
-#: ../../source/cli_bibliotheque.rst:668
+#: ../../source/cli_bibliotheque.rst:671
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
 msgstr "``list`` — Was im Papierkorb liegt, das zuletzt Gelöschte zuerst."
 
-#: ../../source/cli_bibliotheque.rst:670
+#: ../../source/cli_bibliotheque.rst:673
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr ""
 "``restore --id N`` — Stellt Eintrag N wieder her und entfernt ihn aus dem"
 " Papierkorb."
 
-#: ../../source/cli_bibliotheque.rst:671
+#: ../../source/cli_bibliotheque.rst:674
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr ""
 "``discard --id N`` — Verwirft Eintrag N sofort, ohne ihn "
 "wiederherzustellen."
 
-#: ../../source/cli_bibliotheque.rst:672
+#: ../../source/cli_bibliotheque.rst:675
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
@@ -1346,7 +1361,7 @@ msgstr ""
 "``empty [--older-than T]`` — Leert den Papierkorb, oder nur, was älter "
 "als T Tage ist."
 
-#: ../../source/cli_bibliotheque.rst:674
+#: ../../source/cli_bibliotheque.rst:677
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection``, "
@@ -1356,7 +1371,7 @@ msgstr ""
 "damit der Vorgang rückgängig gemacht werden kann. ``K`` ist ``position``,"
 " ``collection``, ``comment`` oder ``match``."
 
-#: ../../source/cli_bibliotheque.rst:678
+#: ../../source/cli_bibliotheque.rst:681
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, "
@@ -1368,7 +1383,7 @@ msgstr ""
 "beschränkt ``--kind`` die Liste auf eine Objektart: ``position``, "
 "``collection``, ``comment``, ``match`` oder ``anki_card``."
 
-#: ../../source/cli_bibliotheque.rst:683
+#: ../../source/cli_bibliotheque.rst:686
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -1381,7 +1396,7 @@ msgstr ""
 "Wachstum niemand verlangt hat. ``trash delete`` ist das, was die "
 "Rücknahme behält."
 
-#: ../../source/cli_bibliotheque.rst:688
+#: ../../source/cli_bibliotheque.rst:691
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon. Une position restaurée reprend son ancien "
@@ -1406,7 +1421,7 @@ msgstr ""
 "belegter oder verschwundener Platz in der Turnierleitung, ein gelöschtes "
 "Turnier — wird durch eine Warnung gemeldet."
 
-#: ../../source/cli_bibliotheque.rst:698
+#: ../../source/cli_bibliotheque.rst:701
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."

@@ -658,7 +658,7 @@ describe('match-level tokens carried to the backend', () => {
     });
 });
 
-describe('aw : les points qu’il reste à marquer à chacun des deux joueurs', () => {
+describe('aw : les points qu’il reste à marquer au joueur', () => {
     test.each(['aw<5', 'aw>3', 'aw:2,5', 'aw:4', 'aw:1'])('la barre de commande lit %s et le transmet tel quel', (tok) => {
         const command = `s ${tok}`;
         const pf = parseFilters(command.slice(2).split(' '), command);
@@ -678,5 +678,39 @@ describe('aw : les points qu’il reste à marquer à chacun des deux joueurs', 
         const pf = parseFilters(command.slice(2).split(' '), command);
         expect(pf.matchLengthFilter).toBe('ml:11');
         expect(pf.awayFilter).toBe('aw<3');
+    });
+});
+
+describe('AW, cr et pcr : la distance de l’adversaire et l’état Crawford', () => {
+    test.each(['AW<5', 'AW>3', 'AW:2,5', 'AW:1'])('la barre de commande lit %s et le transmet tel quel', (tok) => {
+        const command = `s ${tok}`;
+        const pf = parseFilters(command.slice(2).split(' '), command);
+        expect(pf.opponentAwayFilter).toBe(tok);
+        expect(pf.awayFilter).toBe('');
+        expect(buildSearchFilterPayload({}, pf, [tok]).opponentAwayFilter).toBe(tok);
+        const { args } = /** @type {any} */ (replaySearchArgs(command));
+        expect(args.opponentAwayFilter).toBe(tok);
+    });
+
+    test.each([
+        ['s cr', 'game'],
+        ['s pcr', 'post'],
+        ['s cr pcr', 'none']
+    ])('%s donne l’état %s', (command, want) => {
+        const pf = parseFilters(command.slice(2).split(' '), command);
+        expect(pf.crawfordFilter).toBe(want);
+        expect(pf.pipCountFilter).toBeFalsy();
+        expect(buildSearchFilterPayload({}, pf, command.slice(2).split(' ')).crawfordFilter).toBe(want);
+        const { args } = /** @type {any} */ (replaySearchArgs(command));
+        expect(args.crawfordFilter).toBe(want);
+    });
+
+    test('pcr ne devient pas un filtre de pips, p>10 le reste', () => {
+        const command = 's pcr p>10 aw:2 AW:4';
+        const pf = parseFilters(command.slice(2).split(' '), command);
+        expect(pf.pipCountFilter).toBe('p>10');
+        expect(pf.crawfordFilter).toBe('post');
+        expect(pf.awayFilter).toBe('aw:2');
+        expect(pf.opponentAwayFilter).toBe('AW:4');
     });
 });
