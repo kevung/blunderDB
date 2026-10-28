@@ -1233,7 +1233,7 @@ l'horloge et la correction restent au client. Le corps est ``source``
 qui est la graine ; ``"library"``, les positions du tenant listées dans
 ``positionIds``, prises telles quelles, une question chacune), ``count`` (1 par
 défaut, au plus 50 pour Bearoff et 10 pour Évaluation, ignoré pour
-``"library"`` qui en rend une par identifiant) et ``seed`` (au plus 2^52). La
+``"library"`` qui en rend une par identifiant) et ``seed`` (``seed + count - 1`` au plus 2^52). La
 question *i* se tire de ``seed + i`` : la même requête et la même ``seed``
 rendent les mêmes questions, et la question *i* seule se rejoue avec
 ``count`` 1 et la ``seed`` qu'elle porte ; ``seed`` à 0 en tire une, rendue dans

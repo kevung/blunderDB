@@ -92,6 +92,7 @@ func TestGenerateRefusesWhatIsOutOfBounds(t *testing.T) {
 		{"unknown source", "/v1/training.generateBearoff", trainingGenerateReq{Source: "dice"}, 400},
 		{"negative seed", "/v1/training.generateBearoff", trainingGenerateReq{Source: "pool", Seed: -3}, 400},
 		{"seed beyond 2^52", "/v1/training.generateBearoff", trainingGenerateReq{Source: "pool", Seed: maxQuestionSeed + 1}, 400},
+		{"seed + count beyond 2^52", "/v1/training.generateBearoff", trainingGenerateReq{Source: "pool", Count: 2, Seed: maxQuestionSeed}, 400},
 		{"board without position", "/v1/training.generateEvaluation", trainingGenerateReq{Source: "board"}, 400},
 		{"library without ids", "/v1/training.generateBearoff", trainingGenerateReq{Source: "library"}, 400},
 		{"position on the pool", "/v1/training.generateBearoff", trainingGenerateReq{Source: "pool", Position: &pos}, 400},
@@ -171,4 +172,20 @@ func sameChequers(a, b domain.Board) bool {
 		}
 	}
 	return true
+}
+
+// TestGenerateReplaysAtTheSeedBound: the last question of a batch served at
+// the top of the seed range replays alone from the seed it carries.
+func TestGenerateReplaysAtTheSeedBound(t *testing.T) {
+	ts := newTestServer(t)
+	var batch, one trainingBearoffResp
+	postDecode(t, ts, "/v1/training.generateBearoff", trainingGenerateReq{Source: "pool", Count: maxBearoffQuestions, Seed: maxQuestionSeed - maxBearoffQuestions + 1}, &batch)
+	last := batch.Questions[maxBearoffQuestions-1]
+	if last.Seed != maxQuestionSeed {
+		t.Fatalf("last seed = %d, want 2^52", last.Seed)
+	}
+	postDecode(t, ts, "/v1/training.generateBearoff", trainingGenerateReq{Source: "pool", Seed: last.Seed}, &one)
+	if !reflect.DeepEqual(one.Questions[0], last) {
+		t.Error("the last question of the batch does not replay alone")
+	}
 }

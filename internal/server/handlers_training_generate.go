@@ -111,9 +111,11 @@ func (req *trainingGenerateReq) seedAndCount(max int) (int64, int, error) {
 	}
 	seed := req.Seed
 	if seed == 0 {
-		seed = 1 + rand.Int64N(maxQuestionSeed-int64(max)-1)
-	} else if seed > maxQuestionSeed-int64(max) {
-		return 0, 0, fmt.Errorf("seed must leave room for %d questions below 2^52", max)
+		// A drawn seed leaves room for the largest batch, so any served
+		// question stays replayable alone.
+		seed = 1 + rand.Int64N(maxQuestionSeed-int64(max)) //nolint:gosec // G404: a replayable exercise seed, not a secret
+	} else if seed+int64(n)-1 > maxQuestionSeed {
+		return 0, 0, fmt.Errorf("seed + count must not exceed 2^52")
 	}
 	return seed, n, nil
 }
@@ -167,7 +169,7 @@ func (s *Server) handleTrainingGenerateBearoff(w http.ResponseWriter, r *http.Re
 		if req.Source == race.SourceLibrary {
 			q.PositionID = req.PositionIDs[i]
 		}
-		q.BearoffQuestion = race.GenerateBearoffSeeded(race.BearoffRequest{Source: req.Source, Seed: seeds[i]}, uint64(seed))
+		q.BearoffQuestion = race.GenerateBearoffSeeded(race.BearoffRequest{Source: req.Source, Seed: seeds[i]}, uint64(seed)) //nolint:gosec // G115: seed is within [0, 2^52]
 		out.Questions[i] = q
 	}
 	writeJSONResp(w, out)
@@ -213,7 +215,7 @@ func (s *Server) handleTrainingGenerateEvaluation(w http.ResponseWriter, r *http
 				q.EvaluationQuestion = training.EvaluationQuestion{Source: req.Source, Refusal: training.RefusalNotEvaluable}
 				return
 			}
-			q.EvaluationQuestion = training.NewGeneratorFrom(walker, judge).EvaluationSeeded(ereq, uint64(seed))
+			q.EvaluationQuestion = training.NewGeneratorFrom(walker, judge).EvaluationSeeded(ereq, uint64(seed)) //nolint:gosec // G115: seed is within [0, 2^52]
 		})
 		if !ran {
 			if r.Context().Err() != nil {
