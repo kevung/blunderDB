@@ -86,6 +86,11 @@
   </branding>
 
   <releases>
+    <release version="0.47.1" date="2026-10-28">
+      <description>
+        <p>The tournament engine Nicomaque now lives at github.com/kevung/nicomaque; credits and the About page point there</p>
+      </description>
+    </release>
     <release version="0.47.0" date="2026-10-26">
       <description>
         <ul>
