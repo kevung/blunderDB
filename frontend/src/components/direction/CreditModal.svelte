@@ -10,7 +10,7 @@
     let { engineVersion = '', onClose = () => {} } = $props();
 
     const REPO = 'https://github.com/kevung/nicomaque';
-    const DOCS = 'https://github.com/kevung/nicomaque/tree/main/docs';
+    const DOCS = 'https://kevung.github.io/nicomaque/';
 
     /** @param {string} url */
     function open(url) {

@@ -85,8 +85,8 @@ L'essentiel :
   (`kevung/nicomaque
   <https://github.com/kevung/nicomaque>`__) : il tient le format,
   les appariements, les tableaux et le classement d'un tournoi dirigé depuis
-  blunderDB. Sa `documentation
-  <https://github.com/kevung/nicomaque/tree/main/docs>`__ se trouve dans le dossier ``docs`` de son dépôt ;
+  blunderDB. Sa `documentation <https://kevung.github.io/nicomaque/>`__ est publiée en ligne,
+  en français et en anglais ;
 
 * la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross*, comme
   les nombres de Neil, son raccourci de tête, publiés par *Kit Woolsey* dans
