@@ -72,8 +72,10 @@ var customContentTypes = map[string][]string{
 	// gammonnet.cubeMatrix likewise: a grid is a property of the position in
 	// the request, so there is nothing to gather, nothing to store and
 	// nothing to stream.
-	"/v1/gammonnet.cubeMatrix": {"application/json"},
-	"/v1/gammonnet.evaluate":   {"application/json"},
+	"/v1/gammonnet.cubeMatrix":        {"application/json"},
+	"/v1/gammonnet.evaluate":          {"application/json"},
+	"/v1/training.generateBearoff":    {"application/json"},
+	"/v1/training.generateEvaluation": {"application/json"},
 	// rollout.position answers once the rollout is done: one position, no
 	// partial state to stream. rollout.filter is a sweep and streams.
 	"/v1/rollout.position":      {"application/json"},

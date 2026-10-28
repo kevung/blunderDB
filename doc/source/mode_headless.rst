@@ -1225,6 +1225,35 @@ et ``limit`` facultatifs). Un item de Décision porte sa position
 (``errorMp``, absent hors délai). Les questions, elles, sont tirées par le
 client.
 
+``training.generateBearoff`` et ``training.generateEvaluation`` tirent des
+questions des exercices Bearoff et Évaluation, avec leur vérité, pour un client
+qui fait travailler quelqu'un devant son propre plateau : rien n'est conservé,
+l'horloge et la correction restent au client. Le corps est ``source``
+(``"pool"``, les formes canoniques ; ``"board"``, le voisinage de ``position``,
+qui est la graine ; ``"library"``, les positions du tenant listées dans
+``positionIds``, prises telles quelles, une question chacune), ``count`` (1 par
+défaut, au plus 50 pour Bearoff et 10 pour Évaluation, ignoré pour
+``"library"`` qui en rend une par identifiant) et ``seed`` (au plus 2^52). La
+question *i* se tire de ``seed + i`` : la même requête et la même ``seed``
+rendent les mêmes questions, et la question *i* seule se rejoue avec
+``count`` 1 et la ``seed`` qu'elle porte ; ``seed`` à 0 en tire une, rendue dans
+chaque question. La réponse est ``{"questions": [...]}``, chaque question
+portant ``seed``, ``positionId`` (source ``"library"``), ``generated``,
+``refusal`` (une graine hors du domaine est un refus nommé dans la réponse, non
+une erreur : ``notBearoff``, ``tooFewCheckers``, ``emptyBoard``, ``noTable``,
+``notAGame``, ``notMoneyCubeDecision``, ``notEvaluable``), ``source``,
+``plies``, ``position`` et la vérité : ``epc`` pour Bearoff ; ``winChance``
+(en pourcent), ``cubeVerdict``, ``cubeAnswer`` (``nd``, ``dt`` ou ``dp``),
+``regime``, ``depth`` et ``epc`` pour Évaluation. La source ``"library"`` lit le
+tenant (un identifiant inconnu répond 404) ; ``"pool"`` ne lit rien. Bearoff
+est un parcours de table de quelques microsecondes, exécuté sur la requête.
+Chaque question d'Évaluation, dont la vérité se calcule à 2 plis, est une unité
+des travailleurs d'analyse partagés : elle attend son tour de tenant, est
+comptée dans le quota d'analyse (qui, une fois épuisé, refuse l'appel en 429,
+ou abrège une réponse en cours, qui rend alors moins de questions que
+``count``). Le délai de 50 ms du parcours se lit sur l'horloge : un parcours
+retardé retombe sur la source ``"pool"`` à 0 pli, quelle que soit la graine.
+
 La famille ``openingbook`` sert l'exercice Ouverture du panneau Entraînement :
 un jet d'ouverture, ou une réponse, à jouer à un score donné, jugé d'après le
 livre embarqué dans le binaire, calculé par blunderDB. Ce livre n'appartient à

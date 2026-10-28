@@ -36,7 +36,7 @@ generator must let the user drill a kind of position they just met without hunti
 ## Consequences
 
 - This is not a play mode (ADR-0037): no dice the user sees, no score, no game to review.
-- The generator lives in `pkg/blunderdb/engine/training/`; `serve` does not expose it.
+- The generators live in `pkg/blunderdb/engine/race/` and `pkg/blunderdb/engine/training/`; `serve` exposes them as `training.generateBearoff` / `training.generateEvaluation` (question, truth and replay seed, bounded count, Evaluation on the shared analysis workers); the CLI has no face.
 - Pool shapes are exercise data, not settings: adding one is a code change with its histogram
   check.
 - Rejected: the library as the only source — mute without races; kept as the third source.
