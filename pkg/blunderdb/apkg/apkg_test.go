@@ -439,9 +439,9 @@ func TestOneAwayNamesCrawfordAndPostCrawford(t *testing.T) {
 // without changing a single byte Anki reads.
 func TestPackageBytesAreStable(t *testing.T) {
 	golden := map[string]string{
-		"deck":     "6e87943a3fdd273d0715d69577786364f8052945158231756dd7cffc150a1205",
-		"handMade": "b8b9bcfc375a757e0473fd44d19c78eea36d5293d2081426b06166ed6e39c742",
-		"living":   "b45ac0ef3b5ace9d6b51d7e2f73d9388716eaa9fda1c154a853dd61f2fba1f26",
+		"deck":     "9380e8549a66f301ed1426c8b2a763e8121ee8c04424489764de19a3f2a57bd5",
+		"handMade": "87810e14d39866a2efe088fae571565bd44d2c3755747a92267dbc57563f8d2b",
+		"living":   "3e435ed47f501ee30514f1718032305b8397447acd0a5c5607833fc00811eed1",
 	}
 	f := setup(t)
 	for name, src := range map[string]apkg.Source{
@@ -475,6 +475,12 @@ func entriesDigest(t *testing.T, data []byte) string {
 		_ = rc.Close()
 		if err != nil {
 			t.Fatal(err)
+		}
+		if e.Name == "collection.anki2" && len(content) >= 100 {
+			// Bytes 96-99 of a SQLite header record the library version that
+			// last wrote the file; Anki ignores them, and they change with
+			// every driver bump without changing a row.
+			clear(content[96:100])
 		}
 		fmt.Fprintf(h, "%d:%s%d:", len(e.Name), e.Name, len(content))
 		h.Write(content)
