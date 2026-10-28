@@ -2,11 +2,19 @@ package ingest
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
+
+// ErrUnreadableSource marks an AnalyzeDB failure that comes from the file
+// itself — missing, not a blunderDB database, refused by its version,
+// unreadable — as opposed to the target's storage failing.
+var ErrUnreadableSource = errors.New("ingest: unreadable source .db")
+
+func unreadableSource(err error) error { return fmt.Errorf("%w: %w", ErrUnreadableSource, err) }
 
 // DBAnalysis is what a native .db would bring to a target, counted without
 // writing anything: the figures a client shows before sending the import.
@@ -36,18 +44,18 @@ func AnalyzeDB(ctx context.Context, target storage.Stores, scope, path string) (
 	var a DBAnalysis
 	source, err := openSourceDB(ctx, path)
 	if err != nil {
-		return a, err
+		return a, unreadableSource(err)
 	}
 	defer source.Close()
 
 	if a.SourceVersion, err = source.Version(ctx); err != nil {
-		return a, fmt.Errorf("ingest: read source version: %w", err)
+		return a, unreadableSource(fmt.Errorf("ingest: read source version: %w", err))
 	}
 
 	var hashes []uint64
 	for p, err := range source.Positions().List(ctx, scope, storage.ListOpts{}) {
 		if err != nil {
-			return a, fmt.Errorf("ingest: list source positions: %w", err)
+			return a, unreadableSource(fmt.Errorf("ingest: list source positions: %w", err))
 		}
 		hashes = append(hashes, engine.ZobristHash(p))
 	}
@@ -76,20 +84,20 @@ func AnalyzeDB(ctx context.Context, target storage.Stores, scope, path string) (
 
 	colls, err := ReadSourceCollections(ctx, source, scope)
 	if err != nil {
-		return a, err
+		return a, unreadableSource(err)
 	}
 	a.Collections = len(colls)
 	if source.HasTable(ctx, "lesson") {
 		lessons, err := ReadSourceLessons(ctx, source, scope)
 		if err != nil {
-			return a, err
+			return a, unreadableSource(err)
 		}
 		a.Lessons = len(lessons)
 	}
 	if source.HasTable(ctx, "anki_deck") {
 		decks, err := ReadSourceDecks(ctx, source, scope)
 		if err != nil {
-			return a, err
+			return a, unreadableSource(err)
 		}
 		a.Decks = len(decks)
 	}

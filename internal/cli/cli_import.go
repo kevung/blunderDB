@@ -39,9 +39,9 @@ func (cli *CLI) runImport(args []string) error {
 	resume := importCmd.Int64("resume", 0,
 		"With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files with the same path, size and mtime as in its journal are skipped unread, those with the same content are read but not parsed")
 	maxPositions := importCmd.Int("max-positions", 0,
-		"With --type database: carry at most this many of the file's positions, the first in source id order; a match reaching one left out is left out whole (0: all)")
+		"With --type database: carry at most this many of the file's positions, in source id order, leaving out whole what reaches the rest and any position nothing would hold (0: all)")
 	analyzeOnly := importCmd.Bool("analyze", false,
-		"With --type database: count what the file would bring (positions new, merged or unchanged, matches) and import nothing")
+		"With --type database: count what the file would bring (positions and those already held, matches, collections, lessons, decks) and import nothing")
 	failOnError := importCmd.Bool("fail-on-error", false,
 		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error")
 
@@ -688,20 +688,24 @@ func printProgress(w *os.File, p ingest.BatchProgress) {
 	fmt.Fprintln(w, line)
 }
 
-// analyzeDatabase counts what merging a native .db would bring, as the
-// desktop's preview and the daemon's /v1/imports.dbAnalyze do, and writes
-// nothing.
+// analyzeDatabase counts what merging a native .db would bring, by the code
+// the daemon's /v1/imports.dbAnalyze runs (Database.AnalyzeDatabaseFile), and
+// writes nothing.
 func (cli *CLI) analyzeDatabase(filePath, format string) error {
-	res, err := cli.db.AnalyzeImportDatabase(filePath)
+	a, err := cli.db.AnalyzeDatabaseFile(filePath)
 	if err != nil {
 		return err
 	}
 	if format == "json" {
-		return printJSON(res)
+		return printJSON(a)
 	}
 	fmt.Printf("Analysed %s (nothing imported)\n", filePath)
-	fmt.Printf("  positions: %v in the file, %v new, %v to merge, %v unchanged\n", res["total"], res["toAdd"], res["toMerge"], res["toSkip"])
-	fmt.Printf("  matches: %v new, %v already held\n", res["matches"], res["matchesKnown"])
+	fmt.Printf("  positions: %d in the file, %d already held\n", a.Positions, a.PositionsHeld)
+	fmt.Printf("  matches: %d new, %d already held\n", a.Matches, a.MatchesKnown)
+	fmt.Printf("  collections: %d, lessons: %d, decks: %d\n", a.Collections, a.Lessons, a.Decks)
+	if len(a.Unreadable) > 0 {
+		fmt.Printf("  left behind (source too old): %s\n", strings.Join(a.Unreadable, ", "))
+	}
 	return nil
 }
 
@@ -720,7 +724,8 @@ func (cli *CLI) importDatabase(filePath, format string, maxPositions int) error 
 	fmt.Printf("  positions: %v added, %v merged, %v unchanged\n", res["added"], res["merged"], res["skipped"])
 	fmt.Printf("  matches: %v added, %v already held\n", res["matches"], res["matchesKnown"])
 	if n, ok := res["leftOut"].(int); ok && n > 0 {
-		fmt.Printf("  left out by --max-positions: %d positions, %v matches\n", n, res["matchesLeftOut"])
+		fmt.Printf("  left out by --max-positions: %d positions, %v matches, %v collections, %v lessons, %v decks\n",
+			n, res["matchesLeftOut"], res["collectionsLeftOut"], res["lessonsLeftOut"], res["decksLeftOut"])
 	}
 	if n, ok := res["analysesSkipped"].(int); ok && n > 0 {
 		fmt.Printf("  analyses not merged, the one held here unreadable (left as it was): %d\n", n)

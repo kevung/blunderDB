@@ -62,7 +62,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		pc := *p
 		positions = append(positions, &pc)
 	}
-	positions, leftOut := capPositions(positions, src.MaxPositions)
+	slices.SortFunc(positions, func(a, b *domain.Position) int { return cmp.Compare(a.ID, b.ID) })
 	for _, p := range positions {
 		ids = append(ids, p.ID)
 	}
@@ -119,8 +119,34 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	if err != nil {
 		return Summary{}, fmt.Errorf("ingest: read source version: %w", err)
 	}
+	tx, err := im.S.BeginTx(ctx)
+	if err != nil {
+		return Summary{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			_ = tx.Rollback()
+		}
+	}()
+
+	capped := make([]CapPosition, len(positions))
+	for i, p := range positions {
+		capped[i] = CapPosition{ID: p.ID, Zobrist: engine.ZobristHash(p), SelfHeld: p.IndividuallyImported || p.Flagged || hasUserComment(srcComments[p.ID])}
+	}
+	plan, err := PlanCap(ctx, source, tx, scope, capped, src.MaxPositions, srcCollections, srcLessons, srcDecks)
+	if err != nil {
+		return Summary{}, err
+	}
+	srcCollections = plan.KeepCollections(srcCollections)
+	srcLessons = plan.KeepLessons(srcLessons)
+	srcDecks = plan.KeepDecks(srcDecks)
+
 	records := make([]srcRecord, 0, len(positions))
 	for _, p := range positions {
+		if plan.Positions[p.ID] {
+			continue
+		}
 		rec := srcRecord{pos: p, analysis: srcAnalyses[p.ID]}
 		if StaleResponseVerdict(srcVersion, p, rec.analysis) {
 			rec.analysis = nil
@@ -133,17 +159,6 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	if prog != nil {
 		prog(Progress{TotalPositions: total})
 	}
-
-	tx, err := im.S.BeginTx(ctx)
-	if err != nil {
-		return Summary{}, err
-	}
-	committed := false
-	defer func() {
-		if !committed {
-			_ = tx.Rollback()
-		}
-	}()
 
 	// Every source position is saved first: PositionStore.Save dedups by
 	// content (Zobrist), so the target id is not known before the call
@@ -187,7 +202,8 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	}
 
 	carrier := mets.NewCarrier("import", tx.MatchEquityTables(), scope, srcTables)
-	sum := Summary{CreatedPositions: created, PositionsLeftOut: len(leftOut)}
+	sum := Summary{CreatedPositions: created, PositionsLeftOut: len(plan.Positions),
+		CollectionsLeftOut: len(plan.Collections), LessonsLeftOut: len(plan.Lessons), DecksLeftOut: len(plan.Decks)}
 	for _, s := range saved {
 		if err := ctx.Err(); err != nil {
 			return sum, err
@@ -210,7 +226,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 	}
 
-	matches, err := MergeMatchesExcept(ctx, tx, scope, source, targetOf, leftOut)
+	matches, err := MergeMatchesExcept(ctx, tx, scope, source, targetOf, plan.Matches)
 	if err != nil {
 		return sum, err
 	}
@@ -268,19 +284,15 @@ func openSourceDB(ctx context.Context, path string) (*sqlite.Storage, error) {
 	return source, nil
 }
 
-// capPositions keeps the first max positions in ascending source id — the
-// order the source assigned them, the same on every run over the same file —
-// and returns the source ids of those it left out. max <= 0 keeps them all.
-func capPositions(positions []*domain.Position, max int) ([]*domain.Position, map[int64]bool) {
-	slices.SortFunc(positions, func(a, b *domain.Position) int { return cmp.Compare(a.ID, b.ID) })
-	if max <= 0 || len(positions) <= max {
-		return positions, nil
+// hasUserComment reports whether one of comments was written by the user:
+// such a comment holds its position (positionIsHeldSQL).
+func hasUserComment(comments []*domain.CommentEntry) bool {
+	for _, c := range comments {
+		if c.Origin == domain.CommentOriginUser {
+			return true
+		}
 	}
-	leftOut := make(map[int64]bool, len(positions)-max)
-	for _, p := range positions[max:] {
-		leftOut[p.ID] = true
-	}
-	return positions[:max], leftOut
+	return false
 }
 
 // SourceCollection is a collection of a native .db being imported, with its

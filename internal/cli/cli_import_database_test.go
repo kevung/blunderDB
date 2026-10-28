@@ -66,6 +66,7 @@ func TestCLI_ImportDatabaseAnalyzeAndCap(t *testing.T) {
 	for n := 1; n <= 3; n++ {
 		p := domain.InitializePosition()
 		p.Score = [2]int{n, 0}
+		p.IndividuallyImported = true
 		if _, err := src.Positions().Save(ctx, "", &p); err != nil {
 			t.Fatal(err)
 		}
@@ -92,14 +93,14 @@ func TestCLI_ImportDatabaseAnalyzeAndCap(t *testing.T) {
 	}
 
 	for range 2 {
-		if res := run("--analyze"); res["total"] != float64(3) || res["toAdd"] != float64(3) {
-			t.Fatalf("--analyze = %v, want 3 positions, 3 new, every time: it writes nothing", res)
+		if res := run("--analyze"); res["positions"] != float64(3) || res["positionsHeld"] != float64(0) {
+			t.Fatalf("--analyze = %v, want 3 positions, none held, every time: it writes nothing", res)
 		}
 	}
 	if res := run("--max-positions", "2"); res["added"] != float64(2) || res["leftOut"] != float64(1) {
 		t.Fatalf("--max-positions 2 = %v, want 2 added, 1 left out", res)
 	}
-	if res := run("--analyze"); res["toAdd"] != float64(1) {
-		t.Fatalf("--analyze after the capped import = %v, want 1 new", res)
+	if res := run("--analyze"); res["positionsHeld"] != float64(2) {
+		t.Fatalf("--analyze after the capped import = %v, want 2 held", res)
 	}
 }

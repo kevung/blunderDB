@@ -219,6 +219,21 @@ func insertImportedComment(ctx context.Context, stores storage.Stores, positionI
 }
 
 // AnalyzeImportDatabase analyzes what would be imported without making changes
+// AnalyzeDatabaseFile counts what merging the native .db at importPath would
+// bring (ingest.AnalyzeDB), writing nothing: the same figures, by the same
+// code, as the daemon's /v1/imports.dbAnalyze.
+func (d *Database) AnalyzeDatabaseFile(importPath string) (ingest.DBAnalysis, error) {
+	if d.IsOpenDatabase(importPath) {
+		return ingest.DBAnalysis{}, ErrImportIsOpenDatabase
+	}
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return ingest.DBAnalysis{}, fmt.Errorf("no database is currently open")
+	}
+	return ingest.AnalyzeDB(context.Background(), d.store, "", importPath)
+}
+
 func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interface{}, error) {
 	if d.IsOpenDatabase(importPath) {
 		return nil, ErrImportIsOpenDatabase
@@ -593,10 +608,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 }
 
 // CommitImportDatabaseCapped is CommitImportDatabase carrying at most
-// maxPositions of the source's positions, the first in ascending source id
-// (0: all of them), as ingest.Source.MaxPositions does on the daemon. A match
-// reaching a position left out is left out whole; the result counts both
-// ("leftOut", "matchesLeftOut").
+// maxPositions of the source's positions (0: all of them) by the daemon's
+// rule, ingest.PlanCap; the result counts what it left out ("leftOut",
+// "matchesLeftOut", "collectionsLeftOut", "lessonsLeftOut", "decksLeftOut").
 func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions int) (map[string]interface{}, error) {
 	if maxPositions < 0 {
 		return nil, fmt.Errorf("maxPositions must not be negative, got %d", maxPositions)
@@ -690,6 +704,26 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 
 	slog.Debug("built position index for commit", "count", len(currentPositionsMap))
 
+	srcCollections, err := readImportCollections(ctx, importDB)
+	if err != nil {
+		return nil, err
+	}
+	srcLessons, err := readImportLessons(ctx, importDB)
+	if err != nil {
+		return nil, err
+	}
+	srcDecks, err := readImportDecks(ctx, importDB)
+	if err != nil {
+		return nil, err
+	}
+	plan, err := planImportCap(ctx, importDB, stx, maxPositions, commentCols, srcCollections, srcLessons, srcDecks)
+	if err != nil {
+		return nil, err
+	}
+	srcCollections = plan.KeepCollections(srcCollections)
+	srcLessons = plan.KeepLessons(srcLessons)
+	srcDecks = plan.KeepDecks(srcDecks)
+
 	// Load all positions from the import database, carrying their provenance.
 	rows, err := importDB.Query(sourcePositionQuery(importDB))
 	if err != nil {
@@ -700,10 +734,6 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 	var positionsAdded int
 	var positionsMerged int
 	var positionsSkipped int
-	// carried counts the source positions this import handled, against
-	// maxPositions; leftOut holds the source ids of those past the cap.
-	var carried int
-	leftOut := map[int64]bool{}
 	// targetOf maps each source position id to the id it holds here, for the
 	// collections merged after the positions.
 	targetOf := map[int64]int64{}
@@ -724,8 +754,7 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 			slog.Warn("scanning position", "err", err)
 			continue
 		}
-		if maxPositions > 0 && carried >= maxPositions {
-			leftOut[id] = true
+		if plan.Positions[id] {
 			continue
 		}
 
@@ -734,7 +763,6 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 			slog.Warn("unmarshalling position", "err", decErr)
 			continue
 		}
-		carried++
 
 		importPositionJSON, err := positionIdentityJSON(importPosition)
 		if err != nil {
@@ -779,29 +807,17 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 		return nil, err
 	}
 
-	matches, err := mergeImportMatches(ctx, importDB, stx, targetOf, leftOut)
+	matches, err := mergeImportMatches(ctx, importDB, stx, targetOf, plan.Matches)
 	if err != nil {
 		return nil, err
 	}
 	maps := ingest.RowMaps{Positions: targetOf, Matches: matches.MatchMap, Tournaments: matches.TournamentMap}
 
-	srcCollections, err := readImportCollections(ctx, importDB)
-	if err != nil {
-		return nil, err
-	}
 	merged, err := ingest.MergeCollections(ctx, stx, "", srcCollections, maps)
 	if err != nil {
 		return nil, err
 	}
-	srcLessons, err := readImportLessons(ctx, importDB)
-	if err != nil {
-		return nil, err
-	}
 	lessons, err := ingest.MergeLessons(ctx, stx, "", srcLessons, srcCollections, targetOf)
-	if err != nil {
-		return nil, err
-	}
-	srcDecks, err := readImportDecks(ctx, importDB)
 	if err != nil {
 		return nil, err
 	}
@@ -834,8 +850,11 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 		"skipped": positionsSkipped,
 		"total":   totalPositions,
 		// Positions past maxPositions, and the matches that reach one of them.
-		"leftOut":        len(leftOut),
-		"matchesLeftOut": matches.LeftOut,
+		"leftOut":            len(plan.Positions),
+		"matchesLeftOut":     matches.LeftOut,
+		"collectionsLeftOut": len(plan.Collections),
+		"lessonsLeftOut":     len(plan.Lessons),
+		"decksLeftOut":       len(plan.Decks),
 		// Analyses the receiver could not merge; their positions are counted above.
 		"analysesSkipped": run.analysesSkipped,
 		// The same figures as ingest.Summary on the daemon's imports.db.
@@ -857,6 +876,78 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 
 	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
 	return result, nil
+}
+
+// planImportCap is ingest.PlanCap over the import source: each decodable
+// position with its hash and whether it holds itself (individually imported,
+// or bearing a comment the user wrote).
+func planImportCap(ctx context.Context, importDB *sql.DB, stx storage.Stores, maxPositions int, commentCols sourceCommentColumns,
+	colls []ingest.SourceCollection, lessons []*domain.Lesson, decks []ingest.SourceDeck) (ingest.CapPlan, error) {
+	if maxPositions <= 0 {
+		return ingest.CapPlan{}, nil
+	}
+	userNoted, err := userNotedPositions(ctx, importDB, commentCols)
+	if err != nil {
+		return ingest.CapPlan{}, err
+	}
+	positions, err := capPositions(ctx, importDB, userNoted)
+	if err != nil {
+		return ingest.CapPlan{}, err
+	}
+	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+	if err != nil {
+		return ingest.CapPlan{}, err
+	}
+	defer itx.Rollback()
+	return ingest.PlanCap(ctx, sqlite.WrapTx(itx), stx, "", positions, maxPositions, colls, lessons, decks)
+}
+
+// userNotedPositions returns the source positions bearing a comment the
+// user wrote; a source from before comment origins has none.
+func userNotedPositions(ctx context.Context, importDB *sql.DB, commentCols sourceCommentColumns) (map[int64]bool, error) {
+	noted := map[int64]bool{}
+	if !commentCols.origin {
+		return noted, nil
+	}
+	rows, err := importDB.QueryContext(ctx, `SELECT DISTINCT position_id FROM comment WHERE origin = ?`, string(domain.CommentOriginUser))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		noted[id] = true
+	}
+	return noted, rows.Err()
+}
+
+// capPositions lists the source's decodable positions for ingest.PlanCap, in
+// ascending id.
+func capPositions(ctx context.Context, importDB *sql.DB, userNoted map[int64]bool) ([]ingest.CapPosition, error) {
+	rows, err := importDB.QueryContext(ctx, sourcePositionQuery(importDB))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var positions []ingest.CapPosition
+	for rows.Next() {
+		var id int64
+		var stateJSON string
+		var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
+		var individual bool
+		if err := rows.Scan(&id, &stateJSON, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual); err != nil {
+			continue
+		}
+		pos, err := decodeSourcePosition(stateJSON, dt, por, d1, d2, cv, co, s1, s2, hj, hb)
+		if err != nil {
+			continue
+		}
+		positions = append(positions, ingest.CapPosition{ID: id, Zobrist: engine.ZobristHash(&pos), SelfHeld: individual || userNoted[id]})
+	}
+	return positions, rows.Err()
 }
 
 // planImportMatches counts what mergeImportMatches would do with the

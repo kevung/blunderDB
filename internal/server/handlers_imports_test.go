@@ -314,6 +314,9 @@ func TestImportNativeDBAnalyzedThenCapped(t *testing.T) {
 		t.Fatalf("analysis = %+v, want >= 3 positions, none held, 1 match", a)
 	}
 
+	if status, out := postFile(t, ts, "/v1/imports.dbAnalyze", []byte("not a database")); status != http.StatusBadRequest {
+		t.Fatalf("imports.dbAnalyze of a non-database: status %d, want 400: %s", status, out)
+	}
 	if status, out := postFile(t, ts, "/v1/imports.db?max_positions=abc", blob); status != http.StatusBadRequest {
 		t.Fatalf("max_positions=abc: status %d, want 400: %s", status, out)
 	}
@@ -331,16 +334,18 @@ func TestImportNativeDBAnalyzedThenCapped(t *testing.T) {
 			t.Fatalf("first progress = %v, want the total before any position", ev)
 		}
 		sawProgress = true
-		if ev["total_positions"] != float64(2) {
-			t.Fatalf("progress = %v, want total_positions 2", ev)
+		if ev["total_positions"] != float64(0) {
+			t.Fatalf("progress = %v, want total_positions 0", ev)
 		}
 	}
+	// Every position of the file belongs to its one match: the cap leaves
+	// the match out, and with it every position, which nothing would hold.
 	done := events[len(events)-1]
 	if !sawProgress || done["event"] != "done" {
 		t.Fatalf("events = %v", events)
 	}
-	if done["saved_positions"] != float64(2) || done["positions_left_out"] != float64(a.Positions-2) || done["matches_left_out"] != float64(1) {
-		t.Fatalf("done = %v, want 2 saved, %d positions and 1 match left out", done, a.Positions-2)
+	if done["saved_positions"] != float64(0) || done["positions_left_out"] != float64(a.Positions) || done["matches_left_out"] != float64(1) {
+		t.Fatalf("done = %v, want nothing saved, %d positions and 1 match left out", done, a.Positions)
 	}
 }
 

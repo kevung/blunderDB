@@ -46,6 +46,10 @@ export function AnalysisMETStatus(arg1) {
   return window['go']['database']['Database']['AnalysisMETStatus'](arg1);
 }
 
+export function AnalyzeDatabaseFile(arg1) {
+  return window['go']['database']['Database']['AnalyzeDatabaseFile'](arg1);
+}
+
 export function AnalyzeImportDatabase(arg1) {
   return window['go']['database']['Database']['AnalyzeImportDatabase'](arg1);
 }

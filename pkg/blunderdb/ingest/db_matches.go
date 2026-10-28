@@ -44,8 +44,7 @@ type MatchMerge struct {
 	// Unreadable names the families the source could not be read for — a
 	// source older than them — which the import leaves behind.
 	Unreadable []string
-	// LeftOut counts the matches MergeMatchesExcept left behind because they
-	// reach a position the import did not carry.
+	// LeftOut counts the matches MergeMatchesExcept left behind.
 	LeftOut int
 
 	MatchMap      map[int64]int64
@@ -86,11 +85,8 @@ func MergeMatches(ctx context.Context, tx storage.Stores, scope string, source s
 	return MergeMatchesExcept(ctx, tx, scope, source, targetOf, nil)
 }
 
-// MergeMatchesExcept is MergeMatches for an import that left the source
-// positions in leftOut behind (a capped import): a match that reaches one of
-// them is left out whole (MatchMerge.LeftOut) rather than written with holes,
-// so that importing the same file again without the cap brings it complete
-// instead of finding it already held.
+// MergeMatchesExcept is MergeMatches leaving out the source matches in
+// leftOut (a capped import, PlanCap), counted in MatchMerge.LeftOut.
 func MergeMatchesExcept(ctx context.Context, tx storage.Stores, scope string, source storage.Stores, targetOf map[int64]int64, leftOut map[int64]bool) (MatchMerge, error) {
 	res := MatchMerge{MatchMap: map[int64]int64{}, TournamentMap: map[int64]int64{}}
 	if err := mergeTournaments(ctx, tx, scope, source, &res); err != nil {
@@ -257,15 +253,9 @@ func mergeMatchRows(ctx context.Context, tx storage.Stores, scope string, source
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		if len(leftOut) > 0 {
-			reaches, err := matchReaches(ctx, source, scope, m.ID, leftOut)
-			if err != nil {
-				return err
-			}
-			if reaches {
-				res.LeftOut++
-				continue
-			}
+		if leftOut[m.ID] {
+			res.LeftOut++
+			continue
 		}
 		if m.MatchHash != "" || m.CanonicalHash != "" {
 			id, found, err := tx.Matches().FindByHash(ctx, scope, m.MatchHash, m.CanonicalHash)
@@ -567,18 +557,4 @@ func (s *Summary) applyMatchMerge(m MatchMerge) {
 	s.Unreadable = m.Unreadable
 	s.CreatedMatches = m.CreatedMatches
 	s.CreatedTournaments = m.CreatedTournaments
-}
-
-// matchReaches reports whether one of the source match's moves stands on a
-// position in positions.
-func matchReaches(ctx context.Context, source storage.Stores, scope string, matchID int64, positions map[int64]bool) (bool, error) {
-	for mv, err := range source.Matches().MovesByMatch(ctx, scope, matchID) {
-		if err != nil {
-			return false, fmt.Errorf("ingest: read moves of source match %d: %w", matchID, err)
-		}
-		if positions[mv.PositionID] {
-			return true, nil
-		}
-	}
-	return false, nil
 }

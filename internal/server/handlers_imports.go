@@ -615,6 +615,9 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		if format == ingest.FormatNativeDB {
 			done["positions_left_out"] = sum.PositionsLeftOut
 			done["matches_left_out"] = sum.MatchesLeftOut
+			done["collections_left_out"] = sum.CollectionsLeftOut
+			done["lessons_left_out"] = sum.LessonsLeftOut
+			done["decks_left_out"] = sum.DecksLeftOut
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary
@@ -685,8 +688,12 @@ func (s *Server) handleDBAnalyze(w http.ResponseWriter, r *http.Request) {
 	defer cleanup()
 
 	a, err := ingest.AnalyzeDB(r.Context(), s.opts.Storage, scopeOf(r), tmpPath)
-	if err != nil {
+	switch {
+	case errors.Is(err, ingest.ErrUnreadableSource):
 		writeErrorCode(w, CodeInvalid, err.Error())
+		return
+	case err != nil:
+		writeStorageError(w, err)
 		return
 	}
 	writeJSONResp(w, a)

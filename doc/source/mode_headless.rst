@@ -1207,16 +1207,21 @@ Le premier événement ``progress`` d'``imports.db`` arrive avant toute écritur
 et porte ``total_positions``, le nombre de positions que l'import va traiter ;
 chaque événement suivant le répète, de quoi afficher *n / N* et un temps
 restant. Le paramètre ``max_positions`` (``/v1/imports.db?max_positions=5000``)
-plafonne l'import aux premières positions du fichier, dans l'ordre de leur
-identifiant d'origine ; un match qui passe par une position laissée de côté est
-laissé de côté en entier, et l'événement ``done`` compte les deux :
-``positions_left_out``, ``matches_left_out``. Annulé (``imports.cancel``) ou
-en erreur, l'import n'écrit aucune ligne : la fusion entière tient dans une
-transaction. ``imports.dbAnalyze`` reçoit le même fichier et rend, sans rien
-importer, ce qu'il apporterait : ``positions`` et ``positionsHeld`` (celles que
-le tenant tient déjà), ``matches`` et ``matchesKnown``, ``collections``,
-``lessons``, ``decks`` et ``sourceVersion`` ; un fichier que l'import
-refuserait y est refusé de même.
+emporte au plus ce nombre de positions, prises parmi les premières du fichier
+dans l'ordre de leur identifiant d'origine. Un match, une collection, une leçon
+ou un paquet Anki qui touche une position laissée de côté est laissé de côté en
+entier, de même qu'une position que plus rien ne tiendrait après l'import ; un
+import ultérieur sans plafond apporte donc complet ce qui manquait. L'événement
+``done`` compte ce qui a été laissé de côté : ``positions_left_out``,
+``matches_left_out``, ``collections_left_out``, ``lessons_left_out``,
+``decks_left_out``. Annulé (``imports.cancel``) ou en erreur, l'import n'écrit
+aucune ligne : la fusion entière tient dans une transaction.
+``imports.dbAnalyze`` reçoit le même fichier et rend, sans rien importer, ce
+qu'il apporterait : ``positions`` et ``positionsHeld`` (celles que le tenant
+tient déjà), ``matches`` et ``matchesKnown``, ``collections``, ``lessons``,
+``decks``, ``sourceVersion`` et ``unreadable`` ; un fichier illisible ou que
+l'import refuserait y est refusé (400), comme ``import --type database
+--analyze`` en ligne de commande.
 
 .. code-block:: bash
 

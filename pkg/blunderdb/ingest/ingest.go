@@ -44,9 +44,9 @@ type Source struct {
 	// SkipDuplicates skips an exact duplicate outright instead of offering
 	// its deeper analyses to the stored positions (MatchGraph.SkipDuplicates).
 	SkipDuplicates bool
-	// MaxPositions caps a native .db import at its first MaxPositions source
-	// positions, in ascending source id; 0 imports them all. The rest are left
-	// out (Summary.PositionsLeftOut), and so is every reference to them.
+	// MaxPositions caps a native .db import at MaxPositions source positions,
+	// taken in ascending source id, with what reaches the rest left out whole
+	// (PlanCap, Summary.*LeftOut); 0 imports them all.
 	MaxPositions int
 }
 
@@ -67,12 +67,15 @@ type Summary struct {
 	// PositionsLeftOut counts the source positions a capped native .db
 	// import did not carry (Source.MaxPositions).
 	PositionsLeftOut int `json:"positionsLeftOut,omitempty"`
-	// MatchesLeftOut counts the source matches such an import left behind
-	// because they reach a position it did not carry.
-	MatchesLeftOut    int   `json:"matchesLeftOut,omitempty"`
-	SkippedDuplicates int   `json:"skippedDuplicates"`
-	Matches           int   `json:"matches"`
-	MatchID           int64 `json:"matchId,omitempty"`
+	// MatchesLeftOut, CollectionsLeftOut, LessonsLeftOut and DecksLeftOut
+	// count the source rows such an import left behind whole (PlanCap).
+	MatchesLeftOut     int   `json:"matchesLeftOut,omitempty"`
+	CollectionsLeftOut int   `json:"collectionsLeftOut,omitempty"`
+	LessonsLeftOut     int   `json:"lessonsLeftOut,omitempty"`
+	DecksLeftOut       int   `json:"decksLeftOut,omitempty"`
+	SkippedDuplicates  int   `json:"skippedDuplicates"`
+	Matches            int   `json:"matches"`
+	MatchID            int64 `json:"matchId,omitempty"`
 	// Enriched counts the cross-format duplicates whose analyses and comments
 	// were merged into a match already stored — neither new nor skipped.
 	Enriched int `json:"enriched,omitempty"`

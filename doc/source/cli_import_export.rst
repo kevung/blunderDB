@@ -186,14 +186,19 @@ Directions et Rencontres relues, et nomme les collections vivantes figées ou
 laissées sur une liste manuelle, et les familles que la base est trop ancienne
 pour porter.
 
-``--analyze`` compte ce que le fichier apporterait — positions nouvelles, à
-fusionner ou inchangées, matchs nouveaux ou déjà présents — sans rien
-importer. ``--max-positions N`` n'emporte que les ``N`` premières positions du
-fichier, dans l'ordre de leur identifiant d'origine ; un match qui passe par
-une position laissée de côté est laissé de côté en entier, si bien qu'un
-import ultérieur sans plafond l'apporte complet. La sortie compte les positions
-et les matchs laissés de côté. Une erreur ou une interruption en cours d'import
-n'écrit rien : la fusion entière tient dans une transaction.
+``--analyze`` compte ce que le fichier apporterait — ses positions et celles
+que la base tient déjà, ses matchs nouveaux ou déjà présents, ses collections,
+leçons et paquets Anki — sans rien importer ; c'est le même calcul
+qu'``imports.dbAnalyze`` en mode serveur. ``--max-positions N`` emporte au plus
+``N`` positions, prises parmi les ``N`` premières du fichier dans l'ordre de
+leur identifiant d'origine. Un match, une collection, une leçon ou un paquet
+qui touche une position laissée de côté est laissé de côté en entier ; une
+position que plus rien ne tiendrait après l'import (ni match ou collection
+emportés, ni leçon, ni paquet, ni import individuel, ni commentaire de
+l'utilisateur, ni marque d'étude) l'est aussi. Ainsi un import ultérieur sans
+plafond apporte complet ce qui manquait. La sortie compte, famille par
+famille, ce qui a été laissé de côté. Une erreur ou une interruption en cours
+d'import n'écrit rien : la fusion entière tient dans une transaction.
 
 .. code-block:: bash
 

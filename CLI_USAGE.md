@@ -3686,7 +3686,7 @@ Import data into the database.
 
 Options:
   -analyze
-    	With --type database: count what the file would bring (positions new, merged or unchanged, matches) and import nothing
+    	With --type database: count what the file would bring (positions and those already held, matches, collections, lessons, decks) and import nothing
   -db string
     	Path to the database file (required)
   -dir string
@@ -3698,7 +3698,7 @@ Options:
   -format string
     	Output format: text or json (default "text")
   -max-positions int
-    	With --type database: carry at most this many of the file's positions, the first in source id order; a match reaching one left out is left out whole (0: all)
+    	With --type database: carry at most this many of the file's positions, in source id order, leaving out whole what reaches the rest and any position nothing would hold (0: all)
   -recursive
     	Recursively scan subdirectories for batch import (default true)
   -resume int

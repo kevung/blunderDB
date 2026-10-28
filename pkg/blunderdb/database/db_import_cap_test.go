@@ -11,9 +11,9 @@ import (
 )
 
 // TestCommitImportDatabaseCapped: the desktop import follows the daemon's cap
-// (ingest.Source.MaxPositions) — the first positions in source id order, a
-// match reaching a left-out position left out whole, and an uncapped import
-// of the same file afterwards bringing the rest complete.
+// (ingest.PlanCap) — the first positions in source id order that something
+// holds once imported, a match reaching a left-out position left out whole,
+// and an uncapped import of the same file afterwards bringing the rest.
 func TestCommitImportDatabaseCapped(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
@@ -28,6 +28,7 @@ func TestCommitImportDatabaseCapped(t *testing.T) {
 	for n := 1; n <= 4; n++ {
 		p := domain.InitializePosition()
 		p.Score = [2]int{n, 0}
+		p.IndividuallyImported = n == 2
 		id, err := src.Positions().Save(ctx, "", &p)
 		if err != nil {
 			t.Fatal(err)
@@ -69,18 +70,20 @@ func TestCommitImportDatabaseCapped(t *testing.T) {
 	if err != nil {
 		t.Fatalf("capped import: %v", err)
 	}
-	if res["added"] != 3 || res["leftOut"] != 1 || res["matches"] != 1 || res["matchesLeftOut"] != 1 {
-		t.Fatalf("capped result = %v; want 3 added, 1 left out, 1 match, 1 match left out", res)
+	// p1 is held by match "first", p2 is individually imported; p3 would be
+	// held by nothing once imported, and p4 is past the cap.
+	if res["added"] != 2 || res["leftOut"] != 2 || res["matches"] != 1 || res["matchesLeftOut"] != 1 {
+		t.Fatalf("capped result = %v; want 2 added, 2 left out, 1 match, 1 match left out", res)
 	}
-	if p, m := counts(); p != 3 || m != 1 {
-		t.Fatalf("after capped import: %d positions, %d matches; want 3, 1", p, m)
+	if p, m := counts(); p != 2 || m != 1 {
+		t.Fatalf("after capped import: %d positions, %d matches; want 2, 1", p, m)
 	}
 
 	res, err = d.CommitImportDatabase(srcPath)
 	if err != nil {
 		t.Fatalf("uncapped import: %v", err)
 	}
-	if res["added"] != 1 || res["leftOut"] != 0 || res["matches"] != 1 || res["matchesLeftOut"] != 0 {
+	if res["added"] != 2 || res["leftOut"] != 0 || res["matches"] != 1 || res["matchesLeftOut"] != 0 {
 		t.Fatalf("uncapped result = %v; want the remaining position and match", res)
 	}
 	if p, m := counts(); p != 4 || m != 2 {

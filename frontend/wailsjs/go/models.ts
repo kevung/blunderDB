@@ -5025,6 +5025,34 @@ export namespace image {
 
 export namespace ingest {
 	
+	export class DBAnalysis {
+	    sourceVersion: string;
+	    positions: number;
+	    positionsHeld: number;
+	    matches: number;
+	    matchesKnown: number;
+	    collections: number;
+	    lessons: number;
+	    decks: number;
+	    unreadable?: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new DBAnalysis(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.sourceVersion = source["sourceVersion"];
+	        this.positions = source["positions"];
+	        this.positionsHeld = source["positionsHeld"];
+	        this.matches = source["matches"];
+	        this.matchesKnown = source["matchesKnown"];
+	        this.collections = source["collections"];
+	        this.lessons = source["lessons"];
+	        this.decks = source["decks"];
+	        this.unreadable = source["unreadable"];
+	    }
+	}
 	export class PlannedRow {
 	    id: number;
 	    name: string;
