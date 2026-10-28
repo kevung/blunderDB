@@ -70,7 +70,15 @@ func MergeLessons(ctx context.Context, tx storage.Stores, scope string, src []*d
 		}
 		names[l.Name] = true
 		for _, st := range l.Steps {
-			st.PositionID = targetOf[st.PositionID]
+			if st.PositionID != 0 {
+				t, ok := targetOf[st.PositionID]
+				if !ok {
+					// The import did not carry this position (a capped
+					// import): a step that names none would show nothing.
+					continue
+				}
+				st.PositionID = t
+			}
 			name, ok := collName[st.CollectionID]
 			st.CollectionID = 0
 			if ok {

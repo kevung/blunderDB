@@ -166,6 +166,10 @@ export function CommitImportDatabase(arg1) {
   return window['go']['database']['Database']['CommitImportDatabase'](arg1);
 }
 
+export function CommitImportDatabaseCapped(arg1, arg2) {
+  return window['go']['database']['Database']['CommitImportDatabaseCapped'](arg1, arg2);
+}
+
 export function CompareWithGammonNet(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   return window['go']['database']['Database']['CompareWithGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }

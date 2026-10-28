@@ -105,6 +105,8 @@ export function CollectionCoverage(arg1:Array<number>):Promise<Record<number, nu
 
 export function CommitImportDatabase(arg1:string):Promise<Record<string, any>>;
 
+export function CommitImportDatabaseCapped(arg1:string,arg2:number):Promise<Record<string, any>>;
+
 export function CompareWithGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:number,arg7:any):Promise<gammonnet.AnalysisComparison>;
 
 export function ComputeDirectionalBiases(arg1:database.StatsFilter):Promise<storage.DirectionalBiases>;

@@ -44,6 +44,10 @@ type Source struct {
 	// SkipDuplicates skips an exact duplicate outright instead of offering
 	// its deeper analyses to the stored positions (MatchGraph.SkipDuplicates).
 	SkipDuplicates bool
+	// MaxPositions caps a native .db import at its first MaxPositions source
+	// positions, in ascending source id; 0 imports them all. The rest are left
+	// out (Summary.PositionsLeftOut), and so is every reference to them.
+	MaxPositions int
 }
 
 // Progress is reported incrementally during an import.
@@ -51,11 +55,21 @@ type Progress struct {
 	Matches   int `json:"matches"`
 	Games     int `json:"games"`
 	Positions int `json:"positions"`
+	// TotalPositions is how many positions the import will process, known
+	// before the first one is written; 0 when the format cannot tell
+	// beforehand.
+	TotalPositions int `json:"totalPositions,omitempty"`
 }
 
 // Summary is the terminal result of an import.
 type Summary struct {
-	SavedPositions    int   `json:"savedPositions"`
+	SavedPositions int `json:"savedPositions"`
+	// PositionsLeftOut counts the source positions a capped native .db
+	// import did not carry (Source.MaxPositions).
+	PositionsLeftOut int `json:"positionsLeftOut,omitempty"`
+	// MatchesLeftOut counts the source matches such an import left behind
+	// because they reach a position it did not carry.
+	MatchesLeftOut    int   `json:"matchesLeftOut,omitempty"`
 	SkippedDuplicates int   `json:"skippedDuplicates"`
 	Matches           int   `json:"matches"`
 	MatchID           int64 `json:"matchId,omitempty"`

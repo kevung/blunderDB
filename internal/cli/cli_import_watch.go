@@ -78,7 +78,7 @@ func (cli *CLI) importOneWatched(path, format string) error {
 		fmt.Printf("── %s\n", path)
 	}
 	if ingest.IsLibraryFile(path) {
-		return cli.importDatabase(path, format)
+		return cli.importDatabase(path, format, 0)
 	}
 	return cli.importMatch(path, format)
 }

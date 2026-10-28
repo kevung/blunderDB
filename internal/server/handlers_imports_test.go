@@ -231,11 +231,10 @@ func TestImportOGXMEndToEnd(t *testing.T) {
 	}
 }
 
-func TestImportNativeDBEndToEnd(t *testing.T) {
-	ts := newTestServer(t)
-
-	// Build a populated native .db by importing an XG fixture via the legacy
-	// Database, then upload that .db to imports.db.
+// nativeDBBlob builds a populated native .db by importing an XG fixture via
+// the legacy Database, and returns its bytes.
+func nativeDBBlob(t *testing.T) []byte {
+	t.Helper()
 	dbPath := filepath.Join(t.TempDir(), "lib.db")
 	db := database.NewDatabase()
 	if err := db.SetupDatabase(dbPath); err != nil {
@@ -251,14 +250,97 @@ func TestImportNativeDBEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read .db: %v", err)
 	}
+	return blob
+}
 
-	events := uploadImportNamed(t, ts, "/v1/imports.db", "lib.db", blob)
+func TestImportNativeDBEndToEnd(t *testing.T) {
+	ts := newTestServer(t)
+	events := uploadImportNamed(t, ts, "/v1/imports.db", "lib.db", nativeDBBlob(t))
 	done := events[len(events)-1]
 	if done["event"] != "done" {
 		t.Fatalf("last event = %v, want done", done["event"])
 	}
 	if done["saved_positions"].(float64) == 0 {
 		t.Fatal("saved_positions = 0, want > 0")
+	}
+}
+
+// postFile posts file as the multipart 'file' field and returns the status
+// and body.
+func postFile(t *testing.T, ts *httptest.Server, path string, file []byte) (int, []byte) {
+	t.Helper()
+	var body bytes.Buffer
+	mw := multipart.NewWriter(&body)
+	fw, err := mw.CreateFormFile("file", "lib.db")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := fw.Write(file); err != nil {
+		t.Fatal(err)
+	}
+	mw.Close()
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+path, &body)
+	req.Header.Set(middleware.TenantHeader, testTenant)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	out, _ := io.ReadAll(resp.Body)
+	return resp.StatusCode, out
+}
+
+// TestImportNativeDBAnalyzedThenCapped: imports.dbAnalyze counts the file
+// without importing it; imports.db with max_positions announces its capped
+// total in every progress event and says what it left out.
+func TestImportNativeDBAnalyzedThenCapped(t *testing.T) {
+	ts := newTestServer(t)
+	blob := nativeDBBlob(t)
+
+	status, out := postFile(t, ts, "/v1/imports.dbAnalyze", blob)
+	if status != http.StatusOK {
+		t.Fatalf("imports.dbAnalyze status = %d: %s", status, out)
+	}
+	var a struct {
+		Positions     int `json:"positions"`
+		PositionsHeld int `json:"positionsHeld"`
+		Matches       int `json:"matches"`
+	}
+	if err := json.Unmarshal(out, &a); err != nil {
+		t.Fatalf("analysis not JSON: %s", out)
+	}
+	if a.Positions < 3 || a.PositionsHeld != 0 || a.Matches != 1 {
+		t.Fatalf("analysis = %+v, want >= 3 positions, none held, 1 match", a)
+	}
+
+	if status, out := postFile(t, ts, "/v1/imports.db?max_positions=abc", blob); status != http.StatusBadRequest {
+		t.Fatalf("max_positions=abc: status %d, want 400: %s", status, out)
+	}
+	if status, _ := postFile(t, ts, "/v1/imports.json?max_positions=2", blob); status != http.StatusBadRequest {
+		t.Fatalf("max_positions on imports.json: status %d, want 400", status)
+	}
+
+	events := uploadImportNamed(t, ts, "/v1/imports.db?max_positions=2", "lib.db", blob)
+	sawProgress := false
+	for _, ev := range events {
+		if ev["event"] != "progress" {
+			continue
+		}
+		if !sawProgress && ev["positions"].(float64) != 0 {
+			t.Fatalf("first progress = %v, want the total before any position", ev)
+		}
+		sawProgress = true
+		if ev["total_positions"] != float64(2) {
+			t.Fatalf("progress = %v, want total_positions 2", ev)
+		}
+	}
+	done := events[len(events)-1]
+	if !sawProgress || done["event"] != "done" {
+		t.Fatalf("events = %v", events)
+	}
+	if done["saved_positions"] != float64(2) || done["positions_left_out"] != float64(a.Positions-2) || done["matches_left_out"] != float64(1) {
+		t.Fatalf("done = %v, want 2 saved, %d positions and 1 match left out", done, a.Positions-2)
 	}
 }
 

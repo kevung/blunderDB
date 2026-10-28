@@ -57,19 +57,19 @@ func sourcePositionScalarColumns(importDB *sql.DB, alias string) string {
 // importing elsewhere agree on provenance.
 func sourcePositionQuery(importDB *sql.DB) string {
 	if queryable(importDB, `SELECT individually_imported FROM position LIMIT 1`) {
-		return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, individually_imported FROM position`
+		return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, individually_imported FROM position ORDER BY id`
 	}
 	if queryable(importDB, `SELECT 1 FROM move LIMIT 1`) {
 		slog.Debug("import database predates individually_imported; deriving it from the move graph")
 		return `SELECT p.id, p.state, ` + sourcePositionScalarColumns(importDB, "p.") + `,
 			       NOT EXISTS (SELECT 1 FROM move m WHERE m.position_id = p.id)
-			FROM position p`
+			FROM position p ORDER BY p.id`
 	}
 	// No move table at all: the database holds no matches, so every position in
 	// it stands on its own. This is the same rule as the derivation above, taken
 	// to its limit.
 	slog.Debug("import database has no move table; all its positions are individually imported")
-	return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, 1 FROM position`
+	return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, 1 FROM position ORDER BY id`
 }
 
 // queryable reports whether q runs against db — used to probe for a column or a
@@ -589,6 +589,18 @@ func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual 
 
 // CommitImportDatabase performs the actual import within a transaction (ACID)
 func (d *Database) CommitImportDatabase(importPath string) (map[string]interface{}, error) {
+	return d.CommitImportDatabaseCapped(importPath, 0)
+}
+
+// CommitImportDatabaseCapped is CommitImportDatabase carrying at most
+// maxPositions of the source's positions, the first in ascending source id
+// (0: all of them), as ingest.Source.MaxPositions does on the daemon. A match
+// reaching a position left out is left out whole; the result counts both
+// ("leftOut", "matchesLeftOut").
+func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions int) (map[string]interface{}, error) {
+	if maxPositions < 0 {
+		return nil, fmt.Errorf("maxPositions must not be negative, got %d", maxPositions)
+	}
 	if d.IsOpenDatabase(importPath) {
 		return nil, ErrImportIsOpenDatabase
 	}
@@ -688,6 +700,10 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	var positionsAdded int
 	var positionsMerged int
 	var positionsSkipped int
+	// carried counts the source positions this import handled, against
+	// maxPositions; leftOut holds the source ids of those past the cap.
+	var carried int
+	leftOut := map[int64]bool{}
 	// targetOf maps each source position id to the id it holds here, for the
 	// collections merged after the positions.
 	targetOf := map[int64]int64{}
@@ -708,12 +724,17 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			slog.Warn("scanning position", "err", err)
 			continue
 		}
+		if maxPositions > 0 && carried >= maxPositions {
+			leftOut[id] = true
+			continue
+		}
 
 		importPosition, decErr := decodeSourcePosition(stateJSON, dt, por, d1, d2, cv, co, s1, s2, hj, hb)
 		if decErr != nil {
 			slog.Warn("unmarshalling position", "err", decErr)
 			continue
 		}
+		carried++
 
 		importPositionJSON, err := positionIdentityJSON(importPosition)
 		if err != nil {
@@ -758,7 +779,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 
-	matches, err := mergeImportMatches(ctx, importDB, stx, targetOf)
+	matches, err := mergeImportMatches(ctx, importDB, stx, targetOf, leftOut)
 	if err != nil {
 		return nil, err
 	}
@@ -812,6 +833,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		"merged":  positionsMerged,
 		"skipped": positionsSkipped,
 		"total":   totalPositions,
+		// Positions past maxPositions, and the matches that reach one of them.
+		"leftOut":        len(leftOut),
+		"matchesLeftOut": matches.LeftOut,
 		// Analyses the receiver could not merge; their positions are counted above.
 		"analysesSkipped": run.analysesSkipped,
 		// The same figures as ingest.Summary on the daemon's imports.db.
@@ -850,13 +874,13 @@ func planImportMatches(ctx context.Context, importDB *sql.DB, dst storage.Stores
 // mergeImportMatches merges the source's matches, tournaments, drafts and
 // aliases (ingest.MergeMatches) through one read-only transaction on the
 // source, released before the next family opens its own.
-func mergeImportMatches(ctx context.Context, importDB *sql.DB, dst storage.Stores, targetOf map[int64]int64) (ingest.MatchMerge, error) {
+func mergeImportMatches(ctx context.Context, importDB *sql.DB, dst storage.Stores, targetOf map[int64]int64, leftOut map[int64]bool) (ingest.MatchMerge, error) {
 	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
 	if err != nil {
 		return ingest.MatchMerge{}, err
 	}
 	defer itx.Rollback()
-	return ingest.MergeMatches(ctx, dst, "", sqlite.WrapTx(itx), targetOf)
+	return ingest.MergeMatchesExcept(ctx, dst, "", sqlite.WrapTx(itx), targetOf, leftOut)
 }
 
 // readImportCollections reads the source's collections through a read-only

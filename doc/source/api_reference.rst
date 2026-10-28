@@ -192,6 +192,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.bgf                          custom
      POST /v1/imports.cancel                       custom
      POST /v1/imports.db                           custom
+     POST /v1/imports.dbAnalyze                    custom
      POST /v1/imports.files                        JSON
      POST /v1/imports.gnubg                        custom
      POST /v1/imports.json                         custom

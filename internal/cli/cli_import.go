@@ -38,6 +38,10 @@ func (cli *CLI) runImport(args []string) error {
 		"Skip a match already in the database outright; by default its analyses deeper than the stored ones replace them")
 	resume := importCmd.Int64("resume", 0,
 		"With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files with the same path, size and mtime as in its journal are skipped unread, those with the same content are read but not parsed")
+	maxPositions := importCmd.Int("max-positions", 0,
+		"With --type database: carry at most this many of the file's positions, the first in source id order; a match reaching one left out is left out whole (0: all)")
+	analyzeOnly := importCmd.Bool("analyze", false,
+		"With --type database: count what the file would bring (positions new, merged or unchanged, matches) and import nothing")
 	failOnError := importCmd.Bool("fail-on-error", false,
 		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error")
 
@@ -153,7 +157,13 @@ func (cli *CLI) runImport(args []string) error {
 		if _, err := os.Stat(*inputFile); os.IsNotExist(err) {
 			return fmt.Errorf("input file does not exist: %s", *inputFile)
 		}
-		return cli.importDatabase(*inputFile, formatLower)
+		if *maxPositions < 0 {
+			return fmt.Errorf("--max-positions must not be negative")
+		}
+		if *analyzeOnly {
+			return cli.analyzeDatabase(*inputFile, formatLower)
+		}
+		return cli.importDatabase(*inputFile, formatLower, *maxPositions)
 	default:
 		return fmt.Errorf("unknown import type: %s (must be 'match', 'position', 'batch' or 'database')", *importType)
 	}
@@ -678,11 +688,28 @@ func printProgress(w *os.File, p ingest.BatchProgress) {
 	fmt.Fprintln(w, line)
 }
 
+// analyzeDatabase counts what merging a native .db would bring, as the
+// desktop's preview and the daemon's /v1/imports.dbAnalyze do, and writes
+// nothing.
+func (cli *CLI) analyzeDatabase(filePath, format string) error {
+	res, err := cli.db.AnalyzeImportDatabase(filePath)
+	if err != nil {
+		return err
+	}
+	if format == "json" {
+		return printJSON(res)
+	}
+	fmt.Printf("Analysed %s (nothing imported)\n", filePath)
+	fmt.Printf("  positions: %v in the file, %v new, %v to merge, %v unchanged\n", res["total"], res["toAdd"], res["toMerge"], res["toSkip"])
+	fmt.Printf("  matches: %v new, %v already held\n", res["matches"], res["matchesKnown"])
+	return nil
+}
+
 // importDatabase merges a native blunderDB .db, as the desktop's "Import a
 // database" and the daemon's /v1/imports.db do. It opens no import batch: the
 // rows it writes are the file's, and nothing else is recorded (ADR-0007).
-func (cli *CLI) importDatabase(filePath, format string) error {
-	res, err := cli.db.CommitImportDatabase(filePath)
+func (cli *CLI) importDatabase(filePath, format string, maxPositions int) error {
+	res, err := cli.db.CommitImportDatabaseCapped(filePath, maxPositions)
 	if err != nil {
 		return err
 	}
@@ -692,6 +719,9 @@ func (cli *CLI) importDatabase(filePath, format string) error {
 	fmt.Printf("Imported %s\n", filePath)
 	fmt.Printf("  positions: %v added, %v merged, %v unchanged\n", res["added"], res["merged"], res["skipped"])
 	fmt.Printf("  matches: %v added, %v already held\n", res["matches"], res["matchesKnown"])
+	if n, ok := res["leftOut"].(int); ok && n > 0 {
+		fmt.Printf("  left out by --max-positions: %d positions, %v matches\n", n, res["matchesLeftOut"])
+	}
 	if n, ok := res["analysesSkipped"].(int); ok && n > 0 {
 		fmt.Printf("  analyses not merged, the one held here unreadable (left as it was): %d\n", n)
 	}

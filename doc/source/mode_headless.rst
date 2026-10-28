@@ -1203,6 +1203,21 @@ liste telle quelle et est signalée. La réponse compte chaque famille :
 ``aliases``, ``livingCollectionsFrozen``, ``livingCollectionsOnManual``, et
 ``unreadable`` quand la base reçue est trop ancienne pour porter une famille.
 
+Le premier événement ``progress`` d'``imports.db`` arrive avant toute écriture
+et porte ``total_positions``, le nombre de positions que l'import va traiter ;
+chaque événement suivant le répète, de quoi afficher *n / N* et un temps
+restant. Le paramètre ``max_positions`` (``/v1/imports.db?max_positions=5000``)
+plafonne l'import aux premières positions du fichier, dans l'ordre de leur
+identifiant d'origine ; un match qui passe par une position laissée de côté est
+laissé de côté en entier, et l'événement ``done`` compte les deux :
+``positions_left_out``, ``matches_left_out``. Annulé (``imports.cancel``) ou
+en erreur, l'import n'écrit aucune ligne : la fusion entière tient dans une
+transaction. ``imports.dbAnalyze`` reçoit le même fichier et rend, sans rien
+importer, ce qu'il apporterait : ``positions`` et ``positionsHeld`` (celles que
+le tenant tient déjà), ``matches`` et ``matchesKnown``, ``collections``,
+``lessons``, ``decks`` et ``sourceVersion`` ; un fichier que l'import
+refuserait y est refusé de même.
+
 .. code-block:: bash
 
    curl -X POST http://127.0.0.1:8080/v1/exports.sqlite \
@@ -1210,6 +1225,8 @@ liste telle quelle et est signalée. La réponse compte chaque famille :
         -d '{"wholeLibrary":false,"collectionIDs":[4],"includeCollectionPositions":true,
              "includeLessons":false,"includeFilterLibrary":false,"includeAnkiHistory":false,
              "watermark":"Club de Lyon"}' -o ouvertures.db
+   curl -X POST http://127.0.0.1:8080/v1/imports.dbAnalyze \
+        -H 'X-Tenant-ID: 2' -F file=@ouvertures.db
    curl -X POST http://127.0.0.1:8080/v1/imports.db \
         -H 'X-Tenant-ID: 2' -F file=@ouvertures.db
 

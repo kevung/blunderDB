@@ -690,6 +690,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/imports.db — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.db", payload)
 
+    def imports_db_analyze(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.dbAnalyze — hand-written handler — see openapi.yaml."
+        return self._call("/v1/imports.dbAnalyze", payload)
+
     def imports_files(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/imports.files — JSON."
         return self._call("/v1/imports.files", payload)

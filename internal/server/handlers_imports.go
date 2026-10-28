@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -238,6 +239,7 @@ func uploadPaths() map[string]bool {
 		m[u.pattern] = true
 	}
 	m["/v1/imports.batch"] = true
+	m["/v1/imports.dbAnalyze"] = true
 	m["/v1/matches.repair"] = true
 	return m
 }
@@ -251,6 +253,7 @@ func (s *Server) ingestRoutes() []route {
 	rs = append(rs, s.batchRoutes()...)
 	return append(rs,
 		route{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
+		route{http.MethodPost, "/v1/imports.dbAnalyze", s.handleDBAnalyze},
 		// Recomputed on every call, so a client that re-analyses the positions
 		// an import brought in and asks again gets the new figures.
 		route{http.MethodPost, "/v1/imports.report", rpc(func(ctx context.Context, scope string, req importReportReq) (*domain.ImportBatch, error) {
@@ -499,6 +502,11 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			writeErrorCode(w, CodeInvalid, "import format not supported on this server: "+string(format))
 			return
 		}
+		maxPositions, err := maxPositionsParam(r, format)
+		if err != nil {
+			writeErrorCode(w, CodeInvalid, err.Error())
+			return
+		}
 
 		// Claim the worst case against the global spool quota (see
 		// spoolQuota) before touching the body at all.
@@ -567,15 +575,21 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		emit(map[string]any{"event": "started", "import_id": importID, "batch_id": batchID})
 
 		prog := func(p ingest.Progress) {
-			emit(map[string]any{
+			ev := map[string]any{
 				"event":     "progress",
 				"matches":   p.Matches,
 				"games":     p.Games,
 				"positions": p.Positions,
-			})
+			}
+			// A native .db knows its total before writing; the other formats
+			// discover theirs while parsing.
+			if format == ingest.FormatNativeDB {
+				ev["total_positions"] = p.TotalPositions
+			}
+			emit(ev)
 		}
 
-		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath, BatchID: batchID, SkipDuplicates: skipDuplicatesParam(r)}, prog)
+		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath, BatchID: batchID, SkipDuplicates: skipDuplicatesParam(r), MaxPositions: maxPositions}, prog)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				// imports.cancel, or a graceful shutdown cancelling every
@@ -597,6 +611,10 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			"flags_applied":      sum.FlagsApplied,
 			"deepened":           sum.Deepened,
 			"dropped_analyses":   sum.DroppedAnalyses,
+		}
+		if format == ingest.FormatNativeDB {
+			done["positions_left_out"] = sum.PositionsLeftOut
+			done["matches_left_out"] = sum.MatchesLeftOut
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary
@@ -623,6 +641,55 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		}
 		emit(done)
 	}
+}
+
+// maxPositionsParam reads the optional max_positions query parameter: the cap
+// of a native .db import (ingest.Source.MaxPositions), 0 when absent.
+func maxPositionsParam(r *http.Request, format ingest.Format) (int, error) {
+	v := r.URL.Query().Get("max_positions")
+	if v == "" {
+		return 0, nil
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil || n < 1 {
+		return 0, fmt.Errorf("max_positions must be a positive integer, got %q", v)
+	}
+	if format != ingest.FormatNativeDB {
+		return 0, fmt.Errorf("max_positions applies to imports.db only")
+	}
+	return n, nil
+}
+
+// handleDBAnalyze counts what an uploaded native .db would bring to the
+// tenant (ingest.AnalyzeDB) without importing it: a client can warn before
+// sending the import itself.
+func (s *Server) handleDBAnalyze(w http.ResponseWriter, r *http.Request) {
+	if !s.spool.reserve(s.opts.ImportMaxBodyBytes) {
+		writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
+		return
+	}
+	defer s.spool.release(s.opts.ImportMaxBodyBytes)
+
+	r.Body = http.MaxBytesReader(w, r.Body, s.opts.ImportMaxBodyBytes)
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		writeDecodeError(w, "missing multipart 'file' field", err)
+		return
+	}
+	defer file.Close()
+	tmpPath, cleanup, err := spoolToTemp(file, ".db")
+	if err != nil {
+		writeStorageError(w, err)
+		return
+	}
+	defer cleanup()
+
+	a, err := ingest.AnalyzeDB(r.Context(), s.opts.Storage, scopeOf(r), tmpPath)
+	if err != nil {
+		writeErrorCode(w, CodeInvalid, err.Error())
+		return
+	}
+	writeJSONResp(w, a)
 }
 
 type importCancelReq struct {

@@ -1,10 +1,12 @@
 package ingest
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"log/slog"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -42,18 +44,9 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, fmt.Errorf("ingest: native .db import requires a file path")
 	}
 
-	// sqlite.Open bootstraps a fresh database when the file does not exist —
-	// the right thing for a database being created, the wrong thing for one
-	// being imported: a mistyped path would leave a new, empty .db on disk
-	// and import nothing from it.
-	if info, err := os.Stat(src.Path); err != nil {
-		return Summary{}, fmt.Errorf("ingest: source .db not found: %w", err)
-	} else if info.IsDir() {
-		return Summary{}, fmt.Errorf("ingest: source .db not found: %s is a directory", src.Path)
-	}
-	source, err := sqlite.Open(ctx, src.Path, nil)
+	source, err := openSourceDB(ctx, src.Path)
 	if err != nil {
-		return Summary{}, fmt.Errorf("ingest: open source .db: %w", err)
+		return Summary{}, err
 	}
 	defer source.Close()
 
@@ -68,6 +61,9 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 		pc := *p
 		positions = append(positions, &pc)
+	}
+	positions, leftOut := capPositions(positions, src.MaxPositions)
+	for _, p := range positions {
 		ids = append(ids, p.ID)
 	}
 
@@ -133,6 +129,11 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		records = append(records, rec)
 	}
 
+	total := len(records)
+	if prog != nil {
+		prog(Progress{TotalPositions: total})
+	}
+
 	tx, err := im.S.BeginTx(ctx)
 	if err != nil {
 		return Summary{}, err
@@ -186,7 +187,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	}
 
 	carrier := mets.NewCarrier("import", tx.MatchEquityTables(), scope, srcTables)
-	sum := Summary{CreatedPositions: created}
+	sum := Summary{CreatedPositions: created, PositionsLeftOut: len(leftOut)}
 	for _, s := range saved {
 		if err := ctx.Err(); err != nil {
 			return sum, err
@@ -205,15 +206,16 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 		sum.SavedPositions++
 		if prog != nil {
-			prog(Progress{Positions: sum.SavedPositions})
+			prog(Progress{Positions: sum.SavedPositions, TotalPositions: total})
 		}
 	}
 
-	matches, err := MergeMatches(ctx, tx, scope, source, targetOf)
+	matches, err := MergeMatchesExcept(ctx, tx, scope, source, targetOf, leftOut)
 	if err != nil {
 		return sum, err
 	}
 	sum.applyMatchMerge(matches)
+	sum.MatchesLeftOut = matches.LeftOut
 	maps := RowMaps{Positions: targetOf, Matches: matches.MatchMap, Tournaments: matches.TournamentMap}
 
 	merged, err := MergeCollections(ctx, tx, scope, srcCollections, maps)
@@ -246,6 +248,39 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	}
 	committed = true
 	return sum, nil
+}
+
+// openSourceDB opens a native .db being read for an import. sqlite.Open
+// bootstraps a fresh database when the file does not exist — the right thing
+// for a database being created, the wrong thing for one being imported: a
+// mistyped path would leave a new, empty .db on disk and import nothing from
+// it.
+func openSourceDB(ctx context.Context, path string) (*sqlite.Storage, error) {
+	if info, err := os.Stat(path); err != nil {
+		return nil, fmt.Errorf("ingest: source .db not found: %w", err)
+	} else if info.IsDir() {
+		return nil, fmt.Errorf("ingest: source .db not found: %s is a directory", path)
+	}
+	source, err := sqlite.Open(ctx, path, nil)
+	if err != nil {
+		return nil, fmt.Errorf("ingest: open source .db: %w", err)
+	}
+	return source, nil
+}
+
+// capPositions keeps the first max positions in ascending source id — the
+// order the source assigned them, the same on every run over the same file —
+// and returns the source ids of those it left out. max <= 0 keeps them all.
+func capPositions(positions []*domain.Position, max int) ([]*domain.Position, map[int64]bool) {
+	slices.SortFunc(positions, func(a, b *domain.Position) int { return cmp.Compare(a.ID, b.ID) })
+	if max <= 0 || len(positions) <= max {
+		return positions, nil
+	}
+	leftOut := make(map[int64]bool, len(positions)-max)
+	for _, p := range positions[max:] {
+		leftOut[p.ID] = true
+	}
+	return positions[:max], leftOut
 }
 
 // SourceCollection is a collection of a native .db being imported, with its

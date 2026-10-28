@@ -52,3 +52,54 @@ func TestCLI_ImportDatabase(t *testing.T) {
 		}
 	}
 }
+
+// import --type database --analyze counts the file and writes nothing;
+// --max-positions carries the first positions and says what it left out.
+func TestCLI_ImportDatabaseAnalyzeAndCap(t *testing.T) {
+	ctx := context.Background()
+	dir := tempDir(t)
+	srcPath := filepath.Join(dir, "club.db")
+	src, err := sqlite.Open(ctx, srcPath, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for n := 1; n <= 3; n++ {
+		p := domain.InitializePosition()
+		p.Score = [2]int{n, 0}
+		if _, err := src.Positions().Save(ctx, "", &p); err != nil {
+			t.Fatal(err)
+		}
+	}
+	src.Close()
+
+	target := filepath.Join(dir, "mine.db")
+	run := func(args ...string) map[string]any {
+		t.Helper()
+		cli := &CLI{db: NewDatabase()}
+		var runErr error
+		out := captureStdout(t, func() {
+			runErr = cli.runImport(append([]string{"--db", target, "--type", "database", "--file", srcPath, "--format", "json"}, args...))
+		})
+		cli.db.Close()
+		if runErr != nil {
+			t.Fatalf("%v: %v", args, runErr)
+		}
+		var res map[string]any
+		if err := json.Unmarshal([]byte(out), &res); err != nil {
+			t.Fatalf("%v: output %q: %v", args, out, err)
+		}
+		return res
+	}
+
+	for range 2 {
+		if res := run("--analyze"); res["total"] != float64(3) || res["toAdd"] != float64(3) {
+			t.Fatalf("--analyze = %v, want 3 positions, 3 new, every time: it writes nothing", res)
+		}
+	}
+	if res := run("--max-positions", "2"); res["added"] != float64(2) || res["leftOut"] != float64(1) {
+		t.Fatalf("--max-positions 2 = %v, want 2 added, 1 left out", res)
+	}
+	if res := run("--analyze"); res["toAdd"] != float64(1) {
+		t.Fatalf("--analyze after the capped import = %v, want 1 new", res)
+	}
+}

@@ -186,10 +186,21 @@ Directions et Rencontres relues, et nomme les collections vivantes figées ou
 laissées sur une liste manuelle, et les familles que la base est trop ancienne
 pour porter.
 
+``--analyze`` compte ce que le fichier apporterait — positions nouvelles, à
+fusionner ou inchangées, matchs nouveaux ou déjà présents — sans rien
+importer. ``--max-positions N`` n'emporte que les ``N`` premières positions du
+fichier, dans l'ordre de leur identifiant d'origine ; un match qui passe par
+une position laissée de côté est laissé de côté en entier, si bien qu'un
+import ultérieur sans plafond l'apporte complet. La sortie compte les positions
+et les matchs laissés de côté. Une erreur ou une interruption en cours d'import
+n'écrit rien : la fusion entière tient dans une transaction.
+
 .. code-block:: bash
 
    ./blunderdb import --db base.db --type database --file club.db
    ./blunderdb import --db base.db --type database --file club.db --format json
+   ./blunderdb import --db base.db --type database --file club.db --analyze
+   ./blunderdb import --db base.db --type database --file club.db --max-positions 5000
 
 Import par lot
 ^^^^^^^^^^^^^^
