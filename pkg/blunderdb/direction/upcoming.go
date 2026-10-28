@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
-	"github.com/PileOfCells/backgammon-tournoi/render"
+	tournoi "github.com/kevung/nicomaque"
+	"github.com/kevung/nicomaque/render"
 )
 
 // The sheet of a round announced before it is launched. Launching it for real would stamp the

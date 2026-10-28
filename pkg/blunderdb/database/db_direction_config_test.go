@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // Changing the configuration of a tournament under way.

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // BenchmarkOpen measures what Open costs, since the whole design rests on replaying rather than

@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 func doublesDirection(t *testing.T, d *Database) int64 {

@@ -5,7 +5,7 @@ import (
 	"slices"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 func eventCount(t *testing.T, d *Database, tID int64) int {

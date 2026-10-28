@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // What the wall answers to "am I playing?" (ADR-0047, the players' screen): a player who sits a

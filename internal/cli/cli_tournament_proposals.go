@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
-	"github.com/PileOfCells/backgammon-tournoi/render"
+	tournoi "github.com/kevung/nicomaque"
+	"github.com/kevung/nicomaque/render"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )

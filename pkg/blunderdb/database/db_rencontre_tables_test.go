@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // roomOfTwo puts two directed events of n players in one Rencontre of the given tables.

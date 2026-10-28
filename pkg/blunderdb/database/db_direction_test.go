@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // directedTournament creates a Tournament and starts a Direction on it.

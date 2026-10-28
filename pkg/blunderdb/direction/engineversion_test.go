@@ -13,7 +13,7 @@ func TestEngineVersionMatchesGoMod(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	const module = "github.com/PileOfCells/backgammon-tournoi"
+	const module = "github.com/kevung/nicomaque"
 	for _, line := range strings.Split(string(data), "\n") {
 		f := strings.Fields(strings.TrimPrefix(strings.TrimSpace(line), "require "))
 		if len(f) >= 2 && f[0] == module {

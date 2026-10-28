@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // TestHistoryIsReadable: every decision is there, in order, with names rather than identifiers.

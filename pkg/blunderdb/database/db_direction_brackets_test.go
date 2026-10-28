@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // TestBracketsOfASwissPhase: a Swiss phase has no graph before its switch. What a director

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // Latecomers and lengths per round.

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // Seeding, optional and off by default (fonctionnel.md §3.4): a full draw is what backgammon

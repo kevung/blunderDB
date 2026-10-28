@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // festival is S3 (tasks/nicomaque/simulation-2026-09/rapport/S3.md): a main event of 64, a speed

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
-	"github.com/PileOfCells/backgammon-tournoi/render"
+	tournoi "github.com/kevung/nicomaque"
+	"github.com/kevung/nicomaque/render"
 )
 
 // The bracket of an event on a wall page, drawn as inline SVG in Go — a wall page carries no

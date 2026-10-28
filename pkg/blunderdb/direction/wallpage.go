@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PileOfCells/backgammon-tournoi/render"
+	"github.com/kevung/nicomaque/render"
 )
 
 // The room's wall page (ADR-0056 §6): one file at the root of the Rencontre's output folder, one

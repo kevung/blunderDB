@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // Micro-rounds and breaks: the two rules of TIME the engine brings.

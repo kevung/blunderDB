@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // clubConfig is the format the study recommends and the one lot 1 must direct end to end:

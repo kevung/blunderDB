@@ -9,8 +9,8 @@
     /** @type {{ engineVersion?: string, onClose?: () => void }} */
     let { engineVersion = '', onClose = () => {} } = $props();
 
-    const REPO = 'https://github.com/PileOfCells/backgammon-tournoi';
-    const DOCS = 'https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs';
+    const REPO = 'https://github.com/kevung/nicomaque';
+    const DOCS = 'https://github.com/kevung/nicomaque/tree/main/docs';
 
     /** @param {string} url */
     function open(url) {

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 func at(day, h, m int) time.Time { return time.Date(2026, 9, day, h, m, 0, 0, time.Local) }

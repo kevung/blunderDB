@@ -4,7 +4,7 @@ import (
 	"slices"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // The room several Directions share when their Tournaments play in one Rencontre (ADR-0056).

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // TestLastDecisionIsTheOneToTakeBack: undo lands on the gesture the director is thinking of —

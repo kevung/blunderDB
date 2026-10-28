@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )

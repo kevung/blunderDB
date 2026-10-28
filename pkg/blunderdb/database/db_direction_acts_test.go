@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // startedDirection creates a Tournament, directs it and starts it with n entrants.

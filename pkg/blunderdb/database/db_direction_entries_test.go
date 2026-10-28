@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // preparedDirection directs a Tournament and leaves it in preparation, with no entry.

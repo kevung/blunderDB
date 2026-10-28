@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
-	"github.com/PileOfCells/backgammon-tournoi/render"
+	tournoi "github.com/kevung/nicomaque"
+	"github.com/kevung/nicomaque/render"
 )
 
 // Translating the engine's codes on the Go side, for the standalone page (the panel does it in

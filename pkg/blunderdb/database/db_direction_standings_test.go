@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
+	tournoi "github.com/kevung/nicomaque"
 )
 
 // playToTheEnd directs a whole tournament, entering a result for every match.

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
-	"github.com/PileOfCells/backgammon-tournoi/render"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	tournoi "github.com/kevung/nicomaque"
+	"github.com/kevung/nicomaque/render"
 )
 
 // The engine emits codes; the panel renders them in JavaScript, the display page in Go. The two

@@ -82,11 +82,11 @@ L'essentiel :
   <https://github.com/kevung/gammonNet>`__ (MIT) ;
 
 * le moteur de tournoi **Nicomaque** est l'œuvre de *Nicolas Harmand*
-  (`PileOfCells/backgammon-tournoi
-  <https://github.com/PileOfCells/backgammon-tournoi>`__) : il tient le format,
+  (`kevung/nicomaque
+  <https://github.com/kevung/nicomaque>`__) : il tient le format,
   les appariements, les tableaux et le classement d'un tournoi dirigé depuis
   blunderDB. Sa `documentation
-  <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ se trouve dans le dossier ``docs`` de son dépôt ;
+  <https://github.com/kevung/nicomaque/tree/main/docs>`__ se trouve dans le dossier ``docs`` de son dépôt ;
 
 * la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross*, comme
   les nombres de Neil, son raccourci de tête, publiés par *Kit Woolsey* dans

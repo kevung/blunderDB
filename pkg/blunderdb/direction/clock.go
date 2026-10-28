@@ -3,9 +3,9 @@ package direction
 import (
 	"time"
 
-	tournoi "github.com/PileOfCells/backgammon-tournoi"
-	"github.com/PileOfCells/backgammon-tournoi/rules"
-	"github.com/PileOfCells/backgammon-tournoi/sim"
+	tournoi "github.com/kevung/nicomaque"
+	"github.com/kevung/nicomaque/rules"
+	"github.com/kevung/nicomaque/sim"
 )
 
 // What the clock strip reads besides the engine's counters.
