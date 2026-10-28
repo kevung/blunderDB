@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -92,5 +93,66 @@ func TestCommitImportDatabaseCapped(t *testing.T) {
 
 	if _, err := d.CommitImportDatabaseCapped(srcPath, -1); err == nil {
 		t.Fatal("negative cap: no error")
+	}
+}
+
+// TestCommitImportDatabaseCarriesFlag: the source tool's study mark travels
+// with the desktop import and, as in the daemon's, holds its position under
+// the cap; on a position the target already has, it is raised.
+func TestCommitImportDatabaseCarriesFlag(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	dir := t.TempDir()
+
+	srcPath := filepath.Join(dir, "flagged.db")
+	src, err := sqlite.Open(ctx, srcPath, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	positions := make([]domain.Position, 3)
+	for n := range positions {
+		positions[n] = domain.InitializePosition()
+		positions[n].Score = [2]int{n + 1, 0}
+		positions[n].Flagged = n != 0
+		if _, err := src.Positions().Save(ctx, "", &positions[n]); err != nil {
+			t.Fatal(err)
+		}
+	}
+	src.Close()
+
+	d := NewDatabase()
+	if err := d.SetupDatabase(filepath.Join(dir, "mine.db")); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = d.Close() })
+	held := positions[2]
+	held.Flagged = false
+	if _, err := d.store.Positions().Save(ctx, "", &held); err != nil {
+		t.Fatal(err)
+	}
+
+	// p1 is held by nothing, p2 by its mark; p3 is past the cap.
+	res, err := d.CommitImportDatabaseCapped(srcPath, 2)
+	if err != nil {
+		t.Fatalf("capped import: %v", err)
+	}
+	if res["added"] != 1 || res["leftOut"] != 2 {
+		t.Fatalf("capped result = %v; want 1 added, 2 left out", res)
+	}
+	if _, err := d.CommitImportDatabase(srcPath); err != nil {
+		t.Fatalf("uncapped import: %v", err)
+	}
+	for n, p := range positions {
+		id, ok, err := d.store.Positions().Exists(ctx, "", engine.ZobristHash(&p))
+		if err != nil || !ok {
+			t.Fatalf("p%d not held after the uncapped import: %v", n+1, err)
+		}
+		got, err := d.store.Positions().Load(ctx, "", id)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got.Flagged != p.Flagged {
+			t.Fatalf("p%d flagged = %v, want %v", n+1, got.Flagged, p.Flagged)
+		}
 	}
 }

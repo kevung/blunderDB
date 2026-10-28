@@ -81,6 +81,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Analysis/ImportMergeAndRolloutsAllKept", testImportMergeAndRolloutsAllKept},
 		{"Analysis/DBImportAndRolloutsAllKept", testDBImportAndRolloutsAllKept},
 		{"Import/DBCapped", testDBImportCapped},
+		{"Import/DBCappedLosesQueryTarget", testDBImportCappedLosesQueryTarget},
 		{"Import/DBCancelLeavesNothing", testDBImportCancelLeavesNothing},
 		{"Import/DBAnalyzeWritesNothing", testDBAnalyzeWritesNothing},
 		{"Analysis/JSONImportAndRolloutsAllKept", testJSONImportAndRolloutsAllKept},

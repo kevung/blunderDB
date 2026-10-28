@@ -49,27 +49,31 @@ func sourcePositionScalarColumns(importDB *sql.DB, alias string) string {
 }
 
 // sourcePositionQuery selects (id, state, the ten scalar columns
-// sourcePositionScalarColumns lists, individually_imported) from the
-// database being imported.
+// sourcePositionScalarColumns lists, individually_imported, flagged) from the
+// database being imported. A source without the flagged column marks nothing.
 //
 // Before 2.13.0 the flag is derived exactly as the 2.12.0→2.13.0 migration
 // derives it (no move reaches the position), so migrating in place and
 // importing elsewhere agree on provenance.
 func sourcePositionQuery(importDB *sql.DB) string {
+	flagged := "0"
+	if queryable(importDB, `SELECT flagged FROM position LIMIT 1`) {
+		flagged = "flagged"
+	}
 	if queryable(importDB, `SELECT individually_imported FROM position LIMIT 1`) {
-		return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, individually_imported FROM position ORDER BY id`
+		return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, individually_imported, ` + flagged + ` FROM position ORDER BY id`
 	}
 	if queryable(importDB, `SELECT 1 FROM move LIMIT 1`) {
 		slog.Debug("import database predates individually_imported; deriving it from the move graph")
 		return `SELECT p.id, p.state, ` + sourcePositionScalarColumns(importDB, "p.") + `,
-			       NOT EXISTS (SELECT 1 FROM move m WHERE m.position_id = p.id)
+			       NOT EXISTS (SELECT 1 FROM move m WHERE m.position_id = p.id), ` + flagged + `
 			FROM position p ORDER BY p.id`
 	}
 	// No move table at all: the database holds no matches, so every position in
 	// it stands on its own. This is the same rule as the derivation above, taken
 	// to its limit.
 	slog.Debug("import database has no move table; all its positions are individually imported")
-	return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, 1 FROM position ORDER BY id`
+	return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, 1, ` + flagged + ` FROM position ORDER BY id`
 }
 
 // queryable reports whether q runs against db — used to probe for a column or a
@@ -218,7 +222,6 @@ func insertImportedComment(ctx context.Context, stores storage.Stores, positionI
 	return err
 }
 
-// AnalyzeImportDatabase analyzes what would be imported without making changes
 // AnalyzeDatabaseFile counts what merging the native .db at importPath would
 // bring (ingest.AnalyzeDB), writing nothing: the same figures, by the same
 // code, as the daemon's /v1/imports.dbAnalyze.
@@ -234,6 +237,7 @@ func (d *Database) AnalyzeDatabaseFile(importPath string) (ingest.DBAnalysis, er
 	return ingest.AnalyzeDB(context.Background(), d.store, "", importPath)
 }
 
+// AnalyzeImportDatabase analyzes what would be imported without making changes.
 func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interface{}, error) {
 	if d.IsOpenDatabase(importPath) {
 		return nil, ErrImportIsOpenDatabase
@@ -533,11 +537,18 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, importPosition *
 		}
 	}
 
+	raised := false
+	if importPosition.Flagged {
+		if raised, err = r.stx.Positions().RaiseFlag(r.ctx, "", importPosition); err != nil {
+			slog.Warn("marking position flagged", "positionID", existingPositionID, "err", err)
+		}
+	}
+
 	written, err := r.carryAnalysis(id, existingPositionID, importPosition)
 	if err != nil {
 		return false, err
 	}
-	hasMerged = written
+	hasMerged = written || raised
 
 	// Merge comments: each imported row is appended, with its
 	// author, when the target's joined text does not already contain
@@ -749,8 +760,8 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 		var id int64
 		var stateJSON string
 		var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
-		var sourceIndividual bool
-		if err = rows.Scan(&id, &stateJSON, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &sourceIndividual); err != nil {
+		var sourceIndividual, sourceFlagged bool
+		if err = rows.Scan(&id, &stateJSON, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &sourceIndividual, &sourceFlagged); err != nil {
 			slog.Warn("scanning position", "err", err)
 			continue
 		}
@@ -763,6 +774,9 @@ func (d *Database) CommitImportDatabaseCapped(importPath string, maxPositions in
 			slog.Warn("unmarshalling position", "err", decErr)
 			continue
 		}
+		// The source tool's study mark travels, and holds the position in the
+		// target as it does in the source (ADR-0006).
+		importPosition.Flagged = importPosition.Flagged || sourceFlagged
 
 		importPositionJSON, err := positionIdentityJSON(importPosition)
 		if err != nil {
@@ -937,15 +951,15 @@ func capPositions(ctx context.Context, importDB *sql.DB, userNoted map[int64]boo
 		var id int64
 		var stateJSON string
 		var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
-		var individual bool
-		if err := rows.Scan(&id, &stateJSON, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual); err != nil {
+		var individual, flagged bool
+		if err := rows.Scan(&id, &stateJSON, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual, &flagged); err != nil {
 			continue
 		}
 		pos, err := decodeSourcePosition(stateJSON, dt, por, d1, d2, cv, co, s1, s2, hj, hb)
 		if err != nil {
 			continue
 		}
-		positions = append(positions, ingest.CapPosition{ID: id, Zobrist: engine.ZobristHash(&pos), SelfHeld: individual || userNoted[id]})
+		positions = append(positions, ingest.CapPosition{ID: id, Zobrist: engine.ZobristHash(&pos), SelfHeld: individual || flagged || userNoted[id]})
 	}
 	return positions, rows.Err()
 }

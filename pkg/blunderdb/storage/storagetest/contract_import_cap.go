@@ -3,6 +3,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"fmt"
 	"maps"
 	"path/filepath"
 	"testing"
@@ -257,5 +258,64 @@ func testDBAnalyzeWritesNothing(t *testing.T, s storage.Storage) {
 	}
 	if _, err := ingest.AnalyzeDB(ctx, s, "", filepath.Join(t.TempDir(), "missing.db")); err == nil {
 		t.Fatal("AnalyzeDB of a missing file: no error")
+	}
+}
+
+// testDBImportCappedLosesQueryTarget: a position the cap drops because
+// nothing holds it once a match is left out is also gone for the living
+// queries and search sources naming it, so their rows are left out whole
+// rather than carried frozen or emptied. p1 holds itself; match "all"
+// stands on p1..p6 and, reaching the cut p5 and p6, is left out — p2..p4
+// then held by nothing. "near" (like3), "pick" (id3) and the search deck
+// "search" (like3) name p3, kept among the first four but dropped after.
+func testDBImportCappedLosesQueryTarget(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	path := filepath.Join(t.TempDir(), "query-target.db")
+	src, err := sqlite.Open(ctx, path, nil)
+	if err != nil {
+		t.Fatalf("open source: %v", err)
+	}
+	must := func(err error) {
+		t.Helper()
+		if err != nil {
+			t.Fatalf("build source: %v", err)
+		}
+	}
+	p := make([]int64, cappedSourcePositions+1)
+	for n := 1; n <= cappedSourcePositions; n++ {
+		pos := provenancePos(n)
+		pos.IndividuallyImported = n == 1
+		p[n], err = src.Positions().Save(ctx, "", &pos)
+		must(err)
+	}
+	match := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 5, MatchHash: "all"}
+	mid, err := src.Matches().Save(ctx, "", &match)
+	must(err)
+	gid, err := src.Matches().CreateGame(ctx, "", &domain.Game{MatchID: mid, GameNumber: 1})
+	must(err)
+	for i := 1; i <= cappedSourcePositions; i++ {
+		mv := domain.Move{GameID: gid, MoveNumber: int32(i), MoveType: "checker", PositionID: p[i], Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+		_, err := src.Matches().CreateMove(ctx, "", &mv)
+		must(err)
+	}
+	like := fmt.Sprintf("like%d", p[3])
+	_, err = storage.CreateCollection(ctx, src, "", "near", "", like)
+	must(err)
+	_, err = storage.CreateCollection(ctx, src, "", "pick", "", fmt.Sprintf("id%d", p[3]))
+	must(err)
+	_, err = src.Anki().CreateDeck(ctx, "", "search", "", domain.AnkiSourceSearch, 0, fmt.Sprintf(`{"ids":[],"command":%q}`, like))
+	must(err)
+	must(src.Close())
+
+	sum, err := ingest.DBImporter{S: s}.Import(ctx, "", ingest.Source{Format: ingest.FormatNativeDB, Path: path, MaxPositions: cappedSourceCap}, nil)
+	if err != nil {
+		t.Fatalf("capped import: %v", err)
+	}
+	got := [6]int{sum.SavedPositions, sum.PositionsLeftOut, sum.MatchesLeftOut, sum.CollectionsLeftOut, sum.LessonsLeftOut, sum.DecksLeftOut}
+	if want := [6]int{1, 5, 1, 2, 0, 1}; got != want {
+		t.Fatalf("capped summary (saved, left out: positions, matches, collections, lessons, decks) = %v, want %v", got, want)
+	}
+	if shape := libraryShape(t, s); len(shape) != 0 {
+		t.Fatalf("after capped import: %v, want no collection nor deck", shape)
 	}
 }

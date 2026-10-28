@@ -37,14 +37,18 @@ func (p CapPlan) Empty() bool { return len(p.Positions) == 0 }
 // PlanCap decides what an import capped at max positions leaves out:
 //
 //  1. the source positions past the first max, in ascending source id;
-//  2. every match, collection, Lesson and Anki deck that reaches one of
-//     them — a member, a move, a step, a card, a living query or search
+//  2. every match, collection, Lesson and Anki deck that reaches a position
+//     left out — a member, a move, a step, a card, a living query or search
 //     source naming one, or a collection or match left out by this rule;
 //  3. every position of the first max that nothing would hold in the target
 //     once the rest is carried (the retention predicate positionIsHeldSQL):
 //     not already stored there, not self-held, and reached by no carried
 //     match move, collection membership, Lesson step or deck card. Carried, it
 //     would be purged at the next match deletion.
+//
+// Steps 2 and 3 repeat until neither leaves anything more out: a position
+// step 3 drops can be the one a living query or search source of a row step
+// 2 kept names. The set left out only grows, so the loop ends.
 //
 // So a capped import carries at most max positions. positions must be sorted
 // by ascending id. target is read, never written: the import's transaction.
@@ -55,21 +59,14 @@ func PlanCap(ctx context.Context, source, target storage.Stores, scope string, p
 	if max <= 0 || len(positions) <= max {
 		return plan, nil
 	}
-	cut := map[int64]bool{}
-	kept := map[int64]int64{}
+	all := make(map[int64]int64, len(positions))
 	for i, p := range positions {
+		all[p.ID] = p.ID
 		if i >= max {
-			cut[p.ID] = true
-		} else {
-			kept[p.ID] = p.ID
+			plan.Positions[p.ID] = true
 		}
 	}
-	all := make(map[int64]int64, len(positions))
-	for _, p := range positions {
-		all[p.ID] = p.ID
-	}
 
-	// Matches: a move on a cut position leaves the match out.
 	var matchIDs []int64
 	for m, err := range source.Matches().List(ctx, scope, storage.MatchListOpts{}) {
 		if err != nil {
@@ -80,7 +77,7 @@ func PlanCap(ctx context.Context, source, target storage.Stores, scope string, p
 		matchIDs = append(matchIDs, m.ID)
 	}
 	matchPositions := map[int64][]int64{}
-	allMatches, keptMatches := map[int64]int64{}, map[int64]int64{}
+	allMatches := map[int64]int64{}
 	for _, id := range matchIDs {
 		if err := ctx.Err(); err != nil {
 			return plan, err
@@ -92,14 +89,8 @@ func PlanCap(ctx context.Context, source, target storage.Stores, scope string, p
 			if mv.PositionID != 0 {
 				matchPositions[id] = append(matchPositions[id], mv.PositionID)
 			}
-			if cut[mv.PositionID] {
-				plan.Matches[id] = true
-			}
 		}
 		allMatches[id] = id
-		if !plan.Matches[id] {
-			keptMatches[id] = id
-		}
 	}
 	tournaments := map[int64]int64{}
 	for t, err := range source.Tournaments().List(ctx, scope, storage.ListOpts{}) {
@@ -108,20 +99,78 @@ func PlanCap(ctx context.Context, source, target storage.Stores, scope string, p
 		}
 		tournaments[t.ID] = t.ID
 	}
+
+	stored := map[int64]bool{}
+	for _, p := range positions {
+		if plan.Positions[p.ID] || p.SelfHeld {
+			continue
+		}
+		_, ok, err := target.Positions().Exists(ctx, scope, p.Zobrist)
+		if err != nil {
+			return plan, err
+		}
+		stored[p.ID] = ok
+	}
+
+	for {
+		if err := ctx.Err(); err != nil {
+			return plan, err
+		}
+		planRows(&plan, all, allMatches, tournaments, matchPositions, colls, lessons, decks)
+		held, err := capHolders(ctx, target, scope, plan, matchPositions, colls, lessons, decks, all, allMatches, tournaments)
+		if err != nil {
+			return plan, err
+		}
+		grew := false
+		for _, p := range positions {
+			if plan.Positions[p.ID] || p.SelfHeld || held[p.ID] || stored[p.ID] {
+				continue
+			}
+			plan.Positions[p.ID] = true
+			grew = true
+		}
+		if !grew {
+			return plan, nil
+		}
+	}
+}
+
+// planRows leaves out every match, collection, Lesson and deck that reaches a
+// position plan leaves out (step 2 of PlanCap). It only adds to plan.
+func planRows(plan *CapPlan, all, allMatches, tournaments map[int64]int64, matchPositions map[int64][]int64,
+	colls []SourceCollection, lessons []*domain.Lesson, decks []SourceDeck) {
+	out := plan.Positions
+	touches := func(ids []int64) bool {
+		for _, id := range ids {
+			if out[id] {
+				return true
+			}
+		}
+		return false
+	}
+	for id, ps := range matchPositions {
+		if touches(ps) {
+			plan.Matches[id] = true
+		}
+	}
+	kept := map[int64]int64{}
+	for id := range all {
+		if !out[id] {
+			kept[id] = id
+		}
+	}
+	keptMatches := map[int64]int64{}
+	for id := range allMatches {
+		if !plan.Matches[id] {
+			keptMatches[id] = id
+		}
+	}
 	// A living query or search source that names a row the cut leaves out
 	// would be carried frozen, or emptied, for good.
 	losesRow := func(query string) bool {
 		_, okAll := carriedLivingQuery(query, all, allMatches, tournaments)
 		_, okKept := carriedLivingQuery(query, kept, keptMatches, tournaments)
 		return okAll && !okKept
-	}
-	touches := func(ids []int64) bool {
-		for _, id := range ids {
-			if cut[id] {
-				return true
-			}
-		}
-		return false
 	}
 
 	for _, c := range colls {
@@ -132,7 +181,7 @@ func PlanCap(ctx context.Context, source, target storage.Stores, scope string, p
 	}
 	for _, l := range lessons {
 		for _, st := range l.Steps {
-			if cut[st.PositionID] || plan.Collections[st.CollectionID] {
+			if out[st.PositionID] || plan.Collections[st.CollectionID] {
 				plan.Lessons[l.ID] = true
 				break
 			}
@@ -149,28 +198,6 @@ func PlanCap(ctx context.Context, source, target storage.Stores, scope string, p
 		}
 		plan.Decks[d.Deck.ID] = true
 	}
-
-	held, err := capHolders(ctx, target, scope, plan, matchPositions, colls, lessons, decks, all, allMatches, tournaments)
-	if err != nil {
-		return plan, err
-	}
-	for _, p := range positions {
-		if cut[p.ID] {
-			plan.Positions[p.ID] = true
-			continue
-		}
-		if p.SelfHeld || held[p.ID] {
-			continue
-		}
-		_, stored, err := target.Positions().Exists(ctx, scope, p.Zobrist)
-		if err != nil {
-			return plan, err
-		}
-		if !stored {
-			plan.Positions[p.ID] = true
-		}
-	}
-	return plan, nil
 }
 
 // capHolders returns the source positions that a carried match, collection,
