@@ -23,10 +23,11 @@ import (
 // 1 says the exact table is enough to choose between its plays; race cannot
 // import gammonnet anyway.
 //
-// Parity: bound on *gui.App (GenerateBearoffQuestion) as a pure engine
-// function with no storage behind it. The CLI and daemon deliberately get no
-// face: a generated question exists only to be answered under a clock
-// (ADR-0041 consequences).
+// Parity: bound on *gui.App (GenerateBearoffQuestion) and served by the daemon
+// as training.generateBearoff. A generated question is never kept: it exists
+// to be answered, so a face that hands it out also hands out its truth and a
+// seed that replays it, and leaves the clock and the grading to the caller.
+// The CLI has no face: a question with nobody to answer it is no use there.
 
 // Seed sources (ADR-0041 rule 2). The interface names these three and nothing
 // else; « seed » itself is internal vocabulary (CONTEXT.md § Training).
@@ -118,6 +119,15 @@ type BearoffQuestion struct {
 // GenerateBearoff makes one Bearoff question.
 func GenerateBearoff(req BearoffRequest) BearoffQuestion {
 	return generateBearoff(req, rand.New(rand.NewPCG(rand.Uint64(), rand.Uint64())))
+}
+
+// GenerateBearoffSeeded is GenerateBearoff replayable: the same request and
+// seed give the same walk, so a caller that keeps the seed can regenerate the
+// question it graded. The deadline is not read: a speed-dependent fallback
+// would make the seed no longer determine the question.
+func GenerateBearoffSeeded(req BearoffRequest, seed uint64) BearoffQuestion {
+	frozen := time.Unix(0, 0)
+	return generateBearoffWithClock(req, rand.New(rand.NewPCG(seed, seed^0x9e3779b97f4a7c15)), func() time.Time { return frozen })
 }
 
 // generateBearoff is the seeded core, so a test can replay a walk exactly.

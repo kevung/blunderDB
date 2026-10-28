@@ -48,6 +48,7 @@ const (
 	whyStoragePrimitive = "a Storage primitive the desktop reaches through a coarser call — SavePosition, or an importer's own transaction, does this inside one operation; an HTTP client has no such operation and needs the piece"
 	whyEnginePure       = "a pure function of the ENGINE on one position, no storage behind it: the GUI binds it on *gui.App (ComputeCubeMatrix) and the CLI has `cubematrix`, so all three modes answer — but there is nothing for the Database wrapper to hold"
 	whyEngineEvaluate   = "a pure function of the ENGINE on one bare position, nothing read from or written to the tenant: the GUI evaluates the board at rest on *gui.App (StartEvaluationAtRest) and an HTTP or MCP client needs it as a route, which the CLI reaches through `blunderdb call /v1/gammonnet.evaluate` — there is nothing for the Database wrapper to hold"
+	whyTrainingGenerate = "a question generator is for a client that drills a person in front of its own board (ADR-0041): the GUI binds it on *gui.App, an HTTP client needs it as a route, and a CLI sub-command would have nobody to answer the question"
 	whyTenantQuota      = "the daemon's own accounting of what each tenant takes from a SHARED instance (--quota-*): a desktop or CLI database serves one person, who has nothing to share and no quota to read"
 	whySuggestion       = "a constant of the domain, exposed on the wrapper only so the frontend reads it through the same binding as everything else; the CLI prints it beside `list --type tags` and the daemon returns it in the same answer as the vocabulary"
 	whyExplain          = "the explanation is a THEME plus its measured deltas, rendered into a sentence by the client in its own language; the CLI prints an analysis, not a coaching line, and would have to carry its own nine-language templates to say anything here (#298)"
@@ -110,12 +111,14 @@ var serverOnly = map[string]string{
 	// Pure functions of the domain, with no storage behind them. The GUI and
 	// the CLI import the package and call them in Go; only an HTTP client
 	// needs them as routes.
-	"/v1/gammonnet.cubeMatrix": whyEnginePure,
-	"/v1/gammonnet.evaluate":   whyEngineEvaluate,
-	"/v1/tenants.quota":        whyTenantQuota,
-	"/v1/positions.fromOGID":   whyIdentifierDecode,
-	"/v1/positions.fromXGID":   whyPureDomain,
-	"/v1/positions.gnubgId":    whyPureDomain,
+	"/v1/gammonnet.cubeMatrix":        whyEnginePure,
+	"/v1/gammonnet.evaluate":          whyEngineEvaluate,
+	"/v1/training.generateBearoff":    whyTrainingGenerate,
+	"/v1/training.generateEvaluation": whyTrainingGenerate,
+	"/v1/tenants.quota":               whyTenantQuota,
+	"/v1/positions.fromOGID":          whyIdentifierDecode,
+	"/v1/positions.fromXGID":          whyPureDomain,
+	"/v1/positions.gnubgId":           whyPureDomain,
 	// The opening book is data embedded in the binary, not a tenant's rows:
 	// the GUI binds it on *gui.App and the CLI has `openingbook`.
 	"/v1/openingbook.status":   whyPureDomain,

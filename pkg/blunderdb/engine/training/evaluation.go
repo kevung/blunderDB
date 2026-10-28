@@ -26,8 +26,9 @@
 // The cube answer is decided here, not in the interface: the three buttons are
 // graded against CubeAnswer and the interface never compares equities itself.
 //
-// Parity: bound on *gui.App (GenerateEvaluationQuestion), with no CLI or
-// daemon face, for the same reason as GenerateBearoffQuestion.
+// Parity: bound on *gui.App (GenerateEvaluationQuestion) and served by the
+// daemon as training.generateEvaluation, for the same reason as
+// race.GenerateBearoffSeeded; the CLI has no face.
 package training
 
 import (
@@ -161,6 +162,23 @@ func NewGenerator(workers int) (*Generator, error) {
 		judge = judge.WithWorkers(workers)
 	}
 	return &Generator{walker: walker, judge: judge}, nil
+}
+
+// NewGeneratorFrom builds a Generator on searchers the caller owns and sizes:
+// walker at 0-ply, judge at gammonnet.DefaultPly / DefaultPruneK. The daemon
+// lends its pool workers' searchers this way, so a question is charged to its
+// tenant and queued with the other analyses instead of owning engine memory.
+func NewGeneratorFrom(walker, judge *gammonnet.Searcher) *Generator {
+	return &Generator{walker: walker, judge: judge}
+}
+
+// EvaluationSeeded is Evaluation replayable: the same request and seed give
+// the same walk, hence the same question and truth. The walk deadline is not
+// read: a speed-dependent fallback would make the seed no longer determine
+// the question; the ply budget alone bounds the walk.
+func (g *Generator) EvaluationSeeded(req EvaluationRequest, seed uint64) EvaluationQuestion {
+	frozen := time.Unix(0, 0)
+	return g.evaluation(req, rand.New(rand.NewPCG(seed, seed^0x9e3779b97f4a7c15)), func() time.Time { return frozen })
 }
 
 // Evaluation makes one Evaluation question.
