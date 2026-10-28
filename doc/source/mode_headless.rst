@@ -1251,8 +1251,7 @@ Chaque question d'Évaluation, dont la vérité se calcule à 2 plis, est une un
 des travailleurs d'analyse partagés : elle attend son tour de tenant, est
 comptée dans le quota d'analyse (qui, une fois épuisé, refuse l'appel en 429,
 ou abrège une réponse en cours, qui rend alors moins de questions que
-``count``). Le délai de 50 ms du parcours se lit sur l'horloge : un parcours
-retardé retombe sur la source ``"pool"`` à 0 pli, quelle que soit la graine.
+``count``).
 
 La famille ``openingbook`` sert l'exercice Ouverture du panneau Entraînement :
 un jet d'ouverture, ou une réponse, à jouer à un score donné, jugé d'après le

@@ -173,10 +173,12 @@ func NewGeneratorFrom(walker, judge *gammonnet.Searcher) *Generator {
 }
 
 // EvaluationSeeded is Evaluation replayable: the same request and seed give
-// the same walk, hence the same question and truth. The walk deadline still
-// reads the clock, so a walk stalled past it falls back to the pool at k = 0.
+// the same walk, hence the same question and truth. The walk deadline is not
+// read: a speed-dependent fallback would make the seed no longer determine
+// the question; the ply budget alone bounds the walk.
 func (g *Generator) EvaluationSeeded(req EvaluationRequest, seed uint64) EvaluationQuestion {
-	return g.evaluation(req, rand.New(rand.NewPCG(seed, seed^0x9e3779b97f4a7c15)), time.Now)
+	frozen := time.Unix(0, 0)
+	return g.evaluation(req, rand.New(rand.NewPCG(seed, seed^0x9e3779b97f4a7c15)), func() time.Time { return frozen })
 }
 
 // Evaluation makes one Evaluation question.

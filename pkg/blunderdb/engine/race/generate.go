@@ -123,10 +123,11 @@ func GenerateBearoff(req BearoffRequest) BearoffQuestion {
 
 // GenerateBearoffSeeded is GenerateBearoff replayable: the same request and
 // seed give the same walk, so a caller that keeps the seed can regenerate the
-// question it graded. The deadline still reads the clock, so a walk stalled
-// past it falls back to the pool at k = 0 whatever the seed.
+// question it graded. The deadline is not read: a speed-dependent fallback
+// would make the seed no longer determine the question.
 func GenerateBearoffSeeded(req BearoffRequest, seed uint64) BearoffQuestion {
-	return generateBearoff(req, rand.New(rand.NewPCG(seed, seed^0x9e3779b97f4a7c15)))
+	frozen := time.Unix(0, 0)
+	return generateBearoffWithClock(req, rand.New(rand.NewPCG(seed, seed^0x9e3779b97f4a7c15)), func() time.Time { return frozen })
 }
 
 // generateBearoff is the seeded core, so a test can replay a walk exactly.
