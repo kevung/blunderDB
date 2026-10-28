@@ -7403,6 +7403,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/training.generateBearoff:
+    post:
+      operationId: training.generateBearoff
+      tags: [training]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/training.generateEvaluation:
+    post:
+      operationId: training.generateEvaluation
+      tags: [training]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/training.missed:
     post:
       operationId: training.missed

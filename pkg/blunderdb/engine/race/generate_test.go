@@ -2,6 +2,7 @@ package race
 
 import (
 	"math/rand/v2"
+	"reflect"
 	"testing"
 	"time"
 
@@ -429,4 +430,19 @@ func TestTheRollerIsDrawnFromThePoolAndKeptFromASeed(t *testing.T) {
 func generateOnFrozenClock(req BearoffRequest, rng *rand.Rand) BearoffQuestion {
 	frozen := time.Now()
 	return generateBearoffWithClock(req, rng, func() time.Time { return frozen })
+}
+
+func TestASeededQuestionIsReplayable(t *testing.T) {
+	req := BearoffRequest{Source: SourcePool}
+	a, b := GenerateBearoffSeeded(req, 99), GenerateBearoffSeeded(req, 99)
+	if !a.Generated || !reflect.DeepEqual(a, b) {
+		t.Errorf("same seed, different questions: %+v vs %+v", a, b)
+	}
+	differs := false
+	for s := uint64(100); s < 120 && !differs; s++ {
+		differs = !reflect.DeepEqual(a.Position, GenerateBearoffSeeded(req, s).Position)
+	}
+	if !differs {
+		t.Error("twenty other seeds all gave the same position")
+	}
 }

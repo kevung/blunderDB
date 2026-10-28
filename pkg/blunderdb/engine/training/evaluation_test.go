@@ -3,6 +3,7 @@ package training
 import (
 	"math/rand/v2"
 	"os"
+	"reflect"
 	"testing"
 	"time"
 
@@ -390,3 +391,11 @@ func TestPastItsDeadlineAQuestionFallsBackToAPoolSeedAtZeroPlies(t *testing.T) {
 }
 
 func ptr(p domain.Position) *domain.Position { return &p }
+
+func TestASeededQuestionIsReplayable(t *testing.T) {
+	req := EvaluationRequest{Source: SourcePool}
+	a, b := generator.EvaluationSeeded(req, 99), generator.EvaluationSeeded(req, 99)
+	if !a.Generated || !reflect.DeepEqual(a, b) {
+		t.Errorf("same seed, different questions: %+v vs %+v", a, b)
+	}
+}

@@ -42,6 +42,12 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+Non publié
+----------
+
+- **Côté serveur** : ``training.generateBearoff`` et ``training.generateEvaluation`` rendent des questions des exercices Bearoff et Évaluation avec leur vérité (EPC ; chance de gain, verdict du videau, régime), à partir de la source ``pool``, ``board`` ou ``library`` du tenant. Une ``seed`` rend les questions rejouables ; le nombre de questions par appel est borné (50 et 10) et Évaluation passe par les travailleurs d'analyse partagés, comptée dans le quota d'analyse.
+- Voir :ref:`headless`.
+
 0.47.0 (2026-10-26)
 -------------------
 
