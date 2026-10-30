@@ -218,6 +218,7 @@ contiendrait.
    ./blunderdb transcribe --db <path> --draft <id> --finish|--abandon
    ./blunderdb transcribe --db <path> --materialize <document.json>
    ./blunderdb transcribe --db <path> --import <fichier.mat|document.json>
+   ./blunderdb transcribe --db <path> --marks <manifeste.jsonl> [--match <id>]
 
 **Options:**
 
@@ -242,6 +243,8 @@ contiendrait.
   écrire en match d'un seul coup, ou pas du tout.
 * ``--import`` — Fichier ``.mat`` ou document de transcription JSON sur lequel
   ouvrir un nouveau brouillon.
+* ``--marks`` — Écrit à ce chemin le manifeste des repères des vidéos locales,
+  une ligne JSON par coup horodaté (``--match`` le limite à un match).
 
 ``--check`` nomme chaque incohérence avec le numéro de l'action et la partie où
 elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
@@ -284,6 +287,18 @@ Transcription : ``--edit`` ouvre un brouillon sur un match existant,
 brouillon jamais terminé, qui emporte tout ce qui y est écrit. Un match importé
 porte des analyses et des commentaires qu'un ``.mat`` ne porte pas : ``--edit``
 en donne le compte au plus et refuse sans ``--accept-losses``.
+
+``--marks`` écrit un manifeste, sans toucher à la base : une ligne JSON par coup
+qui porte un repère (un instant de la vidéo), pour les seuls matchs dont la
+vidéo est un fichier local. Chaque ligne donne le chemin de la vidéo, le match,
+la partie et le numéro du coup, le joueur, les dés, le coup joué, le plateau
+avant et après, ``roll_tick_ms`` (l'instant du lancer) et ``tick_ms`` (celui du
+coup) ; un coup sans repère n'y figure pas. Une vidéo qui est une URL http(s)
+n'y entre jamais : elle est comptée dans le résumé de fin d'exécution. Un
+fichier local absent du disque est signalé sur la sortie d'erreur et son match
+omis. Aucune image n'est lue ni écrite. La commande n'existe qu'en ligne de
+commande : le démon ``serve`` ne lit aucun fichier vidéo, et le bureau ne
+l'expose pas.
 
 **Exemple:**
 

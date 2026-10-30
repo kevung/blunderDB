@@ -313,18 +313,18 @@ func (s *Service) EditMatch(ctx context.Context, scope string, matchID int64) (*
 	if m.VideoSource != nil {
 		doc.Header.VideoSource = *m.VideoSource
 	}
-	restoreTimecodes(&doc, games, moves)
+	RestoreTimecodes(&doc, games, moves)
 
 	st, err := s.insert(ctx, scope, doc)
 	return st, losses, err
 }
 
-// restoreTimecodes puts each Move's Repères back on the Action that produced it.
+// RestoreTimecodes puts each Move's Repères back on the Action that produced it.
 // The .mat replay lines them up: the game's index, the Move's number in it. An
 // Action that does not find its Move — another kind, another roll — gets none
 // rather than a stranger's; a resignation, which produces no Move, has none to
 // find.
-func restoreTimecodes(doc *transcript.Document, games []*domain.Game, moves map[int64][]*domain.Move) {
+func RestoreTimecodes(doc *transcript.Document, games []*domain.Game, moves map[int64][]*domain.Move) {
 	ann := transcript.Replay(*doc, 0)
 	for i, info := range ann.Actions {
 		if info.MoveNumber < 0 || info.GameIndex < 0 || info.GameIndex >= len(games) {

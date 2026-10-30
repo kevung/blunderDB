@@ -1,11 +1,14 @@
 package cli
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
@@ -34,6 +37,7 @@ func (cli *CLI) runTranscribe(args []string) error {
 	edit := transcribeCmd.Bool("edit", false, "Open a draft on the --match (or return the one already open on it), for a correction finished with --finish")
 	materialize := transcribeCmd.String("materialize", "", "JSON document of Actions (header and actions, dice included) to write as a match in one step, or nothing (requires --db)")
 	importFile := transcribeCmd.String("import", "", "Open a new draft on this .mat or transcription document (JSON), to correct and finish (requires --db)")
+	marks := transcribeCmd.String("marks", "", "Write the manifest of the Repères of the local video sources, one JSON line per timed move, to this .jsonl file (requires --db; --match narrows it to one match)")
 	yes := transcribeCmd.Bool("yes", false, "With --abandon on a draft that never produced a match: confirm that everything typed in it is lost")
 	acceptLosses := transcribeCmd.Bool("accept-losses", false, "With --edit on an imported match: accept that the analyses and comments a .mat cannot carry may be lost")
 
@@ -76,6 +80,15 @@ func (cli *CLI) runTranscribe(args []string) error {
 		fmt.Println("draft that never produced a match loses everything typed")
 		fmt.Println("in it, and asks for --yes.")
 		fmt.Println()
+		fmt.Println("--marks writes a manifest, one JSON line per move that")
+		fmt.Println("carries a Repère (video instants), for the matches whose")
+		fmt.Println("video is a local file: path, match, game, move, dice, play,")
+		fmt.Println("board before and after, roll_tick_ms and tick_ms. A video")
+		fmt.Println("that is an http(s) URL is left out and counted in the")
+		fmt.Println("summary; a local file missing from the disk is named on")
+		fmt.Println("the error output and left out. No image is read or written,")
+		fmt.Println("and nothing is written to the database.")
+		fmt.Println()
 		fmt.Println("Options:")
 		transcribeCmd.PrintDefaults()
 		fmt.Println()
@@ -103,6 +116,9 @@ func (cli *CLI) runTranscribe(args []string) error {
 		fmt.Println("  # Open a draft on a .mat (or a transcription document), then finish it")
 		fmt.Println("  blunderdb transcribe --db database.db --import match.mat")
 		fmt.Println()
+		fmt.Println("  # Export the manifest of Repères of the local videos")
+		fmt.Println("  blunderdb transcribe --db database.db --marks marks.jsonl")
+		fmt.Println()
 		fmt.Println("  # Drop a draft")
 		fmt.Println("  blunderdb transcribe --db database.db --draft 4 --abandon")
 	}
@@ -117,6 +133,13 @@ func (cli *CLI) runTranscribe(args []string) error {
 	}
 	text := formatLower != "json"
 
+	if *marks != "" {
+		if *materialize != "" || *importFile != "" || *finish || *abandon || *edit || *check || *render != "" || *matFile != "" || *draftID != 0 {
+			transcribeCmd.Usage()
+			return fmt.Errorf("--marks takes --db, and --match to narrow it, and nothing else to act on")
+		}
+		return cli.transcribeMarks(*dbPath, *marks, *matchID, text)
+	}
 	if *importFile != "" {
 		if *materialize != "" || *finish || *abandon || *edit || *check || *render != "" || *matFile != "" || *matchID != 0 || *draftID != 0 {
 			transcribeCmd.Usage()
@@ -298,4 +321,47 @@ func printTranscribeResult(r transcribeResult, listing bool) {
 	}
 	fmt.Println("Reported, not refused: a transcription is kept as it was written down,")
 	fmt.Println("so this is a finding and the exit status is 0.")
+}
+
+// transcribeMarks writes the manifest of Repères: the lines come from
+// Database.TranscriptionMarks, this only spells them as JSON lines and the
+// summary beside them.
+func (cli *CLI) transcribeMarks(dbPath, out string, matchID int64, text bool) error {
+	if dbPath == "" {
+		return fmt.Errorf("--marks needs --db")
+	}
+	if err := cli.initDatabase(dbPath); err != nil {
+		return err
+	}
+	marks, sum, err := cli.db.TranscriptionMarks(matchID)
+	if err != nil {
+		return fmt.Errorf("reading the Repères: %w", err)
+	}
+
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	for _, m := range marks {
+		if err := enc.Encode(m); err != nil {
+			return err
+		}
+	}
+	if err := os.WriteFile(out, buf.Bytes(), 0o644); err != nil {
+		return fmt.Errorf("writing %s: %w", out, err)
+	}
+
+	for _, path := range sum.Missing {
+		fmt.Fprintf(os.Stderr, "video not found, match left out: %s\n", path)
+	}
+	if !text {
+		return printJSON(struct {
+			Written string `json:"written"`
+			database.TranscriptionMarksSummary
+		}{out, sum})
+	}
+	fmt.Printf("%d line(s) from %d match(es) written to %s\n", sum.Marks, sum.Matches, out)
+	fmt.Printf("  %d match(es) left out: their video is a URL\n", sum.URLSources)
+	if len(sum.Missing) > 0 {
+		fmt.Printf("  %d match(es) left out: their video file is not on this disk\n", len(sum.Missing))
+	}
+	return nil
 }
