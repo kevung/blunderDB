@@ -13,18 +13,20 @@
  * - `{ kind: 'clearJournal', session?, id }`
  *
  * Worker → fil principal
- * - `{ kind: 'rate', fps }` — la cadence d'échantillonnage voulue, en images du média par seconde
+ * - `{ kind: 'rate', fps }` — la cadence d'échantillonnage voulue, en images du média par seconde :
+ *   `stateRate` hors fenêtre, `denseRate` dans une fenêtre (`automata.js`), envoyée à chaque changement
  * - `{ kind: 'frameDone' }` — l'image est traitée, la suivante peut partir
  * - `{ kind: 'event', event }` — un événement du contrat
  * - `{ kind: 'journalCleared', id }`
  * - `{ kind: 'error', message }`
  */
 
+import { THRESHOLDS } from './automata.js';
 import { createDescriber, createDetector } from './descriptors.js';
 import { clearJournal as clearStoredJournal, openJournal as openStoredJournal } from './journal.js';
 
 /** Cadence de la comparaison d'états hors fenêtre (ADR-0109 règle 1 : 1–2 img/s). */
-export const STATE_RATE = 2;
+export const STATE_RATE = THRESHOLDS.stateRate;
 
 /**
  * @param {object} options
@@ -40,6 +42,7 @@ export function createWorkerCore({ post, openJournal = openStoredJournal, clearJ
     /** @type {Promise<Awaited<ReturnType<typeof openStoredJournal>>> | null} */
     let journal = null;
     let running = false;
+    let rate = STATE_RATE;
 
     /** @param {unknown} err */
     const fail = (err) => post({ kind: 'error', message: err instanceof Error ? err.message : String(err) });
@@ -63,7 +66,8 @@ export function createWorkerCore({ post, openJournal = openStoredJournal, clearJ
                 journal.catch(fail);
                 detector = createDetector();
                 running = true;
-                post({ kind: 'rate', fps: STATE_RATE });
+                rate = detector.rate;
+                post({ kind: 'rate', fps: rate });
                 return;
             case 'frame': {
                 try {
@@ -75,6 +79,11 @@ export function createWorkerCore({ post, openJournal = openStoredJournal, clearJ
                             () => {}
                         );
                     for (const event of detector.push(record)) post({ kind: 'event', event });
+                    // The detector opens and closes the dense windows; the sampler follows.
+                    if (detector.rate !== rate) {
+                        rate = detector.rate;
+                        post({ kind: 'rate', fps: rate });
+                    }
                 } finally {
                     post({ kind: 'frameDone' });
                 }
