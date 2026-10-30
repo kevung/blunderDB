@@ -34,9 +34,11 @@ func referenced(err error) error {
 	return err
 }
 
-// isForeignKeyViolation reports whether err is PostgreSQL refusing a row for a
-// FOREIGN KEY: the parent the row points at is gone.
-func isForeignKeyViolation(err error) bool {
+// isForeignKeyViolation reports whether err is PostgreSQL refusing a row for
+// the FOREIGN KEY named constraint. The name is part of the test: a table with
+// several foreign keys would otherwise have a refusal on one of them taken for
+// a refusal on the one the caller expects.
+func isForeignKeyViolation(err error, constraint string) bool {
 	var pe *pgconn.PgError
-	return errors.As(err, &pe) && pe.Code == pgForeignKeyViolation
+	return errors.As(err, &pe) && pe.Code == pgForeignKeyViolation && pe.ConstraintName == constraint
 }

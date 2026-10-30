@@ -263,7 +263,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced != 0, c.IsCloseCube != 0,
 			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate))
-		if isForeignKeyViolation(err) {
+		if isForeignKeyViolation(err, "analysis_position_tenant_fkey") {
 			// The position was deleted after the ownership check: the same
 			// refusal requireOwned gives, without the driver's text.
 			return fmt.Errorf("postgres: save analysis for position %d: postgres: position: %w", positionID, storage.ErrNotFound)

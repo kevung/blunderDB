@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -68,8 +69,8 @@ func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportO
 	if err != nil {
 		return rep, err
 	}
-	if transferCommitted != nil {
-		transferCommitted(dst)
+	if hook := transferCommitted.Load(); hook != nil {
+		(*hook)(dst)
 	}
 	// The import derives the provenance of the analyses it writes in the
 	// statements that write them; this pass derives what another writer left
@@ -82,7 +83,8 @@ func (d *Database) transferWith(ctx context.Context, dst *Database, opts ExportO
 
 // transferCommitted, when a test sets it, runs once the destination's import
 // has committed: the window in which another handle can write to it.
-var transferCommitted func(dst *Database)
+// Atomic: a transfer running in another goroutine reads it while a test sets it.
+var transferCommitted atomic.Pointer[func(dst *Database)]
 
 // holdForRead counts a reader of d's library among its imports, so that a
 // vacuum is refused while it reads; it is refused itself while one runs.

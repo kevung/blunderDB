@@ -71,11 +71,6 @@ propre issue le jour où il est lancé.
   de bureau. Le prendre rendrait le bureau lecture seule tant que le démon tourne. Décision de
   l'utilisateur (lot 2026-10-25b) : pas de verrou mono-écrivain pour `serve` SQLite ; l'entrée
   reste ouverte.
-- **Crochet de test global `transferCommitted`** (`database/db_transfer.go`) : variable globale
-  non synchronisée.
-- **`isForeignKeyViolation`** (`storage/postgres/errors_postgres.go`) teste le SQLSTATE 23503 et
-  non le nom de la contrainte : une autre clé étrangère serait prise pour celle attendue.
-- **Préfixe `postgres:` doublé** sur l'erreur de commit d'une suppression de match.
 
 ## Ouvert — Moteur
 
@@ -115,9 +110,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   (`embeddedMatchId`) et chaque effet global y est coupé par un garde `embedded` (liste, tri
   partagé, clavier, ids DOM `match-tab-*` en double) ; un effet ajouté sans garde touche l'état
   du vrai panneau. L'extraction du volet de détail règle les deux.
-- **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections,
-  leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la
-  GUI n'offre pas ce choix.
 
 - **Restes de GB-C14 (libellés, vocabulaire, gestes)** : libellés de groupes de la barre
   d'outils non faits ; en-tête de panneau non factorisé dans `PanelTable` ; noms de touches en
@@ -188,9 +180,13 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
 
 ## Historique — items faits
 
+- **2026-10-31 — Export GUI : sélecteur de paquets** : déjà livré (`ExportDatabaseModal.svelte`, listes collections, leçons et paquets ; d64107236, 64bb447ea).
 - **2026-10-31 — `mergeWatchedLibraries` et le plancher de lecture** : la base refusée par le
   plancher est nommée dans le bandeau du dossier surveillé, avec le schéma requis (#862).
 
+- **2026-10-31 — stockage** : `isForeignKeyViolation` teste le nom de la contrainte, le préfixe
+  `postgres:` n'est plus doublé sur l'erreur de commit d'une suppression de match, le crochet
+  `transferCommitted` est atomique (#864).
 - **2026-10-31 — relevé des entrées « Ouvert » déjà livrées** : empreinte d'une position copiée
   prise dans la transaction d'import (#828, `8225586de`) ; `SwapPlayers` et `DeleteCascade`
   écrits une fois dans `sqlshared` (#829, `1ac6cbff5`) ; signature et origine d'un commentaire

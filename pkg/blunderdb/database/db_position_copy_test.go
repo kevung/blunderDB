@@ -151,16 +151,17 @@ func TestCopyPosition_WriteAfterCommitIsNotTheCopys(t *testing.T) {
 		t.Fatalf("Borrow: %v", err)
 	}
 	var injected error
-	transferCommitted = func(*Database) {
+	hook := func(*Database) {
 		held, found, err := b.store.Positions().Exists(context.Background(), "", storage.ZobristOf(&pos))
 		if err == nil && found {
 			_, err = b.store.Comments().Add(context.Background(), "", held, "written by another handle")
 		}
 		injected = err
 	}
-	t.Cleanup(func() { transferCommitted = nil })
+	transferCommitted.Store(&hook)
+	t.Cleanup(func() { transferCommitted.Store(nil) })
 	r, err := CopyPosition(context.Background(), src, dst, id)
-	transferCommitted = nil
+	transferCommitted.Store(nil)
 	if err != nil || injected != nil || !r.Created {
 		t.Fatalf("CopyPosition: created %v, %v; injected write %v", r.Created, err, injected)
 	}
@@ -169,5 +170,27 @@ func TestCopyPosition_WriteAfterCommitIsNotTheCopys(t *testing.T) {
 	}
 	if _, found := heldIn(t, dst, pos); !found {
 		t.Error("the take-back removed the other handle's write")
+	}
+}
+
+// The test hook is read by a transfer while another goroutine sets it: under
+// -race a plain variable is reported here.
+func TestTransferCommittedHook_IsSafeToSetDuringATransfer(t *testing.T) {
+	src, dst, id, _ := copyFixture(t)
+	hook := func(*Database) {}
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		_, _ = CopyPosition(context.Background(), src, dst, id)
+	}()
+	for {
+		select {
+		case <-done:
+			transferCommitted.Store(nil)
+			return
+		default:
+			transferCommitted.Store(&hook)
+			transferCommitted.Store(nil)
+		}
 	}
 }
