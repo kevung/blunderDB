@@ -41,4 +41,5 @@ La synthèse se construit au fil des réponses dans `synthese.md` (une section p
 confirme, ce qu'elle change, les expériences qu'elle impose) ; l'ADR de la phase 1 et la feuille de
 route s'en tirent une fois les neuf reçues.
 
-Reçues : les neuf.
+Reçues : les neuf. `synthese.md` est complète (une section par réponse, puis « Conclusions
+transversales » : cadre révisé, risques découverts hors vision, phases 0 à 3 avec leurs ADR).
