@@ -54,8 +54,12 @@ branche.
 | V0.4 | **LNA Chromium ≥ 142 sous WebView2** : la lecture vidéo actuelle par bouclage déclenche-t-elle permission ou blocage ? Poste Windows requis (décidé : Linux seul disponible ; issue ouverte, en attente). Risque **hors vision** : touche le produit tel qu'il est. | Z-media | poste Windows | non pour le chantier, **oui pour le produit** | Sonnet |
 | V0.5 | **Histogramme `t_lisible − roll_tick_ms`** sur 50 coups de deux vidéos : à la main (Kevin note l'instant où les dés sont lisibles), un script Z-tools trace l'écart. Fixe la fenêtre de l'ADR-0109 et dit si les Repères actuels valent comme fenêtres. | Z-tools | — | non (règle 0110) | Sonnet |
 
-Un rouge sur V0.1 **arrête le chantier** ; le plan se réécrit alors (Go pur avec un
-décodeur ? un outil externe ? renoncer ?) et c'est une décision de Kevin, pas d'un ouvrier.
+V0.1 rendu **vert** (`bancs/01-webview-linux.md`, WebKitGTK 2.54) : Worker depuis `wails://`
+10/10 en dev et dans le binaire, ≈ 5 ms par image, seeks exacts, lecture à 2×–4× encore
+analysable. Surprises : `requestVideoFrameCallback` présent mais muet (repli `currentTime` +
+`requestAnimationFrame`, ADR-0109 règle 4 réécrite), `play()` jamais résolu si `playbackRate ≠ 1`,
+WebCodecs gèle la page. À reprendre : rVFC sur une carte Intel/AMD et sous Wayland ; canvas teinté
+après `ended`. Le chantier continue ; V1.0 (accepter l'ADR-0109) peut s'ouvrir.
 
 V0.2 rendu (`bancs/02-couverture-sql.md`) : fenêtres [−1 ; +2] s = 32 % de la vidéo, 94 % des
 jets à moins de 10 s de l'action précédente, Repères utilisables comme fenêtres (médiane 4 s,

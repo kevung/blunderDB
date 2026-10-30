@@ -1,8 +1,9 @@
 # ADR-0109 — Un événement détecté ouvre une fenêtre, et le Repère garde l'instant du média
 
-Statut : proposée ; acceptation après le banc V0.1 (Worker depuis `wails://` sous WebKitGTK) —
-un rouge arrête le chantier. Le banc V0.2 (couverture des fenêtres en SQL,
-`tasks/transcription-vision/bancs/02-couverture-sql.md`) est rendu : la règle 1 en tient compte.
+Statut : proposée ; les deux bancs qui la conditionnaient sont rendus
+(`tasks/transcription-vision/bancs/01-webview-linux.md` : Worker depuis `wails://` vert sous
+WebKitGTK ; `02-couverture-sql.md`) et les règles 1 et 4 en tiennent compte. L'acceptation est
+l'issue V1.0 du plan (`tasks/transcription-vision/chantiers.md`).
 Voir aussi : ADR-0108 (le cadre de l'assistant : fichier local, pixel dans un Worker, trois
 états, commodités du poste), ADR-0082 (le Repère et sa pose), ADR-0092 (aucune frappe n'est
 avalée), ADR-0044 (transcrire n'est pas jouer), ADR-0111 (la lecture du coup, à venir).
@@ -53,9 +54,14 @@ GStreamer. Et le Repère du jet n'est pas l'instant de l'événement : la premi�
    durées minimales à 10 img/s (lancer ≥ 1 image, repos 5 images sous E_lo, mains dans 2, mains
    hors 3) ; le jet d'ouverture, un dé par moitié, est un cas de l'automate des dés. Ces
    valeurs sont des choix d'ingénierie, réglés sur le banc (règle 8). Un automate n'émet que
-   des événements `{ type, mediaTime, état }` : `mediaTime` est celui de
-   `requestVideoFrameCallback` pour la première image de l'épisode — la première image calme
-   pour un repos, pas celle qui le confirme —, l'état l'un des trois de l'ADR-0108 règle 5.
+   des événements `{ type, mediaTime, état }` : `mediaTime` est l'instant de la première image
+   de l'épisode — la première image calme pour un repos, pas celle qui le confirme —, l'état
+   l'un des trois de l'ADR-0108 règle 5. L'horloge est `metadata.mediaTime` de
+   `requestVideoFrameCallback` **si un premier rappel est reçu**, sinon `currentTime` lu dans
+   `requestAnimationFrame`, une image retenue à chaque changement : sous WebKitGTK 2.54 la
+   fonction existe mais ne rappelle jamais, et la capacité se détecte par un rappel reçu, pas
+   par `typeof` (ADR-0004). L'écart est d'au plus une image à 1× ; en lecture accélérée, les
+   Repères tolèrent ±1 image.
    Les automates sont une machine pure, hors de `transcriptionKeys.js`.
 5. **La détection ne pose aucun Repère ; elle cale celui que l'utilisateur pose.** Quand la
    première touche de dé d'une Action nouvelle pose l'instant du jet (ADR-0082 règle 3) et que
@@ -103,6 +109,13 @@ GStreamer. Et le Repère du jet n'est pas l'instant de l'événement : la premi�
   touche de dé pose l'instant du jet — celui où les dés se sont posés si un repos détecté sûr
   couvre l'instant courant (ADR-0109 règle 5), l'instant courant sinon — et la validation pose
   l'instant de l'action, à l'instant courant de la vidéo ».
+- Mesuré sur le banc V0.1 (WebKitGTK 2.54) : ≈ 5 ms de thread principal par image lue en
+  1080p, quelle que soit la taille de la cible (`willReadFrequently: true`) ; seeks exacts à
+  l'image, 46 ms vers une image clé, 165 ms en fin de groupe ; une passe par seeks à 1 img/s
+  sur une heure ≈ 6 min. Pièges pour le code de la phase : ne jamais attendre la promesse de
+  `play()` quand `playbackRate ≠ 1` ; surveiller une `SecurityError` de `getImageData` après
+  `ended` suivi d'un seek ; ne jamais appeler `VideoDecoder.isConfigSupported` (gel de la page),
+  WebCodecs est exclu sous Linux.
 - Rejeté : une pré-passe accélérée (aucun moteur ne tient 10 img/s sur une heure en 5 min) ;
   un Repère écrit par la détection seule (la colonne resterait un fait rapporté sans que
   personne l'ait rapporté) ; une colonne « origine du Repère » (un changement de schéma pour un

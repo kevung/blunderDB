@@ -4,10 +4,10 @@
 
 ## État
 
-- main = `f208f5060`, release **0.47.1** coupée le 2026-10-28 (tags 0.47.1, 0.47.0, 0.46.1).
-- Environ 155 commits depuis `98b655e05` (reprise du 22 octobre).
-- Nightly verte sur `f208f5060` (2026-10-30).
-- Une seule issue ouverte : #664.
+- Release **0.47.1** coupée le 2026-10-28 (tags 0.47.1, 0.47.0, 0.46.1) ; main a avancé le 30 oct.
+  (chantier vision : ADR-0108 à 0111, lot V0, `transcribe --marks`, CORS du serveur média, doc YouTube).
+- Nightly verte sur `f208f5060` (2026-10-30) ; non relancée depuis les fusions du 30 oct.
+- Issues ouvertes : #664, #842, #845 (vérif. à la main), #846 (poste Windows), #847 (annotation).
 
 ## Fusionné depuis le 22 octobre
 
@@ -44,9 +44,15 @@ sa partie encore utile (quiz et `duel --play` reconnaissent un coup par le plate
 
 1. #664 livre d'ouverture : rapatrier `book.jsonl.gz` de smith quand le calcul est terminé.
 2. #842 : quiz et `duel --play` par le plateau atteint (extrait de la PR #809).
-3. Chantier vision (`tasks/transcription-vision/`) : ADR-0108 acceptée, 0109-0111 proposées ;
-   `chantiers.md` attend la validation de Kevin avant l'ouverture des issues (lot V0 bancs + H1-H3).
-3. Travail de fond : voir `tasks/BACKLOG.md`.
+3. Chantier vision (`tasks/transcription-vision/README.md` → `chantiers.md`). Lot V0 fait le 30 oct. :
+   V0.1 vert (Worker depuis `wails://`), V0.2 rendu (hiérarchie par états = mode normal), V0.3 fusionné
+   (#845 reste ouverte pour la vérification à la main sous `make dev`, procédure dans `bancs/03-cors.md`),
+   V0.5 outils livrés (#847 : Kevin annote 50 coups), V2.1 `transcribe --marks` fusionné ; H1, H2,
+   Dependabot #112 clos ; #846 (LNA WebView2) attend un poste Windows.
+   **Suite** : issue V1.0 = accepter l'ADR-0109 (statut, réécriture en place de l'ADR-0082 règle 3,
+   index), puis le lot V1 dans l'ordre de `chantiers.md` (V1.1 ∥ V1.2 d'abord). À lancer par
+   `/traiter-lot` dans une session **Opus** ; Fable ne sert qu'aux ADR et aux arbitrages.
+4. Travail de fond : voir `tasks/BACKLOG.md`.
 
 ## Pièges
 
