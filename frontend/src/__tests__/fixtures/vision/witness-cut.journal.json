@@ -1,0 +1,34 @@
+{
+    "description": "Synthetic 320x180 scene at 2 img/s: the left dice ROI changes at 1 s; the witness is cut at 3-3.5 s and again at 6 s.",
+    "calibration": {
+        "width": 320,
+        "height": 180,
+        "rois": [
+            { "name": "diceLeft", "x": 60, "y": 70, "w": 40, "h": 30 },
+            { "name": "diceRight", "x": 220, "y": 70, "w": 40, "h": 30 }
+        ],
+        "witness": { "x": 0, "y": 0, "w": 48, "h": 24 }
+    },
+    "expected": [
+        { "type": "frame.uncertain", "mediaTime": 3, "state": "uncertain" },
+        { "type": "frame.uncertain", "mediaTime": 6, "state": "uncertain" }
+    ],
+    "records": [
+        { "t": 0, "u": 0, "w": null, "r": { "diceLeft": [0.4694, null, null], "diceRight": [0.4628, null, null] } },
+        { "t": 0.5, "u": 0, "w": 0, "r": { "diceLeft": [0.4694, 0, 0], "diceRight": [0.4628, 0, 0] } },
+        { "t": 1, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0.4934, 0.4934], "diceRight": [0.4628, 0, 0] } },
+        { "t": 1.5, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0, 0.4934], "diceRight": [0.4628, 0, 0] } },
+        { "t": 2, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0, 0.4934], "diceRight": [0.4628, 0, 0] } },
+        { "t": 2.5, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0, 0.4934], "diceRight": [0.4628, 0, 0] } },
+        { "t": 3, "u": 1, "w": 0.9575, "r": { "diceLeft": [0.4608, 0.4507, null], "diceRight": [0.4628, 0, null] } },
+        { "t": 3.5, "u": 1, "w": 0.9852, "r": { "diceLeft": [0.4595, 0.4515, null], "diceRight": [0.4628, 0, null] } },
+        { "t": 4, "u": 1, "w": 0.9644, "r": { "diceLeft": [0.4734, 0.4491, null], "diceRight": [0.4628, 0, null] } },
+        { "t": 4.5, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0, 0], "diceRight": [0.4628, 0, 0] } },
+        { "t": 5, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0, 0], "diceRight": [0.4628, 0, 0] } },
+        { "t": 5.5, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0, 0], "diceRight": [0.4628, 0, 0] } },
+        { "t": 6, "u": 1, "w": 0.9575, "r": { "diceLeft": [0.4587, 0.4448, null], "diceRight": [0.4628, 0, null] } },
+        { "t": 6.5, "u": 1, "w": 0.9575, "r": { "diceLeft": [0.4734, 0.4448, null], "diceRight": [0.4628, 0, null] } },
+        { "t": 7, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0, 0], "diceRight": [0.4628, 0, 0] } },
+        { "t": 7.5, "u": 0, "w": 0, "r": { "diceLeft": [0.4734, 0, 0], "diceRight": [0.4628, 0, 0] } }
+    ]
+}
