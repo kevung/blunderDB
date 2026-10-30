@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -294,5 +295,27 @@ func TestCLI_DuelStartSettings(t *testing.T) {
 		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "7", "--away", away}); err == nil {
 			t.Errorf("--away %s accepted", away)
 		}
+	}
+}
+
+func TestStepsOfAcceptsEquivalentSpelling(t *testing.T) {
+	var p domain.Position
+	for i := range p.Board.Points {
+		p.Board.Points[i] = domain.Point{Color: domain.None}
+	}
+	p.Board.Points[8] = domain.Point{Checkers: 1, Color: domain.Black}
+	p.Board.Points[24] = domain.Point{Checkers: 2, Color: domain.White}
+	p.Dice = [2]int{3, 2}
+	p.PlayerOnRoll = domain.Black
+	p.Score = [2]int{-1, -1}
+	d := &duel.Decision{Kind: duel.DecideMove, Position: p}
+	for _, n := range []string{"8/5 5/3", "8/6 6/3"} {
+		steps, err := stepsOf(d, n)
+		if err != nil || len(steps) != 2 {
+			t.Fatalf("%q: steps=%v err=%v", n, steps, err)
+		}
+	}
+	if _, err := stepsOf(d, "8/7 7/1"); err == nil {
+		t.Fatal("an impossible play must be refused")
 	}
 }

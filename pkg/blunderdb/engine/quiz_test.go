@@ -120,3 +120,38 @@ func TestQuizPR(t *testing.T) {
 		t.Errorf("no decision gives 0, read with the count: got %v", got)
 	}
 }
+
+// otherSpelling returns the spelling of a lone checker's 3-2 run from the 8
+// point that LegalMoves did not keep, and the position it is played from.
+func otherSpelling(t *testing.T) (domain.Position, string) {
+	t.Helper()
+	var p domain.Position
+	for i := range p.Board.Points {
+		p.Board.Points[i] = domain.Point{Color: domain.None}
+	}
+	p.Board.Points[8] = domain.Point{Checkers: 1, Color: domain.Black}
+	p.Board.Points[24] = domain.Point{Checkers: 2, Color: domain.White}
+	p.Dice = [2]int{3, 2}
+	p.PlayerOnRoll = domain.Black
+	p.Score = [2]int{-1, -1}
+	plays := domain.LegalMoves(&p)
+	if len(plays) != 1 {
+		t.Fatalf("want one play, got %d", len(plays))
+	}
+	other := "8/6 6/3"
+	if plays[0].Notation == other {
+		other = "8/5 5/3"
+	}
+	return p, other
+}
+
+func TestGradeCheckerAnswerNotation_EquivalentSpellingIsLegal(t *testing.T) {
+	pos, other := otherSpelling(t)
+	v := GradeCheckerAnswerNotation(&pos, nil, other)
+	if !v.Legal {
+		t.Fatalf("%q reaches the same board as the kept play and must be legal", other)
+	}
+	if v := GradeCheckerAnswerNotation(&pos, nil, "8/7 7/1"); v.Legal {
+		t.Fatalf("an impossible play must stay illegal")
+	}
+}

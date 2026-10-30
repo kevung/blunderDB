@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"math"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -13,6 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // runDuel is `blunderdb duel`: a Duel played without an interface, one Action
@@ -359,24 +359,19 @@ func (cli *CLI) runDuelAct(kind duel.PlayKind, args []string) error {
 }
 
 // stepsOf finds, among the legal plays of the awaited Decision, the one the
-// notation names — whatever the order its checkers are written in.
+// notation names — by the board it reaches, whatever its spelling or order.
 func stepsOf(d *duel.Decision, notation string) ([]domain.CheckerStep, error) {
 	if d.Kind != duel.DecideMove {
 		return nil, fmt.Errorf("the Duel awaits a %s decision, not a checker play", d.Kind)
 	}
-	want := strings.Fields(notation)
-	if len(want) == 0 {
+	if len(strings.Fields(notation)) == 0 {
 		return nil, fmt.Errorf("--play is required: the legal plays are listed by `duel show`")
 	}
-	slices.Sort(want)
-	for _, lp := range domain.LegalMoves(&d.Position) {
-		got := strings.Fields(domain.Notation(lp.Steps, int(d.Position.PlayerOnRoll)))
-		slices.Sort(got)
-		if slices.Equal(got, want) {
-			return lp.Steps, nil
-		}
+	lp, err := engine.ResolvePlay(&d.Position, domain.LegalMoves(&d.Position), notation, false)
+	if err != nil {
+		return nil, fmt.Errorf("%q is not a legal play of this roll: `duel show` lists them", notation)
 	}
-	return nil, fmt.Errorf("%q is not a legal play of this roll: `duel show` lists them", notation)
+	return lp.Steps, nil
 }
 
 // runDuelForfeit has a Side give the match up: the Duel ends, won by the
