@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { censusDistance, censusRoi, toGray } from '../vision/census.js';
-import { createDescriber, createDetector, replay } from '../vision/descriptors.js';
-import { CALIBRATION, H, makeFrame, scene, texture, W } from './fixtures/vision/frames.js';
+import { createDescriber, createDetector, replay, WITNESS_THRESHOLD, witnessIsUncertain } from '../vision/descriptors.js';
+import { CALIBRATION, H, inside, makeFrame, scene, texture, W } from './fixtures/vision/frames.js';
 
 const ROI = CALIBRATION.rois[0];
 const census = (/** @type {Uint8ClampedArray} */ data) => censusRoi(toGray(data, W, H), W, ROI);
@@ -61,6 +61,32 @@ describe('describer and detector', () => {
         const after = d.describe({ mediaTime: 1, data: scene([CALIBRATION.witness, ROI], 3) });
         expect(after.u).toBe(0);
         expect(after.r.diceLeft[2]).toBe(0);
+    });
+
+    it('holds the witness threshold at 60 % of pixels, strictly above', () => {
+        expect(WITNESS_THRESHOLD).toBe(0.6);
+        expect(witnessIsUncertain(0.6)).toBe(false);
+        expect(witnessIsUncertain(0.6 + 1e-9)).toBe(true);
+        expect(witnessIsUncertain(null)).toBe(false);
+    });
+
+    it('decides the frame near the threshold from the witness alone', () => {
+        // Retexturing the left k columns of the 48×24 witness changes about (k + 1) / 46 of its pixels.
+        /** @param {number} k */
+        const cut = (k) => {
+            const d = createDescriber(CALIBRATION);
+            const r = { x: 0, y: 0, w: k, h: 24 };
+            d.describe({ mediaTime: 0, data: makeFrame((x, y) => texture(x, y)) });
+            return d.describe({ mediaTime: 0.5, data: makeFrame((x, y) => (inside(r, x, y) ? texture(y, x, 4) : texture(x, y))) });
+        };
+        const below = cut(27);
+        expect(below.w).toBeGreaterThan(0.54);
+        expect(below.w).toBeLessThan(0.6);
+        expect(below.u).toBe(0);
+        const above = cut(32);
+        expect(above.w).toBeGreaterThan(0.6);
+        expect(above.w).toBeLessThan(0.7);
+        expect(above.u).toBe(1);
     });
 
     it('emits one frame.uncertain per episode, at its first frame', () => {

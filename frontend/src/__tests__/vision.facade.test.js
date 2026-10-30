@@ -96,6 +96,25 @@ describe('vision facade', () => {
         expect(h.events.at(-1)).toMatchObject({ type: 'vision.error', state: 'uncertain', payload: { reason: 'tainted' } });
         h.frame(2);
         expect(h.frames().length).toBe(0);
+        expect(h.sent.at(-1).m).toEqual({ kind: 'stop' });
+    });
+
+    it('starts again after a tainted halt, without a stop() in between', () => {
+        let tainted = true;
+        const h = harness({
+            grab: () => {
+                if (tainted) throw new TaintedFrameError();
+                return /** @type {any} */ ({ width: 320, height: 180, data: new Uint8ClampedArray(320 * 180 * 4) });
+            }
+        });
+        h.vision.calibrate(CALIBRATION);
+        h.vision.start({ session: 's' });
+        h.frame(1);
+        tainted = false;
+        h.vision.start({ session: 's' });
+        expect(h.sent.map((s) => s.m.kind)).toEqual(['calibrate', 'start', 'stop', 'start']);
+        h.frame(2);
+        expect(h.frames().length).toBe(1);
     });
 
     it('resolves clearJournal on the worker acknowledgement, and dispose terminates', async () => {

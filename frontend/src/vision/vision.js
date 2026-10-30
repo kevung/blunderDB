@@ -66,7 +66,11 @@ export function createVision({ video, createWorker = defaultWorker, createGrabbe
     function halt(reason) {
         if (halted) return;
         halted = true;
+        // A halt ends the run as stop() would: the worker flushes its journal, and a later
+        // start() — after the source is reloaded — begins a fresh run.
+        running = false;
         clock.stop();
+        worker.postMessage({ kind: 'stop' });
         emit(makeEvent(EVENT_TYPES.ERROR, now(), STATES.UNCERTAIN, { reason }));
     }
 

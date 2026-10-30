@@ -19,6 +19,15 @@ import { EVENT_TYPES, makeEvent, normalizeCalibration, STATES } from './contract
 /** Fraction des pixels du témoin au-delà de laquelle l'image est incertaine (ADR-0109 règle 4). */
 export const WITNESS_THRESHOLD = 0.6;
 
+/**
+ * L'image est incertaine quand le témoin change **strictement** au-delà du seuil.
+ * @param {number | null} w fraction des pixels du témoin changés, `null` sans image précédente
+ * @param {number} [threshold]
+ */
+export function witnessIsUncertain(w, threshold = WITNESS_THRESHOLD) {
+    return w !== null && w > threshold;
+}
+
 /** @typedef {{ t: number, u: 0 | 1, w: number | null, r: Record<string, [number, number | null, number | null]> }} DescriptorRecord */
 
 /** @param {number | null} v */
@@ -56,7 +65,7 @@ export function createDescriber(calibration, { tau = DEFAULT_TAU, witnessThresho
             const witness = censusRoi(gray, width, cal.witness, tau).bits;
             const w = prevWitness ? censusChangedFraction(prevWitness, witness) : null;
             prevWitness = witness;
-            const uncertain = w !== null && w > witnessThreshold;
+            const uncertain = witnessIsUncertain(w, witnessThreshold);
             // A jump of the witness means the whole picture moved (cut, exposure, camera):
             // every background is stale, and this frame becomes the new reference.
             if (uncertain) background.clear();
