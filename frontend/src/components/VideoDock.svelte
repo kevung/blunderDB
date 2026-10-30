@@ -17,6 +17,9 @@
      *   onrotate?: () => void,
      *   onrelocate?: (path: string) => void,
      *   onended?: () => void,
+     *   calibrationKey?: string | number | null,
+     *   viewLost?: boolean,
+     *   oncalibration?: (c: any) => void,
      *   onBoard?: boolean,
      *   theatreTarget?: HTMLElement | null,
      *   ontheatre?: () => void
@@ -33,6 +36,9 @@
         onrotate = undefined,
         onrelocate = undefined,
         onended = undefined,
+        calibrationKey = null,
+        viewLost = false,
+        oncalibration = undefined,
         onBoard = $bindable(false),
         theatreTarget = null,
         ontheatre = undefined
@@ -154,7 +160,7 @@
             >
         </div>
     {/if}
-    <div class="video-dock-stage"><VideoPane bind:this={pane} {source} {startMs} {rotation} {onrelocate} {onended} /></div>
+    <div class="video-dock-stage"><VideoPane bind:this={pane} {source} {startMs} {rotation} {onrelocate} {onended} {calibrationKey} {viewLost} {oncalibration} /></div>
 </div>
 
 <style>

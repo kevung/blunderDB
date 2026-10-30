@@ -2154,6 +2154,7 @@
                             source={videoSource}
                             startMs={videoStart}
                             rotation={videoRotation}
+                            calibrationKey={draftId}
                             onrotate={rotateVideo}
                             onrelocate={(/** @type {string} */ path) => attachVideo(path)}
                             theatreTarget={$theatreStore ? $theatreTargetStore : null}
