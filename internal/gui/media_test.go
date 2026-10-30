@@ -273,6 +273,17 @@ func TestMediaHostCORS(t *testing.T) {
 		if got := resp.Header.Get("Access-Control-Allow-Origin"); got != origin {
 			t.Fatalf("%s %q: allow-origin %q", c.method, c.rng, got)
 		}
+		if resp.Header.Get("Vary") != "Origin" {
+			t.Fatalf("%s %q: vary %q", c.method, c.rng, resp.Header.Get("Vary"))
+		}
+		if c.method == "GET" {
+			exp := resp.Header.Get("Access-Control-Expose-Headers")
+			for _, want := range []string{"Content-Range", "Accept-Ranges"} {
+				if !strings.Contains(exp, want) {
+					t.Fatalf("%s %q: expose-headers %q lacks %s", c.method, c.rng, exp, want)
+				}
+			}
+		}
 	}
 	if !strings.Contains(do("OPTIONS", "").Header.Get("Access-Control-Allow-Headers"), "Range") {
 		t.Fatal("preflight does not allow Range")

@@ -16,3 +16,6 @@ Procédure à la main :
    g.getImageData(0, 0, 1, 1);
    ```
 3. Attendu : aucune `SecurityError`. Vérifier aussi qu'un saut (Range) et la lecture marchent.
+
+Aucune redirection à traiter : `ServeContent` ne redirige pas.
+OPTIONS répond 204 avant le contrôle du jeton, sans fuite : aucun corps, aucun en-tête propre au fichier.
