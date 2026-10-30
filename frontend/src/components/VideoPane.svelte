@@ -538,6 +538,7 @@
         <video
             bind:this={video}
             {src}
+            crossorigin="anonymous"
             controls
             controlslist="nofullscreen"
             preload="metadata"

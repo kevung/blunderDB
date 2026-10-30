@@ -70,7 +70,26 @@ func (h *mediaHost) handler() http.Handler {
 	return mux
 }
 
+// allowOrigin lets the page that asked read the bytes: a <video crossorigin> served without
+// it would taint any canvas it is drawn on. The origin is echoed, never "*", and only the
+// token-guarded media route carries it.
+func allowOrigin(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Vary", "Origin")
+	if o := r.Header.Get("Origin"); o != "" {
+		w.Header().Set("Access-Control-Allow-Origin", o)
+		w.Header().Set("Access-Control-Expose-Headers", "Content-Length, Content-Range, Accept-Ranges, X-Media-Container")
+	}
+}
+
 func (h *mediaHost) serveMedia(w http.ResponseWriter, r *http.Request) {
+	allowOrigin(w, r)
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Range")
+		w.Header().Set("Access-Control-Max-Age", "600")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	token := strings.TrimPrefix(r.URL.Path, "/media/")
 	h.mu.Lock()
 	path, ok := h.tokens[token]
