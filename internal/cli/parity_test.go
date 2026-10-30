@@ -151,7 +151,6 @@ var serverOnly = map[string]string{
 
 // databaseParity is the allow-list. Keep it sorted by method name.
 var databaseParity = map[string]parityEntry{
-	"TranscriptionMarks":                {CLI: "transcribe --marks", Why: "the manifest of Repères names video files on the machine that holds them: a daemon's tenant paths designate its clients' disks, which the daemon cannot check and whose files it never reads (ADR-0082 rule 5, ADR-0110 rule 5); the desktop does not expose it either, only the bootstrap tooling of tools/vision/ consumes it"},
 	"AddComment":                        {CLI: "comment add", Server: "/v1/comments.add"},
 	"HoldLibrary":                       {Why: "the GUI's guard on a write carrying ids read before a library switch (ADR-0107); the CLI and the daemon never switch library under a running write"},
 	"MatchIDsReachedBy":                 {Why: "feeds the GUI export dialog's list of the matches a filtered list reaches; the CLI and the daemon export the whole library, and ExportDatabase applies the same rule to an unnamed match selection"},
@@ -318,6 +317,7 @@ var databaseParity = map[string]parityEntry{
 	"OpenTranscription":                 {Server: "/v1/transcriptions.open", CLI: "transcribe --draft", Why: whyTranscription},
 	"CloseTranscription":                {Server: "/v1/transcriptions.close", Why: whyTranscription},
 	"ApplyTranscriptionGesture":         {Server: "/v1/transcriptions.apply", Why: whyTranscription},
+	"TranscriptionMarks":                {CLI: "transcribe --marks", Why: "the manifest of Repères names video files on the machine that holds them: a daemon's tenant paths designate its clients' disks, which the daemon cannot check and whose files it never reads (ADR-0082 rule 5, ADR-0110 rule 5); the desktop does not expose it either, only the bootstrap tooling of tools/vision/ consumes it"},
 	"TranscriptionMAT":                  {Server: "/v1/transcriptions.exportMat", Why: whyTranscriptionMAT},
 	"FinishTranscription":               {Server: "/v1/transcriptions.finish", CLI: "transcribe --finish", Why: whyTranscription},
 	"MaterializeTranscription":          {Server: "/v1/transcriptions.materialize", CLI: "transcribe --materialize", Why: whyTranscription},

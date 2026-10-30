@@ -6,6 +6,7 @@ import (
 	"flag"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -17,7 +18,7 @@ var updateMarksGolden = flag.Bool("update-marks-golden", false,
 
 const marksGolden = "testdata/transcription_marks.golden.jsonl"
 
-// materializeWithVideo writes testdata/gnubg_selfplay_drops_7p.mat as a
+// materializeWithVideo writes the testdata fixture as a
 // match whose video is source and whose first two Actions carry Repères; the
 // third has none.
 func materializeWithVideo(t *testing.T, d *Database, fixture, source string) int64 {
@@ -81,16 +82,39 @@ func TestTranscriptionMarks_LocalSourceOnly(t *testing.T) {
 		t.Errorf("a local source absent from the disk must be named, not exported: %+v, %v", sum, err)
 	}
 
-	// --match narrows to one match; a URL match alone gives nothing.
+	// --match narrows to one match.
 	one, sum, err := d.TranscriptionMarks(local)
 	if err != nil || len(one) != 2 || sum.URLSources != 0 {
 		t.Errorf("TranscriptionMarks(%d) = %d marks, %+v, %v", local, len(one), sum, err)
 	}
 
-	// The manifest writes nothing.
-	again, _, _ := d.TranscriptionMarks(0)
-	if len(again) != len(marks) {
-		t.Error("a second read differs from the first")
+	// A URL match alone gives no line and is counted.
+	if err := d.SetMatchVideoSource(other, "https://youtu.be/abc"); err != nil {
+		t.Fatal(err)
+	}
+	none, sum, err := d.TranscriptionMarks(other)
+	if err != nil || len(none) != 0 || sum.URLSources != 1 {
+		t.Errorf("a URL match alone: %d marks, %+v, %v", len(none), sum, err)
+	}
+
+	// The manifest writes nothing: the row counts of the tables it reads stay put.
+	count := func() string {
+		var out []string
+		for _, tbl := range []string{"match", "game", "move", "position", "transcription", "metadata"} {
+			var n int
+			if err := d.db.QueryRow(`SELECT COUNT(*) FROM ` + tbl).Scan(&n); err != nil {
+				t.Fatal(err)
+			}
+			out = append(out, tbl+"="+strconv.Itoa(n))
+		}
+		return strings.Join(out, " ")
+	}
+	before := count()
+	if _, _, err := d.TranscriptionMarks(0); err != nil {
+		t.Fatal(err)
+	}
+	if after := count(); after != before {
+		t.Errorf("TranscriptionMarks wrote: %s -> %s", before, after)
 	}
 }
 
