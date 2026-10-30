@@ -6,8 +6,9 @@
     // to magnify the picture under the pointer. `viewLost` is the vision core's verdict.
     import { onMount, untrack } from 'svelte';
     import { t } from '../i18n';
-    import { calibrateBoard, applyHomography, boardZones, checkerCenter } from '../vision/geometry/index.js';
-    import { loadCalibrations, saveCalibrations, freeName, pictureRect, pointerToPicture } from '../services/videoCalibration.js';
+    import { calibrateBoard, invertHomography } from '../vision/geometry/index.js';
+    import { closeOnEscape } from '../services/escapeService.js';
+    import { loadCalibrations, saveCalibrations, freeName, pictureRect, pointerToPicture, scaleHomography, ghostCheckers } from '../services/videoCalibration.js';
 
     /**
      * @type {{
@@ -39,12 +40,7 @@
 
     const active = $derived(set.items.find((c) => c.name === set.active) ?? null);
     const pic = $derived(pictureRect(size.w, size.h, video?.videoWidth ?? 0, video?.videoHeight ?? 0));
-    const solved = $derived.by(() => {
-        if (!active || pic.w <= 0) return null;
-        const r = calibrateBoard(active.clicks.map(([x, y]) => [x * pic.w, y * pic.h]));
-        return r.ok ? r : null;
-    });
-
+    const toPixels = $derived(active && pic.w > 0 ? scaleHomography(active.modelToImage, pic.w, pic.h) : null);
     // A draft opened later reads its own calibrations; the first read is the initial state.
     let lastKey = untrack(() => calibrationKey);
     $effect(() => {
@@ -58,8 +54,8 @@
     // The caller learns the calibration in force, in fractions of the picture's width and height.
     $effect(() => {
         const a = active;
-        const r = a ? calibrateBoard(a.clicks) : null;
-        untrack(() => oncalibration?.(a && r && r.ok ? { name: a.name, clicks: a.clicks, imageToModel: r.imageToModel, modelToImage: r.modelToImage } : null));
+        const inverse = a ? invertHomography(a.modelToImage) : null;
+        untrack(() => oncalibration?.(a && inverse ? { name: a.name, clicks: a.clicks, imageToModel: inverse, modelToImage: a.modelToImage } : null));
     });
 
     function measure() {
@@ -110,6 +106,7 @@
 
     /** @param {PointerEvent} e */
     function onClick(e) {
+        if (e.button !== 0) return;
         const p = locate(e);
         if (!p || !capture) return;
         failed = false;
@@ -127,22 +124,34 @@
         const name = freeName(set.items, $t('video.calibDefaultName'));
         capture = null;
         pointer = null;
-        commit({ items: [...set.items, { name, clicks }], active: name });
+        commit({ items: [...set.items, { name, clicks, modelToImage: r.modelToImage }], active: name });
     }
 
+    // The loupe shows the picture as the screen shows it, so it is turned with the video.
     function drawLoupe() {
         const ctx = canvas?.getContext?.('2d');
-        if (!ctx || !video || !pointer || !video.videoWidth) return;
+        const p = /** @type {{ fx: number, fy: number } | null} */ (pointer);
+        if (!ctx || !video || !p || !video.videoWidth) return;
         const half = LOUPE_SPAN / 2;
-        const sx = pointer.fx * video.videoWidth;
-        const sy = pointer.fy * video.videoHeight;
+        ctx.save();
         ctx.clearRect(0, 0, LOUPE, LOUPE);
+        ctx.translate(LOUPE / 2, LOUPE / 2);
+        ctx.rotate((rotation * Math.PI) / 180);
         try {
-            ctx.drawImage(video, sx - half, sy - half, LOUPE_SPAN, LOUPE_SPAN, 0, 0, LOUPE, LOUPE);
+            const k = LOUPE / LOUPE_SPAN;
+            ctx.drawImage(video, p.fx * video.videoWidth - half, p.fy * video.videoHeight - half, LOUPE_SPAN, LOUPE_SPAN, -LOUPE / 2, -LOUPE / 2, LOUPE_SPAN * k, LOUPE_SPAN * k);
         } catch (_e) {
             /* the frame is not drawable yet: the loupe stays empty */
         }
+        ctx.restore();
     }
+    // Drawn as soon as the canvas exists and the pointer moves, and again as the video plays.
+    $effect(() => {
+        if (!capture || !pointer || !canvas) return;
+        drawLoupe();
+        const id = setInterval(drawLoupe, 100);
+        return () => clearInterval(id);
+    });
 
     /** @param {string} name */
     function select(name) {
@@ -161,43 +170,12 @@
         commit({ items: set.items.map((c) => (c === old ? { ...c, name } : c)), active: name });
     }
 
-    /** @param {KeyboardEvent} e */
-    function onKey(e) {
-        if (capture && e.key === 'Escape') {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            cancelCapture();
-        }
-    }
-    onMount(() => {
-        window.addEventListener('keydown', onKey, true);
-        return () => window.removeEventListener('keydown', onKey, true);
+    $effect(() => {
+        if (capture) return closeOnEscape(cancelCapture);
     });
 
-    // The ghost checkers: two per point (first and fifth), one per bar half and tray, each a
-    // circle of one diameter in the board's frame carried to the picture.
-    const ghostShapes = $derived.by(() => {
-        if (!solved) return [];
-        const H = solved.modelToImage;
-        const shapes = [];
-        for (const z of boardZones()) {
-            const ks = z.kind === 'point' ? [0, 4] : [0];
-            for (const k of ks) {
-                const [cx, cy] = checkerCenter(z, k);
-                const pts = [];
-                for (let i = 0; i < 16; i++) {
-                    const a = (i / 16) * 2 * Math.PI;
-                    pts.push(
-                        applyHomography(H, [cx + 0.5 * Math.cos(a), cy + 0.5 * Math.sin(a)])
-                            .map((n) => n.toFixed(1))
-                            .join(',')
-                    );
-                }
-                shapes.push({ id: `${z.id}:${k}`, d: pts.join(' ') });
-            }
-        }
-        return shapes;
-    });
+    // The opening position's checkers, carried to the picture's pixels.
+    const ghostShapes = $derived(toPixels ? ghostCheckers(toPixels).map((g) => ({ id: g.id, side: g.side, d: g.points.map((q) => `${q[0].toFixed(1)},${q[1].toFixed(1)}`).join(' ') })) : []);
 
     // The box turns as the video does, so what happens in it is in the unturned picture's frame.
     const sideways = $derived(rotation === 90 || rotation === 270);
@@ -214,10 +192,10 @@
                 <svg viewBox="0 0 {pic.w} {pic.h}" width={pic.w} height={pic.h} aria-hidden="true">
                     {#if ghosts && !capture}
                         {#each ghostShapes as g (g.id)}
-                            <polygon class="ghost" data-testid="calibration-ghost" points={g.d} />
+                            <polygon class="ghost {g.side}" data-testid="calibration-ghost" data-side={g.side} points={g.d} />
                         {/each}
                     {/if}
-                    {#each capture ?? (active && !solved ? active.clicks : []) as c, i (i)}
+                    {#each capture ?? [] as c, i (i)}
                         <circle class="dot" data-testid="calibration-click" cx={c[0] * pic.w} cy={c[1] * pic.h} r="4" />
                     {/each}
                 </svg>
@@ -236,7 +214,7 @@
         </div>
     {/if}
 
-    <div class="calib-bar" role="toolbar" aria-label={$t('video.calibration')}>
+    <div class="calib-bar r{rotation}" role="toolbar" aria-label={$t('video.calibration')}>
         {#if failed}<span class="calib-lost" data-testid="calibration-failed" role="status">{$t('video.calibFailed')}</span>{/if}
         {#if capture}
             <span class="calib-step" data-testid="calibration-step">{capture.length + 1}/4 · {CORNER_LABELS[capture.length]}</span>
@@ -308,6 +286,10 @@
         stroke: rgb(255 214 10 / 0.9);
         stroke-width: 1.25;
     }
+    .ghost.far {
+        fill: rgb(0 0 0 / 0.35);
+        stroke: rgb(255 140 0 / 0.9);
+    }
     .dot {
         fill: rgb(255 214 10 / 0.9);
         stroke: black;
@@ -321,7 +303,7 @@
     }
     .loupe {
         position: absolute;
-        top: 8px;
+        top: 36px;
         left: 8px;
         width: 120px;
         height: 120px;
@@ -358,12 +340,20 @@
     }
     .calib-bar {
         position: absolute;
-        bottom: 6px;
+        top: 6px;
         right: 6px;
         display: flex;
         gap: 4px;
         align-items: center;
         pointer-events: auto;
+    }
+    .calib-bar.r180 {
+        top: auto;
+        bottom: 6px;
+    }
+    .calib-bar.r270 {
+        right: auto;
+        left: 60px;
     }
     .calib-btn,
     .calib-select,
