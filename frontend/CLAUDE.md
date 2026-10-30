@@ -15,7 +15,7 @@
 - `App.svelte` stays thin; logic lives in `components/` panels and one store per area under
   `stores/`. `commandVocabulary.js` is locked to `commandProcessor.js` by
   `commandVocabulary.sync.test.js`.
-- A fresh worktree fails the eslint pre-commit hook: symlink `frontend/node_modules` from the
-  main checkout rather than `--no-verify`.
+- The pre-commit hook links `frontend/node_modules` from the main checkout in a fresh worktree, and
+  fails if there is none (`npm ci`) rather than skipping silently.
 - Playwright locally: port 5173 may be held by another app (gammonGo) — start Vite on a free
   port, or the e2e suite silently tests the wrong app.
