@@ -314,7 +314,6 @@ export function PickTranscriptionVideo() {
   return window['go']['gui']['App']['PickTranscriptionVideo']();
 }
 
-
 export function QueueGammonNetBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['QueueGammonNetBatch'](arg1, arg2, arg3);
 }

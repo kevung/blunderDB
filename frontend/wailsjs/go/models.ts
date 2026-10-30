@@ -1396,6 +1396,80 @@ export namespace database {
 	        this.draft_id = source["draft_id"];
 	    }
 	}
+	export class TranscriptionMark {
+	    source: string;
+	    match_id: number;
+	    game: number;
+	    move: number;
+	    action: number;
+	    player: number;
+	    kind: string;
+	    dice: number[];
+	    play?: string;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
+	    board_before: domain.Board;
+	    board_after: domain.Board;
+	    inconsistencies?: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TranscriptionMark(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.source = source["source"];
+	        this.match_id = source["match_id"];
+	        this.game = source["game"];
+	        this.move = source["move"];
+	        this.action = source["action"];
+	        this.player = source["player"];
+	        this.kind = source["kind"];
+	        this.dice = source["dice"];
+	        this.play = source["play"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
+	        this.board_before = this.convertValues(source["board_before"], domain.Board);
+	        this.board_after = this.convertValues(source["board_after"], domain.Board);
+	        this.inconsistencies = source["inconsistencies"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class TranscriptionMarksSummary {
+	    matches: number;
+	    marks: number;
+	    url_sources: number;
+	    missing?: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TranscriptionMarksSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.matches = source["matches"];
+	        this.marks = source["marks"];
+	        this.url_sources = source["url_sources"];
+	        this.missing = source["missing"];
+	    }
+	}
 	export class TranscriptionState {
 	    id: number;
 	    annotated: transcript.Annotated;
@@ -3201,8 +3275,8 @@ export namespace domain {
 	    individuallyImportedFilter: boolean;
 	    flaggedFilter: boolean;
 	    moveErrorFilter: string;
-	    decisionTimeFilter: string;
 	    marginFilter: string;
+	    decisionTimeFilter: string;
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
 	    playerFilter: string;
@@ -3274,8 +3348,8 @@ export namespace domain {
 	        this.individuallyImportedFilter = source["individuallyImportedFilter"];
 	        this.flaggedFilter = source["flaggedFilter"];
 	        this.moveErrorFilter = source["moveErrorFilter"];
-	        this.decisionTimeFilter = source["decisionTimeFilter"];
 	        this.marginFilter = source["marginFilter"];
+	        this.decisionTimeFilter = source["decisionTimeFilter"];
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
 	        this.playerFilter = source["playerFilter"];
@@ -5328,6 +5402,11 @@ export namespace ingest {
 	}
 	export class Summary {
 	    savedPositions: number;
+	    positionsLeftOut?: number;
+	    matchesLeftOut?: number;
+	    collectionsLeftOut?: number;
+	    lessonsLeftOut?: number;
+	    decksLeftOut?: number;
 	    skippedDuplicates: number;
 	    matches: number;
 	    matchId?: number;
@@ -5356,6 +5435,11 @@ export namespace ingest {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.savedPositions = source["savedPositions"];
+	        this.positionsLeftOut = source["positionsLeftOut"];
+	        this.matchesLeftOut = source["matchesLeftOut"];
+	        this.collectionsLeftOut = source["collectionsLeftOut"];
+	        this.lessonsLeftOut = source["lessonsLeftOut"];
+	        this.decksLeftOut = source["decksLeftOut"];
 	        this.skippedDuplicates = source["skippedDuplicates"];
 	        this.matches = source["matches"];
 	        this.matchId = source["matchId"];
@@ -8762,6 +8846,44 @@ export namespace storage {
 	        this.rating = source["rating"];
 	    }
 	}
+	export class PhaseStats {
+	    Phase: string;
+	    PR: number;
+	    PRInterval: domain.Interval;
+	    NumDecisions: number;
+	    BlunderCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PhaseStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Phase = source["Phase"];
+	        this.PR = source["PR"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
+	        this.NumDecisions = source["NumDecisions"];
+	        this.BlunderCount = source["BlunderCount"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class PileToggle {
 	    onPile: boolean;
 	    positionId: number;
@@ -9126,147 +9248,6 @@ export namespace storage {
 		}
 	}
 	
-	
-	export class SimilarPosition {
-	    position: domain.Position;
-	    distance: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new SimilarPosition(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.position = this.convertValues(source["position"], domain.Position);
-	        this.distance = source["distance"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	export class StudyEffectWindow {
-	    Decisions: number;
-	    Errors: number;
-	    Loss: number;
-	    Rate: number;
-	    Positions: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new StudyEffectWindow(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Decisions = source["Decisions"];
-	        this.Errors = source["Errors"];
-	        this.Loss = source["Loss"];
-	        this.Rate = source["Rate"];
-	        this.Positions = source["Positions"];
-	    }
-	}
-	export class StudyEffectFamily {
-	    GameType: string;
-	    Kind: string;
-	    Theme: string;
-	    StudiedOn: string;
-	    Studied: number;
-	    Before: StudyEffectWindow;
-	    After: StudyEffectWindow;
-	    Gain: number;
-	    Low: number;
-	    High: number;
-	    Verdict: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new StudyEffectFamily(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.GameType = source["GameType"];
-	        this.Kind = source["Kind"];
-	        this.Theme = source["Theme"];
-	        this.StudiedOn = source["StudiedOn"];
-	        this.Studied = source["Studied"];
-	        this.Before = this.convertValues(source["Before"], StudyEffectWindow);
-	        this.After = this.convertValues(source["After"], StudyEffectWindow);
-	        this.Gain = source["Gain"];
-	        this.Low = source["Low"];
-	        this.High = source["High"];
-	        this.Verdict = source["Verdict"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	export class PhaseStats {
-	    Phase: string;
-	    PR: number;
-	    PRInterval: domain.Interval;
-	    NumDecisions: number;
-	    BlunderCount: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new PhaseStats(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Phase = source["Phase"];
-	        this.PR = source["PR"];
-	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
-	        this.NumDecisions = source["NumDecisions"];
-	        this.BlunderCount = source["BlunderCount"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
 	export class ScoreCellStats {
 	    Money: boolean;
 	    MoverAway: number;
@@ -9289,6 +9270,39 @@ export namespace storage {
 	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
 	        this.NumDecisions = source["NumDecisions"];
 	        this.BlunderCount = source["BlunderCount"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	export class SimilarPosition {
+	    position: domain.Position;
+	    distance: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new SimilarPosition(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.position = this.convertValues(source["position"], domain.Position);
+	        this.distance = source["distance"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -9363,6 +9377,77 @@ export namespace storage {
 	        this.MWC7Cube = this.convertValues(source["MWC7Cube"], domain.MWC7);
 	        this.PerPhase = this.convertValues(source["PerPhase"], PhaseStats);
 	        this.PerScore = this.convertValues(source["PerScore"], ScoreCellStats);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	export class StudyEffectWindow {
+	    Decisions: number;
+	    Errors: number;
+	    Loss: number;
+	    Rate: number;
+	    Positions: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyEffectWindow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Decisions = source["Decisions"];
+	        this.Errors = source["Errors"];
+	        this.Loss = source["Loss"];
+	        this.Rate = source["Rate"];
+	        this.Positions = source["Positions"];
+	    }
+	}
+	export class StudyEffectFamily {
+	    GameType: string;
+	    Kind: string;
+	    Theme: string;
+	    StudiedOn: string;
+	    Studied: number;
+	    Before: StudyEffectWindow;
+	    After: StudyEffectWindow;
+	    Gain: number;
+	    Low: number;
+	    High: number;
+	    Verdict: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyEffectFamily(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.GameType = source["GameType"];
+	        this.Kind = source["Kind"];
+	        this.Theme = source["Theme"];
+	        this.StudiedOn = source["StudiedOn"];
+	        this.Studied = source["Studied"];
+	        this.Before = this.convertValues(source["Before"], StudyEffectWindow);
+	        this.After = this.convertValues(source["After"], StudyEffectWindow);
+	        this.Gain = source["Gain"];
+	        this.Low = source["Low"];
+	        this.High = source["High"];
+	        this.Verdict = source["Verdict"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -1726,6 +1726,10 @@ export function TranscriptionMAT(arg1) {
   return window['go']['database']['Database']['TranscriptionMAT'](arg1);
 }
 
+export function TranscriptionMarks(arg1) {
+  return window['go']['database']['Database']['TranscriptionMarks'](arg1);
+}
+
 export function TransferTo(arg1, arg2, arg3) {
   return window['go']['database']['Database']['TransferTo'](arg1, arg2, arg3);
 }
