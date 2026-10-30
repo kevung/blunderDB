@@ -73,11 +73,6 @@ propre issue le jour où il est lancé.
   reste ouverte.
 - **`mergeWatchedLibraries` et le plancher de lecture** (`frontend/src/services/importService.js`
   ~906) : un refus de plancher de lecture est compté comme un simple échec, sans être nommé.
-- **Crochet de test global `transferCommitted`** (`database/db_transfer.go`) : variable globale
-  non synchronisée.
-- **`isForeignKeyViolation`** (`storage/postgres/errors_postgres.go`) teste le SQLSTATE 23503 et
-  non le nom de la contrainte : une autre clé étrangère serait prise pour celle attendue.
-- **Préfixe `postgres:` doublé** sur l'erreur de commit d'une suppression de match.
 
 ## Ouvert — Moteur
 
@@ -190,6 +185,9 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
 
 ## Historique — items faits
 
+- **2026-10-31 — stockage** : `isForeignKeyViolation` teste le nom de la contrainte, le préfixe
+  `postgres:` n'est plus doublé sur l'erreur de commit d'une suppression de match, le crochet
+  `transferCommitted` est atomique (#864).
 - **2026-10-31 — relevé des entrées « Ouvert » déjà livrées** : empreinte d'une position copiée
   prise dans la transaction d'import (#828, `8225586de`) ; `SwapPlayers` et `DeleteCascade`
   écrits une fois dans `sqlshared` (#829, `1ac6cbff5`) ; signature et origine d'un commentaire

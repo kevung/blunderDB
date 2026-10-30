@@ -118,8 +118,10 @@ type poolScope struct {
 	scope string
 }
 
+// Transact leaves the backend name off its own errors: sqlshared wraps them
+// with the dialect's name.
 func (a shared) Transact(ctx context.Context, fn func(sqlshared.Execer) error) error {
-	return withTx(ctx, a.db, func(tx execer) error { return fn(shared{tx}) })
+	return runTx(ctx, a.db, "", func(tx execer) error { return fn(shared{tx}) })
 }
 
 // pgRows gives pgx.Rows the Close() error signature of database/sql.
