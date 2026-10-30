@@ -37,12 +37,13 @@ Nightly verte sur `f208f5060` (runs des 29 et 30 octobre).
 ## Branches
 
 Aucune branche `feat/*` en cours. Les worktrees de mesure `blunderDB-base` et `blunderDB-f16probe`
-sont supprimés. PR #809 (fix(domain): boardKey ignore la couleur d'une case vide) : en cours de décision (30 oct.).
+sont supprimés. PR #809 (fix(domain): boardKey ignore la couleur d'une case vide) : fermée le 30 oct., remplacée par #802 sur main ;
+sa partie encore utile (quiz et `duel --play` reconnaissent un coup par le plateau atteint) est l'issue #842.
 
 ## Prochaines étapes
 
 1. #664 livre d'ouverture : rapatrier `book.jsonl.gz` de smith quand le calcul est terminé.
-2. Trancher la PR #809.
+2. #842 : quiz et `duel --play` par le plateau atteint (extrait de la PR #809).
 3. Travail de fond : voir `tasks/BACKLOG.md`.
 
 ## Pièges
