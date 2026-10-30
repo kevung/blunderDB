@@ -8,14 +8,6 @@ propre issue le jour où il est lancé.
 
 ## Ouvert — Backend
 
-- **Copie d'une position entre volets : empreinte prise après le commit de l'import.**
-  `database.CopyPosition` calcule l'empreinte (`positionPrint`) de la position créée une fois
-  l'import validé et la provenance des analyses dérivée. Une écriture qu'un autre handle sur le
-  même fichier (import emprunté, autre `Database`) fait sur la nouvelle position dans cet
-  intervalle est comptée comme faisant partie de la copie, et `TakeBackPositionCopy` l'emporterait.
-  Piste : calculer l'empreinte dans la transaction d'import, après une dérivation de provenance
-  faite dans cette même transaction (aujourd'hui `backfillAnalysisProvenance` en tourne une à part).
-
 - **Statistiques : le filtre `--engine` par les cellules** — décidé : différé (2026-10-24). Il
   lit encore les décisions (copie de la sélection) ; passer par `match_stats_cell` demande le
   moteur dans la clé des cellules, autant de cellules en plus que de moteurs par match. Mesure
@@ -38,12 +30,6 @@ propre issue le jour où il est lancé.
   reçoit une `storage.Storage`, les lectures du premier groupe par le contrat, et les
   opérations du second refusées (comme `Vacuum`, `errVacuumNotLocal`) sur un store sans
   `LocalFile`.
-- **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
-  `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
-  `sqlshared`.
-- **Tests par backend redondants** : `comments_*_test.go` / `collections_*_test.go` de
-  `storage/sqlite` et `storage/postgres` doublonnent les cas du contrat
-  (`storagetest/contract_comments.go`, `contract_collections*.go`). Effort S.
 - **`migrate.Run` par lots avec reprise** (aujourd'hui une transaction unique pour toute la
   copie SQLite→PG, `migrate/migrate.go`) — attendre un besoin terrain.
 - **`move.error_mp` sans lecteur ni tenue** (`tasks/mesure-bmab-0.37.md` § 9) : la 2.50 la
@@ -78,20 +64,8 @@ propre issue le jour où il est lancé.
   paquet entier avant de répondre et la collection n'est pas écrite en flux : la mémoire d'un
   gros paquet n'est pas bornée.
 
-- **La signature d'un commentaire ne passe ni par l'export JSON ni par le backend `remote`**
-  (ADR-0099). `ingest/json.go` n'écrit que texte et auteur ; `remote` n'envoie pas
-  `storage.CommentSignatureFromContext` à `comments.add`, que le démon ne lit pas non plus.
-  Un commentaire passé par l'un d'eux arrive non signé, ce qui ne trompe personne mais perd
-  l'attribution vérifiable. Les porter : un champ `signature` (et `origin`) dans le paquet
-  JSON et dans le corps de `comments.add`, recopié tel quel, avec un test de contrat.
-
-- **Plancher de lecture et démon distant, restes.** `remote.Storage.PlayedJoinIgnored()` n'est
-  lu ni par le bureau ni par la CLI (seul un `slog.Warn` signale un démon ancien). Les blobs
-  déjà stockés avec la graphie « Double No » ne sont pas réparés (le front la tolère). La source
-  d'un import `.db` n'est pas comparée à `min_reader_version`. `sqlite.OpenReadOnly` ne contrôle
-  pas le plancher (couvert en pratique par `cli_elsewhere`). `readerFloor`/`raiseReaderFloor`
-  sont dupliqués entre `storage/sqlite` et `storage/postgres` (`sqlshared` pourrait les
-  porter). Le backend `remote` ne couvre pas le cas de contrat du plancher.
+- **Blobs « Double No »** : les blobs déjà stockés avec la graphie « Double No » ne sont pas
+  réparés (le front la tolère).
 - **Verrou mono-écrivain et `serve` SQLite.** `sqlite.Open` passe la porte de swap du vacuum
   mais ne prend pas le verrou mono-écrivain (ADR-0004) : le démon écrit à côté d'une instance
   de bureau. Le prendre rendrait le bureau lecture seule tant que le démon tourne. Décision de
@@ -104,8 +78,6 @@ propre issue le jour où il est lancé.
 - **`isForeignKeyViolation`** (`storage/postgres/errors_postgres.go`) teste le SQLSTATE 23503 et
   non le nom de la contrainte : une autre clé étrangère serait prise pour celle attendue.
 - **Préfixe `postgres:` doublé** sur l'erreur de commit d'une suppression de match.
-- **`build.yml`, en-tête** : le commentaire sur la version de la chaîne Go est resté sur un
-  ancien numéro de patch (corrigé en retirant le numéro).
 
 ## Ouvert — Moteur
 
@@ -155,10 +127,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   déplacent pas le surlignage du panneau Tournois ; vérifier qu'un « Too good to double » importé
   n'est plus lu comme *no double*. Le bouton « Élargir » est abandonné (décision du
   2026-10-24).
-- **Après un CTRL-O annulé, rouvrir l'ancienne bibliothèque** : aujourd'hui le groupe reste
-  vide, comme pour tout échec d'ouverture.
-- **Message de `ErrDatabaseTooNew` non traduit** : le refus d'une base trop récente s'affiche
-  en anglais.
 
 ## Ouvert — Tests / CI
 
@@ -179,8 +147,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   gammonNet en `purego` ~40 min, au-delà des délais locaux usuels. Pour exécuter le noyau arm64
   sans machine dédiée, un `qemu-aarch64` statique (tiré de l'image `tonistiigi/binfmt`) suffit,
   en passant le binaire deux fois (`qemu-aarch64 BIN BIN -test.run …`, argv0 en premier).
-- **`TestVacuum_AnOpenerDuringTheSwapWaitsForTheNewFile`** repose sur un délai de 300 ms : faux
-  vert possible sous charge.
 
 ## Ouvert — Produit / docs
 
@@ -192,8 +158,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   générique par épreuve et par saison suffit. À reprendre seulement sur un besoin réel, avec
   un fichier modèle de la fédération visée (FFBG ou autre), testé contre ce modèle ; ne
   jamais coder un format supposé.
-- **Direction, moteur de tournoi** : `PileOfCells/backgammon-tournoi#26` (N26, un qualifié
-  retiré d'une poule garde sa place en phase suivante) reste ouverte.
 - **Soumissions humaines de distribution** : le tap Homebrew se pousse tout seul sur tag une
   fois le dépôt et le secret en place (comme `aur.yml`), mais ces deux préalables restent à
   faire à la main, une fois :
@@ -225,6 +189,18 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   abordable un regroupement par distance `like` ; le plan d'étude groupe encore par thème seul.
 
 ## Historique — items faits
+
+- **2026-10-31 — relevé des entrées « Ouvert » déjà livrées** : empreinte d'une position copiée
+  prise dans la transaction d'import (#828, `8225586de`) ; `SwapPlayers` et `DeleteCascade`
+  écrits une fois dans `sqlshared` (#829, `1ac6cbff5`) ; signature et origine d'un commentaire
+  dans l'export JSON et `comments.add`, tests `comments_*`/`collections_*` des backends retirés
+  (#831, `06b8e6cb7`) ; plancher de lecture partagé dans `sqlshared`, source d'import et
+  `OpenReadOnly` contrôlés, démon ancien signalé par la CLI, cas de contrat du plancher écarté de
+  `remote` (#825, `5152f2c8b`) ; test du vacuum sans délai de 300 ms, `filelock.ObserveWaits`
+  (#827, `82f1e084f`) ; réouverture de l'ancienne bibliothèque après un CTRL-O annulé (#823) et
+  refus d'une base trop récente traduit (#824), `bb9ec1a19` ; commentaire de `build.yml` sans
+  numéro de patch Go ; `backgammon-tournoi#26` (N26) fermée, repêchage dans Nicomaque
+  (`ad6dbee77`).
 
 - **2026-10-25 — lot 2026-10-25b** (fusionné sur `main`) : #823 à #833, #802, #836 et #837.
   Décision : pas de verrou mono-écrivain pour `serve` SQLite (entrée Backend laissée ouverte).
