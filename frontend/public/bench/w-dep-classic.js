@@ -1,0 +1,1 @@
+self.depClassic = 'importScripts-ok';

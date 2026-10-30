@@ -40,6 +40,8 @@ type mediaHost struct {
 	refs    map[string]int      // token or YouTube id -> panes holding it
 	youtube map[string]bool     // ids with an attached YouTube source
 	mux     map[string]muxEntry // token -> multiplexing check of the file it serves
+
+	benchResult http.HandlerFunc // set only by the V0.1 bench
 }
 
 var youTubeIDRe = regexp.MustCompile(`^[A-Za-z0-9_-]{6,20}$`)
@@ -67,6 +69,10 @@ func (h *mediaHost) handler() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/media/", h.serveMedia)
 	mux.HandleFunc("/yt/", h.serveYouTube)
+	if h.benchResult != nil {
+		mux.HandleFunc("/bench/result", h.benchResult)
+		return benchV01CORS(mux)
+	}
 	return mux
 }
 
