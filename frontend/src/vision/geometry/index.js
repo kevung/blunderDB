@@ -1,7 +1,7 @@
 // Board geometry for the vision pipeline: pure functions over numbers and
 // ImageData-shaped buffers, usable from the main thread and from a Worker.
 
-export { computeHomography, applyHomography, invertHomography, jacobian } from './homography.js';
+export { computeHomography, applyHomography, invertHomography } from './homography.js';
 export * from './boardModel.js';
 export { calibrateBoard } from './calibration.js';
 export { rectifyZone, sampleImage } from './rectify.js';

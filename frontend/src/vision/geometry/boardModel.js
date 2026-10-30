@@ -115,25 +115,3 @@ export function checkerCenter(zone, k) {
     const t = (k + 0.5) * POINT_WIDTH;
     return [zone.base[0] + zone.dir[0] * t, zone.base[1] + zone.dir[1] * t];
 }
-
-/**
- * Checker centres of the starting position, for the ghost checkers that check the
- * calibration's orientation. `near` are the bottom player's.
- * @returns {{ side: 'near' | 'far', center: [number, number] }[]}
- */
-export function initialPositionGhosts() {
-    const start = [
-        [24, 2],
-        [13, 5],
-        [8, 3],
-        [6, 5]
-    ];
-    const ghosts = [];
-    for (const [n, count] of start) {
-        for (let k = 0; k < count; k++) {
-            ghosts.push({ side: 'near', center: checkerCenter(pointZone(n), k) });
-            ghosts.push({ side: 'far', center: checkerCenter(pointZone(25 - n), k) });
-        }
-    }
-    return ghosts;
-}

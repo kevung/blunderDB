@@ -13,7 +13,7 @@ const PIVOT_EPS = 1e-12;
 /**
  * @typedef {[number, number]} Point
  * @typedef {number[]} Matrix3 row-major, length 9
- * @typedef {{ ok: true, H: Matrix3 } | { ok: false, reason: 'points' | 'aligned' | 'non-convex' | 'singular' | 'fold' }} HomographyResult
+ * @typedef {{ ok: true, H: Matrix3 } | { ok: false, reason: 'points' | 'aligned' | 'non-convex' | 'singular' }} HomographyResult
  */
 
 /**
@@ -24,9 +24,10 @@ const PIVOT_EPS = 1e-12;
  * - `aligned`: two points coincide or three are aligned (on either side);
  * - `non-convex`: a quadrilateral, taken in the given order, is not strictly convex
  *   (a dart, or a bow-tie from clicks out of order);
- * - `singular`: the linear system has no unique solution;
- * - `fold`: the line sent to infinity crosses the source quadrilateral, so the sign of
- *   the Jacobian changes inside it and the map tears the board in two.
+ * - `singular`: the linear system has no unique solution. Two strictly convex quads in
+ *   the same vertex order always have one, so this guards rounding only, as does the
+ *   absence of a fold test: such a map sends one quad onto the other, so the line it
+ *   sends to infinity never crosses the source and the Jacobian keeps its sign there.
  *
  * Both orientations are accepted: a board whose home is on the left is the mirror
  * image of one whose home is on the right, not a mistake.
@@ -66,11 +67,6 @@ export function computeHomography(src, dst) {
     const H = normalise(multiply(invertHartley(Td), multiply(Hn, Ts)));
     if (!H) return { ok: false, reason: 'singular' };
 
-    // w is affine in (x, y): one sign at the four corners means one sign on the whole
-    // convex quadrilateral.
-    const ws = src.map(([x, y]) => H[6] * x + H[7] * y + H[8]);
-    if (!(ws.every((w) => w > 0) || ws.every((w) => w < 0))) return { ok: false, reason: 'fold' };
-
     return { ok: true, H };
 }
 
@@ -93,23 +89,6 @@ export function applyHomography(H, [x, y]) {
 export function invertHomography(H) {
     const inv = invert(H);
     return inv && normalise(inv);
-}
-
-/**
- * Jacobian of the map at p, as [[∂u/∂x, ∂u/∂y], [∂v/∂x, ∂v/∂y]]: the local scale and
- * anisotropy that tell whether a zone is large enough in pixels to be read.
- * @param {Matrix3} H
- * @param {Point} p
- * @returns {[[number, number], [number, number]]}
- */
-export function jacobian(H, [x, y]) {
-    const w = H[6] * x + H[7] * y + H[8];
-    const u = (H[0] * x + H[1] * y + H[2]) / w;
-    const v = (H[3] * x + H[4] * y + H[5]) / w;
-    return [
-        [(H[0] - u * H[6]) / w, (H[1] - u * H[7]) / w],
-        [(H[3] - v * H[6]) / w, (H[4] - v * H[7]) / w]
-    ];
 }
 
 function isQuad(pts) {

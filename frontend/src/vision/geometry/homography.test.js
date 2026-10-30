@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computeHomography, applyHomography, invertHomography, jacobian } from './homography.js';
+import { computeHomography, applyHomography, invertHomography } from './homography.js';
 import { lcg } from './synthetic.fixture.js';
 
 const SQUARE = [
@@ -65,6 +65,30 @@ describe('computeHomography', () => {
             [6.5, 6.5],
             [1, 12],
             [12.5, 0.5]
+        ]) {
+            const [x, y] = applyHomography(res.H, p);
+            const [xt, yt] = applyHomography(Htrue, p);
+            expect(Math.hypot(x - xt, y - yt)).toBeLessThan(1e-6);
+        }
+    });
+
+    it('handles a camera that sends the pixel origin to infinity', () => {
+        // h8 = 0: a DLT on raw coordinates that fixes h8 = 1 cannot represent this map;
+        // after Hartley normalisation the fixed entry is the centroid's, which is finite.
+        const src = [
+            [900, 900],
+            [1100, 920],
+            [1080, 1100],
+            [920, 1080]
+        ];
+        const Htrue = [1, 0.1, -800, -0.1, 1, -700, 0.0005, 0.0004, 0];
+        const dst = src.map((p) => applyHomography(Htrue, p));
+        const res = computeHomography(src, dst);
+        expect(res.ok).toBe(true);
+        for (const p of [
+            [1000, 1000],
+            [950, 1050],
+            [1060, 940]
         ]) {
             const [x, y] = applyHomography(res.H, p);
             const [xt, yt] = applyHomography(Htrue, p);
@@ -140,20 +164,4 @@ describe('computeHomography', () => {
             expect(computeHomography(dst, SQUARE)).toEqual({ ok: false, reason });
         });
     }
-});
-
-describe('jacobian', () => {
-    it('matches finite differences', () => {
-        const H = randomH(lcg(11));
-        const p = [4, 9];
-        const J = jacobian(H, p);
-        const h = 1e-6;
-        const [x0, y0] = applyHomography(H, p);
-        const [xu, yu] = applyHomography(H, [p[0] + h, p[1]]);
-        const [xv, yv] = applyHomography(H, [p[0], p[1] + h]);
-        expect(J[0][0]).toBeCloseTo((xu - x0) / h, 4);
-        expect(J[1][0]).toBeCloseTo((yu - y0) / h, 4);
-        expect(J[0][1]).toBeCloseTo((xv - x0) / h, 4);
-        expect(J[1][1]).toBeCloseTo((yv - y0) / h, 4);
-    });
 });

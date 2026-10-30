@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { boardZones, pointZone, barZone, trayZone, checkerCenter, initialPositionGhosts, FIELD_WIDTH, FIELD_HEIGHT, BOARD_RECT, CALIBRATION_CORNERS } from './boardModel.js';
+import { boardZones, pointZone, barZone, trayZone, checkerCenter, FIELD_WIDTH, FIELD_HEIGHT, BOARD_RECT, CALIBRATION_CORNERS } from './boardModel.js';
 
 const overlaps = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
-const inside = (r, [u, v]) => u > r.x0 && u < r.x1 && v > r.y0 && v < r.y1;
 
 describe('board model in checker diameters', () => {
     it('has 28 disjoint zones inside the rectified frame', () => {
@@ -42,14 +41,5 @@ describe('board model in checker diameters', () => {
         expect(trayZone('far').rect.x1).toBe(0);
         expect(() => pointZone(0)).toThrow(RangeError);
         expect(() => pointZone(25)).toThrow(RangeError);
-    });
-
-    it('gives 15 ghost checkers per side, each on its own spot inside a point', () => {
-        const ghosts = initialPositionGhosts();
-        expect(ghosts.filter((g) => g.side === 'near')).toHaveLength(15);
-        expect(ghosts.filter((g) => g.side === 'far')).toHaveLength(15);
-        const points = boardZones().filter((z) => z.kind === 'point');
-        for (const g of ghosts) expect(points.some((z) => inside(z.rect, g.center))).toBe(true);
-        expect(new Set(ghosts.map((g) => g.center.join(','))).size).toBe(30);
     });
 });

@@ -1,7 +1,7 @@
 // Synthetic board images for the geometry tests: a pattern defined in model units,
 // rendered through a known homography so every expectation is computable exactly.
 
-import { BOARD_RECT, FIELD_HEIGHT, POINT_LENGTH, initialPositionGhosts } from './boardModel.js';
+import { BOARD_RECT, FIELD_HEIGHT, POINT_LENGTH, checkerCenter, pointZone } from './boardModel.js';
 import { computeHomography, applyHomography, invertHomography } from './homography.js';
 import { CALIBRATION_CORNERS } from './boardModel.js';
 
@@ -13,13 +13,25 @@ export const BAR = 70;
 export const TRAY = 100;
 export const CHECKER = 250;
 
+/** A few stacks, enough structure for the presence score to lock onto. */
+const CHECKERS = [
+    [24, 2],
+    [13, 5],
+    [8, 3],
+    [6, 5],
+    [1, 2],
+    [12, 5],
+    [17, 3],
+    [19, 5]
+].flatMap(([n, count]) => Array.from({ length: count }, (_, k) => checkerCenter(pointZone(n), k)));
+
 /** Luminance of the model at (u, v), in d. */
 export function modelLuma(u, v, { checkers = true } = {}) {
     const { x0, x1, y0, y1 } = BOARD_RECT;
     if (u < x0 || u >= x1 || v < y0 || v >= y1) return BACKGROUND;
     if (checkers) {
-        for (const g of initialPositionGhosts()) {
-            if (Math.hypot(u - g.center[0], v - g.center[1]) < 0.45) return CHECKER;
+        for (const c of CHECKERS) {
+            if (Math.hypot(u - c[0], v - c[1]) < 0.45) return CHECKER;
         }
     }
     if (u < 0) return TRAY;
