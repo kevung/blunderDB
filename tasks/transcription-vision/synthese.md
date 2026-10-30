@@ -63,3 +63,63 @@ nécessaire (événement `PermissionRequested` de WebView2 comme repli).
 **Conséquence pour les repères (ADR-0082).** `mediaTime` de rVFC est l'instant de l'image composée ;
 c'est lui qui doit alimenter `roll_tick_ms` / `tick_ms` quand la détection pose un repère, à la
 place de `currentTime` qui avance entre deux images.
+
+## 07 — YouTube : accès légitime aux images
+
+**Confirme le cadre, et le durcit.** La réponse est un **non** sans réserve : aucune voie documentée
+ne permet d'analyser les images d'une vidéo YouTube dans les conditions d'utilisation. Techniquement,
+seul `getDisplayMedia` sur sa propre fenêtre donnerait des pixels (fiable sous WebView2 seulement ;
+PipeWire + portail + `enable-media-stream` sous WebKitGTK ; API privée + CGO sous WKWebView), et ce
+serait un usage non autorisé du service (restrictions n° 1 et n° 3 des CGU US du 15 déc. 2023) et une
+création de « derived data » à partir des API Data (Developer Policies III.E.4.h, qui couvrent le
+contenu audiovisuel depuis janvier 2017). Les storyboards (160×90, une vignette par ~10 s, API non
+documentée) sont inutilisables et interdits (III.D.7). La seule clause ouverte est le « (c) as
+permitted by applicable law » de la version EEE de 2022 — trop incertaine pour bâtir dessus.
+
+**Change le cadre.**
+- *Séparation stricte des deux modes, dans le code comme dans la doc* : le pipeline d'analyse ne
+  s'active que pour un `File` local ; YouTube garde `postMessage` (temps, état, vitesse) et le clavier.
+  Pas de `getDisplayMedia`, même sous WebView2.
+- *Le corpus d'entraînement aussi.* Le README dit « la base est déjà un jeu d'entraînement » : cela ne
+  vaut que pour les matchs dont `video_source` est un **fichier local licite**. Extraire des imagettes
+  d'une vidéo YouTube (même pour entraîner, même sans les distribuer) est la « derived data » que
+  III.E.4.h interdit. La chaîne d'amorçage (prompt 06) doit filtrer sur la nature de la source et
+  s'appuyer sur des fichiers transmis par leurs auteurs ou organisateurs, ou sur ses propres
+  enregistrements. Un enregistrement OBS d'une vidéo YouTube d'un tiers reste une reproduction
+  interdite : ne pas le recommander.
+- *Interdiction de nommer un outil de téléchargement* (III.E.1 « encourage, enable » ; OLG Hamburg
+  5 U 54/23, 21 nov. 2024 : l'hébergeur du site de youtube-dl jugé complice). Le dépôt en contient
+  deux mentions, antérieures à ce chantier : `doc/source/manuel_matchs.rst` l.906 (« C'est le cas de
+  fichiers téléchargés par yt-dlp ») et `pkg/blunderdb/videomux/doc.go` l.9 (« Lavf as yt-dlp runs
+  it »). Les deux décrivent un multiplexage, pas un conseil, mais la formulation « fichiers
+  téléchargés par yt-dlp » dans une doc utilisateur est exactement ce que la réponse déconseille.
+  **Décision à prendre par Kevin** : reformuler en « fichiers WebM dont les clusters ne commencent pas
+  sur une image clé (certains outils de téléchargement les écrivent ainsi) » et retirer le nom.
+- *Conformité III.A.1* : un client de l'IFrame Player API doit afficher un lien vers les CGU YouTube
+  et une politique de confidentialité mentionnant l'usage des YouTube API Services. Aucun lien vers
+  `youtube.com/t/terms` n'existe dans `doc/source` ni dans `frontend/src` : manquement déjà présent,
+  indépendant de la vision. À corriger dans le volet vidéo (mode YouTube) et la doc.
+
+**Texte retenu pour la documentation** (manuel du panneau de transcription, section « Mode assisté ») :
+
+> L'analyse automatique des images (détection des lancers, lecture des dés, reconnaissance des
+> coups et du videau) fonctionne uniquement sur des fichiers vidéo locaux que vous avez le droit
+> d'utiliser : vos propres enregistrements, ou des fichiers fournis par leur auteur ou l'organisateur
+> du tournoi. Pour les vidéos YouTube, blunderDB affiche le lecteur officiel de YouTube et ne lit que
+> la position de lecture, l'état et la vitesse ; il n'accède pas aux images, ne télécharge rien, ne
+> conserve aucune copie et ne recommande aucun outil de téléchargement. L'utilisation des vidéos
+> YouTube est soumise aux Conditions d'utilisation de YouTube (https://www.youtube.com/t/terms).
+
+**Message dans le volet** quand le mode assisté est demandé sur une vidéo YouTube : trois lignes
+(pourquoi, ce qui marche quand même, comment obtenir un fichier) et deux actions, « Continuer avec
+YouTube » / « Ouvrir un fichier local… ». Une page d'aide « Demander le fichier à l'organisateur »
+avec un modèle de message est l'alternative honnête la plus utile.
+
+**Expériences imposées.** Aucune technique : les expériences 3–5 de la réponse (capture d'écran par
+webview, images noires sous DRM) sont caduques puisqu'on renonce à la capture. Restent des
+vérifications documentaires : (1) version EEE des CGU en vigueur depuis une IP française (date,
+texte des restrictions 1–3) ; (2) numérotation et date de révision des Developer Policies ;
+(3) relecture de L.331-5, L.335-2-1, L.335-3-1/-2 et L.122-5-3 sur Légifrance avant publication de
+la doc ; (4) recenser les vidéos de backgammon CC BY et écrire aux organisateurs (USBGF, WBF,
+Backgammon Galaxy) pour des fichiers sources ou une licence — c'est aussi la source du corpus
+d'entraînement.

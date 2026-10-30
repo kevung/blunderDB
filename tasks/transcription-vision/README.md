@@ -10,7 +10,8 @@ Cadre fixé avant la bibliographie (voir la cartographie du panneau dans la disc
 - **Tout le pixel vit dans la webview** (canvas, Web Worker). Go ne décode rien (ADR-0082 règle 6,
   pur Go, pas de ffmpeg) ; il garde les règles, les candidats et la machine de transcription.
 - **La base est déjà un jeu d'entraînement** : `video_source` + `roll_tick_ms` / `tick_ms` donnent
-  des couples (image, dés) et (image, `board_after`).
+  des couples (image, dés) et (image, `board_after`) — pour les seuls matchs dont la source est un
+  fichier local licite, jamais une vidéo YouTube (réponse 07).
 - **L'équité n'est pas un a priori** : l'utiliser pour deviner le coup blanchirait les blunders
   (prolonge ADR-0044 : le moteur propose, personne ne décide à la place de l'utilisateur).
 - Trois phases : (1) pré-passe des lancers et saut d'événement en événement ; (2) lecture des dés
@@ -40,4 +41,4 @@ La synthèse se construit au fil des réponses dans `synthese.md` (une section p
 confirme, ce qu'elle change, les expériences qu'elle impose) ; l'ADR de la phase 1 et la feuille de
 route s'en tirent une fois les neuf reçues.
 
-Reçues : 01.
+Reçues : 01, 07.
