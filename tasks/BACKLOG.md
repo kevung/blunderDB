@@ -71,8 +71,6 @@ propre issue le jour où il est lancé.
   de bureau. Le prendre rendrait le bureau lecture seule tant que le démon tourne. Décision de
   l'utilisateur (lot 2026-10-25b) : pas de verrou mono-écrivain pour `serve` SQLite ; l'entrée
   reste ouverte.
-- **`mergeWatchedLibraries` et le plancher de lecture** (`frontend/src/services/importService.js`
-  ~906) : un refus de plancher de lecture est compté comme un simple échec, sans être nommé.
 - **Crochet de test global `transferCommitted`** (`database/db_transfer.go`) : variable globale
   non synchronisée.
 - **`isForeignKeyViolation`** (`storage/postgres/errors_postgres.go`) teste le SQLSTATE 23503 et
@@ -189,6 +187,9 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   abordable un regroupement par distance `like` ; le plan d'étude groupe encore par thème seul.
 
 ## Historique — items faits
+
+- **2026-10-31 — `mergeWatchedLibraries` et le plancher de lecture** : la base refusée par le
+  plancher est nommée dans le bandeau du dossier surveillé, avec le schéma requis (#862).
 
 - **2026-10-31 — relevé des entrées « Ouvert » déjà livrées** : empreinte d'une position copiée
   prise dans la transaction d'import (#828, `8225586de`) ; `SwapPlayers` et `DeleteCascade`

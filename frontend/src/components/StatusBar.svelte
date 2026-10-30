@@ -378,6 +378,9 @@
                 skipped: $watchImportNoticeStore.skipped,
                 failed: $watchImportNoticeStore.failed
             })}
+            {#if $watchImportNoticeStore.tooNew}
+                {$t($watchImportNoticeStore.tooNew.i18nKey, $watchImportNoticeStore.tooNew.i18nParams)}
+            {/if}
             <button
                 type="button"
                 class="watch-import-action"

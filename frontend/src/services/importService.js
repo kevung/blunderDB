@@ -871,7 +871,7 @@ function refuseConcurrentImport() {
  * fusionnée sans aperçu, la fusion étant idempotente.
  *
  * @param {string[]} files
- * @returns {Promise<{succeeded: number, skipped: number, failed: number} | null>}
+ * @returns {Promise<{succeeded: number, skipped: number, failed: number, tooNew?: any} | null>}
  */
 export async function importWatchedFiles(files) {
     if (refuseConcurrentImport()) return null;
@@ -890,7 +890,7 @@ export async function importWatchedFiles(files) {
     }
     await maybeAutoAnalyzeAfterImport(group);
     const r = get(fileImportResultsStore);
-    return { succeeded: r.succeeded + merged.succeeded, skipped: r.skipped + merged.skipped, failed: r.failed + merged.failed };
+    return { succeeded: r.succeeded + merged.succeeded, skipped: r.skipped + merged.skipped, failed: r.failed + merged.failed, ...(merged.tooNew && { tooNew: merged.tooNew }) };
 }
 
 /**
@@ -900,6 +900,7 @@ export async function importWatchedFiles(files) {
  * @param {string[]} libraries
  */
 async function mergeWatchedLibraries(libraries) {
+    /** @type {{succeeded: number, skipped: number, failed: number, tooNew?: any}} */
     const counts = { succeeded: 0, skipped: 0, failed: 0 };
     for (const path of libraries) {
         try {
@@ -909,6 +910,9 @@ async function mergeWatchedLibraries(libraries) {
         } catch (error) {
             logger.error('could not merge the watched database:', path, error);
             counts.failed++;
+            // A floor refusal is named, not left among the plain failures: the cure is to update.
+            const tooNew = tooNewMessage(error, 'status.importSourceTooNew');
+            if (tooNew) counts.tooNew = tooNew;
         }
     }
     if (counts.succeeded > 0) await reloadPositions();

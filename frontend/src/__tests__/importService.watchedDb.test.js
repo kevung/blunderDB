@@ -71,4 +71,12 @@ describe('importWatchedFiles with databases', () => {
         const r = await importWatchedFiles(['/sync/bad.db', '/sync/good.db']);
         expect(r).toEqual({ succeeded: 1, skipped: 0, failed: 1 });
     });
+
+    test('a database refused by the reader floor is named with the schema it needs', async () => {
+        CommitImportDatabase.mockRejectedValueOnce(
+            new Error('this database requires a newer blunderDB: it needs a blunderDB that reads schema 9.9.0 or later, this one reads 1.0.0; update blunderDB to open it')
+        ).mockResolvedValueOnce({ added: 3 });
+        const r = await importWatchedFiles(['/sync/new.db', '/sync/good.db']);
+        expect(r).toMatchObject({ succeeded: 1, failed: 1, tooNew: { i18nKey: 'status.importSourceTooNew', i18nParams: { version: '9.9.0' } } });
+    });
 });
