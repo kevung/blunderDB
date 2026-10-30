@@ -49,9 +49,9 @@ branche.
 | # | Banc | Zone | Dépend de | Bloquant | Modèle |
 |---|---|---|---|---|---|
 | V0.1 | **Worker depuis `wails://`** sous WebKitGTK (Linux), puis WebView2 et WKWebView si un poste existe ; dans le même banc : `requestVideoFrameCallback` + `mediaTime`, coût `drawImage` 1080p → 320×180 + `getImageData` par image, seeks et `playbackRate` (01.3, 01.4), détection WebCodecs par distribution (01.5). Un seul spike, une seule page. | Z-vision | — | **oui** | Opus |
-| V0.2 | **Couverture des fenêtres en SQL** : sur les bases de Kevin, part des coups dont `roll_tick_ms`/`tick_ms` tombent à moins de 3 s du coup précédent (analyse opportuniste suffisante) et histogramme des écarts. Requête seule, aucune écriture. | Z-go | — | **oui** | Sonnet |
+| V0.2 | **Couverture des fenêtres en SQL** : sur `~/dwn/unger.db` (1061 coups horodatés, 3 matchs), part des coups dont `roll_tick_ms`/`tick_ms` tombent à moins de 3 s du coup précédent (analyse opportuniste suffisante) et histogramme des écarts. Requête seule, aucune écriture. | Z-go | — | **oui** | Sonnet |
 | V0.3 | **CORS sur 200/206/OPTIONS** du serveur de bouclage et redirection : le canvas n'est pas « tainted » (`getImageData` ne lève pas). | Z-media | — | non (le correctif est connu) | Sonnet |
-| V0.4 | **LNA Chromium ≥ 142 sous WebView2** : la lecture vidéo actuelle par bouclage déclenche-t-elle permission ou blocage ? Poste Windows requis. Risque **hors vision** : touche le produit tel qu'il est. | Z-media | poste Windows | non pour le chantier, **oui pour le produit** | Sonnet |
+| V0.4 | **LNA Chromium ≥ 142 sous WebView2** : la lecture vidéo actuelle par bouclage déclenche-t-elle permission ou blocage ? Poste Windows requis (décidé : Linux seul disponible ; issue ouverte, en attente). Risque **hors vision** : touche le produit tel qu'il est. | Z-media | poste Windows | non pour le chantier, **oui pour le produit** | Sonnet |
 | V0.5 | **Histogramme `t_lisible − roll_tick_ms`** sur 50 coups de deux vidéos : à la main (Kevin note l'instant où les dés sont lisibles), un script Z-tools trace l'écart. Fixe la fenêtre de l'ADR-0109 et dit si les Repères actuels valent comme fenêtres. | Z-tools | — | non (règle 0110) | Sonnet |
 
 Un rouge sur V0.1 ou V0.2 **arrête le chantier** ; le plan se réécrit alors (Go pur avec un
@@ -64,8 +64,8 @@ Parallélisme : V0.1 ∥ V0.2 ∥ V0.3 ∥ V0.5 (quatre zones). V0.4 quand un po
 | # | Sujet | Zone | Modèle |
 |---|---|---|---|
 | H1 | **`JSC_*` sans AVX** : WebKitGTK 2.52 plante dès que du Wasm tourne sur un CPU sans AVX ; `internal/gui/run.go` ne pose aucune variable. Décider : poser `JSC_useWebAssembly=0` (ou équivalent) quand `/proc/cpuinfo` n'a pas `avx`, ou documenter. Aujourd'hui aucun Wasm ne tourne dans blunderDB : vérifier avant de corriger. | Z-media | Sonnet |
-| H2 | **Conformité YouTube** : reformuler `doc/source/manuel_matchs.rst` (l. ~906) et `pkg/blunderdb/videomux/doc.go` (l. ~9) qui nomment un outil de téléchargement ; ajouter le lien vers les CGU YouTube (Developer Policies III.A.1) dans le volet vidéo et le manuel. Huit `.po`. | Z-doc + Z-panneau (une ligne) | Sonnet |
-| H3 | Dependabot #112 (faible). | — | Sonnet |
+| H2 | **Conformité YouTube** : reformuler `doc/source/manuel_matchs.rst` (l. ~906) et `pkg/blunderdb/videomux/doc.go` (l. ~9) qui nomment un outil de téléchargement ; ajouter le lien vers les CGU YouTube (Developer Policies III.A.1) dans le manuel seulement (décidé : rien dans l'interface). Huit `.po`. | Z-doc | Sonnet |
+| H3 | Dependabot #112 (deepmerge) : **traité sans issue** — tiré par le seul `@sveltejs/vite-plugin-svelte` (outillage de build), alerte close avec motif. | — | — |
 
 H1 et H2 ne dépendent de rien et se font en parallèle du lot V0.
 
@@ -134,7 +134,7 @@ Parallélisme : V3.1 ∥ V3.3 ∥ V3.5 ; puis V3.2 ∥ V3.6 ; puis V3.4 ; puis V
 
 ## Ordre d'ouverture proposé
 
-1. Maintenant : H1, H2, H3 ; V0.1, V0.2, V0.3, V0.5 ; V2.1 (indépendant).
+1. Ouvertes : H1 #849, H2 #850 ; V0.1 #843, V0.2 #844, V0.3 #845, V0.4 #846 (poste Windows), V0.5 #847 ; V2.1 #848. H3 traité directement.
 2. V0.1 et V0.2 verts → V1.0, puis le lot V1 dans l'ordre ci-dessus.
 3. V1.7 lu → V2.0 et le lot V2.
 4. V2.7 lu → V3.0 et le lot V3.
