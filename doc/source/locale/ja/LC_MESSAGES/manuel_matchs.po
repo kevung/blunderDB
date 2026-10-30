@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 22:57+0200\n"
+"POT-Creation-Date: 2026-10-30 16:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -725,7 +725,7 @@ msgstr ""
 " **読み取り専用**\\ "
 "で開きます：ナビゲーション、検索、解析は引き続き可能ですが、あらゆる変更は無効になり、タイトルバーに「[読み取り専用]」と表示されます。"
 
-#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:918
+#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:922
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "利用可能なショートカットについては :ref:`raccourcis` を参照してください。"
 
@@ -1417,6 +1417,17 @@ msgstr ""
 
 #: ../../source/manuel_matchs.rst:777
 msgid ""
+"Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
+"YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
+" d'utilisation de YouTube <https://www.youtube.com/t/terms>`_ : blunderDB"
+" n'en extrait aucune image."
+msgstr ""
+"ローカルファイルは、あなたが正当に所有している動画です。YouTube の動画は YouTube の組み込みプレーヤーで再生され、`YouTube"
+" 利用規約 <https://www.youtube.com/t/terms>`_\\ に従います。blunderDB "
+"はそこから画像を一切取り出しません。"
+
+#: ../../source/manuel_matchs.rst:781
+msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
 " une barre verticale qu'on tire pour agrandir l'une ou l'autre ; la "
@@ -1439,7 +1450,7 @@ msgstr ""
 "の動画は、元の時点で一時停止の状態で再開します。動画、そのコントロール、または区切りバーをクリックしても、キーボードはパネルに残ります。入力のキー、動画のキー、そして盤を回転させる"
 " *CTRL-←* / *CTRL-→* はそのまま効きます。"
 
-#: ../../source/manuel_matchs.rst:791
+#: ../../source/manuel_matchs.rst:795
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1456,7 +1467,7 @@ msgstr ""
 " *ESC*\\ "
 "か、領域の外で離すと取り消されます。盤そのものは動かせません。盤の上でのドラッグはチェッカーを動かします。側はセッションをまたいで記憶され、幅はどちらの側でも動画の幅のままです。ハンドルとボタンはキーボードをパネルに残します。"
 
-#: ../../source/manuel_matchs.rst:802
+#: ../../source/manuel_matchs.rst:806
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -1496,7 +1507,7 @@ msgstr ""
 "が入力済みのダイスを消します。動画を外す、下書きを離れる、タブを切り替える、のいずれでも終了します。プレーヤーには独自の全画面表示はなく、YouTube"
 " も同様です。画面を切り替えるのはシアターモードだけです。このモードは動画が添付された記譜でのみ使えます。"
 
-#: ../../source/manuel_matchs.rst:828
+#: ../../source/manuel_matchs.rst:832
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -1527,7 +1538,7 @@ msgstr ""
 "の動画では、プレーヤーが提供する速度のみ、最大 2× まで使えます。速度が 1× でないときは動画の隅に表示され、新しいソースは 1× "
 "から始まります。"
 
-#: ../../source/manuel_matchs.rst:846
+#: ../../source/manuel_matchs.rst:850
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -1540,7 +1551,7 @@ msgstr ""
 "ずつ、0° から 270° まで回転します。ファイルの動画でも YouTube "
 "のフレームでも、画像は全体が表示されたままです。角度は下書きごとにこのコンピューターにのみ保存され、データベースには書き込まれません。"
 
-#: ../../source/manuel_matchs.rst:852
+#: ../../source/manuel_matchs.rst:856
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -1561,7 +1572,7 @@ msgstr ""
 " 12:34, 手 12:51, 17 s」)。分析パネルは、Duel "
 "で対局した試合と同様に、カーソルのアクションの所要時間を表示します。動画の順序に反する時刻マークは、他のマークが先へ進めるようできるだけ少なく選ばれ、他の不整合と同様に表示され、それに依存する所要時間は不明のままになります。セル上にカーソルを置く(手または所要時間のクリック、*h*、*l*)と、そのアクションのロールの1秒前に動画が移動します。ロールに時刻がない場合は、そのアクションの1秒前です。一時停止中のプレーヤーは一時停止のままです。"
 
-#: ../../source/manuel_matchs.rst:865
+#: ../../source/manuel_matchs.rst:869
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -1594,7 +1605,7 @@ msgstr ""
 " *v* "
 "を押すと、その手が時刻を受け取ります。終わりのない最後のアクションでは、ロールから10秒間そこに留まり、その後トランスクリプトの末尾に戻ります。そこでは数字キーが次のロールを開き、インジケーターがそれを示します。"
 
-#: ../../source/manuel_matchs.rst:887
+#: ../../source/manuel_matchs.rst:891
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -1618,7 +1629,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav``\\ (後者は RPM Fusion "
 "由来)です。:ref:`telecharge_install` を参照してください。"
 
-#: ../../source/manuel_matchs.rst:899
+#: ../../source/manuel_matchs.rst:903
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -1630,23 +1641,24 @@ msgstr ""
 "秒後に再読み込みされ、指定した時点から同じ速度で、以前と同じく再生または一時停止の状態で再開します。3 "
 "回再読み込みしても効果がない場合は、パネルがその旨を表示し、再試行を提案します。"
 
-#: ../../source/manuel_matchs.rst:904
+#: ../../source/manuel_matchs.rst:908
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
-" clé, que le webview ne sait pas décoder seule. C'est le cas de fichiers "
-"téléchargés par yt-dlp. À l'ouverture d'un tel fichier, blunderDB lit "
-"l'index du fichier (quelques kilo-octets par groupe) et, s'il trouve des "
-"sauts fautifs, le volet l'annonce avec la commande qui répare le fichier "
-"sans le réencoder, prête à copier :"
+" clé, que le webview ne sait pas décoder seule. Certains muxeurs, qui "
+"coupent les groupes sans tenir compte des images clés, en produisent. À "
+"l'ouverture d'un tel fichier, blunderDB lit l'index du fichier (quelques "
+"kilo-octets par groupe) et, s'il trouve des sauts fautifs, le volet "
+"l'annonce avec la commande qui répare le fichier sans le réencoder, prête"
+" à copier :"
 msgstr ""
-"多重化に問題のある ``.webm`` や ``.mkv`` "
-"ファイルでは、一部のシークで動画が止まります。ファイル内の画像グループがキーフレームでない画像から始まり、webview "
-"はそれを単独でデコードできないためです。yt-dlp "
-"でダウンロードしたファイルがこれに当たることがあります。このようなファイルを開くと、blunderDB "
-"はファイルのインデックス(グループごとに数キロバイト)を読み、問題のあるシークが見つかれば、ファイルを再エンコードせずに修復するコマンドをコピーできる形でパネルに表示します:"
+"多重化が不適切な ``.webm`` や ``.mkv`` "
+"ファイルでは、一部のシークで動画が固まります。ファイル内の画像グループがキーフレームでない画像から始まり、webview "
+"はそれを単独でデコードできないためです。キーフレームを考慮せずにグループを切るマルチプレクサは、このようなファイルを生成します。このようなファイルを開くと、blunderDB"
+" "
+"はファイルのインデックス(グループあたり数キロバイト)を読み、問題のあるシークを見つけた場合、ペインはそれを知らせるとともに、再エンコードせずにファイルを修復するコマンドをコピーできる状態で表示します:"
 
-#: ../../source/manuel_matchs.rst:914
+#: ../../source/manuel_matchs.rst:918
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "

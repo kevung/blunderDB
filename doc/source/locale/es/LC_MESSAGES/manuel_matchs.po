@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 22:57+0200\n"
+"POT-Creation-Date: 2026-10-30 16:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -922,7 +922,7 @@ msgstr ""
 "análisis siguen siendo posibles, pero toda modificación queda desactivada"
 " y la barra de título muestra « [solo lectura] »."
 
-#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:918
+#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:922
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Consulte :ref:`raccourcis` para ver los atajos disponibles."
 
@@ -1852,6 +1852,19 @@ msgstr ""
 
 #: ../../source/manuel_matchs.rst:777
 msgid ""
+"Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
+"YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
+" d'utilisation de YouTube <https://www.youtube.com/t/terms>`_ : blunderDB"
+" n'en extrait aucune image."
+msgstr ""
+"Un archivo local es un vídeo que usted posee legítimamente. Un vídeo de "
+"YouTube se reproduce en el reproductor integrado de YouTube, sujeto a las"
+" `Condiciones del servicio de YouTube "
+"<https://www.youtube.com/t/terms>`_: blunderDB no extrae ninguna imagen "
+"de él."
+
+#: ../../source/manuel_matchs.rst:781
+msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
 " une barre verticale qu'on tire pour agrandir l'une ou l'autre ; la "
@@ -1884,7 +1897,7 @@ msgstr ""
 " teclas del vídeo y *CTRL-IZQUIERDA* / *CTRL-DERECHA*, que giran el "
 "tablero, conservan su efecto."
 
-#: ../../source/manuel_matchs.rst:791
+#: ../../source/manuel_matchs.rst:795
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1906,7 +1919,7 @@ msgstr ""
 " sigue siendo el del vídeo, esté en el lado que esté. El asa y el botón "
 "dejan el teclado al panel."
 
-#: ../../source/manuel_matchs.rst:802
+#: ../../source/manuel_matchs.rst:806
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -1963,7 +1976,7 @@ msgstr ""
 "cambia la pantalla. El modo solo existe en la Transcripción, con un vídeo"
 " adjunto."
 
-#: ../../source/manuel_matchs.rst:828
+#: ../../source/manuel_matchs.rst:832
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -2006,7 +2019,7 @@ msgstr ""
 " su reproductor, hasta 2×. La velocidad se muestra en la esquina del "
 "vídeo cuando no es 1×, y una nueva fuente vuelve a empezar a 1×."
 
-#: ../../source/manuel_matchs.rst:846
+#: ../../source/manuel_matchs.rst:850
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -2021,7 +2034,7 @@ msgstr ""
 "el vídeo de un archivo como en el marco de YouTube. El ángulo se recuerda"
 " para el borrador, solo en este ordenador; no se escribe en la base."
 
-#: ../../source/manuel_matchs.rst:852
+#: ../../source/manuel_matchs.rst:856
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2052,7 +2065,7 @@ msgstr ""
 " jugada si la tirada no tiene instante; un reproductor en pausa sigue en "
 "pausa."
 
-#: ../../source/manuel_matchs.rst:865
+#: ../../source/manuel_matchs.rst:869
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2104,7 +2117,7 @@ msgstr ""
 "luego vuelve al final de la transcripción: allí las cifras abren el "
 "lanzamiento siguiente, y el indicador lo dice."
 
-#: ../../source/manuel_matchs.rst:887
+#: ../../source/manuel_matchs.rst:891
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2131,7 +2144,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav`` (este último procede de RPM Fusion) "
 "— véase :ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:899
+#: ../../source/manuel_matchs.rst:903
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2145,25 +2158,27 @@ msgstr ""
 " en pausa como antes. Tras tres recargas sin efecto, el panel lo indica y"
 " propone reintentar."
 
-#: ../../source/manuel_matchs.rst:904
+#: ../../source/manuel_matchs.rst:908
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
-" clé, que le webview ne sait pas décoder seule. C'est le cas de fichiers "
-"téléchargés par yt-dlp. À l'ouverture d'un tel fichier, blunderDB lit "
-"l'index du fichier (quelques kilo-octets par groupe) et, s'il trouve des "
-"sauts fautifs, le volet l'annonce avec la commande qui répare le fichier "
-"sans le réencoder, prête à copier :"
+" clé, que le webview ne sait pas décoder seule. Certains muxeurs, qui "
+"coupent les groupes sans tenir compte des images clés, en produisent. À "
+"l'ouverture d'un tel fichier, blunderDB lit l'index du fichier (quelques "
+"kilo-octets par groupe) et, s'il trouve des sauts fautifs, le volet "
+"l'annonce avec la commande qui répare le fichier sans le réencoder, prête"
+" à copier :"
 msgstr ""
 "Un archivo ``.webm`` o ``.mkv`` mal multiplexado congela el vídeo en "
-"algunos saltos: un grupo de imágenes del archivo empieza por una imagen "
-"no clave, que el webview no sabe decodificar sola. Es el caso de archivos"
-" descargados con yt-dlp. Al abrir un archivo así, blunderDB lee el índice"
-" del archivo (unos pocos kilobytes por grupo) y, si encuentra saltos "
-"defectuosos, el panel lo indica con el comando que repara el archivo sin "
-"recodificarlo, listo para copiar:"
+"algunos saltos: un grupo de imágenes del archivo empieza con una imagen "
+"que no es clave, que el webview no sabe decodificar por sí sola. Algunos "
+"multiplexores, que cortan los grupos sin tener en cuenta las imágenes "
+"clave, producen estos archivos. Al abrir un archivo así, blunderDB lee el"
+" índice del archivo (unos kilobytes por grupo) y, si encuentra saltos "
+"defectuosos, el panel lo anuncia con el comando que repara el archivo sin"
+" recodificarlo, listo para copiar:"
 
-#: ../../source/manuel_matchs.rst:914
+#: ../../source/manuel_matchs.rst:918
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 22:57+0200\n"
+"POT-Creation-Date: 2026-10-30 16:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -945,7 +945,7 @@ msgstr ""
 "παραμένουν δυνατές, αλλά κάθε τροποποίηση είναι απενεργοποιημένη και η "
 "γραμμή τίτλου εμφανίζει «[μόνο για ανάγνωση]»."
 
-#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:918
+#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:922
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Ανατρέξτε στο :ref:`raccourcis` για τις διαθέσιμες συντομεύσεις."
 
@@ -1894,6 +1894,19 @@ msgstr ""
 
 #: ../../source/manuel_matchs.rst:777
 msgid ""
+"Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
+"YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
+" d'utilisation de YouTube <https://www.youtube.com/t/terms>`_ : blunderDB"
+" n'en extrait aucune image."
+msgstr ""
+"Ένα τοπικό αρχείο είναι ένα βίντεο που κατέχετε νόμιμα. Ένα βίντεο "
+"YouTube αναπαράγεται στο ενσωματωμένο πρόγραμμα αναπαραγωγής του YouTube,"
+" που υπόκειται στους `Όρους Παροχής Υπηρεσιών του YouTube "
+"<https://www.youtube.com/t/terms>`_: το blunderDB δεν εξάγει καμία εικόνα"
+" από αυτό."
+
+#: ../../source/manuel_matchs.rst:781
+msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
 " une barre verticale qu'on tire pour agrandir l'une ou l'autre ; la "
@@ -1927,7 +1940,7 @@ msgstr ""
 " / *CTRL-ΔΕΞΙΆ*, που περιστρέφουν το ταμπλό, διατηρούν το αποτέλεσμά "
 "τους."
 
-#: ../../source/manuel_matchs.rst:791
+#: ../../source/manuel_matchs.rst:795
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1950,7 +1963,7 @@ msgstr ""
 "του βίντεο, από όποια πλευρά κι αν βρίσκεται. Η λαβή και το κουμπί "
 "αφήνουν το πληκτρολόγιο στο πάνελ."
 
-#: ../../source/manuel_matchs.rst:802
+#: ../../source/manuel_matchs.rst:806
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -2009,7 +2022,7 @@ msgstr ""
 "μόνο η λειτουργία θεάτρου αλλάζει την οθόνη. Η λειτουργία υπάρχει μόνο "
 "στη Μεταγραφή, με επισυναπτόμενο βίντεο."
 
-#: ../../source/manuel_matchs.rst:828
+#: ../../source/manuel_matchs.rst:832
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -2053,7 +2066,7 @@ msgstr ""
 "αναπαραγωγής του, έως 2×. Η ταχύτητα εμφανίζεται στη γωνία του βίντεο "
 "όταν δεν είναι 1×, και μια νέα πηγή ξεκινά ξανά από 1×."
 
-#: ../../source/manuel_matchs.rst:846
+#: ../../source/manuel_matchs.rst:850
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -2068,7 +2081,7 @@ msgstr ""
 "βίντεο ενός αρχείου όπως και στο πλαίσιο YouTube. Η γωνία διατηρείται για"
 " το πρόχειρο, μόνο σε αυτόν τον υπολογιστή· δεν γράφεται στη βάση."
 
-#: ../../source/manuel_matchs.rst:852
+#: ../../source/manuel_matchs.rst:856
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2100,7 +2113,7 @@ msgstr ""
 "την κίνησή της αν η ζαριά δεν έχει στιγμή· ένας παίκτης σε παύση "
 "παραμένει σε παύση."
 
-#: ../../source/manuel_matchs.rst:865
+#: ../../source/manuel_matchs.rst:869
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2153,7 +2166,7 @@ msgstr ""
 "της, και μετά επιστρέφει στο τέλος του transcript: εκεί τα ψηφία ανοίγουν"
 " την επόμενη ρίψη, και η ένδειξη το λέει."
 
-#: ../../source/manuel_matchs.rst:887
+#: ../../source/manuel_matchs.rst:891
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2181,7 +2194,7 @@ msgstr ""
 "(το τελευταίο προέρχεται από το RPM Fusion) — βλ. "
 ":ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:899
+#: ../../source/manuel_matchs.rst:903
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2195,26 +2208,28 @@ msgstr ""
 "αναπαραγωγή ή σε παύση όπως πριν. Μετά από τρεις ανεπιτυχείς "
 "επαναφορτώσεις, το πλαίσιο το επισημαίνει και προτείνει νέα προσπάθεια."
 
-#: ../../source/manuel_matchs.rst:904
+#: ../../source/manuel_matchs.rst:908
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
-" clé, que le webview ne sait pas décoder seule. C'est le cas de fichiers "
-"téléchargés par yt-dlp. À l'ouverture d'un tel fichier, blunderDB lit "
-"l'index du fichier (quelques kilo-octets par groupe) et, s'il trouve des "
-"sauts fautifs, le volet l'annonce avec la commande qui répare le fichier "
-"sans le réencoder, prête à copier :"
+" clé, que le webview ne sait pas décoder seule. Certains muxeurs, qui "
+"coupent les groupes sans tenir compte des images clés, en produisent. À "
+"l'ouverture d'un tel fichier, blunderDB lit l'index du fichier (quelques "
+"kilo-octets par groupe) et, s'il trouve des sauts fautifs, le volet "
+"l'annonce avec la commande qui répare le fichier sans le réencoder, prête"
+" à copier :"
 msgstr ""
-"Ένα λανθασμένα πολυπλεγμένο αρχείο ``.webm`` ή ``.mkv`` παγώνει το βίντεο"
-" σε ορισμένες μεταβάσεις: μια ομάδα εικόνων του αρχείου ξεκινά με μη "
-"βασικό καρέ, που το webview δεν μπορεί να αποκωδικοποιήσει μόνο του. Έτσι"
-" μπορεί να είναι αρχεία που κατέβηκαν με το yt-dlp. Όταν ανοίγει ένα "
-"τέτοιο αρχείο, το blunderDB διαβάζει το ευρετήριο του αρχείου (λίγα "
-"kilobyte ανά ομάδα) και, αν βρει προβληματικές μεταβάσεις, το πλαίσιο το "
-"επισημαίνει με την εντολή που επιδιορθώνει το αρχείο χωρίς "
-"επανακωδικοποίηση, έτοιμη για αντιγραφή:"
+"Ένα κακώς πολυπλεγμένο αρχείο ``.webm`` ή ``.mkv`` παγώνει το βίντεο σε "
+"ορισμένες μεταβάσεις: μια ομάδα εικόνων του αρχείου ξεκινά με μη βασική "
+"εικόνα, που το webview δεν μπορεί να αποκωδικοποιήσει μόνο του. Ορισμένοι"
+" πολυπλέκτες, που κόβουν τις ομάδες χωρίς να λαμβάνουν υπόψη τις βασικές "
+"εικόνες, παράγουν τέτοια αρχεία. Όταν ανοίγει ένα τέτοιο αρχείο, το "
+"blunderDB διαβάζει τον δείκτη του αρχείου (λίγα kilobyte ανά ομάδα) και, "
+"αν βρει προβληματικές μεταβάσεις, το πάνελ το αναφέρει μαζί με την εντολή"
+" που επισκευάζει το αρχείο χωρίς επανακωδικοποίηση, έτοιμη προς "
+"αντιγραφή:"
 
-#: ../../source/manuel_matchs.rst:914
+#: ../../source/manuel_matchs.rst:918
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "
