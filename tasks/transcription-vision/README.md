@@ -41,4 +41,4 @@ La synthèse se construit au fil des réponses dans `synthese.md` (une section p
 confirme, ce qu'elle change, les expériences qu'elle impose) ; l'ADR de la phase 1 et la feuille de
 route s'en tirent une fois les neuf reçues.
 
-Reçues : 01, 07.
+Reçues : les neuf.
