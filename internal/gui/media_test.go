@@ -240,3 +240,44 @@ func TestCheckVideoMux(t *testing.T) {
 		t.Errorf("unreadable mkv: report = %+v, want the command only", got)
 	}
 }
+
+func TestMediaHostCORS(t *testing.T) {
+	var h mediaHost
+	t.Cleanup(h.stop)
+	u, err := h.register(newMediaFile(t, "c.mp4", 1000))
+	if err != nil {
+		t.Fatal(err)
+	}
+	const origin = "http://wails.localhost"
+	do := func(method, rng string) *http.Response {
+		req, _ := http.NewRequest(method, u, nil)
+		req.Header.Set("Origin", origin)
+		if rng != "" {
+			req.Header.Set("Range", rng)
+		}
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		resp.Body.Close()
+		return resp
+	}
+	for _, c := range []struct {
+		method, rng string
+		status      int
+	}{{"GET", "", 200}, {"GET", "bytes=0-99", 206}, {"OPTIONS", "", 204}} {
+		resp := do(c.method, c.rng)
+		if resp.StatusCode != c.status {
+			t.Fatalf("%s %q: status %d", c.method, c.rng, resp.StatusCode)
+		}
+		if got := resp.Header.Get("Access-Control-Allow-Origin"); got != origin {
+			t.Fatalf("%s %q: allow-origin %q", c.method, c.rng, got)
+		}
+	}
+	if !strings.Contains(do("OPTIONS", "").Header.Get("Access-Control-Allow-Headers"), "Range") {
+		t.Fatal("preflight does not allow Range")
+	}
+	if r, _ := get(t, u, ""); r.Header.Get("Access-Control-Allow-Origin") != "" {
+		t.Fatal("allow-origin set without an Origin")
+	}
+}
