@@ -774,6 +774,10 @@ poste, à défaut quelques secondes avant son dernier repère ; le curseur reste
 fin de transcript, prêt pour la saisie, et ne suit la lecture qu'une fois
 qu'elle entre dans une autre action.
 
+Un fichier local est une vidéo que vous détenez légitimement. Une vidéo YouTube se lit dans le
+lecteur intégré de YouTube, soumis aux `Conditions d'utilisation de YouTube
+<https://www.youtube.com/t/terms>`_ : blunderDB n'en extrait aucune image.
+
 **La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du
 plateau se partage : la vidéo à gauche, le plateau à droite, séparés par une
 barre verticale qu'on tire pour agrandir l'une ou l'autre ; la largeur reste la
@@ -903,7 +907,7 @@ réessayer.
 
 Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur certains sauts : un groupe
 d'images du fichier commence par une image non clé, que le webview ne sait pas décoder seule.
-C'est le cas de fichiers téléchargés par yt-dlp. À l'ouverture d'un tel fichier, blunderDB lit
+Certains muxeurs, qui coupent les groupes sans tenir compte des images clés, en produisent. À l'ouverture d'un tel fichier, blunderDB lit
 l'index du fichier (quelques kilo-octets par groupe) et, s'il trouve des sauts fautifs, le volet
 l'annonce avec la commande qui répare le fichier sans le réencoder, prête à copier :
 

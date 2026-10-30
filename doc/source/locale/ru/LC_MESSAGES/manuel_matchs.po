@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 22:57+0200\n"
+"POT-Creation-Date: 2026-10-30 16:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -898,7 +898,7 @@ msgstr ""
 "остаются возможными, но любые изменения отключены, а в строке заголовка "
 "отображается «[только чтение]»."
 
-#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:918
+#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:922
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Смотрите :ref:`raccourcis` для доступных горячих клавиш."
 
@@ -1799,6 +1799,19 @@ msgstr ""
 
 #: ../../source/manuel_matchs.rst:777
 msgid ""
+"Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
+"YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
+" d'utilisation de YouTube <https://www.youtube.com/t/terms>`_ : blunderDB"
+" n'en extrait aucune image."
+msgstr ""
+"Локальный файл — это видео, которым вы владеете на законных основаниях. "
+"Видео YouTube воспроизводится во встроенном плеере YouTube, на который "
+"распространяются `Условия использования YouTube "
+"<https://www.youtube.com/t/terms>`_: blunderDB не извлекает из него ни "
+"одного изображения."
+
+#: ../../source/manuel_matchs.rst:781
+msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
 " une barre verticale qu'on tire pour agrandir l'une ou l'autre ; la "
@@ -1830,7 +1843,7 @@ msgstr ""
 "клавиши ввода, клавиши видео и *CTRL-ВЛЕВО* / *CTRL-ВПРАВО*, "
 "поворачивающие доску, сохраняют своё действие."
 
-#: ../../source/manuel_matchs.rst:791
+#: ../../source/manuel_matchs.rst:795
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1852,7 +1865,7 @@ msgstr ""
 "сеансу, а ширина остаётся шириной видео, с какой бы стороны оно ни "
 "стояло. Ручка и кнопка оставляют клавиатуру панели."
 
-#: ../../source/manuel_matchs.rst:802
+#: ../../source/manuel_matchs.rst:806
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -1907,7 +1920,7 @@ msgstr ""
 "режима, включая YouTube: экран меняет только режим кинотеатра. Режим "
 "существует только в Записи, с прикреплённым видео."
 
-#: ../../source/manuel_matchs.rst:828
+#: ../../source/manuel_matchs.rst:832
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -1949,7 +1962,7 @@ msgstr ""
 "показывается в углу видео, когда она не равна 1×, а новый источник снова "
 "начинает с 1×."
 
-#: ../../source/manuel_matchs.rst:846
+#: ../../source/manuel_matchs.rst:850
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -1964,7 +1977,7 @@ msgstr ""
 "файла, и в рамке YouTube. Угол запоминается для черновика, только на этом"
 " компьютере; в базу он не записывается."
 
-#: ../../source/manuel_matchs.rst:852
+#: ../../source/manuel_matchs.rst:856
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -1993,7 +2006,7 @@ msgstr ""
 "секунду до броска этого действия или до самого действия, если у броска "
 "нет момента; проигрыватель на паузе остаётся на паузе."
 
-#: ../../source/manuel_matchs.rst:865
+#: ../../source/manuel_matchs.rst:869
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2043,7 +2056,7 @@ msgstr ""
 "броска, затем возвращается в конец транскрипта: там цифры открывают "
 "следующий бросок, о чём сообщает индикатор."
 
-#: ../../source/manuel_matchs.rst:887
+#: ../../source/manuel_matchs.rst:891
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2070,7 +2083,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav`` (последний пакет берётся из RPM "
 "Fusion) — см. :ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:899
+#: ../../source/manuel_matchs.rst:903
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2084,26 +2097,27 @@ msgstr ""
 " паузы, как и прежде. После трёх безрезультатных перезагрузок панель "
 "сообщает об этом и предлагает повторить попытку."
 
-#: ../../source/manuel_matchs.rst:904
+#: ../../source/manuel_matchs.rst:908
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
-" clé, que le webview ne sait pas décoder seule. C'est le cas de fichiers "
-"téléchargés par yt-dlp. À l'ouverture d'un tel fichier, blunderDB lit "
-"l'index du fichier (quelques kilo-octets par groupe) et, s'il trouve des "
-"sauts fautifs, le volet l'annonce avec la commande qui répare le fichier "
-"sans le réencoder, prête à copier :"
+" clé, que le webview ne sait pas décoder seule. Certains muxeurs, qui "
+"coupent les groupes sans tenir compte des images clés, en produisent. À "
+"l'ouverture d'un tel fichier, blunderDB lit l'index du fichier (quelques "
+"kilo-octets par groupe) et, s'il trouve des sauts fautifs, le volet "
+"l'annonce avec la commande qui répare le fichier sans le réencoder, prête"
+" à copier :"
 msgstr ""
-"Неправильно мультиплексированный файл ``.webm`` или ``.mkv`` "
-"останавливает видео при некоторых переходах: группа кадров файла "
-"начинается с неключевого кадра, который webview не может декодировать сам"
-" по себе. Так бывает с файлами, загруженными yt-dlp. При открытии такого "
-"файла blunderDB читает индекс файла (несколько килобайт на группу) и, "
-"если находит проблемные переходы, панель сообщает об этом и показывает "
-"команду, которая исправляет файл без перекодирования, готовую к "
-"копированию:"
+"Плохо мультиплексированный файл ``.webm`` или ``.mkv`` вешает видео на "
+"некоторых перемотках: группа изображений файла начинается с не ключевого "
+"кадра, который webview не может декодировать сам по себе. Такие файлы "
+"создают некоторые мультиплексоры, режущие группы без учёта ключевых "
+"кадров. При открытии такого файла blunderDB читает индекс файла "
+"(несколько килобайт на группу) и, если находит дефектные перемотки, "
+"панель сообщает об этом вместе с командой, которая чинит файл без "
+"перекодирования, готовой к копированию:"
 
-#: ../../source/manuel_matchs.rst:914
+#: ../../source/manuel_matchs.rst:918
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "

@@ -5,8 +5,8 @@
 // it. GStreamer's matroskademux in push mode (WebKitGTK's video element) ignores that offset:
 // it decodes from the cluster's first block. When that block is a delta frame, the decoder
 // fails on it and WebKit treats the failure as fatal — the seek never lands and the picture
-// stays frozen. Muxers that cut clusters on size or time rather than on keyframes (Lavf as
-// yt-dlp runs it) write such files; remuxing with clusters long enough to start on keyframes
+// stays frozen. Muxers that cut clusters on size or time rather than on keyframes (Lavf in its
+// default settings) write such files; remuxing with clusters long enough to start on keyframes
 // repairs them without re-encoding (RemuxCommand).
 //
 // Check reads only the SeekHead, Tracks, Cues and a few element headers at the start of each
