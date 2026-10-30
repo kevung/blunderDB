@@ -109,8 +109,7 @@ func CarriedVideoSource(src *string) *string {
 		return nil
 	}
 	v := strings.TrimSpace(*src)
-	lower := strings.ToLower(v)
-	if !strings.HasPrefix(lower, "http://") && !strings.HasPrefix(lower, "https://") {
+	if !IsVideoURL(v) {
 		// Anything that is not exactly an http(s) URL (//host/x, host/x,
 		// https:/h/x) is read as a path, but may still be a URL typed
 		// loosely: the query and the fragment are cut before the name is
@@ -135,6 +134,15 @@ func CarriedVideoSource(src *string) *string {
 		return nil
 	}
 	return &v
+}
+
+// IsVideoURL says whether a video source is an http(s) URL; anything else is
+// read as a local path. It is the one place that draws the line, for the
+// export that strips a URL's credentials and for the one that keeps only the
+// sources living on disk.
+func IsVideoURL(src string) bool {
+	lower := strings.ToLower(strings.TrimSpace(src))
+	return strings.HasPrefix(lower, "http://") || strings.HasPrefix(lower, "https://")
 }
 
 // carriedVideoParams are the query parameters that locate a moment of a

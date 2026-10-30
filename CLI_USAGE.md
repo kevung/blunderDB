@@ -5861,6 +5861,15 @@ comments) and refuses without --accept-losses. Abandoning a
 draft that never produced a match loses everything typed
 in it, and asks for --yes.
 
+--marks writes a manifest, one JSON line per move that
+carries a Repère (video instants), for the matches whose
+video is a local file: path, match, game, move, dice, play,
+board before and after, roll_tick_ms and tick_ms. A video
+that is an http(s) URL is left out and counted in the
+summary; a local file missing from the disk is named on
+the error output and left out. No image is read or written,
+and nothing is written to the database.
+
 Options:
   -abandon
     	Abandon the --draft: delete it without a match; a match it was opened from is left untouched
@@ -5880,6 +5889,8 @@ Options:
     	Output format: text or json (default "text")
   -import string
     	Open a new draft on this .mat or transcription document (JSON), to correct and finish (requires --db)
+  -marks string
+    	Write the manifest of the Repères of the local video sources, one JSON line per timed move, to this .jsonl file (requires --db; --match narrows it to one match)
   -mat string
     	Jellyfish/gnubg .mat file to replay
   -match int
@@ -5914,6 +5925,9 @@ Examples:
 
   # Open a draft on a .mat (or a transcription document), then finish it
   blunderdb transcribe --db database.db --import match.mat
+
+  # Export the manifest of Repères of the local videos
+  blunderdb transcribe --db database.db --marks marks.jsonl
 
   # Drop a draft
   blunderdb transcribe --db database.db --draft 4 --abandon
