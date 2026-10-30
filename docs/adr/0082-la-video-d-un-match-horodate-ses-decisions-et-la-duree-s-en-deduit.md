@@ -54,8 +54,10 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    alors que la vidéo avait continué) est marqué, et non chaque Action juste qui le suit ; insérer, supprimer ou corriger une Action ne déplace aucun
    Repère, et le Replay recalcule.
 3. **Les Repères se posent de deux façons, et le transcript ramène à la vidéo.** Sur une
-   Action *nouvelle*, la première touche de dé pose l'instant du jet et la validation pose
-   l'instant de l'action, à l'instant courant de la vidéo ; une correction en place ne touche
+   Action *nouvelle*, la première touche de dé pose l'instant du jet — celui où les dés se
+   sont posés si un repos détecté sûr couvre l'instant courant (ADR-0109 règle 5), l'instant
+   courant sinon — et la validation pose l'instant de l'action, à l'instant courant de la
+   vidéo ; une correction en place ne touche
    pas aux Repères. Une validation implicite — par le chiffre du jet suivant ou par un geste de
    videau — ne pose aucun instant : le coup reste sans instant d'action plutôt que d'en recevoir
    un faux. Un geste explicite pose l'instant courant sur l'action du curseur, jet ou

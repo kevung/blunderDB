@@ -83,7 +83,7 @@ H1 et H2 ne dépendent de rien et se font en parallèle du lot V0.
 
 | # | Issue | Zone | Dépend de | Modèle |
 |---|---|---|---|---|
-| V1.0 | Accepter l'ADR-0109 : statut, réécriture en place de l'ADR-0082 règle 3, index. | docs | V0.1 et V0.2 verts | Sonnet |
+| V1.0 ✓ | Accepter l'ADR-0109 : statut, réécriture en place de l'ADR-0082 règle 3, index. (fait) | docs | V0.1 et V0.2 verts | Sonnet |
 | V1.1 | **Noyau Z-vision** : contrat d'événements, chargement du Worker (chemin trouvé par V0.1), échantillonneur rVFC à 320×180, descripteurs census + ROI témoin, **journal local** de descripteurs (IndexedDB, effaçable, jamais exporté) et son rejeu en vitest. | Z-vision | V1.0 | Opus |
 | V1.2 | **Géométrie** : homographie DLT normalisée à 4 points, modèle du plateau en diamètres de pion, rectification d'une zone, score de présence avec hystérésis. Module pur, tests sur images de synthèse. | Z-vision (fichiers distincts de V1.1) | V1.0 | Opus |
 | V1.3 | **Automates** mains / dés / partie et fenêtres par comparaison d'états (1–2 img/s → 10 img/s sur [−1 ; +2] s), chemin opportuniste à 1×. Seuils réglés sur les journaux de V1.1. | Z-vision | V1.1 | Opus |

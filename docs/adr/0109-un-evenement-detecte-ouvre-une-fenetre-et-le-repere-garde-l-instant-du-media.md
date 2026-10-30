@@ -1,9 +1,9 @@
 # ADR-0109 — Un événement détecté ouvre une fenêtre, et le Repère garde l'instant du média
 
-Statut : proposée ; les deux bancs qui la conditionnaient sont rendus
+Statut : acceptée. Les deux bancs qui la conditionnaient sont rendus
 (`tasks/transcription-vision/bancs/01-webview-linux.md` : Worker depuis `wails://` vert sous
-WebKitGTK ; `02-couverture-sql.md`) et les règles 1 et 4 en tiennent compte. L'acceptation est
-l'issue V1.0 du plan (`tasks/transcription-vision/chantiers.md`).
+WebKitGTK ; `02-couverture-sql.md`) et les règles 1 et 4 en tiennent compte. L'ADR-0082
+règle 3 est réécrite en place.
 Voir aussi : ADR-0108 (le cadre de l'assistant : fichier local, pixel dans un Worker, trois
 états, commodités du poste), ADR-0082 (le Repère et sa pose), ADR-0092 (aucune frappe n'est
 avalée), ADR-0044 (transcrire n'est pas jouer), ADR-0111 (la lecture du coup, à venir).
@@ -103,12 +103,8 @@ GStreamer. Et le Repère du jet n'est pas l'instant de l'événement : la premi�
   devient plus juste, le filtre et l'affichage (ADR-0073) ne changent pas.
 - `g` et `MAJ-G` entrent dans `shortcutMap.js` avec les touches vidéo du panneau, et dans
   `doc/source/raccourcis.rst` avec ses huit `.po`.
-- À l'acceptation, l'ADR-0082 règle 3 est réécrite en place ; sa phrase « Sur une Action
-  *nouvelle*, la première touche de dé pose l'instant du jet et la validation pose l'instant de
-  l'action, à l'instant courant de la vidéo » devient « Sur une Action *nouvelle*, la première
-  touche de dé pose l'instant du jet — celui où les dés se sont posés si un repos détecté sûr
-  couvre l'instant courant (ADR-0109 règle 5), l'instant courant sinon — et la validation pose
-  l'instant de l'action, à l'instant courant de la vidéo ».
+- L'ADR-0082 règle 3 porte la phrase du jet : l'instant où les dés se sont posés si un repos
+  détecté sûr couvre l'instant courant, l'instant courant sinon.
 - Mesuré sur le banc V0.1 (WebKitGTK 2.54) : ≈ 5 ms de thread principal par image lue en
   1080p, quelle que soit la taille de la cible (`willReadFrequently: true`) ; seeks exacts à
   l'image, 46 ms vers une image clé, 165 ms en fin de groupe ; une passe par seeks à 1 img/s
