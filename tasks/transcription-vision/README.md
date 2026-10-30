@@ -43,3 +43,11 @@ route s'en tirent une fois les neuf reçues.
 
 Reçues : les neuf. `synthese.md` est complète (une section par réponse, puis « Conclusions
 transversales » : cadre révisé, risques découverts hors vision, phases 0 à 3 avec leurs ADR).
+
+## Décisions et chantiers
+
+Les décisions sont dans `docs/adr/` : ADR-0108 (cadre, acceptée), ADR-0109 (phase 1), ADR-0110
+(phase 2), ADR-0111 (phase 3), les trois dernières *proposées* et nommant les bancs qui les
+débloquent. Le découpage en issues par zone de code, l'ordre d'ouverture et les bancs du lot V0
+sont dans `chantiers.md` ; les notes de banc iront dans `bancs/`. Là où `synthese.md` et un ADR
+divergent, l'ADR fait foi.

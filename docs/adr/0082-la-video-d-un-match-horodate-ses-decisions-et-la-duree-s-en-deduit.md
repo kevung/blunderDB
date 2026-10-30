@@ -3,7 +3,8 @@
 Statut : acceptée.
 Voir aussi : ADR-0073 (la durée par décision, son filtre et son affichage), ADR-0044 et
 ADR-0045 (la Transcription et son brouillon), ADR-0057 (l'API de transcription), ADR-0067 (les
-métadonnées qui voyagent avec un match), ADR-0039 (le front web embarqué).
+métadonnées qui voyagent avec un match), ADR-0039 (le front web embarqué), ADR-0108 (l'assistant
+qui lit les images d'un fichier vidéo).
 
 ## Contexte
 
@@ -88,8 +89,9 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    se posent par le geste explicite. Depuis la revue d'un Match, une décision ouvre sa vidéo :
    dans le lecteur de l'application pour un fichier (règle 7), dans le navigateur par le lien
    horodaté pour YouTube. Le démon `serve` ne lit rien.
-6. **L'application ne décode rien elle-même.** Les codecs sont ceux du webview : natifs sur
-   Windows et macOS, ceux de GStreamer sur Linux. Un format que le webview ne lit pas se
+6. **Le webview décode, l'application n'embarque aucun décodeur.** Les codecs sont ceux du
+   webview : natifs sur Windows et macOS, ceux de GStreamer sur Linux. L'assistant de
+   transcription lit, dans le webview, les images que celui-ci a décodées (ADR-0108 règle 2). Un format que le webview ne lit pas se
    diagnostique dans le volet, par le format du fichier et les paquets à installer, jamais par
    un cadre noir. Le Flatpak déclare l'extension ffmpeg du runtime, le paquet AUR nomme ses
    dépendances optionnelles, les notes d'installation listent les greffons.

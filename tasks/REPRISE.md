@@ -44,6 +44,8 @@ sa partie encore utile (quiz et `duel --play` reconnaissent un coup par le plate
 
 1. #664 livre d'ouverture : rapatrier `book.jsonl.gz` de smith quand le calcul est terminé.
 2. #842 : quiz et `duel --play` par le plateau atteint (extrait de la PR #809).
+3. Chantier vision (`tasks/transcription-vision/`) : ADR-0108 acceptée, 0109-0111 proposées ;
+   `chantiers.md` attend la validation de Kevin avant l'ouverture des issues (lot V0 bancs + H1-H3).
 3. Travail de fond : voir `tasks/BACKLOG.md`.
 
 ## Pièges

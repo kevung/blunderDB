@@ -411,9 +411,10 @@ pour des pions.
 - *Le corpus est un manifeste, pas des images* : export CLI (parité GUI/serveur) des repères —
   `video_source`, `roll_tick_ms`, `tick_ms`, dés, coup, plateaux, verdict d'audit — limité aux sources
   **locales**, URL refusées. Les imagettes se régénèrent depuis le fichier et se purgent après
-  entraînement, registre des sources tenu. L'export de bibliothèque ne garde `video_source` que si
-  c'est une URL (`domain.go`) : un corpus central ne peut **pas** naître de bases reçues (il n'y
-  aurait que du YouTube) ; il se construit chez qui détient les fichiers.
+  entraînement, registre des sources tenu. L'export de bibliothèque réduit un `video_source` local
+  à son nom de fichier (ADR-0082 règle 4, `issuance.CarriedVideoSource`) : une base reçue n'apporte
+  que des Repères sans image, un corpus central ne peut **pas** naître de bases reçues ; il se
+  construit chez qui détient les fichiers.
 - *Stockage local pour l'apprentissage actif* : embeddings et étiquettes, jamais d'imagette. Ce n'est
   pas un enregistrement côté destinataire (rien sur qui ouvre ni quand), mais pas non plus un dérivé
   des lignes : hors `issuance.CarriedMetadataKeys`, jamais exporté, de préférence hors du fichier de
@@ -669,8 +670,8 @@ là où ils divergent.
    WebGPU absent de WebKitGTK) ; l'amélioration continue est un k-NN de prototypes par caméra,
    vecteurs stockés localement sans image, hors `CarriedMetadataKeys`, jamais exportés (06).
 8. **Le corpus est un manifeste, construit chez qui détient les fichiers.** L'export de
-   bibliothèque ne garde `video_source` que si c'est une URL : un corpus central ne peut pas naître
-   de bases reçues. Un export CLI des repères, limité aux sources locales, les imagettes régénérées
+   bibliothèque réduit un `video_source` local à son nom de fichier (ADR-0082 règle 4) : une base
+   reçue n'apporte que des Repères sans image, un corpus central ne peut pas naître de bases reçues. Un export CLI des repères, limité aux sources locales, les imagettes régénérées
    puis purgées (06).
 9. **Plancher réel WebKitGTK : 2.50** (même Ubuntu 22.04 l'a reçu par les mises à jour de
    sécurité) : le chemin confortable de 01 est le cas normal (05). Toujours par détection de
