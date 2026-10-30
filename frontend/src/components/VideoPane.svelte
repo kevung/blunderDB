@@ -9,13 +9,14 @@
     import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
+    import VideoCalibration from './VideoCalibration.svelte';
     import { VIDEO_RATES, stepRate as nextRate } from '../utils/videoRate.js';
 
     // `rotation`: 0, 90, 180 or 270 degrees clockwise. The media turns inside the box (the
     // player's own controls with it); at 90 and 270 it takes the box's height as its width and
     // the reverse, so the picture stays whole.
-    /** @type {{ source: string, startMs?: number, rotation?: number, onrelocate?: (path: string) => void, onended?: () => void }} */
-    let { source, startMs = 0, rotation = 0, onrelocate = undefined, onended = undefined } = $props();
+    /** @type {{ source: string, startMs?: number, rotation?: number, onrelocate?: (path: string) => void, onended?: () => void, calibrationKey?: string | number | null, viewLost?: boolean, oncalibration?: (c: any) => void }} */
+    let { source, startMs = 0, rotation = 0, onrelocate = undefined, onended = undefined, calibrationKey = null, viewLost = false, oncalibration = undefined } = $props();
 
     /** @type {'' | 'file' | 'youtube' | 'url'} */
     let kind = $state('');
@@ -570,6 +571,9 @@
             style:--turn="{rotation}deg"
             data-rotation={rotation}
         ></iframe>
+    {/if}
+    {#if calibrationKey != null && kind === 'file' && src && status === 'ready'}
+        <VideoCalibration {calibrationKey} {video} {rotation} {viewLost} {oncalibration} />
     {/if}
     {#if status === 'ready' && rateFlash}
         {#key rate}
