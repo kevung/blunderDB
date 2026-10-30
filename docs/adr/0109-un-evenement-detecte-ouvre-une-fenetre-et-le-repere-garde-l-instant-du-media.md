@@ -1,7 +1,8 @@
 # ADR-0109 — Un événement détecté ouvre une fenêtre, et le Repère garde l'instant du média
 
-Statut : proposée ; acceptation après les bancs V0.1 (Worker depuis `wails://` sous WebKitGTK)
-et V0.2 (couverture des fenêtres en SQL) — un rouge arrête le chantier.
+Statut : proposée ; acceptation après le banc V0.1 (Worker depuis `wails://` sous WebKitGTK) —
+un rouge arrête le chantier. Le banc V0.2 (couverture des fenêtres en SQL,
+`tasks/transcription-vision/bancs/02-couverture-sql.md`) est rendu : la règle 1 en tient compte.
 Voir aussi : ADR-0108 (le cadre de l'assistant : fichier local, pixel dans un Worker, trois
 états, commodités du poste), ADR-0082 (le Repère et sa pose), ADR-0092 (aucune frappe n'est
 avalée), ADR-0044 (transcrire n'est pas jouer), ADR-0111 (la lecture du coup, à venir).
@@ -19,13 +20,17 @@ GStreamer. Et le Repère du jet n'est pas l'instant de l'événement : la premi�
 
 ## Décision
 
-1. **Pas de pré-passe rapide : l'analyse suit la lecture.** Le chemin principal est
-   opportuniste : pendant la lecture à 1×, le Worker reçoit chaque image composée et les
-   automates tournent à 10 img/s. En complément, une analyse hiérarchique : à 1–2 img/s, par
-   seeks séquentiels (un seul en vol), elle compare des **états** — dés déplacés, plateau
-   changé — et ouvre des fenêtres de [−1 ; +2] s où les automates tournent à 10 img/s. La part
-   de chaque chemin se décide par la couverture des fenêtres, mesurée en SQL sur
-   `roll_tick_ms`/`tick_ms` (banc V0.2), pas par le code.
+1. **Pas de pré-passe rapide : l'analyse suit la lecture, et elle est hiérarchique.** Le
+   Worker reçoit chaque image composée pendant la lecture, à la vitesse que le décodeur tient
+   (1× sûrement ; au-delà selon le banc V0.1). Il ne fait pas tourner les automates partout : à
+   1–2 img/s il compare des **états** — dés déplacés, plateau changé — et n'ouvre une fenêtre
+   de [−1 ; +2] s, où les automates tournent à 10 img/s, qu'autour d'un changement. Sur trois
+   matchs horodatés, ces fenêtres couvrent un tiers de la vidéo (banc V0.2) : la hiérarchie
+   divise par trois le travail dense, et c'est elle qui rend la lecture accélérée analysable.
+   La même hiérarchie, par seeks séquentiels (un seul en vol), sert à parcourir une plage sans
+   la regarder. La largeur de la fenêtre est un choix d'ingénierie : [−1 ; +2] s est la valeur
+   de départ, à régler sur l'histogramme du banc V0.5 (à ±5 s la couverture passe à deux
+   tiers et la hiérarchie ne vaut plus la peine).
 2. **Deux résolutions.** Les événements se calculent sur une image réduite à 320×180,
    transférée au Worker. La rectification du plateau en pleine résolution, nécessaire pour
    lire un coup, relève de l'ADR-0111.
