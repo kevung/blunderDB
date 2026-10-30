@@ -112,11 +112,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
 
 ## Ouvert — Frontend
 
-- **`MatchPanel.svelte` (1 772 lignes) : extraire la fiche dans un composant `MatchSheet`**,
-  avant que deux panneaux puissent coexister. Le panneau Tournois héberge un `MatchPanel`
-  (`embeddedMatchId`) et chaque effet global y est coupé par un garde `embedded` (liste, tri
-  partagé, clavier, ids DOM `match-tab-*` en double) ; un effet ajouté sans garde touche l'état
-  du vrai panneau. L'extraction du volet de détail règle les deux.
 - **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections,
   leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la
   GUI n'offre pas ce choix.
@@ -189,6 +184,10 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   abordable un regroupement par distance `like` ; le plan d'étude groupe encore par thème seul.
 
 ## Historique — items faits
+
+- **2026-10-31 — la fiche de `MatchPanel` extraite dans `MatchSheet`** (#863) : le panneau Tournois
+  monte la fiche seule, sans garde `embedded` ni effet global ; les ids DOM des onglets sont par
+  instance (`$props.id()`), la suppression passe par `services/matchTrash.js`.
 
 - **2026-10-31 — relevé des entrées « Ouvert » déjà livrées** : empreinte d'une position copiée
   prise dans la transaction d'import (#828, `8225586de`) ; `SwapPlayers` et `DeleteCascade`

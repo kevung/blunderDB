@@ -120,6 +120,21 @@ describe('TournamentPanel — hosted sheet', () => {
         expect(stop).not.toHaveBeenCalled();
     });
 
+    test('the sheet takes no panel id and shares no DOM id with the Matches panel', async () => {
+        const row = await openTournamentDetail();
+        await fireEvent.click(row);
+        await screen.findByTestId('match-tab-info');
+        expect(document.getElementById('matchPanel')).toBeNull();
+        expect(document.querySelectorAll('.match-panel')).toHaveLength(0);
+
+        // A Matches panel with its own sheet beside the tournament's: no id is on screen twice.
+        const { default: MatchSheet } = await import('../components/MatchSheet.svelte');
+        render(MatchSheet, { props: { matchId: 8 } });
+        await vi.waitFor(() => expect(screen.getAllByTestId('match-tab-info')).toHaveLength(2));
+        const ids = [...document.querySelectorAll('[id]')].map((e) => e.id);
+        expect(new Set(ids).size).toBe(ids.length);
+    });
+
     test('a second click on the same row closes the sheet', async () => {
         const row = await openTournamentDetail();
         await fireEvent.click(row);

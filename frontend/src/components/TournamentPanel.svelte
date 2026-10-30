@@ -12,7 +12,7 @@
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import TournamentReview from './TournamentReview.svelte';
-    import MatchPanel from './MatchPanel.svelte';
+    import MatchSheet from './MatchSheet.svelte';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import { menuFor } from '../services/actionCatalog.js';
     import { sendContext, otherBases } from '../services/sendActions.js';
@@ -241,7 +241,7 @@
         untrack(() => (sheetMatchId = null));
     });
 
-    // The match whose sheet (the Matches panel's own) sits under the table: one click on its row.
+    // The match whose sheet sits under the table: one click on its row.
     let sheetMatchId = $state(/** @type {number | null} */ (null));
     // Bumped when the sheet's match changed under it (players swapped): the sheet is read again.
     let sheetVersion = $state(0);
@@ -1146,7 +1146,7 @@
                 {#if sheetMatchId != null && tournamentMatches.some((m) => m.id === sheetMatchId)}
                     <div class="match-sheet" data-testid="tournament-match-sheet">
                         {#key sheetVersion}
-                            <MatchPanel bind:this={sheet} embeddedMatchId={sheetMatchId} onDeleted={onSheetDeleted} />
+                            <MatchSheet bind:this={sheet} matchId={sheetMatchId} onDeleted={onSheetDeleted} />
                         {/key}
                     </div>
                 {/if}
