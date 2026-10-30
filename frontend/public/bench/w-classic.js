@@ -2,6 +2,20 @@
 self.onmessage = (e) => {
   const d = e.data;
   if (d && d.buf) { self.postMessage({ buf: d.buf, n: d.buf.byteLength }, [d.buf]); return; }
+  if (d && d.codecs) {
+    (async () => {
+      const r = {};
+      for (const codec of d.codecs) {
+        const t0 = performance.now();
+        try { r[codec] = (await VideoDecoder.isConfigSupported({ codec, codedWidth: 1920, codedHeight: 1080 })).supported; }
+        catch (err) { r[codec] = 'throw ' + err; }
+        r[codec + ' ms'] = Math.round(performance.now() - t0);
+        self.postMessage({ partial: r });
+      }
+      self.postMessage({ codecs: r });
+    })();
+    return;
+  }
   if (d && d.probe) {
     let simd = null;
     try { simd = WebAssembly.validate(new Uint8Array(d.simd)); } catch (err) { simd = 'throw ' + err; }

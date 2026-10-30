@@ -23,7 +23,7 @@ async function send(final) {
 }
 async function section(name, fn) {
   log('== ' + name);
-  try { report[name] = await fn(); } catch (e) { report[name] = { error: String(e && e.stack || e) }; }
+  try { report[name] = await fn(); } catch (e) { report[name] = { error: String(e && (e.name + ': ' + e.message + ' @ ' + e.stack) || e) }; }
   log(JSON.stringify(report[name]).slice(0, 400));
   await send(false);
 }
@@ -124,6 +124,7 @@ const nextFrame = (ms) => new Promise((resolve) => {
   video.requestVideoFrameCallback((now, md) => { clearTimeout(t); resolve({ at: performance.now(), md }); });
 });
 let video;
+let rvfcSeen = 0;
 async function setupVideo() {
   video = document.createElement('video');
   video.crossOrigin = 'anonymous';
@@ -152,6 +153,7 @@ async function playAt(rate, seconds, from, pipeline) {
   let stop = false;
   const cb = (now, md) => {
     if (stop) return;
+    rvfcSeen++;
     const ct = video.currentTime;
     const row = { at: performance.now(), mediaTime: md.mediaTime, ct, pf: md.presentedFrames };
     if (pipeline) {
@@ -169,8 +171,29 @@ async function playAt(rate, seconds, from, pipeline) {
   video.requestVideoFrameCallback(cb);
   const wall0 = performance.now();
   const mt0 = video.currentTime;
-  await video.play().catch((e) => { rows.err = String(e); });
-  await sleep(seconds * 1000);
+  const raf = [];
+  const rafLoop = () => {
+    if (stop) return;
+    if (!pipeline || rows.length === 0) {
+      const ct = video.currentTime;
+      const t0 = performance.now();
+      const g = grab();
+      const idx = decodeIndex(g.img);
+      if (pipeline) { const buf = g.img.data.buffer; probeWorker.postMessage({ buf }, [buf]); }
+      raf.push({ at: t0, ct, idx, total: performance.now() - t0 });
+    }
+    requestAnimationFrame(rafLoop);
+  };
+  const ended = once(video, 'ended', seconds * 1000 + 60000);
+  video.addEventListener('playing', () => video.requestVideoFrameCallback(cb), { once: true });
+  requestAnimationFrame(rafLoop);
+  const tp = performance.now();
+  let playResolvedMs = null;
+  video.play().then(() => { playResolvedMs = r1(performance.now() - tp); }, (e) => { rows.err = String(e); });
+  const t00 = performance.now();
+  const byRaf = new Promise((res) => { const tick = () => { if (performance.now() - t00 >= seconds * 1000) res('raf'); else requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
+  const stoppedBy = await Promise.race([sleep(seconds * 1000).then(() => 'timer'), byRaf, ended.then((t) => (t === null ? 'ended-timeout' : 'ended'))]);
+  const tEnd = stoppedBy === 'ended' ? 1 : null;
   stop = true;
   video.pause();
   const wall = (performance.now() - wall0) / 1000;
@@ -202,6 +225,20 @@ async function playAt(rate, seconds, from, pipeline) {
     pipelineMs: pipeline ? { draw: stats(rows.map((r) => r.draw)), getImageData: stats(rows.map((r) => r.read)), total: stats(rows.map((r) => r.total)) } : undefined,
     droppedVideoFrames: q0 && q1 ? q1.droppedVideoFrames - q0.droppedVideoFrames : 'n/a',
     totalVideoFrames: q0 && q1 ? q1.totalVideoFrames - q0.totalVideoFrames : 'n/a',
+    endedEarly: tEnd !== null, stoppedBy, playResolvedMs, canvasReadableAfter: (() => { try { grab(); return true; } catch (e) { return e.name; } })(),
+    rafSampler: (() => {
+      const uniq = new Set(raf.map((r) => r.idx));
+      let ctEq = 0, ctOff1 = 0, ctOther = 0, back = 0;
+      raf.forEach((r, i) => {
+        const e = Math.floor(r.ct * FPS + 1e-6);
+        if (e === r.idx) ctEq++; else if (Math.abs(e - r.idx) === 1) ctOff1++; else ctOther++;
+        if (i && r.idx < raf[i - 1].idx) back++;
+      });
+      const span = raf.length ? raf[raf.length - 1].idx - raf[0].idx + 1 : 0;
+      return { samples: raf.length, samplesPerS: r1(raf.length / wall), distinctFrames: uniq.size, framesInSpan: span,
+        distinctFramesPerS: r1(uniq.size / wall), decodedVsCurrentTime: { equal: ctEq, off1: ctOff1, other: ctOther }, indexWentBack: back,
+        pipelineTotalMs: stats(raf.map((r) => r.total)) };
+    })(),
     err: rows.err
   };
 }
@@ -241,7 +278,7 @@ async function seekBench(label, frames) {
   let rvfcMissing = 0, ok = 0, off = [], seekedMissing = 0, mtOk = 0;
   for (const n of frames) {
     const t = n / FPS + 1 / (4 * FPS);
-    const f = nextFrame(1500);
+    const f = nextFrame(rvfcSeen ? 1500 : 150);
     const s = once(video, 'seeked', 5000);
     const t0 = performance.now();
     video.currentTime = t;
@@ -250,8 +287,9 @@ async function seekBench(label, frames) {
     if (ts === null) seekedMissing++; else toSeeked.push(ts - t0);
     if (fr === null) rvfcMissing++;
     else { toFrame.push(fr.at - t0); if (Math.round(fr.md.mediaTime * FPS) === n) mtOk++; }
-    const idx = decodeIndex(grab().img);
-    if (idx === n) ok++; else off.push(idx - n);
+    let idx;
+    try { idx = decodeIndex(grab().img); } catch (e) { idx = e.name; }
+    if (idx === n) ok++; else off.push(typeof idx === 'number' ? idx - n : idx);
   }
   return {
     label, seeks: frames.length, seekedMs: stats(toSeeked), rvfcAfterSeekMs: stats(toFrame), rvfcMissing, seekedMissing,
@@ -285,6 +323,11 @@ async function detect() {
 
 async function webcodecs() {
   const out = {};
+  report.p5_webcodecs_worker = await withTimeout(new Promise((resolve) => {
+    probeWorker.onmessage = (e) => { if (e.data.codecs) resolve(e.data.codecs); else { report.p5_webcodecs_worker_partial = e.data.partial; send(false); } };
+    probeWorker.postMessage({ codecs: ['vp09.00.10.08', 'av01.0.04M.08', 'avc1.42E01E', 'avc1.640028'] });
+  }), 20000);
+  await send(false);
   report.p5_webcodecs = out;
   const step = async (n) => { report.p5_step = n; await send(false); };
   if (typeof VideoDecoder !== 'undefined') {
@@ -331,7 +374,7 @@ async function main() {
   await section('p4_seek_keyframe', () => seekBench('keyframe', shuffled(Array.from({ length: 50 }, (_, k) => 60 * (k + 4) % 3540))));
   await section('p4_seek_midgop', () => seekBench('mid-GOP (+31 frames)', shuffled(Array.from({ length: 50 }, (_, k) => (60 * (k + 4) + 31) % 3540))));
   await section('p4_seek_endgop', () => seekBench('end of GOP (+59 frames)', shuffled(Array.from({ length: 50 }, (_, k) => (60 * (k + 4) + 59) % 3540))));
-  await section('p4_seek_sequential_0_5s', () => seekBench('sequential 0.5 s', Array.from({ length: 200 }, (_, j) => 15 * (j + 1))));
+  await section('p4_seek_sequential_0_5s', () => seekBench('sequential 0.5 s', Array.from({ length: 100 }, (_, j) => 15 * (j + 1))));
   report.clockResolutionMs = (() => { const a = performance.now(); let b; do { b = performance.now(); } while (b === a); return r1(b - a); })();
   report.end = new Date().toISOString();
   await send(false);
