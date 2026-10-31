@@ -53,8 +53,19 @@ Trouvé sur le disque (2026-10-31) :
 - `~/src/blunderDB/a.db` : 242 Repères (match 1, Unger – MacNaughtan, 9 pts), mais pas la vidéo ;
 - `~/dwn/unger.db` (matchs 284-286, banc V0.2) : absente du disque.
 
-Il faut **les trois ensemble** pour un même match : la vidéo, ses Repères en base, et le journal
-de descripteurs que le volet produit en lisant cette vidéo calibrée (WebKitGTK ; non rejouable
-hors du volet). Marche à suivre : ouvrir le match dans le volet, calibrer, lire en entier,
-exporter le journal, `replay` → `events.json`, puis `marks_export.py` et `mesure.py`. Les seuils se
-règlent ensuite en rejouant le journal sous `createAutomata(overrides)`.
+Il faut **les trois ensemble** pour un même match : la vidéo, ses Repères en base, et les
+événements que le volet produit en lisant cette vidéo calibrée (WebKitGTK ; non rejouable hors
+du volet).
+
+Marche à suivre (build de développement seulement : l'action n'existe pas dans le binaire publié) :
+
+1. `make dev`, ouvrir le match et son brouillon de transcription avec la vidéo attachée ;
+2. calibrer, assistant allumé ;
+3. lire la vidéo en entier à 1×, sans saut ;
+4. cliquer « Enregistrer les événements (banc) » (sous la vidéo) et choisir `events.json` ;
+   le fichier porte `{events, calibration, source}`, `mediaTime` en secondes ;
+5. `marks_export.py` puis `mesure.py events.json marks.csv`.
+
+Les événements ne viennent que de la session en cours : recharger la page les perd (le journal
+IndexedDB n'est pas relu ici). Les seuils se règlent ensuite en rejouant un journal sous
+`createAutomata(overrides)`.

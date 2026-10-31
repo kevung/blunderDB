@@ -24,6 +24,9 @@ Test : `python3 -m unittest discover -s tools/vision` depuis la racine.
 
 ## Banc V1.7 : F1 des événements et gain de navigation
 
+`events.json` s'obtient sous `make dev` : calibrer, assistant allumé, lire la vidéo en entier à
+1×, puis « Enregistrer les événements (banc) » sous la vidéo (absent du binaire publié) ;
+`marks_export.py` produit `marks.csv`.
 `python3 mesure.py events.json marks.csv` (voir l'en-tête du script et
 `tasks/transcription-vision/bancs/04-mesure.md`). `python3 mutations.py` (aussi pour `readable_hist.py` et `prepare_annot.py`) vérifie que chaque
 convention est tenue par un test. Fixture sous `fixtures/`.

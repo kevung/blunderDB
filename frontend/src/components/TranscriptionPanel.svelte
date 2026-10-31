@@ -111,6 +111,7 @@
     import { saveVideoResume, videoResumeMs } from '../services/videoResume.js';
     import { loadVideoRotation, nextRotation, saveVideoRotation } from '../services/videoRotation.js';
     import { visionEventsStore, pushVisionEvent, resetVisionEvents } from '../stores/visionEventsStore.js';
+    import VisionBenchExport from './VisionBenchExport.svelte';
     import { createVisionSession } from '../services/visionSession.js';
     import { jumpTarget, snapRollTime, timelineMarkers, recentOverlay, viewLost as visionViewLost } from '../services/visionTimeline.js';
     import { toCssPx } from '../utils/uiZoom.js';
@@ -716,6 +717,7 @@
     // The calibration in force feeds the vision core; one session per draft's video.
     /** @type {ReturnType<typeof createVisionSession> | null} */
     let visionSession = null;
+    let calibrationName = $state('');
     function endVisionSession() {
         visionSession?.dispose();
         visionSession = null;
@@ -723,6 +725,7 @@
     }
     /** @param {any} calibration */
     function onCalibration(calibration) {
+        calibrationName = calibration?.name ?? '';
         if (!calibration && !visionSession) return;
         if (!visionSession) {
             const video = videoPane?.videoElement?.();
@@ -2220,6 +2223,7 @@
                         />
                     {/key}
                 </div>
+                <VisionBenchExport events={$visionEventsStore} calibration={calibrationName} source={videoSource} />
                 {#if !videoOnBoard}
                     <div class="video-resize" role="separator" aria-orientation="horizontal" aria-label={$t('transcription.videoResize')} onpointerdown={startVideoResize}></div>
                 {/if}
