@@ -14,6 +14,7 @@
  */
 
 import { censusChangedFraction, censusDistance, censusRoi, DEFAULT_TAU, toGray } from './census.js';
+import { createAutomata } from './automata.js';
 import { EVENT_TYPES, makeEvent, normalizeCalibration, STATES } from './contract.js';
 
 /** Fraction des pixels du témoin au-delà de laquelle l'image est incertaine (ADR-0109 règle 4). */
@@ -86,11 +87,13 @@ export function createDescriber(calibration, { tau = DEFAULT_TAU, witnessThresho
 }
 
 /**
- * Les événements tirés des relevés. Un épisode d'images incertaines ne donne qu'un
- * `frame.uncertain`, à l'instant de sa première image. Les automates mains / dés / partie
- * s'ajoutent ici, sur les mêmes relevés.
+ * Les événements tirés des relevés : un épisode d'images incertaines ne donne qu'un
+ * `frame.uncertain`, à l'instant de sa première image ; les automates mains / dés / partie et
+ * la cadence voulue viennent de `automata.js`, sur les mêmes relevés.
+ * @param {Parameters<typeof createAutomata>[0]} [thresholds] pour rejouer sous d'autres seuils
  */
-export function createDetector() {
+export function createDetector(thresholds) {
+    const automata = createAutomata(thresholds);
     let inUncertain = false;
     return {
         /**
@@ -102,7 +105,12 @@ export function createDetector() {
             const events = [];
             if (record.u === 1 && !inUncertain) events.push(makeEvent(EVENT_TYPES.FRAME_UNCERTAIN, record.t, STATES.UNCERTAIN, { witness: record.w }));
             inUncertain = record.u === 1;
+            events.push(...automata.push(record));
             return events;
+        },
+        /** Cadence d'échantillonnage voulue après le dernier relevé, en images du média par seconde. */
+        get rate() {
+            return automata.rate;
         }
     };
 }

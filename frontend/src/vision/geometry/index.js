@@ -6,3 +6,4 @@ export * from './boardModel.js';
 export { calibrateBoard } from './calibration.js';
 export { rectifyZone, sampleImage } from './rectify.js';
 export { presenceScore, nextPresence, createPresenceTracker, PRESENCE_LOST, PRESENCE_FOUND } from './presence.js';
+export { boardRois, WITNESS_MAX } from './rois.js';
