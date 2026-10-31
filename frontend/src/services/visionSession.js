@@ -25,7 +25,7 @@ const KEY_PREFIX = 'blunderdb.transcription.videoPresence.';
 /** @param {string} key @param {ActiveCalibration} c */
 function loadReference(key, c) {
     try {
-        const raw = JSON.parse(localStorage.getItem(KEY_PREFIX + key) ?? 'null');
+        const raw = JSON.parse(localStorage.getItem(KEY_PREFIX + key + '.' + c.name) ?? 'null');
         if (raw && JSON.stringify(raw.clicks) === JSON.stringify(c.clicks) && Array.isArray(raw.data) && raw.data.length === THUMB.width * THUMB.height) {
             return { width: THUMB.width, height: THUMB.height, data: Float32Array.from(raw.data, (/** @type {number | null} */ v) => v ?? NaN) };
         }
@@ -38,7 +38,7 @@ function loadReference(key, c) {
 /** @param {string} key @param {ActiveCalibration} c @param {{ data: Float32Array }} thumb */
 function saveReference(key, c, thumb) {
     try {
-        localStorage.setItem(KEY_PREFIX + key, JSON.stringify({ clicks: c.clicks, data: Array.from(thumb.data, (v) => (Number.isNaN(v) ? null : Math.round(v))) }));
+        localStorage.setItem(KEY_PREFIX + key + '.' + c.name, JSON.stringify({ clicks: c.clicks, data: Array.from(thumb.data, (v) => (Number.isNaN(v) ? null : Math.round(v))) }));
     } catch (_e) {
         /* storage refused: the reference lasts until the pane closes */
     }

@@ -279,15 +279,13 @@ describe('the line and the indicators', () => {
         expect(screen.queryByTestId('video-timeline')).toBeNull();
     });
 
-    test('the overlay that changed with no action is reported, not when an Action explains it', async () => {
+    test('a recent overlay change is reported, an old one is not', async () => {
         fakeVideo.duration = 600000;
-        // The Actions are timed at 70 s / 76 s and 90 s.
         feed(ev(T.OVERLAY_CHANGED, 40, S.CHECK));
         fakeVideo.now = 50000;
         await openedPanel();
         await vi.waitFor(() => expect(screen.queryByTestId('video-overlay-drift')).not.toBeNull(), { timeout: 2000 });
         cleanup();
-        feed(ev(T.OVERLAY_CHANGED, 72, S.CHECK));
         fakeVideo.now = 80000;
         await openedPanel();
         await new Promise((r) => setTimeout(r, 600));

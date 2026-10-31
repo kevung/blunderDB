@@ -112,7 +112,7 @@
     import { loadVideoRotation, nextRotation, saveVideoRotation } from '../services/videoRotation.js';
     import { visionEventsStore, pushVisionEvent, resetVisionEvents } from '../stores/visionEventsStore.js';
     import { createVisionSession } from '../services/visionSession.js';
-    import { jumpTarget, snapRollTime, timelineMarkers, unexpectedOverlay, viewLost as visionViewLost } from '../services/visionTimeline.js';
+    import { jumpTarget, snapRollTime, timelineMarkers, recentOverlay, viewLost as visionViewLost } from '../services/visionTimeline.js';
     import { toCssPx } from '../utils/uiZoom.js';
     import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
@@ -703,16 +703,7 @@
     const markers = $derived(timelineMarkers($visionEventsStore));
     const boardOutOfView = $derived(visionViewLost($visionEventsStore));
     let mediaSec = $state(0);
-    const overlayDrift = $derived(
-        unexpectedOverlay(
-            $visionEventsStore,
-            (annotated?.actions ?? [])
-                .flatMap((/** @type {any} */ a) => [a.roll_tick_ms, a.tick_ms])
-                .filter((/** @type {unknown} */ ms) => typeof ms === 'number')
-                .map((/** @type {number} */ ms) => ms / 1000),
-            mediaSec
-        ) !== null
-    );
+    const overlayDrift = $derived(recentOverlay($visionEventsStore, mediaSec) !== null);
 
     /** @param {1 | -1} direction */
     function jumpToMarker(direction) {

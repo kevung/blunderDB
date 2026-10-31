@@ -9,8 +9,6 @@ import { EVENT_TYPES, STATES } from '../vision/contract.js';
 export const REST_WINDOW_MAX = 60;
 /** A jump from a marker lands on the next one, not on the marker the playhead sits on, seconds. */
 export const JUMP_EPSILON = 0.1;
-/** Delay of the stream's overlay behind the board, seconds (ADR-0109 rule 7). */
-export const OVERLAY_TOLERANCE = 5;
 /** How long an unexpected overlay change stays reported once it can be judged, seconds. */
 export const OVERLAY_SHOWN = 30;
 
@@ -102,19 +100,16 @@ export function snapRollTime(events, at) {
 }
 
 /**
- * The overlay change to report: the latest one old enough to be judged, still recent, that no
- * Action explains. An Action explains it when one of its Repères falls within the overlay's
- * delay of the change, on either side.
+ * The overlay change to report: the latest one, still recent at `at`. The core only emits the
+ * changes no game event explains, so the panel does not judge them again.
  * @param {readonly import('../vision/contract.js').VisionEvent[]} events
- * @param {readonly number[]} actionTimes seconds, the Repères of the Actions
  * @param {number} at seconds, the current instant
  */
-export function unexpectedOverlay(events, actionTimes, at) {
+export function recentOverlay(events, at) {
     let found = null;
     for (const e of events) {
         if (e.type !== EVENT_TYPES.OVERLAY_CHANGED) continue;
-        if (at - e.mediaTime < OVERLAY_TOLERANCE || at - e.mediaTime > OVERLAY_SHOWN) continue;
-        if (actionTimes.some((t) => Math.abs(t - e.mediaTime) <= OVERLAY_TOLERANCE)) continue;
+        if (at < e.mediaTime || at - e.mediaTime > OVERLAY_SHOWN) continue;
         if (!found || e.mediaTime > found.mediaTime) found = e;
     }
     return found;

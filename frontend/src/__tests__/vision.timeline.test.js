@@ -5,7 +5,7 @@
  */
 import { describe, test, expect } from 'vitest';
 import { EVENT_TYPES as T, STATES as S, makeEvent } from '../vision/contract.js';
-import { markerShape, timelineMarkers, jumpTarget, viewLost, snapRollTime, unexpectedOverlay } from '../services/visionTimeline.js';
+import { markerShape, timelineMarkers, jumpTarget, viewLost, snapRollTime, recentOverlay } from '../services/visionTimeline.js';
 
 const ev = (/** @type {string} */ type, /** @type {number} */ t, state = S.SURE) => makeEvent(type, t, state);
 
@@ -102,21 +102,18 @@ describe('snap of the roll Repère', () => {
 
 describe('overlay drift', () => {
     const change = [ev(T.OVERLAY_CHANGED, 100, S.CHECK)];
-    test('reported once the overlay delay has passed, with no Action near it', () => {
-        expect(unexpectedOverlay(change, [], 104.9)).toBeNull();
-        expect(unexpectedOverlay(change, [], 105)?.mediaTime).toBe(100);
-    });
-    test('an Action within the delay, before or after, explains it', () => {
-        expect(unexpectedOverlay(change, [95], 110)).toBeNull();
-        expect(unexpectedOverlay(change, [105], 110)).toBeNull();
-        expect(unexpectedOverlay(change, [94.9], 110)?.mediaTime).toBe(100);
-        expect(unexpectedOverlay(change, [105.1], 110)?.mediaTime).toBe(100);
+    test('reported from the instant of the change, whatever the Actions', () => {
+        expect(recentOverlay(change, 99.9)).toBeNull();
+        expect(recentOverlay(change, 100)?.mediaTime).toBe(100);
     });
     test('forgotten after 30 s', () => {
-        expect(unexpectedOverlay(change, [], 130)?.mediaTime).toBe(100);
-        expect(unexpectedOverlay(change, [], 130.1)).toBeNull();
+        expect(recentOverlay(change, 130)?.mediaTime).toBe(100);
+        expect(recentOverlay(change, 130.1)).toBeNull();
+    });
+    test('the latest change is the one reported', () => {
+        expect(recentOverlay([...change, ev(T.OVERLAY_CHANGED, 110)], 115)?.mediaTime).toBe(110);
     });
     test('other events say nothing', () => {
-        expect(unexpectedOverlay([ev(T.DICE_REST, 100)], [], 110)).toBeNull();
+        expect(recentOverlay([ev(T.DICE_REST, 100)], 110)).toBeNull();
     });
 });

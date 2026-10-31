@@ -167,6 +167,22 @@ describe('presence of the board', () => {
         expect(second.pushed.map((e) => e.type)).toEqual([T.VIEW_LOST]);
     });
 
+    test('each calibration of a draft keeps its own reference', () => {
+        const first = setup();
+        first.session.calibrate(cal());
+        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        const other = setup();
+        other.frame.current = noise(99);
+        other.session.calibrate({ ...cal(), name: 'incrustation' });
+        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        expect(other.pushed).toEqual([]);
+        const back = setup();
+        back.frame.current = noise(99);
+        back.session.calibrate(cal());
+        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        expect(back.pushed.map((e) => e.type)).toEqual([T.VIEW_LOST]);
+    });
+
     test('another draft, or other clicks, do not inherit the reference', () => {
         const first = setup();
         first.session.calibrate(cal());
