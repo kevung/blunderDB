@@ -27,23 +27,23 @@ func (cli *CLI) runCapture(args []string) error {
 	turn := fs.Int("turn", 0, "The player on roll, 1 (bottom) or 2 (top), when no dice show it")
 	force := fs.Bool("force", false, "Save even though the reading has doubts (points, bar, cube, dice or orientation it could not settle)")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb capture [options] <image>")
-		fmt.Println()
-		fmt.Println("Read the position a screen capture of an eXtreme Gammon board shows")
-		fmt.Println("(PNG, JPEG or GIF; one larger than a 4K screen is shrunk first):")
-		fmt.Println("checkers, bar, borne-off checkers, dice, cube and player on roll.")
-		fmt.Println("The score is not read: set it with")
-		fmt.Println("--score, and the turn with --turn when no dice are out. Whatever the")
-		fmt.Println("reading cannot settle is listed as a doubt, never guessed.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb capture [options] <image>")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Read the position a screen capture of an eXtreme Gammon board shows")
+		fmt.Fprintln(cli.stdout(), "(PNG, JPEG or GIF; one larger than a 4K screen is shrunk first):")
+		fmt.Fprintln(cli.stdout(), "checkers, bar, borne-off checkers, dice, cube and player on roll.")
+		fmt.Fprintln(cli.stdout(), "The score is not read: set it with")
+		fmt.Fprintln(cli.stdout(), "--score, and the turn with --turn when no dice are out. Whatever the")
+		fmt.Fprintln(cli.stdout(), "reading cannot settle is listed as a doubt, never guessed.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb capture screenshot.png")
-		fmt.Println("  blunderdb capture --format xgid screenshot.png")
-		fmt.Println("  blunderdb capture --db my.db --save --score 2a/5a screenshot.png")
-		fmt.Println("  blunderdb capture --db my.db --save --score money --turn 2 cube.png")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb capture screenshot.png")
+		fmt.Fprintln(cli.stdout(), "  blunderdb capture --format xgid screenshot.png")
+		fmt.Fprintln(cli.stdout(), "  blunderdb capture --db my.db --save --score 2a/5a screenshot.png")
+		fmt.Fprintln(cli.stdout(), "  blunderdb capture --db my.db --save --score money --turn 2 cube.png")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -80,24 +80,24 @@ func (cli *CLI) runCapture(args []string) error {
 
 	switch *format {
 	case "json":
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		if err := enc.Encode(rd); err != nil {
 			return err
 		}
 	case "xgid":
-		fmt.Println("XGID=" + domain.EncodeXGID(&rd.Position))
+		fmt.Fprintln(cli.stdout(), "XGID="+domain.EncodeXGID(&rd.Position))
 	default:
-		fmt.Printf("Software: %s (fit %.2f)\n", rd.Software, rd.Fit)
-		fmt.Printf("XGID=%s\n", domain.EncodeXGID(&rd.Position))
+		fmt.Fprintf(cli.stdout(), "Software: %s (fit %.2f)\n", rd.Software, rd.Fit)
+		fmt.Fprintf(cli.stdout(), "XGID=%s\n", domain.EncodeXGID(&rd.Position))
 		if len(rd.Unread) > 0 {
-			fmt.Printf("Not read: %s\n", strings.Join(rd.Unread, ", "))
+			fmt.Fprintf(cli.stdout(), "Not read: %s\n", strings.Join(rd.Unread, ", "))
 		}
 		for _, d := range rd.Doubts {
 			if d.Field == "point" || d.Field == "bar" {
-				fmt.Printf("Doubt: %s %d — %s\n", d.Field, d.Point, d.Reason)
+				fmt.Fprintf(cli.stdout(), "Doubt: %s %d — %s\n", d.Field, d.Point, d.Reason)
 			} else {
-				fmt.Printf("Doubt: %s — %s\n", d.Field, d.Reason)
+				fmt.Fprintf(cli.stdout(), "Doubt: %s — %s\n", d.Field, d.Reason)
 			}
 		}
 	}
@@ -128,7 +128,7 @@ func (cli *CLI) runCapture(args []string) error {
 		return err
 	}
 	if *format != "json" {
-		fmt.Printf("Saved as position %d (already there: %v)\n", res.ID, res.Existed)
+		fmt.Fprintf(cli.stdout(), "Saved as position %d (already there: %v)\n", res.ID, res.Existed)
 	}
 	return nil
 }

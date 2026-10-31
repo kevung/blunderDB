@@ -60,7 +60,7 @@ func runTransfer(t *testing.T, args ...string) ingest.TransferReport {
 	cli := &CLI{db: NewDatabase()}
 	defer cli.db.Close()
 	var runErr error
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		runErr = cli.runTransfer(append(args, "--format", "json"))
 	})
 	if runErr != nil {
@@ -112,7 +112,7 @@ func TestCLI_TransferRefusals(t *testing.T) {
 	} {
 		cli := &CLI{db: NewDatabase()}
 		var err error
-		captureStdout(t, func() { err = cli.runTransfer(args) })
+		captureOut(t, cli, func() { err = cli.runTransfer(args) })
 		cli.db.Close()
 		if err == nil {
 			t.Errorf("%s: accepted", name)
@@ -148,7 +148,7 @@ func TestCLI_TransferRefusesAnotherSchema(t *testing.T) {
 		before := fileSum(t, src)
 		cli := &CLI{db: NewDatabase()}
 		var runErr error
-		captureStdout(t, func() { runErr = cli.runTransfer([]string{"--from", src, "--to", dst}) })
+		captureOut(t, cli, func() { runErr = cli.runTransfer([]string{"--from", src, "--to", dst}) })
 		cli.db.Close()
 		if runErr == nil || !strings.Contains(runErr.Error(), want) {
 			t.Errorf("source at %s: %v, want refused as %s", version, runErr, want)
@@ -196,7 +196,7 @@ func TestCLI_TransferNamedCollection(t *testing.T) {
 
 	cli := &CLI{db: NewDatabase()}
 	var runErr error
-	captureStdout(t, func() {
+	captureOut(t, cli, func() {
 		runErr = cli.runTransfer([]string{"--from", src, "--to", dst, "--match-ids=999"})
 	})
 	cli.db.Close()

@@ -54,8 +54,9 @@ func TestCLI_BearoffList(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	out := captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "list", "--data-dir", dir, "--cores", "4"}); err != nil {
+	cl1 := NewCLI()
+	out := captureOut(t, cl1, func() {
+		if err := cl1.Run([]string{"bearoff", "list", "--data-dir", dir, "--cores", "4"}); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -65,8 +66,9 @@ func TestCLI_BearoffList(t *testing.T) {
 		}
 	}
 
-	out = captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "list", "--data-dir", dir, "--format", "json"}); err != nil {
+	cl2 := NewCLI()
+	out = captureOut(t, cl2, func() {
+		if err := cl2.Run([]string{"bearoff", "list", "--data-dir", dir, "--format", "json"}); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -89,8 +91,9 @@ func TestCLI_BearoffVerify(t *testing.T) {
 	if err := os.WriteFile(good, src, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	out := captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "verify", good}); err != nil {
+	cl3 := NewCLI()
+	out := captureOut(t, cl3, func() {
+		if err := cl3.Run([]string{"bearoff", "verify", good}); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -103,8 +106,9 @@ func TestCLI_BearoffVerify(t *testing.T) {
 	if err := os.WriteFile(bad, src, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "verify", bad}); err == nil {
+	cl4 := NewCLI()
+	captureOut(t, cl4, func() {
+		if err := cl4.Run([]string{"bearoff", "verify", bad}); err == nil {
 			t.Error("a corrupt table exited 0")
 		}
 	})
@@ -114,8 +118,9 @@ func TestCLI_BearoffVerify(t *testing.T) {
 // there, it says so instead of spending the time again.
 func TestCLI_BearoffGenerateAndDelete(t *testing.T) {
 	dir := t.TempDir()
-	out := captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "generate", "--ts", "6x3", "--data-dir", dir, "--quiet"}); err != nil {
+	cl5 := NewCLI()
+	out := captureOut(t, cl5, func() {
+		if err := cl5.Run([]string{"bearoff", "generate", "--ts", "6x3", "--data-dir", dir, "--quiet"}); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -127,8 +132,9 @@ func TestCLI_BearoffGenerateAndDelete(t *testing.T) {
 		t.Fatalf("the table was not written: %v", err)
 	}
 
-	out = captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "generate", "--ts", "6x3", "--data-dir", dir, "--quiet"}); err != nil {
+	cl6 := NewCLI()
+	out = captureOut(t, cl6, func() {
+		if err := cl6.Run([]string{"bearoff", "generate", "--ts", "6x3", "--data-dir", dir, "--quiet"}); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -136,8 +142,9 @@ func TestCLI_BearoffGenerateAndDelete(t *testing.T) {
 		t.Errorf("generate recomputed a table that was already there:\n%s", out)
 	}
 
-	out = captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "delete", "--ts", "6x3", "--data-dir", dir}); err != nil {
+	cl7 := NewCLI()
+	out = captureOut(t, cl7, func() {
+		if err := cl7.Run([]string{"bearoff", "delete", "--ts", "6x3", "--data-dir", dir}); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -153,20 +160,22 @@ func TestCLI_BearoffGenerateAndDelete(t *testing.T) {
 // board, and list prices it alongside the two-sided domains.
 func TestCLI_BearoffOneSidedAxis(t *testing.T) {
 	dir := t.TempDir()
-	captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "generate", "--ts", "6x3", "--os", "6", "--data-dir", dir}); err == nil {
+	cl8 := NewCLI()
+	captureOut(t, cl8, func() {
+		if err := cl8.Run([]string{"bearoff", "generate", "--ts", "6x3", "--os", "6", "--data-dir", dir}); err == nil {
 			t.Error("both --ts and --os were accepted")
 		}
-		if err := NewCLI().Run([]string{"bearoff", "generate", "--data-dir", dir}); err == nil {
+		if err := cl8.Run([]string{"bearoff", "generate", "--data-dir", dir}); err == nil {
 			t.Error("neither --ts nor --os was accepted")
 		}
-		if err := NewCLI().Run([]string{"bearoff", "generate", "--os", "5", "--data-dir", dir}); err == nil {
+		if err := cl8.Run([]string{"bearoff", "generate", "--os", "5", "--data-dir", dir}); err == nil {
 			t.Error("a one-sided domain below six points was accepted")
 		}
 	})
 
-	out := captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "list", "--data-dir", dir}); err != nil {
+	cl9 := NewCLI()
+	out := captureOut(t, cl9, func() {
+		if err := cl9.Run([]string{"bearoff", "list", "--data-dir", dir}); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -185,14 +194,15 @@ func TestCLI_BearoffOneSidedAxis(t *testing.T) {
 }
 
 func TestCLI_BearoffRejectsUnknownSubcommand(t *testing.T) {
-	captureStdout(t, func() {
-		if err := NewCLI().Run([]string{"bearoff", "frobnicate"}); err == nil {
+	cl10 := NewCLI()
+	captureOut(t, cl10, func() {
+		if err := cl10.Run([]string{"bearoff", "frobnicate"}); err == nil {
 			t.Error("an unknown sub-command was accepted")
 		}
-		if err := NewCLI().Run([]string{"bearoff"}); err == nil {
+		if err := cl10.Run([]string{"bearoff"}); err == nil {
 			t.Error("bearoff with no sub-command was accepted")
 		}
-		if err := NewCLI().Run([]string{"bearoff", "generate", "--ts", "9x9"}); err == nil {
+		if err := cl10.Run([]string{"bearoff", "generate", "--ts", "9x9"}); err == nil {
 			t.Error("a domain that does not exist was accepted")
 		}
 	})

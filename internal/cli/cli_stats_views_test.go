@@ -27,7 +27,7 @@ func TestCLI_StatsProgressionAndBreakdownJSON(t *testing.T) {
 		{"progression", []string{"PerMatch", "PerTournament", "PRRolling"}},
 		{"breakdown", []string{"PerPhase", "PerGameType", "PerTag", "PerScore", "CubeActionBreakdown", "CubeDirections"}},
 	} {
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			if err := cli.Run([]string{"stats", tc.sub, "--db", dbPath, "--format", "json"}); err != nil {
 				t.Fatalf("stats %s: %v", tc.sub, err)
 			}
@@ -43,7 +43,7 @@ func TestCLI_StatsProgressionAndBreakdownJSON(t *testing.T) {
 		}
 	}
 	for _, sub := range []string{"progression", "breakdown"} {
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			if err := cli.Run([]string{"stats", sub, "--db", dbPath}); err != nil {
 				t.Fatalf("stats %s text: %v", sub, err)
 			}

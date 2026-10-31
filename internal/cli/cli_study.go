@@ -3,7 +3,6 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -54,35 +53,35 @@ func (cli *CLI) StudySubcommands() []string {
 }
 
 func (cli *CLI) printStudyUsage() {
-	fmt.Println("Usage: blunderdb study <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("The study backlog: your blunders, across every import, that nothing has dealt with yet")
-	fmt.Println("(no comment, no Anki card, no collection, no \"studied\" mark), costliest first.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  queue    List the backlog")
-	fmt.Println("  mark     Mark a position studied: it leaves the backlog")
-	fmt.Println("  unmark   Withdraw the mark: the position returns to the backlog")
-	fmt.Println("  status   Tell whether a position carries the mark")
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Println("  blunderdb study queue --db database.db --limit 20")
-	fmt.Println("  blunderdb study mark --db database.db --id 1234")
-	fmt.Println()
-	fmt.Println("Use 'blunderdb study <sub-command> --help' for the options of a sub-command.")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb study <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "The study backlog: your blunders, across every import, that nothing has dealt with yet")
+	fmt.Fprintln(cli.stdout(), "(no comment, no Anki card, no collection, no \"studied\" mark), costliest first.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  queue    List the backlog")
+	fmt.Fprintln(cli.stdout(), "  mark     Mark a position studied: it leaves the backlog")
+	fmt.Fprintln(cli.stdout(), "  unmark   Withdraw the mark: the position returns to the backlog")
+	fmt.Fprintln(cli.stdout(), "  status   Tell whether a position carries the mark")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb study queue --db database.db --limit 20")
+	fmt.Fprintln(cli.stdout(), "  blunderdb study mark --db database.db --id 1234")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Use 'blunderdb study <sub-command> --help' for the options of a sub-command.")
 }
 
-func studyFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
+func (cli *CLI) studyFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
 	fs := flag.NewFlagSet("study "+sub, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
-		fmt.Printf("Usage: blunderdb study %s [options]\n\n%s\n\nOptions:\n", sub, summary)
+		fmt.Fprintf(cli.stdout(), "Usage: blunderdb study %s [options]\n\n%s\n\nOptions:\n", sub, summary)
 		fs.PrintDefaults()
 		if len(examples) > 0 {
-			fmt.Println()
-			fmt.Println("Examples:")
+			fmt.Fprintln(cli.stdout())
+			fmt.Fprintln(cli.stdout(), "Examples:")
 			for _, ex := range examples {
-				fmt.Println("  " + ex)
+				fmt.Fprintln(cli.stdout(), "  "+ex)
 			}
 		}
 	}
@@ -90,7 +89,7 @@ func studyFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *stri
 }
 
 func (cli *CLI) runStudyQueue(args []string) error {
-	fs, dbPath := studyFlagSet("queue",
+	fs, dbPath := cli.studyFlagSet("queue",
 		"List your unhandled blunders across the whole library, costliest first.\nYour name is the database's reference player (see `blunderdb players`).",
 		"blunderdb study queue --db database.db",
 		"blunderdb study queue --db database.db --limit 10 --format json")
@@ -104,13 +103,13 @@ func (cli *CLI) runStudyQueue(args []string) error {
 		return fmt.Errorf("study backlog: %w", err)
 	}
 	if strings.EqualFold(*format, "json") {
-		return printJSON(entries)
+		return cli.printJSON(entries)
 	}
 	if len(entries) == 0 {
-		fmt.Println("Nothing left to study.")
+		fmt.Fprintln(cli.stdout(), "Nothing left to study.")
 		return nil
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "#\tPosition\tKind\tCost\tMatch")
 	for i, e := range entries {
 		kind := "checker"
@@ -135,7 +134,7 @@ func (cli *CLI) setStudied(args []string, studied bool) error {
 	if !studied {
 		sub, summary = "unmark", "Withdraw a position's studied mark: it returns to the study backlog."
 	}
-	fs, dbPath := studyFlagSet(sub, summary, "blunderdb study "+sub+" --db database.db --id 1234")
+	fs, dbPath := cli.studyFlagSet(sub, summary, "blunderdb study "+sub+" --db database.db --id 1234")
 	id := fs.Int64("id", 0, "Position ID (required)")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
@@ -147,15 +146,15 @@ func (cli *CLI) setStudied(args []string, studied bool) error {
 		return fmt.Errorf("study %s: %w", sub, err)
 	}
 	if studied {
-		fmt.Printf("Position %d marked studied.\n", *id)
+		fmt.Fprintf(cli.stdout(), "Position %d marked studied.\n", *id)
 	} else {
-		fmt.Printf("Position %d is back in the study backlog.\n", *id)
+		fmt.Fprintf(cli.stdout(), "Position %d is back in the study backlog.\n", *id)
 	}
 	return nil
 }
 
 func (cli *CLI) runStudyStatus(args []string) error {
-	fs, dbPath := studyFlagSet("status", "Tell whether a position carries the studied mark.", "blunderdb study status --db database.db --id 1234")
+	fs, dbPath := cli.studyFlagSet("status", "Tell whether a position carries the studied mark.", "blunderdb study status --db database.db --id 1234")
 	id := fs.Int64("id", 0, "Position ID (required)")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
@@ -168,9 +167,9 @@ func (cli *CLI) runStudyStatus(args []string) error {
 		return fmt.Errorf("study status: %w", err)
 	}
 	if studied {
-		fmt.Printf("Position %d is marked studied.\n", *id)
+		fmt.Fprintf(cli.stdout(), "Position %d is marked studied.\n", *id)
 	} else {
-		fmt.Printf("Position %d is not marked studied.\n", *id)
+		fmt.Fprintf(cli.stdout(), "Position %d is not marked studied.\n", *id)
 	}
 	return nil
 }

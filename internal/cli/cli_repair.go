@@ -26,32 +26,32 @@ func (cli *CLI) runRepair(args []string) error {
 		"Only list the pairs of matches whose dice say they are one: same dice under other player names, or a truncated match and its longer version (nothing is merged)")
 
 	repairCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb repair [options]")
-		fmt.Println()
-		fmt.Println("Recompute what the database derives from what it stores:")
-		fmt.Println("the scalar columns of every analysis, from the JSON they are")
-		fmt.Println("a projection of, the phase of every position, from its board,")
-		fmt.Println("and the Crawford sentinel of every away score, from the match")
-		fmt.Println("the position came from or the XGID it came in with from")
-		fmt.Println("another program. Useful after a fix to how an imported")
-		fmt.Println("analysis is read, after a change to how a phase is decided,")
-		fmt.Println("and once, for the databases imported before the importers")
-		fmt.Println("wrote the sentinel: a post-Crawford position stored as a")
-		fmt.Println("Crawford one is read cube-dead. Correcting it changes the")
-		fmt.Println("position's Zobrist hash, so such a position is rehashed and")
-		fmt.Println("merged with its correct twin when the database holds one.")
-		fmt.Println("A signed comment on such a position then reads unverified:")
-		fmt.Println("its signature covers the position's hash. The report counts them.")
-		fmt.Println("Nothing runs it automatically.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb repair [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Recompute what the database derives from what it stores:")
+		fmt.Fprintln(cli.stdout(), "the scalar columns of every analysis, from the JSON they are")
+		fmt.Fprintln(cli.stdout(), "a projection of, the phase of every position, from its board,")
+		fmt.Fprintln(cli.stdout(), "and the Crawford sentinel of every away score, from the match")
+		fmt.Fprintln(cli.stdout(), "the position came from or the XGID it came in with from")
+		fmt.Fprintln(cli.stdout(), "another program. Useful after a fix to how an imported")
+		fmt.Fprintln(cli.stdout(), "analysis is read, after a change to how a phase is decided,")
+		fmt.Fprintln(cli.stdout(), "and once, for the databases imported before the importers")
+		fmt.Fprintln(cli.stdout(), "wrote the sentinel: a post-Crawford position stored as a")
+		fmt.Fprintln(cli.stdout(), "Crawford one is read cube-dead. Correcting it changes the")
+		fmt.Fprintln(cli.stdout(), "position's Zobrist hash, so such a position is rehashed and")
+		fmt.Fprintln(cli.stdout(), "merged with its correct twin when the database holds one.")
+		fmt.Fprintln(cli.stdout(), "A signed comment on such a position then reads unverified:")
+		fmt.Fprintln(cli.stdout(), "its signature covers the position's hash. The report counts them.")
+		fmt.Fprintln(cli.stdout(), "Nothing runs it automatically.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		repairCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb repair --db database.db")
-		fmt.Println("  blunderdb repair --db database.db --format json")
-		fmt.Println("  blunderdb repair --db database.db --stats")
-		fmt.Println("  blunderdb repair --db database.db --duplicates")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb repair --db database.db")
+		fmt.Fprintln(cli.stdout(), "  blunderdb repair --db database.db --format json")
+		fmt.Fprintln(cli.stdout(), "  blunderdb repair --db database.db --stats")
+		fmt.Fprintln(cli.stdout(), "  blunderdb repair --db database.db --duplicates")
 	}
 
 	if err := repairCmd.Parse(args); err != nil {
@@ -101,7 +101,7 @@ func (cli *CLI) runRepair(args []string) error {
 	}
 
 	if formatLower == "json" {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Repaired   int  `json:"repaired"`
 			Phases     int  `json:"phases"`
 			Crawford   int  `json:"crawford"`
@@ -111,37 +111,37 @@ func (cli *CLI) runRepair(args []string) error {
 	}
 	switch repaired {
 	case 0:
-		fmt.Println("Every analysis column already matched its analysis; nothing to repair.")
+		fmt.Fprintln(cli.stdout(), "Every analysis column already matched its analysis; nothing to repair.")
 	case 1:
-		fmt.Println("1 analysis repaired.")
+		fmt.Fprintln(cli.stdout(), "1 analysis repaired.")
 	default:
-		fmt.Printf("%d analyses repaired.\n", repaired)
+		fmt.Fprintf(cli.stdout(), "%d analyses repaired.\n", repaired)
 	}
 	switch phases {
 	case 0:
-		fmt.Println("Every position already carried the right phase.")
+		fmt.Fprintln(cli.stdout(), "Every position already carried the right phase.")
 	case 1:
-		fmt.Println("1 position reclassified.")
+		fmt.Fprintln(cli.stdout(), "1 position reclassified.")
 	default:
-		fmt.Printf("%d positions reclassified.\n", phases)
+		fmt.Fprintf(cli.stdout(), "%d positions reclassified.\n", phases)
 	}
 	switch crawford {
 	case 0:
-		fmt.Println("Every position already carried the right Crawford sentinel.")
+		fmt.Fprintln(cli.stdout(), "Every position already carried the right Crawford sentinel.")
 	case 1:
-		fmt.Println("1 position rehashed onto the right Crawford sentinel.")
+		fmt.Fprintln(cli.stdout(), "1 position rehashed onto the right Crawford sentinel.")
 	default:
-		fmt.Printf("%d positions rehashed onto the right Crawford sentinel.\n", crawford)
+		fmt.Fprintf(cli.stdout(), "%d positions rehashed onto the right Crawford sentinel.\n", crawford)
 	}
 	switch unverified {
 	case 0:
 	case 1:
-		fmt.Println("1 signed comment sits on a rehashed position: it now reads unverified, its text untouched.")
+		fmt.Fprintln(cli.stdout(), "1 signed comment sits on a rehashed position: it now reads unverified, its text untouched.")
 	default:
-		fmt.Printf("%d signed comments sit on rehashed positions: they now read unverified, their text untouched.\n", unverified)
+		fmt.Fprintf(cli.stdout(), "%d signed comments sit on rehashed positions: they now read unverified, their text untouched.\n", unverified)
 	}
 	if *rebuildStats {
-		fmt.Printf("Per-match statistics recomputed for %d matches.\n", matchStats)
+		fmt.Fprintf(cli.stdout(), "Per-match statistics recomputed for %d matches.\n", matchStats)
 	}
 	return nil
 }
@@ -156,31 +156,31 @@ func (cli *CLI) repairDuplicates(format string) error {
 		if suspects == nil {
 			suspects = []domain.DuplicateSuspect{}
 		}
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Suspects []domain.DuplicateSuspect `json:"suspects"`
 		}{suspects})
 	}
 	if len(suspects) == 0 {
-		fmt.Println("No suspected duplicate match.")
+		fmt.Fprintln(cli.stdout(), "No suspected duplicate match.")
 		return nil
 	}
 	for _, s := range suspects {
 		switch s.Kind {
 		case domain.DuplicateLonger:
-			fmt.Printf("#%d (%s) is a longer version of #%d (%s)\n", s.MatchID, s.Players, s.OtherID, s.OtherPlayers)
+			fmt.Fprintf(cli.stdout(), "#%d (%s) is a longer version of #%d (%s)\n", s.MatchID, s.Players, s.OtherID, s.OtherPlayers)
 		default:
-			fmt.Printf("#%d (%s) has the dice of #%d (%s)\n", s.MatchID, s.Players, s.OtherID, s.OtherPlayers)
+			fmt.Fprintf(cli.stdout(), "#%d (%s) has the dice of #%d (%s)\n", s.MatchID, s.Players, s.OtherID, s.OtherPlayers)
 			// Each reading of who is who, as the alias commands that record it.
 			for i, p := range s.Pairings {
 				if len(s.Pairings) > 1 {
-					fmt.Printf("  reading %d:\n", i+1)
+					fmt.Fprintf(cli.stdout(), "  reading %d:\n", i+1)
 				}
 				for _, a := range p.Aliases {
-					fmt.Printf("    blunderdb players alias add --db FILE %q %q\n", a.Alias, a.Canonical)
+					fmt.Fprintf(cli.stdout(), "    blunderdb players alias add --db FILE %q %q\n", a.Alias, a.Canonical)
 				}
 			}
 		}
 	}
-	fmt.Printf("%d suspected pair(s); nothing was merged.\n", len(suspects))
+	fmt.Fprintf(cli.stdout(), "%d suspected pair(s); nothing was merged.\n", len(suspects))
 	return nil
 }

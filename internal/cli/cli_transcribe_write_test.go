@@ -81,7 +81,7 @@ func runTranscribeOnFile(t *testing.T, args ...string) (string, error) {
 	c := &CLI{db: NewDatabase()}
 	defer c.db.Close()
 	var err error
-	out := captureStdout(t, func() { err = c.runTranscribe(args) })
+	out := captureOut(t, c, func() { err = c.runTranscribe(args) })
 	return out, err
 }
 

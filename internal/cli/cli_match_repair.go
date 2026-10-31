@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
@@ -23,19 +22,19 @@ func (cli *CLI) runMatchRepair(args []string) error {
 	dryRun := fs.Bool("dry-run", false, "Say what the repair would change, without writing")
 	format := fs.String("format", "text", "Output format: text, json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb match repair --db FILE (--id N [--dry-run] | --list)")
-		fmt.Println()
-		fmt.Println("Rewrite a match's positions, analyses and errors from its source file,")
-		fmt.Println("keeping its id, tournament, names, comments, transcription and video marks.")
-		fmt.Println("Refused when the source file is missing or no longer holds the match.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb match repair --db FILE (--id N [--dry-run] | --list)")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Rewrite a match's positions, analyses and errors from its source file,")
+		fmt.Fprintln(cli.stdout(), "keeping its id, tournament, names, comments, transcription and video marks.")
+		fmt.Fprintln(cli.stdout(), "Refused when the source file is missing or no longer holds the match.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb match repair --db base.db --list")
-		fmt.Println("  blunderdb match repair --db base.db --id 42 --dry-run")
-		fmt.Println("  blunderdb match repair --db base.db --id 42")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb match repair --db base.db --list")
+		fmt.Fprintln(cli.stdout(), "  blunderdb match repair --db base.db --id 42 --dry-run")
+		fmt.Fprintln(cli.stdout(), "  blunderdb match repair --db base.db --id 42")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -57,16 +56,16 @@ func (cli *CLI) runMatchRepair(args []string) error {
 			return err
 		}
 		if *format == "json" {
-			return json.NewEncoder(os.Stdout).Encode(found)
+			return json.NewEncoder(cli.stdout()).Encode(found)
 		}
 		for _, m := range found {
 			if m.Error != "" {
-				fmt.Printf("%d\t%s\t%s\n", m.MatchID, m.FilePath, m.Error)
+				fmt.Fprintf(cli.stdout(), "%d\t%s\t%s\n", m.MatchID, m.FilePath, m.Error)
 				continue
 			}
-			fmt.Printf("%d\t%s\t%s\n", m.MatchID, m.FilePath, repairLine(m.RepairReport))
+			fmt.Fprintf(cli.stdout(), "%d\t%s\t%s\n", m.MatchID, m.FilePath, repairLine(m.RepairReport))
 		}
-		fmt.Printf("%d match(es) to repair or without a usable source\n", len(found))
+		fmt.Fprintf(cli.stdout(), "%d match(es) to repair or without a usable source\n", len(found))
 		return nil
 	}
 
@@ -75,7 +74,7 @@ func (cli *CLI) runMatchRepair(args []string) error {
 		return err
 	}
 	if *format == "json" {
-		return json.NewEncoder(os.Stdout).Encode(rep)
+		return json.NewEncoder(cli.stdout()).Encode(rep)
 	}
 	verb := "repaired"
 	if rep.DryRun {
@@ -84,7 +83,7 @@ func (cli *CLI) runMatchRepair(args []string) error {
 	if !rep.Differs() {
 		verb = "matches its source"
 	}
-	fmt.Printf("match %d %s: %s\n", rep.MatchID, verb, repairLine(rep))
+	fmt.Fprintf(cli.stdout(), "match %d %s: %s\n", rep.MatchID, verb, repairLine(rep))
 	return nil
 }
 

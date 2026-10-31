@@ -17,7 +17,7 @@ func TestCLI_DuelOneActionPerCall(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	run := func(args ...string) string {
 		t.Helper()
-		return captureStdout(t, func() {
+		return captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"duel"}, args...)); err != nil {
 				t.Fatalf("duel %v: %v", args, err)
 			}
@@ -70,7 +70,7 @@ func TestCLI_DuelOneActionPerCall(t *testing.T) {
 func TestCLI_DuelOfTwoBots(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	var st duel.State
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "1", "--side1", "bot:instant", "--side2", "bot:instant", "--format", "json"}); err != nil {
 			t.Fatalf("duel create: %v", err)
 		}
@@ -107,7 +107,7 @@ func TestCLI_DuelStaleRevisionIsRefused(t *testing.T) {
 func TestCLI_MatchShowsItsOrigin(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	var st duel.State
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "1", "--side1", "bot:instant", "--side2", "bot:instant", "--format", "json"}); err != nil {
 			t.Fatalf("duel create: %v", err)
 		}
@@ -120,7 +120,7 @@ func TestCLI_MatchShowsItsOrigin(t *testing.T) {
 	var got struct {
 		Origin *duel.Origin `json:"origin"`
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"match", "--db", dbPath, "--id", id, "--format", "json"}); err != nil {
 			t.Fatalf("match json: %v", err)
 		}
@@ -133,7 +133,7 @@ func TestCLI_MatchShowsItsOrigin(t *testing.T) {
 	}
 
 	for _, format := range []string{"text", "summary"} {
-		out = captureStdout(t, func() {
+		out = captureOut(t, cli, func() {
 			if err := cli.Run([]string{"match", "--db", dbPath, "--id", id, "--format", format}); err != nil {
 				t.Fatalf("match %s: %v", format, err)
 			}
@@ -181,7 +181,7 @@ func TestCLI_DuelForfeit(t *testing.T) {
 	if err := cli.Run([]string{"duel", "forfeit", "--db", dbPath, "--id", "1"}); err == nil {
 		t.Error("a forfeit without --side was accepted")
 	}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"duel", "forfeit", "--db", dbPath, "--id", "1", "--side", "1"}); err != nil {
 			t.Fatalf("forfeit: %v", err)
 		}
@@ -202,7 +202,7 @@ func TestCLI_DuelDeclaredBot(t *testing.T) {
 		t.Error("a declaration without its engine was accepted")
 	}
 	var st duel.State
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"duel", "forfeit", "--db", dbPath, "--id", "1", "--side", "1", "--format", "json"}); err != nil {
 			t.Fatalf("forfeit: %v", err)
 		}
@@ -210,7 +210,7 @@ func TestCLI_DuelDeclaredBot(t *testing.T) {
 	if err := json.Unmarshal([]byte(out), &st); err != nil || st.Ended == nil {
 		t.Fatalf("forfeit: %v, %s", err, out)
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"match", "--db", dbPath, "--id", strconv.FormatInt(st.Ended.MatchID, 10), "--format", "text"}); err != nil {
 			t.Fatalf("match: %v", err)
 		}
@@ -224,7 +224,7 @@ func TestCLI_DuelDeclaredBot(t *testing.T) {
 // before any roll, and its Match's origin carries them.
 func TestCLI_DuelCombinedSeed(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "3", "--combined-seed"}); err != nil {
 			t.Fatal(err)
 		}
@@ -244,7 +244,7 @@ func TestCLI_DuelCombinedSeed(t *testing.T) {
 		t.Error("a second contribution was accepted")
 	}
 	var st duel.State
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"duel", "forfeit", "--db", dbPath, "--id", "1", "--side", "1", "--format", "json"}); err != nil {
 			t.Fatalf("forfeit: %v", err)
 		}
@@ -252,7 +252,7 @@ func TestCLI_DuelCombinedSeed(t *testing.T) {
 	if err := json.Unmarshal([]byte(out), &st); err != nil || st.Ended == nil {
 		t.Fatalf("forfeit: %v, %s", err, out)
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"match", "--db", dbPath, "--id", strconv.FormatInt(st.Ended.MatchID, 10), "--format", "text"}); err != nil {
 			t.Fatalf("match: %v", err)
 		}
@@ -267,7 +267,7 @@ func TestCLI_DuelCombinedSeed(t *testing.T) {
 func TestCLI_DuelStartSettings(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	var st duel.State
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "7", "--away", "1,4", "--single-game",
 			"--side1", "bot:instant", "--side2", "bot:instant", "--format", "json"}); err != nil {
 			t.Fatalf("duel create: %v", err)
@@ -279,7 +279,7 @@ func TestCLI_DuelStartSettings(t *testing.T) {
 	if st.Ended == nil || st.Ended.MatchID == 0 || len(st.Games) != 1 || st.Start == nil || st.Start.Score != [2]int{1, 4} {
 		t.Fatalf("a single game at 1-away 4-away: ended %+v, games %+v", st.Ended, st.Games)
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "5", "--minutes-per-point", "0.4", "--delay", "10", "--format", "json"}); err != nil {
 			t.Fatalf("duel create with a time control: %v", err)
 		}

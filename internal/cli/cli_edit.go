@@ -25,28 +25,28 @@ func (cli *CLI) runEdit(args []string) error {
 	format := editCmd.String("format", "text", "Output format: text or json")
 
 	editCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb edit [options]")
-		fmt.Println()
-		fmt.Println("Edit database metadata.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb edit [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Edit database metadata.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		editCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # Set user name")
-		fmt.Println("  blunderdb edit --db database.db --user \"John Doe\"")
-		fmt.Println()
-		fmt.Println("  # Set description")
-		fmt.Println("  blunderdb edit --db database.db --description \"My positions collection\"")
-		fmt.Println()
-		fmt.Println("  # Clear user name")
-		fmt.Println("  blunderdb edit --db database.db --clear-user")
-		fmt.Println()
-		fmt.Println("  # Set multiple values")
-		fmt.Println("  blunderdb edit --db database.db --user \"John\" --description \"Tournament positions\"")
-		fmt.Println()
-		fmt.Println("  # Draw the library's own lines: XG's thresholds")
-		fmt.Println("  blunderdb edit --db database.db --error-threshold 20 --blunder-threshold 80")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # Set user name")
+		fmt.Fprintln(cli.stdout(), "  blunderdb edit --db database.db --user \"John Doe\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Set description")
+		fmt.Fprintln(cli.stdout(), "  blunderdb edit --db database.db --description \"My positions collection\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Clear user name")
+		fmt.Fprintln(cli.stdout(), "  blunderdb edit --db database.db --clear-user")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Set multiple values")
+		fmt.Fprintln(cli.stdout(), "  blunderdb edit --db database.db --user \"John\" --description \"Tournament positions\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Draw the library's own lines: XG's thresholds")
+		fmt.Fprintln(cli.stdout(), "  blunderdb edit --db database.db --error-threshold 20 --blunder-threshold 80")
 	}
 
 	if err := editCmd.Parse(args); err != nil {
@@ -125,14 +125,14 @@ func (cli *CLI) runEdit(args []string) error {
 	}
 
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Changes []string `json:"changes"`
 		}{Changes: changes})
 	}
 
-	fmt.Println("Database metadata updated:")
+	fmt.Fprintln(cli.stdout(), "Database metadata updated:")
 	for _, change := range changes {
-		fmt.Printf("  - %s\n", change)
+		fmt.Fprintf(cli.stdout(), "  - %s\n", change)
 	}
 
 	return nil

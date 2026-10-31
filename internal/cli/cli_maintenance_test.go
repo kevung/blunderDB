@@ -10,7 +10,7 @@ import (
 // operation may come after the flags too.
 func TestCLI_Maintenance_RunThenStatus(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"maintenance", "run", "--db", dbPath, "--format", "json", "analysis.legacy"}); err != nil {
 			t.Fatalf("maintenance run: %v", err)
 		}
@@ -18,7 +18,7 @@ func TestCLI_Maintenance_RunThenStatus(t *testing.T) {
 	if !strings.Contains(out, `"outcome": "done"`) {
 		t.Errorf("run report = %q; want outcome done", out)
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"maintenance", "status", "--db", dbPath}); err != nil {
 			t.Fatalf("maintenance status: %v", err)
 		}

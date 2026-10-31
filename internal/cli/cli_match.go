@@ -25,22 +25,22 @@ func (cli *CLI) runMatch(args []string) error {
 	output := matchCmd.String("output", "", "Output file (default: stdout)")
 
 	matchCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb match [options]")
-		fmt.Println()
-		fmt.Println("Display match positions and analysis.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb match [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Display match positions and analysis.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		matchCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # Display match positions in JSON format")
-		fmt.Println("  blunderdb match --db database.db --id 1 --format json")
-		fmt.Println()
-		fmt.Println("  # Display match summary")
-		fmt.Println("  blunderdb match --db database.db --id 1 --format summary")
-		fmt.Println()
-		fmt.Println("  # Save match positions to file")
-		fmt.Println("  blunderdb match --db database.db --id 1 --output match.json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # Display match positions in JSON format")
+		fmt.Fprintln(cli.stdout(), "  blunderdb match --db database.db --id 1 --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Display match summary")
+		fmt.Fprintln(cli.stdout(), "  blunderdb match --db database.db --id 1 --format summary")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Save match positions to file")
+		fmt.Fprintln(cli.stdout(), "  blunderdb match --db database.db --id 1 --output match.json")
 	}
 
 	if err := matchCmd.Parse(args); err != nil {
@@ -103,9 +103,9 @@ func (cli *CLI) runMatch(args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to write output file: %w", err)
 		}
-		fmt.Printf("Match data written to: %s\n", *output)
+		fmt.Fprintf(cli.stdout(), "Match data written to: %s\n", *output)
 	} else {
-		fmt.Println(outputData)
+		fmt.Fprintln(cli.stdout(), outputData)
 	}
 
 	return nil

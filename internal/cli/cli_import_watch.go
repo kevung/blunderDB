@@ -28,7 +28,7 @@ func (cli *CLI) importWatch(dirPath, format string, interval time.Duration, fail
 
 	text := format != "json"
 	if text {
-		fmt.Printf("Watching %s for new match files (every %s). Ctrl-C to stop.\n\n", dirPath, interval)
+		fmt.Fprintf(cli.stdout(), "Watching %s for new match files (every %s). Ctrl-C to stop.\n\n", dirPath, interval)
 	}
 
 	stop := make(chan os.Signal, 1)
@@ -42,7 +42,7 @@ func (cli *CLI) importWatch(dirPath, format string, interval time.Duration, fail
 		select {
 		case <-stop:
 			if text {
-				fmt.Println("Stopped watching.")
+				fmt.Fprintln(cli.stdout(), "Stopped watching.")
 			}
 			return nil
 		case <-ticker.C:
@@ -75,7 +75,7 @@ func (cli *CLI) importWatch(dirPath, format string, interval time.Duration, fail
 // another machine's incremental export, merged as `import --type database`.
 func (cli *CLI) importOneWatched(path, format string) error {
 	if format != "json" {
-		fmt.Printf("── %s\n", path)
+		fmt.Fprintf(cli.stdout(), "── %s\n", path)
 	}
 	if ingest.IsLibraryFile(path) {
 		return cli.importDatabase(path, format, 0)

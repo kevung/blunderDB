@@ -13,22 +13,22 @@ import (
 func (cli *CLI) runCompletion(args []string) error {
 	completionCmd := flag.NewFlagSet("completion", flag.ContinueOnError)
 	completionCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb completion <bash|zsh|fish>")
-		fmt.Println()
-		fmt.Println("Print a shell completion script for the subcommand names to stdout.")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # bash: load for the current shell session")
-		fmt.Println("  source <(blunderdb completion bash)")
-		fmt.Println()
-		fmt.Println("  # bash: install system-wide (Debian/Ubuntu/Arch layout)")
-		fmt.Println("  blunderdb completion bash | sudo tee /etc/bash_completion.d/blunderdb > /dev/null")
-		fmt.Println()
-		fmt.Println("  # zsh: install into a directory already on $fpath")
-		fmt.Println("  blunderdb completion zsh > \"${fpath[1]}/_blunderdb\"")
-		fmt.Println()
-		fmt.Println("  # fish: load for the current shell session")
-		fmt.Println("  blunderdb completion fish | source")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb completion <bash|zsh|fish>")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Print a shell completion script for the subcommand names to stdout.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # bash: load for the current shell session")
+		fmt.Fprintln(cli.stdout(), "  source <(blunderdb completion bash)")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # bash: install system-wide (Debian/Ubuntu/Arch layout)")
+		fmt.Fprintln(cli.stdout(), "  blunderdb completion bash | sudo tee /etc/bash_completion.d/blunderdb > /dev/null")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # zsh: install into a directory already on $fpath")
+		fmt.Fprintln(cli.stdout(), "  blunderdb completion zsh > \"${fpath[1]}/_blunderdb\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # fish: load for the current shell session")
+		fmt.Fprintln(cli.stdout(), "  blunderdb completion fish | source")
 	}
 	if err := completionCmd.Parse(args); err != nil {
 		return err
@@ -42,11 +42,11 @@ func (cli *CLI) runCompletion(args []string) error {
 
 	switch strings.ToLower(completionCmd.Arg(0)) {
 	case "bash":
-		fmt.Print(bashCompletionScript(commands))
+		fmt.Fprint(cli.stdout(), bashCompletionScript(commands))
 	case "zsh":
-		fmt.Print(zshCompletionScript(commands))
+		fmt.Fprint(cli.stdout(), zshCompletionScript(commands))
 	case "fish":
-		fmt.Print(fishCompletionScript(commands))
+		fmt.Fprint(cli.stdout(), fishCompletionScript(commands))
 	default:
 		return fmt.Errorf("unknown shell: %s (must be 'bash', 'zsh', or 'fish')", completionCmd.Arg(0))
 	}

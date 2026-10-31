@@ -36,7 +36,7 @@ func TestCLI_ImportDatabase(t *testing.T) {
 	for pass, want := range []float64{1, 0} {
 		cli := &CLI{db: NewDatabase()}
 		var runErr error
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			runErr = cli.runImport([]string{"--db", target, "--type", "database", "--file", srcPath, "--format", "json"})
 		})
 		cli.db.Close()
@@ -78,7 +78,7 @@ func TestCLI_ImportDatabaseAnalyzeAndCap(t *testing.T) {
 		t.Helper()
 		cli := &CLI{db: NewDatabase()}
 		var runErr error
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			runErr = cli.runImport(append([]string{"--db", target, "--type", "database", "--file", srcPath, "--format", "json"}, args...))
 		})
 		cli.db.Close()

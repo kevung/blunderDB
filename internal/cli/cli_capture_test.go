@@ -17,7 +17,7 @@ func runCaptureCLI(t *testing.T, args ...string) (*CLI, string, error) {
 	cli := &CLI{db: NewDatabase()}
 	t.Cleanup(func() { cli.db.Close() })
 	var err error
-	out := captureStdout(t, func() { err = cli.runCapture(args) })
+	out := captureOut(t, cli, func() { err = cli.runCapture(args) })
 	return cli, out, err
 }
 

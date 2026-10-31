@@ -3,7 +3,6 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -54,17 +53,17 @@ func (cli *CLI) OpeningBookSubcommands() []string {
 }
 
 func (cli *CLI) printOpeningBookUsage() {
-	fmt.Println("Usage: blunderdb openingbook <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("The exercise « which play at this score? »: the opening play (1st roll) or")
-	fmt.Println("the reply after an opening play tied with the best (2nd roll) at a match score,")
-	fmt.Println("judged against the opening book embedded in blunderDB.")
-	fmt.Println("Every play tied with the best is a right answer.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  status    How many lines the book holds, and at which scores")
-	fmt.Println("  question  Draw a position to play at a score (--roll first|second)")
-	fmt.Println("  answer    Judge a play and show every candidate against the best")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb openingbook <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "The exercise « which play at this score? »: the opening play (1st roll) or")
+	fmt.Fprintln(cli.stdout(), "the reply after an opening play tied with the best (2nd roll) at a match score,")
+	fmt.Fprintln(cli.stdout(), "judged against the opening book embedded in blunderDB.")
+	fmt.Fprintln(cli.stdout(), "Every play tied with the best is a right answer.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  status    How many lines the book holds, and at which scores")
+	fmt.Fprintln(cli.stdout(), "  question  Draw a position to play at a score (--roll first|second)")
+	fmt.Fprintln(cli.stdout(), "  answer    Judge a play and show every candidate against the best")
 }
 
 // openingBookFlags are the flags every sub-command shares.
@@ -98,13 +97,13 @@ func (cli *CLI) runOpeningBookStatus(args []string) error {
 		if st.Scores == nil {
 			st.Scores = []string{}
 		}
-		return printJSON(st)
+		return cli.printJSON(st)
 	}
 	if st.Lines == 0 {
-		fmt.Println(openingBookEmpty)
+		fmt.Fprintln(cli.stdout(), openingBookEmpty)
 		return nil
 	}
-	fmt.Printf("%d lines at %d scores: %s\n", st.Lines, len(st.Scores), strings.Join(st.Scores, ", "))
+	fmt.Fprintf(cli.stdout(), "%d lines at %d scores: %s\n", st.Lines, len(st.Scores), strings.Join(st.Scores, ", "))
 	return nil
 }
 
@@ -140,13 +139,13 @@ func (cli *CLI) runOpeningBookQuestion(args []string) error {
 		return err
 	}
 	if *format == "json" {
-		return printJSON(q)
+		return cli.printJSON(q)
 	}
 	if q.Empty {
 		if b.Len() == 0 {
-			fmt.Println(openingBookEmpty)
+			fmt.Fprintln(cli.stdout(), openingBookEmpty)
 		} else {
-			fmt.Println("No line of the opening book matches these options.")
+			fmt.Fprintln(cli.stdout(), "No line of the opening book matches these options.")
 		}
 		return nil
 	}
@@ -156,14 +155,14 @@ func (cli *CLI) runOpeningBookQuestion(args []string) error {
 		at += fmt.Sprintf(" (the opener %s-away, the replier %s-away)", awayOf(q.Score, 1), awayOf(q.Score, 0))
 	}
 	if q.Roll == openingbook.RollSecond {
-		fmt.Printf("%s, after the opening %s played %s: reply %s.\n", at, q.Opening, q.OpeningPlay, q.Reply)
-		fmt.Printf("XGID: %s\n", q.XGID)
-		fmt.Printf("Answer: blunderdb openingbook answer --opening %s --reply %s --score %s --after '%s' '<reply>'\n", q.Opening, q.Reply, q.Score, q.OpeningPlay)
+		fmt.Fprintf(cli.stdout(), "%s, after the opening %s played %s: reply %s.\n", at, q.Opening, q.OpeningPlay, q.Reply)
+		fmt.Fprintf(cli.stdout(), "XGID: %s\n", q.XGID)
+		fmt.Fprintf(cli.stdout(), "Answer: blunderdb openingbook answer --opening %s --reply %s --score %s --after '%s' '<reply>'\n", q.Opening, q.Reply, q.Score, q.OpeningPlay)
 		return nil
 	}
-	fmt.Printf("%s: play the opening %s.\n", at, q.Opening)
-	fmt.Printf("XGID: %s\n", q.XGID)
-	fmt.Printf("Answer: blunderdb openingbook answer --opening %s --score %s '<opening play>'\n", q.Opening, q.Score)
+	fmt.Fprintf(cli.stdout(), "%s: play the opening %s.\n", at, q.Opening)
+	fmt.Fprintf(cli.stdout(), "XGID: %s\n", q.XGID)
+	fmt.Fprintf(cli.stdout(), "Answer: blunderdb openingbook answer --opening %s --score %s '<opening play>'\n", q.Opening, q.Score)
 	return nil
 }
 
@@ -189,17 +188,17 @@ func (cli *CLI) runOpeningBookAnswer(args []string) error {
 	score := fs.String("score", "", "Score of the question (4-2, 1-2 Crawford, 1-1 DMP, money)")
 	after := fs.String("after", "", "The opening play the reply follows, as the second-roll question names it; empty judges the opening play")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb openingbook answer --opening <roll> --score <score> [--reply <roll> --after <opening play>] [options] <play>")
-		fmt.Println()
-		fmt.Println("Without --after, judges the opening play (1st roll); with --reply and --after,")
-		fmt.Println("judges the reply played after that opening play (2nd roll).")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb openingbook answer --opening <roll> --score <score> [--reply <roll> --after <opening play>] [options] <play>")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Without --after, judges the opening play (1st roll); with --reply and --after,")
+		fmt.Fprintln(cli.stdout(), "judges the reply played after that opening play (2nd roll).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Example:")
-		fmt.Println("  blunderdb openingbook answer --opening 31 --score 4-2 '8/5 6/5'")
-		fmt.Println("  blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 --after '8/5 6/5' '13/11 6/5'")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Example:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb openingbook answer --opening 31 --score 4-2 '8/5 6/5'")
+		fmt.Fprintln(cli.stdout(), "  blunderdb openingbook answer --opening 31 --reply 21 --score 4-2 --after '8/5 6/5' '13/11 6/5'")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -217,20 +216,20 @@ func (cli *CLI) runOpeningBookAnswer(args []string) error {
 		return err
 	}
 	if *format == "json" {
-		return printJSON(v)
+		return cli.printJSON(v)
 	}
 	switch {
 	case !v.Legal:
-		fmt.Printf("%s is not a legal play of the roll.\n", v.Notation)
+		fmt.Fprintf(cli.stdout(), "%s is not a legal play of the roll.\n", v.Notation)
 	case v.Right:
-		fmt.Printf("Right: %s is tied with the best.\n", v.Notation)
+		fmt.Fprintf(cli.stdout(), "Right: %s is tied with the best.\n", v.Notation)
 	case v.Played < 0:
-		fmt.Printf("Wrong: %s is not among the book's candidates.\n", v.Notation)
+		fmt.Fprintf(cli.stdout(), "Wrong: %s is not among the book's candidates.\n", v.Notation)
 	default:
-		fmt.Printf("Wrong: %s is %.3f behind the best.\n", v.Notation, v.Ranked[v.Played].Gap)
+		fmt.Fprintf(cli.stdout(), "Wrong: %s is %.3f behind the best.\n", v.Notation, v.Ranked[v.Played].Gap)
 	}
-	fmt.Println()
-	tw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(cli.stdout())
+	tw := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	_, _ = fmt.Fprintln(tw, "\tPlay\tGap\t95 % CI\t")
 	for i, r := range v.Ranked {
 		mark := " "
@@ -250,8 +249,8 @@ func (cli *CLI) runOpeningBookAnswer(args []string) error {
 	if err := tw.Flush(); err != nil {
 		return err
 	}
-	fmt.Println()
-	fmt.Println("Gap: normalised equity at the score (±1 = the centred cube) behind the best play.")
-	fmt.Printf("Rollout: %d games; %s\n", v.Games, v.Signature)
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Gap: normalised equity at the score (±1 = the centred cube) behind the best play.")
+	fmt.Fprintf(cli.stdout(), "Rollout: %d games; %s\n", v.Games, v.Signature)
 	return nil
 }

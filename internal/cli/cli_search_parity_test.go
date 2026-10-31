@@ -61,7 +61,7 @@ func TestSearchOutputParity(t *testing.T) {
 	outputs := map[string]string{}
 	for _, c := range searchParityCases {
 		var runErr error
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			runErr = cli.Run(append([]string{"search", "--db", dbPath}, c.args...))
 		})
 		if runErr != nil {

@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -62,7 +63,20 @@ func parseIDList(s string) ([]int64, error) {
 // CLI represents the command-line interface
 type CLI struct {
 	db *Database
+	// out receives everything the commands print on standard output; nil
+	// means os.Stdout, so a literal CLI{} stays usable.
+	out io.Writer
 }
+
+func (cli *CLI) stdout() io.Writer {
+	if cli.out == nil {
+		return os.Stdout
+	}
+	return cli.out
+}
+
+// SetOutput redirects the commands' standard output.
+func (cli *CLI) SetOutput(w io.Writer) { cli.out = w }
 
 // NewCLI creates a new CLI instance
 func NewCLI() *CLI {
@@ -87,7 +101,7 @@ func (cli *CLI) Run(args []string) error {
 	// rejected here as unknown.
 	run, ok := cli.handlers()[strings.ToLower(command)]
 	if !ok {
-		fmt.Printf("Unknown command: %s\n\n", command)
+		fmt.Fprintf(cli.stdout(), "Unknown command: %s\n\n", command)
 		cli.printUsage()
 		return fmt.Errorf("unknown command: %s", command)
 	}
@@ -172,71 +186,71 @@ func CommandNames() []string {
 
 // printUsage prints the usage information
 func (cli *CLI) printUsage() {
-	fmt.Println("blunderDB CLI - Backgammon Database Management Tool")
-	fmt.Println()
-	fmt.Println("Usage:")
-	fmt.Println("  blunderdb <command> [options]")
-	fmt.Println()
-	fmt.Println("Commands:")
-	fmt.Println("  create    Create a new database with optional metadata")
-	fmt.Println("  import    Import data into the database (match, position, batch)")
-	fmt.Println("  export    Export data from the database")
-	fmt.Println("  transfer  Copy part of one library into another")
-	fmt.Println("  identity  Show or move your issuer identity")
-	fmt.Println("  open      Open a password-protected copy into an ordinary database")
-	fmt.Println("  list      List database contents")
-	fmt.Println("  search    Search positions with filters")
-	fmt.Println("  match     Display match positions and analysis")
-	fmt.Println("  lesson      Manage lessons (ordered steps showing collections and positions; export them)")
-	fmt.Println("  study       The study backlog: your unhandled blunders across every import, and the \"studied\" mark")
-	fmt.Println("  collection  Manage collections (list, show, create, rename, delete, export)")
-	fmt.Println("  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
-	fmt.Println("  stats     Statistics computed apart from list --type stats (recurring)")
-	fmt.Println("  training  The Training journal (sessions, missed positions)")
-	fmt.Println("  openingbook  Which play at this score? Replies to the opening, judged by the book")
-	fmt.Println("  cubematrix  Cube verdict at every score of a match, for one position")
-	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
-	fmt.Println("  gnubgid   The GNUbg Position ID and Match ID of a position")
-	fmt.Println("  capture   Read a position from a screen capture of an XG board")
-	fmt.Println("  rollout   Roll out a position's plays or cube decision (gammonNet)")
-	fmt.Println("  bearoff   Generate, list, verify and delete the bearoff tables")
-	fmt.Println("  analyze   Write a gammonNet analysis for every position missing one")
-	fmt.Println("  duel      Play a Duel one Action per call (create, show, move, double, take, pass, stop)")
-	fmt.Println("  transcribe  Replay a .mat, a match or a draft and report its inconsistencies")
-	fmt.Println("  tournament  Read a directed tournament (list, verify, standings, page, export)")
-	fmt.Println("  players   Other spellings of a player (alias add, list, remove, suggest)")
-	fmt.Println("  events    Other spellings of an event (alias add, list, remove, suggest)")
-	fmt.Println("  info      Display database metadata")
-	fmt.Println("  edit      Edit database metadata")
-	fmt.Println("  verify    Verify database integrity")
-	fmt.Println("  vacuum    Compact the database file, reclaiming freed space")
-	fmt.Println("  repair    Recompute the analysis columns from the analyses themselves")
-	fmt.Println("  met       List, import or choose the database's match equity table")
-	fmt.Println("  reencode  Rewrite analyses stored by older releases in the compact format")
-	fmt.Println("  maintenance  State of health: counters, actions and last runs (status, count, ids, run)")
-	fmt.Println("  delete    Delete data from the database")
-	fmt.Println("  comment   Comments on a position, attributed to their author (add, list)")
-	fmt.Println("  elsewhere What other database files know of one board, and its neighbours there")
-	fmt.Println("  trash     What was deleted through the trash, and how to put it back")
-	fmt.Println("  completion  Print a shell completion script (bash, zsh, fish)")
-	fmt.Println("  help      Show this help message")
-	fmt.Println("  version   Show version information")
-	fmt.Println()
-	fmt.Println("Headless mode (advanced, optional — see the 'headless' chapter in the docs):")
-	fmt.Println("  serve     Run the HTTP + JSON daemon (SQLite or multi-tenant PostgreSQL)")
-	fmt.Println("  call      Invoke a daemon handler in-process (scripting/tests)")
-	fmt.Println("  migrate   Copy a SQLite database into PostgreSQL under a tenant")
-	fmt.Println("  healthcheck  Probe a running daemon's /readyz; exit 0 when it is ready")
-	fmt.Println("  mcp          Serve the database's tools to an AI assistant (Model Context Protocol, stdio)")
-	fmt.Println()
-	fmt.Println("Use 'blunderdb <command> --help' for more information about a command.")
+	fmt.Fprintln(cli.stdout(), "blunderDB CLI - Backgammon Database Management Tool")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Usage:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb <command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Commands:")
+	fmt.Fprintln(cli.stdout(), "  create    Create a new database with optional metadata")
+	fmt.Fprintln(cli.stdout(), "  import    Import data into the database (match, position, batch)")
+	fmt.Fprintln(cli.stdout(), "  export    Export data from the database")
+	fmt.Fprintln(cli.stdout(), "  transfer  Copy part of one library into another")
+	fmt.Fprintln(cli.stdout(), "  identity  Show or move your issuer identity")
+	fmt.Fprintln(cli.stdout(), "  open      Open a password-protected copy into an ordinary database")
+	fmt.Fprintln(cli.stdout(), "  list      List database contents")
+	fmt.Fprintln(cli.stdout(), "  search    Search positions with filters")
+	fmt.Fprintln(cli.stdout(), "  match     Display match positions and analysis")
+	fmt.Fprintln(cli.stdout(), "  lesson      Manage lessons (ordered steps showing collections and positions; export them)")
+	fmt.Fprintln(cli.stdout(), "  study       The study backlog: your unhandled blunders across every import, and the \"studied\" mark")
+	fmt.Fprintln(cli.stdout(), "  collection  Manage collections (list, show, create, rename, delete, export)")
+	fmt.Fprintln(cli.stdout(), "  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
+	fmt.Fprintln(cli.stdout(), "  stats     Statistics computed apart from list --type stats (recurring)")
+	fmt.Fprintln(cli.stdout(), "  training  The Training journal (sessions, missed positions)")
+	fmt.Fprintln(cli.stdout(), "  openingbook  Which play at this score? Replies to the opening, judged by the book")
+	fmt.Fprintln(cli.stdout(), "  cubematrix  Cube verdict at every score of a match, for one position")
+	fmt.Fprintln(cli.stdout(), "  epc       EPC, win probability and money cube verdict (bearoff)")
+	fmt.Fprintln(cli.stdout(), "  gnubgid   The GNUbg Position ID and Match ID of a position")
+	fmt.Fprintln(cli.stdout(), "  capture   Read a position from a screen capture of an XG board")
+	fmt.Fprintln(cli.stdout(), "  rollout   Roll out a position's plays or cube decision (gammonNet)")
+	fmt.Fprintln(cli.stdout(), "  bearoff   Generate, list, verify and delete the bearoff tables")
+	fmt.Fprintln(cli.stdout(), "  analyze   Write a gammonNet analysis for every position missing one")
+	fmt.Fprintln(cli.stdout(), "  duel      Play a Duel one Action per call (create, show, move, double, take, pass, stop)")
+	fmt.Fprintln(cli.stdout(), "  transcribe  Replay a .mat, a match or a draft and report its inconsistencies")
+	fmt.Fprintln(cli.stdout(), "  tournament  Read a directed tournament (list, verify, standings, page, export)")
+	fmt.Fprintln(cli.stdout(), "  players   Other spellings of a player (alias add, list, remove, suggest)")
+	fmt.Fprintln(cli.stdout(), "  events    Other spellings of an event (alias add, list, remove, suggest)")
+	fmt.Fprintln(cli.stdout(), "  info      Display database metadata")
+	fmt.Fprintln(cli.stdout(), "  edit      Edit database metadata")
+	fmt.Fprintln(cli.stdout(), "  verify    Verify database integrity")
+	fmt.Fprintln(cli.stdout(), "  vacuum    Compact the database file, reclaiming freed space")
+	fmt.Fprintln(cli.stdout(), "  repair    Recompute the analysis columns from the analyses themselves")
+	fmt.Fprintln(cli.stdout(), "  met       List, import or choose the database's match equity table")
+	fmt.Fprintln(cli.stdout(), "  reencode  Rewrite analyses stored by older releases in the compact format")
+	fmt.Fprintln(cli.stdout(), "  maintenance  State of health: counters, actions and last runs (status, count, ids, run)")
+	fmt.Fprintln(cli.stdout(), "  delete    Delete data from the database")
+	fmt.Fprintln(cli.stdout(), "  comment   Comments on a position, attributed to their author (add, list)")
+	fmt.Fprintln(cli.stdout(), "  elsewhere What other database files know of one board, and its neighbours there")
+	fmt.Fprintln(cli.stdout(), "  trash     What was deleted through the trash, and how to put it back")
+	fmt.Fprintln(cli.stdout(), "  completion  Print a shell completion script (bash, zsh, fish)")
+	fmt.Fprintln(cli.stdout(), "  help      Show this help message")
+	fmt.Fprintln(cli.stdout(), "  version   Show version information")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Headless mode (advanced, optional — see the 'headless' chapter in the docs):")
+	fmt.Fprintln(cli.stdout(), "  serve     Run the HTTP + JSON daemon (SQLite or multi-tenant PostgreSQL)")
+	fmt.Fprintln(cli.stdout(), "  call      Invoke a daemon handler in-process (scripting/tests)")
+	fmt.Fprintln(cli.stdout(), "  migrate   Copy a SQLite database into PostgreSQL under a tenant")
+	fmt.Fprintln(cli.stdout(), "  healthcheck  Probe a running daemon's /readyz; exit 0 when it is ready")
+	fmt.Fprintln(cli.stdout(), "  mcp          Serve the database's tools to an AI assistant (Model Context Protocol, stdio)")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Use 'blunderdb <command> --help' for more information about a command.")
 }
 
 // printVersion prints the application version and the database schema
 // version it speaks (they change independently: DatabaseVersion only bumps
 // when the SQLite schema changes).
 func (cli *CLI) printVersion() {
-	fmt.Printf("blunderDB version %s (database schema %s)\n", appVersion, DatabaseVersion)
+	fmt.Fprintf(cli.stdout(), "blunderDB version %s (database schema %s)\n", appVersion, DatabaseVersion)
 }
 
 // initDatabase initializes the database connection

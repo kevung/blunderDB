@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"text/tabwriter"
 
@@ -15,7 +14,7 @@ import (
 // runCollectionSuggest proposes reference positions (ADR-0080) and, on
 // request, makes a collection or an Anki deck of them.
 func (cli *CLI) runCollectionSuggest(args []string) error {
-	fs, dbPath := collectionFlagSet("suggest",
+	fs, dbPath := cli.collectionFlagSet("suggest",
 		"Propose reference positions to study: among the player's errors, the positions whose lesson\n"+
 			"covers the most recoverable match winning chances of their neighbouring errors (same family,\n"+
 			fmt.Sprintf("within %d checker-pips; a cube reference holds at one score). A close lesson (second-best\n", storage.ReferenceRadius)+
@@ -58,7 +57,7 @@ func (cli *CLI) runCollectionSuggest(args []string) error {
 	var res *storage.ReferenceSuggestions
 	err = withInterruptibleContext(func() {
 		if textOutput {
-			fmt.Println("\nCancelling...")
+			fmt.Fprintln(cli.stdout(), "\nCancelling...")
 		}
 	}, func(ctx context.Context) error {
 		var err error
@@ -101,30 +100,30 @@ func (cli *CLI) runCollectionSuggest(args []string) error {
 		if err != nil {
 			return fmt.Errorf("marshal references: %w", err)
 		}
-		fmt.Println(string(data))
+		fmt.Fprintln(cli.stdout(), string(data))
 		return nil
 	}
-	printReferences(res)
+	cli.printReferences(res)
 	if collectionID != 0 {
-		fmt.Printf("Created collection %d (%s) with %d positions\n", collectionID, strings.TrimSpace(*collection), len(ids))
+		fmt.Fprintf(cli.stdout(), "Created collection %d (%s) with %d positions\n", collectionID, strings.TrimSpace(*collection), len(ids))
 	}
 	if deckID != 0 {
-		fmt.Printf("Created deck %d (%s)\n", deckID, strings.TrimSpace(*deck))
+		fmt.Fprintf(cli.stdout(), "Created deck %d (%s)\n", deckID, strings.TrimSpace(*deck))
 	}
 	return nil
 }
 
 // printReferences writes one line per proposed position, then its reason.
 // MWC figures are percentage points of match winning chances.
-func printReferences(res *storage.ReferenceSuggestions) {
-	fmt.Printf("Reference positions — %d counted decisions, error threshold %d mp, neighbours within %d checker-pips\n",
+func (cli *CLI) printReferences(res *storage.ReferenceSuggestions) {
+	fmt.Fprintf(cli.stdout(), "Reference positions — %d counted decisions, error threshold %d mp, neighbours within %d checker-pips\n",
 		res.NumDecisions, res.ThresholdMP, res.Radius)
-	fmt.Printf("%d candidate positions weighed, %d already handled.\n\n", res.Candidates, res.Handled)
+	fmt.Fprintf(cli.stdout(), "%d candidate positions weighed, %d already handled.\n\n", res.Candidates, res.Handled)
 	if len(res.References) == 0 {
-		fmt.Println("No position to propose: no priced, themed error left unhandled.")
+		fmt.Fprintln(cli.stdout(), "No position to propose: no priced, themed error left unhandled.")
 		return
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "#\tPOSITION\tPLAN\tKIND\tTHEME\tSCORE\tCOVERS\tMWC COVERED\tREASON")
 	for i, r := range res.References {
 		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%s\t%s\t%d errors / %d matches\t%.2f%%\t%s\n", i+1, r.PositionID,

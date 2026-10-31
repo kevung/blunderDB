@@ -16,7 +16,7 @@ import (
 func TestCLI_VacuumJSON(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"vacuum", "--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("vacuum json: %v", err)
 		}
@@ -41,7 +41,7 @@ func TestCLI_VacuumJSON(t *testing.T) {
 func TestCLI_VerifyJSON(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"verify", "--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("verify json: %v", err)
 		}
@@ -65,7 +65,7 @@ func TestCLI_CreateJSON(t *testing.T) {
 	cli := &CLI{db: NewDatabase()}
 	closeOnCleanup(t, cli.db)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"create", "--db", dbPath, "--user", "Alice", "--format", "json"}); err != nil {
 			t.Fatalf("create json: %v", err)
 		}
@@ -90,7 +90,7 @@ func TestCLI_CreateJSON(t *testing.T) {
 func TestCLI_EditJSON(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"edit", "--db", dbPath, "--user", "Bob", "--format", "json"}); err != nil {
 			t.Fatalf("edit json: %v", err)
 		}
@@ -121,7 +121,7 @@ func TestCLI_DeleteJSON(t *testing.T) {
 		t.Fatal("no matches after import")
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"delete", "--db", dbPath, "--type", "match",
 			"--id", fmt.Sprintf("%d", matches[0].ID), "--confirm", "--format", "json"}); err != nil {
 			t.Fatalf("delete json: %v", err)
@@ -151,7 +151,7 @@ func TestCLI_ExportPositionsJSON(t *testing.T) {
 	}
 	outFile := tempDir(t) + "/positions.txt"
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"export", "--db", dbPath, "--type", "positions", "--file", outFile, "--format", "json"}); err != nil {
 			t.Fatalf("export json: %v", err)
 		}
@@ -176,7 +176,7 @@ func TestCLI_ExportPositionsJSON(t *testing.T) {
 func TestCLI_AnalyzeJSON_NothingToDo(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"analyze", "--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("analyze json: %v", err)
 		}
@@ -200,7 +200,7 @@ func TestCLI_AnalyzeJSON_NothingToDo(t *testing.T) {
 
 func TestParseSearchFlags_MissingDB(t *testing.T) {
 	t.Parallel()
-	_, _, err := parseSearchFlags([]string{"--decision", "cube"})
+	_, _, err := (&CLI{}).parseSearchFlags([]string{"--decision", "cube"})
 	if err == nil {
 		t.Fatal("expected an error for a missing --db")
 	}
@@ -208,7 +208,7 @@ func TestParseSearchFlags_MissingDB(t *testing.T) {
 
 func TestParseSearchFlags_BuildsParams(t *testing.T) {
 	t.Parallel()
-	params, dbPath, err := parseSearchFlags([]string{
+	params, dbPath, err := (&CLI{}).parseSearchFlags([]string{
 		"--db", "database.db", "--format", "JSON", "--limit", "5",
 		"--decision", "cube", "--cube", "2",
 	})
@@ -234,7 +234,7 @@ func TestParseSearchFlags_BuildsParams(t *testing.T) {
 
 func TestParseSearchFlags_InvalidDice(t *testing.T) {
 	t.Parallel()
-	_, _, err := parseSearchFlags([]string{"--db", "database.db", "--dice", "7"})
+	_, _, err := (&CLI{}).parseSearchFlags([]string{"--db", "database.db", "--dice", "7"})
 	if err == nil {
 		t.Fatal("expected an error for an out-of-range die")
 	}
@@ -242,7 +242,7 @@ func TestParseSearchFlags_InvalidDice(t *testing.T) {
 
 func TestParseSearchFlags_MutuallyExclusiveComments(t *testing.T) {
 	t.Parallel()
-	_, _, err := parseSearchFlags([]string{"--db", "database.db", "--has-comment", "--no-comment"})
+	_, _, err := (&CLI{}).parseSearchFlags([]string{"--db", "database.db", "--has-comment", "--no-comment"})
 	if err == nil {
 		t.Fatal("expected an error for --has-comment and --no-comment together")
 	}
@@ -294,7 +294,7 @@ func TestSearch_MachineFormatsOwnStdout(t *testing.T) {
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg")}); err != nil {
 		t.Fatalf("import: %v", err)
 	}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"search", "--db", dbPath, "--format", "json", "--limit", "3"}); err != nil {
 			t.Errorf("search json: %v", err)
 		}
@@ -305,7 +305,7 @@ func TestSearch_MachineFormatsOwnStdout(t *testing.T) {
 	if !strings.Contains(out, `"xgid": "XGID=`) {
 		t.Errorf("json rows carry no prefixed XGID:\n%s", out)
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"search", "--db", dbPath, "--format", "xgid", "--limit", "3"}); err != nil {
 			t.Errorf("search xgid: %v", err)
 		}

@@ -66,19 +66,19 @@ func (cli *CLI) BearoffSubcommands() []string {
 }
 
 func (cli *CLI) printBearoffUsage() {
-	fmt.Println("Usage: blunderdb bearoff <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("Generate and manage the bearoff databases. Nothing is downloaded")
-	fmt.Println("and nothing is embedded: a table is computed here and checked")
-	fmt.Println("against gnubg's own fingerprint.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  generate    Compute a table (resumable: Ctrl-C pauses)")
-	fmt.Println("  list        What the data directory holds, and what it costs")
-	fmt.Println("  verify      Check a .bd file against its domain's fingerprint")
-	fmt.Println("  delete      Remove a generated table and any paused run")
-	fmt.Println()
-	fmt.Println("Run 'blunderdb bearoff <sub-command> --help' for its options.")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb bearoff <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Generate and manage the bearoff databases. Nothing is downloaded")
+	fmt.Fprintln(cli.stdout(), "and nothing is embedded: a table is computed here and checked")
+	fmt.Fprintln(cli.stdout(), "against gnubg's own fingerprint.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  generate    Compute a table (resumable: Ctrl-C pauses)")
+	fmt.Fprintln(cli.stdout(), "  list        What the data directory holds, and what it costs")
+	fmt.Fprintln(cli.stdout(), "  verify      Check a .bd file against its domain's fingerprint")
+	fmt.Fprintln(cli.stdout(), "  delete      Remove a generated table and any paused run")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Run 'blunderdb bearoff <sub-command> --help' for its options.")
 }
 
 // parseOneSided turns a point count into a one-sided domain — the table the
@@ -165,23 +165,23 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 	cores := fs.Int("cores", 0, "Cores to use (default: every core but one)")
 	quiet := fs.Bool("quiet", false, "No progress line")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb bearoff generate --ts <domain> [options]")
-		fmt.Println()
-		fmt.Println("Compute a bearoff table. The result is checked against gnubg's")
-		fmt.Println("fingerprint for its domain before it is put in place, so a table")
-		fmt.Println("this writes is the table makebearoff writes.")
-		fmt.Println()
-		fmt.Println("Ctrl-C PAUSES: the state is written beside the table and the next")
-		fmt.Println("run on the same domain continues from it rather than starting")
-		fmt.Println("over. `bearoff delete` throws a paused run away.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb bearoff generate --ts <domain> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Compute a bearoff table. The result is checked against gnubg's")
+		fmt.Fprintln(cli.stdout(), "fingerprint for its domain before it is put in place, so a table")
+		fmt.Fprintln(cli.stdout(), "this writes is the table makebearoff writes.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Ctrl-C PAUSES: the state is written beside the table and the next")
+		fmt.Fprintln(cli.stdout(), "run on the same domain continues from it rather than starting")
+		fmt.Fprintln(cli.stdout(), "over. `bearoff delete` throws a paused run away.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb bearoff generate --ts 6x9")
-		fmt.Println("  blunderdb bearoff generate --ts 6x11 --cores 4 --data-dir /srv/bearoff")
-		fmt.Println("  blunderdb bearoff generate --os 8       # the EPC beyond the home board")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb bearoff generate --ts 6x9")
+		fmt.Fprintln(cli.stdout(), "  blunderdb bearoff generate --ts 6x11 --cores 4 --data-dir /srv/bearoff")
+		fmt.Fprintln(cli.stdout(), "  blunderdb bearoff generate --os 8       # the EPC beyond the home board")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -209,7 +209,7 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 	}
 
 	if verdict, got, err := bearoffgen.Verify(filepath.Join(dir, domain.FileName())); err == nil && got == domain && verdict != bearoffgen.Corrupt {
-		fmt.Printf("%s is already in %s (%s).\n", domain, dir, verdict)
+		fmt.Fprintf(cli.stdout(), "%s is already in %s (%s).\n", domain, dir, verdict)
 		return nil
 	}
 
@@ -222,12 +222,12 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 		// there is nothing to spread across cores.
 		workers = 1
 	}
-	fmt.Printf("Generating %s in %s on %d core(s)%s\n", domain, dir, workers, resumed)
+	fmt.Fprintf(cli.stdout(), "Generating %s in %s on %d core(s)%s\n", domain, dir, workers, resumed)
 	size := humanBytes(domain.Size())
 	if domain.Size() == 0 {
 		size = "an unmeasured size"
 	}
-	fmt.Printf("  %s on disk, %s of memory, about %s\n",
+	fmt.Fprintf(cli.stdout(), "  %s on disk, %s of memory, about %s\n",
 		size, humanBytes(domain.RAMNeeded()),
 		humanDuration(domain.EstimateDuration(0, workers)))
 
@@ -252,7 +252,7 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 			remaining := time.Duration(float64(time.Since(started)) * float64(total-done) / float64(done))
 			eta = fmt.Sprintf(", about %s left", humanDuration(remaining))
 		}
-		fmt.Printf("\r  %.1f%%%s          ", pct, eta)
+		fmt.Fprintf(cli.stdout(), "\r  %.1f%%%s          ", pct, eta)
 	}
 
 	path, err := bearoffgen.GenerateWith(ctx, dir, domain, bearoffgen.RunOptions{
@@ -261,21 +261,21 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 		Pausable: true,
 	})
 	if !*quiet {
-		fmt.Println()
+		fmt.Fprintln(cli.stdout())
 	}
 	if err != nil {
 		if ctx.Err() != nil {
 			if done, total, perr := bearoffgen.CheckpointProgress(dir, domain); perr == nil && total > 0 {
-				fmt.Printf("Paused at %.0f%%. Run the same command again to continue.\n", 100*float64(done)/float64(total))
+				fmt.Fprintf(cli.stdout(), "Paused at %.0f%%. Run the same command again to continue.\n", 100*float64(done)/float64(total))
 				return nil
 			}
-			fmt.Println("Interrupted before anything could be saved.")
+			fmt.Fprintln(cli.stdout(), "Interrupted before anything could be saved.")
 			return nil
 		}
 		return err
 	}
 	verdict, _, _ := bearoffgen.Verify(path)
-	fmt.Printf("Wrote %s (%s, %s) in %s\n", path, humanBytes(domain.Size()), verdict, humanDuration(time.Since(started)))
+	fmt.Fprintf(cli.stdout(), "Wrote %s (%s, %s) in %s\n", path, humanBytes(domain.Size()), verdict, humanDuration(time.Since(started)))
 	return nil
 }
 
@@ -298,18 +298,18 @@ func (cli *CLI) runBearoffList(args []string) error {
 	cores := fs.Int("cores", 0, "Cores the estimate assumes (default: every core but one)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb bearoff list [options]")
-		fmt.Println()
-		fmt.Println("List every domain that can be generated: what it weighs, what it")
-		fmt.Println("needs in memory, roughly how long it takes here, and whether this")
-		fmt.Println("machine already has it.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb bearoff list [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "List every domain that can be generated: what it weighs, what it")
+		fmt.Fprintln(cli.stdout(), "needs in memory, roughly how long it takes here, and whether this")
+		fmt.Fprintln(cli.stdout(), "machine already has it.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb bearoff list")
-		fmt.Println("  blunderdb bearoff list --format json --cores 8")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb bearoff list")
+		fmt.Fprintln(cli.stdout(), "  blunderdb bearoff list --format json --cores 8")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -350,14 +350,14 @@ func (cli *CLI) runBearoffList(args []string) error {
 	}
 
 	if formatLower == "json" {
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(map[string]any{"data_dir": dir, "cores": workers, "domains": rows})
 	}
 
-	fmt.Printf("Data directory: %s\n", dir)
-	fmt.Printf("Estimates assume %d core(s).\n\n", workers)
-	fmt.Printf("%-10s %-18s %10s %10s %10s  %s\n", "DOMAIN", "FILE", "SIZE", "MEMORY", "TIME", "STATE")
+	fmt.Fprintf(cli.stdout(), "Data directory: %s\n", dir)
+	fmt.Fprintf(cli.stdout(), "Estimates assume %d core(s).\n\n", workers)
+	fmt.Fprintf(cli.stdout(), "%-10s %-18s %10s %10s %10s  %s\n", "DOMAIN", "FILE", "SIZE", "MEMORY", "TIME", "STATE")
 	for _, r := range rows {
 		state := "—"
 		if r.Present {
@@ -372,7 +372,7 @@ func (cli *CLI) runBearoffList(args []string) error {
 			// print a zero that reads as "empty file".
 			size = "?"
 		}
-		fmt.Printf("%-10s %-18s %10s %10s %10s  %s\n", r.Domain, r.File, size, ram, est, state)
+		fmt.Fprintf(cli.stdout(), "%-10s %-18s %10s %10s %10s  %s\n", r.Domain, r.File, size, ram, est, state)
 	}
 	return nil
 }
@@ -381,18 +381,18 @@ func (cli *CLI) runBearoffVerify(args []string) error {
 	fs := flag.NewFlagSet("bearoff verify", flag.ContinueOnError)
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb bearoff verify <file.bd> [options]")
-		fmt.Println()
-		fmt.Println("Check a bearoff file against the SHA-256 gnubg produces for its")
-		fmt.Println("domain. Three answers: verified (the same bytes as the reference),")
-		fmt.Println("unverified (well formed, but no fingerprint is recorded for that")
-		fmt.Println("domain), corrupt (the file contradicts its own header).")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb bearoff verify <file.bd> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Check a bearoff file against the SHA-256 gnubg produces for its")
+		fmt.Fprintln(cli.stdout(), "domain. Three answers: verified (the same bytes as the reference),")
+		fmt.Fprintln(cli.stdout(), "unverified (well formed, but no fingerprint is recorded for that")
+		fmt.Fprintln(cli.stdout(), "domain), corrupt (the file contradicts its own header).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb bearoff verify ~/.local/share/blunderDB/gnubg_ts6x6.bd")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb bearoff verify ~/.local/share/blunderDB/gnubg_ts6x6.bd")
 	}
 	// The file is positional, so it is taken before the flags are parsed.
 	var path string
@@ -418,7 +418,7 @@ func (cli *CLI) runBearoffVerify(args []string) error {
 		reason = err.Error()
 	}
 	if formatLower == "json" {
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		if encErr := enc.Encode(map[string]any{
 			"file": path, "domain": domain.String(), "verdict": verdict.String(), "reason": reason,
@@ -426,9 +426,9 @@ func (cli *CLI) runBearoffVerify(args []string) error {
 			return encErr
 		}
 	} else if reason != "" {
-		fmt.Printf("%s: %s (%s) — %s\n", path, verdict, domain, reason)
+		fmt.Fprintf(cli.stdout(), "%s: %s (%s) — %s\n", path, verdict, domain, reason)
 	} else {
-		fmt.Printf("%s: %s (%s)\n", path, verdict, domain)
+		fmt.Fprintf(cli.stdout(), "%s: %s (%s)\n", path, verdict, domain)
 	}
 	// A corrupt file is a failure the shell must see: this command exists to
 	// be put in a script.
@@ -443,17 +443,17 @@ func (cli *CLI) runBearoffDelete(args []string) error {
 	ts := fs.String("ts", "", "Domain to delete, as 6x9, or os8 for a one-sided table (required)")
 	dataDir := fs.String("data-dir", "", "Where to look (default: the application's data directory)")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb bearoff delete --ts <domain> [options]")
-		fmt.Println()
-		fmt.Println("Remove a generated table, along with any paused run and any debris")
-		fmt.Println("of an interrupted one. A default domain is regenerated on the next")
-		fmt.Println("launch of the application; a wider one is not.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb bearoff delete --ts <domain> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Remove a generated table, along with any paused run and any debris")
+		fmt.Fprintln(cli.stdout(), "of an interrupted one. A default domain is regenerated on the next")
+		fmt.Fprintln(cli.stdout(), "launch of the application; a wider one is not.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb bearoff delete --ts 6x11")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb bearoff delete --ts 6x11")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -473,13 +473,13 @@ func (cli *CLI) runBearoffDelete(args []string) error {
 	for _, p := range []string{base, base + ".part", base + ".ckpt"} {
 		if err := os.Remove(p); err == nil {
 			removed++
-			fmt.Printf("Removed %s\n", p)
+			fmt.Fprintf(cli.stdout(), "Removed %s\n", p)
 		} else if !os.IsNotExist(err) {
 			return err
 		}
 	}
 	if removed == 0 {
-		fmt.Printf("Nothing to remove for %s in %s\n", domain, dir)
+		fmt.Fprintf(cli.stdout(), "Nothing to remove for %s in %s\n", domain, dir)
 	}
 	return nil
 }

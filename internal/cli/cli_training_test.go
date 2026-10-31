@@ -41,7 +41,7 @@ func TestCLI_TrainingMissed(t *testing.T) {
 			DeckID       int64
 			CollectionID int64
 		}
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"training", "missed", "--db", dbPath, "--format", "json"}, args...)); err != nil {
 				t.Fatalf("training missed %v: %v", args, err)
 			}

@@ -23,7 +23,7 @@ func TestCLI_CollectionSuggest(t *testing.T) {
 			storage.ReferenceSuggestions
 			CollectionID int64
 		}
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"collection", "suggest", "--db", dbPath, "--format", "json"}, args...)); err != nil {
 				t.Fatalf("collection suggest: %v", err)
 			}
@@ -67,7 +67,7 @@ func TestCLI_CollectionSuggest(t *testing.T) {
 		{"collection", "suggest", "--db", dbPath, "--match", "99999", "--deck", "Nothing"},
 	} {
 		var err error
-		captureStdout(t, func() { err = cli.Run(args) })
+		captureOut(t, cli, func() { err = cli.Run(args) })
 		if err == nil {
 			t.Errorf("%v: want an error", args)
 		}

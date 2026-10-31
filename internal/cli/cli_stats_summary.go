@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"os"
 	"text/tabwriter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -19,18 +18,18 @@ func (cli *CLI) runStatsSummary(args []string) error {
 	player := fs.String("player", "", "Only this player's decisions")
 	c := newCorpusStatsFlags(fs)
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats summary --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The filter's level without any identifier: counts, PR (checker, cube) with")
-		fmt.Println("its 95% interval, MWC loss per 7-point match, PR by game phase and by score.")
-		fmt.Println("No position, match, tournament, opponent or tag appears in it.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats summary --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The filter's level without any identifier: counts, PR (checker, cube) with")
+		fmt.Fprintln(cli.stdout(), "its 95% interval, MWC loss per 7-point match, PR by game phase and by score.")
+		fmt.Fprintln(cli.stdout(), "No position, match, tournament, opponent or tag appears in it.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats summary --db database.db --player \"Alice\"")
-		fmt.Println("  blunderdb stats summary --db database.db --player \"Alice\" --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats summary --db database.db --player \"Alice\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats summary --db database.db --player \"Alice\" --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -49,12 +48,12 @@ func (cli *CLI) runStatsSummary(args []string) error {
 		return statsErr("stats summary", err)
 	}
 	if c.json() {
-		return printJSON(s)
+		return cli.printJSON(s)
 	}
-	fmt.Printf("Matches: %d  Decisions: %d\n", s.Totals.NumMatches, s.Totals.NumDecisions)
-	fmt.Printf("PR: %s%s  checker %.2f  cube %.2f\n", prCell(s.PRGlobal, s.Totals.NumDecisions), intervalText(s.PRInterval), s.PRChecker, s.PRCube)
-	fmt.Printf("MWC loss (7 pt): %s\n", formatMWC7(s.MWC7))
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintf(cli.stdout(), "Matches: %d  Decisions: %d\n", s.Totals.NumMatches, s.Totals.NumDecisions)
+	fmt.Fprintf(cli.stdout(), "PR: %s%s  checker %.2f  cube %.2f\n", prCell(s.PRGlobal, s.Totals.NumDecisions), intervalText(s.PRInterval), s.PRChecker, s.PRCube)
+	fmt.Fprintf(cli.stdout(), "MWC loss (7 pt): %s\n", formatMWC7(s.MWC7))
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "\nPHASE\tPR\t95% INTERVAL\tDECISIONS")
 	for _, r := range s.PerPhase {
 		fmt.Fprintf(w, "%s\t%.2f\t%s\t%d\n", r.Phase, r.PR, intervalText(r.PRInterval), r.NumDecisions)

@@ -16,7 +16,7 @@ func TestExportPositionsCSV(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.exportPositionsCSV(0); err != nil {
 			t.Fatalf("exportPositionsCSV: %v", err)
 		}
@@ -39,7 +39,7 @@ func TestExportMovesCSV(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.exportMovesCSV(0); err != nil {
 			t.Fatalf("exportMovesCSV: %v", err)
 		}
@@ -62,7 +62,7 @@ func TestExportAnalysesCSV(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.exportAnalysesCSV(0); err != nil {
 			t.Fatalf("exportAnalysesCSV: %v", err)
 		}
@@ -82,12 +82,12 @@ func TestExportRespectsAnExplicitLimit(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 
-	whole := parseCSV(t, captureStdout(t, func() {
+	whole := parseCSV(t, captureOut(t, cli, func() {
 		if err := cli.exportPositionsCSV(0); err != nil {
 			t.Fatalf("exportPositionsCSV: %v", err)
 		}
 	}))
-	short := parseCSV(t, captureStdout(t, func() {
+	short := parseCSV(t, captureOut(t, cli, func() {
 		if err := cli.exportPositionsCSV(5); err != nil {
 			t.Fatalf("exportPositionsCSV(5): %v", err)
 		}

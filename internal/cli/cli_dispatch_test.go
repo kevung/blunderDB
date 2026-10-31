@@ -28,7 +28,8 @@ func TestIsCommandCoversEveryHandler(t *testing.T) {
 // user cannot discover is as good as absent. Headless modes are dispatched in
 // main.go, not here, so they are excluded from handlers() but still printed.
 func TestUsageListsEveryCommand(t *testing.T) {
-	usage := captureStdout(t, func() { (&CLI{}).printUsage() })
+	cl1 := &CLI{}
+	usage := captureOut(t, cl1, func() { cl1.printUsage() })
 	for name := range (&CLI{}).handlers() {
 		if !strings.Contains(usage, "  "+name+" ") {
 			t.Errorf("printUsage does not list the %q command", name)

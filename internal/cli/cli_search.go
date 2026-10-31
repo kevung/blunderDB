@@ -47,10 +47,10 @@ type searchParams struct {
 // translates them into a searchParams ready for the database query. It calls
 // the FlagSet's Usage() itself on a validation error, matching every other
 // CLI command's convention of "print usage, then return the error".
-func parseSearchFlags(args []string) (*searchParams, string, error) {
+func (cli *CLI) parseSearchFlags(args []string) (*searchParams, string, error) {
 	searchCmd := flag.NewFlagSet("search", flag.ContinueOnError)
 	f := defineSearchFlags(searchCmd)
-	searchCmd.Usage = func() { printSearchUsage(searchCmd) }
+	searchCmd.Usage = func() { cli.printSearchUsage(searchCmd) }
 
 	if err := searchCmd.Parse(args); err != nil {
 		return nil, "", err
@@ -151,13 +151,13 @@ func printQueryHelp(w io.Writer) {
 
 // runSearch handles the search command
 func (cli *CLI) runSearch(args []string) error {
-	params, dbPath, err := parseSearchFlags(args)
+	params, dbPath, err := cli.parseSearchFlags(args)
 	if err != nil {
 		return err
 	}
 
 	if params.queryHelp {
-		printQueryHelp(os.Stdout)
+		printQueryHelp(cli.stdout())
 		return nil
 	}
 
@@ -200,7 +200,7 @@ func (cli *CLI) runSearch(args []string) error {
 	var analysisMap map[int64]*PositionAnalysis
 	err = withInterruptibleContext(func() {
 		if textOutput {
-			fmt.Println("\nCancelling...")
+			fmt.Fprintln(cli.stdout(), "\nCancelling...")
 		}
 	}, func(ctx context.Context) error {
 		var err error
@@ -272,14 +272,14 @@ func (cli *CLI) runSearch(args []string) error {
 	// Output results
 	// Machine formats own stdout: the count goes to stderr so the stream
 	// stays parseable.
-	status := io.Writer(os.Stdout)
+	status := io.Writer(cli.stdout())
 	if params.format == "json" || params.format == "xgid" {
 		status = os.Stderr
 	}
 	fmt.Fprintf(status, "Found %d position(s)\n\n", len(filteredPositions))
 
 	if len(filteredPositions) > 0 {
-		if err := renderResults(os.Stdout, filteredPositions, analysisMap, params.format); err != nil {
+		if err := renderResults(cli.stdout(), filteredPositions, analysisMap, params.format); err != nil {
 			return err
 		}
 	}
@@ -433,20 +433,20 @@ func (cli *CLI) runSearchRanked(params *searchParams) error {
 		return fmt.Errorf("failed to rank the neighbours: %w", err)
 	}
 	if strings.ToLower(params.format) == "json" {
-		return json.NewEncoder(os.Stdout).Encode(neighbours)
+		return json.NewEncoder(cli.stdout()).Encode(neighbours)
 	}
 	if len(neighbours) == 0 {
 		// An empty ranking is an answer, not a failure: nothing stood close
 		// enough, and saying so beats handing over the least distant of the
 		// unrelated (ADR-0043 rule 4).
-		fmt.Println("No neighbour found.")
+		fmt.Fprintln(cli.stdout(), "No neighbour found.")
 		return nil
 	}
-	fmt.Printf("\n%d neighbour(s) of position %d:\n\n", len(neighbours), params.filters.LikeTargetID)
-	fmt.Println("ID      Distance  XGID")
-	fmt.Println("--      --------  ----")
+	fmt.Fprintf(cli.stdout(), "\n%d neighbour(s) of position %d:\n\n", len(neighbours), params.filters.LikeTargetID)
+	fmt.Fprintln(cli.stdout(), "ID      Distance  XGID")
+	fmt.Fprintln(cli.stdout(), "--      --------  ----")
 	for _, n := range neighbours {
-		fmt.Printf("%-6d  %-8d  %s\n", n.Position.ID, n.Distance, engine.EncodeBoardCompact(n.Position.Board))
+		fmt.Fprintf(cli.stdout(), "%-6d  %-8d  %s\n", n.Position.ID, n.Distance, engine.EncodeBoardCompact(n.Position.Board))
 	}
 	return nil
 }

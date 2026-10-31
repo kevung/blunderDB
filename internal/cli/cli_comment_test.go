@@ -16,14 +16,14 @@ func TestCLI_CommentAddListByAuthor(t *testing.T) {
 	pos := ids[0]
 
 	for _, a := range [][2]string{{"Alice", "too early"}, {"Bob", "I double here"}, {"Élodie", "pass"}} {
-		captureStdout(t, func() {
+		captureOut(t, cli, func() {
 			if err := cli.Run([]string{"comment", "add", "--db", dbPath, "--position", strconv.FormatInt(pos, 10), "--text", a[1], "--author", a[0]}); err != nil {
 				t.Fatalf("comment add: %v", err)
 			}
 		})
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"comment", "list", "--db", dbPath, "--position", strconv.FormatInt(pos, 10), "--format", "json"}); err != nil {
 			t.Fatalf("comment list: %v", err)
 		}
@@ -36,7 +36,7 @@ func TestCLI_CommentAddListByAuthor(t *testing.T) {
 		t.Fatalf("got %d comments, want 3", len(all))
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"comment", "list", "--db", dbPath, "--author", "Bob", "--format", "json"}); err != nil {
 			t.Fatalf("comment list: %v", err)
 		}
@@ -51,7 +51,7 @@ func TestCLI_CommentAddListByAuthor(t *testing.T) {
 
 	// Any case, accents included, as the au"…" search token compares it.
 	for _, q := range []string{"élodie", " ÉLODIE "} {
-		out = captureStdout(t, func() {
+		out = captureOut(t, cli, func() {
 			if err := cli.Run([]string{"comment", "list", "--db", dbPath, "--author", q, "--format", "json"}); err != nil {
 				t.Fatalf("comment list: %v", err)
 			}

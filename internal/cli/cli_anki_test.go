@@ -29,7 +29,7 @@ func seedDeck(t *testing.T, cli *CLI, n int) (deckID int64, positionIDs []int64)
 func TestCLI_AnkiDecks(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "decks", "--db", dbPath}); err != nil {
 			t.Fatalf("anki decks: %v", err)
 		}
@@ -40,7 +40,7 @@ func TestCLI_AnkiDecks(t *testing.T) {
 
 	deckID, ids := seedDeck(t, cli, 3)
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "decks", "--db", dbPath}); err != nil {
 			t.Fatalf("anki decks: %v", err)
 		}
@@ -49,7 +49,7 @@ func TestCLI_AnkiDecks(t *testing.T) {
 		t.Errorf("text listing missing the deck:\n%s", out)
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "decks", "--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("anki decks --format json: %v", err)
 		}
@@ -62,7 +62,7 @@ func TestCLI_AnkiDecks(t *testing.T) {
 		t.Errorf("json decks = %+v, want deck %d with %d new cards", decks, deckID, len(ids))
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "decks", "--db", dbPath, "--format", "csv"}); err != nil {
 			t.Fatalf("anki decks --format csv: %v", err)
 		}
@@ -77,7 +77,7 @@ func TestCLI_AnkiStats(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	deckID, ids := seedDeck(t, cli, 4)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "stats", "--db", dbPath, "--deck", strconv.FormatInt(deckID, 10)}); err != nil {
 			t.Fatalf("anki stats: %v", err)
 		}
@@ -86,7 +86,7 @@ func TestCLI_AnkiStats(t *testing.T) {
 		t.Errorf("text stats missing the deck header:\n%s", out)
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "stats", "--db", dbPath, "--deck", "1", "--format", "json"}); err != nil {
 			t.Fatalf("anki stats --format json: %v", err)
 		}
@@ -111,7 +111,7 @@ func TestCLI_AnkiForecast(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	_, ids := seedDeck(t, cli, 3)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "forecast", "--db", dbPath, "--deck", "1", "--days", "7", "--format", "json"}); err != nil {
 			t.Fatalf("anki forecast: %v", err)
 		}
@@ -128,7 +128,7 @@ func TestCLI_AnkiForecast(t *testing.T) {
 		t.Errorf("day 0 due = %d, want %d", days[0].Due, len(ids))
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "forecast", "--db", dbPath, "--days", "7"}); err != nil {
 			t.Fatalf("anki forecast (all decks): %v", err)
 		}
@@ -147,7 +147,7 @@ func TestCLI_AnkiSync(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateAnkiDeck: %v", err)
 	}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "sync", "--db", dbPath, "--deck", strconv.FormatInt(deckID, 10)}); err != nil {
 			t.Fatalf("anki sync: %v", err)
 		}
@@ -164,7 +164,7 @@ func TestCLI_AnkiSync(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateAnkiDeck(search): %v", err)
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "sync", "--db", dbPath, "--deck", strconv.FormatInt(searchDeck, 10)}); err != nil {
 			t.Fatalf("anki sync (search): %v", err)
 		}
@@ -181,7 +181,7 @@ func TestCLI_AnkiSync(t *testing.T) {
 	}
 
 	// Syncing again adds nothing.
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "sync", "--db", dbPath, "--deck", strconv.FormatInt(searchDeck, 10)}); err != nil {
 			t.Fatalf("anki sync (again): %v", err)
 		}
@@ -204,7 +204,7 @@ func TestCLI_AnkiUsageErrors(t *testing.T) {
 	}
 	for _, args := range cases {
 		var err error
-		captureStdout(t, func() { err = cli.Run(args) })
+		captureOut(t, cli, func() { err = cli.Run(args) })
 		if err == nil {
 			t.Errorf("%v: expected an error", args)
 		}
@@ -242,7 +242,7 @@ func TestCLI_StatsRecurringRejectsBadStudyFlags(t *testing.T) {
 
 func TestCLI_StatsPlan(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"stats", "plan", "--db", dbPath, "--format", "json", "--queue"}); err != nil {
 			t.Fatalf("stats plan: %v", err)
 		}
@@ -264,7 +264,7 @@ func TestCLI_StatsPlan(t *testing.T) {
 		{"stats", "plan", "--db", dbPath, "--deck", "Empty plan"},
 	} {
 		var err error
-		captureStdout(t, func() { err = cli.Run(args) })
+		captureOut(t, cli, func() { err = cli.Run(args) })
 		if err == nil {
 			t.Errorf("%v: want an error", args)
 		}
@@ -275,7 +275,7 @@ func TestCLI_AnkiExport(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	deckID, _ := seedDeck(t, cli, 3)
 	out := filepath.Join(t.TempDir(), "deck.apkg")
-	stdout := captureStdout(t, func() {
+	stdout := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"anki", "export", "--db", dbPath, "--deck", strconv.FormatInt(deckID, 10), "--out", out, "--format", "apkg"}); err != nil {
 			t.Fatalf("anki export: %v", err)
 		}
@@ -302,7 +302,7 @@ func TestCLI_AnkiExport(t *testing.T) {
 		{"anki", "export", "--db", dbPath, "--deck", "1"},
 		{"anki", "export", "--db", dbPath, "--deck", "1", "--out", out, "--format", "csv"},
 	} {
-		captureStdout(t, func() {
+		captureOut(t, cli, func() {
 			if err := cli.Run(args); err == nil {
 				t.Errorf("%v: want an error", args)
 			}

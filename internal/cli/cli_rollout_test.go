@@ -15,7 +15,7 @@ import (
 func TestRolloutCommandRollsNamedPlays(t *testing.T) {
 	cli := &CLI{}
 	var runErr error
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		runErr = cli.runRollout([]string{"--games", "36", "--truncation", "1", "--jsd", "0", "--format", "json",
 			"--move", "8/5 6/5", "--move", "13/10 10/9",
 			"XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10"})
@@ -60,7 +60,7 @@ func TestRolloutCommandStoresAndAnalyzeResumes(t *testing.T) {
 	}
 	c := &CLI{db: NewDatabase()}
 	var runErr error
-	out := captureStdout(t, func() {
+	out := captureOut(t, c, func() {
 		runErr = c.runRollout(append(tiny, "--db", dbPath, "--id", strconv.FormatInt(id, 10), "--store"))
 	})
 	if runErr != nil || !strings.Contains(out, "Stored on position") {
@@ -68,7 +68,7 @@ func TestRolloutCommandStoresAndAnalyzeResumes(t *testing.T) {
 	}
 	c.db.Close()
 	l := &CLI{db: NewDatabase()}
-	out = captureStdout(t, func() {
+	out = captureOut(t, l, func() {
 		runErr = l.runRollout([]string{"--db", dbPath, "--id", strconv.FormatInt(id, 10), "--list"})
 	})
 	l.db.Close()
@@ -78,7 +78,7 @@ func TestRolloutCommandStoresAndAnalyzeResumes(t *testing.T) {
 
 	a := &CLI{db: NewDatabase()}
 	defer a.db.Close()
-	out = captureStdout(t, func() {
+	out = captureOut(t, a, func() {
 		runErr = a.runAnalyze([]string{"--db", dbPath, "--rollout", "fast,games=36,min-games=36,truncation=2,candidates=2", "--query", "s"})
 	})
 	if runErr != nil || !strings.Contains(out, "Nothing to do") {
@@ -95,8 +95,9 @@ func TestReportRollout_StoreFailureFailsTheCommand(t *testing.T) {
 	res := &rollout.Result{Games: 36, Stop: rollout.StopMaxGames}
 	boom := errors.New("disk full")
 
-	out := captureStdout(t, func() {
-		err := reportRollout(res, boom, true, 7, "text")
+	cl1 := &CLI{}
+	out := captureOut(t, cl1, func() {
+		err := cl1.reportRollout(res, boom, true, 7, "text")
 		if !errors.Is(err, boom) {
 			t.Errorf("err %v, want the storage error", err)
 		}
@@ -105,8 +106,9 @@ func TestReportRollout_StoreFailureFailsTheCommand(t *testing.T) {
 		t.Errorf("a failed write was reported as: %q", out)
 	}
 
-	out = captureStdout(t, func() {
-		if err := reportRollout(res, context.Canceled, true, 7, "text"); err != nil {
+	cl2 := &CLI{}
+	out = captureOut(t, cl2, func() {
+		if err := cl2.reportRollout(res, context.Canceled, true, 7, "text"); err != nil {
 			t.Errorf("interrupted: %v", err)
 		}
 	})

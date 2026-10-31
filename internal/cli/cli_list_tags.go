@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 	"text/tabwriter"
 
@@ -26,14 +25,14 @@ func (cli *CLI) listTags(format string) error {
 
 	switch format {
 	case "json":
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(struct {
 			Tags        []domain.TagCount `json:"tags"`
 			Recommended []string          `json:"recommended"`
 		}{Tags: tags, Recommended: domain.RecommendedTags})
 	case "csv":
-		w := csv.NewWriter(os.Stdout)
+		w := csv.NewWriter(cli.stdout())
 		defer w.Flush()
 		if err := w.Write([]string{"tag", "positions"}); err != nil {
 			return err
@@ -47,25 +46,25 @@ func (cli *CLI) listTags(format string) error {
 	}
 
 	if len(tags) == 0 {
-		fmt.Println("No tag used yet.")
-		fmt.Println()
-		fmt.Println("A tag is a #word inside a comment; nothing has to be declared.")
-		fmt.Println("Suggested vocabulary:")
+		fmt.Fprintln(cli.stdout(), "No tag used yet.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "A tag is a #word inside a comment; nothing has to be declared.")
+		fmt.Fprintln(cli.stdout(), "Suggested vocabulary:")
 		for _, t := range domain.RecommendedTags {
-			fmt.Printf("  %s\n", t)
+			fmt.Fprintf(cli.stdout(), "  %s\n", t)
 		}
 		return nil
 	}
 
-	fmt.Printf("Found %d tag(s):\n\n", len(tags))
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintf(cli.stdout(), "Found %d tag(s):\n\n", len(tags))
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "Tag\tPositions")
 	fmt.Fprintln(w, "---\t---------")
 	for _, t := range tags {
 		fmt.Fprintf(w, "%s\t%d\n", t.Tag, t.Count)
 	}
 	w.Flush()
-	fmt.Println()
-	fmt.Println("Search a tag with: blunderdb search --db <path> --query '#prime'")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Search a tag with: blunderdb search --db <path> --query '#prime'")
 	return nil
 }

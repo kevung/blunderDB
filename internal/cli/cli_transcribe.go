@@ -42,85 +42,85 @@ func (cli *CLI) runTranscribe(args []string) error {
 	acceptLosses := transcribeCmd.Bool("accept-losses", false, "With --edit on an imported match: accept that the analyses and comments a .mat cannot carry may be lost")
 
 	transcribeCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb transcribe [options]")
-		fmt.Println()
-		fmt.Println("Replay a transcription and report what the replay finds.")
-		fmt.Println()
-		fmt.Println("The source is a .mat file, a match of a library, or a")
-		fmt.Println("transcription draft of one — exactly one of the three.")
-		fmt.Println("A match is read through its own .mat rendering, so what")
-		fmt.Println("is replayed is what an export of it would contain.")
-		fmt.Println()
-		fmt.Println("--check lists the inconsistencies: an illegal play, two")
-		fmt.Println("turns in a row for the same player, an impossible cube")
-		fmt.Println("action, an action past the end of the match, a play that")
-		fmt.Println("does not use its own roll, a play the record does not")
-		fmt.Println("carry (gnubg writes it \"???\"), a game score the games")
-		fmt.Println("before it do not give. Each is named with the")
-		fmt.Println("action number and the game it belongs to.")
-		fmt.Println()
-		fmt.Println("An inconsistency is REPORTED, never held against the")
-		fmt.Println("input: nothing is refused for one, and the exit status is")
-		fmt.Println("0 whatever the replay finds. A non-zero status means the")
-		fmt.Println("file, the database or the output failed.")
-		fmt.Println()
-		fmt.Println("--render writes the transcription back as a .mat file,")
-		fmt.Println("which is how the round trip is checked on real files.")
-		fmt.Println()
-		fmt.Println("--import opens a new draft on a .mat or a transcription")
-		fmt.Println("document (JSON): its inconsistencies are kept and marked,")
-		fmt.Println("to be corrected before --finish writes the match.")
-		fmt.Println()
-		fmt.Println("Three options write, and only these: --finish writes a")
-		fmt.Println("draft's match and releases the draft, --abandon deletes a")
-		fmt.Println("draft without a match, --edit opens a draft on an existing")
-		fmt.Println("match so that --finish replaces it in place. Editing an")
-		fmt.Println("imported match counts what a .mat cannot carry (analyses,")
-		fmt.Println("comments) and refuses without --accept-losses. Abandoning a")
-		fmt.Println("draft that never produced a match loses everything typed")
-		fmt.Println("in it, and asks for --yes.")
-		fmt.Println()
-		fmt.Println("--marks writes a manifest, one JSON line per move that")
-		fmt.Println("carries a Repère (video instants), for the matches whose")
-		fmt.Println("video is a local file: path, match, game, move, dice, play,")
-		fmt.Println("board before and after, roll_tick_ms and tick_ms. A video")
-		fmt.Println("that is an http(s) URL is left out and counted in the")
-		fmt.Println("summary; a local file missing from the disk is named on")
-		fmt.Println("the error output and left out. No image is read or written,")
-		fmt.Println("and nothing is written to the database.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb transcribe [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Replay a transcription and report what the replay finds.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The source is a .mat file, a match of a library, or a")
+		fmt.Fprintln(cli.stdout(), "transcription draft of one — exactly one of the three.")
+		fmt.Fprintln(cli.stdout(), "A match is read through its own .mat rendering, so what")
+		fmt.Fprintln(cli.stdout(), "is replayed is what an export of it would contain.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "--check lists the inconsistencies: an illegal play, two")
+		fmt.Fprintln(cli.stdout(), "turns in a row for the same player, an impossible cube")
+		fmt.Fprintln(cli.stdout(), "action, an action past the end of the match, a play that")
+		fmt.Fprintln(cli.stdout(), "does not use its own roll, a play the record does not")
+		fmt.Fprintln(cli.stdout(), "carry (gnubg writes it \"???\"), a game score the games")
+		fmt.Fprintln(cli.stdout(), "before it do not give. Each is named with the")
+		fmt.Fprintln(cli.stdout(), "action number and the game it belongs to.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "An inconsistency is REPORTED, never held against the")
+		fmt.Fprintln(cli.stdout(), "input: nothing is refused for one, and the exit status is")
+		fmt.Fprintln(cli.stdout(), "0 whatever the replay finds. A non-zero status means the")
+		fmt.Fprintln(cli.stdout(), "file, the database or the output failed.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "--render writes the transcription back as a .mat file,")
+		fmt.Fprintln(cli.stdout(), "which is how the round trip is checked on real files.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "--import opens a new draft on a .mat or a transcription")
+		fmt.Fprintln(cli.stdout(), "document (JSON): its inconsistencies are kept and marked,")
+		fmt.Fprintln(cli.stdout(), "to be corrected before --finish writes the match.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Three options write, and only these: --finish writes a")
+		fmt.Fprintln(cli.stdout(), "draft's match and releases the draft, --abandon deletes a")
+		fmt.Fprintln(cli.stdout(), "draft without a match, --edit opens a draft on an existing")
+		fmt.Fprintln(cli.stdout(), "match so that --finish replaces it in place. Editing an")
+		fmt.Fprintln(cli.stdout(), "imported match counts what a .mat cannot carry (analyses,")
+		fmt.Fprintln(cli.stdout(), "comments) and refuses without --accept-losses. Abandoning a")
+		fmt.Fprintln(cli.stdout(), "draft that never produced a match loses everything typed")
+		fmt.Fprintln(cli.stdout(), "in it, and asks for --yes.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "--marks writes a manifest, one JSON line per move that")
+		fmt.Fprintln(cli.stdout(), "carries a Repère (video instants), for the matches whose")
+		fmt.Fprintln(cli.stdout(), "video is a local file: path, match, game, move, dice, play,")
+		fmt.Fprintln(cli.stdout(), "board before and after, roll_tick_ms and tick_ms. A video")
+		fmt.Fprintln(cli.stdout(), "that is an http(s) URL is left out and counted in the")
+		fmt.Fprintln(cli.stdout(), "summary; a local file missing from the disk is named on")
+		fmt.Fprintln(cli.stdout(), "the error output and left out. No image is read or written,")
+		fmt.Fprintln(cli.stdout(), "and nothing is written to the database.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		transcribeCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # List what a .mat file's replay finds")
-		fmt.Println("  blunderdb transcribe --mat match.mat --check")
-		fmt.Println()
-		fmt.Println("  # Same, machine-readable")
-		fmt.Println("  blunderdb transcribe --mat match.mat --check --format json")
-		fmt.Println()
-		fmt.Println("  # Round trip: render it back and compare")
-		fmt.Println("  blunderdb transcribe --mat match.mat --render out.mat")
-		fmt.Println()
-		fmt.Println("  # Replay a match of the library, or a draft being typed")
-		fmt.Println("  blunderdb transcribe --db database.db --match 5 --check")
-		fmt.Println("  blunderdb transcribe --db database.db --draft 3 --check")
-		fmt.Println()
-		fmt.Println("  # Correct a match: open a draft on it, then finish it")
-		fmt.Println("  blunderdb transcribe --db database.db --match 5 --edit")
-		fmt.Println("  blunderdb transcribe --db database.db --draft 4 --finish")
-		fmt.Println()
-		fmt.Println("  # Write a match played elsewhere from its Actions; the first illegal Action refuses all")
-		fmt.Println("  blunderdb transcribe --db database.db --materialize match.json")
-		fmt.Println()
-		fmt.Println("  # Open a draft on a .mat (or a transcription document), then finish it")
-		fmt.Println("  blunderdb transcribe --db database.db --import match.mat")
-		fmt.Println()
-		fmt.Println("  # Export the manifest of Repères of the local videos")
-		fmt.Println("  blunderdb transcribe --db database.db --marks marks.jsonl")
-		fmt.Println()
-		fmt.Println("  # Drop a draft")
-		fmt.Println("  blunderdb transcribe --db database.db --draft 4 --abandon")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # List what a .mat file's replay finds")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --mat match.mat --check")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Same, machine-readable")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --mat match.mat --check --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Round trip: render it back and compare")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --mat match.mat --render out.mat")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Replay a match of the library, or a draft being typed")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --db database.db --match 5 --check")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --db database.db --draft 3 --check")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Correct a match: open a draft on it, then finish it")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --db database.db --match 5 --edit")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --db database.db --draft 4 --finish")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Write a match played elsewhere from its Actions; the first illegal Action refuses all")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --db database.db --materialize match.json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Open a draft on a .mat (or a transcription document), then finish it")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --db database.db --import match.mat")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export the manifest of Repères of the local videos")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --db database.db --marks marks.jsonl")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Drop a draft")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transcribe --db database.db --draft 4 --abandon")
 	}
 
 	if err := transcribeCmd.Parse(args); err != nil {
@@ -199,9 +199,9 @@ func (cli *CLI) runTranscribe(args []string) error {
 	}
 
 	if !text {
-		return printJSON(result)
+		return cli.printJSON(result)
 	}
-	printTranscribeResult(result, *check || *render == "")
+	cli.printTranscribeResult(result, *check || *render == "")
 	return nil
 }
 
@@ -293,34 +293,34 @@ type transcribeInconsistency struct {
 	Detail string `json:"detail"`
 }
 
-func printTranscribeResult(r transcribeResult, listing bool) {
+func (cli *CLI) printTranscribeResult(r transcribeResult, listing bool) {
 	if r.MatchLength == 0 {
-		fmt.Printf("%s: money session, %d game(s), %d action(s)\n", r.Source, r.Games, r.Actions)
+		fmt.Fprintf(cli.stdout(), "%s: money session, %d game(s), %d action(s)\n", r.Source, r.Games, r.Actions)
 	} else {
-		fmt.Printf("%s: %d point match, %d game(s), %d action(s)\n", r.Source, r.MatchLength, r.Games, r.Actions)
+		fmt.Fprintf(cli.stdout(), "%s: %d point match, %d game(s), %d action(s)\n", r.Source, r.MatchLength, r.Games, r.Actions)
 	}
 	if r.Finished {
-		fmt.Printf("  Final score: %d-%d\n", r.Score[0], r.Score[1])
+		fmt.Fprintf(cli.stdout(), "  Final score: %d-%d\n", r.Score[0], r.Score[1])
 	} else {
-		fmt.Printf("  Score so far: %d-%d (the match is unfinished)\n", r.Score[0], r.Score[1])
+		fmt.Fprintf(cli.stdout(), "  Score so far: %d-%d (the match is unfinished)\n", r.Score[0], r.Score[1])
 	}
 	if r.Rendered != "" {
-		fmt.Printf("  Rendered to %s\n", r.Rendered)
+		fmt.Fprintf(cli.stdout(), "  Rendered to %s\n", r.Rendered)
 	}
 	if !listing {
 		return
 	}
 	if len(r.Inconsistencies) == 0 {
-		fmt.Println("Inconsistencies: none")
+		fmt.Fprintln(cli.stdout(), "Inconsistencies: none")
 		return
 	}
-	fmt.Printf("Inconsistencies (%d):\n", len(r.Inconsistencies))
+	fmt.Fprintf(cli.stdout(), "Inconsistencies (%d):\n", len(r.Inconsistencies))
 	for _, bad := range r.Inconsistencies {
-		fmt.Printf("  action %d, game %d, player %d (%s): %s — %s\n",
+		fmt.Fprintf(cli.stdout(), "  action %d, game %d, player %d (%s): %s — %s\n",
 			bad.Action, bad.Game, bad.Player, bad.Kind, bad.Type, bad.Detail)
 	}
-	fmt.Println("Reported, not refused: a transcription is kept as it was written down,")
-	fmt.Println("so this is a finding and the exit status is 0.")
+	fmt.Fprintln(cli.stdout(), "Reported, not refused: a transcription is kept as it was written down,")
+	fmt.Fprintln(cli.stdout(), "so this is a finding and the exit status is 0.")
 }
 
 // transcribeMarks writes the manifest of Repères: the lines come from
@@ -353,15 +353,15 @@ func (cli *CLI) transcribeMarks(dbPath, out string, matchID int64, text bool) er
 		fmt.Fprintf(os.Stderr, "video not found, match left out: %s\n", path)
 	}
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Written string `json:"written"`
 			database.TranscriptionMarksSummary
 		}{out, sum})
 	}
-	fmt.Printf("%d line(s) from %d match(es) written to %s\n", sum.Marks, sum.Matches, out)
-	fmt.Printf("  %d match(es) left out: their video is a URL\n", sum.URLSources)
+	fmt.Fprintf(cli.stdout(), "%d line(s) from %d match(es) written to %s\n", sum.Marks, sum.Matches, out)
+	fmt.Fprintf(cli.stdout(), "  %d match(es) left out: their video is a URL\n", sum.URLSources)
 	if len(sum.Missing) > 0 {
-		fmt.Printf("  %d match(es) left out: their video file is not on this disk\n", len(sum.Missing))
+		fmt.Fprintf(cli.stdout(), "  %d match(es) left out: their video file is not on this disk\n", len(sum.Missing))
 	}
 	return nil
 }

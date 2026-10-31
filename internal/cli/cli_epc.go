@@ -24,25 +24,25 @@ func (cli *CLI) runEpc(args []string) error {
 		"Optional two-sided bearoff database (.bd) widening the TS-06-06 computed on this machine")
 
 	epcCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb epc [options] <XGID|OGID>")
-		fmt.Println()
-		fmt.Println("Compute EPC, win probability and money cube verdict for a position.")
-		fmt.Println("Win probability is exact inside the two-sided database domain and")
-		fmt.Println("estimated (with its error bound) outside; the cube verdict is only")
-		fmt.Println("ever shown when exact.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb epc [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Compute EPC, win probability and money cube verdict for a position.")
+		fmt.Fprintln(cli.stdout(), "Win probability is exact inside the two-sided database domain and")
+		fmt.Fprintln(cli.stdout(), "estimated (with its error bound) outside; the cube verdict is only")
+		fmt.Fprintln(cli.stdout(), "ever shown when exact.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		epcCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # EPC and race analysis of a bearoff position")
-		fmt.Println("  blunderdb epc 'XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10'")
-		fmt.Println()
-		fmt.Println("  # The same position given by its OGID (OpenGammon)")
-		fmt.Println("  blunderdb epc 'llmmnnoo:11223344:N0N::W::0:0::'")
-		fmt.Println()
-		fmt.Println("  # With the downloaded/wider database")
-		fmt.Println("  blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # EPC and race analysis of a bearoff position")
+		fmt.Fprintln(cli.stdout(), "  blunderdb epc 'XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10'")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # The same position given by its OGID (OpenGammon)")
+		fmt.Fprintln(cli.stdout(), "  blunderdb epc 'llmmnnoo:11223344:N0N::W::0:0::'")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # With the downloaded/wider database")
+		fmt.Fprintln(cli.stdout(), "  blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'")
 	}
 
 	if err := epcCmd.Parse(args); err != nil {
@@ -68,29 +68,29 @@ func (cli *CLI) runEpc(args []string) error {
 	res := race.Evaluate(&pos)
 
 	if *format == "json" {
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(res)
 	}
 
 	printSide := func(label string, s race.Side) {
-		fmt.Printf("%s: %d checkers", label, s.CheckerCount)
+		fmt.Fprintf(cli.stdout(), "%s: %d checkers", label, s.CheckerCount)
 		if !s.AllInHome {
-			fmt.Println(" (not all in home board — no EPC)")
+			fmt.Fprintln(cli.stdout(), " (not all in home board — no EPC)")
 			return
 		}
 		if s.EPC == nil {
-			fmt.Println()
+			fmt.Fprintln(cli.stdout())
 			return
 		}
-		fmt.Printf("  EPC %.2f  pips %d  wastage %.2f  rolls %.3f ± %.3f\n",
+		fmt.Fprintf(cli.stdout(), "  EPC %.2f  pips %d  wastage %.2f  rolls %.3f ± %.3f\n",
 			s.EPC.EPC, s.EPC.PipCount, s.EPC.Wastage, s.EPC.MeanRolls, s.EPC.StdDev)
 	}
 	printSide("Bottom (X)", res.Bottom)
 	printSide("Top    (O)", res.Top)
 
 	if res.Race == nil {
-		fmt.Println("Race analysis: not a pure bearoff position.")
+		fmt.Fprintln(cli.stdout(), "Race analysis: not a pure bearoff position.")
 		return nil
 	}
 	r := res.Race
@@ -100,21 +100,21 @@ func (cli *CLI) runEpc(args []string) error {
 	}
 	switch r.Regime {
 	case race.RegimeExact:
-		fmt.Printf("Win probability (%s on roll): %.2f%% [exact, TS-06-%02d]\n",
+		fmt.Fprintf(cli.stdout(), "Win probability (%s on roll): %.2f%% [exact, TS-06-%02d]\n",
 			who, 100*r.WinProb, r.SourceCheckers)
 		m := r.Money
-		fmt.Printf("Money cube (%s): cubeless %+.3f  ND %+.3f  D/T %+.3f  D/P %+.3f\n",
+		fmt.Fprintf(cli.stdout(), "Money cube (%s): cubeless %+.3f  ND %+.3f  D/T %+.3f  D/P %+.3f\n",
 			m.CubeState, m.Cubeless, m.NoDouble, m.DoubleTake, m.DoublePass)
 		if m.Verdict != "" {
-			fmt.Printf("Verdict: %s\n", m.Verdict)
+			fmt.Fprintf(cli.stdout(), "Verdict: %s\n", m.Verdict)
 		} else {
-			fmt.Println("Verdict: cube is against the player on roll — no decision")
+			fmt.Fprintln(cli.stdout(), "Verdict: cube is against the player on roll — no decision")
 		}
 	default:
-		fmt.Printf("Win probability (%s on roll): %.2f%% ± %.2f%% [estimated, p99 %.2f%%]\n",
+		fmt.Fprintf(cli.stdout(), "Win probability (%s on roll): %.2f%% ± %.2f%% [estimated, p99 %.2f%%]\n",
 			who, 100*r.WinProb, 100*r.Sigma, 100*r.P99)
-		fmt.Println("Cube verdict: unavailable (never estimated); provide a wider")
-		fmt.Println("two-sided database with --bearoff-ts to widen the exact domain.")
+		fmt.Fprintln(cli.stdout(), "Cube verdict: unavailable (never estimated); provide a wider")
+		fmt.Fprintln(cli.stdout(), "two-sided database with --bearoff-ts to widen the exact domain.")
 	}
 	return nil
 }

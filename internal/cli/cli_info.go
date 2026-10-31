@@ -21,25 +21,25 @@ func (cli *CLI) runInfo(args []string) error {
 	estimate := infoCmd.Bool("estimate", false, "Estimate the tables beyond 200000 rows instead of counting them, and skip the blunders there unless their cached count still holds (default: count every row)")
 
 	infoCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb info [options]")
-		fmt.Println()
-		fmt.Println("Display database metadata and statistics.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb info [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Display database metadata and statistics.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		infoCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # Display database info")
-		fmt.Println("  blunderdb info --db database.db")
-		fmt.Println()
-		fmt.Println("  # Answer at once on a very large database (estimated counts)")
-		fmt.Println("  blunderdb info --db database.db --estimate")
-		fmt.Println()
-		fmt.Println("  # Output as JSON")
-		fmt.Println("  blunderdb info --db database.db --format json")
-		fmt.Println()
-		fmt.Println("  # See where a database came from (works on a protected .dbx too)")
-		fmt.Println("  blunderdb info --db cours.db")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # Display database info")
+		fmt.Fprintln(cli.stdout(), "  blunderdb info --db database.db")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Answer at once on a very large database (estimated counts)")
+		fmt.Fprintln(cli.stdout(), "  blunderdb info --db database.db --estimate")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Output as JSON")
+		fmt.Fprintln(cli.stdout(), "  blunderdb info --db database.db --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # See where a database came from (works on a protected .dbx too)")
+		fmt.Fprintln(cli.stdout(), "  blunderdb info --db cours.db")
 	}
 
 	if err := infoCmd.Parse(args); err != nil {
@@ -56,7 +56,7 @@ func (cli *CLI) runInfo(args []string) error {
 	// which is exactly what makes a copy found in the wild identifiable. Report it and stop
 	// rather than failing to open a file that was never meant to be opened directly.
 	if issuance.IsContainer(*dbPath) {
-		return reportContainer(*dbPath, strings.ToLower(*format) == "json")
+		return cli.reportContainer(*dbPath, strings.ToLower(*format) == "json")
 	}
 
 	// Reading a database's origin never writes to it — nothing anywhere records that a file
@@ -108,24 +108,24 @@ func (cli *CLI) runInfo(args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to format JSON: %w", err)
 		}
-		fmt.Println(string(jsonData))
+		fmt.Fprintln(cli.stdout(), string(jsonData))
 	} else {
-		fmt.Println("Database Information")
-		fmt.Println(strings.Repeat("=", 50))
-		fmt.Printf("Path: %s\n\n", *dbPath)
+		fmt.Fprintln(cli.stdout(), "Database Information")
+		fmt.Fprintln(cli.stdout(), strings.Repeat("=", 50))
+		fmt.Fprintf(cli.stdout(), "Path: %s\n\n", *dbPath)
 
-		fmt.Println("Metadata:")
+		fmt.Fprintln(cli.stdout(), "Metadata:")
 		if v, ok := metadata["database_version"]; ok {
-			fmt.Printf("  Version: %s\n", v)
+			fmt.Fprintf(cli.stdout(), "  Version: %s\n", v)
 		}
 		if v, ok := metadata["user"]; ok && v != "" {
-			fmt.Printf("  User: %s\n", v)
+			fmt.Fprintf(cli.stdout(), "  User: %s\n", v)
 		}
 		if v, ok := metadata["description"]; ok && v != "" {
-			fmt.Printf("  Description: %s\n", v)
+			fmt.Fprintf(cli.stdout(), "  Description: %s\n", v)
 		}
 		if v, ok := metadata["dateOfCreation"]; ok && v != "" {
-			fmt.Printf("  Date of Creation: %s\n", v)
+			fmt.Fprintf(cli.stdout(), "  Date of Creation: %s\n", v)
 		}
 
 		approx := map[string]bool{}
@@ -140,11 +140,11 @@ func (cli *CLI) runInfo(args []string) error {
 				if approx[name] {
 					mark = "≈ "
 				}
-				fmt.Printf("  %s: %s%d\n", label, mark, n)
+				fmt.Fprintf(cli.stdout(), "  %s: %s%d\n", label, mark, n)
 			}
 		}
 
-		fmt.Println("\nStatistics:")
+		fmt.Fprintln(cli.stdout(), "\nStatistics:")
 		count("Positions", "position_count", "positions")
 		count("Analyses", "analysis_count", "analyses")
 		count("Matches", "match_count", "matches")
@@ -153,14 +153,14 @@ func (cli *CLI) runInfo(args []string) error {
 		if _, ok := stats["blunder_count"]; ok {
 			count("Blunders", "blunder_count", "blunders")
 		} else {
-			fmt.Println("  Blunders: not counted on a large database (omit --estimate)")
+			fmt.Fprintln(cli.stdout(), "  Blunders: not counted on a large database (omit --estimate)")
 		}
 
-		fmt.Println("\nThresholds (millipoints):")
-		fmt.Printf("  Error: %d\n", settings.ErrorThresholdMP)
-		fmt.Printf("  Blunder: %d\n", settings.BlunderThresholdMP)
+		fmt.Fprintln(cli.stdout(), "\nThresholds (millipoints):")
+		fmt.Fprintf(cli.stdout(), "  Error: %d\n", settings.ErrorThresholdMP)
+		fmt.Fprintf(cli.stdout(), "  Blunder: %d\n", settings.BlunderThresholdMP)
 
-		printIssuance(iss)
+		cli.printIssuance(iss)
 	}
 
 	return nil
@@ -169,20 +169,20 @@ func (cli *CLI) runInfo(args []string) error {
 // printIssuance reports where a database says it comes from. It prints nothing at all for
 // the overwhelmingly common case — a database that was never watermarked — and there is
 // nothing else to print: no recipient, no holder, no history. See ADR-0007.
-func printIssuance(iss domain.IssuanceInfo) {
+func (cli *CLI) printIssuance(iss domain.IssuanceInfo) {
 	if iss.Watermark == nil {
 		return
 	}
-	fmt.Println("\nOrigin:")
-	printWatermark(iss.Watermark, "  ")
+	fmt.Fprintln(cli.stdout(), "\nOrigin:")
+	cli.printWatermark(iss.Watermark, "  ")
 }
 
-func printWatermark(w *domain.WatermarkInfo, indent string) {
-	fmt.Printf("%s%s\n", indent, w.Origin)
-	fmt.Printf("%sProduced by:  %s  (%s)  %s\n", indent, w.IssuerName, w.IssuerFingerprint, verdict(w))
-	fmt.Printf("%sMarked on:    %s\n", indent, shortDate(w.IssuedAt))
+func (cli *CLI) printWatermark(w *domain.WatermarkInfo, indent string) {
+	fmt.Fprintf(cli.stdout(), "%s%s\n", indent, w.Origin)
+	fmt.Fprintf(cli.stdout(), "%sProduced by:  %s  (%s)  %s\n", indent, w.IssuerName, w.IssuerFingerprint, verdict(w))
+	fmt.Fprintf(cli.stdout(), "%sMarked on:    %s\n", indent, shortDate(w.IssuedAt))
 	if w.Note != "" {
-		fmt.Printf("%sNote:         %s\n", indent, w.Note)
+		fmt.Fprintf(cli.stdout(), "%sNote:         %s\n", indent, w.Note)
 	}
 }
 
@@ -208,7 +208,7 @@ func shortDate(stamp string) string {
 }
 
 // reportContainer describes a protected copy from its cleartext header alone.
-func reportContainer(path string, asJSON bool) error {
+func (cli *CLI) reportContainer(path string, asJSON bool) error {
 	iss, err := database.InspectIssuance(path)
 	if err != nil {
 		return fmt.Errorf("cannot read the protected file: %w", err)
@@ -220,19 +220,19 @@ func reportContainer(path string, asJSON bool) error {
 		if err != nil {
 			return fmt.Errorf("failed to format JSON: %w", err)
 		}
-		fmt.Println(string(jsonData))
+		fmt.Fprintln(cli.stdout(), string(jsonData))
 		return nil
 	}
-	fmt.Println("Protected blunderDB file")
-	fmt.Println(strings.Repeat("=", 50))
-	fmt.Printf("Path: %s\n\n", path)
-	fmt.Println("The database itself is encrypted. Its origin, below, is readable without the")
-	fmt.Println("password.")
-	fmt.Println()
+	fmt.Fprintln(cli.stdout(), "Protected blunderDB file")
+	fmt.Fprintln(cli.stdout(), strings.Repeat("=", 50))
+	fmt.Fprintf(cli.stdout(), "Path: %s\n\n", path)
+	fmt.Fprintln(cli.stdout(), "The database itself is encrypted. Its origin, below, is readable without the")
+	fmt.Fprintln(cli.stdout(), "password.")
+	fmt.Fprintln(cli.stdout())
 	if iss.Watermark == nil {
-		fmt.Println("This file carries no watermark.")
+		fmt.Fprintln(cli.stdout(), "This file carries no watermark.")
 		return nil
 	}
-	printWatermark(iss.Watermark, "  ")
+	cli.printWatermark(iss.Watermark, "  ")
 	return nil
 }

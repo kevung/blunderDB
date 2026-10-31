@@ -48,7 +48,7 @@ func setupCLIStats(t *testing.T) *CLI {
 func TestCLIStats_TextFormat(t *testing.T) {
 	cli := setupCLIStats(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.showStats(StatsFilter{DecisionType: -1}, "pr", "text", 10); err != nil {
 			t.Fatalf("showStats: %v", err)
 		}
@@ -79,7 +79,7 @@ func TestCLIStats_TextFormat(t *testing.T) {
 func TestCLIStats_JSONFormat(t *testing.T) {
 	cli := setupCLIStats(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.showStats(StatsFilter{DecisionType: -1}, "pr", "json", 10); err != nil {
 			t.Fatalf("showStats json: %v", err)
 		}
@@ -111,7 +111,7 @@ func TestCLIStats_JSONFormat(t *testing.T) {
 func TestCLIStats_MWCMetric(t *testing.T) {
 	cli := setupCLIStats(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.showStats(StatsFilter{DecisionType: -1}, "mwc", "text", 10); err != nil {
 			t.Fatalf("showStats mwc: %v", err)
 		}
@@ -131,7 +131,7 @@ func TestCLIStats_PlayerFilter(t *testing.T) {
 	cli := setupCLIStats(t)
 
 	// Filter for a player who does not exist
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		filter := StatsFilter{PlayerName: "Nobody", DecisionType: -1}
 		if err := cli.showStats(filter, "pr", "text", 10); err != nil {
 			t.Fatalf("showStats with player filter: %v", err)
@@ -148,7 +148,7 @@ func TestCLIStats_PlayerFilter(t *testing.T) {
 func TestCLIStats_DecisionTypeFilter(t *testing.T) {
 	cli := setupCLIStats(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		// cube-only: only 1 cube decision inserted
 		filter := StatsFilter{DecisionType: 1}
 		if err := cli.showStats(filter, "pr", "text", 10); err != nil {
@@ -181,7 +181,7 @@ func TestCLIStats_BackwardCompat(t *testing.T) {
 	// Close the DB so cli.Run can reopen it from the file
 	cli.db.Close()
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"list", "--db", dbPath, "--type", "stats"})
 		if err != nil {
 			t.Fatalf("cli.Run list --type stats: %v", err)
@@ -204,7 +204,7 @@ func TestCLIStats_FormatJSONViaCLIRun(t *testing.T) {
 	}
 	cli.db.Close()
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"list", "--db", dbPath, "--type", "stats", "--format", "json"})
 		if err != nil {
 			t.Fatalf("cli.Run list --type stats --format json: %v", err)

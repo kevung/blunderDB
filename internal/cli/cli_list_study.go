@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 	"text/tabwriter"
 )
@@ -20,11 +19,11 @@ func (cli *CLI) listStudy(days int, format string) error {
 
 	switch format {
 	case "json":
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(rows)
 	case "csv":
-		w := csv.NewWriter(os.Stdout)
+		w := csv.NewWriter(cli.stdout())
 		defer w.Flush()
 		if err := w.Write([]string{"game_type", "reviewed", "pr_before", "decisions_before", "pr_after", "decisions_after"}); err != nil {
 			return err
@@ -45,13 +44,13 @@ func (cli *CLI) listStudy(days int, format string) error {
 	}
 
 	if len(rows) == 0 {
-		fmt.Println("Nothing to compare yet: no plan of play is computed, or no match is stored.")
-		fmt.Println("`blunderdb repair` computes the plans; importing matches fills the rest.")
+		fmt.Fprintln(cli.stdout(), "Nothing to compare yet: no plan of play is computed, or no match is stored.")
+		fmt.Fprintln(cli.stdout(), "`blunderdb repair` computes the plans; importing matches fills the rest.")
 		return nil
 	}
 
-	fmt.Printf("\nStudied and played, over the last %d days\n\n", days)
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintf(cli.stdout(), "\nStudied and played, over the last %d days\n\n", days)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "PLAN\tREVISED\tPR BEFORE\t(n)\tPR SINCE\t(n)")
 	for _, r := range rows {
 		fmt.Fprintf(w, "%s\t%d\t%s\t%d\t%s\t%d\n",
@@ -62,9 +61,9 @@ func (cli *CLI) listStudy(days int, format string) error {
 	if err := w.Flush(); err != nil {
 		return err
 	}
-	fmt.Println()
-	fmt.Println("These are three counts read side by side, not an effect: nothing here")
-	fmt.Println("controls for the opponents met, the format played or the luck of the dice.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "These are three counts read side by side, not an effect: nothing here")
+	fmt.Fprintln(cli.stdout(), "controls for the opponents met, the format played or the luck of the dice.")
 	return nil
 }
 

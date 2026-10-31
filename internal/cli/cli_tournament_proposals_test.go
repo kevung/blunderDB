@@ -28,7 +28,7 @@ func TestCLI_TournamentConfirmsARepechage(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "proposals", "--db", dbPath, "--id", itoa64(tID)}); err != nil {
 			t.Fatalf("proposals: %v", err)
 		}
@@ -37,7 +37,7 @@ func TestCLI_TournamentConfirmsARepechage(t *testing.T) {
 		t.Fatalf("the queue does not offer the repechage first:\n%s", out)
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "confirm", "--db", dbPath, "--id", itoa64(tID), "--n", "1"}); err != nil {
 			t.Fatalf("confirm: %v", err)
 		}

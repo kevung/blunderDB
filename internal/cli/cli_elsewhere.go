@@ -38,31 +38,31 @@ func (cli *CLI) runElsewhere(args []string) error {
 	maxDistance := fs.Int("max-distance", 0, "Leave out neighbours farther than this many checker-pips (0: no ceiling)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb elsewhere --db <file> --other <file> [--other <file>...] (--position <id> | --xgid <XGID> | --zobrist <hash> | --match <id> | --tournament <id> | --collection <id> | --lesson <id>) [options]")
-		fmt.Println()
-		fmt.Println("What other databases know of one board: their analysis, their comments, the")
-		fmt.Println("matches where it was played and how, and their boards nearest to it. A play's")
-		fmt.Println("cost is judged with the error and blunder thresholds of --db; an analysis")
-		fmt.Println("valued with another match equity table than the one of --db is flagged, and")
-		fmt.Println("its match-play costs are shown but not judged. The other files are opened")
-		fmt.Println("read-only: nothing is written to any of them, and a file in a read-only folder")
-		fmt.Println("is read as it stands. A file that cannot be read is reported and skipped; the")
-		fmt.Println("others answer, and the command fails only when none could be read.")
-		fmt.Println()
-		fmt.Println("With --match, --tournament, --collection or --lesson, it says instead whether")
-		fmt.Println("each other database holds that object of --db, under the key a copy merges")
-		fmt.Println("it on: a match by its fingerprint (the same match imported from another")
-		fmt.Println("format included), a tournament, a collection or a lesson by its name; and")
-		fmt.Println("what the one it holds contains (games, matches, positions, steps).")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb elsewhere --db <file> --other <file> [--other <file>...] (--position <id> | --xgid <XGID> | --zobrist <hash> | --match <id> | --tournament <id> | --collection <id> | --lesson <id>) [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "What other databases know of one board: their analysis, their comments, the")
+		fmt.Fprintln(cli.stdout(), "matches where it was played and how, and their boards nearest to it. A play's")
+		fmt.Fprintln(cli.stdout(), "cost is judged with the error and blunder thresholds of --db; an analysis")
+		fmt.Fprintln(cli.stdout(), "valued with another match equity table than the one of --db is flagged, and")
+		fmt.Fprintln(cli.stdout(), "its match-play costs are shown but not judged. The other files are opened")
+		fmt.Fprintln(cli.stdout(), "read-only: nothing is written to any of them, and a file in a read-only folder")
+		fmt.Fprintln(cli.stdout(), "is read as it stands. A file that cannot be read is reported and skipped; the")
+		fmt.Fprintln(cli.stdout(), "others answer, and the command fails only when none could be read.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "With --match, --tournament, --collection or --lesson, it says instead whether")
+		fmt.Fprintln(cli.stdout(), "each other database holds that object of --db, under the key a copy merges")
+		fmt.Fprintln(cli.stdout(), "it on: a match by its fingerprint (the same match imported from another")
+		fmt.Fprintln(cli.stdout(), "format included), a tournament, a collection or a lesson by its name; and")
+		fmt.Fprintln(cli.stdout(), "what the one it holds contains (games, matches, positions, steps).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb elsewhere --db mine.db --other club.db --position 412")
-		fmt.Println("  blunderdb elsewhere --db mine.db --other a.db --other b.db --xgid \"XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10\"")
-		fmt.Println("  blunderdb elsewhere --db mine.db --other club.db --zobrist 1234567890 --format json")
-		fmt.Println("  blunderdb elsewhere --db mine.db --other club.db --tournament 3")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb elsewhere --db mine.db --other club.db --position 412")
+		fmt.Fprintln(cli.stdout(), "  blunderdb elsewhere --db mine.db --other a.db --other b.db --xgid \"XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb elsewhere --db mine.db --other club.db --zobrist 1234567890 --format json")
+		fmt.Fprintln(cli.stdout(), "  blunderdb elsewhere --db mine.db --other club.db --tournament 3")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -192,9 +192,9 @@ func (cli *CLI) runElsewhere(args []string) error {
 			}
 			out.Results = append(out.Results, fileReport{File: path, ElsewhereReport: byFile[path]})
 		}
-		return printJSON(out)
+		return cli.printJSON(out)
 	}
-	printElsewhere(q.Zobrist, judge, others, byFile, unread)
+	cli.printElsewhere(q.Zobrist, judge, others, byFile, unread)
 	return nil
 }
 
@@ -245,7 +245,7 @@ func (cli *CLI) elsewhereObject(ctx context.Context, here storage.Storage, kind 
 		results = append(results, fileReport{File: path, ObjectPresence: byFile[path]})
 	}
 	if asJSON {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Query   storage.ObjectQuery `json:"query"`
 			Results []fileReport        `json:"results"`
 		}{q, results})
@@ -254,8 +254,8 @@ func (cli *CLI) elsewhereObject(ctx context.Context, here storage.Storage, kind 
 	if kind == storage.ObjectMatch {
 		label = fmt.Sprintf("%d", id)
 	}
-	fmt.Printf("%s %s\n", kind, label)
-	w := tabwriter.NewWriter(os.Stdout, 0, 4, 2, ' ', 0)
+	fmt.Fprintf(cli.stdout(), "%s %s\n", kind, label)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 4, 2, ' ', 0)
 	fmt.Fprintln(w, "FILE\tHELD\tID\tCONTAINS")
 	for _, r := range results {
 		switch {
@@ -307,43 +307,43 @@ func schemaReadable(path, version string) error {
 	return nil
 }
 
-func printElsewhere(zobrist uint64, judge storage.Judge, files []string, reports map[string]storage.ElsewhereReport, unread map[string]error) {
-	fmt.Printf("Board %d, judged at error >= %d mp, blunder >= %d mp\n",
+func (cli *CLI) printElsewhere(zobrist uint64, judge storage.Judge, files []string, reports map[string]storage.ElsewhereReport, unread map[string]error) {
+	fmt.Fprintf(cli.stdout(), "Board %d, judged at error >= %d mp, blunder >= %d mp\n",
 		zobrist, judge.Settings.ErrorThresholdMP, judge.Settings.BlunderThresholdMP)
 	for _, file := range files {
-		fmt.Println()
-		fmt.Printf("== %s\n", file)
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintf(cli.stdout(), "== %s\n", file)
 		if err, bad := unread[file]; bad {
-			fmt.Printf("Not read: %v\n", err)
+			fmt.Fprintf(cli.stdout(), "Not read: %v\n", err)
 			continue
 		}
 		rep := reports[file]
 		if rep.PositionID == 0 {
-			fmt.Println("Not held.")
+			fmt.Fprintln(cli.stdout(), "Not held.")
 		} else {
-			fmt.Printf("Position %d", rep.PositionID)
+			fmt.Fprintf(cli.stdout(), "Position %d", rep.PositionID)
 			switch {
 			case rep.Analysis == nil:
-				fmt.Print(", no analysis")
+				fmt.Fprint(cli.stdout(), ", no analysis")
 			case rep.OtherMET:
 				name := rep.METName
 				if name == "" {
 					name = "built-in"
 				}
-				fmt.Printf(", analysed with another match equity table (%s)", name)
+				fmt.Fprintf(cli.stdout(), ", analysed with another match equity table (%s)", name)
 			default:
-				fmt.Print(", analysed")
+				fmt.Fprint(cli.stdout(), ", analysed")
 			}
-			fmt.Println()
+			fmt.Fprintln(cli.stdout())
 			for _, c := range rep.Comments {
 				author := c.Author
 				if author == "" {
 					author = "-"
 				}
-				fmt.Printf("  comment (%s): %s\n", author, strings.ReplaceAll(c.Text, "\n", " "))
+				fmt.Fprintf(cli.stdout(), "  comment (%s): %s\n", author, strings.ReplaceAll(c.Text, "\n", " "))
 			}
 			if len(rep.Plays) > 0 {
-				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+				w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 				fmt.Fprintln(w, "  Match\tPlayers\tLength\tDate\tPlayed\tError (mp)\tVerdict")
 				for _, p := range rep.Plays {
 					cost := "-"
@@ -355,13 +355,13 @@ func printElsewhere(zobrist uint64, judge storage.Judge, files []string, reports
 				w.Flush()
 			}
 			if rep.PlaysTruncated {
-				fmt.Printf("  %d of %d matches shown, the latest imported\n", len(uniqueMatches(rep.Plays)), rep.MatchesTotal)
+				fmt.Fprintf(cli.stdout(), "  %d of %d matches shown, the latest imported\n", len(uniqueMatches(rep.Plays)), rep.MatchesTotal)
 			}
 		}
 		if len(rep.Neighbours) > 0 {
-			fmt.Println("  Nearest boards:")
+			fmt.Fprintln(cli.stdout(), "  Nearest boards:")
 			for _, n := range rep.Neighbours {
-				fmt.Printf("    position %d at %d checker-pips (%s)\n", n.Position.ID, n.Distance, domain.EncodeXGID(&n.Position))
+				fmt.Fprintf(cli.stdout(), "    position %d at %d checker-pips (%s)\n", n.Position.ID, n.Distance, domain.EncodeXGID(&n.Position))
 			}
 		}
 	}

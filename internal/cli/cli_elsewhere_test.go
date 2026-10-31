@@ -58,7 +58,7 @@ func TestCLI_ElsewhereReadsAnotherFile(t *testing.T) {
 		t.Fatalf("read other: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", otherPath,
 			"--position", strconv.FormatInt(positions[0].ID, 10), "--format", "json"}); err != nil {
 			t.Errorf("elsewhere: %v", err)
@@ -186,7 +186,7 @@ func TestCLI_ElsewhereSkipsAnUnreadableFile(t *testing.T) {
 	other.Close()
 	missing := filepath.Join(dir, "missing.db")
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", missing, "--other", good, "--zobrist", "1"}); err != nil {
 			t.Errorf("one readable file among two: %v", err)
 		}
@@ -194,7 +194,7 @@ func TestCLI_ElsewhereSkipsAnUnreadableFile(t *testing.T) {
 	if !strings.Contains(out, "== "+good) || !strings.Contains(out, "Not read:") {
 		t.Errorf("output lacks the answer or the skipped file:\n%s", out)
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", missing, "--other", good, "--zobrist", "1", "--format", "json"}); err != nil {
 			t.Errorf("json: %v", err)
 		}
@@ -243,7 +243,7 @@ func TestCLI_ElsewhereFindsAMatchAndACollection(t *testing.T) {
 		id   int64
 		want int64
 	}{{"--match", matchID, theirMatch}, {"--collection", collID, theirColl}, {"--tournament", tournamentID, 0}} {
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			if err := cli.Run([]string{"elsewhere", "--db", dbPath, "--other", otherPath,
 				c.flag, strconv.FormatInt(c.id, 10), "--format", "json"}); err != nil {
 				t.Errorf("elsewhere %s: %v", c.flag, err)

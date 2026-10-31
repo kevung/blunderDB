@@ -16,7 +16,7 @@ func TestExportPlanAgreesWithExportReport(t *testing.T) {
 	out := filepath.Join(t.TempDir(), "cli.db")
 
 	var plan ingest.ExportPlan
-	planJSON := captureStdout(t, func() {
+	planJSON := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--plan", "--format", "json"}); err != nil {
 			t.Fatalf("export --plan: %v", err)
 		}
@@ -31,7 +31,7 @@ func TestExportPlanAgreesWithExportReport(t *testing.T) {
 	var done struct {
 		Report ingest.ExportReport `json:"report"`
 	}
-	doneJSON := captureStdout(t, func() {
+	doneJSON := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--file", out, "--format", "json"}); err != nil {
 			t.Fatalf("export: %v", err)
 		}
@@ -47,7 +47,7 @@ func TestExportPlanAgreesWithExportReport(t *testing.T) {
 	}
 
 	var page ingest.PlannedIDs
-	pageJSON := captureStdout(t, func() {
+	pageJSON := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--plan-ids", "matches", "--limit", "1", "--format", "json"}); err != nil {
 			t.Fatalf("export --plan-ids: %v", err)
 		}
@@ -65,7 +65,7 @@ func TestExportPlanAgreesWithExportReport(t *testing.T) {
 func TestExportPlanRefusesOtherTypes(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	out := filepath.Join(t.TempDir(), "positions.txt")
-	captureStdout(t, func() {
+	captureOut(t, cli, func() {
 		if err := cli.Run([]string{"export", "--db", dbPath, "--type", "positions", "--file", out, "--plan"}); err == nil {
 			t.Error("--plan with --type positions was accepted")
 		}

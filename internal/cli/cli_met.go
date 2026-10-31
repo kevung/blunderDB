@@ -21,23 +21,23 @@ func (cli *CLI) runMET(args []string) error {
 	format := cmd.String("format", "text", "Output format: text or json")
 
 	cmd.Usage = func() {
-		fmt.Println("Usage: blunderdb met [options]")
-		fmt.Println()
-		fmt.Println("List, import or choose the match equity table (MET) of a database.")
-		fmt.Println("Each database has its own table, Kazaross-XG2 by default. gammonNet")
-		fmt.Println("values match scores with the current table, and every analysis it")
-		fmt.Println("computes records that table. An analysis at a match score valued with")
-		fmt.Println("another table is shown as \"different MET\" and left out of the")
-		fmt.Println("statistics. Changing the current table rewrites no analysis.")
-		fmt.Println("Only explicit gnubg tables are read (not the parametric zadeh or mec).")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb met [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "List, import or choose the match equity table (MET) of a database.")
+		fmt.Fprintln(cli.stdout(), "Each database has its own table, Kazaross-XG2 by default. gammonNet")
+		fmt.Fprintln(cli.stdout(), "values match scores with the current table, and every analysis it")
+		fmt.Fprintln(cli.stdout(), "computes records that table. An analysis at a match score valued with")
+		fmt.Fprintln(cli.stdout(), "another table is shown as \"different MET\" and left out of the")
+		fmt.Fprintln(cli.stdout(), "statistics. Changing the current table rewrites no analysis.")
+		fmt.Fprintln(cli.stdout(), "Only explicit gnubg tables are read (not the parametric zadeh or mec).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		cmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb met --db database.db")
-		fmt.Println("  blunderdb met --db database.db --import Rockwell-Kazaross.xml --current")
-		fmt.Println("  blunderdb met --db database.db --use 0")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb met --db database.db")
+		fmt.Fprintln(cli.stdout(), "  blunderdb met --db database.db --import Rockwell-Kazaross.xml --current")
+		fmt.Fprintln(cli.stdout(), "  blunderdb met --db database.db --use 0")
 	}
 
 	if err := cmd.Parse(args); err != nil {
@@ -68,9 +68,9 @@ func (cli *CLI) runMET(args []string) error {
 		}
 		if formatLower == "text" {
 			if t.AlreadyHeld {
-				fmt.Printf("Table already held: #%d %s (same values)\n", t.ID, t.Name)
+				fmt.Fprintf(cli.stdout(), "Table already held: #%d %s (same values)\n", t.ID, t.Name)
 			} else {
-				fmt.Printf("Imported: #%d %s\n", t.ID, t.Name)
+				fmt.Fprintf(cli.stdout(), "Imported: #%d %s\n", t.ID, t.Name)
 			}
 		}
 		if *makeCurrent {
@@ -92,14 +92,14 @@ func (cli *CLI) runMET(args []string) error {
 		if tables == nil {
 			tables = []*domain.MatchEquityTable{}
 		}
-		return printJSON(tables)
+		return cli.printJSON(tables)
 	}
 	for _, t := range tables {
 		mark := " "
 		if t.Current {
 			mark = "*"
 		}
-		fmt.Printf("%s %3d  %s\n", mark, t.ID, t.Name)
+		fmt.Fprintf(cli.stdout(), "%s %3d  %s\n", mark, t.ID, t.Name)
 	}
 	return nil
 }

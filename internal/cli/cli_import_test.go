@@ -88,7 +88,7 @@ func TestCLI_ImportPosition_JSON(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	path := writePositionFile(t, validPositionLine(t), "garbage line")
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"import", "--db", dbPath, "--type", "position", "--file", path, "--format", "json"})
 		if err != nil {
 			t.Fatalf("position import json: %v", err)
@@ -206,7 +206,7 @@ func TestCLI_ImportBatch_JSON(t *testing.T) {
 		t.Fatalf("WriteFile: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"import", "--db", dbPath, "--type", "batch", "--dir", dir, "--format", "json"})
 		if err != nil {
 			t.Fatalf("batch import json: %v", err)
@@ -229,7 +229,7 @@ func TestCLI_ImportBatch_JSON(t *testing.T) {
 func TestCLI_ImportMatch_JSON(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg"), "--format", "json"})
 		if err != nil {
 			t.Fatalf("match import json: %v", err)
@@ -299,7 +299,7 @@ func TestCLI_ImportBatch_ResumeSkipsJournaledFiles(t *testing.T) {
 func TestImport_ReportCountsOnlyNewPositions(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	for _, f := range []string{"charlot1-charlot2_7p_2025-11-08-2305.xg", "charlot1-charlot2_7p_2025-11-08-2305.sgf"} {
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath(f)}); err != nil {
 				t.Fatalf("import %s: %v", f, err)
 			}

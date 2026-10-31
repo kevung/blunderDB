@@ -21,22 +21,22 @@ func (cli *CLI) runCreate(args []string) error {
 	format := createCmd.String("format", "text", "Output format: text or json")
 
 	createCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb create [options]")
-		fmt.Println()
-		fmt.Println("Create a new database with the required schema and optional metadata.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb create [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Create a new database with the required schema and optional metadata.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		createCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # Create a new database")
-		fmt.Println("  blunderdb create --db mydb.db")
-		fmt.Println()
-		fmt.Println("  # Create with metadata")
-		fmt.Println("  blunderdb create --db mydb.db --user \"John Doe\" --description \"My backgammon positions\"")
-		fmt.Println()
-		fmt.Println("  # Force overwrite an existing database")
-		fmt.Println("  blunderdb create --db mydb.db --force")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # Create a new database")
+		fmt.Fprintln(cli.stdout(), "  blunderdb create --db mydb.db")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Create with metadata")
+		fmt.Fprintln(cli.stdout(), "  blunderdb create --db mydb.db --user \"John Doe\" --description \"My backgammon positions\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Force overwrite an existing database")
+		fmt.Fprintln(cli.stdout(), "  blunderdb create --db mydb.db --force")
 	}
 
 	if err := createCmd.Parse(args); err != nil {
@@ -82,7 +82,7 @@ func (cli *CLI) runCreate(args []string) error {
 
 	// Create the database
 	if text {
-		fmt.Printf("Creating database: %s\n", *dbPath)
+		fmt.Fprintf(cli.stdout(), "Creating database: %s\n", *dbPath)
 	}
 	err := cli.db.SetupDatabase(*dbPath)
 	if err != nil {
@@ -107,7 +107,7 @@ func (cli *CLI) runCreate(args []string) error {
 	}
 
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Path        string `json:"path"`
 			Version     string `json:"version"`
 			User        string `json:"user,omitempty"`
@@ -122,18 +122,18 @@ func (cli *CLI) runCreate(args []string) error {
 		})
 	}
 
-	fmt.Printf("Successfully created database with schema version %s\n", DatabaseVersion)
+	fmt.Fprintf(cli.stdout(), "Successfully created database with schema version %s\n", DatabaseVersion)
 
 	// Show database info
-	fmt.Println("\nDatabase Information:")
-	fmt.Printf("  Version: %s\n", DatabaseVersion)
+	fmt.Fprintln(cli.stdout(), "\nDatabase Information:")
+	fmt.Fprintf(cli.stdout(), "  Version: %s\n", DatabaseVersion)
 	if *user != "" {
-		fmt.Printf("  User: %s\n", *user)
+		fmt.Fprintf(cli.stdout(), "  User: %s\n", *user)
 	}
 	if *description != "" {
-		fmt.Printf("  Description: %s\n", *description)
+		fmt.Fprintf(cli.stdout(), "  Description: %s\n", *description)
 	}
-	fmt.Printf("  Created: %s\n", metadata["dateOfCreation"])
+	fmt.Fprintf(cli.stdout(), "  Created: %s\n", metadata["dateOfCreation"])
 
 	return nil
 }

@@ -45,7 +45,7 @@ func seedCollection(t *testing.T, cli *CLI, name string, n int) (int64, []int64)
 func TestCLI_CollectionList(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "list", "--db", dbPath}); err != nil {
 			t.Fatalf("collection list: %v", err)
 		}
@@ -56,7 +56,7 @@ func TestCLI_CollectionList(t *testing.T) {
 
 	id, _ := seedCollection(t, cli, "Openings", 3)
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "list", "--db", dbPath}); err != nil {
 			t.Fatalf("collection list: %v", err)
 		}
@@ -65,7 +65,7 @@ func TestCLI_CollectionList(t *testing.T) {
 		t.Errorf("text listing missing the collection:\n%s", out)
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "list", "--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("collection list --format json: %v", err)
 		}
@@ -78,7 +78,7 @@ func TestCLI_CollectionList(t *testing.T) {
 		t.Errorf("json rows = %+v, want one collection %d with 3 positions", rows, id)
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "list", "--db", dbPath, "--format", "csv"}); err != nil {
 			t.Fatalf("collection list --format csv: %v", err)
 		}
@@ -93,7 +93,7 @@ func TestCLI_CollectionShow(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	id, ids := seedCollection(t, cli, "Openings", 2)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "show", "--db", dbPath, "--id", "1"}); err != nil {
 			t.Fatalf("collection show: %v", err)
 		}
@@ -102,7 +102,7 @@ func TestCLI_CollectionShow(t *testing.T) {
 		t.Errorf("text output missing the collection header:\n%s", out)
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "show", "--db", dbPath, "--id", "1", "--format", "json"}); err != nil {
 			t.Fatalf("collection show --format json: %v", err)
 		}
@@ -155,7 +155,7 @@ func TestCLI_CollectionShow(t *testing.T) {
 func TestCLI_CollectionCreateRenameDelete(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "create", "--db", dbPath, "--name", "Draft", "--description", "notes"}); err != nil {
 			t.Fatalf("collection create: %v", err)
 		}
@@ -164,7 +164,7 @@ func TestCLI_CollectionCreateRenameDelete(t *testing.T) {
 		t.Errorf("create output = %q", out)
 	}
 
-	captureStdout(t, func() {
+	captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "rename", "--db", dbPath, "--id", "1", "--name", "Final"}); err != nil {
 			t.Fatalf("collection rename: %v", err)
 		}
@@ -177,7 +177,7 @@ func TestCLI_CollectionCreateRenameDelete(t *testing.T) {
 		t.Errorf("after rename: name=%q description=%q, want Final/notes (description kept)", c.Name, c.Description)
 	}
 
-	captureStdout(t, func() {
+	captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "delete", "--db", dbPath, "--id", "1", "--confirm"}); err != nil {
 			t.Fatalf("collection delete: %v", err)
 		}
@@ -200,7 +200,7 @@ func TestCLI_CollectionExport(t *testing.T) {
 	id, ids := seedCollection(t, cli, "Openings", 3)
 	outPath := filepath.Join(tempDir(t), "openings.db")
 
-	captureStdout(t, func() {
+	captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "export", "--db", dbPath, "--id", "1", "--out", outPath, "--matches=false"}); err != nil {
 			t.Fatalf("collection export: %v", err)
 		}
@@ -246,7 +246,7 @@ func TestCLI_CollectionUsageErrors(t *testing.T) {
 	}
 	for _, args := range cases {
 		var err error
-		captureStdout(t, func() { err = cli.Run(args) })
+		captureOut(t, cli, func() { err = cli.Run(args) })
 		if err == nil {
 			t.Errorf("%v: expected an error", args)
 		}
@@ -280,7 +280,7 @@ func TestCLI_CollectionExport_CarriesTranscriptionsAliasesAndPassword(t *testing
 	raw.Close()
 
 	out := filepath.Join(tempDir(t), "openings.db")
-	captureStdout(t, func() {
+	captureOut(t, cli, func() {
 		if err := cli.Run([]string{"collection", "export", "--db", dbPath, "--id", fmt.Sprint(colID), "--out", out, "--password", "secret"}); err != nil {
 			t.Fatalf("collection export: %v", err)
 		}
