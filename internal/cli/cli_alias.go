@@ -3,7 +3,6 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -42,18 +41,18 @@ func (cli *CLI) runPlayersMerge(args []string) error {
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	into := fs.String("into", "", "The canonical name the others become spellings of (required)")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb players merge --db FILE --into CANONICAL NAME [NAME...]")
-		fmt.Println()
-		fmt.Println("Make every NAME another spelling of CANONICAL (same as `players alias add`")
-		fmt.Println("for each): the stats, the players table and the search read them as one")
-		fmt.Println("person, every later import stores CANONICAL, and the matches already stored")
-		fmt.Println("keep the names their files wrote.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb players merge --db FILE --into CANONICAL NAME [NAME...]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Make every NAME another spelling of CANONICAL (same as `players alias add`")
+		fmt.Fprintln(cli.stdout(), "for each): the stats, the players table and the search read them as one")
+		fmt.Fprintln(cli.stdout(), "person, every later import stores CANONICAL, and the matches already stored")
+		fmt.Fprintln(cli.stdout(), "keep the names their files wrote.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb players merge --db base.db --into \"John Doe\" \"Doe J.\" \"J. Doe\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb players merge --db base.db --into \"John Doe\" \"Doe J.\" \"J. Doe\"")
 	}
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
@@ -65,7 +64,7 @@ func (cli *CLI) runPlayersMerge(args []string) error {
 	if err := cli.db.MergePlayers(fs.Args(), *into); err != nil {
 		return err
 	}
-	fmt.Printf("%d name(s) merged into %q\n", fs.NArg(), strings.TrimSpace(*into))
+	fmt.Fprintf(cli.stdout(), "%d name(s) merged into %q\n", fs.NArg(), strings.TrimSpace(*into))
 	return nil
 }
 
@@ -75,17 +74,17 @@ func (cli *CLI) runPlayersSwap(args []string) error {
 	fs := flag.NewFlagSet("players swap", flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb players swap --db FILE MATCH_ID")
-		fmt.Println()
-		fmt.Println("Swap the two players of a match: the file named them in the wrong order.")
-		fmt.Println("No position or analysis changes: each player keeps their statistics, under the other seat.")
-		fmt.Println("Refused while a transcription draft is open on the match, and for a match played here.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb players swap --db FILE MATCH_ID")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Swap the two players of a match: the file named them in the wrong order.")
+		fmt.Fprintln(cli.stdout(), "No position or analysis changes: each player keeps their statistics, under the other seat.")
+		fmt.Fprintln(cli.stdout(), "Refused while a transcription draft is open on the match, and for a match played here.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb players swap --db base.db 42")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb players swap --db base.db 42")
 	}
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
@@ -101,7 +100,7 @@ func (cli *CLI) runPlayersSwap(args []string) error {
 	if err := cli.db.SwapMatchPlayers(id); err != nil {
 		return err
 	}
-	fmt.Printf("players of match %d swapped\n", id)
+	fmt.Fprintf(cli.stdout(), "players of match %d swapped\n", id)
 	return nil
 }
 
@@ -114,20 +113,20 @@ func (cli *CLI) runPlayersMain(args []string) error {
 	clearMain := fs.Bool("clear", false, "Forget the Main player (no match is swapped back)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb players main --db FILE [--dry-run] [NAME]")
-		fmt.Println("       blunderdb players main --db FILE --clear")
-		fmt.Println()
-		fmt.Println("Without NAME, print the Main player. With NAME, make them the Main player:")
-		fmt.Println("every match where they (or one of their aliases) sit second has its players")
-		fmt.Println("swapped, all in one transaction, and every later import puts them first.")
-		fmt.Println("A match with a transcription draft open, or played here, is left as it is.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb players main --db FILE [--dry-run] [NAME]")
+		fmt.Fprintln(cli.stdout(), "       blunderdb players main --db FILE --clear")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Without NAME, print the Main player. With NAME, make them the Main player:")
+		fmt.Fprintln(cli.stdout(), "every match where they (or one of their aliases) sit second has its players")
+		fmt.Fprintln(cli.stdout(), "swapped, all in one transaction, and every later import puts them first.")
+		fmt.Fprintln(cli.stdout(), "A match with a transcription draft open, or played here, is left as it is.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb players main --db base.db --dry-run \"John Doe\"")
-		fmt.Println("  blunderdb players main --db base.db \"John Doe\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb players main --db base.db --dry-run \"John Doe\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb players main --db base.db \"John Doe\"")
 	}
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
@@ -141,7 +140,7 @@ func (cli *CLI) runPlayersMain(args []string) error {
 		if err := cli.db.ClearMainPlayer(); err != nil {
 			return err
 		}
-		fmt.Println("Main player forgotten")
+		fmt.Fprintln(cli.stdout(), "Main player forgotten")
 		return nil
 	case fs.NArg() == 0:
 		name, err := cli.db.MainPlayer()
@@ -149,12 +148,12 @@ func (cli *CLI) runPlayersMain(args []string) error {
 			return err
 		}
 		if strings.ToLower(*format) == "json" {
-			return printJSON(map[string]string{"name": name})
+			return cli.printJSON(map[string]string{"name": name})
 		}
 		if name == "" {
-			fmt.Println("No Main player.")
+			fmt.Fprintln(cli.stdout(), "No Main player.")
 		} else {
-			fmt.Println(name)
+			fmt.Fprintln(cli.stdout(), name)
 		}
 		return nil
 	}
@@ -169,15 +168,15 @@ func (cli *CLI) runPlayersMain(args []string) error {
 		return err
 	}
 	if strings.ToLower(*format) == "json" {
-		return printJSON(plan)
+		return cli.printJSON(plan)
 	}
 	verb := "swapped"
 	if *dryRun {
 		verb = "to swap"
 	}
-	fmt.Printf("Main player: %s\n%d match(es) %s: %s\n", plan.Name, len(plan.Swap), verb, joinIDs(plan.Swap))
+	fmt.Fprintf(cli.stdout(), "Main player: %s\n%d match(es) %s: %s\n", plan.Name, len(plan.Swap), verb, joinIDs(plan.Swap))
 	if len(plan.Refused) > 0 {
-		fmt.Printf("%d match(es) left (draft open or played here): %s\n", len(plan.Refused), joinIDs(plan.Refused))
+		fmt.Fprintf(cli.stdout(), "%d match(es) left (draft open or played here): %s\n", len(plan.Refused), joinIDs(plan.Refused))
 	}
 	return nil
 }
@@ -188,15 +187,15 @@ func (cli *CLI) runPlayersMatches(args []string) error {
 	fs := flag.NewFlagSet("players matches", flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb players matches --db FILE NAME")
-		fmt.Println()
-		fmt.Println("Print the ids of the matches NAME plays, at either seat and under any alias.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb players matches --db FILE NAME")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Print the ids of the matches NAME plays, at either seat and under any alias.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb players matches --db base.db \"John Doe\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb players matches --db base.db \"John Doe\"")
 	}
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
 		return err
@@ -210,7 +209,7 @@ func (cli *CLI) runPlayersMatches(args []string) error {
 		return err
 	}
 	for _, id := range ids {
-		fmt.Println(id)
+		fmt.Fprintln(cli.stdout(), id)
 	}
 	return nil
 }
@@ -220,19 +219,19 @@ func (cli *CLI) runEvents(args []string) error { return cli.runAliasCommand("eve
 
 func (cli *CLI) runAliasCommand(cmd, kind string, args []string) error {
 	if len(args) == 0 || isHelpArg(args[0]) {
-		printAliasUsage(cmd, kind)
+		cli.printAliasUsage(cmd, kind)
 		if len(args) == 0 {
 			return fmt.Errorf("missing %s sub-command", cmd)
 		}
 		return nil
 	}
 	if strings.ToLower(args[0]) != "alias" {
-		printAliasUsage(cmd, kind)
+		cli.printAliasUsage(cmd, kind)
 		return fmt.Errorf("unknown %s sub-command: %s", cmd, args[0])
 	}
 	args = args[1:]
 	if len(args) == 0 || isHelpArg(args[0]) {
-		printAliasUsage(cmd, kind)
+		cli.printAliasUsage(cmd, kind)
 		if len(args) == 0 {
 			return fmt.Errorf("missing %s alias action", cmd)
 		}
@@ -242,7 +241,7 @@ func (cli *CLI) runAliasCommand(cmd, kind string, args []string) error {
 	fs := flag.NewFlagSet(cmd+" alias "+action, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	format := fs.String("format", "text", "Output format of list and suggest: text or json")
-	fs.Usage = func() { printAliasUsage(cmd, kind) }
+	fs.Usage = func() { cli.printAliasUsage(cmd, kind) }
 	switch action {
 	case "add":
 		if err := cli.collectionOpen(fs, dbPath, args[1:]); err != nil {
@@ -254,7 +253,7 @@ func (cli *CLI) runAliasCommand(cmd, kind string, args []string) error {
 		if err := cli.db.SetAlias(kind, fs.Arg(0), fs.Arg(1)); err != nil {
 			return err
 		}
-		fmt.Printf("%q is now an alias of %q\n", strings.TrimSpace(fs.Arg(0)), strings.TrimSpace(fs.Arg(1)))
+		fmt.Fprintf(cli.stdout(), "%q is now an alias of %q\n", strings.TrimSpace(fs.Arg(0)), strings.TrimSpace(fs.Arg(1)))
 		return nil
 	case "remove":
 		if err := cli.collectionOpen(fs, dbPath, args[1:]); err != nil {
@@ -270,7 +269,7 @@ func (cli *CLI) runAliasCommand(cmd, kind string, args []string) error {
 		if !removed {
 			return fmt.Errorf("%q is not an alias", fs.Arg(0))
 		}
-		fmt.Printf("alias %q removed\n", strings.TrimSpace(fs.Arg(0)))
+		fmt.Fprintf(cli.stdout(), "alias %q removed\n", strings.TrimSpace(fs.Arg(0)))
 		return nil
 	case "list":
 		if err := cli.collectionOpen(fs, dbPath, args[1:]); err != nil {
@@ -281,9 +280,9 @@ func (cli *CLI) runAliasCommand(cmd, kind string, args []string) error {
 			return err
 		}
 		if strings.ToLower(*format) == "json" {
-			return printJSON(list)
+			return cli.printJSON(list)
 		}
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, "ALIAS\tCANONICAL")
 		for _, a := range list {
 			fmt.Fprintf(w, "%s\t%s\n", a.Alias, a.Canonical)
@@ -298,23 +297,23 @@ func (cli *CLI) runAliasCommand(cmd, kind string, args []string) error {
 			return err
 		}
 		if strings.ToLower(*format) == "json" {
-			return printJSON(list)
+			return cli.printJSON(list)
 		}
-		printAliasSuggestions(cmd, list)
+		cli.printAliasSuggestions(cmd, list)
 		return nil
 	}
-	printAliasUsage(cmd, kind)
+	cli.printAliasUsage(cmd, kind)
 	return fmt.Errorf("unknown %s alias action: %s", cmd, args[0])
 }
 
-func printAliasSuggestions(cmd string, list []database.AliasSuggestion) {
+func (cli *CLI) printAliasSuggestions(cmd string, list []database.AliasSuggestion) {
 	if len(list) == 0 {
-		fmt.Println("No suggestion.")
+		fmt.Fprintln(cli.stdout(), "No suggestion.")
 		return
 	}
 	for _, s := range list {
 		for _, a := range s.Aliases {
-			fmt.Printf("blunderdb %s alias add --db FILE %q %q\n", cmd, a, s.Canonical)
+			fmt.Fprintf(cli.stdout(), "blunderdb %s alias add --db FILE %q %q\n", cmd, a, s.Canonical)
 		}
 	}
 }
@@ -324,32 +323,32 @@ func isHelpArg(s string) bool {
 	return s == "--help" || s == "-h" || s == "help"
 }
 
-func printAliasUsage(cmd, kind string) {
-	fmt.Printf("Usage: blunderdb %s alias <add|list|remove|suggest> --db FILE [arguments]\n\n", cmd)
-	fmt.Printf("Record the other spellings of a %s's name. An import stores the canonical\n", kind)
-	fmt.Println("name where the file writes an alias; the stats, the players table and the")
-	fmt.Println("search read every spelling as one. The matches already stored keep the")
-	fmt.Println("names their files wrote, and so do the match fingerprints.")
-	fmt.Println()
-	fmt.Println("Actions:")
-	fmt.Println("  add ALIAS CANONICAL  Make ALIAS a spelling of CANONICAL")
-	fmt.Println("  list                 List the aliases")
-	fmt.Println("  remove ALIAS         Forget an alias")
-	fmt.Println("  suggest              Propose the names that differ only by case, accents,")
-	fmt.Println("                       punctuation or word order (nothing is recorded)")
-	fmt.Println()
-	fmt.Println("Options:")
-	fmt.Println("  --db FILE        Path to the database file (required)")
-	fmt.Println("  --format FORMAT  Output of list and suggest: text or json (default text)")
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Printf("  blunderdb %s alias add --db base.db \"Doe J.\" \"John Doe\"\n", cmd)
-	fmt.Printf("  blunderdb %s alias list --db base.db --format json\n", cmd)
-	fmt.Printf("  blunderdb %s alias suggest --db base.db\n", cmd)
+func (cli *CLI) printAliasUsage(cmd, kind string) {
+	fmt.Fprintf(cli.stdout(), "Usage: blunderdb %s alias <add|list|remove|suggest> --db FILE [arguments]\n\n", cmd)
+	fmt.Fprintf(cli.stdout(), "Record the other spellings of a %s's name. An import stores the canonical\n", kind)
+	fmt.Fprintln(cli.stdout(), "name where the file writes an alias; the stats, the players table and the")
+	fmt.Fprintln(cli.stdout(), "search read every spelling as one. The matches already stored keep the")
+	fmt.Fprintln(cli.stdout(), "names their files wrote, and so do the match fingerprints.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Actions:")
+	fmt.Fprintln(cli.stdout(), "  add ALIAS CANONICAL  Make ALIAS a spelling of CANONICAL")
+	fmt.Fprintln(cli.stdout(), "  list                 List the aliases")
+	fmt.Fprintln(cli.stdout(), "  remove ALIAS         Forget an alias")
+	fmt.Fprintln(cli.stdout(), "  suggest              Propose the names that differ only by case, accents,")
+	fmt.Fprintln(cli.stdout(), "                       punctuation or word order (nothing is recorded)")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Options:")
+	fmt.Fprintln(cli.stdout(), "  --db FILE        Path to the database file (required)")
+	fmt.Fprintln(cli.stdout(), "  --format FORMAT  Output of list and suggest: text or json (default text)")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintf(cli.stdout(), "  blunderdb %s alias add --db base.db \"Doe J.\" \"John Doe\"\n", cmd)
+	fmt.Fprintf(cli.stdout(), "  blunderdb %s alias list --db base.db --format json\n", cmd)
+	fmt.Fprintf(cli.stdout(), "  blunderdb %s alias suggest --db base.db\n", cmd)
 	if cmd == "players" {
-		fmt.Println()
-		fmt.Println("Also: `players merge --db FILE --into CANONICAL NAME...`,")
-		fmt.Println("`players swap --db FILE MATCH_ID`, `players main --db FILE [NAME]` and")
-		fmt.Println("`players matches --db FILE NAME` (see their --help).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Also: `players merge --db FILE --into CANONICAL NAME...`,")
+		fmt.Fprintln(cli.stdout(), "`players swap --db FILE MATCH_ID`, `players main --db FILE [NAME]` and")
+		fmt.Fprintln(cli.stdout(), "`players matches --db FILE NAME` (see their --help).")
 	}
 }

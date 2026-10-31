@@ -16,21 +16,21 @@ func (cli *CLI) runVacuum(args []string) error {
 	format := vacuumCmd.String("format", "text", "Output format: text or json")
 
 	vacuumCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb vacuum [options]")
-		fmt.Println()
-		fmt.Println("Compact the database file, reclaiming space left behind by")
-		fmt.Println("deletions (matches, tournaments, purges). SQLite needs roughly")
-		fmt.Println("twice the current file size in free disk space to rebuild it;")
-		fmt.Println("blunderdb refuses with a clear error rather than risk running out")
-		fmt.Println("of room partway through. This never runs automatically — it is")
-		fmt.Println("the only way it happens.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb vacuum [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Compact the database file, reclaiming space left behind by")
+		fmt.Fprintln(cli.stdout(), "deletions (matches, tournaments, purges). SQLite needs roughly")
+		fmt.Fprintln(cli.stdout(), "twice the current file size in free disk space to rebuild it;")
+		fmt.Fprintln(cli.stdout(), "blunderdb refuses with a clear error rather than risk running out")
+		fmt.Fprintln(cli.stdout(), "of room partway through. This never runs automatically — it is")
+		fmt.Fprintln(cli.stdout(), "the only way it happens.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		vacuumCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb vacuum --db database.db")
-		fmt.Println("  blunderdb vacuum --db database.db --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb vacuum --db database.db")
+		fmt.Fprintln(cli.stdout(), "  blunderdb vacuum --db database.db --format json")
 	}
 
 	if err := vacuumCmd.Parse(args); err != nil {
@@ -52,7 +52,7 @@ func (cli *CLI) runVacuum(args []string) error {
 	}
 
 	if formatLower != "json" {
-		fmt.Println("Compacting database...")
+		fmt.Fprintln(cli.stdout(), "Compacting database...")
 	}
 	result, err := cli.db.Vacuum()
 	if err != nil {
@@ -60,7 +60,7 @@ func (cli *CLI) runVacuum(args []string) error {
 	}
 
 	if formatLower == "json" {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			SizeBefore int64 `json:"size_before"`
 			SizeAfter  int64 `json:"size_after"`
 			Reclaimed  int64 `json:"reclaimed"`
@@ -71,12 +71,12 @@ func (cli *CLI) runVacuum(args []string) error {
 		})
 	}
 
-	fmt.Printf("  Before: %s\n", vacuumCLIHumanBytes(result.SizeBefore))
-	fmt.Printf("  After:  %s\n", vacuumCLIHumanBytes(result.SizeAfter))
+	fmt.Fprintf(cli.stdout(), "  Before: %s\n", vacuumCLIHumanBytes(result.SizeBefore))
+	fmt.Fprintf(cli.stdout(), "  After:  %s\n", vacuumCLIHumanBytes(result.SizeAfter))
 	if result.SizeBefore > result.SizeAfter {
-		fmt.Printf("  Reclaimed: %s\n", vacuumCLIHumanBytes(result.SizeBefore-result.SizeAfter))
+		fmt.Fprintf(cli.stdout(), "  Reclaimed: %s\n", vacuumCLIHumanBytes(result.SizeBefore-result.SizeAfter))
 	} else {
-		fmt.Println("  Nothing to reclaim.")
+		fmt.Fprintln(cli.stdout(), "  Nothing to reclaim.")
 	}
 
 	return nil

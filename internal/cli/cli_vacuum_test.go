@@ -39,7 +39,7 @@ func TestCLI_Vacuum_ReclaimsSpace(t *testing.T) {
 		t.Fatalf("stat before: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"vacuum", "--db", dbPath}); err != nil {
 			t.Fatalf("vacuum: %v", err)
 		}

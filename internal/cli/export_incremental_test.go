@@ -20,7 +20,7 @@ func TestExportIncrementalIntoAFolder(t *testing.T) {
 	folder := t.TempDir()
 
 	run := func(args ...string) string {
-		return captureStdout(t, func() {
+		return captureOut(t, cli, func() {
 			base := []string{"export", "--db", dbPath, "--type", "database", "--incremental", "--file", folder, "--format", "json"}
 			if err := cli.Run(append(base, args...)); err != nil {
 				t.Fatalf("export %v: %v", args, err)
@@ -71,7 +71,7 @@ func TestExportIncrementalRefusesAnExistingFile(t *testing.T) {
 	file := filepath.Join(t.TempDir(), "inc.db")
 	export := func() error {
 		var err error
-		captureStdout(t, func() {
+		captureOut(t, cli, func() {
 			err = cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--incremental", "--file", file})
 		})
 		return err
@@ -105,7 +105,7 @@ func TestExportIncrementalCarriesANewCommentOnASentPosition(t *testing.T) {
 		var out struct {
 			Report ingest.ExportReport `json:"report"`
 		}
-		raw := captureStdout(t, func() {
+		raw := captureOut(t, cli, func() {
 			if err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--incremental", "--file", folder, "--format", "json"}); err != nil {
 				t.Fatalf("export: %v", err)
 			}
@@ -117,7 +117,7 @@ func TestExportIncrementalCarriesANewCommentOnASentPosition(t *testing.T) {
 	}
 	export()
 	pos := s.positions[0]
-	captureStdout(t, func() {
+	captureOut(t, cli, func() {
 		if err := cli.Run([]string{"comment", "add", "--db", dbPath, "--position", strconv.FormatInt(pos, 10), "--text", "premier commentaire", "--author", "K"}); err != nil {
 			t.Fatalf("comment add: %v", err)
 		}

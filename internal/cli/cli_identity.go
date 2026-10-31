@@ -20,18 +20,18 @@ func (cli *CLI) runOpen(args []string) error {
 	outFile := openCmd.String("file", "", "Where to write the opened database (default: alongside, with .db)")
 
 	openCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb open [options]")
-		fmt.Println()
-		fmt.Println("Open a password-protected copy into an ordinary database file.")
-		fmt.Println()
-		fmt.Println("You are asked for the password once. The result is a normal blunderDB")
-		fmt.Println("database you work with as usual.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb open [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Open a password-protected copy into an ordinary database file.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "You are asked for the password once. The result is a normal blunderDB")
+		fmt.Fprintln(cli.stdout(), "database you work with as usual.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		openCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Example:")
-		fmt.Println("  blunderdb open --db cours.dbx --password secret")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Example:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb open --db cours.dbx --password secret")
 	}
 
 	if err := openCmd.Parse(args); err != nil {
@@ -59,7 +59,7 @@ func (cli *CLI) runOpen(args []string) error {
 	if _, err := issuance.UnwrapContainer(*path, target, *password); err != nil {
 		return err
 	}
-	fmt.Printf("Opened into %s\n", target)
+	fmt.Fprintf(cli.stdout(), "Opened into %s\n", target)
 	return nil
 }
 
@@ -76,24 +76,24 @@ func (cli *CLI) runIdentity(args []string) error {
 	format := idCmd.String("format", "text", "Output format: text or json")
 
 	idCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb identity [options]")
-		fmt.Println()
-		fmt.Println("Show or move your issuer identity.")
-		fmt.Println()
-		fmt.Println("The identity is created by itself the first time you issue copies; you never")
-		fmt.Println("have to set it up. Copies you have already issued keep verifying whatever you")
-		fmt.Println("do here — the name is only a label, and the key is what signs.")
-		fmt.Println()
-		fmt.Println("The exported file lets anyone holding it sign in your name. Do not share it.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb identity [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Show or move your issuer identity.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The identity is created by itself the first time you issue copies; you never")
+		fmt.Fprintln(cli.stdout(), "have to set it up. Copies you have already issued keep verifying whatever you")
+		fmt.Fprintln(cli.stdout(), "do here — the name is only a label, and the key is what signs.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The exported file lets anyone holding it sign in your name. Do not share it.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		idCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb identity")
-		fmt.Println("  blunderdb identity --name \"Jean Dupont\"")
-		fmt.Println("  blunderdb identity --export jean.bdbid --passphrase secret")
-		fmt.Println("  blunderdb identity --import jean.bdbid --passphrase secret")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb identity")
+		fmt.Fprintln(cli.stdout(), "  blunderdb identity --name \"Jean Dupont\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb identity --export jean.bdbid --passphrase secret")
+		fmt.Fprintln(cli.stdout(), "  blunderdb identity --import jean.bdbid --passphrase secret")
 	}
 
 	if err := idCmd.Parse(args); err != nil {
@@ -119,12 +119,12 @@ func (cli *CLI) runIdentity(args []string) error {
 			return err
 		}
 		if !text {
-			return printJSON(struct {
+			return cli.printJSON(struct {
 				Name        string `json:"name"`
 				Fingerprint string `json:"fingerprint"`
 			}{Name: id.Name, Fingerprint: id.Fingerprint()})
 		}
-		fmt.Printf("Identity installed: %s (%s)\n", id.Name, id.Fingerprint())
+		fmt.Fprintf(cli.stdout(), "Identity installed: %s (%s)\n", id.Name, id.Fingerprint())
 		return nil
 	}
 
@@ -142,16 +142,16 @@ func (cli *CLI) runIdentity(args []string) error {
 			return err
 		}
 		if text {
-			fmt.Printf("Identity written to %s\n", *exportPath)
+			fmt.Fprintf(cli.stdout(), "Identity written to %s\n", *exportPath)
 			if *passphrase == "" {
-				fmt.Println("It is NOT protected: anyone holding this file can sign in your name.")
+				fmt.Fprintln(cli.stdout(), "It is NOT protected: anyone holding this file can sign in your name.")
 			}
-			fmt.Println()
+			fmt.Fprintln(cli.stdout())
 		}
 	}
 
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Name        string `json:"name"`
 			Fingerprint string `json:"fingerprint"`
 			StoredIn    string `json:"stored_in"`
@@ -164,12 +164,12 @@ func (cli *CLI) runIdentity(args []string) error {
 		})
 	}
 
-	fmt.Println("Issuer identity")
-	fmt.Printf("  Name:        %s\n", identity.Name)
-	fmt.Printf("  Fingerprint: %s\n", identity.Fingerprint())
-	fmt.Printf("  Stored in:   %s\n", issuance.IdentityPath(issuance.ConfigDir()))
-	fmt.Println()
-	fmt.Println("Give the fingerprint to your recipients if you want them to be able to check")
-	fmt.Println("that a copy really came from you.")
+	fmt.Fprintln(cli.stdout(), "Issuer identity")
+	fmt.Fprintf(cli.stdout(), "  Name:        %s\n", identity.Name)
+	fmt.Fprintf(cli.stdout(), "  Fingerprint: %s\n", identity.Fingerprint())
+	fmt.Fprintf(cli.stdout(), "  Stored in:   %s\n", issuance.IdentityPath(issuance.ConfigDir()))
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Give the fingerprint to your recipients if you want them to be able to check")
+	fmt.Fprintln(cli.stdout(), "that a copy really came from you.")
 	return nil
 }

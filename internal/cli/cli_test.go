@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -112,36 +111,16 @@ func setupCLIWithDB(t *testing.T) (*CLI, string) {
 	return &CLI{db: db}, dbPath
 }
 
-// captureStdout captures stdout produced by fn and returns it as a string.
-func captureStdout(t *testing.T, fn func()) string {
+// captureOut runs fn with c's standard output redirected to a buffer and
+// returns what was written; it touches no process-global state.
+func captureOut(t *testing.T, c *CLI, fn func()) string {
 	t.Helper()
-	old := os.Stdout
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Fatalf("os.Pipe: %v", err)
-	}
-	os.Stdout = w
-
-	type captured struct {
-		out string
-		err error
-	}
-	outC := make(chan captured, 1)
-	go func() {
-		var buf bytes.Buffer
-		_, err := io.Copy(&buf, r)
-		outC <- captured{buf.String(), err}
-	}()
-
+	var buf bytes.Buffer
+	prev := c.out
+	c.out = &buf
+	defer func() { c.out = prev }()
 	fn()
-
-	w.Close()
-	os.Stdout = old
-	got := <-outC
-	if got.err != nil {
-		t.Fatalf("capturing stdout: %v", got.err)
-	}
-	return got.out
+	return buf.String()
 }
 
 // testdataPath returns the absolute path for a testdata fixture file.
@@ -236,7 +215,7 @@ func TestCLI_ListMatches(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.listMatches(10, "", "", nil); err != nil {
 			t.Fatalf("listMatches: %v", err)
 		}
@@ -257,7 +236,7 @@ func TestCLI_ListMatchesQueryAndSort(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 
-	miss := captureStdout(t, func() {
+	miss := captureOut(t, cli, func() {
 		if err := cli.listMatches(10, "no-such-player-anywhere", "player1_desc", nil); err != nil {
 			t.Fatalf("listMatches: %v", err)
 		}
@@ -266,7 +245,7 @@ func TestCLI_ListMatchesQueryAndSort(t *testing.T) {
 		t.Errorf("a filter that matches nothing should say so:\n%s", miss)
 	}
 
-	all := captureStdout(t, func() {
+	all := captureOut(t, cli, func() {
 		if err := cli.listMatches(10, "", "length_desc", nil); err != nil {
 			t.Fatalf("listMatches: %v", err)
 		}
@@ -279,7 +258,7 @@ func TestCLI_ListMatchesQueryAndSort(t *testing.T) {
 func TestCLI_ListTournaments(t *testing.T) {
 	cli := setupCLI(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.listTournaments(10); err != nil {
 			t.Fatalf("listTournaments: %v", err)
 		}
@@ -292,7 +271,7 @@ func TestCLI_ListTournaments(t *testing.T) {
 		t.Fatalf("CreateTournament: %v", err)
 	}
 
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.listTournaments(10); err != nil {
 			t.Fatalf("listTournaments: %v", err)
 		}
@@ -308,7 +287,7 @@ func TestCLI_ListPositions(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.listPositions(0, 10); err != nil {
 			t.Fatalf("listPositions: %v", err)
 		}
@@ -330,7 +309,7 @@ func TestCLI_ListPositions(t *testing.T) {
 	if err != nil || len(ids) != 1 {
 		t.Fatalf("ListPositionIDs(1, 1): %v, %v", ids, err)
 	}
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.listPositions(1, 1); err != nil {
 			t.Fatalf("listPositions(1, 1): %v", err)
 		}
@@ -368,7 +347,7 @@ func TestCLI_ShowStats(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.showStats(StatsFilter{DecisionType: -1}, "pr", "text", 10); err != nil {
 			t.Fatalf("showStats: %v", err)
 		}
@@ -393,7 +372,7 @@ func TestCLI_Search(t *testing.T) {
 	}
 
 	// Search for checker positions — should return results.
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"search", "--db", dbPath, "--decision", "checker", "--format", "table"})
 		if err != nil {
 			t.Fatalf("search checker: %v", err)
@@ -412,7 +391,7 @@ func TestCLI_SearchDice(t *testing.T) {
 	}
 
 	// Both dice (any order)
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"search", "--db", dbPath, "--dice", "6,5", "--format", "table"}); err != nil {
 			t.Fatalf("search --dice 6,5: %v", err)
 		}
@@ -422,7 +401,7 @@ func TestCLI_SearchDice(t *testing.T) {
 	}
 
 	// First die only
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"search", "--db", dbPath, "--dice", "6", "--format", "table"}); err != nil {
 			t.Fatalf("search --dice 6: %v", err)
 		}
@@ -443,7 +422,7 @@ func TestCLI_SearchDice(t *testing.T) {
 func TestCLI_SearchNoResults(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	// Empty DB — search should return 0 positions.
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"search", "--db", dbPath, "--decision", "cube"})
 		if err != nil {
 			t.Fatalf("search: %v", err)
@@ -461,7 +440,7 @@ func TestCLI_SearchJSON(t *testing.T) {
 		t.Fatalf("import: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"search", "--db", dbPath, "--format", "json", "--limit", "2"})
 		if err != nil {
 			t.Fatalf("search json: %v", err)
@@ -631,7 +610,7 @@ func TestCLI_Verify(t *testing.T) {
 		t.Fatalf("import: %v", err)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"verify", "--db", dbPath})
 		if err != nil {
 			t.Fatalf("verify: %v", err)
@@ -650,7 +629,7 @@ func TestCLI_Verify(t *testing.T) {
 func TestCLI_Info(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"info", "--db", dbPath})
 		if err != nil {
 			t.Fatalf("info: %v", err)
@@ -665,7 +644,7 @@ func TestCLI_Info(t *testing.T) {
 func TestCLI_InfoJSON(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"info", "--db", dbPath, "--format", "json"})
 		if err != nil {
 			t.Fatalf("info json: %v", err)
@@ -694,7 +673,7 @@ func TestCLI_InfoCountsAreExactUnlessEstimated(t *testing.T) {
 		var doc struct {
 			Stats map[string]any `json:"stats"`
 		}
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"info", "--db", dbPath, "--format", "json"}, extra...)); err != nil {
 				t.Fatalf("info: %v", err)
 			}
@@ -752,7 +731,7 @@ func TestCLI_MatchJSON(t *testing.T) {
 		t.Fatal("no matches after import")
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		err := cli.Run([]string{"match", "--db", dbPath, "--id", fmt.Sprintf("%d", matches[0].ID), "--format", "json"})
 		if err != nil {
 			t.Fatalf("match json: %v", err)
@@ -851,7 +830,7 @@ func TestCLI_MissingRequiredFlags(t *testing.T) {
 
 func TestCLI_Version(t *testing.T) {
 	cli := &CLI{db: NewDatabase()}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"version"}); err != nil {
 			t.Fatal(err)
 		}
@@ -863,7 +842,7 @@ func TestCLI_Version(t *testing.T) {
 
 func TestCLI_Help(t *testing.T) {
 	cli := &CLI{db: NewDatabase()}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"help"}); err != nil {
 			t.Fatal(err)
 		}

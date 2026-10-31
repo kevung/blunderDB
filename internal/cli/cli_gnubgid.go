@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -18,20 +17,20 @@ func (cli *CLI) runGnubgID(args []string) error {
 	format := cmd.String("format", "text", "Output format: text, json")
 
 	cmd.Usage = func() {
-		fmt.Println("Usage: blunderdb gnubgid [options] <XGID|OGID>")
-		fmt.Println()
-		fmt.Println("Print the GNUbg identifier of a position: the Position ID (the board,")
-		fmt.Println("from the side of the player on roll) and the Match ID (cube, score,")
-		fmt.Println("dice), joined by a colon as GNU Backgammon copies them. The match")
-		fmt.Println("length and the scores are derived from the away scores the position")
-		fmt.Println("holds, as the XGID does.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb gnubgid [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Print the GNUbg identifier of a position: the Position ID (the board,")
+		fmt.Fprintln(cli.stdout(), "from the side of the player on roll) and the Match ID (cube, score,")
+		fmt.Fprintln(cli.stdout(), "dice), joined by a colon as GNU Backgammon copies them. The match")
+		fmt.Fprintln(cli.stdout(), "length and the scores are derived from the away scores the position")
+		fmt.Fprintln(cli.stdout(), "holds, as the XGID does.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		cmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb gnubgid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'")
-		fmt.Println("  blunderdb gnubgid --format json '<XGID>'")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb gnubgid 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10'")
+		fmt.Fprintln(cli.stdout(), "  blunderdb gnubgid --format json '<XGID>'")
 	}
 
 	if err := cmd.Parse(args); err != nil {
@@ -55,10 +54,10 @@ func (cli *CLI) runGnubgID(args []string) error {
 	matchID := domain.EncodeGNUbgMatchID(&pos)
 
 	if *format == "json" {
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(map[string]string{"position_id": positionID, "match_id": matchID, "id": positionID + ":" + matchID})
 	}
-	fmt.Printf("%s:%s\n", positionID, matchID)
+	fmt.Fprintf(cli.stdout(), "%s:%s\n", positionID, matchID)
 	return nil
 }

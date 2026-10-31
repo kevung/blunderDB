@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -26,24 +25,24 @@ func (cli *CLI) runCubeMatrix(args []string) error {
 	jobs := cmd.Int("jobs", 0, "Parallel searches (0 = one per core)")
 
 	cmd.Usage = func() {
-		fmt.Println("Usage: blunderdb cubematrix [options] <XGID|OGID>")
-		fmt.Println()
-		fmt.Println("Show the cube verdict at every score of a match: for each away × away")
-		fmt.Println("cell, whether this position is a double and whether it is a take.")
-		fmt.Println("The position's own score is ignored — the grid replaces it — but its")
-		fmt.Println("cube is kept, so the answer is about this cube, not a centred one.")
-		fmt.Println()
-		fmt.Println("Every cell is its own search: the engine is match-aware, so a single")
-		fmt.Println("search read through different match equities would be wrong exactly")
-		fmt.Println("where the score matters. The grid is post-Crawford throughout.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb cubematrix [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Show the cube verdict at every score of a match: for each away × away")
+		fmt.Fprintln(cli.stdout(), "cell, whether this position is a double and whether it is a take.")
+		fmt.Fprintln(cli.stdout(), "The position's own score is ignored — the grid replaces it — but its")
+		fmt.Fprintln(cli.stdout(), "cube is kept, so the answer is about this cube, not a centred one.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Every cell is its own search: the engine is match-aware, so a single")
+		fmt.Fprintln(cli.stdout(), "search read through different match equities would be wrong exactly")
+		fmt.Fprintln(cli.stdout(), "where the score matters. The grid is post-Crawford throughout.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		cmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'")
-		fmt.Println("  blunderdb cubematrix --match-length 5 --format json '<XGID>'")
-		fmt.Println("  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::W::0:0:7:'  # an OGID")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'")
+		fmt.Fprintln(cli.stdout(), "  blunderdb cubematrix --match-length 5 --format json '<XGID>'")
+		fmt.Fprintln(cli.stdout(), "  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::W::0:0:7:'  # an OGID")
 	}
 
 	if err := cmd.Parse(args); err != nil {
@@ -68,11 +67,11 @@ func (cli *CLI) runCubeMatrix(args []string) error {
 	}
 
 	if *format == "json" {
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(matrix)
 	}
-	printCubeMatrix(matrix)
+	cli.printCubeMatrix(matrix)
 	return nil
 }
 
@@ -88,13 +87,13 @@ var cubeMatrixGlyphs = map[string]string{
 // printCubeMatrix renders the grid: rows are the doubling side's away score,
 // columns the opponent's, so reading across a row answers "I need N, they
 // need what?" — the question a player actually asks at the table.
-func printCubeMatrix(m gammonnet.CubeMatrix) {
+func (cli *CLI) printCubeMatrix(m gammonnet.CubeMatrix) {
 	byScore := make(map[[2]int]gammonnet.CubeMatrixCell, len(m.Cells))
 	for _, c := range m.Cells {
 		byScore[[2]int{c.AwayOnRoll, c.AwayOpponent}] = c
 	}
 
-	fmt.Printf("Cube matrix, %d-point match, %s (rows: away on roll, columns: away opponent)\n\n",
+	fmt.Fprintf(cli.stdout(), "Cube matrix, %d-point match, %s (rows: away on roll, columns: away opponent)\n\n",
 		m.MatchLength, gammonnet.DepthLabel(m.Ply))
 
 	var header strings.Builder
@@ -102,7 +101,7 @@ func printCubeMatrix(m gammonnet.CubeMatrix) {
 	for j := 1; j <= m.MatchLength; j++ {
 		fmt.Fprintf(&header, "%4d", j)
 	}
-	fmt.Println(header.String())
+	fmt.Fprintln(cli.stdout(), header.String())
 
 	for i := 1; i <= m.MatchLength; i++ {
 		var row strings.Builder
@@ -115,14 +114,14 @@ func printCubeMatrix(m gammonnet.CubeMatrix) {
 			}
 			fmt.Fprintf(&row, "%4s", glyph)
 		}
-		fmt.Println(row.String())
+		fmt.Fprintln(cli.stdout(), row.String())
 	}
 
-	fmt.Println()
-	fmt.Println("ND no double   DT double, take   DP double, pass   TG too good   ? not evaluable")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "ND no double   DT double, take   DP double, pass   TG too good   ? not evaluable")
 	for _, c := range m.Cells {
 		if c.Refused {
-			fmt.Printf("  %d-away/%d-away: %s\n", c.AwayOnRoll, c.AwayOpponent, c.Reason)
+			fmt.Fprintf(cli.stdout(), "  %d-away/%d-away: %s\n", c.AwayOnRoll, c.AwayOpponent, c.Reason)
 		}
 	}
 }

@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"text/tabwriter"
 
@@ -48,16 +47,16 @@ func (cli *CLI) finishImportBatch(batchID int64, failures domain.ImportReport) *
 // printImportReport writes the report as the human-readable block that closes
 // an import. It prints nothing at all when there is nothing to say — an import
 // of one already-known match should not produce a page of zeros.
-func printImportReport(b *domain.ImportBatch) {
+func (cli *CLI) printImportReport(b *domain.ImportBatch) {
 	if b == nil {
 		return
 	}
 	r := b.Report
-	fmt.Println()
-	fmt.Println("IMPORT REPORT")
-	fmt.Println(strings.Repeat("-", 60))
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "IMPORT REPORT")
+	fmt.Fprintln(cli.stdout(), strings.Repeat("-", 60))
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintf(w, "Matches imported\t%d\n", r.MatchesImported)
 	if r.MatchesEnriched > 0 {
 		fmt.Fprintf(w, "Matches enriched in place\t%d\n", r.MatchesEnriched)
@@ -98,9 +97,9 @@ func printImportReport(b *domain.ImportBatch) {
 	w.Flush()
 
 	if len(r.WorstDecisions) > 0 {
-		fmt.Println()
-		fmt.Println("Worst decisions:")
-		bw := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Worst decisions:")
+		bw := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		for i, d := range r.WorstDecisions {
 			kind := "checker"
 			if d.IsCube {
@@ -113,13 +112,13 @@ func printImportReport(b *domain.ImportBatch) {
 	}
 
 	if len(r.Failures) > 0 {
-		fmt.Println()
-		fmt.Println("Files that could not be read:")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Files that could not be read:")
 		for _, f := range r.Failures {
-			fmt.Printf("  %s: %s\n", f.Source, f.Reason)
+			fmt.Fprintf(cli.stdout(), "  %s: %s\n", f.Source, f.Reason)
 		}
 		if r.FilesFailed > len(r.Failures) {
-			fmt.Printf("  … and %d more\n", r.FilesFailed-len(r.Failures))
+			fmt.Fprintf(cli.stdout(), "  … and %d more\n", r.FilesFailed-len(r.Failures))
 		}
 	}
 }
@@ -151,17 +150,17 @@ func (cli *CLI) listImports(limit int, batchID int64, format string, queue bool)
 			return fmt.Errorf("import batch %d: %w", batchID, err)
 		}
 		if format == "json" {
-			return printJSON(b)
+			return cli.printJSON(b)
 		}
-		fmt.Printf("Import %d — %s (%s)\n", b.ID, b.Source, b.Format)
-		fmt.Printf("Started %s", b.StartedAt)
+		fmt.Fprintf(cli.stdout(), "Import %d — %s (%s)\n", b.ID, b.Source, b.Format)
+		fmt.Fprintf(cli.stdout(), "Started %s", b.StartedAt)
 		if b.FinishedAt != "" {
-			fmt.Printf(", finished %s", b.FinishedAt)
+			fmt.Fprintf(cli.stdout(), ", finished %s", b.FinishedAt)
 		} else {
-			fmt.Print(", never finished")
+			fmt.Fprint(cli.stdout(), ", never finished")
 		}
-		fmt.Println()
-		printImportReport(b)
+		fmt.Fprintln(cli.stdout())
+		cli.printImportReport(b)
 		return nil
 	}
 
@@ -170,14 +169,14 @@ func (cli *CLI) listImports(limit int, batchID int64, format string, queue bool)
 		return err
 	}
 	if format == "json" {
-		return printJSON(batches)
+		return cli.printJSON(batches)
 	}
 	if len(batches) == 0 {
-		fmt.Println("No import has been recorded in this database yet.")
+		fmt.Fprintln(cli.stdout(), "No import has been recorded in this database yet.")
 		return nil
 	}
-	fmt.Printf("Found %d import(s):\n\n", len(batches))
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintf(cli.stdout(), "Found %d import(s):\n\n", len(batches))
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tStarted\tFormat\tSource\tImported\tSkipped\tEnriched\tFailed\tPositions")
 	fmt.Fprintln(w, "--\t-------\t------\t------\t--------\t-------\t--------\t------\t---------")
 	for _, b := range batches {
@@ -187,7 +186,7 @@ func (cli *CLI) listImports(limit int, batchID int64, format string, queue bool)
 			b.Report.MatchesEnriched, b.Report.FilesFailed, b.Report.PositionsSaved)
 	}
 	w.Flush()
-	fmt.Println("\nUse --batch <id> for the full report of one import.")
+	fmt.Fprintln(cli.stdout(), "\nUse --batch <id> for the full report of one import.")
 	return nil
 }
 
@@ -203,15 +202,15 @@ func (cli *CLI) printStudyQueue(batchID int64, format string) error {
 		return fmt.Errorf("import batch %d: %w", batchID, err)
 	}
 	if format == "json" {
-		return printJSON(entries)
+		return cli.printJSON(entries)
 	}
 	if len(entries) == 0 {
-		fmt.Printf("Import %d brought in nothing worth a second look.\n", batchID)
+		fmt.Fprintf(cli.stdout(), "Import %d brought in nothing worth a second look.\n", batchID)
 		return nil
 	}
 
-	fmt.Printf("Study queue for import %d — %d position(s), in the order to walk them:\n\n", batchID, len(entries))
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintf(cli.stdout(), "Study queue for import %d — %d position(s), in the order to walk them:\n\n", batchID, len(entries))
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "#\tPosition\tWhy\tKind\tCost\tMatch")
 	fmt.Fprintln(w, "-\t--------\t---\t----\t----\t-----")
 	for i, e := range entries {
@@ -226,8 +225,8 @@ func (cli *CLI) printStudyQueue(batchID int64, format string) error {
 		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%s\t%s\n", i+1, e.PositionID, studyReasonLabel(e.Reason), kind, cost, e.Label)
 	}
 	w.Flush()
-	fmt.Println()
-	fmt.Println("Open one with: blunderdb search --db <path> --position-ids <id>")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Open one with: blunderdb search --db <path> --position-ids <id>")
 	return nil
 }
 

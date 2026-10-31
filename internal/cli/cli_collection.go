@@ -72,45 +72,45 @@ func (cli *CLI) CollectionSubcommands() []string {
 }
 
 func (cli *CLI) printCollectionUsage() {
-	fmt.Println("Usage: blunderdb collection <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("Manage collections (hand-picked sets of positions).")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  list      List collections (id, name, number of positions)")
-	fmt.Println("  show      List the positions of one collection (id, index, XGID)")
-	fmt.Println("  pile      Put a position on the Pile, or take it off; without one, print the Pile")
-	fmt.Println("  create    Create an empty collection")
-	fmt.Println("  rename    Rename a collection")
-	fmt.Println("  delete    Delete a collection (its positions stay in the database)")
-	fmt.Println("  export    Export one or more collections to a new database file")
-	fmt.Println("  suggest   Propose reference positions to study, and keep them as a collection or a deck")
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Println("  blunderdb collection list --db database.db")
-	fmt.Println("  blunderdb collection show --db database.db --id 3 --format json")
-	fmt.Println("  blunderdb collection create --db database.db --name \"Blitz openings\"")
-	fmt.Println("  blunderdb collection rename --db database.db --id 3 --name \"Openings\"")
-	fmt.Println("  blunderdb collection delete --db database.db --id 3 --confirm")
-	fmt.Println("  blunderdb collection export --db database.db --id 3,4 --out openings.db")
-	fmt.Println("  blunderdb collection suggest --db database.db --player \"Alice\" --size 10")
-	fmt.Println()
-	fmt.Println("Use 'blunderdb collection <sub-command> --help' for the options of a sub-command.")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb collection <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Manage collections (hand-picked sets of positions).")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  list      List collections (id, name, number of positions)")
+	fmt.Fprintln(cli.stdout(), "  show      List the positions of one collection (id, index, XGID)")
+	fmt.Fprintln(cli.stdout(), "  pile      Put a position on the Pile, or take it off; without one, print the Pile")
+	fmt.Fprintln(cli.stdout(), "  create    Create an empty collection")
+	fmt.Fprintln(cli.stdout(), "  rename    Rename a collection")
+	fmt.Fprintln(cli.stdout(), "  delete    Delete a collection (its positions stay in the database)")
+	fmt.Fprintln(cli.stdout(), "  export    Export one or more collections to a new database file")
+	fmt.Fprintln(cli.stdout(), "  suggest   Propose reference positions to study, and keep them as a collection or a deck")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb collection list --db database.db")
+	fmt.Fprintln(cli.stdout(), "  blunderdb collection show --db database.db --id 3 --format json")
+	fmt.Fprintln(cli.stdout(), "  blunderdb collection create --db database.db --name \"Blitz openings\"")
+	fmt.Fprintln(cli.stdout(), "  blunderdb collection rename --db database.db --id 3 --name \"Openings\"")
+	fmt.Fprintln(cli.stdout(), "  blunderdb collection delete --db database.db --id 3 --confirm")
+	fmt.Fprintln(cli.stdout(), "  blunderdb collection export --db database.db --id 3,4 --out openings.db")
+	fmt.Fprintln(cli.stdout(), "  blunderdb collection suggest --db database.db --player \"Alice\" --size 10")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Use 'blunderdb collection <sub-command> --help' for the options of a sub-command.")
 }
 
 // collectionFlagSet builds the FlagSet shared by every sub-command: the
 // database path, plus the usage banner naming the sub-command.
-func collectionFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
+func (cli *CLI) collectionFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
 	fs := flag.NewFlagSet("collection "+sub, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
-		fmt.Printf("Usage: blunderdb collection %s [options]\n\n%s\n\nOptions:\n", sub, summary)
+		fmt.Fprintf(cli.stdout(), "Usage: blunderdb collection %s [options]\n\n%s\n\nOptions:\n", sub, summary)
 		fs.PrintDefaults()
 		if len(examples) > 0 {
-			fmt.Println()
-			fmt.Println("Examples:")
+			fmt.Fprintln(cli.stdout())
+			fmt.Fprintln(cli.stdout(), "Examples:")
 			for _, ex := range examples {
-				fmt.Println("  " + ex)
+				fmt.Fprintln(cli.stdout(), "  "+ex)
 			}
 		}
 	}
@@ -133,7 +133,7 @@ func (cli *CLI) collectionOpen(fs *flag.FlagSet, dbPath *string, args []string) 
 // ── list ─────────────────────────────────────────────────────────────────────
 
 func (cli *CLI) runCollectionList(args []string) error {
-	fs, dbPath := collectionFlagSet("list", "List the collections of the database.",
+	fs, dbPath := cli.collectionFlagSet("list", "List the collections of the database.",
 		"blunderdb collection list --db database.db",
 		"blunderdb collection list --db database.db --format csv")
 	format := fs.String("format", "text", "Output format: text, json or csv")
@@ -154,9 +154,9 @@ func (cli *CLI) listCollections(format string) error {
 		if collections == nil {
 			collections = []Collection{}
 		}
-		return printJSON(collections)
+		return cli.printJSON(collections)
 	case "csv":
-		w := csv.NewWriter(os.Stdout)
+		w := csv.NewWriter(cli.stdout())
 		defer w.Flush()
 		if err := w.Write([]string{"id", "name", "positions", "description", "created_at"}); err != nil {
 			return fmt.Errorf("write csv header: %w", err)
@@ -171,11 +171,11 @@ func (cli *CLI) listCollections(format string) error {
 		return w.Error()
 	case "text":
 		if len(collections) == 0 {
-			fmt.Println("No collections found in database")
+			fmt.Fprintln(cli.stdout(), "No collections found in database")
 			return nil
 		}
-		fmt.Printf("Found %d collection(s):\n\n", len(collections))
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintf(cli.stdout(), "Found %d collection(s):\n\n", len(collections))
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, "ID\tName\tPositions\tDescription")
 		fmt.Fprintln(w, "--\t----\t---------\t-----------")
 		for _, c := range collections {
@@ -203,7 +203,7 @@ type collectionPositionRow struct {
 }
 
 func (cli *CLI) runCollectionShow(args []string) error {
-	fs, dbPath := collectionFlagSet("show", "List the positions of one collection.",
+	fs, dbPath := cli.collectionFlagSet("show", "List the positions of one collection.",
 		"blunderdb collection show --db database.db --id 3",
 		"blunderdb collection show --db database.db --id 3 --format json")
 	id := fs.Int64("id", 0, "Collection ID (required)")
@@ -244,12 +244,12 @@ func (cli *CLI) showCollection(id int64, format string) error {
 
 	switch strings.ToLower(format) {
 	case "json":
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Collection *Collection             `json:"collection"`
 			Positions  []collectionPositionRow `json:"positions"`
 		}{collection, rows})
 	case "csv":
-		w := csv.NewWriter(os.Stdout)
+		w := csv.NewWriter(cli.stdout())
 		defer w.Flush()
 		if err := w.Write([]string{"id", "index", "xgid", "score", "decision_type"}); err != nil {
 			return fmt.Errorf("write csv header: %w", err)
@@ -264,15 +264,15 @@ func (cli *CLI) showCollection(id int64, format string) error {
 		}
 		return w.Error()
 	case "text":
-		fmt.Printf("Collection %d: %s\n", collection.ID, collection.Name)
+		fmt.Fprintf(cli.stdout(), "Collection %d: %s\n", collection.ID, collection.Name)
 		if collection.Description != "" {
-			fmt.Printf("  Description: %s\n", collection.Description)
+			fmt.Fprintf(cli.stdout(), "  Description: %s\n", collection.Description)
 		}
-		fmt.Printf("  Positions: %d\n\n", len(rows))
+		fmt.Fprintf(cli.stdout(), "  Positions: %d\n\n", len(rows))
 		if len(rows) == 0 {
 			return nil
 		}
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, "ID\tIndex\tScore\tType\tXGID")
 		fmt.Fprintln(w, "--\t-----\t-----\t----\t----")
 		for _, r := range rows {
@@ -287,7 +287,7 @@ func (cli *CLI) showCollection(id int64, format string) error {
 // ── create / rename / delete ─────────────────────────────────────────────────
 
 func (cli *CLI) runCollectionCreate(args []string) error {
-	fs, dbPath := collectionFlagSet("create", "Create an empty collection, or a living one whose content is the result of a search query.",
+	fs, dbPath := cli.collectionFlagSet("create", "Create an empty collection, or a living one whose content is the result of a search query.",
 		"blunderdb collection create --db database.db --name \"Blitz openings\"",
 		"blunderdb collection create --db database.db --name \"Big blunders\" --query \"E>80\"")
 	name := fs.String("name", "", "Collection name (required)")
@@ -304,14 +304,14 @@ func (cli *CLI) runCollectionCreate(args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create collection: %w", err)
 	}
-	fmt.Printf("Successfully created collection %q (ID: %d)\n", strings.TrimSpace(*name), id)
+	fmt.Fprintf(cli.stdout(), "Successfully created collection %q (ID: %d)\n", strings.TrimSpace(*name), id)
 	return nil
 }
 
 // runCollectionFilter makes a collection LIVING, or turns it back into a
 // hand-made list.
 func (cli *CLI) runCollectionFilter(args []string) error {
-	fs, dbPath := collectionFlagSet("filter", "Make a collection living: its content becomes the result of a search query, re-evaluated every time it is opened. An empty query turns it back into a hand-made list, keeping the positions it already held.",
+	fs, dbPath := cli.collectionFlagSet("filter", "Make a collection living: its content becomes the result of a search query, re-evaluated every time it is opened. An empty query turns it back into a hand-made list, keeping the positions it already held.",
 		"blunderdb collection filter --db database.db --id 3 --query \"E>80 gt:holding\"")
 	id := fs.Int64("id", 0, "Collection ID (required)")
 	query := fs.String("query", "", "The search query, in the application's own grammar; empty clears it")
@@ -334,9 +334,9 @@ func (cli *CLI) runCollectionFilter(args []string) error {
 		return fmt.Errorf("failed to set the collection filter: %w", err)
 	}
 	if q == "" {
-		fmt.Printf("Collection %d is a hand-made list again.\n", *id)
+		fmt.Fprintf(cli.stdout(), "Collection %d is a hand-made list again.\n", *id)
 	} else {
-		fmt.Printf("Collection %d is now living: %s\n", *id, q)
+		fmt.Fprintf(cli.stdout(), "Collection %d is now living: %s\n", *id, q)
 	}
 	return nil
 }
@@ -344,7 +344,7 @@ func (cli *CLI) runCollectionFilter(args []string) error {
 // runCollectionFreeze turns a living collection into a hand-made one holding
 // the positions its query selects now.
 func (cli *CLI) runCollectionFreeze(args []string) error {
-	fs, dbPath := collectionFlagSet("freeze", "Freeze a living collection: the positions its query selects now become its content, and the query is cleared.",
+	fs, dbPath := cli.collectionFlagSet("freeze", "Freeze a living collection: the positions its query selects now become its content, and the query is cleared.",
 		"blunderdb collection freeze --db database.db --id 3")
 	id := fs.Int64("id", 0, "Collection ID (required)")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
@@ -358,14 +358,14 @@ func (cli *CLI) runCollectionFreeze(args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to freeze the collection: %w", err)
 	}
-	fmt.Printf("Collection %d is a hand-made list again, frozen on %d position(s).\n", *id, n)
+	fmt.Fprintf(cli.stdout(), "Collection %d is a hand-made list again, frozen on %d position(s).\n", *id, n)
 	return nil
 }
 
 // runCollectionEvaluate reads a collection whole under the declared ceiling and
 // says whether the answer stops short of the true total.
 func (cli *CLI) runCollectionEvaluate(args []string) error {
-	fs, dbPath := collectionFlagSet("evaluate", "Read a collection's position ids, a living one by running its query now. The answer is bounded by a declared ceiling and always states the true total and whether it was truncated.",
+	fs, dbPath := cli.collectionFlagSet("evaluate", "Read a collection's position ids, a living one by running its query now. The answer is bounded by a declared ceiling and always states the true total and whether it was truncated.",
 		"blunderdb collection evaluate --db database.db --id 3",
 		"blunderdb collection evaluate --db database.db --id 3 --limit 100 --format json")
 	id := fs.Int64("id", 0, "Collection ID (required)")
@@ -384,7 +384,7 @@ func (cli *CLI) runCollectionEvaluate(args []string) error {
 	}
 	switch *format {
 	case "json":
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(ev)
 	case "text":
@@ -392,7 +392,7 @@ func (cli *CLI) runCollectionEvaluate(args []string) error {
 		for i, pid := range ev.PositionIDs {
 			ids[i] = strconv.FormatInt(pid, 10)
 		}
-		fmt.Println(strings.Join(ids, "\n"))
+		fmt.Fprintln(cli.stdout(), strings.Join(ids, "\n"))
 		note := ""
 		if ev.Truncated {
 			note = fmt.Sprintf(" (truncated at the ceiling of %d)", ev.Cap)
@@ -407,7 +407,7 @@ func (cli *CLI) runCollectionEvaluate(args []string) error {
 // runCollectionPile is the Pile gesture: with a position it puts it on the
 // Pile or takes it off; without one it says where the Pile stands.
 func (cli *CLI) runCollectionPile(args []string) error {
-	fs, dbPath := collectionFlagSet("pile", "Put a position on the Pile (the collection of positions to come back to), or take it off when it is there. A position given by XGID that is not in the library is written first, as a position brought in on its own. Without a position, print the Pile.",
+	fs, dbPath := cli.collectionFlagSet("pile", "Put a position on the Pile (the collection of positions to come back to), or take it off when it is there. A position given by XGID that is not in the library is written first, as a position brought in on its own. Without a position, print the Pile.",
 		"blunderdb collection pile --db database.db --position-id 42",
 		"blunderdb collection pile --db database.db --xgid \"XGID=-b----E-C---eE---c-e----B-:0:0:1:21:0:0:0:0:10\"",
 		"blunderdb collection pile --db database.db")
@@ -448,7 +448,7 @@ func (cli *CLI) runCollectionPile(args []string) error {
 	if r.Brought {
 		extra = " (written to the library first)"
 	}
-	fmt.Printf("Position %d %s the Pile (collection %d)%s.\n", r.PositionID, verb, r.CollectionID, extra)
+	fmt.Fprintf(cli.stdout(), "Position %d %s the Pile (collection %d)%s.\n", r.PositionID, verb, r.CollectionID, extra)
 	return nil
 }
 
@@ -464,16 +464,16 @@ func (cli *CLI) showPile() error {
 	}
 	for _, c := range colls {
 		if c.ID == id {
-			fmt.Printf("Pile: collection %d %q, %d position(s).\n", c.ID, c.Name, c.PositionCount)
+			fmt.Fprintf(cli.stdout(), "Pile: collection %d %q, %d position(s).\n", c.ID, c.Name, c.PositionCount)
 			return nil
 		}
 	}
-	fmt.Println("No Pile yet: it is created the first time a position is put on it.")
+	fmt.Fprintln(cli.stdout(), "No Pile yet: it is created the first time a position is put on it.")
 	return nil
 }
 
 func (cli *CLI) runCollectionRename(args []string) error {
-	fs, dbPath := collectionFlagSet("rename", "Rename a collection (and optionally change its description).",
+	fs, dbPath := cli.collectionFlagSet("rename", "Rename a collection (and optionally change its description).",
 		"blunderdb collection rename --db database.db --id 3 --name \"Openings\"")
 	id := fs.Int64("id", 0, "Collection ID (required)")
 	name := fs.String("name", "", "New collection name (required)")
@@ -500,12 +500,12 @@ func (cli *CLI) runCollectionRename(args []string) error {
 	if err := cli.db.UpdateCollection(*id, strings.TrimSpace(*name), newDescription); err != nil {
 		return fmt.Errorf("failed to rename collection: %w", err)
 	}
-	fmt.Printf("Successfully renamed collection %d: %q -> %q\n", *id, current.Name, strings.TrimSpace(*name))
+	fmt.Fprintf(cli.stdout(), "Successfully renamed collection %d: %q -> %q\n", *id, current.Name, strings.TrimSpace(*name))
 	return nil
 }
 
 func (cli *CLI) runCollectionDelete(args []string) error {
-	fs, dbPath := collectionFlagSet("delete", "Delete a collection. Its positions stay in the database.",
+	fs, dbPath := cli.collectionFlagSet("delete", "Delete a collection. Its positions stay in the database.",
 		"blunderdb collection delete --db database.db --id 3 --confirm")
 	id := fs.Int64("id", 0, "Collection ID (required)")
 	confirm := fs.Bool("confirm", false, "Confirm deletion without prompting")
@@ -520,20 +520,20 @@ func (cli *CLI) runCollectionDelete(args []string) error {
 	if err != nil || current == nil {
 		return fmt.Errorf("collection with ID %d not found", *id)
 	}
-	fmt.Printf("Collection ID: %d\n  Name: %s\n  Positions: %d\n", current.ID, current.Name, current.PositionCount)
+	fmt.Fprintf(cli.stdout(), "Collection ID: %d\n  Name: %s\n  Positions: %d\n", current.ID, current.Name, current.PositionCount)
 	if !*confirm {
-		fmt.Print("\nDelete this collection? (yes/no): ")
+		fmt.Fprint(cli.stdout(), "\nDelete this collection? (yes/no): ")
 		var response string
 		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "yes" && strings.ToLower(response) != "y" {
-			fmt.Println("Deletion cancelled")
+			fmt.Fprintln(cli.stdout(), "Deletion cancelled")
 			return nil
 		}
 	}
 	if err := cli.db.DeleteCollection(*id); err != nil {
 		return fmt.Errorf("failed to delete collection: %w", err)
 	}
-	fmt.Printf("Successfully deleted collection %d (%s)\n", current.ID, current.Name)
+	fmt.Fprintf(cli.stdout(), "Successfully deleted collection %d (%s)\n", current.ID, current.Name)
 	return nil
 }
 
@@ -545,7 +545,7 @@ func (cli *CLI) runCollectionDelete(args []string) error {
 // positions were played in with their transcription drafts and aliases, and the producer's
 // watermark and password (see the export command and ADR-0007).
 func (cli *CLI) runCollectionExport(args []string) error {
-	fs, dbPath := collectionFlagSet("export", "Export one or more collections to a new database file.",
+	fs, dbPath := cli.collectionFlagSet("export", "Export one or more collections to a new database file.",
 		"blunderdb collection export --db database.db --id 3 --out openings.db",
 		"blunderdb collection export --db database.db --id 3,4 --out openings.db --comments=false",
 		"blunderdb collection export --db database.db --id 3 --out cours.db --watermark \"Cours du 12 mars\" --password secret")
@@ -607,7 +607,7 @@ func (cli *CLI) runCollectionExport(args []string) error {
 		IncludeCollectionPositions: true,
 	}
 	marking := exportMarking{watermark: *watermark, note: *watermarkNote, password: *password}
-	fmt.Printf("Exporting %d collection(s) to: %s\n", len(collectionIDs), *out)
+	fmt.Fprintf(cli.stdout(), "Exporting %d collection(s) to: %s\n", len(collectionIDs), *out)
 	return cli.exportDatabaseWithOptions(opts, marking, true)
 }
 
@@ -641,11 +641,11 @@ func xgidOf(pos *Position) string {
 
 // printJSON writes v to stdout, indented, the way every --format json output
 // of the CLI is written.
-func printJSON(v any) error {
+func (cli *CLI) printJSON(v any) error {
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		return fmt.Errorf("marshal json: %w", err)
 	}
-	fmt.Println(string(data))
+	fmt.Fprintln(cli.stdout(), string(data))
 	return nil
 }

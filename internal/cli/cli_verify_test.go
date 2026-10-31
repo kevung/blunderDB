@@ -14,7 +14,7 @@ import (
 func TestCLI_Verify_ReportsOrphans(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	clean := captureStdout(t, func() {
+	clean := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
 			t.Fatalf("verify (clean): %v", err)
 		}
@@ -44,7 +44,7 @@ func TestCLI_Verify_ReportsOrphans(t *testing.T) {
 	}
 	conn.Close()
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
 			t.Fatalf("verify (orphans): %v", err)
 		}
@@ -69,7 +69,7 @@ func TestCLI_Verify_ReportsOrphans(t *testing.T) {
 func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	clean := captureStdout(t, func() {
+	clean := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
 			t.Fatalf("verify (clean): %v", err)
 		}
@@ -88,7 +88,7 @@ func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
 		}
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
 			t.Fatalf("verify (drift): %v", err)
 		}
@@ -110,7 +110,7 @@ func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
 func TestCLI_Verify_ReportsCounterDrift(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	clean := captureStdout(t, func() {
+	clean := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
 			t.Fatalf("verify (clean): %v", err)
 		}
@@ -136,7 +136,7 @@ func TestCLI_Verify_ReportsCounterDrift(t *testing.T) {
 		}
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
 			t.Fatalf("verify (drift): %v", err)
 		}

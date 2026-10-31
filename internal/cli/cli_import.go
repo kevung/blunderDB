@@ -46,44 +46,44 @@ func (cli *CLI) runImport(args []string) error {
 		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error")
 
 	importCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb import [options]")
-		fmt.Println()
-		fmt.Println("Import data into the database.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb import [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Import data into the database.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		importCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Import Types:")
-		fmt.Println("  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)")
-		fmt.Println("  position  Import positions from a text file")
-		fmt.Println("  batch     Batch import all match/position files from a directory")
-		fmt.Println("  database  Merge a blunderDB database (.db): positions, matches, tournaments, collections, lessons, decks, drafts, aliases")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # Import XG match file")
-		fmt.Println("  blunderdb import --db database.db --type match --file match.xg")
-		fmt.Println()
-		fmt.Println("  # Import position file")
-		fmt.Println("  blunderdb import --db database.db --type position --file positions.txt")
-		fmt.Println()
-		fmt.Println("  # Merge another blunderDB database into this one")
-		fmt.Println("  blunderdb import --db database.db --type database --file club.db")
-		fmt.Println()
-		fmt.Println("  # Batch import all .xg files from a directory (recursive)")
-		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/")
-		fmt.Println()
-		fmt.Println("  # Batch import (non-recursive)")
-		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --recursive=false")
-		fmt.Println()
-		fmt.Println("  # Batch import, machine-readable, failing the run if any file errored")
-		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error")
-		fmt.Println()
-		fmt.Println("  # Continue batch 12, interrupted earlier: files already journaled are skipped")
-		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --resume 12")
-		fmt.Println()
-		fmt.Println("  # Import the folder as it stands, then keep importing what appears in it")
-		fmt.Println("  blunderdb import --db database.db --type batch --dir ~/XG/Matches")
-		fmt.Println("  blunderdb import --db database.db --type batch --dir ~/XG/Matches --watch")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Import Types:")
+		fmt.Fprintln(cli.stdout(), "  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)")
+		fmt.Fprintln(cli.stdout(), "  position  Import positions from a text file")
+		fmt.Fprintln(cli.stdout(), "  batch     Batch import all match/position files from a directory")
+		fmt.Fprintln(cli.stdout(), "  database  Merge a blunderDB database (.db): positions, matches, tournaments, collections, lessons, decks, drafts, aliases")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # Import XG match file")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type match --file match.xg")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Import position file")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type position --file positions.txt")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Merge another blunderDB database into this one")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type database --file club.db")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Batch import all .xg files from a directory (recursive)")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type batch --dir ./matches/")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Batch import (non-recursive)")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type batch --dir ./matches/ --recursive=false")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Batch import, machine-readable, failing the run if any file errored")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Continue batch 12, interrupted earlier: files already journaled are skipped")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type batch --dir ./matches/ --resume 12")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Import the folder as it stands, then keep importing what appears in it")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type batch --dir ~/XG/Matches")
+		fmt.Fprintln(cli.stdout(), "  blunderdb import --db database.db --type batch --dir ~/XG/Matches --watch")
 	}
 
 	if err := importCmd.Parse(args); err != nil {
@@ -199,7 +199,7 @@ func reportOf(b *domain.ImportBatch) *domain.ImportReport {
 // importMatch imports a match file (XG, SGF, MAT, TXT, BGF) or XGP position file
 func (cli *CLI) importMatch(filePath, format string) error {
 	if format != "json" {
-		fmt.Printf("Importing match from: %s\n", filePath)
+		fmt.Fprintf(cli.stdout(), "Importing match from: %s\n", filePath)
 	}
 
 	ext := strings.ToLower(filepath.Ext(filePath))
@@ -219,10 +219,10 @@ func (cli *CLI) importMatch(filePath, format string) error {
 		}
 		report := cli.finishImportBatch(batchID, failures)
 		if format == "json" {
-			return printJSON(importMatchResult{Type: "xgp_position", PositionID: posID, Report: reportOf(report)})
+			return cli.printJSON(importMatchResult{Type: "xgp_position", PositionID: posID, Report: reportOf(report)})
 		}
-		fmt.Printf("Successfully imported XGP position (ID: %d)\n", posID)
-		printImportReport(report)
+		fmt.Fprintf(cli.stdout(), "Successfully imported XGP position (ID: %d)\n", posID)
+		cli.printImportReport(report)
 		return nil
 	case ".xg":
 		matchID, err = cli.db.ImportXGMatch(filePath)
@@ -266,25 +266,25 @@ func (cli *CLI) importMatch(filePath, format string) error {
 			result.MatchLength = match.MatchLength
 			result.Games = match.GameCount
 		}
-		return printJSON(result)
+		return cli.printJSON(result)
 	}
 
-	fmt.Printf("Successfully imported match (ID: %d)\n", matchID)
+	fmt.Fprintf(cli.stdout(), "Successfully imported match (ID: %d)\n", matchID)
 
 	if matchErr == nil && match != nil {
-		fmt.Println("\nMatch Details:")
-		fmt.Printf("  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
+		fmt.Fprintln(cli.stdout(), "\nMatch Details:")
+		fmt.Fprintf(cli.stdout(), "  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
 		if match.Event != "" {
-			fmt.Printf("  Event: %s\n", match.Event)
+			fmt.Fprintf(cli.stdout(), "  Event: %s\n", match.Event)
 		}
 		if match.Location != "" {
-			fmt.Printf("  Location: %s\n", match.Location)
+			fmt.Fprintf(cli.stdout(), "  Location: %s\n", match.Location)
 		}
-		fmt.Printf("  Match Length: %d\n", match.MatchLength)
-		fmt.Printf("  Games: %d\n", match.GameCount)
+		fmt.Fprintf(cli.stdout(), "  Match Length: %d\n", match.MatchLength)
+		fmt.Fprintf(cli.stdout(), "  Games: %d\n", match.GameCount)
 	}
 
-	printImportReport(report)
+	cli.printImportReport(report)
 	return nil
 }
 
@@ -299,7 +299,7 @@ type importPositionResult struct {
 // imported, and with failOnError when any line errored.
 func (cli *CLI) importPosition(filePath, format string, failOnError bool) error {
 	if format != "json" {
-		fmt.Printf("Importing positions from: %s\n", filePath)
+		fmt.Fprintf(cli.stdout(), "Importing positions from: %s\n", filePath)
 	}
 
 	// Read the file
@@ -318,9 +318,9 @@ func (cli *CLI) importPosition(filePath, format string, failOnError bool) error 
 			return fmt.Errorf("failed to import BGBlitz position: %w", err)
 		}
 		if format == "json" {
-			return printJSON(importPositionResult{Imported: 1, PositionID: posID})
+			return cli.printJSON(importPositionResult{Imported: 1, PositionID: posID})
 		}
-		fmt.Printf("Successfully imported BGBlitz position (ID: %d)\n", posID)
+		fmt.Fprintf(cli.stdout(), "Successfully imported BGBlitz position (ID: %d)\n", posID)
 		return nil
 	}
 
@@ -359,13 +359,13 @@ func (cli *CLI) importPosition(filePath, format string, failOnError bool) error 
 	}
 
 	if format == "json" {
-		if err := printJSON(importPositionResult{Imported: imported, Failed: failed}); err != nil {
+		if err := cli.printJSON(importPositionResult{Imported: imported, Failed: failed}); err != nil {
 			return err
 		}
 	} else {
-		fmt.Printf("Successfully imported %d positions\n", imported)
+		fmt.Fprintf(cli.stdout(), "Successfully imported %d positions\n", imported)
 		if failed > 0 {
-			fmt.Printf("Failed to import %d positions\n", failed)
+			fmt.Fprintf(cli.stdout(), "Failed to import %d positions\n", failed)
 		}
 	}
 
@@ -418,7 +418,7 @@ type importBatchResult struct {
 // a failure: re-importing an unchanged directory stays a success.
 func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failOnError bool, resume int64) error {
 	if format != "json" {
-		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
+		fmt.Fprintf(cli.stdout(), "Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
 	}
 
 	matchFiles, err := ingest.CollectFiles(dirPath, recursive)
@@ -442,16 +442,16 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		matchFiles = cli.db.PendingImportFiles(matchFiles)
 		skipped = total - len(matchFiles)
 		if text {
-			fmt.Printf("Resuming batch %d: %d file(s) already journaled, %d left\n\n", resume, skipped, len(matchFiles))
+			fmt.Fprintf(cli.stdout(), "Resuming batch %d: %d file(s) already journaled, %d left\n\n", resume, skipped, len(matchFiles))
 		}
 	} else {
 		batchID = cli.beginImportBatch(dirPath, "mixed")
 		if text {
-			fmt.Printf("Found %d match file(s) to import\n", len(matchFiles))
+			fmt.Fprintf(cli.stdout(), "Found %d match file(s) to import\n", len(matchFiles))
 			if batchID != 0 {
-				fmt.Printf("Batch %d: if the run is interrupted, continue it with --resume %d\n", batchID, batchID)
+				fmt.Fprintf(cli.stdout(), "Batch %d: if the run is interrupted, continue it with --resume %d\n", batchID, batchID)
 			}
-			fmt.Println()
+			fmt.Fprintln(cli.stdout())
 		}
 	}
 	var failures domain.ImportReport
@@ -468,22 +468,22 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		relPath, _ := filepath.Rel(dirPath, o.Path)
 		result := BatchImportResult{FilePath: relPath}
 		if text {
-			fmt.Printf("[%d/%d] %s:", o.Index+1, len(matchFiles), relPath)
+			fmt.Fprintf(cli.stdout(), "[%d/%d] %s:", o.Index+1, len(matchFiles), relPath)
 		}
 		switch {
 		case o.Status == ingest.FileDuplicate:
 			if text {
 				if extra := duplicateExtrasOf(o.FlagsApplied, o.Deepened); extra != "" {
-					fmt.Printf(" DUPLICATE (%s)\n", extra)
+					fmt.Fprintf(cli.stdout(), " DUPLICATE (%s)\n", extra)
 				} else {
-					fmt.Println(" DUPLICATE")
+					fmt.Fprintln(cli.stdout(), " DUPLICATE")
 				}
 			}
 			result.Error = "duplicate"
 			duplicateCount++
 		case o.Status == ingest.FileFailed:
 			if text {
-				fmt.Printf(" ERROR: %s\n", o.Error)
+				fmt.Fprintf(cli.stdout(), " ERROR: %s\n", o.Error)
 			}
 			result.Error = o.Error
 			recordFailure(&failures, relPath, errors.New(o.Error))
@@ -494,7 +494,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			totalPositions += o.Positions
 			successCount++
 			if text {
-				fmt.Printf(" OK (Position ID: %d)\n", o.PositionID)
+				fmt.Fprintf(cli.stdout(), " OK (Position ID: %d)\n", o.PositionID)
 			}
 		default:
 			result.Success = true
@@ -504,9 +504,9 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			totalPositions += o.Positions
 			successCount++
 			if text {
-				fmt.Printf(" OK (ID: %d, %d positions)\n", o.MatchID, o.Positions)
+				fmt.Fprintf(cli.stdout(), " OK (ID: %d, %d positions)\n", o.MatchID, o.Positions)
 				if p := o.ProbableDuplicate; p != nil {
-					fmt.Printf("    probable duplicate of #%d under other names (%s)\n", p.OtherID, p.OtherPlayers)
+					fmt.Fprintf(cli.stdout(), "    probable duplicate of #%d under other names (%s)\n", p.OtherID, p.OtherPlayers)
 				}
 			}
 		}
@@ -518,12 +518,12 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			return
 		}
 		if unsafe {
-			fmt.Println("Bulk mode on an empty database: indexes rebuilt at the end, writes not synced.")
-			fmt.Println("A power cut during this import can damage the database: recreate it and import again.")
+			fmt.Fprintln(cli.stdout(), "Bulk mode on an empty database: indexes rebuilt at the end, writes not synced.")
+			fmt.Fprintln(cli.stdout(), "A power cut during this import can damage the database: recreate it and import again.")
 		} else {
-			fmt.Println("Bulk mode: larger cache, fewer checkpoints.")
+			fmt.Fprintln(cli.stdout(), "Bulk mode: larger cache, fewer checkpoints.")
 		}
-		fmt.Println()
+		fmt.Fprintln(cli.stdout())
 	}
 	var final ingest.BatchProgress
 	onProgress := func(p ingest.BatchProgress) {
@@ -566,11 +566,11 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 
 	if text {
 		// Print summary table
-		fmt.Println("\n" + strings.Repeat("=", 100))
-		fmt.Println("IMPORT SUMMARY")
-		fmt.Println(strings.Repeat("=", 100))
+		fmt.Fprintln(cli.stdout(), "\n"+strings.Repeat("=", 100))
+		fmt.Fprintln(cli.stdout(), "IMPORT SUMMARY")
+		fmt.Fprintln(cli.stdout(), strings.Repeat("=", 100))
 
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, "Status\tFile\tID\tPlayer 1\tPlayer 2\tGames\tPositions\tError")
 		fmt.Fprintln(w, "------\t----\t--\t--------\t--------\t-----\t---------\t-----")
 
@@ -600,12 +600,12 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		}
 		w.Flush()
 
-		fmt.Println(strings.Repeat("-", 100))
-		fmt.Printf("Total: %d files | Success: %d | Duplicates: %d | Failed: %d | Positions imported: %d\n",
+		fmt.Fprintln(cli.stdout(), strings.Repeat("-", 100))
+		fmt.Fprintf(cli.stdout(), "Total: %d files | Success: %d | Duplicates: %d | Failed: %d | Positions imported: %d\n",
 			len(matchFiles), successCount, duplicateCount, failCount, totalPositions)
-		printImportReport(report)
+		cli.printImportReport(report)
 	} else {
-		if err := printJSON(importBatchResult{
+		if err := cli.printJSON(importBatchResult{
 			Files:             results,
 			Total:             len(matchFiles),
 			Success:           successCount,
@@ -697,14 +697,14 @@ func (cli *CLI) analyzeDatabase(filePath, format string) error {
 		return err
 	}
 	if format == "json" {
-		return printJSON(a)
+		return cli.printJSON(a)
 	}
-	fmt.Printf("Analysed %s (nothing imported)\n", filePath)
-	fmt.Printf("  positions: %d in the file, %d already held\n", a.Positions, a.PositionsHeld)
-	fmt.Printf("  matches: %d new, %d already held\n", a.Matches, a.MatchesKnown)
-	fmt.Printf("  collections: %d, lessons: %d, decks: %d\n", a.Collections, a.Lessons, a.Decks)
+	fmt.Fprintf(cli.stdout(), "Analysed %s (nothing imported)\n", filePath)
+	fmt.Fprintf(cli.stdout(), "  positions: %d in the file, %d already held\n", a.Positions, a.PositionsHeld)
+	fmt.Fprintf(cli.stdout(), "  matches: %d new, %d already held\n", a.Matches, a.MatchesKnown)
+	fmt.Fprintf(cli.stdout(), "  collections: %d, lessons: %d, decks: %d\n", a.Collections, a.Lessons, a.Decks)
 	if len(a.Unreadable) > 0 {
-		fmt.Printf("  left behind (source too old): %s\n", strings.Join(a.Unreadable, ", "))
+		fmt.Fprintf(cli.stdout(), "  left behind (source too old): %s\n", strings.Join(a.Unreadable, ", "))
 	}
 	return nil
 }
@@ -718,20 +718,20 @@ func (cli *CLI) importDatabase(filePath, format string, maxPositions int) error 
 		return err
 	}
 	if format == "json" {
-		return printJSON(res)
+		return cli.printJSON(res)
 	}
-	fmt.Printf("Imported %s\n", filePath)
-	fmt.Printf("  positions: %v added, %v merged, %v unchanged\n", res["added"], res["merged"], res["skipped"])
-	fmt.Printf("  matches: %v added, %v already held\n", res["matches"], res["matchesKnown"])
+	fmt.Fprintf(cli.stdout(), "Imported %s\n", filePath)
+	fmt.Fprintf(cli.stdout(), "  positions: %v added, %v merged, %v unchanged\n", res["added"], res["merged"], res["skipped"])
+	fmt.Fprintf(cli.stdout(), "  matches: %v added, %v already held\n", res["matches"], res["matchesKnown"])
 	if n, ok := res["leftOut"].(int); ok && n > 0 {
-		fmt.Printf("  left out by --max-positions: %d positions, %v matches, %v collections, %v lessons, %v decks\n",
+		fmt.Fprintf(cli.stdout(), "  left out by --max-positions: %d positions, %v matches, %v collections, %v lessons, %v decks\n",
 			n, res["matchesLeftOut"], res["collectionsLeftOut"], res["lessonsLeftOut"], res["decksLeftOut"])
 	}
 	if n, ok := res["analysesSkipped"].(int); ok && n > 0 {
-		fmt.Printf("  analyses not merged, the one held here unreadable (left as it was): %d\n", n)
+		fmt.Fprintf(cli.stdout(), "  analyses not merged, the one held here unreadable (left as it was): %d\n", n)
 	}
 	for _, key := range []string{"tournaments", "directions", "rencontres", "collections", "lessons", "decks", "transcriptions", "aliases"} {
-		fmt.Printf("  %s: %v\n", key, res[key])
+		fmt.Fprintf(cli.stdout(), "  %s: %v\n", key, res[key])
 	}
 	for _, l := range [][2]string{
 		{"livingCollectionsFrozen", "living collections frozen"},
@@ -740,7 +740,7 @@ func (cli *CLI) importDatabase(filePath, format string, maxPositions int) error 
 		{"unreadable", "left behind (source too old)"},
 	} {
 		if names, ok := res[l[0]].([]string); ok && len(names) > 0 {
-			fmt.Printf("  %s: %s\n", l[1], strings.Join(names, ", "))
+			fmt.Fprintf(cli.stdout(), "  %s: %s\n", l[1], strings.Join(names, ", "))
 		}
 	}
 	return nil

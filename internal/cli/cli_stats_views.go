@@ -77,23 +77,23 @@ func (cli *CLI) runStatsView(name string, usage func(*flag.FlagSet), args []stri
 // tournament, rolling).
 func (cli *CLI) runStatsProgression(args []string) error {
 	res, f, _, err := cli.runStatsView("progression", func(fs *flag.FlagSet) {
-		fmt.Println("Usage: blunderdb stats progression --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The Progression tab of the Stats panel: the PR of each match in date order,")
-		fmt.Println("each tournament's PR, and the rolling PR over the last N decisions.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats progression --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The Progression tab of the Stats panel: the PR of each match in date order,")
+		fmt.Fprintln(cli.stdout(), "each tournament's PR, and the rolling PR over the last N decisions.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats progression --db database.db --player \"Alice\"")
-		fmt.Println("  blunderdb stats progression --db database.db --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats progression --db database.db --player \"Alice\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats progression --db database.db --format json")
 	}, args, nil)
 	if err != nil {
 		return err
 	}
 	if strings.ToLower(*f.format) == "json" {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			PerMatch      []database.MatchStats      `json:"PerMatch"`
 			PerTournament []database.TournamentStats `json:"PerTournament"`
 			PRRolling     map[int]float64            `json:"PRRolling"`
@@ -102,17 +102,17 @@ func (cli *CLI) runStatsProgression(args []string) error {
 			MWC7          domain.MWC7                `json:"MWC7"`
 		}{res.PerMatch, res.PerTournament, res.PRRolling, res.MWCRolling, res.MWCAvailable, res.MWC7})
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "DATE\tPLAYER\tPR\tDECISIONS\tMWC LOSS (7 PT)")
 	for _, m := range res.PerMatch {
 		fmt.Fprintf(w, "%s\t%s\t%.2f\t%d\t%s\n", m.Date, m.PlayerName, m.PR, m.NumDecisions, formatMWC7(m.MWC7))
 	}
 	w.Flush()
 	if len(res.PRRolling) > 0 {
-		fmt.Println()
-		fmt.Println("Rolling PR (last N decisions):")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Rolling PR (last N decisions):")
 		for _, n := range sortedKeys(res.PRRolling) {
-			fmt.Printf("  %d: %.2f\n", n, res.PRRolling[n])
+			fmt.Fprintf(cli.stdout(), "  %d: %.2f\n", n, res.PRRolling[n])
 		}
 	}
 	return nil
@@ -122,24 +122,24 @@ func (cli *CLI) runStatsProgression(args []string) error {
 // PR split by phase, plan of play, tag, score and cube action.
 func (cli *CLI) runStatsBreakdown(args []string) error {
 	res, f, _, err := cli.runStatsView("breakdown", func(fs *flag.FlagSet) {
-		fmt.Println("Usage: blunderdb stats breakdown --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The Breakdowns tab of the Stats panel: the PR of the filter split by game")
-		fmt.Println("phase, plan of play, comment tag, score (away x away) and cube action, and")
-		fmt.Println("the direction in which the cube decisions went wrong.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats breakdown --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The Breakdowns tab of the Stats panel: the PR of the filter split by game")
+		fmt.Fprintln(cli.stdout(), "phase, plan of play, comment tag, score (away x away) and cube action, and")
+		fmt.Fprintln(cli.stdout(), "the direction in which the cube decisions went wrong.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats breakdown --db database.db --player \"Alice\"")
-		fmt.Println("  blunderdb stats breakdown --db database.db --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats breakdown --db database.db --player \"Alice\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats breakdown --db database.db --format json")
 	}, args, nil)
 	if err != nil {
 		return err
 	}
 	if strings.ToLower(*f.format) == "json" {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			PerPhase            []database.PhaseStats      `json:"PerPhase"`
 			PerGameType         []database.GameTypeStats   `json:"PerGameType"`
 			PerTag              []database.TagStats        `json:"PerTag"`
@@ -148,7 +148,7 @@ func (cli *CLI) runStatsBreakdown(args []string) error {
 			CubeDirections      database.CubeDirections    `json:"CubeDirections"`
 		}{res.PerPhase, res.PerGameType, res.PerTag, res.PerScore, res.CubeActionBreakdown, res.CubeDirections})
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	section := func(title string) { fmt.Fprintf(w, "\n%s\n", title) }
 	fmt.Fprintln(w, "PHASE\tPR\tDECISIONS\tBLUNDERS")
 	for _, r := range res.PerPhase {
@@ -188,18 +188,18 @@ func (cli *CLI) runStatsReport(args []string) error {
 	out = fs.String("output", "", "File to write (default: standard output)")
 	lang = fs.String("lang", "en", "Report language: "+strings.Join(report.Languages(), ", "))
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats report --db <file> --html [options]")
-		fmt.Println()
-		fmt.Println("The HTML report of the Stats panel: the filter's indicators and its ten most")
-		fmt.Println("expensive decisions with their diagrams, as one self-contained file (no image,")
-		fmt.Println("style sheet or script outside it) that a browser prints to PDF.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats report --db <file> --html [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The HTML report of the Stats panel: the filter's indicators and its ten most")
+		fmt.Fprintln(cli.stdout(), "expensive decisions with their diagrams, as one self-contained file (no image,")
+		fmt.Fprintln(cli.stdout(), "style sheet or script outside it) that a browser prints to PDF.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats report --db database.db --html --output rapport.html")
-		fmt.Println("  blunderdb stats report --db database.db --html --player \"Alice\" --lang fr")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats report --db database.db --html --output rapport.html")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats report --db database.db --html --player \"Alice\" --lang fr")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -233,7 +233,7 @@ func (cli *CLI) runStatsReport(args []string) error {
 		return fmt.Errorf("stats report: %w", err)
 	}
 	if *out == "" {
-		fmt.Print(html)
+		fmt.Fprint(cli.stdout(), html)
 		return nil
 	}
 	if err := os.WriteFile(*out, []byte(html), 0o644); err != nil {

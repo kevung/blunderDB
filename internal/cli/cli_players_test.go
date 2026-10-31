@@ -28,7 +28,7 @@ func setupCLIPlayers(t *testing.T) *CLI {
 func TestCLIPlayers_TextFormat(t *testing.T) {
 	cli := setupCLIPlayers(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.showPlayerTable(StatsFilter{DecisionType: -1}, "text"); err != nil {
 			t.Fatalf("showPlayerTable: %v", err)
 		}
@@ -49,7 +49,7 @@ func TestCLIPlayers_TextFormat(t *testing.T) {
 func TestCLIPlayers_CSVFormat(t *testing.T) {
 	cli := setupCLIPlayers(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.showPlayerTable(StatsFilter{DecisionType: -1}, "csv"); err != nil {
 			t.Fatalf("showPlayerTable: %v", err)
 		}
@@ -96,7 +96,7 @@ func TestCLIPlayers_CSVFormat(t *testing.T) {
 func TestCLIPlayers_JSONFormat(t *testing.T) {
 	cli := setupCLIPlayers(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.showPlayerTable(StatsFilter{DecisionType: -1}, "json"); err != nil {
 			t.Fatalf("showPlayerTable: %v", err)
 		}
@@ -116,7 +116,7 @@ func TestCLIPlayers_EmptyDatabase(t *testing.T) {
 	defer db.Close()
 	cli := &CLI{db: db}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.showPlayerTable(StatsFilter{DecisionType: -1}, "text"); err != nil {
 			t.Fatalf("showPlayerTable on an empty database: %v", err)
 		}

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"os"
 	"strings"
 	"text/tabwriter"
 
@@ -71,17 +70,17 @@ func (cli *CLI) runStatsH2H(args []string) error {
 	opponent := fs.String("opponent", "", "Second player (required)")
 	c := newCorpusStatsFlags(fs)
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats h2h --db <file> --player <name> --opponent <name> [options]")
-		fmt.Println()
-		fmt.Println("The matches the two players played against each other, each one's PR in")
-		fmt.Println("each match and over all of them, and the record (decided matches only).")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats h2h --db <file> --player <name> --opponent <name> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The matches the two players played against each other, each one's PR in")
+		fmt.Fprintln(cli.stdout(), "each match and over all of them, and the record (decided matches only).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats h2h --db database.db --player \"Alice\" --opponent \"Bob\"")
-		fmt.Println("  blunderdb stats h2h --db database.db --player \"Alice\" --opponent \"Bob\" --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats h2h --db database.db --player \"Alice\" --opponent \"Bob\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats h2h --db database.db --player \"Alice\" --opponent \"Bob\" --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -104,15 +103,15 @@ func (cli *CLI) runStatsH2H(args []string) error {
 		return statsErr("head to head", err)
 	}
 	if c.json() {
-		return printJSON(res)
+		return cli.printJSON(res)
 	}
-	fmt.Printf("%s vs %s — %d matches, record %d-%d\n", res.PlayerA, res.PlayerB, len(res.Matches), res.WinsA, res.WinsB)
-	fmt.Printf("PR %s: %s over %d decisions; PR %s: %s over %d decisions\n\n",
+	fmt.Fprintf(cli.stdout(), "%s vs %s — %d matches, record %d-%d\n", res.PlayerA, res.PlayerB, len(res.Matches), res.WinsA, res.WinsB)
+	fmt.Fprintf(cli.stdout(), "PR %s: %s over %d decisions; PR %s: %s over %d decisions\n\n",
 		res.PlayerA, prCell(res.PRA, res.DecisionsA), res.DecisionsA, res.PlayerB, prCell(res.PRB, res.DecisionsB), res.DecisionsB)
 	if len(res.Matches) == 0 {
 		return nil
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintf(w, "MATCH\tDATE\tLENGTH\tWINNER\tPR %s\tPR %s\n", res.PlayerA, res.PlayerB)
 	for _, m := range res.Matches {
 		winner := "-"
@@ -134,22 +133,22 @@ func (cli *CLI) runStatsContrast(args []string) error {
 	limit := fs.Int("limit", 20, "Maximum number of positions shown (text only; 0 = all)")
 	c := newCorpusStatsFlags(fs)
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats contrast --db <file> --player <name> --opponent <name> [options]")
-		fmt.Println()
-		fmt.Println("The positions both players decided, whoever they played against, where one")
-		fmt.Println("played well and the other did not: the widest gap first. A player's error on")
-		fmt.Println("a position is their worst play of it; \"well\" means below the library's Error")
-		fmt.Println("threshold. Open the positions with --format json (position_id).")
-		fmt.Println()
-		fmt.Println("A play its position's analysis cannot price (no candidate names it) is left")
-		fmt.Println("out; their count is printed (unscored_moves in JSON).")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats contrast --db <file> --player <name> --opponent <name> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The positions both players decided, whoever they played against, where one")
+		fmt.Fprintln(cli.stdout(), "played well and the other did not: the widest gap first. A player's error on")
+		fmt.Fprintln(cli.stdout(), "a position is their worst play of it; \"well\" means below the library's Error")
+		fmt.Fprintln(cli.stdout(), "threshold. Open the positions with --format json (position_id).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "A play its position's analysis cannot price (no candidate names it) is left")
+		fmt.Fprintln(cli.stdout(), "out; their count is printed (unscored_moves in JSON).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats contrast --db database.db --player \"Alice\" --opponent \"Bob\"")
-		fmt.Println("  blunderdb stats contrast --db database.db --player \"Alice\" --opponent \"Bob\" --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats contrast --db database.db --player \"Alice\" --opponent \"Bob\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats contrast --db database.db --player \"Alice\" --opponent \"Bob\" --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -172,17 +171,17 @@ func (cli *CLI) runStatsContrast(args []string) error {
 		return statsErr("player contrast", err)
 	}
 	if c.json() {
-		return printJSON(res)
+		return cli.printJSON(res)
 	}
-	fmt.Printf("%s / %s — %d common positions, %d where one played well and the other did not (error threshold %d mp)\n\n",
+	fmt.Fprintf(cli.stdout(), "%s / %s — %d common positions, %d where one played well and the other did not (error threshold %d mp)\n\n",
 		res.PlayerA, res.PlayerB, res.CommonPositions, len(res.Positions), res.ThresholdMP)
 	if res.UnscoredMoves > 0 {
-		fmt.Printf("%d analysed plays of these two players have no error their analysis can price and are left out.\n\n", res.UnscoredMoves)
+		fmt.Fprintf(cli.stdout(), "%d analysed plays of these two players have no error their analysis can price and are left out.\n\n", res.UnscoredMoves)
 	}
 	if len(res.Positions) == 0 {
 		return nil
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintf(w, "POSITION\tERR %s (mp)\tERR %s (mp)\tWELL PLAYED BY\n", res.PlayerA, res.PlayerB)
 	shown := res.Positions
 	if *limit > 0 && len(shown) > *limit {
@@ -205,18 +204,18 @@ func (cli *CLI) runStatsMatches(args []string) error {
 	player := fs.String("player", "", "Only the matches where this player holds a counted decision")
 	c := newCorpusStatsFlags(fs)
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats matches --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The matches a corpus figure counts (a ranking line, a window), oldest first:")
-		fmt.Println("those where the player, or any player, holds a counted decision.")
-		fmt.Println("Their IDs feed `list --type matches --ids`.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats matches --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The matches a corpus figure counts (a ranking line, a window), oldest first:")
+		fmt.Fprintln(cli.stdout(), "those where the player, or any player, holds a counted decision.")
+		fmt.Fprintln(cli.stdout(), "Their IDs feed `list --type matches --ids`.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats matches --db database.db --player \"Alice\" --from 2025-01-01 --to 2025-03-31")
-		fmt.Println("  blunderdb stats matches --db database.db --player \"Alice\" --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats matches --db database.db --player \"Alice\" --from 2025-01-01 --to 2025-03-31")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats matches --db database.db --player \"Alice\" --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -235,17 +234,17 @@ func (cli *CLI) runStatsMatches(args []string) error {
 		return statsErr("matches", err)
 	}
 	if c.json() {
-		return printJSON(map[string][]int64{"match_ids": ids})
+		return cli.printJSON(map[string][]int64{"match_ids": ids})
 	}
 	if len(ids) == 0 {
-		fmt.Println("No match with a counted decision in this filter.")
+		fmt.Fprintln(cli.stdout(), "No match with a counted decision in this filter.")
 		return nil
 	}
 	matches, err := cli.db.ListMatches(storage.MatchListOpts{IDs: ids, Sort: "date_asc"})
 	if err != nil {
 		return fmt.Errorf("failed to get matches: %w", err)
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tDATE\tLENGTH\tPLAYER 1\tPLAYER 2")
 	for _, m := range matches {
 		fmt.Fprintf(w, "%d\t%s\t%d\t%s\t%s\n", m.ID, m.MatchDate.Format("2006-01-02"), m.MatchLength, m.Player1Name, m.Player2Name)
@@ -260,17 +259,17 @@ func (cli *CLI) runStatsTournaments(args []string) error {
 	player := fs.String("player", "", "Only the tournaments where this player holds a counted decision")
 	c := newCorpusStatsFlags(fs)
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats tournaments --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The tournaments the Dashboard's tournament count counts, by ID: those")
-		fmt.Println("holding a counted decision of the player, or of any player, under the filter.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats tournaments --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The tournaments the Dashboard's tournament count counts, by ID: those")
+		fmt.Fprintln(cli.stdout(), "holding a counted decision of the player, or of any player, under the filter.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats tournaments --db database.db --player \"Alice\" --from 2025-01-01")
-		fmt.Println("  blunderdb stats tournaments --db database.db --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats tournaments --db database.db --player \"Alice\" --from 2025-01-01")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats tournaments --db database.db --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -289,10 +288,10 @@ func (cli *CLI) runStatsTournaments(args []string) error {
 		return statsErr("tournaments", err)
 	}
 	if c.json() {
-		return printJSON(map[string][]int64{"tournament_ids": ids})
+		return cli.printJSON(map[string][]int64{"tournament_ids": ids})
 	}
 	if len(ids) == 0 {
-		fmt.Println("No tournament with a counted decision in this filter.")
+		fmt.Fprintln(cli.stdout(), "No tournament with a counted decision in this filter.")
 		return nil
 	}
 	all, err := cli.db.GetAllTournaments()
@@ -303,7 +302,7 @@ func (cli *CLI) runStatsTournaments(args []string) error {
 	for _, id := range ids {
 		keep[id] = true
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tDATE\tMATCHES\tNAME")
 	for _, t := range all {
 		if keep[t.ID] {
@@ -320,19 +319,19 @@ func (cli *CLI) runStatsWindows(args []string) error {
 	byPhase := fs.Bool("by-phase", false, "Split each window by game phase (opening, middle game, race, bear-off...)")
 	c := newCorpusStatsFlags(fs)
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats windows --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The PR over a sliding calendar window, one line per month: each line covers")
-		fmt.Println("that month and the ones before it in the window. A window without a counted")
-		fmt.Println("decision shows a dash, not a PR.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats windows --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The PR over a sliding calendar window, one line per month: each line covers")
+		fmt.Fprintln(cli.stdout(), "that month and the ones before it in the window. A window without a counted")
+		fmt.Fprintln(cli.stdout(), "decision shows a dash, not a PR.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats windows --db database.db --player \"Alice\"")
-		fmt.Println("  blunderdb stats windows --db database.db --player \"Alice\" --window quarter --format json")
-		fmt.Println("  blunderdb stats windows --db database.db --player \"Alice\" --by-phase")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats windows --db database.db --player \"Alice\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats windows --db database.db --player \"Alice\" --window quarter --format json")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats windows --db database.db --player \"Alice\" --by-phase")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -366,13 +365,13 @@ func (cli *CLI) runStatsWindows(args []string) error {
 		return statsErr("PR by window", err)
 	}
 	if c.json() {
-		return printJSON(res)
+		return cli.printJSON(res)
 	}
 	if len(res) == 0 {
-		fmt.Println("No dated match with a counted decision in this filter.")
+		fmt.Fprintln(cli.stdout(), "No dated match with a counted decision in this filter.")
 		return nil
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "FROM\tTO\tMATCHES\tDECISIONS\tPR")
 	for _, p := range res {
 		fmt.Fprintf(w, "%s\t%s\t%d\t%d\t%s\n", p.From, p.To, p.NumMatches, p.NumDecisions, prCell(p.PR, p.NumDecisions))
@@ -389,18 +388,18 @@ func (cli *CLI) runStatsRanking(args []string) error {
 	limit := fs.Int("limit", 0, "Show only the first N ranks (0: all)")
 	c := newCorpusStatsFlags(fs)
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats ranking --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The players ranked by PR, the lowest first, among those with at least")
-		fmt.Println("--min-decisions counted decisions: a PR over a few decisions is noise.")
-		fmt.Println("Equal PRs share a rank.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats ranking --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The players ranked by PR, the lowest first, among those with at least")
+		fmt.Fprintln(cli.stdout(), "--min-decisions counted decisions: a PR over a few decisions is noise.")
+		fmt.Fprintln(cli.stdout(), "Equal PRs share a rank.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats ranking --db database.db --min-decisions 1000 --limit 20")
-		fmt.Println("  blunderdb stats ranking --db database.db --from 2024-01-01 --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats ranking --db database.db --min-decisions 1000 --limit 20")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats ranking --db database.db --from 2024-01-01 --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -425,13 +424,13 @@ func (cli *CLI) runStatsRanking(args []string) error {
 		res = res[:*limit]
 	}
 	if c.json() {
-		return printJSON(res)
+		return cli.printJSON(res)
 	}
 	if len(res) == 0 {
-		fmt.Printf("No player with at least %d counted decisions in this filter.\n", *minDecisions)
+		fmt.Fprintf(cli.stdout(), "No player with at least %d counted decisions in this filter.\n", *minDecisions)
 		return nil
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "RANK\tPLAYER\tPR\tDECISIONS\tMATCHES")
 	for _, r := range res {
 		fmt.Fprintf(w, "%d\t%s\t%.2f\t%d\t%d\n", r.Rank, r.Name, r.PR, r.Decisions, r.Matches)
@@ -444,17 +443,17 @@ func (cli *CLI) runStatsEngines(args []string) error {
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats engines --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The analysis engines present in the database, by the exact name --engine")
-		fmt.Println("expects.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats engines --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The analysis engines present in the database, by the exact name --engine")
+		fmt.Fprintln(cli.stdout(), "expects.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats engines --db database.db")
-		fmt.Println("  blunderdb stats engines --db database.db --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats engines --db database.db")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats engines --db database.db --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -474,14 +473,14 @@ func (cli *CLI) runStatsEngines(args []string) error {
 		engines = []string{}
 	}
 	if strings.ToLower(*format) == "json" {
-		return printJSON(engines)
+		return cli.printJSON(engines)
 	}
 	if len(engines) == 0 {
-		fmt.Println("No analysis in this database.")
+		fmt.Fprintln(cli.stdout(), "No analysis in this database.")
 		return nil
 	}
 	for _, e := range engines {
-		fmt.Println(e)
+		fmt.Fprintln(cli.stdout(), e)
 	}
 	return nil
 }

@@ -18,16 +18,16 @@ func (cli *CLI) runDelete(args []string) error {
 	format := deleteCmd.String("format", "text", "Output format: text or json")
 
 	deleteCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb delete [options]")
-		fmt.Println()
-		fmt.Println("Delete data from the database.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb delete [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Delete data from the database.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		deleteCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # Delete match with ID 1")
-		fmt.Println("  blunderdb delete --db database.db --type match --id 1 --confirm")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # Delete match with ID 1")
+		fmt.Fprintln(cli.stdout(), "  blunderdb delete --db database.db --type match --id 1 --confirm")
 	}
 
 	if err := deleteCmd.Parse(args); err != nil {
@@ -84,26 +84,26 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool, format string) error {
 
 	if text {
 		// Show match details
-		fmt.Printf("Match ID: %d\n", match.ID)
-		fmt.Printf("  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
+		fmt.Fprintf(cli.stdout(), "Match ID: %d\n", match.ID)
+		fmt.Fprintf(cli.stdout(), "  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
 		if match.Event != "" {
-			fmt.Printf("  Event: %s\n", match.Event)
+			fmt.Fprintf(cli.stdout(), "  Event: %s\n", match.Event)
 		}
-		fmt.Printf("  Games: %d\n", match.GameCount)
-		fmt.Println()
+		fmt.Fprintf(cli.stdout(), "  Games: %d\n", match.GameCount)
+		fmt.Fprintln(cli.stdout())
 	}
 
 	// Confirm deletion
 	if !confirm {
-		fmt.Print("Are you sure you want to delete this match? (yes/no): ")
+		fmt.Fprint(cli.stdout(), "Are you sure you want to delete this match? (yes/no): ")
 		var response string
 		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "yes" {
 			if text {
-				fmt.Println("Deletion cancelled")
+				fmt.Fprintln(cli.stdout(), "Deletion cancelled")
 				return nil
 			}
-			return printJSON(struct {
+			return cli.printJSON(struct {
 				MatchID   int64 `json:"match_id"`
 				Cancelled bool  `json:"cancelled"`
 			}{MatchID: matchID, Cancelled: true})
@@ -117,12 +117,12 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool, format string) error {
 	}
 
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			MatchID int64 `json:"match_id"`
 			Deleted bool  `json:"deleted"`
 		}{MatchID: matchID, Deleted: true})
 	}
 
-	fmt.Printf("Successfully deleted match ID %d\n", matchID)
+	fmt.Fprintf(cli.stdout(), "Successfully deleted match ID %d\n", matchID)
 	return nil
 }

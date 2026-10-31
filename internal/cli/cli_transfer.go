@@ -22,36 +22,36 @@ func (cli *CLI) runTransfer(args []string) error {
 	sel := selectionFlags(fs, "the transfer")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb transfer --from <library.db> --to <library.db> [options]")
-		fmt.Println()
-		fmt.Println("Copy part of one library into another. Every family goes by default; each one can")
-		fmt.Println("be left out (--matches=false) or narrowed to some ids (--collection-ids=1,2).")
-		fmt.Println("Without ids, every position of the source goes, filed or not. As soon as ids are")
-		fmt.Println("named, only the positions the families kept reach go, with their analyses and")
-		fmt.Println("comments: a collection's members, a match's moves, a lesson's steps, a deck's cards.")
-		fmt.Println("A match named by id brings its tournament (name, date, place), not the tournament's")
-		fmt.Println("other matches; --tournaments=false copies it without one. An id the source does")
-		fmt.Println("not hold is an error.")
-		fmt.Println()
-		fmt.Println("The copy merges like an import: a position the destination holds is not added")
-		fmt.Println("twice, analyses and comments merge, a match, a collection or a lesson it already")
-		fmt.Println("holds is completed, not duplicated. Nothing is written that says where the copy")
-		fmt.Println("came from, nor anything in the source: a source at another schema version is")
-		fmt.Println("refused (open an older one once with blunderDB to upgrade it).")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb transfer --from <library.db> --to <library.db> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Copy part of one library into another. Every family goes by default; each one can")
+		fmt.Fprintln(cli.stdout(), "be left out (--matches=false) or narrowed to some ids (--collection-ids=1,2).")
+		fmt.Fprintln(cli.stdout(), "Without ids, every position of the source goes, filed or not. As soon as ids are")
+		fmt.Fprintln(cli.stdout(), "named, only the positions the families kept reach go, with their analyses and")
+		fmt.Fprintln(cli.stdout(), "comments: a collection's members, a match's moves, a lesson's steps, a deck's cards.")
+		fmt.Fprintln(cli.stdout(), "A match named by id brings its tournament (name, date, place), not the tournament's")
+		fmt.Fprintln(cli.stdout(), "other matches; --tournaments=false copies it without one. An id the source does")
+		fmt.Fprintln(cli.stdout(), "not hold is an error.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The copy merges like an import: a position the destination holds is not added")
+		fmt.Fprintln(cli.stdout(), "twice, analyses and comments merge, a match, a collection or a lesson it already")
+		fmt.Fprintln(cli.stdout(), "holds is completed, not duplicated. Nothing is written that says where the copy")
+		fmt.Fprintln(cli.stdout(), "came from, nor anything in the source: a source at another schema version is")
+		fmt.Fprintln(cli.stdout(), "refused (open an older one once with blunderDB to upgrade it).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # Copy a whole library into another")
-		fmt.Println("  blunderdb transfer --from club.db --to mine.db")
-		fmt.Println()
-		fmt.Println("  # Copy two collections, with their positions, and nothing else")
-		fmt.Println("  blunderdb transfer --from club.db --to mine.db --collection-ids=3,7 \\")
-		fmt.Println("      --matches=false --tournaments=false --lessons=false --decks=false")
-		fmt.Println()
-		fmt.Println("  # Copy one match, with its positions and its tournament, back the other way")
-		fmt.Println("  blunderdb transfer --from mine.db --to club.db --match-ids=12 --collections=false --lessons=false --decks=false")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # Copy a whole library into another")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transfer --from club.db --to mine.db")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Copy two collections, with their positions, and nothing else")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transfer --from club.db --to mine.db --collection-ids=3,7 \\")
+		fmt.Fprintln(cli.stdout(), "      --matches=false --tournaments=false --lessons=false --decks=false")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Copy one match, with its positions and its tournament, back the other way")
+		fmt.Fprintln(cli.stdout(), "  blunderdb transfer --from mine.db --to club.db --match-ids=12 --collections=false --lessons=false --decks=false")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -97,7 +97,7 @@ func (cli *CLI) runTransfer(args []string) error {
 	var report ingest.TransferReport
 	err = withInterruptibleContext(func() {
 		if text {
-			fmt.Println("\nCancelling...")
+			fmt.Fprintln(cli.stdout(), "\nCancelling...")
 		}
 	}, func(ctx context.Context) error {
 		var err error
@@ -111,26 +111,26 @@ func (cli *CLI) runTransfer(args []string) error {
 		return fmt.Errorf("transfer failed: %w", err)
 	}
 	if !text {
-		return printJSON(report)
+		return cli.printJSON(report)
 	}
-	fmt.Printf("Transferred %s -> %s\n", *from, *to)
-	fmt.Println("Read from the source:")
-	printExportReport(report.Exported)
+	fmt.Fprintf(cli.stdout(), "Transferred %s -> %s\n", *from, *to)
+	fmt.Fprintln(cli.stdout(), "Read from the source:")
+	cli.printExportReport(report.Exported)
 	im := report.Imported
-	fmt.Println("Merged into the destination:")
-	fmt.Printf("  positions %d, matches %d (already held %d), collections changed %d, lessons %d, Anki decks %d\n",
+	fmt.Fprintln(cli.stdout(), "Merged into the destination:")
+	fmt.Fprintf(cli.stdout(), "  positions %d, matches %d (already held %d), collections changed %d, lessons %d, Anki decks %d\n",
 		im.SavedPositions, im.Matches, im.SkippedDuplicates, im.Collections, im.Lessons, im.Decks)
 	if im.Tournaments > 0 || im.Transcriptions > 0 || im.Aliases > 0 {
-		fmt.Printf("  tournaments %d, transcriptions %d, aliases %d\n", im.Tournaments, im.Transcriptions, im.Aliases)
+		fmt.Fprintf(cli.stdout(), "  tournaments %d, transcriptions %d, aliases %d\n", im.Tournaments, im.Transcriptions, im.Aliases)
 	}
 	for _, name := range im.LivingCollectionsSkipped {
-		fmt.Printf("  collection %q: its namesake here is living, it received no members\n", name)
+		fmt.Fprintf(cli.stdout(), "  collection %q: its namesake here is living, it received no members\n", name)
 	}
 	for _, name := range im.LivingCollectionsFrozen {
-		fmt.Printf("  living collection %q arrived frozen: its query names rows the transfer did not carry\n", name)
+		fmt.Fprintf(cli.stdout(), "  living collection %q arrived frozen: its query names rows the transfer did not carry\n", name)
 	}
 	for _, name := range im.LivingCollectionsOnManual {
-		fmt.Printf("  living collection %q: its namesake here is a hand-made list, left as it was\n", name)
+		fmt.Fprintf(cli.stdout(), "  living collection %q: its namesake here is a hand-made list, left as it was\n", name)
 	}
 	return nil
 }

@@ -30,7 +30,8 @@ func runTranscribeText(t *testing.T, args ...string) (string, error) {
 	t.Helper()
 
 	var err error
-	out := captureStdout(t, func() { err = (&CLI{db: NewDatabase()}).runTranscribe(args) })
+	cl1 := &CLI{db: NewDatabase()}
+	out := captureOut(t, cl1, func() { err = cl1.runTranscribe(args) })
 	return out, err
 }
 

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
+	"io"
 	"sort"
 	"strconv"
 	"strings"
@@ -75,52 +75,52 @@ func (cli *CLI) TournamentSubcommands() []string {
 }
 
 func (cli *CLI) printTournamentUsage() {
-	fmt.Println("Usage: blunderdb tournament <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("Read a directed tournament without a graphical interface. Directing one")
-	fmt.Println("interactively is the engine's own console; these sub-commands read, except")
-	fmt.Println("`move`, which changes the table of a running match, and `confirm`, which")
-	fmt.Println("records one proposal of the queue.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  list       List the directed tournaments of the database")
-	fmt.Println("  verify     Replay a direction and report any remaining warning")
-	fmt.Println("  standings  Print the standings as CSV")
-	fmt.Println("  ranking    Print a season ranking over several tournaments (CSV or JSON)")
-	fmt.Println("  page       Write the standalone display page, or a Rencontre's wall page")
-	fmt.Println("  export     Print the raw event journal, replayable by the engine's tools")
-	fmt.Println("  move       Move a running match to another table, swapping with its occupant")
-	fmt.Println("  hall       Print a Rencontre's tables, every event together, and its proposals")
-	fmt.Println("  tables     Print the table properties (name, room, reserved, kept for) and rooms")
-	fmt.Println("  proposals  Print the engine's proposals, numbered")
-	fmt.Println("  confirm    Confirm one proposal by its number (a match, a draw, a repechage...)")
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Println("  blunderdb tournament list --db base.db")
-	fmt.Println("  blunderdb tournament verify --db base.db --id 3")
-	fmt.Println("  blunderdb tournament standings --db base.db --id 3 > classement.csv")
-	fmt.Println("  blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31")
-	fmt.Println("  blunderdb tournament page --db base.db --id 3 --out /tmp/affichage")
-	fmt.Println("  blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle")
-	fmt.Println("  blunderdb tournament export --db base.db --id 3 > journal.json")
-	fmt.Println("  blunderdb tournament move --db base.db --id 3 --match m4 --table 7")
-	fmt.Println("  blunderdb tournament hall --db base.db --rencontre 1")
-	fmt.Println("  blunderdb tournament tables --db base.db --rencontre 1")
-	fmt.Println("  blunderdb tournament proposals --db base.db --id 3")
-	fmt.Println("  blunderdb tournament confirm --db base.db --id 3 --n 1")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb tournament <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Read a directed tournament without a graphical interface. Directing one")
+	fmt.Fprintln(cli.stdout(), "interactively is the engine's own console; these sub-commands read, except")
+	fmt.Fprintln(cli.stdout(), "`move`, which changes the table of a running match, and `confirm`, which")
+	fmt.Fprintln(cli.stdout(), "records one proposal of the queue.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  list       List the directed tournaments of the database")
+	fmt.Fprintln(cli.stdout(), "  verify     Replay a direction and report any remaining warning")
+	fmt.Fprintln(cli.stdout(), "  standings  Print the standings as CSV")
+	fmt.Fprintln(cli.stdout(), "  ranking    Print a season ranking over several tournaments (CSV or JSON)")
+	fmt.Fprintln(cli.stdout(), "  page       Write the standalone display page, or a Rencontre's wall page")
+	fmt.Fprintln(cli.stdout(), "  export     Print the raw event journal, replayable by the engine's tools")
+	fmt.Fprintln(cli.stdout(), "  move       Move a running match to another table, swapping with its occupant")
+	fmt.Fprintln(cli.stdout(), "  hall       Print a Rencontre's tables, every event together, and its proposals")
+	fmt.Fprintln(cli.stdout(), "  tables     Print the table properties (name, room, reserved, kept for) and rooms")
+	fmt.Fprintln(cli.stdout(), "  proposals  Print the engine's proposals, numbered")
+	fmt.Fprintln(cli.stdout(), "  confirm    Confirm one proposal by its number (a match, a draw, a repechage...)")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament list --db base.db")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament verify --db base.db --id 3")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament standings --db base.db --id 3 > classement.csv")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament page --db base.db --id 3 --out /tmp/affichage")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament export --db base.db --id 3 > journal.json")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament move --db base.db --id 3 --match m4 --table 7")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament hall --db base.db --rencontre 1")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament tables --db base.db --rencontre 1")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament proposals --db base.db --id 3")
+	fmt.Fprintln(cli.stdout(), "  blunderdb tournament confirm --db base.db --id 3 --n 1")
 }
 
-func tournamentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
+func (cli *CLI) tournamentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
 	fs := flag.NewFlagSet("tournament "+sub, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
-		fmt.Printf("Usage: blunderdb tournament %s [options]\n\n%s\n\nOptions:\n", sub, summary)
+		fmt.Fprintf(cli.stdout(), "Usage: blunderdb tournament %s [options]\n\n%s\n\nOptions:\n", sub, summary)
 		fs.PrintDefaults()
 		if len(examples) > 0 {
-			fmt.Println()
-			fmt.Println("Examples:")
+			fmt.Fprintln(cli.stdout())
+			fmt.Fprintln(cli.stdout(), "Examples:")
 			for _, ex := range examples {
-				fmt.Println("  " + ex)
+				fmt.Fprintln(cli.stdout(), "  "+ex)
 			}
 		}
 	}
@@ -130,7 +130,7 @@ func tournamentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, 
 // ── list ─────────────────────────────────────────────────────────────────────
 
 func (cli *CLI) runTournamentList(args []string) error {
-	fs, dbPath := tournamentFlagSet("list", "List the directed tournaments of the database.",
+	fs, dbPath := cli.tournamentFlagSet("list", "List the directed tournaments of the database.",
 		"blunderdb tournament list --db base.db",
 		"blunderdb tournament list --db base.db --format json")
 	format := fs.String("format", "text", "Output format: text or json")
@@ -145,9 +145,9 @@ func (cli *CLI) runTournamentList(args []string) error {
 		if rows == nil {
 			rows = []database.DirectionSummary{}
 		}
-		return printJSON(rows)
+		return cli.printJSON(rows)
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tSTATE\tENGINE\tRENCONTRE\tUPDATED")
 	for _, r := range rows {
 		fmt.Fprintf(w, "%d\t%s\t%s\t%s\t%s\n", r.TournamentID, r.State, r.EngineVersion, r.RencontreName, r.UpdatedAt)
@@ -162,7 +162,7 @@ func (cli *CLI) runTournamentList(args []string) error {
 // It EXITS IN ERROR when a warning remains: that is the point of an after-the-fact check, and a
 // script that runs it over a season's databases wants a non-zero status, not a line to grep.
 func (cli *CLI) runTournamentVerify(args []string) error {
-	fs, dbPath := tournamentFlagSet("verify",
+	fs, dbPath := cli.tournamentFlagSet("verify",
 		"Replay a direction and report any remaining warning. Exits in error if one remains.",
 		"blunderdb tournament verify --db base.db --id 3",
 		"blunderdb tournament verify --db base.db --id 3 --format json")
@@ -180,7 +180,7 @@ func (cli *CLI) runTournamentVerify(args []string) error {
 		return err
 	}
 	if strings.ToLower(*format) == "json" {
-		if err := printJSON(v.Warnings); err != nil {
+		if err := cli.printJSON(v.Warnings); err != nil {
 			return err
 		}
 	} else {
@@ -191,10 +191,10 @@ func (cli *CLI) runTournamentVerify(args []string) error {
 			if err != nil {
 				return err
 			}
-			fmt.Fprintln(os.Stdout, string(line))
+			fmt.Fprintln(cli.stdout(), string(line))
 		}
 		if len(v.Warnings) == 0 {
-			fmt.Printf("tournament %d: %d events, no warning\n", *id, v.EventCount)
+			fmt.Fprintf(cli.stdout(), "tournament %d: %d events, no warning\n", *id, v.EventCount)
 		}
 	}
 	if n := len(v.Warnings); n > 0 {
@@ -206,7 +206,7 @@ func (cli *CLI) runTournamentVerify(args []string) error {
 // ── standings ────────────────────────────────────────────────────────────────
 
 func (cli *CLI) runTournamentStandings(args []string) error {
-	fs, dbPath := tournamentFlagSet("standings", "Print the standings of a direction as CSV.",
+	fs, dbPath := cli.tournamentFlagSet("standings", "Print the standings of a direction as CSV.",
 		"blunderdb tournament standings --db base.db --id 3",
 		"blunderdb tournament standings --db base.db --id 3 > classement.csv")
 	id := fs.Int64("id", 0, "Tournament ID (required)")
@@ -221,7 +221,7 @@ func (cli *CLI) runTournamentStandings(args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = os.Stdout.WriteString(body)
+	_, err = io.WriteString(cli.stdout(), body)
 	return err
 }
 
@@ -230,7 +230,7 @@ func (cli *CLI) runTournamentStandings(args []string) error {
 // runTournamentRanking prints the season ranking: the places of several finished tournaments
 // turned into points and summed per person (ADR-0062).
 func (cli *CLI) runTournamentRanking(args []string) error {
-	fs, dbPath := tournamentFlagSet("ranking", "Print a season ranking: the finished tournaments of a Rencontre or a period, scored by place.",
+	fs, dbPath := cli.tournamentFlagSet("ranking", "Print a season ranking: the finished tournaments of a Rencontre or a period, scored by place.",
 		"blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31",
 		"blunderdb tournament ranking --db base.db --season --rencontre 1 --points 10,6,4 --elo --format json")
 	season := fs.Bool("season", false, "Rank over several tournaments (required: a single tournament is `standings`)")
@@ -264,14 +264,14 @@ func (cli *CLI) runTournamentRanking(args []string) error {
 		if err != nil {
 			return err
 		}
-		_, err = os.Stdout.WriteString(body)
+		_, err = io.WriteString(cli.stdout(), body)
 		return err
 	case "json":
 		v, err := cli.db.SeasonRanking(q)
 		if err != nil {
 			return err
 		}
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(v)
 	default:
@@ -287,7 +287,7 @@ func (cli *CLI) runTournamentRanking(args []string) error {
 // --rencontre writes the room's wall page instead (ADR-0056 §6): --id and --rencontre name two
 // different rows, one Tournament and one Rencontre, and are mutually exclusive.
 func (cli *CLI) runTournamentPage(args []string) error {
-	fs, dbPath := tournamentFlagSet("page", "Write the standalone display page of a direction, or a Rencontre's wall page.",
+	fs, dbPath := cli.tournamentFlagSet("page", "Write the standalone display page of a direction, or a Rencontre's wall page.",
 		"blunderdb tournament page --db base.db --id 3 > affichage.html",
 		"blunderdb tournament page --db base.db --id 3 --out /tmp/affichage",
 		"blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle")
@@ -329,14 +329,14 @@ func (cli *CLI) writeTournamentOrRencontrePage(out string, render func() (string
 		if err != nil {
 			return err
 		}
-		_, err = os.Stdout.WriteString(body)
+		_, err = io.WriteString(cli.stdout(), body)
 		return err
 	}
 	path, err := write(out)
 	if err != nil {
 		return err
 	}
-	fmt.Println(*path)
+	fmt.Fprintln(cli.stdout(), *path)
 	return nil
 }
 
@@ -348,7 +348,7 @@ func (cli *CLI) writeTournamentOrRencontrePage(out string, render func() (string
 // standings, brackets, warnings — is replayed from it. A tool that reads this output needs no
 // blunderDB at all.
 func (cli *CLI) runTournamentExport(args []string) error {
-	fs, dbPath := tournamentFlagSet("export", "Print the raw event journal of a direction.",
+	fs, dbPath := cli.tournamentFlagSet("export", "Print the raw event journal of a direction.",
 		"blunderdb tournament export --db base.db --id 3 > journal.json")
 	id := fs.Int64("id", 0, "Tournament ID (required)")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
@@ -362,7 +362,7 @@ func (cli *CLI) runTournamentExport(args []string) error {
 	if err != nil {
 		return err
 	}
-	_, err = os.Stdout.WriteString(body)
+	_, err = io.WriteString(cli.stdout(), body)
 	return err
 }
 
@@ -372,7 +372,7 @@ func (cli *CLI) runTournamentExport(args []string) error {
 // table, and when that table is taken the two matches swap. The rule (out-of-service table
 // refused, both moves in one transaction) is the service's; this only names the gesture.
 func (cli *CLI) runTournamentMove(args []string) error {
-	fs, dbPath := tournamentFlagSet("move", "Move a running match to another table; a taken table swaps the two matches.",
+	fs, dbPath := cli.tournamentFlagSet("move", "Move a running match to another table; a taken table swaps the two matches.",
 		"blunderdb tournament move --db base.db --id 3 --match m4 --table 7",
 		"blunderdb tournament move --db base.db --id 3 --match m4 --table 2 --format json")
 	id := fs.Int64("id", 0, "Tournament ID (required)")
@@ -408,14 +408,14 @@ func (cli *CLI) runTournamentMove(args []string) error {
 		}
 	}
 	if strings.ToLower(*format) == "json" {
-		return printJSON(rows)
+		return cli.printJSON(rows)
 	}
 	for _, r := range rows {
 		if ev, ok := r["event"]; ok {
-			fmt.Printf("%s\t%s\ttable %d\n", ev, r["match"], r["table"])
+			fmt.Fprintf(cli.stdout(), "%s\t%s\ttable %d\n", ev, r["match"], r["table"])
 			continue
 		}
-		fmt.Printf("%s\ttable %d\n", r["match"], r["table"])
+		fmt.Fprintf(cli.stdout(), "%s\ttable %d\n", r["match"], r["table"])
 	}
 	return nil
 }
@@ -425,7 +425,7 @@ func (cli *CLI) runTournamentMove(args []string) error {
 // runTournamentHall prints the Hall of a Rencontre, the grid the GUI shows: one line per table
 // of the room whatever the event, then the proposals of each event. The merge is the service's.
 func (cli *CLI) runTournamentHall(args []string) error {
-	fs, dbPath := tournamentFlagSet("hall", "Print a Rencontre's tables, every event together, then the proposals of every event in one queue and the matches held for want of a table.",
+	fs, dbPath := cli.tournamentFlagSet("hall", "Print a Rencontre's tables, every event together, then the proposals of every event in one queue and the matches held for want of a table.",
 		"blunderdb tournament hall --db base.db --rencontre 1",
 		"blunderdb tournament hall --db base.db --rencontre 1 --format json")
 	rencontre := fs.Int64("rencontre", 0, "Rencontre ID (required)")
@@ -442,13 +442,13 @@ func (cli *CLI) runTournamentHall(args []string) error {
 		return err
 	}
 	if strings.ToLower(*format) == "json" {
-		return printJSON(h)
+		return cli.printJSON(h)
 	}
 	room := ""
 	for _, c := range hallByRoom(h) {
 		if c.Room != "" && c.Room != room {
 			room = c.Room
-			fmt.Printf("room\t%s\n", room)
+			fmt.Fprintf(cli.stdout(), "room\t%s\n", room)
 		}
 		table := strconv.Itoa(c.Table)
 		if c.NoTable {
@@ -463,13 +463,13 @@ func (cli *CLI) runTournamentHall(args []string) error {
 			if c.Shared {
 				shared = "\tshared"
 			}
-			fmt.Printf("%s\t%s\t%s\t%s - %s%s\n", table, c.Event, c.MatchID, c.AName, c.BName, shared)
+			fmt.Fprintf(cli.stdout(), "%s\t%s\t%s\t%s - %s%s\n", table, c.Event, c.MatchID, c.AName, c.BName, shared)
 		case c.Unavailable:
-			fmt.Printf("%s\tout of service\n", table)
+			fmt.Fprintf(cli.stdout(), "%s\tout of service\n", table)
 		case c.Reserved:
-			fmt.Printf("%s\treserved\n", table)
+			fmt.Fprintf(cli.stdout(), "%s\treserved\n", table)
 		default:
-			fmt.Printf("%s\tfree\n", table)
+			fmt.Fprintf(cli.stdout(), "%s\tfree\n", table)
 		}
 	}
 	events := map[int64]database.HallEvent{}
@@ -487,14 +487,14 @@ func (cli *CLI) runTournamentHall(args []string) error {
 			return string(id)
 		}
 		if a.A == "" {
-			fmt.Printf("%s\t%s\t%s\n", tag, ev.Name, a.Kind)
+			fmt.Fprintf(cli.stdout(), "%s\t%s\t%s\n", tag, ev.Name, a.Kind)
 			return
 		}
 		where := fmt.Sprintf("table %d", a.Table)
 		if tag == "held" {
 			where = string(a.Reason)
 		}
-		fmt.Printf("%s\t%s\t%s\t%s - %s\t%s\n", tag, ev.Name, a.Kind, name(a.A), name(a.B), where)
+		fmt.Fprintf(cli.stdout(), "%s\t%s\t%s\t%s - %s\t%s\n", tag, ev.Name, a.Kind, name(a.A), name(a.B), where)
 	}
 	for _, p := range h.Queue {
 		printProposal("proposal", p)
@@ -549,7 +549,7 @@ type rencontreTables struct {
 // each of its events, or the ones a Tournament plays under — its Rencontre's when it plays in
 // one. It reads only: the properties are written through `call` (ADR-0057).
 func (cli *CLI) runTournamentTables(args []string) error {
-	fs, dbPath := tournamentFlagSet("tables", "Print the table properties — name, room, reserved, kept for — and the rooms of each event.",
+	fs, dbPath := cli.tournamentFlagSet("tables", "Print the table properties — name, room, reserved, kept for — and the rooms of each event.",
 		"blunderdb tournament tables --db base.db --rencontre 1",
 		"blunderdb tournament tables --db base.db --tournament 3 --format json")
 	rencontre := fs.Int64("rencontre", 0, "Rencontre ID")
@@ -569,11 +569,11 @@ func (cli *CLI) runTournamentTables(args []string) error {
 			return err
 		}
 		if asJSON {
-			return printJSON(plan)
+			return cli.printJSON(plan)
 		}
-		printTableSettings(plan.Settings)
+		cli.printTableSettings(plan.Settings)
 		if len(plan.Rooms) > 0 {
-			fmt.Printf("rooms\t%s\n", strings.Join(plan.Rooms, ", "))
+			fmt.Fprintf(cli.stdout(), "rooms\t%s\n", strings.Join(plan.Rooms, ", "))
 		}
 		return nil
 	}
@@ -590,28 +590,28 @@ func (cli *CLI) runTournamentTables(args []string) error {
 		out.Events = append(out.Events, eventRooms{TournamentID: m.TournamentID, Name: m.Name, Rooms: rooms})
 	}
 	if asJSON {
-		return printJSON(out)
+		return cli.printJSON(out)
 	}
-	printTableSettings(out.TableSettings)
+	cli.printTableSettings(out.TableSettings)
 	for _, ev := range out.Events {
 		rooms := "every table"
 		if len(ev.Rooms) > 0 {
 			rooms = strings.Join(ev.Rooms, ", ")
 		}
-		fmt.Printf("event\t%d\t%s\t%s\n", ev.TournamentID, ev.Name, rooms)
+		fmt.Fprintf(cli.stdout(), "event\t%d\t%s\t%s\n", ev.TournamentID, ev.Name, rooms)
 	}
 	return nil
 }
 
 // printTableSettings prints one line per table that has properties: number, name, room,
 // reserved, the persons it is kept for.
-func printTableSettings(settings []domain.TableSetting) {
-	fmt.Println("table\tname\troom\treserved\tkept for")
+func (cli *CLI) printTableSettings(settings []domain.TableSetting) {
+	fmt.Fprintln(cli.stdout(), "table\tname\troom\treserved\tkept for")
 	for _, s := range settings {
 		reserved := "no"
 		if s.Reserved {
 			reserved = "yes"
 		}
-		fmt.Printf("%d\t%s\t%s\t%s\t%s\n", s.Number, s.Name, s.Room, reserved, strings.Join(s.AssignedTo, ", "))
+		fmt.Fprintf(cli.stdout(), "%d\t%s\t%s\t%s\t%s\n", s.Number, s.Name, s.Room, reserved, strings.Join(s.AssignedTo, ", "))
 	}
 }

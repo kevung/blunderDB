@@ -65,42 +65,42 @@ func (cli *CLI) AnkiSubcommands() []string {
 }
 
 func (cli *CLI) printAnkiUsage() {
-	fmt.Println("Usage: blunderdb anki <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("Inspect and maintain spaced-repetition (FSRS) decks. Reviewing cards")
-	fmt.Println("is done in the GUI's Anki panel.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  decks     List decks with their card, due and new counters")
-	fmt.Println("  stats     Review statistics of one deck (new, learning, review, due)")
-	fmt.Println("  forecast  Cards coming due per day over the next N days")
-	fmt.Println("  sync      Resynchronise a deck with its collection or stored search")
-	fmt.Println("  retention Measured retention of one deck against its target")
-	fmt.Println("  export    Write a deck or a collection as an Anki package (.apkg)")
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Println("  blunderdb anki decks --db database.db")
-	fmt.Println("  blunderdb anki stats --db database.db --deck 2 --format json")
-	fmt.Println("  blunderdb anki forecast --db database.db --deck 2 --days 14")
-	fmt.Println("  blunderdb anki sync --db database.db --deck 2")
-	fmt.Println("  blunderdb anki retention --db database.db --deck 2")
-	fmt.Println("  blunderdb anki export --db database.db --deck 2 --out deck.apkg")
-	fmt.Println()
-	fmt.Println("Use 'blunderdb anki <sub-command> --help' for the options of a sub-command.")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb anki <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Inspect and maintain spaced-repetition (FSRS) decks. Reviewing cards")
+	fmt.Fprintln(cli.stdout(), "is done in the GUI's Anki panel.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  decks     List decks with their card, due and new counters")
+	fmt.Fprintln(cli.stdout(), "  stats     Review statistics of one deck (new, learning, review, due)")
+	fmt.Fprintln(cli.stdout(), "  forecast  Cards coming due per day over the next N days")
+	fmt.Fprintln(cli.stdout(), "  sync      Resynchronise a deck with its collection or stored search")
+	fmt.Fprintln(cli.stdout(), "  retention Measured retention of one deck against its target")
+	fmt.Fprintln(cli.stdout(), "  export    Write a deck or a collection as an Anki package (.apkg)")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb anki decks --db database.db")
+	fmt.Fprintln(cli.stdout(), "  blunderdb anki stats --db database.db --deck 2 --format json")
+	fmt.Fprintln(cli.stdout(), "  blunderdb anki forecast --db database.db --deck 2 --days 14")
+	fmt.Fprintln(cli.stdout(), "  blunderdb anki sync --db database.db --deck 2")
+	fmt.Fprintln(cli.stdout(), "  blunderdb anki retention --db database.db --deck 2")
+	fmt.Fprintln(cli.stdout(), "  blunderdb anki export --db database.db --deck 2 --out deck.apkg")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Use 'blunderdb anki <sub-command> --help' for the options of a sub-command.")
 }
 
 // ankiFlagSet builds the FlagSet shared by every sub-command.
-func ankiFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
+func (cli *CLI) ankiFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
 	fs := flag.NewFlagSet("anki "+sub, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
-		fmt.Printf("Usage: blunderdb anki %s [options]\n\n%s\n\nOptions:\n", sub, summary)
+		fmt.Fprintf(cli.stdout(), "Usage: blunderdb anki %s [options]\n\n%s\n\nOptions:\n", sub, summary)
 		fs.PrintDefaults()
 		if len(examples) > 0 {
-			fmt.Println()
-			fmt.Println("Examples:")
+			fmt.Fprintln(cli.stdout())
+			fmt.Fprintln(cli.stdout(), "Examples:")
 			for _, ex := range examples {
-				fmt.Println("  " + ex)
+				fmt.Fprintln(cli.stdout(), "  "+ex)
 			}
 		}
 	}
@@ -126,7 +126,7 @@ func (cli *CLI) ankiDeck(id int64) (*AnkiDeck, error) {
 // ── decks ────────────────────────────────────────────────────────────────────
 
 func (cli *CLI) runAnkiDecks(args []string) error {
-	fs, dbPath := ankiFlagSet("decks", "List the decks of the database with their counters.",
+	fs, dbPath := cli.ankiFlagSet("decks", "List the decks of the database with their counters.",
 		"blunderdb anki decks --db database.db",
 		"blunderdb anki decks --db database.db --format csv")
 	format := fs.String("format", "text", "Output format: text, json or csv")
@@ -143,9 +143,9 @@ func (cli *CLI) runAnkiDecks(args []string) error {
 		if decks == nil {
 			decks = []AnkiDeck{}
 		}
-		return printJSON(decks)
+		return cli.printJSON(decks)
 	case "csv":
-		w := csv.NewWriter(os.Stdout)
+		w := csv.NewWriter(cli.stdout())
 		defer w.Flush()
 		if err := w.Write([]string{"id", "name", "source", "cards", "due", "new", "request_retention"}); err != nil {
 			return fmt.Errorf("write csv header: %w", err)
@@ -162,11 +162,11 @@ func (cli *CLI) runAnkiDecks(args []string) error {
 		return w.Error()
 	case "text":
 		if len(decks) == 0 {
-			fmt.Println("No decks found in database")
+			fmt.Fprintln(cli.stdout(), "No decks found in database")
 			return nil
 		}
-		fmt.Printf("Found %d deck(s):\n\n", len(decks))
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintf(cli.stdout(), "Found %d deck(s):\n\n", len(decks))
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, "ID\tName\tSource\tCards\tDue\tNew")
 		fmt.Fprintln(w, "--\t----\t------\t-----\t---\t---")
 		for _, d := range decks {
@@ -204,7 +204,7 @@ func ankiSubjectLabel(e domain.AnkiReviewLog) string {
 // ── stats ────────────────────────────────────────────────────────────────────
 
 func (cli *CLI) runAnkiStats(args []string) error {
-	fs, dbPath := ankiFlagSet("stats", "Review statistics of one deck.",
+	fs, dbPath := cli.ankiFlagSet("stats", "Review statistics of one deck.",
 		"blunderdb anki stats --db database.db --deck 2",
 		"blunderdb anki stats --db database.db --deck 2 --format json")
 	deckID := fs.Int64("deck", 0, "Deck ID (required)")
@@ -227,12 +227,12 @@ func (cli *CLI) runAnkiStats(args []string) error {
 
 	switch strings.ToLower(*format) {
 	case "json":
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Deck  *AnkiDeck     `json:"deck"`
 			Stats AnkiDeckStats `json:"stats"`
 		}{deck, stats})
 	case "text":
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintf(w, "Deck %d:\t%s\n", deck.ID, deck.Name)
 		fmt.Fprintf(w, "  Source:\t%s\n", ankiSourceLabel(*deck))
 		fmt.Fprintf(w, "  Request retention:\t%.2f\n", deck.RequestRetention)
@@ -252,7 +252,7 @@ func (cli *CLI) runAnkiStats(args []string) error {
 // ── forecast ─────────────────────────────────────────────────────────────────
 
 func (cli *CLI) runAnkiForecast(args []string) error {
-	fs, dbPath := ankiFlagSet("forecast", "Cards coming due per calendar day (UTC). Day 0 holds every overdue card.",
+	fs, dbPath := cli.ankiFlagSet("forecast", "Cards coming due per calendar day (UTC). Day 0 holds every overdue card.",
 		"blunderdb anki forecast --db database.db --deck 2 --days 14",
 		"blunderdb anki forecast --db database.db --days 30 --format csv   # every deck")
 	deckID := fs.Int64("deck", 0, "Deck ID (0 = every deck)")
@@ -276,9 +276,9 @@ func (cli *CLI) runAnkiForecast(args []string) error {
 		if forecast == nil {
 			forecast = []AnkiForecastDay{}
 		}
-		return printJSON(forecast)
+		return cli.printJSON(forecast)
 	case "csv":
-		w := csv.NewWriter(os.Stdout)
+		w := csv.NewWriter(cli.stdout())
 		defer w.Flush()
 		if err := w.Write([]string{"day", "due"}); err != nil {
 			return fmt.Errorf("write csv header: %w", err)
@@ -291,7 +291,7 @@ func (cli *CLI) runAnkiForecast(args []string) error {
 		return w.Error()
 	case "text":
 		total := 0
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, "Day\tDue")
 		fmt.Fprintln(w, "---\t---")
 		for _, d := range forecast {
@@ -301,7 +301,7 @@ func (cli *CLI) runAnkiForecast(args []string) error {
 		if err := w.Flush(); err != nil {
 			return err
 		}
-		fmt.Printf("\n%d card(s) due over %d day(s)\n", total, len(forecast))
+		fmt.Fprintf(cli.stdout(), "\n%d card(s) due over %d day(s)\n", total, len(forecast))
 		return nil
 	default:
 		return fmt.Errorf("unknown format: %s (must be 'text', 'json', or 'csv')", *format)
@@ -315,7 +315,7 @@ func (cli *CLI) runAnkiForecast(args []string) error {
 // from its stored ids only: re-running the search needs the frontend's
 // command processor, which the GUI has and the CLI does not.
 func (cli *CLI) runAnkiSync(args []string) error {
-	fs, dbPath := ankiFlagSet("sync", "Resynchronise a deck with its source (collection or stored search).",
+	fs, dbPath := cli.ankiFlagSet("sync", "Resynchronise a deck with its source (collection or stored search).",
 		"blunderdb anki sync --db database.db --deck 2")
 	deckID := fs.Int64("deck", 0, "Deck ID (required)")
 	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
@@ -348,7 +348,7 @@ func (cli *CLI) runAnkiSync(args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Synced deck %d (%s): %d card(s), %d added\n", after.ID, after.Name, after.CardCount, after.CardCount-deck.CardCount)
+	fmt.Fprintf(cli.stdout(), "Synced deck %d (%s): %d card(s), %d added\n", after.ID, after.Name, after.CardCount, after.CardCount-deck.CardCount)
 	return nil
 }
 
@@ -368,7 +368,7 @@ func ankiSearchStoredIDs(sourceCommand string) ([]int64, bool) {
 // never writes (ADR-0026 rule 5); under domain.AnkiRetentionMinSample reviews
 // it reports the measure as unavailable rather than print noise.
 func (cli *CLI) runAnkiRetention(args []string) error {
-	fs, dbPath := ankiFlagSet("retention", "Measured retention of one deck against its target.",
+	fs, dbPath := cli.ankiFlagSet("retention", "Measured retention of one deck against its target.",
 		"blunderdb anki retention --db database.db --deck 2",
 		"blunderdb anki retention --db database.db --deck 2 --format json")
 	deckID := fs.Int64("deck", 0, "Deck ID (required)")
@@ -391,12 +391,12 @@ func (cli *CLI) runAnkiRetention(args []string) error {
 
 	switch strings.ToLower(*format) {
 	case "json":
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Deck      *AnkiDeck             `json:"deck"`
 			Retention *domain.AnkiRetention `json:"retention"`
 		}{deck, ret})
 	case "text":
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintf(w, "Deck %d:\t%s\n", deck.ID, deck.Name)
 		fmt.Fprintf(w, "  Target retention:\t%.0f%%\n", ret.TargetRetention*100)
 		if ret.SampleSize < domain.AnkiRetentionMinSample {
@@ -416,7 +416,7 @@ func (cli *CLI) runAnkiRetention(args []string) error {
 // One sub-command with an action, since the three share their argument,
 // confirmation and output.
 func (cli *CLI) runAnkiCard(args []string) error {
-	fs, dbPath := ankiFlagSet("card", "Suspend, bury, remove one card, or undo its last review.",
+	fs, dbPath := cli.ankiFlagSet("card", "Suspend, bury, remove one card, or undo its last review.",
 		"blunderdb anki card --db database.db --id 12 --action suspend",
 		"blunderdb anki card --db database.db --id 12 --action unsuspend",
 		"blunderdb anki card --db database.db --id 12 --action bury",
@@ -457,13 +457,13 @@ func (cli *CLI) runAnkiCard(args []string) error {
 
 	switch strings.ToLower(*format) {
 	case "json":
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			CardID int64  `json:"cardId"`
 			Action string `json:"action"`
 			OK     bool   `json:"ok"`
 		}{*cardID, strings.ToLower(*action), true})
 	case "text":
-		fmt.Printf("Card %d: %sd\n", *cardID, strings.ToLower(*action))
+		fmt.Fprintf(cli.stdout(), "Card %d: %sd\n", *cardID, strings.ToLower(*action))
 		return nil
 	default:
 		return fmt.Errorf("unknown format: %s (use text or json)", *format)
@@ -480,10 +480,10 @@ func (cli *CLI) undoAnkiReview(cardID int64, format string) error {
 	c := rc.Card
 	switch strings.ToLower(format) {
 	case "json":
-		return printJSON(c)
+		return cli.printJSON(c)
 	case "text":
-		fmt.Printf("Card %d: last review undone\n", cardID)
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintf(cli.stdout(), "Card %d: last review undone\n", cardID)
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintf(w, "  Due:\t%s\n", c.Due)
 		fmt.Fprintf(w, "  Interval:\t%d days\n", c.ScheduledDays)
 		fmt.Fprintf(w, "  Stability:\t%.2f\n", c.Stability)
@@ -499,7 +499,7 @@ func (cli *CLI) undoAnkiReview(cardID int64, format string) error {
 // runAnkiLog is the `anki log` sub-command: the recorded review events, most
 // recent first — the only place a mistaken grade is visible (ADR-0026).
 func (cli *CLI) runAnkiLog(args []string) error {
-	fs, dbPath := ankiFlagSet("log", "Recorded review events, most recent first.",
+	fs, dbPath := cli.ankiFlagSet("log", "Recorded review events, most recent first.",
 		"blunderdb anki log --db database.db",
 		"blunderdb anki log --db database.db --deck 2 --limit 50",
 		"blunderdb anki log --db database.db --format json")
@@ -516,13 +516,13 @@ func (cli *CLI) runAnkiLog(args []string) error {
 
 	switch strings.ToLower(*format) {
 	case "json":
-		return printJSON(entries)
+		return cli.printJSON(entries)
 	case "text":
 		if len(entries) == 0 {
-			fmt.Println("No review recorded.")
+			fmt.Fprintln(cli.stdout(), "No review recorded.")
 			return nil
 		}
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		// "SUBJECT", not "POSITION": a score card names no position
 		// (ADR-0042). The column shows the card's key — the position id for a
 		// position card.
@@ -559,7 +559,7 @@ func ankiGradeLabel(rating int) string {
 // Anki imports on a desktop or a phone. It reads the database and writes only
 // the package.
 func (cli *CLI) runAnkiExport(args []string) error {
-	fs, dbPath := ankiFlagSet("export", "Write a study deck or a collection as an Anki package (.apkg).\n"+
+	fs, dbPath := cli.ankiFlagSet("export", "Write a study deck or a collection as an Anki package (.apkg).\n"+
 		"A living collection's query is evaluated at export. Re-importing a later\n"+
 		"export into Anki updates its notes instead of duplicating them.",
 		"blunderdb anki export --db database.db --deck 2 --out deck.apkg",
@@ -590,6 +590,6 @@ func (cli *CLI) runAnkiExport(args []string) error {
 	if res.Truncated {
 		fmt.Fprintf(os.Stderr, "Note: the living collection selects %d positions; the package holds the first %d (the declared ceiling).\n", res.Total, res.Notes)
 	}
-	fmt.Printf("Exported %s: %d card(s) to %s\n", res.Name, res.Notes, *out)
+	fmt.Fprintf(cli.stdout(), "Exported %s: %d card(s) to %s\n", res.Name, res.Notes, *out)
 	return nil
 }

@@ -79,48 +79,48 @@ func (cli *CLI) DuelSubcommands() []string {
 }
 
 func (cli *CLI) printDuelUsage() {
-	fmt.Println("Usage: blunderdb duel <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("Play a Duel one Action per call, without an interface. The Duel lives in the")
-	fmt.Println("database: each call resumes it, plays one Action and writes it back. A Duel")
-	fmt.Println("played this way has no Cadence and no decision times.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  create    Start a Duel (match length or money, the two Sides, a starting position)")
-	fmt.Println("  show      Show a Duel: score, what it awaits, the legal plays")
-	fmt.Println("  list      List the Duels in suspense")
-	fmt.Println("  roll      Roll the dice, without doubling")
-	fmt.Println("  move      Play a checker play, in notation (24/18 13/11)")
-	fmt.Println("  double    Offer the cube")
-	fmt.Println("  take      Take a double")
-	fmt.Println("  pass      Pass on a double")
-	fmt.Println("  resign    Resign the game (single, gammon or backgammon)")
-	fmt.Println("  stop      Stop a money session and keep its Match as it stands")
-	fmt.Println("  discard   Throw the Duel away: nothing of it is written")
-	fmt.Println("  forfeit   Give the match up (--side): the Match is written won by the other Side")
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Println("  blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob")
-	fmt.Println("  blunderdb duel show --db database.db --id 1")
-	fmt.Println("  blunderdb duel move --db database.db --id 1 --play \"24/18 13/11\"")
-	fmt.Println("  blunderdb duel stop --db database.db --id 1")
-	fmt.Println()
-	fmt.Println("Use 'blunderdb duel <sub-command> --help' for the options of a sub-command.")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb duel <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Play a Duel one Action per call, without an interface. The Duel lives in the")
+	fmt.Fprintln(cli.stdout(), "database: each call resumes it, plays one Action and writes it back. A Duel")
+	fmt.Fprintln(cli.stdout(), "played this way has no Cadence and no decision times.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  create    Start a Duel (match length or money, the two Sides, a starting position)")
+	fmt.Fprintln(cli.stdout(), "  show      Show a Duel: score, what it awaits, the legal plays")
+	fmt.Fprintln(cli.stdout(), "  list      List the Duels in suspense")
+	fmt.Fprintln(cli.stdout(), "  roll      Roll the dice, without doubling")
+	fmt.Fprintln(cli.stdout(), "  move      Play a checker play, in notation (24/18 13/11)")
+	fmt.Fprintln(cli.stdout(), "  double    Offer the cube")
+	fmt.Fprintln(cli.stdout(), "  take      Take a double")
+	fmt.Fprintln(cli.stdout(), "  pass      Pass on a double")
+	fmt.Fprintln(cli.stdout(), "  resign    Resign the game (single, gammon or backgammon)")
+	fmt.Fprintln(cli.stdout(), "  stop      Stop a money session and keep its Match as it stands")
+	fmt.Fprintln(cli.stdout(), "  discard   Throw the Duel away: nothing of it is written")
+	fmt.Fprintln(cli.stdout(), "  forfeit   Give the match up (--side): the Match is written won by the other Side")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob")
+	fmt.Fprintln(cli.stdout(), "  blunderdb duel show --db database.db --id 1")
+	fmt.Fprintln(cli.stdout(), "  blunderdb duel move --db database.db --id 1 --play \"24/18 13/11\"")
+	fmt.Fprintln(cli.stdout(), "  blunderdb duel stop --db database.db --id 1")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Use 'blunderdb duel <sub-command> --help' for the options of a sub-command.")
 }
 
 // duelFlagSet builds the FlagSet shared by every sub-command.
-func duelFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string, *string) {
+func (cli *CLI) duelFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string, *string) {
 	fs := flag.NewFlagSet("duel "+sub, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Printf("Usage: blunderdb duel %s [options]\n\n%s\n\nOptions:\n", sub, summary)
+		fmt.Fprintf(cli.stdout(), "Usage: blunderdb duel %s [options]\n\n%s\n\nOptions:\n", sub, summary)
 		fs.PrintDefaults()
 		if len(examples) > 0 {
-			fmt.Println()
-			fmt.Println("Examples:")
+			fmt.Fprintln(cli.stdout())
+			fmt.Fprintln(cli.stdout(), "Examples:")
 			for _, ex := range examples {
-				fmt.Println("  " + ex)
+				fmt.Fprintln(cli.stdout(), "  "+ex)
 			}
 		}
 	}
@@ -151,7 +151,7 @@ func (cli *CLI) duelOpen(fs *flag.FlagSet, dbPath, format *string, args []string
 }
 
 func (cli *CLI) runDuelCreate(args []string) error {
-	fs, dbPath, format := duelFlagSet("create", "Start a Duel and play on to the first Decision of an external Side.",
+	fs, dbPath, format := cli.duelFlagSet("create", "Start a Duel and play on to the first Decision of an external Side.",
 		"blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob",
 		"blunderdb duel create --db database.db --money --jacoby",
 		"blunderdb duel create --db database.db --length 7 --side2 bot:normal",
@@ -215,7 +215,7 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	if err != nil {
 		return fmt.Errorf("creating the duel: %w", err)
 	}
-	return printDuel(st, *format)
+	return cli.printDuel(st, *format)
 }
 
 // parseAway reads "<player 1>,<player 2>" Away scores.
@@ -255,7 +255,7 @@ func parseSide(v, name string) (duel.SideSpec, error) {
 }
 
 func (cli *CLI) runDuelShow(args []string) error {
-	fs, dbPath, format := duelFlagSet("show", "Show a Duel in suspense: its score, what it awaits and, when it awaits a play, the legal ones.",
+	fs, dbPath, format := cli.duelFlagSet("show", "Show a Duel in suspense: its score, what it awaits and, when it awaits a play, the legal ones.",
 		"blunderdb duel show --db database.db --id 1")
 	id := fs.Int64("id", 0, "Duel id (required)")
 	svc, err := cli.duelOpen(fs, dbPath, format, args)
@@ -269,11 +269,11 @@ func (cli *CLI) runDuelShow(args []string) error {
 	if err != nil {
 		return fmt.Errorf("reading duel %d: %w", *id, err)
 	}
-	return printDuel(st, *format)
+	return cli.printDuel(st, *format)
 }
 
 func (cli *CLI) runDuelList(args []string) error {
-	fs, dbPath, format := duelFlagSet("list", "List the Duels in suspense, the most recently played first.",
+	fs, dbPath, format := cli.duelFlagSet("list", "List the Duels in suspense, the most recently played first.",
 		"blunderdb duel list --db database.db")
 	svc, err := cli.duelOpen(fs, dbPath, format, args)
 	if err != nil {
@@ -287,21 +287,21 @@ func (cli *CLI) runDuelList(args []string) error {
 		if rows == nil {
 			rows = []duel.Summary{}
 		}
-		return printJSON(rows)
+		return cli.printJSON(rows)
 	}
 	if len(rows) == 0 {
-		fmt.Println("No Duel in suspense.")
+		fmt.Fprintln(cli.stdout(), "No Duel in suspense.")
 		return nil
 	}
 	for _, r := range rows {
-		fmt.Printf("%d\t%s\t%s\n", r.ID, r.UpdatedAt, r.Label)
+		fmt.Fprintf(cli.stdout(), "%d\t%s\t%s\n", r.ID, r.UpdatedAt, r.Label)
 	}
 	return nil
 }
 
 // runDuelAct plays one Action of the Side the Duel awaits, or of --side.
 func (cli *CLI) runDuelAct(kind duel.PlayKind, args []string) error {
-	fs, dbPath, format := duelFlagSet(string(kind), "Play one Action, then play on to the next Decision of an external Side. The Side defaults to the one the Duel awaits.",
+	fs, dbPath, format := cli.duelFlagSet(string(kind), "Play one Action, then play on to the next Decision of an external Side. The Side defaults to the one the Duel awaits.",
 		"blunderdb duel "+string(kind)+" --db database.db --id 1")
 	id := fs.Int64("id", 0, "Duel id (required)")
 	side := fs.Int("side", 0, "The Side that plays, 1 or 2 (default: the one the Duel awaits)")
@@ -355,7 +355,7 @@ func (cli *CLI) runDuelAct(kind duel.PlayKind, args []string) error {
 	if err != nil {
 		return fmt.Errorf("duel %d: %w", *id, err)
 	}
-	return printDuel(st, *format)
+	return cli.printDuel(st, *format)
 }
 
 // stepsOf finds, among the legal plays of the awaited Decision, the one the
@@ -377,7 +377,7 @@ func stepsOf(d *duel.Decision, notation string) ([]domain.CheckerStep, error) {
 // runDuelForfeit has a Side give the match up: the Duel ends, won by the
 // other Side, and its Match is written as a match won.
 func (cli *CLI) runDuelForfeit(args []string) error {
-	fs, dbPath, format := duelFlagSet("forfeit", "Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a single at the cube's value), and the Match is written won by the other Side.",
+	fs, dbPath, format := cli.duelFlagSet("forfeit", "Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a single at the cube's value), and the Match is written won by the other Side.",
 		"blunderdb duel forfeit --db database.db --id 1 --side 1")
 	id := fs.Int64("id", 0, "Duel id (required)")
 	side := fs.Int("side", 0, "The Side that gives the match up, 1 or 2 (required)")
@@ -399,11 +399,11 @@ func (cli *CLI) runDuelForfeit(args []string) error {
 	if err != nil {
 		return fmt.Errorf("duel %d: %w", *id, err)
 	}
-	return printDuel(st, *format)
+	return cli.printDuel(st, *format)
 }
 
 func (cli *CLI) runDuelContribute(args []string) error {
-	fs, dbPath, format := duelFlagSet("contribute", "Contribute to the seed of a Duel created with --combined-seed: once per external Side, before the first roll, which the last contribution starts.",
+	fs, dbPath, format := cli.duelFlagSet("contribute", "Contribute to the seed of a Duel created with --combined-seed: once per external Side, before the first roll, which the last contribution starts.",
 		"blunderdb duel contribute --db database.db --id 1 --side 1 --value \"my own randomness\"")
 	id := fs.Int64("id", 0, "Duel id (required)")
 	side := fs.Int("side", 0, "The contributing Side, 1 or 2 (required)")
@@ -426,7 +426,7 @@ func (cli *CLI) runDuelContribute(args []string) error {
 	if err != nil {
 		return fmt.Errorf("duel %d: %w", *id, err)
 	}
-	return printDuel(st, *format)
+	return cli.printDuel(st, *format)
 }
 
 func (cli *CLI) runDuelStop(args []string) error { return cli.runDuelEnd("stop", true, args) }
@@ -438,7 +438,7 @@ func (cli *CLI) runDuelEnd(sub string, keep bool, args []string) error {
 	if keep {
 		summary = "Stop a money session and write its Match as it stands: an unfinished game keeps no winner. A match in points is refused: it is written only once won (suspend, forfeit or discard it)."
 	}
-	fs, dbPath, format := duelFlagSet(sub, summary, "blunderdb duel "+sub+" --db database.db --id 1")
+	fs, dbPath, format := cli.duelFlagSet(sub, summary, "blunderdb duel "+sub+" --db database.db --id 1")
 	id := fs.Int64("id", 0, "Duel id (required)")
 	revision := fs.Int64("revision", 0, "Refuse unless the Duel is at this revision (default: no check)")
 	svc, err := cli.duelOpen(fs, dbPath, format, args)
@@ -455,48 +455,48 @@ func (cli *CLI) runDuelEnd(sub string, keep bool, args []string) error {
 	if err != nil {
 		return fmt.Errorf("duel %d: %w", *id, err)
 	}
-	return printDuel(st, *format)
+	return cli.printDuel(st, *format)
 }
 
 // printDuel writes a Duel as the CLI shows it.
-func printDuel(st *duel.State, format string) error {
+func (cli *CLI) printDuel(st *duel.State, format string) error {
 	if strings.ToLower(format) == "json" {
-		return printJSON(st)
+		return cli.printJSON(st)
 	}
 	h := st.Header
 	if h.MatchLength == 0 {
-		fmt.Printf("Duel %d (revision %d): %s vs %s, money\n", st.ID, st.Revision, h.Player1, h.Player2)
+		fmt.Fprintf(cli.stdout(), "Duel %d (revision %d): %s vs %s, money\n", st.ID, st.Revision, h.Player1, h.Player2)
 	} else {
-		fmt.Printf("Duel %d (revision %d): %s vs %s, to %d\n", st.ID, st.Revision, h.Player1, h.Player2, h.MatchLength)
+		fmt.Fprintf(cli.stdout(), "Duel %d (revision %d): %s vs %s, to %d\n", st.ID, st.Revision, h.Player1, h.Player2, h.MatchLength)
 	}
-	fmt.Printf("Score: %d-%d   Actions: %d   Fingerprint: %s\n", st.Score[0], st.Score[1], len(st.Actions), st.Fingerprint)
+	fmt.Fprintf(cli.stdout(), "Score: %d-%d   Actions: %d   Fingerprint: %s\n", st.Score[0], st.Score[1], len(st.Actions), st.Fingerprint)
 	if e := st.Ended; e != nil {
 		switch {
 		case e.Discarded:
-			fmt.Println("Ended: thrown away, nothing written.")
+			fmt.Fprintln(cli.stdout(), "Ended: thrown away, nothing written.")
 		default:
-			fmt.Printf("Ended: Match %d written (seed %s)", e.MatchID, e.DiceSeed)
+			fmt.Fprintf(cli.stdout(), "Ended: Match %d written (seed %s)", e.MatchID, e.DiceSeed)
 			if e.Forfeited != 0 {
-				fmt.Printf(", forfeited by Side %d", e.Forfeited)
+				fmt.Fprintf(cli.stdout(), ", forfeited by Side %d", e.Forfeited)
 			}
-			fmt.Println(".")
+			fmt.Fprintln(cli.stdout(), ".")
 		}
 		return nil
 	}
 	for _, side := range st.AwaitingContribution {
-		fmt.Printf("Awaits: Side %d (%s), a contribution to the seed (duel contribute)\n", side+1, st.Sides[side].Name)
+		fmt.Fprintf(cli.stdout(), "Awaits: Side %d (%s), a contribution to the seed (duel contribute)\n", side+1, st.Sides[side].Name)
 	}
 	d := st.Awaiting
 	if d == nil {
 		return nil
 	}
 	pos := d.Position
-	fmt.Printf("Awaits: Side %d (%s), a %s decision\n", d.Side+1, st.Sides[d.Side].Name, d.Kind)
-	fmt.Println("Position:", domain.EncodeXGID(&pos))
+	fmt.Fprintf(cli.stdout(), "Awaits: Side %d (%s), a %s decision\n", d.Side+1, st.Sides[d.Side].Name, d.Kind)
+	fmt.Fprintln(cli.stdout(), "Position:", domain.EncodeXGID(&pos))
 	if d.Kind == duel.DecideMove {
-		fmt.Printf("Dice: %d-%d. Legal plays:\n", pos.Dice[0], pos.Dice[1])
+		fmt.Fprintf(cli.stdout(), "Dice: %d-%d. Legal plays:\n", pos.Dice[0], pos.Dice[1])
 		for _, lp := range domain.LegalMoves(&pos) {
-			fmt.Println("  " + domain.Notation(lp.Steps, int(pos.PlayerOnRoll)))
+			fmt.Fprintln(cli.stdout(), "  "+domain.Notation(lp.Steps, int(pos.PlayerOnRoll)))
 		}
 	}
 	return nil

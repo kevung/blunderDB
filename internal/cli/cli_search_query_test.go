@@ -11,7 +11,7 @@ import (
 
 func TestSearchQueryFillsFiltersNoFlagCanReach(t *testing.T) {
 	t.Parallel()
-	params, dbPath, err := parseSearchFlags([]string{
+	params, dbPath, err := (&CLI{}).parseSearchFlags([]string{
 		"--db", "database.db",
 		"--query", `s cube nc M p>30 E>50 m"13/11" t"blunder" pl"Alice" T>2026/01/01 xD65 ma3 id7`,
 	})
@@ -48,7 +48,7 @@ func TestSearchQueryFillsFiltersNoFlagCanReach(t *testing.T) {
 
 func TestSearchQueryRefusesUnknownTokens(t *testing.T) {
 	t.Parallel()
-	_, _, err := parseSearchFlags([]string{"--db", "database.db", "--query", "s cube nosuchtoken"})
+	_, _, err := (&CLI{}).parseSearchFlags([]string{"--db", "database.db", "--query", "s cube nosuchtoken"})
 	if err == nil {
 		t.Fatal("expected an error for an unknown token")
 	}
@@ -62,12 +62,12 @@ func TestSearchQueryRefusesUnknownTokens(t *testing.T) {
 // where to search or how to print are not filters and stay compatible.
 func TestSearchQueryRefusesFilterFlagsButAcceptsOutputFlags(t *testing.T) {
 	t.Parallel()
-	_, _, err := parseSearchFlags([]string{"--db", "database.db", "--query", "s cube", "--individual"})
+	_, _, err := (&CLI{}).parseSearchFlags([]string{"--db", "database.db", "--query", "s cube", "--individual"})
 	if err == nil || !strings.Contains(err.Error(), "--individual") {
 		t.Fatalf("expected a refusal naming --individual, got %v", err)
 	}
 
-	params, _, err := parseSearchFlags([]string{
+	params, _, err := (&CLI{}).parseSearchFlags([]string{
 		"--db", "database.db", "--query", "s cube",
 		"--format", "json", "--limit", "5", "--offset", "2", "--export", "out.db",
 	})
@@ -84,7 +84,7 @@ func TestSearchQueryRefusesFilterFlagsButAcceptsOutputFlags(t *testing.T) {
 // say so, rather than narrowing nothing in silence.
 func TestSearchQueryCarriesNoEffectDiagnostics(t *testing.T) {
 	t.Parallel()
-	params, _, err := parseSearchFlags([]string{"--db", "database.db", "--query", "s x"})
+	params, _, err := (&CLI{}).parseSearchFlags([]string{"--db", "database.db", "--query", "s x"})
 	if err != nil {
 		t.Fatalf("parseSearchFlags: %v", err)
 	}
@@ -97,7 +97,7 @@ func TestSearchQueryCarriesNoEffectDiagnostics(t *testing.T) {
 // without --db is the natural thing to do.
 func TestSearchQueryHelpNeedsNoDatabase(t *testing.T) {
 	t.Parallel()
-	params, _, err := parseSearchFlags([]string{"--query-help"})
+	params, _, err := (&CLI{}).parseSearchFlags([]string{"--query-help"})
 	if err != nil {
 		t.Fatalf("--query-help without --db: %v", err)
 	}

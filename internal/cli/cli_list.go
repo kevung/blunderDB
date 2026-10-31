@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"os"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -49,52 +48,52 @@ func (cli *CLI) runList(args []string) error {
 	batchID := listCmd.Int64("batch", 0, "Show the full report of one import batch instead of the list (imports only)")
 
 	listCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb list [options]")
-		fmt.Println()
-		fmt.Println("List database contents.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb list [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "List database contents.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		listCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # List all matches")
-		fmt.Println("  blunderdb list --db database.db --type matches")
-		fmt.Println()
-		fmt.Println("  # List all tournaments")
-		fmt.Println("  blunderdb list --db database.db --type tournaments")
-		fmt.Println()
-		fmt.Println("  # List first 20 positions")
-		fmt.Println("  blunderdb list --db database.db --type positions --limit 20")
-		fmt.Println()
-		fmt.Println("  # List the recorded imports, then read one's report")
-		fmt.Println("  blunderdb list --db database.db --type imports")
-		fmt.Println("  blunderdb list --db database.db --type imports --batch 3")
-		fmt.Println()
-		fmt.Println("  # What to look at now, in the order to look at it")
-		fmt.Println("  blunderdb list --db database.db --type imports --batch 3 --queue")
-		fmt.Println()
-		fmt.Println("  # Show database statistics")
-		fmt.Println("  blunderdb list --db database.db --type stats")
-		fmt.Println()
-		fmt.Println("  # Show stats as JSON")
-		fmt.Println("  blunderdb list --db database.db --type stats --format json")
-		fmt.Println()
-		fmt.Println("  # Show stats in MWC with player filter")
-		fmt.Println("  blunderdb list --db database.db --type stats --metric mwc --player \"Alice\"")
-		fmt.Println()
-		fmt.Println("  # One statistics row per player, over a competition's dates")
-		fmt.Println("  blunderdb list --db database.db --type players --from 2026-03-01 --to 2026-03-08")
-		fmt.Println()
-		fmt.Println("  # The same table as CSV, for a spreadsheet or a script")
-		fmt.Println("  blunderdb list --db database.db --type players --format csv")
-		fmt.Println()
-		fmt.Println("  # The tag vocabulary of this database, most used first")
-		fmt.Println("  blunderdb list --db database.db --type tags")
-		fmt.Println()
-		fmt.Println("  # Tabular exports, for a notebook or a spreadsheet")
-		fmt.Println("  blunderdb list --db database.db --type positions --format csv > positions.csv")
-		fmt.Println("  blunderdb list --db database.db --type moves     --format csv > moves.csv")
-		fmt.Println("  blunderdb list --db database.db --type analyses  --format csv > analyses.csv")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # List all matches")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type matches")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # List all tournaments")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type tournaments")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # List first 20 positions")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type positions --limit 20")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # List the recorded imports, then read one's report")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type imports")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type imports --batch 3")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # What to look at now, in the order to look at it")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type imports --batch 3 --queue")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Show database statistics")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type stats")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Show stats as JSON")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type stats --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Show stats in MWC with player filter")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type stats --metric mwc --player \"Alice\"")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # One statistics row per player, over a competition's dates")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type players --from 2026-03-01 --to 2026-03-08")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # The same table as CSV, for a spreadsheet or a script")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type players --format csv")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # The tag vocabulary of this database, most used first")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type tags")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Tabular exports, for a notebook or a spreadsheet")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type positions --format csv > positions.csv")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type moves     --format csv > moves.csv")
+		fmt.Fprintln(cli.stdout(), "  blunderdb list --db database.db --type analyses  --format csv > analyses.csv")
 	}
 
 	if err := listCmd.Parse(args); err != nil {
@@ -224,35 +223,35 @@ func (cli *CLI) listMatches(limit int, query, sort string, ids []int64) error {
 	}
 
 	if total == 0 {
-		fmt.Println("No matches found in database")
+		fmt.Fprintln(cli.stdout(), "No matches found in database")
 		return nil
 	}
 
-	fmt.Printf("Found %d match(es):\n\n", total)
+	fmt.Fprintf(cli.stdout(), "Found %d match(es):\n\n", total)
 
 	displayCount := len(matches)
 
 	for i := 0; i < displayCount; i++ {
 		match := matches[i]
-		fmt.Printf("ID: %d\n", match.ID)
-		fmt.Printf("  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
+		fmt.Fprintf(cli.stdout(), "ID: %d\n", match.ID)
+		fmt.Fprintf(cli.stdout(), "  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
 		if match.Event != "" {
-			fmt.Printf("  Event: %s\n", match.Event)
+			fmt.Fprintf(cli.stdout(), "  Event: %s\n", match.Event)
 		}
 		if match.Location != "" {
-			fmt.Printf("  Location: %s\n", match.Location)
+			fmt.Fprintf(cli.stdout(), "  Location: %s\n", match.Location)
 		}
-		fmt.Printf("  Match Length: %d\n", match.MatchLength)
-		fmt.Printf("  Games: %d\n", match.GameCount)
-		fmt.Printf("  Imported: %s\n", match.ImportDate.Format("2006-01-02 15:04:05"))
+		fmt.Fprintf(cli.stdout(), "  Match Length: %d\n", match.MatchLength)
+		fmt.Fprintf(cli.stdout(), "  Games: %d\n", match.GameCount)
+		fmt.Fprintf(cli.stdout(), "  Imported: %s\n", match.ImportDate.Format("2006-01-02 15:04:05"))
 		if match.FilePath != "" {
-			fmt.Printf("  File: %s\n", match.FilePath)
+			fmt.Fprintf(cli.stdout(), "  File: %s\n", match.FilePath)
 		}
-		fmt.Println()
+		fmt.Fprintln(cli.stdout())
 	}
 
 	if displayCount < total {
-		fmt.Printf("(Showing %d of %d matches, use --limit to see more)\n", displayCount, total)
+		fmt.Fprintf(cli.stdout(), "(Showing %d of %d matches, use --limit to see more)\n", displayCount, total)
 	}
 
 	return nil
@@ -266,11 +265,11 @@ func (cli *CLI) listTournaments(limit int) error {
 	}
 
 	if len(tournaments) == 0 {
-		fmt.Println("No tournaments found in database")
+		fmt.Fprintln(cli.stdout(), "No tournaments found in database")
 		return nil
 	}
 
-	fmt.Printf("Found %d tournament(s):\n\n", len(tournaments))
+	fmt.Fprintf(cli.stdout(), "Found %d tournament(s):\n\n", len(tournaments))
 
 	displayCount := len(tournaments)
 	if limit > 0 && limit < len(tournaments) {
@@ -279,23 +278,23 @@ func (cli *CLI) listTournaments(limit int) error {
 
 	for i := 0; i < displayCount; i++ {
 		tour := tournaments[i]
-		fmt.Printf("ID: %d\n", tour.ID)
-		fmt.Printf("  Name: %s\n", tour.Name)
+		fmt.Fprintf(cli.stdout(), "ID: %d\n", tour.ID)
+		fmt.Fprintf(cli.stdout(), "  Name: %s\n", tour.Name)
 		switch {
 		case tour.Date != "":
-			fmt.Printf("  Date: %s\n", tour.Date)
+			fmt.Fprintf(cli.stdout(), "  Date: %s\n", tour.Date)
 		case tour.EffectiveDate != "":
-			fmt.Printf("  Date: %s (earliest match)\n", tour.EffectiveDate)
+			fmt.Fprintf(cli.stdout(), "  Date: %s (earliest match)\n", tour.EffectiveDate)
 		}
 		if tour.Location != "" {
-			fmt.Printf("  Location: %s\n", tour.Location)
+			fmt.Fprintf(cli.stdout(), "  Location: %s\n", tour.Location)
 		}
-		fmt.Printf("  Matches: %d\n", tour.MatchCount)
-		fmt.Println()
+		fmt.Fprintf(cli.stdout(), "  Matches: %d\n", tour.MatchCount)
+		fmt.Fprintln(cli.stdout())
 	}
 
 	if limit > 0 && len(tournaments) > limit {
-		fmt.Printf("(Showing %d of %d tournaments, use --limit to see more)\n", displayCount, len(tournaments))
+		fmt.Fprintf(cli.stdout(), "(Showing %d of %d tournaments, use --limit to see more)\n", displayCount, len(tournaments))
 	}
 
 	return nil
@@ -309,7 +308,7 @@ func (cli *CLI) listPositions(offset, limit int) error {
 		return fmt.Errorf("failed to count positions: %w", err)
 	}
 	if total == 0 {
-		fmt.Println("No positions found in database")
+		fmt.Fprintln(cli.stdout(), "No positions found in database")
 		return nil
 	}
 	offset = max(offset, 0)
@@ -322,34 +321,34 @@ func (cli *CLI) listPositions(offset, limit int) error {
 		return fmt.Errorf("failed to get positions: %w", err)
 	}
 
-	fmt.Printf("Found %d position(s):\n\n", total)
+	fmt.Fprintf(cli.stdout(), "Found %d position(s):\n\n", total)
 
 	displayCount := len(positions)
 	for i := 0; i < displayCount; i++ {
 		pos := positions[i]
 
-		fmt.Printf("ID: %d\n", pos.ID)
-		fmt.Printf("  Score: %d-%d\n", pos.Score[0], pos.Score[1])
-		fmt.Printf("  Player on roll: %d\n", pos.PlayerOnRoll)
+		fmt.Fprintf(cli.stdout(), "ID: %d\n", pos.ID)
+		fmt.Fprintf(cli.stdout(), "  Score: %d-%d\n", pos.Score[0], pos.Score[1])
+		fmt.Fprintf(cli.stdout(), "  Player on roll: %d\n", pos.PlayerOnRoll)
 		if pos.DecisionType == CheckerAction {
-			fmt.Printf("  Decision: Checker play\n")
+			fmt.Fprintf(cli.stdout(), "  Decision: Checker play\n")
 		} else {
-			fmt.Printf("  Decision: Cube action\n")
+			fmt.Fprintf(cli.stdout(), "  Decision: Cube action\n")
 		}
-		fmt.Println()
+		fmt.Fprintln(cli.stdout())
 	}
 
 	if shown := offset + displayCount; displayCount > 0 && (offset > 0 || shown < total) {
-		fmt.Printf("(Showing %d-%d of %d positions, use --offset and --limit to see more)\n", offset+1, shown, total)
+		fmt.Fprintf(cli.stdout(), "(Showing %d-%d of %d positions, use --offset and --limit to see more)\n", offset+1, shown, total)
 	}
 
 	return nil
 }
 
 // printRollingStats writes the rolling-window table of the text report.
-func printRollingStats(w io.Writer, result *StatsResult, metricLabel string, useMWC bool) {
+func (cli *CLI) printRollingStats(w io.Writer, result *StatsResult, metricLabel string, useMWC bool) {
 	rollingNs := []int{5, 10, 50, 100, 250, 500, 1000}
-	fmt.Printf("── Rolling %s ──\n", metricLabel)
+	fmt.Fprintf(cli.stdout(), "── Rolling %s ──\n", metricLabel)
 	fmt.Fprintln(w, "  N\tDecisions used\tValue")
 	fmt.Fprintln(w, "  —\t——————————————\t—————")
 	for _, n := range rollingNs {
@@ -389,7 +388,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 	var result *StatsResult
 	err := withInterruptibleContext(func() {
 		if textOutput {
-			fmt.Println("\nCancelling...")
+			fmt.Fprintln(cli.stdout(), "\nCancelling...")
 		}
 	}, func(ctx context.Context) error {
 		var err error
@@ -408,7 +407,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 		if err != nil {
 			return fmt.Errorf("marshal stats: %w", err)
 		}
-		fmt.Println(string(data))
+		fmt.Fprintln(cli.stdout(), string(data))
 		return nil
 	}
 
@@ -419,7 +418,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 		metricLabel = "MWC"
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 
 	// 1. Header
 	fmt.Fprintln(w, "=== blunderDB Statistics ===")
@@ -444,19 +443,19 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 	}
 	fmt.Fprintf(w, "Metric:\t%s\n", metricLabel)
 	w.Flush()
-	fmt.Println()
+	fmt.Fprintln(cli.stdout())
 
 	// 2. Totals
-	fmt.Println("── Totals ──")
+	fmt.Fprintln(cli.stdout(), "── Totals ──")
 	fmt.Fprintf(w, "  Positions:\t%d\n", result.Totals.NumPositions)
 	fmt.Fprintf(w, "  Matches:\t%d\n", result.Totals.NumMatches)
 	fmt.Fprintf(w, "  Tournaments:\t%d\n", result.Totals.NumTournaments)
 	fmt.Fprintf(w, "  Decisions:\t%d\n", result.Totals.NumDecisions)
 	w.Flush()
-	fmt.Println()
+	fmt.Fprintln(cli.stdout())
 
 	// 3. PR / MWC global
-	fmt.Printf("── %s ──\n", metricLabel)
+	fmt.Fprintf(cli.stdout(), "── %s ──\n", metricLabel)
 	if useMWC {
 		mwcStr := func(v float64) string {
 			if !result.MWCAvailable {
@@ -475,13 +474,13 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 	}
 	fmt.Fprintf(w, "  7-pt MWC loss:\t%s\n", formatMWC7(result.MWC7))
 	w.Flush()
-	fmt.Println()
+	fmt.Fprintln(cli.stdout())
 
-	printRollingStats(w, result, metricLabel, useMWC)
-	fmt.Println()
+	cli.printRollingStats(w, result, metricLabel, useMWC)
+	fmt.Fprintln(cli.stdout())
 
 	// 5. Top blunders
-	fmt.Printf("── Top %d Blunders ──\n", topN)
+	fmt.Fprintf(cli.stdout(), "── Top %d Blunders ──\n", topN)
 	fmt.Fprintln(w, "  Pos ID\tType\tError (EMG)\tMWC Loss\tDate\tPlayers")
 	fmt.Fprintln(w, "  ——————\t————\t———————————\t————————\t————\t———————")
 	limit := topN
@@ -506,11 +505,11 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 			b.PositionID, dt, errEMG, mwcStr, date, b.PlayerNames)
 	}
 	w.Flush()
-	fmt.Println()
+	fmt.Fprintln(cli.stdout())
 
 	// 6. Cube action breakdown
 	if len(result.CubeActionBreakdown) > 0 {
-		fmt.Println("── Cube Action Breakdown ──")
+		fmt.Fprintln(cli.stdout(), "── Cube Action Breakdown ──")
 		fmt.Fprintln(w, "  Action\tDecisions\tBlunders\tBlunder %\tPR\tMWC")
 		fmt.Fprintln(w, "  ——————\t—————————\t————————\t—————————\t——\t———")
 		for _, ca := range result.CubeActionBreakdown {
@@ -526,22 +525,22 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 				ca.Action, ca.NumDecisions, ca.BlunderCount, blunderPct, ca.PR, mwcStr)
 		}
 		w.Flush()
-		fmt.Println()
+		fmt.Fprintln(cli.stdout())
 	}
 
 	// 6b. The same decisions, sliced three ways.
 	if len(result.PerPhase) > 0 {
-		fmt.Println("── By Game Phase ──")
+		fmt.Fprintln(cli.stdout(), "── By Game Phase ──")
 		fmt.Fprintln(w, "  Phase\tDecisions\tBlunders\tPR\t95 % CI")
 		fmt.Fprintln(w, "  —————\t—————————\t————————\t——\t———————")
 		for _, ph := range result.PerPhase {
 			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\t%s\n", ph.Phase, ph.NumDecisions, ph.BlunderCount, ph.PR, formatPRInterval(ph.PRInterval))
 		}
 		w.Flush()
-		fmt.Println()
+		fmt.Fprintln(cli.stdout())
 	}
 	if len(result.PerTag) > 0 {
-		fmt.Println("── By Tag ──")
+		fmt.Fprintln(cli.stdout(), "── By Tag ──")
 		fmt.Fprintln(w, "  Tag\tDecisions\tBlunders\tPR\t95 % CI")
 		fmt.Fprintln(w, "  ———\t—————————\t————————\t——\t———————")
 		for _, tag := range result.PerTag {
@@ -550,11 +549,11 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 		w.Flush()
 		// A tag labels, it does not partition: say so, or the column looks
 		// wrong when summed.
-		fmt.Println("  (a position may carry several tags; these rows do not sum to the total)")
-		fmt.Println()
+		fmt.Fprintln(cli.stdout(), "  (a position may carry several tags; these rows do not sum to the total)")
+		fmt.Fprintln(cli.stdout())
 	}
 	if len(result.PerScore) > 0 {
-		fmt.Println("── By Score (away × away, from the player on roll's side) ──")
+		fmt.Fprintln(cli.stdout(), "── By Score (away × away, from the player on roll's side) ──")
 		fmt.Fprintln(w, "  Score\tDecisions\tBlunders\tPR\t95 % CI")
 		fmt.Fprintln(w, "  —————\t—————————\t————————\t——\t———————")
 		for _, c := range result.PerScore {
@@ -568,12 +567,12 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\t%s\n", label, c.NumDecisions, c.BlunderCount, c.PR, formatPRInterval(c.PRInterval))
 		}
 		w.Flush()
-		fmt.Println()
+		fmt.Fprintln(cli.stdout())
 	}
 
 	// 7. Error histogram
 	if len(result.ErrorHistogram) > 0 {
-		fmt.Println("── Error Histogram ──")
+		fmt.Fprintln(cli.stdout(), "── Error Histogram ──")
 		fmt.Fprintln(w, "  Range (EMG)\tCount")
 		fmt.Fprintln(w, "  ——————————\t—————")
 		for _, b := range result.ErrorHistogram {
@@ -605,11 +604,11 @@ func (cli *CLI) showPlayerTable(filter StatsFilter, format string) error {
 		if err != nil {
 			return fmt.Errorf("marshal player table: %w", err)
 		}
-		fmt.Println(string(data))
+		fmt.Fprintln(cli.stdout(), string(data))
 		return nil
 
 	case "csv":
-		w := csv.NewWriter(os.Stdout)
+		w := csv.NewWriter(cli.stdout())
 		defer w.Flush()
 		if err := w.Write([]string{
 			"player", "matches", "wins", "losses", "decisions",
@@ -651,11 +650,11 @@ func (cli *CLI) showPlayerTable(filter StatsFilter, format string) error {
 
 	// ── Text format ──────────────────────────────────────────────────────────
 	if len(rows) == 0 {
-		fmt.Println("No player found for this filter.")
+		fmt.Fprintln(cli.stdout(), "No player found for this filter.")
 		return nil
 	}
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "=== Players ===")
 	if filter.DateFrom != "" || filter.DateTo != "" {
 		fmt.Fprintf(w, "Period:\t%s → %s\n", orDash(filter.DateFrom), orDash(filter.DateTo))
@@ -736,21 +735,21 @@ func (cli *CLI) showTimeErrors(matchIDs []int64, format string) error {
 		if err != nil {
 			return fmt.Errorf("marshal time/error table: %w", err)
 		}
-		fmt.Println(string(data))
+		fmt.Fprintln(cli.stdout(), string(data))
 		return nil
 	}
 	if len(rows) == 0 {
-		fmt.Println("No decision with a recorded time.")
+		fmt.Fprintln(cli.stdout(), "No decision with a recorded time.")
 		return nil
 	}
-	fmt.Printf("%-24s %-8s %10s %14s %10s\n", "Player", "Time", "Decisions", "Mean error mp", "Blunders")
+	fmt.Fprintf(cli.stdout(), "%-24s %-8s %10s %14s %10s\n", "Player", "Time", "Decisions", "Mean error mp", "Blunders")
 	for _, r := range rows {
 		mean, blunders := "", ""
 		if r.Scored > 0 {
 			mean = fmt.Sprintf("%.1f", r.MeanErrorMP)
 			blunders = fmt.Sprintf("%.1f%%", 100*float64(r.Blunders)/float64(r.Scored))
 		}
-		fmt.Printf("%-24s %-8s %10d %14s %10s\n", r.Player, timeBandLabels[r.Bucket], r.Decisions, mean, blunders)
+		fmt.Fprintf(cli.stdout(), "%-24s %-8s %10d %14s %10s\n", r.Player, timeBandLabels[r.Bucket], r.Decisions, mean, blunders)
 	}
 	return nil
 }

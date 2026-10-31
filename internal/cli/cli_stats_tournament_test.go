@@ -21,7 +21,7 @@ func TestCLI_StatsTournament(t *testing.T) {
 		insertStatsFixtureRow(t, cli.db, m, g, 5, 0, 1, 2)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"stats", "tournament", "--db", dbPath, "--id", strconv.FormatInt(tid, 10), "--format", "json"}); err != nil {
 			t.Fatalf("stats tournament: %v", err)
 		}
@@ -46,7 +46,7 @@ func TestCLI_StatsTournament(t *testing.T) {
 		for _, p := range players {
 			args = append(args, "--player", p)
 		}
-		return captureStdout(t, func() {
+		return captureOut(t, cli, func() {
 			if err := cli.Run(args); err != nil {
 				t.Fatalf("stats tournament: %v", err)
 			}
@@ -63,7 +63,7 @@ func TestCLI_StatsTournament(t *testing.T) {
 		t.Errorf("two players are a list in the order asked: %v %+v", err, two)
 	}
 
-	text := captureStdout(t, func() {
+	text := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"stats", "tournament", "--db", dbPath, "--id", strconv.FormatInt(tid, 10)}); err != nil {
 			t.Fatalf("stats tournament: %v", err)
 		}

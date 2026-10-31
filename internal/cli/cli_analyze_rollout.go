@@ -30,12 +30,12 @@ func (cli *CLI) runAnalyzeRollout(spec, query string, jobs int, text bool) error
 		}
 		if len(todo) == 0 {
 			if text {
-				fmt.Println("Nothing to do: every selected position already carries a rollout with these settings.")
+				fmt.Fprintln(cli.stdout(), "Nothing to do: every selected position already carries a rollout with these settings.")
 			}
 			return nil
 		}
 		if text {
-			fmt.Printf("Rolling out %d position(s): %s\n", len(todo), s.DepthLabel())
+			fmt.Fprintf(cli.stdout(), "Rolling out %d position(s): %s\n", len(todo), s.DepthLabel())
 		}
 		last := -1
 		sum, err = cli.db.RolloutPositions(ctx, todo, s, func(p rollouts.Progress) {
@@ -43,7 +43,7 @@ func (cli *CLI) runAnalyzeRollout(spec, query string, jobs int, text bool) error
 				return
 			}
 			last = p.Done
-			fmt.Printf("  %d/%d\n", p.Done, p.Total)
+			fmt.Fprintf(cli.stdout(), "  %d/%d\n", p.Done, p.Total)
 		})
 		return err
 	})
@@ -54,17 +54,17 @@ func (cli *CLI) runAnalyzeRollout(spec, query string, jobs int, text bool) error
 		return fmt.Errorf("analyze --rollout failed: %w", runErr)
 	}
 	if !text {
-		return printJSON(analyzeRolloutResult{Summary: sum, Settings: s, Signature: s.Signature()})
+		return cli.printJSON(analyzeRolloutResult{Summary: sum, Settings: s, Signature: s.Signature()})
 	}
 	if sum.Total == 0 && !sum.Cancelled {
 		return nil
 	}
 	if sum.Cancelled {
-		fmt.Println("Cancelled.")
+		fmt.Fprintln(cli.stdout(), "Cancelled.")
 	} else {
-		fmt.Println("Done.")
+		fmt.Fprintln(cli.stdout(), "Done.")
 	}
-	fmt.Printf("rolled out: %d, refused: %d, failed: %d\n", sum.RolledOut, sum.Refused, sum.Failed)
+	fmt.Fprintf(cli.stdout(), "rolled out: %d, refused: %d, failed: %d\n", sum.RolledOut, sum.Refused, sum.Failed)
 	return nil
 }
 

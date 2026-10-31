@@ -56,9 +56,9 @@ func proposalRows(view *database.DirectionView) []proposalRow {
 	return rows
 }
 
-func printProposalRows(rows []proposalRow, format string) error {
+func (cli *CLI) printProposalRows(rows []proposalRow, format string) error {
 	if strings.ToLower(format) == "json" {
-		return printJSON(rows)
+		return cli.printJSON(rows)
 	}
 	for _, r := range rows {
 		line := fmt.Sprintf("%d\t%s\t%s", r.N, r.Kind, r.Label)
@@ -74,13 +74,13 @@ func printProposalRows(rows []proposalRow, format string) error {
 		if r.Table > 0 {
 			line += fmt.Sprintf("\ttable %d", r.Table)
 		}
-		fmt.Println(line)
+		fmt.Fprintln(cli.stdout(), line)
 	}
 	return nil
 }
 
 func (cli *CLI) runTournamentProposals(args []string) error {
-	fs, dbPath := tournamentFlagSet("proposals", "Print the engine's proposals for a tournament, numbered for `tournament confirm`.",
+	fs, dbPath := cli.tournamentFlagSet("proposals", "Print the engine's proposals for a tournament, numbered for `tournament confirm`.",
 		"blunderdb tournament proposals --db base.db --id 3",
 		"blunderdb tournament proposals --db base.db --id 3 --format json")
 	id := fs.Int64("id", 0, "Tournament ID (required)")
@@ -96,11 +96,11 @@ func (cli *CLI) runTournamentProposals(args []string) error {
 	if err != nil {
 		return err
 	}
-	return printProposalRows(proposalRows(view), *format)
+	return cli.printProposalRows(proposalRows(view), *format)
 }
 
 func (cli *CLI) runTournamentConfirm(args []string) error {
-	fs, dbPath := tournamentFlagSet("confirm", "Confirm one proposal, by its number in `tournament proposals`, and print the queue that follows.",
+	fs, dbPath := cli.tournamentFlagSet("confirm", "Confirm one proposal, by its number in `tournament proposals`, and print the queue that follows.",
 		"blunderdb tournament confirm --db base.db --id 3 --n 1")
 	id := fs.Int64("id", 0, "Tournament ID (required)")
 	n := fs.Int("n", 0, "Number of the proposal, as printed by the proposals sub-command (required)")
@@ -127,5 +127,5 @@ func (cli *CLI) runTournamentConfirm(args []string) error {
 	if view, err = cli.db.ConfirmProposal(*id, string(blob)); err != nil {
 		return err
 	}
-	return printProposalRows(proposalRows(view), *format)
+	return cli.printProposalRows(proposalRows(view), *format)
 }

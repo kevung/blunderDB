@@ -18,7 +18,7 @@ func TestCLI_LessonLifecycle(t *testing.T) {
 	collID, _ := seedCollection(t, cli, "Primes", 2)
 	run := func(args ...string) string {
 		t.Helper()
-		return captureStdout(t, func() {
+		return captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"lesson"}, append(args, "--db", dbPath)...)); err != nil {
 				t.Fatalf("lesson %v: %v", args, err)
 			}
@@ -85,7 +85,7 @@ func TestCLI_LessonProgress(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	run := func(args ...string) string {
 		t.Helper()
-		return captureStdout(t, func() {
+		return captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"lesson"}, append(args, "--db", dbPath)...)); err != nil {
 				t.Fatalf("lesson %v: %v", args, err)
 			}
@@ -130,7 +130,7 @@ func TestCLI_LessonExportHTML(t *testing.T) {
 	collID, _ := seedCollection(t, cli, "Primes", 2)
 	run := func(args ...string) string {
 		t.Helper()
-		return captureStdout(t, func() {
+		return captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"lesson"}, append(args, "--db", dbPath)...)); err != nil {
 				t.Fatalf("lesson %v: %v", args, err)
 			}

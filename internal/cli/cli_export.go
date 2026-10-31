@@ -37,69 +37,69 @@ func (cli *CLI) runExport(args []string) error {
 	planLimit := exportCmd.Int("limit", 0, "With --plan-ids: ids per page (at most 1000, the default)")
 
 	exportCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb export [options]")
-		fmt.Println()
-		fmt.Println("Export data from the database.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb export [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Export data from the database.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		exportCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Export Types:")
-		fmt.Println("  database   Export the whole library, as the server's export does: positions, matches,")
-		fmt.Println("             tournaments, collections, lessons, Anki decks, transcriptions, aliases, filters.")
-		fmt.Println("             Each family can be left out (--matches=false) or narrowed (--match-ids=1,2).")
-		fmt.Println("  positions  Export positions to text file (JSON format)")
-		fmt.Println("  matches    Export only matches to a new database")
-		fmt.Println("  mat        Export match(es) as Jellyfish/gnubg .mat transcript(s)")
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # Export entire database with all matches")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db")
-		fmt.Println()
-		fmt.Println("  # Export database without matches")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --matches=false")
-		fmt.Println()
-		fmt.Println("  # Export without analysis or played moves")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --analysis=false")
-		fmt.Println()
-		fmt.Println("  # Export with analysis but without played moves")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --played-moves=false")
-		fmt.Println()
-		fmt.Println("  # Export with specific collections only")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --collection-ids=1,2,3")
-		fmt.Println()
-		fmt.Println("  # Export without collections or Anki decks")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --collections=false --decks=false")
-		fmt.Println()
-		fmt.Println("  # Export with specific lessons, or without any")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --lesson-ids=2")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --lessons=false")
-		fmt.Println()
-		fmt.Println("  # Export with specific tournaments")
-		fmt.Println("  blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2")
-		fmt.Println()
-		fmt.Println("  # Mark the exported file with its origin, and protect it with a password")
-		fmt.Println("  blunderdb export --db database.db --type database --file cours.db \\")
-		fmt.Println("      --watermark \"Cours de Jean Dupont - 12 mars 2026\" --password secret")
-		fmt.Println()
-		fmt.Println("  # Send another machine what entered the library since the last sync to this folder")
-		fmt.Println("  blunderdb export --db database.db --type database --incremental --file ~/Sync/blunderdb/")
-		fmt.Println()
-		fmt.Println("  # Count what an export would carry, without writing it")
-		fmt.Println("  blunderdb export --db database.db --type database --tournament-ids=1 --plan")
-		fmt.Println()
-		fmt.Println("  # Export positions to text file")
-		fmt.Println("  blunderdb export --db database.db --type positions --file positions.txt")
-		fmt.Println()
-		fmt.Println("  # Export only matches to a new database")
-		fmt.Println("  blunderdb export --db database.db --type matches --file matches.db")
-		fmt.Println()
-		fmt.Println("  # Export one match as a .mat transcript")
-		fmt.Println("  blunderdb export --db database.db --type mat --match-ids 5 --file game.mat")
-		fmt.Println()
-		fmt.Println("  # Export several (or all) matches as .mat files into a directory")
-		fmt.Println("  blunderdb export --db database.db --type mat --match-ids 5,9,12 --dir out/")
-		fmt.Println("  blunderdb export --db database.db --type mat --dir out/")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Export Types:")
+		fmt.Fprintln(cli.stdout(), "  database   Export the whole library, as the server's export does: positions, matches,")
+		fmt.Fprintln(cli.stdout(), "             tournaments, collections, lessons, Anki decks, transcriptions, aliases, filters.")
+		fmt.Fprintln(cli.stdout(), "             Each family can be left out (--matches=false) or narrowed (--match-ids=1,2).")
+		fmt.Fprintln(cli.stdout(), "  positions  Export positions to text file (JSON format)")
+		fmt.Fprintln(cli.stdout(), "  matches    Export only matches to a new database")
+		fmt.Fprintln(cli.stdout(), "  mat        Export match(es) as Jellyfish/gnubg .mat transcript(s)")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  # Export entire database with all matches")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export database without matches")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db --matches=false")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export without analysis or played moves")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db --analysis=false")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export with analysis but without played moves")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db --played-moves=false")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export with specific collections only")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db --collection-ids=1,2,3")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export without collections or Anki decks")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db --collections=false --decks=false")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export with specific lessons, or without any")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db --lesson-ids=2")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db --lessons=false")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export with specific tournaments")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Mark the exported file with its origin, and protect it with a password")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --file cours.db \\")
+		fmt.Fprintln(cli.stdout(), "      --watermark \"Cours de Jean Dupont - 12 mars 2026\" --password secret")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Send another machine what entered the library since the last sync to this folder")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --incremental --file ~/Sync/blunderdb/")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Count what an export would carry, without writing it")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type database --tournament-ids=1 --plan")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export positions to text file")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type positions --file positions.txt")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export only matches to a new database")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type matches --file matches.db")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export one match as a .mat transcript")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type mat --match-ids 5 --file game.mat")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "  # Export several (or all) matches as .mat files into a directory")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type mat --match-ids 5,9,12 --dir out/")
+		fmt.Fprintln(cli.stdout(), "  blunderdb export --db database.db --type mat --dir out/")
 	}
 
 	if err := exportCmd.Parse(args); err != nil {
@@ -205,11 +205,11 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string,
 			return fmt.Errorf("failed to export match %d: %w", ids[0], err)
 		}
 		if !text {
-			return printJSON(struct {
+			return cli.printJSON(struct {
 				Files []string `json:"files"`
 			}{Files: []string{path}})
 		}
-		fmt.Printf("Successfully exported match %d to %s\n", ids[0], path)
+		fmt.Fprintf(cli.stdout(), "Successfully exported match %d to %s\n", ids[0], path)
 		return nil
 	}
 
@@ -235,15 +235,15 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string,
 		}
 		files = append(files, path)
 		if text {
-			fmt.Printf("Exported match %d -> %s\n", id, path)
+			fmt.Fprintf(cli.stdout(), "Exported match %d -> %s\n", id, path)
 		}
 	}
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Files []string `json:"files"`
 		}{Files: files})
 	}
-	fmt.Printf("Successfully exported %d match(es) to %s\n", len(ids), outputDir)
+	fmt.Fprintf(cli.stdout(), "Successfully exported %d match(es) to %s\n", len(ids), outputDir)
 	return nil
 }
 
@@ -281,7 +281,7 @@ type exportMarking struct {
 func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMarking, text bool) error {
 	outputFile := opts.ExportPath
 	if text {
-		fmt.Printf("Exporting database to: %s\n", outputFile)
+		fmt.Fprintf(cli.stdout(), "Exporting database to: %s\n", outputFile)
 	}
 
 	opts.Metadata = make(map[string]string)
@@ -294,7 +294,7 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 	// Ctrl-C cancels a large export in flight instead of waiting it out.
 	err := withInterruptibleContext(func() {
 		if text {
-			fmt.Println("\nCancelling...")
+			fmt.Fprintln(cli.stdout(), "\nCancelling...")
 		}
 	}, func(ctx context.Context) error {
 		var err error
@@ -319,18 +319,18 @@ func (cli *CLI) exportDatabaseWithOptions(opts ExportOptions, marking exportMark
 	}
 
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			File   string              `json:"file"`
 			Bytes  int64               `json:"bytes"`
 			Report ingest.ExportReport `json:"report"`
 		}{File: outputFile, Bytes: size, Report: report})
 	}
 	if size > 0 {
-		fmt.Printf("Successfully exported database (%d bytes)\n", size)
+		fmt.Fprintf(cli.stdout(), "Successfully exported database (%d bytes)\n", size)
 	} else {
-		fmt.Println("Successfully exported database")
+		fmt.Fprintln(cli.stdout(), "Successfully exported database")
 	}
-	printExportReport(report)
+	cli.printExportReport(report)
 
 	return nil
 }
@@ -356,13 +356,13 @@ func (cli *CLI) printExportPlan(opts ExportOptions, req exportPlanRequest, text 
 			return fmt.Errorf("failed to plan the export: %w", err)
 		}
 		if !text {
-			return printJSON(page)
+			return cli.printJSON(page)
 		}
-		fmt.Printf("%s %d-%d of %d:", page.Family, page.Offset+1, page.Offset+len(page.IDs), page.Total)
+		fmt.Fprintf(cli.stdout(), "%s %d-%d of %d:", page.Family, page.Offset+1, page.Offset+len(page.IDs), page.Total)
 		for _, id := range page.IDs {
-			fmt.Printf(" %d", id)
+			fmt.Fprintf(cli.stdout(), " %d", id)
 		}
-		fmt.Println()
+		fmt.Fprintln(cli.stdout())
 		return nil
 	}
 	plan, err := cli.db.PlanExport(opts)
@@ -370,9 +370,9 @@ func (cli *CLI) printExportPlan(opts ExportOptions, req exportPlanRequest, text 
 		return fmt.Errorf("failed to plan the export: %w", err)
 	}
 	if !text {
-		return printJSON(plan)
+		return cli.printJSON(plan)
 	}
-	fmt.Println("The export would write:")
+	fmt.Fprintln(cli.stdout(), "The export would write:")
 	for _, f := range []struct {
 		name string
 		n    int
@@ -384,40 +384,40 @@ func (cli *CLI) printExportPlan(opts ExportOptions, req exportPlanRequest, text 
 		{"Anki decks", plan.AnkiDecks}, {"transcriptions", plan.Transcriptions},
 		{"aliases", plan.Aliases}, {"filters", plan.Filters},
 	} {
-		fmt.Printf("  %-15s %d\n", f.name, f.n)
+		fmt.Fprintf(cli.stdout(), "  %-15s %d\n", f.name, f.n)
 	}
 	for _, c := range plan.FrozenCollections {
-		fmt.Printf("Living collection %d (%s) leaves frozen: its query names rows the file will not hold\n", c.ID, c.Name)
+		fmt.Fprintf(cli.stdout(), "Living collection %d (%s) leaves frozen: its query names rows the file will not hold\n", c.ID, c.Name)
 	}
 	for _, d := range plan.DegradedAnkiDecks {
-		fmt.Printf("Search deck %d (%s) leaves with part of its source dropped: it names rows the file will not hold\n", d.ID, d.Name)
+		fmt.Fprintf(cli.stdout(), "Search deck %d (%s) leaves with part of its source dropped: it names rows the file will not hold\n", d.ID, d.Name)
 	}
 	return nil
 }
 
 // printExportReport prints the counts of a finished export.
-func printExportReport(r ingest.ExportReport) {
-	fmt.Printf("  positions %d, analyses %d, comments %d, matches %d, tournaments %d, collections %d,\n",
+func (cli *CLI) printExportReport(r ingest.ExportReport) {
+	fmt.Fprintf(cli.stdout(), "  positions %d, analyses %d, comments %d, matches %d, tournaments %d, collections %d,\n",
 		r.Positions, r.Analyses, r.Comments, r.Matches, r.Tournaments, r.Collections)
-	fmt.Printf("  lessons %d, Anki decks %d, transcriptions %d, aliases %d, filters %d\n",
+	fmt.Fprintf(cli.stdout(), "  lessons %d, Anki decks %d, transcriptions %d, aliases %d, filters %d\n",
 		r.Lessons, r.AnkiDecks, r.Transcriptions, r.Aliases, r.Filters)
 	if r.Directions > 0 || r.Rencontres > 0 {
-		fmt.Printf("  directions %d, slots %d, rencontres %d\n", r.Directions, r.Slots, r.Rencontres)
+		fmt.Fprintf(cli.stdout(), "  directions %d, slots %d, rencontres %d\n", r.Directions, r.Slots, r.Rencontres)
 	}
 	if r.SignedComments > 0 {
-		fmt.Printf("  %d comment(s) of yours signed with your issuer identity\n", r.SignedComments)
+		fmt.Fprintf(cli.stdout(), "  %d comment(s) of yours signed with your issuer identity\n", r.SignedComments)
 	}
 	if r.UnsignedOwnComments > 0 {
-		fmt.Printf("  %d comment(s) of yours left unsigned: only a watermarked export (--watermark) signs them\n", r.UnsignedOwnComments)
+		fmt.Fprintf(cli.stdout(), "  %d comment(s) of yours left unsigned: only a watermarked export (--watermark) signs them\n", r.UnsignedOwnComments)
 	}
 	if r.DegradedAnkiDecks > 0 {
-		fmt.Printf("  %d search deck(s) left with part of their source dropped (see the log)\n", r.DegradedAnkiDecks)
+		fmt.Fprintf(cli.stdout(), "  %d search deck(s) left with part of their source dropped (see the log)\n", r.DegradedAnkiDecks)
 	}
 	if r.Skipped > 0 {
-		fmt.Printf("  %d row(s) skipped (see the log)\n", r.Skipped)
+		fmt.Fprintf(cli.stdout(), "  %d row(s) skipped (see the log)\n", r.Skipped)
 	}
 	if r.SyncHeld {
-		fmt.Println("  the sync cursor did not advance: the next incremental export sends these rows again")
+		fmt.Fprintln(cli.stdout(), "  the sync cursor did not advance: the next incremental export sends these rows again")
 	}
 }
 
@@ -426,7 +426,7 @@ func printExportReport(r ingest.ExportReport) {
 // the draft it was typed from; under aliases, the player and event aliases they write go too.
 func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcriptions, aliases bool, marking exportMarking, text bool, plan exportPlanRequest) error {
 	if text && !plan.counts {
-		fmt.Printf("Exporting matches to: %s\n", outputFile)
+		fmt.Fprintf(cli.stdout(), "Exporting matches to: %s\n", outputFile)
 	}
 
 	ids := matchIDs
@@ -444,7 +444,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 	}
 
 	if text && !plan.counts {
-		fmt.Printf("Found %d match(es) to export\n", len(ids))
+		fmt.Fprintf(cli.stdout(), "Found %d match(es) to export\n", len(ids))
 	}
 
 	// Export with empty positions but with matches
@@ -476,7 +476,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 	var report ingest.ExportReport
 	err = withInterruptibleContext(func() {
 		if text {
-			fmt.Println("\nCancelling...")
+			fmt.Fprintln(cli.stdout(), "\nCancelling...")
 		}
 	}, func(ctx context.Context) error {
 		var err error
@@ -500,7 +500,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 	}
 
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			File    string              `json:"file"`
 			Bytes   int64               `json:"bytes"`
 			Matches int                 `json:"matches"`
@@ -508,11 +508,11 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 		}{File: outputFile, Bytes: size, Matches: report.Matches, Report: report})
 	}
 	if size > 0 {
-		fmt.Printf("Successfully exported matches (%d bytes)\n", size)
+		fmt.Fprintf(cli.stdout(), "Successfully exported matches (%d bytes)\n", size)
 	} else {
-		fmt.Println("Successfully exported matches")
+		fmt.Fprintln(cli.stdout(), "Successfully exported matches")
 	}
-	printExportReport(report)
+	cli.printExportReport(report)
 
 	return nil
 }
@@ -520,7 +520,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string, matchIDs []int64, transcrip
 // exportPositions exports positions to a text file
 func (cli *CLI) exportPositions(outputFile string, text bool) error {
 	if text {
-		fmt.Printf("Exporting positions to: %s\n", outputFile)
+		fmt.Fprintf(cli.stdout(), "Exporting positions to: %s\n", outputFile)
 	}
 
 	// Get all positions
@@ -546,12 +546,12 @@ func (cli *CLI) exportPositions(outputFile string, text bool) error {
 	}
 
 	if !text {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			File      string `json:"file"`
 			Positions int    `json:"positions"`
 		}{File: outputFile, Positions: len(positions)})
 	}
-	fmt.Printf("Successfully exported %d positions\n", len(positions))
+	fmt.Fprintf(cli.stdout(), "Successfully exported %d positions\n", len(positions))
 	return nil
 }
 

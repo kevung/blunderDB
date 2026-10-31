@@ -3,7 +3,6 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"os"
 	"strings"
 	"text/tabwriter"
 
@@ -21,28 +20,28 @@ func (cli *CLI) runStatsTournament(args []string) error {
 	fs.Var(&players, "player", "Player to review (repeatable; default: the one in the most matches of the tournament)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb stats tournament --db <file> --id <n> [options]")
-		fmt.Println()
-		fmt.Println("One player's tournament set against their usual level (ADR-0081): L7 and PR")
-		fmt.Printf("against the %d days before the tournament, by round, by decision rank within\n", storage.TournamentUsualDays)
-		fmt.Println("the match (fatigue), at pressure scores (DMP, Crawford, post-Crawford) and by")
-		fmt.Println("pace (quick or considered), with 95% intervals, then the tournament's error")
-		fmt.Println("families. A verdict (worse, better, usual) needs an interval and at least")
-		fmt.Printf("%d decisions on both sides, and a usual level of %d matches; otherwise it reads\n",
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb stats tournament --db <file> --id <n> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "One player's tournament set against their usual level (ADR-0081): L7 and PR")
+		fmt.Fprintf(cli.stdout(), "against the %d days before the tournament, by round, by decision rank within\n", storage.TournamentUsualDays)
+		fmt.Fprintln(cli.stdout(), "the match (fatigue), at pressure scores (DMP, Crawford, post-Crawford) and by")
+		fmt.Fprintln(cli.stdout(), "pace (quick or considered), with 95% intervals, then the tournament's error")
+		fmt.Fprintln(cli.stdout(), "families. A verdict (worse, better, usual) needs an interval and at least")
+		fmt.Fprintf(cli.stdout(), "%d decisions on both sides, and a usual level of %d matches; otherwise it reads\n",
 			storage.TournamentReviewMinDecisions, storage.TournamentUsualMinMatches)
-		fmt.Println("insufficient.")
-		fmt.Println()
-		fmt.Println("--player repeats to review several players in one call. With --format json, one")
-		fmt.Println("player gives an object, two or more a list in the order asked; a script whose")
-		fmt.Println("player count varies should call the stats.tournamentReviews route, which always")
-		fmt.Println("returns a list.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "insufficient.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "--player repeats to review several players in one call. With --format json, one")
+		fmt.Fprintln(cli.stdout(), "player gives an object, two or more a list in the order asked; a script whose")
+		fmt.Fprintln(cli.stdout(), "player count varies should call the stats.tournamentReviews route, which always")
+		fmt.Fprintln(cli.stdout(), "returns a list.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb stats tournament --db database.db --id 3")
-		fmt.Println("  blunderdb stats tournament --db database.db --id 3 --player \"Alice\" --player \"Bob\" --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats tournament --db database.db --id 3")
+		fmt.Fprintln(cli.stdout(), "  blunderdb stats tournament --db database.db --id 3 --player \"Alice\" --player \"Bob\" --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -61,15 +60,15 @@ func (cli *CLI) runStatsTournament(args []string) error {
 	if strings.ToLower(*format) == "json" {
 		// One player keeps the single object; several give a list.
 		if len(reviews) == 1 {
-			return printJSON(reviews[0])
+			return cli.printJSON(reviews[0])
 		}
-		return printJSON(reviews)
+		return cli.printJSON(reviews)
 	}
 	for i, r := range reviews {
 		if i > 0 {
-			fmt.Println()
+			fmt.Fprintln(cli.stdout())
 		}
-		printTournamentReview(r)
+		cli.printTournamentReview(r)
 	}
 	return nil
 }
@@ -103,27 +102,27 @@ func fmtVersus(c storage.Comparison, scale float64, unit string) string {
 	return fmt.Sprintf("%s (%+.2f%s [%+.2f, %+.2f])", c.Verdict, scale*c.Delta, unit, scale*c.Low, scale*c.High)
 }
 
-func printTournamentReview(r storage.TournamentReview) {
-	fmt.Printf("Tournament %d %q", r.TournamentID, r.Name)
+func (cli *CLI) printTournamentReview(r storage.TournamentReview) {
+	fmt.Fprintf(cli.stdout(), "Tournament %d %q", r.TournamentID, r.Name)
 	if r.Date != "" {
-		fmt.Printf(" (%s)", r.Date)
+		fmt.Fprintf(cli.stdout(), " (%s)", r.Date)
 	}
-	fmt.Printf(" - %s, %d matches, %d decisions\n", r.Player, r.Matches, r.Decisions)
+	fmt.Fprintf(cli.stdout(), " - %s, %d matches, %d decisions\n", r.Player, r.Matches, r.Decisions)
 	if r.Usual.Available {
-		fmt.Printf("Usual level: %s to %s, %d matches, %d decisions\n", r.Usual.From, r.Usual.To, r.Usual.Matches, r.Usual.Decisions)
+		fmt.Fprintf(cli.stdout(), "Usual level: %s to %s, %d matches, %d decisions\n", r.Usual.From, r.Usual.To, r.Usual.Matches, r.Usual.Decisions)
 	} else {
-		fmt.Printf("Usual level unknown (%d matches in the window, %d needed)\n", r.Usual.Matches, storage.TournamentUsualMinMatches)
+		fmt.Fprintf(cli.stdout(), "Usual level unknown (%d matches in the window, %d needed)\n", r.Usual.Matches, storage.TournamentUsualMinMatches)
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "\tTOURNAMENT\tUSUAL\tVERSUS")
 	fmt.Fprintf(w, "PR\t%s\t%s\t%s\n", fmtPRBand(r.PR, r.PRInterval, r.Decisions),
 		fmtPRBand(r.Usual.PR, r.Usual.PRInterval, r.Usual.Decisions), fmtVersus(r.PRVersus, 1, ""))
 	fmt.Fprintf(w, "L7\t%s\t%s\t%s\n", fmtL7(r.MWC7), fmtL7(r.Usual.MWC7), fmtVersus(r.MWC7Versus, 100, "%"))
 	_ = w.Flush()
 
-	fmt.Println()
-	fmt.Println("By round:")
-	w = tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "By round:")
+	w = tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ROUND\tOPPONENT\tDECISIONS\tPR\tL7\tVERSUS USUAL PR")
 	for _, rr := range r.Rounds {
 		fmt.Fprintf(w, "%d\t%s\t%d\t%s\t%s\t%s\n", rr.Round, rr.Opponent, rr.Decisions,
@@ -135,9 +134,9 @@ func printTournamentReview(r storage.TournamentReview) {
 		title string
 		cells []storage.ReviewCell
 	}{{"By decision rank in the match", r.ByRank}, {"By score", r.ByPressure}, {"By pace", r.ByClock}} {
-		fmt.Println()
-		fmt.Println(part.title + ":")
-		w = tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), part.title+":")
+		w = tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 		fmt.Fprintln(w, "CELL\tDECISIONS\tPR\tUSUAL\tUSUAL PR\tVERSUS")
 		for _, c := range part.cells {
 			fmt.Fprintf(w, "%s\t%d\t%s\t%d\t%s\t%s\n", c.Key, c.Decisions, fmtPRBand(c.PR, c.PRInterval, c.Decisions),
@@ -146,17 +145,17 @@ func printTournamentReview(r storage.TournamentReview) {
 		_ = w.Flush()
 	}
 
-	fmt.Println()
+	fmt.Fprintln(cli.stdout())
 	if len(r.Families) == 0 {
-		fmt.Printf("No error family holds in this tournament (%d to confirm).\n", r.Tentative)
+		fmt.Fprintf(cli.stdout(), "No error family holds in this tournament (%d to confirm).\n", r.Tentative)
 		return
 	}
-	fmt.Println("Error families of the tournament:")
+	fmt.Fprintln(cli.stdout(), "Error families of the tournament:")
 	for i, f := range r.Families {
-		fmt.Printf("  %d. %s / %s / %s: %d errors, recoverable %.2f%% [%.2f, %.2f]\n", i+1, f.GameType, f.Kind, f.Theme,
+		fmt.Fprintf(cli.stdout(), "  %d. %s / %s / %s: %d errors, recoverable %.2f%% [%.2f, %.2f]\n", i+1, f.GameType, f.Kind, f.Theme,
 			f.Errors, 100*f.Recoverable, 100*f.Low, 100*f.High)
 	}
 	if r.Tentative > 0 {
-		fmt.Printf("  (%d more to confirm)\n", r.Tentative)
+		fmt.Fprintf(cli.stdout(), "  (%d more to confirm)\n", r.Tentative)
 	}
 }

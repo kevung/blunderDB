@@ -38,9 +38,9 @@ func (cli *CLI) transcribeImport(dbPath, file string, text bool) error {
 		out.Inconsistencies += len(a.Inconsistencies)
 	}
 	if !text {
-		return printJSON(out)
+		return cli.printJSON(out)
 	}
-	fmt.Printf("draft %d opened: %d action(s), %d game(s), %d inconsistency(ies)\n",
+	fmt.Fprintf(cli.stdout(), "draft %d opened: %d action(s), %d game(s), %d inconsistency(ies)\n",
 		out.DraftID, out.Actions, out.Games, out.Inconsistencies)
 	return nil
 }

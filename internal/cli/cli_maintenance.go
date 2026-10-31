@@ -17,17 +17,17 @@ import (
 // same maintenance package as the GUI's tab and the daemon's routes.
 func (cli *CLI) runMaintenance(args []string) error {
 	if len(args) < 1 {
-		printMaintenanceUsage()
+		cli.printMaintenanceUsage()
 		return fmt.Errorf("missing maintenance sub-command")
 	}
 	sub := strings.ToLower(args[0])
 	if sub == "--help" || sub == "-h" || sub == "help" {
-		printMaintenanceUsage()
+		cli.printMaintenanceUsage()
 		return nil
 	}
 	run, ok := cli.maintenanceHandlers()[sub]
 	if !ok {
-		printMaintenanceUsage()
+		cli.printMaintenanceUsage()
 		return fmt.Errorf("unknown maintenance sub-command: %s", args[0])
 	}
 	return run(args[1:])
@@ -56,27 +56,27 @@ func (cli *CLI) MaintenanceSubcommands() []string {
 	return names
 }
 
-func printMaintenanceUsage() {
-	fmt.Println("Usage: blunderdb maintenance <status|count|ids|run> [operation] --db <file> [--format text|json]")
-	fmt.Println()
-	fmt.Println("The database's state of health: one line per maintenance operation,")
-	fmt.Println("with its counter, its action and its last run. Nothing runs by itself.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  status            Every operation, its free counts and its last run")
-	fmt.Println("  count <operation> Compute one operation's counter, however long it takes")
-	fmt.Println("  ids <operation>   List the ids one operation counts")
-	fmt.Println("  run <operation>   Run one operation's action (Ctrl-C stops it between batches)")
-	fmt.Println()
-	fmt.Println("Operations:")
+func (cli *CLI) printMaintenanceUsage() {
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb maintenance <status|count|ids|run> [operation] --db <file> [--format text|json]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "The database's state of health: one line per maintenance operation,")
+	fmt.Fprintln(cli.stdout(), "with its counter, its action and its last run. Nothing runs by itself.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  status            Every operation, its free counts and its last run")
+	fmt.Fprintln(cli.stdout(), "  count <operation> Compute one operation's counter, however long it takes")
+	fmt.Fprintln(cli.stdout(), "  ids <operation>   List the ids one operation counts")
+	fmt.Fprintln(cli.stdout(), "  run <operation>   Run one operation's action (Ctrl-C stops it between batches)")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Operations:")
 	for _, k := range maintenance.Kinds() {
-		fmt.Printf("  %s\n", k)
+		fmt.Fprintf(cli.stdout(), "  %s\n", k)
 	}
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Println("  blunderdb maintenance status --db database.db")
-	fmt.Println("  blunderdb maintenance count analysis.missing --db database.db")
-	fmt.Println("  blunderdb maintenance run stats.matches --db database.db --format json")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb maintenance status --db database.db")
+	fmt.Fprintln(cli.stdout(), "  blunderdb maintenance count analysis.missing --db database.db")
+	fmt.Fprintln(cli.stdout(), "  blunderdb maintenance run stats.matches --db database.db --format json")
 }
 
 // maintenanceArgs parses a sub-command's arguments: the operation, when the
@@ -86,9 +86,9 @@ func (cli *CLI) maintenanceArgs(sub string, args []string, wantKind bool) (kind 
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		printMaintenanceUsage()
-		fmt.Println()
-		fmt.Println("Options:")
+		cli.printMaintenanceUsage()
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
 	}
 	if wantKind && len(args) > 0 && !strings.HasPrefix(args[0], "-") {
@@ -136,7 +136,7 @@ func (cli *CLI) runMaintenanceStatus(args []string) error {
 		return fmt.Errorf("maintenance status: %w", err)
 	}
 	if asJSON {
-		return printJSON(lines)
+		return cli.printJSON(lines)
 	}
 	for _, l := range lines {
 		count := "-"
@@ -152,7 +152,7 @@ func (cli *CLI) runMaintenanceStatus(args []string) error {
 		if l.Last != nil {
 			last = fmt.Sprintf("%s, %d changed", l.Last.Outcome, l.Last.Changed)
 		}
-		fmt.Printf("  %-18s %-24s %s\n", l.Kind, count, last)
+		fmt.Fprintf(cli.stdout(), "  %-18s %-24s %s\n", l.Kind, count, last)
 	}
 	return nil
 }
@@ -167,12 +167,12 @@ func (cli *CLI) runMaintenanceCount(args []string) error {
 		return fmt.Errorf("maintenance count: %w", err)
 	}
 	if asJSON {
-		return printJSON(struct {
+		return cli.printJSON(struct {
 			Kind  string `json:"kind"`
 			Count int64  `json:"count"`
 		}{kind, n})
 	}
-	fmt.Printf("  %s: %d\n", kind, n)
+	fmt.Fprintf(cli.stdout(), "  %s: %d\n", kind, n)
 	return nil
 }
 
@@ -189,10 +189,10 @@ func (cli *CLI) runMaintenanceIDs(args []string) error {
 		if ids == nil {
 			ids = []int64{}
 		}
-		return printJSON(ids)
+		return cli.printJSON(ids)
 	}
 	for _, id := range ids {
-		fmt.Println(id)
+		fmt.Fprintln(cli.stdout(), id)
 	}
 	return nil
 }
@@ -231,8 +231,8 @@ func (cli *CLI) runMaintenanceRun(args []string) error {
 		return fmt.Errorf("maintenance run: %w", err)
 	}
 	if asJSON {
-		return printJSON(r)
+		return cli.printJSON(r)
 	}
-	fmt.Printf("  %s: %s, %d changed\n", r.Kind, r.Outcome, r.Changed)
+	fmt.Fprintf(cli.stdout(), "  %s: %s, %d changed\n", r.Kind, r.Outcome, r.Changed)
 	return nil
 }

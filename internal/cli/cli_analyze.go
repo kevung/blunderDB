@@ -43,7 +43,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 	rolloutSpec := analyzeCmd.String("rollout", "", "Roll out the positions --query selects instead: a preset (fast, standard) or custom settings, e.g. 'standard' or 'games=648,truncation=0,ply=1'")
 	query := analyzeCmd.String("query", "", "With --rollout: the positions to roll out, in the search query language (see search --query-help); empty means every position")
 
-	analyzeCmd.Usage = func() { printAnalyzeUsage(analyzeCmd) }
+	analyzeCmd.Usage = func() { cli.printAnalyzeUsage(analyzeCmd) }
 
 	if err := analyzeCmd.Parse(args); err != nil {
 		return err
@@ -115,15 +115,15 @@ func (cli *CLI) runAnalyze(args []string) error {
 		if text {
 			switch {
 			case *stale:
-				fmt.Println("Nothing to do: no gammonNet analysis is stale at this depth.")
+				fmt.Fprintln(cli.stdout(), "Nothing to do: no gammonNet analysis is stale at this depth.")
 			case *matchID != 0:
-				fmt.Printf("Nothing to do: every position of match %d already has an analysis.\n", *matchID)
+				fmt.Fprintf(cli.stdout(), "Nothing to do: every position of match %d already has an analysis.\n", *matchID)
 			default:
-				fmt.Println("Nothing to do: every position already has an analysis.")
+				fmt.Fprintln(cli.stdout(), "Nothing to do: every position already has an analysis.")
 			}
 			return nil
 		}
-		return printJSON(analyzeResult{Total: 0, Analyzed: 0, Stale: *stale, MatchID: *matchID, Ply: *ply, PruneK: *pruneK, Candidates: *candidates, Jobs: *jobs})
+		return cli.printJSON(analyzeResult{Total: 0, Analyzed: 0, Stale: *stale, MatchID: *matchID, Ply: *ply, PruneK: *pruneK, Candidates: *candidates, Jobs: *jobs})
 	}
 	if *jobs < 1 {
 		*jobs = 1
@@ -136,7 +136,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 		verb = fmt.Sprintf("Analyzing match %d:", *matchID)
 	}
 	if text {
-		fmt.Printf("%s %d position(s) with gammonNet (%d-ply, k=%d, %d job(s))...\n", verb, total, *ply, *pruneK, *jobs)
+		fmt.Fprintf(cli.stdout(), "%s %d position(s) with gammonNet (%d-ply, k=%d, %d job(s))...\n", verb, total, *ply, *pruneK, *jobs)
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -147,7 +147,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 	go func() {
 		if _, ok := <-sig; ok {
 			if text {
-				fmt.Println("\nCancelling...")
+				fmt.Fprintln(cli.stdout(), "\nCancelling...")
 			}
 			cancel()
 		}
@@ -164,7 +164,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 		// on the first, the last, and every 5% in between.
 		pct := done * 100 / total
 		if done == total || done == 1 || pct/5 != lastReported/5 {
-			fmt.Printf("  %d/%d (%d%%)\n", done, total, pct)
+			fmt.Fprintf(cli.stdout(), "  %d/%d (%d%%)\n", done, total, pct)
 		}
 		lastReported = pct
 	}
@@ -184,18 +184,18 @@ func (cli *CLI) runAnalyze(args []string) error {
 	}
 
 	if !text {
-		return printJSON(analyzeResult{
+		return cli.printJSON(analyzeResult{
 			Total: total, Analyzed: analyzed, Cancelled: cancelled, Stale: *stale, MatchID: *matchID,
 			Evaluated: summary.Evaluated, Refused: summary.Refused, Failed: summary.Failed,
 			Ply: *ply, PruneK: *pruneK, Candidates: *candidates, Jobs: *jobs,
 		})
 	}
 	if cancelled {
-		fmt.Println("Cancelled.")
+		fmt.Fprintln(cli.stdout(), "Cancelled.")
 	} else {
-		fmt.Println("Done.")
+		fmt.Fprintln(cli.stdout(), "Done.")
 	}
-	fmt.Printf("evaluated: %d, refused: %d, failed: %d\n", summary.Evaluated, summary.Refused, summary.Failed)
+	fmt.Fprintf(cli.stdout(), "evaluated: %d, refused: %d, failed: %d\n", summary.Evaluated, summary.Refused, summary.Failed)
 	return nil
 }
 
@@ -237,10 +237,10 @@ func (cli *CLI) runAnalyzeCompare(ply, pruneK, candidates, jobs, limit int, text
 	}
 	if total == 0 {
 		if text {
-			fmt.Println("Nothing to compare: no position carries an analysis written by another engine.")
+			fmt.Fprintln(cli.stdout(), "Nothing to compare: no position carries an analysis written by another engine.")
 			return nil
 		}
-		return printJSON(gammonnet.Aggregate(nil))
+		return cli.printJSON(gammonnet.Aggregate(nil))
 	}
 	if limit > 0 && limit < total {
 		total = limit
@@ -249,9 +249,9 @@ func (cli *CLI) runAnalyzeCompare(ply, pruneK, candidates, jobs, limit int, text
 		jobs = 1
 	}
 	if text {
-		fmt.Printf("Comparing gammonNet with the imported analyses of %d position(s) (%d-ply, k=%d, %d job(s))...\n",
+		fmt.Fprintf(cli.stdout(), "Comparing gammonNet with the imported analyses of %d position(s) (%d-ply, k=%d, %d job(s))...\n",
 			total, ply, pruneK, jobs)
-		fmt.Println("Nothing is written.")
+		fmt.Fprintln(cli.stdout(), "Nothing is written.")
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -262,7 +262,7 @@ func (cli *CLI) runAnalyzeCompare(ply, pruneK, candidates, jobs, limit int, text
 	go func() {
 		if _, ok := <-sig; ok {
 			if text {
-				fmt.Println("\nCancelling...")
+				fmt.Fprintln(cli.stdout(), "\nCancelling...")
 			}
 			cancel()
 		}
@@ -275,7 +275,7 @@ func (cli *CLI) runAnalyzeCompare(ply, pruneK, candidates, jobs, limit int, text
 		}
 		pct := done * 100 / total
 		if done == total || done == 1 || pct/5 != lastReported/5 {
-			fmt.Printf("  %d/%d (%d%%)\n", done, total, pct)
+			fmt.Fprintf(cli.stdout(), "  %d/%d (%d%%)\n", done, total, pct)
 		}
 		lastReported = pct
 	}
@@ -285,80 +285,80 @@ func (cli *CLI) runAnalyzeCompare(ply, pruneK, candidates, jobs, limit int, text
 		return fmt.Errorf("comparison failed: %w", err)
 	}
 	if !text {
-		return printJSON(cmp)
+		return cli.printJSON(cmp)
 	}
 	if ctx.Err() != nil {
-		fmt.Println("Cancelled; reporting what was compared.")
+		fmt.Fprintln(cli.stdout(), "Cancelled; reporting what was compared.")
 	}
-	fmt.Println()
-	fmt.Print(cmp.String())
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprint(cli.stdout(), cmp.String())
 	return nil
 }
 
 // printAnalyzeUsage is `analyze --help`, kept out of runAnalyze: fifty print
 // statements of prose say nothing about the command's control flow, and
 // leaving them inline buried it (and tripped funlen).
-func printAnalyzeUsage(analyzeCmd *flag.FlagSet) {
-	fmt.Println("Usage: blunderdb analyze [options]")
-	fmt.Println()
-	fmt.Println("Write a gammonNet analysis for every position that has none —")
-	fmt.Println("catching up a library built before this feature existed. A")
-	fmt.Println("Position already carrying any analysis (XG, GNUbg, BGBlitz, or a")
-	fmt.Println("prior gammonNet run) is left untouched: this only ever fills a")
-	fmt.Println("gap (ADR-0013). Interrupted with Ctrl-C, the run is cancelled")
-	fmt.Println("cleanly — nothing is lost, and re-running picks up exactly where")
-	fmt.Println("it left off, with no journal needed.")
-	fmt.Println()
-	fmt.Println("--match restricts the sweep to the positions of a single match,")
-	fmt.Println("the id `blunderdb list --type matches` prints. Same gap rule and")
-	fmt.Println("same guarantees, narrower scope: a match just imported or")
-	fmt.Println("transcribed is analysed without sweeping the whole library, and")
-	fmt.Println("a correction re-analysed a second time costs only the positions")
-	fmt.Println("the correction created.")
-	fmt.Println()
-	fmt.Println("--stale switches to the other sweep: every position whose stored")
-	fmt.Println("analysis is entirely gammonNet's own (never an XG/GNUbg/BGBlitz")
-	fmt.Println("one — ADR-0013 protects those unconditionally) but was written at")
-	fmt.Println("an older engine version or a different depth than --ply now asks")
-	fmt.Println("for. Use it after an engine upgrade, or after raising --ply for a")
-	fmt.Println("library already analysed at a shallower depth.")
-	fmt.Println()
-	fmt.Println("Positions are analysed --jobs at a time, on that many cores: the")
-	fmt.Println("positions of a batch are independent, so the result is the same")
-	fmt.Println("whatever --jobs says. Use --jobs 1 to leave the machine free.")
-	fmt.Println()
-	fmt.Println("--compare answers a different question and WRITES NOTHING: on the")
-	fmt.Println("positions carrying an analysis somebody else wrote (XG, GNUbg,")
-	fmt.Println("BGBlitz), how often does gammonNet name the same best move or the")
-	fmt.Println("same cube action, and what would following it have cost on the")
-	fmt.Println("imported analysis's own scale? The answer is broken down by game")
-	fmt.Println("phase, which is what says where the disagreements sit. Use --limit")
-	fmt.Println("to ask the question of a sample rather than of a whole library.")
-	fmt.Println()
-	fmt.Println("--rollout switches to rollouts: every position --query selects is")
-	fmt.Println("rolled out, one after the other on every core, and the rollout is")
-	fmt.Println("written beside its analysis — never in its place. The value is a")
-	fmt.Println("preset (fast: 216 games truncated at 7; standard: 1296 games")
-	fmt.Println("truncated at 11) or custom settings: an optional preset first, then")
-	fmt.Println("games=, min-games=, truncation=, jsd=, ply=, candidates=, seed=,")
-	fmt.Println("comma-separated. A position already carrying a rollout with the")
-	fmt.Println("same settings is skipped, so an interrupted run resumes; the")
-	fmt.Println("position in hand when Ctrl-C arrives is dropped whole.")
-	fmt.Println()
-	fmt.Println("A position gammonNet declines to evaluate (a match score beyond")
-	fmt.Println("its MET, a cube state it refuses) is reported separately at the")
-	fmt.Println("end, as \"refused\": not a failure, and not retried to no effect.")
-	fmt.Println()
-	fmt.Println("Options:")
+func (cli *CLI) printAnalyzeUsage(analyzeCmd *flag.FlagSet) {
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb analyze [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Write a gammonNet analysis for every position that has none —")
+	fmt.Fprintln(cli.stdout(), "catching up a library built before this feature existed. A")
+	fmt.Fprintln(cli.stdout(), "Position already carrying any analysis (XG, GNUbg, BGBlitz, or a")
+	fmt.Fprintln(cli.stdout(), "prior gammonNet run) is left untouched: this only ever fills a")
+	fmt.Fprintln(cli.stdout(), "gap (ADR-0013). Interrupted with Ctrl-C, the run is cancelled")
+	fmt.Fprintln(cli.stdout(), "cleanly — nothing is lost, and re-running picks up exactly where")
+	fmt.Fprintln(cli.stdout(), "it left off, with no journal needed.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "--match restricts the sweep to the positions of a single match,")
+	fmt.Fprintln(cli.stdout(), "the id `blunderdb list --type matches` prints. Same gap rule and")
+	fmt.Fprintln(cli.stdout(), "same guarantees, narrower scope: a match just imported or")
+	fmt.Fprintln(cli.stdout(), "transcribed is analysed without sweeping the whole library, and")
+	fmt.Fprintln(cli.stdout(), "a correction re-analysed a second time costs only the positions")
+	fmt.Fprintln(cli.stdout(), "the correction created.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "--stale switches to the other sweep: every position whose stored")
+	fmt.Fprintln(cli.stdout(), "analysis is entirely gammonNet's own (never an XG/GNUbg/BGBlitz")
+	fmt.Fprintln(cli.stdout(), "one — ADR-0013 protects those unconditionally) but was written at")
+	fmt.Fprintln(cli.stdout(), "an older engine version or a different depth than --ply now asks")
+	fmt.Fprintln(cli.stdout(), "for. Use it after an engine upgrade, or after raising --ply for a")
+	fmt.Fprintln(cli.stdout(), "library already analysed at a shallower depth.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Positions are analysed --jobs at a time, on that many cores: the")
+	fmt.Fprintln(cli.stdout(), "positions of a batch are independent, so the result is the same")
+	fmt.Fprintln(cli.stdout(), "whatever --jobs says. Use --jobs 1 to leave the machine free.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "--compare answers a different question and WRITES NOTHING: on the")
+	fmt.Fprintln(cli.stdout(), "positions carrying an analysis somebody else wrote (XG, GNUbg,")
+	fmt.Fprintln(cli.stdout(), "BGBlitz), how often does gammonNet name the same best move or the")
+	fmt.Fprintln(cli.stdout(), "same cube action, and what would following it have cost on the")
+	fmt.Fprintln(cli.stdout(), "imported analysis's own scale? The answer is broken down by game")
+	fmt.Fprintln(cli.stdout(), "phase, which is what says where the disagreements sit. Use --limit")
+	fmt.Fprintln(cli.stdout(), "to ask the question of a sample rather than of a whole library.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "--rollout switches to rollouts: every position --query selects is")
+	fmt.Fprintln(cli.stdout(), "rolled out, one after the other on every core, and the rollout is")
+	fmt.Fprintln(cli.stdout(), "written beside its analysis — never in its place. The value is a")
+	fmt.Fprintln(cli.stdout(), "preset (fast: 216 games truncated at 7; standard: 1296 games")
+	fmt.Fprintln(cli.stdout(), "truncated at 11) or custom settings: an optional preset first, then")
+	fmt.Fprintln(cli.stdout(), "games=, min-games=, truncation=, jsd=, ply=, candidates=, seed=,")
+	fmt.Fprintln(cli.stdout(), "comma-separated. A position already carrying a rollout with the")
+	fmt.Fprintln(cli.stdout(), "same settings is skipped, so an interrupted run resumes; the")
+	fmt.Fprintln(cli.stdout(), "position in hand when Ctrl-C arrives is dropped whole.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "A position gammonNet declines to evaluate (a match score beyond")
+	fmt.Fprintln(cli.stdout(), "its MET, a cube state it refuses) is reported separately at the")
+	fmt.Fprintln(cli.stdout(), "end, as \"refused\": not a failure, and not retried to no effect.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Options:")
 	analyzeCmd.PrintDefaults()
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Println("  blunderdb analyze --db database.db")
-	fmt.Println("  blunderdb analyze --db database.db --jobs 1")
-	fmt.Println("  blunderdb analyze --db database.db --match 12")
-	fmt.Println("  blunderdb analyze --db database.db --stale --ply 3")
-	fmt.Println("  blunderdb analyze --db database.db --format json")
-	fmt.Println("  blunderdb analyze --db database.db --compare --limit 500")
-	fmt.Println("  blunderdb analyze --db database.db --rollout fast --query 'E>80'")
-	fmt.Println("  blunderdb analyze --db database.db --rollout 'standard,ply=1' --query 'c'")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb analyze --db database.db")
+	fmt.Fprintln(cli.stdout(), "  blunderdb analyze --db database.db --jobs 1")
+	fmt.Fprintln(cli.stdout(), "  blunderdb analyze --db database.db --match 12")
+	fmt.Fprintln(cli.stdout(), "  blunderdb analyze --db database.db --stale --ply 3")
+	fmt.Fprintln(cli.stdout(), "  blunderdb analyze --db database.db --format json")
+	fmt.Fprintln(cli.stdout(), "  blunderdb analyze --db database.db --compare --limit 500")
+	fmt.Fprintln(cli.stdout(), "  blunderdb analyze --db database.db --rollout fast --query 'E>80'")
+	fmt.Fprintln(cli.stdout(), "  blunderdb analyze --db database.db --rollout 'standard,ply=1' --query 'c'")
 }

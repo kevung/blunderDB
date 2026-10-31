@@ -18,7 +18,7 @@ func TestCLI_Reencode_RewritesLegacyAnalyses(t *testing.T) {
 		posID, []byte(`{"xgid":"XGID=legacy"}`)); err != nil {
 		t.Fatal(err)
 	}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"reencode", "--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("reencode: %v", err)
 		}

@@ -40,7 +40,7 @@ func directedTournamentCLI(t *testing.T, cli *CLI, entrants int) int64 {
 func TestCLI_TournamentList(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "list", "--db", dbPath}); err != nil {
 			t.Fatalf("tournament list: %v", err)
 		}
@@ -50,7 +50,7 @@ func TestCLI_TournamentList(t *testing.T) {
 	}
 
 	tID := directedTournamentCLI(t, cli, 8)
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "list", "--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("tournament list json: %v", err)
 		}
@@ -80,7 +80,7 @@ func TestCLI_TournamentListNamesTheRencontre(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	text := captureStdout(t, func() {
+	text := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "list", "--db", dbPath}); err != nil {
 			t.Fatalf("tournament list: %v", err)
 		}
@@ -89,7 +89,7 @@ func TestCLI_TournamentListNamesTheRencontre(t *testing.T) {
 		t.Errorf("tournament list does not name the Rencontre:\n%s", text)
 	}
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "list", "--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("tournament list json: %v", err)
 		}
@@ -126,7 +126,7 @@ func TestCLI_TournamentPageRencontre(t *testing.T) {
 		t.Error("both --id and --rencontre should be rejected")
 	}
 
-	page := captureStdout(t, func() {
+	page := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "page", "--db", dbPath, "--rencontre", itoa64(r.ID)}); err != nil {
 			t.Fatalf("page --rencontre: %v", err)
 		}
@@ -136,7 +136,7 @@ func TestCLI_TournamentPageRencontre(t *testing.T) {
 	}
 
 	dir := t.TempDir()
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "page", "--db", dbPath, "--rencontre", itoa64(r.ID), "--out", dir}); err != nil {
 			t.Fatalf("page --rencontre --out: %v", err)
 		}
@@ -155,7 +155,7 @@ func TestCLI_TournamentVerifyIsQuietWhenSound(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	tID := directedTournamentCLI(t, cli, 8)
 
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "verify", "--db", dbPath, "--id", itoa64(tID)}); err != nil {
 			t.Fatalf("verify on a sound direction: %v", err)
 		}
@@ -199,7 +199,7 @@ func TestCLI_TournamentVerifyFailsOnAWarning(t *testing.T) {
 
 	var out string
 	var runErr error
-	out = captureStdout(t, func() {
+	out = captureOut(t, cli, func() {
 		runErr = cli.Run([]string{"tournament", "verify", "--db", dbPath, "--id", itoa64(tID)})
 	})
 	if runErr == nil {
@@ -215,7 +215,7 @@ func TestCLI_TournamentStandingsAndPageAndExport(t *testing.T) {
 	tID := directedTournamentCLI(t, cli, 8)
 	playRoundsCLI(t, cli, tID, 3)
 
-	csv := captureStdout(t, func() {
+	csv := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "standings", "--db", dbPath, "--id", itoa64(tID)}); err != nil {
 			t.Fatalf("standings: %v", err)
 		}
@@ -225,7 +225,7 @@ func TestCLI_TournamentStandingsAndPageAndExport(t *testing.T) {
 	}
 
 	// The page on standard output, so it can be piped.
-	page := captureStdout(t, func() {
+	page := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "page", "--db", dbPath, "--id", itoa64(tID)}); err != nil {
 			t.Fatalf("page: %v", err)
 		}
@@ -236,7 +236,7 @@ func TestCLI_TournamentStandingsAndPageAndExport(t *testing.T) {
 
 	// And into a folder, which becomes the direction's.
 	dir := t.TempDir()
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "page", "--db", dbPath, "--id", itoa64(tID), "--out", dir}); err != nil {
 			t.Fatalf("page --out: %v", err)
 		}
@@ -251,7 +251,7 @@ func TestCLI_TournamentStandingsAndPageAndExport(t *testing.T) {
 
 	// The raw journal: replayable by the engine's own tools, so it must be the events
 	// themselves and not a view of them.
-	journal := captureStdout(t, func() {
+	journal := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "export", "--db", dbPath, "--id", itoa64(tID)}); err != nil {
 			t.Fatalf("export: %v", err)
 		}
@@ -277,7 +277,7 @@ func TestCLI_TournamentAsksForItsArguments(t *testing.T) {
 		{"tournament", "export", "--db", dbPath},
 		{"tournament", "hall", "--db", dbPath},
 	} {
-		captureStdout(t, func() {
+		captureOut(t, cli, func() {
 			if err := cli.Run(args); err == nil {
 				t.Errorf("%v returned no error", args)
 			}
@@ -380,7 +380,7 @@ func TestCLI_TournamentHall(t *testing.T) {
 	if _, err := cli.db.AttachToRencontre(a, r.ID); err != nil {
 		t.Fatal(err)
 	}
-	text := captureStdout(t, func() {
+	text := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "hall", "--db", dbPath, "--rencontre", itoa64(r.ID)}); err != nil {
 			t.Fatalf("hall: %v", err)
 		}
@@ -393,7 +393,7 @@ func TestCLI_TournamentHall(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "hall", "--db", dbPath, "--rencontre", itoa64(r.ID), "--format", "json"}); err != nil {
 			t.Fatalf("hall --format json: %v", err)
 		}
@@ -455,7 +455,7 @@ func TestCLI_TournamentMoveShowsTheSisterSwap(t *testing.T) {
 			aMatch = c.MatchID
 		}
 	}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "move", "--db", dbPath, "--id", itoa64(b), "--match", string(vb.Running[0].ID), "--table", "1"}); err != nil {
 			t.Fatalf("move: %v", err)
 		}
@@ -486,7 +486,7 @@ func TestCLI_TournamentTables(t *testing.T) {
 	if _, err := cli.db.SetEventRooms(r.ID, a, []string{"B"}); err != nil {
 		t.Fatal(err)
 	}
-	text := captureStdout(t, func() {
+	text := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "tables", "--db", dbPath, "--rencontre", itoa64(r.ID)}); err != nil {
 			t.Fatalf("tables: %v", err)
 		}
@@ -495,7 +495,7 @@ func TestCLI_TournamentTables(t *testing.T) {
 		!strings.Contains(text, "\tOpen de Lyon\tB\n") {
 		t.Errorf("tables --rencontre:\n%s", text)
 	}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "tables", "--db", dbPath, "--tournament", itoa64(a), "--format", "json"}); err != nil {
 			t.Fatalf("tables --tournament: %v", err)
 		}
@@ -510,7 +510,7 @@ func TestCLI_TournamentTables(t *testing.T) {
 	if err := cli.Run([]string{"tournament", "tables", "--db", dbPath}); err == nil {
 		t.Error("tables without --rencontre or --tournament must fail")
 	}
-	hall := captureStdout(t, func() {
+	hall := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"tournament", "hall", "--db", dbPath, "--rencontre", itoa64(r.ID)}); err != nil {
 			t.Fatalf("hall: %v", err)
 		}
@@ -536,7 +536,7 @@ func TestCLI_TournamentRankingNeedsSeasonAndReadsAPeriod(t *testing.T) {
 		Elo   float64
 	}) {
 		t.Helper()
-		out := captureStdout(t, func() {
+		out := captureOut(t, cli, func() {
 			if err := cli.Run([]string{"tournament", "ranking", "--db", dbPath, "--season", "--from", from, "--to", to, "--points", "10,6,4", "--elo", "--format", "json"}); err != nil {
 				t.Fatalf("ranking --season: %v", err)
 			}

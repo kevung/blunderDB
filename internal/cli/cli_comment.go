@@ -3,7 +3,6 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -54,42 +53,42 @@ func (cli *CLI) CommentSubcommands() []string {
 }
 
 func (cli *CLI) printCommentUsage() {
-	fmt.Println("Usage: blunderdb comment <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("Comments on a position. A position holds any number of them, each")
-	fmt.Println("attributed to the person who wrote it (--author, free text). A comment")
-	fmt.Println("received in a watermarked export also carries its producer's signature,")
-	fmt.Println("shown in the Signed by column.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  add       Add a comment to a position, attributed to --author")
-	fmt.Println("  list      List the comments of a position, or of the whole database")
-	fmt.Println()
-	fmt.Println("Examples:")
-	fmt.Println("  blunderdb comment add --db database.db --position 412 --text \"Cube too early\" --author Alice")
-	fmt.Println("  blunderdb comment list --db database.db --position 412")
-	fmt.Println("  blunderdb comment list --db database.db --author Alice --format json")
-	fmt.Println()
-	fmt.Println("Use 'blunderdb comment <sub-command> --help' for the options of a sub-command.")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb comment <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Comments on a position. A position holds any number of them, each")
+	fmt.Fprintln(cli.stdout(), "attributed to the person who wrote it (--author, free text). A comment")
+	fmt.Fprintln(cli.stdout(), "received in a watermarked export also carries its producer's signature,")
+	fmt.Fprintln(cli.stdout(), "shown in the Signed by column.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  add       Add a comment to a position, attributed to --author")
+	fmt.Fprintln(cli.stdout(), "  list      List the comments of a position, or of the whole database")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Examples:")
+	fmt.Fprintln(cli.stdout(), "  blunderdb comment add --db database.db --position 412 --text \"Cube too early\" --author Alice")
+	fmt.Fprintln(cli.stdout(), "  blunderdb comment list --db database.db --position 412")
+	fmt.Fprintln(cli.stdout(), "  blunderdb comment list --db database.db --author Alice --format json")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Use 'blunderdb comment <sub-command> --help' for the options of a sub-command.")
 }
 
-func commentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
+func (cli *CLI) commentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
 	fs := flag.NewFlagSet("comment "+sub, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
-		fmt.Printf("Usage: blunderdb comment %s [options]\n\n%s\n\nOptions:\n", sub, summary)
+		fmt.Fprintf(cli.stdout(), "Usage: blunderdb comment %s [options]\n\n%s\n\nOptions:\n", sub, summary)
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
 		for _, ex := range examples {
-			fmt.Println("  " + ex)
+			fmt.Fprintln(cli.stdout(), "  "+ex)
 		}
 	}
 	return fs, dbPath
 }
 
 func (cli *CLI) runCommentAdd(args []string) error {
-	fs, dbPath := commentFlagSet("add", "Add a comment to a position.",
+	fs, dbPath := cli.commentFlagSet("add", "Add a comment to a position.",
 		"blunderdb comment add --db database.db --position 412 --text \"Cube too early\" --author Alice")
 	position := fs.Int64("position", 0, "Position id (required)")
 	text := fs.String("text", "", "Comment text (required)")
@@ -114,12 +113,12 @@ func (cli *CLI) runCommentAdd(args []string) error {
 	if err := cli.db.AddComment(*position, *text); err != nil {
 		return fmt.Errorf("add comment: %w", err)
 	}
-	fmt.Printf("Comment added to position %d.\n", *position)
+	fmt.Fprintf(cli.stdout(), "Comment added to position %d.\n", *position)
 	return nil
 }
 
 func (cli *CLI) runCommentList(args []string) error {
-	fs, dbPath := commentFlagSet("list", "List the comments of a position, or of the whole database.",
+	fs, dbPath := cli.commentFlagSet("list", "List the comments of a position, or of the whole database.",
 		"blunderdb comment list --db database.db --position 412",
 		"blunderdb comment list --db database.db --author Alice --format json")
 	position := fs.Int64("position", 0, "Only the comments of this position id (0: every position)")
@@ -161,13 +160,13 @@ func (cli *CLI) runCommentList(args []string) error {
 		}
 	}
 	if strings.ToLower(*format) == "json" {
-		return printJSON(entries)
+		return cli.printJSON(entries)
 	}
 	if len(entries) == 0 {
-		fmt.Println("No comments.")
+		fmt.Fprintln(cli.stdout(), "No comments.")
 		return nil
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tPosition\tAuthor\tOrigin\tSigned by\tCreated\tText")
 	fmt.Fprintln(w, "--\t--------\t------\t------\t---------\t-------\t----")
 	for _, e := range entries {

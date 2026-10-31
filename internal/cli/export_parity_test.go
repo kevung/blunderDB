@@ -113,7 +113,7 @@ func TestExportParity_GUICLIAndDaemon(t *testing.T) {
 			outputs := map[string]string{"GUI": gui}
 			if tc.cli != nil {
 				cliOut := filepath.Join(dir, "cli.db")
-				captureStdout(t, func() {
+				captureOut(t, cli, func() {
 					args := append([]string{"export", "--db", dbPath, "--type", "database", "--file", cliOut}, tc.cli(ids)...)
 					if err := cli.Run(args); err != nil {
 						t.Fatalf("CLI export: %v", err)
@@ -320,7 +320,7 @@ func TestCLI_DatabaseExportFamilies(t *testing.T) {
 	run := func(args ...string) map[string][]string {
 		t.Helper()
 		out := filepath.Join(t.TempDir(), "out.db")
-		captureStdout(t, func() {
+		captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"export", "--db", dbPath, "--type", "database", "--file", out}, args...)); err != nil {
 				t.Fatalf("export %v: %v", args, err)
 			}
@@ -360,7 +360,7 @@ func TestCLI_MatchesExportByIDs(t *testing.T) {
 	export := func(args ...string) *sql.DB {
 		t.Helper()
 		out := filepath.Join(t.TempDir(), "matchs.db")
-		captureStdout(t, func() {
+		captureOut(t, cli, func() {
 			if err := cli.Run(append([]string{"export", "--db", dbPath, "--type", "matches", "--file", out}, args...)); err != nil {
 				t.Fatalf("export %v: %v", args, err)
 			}

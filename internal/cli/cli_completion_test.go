@@ -7,7 +7,7 @@ import (
 
 func TestCLI_CompletionBash(t *testing.T) {
 	cli := &CLI{db: NewDatabase()}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"completion", "bash"}); err != nil {
 			t.Fatalf("completion bash: %v", err)
 		}
@@ -22,7 +22,7 @@ func TestCLI_CompletionBash(t *testing.T) {
 
 func TestCLI_CompletionZsh(t *testing.T) {
 	cli := &CLI{db: NewDatabase()}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"completion", "zsh"}); err != nil {
 			t.Fatalf("completion zsh: %v", err)
 		}
@@ -34,7 +34,7 @@ func TestCLI_CompletionZsh(t *testing.T) {
 
 func TestCLI_CompletionFish(t *testing.T) {
 	cli := &CLI{db: NewDatabase()}
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.Run([]string{"completion", "fish"}); err != nil {
 			t.Fatalf("completion fish: %v", err)
 		}

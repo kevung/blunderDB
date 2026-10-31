@@ -46,33 +46,33 @@ func (cli *CLI) runRollout(args []string) error {
 	listStored := cmd.Bool("list", false, "Print the rollouts stored on the position of --db instead of rolling it out")
 
 	cmd.Usage = func() {
-		fmt.Println("Usage: blunderdb rollout [options] <XGID|OGID>")
-		fmt.Println("       blunderdb rollout --db <file> --id <position> [--store] [options]")
-		fmt.Println()
-		fmt.Println("Roll a position out with gammonNet: its plays when the position has dice,")
-		fmt.Println("its cube decision otherwise. Each candidate plays the same dice; the luck")
-		fmt.Println("of every roll is taken out of each game (variance reduction); the first two")
-		fmt.Println("rolls are stratified; a game stops where the two-sided bearoff table")
-		fmt.Println("covers it. The cube is played inside the games (cubeful): trust the")
-		fmt.Println("ranking more than the absolute equity.")
-		fmt.Println()
-		fmt.Println("Equities are money points per unit of the position's cube, or normalised")
-		fmt.Println("equity at a match score. Ctrl-C prints what the games finished so far")
-		fmt.Println("concluded. With --store, a finished rollout is written on the position as a")
-		fmt.Println("second analysis with its own settings, beside the imported or evaluated one;")
-		fmt.Println("an interrupted rollout is never stored. Of two rollouts with the same")
-		fmt.Println("settings, the one with more games is kept (a tie keeps the newer).")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb rollout [options] <XGID|OGID>")
+		fmt.Fprintln(cli.stdout(), "       blunderdb rollout --db <file> --id <position> [--store] [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Roll a position out with gammonNet: its plays when the position has dice,")
+		fmt.Fprintln(cli.stdout(), "its cube decision otherwise. Each candidate plays the same dice; the luck")
+		fmt.Fprintln(cli.stdout(), "of every roll is taken out of each game (variance reduction); the first two")
+		fmt.Fprintln(cli.stdout(), "rolls are stratified; a game stops where the two-sided bearoff table")
+		fmt.Fprintln(cli.stdout(), "covers it. The cube is played inside the games (cubeful): trust the")
+		fmt.Fprintln(cli.stdout(), "ranking more than the absolute equity.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Equities are money points per unit of the position's cube, or normalised")
+		fmt.Fprintln(cli.stdout(), "equity at a match score. Ctrl-C prints what the games finished so far")
+		fmt.Fprintln(cli.stdout(), "concluded. With --store, a finished rollout is written on the position as a")
+		fmt.Fprintln(cli.stdout(), "second analysis with its own settings, beside the imported or evaluated one;")
+		fmt.Fprintln(cli.stdout(), "an interrupted rollout is never stored. Of two rollouts with the same")
+		fmt.Fprintln(cli.stdout(), "settings, the one with more games is kept (a tie keeps the newer).")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		cmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb rollout 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'")
-		fmt.Println("  blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'")
-		fmt.Println("  blunderdb rollout --preset standard --format json '<XGID>'")
-		fmt.Println("  blunderdb rollout --games 648 --truncation 0 --ply 1 '<XGID>'")
-		fmt.Println("  blunderdb rollout --db library.db --id 42 --preset standard --store")
-		fmt.Println("  blunderdb rollout --db library.db --id 42 --list")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb rollout 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'")
+		fmt.Fprintln(cli.stdout(), "  blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'")
+		fmt.Fprintln(cli.stdout(), "  blunderdb rollout --preset standard --format json '<XGID>'")
+		fmt.Fprintln(cli.stdout(), "  blunderdb rollout --games 648 --truncation 0 --ply 1 '<XGID>'")
+		fmt.Fprintln(cli.stdout(), "  blunderdb rollout --db library.db --id 42 --preset standard --store")
+		fmt.Fprintln(cli.stdout(), "  blunderdb rollout --db library.db --id 42 --list")
 	}
 
 	if err := cmd.Parse(args); err != nil {
@@ -161,13 +161,13 @@ func (cli *CLI) runRollout(args []string) error {
 	if opt.Progress != nil {
 		fmt.Fprintln(os.Stderr)
 	}
-	return reportRollout(res, runErr, *store, *positionID, *format)
+	return cli.reportRollout(res, runErr, *store, *positionID, *format)
 }
 
 // reportRollout prints what runErr left of a rollout. An interrupted one
 // prints the games finished so far and succeeds; a finished one whose write
 // failed is printed too (the games took minutes) and then fails the command.
-func reportRollout(res *rollout.Result, runErr error, store bool, positionID int64, format string) error {
+func (cli *CLI) reportRollout(res *rollout.Result, runErr error, store bool, positionID int64, format string) error {
 	interrupted := errors.Is(runErr, context.Canceled)
 	if res == nil || (runErr != nil && !interrupted && res.Stop == rollout.StopCancelled) {
 		return runErr
@@ -178,49 +178,49 @@ func reportRollout(res *rollout.Result, runErr error, store bool, positionID int
 	}
 
 	if format == "json" {
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		if err := enc.Encode(res); err != nil {
 			return err
 		}
 		return storeErr
 	}
-	printRollout(res)
+	cli.printRollout(res)
 	switch {
 	case storeErr != nil:
 	case store && runErr == nil:
-		fmt.Printf("\nStored on position %d.\n", positionID)
+		fmt.Fprintf(cli.stdout(), "\nStored on position %d.\n", positionID)
 	case store:
-		fmt.Println("\nInterrupted: not stored.")
+		fmt.Fprintln(cli.stdout(), "\nInterrupted: not stored.")
 	}
 	return storeErr
 }
 
 // printRollout renders a rollout as XG does: equity, its 95 % interval, the
 // games played, and how many standard deviations separate it from the best.
-func printRollout(r *rollout.Result) {
-	fmt.Printf("Rollout, %d games, stopped on %s\n", r.Games, r.Stop)
-	fmt.Println(r.Signature)
-	fmt.Println()
-	fmt.Printf("  %-24s %9s %9s %7s %7s\n", "Candidate", "Equity", "±95%", "Games", "JSD")
+func (cli *CLI) printRollout(r *rollout.Result) {
+	fmt.Fprintf(cli.stdout(), "Rollout, %d games, stopped on %s\n", r.Games, r.Stop)
+	fmt.Fprintln(cli.stdout(), r.Signature)
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintf(cli.stdout(), "  %-24s %9s %9s %7s %7s\n", "Candidate", "Equity", "±95%", "Games", "JSD")
 	if r.Cube != nil {
 		row := func(name string, e rollout.Estimate) {
-			fmt.Printf("  %-24s %+9.4f %9.4f %7d %7.2f\n", name, e.Equity, e.CI95, e.Games, e.JSD)
+			fmt.Fprintf(cli.stdout(), "  %-24s %+9.4f %9.4f %7d %7.2f\n", name, e.Equity, e.CI95, e.Games, e.JSD)
 		}
 		row(rollout.NoDouble, r.Cube.NoDouble)
 		row(rollout.DoubleTake, r.Cube.DoubleTake)
 		row(rollout.DoublePass, r.Cube.DoublePass)
-		fmt.Println()
-		fmt.Printf("Best cube action: %s\n", r.Cube.Action)
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintf(cli.stdout(), "Best cube action: %s\n", r.Cube.Action)
 	} else {
 		for _, c := range r.Candidates {
-			fmt.Printf("  %-24s %+9.4f %9.4f %7d %7.2f\n", c.Move, c.Equity, c.CI95, c.Games, c.JSD)
+			fmt.Fprintf(cli.stdout(), "  %-24s %+9.4f %9.4f %7d %7.2f\n", c.Move, c.Equity, c.CI95, c.Games, c.JSD)
 		}
 	}
 	if r.CubefulBias {
-		fmt.Println()
-		fmt.Println("Cubeful: the cube model plays inside the games — the ranking is more")
-		fmt.Println("reliable than the absolute equity.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Cubeful: the cube model plays inside the games — the ranking is more")
+		fmt.Fprintln(cli.stdout(), "reliable than the absolute equity.")
 	}
 }
 
@@ -231,26 +231,26 @@ func (cli *CLI) printStoredRollouts(positionID int64, asJSON bool) error {
 		return err
 	}
 	if asJSON {
-		enc := json.NewEncoder(os.Stdout)
+		enc := json.NewEncoder(cli.stdout())
 		enc.SetIndent("", "  ")
 		return enc.Encode(list)
 	}
 	if len(list) == 0 {
-		fmt.Printf("No rollout stored on position %d.\n", positionID)
+		fmt.Fprintf(cli.stdout(), "No rollout stored on position %d.\n", positionID)
 		return nil
 	}
 	for i, r := range list {
 		if i > 0 {
-			fmt.Println()
+			fmt.Fprintln(cli.stdout())
 		}
-		fmt.Printf("%s — %d games, stopped on %s, %s\n", r.AnalysisDepth, r.Games, r.Stop, r.Date.Format("2006-01-02 15:04"))
-		fmt.Println(r.Signature)
-		fmt.Printf("  %-24s %9s %9s %7s %7s\n", "Candidate", "Equity", "±95%", "Games", "JSD")
+		fmt.Fprintf(cli.stdout(), "%s — %d games, stopped on %s, %s\n", r.AnalysisDepth, r.Games, r.Stop, r.Date.Format("2006-01-02 15:04"))
+		fmt.Fprintln(cli.stdout(), r.Signature)
+		fmt.Fprintf(cli.stdout(), "  %-24s %9s %9s %7s %7s\n", "Candidate", "Equity", "±95%", "Games", "JSD")
 		for _, c := range r.Candidates {
-			fmt.Printf("  %-24s %+9.4f %9.4f %7d %7.2f\n", c.Move, c.Equity, c.CI95, c.Games, c.JSD)
+			fmt.Fprintf(cli.stdout(), "  %-24s %+9.4f %9.4f %7d %7.2f\n", c.Move, c.Equity, c.CI95, c.Games, c.JSD)
 		}
 		if r.BestCubeAction != "" {
-			fmt.Printf("Best cube action: %s\n", r.BestCubeAction)
+			fmt.Fprintf(cli.stdout(), "Best cube action: %s\n", r.BestCubeAction)
 		}
 	}
 	return nil

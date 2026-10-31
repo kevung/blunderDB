@@ -54,7 +54,7 @@ func TestCLIRepairReportsTheCrawfordCounter(t *testing.T) {
 			cli.db.Close()
 		}
 	})
-	out := captureStdout(t, func() {
+	out := captureOut(t, cli, func() {
 		if err := cli.runRepair([]string{"--db", dbPath, "--format", "json"}); err != nil {
 			t.Fatalf("runRepair: %v", err)
 		}
@@ -74,7 +74,7 @@ func TestCLIRepairReportsTheCrawfordCounter(t *testing.T) {
 	}
 
 	// And the text format says it in words.
-	text := captureStdout(t, func() {
+	text := captureOut(t, cli, func() {
 		if err := cli.runRepair([]string{"--db", dbPath}); err != nil {
 			t.Fatalf("runRepair (text): %v", err)
 		}

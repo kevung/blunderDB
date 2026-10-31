@@ -98,7 +98,7 @@ func (cli *CLI) transcribeWrite(a transcribeWriteArgs, cmd *flag.FlagSet) error 
 	}
 
 	if !a.text {
-		return printJSON(out)
+		return cli.printJSON(out)
 	}
 	switch out.Action {
 	case "finish":
@@ -106,12 +106,12 @@ func (cli *CLI) transcribeWrite(a transcribeWriteArgs, cmd *flag.FlagSet) error 
 		if out.Finish.Replaced {
 			verb = "replaced"
 		}
-		fmt.Printf("draft %d finished: match %d %s, %d game(s), %d move(s), %d position(s) to analyse\n",
+		fmt.Fprintf(cli.stdout(), "draft %d finished: match %d %s, %d game(s), %d move(s), %d position(s) to analyse\n",
 			out.DraftID, out.Finish.MatchID, verb, out.Finish.Games, out.Finish.Moves, out.Finish.ToAnalyze)
 	case "abandon":
-		fmt.Printf("draft %d abandoned\n", out.DraftID)
+		fmt.Fprintf(cli.stdout(), "draft %d abandoned\n", out.DraftID)
 	default:
-		fmt.Printf("draft %d open on match %d\n", out.DraftID, a.matchID)
+		fmt.Fprintf(cli.stdout(), "draft %d open on match %d\n", out.DraftID, a.matchID)
 	}
 	return nil
 }
@@ -148,9 +148,9 @@ func (cli *CLI) transcribeMaterialize(dbPath, file string, text bool) error {
 		return fmt.Errorf("materialising %s: %w", file, err)
 	}
 	if !text {
-		return printJSON(res)
+		return cli.printJSON(res)
 	}
-	fmt.Printf("match %d written: %d game(s), %d move(s), %d position(s) to analyse\n",
+	fmt.Fprintf(cli.stdout(), "match %d written: %d game(s), %d move(s), %d position(s) to analyse\n",
 		res.MatchID, res.Games, res.Moves, res.ToAnalyze)
 	return nil
 }

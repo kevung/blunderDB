@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -62,7 +61,7 @@ var analysisColumns = []string{
 
 // exportPositionsCSV writes one row per position.
 func (cli *CLI) exportPositionsCSV(limit int) error {
-	w := csv.NewWriter(os.Stdout)
+	w := csv.NewWriter(cli.stdout())
 	defer w.Flush()
 	if err := w.Write(positionColumns); err != nil {
 		return err
@@ -109,7 +108,7 @@ var errWalkDone = errors.New("row limit reached")
 // to spelt out on every row: a table that has to be joined before it says
 // anything is a table nobody uses.
 func (cli *CLI) exportMovesCSV(limit int) error {
-	w := csv.NewWriter(os.Stdout)
+	w := csv.NewWriter(cli.stdout())
 	defer w.Flush()
 	if err := w.Write(moveColumns); err != nil {
 		return err
@@ -158,7 +157,7 @@ func optionalMS(ms *int64) string {
 
 // exportAnalysesCSV writes one row per stored analysis.
 func (cli *CLI) exportAnalysesCSV(limit int) error {
-	w := csv.NewWriter(os.Stdout)
+	w := csv.NewWriter(cli.stdout())
 	defer w.Flush()
 	if err := w.Write(analysisColumns); err != nil {
 		return err

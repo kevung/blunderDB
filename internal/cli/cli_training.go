@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -55,13 +54,13 @@ func (cli *CLI) TrainingSubcommands() []string {
 }
 
 func (cli *CLI) printTrainingUsage() {
-	fmt.Println("Usage: blunderdb training <sub-command> [options]")
-	fmt.Println()
-	fmt.Println("The Training journal: the sessions recorded by the Training tab.")
-	fmt.Println()
-	fmt.Println("Sub-commands:")
-	fmt.Println("  sessions  The recorded sessions, most recent first")
-	fmt.Println("  missed    The positions answered wrong, as a list, a deck or a collection")
+	fmt.Fprintln(cli.stdout(), "Usage: blunderdb training <sub-command> [options]")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "The Training journal: the sessions recorded by the Training tab.")
+	fmt.Fprintln(cli.stdout())
+	fmt.Fprintln(cli.stdout(), "Sub-commands:")
+	fmt.Fprintln(cli.stdout(), "  sessions  The recorded sessions, most recent first")
+	fmt.Fprintln(cli.stdout(), "  missed    The positions answered wrong, as a list, a deck or a collection")
 }
 
 func (cli *CLI) runTrainingSessions(args []string) error {
@@ -71,17 +70,17 @@ func (cli *CLI) runTrainingSessions(args []string) error {
 	limit := fs.Int("limit", 20, "Number of sessions shown (0 = all)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb training sessions --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The sessions of the Training journal, most recent first, with their id")
-		fmt.Println("(for `training missed --session`). PR is the Decision exercise's only.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb training sessions --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The sessions of the Training journal, most recent first, with their id")
+		fmt.Fprintln(cli.stdout(), "(for `training missed --session`). PR is the Decision exercise's only.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb training sessions --db database.db")
-		fmt.Println("  blunderdb training sessions --db database.db --exercise decision --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb training sessions --db database.db")
+		fmt.Fprintln(cli.stdout(), "  blunderdb training sessions --db database.db --exercise decision --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -108,14 +107,14 @@ func (cli *CLI) runTrainingSessions(args []string) error {
 		if err != nil {
 			return fmt.Errorf("marshal training sessions: %w", err)
 		}
-		fmt.Println(string(data))
+		fmt.Fprintln(cli.stdout(), string(data))
 		return nil
 	}
 	if len(sessions) == 0 {
-		fmt.Println("No training session recorded.")
+		fmt.Fprintln(cli.stdout(), "No training session recorded.")
 		return nil
 	}
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	w := tabwriter.NewWriter(cli.stdout(), 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tDATE\tEXERCISE\tASKED\tFAULTS\tMEDIAN\tPR")
 	for _, s := range sessions {
 		pr := "-"
@@ -138,21 +137,21 @@ func (cli *CLI) runTrainingMissed(args []string) error {
 	collectionName := fs.String("collection", "", "Make a collection of these positions, with this name")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
-		fmt.Println("Usage: blunderdb training missed --db <file> [options]")
-		fmt.Println()
-		fmt.Println("The positions answered wrong in the Training journal, each once, the most")
-		fmt.Println("recently missed first. A question that ran out of time counts as missed.")
-		fmt.Println("Only the Decision exercise records the position of each question, so only")
-		fmt.Println("its sessions have missed positions.")
-		fmt.Println("--deck and --collection turn them into study material.")
-		fmt.Println()
-		fmt.Println("Options:")
+		fmt.Fprintln(cli.stdout(), "Usage: blunderdb training missed --db <file> [options]")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "The positions answered wrong in the Training journal, each once, the most")
+		fmt.Fprintln(cli.stdout(), "recently missed first. A question that ran out of time counts as missed.")
+		fmt.Fprintln(cli.stdout(), "Only the Decision exercise records the position of each question, so only")
+		fmt.Fprintln(cli.stdout(), "its sessions have missed positions.")
+		fmt.Fprintln(cli.stdout(), "--deck and --collection turn them into study material.")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Options:")
 		fs.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  blunderdb training missed --db database.db")
-		fmt.Println("  blunderdb training missed --db database.db --session 12 --deck \"Missed on Monday\"")
-		fmt.Println("  blunderdb training missed --db database.db --collection \"My misses\" --format json")
+		fmt.Fprintln(cli.stdout())
+		fmt.Fprintln(cli.stdout(), "Examples:")
+		fmt.Fprintln(cli.stdout(), "  blunderdb training missed --db database.db")
+		fmt.Fprintln(cli.stdout(), "  blunderdb training missed --db database.db --session 12 --deck \"Missed on Monday\"")
+		fmt.Fprintln(cli.stdout(), "  blunderdb training missed --db database.db --collection \"My misses\" --format json")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -201,19 +200,19 @@ func (cli *CLI) runTrainingMissed(args []string) error {
 		if err != nil {
 			return fmt.Errorf("marshal missed positions: %w", err)
 		}
-		fmt.Println(string(data))
+		fmt.Fprintln(cli.stdout(), string(data))
 		return nil
 	}
 	if len(ids) == 0 {
-		fmt.Println("No missed position.")
+		fmt.Fprintln(cli.stdout(), "No missed position.")
 		return nil
 	}
-	fmt.Printf("Missed — %d positions: %s\n", len(ids), joinIDs(ids))
+	fmt.Fprintf(cli.stdout(), "Missed — %d positions: %s\n", len(ids), joinIDs(ids))
 	if deckID != 0 {
-		fmt.Printf("Created deck %d (%s)\n", deckID, *deckName)
+		fmt.Fprintf(cli.stdout(), "Created deck %d (%s)\n", deckID, *deckName)
 	}
 	if collectionID != 0 {
-		fmt.Printf("Created collection %d (%s)\n", collectionID, *collectionName)
+		fmt.Fprintf(cli.stdout(), "Created collection %d (%s)\n", collectionID, *collectionName)
 	}
 	return nil
 }
