@@ -3,13 +3,15 @@
 
 Usage: readable_hist.py <marks.csv> <annot.csv> [out.png]
 marks.csv comes from marks_export.py; annot.csv holds n, t_lisible_ms typed by
-hand. Rows with an empty t_lisible_ms are ignored. Prints median, p10, p90 and
+hand (ms, or the player clock m:ss.mmm). Rows with an empty t_lisible_ms are ignored. Prints median, p10, p90 and
 the share outside [-1 s ; +2 s]; plots with matplotlib when available
 (out.png, default readable_hist.png), else a text histogram.
 """
 import csv
 import math
 import sys
+
+from prepare_annot import parse_time
 
 LOW_MS, HIGH_MS = -1000, 2000
 BIN_MS = 500
@@ -26,7 +28,7 @@ def read_deltas(marks_path, annot_path):
                 continue
             n = int(r["n"])
             if n in roll:
-                deltas.append(int(t) - roll[n])
+                deltas.append(parse_time(t) - roll[n])
     return deltas
 
 
