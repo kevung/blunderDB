@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 16:04+0100\n"
+"POT-Creation-Date: 2026-10-31 03:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -954,7 +954,7 @@ msgstr ""
 "Änderung ist deaktiviert und die Titelleiste zeigt „[schreibgeschützt]“ "
 "an."
 
-#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:922
+#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:953
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Siehe :ref:`raccourcis` für die verfügbaren Tastenkürzel."
 
@@ -2095,7 +2095,82 @@ msgstr ""
 "für den Entwurf nur auf diesem Computer gemerkt; er wird nicht in die "
 "Datenbank geschrieben."
 
-#: ../../source/manuel_matchs.rst:856
+#: ../../source/manuel_matchs.rst:858
+msgid ""
+"**La vue du plateau et la ligne de temps.** Le bouton de calibration de "
+"la barre vidéo désigne les quatre coins du plateau dans l'image (points "
+"1, 12, 13 puis 24) ; les calibrations sont nommées et retenues pour la "
+"vidéo, et le bouton ◌ affiche des pions fantômes pour vérifier le calage."
+" Quand le stream affiche un overlay de score ou de position, le bouton ▭ "
+"de la même barre en trace la zone : deux clics sur deux coins opposés, "
+"puis ▭✕ pour l'oublier. Une zone trop petite pour être surveillée est "
+"refusée (« Calibration échouée »). L'analyse de la vidéo suit alors le "
+"plateau et cette zone ; elle n'écrit rien dans le brouillon."
+msgstr ""
+"**Die Brettansicht und die Zeitleiste.** Die Kalibrierungsschaltfläche "
+"der Videoleiste bezeichnet die vier Ecken des Bretts im Bild (Punkte 1, "
+"12, 13, dann 24); Kalibrierungen werden benannt und für das Video "
+"behalten, und die Schaltfläche ◌ zeigt Geistersteine, um die Ausrichtung "
+"zu prüfen. Zeigt der Stream ein Score- oder Stellungs-Overlay, zeichnet "
+"die Schaltfläche ▭ derselben Leiste dessen Bereich: zwei Klicks auf zwei "
+"gegenüberliegende Ecken, dann ▭✕, um ihn zu verwerfen. Ein zu kleiner, "
+"nicht überwachbarer Bereich wird abgelehnt („Kalibrierung "
+"fehlgeschlagen“). Die Videoanalyse folgt dann dem Brett und diesem "
+"Bereich; sie schreibt nichts in den Entwurf."
+
+#: ../../source/manuel_matchs.rst:868
+msgid ""
+"Sous la vidéo, une **ligne de temps** place les événements que l'analyse "
+"a relevés : jet, repos et reprise des dés, début et fin de partie, "
+"plateau perdu ou retrouvé, overlay modifié. Un clic sur un marqueur amène"
+" la vidéo à cet instant, lecture ou pause conservée ; son info-bulle "
+"donne l'événement et son état. La **forme** dit la certitude : un cercle "
+"pour un événement sûr, un losange pour un événement à vérifier, un "
+"triangle pour un événement incertain ; la couleur ne fait que la doubler."
+" *g* saute au marqueur suivant et *MAJ-G* au précédent, tous états "
+"confondus."
+msgstr ""
+"Unter dem Video platziert eine **Zeitleiste** die Ereignisse, die die "
+"Analyse erkannt hat: Wurf, Ruhe und Wiederaufnahme der Würfel, Beginn und"
+" Ende der Partie, Brett verloren oder wiedergefunden, Overlay geändert. "
+"Ein Klick auf eine Markierung führt das Video zu diesem Zeitpunkt, "
+"Wiedergabe oder Pause bleibt erhalten; ihr Tooltip nennt das Ereignis und"
+" seinen Zustand. Die **Form** gibt die Sicherheit an: ein Kreis für ein "
+"sicheres Ereignis, eine Raute für ein zu prüfendes Ereignis, ein Dreieck "
+"für ein unsicheres Ereignis; die Farbe verdoppelt sie nur. *g* springt "
+"zur nächsten Markierung und *UMSCHALT-G* zur vorherigen, unabhängig vom "
+"Zustand."
+
+#: ../../source/manuel_matchs.rst:877
+msgid ""
+"Le premier dé saisi d'une action pose le repère du jet à l'instant où les"
+" dés se sont immobilisés sur la table, quand ce repos est sûr et date "
+"d'au plus une minute ; sinon, ou si le plateau est hors de vue, il garde "
+"l'instant courant."
+msgstr ""
+"Der erste für eine Aktion eingegebene Würfel setzt die Wurfmarke auf den "
+"Zeitpunkt, an dem die Würfel auf dem Tisch zur Ruhe kamen, sofern diese "
+"Ruhe sicher ist und höchstens eine Minute zurückliegt; andernfalls, oder "
+"wenn das Brett nicht im Bild ist, bleibt der aktuelle Zeitpunkt."
+
+#: ../../source/manuel_matchs.rst:881
+msgid ""
+"Deux indicateurs signalent ce que l'analyse ne peut garantir. **Vue "
+"perdue** apparaît dans la barre de calibration tant que le plateau "
+"calibré n'est plus dans l'image. Le pictogramme ◐ au-dessus de la vidéo "
+"signale, pendant trente secondes, que l'overlay a changé sans qu'un "
+"événement de la partie l'explique : la zone tracée ne correspond peut-"
+"être plus à la partie et se retrace par ▭."
+msgstr ""
+"Zwei Anzeigen weisen auf das hin, was die Analyse nicht garantieren kann."
+" **Ansicht verloren** erscheint in der Kalibrierungsleiste, solange das "
+"kalibrierte Brett nicht mehr im Bild ist. Das Piktogramm ◐ über dem Video"
+" zeigt dreißig Sekunden lang an, dass sich das Overlay geändert hat, ohne"
+" dass ein Ereignis der Partie dies erklärt: Der gezeichnete Bereich "
+"entspricht möglicherweise nicht mehr der Partie und wird mit ▭ neu "
+"gezeichnet."
+
+#: ../../source/manuel_matchs.rst:887
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2126,7 +2201,7 @@ msgstr ""
 "Aktion, wenn der Wurf keinen Zeitpunkt hat; ein pausierter Player bleibt "
 "pausiert."
 
-#: ../../source/manuel_matchs.rst:869
+#: ../../source/manuel_matchs.rst:900
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2178,7 +2253,7 @@ msgstr ""
 "Wurf, kehrt dann an das Ende des Transkripts zurück: Dort öffnen die "
 "Ziffern den nächsten Wurf, und der Indikator sagt es."
 
-#: ../../source/manuel_matchs.rst:891
+#: ../../source/manuel_matchs.rst:922
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2204,7 +2279,7 @@ msgstr ""
 " ``gstreamer1-plugins-good gstreamer1-plugins-bad-free gstreamer1-libav``"
 " (letzteres stammt aus RPM Fusion) — siehe :ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:903
+#: ../../source/manuel_matchs.rst:934
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2219,7 +2294,7 @@ msgstr ""
 "wirkungslosen Neuladungen meldet der Bereich dies und bietet einen neuen "
 "Versuch an."
 
-#: ../../source/manuel_matchs.rst:908
+#: ../../source/manuel_matchs.rst:939
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -2239,7 +2314,7 @@ msgstr ""
 " Bereich, falls er fehlerhafte Sprünge findet, den Befehl, der die Datei "
 "ohne Neukodierung repariert, zum Kopieren bereit:"
 
-#: ../../source/manuel_matchs.rst:918
+#: ../../source/manuel_matchs.rst:949
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "

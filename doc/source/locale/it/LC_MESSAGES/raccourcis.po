@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 23:04+0200\n"
+"POT-Creation-Date: 2026-10-31 03:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -2098,6 +2098,19 @@ msgstr ""
 "(fino a 2× per YouTube)."
 
 #: ../../source/raccourcis.rst:1
+msgid "g / MAJ-G (vidéo attachée)"
+msgstr "g / MAIUSC-G (video allegato)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sauter au marqueur suivant / précédent de la ligne de temps sous la "
+"vidéo, lecture ou pause conservée (:ref:`détail <transcription_vision>`)."
+msgstr ""
+"Saltare al marcatore successivo / precedente della linea temporale sotto "
+"il video, conservando riproduzione o pausa (:ref:`dettagli "
+"<transcription_vision>`)."
+
+#: ../../source/raccourcis.rst:1
 msgid "o (vidéo attachée)"
 msgstr "o (video allegato)"
 
@@ -2125,7 +2138,7 @@ msgstr ""
 " uscirne. Anche ESC ne esce; nella modalità cinema, BACKSPACE cancella i "
 "dadi inseriti (:ref:`dettaglio <transcription_theatre>`)."
 
-#: ../../source/raccourcis.rst:445
+#: ../../source/raccourcis.rst:446
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -2133,7 +2146,7 @@ msgstr ""
 "Un tiro che non consente alcuna mossa registra la danza da sé, senza un "
 "tasto in più."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:449
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
@@ -2152,7 +2165,7 @@ msgstr ""
 "tastiera che li colloca così. Senza video, questi tasti mantengono il "
 "loro significato abituale."
 
-#: ../../source/raccourcis.rst:456
+#: ../../source/raccourcis.rst:457
 msgid ""
 "Un indicateur permanent, au-dessus du triangle et sur la barre du mode "
 "théâtre, dit l'effet d'ENTREE et des chiffres à l'instant. Aucune touche "
@@ -2162,7 +2175,7 @@ msgstr ""
 " cinema, dice l'effetto di INVIO e delle cifre in quel momento. Nessun "
 "tasto è bloccato:"
 
-#: ../../source/raccourcis.rst:459
+#: ../../source/raccourcis.rst:460
 msgid ""
 "**Saisie** — le curseur est au bout du document, ou sur une insertion. La"
 " première ligne de l'analyse est présélectionnée et dessinée ; le chiffre"
@@ -2176,7 +2189,7 @@ msgstr ""
 "successivo: la mossa migliore giocata costa i due dadi e nulla più, la "
 "sua convalida essendo portata dal primo tasto del turno seguente."
 
-#: ../../source/raccourcis.rst:464
+#: ../../source/raccourcis.rst:465
 msgid ""
 "**Coup N** — le curseur est sur une action déjà écrite. *j*/*k*, les "
 "flèches, le plateau et les clics sur l'analyse la corrigent ; le chiffre "
@@ -2189,7 +2202,7 @@ msgstr ""
 "cursore che passa alla decisione successiva. Fine riporta "
 "all'Inserimento."
 
-#: ../../source/raccourcis.rst:469
+#: ../../source/raccourcis.rst:470
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -2202,7 +2215,7 @@ msgstr ""
 "sostituisce, un inserimento apre una cella tra le sue due vicine, e il "
 "campo si legge dalla colonna. Nulla è registrato prima della convalida."
 
-#: ../../source/raccourcis.rst:474
+#: ../../source/raccourcis.rst:475
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -2214,7 +2227,7 @@ msgstr ""
 " volta invece di sovrascrivere quella dopo. La fine della partita o lo "
 "spostamento del cursore vi mette fine."
 
-#: ../../source/raccourcis.rst:479
+#: ../../source/raccourcis.rst:480
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -2226,7 +2239,7 @@ msgstr ""
 "cursore» in fondo al documento. La frase si cancella da sola e rende il "
 "posto all'azione attesa."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:485
 msgid ""
 "Reculer le curseur sur une action, la rouvrir puis ressaisir la corrige "
 "**en place** : la validation remplace l'action et le curseur passe à la "
@@ -2247,7 +2260,7 @@ msgstr ""
 "arretrare il cursore dopo aver cambiato qualcosa registra la correzione "
 "strada facendo."
 
-#: ../../source/raccourcis.rst:492
+#: ../../source/raccourcis.rst:493
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -2273,7 +2286,7 @@ msgstr ""
 " viene inserito per il campo a cui mancava. La pila di annullamento vive "
 "in memoria: va persa alla chiusura della bozza."
 
-#: ../../source/raccourcis.rst:503
+#: ../../source/raccourcis.rst:504
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -2283,7 +2296,7 @@ msgstr ""
 "la trascrizione e la barra della bozza — è descritto in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:510
+#: ../../source/raccourcis.rst:511
 msgid "Planche-contact"
 msgstr "Provino"
 
@@ -2331,7 +2344,7 @@ msgstr "Aprire la posizione sul tavoliere e chiudere il provino."
 msgid "Refermer la planche."
 msgstr "Chiudere il provino."
 
-#: ../../source/raccourcis.rst:527
+#: ../../source/raccourcis.rst:528
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 

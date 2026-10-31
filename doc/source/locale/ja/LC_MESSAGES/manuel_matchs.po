@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 16:04+0100\n"
+"POT-Creation-Date: 2026-10-31 03:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -725,7 +725,7 @@ msgstr ""
 " **読み取り専用**\\ "
 "で開きます：ナビゲーション、検索、解析は引き続き可能ですが、あらゆる変更は無効になり、タイトルバーに「[読み取り専用]」と表示されます。"
 
-#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:922
+#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:953
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "利用可能なショートカットについては :ref:`raccourcis` を参照してください。"
 
@@ -1551,7 +1551,67 @@ msgstr ""
 "ずつ、0° から 270° まで回転します。ファイルの動画でも YouTube "
 "のフレームでも、画像は全体が表示されたままです。角度は下書きごとにこのコンピューターにのみ保存され、データベースには書き込まれません。"
 
-#: ../../source/manuel_matchs.rst:856
+#: ../../source/manuel_matchs.rst:858
+msgid ""
+"**La vue du plateau et la ligne de temps.** Le bouton de calibration de "
+"la barre vidéo désigne les quatre coins du plateau dans l'image (points "
+"1, 12, 13 puis 24) ; les calibrations sont nommées et retenues pour la "
+"vidéo, et le bouton ◌ affiche des pions fantômes pour vérifier le calage."
+" Quand le stream affiche un overlay de score ou de position, le bouton ▭ "
+"de la même barre en trace la zone : deux clics sur deux coins opposés, "
+"puis ▭✕ pour l'oublier. Une zone trop petite pour être surveillée est "
+"refusée (« Calibration échouée »). L'analyse de la vidéo suit alors le "
+"plateau et cette zone ; elle n'écrit rien dans le brouillon."
+msgstr ""
+"\\ **盤面ビューとタイムライン。**\\ 動画バーの校正ボタンで、画像内の盤の四隅(ポイント "
+"1、12、13、24)を指定します。校正には名前が付けられ、動画ごとに保持されます。◌ "
+"ボタンはゴーストチェッカーを表示し、位置合わせを確認できます。配信にスコアまたは局面のオーバーレイが表示されている場合は、同じバーの ▭ "
+"ボタンでその領域を描きます。向かい合う 2 つの角を順にクリックし、▭✕ "
+"で破棄します。監視するには小さすぎる領域は拒否されます(「校正に失敗しました」)。動画の解析はその後、盤とこの領域を追跡します。下書きには何も書き込みません。"
+
+#: ../../source/manuel_matchs.rst:868
+msgid ""
+"Sous la vidéo, une **ligne de temps** place les événements que l'analyse "
+"a relevés : jet, repos et reprise des dés, début et fin de partie, "
+"plateau perdu ou retrouvé, overlay modifié. Un clic sur un marqueur amène"
+" la vidéo à cet instant, lecture ou pause conservée ; son info-bulle "
+"donne l'événement et son état. La **forme** dit la certitude : un cercle "
+"pour un événement sûr, un losange pour un événement à vérifier, un "
+"triangle pour un événement incertain ; la couleur ne fait que la doubler."
+" *g* saute au marqueur suivant et *MAJ-G* au précédent, tous états "
+"confondus."
+msgstr ""
+"動画の下の\\ **タイムライン**\\ "
+"に、解析が検出したイベントが並びます。ロール、ダイスの静止と取り上げ、ゲームの開始と終了、盤の見失いと再検出、オーバーレイの変更です。マーカーをクリックすると動画がその時刻に移動し、再生・一時停止の状態は保たれます。ツールチップにはイベントとその状態が表示されます。\\"
+" **形**\\ "
+"が確からしさを表します。確実なイベントは円、確認が必要なイベントはひし形、不確かなイベントは三角形で、色はそれを補うだけです。\\ *g*\\ "
+"は次のマーカーへ、\\ *SHIFT-G*\\ は前のマーカーへ、状態を問わず移動します。"
+
+#: ../../source/manuel_matchs.rst:877
+msgid ""
+"Le premier dé saisi d'une action pose le repère du jet à l'instant où les"
+" dés se sont immobilisés sur la table, quand ce repos est sûr et date "
+"d'au plus une minute ; sinon, ou si le plateau est hors de vue, il garde "
+"l'instant courant."
+msgstr ""
+"アクションで最初に入力されたダイスは、ダイスがテーブル上で静止した時刻にロールのマークを設定します。ただし、その静止が確実で、1 "
+"分以内のものに限ります。そうでない場合や盤が映っていない場合は、現在の時刻のままです。"
+
+#: ../../source/manuel_matchs.rst:881
+msgid ""
+"Deux indicateurs signalent ce que l'analyse ne peut garantir. **Vue "
+"perdue** apparaît dans la barre de calibration tant que le plateau "
+"calibré n'est plus dans l'image. Le pictogramme ◐ au-dessus de la vidéo "
+"signale, pendant trente secondes, que l'overlay a changé sans qu'un "
+"événement de la partie l'explique : la zone tracée ne correspond peut-"
+"être plus à la partie et se retrace par ▭."
+msgstr ""
+"解析が保証できないことを 2 つのインジケーターが知らせます。\\ **視点を見失いました**\\ "
+"は、校正した盤が画像内に見えなくなっている間、校正バーに表示されます。動画上の ◐ "
+"アイコンは、ゲームのどのイベントでも説明できないオーバーレイの変更があったことを 30 "
+"秒間知らせます。描いた領域がもうゲームと一致していない可能性があり、▭ で描き直します。"
+
+#: ../../source/manuel_matchs.rst:887
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -1572,7 +1632,7 @@ msgstr ""
 " 12:34, 手 12:51, 17 s」)。分析パネルは、Duel "
 "で対局した試合と同様に、カーソルのアクションの所要時間を表示します。動画の順序に反する時刻マークは、他のマークが先へ進めるようできるだけ少なく選ばれ、他の不整合と同様に表示され、それに依存する所要時間は不明のままになります。セル上にカーソルを置く(手または所要時間のクリック、*h*、*l*)と、そのアクションのロールの1秒前に動画が移動します。ロールに時刻がない場合は、そのアクションの1秒前です。一時停止中のプレーヤーは一時停止のままです。"
 
-#: ../../source/manuel_matchs.rst:869
+#: ../../source/manuel_matchs.rst:900
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -1605,7 +1665,7 @@ msgstr ""
 " *v* "
 "を押すと、その手が時刻を受け取ります。終わりのない最後のアクションでは、ロールから10秒間そこに留まり、その後トランスクリプトの末尾に戻ります。そこでは数字キーが次のロールを開き、インジケーターがそれを示します。"
 
-#: ../../source/manuel_matchs.rst:891
+#: ../../source/manuel_matchs.rst:922
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -1629,7 +1689,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav``\\ (後者は RPM Fusion "
 "由来)です。:ref:`telecharge_install` を参照してください。"
 
-#: ../../source/manuel_matchs.rst:903
+#: ../../source/manuel_matchs.rst:934
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -1641,7 +1701,7 @@ msgstr ""
 "秒後に再読み込みされ、指定した時点から同じ速度で、以前と同じく再生または一時停止の状態で再開します。3 "
 "回再読み込みしても効果がない場合は、パネルがその旨を表示し、再試行を提案します。"
 
-#: ../../source/manuel_matchs.rst:908
+#: ../../source/manuel_matchs.rst:939
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -1658,7 +1718,7 @@ msgstr ""
 " "
 "はファイルのインデックス(グループあたり数キロバイト)を読み、問題のあるシークを見つけた場合、ペインはそれを知らせるとともに、再エンコードせずにファイルを修復するコマンドをコピーできる状態で表示します:"
 
-#: ../../source/manuel_matchs.rst:918
+#: ../../source/manuel_matchs.rst:949
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "
