@@ -3284,6 +3284,8 @@
         "calibName": "Name der Kalibrierung",
         "calibGhosts": "Geistersteine",
         "calibDelete": "Kalibrierung löschen",
+        "calibOverlay": "Stream-Overlay einzeichnen",
+        "calibOverlayClear": "Overlay-Zone verwerfen",
         "calibDefaultName": "Kalibrierung",
         "viewLost": "Ansicht verloren",
         "timeline": "Ereignis-Zeitleiste",

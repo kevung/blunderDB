@@ -3284,6 +3284,8 @@
         "calibName": "Kalibroinnin nimi",
         "calibGhosts": "Haamunappulat",
         "calibDelete": "Poista kalibrointi",
+        "calibOverlay": "Piirrä streamin overlay",
+        "calibOverlayClear": "Unohda overlay-alue",
         "calibDefaultName": "Kalibrointi",
         "viewLost": "Näkymä kadonnut",
         "timeline": "Tapahtumien aikajana",

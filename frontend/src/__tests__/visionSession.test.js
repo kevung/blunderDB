@@ -69,6 +69,16 @@ describe('calibration to the core', () => {
         expect(vision.start).toHaveBeenCalledWith({ session: 'd1:plein écran' });
     });
 
+    test('the overlay zone goes to the core in pixels of the reduced frame; without one, or under the hash grid, none goes', () => {
+        const { session, vision } = setup();
+        session.calibrate({ ...cal(), overlay: { x: 0.25, y: 0.5, w: 0.5, h: 0.25 } });
+        expect(vision.calibrate.mock.calls[0][0].overlay).toEqual({ x: 80, y: 90, w: 160, h: 45 });
+        session.calibrate(cal());
+        expect(vision.calibrate.mock.calls[1][0]).not.toHaveProperty('overlay');
+        session.calibrate({ ...cal(), overlay: { x: 0.5, y: 0.5, w: 8 / 320, h: 0.25 } });
+        expect(vision.calibrate.mock.calls[2][0]).not.toHaveProperty('overlay');
+    });
+
     test('without the size of the picture nothing is handed over until its metadata is known', () => {
         const { session, vision, video } = setup({ videoWidth: 0 });
         session.calibrate(cal());

@@ -3284,6 +3284,8 @@
         "calibName": "校正の名前",
         "calibGhosts": "ゴーストチェッカー",
         "calibDelete": "校正を削除",
+        "calibOverlay": "配信オーバーレイの範囲を描く",
+        "calibOverlayClear": "オーバーレイの範囲を消す",
         "calibDefaultName": "校正",
         "viewLost": "視点を見失いました",
         "timeline": "イベントのタイムライン",

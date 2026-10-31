@@ -9,13 +9,41 @@ const KEY_PREFIX = 'blunderdb.transcription.videoCalibrations.';
 
 /**
  * @typedef {[number, number]} Click
- * @typedef {{ name: string, clicks: Click[], modelToImage: number[] }} Calibration four clicks in the order of the model's corners, and the homography they give, in fractions of the picture
+ * @typedef {{ x: number, y: number, w: number, h: number }} Rect
+ * @typedef {{ name: string, clicks: Click[], modelToImage: number[], overlay?: Rect }} Calibration four clicks in the order of the model's corners, the homography they give, and the stream overlay's zone when traced, in fractions of the picture
  * @typedef {{ items: Calibration[], active: string | null }} CalibrationSet
  */
 
 /** @param {unknown} v */
 function validClick(v) {
     return Array.isArray(v) && v.length === 2 && v.every((n) => typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 1);
+}
+
+/** @param {unknown} r @returns {r is Rect} a non-empty rectangle inside the picture */
+function validRect(r) {
+    const o = /** @type {any} */ (r);
+    if (!o || ![o.x, o.y, o.w, o.h].every((n) => typeof n === 'number' && Number.isFinite(n))) return false;
+    return o.x >= 0 && o.y >= 0 && o.w > 0 && o.h > 0 && o.x + o.w <= 1 && o.y + o.h <= 1;
+}
+
+// The core hashes the overlay on a 9×8 grid: a zone with fewer pixels than cells says nothing.
+const OVERLAY_MIN = Object.freeze({ w: 9, h: 8 });
+
+/**
+ * The overlay's zone, from fractions of the picture to whole pixels of the core's reduced frame
+ * (the outer pixels it touches); null when it is under the hash grid there.
+ * @param {Rect | undefined} r
+ * @param {number} width
+ * @param {number} height
+ * @returns {Rect | null}
+ */
+export function overlayInFrame(r, width, height) {
+    if (!r) return null;
+    const x = Math.max(0, Math.floor(r.x * width));
+    const y = Math.max(0, Math.floor(r.y * height));
+    const w = Math.min(width, Math.ceil((r.x + r.w) * width)) - x;
+    const h = Math.min(height, Math.ceil((r.y + r.h) * height)) - y;
+    return w >= OVERLAY_MIN.w && h >= OVERLAY_MIN.h ? { x, y, w, h } : null;
 }
 
 /** @param {unknown} c @returns {c is Calibration} */
@@ -48,7 +76,12 @@ export function loadCalibrations(draftId) {
         const items = [];
         for (const c of raw.items)
             if (validCalibration(c) && !items.some((i) => i.name === c.name))
-                items.push({ name: c.name, clicks: c.clicks.map((p) => /** @type {Click} */ ([p[0], p[1]])), modelToImage: c.modelToImage.slice() });
+                items.push({
+                    name: c.name,
+                    clicks: c.clicks.map((p) => /** @type {Click} */ ([p[0], p[1]])),
+                    modelToImage: c.modelToImage.slice(),
+                    ...(validRect(c.overlay) ? { overlay: { x: c.overlay.x, y: c.overlay.y, w: c.overlay.w, h: c.overlay.h } } : {})
+                });
         const active = items.some((i) => i.name === raw.active) ? raw.active : (items[0]?.name ?? null);
         return { items, active };
     } catch (_e) {

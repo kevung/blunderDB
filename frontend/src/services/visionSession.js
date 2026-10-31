@@ -8,7 +8,7 @@ import { createVision } from '../vision/vision.js';
 import { createFrameGrabber } from '../vision/sampler.js';
 import { EVENT_TYPES, makeEvent, STATES } from '../vision/contract.js';
 import { BOARD_RECT, boardRois, createPresenceTracker, presenceScore, rectifyZone } from '../vision/geometry/index.js';
-import { scaleHomography } from './videoCalibration.js';
+import { overlayInFrame, scaleHomography } from './videoCalibration.js';
 
 /** Presence is read twice a second. */
 export const PRESENCE_PERIOD_MS = 500;
@@ -19,7 +19,7 @@ const FRAME = Object.freeze({ width: 320, height: 180 });
 const KEY_PREFIX = 'blunderdb.transcription.videoPresence.';
 
 /**
- * @typedef {{ name: string, clicks: [number, number][], modelToImage: number[] }} ActiveCalibration
+ * @typedef {{ name: string, clicks: [number, number][], modelToImage: number[], overlay?: { x: number, y: number, w: number, h: number } }} ActiveCalibration
  */
 
 /** @param {string} key @param {ActiveCalibration} c */
@@ -119,7 +119,8 @@ export function createVisionSession({ video, key, push, vision = createVision({ 
         if (!active || !(video.videoWidth > 0) || !(video.videoHeight > 0)) return false;
         const res = boardRois({ modelToImage: scaleHomography(active.modelToImage, video.videoWidth, video.videoHeight), sourceWidth: video.videoWidth, sourceHeight: video.videoHeight });
         if (!res.ok) return false;
-        vision.calibrate(res.calibration);
+        const overlay = overlayInFrame(active.overlay, FRAME.width, FRAME.height);
+        vision.calibrate(overlay ? { ...res.calibration, overlay } : res.calibration);
         session = `${key}:${active.name}`;
         reference = loadReference(String(key), active);
         tracker = createPresenceTracker();

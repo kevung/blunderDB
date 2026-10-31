@@ -3284,6 +3284,8 @@
         "calibName": "Nom de la calibration",
         "calibGhosts": "Pions fantômes",
         "calibDelete": "Supprimer la calibration",
+        "calibOverlay": "Tracer l'overlay du stream",
+        "calibOverlayClear": "Oublier la zone de l'overlay",
         "calibDefaultName": "Calibration",
         "viewLost": "Vue perdue",
         "timeline": "Ligne de temps des événements",

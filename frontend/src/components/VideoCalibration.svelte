@@ -8,7 +8,7 @@
     import { t } from '../i18n';
     import { calibrateBoard, invertHomography } from '../vision/geometry/index.js';
     import { closeOnEscape } from '../services/escapeService.js';
-    import { loadCalibrations, saveCalibrations, freeName, pictureRect, pointerToPicture, scaleHomography, ghostCheckers } from '../services/videoCalibration.js';
+    import { loadCalibrations, saveCalibrations, freeName, pictureRect, pointerToPicture, scaleHomography, ghostCheckers, overlayInFrame } from '../services/videoCalibration.js';
 
     /**
      * @type {{
@@ -16,7 +16,7 @@
      *   video: HTMLVideoElement | null,
      *   rotation?: number,
      *   viewLost?: boolean,
-     *   oncalibration?: (c: { name: string, imageToModel: number[], modelToImage: number[], clicks: [number, number][] } | null) => void
+     *   oncalibration?: (c: { name: string, imageToModel: number[], modelToImage: number[], clicks: [number, number][], overlay?: { x: number, y: number, w: number, h: number } } | null) => void
      * }}
      */
     let { calibrationKey, video, rotation = 0, viewLost = false, oncalibration = undefined } = $props();
@@ -28,6 +28,9 @@
     let set = $state(untrack(() => loadCalibrations(calibrationKey)));
     /** @type {[number, number][] | null} null when not capturing */
     let capture = $state(null);
+    /** @type {[number, number][] | null} the corners of the overlay being traced, null when not tracing */
+    let tracing = $state(null);
+    const capturing = $derived(capture !== null || tracing !== null);
     let failed = $state(false);
     let ghosts = $state(true);
     /** @type {HTMLDivElement | null} */
@@ -49,13 +52,14 @@
         lastKey = key;
         set = loadCalibrations(key);
         capture = null;
+        tracing = null;
     });
 
     // The caller learns the calibration in force, in fractions of the picture's width and height.
     $effect(() => {
         const a = active;
         const inverse = a ? invertHomography(a.modelToImage) : null;
-        untrack(() => oncalibration?.(a && inverse ? { name: a.name, clicks: a.clicks, imageToModel: inverse, modelToImage: a.modelToImage } : null));
+        untrack(() => oncalibration?.(a && inverse ? { name: a.name, clicks: a.clicks, imageToModel: inverse, modelToImage: a.modelToImage, ...(a.overlay ? { overlay: a.overlay } : {}) } : null));
     });
 
     function measure() {
@@ -81,8 +85,16 @@
         failed = false;
         pointer = null;
     }
+    function startTracing() {
+        measure();
+        tracing = [];
+        capture = null;
+        failed = false;
+        pointer = null;
+    }
     function cancelCapture() {
         capture = null;
+        tracing = null;
         failed = false;
         pointer = null;
     }
@@ -108,7 +120,29 @@
     function onClick(e) {
         if (e.button !== 0) return;
         const p = locate(e);
-        if (!p || !capture) return;
+        if (!p) return;
+        if (tracing) {
+            if (tracing.length === 0) {
+                tracing = [[p.fx, p.fy]];
+                return;
+            }
+            const [a] = tracing;
+            const x = Math.min(a[0], p.fx);
+            const y = Math.min(a[1], p.fy);
+            const rect = { x, y, w: Math.max(a[0], p.fx) - x, h: Math.max(a[1], p.fy) - y };
+            tracing = null;
+            pointer = null;
+            if (!active) return;
+            // The core's reduced frame is 320×180: a zone under its hash grid there is refused.
+            if (!overlayInFrame(rect, 320, 180)) {
+                failed = true;
+                return;
+            }
+            const target = active;
+            commit({ items: set.items.map((c) => (c === target ? { ...c, overlay: rect } : c)) });
+            return;
+        }
+        if (!capture) return;
         failed = false;
         const clicks = /** @type {[number, number][]} */ ([...capture, [p.fx, p.fy]]);
         if (clicks.length < 4) {
@@ -147,7 +181,7 @@
     }
     // Drawn as soon as the canvas exists and the pointer moves, and again as the video plays.
     $effect(() => {
-        if (!capture || !pointer || !canvas) return;
+        if (!capturing || !pointer || !canvas) return;
         drawLoupe();
         const id = setInterval(drawLoupe, 100);
         return () => clearInterval(id);
@@ -156,6 +190,11 @@
     /** @param {string} name */
     function select(name) {
         commit({ active: name });
+    }
+    function clearOverlay() {
+        const target = active;
+        if (!target) return;
+        commit({ items: set.items.map((c) => (c === target ? { name: c.name, clicks: c.clicks, modelToImage: c.modelToImage } : c)) });
     }
     function remove() {
         if (!active) return;
@@ -171,7 +210,7 @@
     }
 
     $effect(() => {
-        if (capture) return closeOnEscape(cancelCapture);
+        if (capturing) return closeOnEscape(cancelCapture);
     });
 
     // The opening position's checkers, carried to the picture's pixels.
@@ -185,7 +224,7 @@
     });
 </script>
 
-<div class="calib" data-testid="video-calibration" data-state={capture ? 'capturing' : active ? 'ready' : 'none'}>
+<div class="calib" data-testid="video-calibration" data-state={capturing ? 'capturing' : active ? 'ready' : 'none'}>
     <div class="calib-box" class:turned={rotation !== 0} class:sideways style:--turn="{rotation}deg" bind:this={box}>
         <div class="calib-picture" style:left="{pic.x}px" style:top="{pic.y}px" style:width="{pic.w}px" style:height="{pic.h}px">
             {#if pic.w > 0}
@@ -198,16 +237,29 @@
                     {#each capture ?? [] as c, i (i)}
                         <circle class="dot" data-testid="calibration-click" cx={c[0] * pic.w} cy={c[1] * pic.h} r="4" />
                     {/each}
+                    {#each tracing ?? [] as c, i (i)}
+                        <circle class="dot" data-testid="calibration-overlay-click" cx={c[0] * pic.w} cy={c[1] * pic.h} r="4" />
+                    {/each}
+                    {#if active?.overlay && !capturing}
+                        <rect
+                            class="overlay-zone"
+                            data-testid="calibration-overlay-zone"
+                            x={active.overlay.x * pic.w}
+                            y={active.overlay.y * pic.h}
+                            width={active.overlay.w * pic.w}
+                            height={active.overlay.h * pic.h}
+                        />
+                    {/if}
                 </svg>
             {/if}
         </div>
-        {#if capture}
+        {#if capturing}
             <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div class="calib-capture" data-testid="calibration-capture" onpointermove={onMove} onpointerdown={onClick}></div>
         {/if}
     </div>
 
-    {#if capture && pointer}
+    {#if capturing && pointer}
         <div class="loupe" class:right={!loupeLeft} data-testid="calibration-loupe">
             <canvas bind:this={canvas} width={LOUPE} height={LOUPE}></canvas>
             <span class="cross" aria-hidden="true"></span>
@@ -216,7 +268,10 @@
 
     <div class="calib-bar r{rotation}" role="toolbar" aria-label={$t('video.calibration')}>
         {#if failed}<span class="calib-lost" data-testid="calibration-failed" role="status">{$t('video.calibFailed')}</span>{/if}
-        {#if capture}
+        {#if tracing}
+            <span class="calib-step" data-testid="calibration-overlay-step">▭ {tracing.length + 1}/2</span>
+            <button class="calib-btn" data-testid="calibration-cancel" onmousedown={(e) => e.preventDefault()} onclick={cancelCapture}>✕</button>
+        {:else if capture}
             <span class="calib-step" data-testid="calibration-step">{capture.length + 1}/4 · {CORNER_LABELS[capture.length]}</span>
             <button class="calib-btn" data-testid="calibration-undo" disabled={capture.length === 0} onmousedown={(e) => e.preventDefault()} onclick={() => (capture = capture?.slice(0, -1) ?? null)}
                 >↶</button
@@ -240,6 +295,20 @@
                         onmousedown={(e) => e.preventDefault()}
                         onclick={() => (ghosts = !ghosts)}>◌</button
                     >
+                    <button
+                        class="calib-btn"
+                        data-testid="calibration-overlay"
+                        aria-pressed={!!active.overlay}
+                        title={$t('video.calibOverlay')}
+                        aria-label={$t('video.calibOverlay')}
+                        onmousedown={(e) => e.preventDefault()}
+                        onclick={startTracing}>▭</button
+                    >
+                    {#if active.overlay}
+                        <button class="calib-btn" data-testid="calibration-overlay-clear" title={$t('video.calibOverlayClear')} onmousedown={(e) => e.preventDefault()} onclick={clearOverlay}
+                            >▭✕</button
+                        >
+                    {/if}
                     <button class="calib-btn" data-testid="calibration-delete" title={$t('video.calibDelete')} onmousedown={(e) => e.preventDefault()} onclick={remove}>🗑</button>
                 {/if}
             {/if}
@@ -289,6 +358,12 @@
     .ghost.far {
         fill: rgb(0 0 0 / 0.35);
         stroke: rgb(255 140 0 / 0.9);
+    }
+    .overlay-zone {
+        fill: none;
+        stroke: rgb(80 200 255 / 0.9);
+        stroke-width: 1.5;
+        stroke-dasharray: 4 3;
     }
     .dot {
         fill: rgb(255 214 10 / 0.9);
