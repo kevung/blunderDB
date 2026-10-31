@@ -64,8 +64,6 @@ propre issue le jour où il est lancé.
   paquet entier avant de répondre et la collection n'est pas écrite en flux : la mémoire d'un
   gros paquet n'est pas bornée.
 
-- **Blobs « Double No »** : les blobs déjà stockés avec la graphie « Double No » ne sont pas
-  réparés (le front la tolère).
 - **Verrou mono-écrivain et `serve` SQLite.** `sqlite.Open` passe la porte de swap du vacuum
   mais ne prend pas le verrou mono-écrivain (ADR-0004) : le démon écrit à côté d'une instance
   de bureau. Le prendre rendrait le bureau lecture seule tant que le démon tourne. Décision de
@@ -118,13 +116,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
 - **Smoke test GUI sur une vraie base de production migrée** : parcourir chaque filtre de la
   fenêtre de recherche. Priorité basse ; couvert indirectement par
   `searchFilterService.test.js` (unitaires + round-trip).
-- **Le CLI écrit sur `os.Stdout`, pas sur un `io.Writer`** : ~1 500 `fmt.Print*` répartis
-  dans `internal/cli/` et un `captureStdout` de test qui remplace `os.Stdout` — un état global
-  du processus, donc la plupart des tests du paquet ne peuvent pas prendre `t.Parallel()`.
-  Le geste est de donner au `CLI` un `out io.Writer` (défaut `os.Stdout`) et de faire passer
-  les écritures par lui ; il touche beaucoup de fichiers mais aucun comportement, et il
-  débloque aussi les tests de sortie `--format json` qui aujourd'hui sérialisent. Chantier à
-  part, pas « en passant ».
 - **Suites longues** : `go test -race` du paquet `database` prend ~43 min seul, et les suites
   gammonNet en `purego` ~40 min, au-delà des délais locaux usuels. Pour exécuter le noyau arm64
   sans machine dédiée, un `qemu-aarch64` statique (tiré de l'image `tonistiigi/binfmt`) suffit,
@@ -172,6 +163,8 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
 
 ## Historique — items faits
 
+- **2026-10-31 — CLI sur `io.Writer`** : sortie standard via `CLI.out` (défaut `os.Stdout`), `captureOut` remplace `captureStdout` (#866). Reste : poser `t.Parallel()` test par test.
+- **2026-10-31 — Blobs « Double No »** : sans objet. Graphie XG légitime, lue comme No Double par `CanonicalCubeAction` et le front ; réparer coûterait le décodage de tous les blobs (≈15,6 M sur BMAB). Le doublon de graphies dans `PlayedCubeActions` est réglé par #865.
 - **2026-10-31 — la fiche de `MatchPanel` extraite dans `MatchSheet`** (#863) : le panneau Tournois
   monte la fiche seule, sans garde `embedded` ni effet global ; les ids DOM des onglets sont par
   instance (`$props.id()`), la suppression passe par `services/matchTrash.js`.
