@@ -37,6 +37,7 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 
 import TabbedPanel from '../components/TabbedPanel.svelte';
 import MatchPanel from '../components/MatchPanel.svelte';
+import MatchSheet from '../components/MatchSheet.svelte';
 import PanelProbe, { probeLog } from './fixtures/PanelProbe.svelte';
 import { panels } from '../components/lazyComponents.js';
 import { activeTabStore, homeDismissedStore } from '../stores/uiStore.js';
@@ -137,7 +138,7 @@ describe('TabbedPanel keeps the Matches panel mounted', () => {
         expect(matchPanel()?.querySelector('.sort-arrow')).not.toBeNull();
     });
 
-    test('an embedded sheet beside the hidden panel leaves the shared list and the panel id alone', async () => {
+    test('a sheet beside the hidden panel leaves the shared list and the panel id alone', async () => {
         await switchTo('matches');
         const sortButton = /** @type {HTMLButtonElement} */ (matchPanel()?.querySelector('th.sortable .sort-btn'));
         await fireEvent.click(sortButton);
@@ -145,7 +146,7 @@ describe('TabbedPanel keeps the Matches panel mounted', () => {
         const before = get(matchListStore);
         await switchTo('analysis');
 
-        render(MatchPanel, { props: { embeddedMatchId: MATCH.id } });
+        render(MatchSheet, { props: { matchId: MATCH.id } });
         await settle();
         expect(document.querySelectorAll('#matchPanel')).toHaveLength(1);
         expect(get(matchListStore).column).toBe(before.column);

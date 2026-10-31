@@ -194,7 +194,7 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         // The review scored no decision: there is nothing to revisit, so no such tab.
         const tabs = [...tablist.querySelectorAll('[role="tab"]')].map((b) => b.getAttribute('data-testid'));
         expect(tabs).toEqual(['match-tab-transcript', 'match-tab-charts', 'match-tab-details', 'match-tab-info', 'match-tab-stats']);
-        const panel = (/** @type {string} */ id) => container.querySelector(`#match-tabpanel-${id}`);
+        const panel = (/** @type {string} */ id) => container.querySelector(`[data-testid="match-tabpanel-${id}"]`);
         expect(panel('transcript').hidden).toBe(false);
         expect(panel('charts').hidden).toBe(true);
         expect(panel('charts').querySelector('[data-testid="match-losses"]')).not.toBeNull();
@@ -204,8 +204,8 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
     test('a tab shown is remembered for the next match', async () => {
         const container = await openTranscript();
         await openTab(container, 'details');
-        expect(container.querySelector('#match-tabpanel-details').hidden).toBe(false);
-        expect(container.querySelector('#match-tabpanel-transcript').hidden).toBe(true);
+        expect(container.querySelector('[data-testid="match-tabpanel-details"]').hidden).toBe(false);
+        expect(container.querySelector('[data-testid="match-tabpanel-transcript"]').hidden).toBe(true);
         expect(container.querySelector('[data-testid="match-tab-details"]').getAttribute('aria-selected')).toBe('true');
         expect(localStorage.getItem('blunderdb.matchTab')).toBe('details');
     });
@@ -215,9 +215,9 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         const before = get(matchContextStore).currentIndex;
         const tab = container.querySelector('[data-testid="match-tab-transcript"]');
         await fireEvent.keyDown(tab, { key: 'ArrowRight' });
-        expect(container.querySelector('#match-tabpanel-charts').hidden).toBe(false);
+        expect(container.querySelector('[data-testid="match-tabpanel-charts"]').hidden).toBe(false);
         await fireEvent.keyDown(tab, { key: 'End' });
-        expect(container.querySelector('#match-tabpanel-stats').hidden).toBe(false);
+        expect(container.querySelector('[data-testid="match-tabpanel-stats"]').hidden).toBe(false);
         expect(get(matchContextStore).currentIndex).toBe(before);
     });
 

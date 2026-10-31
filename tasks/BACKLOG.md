@@ -105,11 +105,6 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
 
 ## Ouvert — Frontend
 
-- **`MatchPanel.svelte` (1 772 lignes) : extraire la fiche dans un composant `MatchSheet`**,
-  avant que deux panneaux puissent coexister. Le panneau Tournois héberge un `MatchPanel`
-  (`embeddedMatchId`) et chaque effet global y est coupé par un garde `embedded` (liste, tri
-  partagé, clavier, ids DOM `match-tab-*` en double) ; un effet ajouté sans garde touche l'état
-  du vrai panneau. L'extraction du volet de détail règle les deux.
 
 - **Restes de GB-C14 (libellés, vocabulaire, gestes)** : libellés de groupes de la barre
   d'outils non faits ; en-tête de panneau non factorisé dans `PanelTable` ; noms de touches en
@@ -176,6 +171,10 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   abordable un regroupement par distance `like` ; le plan d'étude groupe encore par thème seul.
 
 ## Historique — items faits
+
+- **2026-10-31 — la fiche de `MatchPanel` extraite dans `MatchSheet`** (#863) : le panneau Tournois
+  monte la fiche seule, sans garde `embedded` ni effet global ; les ids DOM des onglets sont par
+  instance (`$props.id()`), la suppression passe par `services/matchTrash.js`.
 
 - **2026-10-31 — Export GUI : sélecteur de paquets** : déjà livré (`ExportDatabaseModal.svelte`, listes collections, leçons et paquets ; d64107236, 64bb447ea).
 - **2026-10-31 — `mergeWatchedLibraries` et le plancher de lecture** : la base refusée par le
