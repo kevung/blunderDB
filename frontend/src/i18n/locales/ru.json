@@ -3284,6 +3284,8 @@
         "calibName": "Имя калибровки",
         "calibGhosts": "Призрачные шашки",
         "calibDelete": "Удалить калибровку",
+        "calibOverlay": "Обвести оверлей трансляции",
+        "calibOverlayClear": "Забыть область оверлея",
         "calibDefaultName": "Калибровка",
         "viewLost": "Вид потерян",
         "timeline": "Шкала событий",

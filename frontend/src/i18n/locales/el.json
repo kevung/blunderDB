@@ -3284,6 +3284,8 @@
         "calibName": "Όνομα βαθμονόμησης",
         "calibGhosts": "Πεσσοί-φαντάσματα",
         "calibDelete": "Διαγραφή βαθμονόμησης",
+        "calibOverlay": "Σχεδίαση του overlay του stream",
+        "calibOverlayClear": "Διαγραφή της ζώνης του overlay",
         "calibDefaultName": "Βαθμονόμηση",
         "viewLost": "Χάθηκε η όψη",
         "timeline": "Χρονολόγιο συμβάντων",

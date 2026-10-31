@@ -9,7 +9,7 @@
 import { must } from './helpers/must.js';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
-import { loadCalibrations, pictureRect, pointerToPicture, freeName } from '../services/videoCalibration.js';
+import { loadCalibrations, saveCalibrations, pictureRect, pointerToPicture, freeName, overlayInFrame } from '../services/videoCalibration.js';
 import { closeOnEscape } from '../services/escapeService.js';
 import VideoCalibration from '../components/VideoCalibration.svelte';
 
@@ -143,6 +143,111 @@ describe('VideoCalibration', () => {
         await calibrate(r);
         expect(r.getByTestId('video-calibration').dataset.state).toBe('ready');
         expect(localStorage.getItem('blunderdb.transcription.videoCalibrations.null')).toBeNull();
+    });
+});
+
+describe('the overlay zone', () => {
+    // Fractions exact in binary, so the expected rectangle is written in the literal.
+    const ZONE = [
+        [0.25, 0.5],
+        [0.75, 0.75]
+    ];
+    /** @param {any} r @param {number[][]} [corners] */
+    async function trace(r, corners = ZONE) {
+        await fireEvent.click(r.getByTestId('calibration-overlay'));
+        for (const p of corners) await click(r.getByTestId('calibration-capture'), onScreen(p));
+    }
+
+    test('two clicks trace the zone on the active calibration; it is kept, drawn and handed to the caller', async () => {
+        const seen = vi.fn();
+        const r = render(VideoCalibration, { props: { calibrationKey: 11, video: /** @type {any} */ (video), oncalibration: seen } });
+        await calibrate(r);
+        expect(r.queryByTestId('calibration-overlay-zone')).toBeNull();
+        await fireEvent.click(r.getByTestId('calibration-overlay'));
+        expect(r.getByTestId('calibration-overlay-step').textContent).toContain('1/2');
+        await click(r.getByTestId('calibration-capture'), onScreen(ZONE[0]));
+        expect(r.getByTestId('calibration-overlay-step').textContent).toContain('2/2');
+        await click(r.getByTestId('calibration-capture'), onScreen(ZONE[1]));
+
+        expect(r.getByTestId('video-calibration').dataset.state).toBe('ready');
+        expect(loadCalibrations(11).items[0].overlay).toEqual({ x: 0.25, y: 0.5, w: 0.5, h: 0.25 });
+        expect(seen).toHaveBeenLastCalledWith(expect.objectContaining({ overlay: { x: 0.25, y: 0.5, w: 0.5, h: 0.25 } }));
+        const zone = r.getByTestId('calibration-overlay-zone');
+        expect([zone.getAttribute('x'), zone.getAttribute('y'), zone.getAttribute('width'), zone.getAttribute('height')]).toEqual(['100', '100', '200', '50']);
+    });
+
+    test('the corners may be given in any order', async () => {
+        const r = render(VideoCalibration, { props: { calibrationKey: 12, video: /** @type {any} */ (video) } });
+        await calibrate(r);
+        await trace(r, [ZONE[1], ZONE[0]]);
+        expect(loadCalibrations(12).items[0].overlay).toEqual({ x: 0.25, y: 0.5, w: 0.5, h: 0.25 });
+    });
+
+    test('forgetting the zone removes it and the caller no longer receives one', async () => {
+        const seen = vi.fn();
+        const r = render(VideoCalibration, { props: { calibrationKey: 13, video: /** @type {any} */ (video), oncalibration: seen } });
+        await calibrate(r);
+        await trace(r);
+        await fireEvent.click(r.getByTestId('calibration-overlay-clear'));
+        expect(loadCalibrations(13).items[0].overlay).toBeUndefined();
+        expect(seen.mock.lastCall?.[0]).not.toHaveProperty('overlay');
+        expect(r.queryByTestId('calibration-overlay-clear')).toBeNull();
+    });
+
+    test('Escape drops a half-traced zone; a zone under the hash grid is refused', async () => {
+        const r = render(VideoCalibration, { props: { calibrationKey: 14, video: /** @type {any} */ (video) } });
+        await calibrate(r);
+        await fireEvent.click(r.getByTestId('calibration-overlay'));
+        await click(r.getByTestId('calibration-capture'), onScreen(ZONE[0]));
+        await fireEvent.keyDown(window, { key: 'Escape' });
+        expect(r.getByTestId('video-calibration').dataset.state).toBe('ready');
+        expect(loadCalibrations(14).items[0].overlay).toBeUndefined();
+
+        // 3×3 px of a 400×200 picture is 2×3 px of the 320×180 frame
+        await trace(r, [
+            [0.5, 0.5],
+            [0.5075, 0.515]
+        ]);
+        expect(r.getByTestId('calibration-failed')).toBeTruthy();
+        expect(loadCalibrations(14).items[0].overlay).toBeUndefined();
+    });
+
+    test('a zone belongs to its calibration: a new one starts without', async () => {
+        const r = render(VideoCalibration, { props: { calibrationKey: 15, video: /** @type {any} */ (video) } });
+        await calibrate(r);
+        await trace(r);
+        await calibrate(r);
+        const [first, second] = loadCalibrations(15).items;
+        expect(first.overlay).toBeDefined();
+        expect(second.overlay).toBeUndefined();
+    });
+
+    test('a stored zone outside the picture or empty is dropped on reading', () => {
+        const base = loadCalibrations(0);
+        expect(base.items).toHaveLength(0);
+        const cal = { name: 'a', clicks: CORNERS.map((c) => [c[0], c[1]]), modelToImage: [1, 0, 0, 0, 1, 0, 0, 0, 1] };
+        const read = (/** @type {any} */ overlay) => {
+            localStorage.clear();
+            saveCalibrations(5, { items: [{ ...cal, ...(overlay ? { overlay } : {}) }], active: 'a' });
+            return loadCalibrations(5).items[0]?.overlay;
+        };
+        expect(read({ x: 0.5, y: 0.5, w: 0.5, h: 0.5 })).toEqual({ x: 0.5, y: 0.5, w: 0.5, h: 0.5 });
+        expect(read({ x: 0.5, y: 0.5, w: 0.6, h: 0.1 })).toBeUndefined();
+        expect(read({ x: 0.5, y: 0.5, w: 0.1, h: 0.6 })).toBeUndefined();
+        expect(read({ x: -0.1, y: 0.1, w: 0.1, h: 0.1 })).toBeUndefined();
+        expect(read({ x: 0.1, y: 0.1, w: 0, h: 0.1 })).toBeUndefined();
+        expect(read({ x: 0.1, y: 0.1, w: 0.1, h: 0 })).toBeUndefined();
+        expect(read({ x: 0.1, y: 0.1, w: 'a', h: 0.1 })).toBeUndefined();
+    });
+
+    test('whole pixels of the reduced frame, outer ones included, and nothing under 9×8', () => {
+        expect(overlayInFrame({ x: 0.25, y: 0.5, w: 0.5, h: 0.25 }, 320, 180)).toEqual({ x: 80, y: 90, w: 160, h: 45 });
+        // 100.5 → 100, 157.5 → 158
+        expect(overlayInFrame({ x: 100.5 / 320, y: 0.5, w: 49.75 / 320, h: 67.5 / 180 }, 320, 180)).toEqual({ x: 100, y: 90, w: 51, h: 68 });
+        expect(overlayInFrame({ x: 0.5, y: 0.5, w: 9 / 320, h: 8 / 180 }, 320, 180)).toMatchObject({ w: 9, h: 8 });
+        expect(overlayInFrame({ x: 0.5, y: 0.5, w: 8 / 320, h: 8 / 180 }, 320, 180)).toBeNull();
+        expect(overlayInFrame({ x: 0.5, y: 0.5, w: 9 / 320, h: 7 / 180 }, 320, 180)).toBeNull();
+        expect(overlayInFrame(undefined, 320, 180)).toBeNull();
     });
 });
 

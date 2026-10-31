@@ -3284,6 +3284,8 @@
         "calibName": "Nombre de la calibración",
         "calibGhosts": "Fichas fantasma",
         "calibDelete": "Eliminar la calibración",
+        "calibOverlay": "Trazar el overlay del stream",
+        "calibOverlayClear": "Olvidar la zona del overlay",
         "calibDefaultName": "Calibración",
         "viewLost": "Vista perdida",
         "timeline": "Línea de tiempo de eventos",
