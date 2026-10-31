@@ -112,3 +112,73 @@ export function createOverlayWatch({ threshold = DRIFT_THRESHOLD, holdSeconds = 
         }
     };
 }
+
+/** Période minimale, en secondes de média, entre deux échantillons de l'overlay (ADR-0109 règle 7 : 0,5–1 s). */
+export const SAMPLE_PERIOD = 0.5;
+
+/** Retard toléré de l'overlay sur l'action qui le fait changer, en secondes de média. */
+export const LATE_SECONDS = 4;
+
+/** Avance tolérée : le début d'un changement est daté à un échantillon, l'action à une image voisine. */
+export const EARLY_SECONDS = 1;
+
+/**
+ * Délai de décision : un événement attendu n'est émis par les automates qu'après l'épisode qu'il
+ * clôt (une fin de partie à la remise à zéro du plateau), donc bien après le changement d'overlay
+ * qu'il explique. Un changement n'est tranché qu'une fois ce délai écoulé.
+ */
+export const DECISION_SECONDS = 10;
+
+/** Événements après lesquels l'overlay change normalement : fin et début de partie, passage de la main. */
+export const EXPECTED_ACTIONS = Object.freeze([EVENT_TYPES.GAME_END, EVENT_TYPES.GAME_START, EVENT_TYPES.DICE_PICKUP]);
+
+/** @param {Uint8Array} hash */
+export function hashToHex(hash) {
+    return Array.from(hash, (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/** @param {string} hex */
+export function hexToHash(hex) {
+    if (!/^(?:[0-9a-f]{2})+$/.test(hex)) throw new TypeError('vision: invalid dHash hex');
+    return Uint8Array.from(hex.match(/../g) ?? [], (b) => parseInt(b, 16));
+}
+
+/**
+ * Confronte les changements d'overlay aux actions attendues. `push` reçoit, par relevé, l'instant
+ * du média, le dHash éventuel (hex) et les événements que les automates viennent d'émettre ; il rend
+ * les `overlay.changed` inattendus, datés du début du changement. Un changement proche d'une action
+ * attendue se tait ; sans overlay (jamais de dHash), rien n'est émis.
+ * @param {{ threshold?: number, holdSeconds?: number }} [options]
+ */
+export function createOverlayDrift(options) {
+    const watch = createOverlayWatch(options);
+    /** @type {number[]} */
+    let actions = [];
+    /** @type {import('./contract.js').VisionEvent[]} */
+    let candidates = [];
+    return {
+        /**
+         * @param {number} mediaTime
+         * @param {string | undefined} hex
+         * @param {import('./contract.js').VisionEvent[]} events
+         * @returns {import('./contract.js').VisionEvent[]}
+         */
+        push(mediaTime, hex, events) {
+            for (const e of events) if (EXPECTED_ACTIONS.includes(e.type)) actions.push(e.mediaTime);
+            if (hex !== undefined) {
+                const changed = watch.push(mediaTime, hexToHash(hex));
+                if (changed) candidates.push(changed);
+            }
+            const out = [];
+            const waiting = [];
+            for (const c of candidates) {
+                if (mediaTime - c.mediaTime < DECISION_SECONDS) waiting.push(c);
+                else if (!actions.some((a) => c.mediaTime >= a - EARLY_SECONDS && c.mediaTime <= a + LATE_SECONDS)) out.push(c);
+            }
+            candidates = waiting;
+            // An action older than any candidate can still settle can be forgotten.
+            actions = actions.filter((a) => mediaTime - a < DECISION_SECONDS + LATE_SECONDS);
+            return out;
+        }
+    };
+}

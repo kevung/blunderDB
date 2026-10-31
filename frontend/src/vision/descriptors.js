@@ -11,11 +11,14 @@
  * l'image est incertaine (témoin au-delà du seuil), `w` la fraction des pixels du témoin dont
  * la signature census a changé depuis l'image précédente, et pour chaque ROI sa moyenne normalisée, sa distance census à l'image
  * analysée précédente et au fond ; `null` quand la référence manque. Valeurs arrondies à 1e-4.
+ * `o`, présent quand la calibration trace un overlay, est son dHash en hexadécimal, pris au plus
+ * toutes les `SAMPLE_PERIOD` secondes et jamais sur une image incertaine.
  */
 
 import { censusChangedFraction, censusDistance, censusRoi, DEFAULT_TAU, toGray } from './census.js';
 import { createAutomata } from './automata.js';
 import { EVENT_TYPES, makeEvent, normalizeCalibration, STATES } from './contract.js';
+import { createOverlayDrift, dHash, hashToHex, SAMPLE_PERIOD } from './overlay.js';
 
 /** Fraction des pixels du témoin au-delà de laquelle l'image est incertaine (ADR-0109 règle 4). */
 export const WITNESS_THRESHOLD = 0.6;
@@ -29,7 +32,7 @@ export function witnessIsUncertain(w, threshold = WITNESS_THRESHOLD) {
     return w !== null && w > threshold;
 }
 
-/** @typedef {{ t: number, u: 0 | 1, w: number | null, r: Record<string, [number, number | null, number | null]> }} DescriptorRecord */
+/** @typedef {{ t: number, u: 0 | 1, w: number | null, r: Record<string, [number, number | null, number | null]>, o?: string }} DescriptorRecord */
 
 /** @param {number | null} v */
 const round = (v) => (v === null ? null : Math.round(v * 1e4) / 1e4);
@@ -46,6 +49,8 @@ export function createDescriber(calibration, { tau = DEFAULT_TAU, witnessThresho
     const background = new Map();
     /** @type {Uint8Array | null} */
     let prevWitness = null;
+    /** @type {number | null} */
+    let lastOverlay = null;
 
     return {
         calibration: cal,
@@ -81,7 +86,14 @@ export function createDescriber(calibration, { tau = DEFAULT_TAU, witnessThresho
                 prev.set(roi.name, bits);
                 if (!bg) background.set(roi.name, bits);
             }
-            return { t: frame.mediaTime, u: uncertain ? 1 : 0, w: round(w), r };
+            const record = { t: frame.mediaTime, u: uncertain ? 1 : 0, w: round(w), r };
+            // The overlay is sampled apart from the dice ROIs: a slower cadence, and never on a
+            // frame whose picture jumped (the uncertain frame already says so).
+            if (cal.overlay && !uncertain && (lastOverlay === null || frame.mediaTime < lastOverlay || frame.mediaTime - lastOverlay >= SAMPLE_PERIOD)) {
+                lastOverlay = frame.mediaTime;
+                record.o = hashToHex(dHash(gray, width, cal.overlay));
+            }
+            return record;
         }
     };
 }
@@ -94,6 +106,7 @@ export function createDescriber(calibration, { tau = DEFAULT_TAU, witnessThresho
  */
 export function createDetector(thresholds) {
     const automata = createAutomata(thresholds);
+    const drift = createOverlayDrift();
     let inUncertain = false;
     return {
         /**
@@ -105,7 +118,9 @@ export function createDetector(thresholds) {
             const events = [];
             if (record.u === 1 && !inUncertain) events.push(makeEvent(EVENT_TYPES.FRAME_UNCERTAIN, record.t, STATES.UNCERTAIN, { witness: record.w }));
             inUncertain = record.u === 1;
-            events.push(...automata.push(record));
+            const fromAutomata = automata.push(record);
+            events.push(...fromAutomata);
+            events.push(...drift.push(record.t, record.o, fromAutomata));
             return events;
         },
         /** Cadence d'échantillonnage voulue après le dernier relevé, en images du média par seconde. */
