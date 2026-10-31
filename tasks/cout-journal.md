@@ -54,3 +54,16 @@ décision (un gain ou une garde). Rien d'autre.
   lieu de 20 % : le hook ne tient pas tout.
 - **Décision** : aucune règle nouvelle ; à la prochaine passe, chercher d'où viennent les
   `sleep` (ouvriers de mesure longue, attentes de CI) avant de durcir `budget.py`.
+
+### Reprise du lot V1 vision — 31/10
+
+- **Relevé** (fenêtre du 31/10, inclut la fin du lot V1 de la nuit) : 27 M tokens (6 M
+  pondérés), 94 % de relecture de cache. Une session principale = 13 % du coût, contexte moyen
+  79k ; 20 sous-agents = 87 %, médiane 14 tours, p90 44. Aucun ouvrier au-delà de 150 appels ;
+  `Agent()` sans modèle 0 ; contexte fixe 29k ; `sleep` 4 ; commentaires 22 % des octets du code.
+- **Écart** : quatre revues rouges sur six branches (doublon de filtre, Repère pris comme
+  instant, horloge des Repères supposée distincte du média), toutes corrigées par un seul
+  renvoi. Les ouvriers ont tenu l'exigence de mutation ; les défauts rouges étaient de
+  conception, invisibles aux tests.
+- **Décision** : aucune règle nouvelle ; garder une revue Opus sur les outils de mesure, où
+  l'erreur est silencieuse.
