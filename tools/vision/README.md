@@ -18,3 +18,9 @@ standard ; matplotlib est facultatif (repli en histogramme texte). Hors de
    part hors de [−1 ; +2] s, histogramme.
 
 Test : `python3 -m unittest discover -s tools/vision` depuis la racine.
+
+## Banc V1.7 : F1 des événements et gain de navigation
+
+`python3 mesure.py events.json marks.csv` (voir l'en-tête du script et
+`tasks/transcription-vision/bancs/04-mesure.md`). `python3 mutations.py` vérifie que chaque
+convention est tenue par un test. Fixture sous `fixtures/`.
