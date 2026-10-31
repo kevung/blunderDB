@@ -56,7 +56,6 @@ sa partie encore utile (quiz et `duel --play` reconnaissent un coup par le plate
 
 ## Pièges
 
-- Le générateur de `models.ts` (wailsjs) omet `ElsewherePlay` / `ElsewhereNeighbour` : les rétablir à la main.
 - Conflits `.po` de `mode_headless` : prendre l'union des msgid, puis `doc-po-update`.
 - e2e : port libre, `--workers=1`, `--timeout=40000`.
 
