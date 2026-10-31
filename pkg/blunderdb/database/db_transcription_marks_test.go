@@ -59,7 +59,8 @@ func TestTranscriptionMarks_LocalSourceOnly(t *testing.T) {
 	other := materializeWithVideo(t, d, "charlot1-charlot2_7p_2025-11-08-2305.mat", "https://www.youtube.com/watch?v=abc")
 	missing := filepath.Join(t.TempDir(), "absent.mp4")
 
-	marks, sum, err := d.TranscriptionMarks(0)
+	mf, err := d.TranscriptionMarks(0)
+	marks, sum := mf.Marks, mf.Summary
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,12 +79,15 @@ func TestTranscriptionMarks_LocalSourceOnly(t *testing.T) {
 	if err := d.SetMatchVideoSource(other, missing); err != nil {
 		t.Fatal(err)
 	}
-	if _, sum, err = d.TranscriptionMarks(0); err != nil || sum.URLSources != 0 || len(sum.Missing) != 1 || sum.Missing[0] != missing {
+	mf, err = d.TranscriptionMarks(0)
+	sum = mf.Summary
+	if err != nil || sum.URLSources != 0 || len(sum.Missing) != 1 || sum.Missing[0] != missing {
 		t.Errorf("a local source absent from the disk must be named, not exported: %+v, %v", sum, err)
 	}
 
 	// --match narrows to one match.
-	one, sum, err := d.TranscriptionMarks(local)
+	mf, err = d.TranscriptionMarks(local)
+	one, sum := mf.Marks, mf.Summary
 	if err != nil || len(one) != 2 || sum.URLSources != 0 {
 		t.Errorf("TranscriptionMarks(%d) = %d marks, %+v, %v", local, len(one), sum, err)
 	}
@@ -92,7 +96,8 @@ func TestTranscriptionMarks_LocalSourceOnly(t *testing.T) {
 	if err := d.SetMatchVideoSource(other, "https://youtu.be/abc"); err != nil {
 		t.Fatal(err)
 	}
-	none, sum, err := d.TranscriptionMarks(other)
+	mf, err = d.TranscriptionMarks(other)
+	none, sum := mf.Marks, mf.Summary
 	if err != nil || len(none) != 0 || sum.URLSources != 1 {
 		t.Errorf("a URL match alone: %d marks, %+v, %v", len(none), sum, err)
 	}
@@ -110,7 +115,7 @@ func TestTranscriptionMarks_LocalSourceOnly(t *testing.T) {
 		return strings.Join(out, " ")
 	}
 	before := count()
-	if _, _, err := d.TranscriptionMarks(0); err != nil {
+	if _, err := d.TranscriptionMarks(0); err != nil {
 		t.Fatal(err)
 	}
 	if after := count(); after != before {
@@ -126,7 +131,8 @@ func TestTranscriptionMarks_Golden(t *testing.T) {
 		t.Fatal(err)
 	}
 	materializeWithVideo(t, d, "gnubg_selfplay_drops_7p.mat", video)
-	marks, _, err := d.TranscriptionMarks(0)
+	mf, err := d.TranscriptionMarks(0)
+	marks := mf.Marks
 	if err != nil {
 		t.Fatal(err)
 	}

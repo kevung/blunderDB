@@ -249,7 +249,7 @@ func TestMediaHostCORS(t *testing.T) {
 		t.Fatal(err)
 	}
 	const origin = "http://wails.localhost"
-	do := func(method, rng string) *http.Response {
+	do := func(method, rng string) (int, http.Header) {
 		req, _ := http.NewRequest(method, u, nil)
 		req.Header.Set("Origin", origin)
 		if rng != "" {
@@ -260,24 +260,24 @@ func TestMediaHostCORS(t *testing.T) {
 			t.Fatal(err)
 		}
 		resp.Body.Close()
-		return resp
+		return resp.StatusCode, resp.Header
 	}
 	for _, c := range []struct {
 		method, rng string
 		status      int
 	}{{"GET", "", 200}, {"GET", "bytes=0-99", 206}, {"OPTIONS", "", 204}} {
-		resp := do(c.method, c.rng)
-		if resp.StatusCode != c.status {
-			t.Fatalf("%s %q: status %d", c.method, c.rng, resp.StatusCode)
+		status, hdr := do(c.method, c.rng)
+		if status != c.status {
+			t.Fatalf("%s %q: status %d", c.method, c.rng, status)
 		}
-		if got := resp.Header.Get("Access-Control-Allow-Origin"); got != origin {
+		if got := hdr.Get("Access-Control-Allow-Origin"); got != origin {
 			t.Fatalf("%s %q: allow-origin %q", c.method, c.rng, got)
 		}
-		if resp.Header.Get("Vary") != "Origin" {
-			t.Fatalf("%s %q: vary %q", c.method, c.rng, resp.Header.Get("Vary"))
+		if hdr.Get("Vary") != "Origin" {
+			t.Fatalf("%s %q: vary %q", c.method, c.rng, hdr.Get("Vary"))
 		}
 		if c.method == "GET" {
-			exp := resp.Header.Get("Access-Control-Expose-Headers")
+			exp := hdr.Get("Access-Control-Expose-Headers")
 			for _, want := range []string{"Content-Range", "Accept-Ranges"} {
 				if !strings.Contains(exp, want) {
 					t.Fatalf("%s %q: expose-headers %q lacks %s", c.method, c.rng, exp, want)
@@ -285,7 +285,7 @@ func TestMediaHostCORS(t *testing.T) {
 			}
 		}
 	}
-	if !strings.Contains(do("OPTIONS", "").Header.Get("Access-Control-Allow-Headers"), "Range") {
+	if _, hdr := do("OPTIONS", ""); !strings.Contains(hdr.Get("Access-Control-Allow-Headers"), "Range") {
 		t.Fatal("preflight does not allow Range")
 	}
 	if r, _ := get(t, u, ""); r.Header.Get("Access-Control-Allow-Origin") != "" {

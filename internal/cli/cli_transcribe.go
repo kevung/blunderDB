@@ -333,11 +333,12 @@ func (cli *CLI) transcribeMarks(dbPath, out string, matchID int64, text bool) er
 	if err := cli.initDatabase(dbPath); err != nil {
 		return err
 	}
-	marks, sum, err := cli.db.TranscriptionMarks(matchID)
+	manifest, err := cli.db.TranscriptionMarks(matchID)
 	if err != nil {
 		return fmt.Errorf("reading the Repères: %w", err)
 	}
 
+	marks, sum := manifest.Marks, manifest.Summary
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
 	for _, m := range marks {
