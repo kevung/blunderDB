@@ -1,10 +1,11 @@
 {"events": [
- {"type": "dice.rest", "mediaTime": 10.0, "state": "sure"},
- {"type": "dice.rest", "mediaTime": 20.5, "state": "sure"},
- {"type": "dice.rest", "mediaTime": 30.501, "state": "check"},
- {"type": "dice.rest", "mediaTime": 40.2, "state": "uncertain"},
- {"type": "dice.rest", "mediaTime": 40.3, "state": "sure"},
+ {"type": "dice.rest", "mediaTime": 7.0, "state": "sure"},
+ {"type": "dice.rest", "mediaTime": 13.6, "state": "check"},
+ {"type": "dice.rest", "mediaTime": 20.5, "state": "uncertain"},
+ {"type": "dice.rest", "mediaTime": 31.0, "state": "sure"},
+ {"type": "dice.rest", "mediaTime": 37.0, "state": "sure"},
+ {"type": "dice.rest", "mediaTime": 40.6, "state": "uncertain"},
  {"type": "dice.rest", "mediaTime": 55.0, "state": "sure"},
- {"type": "dice.thrown", "mediaTime": 10.0, "state": "sure"},
+ {"type": "dice.thrown", "mediaTime": 7.0, "state": "sure"},
  {"type": "dice.pickup", "mediaTime": 14.2, "state": "sure"}
 ]}

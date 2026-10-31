@@ -11,7 +11,7 @@ plus bas). Aucun chiffre réel n'est donc donné, et les seuils de `THRESHOLDS`
 
 ```bash
 python3 tools/vision/marks_export.py BASE.db MATCH marks.csv        # Repères (lecture seule)
-python3 tools/vision/mesure.py events.json marks.csv [--tol 500] [--avance MS] \
+python3 tools/vision/mesure.py events.json marks.csv [--tol 500] \
         [--paire dice.rest=roll_tick_ms] [--paire dice.pickup=tick_ms] [--etats sure,check]
 python3 -m unittest discover -s tools/vision && python3 tools/vision/mutations.py
 ```
@@ -19,21 +19,30 @@ python3 -m unittest discover -s tools/vision && python3 tools/vision/mutations.p
 `events.json` est `replay(records)` (`frontend/src/vision/descriptors.js`) appliqué à un journal
 de descripteurs réel et sérialisé : `{type, mediaTime en s, state}`.
 
-Conventions, chacune tenue par un test qu'une mutation fait échouer (17 mutants, 17 tués) :
+Conventions, chacune tenue par un test qu'une mutation fait échouer (25 mutants, 25 tués) :
 
-- tolérance en ms entiers, bornes incluses (500 apparie, 501 non) ;
-- Repère = point (Repère − `--avance`) ; l'ADR-0109 dit que le repos précède le Repère du jet,
-  l'avance par défaut est 0 et se règle sur l'histogramme `t_lisible − roll_tick_ms` ;
-- appariement un à un, glouton par écart croissant (pas par ordre d'arrivée) ; reste = FP / FN ;
+- un Repère est une **fenêtre** (`02-couverture-sql.md` § 4) : celle du jet va du `tick_ms` de
+  l'action précédente de la partie (colonne `prev_tick_ms` de `marks_export.py`) à
+  `roll_tick_ms` ; celle de l'action va de `roll_tick_ms` à `tick_ms` ; il n'y a plus d'avance
+  réglable ;
+- un événement du type voulu est un vrai positif s'il tombe dans la fenêtre élargie de
+  `--tol` ms (500) de chaque côté ; bornes et tolérance incluses ; chacune des deux bornes a sa
+  mutation ;
+- une fenêtre sans borne de début (premier jet d'une partie, action précédente sans Repère) ou
+  à rebours n'est pas évaluable : elle sort du rappel, est comptée à part (`sans_fenetre`) et la
+  précision est alors un minorant ;
+- appariement un à un, glouton par distance croissante à la fenêtre ; reste = FP / FN ;
 - paire type = colonne choisie ; défaut `dice.rest = roll_tick_ms` ; filtre d'états optionnel ;
-- gain de navigation, **modèle** : lecture séquentielle des Repères ; sans marqueur la traversée
-  r_k − r_(k−1) ; avec marqueurs, un saut (2 s par défaut, à mesurer) plus l'écart résiduel, ou la
-  traversée complète si aucun événement n'est apparié. C'est un modèle de coût, pas une mesure
-  d'utilisateur : le chiffre de l'ADR demande un essai chronométré.
+- gain de navigation, **modèle** : les Repères de toutes les paires forment une seule suite lue
+  dans l'ordre du temps. Sans marqueur, la traversée depuis le Repère précédent ; avec
+  marqueurs, un saut (2 s par défaut, à mesurer) plus la distance de l'événement à sa fenêtre,
+  ou la traversée si la fenêtre n'a pas d'événement, et **un saut de plus par faux positif**.
+  C'est un modèle de coût, pas une mesure d'utilisateur : le chiffre de l'ADR demande un essai
+  chronométré.
 
-Fixture (`tools/vision/fixtures/`) : 8 événements, 4 Repères de jet, à la main. Attendu : TP 3,
-FP 3, FN 1, F1 0,600, écart médian 200 ms, gain du modèle 58,2 %. Ces chiffres valident l'outil,
-ils ne disent rien du détecteur.
+Fixture (`tools/vision/fixtures/`) : 9 événements, 4 coups, à la main. Attendu pour
+`dice.rest = roll_tick_ms` : TP 3, FP 4, FN 0, une fenêtre non évaluable, F1 0,600, gain du modèle
+39,0 %. Ces chiffres valident l'outil, ils ne disent rien du détecteur.
 
 ## Ce qui manque pour la mesure réelle
 

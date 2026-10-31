@@ -34,8 +34,18 @@ class Vision(unittest.TestCase):
 
     def test_export(self):
         self.assertEqual(
-            marks_export.export_rows(self.db, 7), [(1, 1000, 4000, "31"), (3, 9000, "", "22")]
+            marks_export.export_rows(self.db, 7), [(1, 1000, 4000, "31", ""), (3, 9000, "", "22", "")]
         )
+
+    def test_export_previous_action_tick_within_game(self):
+        con = sqlite3.connect(self.db)
+        con.executescript(
+            "INSERT INTO move VALUES (5, 2, 1, 4, 3, 12000, 15000), (6, 2, 2, 2, 1, 17000, NULL), (7, 2, 3, 5, 5, 20000, 21000);"
+        )
+        con.close()
+        rows = marks_export.export_rows(self.db, 7)
+        # game 1's last tick (4000) does not leak into game 2; a missing tick leaves the next one empty
+        self.assertEqual([r[4] for r in rows], ["", "", "", 15000, ""])
 
     def test_export_read_only(self):
         con = sqlite3.connect(
