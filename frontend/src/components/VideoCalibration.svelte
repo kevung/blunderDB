@@ -32,6 +32,7 @@
     let tracing = $state(null);
     const capturing = $derived(capture !== null || tracing !== null);
     let failed = $state(false);
+    let overlayTooSmall = $state(false);
     let ghosts = $state(true);
     /** @type {HTMLDivElement | null} */
     let box = $state(null);
@@ -83,6 +84,7 @@
         measure();
         capture = [];
         failed = false;
+        overlayTooSmall = false;
         pointer = null;
     }
     function startTracing() {
@@ -90,12 +92,14 @@
         tracing = [];
         capture = null;
         failed = false;
+        overlayTooSmall = false;
         pointer = null;
     }
     function cancelCapture() {
         capture = null;
         tracing = null;
         failed = false;
+        overlayTooSmall = false;
         pointer = null;
     }
 
@@ -135,7 +139,7 @@
             if (!active) return;
             // The core's reduced frame is 320×180: a zone under its hash grid there is refused.
             if (!overlayInFrame(rect, 320, 180)) {
-                failed = true;
+                overlayTooSmall = true;
                 return;
             }
             const target = active;
@@ -144,6 +148,7 @@
         }
         if (!capture) return;
         failed = false;
+        overlayTooSmall = false;
         const clicks = /** @type {[number, number][]} */ ([...capture, [p.fx, p.fy]]);
         if (clicks.length < 4) {
             capture = clicks;
@@ -268,6 +273,7 @@
 
     <div class="calib-bar r{rotation}" role="toolbar" aria-label={$t('video.calibration')}>
         {#if failed}<span class="calib-lost" data-testid="calibration-failed" role="status">{$t('video.calibFailed')}</span>{/if}
+        {#if overlayTooSmall}<span class="calib-lost" data-testid="overlay-too-small" role="status">{$t('video.calibOverlayTooSmall')}</span>{/if}
         {#if tracing}
             <span class="calib-step" data-testid="calibration-overlay-step">▭ {tracing.length + 1}/2</span>
             <button class="calib-btn" data-testid="calibration-cancel" onmousedown={(e) => e.preventDefault()} onclick={cancelCapture}>✕</button>

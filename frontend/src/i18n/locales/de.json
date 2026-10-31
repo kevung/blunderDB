@@ -3294,6 +3294,7 @@
         "markerUncertain": "Unsicher",
         "overlayDrift": "Das Overlay hat sich ohne Aktion geändert",
         "calibFailed": "Kalibrierung fehlgeschlagen",
+        "calibOverlayTooSmall": "Zone zu klein",
         "player": "Videoplayer",
         "placeBoard": "Video neben dem Brett anzeigen",
         "placePanel": "Video zurück ins Panel legen",

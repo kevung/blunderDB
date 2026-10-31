@@ -3294,6 +3294,7 @@
         "markerUncertain": "Incierto",
         "overlayDrift": "El overlay cambió sin acción",
         "calibFailed": "Calibración fallida",
+        "calibOverlayTooSmall": "Zona demasiado pequeña",
         "player": "Reproductor de vídeo",
         "placeBoard": "Mostrar el vídeo junto al tablero",
         "placePanel": "Devolver el vídeo al panel",

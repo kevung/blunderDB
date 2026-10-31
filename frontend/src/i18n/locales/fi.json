@@ -3294,6 +3294,7 @@
         "markerUncertain": "Epävarma",
         "overlayDrift": "Overlay muuttui ilman siirtoa",
         "calibFailed": "Kalibrointi epäonnistui",
+        "calibOverlayTooSmall": "Alue liian pieni",
         "player": "Videosoitin",
         "placeBoard": "Näytä video laudan vieressä",
         "placePanel": "Palauta video paneeliin",

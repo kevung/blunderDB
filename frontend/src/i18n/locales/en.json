@@ -3294,6 +3294,7 @@
         "markerUncertain": "Uncertain",
         "overlayDrift": "The overlay changed with no action",
         "calibFailed": "Calibration failed",
+        "calibOverlayTooSmall": "Zone too small",
         "player": "Video player",
         "placeBoard": "Show the video beside the board",
         "placePanel": "Put the video back in the panel",

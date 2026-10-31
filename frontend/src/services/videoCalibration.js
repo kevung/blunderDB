@@ -3,6 +3,7 @@
 // never written to the database. Clicks are fractions of the picture ([0,1], the unturned
 // image), so they survive a resize of the pane and a rotation of the video.
 
+import { GRID_W, GRID_H } from '../vision/overlay.js';
 import { applyHomography, boardZones, checkerCenter } from '../vision/geometry/index.js';
 
 const KEY_PREFIX = 'blunderdb.transcription.videoCalibrations.';
@@ -26,12 +27,9 @@ function validRect(r) {
     return o.x >= 0 && o.y >= 0 && o.w > 0 && o.h > 0 && o.x + o.w <= 1 && o.y + o.h <= 1;
 }
 
-// The core hashes the overlay on a 9×8 grid: a zone with fewer pixels than cells says nothing.
-const OVERLAY_MIN = Object.freeze({ w: 9, h: 8 });
-
 /**
  * The overlay's zone, from fractions of the picture to whole pixels of the core's reduced frame
- * (the outer pixels it touches); null when it is under the hash grid there.
+ * (the outer pixels it touches); null when it is under the hash grid there (fewer pixels than cells says nothing).
  * @param {Rect | undefined} r
  * @param {number} width
  * @param {number} height
@@ -43,7 +41,7 @@ export function overlayInFrame(r, width, height) {
     const y = Math.max(0, Math.floor(r.y * height));
     const w = Math.min(width, Math.ceil((r.x + r.w) * width)) - x;
     const h = Math.min(height, Math.ceil((r.y + r.h) * height)) - y;
-    return w >= OVERLAY_MIN.w && h >= OVERLAY_MIN.h ? { x, y, w, h } : null;
+    return w >= GRID_W && h >= GRID_H ? { x, y, w, h } : null;
 }
 
 /** @param {unknown} c @returns {c is Calibration} */

@@ -208,7 +208,7 @@ describe('the overlay zone', () => {
             [0.5, 0.5],
             [0.5075, 0.515]
         ]);
-        expect(r.getByTestId('calibration-failed')).toBeTruthy();
+        expect(r.getByTestId('overlay-too-small')).toBeTruthy();
         expect(loadCalibrations(14).items[0].overlay).toBeUndefined();
     });
 

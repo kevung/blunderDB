@@ -3294,6 +3294,7 @@
         "markerUncertain": "不確実",
         "overlayDrift": "操作なしにオーバーレイが変わりました",
         "calibFailed": "校正に失敗しました",
+        "calibOverlayTooSmall": "領域が小さすぎます",
         "player": "動画プレーヤー",
         "placeBoard": "動画を盤の横に表示",
         "placePanel": "動画をパネルに戻す",

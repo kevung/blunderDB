@@ -3294,6 +3294,7 @@
         "markerUncertain": "Неуверенно",
         "overlayDrift": "Оверлей изменился без действия",
         "calibFailed": "Калибровка не удалась",
+        "calibOverlayTooSmall": "Зона слишком мала",
         "player": "Видеоплеер",
         "placeBoard": "Показать видео рядом с доской",
         "placePanel": "Вернуть видео в панель",
