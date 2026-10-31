@@ -35,10 +35,9 @@ MUTANTS_ANNOT = [
     ("prepare_annot.py", "horloge : ms tronquées", "ms % 1000:03d", "ms % 100:03d"),
     ("prepare_annot.py", "analyse : minute à 100 s", "whole * 60 + int(p)", "whole * 100 + int(p)"),
     ("prepare_annot.py", "analyse : secondes prises pour ms", "int(round(secs * 1000))", "int(round(secs))"),
-    ("prepare_annot.py", "extrait : décalage de la vidéo ignoré", "roll_ms + offset_ms - back_ms", "roll_ms - back_ms"),
-    ("prepare_annot.py", "extrait : début non borné à 0", "max(0, roll_ms + offset_ms - back_ms)", "roll_ms + offset_ms - back_ms"),
+    ("prepare_annot.py", "extrait : début non borné à 0", "max(0, roll_ms - back_ms)", "roll_ms - back_ms"),
+    ("prepare_annot.py", "extrait : retour en arrière ignoré", "roll_ms - back_ms)", "roll_ms)"),
     ("prepare_annot.py", "extrait : durée ignorée", "-t {span_ms / 1000:.3f}", "-t 1"),
-    ("prepare_annot.py", "horloge du gabarit sans décalage", "mmss(roll + offset)", "mmss(roll)"),
 ]
 
 MUTANTS = [

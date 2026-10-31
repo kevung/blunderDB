@@ -91,10 +91,10 @@ class Prepare(unittest.TestCase):
         self.assertEqual(prepare_annot.parse_time("1:00:01.5"), 3601500)
         self.assertEqual(prepare_annot.parse_time(" 0:02.5 "), 2500)
 
-    def test_clip_command_offsets_and_clamps(self):
-        c = prepare_annot.clip_command("v.mkv", "out", 7, 10000, 2000, 5000, 9000)
-        self.assertEqual(c, "ffmpeg -y -ss 7.000 -i 'v.mkv' -t 9.000 -an 'out/7.mkv'")
-        self.assertIn("-ss 0.000", prepare_annot.clip_command("v.mkv", "out", 7, 1000, 0, 5000, 9000))
+    def test_clip_command_starts_before_roll_and_clamps(self):
+        c = prepare_annot.clip_command("v.mkv", "out", 7, 10000, 5000, 9000)
+        self.assertEqual(c, "ffmpeg -y -ss 5.000 -i 'v.mkv' -t 9.000 -an 'out/7.mkv'")
+        self.assertIn("-ss 0.000", prepare_annot.clip_command("v.mkv", "out", 7, 1000, 5000, 9000))
 
     def test_main_writes_template_with_empty_annotation(self):
         with tempfile.TemporaryDirectory() as d:
@@ -102,14 +102,14 @@ class Prepare(unittest.TestCase):
             buf = io.StringIO()
             with contextlib.redirect_stdout(buf):
                 self.assertEqual(
-                    prepare_annot.main(["x", MARKS, out, "--n", "2", "--offset-ms", "1000", "--video", "v.mkv"]), 0
+                    prepare_annot.main(["x", MARKS, out, "--n", "2", "--video", "v.mkv"]), 0
                 )
             lines = open(out, encoding="utf-8").read().splitlines()
             self.assertEqual(lines[0], "n,dés,roll_tick_ms,roll_mmss,t_lisible_ms")
-            self.assertEqual(lines[1], "1,31,10000,0:11.000,")
-            self.assertEqual(lines[2], "4,51,40000,0:41.000,")
+            self.assertEqual(lines[1], "1,31,10000,0:10.000,")
+            self.assertEqual(lines[2], "4,51,40000,0:40.000,")
             self.assertEqual(buf.getvalue().count("ffmpeg"), 2)
-            self.assertIn("-ss 6.000", buf.getvalue())
+            self.assertIn("-ss 5.000", buf.getvalue())
 
 
 if __name__ == "__main__":

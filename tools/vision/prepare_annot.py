@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Prepare the moves to annotate for the t_lisible - roll_tick_ms bench.
 
-Usage: prepare_annot.py <marks.csv> <annot.csv> [--n 50] [--offset-ms 0] [--back-ms 5000]
+Usage: prepare_annot.py <marks.csv> <annot.csv> [--n 50] [--back-ms 5000]
                         [--span-ms 9000] [--video v.mkv --clips dir]
 marks.csv comes from marks_export.py. Picks n moves spread evenly over the
 match (deterministic: same marks, same selection, no random draw) and writes
 annot.csv: n, dés, roll_tick_ms, roll_mmss (where to look in the player), then
-the empty t_lisible_ms to fill by hand. Video time = roll_tick_ms + offset-ms
-(offset-ms: video time of the match clock's zero). With --video, prints the
+the empty t_lisible_ms to fill by hand. roll_tick_ms is a video playback time
+(from the start of the media). With --video, prints the
 ffmpeg command cutting, for each move, the clip [roll - back, roll - back +
 span] to clips/<n>.mkv, one per line (run them with `sh`); the tool never
 runs ffmpeg itself.
@@ -46,8 +46,8 @@ def parse_time(text):
     return whole * 60000 + int(round(secs * 1000))
 
 
-def clip_command(video, clips_dir, n, roll_ms, offset_ms, back_ms, span_ms):
-    start = max(0, roll_ms + offset_ms - back_ms)
+def clip_command(video, clips_dir, n, roll_ms, back_ms, span_ms):
+    start = max(0, roll_ms - back_ms)
     return (
         f"ffmpeg -y -ss {start / 1000:.3f} -i '{video}' -t {span_ms / 1000:.3f} "
         f"-an '{os.path.join(clips_dir, str(n))}.mkv'"
@@ -61,7 +61,7 @@ def read_marks(path):
 
 def main(argv):
     args = argv[1:]
-    opts = {"--n": "50", "--offset-ms": "0", "--back-ms": "5000", "--span-ms": "9000", "--video": "", "--clips": "clips"}
+    opts = {"--n": "50", "--back-ms": "5000", "--span-ms": "9000", "--video": "", "--clips": "clips"}
     pos = []
     i = 0
     while i < len(args):
@@ -74,16 +74,16 @@ def main(argv):
     if len(pos) != 2:
         print(__doc__, file=sys.stderr)
         return 2
-    n, offset, back, span = (int(opts[k]) for k in ("--n", "--offset-ms", "--back-ms", "--span-ms"))
+    n, back, span = (int(opts[k]) for k in ("--n", "--back-ms", "--span-ms"))
     rows = pick(read_marks(pos[0]), n)
     with open(pos[1], "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh, lineterminator="\n")
         w.writerow(["n", "dés", "roll_tick_ms", "roll_mmss", "t_lisible_ms"])
         for r in rows:
             roll = int(r["roll_tick_ms"])
-            w.writerow([r["n"], r.get("dés", ""), roll, mmss(roll + offset), ""])
+            w.writerow([r["n"], r.get("dés", ""), roll, mmss(roll), ""])
             if opts["--video"]:
-                print(clip_command(opts["--video"], opts["--clips"], r["n"], roll, offset, back, span))
+                print(clip_command(opts["--video"], opts["--clips"], r["n"], roll, back, span))
     return 0
 
 
