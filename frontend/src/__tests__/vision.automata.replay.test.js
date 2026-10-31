@@ -6,10 +6,42 @@ import { createDetector, replay } from '../vision/descriptors.js';
 import { simulate } from './fixtures/vision/board.js';
 import { SCENARIOS } from './fixtures/vision/scenarios.js';
 
+// The tuned values, written out: the boundary journals are built on these literals, not on
+// THRESHOLDS, so a threshold that moves breaks a behaviour test and not only the pin below.
+const T = Object.freeze({
+    stateRate: 2,
+    denseRate: 10,
+    denseMaxDt: 0.25,
+    maxGap: 2,
+    windowAfter: 2,
+    noiseWindow: 20,
+    noiseMin: 3,
+    hiFactor: 3,
+    loFactor: 1.5,
+    hiFloor: 0.003,
+    loFloor: 0.002,
+    handsIn: 0.03,
+    handsOut: 0.02,
+    throwFrames: 1,
+    restFrames: 5,
+    handsInFrames: 2,
+    handsOutFrames: 3,
+    throwGap: 1,
+    maxRoll: 4,
+    razHi: 0.012,
+    razLo: 0.004
+});
+
 // The automata are tuned on journals (ADR-0109 rule 8). Three kinds of guard hold the tuning:
 // the scripted scenes, played through the live pipeline, must still give the journals on disk;
 // each journal must replay to its events, scored by F1 at ±0.5 s against the annotated truth;
-// and every threshold has a boundary journal that breaks when the threshold moves.
+// and every threshold has a boundary journal, written in literal values, whose behaviour
+// changes when that threshold moves by more than a part in a million.
+//
+// These journals are synthetic: the same generator sets the thresholds and checks them, for
+// want of a real video in the repository. The F1 here says the automata do what was meant on
+// scenes built for them, not that they hold on a camera; the thresholds are to be set again on
+// real journals (V1.7).
 
 const DIR = join(__dirname, 'fixtures', 'vision');
 const NAMES = Object.keys(SCENARIOS);
@@ -110,12 +142,12 @@ describe('automata journals', SLOW, () => {
 });
 
 // Boundary journals, built by hand. Both halves sit on a constant floor F, so the noise spread
-// is nil and the levels are the floors of THRESHOLDS; a frame is "x above the floor".
+// is nil and the levels are the floors of T; a frame is "x above the floor".
 const F = 0.25;
 /** Relative step across a boundary: any move of a threshold beyond it breaks a test. */
 const D = 1e-6;
 
-function journal(warm = THRESHOLDS.noiseWindow) {
+function journal(warm = T.noiseWindow) {
     /** @type {import('../vision/descriptors.js').DescriptorRecord[]} */
     const records = [{ t: 0, u: 0, w: null, r: { left: [0.5, null, null], right: [0.5, null, null] } }];
     let t = 0;
@@ -150,7 +182,6 @@ const run = (j, th) => {
 };
 const types = (/** @type {ReturnType<typeof journal>} */ j) => run(j).map(([type]) => type);
 
-const T = THRESHOLDS;
 /** A dice throw on the left half of excess `x`, then calm frames at excess `calm`. */
 const throwThen = (/** @type {number} */ x, calm = 0, n = T.restFrames) => journal().frame({ x }).frame({ x: calm, n });
 /** A hand in for a second at excess `x`, then frames at excess `out`. */
@@ -158,30 +189,7 @@ const handThen = (/** @type {number} */ x, out = 0, n = T.handsOutFrames) => jou
 
 describe('every threshold holds on a boundary journal', () => {
     it('pins the tuned values', () => {
-        expect(THRESHOLDS).toEqual({
-            stateRate: 2,
-            denseRate: 10,
-            denseMaxDt: 0.25,
-            maxGap: 2,
-            windowBefore: 1,
-            windowAfter: 2,
-            noiseWindow: 20,
-            noiseMin: 3,
-            hiFactor: 3,
-            loFactor: 1.5,
-            hiFloor: 0.003,
-            loFloor: 0.002,
-            handsIn: 0.03,
-            handsOut: 0.02,
-            throwFrames: 1,
-            restFrames: 5,
-            handsInFrames: 2,
-            handsOutFrames: 3,
-            throwGap: 1,
-            maxRoll: 4,
-            razHi: 0.012,
-            razLo: 0.004
-        });
+        expect(THRESHOLDS).toEqual(T);
     });
 
     it('hiFloor: dice motion starts at E_hi', () => {
@@ -196,7 +204,10 @@ describe('every threshold holds on a boundary journal', () => {
     });
 
     describe('hiFactor and loFactor scale the noise spread', () => {
-        // Half the floor samples at F − a, half at F + a: median F, MAD a, spread 1.4826 a.
+        // On the scene journals the sensor noise is stationary, and a census distance averaged
+        // over thousands of bits barely varies: 3σ stays under hiFloor and the floors decide.
+        // Here the noise spreads: half the floor samples at F − a, half at F + a (median F,
+        // MAD a, σ = 1.4826 a), and the factors decide.
         const a = 0.002;
         const sigma = 1.4826 * a;
         function noisy() {
@@ -364,17 +375,15 @@ describe('every threshold holds on a boundary journal', () => {
 });
 
 describe('cadence', () => {
-    it('compares states at stateRate and opens [−windowBefore ; +windowAfter] s around a change', () => {
+    it('compares states at stateRate and stays dense windowAfter s after a change', () => {
         const a = createAutomata();
         const j = journal();
         j.records.forEach((r) => a.push(r));
         expect(a.rate).toBe(T.stateRate);
-        expect(a.window).toBeNull();
         const t0 = j.t + 0.5;
         // A hand between two samples: it opens the window and leaves nothing running.
         a.push({ t: t0, u: 0, w: 0, r: { left: [0.5, F + 2 * T.handsIn, F], right: [0.5, F, F] } });
         expect(a.rate).toBe(T.denseRate);
-        expect(a.window).toEqual({ from: t0 - T.windowBefore, to: t0 + T.windowAfter });
         a.push({ t: t0 + T.windowAfter - 0.1, u: 0, w: 0, r: { left: [0.5, F, F], right: [0.5, F, F] } });
         expect(a.rate).toBe(T.denseRate);
         a.push({ t: t0 + T.windowAfter, u: 0, w: 0, r: { left: [0.5, F, F], right: [0.5, F, F] } });

@@ -10,11 +10,12 @@
  * Hors fenêtre, l'analyse tourne à `stateRate` et compare des **états** : la distance census
  * d'une ROI à l'image analysée précédente, une demi-seconde plus tôt. Des dés déplacés ou un
  * plateau changé la font franchir `E_hi` même si le geste est tombé entre deux images ; elle
- * ouvre alors une fenêtre [t − `windowBefore` ; t + `windowAfter`] où l'analyse passe à
- * `denseRate`, et que chaque image active prolonge. Les automates ne comptent leurs durées que
- * sur les images denses. En lecture (le chemin opportuniste, à 1× ou plus), la part passée
- * d'une fenêtre est déjà jouée : l'épisode commence au relevé grossier qui l'a vu, et son
- * instant n'est pas sûr. `window.from` reste exposé pour un parcours par seeks.
+ * ouvre alors une fenêtre où l'analyse passe à `denseRate` jusqu'à t + `windowAfter`, et que
+ * chaque image active prolonge. Les automates ne comptent leurs durées que sur les images
+ * denses. La borne passée de la fenêtre de l'ADR-0109 (−1 s) n'a de sens que pour un parcours
+ * par seeks, qui peut revenir en arrière ; en lecture (le chemin opportuniste, à 1× ou plus),
+ * cette part est déjà jouée : l'épisode commence au relevé grossier qui l'a vu, et son instant
+ * n'est pas sûr.
  *
  * Qu'une image soit dense se lit sur le relevé lui-même : l'écart à la précédente est au plus
  * `denseMaxDt`. La machine ne dépend ainsi que du journal, pas de la cadence qu'elle a demandée.
@@ -64,8 +65,7 @@ const TUNED = {
     denseMaxDt: 0.25,
     /** Écart (s) au-delà duquel le fil est rompu (seek, décodeur à l'arrêt) : les automates repartent. */
     maxGap: 2,
-    /** Bornes de la fenêtre autour d'un changement d'état, en secondes. */
-    windowBefore: 1,
+    /** Durée (s) de la fenêtre dense après un changement d'état. */
     windowAfter: 2,
     /** Nombre d'images calmes sur lequel se prend la médiane du bruit. */
     noiseWindow: 20,
@@ -136,7 +136,6 @@ export function createAutomata(overrides = {}) {
     /** The levels of the current record, as excess over each ROI's noise floor. */
     const lv = { hi: 0, lo: 0, handsIn: th.handsIn, handsOut: th.handsOut, razHi: th.razHi, razLo: th.razLo };
     let lastT = NaN;
-    let windowFrom = NaN;
     let windowTo = -Infinity;
     let rate = th.stateRate;
     let gameEnabled = true;
@@ -200,7 +199,6 @@ export function createAutomata(overrides = {}) {
 
     /** @param {number} t */
     function extendWindow(t) {
-        if (!(t < windowTo)) windowFrom = t - th.windowBefore;
         windowTo = Math.max(windowTo, t + th.windowAfter);
     }
 
@@ -532,10 +530,6 @@ export function createAutomata(overrides = {}) {
             const floor = {};
             for (const [k, n] of noise) floor[k] = median(n);
             return { ...lv, floor, dice, handsAreIn: handsIn };
-        },
-        /** La fenêtre dense en cours, ou `null`. */
-        get window() {
-            return lastT < windowTo ? { from: windowFrom, to: windowTo } : null;
         },
         thresholds: th
     };

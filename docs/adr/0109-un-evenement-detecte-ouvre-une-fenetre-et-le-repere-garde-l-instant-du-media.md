@@ -50,7 +50,11 @@ GStreamer. Et le Repère du jet n'est pas l'instant de l'événement : la premi�
 4. **Trois automates couplés — mains, dés, partie — sur des descripteurs census.** Chaque ROI
    est normalisée par sa moyenne et comparée en census, invariant à l'auto-exposition ; une ROI
    témoin hors plateau qui change à plus de 60 % rend l'image incertaine et réinitialise les
-   fonds. Les transitions ont une hystérésis (E_hi = 3 × la médiane calme, E_lo = 1,5 ×) et des
+   fonds. Les transitions ont une hystérésis sur l'excès de la distance census au-dessus du
+   plancher de bruit de chaque ROI (sa médiane sur les dernières images calmes) :
+   E_hi = max(e_hi, 3 σ), E_lo = max(e_lo, 1,5 σ), où σ = 1,4826 × MAD du bruit calme et
+   e_hi, e_lo deux minima fixes pour un bruit quasi constant ; une distance census ne tombe
+   jamais à zéro, et 3 × sa médiane mesurerait la texture du plateau, pas le bruit. Elles ont des
    durées minimales à 10 img/s (lancer ≥ 1 image, repos 5 images sous E_lo, mains dans 2, mains
    hors 3) ; le jet d'ouverture, un dé par moitié, est un cas de l'automate des dés. Ces
    valeurs sont des choix d'ingénierie, réglés sur le banc (règle 8). Un automate n'émet que

@@ -73,7 +73,8 @@ export function render(s, frame, noise = 3) {
  * Plays a script through the live pipeline.
  * @param {(t: number) => SceneState} script
  * @param {number} duration seconds of media
- * @param {{ fps?: number, noise?: number, thresholds?: object, start?: number, deliver?: number }} [options]
+ * @param {{ fps?: number, noise?: number | ((frame: number) => number), thresholds?: object, start?: number, deliver?: number }} [options]
+ *   `noise` an amplitude, or the amplitude of each video frame
  *   `deliver` caps the analysed images per second of media, as a decoder that cannot keep up would
  */
 export function simulate(script, duration, { fps = 30, noise = 3, thresholds, start = 0, deliver = Infinity } = {}) {
@@ -85,7 +86,8 @@ export function simulate(script, duration, { fps = 30, noise = 3, thresholds, st
     for (let f = Math.round(start * fps); f < duration * fps; f++) {
         const t = Math.round((f / fps) * 1e4) / 1e4;
         if (!gate.accept(t)) continue;
-        const record = describer.describe({ mediaTime: t, data: render(script(t), f, noise) });
+        const amp = typeof noise === 'function' ? noise(f) : noise;
+        const record = describer.describe({ mediaTime: t, data: render(script(t), f, amp) });
         records.push(record);
         events.push(...detector.push(record));
         const want = Math.min(detector.rate, deliver);

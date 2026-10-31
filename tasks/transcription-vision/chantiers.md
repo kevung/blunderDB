@@ -90,7 +90,7 @@ H1 et H2 ne dépendent de rien et se font en parallèle du lot V0.
 | V1.4 | **Calibration à 4 clics** dans le volet vidéo : loupe, pions fantômes, calibrations nommées, localStorage par `draftId`, « vue perdue ». | Z-panneau | V1.2 | Sonnet |
 | V1.5 | **Ligne de temps à marqueurs** sous la vidéo, saut au clavier, formes des incertains, indicateur ; **Repère = `mediaTime` de l'événement** quand la première touche de dé tombe dans sa fenêtre (ADR-0082 règle 3 réécrite). | Z-panneau + `transcript` si besoin | V1.3, V1.4 | Sonnet |
 | V1.6 | **dHash de l'overlay** : contrôle de dérive, indicateur seulement. | Z-vision | V1.1 | Sonnet |
-| V1.7 | **Mesure** : F1 à ±0,5 s contre les Repères pris comme fenêtres, gain de temps de navigation ; note dans `bancs/`. | Z-tools + Z-vision (lecture) | V1.5 | Sonnet |
+| V1.7 | **Mesure** : F1 à ±0,5 s contre les Repères pris comme fenêtres, gain de temps de navigation ; note dans `bancs/`. Les seuils de V1.3 (`THRESHOLDS` de `vision/automata.js`), réglés sur des journaux de scènes synthétiques, sont à régler à nouveau sur des journaux réels. | Z-tools + Z-vision (lecture) | V1.5 | Sonnet |
 | V1.8 | **Doc** : `manuel_matchs.rst`, `raccourcis.rst`, huit `.po` ; historique des versions. | Z-doc | V1.5 | Sonnet |
 
 Parallélisme : V1.1 ∥ V1.2 (fichiers distincts, même zone — deux ouvriers acceptés parce que
