@@ -17,6 +17,11 @@ standard ; matplotlib est facultatif (repli en histogramme texte). Hors de
    lit dans un extrait, ajouter son début). Laisser vide un coup illisible.
    `--video`, `--back-ms`, `--span-ms` et `--clips` sont une aide facultative : on peut lire dans la vidéo entière.
    (`annot_template.csv` reste le gabarit nu, sans `prepare_annot.py`.)
+   Plus rapide : `mpv --script=annoter.lua --script-opts=annoter-csv=annot.csv --keep-open=yes V.mkv`
+   joue chaque coup au ralenti depuis 5 s avant son Repère, avec les dés attendus à l'écran :
+   `Entrée` note l'instant où ils sont lisibles, `x` un coup illisible, `r` revoit, `Retour arrière`
+   revient au précédent ; chaque saisie est écrite aussitôt et une relance reprend au premier coup
+   non fait (`annot.csv.fait`).
 3. `python3 readable_hist.py marks.csv annot.csv [out.png]` : médiane, p10, p90,
    part hors de [−1 ; +2] s, histogramme.
 
