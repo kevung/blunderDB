@@ -71,10 +71,10 @@ const TUNED = {
     noiseWindow: 20,
     /** Images calmes avant que le plancher de bruit soit pris pour connu. */
     noiseMin: 3,
-    /** `E_hi` et `E_lo` en multiples de la médiane calme. */
+    /** `E_hi` et `E_lo` en multiples de σ, la dispersion du bruit calme. */
     hiFactor: 3,
     loFactor: 1.5,
-    /** Planchers de `E_hi` et `E_lo` quand le bruit est quasi nul (fraction des bits census). */
+    /** Minima de `E_hi` et `E_lo` quand le bruit est quasi constant (fraction des bits census). */
     hiFloor: 0.003,
     loFloor: 0.002,
     /** Une main entre au-dessus de `handsIn` et sort sous `handsOut`. */
