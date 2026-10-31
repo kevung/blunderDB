@@ -462,6 +462,16 @@
         return video ? Math.round(video.currentTime * 1000) : null;
     }
 
+    /** @returns {HTMLVideoElement | null} the file's <video>, null for a streamed source */
+    export function videoElement() {
+        return kind === 'file' ? video : null;
+    }
+
+    /** @returns {number | null} the length of the file in ms, null when unknown */
+    export function durationMs() {
+        return kind === 'file' && video && Number.isFinite(video.duration) ? Math.round(video.duration * 1000) : null;
+    }
+
     /** @param {number} ms */
     export function seek(ms) {
         if (!Number.isFinite(ms)) return;

@@ -10,6 +10,8 @@ export const fakeVideo = {
     /** @type {number[]} */
     seeks: [],
     toggles: 0,
+    /** @type {number | null} */
+    duration: null,
     /** @type {number[]} */
     rateSteps: [],
     reset() {
@@ -17,6 +19,7 @@ export const fakeVideo = {
         this.startMs = null;
         this.seeks = [];
         this.toggles = 0;
+        this.duration = null;
         this.rateSteps = [];
     }
 };

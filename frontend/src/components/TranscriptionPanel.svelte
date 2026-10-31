@@ -110,6 +110,9 @@
     import { createCursorFollower, isTyping, typedRoll } from '../services/videoFollow.js';
     import { saveVideoResume, videoResumeMs } from '../services/videoResume.js';
     import { loadVideoRotation, nextRotation, saveVideoRotation } from '../services/videoRotation.js';
+    import { visionEventsStore, pushVisionEvent, resetVisionEvents } from '../stores/visionEventsStore.js';
+    import { createVisionSession } from '../services/visionSession.js';
+    import { jumpTarget, snapRollTime, timelineMarkers, unexpectedOverlay, viewLost as visionViewLost } from '../services/visionTimeline.js';
     import { toCssPx } from '../utils/uiZoom.js';
     import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
 
@@ -494,7 +497,10 @@
             // double-click, a play finished on the board — is explicit.
             const implicit = command.kind === COMMAND.VALIDATE && i < commands.length - 1;
             if (now !== null && !inPlace && TIMED.has(command.kind) && !implicit && !command.untimed) {
-                gesture.TickMS = now;
+                // The first die of the Action is the roll falling: a rest of the dice detected
+                // sure around this instant says when they did (ADR-0109 rule 5).
+                const snapped = command.kind === COMMAND.DIE ? snapRollTime(get(visionEventsStore), now / 1000) : null;
+                gesture.TickMS = snapped === null ? now : Math.round(snapped * 1000);
                 gesture.HasTick = true;
             }
             const untimedValidation = (implicit || (pendingPlay && CUBE_KINDS.has(command.kind))) && !inPlace;
@@ -603,6 +609,7 @@
                     savedAt = Date.now();
                 }
                 seen = now;
+                mediaSec = now / 1000;
             }
             if (moving || placing > 0) return;
             const active = document.activeElement;
@@ -684,9 +691,64 @@
             stampCursor(event.key === 'V' || event.shiftKey);
             return true;
         }
+        if ((event.key === 'g' || event.key === 'G') && !event.ctrlKey) {
+            jumpToMarker(event.key === 'G' || event.shiftKey ? -1 : 1);
+            return true;
+        }
         return false;
     }
 
+    // What the vision core found along the video: the line under it, the jump between its
+    // markers (play or pause kept), the verdicts it shows. Nothing here writes to the draft.
+    const markers = $derived(timelineMarkers($visionEventsStore));
+    const boardOutOfView = $derived(visionViewLost($visionEventsStore));
+    let mediaSec = $state(0);
+    const overlayDrift = $derived(
+        unexpectedOverlay(
+            $visionEventsStore,
+            (annotated?.actions ?? [])
+                .flatMap((/** @type {any} */ a) => [a.roll_tick_ms, a.tick_ms])
+                .filter((/** @type {unknown} */ ms) => typeof ms === 'number')
+                .map((/** @type {number} */ ms) => ms / 1000),
+            mediaSec
+        ) !== null
+    );
+
+    /** @param {1 | -1} direction */
+    function jumpToMarker(direction) {
+        const now = videoNow();
+        if (now === null) return;
+        const target = jumpTarget(markers, now / 1000, direction);
+        if (target) videoPane?.seek?.(Math.round(target.mediaTime * 1000));
+    }
+
+    // The calibration in force feeds the vision core; one session per draft's video.
+    /** @type {ReturnType<typeof createVisionSession> | null} */
+    let visionSession = null;
+    function endVisionSession() {
+        visionSession?.dispose();
+        visionSession = null;
+        resetVisionEvents();
+    }
+    /** @param {any} calibration */
+    function onCalibration(calibration) {
+        if (!calibration && !visionSession) return;
+        if (!visionSession) {
+            const video = videoPane?.videoElement?.();
+            if (!video) return;
+            try {
+                visionSession = createVisionSession({ video, key: draftId, push: pushVisionEvent });
+            } catch (_e) {
+                return; // no Worker here: the panel works without the assistant
+            }
+        }
+        visionSession.calibrate(calibration);
+    }
+    $effect(() => {
+        void draftId;
+        void videoSource;
+        return endVisionSession;
+    });
     function readVideoHeight() {
         try {
             const v = Number(localStorage.getItem(VIDEO_HEIGHT_KEY));
@@ -2155,6 +2217,11 @@
                             startMs={videoStart}
                             rotation={videoRotation}
                             calibrationKey={draftId}
+                            oncalibration={onCalibration}
+                            viewLost={boardOutOfView}
+                            {markers}
+                            {overlayDrift}
+                            onjump={(/** @type {number} */ sec) => videoPane?.seek?.(Math.round(sec * 1000))}
                             onrotate={rotateVideo}
                             onrelocate={(/** @type {string} */ path) => attachVideo(path)}
                             theatreTarget={$theatreStore ? $theatreTargetStore : null}

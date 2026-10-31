@@ -4,6 +4,7 @@
     // chosen, the dock's node moves there and the same player keeps playing.
     import { tick } from 'svelte';
     import VideoPane from './VideoPane.svelte';
+    import VideoTimeline from './VideoTimeline.svelte';
     import { t } from '../i18n';
     import { portal } from '../utils/portal.js';
     import { videoPlacementStore, videoStageOwnerStore, videoStageTargetStore, claimVideoStage, releaseVideoStage, setVideoPlacement, swapVideoSide } from '../stores/videoStageStore.js';
@@ -20,6 +21,9 @@
      *   calibrationKey?: string | number | null,
      *   viewLost?: boolean,
      *   oncalibration?: (c: any) => void,
+     *   markers?: { type: string, mediaTime: number, state: string, shape: string }[],
+     *   overlayDrift?: boolean,
+     *   onjump?: (mediaTime: number) => void,
      *   onBoard?: boolean,
      *   theatreTarget?: HTMLElement | null,
      *   ontheatre?: () => void
@@ -39,6 +43,9 @@
         calibrationKey = null,
         viewLost = false,
         oncalibration = undefined,
+        markers = [],
+        overlayDrift = false,
+        onjump = undefined,
         onBoard = $bindable(false),
         theatreTarget = null,
         ontheatre = undefined
@@ -78,6 +85,11 @@
     /** @returns {number | null} */
     export function currentTimeMs() {
         return pane?.currentTimeMs?.() ?? null;
+    }
+
+    /** @returns {HTMLVideoElement | null} */
+    export function videoElement() {
+        return pane?.videoElement?.() ?? null;
     }
 
     /** @param {number} ms */
@@ -139,6 +151,9 @@
                     aria-label={$t('video.rotate')}>⟳</button
                 >
             {/if}
+            {#if overlayDrift}
+                <span class="video-dock-drift" data-testid="video-overlay-drift" role="status" title={$t('video.overlayDrift')} aria-label={$t('video.overlayDrift')}>◐</span>
+            {/if}
             {#if onBoard}
                 <button
                     class="video-dock-place video-dock-swap"
@@ -161,6 +176,9 @@
         </div>
     {/if}
     <div class="video-dock-stage"><VideoPane bind:this={pane} {source} {startMs} {rotation} {onrelocate} {onended} {calibrationKey} {viewLost} {oncalibration} /></div>
+    {#if markers.length > 0 && onjump}
+        <VideoTimeline {markers} durationMs={() => pane?.durationMs?.() ?? null} nowMs={() => pane?.currentTimeMs?.() ?? null} {onjump} />
+    {/if}
 </div>
 
 <style>
@@ -204,6 +222,10 @@
         color: white;
         cursor: pointer;
         opacity: 0.7;
+    }
+    .video-dock-drift {
+        margin-right: auto;
+        color: var(--color-warning);
     }
     .video-dock-theatre {
         display: flex;

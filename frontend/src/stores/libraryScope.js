@@ -271,6 +271,8 @@ export const OUTSIDE = [
     'videoSideStore',
     'videoStageOwnerStore',
     'videoStageTargetStore',
+    // What the vision core reported for the video on screen; memory only, reset with the draft.
+    'visionEventsStore',
     // The command line, the palette, the status bar and one-shot requests.
     'statusBarTextStore',
     'commandTextStore',

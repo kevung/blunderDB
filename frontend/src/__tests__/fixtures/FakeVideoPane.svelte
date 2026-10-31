@@ -4,8 +4,8 @@
 
     import { untrack } from 'svelte';
 
-    /** @type {{ source: string, startMs?: number, onrelocate?: (path: string) => void }} */
-    let { source, startMs = 0 } = $props();
+    /** @type {{ source: string, startMs?: number, viewLost?: boolean, onrelocate?: (path: string) => void }} */
+    let { source, startMs = 0, viewLost = false } = $props();
     fakeVideo.startMs = untrack(() => startMs);
 
     export function currentTimeMs() {
@@ -22,9 +22,13 @@
         fakeVideo.rateSteps.push(direction);
     }
 
+    export function durationMs() {
+        return fakeVideo.duration;
+    }
+
     export function togglePlay() {
         fakeVideo.toggles++;
     }
 </script>
 
-<div data-testid="video-pane" data-source={source}></div>
+<div data-testid="video-pane" data-source={source} data-view-lost={viewLost}></div>
