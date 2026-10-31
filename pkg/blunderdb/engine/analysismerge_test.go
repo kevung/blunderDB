@@ -79,6 +79,18 @@ func TestUnionCubeActionsFoldsTheBareDouble(t *testing.T) {
 	}
 }
 
+// "Double No" is XG's spelling of "No Double": the stored one stays, alone.
+func TestUnionCubeActionsFoldsSpellingsOfOneAction(t *testing.T) {
+	got := UnionCubeActions([]string{"Double No"}, []string{"No Double", "Take"})
+	want := []string{"Double No", "Take"}
+	if !slices.Equal(got, want) {
+		t.Fatalf("UnionCubeActions = %v, want %v", got, want)
+	}
+	if got := UnionCubeActions([]string{"No Double"}, []string{"No Double"}); !slices.Equal(got, []string{"No Double"}) {
+		t.Fatalf("identical entries must stay one: %v", got)
+	}
+}
+
 // An import keeps the target's analysis, and still brings the plays the
 // source saw.
 func TestMergeImportedAnalysisUnionsThePlays(t *testing.T) {

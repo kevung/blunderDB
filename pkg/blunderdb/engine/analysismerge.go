@@ -193,14 +193,22 @@ func UnionPlayed(existing, incoming []string) []string {
 // "Double", an importer's analysis says "Double/Take" or "Double/Pass", the
 // offer with its answer. A bare double says nothing the combined label does
 // not, so it is dropped beside one: a reader would otherwise list one double
-// twice.
+// twice. Spellings of one no-double, take or pass ("No Double", "Double No")
+// are one action too: the first met, the stored one, stays.
 func UnionCubeActions(existing, incoming []string) []string {
 	set := make(map[string]bool, len(existing)+len(incoming))
+	seen := make(map[string]bool, 3)
 	combined := false
 	for _, list := range [2][]string{existing, incoming} {
 		for _, a := range list {
 			if a == "" {
 				continue
+			}
+			if c := CanonicalCubeAction(a); c == CubeNoDouble || c == CubeTake || c == CubePass {
+				if seen[c] && !set[a] {
+					continue
+				}
+				seen[c] = true
 			}
 			set[a] = true
 			if isCombinedDouble(a) {
