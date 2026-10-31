@@ -85,7 +85,7 @@ GStreamer. Et le Repère du jet n'est pas l'instant de l'événement : la premi�
    pas seulement une couleur, et reste un arrêt du saut. Aucun marqueur n'écrit rien : sauter
    sur un repos puis `MAJ-V` est la voie explicite pour poser son instant.
 7. **L'overlay du stream sert au contrôle de dérive, jamais au score.** Sur une zone tracée
-   une fois, toutes les 0,5–1 s, une imagette 32×16 en gris donne un dHash de 64 bits ; un
+   une fois, toutes les 0,5–1 s, la zone réduite à une grille 9×8 de gris donne un dHash de 64 bits ; un
    changement au-delà d'une distance de Hamming, tenu plus d'une seconde, est confronté à la
    machine de transcription, avec une tolérance de quelques secondes de retard de l'overlay.
    Attendu (fin de partie, passe), il ne dit rien ; inattendu, un indicateur discret dit

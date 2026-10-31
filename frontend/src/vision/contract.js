@@ -117,7 +117,7 @@ export function makeEvent(type, mediaTime, state, payload = {}) {
 /**
  * Vérifie une calibration et la rend normalisée (entiers, ROI dans l'image, au moins 3×3 pour
  * que le census ait un intérieur, noms uniques).
- * @param {{ width?: number, height?: number, rois: Array<{ name: string, x: number, y: number, w: number, h: number }>, witness: { x: number, y: number, w: number, h: number } }} calibration
+ * @param {{ width?: number, height?: number, overlay?: { x: number, y: number, w: number, h: number } | null, rois: Array<{ name: string, x: number, y: number, w: number, h: number }>, witness: { x: number, y: number, w: number, h: number } }} calibration
  */
 export function normalizeCalibration(calibration) {
     if (!calibration || typeof calibration !== 'object') throw new TypeError('vision: calibration required');
@@ -137,5 +137,9 @@ export function normalizeCalibration(calibration) {
         names.add(r.name);
         return rect(r, r.name);
     });
-    return Object.freeze({ width, height, rois: Object.freeze(rois), witness: rect(calibration.witness, 'witness') });
+    const witness = rect(calibration.witness, 'witness');
+    if (calibration.overlay === undefined || calibration.overlay === null) return Object.freeze({ width, height, rois: Object.freeze(rois), witness });
+    const overlay = rect(calibration.overlay, 'overlay');
+    if (overlay.w < 9 || overlay.h < 8) throw new RangeError('vision: overlay ROI under the 9×8 hash grid');
+    return Object.freeze({ width, height, rois: Object.freeze(rois), witness, overlay });
 }
