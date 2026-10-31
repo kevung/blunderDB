@@ -853,6 +853,37 @@ chaque appui, de 0° à 270°. L'image reste entière,
 dans la vidéo d'un fichier comme dans le cadre YouTube. L'angle est retenu pour
 le brouillon, sur cet ordinateur seulement ; il n'est pas écrit dans la base.
 
+.. _transcription_vision:
+
+**La vue du plateau et la ligne de temps.** Le bouton de calibration de la barre
+vidéo désigne les quatre coins du plateau dans l'image (points 1, 12, 13 puis
+24) ; les calibrations sont nommées et retenues pour la vidéo, et le bouton ◌
+affiche des pions fantômes pour vérifier le calage. Quand le stream affiche un
+overlay de score ou de position, le bouton ▭ de la même barre en trace la zone :
+deux clics sur deux coins opposés, puis ▭✕ pour l'oublier. Une zone trop petite
+pour être surveillée est refusée (« Calibration échouée »). L'analyse de la
+vidéo suit alors le plateau et cette zone ; elle n'écrit rien dans le
+brouillon.
+
+Sous la vidéo, une **ligne de temps** place les événements que l'analyse a
+relevés : jet, repos et reprise des dés, début et fin de partie, plateau perdu ou
+retrouvé, overlay modifié. Un clic sur un marqueur amène la vidéo à cet instant,
+lecture ou pause conservée ; son info-bulle donne l'événement et son état. La
+**forme** dit la certitude : un cercle pour un événement sûr, un losange pour un
+événement à vérifier, un triangle pour un événement incertain ; la couleur ne
+fait que la doubler. *g* saute au marqueur suivant et *MAJ-G* au précédent, tous
+états confondus.
+
+Le premier dé saisi d'une action pose le repère du jet à l'instant où les dés se
+sont immobilisés sur la table, quand ce repos est sûr et date d'au plus une
+minute ; sinon, ou si le plateau est hors de vue, il garde l'instant courant.
+
+Deux indicateurs signalent ce que l'analyse ne peut garantir. **Vue perdue**
+apparaît dans la barre de calibration tant que le plateau calibré n'est plus
+dans l'image. Le pictogramme ◐ au-dessus de la vidéo signale, pendant trente
+secondes, que l'overlay a changé sans qu'un événement de la partie l'explique :
+la zone tracée ne correspond peut-être plus à la partie et se retrace par ▭.
+
 Des repères se déduisent les **durées** de décision : la décision de pions va
 du jet à la fin du coup, la décision de videau de l'action précédente au jet, un
 double ou une réponse de l'action précédente à la leur. Une cellule qui porte

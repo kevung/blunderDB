@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 16:04+0100\n"
+"POT-Creation-Date: 2026-10-31 03:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -945,7 +945,7 @@ msgstr ""
 "παραμένουν δυνατές, αλλά κάθε τροποποίηση είναι απενεργοποιημένη και η "
 "γραμμή τίτλου εμφανίζει «[μόνο για ανάγνωση]»."
 
-#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:922
+#: ../../source/manuel_matchs.rst:386 ../../source/manuel_matchs.rst:953
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Ανατρέξτε στο :ref:`raccourcis` για τις διαθέσιμες συντομεύσεις."
 
@@ -2081,7 +2081,80 @@ msgstr ""
 "βίντεο ενός αρχείου όπως και στο πλαίσιο YouTube. Η γωνία διατηρείται για"
 " το πρόχειρο, μόνο σε αυτόν τον υπολογιστή· δεν γράφεται στη βάση."
 
-#: ../../source/manuel_matchs.rst:856
+#: ../../source/manuel_matchs.rst:858
+msgid ""
+"**La vue du plateau et la ligne de temps.** Le bouton de calibration de "
+"la barre vidéo désigne les quatre coins du plateau dans l'image (points "
+"1, 12, 13 puis 24) ; les calibrations sont nommées et retenues pour la "
+"vidéo, et le bouton ◌ affiche des pions fantômes pour vérifier le calage."
+" Quand le stream affiche un overlay de score ou de position, le bouton ▭ "
+"de la même barre en trace la zone : deux clics sur deux coins opposés, "
+"puis ▭✕ pour l'oublier. Une zone trop petite pour être surveillée est "
+"refusée (« Calibration échouée »). L'analyse de la vidéo suit alors le "
+"plateau et cette zone ; elle n'écrit rien dans le brouillon."
+msgstr ""
+"**Η όψη του ταμπλό και η χρονολωρίδα.** Το κουμπί βαθμονόμησης της "
+"γραμμής βίντεο ορίζει τις τέσσερις γωνίες του ταμπλό στην εικόνα (σημεία "
+"1, 12, 13 και 24)· οι βαθμονομήσεις έχουν όνομα και διατηρούνται για το "
+"βίντεο, και το κουμπί ◌ εμφανίζει πιόνια-φαντάσματα για να ελεγχθεί η "
+"ευθυγράμμιση. Όταν το stream εμφανίζει overlay σκορ ή θέσης, το κουμπί ▭ "
+"της ίδιας γραμμής σχεδιάζει την περιοχή του: δύο κλικ σε δύο αντίθετες "
+"γωνίες, και μετά ▭✕ για να την ξεχάσετε. Μια περιοχή πολύ μικρή για να "
+"παρακολουθηθεί απορρίπτεται («Η βαθμονόμηση απέτυχε»). Η ανάλυση του "
+"βίντεο ακολουθεί τότε το ταμπλό και αυτή την περιοχή· δεν γράφει τίποτα "
+"στο προσχέδιο."
+
+#: ../../source/manuel_matchs.rst:868
+msgid ""
+"Sous la vidéo, une **ligne de temps** place les événements que l'analyse "
+"a relevés : jet, repos et reprise des dés, début et fin de partie, "
+"plateau perdu ou retrouvé, overlay modifié. Un clic sur un marqueur amène"
+" la vidéo à cet instant, lecture ou pause conservée ; son info-bulle "
+"donne l'événement et son état. La **forme** dit la certitude : un cercle "
+"pour un événement sûr, un losange pour un événement à vérifier, un "
+"triangle pour un événement incertain ; la couleur ne fait que la doubler."
+" *g* saute au marqueur suivant et *MAJ-G* au précédent, tous états "
+"confondus."
+msgstr ""
+"Κάτω από το βίντεο, μια **χρονολωρίδα** τοποθετεί τα γεγονότα που "
+"εντόπισε η ανάλυση: ζαριά, ακινησία και ανάληψη των ζαριών, έναρξη και "
+"λήξη της παρτίδας, ταμπλό που χάθηκε ή βρέθηκε ξανά, overlay που άλλαξε. "
+"Ένα κλικ σε έναν δείκτη μεταφέρει το βίντεο σε αυτή τη στιγμή, με "
+"διατήρηση της αναπαραγωγής ή της παύσης· το εργαλείο συμβουλής δίνει το "
+"γεγονός και την κατάστασή του. Το **σχήμα** δείχνει τη βεβαιότητα: κύκλος"
+" για βέβαιο γεγονός, ρόμβος για γεγονός προς έλεγχο, τρίγωνο για αβέβαιο "
+"γεγονός· το χρώμα απλώς το διπλασιάζει. Το *g* πηδά στον επόμενο δείκτη "
+"και το *SHIFT-G* στον προηγούμενο, ανεξαρτήτως κατάστασης."
+
+#: ../../source/manuel_matchs.rst:877
+msgid ""
+"Le premier dé saisi d'une action pose le repère du jet à l'instant où les"
+" dés se sont immobilisés sur la table, quand ce repos est sûr et date "
+"d'au plus une minute ; sinon, ou si le plateau est hors de vue, il garde "
+"l'instant courant."
+msgstr ""
+"Το πρώτο ζάρι που πληκτρολογείται για μια κίνηση ορίζει τη χρονοσήμανση "
+"της ζαριάς τη στιγμή που τα ζάρια ακινητοποιήθηκαν στο τραπέζι, όταν αυτή"
+" η ακινησία είναι βέβαιη και απέχει το πολύ ένα λεπτό· διαφορετικά, ή αν "
+"το ταμπλό είναι εκτός εικόνας, διατηρεί την τρέχουσα στιγμή."
+
+#: ../../source/manuel_matchs.rst:881
+msgid ""
+"Deux indicateurs signalent ce que l'analyse ne peut garantir. **Vue "
+"perdue** apparaît dans la barre de calibration tant que le plateau "
+"calibré n'est plus dans l'image. Le pictogramme ◐ au-dessus de la vidéo "
+"signale, pendant trente secondes, que l'overlay a changé sans qu'un "
+"événement de la partie l'explique : la zone tracée ne correspond peut-"
+"être plus à la partie et se retrace par ▭."
+msgstr ""
+"Δύο ενδείξεις επισημαίνουν ό,τι η ανάλυση δεν μπορεί να εγγυηθεί. Το "
+"**Χάθηκε η όψη** εμφανίζεται στη γραμμή βαθμονόμησης όσο το βαθμονομημένο"
+" ταμπλό δεν βρίσκεται πια στην εικόνα. Το εικονίδιο ◐ πάνω από το βίντεο "
+"επισημαίνει, για τριάντα δευτερόλεπτα, ότι το overlay άλλαξε χωρίς να το "
+"εξηγεί κάποιο γεγονός της παρτίδας: η σχεδιασμένη περιοχή μπορεί να μην "
+"αντιστοιχεί πια στην παρτίδα και σχεδιάζεται ξανά με το ▭."
+
+#: ../../source/manuel_matchs.rst:887
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2113,7 +2186,7 @@ msgstr ""
 "την κίνησή της αν η ζαριά δεν έχει στιγμή· ένας παίκτης σε παύση "
 "παραμένει σε παύση."
 
-#: ../../source/manuel_matchs.rst:869
+#: ../../source/manuel_matchs.rst:900
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2166,7 +2239,7 @@ msgstr ""
 "της, και μετά επιστρέφει στο τέλος του transcript: εκεί τα ψηφία ανοίγουν"
 " την επόμενη ρίψη, και η ένδειξη το λέει."
 
-#: ../../source/manuel_matchs.rst:891
+#: ../../source/manuel_matchs.rst:922
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2194,7 +2267,7 @@ msgstr ""
 "(το τελευταίο προέρχεται από το RPM Fusion) — βλ. "
 ":ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:903
+#: ../../source/manuel_matchs.rst:934
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2208,7 +2281,7 @@ msgstr ""
 "αναπαραγωγή ή σε παύση όπως πριν. Μετά από τρεις ανεπιτυχείς "
 "επαναφορτώσεις, το πλαίσιο το επισημαίνει και προτείνει νέα προσπάθεια."
 
-#: ../../source/manuel_matchs.rst:908
+#: ../../source/manuel_matchs.rst:939
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -2229,7 +2302,7 @@ msgstr ""
 " που επισκευάζει το αρχείο χωρίς επανακωδικοποίηση, έτοιμη προς "
 "αντιγραφή:"
 
-#: ../../source/manuel_matchs.rst:918
+#: ../../source/manuel_matchs.rst:949
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "
