@@ -147,6 +147,7 @@ const F = 0.25;
 /** Relative step across a boundary: any move of a threshold beyond it breaks a test. */
 const D = 1e-6;
 
+/** @param {number} [warm] */
 function journal(warm = T.noiseWindow) {
     /** @type {import('../vision/descriptors.js').DescriptorRecord[]} */
     const records = [{ t: 0, u: 0, w: null, r: { left: [0.5, null, null], right: [0.5, null, null] } }];
@@ -183,9 +184,9 @@ const run = (j, th) => {
 const types = (/** @type {ReturnType<typeof journal>} */ j) => run(j).map(([type]) => type);
 
 /** A dice throw on the left half of excess `x`, then calm frames at excess `calm`. */
-const throwThen = (/** @type {number} */ x, calm = 0, n = T.restFrames) => journal().frame({ x }).frame({ x: calm, n });
+const throwThen = (/** @type {number} */ x, calm = 0, /** @type {number} */ n = T.restFrames) => journal().frame({ x }).frame({ x: calm, n });
 /** A hand in for a second at excess `x`, then frames at excess `out`. */
-const handThen = (/** @type {number} */ x, out = 0, n = T.handsOutFrames) => journal().frame({ x, n: 10 }).frame({ x: out, n });
+const handThen = (/** @type {number} */ x, out = 0, /** @type {number} */ n = T.handsOutFrames) => journal().frame({ x, n: 10 }).frame({ x: out, n });
 
 describe('every threshold holds on a boundary journal', () => {
     it('pins the tuned values', () => {

@@ -4,7 +4,12 @@
 export const W = 320;
 export const H = 180;
 
-/** A deterministic texture: census needs local contrast, a flat field has none. */
+/**
+ * A deterministic texture: census needs local contrast, a flat field has none.
+ * @param {number} x
+ * @param {number} y
+ * @param {number} [seed]
+ */
 export function texture(x, y, seed = 0) {
     return 40 + ((x * 37 + y * 91 + seed * 53 + ((x * y) % 7) * 17) % 160);
 }
@@ -26,7 +31,11 @@ export function makeFrame(lum, gain = 1) {
     return data;
 }
 
-/** @param {{ x: number, y: number, w: number, h: number }} r */
+/**
+ * @param {{ x: number, y: number, w: number, h: number }} r
+ * @param {number} x
+ * @param {number} y
+ */
 export const inside = (r, x, y) => x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h;
 
 export const CALIBRATION = Object.freeze({
@@ -39,7 +48,11 @@ export const CALIBRATION = Object.freeze({
     witness: { x: 0, y: 0, w: 48, h: 24 }
 });
 
-/** The base scene, with `changed` regions retextured by `seed`. */
+/**
+ * The base scene, with `changed` regions retextured by `seed`.
+ * @param {{ x: number, y: number, w: number, h: number }[]} [changed]
+ * @param {number} [seed]
+ */
 export function scene(changed = [], seed = 1) {
     return makeFrame((x, y) => (changed.some((r) => inside(r, x, y)) ? texture(y, x, seed) : texture(x, y)));
 }

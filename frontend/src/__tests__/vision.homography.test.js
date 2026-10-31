@@ -16,13 +16,14 @@ describe('vision homography (ADR-0109)', () => {
             src,
             src.map((p) => applyHomography(Htrue, p))
         );
-        expect(res.ok).toBe(true);
+        if (!res.ok) throw new Error(res.reason);
         const [x, y] = applyHomography(res.H, [1000, 1000]);
         const [xt, yt] = applyHomography(Htrue, [1000, 1000]);
         expect(Math.hypot(x - xt, y - yt)).toBeLessThan(1e-6);
     });
 
     it('calibrates a board from four convex clicks and maps the corners onto them', () => {
+        /** @type {[number, number][]} */
         const clicks = [
             [262, 160],
             [52, 166],
@@ -30,7 +31,7 @@ describe('vision homography (ADR-0109)', () => {
             [236, 24]
         ];
         const cal = calibrateBoard(clicks);
-        expect(cal.ok).toBe(true);
+        if (!cal.ok) throw new Error(cal.reason);
         CALIBRATION_CORNERS.forEach((c, i) => {
             const [x, y] = applyHomography(cal.modelToImage, c);
             expect(x).toBeCloseTo(clicks[i][0], 9);
@@ -39,12 +40,14 @@ describe('vision homography (ADR-0109)', () => {
     });
 
     it('refuses a non-convex quadrilateral of clicks', () => {
+        /** @type {[number, number][]} */
         const dart = [
             [10, 10],
             [100, 10],
             [40, 30],
             [10, 80]
         ];
+        /** @type {[number, number][]} */
         const bowTie = [
             [10, 10],
             [95, 80],

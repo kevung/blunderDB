@@ -5,6 +5,7 @@ import { calibrateBoard } from './calibration.js';
 import { pointZone, barZone, trayZone, FIELD_RECT } from './boardModel.js';
 import { renderBoard, modelLuma, OBLIQUE_CLICKS, DARK, LIGHT, BAR, TRAY } from './synthetic.fixture.js';
 
+/** @param {{ data: Iterable<number> }} img */
 const mean = (img) => {
     let s = 0;
     let n = 0;
@@ -14,15 +15,19 @@ const mean = (img) => {
 
 describe('rectifyZone', () => {
     const frame = renderBoard({ width: 320, height: 180, clicks: OBLIQUE_CLICKS, checkers: false });
-    const cal = calibrateBoard(OBLIQUE_CLICKS);
+    const calibration = calibrateBoard(OBLIQUE_CLICKS);
+    if (!calibration.ok) throw new Error(calibration.reason);
+    const cal = calibration;
 
     it('calibrates from the four clicks', () => {
         expect(cal.ok).toBe(true);
     });
 
     it('reads each zone back with its own shade through an oblique, mirrored view', () => {
+        /** @param {{ x0: number, x1: number, y0: number, y1: number }} r */
         const shrink = (r) => ({ x0: r.x0 + 0.2, x1: r.x1 - 0.2, y0: r.y0 + 0.2, y1: r.y1 - 0.2 });
-        for (const [zone, expected] of [
+        /** @type {Array<[import('./boardModel.js').Zone, number]>} */
+        const cases = [
             [pointZone(1), DARK],
             [pointZone(2), LIGHT],
             [pointZone(12), LIGHT],
@@ -30,7 +35,8 @@ describe('rectifyZone', () => {
             [pointZone(24), LIGHT],
             [barZone('near'), BAR],
             [trayZone('far'), TRAY]
-        ]) {
+        ];
+        for (const [zone, expected] of cases) {
             const img = rectifyZone(frame, cal.modelToImage, shrink(zone.rect), 6, 30);
             expect(img.coverage).toBe(1);
             expect(Math.abs(mean(img) - expected), zone.id).toBeLessThan(1e-6);
@@ -78,6 +84,10 @@ describe('sampling convention', () => {
     // half-pixel convention or of the sample point shows up as a plain number.
     const W = 40;
     const H = 30;
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
     const f = (x, y) => 3 * x + 5 * y + 7;
     const ramp = { width: W, height: H, data: Float64Array.from({ length: W * H }, (_, k) => f((k % W) + 0.5, Math.floor(k / W) + 0.5)) };
 

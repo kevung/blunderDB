@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { boardZones, pointZone, barZone, trayZone, checkerCenter, FIELD_WIDTH, FIELD_HEIGHT, BOARD_RECT, CALIBRATION_CORNERS } from './boardModel.js';
 
+/** @typedef {{ x0: number, x1: number, y0: number, y1: number }} Box */
+/**
+ * @param {Box} a
+ * @param {Box} b
+ */
 const overlaps = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
 
 describe('board model in checker diameters', () => {
@@ -23,6 +28,7 @@ describe('board model in checker diameters', () => {
     });
 
     it('places the clicked corners at the 1-, 12-, 13- and 24-points', () => {
+        /** @param {number} n */
         const corner = (n) => CALIBRATION_CORNERS.find(([u, v]) => Math.abs(u - pointZone(n).base[0]) <= 0.5 && v === pointZone(n).base[1]);
         expect(corner(1)).toEqual(CALIBRATION_CORNERS[0]);
         expect(corner(12)).toEqual(CALIBRATION_CORNERS[1]);

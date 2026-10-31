@@ -159,7 +159,7 @@ afterEach(() => {
     activeTabStore.set('position');
 });
 
-const ev = (/** @type {string} */ type, /** @type {number} */ t, state = S.SURE) => makeEvent(type, t, state);
+const ev = (/** @type {string} */ type, /** @type {number} */ t, state = /** @type {string} */ (S.SURE)) => makeEvent(type, t, state);
 const feed = (/** @type {any[]} */ ...events) => visionEventsStore.set(events);
 const die3 = () => gestures().find((g) => g.Kind === 'enter_die' && g.Die === 3);
 

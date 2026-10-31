@@ -13,6 +13,7 @@ export const JUMP_EPSILON = 0.1;
 export const OVERLAY_SHOWN = 30;
 
 /** The events worth a marker: the hands and the clock would drown the line. */
+/** @type {ReadonlySet<string>} */
 export const MARKER_TYPES = Object.freeze(
     new Set([
         EVENT_TYPES.DICE_THROWN,

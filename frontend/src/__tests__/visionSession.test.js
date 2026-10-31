@@ -23,7 +23,10 @@ const cal = () => {
     return { name: 'plein écran', clicks: CLICKS, modelToImage: r.modelToImage };
 };
 
-/** A frame of noise: two seeds are two unrelated boards. */
+/**
+ * A frame of noise: two seeds are two unrelated boards.
+ * @param {number} seed
+ */
 function noise(seed) {
     const data = new Uint8ClampedArray(320 * 180 * 4);
     let s = seed;
@@ -37,6 +40,7 @@ function noise(seed) {
 
 function setup({ key = 'd1', videoWidth = 1920 } = {}) {
     const video = Object.assign(new EventTarget(), { videoWidth, videoHeight: 1080, readyState: 4, seeking: false, currentTime: 12 });
+    /** @type {Array<(e: any) => void>} */
     const listeners = [];
     const vision = {
         calibrate: vi.fn(),
@@ -48,6 +52,7 @@ function setup({ key = 'd1', videoWidth = 1920 } = {}) {
     };
     const frame = { current: noise(1) };
     const grab = vi.fn(() => frame.current);
+    /** @type {any[]} */
     const pushed = [];
     const session = createVisionSession({ video: /** @type {any} */ (video), key, push: (e) => pushed.push(e), vision: /** @type {any} */ (vision), createGrabber: () => ({ grab }) });
     return { video, vision, frame, grab, pushed, session, listeners };

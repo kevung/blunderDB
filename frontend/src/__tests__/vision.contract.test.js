@@ -16,7 +16,7 @@ describe('vision contract', () => {
         expect(() => makeEvent(EVENT_TYPES.DICE_REST, -1, STATES.SURE)).toThrow(RangeError);
         expect(() => makeEvent(EVENT_TYPES.DICE_REST, NaN, STATES.SURE)).toThrow(RangeError);
         expect(() => makeEvent(EVENT_TYPES.DICE_REST, 1, '0.93')).toThrow(TypeError);
-        expect(() => makeEvent(EVENT_TYPES.DICE_REST, 1, STATES.SURE, null)).toThrow(TypeError);
+        expect(() => makeEvent(EVENT_TYPES.DICE_REST, 1, STATES.SURE, /** @type {any} */ (null))).toThrow(TypeError);
     });
 
     it('freezes three states, never a percentage', () => {

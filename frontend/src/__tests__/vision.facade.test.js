@@ -5,6 +5,7 @@ import { createVision } from '../vision/vision.js';
 import { TaintedFrameError } from '../vision/sampler.js';
 import { CALIBRATION } from './fixtures/vision/frames.js';
 
+/** @param {{ grab?: () => any }} [options] */
 function harness({ grab } = {}) {
     /** @type {any[]} */
     const sent = [];
@@ -24,7 +25,7 @@ function harness({ grab } = {}) {
     const grabs = { n: 0 };
     const vision = createVision({
         video: /** @type {any} */ (video),
-        createWorker: () => worker,
+        createWorker: () => /** @type {any} */ (worker),
         createGrabber: () => ({
             grab: grab ?? (() => (grabs.n++, /** @type {any} */ ({ width: 320, height: 180, data: new Uint8ClampedArray(320 * 180 * 4) })))
         }),

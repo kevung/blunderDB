@@ -57,7 +57,7 @@ function inProcessVision() {
     /** @type {Set<(e: any) => void>} */
     const listeners = new Set();
     const core = createWorkerCore({
-        post: (m) => {
+        post: (/** @type {any} */ m) => {
             if (m.kind === 'event') for (const l of listeners) l(m.event);
         },
         openJournal: async (o) => createMemoryJournal(o.session)
@@ -73,7 +73,13 @@ function inProcessVision() {
     };
 }
 
-/** 2 frames a second; `region` is retextured from `changeAt` on. */
+/**
+ * 2 frames a second; `region` is retextured from `changeAt` on.
+ * @param {ReturnType<typeof inProcessVision>} vision
+ * @param {{ x: number, y: number, w: number, h: number }} region
+ * @param {number} changeAt
+ * @param {number} seconds
+ */
 async function play(vision, region, changeAt, seconds) {
     for (let i = 0; i <= seconds * 2; i++) {
         const t = i / 2;

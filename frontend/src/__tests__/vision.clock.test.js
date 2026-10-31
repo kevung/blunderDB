@@ -135,7 +135,7 @@ describe('frame grabber', () => {
 
     it('reads 320×180 with willReadFrequently', () => {
         const c = canvas(() => /** @type {any} */ ({ width: 320, height: 180, data: new Uint8ClampedArray(320 * 180 * 4) }));
-        const grabber = createFrameGrabber({ video: /** @type {any} */ ({}), createCanvas: c.create });
+        const grabber = createFrameGrabber({ video: /** @type {any} */ ({}), createCanvas: /** @type {any} */ (c.create) });
         expect(grabber.grab().data.length).toBe(320 * 180 * 4);
         expect(c.ctxArgs[0]).toEqual(['2d', { willReadFrequently: true }]);
     });
@@ -144,7 +144,7 @@ describe('frame grabber', () => {
         const c = canvas(() => {
             throw Object.assign(new Error('tainted'), { name: 'SecurityError' });
         });
-        const grabber = createFrameGrabber({ video: /** @type {any} */ ({}), createCanvas: c.create });
+        const grabber = createFrameGrabber({ video: /** @type {any} */ ({}), createCanvas: /** @type {any} */ (c.create) });
         expect(() => grabber.grab()).toThrow(TaintedFrameError);
     });
 });

@@ -5,8 +5,10 @@ import { calibrateBoard } from './calibration.js';
 import { BOARD_RECT } from './boardModel.js';
 import { renderBoard, OBLIQUE_CLICKS, lcg } from './synthetic.fixture.js';
 
-const cal = calibrateBoard(OBLIQUE_CLICKS);
-const thumb = (frame) => rectifyZone(frame, cal.modelToImage, BOARD_RECT, 64, 48);
+const calibration = calibrateBoard(OBLIQUE_CLICKS);
+if (!calibration.ok) throw new Error(calibration.reason);
+const cal = calibration;
+const thumb = /** @param {import('./rectify.js').Image} frame */ (frame) => rectifyZone(frame, cal.modelToImage, BOARD_RECT, 64, 48);
 const reference = thumb(renderBoard({ width: 320, height: 180, clicks: OBLIQUE_CLICKS }));
 
 describe('presenceScore', () => {
@@ -16,11 +18,13 @@ describe('presenceScore', () => {
     });
 
     it('stays above the found threshold when the camera drifts a pixel or two', () => {
+        /** @type {[number, number][]} */
         const moved = OBLIQUE_CLICKS.map(([x, y]) => [x + 1.5, y - 1]);
         expect(presenceScore(reference, thumb(renderBoard({ width: 320, height: 180, clicks: moved })))).toBeGreaterThan(0.7);
     });
 
     it('falls below the lost threshold on another shot', () => {
+        /** @type {[number, number][]} */
         const zoomed = [
             [300, 175],
             [-200, 190],

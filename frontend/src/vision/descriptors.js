@@ -35,7 +35,10 @@ export function witnessIsUncertain(w, threshold = WITNESS_THRESHOLD) {
 /** @typedef {{ t: number, u: 0 | 1, w: number | null, r: Record<string, [number, number | null, number | null]>, o?: string }} DescriptorRecord */
 
 /** @param {number | null} v */
-const round = (v) => (v === null ? null : Math.round(v * 1e4) / 1e4);
+/** @param {number} v */
+const roundN = (v) => Math.round(v * 1e4) / 1e4;
+/** @param {number | null} v */
+const round = (v) => (v === null ? null : roundN(v));
 
 /**
  * @param {Parameters<typeof normalizeCalibration>[0]} calibration
@@ -82,10 +85,11 @@ export function createDescriber(calibration, { tau = DEFAULT_TAU, witnessThresho
                 const { mean, bits } = censusRoi(gray, width, roi, tau);
                 const p = prev.get(roi.name);
                 const bg = background.get(roi.name);
-                r[roi.name] = [round(mean), p ? round(censusDistance(p, bits)) : null, bg ? round(censusDistance(bg, bits)) : null];
+                r[roi.name] = [roundN(mean), p ? round(censusDistance(p, bits)) : null, bg ? round(censusDistance(bg, bits)) : null];
                 prev.set(roi.name, bits);
                 if (!bg) background.set(roi.name, bits);
             }
+            /** @type {DescriptorRecord} */
             const record = { t: frame.mediaTime, u: uncertain ? 1 : 0, w: round(w), r };
             // The overlay is sampled apart from the dice ROIs: a slower cadence, and never on a
             // frame whose picture jumped (the uncertain frame already says so).

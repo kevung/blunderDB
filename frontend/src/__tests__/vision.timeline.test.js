@@ -7,7 +7,7 @@ import { describe, test, expect } from 'vitest';
 import { EVENT_TYPES as T, STATES as S, makeEvent } from '../vision/contract.js';
 import { markerShape, timelineMarkers, jumpTarget, viewLost, snapRollTime, recentOverlay } from '../services/visionTimeline.js';
 
-const ev = (/** @type {string} */ type, /** @type {number} */ t, state = S.SURE) => makeEvent(type, t, state);
+const ev = (/** @type {string} */ type, /** @type {number} */ t, state = /** @type {string} */ (S.SURE)) => makeEvent(type, t, state);
 
 describe('markers', () => {
     test('each state has its own shape, not only a colour', () => {

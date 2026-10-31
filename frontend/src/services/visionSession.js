@@ -47,7 +47,7 @@ function saveReference(key, c, thumb) {
 /**
  * @param {object} options
  * @param {HTMLVideoElement} options.video
- * @param {string | number} options.key the draft
+ * @param {string | number | null} options.key the draft (null while there is none)
  * @param {(event: import('../vision/contract.js').VisionEvent) => void} options.push where the events go
  * @param {ReturnType<typeof createVision>} [options.vision]
  * @param {() => { grab(): { width: number, height: number, data: ArrayLike<number> } }} [options.createGrabber]

@@ -87,7 +87,7 @@ describe('MatchSheet alone', () => {
     test('Escape and arrows on the sheet do not touch the match under review', async () => {
         const { container } = render(MatchSheet, { props: { matchId: 7 } });
         await vi.waitFor(() => expect(container.querySelector('details.game-section')).not.toBeNull());
-        await fireEvent.keyDown(container.querySelector('[role="tablist"]'), { key: 'ArrowRight' });
+        await fireEvent.keyDown(/** @type {Element} */ (container.querySelector('[role="tablist"]')), { key: 'ArrowRight' });
         await fireEvent.keyDown(document.body, { key: 'Escape' });
         expect(get(matchContextStore).isMatchMode).toBe(false);
         expect(container.querySelector('.detail-header')).not.toBeNull();
@@ -102,9 +102,9 @@ describe('MatchSheet alone', () => {
         expect(ids.length).toBeGreaterThan(10);
         expect(new Set(ids).size, 'every id is unique').toBe(ids.length);
         for (const tab of two.querySelectorAll('[role="tab"]')) {
-            const panel = document.getElementById(tab.getAttribute('aria-controls'));
+            const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '');
             expect(panel && two.contains(panel), 'the tab controls a panel of its own sheet').toBe(true);
-            expect(panel.getAttribute('aria-labelledby')).toBe(tab.id);
+            expect(panel?.getAttribute('aria-labelledby')).toBe(tab.id);
         }
     });
 });

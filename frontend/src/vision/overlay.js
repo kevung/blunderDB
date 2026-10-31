@@ -56,12 +56,22 @@ export function dHash(gray, width, roi) {
     return hash;
 }
 
-/** dHash d'une ROI d'une image RGBA. */
+/**
+ * dHash d'une ROI d'une image RGBA.
+ * @param {Uint8Array | Uint8ClampedArray} rgba
+ * @param {number} width
+ * @param {number} height
+ * @param {{ x: number, y: number, w: number, h: number }} roi
+ */
 export function dHashRgba(rgba, width, height, roi) {
     return dHash(toGray(rgba, width, height), width, roi);
 }
 
-/** Distance de Hamming entre deux dHash. */
+/**
+ * Distance de Hamming entre deux dHash.
+ * @param {Uint8Array} a
+ * @param {Uint8Array} b
+ */
 export function hammingDistance(a, b) {
     if (a.length !== b.length) throw new RangeError('vision: dHash length mismatch');
     let d = 0;
@@ -130,6 +140,7 @@ export const EARLY_SECONDS = 1;
 export const DECISION_SECONDS = 10;
 
 /** Événements après lesquels l'overlay change normalement : fin et début de partie, passage de la main. */
+/** @type {readonly string[]} */
 export const EXPECTED_ACTIONS = Object.freeze([EVENT_TYPES.GAME_END, EVENT_TYPES.GAME_START, EVENT_TYPES.DICE_PICKUP]);
 
 /** @param {Uint8Array} hash */

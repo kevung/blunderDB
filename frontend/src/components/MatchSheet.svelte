@@ -85,8 +85,8 @@
     /** @type {any[] | null} the MWC loss of each decision */
     let detailLosses = $state(null);
     let detailReview = $state(/** @type {import('../../wailsjs/go/models').storage.MatchReview | null} */ (null));
-    /** @type {import('../../wailsjs/go/models').duel.Origin | null} the Origin of a match played here */
-    let detailOrigin = $state(null);
+    // The Origin of a match played here.
+    let detailOrigin = $state(/** @type {import('../../wailsjs/go/models').duel.Origin | null} */ (null));
     // The decision under the pointer or the keyboard on either chart, by its Move.
     /** @type {number | null} */
     let hoveredMove = $state(null);
@@ -137,7 +137,7 @@
     // The match's video (ADR-0082): a file plays in a pane of this sheet, a web source opens
     // in the browser at the timestamped link.
     /** @type {'' | 'file' | 'youtube' | 'url'} */
-    let videoKind = $state('');
+    let videoKind = $state(/** @type {'' | 'file' | 'url' | 'youtube'} */ (''));
     let videoOpen = $state(false);
     let videoStartMs = $state(0);
     /** @type {any} */
@@ -163,7 +163,7 @@
         let cancelled = false;
         VideoSourceKind(source)
             .then((k) => {
-                if (!cancelled) videoKind = k || '';
+                if (!cancelled) videoKind = /** @type {typeof videoKind} */ (k || '');
             })
             .catch(() => {
                 if (!cancelled) videoKind = '';
@@ -804,7 +804,7 @@
             hasVideo={!!videoSource}
             {videoOpen}
             ontogglevideo={toggleVideo}
-            onreview={() => enterMatchMode(detailMatch)}
+            onreview={() => enterMatchMode()}
             onexport={() => exportMatchMat(detailMatch)}
             onedit={() => editMatchTranscription(detailMatch.id)}
             ondelete={(e) => deleteMatchEntry(detailMatch, e)}

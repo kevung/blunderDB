@@ -38,6 +38,7 @@ export const CALIBRATION_CORNERS = [
  */
 
 /** Left edge of the column holding a point, counting columns 0..11 from the 1-point side. */
+/** @param {number} col */
 function columnX(col) {
     return col * POINT_WIDTH + (col >= 6 ? BAR_WIDTH : 0);
 }

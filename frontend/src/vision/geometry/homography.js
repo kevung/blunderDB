@@ -32,8 +32,8 @@ const PIVOT_EPS = 1e-12;
  * Both orientations are accepted: a board whose home is on the left is the mirror
  * image of one whose home is on the right, not a mistake.
  *
- * @param {Point[]} src
- * @param {Point[]} dst
+ * @param {ReadonlyArray<readonly number[]>} src
+ * @param {ReadonlyArray<readonly number[]>} dst
  * @returns {HomographyResult}
  */
 export function computeHomography(src, dst) {
@@ -72,7 +72,7 @@ export function computeHomography(src, dst) {
 
 /**
  * @param {Matrix3} H
- * @param {Point} p
+ * @param {readonly number[]} p
  * @returns {Point} [NaN, NaN] at infinity
  */
 export function applyHomography(H, [x, y]) {
@@ -91,12 +91,14 @@ export function invertHomography(H) {
     return inv && normalise(inv);
 }
 
+/** @param {unknown} pts
+ * @returns {boolean} */
 function isQuad(pts) {
     return Array.isArray(pts) && pts.length === 4 && pts.every((p) => Array.isArray(p) && p.length === 2 && Number.isFinite(p[0]) && Number.isFinite(p[1]));
 }
 
 /**
- * @param {Point[]} q
+ * @param {ReadonlyArray<readonly number[]>} q
  * @returns {'convex' | 'aligned' | 'non-convex'}
  */
 function quadShape(q) {
@@ -123,6 +125,8 @@ function quadShape(q) {
 }
 
 /** Similarity moving the centroid to the origin and the mean distance to it to √2. */
+/** @param {ReadonlyArray<readonly number[]>} pts
+ * @returns {Matrix3} */
 function hartley(pts) {
     const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
     const cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
@@ -132,11 +136,16 @@ function hartley(pts) {
 }
 
 /** Exact inverse of a hartley() similarity, without a determinant test that its translation would fool. */
+/** @param {Matrix3} m
+ * @returns {Matrix3} */
 function invertHartley([k, , tx, , , ty]) {
     return [1 / k, 0, -tx / k, 0, 1 / k, -ty / k, 0, 0, 1];
 }
 
 /** Gaussian elimination with partial pivoting; null when a pivot vanishes. */
+/** @param {number[][]} A
+ * @param {number[]} b
+ * @returns {number[] | null} */
 function solve(A, b) {
     const n = b.length;
     const M = A.map((row, i) => [...row, b[i]]);
@@ -161,12 +170,17 @@ function solve(A, b) {
     return x;
 }
 
+/** @param {Matrix3} A
+ * @param {Matrix3} B
+ * @returns {Matrix3} */
 function multiply(A, B) {
     const C = new Array(9);
     for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) C[r * 3 + c] = A[r * 3] * B[c] + A[r * 3 + 1] * B[3 + c] + A[r * 3 + 2] * B[6 + c];
     return C;
 }
 
+/** @param {Matrix3} m
+ * @returns {Matrix3 | null} */
 function invert(m) {
     const [a, b, c, d, e, f, g, h, i] = m;
     const A = e * i - f * h;
@@ -179,6 +193,8 @@ function invert(m) {
     return [A / det, -(b * i - c * h) / det, (b * f - c * e) / det, B / det, (a * i - c * g) / det, -(a * f - c * d) / det, C / det, -(a * h - b * g) / det, (a * e - b * d) / det];
 }
 
+/** @param {Matrix3} H
+ * @returns {Matrix3 | null} */
 function normalise(H) {
     const s = H[8];
     if (!Number.isFinite(s) || s === 0) {

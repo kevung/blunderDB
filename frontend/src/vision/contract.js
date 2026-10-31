@@ -90,7 +90,9 @@ export const COMMANDS = Object.freeze({
     CLEAR_JOURNAL: 'clearJournal'
 });
 
+/** @type {Set<string>} */
 const TYPE_VALUES = new Set(Object.values(EVENT_TYPES));
+/** @type {Set<string>} */
 const STATE_VALUES = new Set(Object.values(STATES));
 
 /**
@@ -118,6 +120,7 @@ export function makeEvent(type, mediaTime, state, payload = {}) {
  * Vérifie une calibration et la rend normalisée (entiers, ROI dans l'image, au moins 3×3 pour
  * que le census ait un intérieur, noms uniques).
  * @param {{ width?: number, height?: number, overlay?: { x: number, y: number, w: number, h: number } | null, rois: Array<{ name: string, x: number, y: number, w: number, h: number }>, witness: { x: number, y: number, w: number, h: number } }} calibration
+ * @returns {{ readonly width: number, readonly height: number, readonly rois: readonly Readonly<{ name: string, x: number, y: number, w: number, h: number }>[], readonly witness: Readonly<{ name: string, x: number, y: number, w: number, h: number }>, readonly overlay?: Readonly<{ name: string, x: number, y: number, w: number, h: number }> }}
  */
 export function normalizeCalibration(calibration) {
     if (!calibration || typeof calibration !== 'object') throw new TypeError('vision: calibration required');

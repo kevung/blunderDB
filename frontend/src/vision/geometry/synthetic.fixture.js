@@ -25,7 +25,12 @@ const CHECKERS = [
     [19, 5]
 ].flatMap(([n, count]) => Array.from({ length: count }, (_, k) => checkerCenter(pointZone(n), k)));
 
-/** Luminance of the model at (u, v), in d. */
+/**
+ * Luminance of the model at (u, v), in d.
+ * @param {number} u
+ * @param {number} v
+ * @param {{ checkers?: boolean }} [options]
+ */
 export function modelLuma(u, v, { checkers = true } = {}) {
     const { x0, x1, y0, y1 } = BOARD_RECT;
     if (u < x0 || u >= x1 || v < y0 || v >= y1) return BACKGROUND;
@@ -51,6 +56,7 @@ export function renderBoard({ width, height, clicks, gain = 1, offset = 0, rgba 
     const res = computeHomography(CALIBRATION_CORNERS, clicks);
     if (!res.ok) throw new Error(res.reason);
     const toModel = invertHomography(res.H);
+    if (!toModel) throw new Error('singular');
     const channels = rgba ? 4 : 1;
     const data = rgba ? new Uint8ClampedArray(width * height * 4) : new Float32Array(width * height);
     for (let y = 0; y < height; y++) {
@@ -67,7 +73,10 @@ export function renderBoard({ width, height, clicks, gain = 1, offset = 0, rgba 
     return { width, height, data, H: res.H };
 }
 
-/** A perspective view of the board in a 320×180 frame, home on the right. */
+/**
+ * A perspective view of the board in a 320×180 frame, home on the right.
+ * @type {[number, number][]}
+ */
 export const OBLIQUE_CLICKS = [
     [262, 160],
     [52, 166],
@@ -75,7 +84,10 @@ export const OBLIQUE_CLICKS = [
     [236, 24]
 ];
 
-/** Deterministic pseudo-random numbers in [0, 1). */
+/**
+ * Deterministic pseudo-random numbers in [0, 1).
+ * @param {number} seed
+ */
 export function lcg(seed) {
     let s = seed >>> 0;
     return () => {

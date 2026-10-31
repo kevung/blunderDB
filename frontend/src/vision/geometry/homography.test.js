@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { computeHomography, applyHomography, invertHomography } from './homography.js';
 import { lcg } from './synthetic.fixture.js';
 
+/** @type {import('./homography.js').Point[]} */
 const SQUARE = [
     [0, 0],
     [13, 0],
@@ -9,12 +10,24 @@ const SQUARE = [
     [0, 13]
 ];
 
+/** @param {import('./homography.js').HomographyResult} res */
+function okH(res) {
+    if (!res.ok) throw new Error(`homography refused: ${res.reason}`);
+    return res.H;
+}
+
+/**
+ * @param {number[]} actual
+ * @param {number[]} expected
+ * @param {number} tol
+ */
 function expectSameH(actual, expected, tol) {
     const e = expected.map((v) => v / expected[8]);
     actual.forEach((v, i) => expect(Math.abs(v - e[i])).toBeLessThan(tol * Math.max(1, Math.abs(e[i]))));
 }
 
 /** A random camera: perspective terms large enough to bend lines, small enough to keep the square in front. */
+/** @param {() => number} rand */
 function randomH(rand) {
     const a = 10 + 20 * rand();
     const theta = 2 * Math.PI * rand();
@@ -48,7 +61,7 @@ describe('computeHomography', () => {
                 [2, 11],
                 [-1, 3]
             ]) {
-                const [x, y] = applyHomography(res.H, p);
+                const [x, y] = applyHomography(okH(res), p);
                 const [xt, yt] = applyHomography(Htrue, p);
                 expect(Math.hypot(x - xt, y - yt)).toBeLessThan(1e-8);
             }
@@ -66,7 +79,7 @@ describe('computeHomography', () => {
             [1, 12],
             [12.5, 0.5]
         ]) {
-            const [x, y] = applyHomography(res.H, p);
+            const [x, y] = applyHomography(okH(res), p);
             const [xt, yt] = applyHomography(Htrue, p);
             expect(Math.hypot(x - xt, y - yt)).toBeLessThan(1e-6);
         }
@@ -90,7 +103,7 @@ describe('computeHomography', () => {
             [950, 1050],
             [1060, 940]
         ]) {
-            const [x, y] = applyHomography(res.H, p);
+            const [x, y] = applyHomography(okH(res), p);
             const [xt, yt] = applyHomography(Htrue, p);
             expect(Math.hypot(x - xt, y - yt)).toBeLessThan(1e-6);
         }
@@ -106,7 +119,7 @@ describe('computeHomography', () => {
         const res = computeHomography(SQUARE, dst);
         expect(res.ok).toBe(true);
         dst.forEach((q, i) => {
-            const [x, y] = applyHomography(res.H, SQUARE[i]);
+            const [x, y] = applyHomography(okH(res), SQUARE[i]);
             expect(x).toBeCloseTo(q[0], 9);
             expect(y).toBeCloseTo(q[1], 9);
         });
@@ -115,6 +128,7 @@ describe('computeHomography', () => {
     it('inverts', () => {
         const Htrue = randomH(lcg(3));
         const Hinv = invertHomography(Htrue);
+        if (!Hinv) throw new Error('singular');
         for (const p of SQUARE) {
             const [x, y] = applyHomography(Hinv, applyHomography(Htrue, p));
             expect(x).toBeCloseTo(p[0], 9);
@@ -129,6 +143,7 @@ describe('computeHomography', () => {
         [95, 80],
         [8, 75]
     ];
+    /** @type {Array<[string, number[][], string]>} */
     const refusals = [
         ['three points', [good[0], good[1], good[2]], 'points'],
         ['five points', [...good, [50, 50]], 'points'],

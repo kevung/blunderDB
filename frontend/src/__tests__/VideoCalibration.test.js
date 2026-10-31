@@ -225,7 +225,7 @@ describe('the overlay zone', () => {
     test('a stored zone outside the picture or empty is dropped on reading', () => {
         const base = loadCalibrations(0);
         expect(base.items).toHaveLength(0);
-        const cal = { name: 'a', clicks: CORNERS.map((c) => [c[0], c[1]]), modelToImage: [1, 0, 0, 0, 1, 0, 0, 0, 1] };
+        const cal = { name: 'a', clicks: /** @type {[number, number][]} */ (CORNERS.map((c) => [c[0], c[1]])), modelToImage: [1, 0, 0, 0, 1, 0, 0, 0, 1] };
         const read = (/** @type {any} */ overlay) => {
             localStorage.clear();
             saveCalibrations(5, { items: [{ ...cal, ...(overlay ? { overlay } : {}) }], active: 'a' });

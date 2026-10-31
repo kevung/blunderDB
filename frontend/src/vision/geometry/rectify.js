@@ -56,12 +56,19 @@ export function sampleImage(image, x, y) {
     return sampleLuma(image, channelCount(image), x, y);
 }
 
+/** @param {Image} image
+ * @returns {number} */
 function channelCount(image) {
     const n = image.data.length / (image.width * image.height);
     if (n !== 1 && n !== 4) throw new RangeError(`image with ${n} channels`);
     return n;
 }
 
+/** @param {Image} image
+ * @param {number} channels
+ * @param {number} x
+ * @param {number} y
+ * @returns {number} */
 function luma(image, channels, x, y) {
     const o = (y * image.width + x) * channels;
     const d = image.data;
@@ -69,6 +76,11 @@ function luma(image, channels, x, y) {
     return channels === 1 ? d[o] : 0.299 * d[o] + 0.587 * d[o + 1] + 0.114 * d[o + 2];
 }
 
+/** @param {Image} image
+ * @param {number} channels
+ * @param {number} px
+ * @param {number} py
+ * @returns {number} */
 function sampleLuma(image, channels, px, py) {
     const { width: w, height: h } = image;
     if (!(px >= 0 && px <= w && py >= 0 && py <= h)) return NaN;

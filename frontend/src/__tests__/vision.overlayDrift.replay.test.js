@@ -18,9 +18,15 @@ const DECISION_SECONDS = 10;
 const A = 'ff00ff00ff00ff00';
 const B = '00ff00ff00ff00ff';
 
-/** Feeds `seconds` of 2 img/s samples, the overlay going from A to B at `changeAt`; `events` by instant. */
+/**
+ * Feeds `seconds` of 2 img/s samples, the overlay going from A to B at `changeAt`; `events` by instant.
+ * @param {number} changeAt
+ * @param {Record<number, import('../vision/contract.js').VisionEvent[]>} [events]
+ * @param {number} [seconds]
+ */
 function run(changeAt, events = {}, seconds = 30) {
     const drift = createOverlayDrift();
+    /** @type {import('../vision/contract.js').VisionEvent[]} */
     const out = [];
     for (let i = 0; i <= seconds * 2; i++) {
         const t = i / 2;
@@ -28,6 +34,10 @@ function run(changeAt, events = {}, seconds = 30) {
     }
     return out;
 }
+/**
+ * @param {string} type
+ * @param {number} t
+ */
 const ev = (type, t) => makeEvent(type, t, STATES.CHECK);
 
 describe('overlay sampling by the describer', () => {
@@ -38,6 +48,7 @@ describe('overlay sampling by the describer', () => {
 
     it('hashes at most every SAMPLE_PERIOD seconds and samples again after a seek back', () => {
         const d = createDescriber(CAL);
+        /** @param {number} t */
         const has = (t) => d.describe({ mediaTime: t, data: scene() }).o !== undefined;
         expect(has(0)).toBe(true);
         expect(has(SAMPLE_PERIOD - 0.01)).toBe(false);
@@ -148,6 +159,7 @@ describe('overlay drift end to end', () => {
     });
 
     it('goes out of the worker as an event, and never touches anything but the indicator', async () => {
+        /** @type {any[]} */
         const posted = [];
         const core = createWorkerCore({ post: (m) => posted.push(m), openJournal: async (o) => createMemoryJournal(o.session) });
         await core.handle({ kind: 'calibrate', calibration: CAL });

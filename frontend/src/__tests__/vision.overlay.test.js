@@ -11,7 +11,9 @@ const img = (f) => {
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) g[y * W + x] = f(x, y);
     return g;
 };
+/** @param {number} x */
 const ramp = (x) => 20 + Math.floor((x * 200) / W);
+/** @param {(x: number, y: number) => number} f */
 const hashOf = (f) => dHash(img(f), W, ROI);
 
 describe('overlay dHash', () => {
@@ -24,7 +26,7 @@ describe('overlay dHash', () => {
         expect(
             hammingDistance(
                 hashOf(ramp),
-                hashOf((x, y) => Math.floor(ramp(x, y) * 0.6))
+                hashOf((x) => Math.floor(ramp(x) * 0.6))
             )
         ).toBe(0);
     });
@@ -48,6 +50,10 @@ describe('overlay dHash', () => {
 
 describe('overlay dHash geometry', () => {
     // Deterministic texture: every cell differs, so any misplaced offset changes the hash.
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
     const noise = (x, y) => (x * 73 + y * 151 + ((x * y) % 7) * 37) % 256;
     const FW = 200;
     const FH = 120;
