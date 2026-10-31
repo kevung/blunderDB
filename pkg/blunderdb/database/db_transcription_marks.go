@@ -59,12 +59,20 @@ type TranscriptionMarksSummary struct {
 	Missing []string `json:"missing,omitempty"`
 }
 
+// TranscriptionManifest is what TranscriptionMarks returns: the lines and the
+// account of what was left out, in one value because Wails binds a single
+// result besides the error.
+type TranscriptionManifest struct {
+	Marks   []TranscriptionMark       `json:"marks"`
+	Summary TranscriptionMarksSummary `json:"summary"`
+}
+
 // TranscriptionMarks reads the manifest of Repères of the library, or of
 // match matchID when it is not zero: one line per move that carries a Repère,
 // for the matches whose video is a local file. A URL source is counted and
 // skipped, a local source absent from the disk is named in Missing and
 // skipped, a match without a video contributes nothing. It writes nothing.
-func (d *Database) TranscriptionMarks(matchID int64) ([]TranscriptionMark, TranscriptionMarksSummary, error) {
+func (d *Database) TranscriptionMarks(matchID int64) (TranscriptionManifest, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
@@ -75,13 +83,13 @@ func (d *Database) TranscriptionMarks(matchID int64) ([]TranscriptionMark, Trans
 	if matchID != 0 {
 		m, err := d.store.Matches().Get(ctx, "", matchID)
 		if err != nil {
-			return nil, sum, fmt.Errorf("match %d: %w", matchID, err)
+			return TranscriptionManifest{Summary: sum}, fmt.Errorf("match %d: %w", matchID, err)
 		}
 		matches = append(matches, m)
 	} else {
 		for m, err := range d.store.Matches().List(ctx, "", storage.MatchListOpts{}) {
 			if err != nil {
-				return nil, sum, err
+				return TranscriptionManifest{Summary: sum}, err
 			}
 			matches = append(matches, m)
 		}
@@ -103,7 +111,7 @@ func (d *Database) TranscriptionMarks(matchID int64) ([]TranscriptionMark, Trans
 		}
 		got, err := d.matchMarks(ctx, m.ID, source)
 		if err != nil {
-			return nil, sum, err
+			return TranscriptionManifest{Summary: sum}, err
 		}
 		if len(got) > 0 {
 			sum.Matches++
@@ -111,7 +119,7 @@ func (d *Database) TranscriptionMarks(matchID int64) ([]TranscriptionMark, Trans
 		}
 	}
 	sum.Marks = len(marks)
-	return marks, sum, nil
+	return TranscriptionManifest{Marks: marks, Summary: sum}, nil
 }
 
 // matchMarks replays match id through its .mat rendering, puts each Move's

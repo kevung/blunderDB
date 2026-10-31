@@ -885,7 +885,7 @@ export function TranscriptionCandidates(arg1:number):Promise<transcription.Candi
 
 export function TranscriptionMAT(arg1:number):Promise<string>;
 
-export function TranscriptionMarks(arg1:number):Promise<Array<database.TranscriptionMark>>;
+export function TranscriptionMarks(arg1:number):Promise<database.TranscriptionManifest>;
 
 export function TransferTo(arg1:context.Context,arg2:database.Database,arg3:domain.ExportOptions):Promise<ingest.TransferReport>;
 
