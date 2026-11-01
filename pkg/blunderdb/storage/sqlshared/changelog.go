@@ -40,8 +40,13 @@ func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, famili
 		// Only entries whose writer, and every older transaction, has ended,
 		// read in the order of those transactions: a change cannot still be
 		// committed behind the cursor.
-		where = tenant + ` AND (xid, seq) > (CAST(CAST(? AS TEXT) AS xid8), ?) AND xid < pg_snapshot_xmin(pg_current_snapshot())`
-		args = append(args[:len(targs)], strconv.FormatInt(after.Xid, 10), after.Seq)
+		// A cursor without Xid is a bare seq (Changes, an export from 0): the
+		// row comparison would pass every row, since any xid is above 0.
+		if after.Xid > 0 {
+			where = tenant + ` AND (xid, seq) > (CAST(CAST(? AS TEXT) AS xid8), ?)`
+			args = append(args[:len(targs)], strconv.FormatInt(after.Xid, 10), after.Seq)
+		}
+		where += ` AND xid < pg_snapshot_xmin(pg_current_snapshot())`
 		order, xid = "xid, seq", "CAST(xid AS TEXT) AS xid_text"
 	}
 	if len(families) > 0 {
