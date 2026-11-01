@@ -44,6 +44,8 @@ func findPosition(ctx context.Context, s storage.Stores, scope, ref string) (int
 type positionPayload struct {
 	Position domain.Position          `json:"position"`
 	Analysis *domain.PositionAnalysis `json:"analysis,omitempty"`
+	// PublicID is opaque: carried and restored as given.
+	PublicID string `json:"public_id,omitempty"`
 }
 
 var positionCodec = codec{
@@ -56,6 +58,11 @@ var positionCodec = codec{
 		}
 		out := positionPayload{Position: *p}
 		out.Position.ID = 0
+		if ids, ok := s.(storage.PublicIDProvider); ok {
+			if out.PublicID, err = ids.PublicIDs().PublicID(ctx, scope, id); err != nil {
+				return nil, err
+			}
+		}
 		switch a, err := s.Analyses().Load(ctx, scope, id); {
 		case err == nil:
 			out.Analysis = a
@@ -134,6 +141,11 @@ var positionCodec = codec{
 }
 
 func applyPosition(ctx context.Context, s storage.Stores, scope string, id int64, p positionPayload) error {
+	if ids, ok := s.(storage.PublicIDProvider); ok {
+		if err := ids.PublicIDs().SetPublicID(ctx, scope, id, p.PublicID); err != nil {
+			return err
+		}
+	}
 	if p.Position.IndividuallyImported {
 		if err := s.Positions().SetIndividuallyImported(ctx, scope, id, true); err != nil {
 			return err

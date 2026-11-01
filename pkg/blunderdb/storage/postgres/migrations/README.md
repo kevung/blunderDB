@@ -373,3 +373,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `analysis` has a trigger of its own that journals its position as an update.
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.52.0.
+- `056_position_public_id.sql` — `position.public_id TEXT`, the opaque label a
+  caller attaches to a position; the engine stores and returns it, never reads
+  it. NULLable, no default, no backfill: no row is rewritten, so `change_log`
+  keeps its entries. Schema-visible: bumped `domain.DatabaseVersion` to 2.53.0.

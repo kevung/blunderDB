@@ -386,3 +386,75 @@ func scenarioMatch(p *csPair) {
 		t.Errorf("b's journal says %s, want trash", e.Op)
 	}
 }
+
+func publicIDOf(t *testing.T, s storage.Storage, ctx context.Context, scope string, id int64) string {
+	t.Helper()
+	v, err := s.(storage.PublicIDProvider).PublicIDs().PublicID(ctx, scope, id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return v
+}
+
+// A position carries a public_id the engine stores and returns as given: it
+// never reads it. It travels with the position, an edit and a clearing follow,
+// and writing it is an edit the journal shows.
+func scenarioPublicID(p *csPair) {
+	t := p.t
+	p.catchUp()
+	q := provenancePos(81)
+	pa, _ := p.a.Positions().Save(p.ca, p.sa, &q)
+	ids := p.a.(storage.PublicIDProvider).PublicIDs()
+	if got := publicIDOf(t, p.a, p.ca, p.sa, pa); got != "" {
+		t.Fatalf("a fresh position holds public_id %q", got)
+	}
+	u := famUUID(t, p.a, p.ca, p.sa, "position", pa)
+	p.send()
+	bid, ok := famID(p.b, p.cb, p.sb, "position", u)
+	if !ok {
+		t.Fatal("the position did not arrive")
+	}
+	if got := publicIDOf(t, p.b, p.cb, p.sb, bid); got != "" {
+		t.Errorf("a position without public_id arrived with %q", got)
+	}
+
+	// Any text, kept byte for byte.
+	const opaque = "Pos 7/ é 日本"
+	before := p.entry(p.a, p.ca, p.sa, u)
+	tick()
+	if err := ids.SetPublicID(p.ca, p.sa, pa, opaque); err != nil {
+		t.Fatal(err)
+	}
+	if after := p.entry(p.a, p.ca, p.sa, u); after.ChangedAt <= before.ChangedAt || after.Op != storage.ChangeUpdate {
+		t.Errorf("setting public_id left the journal at %+v (was %+v)", after, before)
+	}
+	p.send()
+	if got := publicIDOf(t, p.b, p.cb, p.sb, bid); got != opaque {
+		t.Errorf("public_id in b = %q, want %q", got, opaque)
+	}
+	if rep := p.replay(); rep.Applied != 0 {
+		t.Errorf("a replay applied %+v", rep)
+	}
+	if err := ids.SetPublicID(p.ca, p.sa, 1<<40, "x"); err == nil {
+		t.Error("public_id set on a position that does not exist")
+	}
+
+	tick()
+	if err := ids.SetPublicID(p.ca, p.sa, pa, ""); err != nil {
+		t.Fatal(err)
+	}
+	p.send()
+	if got := publicIDOf(t, p.b, p.cb, p.sb, bid); got != "" {
+		t.Errorf("the cleared public_id is still %q in b", got)
+	}
+
+	// A position arriving with one (created after it was set).
+	q2 := provenancePos(82)
+	p2, _ := p.a.Positions().Save(p.ca, p.sa, &q2)
+	_ = ids.SetPublicID(p.ca, p.sa, p2, "second")
+	u2 := famUUID(t, p.a, p.ca, p.sa, "position", p2)
+	p.send()
+	if id2, ok := famID(p.b, p.cb, p.sb, "position", u2); !ok || publicIDOf(t, p.b, p.cb, p.sb, id2) != "second" {
+		t.Error("a position created with a public_id lost it on the way")
+	}
+}

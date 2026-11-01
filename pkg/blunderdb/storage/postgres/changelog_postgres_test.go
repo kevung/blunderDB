@@ -198,3 +198,36 @@ func TestChangeJournal_Postgres_CursorFollowsTransactionOrder(t *testing.T) {
 		t.Fatalf("the scenario needs the late entry to hold the lower seq: %d vs %d", rest[0].Seq, last.Seq)
 	}
 }
+
+// TestMigrate_056_PublicIDKeepsTheJournal: the column is added by the role
+// that runs under FORCE RLS, nullable, and a second Migrate neither fails nor
+// moves a journal entry (no row is rewritten).
+func TestMigrate_056_PublicIDKeepsTheJournal(t *testing.T) {
+	ctx := context.Background()
+	s, _ := openRLS(t)
+	c := tctx(ctx, "1")
+	q := domain.Position{Board: domain.Board{}, PlayerOnRoll: 1}
+	q.Score = [2]int{3, 4}
+	id, err := s.Positions().Save(c, "1", &q)
+	if err != nil {
+		t.Fatal(err)
+	}
+	u, err := s.ObjectUUIDs().ObjectUUID(c, "1", "position", id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	before, err := s.ChangeJournal().Entry(c, "1", u)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, err := s.PublicIDs().PublicID(c, "1", id); err != nil || got != "" {
+		t.Fatalf("public_id of a row held before = %q, %v", got, err)
+	}
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("second Migrate: %v", err)
+	}
+	after, err := s.ChangeJournal().Entry(c, "1", u)
+	if err != nil || after != before {
+		t.Errorf("journal entry moved: %+v -> %+v (%v)", before, after, err)
+	}
+}

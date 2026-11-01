@@ -36,6 +36,7 @@ var schemaStatements = []string{
 	`CREATE TABLE IF NOT EXISTS position (
 		id                INTEGER PRIMARY KEY AUTOINCREMENT,
 		uuid TEXT,
+		public_id TEXT,
 		zobrist_hash      INTEGER,
 		decision_type     INTEGER,
 		player_on_roll    INTEGER,

@@ -83,6 +83,9 @@ func (b binder) ChangeJournal() storage.ChangeJournalStore {
 func (b binder) ObjectUUIDs() storage.ObjectUUIDStore {
 	return &sqlshared.ObjectUUIDStore{DB: b.shared()}
 }
+func (b binder) PublicIDs() storage.PublicIDStore {
+	return &sqlshared.PublicIDStore{DB: b.shared()}
+}
 func (b binder) Training() storage.TrainingStore {
 	return &sqlshared.TrainingStore{DB: b.shared()}
 }
