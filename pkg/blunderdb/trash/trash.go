@@ -30,6 +30,25 @@ import (
 // restore in name only. It does not carry the position's collection or deck
 // membership: those rows belong to the collection and the deck, and the
 // cascade removed the position from them.
+// uuidOf is the identifier of an object, "" when the backend keeps none.
+func uuidOf(ctx context.Context, s storage.Stores, scope, family string, id int64) (string, error) {
+	p, ok := s.(storage.ObjectUUIDProvider)
+	if !ok {
+		return "", nil
+	}
+	return p.ObjectUUIDs().ObjectUUID(ctx, scope, family, id)
+}
+
+// giveBackUUID restores the identifier a deleted object held. An empty one (a
+// snapshot from before identifiers) leaves the object the one it was given.
+func giveBackUUID(ctx context.Context, s storage.Stores, scope, family string, id int64, uuid string) error {
+	p, ok := s.(storage.ObjectUUIDProvider)
+	if !ok || uuid == "" {
+		return nil
+	}
+	return p.ObjectUUIDs().SetObjectUUID(ctx, scope, family, id, uuid)
+}
+
 func Position(ctx context.Context, s storage.Stores, scope string, positionID int64) (int64, error) {
 	payload, err := snapshotPosition(ctx, s, scope, positionID)
 	if err != nil {
@@ -58,6 +77,9 @@ func snapshotPosition(ctx context.Context, s storage.Stores, scope string, posit
 		return domain.TrashPositionPayload{}, err
 	}
 	payload := domain.TrashPositionPayload{Position: *pos}
+	if payload.UUID, err = uuidOf(ctx, s, scope, "position", positionID); err != nil {
+		return domain.TrashPositionPayload{}, err
+	}
 	switch a, err := s.Analyses().Load(ctx, scope, positionID); {
 	case err == nil:
 		payload.Analysis = a
@@ -72,6 +94,18 @@ func snapshotPosition(ctx context.Context, s storage.Stores, scope string, posit
 			return domain.TrashPositionPayload{}, err
 		}
 		payload.Comments = append(payload.Comments, *c)
+	}
+	for _, c := range payload.Comments {
+		u, err := uuidOf(ctx, s, scope, "comment", c.ID)
+		if err != nil {
+			return domain.TrashPositionPayload{}, err
+		}
+		if u != "" {
+			if payload.CommentUUIDs == nil {
+				payload.CommentUUIDs = map[int64]string{}
+			}
+			payload.CommentUUIDs[c.ID] = u
+		}
 	}
 	if payload.StudiedAt, err = s.ImportBatches().StudyMark(ctx, scope, positionID); err != nil {
 		return domain.TrashPositionPayload{}, err
@@ -91,7 +125,12 @@ func Collection(ctx context.Context, s storage.Stores, scope string, collectionI
 	if err != nil {
 		return 0, err
 	}
+	colUUID, err := uuidOf(ctx, s, scope, "collection", collectionID)
+	if err != nil {
+		return 0, err
+	}
 	payload := domain.TrashCollectionPayload{
+		UUID:        colUUID,
 		Name:        col.Name,
 		Description: col.Description,
 		SortOrder:   col.SortOrder,
@@ -124,7 +163,11 @@ func CommentEntry(ctx context.Context, s storage.Stores, scope string, commentID
 	if r := []rune(label); len(r) > 60 {
 		label = string(r[:60]) + "…"
 	}
-	id, err := put(ctx, s, scope, domain.TrashComment, label, domain.TrashCommentPayload{Comment: *entry})
+	commentUUID, err := uuidOf(ctx, s, scope, "comment", commentID)
+	if err != nil {
+		return 0, err
+	}
+	id, err := put(ctx, s, scope, domain.TrashComment, label, domain.TrashCommentPayload{UUID: commentUUID, Comment: *entry})
 	if err != nil {
 		return 0, err
 	}
@@ -216,6 +259,11 @@ func restorePositionPayload(ctx context.Context, s storage.Stores, scope string,
 	if onlyIfGone && !created && id == payload.Position.ID {
 		return id, nil
 	}
+	if created {
+		if err := giveBackUUID(ctx, s, scope, "position", id, payload.UUID); err != nil {
+			return 0, err
+		}
+	}
 	if payload.StudiedAt != 0 {
 		if err := s.ImportBatches().RestoreStudyMark(ctx, scope, id, payload.StudiedAt); err != nil {
 			return 0, err
@@ -254,7 +302,11 @@ func restorePositionPayload(ctx context.Context, s storage.Stores, scope string,
 		if c.Text == "" || existing[c.Text] {
 			continue
 		}
-		if _, err := s.Comments().AddFrom(storage.WithCarriedComment(ctx, c.Author, c.Signature), scope, id, c.Text, c.Origin); err != nil {
+		cid, err := s.Comments().AddFrom(storage.WithCarriedComment(ctx, c.Author, c.Signature), scope, id, c.Text, c.Origin)
+		if err != nil {
+			return 0, err
+		}
+		if err := giveBackUUID(ctx, s, scope, "comment", cid, payload.CommentUUIDs[c.ID]); err != nil {
 			return 0, err
 		}
 	}
@@ -288,6 +340,9 @@ func restoreCollection(ctx context.Context, s storage.Stores, scope string, entr
 	if err != nil {
 		return 0, err
 	}
+	if err := giveBackUUID(ctx, s, scope, "collection", id, payload.UUID); err != nil {
+		return 0, err
+	}
 	var alive []int64
 	for _, pid := range payload.PositionIDs {
 		if _, err := s.Positions().Load(ctx, scope, pid); err == nil {
@@ -312,8 +367,12 @@ func restoreComment(ctx context.Context, s storage.Stores, scope string, entry *
 	if _, err := s.Positions().Load(ctx, scope, payload.Comment.PositionID); err != nil {
 		return 0, fmt.Errorf("restoring a comment on position %d: %w", payload.Comment.PositionID, err)
 	}
-	return s.Comments().AddFrom(storage.WithCarriedComment(ctx, payload.Comment.Author, payload.Comment.Signature), scope, payload.Comment.PositionID,
+	id, err := s.Comments().AddFrom(storage.WithCarriedComment(ctx, payload.Comment.Author, payload.Comment.Signature), scope, payload.Comment.PositionID,
 		payload.Comment.Text, payload.Comment.Origin)
+	if err != nil {
+		return 0, err
+	}
+	return id, giveBackUUID(ctx, s, scope, "comment", id, payload.UUID)
 }
 
 // Rencontre deletes a Rencontre after snapshotting it and its members. Its

@@ -196,3 +196,36 @@ func TestVacuum_PurgeLaCorbeilleSelonSonAge(t *testing.T) {
 	}
 	_ = domain.TrashRetentionDays
 }
+
+// A snapshot taken before identifiers existed holds none: the restore draws
+// one, it does not fail.
+func TestRestore_UnClicheAnterieurAuxUUIDRecoitLeSien(t *testing.T) {
+	t.Parallel()
+	db := trashDB(t)
+	pos := InitializePosition()
+	id, err := db.SavePosition(&pos)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := db.SaveComment(id, "note"); err != nil {
+		t.Fatal(err)
+	}
+	trashID, err := db.TrashPosition(id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.db.Exec(`UPDATE trash SET payload = json_remove(payload, '$.uuid', '$.commentUuids') WHERE id = ?`, trashID); err != nil {
+		t.Fatal(err)
+	}
+	res, err := db.RestoreFromTrash(trashID)
+	if err != nil {
+		t.Fatalf("RestoreFromTrash: %v", err)
+	}
+	var u, cu string
+	if err := db.db.QueryRow(`SELECT uuid FROM position WHERE id = ?`, res.ID).Scan(&u); err != nil || !uuidV7.MatchString(u) {
+		t.Errorf("position uuid = %q, %v", u, err)
+	}
+	if err := db.db.QueryRow(`SELECT uuid FROM comment WHERE position_id = ?`, res.ID).Scan(&cu); err != nil || !uuidV7.MatchString(cu) {
+		t.Errorf("comment uuid = %q, %v", cu, err)
+	}
+}
