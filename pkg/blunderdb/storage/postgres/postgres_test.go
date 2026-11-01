@@ -58,12 +58,12 @@ func startPostgres(t *testing.T) string {
 // wantTables is the full table set, sorted (the v2.7.0 baseline plus the
 // schema_migrations bookkeeping table created by the forward-migration runner).
 var wantTables = []string{
-	"action_label", "analysis", "anki_card", "anki_deck", "anki_review_log",
+	"action_label", "analysis", "anki_card", "anki_deck", "anki_review_log", "change_log",
 	"collection", "collection_position",
 	"command_history", "comment", "direction", "direction_event",
 	"direction_pair_member", "duel", "event_alias",
 	"filter_library", "game", "import_batch", "import_batch_file",
-	"change_log", "lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_origin", "match_stats", "match_stats_cell", "match_stats_position",
+	"lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_origin", "match_stats", "match_stats_cell", "match_stats_position",
 	"metadata", "move", "move_analysis",
 	"player_alias", "position", "rencontre", "schema_migrations", "search_history", "session_state", "study_mark",
 	"table_setting", "tournament", "training_item", "training_session", "transcription",
@@ -80,7 +80,7 @@ var wantIndexes = []string{
 	"idx_analysis_win_gammon2_covering", "idx_analysis_win_gammon_covering",
 	"idx_anki_card_deck", "idx_anki_card_due", "idx_anki_card_identity", "idx_anki_card_uuid",
 	"idx_anki_review_log_card", "idx_anki_review_log_deck",
-	"idx_collection_position_collection", "idx_collection_uuid", "idx_comment_position", "idx_comment_uuid",
+	"idx_change_log_seq", "idx_collection_position_collection", "idx_collection_uuid", "idx_comment_position", "idx_comment_uuid",
 	"idx_direction_event_tournament", "idx_event_alias_canonical",
 	"idx_game_match", "idx_import_batch_file_batch", "idx_import_batch_file_path",
 	"idx_lesson_step_lesson", "idx_lesson_step_position", "idx_lesson_uuid", "idx_match_canonical", "idx_match_dice_hash",

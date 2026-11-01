@@ -58,6 +58,11 @@ func seedUUIDLibrary(t *testing.T, d *Database) {
 // column, trigger or index, no mark, no journal trigger.
 func rewindToBeforeUUIDs(t *testing.T, d *Database) {
 	t.Helper()
+	for _, sfx := range []string{"_i", "_u"} {
+		if _, err := d.db.Exec(`DROP TRIGGER IF EXISTS change_log_analysis` + sfx); err != nil {
+			t.Fatal(err)
+		}
+	}
 	for _, f := range sqlshared.ObjectUUIDFamilies {
 		for _, stmt := range []string{
 			`DROP TRIGGER IF EXISTS object_uuid_` + f.Table,
