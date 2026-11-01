@@ -127,6 +127,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Analysis/CountPositionsWithAnalysisRow", testCountPositionsWithAnalysisRow},
 		{"Comment/CRUD", testCommentCRUD},
 		{"Drawing/Position", testPositionDrawings},
+		{"Derivation/Position", testPositionDerivations},
 		{"Comment/Get", testCommentGet},
 		{"Comment/Upsert", testCommentUpsert},
 		{"Comment/SearchAcrossPositions", testCommentSearchAcrossPositions},
