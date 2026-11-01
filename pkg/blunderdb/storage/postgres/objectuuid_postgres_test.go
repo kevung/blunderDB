@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/jackc/pgx/v5"
@@ -105,6 +106,7 @@ func TestMigrate_054_ObjectUUIDsUnderRLS(t *testing.T) {
 			`INSERT INTO collection (tenant_id, name) VALUES ($1::bigint, 'Openings')`,
 			`INSERT INTO lesson (tenant_id, name) VALUES ($1::bigint, 'Bearing off')`,
 			`INSERT INTO match (tenant_id, canonical_hash, match_hash, player1_name, player2_name) VALUES ($1::bigint, 'canon-1', 'raw-1', 'A', 'B')`,
+			`INSERT INTO match (tenant_id, canonical_hash, match_hash, player1_name, player2_name) VALUES ($1::bigint, '', '', 'A', 'B')`,
 			`INSERT INTO transcription (tenant_id, format_version, document, label) VALUES ($1::bigint, '1', '{}', 'draft')`,
 		} {
 			if _, err := conn.Exec(ctx, stmt, scope); err != nil {
@@ -135,6 +137,9 @@ func TestMigrate_054_ObjectUUIDsUnderRLS(t *testing.T) {
 		t.Fatalf("expected an identifier per seeded object, got %d: %v", len(one), one)
 	}
 	for k, u := range one {
+		if k == "match/" {
+			continue
+		}
 		if two[k] != u {
 			t.Errorf("%s: %s for tenant 1, %s for tenant 2; shared content must converge", k, u, two[k])
 		}
@@ -144,16 +149,20 @@ func TestMigrate_054_ObjectUUIDsUnderRLS(t *testing.T) {
 			t.Errorf("position %d: SQL derived %s, Go derives %s", z, got, want)
 		}
 	}
+	// No natural key: a drawn identifier, not one two tenants would share.
+	if a, b := one["match/"], two["match/"]; a == "" || a == b || strings.HasPrefix(a, "00000000-0000") {
+		t.Errorf("a match with no hash: %q and %q, want two drawn identifiers", a, b)
+	}
 	if want, got := sqlshared.DeriveObjectUUID("collection", "Openings", 1), one["collection/Openings"]; got != want {
 		t.Errorf("collection: SQL derived %s, Go derives %s", got, want)
 	}
 	first := fmt.Sprintf("%d/first note", zobrist[0])
 	second := fmt.Sprintf("%d/second note", zobrist[0])
-	if want := sqlshared.DeriveObjectUUID("comment", fmt.Sprint(zobrist[0]), 1); one["comment/"+first] != want {
-		t.Errorf("first comment: %s, want rank 1: %s", one["comment/"+first], want)
+	if want := sqlshared.DeriveObjectUUID("comment", fmt.Sprint(zobrist[0])+"|first note", 1); one["comment/"+first] != want {
+		t.Errorf("first comment: %s, want the one derived from position and text: %s", one["comment/"+first], want)
 	}
-	if want := sqlshared.DeriveObjectUUID("comment", fmt.Sprint(zobrist[0]), 2); one["comment/"+second] != want {
-		t.Errorf("second comment: %s, want rank 2: %s", one["comment/"+second], want)
+	if want := sqlshared.DeriveObjectUUID("comment", fmt.Sprint(zobrist[0])+"|second note", 1); one["comment/"+second] != want {
+		t.Errorf("second comment: %s, want the one derived from position and text: %s", one["comment/"+second], want)
 	}
 
 	if err := s.Migrate(ctx); err != nil {
