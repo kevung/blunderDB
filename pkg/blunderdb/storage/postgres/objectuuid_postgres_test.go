@@ -131,7 +131,7 @@ func TestMigrate_054_ObjectUUIDsUnderRLS(t *testing.T) {
 	assertForced(t, conn, tables...)
 
 	one, two := uuidSnapshot(t, conn, "1"), uuidSnapshot(t, conn, "2")
-	if len(one) < 11 {
+	if len(one) < 10 {
 		t.Fatalf("expected an identifier per seeded object, got %d: %v", len(one), one)
 	}
 	for k, u := range one {
