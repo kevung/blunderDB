@@ -41,6 +41,7 @@
 
 <script>
     import { tick, untrack } from 'svelte';
+    import { uiScaleStore } from '../../stores/uiScaleStore.js';
     import EmptyState from './EmptyState.svelte';
     import ContextMenu from '../ContextMenu.svelte';
     import { menuRequest } from '../../services/contextMenuTrigger.js';
@@ -211,11 +212,20 @@
     const last = $derived(virtual ? Math.min(rows.length, first + visibleCount + 2 * buffer) : rows.length);
     const windowRows = $derived(virtual ? rows.slice(first, last) : rows);
 
+    // A row is written at the measured pitch, which then floors its height: without this reset a
+    // pitch taken at one interface scale would outlive it.
+    $effect(() => {
+        void $uiScaleStore;
+        measured = 0;
+    });
+
     $effect(() => {
         if (!virtual || !tbodyEl) return;
         void windowRows;
-        const row = tbodyEl.querySelector('tr:not(.spacer)');
-        const h = row ? Math.round(row.getBoundingClientRect().height) : 0;
+        const row = /** @type {HTMLElement | null} */ (tbodyEl.querySelector('tr:not(.spacer)'));
+        // offsetHeight, in the CSS pixels the pitch is written in. getBoundingClientRect counts
+        // window pixels: under a zoom each measure would grow the row it measures, without end.
+        const h = row?.offsetHeight ?? 0;
         if (h > 0 && h !== measured) measured = h;
     });
 

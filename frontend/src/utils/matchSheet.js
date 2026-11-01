@@ -54,6 +54,48 @@ export function rememberTab(id) {
     }
 }
 
+const SHARE_KEY = 'blunderdb.matchSheetShare';
+const DEFAULT_SHEET_SHARE = 0.55;
+const MIN_PANE_WIDTH = 200;
+
+/**
+ * The sheet's width once bounded: the list and the sheet each keep a readable width, or half of
+ * a panel too narrow for both.
+ *
+ * @param {number} width the wanted width, in CSS pixels of the zoomed UI
+ * @param {number} extent the width the list and the sheet share, in the same pixels
+ * @returns {number}
+ */
+export function clampSheetWidth(width, extent) {
+    const min = Math.min(MIN_PANE_WIDTH, extent / 2);
+    return Math.max(min, Math.min(extent - min, width));
+}
+
+/**
+ * The part of the panel the user left to the sheet. A share rather than a width: the same panel
+ * moves between the bottom and the side of the window, and the interface scale changes its pixels.
+ *
+ * @returns {number} strictly between 0 and 1
+ */
+export function rememberedSheetShare() {
+    try {
+        const raw = globalThis.localStorage?.getItem(SHARE_KEY);
+        const share = raw == null ? NaN : Number(raw);
+        return share > 0 && share < 1 ? share : DEFAULT_SHEET_SHARE;
+    } catch {
+        return DEFAULT_SHEET_SHARE;
+    }
+}
+
+/** @param {number} share */
+export function rememberSheetShare(share) {
+    try {
+        globalThis.localStorage?.setItem(SHARE_KEY, String(share));
+    } catch {
+        // Nothing to keep: the sheet opens at its default width next time.
+    }
+}
+
 /**
  * The score after the last game, and who took the match when one player
  * reached its length. A game's `winner` is 1 for player 1, -1 for player 2,

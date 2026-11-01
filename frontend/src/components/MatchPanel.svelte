@@ -16,6 +16,8 @@
     import { GetMatchByID, UpdateMatch, GetMatchMovePositions, SetMatchTournamentByName, SwapMatchPlayers } from '../../wailsjs/go/database/Database.js';
     import ManagePlayersModal from './ManagePlayersModal.svelte';
     import MatchSheet from './MatchSheet.svelte';
+    import { clampSheetWidth, rememberedSheetShare, rememberSheetShare } from '../utils/matchSheet.js';
+    import { resizable } from '../utils/resizeHandle.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
     import { exportMatchMat } from '../services/exportService.js';
@@ -256,6 +258,26 @@
     // The match whose sheet sits beside the list, and the sheet itself (its decisions, its video, its keys).
     /** @type {number | null} */
     let sheetMatchId = $state(null);
+    let sheetShare = $state(rememberedSheetShare());
+    /** @type {HTMLElement | null} */
+    let contentEl = $state(null);
+    let contentWidth = $state(0);
+    $effect(() => {
+        const el = contentEl;
+        if (!el) return;
+        contentWidth = el.clientWidth;
+        if (typeof ResizeObserver === 'undefined') return;
+        const ro = new ResizeObserver(() => (contentWidth = el.clientWidth));
+        ro.observe(el);
+        return () => ro.disconnect();
+    });
+    // In CSS pixels, recomputed from the share: the panel's width changes under it.
+    const sheetWidth = $derived(clampSheetWidth(sheetShare * contentWidth, contentWidth));
+
+    /** @param {number} width */
+    function setSheetWidth(width) {
+        if (contentWidth > 0) sheetShare = width / contentWidth;
+    }
     /** @type {any} */
     let sheet = $state(null);
 
@@ -500,7 +522,7 @@
 </script>
 
 <section class="match-panel" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
-    <div class="match-panel-content">
+    <div class="match-panel-content" bind:this={contentEl}>
         <!-- Match list (left pane) -->
         <div class="match-list-pane" class:has-detail={sheetMatchId != null}>
             <div class="match-list-toolbar">
@@ -701,14 +723,18 @@
             </PanelTable>
         </div>
 
-        <!-- Detail pane, only while a match is selected (the list spans the full
-             width otherwise). The width change is not animated, so the clicked row
-             stays under the cursor for the second click of a double-click. -->
         <!-- Sheet, only while a match is selected (the list spans the full width otherwise).
              The width change is not animated, so the clicked row stays under the cursor for the
              second click of a double-click. -->
         {#if sheetMatchId != null}
-            <div class="sheet-slot">
+            <div
+                class="sheet-handle"
+                role="separator"
+                aria-orientation="vertical"
+                data-testid="match-sheet-handle"
+                use:resizable={{ side: true, size: sheetWidth, clamp: (width) => clampSheetWidth(width, contentWidth), onResize: setSheetWidth, onCommit: () => rememberSheetShare(sheetShare) }}
+            ></div>
+            <div class="sheet-slot" style:flex-basis={contentWidth > 0 ? `${sheetWidth}px` : `${sheetShare * 100}%`}>
                 <MatchSheet bind:this={sheet} matchId={sheetMatchId} onDeleted={onSheetDeleted} />
             </div>
         {/if}
@@ -743,7 +769,7 @@
     }
 
     /* --- Match list pane (left) --- */
-    /* Full width until a match is selected, then 45 % beside the detail pane. */
+    /* Full width until a match is selected, then what the sheet leaves. */
     .match-list-pane {
         flex: 1 1 100%;
         max-width: 100%;
@@ -758,9 +784,26 @@
        clicks of a double-click. No `#nnn` in <style>: colorTokens.sync.test.js
        reads it as a hex colour. */
     .match-list-pane.has-detail {
-        flex: 0 0 45%;
-        max-width: 45%;
-        border-right: 1px solid var(--color-border);
+        flex: 1 1 0;
+    }
+
+    /* A wider grip than its 1 px line, drawn over the panes it separates. */
+    .sheet-handle {
+        flex: 0 0 1px;
+        position: relative;
+        z-index: 2;
+        background: var(--color-border);
+        cursor: ew-resize;
+    }
+
+    .sheet-handle::before {
+        content: '';
+        position: absolute;
+        inset: 0 -3px;
+    }
+
+    .sheet-handle:hover {
+        background: var(--color-primary);
     }
 
     /* Drawn as PanelHeader's strip, so the list and the match beside it share one band. */
@@ -852,8 +895,7 @@
     }
 
     .sheet-slot {
-        flex: 0 0 55%;
-        max-width: 55%;
+        flex: 0 0 auto;
         min-width: 0;
         height: 100%;
     }

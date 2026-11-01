@@ -5,6 +5,7 @@
  * both axes, and onCommit only when the handle actually moved.
  */
 import { describe, test, expect, afterEach, vi } from 'vitest';
+import { tick } from 'svelte';
 import { resizable } from '../utils/resizeHandle.js';
 
 /** @type {HTMLDivElement} */
@@ -172,5 +173,21 @@ describe('resizable - resize event timing', () => {
         } finally {
             window.removeEventListener('resize', listener);
         }
+    });
+});
+
+describe('resizable — a split inside a panel', () => {
+    test('bounds the size with its own clamp and leaves the board alone', async () => {
+        const onResize = vi.fn();
+        const refit = vi.fn();
+        window.addEventListener('resize', refit);
+        mount({ side: true, size: 300, clamp: (/** @type {number} */ s) => Math.min(s, 350), onResize, onCommit: vi.fn() });
+        mouse(handle, 'mousedown', { clientX: 500 });
+        mouse(window, 'mousemove', { clientX: 300 });
+        mouse(window, 'mouseup', { clientX: 300 });
+        await tick();
+        window.removeEventListener('resize', refit);
+        expect(onResize).toHaveBeenCalledWith(350, true);
+        expect(refit).not.toHaveBeenCalled();
     });
 });

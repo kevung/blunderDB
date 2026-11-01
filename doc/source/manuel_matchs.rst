@@ -73,6 +73,9 @@ flèches gauche et droite passent au précédent ou au suivant. L'onglet laissé
 onglet sans contenu n'apparaît pas : un match sans analyse n'a ni **À revoir**
 ni **Détails**, un match sans perte ni durée connue n'a pas de **Graphes**.
 
+La fiche s'ouvre à côté de la liste ; la poignée qui les sépare règle sa largeur,
+retenue d'un lancement à l'autre.
+
 .. figure:: img/panel_match_sheet.png
    :width: 100%
    :alt: Fiche d'un match, onglet Graphes

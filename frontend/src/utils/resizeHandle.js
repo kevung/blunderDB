@@ -27,6 +27,7 @@ export function clampPanelSize(side, size, extent) {
  * @param {number}   params.size      - current size of the panel in px (width in side mode, height otherwise)
  * @param {Function} params.onResize  - (size, side) on every mousemove, after clamping
  * @param {Function} params.onCommit  - (size, side) on mouseup, only when the drag moved the handle at all
+ * @param {(size: number) => number} [params.clamp] - bounds of a panel inside another; the window's by default
  */
 export function resizable(node, params) {
     let current = params;
@@ -34,6 +35,7 @@ export function resizable(node, params) {
     let cleanupDrag = null;
 
     function clamp(side, /** @type {number} */ size) {
+        if (current.clamp) return current.clamp(size);
         // Sizes are CSS pixels of the zoomed UI, the window and the pointer are window pixels.
         return clampPanelSize(side, size, toCssPx(side ? window.innerWidth : window.innerHeight));
     }
@@ -41,6 +43,8 @@ export function resizable(node, params) {
     // The new size reaches the DOM only once Svelte has flushed; measuring before that makes the
     // board fit the previous step.
     function notifyResize() {
+        // A split inside a panel leaves the board its room: no refit to pay for.
+        if (current.clamp) return;
         tick().then(() => window.dispatchEvent(new Event('resize')));
     }
 
