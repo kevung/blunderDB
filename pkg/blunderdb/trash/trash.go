@@ -461,3 +461,32 @@ func put(ctx context.Context, s storage.Stores, scope string, kind domain.TrashK
 	}
 	return s.Trash().Put(ctx, scope, kind, label, blob)
 }
+
+// DiscardByUUID removes the trash entries of one kind whose snapshot holds the
+// object uuid: the object is back (or gone for good) by another way, and
+// restoring the entry would make a second one under a fresh identifier.
+func DiscardByUUID(ctx context.Context, s storage.Stores, scope string, kind domain.TrashKind, uuid string) error {
+	if uuid == "" {
+		return nil
+	}
+	entries, err := s.Trash().List(ctx, scope, kind, storage.ListOpts{})
+	if err != nil {
+		return err
+	}
+	for _, e := range entries {
+		var p struct {
+			UUID string `json:"uuid"`
+		}
+		if json.Unmarshal(e.Payload, &p) == nil && p.UUID == uuid {
+			if err := s.Trash().Discard(ctx, scope, e.ID); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// InTx runs fn in one transaction when s can open one, directly on s otherwise.
+func InTx(ctx context.Context, s storage.Stores, scope string, fn func(storage.Stores) error) error {
+	return inTx(ctx, s, scope, fn)
+}

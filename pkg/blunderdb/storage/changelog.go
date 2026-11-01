@@ -20,18 +20,30 @@ type Change struct {
 	UUID   string `json:"uuid"`
 	Family string `json:"family"`
 	Op     string `json:"op"`
-	// ChangedAt is UTC, RFC 3339 with milliseconds: it compares as text.
+	// ChangedAt is UTC, RFC 3339 with milliseconds (the layout ChangedAtLayout
+	// names). Anything that reads a ChangedAt from elsewhere normalises it
+	// first: only that layout compares as text.
 	ChangedAt string `json:"changed_at"`
 }
+
+// ChangedAtLayout is the layout of Change.ChangedAt.
+const ChangedAtLayout = "2006-01-02T15:04:05.000Z"
 
 // ChangeJournalStore reads the journal the triggers of the uuid-bearing
 // tables write. A cursor is the seq of the last change a reader saw (0 for
 // everything the journal holds). Seq is monotone, not gap-free, and a
 // concurrent PostgreSQL writer can commit a lower seq after a higher one was
-// read: a reader that must not miss it re-reads a short window behind its cursor.
+// read. A reader that must not miss it cannot rely on the cursor alone: the
+// fix (comparing the transaction snapshot's xmin with the writer's xid8) is not
+// implemented; see changeset.Export.
 type ChangeJournalStore interface {
 	// Changes lists up to limit changes with seq > after, oldest first.
 	Changes(ctx context.Context, scope string, after int64, limit int) ([]Change, error)
+	// ChangesOf is Changes restricted to the given families (all when empty).
+	ChangesOf(ctx context.Context, scope string, families []string, after int64, limit int) ([]Change, error)
+	// Unjournaled lists the uuids of a family's rows that have no entry: the
+	// rows that existed before the journal did, which no cursor reaches.
+	Unjournaled(ctx context.Context, scope, family string) ([]string, error)
 	// Entry is the journal entry of one object, ErrNotFound when it has none.
 	Entry(ctx context.Context, scope, uuid string) (Change, error)
 	// Mark records an operation the triggers cannot see (a delete that went

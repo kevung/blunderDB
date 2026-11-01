@@ -166,4 +166,6 @@ func CheckChangeSet(t *testing.T, a storage.Storage, ca context.Context, sa stri
 	if rep := push("same name"); rep.Applied != 1 || len(rep.Conflicts) != 0 {
 		t.Errorf("same name: %+v", rep)
 	}
+
+	CheckChangeSetScenarios(t, a, ca, sa, b, cb, sb)
 }

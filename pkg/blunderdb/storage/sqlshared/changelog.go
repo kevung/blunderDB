@@ -23,12 +23,24 @@ func (s *ChangeJournalStore) changedAtText() string {
 }
 
 func (s *ChangeJournalStore) Changes(ctx context.Context, scope string, after int64, limit int) ([]storage.Change, error) {
+	return s.ChangesOf(ctx, scope, nil, after, limit)
+}
+
+func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, families []string, after int64, limit int) ([]storage.Change, error) {
 	if limit <= 0 {
 		limit = 1000
 	}
 	tenant, targs := s.DB.TenantFilter("", scope)
+	args := append(targs, after)
+	where := tenant + ` AND seq > ?`
+	if len(families) > 0 {
+		where += ` AND family IN (` + Placeholders(len(families)) + `)`
+		for _, f := range families {
+			args = append(args, f)
+		}
+	}
 	rows, err := s.DB.Query(ctx, `SELECT seq, CAST(uuid AS TEXT), family, op, `+s.changedAtText()+` FROM change_log
-		WHERE `+tenant+` AND seq > ? ORDER BY seq LIMIT ?`, append(targs, after, limit)...)
+		WHERE `+where+` ORDER BY seq LIMIT ?`, append(args, limit)...)
 	if err != nil {
 		return nil, errf(s.DB, "changes", err)
 	}
@@ -43,6 +55,36 @@ func (s *ChangeJournalStore) Changes(ctx context.Context, scope string, after in
 	}
 	if err := rows.Err(); err != nil {
 		return nil, errf(s.DB, "changes", err)
+	}
+	return out, nil
+}
+
+func (s *ChangeJournalStore) Unjournaled(ctx context.Context, scope, family string) ([]string, error) {
+	table, err := objectUUIDTable(family)
+	if err != nil {
+		return nil, errf(s.DB, "unjournaled", err)
+	}
+	tenant, targs := s.DB.TenantFilter("t", scope)
+	same := ""
+	if s.DB.Name() == "postgres" {
+		same = ` AND c.tenant_id = t.tenant_id`
+	}
+	rows, err := s.DB.Query(ctx, `SELECT CAST(t.uuid AS TEXT) FROM `+table+` t WHERE `+tenant+` AND t.uuid IS NOT NULL
+		AND NOT EXISTS (SELECT 1 FROM change_log c WHERE c.uuid = t.uuid`+same+`) ORDER BY t.id`, targs...)
+	if err != nil {
+		return nil, errf(s.DB, "unjournaled", err)
+	}
+	defer rows.Close()
+	var out []string
+	for rows.Next() {
+		var u string
+		if err := rows.Scan(&u); err != nil {
+			return nil, errf(s.DB, "unjournaled", err)
+		}
+		out = append(out, u)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "unjournaled", err)
 	}
 	return out, nil
 }
