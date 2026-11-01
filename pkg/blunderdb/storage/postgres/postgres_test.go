@@ -63,7 +63,7 @@ var wantTables = []string{
 	"command_history", "comment", "direction", "direction_event",
 	"direction_pair_member", "duel", "event_alias",
 	"filter_library", "game", "import_batch", "import_batch_file",
-	"lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_origin", "match_stats", "match_stats_cell", "match_stats_position",
+	"change_log", "lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_origin", "match_stats", "match_stats_cell", "match_stats_position",
 	"metadata", "move", "move_analysis",
 	"player_alias", "position", "rencontre", "schema_migrations", "search_history", "session_state", "study_mark",
 	"table_setting", "tournament", "training_item", "training_session", "transcription",

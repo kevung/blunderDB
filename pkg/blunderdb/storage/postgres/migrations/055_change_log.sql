@@ -7,7 +7,8 @@
 --     (no SECURITY DEFINER), so the tenant policy below governs what it writes.
 --   * One row trigger per uuid-bearing table. A uuid that goes from NULL to a
 --     value (the backfill of 054) is not a change; a uuid that changes (a
---     restore from the trash) retires the old one and creates the new.
+--     restore from the trash giving back the identifier) drops the entry of
+--     the fresh draw it replaces and creates the new one.
 -- No COMMIT, no role switch: it holds on blunderdb_user under FORCE RLS.
 -- Idempotent. Schema-visible: bumps domain.DatabaseVersion to 2.52.0.
 
@@ -59,9 +60,7 @@ BEGIN
         IF OLD.uuid IS NULL THEN
             RETURN NEW;
         ELSIF OLD.uuid IS DISTINCT FROM NEW.uuid THEN
-            INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (OLD.tenant_id, OLD.uuid, TG_ARGV[0], 'delete')
-            ON CONFLICT (tenant_id, uuid) DO UPDATE
-                SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = 'delete', changed_at = now();
+            DELETE FROM change_log WHERE tenant_id = OLD.tenant_id AND uuid = OLD.uuid;
         ELSE
             op := 'update';
         END IF;

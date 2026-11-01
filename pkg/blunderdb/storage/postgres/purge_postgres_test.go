@@ -211,6 +211,9 @@ func TestPurgeTenant(t *testing.T) {
 	// nobody purges fails the after-purge count.
 	tables := purgeTenantTables(t, s.pool)
 	for _, tbl := range tables {
+		if tbl == "change_log" {
+			continue // fed by the triggers of the rows seeded above, not seeded
+		}
 		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != 1 {
 			t.Fatalf("seed sanity: %s tenant A: got %d rows, want 1", tbl, got)
 		}

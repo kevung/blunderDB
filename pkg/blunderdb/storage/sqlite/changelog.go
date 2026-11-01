@@ -9,7 +9,8 @@ import (
 )
 
 // EnsureChangeLog creates the change journal and the triggers that write it,
-// the twin of PostgreSQL's 055_change_log.sql. A row is journaled when its
+// the twin of PostgreSQL's 055_change_log.sql. A uuid that changes (a restore giving back the identifier the object held) was a
+// fresh draw nobody has seen: its entry is dropped, not turned into a delete. A row is journaled when its
 // uuid is set: at insert when it comes with one, otherwise when the uuid
 // trigger of EnsureObjectUUIDs names it (NULL to a value), so a backfill that
 // runs before the triggers exist leaves no entries. Idempotent; call it after
@@ -46,7 +47,7 @@ func EnsureChangeLog(ctx context.Context, db *sql.DB) error {
 				WHEN NEW.uuid IS NOT NULL BEGIN ` + ins("NEW.uuid", "'create'", "") + ` END`,
 			`CREATE TRIGGER IF NOT EXISTS change_log_` + f.Table + `_u AFTER UPDATE ON ` + f.Table + `
 				WHEN NEW.uuid IS NOT NULL BEGIN ` +
-				ins("OLD.uuid", "'delete'", `OLD.uuid IS NOT NULL AND OLD.uuid <> NEW.uuid`) + ` ` +
+				`DELETE FROM change_log WHERE uuid = OLD.uuid AND OLD.uuid <> NEW.uuid;` + ` ` +
 				ins("NEW.uuid", `CASE WHEN OLD.uuid IS NULL OR OLD.uuid <> NEW.uuid THEN 'create' ELSE 'update' END`, "") + ` END`,
 			`CREATE TRIGGER IF NOT EXISTS change_log_` + f.Table + `_d AFTER DELETE ON ` + f.Table + `
 				WHEN OLD.uuid IS NOT NULL BEGIN ` + ins("OLD.uuid", "'delete'", "") + ` END`,

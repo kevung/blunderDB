@@ -85,7 +85,7 @@ func markTrashed(ctx context.Context, s storage.Stores, scope, family, uuid stri
 	if !ok || uuid == "" {
 		return nil
 	}
-	return p.ChangeJournal().Mark(ctx, scope, family, uuid, storage.ChangeTrash)
+	return p.ChangeJournal().Mark(ctx, scope, family, uuid, storage.ChangeTrash, "")
 }
 
 // snapshotPosition reads a position with what cascades off it: its analysis,

@@ -63,3 +63,20 @@ func (s *ObjectUUIDStore) SetObjectUUID(ctx context.Context, scope, family strin
 	}
 	return nil
 }
+
+func (s *ObjectUUIDStore) ObjectID(ctx context.Context, scope, family, uuid string) (int64, error) {
+	table, err := objectUUIDTable(family)
+	if err != nil {
+		return 0, errf(s.DB, "object id", err)
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	var id int64
+	err = s.DB.QueryRow(ctx, `SELECT id FROM `+table+` WHERE `+tenant+` AND CAST(uuid AS TEXT) = ?`, append(targs, uuid)...).Scan(&id)
+	if errors.Is(err, ErrNoRows) {
+		return 0, errf(s.DB, "object id", storage.ErrNotFound)
+	}
+	if err != nil {
+		return 0, errf(s.DB, "object id", err)
+	}
+	return id, nil
+}
