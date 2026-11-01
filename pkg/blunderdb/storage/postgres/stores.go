@@ -73,6 +73,9 @@ func (b binder) Aliases() storage.AliasStore { return &sqlshared.AliasStore{DB: 
 func (b binder) ChangeJournal() storage.ChangeJournalStore {
 	return &sqlshared.ChangeJournalStore{DB: b.shared()}
 }
+func (b binder) PositionDrawings() storage.DrawingStore {
+	return &sqlshared.DrawingStore{DB: b.shared()}
+}
 func (b binder) PublicIDs() storage.PublicIDStore {
 	return &sqlshared.PublicIDStore{DB: b.shared()}
 }

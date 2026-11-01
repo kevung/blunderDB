@@ -105,6 +105,7 @@ var migrationSteps = []migrationStep{
 	{"2.50.0", "2.51.0", (*Database).migrate_2_50_0_to_2_51_0},
 	{"2.51.0", "2.52.0", (*Database).migrate_2_51_0_to_2_52_0},
 	{"2.52.0", "2.53.0", (*Database).migrate_2_52_0_to_2_53_0},
+	{"2.53.0", "2.54.0", (*Database).migrate_2_53_0_to_2_54_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given

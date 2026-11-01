@@ -700,6 +700,18 @@ var schemaStatements = []string{
 		lesson_step_id INTEGER PRIMARY KEY REFERENCES lesson_step(id) ON DELETE CASCADE,
 		done_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 	)`,
+	// The arrows and squares a player lays over a position, in the order
+	// drawn. They go with the position and travel in exports and transfers.
+	`CREATE TABLE IF NOT EXISTS position_drawing (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		position_id INTEGER NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+		rank INTEGER NOT NULL,
+		kind TEXT NOT NULL CHECK (kind IN ('arrow', 'square')),
+		from_point INTEGER NOT NULL CHECK (from_point BETWEEN 0 AND 25),
+		to_point INTEGER NOT NULL CHECK (to_point BETWEEN 0 AND 25),
+		color TEXT NOT NULL CHECK (color IN ('red', 'green', 'blue', 'yellow')),
+		UNIQUE (position_id, rank)
+	)`,
 	// The positions the user marked "studied" in the library-wide study
 	// backlog: written only by that gesture, reversible, never exported (a
 	// table of its own so that no exporter carries it). Not a retention

@@ -19,7 +19,7 @@ func testPositionDrawings(t *testing.T, s storage.Storage) {
 		t.Fatal("this backend keeps no drawings")
 	}
 	d := prov.PositionDrawings()
-	pa, pb := provenancePos(101), provenancePos(102)
+	pa, pb := provenancePos(3), provenancePos(4)
 	a, err := s.Positions().Save(ctx, "", &pa)
 	if err != nil {
 		t.Fatal(err)

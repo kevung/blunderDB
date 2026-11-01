@@ -377,3 +377,8 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   caller attaches to a position; the engine stores and returns it, never reads
   it. NULLable, no default, no backfill: no row is rewritten, so `change_log`
   keeps its entries. Schema-visible: bumped `domain.DatabaseVersion` to 2.53.0.
+- `057_position_drawing.sql` — `position_drawing`, the arrows and squares a
+  player lays over a position (kind, two points, one of four colours, in the
+  order drawn). Composite tenant key to `position` with `ON DELETE CASCADE`,
+  `FORCE RLS`, `lock_timeout = 15s`. No trigger: the change journal is not
+  touched. Schema-visible: bumped `domain.DatabaseVersion` to 2.54.0.
