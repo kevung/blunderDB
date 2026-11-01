@@ -5281,6 +5281,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/positions.drawing:
+    post:
+      operationId: positions.drawing
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/drawingResp"
   /v1/positions.epc:
     post:
       operationId: positions.epc
@@ -5622,6 +5639,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/positionSaveResp"
+  /v1/positions.setDrawing:
+    post:
+      operationId: positions.setDrawing
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setDrawingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/positions.setIndividuallyImported:
     post:
       operationId: positions.setIndividuallyImported
@@ -9037,6 +9071,9 @@ components:
     domain_CommentEntry:
       type: object
       description: "Opaque: see the Go type domain.CommentEntry (defined outside internal/server, not expanded here)."
+    domain_DrawingMark:
+      type: object
+      description: "Opaque: see the Go type domain.DrawingMark (defined outside internal/server, not expanded here)."
     domain_DuplicateSuspect:
       type: object
       description: "Opaque: see the Go type domain.DuplicateSuspect (defined outside internal/server, not expanded here)."
@@ -9100,6 +9137,13 @@ components:
     domain_TrashEntry:
       type: object
       description: "Opaque: see the Go type domain.TrashEntry (defined outside internal/server, not expanded here)."
+    drawingResp:
+      type: object
+      properties:
+        marks:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_DrawingMark"
     duel_Origin:
       type: object
       description: "Opaque: see the Go type duel.Origin (defined outside internal/server, not expanded here)."
@@ -9992,6 +10036,16 @@ components:
       properties:
         state:
           $ref: "#/components/schemas/storage_SessionState"
+    setDrawingReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        marks:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_DrawingMark"
     setMatchByNameReq:
       type: object
       properties:

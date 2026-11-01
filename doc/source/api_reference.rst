@@ -281,6 +281,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    positions
      POST /v1/positions.count                      JSON
      POST /v1/positions.delete                     JSON
+     POST /v1/positions.drawing                    JSON
      POST /v1/positions.epc                        JSON
      POST /v1/positions.exists                     JSON
      POST /v1/positions.explain                    JSON
@@ -300,6 +301,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.reclassifyPhases           JSON
      POST /v1/positions.repairCrawford             JSON
      POST /v1/positions.save                       JSON  (Idempotency-Key)
+     POST /v1/positions.setDrawing                 JSON
      POST /v1/positions.setIndividuallyImported    JSON
      POST /v1/positions.setPublicId                JSON
      POST /v1/positions.similar                    JSON

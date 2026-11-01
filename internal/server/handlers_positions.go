@@ -162,6 +162,26 @@ func (s *Server) positionRoutes() []route {
 			}
 			return ids.SetPublicID(ctx, scope, req.ID, req.PublicID)
 		})},
+		// The arrows and squares a player laid over a position, in the order
+		// drawn; set whole, an empty list clears it.
+		{http.MethodPost, "/v1/positions.drawing", rpc(func(ctx context.Context, scope string, req idReq) (drawingResp, error) {
+			d, err := s.drawings()
+			if err != nil {
+				return drawingResp{}, err
+			}
+			marks, err := d.Drawing(ctx, scope, req.ID)
+			if marks == nil {
+				marks = []domain.DrawingMark{}
+			}
+			return drawingResp{Marks: marks}, err
+		})},
+		{http.MethodPost, "/v1/positions.setDrawing", rpcVoid(func(ctx context.Context, scope string, req setDrawingReq) error {
+			d, err := s.drawings()
+			if err != nil {
+				return err
+			}
+			return d.SetDrawing(ctx, scope, req.ID, req.Marks)
+		})},
 		{http.MethodPost, "/v1/positions.exists", rpc(func(ctx context.Context, scope string, req existsReq) (existsResp, error) {
 			id, found, err := ps().Exists(ctx, scope, req.Zobrist)
 			return existsResp{ID: id, Found: found}, err
@@ -386,4 +406,22 @@ func (s *Server) publicIDs() (storage.PublicIDStore, error) {
 		return nil, fmt.Errorf("this backend keeps no public_id: %w", storage.ErrUnsupported)
 	}
 	return p.PublicIDs(), nil
+}
+
+type drawingResp struct {
+	Marks []domain.DrawingMark `json:"marks"`
+}
+
+// setDrawingReq replaces the drawing of position ID by Marks.
+type setDrawingReq struct {
+	ID    int64                `json:"id"`
+	Marks []domain.DrawingMark `json:"marks"`
+}
+
+func (s *Server) drawings() (storage.DrawingStore, error) {
+	p, ok := s.opts.Storage.(storage.DrawingProvider)
+	if !ok {
+		return nil, fmt.Errorf("this backend keeps no drawings: %w", storage.ErrUnsupported)
+	}
+	return p.PositionDrawings(), nil
 }

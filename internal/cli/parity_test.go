@@ -91,6 +91,10 @@ var serverOnly = map[string]string{
 	// foreground and read its progress from the call itself.
 	// An opaque label a caller attaches to a position (gammonGo's public page
 	// link); the desktop has no use for it yet.
+	// The arrows and squares a player lays over a board; the desktop has no
+	// board editor for them yet.
+	"/v1/positions.drawing":     "the drawing of a position: only the daemon's callers read it until the desktop has an editor",
+	"/v1/positions.setDrawing":  "replaces the drawing of a position: only the daemon's callers write it until the desktop has an editor",
 	"/v1/positions.publicId":    "the opaque public_id a caller attached to a position: only the daemon's callers set and read it",
 	"/v1/positions.setPublicId": "sets or clears the opaque public_id of a position: only the daemon's callers use it",
 	"/v1/imports.batch.status":  "the progress of a batch import running in the daemon's background: the CLI and the desktop get it from the foreground call",

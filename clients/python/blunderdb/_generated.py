@@ -1002,6 +1002,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.delete — JSON."
         return self._call("/v1/positions.delete", payload)
 
+    def positions_drawing(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.drawing — JSON."
+        return self._call("/v1/positions.drawing", payload)
+
     def positions_epc(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.epc — JSON."
         return self._call("/v1/positions.epc", payload)
@@ -1077,6 +1081,10 @@ class GeneratedAPI(BaseClient):
     def positions_save(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/positions.save — JSON. Accepts an Idempotency-Key."
         return self._call("/v1/positions.save", payload, idempotency_key=idempotency_key)
+
+    def positions_set_drawing(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.setDrawing — JSON."
+        return self._call("/v1/positions.setDrawing", payload)
 
     def positions_set_individually_imported(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.setIndividuallyImported — JSON."
