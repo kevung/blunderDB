@@ -2223,7 +2223,7 @@
                         />
                     {/key}
                 </div>
-                <VisionBenchExport events={$visionEventsStore} calibration={calibrationName} source={videoSource} />
+                <VisionBenchExport events={$visionEventsStore} calibration={calibrationName} source={videoSource} {draftId} />
                 {#if !videoOnBoard}
                     <div class="video-resize" role="separator" aria-orientation="horizontal" aria-label={$t('transcription.videoResize')} onpointerdown={startVideoResize}></div>
                 {/if}

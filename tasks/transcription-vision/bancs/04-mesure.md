@@ -114,3 +114,19 @@ Suite : le journal de descripteurs de cette lecture est dans l'IndexedDB de la w
 `make dev` (sessions `<draftId>:Calibration` et `<draftId>:Calibration 2`). Le rendre lisible
 hors du volet (export dev-only, `readJournal`) permettrait de régler témoin et seuils par `replay`
 avec les Repères comme fenêtres, sans relire la vidéo ; puis corriger #868 et relancer la mesure.
+
+### Rejouer le journal sans relire la vidéo
+
+Le journal des descripteurs de la lecture reste dans l'IndexedDB de la webview (base
+`blunderdb-vision-journal`, sessions `<brouillon>:<calibration>`) ; rien ne l'efface dans
+l'application (`clearJournal` n'a pas d'appelant d'interface), mais l'IndexedDB est liée à
+l'origine de `wails dev` : ne pas en changer le port.
+
+1. Sous `make dev`, volet transcription du même brouillon : « Enregistrer le journal (banc) »
+   écrit `journal.json` (`{ draftId, sessions: { "<brouillon>:<calibration>": [relevés…] },
+   calibrations: { "<session>": { name, clicks, modelToImage, overlay? } } }`, toutes les
+   sessions du brouillon).
+2. `node tools/vision/replay.mjs journal.json [--session S] [--overrides '{"seuil":…}'] > events.json`
+   (mêmes événements que l'export du volet ; les seuils : `createAutomata(overrides)`).
+3. `python3 tools/vision/mesure.py events.json marks.csv`.
+

@@ -131,6 +131,53 @@ export async function clearJournal({ session, indexedDB = globalThis.indexedDB }
 }
 
 /**
+ * Tous les relevés d'une session, dans l'ordre d'écriture. Lecture seule : rien n'est effacé.
+ * @param {{ session: string, indexedDB?: IDBFactory }} options
+ * @returns {Promise<import('./descriptors.js').DescriptorRecord[]>}
+ */
+export async function readJournal({ session, indexedDB = globalThis.indexedDB }) {
+    if (!indexedDB) return [];
+    const db = await openDb(indexedDB);
+    try {
+        const tx = db.transaction(STORE, 'readonly');
+        // Rows sharing an index key come back in primary-key order: the order of writing.
+        const rows = await done(tx.objectStore(STORE).index(BY_SESSION).getAll(IDBKeyRange.only(session)));
+        return rows.map((/** @type {{ record: import('./descriptors.js').DescriptorRecord }} */ row) => row.record);
+    } finally {
+        db.close();
+    }
+}
+
+/**
+ * Les sessions présentes dans le journal, sans doublon, en ordre alphabétique.
+ * @param {{ indexedDB?: IDBFactory }} [options]
+ * @returns {Promise<string[]>}
+ */
+export async function listJournalSessions({ indexedDB = globalThis.indexedDB } = {}) {
+    if (!indexedDB) return [];
+    const db = await openDb(indexedDB);
+    try {
+        const tx = db.transaction(STORE, 'readonly');
+        /** @type {string[]} */
+        const names = [];
+        await new Promise((resolve, reject) => {
+            // `nextunique` visits each session once (getAllKeys on an index yields primary keys).
+            const req = tx.objectStore(STORE).index(BY_SESSION).openKeyCursor(null, 'nextunique');
+            req.onerror = () => reject(req.error);
+            req.onsuccess = () => {
+                const cursor = req.result;
+                if (!cursor) return resolve(undefined);
+                names.push(/** @type {string} */ (cursor.key));
+                cursor.continue();
+            };
+        });
+        return names;
+    } finally {
+        db.close();
+    }
+}
+
+/**
  * Journal en mémoire, même interface : là où IndexedDB manque, rien n'est gardé au-delà de la
  * page.
  * @param {string} session

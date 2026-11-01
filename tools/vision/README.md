@@ -35,3 +35,12 @@ Test : `python3 -m unittest discover -s tools/vision` depuis la racine.
 `python3 mesure.py events.json marks.csv` (voir l'en-tête du script et
 `tasks/transcription-vision/bancs/04-mesure.md`). `python3 mutations.py` (aussi pour `readable_hist.py` et `prepare_annot.py`) vérifie que chaque
 convention est tenue par un test. Fixture sous `fixtures/`.
+
+### Rejouer un journal hors de l'application
+
+« Enregistrer le journal (banc) » (même endroit, `make dev` seulement) écrit `journal.json` :
+les relevés de toutes les sessions du brouillon ; `node tools/vision/replay.mjs journal.json
+[--session S] [--overrides '{"seuil":…}'] > events.json` les rejoue dans les automates (format
+de l'export d'événements, sessions fusionnées par instant) ; puis `mesure.py events.json
+marks.csv`. Sans toucher à la vidéo : les seuils se règlent sur le journal.
+

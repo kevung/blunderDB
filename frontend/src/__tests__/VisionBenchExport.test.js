@@ -59,4 +59,18 @@ describe('bench export', () => {
         const { queryByRole } = render(VisionBenchExport, { props: { events: [], calibration: 'c', source: 's' } });
         expect(queryByRole('button')).toBeNull();
     });
+
+    test('the journal button shows without events, once a draft is known, and writes the journal', async () => {
+        gui.SaveBoardImageDialog.mockResolvedValue('/tmp/j.json');
+        const { getByRole } = render(VisionBenchExport, { props: { events: [], calibration: 'c', source: 's', draftId: 5 } });
+        await fireEvent.click(getByRole('button', { name: /journal/ }));
+        await vi.waitFor(() => expect(gui.SaveBoardSVG).toHaveBeenCalled());
+        expect(gui.SaveBoardImageDialog).toHaveBeenCalledWith('json', 'journal.json');
+        expect(JSON.parse(gui.SaveBoardSVG.mock.calls[0][1])).toMatchObject({ draftId: '5', sessions: {} });
+    });
+
+    test('no journal button without a draft', () => {
+        const { queryByRole } = render(VisionBenchExport, { props: { events: [], calibration: 'c', source: 's' } });
+        expect(queryByRole('button')).toBeNull();
+    });
 });
