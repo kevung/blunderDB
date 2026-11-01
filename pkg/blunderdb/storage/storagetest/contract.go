@@ -255,6 +255,8 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Trash/KeepsUUIDs", testTrashKeepsUUIDs},
 		{"ChangeJournal", testChangeJournal},
 		{"ChangeJournal/TrashMatch", testChangeJournalTrashMatch},
+		{"ChangeJournal/Reanalysis", testChangeJournalReanalysis},
+		{"ChangeJournal/PurgeEndsTrash", testChangeJournalPurgeEndsTrash},
 		{"Trash/MatchDirectionSlot", testTrashMatchDirectionSlot},
 		{"Trash/MatchSlotGone", testTrashMatchSlotGone},
 		{"Trash/MatchPositionBackElsewhere", testTrashMatchPositionBackElsewhere},

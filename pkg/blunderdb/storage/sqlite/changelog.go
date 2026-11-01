@@ -3,7 +3,9 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
@@ -43,18 +45,30 @@ func EnsureChangeLog(ctx context.Context, db *sql.DB) error {
 				uuid, f.Family, op, and, where)
 		}
 		stmts := []string{
-			`CREATE TRIGGER IF NOT EXISTS change_log_` + f.Table + `_i AFTER INSERT ON ` + f.Table + `
+			`CREATE TRIGGER change_log_` + f.Table + `_i AFTER INSERT ON ` + f.Table + `
 				WHEN NEW.uuid IS NOT NULL BEGIN ` + ins("NEW.uuid", "'create'", "") + ` END`,
-			`CREATE TRIGGER IF NOT EXISTS change_log_` + f.Table + `_u AFTER UPDATE ON ` + f.Table + `
+			`CREATE TRIGGER change_log_` + f.Table + `_u AFTER UPDATE ON ` + f.Table + `
 				WHEN NEW.uuid IS NOT NULL BEGIN ` +
 				`DELETE FROM change_log WHERE uuid = OLD.uuid AND OLD.uuid <> NEW.uuid;` + ` ` +
 				ins("NEW.uuid", `CASE WHEN OLD.uuid IS NULL OR OLD.uuid <> NEW.uuid THEN 'create' ELSE 'update' END`, "") + ` END`,
-			`CREATE TRIGGER IF NOT EXISTS change_log_` + f.Table + `_d AFTER DELETE ON ` + f.Table + `
+			`CREATE TRIGGER change_log_` + f.Table + `_d AFTER DELETE ON ` + f.Table + `
 				WHEN OLD.uuid IS NOT NULL BEGIN ` + ins("OLD.uuid", "'delete'", "") + ` END`,
 		}
 		for _, s := range stmts {
-			if _, err := db.ExecContext(ctx, s); err != nil {
+			if err := ensureTrigger(ctx, db, s); err != nil {
 				return fmt.Errorf("sqlite: change_log trigger on %s: %w", f.Table, err)
+			}
+		}
+	}
+	if tables["analysis"] && tables["position"] {
+		// An analysis has no uuid: a re-analysis is an update of its position.
+		const body = `DELETE FROM change_log WHERE uuid = (SELECT uuid FROM position WHERE id = NEW.position_id);` +
+			` INSERT INTO change_log (uuid, family, op) SELECT uuid, 'position', 'update' FROM position WHERE id = NEW.position_id AND uuid IS NOT NULL;`
+		for _, ev := range []string{"INSERT", "UPDATE"} {
+			stmt := `CREATE TRIGGER change_log_analysis_` + strings.ToLower(ev[:1]) + ` AFTER ` + ev + ` ON analysis
+				WHEN NEW.position_id IS NOT NULL BEGIN ` + body + ` END`
+			if err := ensureTrigger(ctx, db, stmt); err != nil {
+				return fmt.Errorf("sqlite: change_log trigger on analysis: %w", err)
 			}
 		}
 	}
@@ -71,8 +85,40 @@ func ForgetChangeLog(ctx context.Context, db *sql.DB) error {
 			}
 		}
 	}
+	for _, sfx := range []string{"_i", "_u"} {
+		if _, err := db.ExecContext(ctx, `DROP TRIGGER IF EXISTS change_log_analysis`+sfx); err != nil {
+			return fmt.Errorf("sqlite: drop the change_log trigger on analysis: %w", err)
+		}
+	}
 	if _, err := db.ExecContext(ctx, `DROP TABLE IF EXISTS change_log`); err != nil {
 		return fmt.Errorf("sqlite: drop change_log: %w", err)
 	}
 	return nil
+}
+
+// ensureTrigger creates the trigger a CREATE TRIGGER statement describes, and
+// replaces one of the same name whose body differs (SQLite keeps the text it
+// was created with, so a plain IF NOT EXISTS would freeze an old body for good).
+func ensureTrigger(ctx context.Context, db *sql.DB, create string) error {
+	name := strings.Fields(create)[2]
+	var have sql.NullString
+	err := db.QueryRowContext(ctx, `SELECT sql FROM sqlite_master WHERE type = 'trigger' AND name = ?`, name).Scan(&have)
+	if err == nil && have.String == create {
+		return nil
+	}
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return err
+	}
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = tx.Rollback() }()
+	if _, err := tx.ExecContext(ctx, `DROP TRIGGER IF EXISTS `+name); err != nil {
+		return err
+	}
+	if _, err := tx.ExecContext(ctx, create); err != nil {
+		return err
+	}
+	return tx.Commit()
 }

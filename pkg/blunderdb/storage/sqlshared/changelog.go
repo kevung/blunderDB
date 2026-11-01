@@ -48,10 +48,13 @@ func (s *ChangeJournalStore) Changes(ctx context.Context, scope string, after in
 }
 
 func (s *ChangeJournalStore) Entry(ctx context.Context, scope, uuid string) (storage.Change, error) {
+	if !isUUID(uuid) {
+		return storage.Change{}, errf(s.DB, "change entry", storage.ErrNotFound)
+	}
 	tenant, targs := s.DB.TenantFilter("", scope)
 	var c storage.Change
 	err := s.DB.QueryRow(ctx, `SELECT seq, CAST(uuid AS TEXT), family, op, `+s.changedAtText()+` FROM change_log
-		WHERE `+tenant+` AND CAST(uuid AS TEXT) = ?`, append(targs, uuid)...).Scan(&c.Seq, &c.UUID, &c.Family, &c.Op, &c.ChangedAt)
+		WHERE `+tenant+` AND uuid = ?`, append(targs, uuid)...).Scan(&c.Seq, &c.UUID, &c.Family, &c.Op, &c.ChangedAt)
 	if errors.Is(err, ErrNoRows) {
 		return storage.Change{}, errf(s.DB, "change entry", storage.ErrNotFound)
 	}

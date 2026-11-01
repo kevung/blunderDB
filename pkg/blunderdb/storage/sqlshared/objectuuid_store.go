@@ -69,9 +69,12 @@ func (s *ObjectUUIDStore) ObjectID(ctx context.Context, scope, family, uuid stri
 	if err != nil {
 		return 0, errf(s.DB, "object id", err)
 	}
+	if !isUUID(uuid) {
+		return 0, errf(s.DB, "object id", storage.ErrNotFound)
+	}
 	tenant, targs := s.DB.TenantFilter("", scope)
 	var id int64
-	err = s.DB.QueryRow(ctx, `SELECT id FROM `+table+` WHERE `+tenant+` AND CAST(uuid AS TEXT) = ?`, append(targs, uuid)...).Scan(&id)
+	err = s.DB.QueryRow(ctx, `SELECT id FROM `+table+` WHERE `+tenant+` AND uuid = ?`, append(targs, uuid)...).Scan(&id)
 	if errors.Is(err, ErrNoRows) {
 		return 0, errf(s.DB, "object id", storage.ErrNotFound)
 	}
@@ -79,4 +82,25 @@ func (s *ObjectUUIDStore) ObjectID(ctx context.Context, scope, family, uuid stri
 		return 0, errf(s.DB, "object id", err)
 	}
 	return id, nil
+}
+
+// isUUID reports whether s has the 8-4-4-4-12 shape. The lookups compare the
+// column itself (so its index serves them), which PostgreSQL types as uuid and
+// would refuse to bind a malformed text to.
+func isUUID(s string) bool {
+	if len(s) != 36 {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		switch c := s[i]; {
+		case i == 8 || i == 13 || i == 18 || i == 23:
+			if c != '-' {
+				return false
+			}
+		case c >= '0' && c <= '9', c >= 'a' && c <= 'f', c >= 'A' && c <= 'F':
+		default:
+			return false
+		}
+	}
+	return true
 }
