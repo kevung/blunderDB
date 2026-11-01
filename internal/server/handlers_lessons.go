@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/lessonmd"
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -53,6 +54,24 @@ type lessonHTMLResp struct {
 	HTML string `json:"html"`
 }
 
+// lessonMarkdownReq asks for the Markdown of the Lessons ids name, in order.
+type lessonMarkdownReq struct {
+	IDs []int64 `json:"ids"`
+}
+
+type lessonMarkdownResp struct {
+	Markdown string `json:"markdown"`
+}
+
+// lessonImportMarkdownReq carries a Markdown file: one Lesson per "# title".
+type lessonImportMarkdownReq struct {
+	Markdown string `json:"markdown"`
+}
+
+type lessonImportMarkdownResp struct {
+	IDs []int64 `json:"ids"`
+}
+
 // lessonRoutes serve the Lessons (ADR-0066): read by any client, written by
 // the coach's own tools through the same store as the desktop and the CLI.
 func (s *Server) lessonRoutes() []route {
@@ -70,6 +89,17 @@ func (s *Server) lessonRoutes() []route {
 			html, err := report.BuildLesson(ctx, s.opts.Storage, scope, req.ID, req.Language, nil)
 			return lessonHTMLResp{HTML: html}, err
 		})},
+		// A Lesson, or an article, as Markdown text; and back. No social state
+		// travels in it, nor the board a Step shows (see package lessonmd).
+		{http.MethodPost, "/v1/lessons.markdown", rpc(func(ctx context.Context, scope string, req lessonMarkdownReq) (lessonMarkdownResp, error) {
+			md, err := lessonmd.Export(ctx, s.opts.Storage, scope, req.IDs...)
+			return lessonMarkdownResp{Markdown: md}, err
+		})},
+		// Idempotent: a retried import would make every Lesson twice.
+		{http.MethodPost, "/v1/lessons.importMarkdown", s.withIdempotency(rpc(func(ctx context.Context, scope string, req lessonImportMarkdownReq) (lessonImportMarkdownResp, error) {
+			ids, err := lessonmd.Import(ctx, s.opts.Storage, scope, req.Markdown)
+			return lessonImportMarkdownResp{IDs: ids}, err
+		}))},
 		// Idempotent: Create has no natural dedup key, so a retry would make a
 		// second, identically named Lesson.
 		{http.MethodPost, "/v1/lessons.create", s.withIdempotency(rpc(func(ctx context.Context, scope string, req lessonCreateReq) (idResp, error) {

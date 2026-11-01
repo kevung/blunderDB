@@ -754,9 +754,17 @@ class GeneratedAPI(BaseClient):
         "POST /v1/lessons.html — JSON."
         return self._call("/v1/lessons.html", payload)
 
+    def lessons_import_markdown(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/lessons.importMarkdown — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/lessons.importMarkdown", payload, idempotency_key=idempotency_key)
+
     def lessons_list(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.list — JSON."
         return self._call("/v1/lessons.list", payload)
+
+    def lessons_markdown(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.markdown — JSON."
+        return self._call("/v1/lessons.markdown", payload)
 
     def lessons_remove_step(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.removeStep — JSON."

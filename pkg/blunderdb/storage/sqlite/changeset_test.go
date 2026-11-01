@@ -46,3 +46,8 @@ func TestChangeSet_SQLite(t *testing.T) {
 	ctx := context.Background()
 	storagetest.CheckChangeSet(t, open(), ctx, "", open(), ctx, "")
 }
+
+func TestLessonMarkdown_SQLite(t *testing.T) {
+	s, _ := openLib(t)
+	storagetest.CheckLessonMarkdown(t, s, context.Background(), "")
+}

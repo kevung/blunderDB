@@ -40,3 +40,9 @@ func TestChangeSetPreJournal_Postgres(t *testing.T) {
 		})
 	})
 }
+
+// TestLessonMarkdown_Postgres: the Markdown round trip under FORCE RLS.
+func TestLessonMarkdown_Postgres(t *testing.T) {
+	s, _ := openRLS(t)
+	storagetest.CheckLessonMarkdown(t, s, storage.WithTenant(context.Background(), 1), "1")
+}
