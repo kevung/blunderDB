@@ -80,6 +80,10 @@ const (
 // route must be reachable from databaseParity or named below with a reason.
 // Sorted by route.
 var serverOnly = map[string]string{
+	// The peer of an exchange reaches the daemon only by HTTP; the desktop and
+	// the CLI hold their own library and call package changeset directly.
+	"/v1/changeset.export": "package changeset, shared: no Database method wraps it",
+	"/v1/changeset.import": "package changeset, shared: no Database method wraps it",
 	// One Database method per alias gesture takes the kind ("player" or
 	// "event"); the daemon spells the kind in the path.
 	"/v1/events.alias.list":    "ListAliases(\"event\"), the CLI's `events alias list`: the parity row names the players route of the same method",
