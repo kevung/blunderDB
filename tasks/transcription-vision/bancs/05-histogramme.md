@@ -125,3 +125,21 @@ Ce que la deuxième vidéo change :
 - La borne de 60 s de la règle 5 reste très au-delà du besoin (pire cas −12 s) ; 15 s suffisent.
 - Une vraie deuxième source (autre salle, autre matériel) reste à mesurer avant d'en faire une
   constante : Marseille, Jussieu ou les Tuileries, une fois transcrits avec Repères.
+
+### Le délai est en secondes de média : il dépend de la vitesse de lecture
+
+Les deux vidéos ont été transcrites à ×2 environ, de mémoire de l'annotateur ; la vitesse n'est
+enregistrée nulle part (ni en base ni en `localStorage`). Si la vidéo continue de tourner pendant
+la lecture des dés et la frappe, le délai mesuré vaut temps de réaction × vitesse : 2,5 s de média
+à ×2, c'est 1,25 s d'horloge ; le même transcripteur à ×1 donnerait ~1,25 s, à ×4 ~5 s. S'il met
+en pause pour taper, le délai ne dépend plus de la vitesse. Les chiffres ci-dessus ne valent donc
+que pour cette habitude (×2, sans pause) et ne sont pas des constantes :
+
+- **Fenêtre d'apprentissage faible** : ne pas la figer à [−7 ; +1] s. L'estimer par transcription,
+  à partir de la médiane de `roll_tick_ms − mediaTime` des repos de dés détectés sûrs et appariés
+  (la mesure V1.7 donne ces paires), puis élargir autour ; [−7 ; +1] s reste le défaut quand la
+  vision n'a rien détecté.
+- **Borne de la règle 5** : elle s'applique pendant la saisie, quand la vitesse est connue ; la
+  borner en temps d'horloge (≈ 8 s × vitesse, en média) plutôt qu'en temps de média fixe. 60 s
+  couvre déjà ×4 (pire cas mesuré 6 s d'horloge → 24 s de média) ; une borne fixe à 15 s ne le
+  couvrirait pas.
