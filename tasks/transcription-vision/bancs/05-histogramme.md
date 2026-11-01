@@ -1,8 +1,7 @@
 # Banc V0.5 — histogramme de t_lisible − roll_tick_ms
 
-Verdict : **outils livrés et testés sur fixture ; annotation à la main non faite**. Aucun chiffre
-réel n'est donné : la médiane, p10, p90 et la part hors de [−1 ; +2] s restent à produire (section
-« Résultat » vide, à remplir après saisie). Issue #847 ouverte jusqu'à cette saisie.
+Verdict : **mesuré sur 47 coups d'un match** (2026-11-01) : les dés sont lisibles 3,0 s (médiane)
+avant le Repère, jamais après ; la fenêtre [Repère − 6,5 s ; Repère − 0,5 s] en contient 94 %.
 
 Question : de combien le Repère du jet tapé (`roll_tick_ms`, posé après repos, lecture et frappe)
 est-il en retard sur l'instant où les dés sont lisibles à l'image ? Ce décalage fixe la fenêtre de
@@ -54,4 +53,40 @@ règle 5 (`TranscriptionPanel.svelte`), un Repère posé pendant un repos détec
 
 ## Résultat
 
-À remplir après annotation.
+Corpus : `~/bkgm/unger.db` match 285 (Unger – Sekri, 9 pts, BMAB 2026-10-10, ronde 2), vidéo
+locale `.webm` 640×480 à 24 img/s, 383 Repères posés à la main pendant la transcription, avant
+l'ADR-0109 (vision éteinte). 50 coups étalés par `prepare_annot.py`, saisis dans mpv au ralenti
+×0,5 avec `annoter.lua` (Entrée à la première image où les deux dés sont lisibles ; temps de
+réaction ≈ 0,1 s de média, qui décale légèrement vers le tard). Une seule vidéo, un seul
+annotateur : le chiffre vaut pour ce poste et cette façon de transcrire.
+
+```
+coups annotés : 47 (3 illisibles)
+médiane : -2.99 s
+p10     : -5.55 s
+p90     : -1.37 s
+hors [-1 ; +2] s : 94 %
+extrêmes : -10.9 s et -0.02 s ; aucun delta positif
+```
+
+| Fenêtre autour du Repère | Part des coups |
+|---|---|
+| [−1 ; +2] s | 6 % |
+| [−6 ; −1] s | 85 % |
+| [−6,5 ; −0,5] s | 94 % |
+| [−7 ; 0] s | 98 % |
+
+Conclusions :
+
+- **Le Repère n'est pas l'instant du jet** : il le suit de 1,4 à 5,5 s (p10–p90), le temps de
+  lire et de taper. Il ne peut donc pas servir de centre à la fenêtre [−1 ; +2] s de la règle 1
+  (6 % dedans).
+- **Comme fenêtre d'apprentissage faible (ADR-0110), le Repère vaut** à condition d'être décalé :
+  [Repère − 6,5 s ; Repère − 0,5 s] couvre 94 % des instants lisibles, [Repère − 7 s ; Repère]
+  98 %. Les images calmes du corpus se cherchent dans cette fenêtre, pas autour du Repère.
+- **Borne de 60 s de la règle 5** : le repos détecté précède la frappe de 11 s au pire ; 60 s
+  est très au-delà du besoin. Elle peut descendre vers 15 s sans perdre de calage, ce qui
+  réduit le risque de caler sur un repos ancien ; à décider avec la mesure V1.7 (#858), qui dit
+  combien de repos sont détectés sûrs.
+- La fenêtre du jet de `mesure.py` (de l'action précédente au Repère, ±0,5 s) contient bien
+  l'instant lisible : aucun delta n'est positif.
