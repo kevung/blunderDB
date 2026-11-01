@@ -86,7 +86,7 @@ Conclusions :
   [Repère − 6,5 s ; Repère − 0,5 s] couvre 94 % des instants lisibles, [Repère − 7 s ; Repère]
   98 %. Les images calmes du corpus se cherchent dans cette fenêtre, pas autour du Repère.
 - **Borne de 60 s de la règle 5** : le repos détecté précède la frappe de 11 s au pire ; 60 s
-  est très au-delà du besoin. Elle peut descendre vers 15 s sans perdre de calage, ce qui
+  est très au-delà du besoin. (Corrigé plus bas : ce chiffre dépend de la vitesse de lecture.) Elle pourrait descendre, ce qui
   réduit le risque de caler sur un repos ancien ; à décider avec la mesure V1.7 (#858), qui dit
   combien de repos sont détectés sûrs.
 - La fenêtre du jet de `mesure.py` (de l'action précédente au Repère, ±0,5 s) contient bien
@@ -122,7 +122,7 @@ Ce que la deuxième vidéo change :
   la frappe a devancé l'image, ou les dés ont roulé encore. La fenêtre d'apprentissage faible doit
   donc déborder un peu après le Repère : **[Repère − 7 s ; Repère + 1 s]** (95 % des 96 coups)
   remplace [− 6,5 ; − 0,5] s.
-- La borne de 60 s de la règle 5 reste très au-delà du besoin (pire cas −12 s) ; 15 s suffisent.
+- La borne de 60 s de la règle 5 reste très au-delà du besoin (pire cas −12 s) à ×2 ; voir la section sur la vitesse de lecture avant de la réduire.
 - Une vraie deuxième source (autre salle, autre matériel) reste à mesurer avant d'en faire une
   constante : Marseille, Jussieu ou les Tuileries, une fois transcrits avec Repères.
 
