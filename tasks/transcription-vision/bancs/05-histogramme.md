@@ -1,7 +1,8 @@
 # Banc V0.5 — histogramme de t_lisible − roll_tick_ms
 
-Verdict : **mesuré sur 47 coups d'un match** (2026-11-01) : les dés sont lisibles 3,0 s (médiane)
-avant le Repère, jamais après ; la fenêtre [Repère − 6,5 s ; Repère − 0,5 s] en contient 94 %.
+Verdict : **mesuré sur 96 coups de deux vidéos** (2026-11-01) : les dés sont lisibles 2,5 s
+(médiane) avant le Repère, presque jamais après ; la fenêtre [Repère − 7 s ; Repère + 1 s] en
+contient 95 %.
 
 Question : de combien le Repère du jet tapé (`roll_tick_ms`, posé après repos, lecture et frappe)
 est-il en retard sur l'instant où les dés sont lisibles à l'image ? Ce décalage fixe la fenêtre de
@@ -90,3 +91,37 @@ Conclusions :
   combien de repos sont détectés sûrs.
 - La fenêtre du jet de `mesure.py` (de l'action précédente au Repère, ±0,5 s) contient bien
   l'instant lisible : aucun delta n'est positif.
+
+### Deuxième vidéo et réunion
+
+Corpus : brouillon de transcription 5 de `~/bkgm/unger.db` (Unger – Guerbaa, 9 pts, même tournoi,
+ronde 4, non terminé), vidéo locale `.mp4` en portrait 480×640 à 24 img/s, 271 Repères posés les
+12 et 13 octobre (vision éteinte), lus dans le document du brouillon (aucun `move` en base). Même
+annotateur, même outil. Même tournoi, donc même matériel et même salle : la deuxième vidéo
+éprouve la stabilité du délai chez un transcripteur, pas la diversité des sources.
+
+```
+                 coups  médiane   p10     p90     extrêmes          delta > 0
+vidéo 1 (285)      47   -2.99 s  -5.55 s -1.37 s  -10.9 / -0.02 s       0
+vidéo 2 (brouil.)  49   -1.96 s  -4.49 s -0.94 s  -12.0 / +1.89 s       2
+réunion            96   -2.48 s  -5.60 s -1.09 s  -12.0 / +1.89 s       2
+```
+
+| Fenêtre autour du Repère | Vidéo 2 | Réunion |
+|---|---|---|
+| [−6 ; −1] s | 80 % | 82 % |
+| [−6,5 ; −0,5] s | 88 % | 91 % |
+| [−7 ; 0] s | 90 % | 94 % |
+| [−7 ; +1] s | — | 95 % |
+| [−8 ; +2] s | — | 97 % |
+
+Ce que la deuxième vidéo change :
+
+- Le délai tient en ordre de grandeur (médiane 2 s contre 3 s) ; la seconde frappe est un peu plus
+  rapide. Deux coups ont un Repère posé *avant* que les dés soient lisibles (+0,04 s et +1,89 s) :
+  la frappe a devancé l'image, ou les dés ont roulé encore. La fenêtre d'apprentissage faible doit
+  donc déborder un peu après le Repère : **[Repère − 7 s ; Repère + 1 s]** (95 % des 96 coups)
+  remplace [− 6,5 ; − 0,5] s.
+- La borne de 60 s de la règle 5 reste très au-delà du besoin (pire cas −12 s) ; 15 s suffisent.
+- Une vraie deuxième source (autre salle, autre matériel) reste à mesurer avant d'en faire une
+  constante : Marseille, Jussieu ou les Tuileries, une fois transcrits avec Repères.
