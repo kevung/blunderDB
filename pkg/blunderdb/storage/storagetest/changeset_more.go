@@ -110,6 +110,7 @@ func CheckChangeSetScenarios(t *testing.T, a storage.Storage, ca context.Context
 	t.Run("CursorStopsAtUncarriedFamilies", func(t *testing.T) {
 		scenarioUncarried(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb})
 	})
+	CheckChangeSetSync(t, a, ca, sa, b, cb, sb)
 }
 
 // A trashes a collection then restores it; b received both. b must end with

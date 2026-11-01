@@ -232,19 +232,6 @@ func scenarioMembersFirst(p *csPair) {
 			t.Fatal(err)
 		}
 	}
-	set, _ := changeset.Export(p.ca, p.a, p.sa, p.cursorFrom, 1000)
-	ci, pi := -1, -1
-	for i, r := range set.Records {
-		if r.Family == "collection" {
-			ci = i
-		}
-		if r.Family == "position" {
-			pi = i
-		}
-	}
-	if ci < 0 || pi < ci {
-		t.Fatalf("the scenario needs the collection (%d) before a position (%d)", ci, pi)
-	}
 	p.send()
 	cu := famUUID(t, p.a, p.ca, p.sa, "collection", col)
 	bid, ok := famID(p.b, p.cb, p.sb, "collection", cu)
@@ -397,8 +384,8 @@ func publicIDOf(t *testing.T, s storage.Storage, ctx context.Context, scope stri
 }
 
 // A position carries a public_id the engine stores and returns as given: it
-// never reads it. It travels with the position, an edit and a clearing follow,
-// and writing it is an edit the journal shows.
+// never reads it. It travels with the position, an edit follows, an empty one
+// overwrites nothing, and writing it is an edit the journal shows.
 func scenarioPublicID(p *csPair) {
 	t := p.t
 	p.catchUp()
@@ -444,8 +431,8 @@ func scenarioPublicID(p *csPair) {
 		t.Fatal(err)
 	}
 	p.send()
-	if got := publicIDOf(t, p.b, p.cb, p.sb, bid); got != "" {
-		t.Errorf("the cleared public_id is still %q in b", got)
+	if got := publicIDOf(t, p.b, p.cb, p.sb, bid); got != opaque {
+		t.Errorf("an empty public_id overwrote %q with %q", opaque, got)
 	}
 
 	// A position arriving with one (created after it was set).

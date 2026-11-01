@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
@@ -44,11 +45,18 @@ func EnsureChangeLog(ctx context.Context, db *sql.DB) error {
 			return fmt.Sprintf(`DELETE FROM change_log WHERE uuid = %[1]s%[4]s; INSERT INTO change_log (uuid, family, op) SELECT %[1]s, '%[2]s', %[3]s%[5]s;`,
 				uuid, f.Family, op, and, where)
 		}
+		// A match rewrites its row for what is local to the library too.
+		changedOnly := ""
+		if f.Table == "match" {
+			if changedOnly, err = matchChangeCondition(ctx, db); err != nil {
+				return err
+			}
+		}
 		stmts := []string{
 			`CREATE TRIGGER change_log_` + f.Table + `_i AFTER INSERT ON ` + f.Table + `
 				WHEN NEW.uuid IS NOT NULL BEGIN ` + ins("NEW.uuid", "'create'", "") + ` END`,
 			`CREATE TRIGGER change_log_` + f.Table + `_u AFTER UPDATE ON ` + f.Table + `
-				WHEN NEW.uuid IS NOT NULL BEGIN ` +
+				WHEN NEW.uuid IS NOT NULL` + changedOnly + ` BEGIN ` +
 				`DELETE FROM change_log WHERE uuid = OLD.uuid AND OLD.uuid <> NEW.uuid;` + ` ` +
 				ins("NEW.uuid", `CASE WHEN OLD.uuid IS NULL OR OLD.uuid <> NEW.uuid THEN 'create' ELSE 'update' END`, "") + ` END`,
 			`CREATE TRIGGER change_log_` + f.Table + `_d AFTER DELETE ON ` + f.Table + `
@@ -73,6 +81,30 @@ func EnsureChangeLog(ctx context.Context, db *sql.DB) error {
 		}
 	}
 	return nil
+}
+
+// matchChangeCondition is the part of a WHEN that holds when a column of match
+// other than sqlshared.LocalMatchColumns changed.
+func matchChangeCondition(ctx context.Context, db *sql.DB) (string, error) {
+	rows, err := db.QueryContext(ctx, `SELECT name FROM pragma_table_info('match')`)
+	if err != nil {
+		return "", fmt.Errorf("sqlite: columns of match: %w", err)
+	}
+	defer rows.Close()
+	var diff []string
+	for rows.Next() {
+		var col string
+		if err := rows.Scan(&col); err != nil {
+			return "", fmt.Errorf("sqlite: columns of match: %w", err)
+		}
+		if !slices.Contains(sqlshared.LocalMatchColumns, col) {
+			diff = append(diff, fmt.Sprintf(`OLD."%[1]s" IS NOT NEW."%[1]s"`, col))
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return "", fmt.Errorf("sqlite: columns of match: %w", err)
+	}
+	return " AND (" + strings.Join(diff, " OR ") + ")", nil
 }
 
 // ForgetChangeLog drops the journal and its triggers: a file an export writes

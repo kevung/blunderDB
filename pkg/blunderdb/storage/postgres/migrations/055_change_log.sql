@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS change_log (
     PRIMARY KEY (tenant_id, uuid)
 );
 CREATE INDEX IF NOT EXISTS idx_change_log_seq ON change_log (tenant_id, seq);
+CREATE INDEX IF NOT EXISTS idx_change_log_xid ON change_log (tenant_id, xid, seq);
 
 DO $$ BEGIN
     IF EXISTS (
@@ -93,8 +94,18 @@ DROP TRIGGER IF EXISTS change_log_collection ON collection;
 CREATE TRIGGER change_log_collection AFTER INSERT OR UPDATE OR DELETE ON collection
     FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('collection');
 DROP TRIGGER IF EXISTS change_log_match ON match;
-CREATE TRIGGER change_log_match AFTER INSERT OR UPDATE OR DELETE ON match
+CREATE TRIGGER change_log_match AFTER INSERT OR DELETE ON match
     FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('match');
+-- The columns that belong to the library (where the user last looked, the
+-- tournament, the import batch) stay out of what a peer receives, so changing
+-- them alone dates nothing. sqlshared.LocalMatchColumns spells the same list.
+DROP TRIGGER IF EXISTS change_log_match_update ON match;
+CREATE TRIGGER change_log_match_update AFTER UPDATE ON match
+    FOR EACH ROW WHEN (
+        (to_jsonb(OLD) - ARRAY['import_date', 'tournament_id', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
+        IS DISTINCT FROM
+        (to_jsonb(NEW) - ARRAY['import_date', 'tournament_id', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
+    ) EXECUTE FUNCTION blunderdb_journal('match');
 DROP TRIGGER IF EXISTS change_log_transcription ON transcription;
 CREATE TRIGGER change_log_transcription AFTER INSERT OR UPDATE OR DELETE ON transcription
     FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('transcription');

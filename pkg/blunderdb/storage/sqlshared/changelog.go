@@ -14,6 +14,11 @@ type ChangeJournalStore struct{ DB Execer }
 
 var _ storage.ChangeJournalStore = (*ChangeJournalStore)(nil)
 
+// LocalMatchColumns are the columns of a match that belong to the library, not
+// to the match, the ones its changeset payload leaves out: changing them alone
+// is no change a peer should see. 055_change_log.sql spells the same list.
+var LocalMatchColumns = []string{"import_date", "tournament_id", "import_batch_id", "last_visited_position", "last_visited_at"}
+
 // changedAtText renders changed_at as UTC RFC 3339 with milliseconds on both
 // backends (SQLite stores that text; PostgreSQL a timestamptz).
 func (s *ChangeJournalStore) changedAtText() string {
@@ -30,6 +35,9 @@ func (s *ChangeJournalStore) Changes(ctx context.Context, scope string, after in
 func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, families []string, after storage.Cursor, limit int) ([]storage.Change, error) {
 	if limit <= 0 {
 		limit = 1000
+	}
+	if _, err := s.checkCursor(ctx, scope, after); err != nil {
+		return nil, err
 	}
 	tenant, targs := s.DB.TenantFilter("", scope)
 	var args []any
@@ -74,6 +82,67 @@ func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, famili
 	if err := rows.Err(); err != nil {
 		return nil, errf(s.DB, "changes", err)
 	}
+	return out, nil
+}
+
+// checkCursor gives the journal's epoch and refuses a cursor from another one.
+//
+// A row whose xid this cluster's counter has not reached was restored from a
+// dump of a cluster further along: no reader's snapshot would ever pass it. It
+// is older than anything written here, so it goes to the front (xid 1 precedes
+// every assigned xid, and seq keeps its order among its peers).
+func (s *ChangeJournalStore) checkCursor(ctx context.Context, scope string, after storage.Cursor) (string, error) {
+	if s.DB.Name() != "postgres" {
+		return "", nil
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	if _, err := s.DB.Exec(ctx, `UPDATE change_log SET xid = CAST('1' AS xid8) WHERE `+tenant+`
+		AND xid >= pg_snapshot_xmax(pg_current_snapshot()) AND xid IS DISTINCT FROM pg_current_xact_id_if_assigned()`, targs...); err != nil {
+		return "", errf(s.DB, "journal cursor", err)
+	}
+	var xmax, epoch string
+	if err := s.DB.QueryRow(ctx, `SELECT CAST(pg_snapshot_xmax(pg_current_snapshot()) AS TEXT), CAST(system_identifier AS TEXT)
+		FROM pg_control_system()`).Scan(&xmax, &epoch); err != nil {
+		return "", errf(s.DB, "journal cursor", err)
+	}
+	horizon, err := strconv.ParseInt(xmax, 10, 64)
+	if err != nil {
+		return "", errf(s.DB, "journal cursor", err)
+	}
+	if after.Xid >= horizon || (after.Epoch != "" && after.Epoch != epoch) {
+		return "", errf(s.DB, "journal cursor", storage.ErrCursorStale)
+	}
+	return epoch, nil
+}
+
+// Horizon — see storage.ChangeJournalStore.
+func (s *ChangeJournalStore) Horizon(ctx context.Context, scope string, families []string, after storage.Cursor) (storage.Cursor, error) {
+	epoch, err := s.checkCursor(ctx, scope, after)
+	if err != nil {
+		return storage.Cursor{}, err
+	}
+	tenant, args := s.DB.TenantFilter("", scope)
+	where, order, xid := tenant, "seq DESC", "'0'"
+	if s.DB.Name() == "postgres" {
+		where += ` AND xid < pg_snapshot_xmin(pg_current_snapshot())`
+		order, xid = "xid DESC, seq DESC", "CAST(xid AS TEXT) AS xid_text"
+	}
+	if len(families) > 0 {
+		where += ` AND family IN (` + Placeholders(len(families)) + `)`
+		for _, f := range families {
+			args = append(args, f)
+		}
+	}
+	out := storage.Cursor{Epoch: epoch}
+	var x string
+	err = s.DB.QueryRow(ctx, `SELECT `+xid+`, seq FROM change_log WHERE `+where+` ORDER BY `+order+` LIMIT 1`, args...).Scan(&x, &out.Seq)
+	if errors.Is(err, ErrNoRows) {
+		return out, nil
+	}
+	if err != nil {
+		return storage.Cursor{}, errf(s.DB, "journal horizon", err)
+	}
+	out.Xid, _ = strconv.ParseInt(x, 10, 64)
 	return out, nil
 }
 

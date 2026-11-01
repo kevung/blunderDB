@@ -1059,6 +1059,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/changeset.export:
+    post:
+      operationId: changeset.export
+      tags: [changeset]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/changesetExportReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/changeset_Set"
+  /v1/changeset.import:
+    post:
+      operationId: changeset.import
+      tags: [changeset]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/changesetImportReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/changeset_Report"
   /v1/collections.addPosition:
     post:
       operationId: collections.addPosition
@@ -8587,6 +8621,30 @@ components:
         cardId:
           type: integer
           format: int64
+    changesetExportReq:
+      type: object
+      properties:
+        cursor:
+          $ref: "#/components/schemas/storage_Cursor"
+        limit:
+          type: integer
+          format: int32
+    changesetImportReq:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/changeset_Record"
+    changeset_Record:
+      type: object
+      description: "Opaque: see the Go type changeset.Record (defined outside internal/server, not expanded here)."
+    changeset_Report:
+      type: object
+      description: "Opaque: see the Go type changeset.Report (defined outside internal/server, not expanded here)."
+    changeset_Set:
+      type: object
+      description: "Opaque: see the Go type changeset.Set (defined outside internal/server, not expanded here)."
     collPositionReq:
       type: object
       properties:
@@ -10229,6 +10287,9 @@ components:
     storage_CountsEstimate:
       type: object
       description: "Opaque: see the Go type storage.CountsEstimate (defined outside internal/server, not expanded here)."
+    storage_Cursor:
+      type: object
+      description: "Opaque: see the Go type storage.Cursor (defined outside internal/server, not expanded here)."
     storage_DecisionLoss:
       type: object
       description: "Opaque: see the Go type storage.DecisionLoss (defined outside internal/server, not expanded here)."

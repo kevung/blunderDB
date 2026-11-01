@@ -179,10 +179,7 @@ func CommentEntry(ctx context.Context, s storage.Stores, scope string, commentID
 	if err != nil {
 		return 0, err
 	}
-	label := entry.Text
-	if r := []rune(label); len(r) > 60 {
-		label = string(r[:60]) + "…"
-	}
+	label := commentLabel(entry)
 	commentUUID, err := uuidOf(ctx, s, scope, "comment", commentID)
 	if err != nil {
 		return 0, err
@@ -198,6 +195,22 @@ func CommentEntry(ctx context.Context, s storage.Stores, scope string, commentID
 		return markTrashed(ctx, s, scope, "comment", commentUUID)
 	})
 	return id, err
+}
+
+func commentLabel(entry *domain.CommentEntry) string {
+	if r := []rune(entry.Text); len(r) > 60 {
+		return string(r[:60]) + "…"
+	}
+	return entry.Text
+}
+
+// KeepCommentVersion puts a copy of a note about to be overwritten in the
+// trash, under the same purge window. It has no uuid: restoring it adds a note
+// beside the current one, and nothing that discards the note's trash entries
+// by uuid reaches it.
+func KeepCommentVersion(ctx context.Context, s storage.Stores, scope string, entry *domain.CommentEntry) error {
+	_, err := put(ctx, s, scope, domain.TrashComment, commentLabel(entry), domain.TrashCommentPayload{Comment: *entry})
+	return err
 }
 
 // findComment locates one comment entry by id. CommentStore has no by-id read,

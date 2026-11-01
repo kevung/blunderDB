@@ -486,17 +486,6 @@ func RebuildMatchAs(ctx context.Context, s storage.Stores, scope string, p *doma
 			return 0, storage.ErrConflict
 		}
 	}
-	positions := make(map[int64]int64, len(p.Positions))
-	for _, pp := range p.Positions {
-		pos := pp.Position
-		old := pos.ID
-		pos.ID = 0
-		id, _, err := s.Positions().SaveCreated(ctx, scope, &pos)
-		if err != nil {
-			return 0, err
-		}
-		positions[old] = id
-	}
 	m.ID, m.TournamentID, m.ImportBatchID = 0, nil, 0
 	matchID, err := ms.Save(ctx, scope, &m)
 	if err != nil {
@@ -512,13 +501,40 @@ func RebuildMatchAs(ctx context.Context, s storage.Stores, scope string, p *doma
 			return 0, err
 		}
 	}
+	return matchID, writeMatchBody(ctx, s, scope, matchID, p)
+}
+
+// RewriteMatchBody replaces the games, moves and move analyses of a held match
+// with a snapshot's, in the caller's transaction; the row stays, id and all.
+// The positions the old moves named stay too: if one is orphaned where the
+// snapshot was made, that purge travels on its own.
+func RewriteMatchBody(ctx context.Context, s storage.Stores, scope string, matchID int64, p *domain.TrashMatchPayload) error {
+	if _, err := s.Matches().DeleteGames(ctx, scope, matchID); err != nil {
+		return err
+	}
+	return writeMatchBody(ctx, s, scope, matchID, p)
+}
+
+func writeMatchBody(ctx context.Context, s storage.Stores, scope string, matchID int64, p *domain.TrashMatchPayload) error {
+	ms := s.Matches()
+	positions := make(map[int64]int64, len(p.Positions))
+	for _, pp := range p.Positions {
+		pos := pp.Position
+		old := pos.ID
+		pos.ID = 0
+		id, _, err := s.Positions().SaveCreated(ctx, scope, &pos)
+		if err != nil {
+			return err
+		}
+		positions[old] = id
+	}
 	games := make(map[int64]int64, len(p.Games))
 	for _, g := range p.Games {
 		old := g.ID
 		g.ID, g.MatchID = 0, matchID
 		id, err := ms.CreateGame(ctx, scope, &g)
 		if err != nil {
-			return 0, err
+			return err
 		}
 		games[old] = id
 	}
@@ -526,7 +542,7 @@ func RebuildMatchAs(ctx context.Context, s storage.Stores, scope string, p *doma
 	for _, mv := range p.Moves {
 		gameID, ok := games[mv.GameID]
 		if !ok {
-			return 0, fmt.Errorf("match snapshot: move %d names game %d, absent: %w", mv.ID, mv.GameID, storage.ErrInvalid)
+			return fmt.Errorf("match snapshot: move %d names game %d, absent: %w", mv.ID, mv.GameID, storage.ErrInvalid)
 		}
 		old := mv.ID
 		mv.ID, mv.GameID = 0, gameID
@@ -535,22 +551,19 @@ func RebuildMatchAs(ctx context.Context, s storage.Stores, scope string, p *doma
 		}
 		id, err := ms.CreateMove(ctx, scope, &mv)
 		if err != nil {
-			return 0, err
+			return err
 		}
 		moves[old] = id
 	}
 	for _, ma := range p.MoveAnalyses {
 		moveID, ok := moves[ma.MoveID]
 		if !ok {
-			return 0, fmt.Errorf("match snapshot: analysis %d names move %d, absent: %w", ma.ID, ma.MoveID, storage.ErrInvalid)
+			return fmt.Errorf("match snapshot: analysis %d names move %d, absent: %w", ma.ID, ma.MoveID, storage.ErrInvalid)
 		}
 		ma.ID, ma.MoveID = 0, moveID
 		if _, err := ms.CreateMoveAnalysis(ctx, scope, &ma); err != nil {
-			return 0, err
+			return err
 		}
 	}
-	if err := s.Stats().RefreshMatchStats(ctx, scope, []int64{matchID}); err != nil {
-		return 0, err
-	}
-	return matchID, nil
+	return s.Stats().RefreshMatchStats(ctx, scope, []int64{matchID})
 }

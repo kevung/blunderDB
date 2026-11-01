@@ -226,6 +226,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.updateDeckParams — JSON."
         return self._call("/v1/anki.updateDeckParams", payload)
 
+    def changeset_export(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/changeset.export — JSON."
+        return self._call("/v1/changeset.export", payload)
+
+    def changeset_import(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/changeset.import — JSON."
+        return self._call("/v1/changeset.import", payload)
+
     def collections_add_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.addPosition — JSON."
         return self._call("/v1/collections.addPosition", payload)

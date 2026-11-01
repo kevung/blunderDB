@@ -1435,6 +1435,17 @@ restauration réussie n'a pas pu remettre, chacun avec un ``code`` stable
 ``trash.empty`` efface les entrées plus anciennes que ``olderThanDays`` jours
 (``0`` vide tout) et rend leur nombre (``purged``).
 
+La famille ``changeset`` synchronise deux bibliothèques par leur journal.
+``changeset.export`` (``cursor``, ``limit``) rend une page : ``records``, le
+``cursor`` à redonner tel quel, et ``more`` tant que l'échange n'est pas fini ;
+une page ne sépare jamais un objet de ce à quoi il renvoie. Un curseur vide
+repart du début. Une réponse ``410`` dit que ce journal ne peut pas continuer
+depuis ce curseur (sauvegarde restaurée ailleurs) : repartez d'un curseur vide,
+l'import absorbe la répétition. ``changeset.import`` (``records``) fusionne, la
+dernière écriture gagnant, et rend le rapport : ``added``, ``modified``,
+``removed``, ``older``, ``conflicts``, et ``missing`` pour une référence qui
+n'a pas pu être placée. Une note écrasée par l'import reste dans la corbeille.
+
 ``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant
 courant : écrire une analyse pour chaque position qui n'en a aucune
 (`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__,

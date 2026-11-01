@@ -47,16 +47,36 @@ const ChangedAtLayout = "2006-01-02T15:04:05.000Z"
 // that only entries behind pg_snapshot_xmin are listed, a reader never passes
 // a writer still in flight. SQLite has one writer at a time: Xid stays 0 and
 // seq orders.
+//
+// Family and the Read and End fields are a paged export in progress (package
+// changeset): a caller stores the cursor whole and treats it as opaque.
 type Cursor struct {
 	Xid int64 `json:"xid,omitempty"`
 	Seq int64 `json:"seq"`
+	// Epoch names the PostgreSQL cluster whose transaction counter Xid is on: a
+	// backup restored elsewhere restarts that counter, so no order holds between
+	// a cursor from before and an entry from after (ErrCursorStale).
+	Epoch   string `json:"epoch,omitempty"`
+	Family  string `json:"family,omitempty"`
+	ReadXid int64  `json:"read_xid,omitempty"`
+	ReadSeq int64  `json:"read_seq,omitempty"`
+	EndXid  int64  `json:"end_xid,omitempty"`
+	EndSeq  int64  `json:"end_seq,omitempty"`
 }
+
+// IsStart says the cursor names no change: everything is after it.
+func (c Cursor) IsStart() bool { return c.Xid == 0 && c.Seq == 0 && c.Family == "" }
 
 type ChangeJournalStore interface {
 	// Changes lists up to limit changes with seq > after, oldest first.
 	Changes(ctx context.Context, scope string, after int64, limit int) ([]Change, error)
 	// ChangesOf is Changes restricted to the given families (all when empty).
 	ChangesOf(ctx context.Context, scope string, families []string, after Cursor, limit int) ([]Change, error)
+	// Horizon is the last change of the given families a reader can see now
+	// (the zero Cursor when none), with the journal's Epoch. An entry that
+	// appears later sorts after it. ErrCursorStale when after cannot be on this
+	// journal.
+	Horizon(ctx context.Context, scope string, families []string, after Cursor) (Cursor, error)
 	// Unjournaled lists up to limit uuids of a family's rows that have no
 	// entry and whose id is past afterID, by id: the rows that existed before
 	// the journal did, which no cursor reaches. The second result is the id

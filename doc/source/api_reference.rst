@@ -66,6 +66,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/anki.undoReview                      JSON  (Idempotency-Key)
      POST /v1/anki.updateDeck                      JSON
      POST /v1/anki.updateDeckParams                JSON
+   changeset
+     POST /v1/changeset.export                     JSON
+     POST /v1/changeset.import                     JSON
    collections
      POST /v1/collections.addPosition              JSON
      POST /v1/collections.addPositions             JSON

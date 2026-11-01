@@ -141,7 +141,8 @@ var positionCodec = codec{
 }
 
 func applyPosition(ctx context.Context, s storage.Stores, scope string, id int64, p positionPayload) error {
-	if ids, ok := s.(storage.PublicIDProvider); ok {
+	// The peer may simply not have heard of it: an empty one says nothing.
+	if ids, ok := s.(storage.PublicIDProvider); ok && p.PublicID != "" {
 		if err := ids.PublicIDs().SetPublicID(ctx, scope, id, p.PublicID); err != nil {
 			return err
 		}
@@ -212,6 +213,17 @@ var commentCodec = codec{
 			if pid, _, err = s.Positions().SaveCreated(ctx, scope, &board); err != nil {
 				return 0, err
 			}
+			u, err := uuidsOf(s).ObjectUUID(ctx, scope, "position", pid)
+			if err != nil {
+				return 0, err
+			}
+			journal, _, err := providers(s)
+			if err != nil {
+				return 0, err
+			}
+			if err := journal.Mark(ctx, scope, "position", u, storage.ChangeCreate, fallbackDate); err != nil {
+				return 0, err
+			}
 		}
 		return s.Comments().AddFrom(storage.WithCarriedComment(ctx, p.Author, p.Signature), scope, pid, p.Text, domain.ParseCommentOrigin(p.Origin))
 	},
@@ -219,6 +231,15 @@ var commentCodec = codec{
 		var p commentPayload
 		if err := json.Unmarshal(raw, &p); err != nil {
 			return fmt.Errorf("comment payload: %w", err)
+		}
+		e, err := s.Comments().Get(ctx, scope, id)
+		if err != nil {
+			return err
+		}
+		if e.Text != p.Text {
+			if err := trash.KeepCommentVersion(ctx, s, scope, e); err != nil {
+				return err
+			}
 		}
 		return s.Comments().Update(storage.WithCarriedComment(ctx, p.Author, p.Signature), scope, id, p.Text)
 	},
@@ -290,14 +311,32 @@ var matchCodec = codec{
 		}
 		return trash.RebuildMatchAs(ctx, s, scope, &p)
 	},
-	// Games and moves of a match do not change once stored; the header, the
-	// note and the video do.
+	// A match can be rewritten whole (a transcription saved again, the seats
+	// swapped): what the games say and what the header says stay one thing. A
+	// header whose hash another local match holds is refused, whole.
 	update: func(ctx context.Context, s storage.Stores, scope string, id int64, raw json.RawMessage) error {
 		var p matchPayload
 		if err := json.Unmarshal(raw, &p); err != nil {
 			return fmt.Errorf("match payload: %w", err)
 		}
 		m := p.Match
+		cur, err := trash.SnapshotMatch(ctx, s, scope, id)
+		if err != nil {
+			return err
+		}
+		portableMatch(cur)
+		if err := hashesFree(ctx, s, scope, id, cur.Match, m); err != nil {
+			return err
+		}
+		same, err := sameBody(cur, &p)
+		if err != nil {
+			return err
+		}
+		if !same {
+			if err := trash.RewriteMatchBody(ctx, s, scope, id, &p); err != nil {
+				return err
+			}
+		}
 		if err := s.Matches().ReplaceHeader(ctx, scope, id, &m); err != nil {
 			return err
 		}
@@ -316,6 +355,49 @@ var matchCodec = codec{
 		}
 		return s.Matches().DeleteCascade(ctx, scope, id)
 	},
+}
+
+// hashesFree refuses a header whose new hash is another local match's.
+func hashesFree(ctx context.Context, s storage.Stores, scope string, id int64, have, want domain.Match) error {
+	check := func(hash, canonical string) error {
+		other, found, err := s.Matches().FindByHash(ctx, scope, hash, canonical)
+		if err != nil {
+			return err
+		}
+		if found && other != id {
+			return storage.ErrConflict
+		}
+		return nil
+	}
+	if want.MatchHash != "" && want.MatchHash != have.MatchHash {
+		if err := check(want.MatchHash, ""); err != nil {
+			return err
+		}
+	}
+	if want.CanonicalHash != "" && want.CanonicalHash != have.CanonicalHash {
+		return check("", want.CanonicalHash)
+	}
+	return nil
+}
+
+// sameBody says two portable snapshots hold the same games, moves, analyses and
+// boards. A position is compared by hash only: the rest of its row is the
+// position family's to carry.
+func sameBody(a, b *matchPayload) (bool, error) {
+	digest := func(p *matchPayload) (string, error) {
+		boards := make([]uint64, len(p.Positions))
+		for i := range p.Positions {
+			boards[i] = storage.ZobristOf(&p.Positions[i].Position)
+		}
+		raw, err := json.Marshal([]any{boards, p.Games, p.Moves, p.MoveAnalyses})
+		return string(raw), err
+	}
+	da, err := digest(a)
+	if err != nil {
+		return false, err
+	}
+	db, err := digest(b)
+	return da == db, err
 }
 
 // --- lesson ---
@@ -385,6 +467,8 @@ func fillSteps(ctx context.Context, s storage.Stores, scope string, id int64, p 
 				step.CollectionID = cid
 			} else if !errors.Is(err, storage.ErrNotFound) {
 				return err
+			} else {
+				noteMissing(ctx, st.Collection)
 			}
 		}
 		if st.Position != "" {
@@ -394,6 +478,8 @@ func fillSteps(ctx context.Context, s storage.Stores, scope string, id int64, p 
 			}
 			if found {
 				step.PositionID = pid
+			} else {
+				noteMissing(ctx, st.Position)
 			}
 		}
 		if _, err := s.Lessons().AddStep(ctx, scope, id, step); err != nil {
