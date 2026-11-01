@@ -267,6 +267,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeMetadata,
 		e.resolveSelection,
 		e.writePositions,
+		e.writeDerivations,
 		e.writeCollections,
 		e.writeLessons,
 		e.writeTournaments,
@@ -625,6 +626,36 @@ func (e *exporter) writePositions() error {
 		}
 	}
 	return e.writeByIDs(e.extraPositionIDs)
+}
+
+// writeDerivations carries the link of each exported variant to its origin,
+// once every position has its exported id. A variant whose origin is not in
+// the export keeps no link: it would point at nothing.
+func (e *exporter) writeDerivations() error {
+	dp, ok := e.src.(storage.DerivationProvider)
+	if !ok || len(e.posMap) == 0 {
+		return nil
+	}
+	ids := make([]int64, 0, len(e.posMap))
+	for old := range e.posMap {
+		ids = append(ids, old)
+	}
+	derived, err := dp.PositionDerivations().Derivations(e.ctx, e.scope, ids)
+	if err != nil {
+		return fmt.Errorf("cannot read derivations to export: %w", err)
+	}
+	for old, d := range derived {
+		from, ok := e.posMap[d.FromID]
+		if !ok {
+			continue
+		}
+		if _, err := e.tx.ExecContext(e.ctx,
+			`INSERT OR IGNORE INTO position_derivation (position_id, from_position_id, move) VALUES (?, ?, ?)`,
+			e.posMap[old], from, d.Move); err != nil {
+			e.skip("inserting derivation for position", "newID", e.posMap[old], "oldID", old, "err", err)
+		}
+	}
+	return nil
 }
 
 func (e *exporter) writeByIDs(ids []int64) error {
@@ -1173,6 +1204,7 @@ var exportedTables = map[string]string{
 	"position":              "the selected positions, under the export's own ids",
 	"analysis":              "carried with its position",
 	"comment":               "the carried comment columns of each position (issuance.CarriedCommentColumns)",
+	"position_derivation":   "the link of each exported variant to its exported origin, under the export's own ids; a link whose origin is not exported is left out",
 	"position_drawing":      "the arrows and squares drawn on each position, with the comments option: a drawing is an annotation of the position like its comments",
 	"metadata":              "the allow-list issuance.CarriedMetadataKeys, plus the producer's watermark",
 	"filter_library":        "the saved filters of the selection",

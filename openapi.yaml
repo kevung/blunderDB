@@ -5281,6 +5281,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/positions.derivedFrom:
+    post:
+      operationId: positions.derivedFrom
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/derivedFromResp"
   /v1/positions.drawing:
     post:
       operationId: positions.drawing
@@ -5639,6 +5656,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/positionSaveResp"
+  /v1/positions.setDerivedFrom:
+    post:
+      operationId: positions.setDerivedFrom
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setDerivedFromReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/positions.setDrawing:
     post:
       operationId: positions.setDrawing
@@ -5726,6 +5760,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/positions.variants:
+    post:
+      operationId: positions.variants
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/variantsResp"
   /v1/quiz.gradeChecker:
     post:
       operationId: quiz.gradeChecker
@@ -8788,6 +8839,12 @@ components:
           type: string
         description:
           type: string
+    derivedFromResp:
+      type: object
+      properties:
+        derived_from:
+          $ref: "#/components/schemas/domain_Derivation"
+          nullable: true
     directionAbsentReq:
       type: object
       properties:
@@ -9071,6 +9128,9 @@ components:
     domain_CommentEntry:
       type: object
       description: "Opaque: see the Go type domain.CommentEntry (defined outside internal/server, not expanded here)."
+    domain_Derivation:
+      type: object
+      description: "Opaque: see the Go type domain.Derivation (defined outside internal/server, not expanded here)."
     domain_DrawingMark:
       type: object
       description: "Opaque: see the Go type domain.DrawingMark (defined outside internal/server, not expanded here)."
@@ -10036,6 +10096,15 @@ components:
       properties:
         state:
           $ref: "#/components/schemas/storage_SessionState"
+    setDerivedFromReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        derived_from:
+          $ref: "#/components/schemas/domain_Derivation"
+          nullable: true
     setDrawingReq:
       type: object
       properties:
@@ -10605,6 +10674,14 @@ components:
           type: string
         message:
           type: string
+    variantsResp:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
     versionResp:
       type: object
       properties:

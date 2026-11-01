@@ -712,6 +712,17 @@ var schemaStatements = []string{
 		color TEXT NOT NULL CHECK (color IN ('red', 'green', 'blue', 'yellow')),
 		UNIQUE (position_id, rank)
 	)`,
+	// The position a position derives from and the move that led to it: one
+	// origin per position. Either end going takes the link with it. They
+	// travel in exports and transfers.
+	`CREATE TABLE IF NOT EXISTS position_derivation (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		position_id INTEGER NOT NULL UNIQUE REFERENCES position(id) ON DELETE CASCADE,
+		from_position_id INTEGER NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+		move TEXT NOT NULL DEFAULT '' CHECK (length(move) <= 100),
+		CHECK (position_id <> from_position_id)
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_position_derivation_from ON position_derivation(from_position_id)`,
 	// The positions the user marked "studied" in the library-wide study
 	// backlog: written only by that gesture, reversible, never exported (a
 	// table of its own so that no exporter carries it). Not a retention

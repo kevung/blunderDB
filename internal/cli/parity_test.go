@@ -93,12 +93,15 @@ var serverOnly = map[string]string{
 	// link); the desktop has no use for it yet.
 	// The arrows and squares a player lays over a board; the desktop has no
 	// board editor for them yet.
-	"/v1/positions.drawing":     "the drawing of a position: only the daemon's callers read it until the desktop has an editor",
-	"/v1/positions.setDrawing":  "replaces the drawing of a position: only the daemon's callers write it until the desktop has an editor",
-	"/v1/positions.publicId":    "the opaque public_id a caller attached to a position: only the daemon's callers set and read it",
-	"/v1/positions.setPublicId": "sets or clears the opaque public_id of a position: only the daemon's callers use it",
-	"/v1/imports.batch.status":  "the progress of a batch import running in the daemon's background: the CLI and the desktop get it from the foreground call",
-	"/v1/imports.batch.cancel":  "stops a batch import running in the daemon's background: the CLI's is Ctrl-C and the desktop's is CancelImport",
+	"/v1/positions.derivedFrom":    "the position a position derives from and the move played: only the daemon's callers read it until the desktop has a variant gesture",
+	"/v1/positions.setDerivedFrom": "sets or clears the origin of a variant: only the daemon's callers write it until the desktop has a variant gesture",
+	"/v1/positions.variants":       "the positions deriving from a position: only the daemon's callers list them until the desktop has a variant gesture",
+	"/v1/positions.drawing":        "the drawing of a position: only the daemon's callers read it until the desktop has an editor",
+	"/v1/positions.setDrawing":     "replaces the drawing of a position: only the daemon's callers write it until the desktop has an editor",
+	"/v1/positions.publicId":       "the opaque public_id a caller attached to a position: only the daemon's callers set and read it",
+	"/v1/positions.setPublicId":    "sets or clears the opaque public_id of a position: only the daemon's callers use it",
+	"/v1/imports.batch.status":     "the progress of a batch import running in the daemon's background: the CLI and the desktop get it from the foreground call",
+	"/v1/imports.batch.cancel":     "stops a batch import running in the daemon's background: the CLI's is Ctrl-C and the desktop's is CancelImport",
 	// Storage primitives the desktop reaches through a coarser call. The GUI
 	// and the CLI never save a bare match row or ask whether a Zobrist hash is
 	// present: SavePosition and the importers do that inside one operation.

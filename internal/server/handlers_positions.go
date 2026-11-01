@@ -182,6 +182,36 @@ func (s *Server) positionRoutes() []route {
 			}
 			return d.SetDrawing(ctx, scope, req.ID, req.Marks)
 		})},
+		// The position a position derives from and the move that led to it (a
+		// variant's link to its origin); null when it derives from nothing.
+		// Set whole, an absent derived_from clears it.
+		{http.MethodPost, "/v1/positions.derivedFrom", rpc(func(ctx context.Context, scope string, req idReq) (derivedFromResp, error) {
+			d, err := s.derivations()
+			if err != nil {
+				return derivedFromResp{}, err
+			}
+			dv, err := d.DerivedFrom(ctx, scope, req.ID)
+			return derivedFromResp{DerivedFrom: dv}, err
+		})},
+		{http.MethodPost, "/v1/positions.setDerivedFrom", rpcVoid(func(ctx context.Context, scope string, req setDerivedFromReq) error {
+			d, err := s.derivations()
+			if err != nil {
+				return err
+			}
+			return d.SetDerivedFrom(ctx, scope, req.ID, req.DerivedFrom)
+		})},
+		// The positions deriving directly from the position.
+		{http.MethodPost, "/v1/positions.variants", rpc(func(ctx context.Context, scope string, req idReq) (variantsResp, error) {
+			d, err := s.derivations()
+			if err != nil {
+				return variantsResp{}, err
+			}
+			ids, err := d.Variants(ctx, scope, req.ID)
+			if ids == nil {
+				ids = []int64{}
+			}
+			return variantsResp{IDs: ids}, err
+		})},
 		{http.MethodPost, "/v1/positions.exists", rpc(func(ctx context.Context, scope string, req existsReq) (existsResp, error) {
 			id, found, err := ps().Exists(ctx, scope, req.Zobrist)
 			return existsResp{ID: id, Found: found}, err
@@ -424,4 +454,27 @@ func (s *Server) drawings() (storage.DrawingStore, error) {
 		return nil, fmt.Errorf("this backend keeps no drawings: %w", storage.ErrUnsupported)
 	}
 	return p.PositionDrawings(), nil
+}
+
+type derivedFromResp struct {
+	DerivedFrom *domain.Derivation `json:"derived_from"`
+}
+
+// setDerivedFromReq makes position ID derive from DerivedFrom; absent or null
+// clears it.
+type setDerivedFromReq struct {
+	ID          int64              `json:"id"`
+	DerivedFrom *domain.Derivation `json:"derived_from"`
+}
+
+type variantsResp struct {
+	IDs []int64 `json:"ids"`
+}
+
+func (s *Server) derivations() (storage.DerivationStore, error) {
+	p, ok := s.opts.Storage.(storage.DerivationProvider)
+	if !ok {
+		return nil, fmt.Errorf("this backend keeps no derivations: %w", storage.ErrUnsupported)
+	}
+	return p.PositionDerivations(), nil
 }
