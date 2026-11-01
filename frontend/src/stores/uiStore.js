@@ -167,6 +167,3 @@ export const duelPipcountHiddenStore = writable(false);
 export const pipcountVisibleStore = derived([showPipcountStore, trainingPipOverrideStore, duelPipcountHiddenStore], ([$preference, $override, $duelHidden]) =>
     $duelHidden ? false : $override === null ? $preference : $override
 );
-
-// The welcome screen is shown while no database is open, unless set aside; an empty panel can bring it back.
-export const homeDismissedStore = writable(false);

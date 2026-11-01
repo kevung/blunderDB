@@ -463,8 +463,7 @@ vérifier. Le réglage est mémorisé.
 
 .. _eval_sans_base:
 
-**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : une fois
-l'écran d'accueil écarté, on y pose, colle (*CTRL-V*) et modifie une position,
+**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : on y pose, colle (*CTRL-V*) et modifie une position,
 on l'évalue, on la roule, on la copie en texte (*CTRL-C*) ou en image
 (*CTRL-X*, et *CTRL-X CTRL-X* avec l'évaluation). Le clic droit dans le
 panneau propose aussi *Enregistrer l'image (SVG)…* et *Enregistrer l'image

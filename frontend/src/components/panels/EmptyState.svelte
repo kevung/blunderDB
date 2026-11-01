@@ -1,10 +1,9 @@
 <script>
     // An empty view that says what to do next (ADR-0085, G5): the panel's own primary action
-    // when it has one, else import something, or go back to the welcome screen when no database
-    // is open. The only centred block of a panel.
+    // when it has one, else import something, or open a database when none is open. The only
+    // centred block of a panel.
     import { t } from '../../i18n/index.js';
     import { databasePathStore } from '../../stores/databaseStore';
-    import { homeDismissedStore } from '../../stores/uiStore';
     import { importPosition } from '../../services/importService';
     import { openDatabase } from '../../services/databaseService';
 
@@ -28,9 +27,6 @@
                 <button type="button" class="empty-btn primary" onclick={() => importPosition()}>{$t('emptyState.import')}</button>
             {:else}
                 <button type="button" class="empty-btn primary" onclick={() => openDatabase()}>{$t('emptyState.openDatabase')}</button>
-            {/if}
-            {#if !$databasePathStore}
-                <button type="button" class="empty-btn" onclick={() => homeDismissedStore.set(false)}>{$t('emptyState.backHome')}</button>
             {/if}
         </span>
     {/if}

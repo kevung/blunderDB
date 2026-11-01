@@ -14,7 +14,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { installWailsMock, dismissHomeScreen } from './helpers/wailsMock.js';
+import { installWailsMock } from './helpers/wailsMock.js';
 import { openLibraryMock } from './helpers/fixtures.js';
 import { THEMES } from '../../src/utils/themes.js';
 
@@ -43,7 +43,6 @@ const paint = (locator) =>
 
 async function openGoTo(page) {
     await page.goto('/');
-    await dismissHomeScreen(page);
     await page.locator('button[aria-label="Go To Position"]').click();
     await expect(page.locator('.modal-box')).toBeVisible();
 }

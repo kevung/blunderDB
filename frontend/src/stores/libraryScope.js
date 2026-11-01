@@ -264,7 +264,6 @@ export const OUTSIDE = [
     'searchStructureModeStore',
     'searchOfferedCubeStore',
     'metaStore',
-    'homeDismissedStore',
     'pageStepStore',
     'configInitialTabStore',
     'videoPlacementStore',

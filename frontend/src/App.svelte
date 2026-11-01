@@ -22,7 +22,7 @@
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
     import { analysisStore, emptyAnalysis } from './stores/analysisStore.js';
-    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen, homeDismissedStore } from './stores/uiStore.js';
+    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen } from './stores/uiStore.js';
     import { transcriptionWheelStore } from './stores/transcriptionStore.js';
 
     import { newDatabase, openDatabase, openDatabaseByPath, exitApp, setStatusBarMessage } from './services/databaseService.js';
@@ -93,7 +93,6 @@
     import { TRAINING_EXERCISES, exerciseForCommand } from './services/trainingTab.js';
     import { showTab, showTrainingPanel, showDuelPanel } from './services/tabToggles.js';
     import { duelHoldsBoardStore, duelFoldedStore, tabOpensDuringDuel } from './stores/duelStore.js';
-    import HomeScreen from './components/HomeScreen.svelte';
     import SplitArea from './components/SplitArea.svelte';
     import { splitStore } from './stores/splitStore.js';
     import { splitPanelBeside, restoreSplit, markSplitRestored } from './services/splitService.js';
@@ -513,14 +512,6 @@
                 <span class="drop-hint">.db &middot; .xg &middot; .sgf &middot; .mat &middot; .bgf &middot; .ogxm &middot; .txt</span>
             </div>
         </div>
-    {/if}
-
-    <!-- L'écran d'accueil. Un plateau vide n'est pas une invitation :
-         il ne dit ni ce que l'outil sait faire, ni par où commencer. Il
-         s'efface dès qu'une base est ouverte, et se laisse écarter pour qui
-         veut se servir du panneau Eval sans base. -->
-    {#if !$databasePathStore && !$homeDismissedStore}
-        <HomeScreen onDismiss={() => homeDismissedStore.set(true)} />
     {/if}
 
     <!-- Le plein écran de la Direction masque le chrome sans le démonter : `display: contents`

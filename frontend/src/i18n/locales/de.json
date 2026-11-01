@@ -1985,16 +1985,6 @@
         "unmarked": "Markierung entfernt: die Stellung ist wieder in der Warteschlange.",
         "marked": "Position als gesehen markiert: sie verlässt die Lernliste."
     },
-    "home": {
-        "title": "blunderDB",
-        "lede": "Ihre Backgammon-Stellungsdatenbank: importieren Sie Ihre Matches, suchen Sie, was Sie wiedersehen wollen, messen Sie, was Sie spielen.",
-        "importTitle": "Meine Matches importieren",
-        "importNote": "Eine neue Datenbank, Ihre Dateien aus XG, GNU Backgammon, Jellyfish oder BGBlitz, und Ihr PR mit Ihren schlimmsten Entscheidungen in zwei Minuten.",
-        "openTitle": "Datenbank öffnen",
-        "openNote": "Eine .db-Datei, die Sie schon haben.",
-        "resume": "{name} wieder öffnen",
-        "dismiss": "Ohne Datenbank fortfahren"
-    },
     "engines": {
         "agree": "Die Engines sind sich einig:",
         "disagree": "Die Engines widersprechen sich:"
@@ -3043,8 +3033,7 @@
     "emptyState": {
         "import": "Importieren… (Strg+I)",
         "openDatabase": "Datenbank öffnen…",
-        "clearFilter": "Filter löschen",
-        "backHome": "Zurück zum Startbildschirm"
+        "clearFilter": "Filter löschen"
     },
     "keyNames": {
         "ctrl": "Strg",

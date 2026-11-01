@@ -1985,16 +1985,6 @@
         "unmarked": "Merkintä poistettu: asema palaa jonoon.",
         "marked": "Asema merkitty nähdyksi: se poistuu opiskelujonosta."
     },
-    "home": {
-        "title": "blunderDB",
-        "lede": "Backgammon-asematietokantasi: tuo ottelusi, etsi se mitä haluat katsoa uudelleen, mittaa mitä pelaat.",
-        "importTitle": "Tuo otteluni",
-        "importNote": "Uusi tietokanta, XG-, GNU Backgammon-, Jellyfish- tai BGBlitz-tiedostosi, ja PR-lukusi pahimpine päätöksinesi kahdessa minuutissa.",
-        "openTitle": "Avaa tietokanta",
-        "openNote": ".db-tiedosto joka sinulla jo on.",
-        "resume": "Avaa {name} uudelleen",
-        "dismiss": "Jatka avaamatta tietokantaa"
-    },
     "engines": {
         "agree": "Moottorit ovat samaa mieltä:",
         "disagree": "Moottorit ovat eri mieltä:"
@@ -3043,8 +3033,7 @@
     "emptyState": {
         "import": "Tuo… (Ctrl+I)",
         "openDatabase": "Avaa tietokanta…",
-        "clearFilter": "Tyhjennä suodatin",
-        "backHome": "Takaisin aloitusnäyttöön"
+        "clearFilter": "Tyhjennä suodatin"
     },
     "keyNames": {
         "ctrl": "Ctrl",

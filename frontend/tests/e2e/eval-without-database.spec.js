@@ -9,7 +9,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { dismissHomeScreen, installWailsMock, getWailsCalls } from './helpers/wailsMock.js';
+import { installWailsMock, getWailsCalls } from './helpers/wailsMock.js';
 import en from '../../src/i18n/locales/en.json' with { type: 'json' };
 
 const MOVES = [
@@ -86,7 +86,6 @@ test('the Eval panel works end to end without a database', async ({ page }) => {
     });
     await page.goto('/');
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
-    await dismissHomeScreen(page);
     const startupCalls = await awaitStartupReads(page);
     await page.click('[data-testid="tab-eval"]');
     await expect(page.locator('[data-testid="tab-eval"]')).toHaveClass(/active/);
@@ -154,7 +153,6 @@ test('a training session runs without a database, and is told, not recorded', as
     await installWailsMock(page);
     await page.goto('/');
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
-    await dismissHomeScreen(page);
     const startupCalls = await awaitStartupReads(page);
     await page.keyboard.press('Control+j');
     await expect(page.locator('[data-testid="tab-training"]')).toHaveClass(/active/);

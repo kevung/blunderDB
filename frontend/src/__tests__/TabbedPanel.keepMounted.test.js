@@ -40,7 +40,7 @@ import MatchPanel from '../components/MatchPanel.svelte';
 import MatchSheet from '../components/MatchSheet.svelte';
 import PanelProbe, { probeLog } from './fixtures/PanelProbe.svelte';
 import { panels } from '../components/lazyComponents.js';
-import { activeTabStore, homeDismissedStore } from '../stores/uiStore.js';
+import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { matchListStore, emptyMatchList } from '../stores/matchListStore.js';
 
@@ -66,7 +66,6 @@ beforeEach(async () => {
     probeLog.mounts = 0;
     probeLog.destroys = 0;
     databasePathStore.set('/tmp/test.db');
-    homeDismissedStore.set(true);
     await switchTo('analysis');
     render(TabbedPanel, {
         props: { onLoadPositionsByFilters: noop, onCloseAnalysis: noop, onCloseComment: noop, onOpenCollection: noop, onAddToFilterLibrary: noop }
@@ -80,7 +79,6 @@ afterEach(() => {
     panels.components.set({});
     activeTabStore.set('analysis');
     databasePathStore.set('');
-    homeDismissedStore.set(false);
 });
 
 describe('TabbedPanel keeps the Matches panel mounted', () => {

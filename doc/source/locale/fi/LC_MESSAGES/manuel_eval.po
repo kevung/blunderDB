@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-11-01 19:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1057,43 +1057,41 @@ msgstr ""
 
 #: ../../source/manuel_eval.rst:466
 msgid ""
-"**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : une fois "
-"l'écran d'accueil écarté, on y pose, colle (*CTRL-V*) et modifie une "
-"position, on l'évalue, on la roule, on la copie en texte (*CTRL-C*) ou en"
-" image (*CTRL-X*, et *CTRL-X CTRL-X* avec l'évaluation). Le clic droit "
-"dans le panneau propose aussi *Enregistrer l'image (SVG)…* et "
-"*Enregistrer l'image (PNG)…*. Le plateau de l'onglet Recherche est lui "
-"aussi un brouillon : il s'édite et reçoit un collage sans base, et l'on "
-"passe de l'un à l'autre sans rien perdre ; lancer la recherche, elle, "
-"demande une base. Seuls *Ajouter à la base* et *CTRL-S* exigent une base "
-"dans le panneau, et la barre d'état le dit. Aucune base n'est créée en "
-"coulisse. Dans le panneau Eval comme dans l'onglet Recherche, la commande"
-" ``import XGID=…`` (ou ``import OGID=…``) pose la position sur le plateau"
-" brouillon, sans base. L'onglet **Entraînement** s'ouvre lui aussi sans "
-"base : *Scores*, *Pions*, *Bearoff* et *Évaluation* sont disponibles, "
-"*Décision* est désactivé avec la raison affichée, et la session terminée "
-"n'est pas enregistrée (le journal l'indique). La Direction de tournoi "
-"exige une base ouverte."
+"**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : on y "
+"pose, colle (*CTRL-V*) et modifie une position, on l'évalue, on la roule,"
+" on la copie en texte (*CTRL-C*) ou en image (*CTRL-X*, et *CTRL-X "
+"CTRL-X* avec l'évaluation). Le clic droit dans le panneau propose aussi "
+"*Enregistrer l'image (SVG)…* et *Enregistrer l'image (PNG)…*. Le plateau "
+"de l'onglet Recherche est lui aussi un brouillon : il s'édite et reçoit "
+"un collage sans base, et l'on passe de l'un à l'autre sans rien perdre ; "
+"lancer la recherche, elle, demande une base. Seuls *Ajouter à la base* et"
+" *CTRL-S* exigent une base dans le panneau, et la barre d'état le dit. "
+"Aucune base n'est créée en coulisse. Dans le panneau Eval comme dans "
+"l'onglet Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``) "
+"pose la position sur le plateau brouillon, sans base. L'onglet "
+"**Entraînement** s'ouvre lui aussi sans base : *Scores*, *Pions*, "
+"*Bearoff* et *Évaluation* sont disponibles, *Décision* est désactivé avec"
+" la raison affichée, et la session terminée n'est pas enregistrée (le "
+"journal l'indique). La Direction de tournoi exige une base ouverte."
 msgstr ""
-"**Ilman avattua tietokantaa.** Eval-paneeli ei tarvitse tietokantaa: kun "
-"aloitusnäyttö on suljettu, siinä voi asettaa, liittää (*CTRL-V*) ja "
-"muokata aseman, arvioida sen, ajaa sille rolloutin ja kopioida sen "
-"tekstinä (*CTRL-C*) tai kuvana (*CTRL-X*, ja *CTRL-X CTRL-X* arvioinnin "
-"kanssa). Paneelin hiiren oikean painikkeen valikossa on myös *Tallenna "
-"kuva (SVG)…* ja *Tallenna kuva (PNG)…*. Haku-välilehden lauta on myös "
-"luonnoslauta: sitä voi muokata ja siihen voi liittää ilman tietokantaa, "
-"ja laudasta toiseen voi siirtyä menettämättä mitään; haun käynnistäminen "
-"sen sijaan vaatii tietokannan. Vain *Lisää tietokantaan* ja *CTRL-S* "
-"vaativat paneelissa tietokannan, ja tilarivi kertoo siitä. Tietokantaa ei"
-" luoda taustalla. Eval-paneelissa kuten Haku-välilehdelläkin komento "
-"``import XGID=…`` (tai ``import OGID=…``) asettaa aseman luonnoslaudalle "
-"ilman tietokantaa. Myös **Harjoittelu**-välilehti avautuu ilman "
-"tietokantaa: *Pisteet*, *Nappulat*, *Bearoff* ja *Arviointi* ovat "
-"käytettävissä, *Päätös* on poissa käytöstä ja syy näytetään, eikä "
-"päättynyttä istuntoa tallenneta (loki kertoo siitä). Turnauksen johto "
-"edellyttää avattua tietokantaa."
+"**Ilman avattua tietokantaa.** Eval-paneeli ei tarvitse tietokantaa: "
+"siinä voi asettaa, liittää (*CTRL-V*) ja muokata aseman, arvioida sen, "
+"ajaa sille rolloutin ja kopioida sen tekstinä (*CTRL-C*) tai kuvana "
+"(*CTRL-X*, ja *CTRL-X CTRL-X* arvioinnin kanssa). Paneelin hiiren oikean "
+"painikkeen valikossa on myös *Tallenna kuva (SVG)…* ja *Tallenna kuva "
+"(PNG)…*. Haku-välilehden lauta on myös luonnoslauta: sitä voi muokata ja "
+"siihen voi liittää ilman tietokantaa, ja laudasta toiseen voi siirtyä "
+"menettämättä mitään; haun käynnistäminen sen sijaan vaatii tietokannan. "
+"Vain *Lisää tietokantaan* ja *CTRL-S* vaativat paneelissa tietokannan, ja"
+" tilarivi kertoo siitä. Tietokantaa ei luoda taustalla. Eval-paneelissa "
+"kuten Haku-välilehdelläkin komento ``import XGID=…`` (tai ``import "
+"OGID=…``) asettaa aseman luonnoslaudalle ilman tietokantaa. Myös "
+"**Harjoittelu**-välilehti avautuu ilman tietokantaa: *Pisteet*, "
+"*Nappulat*, *Bearoff* ja *Arviointi* ovat käytettävissä, *Päätös* on "
+"poissa käytöstä ja syy näytetään, eikä päättynyttä istuntoa tallenneta "
+"(loki kertoo siitä). Turnauksen johto edellyttää avattua tietokantaa."
 
-#: ../../source/manuel_eval.rst:483
+#: ../../source/manuel_eval.rst:482
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
@@ -1101,11 +1099,11 @@ msgstr ""
 "Sulje Eval-paneeli painamalla *CTRL-E* tai vaihtamalla toiseen "
 "välilehteen."
 
-#: ../../source/manuel_eval.rst:488
+#: ../../source/manuel_eval.rst:487
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Eval-paneelin metodologia ja oletukset"
 
-#: ../../source/manuel_eval.rst:490
+#: ../../source/manuel_eval.rst:489
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
@@ -1113,7 +1111,7 @@ msgstr ""
 "Jokainen paneelin näyttämä arvo perustuu täsmällisiin oletuksiin, jotka "
 "esitetään tässä tyhjentävästi."
 
-#: ../../source/manuel_eval.rst:493
+#: ../../source/manuel_eval.rst:492
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -1125,7 +1123,7 @@ msgstr ""
 "nappulat omalla kotialueellaan. Asema arvioidaan *ennen heittoa*; "
 "asetetut nopat jätetään huomiotta."
 
-#: ../../source/manuel_eval.rst:498
+#: ../../source/manuel_eval.rst:497
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -1149,7 +1147,7 @@ msgstr ""
 "näkyy kilpalohkon kulmassa (”OS-08”) — ilman sitä luettaisiin oletuksena "
 "”kuusi” ja uskottaisiin puolen olevan kokonaan kotona."
 
-#: ../../source/manuel_eval.rst:508
+#: ../../source/manuel_eval.rst:507
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -1170,7 +1168,7 @@ msgstr ""
 "kumpikin pelaaja minimoi omat heittonsa vastustajasta välittämättä — se "
 "on EPC:n vakiomääritelmä."
 
-#: ../../source/manuel_eval.rst:517
+#: ../../source/manuel_eval.rst:516
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -1187,7 +1185,7 @@ msgstr ""
 "optimaalisella two-sided-pelillä: ei lisäoletuksia, virhe rajoittuu "
 "kvantisointiin (< 0,002 %)."
 
-#: ../../source/manuel_eval.rst:523
+#: ../../source/manuel_eval.rst:522
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -1202,7 +1200,7 @@ msgstr ""
 "polynomikorjausta, joka on kalibroitu etukäteen TS-06-11-tietokantaa "
 "vasten. Kolme oletusta:"
 
-#: ../../source/manuel_eval.rst:529
+#: ../../source/manuel_eval.rst:528
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
@@ -1210,7 +1208,7 @@ msgstr ""
 "kahden ulosottoprosessin **riippumattomuus** — rakenteellinen ominaisuus "
 "kilpajuoksussa: ilman kontaktia ei ole mitään vuorovaikutusta;"
 
-#: ../../source/manuel_eval.rst:532
+#: ../../source/manuel_eval.rst:531
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -1223,7 +1221,7 @@ msgstr ""
 "Mitattu vaikutus on antisymmetrinen harha (konvoluutio liioittelee "
 "johtajan etumatkaa), jonka korjaus absorboi tilastollisesti;"
 
-#: ../../source/manuel_eval.rst:537
+#: ../../source/manuel_eval.rst:536
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -1238,7 +1236,7 @@ msgstr ""
 "raja on ekstrapoloitu** — suuntaus on monotoninen, mutta mikään oraakkeli"
 " ei todenna sitä."
 
-#: ../../source/manuel_eval.rst:543
+#: ../../source/manuel_eval.rst:542
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -1257,7 +1255,7 @@ msgstr ""
 "GNUbg:n säännön mukaan, joka on validoitu kohta kohdalta sen analyysiä "
 "vasten."
 
-#: ../../source/manuel_eval.rst:551
+#: ../../source/manuel_eval.rst:550
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -1282,7 +1280,7 @@ msgstr ""
 "2: 62 %:n voittotodennäköisyys, tarkka D/T +0,006, XG:llä +0,475). "
 "Näytetty **päätös** sitä vastoin yhtyy moottoreiden päätökseen."
 
-#: ../../source/manuel_eval.rst:562
+#: ../../source/manuel_eval.rst:561
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -1302,7 +1300,7 @@ msgstr ""
 "(katso alempana), ja mahdollistaa, ainoana kolmesta tilasta tarkan "
 "ohella, päätöksen **ottelun pistetilanteessa**."
 
-#: ../../source/manuel_eval.rst:570
+#: ../../source/manuel_eval.rst:569
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -1333,7 +1331,7 @@ msgstr ""
 "perustellusti erilaista menetelmää eroavat eniten tiukassa päätöksessä — "
 "ei hajanainen virhe, joka maksaisi ekviteettiä kaikkialla."
 
-#: ../../source/manuel_eval.rst:583
+#: ../../source/manuel_eval.rst:582
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -1345,7 +1343,7 @@ msgstr ""
 "ja kontaktiasemista ei ole julkaistua mittausta: edellä sanottu ei siirry"
 " näihin tapauksiin."
 
-#: ../../source/manuel_eval.rst:587
+#: ../../source/manuel_eval.rst:586
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions à 3 plis évalue le réseau "
@@ -1370,7 +1368,7 @@ msgstr ""
 "kynnyksen, jonka jälkeen eXtreme Gammon ylipäätään puhuu virheestä. "
 "Päätöstä kohti, kaikki tapaukset yhdessä, hyöty on 0,0000."
 
-#: ../../source/manuel_eval.rst:598
+#: ../../source/manuel_eval.rst:597
 msgid ""
 "Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans "
 "l'onglet *gammonNet* de la configuration. À 3 et 4 plis, comme dans "
@@ -1390,7 +1388,7 @@ msgstr ""
 "toistettavissa (``TestThreePlyMeasure``), ja johtopäätös ratkaistaan "
 "uudelleen, jos verkko muuttuu."
 
-#: ../../source/manuel_eval.rst:606
+#: ../../source/manuel_eval.rst:605
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -1420,7 +1418,7 @@ msgstr ""
 "konvoluutiolla ei ole koskaan ollut oikeutta näyttää päätöstä — tämän "
 "aukon täyttää haku, joka pelaa trajektorin, ei tilastollinen tiivistelmä."
 
-#: ../../source/manuel_eval.rst:619
+#: ../../source/manuel_eval.rst:618
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 15:30+0200\n"
+"POT-Creation-Date: 2026-11-01 19:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1076,53 +1076,51 @@ msgstr ""
 
 #: ../../source/manuel_eval.rst:466
 msgid ""
-"**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : une fois "
-"l'écran d'accueil écarté, on y pose, colle (*CTRL-V*) et modifie une "
-"position, on l'évalue, on la roule, on la copie en texte (*CTRL-C*) ou en"
-" image (*CTRL-X*, et *CTRL-X CTRL-X* avec l'évaluation). Le clic droit "
-"dans le panneau propose aussi *Enregistrer l'image (SVG)…* et "
-"*Enregistrer l'image (PNG)…*. Le plateau de l'onglet Recherche est lui "
-"aussi un brouillon : il s'édite et reçoit un collage sans base, et l'on "
-"passe de l'un à l'autre sans rien perdre ; lancer la recherche, elle, "
-"demande une base. Seuls *Ajouter à la base* et *CTRL-S* exigent une base "
-"dans le panneau, et la barre d'état le dit. Aucune base n'est créée en "
-"coulisse. Dans le panneau Eval comme dans l'onglet Recherche, la commande"
-" ``import XGID=…`` (ou ``import OGID=…``) pose la position sur le plateau"
-" brouillon, sans base. L'onglet **Entraînement** s'ouvre lui aussi sans "
-"base : *Scores*, *Pions*, *Bearoff* et *Évaluation* sont disponibles, "
-"*Décision* est désactivé avec la raison affichée, et la session terminée "
-"n'est pas enregistrée (le journal l'indique). La Direction de tournoi "
-"exige une base ouverte."
+"**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : on y "
+"pose, colle (*CTRL-V*) et modifie une position, on l'évalue, on la roule,"
+" on la copie en texte (*CTRL-C*) ou en image (*CTRL-X*, et *CTRL-X "
+"CTRL-X* avec l'évaluation). Le clic droit dans le panneau propose aussi "
+"*Enregistrer l'image (SVG)…* et *Enregistrer l'image (PNG)…*. Le plateau "
+"de l'onglet Recherche est lui aussi un brouillon : il s'édite et reçoit "
+"un collage sans base, et l'on passe de l'un à l'autre sans rien perdre ; "
+"lancer la recherche, elle, demande une base. Seuls *Ajouter à la base* et"
+" *CTRL-S* exigent une base dans le panneau, et la barre d'état le dit. "
+"Aucune base n'est créée en coulisse. Dans le panneau Eval comme dans "
+"l'onglet Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``) "
+"pose la position sur le plateau brouillon, sans base. L'onglet "
+"**Entraînement** s'ouvre lui aussi sans base : *Scores*, *Pions*, "
+"*Bearoff* et *Évaluation* sont disponibles, *Décision* est désactivé avec"
+" la raison affichée, et la session terminée n'est pas enregistrée (le "
+"journal l'indique). La Direction de tournoi exige une base ouverte."
 msgstr ""
-"**Sin base abierta.** El panel Eval no necesita una base: una vez cerrada"
-" la pantalla de inicio, se puede colocar, pegar (*CTRL-V*) y modificar "
-"una posición, evaluarla, hacer un rollout y copiarla como texto "
-"(*CTRL-C*) o como imagen (*CTRL-X*, y *CTRL-X CTRL-X* con la evaluación)."
-" El clic derecho en el panel ofrece también *Guardar la imagen (SVG)…* y "
-"*Guardar la imagen (PNG)…*. El tablero de la pestaña Búsqueda es también "
-"un borrador: se edita y recibe un pegado sin base, y se pasa de uno a "
-"otro sin perder nada; lanzar la búsqueda, en cambio, requiere una base. "
-"Solo *Añadir a la base* y *CTRL-S* exigen una base en el panel, y la "
-"barra de estado lo indica. No se crea ninguna base en segundo plano. En "
-"el panel Eval, como en la pestaña Búsqueda, el comando ``import XGID=…`` "
-"(o ``import OGID=…``) coloca la posición en el tablero borrador, sin "
-"base. La pestaña **Entrenamiento** también se abre sin base: "
-"*Puntuaciones*, *Fichas*, *Bearoff* y *Evaluación* están disponibles, "
-"*Decisión* está desactivada con el motivo a la vista, y la sesión "
-"terminada no se registra (el diario lo indica). La Dirección de torneo "
-"exige una base abierta."
+"**Sin base abierta.** El panel Eval no necesita una base: se puede "
+"colocar, pegar (*CTRL-V*) y modificar una posición, evaluarla, hacer un "
+"rollout y copiarla como texto (*CTRL-C*) o como imagen (*CTRL-X*, y "
+"*CTRL-X CTRL-X* con la evaluación). El clic derecho en el panel ofrece "
+"también *Guardar la imagen (SVG)…* y *Guardar la imagen (PNG)…*. El "
+"tablero de la pestaña Búsqueda es también un borrador: se edita y recibe "
+"un pegado sin base, y se pasa de uno a otro sin perder nada; lanzar la "
+"búsqueda, en cambio, requiere una base. Solo *Añadir a la base* y "
+"*CTRL-S* exigen una base en el panel, y la barra de estado lo indica. No "
+"se crea ninguna base en segundo plano. En el panel Eval, como en la "
+"pestaña Búsqueda, el comando ``import XGID=…`` (o ``import OGID=…``) "
+"coloca la posición en el tablero borrador, sin base. La pestaña "
+"**Entrenamiento** también se abre sin base: *Puntuaciones*, *Fichas*, "
+"*Bearoff* y *Evaluación* están disponibles, *Decisión* está desactivada "
+"con el motivo a la vista, y la sesión terminada no se registra (el diario"
+" lo indica). La Dirección de torneo exige una base abierta."
 
-#: ../../source/manuel_eval.rst:483
+#: ../../source/manuel_eval.rst:482
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
 msgstr "Para cerrar el panel Eval, pulse *CTRL-E* o cambie a otra pestaña."
 
-#: ../../source/manuel_eval.rst:488
+#: ../../source/manuel_eval.rst:487
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Metodología e hipótesis del panel Eval"
 
-#: ../../source/manuel_eval.rst:490
+#: ../../source/manuel_eval.rst:489
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
@@ -1130,7 +1128,7 @@ msgstr ""
 "Cada valor mostrado por el panel se basa en hipótesis precisas, "
 "enunciadas aquí exhaustivamente."
 
-#: ../../source/manuel_eval.rst:493
+#: ../../source/manuel_eval.rst:492
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -1142,7 +1140,7 @@ msgstr ""
 " jugadores en su cuadro interior. La posición se evalúa *antes de la "
 "tirada*; los dados puestos se ignoran."
 
-#: ../../source/manuel_eval.rst:498
+#: ../../source/manuel_eval.rst:497
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -1166,7 +1164,7 @@ msgstr ""
 "carrera («OS-08») — sin él se leería «seis» por defecto y se creería al "
 "bando enteramente en casa."
 
-#: ../../source/manuel_eval.rst:508
+#: ../../source/manuel_eval.rst:507
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -1186,7 +1184,7 @@ msgstr ""
 " es el *juego óptimo de un lado*: cada jugador minimiza sus propias "
 "tiradas ignorando al adversario — es la definición estándar del EPC."
 
-#: ../../source/manuel_eval.rst:517
+#: ../../source/manuel_eval.rst:516
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -1202,7 +1200,7 @@ msgstr ""
 "juego two-sided óptimo de ambos bandos: ninguna hipótesis adicional, "
 "error limitado a la cuantificación (< 0,002 %)."
 
-#: ../../source/manuel_eval.rst:523
+#: ../../source/manuel_eval.rst:522
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -1216,7 +1214,7 @@ msgstr ""
 "igual al del adversario) y aplicando luego una corrección polinómica "
 "fija, calibrada fuera de línea contra la base TS-06-11. Tres hipótesis:"
 
-#: ../../source/manuel_eval.rst:529
+#: ../../source/manuel_eval.rst:528
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
@@ -1224,7 +1222,7 @@ msgstr ""
 "**independencia** de los dos procesos de salida — estructural en carrera:"
 " sin contacto no hay ninguna interacción;"
 
-#: ../../source/manuel_eval.rst:532
+#: ../../source/manuel_eval.rst:531
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -1237,7 +1235,7 @@ msgstr ""
 "convolución exagera la ventaja del líder) que la corrección absorbe "
 "estadísticamente;"
 
-#: ../../source/manuel_eval.rst:537
+#: ../../source/manuel_eval.rst:536
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -1252,7 +1250,7 @@ msgstr ""
 " está extrapolada** — la tendencia es monótona pero ningún oráculo la "
 "certifica."
 
-#: ../../source/manuel_eval.rst:543
+#: ../../source/manuel_eval.rst:542
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -1270,7 +1268,7 @@ msgstr ""
 "pasar) se reconstruye exactamente a partir de las equidades almacenadas, "
 "según la regla de GNUbg, validada punto por punto contra su análisis."
 
-#: ../../source/manuel_eval.rst:551
+#: ../../source/manuel_eval.rst:550
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -1295,7 +1293,7 @@ msgstr ""
 "D/T exacto +0,006 frente a +0,475 en XG). La **decisión** mostrada, en "
 "cambio, coincide con la de los motores."
 
-#: ../../source/manuel_eval.rst:562
+#: ../../source/manuel_eval.rst:561
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -1315,7 +1313,7 @@ msgstr ""
 " (véase más abajo) y permite, único de los tres regímenes junto con el "
 "exacto, un veredicto **al marcador de partido**."
 
-#: ../../source/manuel_eval.rst:570
+#: ../../source/manuel_eval.rst:569
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -1346,7 +1344,7 @@ msgstr ""
 "donde dos métodos legítimamente distintos divergen más en una decisión "
 "ajustada — no un error difuso que costaría equidad en todas partes."
 
-#: ../../source/manuel_eval.rst:583
+#: ../../source/manuel_eval.rst:582
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -1358,7 +1356,7 @@ msgstr ""
 " de contacto no tienen medida publicada: lo anterior no se traslada a "
 "esos casos."
 
-#: ../../source/manuel_eval.rst:587
+#: ../../source/manuel_eval.rst:586
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions à 3 plis évalue le réseau "
@@ -1382,7 +1380,7 @@ msgstr ""
 "por debajo de 0,020, el umbral a partir del cual eXtreme Gammon habla de "
 "error. Por decisión, todos los casos juntos, el beneficio es de 0,0000."
 
-#: ../../source/manuel_eval.rst:598
+#: ../../source/manuel_eval.rst:597
 msgid ""
 "Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans "
 "l'onglet *gammonNet* de la configuration. À 3 et 4 plis, comme dans "
@@ -1403,7 +1401,7 @@ msgstr ""
 "(``TestThreePlyMeasure``) y la conclusión se volverá a juzgar si la red "
 "cambia."
 
-#: ../../source/manuel_eval.rst:606
+#: ../../source/manuel_eval.rst:605
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -1434,7 +1432,7 @@ msgstr ""
 " tenido derecho a mostrar veredicto — es una búsqueda que juega la "
 "trayectoria, no un resumen estadístico, lo que rellena ese hueco."
 
-#: ../../source/manuel_eval.rst:619
+#: ../../source/manuel_eval.rst:618
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"

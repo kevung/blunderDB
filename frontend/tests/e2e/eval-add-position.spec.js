@@ -13,7 +13,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { dismissHomeScreen, installWailsMock } from './helpers/wailsMock.js';
+import { installWailsMock } from './helpers/wailsMock.js';
 import { epcResultA, openLibraryMock } from './helpers/fixtures.js';
 import fr from '../../src/i18n/locales/fr.json' with { type: 'json' };
 import de from '../../src/i18n/locales/de.json' with { type: 'json' };
@@ -50,7 +50,6 @@ async function openEval(page, mock) {
 
     await page.goto('/');
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
-    await dismissHomeScreen(page);
     await page.click('[data-testid="tab-eval"]');
     await expect(page.locator('[data-testid="tab-eval"]')).toHaveClass(/active/);
     await expect(page.locator('.eval-panel [data-testid="panel-header"] .badge')).toBeVisible({ timeout: 4000 });

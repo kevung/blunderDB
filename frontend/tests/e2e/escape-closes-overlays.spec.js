@@ -7,7 +7,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { dismissHomeScreen, installWailsMock } from './helpers/wailsMock.js';
+import { installWailsMock } from './helpers/wailsMock.js';
 import { openLibraryMock } from './helpers/fixtures.js';
 import { installDirectionEngine } from './helpers/directionEngine.js';
 
@@ -39,7 +39,6 @@ test('le menu contextuel des onglets se ferme au clavier', async ({ page }) => {
     await installWailsMock(page);
     await page.goto('/');
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
-    await dismissHomeScreen(page);
 
     await page.locator('[data-testid="tab-stats"]').click({ button: 'right' });
     const menu = page.locator('.context-menu');

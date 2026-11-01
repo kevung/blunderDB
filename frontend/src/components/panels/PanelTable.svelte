@@ -129,7 +129,7 @@
         /** (from, to): enables pointer drag reordering of the rows. */
         onReorder = undefined,
         emptyText = '',
-        /** Offer "Import…" (and the way back to the welcome screen) under the empty text. */
+        /** Offer "Import…", or opening a database, under the empty text. */
         emptyActions = false,
         /** With `emptyActions`: a way to lift the filter that emptied the list, in place of the import. */
         emptyClear = null,

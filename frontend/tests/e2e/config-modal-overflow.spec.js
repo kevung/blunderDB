@@ -4,7 +4,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { installWailsMock, dismissHomeScreen } from './helpers/wailsMock.js';
+import { installWailsMock } from './helpers/wailsMock.js';
 import { openLibraryMock } from './helpers/fixtures.js';
 
 for (const [width, height] of [
@@ -15,7 +15,6 @@ for (const [width, height] of [
         await page.setViewportSize({ width, height });
         await installWailsMock(page, openLibraryMock());
         await page.goto('/');
-        await dismissHomeScreen(page);
         await page.locator('button[aria-label="Settings"]').click();
         const box = page.locator('.modal-box').first();
         await expect(box).toBeVisible();

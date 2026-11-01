@@ -1985,16 +1985,6 @@
         "unmarked": "Marca retirada: la posición vuelve a la cola.",
         "marked": "Posición marcada como vista: sale de la cola de estudio."
     },
-    "home": {
-        "title": "blunderDB",
-        "lede": "Su base de posiciones de backgammon: importe sus partidos, busque lo que quiera revisar, mida lo que juega.",
-        "importTitle": "Importar mis partidos",
-        "importNote": "Una base nueva, sus ficheros de XG, GNU Backgammon, Jellyfish o BGBlitz, y su PR con sus peores decisiones en dos minutos.",
-        "openTitle": "Abrir una base",
-        "openNote": "Un fichero .db que ya tiene.",
-        "resume": "Retomar {name}",
-        "dismiss": "Continuar sin abrir una base"
-    },
     "engines": {
         "agree": "Los motores coinciden:",
         "disagree": "Los motores discrepan:"
@@ -3043,8 +3033,7 @@
     "emptyState": {
         "import": "Importar… (Ctrl+I)",
         "openDatabase": "Abrir una base de datos…",
-        "clearFilter": "Borrar el filtro",
-        "backHome": "Volver a la pantalla de inicio"
+        "clearFilter": "Borrar el filtro"
     },
     "keyNames": {
         "ctrl": "Ctrl",

@@ -11,7 +11,7 @@
     import { onMount } from 'svelte';
     import { get } from 'svelte/store';
     import { SvelteSet } from 'svelte/reactivity';
-    import { activeTabStore, dbMutationCounterStore, homeDismissedStore } from '../stores/uiStore';
+    import { activeTabStore, dbMutationCounterStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
     import { ankiDueStore, refreshAnkiDue } from '../stores/ankiDueStore.js';
     import { pendingProposalsStore } from '../stores/directionStore.js';
@@ -25,12 +25,11 @@
     import ActiveLibraryMark from './ActiveLibraryMark.svelte';
 
     // Each panel is its own chunk, fetched when its tab is first shown (lazyComponents.js).
-    import { panels, activePanelToLoad } from './lazyComponents.js';
+    import { panels } from './lazyComponents.js';
 
     const loadedPanels = panels.components;
     $effect(() => {
-        const name = activePanelToLoad($activeTabStore, { homeScreenShown: !$databasePathStore && !$homeDismissedStore });
-        if (name) panels.load(name);
+        panels.load($activeTabStore);
     });
     const failedPanels = panels.failed;
     const Panel = $derived($loadedPanels[$activeTabStore]);

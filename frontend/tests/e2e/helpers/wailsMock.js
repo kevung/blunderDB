@@ -352,26 +352,6 @@ export async function getWailsCalls(page, methodName) {
 }
 
 /**
- * Écarte l'écran d'accueil s'il est là.
- *
- * L'accueil couvre l'application tant qu'aucune base n'est ouverte et
- * intercepte les clics sur les onglets ; une spec qui travaille sur le
- * plateau brouillon (Eval) fait ici le geste d'écartement plutôt que
- * d'ouvrir une base dont elle n'a pas besoin. Sans effet quand une base est
- * montée (openLibraryMock) : l'accueil s'y efface de lui-même.
- *
- * @param {import('@playwright/test').Page} page
- */
-export async function dismissHomeScreen(page) {
-    // The app mounts once the locale is in (main.js): before that there is no home screen to
-    // dismiss, and one that appears afterwards would cover every panel.
-    await page.waitForFunction(() => performance.getEntriesByName('bdb:mounted').length > 0);
-    // Constat et clic en un seul tour de page : sous openLibraryMock, l'accueil peut s'effacer
-    // entre un count() et un click(), qui attendrait alors un bouton disparu.
-    await page.evaluate(() => /** @type {HTMLElement | null} */ (document.querySelector('[data-testid="home-dismiss"]'))?.click());
-}
-
-/**
  * The dev server answers module by module, and a lazy panel only mounts once its chunk is
  * there ("Loading…" until then). `main.js` marks `bdb:deferred-loaded` when every deferred
  * panel and the Direction view are fetched. After each navigation to the app, wait for that
