@@ -1,14 +1,16 @@
 -- Banc V0.5 : annotation de t_lisible_ms dans annot.csv, coup par coup, dans mpv.
 -- Usage : mpv --script=annoter.lua --script-opts=annoter-csv=annot.csv VIDEO
 -- Entrée = dés lisibles ici · x = illisible · Retour arrière = coup précédent · r = revoir
+-- h = aide affichée / réduite / masquée · p = aide en haut / en bas (elle ne doit pas cacher les dés)
 
-local opts = { csv = "annot.csv", avant = 5, apres = 4, vitesse = 0.5 }
+local opts = { csv = "annot.csv", avant = 5, apres = 4, vitesse = 0.5, position = "bas" }
 require("mp.options").read_options(opts, "annoter")
 
 local done_path = opts.csv .. ".fait"
 local header, rows = nil, {}
 local fait = {}
 local i = 1
+local aide = 2 -- 2 complète, 1 une ligne, 0 masquée
 
 local function split(line)
     local t = {}
@@ -49,14 +51,22 @@ end
 local function roll_s() return tonumber(rows[i][3]) / 1000 end
 
 local function osd()
+    if i > #rows then return end
+    if aide == 0 then
+        mp.set_osd_ass(0, 0, "")
+        return
+    end
     local r = rows[i]
     local d = r[2]
     local etat = fait[r[1]] and ((r[5] ~= "" and "noté " .. r[5] .. " ms") or "illisible") or "à faire"
-    mp.set_osd_ass(0, 0, string.format(
-        "{\\an7\\fs22\\bord2}Coup %d/%d  —  dés attendus %s-%s  —  %s  (%d faits)\\N"
-            .. "{\\fs16}Espace lecture/pause · , . image par image · Entrée = lisibles ici · x = illisible · "
-            .. "r = revoir · Retour arrière = précédent",
-        i, #rows, d:sub(1, 1), d:sub(2, 2), etat, count_done()))
+    local ancre = opts.position == "haut" and "\\an7" or "\\an1"
+    local texte = string.format("{%s\\fs22\\bord2}Coup %d/%d — dés %s-%s — %s (%d faits)", ancre, i, #rows,
+        d:sub(1, 1), d:sub(2, 2), etat, count_done())
+    if aide == 2 then
+        texte = texte .. "\\N{\\fs16}Espace lecture/pause · , . image par image · Entrée = lisibles ici · x = illisible · "
+            .. "r = revoir · Retour arrière = précédent · h = aide · p = haut/bas"
+    end
+    mp.set_osd_ass(0, 0, texte)
 end
 
 local function go(k)
@@ -100,6 +110,14 @@ mp.add_forced_key_binding("ENTER", "annoter-lisible", function()
 end)
 mp.add_forced_key_binding("x", "annoter-illisible", function() mark("") end)
 mp.add_forced_key_binding("r", "annoter-revoir", function() go(i) end)
+mp.add_forced_key_binding("h", "annoter-aide", function()
+    aide = (aide + 2) % 3
+    osd()
+end)
+mp.add_forced_key_binding("p", "annoter-position", function()
+    opts.position = opts.position == "haut" and "bas" or "haut"
+    osd()
+end)
 mp.add_forced_key_binding("BS", "annoter-precedent", function() go(i - 1) end)
 
 local started = false
