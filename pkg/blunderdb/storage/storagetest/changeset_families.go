@@ -19,7 +19,7 @@ func tick() { time.Sleep(5 * time.Millisecond) }
 // sees its own changes only.
 func (p *csPair) catchUp() {
 	p.t.Helper()
-	set, err := changeset.Export(p.ca, p.a, p.sa, 0, 1_000_000)
+	set, err := changeset.Export(p.ca, p.a, p.sa, storage.Cursor{}, 1_000_000)
 	if err != nil {
 		p.t.Fatal(err)
 	}
@@ -29,7 +29,7 @@ func (p *csPair) catchUp() {
 // replay sends everything a holds, from 0, to b.
 func (p *csPair) replay() changeset.Report {
 	p.t.Helper()
-	set, err := changeset.Export(p.ca, p.a, p.sa, 0, 1_000_000)
+	set, err := changeset.Export(p.ca, p.a, p.sa, storage.Cursor{}, 1_000_000)
 	if err != nil {
 		p.t.Fatal(err)
 	}

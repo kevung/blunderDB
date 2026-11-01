@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -23,20 +24,25 @@ func (s *ChangeJournalStore) changedAtText() string {
 }
 
 func (s *ChangeJournalStore) Changes(ctx context.Context, scope string, after int64, limit int) ([]storage.Change, error) {
-	return s.ChangesOf(ctx, scope, nil, after, limit)
+	return s.ChangesOf(ctx, scope, nil, storage.Cursor{Seq: after}, limit)
 }
 
-func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, families []string, after int64, limit int) ([]storage.Change, error) {
+func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, families []string, after storage.Cursor, limit int) ([]storage.Change, error) {
 	if limit <= 0 {
 		limit = 1000
 	}
 	tenant, targs := s.DB.TenantFilter("", scope)
-	args := append(targs, after)
-	where := tenant + ` AND seq > ?`
+	var args []any
+	args = append(args, targs...)
+	where, order, xid := tenant+` AND seq > ?`, "seq", "0"
+	args = append(args, after.Seq)
 	if s.DB.Name() == "postgres" {
-		// Only entries whose writer, and every older transaction, has ended:
-		// a lower seq cannot still be committed behind the one read.
-		where += ` AND xid < pg_snapshot_xmin(pg_current_snapshot())`
+		// Only entries whose writer, and every older transaction, has ended,
+		// read in the order of those transactions: a change cannot still be
+		// committed behind the cursor.
+		where = tenant + ` AND (xid, seq) > (CAST(CAST(? AS TEXT) AS xid8), ?) AND xid < pg_snapshot_xmin(pg_current_snapshot())`
+		args = append(args[:len(targs)], strconv.FormatInt(after.Xid, 10), after.Seq)
+		order, xid = "xid, seq", "CAST(xid AS TEXT) AS xid_text"
 	}
 	if len(families) > 0 {
 		where += ` AND family IN (` + Placeholders(len(families)) + `)`
@@ -44,8 +50,8 @@ func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, famili
 			args = append(args, f)
 		}
 	}
-	rows, err := s.DB.Query(ctx, `SELECT seq, CAST(uuid AS TEXT), family, op, `+s.changedAtText()+` FROM change_log
-		WHERE `+where+` ORDER BY seq LIMIT ?`, append(args, limit)...)
+	rows, err := s.DB.Query(ctx, `SELECT seq, CAST(uuid AS TEXT), family, op, `+s.changedAtText()+`, `+xid+` FROM change_log
+		WHERE `+where+` ORDER BY `+order+` LIMIT ?`, append(args, limit)...)
 	if err != nil {
 		return nil, errf(s.DB, "changes", err)
 	}
@@ -53,9 +59,11 @@ func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, famili
 	var out []storage.Change
 	for rows.Next() {
 		var c storage.Change
-		if err := rows.Scan(&c.Seq, &c.UUID, &c.Family, &c.Op, &c.ChangedAt); err != nil {
+		var x string
+		if err := rows.Scan(&c.Seq, &c.UUID, &c.Family, &c.Op, &c.ChangedAt, &x); err != nil {
 			return nil, errf(s.DB, "changes", err)
 		}
+		c.Xid, _ = strconv.ParseInt(x, 10, 64)
 		out = append(out, c)
 	}
 	if err := rows.Err(); err != nil {

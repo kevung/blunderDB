@@ -48,9 +48,9 @@ type Record struct {
 // (they have no entry), dated at the floor, all in the one set: its size is
 // that of those rows, not bounded by the limit.
 type Set struct {
-	Cursor  int64    `json:"cursor"`
-	More    bool     `json:"more"`
-	Records []Record `json:"records"`
+	Cursor  storage.Cursor `json:"cursor"`
+	More    bool           `json:"more"`
+	Records []Record       `json:"records"`
 }
 
 // Report counts what an import did with each record.
@@ -124,7 +124,7 @@ func normalize(at string) (string, error) {
 // cursor and loads the content of the creates and updates. An object that
 // vanished between the journal read and the content read is left out: its
 // delete is a later entry.
-func Export(ctx context.Context, s storage.Stores, scope string, after int64, limit int) (Set, error) {
+func Export(ctx context.Context, s storage.Stores, scope string, after storage.Cursor, limit int) (Set, error) {
 	journal, uuids, err := providers(s)
 	if err != nil {
 		return Set{}, err
@@ -135,7 +135,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after int64, li
 	set := Set{Cursor: after}
 	// The rows that predate the journal first: an object created while they
 	// are read has an entry, so the journal read below finds it.
-	if after == 0 {
+	if after == (storage.Cursor{}) {
 		for _, f := range families() {
 			us, err := journal.Unjournaled(ctx, scope, f)
 			if err != nil {
@@ -161,7 +161,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after int64, li
 		changes, set.More = changes[:limit], true
 	}
 	for _, c := range changes {
-		set.Cursor = c.Seq
+		set.Cursor = storage.Cursor{Xid: c.Xid, Seq: c.Seq}
 		rec := Record{Change: c}
 		if c.Op == storage.ChangeCreate || c.Op == storage.ChangeUpdate {
 			ok, err := loadPayload(ctx, s, uuids, scope, &rec)

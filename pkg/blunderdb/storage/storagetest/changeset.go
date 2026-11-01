@@ -21,7 +21,7 @@ func CheckChangeSet(t *testing.T, a storage.Storage, ca context.Context, sa stri
 		return cb
 	}
 	tick := func() { time.Sleep(5 * time.Millisecond) }
-	var cursor int64
+	var cursor storage.Cursor
 	push := func(what string) changeset.Report {
 		t.Helper()
 		set, err := changeset.Export(ca, a, sa, cursor, 1000)
@@ -68,7 +68,7 @@ func CheckChangeSet(t *testing.T, a storage.Storage, ca context.Context, sa stri
 	}
 
 	// Importing again, or importing what came from there, changes nothing.
-	set, _ := changeset.Export(ca, a, sa, 0, 1000)
+	set, _ := changeset.Export(ca, a, sa, storage.Cursor{}, 1000)
 	if rep, _ := changeset.Import(cb, b, sb, set); rep.Applied != 0 || rep.Older == 0 {
 		t.Errorf("a replay applied something: %+v", rep)
 	}

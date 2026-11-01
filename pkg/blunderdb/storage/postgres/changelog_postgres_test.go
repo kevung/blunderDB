@@ -153,3 +153,48 @@ func TestChangeJournal_Postgres_HidesBehindOpenTransactions(t *testing.T) {
 		t.Fatalf("after the commit: %+v, %v", cs, err)
 	}
 }
+
+// Two writers whose seq draw order differs from their transaction order: the
+// older transaction draws its second seq after the newer drew its first, and
+// commits first. A cursor on seq alone, past the older one's last entry, never
+// sees the newer one's; (xid, seq) does.
+func TestChangeJournal_Postgres_CursorFollowsTransactionOrder(t *testing.T) {
+	ctx := context.Background()
+	s, _ := openRLS(t)
+	c1 := tctx(ctx, "1")
+	begin := func() storage.Tx {
+		tx, err := s.BeginTx(c1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return tx
+	}
+	create := func(tx storage.Tx, name string) {
+		if _, err := tx.Collections().Create(c1, "1", name, ""); err != nil {
+			t.Fatal(err)
+		}
+	}
+	older, newer := begin(), begin()
+	create(older, "older, first")
+	create(newer, "newer, first")
+	create(older, "older, second")
+	if err := older.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	j := s.ChangeJournal()
+	seen, err := j.ChangesOf(c1, "1", nil, storage.Cursor{}, 100)
+	if err != nil || len(seen) != 2 {
+		t.Fatalf("while the newer writer is in flight: %+v, %v", seen, err)
+	}
+	last := seen[len(seen)-1]
+	if err := newer.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	rest, err := j.ChangesOf(c1, "1", nil, storage.Cursor{Xid: last.Xid, Seq: last.Seq}, 100)
+	if err != nil || len(rest) != 1 {
+		t.Fatalf("after the newer writer committed: %+v, %v", rest, err)
+	}
+	if rest[0].Seq > last.Seq {
+		t.Fatalf("the scenario needs the late entry to hold the lower seq: %d vs %d", rest[0].Seq, last.Seq)
+	}
+}

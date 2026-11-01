@@ -16,6 +16,9 @@ const (
 // stays as small as the library and a reader past a cursor sees each object
 // once, in its final state.
 type Change struct {
+	// Xid is the writer's transaction on PostgreSQL (Cursor), 0 on SQLite and
+	// in Entry.
+	Xid    int64  `json:"xid,omitempty"`
 	Seq    int64  `json:"seq"`
 	UUID   string `json:"uuid"`
 	Family string `json:"family"`
@@ -38,11 +41,22 @@ const ChangedAtLayout = "2006-01-02T15:04:05.000Z"
 // ended. What remains: two writers whose seq draw order differs from their xid
 // order (the older xid draws its seq second) can still be read out of order;
 // a cursor on (xid, seq) would close it. SQLite has one writer at a time.
+// Cursor is where a reader stopped: the last change it saw. On PostgreSQL the
+// journal is read in the order of the writers' transactions (Xid), then of
+// their seq, because seq alone is drawn out of commit order; with the guard
+// that only entries behind pg_snapshot_xmin are listed, a reader never passes
+// a writer still in flight. SQLite has one writer at a time: Xid stays 0 and
+// seq orders.
+type Cursor struct {
+	Xid int64 `json:"xid,omitempty"`
+	Seq int64 `json:"seq"`
+}
+
 type ChangeJournalStore interface {
 	// Changes lists up to limit changes with seq > after, oldest first.
 	Changes(ctx context.Context, scope string, after int64, limit int) ([]Change, error)
 	// ChangesOf is Changes restricted to the given families (all when empty).
-	ChangesOf(ctx context.Context, scope string, families []string, after int64, limit int) ([]Change, error)
+	ChangesOf(ctx context.Context, scope string, families []string, after Cursor, limit int) ([]Change, error)
 	// Unjournaled lists the uuids of a family's rows that have no entry: the
 	// rows that existed before the journal did, which no cursor reaches.
 	Unjournaled(ctx context.Context, scope, family string) ([]string, error)

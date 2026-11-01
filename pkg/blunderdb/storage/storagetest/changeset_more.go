@@ -20,7 +20,7 @@ type csPair struct {
 	a, b       storage.Storage
 	ca, cb     context.Context
 	sa, sb     string
-	cursorFrom int64
+	cursorFrom storage.Cursor
 }
 
 func (p *csPair) uuid(s storage.Storage, ctx context.Context, scope string, id int64) string {
@@ -237,8 +237,8 @@ func scenarioTie(p *csPair) {
 		p.t.Fatal(err)
 	}
 	p.mark(p.b, p.cb, p.sb, u, storage.ChangeUpdate, at)
-	fromA, _ := changeset.Export(p.ca, p.a, p.sa, 0, 1000)
-	fromB, _ := changeset.Export(p.cb, p.b, p.sb, 0, 1000)
+	fromA, _ := changeset.Export(p.ca, p.a, p.sa, storage.Cursor{}, 1000)
+	fromB, _ := changeset.Export(p.cb, p.b, p.sb, storage.Cursor{}, 1000)
 	if _, err := changeset.Import(p.cb, p.b, p.sb, fromA); err != nil {
 		p.t.Fatal(err)
 	}
@@ -328,13 +328,13 @@ func scenarioUncarried(p *csPair) {
 	if _, err := p.a.Transcriptions().Save(p.ca, p.sa, &storage.Transcription{FormatVersion: "1", Label: "Not carried yet", Document: "{}"}); err != nil {
 		p.t.Fatal(err)
 	}
-	set, err := changeset.Export(p.ca, p.a, p.sa, 0, 1000)
+	set, err := changeset.Export(p.ca, p.a, p.sa, storage.Cursor{}, 1000)
 	if err != nil {
 		p.t.Fatal(err)
 	}
 	last := p.entry(p.a, p.ca, p.sa, u).Seq
-	if set.Cursor != last {
-		p.t.Errorf("cursor %d passed the carried entries (%d) over an uncarried family", set.Cursor, last)
+	if set.Cursor.Seq != last {
+		p.t.Errorf("cursor %d passed the carried entries (%d) over an uncarried family", set.Cursor.Seq, last)
 	}
 	for _, r := range set.Records {
 		if r.Family == "transcription" {
@@ -368,7 +368,7 @@ func CheckChangeSetPreJournal(t *testing.T, a storage.Storage, ca context.Contex
 	if _, err := a.(storage.ChangeJournalProvider).ChangeJournal().Entry(ca, sa, u1); err == nil {
 		t.Fatal("the journal still has an entry: the scenario tests nothing")
 	}
-	p.cursorFrom = 0
+	p.cursorFrom = storage.Cursor{}
 	rep := p.send()
 	if got := p.name(b, cb, sb, bid); got != "Old one, edited in b" {
 		t.Errorf("an object that predates the journal overwrote an edit: %q", got)
@@ -382,7 +382,7 @@ func CheckChangeSetPreJournal(t *testing.T, a storage.Storage, ca context.Contex
 	three, _ := a.Collections().Create(ca, sa, "Old three", "")
 	_ = three
 	forget()
-	if set, err := changeset.Export(ca, a, sa, 0, 1000); err != nil || len(set.Records) < 3 {
+	if set, err := changeset.Export(ca, a, sa, storage.Cursor{}, 1000); err != nil || len(set.Records) < 3 {
 		t.Errorf("export from 0 carries %d records (%v), want every collection", len(set.Records), err)
 	}
 	_ = c
