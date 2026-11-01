@@ -68,7 +68,35 @@ MUTANTS = [
     ("navigation : traversée repartant de 0 à chaque paire", "cibles += [(w[1], dist_de.get(j)) for j, w in enumerate(evaluables)]",
      "cibles += [(w[1] + 10**9 * len(par_paire), dist_de.get(j)) for j, w in enumerate(evaluables)]"),
     ("navigation : ordre du temps ignoré", "sorted(cibles, key=lambda c: c[0])", "cibles"),
+    ("plages : événements non filtrés", "charger_evenements(events_path, etats) if dans_plages(t, plages)]", "charger_evenements(events_path, etats)]"),
+    ("plages : Repères non filtrés", "avance_ms) if dans_plages(w[1], plages)]", "avance_ms)]"),
+    ("plages : borne basse exclusive", "a <= t <= b", "a < t <= b"),
+    ("plages : borne haute exclusive", "a <= t <= b", "a <= t < b"),
+    ("plages : écart de 2 s pris pour une rupture", "if t - prec > ms(ecart_s):", "if t - prec >= ms(ecart_s):"),
+    ("plages : relevés pris dans l'ordre du fichier", "ts = sorted(ms(r[\"t\"]) for r in releves)", "ts = [ms(r[\"t\"]) for r in releves]"),
+    ("plages : secondes du texte lues comme ms", "out.append((ms(float(ligne[0])), ms(float(ligne[1]))))", "out.append((int(float(ligne[0])), int(float(ligne[1]))))"),
+    ("avance : ignorée", "debut = fin - avance_ms", "debut = None"),
+    ("avance : appliquée aux fenêtres bornées", "if debut is None and avance_ms is not None:", "if avance_ms is not None:"),
 ]
+
+
+def run_suite(d, suite):
+    # Not -I: it drops the working directory from sys.path, the suite would not import and
+    # every mutant would look killed. d holds only the files copied here.
+    return subprocess.run([sys.executable, "-m", "unittest", suite], cwd=d, capture_output=True)
+
+
+def check_baseline():
+    """The unmutated sources must pass, or a failing suite would kill every mutant."""
+    with tempfile.TemporaryDirectory() as d:
+        shutil.copytree(os.path.join(HERE, "fixtures"), os.path.join(d, "fixtures"))
+        for f in ("mesure.py", "test_mesure.py", "readable_hist.py", "prepare_annot.py", "test_annot.py"):
+            shutil.copy(os.path.join(HERE, f), d)
+        for suite in ("test_mesure", "test_annot"):
+            if run_suite(d, suite).returncode != 0:
+                print(f"BASE ROUGE  {suite} échoue sans mutation")
+                return False
+    return True
 
 
 def run_annot():
@@ -85,7 +113,7 @@ def run_annot():
                 shutil.copy(os.path.join(HERE, f), d)
             with open(os.path.join(d, fichier), "w", encoding="utf-8") as fh:
                 fh.write(src.replace(old, new))
-            r = subprocess.run([sys.executable, "-I", "-m", "unittest", "test_annot"], cwd=d, capture_output=True)
+            r = run_suite(d, "test_annot")
         tue = r.returncode != 0
         print(("tué       " if tue else "SURVIT    ") + nom)
         survivors += not tue
@@ -93,6 +121,8 @@ def run_annot():
 
 
 def main():
+    if not check_baseline():
+        return 1
     survivors = run_annot()
     src = open(os.path.join(HERE, "mesure.py"), encoding="utf-8").read()
     for nom, old, new in MUTANTS:
@@ -105,7 +135,7 @@ def main():
             shutil.copy(os.path.join(HERE, "test_mesure.py"), d)
             with open(os.path.join(d, "mesure.py"), "w", encoding="utf-8") as fh:
                 fh.write(src.replace(old, new))
-            r = subprocess.run([sys.executable, "-I", "-m", "unittest", "test_mesure"], cwd=d, capture_output=True)
+            r = run_suite(d, "test_mesure")
         tue = r.returncode != 0
         print(("tué       " if tue else "SURVIT    ") + nom)
         survivors += not tue
