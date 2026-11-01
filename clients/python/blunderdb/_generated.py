@@ -1062,6 +1062,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.parseText — JSON."
         return self._call("/v1/positions.parseText", payload)
 
+    def positions_public_id(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.publicId — JSON."
+        return self._call("/v1/positions.publicId", payload)
+
     def positions_reclassify_phases(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.reclassifyPhases — JSON."
         return self._call("/v1/positions.reclassifyPhases", payload)
@@ -1077,6 +1081,10 @@ class GeneratedAPI(BaseClient):
     def positions_set_individually_imported(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.setIndividuallyImported — JSON."
         return self._call("/v1/positions.setIndividuallyImported", payload)
+
+    def positions_set_public_id(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.setPublicId — JSON."
+        return self._call("/v1/positions.setPublicId", payload)
 
     def positions_similar(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.similar — JSON."

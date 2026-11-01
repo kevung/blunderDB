@@ -145,6 +145,23 @@ func (s *Server) positionRoutes() []route {
 		{http.MethodPost, "/v1/positions.load", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Position, error) {
 			return ps().Load(ctx, scope, req.ID)
 		})},
+		// The opaque label a caller attaches to a position: kept as given, never
+		// read by the engine.
+		{http.MethodPost, "/v1/positions.publicId", rpc(func(ctx context.Context, scope string, req idReq) (publicIDResp, error) {
+			ids, err := s.publicIDs()
+			if err != nil {
+				return publicIDResp{}, err
+			}
+			v, err := ids.PublicID(ctx, scope, req.ID)
+			return publicIDResp{PublicID: v}, err
+		})},
+		{http.MethodPost, "/v1/positions.setPublicId", rpcVoid(func(ctx context.Context, scope string, req setPublicIDReq) error {
+			ids, err := s.publicIDs()
+			if err != nil {
+				return err
+			}
+			return ids.SetPublicID(ctx, scope, req.ID, req.PublicID)
+		})},
 		{http.MethodPost, "/v1/positions.exists", rpc(func(ctx context.Context, scope string, req existsReq) (existsResp, error) {
 			id, found, err := ps().Exists(ctx, scope, req.Zobrist)
 			return existsResp{ID: id, Found: found}, err
@@ -351,4 +368,22 @@ func (s *Server) handleFromImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSONResp(w, rd)
+}
+
+type publicIDResp struct {
+	PublicID string `json:"publicId"`
+}
+
+// setPublicIDReq sets the label of position ID; an empty PublicID clears it.
+type setPublicIDReq struct {
+	ID       int64  `json:"id"`
+	PublicID string `json:"publicId"`
+}
+
+func (s *Server) publicIDs() (storage.PublicIDStore, error) {
+	p, ok := s.opts.Storage.(storage.PublicIDProvider)
+	if !ok {
+		return nil, fmt.Errorf("this backend keeps no public_id: %w", storage.ErrUnsupported)
+	}
+	return p.PublicIDs(), nil
 }

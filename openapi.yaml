@@ -5546,6 +5546,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/parser_Result"
+  /v1/positions.publicId:
+    post:
+      operationId: positions.publicId
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/publicIDResp"
   /v1/positions.reclassifyPhases:
     post:
       operationId: positions.reclassifyPhases
@@ -5615,6 +5632,23 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/individuallyImportedReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/positions.setPublicId:
+    post:
+      operationId: positions.setPublicId
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setPublicIDReq"
       responses:
         "200":
           description: OK
@@ -9637,6 +9671,11 @@ components:
           format: int64
         created:
           type: boolean
+    publicIDResp:
+      type: object
+      properties:
+        publicId:
+          type: string
     purgedResp:
       type: object
       properties:
@@ -9960,6 +9999,14 @@ components:
           type: integer
           format: int64
         tournamentName:
+          type: string
+    setPublicIDReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        publicId:
           type: string
     similarReq:
       type: object

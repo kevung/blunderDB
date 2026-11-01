@@ -296,10 +296,12 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.load                       JSON
      POST /v1/positions.loadByIds                  JSON
      POST /v1/positions.parseText                  JSON
+     POST /v1/positions.publicId                   JSON
      POST /v1/positions.reclassifyPhases           JSON
      POST /v1/positions.repairCrawford             JSON
      POST /v1/positions.save                       JSON  (Idempotency-Key)
      POST /v1/positions.setIndividuallyImported    JSON
+     POST /v1/positions.setPublicId                JSON
      POST /v1/positions.similar                    JSON
      POST /v1/positions.update                     JSON
    quiz
