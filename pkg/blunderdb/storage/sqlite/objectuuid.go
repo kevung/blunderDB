@@ -38,7 +38,8 @@ const objectUUIDExpr = `(SELECT printf('%08x-%04x-7%s-%s%s-%s', ms / 65536, ms %
 // written from now on, and the rows held before get the identifier derived
 // from their natural key (sqlshared.DeriveObjectUUID). Once per library
 // (sqlshared.ObjectUUIDKey); batched, so an interrupted pass resumes where it
-// stopped and no write lasts longer than one batch. The uuid columns and
+// stopped; no write lasts longer than one batch, except a family of ranked
+// rows (notes, names, matches), numbered and written by one statement. The uuid columns and
 // their unique indexes come from EnsureSchema, which runs first.
 func EnsureObjectUUIDs(ctx context.Context, db *sql.DB) error {
 	tables, err := objectNames(ctx, db, "table")
@@ -106,6 +107,13 @@ func EnsureObjectUUIDs(ctx context.Context, db *sql.DB) error {
 			after = upTo.Int64
 		}
 	}
+	for _, f := range present {
+		n, err := drawObjectUUIDs(ctx, db, f.Table)
+		if err != nil {
+			return fmt.Errorf("sqlite: draw the uuids of %s: %w", f.Table, err)
+		}
+		total += n
+	}
 	if _, err := db.ExecContext(ctx, `INSERT OR REPLACE INTO metadata (key, value) VALUES (?, '1')`, sqlshared.ObjectUUIDKey); err != nil {
 		return fmt.Errorf("sqlite: record the uuid backfill: %w", err)
 	}
@@ -113,6 +121,39 @@ func EnsureObjectUUIDs(ctx context.Context, db *sql.DB) error {
 		slog.Info("gave the stored objects their uuid", "rows", total)
 	}
 	return nil
+}
+
+// drawObjectUUIDs names the rows the derivation left without one (no natural
+// key) with a drawn identifier, one statement per row: the expression draws
+// once per statement.
+func drawObjectUUIDs(ctx context.Context, db *sql.DB, table string) (int, error) {
+	ids, err := undrawnIDs(ctx, db, table)
+	if err != nil {
+		return 0, err
+	}
+	for _, id := range ids {
+		if _, err := db.ExecContext(ctx, `UPDATE `+table+` SET uuid = `+objectUUIDExpr+` WHERE id = ? AND uuid IS NULL`, id); err != nil {
+			return 0, err
+		}
+	}
+	return len(ids), nil
+}
+
+func undrawnIDs(ctx context.Context, db *sql.DB, table string) ([]int64, error) {
+	rows, err := db.QueryContext(ctx, `SELECT id FROM `+table+` WHERE uuid IS NULL ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
 }
 
 // ForgetObjectUUIDs puts a freshly bootstrapped library back to "no uuid

@@ -18,9 +18,19 @@ func TestDeriveObjectUUID_ShapeAndStability(t *testing.T) {
 	if again := DeriveObjectUUID("position", "123456789", 1); again != got {
 		t.Fatalf("not deterministic: %s then %s", got, again)
 	}
-	// Pinned: the PostgreSQL twin is checked against this very value.
-	if want := "00000000-0000-7" + got[15:]; got != want {
-		t.Fatalf("shape drift: %s", got)
+	// Pinned: a change of the derivation renames every migrated object, and
+	// the PostgreSQL twin is checked against the same function.
+	for _, c := range []struct {
+		family, key string
+		rank        int64
+		want        string
+	}{
+		{"position", "123456789", 1, "00000000-0000-7646-85b5-4923e74b4fd2"},
+		{"comment", "42|hello", 2, "00000000-0000-744e-a465-43fc7d20b77a"},
+	} {
+		if got := DeriveObjectUUID(c.family, c.key, c.rank); got != c.want {
+			t.Errorf("DeriveObjectUUID(%q, %q, %d) = %s, want %s", c.family, c.key, c.rank, got, c.want)
+		}
 	}
 }
 

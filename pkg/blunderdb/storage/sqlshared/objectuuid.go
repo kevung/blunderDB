@@ -24,7 +24,8 @@ const ObjectUUIDBatch = 20000
 // sorts before every row created since) and whose remaining 74 bits are the
 // SHA-256 of the object's family, natural key and rank among the rows sharing
 // that key. A function of the content alone — no tenant, no row id — so two
-// libraries holding the same objects converge on the same identifiers.
+// libraries holding the same objects converge on the same identifiers. A row
+// with no natural key is not derived at all (see ObjectUUIDFamily.key).
 // The SQL twin (blunderdb_derive_uuid, migration 054) must agree byte for byte.
 func DeriveObjectUUID(family, key string, rank int64) string {
 	sum := sha256.Sum256([]byte("blunderdb/uuid/1|" + family + "|" + key + "|" + strconv.FormatInt(rank, 10)))
@@ -34,7 +35,11 @@ func DeriveObjectUUID(family, key string, rank int64) string {
 
 // ObjectUUIDFamily is a kind of object carrying a uuid column, and how its
 // natural key reads. The key is a SQL expression over t (the row) and the
-// joined tables, written in the portable subset both backends speak.
+// joined tables, written in the portable subset both backends speak. It is
+// the object's content, never its row id, and NULL when the row has none
+// (a note whose position is gone): such a row draws a random identifier, as
+// a row written since does, rather than one two libraries would share for
+// different objects.
 type ObjectUUIDFamily struct {
 	Table  string
 	Family string
@@ -60,8 +65,7 @@ func joinPosition(tenanted bool) string {
 }
 
 const (
-	zobristOrID = `COALESCE(CAST(p.zobrist_hash AS TEXT), 'id:' || CAST(t.id AS TEXT))`
-	nameKey     = `t.name`
+	nameKey = `t.name`
 )
 
 // ObjectUUIDFamilies lists the objects that carry a uuid, in the order the
@@ -69,14 +73,15 @@ const (
 // named by its position's uuid, and a trigger rewriting the row of its
 // blob at every insert would double the cost of the heaviest write.
 var ObjectUUIDFamilies = []ObjectUUIDFamily{
-	{Table: "position", Family: "position", Reads: []string{"position"}, key: `COALESCE(CAST(t.zobrist_hash AS TEXT), 'id:' || CAST(t.id AS TEXT))`},
-	{Table: "comment", Family: "comment", Reads: []string{"comment", "position"}, Ranked: true, joins: joinPosition, key: zobristOrID},
+	{Table: "position", Family: "position", Reads: []string{"position"}, key: `CAST(t.zobrist_hash AS TEXT)`},
+	{Table: "comment", Family: "comment", Reads: []string{"comment", "position"}, Ranked: true, joins: joinPosition,
+		key: `CAST(p.zobrist_hash AS TEXT) || '|' || COALESCE(t.text, '')`},
 	{Table: "collection", Family: "collection", Reads: []string{"collection"}, Ranked: true, key: nameKey},
 	{Table: "match", Family: "match", Reads: []string{"match"}, Ranked: true,
-		key: `COALESCE(NULLIF(t.canonical_hash, ''), NULLIF(t.match_hash, ''), 'id:' || CAST(t.id AS TEXT))`},
+		key: `COALESCE(NULLIF(t.canonical_hash, ''), NULLIF(t.match_hash, ''))`},
 	{Table: "transcription", Family: "transcription", Reads: []string{"transcription", "match"}, Ranked: true,
 		joins: func(tn bool) string { return " LEFT JOIN match m ON m.id = t.match_id" + tenantOn(tn, "m", "t") },
-		key:   `COALESCE(m.canonical_hash, '') || '|' || COALESCE(t.label, '')`},
+		key:   `COALESCE(m.canonical_hash, '') || '|' || COALESCE(t.label, '') || '|' || COALESCE(CAST(t.document AS TEXT), '')`},
 	{Table: "lesson", Family: "lesson", Reads: []string{"lesson"}, Ranked: true, key: nameKey},
 	{Table: "anki_card", Family: "anki_card", Reads: []string{"anki_card", "anki_deck", "position"}, Ranked: true,
 		joins: func(tn bool) string {
@@ -96,7 +101,8 @@ func (f ObjectUUIDFamily) NextBoundSQL(after int64, batch int) string {
 // without an identifier. An unranked family is written one id range at a time
 // (after, upTo]; a ranked one numbers its rows over the whole table, so
 // it is written by one statement, ranges ignored (these tables hold names and
-// notes, not the positions).
+// notes, not the positions). Rows with no natural key are left for
+// the random pass that follows.
 func (f ObjectUUIDFamily) BackfillSQL(tenanted bool, after, upTo int64) string {
 	joins := ""
 	if f.joins != nil {
@@ -110,11 +116,11 @@ func (f ObjectUUIDFamily) BackfillSQL(tenanted bool, after, upTo int64) string {
 		return fmt.Sprintf(`UPDATE %[1]s SET uuid = %[2]s('%[3]s', s.k, s.rn) FROM (
 			SELECT id, k, rn FROM (
 				SELECT t.id AS id, t.uuid AS u, %[4]s AS k, row_number() OVER (PARTITION BY %[5]s ORDER BY t.id) AS rn
-				FROM %[1]s t%[6]s) x WHERE u IS NULL) s WHERE %[1]s.id = s.id`,
+				FROM %[1]s t%[6]s) x WHERE u IS NULL AND k IS NOT NULL) s WHERE %[1]s.id = s.id`,
 			f.Table, ObjectUUIDDeriveFunc, f.Family, f.key, part, joins)
 	}
 	return fmt.Sprintf(`UPDATE %[1]s SET uuid = %[2]s('%[3]s', s.k, 1) FROM (
-			SELECT t.id AS id, %[4]s AS k FROM %[1]s t%[5]s WHERE t.uuid IS NULL AND t.id > %[6]d AND t.id <= %[7]d) s
+			SELECT t.id AS id, %[4]s AS k FROM %[1]s t%[5]s WHERE t.uuid IS NULL AND (%[4]s) IS NOT NULL AND t.id > %[6]d AND t.id <= %[7]d) s
 			WHERE %[1]s.id = s.id`,
 		f.Table, ObjectUUIDDeriveFunc, f.Family, f.key, joins, after, upTo)
 }

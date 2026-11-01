@@ -183,17 +183,19 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		return err
 	}
 
-	// The rows held before the uuid columns existed get theirs, once the
-	// columns and the tables created late are there (see migrate_2_50_0_to_2_51_0).
-	if err := sqlite.EnsureObjectUUIDs(ctx, d.db); err != nil {
-		return fmt.Errorf("giving the stored objects their uuid: %w", err)
-	}
-
 	// Repair position rows the native .db importer once stored without their
 	// Zobrist hash and scalar search columns (see repairPositionsWithoutScalars).
 	// No version bump: the schema is unchanged, only the values are restored.
 	if err := d.repairPositionsWithoutScalars(ctx); err != nil {
 		return fmt.Errorf("repairing positions without scalar columns: %w", err)
+	}
+
+	// The rows held before the uuid columns existed get theirs, once the
+	// columns and the tables created late are there (see migrate_2_50_0_to_2_51_0),
+	// and once the repair above has given every position the hash its identity
+	// is derived from.
+	if err := sqlite.EnsureObjectUUIDs(ctx, d.db); err != nil {
+		return fmt.Errorf("giving the stored objects their uuid: %w", err)
 	}
 
 	// Classify every position's phase once, on the open crossing 2.19.0

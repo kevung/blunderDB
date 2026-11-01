@@ -383,6 +383,9 @@ func (s *Storage) Migrate(ctx context.Context) error {
 		if err := EnsureSchema(ctx, s.sqlDB); err != nil {
 			return err
 		}
+		if err := EnsureObjectUUIDs(ctx, s.sqlDB); err != nil {
+			return err
+		}
 		return RaiseReaderFloor(ctx, s.sqlDB)
 	}
 	return fmt.Errorf("sqlite: database is at schema version %q, need %q, and no migrator is registered (blank-import package database, e.g. `_ \"github.com/kevung/blunderdb/pkg/blunderdb/database\"`, to enable migrating older databases)", version, domain.DatabaseVersion)

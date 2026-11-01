@@ -66,6 +66,22 @@ func backfillObjectUUIDs(ctx context.Context, conn migrationConn) error {
 				break
 			}
 		}
+		// What has no natural key draws its identifier, as a new row does.
+		var n int64
+		all, err := inUnforcedTx(ctx, conn, []string{f.Table}, func(tx pgx.Tx) error {
+			tag, err := tx.Exec(ctx, `UPDATE `+f.Table+` SET uuid = blunderdb_uuid7() WHERE uuid IS NULL`)
+			n = tag.RowsAffected()
+			return err
+		})
+		if errors.Is(err, errUnforcedLockTimeout) {
+			slog.Warn("postgres: a table stayed locked; the uuid backfill resumes at the next start", "table", f.Table)
+			return nil
+		}
+		if err != nil {
+			return fmt.Errorf("postgres: draw the uuids of %s: %w", f.Table, err)
+		}
+		complete = complete && all
+		total += n
 	}
 	if !complete {
 		return nil
