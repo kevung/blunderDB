@@ -69,3 +69,48 @@ Marche à suivre (build de développement seulement : l'action n'existe pas dans
 Les événements ne viennent que de la session en cours : recharger la page les perd (le journal
 IndexedDB n'est pas relu ici). Les seuils se règlent ensuite en rejouant un journal sous
 `createAutomata(overrides)`.
+
+## Première mesure réelle (2026-11-01)
+
+Corpus : `~/bkgm/unger.db` match 285 (Unger – Sekri, 9 pts), vidéo locale `.webm` 640×480,
+24 img/s, caméra fixe au-dessus du plateau ; 383 Repères de jet posés à la main avant l'ADR-0109
+(vision éteinte, vitesse ×2 environ, voir `05-histogramme.md`). Lecture à 1× dans `make dev` sur
+une copie de la base ; une calibration, puis une deuxième à 0 h 53 (contournement de #868). Les
+événements cessent à 55 min 12 s (après un `view.lost`, l'analyse ne repart plus malgré la
+recalibration) : 1168 événements sur les 55 premières minutes d'un match de 97.
+
+```
+type             état     nombre
+hands.in         sûr       335      (un toutes les 5 s)
+hands.out        sûr       185
+dice.thrown      sûr        50
+dice.rest        sûr        53
+dice.pickup      à vér.     12
+frame.uncertain            406      (un toutes les 4 s)
+view.lost / view.found   40 / 38
+overlay.changed  à vér.     18
+```
+
+`mesure.py`, `dice.rest = roll_tick_ms`, ±0,5 s : TP 8, FP 47, FN 287, F1 0,046 ; gain de
+navigation du modèle 2,4 %.
+
+Restreint aux tranches où l'analyse tournait (hors `view.lost` → `view.found`) : 1594 s couvertes
+sur 3313 (48 %), 75 Repères de jet. Un `dice.rest` sûr tombe dans [Repère − 15 s ; Repère + 1 s]
+pour 20 d'entre eux (27 %), écart médian 8 s ; au hasard, avec 53 repos en 1594 s, la chance d'en
+avoir un dans 16 s est de 41 % : **le détecteur de dés ne voit pas les jets**. Les mains sont vues
+presque partout (73/75), mais leur densité rend ce chiffre non informatif (84 % au hasard).
+
+Verdict : **V1 ne tient pas sur cette vidéo réelle.** Trois causes, par ordre de poids supposé :
+
+1. **Présence** (#868) : la référence est prise pions compris, la vue se « perd » quand la position
+   s'éloigne de celle de la calibration ; 52 % du temps sans analyse, et un `view.lost` final dont
+   l'analyse ne revient pas même après recalibration.
+2. **Témoin hors plateau** : 406 `frame.uncertain` en 55 min ; chacun réinitialise les fonds des
+   ROI, ce qui empêche l'automate des dés d'atteindre ses durées minimales. Le témoin tombe
+   vraisemblablement là où passent les bras ou le corps des joueurs.
+3. **Seuils des automates** réglés sur des journaux synthétiques (`THRESHOLDS` d'`automata.js`).
+
+Suite : le journal de descripteurs de cette lecture est dans l'IndexedDB de la webview de
+`make dev` (sessions `<draftId>:Calibration` et `<draftId>:Calibration 2`). Le rendre lisible
+hors du volet (export dev-only, `readJournal`) permettrait de régler témoin et seuils par `replay`
+avec les Repères comme fenêtres, sans relire la vidéo ; puis corriger #868 et relancer la mesure.
