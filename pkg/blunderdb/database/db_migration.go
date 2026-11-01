@@ -102,6 +102,7 @@ var migrationSteps = []migrationStep{
 	{"2.47.0", "2.48.0", (*Database).migrate_2_47_0_to_2_48_0},
 	{"2.48.0", "2.49.0", (*Database).migrate_2_48_0_to_2_49_0},
 	{"2.49.0", "2.50.0", (*Database).migrate_2_49_0_to_2_50_0},
+	{"2.50.0", "2.51.0", (*Database).migrate_2_50_0_to_2_51_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -180,6 +181,12 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	// creating some tables (e.g. filter_library was missing from some migration paths).
 	if err := d.ensureAllTablesExist(); err != nil {
 		return err
+	}
+
+	// The rows held before the uuid columns existed get theirs, once the
+	// columns and the tables created late are there (see migrate_2_50_0_to_2_51_0).
+	if err := sqlite.EnsureObjectUUIDs(ctx, d.db); err != nil {
+		return fmt.Errorf("giving the stored objects their uuid: %w", err)
 	}
 
 	// Repair position rows the native .db importer once stored without their

@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.50.0"
+	DatabaseVersion = "2.51.0"
 
 	// MinReaderVersion is the oldest schema version a binary must speak to
 	// open a database this binary has opened for writing. Raised only when a

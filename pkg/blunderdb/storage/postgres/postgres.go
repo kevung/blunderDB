@@ -220,6 +220,9 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	if err := runGoBackfills(ctx, conn); err != nil {
 		return err
 	}
+	if err := backfillObjectUUIDs(ctx, conn); err != nil {
+		return err
+	}
 	if err := setDatabaseVersion(ctx, conn); err != nil {
 		return err
 	}
