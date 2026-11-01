@@ -51,6 +51,9 @@ func uuidSnapshot(t *testing.T, conn *pgx.Conn, tenant string) map[string]string
 				}
 				out[c.family+"/"+label] = got
 			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
+			}
 			rows.Close()
 		}
 	})
