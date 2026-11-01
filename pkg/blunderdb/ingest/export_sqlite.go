@@ -658,6 +658,7 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 	var analysisMET map[int64]int64
 	var moves map[int64][]*domain.Move
 	var comments map[int64][]*domain.CommentEntry
+	var drawings map[int64][]domain.DrawingMark
 	var err error
 	if e.opts.Analysis {
 		if analyses, err = e.src.Analyses().LoadMany(e.ctx, e.scope, ids); err != nil {
@@ -675,6 +676,11 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 	if e.opts.Comments {
 		if comments, err = e.src.Comments().ByPositions(e.ctx, e.scope, ids); err != nil {
 			return fmt.Errorf("cannot read comments to export: %w", err)
+		}
+		if dp, ok := e.src.(storage.DrawingProvider); ok {
+			if drawings, err = dp.PositionDrawings().Drawings(e.ctx, e.scope, ids); err != nil {
+				return fmt.Errorf("cannot read drawings to export: %w", err)
+			}
 		}
 	}
 
@@ -718,6 +724,14 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				if err := e.carryTable(analysisMET[p.ID], newID); err != nil {
 					return err
 				}
+			}
+		}
+		for rank, m := range drawings[p.ID] {
+			if _, err := e.tx.ExecContext(e.ctx,
+				`INSERT INTO position_drawing (position_id, rank, kind, from_point, to_point, color) VALUES (?, ?, ?, ?, ?, ?)`,
+				newID, rank, m.Kind, m.From, m.To, m.Color); err != nil {
+				e.skip("inserting drawing mark for position", "newID", newID, "oldID", p.ID, "err", err)
+				break
 			}
 		}
 		for _, c := range comments[p.ID] {
@@ -1159,6 +1173,7 @@ var exportedTables = map[string]string{
 	"position":              "the selected positions, under the export's own ids",
 	"analysis":              "carried with its position",
 	"comment":               "the carried comment columns of each position (issuance.CarriedCommentColumns)",
+	"position_drawing":      "the arrows and squares drawn on each position, with the comments option: a drawing is an annotation of the position like its comments",
 	"metadata":              "the allow-list issuance.CarriedMetadataKeys, plus the producer's watermark",
 	"filter_library":        "the saved filters of the selection",
 	"collection":            "the selected collections",

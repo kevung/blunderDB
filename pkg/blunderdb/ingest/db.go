@@ -78,6 +78,14 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, fmt.Errorf("ingest: read source comments: %w", err)
 	}
 
+	// A source from before drawings existed (schema < 2.54.0) has none.
+	var srcDrawings map[int64][]domain.DrawingMark
+	if source.HasTable(ctx, "position_drawing") {
+		if srcDrawings, err = source.PositionDrawings().Drawings(ctx, scope, ids); err != nil {
+			return Summary{}, fmt.Errorf("ingest: read source drawings: %w", err)
+		}
+	}
+
 	srcCollections, err := ReadSourceCollections(ctx, source, scope)
 	if err != nil {
 		return Summary{}, err
@@ -114,6 +122,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		pos      *domain.Position
 		analysis *domain.PositionAnalysis
 		comments []*domain.CommentEntry
+		drawing  []domain.DrawingMark
 	}
 	srcVersion, err := source.Version(ctx)
 	if err != nil {
@@ -152,6 +161,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 			rec.analysis = nil
 		}
 		rec.comments = srcComments[p.ID]
+		rec.drawing = srcDrawings[p.ID]
 		records = append(records, rec)
 	}
 
@@ -218,6 +228,9 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 			}
 		}
 		if err := mergeDBCommentsPreloaded(ctx, tx, scope, s.id, targetComments[s.id], s.rec.comments); err != nil {
+			return sum, err
+		}
+		if err := mergeDBDrawing(ctx, tx, scope, s.id, s.rec.drawing); err != nil {
 			return sum, err
 		}
 		sum.SavedPositions++
@@ -534,4 +547,19 @@ func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, 
 		}
 	}
 	return nil
+}
+
+// mergeDBDrawing gives a position the imported drawing unless it already has
+// one: a drawing is the player's own work on the board, and a second import
+// of the same file must not undo a later edit of it.
+func mergeDBDrawing(ctx context.Context, tx storage.Tx, scope string, positionID int64, marks []domain.DrawingMark) error {
+	dp, ok := tx.(storage.DrawingProvider)
+	if !ok || len(marks) == 0 {
+		return nil
+	}
+	have, err := dp.PositionDrawings().Drawing(ctx, scope, positionID)
+	if err != nil || len(have) > 0 {
+		return err
+	}
+	return dp.PositionDrawings().SetDrawing(ctx, scope, positionID, marks)
 }
