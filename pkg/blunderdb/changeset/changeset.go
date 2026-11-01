@@ -69,14 +69,27 @@ type Report struct {
 
 // codec reads and writes one family's content.
 type codec struct {
+	// rank orders the families of one set on import: what others point at
+	// (positions, matches, collections) before what points at them.
+	rank      int
 	trashKind domain.TrashKind
-	read      func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error)
-	create    func(ctx context.Context, s storage.Stores, scope string, payload json.RawMessage) (int64, error)
-	update    func(ctx context.Context, s storage.Stores, scope string, id int64, payload json.RawMessage) error
-	remove    func(ctx context.Context, s storage.Stores, scope string, id int64, toTrash bool) error
+	// locate finds the local object a record names when its uuid is unknown
+	// here, and gives it the record's uuid when that is the older one; nil for
+	// the families whose uuid is the only name.
+	locate func(ctx context.Context, s storage.Stores, scope string, r Record) (id int64, uuid string, found bool, err error)
+	read   func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error)
+	create func(ctx context.Context, s storage.Stores, scope string, payload json.RawMessage) (int64, error)
+	update func(ctx context.Context, s storage.Stores, scope string, id int64, payload json.RawMessage) error
+	remove func(ctx context.Context, s storage.Stores, scope string, id int64, toTrash bool) error
 }
 
-var codecs = map[string]codec{"collection": collectionCodec}
+var codecs = map[string]codec{
+	"position":   positionCodec,
+	"match":      matchCodec,
+	"collection": collectionCodec,
+	"comment":    commentCodec,
+	"lesson":     lessonCodec,
+}
 
 func families() []string {
 	out := make([]string, 0, len(codecs))
@@ -218,7 +231,9 @@ func tieKey(op string, payload []byte) string {
 // transaction.
 func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Report, error) {
 	var rep Report
-	for _, r := range set.Records {
+	records := slices.Clone(set.Records)
+	slices.SortStableFunc(records, func(a, b Record) int { return codecs[a.Family].rank - codecs[b.Family].rank })
+	for _, r := range records {
 		cd, ok := codecs[r.Family]
 		if !ok {
 			rep.Unsupported++
@@ -264,13 +279,24 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 	if err != nil {
 		return false, false, err
 	}
-	local, err := journal.Entry(ctx, scope, r.UUID)
-	hasEntry := err == nil
+	id, err := uuids.ObjectID(ctx, scope, r.Family, r.UUID)
+	held := err == nil
 	if err != nil && !errors.Is(err, storage.ErrNotFound) {
 		return false, false, err
 	}
-	id, err := uuids.ObjectID(ctx, scope, r.Family, r.UUID)
-	held := err == nil
+	if !held && cd.locate != nil {
+		// The same object under another name: the older uuid is kept on both
+		// sides, whichever library meets the other first.
+		var uuid string
+		if id, uuid, held, err = cd.locate(ctx, s, scope, r); err != nil {
+			return false, false, err
+		}
+		if held {
+			r.UUID = uuid
+		}
+	}
+	local, err := journal.Entry(ctx, scope, r.UUID)
+	hasEntry := err == nil
 	if err != nil && !errors.Is(err, storage.ErrNotFound) {
 		return false, false, err
 	}
@@ -309,7 +335,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 				return false, false, err
 			}
 		}
-		if r.Op == storage.ChangeDelete {
+		if r.Op == storage.ChangeDelete && cd.trashKind != "" {
 			// Gone for good: the entry the trash kept can no longer be restored.
 			if err := trash.DiscardByUUID(ctx, s, scope, cd.trashKind, r.UUID); err != nil {
 				return false, false, err
@@ -340,7 +366,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 
 // --- collection ---
 
-// collectionPayload is a collection with its membership, by position uuid, in
+// collectionPayload is a collection with its membership, by board hash, in
 // order. A living collection (FilterQuery) has no membership rows. A member
 // whose position this library does not hold is left out on import.
 type collectionPayload struct {
@@ -352,6 +378,7 @@ type collectionPayload struct {
 }
 
 var collectionCodec = codec{
+	rank:      2,
 	trashKind: domain.TrashCollection,
 	read: func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error) {
 		c, err := s.Collections().Get(ctx, scope, id)
@@ -366,15 +393,12 @@ var collectionCodec = codec{
 		if err != nil {
 			return nil, err
 		}
-		uu := s.(storage.ObjectUUIDProvider).ObjectUUIDs()
 		for _, pid := range ids {
-			u, err := uu.ObjectUUID(ctx, scope, "position", pid)
+			ref, err := refOf(ctx, s, scope, pid)
 			if err != nil {
 				return nil, err
 			}
-			if u != "" {
-				p.Members = append(p.Members, u)
-			}
+			p.Members = append(p.Members, ref)
 		}
 		return p, nil
 	},
@@ -417,15 +441,14 @@ func fill(ctx context.Context, s storage.Stores, scope string, id int64, p colle
 		}
 	}
 	if p.FilterQuery == "" {
-		uu := s.(storage.ObjectUUIDProvider).ObjectUUIDs()
 		var want []int64
-		for _, u := range p.Members {
-			pid, err := uu.ObjectID(ctx, scope, "position", u)
-			if errors.Is(err, storage.ErrNotFound) {
-				continue
-			}
+		for _, ref := range p.Members {
+			pid, found, err := findPosition(ctx, s, scope, ref)
 			if err != nil {
 				return err
+			}
+			if !found {
+				continue
 			}
 			if !slices.Contains(want, pid) {
 				want = append(want, pid)

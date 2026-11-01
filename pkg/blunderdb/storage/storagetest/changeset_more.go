@@ -101,6 +101,11 @@ func CheckChangeSetScenarios(t *testing.T, a storage.Storage, ca context.Context
 	t.Run("Clock", func(t *testing.T) { scenarioClock(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("TieToTheMillisecond", func(t *testing.T) { scenarioTie(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("CollectionContent", func(t *testing.T) { scenarioContent(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
+	t.Run("Position", func(t *testing.T) { scenarioPosition(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
+	t.Run("MembersAfterTheirPositions", func(t *testing.T) { scenarioMembersFirst(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
+	t.Run("Match", func(t *testing.T) { scenarioMatch(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
+	t.Run("Lesson", func(t *testing.T) { scenarioLesson(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
+	t.Run("Comment", func(t *testing.T) { scenarioComment(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("CursorStopsAtUncarriedFamilies", func(t *testing.T) {
 		scenarioUncarried(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb})
 	})
@@ -305,9 +310,9 @@ func scenarioContent(p *csPair) {
 // The cursor stays at the last entry of a carried family, so a family carried
 // later is not skipped.
 func scenarioUncarried(p *csPair) {
-	id, _ := p.a.Collections().Create(p.ca, p.sa, "Before a lesson", "")
+	id, _ := p.a.Collections().Create(p.ca, p.sa, "Before a draft", "")
 	u := p.uuid(p.a, p.ca, p.sa, id)
-	if _, err := p.a.Lessons().Create(p.ca, p.sa, "Not carried yet", ""); err != nil {
+	if _, err := p.a.Transcriptions().Save(p.ca, p.sa, &storage.Transcription{FormatVersion: "1", Label: "Not carried yet", Document: "{}"}); err != nil {
 		p.t.Fatal(err)
 	}
 	set, err := changeset.Export(p.ca, p.a, p.sa, 0, 1000)
@@ -319,7 +324,7 @@ func scenarioUncarried(p *csPair) {
 		p.t.Errorf("cursor %d passed the carried entries (%d) over an uncarried family", set.Cursor, last)
 	}
 	for _, r := range set.Records {
-		if r.Family != "collection" {
+		if r.Family == "transcription" {
 			p.t.Errorf("a record of family %s", r.Family)
 		}
 	}

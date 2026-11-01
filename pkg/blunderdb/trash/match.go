@@ -461,3 +461,96 @@ func inTx(ctx context.Context, s storage.Stores, scope string, fn func(storage.S
 	}
 	return tx.Commit()
 }
+
+// SnapshotMatch reads a match whole, as Match does before deleting it, without
+// deleting it.
+func SnapshotMatch(ctx context.Context, s storage.Stores, scope string, matchID int64) (*domain.TrashMatchPayload, error) {
+	return snapshotMatch(ctx, s, scope, matchID)
+}
+
+// RebuildMatchAs stores a snapshot as a new match under a fresh id, in the
+// caller's transaction: what a library receives from another one, where the
+// ids of the snapshot name nothing. Its positions are saved by hash (each
+// becomes whichever row holds it) and keep neither analysis nor notes; its
+// tournament, import batch, direction slot, drafts and origin are the
+// sender's and are left out. ErrConflict when a match with the same hashes is
+// held. The positions it creates are named by the library; the caller gives
+// the match its uuid.
+func RebuildMatchAs(ctx context.Context, s storage.Stores, scope string, p *domain.TrashMatchPayload) (int64, error) {
+	ms := s.Matches()
+	m := p.Match
+	if m.MatchHash != "" || m.CanonicalHash != "" {
+		if _, found, err := ms.FindByHash(ctx, scope, m.MatchHash, m.CanonicalHash); err != nil {
+			return 0, err
+		} else if found {
+			return 0, storage.ErrConflict
+		}
+	}
+	positions := make(map[int64]int64, len(p.Positions))
+	for _, pp := range p.Positions {
+		pos := pp.Position
+		old := pos.ID
+		pos.ID = 0
+		id, _, err := s.Positions().SaveCreated(ctx, scope, &pos)
+		if err != nil {
+			return 0, err
+		}
+		positions[old] = id
+	}
+	m.ID, m.TournamentID, m.ImportBatchID = 0, nil, 0
+	matchID, err := ms.Save(ctx, scope, &m)
+	if err != nil {
+		return 0, err
+	}
+	if m.VideoSource != nil {
+		if err := ms.SetVideoSource(ctx, scope, matchID, *m.VideoSource); err != nil {
+			return 0, err
+		}
+	}
+	if m.Comment != "" {
+		if err := ms.UpdateComment(ctx, scope, matchID, m.Comment); err != nil {
+			return 0, err
+		}
+	}
+	games := make(map[int64]int64, len(p.Games))
+	for _, g := range p.Games {
+		old := g.ID
+		g.ID, g.MatchID = 0, matchID
+		id, err := ms.CreateGame(ctx, scope, &g)
+		if err != nil {
+			return 0, err
+		}
+		games[old] = id
+	}
+	moves := make(map[int64]int64, len(p.Moves))
+	for _, mv := range p.Moves {
+		gameID, ok := games[mv.GameID]
+		if !ok {
+			return 0, fmt.Errorf("match snapshot: move %d names game %d, absent: %w", mv.ID, mv.GameID, storage.ErrInvalid)
+		}
+		old := mv.ID
+		mv.ID, mv.GameID = 0, gameID
+		if mv.PositionID != 0 {
+			mv.PositionID = positions[mv.PositionID]
+		}
+		id, err := ms.CreateMove(ctx, scope, &mv)
+		if err != nil {
+			return 0, err
+		}
+		moves[old] = id
+	}
+	for _, ma := range p.MoveAnalyses {
+		moveID, ok := moves[ma.MoveID]
+		if !ok {
+			return 0, fmt.Errorf("match snapshot: analysis %d names move %d, absent: %w", ma.ID, ma.MoveID, storage.ErrInvalid)
+		}
+		ma.ID, ma.MoveID = 0, moveID
+		if _, err := ms.CreateMoveAnalysis(ctx, scope, &ma); err != nil {
+			return 0, err
+		}
+	}
+	if err := s.Stats().RefreshMatchStats(ctx, scope, []int64{matchID}); err != nil {
+		return 0, err
+	}
+	return matchID, nil
+}
