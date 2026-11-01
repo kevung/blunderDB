@@ -143,3 +143,9 @@ que pour cette habitude (×2, sans pause) et ne sont pas des constantes :
   borner en temps d'horloge (≈ 8 s × vitesse, en média) plutôt qu'en temps de média fixe. 60 s
   couvre déjà ×4 (pire cas mesuré 6 s d'horloge → 24 s de média) ; une borne fixe à 15 s ne le
   couvrirait pas.
+
+Habitude déclarée par le transcripteur : vidéo laissée à ×2 pendant la frappe, mise en pause
+parfois sur un coup complexe ou dans une course de sortie rapide. Le délai mesuré mélange donc deux
+régimes : le gros de la distribution suit le temps de réaction × 2, les pauses tirent vers 0 (et
+peuvent expliquer les deux Repères à peine postérieurs à l'image lisible). C'est une raison de plus
+pour estimer la fenêtre par transcription, et pour la garder large d'un côté et de l'autre.
