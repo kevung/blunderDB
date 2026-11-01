@@ -46,7 +46,13 @@ GStreamer. Et le Repère du jet n'est pas l'instant de l'événement : la premi�
    homographie et imagettes vivent en `localStorage` par `draftId`, comme la rotation de la
    vidéo (ADR-0108 règle 6). Un score de présence du plateau calibré, à environ 2 Hz, bascule
    avec hystérésis (perdu sous 0,5, retrouvé au-dessus de 0,7) : « vue perdue » s'affiche, et
-   l'analyse se tait jusqu'au retour.
+   l'analyse se tait jusqu'au retour. Le score ne compare que ce que le jeu ne modifie pas — une
+   bande du cadre le long des deux grands côtés et au-delà du plateau de sortie, et la bande
+   vide entre les pointes des flèches, barre exclue — : une position éloignée de celle de la
+   calibration reste la même vue. La vue n'est perdue qu'après quatre secondes de score bas,
+   pour qu'une main ou un bras au-dessus du plateau ne coupe pas l'analyse ; elle est retrouvée
+   dès le premier score haut. Une nouvelle calibration est faite sur un plateau visible : si la
+   vue était perdue, elle émet « vue retrouvée » et relance l'analyse.
 4. **Trois automates couplés — mains, dés, partie — sur des descripteurs census.** Chaque ROI
    est normalisée par sa moyenne et comparée en census, invariant à l'auto-exposition ; une ROI
    témoin hors plateau qui change à plus de 60 % rend l'image incertaine et réinitialise les

@@ -1,19 +1,28 @@
 // The panel's side of the vision core for one video: the calibration in force becomes the
 // ROIs of the core, the core's events flow into the panel's store, and the presence of the
 // calibrated board is judged here, at about 2 Hz, against a thumbnail taken at calibration
-// (ADR-0109 rule 3). The reference thumbnail lives in localStorage with the calibration, per
-// draft; nothing of it is written to the database.
+// (ADR-0109 rule 3): on what the game never changes only, and lost only once the score has
+// stayed low for PRESENCE_HOLD_MS. The reference thumbnail lives in localStorage with the
+// calibration, per draft; nothing of it is written to the database.
 
 import { createVision } from '../vision/vision.js';
 import { createFrameGrabber } from '../vision/sampler.js';
 import { EVENT_TYPES, makeEvent, STATES } from '../vision/contract.js';
-import { BOARD_RECT, boardRois, createPresenceTracker, presenceScore, rectifyZone } from '../vision/geometry/index.js';
+import { PRESENCE_RECT, boardRois, createPresenceTracker, presenceMask, presenceScore, rectifyZone } from '../vision/geometry/index.js';
 import { overlayInFrame, scaleHomography } from './videoCalibration.js';
 
 /** Presence is read twice a second. */
 export const PRESENCE_PERIOD_MS = 500;
-/** The reference thumbnail: the rectified board, in pixels. */
-export const THUMB = Object.freeze({ width: 64, height: 32 });
+/**
+ * How long the score must stay low before the view is lost. A hand moving checkers, or an arm
+ * reaching across the board, hides the compared zones for one to three seconds; a cut, a zoom
+ * or a moved camera lasts longer, and the few seconds of analysis it costs are cheaper than
+ * an analysis silenced at every move.
+ */
+export const PRESENCE_HOLD_MS = 4000;
+/** The reference thumbnail: the rectified board and a band of its frame, in pixels. */
+export const THUMB = Object.freeze({ width: 80, height: 80 });
+const MASK = presenceMask(THUMB.width, THUMB.height, PRESENCE_RECT);
 /** The frame the thumbnail is sampled from. */
 const FRAME = Object.freeze({ width: 320, height: 180 });
 const KEY_PREFIX = 'blunderdb.transcription.videoPresence.';
@@ -66,12 +75,21 @@ export function createVisionSession({ video, key, push, vision = createVision({ 
     /** @type {{ grab(): { width: number, height: number, data: ArrayLike<number> } } | null} */
     let grabber = null;
     let running = false;
+    // Whether the panel's last word on the board is "view lost": a new calibration, made on a
+    // visible board, takes it back.
+    let announcedLost = false;
+
+    /** @param {string} type @param {number} at @param {Record<string, unknown>} payload */
+    function announce(type, at, payload) {
+        announcedLost = type === EVENT_TYPES.VIEW_LOST;
+        push(makeEvent(type, Number.isFinite(at) ? Math.max(0, at) : 0, STATES.SURE, payload));
+    }
 
     function thumbnail() {
         if (!active) return null;
         grabber ??= createGrabber();
         const image = grabber.grab();
-        return rectifyZone(image, scaleHomography(active.modelToImage, image.width, image.height), BOARD_RECT, THUMB.width, THUMB.height);
+        return rectifyZone(image, scaleHomography(active.modelToImage, image.width, image.height), PRESENCE_RECT, THUMB.width, THUMB.height);
     }
 
     function tick() {
@@ -88,10 +106,13 @@ export function createVisionSession({ video, key, push, vision = createVision({ 
             saveReference(String(key), active, thumb);
             return;
         }
-        const score = presenceScore(reference, thumb);
-        const { present, changed } = tracker.update(score);
+        const score = presenceScore(reference, thumb, MASK);
+        const now = video.currentTime;
+        const { present, changed, since } = tracker.update(score, now);
         if (!changed) return;
-        push(makeEvent(present ? EVENT_TYPES.VIEW_FOUND : EVENT_TYPES.VIEW_LOST, Math.max(0, video.currentTime), STATES.SURE, { score }));
+        // The view left at the first low reading of the run, not when the run grew long enough.
+        if (present) announce(EVENT_TYPES.VIEW_FOUND, now, { score });
+        else announce(EVENT_TYPES.VIEW_LOST, Number.isFinite(since) ? Math.min(since, now) : now, { score });
         // While the board is out of the picture the analysis keeps silent.
         if (present) startAnalysis();
         else stopAnalysis();
@@ -123,7 +144,8 @@ export function createVisionSession({ video, key, push, vision = createVision({ 
         vision.calibrate(overlay ? { ...res.calibration, overlay } : res.calibration);
         session = `${key}:${active.name}`;
         reference = loadReference(String(key), active);
-        tracker = createPresenceTracker();
+        tracker = createPresenceTracker({ hold: Math.ceil(PRESENCE_HOLD_MS / PRESENCE_PERIOD_MS) });
+        if (announcedLost) announce(EVENT_TYPES.VIEW_FOUND, video.currentTime, { calibration: active.name });
         startAnalysis();
         timer ??= setInterval(tick, PRESENCE_PERIOD_MS);
         return true;
