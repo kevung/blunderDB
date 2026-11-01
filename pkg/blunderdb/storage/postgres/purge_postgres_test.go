@@ -217,11 +217,15 @@ func TestPurgeTenant(t *testing.T) {
 		if tbl == "change_log" {
 			continue // fed by the triggers of the rows seeded above, not seeded
 		}
-		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != 1 {
-			t.Fatalf("seed sanity: %s tenant A: got %d rows, want 1", tbl, got)
+		want := 1
+		if tbl == "position" {
+			want = 2 // a derivation links two positions
 		}
-		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != 1 {
-			t.Fatalf("seed sanity: %s tenant B: got %d rows, want 1", tbl, got)
+		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != want {
+			t.Fatalf("seed sanity: %s tenant A: got %d rows, want %d", tbl, got, want)
+		}
+		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != want {
+			t.Fatalf("seed sanity: %s tenant B: got %d rows, want %d", tbl, got, want)
 		}
 	}
 

@@ -93,7 +93,7 @@ func readCommentShape(t *testing.T, db *sql.DB) commentShape {
 	}
 	// Whitespace in a statement is layout, not schema: an index rebuilt from
 	// the reference statement keeps its meaning, not its spacing.
-	schema := strs(`SELECT type, name, tbl_name, sql FROM sqlite_master WHERE type IN ('index', 'trigger') AND sql IS NOT NULL ORDER BY type, name`)
+	schema := strs(`SELECT type, name, tbl_name, sql FROM sqlite_master WHERE type IN ('index', 'trigger') AND tbl_name = 'comment' AND sql IS NOT NULL ORDER BY type, name`)
 	for i, s := range schema {
 		schema[i] = strings.Join(strings.Fields(s), " ")
 	}
