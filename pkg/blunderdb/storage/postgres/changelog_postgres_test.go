@@ -126,3 +126,30 @@ func TestMigrate_055_FromAnRLSLibrary(t *testing.T) {
 		}
 	}
 }
+
+// An entry is listed only once every transaction older than its writer has
+// ended: a cursor past a committed seq cannot skip a lower one still in flight.
+func TestChangeJournal_Postgres_HidesBehindOpenTransactions(t *testing.T) {
+	ctx := context.Background()
+	s, _ := openRLS(t)
+	c1 := tctx(ctx, "1")
+	tx, err := s.BeginTx(c1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := tx.Collections().Create(c1, "1", "in flight", ""); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Collections().Create(c1, "1", "committed after", ""); err != nil {
+		t.Fatal(err)
+	}
+	if cs, err := s.ChangeJournal().Changes(c1, "1", 0, 100); err != nil || len(cs) != 0 {
+		t.Fatalf("while a writer is in flight: %+v, %v", cs, err)
+	}
+	if err := tx.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	if cs, err := s.ChangeJournal().Changes(c1, "1", 0, 100); err != nil || len(cs) != 2 {
+		t.Fatalf("after the commit: %+v, %v", cs, err)
+	}
+}

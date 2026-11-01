@@ -47,8 +47,12 @@ var sqliteOnlyIndexes = []string{
 }
 
 // postgresOnlyIndexes are declared here and deliberately absent from SQLite.
-// None today; add an entry (with a reason) rather than loosening the test.
-var postgresOnlyIndexes = []string{}
+// Add an entry (with a reason) rather than loosening the test.
+var postgresOnlyIndexes = []string{
+	// SQLite's change_log is keyed by its seq (INTEGER PRIMARY KEY): the
+	// primary key is the index.
+	"idx_change_log_seq",
+}
 
 // indexDecl is one CREATE INDEX statement, normalised for comparison.
 type indexDecl struct {

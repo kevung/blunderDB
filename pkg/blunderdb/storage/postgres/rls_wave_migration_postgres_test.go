@@ -5,6 +5,7 @@ package postgres_test
 import (
 	"context"
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -82,6 +83,10 @@ func execUnforced(t *testing.T, conn *pgx.Conn, tables []string, stmts []string)
 	t.Helper()
 	ctx := context.Background()
 	var all []string
+	// The journal triggers write change_log whatever table is rewound.
+	if !slices.Contains(tables, "change_log") {
+		tables = append(slices.Clone(tables), "change_log")
+	}
 	for _, tbl := range tables {
 		all = append(all, `ALTER TABLE `+tbl+` NO FORCE ROW LEVEL SECURITY`)
 	}

@@ -58,12 +58,12 @@ func startPostgres(t *testing.T) string {
 // wantTables is the full table set, sorted (the v2.7.0 baseline plus the
 // schema_migrations bookkeeping table created by the forward-migration runner).
 var wantTables = []string{
-	"action_label", "analysis", "anki_card", "anki_deck", "anki_review_log",
+	"action_label", "analysis", "anki_card", "anki_deck", "anki_review_log", "change_log",
 	"collection", "collection_position",
 	"command_history", "comment", "direction", "direction_event",
 	"direction_pair_member", "duel", "event_alias",
 	"filter_library", "game", "import_batch", "import_batch_file",
-	"change_log", "lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_origin", "match_stats", "match_stats_cell", "match_stats_position",
+	"lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_origin", "match_stats", "match_stats_cell", "match_stats_position",
 	"metadata", "move", "move_analysis",
 	"player_alias", "position", "rencontre", "schema_migrations", "search_history", "session_state", "study_mark",
 	"table_setting", "tournament", "training_item", "training_session", "transcription",

@@ -29,6 +29,10 @@ CREATE TABLE IF NOT EXISTS change_log (
     family     TEXT        NOT NULL,
     op         TEXT        NOT NULL CHECK (op IN ('create', 'update', 'delete', 'trash')),
     changed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    -- The writer's transaction: a reader shows an entry only once every
+    -- transaction older than it has ended (pg_snapshot_xmin), so a cursor never
+    -- passes the seq of a writer still in flight.
+    xid        xid8        NOT NULL DEFAULT pg_current_xact_id(),
     PRIMARY KEY (tenant_id, uuid)
 );
 CREATE INDEX IF NOT EXISTS idx_change_log_seq ON change_log (tenant_id, seq);
@@ -56,7 +60,7 @@ BEGIN
         IF OLD.uuid IS NOT NULL THEN
             INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (OLD.tenant_id, OLD.uuid, TG_ARGV[0], 'delete')
             ON CONFLICT (tenant_id, uuid) DO UPDATE
-                SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = 'delete', changed_at = now();
+                SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = 'delete', changed_at = now(), xid = pg_current_xact_id();
         END IF;
         RETURN OLD;
     END IF;
@@ -75,7 +79,7 @@ BEGIN
     END IF;
     INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (NEW.tenant_id, NEW.uuid, TG_ARGV[0], op)
     ON CONFLICT (tenant_id, uuid) DO UPDATE
-        SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = EXCLUDED.op, changed_at = now();
+        SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = EXCLUDED.op, changed_at = now(), xid = pg_current_xact_id();
     RETURN NEW;
 END $$;
 
@@ -110,7 +114,7 @@ BEGIN
     IF u IS NOT NULL THEN
         INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (NEW.tenant_id, u, 'position', 'update')
         ON CONFLICT (tenant_id, uuid) DO UPDATE
-            SET seq = nextval('change_log_seq'), family = 'position', op = 'update', changed_at = now();
+            SET seq = nextval('change_log_seq'), family = 'position', op = 'update', changed_at = now(), xid = pg_current_xact_id();
     END IF;
     RETURN NEW;
 END $$;

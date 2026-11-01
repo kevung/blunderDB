@@ -33,9 +33,11 @@ const ChangedAtLayout = "2006-01-02T15:04:05.000Z"
 // tables write. A cursor is the seq of the last change a reader saw (0 for
 // everything the journal holds). Seq is monotone, not gap-free, and a
 // concurrent PostgreSQL writer can commit a lower seq after a higher one was
-// read. A reader that must not miss it cannot rely on the cursor alone: the
-// fix (comparing the transaction snapshot's xmin with the writer's xid8) is not
-// implemented; see changeset.Export.
+// read; PostgreSQL therefore lists an entry only once its writer's xid8 is
+// below pg_snapshot_xmin, i.e. every transaction that started before it has
+// ended. What remains: two writers whose seq draw order differs from their xid
+// order (the older xid draws its seq second) can still be read out of order;
+// a cursor on (xid, seq) would close it. SQLite has one writer at a time.
 type ChangeJournalStore interface {
 	// Changes lists up to limit changes with seq > after, oldest first.
 	Changes(ctx context.Context, scope string, after int64, limit int) ([]Change, error)

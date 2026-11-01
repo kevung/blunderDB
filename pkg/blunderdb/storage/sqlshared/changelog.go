@@ -33,6 +33,11 @@ func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, famili
 	tenant, targs := s.DB.TenantFilter("", scope)
 	args := append(targs, after)
 	where := tenant + ` AND seq > ?`
+	if s.DB.Name() == "postgres" {
+		// Only entries whose writer, and every older transaction, has ended:
+		// a lower seq cannot still be committed behind the one read.
+		where += ` AND xid < pg_snapshot_xmin(pg_current_snapshot())`
+	}
 	if len(families) > 0 {
 		where += ` AND family IN (` + Placeholders(len(families)) + `)`
 		for _, f := range families {
@@ -130,7 +135,7 @@ func (s *ChangeJournalStore) Mark(ctx context.Context, scope, family, uuid, op, 
 		_, err = s.DB.Exec(ctx, `INSERT INTO change_log (tenant_id, uuid, family, op, changed_at)
 			VALUES (?, CAST(? AS uuid), ?, ?, COALESCE(CAST(NULLIF(?, '') AS timestamptz), now()))
 			ON CONFLICT (tenant_id, uuid) DO UPDATE SET seq = nextval('change_log_seq'), family = EXCLUDED.family,
-			op = EXCLUDED.op, changed_at = EXCLUDED.changed_at`, s.DB.ScopeArg(scope), uuid, family, op, at)
+			op = EXCLUDED.op, changed_at = EXCLUDED.changed_at, xid = pg_current_xact_id()`, s.DB.ScopeArg(scope), uuid, family, op, at)
 	}
 	if err != nil {
 		return errf(s.DB, "mark change", err)
