@@ -114,6 +114,8 @@ type TrashAnkiCardPayload struct {
 // (Position.ID), not only those the delete purged: a position still held at
 // delete time can be gone by restore time.
 type TrashMatchPayload struct {
+	// UUID is the identifier the match held, given back by a restore.
+	UUID         string                 `json:"uuid,omitempty"`
 	Match        Match                  `json:"match"`
 	Games        []Game                 `json:"games,omitempty"`
 	Moves        []Move                 `json:"moves,omitempty"`

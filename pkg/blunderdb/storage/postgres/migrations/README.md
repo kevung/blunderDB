@@ -365,7 +365,11 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   (no SECURITY DEFINER); no COMMIT, so it holds on `blunderdb_user` under FORCE
   RLS. The SQLite twin is `sqlite.EnsureChangeLog`.
 
-  Cost: a trigger per write (measured in the PR); ACCESS EXCLUSIVE only for the
-  instant `CREATE TRIGGER` takes on each table.
+  Cost: a trigger per write (measured in the PR). `CREATE TRIGGER` takes
+  SHARE ROW EXCLUSIVE (reads pass, writes wait) on each table, and the lock is
+  held on all eight tables (seven uuid-bearing ones and `analysis`) until the
+  file's transaction ends. The file sets `lock_timeout = 15s`: a table kept
+  busy by a long transaction fails the migration, which the next start retries.
+  `analysis` has a trigger of its own that journals its position as an update.
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.52.0.

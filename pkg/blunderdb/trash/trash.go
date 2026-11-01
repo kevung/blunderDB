@@ -50,33 +50,32 @@ func giveBackUUID(ctx context.Context, s storage.Stores, scope, family string, i
 }
 
 func Position(ctx context.Context, s storage.Stores, scope string, positionID int64) (int64, error) {
-	payload, err := snapshotPosition(ctx, s, scope, positionID)
-	if err != nil {
-		return 0, err
-	}
-	id, err := put(ctx, s, scope, domain.TrashPosition, fmt.Sprintf("Position %d", positionID), payload)
-	if err != nil {
-		return 0, err
-	}
-	// ON DELETE CASCADE takes the analysis, the comments and the memberships.
-	if err := s.Positions().Delete(ctx, scope, positionID); err != nil {
-		// The snapshot outlived the delete it was for: discard it rather than
-		// leave a trash entry for something still in the database, which would
-		// restore into a duplicate on the next click.
-		_ = s.Trash().Discard(ctx, scope, id)
-		return 0, err
-	}
-	// Deleted, but to the trash: the journal says so for the position and for
-	// the notes that went with it.
-	if err := markTrashed(ctx, s, scope, "position", payload.UUID); err != nil {
-		return 0, err
-	}
-	for _, u := range payload.CommentUUIDs {
-		if err := markTrashed(ctx, s, scope, "comment", u); err != nil {
-			return 0, err
+	var id int64
+	err := inTx(ctx, s, scope, func(s storage.Stores) error {
+		payload, err := snapshotPosition(ctx, s, scope, positionID)
+		if err != nil {
+			return err
 		}
-	}
-	return id, nil
+		if id, err = put(ctx, s, scope, domain.TrashPosition, fmt.Sprintf("Position %d", positionID), payload); err != nil {
+			return err
+		}
+		// ON DELETE CASCADE takes the analysis, the comments and the memberships.
+		if err := s.Positions().Delete(ctx, scope, positionID); err != nil {
+			return err
+		}
+		// Deleted, but to the trash: the journal says so for the position and
+		// for the notes that went with it.
+		if err := markTrashed(ctx, s, scope, "position", payload.UUID); err != nil {
+			return err
+		}
+		for _, u := range payload.CommentUUIDs {
+			if err := markTrashed(ctx, s, scope, "comment", u); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return id, err
 }
 
 // markTrashed tells the change journal that a delete went through the trash.
@@ -161,15 +160,17 @@ func Collection(ctx context.Context, s storage.Stores, scope string, collectionI
 		payload.PositionIDs = append(payload.PositionIDs, p.ID)
 	}
 
-	id, err := put(ctx, s, scope, domain.TrashCollection, col.Name, payload)
-	if err != nil {
-		return 0, err
-	}
-	if err := cs.Delete(ctx, scope, collectionID); err != nil {
-		_ = s.Trash().Discard(ctx, scope, id)
-		return 0, err
-	}
-	return id, markTrashed(ctx, s, scope, "collection", colUUID)
+	var id int64
+	err = inTx(ctx, s, scope, func(s storage.Stores) error {
+		if id, err = put(ctx, s, scope, domain.TrashCollection, col.Name, payload); err != nil {
+			return err
+		}
+		if err := s.Collections().Delete(ctx, scope, collectionID); err != nil {
+			return err
+		}
+		return markTrashed(ctx, s, scope, "collection", colUUID)
+	})
+	return id, err
 }
 
 // CommentEntry deletes one comment entry after snapshotting it.
@@ -186,15 +187,17 @@ func CommentEntry(ctx context.Context, s storage.Stores, scope string, commentID
 	if err != nil {
 		return 0, err
 	}
-	id, err := put(ctx, s, scope, domain.TrashComment, label, domain.TrashCommentPayload{UUID: commentUUID, Comment: *entry})
-	if err != nil {
-		return 0, err
-	}
-	if err := s.Comments().Delete(ctx, scope, commentID); err != nil {
-		_ = s.Trash().Discard(ctx, scope, id)
-		return 0, err
-	}
-	return id, markTrashed(ctx, s, scope, "comment", commentUUID)
+	var id int64
+	err = inTx(ctx, s, scope, func(s storage.Stores) error {
+		if id, err = put(ctx, s, scope, domain.TrashComment, label, domain.TrashCommentPayload{UUID: commentUUID, Comment: *entry}); err != nil {
+			return err
+		}
+		if err := s.Comments().Delete(ctx, scope, commentID); err != nil {
+			return err
+		}
+		return markTrashed(ctx, s, scope, "comment", commentUUID)
+	})
+	return id, err
 }
 
 // findComment locates one comment entry by id. CommentStore has no by-id read,

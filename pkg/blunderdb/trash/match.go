@@ -40,12 +40,44 @@ func Match(ctx context.Context, s storage.Stores, scope string, matchID int64) (
 			_ = s.Trash().Discard(ctx, scope, id)
 			return err
 		}
-		return nil
+		return markMatchTrashed(ctx, s, scope, payload)
 	})
 	if err != nil {
 		return 0, err
 	}
 	return id, nil
+}
+
+// markMatchTrashed tells the journal that the delete went through the trash:
+// for the match, for each position the cascade purged and for their notes.
+// A position another match or a collection still holds was not deleted.
+func markMatchTrashed(ctx context.Context, s storage.Stores, scope string, p *domain.TrashMatchPayload) error {
+	if err := markTrashed(ctx, s, scope, "match", p.UUID); err != nil {
+		return err
+	}
+	uu, ok := s.(storage.ObjectUUIDProvider)
+	if !ok {
+		return nil
+	}
+	for _, pp := range p.Positions {
+		if pp.UUID == "" {
+			continue
+		}
+		if _, err := uu.ObjectUUIDs().ObjectID(ctx, scope, "position", pp.UUID); err == nil {
+			continue
+		} else if !errors.Is(err, storage.ErrNotFound) {
+			return err
+		}
+		if err := markTrashed(ctx, s, scope, "position", pp.UUID); err != nil {
+			return err
+		}
+		for _, u := range pp.CommentUUIDs {
+			if err := markTrashed(ctx, s, scope, "comment", u); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func matchLabel(m *domain.Match) string {
@@ -63,6 +95,9 @@ func snapshotMatch(ctx context.Context, s storage.Stores, scope string, matchID 
 		return nil, err
 	}
 	p := &domain.TrashMatchPayload{Match: *m}
+	if p.UUID, err = uuidOf(ctx, s, scope, "match", matchID); err != nil {
+		return nil, err
+	}
 	for g, err := range ms.Games(ctx, scope, matchID) {
 		if err != nil {
 			return nil, err
@@ -221,6 +256,9 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 		return 0, nil, err
 	}
 	matchID := m.ID
+	if err := giveBackUUID(ctx, s, scope, "match", matchID, p.UUID); err != nil {
+		return 0, nil, err
+	}
 	if m.VideoSource != nil {
 		if err := ms.SetVideoSource(ctx, scope, matchID, *m.VideoSource); err != nil {
 			return 0, nil, err

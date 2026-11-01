@@ -10,7 +10,15 @@
 --     restore from the trash giving back the identifier) drops the entry of
 --     the fresh draw it replaces and creates the new one.
 -- No COMMIT, no role switch: it holds on blunderdb_user under FORCE RLS.
+--   * An analysis has no uuid of its own: a trigger on it journals its
+--     position (an update), so a re-analysis reaches a peer.
+-- CREATE TRIGGER takes SHARE ROW EXCLUSIVE on its table (reads pass, writes
+-- wait), held on every table below until this file's transaction ends:
+-- lock_timeout makes a busy table fail the migration, retried at the next
+-- start, rather than queue writers behind a long transaction indefinitely.
 -- Idempotent. Schema-visible: bumps domain.DatabaseVersion to 2.52.0.
+
+SET LOCAL lock_timeout = '15s';
 
 CREATE SEQUENCE IF NOT EXISTS change_log_seq;
 
@@ -92,3 +100,21 @@ CREATE TRIGGER change_log_lesson AFTER INSERT OR UPDATE OR DELETE ON lesson
 DROP TRIGGER IF EXISTS change_log_anki_card ON anki_card;
 CREATE TRIGGER change_log_anki_card AFTER INSERT OR UPDATE OR DELETE ON anki_card
     FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('anki_card');
+
+CREATE OR REPLACE FUNCTION blunderdb_journal_analysis() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE
+    u uuid;
+BEGIN
+    SELECT p.uuid INTO u FROM position p WHERE p.id = NEW.position_id AND p.tenant_id = NEW.tenant_id;
+    IF u IS NOT NULL THEN
+        INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (NEW.tenant_id, u, 'position', 'update')
+        ON CONFLICT (tenant_id, uuid) DO UPDATE
+            SET seq = nextval('change_log_seq'), family = 'position', op = 'update', changed_at = now();
+    END IF;
+    RETURN NEW;
+END $$;
+
+DROP TRIGGER IF EXISTS change_log_analysis ON analysis;
+CREATE TRIGGER change_log_analysis AFTER INSERT OR UPDATE ON analysis
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal_analysis();

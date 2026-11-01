@@ -5,6 +5,7 @@ package storagetest
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -121,4 +122,149 @@ func testChangeJournal(t *testing.T, s storage.Storage) {
 	}
 	wantOp("position trash", pu, storage.ChangeTrash)
 	wantOp("note trash", cu, storage.ChangeTrash)
+}
+
+// A match sent to the trash is restorable, so the journal must say trash for
+// the match, for the positions only it held and for their notes — a delete
+// would make a peer remove them for good.
+func testChangeJournalTrashMatch(t *testing.T, s storage.Storage) {
+	prov, ok := s.(storage.ChangeJournalProvider)
+	uprov, uok := s.(storage.ObjectUUIDProvider)
+	if !ok || !uok {
+		t.Skip("backend keeps no change journal")
+	}
+	ctx := context.Background()
+	uuidOf := func(family string, id int64) string {
+		t.Helper()
+		u, err := uprov.ObjectUUIDs().ObjectUUID(ctx, "", family, id)
+		if err != nil || u == "" {
+			t.Fatalf("uuid of %s %d = %q, %v", family, id, u, err)
+		}
+		return u
+	}
+	opOf := func(u string) string {
+		t.Helper()
+		c, err := prov.ChangeJournal().Entry(ctx, "", u)
+		if err != nil {
+			t.Fatalf("journal entry of %s: %v", u, err)
+		}
+		return c.Op
+	}
+
+	ms := s.Matches()
+	mid, err := ms.Save(ctx, "", &domain.Match{Player1Name: "Jo", Player2Name: "Flo", MatchLength: 5,
+		MatchDate: time.Date(2025, 1, 2, 0, 0, 0, 0, time.UTC), MatchHash: "jt-h", CanonicalHash: "jt-c", GameCount: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	gid, err := ms.CreateGame(ctx, "", &domain.Game{MatchID: mid, GameNumber: 1, MoveCount: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := provenancePos(63)
+	pid, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cid, err := s.Comments().AddFrom(ctx, "", pid, "only this match holds me", domain.CommentOrigin(""))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ms.CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 1, MoveType: "checker", PositionID: pid,
+		Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}); err != nil {
+		t.Fatal(err)
+	}
+	mu, pu, cu := uuidOf("match", mid), uuidOf("position", pid), uuidOf("comment", cid)
+
+	tid, err := trash.Match(ctx, s, "", mid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for what, u := range map[string]string{"match": mu, "orphan position": pu, "its note": cu} {
+		if got := opOf(u); got != storage.ChangeTrash {
+			t.Errorf("%s: journal says %s after a trash, want trash", what, got)
+		}
+	}
+	r, err := trash.Restore(ctx, s, "", tid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := uuidOf("match", r.ID); got != mu {
+		t.Errorf("restored match uuid %s, want %s", got, mu)
+	}
+	// Later statements of the restore (video, tournament slot) may leave an
+	// update: an upsert for a reader, which is all a restore must be.
+	if got := opOf(mu); got != storage.ChangeCreate && got != storage.ChangeUpdate {
+		t.Errorf("restored match: journal says %s, want a create or an update", got)
+	}
+}
+
+// Purging the trash makes the removal final: the journal says delete, no
+// longer trash, so a peer drops what it had held back.
+func testChangeJournalPurgeEndsTrash(t *testing.T, s storage.Storage) {
+	prov, ok := s.(storage.ChangeJournalProvider)
+	uprov, uok := s.(storage.ObjectUUIDProvider)
+	if !ok || !uok {
+		t.Skip("backend keeps no change journal")
+	}
+	ctx := context.Background()
+	id, err := s.Collections().Create(ctx, "", "To purge", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	u, err := uprov.ObjectUUIDs().ObjectUUID(ctx, "", "collection", id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := trash.Collection(ctx, s, "", id); err != nil {
+		t.Fatal(err)
+	}
+	before, err := prov.ChangeJournal().Entry(ctx, "", u)
+	if err != nil || before.Op != storage.ChangeTrash {
+		t.Fatalf("before the purge: %+v, %v", before, err)
+	}
+	if n, err := s.Trash().Purge(ctx, "", 0); err != nil || n == 0 {
+		t.Fatalf("Purge = %d, %v", n, err)
+	}
+	after, err := prov.ChangeJournal().Entry(ctx, "", u)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if after.Op != storage.ChangeDelete || after.Seq <= before.Seq {
+		t.Errorf("after the purge: %+v, want a delete moved past %d", after, before.Seq)
+	}
+}
+
+// A re-analysis writes only the analysis row: the journal still moves the
+// position, which a peer carries the verdict with.
+func testChangeJournalReanalysis(t *testing.T, s storage.Storage) {
+	prov, ok := s.(storage.ChangeJournalProvider)
+	uprov, uok := s.(storage.ObjectUUIDProvider)
+	if !ok || !uok {
+		t.Skip("backend keeps no change journal")
+	}
+	ctx := context.Background()
+	p := provenancePos(64)
+	pid, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	u, err := uprov.ObjectUUIDs().ObjectUUID(ctx, "", "position", pid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	before, err := prov.ChangeJournal().Entry(ctx, "", u)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i, at := range []time.Time{time.Date(2025, 1, 2, 0, 0, 0, 0, time.UTC), time.Date(2025, 2, 3, 0, 0, 0, 0, time.UTC)} {
+		if err := s.Analyses().Save(ctx, "", pid, verdictBy("XG", at)); err != nil {
+			t.Fatal(err)
+		}
+		now, err := prov.ChangeJournal().Entry(ctx, "", u)
+		if err != nil || now.Seq <= before.Seq || now.Op == storage.ChangeDelete || now.Op == storage.ChangeTrash {
+			t.Fatalf("analysis %d: %+v after %+v (%v), want the position moved forward", i, now, before, err)
+		}
+		before = now
+	}
 }
