@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -201,19 +202,28 @@ func TestMigrate_2_45_0_to_2_46_0_CommentRebuildKeepsEverything(t *testing.T) {
 	}
 }
 
-// withoutSignature drops comment.signature, which the next step (2.47.0)
-// adds empty to every row, from a shape: what this test watches is the
-// rebuild, not the column a later step brings.
+// withoutSignature drops what later steps bring to the comment table from a
+// shape: comment.signature (2.47.0, empty on every row) and comment.uuid
+// (2.51.0) with its index and trigger. What this test watches is the
+// rebuild, not the columns a later step brings.
 func withoutSignature(s commentShape) commentShape {
+	uuidField := regexp.MustCompile(`\|uuid=[^|]*`)
 	for i, r := range s.Rows {
-		s.Rows[i] = strings.TrimSuffix(r, "|signature=<nil>")
+		s.Rows[i] = strings.TrimSuffix(uuidField.ReplaceAllString(r, ""), "|signature=<nil>")
 	}
 	cols := s.Columns[:0:0]
 	for _, c := range s.Columns {
-		if !strings.HasPrefix(c, "name=signature|") {
+		if !strings.HasPrefix(c, "name=signature|") && !strings.HasPrefix(c, "name=uuid|") {
 			cols = append(cols, c)
 		}
 	}
 	s.Columns = cols
+	schema := s.Schema[:0:0]
+	for _, c := range s.Schema {
+		if !strings.Contains(c, "uuid") {
+			schema = append(schema, c)
+		}
+	}
+	s.Schema = schema
 	return s
 }

@@ -60,9 +60,14 @@ type TrashEntry struct {
 // Membership of collections and Anki decks is not: those rows belong to the
 // collection and the deck, and the cascade already removed them.
 type TrashPositionPayload struct {
+	// UUID is the position's identifier, given back at restore; absent from
+	// a snapshot taken before identifiers existed (the restore then draws one).
+	UUID     string            `json:"uuid,omitempty"`
 	Position Position          `json:"position"`
 	Analysis *PositionAnalysis `json:"analysis,omitempty"`
 	Comments []CommentEntry    `json:"comments,omitempty"`
+	// CommentUUIDs are the identifiers of Comments, by comment id.
+	CommentUUIDs map[int64]string `json:"commentUuids,omitempty"`
 	// MET is the table the analysis was valued with, 0 for the built-in one.
 	// Tables are never deleted, so the id still names it at restore.
 	MET int64 `json:"met,omitempty"`
@@ -81,6 +86,7 @@ type TrashPositionPayload struct {
 // The fields are spelled out rather than reusing storage.Collection: this
 // package depends on the standard library only.
 type TrashCollectionPayload struct {
+	UUID        string  `json:"uuid,omitempty"`
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	SortOrder   int     `json:"sortOrder"`
@@ -89,6 +95,7 @@ type TrashCollectionPayload struct {
 
 // TrashCommentPayload is what a deleted comment entry keeps.
 type TrashCommentPayload struct {
+	UUID    string       `json:"uuid,omitempty"`
 	Comment CommentEntry `json:"comment"`
 }
 

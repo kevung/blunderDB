@@ -102,6 +102,7 @@ var migrationSteps = []migrationStep{
 	{"2.47.0", "2.48.0", (*Database).migrate_2_47_0_to_2_48_0},
 	{"2.48.0", "2.49.0", (*Database).migrate_2_48_0_to_2_49_0},
 	{"2.49.0", "2.50.0", (*Database).migrate_2_49_0_to_2_50_0},
+	{"2.50.0", "2.51.0", (*Database).migrate_2_50_0_to_2_51_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -187,6 +188,14 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	// No version bump: the schema is unchanged, only the values are restored.
 	if err := d.repairPositionsWithoutScalars(ctx); err != nil {
 		return fmt.Errorf("repairing positions without scalar columns: %w", err)
+	}
+
+	// The rows held before the uuid columns existed get theirs, once the
+	// columns and the tables created late are there (see migrate_2_50_0_to_2_51_0),
+	// and once the repair above has given every position the hash its identity
+	// is derived from.
+	if err := sqlite.EnsureObjectUUIDs(ctx, d.db); err != nil {
+		return fmt.Errorf("giving the stored objects their uuid: %w", err)
 	}
 
 	// Classify every position's phase once, on the open crossing 2.19.0

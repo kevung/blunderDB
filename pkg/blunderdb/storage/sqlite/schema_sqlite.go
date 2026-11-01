@@ -35,6 +35,7 @@ var schemaStatements = []string{
 	// CheckConstraints states the rule for every database instead.
 	`CREATE TABLE IF NOT EXISTS position (
 		id                INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		zobrist_hash      INTEGER,
 		decision_type     INTEGER,
 		player_on_roll    INTEGER,
@@ -147,6 +148,7 @@ var schemaStatements = []string{
 		-- AUTOINCREMENT: an identifier is never reused, so an incremental
 		-- export can follow comments by identifier (ADR-0096).
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		position_id INTEGER,
 		text TEXT,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -241,6 +243,7 @@ var schemaStatements = []string{
 	)`,
 	`CREATE TABLE IF NOT EXISTS match (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		player1_name TEXT,
 		player2_name TEXT,
 		event TEXT,
@@ -448,6 +451,7 @@ var schemaStatements = []string{
 	// counts the row's writes, the version a gesture must name (ADR-0057).
 	`CREATE TABLE IF NOT EXISTS transcription (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		format_version TEXT NOT NULL,
@@ -511,6 +515,7 @@ var schemaStatements = []string{
 	)`,
 	`CREATE TABLE IF NOT EXISTS collection (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		name TEXT NOT NULL,
 		description TEXT,
 		-- A LIVING collection (2.20.0, issue #282): a search query, in the
@@ -669,6 +674,7 @@ var schemaStatements = []string{
 	// Steps. A Position a Step shows is held (positionIsHeldSQL).
 	`CREATE TABLE IF NOT EXISTS lesson (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		name TEXT NOT NULL,
 		description TEXT NOT NULL DEFAULT '',
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -788,6 +794,7 @@ var schemaStatements = []string{
 	// relax a constraint.
 	`CREATE TABLE IF NOT EXISTS anki_card (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		deck_id INTEGER NOT NULL,
 		kind TEXT NOT NULL DEFAULT 'position',
 		key TEXT NOT NULL DEFAULT '',
@@ -860,6 +867,13 @@ var schemaStatements = []string{
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_card ON anki_review_log(card_id, reviewed_at)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_deck ON anki_review_log(deck_id, reviewed_at)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_uuid ON position(uuid)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_comment_uuid ON comment(uuid)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_uuid ON match(uuid)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_transcription_uuid ON transcription(uuid)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_collection_uuid ON collection(uuid)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_lesson_uuid ON lesson(uuid)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_anki_card_uuid ON anki_card(uuid)`,
 	// No index leads with decision_type: it splits the library in
 	// two, and a filter on it ran slower through such an index than through
 	// the table on a 15.6 M-position library. Only the take/pass side of
@@ -1046,6 +1060,9 @@ func Bootstrap(ctx context.Context, db *sql.DB) error {
 		return err
 	}
 	if err := EnsureMultiPlayedTriggers(ctx, db); err != nil {
+		return err
+	}
+	if err := EnsureObjectUUIDs(ctx, db); err != nil {
 		return err
 	}
 	if _, err := db.ExecContext(ctx,
