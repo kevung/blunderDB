@@ -1,0 +1,95 @@
+-- Forward migration: the 2.52.0 wave — the change journal.
+--
+--   * change_log: one row per object (tenant_id, uuid), moved to the end by a
+--     new seq each time the object is created, updated, deleted or trashed.
+--     A reader past a cursor sees each object once, in its final state.
+--   * blunderdb_journal(): the trigger function. It runs as the invoking role
+--     (no SECURITY DEFINER), so the tenant policy below governs what it writes.
+--   * One row trigger per uuid-bearing table. A uuid that goes from NULL to a
+--     value (the backfill of 054) is not a change; a uuid that changes (a
+--     restore from the trash) retires the old one and creates the new.
+-- No COMMIT, no role switch: it holds on blunderdb_user under FORCE RLS.
+-- Idempotent. Schema-visible: bumps domain.DatabaseVersion to 2.52.0.
+
+CREATE SEQUENCE IF NOT EXISTS change_log_seq;
+
+CREATE TABLE IF NOT EXISTS change_log (
+    tenant_id  BIGINT      NOT NULL,
+    seq        BIGINT      NOT NULL DEFAULT nextval('change_log_seq'),
+    uuid       UUID        NOT NULL,
+    family     TEXT        NOT NULL,
+    op         TEXT        NOT NULL CHECK (op IN ('create', 'update', 'delete', 'trash')),
+    changed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (tenant_id, uuid)
+);
+CREATE INDEX IF NOT EXISTS idx_change_log_seq ON change_log (tenant_id, seq);
+
+DO $$ BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = current_schema() AND c.relname = 'position' AND c.relrowsecurity
+    ) THEN
+        ALTER TABLE change_log ENABLE ROW LEVEL SECURITY;
+        ALTER TABLE change_log FORCE ROW LEVEL SECURITY;
+        DROP POLICY IF EXISTS tenant_isolation ON change_log;
+        CREATE POLICY tenant_isolation ON change_log
+            USING      (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::bigint)
+            WITH CHECK (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::bigint);
+    END IF;
+END $$;
+
+CREATE OR REPLACE FUNCTION blunderdb_journal() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE
+    op text;
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        IF OLD.uuid IS NOT NULL THEN
+            INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (OLD.tenant_id, OLD.uuid, TG_ARGV[0], 'delete')
+            ON CONFLICT (tenant_id, uuid) DO UPDATE
+                SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = 'delete', changed_at = now();
+        END IF;
+        RETURN OLD;
+    END IF;
+    IF NEW.uuid IS NULL THEN
+        RETURN NEW;
+    END IF;
+    op := 'create';
+    IF TG_OP = 'UPDATE' THEN
+        IF OLD.uuid IS NULL THEN
+            RETURN NEW;
+        ELSIF OLD.uuid IS DISTINCT FROM NEW.uuid THEN
+            INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (OLD.tenant_id, OLD.uuid, TG_ARGV[0], 'delete')
+            ON CONFLICT (tenant_id, uuid) DO UPDATE
+                SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = 'delete', changed_at = now();
+        ELSE
+            op := 'update';
+        END IF;
+    END IF;
+    INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (NEW.tenant_id, NEW.uuid, TG_ARGV[0], op)
+    ON CONFLICT (tenant_id, uuid) DO UPDATE
+        SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = EXCLUDED.op, changed_at = now();
+    RETURN NEW;
+END $$;
+
+DROP TRIGGER IF EXISTS change_log_position ON position;
+CREATE TRIGGER change_log_position AFTER INSERT OR UPDATE OR DELETE ON position
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('position');
+DROP TRIGGER IF EXISTS change_log_comment ON comment;
+CREATE TRIGGER change_log_comment AFTER INSERT OR UPDATE OR DELETE ON comment
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('comment');
+DROP TRIGGER IF EXISTS change_log_collection ON collection;
+CREATE TRIGGER change_log_collection AFTER INSERT OR UPDATE OR DELETE ON collection
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('collection');
+DROP TRIGGER IF EXISTS change_log_match ON match;
+CREATE TRIGGER change_log_match AFTER INSERT OR UPDATE OR DELETE ON match
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('match');
+DROP TRIGGER IF EXISTS change_log_transcription ON transcription;
+CREATE TRIGGER change_log_transcription AFTER INSERT OR UPDATE OR DELETE ON transcription
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('transcription');
+DROP TRIGGER IF EXISTS change_log_lesson ON lesson;
+CREATE TRIGGER change_log_lesson AFTER INSERT OR UPDATE OR DELETE ON lesson
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('lesson');
+DROP TRIGGER IF EXISTS change_log_anki_card ON anki_card;
+CREATE TRIGGER change_log_anki_card AFTER INSERT OR UPDATE OR DELETE ON anki_card
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('anki_card');

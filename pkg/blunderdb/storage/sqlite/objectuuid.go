@@ -42,6 +42,13 @@ const objectUUIDExpr = `(SELECT printf('%08x-%04x-7%s-%s%s-%s', ms / 65536, ms %
 // rows (notes, names, matches), numbered and written by one statement. The uuid columns and
 // their unique indexes come from EnsureSchema, which runs first.
 func EnsureObjectUUIDs(ctx context.Context, db *sql.DB) error {
+	if err := ensureObjectUUIDs(ctx, db); err != nil {
+		return err
+	}
+	return EnsureChangeLog(ctx, db)
+}
+
+func ensureObjectUUIDs(ctx context.Context, db *sql.DB) error {
 	tables, err := objectNames(ctx, db, "table")
 	if err != nil {
 		return err
@@ -162,6 +169,9 @@ func undrawnIDs(ctx context.Context, db *sql.DB, table string) ([]int64, error) 
 // natural keys (EnsureObjectUUIDs), so an export is the same bytes whenever
 // it is made, and two recipients of one file agree.
 func ForgetObjectUUIDs(ctx context.Context, db *sql.DB) error {
+	if err := ForgetChangeLog(ctx, db); err != nil {
+		return err
+	}
 	for _, f := range sqlshared.ObjectUUIDFamilies {
 		if _, err := db.ExecContext(ctx, `DROP TRIGGER IF EXISTS object_uuid_`+f.Table); err != nil {
 			return fmt.Errorf("sqlite: drop the uuid trigger on %s: %w", f.Table, err)

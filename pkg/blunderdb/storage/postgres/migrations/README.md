@@ -359,3 +359,13 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   row is not rewritten).
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.50.0.
+- `055_change_log.sql` — `change_log` (one row per object, moved to the end by a
+  new `seq` at each change), `blunderdb_journal()` and one row trigger per
+  uuid-bearing table, with the tenant policy. Runs as the invoking role
+  (no SECURITY DEFINER); no COMMIT, so it holds on `blunderdb_user` under FORCE
+  RLS. The SQLite twin is `sqlite.EnsureChangeLog`.
+
+  Cost: a trigger per write (measured in the PR); ACCESS EXCLUSIVE only for the
+  instant `CREATE TRIGGER` takes on each table.
+
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.52.0.

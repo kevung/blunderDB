@@ -66,7 +66,26 @@ func Position(ctx context.Context, s storage.Stores, scope string, positionID in
 		_ = s.Trash().Discard(ctx, scope, id)
 		return 0, err
 	}
+	// Deleted, but to the trash: the journal says so for the position and for
+	// the notes that went with it.
+	if err := markTrashed(ctx, s, scope, "position", payload.UUID); err != nil {
+		return 0, err
+	}
+	for _, u := range payload.CommentUUIDs {
+		if err := markTrashed(ctx, s, scope, "comment", u); err != nil {
+			return 0, err
+		}
+	}
 	return id, nil
+}
+
+// markTrashed tells the change journal that a delete went through the trash.
+func markTrashed(ctx context.Context, s storage.Stores, scope, family, uuid string) error {
+	p, ok := s.(storage.ChangeJournalProvider)
+	if !ok || uuid == "" {
+		return nil
+	}
+	return p.ChangeJournal().Mark(ctx, scope, family, uuid, storage.ChangeTrash)
 }
 
 // snapshotPosition reads a position with what cascades off it: its analysis,
@@ -150,7 +169,7 @@ func Collection(ctx context.Context, s storage.Stores, scope string, collectionI
 		_ = s.Trash().Discard(ctx, scope, id)
 		return 0, err
 	}
-	return id, nil
+	return id, markTrashed(ctx, s, scope, "collection", colUUID)
 }
 
 // CommentEntry deletes one comment entry after snapshotting it.
@@ -175,7 +194,7 @@ func CommentEntry(ctx context.Context, s storage.Stores, scope string, commentID
 		_ = s.Trash().Discard(ctx, scope, id)
 		return 0, err
 	}
-	return id, nil
+	return id, markTrashed(ctx, s, scope, "comment", commentUUID)
 }
 
 // findComment locates one comment entry by id. CommentStore has no by-id read,
