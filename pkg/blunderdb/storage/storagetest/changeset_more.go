@@ -207,6 +207,19 @@ func scenarioClock(p *csPair) {
 	if after := p.entry(p.b, p.cb, p.sb, u).ChangedAt; after <= at {
 		p.t.Errorf("a local edit after the import is not newer: %s <= %s", after, at)
 	}
+	// The peer's clock is still ahead and it sends the record again: the same
+	// change, which must not beat the edit made here since. A really newer
+	// change from that peer still does.
+	if rep := recv("from the future", "2999-01-01T00:00:00.000Z"); rep.Applied != 0 {
+		p.t.Errorf("a future record sent again beat a local edit: %+v", rep)
+	}
+	if c, _ := p.b.Collections().Get(p.cb, p.sb, bid); c.Name != "edited here" {
+		p.t.Errorf("the local edit was overwritten: %q", c.Name)
+	}
+	time.Sleep(5 * time.Millisecond)
+	if rep := recv("later, still ahead", "2999-01-02T00:00:00.000Z"); rep.Applied != 1 {
+		p.t.Errorf("a newer future record from the same peer was ignored: %+v", rep)
+	}
 }
 
 // Same millisecond on both sides, different content: both pick the same one.

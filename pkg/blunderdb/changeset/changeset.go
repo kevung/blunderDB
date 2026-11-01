@@ -248,15 +248,16 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 		if err != nil {
 			return rep, err
 		}
+		future := ""
 		if now := time.Now().UTC().Format(storage.ChangedAtLayout); at > now {
-			at = now
+			future, at = at, now
 			rep.Clamped++
 		}
 		r.ChangedAt = at
 		var applied, conflict bool
 		err = trash.InTx(ctx, s, scope, func(s storage.Stores) error {
 			var err error
-			applied, conflict, err = apply(ctx, s, scope, cd, r)
+			applied, conflict, err = apply(ctx, s, scope, cd, r, future)
 			return err
 		})
 		switch {
@@ -274,10 +275,23 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 }
 
 // apply merges one record inside the caller's transaction.
-func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Record) (applied, conflict bool, err error) {
+func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Record, future string) (applied, conflict bool, err error) {
 	journal, uuids, err := providers(s)
 	if err != nil {
 		return false, false, err
+	}
+	// A record dated in the future was taken as made at its first receipt. The
+	// peer sends it again as long as its clock is ahead: that is the same
+	// change, not a newer one, and must not beat what was edited here since.
+	seen := ""
+	if future != "" {
+		seen = futureMarker(r.UUID)
+		switch m, err := journal.Entry(ctx, scope, seen); {
+		case err == nil && m.ChangedAt == future:
+			return false, false, nil
+		case err != nil && !errors.Is(err, storage.ErrNotFound):
+			return false, false, err
+		}
 	}
 	id, err := uuids.ObjectID(ctx, scope, r.Family, r.UUID)
 	held := err == nil
@@ -360,6 +374,11 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 	}
 	if err := journal.Mark(ctx, scope, r.Family, r.UUID, r.Op, r.ChangedAt); err != nil {
 		return false, false, err
+	}
+	if seen != "" {
+		if err := journal.Mark(ctx, scope, r.Family, seen, storage.ChangeUpdate, future); err != nil {
+			return false, false, err
+		}
 	}
 	return true, false, nil
 }
@@ -536,4 +555,20 @@ func placeCollection(ctx context.Context, s storage.Stores, scope string, id int
 		}
 	}
 	return nil
+}
+
+// markerFamily seeds the key of the journal entry that remembers a future-dated
+// record (see apply). It is an entry of no object: an export finds no row for
+// it and leaves it out.
+const markerFamily = "changeset-future"
+
+// futureMarker is the journal key remembering the future date of uuid's record.
+func futureMarker(uuid string) string {
+	return deriveMarker(uuid)
+}
+
+func deriveMarker(uuid string) string {
+	sum := sha256.Sum256([]byte("blunderdb/changeset/1|" + markerFamily + "|" + uuid))
+	h := hex.EncodeToString(sum[:])
+	return h[0:8] + "-" + h[8:12] + "-7" + h[13:16] + "-8" + h[17:20] + "-" + h[20:32]
 }

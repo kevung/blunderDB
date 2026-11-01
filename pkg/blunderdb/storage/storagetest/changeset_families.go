@@ -129,7 +129,6 @@ func scenarioComment(p *csPair) {
 	}
 }
 
-
 func (p *csPair) swapped() *csPair {
 	return &csPair{t: p.t, a: p.b, ca: p.cb, sa: p.sb, b: p.a, cb: p.ca, sb: p.sa}
 }
