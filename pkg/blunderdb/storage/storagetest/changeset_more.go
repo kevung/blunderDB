@@ -386,4 +386,34 @@ func CheckChangeSetPreJournal(t *testing.T, a storage.Storage, ca context.Contex
 		t.Errorf("export from 0 carries %d records (%v), want every collection", len(set.Records), err)
 	}
 	_ = c
+
+	// From 0 the export pages like any other: rows that predate the journal
+	// come a page at a time, each once, and a page holds at most the limit.
+	forget()
+	seen, pages, cur := map[string]int{}, 0, storage.Cursor{}
+	for pages < 50 {
+		set, err := changeset.Export(ca, a, sa, cur, 2)
+		if err != nil {
+			t.Fatal(err)
+		}
+		pages++
+		if len(set.Records) > 2 {
+			t.Fatalf("page %d holds %d records, limit 2", pages, len(set.Records))
+		}
+		for _, r := range set.Records {
+			seen[r.UUID]++
+		}
+		cur = set.Cursor
+		if !set.More {
+			break
+		}
+	}
+	if pages < 2 || len(seen) < 3 {
+		t.Errorf("%d pages, %d objects: the export did not page", pages, len(seen))
+	}
+	for u, n := range seen {
+		if n != 1 {
+			t.Errorf("%s came %d times", u, n)
+		}
+	}
 }

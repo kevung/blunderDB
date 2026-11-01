@@ -44,9 +44,9 @@ type Record struct {
 // of a family not carried is never behind it. More says the limit cut the
 // read short.
 //
-// An export from cursor 0 also carries the objects that predate the journal
-// (they have no entry), dated at the floor, all in the one set: its size is
-// that of those rows, not bounded by the limit.
+// An export from cursor 0 first gives the objects that predate the journal
+// (they have no entry) an entry dated at the floor; they then come, a page at
+// a time, with the rest.
 type Set struct {
 	Cursor  storage.Cursor `json:"cursor"`
 	More    bool           `json:"more"`
@@ -133,23 +133,25 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 		limit = 1000
 	}
 	set := Set{Cursor: after}
-	// The rows that predate the journal first: an object created while they
-	// are read has an entry, so the journal read below finds it.
+	// The rows that predate the journal have no entry for a cursor to reach:
+	// from 0 they are given one, dated at the floor, a batch at a time, and the
+	// journal read below pages through them like any other. An object created
+	// or edited meanwhile keeps its own entry.
 	if after == (storage.Cursor{}) {
 		for _, f := range families() {
-			us, err := journal.Unjournaled(ctx, scope, f)
-			if err != nil {
-				return Set{}, err
-			}
-			for _, u := range us {
-				rec := Record{Change: storage.Change{UUID: u, Family: f, Op: storage.ChangeCreate, ChangedAt: floor}}
-				ok, err := loadPayload(ctx, s, uuids, scope, &rec)
+			var id int64
+			for {
+				us, last, err := journal.Unjournaled(ctx, scope, f, id, limit)
 				if err != nil {
 					return Set{}, err
 				}
-				if ok {
-					set.Records = append(set.Records, rec)
+				if len(us) == 0 {
+					break
 				}
+				if err := journal.Adopt(ctx, scope, f, us, floor); err != nil {
+					return Set{}, err
+				}
+				id = last
 			}
 		}
 	}

@@ -72,34 +72,35 @@ func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, famili
 	return out, nil
 }
 
-func (s *ChangeJournalStore) Unjournaled(ctx context.Context, scope, family string) ([]string, error) {
+func (s *ChangeJournalStore) Unjournaled(ctx context.Context, scope, family string, afterID int64, limit int) ([]string, int64, error) {
 	table, err := objectUUIDTable(family)
 	if err != nil {
-		return nil, errf(s.DB, "unjournaled", err)
+		return nil, 0, errf(s.DB, "unjournaled", err)
 	}
 	tenant, targs := s.DB.TenantFilter("t", scope)
 	same := ""
 	if s.DB.Name() == "postgres" {
 		same = ` AND c.tenant_id = t.tenant_id`
 	}
-	rows, err := s.DB.Query(ctx, `SELECT CAST(t.uuid AS TEXT) FROM `+table+` t WHERE `+tenant+` AND t.uuid IS NOT NULL
-		AND NOT EXISTS (SELECT 1 FROM change_log c WHERE c.uuid = t.uuid`+same+`) ORDER BY t.id`, targs...)
+	rows, err := s.DB.Query(ctx, `SELECT t.id, CAST(t.uuid AS TEXT) FROM `+table+` t WHERE `+tenant+` AND t.uuid IS NOT NULL AND t.id > ?
+		AND NOT EXISTS (SELECT 1 FROM change_log c WHERE c.uuid = t.uuid`+same+`) ORDER BY t.id LIMIT ?`, append(append(targs, afterID), limit)...)
 	if err != nil {
-		return nil, errf(s.DB, "unjournaled", err)
+		return nil, 0, errf(s.DB, "unjournaled", err)
 	}
 	defer rows.Close()
 	var out []string
+	last := afterID
 	for rows.Next() {
 		var u string
-		if err := rows.Scan(&u); err != nil {
-			return nil, errf(s.DB, "unjournaled", err)
+		if err := rows.Scan(&last, &u); err != nil {
+			return nil, 0, errf(s.DB, "unjournaled", err)
 		}
 		out = append(out, u)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, errf(s.DB, "unjournaled", err)
+		return nil, 0, errf(s.DB, "unjournaled", err)
 	}
-	return out, nil
+	return out, last, nil
 }
 
 func (s *ChangeJournalStore) Entry(ctx context.Context, scope, uuid string) (storage.Change, error) {
@@ -147,6 +148,27 @@ func (s *ChangeJournalStore) Mark(ctx context.Context, scope, family, uuid, op, 
 	}
 	if err != nil {
 		return errf(s.DB, "mark change", err)
+	}
+	return nil
+}
+
+// Adopt — see storage.ChangeJournalStore.
+func (s *ChangeJournalStore) Adopt(ctx context.Context, scope, family string, uuids []string, at string) error {
+	if _, err := objectUUIDTable(family); err != nil {
+		return errf(s.DB, "adopt", err)
+	}
+	for _, u := range uuids {
+		var err error
+		if s.DB.Name() == "sqlite" {
+			_, err = s.DB.Exec(ctx, `INSERT OR IGNORE INTO change_log (uuid, family, op, changed_at) VALUES (?, ?, 'create', ?)`, u, family, at)
+		} else {
+			_, err = s.DB.Exec(ctx, `INSERT INTO change_log (tenant_id, uuid, family, op, changed_at)
+				VALUES (?, CAST(? AS uuid), ?, 'create', CAST(? AS timestamptz)) ON CONFLICT (tenant_id, uuid) DO NOTHING`,
+				s.DB.ScopeArg(scope), u, family, at)
+		}
+		if err != nil {
+			return errf(s.DB, "adopt", err)
+		}
 	}
 	return nil
 }

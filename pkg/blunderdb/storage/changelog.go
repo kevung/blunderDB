@@ -57,9 +57,11 @@ type ChangeJournalStore interface {
 	Changes(ctx context.Context, scope string, after int64, limit int) ([]Change, error)
 	// ChangesOf is Changes restricted to the given families (all when empty).
 	ChangesOf(ctx context.Context, scope string, families []string, after Cursor, limit int) ([]Change, error)
-	// Unjournaled lists the uuids of a family's rows that have no entry: the
-	// rows that existed before the journal did, which no cursor reaches.
-	Unjournaled(ctx context.Context, scope, family string) ([]string, error)
+	// Unjournaled lists up to limit uuids of a family's rows that have no
+	// entry and whose id is past afterID, by id: the rows that existed before
+	// the journal did, which no cursor reaches. The second result is the id
+	// of the last row listed, to pass as afterID for the next page.
+	Unjournaled(ctx context.Context, scope, family string, afterID int64, limit int) ([]string, int64, error)
 	// Entry is the journal entry of one object, ErrNotFound when it has none.
 	Entry(ctx context.Context, scope, uuid string) (Change, error)
 	// Mark records an operation the triggers cannot see (a delete that went
@@ -67,6 +69,9 @@ type ChangeJournalStore interface {
 	// the time it had where it was made (at, as Change.ChangedAt; "" is now),
 	// so a change that travelled is not newer than the one it carries.
 	Mark(ctx context.Context, scope, family, uuid, op, at string) error
+	// Adopt gives the objects an entry dated at as a create, where they have
+	// none: an object edited meanwhile keeps its own.
+	Adopt(ctx context.Context, scope, family string, uuids []string, at string) error
 }
 
 // ChangeJournalProvider is implemented by the Stores of a backend that keeps
