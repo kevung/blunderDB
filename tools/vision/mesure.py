@@ -21,13 +21,21 @@ Conventions (chacune tenue par un test de test_mesure.py, et par une mutation) :
     un événement en trop est un faux positif, une fenêtre sans événement un manque ;
   - `--paire TYPE=COLONNE` (répétable) choisit ce qui se compare à quoi ; par défaut
     dice.rest=roll_tick_ms ; le F1 est calculé par paire puis sur leur réunion ;
-  - `--etats` filtre les événements gardés (par défaut tous).
+  - `--etats` filtre les événements gardés (par défaut tous) ;
+  - `--plages FICHIER` restreint la mesure au temps couvert par l'analyse : un Repère compte
+    si sa fin (roll_tick_ms ou tick_ms) tombe dans une plage, un événement s'il y tombe ;
+    FICHIER est un journal de descripteurs (les plages sont ses relevés, rompues par un écart
+    de plus de 2 s, le `maxGap` des automates) ou un texte « début fin » en secondes par ligne ;
+  - `--avance S` donne aux fenêtres sans borne de début celle de [fin − S s ; fin] au lieu
+    de les sortir du rappel (par défaut elles en sortent).
 
 Gain de navigation, modèle explicite : les Repères de toutes les paires forment une seule
 suite lue dans l'ordre du temps. Sans marqueur, atteindre un Repère coûte la traversée
 depuis le précédent. Avec marqueurs, une fenêtre appariée coûte un saut (`--saut` s) plus la
 distance de l'événement à la fenêtre ; une fenêtre sans événement coûte la traversée ; chaque
-faux positif coûte un saut de plus (le marqueur est visité pour rien).
+faux positif coûte un saut de plus (le marqueur est visité pour rien). Sous `--plages`, une
+traversée ne compte que le temps couvert : le temps sans analyse n'est à la charge ni du
+détecteur ni de la lecture sans marqueur.
 """
 import argparse
 import csv
@@ -59,10 +67,44 @@ def _cell(r, col):
     return None if v in ("", None) else int(v)
 
 
-def charger_fenetres(path, colonne):
+def charger_plages(path, ecart_s=2.0):
+    """Les plages [(debut_ms, fin_ms)] couvertes, triées (voir `--plages` dans l'en-tête)."""
+    with open(path, encoding="utf-8") as fh:
+        texte = fh.read()
+    try:
+        journal = json.loads(texte)
+    except ValueError:
+        journal = None
+    out = []
+    if isinstance(journal, dict) and "sessions" in journal:
+        for releves in journal["sessions"].values():
+            ts = sorted(ms(r["t"]) for r in releves)
+            if not ts:
+                continue
+            debut = prec = ts[0]
+            for t in ts[1:]:
+                if t - prec > ms(ecart_s):
+                    out.append((debut, prec))
+                    debut = t
+                prec = t
+            out.append((debut, prec))
+    else:
+        for ligne in texte.splitlines():
+            ligne = ligne.split("#", 1)[0].split()
+            if ligne:
+                out.append((ms(float(ligne[0])), ms(float(ligne[1]))))
+    return sorted(out)
+
+
+def dans_plages(t, plages):
+    return plages is None or any(a <= t <= b for a, b in plages)
+
+
+def charger_fenetres(path, colonne, avance_ms=None):
     """Les fenêtres (debut, fin) en ms de `colonne`, dans l'ordre du match.
 
-    debut est None quand la fenêtre n'est pas évaluable (voir l'en-tête).
+    debut est None quand la fenêtre n'est pas évaluable (voir l'en-tête), sauf si `avance_ms`
+    la borne à fin − avance_ms.
     """
     with open(path, newline="", encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh))
@@ -73,6 +115,8 @@ def charger_fenetres(path, colonne):
             continue
         roll, prev = _cell(r, "roll_tick_ms"), _cell(r, "prev_tick_ms")
         debut = roll if colonne == "tick_ms" and roll is not None else prev
+        if debut is None and avance_ms is not None:
+            debut = fin - avance_ms
         if debut is not None and debut > fin:
             debut = None
         out.append((debut, fin))
@@ -119,7 +163,14 @@ def mediane(xs):
     return s[m] if len(s) % 2 else (s[m - 1] + s[m]) / 2
 
 
-def gain_navigation(cibles, faux_positifs, saut_ms=2000):
+def couvert(a, b, plages):
+    """La durée de [a ; b] couverte par les plages (toute la durée sans plages)."""
+    if plages is None:
+        return max(0, b - a)
+    return sum(max(0, min(b, fin) - max(a, debut)) for debut, fin in plages)
+
+
+def gain_navigation(cibles, faux_positifs, saut_ms=2000, plages=None):
     """(sans_ms, avec_ms) pour la lecture dans l'ordre du temps.
 
     cibles = [(fin_ms, distance_ms ou None)] : le Repère et, s'il est apparié, la distance de
@@ -128,20 +179,20 @@ def gain_navigation(cibles, faux_positifs, saut_ms=2000):
     sans = avec = 0
     prev = 0
     for fin, dist in sorted(cibles, key=lambda c: c[0]):
-        travers = max(0, fin - prev)
+        travers = couvert(prev, fin, plages)
         sans += travers
         avec += travers if dist is None else saut_ms + dist
         prev = max(prev, fin)
     return sans, avec + faux_positifs * saut_ms
 
 
-def mesurer(events_path, marks_path, paires_cfg, tol_ms=500, etats=None, saut_ms=2000):
-    evts = charger_evenements(events_path, etats)
+def mesurer(events_path, marks_path, paires_cfg, tol_ms=500, etats=None, saut_ms=2000, plages=None, avance_ms=None):
+    evts = [(ty, t) for ty, t in charger_evenements(events_path, etats) if dans_plages(t, plages)]
     par_paire, tp_tot, det_tot, rep_tot, dists = {}, 0, 0, 0, []
     cibles, fp_tot, sans_fenetre = [], 0, 0
     for typ, col in paires_cfg:
         det = sorted(t for ty, t in evts if ty == typ)
-        toutes = charger_fenetres(marks_path, col)
+        toutes = [w for w in charger_fenetres(marks_path, col, avance_ms) if dans_plages(w[1], plages)]
         evaluables = [w for w in toutes if w[0] is not None]
         sans_fenetre += len(toutes) - len(evaluables)
         paires, nd, nr = apparier(det, evaluables, tol_ms)
@@ -154,7 +205,7 @@ def mesurer(events_path, marks_path, paires_cfg, tol_ms=500, etats=None, saut_ms
         dist_de = {j: d for _, j, d in paires}
         cibles += [(w[1], dist_de.get(j)) for j, w in enumerate(evaluables)]
         cibles += [(w[1], None) for w in toutes if w[0] is None]
-    sans, avec = gain_navigation(cibles, fp_tot, saut_ms)
+    sans, avec = gain_navigation(cibles, fp_tot, saut_ms, plages)
     return {
         "tol_ms": tol_ms,
         "paires": par_paire,
@@ -203,11 +254,15 @@ def main(argv):
     ap.add_argument("--paire", action="append", help="TYPE=COLONNE, répétable (dice.rest=roll_tick_ms)")
     ap.add_argument("--etats", help="états gardés, séparés par des virgules (tous)")
     ap.add_argument("--saut", type=int, default=2000, help="coût d'un saut au marqueur, ms (2000)")
+    ap.add_argument("--plages", help="journal.json ou texte « début fin » (s) : temps couvert (tout)")
+    ap.add_argument("--avance", type=float, help="fenêtre sans début : [fin − AVANCE s ; fin] (hors rappel)")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv[1:])
     cfg = [tuple(p.split("=", 1)) for p in a.paire] if a.paire else [DEFAUT_PAIRE]
     etats = set(a.etats.split(",")) if a.etats else None
-    res = mesurer(a.events, a.marks, cfg, a.tol, etats, a.saut)
+    plages = charger_plages(a.plages) if a.plages else None
+    avance_ms = None if a.avance is None else ms(a.avance)
+    res = mesurer(a.events, a.marks, cfg, a.tol, etats, a.saut, plages, avance_ms)
     print(json.dumps(res, indent=1, ensure_ascii=False) if a.json else rapport(res))
     return 0
 

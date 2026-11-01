@@ -112,12 +112,15 @@ class Mesurer(unittest.TestCase):
                 json.dump([{"type": "dice.rest", "mediaTime": 10.5, "state": "sure"}], fh)
             self.assertEqual(mesure.charger_evenements(p), [("dice.rest", 10500)])
         self.assertEqual(mesure.ms(30.501), 30501)
+        # 1.005 * 1000 is 1004.999… in binary: truncating would lose a millisecond.
+        self.assertEqual(mesure.ms(1.005), 1005)
 
     def test_empty_cell_is_not_a_mark(self):
         self.assertEqual(len(mesure.charger_fenetres(MARKS, "tick_ms")), 3)
 
     def test_empty_is_perfect(self):
         self.assertEqual(mesure.scores(0, 0, 0)["f1"], 1.0)
+        self.assertEqual(mesure.scores(100, 120, 110)["f1"], 200 / 230)
         self.assertIsNone(mesure.scores(0, 0, 3)["precision"])
 
 
@@ -144,12 +147,78 @@ class Navigation(unittest.TestCase):
         n = mesure.mesurer(EVENTS, MARKS, BOTH)["navigation"]
         self.assertEqual((n["sans_ms"], n["avec_ms"]), (45000, 37600))
 
+    def test_traversal_counts_covered_time_only(self):
+        cibles = [(10000, None), (30000, None)]
+        # [0 ; 10 s] and [25 ; 30 s] are covered: 10 s to the first mark, 5 s to the second.
+        self.assertEqual(mesure.gain_navigation(cibles, 0, 2000, [(0, 10000), (25000, 40000)]), (15000, 15000))
+        self.assertEqual(mesure.couvert(5000, 30000, [(0, 10000), (25000, 40000)]), 10000)
+        self.assertEqual(mesure.couvert(5000, 30000, None), 25000)
+
     def test_no_marks_no_gain(self):
         with tempfile.TemporaryDirectory() as d:
             p = os.path.join(d, "m.csv")
             with open(p, "w") as fh:
                 fh.write("n,roll_tick_ms,tick_ms,dés,prev_tick_ms\n")
             self.assertIsNone(mesure.mesurer(EVENTS, p, REST)["navigation"]["gain"])
+
+
+def _ecrire(d, nom, contenu):
+    p = os.path.join(d, nom)
+    with open(p, "w", encoding="utf-8") as fh:
+        fh.write(contenu if isinstance(contenu, str) else json.dumps(contenu))
+    return p
+
+
+class Plages(unittest.TestCase):
+    def test_text_ranges_filter_marks_and_events(self):
+        # [0 ; 25 s] keeps the first two marks and the rests at 7.0, 13.6 and 20.5 s.
+        with tempfile.TemporaryDirectory() as d:
+            plages = mesure.charger_plages(_ecrire(d, "p.txt", "# couvert\n0 25\n"))
+        self.assertEqual(plages, [(0, 25000)])
+        t = mesure.mesurer(EVENTS, MARKS, REST, plages=plages)["total"]
+        self.assertEqual((t["tp"], t["fp"], t["fn"]), (2, 1, 0))
+
+    def test_range_bounds_are_inclusive(self):
+        # marks ending at 10 and 20 s are both in [10 ; 20 s]; of the events only 13.6 s is.
+        t = mesure.mesurer(EVENTS, MARKS, REST, plages=[(10000, 20000)])["total"]
+        self.assertEqual((t["tp"], t["fp"], t["fn"]), (1, 0, 1))
+
+    def test_journal_ranges_break_beyond_two_seconds(self):
+        journal = {"sessions": {"a": [{"t": 6}, {"t": 0}, {"t": 2}, {"t": 5.001}, {"t": 7}], "b": [{"t": 30}, {"t": 31}]}}
+        with tempfile.TemporaryDirectory() as d:
+            plages = mesure.charger_plages(_ecrire(d, "j.json", journal))
+        # 2 → 5.001 s is a break; 5.001 → 7 s (1.999 s) and 0 → 2 s (exactly 2 s) are not.
+        self.assertEqual(plages, [(0, 2000), (5001, 7000), (30000, 31000)])
+
+    def test_navigation_skips_uncovered_time(self):
+        # marks at 10 and 20 s; [12 ; 18 s] is not covered: 10 + 2 + 2 s of traversal.
+        n = mesure.mesurer(EVENTS, MARKS, REST, plages=[(0, 12000), (18000, 25000)])["navigation"]
+        self.assertEqual(n["sans_ms"], 14000)
+
+    def test_no_ranges_keeps_everything(self):
+        self.assertEqual(mesure.mesurer(EVENTS, MARKS, REST, plages=None)["total"]["fp"], 4)
+
+
+class Avance(unittest.TestCase):
+    def test_only_windows_without_start_get_one(self):
+        w = mesure.charger_fenetres(MARKS, "roll_tick_ms", avance_ms=3000)
+        self.assertEqual(w, [(5000, 10000), (14000, 20000), (27000, 30000), (36000, 40000)])
+
+    def test_bounded_window_enters_recall(self):
+        r = mesure.mesurer(EVENTS, MARKS, REST, avance_ms=3000)
+        self.assertEqual(r["sans_fenetre"], 0)
+        t = r["total"]
+        self.assertEqual((t["tp"], t["fp"], t["fn"]), (3, 4, 1))
+        t = mesure.mesurer(EVENTS, MARKS, REST, tol_ms=1000, avance_ms=3000)["total"]
+        self.assertEqual(t["tp"], 4)
+
+    def test_cli_options(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = _ecrire(d, "p.txt", "0 25\n")
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                self.assertEqual(mesure.main(["x", EVENTS, MARKS, "--plages", p, "--avance", "3"]), 0)
+        self.assertIn("| total | 2 | 1 | 0 |", buf.getvalue())
 
 
 class Cli(unittest.TestCase):

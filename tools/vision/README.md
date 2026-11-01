@@ -42,5 +42,7 @@ convention est tenue par un test. Fixture sous `fixtures/`.
 les relevés de toutes les sessions du brouillon ; `node tools/vision/replay.mjs journal.json
 [--session S] [--overrides '{"seuil":…}'] > events.json` les rejoue dans les automates (format
 de l'export d'événements, sessions fusionnées par instant) ; puis `mesure.py events.json
-marks.csv`. Sans toucher à la vidéo : les seuils se règlent sur le journal.
+marks.csv --plages journal.json` (seuls comptent les Repères tombés dans le temps couvert par le
+journal ; `--avance S` borne les fenêtres sans action précédente). Sans toucher à la vidéo : les
+seuils se règlent sur le journal.
 
