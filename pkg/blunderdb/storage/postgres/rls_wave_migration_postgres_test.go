@@ -88,17 +88,34 @@ func execUnforced(t *testing.T, conn *pgx.Conn, tables []string, stmts []string)
 		tables = append(slices.Clone(tables), "change_log")
 	}
 	for _, tbl := range tables {
-		all = append(all, `ALTER TABLE `+tbl+` NO FORCE ROW LEVEL SECURITY`)
+		all = append(all, `ALTER TABLE IF EXISTS `+tbl+` NO FORCE ROW LEVEL SECURITY`)
 	}
 	all = append(all, stmts...)
 	for _, tbl := range tables {
-		all = append(all, `ALTER TABLE `+tbl+` FORCE ROW LEVEL SECURITY`)
+		all = append(all, `ALTER TABLE IF EXISTS `+tbl+` FORCE ROW LEVEL SECURITY`)
 	}
 	for _, stmt := range all {
 		if _, err := conn.Exec(ctx, stmt); err != nil {
 			t.Fatalf("%s: %v", stmt, err)
 		}
 	}
+}
+
+// migrateWithJournalUnforced replays Migrate with change_log's FORCE lifted: an
+// old migration replayed on a library that already has the journal triggers
+// rewrites rows with no tenant, which the journal's policy refuses. (Real
+// upgrades run those migrations before the journal exists; a migration written
+// after 055 that rewrites uuid-bearing rows must lift change_log the way
+// inUnforcedTx does.)
+func migrateWithJournalUnforced(ctx context.Context, s *pg.Storage, conn *pgx.Conn) error {
+	if _, err := conn.Exec(ctx, `ALTER TABLE change_log NO FORCE ROW LEVEL SECURITY`); err != nil {
+		return err
+	}
+	err := s.Migrate(ctx)
+	if _, ferr := conn.Exec(ctx, `ALTER TABLE change_log FORCE ROW LEVEL SECURITY`); err == nil {
+		err = ferr
+	}
+	return err
 }
 
 func assertForced(t *testing.T, conn *pgx.Conn, tables ...string) {
@@ -170,7 +187,7 @@ func TestMigrate_034_UnderRLS(t *testing.T) {
 	execUnforced(t, conn, []string{"position", "move", "analysis"},
 		append([]string{`ALTER TABLE action_label NO FORCE ROW LEVEL SECURITY`}, weightWaveRollback()...))
 
-	if err := s.Migrate(ctx); err != nil {
+	if err := migrateWithJournalUnforced(ctx, s, conn); err != nil {
 		t.Fatalf("Migrate under RLS: %v", err)
 	}
 	assertForced(t, conn, "position", "move", "analysis", "action_label")
@@ -238,7 +255,7 @@ func TestMigrate_032_MatchDateUnderRLS(t *testing.T) {
 		`DELETE FROM schema_migrations WHERE version = '032_large_library_wave'`,
 	})
 
-	if err := s.Migrate(ctx); err != nil {
+	if err := migrateWithJournalUnforced(ctx, s, conn); err != nil {
 		t.Fatalf("Migrate under RLS: %v", err)
 	}
 	assertForced(t, conn, "position", "move", "game", "match")
@@ -299,7 +316,7 @@ func TestMigrate_049_UndatedMatchUnderRLS(t *testing.T) {
 		`DELETE FROM schema_migrations WHERE version = '049_undated_match_null'`,
 	})
 
-	if err := s.Migrate(ctx); err != nil {
+	if err := migrateWithJournalUnforced(ctx, s, conn); err != nil {
 		t.Fatalf("Migrate under RLS: %v", err)
 	}
 	assertForced(t, conn, "position", "move", "game", "match")
@@ -373,7 +390,7 @@ func TestMigrate_052_MultiPlayedUnderRLS(t *testing.T) {
 		`DELETE FROM schema_migrations WHERE version = '052_multi_played'`,
 	})
 
-	if err := s.Migrate(ctx); err != nil {
+	if err := migrateWithJournalUnforced(ctx, s, conn); err != nil {
 		t.Fatalf("Migrate under RLS: %v", err)
 	}
 	assertForced(t, conn, "position", "move")
@@ -681,7 +698,7 @@ func TestMigrate_DecisionRecountUnderRLS(t *testing.T) {
 		`UPDATE analysis SET is_close_cube = FALSE`,
 		`UPDATE metadata SET value = '1' WHERE key = 'go_backfills'`))
 
-	if err := s.Migrate(ctx); err != nil {
+	if err := migrateWithJournalUnforced(ctx, s, conn); err != nil {
 		t.Fatalf("Migrate under RLS: %v", err)
 	}
 	assertForced(t, conn, tables...)
