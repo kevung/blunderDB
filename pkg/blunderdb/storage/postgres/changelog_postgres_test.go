@@ -87,6 +87,7 @@ func TestMigrate_055_FromAnRLSLibrary(t *testing.T) {
 	}
 	execUnforced(t, conn, []string{"position", "comment", "collection", "match", "transcription", "lesson", "anki_card", "analysis"},
 		append(drops,
+			`DROP TRIGGER IF EXISTS change_log_match_update ON match`,
 			`DROP TRIGGER IF EXISTS change_log_analysis ON analysis`,
 			`DROP FUNCTION IF EXISTS blunderdb_journal_analysis()`,
 			`DROP FUNCTION IF EXISTS blunderdb_journal()`,
