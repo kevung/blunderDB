@@ -147,6 +147,13 @@ class Navigation(unittest.TestCase):
         n = mesure.mesurer(EVENTS, MARKS, BOTH)["navigation"]
         self.assertEqual((n["sans_ms"], n["avec_ms"]), (45000, 37600))
 
+    def test_traversal_counts_covered_time_only(self):
+        cibles = [(10000, None), (30000, None)]
+        # [0 ; 10 s] and [25 ; 30 s] are covered: 10 s to the first mark, 5 s to the second.
+        self.assertEqual(mesure.gain_navigation(cibles, 0, 2000, [(0, 10000), (25000, 40000)]), (15000, 15000))
+        self.assertEqual(mesure.couvert(5000, 30000, [(0, 10000), (25000, 40000)]), 10000)
+        self.assertEqual(mesure.couvert(5000, 30000, None), 25000)
+
     def test_no_marks_no_gain(self):
         with tempfile.TemporaryDirectory() as d:
             p = os.path.join(d, "m.csv")
@@ -182,6 +189,11 @@ class Plages(unittest.TestCase):
             plages = mesure.charger_plages(_ecrire(d, "j.json", journal))
         # 2 → 5.001 s is a break; 5.001 → 7 s (1.999 s) and 0 → 2 s (exactly 2 s) are not.
         self.assertEqual(plages, [(0, 2000), (5001, 7000), (30000, 31000)])
+
+    def test_navigation_skips_uncovered_time(self):
+        # marks at 10 and 20 s; [12 ; 18 s] is not covered: 10 + 2 + 2 s of traversal.
+        n = mesure.mesurer(EVENTS, MARKS, REST, plages=[(0, 12000), (18000, 25000)])["navigation"]
+        self.assertEqual(n["sans_ms"], 14000)
 
     def test_no_ranges_keeps_everything(self):
         self.assertEqual(mesure.mesurer(EVENTS, MARKS, REST, plages=None)["total"]["fp"], 4)

@@ -75,6 +75,8 @@ MUTANTS = [
     ("plages : écart de 2 s pris pour une rupture", "if t - prec > ms(ecart_s):", "if t - prec >= ms(ecart_s):"),
     ("plages : relevés pris dans l'ordre du fichier", "ts = sorted(ms(r[\"t\"]) for r in releves)", "ts = [ms(r[\"t\"]) for r in releves]"),
     ("plages : secondes du texte lues comme ms", "out.append((ms(float(ligne[0])), ms(float(ligne[1]))))", "out.append((int(float(ligne[0])), int(float(ligne[1]))))"),
+    ("navigation : temps non couvert compté", "        return max(0, b - a)\n    return sum(", "        return max(0, b - a)\n    return max(0, b - a) + 0 * sum("),
+    ("navigation : plages oubliées par mesurer", "gain_navigation(cibles, fp_tot, saut_ms, plages)", "gain_navigation(cibles, fp_tot, saut_ms)"),
     ("avance : ignorée", "debut = fin - avance_ms", "debut = None"),
     ("avance : appliquée aux fenêtres bornées", "if debut is None and avance_ms is not None:", "if avance_ms is not None:"),
 ]

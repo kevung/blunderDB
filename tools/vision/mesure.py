@@ -33,7 +33,9 @@ Gain de navigation, modèle explicite : les Repères de toutes les paires formen
 suite lue dans l'ordre du temps. Sans marqueur, atteindre un Repère coûte la traversée
 depuis le précédent. Avec marqueurs, une fenêtre appariée coûte un saut (`--saut` s) plus la
 distance de l'événement à la fenêtre ; une fenêtre sans événement coûte la traversée ; chaque
-faux positif coûte un saut de plus (le marqueur est visité pour rien).
+faux positif coûte un saut de plus (le marqueur est visité pour rien). Sous `--plages`, une
+traversée ne compte que le temps couvert : le temps sans analyse n'est à la charge ni du
+détecteur ni de la lecture sans marqueur.
 """
 import argparse
 import csv
@@ -161,7 +163,14 @@ def mediane(xs):
     return s[m] if len(s) % 2 else (s[m - 1] + s[m]) / 2
 
 
-def gain_navigation(cibles, faux_positifs, saut_ms=2000):
+def couvert(a, b, plages):
+    """La durée de [a ; b] couverte par les plages (toute la durée sans plages)."""
+    if plages is None:
+        return max(0, b - a)
+    return sum(max(0, min(b, fin) - max(a, debut)) for debut, fin in plages)
+
+
+def gain_navigation(cibles, faux_positifs, saut_ms=2000, plages=None):
     """(sans_ms, avec_ms) pour la lecture dans l'ordre du temps.
 
     cibles = [(fin_ms, distance_ms ou None)] : le Repère et, s'il est apparié, la distance de
@@ -170,7 +179,7 @@ def gain_navigation(cibles, faux_positifs, saut_ms=2000):
     sans = avec = 0
     prev = 0
     for fin, dist in sorted(cibles, key=lambda c: c[0]):
-        travers = max(0, fin - prev)
+        travers = couvert(prev, fin, plages)
         sans += travers
         avec += travers if dist is None else saut_ms + dist
         prev = max(prev, fin)
@@ -196,7 +205,7 @@ def mesurer(events_path, marks_path, paires_cfg, tol_ms=500, etats=None, saut_ms
         dist_de = {j: d for _, j, d in paires}
         cibles += [(w[1], dist_de.get(j)) for j, w in enumerate(evaluables)]
         cibles += [(w[1], None) for w in toutes if w[0] is None]
-    sans, avec = gain_navigation(cibles, fp_tot, saut_ms)
+    sans, avec = gain_navigation(cibles, fp_tot, saut_ms, plages)
     return {
         "tol_ms": tol_ms,
         "paires": par_paire,
