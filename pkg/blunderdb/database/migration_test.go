@@ -3409,6 +3409,7 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 		`DROP TABLE import_batch_file`, `DROP TABLE player_alias`, `DROP TABLE event_alias`,
 		`DROP TABLE match_stats`,
 		`DROP INDEX idx_match_dice_hash`, `DROP INDEX idx_training_item_position`,
+		`DROP TRIGGER IF EXISTS change_log_match_u`, // it names every column of match
 		`ALTER TABLE match DROP COLUMN dice_hash`,
 		`ALTER TABLE match DROP COLUMN player1_elo`, `ALTER TABLE match DROP COLUMN player2_elo`,
 		`ALTER TABLE match DROP COLUMN player1_experience`, `ALTER TABLE match DROP COLUMN player2_experience`,
@@ -4529,6 +4530,7 @@ func TestMigrate_2_39_0_to_2_40_0_MatchVideo(t *testing.T) {
 	}
 	// Back to the 2.39.0 shape.
 	for _, stmt := range []string{
+		`DROP TRIGGER IF EXISTS change_log_match_u`, // it names every column of match
 		`ALTER TABLE match DROP COLUMN video_source`,
 		`ALTER TABLE move DROP COLUMN roll_tick_ms`,
 		`ALTER TABLE move DROP COLUMN tick_ms`,

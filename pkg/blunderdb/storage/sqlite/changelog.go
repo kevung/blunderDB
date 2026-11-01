@@ -104,6 +104,8 @@ func matchChangeCondition(ctx context.Context, db *sql.DB) (string, error) {
 	if err := rows.Err(); err != nil {
 		return "", fmt.Errorf("sqlite: columns of match: %w", err)
 	}
+	// Sorted: a migrated library holds its columns in another order than a fresh one.
+	slices.Sort(diff)
 	return " AND (" + strings.Join(diff, " OR ") + ")", nil
 }
 
