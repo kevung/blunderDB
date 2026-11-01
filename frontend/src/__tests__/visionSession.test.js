@@ -6,11 +6,15 @@
  */
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { calibrateBoard } from '../vision/geometry/index.js';
+import { OBLIQUE_CLICKS, POSITIONS, renderBoard, stackCheckers } from '../vision/geometry/synthetic.fixture.js';
 import { EVENT_TYPES as T } from '../vision/contract.js';
 import { createVisionSession } from '../services/visionSession.js';
+import { viewLost } from '../services/visionTimeline.js';
 
 // Twice a second, stated here in the literal.
 const PRESENCE_PERIOD_MS = 500;
+// The view is lost after four seconds of low scores: eight readings.
+const HOLD = 8 * PRESENCE_PERIOD_MS;
 
 const CLICKS = /** @type {[number, number][]} */ ([
     [0.9, 0.9],
@@ -129,6 +133,8 @@ describe('presence of the board', () => {
         vision.stop.mockClear();
         frame.current = noise(99);
         video.currentTime = 40;
+        vi.advanceTimersByTime(HOLD - PRESENCE_PERIOD_MS);
+        expect(pushed).toEqual([]);
         vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
         expect(pushed.map((e) => e.type)).toEqual([T.VIEW_LOST]);
         expect(pushed[0].mediaTime).toBe(40);
@@ -145,7 +151,7 @@ describe('presence of the board', () => {
         session.calibrate(cal());
         vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
         frame.current = noise(99);
-        vi.advanceTimersByTime(5 * PRESENCE_PERIOD_MS);
+        vi.advanceTimersByTime(3 * HOLD);
         expect(pushed).toHaveLength(1);
     });
 
@@ -178,7 +184,7 @@ describe('presence of the board', () => {
         const second = setup();
         second.frame.current = noise(99);
         second.session.calibrate(cal());
-        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        vi.advanceTimersByTime(HOLD);
         expect(second.pushed.map((e) => e.type)).toEqual([T.VIEW_LOST]);
     });
 
@@ -189,12 +195,12 @@ describe('presence of the board', () => {
         const other = setup();
         other.frame.current = noise(99);
         other.session.calibrate({ ...cal(), name: 'incrustation' });
-        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        vi.advanceTimersByTime(HOLD);
         expect(other.pushed).toEqual([]);
         const back = setup();
         back.frame.current = noise(99);
         back.session.calibrate(cal());
-        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        vi.advanceTimersByTime(HOLD);
         expect(back.pushed.map((e) => e.type)).toEqual([T.VIEW_LOST]);
     });
 
@@ -205,12 +211,93 @@ describe('presence of the board', () => {
         const other = setup({ key: 'd2' });
         other.frame.current = noise(99);
         other.session.calibrate(cal());
-        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        vi.advanceTimersByTime(HOLD);
         expect(other.pushed).toEqual([]);
         const moved = setup();
         moved.frame.current = noise(99);
         moved.session.calibrate({ ...cal(), clicks: [[0.8, 0.9], ...CLICKS.slice(1)] });
-        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        vi.advanceTimersByTime(HOLD);
         expect(moved.pushed).toEqual([]);
+    });
+});
+
+describe('presence on a board in play', () => {
+    // The synthetic board seen at an angle, its points close in tone as on felt.
+    const FELT = /** @type {[number, number]} */ ([100, 130]);
+    const OBLIQUE = /** @type {[number, number][]} */ (OBLIQUE_CLICKS.map(([x, y]) => [x / 320, y / 180]));
+    const oblique = () => ({ name: 'plein écran', clicks: OBLIQUE, modelToImage: /** @type {any} */ (calibrateBoard(OBLIQUE)).modelToImage });
+    /** @param {object} [o] */
+    const board = (o = {}) =>
+        /** @type {any} */ (renderBoard({ width: 320, height: 180, clicks: OBLIQUE_CLICKS, points: FELT, background: 150, rgba: true, checkers: stackCheckers(POSITIONS.start), ...o }));
+
+    test('checkers moving from the start to a bear-off never lose the view', () => {
+        const { session, frame, pushed, vision } = setup();
+        frame.current = board();
+        session.calibrate(oblique());
+        vi.advanceTimersByTime(PRESENCE_PERIOD_MS); // the reference, at the start
+        for (const p of /** @type {const} */ (['start', 'middle', 'bearoff'])) {
+            frame.current = board({ checkers: stackCheckers(POSITIONS[p]) });
+            vi.advanceTimersByTime(2 * HOLD);
+        }
+        expect(pushed).toEqual([]);
+        expect(vision.stop).not.toHaveBeenCalled();
+    });
+
+    test('an arm across the board for two seconds does not lose the view', () => {
+        const { session, frame, pushed, vision } = setup();
+        frame.current = board();
+        session.calibrate(oblique());
+        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        frame.current = board({ occluder: { x: 40, y: 0, w: 240, h: 180, luma: 160 } });
+        vi.advanceTimersByTime(4 * PRESENCE_PERIOD_MS);
+        frame.current = board({ checkers: stackCheckers(POSITIONS.middle) });
+        vi.advanceTimersByTime(HOLD);
+        expect(pushed).toEqual([]);
+        expect(vision.stop).not.toHaveBeenCalled();
+    });
+
+    test('another shot, or a camera moved by a few pixels, loses the view', () => {
+        /** @type {[number, number][][]} */
+        const shots = [
+            OBLIQUE_CLICKS.map(([x, y]) => [x + 10, y - 5]),
+            [
+                [300, 175],
+                [-200, 190],
+                [-120, -150],
+                [280, -160]
+            ]
+        ];
+        for (const clicks of shots) {
+            const { session, frame, pushed, vision } = setup();
+            frame.current = board();
+            session.calibrate(oblique());
+            vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+            frame.current = board({ clicks });
+            vi.advanceTimersByTime(HOLD);
+            expect(pushed.map((e) => e.type)).toEqual([T.VIEW_LOST]);
+            expect(vision.stop).toHaveBeenCalledTimes(1);
+            session.dispose();
+        }
+    });
+
+    test('a view lost, then a new calibration: the view is found again and the analysis restarts', () => {
+        const { session, frame, pushed, vision, video } = setup();
+        frame.current = board();
+        session.calibrate(oblique());
+        vi.advanceTimersByTime(PRESENCE_PERIOD_MS);
+        const moved = /** @type {[number, number][]} */ (OBLIQUE_CLICKS.map(([x, y]) => [x + 10, y - 5]));
+        frame.current = board({ clicks: moved });
+        vi.advanceTimersByTime(HOLD);
+        expect(pushed.map((e) => e.type)).toEqual([T.VIEW_LOST]);
+        vision.start.mockClear();
+        video.currentTime = 60;
+        const clicks = /** @type {[number, number][]} */ (moved.map(([x, y]) => [x / 320, y / 180]));
+        session.calibrate({ name: 'déplacée', clicks, modelToImage: /** @type {any} */ (calibrateBoard(clicks)).modelToImage });
+        expect(pushed.map((e) => e.type)).toEqual([T.VIEW_LOST, T.VIEW_FOUND]);
+        expect(pushed[1].mediaTime).toBe(60);
+        expect(viewLost(pushed)).toBe(false);
+        expect(vision.start).toHaveBeenCalledWith({ session: 'd1:déplacée' });
+        vi.advanceTimersByTime(3 * HOLD);
+        expect(pushed).toHaveLength(2);
     });
 });
