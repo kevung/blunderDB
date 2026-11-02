@@ -11,7 +11,7 @@ const MaxDerivationMove = 100
 // came from. It says nothing of anyone else.
 type Derivation struct {
 	// FromID is the id of the position this one derives from.
-	FromID int64 `json:"from_id"`
+	FromID int64 `json:"fromId"`
 	// Move is the move played from that position, free text ("13/7 24/23"),
 	// empty when unknown.
 	Move string `json:"move"`

@@ -13,9 +13,9 @@ import (
 
 type derivationBody struct {
 	DerivedFrom *struct {
-		FromID int64  `json:"from_id"`
+		FromID int64  `json:"fromId"`
 		Move   string `json:"move"`
-	} `json:"derived_from"`
+	} `json:"derivedFrom"`
 }
 
 // A variant is linked to its origin with the move played, read back, listed
@@ -53,10 +53,10 @@ func TestPositionsDerivation_SetGetClear(t *testing.T) {
 		}
 		return b
 	}
-	if rec := serveAcross(t, srv, "1", "", "/v1/positions.derivedFrom", `{"id":`+variant+`}`); rec.Body.String() != `{"derived_from":null}`+"\n" && rec.Body.String() != `{"derived_from":null}` {
+	if rec := serveAcross(t, srv, "1", "", "/v1/positions.derivedFrom", `{"id":`+variant+`}`); rec.Body.String() != `{"derivedFrom":null}`+"\n" && rec.Body.String() != `{"derivedFrom":null}` {
 		t.Fatalf("fresh = %s, want an explicit null", rec.Body)
 	}
-	set := `{"id":` + variant + `,"derived_from":{"from_id":` + origin + `,"move":"13/7 24/23"}}`
+	set := `{"id":` + variant + `,"derivedFrom":{"fromId":` + origin + `,"move":"13/7 24/23"}}`
 	if rec := serveAcross(t, srv, "1", "", "/v1/positions.setDerivedFrom", set); rec.Code != http.StatusOK {
 		t.Fatalf("set: %d %s", rec.Code, rec.Body)
 	}
@@ -68,8 +68,8 @@ func TestPositionsDerivation_SetGetClear(t *testing.T) {
 		t.Errorf("variants: %d %s", rec.Code, rec.Body)
 	}
 	for name, body := range map[string]string{
-		"itself": `{"id":` + variant + `,"derived_from":{"from_id":` + variant + `}}`,
-		"loop":   `{"id":` + origin + `,"derived_from":{"from_id":` + variant + `}}`,
+		"itself": `{"id":` + variant + `,"derivedFrom":{"fromId":` + variant + `}}`,
+		"loop":   `{"id":` + origin + `,"derivedFrom":{"fromId":` + variant + `}}`,
 	} {
 		if rec := serveAcross(t, srv, "1", "", "/v1/positions.setDerivedFrom", body); rec.Code != http.StatusBadRequest {
 			t.Errorf("%s: %d %s, want 400", name, rec.Code, rec.Body)
@@ -78,13 +78,26 @@ func TestPositionsDerivation_SetGetClear(t *testing.T) {
 	if b := get(variant); b.DerivedFrom == nil || b.DerivedFrom.Move != "13/7 24/23" {
 		t.Errorf("a refused link changed the previous one: %+v", b.DerivedFrom)
 	}
-	if rec := serveAcross(t, srv, "1", "", "/v1/positions.setDerivedFrom", `{"id":`+variant+`}`); rec.Code != http.StatusOK {
+	// A misspelt or missing field must not erase the link (the decoder lets
+	// unknown fields through): only an explicit null clears it.
+	for name, body := range map[string]string{
+		"snake case": `{"id":` + variant + `,"derived_from":{"from_id":` + origin + `}}`,
+		"absent":     `{"id":` + variant + `}`,
+	} {
+		if rec := serveAcross(t, srv, "1", "", "/v1/positions.setDerivedFrom", body); rec.Code != http.StatusBadRequest {
+			t.Errorf("%s: %d %s, want 400", name, rec.Code, rec.Body)
+		}
+	}
+	if b := get(variant); b.DerivedFrom == nil {
+		t.Fatal("a request without derivedFrom erased the link")
+	}
+	if rec := serveAcross(t, srv, "1", "", "/v1/positions.setDerivedFrom", `{"id":`+variant+`,"derivedFrom":null}`); rec.Code != http.StatusOK {
 		t.Fatalf("clear: %d %s", rec.Code, rec.Body)
 	}
 	if b := get(variant); b.DerivedFrom != nil {
 		t.Errorf("after clear: %+v", b.DerivedFrom)
 	}
-	if rec := serveAcross(t, srv, "1", "", "/v1/positions.setDerivedFrom", `{"id":999999}`); rec.Code != http.StatusNotFound {
+	if rec := serveAcross(t, srv, "1", "", "/v1/positions.setDerivedFrom", `{"id":999999,"derivedFrom":null}`); rec.Code != http.StatusNotFound {
 		t.Errorf("unknown position: %d, want 404", rec.Code)
 	}
 }

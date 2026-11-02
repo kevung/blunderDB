@@ -8900,7 +8900,7 @@ components:
     derivedFromResp:
       type: object
       properties:
-        derived_from:
+        derivedFrom:
           $ref: "#/components/schemas/domain_Derivation"
           nullable: true
     directionAbsentReq:
@@ -10160,7 +10160,7 @@ components:
         id:
           type: integer
           format: int64
-        derived_from:
+        derivedFrom:
           $ref: "#/components/schemas/domain_Derivation"
           nullable: true
     setDrawingReq:

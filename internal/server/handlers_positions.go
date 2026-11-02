@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"context"
 	"encoding/base64"
 	"errors"
@@ -184,7 +185,7 @@ func (s *Server) positionRoutes() []route {
 		})},
 		// The position a position derives from and the move that led to it (a
 		// variant's link to its origin); null when it derives from nothing.
-		// Set whole, an absent derived_from clears it.
+		// Set whole: derivedFrom null clears it, and an absent derivedFrom is refused (a misspelt field must not erase a link).
 		{http.MethodPost, "/v1/positions.derivedFrom", rpc(func(ctx context.Context, scope string, req idReq) (derivedFromResp, error) {
 			d, err := s.derivations()
 			if err != nil {
@@ -197,6 +198,9 @@ func (s *Server) positionRoutes() []route {
 			d, err := s.derivations()
 			if err != nil {
 				return err
+			}
+			if !req.present {
+				return fmt.Errorf("%w: derivedFrom is required, null to clear the link", storage.ErrInvalid)
 			}
 			return d.SetDerivedFrom(ctx, scope, req.ID, req.DerivedFrom)
 		})},
@@ -457,14 +461,31 @@ func (s *Server) drawings() (storage.DrawingStore, error) {
 }
 
 type derivedFromResp struct {
-	DerivedFrom *domain.Derivation `json:"derived_from"`
+	DerivedFrom *domain.Derivation `json:"derivedFrom"`
 }
 
-// setDerivedFromReq makes position ID derive from DerivedFrom; absent or null
-// clears it.
+// setDerivedFromReq makes position ID derive from DerivedFrom; null clears it.
+// The field must be present: the decoder ignores fields it does not know, so
+// an absent one is a misspelling, not a request to erase.
 type setDerivedFromReq struct {
 	ID          int64              `json:"id"`
-	DerivedFrom *domain.Derivation `json:"derived_from"`
+	DerivedFrom *domain.Derivation `json:"derivedFrom"`
+	present     bool
+}
+
+func (r *setDerivedFromReq) UnmarshalJSON(b []byte) error {
+	type plain setDerivedFromReq
+	var p plain
+	if err := json.Unmarshal(b, &p); err != nil {
+		return err
+	}
+	var keys map[string]json.RawMessage
+	if err := json.Unmarshal(b, &keys); err != nil {
+		return err
+	}
+	_, p.present = keys["derivedFrom"]
+	*r = setDerivedFromReq(p)
+	return nil
 }
 
 type variantsResp struct {
