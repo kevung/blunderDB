@@ -52,6 +52,8 @@ var postgresOnlyIndexes = []string{
 	// SQLite's change_log is keyed by its seq (INTEGER PRIMARY KEY): the
 	// primary key is the index.
 	"idx_change_log_seq",
+	// The read order of PostgreSQL's journal (xid, seq): SQLite has no xid.
+	"idx_change_log_xid",
 }
 
 // indexDecl is one CREATE INDEX statement, normalised for comparison.

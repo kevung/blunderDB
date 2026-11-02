@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS position_derivation (
         FOREIGN KEY (tenant_id, from_position_id) REFERENCES position (tenant_id, id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS position_derivation_from_idx ON position_derivation (tenant_id, from_position_id);
+CREATE INDEX IF NOT EXISTS idx_position_derivation_from ON position_derivation (tenant_id, from_position_id);
 
 -- Row-level security, applied only if this schema already has it. Same shape
 -- as 057_position_drawing.sql.
