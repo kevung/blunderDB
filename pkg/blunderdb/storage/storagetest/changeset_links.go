@@ -70,6 +70,7 @@ func CheckChangeSetLinks(t *testing.T, pair func(t *testing.T) *ChangeSetPair) {
 		{"LinkWaitsForAnOriginOfALaterPage", scenarioLinkAcrossPages},
 		{"LinkWaitsForAnOriginOfALaterSet", scenarioLinkAcrossSets},
 		{"ErasedWaitingLinkStaysErased", scenarioErasedWaitingLink},
+		{"WaitingLinkErasedMeanwhileStaysErased", scenarioWaitingLinkErasedMeanwhile},
 		{"RefusedLoopKeepsTheLink", scenarioLoopKeepsLink},
 		{"FirstMeetKeepsWhatThePeerNeverSaw", scenarioFirstMeet},
 		{"TieAtTheFloorLosesNothing", scenarioFloorTie},
@@ -492,5 +493,44 @@ func scenarioErasedWaitingLink(p *csPair) {
 	}
 	if d := p.link(p.b, p.cb, p.sb, bv); d != nil {
 		t.Errorf("the origin's arrival brought an erased link back: %+v", d)
+	}
+}
+
+// racingStores erases, right after the import has read the waiting links, what
+// a writer on another connection would: settleLinks holds a stale list.
+type racingStores struct {
+	storage.Storage
+	race func()
+}
+
+func (r racingStores) ChangeJournal() storage.ChangeJournalStore {
+	return racingJournal{r.Storage.(storage.ChangeJournalProvider).ChangeJournal(), r.race}
+}
+
+func (r racingStores) ObjectUUIDs() storage.ObjectUUIDStore {
+	return r.Storage.(storage.ObjectUUIDProvider).ObjectUUIDs()
+}
+
+type racingJournal struct {
+	storage.ChangeJournalStore
+	race func()
+}
+
+func (j racingJournal) PendingLinks(ctx context.Context, scope string) ([]storage.PartFact, error) {
+	list, err := j.ChangeJournalStore.PendingLinks(ctx, scope)
+	j.race()
+	return list, err
+}
+
+// A link erased between the reading of the waiting list and its settling stays
+// erased: the transaction goes by what it reads, not by the list.
+func scenarioWaitingLinkErasedMeanwhile(p *csPair) {
+	bv, origins := p.waitingOnB(350)
+	stores := racingStores{p.b, func() { p.setLink(p.b, p.cb, p.sb, bv, nil) }}
+	if _, err := changeset.Import(p.cb, stores, p.sb, origins); err != nil {
+		p.t.Fatal(err)
+	}
+	if d := p.link(p.b, p.cb, p.sb, bv); d != nil {
+		p.t.Errorf("a link erased meanwhile was made from the stale list: %+v", d)
 	}
 }

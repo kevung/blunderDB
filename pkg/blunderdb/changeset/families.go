@@ -421,6 +421,17 @@ func settleLinks(ctx context.Context, s storage.Stores, scope string, rep *Repor
 			if err != nil {
 				return err
 			}
+			// The list was read before this transaction: the link may have
+			// been erased or made since, or its position be gone.
+			cur, known, err := journal.PartFact(ctx, scope, f.PositionID, storage.PartDerivation)
+			if err != nil {
+				return err
+			}
+			if !known || cur.PendingOrigin == "" {
+				settled = true
+				return nil
+			}
+			f = cur
 			origin, found, err := findPosition(ctx, s, scope, f.PendingOrigin)
 			if err != nil || !found {
 				return err
