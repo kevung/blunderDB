@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 04:07+0100\n"
+"POT-Creation-Date: 2026-11-02 04:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -39,16 +39,11 @@ msgstr "Εκδόσεις και μεταβάσεις"
 #: ../../source/annexe_db_scheme.rst:13
 msgid ""
 "Le schéma de la base de données est **versionné**. La version courante du"
-" schéma est **2.51.0** ; elle est indépendante de la version de "
+" schéma est **2.55.0** ; elle est indépendante de la version de "
 "l'application et n'est incrémentée que lorsque la structure interne "
 "évolue. La version du schéma d'une base ouverte est visible dans le "
 "panneau **Métadonnées** (commande ``meta``)."
-msgstr ""
-"Το σχήμα της βάσης δεδομένων είναι **εκδοσιολογημένο**. Η τρέχουσα έκδοση"
-" του σχήματος είναι **2.51.0**· είναι ανεξάρτητη από την έκδοση της "
-"εφαρμογής και αυξάνεται μόνο όταν αλλάζει η εσωτερική δομή. Η έκδοση του "
-"σχήματος μιας ανοικτής βάσης εμφανίζεται στον πίνακα **Μεταδεδομένα** "
-"(εντολή ``meta``)."
+msgstr "Το σχήμα της βάσης δεδομένων είναι **εκδοσιολογημένο**. Η τρέχουσα έκδοση του σχήματος είναι **2.55.0**· είναι ανεξάρτητη από την έκδοση της εφαρμογής και αυξάνεται μόνο όταν αλλάζει η εσωτερική δομή. Η έκδοση του σχήματος μιας ανοικτής βάσης εμφανίζεται στον πίνακα **Μεταδεδομένα** (εντολή ``meta``)."
 
 #: ../../source/annexe_db_scheme.rst:20
 msgid ""
@@ -148,6 +143,22 @@ msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:61
 msgid ""
+"**Journal de changements** : ``change_log`` date la dernière écriture de "
+"chaque objet, et ``position_part_fact`` celle du dessin et du lien de "
+"variante d'une position, effacement compris. Deux bibliothèques s'en "
+"servent pour se synchroniser."
+msgstr "**Ημερολόγιο αλλαγών**: το ``change_log`` χρονολογεί την τελευταία εγγραφή κάθε αντικειμένου και το ``position_part_fact`` εκείνη του σχεδίου και του συνδέσμου παραλλαγής μιας θέσης, μαζί με τις διαγραφές. Δύο βιβλιοθήκες τα χρησιμοποιούν για να συγχρονίζονται."
+
+#: ../../source/annexe_db_scheme.rst:66
+msgid ""
+"**Marques d'une position** : ``position_drawing`` porte le dessin et "
+"``position_derivation`` le lien d'une variante à la position dont elle "
+"vient ; la colonne ``position.public_id`` porte un libellé choisi par "
+"l'appelant."
+msgstr "**Σημάνσεις μιας θέσης**: το ``position_drawing`` περιέχει το σχέδιο και το ``position_derivation`` τον σύνδεσμο μιας παραλλαγής με τη θέση από την οποία προέρχεται· η στήλη ``position.public_id`` περιέχει μια ετικέτα που επιλέγει ο καλών."
+
+#: ../../source/annexe_db_scheme.rst:70
+msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
 "``filter_library`` la bibliothèque de filtres, et ``metadata`` les "
@@ -158,11 +169,11 @@ msgstr ""
 "``filter_library`` τη βιβλιοθήκη φίλτρων, και ο ``metadata`` τα "
 "μεταδεδομένα της βάσης (μεταξύ των οποίων και η έκδοση του σχήματος)."
 
-#: ../../source/annexe_db_scheme.rst:67
+#: ../../source/annexe_db_scheme.rst:76
 msgid "Principes de conception"
 msgstr "Αρχές σχεδιασμού"
 
-#: ../../source/annexe_db_scheme.rst:69
+#: ../../source/annexe_db_scheme.rst:78
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
@@ -170,7 +181,7 @@ msgstr ""
 "Από το σχήμα 2.0.0, αρκετές επιλογές σχεδιασμού επιταχύνουν την αναζήτηση"
 " και μειώνουν το μέγεθος του αρχείου:"
 
-#: ../../source/annexe_db_scheme.rst:72
+#: ../../source/annexe_db_scheme.rst:81
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -180,7 +191,7 @@ msgstr ""
 "Zobrist και ένα μοναδικό ευρετήριο, έτσι ώστε μια ίδια θέση που "
 "συναντάται σε πολλαπλές εισαγωγές να αποθηκεύεται μόνο μία φορά."
 
-#: ../../source/annexe_db_scheme.rst:76
+#: ../../source/annexe_db_scheme.rst:85
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -192,7 +203,7 @@ msgstr ""
 "καθυστερημένα πούλια, σφάλμα κίνησης ή κύβου, πιθανότητες νίκης…) "
 "προϋπολογίζονται σε ειδικές στήλες για γρήγορο φιλτράρισμα."
 
-#: ../../source/annexe_db_scheme.rst:81
+#: ../../source/annexe_db_scheme.rst:90
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -202,7 +213,7 @@ msgstr ""
 "επιτρέπουν ένα πολύ γρήγορο ακέραιο προφιλτράρισμα κατά τις αναζητήσεις "
 "μοτίβων δομής."
 
-#: ../../source/annexe_db_scheme.rst:85
+#: ../../source/annexe_db_scheme.rst:94
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -216,10 +227,11 @@ msgstr ""
 "και μετατρέπονται με ``vacuum`` ή ``reencode``), κάτι που μειώνει "
 "σημαντικά το μέγεθος του αρχείου."
 
-#: ../../source/annexe_db_scheme.rst:91
+#: ../../source/annexe_db_scheme.rst:100
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."
 msgstr ""
 "**Καταγραφή WAL**: η λειτουργία WAL και προσαρμοσμένα PRAGMA βελτιώνουν "
 "τις επιδόσεις ανάγνωσης και εγγραφής."
+

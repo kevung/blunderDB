@@ -11,7 +11,7 @@ Versionnage et migrations
 -------------------------
 
 Le schéma de la base de données est **versionné**. La version courante du
-schéma est **2.51.0** ; elle est indépendante de la version de l'application et
+schéma est **2.55.0** ; elle est indépendante de la version de l'application et
 n'est incrémentée que lorsque la structure interne évolue. La version du schéma
 d'une base ouverte est visible dans le panneau **Métadonnées** (commande
 ``meta``).
@@ -57,6 +57,15 @@ Le schéma courant s'articule autour des tables suivantes :
 * **Répétition espacée (Anki)** : ``anki_deck``, ``anki_card`` et
   ``anki_review_log`` gèrent les paquets, les cartes et le journal des
   révisions (algorithme FSRS).
+
+* **Journal de changements** : ``change_log`` date la dernière écriture de
+  chaque objet, et ``position_part_fact`` celle du dessin et du lien de variante
+  d'une position, effacement compris. Deux bibliothèques s'en servent pour se
+  synchroniser.
+
+* **Marques d'une position** : ``position_drawing`` porte le dessin et
+  ``position_derivation`` le lien d'une variante à la position dont elle vient ;
+  la colonne ``position.public_id`` porte un libellé choisi par l'appelant.
 
 * **Historique et divers** : ``command_history`` et ``search_history``
   conservent l'historique des commandes et des recherches, ``filter_library``

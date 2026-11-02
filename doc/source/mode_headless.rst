@@ -406,6 +406,14 @@ par douze routes : ``/v1/lessons.list``, ``lessons.get`` (la leçon et ses
 étape) ; ``lessons.html`` (``{"id": <leçon>, "language": "fr"}``) rend la leçon en une page HTML autonome, plateaux compris. La suppression d'une leçon est définitive et laisse les collections et
 les positions que ses étapes montraient. Les outils MCP ``list_lessons`` et ``lesson`` les lisent.
 
+``lessons.markdown`` (``{"ids": [<leçon>, …]}``) rend des leçons en un texte
+Markdown (``markdown``) : ``# nom``, la description, puis une section ``## titre``
+par étape ; un article est une leçon sans étape. ``lessons.importMarkdown``
+(``{"markdown": "…"}``) crée une leçon par document, en une seule transaction, et
+rend leurs ``ids``. Le Markdown ne porte que le texte : une étape importée ne
+montre ni plateau ni collection. Un bloc de code qu'aucune clôture ne ferme est
+refusé.
+
 .. _headless_transcription:
 
 Transcrire par l'API
@@ -1445,6 +1453,16 @@ l'import absorbe la répétition. ``changeset.import`` (``records``) fusionne, l
 dernière écriture gagnant, et rend le rapport : ``added``, ``modified``,
 ``removed``, ``older``, ``conflicts``, et ``missing`` pour une référence qui
 n'a pas pu être placée. Une note écrasée par l'import reste dans la corbeille.
+
+Trois marques s'ajoutent à une position, et voyagent avec elle.
+``positions.drawing`` et ``positions.setDrawing`` (``{"id": N, "marks": […]}``)
+lisent et remplacent son dessin : des flèches et des cases, 40 au plus ; une liste
+vide l'efface. ``positions.setDerivedFrom`` (``{"id": N, "derivedFrom": {"fromId":
+<origine>, "move": "13/7"}}``, ``null`` pour effacer) la déclare variante d'une
+autre position ; ``positions.derivedFrom`` lit ce lien et ``positions.variants``
+la liste de ses variantes. Une boucle ou une origine absente est refusée.
+``positions.publicId`` et ``positions.setPublicId`` lisent et posent un libellé
+que blunderDB conserve sans jamais l'interpréter.
 
 ``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant
 courant : écrire une analyse pour chaque position qui n'en a aucune

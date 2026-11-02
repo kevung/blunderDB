@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 04:07+0100\n"
+"POT-Creation-Date: 2026-11-02 04:53+0100\n"
 "PO-Revision-Date: 2025-02-13 00:00+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -39,15 +39,11 @@ msgstr "Versioning and migrations"
 #: ../../source/annexe_db_scheme.rst:13
 msgid ""
 "Le schéma de la base de données est **versionné**. La version courante du"
-" schéma est **2.51.0** ; elle est indépendante de la version de "
+" schéma est **2.55.0** ; elle est indépendante de la version de "
 "l'application et n'est incrémentée que lorsque la structure interne "
 "évolue. La version du schéma d'une base ouverte est visible dans le "
 "panneau **Métadonnées** (commande ``meta``)."
-msgstr ""
-"The database schema is **versioned**. The current schema version is "
-"**2.51.0**; it is independent of the application version and is only "
-"incremented when the internal structure changes. The schema version of an"
-" open database is shown in the **Metadata** panel (``meta`` command)."
+msgstr "The database schema is **versioned**. The current schema version is **2.55.0**; it is independent of the application version and is only incremented when the internal structure changes. The schema version of an open database is shown in the **Metadata** panel (``meta`` command)."
 
 #: ../../source/annexe_db_scheme.rst:20
 msgid ""
@@ -145,6 +141,22 @@ msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:61
 msgid ""
+"**Journal de changements** : ``change_log`` date la dernière écriture de "
+"chaque objet, et ``position_part_fact`` celle du dessin et du lien de "
+"variante d'une position, effacement compris. Deux bibliothèques s'en "
+"servent pour se synchroniser."
+msgstr "**Change journal**: ``change_log`` dates the last write of each object, and ``position_part_fact`` that of a position's drawing and variant link, erasures included. Two libraries use them to synchronise."
+
+#: ../../source/annexe_db_scheme.rst:66
+msgid ""
+"**Marques d'une position** : ``position_drawing`` porte le dessin et "
+"``position_derivation`` le lien d'une variante à la position dont elle "
+"vient ; la colonne ``position.public_id`` porte un libellé choisi par "
+"l'appelant."
+msgstr "**Marks on a position**: ``position_drawing`` holds the drawing and ``position_derivation`` the link from a variant to the position it comes from; the column ``position.public_id`` holds a label chosen by the caller."
+
+#: ../../source/annexe_db_scheme.rst:70
+msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
 "``filter_library`` la bibliothèque de filtres, et ``metadata`` les "
@@ -155,11 +167,11 @@ msgstr ""
 " library, and ``metadata`` the database metadata (including the schema "
 "version)."
 
-#: ../../source/annexe_db_scheme.rst:67
+#: ../../source/annexe_db_scheme.rst:76
 msgid "Principes de conception"
 msgstr "Design principles"
 
-#: ../../source/annexe_db_scheme.rst:69
+#: ../../source/annexe_db_scheme.rst:78
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
@@ -167,7 +179,7 @@ msgstr ""
 "From schema 2.0.0 onwards, several design choices speed up searches and "
 "reduce the file size:"
 
-#: ../../source/annexe_db_scheme.rst:72
+#: ../../source/annexe_db_scheme.rst:81
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -177,7 +189,7 @@ msgstr ""
 "unique index, so that the same position encountered across several "
 "imports is stored only once."
 
-#: ../../source/annexe_db_scheme.rst:76
+#: ../../source/annexe_db_scheme.rst:85
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -189,7 +201,7 @@ msgstr ""
 "play or cube error, chances of winning, etc.) are precomputed into "
 "dedicated columns for fast filtering."
 
-#: ../../source/annexe_db_scheme.rst:81
+#: ../../source/annexe_db_scheme.rst:90
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -198,7 +210,7 @@ msgstr ""
 "**Bitboard prefilter**: occupancy and point-mask columns enable a very "
 "fast integer prefilter when searching for structure patterns."
 
-#: ../../source/annexe_db_scheme.rst:85
+#: ../../source/annexe_db_scheme.rst:94
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -211,10 +223,11 @@ msgstr ""
 "older analyses, in JSON, remain readable and are converted by ``vacuum`` "
 "or ``reencode``), which greatly reduces the file size."
 
-#: ../../source/annexe_db_scheme.rst:91
+#: ../../source/annexe_db_scheme.rst:100
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."
 msgstr ""
 "**WAL journaling**: WAL mode and tuned PRAGMAs improve read and write "
 "performance."
+
