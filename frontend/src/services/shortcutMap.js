@@ -15,6 +15,8 @@
  * `shadows`: chords this scope deliberately takes over from a scope of a later tier.
  */
 
+import { VISION_AVAILABLE } from '../vision/available.js';
+
 /** Dispatch order; a lower tier sees the key first. */
 export const TIER = Object.freeze({
     OVERLAY: 0,
@@ -119,8 +121,7 @@ export const SHORTCUTS = {
             'Ctrl+Shift+ArrowRight',
             'v',
             'Shift+V',
-            'g',
-            'Shift+G',
+            ...(VISION_AVAILABLE ? ['g', 'Shift+G'] : []),
             'o',
             '[',
             ']'

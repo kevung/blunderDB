@@ -51,3 +51,6 @@ Les décisions sont dans `docs/adr/` : ADR-0108 (cadre, acceptée), ADR-0109 (ph
 débloquent. Le découpage en issues par zone de code, l'ordre d'ouverture et les bancs du lot V0
 sont dans `chantiers.md` ; les notes de banc iront dans `bancs/`. Là où `synthese.md` et un ADR
 divergent, l'ADR fait foi.
+
+Activer : `VISION_AVAILABLE = true` dans `frontend/src/vision/available.js` (vraie seulement sous
+`make dev` sinon), puis remettre la doc de `doc-a-republier.md`.

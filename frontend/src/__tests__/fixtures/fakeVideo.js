@@ -14,6 +14,8 @@ export const fakeVideo = {
     duration: null,
     /** @type {number[]} */
     rateSteps: [],
+    /** @type {((c: any) => void) | null} the panel's hand on a calibration being retained */
+    oncalibration: null,
     reset() {
         this.now = null;
         this.startMs = null;
@@ -21,5 +23,6 @@ export const fakeVideo = {
         this.toggles = 0;
         this.duration = null;
         this.rateSteps = [];
+        this.oncalibration = null;
     }
 };

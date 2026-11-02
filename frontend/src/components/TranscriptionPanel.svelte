@@ -113,6 +113,7 @@
     import { visionEventsStore, pushVisionEvent, resetVisionEvents } from '../stores/visionEventsStore.js';
     import VisionBenchExport from './VisionBenchExport.svelte';
     import { createVisionSession } from '../services/visionSession.js';
+    import { VISION_AVAILABLE } from '../vision/available.js';
     import { jumpTarget, snapRollTime, timelineMarkers, recentOverlay, viewLost as visionViewLost } from '../services/visionTimeline.js';
     import { toCssPx } from '../utils/uiZoom.js';
     import { readOfLibrary, isLibraryLeft } from '../stores/groupActivityStore.js';
@@ -692,7 +693,7 @@
             stampCursor(event.key === 'V' || event.shiftKey);
             return true;
         }
-        if ((event.key === 'g' || event.key === 'G') && !event.ctrlKey) {
+        if (VISION_AVAILABLE && (event.key === 'g' || event.key === 'G') && !event.ctrlKey) {
             jumpToMarker(event.key === 'G' || event.shiftKey ? -1 : 1);
             return true;
         }
@@ -725,6 +726,7 @@
     }
     /** @param {any} calibration */
     function onCalibration(calibration) {
+        if (!VISION_AVAILABLE) return;
         calibrationName = calibration?.name ?? '';
         if (!calibration && !visionSession) return;
         if (!visionSession) {
@@ -2223,7 +2225,9 @@
                         />
                     {/key}
                 </div>
-                <VisionBenchExport events={$visionEventsStore} calibration={calibrationName} source={videoSource} {draftId} />
+                {#if VISION_AVAILABLE}
+                    <VisionBenchExport events={$visionEventsStore} calibration={calibrationName} source={videoSource} {draftId} />
+                {/if}
                 {#if !videoOnBoard}
                     <div class="video-resize" role="separator" aria-orientation="horizontal" aria-label={$t('transcription.videoResize')} onpointerdown={startVideoResize}></div>
                 {/if}

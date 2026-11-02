@@ -10,6 +10,7 @@
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
     import VideoCalibration from './VideoCalibration.svelte';
+    import { VISION_AVAILABLE } from '../vision/available.js';
     import { VIDEO_RATES, stepRate as nextRate } from '../utils/videoRate.js';
 
     // `rotation`: 0, 90, 180 or 270 degrees clockwise. The media turns inside the box (the
@@ -582,7 +583,7 @@
             data-rotation={rotation}
         ></iframe>
     {/if}
-    {#if calibrationKey != null && kind === 'file' && src && status === 'ready'}
+    {#if VISION_AVAILABLE && calibrationKey != null && kind === 'file' && src && status === 'ready'}
         <VideoCalibration {calibrationKey} {video} {rotation} {viewLost} {oncalibration} />
     {/if}
     {#if status === 'ready' && rateFlash}

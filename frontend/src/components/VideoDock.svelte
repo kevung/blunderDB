@@ -7,6 +7,7 @@
     import VideoTimeline from './VideoTimeline.svelte';
     import { t } from '../i18n';
     import { portal } from '../utils/portal.js';
+    import { VISION_AVAILABLE } from '../vision/available.js';
     import { videoPlacementStore, videoStageOwnerStore, videoStageTargetStore, claimVideoStage, releaseVideoStage, setVideoPlacement, swapVideoSide } from '../stores/videoStageStore.js';
 
     /**
@@ -151,7 +152,7 @@
                     aria-label={$t('video.rotate')}>⟳</button
                 >
             {/if}
-            {#if overlayDrift}
+            {#if VISION_AVAILABLE && overlayDrift}
                 <span class="video-dock-drift" data-testid="video-overlay-drift" role="status" title={$t('video.overlayDrift')} aria-label={$t('video.overlayDrift')}>◐</span>
             {/if}
             {#if onBoard}
@@ -176,7 +177,7 @@
         </div>
     {/if}
     <div class="video-dock-stage"><VideoPane bind:this={pane} {source} {startMs} {rotation} {onrelocate} {onended} {calibrationKey} {viewLost} {oncalibration} /></div>
-    {#if markers.length > 0 && onjump}
+    {#if VISION_AVAILABLE && markers.length > 0 && onjump}
         <VideoTimeline {markers} durationMs={() => pane?.durationMs?.() ?? null} nowMs={() => pane?.currentTimeMs?.() ?? null} {onjump} />
     {/if}
 </div>
