@@ -93,10 +93,9 @@ var serverOnly = map[string]string{
 	// A batch import over HTTP outlives its request, so it has a handle to
 	// read and to stop. The CLI and the desktop run the same pipeline in the
 	// foreground and read its progress from the call itself.
-	// An opaque label a caller attaches to a position (gammonGo's public page
-	// link); the desktop has no use for it yet.
-	// The arrows and squares a player lays over a board; the desktop has no
-	// board editor for them yet.
+	// Per-position data only a daemon caller edits so far: the opaque label of
+	// a public page link, the arrows and squares drawn over a board, and the
+	// link of a variant to its origin. The desktop has no gesture for them yet.
 	"/v1/positions.derivedFrom":    "the position a position derives from and the move played: only the daemon's callers read it until the desktop has a variant gesture",
 	"/v1/positions.setDerivedFrom": "sets or clears the origin of a variant: only the daemon's callers write it until the desktop has a variant gesture",
 	"/v1/positions.variants":       "the positions deriving from a position: only the daemon's callers list them until the desktop has a variant gesture",
