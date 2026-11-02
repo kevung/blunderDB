@@ -10,7 +10,8 @@
 // description and no Steps. The Markdown carries text only: the collection or
 // board a Step shows is not named in it, so an imported Step shows none.
 // A heading inside a code fence is text; a body line that would read as a
-// heading is written with a leading backslash and read back without it.
+// heading, or open a fence nothing closes, is written with a leading backslash
+// and read back without it.
 package lessonmd
 
 import (
@@ -41,16 +42,52 @@ func isSection(l string) bool {
 	return l == "##" || strings.HasPrefix(l, "## ")
 }
 
-// headingLike reports a body line the parser would take for a heading, once
-// leading backslashes are set aside.
-func headingLike(l string) bool {
+// escapable reports a body line a backslash protects, once leading backslashes
+// are set aside: one the parser would take for a heading or a fence.
+func escapable(l string) bool {
 	t := strings.TrimLeft(l, `\`)
-	return t == "#" || t == "##" || strings.HasPrefix(t, "# ") || strings.HasPrefix(t, "## ")
+	if t == "#" || t == "##" || strings.HasPrefix(t, "# ") || strings.HasPrefix(t, "## ") {
+		return true
+	}
+	_, ok := openFence(t)
+	return ok
 }
 
-func fenceToggles(l string) bool {
+// fence is an open code fence, as CommonMark reads one.
+type fence struct {
+	mark byte
+	size int
+}
+
+// fenceRun splits a line that may be a fence into its run of marks and what
+// follows. Four spaces of indent make it an indented code line instead.
+func fenceRun(l string) (mark byte, size int, rest string) {
 	t := strings.TrimLeft(l, " ")
-	return strings.HasPrefix(t, "```") || strings.HasPrefix(t, "~~~")
+	if len(l)-len(t) > 3 || t == "" || (t[0] != '`' && t[0] != '~') {
+		return 0, 0, ""
+	}
+	mark = t[0]
+	for size < len(t) && t[size] == mark {
+		size++
+	}
+	return mark, size, t[size:]
+}
+
+// openFence reads a line that opens a fence. A backtick further on makes the
+// line inline code: "```x``` text" opens nothing.
+func openFence(l string) (fence, bool) {
+	mark, size, rest := fenceRun(l)
+	if size < 3 || (mark == '`' && strings.Contains(rest, "`")) {
+		return fence{}, false
+	}
+	return fence{mark, size}, true
+}
+
+// closes reports a line that closes f: the same mark, at least as many, and
+// nothing after them.
+func (f fence) closes(l string) bool {
+	mark, size, rest := fenceRun(l)
+	return mark == f.mark && size >= f.size && strings.TrimRight(rest, " \t") == ""
 }
 
 func oneLine(s string) string { return strings.Join(strings.Fields(s), " ") }
@@ -64,20 +101,26 @@ func Render(d Doc) string {
 			return
 		}
 		b.WriteString("\n")
-		fenced := false
-		for _, l := range strings.Split(s, "\n") {
-			if fenceToggles(l) {
-				fenced = !fenced
-			} else if !fenced && headingLike(l) {
+		ls := strings.Split(s, "\n")
+		for i := 0; i < len(ls); i++ {
+			l := ls[i]
+			if f, ok := openFence(l); ok {
+				end := i + 1
+				for end < len(ls) && !f.closes(ls[end]) {
+					end++
+				}
+				if end < len(ls) {
+					b.WriteString(strings.Join(ls[i:end+1], "\n") + "\n")
+					i = end
+					continue
+				}
+				// Nothing closes it: as a fence it would take the next step for
+				// code, and a closing line added here would come back as text.
+			}
+			if escapable(l) {
 				l = `\` + l
 			}
 			b.WriteString(l + "\n")
-		}
-		// A body that opens a fence and never closes it would take the next
-		// step for code on the way back: the file closes it, and the text
-		// read back ends with that fence.
-		if fenced {
-			b.WriteString("```\n")
 		}
 	}
 	body(d.Description)
@@ -123,10 +166,11 @@ func Parse(src string) ([]Doc, error) {
 			cur = nil
 		}
 	}
-	fenced := false
+	var open *fence
+	swallowed := false
 	for _, l := range strings.Split(strings.ReplaceAll(src, "\r\n", "\n"), "\n") {
 		l = strings.TrimRight(l, "\r")
-		if !fenced {
+		if open == nil {
 			switch {
 			case isTitle(l):
 				closeDoc()
@@ -144,16 +188,25 @@ func Parse(src string) ([]Doc, error) {
 			}
 			continue
 		}
-		if fenceToggles(l) {
-			fenced = !fenced
-		} else if !fenced && strings.HasPrefix(l, `\`) && headingLike(l) {
+		switch f, opens := openFence(l); {
+		case open != nil:
+			if open.closes(l) {
+				open = nil
+				swallowed = false
+			} else if isTitle(l) || isSection(l) {
+				swallowed = true
+			}
+		case opens:
+			open = &f
+		case strings.HasPrefix(l, `\`) && escapable(l):
 			l = l[1:]
 		}
 		lines = append(lines, l)
 	}
-	if fenced {
-		// A fence left open would swallow every later step and lesson as text.
-		return nil, fmt.Errorf("lessonmd: a code fence is never closed: %w", storage.ErrInvalid)
+	if swallowed {
+		// An open fence ends with the file, as in CommonMark; refused only when
+		// it has taken what reads as a later step or lesson.
+		return nil, fmt.Errorf("lessonmd: a code fence never closed takes the headings after it: %w", storage.ErrInvalid)
 	}
 	closeDoc()
 	if len(docs) == 0 {

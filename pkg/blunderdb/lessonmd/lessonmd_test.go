@@ -75,12 +75,35 @@ func TestRefusesAFenceNeverClosed(t *testing.T) {
 	}
 }
 
-// What Render writes always parses back to the same number of documents and
+// What Render writes parses back to the very text, and the same documents and
 // steps, even from a body that opens a fence and does not close it.
-func TestRenderClosesAFenceItOpened(t *testing.T) {
-	in := Doc{Name: "A", Description: "```\nopen", Steps: []Step{{"S", "next"}}}
-	docs, err := Parse(Render(in) + "\n" + Render(Doc{Name: "B"}))
-	if err != nil || len(docs) != 2 || len(docs[0].Steps) != 1 || docs[0].Steps[0].Text != "next" {
-		t.Fatalf("got %+v, %v", docs, err)
+func TestRenderKeepsAFenceLeftOpen(t *testing.T) {
+	in := Doc{Name: "A", Description: "```\nopen\n## not a step\n~~~\nmore", Steps: []Step{{"S", "next"}, {"T", "\\```\n~~~\nlast"}}}
+	rendered := Render(in) + "\n" + Render(Doc{Name: "B"})
+	docs, err := Parse(rendered)
+	if err != nil || len(docs) != 2 || !reflect.DeepEqual(docs[0], in) {
+		t.Fatalf("got %+v, %v, want %+v, from:\n%s", docs, err, in, rendered)
+	}
+	again, err := Parse(Render(docs[0]))
+	if err != nil || !reflect.DeepEqual(again[0], in) {
+		t.Errorf("second pass: %+v, %v", again, err)
+	}
+}
+
+func TestValidMarkdownIsNotRefused(t *testing.T) {
+	for name, tc := range map[string]struct{ src, want string }{
+		"inline code at the start of a line": {"# T\n\n```x``` text\n\n## S\n", "```x``` text"},
+		"tildes inside a backtick fence":     {"# T\n\n```\n~~~\n# code\n```\n\n## S\n", "```\n~~~\n# code\n```"},
+		"a shorter run closes nothing":       {"# T\n\n````\n```\n# code\n````\n\n## S\n", "````\n```\n# code\n````"},
+		"an indented code block":             {"# T\n\n    ```\n    code\n\n## S\n", "    ```\n    code"},
+	} {
+		docs, err := Parse(tc.src)
+		if err != nil || len(docs) != 1 || docs[0].Description != tc.want || len(docs[0].Steps) != 1 {
+			t.Errorf("%s: got %+v, %v", name, docs, err)
+		}
+	}
+	docs, err := Parse("# T\n\n## S\n\n```\ncode to the end\n")
+	if err != nil || len(docs[0].Steps) != 1 || docs[0].Steps[0].Text != "```\ncode to the end" {
+		t.Errorf("a last fence the file ends: %+v, %v", docs, err)
 	}
 }
