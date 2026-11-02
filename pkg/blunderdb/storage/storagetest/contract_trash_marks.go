@@ -21,7 +21,10 @@ type positionMarks struct {
 }
 
 // markPosition gives pos a public id, a drawing, an origin and a variant.
-func markPosition(t *testing.T, s storage.Storage, pos, origin, variant int64) positionMarks {
+//
+// A drawing holds its position against the purge of a match (the position
+// would never reach the trash), so a match test passes drawn = false.
+func markPosition(t *testing.T, s storage.Storage, pos, origin, variant int64, drawn bool) positionMarks {
 	t.Helper()
 	ctx := context.Background()
 	m := positionMarks{
@@ -35,7 +38,9 @@ func markPosition(t *testing.T, s storage.Storage, pos, origin, variant int64) p
 	if err := s.(storage.PublicIDProvider).PublicIDs().SetPublicID(ctx, "", pos, m.publicID); err != nil {
 		t.Fatal(err)
 	}
-	if err := s.(storage.DrawingProvider).PositionDrawings().SetDrawing(ctx, "", pos, m.drawing); err != nil {
+	if !drawn {
+		m.drawing = nil
+	} else if err := s.(storage.DrawingProvider).PositionDrawings().SetDrawing(ctx, "", pos, m.drawing); err != nil {
 		t.Fatal(err)
 	}
 	d := s.(storage.DerivationProvider).PositionDerivations()
@@ -55,7 +60,7 @@ func (m positionMarks) check(t *testing.T, s storage.Storage, pos int64) {
 	if got, err := s.(storage.PublicIDProvider).PublicIDs().PublicID(ctx, "", pos); err != nil || got != m.publicID {
 		t.Errorf("public id after restore = %q, %v; want %q", got, err, m.publicID)
 	}
-	if got, err := s.(storage.DrawingProvider).PositionDrawings().Drawing(ctx, "", pos); err != nil || !reflect.DeepEqual(got, m.drawing) {
+	if got, err := s.(storage.DrawingProvider).PositionDrawings().Drawing(ctx, "", pos); err != nil || len(got) != len(m.drawing) || len(m.drawing) > 0 && !reflect.DeepEqual(got, m.drawing) {
 		t.Errorf("drawing after restore = %+v, %v; want %+v", got, err, m.drawing)
 	}
 	d := s.(storage.DerivationProvider).PositionDerivations()
@@ -84,7 +89,7 @@ func testTrashPositionKeepsMarks(t *testing.T, s storage.Storage) {
 		return id
 	}
 	pos, origin, variant := save(41), save(42), save(43)
-	marks := markPosition(t, s, pos, origin, variant)
+	marks := markPosition(t, s, pos, origin, variant, true)
 
 	entry, err := trash.Position(ctx, s, "", pos)
 	if err != nil {

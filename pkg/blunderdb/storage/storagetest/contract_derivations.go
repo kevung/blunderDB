@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"reflect"
+	"sync"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -121,5 +122,53 @@ func testPositionDerivations(t *testing.T, s storage.Storage) {
 	}
 	if all, _ := d.Derivations(ctx, "", []int64{v2}); len(all) != 0 {
 		t.Errorf("a deleted variant keeps its link: %+v", all)
+	}
+}
+
+// testPositionDerivationsRingRace: N writers each make a position derive from
+// its neighbour, closing a ring only if every one of them is accepted. Each
+// write looks fine against the others' past, so only serialising the writes
+// refuses one.
+func testPositionDerivationsRingRace(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	d := s.(storage.DerivationProvider).PositionDerivations()
+	const n = 4
+	ids := make([]int64, n)
+	for i := range ids {
+		p := provenancePos(60 + i)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids[i] = id
+	}
+	for round := 0; round < 5; round++ {
+		for _, id := range ids {
+			if err := d.SetDerivedFrom(ctx, "", id, nil); err != nil {
+				t.Fatal(err)
+			}
+		}
+		errs := make([]error, n)
+		var wg sync.WaitGroup
+		for i := range ids {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				errs[i] = d.SetDerivedFrom(ctx, "", ids[i], &domain.Derivation{FromID: ids[(i+1)%n]})
+			}()
+		}
+		wg.Wait()
+		accepted := 0
+		for i, err := range errs {
+			switch {
+			case err == nil:
+				accepted++
+			case !errors.Is(err, storage.ErrInvalid):
+				t.Fatalf("round %d: write %d failed otherwise than by refusal: %v", round, i, err)
+			}
+		}
+		if accepted == n {
+			t.Fatalf("round %d: all %d writes were accepted: the positions derive from each other in a ring", round, n)
+		}
 	}
 }

@@ -16,7 +16,7 @@ type DerivationStore struct{ DB Execer }
 var _ storage.DerivationStore = (*DerivationStore)(nil)
 
 func (s *DerivationStore) DerivedFrom(ctx context.Context, scope string, positionID int64) (*domain.Derivation, error) {
-	if err := requirePositionIn(ctx, s.DB, scope, positionID); err != nil {
+	if err := requirePositionIn(ctx, s.DB, scope, positionID, "derivation"); err != nil {
 		return nil, err
 	}
 	m, err := s.Derivations(ctx, scope, []int64{positionID})
@@ -32,28 +32,37 @@ func (s *DerivationStore) SetDerivedFrom(ctx context.Context, scope string, posi
 			return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 		}
 	}
-	if err := requirePositionIn(ctx, s.DB, scope, positionID); err != nil {
+	if err := requirePositionIn(ctx, s.DB, scope, positionID, "derivation"); err != nil {
 		return err
 	}
 	return s.DB.Transact(ctx, func(tx Execer) error {
-		tenant, targs := tx.TenantFilter("", scope)
-		if d != nil {
-			if err := requirePositionIn(ctx, tx, scope, d.FromID); err != nil {
-				if errors.Is(err, storage.ErrNotFound) {
-					return fmt.Errorf("%w: derivation origin %d is not a position of the scope", storage.ErrInvalid, d.FromID)
-				}
-				return err
-			}
-			if err := (&DerivationStore{DB: tx}).refuseLoop(ctx, scope, positionID, d.FromID); err != nil {
-				return err
+		// The links of a tenant are written one transaction at a time: two
+		// crossing writes, each fine against the other's past, would close a
+		// loop. The guard (PostgreSQL) is taken before the check; on SQLite
+		// the delete below is the first write and takes the write lock.
+		if q, gargs := tx.Guard(storage.DerivationGuardKey(scope)); q != "" {
+			if _, err := tx.Exec(ctx, q, gargs...); err != nil {
+				return errf(tx, "guard derivation", err)
 			}
 		}
+		tenant, targs := tx.TenantFilter("", scope)
 		if _, err := tx.Exec(ctx, `DELETE FROM position_derivation WHERE position_id = ? AND `+tenant,
 			append([]any{positionID}, targs...)...); err != nil {
 			return errf(tx, "clear derivation", err)
 		}
 		if d == nil {
 			return nil
+		}
+		// An origin or a loop that is refused rolls the delete back with the
+		// rest of the transaction: the previous link stays.
+		if err := requirePositionIn(ctx, tx, scope, d.FromID, "derivation"); err != nil {
+			if errors.Is(err, storage.ErrNotFound) {
+				return fmt.Errorf("%w: derivation origin %d is not a position of the scope", storage.ErrInvalid, d.FromID)
+			}
+			return err
+		}
+		if err := (&DerivationStore{DB: tx}).refuseLoop(ctx, scope, positionID, d.FromID); err != nil {
+			return err
 		}
 		cols, args := tx.TenantColumns(scope)
 		cols = append(cols, "position_id", "from_position_id", "move")
@@ -121,7 +130,7 @@ func (s *DerivationStore) Derivations(ctx context.Context, scope string, positio
 }
 
 func (s *DerivationStore) Variants(ctx context.Context, scope string, originID int64) ([]int64, error) {
-	if err := requirePositionIn(ctx, s.DB, scope, originID); err != nil {
+	if err := requirePositionIn(ctx, s.DB, scope, originID, "derivation"); err != nil {
 		return nil, err
 	}
 	tenant, targs := s.DB.TenantFilter("", scope)
@@ -145,16 +154,18 @@ func (s *DerivationStore) Variants(ctx context.Context, scope string, originID i
 	return ids, nil
 }
 
-// requirePositionIn is ErrNotFound unless the position exists in the scope.
-func requirePositionIn(ctx context.Context, db Execer, scope string, id int64) error {
+// requirePositionIn is ErrNotFound unless the position exists in the scope;
+// a foreign key alone would say "constraint failed" on SQLite. what names the
+// caller in the error.
+func requirePositionIn(ctx context.Context, db Execer, scope string, id int64, what string) error {
 	tenant, targs := db.TenantFilter("", scope)
 	var one int
 	err := db.QueryRow(ctx, `SELECT 1 FROM position WHERE `+tenant+` AND id = ?`, append(targs, id)...).Scan(&one)
 	if errors.Is(err, ErrNoRows) {
-		return errf(db, "derivation", storage.ErrNotFound)
+		return errf(db, what, storage.ErrNotFound)
 	}
 	if err != nil {
-		return errf(db, "derivation", err)
+		return errf(db, what, err)
 	}
 	return nil
 }

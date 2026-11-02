@@ -63,3 +63,9 @@ func BeginGuarded(ctx context.Context, st Storage, keys ...string) (Tx, error) {
 func AnalysisGuardKey(scope string, positionID int64) string {
 	return fmt.Sprintf("analysis:%s:%d", scope, positionID)
 }
+
+// DerivationGuardKey is the guard every writer of a derivation link takes:
+// whether a link closes a loop depends on all the others of its scope.
+func DerivationGuardKey(scope string) string {
+	return "derivation:" + scope
+}

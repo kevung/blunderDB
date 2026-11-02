@@ -162,7 +162,7 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("Save transcription: %v", err)
 	}
-	marks := markPosition(t, s, orphan, held, savePos(33))
+	marks := markPosition(t, s, orphan, held, savePos(33), false)
 	m1 := addMove(gameID, 1, orphan)
 	addMove(gameID, 2, held)
 	addMove(gameID, 3, 0)

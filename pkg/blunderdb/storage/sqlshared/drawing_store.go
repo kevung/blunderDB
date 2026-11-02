@@ -2,7 +2,6 @@ package sqlshared
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -16,7 +15,7 @@ type DrawingStore struct{ DB Execer }
 var _ storage.DrawingStore = (*DrawingStore)(nil)
 
 func (s *DrawingStore) Drawing(ctx context.Context, scope string, positionID int64) ([]domain.DrawingMark, error) {
-	if err := s.requirePosition(ctx, scope, positionID); err != nil {
+	if err := requirePositionIn(ctx, s.DB, scope, positionID, "drawing"); err != nil {
 		return nil, err
 	}
 	m, err := s.Drawings(ctx, scope, []int64{positionID})
@@ -27,7 +26,7 @@ func (s *DrawingStore) SetDrawing(ctx context.Context, scope string, positionID 
 	if err := domain.ValidateDrawing(marks); err != nil {
 		return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 	}
-	if err := s.requirePosition(ctx, scope, positionID); err != nil {
+	if err := requirePositionIn(ctx, s.DB, scope, positionID, "drawing"); err != nil {
 		return err
 	}
 	return s.DB.Transact(ctx, func(tx Execer) error {
@@ -83,19 +82,4 @@ func (s *DrawingStore) Drawings(ctx context.Context, scope string, positionIDs [
 		}
 	}
 	return out, nil
-}
-
-// requirePosition is ErrNotFound unless the position exists in the scope; a
-// foreign key alone would say "constraint failed" on SQLite.
-func (s *DrawingStore) requirePosition(ctx context.Context, scope string, id int64) error {
-	tenant, targs := s.DB.TenantFilter("", scope)
-	var one int
-	err := s.DB.QueryRow(ctx, `SELECT 1 FROM position WHERE `+tenant+` AND id = ?`, append(targs, id)...).Scan(&one)
-	if errors.Is(err, ErrNoRows) {
-		return errf(s.DB, "drawing", storage.ErrNotFound)
-	}
-	if err != nil {
-		return errf(s.DB, "drawing", err)
-	}
-	return nil
 }
