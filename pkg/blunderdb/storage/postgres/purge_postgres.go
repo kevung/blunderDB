@@ -26,10 +26,10 @@ var purgeOrder = []string{
 	"table_setting", "study_mark", "position_drawing", "position_derivation", "lesson_progress", "lesson_step", "import_batch_file", "player_alias", "event_alias",
 	"comment", "analysis", "move", "anki_card", "game",
 	"collection", "lesson", "anki_deck", "transcription", "duel", "match_origin", "match", "import_batch",
-	"tournament", "rencontre", "position",
+	"tournament", "rencontre", "position_part_fact", "position",
 	"filter_library", "command_history", "search_history", "session_state",
 	"library_settings", "trash", "match_equity_table", "action_label",
-	"position_part_fact", "change_log",
+	"change_log",
 }
 
 // PurgeTenant permanently deletes every row belonging to scope across all
