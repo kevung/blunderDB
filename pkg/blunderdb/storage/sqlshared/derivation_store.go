@@ -64,7 +64,7 @@ func (s *DerivationStore) SetDerivedFrom(ctx context.Context, scope string, posi
 			return errf(tx, "clear derivation", err)
 		}
 		if d == nil {
-			return nil
+			return forgetWaitingLink(ctx, tx, scope, positionID)
 		}
 		cols, args := tx.TenantColumns(scope)
 		cols = append(cols, "position_id", "from_position_id", "move")
@@ -75,6 +75,29 @@ func (s *DerivationStore) SetDerivedFrom(ctx context.Context, scope string, posi
 		}
 		return nil
 	})
+}
+
+// forgetWaitingLink erases a link still waiting for its origin. It has no row,
+// so no trigger sees the erasure: left alone, the next import would make the
+// link the user just removed, and the peer would never hear of it.
+func forgetWaitingLink(ctx context.Context, tx Execer, scope string, positionID int64) error {
+	journal := &ChangeJournalStore{DB: tx}
+	f, _, err := journal.PartFact(ctx, scope, positionID, storage.PartDerivation)
+	if err != nil || f.PendingOrigin == "" {
+		return err
+	}
+	u, err := (&ObjectUUIDStore{DB: tx}).ObjectUUID(ctx, scope, "position", positionID)
+	if err != nil {
+		return err
+	}
+	if err := journal.Mark(ctx, scope, "position", u, storage.ChangeUpdate, ""); err != nil {
+		return err
+	}
+	entry, err := journal.Entry(ctx, scope, u)
+	if err != nil {
+		return err
+	}
+	return journal.SetPartFact(ctx, scope, storage.PartFact{PositionID: positionID, Part: storage.PartDerivation, At: entry.ChangedAt})
 }
 
 // refuseLoop is ErrInvalid when walking up from the origin reaches the

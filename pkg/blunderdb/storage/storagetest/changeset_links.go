@@ -69,6 +69,7 @@ func CheckChangeSetLinks(t *testing.T, pair func(t *testing.T) *ChangeSetPair) {
 		{"LinkOfAVariantHeldUnderAnOlderUUID", scenarioLinkOlderUUID},
 		{"LinkWaitsForAnOriginOfALaterPage", scenarioLinkAcrossPages},
 		{"LinkWaitsForAnOriginOfALaterSet", scenarioLinkAcrossSets},
+		{"ErasedWaitingLinkStaysErased", scenarioErasedWaitingLink},
 		{"RefusedLoopKeepsTheLink", scenarioLoopKeepsLink},
 		{"FirstMeetKeepsWhatThePeerNeverSaw", scenarioFirstMeet},
 		{"TieAtTheFloorLosesNothing", scenarioFloorTie},
@@ -442,4 +443,54 @@ type ChangeSetPair = csPair
 // NewChangeSetPair names two libraries for CheckChangeSetLinks.
 func NewChangeSetPair(t *testing.T, a storage.Storage, ca context.Context, sa string, b storage.Storage, cb context.Context, sb string) *ChangeSetPair {
 	return &csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}
+}
+
+// waitingOnB leaves on b a variant whose origin is in the set it returns.
+func (p *csPair) waitingOnB(from int) (variant int64, origins changeset.Set) {
+	t := p.t
+	ids := p.saved(from, 2)
+	o, v := ids[0], ids[1]
+	p.setLink(p.a, p.ca, p.sa, v, &domain.Derivation{FromID: o})
+	uv := famUUID(t, p.a, p.ca, p.sa, "position", v)
+	set, err := changeset.Export(p.ca, p.a, p.sa, storage.Cursor{}, 1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var onlyV changeset.Set
+	for _, r := range set.Records {
+		if r.UUID == uv {
+			onlyV.Records = append(onlyV.Records, r)
+		} else {
+			origins.Records = append(origins.Records, r)
+		}
+	}
+	if _, err := changeset.Import(p.cb, p.b, p.sb, onlyV); err != nil {
+		t.Fatal(err)
+	}
+	return p.onB(v), origins
+}
+
+// Erasing a link that waits for its origin is an erasure like another: dated,
+// journaled, and the origin's arrival does not bring the link back.
+func scenarioErasedWaitingLink(p *csPair) {
+	t := p.t
+	bv, origins := p.waitingOnB(340)
+	u := famUUID(t, p.b, p.cb, p.sb, "position", bv)
+	before := p.entry(p.b, p.cb, p.sb, u)
+	tick()
+	p.setLink(p.b, p.cb, p.sb, bv, nil)
+	after := p.entry(p.b, p.cb, p.sb, u)
+	if after.ChangedAt <= before.ChangedAt {
+		t.Errorf("the erasure left the journal at %s (was %s)", after.ChangedAt, before.ChangedAt)
+	}
+	f, known, err := p.b.(storage.ChangeJournalProvider).ChangeJournal().PartFact(p.cb, p.sb, bv, storage.PartDerivation)
+	if err != nil || !known || f.PendingOrigin != "" || f.At != after.ChangedAt {
+		t.Errorf("the fact after the erasure: %+v, known %v, %v; want no origin, dated %s", f, known, err, after.ChangedAt)
+	}
+	if _, err := changeset.Import(p.cb, p.b, p.sb, origins); err != nil {
+		t.Fatal(err)
+	}
+	if d := p.link(p.b, p.cb, p.sb, bv); d != nil {
+		t.Errorf("the origin's arrival brought an erased link back: %+v", d)
+	}
 }
