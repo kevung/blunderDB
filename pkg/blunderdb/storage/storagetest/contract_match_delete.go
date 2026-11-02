@@ -103,6 +103,7 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	ankiCard := inMatch(7, false)
 
 	lessonStep := inMatch(10, false)
+	drawn := inMatch(11, false) // …with arrows the user laid over it
 
 	// Flagged for study in the source tool (ADR-0006): deleting a match must
 	// not delete the positions the `fl` filter exists to surface.
@@ -166,6 +167,10 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	if _, err := s.Lessons().AddStep(ctx, "", lesson, domain.LessonStep{Title: "Étape", PositionID: lessonStep}); err != nil {
 		t.Fatalf("AddStep: %v", err)
 	}
+	if err := s.(storage.DrawingProvider).PositionDrawings().SetDrawing(ctx, "", drawn,
+		[]domain.DrawingMark{{Kind: domain.DrawingArrow, From: 13, To: 7, Color: "red"}}); err != nil {
+		t.Fatalf("SetDrawing: %v", err)
+	}
 	deck, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
 	if err != nil {
 		t.Fatalf("CreateDeck: %v", err)
@@ -192,6 +197,7 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		{"flagged (ADR-0006)", flagged, true},
 		{"referenced by an Anki card", ankiCard, true},
 		{"shown by a lesson step", lessonStep, true},
+		{"drawn on by the user", drawn, true},
 		{"shared with a second, still-live match", sharedWithSecondMatch, true},
 	} {
 		_, err := s.Positions().Load(ctx, "", tc.id)

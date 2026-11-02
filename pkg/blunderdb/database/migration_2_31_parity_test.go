@@ -199,6 +199,9 @@ func libraryContent(t *testing.T, path string) map[string]string {
 		}
 	})
 	for _, table := range tables {
+		if table == "change_log" || table == "change_log_applying" {
+			continue
+		}
 		var cols []string
 		eachRow(t, db, `SELECT name, type FROM pragma_table_info('`+table+`')`, func(r *sql.Rows) {
 			var name, typ string
@@ -223,8 +226,16 @@ func libraryContent(t *testing.T, path string) map[string]string {
 		for i := range vals {
 			ptrs[i] = &vals[i]
 		}
+		// The change journal is when things happened here, not what the
+		// library holds: its seq and times differ between a cut run and a clean one.
+		where := ""
+		if strings.HasPrefix(table, "sqlite_stat") {
+			where = ` WHERE tbl <> 'change_log'`
+		} else if table == "sqlite_sequence" {
+			where = ` WHERE name <> 'change_log'`
+		}
 		n := 0
-		eachRow(t, db, `SELECT `+rowid+`, `+strings.Join(quoted, ", ")+` FROM "`+table+`"`, func(r *sql.Rows) {
+		eachRow(t, db, `SELECT `+rowid+`, `+strings.Join(quoted, ", ")+` FROM "`+table+`"`+where, func(r *sql.Rows) {
 			if err := r.Scan(ptrs...); err != nil {
 				t.Fatal(err)
 			}

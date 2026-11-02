@@ -3,6 +3,7 @@ package ingest
 import (
 	"cmp"
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -78,6 +79,11 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, fmt.Errorf("ingest: read source comments: %w", err)
 	}
 
+	srcDrawings, srcDerivations, err := readSourceMarks(ctx, source, scope, ids)
+	if err != nil {
+		return Summary{}, err
+	}
+
 	srcCollections, err := ReadSourceCollections(ctx, source, scope)
 	if err != nil {
 		return Summary{}, err
@@ -114,6 +120,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		pos      *domain.Position
 		analysis *domain.PositionAnalysis
 		comments []*domain.CommentEntry
+		drawing  []domain.DrawingMark
 	}
 	srcVersion, err := source.Version(ctx)
 	if err != nil {
@@ -152,6 +159,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 			rec.analysis = nil
 		}
 		rec.comments = srcComments[p.ID]
+		rec.drawing = srcDrawings[p.ID]
 		records = append(records, rec)
 	}
 
@@ -220,10 +228,17 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		if err := mergeDBCommentsPreloaded(ctx, tx, scope, s.id, targetComments[s.id], s.rec.comments); err != nil {
 			return sum, err
 		}
+		if err := mergeDBDrawing(ctx, tx, scope, s.id, s.rec.drawing); err != nil {
+			return sum, err
+		}
 		sum.SavedPositions++
 		if prog != nil {
 			prog(Progress{Positions: sum.SavedPositions, TotalPositions: total})
 		}
+	}
+
+	if err := mergeDBDerivations(ctx, tx, scope, srcDerivations, targetOf); err != nil {
+		return sum, err
 	}
 
 	matches, err := MergeMatchesExcept(ctx, tx, scope, source, targetOf, plan.Matches)
@@ -531,6 +546,77 @@ func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, 
 			existing = trimmed
 		} else {
 			existing = existing + "\n\n" + trimmed
+		}
+	}
+	return nil
+}
+
+// mergeDBDrawing gives a position the imported drawing unless it already has
+// one: a drawing is the player's own work on the board, and a second import
+// of the same file must not undo a later edit of it.
+func mergeDBDrawing(ctx context.Context, tx storage.Tx, scope string, positionID int64, marks []domain.DrawingMark) error {
+	dp, ok := tx.(storage.DrawingProvider)
+	if !ok || len(marks) == 0 {
+		return nil
+	}
+	have, err := dp.PositionDrawings().Drawing(ctx, scope, positionID)
+	if err != nil || len(have) > 0 {
+		return err
+	}
+	return dp.PositionDrawings().SetDrawing(ctx, scope, positionID, marks)
+}
+
+// readSourceMarks reads the drawings and the links of the source's positions. A
+// source from before they existed (schema < 2.54.0, < 2.55.0) has none.
+func readSourceMarks(ctx context.Context, source *sqlite.Storage, scope string, ids []int64) (map[int64][]domain.DrawingMark, map[int64]domain.Derivation, error) {
+	var drawings map[int64][]domain.DrawingMark
+	var links map[int64]domain.Derivation
+	var err error
+	if source.HasTable(ctx, "position_drawing") {
+		if drawings, err = source.PositionDrawings().Drawings(ctx, scope, ids); err != nil {
+			return nil, nil, fmt.Errorf("ingest: read source drawings: %w", err)
+		}
+	}
+	if source.HasTable(ctx, "position_derivation") {
+		if links, err = source.PositionDerivations().Derivations(ctx, scope, ids); err != nil {
+			return nil, nil, fmt.Errorf("ingest: read source derivations: %w", err)
+		}
+	}
+	return drawings, links, nil
+}
+
+// mergeDBDerivations links the imported variants to their imported origins,
+// under the target's ids. A variant that already has an origin keeps it (the
+// link is the destination's own work), and a link whose origin is not in the
+// import, or that would close a loop with what the target holds, is left out.
+func mergeDBDerivations(ctx context.Context, tx storage.Tx, scope string, src map[int64]domain.Derivation, targetOf map[int64]int64) error {
+	dp, ok := tx.(storage.DerivationProvider)
+	if !ok || len(src) == 0 {
+		return nil
+	}
+	store := dp.PositionDerivations()
+	targets := make([]int64, 0, len(src))
+	for srcID := range src {
+		if id, ok := targetOf[srcID]; ok {
+			targets = append(targets, id)
+		}
+	}
+	have, err := store.Derivations(ctx, scope, targets)
+	if err != nil {
+		return err
+	}
+	for srcID, d := range src {
+		variant, ok := targetOf[srcID]
+		origin, ok2 := targetOf[d.FromID]
+		if !ok || !ok2 {
+			continue
+		}
+		if _, held := have[variant]; held {
+			continue
+		}
+		err := store.SetDerivedFrom(ctx, scope, variant, &domain.Derivation{FromID: origin, Move: d.Move})
+		if err != nil && !errors.Is(err, storage.ErrInvalid) {
+			return err
 		}
 	}
 	return nil

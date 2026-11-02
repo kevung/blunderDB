@@ -365,3 +365,32 @@ func testCommentPositionDeleteCascades(t *testing.T, s storage.Storage) {
 		t.Errorf("Search after position delete: got %v, want [%d]", got, survivor)
 	}
 }
+
+// Get reads one entry by its id, empty ones included, and says ErrNotFound
+// for an id nobody holds.
+func testCommentGet(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := provenancePos(3)
+	pos, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	id, err := s.Comments().Add(ctx, "", pos, "by id")
+	if err != nil {
+		t.Fatal(err)
+	}
+	e, err := s.Comments().Get(ctx, "", id)
+	if err != nil || e.ID != id || e.PositionID != pos || e.Text != "by id" {
+		t.Fatalf("Get = %+v, %v", e, err)
+	}
+	empty, _ := s.Comments().Add(ctx, "", pos, "")
+	if e, err := s.Comments().Get(ctx, "", empty); err != nil || e.Text != "" {
+		t.Errorf("Get of an empty entry = %+v, %v", e, err)
+	}
+	if err := s.Comments().Delete(ctx, "", id); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Comments().Get(ctx, "", id); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Get after Delete: %v, want ErrNotFound", err)
+	}
+}

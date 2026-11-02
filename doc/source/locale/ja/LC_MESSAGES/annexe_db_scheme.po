@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 04:07+0100\n"
+"POT-Creation-Date: 2026-11-02 04:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -38,14 +38,11 @@ msgstr "バージョン管理と移行"
 #: ../../source/annexe_db_scheme.rst:13
 msgid ""
 "Le schéma de la base de données est **versionné**. La version courante du"
-" schéma est **2.51.0** ; elle est indépendante de la version de "
+" schéma est **2.55.0** ; elle est indépendante de la version de "
 "l'application et n'est incrémentée que lorsque la structure interne "
 "évolue. La version du schéma d'une base ouverte est visible dans le "
 "panneau **Métadonnées** (commande ``meta``)."
-msgstr ""
-"データベーススキーマは\\ **バージョン管理**\\ されています。現在のスキーマバージョンは\\ **2.51.0**\\ "
-"です。これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ更新されます。開いているデータベースのスキーマバージョンは\\"
-" **メタデータ**\\ パネル（``meta`` コマンド）で確認できます。"
+msgstr "データベーススキーマは\\ **バージョン管理**\\ されています。現在のスキーマバージョンは\\ **2.55.0**\\ です。これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ更新されます。開いているデータベースのスキーマバージョンは\\ **メタデータ**\\ パネル（``meta`` コマンド）で確認できます。"
 
 #: ../../source/annexe_db_scheme.rst:20
 msgid ""
@@ -133,6 +130,22 @@ msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:61
 msgid ""
+"**Journal de changements** : ``change_log`` date la dernière écriture de "
+"chaque objet, et ``position_part_fact`` celle du dessin et du lien de "
+"variante d'une position, effacement compris. Deux bibliothèques s'en "
+"servent pour se synchroniser."
+msgstr "**変更ジャーナル** ： ``change_log`` は各オブジェクトの最後の書き込みの日時を記録し、 ``position_part_fact`` はポジションの描画とバリアントリンクの最後の書き込みの日時を、消去も含めて記録します。 2 つのライブラリはこれらを使って同期します。"
+
+#: ../../source/annexe_db_scheme.rst:66
+msgid ""
+"**Marques d'une position** : ``position_drawing`` porte le dessin et "
+"``position_derivation`` le lien d'une variante à la position dont elle "
+"vient ; la colonne ``position.public_id`` porte un libellé choisi par "
+"l'appelant."
+msgstr "**ポジションのマーク** ： ``position_drawing`` は描画を、 ``position_derivation`` はバリアントから元のポジションへのリンクを保持します。 ``position.public_id`` 列は呼び出し側が選んだラベルを保持します。"
+
+#: ../../source/annexe_db_scheme.rst:70
+msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
 "conservent l'historique des commandes et des recherches, "
 "``filter_library`` la bibliothèque de filtres, et ``metadata`` les "
@@ -142,17 +155,17 @@ msgstr ""
 "はコマンドと検索の履歴を保持し、\\ ``filter_library`` はフィルターライブラリを、\\ ``metadata`` "
 "はデータベースのメタデータ（スキーマのバージョンを含む）を保持します。"
 
-#: ../../source/annexe_db_scheme.rst:67
+#: ../../source/annexe_db_scheme.rst:76
 msgid "Principes de conception"
 msgstr "設計の原則"
 
-#: ../../source/annexe_db_scheme.rst:69
+#: ../../source/annexe_db_scheme.rst:78
 msgid ""
 "À partir du schéma 2.0.0, plusieurs choix de conception accélèrent la "
 "recherche et réduisent la taille du fichier :"
 msgstr "スキーマ 2.0.0 以降、いくつかの設計上の選択によって、検索が高速化され、ファイルサイズが削減されます："
 
-#: ../../source/annexe_db_scheme.rst:72
+#: ../../source/annexe_db_scheme.rst:81
 msgid ""
 "**Déduplication des positions** : chaque position porte un hash de "
 "Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
@@ -161,7 +174,7 @@ msgstr ""
 "**ポジションの重複排除** ：各ポジションは Zobrist "
 "ハッシュと一意のインデックスを持つため、複数のインポートで同じポジションが現れても一度しか保存されません。"
 
-#: ../../source/annexe_db_scheme.rst:76
+#: ../../source/annexe_db_scheme.rst:85
 msgid ""
 "**Colonnes de filtrage dénormalisées** : des critères fréquemment "
 "recherchés (type de décision, dés, différence de course, pions sortis, "
@@ -171,7 +184,7 @@ msgstr ""
 "**非正規化されたフィルタリング列** "
 "：よく検索される条件（判断タイプ、出目、ピップカウント差、ベアオフしたチェッカー、バックチェッカー、手やキューブのエラー、勝率など）は、高速なフィルタリングのために専用の列にあらかじめ計算されています。"
 
-#: ../../source/annexe_db_scheme.rst:81
+#: ../../source/annexe_db_scheme.rst:90
 msgid ""
 "**Préfiltre par bitboards** : des colonnes d'occupation et de masques de "
 "points permettent un préfiltre entier très rapide lors des recherches de "
@@ -180,7 +193,7 @@ msgstr ""
 "**ビットボードによる事前フィルタリング** "
 "：占有列とポイントマスク列により、構造パターンの検索時に非常に高速な整数ベースの事前フィルタリングが可能になります。"
 
-#: ../../source/annexe_db_scheme.rst:85
+#: ../../source/annexe_db_scheme.rst:94
 msgid ""
 "**Stockage compact** : les positions sont encodées de façon compacte et "
 "les données d'analyse sont rangées dans un format binaire compressé (zstd"
@@ -192,8 +205,9 @@ msgstr ""
 "zstd）で保存されます（JSON の古い分析も引き続き読み込め、\\ ``vacuum``\\ または\\ ``reencode``\\ "
 "で変換されます）。これによりファイルサイズが大幅に削減されます。"
 
-#: ../../source/annexe_db_scheme.rst:91
+#: ../../source/annexe_db_scheme.rst:100
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
 " performances en lecture et en écriture."
 msgstr "**WAL ジャーナリング** ：WAL モードと調整された PRAGMA により、読み書きのパフォーマンスが向上します。"
+

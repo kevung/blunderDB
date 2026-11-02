@@ -2,6 +2,7 @@ package sqlshared
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -123,11 +124,91 @@ func (s *TrashStore) Purge(ctx context.Context, scope string, olderThanDays int)
 			where += ` AND deleted_at < datetime('now', '-` + days + ` days')`
 		}
 	}
-	n, err := s.DB.Exec(ctx, `DELETE FROM trash WHERE `+where, targs...)
+	var n int64
+	err := s.DB.Transact(ctx, func(tx Execer) error {
+		held, err := trashedObjects(ctx, tx, where, targs)
+		if err != nil {
+			return err
+		}
+		if n, err = tx.Exec(ctx, `DELETE FROM trash WHERE `+where, targs...); err != nil {
+			return err
+		}
+		// What the journal still calls trash is gone for good now.
+		j := &ChangeJournalStore{DB: tx}
+		for _, o := range held {
+			if o.uuid == "" {
+				continue
+			}
+			switch e, err := j.Entry(ctx, scope, o.uuid); {
+			case errors.Is(err, storage.ErrNotFound):
+			case err != nil:
+				return err
+			case e.Op == storage.ChangeTrash:
+				if err := j.Mark(ctx, scope, o.family, o.uuid, storage.ChangeDelete, ""); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return 0, errf(s.DB, "purge the trash", err)
 	}
 	return int(n), nil
+}
+
+type trashedObject struct{ family, uuid string }
+
+// trashedObjects names, by family and uuid, what the entries matching where
+// held: the object itself and, for a position or a match, its notes and
+// positions.
+func trashedObjects(ctx context.Context, db Execer, where string, args []any) ([]trashedObject, error) {
+	rows, err := db.Query(ctx, `SELECT kind, payload FROM trash WHERE `+where, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	type position struct {
+		UUID         string           `json:"uuid"`
+		CommentUUIDs map[int64]string `json:"commentUuids"`
+	}
+	var out []trashedObject
+	addPosition := func(p position) {
+		out = append(out, trashedObject{"position", p.UUID})
+		for _, u := range p.CommentUUIDs {
+			out = append(out, trashedObject{"comment", u})
+		}
+	}
+	for rows.Next() {
+		var kind, payload string
+		if err := rows.Scan(&kind, &payload); err != nil {
+			return nil, err
+		}
+		var p struct {
+			position
+			Positions []position `json:"positions"`
+		}
+		if err := json.Unmarshal([]byte(payload), &p); err != nil {
+			continue
+		}
+		switch domain.TrashKind(kind) {
+		case domain.TrashPosition:
+			addPosition(p.position)
+		case domain.TrashCollection:
+			out = append(out, trashedObject{"collection", p.UUID})
+		case domain.TrashComment:
+			out = append(out, trashedObject{"comment", p.UUID})
+		case domain.TrashMatch:
+			out = append(out, trashedObject{"match", p.UUID})
+			for _, pp := range p.Positions {
+				addPosition(pp)
+			}
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 // Count is how many entries the trash holds.

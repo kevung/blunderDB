@@ -42,6 +42,17 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.49.0 (2026-11-02)
+-------------------
+
+- **Deux bibliothèques se synchronisent** : côté serveur, ``changeset.export`` et ``changeset.import`` échangent ce qui a changé depuis un curseur, page par page, la dernière écriture gagnant. Une mise en corbeille voyage comme telle, et une note écrasée par l'import reste dans la corbeille.
+- **Un dessin par position** : ``positions.drawing`` et ``positions.setDrawing`` posent des flèches et des cases sur une position ; le dessin suit les commentaires dans l'export et le transfert.
+- **Le lien d'une variante à son origine** : ``positions.setDerivedFrom``, ``positions.derivedFrom`` et ``positions.variants`` disent de quelle position une autre est née, et par quel coup.
+- **Un libellé par position** : ``positions.publicId`` et ``positions.setPublicId`` posent un libellé que blunderDB conserve sans l'interpréter.
+- **Leçons et articles en Markdown** : ``lessons.markdown`` les exporte en texte, ``lessons.importMarkdown`` les crée depuis ce texte.
+- **Une base passe au schéma 2.55.0** à l'ouverture, et tient désormais un journal de ses changements.
+- Voir :ref:`headless` et :ref:`annexe_db_migration`.
+
 0.48.0 (2026-11-02)
 -------------------
 

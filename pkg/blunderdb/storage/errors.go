@@ -81,3 +81,8 @@ func (e *DuplicatePositionError) Is(target error) bool { return target == ErrCon
 // imported history). It matches ErrConflict; its message is part of the
 // contract — the GUI recognises it to translate it.
 var ErrNoReviewToUndo = fmt.Errorf("%w: the card has no review to undo", ErrConflict)
+
+// ErrCursorStale: the cursor was issued by a journal this one is not (a backup
+// restored into another cluster). Nothing can be read after it: start again
+// from the zero Cursor, which an import absorbs without harm.
+var ErrCursorStale = errors.New("storage: journal cursor no longer valid")

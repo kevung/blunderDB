@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/lessonmd"
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -165,6 +166,22 @@ func (d *Database) LessonHTMLCtx(ctx context.Context, id int64, lang string, dia
 		}
 	}
 	return report.BuildLesson(ctx, d.store, "", id, lang, draw)
+}
+
+// LessonMarkdown writes the Lessons the ids name as Markdown (package
+// lessonmd): text only, one document each. Nothing is written to the database.
+func (d *Database) LessonMarkdown(ids []int64) (string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return lessonmd.Export(context.Background(), d.store, "", ids...)
+}
+
+// ImportLessonMarkdown creates one Lesson per "# title" of src, a Markdown
+// text with no section being a Lesson without Steps, and returns their ids.
+func (d *Database) ImportLessonMarkdown(src string) ([]int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return lessonmd.Import(context.Background(), d.store, "", src)
 }
 
 // LessonPositionIDs lists the positions the Lesson id shows, Steps' own and the

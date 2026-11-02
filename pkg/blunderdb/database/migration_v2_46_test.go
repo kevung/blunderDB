@@ -166,8 +166,17 @@ func TestMigrate_2_45_0_to_2_46_0_CommentRebuildKeepsEverything(t *testing.T) {
 	if !reflect.DeepEqual(before.ForeignKeys, after.ForeignKeys) {
 		t.Errorf("comment foreign keys changed:\nbefore %v\nafter  %v", before.ForeignKeys, after.ForeignKeys)
 	}
-	if !reflect.DeepEqual(before.Schema, after.Schema) {
-		t.Errorf("indexes or triggers changed:\nbefore %v\nafter  %v", before.Schema, after.Schema)
+	// Later steps add indexes and triggers of their own (the change journal,
+	// the derivation index): what the rebuild must not do is lose one the
+	// 2.45.0 library had, on comment or on any other table.
+	kept := map[string]bool{}
+	for _, c := range after.Schema {
+		kept[c] = true
+	}
+	for _, c := range before.Schema {
+		if !kept[c] {
+			t.Errorf("the rebuild lost an index or trigger: %s", c)
+		}
 	}
 	var orphans int
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM pragma_foreign_key_check('comment')`).Scan(&orphans); err != nil || orphans != 0 {

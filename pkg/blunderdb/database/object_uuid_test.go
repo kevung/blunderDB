@@ -55,12 +55,28 @@ func seedUUIDLibrary(t *testing.T, d *Database) {
 }
 
 // rewindToBeforeUUIDs puts an open library back as a 2.50.0 one: no uuid
-// column, trigger or index, no mark.
+// column, trigger or index, no mark, no journal trigger.
 func rewindToBeforeUUIDs(t *testing.T, d *Database) {
 	t.Helper()
+	for _, sfx := range []string{"_i", "_u"} {
+		if _, err := d.db.Exec(`DROP TRIGGER IF EXISTS change_log_analysis` + sfx); err != nil {
+			t.Fatal(err)
+		}
+	}
+	// The triggers of the drawing and the derivation name position.uuid.
+	for _, tbl := range []string{"position_drawing", "position_derivation"} {
+		for _, sfx := range []string{"_i", "_u", "_d"} {
+			if _, err := d.db.Exec(`DROP TRIGGER IF EXISTS change_log_` + tbl + sfx); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
 	for _, f := range sqlshared.ObjectUUIDFamilies {
 		for _, stmt := range []string{
 			`DROP TRIGGER IF EXISTS object_uuid_` + f.Table,
+			`DROP TRIGGER IF EXISTS change_log_` + f.Table + `_i`,
+			`DROP TRIGGER IF EXISTS change_log_` + f.Table + `_u`,
+			`DROP TRIGGER IF EXISTS change_log_` + f.Table + `_d`,
 			`DROP INDEX IF EXISTS idx_` + f.Table + `_uuid`,
 			`ALTER TABLE ` + f.Table + ` DROP COLUMN uuid`,
 		} {

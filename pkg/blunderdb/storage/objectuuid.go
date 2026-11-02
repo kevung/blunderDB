@@ -10,6 +10,8 @@ import "context"
 type ObjectUUIDStore interface {
 	// ObjectUUID is the uuid of the object, "" when the row holds none.
 	ObjectUUID(ctx context.Context, scope, family string, id int64) (string, error)
+	// ObjectID is the row id of the object holding uuid, ErrNotFound when none.
+	ObjectID(ctx context.Context, scope, family, uuid string) (int64, error)
 	// SetObjectUUID gives the object a uuid it held before (a restore from
 	// the trash). A uuid another row of the scope now holds is left alone:
 	// the object keeps the one it has.

@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -144,6 +145,76 @@ func (s *Server) positionRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/positions.load", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Position, error) {
 			return ps().Load(ctx, scope, req.ID)
+		})},
+		// The opaque label a caller attaches to a position: kept as given, never
+		// read by the engine.
+		{http.MethodPost, "/v1/positions.publicId", rpc(func(ctx context.Context, scope string, req idReq) (publicIDResp, error) {
+			ids, err := s.publicIDs()
+			if err != nil {
+				return publicIDResp{}, err
+			}
+			v, err := ids.PublicID(ctx, scope, req.ID)
+			return publicIDResp{PublicID: v}, err
+		})},
+		{http.MethodPost, "/v1/positions.setPublicId", rpcVoid(func(ctx context.Context, scope string, req setPublicIDReq) error {
+			ids, err := s.publicIDs()
+			if err != nil {
+				return err
+			}
+			return ids.SetPublicID(ctx, scope, req.ID, req.PublicID)
+		})},
+		// The arrows and squares a player laid over a position, in the order
+		// drawn; set whole, an empty list clears it.
+		{http.MethodPost, "/v1/positions.drawing", rpc(func(ctx context.Context, scope string, req idReq) (drawingResp, error) {
+			d, err := s.drawings()
+			if err != nil {
+				return drawingResp{}, err
+			}
+			marks, err := d.Drawing(ctx, scope, req.ID)
+			if marks == nil {
+				marks = []domain.DrawingMark{}
+			}
+			return drawingResp{Marks: marks}, err
+		})},
+		{http.MethodPost, "/v1/positions.setDrawing", rpcVoid(func(ctx context.Context, scope string, req setDrawingReq) error {
+			d, err := s.drawings()
+			if err != nil {
+				return err
+			}
+			return d.SetDrawing(ctx, scope, req.ID, req.Marks)
+		})},
+		// The position a position derives from and the move that led to it (a
+		// variant's link to its origin); null when it derives from nothing.
+		// Set whole: derivedFrom null clears it, and an absent derivedFrom is refused (a misspelt field must not erase a link).
+		{http.MethodPost, "/v1/positions.derivedFrom", rpc(func(ctx context.Context, scope string, req idReq) (derivedFromResp, error) {
+			d, err := s.derivations()
+			if err != nil {
+				return derivedFromResp{}, err
+			}
+			dv, err := d.DerivedFrom(ctx, scope, req.ID)
+			return derivedFromResp{DerivedFrom: dv}, err
+		})},
+		{http.MethodPost, "/v1/positions.setDerivedFrom", rpcVoid(func(ctx context.Context, scope string, req setDerivedFromReq) error {
+			d, err := s.derivations()
+			if err != nil {
+				return err
+			}
+			if !req.present {
+				return fmt.Errorf("%w: derivedFrom is required, null to clear the link", storage.ErrInvalid)
+			}
+			return d.SetDerivedFrom(ctx, scope, req.ID, req.DerivedFrom)
+		})},
+		// The positions deriving directly from the position.
+		{http.MethodPost, "/v1/positions.variants", rpc(func(ctx context.Context, scope string, req idReq) (variantsResp, error) {
+			d, err := s.derivations()
+			if err != nil {
+				return variantsResp{}, err
+			}
+			ids, err := d.Variants(ctx, scope, req.ID)
+			if ids == nil {
+				ids = []int64{}
+			}
+			return variantsResp{IDs: ids}, err
 		})},
 		{http.MethodPost, "/v1/positions.exists", rpc(func(ctx context.Context, scope string, req existsReq) (existsResp, error) {
 			id, found, err := ps().Exists(ctx, scope, req.Zobrist)
@@ -351,4 +422,80 @@ func (s *Server) handleFromImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSONResp(w, rd)
+}
+
+type publicIDResp struct {
+	PublicID string `json:"publicId"`
+}
+
+// setPublicIDReq sets the label of position ID; an empty PublicID clears it.
+type setPublicIDReq struct {
+	ID       int64  `json:"id"`
+	PublicID string `json:"publicId"`
+}
+
+func (s *Server) publicIDs() (storage.PublicIDStore, error) {
+	p, ok := s.opts.Storage.(storage.PublicIDProvider)
+	if !ok {
+		return nil, fmt.Errorf("this backend keeps no public_id: %w", storage.ErrUnsupported)
+	}
+	return p.PublicIDs(), nil
+}
+
+type drawingResp struct {
+	Marks []domain.DrawingMark `json:"marks"`
+}
+
+// setDrawingReq replaces the drawing of position ID by Marks.
+type setDrawingReq struct {
+	ID    int64                `json:"id"`
+	Marks []domain.DrawingMark `json:"marks"`
+}
+
+func (s *Server) drawings() (storage.DrawingStore, error) {
+	p, ok := s.opts.Storage.(storage.DrawingProvider)
+	if !ok {
+		return nil, fmt.Errorf("this backend keeps no drawings: %w", storage.ErrUnsupported)
+	}
+	return p.PositionDrawings(), nil
+}
+
+type derivedFromResp struct {
+	DerivedFrom *domain.Derivation `json:"derivedFrom"`
+}
+
+// setDerivedFromReq makes position ID derive from DerivedFrom; null clears it.
+// The field must be present: the decoder ignores fields it does not know, so
+// an absent one is a misspelling, not a request to erase.
+type setDerivedFromReq struct {
+	ID          int64              `json:"id"`
+	DerivedFrom *domain.Derivation `json:"derivedFrom"`
+	present     bool
+}
+
+func (r *setDerivedFromReq) UnmarshalJSON(b []byte) error {
+	type plain setDerivedFromReq
+	var p plain
+	if err := json.Unmarshal(b, &p); err != nil {
+		return err
+	}
+	var keys map[string]json.RawMessage
+	if err := json.Unmarshal(b, &keys); err != nil {
+		return err
+	}
+	_, p.present = keys["derivedFrom"]
+	*r = setDerivedFromReq(p)
+	return nil
+}
+
+type variantsResp struct {
+	IDs []int64 `json:"ids"`
+}
+
+func (s *Server) derivations() (storage.DerivationStore, error) {
+	p, ok := s.opts.Storage.(storage.DerivationProvider)
+	if !ok {
+		return nil, fmt.Errorf("this backend keeps no derivations: %w", storage.ErrUnsupported)
+	}
+	return p.PositionDerivations(), nil
 }

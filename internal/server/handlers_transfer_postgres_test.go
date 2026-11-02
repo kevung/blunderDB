@@ -11,8 +11,11 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"reflect"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -146,5 +149,89 @@ func TestTransferPull_Postgres(t *testing.T) {
 	}
 	if got := count("4"); got[0] != len(ids) {
 		t.Errorf("collection of %d pulled: tenant 4 holds %v", len(ids), got)
+	}
+}
+
+// A drawing laid in tenant 2 arrives in tenant 1 with its position, and stays
+// out of any third tenant; the pull is a PostgreSQL transaction under RLS.
+func TestTransferPull_CarriesDrawing_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	st := srv.opts.Storage
+	importFixture(t, st, "2", "match_with_comment.xg")
+	ctx2 := storage.WithTenant(context.Background(), 2)
+	ctx1 := storage.WithTenant(context.Background(), 1)
+
+	var src *domain.Position
+	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{Limit: 1}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		pc := *p
+		src = &pc
+	}
+	marks := []domain.DrawingMark{{Kind: domain.DrawingArrow, From: 13, To: 7, Color: "red"}, {Kind: domain.DrawingSquare, From: 6, To: 6, Color: "green"}}
+	d := st.(storage.DrawingProvider).PositionDrawings()
+	if err := d.SetDrawing(ctx2, "2", src.ID, marks); err != nil {
+		t.Fatal(err)
+	}
+
+	pull(t, srv, "1", "2")
+	id, found, err := st.Positions().Exists(ctx1, "1", engine.ZobristHash(src))
+	if err != nil || !found {
+		t.Fatalf("the pulled position is not in tenant 1: %v", err)
+	}
+	got, err := d.Drawing(ctx1, "1", id)
+	if err != nil || !reflect.DeepEqual(got, marks) {
+		t.Errorf("pulled drawing = %+v, %v; want %+v", got, err, marks)
+	}
+	if _, err := d.Drawing(ctx1, "1", src.ID); err == nil {
+		if all, _ := d.Drawings(ctx1, "1", []int64{src.ID}); len(all) != 0 {
+			t.Errorf("tenant 1 reads a drawing of tenant 2: %+v", all)
+		}
+	}
+}
+
+// A variant pulled from tenant 2 keeps its link to the origin under tenant 1's
+// ids, and the link stays out of a third tenant; the pull is a PostgreSQL
+// transaction under RLS.
+func TestTransferPull_CarriesDerivation_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	st := srv.opts.Storage
+	importFixture(t, st, "2", "match_with_comment.xg")
+	ctx2 := storage.WithTenant(context.Background(), 2)
+	ctx1 := storage.WithTenant(context.Background(), 1)
+
+	var ps []*domain.Position
+	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{Limit: 2}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		pc := *p
+		ps = append(ps, &pc)
+	}
+	if len(ps) < 2 {
+		t.Fatal("fixture has fewer than two positions")
+	}
+	d := st.(storage.DerivationProvider).PositionDerivations()
+	if err := d.SetDerivedFrom(ctx2, "2", ps[1].ID, &domain.Derivation{FromID: ps[0].ID, Move: "13/7"}); err != nil {
+		t.Fatal(err)
+	}
+
+	pull(t, srv, "1", "2")
+	vid, found, err := st.Positions().Exists(ctx1, "1", engine.ZobristHash(ps[1]))
+	if err != nil || !found {
+		t.Fatalf("the pulled variant is not in tenant 1: %v", err)
+	}
+	oid, found, err := st.Positions().Exists(ctx1, "1", engine.ZobristHash(ps[0]))
+	if err != nil || !found {
+		t.Fatalf("the pulled origin is not in tenant 1: %v", err)
+	}
+	got, err := d.DerivedFrom(ctx1, "1", vid)
+	if err != nil || got == nil || got.FromID != oid || got.Move != "13/7" {
+		t.Errorf("pulled derivation = %+v, %v; want origin %d move 13/7", got, err, oid)
+	}
+	// Tenant 1 cannot read tenant 2's rows through the ids it knows.
+	if all, _ := d.Derivations(ctx1, "1", []int64{ps[1].ID}); len(all) != 0 {
+		t.Errorf("tenant 1 reads a derivation of tenant 2: %+v", all)
 	}
 }

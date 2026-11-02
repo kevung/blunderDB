@@ -77,8 +77,20 @@ func (b binder) Duels() storage.DuelStore {
 	return &sqlshared.DuelStore{DB: b.shared()}
 }
 func (b binder) Aliases() storage.AliasStore { return &sqlshared.AliasStore{DB: b.shared()} }
+func (b binder) ChangeJournal() storage.ChangeJournalStore {
+	return &sqlshared.ChangeJournalStore{DB: b.shared()}
+}
 func (b binder) ObjectUUIDs() storage.ObjectUUIDStore {
 	return &sqlshared.ObjectUUIDStore{DB: b.shared()}
+}
+func (b binder) PositionDerivations() storage.DerivationStore {
+	return &sqlshared.DerivationStore{DB: b.shared()}
+}
+func (b binder) PositionDrawings() storage.DrawingStore {
+	return &sqlshared.DrawingStore{DB: b.shared()}
+}
+func (b binder) PublicIDs() storage.PublicIDStore {
+	return &sqlshared.PublicIDStore{DB: b.shared()}
 }
 func (b binder) Training() storage.TrainingStore {
 	return &sqlshared.TrainingStore{DB: b.shared()}

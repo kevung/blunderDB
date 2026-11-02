@@ -77,6 +77,33 @@ type TrashPositionPayload struct {
 	// TrainingItemIDs are the quiz answers given on the position; the delete
 	// leaves them without one, a restore ties them to it again.
 	TrainingItemIDs []int64 `json:"trainingItemIds,omitempty"`
+	// PublicID is the label the position carried; it goes with its row.
+	PublicID string `json:"publicId,omitempty"`
+	// Drawing is the marks laid over the position; the cascade drops them.
+	Drawing []DrawingMark `json:"drawing,omitempty"`
+	// DerivedFrom is the link to the position this one came from, and
+	// Variants the ids of the positions that derive from it: the cascade
+	// drops both kinds of row.
+	DerivedFrom *Derivation `json:"derivedFrom,omitempty"`
+	Variants    []Derived   `json:"variants,omitempty"`
+	// PartFacts is what the library knew of the drawing and the link when the
+	// position went: an erasure has no content but this, and a link still
+	// waiting for its origin lives only here.
+	PartFacts []TrashPartFact `json:"partFacts,omitempty"`
+}
+
+// TrashPartFact is a storage.PartFact without the position it belongs to.
+type TrashPartFact struct {
+	Part          string `json:"part"`
+	At            string `json:"at"`
+	PendingOrigin string `json:"pendingOrigin,omitempty"`
+	PendingMove   string `json:"pendingMove,omitempty"`
+}
+
+// Derived is one variant of a position and the move that led to it.
+type Derived struct {
+	ID   int64  `json:"id"`
+	Move string `json:"move,omitempty"`
 }
 
 // TrashCollectionPayload is what a deleted collection keeps: enough of the
@@ -114,6 +141,8 @@ type TrashAnkiCardPayload struct {
 // (Position.ID), not only those the delete purged: a position still held at
 // delete time can be gone by restore time.
 type TrashMatchPayload struct {
+	// UUID is the identifier the match held, given back by a restore.
+	UUID         string                 `json:"uuid,omitempty"`
 	Match        Match                  `json:"match"`
 	Games        []Game                 `json:"games,omitempty"`
 	Moves        []Move                 `json:"moves,omitempty"`

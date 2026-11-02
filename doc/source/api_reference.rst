@@ -66,6 +66,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/anki.undoReview                      JSON  (Idempotency-Key)
      POST /v1/anki.updateDeck                      JSON
      POST /v1/anki.updateDeckParams                JSON
+   changeset
+     POST /v1/changeset.export                     JSON
+     POST /v1/changeset.import                     JSON
    collections
      POST /v1/collections.addPosition              JSON
      POST /v1/collections.addPositions             JSON
@@ -209,7 +212,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/lessons.doneSteps                    JSON
      POST /v1/lessons.get                          JSON
      POST /v1/lessons.html                         JSON
+     POST /v1/lessons.importMarkdown               JSON  (Idempotency-Key)
      POST /v1/lessons.list                         JSON
+     POST /v1/lessons.markdown                     JSON
      POST /v1/lessons.removeStep                   JSON
      POST /v1/lessons.reorderSteps                 JSON
      POST /v1/lessons.setStepDone                  JSON
@@ -281,6 +286,8 @@ l'en-tête ``Idempotency-Key`` optionnel.
    positions
      POST /v1/positions.count                      JSON
      POST /v1/positions.delete                     JSON
+     POST /v1/positions.derivedFrom                JSON
+     POST /v1/positions.drawing                    JSON
      POST /v1/positions.epc                        JSON
      POST /v1/positions.exists                     JSON
      POST /v1/positions.explain                    JSON
@@ -296,12 +303,17 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.load                       JSON
      POST /v1/positions.loadByIds                  JSON
      POST /v1/positions.parseText                  JSON
+     POST /v1/positions.publicId                   JSON
      POST /v1/positions.reclassifyPhases           JSON
      POST /v1/positions.repairCrawford             JSON
      POST /v1/positions.save                       JSON  (Idempotency-Key)
+     POST /v1/positions.setDerivedFrom             JSON
+     POST /v1/positions.setDrawing                 JSON
      POST /v1/positions.setIndividuallyImported    JSON
+     POST /v1/positions.setPublicId                JSON
      POST /v1/positions.similar                    JSON
      POST /v1/positions.update                     JSON
+     POST /v1/positions.variants                   JSON
    quiz
      POST /v1/quiz.gradeChecker                    JSON
      POST /v1/quiz.gradeCheckerMove                JSON
@@ -443,7 +455,7 @@ Idempotence
 La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et les écritures de ``positions.*`` sont
 idempotentes dans leur effet grâce au hachage Zobrist du contenu — enregistrer
-deux fois la même position renvoie la même ligne, jamais un doublon. 50 méthodes
+deux fois la même position renvoie la même ligne, jamais un doublon. 51 méthodes
 acceptent un en-tête ``Idempotency-Key`` optionnel : celles dont deux appels
 sont deux effets distincts, et ``positions.save``, dont la réponse dit si
 l'appel a créé la position (``created``) et le dirait faux si elle était
