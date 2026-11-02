@@ -19,6 +19,7 @@ import (
 type positionStore struct {
 	db     execer
 	shared sqlshared.Execer
+	stmts  *poolStmts
 }
 
 // ReclassifyDerived recomputes the derived phase of every position whose stored
@@ -126,7 +127,7 @@ func (s *positionStore) SaveCreated(ctx context.Context, scope string, p *domain
 func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Position) (int64, bool, error) {
 	norm := p.NormalizeForStorage()
 	cols := engine.PopulatePositionColumns(p)
-	res, err := s.db.ExecContext(ctx, positionInsertSQL,
+	res, err := s.stmts.exec(ctx, s.db, positionInsertSQL,
 		int64(cols.ZobristHash), cols.DecisionType, norm.PlayerOnRoll, cols.Dice1, cols.Dice2,
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
 		cols.HasJacoby, cols.HasBeaver,

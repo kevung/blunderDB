@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 04:23+0200\n"
+"POT-Creation-Date: 2026-11-02 09:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -676,7 +676,7 @@ msgstr "また、データベースは単一のファイルのままであって
 
 #: ../../source/faq.rst:364
 msgid ""
-"Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
+"Enfin, blunderDB ne se limite pas à l'application de bureau : le même "
 "binaire offre une interface en ligne de commande et un mode serveur "
 "facultatif, qui peut s'appuyer sur PostgreSQL pour les déploiements "
 "multi-utilisateurs. L'usage normal reste toutefois l'application de "
@@ -769,3 +769,4 @@ msgid ""
 msgstr ""
 "blunderDB のアイコンは `SMirC シリーズ <https://commons.wikimedia.org/wiki/SMirC>`_"
 " の \"goggling\" 絵文字です。"
+

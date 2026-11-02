@@ -93,7 +93,7 @@ A violation is a bug even when every test passes.
   into a backend; a new dialect difference goes in `Dialect`, covered by the contract suite.
 - **A schema change** bumps `DatabaseVersion` and adds a `migrate_X_to_Y` step to
   `migrationSteps` (`db_migration.go`; `TestMigrationSteps_ContinuousChain` requires an unbroken
-  chain), DDL in `db_schema.go`, the PostgreSQL side under `storage/postgres/migrations/`, and a
+  chain), DDL in `storage/sqlite/schema_sqlite.go`, the PostgreSQL side under `storage/postgres/migrations/`, and a
   test in `migration_test.go`; reconsider `domain.MinReaderVersion` at each bump.
 - **The serve daemon performs no authentication**: it trusts `X-Tenant-ID` behind an
   authenticating proxy. Never add auth to the engine, never weaken the warnings (ADR-0005).

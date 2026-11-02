@@ -31,10 +31,12 @@ type binder struct {
 	// probe remembers the handle's query_only answer; nil on a binder over a
 	// transaction or a borrowed connection, which asks that connection.
 	probe *writeProbe
+	// stmts is nil on a binder over a transaction, where stmtTx prepares.
+	stmts *poolStmts
 }
 
-func (b binder) Positions() storage.PositionStore     { return &positionStore{b.db, b.shared()} }
-func (b binder) Analyses() storage.AnalysisStore      { return &analysisStore{b.db} }
+func (b binder) Positions() storage.PositionStore     { return &positionStore{b.db, b.shared(), b.stmts} }
+func (b binder) Analyses() storage.AnalysisStore      { return &analysisStore{db: b.db, stmts: b.stmts} }
 func (b binder) Matches() storage.MatchStore          { return &matchStore{b.db} }
 func (b binder) Comments() storage.CommentStore       { return &sqlshared.CommentStore{DB: b.shared()} }
 func (b binder) Collections() storage.CollectionStore { return &collectionStore{b.db} }

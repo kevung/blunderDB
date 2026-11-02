@@ -22,6 +22,11 @@
 //   - Save/Update/Delete return (int64, error) or error. SQLite uses
 //     LastInsertId internally; PostgreSQL uses RETURNING id — the
 //     interface hides the difference.
+//   - A capability not every backend offers is an interface of its own that the
+//     Stores of a backend may also satisfy (ChangeJournalProvider,
+//     ObjectUUIDProvider, DrawingProvider, DerivationProvider, PublicIDProvider):
+//     SQLite and PostgreSQL offer them, storage/remote does not, and a caller
+//     type-asserts.
 //
 // This file declares the contract only — no backend implementation lives
 // here. The DTO structs declared alongside the sub-interfaces are the

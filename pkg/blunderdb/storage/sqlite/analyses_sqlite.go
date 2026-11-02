@@ -16,7 +16,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
-type analysisStore struct{ db execer }
+type analysisStore struct {
+	db    execer
+	stmts *poolStmts
+}
 
 var _ storage.AnalysisStore = (*analysisStore)(nil)
 
@@ -542,7 +545,7 @@ func (s *analysisStore) RepairDenormalisedFrom(ctx context.Context, after int64,
 			if err != nil {
 				return repaired, fmt.Errorf("sqlite: repair: update %d: %w", r.id, err)
 			}
-			if _, err := s.db.ExecContext(ctx,
+			if _, err := s.stmts.exec(ctx, s.db,
 				`UPDATE analysis SET best_cube_action=?, cube_error=?, best_move_equity_error=?,
 				 is_forced=?, is_close_cube=? WHERE id=?`,
 				bestCube, c.CubeError, c.BestMoveErrorArg(), c.IsForced, c.IsCloseCube, r.id); err != nil {
