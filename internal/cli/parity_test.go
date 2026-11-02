@@ -80,6 +80,10 @@ const (
 // route must be reachable from databaseParity or named below with a reason.
 // Sorted by route.
 var serverOnly = map[string]string{
+	// The peer of an exchange reaches the daemon only by HTTP; the desktop and
+	// the CLI hold their own library and call package changeset directly.
+	"/v1/changeset.export": "package changeset, shared: no Database method wraps it",
+	"/v1/changeset.import": "package changeset, shared: no Database method wraps it",
 	// One Database method per alias gesture takes the kind ("player" or
 	// "event"); the daemon spells the kind in the path.
 	"/v1/events.alias.list":    "ListAliases(\"event\"), the CLI's `events alias list`: the parity row names the players route of the same method",
@@ -89,8 +93,18 @@ var serverOnly = map[string]string{
 	// A batch import over HTTP outlives its request, so it has a handle to
 	// read and to stop. The CLI and the desktop run the same pipeline in the
 	// foreground and read its progress from the call itself.
-	"/v1/imports.batch.status": "the progress of a batch import running in the daemon's background: the CLI and the desktop get it from the foreground call",
-	"/v1/imports.batch.cancel": "stops a batch import running in the daemon's background: the CLI's is Ctrl-C and the desktop's is CancelImport",
+	// Per-position data only a daemon caller edits so far: the opaque label of
+	// a public page link, the arrows and squares drawn over a board, and the
+	// link of a variant to its origin. The desktop has no gesture for them yet.
+	"/v1/positions.derivedFrom":    "the position a position derives from and the move played: only the daemon's callers read it until the desktop has a variant gesture",
+	"/v1/positions.setDerivedFrom": "sets or clears the origin of a variant: only the daemon's callers write it until the desktop has a variant gesture",
+	"/v1/positions.variants":       "the positions deriving from a position: only the daemon's callers list them until the desktop has a variant gesture",
+	"/v1/positions.drawing":        "the drawing of a position: only the daemon's callers read it until the desktop has an editor",
+	"/v1/positions.setDrawing":     "replaces the drawing of a position: only the daemon's callers write it until the desktop has an editor",
+	"/v1/positions.publicId":       "the opaque public_id a caller attached to a position: only the daemon's callers set and read it",
+	"/v1/positions.setPublicId":    "sets or clears the opaque public_id of a position: only the daemon's callers use it",
+	"/v1/imports.batch.status":     "the progress of a batch import running in the daemon's background: the CLI and the desktop get it from the foreground call",
+	"/v1/imports.batch.cancel":     "stops a batch import running in the daemon's background: the CLI's is Ctrl-C and the desktop's is CancelImport",
 	// Storage primitives the desktop reaches through a coarser call. The GUI
 	// and the CLI never save a bare match row or ask whether a Zobrist hash is
 	// present: SavePosition and the importers do that inside one operation.

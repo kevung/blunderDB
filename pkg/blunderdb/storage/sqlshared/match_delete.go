@@ -17,7 +17,9 @@ type RefreshPositionDates func(ctx context.Context, tx Execer, scope string, ids
 // here for both backends; only TenantFilter and Bool differ.
 //
 // A position is held by: another match's move; a collection membership; an
-// Anki card; a Lesson step (ADR-0066); a comment with origin = 'user'; the
+// Anki card; a Lesson step (ADR-0066); a drawing (arrows and squares laid by
+// hand are, like a note of the user, work that outlives the file it came
+// from); a comment with origin = 'user'; the
 // individually_imported mark (ADR-0001); or the source tool's study mark
 // (ADR-0006).
 //
@@ -39,6 +41,7 @@ func positionIsHeldSQL(d Dialect, scope string) (string, []any) {
 		` OR ` + holder("collection_position", "") +
 		` OR ` + holder("anki_card", "") +
 		` OR ` + holder("lesson_step", "") +
+		` OR ` + holder("position_drawing", "") +
 		` OR ` + holder("comment", ` AND origin = 'user'`) +
 		` OR ` + d.Bool("position.individually_imported", true) +
 		` OR ` + d.Bool("position.flagged", true)

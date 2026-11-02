@@ -359,3 +359,33 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   row is not rewritten).
 
   Schema-visible: bumped `domain.DatabaseVersion` to 2.50.0.
+- `055_change_log.sql` — `change_log` (one row per object, moved to the end by a
+  new `seq` at each change), `blunderdb_journal()` and one row trigger per
+  uuid-bearing table, with the tenant policy. Runs as the invoking role
+  (no SECURITY DEFINER); no COMMIT, so it holds on `blunderdb_user` under FORCE
+  RLS. The SQLite twin is `sqlite.EnsureChangeLog`.
+
+  Cost: a trigger per write (measured in the PR). `CREATE TRIGGER` takes
+  SHARE ROW EXCLUSIVE (reads pass, writes wait) on each table, and the lock is
+  held on all eight tables (seven uuid-bearing ones and `analysis`) until the
+  file's transaction ends. The file sets `lock_timeout = 15s`: a table kept
+  busy by a long transaction fails the migration, which the next start retries.
+  `analysis` has a trigger of its own that journals its position as an update.
+
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.52.0.
+- `056_position_public_id.sql` — `position.public_id TEXT`, the opaque label a
+  caller attaches to a position; the engine stores and returns it, never reads
+  it. NULLable, no default, no backfill: no row is rewritten, so `change_log`
+  keeps its entries. Schema-visible: bumped `domain.DatabaseVersion` to 2.53.0.
+- `057_position_drawing.sql` — `position_drawing`, the arrows and squares a
+  player lays over a position (kind, two points, one of four colours, in the
+  order drawn). Composite tenant key to `position` with `ON DELETE CASCADE`,
+  `FORCE RLS`, `lock_timeout = 15s`. A trigger journals the position, and
+  `position_part_fact` dates the drawing or the link (an erasure included).
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.54.0.
+- `058_position_derivation.sql` — `position_derivation`, the position a position
+  derives from and the move played to reach it (one origin per position, any
+  number of variants per origin). Composite tenant keys on both ends with
+  `ON DELETE CASCADE` (the origin's deletion drops the link, not the variant),
+  `FORCE RLS`, `lock_timeout = 15s`. A trigger journals the variant, as in 057.
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.55.0.

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"strconv"
 
 	"github.com/jackc/pgx/v5"
@@ -65,6 +66,7 @@ var rlsTables = []string{
 	"table_setting", "lesson", "lesson_step",
 	"import_batch_file", "player_alias", "event_alias", "match_stats", "match_stats_cell", "match_stats_position",
 	"lesson_progress", "match_equity_table", "action_label", "study_mark", "duel", "match_origin",
+	"change_log", "position_drawing", "position_derivation", "position_part_fact",
 }
 
 // ApplyRLS installs (idempotently) Row-Level Security on every tenant-scoped
@@ -171,7 +173,10 @@ func unforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx 
 	}
 	complete = true
 	var lifted []string
-	for _, t := range tables {
+	// The journal triggers of the uuid-bearing tables write change_log under
+	// the same policy: a pass that rewrites their rows on a connection with no
+	// tenant needs it lifted too.
+	for _, t := range append(slices.Clone(tables), "change_log") {
 		var forced, blind bool
 		if err := tx.QueryRow(ctx,
 			`SELECT COALESCE(bool_or(c.relforcerowsecurity AND owned), false),

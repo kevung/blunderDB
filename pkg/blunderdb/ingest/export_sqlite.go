@@ -267,6 +267,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeMetadata,
 		e.resolveSelection,
 		e.writePositions,
+		e.writeDerivations,
 		e.writeCollections,
 		e.writeLessons,
 		e.writeTournaments,
@@ -627,6 +628,36 @@ func (e *exporter) writePositions() error {
 	return e.writeByIDs(e.extraPositionIDs)
 }
 
+// writeDerivations carries the link of each exported variant to its origin,
+// once every position has its exported id. A variant whose origin is not in
+// the export keeps no link: it would point at nothing.
+func (e *exporter) writeDerivations() error {
+	dp, ok := e.src.(storage.DerivationProvider)
+	if !ok || len(e.posMap) == 0 {
+		return nil
+	}
+	ids := make([]int64, 0, len(e.posMap))
+	for old := range e.posMap {
+		ids = append(ids, old)
+	}
+	derived, err := dp.PositionDerivations().Derivations(e.ctx, e.scope, ids)
+	if err != nil {
+		return fmt.Errorf("cannot read derivations to export: %w", err)
+	}
+	for old, d := range derived {
+		from, ok := e.posMap[d.FromID]
+		if !ok {
+			continue
+		}
+		if _, err := e.tx.ExecContext(e.ctx,
+			`INSERT OR IGNORE INTO position_derivation (position_id, from_position_id, move) VALUES (?, ?, ?)`,
+			e.posMap[old], from, d.Move); err != nil {
+			e.skip("inserting derivation for position", "newID", e.posMap[old], "oldID", old, "err", err)
+		}
+	}
+	return nil
+}
+
 func (e *exporter) writeByIDs(ids []int64) error {
 	for start := 0; start < len(ids); start += positionBatch {
 		loaded, err := e.src.Positions().LoadByIDs(e.ctx, e.scope, ids[start:min(start+positionBatch, len(ids))])
@@ -658,6 +689,7 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 	var analysisMET map[int64]int64
 	var moves map[int64][]*domain.Move
 	var comments map[int64][]*domain.CommentEntry
+	var drawings map[int64][]domain.DrawingMark
 	var err error
 	if e.opts.Analysis {
 		if analyses, err = e.src.Analyses().LoadMany(e.ctx, e.scope, ids); err != nil {
@@ -675,6 +707,11 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 	if e.opts.Comments {
 		if comments, err = e.src.Comments().ByPositions(e.ctx, e.scope, ids); err != nil {
 			return fmt.Errorf("cannot read comments to export: %w", err)
+		}
+		if dp, ok := e.src.(storage.DrawingProvider); ok {
+			if drawings, err = dp.PositionDrawings().Drawings(e.ctx, e.scope, ids); err != nil {
+				return fmt.Errorf("cannot read drawings to export: %w", err)
+			}
 		}
 	}
 
@@ -718,6 +755,14 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				if err := e.carryTable(analysisMET[p.ID], newID); err != nil {
 					return err
 				}
+			}
+		}
+		for rank, m := range drawings[p.ID] {
+			if _, err := e.tx.ExecContext(e.ctx,
+				`INSERT INTO position_drawing (position_id, rank, kind, from_point, to_point, color) VALUES (?, ?, ?, ?, ?, ?)`,
+				newID, rank, m.Kind, m.From, m.To, m.Color); err != nil {
+				e.skip("inserting drawing mark for position", "newID", newID, "oldID", p.ID, "err", err)
+				break
 			}
 		}
 		for _, c := range comments[p.ID] {
@@ -1159,6 +1204,8 @@ var exportedTables = map[string]string{
 	"position":              "the selected positions, under the export's own ids",
 	"analysis":              "carried with its position",
 	"comment":               "the carried comment columns of each position (issuance.CarriedCommentColumns)",
+	"position_derivation":   "the link of each exported variant to its exported origin, under the export's own ids; a link whose origin is not exported is left out",
+	"position_drawing":      "the arrows and squares drawn on each position, with the comments option: a drawing is an annotation of the position like its comments",
 	"metadata":              "the allow-list issuance.CarriedMetadataKeys, plus the producer's watermark",
 	"filter_library":        "the saved filters of the selection",
 	"collection":            "the selected collections",
@@ -1188,6 +1235,7 @@ var exportedTables = map[string]string{
 
 // notExportedTables are the tables an export leaves behind, each with why.
 var notExportedTables = map[string]string{
+	"position_part_fact":   "when this library last wrote a drawing or a link: a recipient's copy is its own first write",
 	"command_history":      "what the user typed: personal, belongs to this installation",
 	"search_history":       "what the user searched: personal, belongs to this installation",
 	"session_state":        "where the user left the interface: personal, belongs to this installation",

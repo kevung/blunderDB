@@ -50,23 +50,41 @@ func giveBackUUID(ctx context.Context, s storage.Stores, scope, family string, i
 }
 
 func Position(ctx context.Context, s storage.Stores, scope string, positionID int64) (int64, error) {
-	payload, err := snapshotPosition(ctx, s, scope, positionID)
-	if err != nil {
-		return 0, err
+	var id int64
+	err := inTx(ctx, s, scope, func(s storage.Stores) error {
+		payload, err := snapshotPosition(ctx, s, scope, positionID)
+		if err != nil {
+			return err
+		}
+		if id, err = put(ctx, s, scope, domain.TrashPosition, fmt.Sprintf("Position %d", positionID), payload); err != nil {
+			return err
+		}
+		// ON DELETE CASCADE takes the analysis, the comments and the memberships.
+		if err := s.Positions().Delete(ctx, scope, positionID); err != nil {
+			return err
+		}
+		// Deleted, but to the trash: the journal says so for the position and
+		// for the notes that went with it.
+		if err := markTrashed(ctx, s, scope, "position", payload.UUID); err != nil {
+			return err
+		}
+		for _, u := range payload.CommentUUIDs {
+			if err := markTrashed(ctx, s, scope, "comment", u); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return id, err
+}
+
+// markTrashed tells the change journal that a delete went through the trash.
+func markTrashed(ctx context.Context, s storage.Stores, scope, family, uuid string) error {
+	p, ok := s.(storage.ChangeJournalProvider)
+	if !ok || uuid == "" {
+		return nil
 	}
-	id, err := put(ctx, s, scope, domain.TrashPosition, fmt.Sprintf("Position %d", positionID), payload)
-	if err != nil {
-		return 0, err
-	}
-	// ON DELETE CASCADE takes the analysis, the comments and the memberships.
-	if err := s.Positions().Delete(ctx, scope, positionID); err != nil {
-		// The snapshot outlived the delete it was for: discard it rather than
-		// leave a trash entry for something still in the database, which would
-		// restore into a duplicate on the next click.
-		_ = s.Trash().Discard(ctx, scope, id)
-		return 0, err
-	}
-	return id, nil
+	return p.ChangeJournal().Mark(ctx, scope, family, uuid, storage.ChangeTrash, "")
 }
 
 // snapshotPosition reads a position with what cascades off it: its analysis,
@@ -113,7 +131,114 @@ func snapshotPosition(ctx context.Context, s storage.Stores, scope string, posit
 	if payload.TrainingItemIDs, err = s.Training().ItemsOfPosition(ctx, scope, positionID); err != nil {
 		return domain.TrashPositionPayload{}, err
 	}
+	if err := snapshotMarks(ctx, s, scope, positionID, &payload); err != nil {
+		return domain.TrashPositionPayload{}, err
+	}
 	return payload, nil
+}
+
+// snapshotMarks reads what the deleted position's own tables carry: its
+// public id, its drawing and its derivation links, in both directions.
+func snapshotMarks(ctx context.Context, s storage.Stores, scope string, positionID int64, payload *domain.TrashPositionPayload) error {
+	var err error
+	if p, ok := s.(storage.PublicIDProvider); ok {
+		if payload.PublicID, err = p.PublicIDs().PublicID(ctx, scope, positionID); err != nil {
+			return err
+		}
+	}
+	if p, ok := s.(storage.DrawingProvider); ok {
+		if payload.Drawing, err = p.PositionDrawings().Drawing(ctx, scope, positionID); err != nil {
+			return err
+		}
+	}
+	if p, ok := s.(storage.DerivationProvider); ok {
+		d := p.PositionDerivations()
+		if payload.DerivedFrom, err = d.DerivedFrom(ctx, scope, positionID); err != nil {
+			return err
+		}
+		ids, err := d.Variants(ctx, scope, positionID)
+		if err != nil {
+			return err
+		}
+		links, err := d.Derivations(ctx, scope, ids)
+		if err != nil {
+			return err
+		}
+		for _, id := range ids {
+			payload.Variants = append(payload.Variants, domain.Derived{ID: id, Move: links[id].Move})
+		}
+	}
+	return nil
+}
+
+// restoreMarks puts back what snapshotMarks read, onto the position now
+// called id. It fills what is missing and never overwrites: a drawing, a
+// label or a link written since the delete is the newer work. A link whose
+// other end is gone, or that would now close a loop, is left out.
+func restoreMarks(ctx context.Context, s storage.Stores, scope string, id int64, payload domain.TrashPositionPayload) error {
+	if p, ok := s.(storage.PublicIDProvider); ok && payload.PublicID != "" {
+		have, err := p.PublicIDs().PublicID(ctx, scope, id)
+		if err != nil {
+			return err
+		}
+		if have == "" {
+			if err := p.PublicIDs().SetPublicID(ctx, scope, id, payload.PublicID); err != nil {
+				return err
+			}
+		}
+	}
+	if p, ok := s.(storage.DrawingProvider); ok && len(payload.Drawing) > 0 {
+		have, err := p.PositionDrawings().Drawing(ctx, scope, id)
+		if err != nil {
+			return err
+		}
+		if len(have) == 0 {
+			if err := p.PositionDrawings().SetDrawing(ctx, scope, id, payload.Drawing); err != nil {
+				return err
+			}
+		}
+	}
+	return restoreLinks(ctx, s, scope, id, payload, nil)
+}
+
+// restoreLinks puts back the derivation links of a restored position. The
+// ids in the payload are the ones the library had; remap says where a
+// position restored under another id went (nil when none moved).
+func restoreLinks(ctx context.Context, s storage.Stores, scope string, id int64, payload domain.TrashPositionPayload, remap map[int64]int64) error {
+	p, ok := s.(storage.DerivationProvider)
+	if !ok {
+		return nil
+	}
+	moved := func(x int64) int64 {
+		if n, ok := remap[x]; ok {
+			return n
+		}
+		return x
+	}
+	d := p.PositionDerivations()
+	link := func(variant int64, l domain.Derivation) error {
+		have, err := d.DerivedFrom(ctx, scope, variant)
+		if err != nil || have != nil {
+			return err
+		}
+		switch err := d.SetDerivedFrom(ctx, scope, variant, &l); {
+		case errors.Is(err, storage.ErrInvalid), errors.Is(err, storage.ErrNotFound):
+			return nil
+		default:
+			return err
+		}
+	}
+	if payload.DerivedFrom != nil {
+		if err := link(id, domain.Derivation{FromID: moved(payload.DerivedFrom.FromID), Move: payload.DerivedFrom.Move}); err != nil {
+			return err
+		}
+	}
+	for _, v := range payload.Variants {
+		if err := link(moved(v.ID), domain.Derivation{FromID: id, Move: v.Move}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Collection deletes a collection after snapshotting it and the ids of the
@@ -142,15 +267,17 @@ func Collection(ctx context.Context, s storage.Stores, scope string, collectionI
 		payload.PositionIDs = append(payload.PositionIDs, p.ID)
 	}
 
-	id, err := put(ctx, s, scope, domain.TrashCollection, col.Name, payload)
-	if err != nil {
-		return 0, err
-	}
-	if err := cs.Delete(ctx, scope, collectionID); err != nil {
-		_ = s.Trash().Discard(ctx, scope, id)
-		return 0, err
-	}
-	return id, nil
+	var id int64
+	err = inTx(ctx, s, scope, func(s storage.Stores) error {
+		if id, err = put(ctx, s, scope, domain.TrashCollection, col.Name, payload); err != nil {
+			return err
+		}
+		if err := s.Collections().Delete(ctx, scope, collectionID); err != nil {
+			return err
+		}
+		return markTrashed(ctx, s, scope, "collection", colUUID)
+	})
+	return id, err
 }
 
 // CommentEntry deletes one comment entry after snapshotting it.
@@ -159,23 +286,38 @@ func CommentEntry(ctx context.Context, s storage.Stores, scope string, commentID
 	if err != nil {
 		return 0, err
 	}
-	label := entry.Text
-	if r := []rune(label); len(r) > 60 {
-		label = string(r[:60]) + "…"
-	}
+	label := commentLabel(entry)
 	commentUUID, err := uuidOf(ctx, s, scope, "comment", commentID)
 	if err != nil {
 		return 0, err
 	}
-	id, err := put(ctx, s, scope, domain.TrashComment, label, domain.TrashCommentPayload{UUID: commentUUID, Comment: *entry})
-	if err != nil {
-		return 0, err
+	var id int64
+	err = inTx(ctx, s, scope, func(s storage.Stores) error {
+		if id, err = put(ctx, s, scope, domain.TrashComment, label, domain.TrashCommentPayload{UUID: commentUUID, Comment: *entry}); err != nil {
+			return err
+		}
+		if err := s.Comments().Delete(ctx, scope, commentID); err != nil {
+			return err
+		}
+		return markTrashed(ctx, s, scope, "comment", commentUUID)
+	})
+	return id, err
+}
+
+func commentLabel(entry *domain.CommentEntry) string {
+	if r := []rune(entry.Text); len(r) > 60 {
+		return string(r[:60]) + "…"
 	}
-	if err := s.Comments().Delete(ctx, scope, commentID); err != nil {
-		_ = s.Trash().Discard(ctx, scope, id)
-		return 0, err
-	}
-	return id, nil
+	return entry.Text
+}
+
+// KeepCommentVersion puts a copy of a note about to be overwritten in the
+// trash, under the same purge window. It has no uuid: restoring it adds a note
+// beside the current one, and nothing that discards the note's trash entries
+// by uuid reaches it.
+func KeepCommentVersion(ctx context.Context, s storage.Stores, scope string, entry *domain.CommentEntry) error {
+	_, err := put(ctx, s, scope, domain.TrashComment, commentLabel(entry), domain.TrashCommentPayload{Comment: *entry})
+	return err
 }
 
 // findComment locates one comment entry by id. CommentStore has no by-id read,
@@ -240,53 +382,58 @@ func restorePosition(ctx context.Context, s storage.Stores, scope string, entry 
 	if err := json.Unmarshal(entry.Payload, &payload); err != nil {
 		return 0, fmt.Errorf("trash entry %d: %w", entry.ID, err)
 	}
-	return restorePositionPayload(ctx, s, scope, payload, false)
+	id, _, err := restorePositionPayload(ctx, s, scope, payload, false)
+	return id, err
 }
 
 // restorePositionPayload re-Saves a snapshotted position and puts back its
-// analysis and comments; see restorePosition. With onlyIfGone, a position the
+// analysis and comments; see restorePosition. The bool says the position was
+// left as it was (onlyIfGone). With onlyIfGone, a position the
 // database still holds under its own id is left as it is: it stayed in the
 // library while the snapshot waited, so a note edited or deleted since must
 // not come back. A position that was purged and stored again since under
 // another id is a different case: it gets back what it lacks — its study mark,
 // its training answers, an analysis and notes — and keeps what it has.
-func restorePositionPayload(ctx context.Context, s storage.Stores, scope string, payload domain.TrashPositionPayload, onlyIfGone bool) (int64, error) {
+func restorePositionPayload(ctx context.Context, s storage.Stores, scope string, payload domain.TrashPositionPayload, onlyIfGone bool) (int64, bool, error) {
 	pos := payload.Position
 	id, created, err := reinstatePosition(ctx, s, scope, &pos)
 	if err != nil {
-		return 0, err
+		return 0, false, err
 	}
 	if onlyIfGone && !created && id == payload.Position.ID {
-		return id, nil
+		return id, true, nil
 	}
 	if created {
 		if err := giveBackUUID(ctx, s, scope, "position", id, payload.UUID); err != nil {
-			return 0, err
+			return 0, false, err
 		}
+	}
+	if err := restoreMarks(ctx, s, scope, id, payload); err != nil {
+		return 0, false, err
 	}
 	if payload.StudiedAt != 0 {
 		if err := s.ImportBatches().RestoreStudyMark(ctx, scope, id, payload.StudiedAt); err != nil {
-			return 0, err
+			return 0, false, err
 		}
 	}
 	if err := s.Training().RelinkItems(ctx, scope, payload.TrainingItemIDs, id); err != nil {
-		return 0, err
+		return 0, false, err
 	}
 	if payload.Analysis != nil {
 		switch _, err := s.Analyses().Load(ctx, scope, id); {
 		case errors.Is(err, storage.ErrNotFound):
 			if err := s.Analyses().Save(ctx, scope, id, payload.Analysis); err != nil {
-				return 0, err
+				return 0, false, err
 			}
 			// Save leaves a new row on the built-in table; a verdict valued
 			// with another one must say so again (ADR-0068).
 			if payload.MET != 0 {
 				if err := s.MatchEquityTables().TagAnalyses(ctx, scope, payload.MET, []int64{id}); err != nil {
-					return 0, err
+					return 0, false, err
 				}
 			}
 		case err != nil:
-			return 0, err
+			return 0, false, err
 		}
 	}
 	// Comments are appended, not replaced: a comment written on the position
@@ -294,7 +441,7 @@ func restorePositionPayload(ctx context.Context, s storage.Stores, scope string,
 	existing := map[string]bool{}
 	for c, err := range s.Comments().ByPosition(ctx, scope, id) {
 		if err != nil {
-			return 0, err
+			return 0, false, err
 		}
 		existing[c.Text] = true
 	}
@@ -304,13 +451,13 @@ func restorePositionPayload(ctx context.Context, s storage.Stores, scope string,
 		}
 		cid, err := s.Comments().AddFrom(storage.WithCarriedComment(ctx, c.Author, c.Signature), scope, id, c.Text, c.Origin)
 		if err != nil {
-			return 0, err
+			return 0, false, err
 		}
 		if err := giveBackUUID(ctx, s, scope, "comment", cid, payload.CommentUUIDs[c.ID]); err != nil {
-			return 0, err
+			return 0, false, err
 		}
 	}
-	return id, nil
+	return id, false, nil
 }
 
 // reinstatePosition stores the position under the id it had, so what named it
@@ -438,4 +585,33 @@ func put(ctx context.Context, s storage.Stores, scope string, kind domain.TrashK
 		return 0, err
 	}
 	return s.Trash().Put(ctx, scope, kind, label, blob)
+}
+
+// DiscardByUUID removes the trash entries of one kind whose snapshot holds the
+// object uuid: the object is back (or gone for good) by another way, and
+// restoring the entry would make a second one under a fresh identifier.
+func DiscardByUUID(ctx context.Context, s storage.Stores, scope string, kind domain.TrashKind, uuid string) error {
+	if uuid == "" {
+		return nil
+	}
+	entries, err := s.Trash().List(ctx, scope, kind, storage.ListOpts{})
+	if err != nil {
+		return err
+	}
+	for _, e := range entries {
+		var p struct {
+			UUID string `json:"uuid"`
+		}
+		if json.Unmarshal(e.Payload, &p) == nil && p.UUID == uuid {
+			if err := s.Trash().Discard(ctx, scope, e.ID); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// InTx runs fn in one transaction when s can open one, directly on s otherwise.
+func InTx(ctx context.Context, s storage.Stores, scope string, fn func(storage.Stores) error) error {
+	return inTx(ctx, s, scope, fn)
 }

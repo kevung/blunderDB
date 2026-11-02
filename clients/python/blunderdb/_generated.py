@@ -226,6 +226,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.updateDeckParams — JSON."
         return self._call("/v1/anki.updateDeckParams", payload)
 
+    def changeset_export(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/changeset.export — JSON."
+        return self._call("/v1/changeset.export", payload)
+
+    def changeset_import(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/changeset.import — JSON."
+        return self._call("/v1/changeset.import", payload)
+
     def collections_add_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.addPosition — JSON."
         return self._call("/v1/collections.addPosition", payload)
@@ -1002,6 +1010,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.delete — JSON."
         return self._call("/v1/positions.delete", payload)
 
+    def positions_derived_from(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.derivedFrom — JSON."
+        return self._call("/v1/positions.derivedFrom", payload)
+
+    def positions_drawing(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.drawing — JSON."
+        return self._call("/v1/positions.drawing", payload)
+
     def positions_epc(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.epc — JSON."
         return self._call("/v1/positions.epc", payload)
@@ -1062,6 +1078,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.parseText — JSON."
         return self._call("/v1/positions.parseText", payload)
 
+    def positions_public_id(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.publicId — JSON."
+        return self._call("/v1/positions.publicId", payload)
+
     def positions_reclassify_phases(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.reclassifyPhases — JSON."
         return self._call("/v1/positions.reclassifyPhases", payload)
@@ -1074,9 +1094,21 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.save — JSON. Accepts an Idempotency-Key."
         return self._call("/v1/positions.save", payload, idempotency_key=idempotency_key)
 
+    def positions_set_derived_from(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.setDerivedFrom — JSON."
+        return self._call("/v1/positions.setDerivedFrom", payload)
+
+    def positions_set_drawing(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.setDrawing — JSON."
+        return self._call("/v1/positions.setDrawing", payload)
+
     def positions_set_individually_imported(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.setIndividuallyImported — JSON."
         return self._call("/v1/positions.setIndividuallyImported", payload)
+
+    def positions_set_public_id(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.setPublicId — JSON."
+        return self._call("/v1/positions.setPublicId", payload)
 
     def positions_similar(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.similar — JSON."
@@ -1085,6 +1117,10 @@ class GeneratedAPI(BaseClient):
     def positions_update(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.update — JSON."
         return self._call("/v1/positions.update", payload)
+
+    def positions_variants(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.variants — JSON."
+        return self._call("/v1/positions.variants", payload)
 
     def quiz_grade_checker(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/quiz.gradeChecker — JSON."

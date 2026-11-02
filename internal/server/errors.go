@@ -90,7 +90,7 @@ func statusForCode(code string) int {
 // codeForErr maps a storage sentinel error to an API error code.
 func codeForErr(err error) string {
 	switch {
-	case errors.Is(err, transcription.ErrSessionGone):
+	case errors.Is(err, transcription.ErrSessionGone), errors.Is(err, storage.ErrCursorStale):
 		return CodeGone
 	case isDuelRefusal(err):
 		return CodeInvalid

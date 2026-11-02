@@ -36,6 +36,7 @@ var schemaStatements = []string{
 	`CREATE TABLE IF NOT EXISTS position (
 		id                INTEGER PRIMARY KEY AUTOINCREMENT,
 		uuid TEXT,
+		public_id TEXT,
 		zobrist_hash      INTEGER,
 		decision_type     INTEGER,
 		player_on_roll    INTEGER,
@@ -699,6 +700,41 @@ var schemaStatements = []string{
 		lesson_step_id INTEGER PRIMARY KEY REFERENCES lesson_step(id) ON DELETE CASCADE,
 		done_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 	)`,
+	// The arrows and squares a player lays over a position, in the order
+	// drawn. They go with the position and travel in exports and transfers.
+	`CREATE TABLE IF NOT EXISTS position_drawing (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		position_id INTEGER NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+		rank INTEGER NOT NULL,
+		kind TEXT NOT NULL CHECK (kind IN ('arrow', 'square')),
+		from_point INTEGER NOT NULL CHECK (from_point BETWEEN 0 AND 25),
+		to_point INTEGER NOT NULL CHECK (to_point BETWEEN 0 AND 25),
+		color TEXT NOT NULL CHECK (color IN ('red', 'green', 'blue', 'yellow')),
+		UNIQUE (position_id, rank)
+	)`,
+	// The position a position derives from and the move that led to it: one
+	// origin per position. Either end going takes the link with it. They
+	// travel in exports and transfers.
+	`CREATE TABLE IF NOT EXISTS position_derivation (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		position_id INTEGER NOT NULL UNIQUE REFERENCES position(id) ON DELETE CASCADE,
+		from_position_id INTEGER NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+		move TEXT NOT NULL DEFAULT '' CHECK (length(move) <= 100),
+		CHECK (position_id <> from_position_id)
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_position_derivation_from ON position_derivation(from_position_id)`,
+	// When a drawing or a link was last written, an erasure included, and the
+	// link whose origin has not arrived yet. Local to the library's journal:
+	// never exported as a table, it travels in the position's record.
+	`CREATE TABLE IF NOT EXISTS position_part_fact (
+		position_id INTEGER NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+		part TEXT NOT NULL CHECK (part IN ('drawing', 'derivation')),
+		changed_at TEXT NOT NULL,
+		pending_origin TEXT,
+		pending_move TEXT,
+		PRIMARY KEY (position_id, part)
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_position_part_fact_pending ON position_part_fact(pending_origin) WHERE pending_origin IS NOT NULL`,
 	// The positions the user marked "studied" in the library-wide study
 	// backlog: written only by that gesture, reversible, never exported (a
 	// table of its own so that no exporter carries it). Not a retention

@@ -119,6 +119,20 @@ func (s commentStore) ByPosition(ctx context.Context, scope string, positionID i
 	return stream[*domain.CommentEntry](ctx, s.c, scope, "comments.byPosition", positionIDReq{positionID})
 }
 
+// Get scans the listing: the daemon has no route to one entry by id, and the
+// callers (the changeset) read a few.
+func (s commentStore) Get(ctx context.Context, scope string, commentID int64) (*domain.CommentEntry, error) {
+	for e, err := range s.ListAll(ctx, scope, storage.ListOpts{}) {
+		if err != nil {
+			return nil, err
+		}
+		if e.ID == commentID {
+			return e, nil
+		}
+	}
+	return nil, storage.ErrNotFound
+}
+
 func (s commentStore) ListAll(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.CommentEntry, error] {
 	return stream[*domain.CommentEntry](ctx, s.c, scope, "comments.listAll", listReq{opts.Limit, opts.Offset})
 }

@@ -170,6 +170,7 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.healthRoutes()...)
 	rs = append(rs, s.rolloutRoutes()...)
 	rs = append(rs, s.trashRoutes()...)
+	rs = append(rs, s.changesetRoutes()...)
 	rs = append(rs, s.directionReadRoutes()...)
 	rs = append(rs, s.rencontreReadRoutes()...)
 	rs = append(rs, s.directionGestureRoutes()...)

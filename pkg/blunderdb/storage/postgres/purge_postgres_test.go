@@ -131,6 +131,9 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 	exec(`INSERT INTO action_label (tenant_id, label) VALUES ($1, 'Doppel')`, tenantID)
 	exec(`INSERT INTO collection_position (tenant_id, collection_id, position_id) VALUES ($1, $2, $3)`, tenantID, collectionID, positionID)
 	exec(`INSERT INTO study_mark (tenant_id, position_id, marked_at) VALUES ($1, $2, 0)`, tenantID, positionID)
+	otherID := scalar(`INSERT INTO position (tenant_id, state) VALUES ($1, 'y') RETURNING id`, tenantID)
+	exec(`INSERT INTO position_derivation (tenant_id, position_id, from_position_id, move) VALUES ($1, $2, $3, '13/7')`, tenantID, otherID, positionID)
+	exec(`INSERT INTO position_drawing (tenant_id, position_id, rank, kind, from_point, to_point, color) VALUES ($1, $2, 0, 'square', 6, 6, 'red')`, tenantID, positionID)
 
 	sessionID := scalar(`INSERT INTO training_session (tenant_id, exercise) VALUES ($1, 'scores') RETURNING id`, tenantID)
 	exec(`INSERT INTO training_item (tenant_id, session_id, number_type) VALUES ($1, $2, 'tp4.last')`, tenantID, sessionID)
@@ -211,11 +214,18 @@ func TestPurgeTenant(t *testing.T) {
 	// nobody purges fails the after-purge count.
 	tables := purgeTenantTables(t, s.pool)
 	for _, tbl := range tables {
-		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != 1 {
-			t.Fatalf("seed sanity: %s tenant A: got %d rows, want 1", tbl, got)
+		if tbl == "change_log" || tbl == "position_part_fact" {
+			continue // fed by the triggers of the rows seeded above, not seeded
 		}
-		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != 1 {
-			t.Fatalf("seed sanity: %s tenant B: got %d rows, want 1", tbl, got)
+		want := 1
+		if tbl == "position" {
+			want = 2 // a derivation links two positions
+		}
+		if got := purgeCountRows(t, s.pool, tbl, tenantA); got != want {
+			t.Fatalf("seed sanity: %s tenant A: got %d rows, want %d", tbl, got, want)
+		}
+		if got := purgeCountRows(t, s.pool, tbl, tenantB); got != want {
+			t.Fatalf("seed sanity: %s tenant B: got %d rows, want %d", tbl, got, want)
 		}
 	}
 

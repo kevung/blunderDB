@@ -3,6 +3,7 @@ package sqlshared
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"iter"
 	"sort"
@@ -234,6 +235,21 @@ func (s *CommentStore) commentSeq(ctx context.Context, what, query string, args 
 			yield(nil, errf(s.DB, what, err))
 		}
 	}
+}
+
+// Get — see storage.CommentStore.
+func (s *CommentStore) Get(ctx context.Context, scope string, commentID int64) (*domain.CommentEntry, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	e, err := scanCommentEntry(s.DB.QueryRow(ctx,
+		`SELECT `+s.selectCols()+` FROM comment WHERE id = ? AND `+tenant,
+		append([]any{commentID}, targs...)...))
+	if errors.Is(err, ErrNoRows) {
+		return nil, errf(s.DB, fmt.Sprintf("comment %d", commentID), storage.ErrNotFound)
+	}
+	if err != nil {
+		return nil, errf(s.DB, fmt.Sprintf("comment %d", commentID), err)
+	}
+	return &e, nil
 }
 
 // ByPosition streams the non-empty comment entries of a position, most recent

@@ -10,6 +10,10 @@ import (
 // CommentStore persists the free-text comments attached to positions. A
 // position may carry several comment entries.
 type CommentStore interface {
+	// Get reads one entry by its id, an empty one included; ErrNotFound when
+	// no entry has it.
+	Get(ctx context.Context, scope string, commentID int64) (*domain.CommentEntry, error)
+
 	// Add appends a comment the USER wrote to a position and returns its id.
 	// It is AddFrom with domain.CommentOriginUser, spelled short because that
 	// is what almost every caller means.

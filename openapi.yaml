@@ -1059,6 +1059,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/changeset.export:
+    post:
+      operationId: changeset.export
+      tags: [changeset]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/changesetExportReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/changeset_Set"
+  /v1/changeset.import:
+    post:
+      operationId: changeset.import
+      tags: [changeset]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/changesetImportReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/changeset_Report"
   /v1/collections.addPosition:
     post:
       operationId: collections.addPosition
@@ -5281,6 +5315,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/positions.derivedFrom:
+    post:
+      operationId: positions.derivedFrom
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/derivedFromResp"
+  /v1/positions.drawing:
+    post:
+      operationId: positions.drawing
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/drawingResp"
   /v1/positions.epc:
     post:
       operationId: positions.epc
@@ -5546,6 +5614,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/parser_Result"
+  /v1/positions.publicId:
+    post:
+      operationId: positions.publicId
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/publicIDResp"
   /v1/positions.reclassifyPhases:
     post:
       operationId: positions.reclassifyPhases
@@ -5605,6 +5690,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/positionSaveResp"
+  /v1/positions.setDerivedFrom:
+    post:
+      operationId: positions.setDerivedFrom
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setDerivedFromReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/positions.setDrawing:
+    post:
+      operationId: positions.setDrawing
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setDrawingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/positions.setIndividuallyImported:
     post:
       operationId: positions.setIndividuallyImported
@@ -5615,6 +5734,23 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/individuallyImportedReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/positions.setPublicId:
+    post:
+      operationId: positions.setPublicId
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setPublicIDReq"
       responses:
         "200":
           description: OK
@@ -5658,6 +5794,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/positions.variants:
+    post:
+      operationId: positions.variants
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/variantsResp"
   /v1/quiz.gradeChecker:
     post:
       operationId: quiz.gradeChecker
@@ -8487,6 +8640,30 @@ components:
         cardId:
           type: integer
           format: int64
+    changesetExportReq:
+      type: object
+      properties:
+        cursor:
+          $ref: "#/components/schemas/storage_Cursor"
+        limit:
+          type: integer
+          format: int32
+    changesetImportReq:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: "#/components/schemas/changeset_Record"
+    changeset_Record:
+      type: object
+      description: "Opaque: see the Go type changeset.Record (defined outside internal/server, not expanded here)."
+    changeset_Report:
+      type: object
+      description: "Opaque: see the Go type changeset.Report (defined outside internal/server, not expanded here)."
+    changeset_Set:
+      type: object
+      description: "Opaque: see the Go type changeset.Set (defined outside internal/server, not expanded here)."
     collPositionReq:
       type: object
       properties:
@@ -8739,6 +8916,12 @@ components:
           type: string
         description:
           type: string
+    derivedFromResp:
+      type: object
+      properties:
+        derivedFrom:
+          $ref: "#/components/schemas/domain_Derivation"
+          nullable: true
     directionAbsentReq:
       type: object
       properties:
@@ -9022,6 +9205,12 @@ components:
     domain_CommentEntry:
       type: object
       description: "Opaque: see the Go type domain.CommentEntry (defined outside internal/server, not expanded here)."
+    domain_Derivation:
+      type: object
+      description: "Opaque: see the Go type domain.Derivation (defined outside internal/server, not expanded here)."
+    domain_DrawingMark:
+      type: object
+      description: "Opaque: see the Go type domain.DrawingMark (defined outside internal/server, not expanded here)."
     domain_DuplicateSuspect:
       type: object
       description: "Opaque: see the Go type domain.DuplicateSuspect (defined outside internal/server, not expanded here)."
@@ -9085,6 +9274,13 @@ components:
     domain_TrashEntry:
       type: object
       description: "Opaque: see the Go type domain.TrashEntry (defined outside internal/server, not expanded here)."
+    drawingResp:
+      type: object
+      properties:
+        marks:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_DrawingMark"
     duel_Origin:
       type: object
       description: "Opaque: see the Go type duel.Origin (defined outside internal/server, not expanded here)."
@@ -9661,6 +9857,11 @@ components:
           format: int64
         created:
           type: boolean
+    publicIDResp:
+      type: object
+      properties:
+        publicId:
+          type: string
     purgedResp:
       type: object
       properties:
@@ -9977,6 +10178,25 @@ components:
       properties:
         state:
           $ref: "#/components/schemas/storage_SessionState"
+    setDerivedFromReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        derivedFrom:
+          $ref: "#/components/schemas/domain_Derivation"
+          nullable: true
+    setDrawingReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        marks:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_DrawingMark"
     setMatchByNameReq:
       type: object
       properties:
@@ -9984,6 +10204,14 @@ components:
           type: integer
           format: int64
         tournamentName:
+          type: string
+    setPublicIDReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        publicId:
           type: string
     similarReq:
       type: object
@@ -10083,6 +10311,9 @@ components:
     storage_CountsEstimate:
       type: object
       description: "Opaque: see the Go type storage.CountsEstimate (defined outside internal/server, not expanded here)."
+    storage_Cursor:
+      type: object
+      description: "Opaque: see the Go type storage.Cursor (defined outside internal/server, not expanded here)."
     storage_DecisionLoss:
       type: object
       description: "Opaque: see the Go type storage.DecisionLoss (defined outside internal/server, not expanded here)."
@@ -10531,6 +10762,14 @@ components:
           type: string
         message:
           type: string
+    variantsResp:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
     versionResp:
       type: object
       properties:

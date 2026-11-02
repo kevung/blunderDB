@@ -80,6 +80,7 @@ func TestCheckSchema(t *testing.T) {
 
 	for _, stmt := range []string{
 		`DROP INDEX idx_match_canonical`,
+		`DROP TRIGGER change_log_match_u`, // it names every column of match
 		`ALTER TABLE match DROP COLUMN comment`,
 		`ALTER TABLE tournament DROP COLUMN comment`,
 		`DROP TABLE anki_review_log`,
