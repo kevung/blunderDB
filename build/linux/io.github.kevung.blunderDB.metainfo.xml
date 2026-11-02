@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.48.0" date="2026-11-02">
+      <description>
+        <ul>
+          <li>The application opens straight on the board and panels: there is no welcome screen any more</li>
+          <li>Transcription metadata suggests the events and locations already in the database, and the player names for the transcriber</li>
+          <li>Importing a .db file from the command line or a serve daemon can count what it would bring without importing, and cap the number of positions</li>
+          <li>Databases move to schema 2.51.0: every position, comment, collection, match, transcription, lesson and Anki card carries a stable UUID</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.47.1" date="2026-10-28">
       <description>
         <p>The tournament engine Nicomaque now lives at github.com/kevung/nicomaque; credits and the About page point there</p>
