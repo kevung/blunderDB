@@ -24,6 +24,21 @@ function key(/** @type {string} */ code, extra = {}) {
 
 const CHECKER = { expects: 'checker' };
 
+describe('match gagné : plus rien n’est attendu au bout du document', () => {
+    const OVER = { expects: '' };
+
+    test.each(['Digit6', 'KeyD', 'KeyR', 'KeyF', 'KeyT', 'KeyJ'])('%s ne saisit rien', (code) => {
+        const result = pressKey(initialKeyState(), key(code), OVER);
+        expect(result.handled).toBe(false);
+        expect(result.commands).toEqual([]);
+        expect(result.state).toEqual(initialKeyState());
+    });
+
+    test('la relecture reste', () => {
+        expect(pressKey(initialKeyState(), key('KeyH'), OVER).commands).toEqual([{ kind: COMMAND.CURSOR_BACK }]);
+    });
+});
+
 describe('cursorDelta', () => {
     test.each([
         ['KeyH', -1],

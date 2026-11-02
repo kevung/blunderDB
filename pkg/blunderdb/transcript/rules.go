@@ -465,6 +465,9 @@ func (s *state) declare(info *ActionInfo, score [2]int) bool {
 // when a game has just ended, the score and the Crawford mention of the game to come
 // are already the ones the panel must show.
 func (s *state) next(nextScore *[2]int) Next {
+	if s.matchOver() {
+		return s.nextAfterMatch()
+	}
 	proj := *s
 	proj.games = append([]GameInfo(nil), s.games...)
 	gameStart := !s.gameActive
@@ -502,6 +505,20 @@ func (s *state) next(nextScore *[2]int) Next {
 		cube = answeredCube(cube)
 	}
 	n.Position = proj.position(n.Side, [2]int{}, decision, cube)
+	return n
+}
+
+// nextAfterMatch is what a won match waits for: nothing. The Position stays on the
+// board the match ended on, at the score its last game was played at: past the
+// length an Away score could only read 0, which means post-Crawford, and the final
+// score is [Annotated.Score].
+func (s *state) nextAfterMatch() Next {
+	n := Next{MatchOver: true, GameNumber: len(s.games), Side: s.winner()}
+	proj := *s
+	if len(s.games) > 0 {
+		proj.points = s.games[len(s.games)-1].InitialScore
+	}
+	n.Position = proj.position(n.Side, [2]int{}, domain.CheckerAction, s.cube)
 	return n
 }
 

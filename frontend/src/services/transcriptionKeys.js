@@ -300,7 +300,7 @@ const clamp = (n, max) => Math.min(Math.max(n, 0), max);
  * @param {KeyState} state - l'état rendu par `initialKeyState` ou par un appel précédent
  * @param {KeyboardEvent} event
  * @param {{expects?: string, mode?: string, editing?: boolean}} context -
- *   `expects` : la sorte d'Action attendue au Cursor (`annotated.entry.kind`,
+ *   `expects` : la sorte d'Action attendue au Cursor, vide après le match (`annotated.entry.kind`,
  *   à défaut `annotated.next.expects`) ; `mode` : [MODE] au Cursor
  *   ([transcriptionMode]) ; `editing` : le Cursor tient une cellule sans dé
  *   tapé.
@@ -335,6 +335,9 @@ export function pressKey(state, event, { expects = 'checker', mode = MODE.ENTRY,
     if (edit) {
         return { handled: true, state: initialKeyState(), commands: [{ kind: edit }] };
     }
+
+    // Match gagné, Cursor au bout : plus rien n'est attendu, seule la relecture reste.
+    if (!expects) return ignored(state);
 
     // `r` ouvre l'attente du niveau depuis tout état ; `Échap` rend l'état
     // d'avant intact (ux.md §3).

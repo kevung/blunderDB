@@ -158,7 +158,10 @@ var (
 	// ErrNotPure reports undo, redo or a seek handed to [Apply]. They are gestures
 	// of the SESSION, not of the document: only an [Editor] holds the stack they
 	// walk or keep clear of.
-	ErrNotPure = errors.New("transcript: undo, redo and seek belong to the editor, not to Apply")
+	// ErrMatchOver: the document's end is past a won match. An Action already there
+	// stays, marked past the end (a shortened length, a declared score); none is added.
+	ErrMatchOver = errors.New("transcript: the match is already won")
+	ErrNotPure   = errors.New("transcript: undo, redo and seek belong to the editor, not to Apply")
 )
 
 // Apply returns the document that gesture g makes of doc. It is pure: doc is never
@@ -187,12 +190,35 @@ func movesOnly(k GestureKind) bool {
 	return false
 }
 
+// writesAction reports whether a gesture starts or records an Action at the slot
+// where the Cursor or the Entry stands.
+func writesAction(k GestureKind) bool {
+	switch k {
+	case GestureEnterDie, GestureEnterPlay, GestureSelectCandidate, GestureDance,
+		GestureDouble, GestureTake, GesturePass, GestureResign:
+		return true
+	}
+	return false
+}
+
+// pastMatchEnd reports whether the slot being written is a new one behind a won match.
+func pastMatchEnd(doc Document) bool {
+	at := doc.Cursor
+	if doc.Entry != nil {
+		at = doc.Entry.At
+	}
+	return at >= len(doc.Actions) && Replay(doc, 0).Finished
+}
+
 func apply(doc Document, g Gesture) (Document, error) {
 	out := doc.clone()
 	// Touched describes the LAST gesture and nothing else: it is cleared here and
 	// set again only by the paths that write an Action, so that walking the
 	// Cursor never leaves a stale index behind for the next Replay to start from.
 	out.HasTouched, out.HoldCursor = false, false
+	if writesAction(g.Kind) && pastMatchEnd(out) {
+		return doc, ErrMatchOver
+	}
 	switch g.Kind {
 	case GestureCreate:
 		// A new draft inherits the length of the one it follows, and 7 when there is
@@ -994,6 +1020,9 @@ func cubeGesture(doc Document, g Gesture) (Document, error) {
 		// The cube Action FOLLOWS the play just recorded, wherever the
 		// validation left the Cursor.
 		mode, at = EntryNew, clampSlot(at+1, len(doc.Actions))
+		if at >= len(doc.Actions) && Replay(doc, 0).Finished {
+			return doc, nil
+		}
 		slotSide = -1
 		if at < len(doc.Actions) {
 			slotSide = proposedSide(doc, at)

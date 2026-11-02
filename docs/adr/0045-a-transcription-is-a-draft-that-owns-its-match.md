@@ -41,6 +41,9 @@ crash.
    move, double turn, impossible cube action, Action past the end of the match. Each is
    recomputed by replaying from the corrected Action. The saved Match carries none as data; an
    illegal move is a Move whose Position is the board it left.
+   A won match waits for nothing: no new Action is entered behind it, and those already there
+   (a shortened length, a declared score) stay marked. Its board stays the last one, at the
+   score of the last game: past the length an Away score could only read post-Crawford.
 6. **A resignation is an Action of the draft and a fact of the Game** (`winner`,
    `points_won`), not a Move. An abandoned match is unfinished: `winner = 0` on its last game.
 7. **Crawford is derived from the score sequence and written as the glossary's sentinel**:
