@@ -325,18 +325,22 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			if tc.fn == nil {
-				t.Skip("contract case pending storage implementation (P2 PRs 3-6)")
-			}
-			if keep != nil && !keep(tc.name) {
-				t.Skip("outside this backend's coverage")
-			}
-			s := factory()
-			defer s.Close()
-			tc.fn(t, s)
-		})
+		runContractCase(t, tc.name, tc.fn, factory, keep)
 	}
+}
+
+func runContractCase(t *testing.T, name string, fn func(*testing.T, storage.Storage), factory func() storage.Storage, keep func(string) bool) {
+	t.Run(name, func(t *testing.T) {
+		if fn == nil {
+			t.Skip("contract case pending storage implementation (P2 PRs 3-6)")
+		}
+		if keep != nil && !keep(name) {
+			t.Skip("outside this backend's coverage")
+		}
+		s := factory()
+		defer s.Close()
+		fn(t, s)
+	})
 }
 
 // checkerPos returns a fresh starting position flagged as a checker decision.

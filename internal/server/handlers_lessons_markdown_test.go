@@ -49,7 +49,10 @@ func TestLessonsMarkdown_RoundTripAndRefusal(t *testing.T) {
 	}
 	code, out = post("/v1/lessons.list", `{}`)
 	var list []map[string]any
-	if json.Unmarshal([]byte(out), &list); code != http.StatusOK || len(list) != 3 {
+	if err := json.Unmarshal([]byte(out), &list); err != nil {
+		t.Fatalf("lessons.list: %v in %s", err, out)
+	}
+	if code != http.StatusOK || len(list) != 3 {
 		t.Errorf("lessons after the refusals: %d %s; want 3", code, out)
 	}
 }

@@ -79,20 +79,9 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, fmt.Errorf("ingest: read source comments: %w", err)
 	}
 
-	// A source from before drawings existed (schema < 2.54.0) has none.
-	var srcDrawings map[int64][]domain.DrawingMark
-	if source.HasTable(ctx, "position_drawing") {
-		if srcDrawings, err = source.PositionDrawings().Drawings(ctx, scope, ids); err != nil {
-			return Summary{}, fmt.Errorf("ingest: read source drawings: %w", err)
-		}
-	}
-
-	// A source from before derivations existed (schema < 2.55.0) has none.
-	var srcDerivations map[int64]domain.Derivation
-	if source.HasTable(ctx, "position_derivation") {
-		if srcDerivations, err = source.PositionDerivations().Derivations(ctx, scope, ids); err != nil {
-			return Summary{}, fmt.Errorf("ingest: read source derivations: %w", err)
-		}
+	srcDrawings, srcDerivations, err := readSourceMarks(ctx, source, scope, ids)
+	if err != nil {
+		return Summary{}, err
 	}
 
 	srcCollections, err := ReadSourceCollections(ctx, source, scope)
@@ -575,6 +564,25 @@ func mergeDBDrawing(ctx context.Context, tx storage.Tx, scope string, positionID
 		return err
 	}
 	return dp.PositionDrawings().SetDrawing(ctx, scope, positionID, marks)
+}
+
+// readSourceMarks reads the drawings and the links of the source's positions. A
+// source from before they existed (schema < 2.54.0, < 2.55.0) has none.
+func readSourceMarks(ctx context.Context, source *sqlite.Storage, scope string, ids []int64) (map[int64][]domain.DrawingMark, map[int64]domain.Derivation, error) {
+	var drawings map[int64][]domain.DrawingMark
+	var links map[int64]domain.Derivation
+	var err error
+	if source.HasTable(ctx, "position_drawing") {
+		if drawings, err = source.PositionDrawings().Drawings(ctx, scope, ids); err != nil {
+			return nil, nil, fmt.Errorf("ingest: read source drawings: %w", err)
+		}
+	}
+	if source.HasTable(ctx, "position_derivation") {
+		if links, err = source.PositionDerivations().Derivations(ctx, scope, ids); err != nil {
+			return nil, nil, fmt.Errorf("ingest: read source derivations: %w", err)
+		}
+	}
+	return drawings, links, nil
 }
 
 // mergeDBDerivations links the imported variants to their imported origins,
