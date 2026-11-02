@@ -38,6 +38,9 @@
     // Le nom de tournoi tapé et resté sans correspondance, '' sinon.
     let unknownTournament = $state('');
     let synced = '';
+    // Les champs tels qu'écrits en dernier : quitter un champ intact, ou le quitter
+    // juste après y avoir choisi une proposition, n'est pas un geste.
+    let written = '';
 
     function blank() {
         return { player1: '', player2: '', event: '', location: '', round: '', date: '', transcriber: '', tournament: '' };
@@ -108,6 +111,7 @@
             transcriber: header?.transcriber ?? '',
             tournament: tournamentNameOf(header?.tournament_id)
         };
+        written = JSON.stringify(form);
     });
 
     // Un texte : lié à un nombre, un champ vide deviendrait `0` (argent).
@@ -145,6 +149,9 @@
     /** Écrit l'en-tête descriptif ; la longueur et le `match_id` n'y sont pas. */
     function commit() {
         if (busy) return;
+        const current = JSON.stringify(form);
+        if (current === written) return;
+        written = current;
         /** @type {{player1: string, player2: string, event: string, location: string, round: string, transcriber: string, date: string | undefined, tournament_id?: number}} */
         const next = {
             player1: form.player1.trim(),

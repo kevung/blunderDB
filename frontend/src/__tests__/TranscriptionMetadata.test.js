@@ -187,6 +187,28 @@ describe('le volet des métadonnées', () => {
         expect(apply.mock.calls[0][0].Header.event).toBe('Tournoi du club');
     });
 
+    test('quitter un champ intact n’écrit rien', async () => {
+        const apply = await mount();
+        for (const name of [/Événement|Event/i, /Lieu|Location/i, /Transcri/i]) {
+            await fireEvent.blur(screen.getByLabelText(name));
+        }
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        expect(apply).not.toHaveBeenCalled();
+    });
+
+    test('choisir une proposition puis quitter le champ n’écrit qu’une fois', async () => {
+        const apply = await mount();
+        const field = screen.getByLabelText(/Lieu|Location/i);
+        await fireEvent.focus(field);
+        await fireEvent.input(field, { target: { value: 'Pa' } });
+        await fireEvent.mouseDown(await screen.findByText('Paris'));
+        await fireEvent.blur(field);
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        expect(apply).toHaveBeenCalledTimes(1);
+        expect(apply.mock.calls[0][0].Header.location).toBe('Paris');
+        expect(apply.mock.calls[0][0].Header.event).toBe('');
+    });
+
     test('le tournoi voyage par son identifiant, un nom inconnu ne détache pas', async () => {
         const apply = await mount(headerOf({ tournament_id: 3 }));
         const field = /** @type {HTMLInputElement} */ (screen.getByLabelText('Tournament'));
