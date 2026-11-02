@@ -4250,6 +4250,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/lessonHTMLResp"
+  /v1/lessons.importMarkdown:
+    post:
+      operationId: lessons.importMarkdown
+      tags: [lessons]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/lessonImportMarkdownReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/lessonImportMarkdownResp"
   /v1/lessons.list:
     post:
       operationId: lessons.list
@@ -4270,6 +4295,23 @@ paths:
                 items:
                   $ref: "#/components/schemas/domain_Lesson"
                   nullable: true
+  /v1/lessons.markdown:
+    post:
+      operationId: lessons.markdown
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/lessonMarkdownReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/lessonMarkdownResp"
   /v1/lessons.removeStep:
     post:
       operationId: lessons.removeStep
@@ -9550,6 +9592,32 @@ components:
       type: object
       properties:
         html:
+          type: string
+    lessonImportMarkdownReq:
+      type: object
+      properties:
+        markdown:
+          type: string
+    lessonImportMarkdownResp:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+    lessonMarkdownReq:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+    lessonMarkdownResp:
+      type: object
+      properties:
+        markdown:
           type: string
     lessonReorderReq:
       type: object

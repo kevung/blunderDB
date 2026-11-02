@@ -220,6 +220,8 @@ var databaseParity = map[string]parityEntry{
 	"CreateAnkiDeck":                    {Server: "/v1/anki.createDeck", Why: "a deck is created from the GUI's current collection or search; the CLI lists, inspects and syncs decks"},
 	"CreateCollection":                  {CLI: "collection create", Server: "/v1/collections.create"},
 	"LessonHTML":                        {CLI: "lesson export --html", Server: "/v1/lessons.html"},
+	"LessonMarkdown":                    {Server: "/v1/lessons.markdown", Why: "Database.LessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
+	"ImportLessonMarkdown":              {Server: "/v1/lessons.importMarkdown", Why: "Database.ImportLessonMarkdown serves the desktop, whose interface has no gesture for it yet; the CLI has no verb for it yet"},
 	"LessonHTMLCtx":                     {Why: whyCtxVariant},
 	"LessonPositionIDs":                 {Why: "lets the desktop draw a Lesson's boards in the palette on screen before asking for the document; the CLI and the daemon draw them with the built-in diagram"},
 	"CreateLesson":                      {CLI: "lesson create", Server: "/v1/lessons.create"},
