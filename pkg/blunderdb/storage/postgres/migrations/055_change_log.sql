@@ -52,16 +52,26 @@ DO $$ BEGIN
     END IF;
 END $$;
 
+-- Set for the length of a transaction that applies a peer's record (see
+-- storage.ChangeJournalStore.Applying): what it writes is no change of this
+-- library, so nothing is dated now.
+CREATE OR REPLACE FUNCTION blunderdb_applying_at() RETURNS timestamptz
+LANGUAGE sql STABLE AS $$
+    SELECT NULLIF(current_setting('blunderdb.applying_at', true), '')::timestamptz
+$$;
+
 CREATE OR REPLACE FUNCTION blunderdb_journal() RETURNS trigger
 LANGUAGE plpgsql AS $$
 DECLARE
     op text;
+    applying timestamptz := blunderdb_applying_at();
+    stamp timestamptz := now();
 BEGIN
     IF TG_OP = 'DELETE' THEN
         IF OLD.uuid IS NOT NULL THEN
-            INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (OLD.tenant_id, OLD.uuid, TG_ARGV[0], 'delete')
+            INSERT INTO change_log (tenant_id, uuid, family, op, changed_at) VALUES (OLD.tenant_id, OLD.uuid, TG_ARGV[0], 'delete', COALESCE(applying, stamp))
             ON CONFLICT (tenant_id, uuid) DO UPDATE
-                SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = 'delete', changed_at = now(), xid = pg_current_xact_id();
+                SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = 'delete', changed_at = EXCLUDED.changed_at, xid = pg_current_xact_id();
         END IF;
         RETURN OLD;
     END IF;
@@ -78,9 +88,16 @@ BEGIN
             op := 'update';
         END IF;
     END IF;
-    INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (NEW.tenant_id, NEW.uuid, TG_ARGV[0], op)
+    IF applying IS NOT NULL THEN
+        IF op = 'update' THEN
+            RETURN NEW;
+        END IF;
+        -- Below the floor: the row's real record always wins.
+        stamp := '1969-12-31T00:00:00.000Z';
+    END IF;
+    INSERT INTO change_log (tenant_id, uuid, family, op, changed_at) VALUES (NEW.tenant_id, NEW.uuid, TG_ARGV[0], op, stamp)
     ON CONFLICT (tenant_id, uuid) DO UPDATE
-        SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = EXCLUDED.op, changed_at = now(), xid = pg_current_xact_id();
+        SET seq = nextval('change_log_seq'), family = EXCLUDED.family, op = EXCLUDED.op, changed_at = EXCLUDED.changed_at, xid = pg_current_xact_id();
     RETURN NEW;
 END $$;
 
@@ -121,6 +138,9 @@ LANGUAGE plpgsql AS $$
 DECLARE
     u uuid;
 BEGIN
+    IF blunderdb_applying_at() IS NOT NULL THEN
+        RETURN NEW;
+    END IF;
     SELECT p.uuid INTO u FROM position p WHERE p.id = NEW.position_id AND p.tenant_id = NEW.tenant_id;
     IF u IS NOT NULL THEN
         INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (NEW.tenant_id, u, 'position', 'update')

@@ -53,9 +53,10 @@ const ChangedAtLayout = "2006-01-02T15:04:05.000Z"
 type Cursor struct {
 	Xid int64 `json:"xid,omitempty"`
 	Seq int64 `json:"seq"`
-	// Epoch names the PostgreSQL cluster whose transaction counter Xid is on: a
-	// backup restored elsewhere restarts that counter, so no order holds between
-	// a cursor from before and an entry from after (ErrCursorStale).
+	// Epoch names the PostgreSQL cluster and timeline whose transaction counter
+	// Xid is on: a backup restored elsewhere restarts that counter and a
+	// point-in-time recovery rewinds it, so no order holds between a cursor from
+	// before and an entry from after (ErrCursorStale).
 	Epoch   string `json:"epoch,omitempty"`
 	Family  string `json:"family,omitempty"`
 	ReadXid int64  `json:"read_xid,omitempty"`
@@ -92,6 +93,37 @@ type ChangeJournalStore interface {
 	// Adopt gives the objects an entry dated at as a create, where they have
 	// none: an object edited meanwhile keeps its own.
 	Adopt(ctx context.Context, scope, family string, uuids []string, at string) error
+	// Applying says that what the current transaction writes comes from a peer
+	// and is no change of this library. Until it is called with "" the triggers
+	// date nothing now: a row they would journal as an update keeps its entry,
+	// a row that goes is dated at, and a row that appears is dated below the
+	// floor, so that its real record always wins.
+	Applying(ctx context.Context, scope, at string) error
+	// PartFact is the last fact known of a part of a position; false when
+	// there has never been one.
+	PartFact(ctx context.Context, scope string, positionID int64, part string) (PartFact, bool, error)
+	// SetPartFact replaces the fact of f's part of f's position.
+	SetPartFact(ctx context.Context, scope string, f PartFact) error
+	// PendingLinks lists the derivation facts still waiting for their origin.
+	PendingLinks(ctx context.Context, scope string) ([]PartFact, error)
+}
+
+// The parts of a position that are written apart from it, and so can differ
+// between two libraries that both hold the position.
+const (
+	PartDrawing    = "drawing"
+	PartDerivation = "derivation"
+)
+
+// PartFact dates the last write of a part of a position. No content with a fact
+// is an erasure: it is what tells "erased" from "never heard of".
+type PartFact struct {
+	PositionID int64
+	Part       string
+	At         string
+	// PendingOrigin is the board hash of an origin this library does not hold
+	// yet, and PendingMove the move of that link (PartDerivation only).
+	PendingOrigin, PendingMove string
 }
 
 // ChangeJournalProvider is implemented by the Stores of a backend that keeps

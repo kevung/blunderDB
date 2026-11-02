@@ -723,6 +723,18 @@ var schemaStatements = []string{
 		CHECK (position_id <> from_position_id)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_position_derivation_from ON position_derivation(from_position_id)`,
+	// When a drawing or a link was last written, an erasure included, and the
+	// link whose origin has not arrived yet. Local to the library's journal:
+	// never exported as a table, it travels in the position's record.
+	`CREATE TABLE IF NOT EXISTS position_part_fact (
+		position_id INTEGER NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+		part TEXT NOT NULL CHECK (part IN ('drawing', 'derivation')),
+		changed_at TEXT NOT NULL,
+		pending_origin TEXT,
+		pending_move TEXT,
+		PRIMARY KEY (position_id, part)
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_position_part_fact_pending ON position_part_fact(pending_origin) WHERE pending_origin IS NOT NULL`,
 	// The positions the user marked "studied" in the library-wide study
 	// backlog: written only by that gesture, reversible, never exported (a
 	// table of its own so that no exporter carries it). Not a retention

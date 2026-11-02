@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -91,6 +92,12 @@ func (s *ChangeJournalStore) ChangesOf(ctx context.Context, scope string, famili
 // dump of a cluster further along: no reader's snapshot would ever pass it. It
 // is older than anything written here, so it goes to the front (xid 1 precedes
 // every assigned xid, and seq keeps its order among its peers).
+//
+// The epoch is the cluster and its timeline: a point-in-time recovery keeps the
+// cluster's identifier and rewinds the xid counter, and once the counter is back
+// past a cursor nothing else tells the entries written since from the ones lost.
+// The timeline is read from the WAL being written, which has it from the
+// promotion on; pg_control_checkpoint has it only after the next checkpoint.
 func (s *ChangeJournalStore) checkCursor(ctx context.Context, scope string, after storage.Cursor) (string, error) {
 	if s.DB.Name() != "postgres" {
 		return "", nil
@@ -101,7 +108,8 @@ func (s *ChangeJournalStore) checkCursor(ctx context.Context, scope string, afte
 		return "", errf(s.DB, "journal cursor", err)
 	}
 	var xmax, epoch string
-	if err := s.DB.QueryRow(ctx, `SELECT CAST(pg_snapshot_xmax(pg_current_snapshot()) AS TEXT), CAST(system_identifier AS TEXT)
+	if err := s.DB.QueryRow(ctx, `SELECT CAST(pg_snapshot_xmax(pg_current_snapshot()) AS TEXT),
+		CAST(system_identifier AS TEXT) || '/' || substr(pg_walfile_name(pg_current_wal_lsn()), 1, 8)
 		FROM pg_control_system()`).Scan(&xmax, &epoch); err != nil {
 		return "", errf(s.DB, "journal cursor", err)
 	}
@@ -224,6 +232,89 @@ func (s *ChangeJournalStore) Mark(ctx context.Context, scope, family, uuid, op, 
 		return errf(s.DB, "mark change", err)
 	}
 	return nil
+}
+
+// Applying — see storage.ChangeJournalStore. The triggers read it: a setting
+// local to the transaction on PostgreSQL, a row removed before the commit on
+// SQLite, whose triggers can read neither a setting nor a temporary table.
+func (s *ChangeJournalStore) Applying(ctx context.Context, _ string, at string) error {
+	if s.DB.Name() != "sqlite" {
+		if _, err := s.DB.Exec(ctx, `SELECT set_config('blunderdb.applying_at', ?, true)`, at); err != nil {
+			return errf(s.DB, "applying", err)
+		}
+		return nil
+	}
+	if _, err := s.DB.Exec(ctx, `DELETE FROM change_log_applying`); err != nil {
+		return errf(s.DB, "applying", err)
+	}
+	if at == "" {
+		return nil
+	}
+	if _, err := s.DB.Exec(ctx, `INSERT INTO change_log_applying (at) VALUES (?)`, at); err != nil {
+		return errf(s.DB, "applying", err)
+	}
+	return nil
+}
+
+// PartFact — see storage.ChangeJournalStore.
+func (s *ChangeJournalStore) PartFact(ctx context.Context, scope string, positionID int64, part string) (storage.PartFact, bool, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	f := storage.PartFact{PositionID: positionID, Part: part}
+	err := s.DB.QueryRow(ctx, `SELECT changed_at, COALESCE(pending_origin, ''), COALESCE(pending_move, '') FROM position_part_fact
+		WHERE position_id = ? AND part = ? AND `+tenant, append([]any{positionID, part}, targs...)...).Scan(&f.At, &f.PendingOrigin, &f.PendingMove)
+	if errors.Is(err, ErrNoRows) {
+		return f, false, nil
+	}
+	if err != nil {
+		return f, false, errf(s.DB, "part fact", err)
+	}
+	return f, true, nil
+}
+
+// SetPartFact — see storage.ChangeJournalStore.
+func (s *ChangeJournalStore) SetPartFact(ctx context.Context, scope string, f storage.PartFact) error {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	if _, err := s.DB.Exec(ctx, `DELETE FROM position_part_fact WHERE position_id = ? AND part = ? AND `+tenant,
+		append([]any{f.PositionID, f.Part}, targs...)...); err != nil {
+		return errf(s.DB, "part fact", err)
+	}
+	cols, args := s.DB.TenantColumns(scope)
+	cols = append(cols, "position_id", "part", "changed_at", "pending_origin", "pending_move")
+	args = append(args, f.PositionID, f.Part, f.At, nullIfEmpty(f.PendingOrigin), nullIfEmpty(f.PendingMove))
+	if _, err := s.DB.Exec(ctx, `INSERT INTO position_part_fact (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`, args...); err != nil {
+		return errf(s.DB, "part fact", err)
+	}
+	return nil
+}
+
+func nullIfEmpty(v string) any {
+	if v == "" {
+		return nil
+	}
+	return v
+}
+
+// PendingLinks — see storage.ChangeJournalStore.
+func (s *ChangeJournalStore) PendingLinks(ctx context.Context, scope string) ([]storage.PartFact, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	rows, err := s.DB.Query(ctx, `SELECT position_id, changed_at, pending_origin, COALESCE(pending_move, '') FROM position_part_fact
+		WHERE pending_origin IS NOT NULL AND `+tenant+` ORDER BY position_id`, targs...)
+	if err != nil {
+		return nil, errf(s.DB, "pending links", err)
+	}
+	defer rows.Close()
+	var out []storage.PartFact
+	for rows.Next() {
+		f := storage.PartFact{Part: storage.PartDerivation}
+		if err := rows.Scan(&f.PositionID, &f.At, &f.PendingOrigin, &f.PendingMove); err != nil {
+			return nil, errf(s.DB, "pending links", err)
+		}
+		out = append(out, f)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "pending links", err)
+	}
+	return out, nil
 }
 
 // Adopt — see storage.ChangeJournalStore.

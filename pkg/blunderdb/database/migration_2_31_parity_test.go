@@ -199,7 +199,7 @@ func libraryContent(t *testing.T, path string) map[string]string {
 		}
 	})
 	for _, table := range tables {
-		if table == "change_log" {
+		if table == "change_log" || table == "change_log_applying" {
 			continue
 		}
 		var cols []string

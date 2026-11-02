@@ -29,7 +29,7 @@ var purgeOrder = []string{
 	"tournament", "rencontre", "position",
 	"filter_library", "command_history", "search_history", "session_state",
 	"library_settings", "trash", "match_equity_table", "action_label",
-	"change_log",
+	"position_part_fact", "change_log",
 }
 
 // PurgeTenant permanently deletes every row belonging to scope across all

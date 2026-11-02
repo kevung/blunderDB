@@ -39,10 +39,23 @@ func (s *DerivationStore) SetDerivedFrom(ctx context.Context, scope string, posi
 		// The links of a tenant are written one transaction at a time: two
 		// crossing writes, each fine against the other's past, would close a
 		// loop. The guard (PostgreSQL) is taken before the check; on SQLite
-		// the delete below is the first write and takes the write lock.
+		// the transaction holds the write lock from its start.
 		if q, gargs := tx.Guard(storage.DerivationGuardKey(scope)); q != "" {
 			if _, err := tx.Exec(ctx, q, gargs...); err != nil {
 				return errf(tx, "guard derivation", err)
+			}
+		}
+		// A refused link changes nothing, whether or not the caller goes on in
+		// its transaction: the checks come before the first write.
+		if d != nil {
+			if err := requirePositionIn(ctx, tx, scope, d.FromID, "derivation"); err != nil {
+				if errors.Is(err, storage.ErrNotFound) {
+					return fmt.Errorf("%w: derivation origin %d is not a position of the scope", storage.ErrInvalid, d.FromID)
+				}
+				return err
+			}
+			if err := (&DerivationStore{DB: tx}).refuseLoop(ctx, scope, positionID, d.FromID); err != nil {
+				return err
 			}
 		}
 		tenant, targs := tx.TenantFilter("", scope)
@@ -52,17 +65,6 @@ func (s *DerivationStore) SetDerivedFrom(ctx context.Context, scope string, posi
 		}
 		if d == nil {
 			return nil
-		}
-		// An origin or a loop that is refused rolls the delete back with the
-		// rest of the transaction: the previous link stays.
-		if err := requirePositionIn(ctx, tx, scope, d.FromID, "derivation"); err != nil {
-			if errors.Is(err, storage.ErrNotFound) {
-				return fmt.Errorf("%w: derivation origin %d is not a position of the scope", storage.ErrInvalid, d.FromID)
-			}
-			return err
-		}
-		if err := (&DerivationStore{DB: tx}).refuseLoop(ctx, scope, positionID, d.FromID); err != nil {
-			return err
 		}
 		cols, args := tx.TenantColumns(scope)
 		cols = append(cols, "position_id", "from_position_id", "move")

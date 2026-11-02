@@ -35,7 +35,7 @@ func TestEnsureChangeLog_ReplacesATriggerBody(t *testing.T) {
 	want := body()
 	for _, q := range []string{
 		`DROP TRIGGER change_log_collection_u`,
-		`CREATE TRIGGER change_log_collection_u AFTER UPDATE ON collection BEGIN SELECT 1; END`,
+		`CREATE TRIGGER change_log_collection_u AFTER UPDATE ON collection BEGIN SELECT 'old'; END`,
 	} {
 		if _, err := db.ExecContext(ctx, q); err != nil {
 			t.Fatal(err)
@@ -44,7 +44,7 @@ func TestEnsureChangeLog_ReplacesATriggerBody(t *testing.T) {
 	if err := sqlite.EnsureChangeLog(ctx, db); err != nil {
 		t.Fatal(err)
 	}
-	if got := body(); got != want || strings.Contains(got, "SELECT 1") {
+	if got := body(); got != want || strings.Contains(got, "SELECT 'old'") {
 		t.Errorf("the old body stayed:\n%s", got)
 	}
 }

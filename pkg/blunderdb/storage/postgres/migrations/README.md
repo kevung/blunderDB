@@ -380,11 +380,12 @@ why it must hold no per-tenant data: the daemon exposes it read-only
 - `057_position_drawing.sql` — `position_drawing`, the arrows and squares a
   player lays over a position (kind, two points, one of four colours, in the
   order drawn). Composite tenant key to `position` with `ON DELETE CASCADE`,
-  `FORCE RLS`, `lock_timeout = 15s`. No trigger: the change journal is not
-  touched. Schema-visible: bumped `domain.DatabaseVersion` to 2.54.0.
+  `FORCE RLS`, `lock_timeout = 15s`. A trigger journals the position, and
+  `position_part_fact` dates the drawing or the link (an erasure included).
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.54.0.
 - `058_position_derivation.sql` — `position_derivation`, the position a position
   derives from and the move played to reach it (one origin per position, any
   number of variants per origin). Composite tenant keys on both ends with
   `ON DELETE CASCADE` (the origin's deletion drops the link, not the variant),
-  `FORCE RLS`, `lock_timeout = 15s`. No trigger: the change journal is not
-  touched. Schema-visible: bumped `domain.DatabaseVersion` to 2.55.0.
+  `FORCE RLS`, `lock_timeout = 15s`. A trigger journals the variant, as in 057.
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.55.0.

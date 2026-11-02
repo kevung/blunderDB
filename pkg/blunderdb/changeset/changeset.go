@@ -40,10 +40,6 @@ import (
 // any change, so it never overwrites an object the other side holds.
 const floor = "1970-01-01T00:00:00.000Z"
 
-// fallbackDate is the date of a position created only because a note arrived
-// before it: below the floor, so its real record always wins.
-const fallbackDate = "1969-12-31T00:00:00.000Z"
-
 // Record is one object's last change and, for a create or an update, its content.
 type Record struct {
 	storage.Change
@@ -293,10 +289,10 @@ func tieKey(op string, payload []byte) string {
 // had where it was made, so it is not re-sent as newer. A delete of an object
 // this library never held is still recorded, so an older create that arrives
 // later loses. Each record is applied, and its entry written, in one
-// transaction.
+// transaction, in which nothing it writes is dated now (see Applying).
 func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Report, error) {
 	var rep Report
-	var deferred []deferredLink
+	var waiting []waitingLink
 	records := slices.Clone(set.Records)
 	slices.SortStableFunc(records, func(a, b Record) int { return codecs[a.Family].rank - codecs[b.Family].rank })
 	for _, r := range records {
@@ -323,12 +319,20 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 		var res outcome
 		var missing []string
 		rctx := context.WithValue(ctx, missingKey{}, &missing)
-		var links []deferredLink
-		rctx = context.WithValue(rctx, deferredKey{}, &links)
+		var links []waitingLink
+		rctx = context.WithValue(rctx, waitingKey{}, &links)
 		err = trash.InTx(rctx, s, scope, func(s storage.Stores) error {
-			var err error
-			res, err = apply(rctx, s, scope, cd, r, future)
-			return err
+			journal, _, err := providers(s)
+			if err != nil {
+				return err
+			}
+			if err := journal.Applying(rctx, scope, r.ChangedAt); err != nil {
+				return err
+			}
+			if res, err = apply(rctx, s, scope, cd, r, future); err != nil {
+				return err
+			}
+			return journal.Applying(rctx, scope, "")
 		})
 		if err != nil {
 			return rep, err
@@ -353,35 +357,19 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 		}
 		for _, l := range links {
 			l.Family, l.UUID = r.Family, r.UUID
-			deferred = append(deferred, l)
+			waiting = append(waiting, l)
 		}
 	}
-	// Every record is in: the origins that arrived after their variant are
-	// here now. What is still missing is the peer's to send.
-	for _, l := range deferred {
-		var missing []string
-		lctx := context.WithValue(ctx, missingKey{}, &missing)
-		err := trash.InTx(lctx, s, scope, func(s storage.Stores) error {
-			journal, _, err := providers(s)
-			if err != nil {
-				return err
-			}
-			// Writing the link dates the variant now; it keeps the date of
-			// the record it came with, or the peer would be sent it back.
-			stamp, err := journal.Entry(lctx, scope, l.UUID)
-			if err != nil {
-				return err
-			}
-			if err := applyDerivation(lctx, s, scope, l.Variant, &derivationPayload{Position: l.Ref, Move: l.Move}); err != nil {
-				return err
-			}
-			return journal.Mark(lctx, scope, l.Family, l.UUID, stamp.Op, stamp.ChangedAt)
-		})
-		if err != nil {
-			return rep, err
-		}
-		for _, ref := range missing {
-			rep.Missing = append(rep.Missing, MissingRef{Family: l.Family, UUID: l.UUID, Ref: ref})
+	// Every record is in: the origins that arrived after their variant, in this
+	// set or an earlier one, are here now. What is still missing is the peer's
+	// to send.
+	still, err := settleLinks(ctx, s, scope, &rep)
+	if err != nil {
+		return rep, err
+	}
+	for _, l := range waiting {
+		if still[l.Variant] {
+			rep.Missing = append(rep.Missing, MissingRef{Family: l.Family, UUID: l.UUID, Ref: l.Ref})
 		}
 	}
 	return rep, nil
@@ -687,15 +675,10 @@ func fill(ctx context.Context, s storage.Stores, scope string, id int64, p colle
 }
 
 // placeCollection moves the collection to rank among the library's, when it
-// is not there. The others keep their journal dates: reordering rewrites their
-// rows, which is no edit of theirs and must not look newer than a peer's.
+// is not there.
 func placeCollection(ctx context.Context, s storage.Stores, scope string, id int64, rank int) error {
 	cs := s.Collections()
 	var order []int64
-	journal, uuids, err := providers(s)
-	if err != nil {
-		return err
-	}
 	for c, err := range cs.List(ctx, scope) {
 		if err != nil {
 			return err
@@ -709,27 +692,8 @@ func placeCollection(ctx context.Context, s storage.Stores, scope string, id int
 	}
 	order = slices.Delete(order, cur, cur+1)
 	order = slices.Insert(order, target, id)
-	type stamp struct{ uuid, op, at string }
-	var stamps []stamp
-	for _, o := range order {
-		if o == id {
-			continue
-		}
-		u, err := uuids.ObjectUUID(ctx, scope, "collection", o)
-		if err != nil || u == "" {
-			continue
-		}
-		if e, err := journal.Entry(ctx, scope, u); err == nil {
-			stamps = append(stamps, stamp{u, e.Op, e.ChangedAt})
-		}
-	}
 	if err := cs.Reorder(ctx, scope, order); err != nil {
 		return err
-	}
-	for _, st := range stamps {
-		if err := journal.Mark(ctx, scope, "collection", st.uuid, st.op, st.at); err != nil {
-			return err
-		}
 	}
 	return nil
 }

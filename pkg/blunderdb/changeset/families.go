@@ -46,11 +46,15 @@ type positionPayload struct {
 	Analysis *domain.PositionAnalysis `json:"analysis,omitempty"`
 	// PublicID is opaque: carried and restored as given.
 	PublicID string `json:"publicId,omitempty"`
-	// Drawing is the whole drawing of the position; none clears it.
-	Drawing []domain.DrawingMark `json:"drawing,omitempty"`
+	// Drawing is the whole drawing of the position. DrawingAt dates it: no date
+	// says nothing, and a date with no marks is an erasure.
+	Drawing   []domain.DrawingMark `json:"drawing,omitempty"`
+	DrawingAt string               `json:"drawingAt,omitempty"`
 	// DerivedFrom is the link to the origin, which it names by the hash of
-	// its board like every cross-reference of a payload; none clears it.
+	// its board like every cross-reference of a payload. DerivedAt dates it as
+	// DrawingAt does the drawing.
 	DerivedFrom *derivationPayload `json:"derivedFrom,omitempty"`
+	DerivedAt   string             `json:"derivedAt,omitempty"`
 }
 
 type derivationPayload struct {
@@ -73,23 +77,11 @@ var positionCodec = codec{
 				return nil, err
 			}
 		}
-		if dp, ok := s.(storage.DrawingProvider); ok {
-			if out.Drawing, err = dp.PositionDrawings().Drawing(ctx, scope, id); err != nil {
-				return nil, err
-			}
+		if out.Drawing, out.DrawingAt, err = readDrawing(ctx, s, scope, id); err != nil {
+			return nil, err
 		}
-		if dp, ok := s.(storage.DerivationProvider); ok {
-			d, err := dp.PositionDerivations().DerivedFrom(ctx, scope, id)
-			if err != nil {
-				return nil, err
-			}
-			if d != nil {
-				ref, err := refOf(ctx, s, scope, d.FromID)
-				if err != nil {
-					return nil, err
-				}
-				out.DerivedFrom = &derivationPayload{Position: ref, Move: d.Move}
-			}
+		if out.DerivedFrom, out.DerivedAt, err = readLink(ctx, s, scope, id); err != nil {
+			return nil, err
 		}
 		switch a, err := s.Analyses().Load(ctx, scope, id); {
 		case err == nil:
@@ -125,6 +117,32 @@ var positionCodec = codec{
 			return err
 		}
 		return s.Positions().Delete(ctx, scope, id)
+	},
+	// Each part keeps its latest fact. The rest is what the update could not
+	// take back anyway, so the two sides reach one content.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l positionPayload
+		if err := json.Unmarshal(winner, &w); err != nil {
+			return nil, fmt.Errorf("position payload: %w", err)
+		}
+		if err := json.Unmarshal(loser, &l); err != nil {
+			return nil, fmt.Errorf("position payload: %w", err)
+		}
+		w.Position.IndividuallyImported = w.Position.IndividuallyImported || l.Position.IndividuallyImported
+		w.Position.Flagged = w.Position.Flagged || l.Position.Flagged
+		if w.Analysis == nil {
+			w.Analysis = l.Analysis
+		}
+		if w.PublicID == "" {
+			w.PublicID = l.PublicID
+		}
+		if partBeats(l.DrawingAt, l.Drawing, w.DrawingAt, w.Drawing) {
+			w.Drawing, w.DrawingAt = l.Drawing, l.DrawingAt
+		}
+		if partBeats(l.DerivedAt, l.DerivedFrom, w.DerivedAt, w.DerivedFrom) {
+			w.DerivedFrom, w.DerivedAt = l.DerivedFrom, l.DerivedAt
+		}
+		return json.Marshal(w)
 	},
 	// The same board under two uuids (two libraries named it before they met):
 	// the older uuid, which sorts first, is kept on both sides. Whatever
@@ -186,12 +204,10 @@ func applyPosition(ctx context.Context, s storage.Stores, scope string, id int64
 			return err
 		}
 	}
-	if dp, ok := s.(storage.DrawingProvider); ok {
-		if err := dp.PositionDrawings().SetDrawing(ctx, scope, id, p.Drawing); err != nil {
-			return err
-		}
+	if err := applyDrawing(ctx, s, scope, id, p); err != nil {
+		return err
 	}
-	if err := applyDerivation(ctx, s, scope, id, p.DerivedFrom); err != nil {
+	if err := applyLink(ctx, s, scope, id, p); err != nil {
 		return err
 	}
 	if p.Analysis != nil {
@@ -200,47 +216,247 @@ func applyPosition(ctx context.Context, s storage.Stores, scope string, id int64
 	return nil
 }
 
-// deferredKey carries the links whose origin was not here yet: the origin may
-// be another record of the same set, applied later.
-type deferredKey struct{}
-
-type deferredLink struct {
-	Family, UUID string
-	Variant      int64
-	Ref, Move    string
+// readDrawing is a position's drawing and the date of its last fact. A drawing
+// with no fact came in with the rows (a file import): it counts as old.
+func readDrawing(ctx context.Context, s storage.Stores, scope string, id int64) ([]domain.DrawingMark, string, error) {
+	dp, ok := s.(storage.DrawingProvider)
+	if !ok {
+		return nil, "", nil
+	}
+	marks, err := dp.PositionDrawings().Drawing(ctx, scope, id)
+	if err != nil {
+		return nil, "", err
+	}
+	journal, _, err := providers(s)
+	if err != nil {
+		return nil, "", err
+	}
+	f, known, err := journal.PartFact(ctx, scope, id, storage.PartDrawing)
+	if err != nil {
+		return nil, "", err
+	}
+	if !known && len(marks) > 0 {
+		f.At = floor
+	}
+	if len(marks) == 0 {
+		marks = nil
+	}
+	return marks, f.At, nil
 }
 
-// applyDerivation makes position id derive from the position ref names, or
-// from nothing. An origin this library does not hold is retried once the whole
-// set is in (see Import) and reported if still absent; a link that would
-// close a loop here is left out and reported.
-func applyDerivation(ctx context.Context, s storage.Stores, scope string, id int64, d *derivationPayload) error {
+// readLink is a position's link and the date of its last fact: the link waiting
+// for its origin when there is one, as that is the last fact known.
+func readLink(ctx context.Context, s storage.Stores, scope string, id int64) (*derivationPayload, string, error) {
+	dp, ok := s.(storage.DerivationProvider)
+	if !ok {
+		return nil, "", nil
+	}
+	journal, _, err := providers(s)
+	if err != nil {
+		return nil, "", err
+	}
+	f, known, err := journal.PartFact(ctx, scope, id, storage.PartDerivation)
+	if err != nil {
+		return nil, "", err
+	}
+	if f.PendingOrigin != "" {
+		return &derivationPayload{Position: f.PendingOrigin, Move: f.PendingMove}, f.At, nil
+	}
+	d, err := dp.PositionDerivations().DerivedFrom(ctx, scope, id)
+	if err != nil || d == nil {
+		return nil, f.At, err
+	}
+	ref, err := refOf(ctx, s, scope, d.FromID)
+	if err != nil {
+		return nil, "", err
+	}
+	if !known {
+		f.At = floor
+	}
+	return &derivationPayload{Position: ref, Move: d.Move}, f.At, nil
+}
+
+// partBeats says whether a part, dated at, replaces another: the later fact,
+// then content over none, then the greater content, the same way on both sides.
+// No date and no content says nothing, so it never beats anything.
+func partBeats(at string, content any, otherAt string, other any) bool {
+	if at != otherAt {
+		return at > otherAt
+	}
+	c, _ := json.Marshal(content)
+	o, _ := json.Marshal(other)
+	switch cNone, oNone := string(c) == "null", string(o) == "null"; {
+	case cNone || oNone:
+		return !cNone && oNone
+	default:
+		return string(c) > string(o)
+	}
+}
+
+// partDate is the date of a part in a payload, as this library will hold it:
+// content with no date is old, and a date ahead of the clock is taken as now.
+func partDate(at string, hasContent bool) (string, error) {
+	if at == "" {
+		if hasContent {
+			return floor, nil
+		}
+		return "", nil
+	}
+	at, err := normalize(at)
+	if err != nil {
+		return "", err
+	}
+	if now := time.Now().UTC().Format(storage.ChangedAtLayout); at > now {
+		return now, nil
+	}
+	return at, nil
+}
+
+func applyDrawing(ctx context.Context, s storage.Stores, scope string, id int64, p positionPayload) error {
+	dp, ok := s.(storage.DrawingProvider)
+	if !ok {
+		return nil
+	}
+	at, err := partDate(p.DrawingAt, len(p.Drawing) > 0)
+	if err != nil || at == "" {
+		return err
+	}
+	marks := p.Drawing
+	if len(marks) == 0 {
+		marks = nil
+	}
+	have, haveAt, err := readDrawing(ctx, s, scope, id)
+	if err != nil || !partBeats(at, marks, haveAt, have) {
+		return err
+	}
+	if err := dp.PositionDrawings().SetDrawing(ctx, scope, id, marks); err != nil {
+		return err
+	}
+	journal, _, err := providers(s)
+	if err != nil {
+		return err
+	}
+	return journal.SetPartFact(ctx, scope, storage.PartFact{PositionID: id, Part: storage.PartDrawing, At: at})
+}
+
+// waitingKey carries the links of the record being applied whose origin is not
+// here yet: Import tells apart, once every record is in, those still waiting.
+type waitingKey struct{}
+
+// applyLink makes position id derive from what the payload says. An origin this
+// library does not hold leaves a fact waiting for it (see settleLinks); the link
+// there was stays until then. A link that would close a loop here is left out
+// and reported, and what there was stays.
+func applyLink(ctx context.Context, s storage.Stores, scope string, id int64, p positionPayload) error {
 	dp, ok := s.(storage.DerivationProvider)
 	if !ok {
 		return nil
 	}
-	if d == nil {
-		return dp.PositionDerivations().SetDerivedFrom(ctx, scope, id, nil)
+	at, err := partDate(p.DerivedAt, p.DerivedFrom != nil)
+	if err != nil || at == "" {
+		return err
 	}
-	origin, found, err := findPosition(ctx, s, scope, d.Position)
+	have, haveAt, err := readLink(ctx, s, scope, id)
+	if err != nil || !partBeats(at, p.DerivedFrom, haveAt, have) {
+		return err
+	}
+	journal, _, err := providers(s)
+	if err != nil {
+		return err
+	}
+	fact := storage.PartFact{PositionID: id, Part: storage.PartDerivation, At: at}
+	if p.DerivedFrom == nil {
+		if err := dp.PositionDerivations().SetDerivedFrom(ctx, scope, id, nil); err != nil {
+			return err
+		}
+		return journal.SetPartFact(ctx, scope, fact)
+	}
+	origin, found, err := findPosition(ctx, s, scope, p.DerivedFrom.Position)
 	if err != nil {
 		return err
 	}
 	if !found {
-		if list, ok := ctx.Value(deferredKey{}).(*[]deferredLink); ok {
-			*list = append(*list, deferredLink{Variant: id, Ref: d.Position, Move: d.Move})
-		} else {
-			noteMissing(ctx, d.Position)
+		fact.PendingOrigin, fact.PendingMove = p.DerivedFrom.Position, p.DerivedFrom.Move
+		if list, ok := ctx.Value(waitingKey{}).(*[]waitingLink); ok {
+			*list = append(*list, waitingLink{Variant: id, Ref: p.DerivedFrom.Position})
 		}
-		return nil
+		return journal.SetPartFact(ctx, scope, fact)
 	}
-	switch err := dp.PositionDerivations().SetDerivedFrom(ctx, scope, id, &domain.Derivation{FromID: origin, Move: d.Move}); {
+	switch err := dp.PositionDerivations().SetDerivedFrom(ctx, scope, id, &domain.Derivation{FromID: origin, Move: p.DerivedFrom.Move}); {
 	case errors.Is(err, storage.ErrInvalid):
-		noteMissing(ctx, d.Position)
+		noteMissing(ctx, p.DerivedFrom.Position)
 		return nil
-	default:
+	case err != nil:
 		return err
 	}
+	return journal.SetPartFact(ctx, scope, fact)
+}
+
+type waitingLink struct {
+	Family, UUID string
+	Variant      int64
+	Ref          string
+}
+
+// settleLinks makes the links whose origin has arrived, whichever import brought
+// it or if the library made it itself. It gives the variants still waiting. A
+// link that would close a loop is dropped and reported: the fact then dates what
+// is left at the floor, so the link it stays with beats nothing elsewhere.
+func settleLinks(ctx context.Context, s storage.Stores, scope string, rep *Report) (map[int64]bool, error) {
+	journal, uuids, err := providers(s)
+	if err != nil {
+		return nil, err
+	}
+	pending, err := journal.PendingLinks(ctx, scope)
+	if err != nil {
+		return nil, err
+	}
+	waiting := map[int64]bool{}
+	for _, f := range pending {
+		var refused bool
+		var settled bool
+		err := trash.InTx(ctx, s, scope, func(s storage.Stores) error {
+			refused, settled = false, false
+			journal, _, err := providers(s)
+			if err != nil {
+				return err
+			}
+			origin, found, err := findPosition(ctx, s, scope, f.PendingOrigin)
+			if err != nil || !found {
+				return err
+			}
+			settled = true
+			if err := journal.Applying(ctx, scope, f.At); err != nil {
+				return err
+			}
+			kept := storage.PartFact{PositionID: f.PositionID, Part: storage.PartDerivation, At: f.At}
+			err = s.(storage.DerivationProvider).PositionDerivations().SetDerivedFrom(ctx, scope, f.PositionID, &domain.Derivation{FromID: origin, Move: f.PendingMove})
+			switch {
+			case errors.Is(err, storage.ErrInvalid):
+				refused, kept.At = true, floor
+			case err != nil:
+				return err
+			}
+			if err := journal.SetPartFact(ctx, scope, kept); err != nil {
+				return err
+			}
+			return journal.Applying(ctx, scope, "")
+		})
+		if err != nil {
+			return nil, err
+		}
+		if !settled {
+			waiting[f.PositionID] = true
+		}
+		if refused {
+			u, err := uuids.ObjectUUID(ctx, scope, "position", f.PositionID)
+			if err != nil {
+				return nil, err
+			}
+			rep.Missing = append(rep.Missing, MissingRef{Family: "position", UUID: u, Ref: f.PendingOrigin})
+		}
+	}
+	return waiting, nil
 }
 
 // --- comment ---
@@ -290,17 +506,6 @@ var commentCodec = codec{
 			board := p.Board
 			board.ID = 0
 			if pid, _, err = s.Positions().SaveCreated(ctx, scope, &board); err != nil {
-				return 0, err
-			}
-			u, err := uuidsOf(s).ObjectUUID(ctx, scope, "position", pid)
-			if err != nil {
-				return 0, err
-			}
-			journal, _, err := providers(s)
-			if err != nil {
-				return 0, err
-			}
-			if err := journal.Mark(ctx, scope, "position", u, storage.ChangeCreate, fallbackDate); err != nil {
 				return 0, err
 			}
 		}

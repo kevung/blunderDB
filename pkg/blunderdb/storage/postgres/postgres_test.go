@@ -65,7 +65,7 @@ var wantTables = []string{
 	"filter_library", "game", "import_batch", "import_batch_file",
 	"lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_origin", "match_stats", "match_stats_cell", "match_stats_position",
 	"metadata", "move", "move_analysis",
-	"player_alias", "position", "position_derivation", "position_drawing", "rencontre", "schema_migrations", "search_history", "session_state", "study_mark",
+	"player_alias", "position", "position_derivation", "position_drawing", "position_part_fact", "rencontre", "schema_migrations", "search_history", "session_state", "study_mark",
 	"table_setting", "tournament", "training_item", "training_session", "transcription",
 	"trash",
 }
@@ -86,7 +86,7 @@ var wantIndexes = []string{
 	"idx_lesson_step_lesson", "idx_lesson_step_position", "idx_lesson_uuid", "idx_match_canonical", "idx_match_dice_hash",
 	"idx_match_direction_slot", "idx_match_hash", "idx_match_stats_position_position", "idx_match_stats_pr", "idx_match_uuid", "idx_move_game", "idx_move_position", "idx_player_alias_canonical",
 	"idx_position_back_checkers_1", "idx_position_back_checkers_2",
-	"idx_position_cube_take", "idx_position_derivation_from",
+	"idx_position_cube_take", "idx_position_derivation_from", "idx_position_part_fact_pending",
 	"idx_position_dice", "idx_position_flagged",
 	"idx_position_game_type", "idx_position_individual",
 	"idx_position_match_date", "idx_position_multi_played", "idx_position_no_contact", "idx_position_off",

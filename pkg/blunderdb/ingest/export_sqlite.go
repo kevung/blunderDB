@@ -1235,6 +1235,7 @@ var exportedTables = map[string]string{
 
 // notExportedTables are the tables an export leaves behind, each with why.
 var notExportedTables = map[string]string{
+	"position_part_fact":   "when this library last wrote a drawing or a link: a recipient's copy is its own first write",
 	"command_history":      "what the user typed: personal, belongs to this installation",
 	"search_history":       "what the user searched: personal, belongs to this installation",
 	"session_state":        "where the user left the interface: personal, belongs to this installation",
