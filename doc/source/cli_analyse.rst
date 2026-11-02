@@ -480,6 +480,10 @@ lue ni écrite.
 
 **openingbook status** — Le nombre de lignes du livre et ses scores.
 
+.. code-block:: bash
+
+   ./blunderdb openingbook status [--book <fichier>] [--format text|json]
+
 **openingbook question** — Tire une question : le jet d'ouverture et le score,
 avec le XGID de la position d'ouverture ; avec ``--roll second``, le jet de
 réponse dans la position que laisse un coup d'ouverture à égalité avec le

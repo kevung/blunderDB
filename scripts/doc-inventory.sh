@@ -27,7 +27,7 @@
 #   2. every one of them has a hand-written section in CLI_USAGE.md, not just
 #      a captured --help in its generated flag reference;
 #   3. every subcommand a command's own --help advertises is written in
-#      cli.rst, so `trash discard` cannot exist only in the binary.
+#      cli.rst or its cli_*.rst chapters, so `trash discard` cannot exist only in the binary.
 #
 # Usage: scripts/doc-inventory.sh        (from anywhere; exit 1 on any gap)
 
@@ -37,6 +37,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 CLI=internal/cli/cli.go
 RST=doc/source/cli.rst
+PAGES=("$RST" doc/source/cli_*.rst)
 USAGE=CLI_USAGE.md
 
 fail=0
@@ -63,8 +64,14 @@ commands=$(
 
 usage_names=$(
     awk '/^func \(cli \*CLI\) printUsage\(\)/,/^}/' "$CLI" |
-        grep -oE 'fmt\.Println\("  [a-z]+' | awk '{print $NF}'
+        grep -oE 'fmt\.Fprintln\(cli\.stdout\(\), "  [a-z]+' | awk '{print $NF}' || true
 )
+# An extraction that stops matching must fail aloud: under pipefail it used to
+# end the script with no message, and an empty list would report no gap at all.
+[ -n "$usage_names" ] || {
+    echo "doc-inventory: could not read printUsage() from $CLI" >&2
+    exit 2
+}
 
 for c in $commands; do
     grep -qx "$c" <<<"$usage_names" || gap \
@@ -98,13 +105,14 @@ done
 # the dispatch is a switch, the "Subcommands:" block of its own --help (trash).
 subcommands_of() {
     local file="$1" cmd="$2"
-    awk -v c="$cmd" '$0 ~ "^func \\(cli \\*CLI\\) " c "Handlers\\(\\)" {inside=1; next}
+    # tolower: the openingbook command's table is openingBookHandlers().
+    awk -v c="$cmd" 'tolower($0) ~ "^func \\(cli \\*cli\\) " c "handlers\\(\\)" {inside=1; next}
          inside && /^}/ {exit}
          inside' "$file" | grep -oE '"[a-z-]+":' | tr -d '":' || true
-    awk '/fmt\.Println\("Subcommands:"\)/{inside=1; next}
-         inside && /fmt\.Println\(\)/{exit}
+    awk '/fmt\.Fprintln\(cli\.stdout\(\), "Subcommands:"\)/{inside=1; next}
+         inside && /fmt\.Fprintln\(cli\.stdout\(\)\)/{exit}
          inside' "$file" |
-        grep -oE 'fmt\.Println\("  [a-z][a-z-]*' | awk '{print $NF}' || true
+        grep -oE 'fmt\.Fprintln\(cli\.stdout\(\), "  [a-z][a-z-]*' | awk '{print $NF}' || true
 }
 
 for file in internal/cli/cli_*.go; do
@@ -115,13 +123,24 @@ for file in internal/cli/cli_*.go; do
     subs=$(subcommands_of "$file" "$cmd" | sort -u)
     [ -n "$subs" ] || continue
 
-    # The command's own section of cli.rst, down to the next one.
-    section=$(awk -v c="$cmd" '
-        $0 ~ "^" c " — " {inside=1}
-        inside && /^[a-z]+ — / && $0 !~ "^" c " — " {exit}
-        inside {print}
-    ' "$RST")
-    [ -n "$section" ] || continue
+    # The command's own section, down to the next title of that level. A title
+    # is known by its underline: prose can hold "word — word" at line start.
+    # cli.rst holds the summary; the sections live in its cli_*.rst chapters.
+    section=$(cat "${PAGES[@]}" | awk -v c="$cmd" '
+        /^---+$/ {
+            if (prev ~ "^" c " — ") inside=1
+            else if (inside) exit
+            prev=""; next
+        }
+        inside {print prev}
+        {prev=$0}
+        END {if (inside) print prev}
+    ')
+    [ -n "$section" ] || {
+        gap "$RST n'a pas de section pour \`$cmd\`, qui a des sous-commandes" \
+            "Ajouter une section \"$cmd — …\" au chapitre cli_*.rst qui convient, et traduire les huit .po."
+        continue
+    }
 
     for sub in $subs; do
         # Three ways the page names a sub-command, all of them legitimate: in a
@@ -131,7 +150,7 @@ for file in internal/cli/cli_*.go; do
         # where the page says it does — matching the prefix alone let
         # ``discardXX`` pass for `discard`.
         grep -qE "(\`\`$sub(\`\`| )|\*\*$sub[.*]|blunderdb $cmd $sub([^a-z-]|\$))" <<<"$section" || gap \
-            "$RST ne décrit pas \`$cmd $sub\`" \
+            "$RST et ses chapitres ne décrivent pas \`$cmd $sub\`" \
             "La commande la dispatche : elle existe pour l'utilisateur." \
             "L'ajouter à la liste **Sous-commandes:** de la section \`$cmd\`, et traduire les huit .po."
     done
