@@ -6698,6 +6698,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_MatchReview"
+  /v1/stats.matchTextValues:
+    post:
+      operationId: stats.matchTextValues
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchTextValuesReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_PlayerFrequency"
   /v1/stats.matchTimeSummary:
     post:
       operationId: stats.matchTimeSummary
@@ -9504,6 +9523,11 @@ components:
         match:
           $ref: "#/components/schemas/domain_Match"
           nullable: true
+    matchTextValuesReq:
+      type: object
+      properties:
+        field:
+          $ref: "#/components/schemas/storage_MatchTextField"
     matchUpdateReq:
       type: object
       properties:
@@ -10089,6 +10113,9 @@ components:
     storage_MatchReview:
       type: object
       description: "Opaque: see the Go type storage.MatchReview (defined outside internal/server, not expanded here)."
+    storage_MatchTextField:
+      type: object
+      description: "Opaque: see the Go type storage.MatchTextField (defined outside internal/server, not expanded here)."
     storage_MatchTimeSummary:
       type: object
       description: "Opaque: see the Go type storage.MatchTimeSummary (defined outside internal/server, not expanded here)."

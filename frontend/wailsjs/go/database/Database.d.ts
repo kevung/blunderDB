@@ -365,6 +365,8 @@ export function GetMatchReview(arg1:number):Promise<storage.MatchReview>;
 
 export function GetMatchTimeSummary(arg1:number):Promise<storage.MatchTimeSummary>;
 
+export function GetMatchTextValues(arg1:string):Promise<Array<string>>;
+
 export function GetMatchTournament(arg1:number):Promise<domain.Tournament>;
 
 export function GetMovesByGame(arg1:number):Promise<Array<domain.Move>>;

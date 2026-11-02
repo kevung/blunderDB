@@ -686,6 +686,10 @@ export function GetMatchTimeSummary(arg1) {
   return window['go']['database']['Database']['GetMatchTimeSummary'](arg1);
 }
 
+export function GetMatchTextValues(arg1) {
+  return window['go']['database']['Database']['GetMatchTextValues'](arg1);
+}
+
 export function GetMatchTournament(arg1) {
   return window['go']['database']['Database']['GetMatchTournament'](arg1);
 }

@@ -79,6 +79,16 @@ func (s statsStore) PlayerNames(ctx context.Context, scope string) ([]storage.Pl
 	return r, err
 }
 
+type matchTextReq struct {
+	Field storage.MatchTextField `json:"field"`
+}
+
+func (s statsStore) MatchTextValues(ctx context.Context, scope string, field storage.MatchTextField) ([]storage.PlayerFrequency, error) {
+	var r []storage.PlayerFrequency
+	err := s.c.call(ctx, scope, "stats.matchTextValues", matchTextReq{field}, &r)
+	return r, err
+}
+
 func (s statsStore) PlayerTable(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.PlayerRow, error) {
 	var r []storage.PlayerRow
 	err := s.c.call(ctx, scope, "stats.playerTable", statsFilterReq{filter}, &r)

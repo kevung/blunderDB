@@ -545,6 +545,50 @@ func (s *StatsStore) PlayerNames(ctx context.Context, scope string) ([]storage.P
 	return mergePlayerFrequencies(raw, aliases), nil
 }
 
+// MatchTextValues returns the distinct non-empty values of the event or
+// location column of the tenant's matches, most frequent first, ties
+// alphabetical. Event aliases fold into their canonical name.
+func (s *StatsStore) MatchTextValues(ctx context.Context, scope string, field storage.MatchTextField) ([]storage.PlayerFrequency, error) {
+	// The column name is spliced into the SQL: only the closed set below.
+	if !field.Valid() {
+		return nil, fmt.Errorf("MatchTextValues: field %q: %w", field, storage.ErrInvalid)
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	col := string(field)
+	rows, err := s.DB.Query(ctx, `
+		SELECT `+col+` AS name, COUNT(*) AS cnt
+		FROM match
+		WHERE `+tenant+` AND `+col+` IS NOT NULL AND `+col+` != ''
+		GROUP BY `+col+`
+		ORDER BY cnt DESC, name ASC
+	`, targs...)
+	if err != nil {
+		return nil, fmt.Errorf("MatchTextValues: %w", err)
+	}
+	defer rows.Close()
+
+	var raw []storage.PlayerFrequency
+	for rows.Next() {
+		var pf storage.PlayerFrequency
+		if err := rows.Scan(&pf.Name, &pf.Count); err != nil {
+			return nil, fmt.Errorf("MatchTextValues scan: %w", err)
+		}
+		raw = append(raw, pf)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("MatchTextValues rows: %w", err)
+	}
+	rows.Close()
+	if field != storage.MatchEvent {
+		return raw, nil
+	}
+	aliases, err := aliasMap(ctx, s.DB, scope, storage.AliasEvent)
+	if err != nil {
+		return nil, fmt.Errorf("MatchTextValues aliases: %w", err)
+	}
+	return mergePlayerFrequencies(raw, aliases), nil
+}
+
 // mergePlayerFrequencies folds every alias into its canonical name and
 // re-ranks: count descending, then name.
 func mergePlayerFrequencies(raw []storage.PlayerFrequency, aliases storage.AliasMap) []storage.PlayerFrequency {

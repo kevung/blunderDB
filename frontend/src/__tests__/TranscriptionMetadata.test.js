@@ -16,10 +16,11 @@ import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllPlayerNames: vi.fn(),
-    GetAllTournaments: vi.fn()
+    GetAllTournaments: vi.fn(),
+    GetMatchTextValues: vi.fn()
 }));
 
-import { GetAllPlayerNames, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
+import { GetAllPlayerNames, GetAllTournaments, GetMatchTextValues } from '../../wailsjs/go/database/Database.js';
 import TranscriptionMetadata from '../components/TranscriptionMetadata.svelte';
 
 const TOURNAMENTS = [
@@ -69,6 +70,8 @@ beforeEach(() => {
         { Name: 'Charlie', Count: 1 }
     ]);
     /** @type {any} */ (GetAllTournaments).mockResolvedValue(TOURNAMENTS);
+    // Des chaînes déjà classées : le Go rend les noms, pas leurs effectifs.
+    /** @type {any} */ (GetMatchTextValues).mockImplementation(async (field) => (field === 'event' ? ['Open de Paris', 'Masters de Lyon'] : ['Paris', 'Lyon']));
 });
 
 afterEach(cleanup);
@@ -95,8 +98,9 @@ describe('le volet des métadonnées', () => {
     test('écrit l’en-tête descriptif, et rien d’autre', async () => {
         const apply = await mount();
 
-        await fireEvent.input(screen.getByLabelText('Event'), { target: { value: 'Open de Paris' } });
-        await fireEvent.change(screen.getByLabelText('Event'));
+        const field = screen.getByLabelText('Event');
+        await fireEvent.input(field, { target: { value: 'Open de Paris' } });
+        await fireEvent.keyDown(field, { key: 'Enter' });
 
         expect(apply).toHaveBeenCalledTimes(1);
         const gesture = apply.mock.calls[0][0];
@@ -113,8 +117,9 @@ describe('le volet des métadonnées', () => {
     test('rien n’est exigé : des noms vides s’écrivent comme le reste', async () => {
         const apply = await mount(headerOf({ player1: '', player2: '', transcriber: '' }));
 
-        await fireEvent.input(screen.getByLabelText('Location'), { target: { value: 'Paris' } });
-        await fireEvent.change(screen.getByLabelText('Location'));
+        const field = screen.getByLabelText('Location');
+        await fireEvent.input(field, { target: { value: 'Paris' } });
+        await fireEvent.keyDown(field, { key: 'Enter' });
 
         const gesture = apply.mock.calls[0][0];
         expect(gesture.Header.player1).toBe('');
@@ -140,6 +145,46 @@ describe('le volet des métadonnées', () => {
         await fireEvent.keyDown(field, { key: 'Enter' });
         await tick();
         expect(apply.mock.calls.at(-1)[0].Header.player1).toBe('Zoé Martin');
+    });
+
+    test.each([
+        ['Event', 'event', 'Mast', 'Masters de Lyon', 'Tournoi du club'],
+        ['Location', 'location', 'Ly', 'Lyon', 'Bordeaux'],
+        ['Transcriber', 'transcriber', 'Char', 'Charlie', 'Zoé Martin']
+    ])('%s propose les valeurs de la base, en choisir une ne remplit que ce champ', async (labelText, key, typed, proposed, free) => {
+        const header = headerOf({ event: 'E0', location: 'L0', transcriber: 'T0' });
+        const apply = await mount(header);
+        const field = screen.getByLabelText(labelText);
+
+        await fireEvent.focus(field);
+        await fireEvent.input(field, { target: { value: typed } });
+        await tick();
+        await fireEvent.mouseDown(screen.getByText(proposed));
+        await tick();
+        const picked = apply.mock.calls.at(-1)[0];
+        expect(picked.Kind).toBe('set_header');
+        expect(picked.Header[key]).toBe(proposed);
+        // Aucune inférence : les deux autres champs gardent leur valeur.
+        for (const other of ['event', 'location', 'transcriber'].filter((k) => k !== key)) {
+            expect(picked.Header[other]).toBe(header[other]);
+        }
+
+        // Un texte absent de la liste reste tel que tapé.
+        await fireEvent.input(field, { target: { value: free } });
+        await fireEvent.keyDown(field, { key: 'Enter' });
+        await tick();
+        expect(apply.mock.calls.at(-1)[0].Header[key]).toBe(free);
+    });
+
+    test('perdre le focus écrit le texte libre, sans geste de plus', async () => {
+        const apply = await mount();
+        const field = screen.getByLabelText('Event');
+        await fireEvent.focus(field);
+        await fireEvent.input(field, { target: { value: 'Tournoi du club' } });
+        await fireEvent.blur(field);
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        expect(apply).toHaveBeenCalledTimes(1);
+        expect(apply.mock.calls[0][0].Header.event).toBe('Tournoi du club');
     });
 
     test('le tournoi voyage par son identifiant, un nom inconnu ne détache pas', async () => {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 19:23+0100\n"
+"POT-Creation-Date: 2026-11-02 01:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -904,7 +904,7 @@ msgstr ""
 "остаются возможными, но любые изменения отключены, а в строке заголовка "
 "отображается «[только чтение]»."
 
-#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:955
+#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:959
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Смотрите :ref:`raccourcis` для доступных горячих клавиш."
 
@@ -1061,6 +1061,18 @@ msgstr ""
 
 #: ../../source/manuel_matchs.rst:460
 msgid ""
+"L'événement et le lieu proposent ceux des matchs déjà en base, les plus "
+"fréquents d'abord ; le transcripteur propose les noms de joueurs. Choisir"
+" une proposition ne remplit que son champ, et un texte absent de la liste"
+" reste tel que tapé."
+msgstr ""
+"Событие и место предлагают значения уже имеющихся в базе матчей, самые "
+"частые первыми; транскриптор предлагает имена игроков. Выбор подсказки "
+"заполняет только её поле, а текст, которого нет в списке, остаётся как "
+"набран."
+
+#: ../../source/manuel_matchs.rst:464
+msgid ""
 "Ouvert, le formulaire prend la place de la saisie : les dés, la palette "
 "et les candidats sont masqués, la transcription reste visible, la vidéo "
 "reste en place. Le même bouton, ou *Échap*, rend la saisie."
@@ -1069,7 +1081,7 @@ msgstr ""
 "скрыты, запись остаётся видимой, видео остаётся на месте. Та же кнопка "
 "или *Esc* возвращает ввод."
 
-#: ../../source/manuel_matchs.rst:464
+#: ../../source/manuel_matchs.rst:468
 msgid ""
 "La **longueur du match** se change dans ce même volet, à tout moment : le"
 " score, la partie Crawford et le référentiel — les parties d'argent "
@@ -1090,7 +1102,7 @@ msgstr ""
 "снова, будут записаны совершенно новые позиции, требующие анализа, а "
 "старые исчезнут, как только их больше ничто не удерживает."
 
-#: ../../source/manuel_matchs.rst:473
+#: ../../source/manuel_matchs.rst:477
 msgid ""
 "Sous la barre, le brouillon occupe trois régions : la **palette** des "
 "cibles souris, les **coups candidats** et le **transcript**. Elles se "
@@ -1118,7 +1130,7 @@ msgstr ""
 "двумя клетками броска и первой строкой кандидатов ничего не вклинивается,"
 " и не менее пяти кандидатов читаются без всякой прокрутки."
 
-#: ../../source/manuel_matchs.rst:486
+#: ../../source/manuel_matchs.rst:490
 msgid ""
 "La palette montre les deux dés au fur et à mesure de leur saisie ; un "
 "clic dessus les efface, comme *RETOUR ARRIERE*. Une partie commence par "
@@ -1146,7 +1158,7 @@ msgstr ""
 "отметку: оно остаётся в завершённой партии, не открывает новую и "
 "удаляется вручную."
 
-#: ../../source/manuel_matchs.rst:498
+#: ../../source/manuel_matchs.rst:502
 msgid ""
 "Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,"
 " classés par le moteur embarqué, le premier présélectionné. Il ne dessine"
@@ -1167,7 +1179,7 @@ msgstr ""
 " никогда не пишется в базу. Когда движок недоступен, ходы перечисляются "
 "без порядка, и список говорит об этом в своей шапке."
 
-#: ../../source/manuel_matchs.rst:506
+#: ../../source/manuel_matchs.rst:510
 msgid ""
 "Un jet sans aucun coup légal enregistre la **danse** de lui-même : la "
 "main passe à l'adversaire sans coup à taper. Quand le jet dansant importe"
@@ -1183,7 +1195,7 @@ msgstr ""
 "баре, или перед домом, пропускающим любой бросок, она ничего не вводит, и"
 " строка состояния сообщает об этом."
 
-#: ../../source/manuel_matchs.rst:513
+#: ../../source/manuel_matchs.rst:517
 msgid ""
 "La **molette** sélectionne le candidat suivant ou précédent, au-dessus de"
 " la liste comme au-dessus du damier : le regard reste sur le plateau et "
@@ -1196,7 +1208,7 @@ msgstr ""
 "прокручиваются, что узнаёт ход быстрее, чем чтение его нотации. Щелчок по"
 " строке выбирает её, двойной щелчок подтверждает."
 
-#: ../../source/manuel_matchs.rst:518
+#: ../../source/manuel_matchs.rst:522
 msgid ""
 "Un indicateur, à gauche des cases du jet — et sur la barre du mode "
 "théâtre —, dit ce que fait la frappe à l'instant : **Saisie** au bout du "
@@ -1224,7 +1236,7 @@ msgstr ""
 "решению, и последующие позиции пересчитываются. End возвращает в конец "
 "документа."
 
-#: ../../source/manuel_matchs.rst:530
+#: ../../source/manuel_matchs.rst:534
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -1237,7 +1249,7 @@ msgstr ""
 " с рукой на мыши. Одна клетка на бросок, никогда не две: 3-1 и 1-3 — это "
 "один и тот же бросок."
 
-#: ../../source/manuel_matchs.rst:535
+#: ../../source/manuel_matchs.rst:539
 msgid ""
 "Tout coup joué au plateau commence par le jet, tapé au clavier ou cliqué "
 "au triangle : sans dés saisis, le damier ne joue rien. Les deux dés "
@@ -1270,7 +1282,7 @@ msgstr ""
 "разыгрываемым ходом; они возвращаются, когда ход отменяется или "
 "записывается."
 
-#: ../../source/manuel_matchs.rst:549
+#: ../../source/manuel_matchs.rst:553
 msgid ""
 "Le coup achevé n'est enregistré que par une validation : un clic sur les "
 "dés grisés, ENTREE, ou le jet suivant — un chiffre ou une case du "
@@ -1282,7 +1294,7 @@ msgstr ""
 " который сначала записывает его с костями в том виде, как они были "
 "набраны. На перечитанном действии он его заменяет."
 
-#: ../../source/manuel_matchs.rst:554
+#: ../../source/manuel_matchs.rst:558
 msgid ""
 "Un coup illégal se transcrit tel qu'il a été joué, sans bouton ni "
 "changement de mode. Un glissé qu'aucun coup légal n'offre pose le pion là"
@@ -1304,7 +1316,7 @@ msgstr ""
 "полученную доску. Backspace отменяет последний шаг; отмена единственного "
 "шага вне правил возвращает список."
 
-#: ../../source/manuel_matchs.rst:563
+#: ../../source/manuel_matchs.rst:567
 msgid ""
 "Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur "
 "la cellule d'un coup — ou d'une danse, d'un coup non consigné — la change"
@@ -1332,7 +1344,7 @@ msgstr ""
 " с пунктирной рамкой текущего ввода открывается так же, как только "
 "введены обе её кости."
 
-#: ../../source/manuel_matchs.rst:576
+#: ../../source/manuel_matchs.rst:580
 msgid ""
 "Un coup saisi par le glissé libre ou par la notation qui se trouve être "
 "légal reste un coup ordinaire — la comparaison se fait sur le plateau "
@@ -1346,7 +1358,7 @@ msgstr ""
 "ход» в транскрипте, а экспорт ``.mat`` предупреждает перед записью файла,"
 " никогда не отказывая."
 
-#: ../../source/manuel_matchs.rst:582
+#: ../../source/manuel_matchs.rst:586
 msgid ""
 "Le plateau obtenu par un coup hors des règles vaut pour la position où il"
 " a été joué. Quand une correction plus haut dans le transcript change "
@@ -1358,7 +1370,7 @@ msgstr ""
 "шаги хода переигрываются от новой, и все последующие позиции отражают "
 "исправление."
 
-#: ../../source/manuel_matchs.rst:587
+#: ../../source/manuel_matchs.rst:591
 msgid ""
 "Les flèches du plateau sont celles du coup écrit dans la décision sous le"
 " curseur, en gris, rejoué sur la position qu'elle a. Un pas qui ne s'y "
@@ -1385,7 +1397,7 @@ msgstr ""
 "стрелки синим, только когда на неё наведён указатель или когда она "
 "выбрана колёсиком, клавишами или щелчком."
 
-#: ../../source/manuel_matchs.rst:596
+#: ../../source/manuel_matchs.rst:600
 msgid ""
 "Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**, "
 "**Abandonner** reprend à la souris les quatre gestes de videau : ce sont,"
@@ -1418,7 +1430,7 @@ msgstr ""
 "предлагает дубль. Перед предложением он не отвечает: принятие и пас — два"
 " симметричных ответа, и они живут вместе в ряду, по щелчку каждый."
 
-#: ../../source/manuel_matchs.rst:612
+#: ../../source/manuel_matchs.rst:616
 msgid ""
 "La **barre d'état** dit ce que le brouillon attend, en un mot : la danse "
 "enregistrée d'office, le premier coup d'une partie, la réponse attendue à"
@@ -1437,7 +1449,7 @@ msgstr ""
 "полутора секунд. Несогласованность же, оставленную действием, отмечает "
 "шапка транскрипта, там, где стоит ошибочная ячейка."
 
-#: ../../source/manuel_matchs.rst:620
+#: ../../source/manuel_matchs.rst:624
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -1450,7 +1462,7 @@ msgstr ""
 "Кроуфорда и конец матча появляются тогда на строке матча, и ожидается "
 "первый ход следующей партии."
 
-#: ../../source/manuel_matchs.rst:625
+#: ../../source/manuel_matchs.rst:629
 msgid ""
 "Le score d'une partie est celui que donnent les parties précédentes, sauf"
 " s'il a été annoncé autrement à la table. Un double-clic sur le score de "
@@ -1476,7 +1488,7 @@ msgstr ""
 " партии несёт несогласованность «несогласованный заявленный счёт». В игре"
 " на деньги счёта для заявления нет."
 
-#: ../../source/manuel_matchs.rst:637
+#: ../../source/manuel_matchs.rst:641
 msgid ""
 "Un transcript repris en cours de match peut commencer après la partie "
 "Crawford. Lorsque la première partie s'ouvre avec un joueur à un point du"
@@ -1500,7 +1512,7 @@ msgstr ""
 "[Crawford \"PostCrawford\"]``, которую blunderDB читает обратно; gnubg её"
 " игнорирует и считает эту первую партию партией Кроуфорда."
 
-#: ../../source/manuel_matchs.rst:647
+#: ../../source/manuel_matchs.rst:651
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1537,7 +1549,7 @@ msgstr ""
 "набирается пропущенный ход — например, удалённое решение. Партии "
 "сворачиваются; та, где курсор, открыта."
 
-#: ../../source/manuel_matchs.rst:663
+#: ../../source/manuel_matchs.rst:667
 msgid ""
 "**Ce qui est en train d'être tapé se dessine dans le transcript**, en "
 "pointillés, à la place exacte où il sera écrit : les dés au fur et à "
@@ -1556,7 +1568,7 @@ msgstr ""
 "подтверждения в черновик ничего не пишется; прочитанное и то, что скажет "
 "документ, никогда не расходятся."
 
-#: ../../source/manuel_matchs.rst:672
+#: ../../source/manuel_matchs.rst:676
 msgid ""
 "Corriger, c'est taper sur la cellule où l'on est. Le curseur posé sur une"
 " action, un chiffre en recommence le jet sur place, et les quatre gestes "
@@ -1584,7 +1596,7 @@ msgstr ""
 "ячейку, только что открытую вставкой: *i*, затем *d* вставляет дабл перед"
 " указанным действием."
 
-#: ../../source/manuel_matchs.rst:684
+#: ../../source/manuel_matchs.rst:688
 msgid ""
 "Revenir sur la **dernière** action, c'est revenir là où la transcription "
 "s'écrit. Un chiffre tapé sur elle en corrige encore le jet, mais une fois"
@@ -1598,7 +1610,7 @@ msgstr ""
 "открывает следующее решение; ВВОД подтверждает его так же. Последующие "
 "решения тогда добавляются следом, как в первый раз."
 
-#: ../../source/manuel_matchs.rst:690
+#: ../../source/manuel_matchs.rst:694
 msgid ""
 "Taper un **autre jet** sur le **premier coup** d'une partie décide à "
 "nouveau qui commence : le dé du joueur 1 se tape en premier, celui du "
@@ -1622,7 +1634,7 @@ msgstr ""
 "отмечается «несогласованные кубики». Остальная партия сохраняет свои "
 "стороны."
 
-#: ../../source/manuel_matchs.rst:700
+#: ../../source/manuel_matchs.rst:704
 msgid ""
 "Une **insertion au milieu du document continue d'insérer** : la "
 "validation ouvre une cellule vide à la suite, et l'action suivante "
@@ -1639,7 +1651,7 @@ msgstr ""
 "уже набрано из следующей партии. Конец партии или перемещение курсора "
 "прекращает вставку: курсор тогда встаёт на первый ход следующей партии."
 
-#: ../../source/manuel_matchs.rst:708
+#: ../../source/manuel_matchs.rst:712
 msgid ""
 "**Suppr** (ou *x*) retire la décision en cours d'édition et recule sur la"
 " précédente, prête à être corrigée : sur une cellule écrite, l'action "
@@ -1657,7 +1669,7 @@ msgstr ""
 "двойной ход, оставленный удалением, отмечается, но курсор к нему не "
 "возвращается."
 
-#: ../../source/manuel_matchs.rst:715
+#: ../../source/manuel_matchs.rst:719
 msgid ""
 "Un clic droit sur une cellule ouvre les corrections de cette action — "
 "insérer avant, insérer après, supprimer, changer de camp — et amène le "
@@ -1674,7 +1686,7 @@ msgstr ""
 "кнопка, действующая на «действие под курсором», целилась бы в ячейку, "
 "которую можно и не видеть, тогда как правый щелчок называет свою."
 
-#: ../../source/manuel_matchs.rst:722
+#: ../../source/manuel_matchs.rst:726
 msgid ""
 "La barre du brouillon porte ses deux seules sorties, au bout à droite, "
 "après le menu « ⋯ ». « **Terminer** » (CTRL-ENTREE) écrit le match dans "
@@ -1699,7 +1711,7 @@ msgstr ""
 "записывается в базу после каждого действия, а возврат к списку оставляет "
 "его для продолжения позже."
 
-#: ../../source/manuel_matchs.rst:733
+#: ../../source/manuel_matchs.rst:737
 msgid ""
 "Le menu **⋯** de la barre tient « **Texte .mat** », qui ouvre le fichier "
 "Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que "
@@ -1714,7 +1726,7 @@ msgstr ""
 "«**Экспорт .mat**», которое пишет тот же файл на диск. Две стрелки **↶** "
 "и **↷** отменяют и возвращают, как *CTRL-Z* и *CTRL-SHIFT-Z*."
 
-#: ../../source/manuel_matchs.rst:740
+#: ../../source/manuel_matchs.rst:744
 msgid ""
 "Si l'analyse d'un match transcrit a été interrompue — l'application "
 "fermée pendant le lot —, la barre d'état le signale à la prochaine "
@@ -1730,7 +1742,7 @@ msgstr ""
 " а возобновлённый пакет охватывает только этот матч, но никогда всю "
 "библиотеку."
 
-#: ../../source/manuel_matchs.rst:746
+#: ../../source/manuel_matchs.rst:750
 msgid ""
 "Un brouillon qui porte des incohérences est terminé tout de même, après "
 "un avertissement : rien n'est refusé. Un coup illégal est exporté tel "
@@ -1742,7 +1754,7 @@ msgstr ""
 "сыгран, с предупреждением, что gnubg и XG отметят его («Invalid move») и "
 "затем разойдутся."
 
-#: ../../source/manuel_matchs.rst:751
+#: ../../source/manuel_matchs.rst:755
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "
 "matchs ou « **Éditer la transcription** » de sa fiche ouvre un brouillon "
@@ -1763,7 +1775,7 @@ msgstr ""
 "открытием диалог сообщает, сколько их максимум и что завершение черновика"
 " может их потерять."
 
-#: ../../source/manuel_matchs.rst:760
+#: ../../source/manuel_matchs.rst:764
 msgid ""
 "Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de "
 "la barre du brouillon ouvre un menu : **Fichier local…** pour choisir une"
@@ -1803,7 +1815,7 @@ msgstr ""
 "метки; курсор остаётся в конце транскрипта, готовый к вводу, и следует за"
 " воспроизведением, только когда оно входит в другое действие."
 
-#: ../../source/manuel_matchs.rst:779
+#: ../../source/manuel_matchs.rst:783
 msgid ""
 "Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
 "YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
@@ -1816,7 +1828,7 @@ msgstr ""
 "<https://www.youtube.com/t/terms>`_: blunderDB не извлекает из него ни "
 "одного изображения."
 
-#: ../../source/manuel_matchs.rst:783
+#: ../../source/manuel_matchs.rst:787
 msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
@@ -1849,7 +1861,7 @@ msgstr ""
 "клавиши ввода, клавиши видео и *CTRL-ВЛЕВО* / *CTRL-ВПРАВО*, "
 "поворачивающие доску, сохраняют своё действие."
 
-#: ../../source/manuel_matchs.rst:797
+#: ../../source/manuel_matchs.rst:801
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1871,7 +1883,7 @@ msgstr ""
 "сеансу, а ширина остаётся шириной видео, с какой бы стороны оно ни "
 "стояло. Ручка и кнопка оставляют клавиатуру панели."
 
-#: ../../source/manuel_matchs.rst:808
+#: ../../source/manuel_matchs.rst:812
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -1926,7 +1938,7 @@ msgstr ""
 "режима, включая YouTube: экран меняет только режим кинотеатра. Режим "
 "существует только в Записи, с прикреплённым видео."
 
-#: ../../source/manuel_matchs.rst:834
+#: ../../source/manuel_matchs.rst:838
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -1968,7 +1980,7 @@ msgstr ""
 "показывается в углу видео, когда она не равна 1×, а новый источник снова "
 "начинает с 1×."
 
-#: ../../source/manuel_matchs.rst:852
+#: ../../source/manuel_matchs.rst:856
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -1983,7 +1995,7 @@ msgstr ""
 "файла, и в рамке YouTube. Угол запоминается для черновика, только на этом"
 " компьютере; в базу он не записывается."
 
-#: ../../source/manuel_matchs.rst:860
+#: ../../source/manuel_matchs.rst:864
 msgid ""
 "**La vue du plateau et la ligne de temps.** Le bouton de calibration de "
 "la barre vidéo désigne les quatre coins du plateau dans l'image (points "
@@ -2005,7 +2017,7 @@ msgstr ""
 "удалась»). Анализ видео затем следит за доской и этой областью; в "
 "черновик он ничего не пишет."
 
-#: ../../source/manuel_matchs.rst:870
+#: ../../source/manuel_matchs.rst:874
 msgid ""
 "Sous la vidéo, une **ligne de temps** place les événements que l'analyse "
 "a relevés : jet, repos et reprise des dés, début et fin de partie, "
@@ -2026,7 +2038,7 @@ msgstr ""
 "неопределённое событие; цвет лишь дублирует её. *g* переходит к "
 "следующему маркеру, *SHIFT-G* — к предыдущему, независимо от состояния."
 
-#: ../../source/manuel_matchs.rst:879
+#: ../../source/manuel_matchs.rst:883
 msgid ""
 "Le premier dé saisi d'une action pose le repère du jet à l'instant où les"
 " dés se sont immobilisés sur la table, quand ce repos est sûr et date "
@@ -2037,7 +2049,7 @@ msgstr ""
 "когда кости замерли на столе, если этот покой надёжен и был не более "
 "минуты назад; иначе, или если доска вне кадра, остаётся текущий момент."
 
-#: ../../source/manuel_matchs.rst:883
+#: ../../source/manuel_matchs.rst:887
 msgid ""
 "Deux indicateurs signalent ce que l'analyse ne peut garantir. **Vue "
 "perdue** apparaît dans la barre de calibration tant que le plateau "
@@ -2053,7 +2065,7 @@ msgstr ""
 "которое это объясняло бы: очерченная область, возможно, уже не "
 "соответствует партии и очерчивается заново кнопкой ▭."
 
-#: ../../source/manuel_matchs.rst:889
+#: ../../source/manuel_matchs.rst:893
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2082,7 +2094,7 @@ msgstr ""
 "секунду до броска этого действия или до самого действия, если у броска "
 "нет момента; проигрыватель на паузе остаётся на паузе."
 
-#: ../../source/manuel_matchs.rst:902
+#: ../../source/manuel_matchs.rst:906
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2132,7 +2144,7 @@ msgstr ""
 "броска, затем возвращается в конец транскрипта: там цифры открывают "
 "следующий бросок, о чём сообщает индикатор."
 
-#: ../../source/manuel_matchs.rst:924
+#: ../../source/manuel_matchs.rst:928
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2159,7 +2171,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav`` (последний пакет берётся из RPM "
 "Fusion) — см. :ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:936
+#: ../../source/manuel_matchs.rst:940
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2173,7 +2185,7 @@ msgstr ""
 " паузы, как и прежде. После трёх безрезультатных перезагрузок панель "
 "сообщает об этом и предлагает повторить попытку."
 
-#: ../../source/manuel_matchs.rst:941
+#: ../../source/manuel_matchs.rst:945
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -2193,7 +2205,7 @@ msgstr ""
 "панель сообщает об этом вместе с командой, которая чинит файл без "
 "перекодирования, готовой к копированию:"
 
-#: ../../source/manuel_matchs.rst:951
+#: ../../source/manuel_matchs.rst:955
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "

@@ -9,14 +9,14 @@
   — `swap_players` : même match, lu de l'autre côté.
 
   Changer la longueur rejoue tout sans rien supprimer ; les règles de session
-  (Jacoby, beaver) survivent à un aller-retour en match (ADR-0028). Noms et
-  tournoi passent par EntityAutocomplete ; un nom absent reste tel que tapé.
+  (Jacoby, beaver) survivent à un aller-retour en match (ADR-0028). Noms,
+  tournoi, événement, lieu et transcripteur passent par EntityAutocomplete ; un nom absent reste tel que tapé.
 -->
 <script>
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
-    import { GetAllPlayerNames, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
+    import { GetAllPlayerNames, GetAllTournaments, GetMatchTextValues } from '../../wailsjs/go/database/Database.js';
 
     let {
         /** L'en-tête du document, tel que le moteur vient de le renvoyer. */
@@ -29,6 +29,8 @@
 
     let players = $state(/** @type {any[]} */ ([]));
     let tournaments = $state(/** @type {any[]} */ ([]));
+    let events = $state(/** @type {string[]} */ ([]));
+    let locations = $state(/** @type {string[]} */ ([]));
 
     // Copie locale : un champ en frappe n'est pas réécrit par le document
     // renvoyé, mais un changement venu d'ailleurs (annuler, inverser) se voit.
@@ -124,11 +126,13 @@
 
     async function loadLists() {
         try {
-            const [names, tours] = await Promise.all([GetAllPlayerNames(), GetAllTournaments()]);
+            const [names, tours, evs, locs] = await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetMatchTextValues('event'), GetMatchTextValues('location')]);
             // `GetAllPlayerNames` rend des `PlayerFrequency` ({Name, Count}) : le
             // champ ne propose et n'écrit que le nom.
             players = (names ?? []).map((row) => row.Name);
             tournaments = tours ?? [];
+            events = evs ?? [];
+            locations = locs ?? [];
         } catch (err) {
             logger.error('Failed to load the players and tournaments of the metadata pane:', err);
         }
@@ -201,7 +205,7 @@
      * Un item choisi : `onSelect` précède l'écriture de `value`, donc le nom est
      * écrit ici avant le commit.
      *
-     * @param {'player1' | 'player2' | 'tournament'} field
+     * @param {'player1' | 'player2' | 'tournament' | 'event' | 'location' | 'transcriber'} field
      * @param {unknown} name
      */
     function pickInto(field, name) {
@@ -251,11 +255,27 @@
     <div class="row">
         <label class="field">
             <span>{$t('transcription.eventLabel')}</span>
-            <input type="text" bind:value={form.event} onchange={commit} disabled={busy} />
+            <EntityAutocomplete
+                bind:value={form.event}
+                items={events}
+                label={(/** @type {unknown} */ name) => String(name)}
+                variant="field"
+                onSelect={(/** @type {unknown} */ name) => pickInto('event', name)}
+                onSubmit={commit}
+                onDismiss={commit}
+            />
         </label>
         <label class="field">
             <span>{$t('transcription.locationLabel')}</span>
-            <input type="text" bind:value={form.location} onchange={commit} disabled={busy} />
+            <EntityAutocomplete
+                bind:value={form.location}
+                items={locations}
+                label={(/** @type {unknown} */ name) => String(name)}
+                variant="field"
+                onSelect={(/** @type {unknown} */ name) => pickInto('location', name)}
+                onSubmit={commit}
+                onDismiss={commit}
+            />
         </label>
         <label class="field narrow">
             <span>{$t('transcription.roundLabel')}</span>
@@ -270,7 +290,15 @@
     <div class="row">
         <label class="field">
             <span>{$t('transcription.transcriberLabel')}</span>
-            <input type="text" bind:value={form.transcriber} onchange={commit} disabled={busy} />
+            <EntityAutocomplete
+                bind:value={form.transcriber}
+                items={players}
+                label={(/** @type {unknown} */ name) => String(name)}
+                variant="field"
+                onSelect={(/** @type {unknown} */ name) => pickInto('transcriber', name)}
+                onSubmit={commit}
+                onDismiss={commit}
+            />
         </label>
         <label class="field">
             <span>{$t('transcription.tournamentLabel')}</span>

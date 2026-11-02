@@ -276,6 +276,18 @@ type PlayerFrequency struct {
 	Count int
 }
 
+// MatchTextField names a free-text column of the match table whose distinct
+// values the transcription pane offers back.
+type MatchTextField string
+
+const (
+	MatchEvent    MatchTextField = "event"
+	MatchLocation MatchTextField = "location"
+)
+
+// Valid reports whether f is one of the known fields.
+func (f MatchTextField) Valid() bool { return f == MatchEvent || f == MatchLocation }
+
 // PlayerRow is one line of the players table: everything the panel shows about
 // a player, computed over the matches the filter retains.
 //
@@ -669,6 +681,12 @@ type StatsStore interface {
 
 	// PlayerNames returns every player name ranked by match frequency.
 	PlayerNames(ctx context.Context, scope string) ([]PlayerFrequency, error)
+
+	// MatchTextValues returns the distinct non-empty values of one text field
+	// of the scope's matches, ranked by the number of matches carrying them,
+	// ties alphabetically. Events fold their aliases into the canonical name,
+	// as PlayerNames does; locations have none. An unknown field is ErrInvalid.
+	MatchTextValues(ctx context.Context, scope string, field MatchTextField) ([]PlayerFrequency, error)
 
 	// PlayerTable computes one row per player over the matches the filter
 	// retains, for the players table of the Stats panel.

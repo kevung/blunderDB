@@ -191,6 +191,7 @@ var covered = map[string]bool{
 	"Session/MultiScopeIsolation":                            true,
 	"Stats/AggregateCounts":                                  true,
 	"Stats/AnalysisEngines":                                  true,
+	"Stats/MatchTextValues":                                  true,
 	"Stats/BreakdownPositions":                               true,
 	"Stats/BreakdownPositions/decision_type":                 true,
 	"Stats/BreakdownPositions/no_filter":                     true,

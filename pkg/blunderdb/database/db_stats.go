@@ -454,6 +454,23 @@ func (d *Database) GetAllPlayerNames() ([]PlayerFrequency, error) {
 	return fromStoragePlayerFreq(p), nil
 }
 
+// GetMatchTextValues returns the distinct event names ("event") or locations
+// ("location") of the matches, most frequent first, ties alphabetical: the
+// suggestions of the transcription metadata pane.
+func (d *Database) GetMatchTextValues(field string) ([]string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	rows, err := d.store.Stats().MatchTextValues(context.Background(), "", storage.MatchTextField(field))
+	if err != nil {
+		return nil, err
+	}
+	out := make([]string, 0, len(rows))
+	for _, r := range rows {
+		out = append(out, r.Name)
+	}
+	return out, nil
+}
+
 // applyMatchBadges fills the per-player PR/MWC badge fields of every match in
 // the slice. Callers hold the read lock. Scoped to these matches, so the cost
 // follows the page shown, not the database.

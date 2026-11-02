@@ -9,6 +9,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
+type matchTextValuesReq struct {
+	Field storage.MatchTextField `json:"field"`
+}
+
 type statsComputeReq struct {
 	Filter storage.StatsFilter `json:"filter"`
 }
@@ -185,6 +189,9 @@ func (s *Server) statsRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/stats.playerNames", rpc(func(ctx context.Context, scope string, _ struct{}) ([]storage.PlayerFrequency, error) {
 			return ss().PlayerNames(ctx, scope)
+		})},
+		{http.MethodPost, "/v1/stats.matchTextValues", rpc(func(ctx context.Context, scope string, req matchTextValuesReq) ([]storage.PlayerFrequency, error) {
+			return ss().MatchTextValues(ctx, scope, req.Field)
 		})},
 		{http.MethodPost, "/v1/stats.playerTable", rpc(func(ctx context.Context, scope string, req statsComputeReq) ([]storage.PlayerRow, error) {
 			return ss().PlayerTable(ctx, scope, req.Filter)

@@ -457,6 +457,10 @@ bouton **Inverser les joueurs** échange les deux noms, donne toutes les actions
 au camp d'en face et retourne le plateau : c'est le même match, lu de l'autre
 côté.
 
+L'événement et le lieu proposent ceux des matchs déjà en base, les plus fréquents
+d'abord ; le transcripteur propose les noms de joueurs. Choisir une proposition
+ne remplit que son champ, et un texte absent de la liste reste tel que tapé.
+
 Ouvert, le formulaire prend la place de la saisie : les dés, la palette et les
 candidats sont masqués, la transcription reste visible, la vidéo reste en place. Le même
 bouton, ou *Échap*, rend la saisie.
