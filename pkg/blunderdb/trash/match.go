@@ -219,12 +219,23 @@ func rebuildMatch(ctx context.Context, s storage.Stores, scope string, p *domain
 	}
 
 	positions := make(map[int64]int64, len(p.Positions))
+	var restored []domain.TrashPositionPayload
 	for _, pp := range p.Positions {
-		newID, err := restorePositionPayload(ctx, s, scope, pp, true)
+		newID, kept, err := restorePositionPayload(ctx, s, scope, pp, true)
 		if err != nil {
 			return 0, nil, err
 		}
 		positions[pp.Position.ID] = newID
+		if !kept {
+			restored = append(restored, pp)
+		}
+	}
+	// Derivation links join positions of the snapshot: they go back once all
+	// of them exist, under the ids they now have.
+	for _, pp := range restored {
+		if err := restoreLinks(ctx, s, scope, positions[pp.Position.ID], pp, positions); err != nil {
+			return 0, nil, err
+		}
 	}
 
 	var warnings []domain.TrashWarning

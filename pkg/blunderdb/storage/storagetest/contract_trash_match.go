@@ -162,6 +162,7 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("Save transcription: %v", err)
 	}
+	marks := markPosition(t, s, orphan, held, savePos(33))
 	m1 := addMove(gameID, 1, orphan)
 	addMove(gameID, 2, held)
 	addMove(gameID, 3, 0)
@@ -256,6 +257,7 @@ func testTrashMatchRestores(t *testing.T, s storage.Storage) {
 	if got, err := s.Stats().MatchStats(ctx, "", []int64{restored}); err != nil || !reflect.DeepEqual(got, wantStats) {
 		t.Errorf("match stats after restore = %+v, %v; want %+v", got, err, wantStats)
 	}
+	marks.check(t, s, orphan)
 	if _, err := s.Analyses().Load(ctx, "", restoredOrphan); err != nil {
 		t.Errorf("analysis of the purged position after restore: %v", err)
 	}

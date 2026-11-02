@@ -77,6 +77,21 @@ type TrashPositionPayload struct {
 	// TrainingItemIDs are the quiz answers given on the position; the delete
 	// leaves them without one, a restore ties them to it again.
 	TrainingItemIDs []int64 `json:"trainingItemIds,omitempty"`
+	// PublicID is the label the position carried; it goes with its row.
+	PublicID string `json:"publicId,omitempty"`
+	// Drawing is the marks laid over the position; the cascade drops them.
+	Drawing []DrawingMark `json:"drawing,omitempty"`
+	// DerivedFrom is the link to the position this one came from, and
+	// Variants the ids of the positions that derive from it: the cascade
+	// drops both kinds of row.
+	DerivedFrom *Derivation `json:"derivedFrom,omitempty"`
+	Variants    []Derived   `json:"variants,omitempty"`
+}
+
+// Derived is one variant of a position and the move that led to it.
+type Derived struct {
+	ID   int64  `json:"id"`
+	Move string `json:"move,omitempty"`
 }
 
 // TrashCollectionPayload is what a deleted collection keeps: enough of the
