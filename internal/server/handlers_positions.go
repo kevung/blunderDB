@@ -1,9 +1,9 @@
 package server
 
 import (
-	"encoding/json"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
