@@ -63,6 +63,14 @@ func rewindToBeforeUUIDs(t *testing.T, d *Database) {
 			t.Fatal(err)
 		}
 	}
+	// The triggers of the drawing and the derivation name position.uuid.
+	for _, tbl := range []string{"position_drawing", "position_derivation"} {
+		for _, sfx := range []string{"_i", "_u", "_d"} {
+			if _, err := d.db.Exec(`DROP TRIGGER IF EXISTS change_log_` + tbl + sfx); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
 	for _, f := range sqlshared.ObjectUUIDFamilies {
 		for _, stmt := range []string{
 			`DROP TRIGGER IF EXISTS object_uuid_` + f.Table,
