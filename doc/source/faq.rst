@@ -361,7 +361,7 @@ fichier sqlite semblait tout indiqué.
 Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut copier,
 sauvegarder ou envoyer à un autre joueur.
 
-Enfin, blunderDB ne se limite plus à l'application de bureau : le même binaire
+Enfin, blunderDB ne se limite pas à l'application de bureau : le même binaire
 offre une interface en ligne de commande et un mode serveur facultatif, qui
 peut s'appuyer sur PostgreSQL pour les déploiements multi-utilisateurs. L'usage
 normal reste toutefois l'application de bureau. Voir :ref:`cli` et

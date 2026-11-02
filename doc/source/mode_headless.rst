@@ -397,13 +397,13 @@ Les leçons
 ~~~~~~~~~~
 
 Les leçons (:ref:`lecons`) se lisent et s'écrivent sous le tenant de l'appelant
-par douze routes : ``/v1/lessons.list``, ``lessons.get`` (la leçon et ses
+par quatorze routes : ``/v1/lessons.list``, ``lessons.get`` (la leçon et ses
 étapes, dans l'ordre), ``lessons.create``, ``lessons.update``,
 ``lessons.delete``, ``lessons.addStep``, ``lessons.updateStep``,
 ``lessons.removeStep``, ``lessons.reorderSteps``, ``lessons.setStepDone``
 (``{"id": <étape>, "done": true|false}``, le geste « étape faite » du lecteur,
 écrit sous son propre tenant) et ``lessons.doneSteps`` (la date de ce geste par
-étape) ; ``lessons.html`` (``{"id": <leçon>, "language": "fr"}``) rend la leçon en une page HTML autonome, plateaux compris. La suppression d'une leçon est définitive et laisse les collections et
+étape) ; ``lessons.html`` (``{"id": <leçon>, "language": "fr"}``) rend la leçon en une page HTML autonome, plateaux compris ; ``lessons.markdown`` et ``lessons.importMarkdown`` échangent du Markdown (ci-dessous). La suppression d'une leçon est définitive et laisse les collections et
 les positions que ses étapes montraient. Les outils MCP ``list_lessons`` et ``lesson`` les lisent.
 
 ``lessons.markdown`` (``{"ids": [<leçon>, …]}``) rend des leçons en un texte
@@ -1454,7 +1454,8 @@ dernière écriture gagnant, et rend le rapport : ``added``, ``modified``,
 ``removed``, ``older``, ``conflicts``, et ``missing`` pour une référence qui
 n'a pas pu être placée. Une note écrasée par l'import reste dans la corbeille.
 
-Trois marques s'ajoutent à une position, et voyagent avec elle.
+Trois marques s'ajoutent à une position : ``changeset.export`` les emporte toutes
+les trois, l'export et le transfert le dessin et le lien d'origine, sans le libellé.
 ``positions.drawing`` et ``positions.setDrawing`` (``{"id": N, "marks": […]}``)
 lisent et remplacent son dessin : des flèches et des cases, 40 au plus ; une liste
 vide l'efface. ``positions.setDerivedFrom`` (``{"id": N, "derivedFrom": {"fromId":
