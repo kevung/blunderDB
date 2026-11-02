@@ -42,11 +42,17 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
-Non publié
-----------
+0.48.0 (2026-11-02)
+-------------------
 
+- **L'application s'ouvre directement** : l'écran d'accueil disparaît ; le plateau et les panneaux sont visibles dès le démarrage, avec ou sans base. La dernière base se rouvre seule, et une base se crée ou s'ouvre depuis la barre d'outils ou l'état vide d'un panneau.
+- **Des propositions pour les métadonnées d'une transcription** : l'événement et le lieu proposent ceux des matchs déjà en base, les plus fréquents d'abord ; le transcripteur propose les noms de joueurs. Choisir une proposition ne remplit que son champ, et un texte absent de la liste reste tel que tapé. En mode serveur, ``stats.matchTextValues`` rend ces valeurs.
+- **Import d'une base .db : compter, puis plafonner** : ``import --type database --analyze`` et ``imports.dbAnalyze`` comptent ce que le fichier apporterait sans rien importer. ``--max-positions N`` et ``max_positions`` emportent au plus *N* positions ; un match, une collection, une leçon ou un paquet Anki qui touche une position laissée de côté est laissé de côté en entier, et un import ultérieur sans plafond apporte complet ce qui manquait. En mode serveur, le premier événement ``progress`` d'``imports.db`` annonce ``total_positions`` avant toute écriture.
 - **Côté serveur** : ``training.generateBearoff`` et ``training.generateEvaluation`` rendent des questions des exercices Bearoff et Évaluation avec leur vérité (EPC ; chance de gain, verdict du videau, régime), à partir de la source ``pool``, ``board`` ou ``library`` du tenant. Une ``seed`` rend les questions rejouables ; le nombre de questions par appel est borné (50 et 10) et Évaluation passe par les travailleurs d'analyse partagés, comptée dans le quota d'analyse.
-- Voir :ref:`headless`.
+- ``transcribe --marks`` écrit le manifeste des repères des vidéos locales, une ligne JSON par coup horodaté ; ``--match`` le limite à un match.
+- **Un identifiant stable pour chaque objet** : la base passe au schéma 2.51.0 ; chaque position, commentaire, collection, match, transcription, leçon et carte Anki porte un UUID, et les identifiants entiers ne changent pas. Deux bases migrées séparément donnent le même UUID à un même objet.
+- **Corrections notables** : un match gagné en transcription n'attend plus rien : le plateau reste sur la dernière position, au score de la dernière partie, aucune action ne s'écrit à la suite, et la relecture et les corrections restent possibles ; le zoom ne fait plus disparaître les lignes des listes ; la fiche d'un match se redimensionne par une poignée, et sa largeur est retenue ; un quiz et ``duel move`` reconnaissent un coup au plateau qu'il atteint, quelle que soit sa notation ; un dossier surveillé nomme la base qu'il refuse parce qu'elle demande un blunderDB plus récent ; une position, une collection ou un commentaire restauré depuis la corbeille retrouve son UUID.
+- Voir :ref:`panneau_matchs`, :ref:`cli` et :ref:`headless`.
 
 0.47.0 (2026-10-26)
 -------------------
