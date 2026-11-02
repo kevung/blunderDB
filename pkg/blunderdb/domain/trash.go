@@ -86,6 +86,18 @@ type TrashPositionPayload struct {
 	// drops both kinds of row.
 	DerivedFrom *Derivation `json:"derivedFrom,omitempty"`
 	Variants    []Derived   `json:"variants,omitempty"`
+	// PartFacts is what the library knew of the drawing and the link when the
+	// position went: an erasure has no content but this, and a link still
+	// waiting for its origin lives only here.
+	PartFacts []TrashPartFact `json:"partFacts,omitempty"`
+}
+
+// TrashPartFact is a storage.PartFact without the position it belongs to.
+type TrashPartFact struct {
+	Part          string `json:"part"`
+	At            string `json:"at"`
+	PendingOrigin string `json:"pendingOrigin,omitempty"`
+	PendingMove   string `json:"pendingMove,omitempty"`
 }
 
 // Derived is one variant of a position and the move that led to it.

@@ -9,6 +9,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/trash"
 )
 
 var linkMarks = []domain.DrawingMark{{Kind: domain.DrawingArrow, From: 13, To: 7, Color: "red"}}
@@ -71,6 +72,7 @@ func CheckChangeSetLinks(t *testing.T, pair func(t *testing.T) *ChangeSetPair) {
 		{"LinkWaitsForAnOriginOfALaterSet", scenarioLinkAcrossSets},
 		{"ErasedWaitingLinkStaysErased", scenarioErasedWaitingLink},
 		{"WaitingLinkErasedMeanwhileStaysErased", scenarioWaitingLinkErasedMeanwhile},
+		{"TrashKeepsPartFacts", scenarioTrashKeepsPartFacts},
 		{"RefusedLoopKeepsTheLink", scenarioLoopKeepsLink},
 		{"FirstMeetKeepsWhatThePeerNeverSaw", scenarioFirstMeet},
 		{"TieAtTheFloorLosesNothing", scenarioFloorTie},
@@ -532,5 +534,51 @@ func scenarioWaitingLinkErasedMeanwhile(p *csPair) {
 	}
 	if d := p.link(p.b, p.cb, p.sb, bv); d != nil {
 		p.t.Errorf("a link erased meanwhile was made from the stale list: %+v", d)
+	}
+}
+
+// The trash keeps what the library knew of the parts of a position: a link
+// still waiting waits again after the restore, and restoring is no new write.
+func scenarioTrashKeepsPartFacts(p *csPair) {
+	t := p.t
+	bv, origins := p.waitingOnB(360)
+	journal := p.b.(storage.ChangeJournalProvider).ChangeJournal()
+	waiting, _, err := journal.PartFact(p.cb, p.sb, bv, storage.PartDerivation)
+	if err != nil || waiting.PendingOrigin == "" {
+		t.Fatalf("the scenario needs a waiting link: %+v, %v", waiting, err)
+	}
+	drawn := []domain.DrawingMark{{Kind: domain.DrawingSquare, From: 6, To: 6, Color: "green"}}
+	drawings := p.b.(storage.DrawingProvider).PositionDrawings()
+	if err := drawings.SetDrawing(p.cb, p.sb, bv, drawn); err != nil {
+		t.Fatal(err)
+	}
+	if err := drawings.SetDrawing(p.cb, p.sb, bv, nil); err != nil {
+		t.Fatal(err)
+	}
+	erased, known, err := journal.PartFact(p.cb, p.sb, bv, storage.PartDrawing)
+	if err != nil || !known {
+		t.Fatalf("the scenario needs an erased drawing: %+v, %v, %v", erased, known, err)
+	}
+
+	entry, err := trash.Position(p.cb, p.b, p.sb, bv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tick()
+	res, err := trash.Restore(p.cb, p.b, p.sb, entry)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, _, err := journal.PartFact(p.cb, p.sb, res.ID, storage.PartDerivation); err != nil || got.PendingOrigin != waiting.PendingOrigin || got.At != waiting.At {
+		t.Errorf("the waiting link after the restore: %+v, %v; want %+v", got, err, waiting)
+	}
+	if got, known, err := journal.PartFact(p.cb, p.sb, res.ID, storage.PartDrawing); err != nil || !known || got.At != erased.At {
+		t.Errorf("the erased drawing after the restore: %+v, known %v, %v; want dated %s", got, known, err, erased.At)
+	}
+	if _, err := changeset.Import(p.cb, p.b, p.sb, origins); err != nil {
+		t.Fatal(err)
+	}
+	if d := p.link(p.b, p.cb, p.sb, res.ID); d == nil {
+		t.Error("the restored variant did not get its link when the origin arrived")
 	}
 }

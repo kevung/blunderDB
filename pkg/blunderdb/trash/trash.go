@@ -168,6 +168,17 @@ func snapshotMarks(ctx context.Context, s storage.Stores, scope string, position
 			payload.Variants = append(payload.Variants, domain.Derived{ID: id, Move: links[id].Move})
 		}
 	}
+	if p, ok := s.(storage.ChangeJournalProvider); ok {
+		for _, part := range []string{storage.PartDrawing, storage.PartDerivation} {
+			f, known, err := p.ChangeJournal().PartFact(ctx, scope, positionID, part)
+			if err != nil {
+				return err
+			}
+			if known {
+				payload.PartFacts = append(payload.PartFacts, domain.TrashPartFact{Part: part, At: f.At, PendingOrigin: f.PendingOrigin, PendingMove: f.PendingMove})
+			}
+		}
+	}
 	return nil
 }
 
@@ -176,6 +187,10 @@ func snapshotMarks(ctx context.Context, s storage.Stores, scope string, position
 // label or a link written since the delete is the newer work. A link whose
 // other end is gone, or that would now close a loop, is left out.
 func restoreMarks(ctx context.Context, s storage.Stores, scope string, id int64, payload domain.TrashPositionPayload) error {
+	giveBackFacts, err := keptFacts(ctx, s, scope, id, payload)
+	if err != nil {
+		return err
+	}
 	if p, ok := s.(storage.PublicIDProvider); ok && payload.PublicID != "" {
 		have, err := p.PublicIDs().PublicID(ctx, scope, id)
 		if err != nil {
@@ -198,7 +213,39 @@ func restoreMarks(ctx context.Context, s storage.Stores, scope string, id int64,
 			}
 		}
 	}
-	return restoreLinks(ctx, s, scope, id, payload, nil)
+	if err := restoreLinks(ctx, s, scope, id, payload, nil); err != nil {
+		return err
+	}
+	return giveBackFacts()
+}
+
+// keptFacts picks the snapshot's part facts the position has no fact for yet,
+// and gives what writes them. It runs before the marks go back, because the
+// triggers date that write now: a restore is not a new drawing or a new link.
+func keptFacts(ctx context.Context, s storage.Stores, scope string, id int64, payload domain.TrashPositionPayload) (func() error, error) {
+	p, ok := s.(storage.ChangeJournalProvider)
+	if !ok {
+		return func() error { return nil }, nil
+	}
+	var missing []domain.TrashPartFact
+	for _, f := range payload.PartFacts {
+		_, known, err := p.ChangeJournal().PartFact(ctx, scope, id, f.Part)
+		if err != nil {
+			return nil, err
+		}
+		if !known {
+			missing = append(missing, f)
+		}
+	}
+	return func() error {
+		for _, f := range missing {
+			err := p.ChangeJournal().SetPartFact(ctx, scope, storage.PartFact{PositionID: id, Part: f.Part, At: f.At, PendingOrigin: f.PendingOrigin, PendingMove: f.PendingMove})
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}, nil
 }
 
 // restoreLinks puts back the derivation links of a restored position. The
