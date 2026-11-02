@@ -67,3 +67,20 @@ func TestRenderThenParseIsTheIdentity(t *testing.T) {
 		t.Errorf("round trip changed it:\n got %+v\nwant %+v", docs, in)
 	}
 }
+
+// A fence never closed would swallow every later step and lesson as text.
+func TestRefusesAFenceNeverClosed(t *testing.T) {
+	if _, err := Parse("# T\n\n## S\n\n```\ncode\n\n## Next\n\ntext\n\n# Other\n"); err == nil {
+		t.Error("an open fence ran to the end of the file without a word")
+	}
+}
+
+// What Render writes always parses back to the same number of documents and
+// steps, even from a body that opens a fence and does not close it.
+func TestRenderClosesAFenceItOpened(t *testing.T) {
+	in := Doc{Name: "A", Description: "```\nopen", Steps: []Step{{"S", "next"}}}
+	docs, err := Parse(Render(in) + "\n" + Render(Doc{Name: "B"}))
+	if err != nil || len(docs) != 2 || len(docs[0].Steps) != 1 || docs[0].Steps[0].Text != "next" {
+		t.Fatalf("got %+v, %v", docs, err)
+	}
+}

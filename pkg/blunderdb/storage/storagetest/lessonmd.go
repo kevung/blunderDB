@@ -62,3 +62,21 @@ func CheckLessonMarkdown(t *testing.T, s storage.Storage, ctx context.Context, s
 		t.Errorf("lessons: %d before, %d after the import, %d after the refusal", len(before), len(n), len(after))
 	}
 }
+
+// CheckLessonImportAtomic: an import cut in the middle (here the context
+// cancelled by the second Step) leaves no Lesson behind, even though the
+// cancelled context could not run a compensating delete.
+func CheckLessonImportAtomic(t *testing.T, s storage.Storage, scope string, ctxOf func(context.Context) context.Context) {
+	t.Helper()
+	base, cancel := context.WithCancel(ctxOf(context.Background()))
+	defer cancel()
+	before, _ := s.Lessons().List(ctxOf(context.Background()), scope)
+	cut := &cutAfterSteps{Storage: s, left: 2, cancel: cancel}
+	_, err := lessonmd.Import(base, cut, scope, "# One\n\n## a\n\nx\n\n## b\n\ny\n\n# Two\n\n## c\n\nz\n")
+	if err == nil {
+		t.Fatal("an import cut in the middle reported success")
+	}
+	if after, _ := s.Lessons().List(ctxOf(context.Background()), scope); len(after) != len(before) {
+		t.Errorf("%d lessons before the cut import, %d after: partial lessons remain", len(before), len(after))
+	}
+}

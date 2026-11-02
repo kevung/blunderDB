@@ -15,12 +15,12 @@ package lessonmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/trash"
 )
 
 // Step is one section of a Doc.
@@ -72,6 +72,12 @@ func Render(d Doc) string {
 				l = `\` + l
 			}
 			b.WriteString(l + "\n")
+		}
+		// A body that opens a fence and never closes it would take the next
+		// step for code on the way back: the file closes it, and the text
+		// read back ends with that fence.
+		if fenced {
+			b.WriteString("```\n")
 		}
 	}
 	body(d.Description)
@@ -145,6 +151,10 @@ func Parse(src string) ([]Doc, error) {
 		}
 		lines = append(lines, l)
 	}
+	if fenced {
+		// A fence left open would swallow every later step and lesson as text.
+		return nil, fmt.Errorf("lessonmd: a code fence is never closed: %w", storage.ErrInvalid)
+	}
 	closeDoc()
 	if len(docs) == 0 {
 		return nil, fmt.Errorf("lessonmd: no \"# title\" line: %w", storage.ErrInvalid)
@@ -174,33 +184,33 @@ func Export(ctx context.Context, s storage.Stores, scope string, ids ...int64) (
 	return strings.Join(parts, "\n"), nil
 }
 
-// Import creates one Lesson per document of src and returns their ids. A
-// document that fails to be written leaves none of src's Lessons behind.
-func Import(ctx context.Context, s storage.Stores, scope, src string) (ids []int64, err error) {
+// Import creates one Lesson per document of src and returns their ids, in one
+// transaction: a document that fails to be written, or a connection lost
+// half-way, leaves none of src's Lessons behind.
+func Import(ctx context.Context, s storage.Stores, scope, src string) ([]int64, error) {
 	docs, err := Parse(src)
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		if err == nil {
-			return
-		}
-		for _, id := range ids {
-			err = errors.Join(err, s.Lessons().Delete(ctx, scope, id))
-		}
+	var ids []int64
+	err = trash.InTx(ctx, s, scope, func(s storage.Stores) error {
 		ids = nil
-	}()
-	for _, d := range docs {
-		id, err := s.Lessons().Create(ctx, scope, d.Name, d.Description)
-		if err != nil {
-			return ids, err
-		}
-		ids = append(ids, id)
-		for _, st := range d.Steps {
-			if _, err := s.Lessons().AddStep(ctx, scope, id, domain.LessonStep{Title: st.Title, Text: st.Text}); err != nil {
-				return ids, err
+		for _, d := range docs {
+			id, err := s.Lessons().Create(ctx, scope, d.Name, d.Description)
+			if err != nil {
+				return err
+			}
+			ids = append(ids, id)
+			for _, st := range d.Steps {
+				if _, err := s.Lessons().AddStep(ctx, scope, id, domain.LessonStep{Title: st.Title, Text: st.Text}); err != nil {
+					return err
+				}
 			}
 		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 	return ids, nil
 }

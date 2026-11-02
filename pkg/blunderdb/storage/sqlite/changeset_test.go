@@ -50,4 +50,5 @@ func TestChangeSet_SQLite(t *testing.T) {
 func TestLessonMarkdown_SQLite(t *testing.T) {
 	s, _ := openLib(t)
 	storagetest.CheckLessonMarkdown(t, s, context.Background(), "")
+	storagetest.CheckLessonImportAtomic(t, s, "", func(c context.Context) context.Context { return c })
 }
