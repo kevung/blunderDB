@@ -19,6 +19,7 @@ import (
 type shared struct {
 	db    execer
 	probe *writeProbe
+	stmts *poolStmts
 }
 
 var _ sqlshared.Execer = shared{}
