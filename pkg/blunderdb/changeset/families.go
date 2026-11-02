@@ -45,7 +45,17 @@ type positionPayload struct {
 	Position domain.Position          `json:"position"`
 	Analysis *domain.PositionAnalysis `json:"analysis,omitempty"`
 	// PublicID is opaque: carried and restored as given.
-	PublicID string `json:"public_id,omitempty"`
+	PublicID string `json:"publicId,omitempty"`
+	// Drawing is the whole drawing of the position; none clears it.
+	Drawing []domain.DrawingMark `json:"drawing,omitempty"`
+	// DerivedFrom is the link to the origin, which it names by the hash of
+	// its board like every cross-reference of a payload; none clears it.
+	DerivedFrom *derivationPayload `json:"derivedFrom,omitempty"`
+}
+
+type derivationPayload struct {
+	Position string `json:"position"`
+	Move     string `json:"move,omitempty"`
 }
 
 var positionCodec = codec{
@@ -61,6 +71,24 @@ var positionCodec = codec{
 		if ids, ok := s.(storage.PublicIDProvider); ok {
 			if out.PublicID, err = ids.PublicIDs().PublicID(ctx, scope, id); err != nil {
 				return nil, err
+			}
+		}
+		if dp, ok := s.(storage.DrawingProvider); ok {
+			if out.Drawing, err = dp.PositionDrawings().Drawing(ctx, scope, id); err != nil {
+				return nil, err
+			}
+		}
+		if dp, ok := s.(storage.DerivationProvider); ok {
+			d, err := dp.PositionDerivations().DerivedFrom(ctx, scope, id)
+			if err != nil {
+				return nil, err
+			}
+			if d != nil {
+				ref, err := refOf(ctx, s, scope, d.FromID)
+				if err != nil {
+					return nil, err
+				}
+				out.DerivedFrom = &derivationPayload{Position: ref, Move: d.Move}
 			}
 		}
 		switch a, err := s.Analyses().Load(ctx, scope, id); {
@@ -158,10 +186,61 @@ func applyPosition(ctx context.Context, s storage.Stores, scope string, id int64
 			return err
 		}
 	}
+	if dp, ok := s.(storage.DrawingProvider); ok {
+		if err := dp.PositionDrawings().SetDrawing(ctx, scope, id, p.Drawing); err != nil {
+			return err
+		}
+	}
+	if err := applyDerivation(ctx, s, scope, id, p.DerivedFrom); err != nil {
+		return err
+	}
 	if p.Analysis != nil {
 		return s.Analyses().Save(ctx, scope, id, p.Analysis)
 	}
 	return nil
+}
+
+// deferredKey carries the links whose origin was not here yet: the origin may
+// be another record of the same set, applied later.
+type deferredKey struct{}
+
+type deferredLink struct {
+	Family, UUID string
+	Variant      int64
+	Ref, Move    string
+}
+
+// applyDerivation makes position id derive from the position ref names, or
+// from nothing. An origin this library does not hold is retried once the whole
+// set is in (see Import) and reported if still absent; a link that would
+// close a loop here is left out and reported.
+func applyDerivation(ctx context.Context, s storage.Stores, scope string, id int64, d *derivationPayload) error {
+	dp, ok := s.(storage.DerivationProvider)
+	if !ok {
+		return nil
+	}
+	if d == nil {
+		return dp.PositionDerivations().SetDerivedFrom(ctx, scope, id, nil)
+	}
+	origin, found, err := findPosition(ctx, s, scope, d.Position)
+	if err != nil {
+		return err
+	}
+	if !found {
+		if list, ok := ctx.Value(deferredKey{}).(*[]deferredLink); ok {
+			*list = append(*list, deferredLink{Variant: id, Ref: d.Position, Move: d.Move})
+		} else {
+			noteMissing(ctx, d.Position)
+		}
+		return nil
+	}
+	switch err := dp.PositionDerivations().SetDerivedFrom(ctx, scope, id, &domain.Derivation{FromID: origin, Move: d.Move}); {
+	case errors.Is(err, storage.ErrInvalid):
+		noteMissing(ctx, d.Position)
+		return nil
+	default:
+		return err
+	}
 }
 
 // --- comment ---

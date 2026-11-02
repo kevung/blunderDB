@@ -1,11 +1,12 @@
 -- Forward migration: the derivation of a position — the position it derives
 -- from and the move played to reach it (a variant's link to its origin).
 --
--- A new table with no trigger: the change journal (055) is not touched, and
--- no existing row is rewritten. A derivation goes with either of its two
+-- A new table: no existing row is rewritten. A derivation goes with either of its two
 -- positions (composite tenant keys, ON DELETE CASCADE: deleting the origin
--- drops the link, never the variant) and travels in exports and transfers, not
--- in the journal. A position has one origin.
+-- drops the link, never the variant) and travels in exports, transfers and the
+-- change journal as part of the variant: a trigger journals it (an update)
+-- whenever its link is written (function defined in 057). A position has one
+-- origin.
 -- No COMMIT, no role switch: it holds on blunderdb_user under FORCE RLS.
 -- CREATE TABLE and the foreign keys take SHARE ROW EXCLUSIVE on "position"
 -- (reads pass, writes wait) until this file's transaction ends: lock_timeout
@@ -48,3 +49,7 @@ DO $$ BEGIN
             WITH CHECK (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::bigint);
     END IF;
 END $$;
+
+DROP TRIGGER IF EXISTS change_log_position_derivation ON position_derivation;
+CREATE TRIGGER change_log_position_derivation AFTER INSERT OR UPDATE OR DELETE ON position_derivation
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal_of_position();

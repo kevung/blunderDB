@@ -1,10 +1,10 @@
 -- Forward migration: the drawing of a position — the arrows and squares a
 -- player lays over its board, in the order drawn.
 --
--- A new table with no trigger: the change journal (055) is not touched, and
--- no existing row is rewritten. A drawing goes with its position (composite
--- tenant key, ON DELETE CASCADE) and travels in exports and transfers, not in
--- the journal.
+-- A new table: no existing row is rewritten. A drawing goes with its position
+-- (composite tenant key, ON DELETE CASCADE) and travels in exports, transfers
+-- and the change journal as part of it: a trigger journals the position (an
+-- update) whenever a mark is written, as 055 does for an analysis.
 -- No COMMIT, no role switch: it holds on blunderdb_user under FORCE RLS.
 -- CREATE TABLE and the foreign key take SHARE ROW EXCLUSIVE on "position"
 -- (reads pass, writes wait) until this file's transaction ends: lock_timeout
@@ -45,3 +45,32 @@ DO $$ BEGIN
             WITH CHECK (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::bigint);
     END IF;
 END $$;
+
+-- Writing a mark of a position (or a link of a variant) is an update of that
+-- position, as a re-analysis is (055): they have no uuid of their own, and a
+-- peer must receive them with the position. When the position itself is going
+-- (the cascade), it is already gone here and its own delete entry stands.
+CREATE OR REPLACE FUNCTION blunderdb_journal_of_position() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE
+    pid bigint;
+    tid bigint;
+    u uuid;
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        pid := OLD.position_id; tid := OLD.tenant_id;
+    ELSE
+        pid := NEW.position_id; tid := NEW.tenant_id;
+    END IF;
+    SELECT p.uuid INTO u FROM position p WHERE p.id = pid AND p.tenant_id = tid;
+    IF u IS NOT NULL THEN
+        INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (tid, u, 'position', 'update')
+        ON CONFLICT (tenant_id, uuid) DO UPDATE
+            SET seq = nextval('change_log_seq'), family = 'position', op = 'update', changed_at = now(), xid = pg_current_xact_id();
+    END IF;
+    RETURN NULL;
+END $$;
+
+DROP TRIGGER IF EXISTS change_log_position_drawing ON position_drawing;
+CREATE TRIGGER change_log_position_drawing AFTER INSERT OR UPDATE OR DELETE ON position_drawing
+    FOR EACH ROW EXECUTE FUNCTION blunderdb_journal_of_position();

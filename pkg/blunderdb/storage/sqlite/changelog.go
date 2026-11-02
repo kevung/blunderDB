@@ -80,6 +80,24 @@ func EnsureChangeLog(ctx context.Context, db *sql.DB) error {
 			}
 		}
 	}
+	// A drawing and a derivation link have no uuid either: they are part of
+	// the position they belong to (the variant, for a link), so writing one
+	// is an update of it. The position must still exist: when it is the
+	// position that is going, its own delete entry stands.
+	for _, tbl := range []string{"position_drawing", "position_derivation"} {
+		if !tables[tbl] || !tables["position"] {
+			continue
+		}
+		for _, ev := range []struct{ name, ref string }{{"INSERT", "NEW"}, {"UPDATE", "NEW"}, {"DELETE", "OLD"}} {
+			pos := `(SELECT uuid FROM position WHERE id = ` + ev.ref + `.position_id)`
+			stmt := `CREATE TRIGGER change_log_` + tbl + `_` + strings.ToLower(ev.name[:1]) + ` AFTER ` + ev.name + ` ON ` + tbl + ` BEGIN ` +
+				`DELETE FROM change_log WHERE uuid = ` + pos + `; ` +
+				`INSERT INTO change_log (uuid, family, op) SELECT uuid, 'position', 'update' FROM position WHERE id = ` + ev.ref + `.position_id AND uuid IS NOT NULL; END`
+			if err := ensureTrigger(ctx, db, stmt); err != nil {
+				return fmt.Errorf("sqlite: change_log trigger on %s: %w", tbl, err)
+			}
+		}
+	}
 	return nil
 }
 
@@ -122,6 +140,13 @@ func ForgetChangeLog(ctx context.Context, db *sql.DB) error {
 	for _, sfx := range []string{"_i", "_u"} {
 		if _, err := db.ExecContext(ctx, `DROP TRIGGER IF EXISTS change_log_analysis`+sfx); err != nil {
 			return fmt.Errorf("sqlite: drop the change_log trigger on analysis: %w", err)
+		}
+	}
+	for _, tbl := range []string{"position_drawing", "position_derivation"} {
+		for _, sfx := range []string{"_i", "_u", "_d"} {
+			if _, err := db.ExecContext(ctx, `DROP TRIGGER IF EXISTS change_log_`+tbl+sfx); err != nil {
+				return fmt.Errorf("sqlite: drop the change_log trigger on %s: %w", tbl, err)
+			}
 		}
 	}
 	if _, err := db.ExecContext(ctx, `DROP TABLE IF EXISTS change_log`); err != nil {

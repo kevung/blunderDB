@@ -4,6 +4,7 @@ package storagetest
 
 import (
 	"context"
+	"reflect"
 	"testing"
 	"time"
 
@@ -443,5 +444,142 @@ func scenarioPublicID(p *csPair) {
 	p.send()
 	if id2, ok := famID(p.b, p.cb, p.sb, "position", u2); !ok || publicIDOf(t, p.b, p.cb, p.sb, id2) != "second" {
 		t.Error("a position created with a public_id lost it on the way")
+	}
+}
+
+// A position's drawing and its link to the position it derives from travel
+// with it: writing either is an edit the journal shows, the link names its
+// origin by board (the ids differ between libraries), an empty drawing and a
+// cleared link are carried too, and a variant that arrives before its origin
+// is linked once the set is in.
+func scenarioDrawingAndDerivation(p *csPair) {
+	t := p.t
+	p.catchUp()
+	// b holds one more position than a, so no id agrees by luck.
+	pz := provenancePos(20)
+	_, _ = p.b.Positions().Save(p.cb, p.sb, &pz)
+	qx, qy := provenancePos(21), provenancePos(22)
+	x, _ := p.a.Positions().Save(p.ca, p.sa, &qx)
+	y, _ := p.a.Positions().Save(p.ca, p.sa, &qy)
+	ux, uy := famUUID(t, p.a, p.ca, p.sa, "position", x), famUUID(t, p.a, p.ca, p.sa, "position", y)
+	p.send()
+	bx, okx := famID(p.b, p.cb, p.sb, "position", ux)
+	by, oky := famID(p.b, p.cb, p.sb, "position", uy)
+	if !okx || !oky {
+		t.Fatal("the positions did not arrive")
+	}
+	draw := func(s storage.Storage, c context.Context, sc string, id int64) []domain.DrawingMark {
+		m, err := s.(storage.DrawingProvider).PositionDrawings().Drawing(c, sc, id)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return m
+	}
+	origin := func(s storage.Storage, c context.Context, sc string, id int64) *domain.Derivation {
+		d, err := s.(storage.DerivationProvider).PositionDerivations().DerivedFrom(c, sc, id)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return d
+	}
+
+	marks := []domain.DrawingMark{
+		{Kind: domain.DrawingArrow, From: 13, To: 7, Color: "red"},
+		{Kind: domain.DrawingSquare, From: 6, To: 6, Color: "blue"},
+	}
+	before := p.entry(p.a, p.ca, p.sa, ux)
+	tick()
+	if err := p.a.(storage.DrawingProvider).PositionDrawings().SetDrawing(p.ca, p.sa, x, marks); err != nil {
+		t.Fatal(err)
+	}
+	if after := p.entry(p.a, p.ca, p.sa, ux); after.ChangedAt <= before.ChangedAt || after.Op != storage.ChangeUpdate {
+		t.Errorf("drawing a position left the journal at %+v (was %+v)", after, before)
+	}
+	before = p.entry(p.a, p.ca, p.sa, uy)
+	tick()
+	if err := p.a.(storage.DerivationProvider).PositionDerivations().SetDerivedFrom(p.ca, p.sa, y, &domain.Derivation{FromID: x, Move: "13/7"}); err != nil {
+		t.Fatal(err)
+	}
+	if after := p.entry(p.a, p.ca, p.sa, uy); after.ChangedAt <= before.ChangedAt || after.Op != storage.ChangeUpdate {
+		t.Errorf("linking a variant left the journal at %+v (was %+v)", after, before)
+	}
+	p.send()
+	if got := draw(p.b, p.cb, p.sb, bx); !reflect.DeepEqual(got, marks) {
+		t.Errorf("drawing in b = %+v, want %+v", got, marks)
+	}
+	if d := origin(p.b, p.cb, p.sb, by); d == nil || d.FromID != bx || d.Move != "13/7" {
+		t.Errorf("the link in b = %+v, want position %d by 13/7 (b's own id, not a's %d)", d, bx, x)
+	}
+	if rep := p.replay(); rep.Applied != 0 {
+		t.Errorf("a replay applied %+v", rep)
+	}
+
+	// The way back: b clears the drawing and the link; a follows.
+	tick()
+	if err := p.b.(storage.DrawingProvider).PositionDrawings().SetDrawing(p.cb, p.sb, bx, nil); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.b.(storage.DerivationProvider).PositionDerivations().SetDerivedFrom(p.cb, p.sb, by, nil); err != nil {
+		t.Fatal(err)
+	}
+	back := p.swapped()
+	back.catchUp()
+	back.cursorFrom = storage.Cursor{}
+	back.send()
+	if got := draw(p.a, p.ca, p.sa, x); len(got) != 0 {
+		t.Errorf("a cleared drawing came back as %+v", got)
+	}
+	if d := origin(p.a, p.ca, p.sa, y); d != nil {
+		t.Errorf("a cleared link came back as %+v", d)
+	}
+
+	// A variant that arrives before its origin: its record is first in the set.
+	qo, qv := provenancePos(23), provenancePos(24)
+	o, _ := p.a.Positions().Save(p.ca, p.sa, &qo)
+	v, _ := p.a.Positions().Save(p.ca, p.sa, &qv)
+	if err := p.a.(storage.DerivationProvider).PositionDerivations().SetDerivedFrom(p.ca, p.sa, v, &domain.Derivation{FromID: o}); err != nil {
+		t.Fatal(err)
+	}
+	tick()
+	if err := p.a.(storage.DrawingProvider).PositionDrawings().SetDrawing(p.ca, p.sa, o, marks[:1]); err != nil {
+		t.Fatal(err)
+	}
+	uo, uv := famUUID(t, p.a, p.ca, p.sa, "position", o), famUUID(t, p.a, p.ca, p.sa, "position", v)
+	p.cursorFrom = storage.Cursor{}
+	rep := p.send()
+	bo, _ := famID(p.b, p.cb, p.sb, "position", uo)
+	bv, _ := famID(p.b, p.cb, p.sb, "position", uv)
+	if d := origin(p.b, p.cb, p.sb, bv); d == nil || d.FromID != bo {
+		t.Errorf("a variant sent before its origin is linked to %+v, want position %d", d, bo)
+	}
+	if len(rep.Missing) != 0 {
+		t.Errorf("a link resolved at the end of the set was reported missing: %+v", rep.Missing)
+	}
+	// Linking it late did not date it newer than the record it came with.
+	if ea, eb := p.entry(p.a, p.ca, p.sa, uv), p.entry(p.b, p.cb, p.sb, uv); ea.ChangedAt != eb.ChangedAt {
+		t.Errorf("journals disagree on the variant: %+v vs %+v", ea, eb)
+	}
+	if rep := p.replay(); rep.Applied != 0 {
+		t.Errorf("a replay applied %+v", rep)
+	}
+
+	// The cascade that takes a drawn position's marks and its links does not
+	// turn its delete into an update.
+	tick()
+	if err := p.a.Positions().Delete(p.ca, p.sa, o); err != nil {
+		t.Fatal(err)
+	}
+	if e := p.entry(p.a, p.ca, p.sa, uo); e.Op != storage.ChangeDelete {
+		t.Errorf("deleting a drawn origin left the journal at %+v, want a delete", e)
+	}
+	if e := p.entry(p.a, p.ca, p.sa, uv); e.Op != storage.ChangeUpdate {
+		t.Errorf("the variant of a deleted origin is journaled %+v, want an update (its link went)", e)
+	}
+	p.send()
+	if _, ok := famID(p.b, p.cb, p.sb, "position", uo); ok {
+		t.Error("the deleted origin is still in b")
+	}
+	if d := origin(p.b, p.cb, p.sb, bv); d != nil {
+		t.Errorf("the variant keeps a link to a deleted origin in b: %+v", d)
 	}
 }

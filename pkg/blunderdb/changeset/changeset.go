@@ -296,6 +296,7 @@ func tieKey(op string, payload []byte) string {
 // transaction.
 func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Report, error) {
 	var rep Report
+	var deferred []deferredLink
 	records := slices.Clone(set.Records)
 	slices.SortStableFunc(records, func(a, b Record) int { return codecs[a.Family].rank - codecs[b.Family].rank })
 	for _, r := range records {
@@ -322,6 +323,8 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 		var res outcome
 		var missing []string
 		rctx := context.WithValue(ctx, missingKey{}, &missing)
+		var links []deferredLink
+		rctx = context.WithValue(rctx, deferredKey{}, &links)
 		err = trash.InTx(rctx, s, scope, func(s storage.Stores) error {
 			var err error
 			res, err = apply(rctx, s, scope, cd, r, future)
@@ -347,6 +350,38 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 		rep.Applied++
 		for _, ref := range missing {
 			rep.Missing = append(rep.Missing, MissingRef{Family: r.Family, UUID: r.UUID, Ref: ref})
+		}
+		for _, l := range links {
+			l.Family, l.UUID = r.Family, r.UUID
+			deferred = append(deferred, l)
+		}
+	}
+	// Every record is in: the origins that arrived after their variant are
+	// here now. What is still missing is the peer's to send.
+	for _, l := range deferred {
+		var missing []string
+		lctx := context.WithValue(ctx, missingKey{}, &missing)
+		err := trash.InTx(lctx, s, scope, func(s storage.Stores) error {
+			journal, _, err := providers(s)
+			if err != nil {
+				return err
+			}
+			// Writing the link dates the variant now; it keeps the date of
+			// the record it came with, or the peer would be sent it back.
+			stamp, err := journal.Entry(lctx, scope, l.UUID)
+			if err != nil {
+				return err
+			}
+			if err := applyDerivation(lctx, s, scope, l.Variant, &derivationPayload{Position: l.Ref, Move: l.Move}); err != nil {
+				return err
+			}
+			return journal.Mark(lctx, scope, l.Family, l.UUID, stamp.Op, stamp.ChangedAt)
+		})
+		if err != nil {
+			return rep, err
+		}
+		for _, ref := range missing {
+			rep.Missing = append(rep.Missing, MissingRef{Family: l.Family, UUID: l.UUID, Ref: ref})
 		}
 	}
 	return rep, nil
