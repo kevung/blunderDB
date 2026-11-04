@@ -1460,6 +1460,37 @@ leurs cartes et leur planning. Un tournoi voyage avec son en-tête et sa note, e
 chaque match nomme son tournoi et sa place dans la liste ; les familles sans
 corbeille (leçons, transcriptions, tournois, paquets, cartes) s'effacent quand un pair les met en corbeille.
 
+**Serveur de synchronisation.** L'onglet *Synchronisation* des paramètres
+(voir :ref:`synchronisation_distante`) tient la bibliothèque ouverte au même
+état qu'un serveur distant, quel qu'il soit, pourvu qu'il réponde aux deux
+mêmes appels que ``blunderdb serve``, sous l'adresse que l'utilisateur colle
+(son ``<base>`` peut porter un préfixe, par exemple ``https://hôte/api``) :
+
+* ``POST <base>/v1/changeset.export`` avec ``{"cursor": {…}, "limit": N}`` rend
+  ``200`` et ``{"cursor": {…}, "more": bool, "records": […]}``. Le curseur est
+  opaque, ``{}`` repart du début ; ``limit`` ne dépasse pas 1000 (l'application
+  en demande 500). Un enregistrement est ``{"seq", "uuid", "family", "op",
+  "changed_at", "payload"?}``. Le serveur doit pouvoir rendre un curseur qu'il a
+  émis, et répondre ``410`` quand il ne peut plus en reprendre un.
+* ``POST <base>/v1/changeset.import`` avec ``{"records": […]}`` (au plus 500
+  enregistrements, ceux d'un ``changeset.export``) fusionne, la dernière
+  écriture gagnant, et rend ``200`` et le rapport (``applied``, ``added``,
+  ``modified``, ``removed``, ``older``, ``conflicts``, ``missing``,
+  ``unsupported``). Un enregistrement répété ne change rien.
+* Chaque requête porte ``Authorization: Bearer <jeton>`` et
+  ``Content-Type: application/json``. Le jeton ne figure jamais dans l'adresse.
+  ``401`` ou ``403`` : jeton refusé ; ``413`` : envoi trop gros ; ``429`` : débit
+  atteint ; ``410`` sur l'export : curseur périmé ; tout autre échec porte
+  l'enveloppe ``{"error": {"code", "message"}}`` des appels ci-dessus.
+
+L'application envoie d'abord, puis reçoit, une page à la fois. Elle garde deux
+curseurs par serveur et par bibliothèque : celui du journal local (ce que le
+serveur a déjà) et celui du serveur (ce qui est déjà fusionné ici), chacun
+avancé une fois sa page réglée. Un curseur refusé par un journal (``410``, ou
+périmé en local) repart du début, l'import absorbant la répétition. Les
+enregistrements reçus reviennent à l'envoi suivant, que le serveur absorbe de
+la même façon.
+
 Trois marques s'ajoutent à une position : ``changeset.export`` les emporte toutes
 les trois, l'export et le transfert le dessin et le lien d'origine, sans le libellé.
 ``positions.drawing`` et ``positions.setDrawing`` (``{"id": N, "marks": […]}``)

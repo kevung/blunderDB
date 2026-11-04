@@ -565,6 +565,7 @@ blunderDB. Elle est organisée en dix onglets :
   dossier, décrit ci-dessous ;
 * **Assistant et MCP** — le serveur MCP local et l'assistant interne, décrits
   ci-dessous ;
+* **Synchronisation** — un compte distant, décrit ci-dessous ;
 * **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
   section :ref:`diffusion_controlee`.
 
@@ -1070,6 +1071,28 @@ libre du modèle**. L'assistant ne propose de modification que si la case
 **Laisser l'assistant proposer des modifications** est cochée — un réglage
 distinct de l'écriture du serveur MCP local — et chaque modification qu'il
 prépare s'affiche et n'est faite qu'après **Confirmer**.
+
+.. _synchronisation_distante:
+
+Synchronisation
+~~~~~~~~~~~~~~~
+
+L'onglet **Synchronisation** tient la bibliothèque ouverte au même état qu'une
+bibliothèque distante. Collez l'**adresse du serveur** (``https://``, ou
+``http://`` sur cette machine seulement) et le **jeton personnel** qu'il vous a
+donné ; le jeton va dans le trousseau du système, jamais dans la base, ni dans
+le fichier de réglages, ni dans un journal, et n'est pas repris par un export.
+Retirer le jeton se fait en enregistrant un champ vide.
+
+**Synchroniser maintenant** envoie ce qui a changé ici, puis reçoit ce qui a
+changé là-bas, une page à la fois ; **Synchroniser au démarrage** le fait à
+l'ouverture de la fenêtre. Seuls les changements depuis la dernière fois
+voyagent. Si le même objet a changé des deux côtés, la modification la plus
+récente l'emporte. L'onglet indique la dernière synchronisation réussie et ce
+qui a été envoyé et reçu. Une panne est dite avec sa cause (jeton refusé,
+serveur muet, limite atteinte…) ; la bibliothèque reste utilisable et la
+synchronisation reprend là où elle s'est arrêtée. Le protocole est décrit au
+chapitre :ref:`headless`.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de
