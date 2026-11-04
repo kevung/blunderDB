@@ -4,6 +4,7 @@ package storagetest
 
 import (
 	"context"
+	"encoding/json"
 	"reflect"
 	"testing"
 	"time"
@@ -630,6 +631,158 @@ func scenarioWritesAdvance(p *csPair) {
 		t.Fatal(err)
 	}
 	p.send()
+}
+
+// A date taken as now must not fall under the date the object holds: the record
+// is the later one by its own date, and would lose to what it follows. Dates are
+// rewritten as a clock ahead of this library's would have set them: the first
+// keeps its date, within the slack, the second is far past it.
+func scenarioClampOverHeld(p *csPair) {
+	t := p.t
+	p.catchUp()
+	stamp := func(d time.Duration) string { return time.Now().UTC().Add(d).Format(storage.ChangedAtLayout) }
+	// send carries a's changes after the cursor, dated d ahead, the drawing too.
+	send := func(d time.Duration) changeset.Report {
+		t.Helper()
+		set, err := changeset.Export(p.ca, p.a, p.sa, p.cursorFrom, 1000)
+		if err != nil {
+			t.Fatal(err)
+		}
+		p.cursorFrom = set.Cursor
+		at := stamp(d)
+		for i := range set.Records {
+			r := &set.Records[i]
+			r.ChangedAt = at
+			if r.Family != "position" {
+				continue
+			}
+			var m map[string]any
+			if err := json.Unmarshal(r.Payload, &m); err != nil {
+				t.Fatal(err)
+			}
+			if _, ok := m["drawingAt"]; ok {
+				m["drawingAt"] = at
+			}
+			if r.Payload, err = json.Marshal(m); err != nil {
+				t.Fatal(err)
+			}
+		}
+		rep, err := changeset.Import(p.cb, p.b, p.sb, set)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return rep
+	}
+	ids := p.a.(storage.PublicIDProvider).PublicIDs()
+	drawings := p.a.(storage.DrawingProvider).PositionDrawings()
+	square := func(n int) []domain.DrawingMark {
+		return []domain.DrawingMark{{Kind: domain.DrawingSquare, From: n, To: n, Color: "green"}}
+	}
+	cid, err := p.a.Collections().Create(p.ca, p.sa, "Clamp one", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	q := provenancePos(58)
+	pid, err := p.a.Positions().Save(p.ca, p.sa, &q)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := drawings.SetDrawing(p.ca, p.sa, pid, square(7)); err != nil {
+		t.Fatal(err)
+	}
+	cu, u := famUUID(t, p.a, p.ca, p.sa, "collection", cid), famUUID(t, p.a, p.ca, p.sa, "position", pid)
+	const kept, past = 700 * time.Millisecond, time.Hour
+	if rep := send(kept); rep.Clamped != 0 {
+		t.Fatalf("a date within the slack was clamped: %+v", rep)
+	}
+	bcid, okc := famID(p.b, p.cb, p.sb, "collection", cu)
+	bpid, okp := famID(p.b, p.cb, p.sb, "position", u)
+	if !okc || !okp {
+		t.Fatal("the objects did not arrive")
+	}
+	held := p.entry(p.b, p.cb, p.sb, cu).ChangedAt
+
+	if err := p.a.Collections().Update(p.ca, p.sa, cid, "Clamp two", ""); err != nil {
+		t.Fatal(err)
+	}
+	if err := ids.SetPublicID(p.ca, p.sa, pid, "two"); err != nil {
+		t.Fatal(err)
+	}
+	marks := square(8)
+	if err := drawings.SetDrawing(p.ca, p.sa, pid, marks); err != nil {
+		t.Fatal(err)
+	}
+	if rep := send(past); rep.Clamped != 2 || rep.Older != 0 {
+		t.Errorf("a record far ahead: %+v, want both clamped and none older", rep)
+	}
+	if c, err := p.b.Collections().Get(p.cb, p.sb, bcid); err != nil || c.Name != "Clamp two" {
+		t.Errorf("the later collection was lost: %+v, %v", c, err)
+	}
+	if got := publicIDOf(t, p.b, p.cb, p.sb, bpid); got != "two" {
+		t.Errorf("the later public_id was lost: %q", got)
+	}
+	if got, err := p.b.(storage.DrawingProvider).PositionDrawings().Drawing(p.cb, p.sb, bpid); err != nil || !reflect.DeepEqual(got, marks) {
+		t.Errorf("the later drawing was lost: %+v, %v", got, err)
+	}
+	if at := p.entry(p.b, p.cb, p.sb, cu).ChangedAt; at <= held || at > stamp(2*time.Second) {
+		t.Errorf("the record is held at %s, want just past %s and not its own far date", at, held)
+	}
+
+	// Nor when what is held is itself past the slack: a clock set back since.
+	journalB := p.b.(storage.ChangeJournalProvider).ChangeJournal()
+	heldFar := stamp(past / 2)
+	if err := journalB.Mark(p.cb, p.sb, "collection", cu, storage.ChangeUpdate, heldFar); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.a.Collections().Update(p.ca, p.sa, cid, "Clamp far", ""); err != nil {
+		t.Fatal(err)
+	}
+	if rep := send(past); rep.Applied != 1 || rep.Clamped != 1 {
+		t.Errorf("a record later than a date held past the slack: %+v", rep)
+	}
+	if c, err := p.b.Collections().Get(p.cb, p.sb, bcid); err != nil || c.Name != "Clamp far" {
+		t.Errorf("the later collection was lost over a date past the slack: %+v, %v", c, err)
+	}
+	if at := p.entry(p.b, p.cb, p.sb, cu).ChangedAt; at <= heldFar {
+		t.Errorf("the record is held at %s, not past %s", at, heldFar)
+	}
+
+	// A record older than what is held, even dated ahead of the clock, stays older.
+	if err := journalB.Mark(p.cb, p.sb, "collection", cu, storage.ChangeUpdate, stamp(2*past)); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.a.Collections().Update(p.ca, p.sa, cid, "Clamp three", ""); err != nil {
+		t.Fatal(err)
+	}
+	if rep := send(past); rep.Older != 1 || rep.Applied != 0 {
+		t.Errorf("a record older than the date held: %+v", rep)
+	}
+	if c, err := p.b.Collections().Get(p.cb, p.sb, bcid); err != nil || c.Name != "Clamp far" {
+		t.Errorf("an older record took over: %+v, %v", c, err)
+	}
+
+	// The libraries go on to other scenarios: b ends as a holds, dated as a is.
+	p.cursorFrom = storage.Cursor{}
+	journalA := p.a.(storage.ChangeJournalProvider).ChangeJournal()
+	if err := journalB.Mark(p.cb, p.sb, "collection", cu, storage.ChangeUpdate, p.entry(p.a, p.ca, p.sa, cu).ChangedAt); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.b.Collections().Update(p.cb, p.sb, bcid, "Clamp three", ""); err != nil {
+		t.Fatal(err)
+	}
+	if err := journalB.Mark(p.cb, p.sb, "collection", cu, storage.ChangeUpdate, p.entry(p.a, p.ca, p.sa, cu).ChangedAt); err != nil {
+		t.Fatal(err)
+	}
+	if err := journalB.Mark(p.cb, p.sb, "position", u, storage.ChangeUpdate, p.entry(p.a, p.ca, p.sa, u).ChangedAt); err != nil {
+		t.Fatal(err)
+	}
+	f, _, err := journalA.PartFact(p.ca, p.sa, pid, storage.PartDrawing)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := journalB.SetPartFact(p.cb, p.sb, storage.PartFact{PositionID: bpid, Part: storage.PartDrawing, At: f.At}); err != nil {
+		t.Fatal(err)
+	}
 }
 
 // A position's drawing and its link to the position it derives from travel

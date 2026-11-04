@@ -296,10 +296,10 @@ func partBeats(at string, content any, otherAt string, other any) bool {
 	}
 }
 
-// partDate is the date of a part in a payload, as this library will hold it:
-// content with no date is old, and a date ahead of the clock by more than
-// clockSlack is taken as now.
-func partDate(at string, hasContent bool) (string, error) {
+// partDate is the date of a part in a payload, as this library will hold it
+// over the date held: content with no date is old, and a date ahead of the clock
+// by more than clockSlack is taken as now, or just after what is held (overHeld).
+func partDate(at string, hasContent bool, held string) (string, error) {
 	if at == "" {
 		if hasContent {
 			return floor, nil
@@ -311,7 +311,7 @@ func partDate(at string, hasContent bool) (string, error) {
 		return "", err
 	}
 	if now := time.Now().UTC(); at > now.Add(clockSlack).Format(storage.ChangedAtLayout) {
-		return now.Format(storage.ChangedAtLayout), nil
+		return overHeld(at, now.Format(storage.ChangedAtLayout), held)
 	}
 	return at, nil
 }
@@ -321,7 +321,11 @@ func applyDrawing(ctx context.Context, s storage.Stores, scope string, id int64,
 	if !ok {
 		return nil
 	}
-	at, err := partDate(p.DrawingAt, len(p.Drawing) > 0)
+	have, haveAt, err := readDrawing(ctx, s, scope, id)
+	if err != nil {
+		return err
+	}
+	at, err := partDate(p.DrawingAt, len(p.Drawing) > 0, haveAt)
 	if err != nil || at == "" {
 		return err
 	}
@@ -329,9 +333,8 @@ func applyDrawing(ctx context.Context, s storage.Stores, scope string, id int64,
 	if len(marks) == 0 {
 		marks = nil
 	}
-	have, haveAt, err := readDrawing(ctx, s, scope, id)
-	if err != nil || !partBeats(at, marks, haveAt, have) {
-		return err
+	if !partBeats(at, marks, haveAt, have) {
+		return nil
 	}
 	if err := dp.PositionDrawings().SetDrawing(ctx, scope, id, marks); err != nil {
 		return err
@@ -356,13 +359,16 @@ func applyLink(ctx context.Context, s storage.Stores, scope string, id int64, p 
 	if !ok {
 		return nil
 	}
-	at, err := partDate(p.DerivedAt, p.DerivedFrom != nil)
+	have, haveAt, err := readLink(ctx, s, scope, id)
+	if err != nil {
+		return err
+	}
+	at, err := partDate(p.DerivedAt, p.DerivedFrom != nil, haveAt)
 	if err != nil || at == "" {
 		return err
 	}
-	have, haveAt, err := readLink(ctx, s, scope, id)
-	if err != nil || !partBeats(at, p.DerivedFrom, haveAt, have) {
-		return err
+	if !partBeats(at, p.DerivedFrom, haveAt, have) {
+		return nil
 	}
 	journal, _, err := providers(s)
 	if err != nil {
