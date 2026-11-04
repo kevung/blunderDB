@@ -1460,6 +1460,11 @@ leurs cartes et leur planning. Un tournoi voyage avec son en-tête, sa note et s
 dates ; le rattachement d'un match à un tournoi et sa place dans la liste restent
 propres à chaque bibliothèque. Les familles sans corbeille (leçons, transcriptions,
 tournois, paquets, cartes) s'effacent quand un pair les met en corbeille.
+À égalité de date, chaque famille fusionne les deux contenus de la même façon des deux côtés
+et n'efface rien que l'autre garde : la note ou la description qui manque d'un côté
+est reprise, deux notes sont gardées ensemble, la révision la plus avancée l'emporte.
+``skipped``, dans la page exportée, compte les objets du journal dont le contenu n'a pas pu être lu ;
+une collection dont la requête désigne des lignes par leur numéro (``id12``, ``ma3``) ne voyage pas.
 
 Trois marques s'ajoutent à une position : ``changeset.export`` les emporte toutes
 les trois, l'export et le transfert le dessin et le lien d'origine, sans le libellé.

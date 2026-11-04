@@ -610,6 +610,18 @@ var matchCodec = codec{
 		portableMatch(p)
 		return p, nil
 	},
+	// Two notes of one tie are both kept.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l matchPayload
+		if err := json.Unmarshal(winner, &w); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		if err := json.Unmarshal(loser, &l); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		w.Match.Comment = joinText(w.Match.Comment, l.Match.Comment)
+		return json.Marshal(w)
+	},
 	create: func(ctx context.Context, s storage.Stores, scope string, raw json.RawMessage) (int64, error) {
 		var p matchPayload
 		if err := json.Unmarshal(raw, &p); err != nil {

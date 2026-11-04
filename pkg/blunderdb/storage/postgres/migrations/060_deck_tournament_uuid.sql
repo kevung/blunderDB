@@ -61,7 +61,7 @@ CREATE TRIGGER change_log_tournament_update AFTER UPDATE ON tournament
 DROP TRIGGER IF EXISTS change_log_match_update ON match;
 CREATE TRIGGER change_log_match_update AFTER UPDATE ON match
     FOR EACH ROW WHEN (
-        (to_jsonb(OLD) - ARRAY['import_date', 'tournament_id', 'tournament_sort_order', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
+        (to_jsonb(OLD) - ARRAY['import_date', 'tournament_id', 'tournament_sort_order', 'import_batch_id', 'last_visited_position', 'last_visited_at', 'direction_match_id'])
         IS DISTINCT FROM
-        (to_jsonb(NEW) - ARRAY['import_date', 'tournament_id', 'tournament_sort_order', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
+        (to_jsonb(NEW) - ARRAY['import_date', 'tournament_id', 'tournament_sort_order', 'import_batch_id', 'last_visited_position', 'last_visited_at', 'direction_match_id'])
     ) EXECUTE FUNCTION blunderdb_journal('match');

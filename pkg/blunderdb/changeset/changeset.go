@@ -58,6 +58,10 @@ type Set struct {
 	Cursor  storage.Cursor `json:"cursor"`
 	More    bool           `json:"more"`
 	Records []Record       `json:"records"`
+	// Skipped counts the journal entries whose object could not be read (gone
+	// since the journal was, or pointing at a row that is not there): they are
+	// left out, and the count says so.
+	Skipped int `json:"skipped,omitempty"`
 }
 
 // Report counts what an import did with each record.
@@ -243,6 +247,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 					return Set{}, err
 				}
 				if !ok {
+					set.Skipped++
 					continue
 				}
 			}
@@ -500,11 +505,13 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		return lost, err
 	}
 	switch {
-	case twin && cd.twins && hasEntry && held && len(r.Payload) > 0 && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete &&
+	case twin && cd.twins && held && len(r.Payload) > 0 && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete &&
 		(r.Op == storage.ChangeCreate || r.Op == storage.ChangeUpdate):
 		// Two draws of one object: neither is the other's edit, so what the merge
 		// keeps is dated as the later of the two. Kept as it was, it still takes
-		// that date: dated below it, the other side would refuse it for good.
+		// that date: dated below it, the other side would refuse it for good. A
+		// draw that no journal entry covers yet (the first import before the
+		// first export) counts as dated at the floor.
 		content, err := cd.read(ctx, s, scope, id)
 		if err != nil {
 			return lost, err
@@ -513,9 +520,11 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		if err != nil {
 			return lost, err
 		}
-		localAt, err := normalize(local.ChangedAt)
-		if err != nil {
-			return lost, err
+		localAt := floor
+		if hasEntry {
+			if localAt, err = normalize(local.ChangedAt); err != nil {
+				return lost, err
+			}
 		}
 		winner, loser := []byte(r.Payload), payload
 		if r.ChangedAt < localAt || (r.ChangedAt == localAt && tieKey(storage.ChangeUpdate, r.Payload) < tieKey(storage.ChangeUpdate, payload)) {
@@ -529,7 +538,11 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 			if r.ChangedAt <= localAt {
 				return lost, nil
 			}
-			if err := journal.Mark(ctx, scope, r.Family, r.UUID, local.Op, r.ChangedAt); err != nil {
+			op := local.Op
+			if !hasEntry {
+				op = storage.ChangeUpdate
+			}
+			if err := journal.Mark(ctx, scope, r.Family, r.UUID, op, r.ChangedAt); err != nil {
 				return lost, err
 			}
 			if seen != "" {
@@ -648,11 +661,16 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 // whose position this library does not hold is left out on import, and named in
 // the report.
 type collectionPayload struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	FilterQuery string   `json:"filterQuery,omitempty"`
-	SortOrder   int      `json:"sortOrder"`
-	Members     []string `json:"members,omitempty"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	FilterQuery string `json:"filterQuery,omitempty"`
+	// QueryNamesRows says the living query selects by row id (like<n>, id<n>,
+	// ma<n>, tn<n>): numbers that mean other rows in a peer's library. It does
+	// not travel, as for a search deck's source; the peer keeps its own query
+	// and members.
+	QueryNamesRows bool     `json:"queryNamesRows,omitempty"`
+	SortOrder      int      `json:"sortOrder"`
+	Members        []string `json:"members,omitempty"`
 }
 
 var collectionCodec = codec{
@@ -665,6 +683,9 @@ var collectionCodec = codec{
 		}
 		p := collectionPayload{Name: c.Name, Description: c.Description, FilterQuery: c.FilterQuery, SortOrder: c.SortOrder}
 		if c.FilterQuery != "" {
+			if commandNamesRows(c.FilterQuery) {
+				p.FilterQuery, p.QueryNamesRows = "", true
+			}
 			return p, nil
 		}
 		ids, err := s.Collections().PositionIDs(ctx, scope, id, storage.ListOpts{})
@@ -718,21 +739,47 @@ var collectionCodec = codec{
 		if err := json.Unmarshal(loser, &l); err != nil {
 			return nil, fmt.Errorf("collection payload: %w", err)
 		}
-		if w.FilterQuery != "" {
-			return winner, nil
+		w.Description = joinText(w.Description, l.Description)
+		if w.FilterQuery == "" && !w.QueryNamesRows && l.FilterQuery != "" {
+			w.FilterQuery, w.Members = l.FilterQuery, nil
 		}
-		for _, m := range l.Members {
-			if !slices.Contains(w.Members, m) {
-				w.Members = append(w.Members, m)
+		if w.FilterQuery != "" || w.QueryNamesRows {
+			return json.Marshal(w)
+		}
+		// The one that holds the other is kept as it is, order included, so a
+		// merged list met again by either side stays what it was.
+		if !subset(l.Members, w.Members) {
+			if subset(w.Members, l.Members) {
+				w.Members = l.Members
+			} else {
+				for _, m := range l.Members {
+					if !slices.Contains(w.Members, m) {
+						w.Members = append(w.Members, m)
+					}
+				}
 			}
 		}
 		return json.Marshal(w)
 	},
 }
 
+// subset says every member of a is in b.
+func subset(a, b []string) bool {
+	for _, m := range a {
+		if !slices.Contains(b, m) {
+			return false
+		}
+	}
+	return true
+}
+
 // fill brings a collection's query, membership and rank to the payload's.
 func fill(ctx context.Context, s storage.Stores, scope string, id int64, p collectionPayload, created bool) error {
 	cs := s.Collections()
+	if p.QueryNamesRows {
+		noteMissing(ctx, "living query")
+		return placeCollection(ctx, s, scope, id, p.SortOrder)
+	}
 	if p.FilterQuery != "" || !created {
 		if err := cs.SetFilterQuery(ctx, scope, id, p.FilterQuery); err != nil {
 			return err

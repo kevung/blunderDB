@@ -22,10 +22,13 @@ var _ storage.ChangeJournalStore = (*ChangeJournalStore)(nil)
 // same lists.
 //
 // A match's tournament and its order there are among them: a tournament travels
-// alone, and each library keeps its own attachments. The synchronisation of a
-// deck touches updated_at and nothing the payload carries.
+// alone, and each library keeps its own attachments. A synchronisation of a deck
+// and the attaching of a match to a tournament touch updated_at: the deck's
+// payload leaves it out; the tournament's carries it, so an attaching changes
+// that payload without dating it, and an exchange from 0 meets a tie there,
+// which the tournament's merge settles (the later date).
 var LocalColumns = map[string][]string{
-	"match":      {"import_date", "tournament_id", "tournament_sort_order", "import_batch_id", "last_visited_position", "last_visited_at"},
+	"match":      {"import_date", "tournament_id", "tournament_sort_order", "import_batch_id", "last_visited_position", "last_visited_at", "direction_match_id"},
 	"anki_deck":  {"updated_at"},
 	"tournament": {"updated_at", "sort_order", "rencontre_id", "rencontre_rooms"},
 }
