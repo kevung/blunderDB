@@ -217,16 +217,21 @@ func (s *ChangeJournalStore) Mark(ctx context.Context, scope, family, uuid, op, 
 	var err error
 	if s.DB.Name() == "sqlite" {
 		if at == "" {
-			_, err = s.DB.Exec(ctx, `INSERT OR REPLACE INTO change_log (uuid, family, op) VALUES (?, ?, ?)`, uuid, family, op)
+			// Selected before the replace: the date this write has to pass.
+			_, err = s.DB.Exec(ctx, `INSERT OR REPLACE INTO change_log (uuid, family, op, changed_at) VALUES (?, ?, ?,
+				MAX(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+					COALESCE((SELECT strftime('%Y-%m-%dT%H:%M:%fZ', changed_at, '+0.001 seconds') FROM change_log WHERE uuid = ?), '')))`,
+				uuid, family, op, uuid)
 		} else {
 			_, err = s.DB.Exec(ctx, `INSERT OR REPLACE INTO change_log (uuid, family, op, changed_at) VALUES (?, ?, ?, ?)`, uuid, family, op, at)
 		}
 	} else {
-		// at is bound as text and cast; "" falls to now().
+		// at is bound as text and cast; "" falls to now(), past what the entry holds.
 		_, err = s.DB.Exec(ctx, `INSERT INTO change_log (tenant_id, uuid, family, op, changed_at)
 			VALUES (?, CAST(? AS uuid), ?, ?, COALESCE(CAST(NULLIF(?, '') AS timestamptz), now()))
 			ON CONFLICT (tenant_id, uuid) DO UPDATE SET seq = nextval('change_log_seq'), family = EXCLUDED.family,
-			op = EXCLUDED.op, changed_at = EXCLUDED.changed_at, xid = pg_current_xact_id()`, s.DB.ScopeArg(scope), uuid, family, op, at)
+			op = EXCLUDED.op, changed_at = CASE WHEN ? = '' THEN blunderdb_stamp_after(change_log.changed_at) ELSE EXCLUDED.changed_at END,
+			xid = pg_current_xact_id()`, s.DB.ScopeArg(scope), uuid, family, op, at, at)
 	}
 	if err != nil {
 		return errf(s.DB, "mark change", err)

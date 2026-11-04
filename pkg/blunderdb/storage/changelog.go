@@ -23,6 +23,9 @@ type Change struct {
 	UUID   string `json:"uuid"`
 	Family string `json:"family"`
 	Op     string `json:"op"`
+	// ChangedAt only grows for an object written here: a write is dated now, or
+	// a millisecond past the date the object holds when the clock has not passed
+	// it, so a peer that holds the earlier write takes the later one.
 	// ChangedAt is UTC, RFC 3339 with milliseconds (the layout ChangedAtLayout
 	// names). Anything that reads a ChangedAt from elsewhere normalises it
 	// first: only that layout compares as text.

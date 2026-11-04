@@ -390,7 +390,7 @@ func publicIDOf(t *testing.T, s storage.Storage, ctx context.Context, scope stri
 func scenarioPublicID(p *csPair) {
 	t := p.t
 	p.catchUp()
-	q := provenancePos(81)
+	q := provenancePos(53)
 	pa, _ := p.a.Positions().Save(p.ca, p.sa, &q)
 	ids := p.a.(storage.PublicIDProvider).PublicIDs()
 	if got := publicIDOf(t, p.a, p.ca, p.sa, pa); got != "" {
@@ -437,14 +437,199 @@ func scenarioPublicID(p *csPair) {
 	}
 
 	// A position arriving with one (created after it was set).
-	q2 := provenancePos(82)
-	p2, _ := p.a.Positions().Save(p.ca, p.sa, &q2)
-	_ = ids.SetPublicID(p.ca, p.sa, p2, "second")
+	q2 := provenancePos(54)
+	p2, err := p.a.Positions().Save(p.ca, p.sa, &q2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p2 == pa {
+		t.Fatal("the second board is the first one: the step tests nothing")
+	}
+	if err := ids.SetPublicID(p.ca, p.sa, p2, "second"); err != nil {
+		t.Fatal(err)
+	}
 	u2 := famUUID(t, p.a, p.ca, p.sa, "position", p2)
 	p.send()
-	if id2, ok := famID(p.b, p.cb, p.sb, "position", u2); !ok || publicIDOf(t, p.b, p.cb, p.sb, id2) != "second" {
-		t.Error("a position created with a public_id lost it on the way")
+	id2, ok := famID(p.b, p.cb, p.sb, "position", u2)
+	if !ok {
+		t.Fatal("a position created with a public_id did not arrive")
 	}
+	if got := publicIDOf(t, p.b, p.cb, p.sb, id2); got != "second" {
+		t.Errorf("a position created with a public_id arrived with %q", got)
+	}
+}
+
+// Two writes of one object in one library are ordered: the second is dated
+// after the first whatever the clock says, or a peer that received the first
+// would keep it for good, the tie or the older date going against the later
+// write. A stamp ahead of the clock stands for both: a write in the same
+// millisecond, and a clock set back between the two writes.
+func scenarioWritesAdvance(p *csPair) {
+	t := p.t
+	p.catchUp()
+	journal := p.a.(storage.ChangeJournalProvider).ChangeJournal()
+	ids := p.a.(storage.PublicIDProvider).PublicIDs()
+	stamp := func(d time.Duration) string { return time.Now().UTC().Add(d).Format(storage.ChangedAtLayout) }
+	later := func(at string, d time.Duration) string {
+		parsed, err := time.Parse(storage.ChangedAtLayout, at)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return parsed.Add(d).Format(storage.ChangedAtLayout)
+	}
+	q := provenancePos(55)
+	pa, err := p.a.Positions().Save(p.ca, p.sa, &q)
+	if err != nil {
+		t.Fatal(err)
+	}
+	u := famUUID(t, p.a, p.ca, p.sa, "position", pa)
+	cid, err := p.a.Collections().Create(p.ca, p.sa, "Advancing", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cu := famUUID(t, p.a, p.ca, p.sa, "collection", cid)
+
+	// Each kind of write, from a stamp no clock has reached.
+	writes := []struct {
+		name, family, uuid string
+		write              func() error
+	}{
+		{"a field of the row", "position", u, func() error { return ids.SetPublicID(p.ca, p.sa, pa, "one") }},
+		{"a mark", "position", u, func() error {
+			return p.a.(storage.DrawingProvider).PositionDrawings().SetDrawing(p.ca, p.sa, pa, []domain.DrawingMark{{Kind: domain.DrawingSquare, From: 3, To: 3, Color: "green"}})
+		}},
+		{"an analysis", "position", u, func() error {
+			return p.a.Analyses().Save(p.ca, p.sa, pa, doublingAnalysis())
+		}},
+		{"a row of a family", "collection", cu, func() error { return p.a.Collections().Update(p.ca, p.sa, cid, "Advanced", "") }},
+		{"a journal mark", "collection", cu, func() error {
+			return journal.Mark(p.ca, p.sa, "collection", cu, storage.ChangeUpdate, "")
+		}},
+		{"a delete", "collection", cu, func() error { return p.a.Collections().Delete(p.ca, p.sa, cid) }},
+	}
+	ahead := stamp(time.Hour)
+	for _, w := range writes {
+		if err := journal.Mark(p.ca, p.sa, w.family, w.uuid, storage.ChangeUpdate, ahead); err != nil {
+			t.Fatal(err)
+		}
+		if err := w.write(); err != nil {
+			t.Fatalf("%s: %v", w.name, err)
+		}
+		if got := p.entry(p.a, p.ca, p.sa, w.uuid).ChangedAt; got <= ahead {
+			t.Errorf("%s dated %s, not after the %s the object held", w.name, got, ahead)
+		}
+	}
+	// One write takes the smallest step: a date any peer still compares.
+	if err := journal.Mark(p.ca, p.sa, "position", u, storage.ChangeUpdate, ahead); err != nil {
+		t.Fatal(err)
+	}
+	if err := ids.SetPublicID(p.ca, p.sa, pa, "two"); err != nil {
+		t.Fatal(err)
+	}
+	if got, want := p.entry(p.a, p.ca, p.sa, u).ChangedAt, later(ahead, time.Millisecond); got != want {
+		t.Errorf("a write after %s dated %s, want %s", ahead, got, want)
+	}
+
+	// The date of a part moves the same way.
+	drawings := p.a.(storage.DrawingProvider).PositionDrawings()
+	if err := journal.SetPartFact(p.ca, p.sa, storage.PartFact{PositionID: pa, Part: storage.PartDrawing, At: ahead}); err != nil {
+		t.Fatal(err)
+	}
+	if err := drawings.SetDrawing(p.ca, p.sa, pa, []domain.DrawingMark{{Kind: domain.DrawingSquare, From: 4, To: 4, Color: "green"}}); err != nil {
+		t.Fatal(err)
+	}
+	if f, _, err := journal.PartFact(p.ca, p.sa, pa, storage.PartDrawing); err != nil || f.At <= ahead {
+		t.Errorf("the date of the drawing after %s: %+v, %v", ahead, f, err)
+	}
+
+	// Across the wire: the first write reached the peer, the second, dated by a
+	// clock that has not reached the first, must still reach it. The stamp stays
+	// within what a peer takes as its own time, so no clamp plays any part.
+	q2 := provenancePos(56)
+	p2, err := p.a.Positions().Save(p.ca, p.sa, &q2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := ids.SetPublicID(p.ca, p.sa, p2, "first"); err != nil {
+		t.Fatal(err)
+	}
+	if err := drawings.SetDrawing(p.ca, p.sa, p2, []domain.DrawingMark{{Kind: domain.DrawingSquare, From: 5, To: 5, Color: "green"}}); err != nil {
+		t.Fatal(err)
+	}
+	u2 := famUUID(t, p.a, p.ca, p.sa, "position", p2)
+	p.send()
+	b2, ok := famID(p.b, p.cb, p.sb, "position", u2)
+	if !ok {
+		t.Fatal("the position did not arrive")
+	}
+	near := stamp(300 * time.Millisecond)
+	for _, side := range []struct {
+		s     storage.Storage
+		c     context.Context
+		scope string
+		id    int64
+	}{{p.a, p.ca, p.sa, p2}, {p.b, p.cb, p.sb, b2}} {
+		j := side.s.(storage.ChangeJournalProvider).ChangeJournal()
+		if err := j.Mark(side.c, side.scope, "position", u2, storage.ChangeUpdate, near); err != nil {
+			t.Fatal(err)
+		}
+		if err := j.SetPartFact(side.c, side.scope, storage.PartFact{PositionID: side.id, Part: storage.PartDrawing, At: near}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	p.catchUp()
+	if err := ids.SetPublicID(p.ca, p.sa, p2, "second"); err != nil {
+		t.Fatal(err)
+	}
+	marks := []domain.DrawingMark{{Kind: domain.DrawingSquare, From: 6, To: 6, Color: "green"}}
+	if err := drawings.SetDrawing(p.ca, p.sa, p2, marks); err != nil {
+		t.Fatal(err)
+	}
+	rep := p.send()
+	if rep.Clamped != 0 {
+		t.Errorf("a date within the peer's slack was clamped: %+v", rep)
+	}
+	if got := publicIDOf(t, p.b, p.cb, p.sb, b2); got != "second" {
+		t.Errorf("the later write was lost on the way: public_id in b = %q (%+v)", got, rep)
+	}
+	got, err := p.b.(storage.DrawingProvider).PositionDrawings().Drawing(p.cb, p.sb, b2)
+	if err != nil || !reflect.DeepEqual(got, marks) {
+		t.Errorf("the later drawing was lost on the way: %+v, %v", got, err)
+	}
+	// The peer answers with what it now holds: the same write, a no-op.
+	back, err := changeset.Export(p.cb, p.b, p.sb, storage.Cursor{}, 1_000_000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	answer := changeset.Set{}
+	for _, r := range back.Records {
+		if r.UUID == u2 {
+			answer.Records = append(answer.Records, r)
+		}
+	}
+	if rep, err := changeset.Import(p.ca, p.a, p.sa, answer); err != nil || rep.Applied != 0 {
+		t.Errorf("the peer's answer applied: %+v, %v", rep, err)
+	}
+	if got := publicIDOf(t, p.a, p.ca, p.sa, p2); got != "second" {
+		t.Errorf("public_id in a = %q after the peer answered", got)
+	}
+
+	// The libraries go on to other scenarios: nothing stays dated an hour ahead,
+	// and the peer holds what this one wrote.
+	present := stamp(0)
+	for _, w := range []struct{ family, uuid string }{{"position", u}, {"collection", cu}} {
+		op := storage.ChangeUpdate
+		if w.family == "collection" {
+			op = storage.ChangeDelete
+		}
+		if err := journal.Mark(p.ca, p.sa, w.family, w.uuid, op, present); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := journal.SetPartFact(p.ca, p.sa, storage.PartFact{PositionID: pa, Part: storage.PartDrawing, At: present}); err != nil {
+		t.Fatal(err)
+	}
+	p.send()
 }
 
 // A position's drawing and its link to the position it derives from travel

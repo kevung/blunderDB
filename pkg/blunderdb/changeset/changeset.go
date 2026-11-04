@@ -278,9 +278,18 @@ func tieKey(op string, payload []byte) string {
 	return class + hex.EncodeToString(sum[:])
 }
 
+// clockSlack is how far ahead of this library's clock a record may be dated and
+// still keep its date. A journal dates two writes of an object in the same
+// millisecond a millisecond apart, so an honest date can lead the clock a little;
+// taken as made now, it would tie with, or lose to, the write it follows. A
+// local edit made after it still comes later: the journal dates it past what the
+// object holds.
+const clockSlack = time.Second
+
 // Import merges a set into the library: per object, the later change wins.
 // Dates are normalised (UTC, milliseconds) and compared as dates; one later
-// than this library's clock is taken as made now (Report.Clamped). A tie to
+// than this library's clock by more than clockSlack is taken as made now
+// (Report.Clamped). A tie to
 // the millisecond goes to the greater tieKey, so both sides pick the same
 // one; an identical change is a no-op, which makes a record that comes back
 // around harmless. A restore therefore beats an older delete and a delete an
@@ -311,8 +320,9 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 			return rep, err
 		}
 		future := ""
-		if now := time.Now().UTC().Format(storage.ChangedAtLayout); at > now {
-			future, at = at, now
+		now := time.Now().UTC()
+		if at > now.Add(clockSlack).Format(storage.ChangedAtLayout) {
+			future, at = at, now.Format(storage.ChangedAtLayout)
 			rep.Clamped++
 		}
 		r.ChangedAt = at

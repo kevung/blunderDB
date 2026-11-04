@@ -389,3 +389,9 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `ON DELETE CASCADE` (the origin's deletion drops the link, not the variant),
   `FORCE RLS`, `lock_timeout = 15s`. A trigger journals the variant, as in 057.
   Schema-visible: bumped `domain.DatabaseVersion` to 2.55.0.
+- `059_journal_stamps_advance.sql` — a local write dates the journal entry of its
+  object, and the date of a part, past what they hold when `now()` has not passed
+  it: two writes of an object in one millisecond, or across a clock set back,
+  stay ordered for a peer. `blunderdb_stamp_after`, and the three journal
+  functions replaced. No table touched. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.56.0.

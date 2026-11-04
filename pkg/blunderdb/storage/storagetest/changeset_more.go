@@ -105,6 +105,7 @@ func CheckChangeSetScenarios(t *testing.T, a storage.Storage, ca context.Context
 	t.Run("MembersAfterTheirPositions", func(t *testing.T) { scenarioMembersFirst(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("Match", func(t *testing.T) { scenarioMatch(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("PublicID", func(t *testing.T) { scenarioPublicID(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
+	t.Run("WritesAdvance", func(t *testing.T) { scenarioWritesAdvance(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("DrawingAndDerivation", func(t *testing.T) {
 		scenarioDrawingAndDerivation(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb})
 	})

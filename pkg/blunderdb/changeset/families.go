@@ -85,6 +85,9 @@ var positionCodec = codec{
 		}
 		switch a, err := s.Analyses().Load(ctx, scope, id); {
 		case err == nil:
+			// The id is this library's: left in, two libraries holding the same
+			// analysis would read as a conflict on a tie.
+			a.PositionID = 0
 			out.Analysis = a
 		case !errors.Is(err, storage.ErrNotFound):
 			return nil, err
@@ -294,7 +297,8 @@ func partBeats(at string, content any, otherAt string, other any) bool {
 }
 
 // partDate is the date of a part in a payload, as this library will hold it:
-// content with no date is old, and a date ahead of the clock is taken as now.
+// content with no date is old, and a date ahead of the clock by more than
+// clockSlack is taken as now.
 func partDate(at string, hasContent bool) (string, error) {
 	if at == "" {
 		if hasContent {
@@ -306,8 +310,8 @@ func partDate(at string, hasContent bool) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if now := time.Now().UTC().Format(storage.ChangedAtLayout); at > now {
-		return now, nil
+	if now := time.Now().UTC(); at > now.Add(clockSlack).Format(storage.ChangedAtLayout) {
+		return now.Format(storage.ChangedAtLayout), nil
 	}
 	return at, nil
 }

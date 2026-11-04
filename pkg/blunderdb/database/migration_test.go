@@ -5479,3 +5479,54 @@ func TestMigrate_2_50_0_RederiveResumes(t *testing.T) {
 		t.Errorf("derivation still owed after the resumed pass: %d (%v)", owed, err)
 	}
 }
+
+// A library written by the previous schema dates its next write past what an
+// object holds: the trigger it kept from then is replaced at the open.
+func TestMigrate_2_55_0_to_2_56_0_JournalDatesGrow(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2550.db")
+	const ahead = "2999-01-01T00:00:00.000Z"
+
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	if _, err := d.db.Exec(`INSERT INTO collection (name) VALUES ('kept')`); err != nil {
+		t.Fatal(err)
+	}
+	for _, stmt := range []string{
+		`DROP TRIGGER change_log_collection_u`,
+		`CREATE TRIGGER change_log_collection_u AFTER UPDATE ON collection WHEN NEW.uuid IS NOT NULL BEGIN
+			DELETE FROM change_log WHERE uuid = NEW.uuid;
+			INSERT INTO change_log (uuid, family, op, changed_at) SELECT NEW.uuid, 'collection', 'update', strftime('%Y-%m-%dT%H:%M:%fZ', 'now');
+		END`,
+		`UPDATE change_log SET changed_at = '` + ahead + `' WHERE family = 'collection'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+	stampVersion(t, dbPath, "2.55.0")
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.55.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration: %s, %v", v, err)
+	}
+	if _, err := d.db.Exec(`UPDATE collection SET name = 'edited' WHERE name = 'kept'`); err != nil {
+		t.Fatal(err)
+	}
+	var got string
+	if err := d.db.QueryRow(`SELECT changed_at FROM change_log WHERE family = 'collection'`).Scan(&got); err != nil {
+		t.Fatal(err)
+	}
+	if want := "2999-01-01T00:00:00.001Z"; got != want {
+		t.Errorf("the write after the migration is dated %s, want %s", got, want)
+	}
+}
