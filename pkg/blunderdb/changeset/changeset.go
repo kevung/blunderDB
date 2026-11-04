@@ -114,6 +114,11 @@ var codecs = map[string]codec{
 	"collection": collectionCodec,
 	"comment":    commentCodec,
 	"lesson":     lessonCodec,
+
+	"transcription": transcriptionCodec,
+	"tournament":    tournamentCodec,
+	"anki_deck":     deckCodec,
+	"anki_card":     cardCodec,
 }
 
 // families lists the carried families in rank order.
@@ -501,7 +506,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		} else {
 			res = added
 			if id, err = cd.create(ctx, s, scope, r.Payload); err == nil {
-				if err = uuids.SetObjectUUID(ctx, scope, r.Family, id, r.UUID); err == nil {
+				if err = uuids.SetObjectUUID(ctx, scope, r.Family, id, r.UUID); err == nil && cd.trashKind != "" {
 					// It is back by this way: restoring the trash entry that held
 					// it would make a second one.
 					err = trash.DiscardByUUID(ctx, s, scope, cd.trashKind, r.UUID)

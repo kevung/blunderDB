@@ -110,9 +110,7 @@ func CheckChangeSetScenarios(t *testing.T, a storage.Storage, ca context.Context
 	})
 	t.Run("Lesson", func(t *testing.T) { scenarioLesson(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("Comment", func(t *testing.T) { scenarioComment(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
-	t.Run("CursorStopsAtUncarriedFamilies", func(t *testing.T) {
-		scenarioUncarried(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb})
-	})
+	CheckChangeSetAnkiFamilies(t, a, ca, sa, b, cb, sb)
 	CheckChangeSetSync(t, a, ca, sa, b, cb, sb)
 }
 
@@ -322,29 +320,6 @@ func scenarioContent(p *csPair) {
 	p.send()
 	if got := order(p.b, p.cb, p.sb, bid); len(got) != 2 {
 		p.t.Errorf("after a removal b holds %v", got)
-	}
-}
-
-// The cursor stays at the last entry of a carried family, so a family carried
-// later is not skipped.
-func scenarioUncarried(p *csPair) {
-	id, _ := p.a.Collections().Create(p.ca, p.sa, "Before a draft", "")
-	u := p.uuid(p.a, p.ca, p.sa, id)
-	if _, err := p.a.Transcriptions().Save(p.ca, p.sa, &storage.Transcription{FormatVersion: "1", Label: "Not carried yet", Document: "{}"}); err != nil {
-		p.t.Fatal(err)
-	}
-	set, err := changeset.Export(p.ca, p.a, p.sa, storage.Cursor{}, 1000)
-	if err != nil {
-		p.t.Fatal(err)
-	}
-	last := p.entry(p.a, p.ca, p.sa, u).Seq
-	if set.Cursor.Seq != last {
-		p.t.Errorf("cursor %d passed the carried entries (%d) over an uncarried family", set.Cursor.Seq, last)
-	}
-	for _, r := range set.Records {
-		if r.Family == "transcription" {
-			p.t.Errorf("a record of family %s", r.Family)
-		}
 	}
 }
 

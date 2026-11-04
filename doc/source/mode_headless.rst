@@ -1453,6 +1453,11 @@ l'import absorbe la répétition. ``changeset.import`` (``records``) fusionne, l
 dernière écriture gagnant, et rend le rapport : ``added``, ``modified``,
 ``removed``, ``older``, ``conflicts``, et ``missing`` pour une référence qui
 n'a pas pu être placée. Une note écrasée par l'import reste dans la corbeille.
+Le journal porte les positions (avec leur analyse), les matchs, les collections,
+les notes, les leçons, les transcriptions, les tournois et les paquets Anki avec
+leurs cartes et leur planning. Un tournoi voyage avec son en-tête et sa note, pas
+avec la liste de ses matchs ; les familles sans corbeille (leçons, transcriptions,
+tournois, paquets, cartes) s'effacent quand un pair les met en corbeille.
 
 Trois marques s'ajoutent à une position : ``changeset.export`` les emporte toutes
 les trois, l'export et le transfert le dessin et le lien d'origine, sans le libellé.

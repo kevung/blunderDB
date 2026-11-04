@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/storagetest"
 )
@@ -65,4 +67,43 @@ func TestChangeSetFirstSync_SQLite(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+}
+
+// The cursor stays at the last entry of a carried family, so a family a later
+// version carries is not skipped by a peer that exported before it did.
+func TestChangeSetCursorStopsAtUncarriedFamilies_SQLite(t *testing.T) {
+	ctx := context.Background()
+	s, path := openLib(t)
+	id, err := s.Collections().Create(ctx, "", "Before the unknown", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	u, err := s.ObjectUUIDs().ObjectUUID(ctx, "", "collection", id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	if _, err := db.ExecContext(ctx, `INSERT INTO change_log (uuid, family, op) VALUES ('0190a000-0000-7000-8000-00000000f00d', 'not-carried-yet', 'update')`); err != nil {
+		t.Fatal(err)
+	}
+	set, err := changeset.Export(ctx, s, "", storage.Cursor{}, 1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	last, err := s.ChangeJournal().Entry(ctx, "", u)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if set.Cursor.Seq != last.Seq {
+		t.Errorf("cursor %d passed the carried entries (%d) over an uncarried family", set.Cursor.Seq, last.Seq)
+	}
+	for _, r := range set.Records {
+		if r.Family == "not-carried-yet" {
+			t.Errorf("a record of family %s", r.Family)
+		}
+	}
 }
