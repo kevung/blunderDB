@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -576,6 +577,9 @@ func portableMatch(p *domain.TrashMatchPayload) {
 	p.UUID, p.Origin = "", nil
 	p.DirectionSlot, p.DirectionPair, p.TranscriptionIDs, p.ImportFileIDs = "", [2]string{}, nil, nil
 	p.Match.ID, p.Match.ImportDate, p.Match.TournamentID, p.Match.ImportBatchID = 0, time.Time{}, nil, 0
+	// Its place is the index below: the number kept here counts the gaps a
+	// removal left, which two libraries holding one order do not share.
+	p.Match.TournamentSortOrder = 0
 	p.Match.LastVisitedPosition = -1
 	pos := map[int64]int64{}
 	for i := range p.Positions {
@@ -607,6 +611,28 @@ func portableMatch(p *domain.TrashMatchPayload) {
 var matchCodec = codec{
 	rank:      1,
 	trashKind: domain.TrashMatch,
+	// A tie says neither side knows of the other's edit: a payload that names no
+	// tournament is no detaching for a peer's naming one to undo, and two notes
+	// are both kept. The rest is the winner's, the one the digests settle.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l matchPayload
+		if err := json.Unmarshal(winner, &w); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		if err := json.Unmarshal(loser, &l); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		switch {
+		case (w.Tournament == nil || *w.Tournament == "") && l.Tournament != nil && *l.Tournament != "":
+			w.Tournament, w.TournamentIndex = l.Tournament, l.TournamentIndex
+		case l.Tournament != nil && w.Tournament != nil && *l.Tournament == *w.Tournament:
+			// Each counts the matches it knows before this one: the side that
+			// knows more is the one whose place fits the whole.
+			w.TournamentIndex = max(w.TournamentIndex, l.TournamentIndex)
+		}
+		w.Match.Comment = joinText(w.Match.Comment, l.Match.Comment)
+		return json.Marshal(w)
+	},
 	read: func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error) {
 		p, err := trash.SnapshotMatch(ctx, s, scope, id)
 		if err != nil {
@@ -716,28 +742,90 @@ func joinTournament(ctx context.Context, s storage.Stores, scope string, id int6
 			return err
 		}
 	}
-	var ids []int64
-	for tm, err := range ts.Matches(ctx, scope, tid) {
-		if err != nil {
-			return err
-		}
-		if tm.ID != id {
-			ids = append(ids, tm.ID)
-		}
+	notePlace(ctx, place{tournament: tid, match: id, index: p.TournamentIndex})
+	return nil
+}
+
+// place is where a match said it stood among its tournament's, once the import
+// has brought every match in.
+type place struct {
+	tournament, match int64
+	index             int
+	uuid              string
+}
+
+type placeKey struct{}
+
+func notePlace(ctx context.Context, pl place) {
+	if list, ok := ctx.Value(placeKey{}).(*[]place); ok {
+		*list = append(*list, pl)
 	}
-	at := min(max(p.TournamentIndex, 0), len(ids))
-	ids = slices.Insert(ids, at, id)
-	var now []int64
-	for tm, err := range ts.Matches(ctx, scope, tid) {
-		if err != nil {
-			return err
-		}
-		now = append(now, tm.ID)
-	}
-	if slices.Equal(now, ids) {
+}
+
+// settlePlaces orders each tournament the import touched. A match goes at the
+// index it names among the ones the import did not move, those taken by index
+// and then by uuid: the order the journal delivered them in decides nothing,
+// so every library reaches the order the matches name.
+func settlePlaces(ctx context.Context, s storage.Stores, scope string, places []place) error {
+	if len(places) == 0 {
 		return nil
 	}
-	return ts.ReorderMatches(ctx, scope, tid, ids)
+	_, uuids, err := providers(s)
+	if err != nil {
+		return err
+	}
+	byTournament := map[int64][]place{}
+	for _, pl := range places {
+		if pl.uuid, err = uuids.ObjectUUID(ctx, scope, "match", pl.match); err != nil {
+			return err
+		}
+		byTournament[pl.tournament] = append(byTournament[pl.tournament], pl)
+	}
+	for tid, pls := range byTournament {
+		slices.SortFunc(pls, func(a, b place) int {
+			if a.index != b.index {
+				return a.index - b.index
+			}
+			return strings.Compare(a.uuid, b.uuid)
+		})
+		pls = slices.CompactFunc(pls, func(a, b place) bool { return a.match == b.match })
+		err := trash.InTx(ctx, s, scope, func(s storage.Stores) error {
+			journal, _, err := providers(s)
+			if err != nil {
+				return err
+			}
+			var now, order []int64
+			for tm, err := range s.Tournaments().Matches(ctx, scope, tid) {
+				if err != nil {
+					return err
+				}
+				now = append(now, tm.ID)
+				if !slices.ContainsFunc(pls, func(pl place) bool { return pl.match == tm.ID }) {
+					order = append(order, tm.ID)
+				}
+			}
+			for _, pl := range pls {
+				if slices.Contains(now, pl.match) {
+					order = slices.Insert(order, min(max(pl.index, 0), len(order)), pl.match)
+				}
+			}
+			if slices.Equal(now, order) {
+				return nil
+			}
+			// The order is what the records say: it is no edit to send back.
+			if err := journal.Applying(ctx, scope, time.Now().UTC().Format(storage.ChangedAtLayout)); err != nil {
+				return err
+			}
+			if err := s.Tournaments().ReorderMatches(ctx, scope, tid, order); err != nil {
+				return err
+			}
+			return journal.Applying(ctx, scope, "")
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // hashesFree refuses a header whose new hash is another local match's.

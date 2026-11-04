@@ -23,9 +23,11 @@ var _ storage.ChangeJournalStore = (*ChangeJournalStore)(nil)
 //
 // A match's tournament is not among them: it travels with the match. A
 // synchronisation of a deck and the attaching of a match to a tournament touch
-// updated_at and nothing the payload carries.
+// updated_at: the deck's payload leaves it out; the tournament's carries it, so
+// an attaching changes that payload without dating it, and an exchange from 0
+// meets a tie there, which the tournament's merge settles (the later date).
 var LocalColumns = map[string][]string{
-	"match":      {"import_date", "import_batch_id", "last_visited_position", "last_visited_at"},
+	"match":      {"import_date", "import_batch_id", "last_visited_position", "last_visited_at", "direction_match_id"},
 	"anki_deck":  {"updated_at"},
 	"tournament": {"updated_at", "sort_order", "rencontre_id", "rencontre_rooms"},
 }
