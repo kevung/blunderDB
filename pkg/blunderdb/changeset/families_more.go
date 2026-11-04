@@ -1,6 +1,8 @@
 package changeset
 
 import (
+	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -8,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -63,6 +66,23 @@ func saveTranscription(ctx context.Context, s storage.Stores, scope string, id i
 
 var transcriptionCodec = codec{
 	rank: 5,
+	// A tie says neither side knows of the other's edit: a draft that names the
+	// match it produced is kept over the same draft standing alone (its match
+	// had not arrived), whatever the digests say.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l transcriptionPayload
+		if err := decode("transcription", winner, &w); err != nil {
+			return nil, err
+		}
+		if err := decode("transcription", loser, &l); err != nil {
+			return nil, err
+		}
+		if w.Match != "" || l.Match == "" {
+			return winner, nil
+		}
+		w.Match = l.Match
+		return json.Marshal(w)
+	},
 	read: func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error) {
 		t, err := s.Transcriptions().Get(ctx, scope, id)
 		if err != nil {
@@ -100,7 +120,7 @@ var transcriptionCodec = codec{
 // --- tournament ---
 
 // tournamentPayload is a tournament's header and note. Which matches belong to
-// it is a fact of the library (the match carries it), not carried.
+// it is the match's to say (it names the tournament).
 type tournamentPayload struct {
 	Name      string `json:"name"`
 	Date      string `json:"date,omitempty"`
@@ -111,7 +131,8 @@ type tournamentPayload struct {
 }
 
 var tournamentCodec = codec{
-	rank: 6,
+	// Before the matches, which name it.
+	rank: -1,
 	read: func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error) {
 		t, err := s.Tournaments().Get(ctx, scope, id)
 		if err != nil {
@@ -193,6 +214,19 @@ func portableSource(ctx context.Context, s storage.Stores, scope, source string)
 		refs = append(refs, ref)
 	}
 	delete(doc, "ids")
+	// The command and the payload replay on the peer's own numbering: one that
+	// names a row by id selects other rows there, so it is dropped, as every
+	// other path a deck travels by drops it. The refs stay.
+	if raw, ok := doc["command"]; ok {
+		var command string
+		if json.Unmarshal(raw, &command) != nil || commandNamesRows(command) {
+			delete(doc, "command")
+			delete(doc, "position")
+		}
+	}
+	if raw, ok := doc["payload"]; ok && domain.SearchPayloadNamesRows(raw) {
+		delete(doc, "payload")
+	}
 	raw, err := json.Marshal(refs)
 	if err != nil {
 		return "", err
@@ -200,6 +234,13 @@ func portableSource(ctx context.Context, s storage.Stores, scope, source string)
 	doc["refs"] = raw
 	out, err := json.Marshal(doc)
 	return string(out), err
+}
+
+// commandNamesRows says a command-bar query selects by row id (like<n>, id<n>,
+// ma<n>, tn<n>).
+func commandNamesRows(command string) bool {
+	f, _ := searchquery.Parse(command)
+	return f.LikeTargetID != 0 || f.PositionIDsFilter != "" || f.MatchIDsFilter != "" || f.TournamentIDsFilter != ""
 }
 
 func localSource(ctx context.Context, s storage.Stores, scope, source string) (string, error) {
@@ -234,8 +275,34 @@ func localSource(ctx context.Context, s storage.Stores, scope, source string) (s
 	return string(out), err
 }
 
+// ankiStates is the backend's Anki state; a backend that keeps a journal but
+// no decks (the contract is optional) answers every call with an error rather
+// than a panic.
 func ankiStates(s storage.Stores) storage.AnkiStateStore {
-	return s.(storage.AnkiStateProvider).AnkiStates()
+	if p, ok := s.(storage.AnkiStateProvider); ok {
+		return p.AnkiStates()
+	}
+	return noAnkiState{}
+}
+
+var errNoAnkiState = errors.New("changeset: the backend keeps no Anki decks and cards")
+
+type noAnkiState struct{}
+
+func (noAnkiState) Deck(context.Context, string, int64) (*domain.AnkiDeck, error) {
+	return nil, errNoAnkiState
+}
+func (noAnkiState) PutDeck(context.Context, string, domain.AnkiDeck) (int64, error) {
+	return 0, errNoAnkiState
+}
+func (noAnkiState) Card(context.Context, string, int64) (*domain.AnkiCard, error) {
+	return nil, errNoAnkiState
+}
+func (noAnkiState) FindCard(context.Context, string, int64, string, string) (int64, bool, error) {
+	return 0, false, errNoAnkiState
+}
+func (noAnkiState) PutCard(context.Context, string, domain.AnkiCard) (int64, error) {
+	return 0, errNoAnkiState
 }
 
 func deckFrom(ctx context.Context, s storage.Stores, scope string, id int64, p deckPayload) (domain.AnkiDeck, error) {
@@ -356,8 +423,45 @@ func (p cardPayload) card(id, deckID, positionID int64, key string) domain.AnkiC
 		Reps: p.Reps, Lapses: p.Lapses, State: p.State, LastReview: p.LastReview, Suspended: p.Suspended, BuriedUntil: p.BuriedUntil}
 }
 
+// ahead orders two states of one card by how far its reviews went: the later
+// last review, then the more reviews, then the more lapses. Equal in all three
+// they are told apart by their bytes, so both sides settle on the same one.
+func (p cardPayload) ahead(o cardPayload) int {
+	if c := cmp.Compare(p.LastReview, o.LastReview); c != 0 {
+		return c
+	}
+	if c := cmp.Compare(p.Reps, o.Reps); c != 0 {
+		return c
+	}
+	if c := cmp.Compare(p.Lapses, o.Lapses); c != 0 {
+		return c
+	}
+	a, _ := json.Marshal(p)
+	b, _ := json.Marshal(o)
+	return bytes.Compare(a, b)
+}
+
 var cardCodec = codec{
 	rank: 8,
+	// Two states of one card that nothing orders (a tie, or a draw that met a
+	// card reviewed elsewhere) keep the one whose reviews went further: a draw
+	// carries no review, so it never stands for the last write.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l cardPayload
+		if err := decode("card", winner, &w); err != nil {
+			return nil, err
+		}
+		if err := decode("card", loser, &l); err != nil {
+			return nil, err
+		}
+		if l.ahead(w) > 0 {
+			return loser, nil
+		}
+		return winner, nil
+	},
+	// The cards of two libraries that drew the same question meet under two
+	// uuids: the planning that went furthest is the card's.
+	twins: true,
 	read: func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error) {
 		c, err := ankiStates(s).Card(ctx, scope, id)
 		if err != nil {

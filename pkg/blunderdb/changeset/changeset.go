@@ -29,6 +29,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -106,6 +107,9 @@ type codec struct {
 	// greater tieKey simply wins. It keeps what the winner would lose for no
 	// reason; a same result on both sides is what lets them converge.
 	merge func(winner, loser json.RawMessage) (json.RawMessage, error)
+	// twins says a record found under another uuid by locate is merged with the
+	// local content whatever the dates say, instead of the later one winning.
+	twins bool
 }
 
 var codecs = map[string]codec{
@@ -129,6 +133,12 @@ func families() []string {
 	}
 	slices.SortFunc(out, func(a, b string) int { return codecs[a].rank - codecs[b].rank })
 	return out
+}
+
+// carriedStamp names the set of families an export reads.
+func carriedStamp(carried []string) string {
+	sum := sha256.Sum256([]byte(strings.Join(carried, ",")))
+	return hex.EncodeToString(sum[:4])
 }
 
 func providers(s storage.Stores) (storage.ChangeJournalStore, storage.ObjectUUIDStore, error) {
@@ -165,6 +175,13 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 		limit = 1000
 	}
 	carried := families()
+	stamp := carriedStamp(carried)
+	// A cursor taken when fewer families were carried (or by a library that
+	// recorded none) passed the entries of the others unread: it would give
+	// nothing for them, silently.
+	if !after.IsStart() && after.Carried != stamp {
+		return Set{}, fmt.Errorf("changeset: the cursor predates the families now carried, export from the start: %w", storage.ErrCursorStale)
+	}
 	run := after
 	if run.Family == "" {
 		// The rows that predate the journal have no entry for a cursor to reach:
@@ -192,7 +209,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 		if err != nil {
 			return Set{}, err
 		}
-		run.Epoch = end.Epoch
+		run.Epoch, run.Carried = end.Epoch, stamp
 		run.Family, run.ReadXid, run.ReadSeq = carried[0], after.Xid, after.Seq
 		run.EndXid, run.EndSeq = end.Xid, end.Seq
 		// An entry past the horizon can be gone (a uuid given back drops it).
@@ -236,7 +253,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 			return set, nil
 		}
 		if family++; family == len(carried) {
-			set.Cursor = storage.Cursor{Xid: run.EndXid, Seq: run.EndSeq, Epoch: run.Epoch}
+			set.Cursor = storage.Cursor{Xid: run.EndXid, Seq: run.EndSeq, Epoch: run.Epoch, Carried: stamp}
 			return set, nil
 		}
 		run.Family, run.ReadXid, run.ReadSeq = carried[family], run.Xid, run.Seq
@@ -253,6 +270,11 @@ func loadPayload(ctx context.Context, s storage.Stores, uuids storage.ObjectUUID
 		return false, err
 	}
 	content, err := codecs[rec.Family].read(ctx, s, scope, id)
+	if errors.Is(err, storage.ErrNotFound) {
+		// What the object points at is gone (a card whose position was removed
+		// behind the schema's back): it stays out, as an object that vanished.
+		return false, nil
+	}
 	if err != nil {
 		return false, err
 	}
@@ -426,6 +448,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 	if err != nil && !errors.Is(err, storage.ErrNotFound) {
 		return lost, err
 	}
+	twin := false
 	if !held && cd.locate != nil {
 		// The same object under another name: the older uuid is kept on both
 		// sides, whichever library meets the other first.
@@ -434,7 +457,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 			return lost, err
 		}
 		if held {
-			r.UUID = uuid
+			r.UUID, twin = uuid, true
 		}
 	}
 	local, err := journal.Entry(ctx, scope, r.UUID)
@@ -443,6 +466,31 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		return lost, err
 	}
 	switch {
+	case twin && cd.twins && hasEntry && held && len(r.Payload) > 0 && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete &&
+		(r.Op == storage.ChangeCreate || r.Op == storage.ChangeUpdate):
+		// Two draws of one object: neither is the other's edit, so the dates do
+		// not order them. What the merge keeps is dated as the later of the two.
+		content, err := cd.read(ctx, s, scope, id)
+		if err != nil {
+			return lost, err
+		}
+		payload, err := json.Marshal(content)
+		if err != nil {
+			return lost, err
+		}
+		merged, err := cd.merge(r.Payload, payload)
+		if err != nil {
+			return lost, err
+		}
+		if tieKey(storage.ChangeUpdate, merged) == tieKey(storage.ChangeUpdate, payload) {
+			return lost, nil
+		}
+		r.Payload = merged
+		if localAt, err := normalize(local.ChangedAt); err != nil {
+			return lost, err
+		} else if localAt > r.ChangedAt {
+			r.ChangedAt = localAt
+		}
 	case hasEntry:
 		localAt, err := normalize(local.ChangedAt)
 		if err != nil {

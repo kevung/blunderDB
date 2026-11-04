@@ -6,11 +6,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// payloadIDFields are the fields of a stored search payload that name rows
-// by id. The payload is the frontend's filter set, replayed as is: nothing
-// here can rewrite it the way the command bar's grammar is rewritten.
-var payloadIDFields = []string{"likeTargetId", "positionIDsFilter", "matchIDsFilter", "tournamentIDsFilter", "restrictToPositionIDs"}
-
 // carriedSearchSource moves a search deck's source from one library's
 // numbering to another's, for every path a deck travels by — export to a
 // file, import from one. Its `ids` are renumbered, a position left behind
@@ -48,7 +43,7 @@ func carriedSearchSource(source string, positions, matches, tournaments map[int6
 			delete(doc, "position")
 		}
 	}
-	if raw, ok := doc["payload"]; ok && payloadNamesRows(raw) {
+	if raw, ok := doc["payload"]; ok && domain.SearchPayloadNamesRows(raw) {
 		delete(doc, "payload")
 	}
 	out, err := json.Marshal(doc)
@@ -56,31 +51,6 @@ func carriedSearchSource(source string, positions, matches, tournaments map[int6
 		return remapIDList(source, positions)
 	}
 	return string(out)
-}
-
-// payloadNamesRows reports whether a stored search payload names a row by
-// id; one that cannot be read is treated as naming some.
-func payloadNamesRows(raw json.RawMessage) bool {
-	var p map[string]any
-	if err := json.Unmarshal(raw, &p); err != nil {
-		return true
-	}
-	for _, k := range payloadIDFields {
-		switch v := p[k].(type) {
-		case nil:
-		case string:
-			if v != "" {
-				return true
-			}
-		case float64:
-			if v != 0 {
-				return true
-			}
-		default:
-			return true
-		}
-	}
-	return false
 }
 
 // searchSourceLost reports whether carrying a search deck's source dropped

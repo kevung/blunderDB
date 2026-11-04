@@ -22,6 +22,7 @@ func CheckChangeSetAnkiFamilies(t *testing.T, a storage.Storage, ca context.Cont
 	t.Run("Transcription", func(t *testing.T) { p := pair(); p.t = t; scenarioTranscription(p) })
 	t.Run("Tournament", func(t *testing.T) { p := pair(); p.t = t; scenarioTournament(p) })
 	t.Run("TrashIsADelete", func(t *testing.T) { p := pair(); p.t = t; scenarioTrashWithoutBin(p) })
+	checkChangeSetReview(t, pair)
 }
 
 // sent imports one record of a peer into b, dated now.

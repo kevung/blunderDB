@@ -52,10 +52,10 @@ func EnsureChangeLog(ctx context.Context, db *sql.DB) error {
 			return fmt.Sprintf(`DELETE FROM change_log WHERE uuid = %[1]s; INSERT INTO change_log (uuid, family, op, changed_at) SELECT %[1]s, '%[2]s', %[3]s, %[4]s;`,
 				uuid, f.Family, op, at)
 		}
-		// A match rewrites its row for what is local to the library too.
+		// A row is rewritten for what is local to the library too.
 		changedOnly := ""
-		if f.Table == "match" {
-			if changedOnly, err = matchChangeCondition(ctx, db); err != nil {
+		if local := sqlshared.LocalColumns[f.Table]; local != nil {
+			if changedOnly, err = changeCondition(ctx, db, f.Table, local); err != nil {
 				return err
 			}
 		}
@@ -111,26 +111,26 @@ func EnsureChangeLog(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-// matchChangeCondition is the part of a WHEN that holds when a column of match
-// other than sqlshared.LocalMatchColumns changed.
-func matchChangeCondition(ctx context.Context, db *sql.DB) (string, error) {
-	rows, err := db.QueryContext(ctx, `SELECT name FROM pragma_table_info('match')`)
+// changeCondition is the part of a WHEN that holds when a column of table
+// other than the local ones changed.
+func changeCondition(ctx context.Context, db *sql.DB, table string, local []string) (string, error) {
+	rows, err := db.QueryContext(ctx, `SELECT name FROM pragma_table_info(?)`, table)
 	if err != nil {
-		return "", fmt.Errorf("sqlite: columns of match: %w", err)
+		return "", fmt.Errorf("sqlite: columns of %s: %w", table, err)
 	}
 	defer rows.Close()
 	var diff []string
 	for rows.Next() {
 		var col string
 		if err := rows.Scan(&col); err != nil {
-			return "", fmt.Errorf("sqlite: columns of match: %w", err)
+			return "", fmt.Errorf("sqlite: columns of %s: %w", table, err)
 		}
-		if !slices.Contains(sqlshared.LocalMatchColumns, col) {
+		if !slices.Contains(local, col) {
 			diff = append(diff, fmt.Sprintf(`OLD."%[1]s" IS NOT NEW."%[1]s"`, col))
 		}
 	}
 	if err := rows.Err(); err != nil {
-		return "", fmt.Errorf("sqlite: columns of match: %w", err)
+		return "", fmt.Errorf("sqlite: columns of %s: %w", table, err)
 	}
 	// Sorted: a migrated library holds its columns in another order than a fresh one.
 	slices.Sort(diff)

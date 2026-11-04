@@ -244,6 +244,9 @@ func TestMigrate_059_DeckAndTournamentUUIDsUnderRLS(t *testing.T) {
 				}
 				got = append(got, u)
 			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
+			}
 		})
 		want := []string{sqlshared.DeriveObjectUUID("anki_deck", "Openings", 1), sqlshared.DeriveObjectUUID("anki_deck", "Openings", 2)}
 		if len(got) != 2 || got[0] != want[0] || got[1] != want[1] {

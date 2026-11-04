@@ -391,7 +391,9 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   Schema-visible: bumped `domain.DatabaseVersion` to 2.55.0.
 - `059_deck_tournament_uuid.sql` — `anki_deck.uuid` and `tournament.uuid` (unique
   per tenant, `blunderdb_uuid7()` by default, set after the bare `ADD COLUMN`),
-  and a `blunderdb_journal` trigger on each. The rows held before are named by
+  and a `blunderdb_journal` trigger on each, whose update side ignores the columns
+  that are the library's own (`sqlshared.LocalColumns`); the match's update trigger
+  now journals a change of its tournament. The rows held before are named by
   Go in a pass of their own per family (`sqlshared.MarkFor`), so a library that
   passed 054's pass still gets it. `lock_timeout = 15s`.
   Schema-visible: bumped `domain.DatabaseVersion` to 2.56.0.

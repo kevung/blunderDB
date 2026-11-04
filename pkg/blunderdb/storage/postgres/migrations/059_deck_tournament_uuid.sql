@@ -10,9 +10,12 @@
 --   * The rows held before are named by Go (backfillObjectUUIDs, run by
 --     Migrate), once per family: a library that passed the pass of 054 still
 --     gets this one (its own metadata row, sqlshared.MarkFor).
---   * One journal trigger per table, the function being 055's.
+--   * One journal trigger per table, the function being 055's; the update
+--     trigger of a deck and of a tournament, and 055's of a match, leave out
+--     the columns that are local (see below).
 -- No COMMIT, no role switch: it holds on blunderdb_user under FORCE RLS.
--- ALTER TABLE and CREATE TRIGGER lock the two (small) tables: lock_timeout
+-- ALTER TABLE and CREATE TRIGGER lock the two (small) tables, and the trigger of
+-- match for the instant of its swap: lock_timeout
 -- makes a busy one fail the migration, retried at the next start, rather
 -- than queue writers behind a long transaction. Idempotent.
 -- Schema-visible: bumps domain.DatabaseVersion to 2.56.0.
@@ -28,9 +31,36 @@ ALTER TABLE tournament ALTER COLUMN uuid SET DEFAULT blunderdb_uuid7();
 CREATE UNIQUE INDEX IF NOT EXISTS idx_anki_deck_uuid  ON anki_deck (tenant_id, uuid);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_tournament_uuid ON tournament (tenant_id, uuid);
 
+-- What a local gesture rewrites without the object having changed stays out of
+-- what dates it: a synchronisation of a deck and the attaching of a match to a
+-- tournament touch updated_at (and the tournament's order and rencontre) and
+-- nothing the changeset carries. sqlshared.LocalColumns spells the same lists.
 DROP TRIGGER IF EXISTS change_log_anki_deck ON anki_deck;
-CREATE TRIGGER change_log_anki_deck AFTER INSERT OR UPDATE OR DELETE ON anki_deck
+CREATE TRIGGER change_log_anki_deck AFTER INSERT OR DELETE ON anki_deck
     FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('anki_deck');
+DROP TRIGGER IF EXISTS change_log_anki_deck_update ON anki_deck;
+CREATE TRIGGER change_log_anki_deck_update AFTER UPDATE ON anki_deck
+    FOR EACH ROW WHEN (
+        (to_jsonb(OLD) - ARRAY['updated_at']) IS DISTINCT FROM (to_jsonb(NEW) - ARRAY['updated_at'])
+    ) EXECUTE FUNCTION blunderdb_journal('anki_deck');
 DROP TRIGGER IF EXISTS change_log_tournament ON tournament;
-CREATE TRIGGER change_log_tournament AFTER INSERT OR UPDATE OR DELETE ON tournament
+CREATE TRIGGER change_log_tournament AFTER INSERT OR DELETE ON tournament
     FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('tournament');
+DROP TRIGGER IF EXISTS change_log_tournament_update ON tournament;
+CREATE TRIGGER change_log_tournament_update AFTER UPDATE ON tournament
+    FOR EACH ROW WHEN (
+        (to_jsonb(OLD) - ARRAY['updated_at', 'sort_order', 'rencontre_id', 'rencontre_rooms'])
+        IS DISTINCT FROM
+        (to_jsonb(NEW) - ARRAY['updated_at', 'sort_order', 'rencontre_id', 'rencontre_rooms'])
+    ) EXECUTE FUNCTION blunderdb_journal('tournament');
+
+-- The tournament a match belongs to travels with the match (its payload names
+-- the tournament by uuid), so changing it dates the match: the list of 055
+-- without tournament_id.
+DROP TRIGGER IF EXISTS change_log_match_update ON match;
+CREATE TRIGGER change_log_match_update AFTER UPDATE ON match
+    FOR EACH ROW WHEN (
+        (to_jsonb(OLD) - ARRAY['import_date', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
+        IS DISTINCT FROM
+        (to_jsonb(NEW) - ARRAY['import_date', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
+    ) EXECUTE FUNCTION blunderdb_journal('match');

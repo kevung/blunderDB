@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"path/filepath"
+	"strconv"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/storagetest"
@@ -105,5 +107,70 @@ func TestChangeSetCursorStopsAtUncarriedFamilies_SQLite(t *testing.T) {
 		if r.Family == "not-carried-yet" {
 			t.Errorf("a record of family %s", r.Family)
 		}
+	}
+}
+
+// A card whose position row is gone leaves the export of the rest standing.
+func TestChangeSetOrphanCard_SQLite(t *testing.T) {
+	ctx := context.Background()
+	a, path := openLib(t)
+	q := domain.InitializePosition()
+	pid, err := a.Positions().Save(ctx, "", &q)
+	if err != nil {
+		t.Fatal(err)
+	}
+	deck, err := a.Anki().CreateDeck(ctx, "", "Orphans", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Anki().SyncWithPositions(ctx, "", deck, []int64{pid}); err != nil {
+		t.Fatal(err)
+	}
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+	for _, stmt := range []string{`PRAGMA foreign_keys = OFF`, `DELETE FROM position WHERE id = ` + strconv.FormatInt(pid, 10)} {
+		if _, err := conn.ExecContext(ctx, stmt); err != nil {
+			t.Fatal(err)
+		}
+	}
+	set, err := changeset.Export(ctx, a, "", storage.Cursor{}, 1000)
+	if err != nil {
+		t.Fatalf("an orphan card failed the whole export: %v", err)
+	}
+	for _, r := range set.Records {
+		if r.Family == "anki_card" && r.Op != storage.ChangeDelete {
+			t.Errorf("the orphan card was exported: %+v", r)
+		}
+	}
+}
+
+// journalOnly is a backend that keeps a journal and uuids but no Anki state.
+type journalOnly struct {
+	storage.Stores
+	s *sqlite.Storage
+}
+
+func (j journalOnly) ChangeJournal() storage.ChangeJournalStore { return j.s.ChangeJournal() }
+func (j journalOnly) ObjectUUIDs() storage.ObjectUUIDStore      { return j.s.ObjectUUIDs() }
+
+// A deck record meeting a backend with no Anki state is an error, not a panic.
+func TestChangeSetWithoutAnkiState_SQLite(t *testing.T) {
+	ctx := context.Background()
+	a, _ := openLib(t)
+	deck := changeset.Record{
+		Change:  storage.Change{UUID: "0198a000-0000-7000-8000-000000000001", Family: "anki_deck", Op: storage.ChangeCreate, ChangedAt: "2026-01-01T00:00:00.000Z"},
+		Payload: []byte(`{"name":"D","sourceType":"search"}`),
+	}
+	_, err := changeset.Import(ctx, journalOnly{Stores: a, s: a}, "", changeset.Set{Records: []changeset.Record{deck}})
+	if err == nil {
+		t.Fatal("a deck was imported by a backend that keeps none")
 	}
 }

@@ -104,8 +104,8 @@ func TestChangeSetCursorAfterRestore_Postgres(t *testing.T) {
 	}
 
 	for name, cur := range map[string]storage.Cursor{
-		"ahead of the counter": {Xid: ahead, Seq: first.Cursor.Seq, Epoch: first.Cursor.Epoch},
-		"of another cluster":   {Xid: first.Cursor.Xid, Seq: first.Cursor.Seq, Epoch: "another cluster"},
+		"ahead of the counter": {Xid: ahead, Seq: first.Cursor.Seq, Epoch: first.Cursor.Epoch, Carried: first.Cursor.Carried},
+		"of another cluster":   {Xid: first.Cursor.Xid, Seq: first.Cursor.Seq, Epoch: "another cluster", Carried: first.Cursor.Carried},
 	} {
 		if set, err := changeset.Export(ca, rls, "1", cur, 100); !errors.Is(err, storage.ErrCursorStale) {
 			t.Errorf("cursor %s: %d records, %v, want ErrCursorStale", name, len(set.Records), err)

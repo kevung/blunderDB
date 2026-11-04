@@ -15,10 +15,20 @@ type ChangeJournalStore struct{ DB Execer }
 
 var _ storage.ChangeJournalStore = (*ChangeJournalStore)(nil)
 
-// LocalMatchColumns are the columns of a match that belong to the library, not
-// to the match, the ones its changeset payload leaves out: changing them alone
-// is no change a peer should see. 055_change_log.sql spells the same list.
-var LocalMatchColumns = []string{"import_date", "tournament_id", "import_batch_id", "last_visited_position", "last_visited_at"}
+// LocalColumns are, per table, the columns that belong to the library, not to
+// the object: the ones its changeset payload leaves out, or that a local
+// gesture rewrites without the object having changed. Changing them alone
+// dates nothing. 055_change_log.sql and 059_deck_tournament_uuid.sql spell the
+// same lists.
+//
+// A match's tournament is not among them: it travels with the match. A
+// synchronisation of a deck and the attaching of a match to a tournament touch
+// updated_at and nothing the payload carries.
+var LocalColumns = map[string][]string{
+	"match":      {"import_date", "import_batch_id", "last_visited_position", "last_visited_at"},
+	"anki_deck":  {"updated_at"},
+	"tournament": {"updated_at", "sort_order", "rencontre_id", "rencontre_rooms"},
+}
 
 // changedAtText renders changed_at as UTC RFC 3339 with milliseconds on both
 // backends (SQLite stores that text; PostgreSQL a timestamptz).
