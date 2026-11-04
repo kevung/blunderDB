@@ -142,4 +142,6 @@ export function SaveWatchFolder(arg1:boolean,arg2:string,arg3:number):Promise<vo
 
 export function SaveWindowDimensions(arg1:number,arg2:number):Promise<void>;
 
-export function SyncServerAddress():Promise<string|boolean>;
+export function SyncAutoStart():Promise<boolean>;
+
+export function SyncServerAddress():Promise<string>;

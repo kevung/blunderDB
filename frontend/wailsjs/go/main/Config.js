@@ -282,6 +282,10 @@ export function SaveWindowDimensions(arg1, arg2) {
   return window['go']['main']['Config']['SaveWindowDimensions'](arg1, arg2);
 }
 
+export function SyncAutoStart() {
+  return window['go']['main']['Config']['SyncAutoStart']();
+}
+
 export function SyncServerAddress() {
   return window['go']['main']['Config']['SyncServerAddress']();
 }
