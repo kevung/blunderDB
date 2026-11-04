@@ -438,6 +438,18 @@ export function SuggestWatchFolder() {
   return window['go']['gui']['App']['SuggestWatchFolder']();
 }
 
+export function SyncNow() {
+  return window['go']['gui']['App']['SyncNow']();
+}
+
+export function SyncSetToken(arg1, arg2) {
+  return window['go']['gui']['App']['SyncSetToken'](arg1, arg2);
+}
+
+export function SyncStatus() {
+  return window['go']['gui']['App']['SyncStatus']();
+}
+
 export function TransferToGroup(arg1, arg2) {
   return window['go']['gui']['App']['TransferToGroup'](arg1, arg2);
 }

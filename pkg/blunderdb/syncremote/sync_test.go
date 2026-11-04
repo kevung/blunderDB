@@ -88,7 +88,7 @@ func newServer(t *testing.T, lib *database.Database) *server {
 				http.Error(w, `{"error":{"code":"gone","message":"journal restored"}}`, http.StatusGone)
 				return
 			}
-			set, err := lib.ChangesetExport(r.Context(), req.Cursor, req.Limit)
+			set, err := database.JournalOf(lib).Export(r.Context(), req.Cursor, req.Limit)
 			if err != nil {
 				http.Error(w, `{"error":{"code":"internal","message":"x"}}`, http.StatusInternalServerError)
 				return
@@ -104,7 +104,7 @@ func newServer(t *testing.T, lib *database.Database) *server {
 				http.Error(w, `{"error":{"code":"unavailable","message":"busy"}}`, http.StatusServiceUnavailable)
 				return
 			}
-			rep, err := lib.ChangesetImport(r.Context(), changeset.Set{Records: req.Records})
+			rep, err := database.JournalOf(lib).Import(r.Context(), changeset.Set{Records: req.Records})
 			if err != nil {
 				http.Error(w, `{"error":{"code":"internal","message":"x"}}`, http.StatusInternalServerError)
 				return
@@ -143,7 +143,7 @@ func TestTwoPassesLevelBothLibrariesThenSendOnlyWhatChanged(t *testing.T) {
 	srv := newServer(t, b)
 	c := client(t, srv, token)
 
-	cur, res, err := syncremote.Run(context.Background(), a, c, syncremote.Cursors{}, syncremote.Options{})
+	cur, res, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -166,7 +166,7 @@ func TestTwoPassesLevelBothLibrariesThenSendOnlyWhatChanged(t *testing.T) {
 			}
 		}
 	}
-	cur2, res2, err := syncremote.Run(context.Background(), a, c, cur, syncremote.Options{})
+	cur2, res2, err := syncremote.Run(context.Background(), database.JournalOf(a), c, cur, syncremote.Options{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -187,11 +187,11 @@ func TestReplayOfTheSamePassChangesNothing(t *testing.T) {
 	create(t, a, "One")
 	srv := newServer(t, b)
 	c := client(t, srv, token)
-	if _, _, err := syncremote.Run(context.Background(), a, c, syncremote.Cursors{}, syncremote.Options{}); err != nil {
+	if _, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{}); err != nil {
 		t.Fatal(err)
 	}
 	// Lost cursors: everything is sent and received again.
-	_, res, err := syncremote.Run(context.Background(), a, c, syncremote.Cursors{}, syncremote.Options{})
+	_, res, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -214,7 +214,7 @@ func TestPagesAreSettledOneByOneAndAResumeSkipsThem(t *testing.T) {
 
 	var saved []syncremote.Cursors
 	opt := syncremote.Options{Page: 1, Save: func(c syncremote.Cursors) error { saved = append(saved, c); return nil }}
-	cur, _, err := syncremote.Run(context.Background(), a, c, syncremote.Cursors{}, opt)
+	cur, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, opt)
 	if err == nil || !strings.Contains(err.Error(), "does not answer") {
 		t.Fatalf("a failing page: err = %v, want ErrUnavailable", err)
 	}
@@ -228,7 +228,7 @@ func TestPagesAreSettledOneByOneAndAResumeSkipsThem(t *testing.T) {
 	srv.mu.Lock()
 	srv.failImportAt, srv.imported = 0, nil
 	srv.mu.Unlock()
-	if _, _, err := syncremote.Run(context.Background(), a, c, cur, opt); err != nil {
+	if _, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, cur, opt); err != nil {
 		t.Fatal(err)
 	}
 	has(t, b, "A1", "A2", "A3")
@@ -246,13 +246,13 @@ func TestStaleRemoteCursorRestartsFromTheBeginning(t *testing.T) {
 	create(t, b, "Server side")
 	srv := newServer(t, b)
 	c := client(t, srv, token)
-	cur, _, err := syncremote.Run(context.Background(), a, c, syncremote.Cursors{}, syncremote.Options{})
+	cur, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{})
 	if err != nil {
 		t.Fatal(err)
 	}
 	create(t, b, "Later")
 	srv.stale = func(after storage.Cursor) bool { return !after.IsStart() }
-	if _, _, err := syncremote.Run(context.Background(), a, c, cur, syncremote.Options{}); err != nil {
+	if _, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, cur, syncremote.Options{}); err != nil {
 		t.Fatalf("a refused cursor must restart from the start: %v", err)
 	}
 	has(t, a, "Server side", "Later")
@@ -264,7 +264,7 @@ func TestStaleLocalCursorRestartsFromTheBeginning(t *testing.T) {
 	srv := newServer(t, b)
 	c := client(t, srv, token)
 	cur := syncremote.Cursors{Sent: storage.Cursor{Seq: 5, Carried: "another journal"}}
-	if _, _, err := syncremote.Run(context.Background(), a, c, cur, syncremote.Options{}); err != nil {
+	if _, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, cur, syncremote.Options{}); err != nil {
 		t.Fatalf("a stale local cursor must restart: %v", err)
 	}
 	has(t, b, "Mine")
@@ -276,7 +276,7 @@ func TestARefusedTokenIsSaidAndNeverRepeated(t *testing.T) {
 	srv := newServer(t, b)
 	const wrong = "bdb_wrong-token"
 	c := client(t, srv, wrong)
-	cur, _, err := syncremote.Run(context.Background(), a, c, syncremote.Cursors{}, syncremote.Options{})
+	cur, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{})
 	if err == nil || !strings.Contains(err.Error(), "refuses the token") {
 		t.Fatalf("err = %v, want a refused token", err)
 	}
@@ -297,7 +297,7 @@ func TestAnUnreachableServerIsSaidAndTheLibraryStaysUsable(t *testing.T) {
 	srv := newServer(t, b)
 	c := client(t, srv, token)
 	srv.Close()
-	_, _, err := syncremote.Run(context.Background(), a, c, syncremote.Cursors{}, syncremote.Options{})
+	_, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{})
 	if err == nil || !strings.Contains(err.Error(), "does not answer") {
 		t.Fatalf("err = %v, want ErrUnavailable", err)
 	}

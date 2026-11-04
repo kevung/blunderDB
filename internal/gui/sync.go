@@ -252,7 +252,7 @@ func (a *App) syncRun(ctx context.Context) {
 		entries[key] = entry
 		return a.sync.store(entries)
 	}
-	_, r, err := syncremote.Run(ctx, db, client, entry.Cursors, syncremote.Options{Save: save})
+	_, r, err := syncremote.Run(ctx, database.JournalOf(db), client, entry.Cursors, syncremote.Options{Save: save})
 	res = &r
 	if err != nil {
 		runErr = syncError(err)

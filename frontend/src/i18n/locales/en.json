@@ -163,7 +163,8 @@
         "commentAuthor": "Your name",
         "commentAuthorNote": "Signs the comments you write. Empty: unsigned.",
         "assistantTitle": "Assistant and MCP",
-        "corpusTitle": "Corpus"
+        "corpusTitle": "Corpus",
+        "syncTitle": "Synchronisation"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -3029,6 +3030,32 @@
         "needsAck": "First accept this provider's privacy warning in Settings › Assistant and MCP.",
         "error": "Error: {error}",
         "write": "Let the assistant propose changes (each one confirmed)"
+    },
+    "sync": {
+        "title": "Synchronisation with a server",
+        "intro": "Keep your library level with a remote one: paste a server address and the personal token it gave you. Changes are sent and received page by page; when both sides changed the same thing, the most recent wins. Offline, nothing is blocked.",
+        "server": "Server address",
+        "token": "Personal token",
+        "tokenSave": "Save the token",
+        "tokenRemove": "Remove the token",
+        "tokenStored": "A token is stored in the system keyring.",
+        "tokenNone": "No token stored.",
+        "auto": "Synchronise at startup",
+        "now": "Synchronise now",
+        "running": "Synchronising…",
+        "last": "Last successful synchronisation: {date}",
+        "never": "Never synchronised.",
+        "result": "Sent: {sent} · received: {received}",
+        "error": {
+            "refused": "The server refuses the token: it is wrong, expired or revoked.",
+            "unavailable": "The server does not answer. Your library is intact; synchronisation resumes where it stopped.",
+            "rate_limited": "The server is limiting requests: try again in a few minutes.",
+            "too_large": "The server refuses a send that is too large.",
+            "address": "Invalid address: https:// is required (http:// only on this machine).",
+            "no_token": "No token is stored for this server.",
+            "no_library": "No library is open.",
+            "other": "Synchronisation failed."
+        }
     },
     "emptyState": {
         "import": "Import… (Ctrl+I)",

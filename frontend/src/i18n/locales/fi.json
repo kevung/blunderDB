@@ -163,7 +163,8 @@
         "commentAuthor": "Nimesi",
         "commentAuthorNote": "Allekirjoittaa kirjoittamasi kommentit. Tyhjä: ei allekirjoitusta.",
         "assistantTitle": "Avustaja ja MCP",
-        "corpusTitle": "Korpus"
+        "corpusTitle": "Korpus",
+        "syncTitle": "Synkronointi"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -3029,6 +3030,32 @@
         "needsAck": "Hyväksy ensin tämän palveluntarjoajan tietosuojavaroitus kohdassa Asetukset › Avustaja ja MCP.",
         "error": "Virhe: {error}",
         "write": "Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)"
+    },
+    "sync": {
+        "title": "Synkronointi palvelimen kanssa",
+        "intro": "Pidä kirjastosi samassa tilassa etäkirjaston kanssa: liitä palvelimen osoite ja sen antama henkilökohtainen tunniste. Muutokset lähetetään ja vastaanotetaan sivu kerrallaan; jos sama asia muuttui molemmilla puolilla, uudempi voittaa. Offline-tilassa mikään ei estä työskentelyä.",
+        "server": "Palvelimen osoite",
+        "token": "Henkilökohtainen tunniste",
+        "tokenSave": "Tallenna tunniste",
+        "tokenRemove": "Poista tunniste",
+        "tokenStored": "Tunniste on tallennettu järjestelmän avainnippuun.",
+        "tokenNone": "Tunnistetta ei ole tallennettu.",
+        "auto": "Synkronoi käynnistettäessä",
+        "now": "Synkronoi nyt",
+        "running": "Synkronoidaan…",
+        "last": "Viimeisin onnistunut synkronointi: {date}",
+        "never": "Ei ole koskaan synkronoitu.",
+        "result": "Lähetetty: {sent} · vastaanotettu: {received}",
+        "error": {
+            "refused": "Palvelin hylkää tunnisteen: se on väärä, vanhentunut tai peruutettu.",
+            "unavailable": "Palvelin ei vastaa. Kirjastosi on ehjä; synkronointi jatkuu siitä, mihin se jäi.",
+            "rate_limited": "Palvelin rajoittaa pyyntöjä: yritä uudelleen muutaman minuutin kuluttua.",
+            "too_large": "Palvelin hylkää liian suuren lähetyksen.",
+            "address": "Virheellinen osoite: https:// vaaditaan (http:// vain tällä koneella).",
+            "no_token": "Tälle palvelimelle ei ole tallennettu tunnistetta.",
+            "no_library": "Kirjastoa ei ole avattu.",
+            "other": "Synkronointi epäonnistui."
+        }
     },
     "emptyState": {
         "import": "Tuo… (Ctrl+I)",

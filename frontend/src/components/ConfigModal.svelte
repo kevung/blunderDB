@@ -1,6 +1,7 @@
 <script>
     import AssistantSettings from './AssistantSettings.svelte';
     import CorpusSettings from './CorpusSettings.svelte';
+    import SyncSettings from './SyncSettings.svelte';
     import METSettings from './METSettings.svelte';
     import RolloutSettings from './RolloutSettings.svelte';
     import MaintenanceSettings from './MaintenanceSettings.svelte';
@@ -87,6 +88,7 @@
         { id: 'gammonnet', labelKey: 'config.gammonnetTitle' },
         { id: 'watch', labelKey: 'config.watchTitle' },
         { id: 'assistant', labelKey: 'config.assistantTitle' },
+        { id: 'sync', labelKey: 'config.syncTitle' },
         { id: 'identity', labelKey: 'config.identityTitle' }
     ];
     let activeTab = $state('interface');
@@ -984,6 +986,8 @@
                 <CorpusSettings />
             {:else if activeTab === 'assistant'}
                 <AssistantSettings />
+            {:else if activeTab === 'sync'}
+                <SyncSettings />
             {:else if activeTab === 'identity'}
                 <p class="setting-note">{$t('config.identityIntro')}</p>
                 {#if identity?.present}

@@ -227,6 +227,12 @@ export function StopTournamentDisplay():Promise<gui.TournamentDisplayStatus>;
 
 export function SuggestWatchFolder():Promise<string>;
 
+export function SyncNow():Promise<gui.SyncStatus>;
+
+export function SyncSetToken(arg1:string,arg2:string):Promise<void>;
+
+export function SyncStatus():Promise<gui.SyncStatus>;
+
 export function TransferToGroup(arg1:number,arg2:Array<gui.TransferBatch>):Promise<gui.TransferSummary>;
 
 export function UndoPositionCopy(arg1:number):Promise<void>;

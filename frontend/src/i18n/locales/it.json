@@ -163,7 +163,8 @@
         "commentAuthor": "Il tuo nome",
         "commentAuthorNote": "Firma i commenti che scrivi. Vuoto: senza firma.",
         "assistantTitle": "Assistente e MCP",
-        "corpusTitle": "Corpus"
+        "corpusTitle": "Corpus",
+        "syncTitle": "Sincronizzazione"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -3029,6 +3030,32 @@
         "needsAck": "Accettate prima l'avviso sulla riservatezza di questo fornitore in Impostazioni › Assistente e MCP.",
         "error": "Errore: {error}",
         "write": "Lasciare che l'assistente proponga modifiche (ciascuna confermata)"
+    },
+    "sync": {
+        "title": "Sincronizzazione con un server",
+        "intro": "Mantenga la sua libreria allineata a una remota: incolli l'indirizzo di un server e il token personale che le ha dato. Le modifiche vengono inviate e ricevute a pagine; se entrambe le parti hanno cambiato la stessa cosa, vince la più recente. Offline, nulla viene bloccato.",
+        "server": "Indirizzo del server",
+        "token": "Token personale",
+        "tokenSave": "Salva il token",
+        "tokenRemove": "Rimuovi il token",
+        "tokenStored": "Un token è salvato nel portachiavi del sistema.",
+        "tokenNone": "Nessun token salvato.",
+        "auto": "Sincronizza all'avvio",
+        "now": "Sincronizza ora",
+        "running": "Sincronizzazione in corso…",
+        "last": "Ultima sincronizzazione riuscita: {date}",
+        "never": "Mai sincronizzata.",
+        "result": "Inviati: {sent} · ricevuti: {received}",
+        "error": {
+            "refused": "Il server rifiuta il token: è errato, scaduto o revocato.",
+            "unavailable": "Il server non risponde. La sua libreria è intatta; la sincronizzazione riprenderà da dove si è fermata.",
+            "rate_limited": "Il server limita le richieste: riprovi tra qualche minuto.",
+            "too_large": "Il server rifiuta un invio troppo grande.",
+            "address": "Indirizzo non valido: è richiesto https:// (http:// solo su questo computer).",
+            "no_token": "Nessun token salvato per questo server.",
+            "no_library": "Nessuna libreria aperta.",
+            "other": "Sincronizzazione non riuscita."
+        }
     },
     "emptyState": {
         "import": "Importa… (Ctrl+I)",

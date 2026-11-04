@@ -14,8 +14,8 @@ const DefaultPage = 500
 
 // Local is the open library.
 type Local interface {
-	ChangesetExport(ctx context.Context, after storage.Cursor, limit int) (changeset.Set, error)
-	ChangesetImport(ctx context.Context, set changeset.Set) (changeset.Report, error)
+	Export(ctx context.Context, after storage.Cursor, limit int) (changeset.Set, error)
+	Import(ctx context.Context, set changeset.Set) (changeset.Report, error)
 }
 
 // Remote is the server.
@@ -88,7 +88,7 @@ func Run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 		if err := ctx.Err(); err != nil {
 			return cur, res, err
 		}
-		set, err := local.ChangesetExport(ctx, cur.Sent, opt.Page)
+		set, err := local.Export(ctx, cur.Sent, opt.Page)
 		if errors.Is(err, storage.ErrCursorStale) && !restarted && !cur.Sent.IsStart() {
 			cur.Sent, restarted = storage.Cursor{}, true
 			continue
@@ -129,7 +129,7 @@ func Run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 			return cur, res, fmt.Errorf("receiving: %w", err)
 		}
 		if len(set.Records) > 0 {
-			rep, err := local.ChangesetImport(ctx, set)
+			rep, err := local.Import(ctx, set)
 			if err != nil {
 				return cur, res, fmt.Errorf("merging what was received: %w", err)
 			}
