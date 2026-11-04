@@ -77,6 +77,9 @@ inutilisables à cette taille et le seront dix fois plus à 10 M — ce sont les
 et 5 (stats matérialisées, GB5.6). Le premier passage, cache froid, est plus lent
 que les suivants (×1,5 pour les stats, ×2,4 pour l'import) : le job de nuit lance donc chaque
 benchmark trois fois et `scripts/bench-scale-compare.sh` retient le meilleur passage.
+Un ralentissement de moins de 1 ms ne compte pas, quel que soit son ratio : à code égal, le
+meilleur passage de `ListPositionIDs` varie de 0,22 ms d'une nuit à l'autre sur un même CPU, soit
+plus que le seuil pour une opération de 0,3 à 0,6 ms ; le benchmark suivant dure 40 ms.
 La référence de la nuit précédente est gardée par modèle de CPU du runner : `ubuntu-latest`
 tire ses machines de plusieurs générations (EPYC 7763, EPYC 9V45, Xeon 8573C) dont l'écart
 atteint ×1,8 à code égal, plus que le seuil ; le script refuse de comparer deux CPU différents.

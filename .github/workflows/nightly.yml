@@ -229,7 +229,9 @@ jobs:
   # counts: the first pass reads a cold base (up to ×2.4 slower for the
   # import), which alone would cross the factor. The factor is wide because
   # a shared runner is noisy; it is there for an index lost or a query turned
-  # into a full scan, not for drift.
+  # into a full scan, not for drift. A slowdown under 1 ms never counts, however
+  # large its ratio: on ListPositionIDs, a few tenths of a millisecond timed
+  # once per pass, the runner's noise alone crosses the factor.
   #
   # Why nightly: building the base takes about eleven minutes on a laptop
   # (≈ 1 500 positions/s), more on a runner, and the benchmarks themselves
