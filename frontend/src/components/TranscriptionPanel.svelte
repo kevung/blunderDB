@@ -26,7 +26,7 @@
     import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
     import { positionStore } from '../stores/positionStore.js';
     import { selectedMoveStore } from '../stores/analysisStore.js';
-    import { panelKeyGuard } from '../services/keyboardService.js';
+    import { panelKeyGuard, isBoardNavigationKey } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
     import { isBareLetter } from '../utils/keys.js';
     import { isMoneyPosition } from '../utils/cubeDecision.js';
@@ -1386,6 +1386,13 @@
         return !!panelEl?.contains(active) || !!videoPane?.holds?.(active) || theatreHolds(active);
     }
 
+    // A position-browsing key the panel does not use stays with the panel: left unclaimed, the
+    // global dispatcher would move the library under it.
+    /** @param {KeyboardEvent} event */
+    function claimBrowsingKey(event) {
+        if (isBoardNavigationKey(event)) event.preventDefault();
+    }
+
     /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
@@ -1452,7 +1459,10 @@
             noticeTranscription('transcription.notice.noDice');
             return;
         }
-        if (!result.handled) return;
+        if (!result.handled) {
+            claimBrowsingKey(event);
+            return;
+        }
         // A key naming a line takes it from the pointer even when the selection stays put.
         if (selectionDelta(event) !== 0) hoveredMove = null;
         event.preventDefault();
@@ -1491,6 +1501,7 @@
             openDraft(rows[listIndex]);
             return;
         }
+        claimBrowsingKey(event);
         if (isBareLetter(event, 'n') && !showForm) {
             event.preventDefault();
             event.stopPropagation();

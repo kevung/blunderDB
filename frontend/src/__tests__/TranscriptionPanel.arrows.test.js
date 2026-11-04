@@ -378,3 +378,16 @@ describe('choosing a line of the analysis replaces the decision, the first line 
         expect(sent()).toEqual(['select 0', 'validate']);
     });
 });
+
+describe('a browsing key the panel does not use stays in the panel', () => {
+    test.each([
+        ['Home', 'Home'],
+        ['End', 'End'],
+        ['PageUp', 'PageUp'],
+        ['PageDown', 'PageDown']
+    ])('%s is claimed so the global dispatcher never moves the library', async (code, key) => {
+        await cursorBack(1);
+        const notClaimed = await fireEvent.keyDown(document, { code, key });
+        expect(notClaimed).toBe(false);
+    });
+});
