@@ -1129,10 +1129,10 @@ func (c *Config) SaveSync(s SyncSettings) error {
 	return c.SaveConfig(c)
 }
 
-// SyncServerAddress is read by the window's synchronisation at startup.
-func (c *Config) SyncServerAddress() (server string, auto bool) {
-	return c.SyncServer, c.SyncAuto
-}
+// SyncServerAddress and SyncAutoStart are read by the window's synchronisation.
+func (c *Config) SyncServerAddress() string { return c.SyncServer }
+
+func (c *Config) SyncAutoStart() bool { return c.SyncAuto }
 
 // AssistantConsentURL is the remote address whose privacy warning the user
 // accepted, read by the assistant before it sends a sentence anywhere remote.

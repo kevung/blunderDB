@@ -19,7 +19,8 @@ type fixedSync struct {
 	auto   bool
 }
 
-func (f fixedSync) SyncServerAddress() (string, bool) { return f.server, f.auto }
+func (f fixedSync) SyncServerAddress() string { return f.server }
+func (f fixedSync) SyncAutoStart() bool       { return f.auto }
 
 func syncApp(t *testing.T, server string) (*App, string) {
 	t.Helper()

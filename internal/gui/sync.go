@@ -31,7 +31,8 @@ const syncStatusEvent = "sync:status"
 // SyncSettingsSource is what the settings expose to the synchronisation: the
 // server address and whether to sync at startup.
 type SyncSettingsSource interface {
-	SyncServerAddress() (server string, auto bool)
+	SyncServerAddress() string
+	SyncAutoStart() bool
 }
 
 // SyncError is why the last run failed. Kind lets the window word it:
@@ -121,7 +122,7 @@ func (a *App) syncSettings() (server string, auto bool) {
 	if a.sync.source == nil {
 		return "", false
 	}
-	return a.sync.source.SyncServerAddress()
+	return a.sync.source.SyncServerAddress(), a.sync.source.SyncAutoStart()
 }
 
 // SyncSetToken stores the token for a server in the system keyring; an empty
