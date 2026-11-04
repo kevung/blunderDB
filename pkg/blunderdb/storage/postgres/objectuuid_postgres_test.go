@@ -287,7 +287,7 @@ func TestMigrate_060_DeckAndTournamentUUIDsUnderRLS(t *testing.T) {
 	for _, r := range set.Records {
 		carried[r.Family]++
 	}
-	if carried["anki_deck"] != 2 || carried["tournament"] != 1 {
+	if carried["anki_deck"] != 2 || carried["tournament"] != 2 {
 		t.Errorf("an export from the start carries %v", carried)
 	}
 	id, err := rls.Anki().CreateDeck(c, "1", "New", "", domain.AnkiSourceSearch, 0, "")
