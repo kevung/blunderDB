@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"path/filepath"
@@ -8,6 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
@@ -47,6 +50,7 @@ func seedUUIDLibrary(t *testing.T, d *Database) {
 		`INSERT INTO match (canonical_hash, match_hash, player1_name, player2_name) VALUES ('canon-1', 'raw-1', 'A', 'B')`,
 		`INSERT INTO match (canonical_hash, match_hash, player1_name, player2_name) VALUES ('canon-2', 'raw-2', 'A', 'B')`,
 		`INSERT INTO transcription (format_version, document, label) VALUES ('1', '{}', 'draft')`,
+		`INSERT INTO tournament (name, date) VALUES ('Open', '2026-01-01')`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
 			t.Fatalf("%s: %v", stmt, err)
@@ -85,13 +89,13 @@ func rewindToBeforeUUIDs(t *testing.T, d *Database) {
 			}
 		}
 	}
-	for _, stmt := range []string{
-		`DELETE FROM metadata WHERE key = '` + sqlshared.ObjectUUIDKey + `'`,
-		`UPDATE metadata SET value = '2.50.0' WHERE key = 'database_version'`,
-	} {
-		if _, err := d.db.Exec(stmt); err != nil {
-			t.Fatalf("%s: %v", stmt, err)
+	for _, f := range sqlshared.ObjectUUIDFamilies {
+		if _, err := d.db.Exec(`DELETE FROM metadata WHERE key = ?`, f.MarkOf()); err != nil {
+			t.Fatal(err)
 		}
+	}
+	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.50.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -108,6 +112,8 @@ func uuidsByContent(t *testing.T, d *Database) map[string]string {
 		{"match", `SELECT canonical_hash, uuid FROM match`},
 		{"transcription", `SELECT label, uuid FROM transcription`},
 		{"anki_card", `SELECT kind, uuid FROM anki_card`},
+		{"anki_deck", `SELECT name, uuid FROM anki_deck`},
+		{"tournament", `SELECT name, uuid FROM tournament`},
 	} {
 		func() {
 			rows, err := d.db.Query(c.query)
@@ -412,5 +418,86 @@ func TestObjectUUID_APositionRepairedOnTheOpenIsNamedByItsHash(t *testing.T) {
 	}
 	if want := sqlshared.DeriveObjectUUID("position", fmt.Sprint(zobrist), 1); u != want {
 		t.Errorf("repaired position uuid = %s, want the one derived from its hash: %s", u, want)
+	}
+}
+
+// A library at 2.55.0 has its uuids and its journal for the families of 2.51.0;
+// the deck and the tournament, added at 2.56.0, are named by their own pass
+// when it opens, from the same natural key on every library, and an export
+// from the start carries them.
+func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_55(t *testing.T) {
+	t.Parallel()
+	path, d := uuidLibrary(t, "at255.db")
+	for _, stmt := range []string{
+		`INSERT INTO anki_deck (name) VALUES ('Openings')`,
+		`INSERT INTO anki_deck (name) VALUES ('Openings')`,
+		`INSERT INTO tournament (name) VALUES ('Open')`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, table := range []string{"anki_deck", "tournament"} {
+		for _, stmt := range []string{
+			`DROP TRIGGER IF EXISTS object_uuid_` + table,
+			`DROP TRIGGER IF EXISTS change_log_` + table + `_i`,
+			`DROP TRIGGER IF EXISTS change_log_` + table + `_u`,
+			`DROP TRIGGER IF EXISTS change_log_` + table + `_d`,
+			`DROP INDEX IF EXISTS idx_` + table + `_uuid`,
+			`ALTER TABLE ` + table + ` DROP COLUMN uuid`,
+			`DELETE FROM metadata WHERE key = '` + sqlshared.MarkFor(table) + `'`,
+		} {
+			if _, err := d.db.Exec(stmt); err != nil {
+				t.Fatalf("%s: %v", stmt, err)
+			}
+		}
+	}
+	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.55.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+	d = reopenMigrated(t, path)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after the open = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	got := uuidsWhere(t, d, `SELECT uuid FROM anki_deck ORDER BY id`)
+	want := []string{sqlshared.DeriveObjectUUID("anki_deck", "Openings", 1), sqlshared.DeriveObjectUUID("anki_deck", "Openings", 2)}
+	if len(got) != 2 || got[0] != want[0] || got[1] != want[1] {
+		t.Errorf("deck uuids = %v, want those derived from the name and the rank: %v", got, want)
+	}
+	if got := uuidsWhere(t, d, `SELECT uuid FROM tournament`); len(got) != 1 || got[0] != sqlshared.DeriveObjectUUID("tournament", "Open", 1) {
+		t.Errorf("tournament uuid = %v", got)
+	}
+	for _, table := range []string{"anki_deck", "tournament"} {
+		var n int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE (type = 'index' AND name = ?) OR (type = 'trigger' AND name IN (?, ?, ?, ?))`,
+			"idx_"+table+"_uuid", "object_uuid_"+table, "change_log_"+table+"_i", "change_log_"+table+"_u", "change_log_"+table+"_d").Scan(&n); err != nil || n != 5 {
+			t.Errorf("%s: %d of its index and 4 triggers exist (%v)", table, n, err)
+		}
+	}
+	set, err := changeset.Export(context.Background(), d.store, "", storage.Cursor{}, 1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	carried := map[string]int{}
+	for _, r := range set.Records {
+		carried[r.Family]++
+	}
+	if carried["anki_deck"] != 2 || carried["tournament"] != 1 {
+		t.Errorf("an export from the start carries %v, want the two decks and the tournament", carried)
+	}
+	// A new deck written now is named and journaled by the triggers.
+	if _, err := d.db.Exec(`INSERT INTO anki_deck (name) VALUES ('New')`); err != nil {
+		t.Fatal(err)
+	}
+	var u string
+	if err := d.db.QueryRow(`SELECT uuid FROM anki_deck WHERE name = 'New'`).Scan(&u); err != nil || !uuidV7.MatchString(u) {
+		t.Fatalf("a new deck got %q, %v", u, err)
+	}
+	var op string
+	if err := d.db.QueryRow(`SELECT op FROM change_log WHERE uuid = ?`, u).Scan(&op); err != nil || op != "create" {
+		t.Errorf("journal entry of the new deck: %q, %v", op, err)
 	}
 }

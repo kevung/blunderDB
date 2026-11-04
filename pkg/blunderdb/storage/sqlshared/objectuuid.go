@@ -11,6 +11,17 @@ import (
 // uuid columns existed has its identifier. Never exported.
 const ObjectUUIDKey = "object_uuid_backfill"
 
+// MarkOf is the metadata row recording the backfill of f.
+func (f ObjectUUIDFamily) MarkOf() string {
+	if f.Mark == "" {
+		return ObjectUUIDKey
+	}
+	return f.Mark
+}
+
+// MarkFor is the metadata row of a family added after the first pass.
+func MarkFor(family string) string { return ObjectUUIDKey + "_" + family }
+
 // ObjectUUIDDeriveFunc is the SQL name of DeriveObjectUUID, a function of the
 // database on PostgreSQL and a registered one on SQLite.
 const ObjectUUIDDeriveFunc = "blunderdb_derive_uuid"
@@ -49,6 +60,12 @@ type ObjectUUIDFamily struct {
 	// Reads names the tables the backfill statement reads besides its own
 	// (a backend that lifts row-level security lifts it on each).
 	Reads []string
+	// Mark is the metadata row recording that the family's rows held before
+	// its uuid column existed have their identifier: ObjectUUIDKey for the
+	// families born with the uuids, one row of its own for a family added
+	// since, so a library that already passed the first pass still gets the
+	// second.
+	Mark  string
 	joins func(tenanted bool) string
 	key   string
 }
@@ -88,6 +105,10 @@ var ObjectUUIDFamilies = []ObjectUUIDFamily{
 			return " LEFT JOIN anki_deck d ON d.id = t.deck_id" + tenantOn(tn, "d", "t") + joinPosition(tn)
 		},
 		key: `COALESCE(d.name, '') || '|' || COALESCE(t.kind, '') || '|' || COALESCE(CAST(p.zobrist_hash AS TEXT), t.key, '')`},
+	// Added with schema 2.56.0: a library past the first pass names them in a
+	// pass of their own.
+	{Table: "anki_deck", Family: "anki_deck", Reads: []string{"anki_deck"}, Ranked: true, Mark: MarkFor("anki_deck"), key: nameKey},
+	{Table: "tournament", Family: "tournament", Reads: []string{"tournament"}, Ranked: true, Mark: MarkFor("tournament"), key: nameKey},
 }
 
 // NextBoundSQL reads the id closing the next batch of an unranked family
