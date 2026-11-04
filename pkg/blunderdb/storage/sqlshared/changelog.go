@@ -21,11 +21,11 @@ var _ storage.ChangeJournalStore = (*ChangeJournalStore)(nil)
 // dates nothing. 055_change_log.sql and 060_deck_tournament_uuid.sql spell the
 // same lists.
 //
-// A match's tournament is not among them: it travels with the match. A
-// synchronisation of a deck and the attaching of a match to a tournament touch
-// updated_at and nothing the payload carries.
+// A match's tournament and its order there are among them: a tournament travels
+// alone, and each library keeps its own attachments. The synchronisation of a
+// deck touches updated_at and nothing the payload carries.
 var LocalColumns = map[string][]string{
-	"match":      {"import_date", "import_batch_id", "last_visited_position", "last_visited_at"},
+	"match":      {"import_date", "tournament_id", "tournament_sort_order", "import_batch_id", "last_visited_position", "last_visited_at"},
 	"anki_deck":  {"updated_at"},
 	"tournament": {"updated_at", "sort_order", "rencontre_id", "rencontre_rooms"},
 }

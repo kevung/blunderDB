@@ -32,9 +32,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_anki_deck_uuid  ON anki_deck (tenant_id, u
 CREATE UNIQUE INDEX IF NOT EXISTS idx_tournament_uuid ON tournament (tenant_id, uuid);
 
 -- What a local gesture rewrites without the object having changed stays out of
--- what dates it: a synchronisation of a deck and the attaching of a match to a
--- tournament touch updated_at (and the tournament's order and rencontre) and
--- nothing the changeset carries. sqlshared.LocalColumns spells the same lists.
+-- what dates it: a synchronisation of a deck touches updated_at, a tournament's
+-- order and rencontre are the library's own, and nothing of that is in the
+-- changeset. sqlshared.LocalColumns spells the same lists.
 DROP TRIGGER IF EXISTS change_log_anki_deck ON anki_deck;
 CREATE TRIGGER change_log_anki_deck AFTER INSERT OR DELETE ON anki_deck
     FOR EACH ROW EXECUTE FUNCTION blunderdb_journal('anki_deck');
@@ -54,13 +54,14 @@ CREATE TRIGGER change_log_tournament_update AFTER UPDATE ON tournament
         (to_jsonb(NEW) - ARRAY['updated_at', 'sort_order', 'rencontre_id', 'rencontre_rooms'])
     ) EXECUTE FUNCTION blunderdb_journal('tournament');
 
--- The tournament a match belongs to travels with the match (its payload names
--- the tournament by uuid), so changing it dates the match: the list of 055
--- without tournament_id.
+-- A match's attachment stays in each library: a tournament travels with its
+-- header and note, and no match names one. tournament_id was local since 055;
+-- the order the match holds there is too, so reordering a tournament dates no
+-- match and cannot pass a stale copy for the later write.
 DROP TRIGGER IF EXISTS change_log_match_update ON match;
 CREATE TRIGGER change_log_match_update AFTER UPDATE ON match
     FOR EACH ROW WHEN (
-        (to_jsonb(OLD) - ARRAY['import_date', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
+        (to_jsonb(OLD) - ARRAY['import_date', 'tournament_id', 'tournament_sort_order', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
         IS DISTINCT FROM
-        (to_jsonb(NEW) - ARRAY['import_date', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
+        (to_jsonb(NEW) - ARRAY['import_date', 'tournament_id', 'tournament_sort_order', 'import_batch_id', 'last_visited_position', 'last_visited_at'])
     ) EXECUTE FUNCTION blunderdb_journal('match');

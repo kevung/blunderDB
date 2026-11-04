@@ -85,9 +85,6 @@ func (b binder) ChangeJournal() storage.ChangeJournalStore {
 func (b binder) AnkiStates() storage.AnkiStateStore {
 	return &sqlshared.AnkiStateStore{DB: b.shared()}
 }
-func (b binder) MatchPlaces() storage.MatchPlaceStore {
-	return &sqlshared.MatchPlaceStore{DB: b.shared()}
-}
 func (b binder) ObjectUUIDs() storage.ObjectUUIDStore {
 	return &sqlshared.ObjectUUIDStore{DB: b.shared()}
 }

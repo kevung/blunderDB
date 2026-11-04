@@ -107,9 +107,6 @@ type codec struct {
 	// greater tieKey simply wins. It keeps what the winner would lose for no
 	// reason; a same result on both sides is what lets them converge.
 	merge func(winner, loser json.RawMessage) (json.RawMessage, error)
-	// olderSays says an older record may hold what the object lacks, which merge
-	// then adds: read cheaply, because it is asked of every record that lost.
-	olderSays func(raw json.RawMessage) bool
 	// twins says a record found under another uuid by locate is merged with the
 	// local content whatever the dates say, instead of the later one winning.
 	twins bool
@@ -563,9 +560,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		}
 		switch {
 		case r.ChangedAt < localAt:
-			if adopted, err := adoptOlder(ctx, s, scope, cd, &r, id, held, local.Op, localAt); err != nil || !adopted {
-				return lost, err
-			}
+			return lost, nil
 		case r.ChangedAt == localAt:
 			var payload []byte
 			if held && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete {
@@ -596,9 +591,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 			}
 		}
 	case held && r.ChangedAt <= floor:
-		if adopted, err := adoptOlder(ctx, s, scope, cd, &r, id, held, storage.ChangeUpdate, floor); err != nil || !adopted {
-			return lost, err
-		}
+		return lost, nil
 	}
 
 	res := modified
@@ -646,33 +639,6 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		}
 	}
 	return res, nil
-}
-
-// adoptOlder merges into the object what an older record says that the object
-// has no word on (see codec.olderSays). The object keeps its date, so what it
-// gained goes on to the next peer as it stands. false when there is nothing to gain.
-func adoptOlder(ctx context.Context, s storage.Stores, scope string, cd codec, r *Record, id int64, held bool, localOp, localAt string) (bool, error) {
-	if cd.olderSays == nil || !held || localOp == storage.ChangeTrash || localOp == storage.ChangeDelete ||
-		(r.Op != storage.ChangeCreate && r.Op != storage.ChangeUpdate) || !cd.olderSays(r.Payload) {
-		return false, nil
-	}
-	content, err := cd.read(ctx, s, scope, id)
-	if err != nil {
-		return false, err
-	}
-	payload, err := json.Marshal(content)
-	if err != nil {
-		return false, err
-	}
-	merged, err := cd.merge(payload, r.Payload)
-	if err != nil {
-		return false, err
-	}
-	if tieKey(storage.ChangeUpdate, merged) == tieKey(storage.ChangeUpdate, payload) {
-		return false, nil
-	}
-	r.Payload, r.ChangedAt = merged, localAt
-	return true, nil
 }
 
 // --- collection ---

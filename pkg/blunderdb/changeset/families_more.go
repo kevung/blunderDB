@@ -119,7 +119,7 @@ var transcriptionCodec = codec{
 // --- tournament ---
 
 // tournamentPayload is a tournament's header and note. Which matches belong to
-// it is the match's to say (it names the tournament). updated_at stays out: it
+// it, and in what order, stays in each library. updated_at stays out: it
 // moves at every attachment, here and on the peer alike.
 type tournamentPayload struct {
 	Name      string `json:"name"`
@@ -502,12 +502,20 @@ var cardCodec = codec{
 		if err != nil {
 			return 0, "", false, err
 		}
-		if have == "" || r.UUID >= have {
-			return id, have, have != "", nil
+		if have == "" {
+			return id, "", false, nil
 		}
 		journal, _, err := providers(s)
 		if err != nil {
 			return 0, "", false, err
+		}
+		if r.UUID >= have {
+			// A card from before the journal counts as dated at the floor, and
+			// needs the entry that says so for the twin merge to see its reviews.
+			if err := journal.Adopt(ctx, scope, "anki_card", []string{have}, floor); err != nil {
+				return 0, "", false, err
+			}
+			return id, have, true, nil
 		}
 		stamp, serr := journal.Entry(ctx, scope, have)
 		if err := uuidsOf(s).SetObjectUUID(ctx, scope, "anki_card", id, r.UUID); err != nil {

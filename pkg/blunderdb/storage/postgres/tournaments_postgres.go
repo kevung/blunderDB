@@ -194,9 +194,9 @@ func (s *tournamentStore) AddMatch(ctx context.Context, scope string, tournament
 // RemoveMatch detaches a match from whatever tournament it belongs to.
 func (s *tournamentStore) RemoveMatch(ctx context.Context, scope string, matchID int64) error {
 	if _, err := s.db.Exec(ctx,
-		`UPDATE match SET tournament_id = NULL, tournament_sort_order = $3
+		`UPDATE match SET tournament_id = NULL, tournament_sort_order = 0
 		 WHERE id = $1 AND tenant_id = $2`,
-		matchID, tenantID(scope), storage.MatchDetached); err != nil {
+		matchID, tenantID(scope)); err != nil {
 		return fmt.Errorf("postgres: remove match %d from tournament: %w", matchID, err)
 	}
 	return nil
@@ -209,8 +209,8 @@ func (s *tournamentStore) SetMatchByName(ctx context.Context, scope string, matc
 	name := strings.TrimSpace(tournamentName)
 	if name == "" {
 		if _, err := s.db.Exec(ctx,
-			`UPDATE match SET tournament_id = NULL, tournament_sort_order = $3 WHERE id = $1 AND tenant_id = $2`,
-			matchID, tenant, storage.MatchDetached); err != nil {
+			`UPDATE match SET tournament_id = NULL WHERE id = $1 AND tenant_id = $2`,
+			matchID, tenant); err != nil {
 			return fmt.Errorf("postgres: detach match %d from tournament: %w", matchID, err)
 		}
 		return nil
@@ -281,8 +281,7 @@ func (s *tournamentStore) Matches(ctx context.Context, scope string, tournamentI
 			`SELECT `+matchSelectCols+` FROM match m
 			 LEFT JOIN tournament t ON m.tournament_id = t.id
 			 WHERE m.tournament_id = $1 AND m.tenant_id = $2
-			 ORDER BY m.tournament_sort_order ASC, m.match_date DESC NULLS LAST,
-			          COALESCE(m.canonical_hash, '') COLLATE "C", COALESCE(m.match_hash, '') COLLATE "C"`,
+			 ORDER BY m.tournament_sort_order ASC, m.match_date DESC NULLS LAST`,
 			tournamentID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list tournament matches: %w", err))

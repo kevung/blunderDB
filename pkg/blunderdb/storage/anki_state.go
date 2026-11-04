@@ -35,19 +35,3 @@ type AnkiStateStore interface {
 type AnkiStateProvider interface {
 	AnkiStates() AnkiStateStore
 }
-
-// MatchDetached is the tournament order of a match detached by a gesture, which
-// says more than the order of a match that never had a tournament.
-const MatchDetached = -1
-
-// MatchPlaceStore writes the order a peer gave a match in its tournament, which
-// ReorderMatches, renumbering a whole list, cannot.
-type MatchPlaceStore interface {
-	SetMatchOrder(ctx context.Context, scope string, matchID int64, order int) error
-}
-
-// MatchPlaceProvider is implemented by the Stores of a backend that merges a
-// changeset (the remote client does not).
-type MatchPlaceProvider interface {
-	MatchPlaces() MatchPlaceStore
-}
