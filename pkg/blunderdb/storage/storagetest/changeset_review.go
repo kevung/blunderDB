@@ -21,6 +21,24 @@ func checkChangeSetReview(t *testing.T, pair func() *csPair) {
 	t.Run("AnkiTieKeepsTheReview", func(t *testing.T) { p := pair(); p.t = t; scenarioAnkiTieKeepsReview(p) })
 	t.Run("CursorBeforeTheFamilies", func(t *testing.T) { p := pair(); p.t = t; scenarioCursorBeforeFamilies(p) })
 	t.Run("TournamentMembership", func(t *testing.T) { p := pair(); p.t = t; scenarioTournamentMembership(p) })
+	for _, s := range []struct {
+		name string
+		run  func(*csPair)
+	}{
+		{"LocalWritesDatedPastHeld", scenarioLocalWritesDatedPastHeld},
+		{"NewFamiliesPagedAtOne", scenarioNewFamiliesPagedAtOne},
+		{"AnkiTwinConverges", scenarioAnkiTwinConverges},
+		{"AnkiTwinLastWrite", scenarioAnkiTwinLastWrite},
+		{"TournamentReplay", scenarioTournamentReplay},
+		{"TournamentOrderExchange", scenarioTournamentOrderExchange},
+		{"TournamentOldFile", scenarioTournamentOldFile},
+		{"TournamentCrossedFiles", scenarioTournamentCrossedFiles},
+		{"LegacyAttachSurvives", scenarioLegacyAttachSurvives},
+		{"LegacyAttachSurvivesLaterEdit", scenarioLegacyAttachSurvivesLaterEdit},
+		{"ExplicitDetachStands", scenarioExplicitDetachStands},
+	} {
+		t.Run(s.name, func(t *testing.T) { p := pair(); p.t = t; s.run(p) })
+	}
 }
 
 // back sends b's changes, from 0, to a.

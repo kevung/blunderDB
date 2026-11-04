@@ -207,6 +207,7 @@ func TestMigrate_060_DeckAndTournamentUUIDsUnderRLS(t *testing.T) {
 			`INSERT INTO anki_deck (tenant_id, name) VALUES ($1::bigint, 'Openings')`,
 			`INSERT INTO anki_deck (tenant_id, name) VALUES ($1::bigint, 'Openings')`,
 			`INSERT INTO tournament (tenant_id, name) VALUES ($1::bigint, 'Open')`,
+			`INSERT INTO tournament (tenant_id, name, date) VALUES ($1::bigint, 'Open', '2025-06-01')`,
 		} {
 			if _, err := conn.Exec(ctx, stmt, scope); err != nil {
 				t.Fatalf("%s: %v", stmt, err)
@@ -254,11 +255,20 @@ func TestMigrate_060_DeckAndTournamentUUIDsUnderRLS(t *testing.T) {
 		}
 		var tu string
 		asTenant(t, conn, scope, func() {
-			if err := conn.QueryRow(ctx, `SELECT CAST(uuid AS TEXT) FROM tournament`).Scan(&tu); err != nil {
+			if err := conn.QueryRow(ctx, `SELECT CAST(uuid AS TEXT) FROM tournament WHERE date IS NULL`).Scan(&tu); err != nil {
 				t.Fatal(err)
 			}
 		})
-		if tu != sqlshared.DeriveObjectUUID("tournament", "Open", 1) {
+		var edition string
+		asTenant(t, conn, scope, func() {
+			if err := conn.QueryRow(ctx, `SELECT CAST(uuid AS TEXT) FROM tournament WHERE date IS NOT NULL`).Scan(&edition); err != nil {
+				t.Fatal(err)
+			}
+		})
+		if edition != sqlshared.DeriveObjectUUID("tournament", "Open|2025-06-01", 1) {
+			t.Errorf("tenant %s: the other edition has uuid %s", scope, edition)
+		}
+		if tu != sqlshared.DeriveObjectUUID("tournament", "Open|", 1) {
 			t.Errorf("tenant %s: tournament uuid %s", scope, tu)
 		}
 	}
@@ -277,7 +287,7 @@ func TestMigrate_060_DeckAndTournamentUUIDsUnderRLS(t *testing.T) {
 	for _, r := range set.Records {
 		carried[r.Family]++
 	}
-	if carried["anki_deck"] != 2 || carried["tournament"] != 1 {
+	if carried["anki_deck"] != 2 || carried["tournament"] != 2 {
 		t.Errorf("an export from the start carries %v", carried)
 	}
 	id, err := rls.Anki().CreateDeck(c, "1", "New", "", domain.AnkiSourceSearch, 0, "")

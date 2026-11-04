@@ -1458,7 +1458,8 @@ Le journal porte les positions (avec leur analyse), les matchs, les collections,
 les notes, les leçons, les transcriptions, les tournois et les paquets Anki avec
 leurs cartes et leur planning. Un tournoi voyage avec son en-tête et sa note, et
 chaque match nomme son tournoi et sa place dans la liste ; les familles sans
-corbeille (leçons, transcriptions, tournois, paquets, cartes) s'effacent quand un pair les met en corbeille.
+corbeille (leçons, transcriptions, tournois, paquets, cartes) s'effacent quand
+un pair les met en corbeille.
 À égalité de date, chaque famille fusionne les deux contenus de la même façon des deux côtés
 et n'efface rien que l'autre garde : la note, la description ou le tournoi qui manque d'un côté
 est repris, deux notes sont gardées ensemble, la révision la plus avancée l'emporte.

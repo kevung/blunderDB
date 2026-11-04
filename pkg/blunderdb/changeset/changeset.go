@@ -111,6 +111,9 @@ type codec struct {
 	// greater tieKey simply wins. It keeps what the winner would lose for no
 	// reason; a same result on both sides is what lets them converge.
 	merge func(winner, loser json.RawMessage) (json.RawMessage, error)
+	// olderSays says an older record may hold what the object lacks, which merge
+	// then adds: read cheaply, because it is asked of every record that lost.
+	olderSays func(raw json.RawMessage) bool
 	// twins says a record found under another uuid by locate is merged with the
 	// local content whatever the dates say, instead of the later one winning.
 	twins bool
@@ -358,7 +361,6 @@ const clockSlack = time.Second
 func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Report, error) {
 	var rep Report
 	var waiting []waitingLink
-	var placed []place
 	records := slices.Clone(set.Records)
 	slices.SortStableFunc(records, func(a, b Record) int { return codecs[a.Family].rank - codecs[b.Family].rank })
 	for _, r := range records {
@@ -388,8 +390,6 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 		rctx := context.WithValue(ctx, missingKey{}, &missing)
 		var links []waitingLink
 		rctx = context.WithValue(rctx, waitingKey{}, &links)
-		var places []place
-		rctx = context.WithValue(rctx, placeKey{}, &places)
 		err = trash.InTx(rctx, s, scope, func(s storage.Stores) error {
 			journal, _, err := providers(s)
 			if err != nil {
@@ -421,7 +421,6 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 			rep.Removed++
 		}
 		rep.Applied++
-		placed = append(placed, places...)
 		for _, ref := range missing {
 			rep.Missing = append(rep.Missing, MissingRef{Family: r.Family, UUID: r.UUID, Ref: ref})
 		}
@@ -433,9 +432,6 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 	// Every record is in: the origins that arrived after their variant, in this
 	// set or an earlier one, are here now. What is still missing is the peer's
 	// to send.
-	if err := settlePlaces(ctx, s, scope, placed); err != nil {
-		return rep, err
-	}
 	still, err := settleLinks(ctx, s, scope, &rep)
 	if err != nil {
 		return rep, err
@@ -514,10 +510,11 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 	switch {
 	case twin && cd.twins && held && len(r.Payload) > 0 && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete &&
 		(r.Op == storage.ChangeCreate || r.Op == storage.ChangeUpdate):
-		// Two draws of one object: neither is the other's edit, so the dates do
-		// not order them, and a draw that no journal entry covers yet (the first
-		// import before the first export) is no later write either. What the
-		// merge keeps is dated as the later of the two.
+		// Two draws of one object: neither is the other's edit, so what the merge
+		// keeps is dated as the later of the two. Kept as it was, it still takes
+		// that date: dated below it, the other side would refuse it for good. A
+		// draw that no journal entry covers yet (the first import before the
+		// first export) counts as dated at the floor.
 		content, err := cd.read(ctx, s, scope, id)
 		if err != nil {
 			return lost, err
@@ -526,21 +523,40 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		if err != nil {
 			return lost, err
 		}
-		merged, err := cd.merge(r.Payload, payload)
+		localAt := floor
+		if hasEntry {
+			if localAt, err = normalize(local.ChangedAt); err != nil {
+				return lost, err
+			}
+		}
+		winner, loser := []byte(r.Payload), payload
+		if r.ChangedAt < localAt || (r.ChangedAt == localAt && tieKey(storage.ChangeUpdate, r.Payload) < tieKey(storage.ChangeUpdate, payload)) {
+			winner, loser = loser, winner
+		}
+		merged, err := cd.merge(winner, loser)
 		if err != nil {
 			return lost, err
 		}
 		if tieKey(storage.ChangeUpdate, merged) == tieKey(storage.ChangeUpdate, payload) {
+			if r.ChangedAt <= localAt {
+				return lost, nil
+			}
+			op := local.Op
+			if !hasEntry {
+				op = storage.ChangeUpdate
+			}
+			if err := journal.Mark(ctx, scope, r.Family, r.UUID, op, r.ChangedAt); err != nil {
+				return lost, err
+			}
+			if seen != "" {
+				if err := journal.Mark(ctx, scope, r.Family, seen, storage.ChangeUpdate, future); err != nil {
+					return lost, err
+				}
+			}
 			return lost, nil
 		}
 		r.Payload = merged
-		if hasEntry {
-			if localAt, err := normalize(local.ChangedAt); err != nil {
-				return lost, err
-			} else if localAt > r.ChangedAt {
-				r.ChangedAt = localAt
-			}
-		}
+		r.ChangedAt = max(r.ChangedAt, localAt)
 	case hasEntry:
 		localAt, err := normalize(local.ChangedAt)
 		if err != nil {
@@ -560,7 +576,9 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		}
 		switch {
 		case r.ChangedAt < localAt:
-			return lost, nil
+			if adopted, err := adoptOlder(ctx, s, scope, cd, &r, id, held, local.Op, localAt); err != nil || !adopted {
+				return lost, err
+			}
 		case r.ChangedAt == localAt:
 			var payload []byte
 			if held && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete {
@@ -591,7 +609,9 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 			}
 		}
 	case held && r.ChangedAt <= floor:
-		return lost, nil
+		if adopted, err := adoptOlder(ctx, s, scope, cd, &r, id, held, storage.ChangeUpdate, floor); err != nil || !adopted {
+			return lost, err
+		}
 	}
 
 	res := modified
@@ -639,6 +659,33 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		}
 	}
 	return res, nil
+}
+
+// adoptOlder merges into the object what an older record says that the object
+// has no word on (see codec.olderSays). The object keeps its date, so what it
+// gained goes on to the next peer as it stands. false when there is nothing to gain.
+func adoptOlder(ctx context.Context, s storage.Stores, scope string, cd codec, r *Record, id int64, held bool, localOp, localAt string) (bool, error) {
+	if cd.olderSays == nil || !held || localOp == storage.ChangeTrash || localOp == storage.ChangeDelete ||
+		(r.Op != storage.ChangeCreate && r.Op != storage.ChangeUpdate) || !cd.olderSays(r.Payload) {
+		return false, nil
+	}
+	content, err := cd.read(ctx, s, scope, id)
+	if err != nil {
+		return false, err
+	}
+	payload, err := json.Marshal(content)
+	if err != nil {
+		return false, err
+	}
+	merged, err := cd.merge(payload, r.Payload)
+	if err != nil {
+		return false, err
+	}
+	if tieKey(storage.ChangeUpdate, merged) == tieKey(storage.ChangeUpdate, payload) {
+		return false, nil
+	}
+	r.Payload, r.ChangedAt = merged, localAt
+	return true, nil
 }
 
 // --- collection ---

@@ -54,6 +54,8 @@ func checkChangeSetTies(t *testing.T, pair func() *csPair) {
 	}
 	t.Run("Ties_MatchBeforeItsTournament", func(t *testing.T) { p := pair(); p.t = t; tieMatchBeforeTournament(p) })
 	t.Run("Ties_TournamentOrderOnAFreshPeer", func(t *testing.T) { p := pair(); p.t = t; scenarioOrderOnFreshPeer(p) })
+	t.Run("Ties_SkippedIsCounted", func(t *testing.T) { p := pair(); p.t = t; scenarioSkippedIsCounted(p) })
+	t.Run("Ties_LivingQueryOfRows", func(t *testing.T) { p := pair(); p.t = t; scenarioLivingQueryOfRows(p) })
 	t.Run("Ties_SlotDatesNothing", func(t *testing.T) { p := pair(); p.t = t; scenarioSlotDatesNothing(p) })
 }
 
@@ -345,12 +347,17 @@ func tieMatch() tieCase {
 			}
 		},
 		check: func(p *csPair, i int, id int64) string {
-			tr, err := p.a.Tournaments().TournamentOf(p.ca, p.sa, id)
-			if err != nil {
-				return "the match left its tournament"
-			}
-			if got := famUUID(p.t, p.a, p.ca, p.sa, "tournament", tr.ID); got != tourU {
-				return "the match is in another tournament"
+			// A detachment is a gesture like any other: at a tie to the
+			// millisecond the sides agree on one outcome (checked for all), and
+			// only the matches nobody detached must have stayed.
+			if i%3 != 1 {
+				tr, err := p.a.Tournaments().TournamentOf(p.ca, p.sa, id)
+				if err != nil {
+					return "the match left its tournament"
+				}
+				if got := famUUID(p.t, p.a, p.ca, p.sa, "tournament", tr.ID); got != tourU {
+					return "the match is in another tournament"
+				}
 			}
 			m, err := p.a.Matches().Get(p.ca, p.sa, id)
 			if err != nil {
@@ -681,5 +688,57 @@ func scenarioSlotDatesNothing(p *csPair) {
 	}
 	if rep := p.send(); rep.Applied != 0 {
 		t.Errorf("filling a slot travelled: %+v", rep)
+	}
+}
+
+// An entry whose object is gone is left out of the page, and the page says so.
+func scenarioSkippedIsCounted(p *csPair) {
+	t := p.t
+	p.catchUp()
+	ghost := "01a1a8d5-0000-7000-8000-000000000042"
+	if err := p.a.(storage.ChangeJournalProvider).ChangeJournal().Mark(p.ca, p.sa, "lesson", ghost, storage.ChangeUpdate, "2026-11-05T00:00:00.000Z"); err != nil {
+		t.Fatal(err)
+	}
+	set, err := changeset.Export(p.ca, p.a, p.sa, p.cursorFrom, 1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if set.Skipped != 1 {
+		t.Errorf("a page that left one object out says Skipped = %d", set.Skipped)
+	}
+	for _, r := range set.Records {
+		if r.UUID == ghost {
+			t.Error("the ghost travelled")
+		}
+	}
+}
+
+// A living collection whose query names rows by number reaches the peer
+// without that query (the numbers mean other rows there); one that does not,
+// keeps it.
+func scenarioLivingQueryOfRows(p *csPair) {
+	t := p.t
+	p.catchUp()
+	byRows, _ := p.a.Collections().Create(p.ca, p.sa, tieName("Living rows", 0), "")
+	plain, _ := p.a.Collections().Create(p.ca, p.sa, tieName("Living plain", 0), "")
+	if err := p.a.Collections().SetFilterQuery(p.ca, p.sa, byRows, "ma7 tn3"); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.a.Collections().SetFilterQuery(p.ca, p.sa, plain, "S"); err != nil {
+		t.Fatal(err)
+	}
+	p.send()
+	queryOf := func(id int64) string {
+		c, err := p.b.Collections().Get(p.cb, p.sb, id)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return c.FilterQuery
+	}
+	if got := queryOf(famIDMust(p, p.b, p.cb, p.sb, "collection", famUUID(t, p.a, p.ca, p.sa, "collection", byRows))); got != "" {
+		t.Errorf("the query that names rows reached the peer: %q", got)
+	}
+	if got := queryOf(famIDMust(p, p.b, p.cb, p.sb, "collection", famUUID(t, p.a, p.ca, p.sa, "collection", plain))); got != "S" {
+		t.Errorf("the query that names no row changed on the way: %q", got)
 	}
 }
