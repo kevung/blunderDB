@@ -305,9 +305,42 @@ func tieKey(op string, payload []byte) string {
 	return class + hex.EncodeToString(sum[:])
 }
 
+// overHeld is the date of a record dated future, ahead of the clock and taken as
+// clamped, over the date an object holds: when the record is the later one by its
+// own date, it stays later than what it follows, however far ahead that date is.
+// now+clockSlack would not do: a held date can be past it (a clock set back, a
+// burst of writes), and it ties with a date kept at the edge of the slack.
+func overHeld(future, clamped, held string) (string, error) {
+	if held == "" {
+		return clamped, nil
+	}
+	held, err := normalize(held)
+	if err != nil {
+		return "", err
+	}
+	if future <= held || clamped > held {
+		return clamped, nil
+	}
+	t, err := time.Parse(storage.ChangedAtLayout, held)
+	if err != nil {
+		return "", err
+	}
+	return t.Add(time.Millisecond).Format(storage.ChangedAtLayout), nil
+}
+
+// clockSlack is how far ahead of this library's clock a record may be dated and
+// still keep its date. A journal dates two writes of an object in the same
+// millisecond a millisecond apart, so an honest date can lead the clock a little;
+// taken as made now, it would tie with, or lose to, the write it follows. A
+// local edit made after it still comes later: the journal dates it past what the
+// object holds.
+const clockSlack = time.Second
+
 // Import merges a set into the library: per object, the later change wins.
 // Dates are normalised (UTC, milliseconds) and compared as dates; one later
-// than this library's clock is taken as made now (Report.Clamped). A tie to
+// than this library's clock by more than clockSlack is taken as made now
+// (Report.Clamped), or as made just after what the object holds when that is
+// later than now and the record is later still (overHeld). A tie to
 // the millisecond goes to the greater tieKey, so both sides pick the same
 // one; an identical change is a no-op, which makes a record that comes back
 // around harmless. A restore therefore beats an older delete and a delete an
@@ -338,8 +371,9 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 			return rep, err
 		}
 		future := ""
-		if now := time.Now().UTC().Format(storage.ChangedAtLayout); at > now {
-			future, at = at, now
+		now := time.Now().UTC()
+		if at > now.Add(clockSlack).Format(storage.ChangedAtLayout) {
+			future, at = at, now.Format(storage.ChangedAtLayout)
 			rep.Clamped++
 		}
 		r.ChangedAt = at
@@ -495,6 +529,18 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		localAt, err := normalize(local.ChangedAt)
 		if err != nil {
 			return lost, err
+		}
+		if future != "" {
+			at, err := overHeld(future, r.ChangedAt, localAt)
+			if err != nil {
+				return lost, err
+			}
+			if at != r.ChangedAt {
+				r.ChangedAt = at
+				if err := journal.Applying(ctx, scope, at); err != nil {
+					return lost, err
+				}
+			}
 		}
 		switch {
 		case r.ChangedAt < localAt:

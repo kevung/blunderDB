@@ -389,11 +389,17 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `ON DELETE CASCADE` (the origin's deletion drops the link, not the variant),
   `FORCE RLS`, `lock_timeout = 15s`. A trigger journals the variant, as in 057.
   Schema-visible: bumped `domain.DatabaseVersion` to 2.55.0.
-- `059_deck_tournament_uuid.sql` — `anki_deck.uuid` and `tournament.uuid` (unique
+- `059_journal_stamps_advance.sql` — a local write dates the journal entry of its
+  object, and the date of a part, past what they hold when `now()` has not passed
+  it: two writes of an object in one millisecond, or across a clock set back,
+  stay ordered for a peer. `blunderdb_stamp_after`, and the three journal
+  functions replaced. No table touched. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.56.0.
+- `060_deck_tournament_uuid.sql` — `anki_deck.uuid` and `tournament.uuid` (unique
   per tenant, `blunderdb_uuid7()` by default, set after the bare `ADD COLUMN`),
   and a `blunderdb_journal` trigger on each, whose update side ignores the columns
   that are the library's own (`sqlshared.LocalColumns`); the match's update trigger
   now journals a change of its tournament. The rows held before are named by
   Go in a pass of their own per family (`sqlshared.MarkFor`), so a library that
   passed 054's pass still gets it. `lock_timeout = 15s`.
-  Schema-visible: bumped `domain.DatabaseVersion` to 2.56.0.
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.57.0.

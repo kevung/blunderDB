@@ -39,6 +39,15 @@ const TRANSCRIPTION_CALLS = new Set([
     'AbandonTranscription',
     'MatchTranscriptionLosses',
     'ApplyTranscriptionGesture',
+    'TranscriptionCandidates',
+    'ImportTranscription',
+    'PickTranscriptionFile',
+    'PickTranscriptionVideo',
+    'ReadFileContent',
+    'YouTubeWatchURL',
+    'GetAllPlayerNames',
+    'GetAllTournaments',
+    'GetMatchTextValues',
     'TranscriptionMAT',
     'PendingTranscriptionAnalysis',
     'SuggestTranscriptionMatFilename',
@@ -50,10 +59,20 @@ const TRANSCRIPTION_CALLS = new Set([
     'LegalMoves',
     'EvaluatePositionImmediate',
     'SaveSessionState',
+    // Le plateau redessiné lit son marqueur de Pile : une lecture, qui suit la position dessinée.
+    'IsPositionOnPile',
     // Géométrie de la fenêtre, notée à son propre rythme, pas par une touche.
     'WindowGetSize',
-    'SaveWindowDimensions'
+    'SaveWindowDimensions',
+    // Sondage des écritures d'un autre processus, à son propre rythme lui aussi.
+    'LibrariesWrittenElsewhere'
 ]);
+
+/**
+ * Silence qui vaut repos. Plus long que le différé du filtre des matchs (250 ms) : frappé là, son
+ * appel partirait pendant la touche suivante et lui serait imputé.
+ */
+const QUIET_MS = 300;
 
 /** mulberry32 : la séquence d'une graine se rejoue à l'identique. */
 function prng(seed) {
@@ -139,10 +158,14 @@ async function boot(page, seed, errors) {
     errors.length = 0;
 }
 
-/** Attend le repos : plus aucun appel du moteur en vol, deux lectures d'affilée. */
+/** Attend le repos : plus aucun appel du moteur en vol, et le journal immobile depuis QUIET_MS. */
 async function settle(page) {
+    await page.evaluate(() => {
+        const w = /** @type {any} */ (window);
+        w.__monkeyQuietSince = performance.now();
+    });
     await page.waitForFunction(
-        () => {
+        (quietMs) => {
             const w = /** @type {any} */ (window);
             // Une touche qui fuit agit hors du moteur (parcours, chargements) :
             // le repos exige aussi un journal d'appels immobile.
@@ -150,13 +173,12 @@ async function settle(page) {
             const last = calls[calls.length - 1];
             if (w.__monkeyInflight !== 0 || last !== w.__monkeyLastCall) {
                 w.__monkeyLastCall = last;
-                w.__monkeyQuiet = 0;
+                w.__monkeyQuietSince = performance.now();
                 return false;
             }
-            w.__monkeyQuiet = (w.__monkeyQuiet ?? 0) + 1;
-            return w.__monkeyQuiet >= 6;
+            return performance.now() - w.__monkeyQuietSince >= quietMs;
         },
-        null,
+        QUIET_MS,
         { polling: 40, timeout: 10000 }
     );
 }
@@ -295,11 +317,12 @@ async function checkLeak(page, s) {
     if (!s.key || !panelOwned(s.key)) return [];
     const b = s.before;
     if (b.tab !== 'transcription' || b.draft == null || !b.focusInPanel || b.modal) return [];
+    // Avant worldOf, qui vide le journal : lu après, il ne dirait rien de ce que la touche a appelé.
+    const foreign = (await callsSince(page, b.calls)).filter((m) => !TRANSCRIPTION_CALLS.has(m));
     const after = await worldOf(page);
     const out = [];
     if (after.tab !== b.tab) out.push(`touche ${s.key} : onglet ${b.tab} → ${after.tab}`);
     if (after.index !== b.index) out.push(`touche ${s.key} : position parcourue ${b.index} → ${after.index}`);
-    const foreign = (await callsSince(page, b.calls)).filter((m) => !TRANSCRIPTION_CALLS.has(m));
     if (foreign.length) out.push(`touche ${s.key} : appels hors transcription ${[...new Set(foreign)].join(', ')}`);
     return out;
 }

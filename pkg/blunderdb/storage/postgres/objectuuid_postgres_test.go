@@ -193,13 +193,13 @@ func TestMigrate_054_ObjectUUIDsUnderRLS(t *testing.T) {
 	}
 }
 
-// TestMigrate_059_DeckAndTournamentUUIDsUnderRLS: a library whose first uuid
+// TestMigrate_060_DeckAndTournamentUUIDsUnderRLS: a library whose first uuid
 // pass is long done still names its decks and tournaments, by a pass of their
 // own, on a role that is neither superuser nor BYPASSRLS. The identifiers are
 // the ones Go derives, two tenants holding the same names converge, FORCE is
 // back, the naming is no change of the journal (an export from the start still
 // carries the rows), and a deck written afterwards is journaled by its trigger.
-func TestMigrate_059_DeckAndTournamentUUIDsUnderRLS(t *testing.T) {
+func TestMigrate_060_DeckAndTournamentUUIDsUnderRLS(t *testing.T) {
 	ctx := context.Background()
 	s, conn, ownerDSN := openAsRLSOwner(t)
 	for _, scope := range []string{"1", "2"} {

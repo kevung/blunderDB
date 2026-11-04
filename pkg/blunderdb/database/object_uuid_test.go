@@ -421,13 +421,13 @@ func TestObjectUUID_APositionRepairedOnTheOpenIsNamedByItsHash(t *testing.T) {
 	}
 }
 
-// A library at 2.55.0 has its uuids and its journal for the families of 2.51.0;
-// the deck and the tournament, added at 2.56.0, are named by their own pass
+// A library at 2.56.0 has its uuids and its journal for the families of 2.51.0;
+// the deck and the tournament, added at 2.57.0, are named by their own pass
 // when it opens, from the same natural key on every library, and an export
 // from the start carries them.
-func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_55(t *testing.T) {
+func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_56(t *testing.T) {
 	t.Parallel()
-	path, d := uuidLibrary(t, "at255.db")
+	path, d := uuidLibrary(t, "at256.db")
 	for _, stmt := range []string{
 		`INSERT INTO anki_deck (name) VALUES ('Openings')`,
 		`INSERT INTO anki_deck (name) VALUES ('Openings')`,
@@ -452,7 +452,7 @@ func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_55(t *testing.T) {
 			}
 		}
 	}
-	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.55.0' WHERE key = 'database_version'`); err != nil {
+	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.56.0' WHERE key = 'database_version'`); err != nil {
 		t.Fatal(err)
 	}
 	if err := d.Close(); err != nil {

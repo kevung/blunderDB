@@ -8,6 +8,12 @@ propre issue le jour où il est lancé.
 
 ## Ouvert — Backend
 
+- **Journal du changeset : rafale d'écritures sur un même objet** — une écriture locale est datée
+  à la milliseconde suivant la date tenue quand l'horloge ne l'a pas dépassée ; plus de 1000
+  écritures rapides d'un même objet datent donc à plus de 1 s d'avance (2000 écritures : 1,7 s),
+  au-delà de `clockSlack`, et peuvent faire diverger durablement deux pairs. Aucun chemin réel
+  connu : à reprendre si l'un apparaît (`storage/changelog.go`, `changeset/changeset.go`).
+
 - **Statistiques : le filtre `--engine` par les cellules** — décidé : différé (2026-10-24). Il
   lit encore les décisions (copie de la sélection) ; passer par `match_stats_cell` demande le
   moteur dans la clé des cellules, autant de cellules en plus que de moteurs par match. Mesure

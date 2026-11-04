@@ -1,4 +1,4 @@
--- Forward migration: the 2.56.0 wave — the Anki deck and the tournament join
+-- Forward migration: the 2.57.0 wave — the Anki deck and the tournament join
 -- the objects that carry a stable uuid and a change-journal entry, so the
 -- changeset carries them (with the cards, the transcriptions and the other
 -- families that already had a uuid since 054).
@@ -18,7 +18,7 @@
 -- match for the instant of its swap: lock_timeout
 -- makes a busy one fail the migration, retried at the next start, rather
 -- than queue writers behind a long transaction. Idempotent.
--- Schema-visible: bumps domain.DatabaseVersion to 2.56.0.
+-- Schema-visible: bumps domain.DatabaseVersion to 2.57.0.
 
 SET LOCAL lock_timeout = '15s';
 

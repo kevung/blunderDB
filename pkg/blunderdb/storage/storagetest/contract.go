@@ -360,8 +360,9 @@ func cubePos() domain.Position {
 	return p
 }
 
-// provenancePos returns a position unique to n (the score is part of a
-// position's identity, so each n hashes to its own row).
+// provenancePos returns a position unique to n up to 63 (the score is part of a
+// position's identity, but the hash clamps it there: every n above 63 is the
+// same row).
 func provenancePos(n int) domain.Position {
 	p := domain.InitializePosition()
 	p.DecisionType = domain.CheckerAction
