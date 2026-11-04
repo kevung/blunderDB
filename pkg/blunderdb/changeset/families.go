@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"slices"
 	"strconv"
 	"time"
 
@@ -564,16 +563,18 @@ var commentCodec = codec{
 // libraries holding the same match read the same bytes. What the match is
 // attached to here (import batch, direction slot, drafts, the duel that
 // produced it) and where the user last looked belong to the library and stay
-// out. The tournament does not: it is named by uuid, with the match's place
-// among the tournament's (TournamentIndex). A payload with no "tournament" is
-// a peer's that does not say, which leaves the match where it is; "" detaches.
+// out. The tournament does not: it is named by uuid, with the match's order
+// among the tournament's, a value of the row that only a write dated on the
+// match changes. Tournament is nil where the library has no word on it (the
+// match was never attached, or was by a schema that did not date it), which
+// leaves the match where it is; "" is a detachment, dated like any gesture.
 type matchPayload struct {
 	domain.TrashMatchPayload
 	Tournament *string `json:"tournament"`
 }
 
 func portableMatch(p *domain.TrashMatchPayload) {
-	p.UUID, p.Origin = "", nil
+	p.UUID, p.Origin, p.TournamentIndex = "", nil, 0
 	p.DirectionSlot, p.DirectionPair, p.TranscriptionIDs, p.ImportFileIDs = "", [2]string{}, nil, nil
 	p.Match.ID, p.Match.ImportDate, p.Match.TournamentID, p.Match.ImportBatchID = 0, time.Time{}, nil, 0
 	p.Match.LastVisitedPosition = -1
@@ -612,18 +613,46 @@ var matchCodec = codec{
 		if err != nil {
 			return nil, err
 		}
-		tournament := ""
-		if p.Match.TournamentID != nil {
-			tournament, err = uuidsOf(s).ObjectUUID(ctx, scope, "tournament", *p.Match.TournamentID)
+		var tournament *string
+		switch {
+		case p.Match.TournamentID != nil:
+			u, err := uuidsOf(s).ObjectUUID(ctx, scope, "tournament", *p.Match.TournamentID)
 			if err != nil && !errors.Is(err, storage.ErrNotFound) {
 				return nil, err
 			}
+			if u != "" {
+				tournament = &u
+			}
+		case p.Match.TournamentSortOrder == storage.MatchDetached:
+			tournament = new(string)
 		}
 		portableMatch(p)
-		if tournament == "" {
-			p.TournamentIndex = 0
+		if tournament == nil || *tournament == "" {
+			p.Match.TournamentSortOrder = 0
 		}
-		return matchPayload{TrashMatchPayload: *p, Tournament: &tournament}, nil
+		return matchPayload{TrashMatchPayload: *p, Tournament: tournament}, nil
+	},
+	// A word on the tournament beats no word, whichever state is the later:
+	// the states of a match say nothing of a tournament they never heard of.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l matchPayload
+		if err := json.Unmarshal(winner, &w); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		if err := json.Unmarshal(loser, &l); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		if w.Tournament != nil || l.Tournament == nil {
+			return winner, nil
+		}
+		w.Tournament, w.Match.TournamentSortOrder = l.Tournament, l.Match.TournamentSortOrder
+		return json.Marshal(w)
+	},
+	olderSays: func(raw json.RawMessage) bool {
+		var p struct {
+			Tournament *string `json:"tournament"`
+		}
+		return json.Unmarshal(raw, &p) == nil && p.Tournament != nil
 	},
 	create: func(ctx context.Context, s storage.Stores, scope string, raw json.RawMessage) (int64, error) {
 		var p matchPayload
@@ -684,25 +713,23 @@ var matchCodec = codec{
 	},
 }
 
-// joinTournament brings the match to the tournament the payload names, at its
-// place among the tournament's matches. A tournament this library lacks leaves
-// the match where it is, and the report names it.
+// joinTournament brings the match to the tournament the payload names, at the
+// order it holds there. Two matches attached apart can share an order: the
+// listing settles them by their content, on every library alike. A tournament
+// this library lacks leaves the match where it is, and the report names it.
 func joinTournament(ctx context.Context, s storage.Stores, scope string, id int64, p matchPayload) error {
 	if p.Tournament == nil {
 		return nil
 	}
 	ts := s.Tournaments()
+	if *p.Tournament == "" {
+		return ts.RemoveMatch(ctx, scope, id)
+	}
 	cur, err := ts.TournamentOf(ctx, scope, id)
 	if err != nil && !errors.Is(err, storage.ErrNotFound) {
 		return err
 	}
 	attached := err == nil
-	if *p.Tournament == "" {
-		if attached {
-			return ts.RemoveMatch(ctx, scope, id)
-		}
-		return nil
-	}
 	tid, err := uuidsOf(s).ObjectID(ctx, scope, "tournament", *p.Tournament)
 	if errors.Is(err, storage.ErrNotFound) {
 		noteMissing(ctx, *p.Tournament)
@@ -716,28 +743,11 @@ func joinTournament(ctx context.Context, s storage.Stores, scope string, id int6
 			return err
 		}
 	}
-	var ids []int64
-	for tm, err := range ts.Matches(ctx, scope, tid) {
-		if err != nil {
-			return err
-		}
-		if tm.ID != id {
-			ids = append(ids, tm.ID)
-		}
+	places, ok := s.(storage.MatchPlaceProvider)
+	if !ok {
+		return fmt.Errorf("changeset: this backend does not place a match in a tournament: %w", storage.ErrInvalid)
 	}
-	at := min(max(p.TournamentIndex, 0), len(ids))
-	ids = slices.Insert(ids, at, id)
-	var now []int64
-	for tm, err := range ts.Matches(ctx, scope, tid) {
-		if err != nil {
-			return err
-		}
-		now = append(now, tm.ID)
-	}
-	if slices.Equal(now, ids) {
-		return nil
-	}
-	return ts.ReorderMatches(ctx, scope, tid, ids)
+	return places.MatchPlaces().SetMatchOrder(ctx, scope, id, p.Match.TournamentSortOrder)
 }
 
 // hashesFree refuses a header whose new hash is another local match's.

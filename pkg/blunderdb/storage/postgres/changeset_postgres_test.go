@@ -44,6 +44,51 @@ func TestChangeSetPreJournal_Postgres(t *testing.T) {
 	})
 }
 
+// The cursor stays at the last entry of a carried family, so a family a later
+// version carries is not skipped by a peer that exported before it did.
+func TestChangeSetCursorStopsAtUncarriedFamilies_Postgres(t *testing.T) {
+	ctx := context.Background()
+	s, conn, ownerDSN := openAsRLSOwner(t)
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatal(err)
+	}
+	rls, err := pg.Open(ctx, ownerDSN, &storage.Options{EnableRLS: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = rls.Close() })
+	tenant := storage.WithTenant(ctx, 1)
+	id, err := rls.Collections().Create(tenant, "1", "Before the unknown", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	u, err := rls.ObjectUUIDs().ObjectUUID(tenant, "1", "collection", id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	asTenant(t, conn, "1", func() {
+		if _, err := conn.Exec(ctx, `INSERT INTO change_log (tenant_id, uuid, family, op) VALUES (1, '0190a000-0000-7000-8000-00000000f00d', 'not-carried-yet', 'update')`); err != nil {
+			t.Fatal(err)
+		}
+	})
+	set, err := changeset.Export(tenant, rls, "1", storage.Cursor{}, 1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	last, err := rls.ChangeJournal().Entry(tenant, "1", u)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if set.Cursor.Seq != last.Seq {
+		t.Errorf("cursor %d passed the carried entries (%d) over an uncarried family", set.Cursor.Seq, last.Seq)
+	}
+	for _, r := range set.Records {
+		if r.Family == "not-carried-yet" {
+			t.Errorf("a record of family %s", r.Family)
+		}
+	}
+}
+
 func TestChangeSetFirstSync_Postgres(t *testing.T) {
 	ctx := context.Background()
 	s, conn, ownerDSN := openAsRLSOwner(t)

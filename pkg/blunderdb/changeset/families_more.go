@@ -1,7 +1,6 @@
 package changeset
 
 import (
-	"bytes"
 	"cmp"
 	"context"
 	"encoding/json"
@@ -120,14 +119,14 @@ var transcriptionCodec = codec{
 // --- tournament ---
 
 // tournamentPayload is a tournament's header and note. Which matches belong to
-// it is the match's to say (it names the tournament).
+// it is the match's to say (it names the tournament). updated_at stays out: it
+// moves at every attachment, here and on the peer alike.
 type tournamentPayload struct {
 	Name      string `json:"name"`
 	Date      string `json:"date,omitempty"`
 	Location  string `json:"location,omitempty"`
 	Comment   string `json:"comment,omitempty"`
 	CreatedAt string `json:"createdAt,omitempty"`
-	UpdatedAt string `json:"updatedAt,omitempty"`
 }
 
 var tournamentCodec = codec{
@@ -138,8 +137,7 @@ var tournamentCodec = codec{
 		if err != nil {
 			return nil, err
 		}
-		return tournamentPayload{Name: t.Name, Date: t.Date, Location: t.Location, Comment: t.Comment,
-			CreatedAt: t.CreatedAt, UpdatedAt: t.UpdatedAt}, nil
+		return tournamentPayload{Name: t.Name, Date: t.Date, Location: t.Location, Comment: t.Comment, CreatedAt: t.CreatedAt}, nil
 	},
 	create: func(ctx context.Context, s storage.Stores, scope string, raw json.RawMessage) (int64, error) {
 		var p tournamentPayload
@@ -171,7 +169,7 @@ func fillTournament(ctx context.Context, s storage.Stores, scope string, id int6
 	if err := s.Tournaments().UpdateComment(ctx, scope, id, p.Comment); err != nil {
 		return err
 	}
-	return s.Tournaments().KeepDates(ctx, scope, id, p.CreatedAt, p.UpdatedAt)
+	return s.Tournaments().KeepDates(ctx, scope, id, p.CreatedAt, "")
 }
 
 // --- anki deck ---
@@ -424,8 +422,7 @@ func (p cardPayload) card(id, deckID, positionID int64, key string) domain.AnkiC
 }
 
 // ahead orders two states of one card by how far its reviews went: the later
-// last review, then the more reviews, then the more lapses. Equal in all three
-// they are told apart by their bytes, so both sides settle on the same one.
+// last review, then the more reviews, then the more lapses.
 func (p cardPayload) ahead(o cardPayload) int {
 	if c := cmp.Compare(p.LastReview, o.LastReview); c != 0 {
 		return c
@@ -433,19 +430,15 @@ func (p cardPayload) ahead(o cardPayload) int {
 	if c := cmp.Compare(p.Reps, o.Reps); c != 0 {
 		return c
 	}
-	if c := cmp.Compare(p.Lapses, o.Lapses); c != 0 {
-		return c
-	}
-	a, _ := json.Marshal(p)
-	b, _ := json.Marshal(o)
-	return bytes.Compare(a, b)
+	return cmp.Compare(p.Lapses, o.Lapses)
 }
 
 var cardCodec = codec{
 	rank: 8,
 	// Two states of one card that nothing orders (a tie, or a draw that met a
-	// card reviewed elsewhere) keep the one whose reviews went further: a draw
-	// carries no review, so it never stands for the last write.
+	// card reviewed elsewhere) keep the planning whose reviews went further, a
+	// draw carrying no review; the suspension and the burial are gestures, and
+	// stay the last write's. Winner is the later of the two.
 	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
 		var w, l cardPayload
 		if err := decode("card", winner, &w); err != nil {
@@ -454,10 +447,11 @@ var cardCodec = codec{
 		if err := decode("card", loser, &l); err != nil {
 			return nil, err
 		}
-		if l.ahead(w) > 0 {
-			return loser, nil
+		if l.ahead(w) <= 0 {
+			return winner, nil
 		}
-		return winner, nil
+		l.Suspended, l.BuriedUntil = w.Suspended, w.BuriedUntil
+		return json.Marshal(l)
 	},
 	// The cards of two libraries that drew the same question meet under two
 	// uuids: the planning that went furthest is the card's.
