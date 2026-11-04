@@ -269,6 +269,12 @@ type Config struct {
 	// AssistantRemoteAck is the remote address whose privacy warning the user
 	// accepted; another address asks again.
 	AssistantRemoteAck string `json:"assistant_remote_ack,omitempty"`
+
+	// The remote library the open one is kept level with (package
+	// syncremote): its address and whether to sync at startup. The token is
+	// never here: it lives in the system keyring.
+	SyncServer string `json:"sync_server,omitempty"`
+	SyncAuto   bool   `json:"sync_auto,omitempty"`
 }
 
 // clampUIScale clamps scale to the supported range, 0 meaning the default.
@@ -503,6 +509,7 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.Assistant, c.AssistantPreset, c.AssistantBaseURL = config.Assistant, config.AssistantPreset, config.AssistantBaseURL
 	c.AssistantModel, c.AssistantRemoteAck = config.AssistantModel, config.AssistantRemoteAck
 	c.AssistantWrite = config.AssistantWrite
+	c.SyncServer, c.SyncAuto = config.SyncServer, config.SyncAuto
 	c.ConfigVersion = config.ConfigVersion
 
 	if migrating {
@@ -1102,6 +1109,29 @@ func (c *Config) SaveAssistant(s AssistantSettings) error {
 	c.Assistant, c.AssistantPreset, c.AssistantBaseURL = s.On, s.Preset, s.BaseURL
 	c.AssistantModel, c.AssistantRemoteAck, c.AssistantWrite = s.Model, strings.TrimSpace(s.RemoteAck), s.Write
 	return c.SaveConfig(c)
+}
+
+// SyncSettings is the remote library's setting as one value: the address and
+// the startup switch, never the token.
+type SyncSettings struct {
+	Server string `json:"server"`
+	Auto   bool   `json:"auto"`
+}
+
+// GetSync returns the remote library's setting.
+func (c *Config) GetSync() SyncSettings {
+	return SyncSettings{Server: c.SyncServer, Auto: c.SyncAuto}
+}
+
+// SaveSync persists the remote library's setting.
+func (c *Config) SaveSync(s SyncSettings) error {
+	c.SyncServer, c.SyncAuto = strings.TrimSpace(s.Server), s.Auto
+	return c.SaveConfig(c)
+}
+
+// SyncServerAddress is read by the window's synchronisation at startup.
+func (c *Config) SyncServerAddress() (server string, auto bool) {
+	return c.SyncServer, c.SyncAuto
 }
 
 // AssistantConsentURL is the remote address whose privacy warning the user

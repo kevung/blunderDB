@@ -749,3 +749,18 @@ func TestDuelFormSurvivesReload(t *testing.T) {
 		t.Errorf("reloaded form = %q, want %q", got, form)
 	}
 }
+
+func TestSyncSettingsSurviveARestartAndHoldNoToken(t *testing.T) {
+	isolateXDGConfig(t)
+	c := NewConfig()
+	if err := c.SaveSync(SyncSettings{Server: " https://sync.example.org/api ", Auto: true}); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := NewConfig().LoadConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := loaded.GetSync(); got.Server != "https://sync.example.org/api" || !got.Auto {
+		t.Errorf("reloaded sync setting = %+v", got)
+	}
+}

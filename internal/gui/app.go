@@ -28,7 +28,9 @@ import (
 
 // App struct
 type App struct {
-	ctx context.Context
+	// sync is the synchronisation with a remote library (sync.go).
+	sync syncState
+	ctx  context.Context
 	// db is used only by jobs that need both the database and Wails events
 	// (the gammonNet batch); other App methods stay database-free.
 	db *database.Database
@@ -416,6 +418,7 @@ func (a *App) startup(ctx context.Context) {
 	// Generate the missing bearoff tables silently in the background
 	// (ADR-0027; about six seconds of one core on first launch).
 	a.EnsureBearoffTables()
+	a.syncAtStartup()
 }
 
 // directionPageWarningEvent carries a database.PageWarning to the frontend.
