@@ -1501,7 +1501,6 @@
             openDraft(rows[listIndex]);
             return;
         }
-        claimBrowsingKey(event);
         if (isBareLetter(event, 'n') && !showForm) {
             event.preventDefault();
             event.stopPropagation();

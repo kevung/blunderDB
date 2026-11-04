@@ -391,3 +391,19 @@ describe('a browsing key the panel does not use stays in the panel', () => {
         expect(notClaimed).toBe(false);
     });
 });
+
+describe('without a draft, the browsing keys stay global', () => {
+    test.each([
+        ['Home', 'Home'],
+        ['PageUp', 'PageUp'],
+        ['KeyH', 'h'],
+        ['ArrowLeft', 'ArrowLeft']
+    ])('%s is left to the library', async (code, key) => {
+        transcriptionStore.set(null);
+        render(TranscriptionPanel);
+        await tick();
+        document.getElementById('transcriptionPanel')?.focus();
+        const notClaimed = await fireEvent.keyDown(document, { code, key });
+        expect(notClaimed).toBe(true);
+    });
+});
