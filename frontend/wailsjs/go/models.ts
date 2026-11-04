@@ -10178,6 +10178,7 @@ export namespace syncremote {
 	    older: number;
 	    conflicts: number;
 	    missing: number;
+	    unsupported: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Totals(source);
@@ -10192,6 +10193,7 @@ export namespace syncremote {
 	        this.older = source["older"];
 	        this.conflicts = source["conflicts"];
 	        this.missing = source["missing"];
+	        this.unsupported = source["unsupported"];
 	    }
 	}
 	export class Result {

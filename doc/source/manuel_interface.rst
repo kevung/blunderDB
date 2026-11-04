@@ -547,7 +547,7 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en dix onglets :
+blunderDB. Elle est organisée en onze onglets :
 
 * **Interface** — thème, langue, échelle d'affichage, position du panneau, pas de
   PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste),

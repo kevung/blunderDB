@@ -418,7 +418,6 @@ func (a *App) startup(ctx context.Context) {
 	// Generate the missing bearoff tables silently in the background
 	// (ADR-0027; about six seconds of one core on first launch).
 	a.EnsureBearoffTables()
-	a.syncAtStartup()
 }
 
 // directionPageWarningEvent carries a database.PageWarning to the frontend.

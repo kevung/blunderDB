@@ -438,6 +438,10 @@ export function SuggestWatchFolder() {
   return window['go']['gui']['App']['SuggestWatchFolder']();
 }
 
+export function SyncAtStartup() {
+  return window['go']['gui']['App']['SyncAtStartup']();
+}
+
 export function SyncNow() {
   return window['go']['gui']['App']['SyncNow']();
 }

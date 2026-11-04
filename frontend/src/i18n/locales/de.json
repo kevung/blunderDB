@@ -3054,8 +3054,10 @@
             "address": "Ungültige Adresse: https:// ist erforderlich (http:// nur auf diesem Rechner).",
             "no_token": "Für diesen Server ist kein Token gespeichert.",
             "no_library": "Keine Bibliothek ist geöffnet.",
-            "other": "Die Synchronisierung ist fehlgeschlagen."
-        }
+            "other": "Die Synchronisierung ist fehlgeschlagen.",
+            "library_changed": "Die Bibliothek hat sich während der Synchronisierung geändert: Sie wurde abgebrochen, starten Sie sie erneut."
+        },
+        "unapplied": "{conflicts} im Konflikt, {missing} mit fehlendem Verweis, {unsupported} von nicht unterstütztem Typ: Diese Elemente wurden nicht übernommen."
     },
     "emptyState": {
         "import": "Importieren… (Strg+I)",

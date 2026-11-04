@@ -3054,8 +3054,10 @@
             "address": "Invalid address: https:// is required (http:// only on this machine).",
             "no_token": "No token is stored for this server.",
             "no_library": "No library is open.",
-            "other": "Synchronisation failed."
-        }
+            "other": "Synchronisation failed.",
+            "library_changed": "The library changed during the synchronisation: it was interrupted, run it again."
+        },
+        "unapplied": "{conflicts} in conflict, {missing} with a missing reference, {unsupported} of an unsupported type: these items were not applied."
     },
     "emptyState": {
         "import": "Import… (Ctrl+I)",

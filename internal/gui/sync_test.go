@@ -111,3 +111,40 @@ func TestSyncSuccessIsRecordedAndSurvivesInTheStateFile(t *testing.T) {
 		t.Errorf("after a restart lastSuccess = %q, want %q", got, st.LastSuccess)
 	}
 }
+
+// The window starts with an empty in-memory library: a startup run waits for the real one.
+func TestSyncAtStartupWaitsForTheRealLibrary(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"cursor":{"seq":0},"more":false,"records":[]}`))
+	}))
+	defer srv.Close()
+	keyring.MockInit()
+	mem := database.NewDatabase()
+	if err := mem.SetupDatabase(":memory:"); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = mem.Close() })
+	a := NewApp(mem)
+	a.sync.source = fixedSync{server: srv.URL, auto: true}
+	a.sync.path = filepath.Join(t.TempDir(), "sync-state.json")
+	if err := a.SyncSetToken(srv.URL, "tok"); err != nil {
+		t.Fatal(err)
+	}
+	if a.syncAtStartup() {
+		t.Fatal("a startup run began on the in-memory library")
+	}
+	if err := mem.SetupDatabase(filepath.Join(t.TempDir(), "real.db")); err != nil {
+		t.Fatal(err)
+	}
+	if !a.syncAtStartup() {
+		t.Fatal("no startup run on the real library")
+	}
+	a.sync.wg.Wait()
+	if st := a.SyncStatus(); st.Error != nil || st.LastSuccess == "" {
+		t.Errorf("status = %+v", st)
+	}
+	a.sync.source = fixedSync{server: srv.URL, auto: false}
+	if a.syncAtStartup() {
+		t.Error("a startup run began with the switch off")
+	}
+}

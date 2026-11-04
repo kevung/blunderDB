@@ -56,7 +56,9 @@ type SyncStatus struct {
 }
 
 type syncState struct {
-	mu      sync.Mutex
+	mu sync.Mutex
+	// wg tracks the run in flight, for a test to wait on.
+	wg      sync.WaitGroup
 	running bool
 	lastErr *SyncError
 	result  *syncremote.Result
@@ -186,22 +188,33 @@ func (a *App) SyncNow() SyncStatus {
 	a.sync.running, a.sync.lastErr = true, nil
 	st := a.statusLocked(server)
 	a.sync.mu.Unlock()
+	a.sync.wg.Add(1)
 	go func() {
+		defer a.sync.wg.Done()
 		a.syncRun(context.Background())
 		a.emitSync()
 	}()
 	return st
 }
 
-// syncAtStartup runs once when the window opens, for a user who asked for it
-// and has both an address and a token. It stays silent otherwise: a library
-// that is not open yet, or no account, is not a failure.
-func (a *App) syncAtStartup() {
+// SyncAtStartup is called by the window once it has reopened the user's
+// library, for a user who asked for a sync at startup and has both an address
+// and a token. It stays silent otherwise. The handle holds an empty in-memory
+// library until then: a run on it would merge the server into nothing.
+func (a *App) SyncAtStartup() {
+	a.syncAtStartup()
+}
+
+func (a *App) syncAtStartup() bool {
 	server, auto := a.syncSettings()
 	if !auto || strings.TrimSpace(server) == "" || a.db == nil || !syncHasToken(server) {
-		return
+		return false
+	}
+	if p := database.OpenPath(a.db); p == "" || p == ":memory:" {
+		return false
 	}
 	a.SyncNow()
+	return true
 }
 
 func (a *App) emitSync() {
@@ -245,7 +258,8 @@ func (a *App) syncRun(ctx context.Context) {
 		return
 	}
 
-	key := syncKey(db, addr)
+	journal := database.JournalOf(db)
+	key := journal.Path() + "\x00" + addr
 	entries := a.sync.load()
 	entry := entries[key]
 	save := func(c syncremote.Cursors) error {
@@ -253,7 +267,7 @@ func (a *App) syncRun(ctx context.Context) {
 		entries[key] = entry
 		return a.sync.store(entries)
 	}
-	_, r, err := syncremote.Run(ctx, database.JournalOf(db), client, entry.Cursors, syncremote.Options{Save: save})
+	_, r, err := syncremote.Run(ctx, journal, client, entry.Cursors, syncremote.Options{Save: save})
 	res = &r
 	if err != nil {
 		runErr = syncError(err)
@@ -270,6 +284,8 @@ func (a *App) syncRun(ctx context.Context) {
 func syncError(err error) *SyncError {
 	kind := "other"
 	switch {
+	case errors.Is(err, database.ErrDatabaseChanged):
+		kind = "library_changed"
 	case errors.Is(err, syncremote.ErrRefused):
 		kind = "refused"
 	case errors.Is(err, syncremote.ErrRateLimited):

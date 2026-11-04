@@ -3054,8 +3054,10 @@
             "address": "Indirizzo non valido: è richiesto https:// (http:// solo su questo computer).",
             "no_token": "Nessun token salvato per questo server.",
             "no_library": "Nessuna libreria aperta.",
-            "other": "Sincronizzazione non riuscita."
-        }
+            "other": "Sincronizzazione non riuscita.",
+            "library_changed": "La libreria è cambiata durante la sincronizzazione: è stata interrotta, la riavvii."
+        },
+        "unapplied": "{conflicts} in conflitto, {missing} con un riferimento assente, {unsupported} di un tipo non supportato: questi elementi non sono stati applicati."
     },
     "emptyState": {
         "import": "Importa… (Ctrl+I)",

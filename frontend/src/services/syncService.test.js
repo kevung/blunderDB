@@ -12,3 +12,16 @@ describe('syncErrorKey', () => {
         expect(syncErrorKey('something_new')).toBe('sync.error.other');
     });
 });
+
+describe('syncUnapplied', () => {
+    it('counts what either side could not apply, so a passed-on record is never shown as done', async () => {
+        const { syncUnapplied } = await import('./syncService.js');
+        expect(syncUnapplied(null)).toBe(0);
+        expect(
+            syncUnapplied({
+                sent: { records: 5, conflicts: 1, missing: 0, unsupported: 0 },
+                received: { records: 4, conflicts: 0, missing: 2, unsupported: 3 }
+            })
+        ).toBe(6);
+    });
+});

@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { t, language } from '../i18n';
     import { logger } from '../utils/logger.js';
-    import { syncSettingsStore, syncStateStore, loadSync, saveSyncSettings, setSyncToken, syncNow, syncErrorKey } from '../services/syncService.js';
+    import { syncSettingsStore, syncStateStore, loadSync, saveSyncSettings, setSyncToken, syncNow, syncErrorKey, syncUnapplied } from '../services/syncService.js';
 
     let serverInput = $state('');
     let tokenInput = $state('');
@@ -79,6 +79,15 @@
         <p class="setting-note ok" data-testid="sync-result">
             {$t('sync.result', { sent: st.result.sent?.records ?? 0, received: st.result.received?.records ?? 0 })}
         </p>
+        {#if syncUnapplied(st.result) > 0}
+            <p class="setting-note warn" role="alert" data-testid="sync-unapplied">
+                {$t('sync.unapplied', {
+                    conflicts: (st.result.sent?.conflicts ?? 0) + (st.result.received?.conflicts ?? 0),
+                    missing: (st.result.sent?.missing ?? 0) + (st.result.received?.missing ?? 0),
+                    unsupported: (st.result.sent?.unsupported ?? 0) + (st.result.received?.unsupported ?? 0)
+                })}
+            </p>
+        {/if}
     {/if}
     {#if saveError}
         <p class="setting-note warn" role="alert">{saveError}</p>

@@ -331,3 +331,43 @@ func TestAddress(t *testing.T) {
 		t.Errorf("normalized to %q", got)
 	}
 }
+
+func TestARedirectIsNeverFollowedSoTheTokenGoesNowhereElse(t *testing.T) {
+	a := openLibrary(t)
+	create(t, a, "Mine")
+	var leaked bool
+	other := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { leaked = true }))
+	defer other.Close()
+	redirecting := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, other.URL+r.URL.Path, http.StatusTemporaryRedirect)
+	}))
+	defer redirecting.Close()
+	c, err := syncremote.NewClient(redirecting.URL, token, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _, err = syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{})
+	if err == nil || !strings.Contains(err.Error(), "redirects") {
+		t.Fatalf("err = %v, want the redirect reported", err)
+	}
+	if leaked {
+		t.Errorf("the redirect was followed")
+	}
+}
+
+// A record of a family this side does not carry is reported, not passed as done.
+func TestWhatTheOtherSideCouldNotApplyIsCounted(t *testing.T) {
+	a := openLibrary(t)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"cursor":{"seq":1},"more":false,"records":[{"seq":1,"uuid":"u1","family":"hologram","op":"create","changed_at":"2026-01-01T00:00:00.000Z","payload":{}}]}`))
+	}))
+	defer srv.Close()
+	c, _ := syncremote.NewClient(srv.URL, token, nil)
+	_, res, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Received.Records != 1 || res.Received.Unsupported != 1 {
+		t.Errorf("received = %+v, want the record counted as unsupported", res.Received)
+	}
+}

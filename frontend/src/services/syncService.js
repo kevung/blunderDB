@@ -1,7 +1,9 @@
 import { writable } from 'svelte/store';
 import { EventsOn } from '../../wailsjs/runtime/runtime.js';
-import { SyncStatus, SyncNow, SyncSetToken } from '../../wailsjs/go/gui/App.js';
+import { SyncStatus, SyncNow, SyncSetToken, SyncAtStartup } from '../../wailsjs/go/gui/App.js';
 import { GetSync, SaveSync } from '../../wailsjs/go/main/Config.js';
+import { statusBarTextStore } from '../stores/uiStore';
+import { tMsg } from '../i18n';
 import { logger } from '../utils/logger.js';
 
 // Synchronisation with a remote library: an address and a token the user pastes. The Go side
@@ -9,7 +11,8 @@ import { logger } from '../utils/logger.js';
 // the token goes straight to the system keyring and never comes back here.
 
 /** @typedef {{ server: string, auto: boolean }} SyncSettings */
-/** @typedef {{ running: boolean, server: string, hasToken: boolean, lastSuccess: string, error?: { kind: string, message: string } | null, result?: { sent: { records: number }, received: { records: number } } | null }} SyncState */
+/** @typedef {{ running: boolean, server: string, hasToken: boolean, lastSuccess: string, error?: { kind: string, message: string } | null, result?: { sent: SyncTotals, received: SyncTotals } | null }} SyncState */
+/** @typedef {{ records: number, conflicts: number, missing: number, unsupported: number }} SyncTotals */
 
 /** @type {import('svelte/store').Writable<SyncSettings>} */
 export const syncSettingsStore = writable({ server: '', auto: false });
@@ -18,15 +21,46 @@ export const syncStateStore = writable({ running: false, server: '', hasToken: f
 
 let subscribed = false;
 
+/** @param {SyncState} s */
+function onStatus(s) {
+    syncStateStore.set(s);
+    // A failed run is told on the status bar too: nobody opens the tab to look for it.
+    if (!s.running && s.error) statusBarTextStore.set(tMsg(syncErrorKey(s.error.kind)));
+}
+
+function subscribe() {
+    if (subscribed) return;
+    subscribed = true;
+    EventsOn('sync:status', onStatus);
+}
+
+/** Called once the user's library is open: listens, and starts the run asked for at startup. */
+export async function initSync() {
+    subscribe();
+    try {
+        await SyncAtStartup();
+    } catch (error) {
+        logger.error('Error starting the sync:', error);
+    }
+}
+
+/**
+ * What a run could not apply, summed: records in conflict, with a reference this side lacks, or
+ * of a family it does not carry. They count as passed on for the cursor, so they must be shown.
+ * @param {SyncState['result']} r
+ */
+export function syncUnapplied(r) {
+    let n = 0;
+    for (const side of [r?.sent, r?.received]) n += (side?.conflicts ?? 0) + (side?.missing ?? 0) + (side?.unsupported ?? 0);
+    return n;
+}
+
 export async function loadSync() {
     try {
         const [saved, state] = await Promise.all([GetSync(), SyncStatus()]);
         syncSettingsStore.set({ server: saved?.server ?? '', auto: !!saved?.auto });
         syncStateStore.set(state);
-        if (!subscribed) {
-            subscribed = true;
-            EventsOn('sync:status', (/** @type {SyncState} */ s) => syncStateStore.set(s));
-        }
+        subscribe();
     } catch (error) {
         logger.error('Error loading the sync setting:', error);
     }
@@ -49,7 +83,7 @@ export async function syncNow() {
     syncStateStore.set(await SyncNow());
 }
 
-const ERROR_KINDS = ['refused', 'unavailable', 'rate_limited', 'too_large', 'address', 'no_token', 'no_library'];
+const ERROR_KINDS = ['refused', 'unavailable', 'rate_limited', 'too_large', 'address', 'no_token', 'no_library', 'library_changed'];
 
 /** The i18n key wording a failed run; an unforeseen kind falls back to the generic one. @param {string} kind */
 export function syncErrorKey(kind) {

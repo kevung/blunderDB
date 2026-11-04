@@ -3054,8 +3054,10 @@
             "address": "Adresse invalide : https:// est exigé (http:// seulement sur cette machine).",
             "no_token": "Aucun jeton n'est enregistré pour ce serveur.",
             "no_library": "Aucune bibliothèque n'est ouverte.",
-            "other": "La synchronisation a échoué."
-        }
+            "other": "La synchronisation a échoué.",
+            "library_changed": "La bibliothèque a changé pendant la synchronisation : elle a été interrompue, relancez-la."
+        },
+        "unapplied": "{conflicts} en conflit, {missing} avec une référence absente, {unsupported} d'un type non pris en charge : ces éléments n'ont pas été appliqués."
     },
     "emptyState": {
         "import": "Importer… (Ctrl+I)",

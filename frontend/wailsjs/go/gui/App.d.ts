@@ -227,6 +227,8 @@ export function StopTournamentDisplay():Promise<gui.TournamentDisplayStatus>;
 
 export function SuggestWatchFolder():Promise<string>;
 
+export function SyncAtStartup():Promise<void>;
+
 export function SyncNow():Promise<gui.SyncStatus>;
 
 export function SyncSetToken(arg1:string,arg2:string):Promise<void>;

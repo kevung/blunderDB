@@ -55,6 +55,11 @@ func NewClient(address, token string, hc *http.Client) (*Client, error) {
 	if hc == nil {
 		hc = &http.Client{Timeout: 2 * time.Minute}
 	}
+	// A redirect would carry the token to wherever it points, in clear if it
+	// leaves https: it is an answer to report, not to follow.
+	own := *hc
+	own.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	hc = &own
 	return &Client{base: base, token: strings.TrimSpace(token), http: hc}, nil
 }
 
@@ -148,6 +153,8 @@ func statusError(status int, raw []byte) error {
 		msg = ": " + msg
 	}
 	switch {
+	case status >= 300 && status < 400:
+		return fmt.Errorf("%w (HTTP %d): the server redirects, give its final address", ErrBadAddress, status)
 	case status == http.StatusGone:
 		return fmt.Errorf("%w%s", storage.ErrCursorStale, msg)
 	case status == http.StatusUnauthorized, status == http.StatusForbidden:

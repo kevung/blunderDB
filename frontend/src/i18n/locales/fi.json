@@ -3054,8 +3054,10 @@
             "address": "Virheellinen osoite: https:// vaaditaan (http:// vain tällä koneella).",
             "no_token": "Tälle palvelimelle ei ole tallennettu tunnistetta.",
             "no_library": "Kirjastoa ei ole avattu.",
-            "other": "Synkronointi epäonnistui."
-        }
+            "other": "Synkronointi epäonnistui.",
+            "library_changed": "Kirjasto vaihtui synkronoinnin aikana: se keskeytettiin, käynnistä se uudelleen."
+        },
+        "unapplied": "{conflicts} ristiriidassa, {missing} puuttuvalla viittauksella, {unsupported} tukemattomaa tyyppiä: näitä kohteita ei otettu käyttöön."
     },
     "emptyState": {
         "import": "Tuo… (Ctrl+I)",

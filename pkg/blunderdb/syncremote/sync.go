@@ -41,6 +41,8 @@ type Totals struct {
 	Older     int `json:"older"`
 	Conflicts int `json:"conflicts"`
 	Missing   int `json:"missing"`
+	// Unsupported records are of a family the receiving side does not carry.
+	Unsupported int `json:"unsupported"`
 }
 
 func (t *Totals) add(n int, r changeset.Report) {
@@ -51,6 +53,7 @@ func (t *Totals) add(n int, r changeset.Report) {
 	t.Older += r.Older
 	t.Conflicts += len(r.Conflicts)
 	t.Missing += len(r.Missing)
+	t.Unsupported += r.Unsupported
 }
 
 // Result is the outcome of a run: Sent is what the server reported on the
