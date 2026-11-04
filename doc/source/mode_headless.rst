@@ -1448,16 +1448,17 @@ La famille ``changeset`` synchronise deux bibliothèques par leur journal.
 ``cursor`` à redonner tel quel, et ``more`` tant que l'échange n'est pas fini ;
 une page ne sépare jamais un objet de ce à quoi il renvoie. Un curseur vide
 repart du début. Une réponse ``410`` dit que ce journal ne peut pas continuer
-depuis ce curseur (sauvegarde restaurée ailleurs) : repartez d'un curseur vide,
+depuis ce curseur (sauvegarde restaurée ailleurs, curseur pris avant
+l'ajout d'une famille au journal) : repartez d'un curseur vide,
 l'import absorbe la répétition. ``changeset.import`` (``records``) fusionne, la
 dernière écriture gagnant, et rend le rapport : ``added``, ``modified``,
 ``removed``, ``older``, ``conflicts``, et ``missing`` pour une référence qui
 n'a pas pu être placée. Une note écrasée par l'import reste dans la corbeille.
 Le journal porte les positions (avec leur analyse), les matchs, les collections,
 les notes, les leçons, les transcriptions, les tournois et les paquets Anki avec
-leurs cartes et leur planning. Un tournoi voyage avec son en-tête et sa note, pas
-avec la liste de ses matchs ; les familles sans corbeille (leçons, transcriptions,
-tournois, paquets, cartes) s'effacent quand un pair les met en corbeille.
+leurs cartes et leur planning. Un tournoi voyage avec son en-tête et sa note, et
+chaque match nomme son tournoi et sa place dans la liste ; les familles sans
+corbeille (leçons, transcriptions, tournois, paquets, cartes) s'effacent quand un pair les met en corbeille.
 
 Trois marques s'ajoutent à une position : ``changeset.export`` les emporte toutes
 les trois, l'export et le transfert le dessin et le lien d'origine, sans le libellé.
