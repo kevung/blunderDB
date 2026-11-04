@@ -80,7 +80,7 @@ const NAVIGATION_KEYS = new Set(['j', 'k', 'h', 'l', 'ArrowLeft', 'ArrowRight', 
 // Position-browsing keys: bare h/j/k/l (Shift-J/K switch views), arrows,
 // PageUp/PageDown, Home/End. Panels holding a selection keep them for their own list.
 /** @param {KeyboardEvent} event */
-function isBoardNavigationKey(event) {
+export function isBoardNavigationKey(event) {
     return (
         isBareLetter(event, 'j') ||
         isBareLetter(event, 'k') ||
