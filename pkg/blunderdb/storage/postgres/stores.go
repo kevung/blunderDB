@@ -82,6 +82,9 @@ func (b binder) PositionDrawings() storage.DrawingStore {
 func (b binder) PublicIDs() storage.PublicIDStore {
 	return &sqlshared.PublicIDStore{DB: b.shared()}
 }
+func (b binder) AnkiStates() storage.AnkiStateStore {
+	return &sqlshared.AnkiStateStore{DB: b.shared()}
+}
 func (b binder) ObjectUUIDs() storage.ObjectUUIDStore {
 	return &sqlshared.ObjectUUIDStore{DB: b.shared()}
 }

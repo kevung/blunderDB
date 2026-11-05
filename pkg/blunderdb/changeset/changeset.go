@@ -29,6 +29,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -57,6 +58,10 @@ type Set struct {
 	Cursor  storage.Cursor `json:"cursor"`
 	More    bool           `json:"more"`
 	Records []Record       `json:"records"`
+	// Skipped counts the journal entries whose object could not be read (gone
+	// since the journal was, or pointing at a row that is not there): they are
+	// left out, and the count says so.
+	Skipped int `json:"skipped,omitempty"`
 }
 
 // Report counts what an import did with each record.
@@ -106,6 +111,9 @@ type codec struct {
 	// greater tieKey simply wins. It keeps what the winner would lose for no
 	// reason; a same result on both sides is what lets them converge.
 	merge func(winner, loser json.RawMessage) (json.RawMessage, error)
+	// twins says a record found under another uuid by locate is merged with the
+	// local content whatever the dates say, instead of the later one winning.
+	twins bool
 }
 
 var codecs = map[string]codec{
@@ -114,6 +122,11 @@ var codecs = map[string]codec{
 	"collection": collectionCodec,
 	"comment":    commentCodec,
 	"lesson":     lessonCodec,
+
+	"transcription": transcriptionCodec,
+	"tournament":    tournamentCodec,
+	"anki_deck":     deckCodec,
+	"anki_card":     cardCodec,
 }
 
 // families lists the carried families in rank order.
@@ -124,6 +137,12 @@ func families() []string {
 	}
 	slices.SortFunc(out, func(a, b string) int { return codecs[a].rank - codecs[b].rank })
 	return out
+}
+
+// carriedStamp names the set of families an export reads.
+func carriedStamp(carried []string) string {
+	sum := sha256.Sum256([]byte(strings.Join(carried, ",")))
+	return hex.EncodeToString(sum[:4])
 }
 
 func providers(s storage.Stores) (storage.ChangeJournalStore, storage.ObjectUUIDStore, error) {
@@ -160,6 +179,13 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 		limit = 1000
 	}
 	carried := families()
+	stamp := carriedStamp(carried)
+	// A cursor taken when fewer families were carried (or by a library that
+	// recorded none) passed the entries of the others unread: it would give
+	// nothing for them, silently.
+	if !after.IsStart() && after.Carried != stamp {
+		return Set{}, fmt.Errorf("changeset: the cursor predates the families now carried, export from the start: %w", storage.ErrCursorStale)
+	}
 	run := after
 	if run.Family == "" {
 		// The rows that predate the journal have no entry for a cursor to reach:
@@ -187,7 +213,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 		if err != nil {
 			return Set{}, err
 		}
-		run.Epoch = end.Epoch
+		run.Epoch, run.Carried = end.Epoch, stamp
 		run.Family, run.ReadXid, run.ReadSeq = carried[0], after.Xid, after.Seq
 		run.EndXid, run.EndSeq = end.Xid, end.Seq
 		// An entry past the horizon can be gone (a uuid given back drops it).
@@ -221,6 +247,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 					return Set{}, err
 				}
 				if !ok {
+					set.Skipped++
 					continue
 				}
 			}
@@ -231,7 +258,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 			return set, nil
 		}
 		if family++; family == len(carried) {
-			set.Cursor = storage.Cursor{Xid: run.EndXid, Seq: run.EndSeq, Epoch: run.Epoch}
+			set.Cursor = storage.Cursor{Xid: run.EndXid, Seq: run.EndSeq, Epoch: run.Epoch, Carried: stamp}
 			return set, nil
 		}
 		run.Family, run.ReadXid, run.ReadSeq = carried[family], run.Xid, run.Seq
@@ -248,6 +275,11 @@ func loadPayload(ctx context.Context, s storage.Stores, uuids storage.ObjectUUID
 		return false, err
 	}
 	content, err := codecs[rec.Family].read(ctx, s, scope, id)
+	if errors.Is(err, storage.ErrNotFound) {
+		// What the object points at is gone (a card whose position was removed
+		// behind the schema's back): it stays out, as an object that vanished.
+		return false, nil
+	}
 	if err != nil {
 		return false, err
 	}
@@ -455,6 +487,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 	if err != nil && !errors.Is(err, storage.ErrNotFound) {
 		return lost, err
 	}
+	twin := false
 	if !held && cd.locate != nil {
 		// The same object under another name: the older uuid is kept on both
 		// sides, whichever library meets the other first.
@@ -463,7 +496,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 			return lost, err
 		}
 		if held {
-			r.UUID = uuid
+			r.UUID, twin = uuid, true
 		}
 	}
 	local, err := journal.Entry(ctx, scope, r.UUID)
@@ -472,6 +505,55 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		return lost, err
 	}
 	switch {
+	case twin && cd.twins && held && len(r.Payload) > 0 && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete &&
+		(r.Op == storage.ChangeCreate || r.Op == storage.ChangeUpdate):
+		// Two draws of one object: neither is the other's edit, so what the merge
+		// keeps is dated as the later of the two. Kept as it was, it still takes
+		// that date: dated below it, the other side would refuse it for good. A
+		// draw that no journal entry covers yet (the first import before the
+		// first export) counts as dated at the floor.
+		content, err := cd.read(ctx, s, scope, id)
+		if err != nil {
+			return lost, err
+		}
+		payload, err := json.Marshal(content)
+		if err != nil {
+			return lost, err
+		}
+		localAt := floor
+		if hasEntry {
+			if localAt, err = normalize(local.ChangedAt); err != nil {
+				return lost, err
+			}
+		}
+		winner, loser := []byte(r.Payload), payload
+		if r.ChangedAt < localAt || (r.ChangedAt == localAt && tieKey(storage.ChangeUpdate, r.Payload) < tieKey(storage.ChangeUpdate, payload)) {
+			winner, loser = loser, winner
+		}
+		merged, err := cd.merge(winner, loser)
+		if err != nil {
+			return lost, err
+		}
+		if tieKey(storage.ChangeUpdate, merged) == tieKey(storage.ChangeUpdate, payload) {
+			if r.ChangedAt <= localAt {
+				return lost, nil
+			}
+			op := local.Op
+			if !hasEntry {
+				op = storage.ChangeUpdate
+			}
+			if err := journal.Mark(ctx, scope, r.Family, r.UUID, op, r.ChangedAt); err != nil {
+				return lost, err
+			}
+			if seen != "" {
+				if err := journal.Mark(ctx, scope, r.Family, seen, storage.ChangeUpdate, future); err != nil {
+					return lost, err
+				}
+			}
+			return lost, nil
+		}
+		r.Payload = merged
+		r.ChangedAt = max(r.ChangedAt, localAt)
 	case hasEntry:
 		localAt, err := normalize(local.ChangedAt)
 		if err != nil {
@@ -547,7 +629,7 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		} else {
 			res = added
 			if id, err = cd.create(ctx, s, scope, r.Payload); err == nil {
-				if err = uuids.SetObjectUUID(ctx, scope, r.Family, id, r.UUID); err == nil {
+				if err = uuids.SetObjectUUID(ctx, scope, r.Family, id, r.UUID); err == nil && cd.trashKind != "" {
 					// It is back by this way: restoring the trash entry that held
 					// it would make a second one.
 					err = trash.DiscardByUUID(ctx, s, scope, cd.trashKind, r.UUID)
@@ -579,11 +661,16 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 // whose position this library does not hold is left out on import, and named in
 // the report.
 type collectionPayload struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	FilterQuery string   `json:"filterQuery,omitempty"`
-	SortOrder   int      `json:"sortOrder"`
-	Members     []string `json:"members,omitempty"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	FilterQuery string `json:"filterQuery,omitempty"`
+	// QueryNamesRows says the living query selects by row id (like<n>, id<n>,
+	// ma<n>, tn<n>): numbers that mean other rows in a peer's library. It does
+	// not travel, as for a search deck's source; the peer keeps its own query
+	// and members.
+	QueryNamesRows bool     `json:"queryNamesRows,omitempty"`
+	SortOrder      int      `json:"sortOrder"`
+	Members        []string `json:"members,omitempty"`
 }
 
 var collectionCodec = codec{
@@ -596,6 +683,9 @@ var collectionCodec = codec{
 		}
 		p := collectionPayload{Name: c.Name, Description: c.Description, FilterQuery: c.FilterQuery, SortOrder: c.SortOrder}
 		if c.FilterQuery != "" {
+			if commandNamesRows(c.FilterQuery) {
+				p.FilterQuery, p.QueryNamesRows = "", true
+			}
 			return p, nil
 		}
 		ids, err := s.Collections().PositionIDs(ctx, scope, id, storage.ListOpts{})
@@ -649,21 +739,47 @@ var collectionCodec = codec{
 		if err := json.Unmarshal(loser, &l); err != nil {
 			return nil, fmt.Errorf("collection payload: %w", err)
 		}
-		if w.FilterQuery != "" {
-			return winner, nil
+		w.Description = joinText(w.Description, l.Description)
+		if w.FilterQuery == "" && !w.QueryNamesRows && l.FilterQuery != "" {
+			w.FilterQuery, w.Members = l.FilterQuery, nil
 		}
-		for _, m := range l.Members {
-			if !slices.Contains(w.Members, m) {
-				w.Members = append(w.Members, m)
+		if w.FilterQuery != "" || w.QueryNamesRows {
+			return json.Marshal(w)
+		}
+		// The one that holds the other is kept as it is, order included, so a
+		// merged list met again by either side stays what it was.
+		if !subset(l.Members, w.Members) {
+			if subset(w.Members, l.Members) {
+				w.Members = l.Members
+			} else {
+				for _, m := range l.Members {
+					if !slices.Contains(w.Members, m) {
+						w.Members = append(w.Members, m)
+					}
+				}
 			}
 		}
 		return json.Marshal(w)
 	},
 }
 
+// subset says every member of a is in b.
+func subset(a, b []string) bool {
+	for _, m := range a {
+		if !slices.Contains(b, m) {
+			return false
+		}
+	}
+	return true
+}
+
 // fill brings a collection's query, membership and rank to the payload's.
 func fill(ctx context.Context, s storage.Stores, scope string, id int64, p collectionPayload, created bool) error {
 	cs := s.Collections()
+	if p.QueryNamesRows {
+		noteMissing(ctx, "living query")
+		return placeCollection(ctx, s, scope, id, p.SortOrder)
+	}
 	if p.FilterQuery != "" || !created {
 		if err := cs.SetFilterQuery(ctx, scope, id, p.FilterQuery); err != nil {
 			return err

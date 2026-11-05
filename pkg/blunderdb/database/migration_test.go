@@ -5530,3 +5530,59 @@ func TestMigrate_2_55_0_to_2_56_0_JournalDatesGrow(t *testing.T) {
 		t.Errorf("the write after the migration is dated %s, want %s", got, want)
 	}
 }
+
+// A library written by the previous schema has no uuid column on the deck and
+// the tournament: the step adds it with its unique index, and the rows held are
+// named at the open. The step's own second run finds the column there.
+func TestMigrate_2_56_0_to_2_57_0_DeckAndTournamentUUID(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2560.db")
+
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	for _, table := range []string{"anki_deck", "tournament"} {
+		for _, stmt := range []string{
+			`DROP TRIGGER IF EXISTS object_uuid_` + table,
+			`DROP TRIGGER IF EXISTS change_log_` + table + `_i`,
+			`DROP TRIGGER IF EXISTS change_log_` + table + `_u`,
+			`DROP TRIGGER IF EXISTS change_log_` + table + `_d`,
+			`DROP INDEX IF EXISTS idx_` + table + `_uuid`,
+			`ALTER TABLE ` + table + ` DROP COLUMN uuid`,
+			`INSERT INTO ` + table + ` (name) VALUES ('kept')`,
+			// A library of that schema has never run the pass of these two.
+			`DELETE FROM metadata WHERE key = '` + sqlshared.MarkFor(table) + `'`,
+		} {
+			if _, err := d.db.Exec(stmt); err != nil {
+				t.Fatalf("%s: %v", stmt, err)
+			}
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+	stampVersion(t, dbPath, "2.56.0")
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.56.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration: %s, %v", v, err)
+	}
+	for _, table := range []string{"anki_deck", "tournament"} {
+		var u string
+		if err := d.db.QueryRow(`SELECT uuid FROM ` + table + ` WHERE name = 'kept'`).Scan(&u); err != nil || u == "" {
+			t.Errorf("%s: the row held got uuid %q, %v", table, u, err)
+		}
+		var n int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = ?`, "idx_"+table+"_uuid").Scan(&n); err != nil || n != 1 {
+			t.Errorf("%s: unique index count = %d, %v", table, n, err)
+		}
+	}
+	if err := d.migrate_2_56_0_to_2_57_0(context.Background()); err != nil {
+		t.Errorf("second run of the step: %v", err)
+	}
+}

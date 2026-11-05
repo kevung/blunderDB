@@ -36,8 +36,8 @@ const objectUUIDExpr = `(SELECT printf('%08x-%04x-7%s-%s%s-%s', ms / 65536, ms %
 
 // EnsureObjectUUIDs gives every object a uuid: a trigger names the rows
 // written from now on, and the rows held before get the identifier derived
-// from their natural key (sqlshared.DeriveObjectUUID). Once per library
-// (sqlshared.ObjectUUIDKey); batched, so an interrupted pass resumes where it
+// from their natural key (sqlshared.DeriveObjectUUID). Once per family
+// (ObjectUUIDFamily.MarkOf); batched, so an interrupted pass resumes where it
 // stopped; no write lasts longer than one batch, except a family of ranked
 // rows (notes, names, matches), numbered and written by one statement. The uuid columns and
 // their unique indexes come from EnsureSchema, which runs first.
@@ -74,14 +74,23 @@ func ensureObjectUUIDs(ctx context.Context, db *sql.DB) error {
 			return fmt.Errorf("sqlite: uuid trigger on %s: %w", f.Table, err)
 		}
 	}
-	var done string
-	err = db.QueryRowContext(ctx, `SELECT value FROM metadata WHERE key = ?`, sqlshared.ObjectUUIDKey).Scan(&done)
-	if err == nil {
+	// A family whose pass is recorded is skipped; the others are named now.
+	var owed []sqlshared.ObjectUUIDFamily
+	for _, f := range present {
+		var done string
+		err := db.QueryRowContext(ctx, `SELECT value FROM metadata WHERE key = ?`, f.MarkOf()).Scan(&done)
+		if err == nil {
+			continue
+		}
+		if !errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("sqlite: probe the uuid backfill: %w", err)
+		}
+		owed = append(owed, f)
+	}
+	if len(owed) == 0 {
 		return nil
 	}
-	if !errors.Is(err, sql.ErrNoRows) {
-		return fmt.Errorf("sqlite: probe the uuid backfill: %w", err)
-	}
+	present = owed
 	total := 0
 	for _, f := range present {
 		if f.Ranked {
@@ -121,8 +130,10 @@ func ensureObjectUUIDs(ctx context.Context, db *sql.DB) error {
 		}
 		total += n
 	}
-	if _, err := db.ExecContext(ctx, `INSERT OR REPLACE INTO metadata (key, value) VALUES (?, '1')`, sqlshared.ObjectUUIDKey); err != nil {
-		return fmt.Errorf("sqlite: record the uuid backfill: %w", err)
+	for _, f := range present {
+		if _, err := db.ExecContext(ctx, `INSERT OR REPLACE INTO metadata (key, value) VALUES (?, '1')`, f.MarkOf()); err != nil {
+			return fmt.Errorf("sqlite: record the uuid backfill: %w", err)
+		}
 	}
 	if total > 0 {
 		slog.Info("gave the stored objects their uuid", "rows", total)
@@ -177,8 +188,10 @@ func ForgetObjectUUIDs(ctx context.Context, db *sql.DB) error {
 			return fmt.Errorf("sqlite: drop the uuid trigger on %s: %w", f.Table, err)
 		}
 	}
-	if _, err := db.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, sqlshared.ObjectUUIDKey); err != nil {
-		return fmt.Errorf("sqlite: forget the uuid backfill: %w", err)
+	for _, f := range sqlshared.ObjectUUIDFamilies {
+		if _, err := db.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, f.MarkOf()); err != nil {
+			return fmt.Errorf("sqlite: forget the uuid backfill: %w", err)
+		}
 	}
 	return nil
 }

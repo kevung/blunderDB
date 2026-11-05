@@ -42,3 +42,33 @@ func SearchSourceDocument(source string) (map[string]json.RawMessage, bool) {
 	}
 	return doc, true
 }
+
+// searchPayloadIDFields are the fields of a stored search payload that name
+// rows by id. The payload is the frontend's filter set, replayed as is:
+// nothing can rewrite it the way the command bar's grammar is rewritten.
+var searchPayloadIDFields = []string{"likeTargetId", "positionIDsFilter", "matchIDsFilter", "tournamentIDsFilter", "restrictToPositionIDs"}
+
+// SearchPayloadNamesRows reports whether a stored search payload names a row
+// by id; one that cannot be read is treated as naming some.
+func SearchPayloadNamesRows(raw json.RawMessage) bool {
+	var p map[string]any
+	if err := json.Unmarshal(raw, &p); err != nil {
+		return true
+	}
+	for _, k := range searchPayloadIDFields {
+		switch v := p[k].(type) {
+		case nil:
+		case string:
+			if v != "" {
+				return true
+			}
+		case float64:
+			if v != 0 {
+				return true
+			}
+		default:
+			return true
+		}
+	}
+	return false
+}
