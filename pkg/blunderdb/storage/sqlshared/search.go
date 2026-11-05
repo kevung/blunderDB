@@ -104,7 +104,8 @@ func (s *SearchStore) appendRateClauses(ctx context.Context, scope string, f dom
 	if winGammonWhere.Len() > 0 {
 		aTenant, aArgs := s.DB.TenantFilter("", scope)
 		sub := "SELECT position_id FROM analysis WHERE " + aTenant + winGammonWhere.String()
-		if err := s.narrowToIDs(ctx, sub, append(aArgs, winGammonArgs...), where, &args, nil); err != nil {
+		subArgs := append(append([]any{}, aArgs...), winGammonArgs...)
+		if err := s.narrowToIDs(ctx, sub, subArgs, where, &args, s.commonAnalysisClause(aTenant+winGammonWhere.String(), subArgs, where, &args)); err != nil {
 			return err
 		}
 	}
@@ -122,13 +123,27 @@ func (s *SearchStore) appendRateClauses(ctx context.Context, scope string, f dom
 	if winGammon2Where.Len() > 0 {
 		aTenant, aArgs := s.DB.TenantFilter("", scope)
 		sub := "SELECT position_id FROM analysis WHERE " + aTenant + winGammon2Where.String()
-		if err := s.narrowToIDs(ctx, sub, append(aArgs, winGammon2Args...), where, &args, nil); err != nil {
+		subArgs := append(append([]any{}, aArgs...), winGammon2Args...)
+		if err := s.narrowToIDs(ctx, sub, subArgs, where, &args, s.commonAnalysisClause(aTenant+winGammon2Where.String(), subArgs, where, &args)); err != nil {
 			return err
 		}
 	}
 	BMin, BMax, BHasMin, BHasMax := searchfilter.ParseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
 	searchfilter.AppendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, where, &args)
 	return nil
+}
+
+// commonAnalysisClause writes a common condition on the analysis. SQLite materialises an IN
+// subquery whole, a table read per match, where a check per position of the walk stops at the
+// window; PostgreSQL hashes it from its index (nil: the plain subquery).
+func (s *SearchStore) commonAnalysisClause(cond string, condArgs []any, where *strings.Builder, args *[]any) func() {
+	if s.DB.Name() != "sqlite" {
+		return nil
+	}
+	return func() {
+		where.WriteString(" AND EXISTS (SELECT 1 FROM analysis WHERE position_id = p.id AND " + cond + ")")
+		*args = append(*args, condArgs...)
+	}
 }
 
 // readIDList reads a column of ids as the text of a literal list, up to limit if positive.
@@ -178,6 +193,57 @@ const (
 	blunderFloor     = 100
 	blunderListLimit = 50000
 )
+
+// idLists gathers the literal lists of one search: two lists in one statement make the
+// planner scan the table against both, seconds where their intersection, read here,
+// is a few rows by primary key.
+type idLists struct {
+	seen bool
+	ids  []string
+}
+
+type idListsKey struct{}
+
+func (l *idLists) intersect(ids []string) {
+	if !l.seen {
+		l.seen, l.ids = true, ids
+		return
+	}
+	in := make(map[string]struct{}, len(ids))
+	for _, id := range ids {
+		in[id] = struct{}{}
+	}
+	kept := l.ids[:0]
+	for _, id := range l.ids {
+		if _, ok := in[id]; ok {
+			kept = append(kept, id)
+		}
+	}
+	l.ids = kept
+}
+
+func (l *idLists) write(s *SearchStore, where *strings.Builder, args *[]any) {
+	switch {
+	case !l.seen:
+	case len(l.ids) == 0:
+		where.WriteString(" AND 0=1")
+	default:
+		cond, condArgs := s.DB.IDsIn("p.id", l.ids)
+		where.WriteString(" AND " + cond)
+		*args = append(*args, condArgs...)
+	}
+}
+
+// occupancyProbeLimit: a whole occupancy shared by more positions is no use from its index,
+// whose rows are read and sorted, while the walk in id order meets them soon.
+const occupancyProbeLimit = 5000
+
+// rareOccupancy tells whether an occupancy is worth asking its index.
+func (s *SearchStore) rareOccupancy(ctx context.Context, scope, col string, v int64) (bool, error) {
+	own, ownArgs := s.DB.TenantFilter("", scope)
+	found, err := s.readIDList(ctx, "SELECT 1 FROM position WHERE "+own+" AND "+col+" = ?", append(append([]any{}, ownArgs...), v), occupancyProbeLimit+1)
+	return len(found) <= occupancyProbeLimit, err
+}
 
 // narrowLimit is how many matches a filter on another table may name by literal list.
 // Atomic so a test can move it (SetNarrowLimit) while other searches run.
@@ -231,6 +297,10 @@ func (s *SearchStore) narrowWithin(ctx context.Context, limit int, sub string, s
 	case len(ids) == 0:
 		where.WriteString(" AND 0=1")
 	default:
+		if lists, ok := ctx.Value(idListsKey{}).(*idLists); ok {
+			lists.intersect(ids)
+			return nil
+		}
 		cond, condArgs := s.DB.IDsIn("p.id", ids)
 		where.WriteString(" AND " + cond)
 		*args = append(*args, condArgs...)
@@ -321,6 +391,8 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 // which is what needAnalysis/useSQLFilters/bitboardTight/moveErrorInGo/
 // effInclude in the returned searchWhereClause are for.
 func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
+	lists := &idLists{}
+	ctx = context.WithValue(ctx, idListsKey{}, lists)
 	useSQLFilters := !f.MirrorFilter
 	moveErrorInGo := false
 
@@ -524,13 +596,22 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 			// A side whose fifteen checkers are all placed has nowhere else to be: its
 			// occupancy is implied whole, and an index answers what masks cannot.
 			black, white := placedCheckers(effInclude.Board)
-			if black == domain.CheckersPerPlayer {
-				where.WriteString(" AND p.occupancy_1 = ?")
-				args = append(args, int64(occ1Req))
-			}
-			if white == domain.CheckersPerPlayer {
-				where.WriteString(" AND p.occupancy_2 = ?")
-				args = append(args, int64(occ2Req))
+			for _, side := range []struct {
+				placed int
+				col    string
+				occ    int64
+			}{{black, "occupancy_1", int64(occ1Req)}, {white, "occupancy_2", int64(occ2Req)}} {
+				if side.placed != domain.CheckersPerPlayer {
+					continue
+				}
+				rare, err := s.rareOccupancy(ctx, scope, side.col, side.occ)
+				if err != nil {
+					return searchWhereClause{}, err
+				}
+				if rare {
+					where.WriteString(" AND p." + side.col + " = ?")
+					args = append(args, side.occ)
+				}
 			}
 		}
 
@@ -558,6 +639,7 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		args = append(args, cArgs...)
 	}
 
+	lists.write(s, &where, &args)
 	return searchWhereClause{
 		scope:         scope,
 		where:         where.String(),
@@ -1038,13 +1120,30 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 		return 0, false, err
 	}
 	n := 0
-	if wc.goPhase(f) {
-		err = s.scan(ctx, f, wc, storage.ListOpts{Limit: max + 1}, func(positions []domain.Position) bool {
+	count := func(wc searchWhereClause) error {
+		left := max + 1 - n
+		if !wc.goPhase(f) {
+			m, err := s.countRows(ctx, wc, left)
+			n += m
+			return err
+		}
+		return s.scan(ctx, f, wc, storage.ListOpts{Limit: left}, func(positions []domain.Position) bool {
 			n += len(positions)
 			return true
 		})
+	}
+	// A move error alone calls for Go only on the rows played more than one way: the others
+	// are counted from their columns, without reading an analysis.
+	bySQL := wc
+	bySQL.moveErrorInGo = false
+	if wc.moveErrorInGo && !bySQL.goPhase(f) {
+		bySQL.where = wc.where + " AND " + s.DB.Bool("p.multi_played", false)
+		if err = count(bySQL); err == nil && n <= max {
+			wc.where += " AND " + s.DB.Bool("p.multi_played", true)
+			err = count(wc)
+		}
 	} else {
-		n, err = s.countRows(ctx, wc, max+1)
+		err = count(wc)
 	}
 	if err != nil {
 		if ctx.Err() != nil && n > 0 {

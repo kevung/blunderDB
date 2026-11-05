@@ -13,7 +13,7 @@
 -- a busy table fail the migration, retried at the next start, rather than queue writers behind it.
 SET LOCAL lock_timeout = '15s';
 
-CREATE INDEX IF NOT EXISTS idx_position_occupancy1 ON position (tenant_id, occupancy_1, occupancy_2, id);
+CREATE INDEX IF NOT EXISTS idx_position_occupancy1 ON position (tenant_id, occupancy_1, occupancy_2);
 CREATE INDEX IF NOT EXISTS idx_position_occupancy2 ON position (tenant_id, occupancy_2);
 CREATE INDEX IF NOT EXISTS idx_move_game_position ON move (game_id, position_id) INCLUDE (tenant_id);
 DROP INDEX IF EXISTS idx_move_game;
