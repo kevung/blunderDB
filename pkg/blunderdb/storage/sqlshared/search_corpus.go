@@ -183,10 +183,12 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 			where.WriteString(" AND 0=1")
 			return nil
 		}
-		sub = "SELECT position_id FROM move WHERE game_id IN (" + strings.Join(games, ",") + ")"
-		return s.narrowWithin(ctx, matchListLimit, sub, nil, where, args, nil)
+		inGames, gameArgs := s.DB.IDsIn("game_id", games)
+		return s.narrowWithin(ctx, matchListLimit, "SELECT position_id FROM move WHERE "+inGames, gameArgs, where, args, nil)
 	}
-	where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE mv.position_id = p.id AND mv.game_id + 0 IN (" + strings.Join(games, ",") + ") LIMIT 1 OFFSET 0)")
+	inGames, gameArgs := s.DB.IDsIn("mv.game_id + 0", games)
+	where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE mv.position_id = p.id AND " + inGames + " LIMIT 1 OFFSET 0)")
+	*args = append(*args, gameArgs...)
 	return nil
 }
 

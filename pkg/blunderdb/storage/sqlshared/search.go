@@ -231,7 +231,9 @@ func (s *SearchStore) narrowWithin(ctx context.Context, limit int, sub string, s
 	case len(ids) == 0:
 		where.WriteString(" AND 0=1")
 	default:
-		where.WriteString(" AND p.id IN (" + strings.Join(ids, ",") + ")")
+		cond, condArgs := s.DB.IDsIn("p.id", ids)
+		where.WriteString(" AND " + cond)
+		*args = append(*args, condArgs...)
 	}
 	return nil
 }

@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"strings"
 	"context"
 	"errors"
 	"time"
@@ -47,6 +48,9 @@ func (shared) BoolAsInt(col string) string { return "CASE WHEN " + col + " THEN 
 func (shared) BoolArg(v bool) any          { return v }
 func (shared) Bigint(expr string) string   { return "CAST(" + expr + " AS BIGINT)" }
 func (shared) ILike() string               { return "ILIKE" }
+func (shared) IDsIn(expr string, ids []string) (string, []any) {
+	return expr + " = ANY(?::bigint[])", []any{"{" + strings.Join(ids, ",") + "}"}
+}
 func (shared) ForUpdate() string           { return " FOR UPDATE" }
 func (shared) Guard(key string) (string, []any) {
 	return "SELECT pg_advisory_xact_lock(?)", []any{guardKey(key)}
