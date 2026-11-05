@@ -152,3 +152,11 @@ func asCommonCondition(test func(*testing.T, storage.Storage)) func(*testing.T, 
 		test(t, s)
 	}
 }
+
+// asHeavyCondition: a filter on the match, checked position by position.
+func asHeavyCondition(test func(*testing.T, storage.Storage)) func(*testing.T, storage.Storage) {
+	return func(t *testing.T, s storage.Storage) {
+		defer sqlshared.SetNarrowLimit(0)()
+		test(t, s)
+	}
+}

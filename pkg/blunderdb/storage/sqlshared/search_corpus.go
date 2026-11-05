@@ -172,12 +172,13 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	}
 	// Heavy, the filter is checked position by position in the walk in id order, from the
 	// games it holds of: any join here, the planner may start each check from the matches,
-	// row after row. Whether it is heavy is known from the games, without reading any move.
+	// row after row, and the sum keeps it from reading the list through an index, one
+	// descent per game. Whether it is heavy is known from the games, without reading any move.
 	games, err := s.readIDList(ctx, `SELECT g.id FROM game g JOIN match mt ON g.match_id = mt.id WHERE `+mtTenant+cond.String(), subArgs, 0)
 	if err != nil {
 		return err
 	}
-	if len(games)*movesPerGame <= matchListLimit {
+	if narrowLimit.Load() != 0 && len(games)*movesPerGame <= matchListLimit {
 		if len(games) == 0 {
 			where.WriteString(" AND 0=1")
 			return nil
@@ -185,16 +186,9 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 		sub = "SELECT position_id FROM move WHERE game_id IN (" + strings.Join(games, ",") + ")"
 		return s.narrowWithin(ctx, matchListLimit, sub, nil, where, args, nil)
 	}
-	where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE " + walkKey + " AND mv.game_id IN (" + strings.Join(games, ",") + ") LIMIT 1 OFFSET 0)")
+	where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE mv.position_id = p.id AND mv.game_id + 0 IN (" + strings.Join(games, ",") + ") LIMIT 1 OFFSET 0)")
 	return nil
 }
-
-// walkKey ties the walk's moves to the position. Read through the joined analysis when the
-// rest of the filter reads it, it cannot run before that cheaper filter, at the scan.
-const (
-	walkKey       = "mv.position_id = p.id"
-	walkKeyJoined = "mv.position_id = COALESCE(a.position_id, p.id)"
-)
 
 // matchListLimit is how many moves a match-level filter may name by literal list: above
 // it the filter holds of at least one position in a hundred of a five-million library,

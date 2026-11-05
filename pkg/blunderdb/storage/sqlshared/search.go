@@ -517,13 +517,9 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		args = append(args, cArgs...)
 	}
 
-	clause := where.String()
-	if strings.Contains(clause, walkKey) && readsAnalysis.MatchString(clause) {
-		clause = strings.ReplaceAll(clause, walkKey, walkKeyJoined)
-	}
 	return searchWhereClause{
 		scope:         scope,
-		where:         clause,
+		where:         where.String(),
 		args:          args,
 		needAnalysis:  needAnalysis,
 		useSQLFilters: useSQLFilters,
