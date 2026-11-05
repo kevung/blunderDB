@@ -416,8 +416,9 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   five times heavier for the same search. No schema change, no version bump.
 - `064_narrow_columns.sql` — `position`, `analysis` and `move` columns as wide as their values
   (16 or 32 bits), one rewrite per table; past 512 MB of positions a start leaves them wide and
-  `SELECT blunderdb_narrow_columns()` does it in a window. Shared statements bind Go integers as
-  `bigint`, so a filter past a column finds nothing. No version bump.
+  `SELECT blunderdb_narrow_columns()` does it in a window; a stored value past its type refuses it
+  by table, column, value and row. Shared statements compare Go integers as `bigint`, so a filter
+  past a column finds nothing. No version bump.
 - `065_journal_writes_less.sql` — functions only: a second write of an object in the transaction
   that journaled it rewrites no entry, and a library may keep no journal (`library_settings` key
   `change_journal`, `changeset.export`/`import` refused with `journal_off`). No version bump.

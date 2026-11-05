@@ -6,7 +6,7 @@
 -- (cube, scores, match length), for the masks (26 bits) and for errors in
 -- millipoints. Ids, tenant, hash and the times of a move stay 64 bits. A value
 -- out of range is refused by name (errors_postgres.go), never cut; a search
--- binds its integers as bigint (adapter.go), so a filter past the bound finds
+-- compares its integers as bigint (adapter.go), so a filter past the bound finds
 -- nothing rather than fails.
 --
 -- One ALTER per table: one rewrite, under ACCESS EXCLUSIVE, about 12 000 rows/s
@@ -19,64 +19,90 @@
 
 SET LOCAL lock_timeout = '15s';
 
+-- A value past its type fails the ALTER (22003) without saying where: the
+-- refusal names the table, the column, the value and the row, which the
+-- operator corrects or deletes before starting again. The search lifts FORCE,
+-- the migrating connection carries no tenant; the refusal rolls it back.
+CREATE OR REPLACE FUNCTION blunderdb_narrow_table(tbl text, probe text, cols text[]) RETURNS void
+LANGUAGE plpgsql AS $$
+DECLARE
+    alters text;
+    bad text;
+    row_id bigint;
+BEGIN
+    IF (SELECT atttypid <> 'bigint'::regtype FROM pg_attribute
+         WHERE attrelid = tbl::regclass AND attname = probe) THEN
+        RETURN;
+    END IF;
+    SELECT string_agg(format('ALTER COLUMN %I TYPE %s', cols[g][1], cols[g][2]), ', ')
+      INTO alters FROM generate_subscripts(cols, 1) AS g;
+    BEGIN
+        EXECUTE format('ALTER TABLE %I %s', tbl, alters);
+    EXCEPTION WHEN numeric_value_out_of_range THEN
+        EXECUTE format('ALTER TABLE %I NO FORCE ROW LEVEL SECURITY', tbl);
+        FOR c IN 1 .. array_length(cols, 1) LOOP
+            EXECUTE format('SELECT CAST(%1$I AS text), id FROM %2$I WHERE %1$I NOT BETWEEN $1 AND $2 LIMIT 1', cols[c][1], tbl)
+               INTO bad, row_id
+              USING CASE cols[c][2] WHEN 'smallint' THEN -32768 ELSE -2147483648 END,
+                    CASE cols[c][2] WHEN 'smallint' THEN 32767 ELSE 2147483647 END;
+            IF bad IS NOT NULL THEN
+                RAISE EXCEPTION 'blunderdb: %.% holds %, past % (row id %): correct or delete that row, then start again',
+                    tbl, cols[c][1], bad, cols[c][2], row_id USING ERRCODE = 'numeric_value_out_of_range';
+            END IF;
+        END LOOP;
+        RAISE;
+    END;
+END $$;
+
 CREATE OR REPLACE FUNCTION blunderdb_narrow_columns() RETURNS void
 LANGUAGE plpgsql AS $$
 BEGIN
-    IF (SELECT atttypid = 'bigint'::regtype FROM pg_attribute
-         WHERE attrelid = 'position'::regclass AND attname = 'pip_1') THEN
-        ALTER TABLE position
-            ALTER COLUMN decision_type TYPE smallint,
-            ALTER COLUMN player_on_roll TYPE smallint,
-            ALTER COLUMN dice_1 TYPE smallint,
-            ALTER COLUMN dice_2 TYPE smallint,
-            ALTER COLUMN cube_value TYPE integer,
-            ALTER COLUMN cube_owner TYPE smallint,
-            ALTER COLUMN score_1 TYPE integer,
-            ALTER COLUMN score_2 TYPE integer,
-            ALTER COLUMN match_length TYPE integer,
-            ALTER COLUMN pip_1 TYPE smallint,
-            ALTER COLUMN pip_2 TYPE smallint,
-            ALTER COLUMN pip_diff TYPE smallint,
-            ALTER COLUMN off_1 TYPE smallint,
-            ALTER COLUMN off_2 TYPE smallint,
-            ALTER COLUMN back_checkers_1 TYPE smallint,
-            ALTER COLUMN back_checkers_2 TYPE smallint,
-            ALTER COLUMN occupancy_1 TYPE integer,
-            ALTER COLUMN occupancy_2 TYPE integer,
-            ALTER COLUMN point_mask_1 TYPE integer,
-            ALTER COLUMN point_mask_2 TYPE integer,
-            ALTER COLUMN game_phase TYPE smallint,
-            ALTER COLUMN max_cube TYPE smallint,
-            ALTER COLUMN game_type TYPE smallint;
-    END IF;
-    IF (SELECT atttypid = 'bigint'::regtype FROM pg_attribute
-         WHERE attrelid = 'analysis'::regclass AND attname = 'player1_win_rate') THEN
-        ALTER TABLE analysis
-            ALTER COLUMN cube_error TYPE integer,
-            ALTER COLUMN best_move_equity_error TYPE integer,
-            ALTER COLUMN player1_win_rate TYPE smallint,
-            ALTER COLUMN player1_gammon_rate TYPE smallint,
-            ALTER COLUMN player1_backgammon_rate TYPE smallint,
-            ALTER COLUMN player2_win_rate TYPE smallint,
-            ALTER COLUMN player2_gammon_rate TYPE smallint,
-            ALTER COLUMN player2_backgammon_rate TYPE smallint,
-            ALTER COLUMN analysis_depth TYPE smallint,
-            ALTER COLUMN best_cube_action TYPE smallint;
-    END IF;
-    IF (SELECT atttypid = 'bigint'::regtype FROM pg_attribute
-         WHERE attrelid = 'move'::regclass AND attname = 'move_number') THEN
-        ALTER TABLE move
-            ALTER COLUMN move_number TYPE integer,
-            ALTER COLUMN player TYPE smallint,
-            ALTER COLUMN dice_1 TYPE smallint,
-            ALTER COLUMN dice_2 TYPE smallint,
-            ALTER COLUMN luck_mp TYPE integer,
-            ALTER COLUMN error_mp TYPE integer,
-            ALTER COLUMN move_type TYPE smallint,
-            ALTER COLUMN cube_action TYPE smallint,
-            ALTER COLUMN decision_error_mp TYPE integer,
-            ALTER COLUMN is_close_cube TYPE smallint;
-    END IF;
+    PERFORM blunderdb_narrow_table('position', 'pip_1', ARRAY[
+        ['decision_type', 'smallint'],
+        ['player_on_roll', 'smallint'],
+        ['dice_1', 'smallint'],
+        ['dice_2', 'smallint'],
+        ['cube_value', 'integer'],
+        ['cube_owner', 'smallint'],
+        ['score_1', 'integer'],
+        ['score_2', 'integer'],
+        ['match_length', 'integer'],
+        ['pip_1', 'smallint'],
+        ['pip_2', 'smallint'],
+        ['pip_diff', 'smallint'],
+        ['off_1', 'smallint'],
+        ['off_2', 'smallint'],
+        ['back_checkers_1', 'smallint'],
+        ['back_checkers_2', 'smallint'],
+        ['occupancy_1', 'integer'],
+        ['occupancy_2', 'integer'],
+        ['point_mask_1', 'integer'],
+        ['point_mask_2', 'integer'],
+        ['game_phase', 'smallint'],
+        ['max_cube', 'smallint'],
+        ['game_type', 'smallint']]);
+    PERFORM blunderdb_narrow_table('analysis', 'player1_win_rate', ARRAY[
+        ['cube_error', 'integer'],
+        ['best_move_equity_error', 'integer'],
+        ['player1_win_rate', 'smallint'],
+        ['player1_gammon_rate', 'smallint'],
+        ['player1_backgammon_rate', 'smallint'],
+        ['player2_win_rate', 'smallint'],
+        ['player2_gammon_rate', 'smallint'],
+        ['player2_backgammon_rate', 'smallint'],
+        ['analysis_depth', 'smallint'],
+        ['best_cube_action', 'smallint']]);
+    PERFORM blunderdb_narrow_table('move', 'move_number', ARRAY[
+        ['move_number', 'integer'],
+        ['player', 'smallint'],
+        ['dice_1', 'smallint'],
+        ['dice_2', 'smallint'],
+        ['luck_mp', 'integer'],
+        ['error_mp', 'integer'],
+        ['move_type', 'smallint'],
+        ['cube_action', 'smallint'],
+        ['decision_error_mp', 'integer'],
+        ['is_close_cube', 'smallint']]);
 END $$;
 
 DO $$ BEGIN

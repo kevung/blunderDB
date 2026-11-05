@@ -5,6 +5,7 @@ package postgres_test
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/jackc/pgx/v5"
@@ -280,5 +281,36 @@ func TestNarrowColumn_BoundsRoundTrip(t *testing.T) {
 	}
 	if got.Cube.Value != p.Cube.Value || got.Score != p.Score {
 		t.Errorf("got cube %d score %v", got.Cube.Value, got.Score)
+	}
+}
+
+// A stored value past its narrowed type refuses the rewrite by table, column, value and row,
+// which the operator corrects before starting again, rather than a bare 22003.
+func TestNarrowColumns_RefusalNamesTheValue(t *testing.T) {
+	bg := context.Background()
+	owner, conn, dsn := openAsRLSOwner(t)
+	if err := owner.ApplyRLS(bg); err != nil {
+		t.Fatal(err)
+	}
+	s, err := pg.Open(bg, dsn, &storage.Options{EnableRLS: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = s.Close() })
+	id, err := s.Positions().Save(tctx(bg, "1"), "1", compactPosition(11))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := conn.Exec(bg, `ALTER TABLE position ALTER COLUMN pip_2 TYPE bigint, ALTER COLUMN pip_1 TYPE bigint`); err != nil {
+		t.Fatal(err)
+	}
+	asTenant(t, conn, "1", func() {
+		if _, err := conn.Exec(bg, `UPDATE position SET pip_2 = 40000 WHERE id = $1`, id); err != nil {
+			t.Fatal(err)
+		}
+	})
+	_, err = conn.Exec(bg, `SELECT blunderdb_narrow_columns()`)
+	if err == nil || !strings.Contains(err.Error(), "position.pip_2 holds 40000, past smallint") {
+		t.Errorf("narrowing past a stored value = %v; want it named", err)
 	}
 }
