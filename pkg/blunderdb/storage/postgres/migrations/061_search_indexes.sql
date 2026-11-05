@@ -10,7 +10,6 @@
 --
 -- Back: DROP these five, then
 --   CREATE INDEX idx_analysis_move_error ON analysis (tenant_id, best_move_equity_error);
-SET lock_timeout = '15s';
 
 CREATE INDEX IF NOT EXISTS idx_analysis_tenant_position ON analysis (tenant_id, position_id);
 CREATE INDEX IF NOT EXISTS idx_analysis_error_order ON analysis (tenant_id, best_move_equity_error DESC, position_id);

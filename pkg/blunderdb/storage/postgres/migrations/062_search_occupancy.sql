@@ -8,7 +8,6 @@
 -- cube error reads a list in id order, a few percent of the tenant's rows.
 --
 -- Back: DROP these four, then CREATE INDEX idx_move_game ON move (game_id);
-SET lock_timeout = '15s';
 
 CREATE INDEX IF NOT EXISTS idx_position_occupancy1 ON position (tenant_id, occupancy_1);
 CREATE INDEX IF NOT EXISTS idx_position_occupancy2 ON position (tenant_id, occupancy_2);
