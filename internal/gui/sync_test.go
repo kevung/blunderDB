@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -107,7 +108,8 @@ func TestSyncSuccessIsRecordedAndSurvivesInTheStateFile(t *testing.T) {
 	if st.Error != nil || st.LastSuccess == "" {
 		t.Fatalf("status = %+v", st)
 	}
-	if fi, err := os.Stat(state); err != nil || fi.Mode().Perm() != 0o600 {
+	// Windows has no Unix permission bits: its profile directory keeps the file private.
+	if fi, err := os.Stat(state); err != nil || (runtime.GOOS != "windows" && fi.Mode().Perm() != 0o600) {
 		t.Errorf("state file: %v, %v", fi, err)
 	}
 	// A new App reads the date back.
