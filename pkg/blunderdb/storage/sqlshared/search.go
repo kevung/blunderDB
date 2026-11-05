@@ -235,8 +235,9 @@ func (l *idLists) write(s *SearchStore, where *strings.Builder, args *[]any) {
 }
 
 // occupancyProbeLimit: a whole occupancy shared by more positions is no use from its index,
-// whose rows are read and sorted, while the walk in id order meets them soon.
-const occupancyProbeLimit = 5000
+// each row a heap read before the sort, a millisecond when cold, where the walk in id order
+// reads the masks from an index.
+const occupancyProbeLimit = 500
 
 // rareOccupancy tells whether an occupancy is worth asking its index.
 func (s *SearchStore) rareOccupancy(ctx context.Context, scope, col string, v int64) (bool, error) {
@@ -604,9 +605,12 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 				if side.placed != domain.CheckersPerPlayer {
 					continue
 				}
-				rare, err := s.rareOccupancy(ctx, scope, side.col, side.occ)
-				if err != nil {
-					return searchWhereClause{}, err
+				rare := black == white // both sides whole: the pair is the index's own key
+				if !rare {
+					var err error
+					if rare, err = s.rareOccupancy(ctx, scope, side.col, side.occ); err != nil {
+						return searchWhereClause{}, err
+					}
 				}
 				if rare {
 					where.WriteString(" AND p." + side.col + " = ?")
