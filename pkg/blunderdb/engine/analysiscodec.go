@@ -759,7 +759,10 @@ func populateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 		c.Player2BackgammonRate = int64(math.Round(best.OpponentBackgammonChance * 100))
 	}
 
-	if playedMove != "" && a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 {
+	// A cube decision plays no move, whatever its analysis holds: the search orders these
+	// rows by id on the strength of it (windowIDs).
+	cubeDecision := pos != nil && pos.DecisionType == domain.CubeAction
+	if !cubeDecision && playedMove != "" && a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0 {
 		if m := PlayedCandidate(pos, a.CheckerAnalysis.Moves, playedMove); m == nil {
 			c.BestMoveUnscored = true
 		} else if m.EquityError != nil {

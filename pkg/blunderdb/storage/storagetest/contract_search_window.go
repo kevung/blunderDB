@@ -184,6 +184,22 @@ func testSearchErrorSortOfCubeDecisions(t *testing.T, s storage.Storage) {
 			t.Fatalf("Save analysis: %v", err)
 		}
 	}
+	// A played move stored on a cube decision must not reach the error column: the sort
+	// above orders these rows by id on that invariant, and the unfiltered sort reads the column.
+	e := 0.5
+	strayMove := domain.PositionAnalysis{AnalysisType: "DoublingCube", PlayedCubeAction: "No double", PlayedMove: "24/20",
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "2-ply", BestCubeAction: "Double, take", CubefulNoDoubleError: -0.2},
+		CheckerAnalysis:      &domain.CheckerAnalysis{Moves: []domain.CheckerMove{{Move: "13/9", Equity: 0.1}, {Move: "24/20", Equity: -0.4, EquityError: &e}}}}
+	if err := s.Analyses().Save(ctx, "", ids[4], &strayMove); err != nil {
+		t.Fatalf("Save analysis: %v", err)
+	}
+	all, err := s.Search().FindIDs(ctx, "", domain.SearchFilters{Sort: "error"}, storage.ListOpts{Limit: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(all) != 1 || all[0] != ids[1] {
+		t.Fatalf("a stray played move reached the error column of a cube decision: first = %v, want %d", all, ids[1])
+	}
 	checker := domain.InitializePosition()
 	checker.Score = [2]int{20, 21}
 	if _, err := s.Positions().Save(ctx, "", &checker); err != nil {
