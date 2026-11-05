@@ -75,7 +75,7 @@ var wantIndexes = []string{
 	"idx_analysis_backgammon1", "idx_analysis_backgammon2",
 	"idx_analysis_creation_date", "idx_analysis_cube_error",
 	"idx_analysis_is_close_cube",
-	"idx_analysis_is_forced", "idx_analysis_met", "idx_analysis_error_order", "idx_analysis_gammon1", "idx_analysis_gammon2", "idx_analysis_tenant_position",
+	"idx_analysis_is_forced", "idx_analysis_met", "idx_analysis_error_order", "idx_analysis_blunder", "idx_analysis_gammon1", "idx_analysis_gammon2", "idx_analysis_tenant_position",
 	"idx_analysis_position", "idx_analysis_provenance_pending",
 	"idx_analysis_win_gammon2_covering", "idx_analysis_win_gammon_covering",
 	"idx_anki_card_deck", "idx_anki_card_due", "idx_anki_card_identity", "idx_anki_card_uuid", "idx_anki_deck_uuid",

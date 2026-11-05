@@ -79,6 +79,7 @@ func TestSchemaV200_Indexes(t *testing.T) {
 		"idx_analysis_error_order",
 		"idx_analysis_gammon1",
 		"idx_analysis_gammon2",
+		"idx_analysis_blunder",
 		"idx_position_occupancy1",
 		"idx_position_occupancy2",
 		"idx_analysis_win_gammon2_covering",

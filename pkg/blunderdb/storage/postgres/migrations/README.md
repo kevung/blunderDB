@@ -409,4 +409,5 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `idx_analysis_move_error`), the gammon rates, the checker masks by id. No schema
   change, no version bump.
 - `062_search_occupancy.sql` — the occupancy of each side, for a board filter placing all
-  its fifteen checkers. No schema change, no version bump.
+  its fifteen checkers; the positions of a game from the index alone (supersedes
+  `idx_move_game`); the blunders of a tenant in id order. No schema change, no version bump.

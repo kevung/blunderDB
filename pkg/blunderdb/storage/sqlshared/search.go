@@ -172,6 +172,9 @@ func placedCheckers(b domain.Board) (black, white int) {
 	return black, white
 }
 
+// blunderFloor is the predicate of idx_analysis_blunder, in thousandths of a point.
+const blunderFloor = 100
+
 // narrowLimit is how many matches a filter on another table may name by literal list.
 // Atomic so a test can move it (SetNarrowLimit) while other searches run.
 var narrowLimit atomic.Int64
@@ -260,6 +263,23 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	// branches. Common, the walk in id order meets its rows soon, on the joined analysis.
 	tenant, tenantArgs := s.DB.TenantFilter("an", scope)
 	own, ownArgs := s.DB.TenantFilter("", scope)
+	recheck := func() {
+		where.WriteString(" AND (" + positionErrExpr + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
+		*argsp = append(*argsp, bound...)
+	}
+	// From a blunder up, idx_analysis_blunder holds every candidate in id order, whatever
+	// the decision of the position: the threshold is written out for the planner to see
+	// that the partial index applies.
+	if eHasMin && eqMin >= blunderFloor {
+		n := strconv.Itoa(eqMin)
+		sub := "SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + ")" +
+			" UNION ALL SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
+		if err := s.narrowToIDs(ctx, sub, append(append([]any{}, ownArgs...), ownArgs...), where, argsp, nil); err != nil {
+			return true, err
+		}
+		recheck()
+		return true, nil
+	}
 	branch := func(decision, col string) string {
 		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
 	}
@@ -267,10 +287,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + " UNION ALL " +
 		"SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
 	subArgs := append(append(append(append(append([]any{}, tenantArgs...), bound...), tenantArgs...), bound...), ownArgs...)
-	err := s.narrowToIDs(ctx, sub, subArgs, where, argsp, func() {
-		where.WriteString(" AND (" + positionErrExpr + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
-		*argsp = append(*argsp, bound...)
-	})
+	err := s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
 	return true, err
 }
 
