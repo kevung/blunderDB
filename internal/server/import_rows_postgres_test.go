@@ -193,3 +193,41 @@ func TestImportStoredRowsAreStable(t *testing.T) {
 		}
 	}
 }
+
+// TestImportBatchUnderRLS: a batch outlives its request, and its writes must
+// still carry the tenant the policies check. Without it every file fails and
+// the batch still ends "done".
+func TestImportBatchUnderRLS(t *testing.T) {
+	ctx := context.Background()
+	super := os.Getenv("BLUNDERDB_BENCH_DSN")
+	if super == "" {
+		super = postgresDSN(t)
+	}
+	name := fmt.Sprintf("rlsbatch_%d", os.Getpid())
+	benchExec(t, ctx, super, fmt.Sprintf(`CREATE ROLE %s LOGIN PASSWORD '%s'`, benchRole, benchRole))
+	benchExec(t, ctx, super, fmt.Sprintf(`CREATE DATABASE %s OWNER %s`, name, benchRole))
+	t.Cleanup(func() { benchExec(t, ctx, super, fmt.Sprintf(`DROP DATABASE %s WITH (FORCE)`, name)) })
+	st := benchOpen(t, ctx, benchDSN(t, super, benchRole, name))
+	defer st.Close()
+	srv, err := New(Options{Storage: st, Metrics: metrics.New()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts := newBenchHTTPServer(t, srv)
+
+	files := []benchFile{{path: filepath.Join("..", "..", "testdata", "charlot1-charlot2_7p_2025-11-08-2305.xg")}}
+	benchBatch(t, ts, srv, files)
+
+	conn, err := pgx.Connect(ctx, benchDSN(t, super, "", name))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(ctx)
+	var matches, batches int
+	if err := conn.QueryRow(ctx, `SELECT (SELECT COUNT(*) FROM match), (SELECT COUNT(*) FROM import_batch WHERE finished_at IS NOT NULL)`).Scan(&matches, &batches); err != nil {
+		t.Fatal(err)
+	}
+	if matches != 1 || batches != 1 {
+		t.Errorf("after a batch under RLS: %d match(es), %d closed batch(es), want 1 and 1", matches, batches)
+	}
+}

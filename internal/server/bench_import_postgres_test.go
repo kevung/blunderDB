@@ -14,6 +14,7 @@
 // BLUNDERDB_BENCH_FILES   how many files to measure (default 50)
 // BLUNDERDB_BENCH_SEED    synthetic matches stored beforehand (default 0)
 // BLUNDERDB_BENCH_QUERY   query string of each upload (e.g. report=deferred)
+// BLUNDERDB_BENCH_BATCH   send the files as one .tar to imports.batch
 // BLUNDERDB_BENCH_OUT     where to write the JSON result
 // BLUNDERDB_BENCH_NEW_TENANT  measure on a tenant other than the seeded one
 // BLUNDERDB_BENCH_TEMPLATE  database to clone instead of seeding; when it does
@@ -21,6 +22,7 @@
 package server
 
 import (
+	"archive/tar"
 	"bytes"
 	"cmp"
 	"context"
@@ -261,6 +263,64 @@ func benchPost(t *testing.T, ts *httptest.Server, path, method, query string) {
 	}
 }
 
+// benchBatch sends files as one .tar to imports.batch, waits for its end and
+// reads its report once, as a client of the batch route does.
+func benchBatch(t *testing.T, ts *httptest.Server, srv *Server, files []benchFile) {
+	t.Helper()
+	var archive bytes.Buffer
+	tw := tar.NewWriter(&archive)
+	for i, f := range files {
+		data, err := os.ReadFile(f.path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := tw.WriteHeader(&tar.Header{Name: fmt.Sprintf("%d.xg", i), Mode: 0o600, Size: int64(len(data)), Typeflag: tar.TypeReg}); err != nil {
+			t.Fatal(err)
+		}
+		_, _ = tw.Write(data)
+	}
+	_ = tw.Close()
+	var body bytes.Buffer
+	mw := multipart.NewWriter(&body)
+	fw, _ := mw.CreateFormFile("file", "lot.tar")
+	_, _ = fw.Write(archive.Bytes())
+	_ = mw.Close()
+	scope := strconv.FormatInt(benchMeasuredTenant(), 10)
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/imports.batch", &body)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	req.Header.Set("X-Tenant-ID", scope)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	var out importBatchResp
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil || resp.StatusCode/100 != 2 {
+		t.Fatalf("batch refused: %d %v", resp.StatusCode, err)
+	}
+	job, ok := srv.batches.get(scope, out.ImportID)
+	if !ok {
+		t.Fatal("no batch job")
+	}
+	<-job.done
+	st := job.status()
+	if st.State != batchStateDone {
+		t.Fatalf("batch ended %s", st.State)
+	}
+	reportReq, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/imports.report", strings.NewReader(fmt.Sprintf(`{"batchId":%d}`, st.BatchID)))
+	reportReq.Header.Set("X-Tenant-ID", scope)
+	reportReq.Header.Set("Content-Type", "application/json")
+	reportResp, err := http.DefaultClient.Do(reportReq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer reportResp.Body.Close()
+	_, _ = io.Copy(io.Discard, reportResp.Body)
+	if reportResp.StatusCode != http.StatusOK {
+		t.Fatalf("report refused: %d", reportResp.StatusCode)
+	}
+}
+
 func lastLine(b []byte) []byte {
 	b = bytes.TrimSpace(b)
 	if i := bytes.LastIndexByte(b, '\n'); i >= 0 {
@@ -353,15 +413,22 @@ func TestBenchImportHTTP(t *testing.T) {
 	loadBefore := benchLoad()
 	durations := make([]time.Duration, 0, len(measured))
 	t0 := time.Now()
-	for _, f := range measured {
-		t1 := time.Now()
-		benchUpload(t, ts, f, os.Getenv("BLUNDERDB_BENCH_QUERY"))
-		durations = append(durations, time.Since(t1))
+	if os.Getenv("BLUNDERDB_BENCH_BATCH") != "" {
+		benchBatch(t, ts, srv, measured)
+	} else {
+		for _, f := range measured {
+			t1 := time.Now()
+			benchUpload(t, ts, f, os.Getenv("BLUNDERDB_BENCH_QUERY"))
+			durations = append(durations, time.Since(t1))
+		}
 	}
 	total := time.Since(t0)
 	loadAfter := benchLoad()
+	if len(durations) == 0 {
+		durations = append(durations, total/time.Duration(len(measured)))
+	}
 
-	third := len(durations) / 3
+	third := max(len(durations)/3, 1)
 	result := map[string]any{
 		"fichiers":           len(measured),
 		"octets":             bytesIn,

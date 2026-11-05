@@ -394,7 +394,9 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 			size += fi.Size()
 		}
 	}
-	ctx, cancel := context.WithCancel(context.Background())
+	// The job outlives the request but keeps what its context carries: the
+	// tenant the row-level policies check is among it.
+	ctx, cancel := context.WithCancel(context.WithoutCancel(r.Context()))
 	s.imports.register(job.id, scope, cancel)
 	job.mu.Lock()
 	job.skipDuplicates = skipDuplicatesParam(r)
@@ -528,8 +530,8 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 
 	if batchID != 0 {
 		// Whatever the end, the groups committed are in the database: the
-		// batch's report must say so. A fresh context, the job's is over.
-		if ferr := batches.Finish(context.Background(), scope, batchID, counts); ferr != nil {
+		// batch's report must say so. Not the job's cancellation, it is over.
+		if ferr := batches.Finish(context.WithoutCancel(ctx), scope, batchID, counts); ferr != nil {
 			slog.Warn("import batch: closing the batch failed", "err", ferr)
 		}
 	}
