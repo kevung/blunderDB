@@ -86,6 +86,11 @@
   </branding>
 
   <releases>
+    <release version="0.49.1" date="2026-11-05">
+      <description>
+        <p>Fixes writes silently lost during library synchronisation when two edits of one object carried the same or an earlier date, and the Home, End, Page Up and Page Down keys moving the library while a transcription draft is open.</p>
+      </description>
+    </release>
     <release version="0.49.0" date="2026-11-02">
       <description>
         <ul>

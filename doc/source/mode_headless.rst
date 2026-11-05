@@ -1456,9 +1456,15 @@ dernière écriture gagnant, et rend le rapport : ``added``, ``modified``,
 n'a pas pu être placée. Une note écrasée par l'import reste dans la corbeille.
 Le journal porte les positions (avec leur analyse), les matchs, les collections,
 les notes, les leçons, les transcriptions, les tournois et les paquets Anki avec
-leurs cartes et leur planning. Un tournoi voyage avec son en-tête et sa note, et
-chaque match nomme son tournoi et sa place dans la liste ; les familles sans
-corbeille (leçons, transcriptions, tournois, paquets, cartes) s'effacent quand un pair les met en corbeille.
+leurs cartes et leur planning. Un tournoi voyage avec son en-tête, sa note et ses
+dates ; le rattachement d'un match à un tournoi et sa place dans la liste restent
+propres à chaque bibliothèque. Les familles sans corbeille (leçons, transcriptions,
+tournois, paquets, cartes) s'effacent quand un pair les met en corbeille.
+À égalité de date, chaque famille fusionne les deux contenus de la même façon des deux côtés
+et n'efface rien que l'autre garde : la note ou la description qui manque d'un côté
+est reprise, deux notes sont gardées ensemble, la révision la plus avancée l'emporte.
+``skipped``, dans la page exportée, compte les objets du journal dont le contenu n'a pas pu être lu ;
+une collection dont la requête désigne des lignes par leur numéro (``id12``, ``ma3``) ne voyage pas.
 
 **Serveur de synchronisation.** L'onglet *Synchronisation* des paramètres
 (voir :ref:`synchronisation_distante`) tient la bibliothèque ouverte au même

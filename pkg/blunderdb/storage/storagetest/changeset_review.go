@@ -20,7 +20,19 @@ func checkChangeSetReview(t *testing.T, pair func() *csPair) {
 	t.Run("AnkiTwinKeepsTheReview", func(t *testing.T) { p := pair(); p.t = t; scenarioAnkiTwinKeepsReview(p) })
 	t.Run("AnkiTieKeepsTheReview", func(t *testing.T) { p := pair(); p.t = t; scenarioAnkiTieKeepsReview(p) })
 	t.Run("CursorBeforeTheFamilies", func(t *testing.T) { p := pair(); p.t = t; scenarioCursorBeforeFamilies(p) })
-	t.Run("TournamentMembership", func(t *testing.T) { p := pair(); p.t = t; scenarioTournamentMembership(p) })
+	t.Run("AttachmentStaysLocal", func(t *testing.T) { p := pair(); p.t = t; scenarioAttachmentStaysLocal(p) })
+	for _, s := range []struct {
+		name string
+		run  func(*csPair)
+	}{
+		{"LocalWritesDatedPastHeld", scenarioLocalWritesDatedPastHeld},
+		{"NewFamiliesPagedAtOne", scenarioNewFamiliesPagedAtOne},
+		{"AnkiTwinConverges", scenarioAnkiTwinConverges},
+		{"AnkiTwinLastWrite", scenarioAnkiTwinLastWrite},
+		{"TournamentReplay", scenarioTournamentReplay},
+	} {
+		t.Run(s.name, func(t *testing.T) { p := pair(); p.t = t; s.run(p) })
+	}
 }
 
 // back sends b's changes, from 0, to a.
@@ -191,72 +203,107 @@ func scenarioAnkiTieKeepsReview(p *csPair) {
 	}
 }
 
-// A match belongs to a tournament here and there: the link travels with the
-// match, in its place, and a note on the tournament is not dated by it.
-func scenarioTournamentMembership(p *csPair) {
+// A tournament travels without its matches: attaching, reordering and detaching
+// date neither the match nor the tournament, reach no peer, and leave the peer's
+// own attachments and later edits standing. A match reads the same on both sides
+// whatever its place in the tournament of each.
+func scenarioAttachmentStaysLocal(p *csPair) {
 	t := p.t
 	p.catchUp()
 	tid, _ := p.a.Tournaments().Create(p.ca, p.sa, "Membership", "", "")
 	tu := famUUID(t, p.a, p.ca, p.sa, "tournament", tid)
 	var mids [2]int64
+	var mus [2]string
 	for i := range mids {
 		h := "mem-" + string(rune('a'+i))
 		mids[i], _ = p.a.Matches().Save(p.ca, p.sa, &domain.Match{Player1Name: "P", Player2Name: "Q", MatchLength: 3, FilePath: h + ".xg", MatchHash: h, CanonicalHash: h + "c"})
+		mus[i] = famUUID(t, p.a, p.ca, p.sa, "match", mids[i])
 	}
 	p.send()
 	btid := famIDMust(p, p.b, p.cb, p.sb, "tournament", tu)
+	mb0 := famIDMust(p, p.b, p.cb, p.sb, "match", mus[0])
+	mb1 := famIDMust(p, p.b, p.cb, p.sb, "match", mus[1])
 	tick()
-	if err := p.b.Tournaments().UpdateComment(p.cb, p.sb, btid, "note of b"); err != nil {
+	if err := p.b.Matches().UpdateComment(p.cb, p.sb, mb0, "note of b"); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.b.Tournaments().AddMatch(p.cb, p.sb, btid, mb1); err != nil {
 		t.Fatal(err)
 	}
 	tick()
-	before := p.entry(p.a, p.ca, p.sa, tu)
+	dated := func() [3]storage.Change {
+		return [3]storage.Change{p.entry(p.a, p.ca, p.sa, tu), p.entry(p.a, p.ca, p.sa, mus[0]), p.entry(p.a, p.ca, p.sa, mus[1])}
+	}
+	before := dated()
 	for _, m := range mids {
 		if err := p.a.Tournaments().AddMatch(p.ca, p.sa, tid, m); err != nil {
 			t.Fatal(err)
 		}
 	}
-	if after := p.entry(p.a, p.ca, p.sa, tu); after.ChangedAt != before.ChangedAt {
-		t.Errorf("attaching a match dated the tournament: %s -> %s", before.ChangedAt, after.ChangedAt)
-	}
-	p.send()
-	if g, _ := p.b.Tournaments().Get(p.cb, p.sb, btid); g.Comment != "note of b" {
-		t.Errorf("attaching a match undid the peer's note: %q", g.Comment)
-	}
-	var order []string
-	for m, err := range p.b.Tournaments().Matches(p.cb, p.sb, btid) {
-		if err != nil {
-			t.Fatal(err)
-		}
-		order = append(order, m.MatchHash)
-	}
-	if len(order) != 2 || order[0] != "mem-a" || order[1] != "mem-b" {
-		t.Fatalf("the matches of the tournament in b: %v, want [mem-a mem-b]", order)
-	}
-	// The order moves, then a match leaves.
-	tick()
 	if err := p.a.Tournaments().ReorderMatches(p.ca, p.sa, tid, []int64{mids[1], mids[0]}); err != nil {
 		t.Fatal(err)
 	}
-	p.send()
-	order = order[:0]
-	for m, err := range p.b.Tournaments().Matches(p.cb, p.sb, btid) {
-		if err != nil {
-			t.Fatal(err)
-		}
-		order = append(order, m.MatchHash)
+	if err := p.a.Tournaments().RemoveMatch(p.ca, p.sa, mids[1]); err != nil {
+		t.Fatal(err)
 	}
-	if len(order) != 2 || order[0] != "mem-b" {
-		t.Errorf("the new order did not travel: %v", order)
+	if err := p.a.Tournaments().AddMatch(p.ca, p.sa, tid, mids[1]); err != nil {
+		t.Fatal(err)
 	}
+	if after := dated(); after != before {
+		t.Errorf("an attachment wrote the journal: %+v -> %+v", before, after)
+	}
+	if rep := p.send(); rep.Applied != 0 {
+		t.Errorf("an attachment reached the peer: %+v", rep)
+	}
+	if got, _ := p.b.Matches().Get(p.cb, p.sb, mb0); got.Comment != "note of b" {
+		t.Errorf("the attachments of a undid the note of b: %q", got.Comment)
+	}
+	if _, err := p.b.Tournaments().TournamentOf(p.cb, p.sb, mb0); err == nil {
+		t.Error("a match attached on a is attached on b")
+	}
+	mark := p.cursorFrom
 	tick()
-	if err := p.a.Tournaments().RemoveMatch(p.ca, p.sa, mids[0]); err != nil {
+	if err := p.a.Matches().UpdateComment(p.ca, p.sa, mids[1], "edit of a"); err != nil {
 		t.Fatal(err)
 	}
 	p.send()
-	bm := famIDMust(p, p.b, p.cb, p.sb, "match", famUUID(t, p.a, p.ca, p.sa, "match", mids[0]))
-	if _, err := p.b.Tournaments().TournamentOf(p.cb, p.sb, bm); err == nil {
-		t.Error("the match left the tournament in a and stayed in b")
+	if got, err := p.b.Tournaments().TournamentOf(p.cb, p.sb, mb1); err != nil || got.ID != btid {
+		t.Errorf("an edit of the match moved the attachment of b: %+v, %v", got, err)
+	}
+	inA, _ := p.a.Matches().Get(p.ca, p.sa, mids[1])
+	inB, _ := p.b.Matches().Get(p.cb, p.sb, mb1)
+	if inA.TournamentSortOrder == inB.TournamentSortOrder {
+		t.Fatalf("the two places must differ for this check: both %d", inA.TournamentSortOrder)
+	}
+	if pa, pb := exportedPayload(p, p.a, p.ca, p.sa, mus[1]), exportedPayload(p, p.b, p.cb, p.sb, mus[1]); pa != pb {
+		t.Errorf("the match reads differently on each side:\n%s\n%s", pa, pb)
+	}
+	tick()
+	if err := p.a.Matches().UpdateComment(p.ca, p.sa, mids[0], "edit of a"); err != nil {
+		t.Fatal(err)
+	}
+	p.send()
+	if pa, pb := exportedPayload(p, p.a, p.ca, p.sa, mus[0]), exportedPayload(p, p.b, p.cb, p.sb, mus[0]); pa != pb {
+		t.Errorf("a match attached on a alone reads differently on each side:\n%s\n%s", pa, pb)
+	}
+	again, err := changeset.Export(p.ca, p.a, p.sa, mark, 1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rep, err := changeset.Import(p.cb, p.b, p.sb, again); err != nil || rep.Applied != 0 {
+		t.Errorf("a replay applied %+v, %v", rep, err)
+	}
+	held := p.entry(p.a, p.ca, p.sa, mus[1])
+	tick()
+	if err := p.a.Tournaments().Delete(p.ca, p.sa, tid); err != nil {
+		t.Fatal(err)
+	}
+	if got := p.entry(p.a, p.ca, p.sa, mus[1]); got != held {
+		t.Errorf("deleting the tournament dated its match: %+v -> %+v", held, got)
+	}
+	p.send()
+	if _, err := p.b.Tournaments().TournamentOf(p.cb, p.sb, mb1); err == nil {
+		t.Error("the tournament is gone on b and the match still names it")
 	}
 }
 

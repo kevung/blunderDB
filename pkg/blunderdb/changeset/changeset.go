@@ -58,6 +58,10 @@ type Set struct {
 	Cursor  storage.Cursor `json:"cursor"`
 	More    bool           `json:"more"`
 	Records []Record       `json:"records"`
+	// Skipped counts the journal entries whose object could not be read (gone
+	// since the journal was, or pointing at a row that is not there): they are
+	// left out, and the count says so.
+	Skipped int `json:"skipped,omitempty"`
 }
 
 // Report counts what an import did with each record.
@@ -243,6 +247,7 @@ func Export(ctx context.Context, s storage.Stores, scope string, after storage.C
 					return Set{}, err
 				}
 				if !ok {
+					set.Skipped++
 					continue
 				}
 			}
@@ -305,9 +310,42 @@ func tieKey(op string, payload []byte) string {
 	return class + hex.EncodeToString(sum[:])
 }
 
+// overHeld is the date of a record dated future, ahead of the clock and taken as
+// clamped, over the date an object holds: when the record is the later one by its
+// own date, it stays later than what it follows, however far ahead that date is.
+// now+clockSlack would not do: a held date can be past it (a clock set back, a
+// burst of writes), and it ties with a date kept at the edge of the slack.
+func overHeld(future, clamped, held string) (string, error) {
+	if held == "" {
+		return clamped, nil
+	}
+	held, err := normalize(held)
+	if err != nil {
+		return "", err
+	}
+	if future <= held || clamped > held {
+		return clamped, nil
+	}
+	t, err := time.Parse(storage.ChangedAtLayout, held)
+	if err != nil {
+		return "", err
+	}
+	return t.Add(time.Millisecond).Format(storage.ChangedAtLayout), nil
+}
+
+// clockSlack is how far ahead of this library's clock a record may be dated and
+// still keep its date. A journal dates two writes of an object in the same
+// millisecond a millisecond apart, so an honest date can lead the clock a little;
+// taken as made now, it would tie with, or lose to, the write it follows. A
+// local edit made after it still comes later: the journal dates it past what the
+// object holds.
+const clockSlack = time.Second
+
 // Import merges a set into the library: per object, the later change wins.
 // Dates are normalised (UTC, milliseconds) and compared as dates; one later
-// than this library's clock is taken as made now (Report.Clamped). A tie to
+// than this library's clock by more than clockSlack is taken as made now
+// (Report.Clamped), or as made just after what the object holds when that is
+// later than now and the record is later still (overHeld). A tie to
 // the millisecond goes to the greater tieKey, so both sides pick the same
 // one; an identical change is a no-op, which makes a record that comes back
 // around harmless. A restore therefore beats an older delete and a delete an
@@ -338,8 +376,9 @@ func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Repor
 			return rep, err
 		}
 		future := ""
-		if now := time.Now().UTC().Format(storage.ChangedAtLayout); at > now {
-			future, at = at, now
+		now := time.Now().UTC()
+		if at > now.Add(clockSlack).Format(storage.ChangedAtLayout) {
+			future, at = at, now.Format(storage.ChangedAtLayout)
 			rep.Clamped++
 		}
 		r.ChangedAt = at
@@ -466,10 +505,13 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		return lost, err
 	}
 	switch {
-	case twin && cd.twins && hasEntry && held && len(r.Payload) > 0 && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete &&
+	case twin && cd.twins && held && len(r.Payload) > 0 && local.Op != storage.ChangeTrash && local.Op != storage.ChangeDelete &&
 		(r.Op == storage.ChangeCreate || r.Op == storage.ChangeUpdate):
-		// Two draws of one object: neither is the other's edit, so the dates do
-		// not order them. What the merge keeps is dated as the later of the two.
+		// Two draws of one object: neither is the other's edit, so what the merge
+		// keeps is dated as the later of the two. Kept as it was, it still takes
+		// that date: dated below it, the other side would refuse it for good. A
+		// draw that no journal entry covers yet (the first import before the
+		// first export) counts as dated at the floor.
 		content, err := cd.read(ctx, s, scope, id)
 		if err != nil {
 			return lost, err
@@ -478,23 +520,56 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 		if err != nil {
 			return lost, err
 		}
-		merged, err := cd.merge(r.Payload, payload)
+		localAt := floor
+		if hasEntry {
+			if localAt, err = normalize(local.ChangedAt); err != nil {
+				return lost, err
+			}
+		}
+		winner, loser := []byte(r.Payload), payload
+		if r.ChangedAt < localAt || (r.ChangedAt == localAt && tieKey(storage.ChangeUpdate, r.Payload) < tieKey(storage.ChangeUpdate, payload)) {
+			winner, loser = loser, winner
+		}
+		merged, err := cd.merge(winner, loser)
 		if err != nil {
 			return lost, err
 		}
 		if tieKey(storage.ChangeUpdate, merged) == tieKey(storage.ChangeUpdate, payload) {
+			if r.ChangedAt <= localAt {
+				return lost, nil
+			}
+			op := local.Op
+			if !hasEntry {
+				op = storage.ChangeUpdate
+			}
+			if err := journal.Mark(ctx, scope, r.Family, r.UUID, op, r.ChangedAt); err != nil {
+				return lost, err
+			}
+			if seen != "" {
+				if err := journal.Mark(ctx, scope, r.Family, seen, storage.ChangeUpdate, future); err != nil {
+					return lost, err
+				}
+			}
 			return lost, nil
 		}
 		r.Payload = merged
-		if localAt, err := normalize(local.ChangedAt); err != nil {
-			return lost, err
-		} else if localAt > r.ChangedAt {
-			r.ChangedAt = localAt
-		}
+		r.ChangedAt = max(r.ChangedAt, localAt)
 	case hasEntry:
 		localAt, err := normalize(local.ChangedAt)
 		if err != nil {
 			return lost, err
+		}
+		if future != "" {
+			at, err := overHeld(future, r.ChangedAt, localAt)
+			if err != nil {
+				return lost, err
+			}
+			if at != r.ChangedAt {
+				r.ChangedAt = at
+				if err := journal.Applying(ctx, scope, at); err != nil {
+					return lost, err
+				}
+			}
 		}
 		switch {
 		case r.ChangedAt < localAt:
@@ -586,11 +661,16 @@ func apply(ctx context.Context, s storage.Stores, scope string, cd codec, r Reco
 // whose position this library does not hold is left out on import, and named in
 // the report.
 type collectionPayload struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	FilterQuery string   `json:"filterQuery,omitempty"`
-	SortOrder   int      `json:"sortOrder"`
-	Members     []string `json:"members,omitempty"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	FilterQuery string `json:"filterQuery,omitempty"`
+	// QueryNamesRows says the living query selects by row id (like<n>, id<n>,
+	// ma<n>, tn<n>): numbers that mean other rows in a peer's library. It does
+	// not travel, as for a search deck's source; the peer keeps its own query
+	// and members.
+	QueryNamesRows bool     `json:"queryNamesRows,omitempty"`
+	SortOrder      int      `json:"sortOrder"`
+	Members        []string `json:"members,omitempty"`
 }
 
 var collectionCodec = codec{
@@ -603,6 +683,9 @@ var collectionCodec = codec{
 		}
 		p := collectionPayload{Name: c.Name, Description: c.Description, FilterQuery: c.FilterQuery, SortOrder: c.SortOrder}
 		if c.FilterQuery != "" {
+			if commandNamesRows(c.FilterQuery) {
+				p.FilterQuery, p.QueryNamesRows = "", true
+			}
 			return p, nil
 		}
 		ids, err := s.Collections().PositionIDs(ctx, scope, id, storage.ListOpts{})
@@ -656,21 +739,47 @@ var collectionCodec = codec{
 		if err := json.Unmarshal(loser, &l); err != nil {
 			return nil, fmt.Errorf("collection payload: %w", err)
 		}
-		if w.FilterQuery != "" {
-			return winner, nil
+		w.Description = joinText(w.Description, l.Description)
+		if w.FilterQuery == "" && !w.QueryNamesRows && l.FilterQuery != "" {
+			w.FilterQuery, w.Members = l.FilterQuery, nil
 		}
-		for _, m := range l.Members {
-			if !slices.Contains(w.Members, m) {
-				w.Members = append(w.Members, m)
+		if w.FilterQuery != "" || w.QueryNamesRows {
+			return json.Marshal(w)
+		}
+		// The one that holds the other is kept as it is, order included, so a
+		// merged list met again by either side stays what it was.
+		if !subset(l.Members, w.Members) {
+			if subset(w.Members, l.Members) {
+				w.Members = l.Members
+			} else {
+				for _, m := range l.Members {
+					if !slices.Contains(w.Members, m) {
+						w.Members = append(w.Members, m)
+					}
+				}
 			}
 		}
 		return json.Marshal(w)
 	},
 }
 
+// subset says every member of a is in b.
+func subset(a, b []string) bool {
+	for _, m := range a {
+		if !slices.Contains(b, m) {
+			return false
+		}
+	}
+	return true
+}
+
 // fill brings a collection's query, membership and rank to the payload's.
 func fill(ctx context.Context, s storage.Stores, scope string, id int64, p collectionPayload, created bool) error {
 	cs := s.Collections()
+	if p.QueryNamesRows {
+		noteMissing(ctx, "living query")
+		return placeCollection(ctx, s, scope, id, p.SortOrder)
+	}
 	if p.FilterQuery != "" || !created {
 		if err := cs.SetFilterQuery(ctx, scope, id, p.FilterQuery); err != nil {
 			return err

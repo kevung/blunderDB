@@ -105,6 +105,8 @@ func CheckChangeSetScenarios(t *testing.T, a storage.Storage, ca context.Context
 	t.Run("MembersAfterTheirPositions", func(t *testing.T) { scenarioMembersFirst(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("Match", func(t *testing.T) { scenarioMatch(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("PublicID", func(t *testing.T) { scenarioPublicID(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
+	t.Run("WritesAdvance", func(t *testing.T) { scenarioWritesAdvance(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
+	t.Run("ClampOverHeld", func(t *testing.T) { scenarioClampOverHeld(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb}) })
 	t.Run("DrawingAndDerivation", func(t *testing.T) {
 		scenarioDrawingAndDerivation(&csPair{t: t, a: a, ca: ca, sa: sa, b: b, cb: cb, sb: sb})
 	})
@@ -395,5 +397,46 @@ func CheckChangeSetPreJournal(t *testing.T, a storage.Storage, ca context.Contex
 		if n != 1 {
 			t.Errorf("%s came %d times", u, n)
 		}
+	}
+
+	preJournalTwin(t, p, forget)
+}
+
+// A card reviewed before the journal, with no entry, meets the draw of the
+// same card made later by a peer: its reviews stay. Importing before one's
+// first export is a normal order.
+func preJournalTwin(t *testing.T, p *csPair, forget func()) {
+	p.t = t
+	p.catchUp()
+	q := syncPos(1500)
+	pa, _ := p.a.Positions().Save(p.ca, p.sa, &q)
+	q2 := syncPos(1500)
+	pb, _ := p.b.Positions().Save(p.cb, p.sb, &q2)
+	deck, _ := p.a.Anki().CreateDeck(p.ca, p.sa, "Pre-journal twin", "", domain.AnkiSourceSearch, 0, "")
+	du := famUUID(t, p.a, p.ca, p.sa, "anki_deck", deck)
+	p.send()
+	bdeck := famIDMust(p, p.b, p.cb, p.sb, "anki_deck", du)
+	if err := p.a.Anki().SyncWithPositions(p.ca, p.sa, deck, []int64{pa}); err != nil {
+		t.Fatal(err)
+	}
+	ac, _ := cardOf(p, p.a, p.ca, p.sa, deck, pa)
+	review(p, p.a, p.ca, p.sa, ac, 3)
+	tick()
+	if err := p.b.Anki().SyncWithPositions(p.cb, p.sb, bdeck, []int64{pb}); err != nil {
+		t.Fatal(err)
+	}
+	forget()
+	cu := famUUID(t, p.a, p.ca, p.sa, "anki_card", ac)
+	if _, err := p.a.(storage.ChangeJournalProvider).ChangeJournal().Entry(p.ca, p.sa, cu); err == nil {
+		t.Fatal("the journal still has an entry: the scenario tests nothing")
+	}
+	p.back()
+	p.replay()
+	if c, _ := ankiCard(p, p.a, p.ca, p.sa, deck, ac); c.Reps != 3 {
+		t.Errorf("a: reps = %d after a peer's draw met a card with no entry, want 3", c.Reps)
+	}
+	bc, _ := cardOf(p, p.b, p.cb, p.sb, bdeck, pb)
+	if c, _ := ankiCard(p, p.b, p.cb, p.sb, bdeck, bc); c.Reps != 3 {
+		t.Errorf("b: reps = %d, want 3", c.Reps)
 	}
 }

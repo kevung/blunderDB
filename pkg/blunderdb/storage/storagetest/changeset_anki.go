@@ -23,6 +23,7 @@ func CheckChangeSetAnkiFamilies(t *testing.T, a storage.Storage, ca context.Cont
 	t.Run("Tournament", func(t *testing.T) { p := pair(); p.t = t; scenarioTournament(p) })
 	t.Run("TrashIsADelete", func(t *testing.T) { p := pair(); p.t = t; scenarioTrashWithoutBin(p) })
 	checkChangeSetReview(t, pair)
+	checkChangeSetTies(t, pair)
 }
 
 // sent imports one record of a peer into b, dated now.
@@ -425,8 +426,8 @@ func scenarioTournament(p *csPair) {
 	if err != nil || got.Name != "Monte Carlo" || got.Date != "2026-05-01" || got.Location != "Monaco" || got.Comment != "final in 3 days" {
 		t.Fatalf("tournament in b = %+v, %v", got, err)
 	}
-	if want, _ := p.a.Tournaments().Get(p.ca, p.sa, tid); got.CreatedAt != want.CreatedAt || got.UpdatedAt != want.UpdatedAt {
-		t.Errorf("the tournament lost its dates: %s/%s vs %s/%s", got.CreatedAt, got.UpdatedAt, want.CreatedAt, want.UpdatedAt)
+	if want, _ := p.a.Tournaments().Get(p.ca, p.sa, tid); got.CreatedAt != want.CreatedAt {
+		t.Errorf("the tournament lost its creation date: %s vs %s", got.CreatedAt, want.CreatedAt)
 	}
 	if rep := p.replay(); rep.Applied != 0 {
 		t.Errorf("a replay applied %+v", rep)

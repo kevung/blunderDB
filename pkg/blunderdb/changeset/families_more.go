@@ -1,14 +1,16 @@
 package changeset
 
 import (
-	"bytes"
 	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
+	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/anki"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -120,26 +122,64 @@ var transcriptionCodec = codec{
 // --- tournament ---
 
 // tournamentPayload is a tournament's header and note. Which matches belong to
-// it is the match's to say (it names the tournament).
+// it, and in what order, stays in each library. updated_at stays out: it
+// moves at every attachment, here and on the peer alike.
 type tournamentPayload struct {
 	Name      string `json:"name"`
 	Date      string `json:"date,omitempty"`
 	Location  string `json:"location,omitempty"`
 	Comment   string `json:"comment,omitempty"`
 	CreatedAt string `json:"createdAt,omitempty"`
-	UpdatedAt string `json:"updatedAt,omitempty"`
+}
+
+// joinText settles two texts of one field: the one that is not empty, the one
+// that holds the other, else both in byte order, so either side builds the same.
+func joinText(a, b string) string {
+	switch {
+	case a == b || b == "" || strings.Contains(a, b):
+		return a
+	case a == "" || strings.Contains(b, a):
+		return b
+	case a > b:
+		a, b = b, a
+	}
+	return a + "\n\n" + b
+}
+
+// firstOf is the first of two texts that is not empty.
+func firstOf(a, b string) string {
+	if a != "" {
+		return a
+	}
+	return b
 }
 
 var tournamentCodec = codec{
 	// Before the matches, which name it.
 	rank: -1,
+	// A tie says neither side knows of the other's edit: a note or a place one
+	// side lacks is not erased for that, and two notes are both kept.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l tournamentPayload
+		if err := decode("tournament", winner, &w); err != nil {
+			return nil, err
+		}
+		if err := decode("tournament", loser, &l); err != nil {
+			return nil, err
+		}
+		w.Comment = joinText(w.Comment, l.Comment)
+		w.Date, w.Location = firstOf(w.Date, l.Date), firstOf(w.Location, l.Location)
+		if w.CreatedAt == "" || (l.CreatedAt != "" && l.CreatedAt < w.CreatedAt) {
+			w.CreatedAt = l.CreatedAt
+		}
+		return json.Marshal(w)
+	},
 	read: func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error) {
 		t, err := s.Tournaments().Get(ctx, scope, id)
 		if err != nil {
 			return nil, err
 		}
-		return tournamentPayload{Name: t.Name, Date: t.Date, Location: t.Location, Comment: t.Comment,
-			CreatedAt: t.CreatedAt, UpdatedAt: t.UpdatedAt}, nil
+		return tournamentPayload{Name: t.Name, Date: t.Date, Location: t.Location, Comment: t.Comment, CreatedAt: t.CreatedAt}, nil
 	},
 	create: func(ctx context.Context, s storage.Stores, scope string, raw json.RawMessage) (int64, error) {
 		var p tournamentPayload
@@ -171,7 +211,7 @@ func fillTournament(ctx context.Context, s storage.Stores, scope string, id int6
 	if err := s.Tournaments().UpdateComment(ctx, scope, id, p.Comment); err != nil {
 		return err
 	}
-	return s.Tournaments().KeepDates(ctx, scope, id, p.CreatedAt, p.UpdatedAt)
+	return s.Tournaments().KeepDates(ctx, scope, id, p.CreatedAt, "")
 }
 
 // --- anki deck ---
@@ -331,6 +371,26 @@ func deckFrom(ctx context.Context, s storage.Stores, scope string, id int64, p d
 
 var deckCodec = codec{
 	rank: 7,
+	// A tie says neither side knows of the other's edit: a description one side
+	// lacks is not erased for that, and two descriptions are both kept. The
+	// settings are the winner's, the one the digests settle.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l deckPayload
+		if err := decode("deck", winner, &w); err != nil {
+			return nil, err
+		}
+		if err := decode("deck", loser, &l); err != nil {
+			return nil, err
+		}
+		w.Description = joinText(w.Description, l.Description)
+		if w.SourceType == l.SourceType {
+			w.SourceCollection, w.SourceCommand = firstOf(w.SourceCollection, l.SourceCollection), firstOf(w.SourceCommand, l.SourceCommand)
+		}
+		if w.SessionLimit == nil {
+			w.SessionLimit = l.SessionLimit
+		}
+		return json.Marshal(w)
+	},
 	read: func(ctx context.Context, s storage.Stores, scope string, id int64) (any, error) {
 		d, err := ankiStates(s).Deck(ctx, scope, id)
 		if err != nil {
@@ -423,29 +483,36 @@ func (p cardPayload) card(id, deckID, positionID int64, key string) domain.AnkiC
 		Reps: p.Reps, Lapses: p.Lapses, State: p.State, LastReview: p.LastReview, Suspended: p.Suspended, BuriedUntil: p.BuriedUntil}
 }
 
+// reviewInstant is a last review in the one layout both backends write, so two
+// libraries compare the same instant as the same text whatever layout a row
+// was filled with; a text no layout reads stays as it is.
+func reviewInstant(s string) string {
+	for _, layout := range []string{anki.TimeLayout, time.RFC3339Nano} {
+		if t, err := time.Parse(layout, s); err == nil {
+			return t.UTC().Format(anki.TimeLayout)
+		}
+	}
+	return s
+}
+
 // ahead orders two states of one card by how far its reviews went: the later
-// last review, then the more reviews, then the more lapses. Equal in all three
-// they are told apart by their bytes, so both sides settle on the same one.
+// last review, then the more reviews, then the more lapses.
 func (p cardPayload) ahead(o cardPayload) int {
-	if c := cmp.Compare(p.LastReview, o.LastReview); c != 0 {
+	if c := cmp.Compare(reviewInstant(p.LastReview), reviewInstant(o.LastReview)); c != 0 {
 		return c
 	}
 	if c := cmp.Compare(p.Reps, o.Reps); c != 0 {
 		return c
 	}
-	if c := cmp.Compare(p.Lapses, o.Lapses); c != 0 {
-		return c
-	}
-	a, _ := json.Marshal(p)
-	b, _ := json.Marshal(o)
-	return bytes.Compare(a, b)
+	return cmp.Compare(p.Lapses, o.Lapses)
 }
 
 var cardCodec = codec{
 	rank: 8,
 	// Two states of one card that nothing orders (a tie, or a draw that met a
-	// card reviewed elsewhere) keep the one whose reviews went further: a draw
-	// carries no review, so it never stands for the last write.
+	// card reviewed elsewhere) keep the planning whose reviews went further, a
+	// draw carrying no review; the suspension and the burial are gestures, and
+	// stay the last write's. Winner is the later of the two.
 	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
 		var w, l cardPayload
 		if err := decode("card", winner, &w); err != nil {
@@ -454,10 +521,11 @@ var cardCodec = codec{
 		if err := decode("card", loser, &l); err != nil {
 			return nil, err
 		}
-		if l.ahead(w) > 0 {
-			return loser, nil
+		if l.ahead(w) <= 0 {
+			return winner, nil
 		}
-		return winner, nil
+		l.Suspended, l.BuriedUntil = w.Suspended, w.BuriedUntil
+		return json.Marshal(l)
 	},
 	// The cards of two libraries that drew the same question meet under two
 	// uuids: the planning that went furthest is the card's.
@@ -508,12 +576,20 @@ var cardCodec = codec{
 		if err != nil {
 			return 0, "", false, err
 		}
-		if have == "" || r.UUID >= have {
-			return id, have, have != "", nil
+		if have == "" {
+			return id, "", false, nil
 		}
 		journal, _, err := providers(s)
 		if err != nil {
 			return 0, "", false, err
+		}
+		if r.UUID >= have {
+			// A card from before the journal counts as dated at the floor, and
+			// needs the entry that says so for the twin merge to see its reviews.
+			if err := journal.Adopt(ctx, scope, "anki_card", []string{have}, floor); err != nil {
+				return 0, "", false, err
+			}
+			return id, have, true, nil
 		}
 		stamp, serr := journal.Entry(ctx, scope, have)
 		if err := uuidsOf(s).SetObjectUUID(ctx, scope, "anki_card", id, r.UUID); err != nil {

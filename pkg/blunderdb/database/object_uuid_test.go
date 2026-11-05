@@ -421,17 +421,18 @@ func TestObjectUUID_APositionRepairedOnTheOpenIsNamedByItsHash(t *testing.T) {
 	}
 }
 
-// A library at 2.55.0 has its uuids and its journal for the families of 2.51.0;
-// the deck and the tournament, added at 2.56.0, are named by their own pass
+// A library at 2.56.0 has its uuids and its journal for the families of 2.51.0;
+// the deck and the tournament, added at 2.57.0, are named by their own pass
 // when it opens, from the same natural key on every library, and an export
 // from the start carries them.
-func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_55(t *testing.T) {
+func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_56(t *testing.T) {
 	t.Parallel()
-	path, d := uuidLibrary(t, "at255.db")
+	path, d := uuidLibrary(t, "at256.db")
 	for _, stmt := range []string{
 		`INSERT INTO anki_deck (name) VALUES ('Openings')`,
 		`INSERT INTO anki_deck (name) VALUES ('Openings')`,
 		`INSERT INTO tournament (name) VALUES ('Open')`,
+		`INSERT INTO tournament (name, date) VALUES ('Open', '2025-06-01')`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
 			t.Fatal(err)
@@ -452,7 +453,7 @@ func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_55(t *testing.T) {
 			}
 		}
 	}
-	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.55.0' WHERE key = 'database_version'`); err != nil {
+	if _, err := d.db.Exec(`UPDATE metadata SET value = '2.56.0' WHERE key = 'database_version'`); err != nil {
 		t.Fatal(err)
 	}
 	if err := d.Close(); err != nil {
@@ -467,8 +468,10 @@ func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_55(t *testing.T) {
 	if len(got) != 2 || got[0] != want[0] || got[1] != want[1] {
 		t.Errorf("deck uuids = %v, want those derived from the name and the rank: %v", got, want)
 	}
-	if got := uuidsWhere(t, d, `SELECT uuid FROM tournament`); len(got) != 1 || got[0] != sqlshared.DeriveObjectUUID("tournament", "Open", 1) {
-		t.Errorf("tournament uuid = %v", got)
+	if got, want := uuidsWhere(t, d, `SELECT uuid FROM tournament ORDER BY id`), []string{
+		sqlshared.DeriveObjectUUID("tournament", "Open|", 1), sqlshared.DeriveObjectUUID("tournament", "Open|2025-06-01", 1),
+	}; len(got) != 2 || got[0] != want[0] || got[1] != want[1] {
+		t.Errorf("tournament uuids = %v, want one per edition: %v", got, want)
 	}
 	for _, table := range []string{"anki_deck", "tournament"} {
 		var n int
@@ -485,8 +488,8 @@ func TestObjectUUID_DeckAndTournamentJoinALibraryAt2_55(t *testing.T) {
 	for _, r := range set.Records {
 		carried[r.Family]++
 	}
-	if carried["anki_deck"] != 2 || carried["tournament"] != 1 {
-		t.Errorf("an export from the start carries %v, want the two decks and the tournament", carried)
+	if carried["anki_deck"] != 2 || carried["tournament"] != 2 {
+		t.Errorf("an export from the start carries %v, want the two decks and the two editions", carried)
 	}
 	// A new deck written now is named and journaled by the triggers.
 	if _, err := d.db.Exec(`INSERT INTO anki_deck (name) VALUES ('New')`); err != nil {

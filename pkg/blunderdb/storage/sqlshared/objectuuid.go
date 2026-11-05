@@ -105,10 +105,10 @@ var ObjectUUIDFamilies = []ObjectUUIDFamily{
 			return " LEFT JOIN anki_deck d ON d.id = t.deck_id" + tenantOn(tn, "d", "t") + joinPosition(tn)
 		},
 		key: `COALESCE(d.name, '') || '|' || COALESCE(t.kind, '') || '|' || COALESCE(CAST(p.zobrist_hash AS TEXT), t.key, '')`},
-	// Added with schema 2.56.0: a library past the first pass names them in a
-	// pass of their own.
+	// Added with schema 2.57.0: a library past the first pass names them in a
+	// pass of their own. Two editions of a tournament share a name, not a date.
 	{Table: "anki_deck", Family: "anki_deck", Reads: []string{"anki_deck"}, Ranked: true, Mark: MarkFor("anki_deck"), key: nameKey},
-	{Table: "tournament", Family: "tournament", Reads: []string{"tournament"}, Ranked: true, Mark: MarkFor("tournament"), key: nameKey},
+	{Table: "tournament", Family: "tournament", Reads: []string{"tournament"}, Ranked: true, Mark: MarkFor("tournament"), key: `t.name || '|' || COALESCE(t.date, '')`},
 }
 
 // NextBoundSQL reads the id closing the next batch of an unranked family

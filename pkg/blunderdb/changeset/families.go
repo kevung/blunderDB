@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"slices"
 	"strconv"
 	"time"
 
@@ -86,6 +85,9 @@ var positionCodec = codec{
 		}
 		switch a, err := s.Analyses().Load(ctx, scope, id); {
 		case err == nil:
+			// The id is this library's: left in, two libraries holding the same
+			// analysis would read as a conflict on a tie.
+			a.PositionID = 0
 			out.Analysis = a
 		case !errors.Is(err, storage.ErrNotFound):
 			return nil, err
@@ -294,9 +296,10 @@ func partBeats(at string, content any, otherAt string, other any) bool {
 	}
 }
 
-// partDate is the date of a part in a payload, as this library will hold it:
-// content with no date is old, and a date ahead of the clock is taken as now.
-func partDate(at string, hasContent bool) (string, error) {
+// partDate is the date of a part in a payload, as this library will hold it
+// over the date held: content with no date is old, and a date ahead of the clock
+// by more than clockSlack is taken as now, or just after what is held (overHeld).
+func partDate(at string, hasContent bool, held string) (string, error) {
 	if at == "" {
 		if hasContent {
 			return floor, nil
@@ -307,8 +310,8 @@ func partDate(at string, hasContent bool) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if now := time.Now().UTC().Format(storage.ChangedAtLayout); at > now {
-		return now, nil
+	if now := time.Now().UTC(); at > now.Add(clockSlack).Format(storage.ChangedAtLayout) {
+		return overHeld(at, now.Format(storage.ChangedAtLayout), held)
 	}
 	return at, nil
 }
@@ -318,7 +321,11 @@ func applyDrawing(ctx context.Context, s storage.Stores, scope string, id int64,
 	if !ok {
 		return nil
 	}
-	at, err := partDate(p.DrawingAt, len(p.Drawing) > 0)
+	have, haveAt, err := readDrawing(ctx, s, scope, id)
+	if err != nil {
+		return err
+	}
+	at, err := partDate(p.DrawingAt, len(p.Drawing) > 0, haveAt)
 	if err != nil || at == "" {
 		return err
 	}
@@ -326,9 +333,8 @@ func applyDrawing(ctx context.Context, s storage.Stores, scope string, id int64,
 	if len(marks) == 0 {
 		marks = nil
 	}
-	have, haveAt, err := readDrawing(ctx, s, scope, id)
-	if err != nil || !partBeats(at, marks, haveAt, have) {
-		return err
+	if !partBeats(at, marks, haveAt, have) {
+		return nil
 	}
 	if err := dp.PositionDrawings().SetDrawing(ctx, scope, id, marks); err != nil {
 		return err
@@ -353,13 +359,16 @@ func applyLink(ctx context.Context, s storage.Stores, scope string, id int64, p 
 	if !ok {
 		return nil
 	}
-	at, err := partDate(p.DerivedAt, p.DerivedFrom != nil)
+	have, haveAt, err := readLink(ctx, s, scope, id)
+	if err != nil {
+		return err
+	}
+	at, err := partDate(p.DerivedAt, p.DerivedFrom != nil, haveAt)
 	if err != nil || at == "" {
 		return err
 	}
-	have, haveAt, err := readLink(ctx, s, scope, id)
-	if err != nil || !partBeats(at, p.DerivedFrom, haveAt, have) {
-		return err
+	if !partBeats(at, p.DerivedFrom, haveAt, have) {
+		return nil
 	}
 	journal, _, err := providers(s)
 	if err != nil {
@@ -552,20 +561,16 @@ var commentCodec = codec{
 
 // matchPayload is a match whole, with every id replaced by its rank, so two
 // libraries holding the same match read the same bytes. What the match is
-// attached to here (import batch, direction slot, drafts, the duel that
-// produced it) and where the user last looked belong to the library and stay
-// out. The tournament does not: it is named by uuid, with the match's place
-// among the tournament's (TournamentIndex). A payload with no "tournament" is
-// a peer's that does not say, which leaves the match where it is; "" detaches.
-type matchPayload struct {
-	domain.TrashMatchPayload
-	Tournament *string `json:"tournament"`
-}
+// attached to here (tournament and its order there, import batch, direction
+// slot, drafts, the duel that produced it) and where the user last looked
+// belong to the library and stay out.
+type matchPayload = domain.TrashMatchPayload
 
 func portableMatch(p *domain.TrashMatchPayload) {
-	p.UUID, p.Origin = "", nil
+	p.UUID, p.TournamentIndex, p.Origin = "", 0, nil
 	p.DirectionSlot, p.DirectionPair, p.TranscriptionIDs, p.ImportFileIDs = "", [2]string{}, nil, nil
-	p.Match.ID, p.Match.ImportDate, p.Match.TournamentID, p.Match.ImportBatchID = 0, time.Time{}, nil, 0
+	p.Match.ID, p.Match.ImportDate, p.Match.ImportBatchID = 0, time.Time{}, 0
+	p.Match.TournamentID, p.Match.TournamentName, p.Match.TournamentSortOrder = nil, "", 0
 	p.Match.LastVisitedPosition = -1
 	pos := map[int64]int64{}
 	for i := range p.Positions {
@@ -602,29 +607,27 @@ var matchCodec = codec{
 		if err != nil {
 			return nil, err
 		}
-		tournament := ""
-		if p.Match.TournamentID != nil {
-			tournament, err = uuidsOf(s).ObjectUUID(ctx, scope, "tournament", *p.Match.TournamentID)
-			if err != nil && !errors.Is(err, storage.ErrNotFound) {
-				return nil, err
-			}
-		}
 		portableMatch(p)
-		if tournament == "" {
-			p.TournamentIndex = 0
+		return p, nil
+	},
+	// Two notes of one tie are both kept.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l matchPayload
+		if err := json.Unmarshal(winner, &w); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
 		}
-		return matchPayload{TrashMatchPayload: *p, Tournament: &tournament}, nil
+		if err := json.Unmarshal(loser, &l); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		w.Match.Comment = joinText(w.Match.Comment, l.Match.Comment)
+		return json.Marshal(w)
 	},
 	create: func(ctx context.Context, s storage.Stores, scope string, raw json.RawMessage) (int64, error) {
 		var p matchPayload
 		if err := json.Unmarshal(raw, &p); err != nil {
 			return 0, fmt.Errorf("match payload: %w", err)
 		}
-		id, err := trash.RebuildMatchAs(ctx, s, scope, &p.TrashMatchPayload)
-		if err != nil {
-			return 0, err
-		}
-		return id, joinTournament(ctx, s, scope, id, p)
+		return trash.RebuildMatchAs(ctx, s, scope, &p)
 	},
 	// A match can be rewritten whole (a transcription saved again, the seats
 	// swapped): what the games say and what the header says stay one thing. A
@@ -643,12 +646,12 @@ var matchCodec = codec{
 		if err := hashesFree(ctx, s, scope, id, cur.Match, m); err != nil {
 			return err
 		}
-		same, err := sameBody(cur, &p.TrashMatchPayload)
+		same, err := sameBody(cur, &p)
 		if err != nil {
 			return err
 		}
 		if !same {
-			if err := trash.RewriteMatchBody(ctx, s, scope, id, &p.TrashMatchPayload); err != nil {
+			if err := trash.RewriteMatchBody(ctx, s, scope, id, &p); err != nil {
 				return err
 			}
 		}
@@ -659,11 +662,9 @@ var matchCodec = codec{
 			return err
 		}
 		if m.VideoSource != nil {
-			if err := s.Matches().SetVideoSource(ctx, scope, id, *m.VideoSource); err != nil {
-				return err
-			}
+			return s.Matches().SetVideoSource(ctx, scope, id, *m.VideoSource)
 		}
-		return joinTournament(ctx, s, scope, id, p)
+		return nil
 	},
 	remove: func(ctx context.Context, s storage.Stores, scope string, id int64, toTrash bool) error {
 		if toTrash {
@@ -672,62 +673,6 @@ var matchCodec = codec{
 		}
 		return s.Matches().DeleteCascade(ctx, scope, id)
 	},
-}
-
-// joinTournament brings the match to the tournament the payload names, at its
-// place among the tournament's matches. A tournament this library lacks leaves
-// the match where it is, and the report names it.
-func joinTournament(ctx context.Context, s storage.Stores, scope string, id int64, p matchPayload) error {
-	if p.Tournament == nil {
-		return nil
-	}
-	ts := s.Tournaments()
-	cur, err := ts.TournamentOf(ctx, scope, id)
-	if err != nil && !errors.Is(err, storage.ErrNotFound) {
-		return err
-	}
-	attached := err == nil
-	if *p.Tournament == "" {
-		if attached {
-			return ts.RemoveMatch(ctx, scope, id)
-		}
-		return nil
-	}
-	tid, err := uuidsOf(s).ObjectID(ctx, scope, "tournament", *p.Tournament)
-	if errors.Is(err, storage.ErrNotFound) {
-		noteMissing(ctx, *p.Tournament)
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-	if !attached || cur.ID != tid {
-		if err := ts.AddMatch(ctx, scope, tid, id); err != nil {
-			return err
-		}
-	}
-	var ids []int64
-	for tm, err := range ts.Matches(ctx, scope, tid) {
-		if err != nil {
-			return err
-		}
-		if tm.ID != id {
-			ids = append(ids, tm.ID)
-		}
-	}
-	at := min(max(p.TournamentIndex, 0), len(ids))
-	ids = slices.Insert(ids, at, id)
-	var now []int64
-	for tm, err := range ts.Matches(ctx, scope, tid) {
-		if err != nil {
-			return err
-		}
-		now = append(now, tm.ID)
-	}
-	if slices.Equal(now, ids) {
-		return nil
-	}
-	return ts.ReorderMatches(ctx, scope, tid, ids)
 }
 
 // hashesFree refuses a header whose new hash is another local match's.
@@ -756,8 +701,8 @@ func hashesFree(ctx context.Context, s storage.Stores, scope string, id int64, h
 // sameBody says two portable snapshots hold the same games, moves, analyses and
 // boards. A position is compared by hash only: the rest of its row is the
 // position family's to carry.
-func sameBody(a, b *domain.TrashMatchPayload) (bool, error) {
-	digest := func(p *domain.TrashMatchPayload) (string, error) {
+func sameBody(a, b *matchPayload) (bool, error) {
+	digest := func(p *matchPayload) (string, error) {
 		boards := make([]uint64, len(p.Positions))
 		for i := range p.Positions {
 			boards[i] = storage.ZobristOf(&p.Positions[i].Position)

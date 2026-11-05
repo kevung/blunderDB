@@ -18,14 +18,17 @@ var _ storage.ChangeJournalStore = (*ChangeJournalStore)(nil)
 // LocalColumns are, per table, the columns that belong to the library, not to
 // the object: the ones its changeset payload leaves out, or that a local
 // gesture rewrites without the object having changed. Changing them alone
-// dates nothing. 055_change_log.sql and 059_deck_tournament_uuid.sql spell the
+// dates nothing. 055_change_log.sql and 060_deck_tournament_uuid.sql spell the
 // same lists.
 //
-// A match's tournament is not among them: it travels with the match. A
-// synchronisation of a deck and the attaching of a match to a tournament touch
-// updated_at and nothing the payload carries.
+// A match's tournament and its order there are among them: a tournament travels
+// alone, and each library keeps its own attachments. A synchronisation of a deck
+// and the attaching of a match to a tournament touch updated_at: the deck's
+// payload leaves it out; the tournament's carries it, so an attaching changes
+// that payload without dating it, and an exchange from 0 meets a tie there,
+// which the tournament's merge settles (the later date).
 var LocalColumns = map[string][]string{
-	"match":      {"import_date", "import_batch_id", "last_visited_position", "last_visited_at"},
+	"match":      {"import_date", "tournament_id", "tournament_sort_order", "import_batch_id", "last_visited_position", "last_visited_at", "direction_match_id"},
 	"anki_deck":  {"updated_at"},
 	"tournament": {"updated_at", "sort_order", "rencontre_id", "rencontre_rooms"},
 }
@@ -227,16 +230,21 @@ func (s *ChangeJournalStore) Mark(ctx context.Context, scope, family, uuid, op, 
 	var err error
 	if s.DB.Name() == "sqlite" {
 		if at == "" {
-			_, err = s.DB.Exec(ctx, `INSERT OR REPLACE INTO change_log (uuid, family, op) VALUES (?, ?, ?)`, uuid, family, op)
+			// Selected before the replace: the date this write has to pass.
+			_, err = s.DB.Exec(ctx, `INSERT OR REPLACE INTO change_log (uuid, family, op, changed_at) VALUES (?, ?, ?,
+				MAX(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+					COALESCE((SELECT strftime('%Y-%m-%dT%H:%M:%fZ', changed_at, '+0.001 seconds') FROM change_log WHERE uuid = ?), '')))`,
+				uuid, family, op, uuid)
 		} else {
 			_, err = s.DB.Exec(ctx, `INSERT OR REPLACE INTO change_log (uuid, family, op, changed_at) VALUES (?, ?, ?, ?)`, uuid, family, op, at)
 		}
 	} else {
-		// at is bound as text and cast; "" falls to now().
+		// at is bound as text and cast; "" falls to now(), past what the entry holds.
 		_, err = s.DB.Exec(ctx, `INSERT INTO change_log (tenant_id, uuid, family, op, changed_at)
 			VALUES (?, CAST(? AS uuid), ?, ?, COALESCE(CAST(NULLIF(?, '') AS timestamptz), now()))
 			ON CONFLICT (tenant_id, uuid) DO UPDATE SET seq = nextval('change_log_seq'), family = EXCLUDED.family,
-			op = EXCLUDED.op, changed_at = EXCLUDED.changed_at, xid = pg_current_xact_id()`, s.DB.ScopeArg(scope), uuid, family, op, at)
+			op = EXCLUDED.op, changed_at = CASE WHEN ? = '' THEN blunderdb_stamp_after(change_log.changed_at) ELSE EXCLUDED.changed_at END,
+			xid = pg_current_xact_id()`, s.DB.ScopeArg(scope), uuid, family, op, at, at)
 	}
 	if err != nil {
 		return errf(s.DB, "mark change", err)
