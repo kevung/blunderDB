@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"iter"
 	"math"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -610,6 +611,10 @@ func (s *SearchStore) scan(ctx context.Context, f domain.SearchFilters, wc searc
 	}
 }
 
+// readsAnalysis spots a reference to the joined analysis in a clause. A subquery
+// with its own alias a only costs the shortcut, never a wrong answer.
+var readsAnalysis = regexp.MustCompile(`\ba\.`)
+
 // scanChunk runs one bounded query of the scan — the WHERE clause plus
 // extra, ordered, within limit/offset — and passes its rows through the Go
 // phase. It also returns how many rows SQL gave and the id of the last one,
@@ -624,15 +629,26 @@ func (s *SearchStore) scanChunk(ctx context.Context, f domain.SearchFilters, wc 
 
 	limitClause, limitArgs := s.DB.LimitOffset(limit, offset)
 
+	// When neither the filter nor the order reads the analysis, the window is cut
+	// on position alone and the analysis attached to the rows kept: the join is one
+	// lookup per row of the page, whatever OFFSET skips and however many other
+	// tenants' rows lie between two ids in the analysis index.
+	order := domain.SearchOrderByClause(f.Sort)
+	from := `position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE ` + wc.where + extra + ` ORDER BY ` + order + limitClause
+	if limit > 0 && !readsAnalysis.MatchString(wc.where+extra+" "+order) {
+		from = `(SELECT p.* FROM position p WHERE ` + wc.where + extra + ` ORDER BY ` + order + limitClause + `) p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	ORDER BY ` + order
+	}
 	query := `SELECT p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
 		p.has_jacoby, p.has_beaver, p.max_cube, p.is_cube_response,
 		p.individually_imported, p.flagged,
 		a.id, ` + analysisDataCol + ` AS data
-	FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE ` + wc.where + extra + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort) + limitClause
+	FROM ` + from
 
 	args := append(append(append([]any{}, wc.args...), extraArgs...), limitArgs...)
 	rows, err := s.DB.Query(ctx, query, args...)
@@ -713,6 +729,41 @@ func (s *SearchStore) Count(ctx context.Context, scope string, f domain.SearchFi
 		return n, err
 	}
 	return s.countWhere(ctx, wc, "", nil)
+}
+
+// CountUpTo counts at most max survivors, one row past it to tell a result of
+// exactly max from a longer one. The Go phase stops on the same condition.
+func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.SearchFilters, max int) (int, bool, error) {
+	if max <= 0 {
+		return 0, false, fmt.Errorf("search count: max %d: %w", max, storage.ErrInvalid)
+	}
+	wc, err := s.buildWhere(ctx, scope, f)
+	if err != nil {
+		return 0, false, err
+	}
+	n := 0
+	if wc.goPhase(f) {
+		err = s.scan(ctx, f, wc, storage.ListOpts{Limit: max + 1}, func(positions []domain.Position) bool {
+			n += len(positions)
+			return true
+		})
+	} else {
+		limitClause, limitArgs := s.DB.LimitOffset(max+1, 0)
+		query := `SELECT COUNT(*) FROM (SELECT 1 FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE ` + wc.where + limitClause + `) AS bounded`
+		err = s.DB.QueryRow(ctx, query, append(append([]any{}, wc.args...), limitArgs...)...).Scan(&n)
+		if err != nil {
+			err = errf(s.DB, "search bounded count", err)
+		}
+	}
+	if err != nil {
+		return 0, false, err
+	}
+	if n > max {
+		return max, true, nil
+	}
+	return n, false, nil
 }
 
 func (s *SearchStore) countWhere(ctx context.Context, wc searchWhereClause, extra string, extraArgs []any) (int, error) {
@@ -1264,6 +1315,17 @@ func (s *SearchStore) appendIdentityClauses(ctx context.Context, scope string, f
 		} else {
 			where.WriteString(" AND 0=1")
 		}
+	}
+
+	var excluded []any
+	for _, idStr := range strings.Split(f.ExcludePositionIDs, ",") {
+		if id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64); err == nil {
+			excluded = append(excluded, id)
+		}
+	}
+	if len(excluded) > 0 {
+		where.WriteString(" AND p.id NOT IN (" + Placeholders(len(excluded)) + ")")
+		*args = append(*args, excluded...)
 	}
 
 	// User-facing position-id filter (command-line token `id`). Uses the same

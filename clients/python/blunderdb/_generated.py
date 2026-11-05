@@ -1214,6 +1214,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/search.count — JSON."
         return self._call("/v1/search.count", payload)
 
+    def search_count_up_to(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.countUpTo — JSON."
+        return self._call("/v1/search.countUpTo", payload)
+
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."
         return self._stream("/v1/search.find", payload)

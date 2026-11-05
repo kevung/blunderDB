@@ -49,6 +49,10 @@ type SearchStore interface {
 	// Count is the length of Find's unbounded result.
 	Count(ctx context.Context, scope string, f domain.SearchFilters) (int, error)
 
+	// CountUpTo is Count bounded: it stops at max and reports capped when the
+	// result is longer, so that a result of any size costs no more than max rows.
+	CountUpTo(ctx context.Context, scope string, f domain.SearchFilters, max int) (n int, capped bool, err error)
+
 	// IndexOf is the rank of id in Find's unbounded result; found is false
 	// when the search does not find it.
 	IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (index int, found bool, err error)

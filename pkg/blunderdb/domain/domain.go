@@ -589,6 +589,9 @@ type SearchFilters struct {
 
 	PositionIDsFilter     string `json:"positionIDsFilter"`
 	RestrictToPositionIDs string `json:"restrictToPositionIDs"`
+	// ExcludePositionIDs is the opposite narrowing, comma-separated: these rows leave the result
+	// before the window, so a page stays full and a count stays true. A blank list excludes nothing.
+	ExcludePositionIDs string `json:"excludePositionIDs,omitempty"`
 
 	// Sort orders the result set. "" keeps the stable engine order (position id).
 	// Analysis-backed keys ("error", "winrate", "close") order by the denormalised

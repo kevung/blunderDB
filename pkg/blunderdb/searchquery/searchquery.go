@@ -702,6 +702,7 @@ var Unrepresentable = map[string]string{
 	"LikeTargetBoard":       "a board position: what a bare `like` ranks against in edit mode is drawn, not typed",
 	"ExcludeFilter":         "a board position: the exclusion structure is drawn, not typed",
 	"RestrictToPositionIDs": "an internal narrowing (search within a result set), not a user filter",
+	"ExcludePositionIDs":    "an internal narrowing (rows a caller hides), not a user filter",
 	"Sort":                  "set by the caller; a Go-only token would fork the grammar",
 }
 

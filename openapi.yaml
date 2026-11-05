@@ -6485,6 +6485,23 @@ paths:
               schema:
                 type: integer
                 format: int32
+  /v1/search.countUpTo:
+    post:
+      operationId: search.countUpTo
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchCountUpToReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/searchCountUpToResp"
   /v1/search.find:
     post:
       operationId: search.find
@@ -10130,6 +10147,22 @@ components:
             $ref: "#/components/schemas/domain_RolloutAnalysis"
     scopeReq:
       type: object
+    searchCountUpToReq:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/domain_SearchFilters"
+        max:
+          type: integer
+          format: int32
+    searchCountUpToResp:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+        capped:
+          type: boolean
     searchFindReq:
       type: object
       properties:
