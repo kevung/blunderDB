@@ -98,9 +98,10 @@ func (a shared) Query(ctx context.Context, query string, args ...any) (sqlshared
 	return pgRows{rows}, nil
 }
 
-// typedRebind is sqlshared.Rebind that declares each Go integer a bigint. Left to infer, a parameter
-// takes the type of its column, and a filter past a smallint would fail to encode instead of finding
-// nothing. An integer comparison of two widths still reads the index.
+// typedRebind is sqlshared.Rebind that declares a Go integer a bigint where it is compared: left to
+// infer, it takes the type of its column, and a filter past a smallint would fail to encode instead of
+// finding nothing. Only there: a function argument or an operand that wants an integer (substr, date +
+// n, jsonb -> n) has no implicit cast from bigint, and is left to infer as before.
 func typedRebind(query string, args []any) string {
 	if !strings.Contains(query, "?") {
 		return query
@@ -112,21 +113,85 @@ func typedRebind(query string, args []any) string {
 	}
 	var b strings.Builder
 	b.Grow(len(query) + 16)
+	var (
+		prev    string // last token: an operator, a parenthesis, a comma or an upper-cased word
+		inList  []bool // per open parenthesis, whether it is the list of an IN
+		between bool   // a BETWEEN waits for its AND
+	)
 	n := 0
-	for i := 0; i < len(query); i++ {
-		if query[i] != '?' {
-			b.WriteByte(query[i])
+	for i := 0; i < len(query); {
+		c := query[i]
+		switch {
+		case c == '?':
+			b.WriteString("$" + strconv.Itoa(n+1))
+			compared := comparison[prev] || prev == "BETWEEN" || prev == "AND+" ||
+				((prev == "(" || prev == ",") && len(inList) > 0 && inList[len(inList)-1]) ||
+				comparison[nextOperator(query[i+1:])]
+			if n < len(args) && isGoInteger(args[n]) && compared && !strings.HasPrefix(query[i+1:], "::") {
+				b.WriteString("::bigint")
+			}
+			n++
+			prev = "?"
+			i++
+			continue
+		case c == '(':
+			inList = append(inList, prev == "IN")
+			prev = "("
+		case c == ')':
+			if len(inList) > 0 {
+				inList = inList[:len(inList)-1]
+			}
+			prev = ")"
+		case c == ',':
+			prev = ","
+		case isWordByte(c):
+			j := i
+			for j < len(query) && isWordByte(query[j]) {
+				j++
+			}
+			prev = strings.ToUpper(query[i:j])
+			switch {
+			case prev == "BETWEEN":
+				between = true
+			case prev == "AND" && between:
+				between, prev = false, "AND+"
+			}
+			b.WriteString(query[i:j])
+			i = j
+			continue
+		case isOperatorByte(c):
+			j := i
+			for j < len(query) && isOperatorByte(query[j]) {
+				j++
+			}
+			prev = query[i:j]
+			b.WriteString(prev)
+			i = j
 			continue
 		}
-		b.WriteByte('$')
-		b.WriteString(strconv.Itoa(n + 1))
-		if n < len(args) && isGoInteger(args[n]) && !strings.HasPrefix(query[i+1:], "::") {
-			b.WriteString("::bigint")
-		}
-		n++
+		b.WriteByte(c)
+		i++
 	}
 	return b.String()
 }
+
+var comparison = map[string]bool{"=": true, "<>": true, "!=": true, "<": true, ">": true, "<=": true, ">=": true}
+
+// nextOperator is the operator that follows a placeholder, for one written on the left.
+func nextOperator(rest string) string {
+	rest = strings.TrimLeft(rest, " \t\n")
+	j := 0
+	for j < len(rest) && isOperatorByte(rest[j]) {
+		j++
+	}
+	return rest[:j]
+}
+
+func isWordByte(c byte) bool {
+	return c == '_' || c == '.' || c == '$' || c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'
+}
+
+func isOperatorByte(c byte) bool { return strings.IndexByte("<>=!+-*/%|&~^#@:", c) >= 0 }
 
 func isGoInteger(v any) bool {
 	switch v.(type) {
