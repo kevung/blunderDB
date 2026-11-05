@@ -561,15 +561,16 @@ var commentCodec = codec{
 
 // matchPayload is a match whole, with every id replaced by its rank, so two
 // libraries holding the same match read the same bytes. What the match is
-// attached to here (tournament, import batch, direction slot, drafts, the
-// duel that produced it) and where the user last looked belong to the library
-// and stay out.
+// attached to here (tournament and its order there, import batch, direction
+// slot, drafts, the duel that produced it) and where the user last looked
+// belong to the library and stay out.
 type matchPayload = domain.TrashMatchPayload
 
 func portableMatch(p *domain.TrashMatchPayload) {
 	p.UUID, p.TournamentIndex, p.Origin = "", 0, nil
 	p.DirectionSlot, p.DirectionPair, p.TranscriptionIDs, p.ImportFileIDs = "", [2]string{}, nil, nil
-	p.Match.ID, p.Match.ImportDate, p.Match.TournamentID, p.Match.ImportBatchID = 0, time.Time{}, nil, 0
+	p.Match.ID, p.Match.ImportDate, p.Match.ImportBatchID = 0, time.Time{}, 0
+	p.Match.TournamentID, p.Match.TournamentName, p.Match.TournamentSortOrder = nil, "", 0
 	p.Match.LastVisitedPosition = -1
 	pos := map[int64]int64{}
 	for i := range p.Positions {
@@ -608,6 +609,18 @@ var matchCodec = codec{
 		}
 		portableMatch(p)
 		return p, nil
+	},
+	// Two notes of one tie are both kept.
+	merge: func(winner, loser json.RawMessage) (json.RawMessage, error) {
+		var w, l matchPayload
+		if err := json.Unmarshal(winner, &w); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		if err := json.Unmarshal(loser, &l); err != nil {
+			return nil, fmt.Errorf("match payload: %w", err)
+		}
+		w.Match.Comment = joinText(w.Match.Comment, l.Match.Comment)
+		return json.Marshal(w)
 	},
 	create: func(ctx context.Context, s storage.Stores, scope string, raw json.RawMessage) (int64, error) {
 		var p matchPayload

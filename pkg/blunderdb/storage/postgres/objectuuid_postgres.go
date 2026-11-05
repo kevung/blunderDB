@@ -13,22 +13,30 @@ import (
 
 // backfillObjectUUIDs names every object held before 054 with the identifier
 // derived from its natural key (sqlshared.DeriveObjectUUID, computed in SQL by
-// blunderdb_derive_uuid). Once per library (sqlshared.ObjectUUIDKey), written
+// blunderdb_derive_uuid). Once per family (ObjectUUIDFamily.MarkOf), written
 // only when the pass saw every tenant's rows. One transaction per batch with
 // FORCE lifted inside it, so the lock lasts one batch; resumable by
 // construction, a written row no longer being NULL; a table busy past
 // unforcedLockTimeout is left for the next Migrate.
 func backfillObjectUUIDs(ctx context.Context, conn migrationConn) error {
-	var done string
-	err := conn.QueryRow(ctx, `SELECT value FROM metadata WHERE key = $1`, sqlshared.ObjectUUIDKey).Scan(&done)
-	if err == nil {
+	// A family whose pass is recorded is skipped; the others are named now.
+	var owed []sqlshared.ObjectUUIDFamily
+	for _, f := range sqlshared.ObjectUUIDFamilies {
+		var done string
+		err := conn.QueryRow(ctx, `SELECT value FROM metadata WHERE key = $1`, f.MarkOf()).Scan(&done)
+		if err == nil {
+			continue
+		}
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("postgres: read %s: %w", f.MarkOf(), err)
+		}
+		owed = append(owed, f)
+	}
+	if len(owed) == 0 {
 		return nil
 	}
-	if !errors.Is(err, pgx.ErrNoRows) {
-		return fmt.Errorf("postgres: read %s: %w", sqlshared.ObjectUUIDKey, err)
-	}
 	complete, total := true, int64(0)
-	for _, f := range sqlshared.ObjectUUIDFamilies {
+	for _, f := range owed {
 		var after int64
 		for {
 			if err := ctx.Err(); err != nil {
@@ -86,10 +94,12 @@ func backfillObjectUUIDs(ctx context.Context, conn migrationConn) error {
 	if !complete {
 		return nil
 	}
-	if _, err := conn.Exec(ctx,
-		`INSERT INTO metadata (key, value) VALUES ($1, '1') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
-		sqlshared.ObjectUUIDKey); err != nil {
-		return fmt.Errorf("postgres: write %s: %w", sqlshared.ObjectUUIDKey, err)
+	for _, f := range owed {
+		if _, err := conn.Exec(ctx,
+			`INSERT INTO metadata (key, value) VALUES ($1, '1') ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+			f.MarkOf()); err != nil {
+			return fmt.Errorf("postgres: write %s: %w", f.MarkOf(), err)
+		}
 	}
 	if total > 0 {
 		slog.Info("gave the stored objects their uuid", "rows", total)

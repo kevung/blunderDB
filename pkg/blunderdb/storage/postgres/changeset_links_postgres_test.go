@@ -12,6 +12,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/storagetest"
 )
 
@@ -23,6 +24,32 @@ func TestChangeSetLinks_Postgres(t *testing.T) {
 		n += 2
 		a, b := n, n+1
 		return storagetest.NewChangeSetPair(t, s, storage.WithTenant(ctx, a), strconv.FormatInt(a, 10), s, storage.WithTenant(ctx, b), strconv.FormatInt(b, 10))
+	})
+}
+
+func TestChangeSetCardTwinBeforeTheJournal_Postgres(t *testing.T) {
+	ctx := context.Background()
+	s, conn, ownerDSN := openAsRLSOwner(t)
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatal(err)
+	}
+	rls, err := pg.Open(ctx, ownerDSN, &storage.Options{EnableRLS: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = rls.Close() })
+	var n int64
+	storagetest.CheckChangeSetCardTwinBeforeTheJournal(t, func(t *testing.T) (*storagetest.ChangeSetPair, func()) {
+		n += 2
+		a, b := n, n+1
+		scope := strconv.FormatInt(b, 10)
+		return storagetest.NewChangeSetPair(t, rls, storage.WithTenant(ctx, a), strconv.FormatInt(a, 10), rls, storage.WithTenant(ctx, b), scope), func() {
+			asTenant(t, conn, scope, func() {
+				if _, err := conn.Exec(ctx, `DELETE FROM change_log WHERE family = 'anki_card'`); err != nil {
+					t.Fatal(err)
+				}
+			})
+		}
 	})
 }
 

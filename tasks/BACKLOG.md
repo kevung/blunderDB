@@ -14,6 +14,12 @@ propre issue le jour où il est lancé.
   au-delà de `clockSlack`, et peuvent faire diverger durablement deux pairs. Aucun chemin réel
   connu : à reprendre si l'un apparaît (`storage/changelog.go`, `changeset/changeset.go`).
 
+- **Changeset : cartes jumelles, 5 révisions anciennes contre 1 récente** — deux tirages d'une même
+  carte fusionnés gardent le planning de la révision la plus récente (`cardPayload.ahead`, date de
+  `LastReview`) : 5 révisions d'un côté cèdent à 1 révision postérieure de l'autre, le compte de
+  révisions redescend. Convergent, laissé en l'état ; à reprendre si un utilisateur le rencontre
+  (`changeset/families_more.go`).
+
 - **Statistiques : le filtre `--engine` par les cellules** — décidé : différé (2026-10-24). Il
   lit encore les décisions (copie de la sélection) ; passer par `match_stats_cell` demande le
   moteur dans la clé des cellules, autant de cellules en plus que de moteurs par match. Mesure

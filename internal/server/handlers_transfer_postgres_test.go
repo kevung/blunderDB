@@ -17,8 +17,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
 // importFixture fills scope of s from an XG fixture of the repository.
@@ -233,5 +235,90 @@ func TestTransferPull_CarriesDerivation_Postgres(t *testing.T) {
 	// Tenant 1 cannot read tenant 2's rows through the ids it knows.
 	if all, _ := d.Derivations(ctx1, "1", []int64{ps[1].ID}); len(all) != 0 {
 		t.Errorf("tenant 1 reads a derivation of tenant 2: %+v", all)
+	}
+}
+
+// A pull that leaves comments out leaves a match's own note and its file name
+// at the source, keeps the hash that deduplicates, and files five positions
+// pulled without their match as the recipient's individual positions; the
+// pull is a PostgreSQL transaction under RLS.
+func TestTransferPull_NoMatchNoteAndIndividualPositions_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	st := srv.opts.Storage
+	importFixture(t, st, "2", "match_with_comment.xg")
+	ctx1 := storage.WithTenant(context.Background(), 1)
+	ctx2 := storage.WithTenant(context.Background(), 2)
+
+	var src *domain.Match
+	for m, err := range st.Matches().List(ctx2, "2", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		mc := *m
+		src = &mc
+	}
+	if err := st.Matches().UpdateComment(ctx2, "2", src.ID, "private note"); err != nil {
+		t.Fatal(err)
+	}
+	if err := st.Matches().SetVideoSource(ctx2, "2", src.ID, "https://www.dropbox.com/s/SECRETTOKEN/cours.mp4"); err != nil {
+		t.Fatal(err)
+	}
+	var ids []int64
+	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{Limit: 5}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	col, err := st.Collections().Create(ctx2, "2", "picked", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := st.Collections().AddPositions(ctx2, "2", col, ids); err != nil {
+		t.Fatal(err)
+	}
+
+	body := `{"tenant":"2","export":{"wholeLibrary":true,"includeMatches":true,"includeCollections":true,"includeAnalysis":true,"includeComments":false}}`
+	if rec := serveAcross(t, srv, "1", "2", "/v1/across.transferPull", body); rec.Code != http.StatusOK {
+		t.Fatalf("pull: %d %s", rec.Code, rec.Body)
+	}
+	var got *domain.Match
+	for m, err := range st.Matches().List(ctx1, "1", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		mc := *m
+		got = &mc
+	}
+	if got == nil {
+		t.Fatal("no match arrived in tenant 1")
+	}
+	if got.Comment != "" || got.CommentAuthor != "" || got.FilePath != issuance.AnonymousFileName(src.FilePath, false) || (got.VideoSource != nil && *got.VideoSource != "") {
+		t.Errorf("tenant 1 holds note %q author %q file %q has a video source", got.Comment, got.CommentAuthor, got.FilePath)
+	}
+	if !transcription.IsImported(got) {
+		t.Errorf("the received match no longer counts as imported (file %q): a transcription would drop its analyses unwarned", got.FilePath)
+	}
+	if got.MatchHash != src.MatchHash {
+		t.Errorf("match hash %q, want %q", got.MatchHash, src.MatchHash)
+	}
+
+	body = fmt.Sprintf(`{"tenant":"2","export":{"wholeLibrary":false,"includeCollections":true,"collectionIDs":[%d]}}`, col)
+	if rec := serveAcross(t, srv, "4", "2", "/v1/across.transferPull", body); rec.Code != http.StatusOK {
+		t.Fatalf("collection pull: %d %s", rec.Code, rec.Body)
+	}
+	ctx4 := storage.WithTenant(context.Background(), 4)
+	n, individual := 0, 0
+	for p, err := range st.Positions().List(ctx4, "4", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		n++
+		if p.IndividuallyImported {
+			individual++
+		}
+	}
+	if n != len(ids) || individual != n {
+		t.Errorf("tenant 4 holds %d positions, %d individual; want %d of %d", n, individual, len(ids), len(ids))
 	}
 }
