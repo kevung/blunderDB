@@ -120,10 +120,10 @@ func (s *ChangeJournalStore) checkCursor(ctx context.Context, scope string, afte
 		AND xid >= pg_snapshot_xmax(pg_current_snapshot()) AND xid IS DISTINCT FROM pg_current_xact_id_if_assigned()`, targs...); err != nil {
 		return "", errf(s.DB, "journal cursor", err)
 	}
-	var xmax, epoch string
-	if err := s.DB.QueryRow(ctx, `SELECT CAST(pg_snapshot_xmax(pg_current_snapshot()) AS TEXT),
-		CAST(system_identifier AS TEXT) || '/' || substr(pg_walfile_name(pg_current_wal_lsn()), 1, 8)
-		FROM pg_control_system()`).Scan(&xmax, &epoch); err != nil {
+	var xmax, epoch, since string
+	if err := s.DB.QueryRow(ctx, `SELECT CAST(pg_snapshot_xmax(pg_current_snapshot()) AS TEXT), `+journalEpoch+`,
+		COALESCE((SELECT value FROM library_settings WHERE tenant_id = ? AND key = 'change_journal_since'), '')
+		FROM pg_control_system()`, s.DB.ScopeArg(scope)).Scan(&xmax, &epoch, &since); err != nil {
 		return "", errf(s.DB, "journal cursor", err)
 	}
 	horizon, err := strconv.ParseInt(xmax, 10, 64)
@@ -133,8 +133,19 @@ func (s *ChangeJournalStore) checkCursor(ctx context.Context, scope string, afte
 	if after.Xid >= horizon || (after.Epoch != "" && after.Epoch != epoch) {
 		return "", errf(s.DB, "journal cursor", storage.ErrCursorStale)
 	}
+	// A cursor of before the journal was last restored passed nothing of the cut.
+	if sinceEpoch, sinceXid, ok := strings.Cut(since, " "); ok && sinceEpoch == epoch && after.Xid != 0 {
+		if restored, err := strconv.ParseInt(sinceXid, 10, 64); err != nil {
+			return "", errf(s.DB, "journal cursor", err)
+		} else if after.Xid < restored {
+			return "", errf(s.DB, "journal cursor", storage.ErrCursorStale)
+		}
+	}
 	return epoch, nil
 }
+
+// journalEpoch names the cluster and its timeline, read against pg_control_system().
+const journalEpoch = `CAST(system_identifier AS TEXT) || '/' || substr(pg_walfile_name(pg_current_wal_lsn()), 1, 8)`
 
 // Horizon — see storage.ChangeJournalStore.
 func (s *ChangeJournalStore) Horizon(ctx context.Context, scope string, families []string, after storage.Cursor) (storage.Cursor, error) {
@@ -358,13 +369,18 @@ func (s *ChangeJournalStore) SetJournalOff(ctx context.Context, scope string, of
 	if s.DB.Name() == "sqlite" {
 		return errf(s.DB, "journal off", fmt.Errorf("a library file keeps its journal: %w", storage.ErrInvalid))
 	}
-	query := `DELETE FROM library_settings WHERE tenant_id = ? AND key = 'change_journal'`
-	args := []any{s.DB.ScopeArg(scope)}
+	// Restored, the journal dates its restoration: a cursor from before it is
+	// refused (checkCursor) rather than answered without the cut.
+	query := `WITH gone AS (DELETE FROM library_settings WHERE tenant_id = ? AND key = 'change_journal' RETURNING 1)
+		INSERT INTO library_settings (tenant_id, key, value)
+		SELECT CAST(? AS BIGINT), 'change_journal_since', ` + journalEpoch + ` || ' ' || CAST(pg_current_xact_id() AS TEXT)
+		FROM pg_control_system() WHERE EXISTS (SELECT 1 FROM gone)
+		ON CONFLICT (tenant_id, key) DO UPDATE SET value = EXCLUDED.value`
+	args := []any{s.DB.ScopeArg(scope), s.DB.ScopeArg(scope)}
 	if off {
 		query = `WITH gone AS (DELETE FROM change_log WHERE tenant_id = ?)
 			INSERT INTO library_settings (tenant_id, key, value) VALUES (?, 'change_journal', 'off')
 			ON CONFLICT (tenant_id, key) DO UPDATE SET value = 'off'`
-		args = append(args, s.DB.ScopeArg(scope))
 	}
 	if _, err := s.DB.Exec(ctx, query, args...); err != nil {
 		return errf(s.DB, "journal off", err)

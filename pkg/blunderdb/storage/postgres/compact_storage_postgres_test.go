@@ -173,6 +173,51 @@ func TestJournalOff(t *testing.T) {
 	}
 }
 
+// A cursor taken before a cut passed nothing of what was written during it: restored, the journal
+// refuses it (a full resumption, as for a journal from elsewhere) instead of answering from it.
+func TestJournalOff_RestoredRefusesAnOlderCursor(t *testing.T) {
+	bg := context.Background()
+	s, _ := openRLS(t)
+	pub := tctx(bg, "1")
+	j := s.ChangeJournal()
+
+	if _, err := s.Positions().Save(pub, "1", compactPosition(3)); err != nil {
+		t.Fatal(err)
+	}
+	old, err := changeset.Export(pub, s, "1", storage.Cursor{}, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := j.SetJournalOff(pub, "1", false); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := changeset.Export(pub, s, "1", old.Cursor, 100); err != nil {
+		t.Errorf("a journal never cut refuses its cursor: %v", err)
+	}
+	if err := j.SetJournalOff(pub, "1", true); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Positions().Save(pub, "1", compactPosition(5)); err != nil {
+		t.Fatal(err)
+	}
+	if err := j.SetJournalOff(pub, "1", false); err != nil {
+		t.Fatal(err)
+	}
+	if got, err := changeset.Export(pub, s, "1", old.Cursor, 100); !errors.Is(err, storage.ErrCursorStale) {
+		t.Errorf("a cursor of before the cut = %d records, %v; want ErrCursorStale", len(got.Records), err)
+	}
+	fresh, err := changeset.Export(pub, s, "1", storage.Cursor{}, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Positions().Save(pub, "1", compactPosition(6)); err != nil {
+		t.Fatal(err)
+	}
+	if got, err := changeset.Export(pub, s, "1", fresh.Cursor, 100); err != nil || len(got.Records) != 1 {
+		t.Errorf("a cursor of after the restore = %d records, %v; want 1", len(got.Records), err)
+	}
+}
+
 // One tenant's cut is not another's, even set in its name by a statement that
 // forgets to filter: the policy covers the setting.
 func TestJournalOff_PolicyHoldsTheSetting(t *testing.T) {
