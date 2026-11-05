@@ -52,6 +52,7 @@ func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 // its bound arguments, plus the state later phases need that buildWhere
 // already computed while reading f.
 type searchWhereClause struct {
+	scope         string
 	where         string
 	args          []any
 	needAnalysis  bool
@@ -387,6 +388,7 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	}
 
 	return searchWhereClause{
+		scope:         scope,
 		where:         where.String(),
 		args:          args,
 		needAnalysis:  needAnalysis,
@@ -611,6 +613,78 @@ func (s *SearchStore) scan(ctx context.Context, f domain.SearchFilters, wc searc
 	}
 }
 
+// windowIDs cuts a window on ids alone, position rows and analyses being read
+// only for the rows kept, so that neither OFFSET nor the neighbouring tenants' rows
+// in the analysis index are paid for.
+//
+// A sort key is read in two phases, because "key DESC NULLS LAST, p.id" has no index
+// to follow: an index runs its NULLs at one end only, and a key on the analysis sits
+// on the nullable side of the join. The rows with a key go first, the only ones an
+// index can order, from the analysis when the key is there (a row with a key has an
+// analysis, so the inner join loses none); those without follow in id order.
+func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, extra string, extraArgs []any, limit, offset int) ([]int64, error) {
+	key, desc, _ := sortKey(f.Sort)
+	filter := wc.where + extra
+	args := append(append([]any{}, wc.args...), extraArgs...)
+	plain := "position p"
+	if readsAnalysis.MatchString(filter) || strings.HasPrefix(key, "a.") {
+		plain += " LEFT JOIN analysis a ON a.position_id = p.id"
+	}
+	if key == "" {
+		return s.readIDs(ctx, plain, filter, "p.id", args, limit, offset)
+	}
+	dir := " ASC"
+	if desc {
+		dir = " DESC"
+	}
+	keyed, keyedFilter, keyedArgs := plain, filter+" AND "+key+" IS NOT NULL", args
+	if strings.HasPrefix(key, "a.") {
+		tenant, tenantArgs := s.DB.TenantFilter("a", wc.scope)
+		keyed = "analysis a JOIN position p ON p.id = a.position_id"
+		keyedFilter += " AND " + tenant
+		keyedArgs = append(append([]any{}, args...), tenantArgs...)
+	}
+	ids, err := s.readIDs(ctx, keyed, keyedFilter, key+dir+", p.id", keyedArgs, limit, offset)
+	if err != nil || len(ids) == limit {
+		return ids, err
+	}
+	rest := 0
+	if len(ids) == 0 && offset > 0 {
+		var n int
+		if err := s.DB.QueryRow(ctx, `SELECT COUNT(*) FROM `+keyed+` WHERE `+keyedFilter, keyedArgs...).Scan(&n); err != nil {
+			return nil, errf(s.DB, "search keyed count", err)
+		}
+		rest = max(offset-n, 0)
+	}
+	tail, err := s.readIDs(ctx, plain, filter+" AND "+key+" IS NULL", "p.id", args, limit-len(ids), rest)
+	if err != nil {
+		return nil, err
+	}
+	return append(ids, tail...), nil
+}
+
+func (s *SearchStore) readIDs(ctx context.Context, from, filter, order string, args []any, limit, offset int) ([]int64, error) {
+	limitClause, limitArgs := s.DB.LimitOffset(limit, offset)
+	rows, err := s.DB.Query(ctx, `SELECT p.id FROM `+from+` WHERE `+filter+` ORDER BY `+order+limitClause,
+		append(append([]any{}, args...), limitArgs...)...)
+	if err != nil {
+		return nil, errf(s.DB, "search ids query", err)
+	}
+	defer rows.Close()
+	ids := make([]int64, 0, limit)
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, errf(s.DB, "search ids scan", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "search ids rows", err)
+	}
+	return ids, nil
+}
+
 // readsAnalysis spots a reference to the joined analysis in a clause. A subquery
 // with its own alias a only costs the shortcut, never a wrong answer.
 var readsAnalysis = regexp.MustCompile(`\ba\.`)
@@ -629,26 +703,32 @@ func (s *SearchStore) scanChunk(ctx context.Context, f domain.SearchFilters, wc 
 
 	limitClause, limitArgs := s.DB.LimitOffset(limit, offset)
 
-	// When neither the filter nor the order reads the analysis, the window is cut
-	// on position alone and the analysis attached to the rows kept: the join is one
-	// lookup per row of the page, whatever OFFSET skips and however many other
-	// tenants' rows lie between two ids in the analysis index.
 	order := domain.SearchOrderByClause(f.Sort)
-	from := `position p
-	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE ` + wc.where + extra + ` ORDER BY ` + order + limitClause
-	if limit > 0 && !readsAnalysis.MatchString(wc.where+extra+" "+order) {
-		from = `(SELECT p.* FROM position p WHERE ` + wc.where + extra + ` ORDER BY ` + order + limitClause + `) p
-	LEFT JOIN analysis a ON a.position_id = p.id
-	ORDER BY ` + order
-	}
-	query := `SELECT p.id, p.state,
+	columns := `p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
 		p.has_jacoby, p.has_beaver, p.max_cube, p.is_cube_response,
 		p.individually_imported, p.flagged,
-		a.id, ` + analysisDataCol + ` AS data
-	FROM ` + from
+		a.id, ` + analysisDataCol + ` AS data`
+	if limit > 0 && limit <= maxWindowInline {
+		ids, err := s.windowIDs(ctx, f, wc, extra, extraArgs, limit, offset)
+		if err != nil || len(ids) == 0 {
+			return nil, 0, 0, err
+		}
+		rows, err := s.DB.Query(ctx, `SELECT `+columns+` FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE p.id IN (`+Placeholders(len(ids))+`) ORDER BY `+order, int64Args(ids)...)
+		if err != nil {
+			return nil, 0, 0, errf(s.DB, "search query", err)
+		}
+		defer rows.Close()
+		return s.finishChunk(ctx, f, wc, rows, limit)
+	}
+
+	query := `SELECT ` + columns + `
+	FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE ` + wc.where + extra + ` ORDER BY ` + order + limitClause
 
 	args := append(append(append([]any{}, wc.args...), extraArgs...), limitArgs...)
 	rows, err := s.DB.Query(ctx, query, args...)
@@ -656,7 +736,15 @@ func (s *SearchStore) scanChunk(ctx context.Context, f domain.SearchFilters, wc 
 		return nil, 0, 0, errf(s.DB, "search query", err)
 	}
 	defer rows.Close()
+	return s.finishChunk(ctx, f, wc, rows, limit)
+}
 
+// maxWindowInline bounds the ids a window fetches by a literal list: above it, the
+// statement would pass the placeholder limit of both databases.
+const maxWindowInline = 30000
+
+// finishChunk reads the rows of a chunk and passes them through the Go phase.
+func (s *SearchStore) finishChunk(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, rows Rows, limit int) ([]domain.Position, int, int64, error) {
 	positions, scanned, err := s.scanRows(rows, wc.needAnalysis, limit)
 	if err != nil {
 		return nil, 0, 0, err
@@ -690,6 +778,9 @@ func (s *SearchStore) FindIDs(ctx context.Context, scope string, f domain.Search
 		return ids, err
 	}
 
+	if opts.Limit > 0 {
+		return s.windowIDs(ctx, f, wc, "", nil, opts.Limit, opts.Offset)
+	}
 	limitClause, limitArgs := s.DB.LimitOffset(opts.Limit, opts.Offset)
 	query := `SELECT p.id FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
@@ -1317,15 +1408,16 @@ func (s *SearchStore) appendIdentityClauses(ctx context.Context, scope string, f
 		}
 	}
 
-	var excluded []any
+	// Written as literals, parsed integers only: a hidden list has no reason to stop
+	// at the placeholder limit of the database.
+	var excluded []string
 	for _, idStr := range strings.Split(f.ExcludePositionIDs, ",") {
 		if id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64); err == nil {
-			excluded = append(excluded, id)
+			excluded = append(excluded, strconv.FormatInt(id, 10))
 		}
 	}
 	if len(excluded) > 0 {
-		where.WriteString(" AND p.id NOT IN (" + Placeholders(len(excluded)) + ")")
-		*args = append(*args, excluded...)
+		where.WriteString(" AND p.id NOT IN (" + strings.Join(excluded, ",") + ")")
 	}
 
 	// User-facing position-id filter (command-line token `id`). Uses the same
