@@ -882,7 +882,7 @@ func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []sto
 		if _, err := s.db.Exec(ctx, analysisBulkInsertSQL, args...); err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
 		}
-		if err := analyzeNeverAnalysed(ctx, s.db, "analysis"); err != nil {
+		if err := analyzeFirstOfTenant(ctx, s.db, "analysis", "position_id", tenant, chunk[0].PositionID); err != nil {
 			return err
 		}
 		if len(responses) > 0 {

@@ -1057,7 +1057,7 @@ func (s *matchStore) createMovesChunk(ctx context.Context, tenant int64, mvs []*
 		mv.ID = ids[i]
 	}
 	res.Close()
-	return analyzeNeverAnalysed(ctx, s.db, "move")
+	return analyzeFirstOfTenant(ctx, s.db, "move", "id", tenant, ids[0])
 }
 
 // playedDecisionBases reads what scores a move at each position, by position;

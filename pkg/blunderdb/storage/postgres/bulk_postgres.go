@@ -21,23 +21,24 @@ const (
 	bulkTime   = "timestamptz"
 )
 
-// analyzeNeverAnalysed gives table its first statistics, once it holds rows. A
-// plan made while a table has none is cached with the connection and survives
-// until the first ANALYZE, which autovacuum makes a minute later at best: until
-// then each foreign key check and journal trigger on position walks every row
-// of the tenant through its first index on tenant_id, a cost that grows with
-// the table. After this, the plans hold however fast it grows. Taken in the
-// caller's transaction, whose rows it counts, and paid by a first import only.
-func analyzeNeverAnalysed(ctx context.Context, db execer, table string) error {
-	var never bool
-	if err := db.QueryRow(ctx,
-		`SELECT reltuples < 1 FROM pg_class WHERE oid = $1::regclass`, table).Scan(&never); err != nil {
-		return fmt.Errorf("postgres: statistics of %s: %w", table, err)
+// analyzeFirstOfTenant gives table statistics that know the tenant, when these
+// are its first rows there (idColumn below minID: none). A planner that has never
+// seen a tenant_id estimates one row for it, and takes any index starting with
+// tenant_id for a way to reach a row: each foreign key check, journal trigger and
+// statistics query then walks all the tenant's rows, a cost that grows with what
+// is being imported, until autovacuum comes by, a minute later at best and never
+// for a small tenant in a large table. Paid by a tenant's first import only, in
+// its transaction, whose rows it counts; a concurrent ANALYZE is left to finish.
+func analyzeFirstOfTenant(ctx context.Context, db execer, table, idColumn string, tenant, minID int64) error {
+	var seen bool
+	if err := db.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM `+table+` WHERE tenant_id = $1 AND `+idColumn+` < $2)`,
+		tenant, minID).Scan(&seen); err != nil {
+		return fmt.Errorf("postgres: first rows of the tenant in %s: %w", table, err)
 	}
-	if !never {
+	if seen {
 		return nil
 	}
-	if _, err := db.Exec(ctx, "ANALYZE "+table); err != nil {
+	if _, err := db.Exec(ctx, "ANALYZE (SKIP_LOCKED) "+table); err != nil {
 		return fmt.Errorf("postgres: analyze %s: %w", table, err)
 	}
 	return nil

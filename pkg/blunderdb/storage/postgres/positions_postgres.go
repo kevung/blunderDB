@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"math"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
@@ -649,8 +650,14 @@ func (s *positionStore) saveChunk(ctx context.Context, tenant int64, chunk []*do
 	if err := s.scanHashIDs(ctx, inserted, positionBulkInsertSQL, args...); err != nil {
 		return fmt.Errorf("postgres: save position: %w", err)
 	}
-	if err := analyzeNeverAnalysed(ctx, s.db, "position"); err != nil {
-		return err
+	if len(inserted) > 0 {
+		minID := int64(math.MaxInt64)
+		for _, id := range inserted {
+			minID = min(minID, id)
+		}
+		if err := analyzeFirstOfTenant(ctx, s.db, "position", "id", tenant, minID); err != nil {
+			return err
+		}
 	}
 
 	var stored, individual, flagged []int64

@@ -115,14 +115,15 @@ func (a shared) FillKey(scope string) (any, bool) {
 }
 
 // joinOrderSettings are what sqlshared.withJoinOrderPlan needs of the planner.
-var joinOrderSettings = []string{"join_collapse_limit", "from_collapse_limit", "enable_hashjoin", "enable_mergejoin", "enable_seqscan"}
+var joinOrderSettings = []string{"join_collapse_limit", "from_collapse_limit", "enable_hashjoin", "enable_mergejoin", "enable_seqscan", "enable_bitmapscan"}
 
 // PinJoinOrder — see sqlshared.withJoinOrderPlan. Local to the transaction, and
 // taken back at the end of the work it was asked for: the transaction may go on
 // to other writes.
 func (a shared) PinJoinOrder(ctx context.Context) (func() error, error) {
 	if _, err := a.db.Exec(ctx, `SELECT set_config('join_collapse_limit', '1', true), set_config('from_collapse_limit', '1', true),
-		set_config('enable_hashjoin', 'off', true), set_config('enable_mergejoin', 'off', true), set_config('enable_seqscan', 'off', true)`); err != nil {
+		set_config('enable_hashjoin', 'off', true), set_config('enable_mergejoin', 'off', true), set_config('enable_seqscan', 'off', true),
+		set_config('enable_bitmapscan', 'off', true)`); err != nil {
 		return nil, fmt.Errorf("postgres: pin join order: %w", err)
 	}
 	return func() error {
