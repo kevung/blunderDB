@@ -3,6 +3,7 @@ package syncremote_test
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -61,6 +62,7 @@ type server struct {
 	imported     []int            // records per import call
 	exported     []storage.Cursor // cursor of each export call
 	failImportAt int              // 1-based import call that answers 503, 0 never
+	capped       bool             // every import answers 402, the account at its allowance
 	stale        func(storage.Cursor) bool
 	calls        int
 }
@@ -100,6 +102,10 @@ func newServer(t *testing.T, lib *database.Database) *server {
 			}
 			_ = json.NewDecoder(r.Body).Decode(&req)
 			s.imported = append(s.imported, len(req.Records))
+			if s.capped {
+				http.Error(w, `{"error":{"code":"allowance_exceeded","message":"Plan limit","axis":"collections","allowed":5,"held":5,"new":3}}`, http.StatusPaymentRequired)
+				return
+			}
 			if s.failImportAt == len(s.imported) {
 				http.Error(w, `{"error":{"code":"unavailable","message":"busy"}}`, http.StatusServiceUnavailable)
 				return
@@ -370,4 +376,34 @@ func TestWhatTheOtherSideCouldNotApplyIsCounted(t *testing.T) {
 	if res.Received.Records != 1 || res.Received.Unsupported != 1 {
 		t.Errorf("received = %+v, want the record counted as unsupported", res.Received)
 	}
+}
+
+func TestAnAllowanceSuspendsTheSendingOnlyAndItResumesUnderTheCap(t *testing.T) {
+	a, b := openLibrary(t), openLibrary(t)
+	create(t, a, "Mine1")
+	create(t, a, "Mine2")
+	create(t, b, "Theirs")
+	s := newServer(t, b)
+	s.capped = true
+	c := client(t, s, token)
+
+	cur, res, err := syncremote.Run(context.Background(), database.JournalOf(a), c, syncremote.Cursors{}, syncremote.Options{})
+	if f, ok := syncremote.AllowanceOf(err); !errors.Is(err, syncremote.ErrAllowance) || !ok || f != (syncremote.AllowanceFigures{Axis: "collections", Allowed: 5, Held: 5, New: 3}) {
+		t.Fatalf("err = %v, want the allowance with its figures", err)
+	}
+	has(t, a, "Theirs")
+	if res.Received.Added == 0 || cur.Received.IsStart() {
+		t.Errorf("received %+v, cursor %+v: the receiving must go on past a 402", res.Received, cur.Received)
+	}
+	if !cur.Sent.IsStart() || len(names(t, b)) != 1 {
+		t.Errorf("sent cursor %+v, server holds %v: nothing refused may be passed over", cur.Sent, names(t, b))
+	}
+
+	s.mu.Lock()
+	s.capped = false
+	s.mu.Unlock()
+	if _, _, err := syncremote.Run(context.Background(), database.JournalOf(a), c, cur, syncremote.Options{}); err != nil {
+		t.Fatal(err)
+	}
+	has(t, b, "Mine1", "Mine2")
 }

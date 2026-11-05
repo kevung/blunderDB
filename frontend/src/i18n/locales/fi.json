@@ -3058,7 +3058,7 @@
             "library_changed": "Kirjasto vaihtui synkronoinnin aikana: se keskeytettiin, käynnistä se uudelleen.",
             "tool_locked": "Palvelin on lukittu ottelun ajaksi: yritä uudelleen ottelun jälkeen.",
             "blocked": "Jokin tämän koneen ja palvelimen välissä (välityspalvelin, palomuuri) hylkää pyynnön sen koon vuoksi. Mitään ei ohitettu; pyydä palvelimen ylläpitäjää nostamaan rajaa.",
-            "allowance": "Tilauksesi sallii {allowed} {axis}; sinulla on {held} ja tämä synkronointi lisää {new}. Mitään ei menetetty: vapauta tilaa tai vaihda tilausta ja yritä uudelleen.",
+            "allowance": "Lähetys keskeytetty, raja saavutettu: tilauksesi sallii {allowed} {axis}; sinulla on {held} ja tämä lähetys lisää {new}. Vastaanotto jatkui eikä mitään menetetty: lähetys jatkuu, kun olet rajan alla (vapauta tilaa tai vaihda tilausta).",
             "invalid_records": "Palvelin hylkää joidenkin tietueiden sisällön."
         },
         "unapplied": "{conflicts} ristiriidassa, {missing} puuttuvalla viittauksella, {unsupported} tukemattomaa tyyppiä: näitä kohteita ei otettu käyttöön.",

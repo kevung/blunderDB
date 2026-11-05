@@ -122,12 +122,14 @@ func TestARecordTooLargeAloneIsDeclaredUnsynchronizableAndTheRunGoesOn(t *testin
 	}
 }
 
-func TestTheAllowanceStopsTheRunAtOnceWithTheServersOwnWords(t *testing.T) {
+func TestTheAllowanceIsNeverRetriedAndKeepsTheServersOwnWords(t *testing.T) {
 	a, b := openLibrary(t), openLibrary(t)
 	fill(t, a, 3)
 	var srvCalls int
 	hs := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		srvCalls++
+		if strings.HasSuffix(r.URL.Path, ".import") {
+			srvCalls++
+		}
 		w.WriteHeader(http.StatusPaymentRequired)
 		_, _ = w.Write([]byte(`{"error":{"code":"allowance_exceeded","message":"Quota atteint : 100 enregistrements."}}`))
 	}))
@@ -141,7 +143,7 @@ func TestTheAllowanceStopsTheRunAtOnceWithTheServersOwnWords(t *testing.T) {
 		t.Fatalf("err = %v, want the allowance error with the server's message", err)
 	}
 	if srvCalls != 1 {
-		t.Errorf("the server was called %d times, want 1 (no retry)", srvCalls)
+		t.Errorf("the import was called %d times, want 1 (no retry)", srvCalls)
 	}
 	if !cur.Sent.IsStart() || len(names(t, b)) != 0 {
 		t.Error("a refused page must leave the cursor where it was, so that the same page is replayed")

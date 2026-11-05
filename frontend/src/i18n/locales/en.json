@@ -3058,7 +3058,7 @@
             "library_changed": "The library changed during the synchronisation: it was interrupted, run it again.",
             "tool_locked": "The server is locked during a match: try again after the match.",
             "blocked": "Something between this machine and the server refuses a request for its size (a proxy or a firewall). Nothing was skipped; ask whoever runs the server to raise the limit.",
-            "allowance": "Your plan allows {allowed} {axis}; you hold {held} and this synchronisation adds {new}. Nothing was lost: free some room or change plan, then run it again.",
+            "allowance": "Sending suspended, limit reached: your plan allows {allowed} {axis}; you hold {held} and this sending adds {new}. Receiving went on and nothing was lost: sending resumes once you are under the limit (free some room or change plan).",
             "invalid_records": "The server refuses the content of some records."
         },
         "unapplied": "{conflicts} in conflict, {missing} with a missing reference, {unsupported} of an unsupported type: these items were not applied.",

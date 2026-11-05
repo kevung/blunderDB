@@ -472,6 +472,9 @@ func retryReceived(ctx context.Context, local Local, remote Remote, cur *Cursors
 
 // Run sends then receives. It returns the cursors reached even on an error, so
 // the caller keeps the progress made; the error is the first thing that failed.
+// An exhausted allowance (402) stops the sending only: the sent cursor stays
+// before what was refused, the receiving goes on, and the allowance is the
+// error returned when nothing else failed.
 func Run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Options) (Cursors, Result, error) {
 	cur, res, err := run(ctx, local, remote, cur, opt)
 	res.Skipped = cur.Skipped
@@ -495,58 +498,16 @@ func run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 		return opt.Save(cur)
 	}
 
-	if err := retrySent(ctx, local, remote, &cur, opt, &res, save); err != nil {
-		return cur, res, err
-	}
-
-	early, err := sendMatchesFirst(ctx, local, remote, &cur, opt, &res)
-	if err != nil {
-		return cur, res, err
-	}
-
-	restarted := false
-	for {
-		if err := ctx.Err(); err != nil {
-			return cur, res, err
-		}
-		set, err := local.Export(ctx, cur.Sent, opt.Page)
-		if errors.Is(err, storage.ErrCursorStale) && !restarted && !cur.Sent.IsStart() {
-			cur.Sent, restarted = storage.Cursor{}, true
-			continue
-		}
-		if err != nil {
-			return cur, res, fmt.Errorf("reading this library's changes: %w", err)
-		}
-		if len(early) > 0 {
-			set.Records = slices.DeleteFunc(slices.Clone(set.Records), func(r changeset.Record) bool { return early[r.Change] })
-		}
-		if len(set.Records) > 0 {
-			aside := func(rec changeset.Record, reason string) {
-				cur.setAside(Skip{Direction: DirectionSent, Family: rec.Family, UUID: rec.UUID, Size: int64(len(rec.Payload)), Reason: reason, From: cur.Sent, To: set.Cursor})
-			}
-			var miss []changeset.MissingRef
-			if err := sendPage(ctx, remote, opt, set.Records, &res, aside, &miss); err != nil {
-				return cur, res, fmt.Errorf("sending: %w", err)
-			}
-			cur.dangle(DirectionSent, miss, payloadSize(set.Records), cur.Sent, set.Cursor)
-		}
-		if set.More && set.Cursor == cur.Sent {
-			return cur, res, fmt.Errorf("reading this library's changes: the cursor does not advance")
-		}
-		cur.Sent = set.Cursor
-		if err := save(); err != nil {
-			return cur, res, err
-		}
-		if !set.More {
-			break
-		}
+	held := sendAll(ctx, local, remote, &cur, opt, &res, save)
+	if held != nil && !errors.Is(held, ErrAllowance) {
+		return cur, res, held
 	}
 
 	if err := retryReceived(ctx, local, remote, &cur, opt, &res, save); err != nil {
 		return cur, res, err
 	}
 
-	restarted = false
+	restarted := false
 	for {
 		if err := ctx.Err(); err != nil {
 			return cur, res, err
@@ -574,5 +535,57 @@ func run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 			break
 		}
 	}
-	return cur, res, nil
+	return cur, res, held
+}
+
+// sendAll sends what the server lacks: the records set aside first, then every
+// match, then the journal page by page, settling the sent cursor after each.
+func sendAll(ctx context.Context, local Local, remote Remote, cur *Cursors, opt Options, res *Result, save func() error) error {
+	if err := retrySent(ctx, local, remote, cur, opt, res, save); err != nil {
+		return err
+	}
+
+	early, err := sendMatchesFirst(ctx, local, remote, cur, opt, res)
+	if err != nil {
+		return err
+	}
+
+	restarted := false
+	for {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		set, err := local.Export(ctx, cur.Sent, opt.Page)
+		if errors.Is(err, storage.ErrCursorStale) && !restarted && !cur.Sent.IsStart() {
+			cur.Sent, restarted = storage.Cursor{}, true
+			continue
+		}
+		if err != nil {
+			return fmt.Errorf("reading this library's changes: %w", err)
+		}
+		if len(early) > 0 {
+			set.Records = slices.DeleteFunc(slices.Clone(set.Records), func(r changeset.Record) bool { return early[r.Change] })
+		}
+		if len(set.Records) > 0 {
+			aside := func(rec changeset.Record, reason string) {
+				cur.setAside(Skip{Direction: DirectionSent, Family: rec.Family, UUID: rec.UUID, Size: int64(len(rec.Payload)), Reason: reason, From: cur.Sent, To: set.Cursor})
+			}
+			var miss []changeset.MissingRef
+			if err := sendPage(ctx, remote, opt, set.Records, res, aside, &miss); err != nil {
+				return fmt.Errorf("sending: %w", err)
+			}
+			cur.dangle(DirectionSent, miss, payloadSize(set.Records), cur.Sent, set.Cursor)
+		}
+		if set.More && set.Cursor == cur.Sent {
+			return fmt.Errorf("reading this library's changes: the cursor does not advance")
+		}
+		cur.Sent = set.Cursor
+		if err := save(); err != nil {
+			return err
+		}
+		if !set.More {
+			break
+		}
+	}
+	return nil
 }

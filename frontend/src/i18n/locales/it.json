@@ -3058,7 +3058,7 @@
             "library_changed": "La libreria è cambiata durante la sincronizzazione: è stata interrotta, la riavvii.",
             "tool_locked": "Il server è bloccato durante una partita: riprovi dopo la partita.",
             "blocked": "Qualcosa tra questo computer e il server (proxy, firewall) rifiuta una richiesta per le sue dimensioni. Nulla è stato saltato; chieda a chi gestisce il server di alzare il limite.",
-            "allowance": "Il suo piano consente {allowed} {axis}; ne possiede {held} e questa sincronizzazione ne aggiunge {new}. Nulla è andato perso: liberi spazio o cambi piano, poi riavvii.",
+            "allowance": "Invio sospeso, limite raggiunto: il suo piano consente {allowed} {axis}; ne possiede {held} e questo invio ne aggiunge {new}. La ricezione è proseguita e nulla è andato perso: l’invio riprenderà quando sarà sotto il limite (liberi spazio o cambi piano).",
             "invalid_records": "Il server rifiuta il contenuto di alcuni record."
         },
         "unapplied": "{conflicts} in conflitto, {missing} con un riferimento assente, {unsupported} di un tipo non supportato: questi elementi non sono stati applicati.",

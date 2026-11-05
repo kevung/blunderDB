@@ -3058,7 +3058,7 @@
             "library_changed": "Die Bibliothek hat sich während der Synchronisierung geändert: Sie wurde abgebrochen, starten Sie sie erneut.",
             "tool_locked": "Der Server ist während einer Partie gesperrt: versuchen Sie es nach der Partie erneut.",
             "blocked": "Etwas zwischen diesem Rechner und dem Server (Proxy, Firewall) lehnt eine Anfrage wegen ihrer Größe ab. Nichts wurde übersprungen; bitten Sie den Betreiber des Servers, die Grenze anzuheben.",
-            "allowance": "Ihr Tarif erlaubt {allowed} {axis}; Sie halten {held} und diese Synchronisierung fügt {new} hinzu. Nichts ging verloren: schaffen Sie Platz oder wechseln Sie den Tarif und starten Sie erneut.",
+            "allowance": "Senden ausgesetzt, Grenze erreicht: Ihr Tarif erlaubt {allowed} {axis}; Sie halten {held} und dieses Senden fügt {new} hinzu. Der Empfang lief weiter und nichts ging verloren: Das Senden setzt wieder ein, sobald Sie unter der Grenze sind (schaffen Sie Platz oder wechseln Sie den Tarif).",
             "invalid_records": "Der Server lehnt den Inhalt einiger Einträge ab."
         },
         "unapplied": "{conflicts} im Konflikt, {missing} mit fehlendem Verweis, {unsupported} von nicht unterstütztem Typ: Diese Elemente wurden nicht übernommen.",
