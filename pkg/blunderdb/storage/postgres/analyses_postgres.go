@@ -871,11 +871,11 @@ func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []sto
 				responses = append(responses, it.PositionID)
 			}
 		}
-		args, err := bulkColumns(analysisBulkTypes, rows)
+		q, args, err := bulkStatement(ctx, s.db, analysisBulkInsertSQL, analysisBulkTypes, rows)
 		if err != nil {
 			return err
 		}
-		if _, err := s.db.Exec(ctx, analysisBulkInsertSQL, args...); err != nil {
+		if _, err := s.db.Exec(ctx, q, args...); err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
 		}
 		if err := analyzeFirstOfTenant(ctx, s.db, "analysis", "position_id", tenant, chunk[0].PositionID); err != nil {

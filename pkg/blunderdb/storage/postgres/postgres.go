@@ -48,7 +48,8 @@ const (
 // Storage is the PostgreSQL implementation of storage.Storage.
 type Storage struct {
 	binder
-	pool *pgxpool.Pool
+	pool       *pgxpool.Pool
+	copyWrites bool
 }
 
 var _ storage.Storage = (*Storage)(nil)
@@ -58,6 +59,26 @@ var _ storage.Storage = (*Storage)(nil)
 // bootstraps the v2.7.0 schema if the database is empty. The returned Storage
 // owns the pool: Close shuts it down.
 func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, error) {
+	s, err := openPool(ctx, dsn, opts)
+	if err != nil {
+		return nil, err
+	}
+	loader, err := s.ActsAsLoader(ctx)
+	if err == nil && loader {
+		err = fmt.Errorf("postgres: the role %s loads offline and never serves", LoaderRole)
+	}
+	if err != nil {
+		s.pool.Close()
+		return nil, err
+	}
+	if err := s.Migrate(ctx); err != nil {
+		s.pool.Close()
+		return nil, err
+	}
+	return s, nil
+}
+
+func openPool(ctx context.Context, dsn string, opts *storage.Options) (*Storage, error) {
 	cfg, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
 		return nil, fmt.Errorf("postgres: parse dsn: %w", err)
@@ -87,12 +108,7 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 		return nil, fmt.Errorf("postgres: ping: %w", err)
 	}
 
-	s := &Storage{binder: binder{db: pool}, pool: pool}
-	if err := s.Migrate(ctx); err != nil {
-		pool.Close()
-		return nil, err
-	}
-	return s, nil
+	return &Storage{binder: binder{db: pool}, pool: pool}, nil
 }
 
 // intFromEnv reads a positive integer from the named environment variable,
@@ -152,6 +168,9 @@ func (s *Storage) BeginTx(ctx context.Context) (storage.Tx, error) {
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("postgres: begin tx: %w", err)
+	}
+	if s.copyWrites {
+		return &txImpl{binder: binder{db: copyTx{tx}}, tx: tx, ctx: ctx}, nil
 	}
 	return &txImpl{binder: binder{db: tx}, tx: tx, ctx: ctx}, nil
 }
