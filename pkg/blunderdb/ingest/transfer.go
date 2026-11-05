@@ -96,6 +96,7 @@ func TransferBeforeCommit(ctx context.Context, from, to TransferEnd, opts domain
 	if err := transferSelection(srcCtx, from, opts, &plan); err != nil {
 		return TransferReport{}, err
 	}
+	plan.Transfer = true
 
 	dir, err := os.MkdirTemp("", "blunderdb-transfer-*")
 	if err != nil {

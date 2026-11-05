@@ -397,3 +397,99 @@ func TestTransfer_AbsentIDRefused(t *testing.T) {
 		t.Errorf("a refused transfer wrote %d positions", got.Positions)
 	}
 }
+
+// firstMatch is the only match of s.
+func firstMatch(t *testing.T, s storage.Storage) *domain.Match {
+	t.Helper()
+	for m, err := range s.Matches().List(context.Background(), "", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		return m
+	}
+	t.Fatal("no match")
+	return nil
+}
+
+// TestTransfer_WithoutCommentsCarriesNoMatchNote: a match's own note and the
+// name of its file are the owner's; a transfer that leaves comments out leaves
+// them too, while the content hash, which deduplicates, still arrives.
+func TestTransfer_WithoutCommentsCarriesNoMatchNote(t *testing.T) {
+	ctx := context.Background()
+	for _, withComments := range []bool{false, true} {
+		a := seedLibrary(t, "match_with_comment.xg", "from A")
+		src := firstMatch(t, a)
+		if err := a.Matches().UpdateComment(ctx, "", src.ID, "private note"); err != nil {
+			t.Fatal(err)
+		}
+		src = firstMatch(t, a)
+		if src.FilePath == "" || src.MatchHash == "" {
+			t.Fatalf("fixture lacks a file name or a hash: %+v", src)
+		}
+		b := emptyLibrary(t)
+		opts := WholeLibraryOptions()
+		opts.IncludeComments = withComments
+		if _, err := Transfer(ctx, TransferEnd{S: a}, TransferEnd{S: b}, opts, nil); err != nil {
+			t.Fatal(err)
+		}
+		got := firstMatch(t, b)
+		if got.MatchHash != src.MatchHash {
+			t.Errorf("withComments=%v: match hash %q, want %q: deduplication needs it", withComments, got.MatchHash, src.MatchHash)
+		}
+		if withComments {
+			if got.Comment != "private note" || got.FilePath == "" {
+				t.Errorf("with comments the note and file name travel, got %q %q", got.Comment, got.FilePath)
+			}
+			continue
+		}
+		if got.Comment != "" || got.CommentAuthor != "" || got.FilePath != "" {
+			t.Errorf("without comments the target holds note %q author %q file %q", got.Comment, got.CommentAuthor, got.FilePath)
+		}
+	}
+}
+
+// TestTransfer_PositionsOutsideTheirMatchAreIndividual: five positions of a
+// match, sent as a collection without the match, are the recipient's own
+// positions; sent with their match they stay match positions.
+func TestTransfer_PositionsOutsideTheirMatchAreIndividual(t *testing.T) {
+	ctx := context.Background()
+	individual := func(s storage.Storage) (n, total int) {
+		for p, err := range s.Positions().List(ctx, "", storage.ListOpts{}) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			total++
+			if p.IndividuallyImported {
+				n++
+			}
+		}
+		return
+	}
+	a := seedLibrary(t, "match_with_comment.xg", "picked")
+	if n, _ := individual(a); n != 0 {
+		t.Fatalf("source already holds %d individual positions", n)
+	}
+	var col int64
+	for c, err := range a.Collections().List(ctx, "") {
+		if err != nil {
+			t.Fatal(err)
+		}
+		col = c.ID
+	}
+	b := emptyLibrary(t)
+	opts := domain.ExportOptions{IncludeCollections: true, CollectionIDs: []int64{col}, IncludeCollectionPositions: true}
+	if _, err := Transfer(ctx, TransferEnd{S: a}, TransferEnd{S: b}, opts, nil); err != nil {
+		t.Fatal(err)
+	}
+	if n, total := individual(b); total != 5 || n != 5 {
+		t.Errorf("collection alone: %d of %d positions individual, want 5 of 5", n, total)
+	}
+
+	whole := emptyLibrary(t)
+	if _, err := Transfer(ctx, TransferEnd{S: a}, TransferEnd{S: whole}, WholeLibraryOptions(), nil); err != nil {
+		t.Fatal(err)
+	}
+	if n, total := individual(whole); total < 6 || n != 0 {
+		t.Errorf("whole library: %d of %d positions individual, want none (they belong to the match)", n, total)
+	}
+}

@@ -272,6 +272,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeLessons,
 		e.writeTournaments,
 		e.writeMatches,
+		e.markPositionsOutsideMatches,
 		e.writeDirections,
 		e.writeRencontres,
 		e.writeLivingQueries,
@@ -1287,6 +1288,21 @@ var notExportedMatchColumns = map[string]string{
 	"direction_match_id": "written by writeDirections, and only when the match's tournament Direction leaves with it",
 }
 
+// markPositionsOutsideMatches raises individually_imported on every position
+// of a transfer that no exported move reaches: the recipient holds it outside
+// any match, which is what the flag says (ADR-0001).
+func (e *exporter) markPositionsOutsideMatches() error {
+	if !e.opts.Transfer {
+		return nil
+	}
+	if _, err := e.tx.ExecContext(e.ctx,
+		`UPDATE position SET individually_imported = 1
+		 WHERE id NOT IN (SELECT position_id FROM move WHERE position_id IS NOT NULL)`); err != nil {
+		return fmt.Errorf("ingest: mark positions outside a match: %w", err)
+	}
+	return nil
+}
+
 func (e *exporter) writeMatches() error {
 	for _, id := range e.matchIDs {
 		if err := e.ctx.Err(); err != nil {
@@ -1304,12 +1320,18 @@ func (e *exporter) writeMatches() error {
 			}
 		}
 		noteCols, noteArgs := carriedMatchComment(m)
+		filePath := issuance.CarriedFileName(m.FilePath)
+		if e.opts.Transfer && !e.opts.Comments {
+			// The note and the file name are the owner's own; the content
+			// hash says nothing of them and still deduplicates.
+			noteCols, noteArgs, filePath = nil, nil, ""
+		}
 		res, err := e.tx.ExecContext(e.ctx,
 			`INSERT INTO match (`+strings.Join(append(slices.Clone(exportedMatchColumns), noteCols...), ", ")+`)
 			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?,
 			         ?, ?, ?, ?, ?, ?, ?, ?, ?`+strings.Repeat(", ?", len(noteArgs))+`)`,
 			append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
-				nullableTime(m.MatchDate), nullableTime(m.ImportDate), issuance.CarriedFileName(m.FilePath), m.GameCount,
+				nullableTime(m.MatchDate), nullableTime(m.ImportDate), filePath, m.GameCount,
 				m.MatchHash, m.CanonicalHash,
 				tournamentID, m.TournamentSortOrder, m.LastVisitedPosition,
 				m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
