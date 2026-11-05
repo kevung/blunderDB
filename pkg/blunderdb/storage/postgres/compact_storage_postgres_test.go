@@ -314,3 +314,54 @@ func TestNarrowColumns_RefusalNamesTheValue(t *testing.T) {
 		t.Errorf("narrowing past a stored value = %v; want it named", err)
 	}
 }
+
+// The refusal lifts FORCE ROW LEVEL SECURITY to find the value; it rolls back
+// with the rewrite, so the table is forced again under the real, non-superuser
+// role, and a tenant still sees only its own rows.
+func TestNarrowColumns_RefusalRestoresForcedRLS(t *testing.T) {
+	bg := context.Background()
+	owner, conn, dsn := openAsRLSOwner(t)
+	if err := owner.ApplyRLS(bg); err != nil {
+		t.Fatal(err)
+	}
+	s, err := pg.Open(bg, dsn, &storage.Options{EnableRLS: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = s.Close() })
+	var super bool
+	if err := conn.QueryRow(bg, `SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = current_user`).Scan(&super); err != nil || super {
+		t.Fatalf("test role bypasses RLS (%v, err %v)", super, err)
+	}
+	id, err := s.Positions().Save(tctx(bg, "1"), "1", compactPosition(11))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Positions().Save(tctx(bg, "2"), "2", compactPosition(12)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := conn.Exec(bg, `ALTER TABLE position ALTER COLUMN pip_2 TYPE bigint, ALTER COLUMN pip_1 TYPE bigint`); err != nil {
+		t.Fatal(err)
+	}
+	asTenant(t, conn, "1", func() {
+		if _, err := conn.Exec(bg, `UPDATE position SET pip_2 = 40000 WHERE id = $1`, id); err != nil {
+			t.Fatal(err)
+		}
+	})
+	if _, err := conn.Exec(bg, `SELECT blunderdb_narrow_columns()`); err == nil {
+		t.Fatal("narrowing past a stored value succeeded")
+	}
+	var forced bool
+	if err := conn.QueryRow(bg, `SELECT relforcerowsecurity FROM pg_class WHERE oid = 'position'::regclass`).Scan(&forced); err != nil {
+		t.Fatal(err)
+	}
+	if !forced {
+		t.Error("position is no longer FORCE ROW LEVEL SECURITY after the refusal")
+	}
+	asTenant(t, conn, "1", func() {
+		var n int
+		if err := conn.QueryRow(bg, `SELECT count(*) FROM position`).Scan(&n); err != nil || n != 1 {
+			t.Errorf("tenant 1 sees %d positions (err %v); want 1", n, err)
+		}
+	})
+}
