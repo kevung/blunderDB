@@ -980,7 +980,7 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon2    ON analysis(player2_backgammon_rate)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match(canonical_hash)`,
 	`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
-	`CREATE        INDEX IF NOT EXISTS idx_move_game_position              ON move(game_id, position_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_command_history_scope   ON command_history(scope, timestamp)`,
 	`CREATE        INDEX IF NOT EXISTS idx_search_history_scope    ON search_history(scope, timestamp)`,

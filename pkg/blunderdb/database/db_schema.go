@@ -41,7 +41,6 @@ func (d *Database) ensureAllTablesExist() error {
 		`DROP INDEX IF EXISTS idx_position_score`,
 		`DROP INDEX IF EXISTS idx_analysis_win_gammon`,
 		`DROP INDEX IF EXISTS idx_analysis_move_error`, // superseded by idx_analysis_error_order
-		`DROP INDEX IF EXISTS idx_move_game`,           // superseded by idx_move_game_position
 		`DROP INDEX IF EXISTS idx_analysis_win1`,
 	} {
 		_, _ = d.db.ExecContext(ctx, stmt)

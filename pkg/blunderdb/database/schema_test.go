@@ -86,7 +86,7 @@ func TestSchemaV200_Indexes(t *testing.T) {
 		"idx_analysis_creation_date",
 		"idx_position_match_date",
 		"idx_move_position",
-		"idx_move_game_position",
+		"idx_move_game",
 		"idx_game_match",
 	}
 	rows, err := d.db.Query(`SELECT name FROM sqlite_master WHERE type='index'`)
