@@ -66,6 +66,8 @@ type FileOutcome struct {
 	Player2           string                   `json:"player2,omitempty"`
 	Games             int                      `json:"games,omitempty"`
 	Error             string                   `json:"error,omitempty"`
+	// Code says why in one of the domain.ImportErr values when Status is FileFailed.
+	Code string `json:"code,omitempty"`
 	// DuplicateOf is the index of an earlier file of the same list with the
 	// same bytes, -1 when the duplicate (if any) was found in the database.
 	DuplicateOf int `json:"duplicate_of"`
@@ -152,8 +154,13 @@ func mapFile(path string) (*MatchGraph, []PositionGraph, error) {
 		p, err := MapXGPPosition(path)
 		return nil, p, err
 	}
-	return nil, nil, fmt.Errorf("unsupported file type: %s", filepath.Ext(path))
+	return nil, nil, fmt.Errorf("%w: %s", errUnsupportedFile, filepath.Ext(path))
 }
+
+var (
+	errUnsupportedFile = errors.New("unsupported file type")
+	errNothingToImport = errors.New("nothing to import")
+)
 
 func lookupKnown(known func(string) (int64, bool), d [sha256.Size]byte) (int64, bool) {
 	if known == nil {
@@ -430,13 +437,16 @@ func (w *pipelineWriter) add(rf *readFile) error {
 func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error) {
 	o := rf.outcome()
 	if rf.err != nil {
-		o.Status, o.Error = FileFailed, rf.err.Error()
+		o.Status, o.Error, o.Code = FileFailed, rf.err.Error(), ImportErrorCode(rf.err)
+		if rf.hashed && rf.size == 0 {
+			o.Code = domain.ImportErrEmpty
+		}
 		return o, nil
 	}
 	if first, ok := w.lookup(rf.digest); ok {
 		o.DuplicateOf = first.Index
 		if first.Status == FileFailed {
-			o.Status, o.Error = FileFailed, first.Error
+			o.Status, o.Error, o.Code = FileFailed, first.Error, first.Code
 			return o, nil
 		}
 		o.Status = FileDuplicate
@@ -471,7 +481,7 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 	}
 	g := rf.graph
 	if g == nil {
-		o.Status, o.Error = FileFailed, "nothing to import"
+		o.Status, o.Error, o.Code = FileFailed, errNothingToImport.Error(), ImportErrorCode(errNothingToImport)
 		return o, nil
 	}
 	g.ImportBatchID = w.opts.ImportBatchID
@@ -569,7 +579,7 @@ func (w *pipelineWriter) replay(files []*readFile) error {
 			}
 			w.abort()
 			o = rf.outcome()
-			o.Status, o.Error = FileFailed, err.Error()
+			o.Status, o.Error, o.Code = FileFailed, err.Error(), ImportErrorCode(err)
 			// A file refused at write time is decided: its journal line is a
 			// group of one, with nothing else to commit.
 			w.staged = []FileOutcome{o}

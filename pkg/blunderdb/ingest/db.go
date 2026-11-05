@@ -54,18 +54,9 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	// Drain the source position list before issuing per-position follow-up
 	// queries: nesting them inside the List iterator would hold one pooled
 	// connection while grabbing another (see JSONExporter).
-	var positions []*domain.Position
-	var ids []int64
-	for p, err := range source.Positions().List(ctx, scope, storage.ListOpts{}) {
-		if err != nil {
-			return Summary{}, fmt.Errorf("ingest: list source positions: %w", err)
-		}
-		pc := *p
-		positions = append(positions, &pc)
-	}
-	slices.SortFunc(positions, func(a, b *domain.Position) int { return cmp.Compare(a.ID, b.ID) })
-	for _, p := range positions {
-		ids = append(ids, p.ID)
+	positions, ids, err := listSourcePositions(ctx, source, scope)
+	if err != nil {
+		return Summary{}, err
 	}
 
 	// Source analyses and comments, batched: one round trip per family, not
@@ -185,24 +176,29 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	targetIDs := make([]int64, 0, len(records))
 	targetOf := make(map[int64]int64, len(records))
 	var created []int64
+	copies := make([]*domain.Position, len(records))
 	for i := range records {
-		if err := ctx.Err(); err != nil {
-			return Summary{}, err
-		}
-		rec := &records[i]
-		pc := *rec.pos
+		pc := *records[i].pos
 		pc.ID = 0
-		id, inserted, err := tx.Positions().SaveCreated(ctx, scope, &pc)
-		if err != nil {
-			return Summary{}, err
-		}
-		if inserted {
-			created = append(created, id)
-		}
-		saved = append(saved, savedRecord{rec: rec, id: id})
-		targetIDs = append(targetIDs, id)
-		targetOf[rec.pos.ID] = id
+		copies[i] = &pc
 	}
+	ids, inserted, err := tx.Positions().SaveMany(ctx, scope, copies)
+	if err != nil {
+		return Summary{}, err
+	}
+	for i := range records {
+		rec := &records[i]
+		if inserted[i] {
+			created = append(created, ids[i])
+		}
+		saved = append(saved, savedRecord{rec: rec, id: ids[i]})
+		targetIDs = append(targetIDs, ids[i])
+		targetOf[rec.pos.ID] = ids[i]
+	}
+	// A position this transaction created can have no analysis yet: asking would
+	// take the analysis guard, a lock held to the commit, once per position, and
+	// a library is more positions than a server's lock table has room for.
+	mergeCtx := storage.WithFreshPositions(ctx, created)
 
 	targetComments, err := tx.Comments().ByPositions(ctx, scope, targetIDs)
 	if err != nil {
@@ -221,7 +217,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 			if err != nil {
 				return sum, err
 			}
-			if _, err := MergeDBAnalysis(ctx, tx, scope, s.id, s.rec.analysis, met); err != nil {
+			if _, err := MergeDBAnalysis(mergeCtx, tx, scope, s.id, s.rec.analysis, met); err != nil {
 				return sum, err
 			}
 		}
@@ -620,4 +616,22 @@ func mergeDBDerivations(ctx context.Context, tx storage.Tx, scope string, src ma
 		}
 	}
 	return nil
+}
+
+// listSourcePositions drains the source's positions, by id, with their ids.
+func listSourcePositions(ctx context.Context, source *sqlite.Storage, scope string) ([]*domain.Position, []int64, error) {
+	var positions []*domain.Position
+	for p, err := range source.Positions().List(ctx, scope, storage.ListOpts{}) {
+		if err != nil {
+			return nil, nil, fmt.Errorf("ingest: list source positions: %w", err)
+		}
+		pc := *p
+		positions = append(positions, &pc)
+	}
+	slices.SortFunc(positions, func(a, b *domain.Position) int { return cmp.Compare(a.ID, b.ID) })
+	ids := make([]int64, len(positions))
+	for i, p := range positions {
+		ids[i] = p.ID
+	}
+	return positions, ids, nil
 }
