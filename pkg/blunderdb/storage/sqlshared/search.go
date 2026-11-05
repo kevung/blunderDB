@@ -130,7 +130,7 @@ func (s *SearchStore) appendRateClauses(scope string, f domain.SearchFilters, wh
 
 // appendMoveErrorClause adds the move-error filter and reports whether Go
 // must settle it afterwards.
-func (s *SearchStore) appendMoveErrorClause(f domain.SearchFilters, where *strings.Builder, argsp *[]any) bool {
+func (s *SearchStore) appendMoveErrorClause(scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) bool {
 	// The denormalised error column scores ONE play (the first of
 	// PlayedMoves, see AnalysisStore.Save). A position played several ways
 	// is let through by its multi_played indicator and settled in Go by
@@ -144,20 +144,33 @@ func (s *SearchStore) appendMoveErrorClause(f domain.SearchFilters, where *strin
 	eqMin := int(math.Round(eMin))
 	eqMax := int(math.Round(eMax))
 	var cond string
+	var bound []any
 	switch {
 	case eHasMin && eHasMax:
-		cond = positionErrExpr + " BETWEEN ? AND ?"
-		*argsp = append(*argsp, eqMin, eqMax)
+		cond, bound = " BETWEEN ? AND ?", []any{eqMin, eqMax}
 	case eHasMin:
-		cond = positionErrExpr + " >= ?"
-		*argsp = append(*argsp, eqMin)
+		cond, bound = " >= ?", []any{eqMin}
 	case eHasMax:
-		cond = positionErrExpr + " <= ?"
-		*argsp = append(*argsp, eqMax)
+		cond, bound = " <= ?", []any{eqMax}
 	default:
 		return false
 	}
-	where.WriteString(" AND (" + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
+	// positionErrExpr split in its two branches, each answered from its own index,
+	// so that a rare error costs its matches and not the walk of the tenant.
+	tenant, tenantArgs := s.DB.TenantFilter("an", scope)
+	own, ownArgs := s.DB.TenantFilter("", scope)
+	branch := func(decision, col string) string {
+		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
+	}
+	where.WriteString(" AND p.id IN (" +
+		branch("q.decision_type = 1", "cube_error") + " UNION ALL " +
+		branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + " UNION ALL " +
+		"SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true) + ")")
+	*argsp = append(*argsp, tenantArgs...)
+	*argsp = append(*argsp, bound...)
+	*argsp = append(*argsp, tenantArgs...)
+	*argsp = append(*argsp, bound...)
+	*argsp = append(*argsp, ownArgs...)
 	return true
 }
 
@@ -342,7 +355,7 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		}
 
 		s.appendRateClauses(scope, f, &where, &args)
-		if s.appendMoveErrorClause(f, &where, &args) {
+		if s.appendMoveErrorClause(scope, f, &where, &args) {
 			moveErrorInGo = true
 		}
 
