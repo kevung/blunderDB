@@ -173,7 +173,11 @@ func placedCheckers(b domain.Board) (black, white int) {
 }
 
 // blunderFloor is the predicate of idx_analysis_blunder, in thousandths of a point.
-const blunderFloor = 100
+// blunderListLimit: a list costs about a millisecond of planning per thousand ids.
+const (
+	blunderFloor     = 100
+	blunderListLimit = 50000
+)
 
 // narrowLimit is how many matches a filter on another table may name by literal list.
 // Atomic so a test can move it (SetNarrowLimit) while other searches run.
@@ -274,7 +278,10 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		n := strconv.Itoa(eqMin)
 		sub := "SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + ")" +
 			" UNION ALL SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
-		if err := s.narrowToIDs(ctx, sub, append(append([]any{}, ownArgs...), ownArgs...), where, argsp, nil); err != nil {
+		// As a subquery the planner, estimating two hundred rows out of the union, sorts
+		// them all, a heap read each; a list it walks in id order and stops at the window.
+		common := func() {}
+		if err := s.narrowWithin(ctx, blunderListLimit, sub, append(append([]any{}, ownArgs...), ownArgs...), where, argsp, common); err != nil {
 			return true, err
 		}
 		recheck()

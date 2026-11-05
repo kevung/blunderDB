@@ -48,11 +48,6 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 			// SetErr cause surfaces here, at Error level to stand out.
 			if rec.err != nil {
 				args = append(args, "err", rec.err.Error())
-				// A reader gone is no failure: its statement reports the cancellation.
-				if r.Context().Err() != nil {
-					logger.Info("http request", args...)
-					return
-				}
 				logger.Error("http request", args...)
 				return
 			}

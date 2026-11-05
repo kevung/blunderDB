@@ -80,6 +80,7 @@ const (
 // route must be reachable from databaseParity or named below with a reason.
 // Sorted by route.
 var serverOnly = map[string]string{
+	"/v1/search.countUpTo": "a bound on a count for a remote reader; a library of one counts whole",
 	// The peer of an exchange reaches the daemon only by HTTP; the desktop and
 	// the CLI hold their own library and call package changeset directly.
 	"/v1/changeset.export": "package changeset, shared: no Database method wraps it",

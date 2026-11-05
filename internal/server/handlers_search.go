@@ -108,6 +108,10 @@ func (s *Server) searchRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/search.countUpTo", rpc(func(ctx context.Context, scope string, req searchCountUpToReq) (searchCountUpToResp, error) {
 			n, capped, err := ss().CountUpTo(ctx, scope, req.Filters, req.Max)
+			// A caller bounds its count in time, and leaving is how it says so: no failure.
+			if err != nil && ctx.Err() != nil {
+				return searchCountUpToResp{Capped: true}, nil
+			}
 			return searchCountUpToResp{Count: n, Capped: capped}, err
 		})},
 		{http.MethodPost, "/v1/search.indexOf", rpc(func(ctx context.Context, scope string, req searchIndexOfReq) (int, error) {
