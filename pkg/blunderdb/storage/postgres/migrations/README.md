@@ -414,3 +414,12 @@ why it must hold no per-tenant data: the daemon exposes it read-only
 - `063_search_rates.sql` — the win rates on a plain index (`idx_analysis_win1/2`), replacing the
   two covering indexes, `idx_analysis_win_gammon_covering` and `idx_analysis_win_gammon2_covering`,
   five times heavier for the same search. No schema change, no version bump.
+- `064_narrow_columns.sql` — `position`, `analysis` and `move` columns as wide as their values
+  (16 or 32 bits), one rewrite per table; past 512 MB of positions a start leaves them wide and
+  `SELECT blunderdb_narrow_columns()` does it in a window. Shared statements bind Go integers as
+  `bigint`, so a filter past a column finds nothing. No version bump.
+- `065_journal_writes_less.sql` — functions only: a second write of an object in the transaction
+  that journaled it rewrites no entry, and a library may keep no journal (`library_settings` key
+  `change_journal`, `changeset.export`/`import` refused with `journal_off`). No version bump.
+- `066_merged_keys.sql` — `position` and `move` keep their `(tenant_id, id)` key alone, `analysis`
+  its `(tenant_id, position_id)` one; `idx_analysis_creation_date` goes (SQLite too). No version bump.
