@@ -49,6 +49,9 @@ var sqliteOnlyIndexes = []string{
 // postgresOnlyIndexes are declared here and deliberately absent from SQLite.
 // Add an entry (with a reason) rather than loosening the test.
 var postgresOnlyIndexes = []string{
+	// SQLite's analysis index is its tenant's alone, and its table is ordered by id.
+	"idx_analysis_tenant_position",
+	"idx_position_structure",
 	// SQLite's change_log is keyed by its seq (INTEGER PRIMARY KEY): the
 	// primary key is the index.
 	"idx_change_log_seq",

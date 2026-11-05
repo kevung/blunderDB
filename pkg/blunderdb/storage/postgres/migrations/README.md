@@ -395,3 +395,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   stay ordered for a peer. `blunderdb_stamp_after`, and the three journal
   functions replaced. No table touched. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.56.0.
+- `061_search_indexes.sql` — indexes of the search (`docs/PERF-RECHERCHE.md` in gammonGo):
+  the tenant's analyses by id, the order by played-move error (supersedes
+  `idx_analysis_move_error`), the gammon rates, the checker masks by id. No schema
+  change, no version bump. 060 is held by the pending migration of #888.
