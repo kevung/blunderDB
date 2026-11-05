@@ -2,6 +2,7 @@ package gui
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -12,6 +13,7 @@ import (
 	"github.com/zalando/go-keyring"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/syncremote"
 )
 
 type fixedSync struct {
@@ -146,5 +148,27 @@ func TestSyncAtStartupWaitsForTheRealLibrary(t *testing.T) {
 	a.sync.source = fixedSync{server: srv.URL, auto: false}
 	if a.syncAtStartup() {
 		t.Error("a startup run began with the switch off")
+	}
+}
+
+func TestSyncErrorKindsFromTheServersAnswers(t *testing.T) {
+	answer := func(status int, body string) error {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(status)
+			_, _ = w.Write([]byte(body))
+		}))
+		defer srv.Close()
+		c, err := syncremote.NewClient(srv.URL, "bdb_x", srv.Client())
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = c.Import(context.Background(), nil)
+		return fmt.Errorf("sending: %w", err)
+	}
+	if e := syncError(answer(402, `{"error":{"code":"allowance_exceeded","message":"Quota atteint."}}`)); e.Kind != "allowance" || e.Message != "Quota atteint." {
+		t.Errorf("allowance = %+v, want the server's words as they are", e)
+	}
+	if e := syncError(answer(409, `{"error":{"code":"tool_locked_during_match","message":"x"}}`)); e.Kind != "tool_locked" {
+		t.Errorf("locked tool = %+v", e)
 	}
 }

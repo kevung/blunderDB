@@ -3055,7 +3055,8 @@
             "no_token": "Nessun token salvato per questo server.",
             "no_library": "Nessuna libreria aperta.",
             "other": "Sincronizzazione non riuscita.",
-            "library_changed": "La libreria è cambiata durante la sincronizzazione: è stata interrotta, la riavvii."
+            "library_changed": "La libreria è cambiata durante la sincronizzazione: è stata interrotta, la riavvii.",
+            "tool_locked": "Il server è bloccato durante una partita: riprovi dopo la partita."
         },
         "unapplied": "{conflicts} in conflitto, {missing} con un riferimento assente, {unsupported} di un tipo non supportato: questi elementi non sono stati applicati."
     },

@@ -3055,7 +3055,8 @@
             "no_token": "No token is stored for this server.",
             "no_library": "No library is open.",
             "other": "Synchronisation failed.",
-            "library_changed": "The library changed during the synchronisation: it was interrupted, run it again."
+            "library_changed": "The library changed during the synchronisation: it was interrupted, run it again.",
+            "tool_locked": "The server is locked during a match: try again after the match."
         },
         "unapplied": "{conflicts} in conflict, {missing} with a missing reference, {unsupported} of an unsupported type: these items were not applied."
     },

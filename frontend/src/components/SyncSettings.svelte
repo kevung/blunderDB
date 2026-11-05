@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { t, language } from '../i18n';
     import { logger } from '../utils/logger.js';
-    import { syncSettingsStore, syncStateStore, loadSync, saveSyncSettings, setSyncToken, syncNow, syncErrorKey, syncUnapplied } from '../services/syncService.js';
+    import { syncSettingsStore, syncStateStore, loadSync, saveSyncSettings, setSyncToken, syncNow, syncErrorKey, syncErrorIsVerbatim, syncUnapplied } from '../services/syncService.js';
 
     let serverInput = $state('');
     let tokenInput = $state('');
@@ -72,7 +72,7 @@
     </div>
     {#if st.error}
         <p class="setting-note warn" role="alert" data-testid="sync-error">
-            {$t(syncErrorKey(st.error.kind))}
+            {syncErrorIsVerbatim(st.error.kind) ? st.error.message : $t(syncErrorKey(st.error.kind))}
             <span class="detail">{st.error.message}</span>
         </p>
     {:else if !st.running && st.result}

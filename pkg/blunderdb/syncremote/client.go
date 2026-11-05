@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,6 +29,10 @@ var (
 	ErrRateLimited = errors.New("syncremote: the server's limit is reached")
 	// ErrTooLarge: the server refuses the page for its size (413).
 	ErrTooLarge = errors.New("syncremote: the page is too large for the server")
+	// ErrAllowance: the account's allowance is used up (402); retrying cannot help.
+	ErrAllowance = errors.New("syncremote: the allowance is exceeded")
+	// ErrToolLocked: the server holds this library's tools while a match is played (409); retry after it.
+	ErrToolLocked = errors.New("syncremote: the server is locked during a match")
 	// ErrBadAddress: the address is not usable (not http(s), embeds credentials or a query).
 	ErrBadAddress = errors.New("syncremote: invalid server address")
 )
@@ -138,12 +143,72 @@ func (c *Client) call(ctx context.Context, method string, in, out any) error {
 		}
 		return nil
 	}
-	return statusError(resp.StatusCode, raw)
+	return statusError(resp.StatusCode, resp.Header, raw)
 }
 
-func statusError(status int, raw []byte) error {
+// rateLimited is ErrRateLimited that remembers how long the server asked to wait.
+type rateLimited struct {
+	msg   string
+	after time.Duration
+}
+
+func (e *rateLimited) Error() string             { return ErrRateLimited.Error() + e.msg }
+func (e *rateLimited) Unwrap() error             { return ErrRateLimited }
+func (e *rateLimited) RetryAfter() time.Duration { return e.after }
+
+// allowance is ErrAllowance worded by the server: its message is shown as is.
+type allowance struct{ msg string }
+
+func (e *allowance) Error() string {
+	if e.msg == "" {
+		return ErrAllowance.Error()
+	}
+	return e.msg
+}
+func (e *allowance) Unwrap() error { return ErrAllowance }
+
+// AllowanceMessage is the server's own wording of an exceeded allowance, without the run's prefixes.
+func AllowanceMessage(err error) string {
+	var a *allowance
+	if errors.As(err, &a) {
+		return a.Error()
+	}
+	return err.Error()
+}
+
+// RetryAfter is the wait a rate-limited answer asked for.
+func RetryAfter(err error) (time.Duration, bool) {
+	var r interface{ RetryAfter() time.Duration }
+	if errors.As(err, &r) && r.RetryAfter() > 0 {
+		return r.RetryAfter(), true
+	}
+	return 0, false
+}
+
+// parseRetryAfter reads delta-seconds or an HTTP date; zero when absent or unusable.
+func parseRetryAfter(v string) time.Duration {
+	v = strings.TrimSpace(v)
+	if v == "" {
+		return 0
+	}
+	if n, err := strconv.Atoi(v); err == nil {
+		if n < 0 {
+			return 0
+		}
+		return time.Duration(n) * time.Second
+	}
+	if t, err := http.ParseTime(v); err == nil {
+		if d := time.Until(t); d > 0 {
+			return d
+		}
+	}
+	return 0
+}
+
+func statusError(status int, h http.Header, raw []byte) error {
 	var env struct {
 		Error struct {
+			Code    string `json:"code"`
 			Message string `json:"message"`
 		} `json:"error"`
 	}
@@ -159,8 +224,12 @@ func statusError(status int, raw []byte) error {
 		return fmt.Errorf("%w%s", storage.ErrCursorStale, msg)
 	case status == http.StatusUnauthorized, status == http.StatusForbidden:
 		return fmt.Errorf("%w (HTTP %d)%s", ErrRefused, status, msg)
+	case status == http.StatusPaymentRequired:
+		return &allowance{msg: env.Error.Message}
+	case status == http.StatusConflict && env.Error.Code == "tool_locked_during_match":
+		return fmt.Errorf("%w%s", ErrToolLocked, msg)
 	case status == http.StatusTooManyRequests:
-		return fmt.Errorf("%w%s", ErrRateLimited, msg)
+		return &rateLimited{msg: msg, after: parseRetryAfter(h.Get("Retry-After"))}
 	case status == http.StatusRequestEntityTooLarge:
 		return fmt.Errorf("%w%s", ErrTooLarge, msg)
 	default:

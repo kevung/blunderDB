@@ -3055,7 +3055,8 @@
             "no_token": "Tälle palvelimelle ei ole tallennettu tunnistetta.",
             "no_library": "Kirjastoa ei ole avattu.",
             "other": "Synkronointi epäonnistui.",
-            "library_changed": "Kirjasto vaihtui synkronoinnin aikana: se keskeytettiin, käynnistä se uudelleen."
+            "library_changed": "Kirjasto vaihtui synkronoinnin aikana: se keskeytettiin, käynnistä se uudelleen.",
+            "tool_locked": "Palvelin on lukittu ottelun ajaksi: yritä uudelleen ottelun jälkeen."
         },
         "unapplied": "{conflicts} ristiriidassa, {missing} puuttuvalla viittauksella, {unsupported} tukemattomaa tyyppiä: näitä kohteita ei otettu käyttöön."
     },

@@ -288,6 +288,10 @@ func syncError(err error) *SyncError {
 		kind = "library_changed"
 	case errors.Is(err, syncremote.ErrRefused):
 		kind = "refused"
+	case errors.Is(err, syncremote.ErrAllowance):
+		return &SyncError{Kind: "allowance", Message: syncremote.AllowanceMessage(err)}
+	case errors.Is(err, syncremote.ErrToolLocked):
+		kind = "tool_locked"
 	case errors.Is(err, syncremote.ErrRateLimited):
 		kind = "rate_limited"
 	case errors.Is(err, syncremote.ErrTooLarge):

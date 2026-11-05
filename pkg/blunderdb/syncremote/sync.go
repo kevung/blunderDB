@@ -4,13 +4,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// DefaultPage is the number of records a page carries.
+// DefaultPage is the number of records a page carries; no import carries more.
 const DefaultPage = 500
+
+// maxRetryAfter bounds the wait a run accepts on a rate-limited answer: longer,
+// the run stops and says so rather than hold the window.
+const maxRetryAfter = 2 * time.Minute
+
+// maxRetries is how many times one call waits out a rate limit.
+const maxRetries = 3
 
 // Local is the open library.
 type Local interface {
@@ -43,6 +51,8 @@ type Totals struct {
 	Missing   int `json:"missing"`
 	// Unsupported records are of a family the receiving side does not carry.
 	Unsupported int `json:"unsupported"`
+	// Unsynchronizable records are refused by the server for their size alone.
+	Unsynchronizable int `json:"unsynchronizable"`
 }
 
 func (t *Totals) add(n int, r changeset.Report) {
@@ -70,13 +80,67 @@ type Options struct {
 	// Save is called with the cursors after every settled page, so a run cut
 	// short resumes there. Its error stops the run.
 	Save func(Cursors) error
+	// Sleep waits out a Retry-After, time-based when nil.
+	Sleep func(ctx context.Context, d time.Duration) error
+}
+
+func sleep(ctx context.Context, d time.Duration) error {
+	t := time.NewTimer(d)
+	defer t.Stop()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-t.C:
+		return nil
+	}
+}
+
+// retrying replays a call the server rate-limited, after the wait it asked for.
+// Every other error, a refusal on the allowance included, is returned at once.
+func retrying[T any](ctx context.Context, opt Options, call func() (T, error)) (T, error) {
+	for n := 0; ; n++ {
+		v, err := call()
+		after, ok := RetryAfter(err)
+		if err == nil || !ok || n >= maxRetries || after > maxRetryAfter {
+			return v, err
+		}
+		if err := opt.Sleep(ctx, after); err != nil {
+			return v, err
+		}
+	}
+}
+
+// send imports records, halving the batch while the server finds it too large.
+// A record that is too large alone cannot be synchronised: it is counted, and
+// the run goes on with the next.
+func send(ctx context.Context, remote Remote, opt Options, recs []changeset.Record, res *Result) error {
+	rep, err := retrying(ctx, opt, func() (changeset.Report, error) { return remote.Import(ctx, recs) })
+	switch {
+	case err == nil:
+		res.Sent.add(len(recs), rep)
+		return nil
+	case !errors.Is(err, ErrTooLarge):
+		return err
+	case len(recs) == 1:
+		res.Sent.Records++
+		res.Sent.Unsynchronizable++
+		return nil
+	}
+	mid := len(recs) / 2
+	if err := send(ctx, remote, opt, recs[:mid], res); err != nil {
+		return err
+	}
+	return send(ctx, remote, opt, recs[mid:], res)
 }
 
 // Run sends then receives. It returns the cursors reached even on an error, so
 // the caller keeps the progress made; the error is the first thing that failed.
 func Run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Options) (Cursors, Result, error) {
-	if opt.Page <= 0 {
+	if opt.Page <= 0 || opt.Page > DefaultPage {
 		opt.Page = DefaultPage
+	}
+	if opt.Sleep == nil {
+		opt.Sleep = sleep
 	}
 	var res Result
 	save := func() error {
@@ -100,11 +164,9 @@ func Run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 			return cur, res, fmt.Errorf("reading this library's changes: %w", err)
 		}
 		if len(set.Records) > 0 {
-			rep, err := remote.Import(ctx, set.Records)
-			if err != nil {
+			if err := send(ctx, remote, opt, set.Records, &res); err != nil {
 				return cur, res, fmt.Errorf("sending: %w", err)
 			}
-			res.Sent.add(len(set.Records), rep)
 		}
 		if set.More && set.Cursor == cur.Sent {
 			return cur, res, fmt.Errorf("reading this library's changes: the cursor does not advance")
@@ -123,7 +185,7 @@ func Run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 		if err := ctx.Err(); err != nil {
 			return cur, res, err
 		}
-		set, err := remote.Export(ctx, cur.Received, opt.Page)
+		set, err := retrying(ctx, opt, func() (changeset.Set, error) { return remote.Export(ctx, cur.Received, opt.Page) })
 		if errors.Is(err, storage.ErrCursorStale) && !restarted && !cur.Received.IsStart() {
 			cur.Received, restarted = storage.Cursor{}, true
 			continue

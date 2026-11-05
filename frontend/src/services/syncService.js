@@ -12,7 +12,7 @@ import { logger } from '../utils/logger.js';
 
 /** @typedef {{ server: string, auto: boolean }} SyncSettings */
 /** @typedef {{ running: boolean, server: string, hasToken: boolean, lastSuccess: string, error?: { kind: string, message: string } | null, result?: { sent: SyncTotals, received: SyncTotals } | null }} SyncState */
-/** @typedef {{ records: number, conflicts: number, missing: number, unsupported: number }} SyncTotals */
+/** @typedef {{ records: number, conflicts: number, missing: number, unsupported: number, unsynchronizable?: number }} SyncTotals */
 
 /** @type {import('svelte/store').Writable<SyncSettings>} */
 export const syncSettingsStore = writable({ server: '', auto: false });
@@ -25,7 +25,7 @@ let subscribed = false;
 function onStatus(s) {
     syncStateStore.set(s);
     // A failed run is told on the status bar too: nobody opens the tab to look for it.
-    if (!s.running && s.error) statusBarTextStore.set(tMsg(syncErrorKey(s.error.kind)));
+    if (!s.running && s.error) statusBarTextStore.set(syncErrorIsVerbatim(s.error.kind) ? s.error.message : tMsg(syncErrorKey(s.error.kind)));
 }
 
 function subscribe() {
@@ -51,7 +51,7 @@ export async function initSync() {
  */
 export function syncUnapplied(r) {
     let n = 0;
-    for (const side of [r?.sent, r?.received]) n += (side?.conflicts ?? 0) + (side?.missing ?? 0) + (side?.unsupported ?? 0);
+    for (const side of [r?.sent, r?.received]) n += (side?.conflicts ?? 0) + (side?.missing ?? 0) + (side?.unsupported ?? 0) + (side?.unsynchronizable ?? 0);
     return n;
 }
 
@@ -83,7 +83,12 @@ export async function syncNow() {
     syncStateStore.set(await SyncNow());
 }
 
-const ERROR_KINDS = ['refused', 'unavailable', 'rate_limited', 'too_large', 'address', 'no_token', 'no_library', 'library_changed'];
+const ERROR_KINDS = ['refused', 'unavailable', 'rate_limited', 'too_large', 'address', 'no_token', 'no_library', 'library_changed', 'tool_locked'];
+
+/** The server words an exceeded allowance itself: its message is shown as is, not translated. @param {string} kind */
+export function syncErrorIsVerbatim(kind) {
+    return kind === 'allowance';
+}
 
 /** The i18n key wording a failed run; an unforeseen kind falls back to the generic one. @param {string} kind */
 export function syncErrorKey(kind) {

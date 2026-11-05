@@ -3055,7 +3055,8 @@
             "no_token": "No hay ningún token guardado para este servidor.",
             "no_library": "No hay ninguna biblioteca abierta.",
             "other": "La sincronización ha fallado.",
-            "library_changed": "La biblioteca cambió durante la sincronización: se interrumpió, vuelva a lanzarla."
+            "library_changed": "La biblioteca cambió durante la sincronización: se interrumpió, vuelva a lanzarla.",
+            "tool_locked": "El servidor está bloqueado durante una partida: vuelva a intentarlo después de la partida."
         },
         "unapplied": "{conflicts} en conflicto, {missing} con una referencia ausente, {unsupported} de un tipo no admitido: estos elementos no se aplicaron."
     },
