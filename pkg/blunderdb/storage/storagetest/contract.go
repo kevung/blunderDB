@@ -65,6 +65,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Search/FilterByFlagged", testSearchFilterByFlagged},
 		{"Search/CountUpTo", testSearchCountUpTo},
 		{"Search/WindowsCutTheFullResult", testSearchWindowsCutTheFullResult},
+		{"Search/ErrorSortOfCubeDecisions", testSearchErrorSortOfCubeDecisions},
 		{"Search/ExcludePositionIDs", testSearchExcludePositionIDs},
 		{"Search/FilterByAway", testSearchFilterByAway},
 		{"Search/FilterByMargin", testSearchFilterByMargin},

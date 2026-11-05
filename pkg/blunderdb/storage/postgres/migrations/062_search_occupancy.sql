@@ -9,6 +9,10 @@
 --
 -- Back: DROP these four, then CREATE INDEX idx_move_game ON move (game_id);
 
+-- An index build holds SHARE on the table until this file's transaction ends: lock_timeout makes
+-- a busy table fail the migration, retried at the next start, rather than queue writers behind it.
+SET LOCAL lock_timeout = '15s';
+
 CREATE INDEX IF NOT EXISTS idx_position_occupancy1 ON position (tenant_id, occupancy_1);
 CREATE INDEX IF NOT EXISTS idx_position_occupancy2 ON position (tenant_id, occupancy_2);
 CREATE INDEX IF NOT EXISTS idx_move_game_position ON move (game_id, position_id) INCLUDE (tenant_id);

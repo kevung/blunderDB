@@ -160,3 +160,51 @@ func asHeavyCondition(test func(*testing.T, storage.Storage)) func(*testing.T, s
 		test(t, s)
 	}
 }
+
+// A cube decision plays no move, so the error sort of cube decisions reads as the id order, the unanalysed
+// ones after. A row that keeps a played-move error on a cube decision would break the shortcut: the
+// writer must not produce one.
+func testSearchErrorSortOfCubeDecisions(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	var ids []int64
+	for i := 0; i < 5; i++ {
+		p := domain.InitializePosition()
+		p.Score = [2]int{3 + i, 5}
+		p.DecisionType = domain.CubeAction
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save: %v", err)
+		}
+		ids = append(ids, id)
+	}
+	for _, id := range ids[1:] {
+		a := domain.PositionAnalysis{AnalysisType: "DoublingCube", PlayedCubeAction: "No double",
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "2-ply", BestCubeAction: "Double, take", CubefulNoDoubleError: -0.2}}
+		if err := s.Analyses().Save(ctx, "", id, &a); err != nil {
+			t.Fatalf("Save analysis: %v", err)
+		}
+	}
+	checker := domain.InitializePosition()
+	checker.Score = [2]int{20, 21}
+	if _, err := s.Positions().Save(ctx, "", &checker); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	f := domain.SearchFilters{DecisionTypeFilter: true, Sort: "error"}
+	f.Filter.DecisionType = domain.CubeAction
+	f.Filter.PlayerOnRoll = domain.Black
+	want := append(append([]int64{}, ids[1:]...), ids[0])
+	got, err := s.Search().FindIDs(ctx, "", f, storage.ListOpts{Limit: 10})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if fmt.Sprint(got) != fmt.Sprint(want) {
+		t.Fatalf("error sort of cube decisions = %v, want %v", got, want)
+	}
+	page, err := s.Search().FindIDs(ctx, "", f, storage.ListOpts{Limit: 2, Offset: 3})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if fmt.Sprint(page) != fmt.Sprint(want[3:]) {
+		t.Fatalf("window across the unanalysed = %v, want %v", page, want[3:])
+	}
+}

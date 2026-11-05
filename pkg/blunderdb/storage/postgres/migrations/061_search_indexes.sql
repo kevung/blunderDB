@@ -11,6 +11,10 @@
 -- Back: DROP these five, then
 --   CREATE INDEX idx_analysis_move_error ON analysis (tenant_id, best_move_equity_error);
 
+-- An index build holds SHARE on the table until this file's transaction ends: lock_timeout makes
+-- a busy table fail the migration, retried at the next start, rather than queue writers behind it.
+SET LOCAL lock_timeout = '15s';
+
 CREATE INDEX IF NOT EXISTS idx_analysis_tenant_position ON analysis (tenant_id, position_id);
 CREATE INDEX IF NOT EXISTS idx_analysis_error_order ON analysis (tenant_id, best_move_equity_error DESC, position_id);
 DROP INDEX IF EXISTS idx_analysis_move_error;

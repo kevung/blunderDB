@@ -800,7 +800,13 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 		keyedFilter += " AND " + tenant
 		keyedArgs = append(append([]any{}, args...), tenantArgs...)
 	}
-	ids, err := s.readIDs(ctx, keyed, keyedFilter, key+dir+", p.id", keyedArgs, limit, offset)
+	keyedOrder := key + dir + ", p.id"
+	// A cube decision plays no move: its played-move error is 0 throughout, so the order
+	// is the id's. The error index would make it walk every checker error of the tenant first.
+	if key == "a.best_move_equity_error" && f.DecisionTypeFilter && f.Filter.DecisionType == domain.CubeAction {
+		keyedOrder = "p.id"
+	}
+	ids, err := s.readIDs(ctx, keyed, keyedFilter, keyedOrder, keyedArgs, limit, offset)
 	if err != nil || len(ids) == limit {
 		return ids, err
 	}
