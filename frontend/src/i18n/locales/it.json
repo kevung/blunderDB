@@ -163,7 +163,8 @@
         "commentAuthor": "Il tuo nome",
         "commentAuthorNote": "Firma i commenti che scrivi. Vuoto: senza firma.",
         "assistantTitle": "Assistente e MCP",
-        "corpusTitle": "Corpus"
+        "corpusTitle": "Corpus",
+        "syncTitle": "Sincronizzazione"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -3029,6 +3030,58 @@
         "needsAck": "Accettate prima l'avviso sulla riservatezza di questo fornitore in Impostazioni › Assistente e MCP.",
         "error": "Errore: {error}",
         "write": "Lasciare che l'assistente proponga modifiche (ciascuna confermata)"
+    },
+    "sync": {
+        "title": "Sincronizzazione con un server",
+        "intro": "Mantenga la sua libreria allineata a una remota: incolli l'indirizzo di un server e il token personale che le ha dato. Le modifiche vengono inviate e ricevute a pagine; se entrambe le parti hanno cambiato la stessa cosa, vince la più recente. Offline, nulla viene bloccato.",
+        "server": "Indirizzo del server",
+        "token": "Token personale",
+        "tokenSave": "Salva il token",
+        "tokenRemove": "Rimuovi il token",
+        "tokenStored": "Un token è salvato nel portachiavi del sistema.",
+        "tokenNone": "Nessun token salvato.",
+        "auto": "Sincronizza all'avvio",
+        "now": "Sincronizza ora",
+        "running": "Sincronizzazione in corso…",
+        "last": "Ultima sincronizzazione riuscita: {date}",
+        "never": "Mai sincronizzata.",
+        "result": "Inviati: {sent} · ricevuti: {received}",
+        "error": {
+            "refused": "Il server rifiuta il token: è errato, scaduto o revocato.",
+            "unavailable": "Il server non risponde. La sua libreria è intatta; la sincronizzazione riprenderà da dove si è fermata.",
+            "rate_limited": "Il server limita le richieste: riprovi tra qualche minuto.",
+            "too_large": "Il server rifiuta un invio troppo grande.",
+            "address": "Indirizzo non valido: è richiesto https:// (http:// solo su questo computer).",
+            "no_token": "Nessun token salvato per questo server.",
+            "no_library": "Nessuna libreria aperta.",
+            "other": "Sincronizzazione non riuscita.",
+            "library_changed": "La libreria è cambiata durante la sincronizzazione: è stata interrotta, la riavvii.",
+            "tool_locked": "Il server è bloccato durante una partita: riprovi dopo la partita.",
+            "blocked": "Qualcosa tra questo computer e il server (proxy, firewall) rifiuta una richiesta per le sue dimensioni. Nulla è stato saltato; chieda a chi gestisce il server di alzare il limite.",
+            "allowance": "Invio sospeso, limite raggiunto: il suo piano consente {allowed} {axis}; ne possiede {held} e questo invio ne aggiunge {new}. La ricezione è proseguita e nulla è andato perso: l’invio riprenderà quando sarà sotto il limite (liberi spazio o cambi piano).",
+            "invalid_records": "Il server rifiuta il contenuto di alcuni record."
+        },
+        "unapplied": "{conflicts} in conflitto, {missing} con un riferimento assente, {unsupported} di un tipo non supportato: questi elementi non sono stati applicati.",
+        "skipped": {
+            "status": "Sincronizzazione: {count} elemento/i non applicato/i o messo/i da parte; dettagli in Impostazioni, Sincronizzazione.",
+            "title": "Messi da parte, ritentati a ogni sincronizzazione ({count}):",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "inviato",
+            "received": "ricevuto",
+            "too_large": "rifiutato dal server per le sue dimensioni",
+            "interrupted": "non è passato",
+            "invalid": "rifiutato dal server per il contenuto",
+            "reference": "inviato senza un riferimento a un record messo da parte, reinviato quando questo passa"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "posizioni",
+                "matches": "partite",
+                "storage": "MB di spazio",
+                "collections": "raccolte",
+                "other": "elementi"
+            }
+        }
     },
     "emptyState": {
         "import": "Importa… (Ctrl+I)",

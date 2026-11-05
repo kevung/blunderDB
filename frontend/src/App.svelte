@@ -99,6 +99,7 @@
     import { activeGroupId, activateGroup, openInNewGroup } from './stores/libraryGroupStore.js';
     import { initFolderWatch } from './services/watchService.js';
     import { initMCPHost } from './services/mcpHostService.js';
+    import { initSync } from './services/syncService.js';
     import { initOutsideWrites, stopOutsideWrites } from './services/outsideWritesService.js';
     import { initTheme } from './stores/themeStore.js';
 
@@ -483,6 +484,8 @@
         } catch (error) {
             logger.error('Error putting back the split screen:', error);
         }
+        // After the reopening above: until then the handle holds an empty in-memory library.
+        initSync();
         startupDone();
     });
 

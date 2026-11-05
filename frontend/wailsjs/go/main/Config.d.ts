@@ -54,6 +54,8 @@ export function GetRolloutChoice():Promise<main.RolloutChoice>;
 
 export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
 
+export function GetSync():Promise<main.SyncSettings>;
+
 export function GetTabOrder():Promise<Array<string>>;
 
 export function GetTabPanelHeights():Promise<Record<string, number>>;
@@ -122,6 +124,8 @@ export function SaveRolloutChoice(arg1:main.RolloutChoice):Promise<void>;
 
 export function SaveStatsFilter(arg1:main.StatsFilterPersisted):Promise<void>;
 
+export function SaveSync(arg1:main.SyncSettings):Promise<void>;
+
 export function SaveTabOrder(arg1:Array<string>):Promise<void>;
 
 export function SaveTabPanelHeight(arg1:string,arg2:number):Promise<void>;
@@ -137,3 +141,7 @@ export function SaveUIScale(arg1:number):Promise<void>;
 export function SaveWatchFolder(arg1:boolean,arg2:string,arg3:number):Promise<void>;
 
 export function SaveWindowDimensions(arg1:number,arg2:number):Promise<void>;
+
+export function SyncAutoStart():Promise<boolean>;
+
+export function SyncServerAddress():Promise<string>;

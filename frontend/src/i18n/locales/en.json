@@ -163,7 +163,8 @@
         "commentAuthor": "Your name",
         "commentAuthorNote": "Signs the comments you write. Empty: unsigned.",
         "assistantTitle": "Assistant and MCP",
-        "corpusTitle": "Corpus"
+        "corpusTitle": "Corpus",
+        "syncTitle": "Synchronisation"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -3029,6 +3030,58 @@
         "needsAck": "First accept this provider's privacy warning in Settings › Assistant and MCP.",
         "error": "Error: {error}",
         "write": "Let the assistant propose changes (each one confirmed)"
+    },
+    "sync": {
+        "title": "Synchronisation with a server",
+        "intro": "Keep your library level with a remote one: paste a server address and the personal token it gave you. Changes are sent and received page by page; when both sides changed the same thing, the most recent wins. Offline, nothing is blocked.",
+        "server": "Server address",
+        "token": "Personal token",
+        "tokenSave": "Save the token",
+        "tokenRemove": "Remove the token",
+        "tokenStored": "A token is stored in the system keyring.",
+        "tokenNone": "No token stored.",
+        "auto": "Synchronise at startup",
+        "now": "Synchronise now",
+        "running": "Synchronising…",
+        "last": "Last successful synchronisation: {date}",
+        "never": "Never synchronised.",
+        "result": "Sent: {sent} · received: {received}",
+        "error": {
+            "refused": "The server refuses the token: it is wrong, expired or revoked.",
+            "unavailable": "The server does not answer. Your library is intact; synchronisation resumes where it stopped.",
+            "rate_limited": "The server is limiting requests: try again in a few minutes.",
+            "too_large": "The server refuses a send that is too large.",
+            "address": "Invalid address: https:// is required (http:// only on this machine).",
+            "no_token": "No token is stored for this server.",
+            "no_library": "No library is open.",
+            "other": "Synchronisation failed.",
+            "library_changed": "The library changed during the synchronisation: it was interrupted, run it again.",
+            "tool_locked": "The server is locked during a match: try again after the match.",
+            "blocked": "Something between this machine and the server refuses a request for its size (a proxy or a firewall). Nothing was skipped; ask whoever runs the server to raise the limit.",
+            "allowance": "Sending suspended, limit reached: your plan allows {allowed} {axis}; you hold {held} and this sending adds {new}. Receiving went on and nothing was lost: sending resumes once you are under the limit (free some room or change plan).",
+            "invalid_records": "The server refuses the content of some records."
+        },
+        "unapplied": "{conflicts} in conflict, {missing} with a missing reference, {unsupported} of an unsupported type: these items were not applied.",
+        "skipped": {
+            "status": "Synchronisation: {count} item(s) not applied or set aside; see Settings, Synchronisation.",
+            "title": "Set aside, tried again at each synchronisation ({count}):",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "sent",
+            "received": "received",
+            "too_large": "refused by the server for its size",
+            "interrupted": "could not get through",
+            "invalid": "refused by the server for its content",
+            "reference": "sent without a reference to a record set aside, sent again once it goes through"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "positions",
+                "matches": "matches",
+                "storage": "MB of storage",
+                "collections": "collections",
+                "other": "items"
+            }
+        }
     },
     "emptyState": {
         "import": "Import… (Ctrl+I)",

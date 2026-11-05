@@ -28,7 +28,9 @@ import (
 
 // App struct
 type App struct {
-	ctx context.Context
+	// sync is the synchronisation with a remote library (sync.go).
+	sync syncState
+	ctx  context.Context
 	// db is used only by jobs that need both the database and Wails events
 	// (the gammonNet batch); other App methods stay database-free.
 	db *database.Database

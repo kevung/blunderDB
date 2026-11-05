@@ -163,7 +163,8 @@
         "commentAuthor": "Nimesi",
         "commentAuthorNote": "Allekirjoittaa kirjoittamasi kommentit. Tyhjä: ei allekirjoitusta.",
         "assistantTitle": "Avustaja ja MCP",
-        "corpusTitle": "Korpus"
+        "corpusTitle": "Korpus",
+        "syncTitle": "Synkronointi"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -3029,6 +3030,58 @@
         "needsAck": "Hyväksy ensin tämän palveluntarjoajan tietosuojavaroitus kohdassa Asetukset › Avustaja ja MCP.",
         "error": "Virhe: {error}",
         "write": "Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)"
+    },
+    "sync": {
+        "title": "Synkronointi palvelimen kanssa",
+        "intro": "Pidä kirjastosi samassa tilassa etäkirjaston kanssa: liitä palvelimen osoite ja sen antama henkilökohtainen tunniste. Muutokset lähetetään ja vastaanotetaan sivu kerrallaan; jos sama asia muuttui molemmilla puolilla, uudempi voittaa. Offline-tilassa mikään ei estä työskentelyä.",
+        "server": "Palvelimen osoite",
+        "token": "Henkilökohtainen tunniste",
+        "tokenSave": "Tallenna tunniste",
+        "tokenRemove": "Poista tunniste",
+        "tokenStored": "Tunniste on tallennettu järjestelmän avainnippuun.",
+        "tokenNone": "Tunnistetta ei ole tallennettu.",
+        "auto": "Synkronoi käynnistettäessä",
+        "now": "Synkronoi nyt",
+        "running": "Synkronoidaan…",
+        "last": "Viimeisin onnistunut synkronointi: {date}",
+        "never": "Ei ole koskaan synkronoitu.",
+        "result": "Lähetetty: {sent} · vastaanotettu: {received}",
+        "error": {
+            "refused": "Palvelin hylkää tunnisteen: se on väärä, vanhentunut tai peruutettu.",
+            "unavailable": "Palvelin ei vastaa. Kirjastosi on ehjä; synkronointi jatkuu siitä, mihin se jäi.",
+            "rate_limited": "Palvelin rajoittaa pyyntöjä: yritä uudelleen muutaman minuutin kuluttua.",
+            "too_large": "Palvelin hylkää liian suuren lähetyksen.",
+            "address": "Virheellinen osoite: https:// vaaditaan (http:// vain tällä koneella).",
+            "no_token": "Tälle palvelimelle ei ole tallennettu tunnistetta.",
+            "no_library": "Kirjastoa ei ole avattu.",
+            "other": "Synkronointi epäonnistui.",
+            "library_changed": "Kirjasto vaihtui synkronoinnin aikana: se keskeytettiin, käynnistä se uudelleen.",
+            "tool_locked": "Palvelin on lukittu ottelun ajaksi: yritä uudelleen ottelun jälkeen.",
+            "blocked": "Jokin tämän koneen ja palvelimen välissä (välityspalvelin, palomuuri) hylkää pyynnön sen koon vuoksi. Mitään ei ohitettu; pyydä palvelimen ylläpitäjää nostamaan rajaa.",
+            "allowance": "Lähetys keskeytetty, raja saavutettu: tilauksesi sallii {allowed} {axis}; sinulla on {held} ja tämä lähetys lisää {new}. Vastaanotto jatkui eikä mitään menetetty: lähetys jatkuu, kun olet rajan alla (vapauta tilaa tai vaihda tilausta).",
+            "invalid_records": "Palvelin hylkää joidenkin tietueiden sisällön."
+        },
+        "unapplied": "{conflicts} ristiriidassa, {missing} puuttuvalla viittauksella, {unsupported} tukemattomaa tyyppiä: näitä kohteita ei otettu käyttöön.",
+        "skipped": {
+            "status": "Synkronointi: {count} kohdetta jäi soveltamatta tai sivuun; tiedot kohdassa Asetukset, Synkronointi.",
+            "title": "Sivuun jätetty, yritetään uudelleen jokaisessa synkronoinnissa ({count}):",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "lähetetty",
+            "received": "vastaanotettu",
+            "too_large": "palvelin hylkäsi koon vuoksi",
+            "interrupted": "ei päässyt läpi",
+            "invalid": "palvelin hylkäsi sisällön vuoksi",
+            "reference": "lähetetty ilman viittausta sivuun jätettyyn tietueeseen, lähetetään uudelleen kun se menee läpi"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "asemaa",
+                "matches": "ottelua",
+                "storage": "Mt tallennustilaa",
+                "collections": "kokoelmaa",
+                "other": "kohdetta"
+            }
+        }
     },
     "emptyState": {
         "import": "Tuo… (Ctrl+I)",

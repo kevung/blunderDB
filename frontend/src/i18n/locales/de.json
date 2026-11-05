@@ -163,7 +163,8 @@
         "commentAuthor": "Ihr Name",
         "commentAuthorNote": "Signiert die Kommentare, die Sie schreiben. Leer: unsigniert.",
         "assistantTitle": "Assistent und MCP",
-        "corpusTitle": "Korpus"
+        "corpusTitle": "Korpus",
+        "syncTitle": "Synchronisierung"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -3029,6 +3030,58 @@
         "needsAck": "Akzeptieren Sie zuerst den Datenschutzhinweis dieses Anbieters unter Einstellungen › Assistent und MCP.",
         "error": "Fehler: {error}",
         "write": "Den Assistenten Änderungen vorschlagen lassen (jede bestätigt)"
+    },
+    "sync": {
+        "title": "Synchronisierung mit einem Server",
+        "intro": "Halten Sie Ihre Bibliothek mit einer entfernten auf demselben Stand: Fügen Sie die Serveradresse und das persönliche Token ein, das Sie erhalten haben. Änderungen werden seitenweise gesendet und empfangen; wurde dasselbe auf beiden Seiten geändert, gilt die neuere Änderung. Offline wird nichts blockiert.",
+        "server": "Serveradresse",
+        "token": "Persönliches Token",
+        "tokenSave": "Token speichern",
+        "tokenRemove": "Token entfernen",
+        "tokenStored": "Ein Token ist im Schlüsselbund des Systems gespeichert.",
+        "tokenNone": "Kein Token gespeichert.",
+        "auto": "Beim Start synchronisieren",
+        "now": "Jetzt synchronisieren",
+        "running": "Synchronisierung läuft …",
+        "last": "Letzte erfolgreiche Synchronisierung: {date}",
+        "never": "Noch nie synchronisiert.",
+        "result": "Gesendet: {sent} · empfangen: {received}",
+        "error": {
+            "refused": "Der Server lehnt das Token ab: Es ist falsch, abgelaufen oder widerrufen.",
+            "unavailable": "Der Server antwortet nicht. Ihre Bibliothek ist unversehrt; die Synchronisierung setzt dort fort, wo sie stehen blieb.",
+            "rate_limited": "Der Server begrenzt die Anfragen: Versuchen Sie es in einigen Minuten erneut.",
+            "too_large": "Der Server lehnt eine zu große Sendung ab.",
+            "address": "Ungültige Adresse: https:// ist erforderlich (http:// nur auf diesem Rechner).",
+            "no_token": "Für diesen Server ist kein Token gespeichert.",
+            "no_library": "Keine Bibliothek ist geöffnet.",
+            "other": "Die Synchronisierung ist fehlgeschlagen.",
+            "library_changed": "Die Bibliothek hat sich während der Synchronisierung geändert: Sie wurde abgebrochen, starten Sie sie erneut.",
+            "tool_locked": "Der Server ist während einer Partie gesperrt: versuchen Sie es nach der Partie erneut.",
+            "blocked": "Etwas zwischen diesem Rechner und dem Server (Proxy, Firewall) lehnt eine Anfrage wegen ihrer Größe ab. Nichts wurde übersprungen; bitten Sie den Betreiber des Servers, die Grenze anzuheben.",
+            "allowance": "Senden ausgesetzt, Grenze erreicht: Ihr Tarif erlaubt {allowed} {axis}; Sie halten {held} und dieses Senden fügt {new} hinzu. Der Empfang lief weiter und nichts ging verloren: Das Senden setzt wieder ein, sobald Sie unter der Grenze sind (schaffen Sie Platz oder wechseln Sie den Tarif).",
+            "invalid_records": "Der Server lehnt den Inhalt einiger Einträge ab."
+        },
+        "unapplied": "{conflicts} im Konflikt, {missing} mit fehlendem Verweis, {unsupported} von nicht unterstütztem Typ: Diese Elemente wurden nicht übernommen.",
+        "skipped": {
+            "status": "Synchronisierung: {count} Element(e) nicht übernommen oder zurückgestellt; Details unter Einstellungen, Synchronisierung.",
+            "title": "Zurückgestellt, bei jeder Synchronisation erneut versucht ({count}):",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "gesendet",
+            "received": "empfangen",
+            "too_large": "vom Server wegen seiner Größe abgelehnt",
+            "interrupted": "kam nicht durch",
+            "invalid": "vom Server wegen seines Inhalts abgelehnt",
+            "reference": "ohne Verweis auf einen zurückgestellten Eintrag gesendet, erneut gesendet, sobald dieser durchgeht"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "Positionen",
+                "matches": "Partien",
+                "storage": "MB Speicher",
+                "collections": "Sammlungen",
+                "other": "Elemente"
+            }
+        }
     },
     "emptyState": {
         "import": "Importieren… (Strg+I)",

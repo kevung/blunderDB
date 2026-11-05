@@ -163,7 +163,8 @@
         "commentAuthor": "Votre nom",
         "commentAuthorNote": "Signe les commentaires que vous écrivez. Vide : non signés.",
         "assistantTitle": "Assistant et MCP",
-        "corpusTitle": "Corpus"
+        "corpusTitle": "Corpus",
+        "syncTitle": "Synchronisation"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -3029,6 +3030,58 @@
         "needsAck": "Acceptez d'abord l'avertissement de confidentialité de ce fournisseur dans Paramètres › Assistant et MCP.",
         "error": "Erreur : {error}",
         "write": "Laisser l'assistant proposer des modifications (chacune confirmée)"
+    },
+    "sync": {
+        "title": "Synchronisation avec un serveur",
+        "intro": "Tenez votre bibliothèque au même état qu'une bibliothèque distante : collez l'adresse d'un serveur et le jeton personnel qu'il vous a donné. Les changements partent et arrivent par pages ; en cas de modification des deux côtés, la plus récente l'emporte. Hors ligne, rien n'est bloqué.",
+        "server": "Adresse du serveur",
+        "token": "Jeton personnel",
+        "tokenSave": "Enregistrer le jeton",
+        "tokenRemove": "Retirer le jeton",
+        "tokenStored": "Un jeton est enregistré dans le trousseau du système.",
+        "tokenNone": "Aucun jeton enregistré.",
+        "auto": "Synchroniser au démarrage",
+        "now": "Synchroniser maintenant",
+        "running": "Synchronisation en cours…",
+        "last": "Dernière synchronisation réussie : {date}",
+        "never": "Jamais synchronisée.",
+        "result": "Envoyés : {sent} · reçus : {received}",
+        "error": {
+            "refused": "Le serveur refuse le jeton : il est faux, expiré ou révoqué.",
+            "unavailable": "Le serveur ne répond pas. Votre bibliothèque est intacte ; la synchronisation reprendra là où elle s'est arrêtée.",
+            "rate_limited": "Le serveur limite le débit : réessayez dans quelques minutes.",
+            "too_large": "Le serveur refuse un envoi trop volumineux.",
+            "address": "Adresse invalide : https:// est exigé (http:// seulement sur cette machine).",
+            "no_token": "Aucun jeton n'est enregistré pour ce serveur.",
+            "no_library": "Aucune bibliothèque n'est ouverte.",
+            "other": "La synchronisation a échoué.",
+            "library_changed": "La bibliothèque a changé pendant la synchronisation : elle a été interrompue, relancez-la.",
+            "tool_locked": "Le serveur est verrouillé pendant une partie : réessayez après la partie.",
+            "blocked": "Un élément entre cet ordinateur et le serveur (mandataire, pare-feu) refuse une requête pour sa taille. Rien n'a été enjambé ; demandez à l'exploitant du serveur de relever la limite.",
+            "allowance": "Envoi suspendu, plafond atteint : votre formule permet {allowed} {axis} ; vous en détenez {held} et cet envoi en ajoute {new}. La réception a continué et rien n’est perdu : l’envoi reprendra dès que vous serez sous le plafond (libérez de la place ou changez de formule).",
+            "invalid_records": "Le serveur refuse le contenu de certains enregistrements."
+        },
+        "unapplied": "{conflicts} en conflit, {missing} avec une référence absente, {unsupported} d'un type non pris en charge : ces éléments n'ont pas été appliqués.",
+        "skipped": {
+            "status": "Synchronisation : {count} élément(s) non appliqué(s) ou mis de côté, détail dans Paramètres, Synchronisation.",
+            "title": "Mis de côté, retentés à chaque synchronisation ({count}) :",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "envoyé",
+            "received": "reçu",
+            "too_large": "refusé par le serveur pour sa taille",
+            "interrupted": "n'a pas pu passer",
+            "invalid": "refusé par le serveur pour son contenu",
+            "reference": "envoyé sans une référence vers un enregistrement mis de côté, renvoyé quand celui-ci passe"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "positions",
+                "matches": "matchs",
+                "storage": "Mo de stockage",
+                "collections": "collections",
+                "other": "éléments"
+            }
+        }
     },
     "emptyState": {
         "import": "Importer… (Ctrl+I)",
