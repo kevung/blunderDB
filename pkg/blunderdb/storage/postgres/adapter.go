@@ -101,14 +101,14 @@ func (a shared) Query(ctx context.Context, query string, args ...any) (sqlshared
 // plan, unaware of the LIMIT or of the value, and a search walks or sorts the tenant. Only the search:
 // with custom plans, an import into a new tenant, out of the histogram, is estimated at one row and
 // nests its loops, seconds per match.
-type searchDB struct{ shared }
+type searchDB struct{ sqlshared.Execer }
 
 func (a searchDB) Query(ctx context.Context, query string, args ...any) (sqlshared.Rows, error) {
-	return a.shared.Query(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
+	return a.Execer.Query(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
 }
 
 func (a searchDB) QueryRow(ctx context.Context, query string, args ...any) sqlshared.Row {
-	return a.shared.QueryRow(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
+	return a.Execer.QueryRow(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
 }
 
 func (a shared) QueryRow(ctx context.Context, query string, args ...any) sqlshared.Row {
