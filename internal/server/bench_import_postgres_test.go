@@ -210,18 +210,40 @@ func benchMedian(d []time.Duration) time.Duration {
 	return s[len(s)/2]
 }
 
+func newBenchHTTPServer(t *testing.T, srv *Server) *httptest.Server {
+	t.Helper()
+	ts := httptest.NewServer(srv.Handler())
+	t.Cleanup(ts.Close)
+	return ts
+}
+
 func benchUpload(t *testing.T, ts *httptest.Server, f benchFile, query string) {
 	t.Helper()
-	data, err := os.ReadFile(f.path)
+	benchPost(t, ts, f.path, "imports.xg", query)
+}
+
+// benchUploadAny uploads a match file of any format by its extension.
+func benchUploadAny(t *testing.T, ts *httptest.Server, path string) {
+	t.Helper()
+	method := "imports.gnubg"
+	if strings.EqualFold(filepath.Ext(path), ".xg") {
+		method = "imports.xg"
+	}
+	benchPost(t, ts, path, method, "")
+}
+
+func benchPost(t *testing.T, ts *httptest.Server, path, method, query string) {
+	t.Helper()
+	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
 	var body bytes.Buffer
 	mw := multipart.NewWriter(&body)
-	fw, _ := mw.CreateFormFile("file", "bench.xg")
+	fw, _ := mw.CreateFormFile("file", "bench"+strings.ToLower(filepath.Ext(path)))
 	_, _ = fw.Write(data)
 	_ = mw.Close()
-	target := ts.URL + "/v1/imports.xg"
+	target := ts.URL + "/v1/" + method
 	if query != "" {
 		target += "?" + query
 	}
@@ -235,7 +257,7 @@ func benchUpload(t *testing.T, ts *httptest.Server, f benchFile, query string) {
 	defer resp.Body.Close()
 	out, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK || bytes.Contains(out, []byte(`"event":"error"`)) {
-		t.Fatalf("upload %s: %d (%d bytes back): %.300s", f.digest[:8], resp.StatusCode, len(out), lastLine(out))
+		t.Errorf("upload refused: %d (%d bytes back): %.200s", resp.StatusCode, len(out), lastLine(out))
 	}
 }
 
