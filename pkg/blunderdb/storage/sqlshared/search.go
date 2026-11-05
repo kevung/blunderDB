@@ -168,7 +168,13 @@ func SetNarrowLimit(n int) (restore func()) {
 // two statements; a position arriving between them only shifts the moment of its
 // appearance.
 func (s *SearchStore) narrowToIDs(ctx context.Context, sub string, subArgs []any, where *strings.Builder, args *[]any, common func()) error {
-	limit := int(narrowLimit.Load())
+	return s.narrowWithin(ctx, int(narrowLimit.Load()), sub, subArgs, where, args, common)
+}
+
+func (s *SearchStore) narrowWithin(ctx context.Context, limit int, sub string, subArgs []any, where *strings.Builder, args *[]any, common func()) error {
+	if narrowLimit.Load() < 0 {
+		limit = -1
+	}
 	writeCommon := func() {
 		if common != nil {
 			common()

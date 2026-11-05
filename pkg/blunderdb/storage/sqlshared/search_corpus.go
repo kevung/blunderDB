@@ -161,12 +161,41 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	}
 
 	mtTenant, mtArgs := s.DB.TenantFilter("mt", scope)
-	sub := "SELECT mv.position_id FROM move mv" +
+	joined := " FROM move mv" +
 		" JOIN game g ON mv.game_id = g.id" +
 		" JOIN match mt ON g.match_id = mt.id" +
 		" WHERE " + mtTenant + cond.String()
-	return s.narrowToIDs(ctx, sub, append(mtArgs, condArgs...), where, args, nil)
+	sub := "SELECT mv.position_id" + joined
+	subArgs := append(append([]any{}, mtArgs...), condArgs...)
+	// The walk in id order is checked once per position; the subquery form would lead
+	// the planner to read every move of the match set, then look up each position.
+	walk := func() {
+		where.WriteString(" AND EXISTS (SELECT 1" + joined + " AND mv.position_id = p.id LIMIT 1 OFFSET 0)")
+		*args = append(*args, subArgs...)
+	}
+	limit := matchListLimit
+	if !strings.Contains(cond.String(), "mv.") && narrowLimit.Load() >= 0 {
+		// Whose moves are too many to list is known from the matches alone, without
+		// reading any move. Inexact, and only a choice of form.
+		var games int64
+		if err := s.DB.QueryRow(ctx, `SELECT COALESCE(SUM(mt.game_count), 0) FROM match mt WHERE `+mtTenant+cond.String(), subArgs...).Scan(&games); err != nil {
+			return errf(s.DB, "search match games", err)
+		}
+		if games*movesPerGame > int64(limit) {
+			walk()
+			return nil
+		}
+	}
+	return s.narrowWithin(ctx, limit, sub, subArgs, where, args, walk)
 }
+
+// matchListLimit is how many moves a match-level filter may name by literal list: above
+// it the filter holds of at least one position in a hundred of a five-million library,
+// and the walk meets it soon. movesPerGame is a mean of real matches, for an estimate.
+const (
+	matchListLimit = 30000
+	movesPerGame   = 55
+)
 
 // playerSeatCond writes the " AND (...)" condition on the two players of the
 // match a move belongs to (mt) and, with a seat, on who took the decision (mv).
