@@ -36,6 +36,7 @@ func TestBuildWhereMatchDateIsHalfOpenOnTheLastDay(t *testing.T) {
 }
 
 func TestBuildWhereMatchLevelTokensShareOneSubquery(t *testing.T) {
+	defer SetNarrowLimit(-1)()
 	wc, err := buildWhereStore().buildWhere(context.Background(), "", domain.SearchFilters{
 		PlayerFilter: `pl!"Alice"`, OpponentFilter: `op"Bob"`, RoundFilter: "3", PlayerPRFilter: "pr>8",
 	})

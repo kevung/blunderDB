@@ -22,8 +22,10 @@ const likeEscape = ` ESCAPE '\'`
 // player's PR, the engine and depth of the analysis, the kind of cube decision.
 // They are properties of stored rows, not of the board, so — like the identity
 // clauses — they stay in SQL even in mirror search.
-func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) {
-	s.appendMatchLevelClause(scope, f, prMissing, aliases, where, args)
+func (s *SearchStore) appendCorpusClauses(ctx context.Context, scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) error {
+	if err := s.appendMatchLevelClause(ctx, scope, f, prMissing, aliases, where, args); err != nil {
+		return err
+	}
 
 	if f.MatchDateFilter != "" {
 		from, until, ok := searchfilter.ParseMatchDate(f.MatchDateFilter)
@@ -55,6 +57,7 @@ func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, 
 		where.WriteString(" AND p.decision_type = ? AND " + s.DB.Bool("p.is_cube_response", f.CubeResponseFilter == "takepass"))
 		*args = append(*args, domain.CubeAction)
 	}
+	return nil
 }
 
 // appendMatchLevelClause writes ONE subquery over the moves that reach a
@@ -62,7 +65,7 @@ func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, 
 // of the one who decided, the tournament, the round, the PR — holds of the same
 // match and the same move. Separate subqueries would let `pl"A" op"B"` be
 // satisfied by A's match against C and a match of B against D.
-func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) {
+func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) error {
 	player, seatOnly := searchfilter.PlayerSpec(f.PlayerFilter)
 	opponent := ""
 	if f.OpponentFilter != "" {
@@ -74,7 +77,7 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 	}
 	rounds := domain.SplitFilterList(f.RoundFilter)
 	if player == "" && opponent == "" && tournament == "" && len(rounds) == 0 && f.PlayerPRFilter == "" && f.MatchLengthFilter == "" {
-		return
+		return nil
 	}
 
 	var cond strings.Builder
@@ -158,12 +161,11 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 	}
 
 	mtTenant, mtArgs := s.DB.TenantFilter("mt", scope)
-	where.WriteString(" AND p.id IN (SELECT mv.position_id FROM move mv" +
+	sub := "SELECT mv.position_id FROM move mv" +
 		" JOIN game g ON mv.game_id = g.id" +
 		" JOIN match mt ON g.match_id = mt.id" +
-		" WHERE " + mtTenant + cond.String() + ")")
-	*args = append(*args, mtArgs...)
-	*args = append(*args, condArgs...)
+		" WHERE " + mtTenant + cond.String()
+	return s.narrowToIDs(ctx, sub, append(mtArgs, condArgs...), where, args, nil)
 }
 
 // playerSeatCond writes the " AND (...)" condition on the two players of the

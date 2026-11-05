@@ -8,6 +8,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 func saveWindowPositions(ctx context.Context, t *testing.T, s storage.Storage, n int) []int64 {
@@ -139,5 +140,15 @@ func testSearchWindowsCutTheFullResult(t *testing.T, s storage.Storage) {
 				t.Fatalf("sort %q, %s: pages %v, whole %v", sort, name, pages, whole)
 			}
 		}
+	}
+}
+
+// A condition on another table is written either as the list of its matches or as a
+// subquery, by how many there are: a test written against few rows also holds of the
+// form a large library gets.
+func asCommonCondition(test func(*testing.T, storage.Storage)) func(*testing.T, storage.Storage) {
+	return func(t *testing.T, s storage.Storage) {
+		defer sqlshared.SetNarrowLimit(-1)()
+		test(t, s)
 	}
 }

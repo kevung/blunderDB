@@ -85,7 +85,7 @@ func (s *SearchStore) appendRowFlagClauses(f domain.SearchFilters, where *string
 }
 
 // appendRateClauses adds the win, gammon and backgammon rate filters of both players.
-func (s *SearchStore) appendRateClauses(scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) {
+func (s *SearchStore) appendRateClauses(ctx context.Context, scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) error {
 	args := *argsp
 	defer func() { *argsp = args }()
 	// Win/gammon rate as `p.id IN (SELECT position_id FROM analysis …)`,
@@ -103,9 +103,10 @@ func (s *SearchStore) appendRateClauses(scope string, f domain.SearchFilters, wh
 	searchfilter.AppendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
 	if winGammonWhere.Len() > 0 {
 		aTenant, aArgs := s.DB.TenantFilter("", scope)
-		where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE " + aTenant + winGammonWhere.String() + ")")
-		args = append(args, aArgs...)
-		args = append(args, winGammonArgs...)
+		sub := "SELECT position_id FROM analysis WHERE " + aTenant + winGammonWhere.String()
+		if err := s.narrowToIDs(ctx, sub, append(aArgs, winGammonArgs...), where, &args, nil); err != nil {
+			return err
+		}
 	}
 	bMin, bMax, bHasMin, bHasMax := searchfilter.ParseFloatFilterExpr(f.BackgammonRateFilter, "b")
 	searchfilter.AppendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, where, &args)
@@ -120,17 +121,83 @@ func (s *SearchStore) appendRateClauses(scope string, f domain.SearchFilters, wh
 	searchfilter.AppendIntRangeSQL("player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &winGammon2Where, &winGammon2Args)
 	if winGammon2Where.Len() > 0 {
 		aTenant, aArgs := s.DB.TenantFilter("", scope)
-		where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE " + aTenant + winGammon2Where.String() + ")")
-		args = append(args, aArgs...)
-		args = append(args, winGammon2Args...)
+		sub := "SELECT position_id FROM analysis WHERE " + aTenant + winGammon2Where.String()
+		if err := s.narrowToIDs(ctx, sub, append(aArgs, winGammon2Args...), where, &args, nil); err != nil {
+			return err
+		}
 	}
 	BMin, BMax, BHasMin, BHasMax := searchfilter.ParseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
 	searchfilter.AppendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, where, &args)
+	return nil
+}
+
+// narrowLimit is how many matches a filter on another table may name by literal list.
+// Atomic so a test can move it (SetNarrowLimit) while other searches run.
+var narrowLimit atomic.Int64
+
+func init() { narrowLimit.Store(5000) }
+
+// SetNarrowLimit sets narrowLimit and returns a func restoring the previous one; below
+// zero, no condition is read first. For tests only: both ways of writing a condition
+// are exercised on every backend.
+func SetNarrowLimit(n int) (restore func()) {
+	old := narrowLimit.Swap(int64(n))
+	return func() { narrowLimit.Store(old) }
+}
+
+// narrowToIDs writes the condition "p.id comes out of sub". A rare condition is the
+// planner's trap: its estimate at the tail of a histogram is off by hundreds, so under
+// a LIMIT it walks the tenant in id order hoping to meet the matches soon. Up to
+// narrowLimit matches are therefore read first, from the index of the condition, and
+// written as a list. Beyond it the matches are common, the walk does meet them soon,
+// and common writes the clause (nil: sub as a subquery). A condition is read twice in
+// two statements; a position arriving between them only shifts the moment of its
+// appearance.
+func (s *SearchStore) narrowToIDs(ctx context.Context, sub string, subArgs []any, where *strings.Builder, args *[]any, common func()) error {
+	limit := int(narrowLimit.Load())
+	writeCommon := func() {
+		if common != nil {
+			common()
+			return
+		}
+		where.WriteString(" AND p.id IN (" + sub + ")")
+		*args = append(*args, subArgs...)
+	}
+	if limit < 0 {
+		writeCommon()
+		return nil
+	}
+	limitClause, limitArgs := s.DB.LimitOffset(limit+1, 0)
+	rows, err := s.DB.Query(ctx, `SELECT * FROM (`+sub+`) AS probe`+limitClause, append(append([]any{}, subArgs...), limitArgs...)...)
+	if err != nil {
+		return errf(s.DB, "search narrow", err)
+	}
+	defer rows.Close()
+	ids := make([]string, 0, 64)
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return errf(s.DB, "search narrow scan", err)
+		}
+		ids = append(ids, strconv.FormatInt(id, 10))
+	}
+	if err := rows.Err(); err != nil {
+		return errf(s.DB, "search narrow rows", err)
+	}
+	switch {
+	case len(ids) > limit:
+		writeCommon()
+	case len(ids) == 0:
+		where.WriteString(" AND 0=1")
+	default:
+		where.WriteString(" AND p.id IN (" + strings.Join(ids, ",") + ")")
+	}
+	return nil
 }
 
 // appendMoveErrorClause adds the move-error filter and reports whether Go
 // must settle it afterwards.
-func (s *SearchStore) appendMoveErrorClause(scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) bool {
+func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) (bool, error) {
 	// The denormalised error column scores ONE play (the first of
 	// PlayedMoves, see AnalysisStore.Save). A position played several ways
 	// is let through by its multi_played indicator and settled in Go by
@@ -138,7 +205,7 @@ func (s *SearchStore) appendMoveErrorClause(scope string, f domain.SearchFilters
 	// under-state it. The indicator is kept by triggers on move, so the
 	// clause reads two columns of the row and no move at all.
 	if f.MoveErrorFilter == "" {
-		return false
+		return false, nil
 	}
 	eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
 	eqMin := int(math.Round(eMin))
@@ -153,25 +220,24 @@ func (s *SearchStore) appendMoveErrorClause(scope string, f domain.SearchFilters
 	case eHasMax:
 		cond, bound = " <= ?", []any{eqMax}
 	default:
-		return false
+		return false, nil
 	}
-	// positionErrExpr split in its two branches, each answered from its own index,
-	// so that a rare error costs its matches and not the walk of the tenant.
+	// Rare, the error is read from its two indexes, positionErrExpr split in its two
+	// branches. Common, the walk in id order meets its rows soon, on the joined analysis.
 	tenant, tenantArgs := s.DB.TenantFilter("an", scope)
 	own, ownArgs := s.DB.TenantFilter("", scope)
 	branch := func(decision, col string) string {
 		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
 	}
-	where.WriteString(" AND p.id IN (" +
-		branch("q.decision_type = 1", "cube_error") + " UNION ALL " +
+	sub := branch("q.decision_type = 1", "cube_error") + " UNION ALL " +
 		branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + " UNION ALL " +
-		"SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true) + ")")
-	*argsp = append(*argsp, tenantArgs...)
-	*argsp = append(*argsp, bound...)
-	*argsp = append(*argsp, tenantArgs...)
-	*argsp = append(*argsp, bound...)
-	*argsp = append(*argsp, ownArgs...)
-	return true
+		"SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
+	subArgs := append(append(append(append(append([]any{}, tenantArgs...), bound...), tenantArgs...), bound...), ownArgs...)
+	err := s.narrowToIDs(ctx, sub, subArgs, where, argsp, func() {
+		where.WriteString(" AND (" + positionErrExpr + cond + " OR " + s.DB.Bool("p.multi_played", true) + ")")
+		*argsp = append(*argsp, bound...)
+	})
+	return true, err
 }
 
 // buildWhere translates f into the WHERE clause of the search query: cheap
@@ -232,7 +298,9 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 			return searchWhereClause{}, err
 		}
 	}
-	s.appendCorpusClauses(scope, f, prMissing, aliases, &where, &args)
+	if err := s.appendCorpusClauses(ctx, scope, f, prMissing, aliases, &where, &args); err != nil {
+		return searchWhereClause{}, err
+	}
 
 	// A ranked query narrows to the target's equivalence class BEFORE anything
 	// else: a neighbour is the same problem nearby, and the rest of the WHERE
@@ -354,10 +422,14 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 			}
 		}
 
-		s.appendRateClauses(scope, f, &where, &args)
-		if s.appendMoveErrorClause(scope, f, &where, &args) {
-			moveErrorInGo = true
+		if err := s.appendRateClauses(ctx, scope, f, &where, &args); err != nil {
+			return searchWhereClause{}, err
 		}
+		moveError, err := s.appendMoveErrorClause(ctx, scope, f, &where, &args)
+		if err != nil {
+			return searchWhereClause{}, err
+		}
+		moveErrorInGo = moveError
 
 		if f.DecisionTimeFilter != "" {
 			if cond, condArgs := decisionTimeSQL(s.DB, scope, f.DecisionTimeFilter); cond != "" {
