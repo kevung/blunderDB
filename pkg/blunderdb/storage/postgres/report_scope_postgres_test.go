@@ -64,7 +64,7 @@ func TestImportReportReadsItsBatchOnly(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer tx.Rollback(ctx) //nolint:errcheck
+	defer tx.Rollback(ctx) //nolint:errcheck // rollback after commit is a no-op
 	// The counters also hold what the connection read before, not yet flushed.
 	positionReads := func() (n int64) {
 		t.Helper()
