@@ -158,30 +158,34 @@ func importRowsServer(t *testing.T, ctx context.Context) (ts *httptest.Server, s
 	return newBenchHTTPServer(t, srv), super, name
 }
 
-// TestImportDatesPositionsAtBirth: a position a dated match creates is written
-// with the match's date, so the journal records it as created, never as updated.
+// TestImportDatesPositionsAtBirth: a position a match creates is written with
+// the match's date, and the journal records one nothing else touches as
+// created, not updated (an analysis stored for it later is an update).
 func TestImportDatesPositionsAtBirth(t *testing.T) {
 	ctx := context.Background()
 	ts, super, name := importRowsServer(t, ctx)
 	benchUploadAny(t, ts, filepath.Join("..", "..", "testdata", "charlot1-charlot2_7p_2025-11-08-2305.xg"))
+	benchUploadAny(t, ts, filepath.Join("..", "..", "testdata", "gnubg_selfplay_drops_7p.mat"))
 
 	conn, err := pgx.Connect(ctx, benchDSN(t, super, "", name))
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer conn.Close(ctx)
-	var positions, dated, created, updated int
-	err = conn.QueryRow(ctx, `SELECT
-		(SELECT COUNT(*) FROM position),
-		(SELECT COUNT(*) FROM position p WHERE p.match_date = (SELECT MIN(match_date) FROM match)),
-		(SELECT COUNT(*) FROM change_log WHERE family = 'position' AND op = 'create'),
-		(SELECT COUNT(*) FROM change_log WHERE family = 'position' AND op = 'update')`).
-		Scan(&positions, &dated, &created, &updated)
+	var positions, misdated, bare, bareCreated int
+	err = conn.QueryRow(ctx, `SELECT COUNT(*),
+		COUNT(*) FILTER (WHERE p.match_date IS DISTINCT FROM (SELECT MIN(m.match_date)
+			FROM move mv JOIN game g ON g.id = mv.game_id JOIN match m ON m.id = g.match_id WHERE mv.position_id = p.id)),
+		COUNT(*) FILTER (WHERE NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id)),
+		COUNT(*) FILTER (WHERE NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id)
+			AND (SELECT c.op FROM change_log c WHERE c.uuid = p.uuid) = 'create')
+		FROM position p`).Scan(&positions, &misdated, &bare, &bareCreated)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if positions == 0 || dated != positions || created != positions || updated != 0 {
-		t.Errorf("%d positions: %d dated like the match, journal %d created and %d updated", positions, dated, created, updated)
+	if positions == 0 || bare == 0 || misdated != 0 || bareCreated != bare {
+		t.Errorf("%d positions, %d not dated like their match; %d without analysis, %d of them journalled as created",
+			positions, misdated, bare, bareCreated)
 	}
 }
 
