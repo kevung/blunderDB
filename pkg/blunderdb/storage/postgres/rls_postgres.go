@@ -80,20 +80,70 @@ var rlsTables = []string{
 // with Options.EnableRLS and propagate the tenant via storage.WithTenant.
 // Application-level tenant filtering stays in place either way — RLS is a
 // second layer, not a replacement.
+//
+// A table already policed is left alone, and each ALTER waits rlsLockTimeout at
+// most: ACCESS EXCLUSIVE queues behind a long query, and every later request of
+// the table queues behind it, so a start would freeze the service.
 func (s *Storage) ApplyRLS(ctx context.Context) error {
-	return forEachRLSTable(ctx, s.pool, func(t string) []string {
-		// NULLIF maps an unset/reset GUC (custom GUCs reset to '' , not NULL) to
-		// NULL, so the comparison yields no rows instead of an `''::bigint` cast
-		// error — fail-closed for a connection without a tenant.
-		policyPred := "tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::bigint"
-		return []string{
-			fmt.Sprintf(`ALTER TABLE %s ENABLE ROW LEVEL SECURITY`, t),
-			fmt.Sprintf(`ALTER TABLE %s FORCE ROW LEVEL SECURITY`, t),
-			fmt.Sprintf(`DROP POLICY IF EXISTS tenant_isolation ON %s`, t),
-			fmt.Sprintf(`CREATE POLICY tenant_isolation ON %s USING (%s) WITH CHECK (%s)`,
-				t, policyPred, policyPred),
+	for _, t := range rlsTables {
+		stmts, err := missingRLS(ctx, s.pool, t)
+		if err != nil {
+			return err
 		}
-	})
+		if len(stmts) == 0 {
+			continue
+		}
+		err = pgx.BeginFunc(ctx, s.pool, func(tx pgx.Tx) error {
+			if _, err := tx.Exec(ctx, `SET LOCAL lock_timeout = '`+rlsLockTimeout+`'`); err != nil {
+				return err
+			}
+			for _, stmt := range stmts {
+				if _, err := tx.Exec(ctx, stmt); err != nil {
+					return err
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			return fmt.Errorf("postgres: RLS on %s: %w", t, err)
+		}
+	}
+	return nil
+}
+
+const rlsLockTimeout = "5s"
+
+// rlsPolicyPredicate maps an unset/reset GUC (custom GUCs reset to '', not NULL)
+// to NULL, so the comparison yields no rows instead of an `''::bigint` cast error:
+// fail-closed for a connection without a tenant.
+const rlsPolicyPredicate = "tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::bigint"
+
+// rlsPolicyDeparsed is rlsPolicyPredicate as pg_policies shows it. Another server
+// spelling only makes the policy be written again.
+const rlsPolicyDeparsed = "(tenant_id = (NULLIF(current_setting('app.tenant_id'::text, true), ''::text))::bigint)"
+
+// missingRLS returns what table t still needs, without taking its lock.
+func missingRLS(ctx context.Context, pool *pgxpool.Pool, t string) ([]string, error) {
+	var enabled, forced, policed bool
+	err := pool.QueryRow(ctx, `SELECT COALESCE(bool_or(c.relrowsecurity), false), COALESCE(bool_or(c.relforcerowsecurity), false),
+		EXISTS (SELECT 1 FROM pg_policy p WHERE p.polrelid = to_regclass($1) AND p.polname = 'tenant_isolation'
+			AND pg_get_expr(p.polqual, p.polrelid) = $2 AND pg_get_expr(p.polwithcheck, p.polrelid) = $2)
+		FROM pg_class c WHERE c.oid = to_regclass($1)`, t, rlsPolicyDeparsed).Scan(&enabled, &forced, &policed)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: probe RLS on %s: %w", t, err)
+	}
+	var stmts []string
+	if !enabled {
+		stmts = append(stmts, fmt.Sprintf(`ALTER TABLE %s ENABLE ROW LEVEL SECURITY`, t))
+	}
+	if !forced {
+		stmts = append(stmts, fmt.Sprintf(`ALTER TABLE %s FORCE ROW LEVEL SECURITY`, t))
+	}
+	if !policed {
+		stmts = append(stmts, fmt.Sprintf(`DROP POLICY IF EXISTS tenant_isolation ON %s`, t),
+			fmt.Sprintf(`CREATE POLICY tenant_isolation ON %s USING (%s) WITH CHECK (%s)`, t, rlsPolicyPredicate, rlsPolicyPredicate))
+	}
+	return stmts, nil
 }
 
 // DropRLS removes the tenant_isolation policy and disables RLS on every

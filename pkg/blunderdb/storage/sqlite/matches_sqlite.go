@@ -958,7 +958,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 		rows, err := s.db.QueryContext(ctx,
 			`SELECT `+moveColsOf("mv.")+`, a.data
 			 FROM move mv LEFT JOIN analysis a ON a.position_id = mv.position_id
-			 WHERE mv.game_id = ? ORDER BY mv.move_number`, gameID)
+			 WHERE mv.game_id = ? ORDER BY mv.move_number, mv.id`, gameID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list moves: %w", err))
 			return
@@ -985,7 +985,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 func (s *matchStore) RecordedMoves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+moveSelectCols+` FROM move WHERE game_id = ? ORDER BY move_number`, gameID)
+			`SELECT `+moveSelectCols+` FROM move WHERE game_id = ? ORDER BY move_number, id`, gameID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list recorded moves: %w", err))
 			return
@@ -1051,7 +1051,7 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
 			 LEFT JOIN analysis a ON a.position_id = mv.position_id
 			 WHERE g.match_id = ?
-			 ORDER BY g.game_number, mv.move_number`, matchID)
+			 ORDER BY g.game_number, mv.move_number, mv.id`, matchID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
 			return
@@ -1147,7 +1147,7 @@ func (s *matchStore) MoveAnalysesByMatch(ctx context.Context, scope string, matc
 			 INNER JOIN move mv ON ma.move_id = mv.id
 			 INNER JOIN game g ON mv.game_id = g.id
 			 WHERE g.match_id = ?
-			 ORDER BY g.game_number, mv.move_number, ma.id`, matchID)
+			 ORDER BY g.game_number, mv.move_number, mv.id, ma.id`, matchID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list move analyses: %w", err))
 			return
@@ -1215,7 +1215,7 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 			 INNER JOIN game g ON mv.game_id = g.id
 			 INNER JOIN position p ON mv.position_id = p.id
 			 WHERE g.match_id = ?
-			 ORDER BY g.game_number, mv.move_number`, matchID)
+			 ORDER BY g.game_number, mv.move_number, mv.id`, matchID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: move positions for match %d: %w", matchID, err))
 			return

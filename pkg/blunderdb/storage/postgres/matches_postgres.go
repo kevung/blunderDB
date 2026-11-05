@@ -886,7 +886,7 @@ func (s *matchStore) MoveAnalysesByMatch(ctx context.Context, scope string, matc
 			 INNER JOIN move mv ON ma.move_id = mv.id
 			 INNER JOIN game g ON mv.game_id = g.id
 			 WHERE g.match_id = $1 AND ma.tenant_id = $2
-			 ORDER BY g.game_number, mv.move_number, ma.id`,
+			 ORDER BY g.game_number, mv.move_number, mv.id, ma.id`,
 			matchID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list move analyses: %w", err))
@@ -1179,7 +1179,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 			 FROM move mv LEFT JOIN analysis a
 			   ON a.position_id = mv.position_id AND a.tenant_id = mv.tenant_id
 			 WHERE mv.game_id = $1 AND mv.tenant_id = $2
-			 ORDER BY mv.move_number`,
+			 ORDER BY mv.move_number, mv.id`,
 			gameID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list moves: %w", err))
@@ -1207,7 +1207,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 func (s *matchStore) RecordedMoves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.Query(ctx,
-			`SELECT `+moveSelectCols+` FROM move WHERE game_id = $1 AND tenant_id = $2 ORDER BY move_number`,
+			`SELECT `+moveSelectCols+` FROM move WHERE game_id = $1 AND tenant_id = $2 ORDER BY move_number, id`,
 			gameID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list recorded moves: %w", err))
@@ -1276,7 +1276,7 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			 LEFT JOIN analysis a
 			   ON a.position_id = mv.position_id AND a.tenant_id = mv.tenant_id
 			 WHERE g.match_id = $1 AND mv.tenant_id = $2
-			 ORDER BY g.game_number, mv.move_number`,
+			 ORDER BY g.game_number, mv.move_number, mv.id`,
 			matchID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list moves by match: %w", err))
@@ -1344,7 +1344,7 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 			 INNER JOIN game g ON mv.game_id = g.id
 			 INNER JOIN position p ON mv.position_id = p.id
 			 WHERE g.match_id = $1 AND mv.tenant_id = $2
-			 ORDER BY g.game_number, mv.move_number`,
+			 ORDER BY g.game_number, mv.move_number, mv.id`,
 			matchID, tenant)
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: move positions for match %d: %w", matchID, err))
