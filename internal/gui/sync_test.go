@@ -125,6 +125,8 @@ func TestSyncAtStartupWaitsForTheRealLibrary(t *testing.T) {
 	}))
 	defer srv.Close()
 	keyring.MockInit()
+	// Made before the library's Close is registered, so it is removed after it: Windows keeps an open file.
+	realDir := t.TempDir()
 	mem := database.NewDatabase()
 	if err := mem.SetupDatabase(":memory:"); err != nil {
 		t.Fatal(err)
@@ -139,7 +141,7 @@ func TestSyncAtStartupWaitsForTheRealLibrary(t *testing.T) {
 	if a.syncAtStartup() {
 		t.Fatal("a startup run began on the in-memory library")
 	}
-	if err := mem.SetupDatabase(filepath.Join(t.TempDir(), "real.db")); err != nil {
+	if err := mem.SetupDatabase(filepath.Join(realDir, "real.db")); err != nil {
 		t.Fatal(err)
 	}
 	if !a.syncAtStartup() {
