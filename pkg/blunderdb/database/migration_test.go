@@ -3401,7 +3401,7 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 	}
 	for _, stmt := range []string{
 		`DROP INDEX IF EXISTS idx_analysis_engine`, `DROP INDEX IF EXISTS idx_analysis_depth`, `DROP INDEX IF EXISTS idx_analysis_provenance_pending`,
-		`DROP INDEX idx_analysis_creation_date`, `DROP INDEX idx_position_match_date`,
+		`DROP INDEX IF EXISTS idx_analysis_creation_date`, `DROP INDEX idx_position_match_date`,
 		`ALTER TABLE analysis DROP COLUMN analysis_engine`,
 		`ALTER TABLE analysis DROP COLUMN analysis_depth`,
 		`ALTER TABLE analysis DROP COLUMN creation_date`,
