@@ -69,6 +69,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    changeset
      POST /v1/changeset.export                     JSON
      POST /v1/changeset.import                     JSON
+     POST /v1/changeset.setJournalOff              JSON
    collections
      POST /v1/collections.addPosition              JSON
      POST /v1/collections.addPositions             JSON

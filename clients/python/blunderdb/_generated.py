@@ -234,6 +234,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/changeset.import — JSON."
         return self._call("/v1/changeset.import", payload)
 
+    def changeset_set_journal_off(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/changeset.setJournalOff — JSON."
+        return self._call("/v1/changeset.setJournalOff", payload)
+
     def collections_add_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.addPosition — JSON."
         return self._call("/v1/collections.addPosition", payload)
