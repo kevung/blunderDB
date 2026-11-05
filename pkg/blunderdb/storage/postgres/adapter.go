@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -48,7 +49,10 @@ func (shared) BoolAsInt(col string) string { return "CASE WHEN " + col + " THEN 
 func (shared) BoolArg(v bool) any          { return v }
 func (shared) Bigint(expr string) string   { return "CAST(" + expr + " AS BIGINT)" }
 func (shared) ILike() string               { return "ILIKE" }
-func (shared) ForUpdate() string           { return " FOR UPDATE" }
+func (shared) IDsIn(expr string, ids []string) (string, []any) {
+	return expr + " = ANY(?::bigint[])", []any{"{" + strings.Join(ids, ",") + "}"}
+}
+func (shared) ForUpdate() string { return " FOR UPDATE" }
 func (shared) Guard(key string) (string, []any) {
 	return "SELECT pg_advisory_xact_lock(?)", []any{guardKey(key)}
 }
@@ -91,6 +95,20 @@ func (a shared) Query(ctx context.Context, query string, args ...any) (sqlshared
 		return nil, err
 	}
 	return pgRows{rows}, nil
+}
+
+// searchDB plans each statement of a search for its values. A cached statement may keep a generic
+// plan, unaware of the LIMIT or of the value, and a search walks or sorts the tenant. Only the search:
+// with custom plans, an import into a new tenant, out of the histogram, is estimated at one row and
+// nests its loops, seconds per match.
+type searchDB struct{ sqlshared.Execer }
+
+func (a searchDB) Query(ctx context.Context, query string, args ...any) (sqlshared.Rows, error) {
+	return a.Execer.Query(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
+}
+
+func (a searchDB) QueryRow(ctx context.Context, query string, args ...any) sqlshared.Row {
+	return a.Execer.QueryRow(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
 }
 
 func (a shared) QueryRow(ctx context.Context, query string, args ...any) sqlshared.Row {

@@ -17,7 +17,7 @@ func (s *StatsStore) MatchTurns(ctx context.Context, scope string, matchID int64
 			mv.decision_ms, mv.cube_decision_ms
 		 FROM move mv JOIN game g ON g.id = mv.game_id
 		 WHERE `+tenant+` AND g.match_id = ?
-		 ORDER BY g.game_number ASC, mv.move_number ASC`,
+		 ORDER BY g.game_number ASC, mv.move_number ASC, mv.id ASC`,
 		append(args, matchID)...)
 	if err != nil {
 		return out, errf(s.DB, "MatchTurns query", err)

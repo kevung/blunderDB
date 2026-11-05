@@ -404,3 +404,13 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   Go in a pass of their own per family (`sqlshared.MarkFor`), so a library that
   passed 054's pass still gets it. `lock_timeout = 15s`.
   Schema-visible: bumped `domain.DatabaseVersion` to 2.57.0.
+- `061_search_indexes.sql` — indexes of the search (`docs/PERF-RECHERCHE.md` in gammonGo):
+  the tenant's analyses by id, the order by played-move error (supersedes
+  `idx_analysis_move_error`), the gammon rates, the checker masks by id. No schema
+  change, no version bump.
+- `062_search_occupancy.sql` — the occupancy of each side, for a board filter placing all
+  its fifteen checkers; the positions of a game from the index alone (supersedes
+  `idx_move_game`); the blunders of a tenant in id order. No schema change, no version bump.
+- `063_search_rates.sql` — the win rates on a plain index (`idx_analysis_win1/2`), replacing the
+  two covering indexes, `idx_analysis_win_gammon_covering` and `idx_analysis_win_gammon2_covering`,
+  five times heavier for the same search. No schema change, no version bump.

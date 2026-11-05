@@ -204,15 +204,15 @@ func positionOf(ctx context.Context, q execer, positionID int64, a *domain.Posit
 		return played.Position, nil
 	}
 	var state []byte
-	var por, d1, d2 *int64
-	err := q.QueryRowContext(ctx, playPositionSQL, positionID).Scan(&state, &por, &d1, &d2)
+	var por, d1, d2, dt *int64
+	err := q.QueryRowContext(ctx, playPositionSQL, positionID).Scan(&state, &por, &d1, &d2, &dt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: read position %d to replay its plays: %w", positionID, err)
 	}
-	return sqlshared.PlayPosition(state, por, d1, d2), nil
+	return sqlshared.PlayPosition(state, por, d1, d2, dt), nil
 }
 
 // write encodes a prepared analysis and upserts it with its columns.
@@ -337,13 +337,13 @@ func SaveExportedAnalysis(ctx context.Context, tx *sql.Tx, positionID int64, a *
 	}
 	var decisionType int
 	var state []byte
-	var por, d1, d2 *int64
-	err = tx.QueryRowContext(ctx, playDecisionPositionSQL, positionID).Scan(&decisionType, &state, &por, &d1, &d2)
+	var por, d1, d2, dt *int64
+	err = tx.QueryRowContext(ctx, playDecisionPositionSQL, positionID).Scan(&decisionType, &state, &por, &d1, &d2, &dt)
 	found := err == nil
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, fmt.Errorf("sqlite: save analysis: read position %d: %w", positionID, err)
 	}
-	played := sqlshared.PlayPosition(state, por, d1, d2)
+	played := sqlshared.PlayPosition(state, por, d1, d2, dt)
 	// The columns take the position only where positionOf would read it.
 	var pos *domain.Position
 	if ca := a.ColumnSource().CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
@@ -470,8 +470,8 @@ func (s *analysisStore) RepairDenormalisedFrom(ctx context.Context, after int64,
 		// than looked up row by row: a repair walks every analysis.
 		mvMove, mvCube sql.NullString
 		// The position's columns its legal plays depend on.
-		state       []byte
-		por, d1, d2 *int64
+		state           []byte
+		por, d1, d2, dt *int64
 	}
 	repaired := 0
 	lastID := after
@@ -494,7 +494,7 @@ func (s *analysisStore) RepairDenormalisedFrom(ctx context.Context, after int64,
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.label.rates[0], &r.label.rates[1], &r.label.rates[2], &r.label.rates[3], &r.label.rates[4], &r.label.rates[5], &r.label.engine, &r.label.depth, &r.label.created, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
+				if err := rows.Scan(&r.id, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.label.rates[0], &r.label.rates[1], &r.label.rates[2], &r.label.rates[3], &r.label.rates[4], &r.label.rates[5], &r.label.engine, &r.label.depth, &r.label.created, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
 					return fmt.Errorf("sqlite: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -528,7 +528,7 @@ func (s *analysisStore) RepairDenormalisedFrom(ctx context.Context, after int64,
 				a.PlayedMoves, a.PlayedCubeActions,
 				[]string{r.mvMove.String}, []string{r.mvCube.String})
 			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
-				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2))
+				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2, r.dt))
 			analyses[r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr, forced: r.forced, closeCube: r.closeCub}
 			labelled, err := s.repairLabel(ctx, r.id, r.posID, !r.label.equal(c), &a, c)

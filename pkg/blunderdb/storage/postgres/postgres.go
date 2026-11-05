@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgconn/ctxwatch"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -71,6 +73,11 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 		configureRLSPool(cfg)
 	}
 
+	// By default a cancelled context only closes the socket: the server finishes the
+	// statement unseen, at full cost, and a search abandoned by its reader goes on.
+	cfg.ConnConfig.BuildContextWatcherHandler = func(c *pgconn.PgConn) ctxwatch.Handler {
+		return &pgconn.CancelRequestContextWatcherHandler{Conn: c, DeadlineDelay: 2 * time.Second}
+	}
 	pool, err := pgxpool.NewWithConfig(ctx, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("postgres: open pool: %w", err)

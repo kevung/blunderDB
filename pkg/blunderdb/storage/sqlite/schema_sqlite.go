@@ -938,7 +938,12 @@ var schemaStatements = []string{
 	// idx_analysis_win_gammon and idx_analysis_win1 (a strict prefix).
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis(player1_win_rate, player1_gammon_rate, position_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_error_order    ON analysis(best_move_equity_error DESC, position_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon1        ON analysis(player1_gammon_rate)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis(player2_gammon_rate)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_blunder        ON analysis(position_id) WHERE best_move_equity_error >= 100 OR cube_error >= 100`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy1     ON position(occupancy_1, occupancy_2)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy2     ON position(occupancy_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis(is_forced) WHERE is_forced = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_close_cube  ON analysis(is_close_cube) WHERE is_close_cube = 1`,
 	// The comment-presence filter (`co`/`xco`) probes this table once per search

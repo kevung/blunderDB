@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -56,7 +57,10 @@ func (shared) BoolArg(v bool) any {
 }
 func (shared) Bigint(expr string) string { return expr }
 func (shared) ILike() string             { return "LIKE" }
-func (shared) ForUpdate() string         { return "" }
+func (shared) IDsIn(expr string, ids []string) (string, []any) {
+	return expr + " IN (" + strings.Join(ids, ",") + ")", nil
+}
+func (shared) ForUpdate() string { return "" }
 func (shared) Guard(string) (string, []any) {
 	return "", nil
 }

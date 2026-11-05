@@ -30,13 +30,13 @@ func (d *Database) migrate_2_36_0_to_2_37_0(ctx context.Context) error {
 		}
 	}
 	type row struct {
-		id             int64
-		data           []byte
-		mvMove, mvCube sql.NullString
-		state          []byte
-		por, d1, d2    *int64
-		forced, close  sql.NullInt64
-		moveErr        sql.NullInt64
+		id              int64
+		data            []byte
+		mvMove, mvCube  sql.NullString
+		state           []byte
+		por, d1, d2, dt *int64
+		forced, close   sql.NullInt64
+		moveErr         sql.NullInt64
 	}
 	changed := 0
 	var lastID int64
@@ -56,7 +56,7 @@ func (d *Database) migrate_2_36_0_to_2_37_0(ctx context.Context) error {
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.data, &r.forced, &r.close, &r.moveErr, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
+				if err := rows.Scan(&r.id, &r.data, &r.forced, &r.close, &r.moveErr, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
 					return nil, fmt.Errorf("recount decisions: scan: %w", err)
 				}
 				page = append(page, r)
@@ -80,7 +80,7 @@ func (d *Database) migrate_2_36_0_to_2_37_0(ctx context.Context) error {
 			}
 			playedMove, playedCube := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions,
 				[]string{r.mvMove.String}, []string{r.mvCube.String})
-			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCube, sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2))
+			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCube, sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2, r.dt))
 			moveErr := r.moveErr
 			if c.BestMoveUnscored {
 				moveErr = sql.NullInt64{}

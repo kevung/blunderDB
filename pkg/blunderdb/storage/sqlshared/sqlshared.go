@@ -158,6 +158,9 @@ type Dialect interface {
 	// ILike is the case-insensitive LIKE operator: LIKE in SQLite (already
 	// case-insensitive for ASCII), ILIKE in PostgreSQL.
 	ILike() string
+	// IDsIn writes "expr is one of ids", ids being parsed integers in decimal. A long list
+	// costs the database its parse tree in every session running it, unless bound whole.
+	IDsIn(expr string, ids []string) (string, []any)
 
 	// ForUpdate is the suffix of a SELECT whose rows the transaction is about
 	// to rewrite: " FOR UPDATE" on PostgreSQL, so a concurrent writer waits

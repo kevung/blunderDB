@@ -21,6 +21,16 @@ type searchFindReq struct {
 }
 
 // searchIndexOfReq asks for the rank of one position in a search's result.
+type searchCountUpToReq struct {
+	Filters domain.SearchFilters `json:"filters"`
+	Max     int                  `json:"max"`
+}
+
+type searchCountUpToResp struct {
+	Count  int  `json:"count"`
+	Capped bool `json:"capped"`
+}
+
 type searchIndexOfReq struct {
 	Filters domain.SearchFilters `json:"filters"`
 	ID      int64                `json:"id"`
@@ -95,6 +105,14 @@ func (s *Server) searchRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/search.count", rpc(func(ctx context.Context, scope string, req searchFindReq) (int, error) {
 			return ss().Count(ctx, scope, req.Filters)
+		})},
+		{http.MethodPost, "/v1/search.countUpTo", rpc(func(ctx context.Context, scope string, req searchCountUpToReq) (searchCountUpToResp, error) {
+			n, capped, err := ss().CountUpTo(ctx, scope, req.Filters, req.Max)
+			// A caller bounds its count in time, and leaving is how it says so: no failure.
+			if err != nil && ctx.Err() != nil {
+				return searchCountUpToResp{Capped: true}, nil
+			}
+			return searchCountUpToResp{Count: n, Capped: capped}, err
 		})},
 		{http.MethodPost, "/v1/search.indexOf", rpc(func(ctx context.Context, scope string, req searchIndexOfReq) (int, error) {
 			if req.ID <= 0 {
