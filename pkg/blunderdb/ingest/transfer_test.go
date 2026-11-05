@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -422,6 +424,9 @@ func TestTransfer_WithoutCommentsCarriesNoMatchNote(t *testing.T) {
 		if err := a.Matches().UpdateComment(ctx, "", src.ID, "private note"); err != nil {
 			t.Fatal(err)
 		}
+		if err := a.Matches().SetVideoSource(ctx, "", src.ID, "https://www.dropbox.com/s/SECRETTOKEN/cours.mp4"); err != nil {
+			t.Fatal(err)
+		}
 		src = firstMatch(t, a)
 		if src.FilePath == "" || src.MatchHash == "" {
 			t.Fatalf("fixture lacks a file name or a hash: %+v", src)
@@ -442,8 +447,17 @@ func TestTransfer_WithoutCommentsCarriesNoMatchNote(t *testing.T) {
 			}
 			continue
 		}
-		if got.Comment != "" || got.CommentAuthor != "" || got.FilePath != "" {
+		if got.Comment != "" || got.CommentAuthor != "" || got.FilePath != issuance.AnonymousFileName(src.FilePath, false) {
 			t.Errorf("without comments the target holds note %q author %q file %q", got.Comment, got.CommentAuthor, got.FilePath)
+		}
+		if got.VideoSource != nil && *got.VideoSource != "" {
+			t.Errorf("without comments the target holds a video source %q", *got.VideoSource)
+		}
+		if got.FilePath == "" {
+			t.Errorf("a received imported match carries no file marker: transcription.IsImported would read it as typed in")
+		}
+		if strings.Contains(got.FilePath, strings.TrimSuffix(src.FilePath, filepath.Ext(src.FilePath))) {
+			t.Errorf("the file name leaks in %q", got.FilePath)
 		}
 	}
 }

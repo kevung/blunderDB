@@ -198,6 +198,26 @@ func CarriedFileName(path string) string {
 	return v[strings.LastIndexAny(v, `/\`)+1:]
 }
 
+// AnonymousFileName stands for a source file whose name stays with its owner:
+// a fixed stem and, for the two formats the winner encoding reads from it, the
+// extension; any other extension could be a part of the owner's name.
+// It is empty for a match no file produced, so that match stays a
+// transcription for the recipient.
+func AnonymousFileName(path string, hadImportBatch bool) string {
+	name := CarriedFileName(path)
+	if name == "" && !hadImportBatch {
+		return ""
+	}
+	ext := ""
+	if i := strings.LastIndex(name, "."); i >= 0 {
+		ext = strings.ToLower(name[i+1:])
+	}
+	if ext == "xg" || ext == "bgf" {
+		return "imported-file." + ext
+	}
+	return "imported-file"
+}
+
 // Carried returns the subset of md that may travel inside an exported file.
 func Carried(md map[string]string) map[string]string {
 	out := make(map[string]string, len(CarriedMetadataKeys))

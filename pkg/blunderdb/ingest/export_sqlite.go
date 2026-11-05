@@ -1176,10 +1176,14 @@ func (e *exporter) writeTournaments() error {
 			e.skip("reading tournament", "tournamentID", id, "err", storage.ErrNotFound)
 			continue
 		}
+		comment := t.Comment
+		if e.opts.Transfer && !e.opts.Comments {
+			comment = ""
+		}
 		res, err := e.tx.ExecContext(e.ctx,
 			`INSERT INTO tournament (name, date, location, sort_order, comment, created_at, updated_at)
 			 VALUES (?, ?, ?, ?, ?, COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP), COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP))`,
-			t.Name, t.Date, t.Location, t.SortOrder, t.Comment, t.CreatedAt, t.UpdatedAt)
+			t.Name, t.Date, t.Location, t.SortOrder, comment, t.CreatedAt, t.UpdatedAt)
 		if err != nil {
 			e.skip("inserting tournament", "tournamentID", id, "err", err)
 			continue
@@ -1321,10 +1325,14 @@ func (e *exporter) writeMatches() error {
 		}
 		noteCols, noteArgs := carriedMatchComment(m)
 		filePath := issuance.CarriedFileName(m.FilePath)
+		videoSource := issuance.CarriedVideoSource(m.VideoSource)
 		if e.opts.Transfer && !e.opts.Comments {
-			// The note and the file name are the owner's own; the content
-			// hash says nothing of them and still deduplicates.
-			noteCols, noteArgs, filePath = nil, nil, ""
+			// The note, the file name and the video link are the owner's own
+			// (a link may hold a token); the content hash says nothing of
+			// them and still deduplicates. An imported match keeps a
+			// generic file marker so the recipient still knows it came from
+			// a file, whose analyses a transcription would drop.
+			noteCols, noteArgs, filePath, videoSource = nil, nil, issuance.AnonymousFileName(m.FilePath, m.ImportBatchID != 0), nil
 		}
 		res, err := e.tx.ExecContext(e.ctx,
 			`INSERT INTO match (`+strings.Join(append(slices.Clone(exportedMatchColumns), noteCols...), ", ")+`)
@@ -1336,7 +1344,7 @@ func (e *exporter) writeMatches() error {
 				tournamentID, m.TournamentSortOrder, m.LastVisitedPosition,
 				m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
 				m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion,
-				issuance.CarriedVideoSource(m.VideoSource)}, noteArgs...)...)
+				videoSource}, noteArgs...)...)
 		if err != nil {
 			e.skip("inserting match", "matchID", id, "err", err)
 			continue

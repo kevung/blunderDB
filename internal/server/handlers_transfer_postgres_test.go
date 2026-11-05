@@ -17,8 +17,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
 
 // importFixture fills scope of s from an XG fixture of the repository.
@@ -258,6 +260,9 @@ func TestTransferPull_NoMatchNoteAndIndividualPositions_Postgres(t *testing.T) {
 	if err := st.Matches().UpdateComment(ctx2, "2", src.ID, "private note"); err != nil {
 		t.Fatal(err)
 	}
+	if err := st.Matches().SetVideoSource(ctx2, "2", src.ID, "https://www.dropbox.com/s/SECRETTOKEN/cours.mp4"); err != nil {
+		t.Fatal(err)
+	}
 	var ids []int64
 	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{Limit: 5}) {
 		if err != nil {
@@ -288,8 +293,11 @@ func TestTransferPull_NoMatchNoteAndIndividualPositions_Postgres(t *testing.T) {
 	if got == nil {
 		t.Fatal("no match arrived in tenant 1")
 	}
-	if got.Comment != "" || got.CommentAuthor != "" || got.FilePath != "" {
-		t.Errorf("tenant 1 holds note %q author %q file %q", got.Comment, got.CommentAuthor, got.FilePath)
+	if got.Comment != "" || got.CommentAuthor != "" || got.FilePath != issuance.AnonymousFileName(src.FilePath, false) || (got.VideoSource != nil && *got.VideoSource != "") {
+		t.Errorf("tenant 1 holds note %q author %q file %q has a video source", got.Comment, got.CommentAuthor, got.FilePath)
+	}
+	if !transcription.IsImported(got) {
+		t.Errorf("the received match no longer counts as imported (file %q): a transcription would drop its analyses unwarned", got.FilePath)
 	}
 	if got.MatchHash != src.MatchHash {
 		t.Errorf("match hash %q, want %q", got.MatchHash, src.MatchHash)
