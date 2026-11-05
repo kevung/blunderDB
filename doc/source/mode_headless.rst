@@ -1477,7 +1477,11 @@ mêmes appels que ``blunderdb serve``, sous l'adresse que l'utilisateur colle
   opaque, ``{}`` repart du début ; ``limit`` ne dépasse pas 1000 (l'application
   en demande 500). Un enregistrement est ``{"seq", "uuid", "family", "op",
   "changed_at", "payload"?}``. Le serveur doit pouvoir rendre un curseur qu'il a
-  émis, et répondre ``410`` quand il ne peut plus en reprendre un.
+  émis, et répondre ``410`` quand il ne peut plus en reprendre un. Un serveur
+  qui ne veut pas porter un enregistrement trop gros rend une page vide dont le
+  curseur le dépasse et qui le nomme : ``"skipped": [{"family", "uuid",
+  "size"}]``. Sans cela, une page d'un seul enregistrement est servie quelle
+  que soit sa taille.
 * ``POST <base>/v1/changeset.import`` avec ``{"records": […]}`` (au plus 500
   enregistrements, ceux d'un ``changeset.export``) fusionne, la dernière
   écriture gagnant, et rend ``200`` et le rapport (``applied``, ``added``,
@@ -1485,7 +1489,10 @@ mêmes appels que ``blunderdb serve``, sous l'adresse que l'utilisateur colle
   ``unsupported``). Un enregistrement répété ne change rien.
 * Chaque requête porte ``Authorization: Bearer <jeton>`` et
   ``Content-Type: application/json``. Le jeton ne figure jamais dans l'adresse.
-  ``401`` ou ``403`` : jeton refusé ; ``413`` : envoi trop gros ; ``429`` : débit
+  ``401`` ou ``403`` : jeton refusé ; ``413`` avec le code ``payload_too_large``
+  ou ``record_too_large`` : envoi trop gros pour le serveur (tout autre ``413``,
+  d'un mandataire par exemple, arrête le passage sans rien enjamber) ; ``400``
+  de code ``invalid_body`` : corps coupé ou trop lent ; ``429`` : débit
   atteint ; ``410`` sur l'export : curseur périmé ; tout autre échec porte
   l'enveloppe ``{"error": {"code", "message"}}`` des appels ci-dessus.
 
@@ -1496,6 +1503,15 @@ avancé une fois sa page réglée. Un curseur refusé par un journal (``410``, o
 périmé en local) repart du début, l'import absorbant la répétition. Les
 enregistrements reçus reviennent à l'envoi suivant, que le serveur absorbe de
 la même façon.
+
+Sur ``413 payload_too_large`` ou une coupure en cours d'envoi, l'application
+divise la page par deux jusqu'à un enregistrement. Un enregistrement seul que
+le serveur refuse pour sa taille (code explicite), ou qui ne passe pas, est mis
+de côté : il est conservé avec son type et son identifiant dans l'état de
+synchronisation, retenté à chaque passage et listé dans l'écran de
+synchronisation. De même pour un enregistrement que le serveur déclare enjambé
+à l'export. Le serveur doit donc lire un corps lentement envoyé : le délai de
+lecture se renouvelle tant que l'envoi progresse.
 
 Trois marques s'ajoutent à une position : ``changeset.export`` les emporte toutes
 les trois, l'export et le transfert le dessin et le lien d'origine, sans le libellé.
