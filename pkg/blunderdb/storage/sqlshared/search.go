@@ -742,6 +742,11 @@ func (s *SearchStore) scan(ctx context.Context, f domain.SearchFilters, wc searc
 	keyset := keysetOrder(f.Sort)
 	maxChunk := int(searchChunk.Load())
 	chunk := min(searchFirstChunk, maxChunk)
+	// Each candidate read is a heap read of the position and of its analysis: a page reads
+	// little more than itself, and the chunks double when the Go phase rejects.
+	if opts.Limit > 0 {
+		chunk = min(chunk, opts.Offset+opts.Limit+1)
+	}
 	skip, taken := opts.Offset, 0
 	var after int64
 	resumed := false
@@ -999,8 +1004,31 @@ func (s *SearchStore) Count(ctx context.Context, scope string, f domain.SearchFi
 	return s.countWhere(ctx, wc, "", nil)
 }
 
+// countRows reads the rows of a search one by one up to limit; on failure n is what it reached.
+func (s *SearchStore) countRows(ctx context.Context, wc searchWhereClause, limit int) (n int, err error) {
+	limitClause, limitArgs := s.DB.LimitOffset(limit, 0)
+	rows, err := s.DB.Query(ctx, `SELECT 1 FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE `+wc.where+limitClause, append(append([]any{}, wc.args...), limitArgs...)...)
+	if err != nil {
+		return 0, errf(s.DB, "search bounded count", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		n++
+	}
+	if err := rows.Err(); err != nil {
+		return n, errf(s.DB, "search bounded count", err)
+	}
+	return n, nil
+}
+
 // CountUpTo counts at most max survivors, one row past it to tell a result of
 // exactly max from a longer one. The Go phase stops on the same condition.
+//
+// A caller bounds the count in time with ctx: rows are counted as they arrive, and a
+// count cut short reports what it reached as capped, "at least n". Cut before its first
+// row, it fails with the context's error.
 func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.SearchFilters, max int) (int, bool, error) {
 	if max <= 0 {
 		return 0, false, fmt.Errorf("search count: max %d: %w", max, storage.ErrInvalid)
@@ -1016,16 +1044,12 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 			return true
 		})
 	} else {
-		limitClause, limitArgs := s.DB.LimitOffset(max+1, 0)
-		query := `SELECT COUNT(*) FROM (SELECT 1 FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE ` + wc.where + limitClause + `) AS bounded`
-		err = s.DB.QueryRow(ctx, query, append(append([]any{}, wc.args...), limitArgs...)...).Scan(&n)
-		if err != nil {
-			err = errf(s.DB, "search bounded count", err)
-		}
+		n, err = s.countRows(ctx, wc, max+1)
 	}
 	if err != nil {
+		if ctx.Err() != nil && n > 0 {
+			return n, true, nil
+		}
 		return 0, false, err
 	}
 	if n > max {

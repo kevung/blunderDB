@@ -51,6 +51,7 @@ type SearchStore interface {
 
 	// CountUpTo is Count bounded: it stops at max and reports capped when the
 	// result is longer, so that a result of any size costs no more than max rows.
+	// A count the context cuts short reports what it reached as capped ("at least n").
 	CountUpTo(ctx context.Context, scope string, f domain.SearchFilters, max int) (n int, capped bool, err error)
 
 	// IndexOf is the rank of id in Find's unbounded result; found is false

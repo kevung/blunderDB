@@ -178,26 +178,32 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	if err != nil {
 		return err
 	}
-	if narrowLimit.Load() != 0 && len(games)*movesPerGame <= matchListLimit {
-		if len(games) == 0 {
-			where.WriteString(" AND 0=1")
-			return nil
-		}
-		inGames, gameArgs := s.DB.IDsIn("game_id", games)
-		return s.narrowWithin(ctx, matchListLimit, "SELECT position_id FROM move WHERE "+inGames, gameArgs, where, args, nil)
+	if len(games) == 0 {
+		where.WriteString(" AND 0=1")
+		return nil
 	}
 	inGames, gameArgs := s.DB.IDsIn("mv.game_id + 0", games)
-	where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE mv.position_id = p.id AND " + inGames + " LIMIT 1 OFFSET 0)")
-	*args = append(*args, gameArgs...)
-	return nil
+	walk := func() {
+		where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE mv.position_id = p.id AND " + inGames + " LIMIT 1 OFFSET 0)")
+		*args = append(*args, gameArgs...)
+	}
+	if narrowLimit.Load() == 0 || len(games)*movesPerGame/matchProbeMargin > matchListLimit {
+		walk()
+		return nil
+	}
+	// The games are short or long: their moves are counted by reading them, at most
+	// matchListLimit index entries, a few milliseconds.
+	listGames, listArgs := s.DB.IDsIn("game_id", games)
+	return s.narrowWithin(ctx, matchListLimit, "SELECT position_id FROM move WHERE "+listGames, listArgs, where, args, walk)
 }
 
 // matchListLimit is how many moves a match-level filter may name by literal list: above
 // it the filter holds of at least one position in a hundred of a five-million library,
 // and the walk meets it soon. movesPerGame is a mean of real matches, for an estimate.
 const (
-	matchListLimit = 30000
-	movesPerGame   = 55
+	matchListLimit   = 30000
+	movesPerGame     = 55
+	matchProbeMargin = 4
 )
 
 // playerSeatCond writes the " AND (...)" condition on the two players of the

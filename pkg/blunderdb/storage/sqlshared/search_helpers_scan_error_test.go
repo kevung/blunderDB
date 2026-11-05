@@ -63,3 +63,47 @@ func TestFindPropagatesTournamentLookupFailure(t *testing.T) {
 		t.Fatal("find with a failing tournament lookup = nil error; want a non-nil error")
 	}
 }
+
+// cutExecer cuts the context after three rows of its Query, as a reader's time budget does.
+type cutExecer struct {
+	fakeExecer
+	cancel context.CancelFunc
+	empty  bool
+}
+
+type cutRows struct {
+	emptyRows
+	left   int
+	cancel context.CancelFunc
+}
+
+func (r *cutRows) Next() bool {
+	if r.left == 0 {
+		r.cancel()
+		return false
+	}
+	r.left--
+	return true
+}
+func (r *cutRows) Err() error { return context.Canceled }
+
+func (f *cutExecer) Query(ctx context.Context, query string, args ...any) (Rows, error) {
+	if f.empty {
+		return &cutRows{cancel: f.cancel}, nil
+	}
+	return &cutRows{left: 3, cancel: f.cancel}, nil
+}
+
+func TestCountUpToReportsACountCutShortAsAtLeast(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	n, capped, err := (&SearchStore{DB: &cutExecer{cancel: cancel}}).CountUpTo(ctx, "", domain.SearchFilters{}, 100)
+	if err != nil || n != 3 || !capped {
+		t.Fatalf("cut after three rows: n=%d capped=%v err=%v", n, capped, err)
+	}
+	ctx, cancel = context.WithCancel(context.Background())
+	defer cancel()
+	if _, _, err := (&SearchStore{DB: &cutExecer{cancel: cancel, empty: true}}).CountUpTo(ctx, "", domain.SearchFilters{}, 100); err == nil {
+		t.Fatal("cut before the first row must fail, not report zero")
+	}
+}
