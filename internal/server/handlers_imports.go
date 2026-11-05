@@ -621,7 +621,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 				emit(map[string]any{"event": "cancelled"})
 				return
 			}
-			emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
+			emit(map[string]any{"event": "error", "error": errorBodyFor(w, err), "import_code": ingest.ImportErrorCode(err)})
 			return
 		}
 

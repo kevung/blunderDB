@@ -93,7 +93,21 @@ type ImportReport struct {
 type ImportFailure struct {
 	Source string `json:"source"`
 	Reason string `json:"reason"`
+	// Code says why in one of the ImportErr values; Reason keeps the words.
+	Code string `json:"code,omitempty"`
 }
+
+// Why a file could not be imported. Stable: a client acts on them. A duplicate
+// is not among them: it is a file that succeeded in bringing nothing new, and
+// the report counts it apart.
+const (
+	ImportErrUnknownFormat = "unknown_format" // no importer reads this kind of file
+	ImportErrTruncated     = "truncated"      // the file stops before its end
+	ImportErrCorrupt       = "corrupt"        // the importer does not recognise its content
+	ImportErrTooLarge      = "too_large"      // a part of it goes past what is accepted
+	ImportErrEmpty         = "empty"          // well formed, with nothing to import in it
+	ImportErrInternal      = "internal"       // the server failed, not the file: try again
+)
 
 // ImportBlunder is one of a batch's worst decisions.
 type ImportBlunder struct {

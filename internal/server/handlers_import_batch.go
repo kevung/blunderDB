@@ -55,6 +55,8 @@ const batchExtractFactor = 2
 type batchFileError struct {
 	Path  string `json:"path"`
 	Error string `json:"error"`
+	// Code is one of the domain.ImportErr values.
+	Code string `json:"code"`
 }
 
 // batchJob is one batch import. All its mutable fields sit behind mu.
@@ -507,12 +509,12 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 					}
 					counts.FilesFailed++
 					if len(counts.Failures) < batchErrorWindow {
-						counts.Failures = append(counts.Failures, domain.ImportFailure{Source: rel, Reason: o.Error})
+						counts.Failures = append(counts.Failures, domain.ImportFailure{Source: rel, Reason: o.Error, Code: o.Code})
 					}
 					job.mu.Lock()
 					job.failed++
 					if len(job.errors) < batchErrorWindow {
-						job.errors = append(job.errors, batchFileError{Path: rel, Error: o.Error})
+						job.errors = append(job.errors, batchFileError{Path: rel, Error: o.Error, Code: o.Code})
 					}
 					job.mu.Unlock()
 				}

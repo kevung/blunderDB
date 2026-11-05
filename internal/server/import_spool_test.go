@@ -15,6 +15,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -147,5 +148,76 @@ func TestImportBatchSpoolHoldsWhatItUnpacked(t *testing.T) {
 	<-job.done
 	if got := srv.spool.usage(); got != 0 {
 		t.Errorf("spool still holds %d bytes after the batch", got)
+	}
+}
+
+func spoolEvents(t *testing.T, ts *httptest.Server, path, filename string, file []byte) []map[string]any {
+	t.Helper()
+	return uploadImportNamed(t, ts, path, filename, file)
+}
+
+// The file-by-file stream says why in a stable code, its text kept.
+func TestImportStreamErrorCarriesItsCode(t *testing.T) {
+	ts, _ := spoolServer(t, 0)
+	xg := spoolRepoXG(t)
+	events := spoolEvents(t, ts, "/v1/imports.xg", "a.xg", xg[:len(xg)/2])
+	last := events[len(events)-1]
+	if last["event"] != "error" || last["import_code"] != domain.ImportErrCorrupt {
+		t.Errorf("last event %v, want an error of code %s", last, domain.ImportErrCorrupt)
+	}
+	if last["error"] == nil {
+		t.Error("the error body must stay beside the code")
+	}
+}
+
+// A batch names each refused file's code, in its status and in its report.
+func TestImportBatchFileErrorsCarryTheirCode(t *testing.T) {
+	ts, srv := spoolServer(t, 0)
+	xg := spoolRepoXG(t)
+	archive := spoolTar(t, "cut.xg", xg[:len(xg)/2])
+	var buf bytes.Buffer
+	mw := multipart.NewWriter(&buf)
+	fw, _ := mw.CreateFormFile("file", "lot.tar")
+	_, _ = fw.Write(archive)
+	_ = mw.Close()
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/imports.batch", &buf)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	req.Header.Set(middleware.TenantHeader, testTenant)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	var out importBatchResp
+	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+		t.Fatal(err)
+	}
+	st := waitBatch(t, srv, out.ImportID)
+	if len(st.Errors) != 1 || st.Errors[0].Code != domain.ImportErrCorrupt || st.Errors[0].Error == "" {
+		t.Fatalf("errors %+v, want one of code %s", st.Errors, domain.ImportErrCorrupt)
+	}
+	batch, err := srv.opts.Storage.ImportBatches().Load(context.Background(), testTenant, st.BatchID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(batch.Report.Failures) != 1 || batch.Report.Failures[0].Code != domain.ImportErrCorrupt {
+		t.Errorf("report failures %+v", batch.Report.Failures)
+	}
+}
+
+// report=deferred leaves the report to imports.report; the default keeps it in
+// the terminal event.
+func TestImportReportDeferred(t *testing.T) {
+	ts, _ := spoolServer(t, 0)
+	xg := spoolRepoXG(t)
+	events := spoolEvents(t, ts, "/v1/imports.xg", "a.xg", xg)
+	if _, ok := events[len(events)-1]["report"]; !ok {
+		t.Errorf("default terminal event has no report: %v", events[len(events)-1])
+	}
+	ts2, _ := spoolServer(t, 0)
+	events = spoolEvents(t, ts2, "/v1/imports.xg?report=deferred", "a.xg", xg)
+	last := events[len(events)-1]
+	if _, ok := last["report"]; ok || last["batch_id"] == nil {
+		t.Errorf("deferred terminal event: %v, want a batch id and no report", last)
 	}
 }
