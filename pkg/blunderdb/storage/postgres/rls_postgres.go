@@ -113,8 +113,8 @@ func (s *Storage) ApplyRLS(ctx context.Context) error {
 
 const rlsLockTimeout = "5s"
 
-// rlsPolicyPredicate maps an unset/reset GUC (custom GUCs reset to '', not NULL)
-// to NULL, so the comparison yields no rows instead of an `''::bigint` cast error:
+// rlsPolicyPredicate maps an unset/reset GUC (custom GUCs reset to ”, not NULL)
+// to NULL, so the comparison yields no rows instead of an `”::bigint` cast error:
 // fail-closed for a connection without a tenant.
 const rlsPolicyPredicate = "tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::bigint"
 
