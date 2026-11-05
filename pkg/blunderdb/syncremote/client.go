@@ -137,7 +137,7 @@ func (c *Client) call(ctx context.Context, method string, in, out any) error {
 	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.base+"/v1/"+method, bytes.NewReader(body))
 	if err != nil {
-		return fmt.Errorf("%w: %v", ErrBadAddress, err)
+		return fmt.Errorf("%w: %w", ErrBadAddress, err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
@@ -151,18 +151,18 @@ func (c *Client) call(ctx context.Context, method string, in, out any) error {
 		}
 		// The transport's error repeats the URL, never a header.
 		if connected {
-			return fmt.Errorf("%w: %w: %v", ErrUnavailable, ErrInterrupted, err)
+			return fmt.Errorf("%w: %w: %w", ErrUnavailable, ErrInterrupted, err)
 		}
-		return fmt.Errorf("%w: %v", ErrUnavailable, err)
+		return fmt.Errorf("%w: %w", ErrUnavailable, err)
 	}
 	defer resp.Body.Close()
 	raw, err := io.ReadAll(io.LimitReader(resp.Body, maxAnswer))
 	if err != nil {
-		return fmt.Errorf("%w: reading the answer: %v", ErrUnavailable, err)
+		return fmt.Errorf("%w: reading the answer: %w", ErrUnavailable, err)
 	}
 	if resp.StatusCode == http.StatusOK {
 		if err := json.Unmarshal(raw, out); err != nil {
-			return fmt.Errorf("%w: the answer is not a changeset: %v", ErrUnavailable, err)
+			return fmt.Errorf("%w: the answer is not a changeset: %w", ErrUnavailable, err)
 		}
 		return nil
 	}

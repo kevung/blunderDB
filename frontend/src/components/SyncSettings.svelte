@@ -95,7 +95,14 @@
             {$t('sync.skipped.title', { count: syncSkipped(st).length })}
             <ul>
                 {#each syncSkipped(st) as k (k.direction + k.family + k.uuid)}
-                    <li>{$t('sync.skipped.item', { family: k.family, id: k.uuid, direction: $t(k.direction === 'received' ? 'sync.skipped.received' : 'sync.skipped.sent'), reason: $t(syncSkipReasonKey(k.reason)) })}</li>
+                    <li>
+                        {$t('sync.skipped.item', {
+                            family: k.family,
+                            id: k.uuid,
+                            direction: $t(k.direction === 'received' ? 'sync.skipped.received' : 'sync.skipped.sent'),
+                            reason: $t(syncSkipReasonKey(k.reason))
+                        })}
+                    </li>
                 {/each}
             </ul>
         </div>
