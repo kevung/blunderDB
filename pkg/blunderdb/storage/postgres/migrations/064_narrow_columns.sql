@@ -10,7 +10,7 @@
 -- nothing rather than fails.
 --
 -- One ALTER per table: one rewrite, under ACCESS EXCLUSIVE, about 12 000 rows/s
--- with its indexes. Past 2 GB of position table that is minutes of closed
+-- with its indexes. Past 512 MB of position table (1,5 M rows, two minutes) that is longer of closed
 -- library, which no start decides alone: the file records itself and leaves
 -- the columns wide, and everything still works on wide columns. Then, in a
 -- window: SELECT blunderdb_narrow_columns();
@@ -80,7 +80,7 @@ BEGIN
 END $$;
 
 DO $$ BEGIN
-    IF pg_relation_size('position') <= 2147483648 THEN
+    IF pg_relation_size('position') <= 536870912 THEN
         PERFORM blunderdb_narrow_columns();
     ELSE
         RAISE WARNING 'position is too large to rewrite at a start: columns stay wide, run SELECT blunderdb_narrow_columns() in a window';
