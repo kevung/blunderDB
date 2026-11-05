@@ -269,7 +269,8 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	// several per move, and each is scored by the analysis its position ends
 	// with.
 	var newMoves []*domain.Move
-	commentCtx := storage.WithCommentAuthor(ctx, importedCommentAuthor(g))
+	var visits []*MoveGraph
+	var positions []*domain.Position
 	for gi := range g.Games {
 		gg := &g.Games[gi]
 		var gameID int64
@@ -281,27 +282,30 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			}
 			gameID = id
 		}
-		counter.Games++
-
 		for mi := range gg.Moves {
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
-				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction, Position: mg.Position}
-				posID, created, err := savePositionCreated(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin, createdHere)
-				if err != nil {
-					return res, err
-				}
-				mg.Move.PositionID = posID
-				if created {
-					res.SavedPositions++
-				}
-				counter.Positions++
+				visits = append(visits, mg)
+				positions = append(positions, mg.Position)
 			}
 			if !enrich {
 				mg.Move.GameID = gameID
 				newMoves = append(newMoves, &mg.Move)
 			}
-			if prog != nil {
+		}
+	}
+	saved, err := saveVisits(ctx, tx, scope, g, visits, positions, createdHere)
+	if err != nil {
+		return res, err
+	}
+	res.SavedPositions += saved
+	if prog != nil {
+		for gi := range g.Games {
+			counter.Games++
+			for mi := range g.Games[gi].Moves {
+				if g.Games[gi].Moves[mi].Position != nil {
+					counter.Positions++
+				}
 				prog(counter)
 			}
 		}
@@ -385,48 +389,122 @@ func savePositionCreated(ctx context.Context, tx storage.Tx, scope string, pos *
 		createdHere[posID] = true
 	}
 	keepStored := createdHere != nil && !createdHere[posID]
+	if frags := presentFragments(analyses); len(frags) > 0 {
+		mergeCtx := ctx
+		if created {
+			mergeCtx = storage.WithFreshPosition(ctx, posID)
+		}
+		if _, err := tx.Analyses().Merge(mergeCtx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+			return foldFragments(existing, frags, posID, keepStored)
+		}); err != nil {
+			return posID, created, err
+		}
+	}
+	return posID, created, addNewComments(ctx, tx, scope, posID, comments, origin)
+}
+
+// presentFragments are the analyses that are there.
+func presentFragments(analyses []*domain.PositionAnalysis) []*domain.PositionAnalysis {
 	frags := make([]*domain.PositionAnalysis, 0, len(analyses))
 	for _, frag := range analyses {
 		if frag != nil {
 			frags = append(frags, frag)
 		}
 	}
-	if len(frags) > 0 {
-		mergeCtx := ctx
-		if created {
-			mergeCtx = storage.WithFreshPosition(ctx, posID)
-		}
-		if _, err := tx.Analyses().Merge(mergeCtx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
-			cur := existing
-			for i, frag := range frags {
-				if keepStored {
-					next := deepenAnalysis(cur, *frag)
-					if next != cur && i < len(frags)-1 {
-						next.PositionID = int(posID)
-						engine.RoundAnalysisForStorage(next)
-					}
-					cur = next
-					continue
-				}
-				merged := mergeAnalysis(cur, *frag)
-				if i < len(frags)-1 {
-					merged.PositionID = int(posID)
-					engine.RoundAnalysisForStorage(&merged)
-				}
-				cur = &merged
+	return frags
+}
+
+// foldFragments merges frags into existing, in memory, by the rule of an import
+// or, with keepStored, of a rewrite. Between two fragments the partial result is
+// rounded as storage would round it.
+func foldFragments(existing *domain.PositionAnalysis, frags []*domain.PositionAnalysis, posID int64, keepStored bool) *domain.PositionAnalysis {
+	cur := existing
+	for i, frag := range frags {
+		if keepStored {
+			next := deepenAnalysis(cur, *frag)
+			if next != cur && i < len(frags)-1 {
+				next.PositionID = int(posID)
+				engine.RoundAnalysisForStorage(next)
 			}
-			return cur
-		}); err != nil {
-			return posID, created, err
+			cur = next
+			continue
+		}
+		merged := mergeAnalysis(cur, *frag)
+		if i < len(frags)-1 {
+			merged.PositionID = int(posID)
+			engine.RoundAnalysisForStorage(&merged)
+		}
+		cur = &merged
+	}
+	return cur
+}
+
+// saveVisits stores what the moves of a match name, in as few round trips as
+// the store allows, and returns how many positions are new rows.
+//
+// The result is the one of visiting each move in turn: every position first,
+// since a position's id does not depend on another's analysis; then the
+// analyses of the first visit to a position this call created, which can read
+// nothing; then, in visit order, those that can find a row, a second visit to
+// such a position included, then the comments.
+func saveVisits(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph, visits []*MoveGraph, positions []*domain.Position, createdHere map[int64]bool) (int, error) {
+	ids, created, err := tx.Positions().SaveMany(ctx, scope, positions)
+	if err != nil {
+		return 0, err
+	}
+	saved := 0
+	var fresh []storage.FreshAnalysis
+	for i, mg := range visits {
+		mg.Move.PositionID = ids[i]
+		if !created[i] {
+			continue
+		}
+		saved++
+		if createdHere != nil {
+			createdHere[ids[i]] = true
+		}
+		if frags := presentFragments(mg.Analyses); len(frags) > 0 {
+			fresh = append(fresh, storage.FreshAnalysis{
+				PositionID: ids[i],
+				Analysis:   foldFragments(nil, frags, ids[i], false),
+				Played:     playedAt(mg),
+			})
 		}
 	}
+	if err := tx.Analyses().SaveFresh(ctx, scope, fresh); err != nil {
+		return saved, err
+	}
+	commentCtx := storage.WithCommentAuthor(ctx, importedCommentAuthor(g))
+	for i, mg := range visits {
+		posID := ids[i]
+		if frags := presentFragments(mg.Analyses); len(frags) > 0 && !created[i] {
+			keepStored := createdHere != nil && !createdHere[posID]
+			if _, err := tx.Analyses().Merge(commentCtx, scope, posID, playedAt(mg), func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+				return foldFragments(existing, frags, posID, keepStored)
+			}); err != nil {
+				return saved, err
+			}
+		}
+		if err := addNewComments(commentCtx, tx, scope, posID, mg.Comments, g.CommentOrigin); err != nil {
+			return saved, err
+		}
+	}
+	return saved, nil
+}
+
+func playedAt(mg *MoveGraph) *storage.PlayedActions {
+	return &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction, Position: mg.Position}
+}
+
+// addNewComments adds the comments the position does not hold yet.
+func addNewComments(ctx context.Context, tx storage.Tx, scope string, posID int64, comments []string, origin domain.CommentOrigin) error {
 	// Add only comments not already on the position: an enrich re-import, or
 	// the same file imported twice, revisits a deduplicated position.
 	if len(comments) > 0 {
 		existing := map[string]bool{}
 		for c, err := range tx.Comments().ByPosition(ctx, scope, posID) {
 			if err != nil {
-				return posID, created, err
+				return err
 			}
 			existing[c.Text] = true
 		}
@@ -435,12 +513,12 @@ func savePositionCreated(ctx context.Context, tx storage.Tx, scope string, pos *
 				continue
 			}
 			if _, err := tx.Comments().AddFrom(ctx, scope, posID, c, origin); err != nil {
-				return posID, created, err
+				return err
 			}
 			existing[c] = true
 		}
 	}
-	return posID, created, nil
+	return nil
 }
 
 // applyFlags raises the source-tool study mark on the positions of a graph

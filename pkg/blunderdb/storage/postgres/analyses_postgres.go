@@ -830,6 +830,69 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 	return nil
 }
 
+// analysisBulkTypes are the columns of analysisInsertSQL, in order.
+var analysisBulkTypes = []string{
+	bulkBigint, bulkBigint, bulkBytea,
+	bulkInt, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkBigint,
+	bulkBool, bulkBool,
+	bulkText, bulkInt, bulkTime,
+}
+
+var analysisBulkInsertSQL = insertHead(analysisInsertSQL) + " " + unnestSelect(analysisBulkTypes)
+
+// SaveFresh — see storage.AnalysisStore. A chunk is one statement, and one
+// more for the cube-response flags.
+func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []storage.FreshAnalysis) error {
+	tenant := tenantID(scope)
+	for start := 0; start < len(items); start += saveManyChunk {
+		chunk := items[start:min(start+saveManyChunk, len(items))]
+		rows := make([][]any, len(chunk))
+		var responses []int64
+		for i, it := range chunk {
+			c, err := s.prepare(ctx, tenant, it.PositionID, it.Analysis, it.Played)
+			if err != nil {
+				return err
+			}
+			data, err := engine.EncodeAnalysisForStorage(it.Analysis)
+			if err != nil {
+				return fmt.Errorf("postgres: encode analysis: %w", err)
+			}
+			bestCube, err := actionCode(ctx, s.db, tenant, c.BestCubeAction)
+			if err != nil {
+				return fmt.Errorf("postgres: save analysis: %w", err)
+			}
+			rows[i] = []any{
+				tenant, it.PositionID, data,
+				bestCube, c.CubeError, c.BestMoveErrorArg(),
+				c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
+				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
+				c.IsForced != 0, c.IsCloseCube != 0,
+				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate),
+			}
+			if slices.ContainsFunc(it.Analysis.PlayedCubeActions, engine.IsResponseCubeAction) {
+				responses = append(responses, it.PositionID)
+			}
+		}
+		args, err := bulkColumns(analysisBulkTypes, rows)
+		if err != nil {
+			return err
+		}
+		if _, err := s.db.Exec(ctx, analysisBulkInsertSQL, args...); err != nil {
+			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
+		}
+		if len(responses) > 0 {
+			if _, err := s.db.Exec(ctx,
+				`UPDATE position SET is_cube_response = TRUE WHERE tenant_id = $1 AND id = ANY($2)`,
+				tenant, responses); err != nil {
+				return fmt.Errorf("postgres: flag cube response: %w", err)
+			}
+		}
+	}
+	return nil
+}
+
 // playPositions is positionOf for several positions in one read: what of
 // each stored position its checker plays depend on, nil (or absent) when it
 // has none.
