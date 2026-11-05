@@ -133,6 +133,8 @@ func actionDim(v any) int64 {
 		return x
 	case int32:
 		return int64(x)
+	case int16:
+		return int64(x)
 	case int:
 		return int64(x)
 	}
