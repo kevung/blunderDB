@@ -37,7 +37,7 @@ func (b binder) Anki() storage.AnkiStore {
 }
 func (b binder) Filters() storage.FilterStore  { return &sqlshared.FilterStore{DB: b.shared()} }
 func (b binder) Session() storage.SessionStore { return &sqlshared.SessionStore{DB: b.shared()} }
-func (b binder) Search() storage.SearchStore   { return &sqlshared.SearchStore{DB: b.shared()} }
+func (b binder) Search() storage.SearchStore   { return &sqlshared.SearchStore{DB: searchDB{b.shared()}} }
 func (b binder) SearchHistory() storage.SearchHistoryStore {
 	return &sqlshared.SearchHistoryStore{DB: b.shared()}
 }
