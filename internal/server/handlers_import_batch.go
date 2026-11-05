@@ -307,7 +307,11 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		archive := filepath.Join(workDir, "archive"+ext)
-		if err := copyToFile(archive, file); err != nil {
+		if err := copyToFile(archive, file, upload); err != nil {
+			if errors.Is(err, ingest.ErrArchiveTooLarge) {
+				writeErrorCode(w, CodeInvalid, "the upload is larger than its declared length")
+				return
+			}
 			writeStorageError(w, err)
 			return
 		}
@@ -315,7 +319,12 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 		// the batch's whole life, the upload's share goes once it is unpacked.
 		budget := s.opts.ImportMaxBodyBytes * batchExtractFactor
 		unpacked := budget
-		if declared, derr := ingest.ArchiveUnpackedSize(archive); derr == nil {
+		declared, derr := ingest.ArchiveUnpackedSize(archive)
+		switch {
+		case errors.Is(derr, ingest.ErrArchiveTooLarge) || errors.Is(derr, ingest.ErrArchiveTooManyEntries):
+			writeErrorCode(w, CodeInvalid, derr.Error())
+			return
+		case derr == nil:
 			unpacked = min(declared, budget)
 		}
 		if !s.spool.reserve(unpacked) {
@@ -324,7 +333,8 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 		}
 		reserved += unpacked
 		root = filepath.Join(workDir, "files")
-		n, err := ingest.ExtractArchive(archive, root, budget)
+		// Unpacking stops at what was reserved, whatever the archive announced.
+		n, err := ingest.ExtractArchive(archive, root, unpacked)
 		os.Remove(archive)
 		s.spool.release(upload)
 		reserved -= upload
@@ -426,14 +436,19 @@ func writeBatchAccepted(w http.ResponseWriter, job *batchJob) {
 	writeJSONResp(w, importBatchResp{ImportID: job.id, Files: total})
 }
 
-func copyToFile(path string, r io.Reader) error {
+func copyToFile(path string, r io.Reader, max int64) error {
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
 	if err != nil {
 		return fmt.Errorf("server: spool archive: %w", err)
 	}
-	if _, err := io.Copy(f, r); err != nil {
+	n, err := io.Copy(f, io.LimitReader(r, max+1))
+	if err != nil {
 		f.Close()
 		return fmt.Errorf("server: spool archive: %w", err)
+	}
+	if n > max {
+		f.Close()
+		return ingest.ErrArchiveTooLarge
 	}
 	return f.Close()
 }

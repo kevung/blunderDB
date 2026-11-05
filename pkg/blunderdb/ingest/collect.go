@@ -54,8 +54,15 @@ var ErrArchiveTooManyEntries = errors.New("archive holds too many entries")
 // is refused. The budget counts bytes actually written, never the sizes the
 // archive declares, which a hostile archive chooses. Files land in archive
 // order: each entry gets its own numbered directory, so CollectFiles reads
-// them back in the order the archive held them.
-func ExtractArchive(archive, dir string, maxBytes int64) (int, error) {
+// them back in the order the archive held them. An archive that goes over the
+// budget, or is refused for any other reason, leaves nothing behind in dir.
+func ExtractArchive(archive, dir string, maxBytes int64) (n int, err error) {
+	defer func() {
+		if err != nil {
+			os.RemoveAll(dir)
+			n = 0
+		}
+	}()
 	switch strings.ToLower(filepath.Ext(archive)) {
 	case ".zip":
 		return extractZip(archive, dir, maxBytes)
@@ -65,30 +72,56 @@ func ExtractArchive(archive, dir string, maxBytes int64) (int, error) {
 	return 0, fmt.Errorf("unsupported archive type %q (want .zip or .tar)", filepath.Ext(archive))
 }
 
-// ArchiveUnpackedSize says what archive can unpack to, without unpacking it. A
-// zip states it entry by entry, and its reader refuses an entry that runs past
-// its statement; a tar holds its entries as they are, so its own size bounds them.
+// ArchiveUnpackedSize says what archive announces it unpacks to, without
+// unpacking it: the logical size of each entry (a sparse tar entry counts its
+// holes), summed without overflow. A sum that cannot be held is a refusal. It
+// is a first line only — the archive chooses what it announces, and
+// ExtractArchive's count of the bytes it writes is the guard.
 func ArchiveUnpackedSize(archive string) (int64, error) {
-	if strings.ToLower(filepath.Ext(archive)) != ".zip" {
-		fi, err := os.Stat(archive)
+	var total uint64
+	add := func(n uint64) error {
+		if n > math.MaxInt64 || total > math.MaxInt64-n {
+			return ErrArchiveTooLarge
+		}
+		total += n
+		return nil
+	}
+	if strings.ToLower(filepath.Ext(archive)) == ".zip" {
+		zr, err := zip.OpenReader(archive)
 		if err != nil {
 			return 0, err
 		}
-		return fi.Size(), nil
+		defer zr.Close()
+		for _, f := range zr.File {
+			if err := add(f.UncompressedSize64); err != nil {
+				return 0, err
+			}
+		}
+		return int64(total), nil
 	}
-	zr, err := zip.OpenReader(archive)
+	f, err := os.Open(archive)
 	if err != nil {
 		return 0, err
 	}
-	defer zr.Close()
-	var total uint64
-	for _, f := range zr.File {
-		total += f.UncompressedSize64
+	defer f.Close()
+	tr := tar.NewReader(f)
+	for n := 0; ; n++ {
+		h, err := tr.Next()
+		if err == io.EOF {
+			return int64(total), nil
+		}
+		if err != nil {
+			return 0, err
+		}
+		if n >= MaxArchiveEntries {
+			return 0, ErrArchiveTooManyEntries
+		}
+		if h.Typeflag == tar.TypeReg && h.Size > 0 {
+			if err := add(uint64(h.Size)); err != nil {
+				return 0, err
+			}
+		}
 	}
-	if total > math.MaxInt64 {
-		return math.MaxInt64, nil
-	}
-	return int64(total), nil
 }
 
 // unpacker writes entries under dir within a byte budget.

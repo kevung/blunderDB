@@ -3,8 +3,10 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -38,11 +40,33 @@ func analyzeFirstOfTenant(ctx context.Context, db execer, table, idColumn string
 	if seen {
 		return nil
 	}
+	var denied bool
+	if err := db.QueryRow(ctx, analyzeDeniedSQL, table).Scan(&denied); err != nil {
+		return fmt.Errorf("postgres: analyze rights on %s: %w", table, err)
+	}
+	if denied {
+		analyzeDeniedOnce.Do(func() {
+			slog.Warn("import statistics skipped: the database role may not ANALYZE (it must own the tables, be a member of their owner, or hold MAINTAIN from PostgreSQL 17); first imports of a tenant will plan badly until autovacuum", "table", table)
+		})
+		return nil
+	}
 	if _, err := db.Exec(ctx, "ANALYZE (SKIP_LOCKED) "+table); err != nil {
 		return fmt.Errorf("postgres: analyze %s: %w", table, err)
 	}
 	return nil
 }
+
+// analyzeDeniedSQL says whether the current role may not ANALYZE $1: the same
+// right statsDeniedSQL checks, for one table. ANALYZE refused only warns, which
+// no one reads, and the import runs on without the gain.
+const analyzeDeniedSQL = `SELECT NOT pg_has_role(c.relowner, 'MEMBER')
+	  AND NOT (SELECT rolsuper FROM pg_roles WHERE rolname = current_user)
+	  AND NOT CASE WHEN current_setting('server_version_num')::int >= 170000
+	               THEN has_table_privilege(c.oid, 'MAINTAIN') ELSE false END
+	FROM pg_class c WHERE c.oid = $1::regclass`
+
+// analyzeDeniedOnce makes the exploitant's warning appear once per process.
+var analyzeDeniedOnce sync.Once
 
 // unnestSelect renders "SELECT * FROM unnest($1::t1[], $2::t2[], ...)".
 func unnestSelect(types []string) string {

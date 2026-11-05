@@ -54,18 +54,9 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	// Drain the source position list before issuing per-position follow-up
 	// queries: nesting them inside the List iterator would hold one pooled
 	// connection while grabbing another (see JSONExporter).
-	var positions []*domain.Position
-	var ids []int64
-	for p, err := range source.Positions().List(ctx, scope, storage.ListOpts{}) {
-		if err != nil {
-			return Summary{}, fmt.Errorf("ingest: list source positions: %w", err)
-		}
-		pc := *p
-		positions = append(positions, &pc)
-	}
-	slices.SortFunc(positions, func(a, b *domain.Position) int { return cmp.Compare(a.ID, b.ID) })
-	for _, p := range positions {
-		ids = append(ids, p.ID)
+	positions, ids, err := listSourcePositions(ctx, source, scope)
+	if err != nil {
+		return Summary{}, err
 	}
 
 	// Source analyses and comments, batched: one round trip per family, not
@@ -625,4 +616,22 @@ func mergeDBDerivations(ctx context.Context, tx storage.Tx, scope string, src ma
 		}
 	}
 	return nil
+}
+
+// listSourcePositions drains the source's positions, by id, with their ids.
+func listSourcePositions(ctx context.Context, source *sqlite.Storage, scope string) ([]*domain.Position, []int64, error) {
+	var positions []*domain.Position
+	for p, err := range source.Positions().List(ctx, scope, storage.ListOpts{}) {
+		if err != nil {
+			return nil, nil, fmt.Errorf("ingest: list source positions: %w", err)
+		}
+		pc := *p
+		positions = append(positions, &pc)
+	}
+	slices.SortFunc(positions, func(a, b *domain.Position) int { return cmp.Compare(a.ID, b.ID) })
+	ids := make([]int64, len(positions))
+	for i, p := range positions {
+		ids[i] = p.ID
+	}
+	return positions, ids, nil
 }

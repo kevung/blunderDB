@@ -1164,6 +1164,20 @@ reprendre que les marques, comme ``--skip-duplicates`` en ligne de commande.
 ``importId`` (en-tête ``Idempotency-Replayed: true``) sans relancer l'import. Pour
 un lot reçu en archive, la clé désigne le lot, pas le contenu de l'archive.
 
+Deux limites tiennent à PostgreSQL. L'archive d'un lot est comptée à la taille
+logique de ses entrées (trous des archives creuses compris) : une somme qui
+déborde, ou des octets écrits au-delà de ce que le lot a réservé, la fait
+refuser (400) et efface ce qui avait été écrit. Le rôle de la base doit être
+propriétaire des tables, ou détenir ``MAINTAIN`` (PostgreSQL 17) : sinon les
+statistiques du premier import d'un tenant ne sont pas calculées, ce que le
+serveur journalise une fois par processus (``import statistics skipped``) et
+que l'import mesure en plans plus lents jusqu'au passage de l'autovacuum.
+Enfin, un ``imports.db`` qui analyse plus de positions déjà présentes et sans
+analyse que la table des verrous n'en contient (``max_locks_per_transaction`` ×
+``max_connections``, soit environ 6 400 aux réglages par défaut) échoue en bloc
+avec une erreur qui le dit (``out of shared memory``, SQLSTATE 53200) : relever
+``max_locks_per_transaction`` ou importer en fichiers plus petits.
+
 Chaque fichier refusé porte un ``code`` stable en plus de son texte, dans le
 statut comme dans le rapport (l'import d'un fichier le rend en ``import_code``
 dans son événement d'erreur) : ``unknown_format``, ``truncated``, ``corrupt``,

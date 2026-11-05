@@ -5,12 +5,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
@@ -219,5 +221,70 @@ func TestImportReportDeferred(t *testing.T) {
 	last := events[len(events)-1]
 	if _, ok := last["report"]; ok || last["batch_id"] == nil {
 		t.Errorf("deferred terminal event: %v, want a batch id and no report", last)
+	}
+}
+
+// sparseSpoolTar is a PAX 1.0 sparse tar of one hole of realSize bytes, written
+// by hand: archive/tar's writer cannot emit one.
+func sparseSpoolTar(name string, realSize int64) []byte {
+	block := func(n string, typeflag byte, size int64) []byte {
+		b := make([]byte, 512)
+		copy(b, n)
+		copy(b[100:], "0000644\x00")
+		copy(b[124:], fmt.Sprintf("%011o\x00", size))
+		copy(b[148:], "        ")
+		b[156] = typeflag
+		copy(b[257:], "ustar\x0000")
+		sum := 0
+		for _, c := range b {
+			sum += int(c)
+		}
+		copy(b[148:], fmt.Sprintf("%06o\x00 ", sum))
+		return b
+	}
+	var recs bytes.Buffer
+	for _, kv := range [][2]string{{"GNU.sparse.major", "1"}, {"GNU.sparse.minor", "0"}, {"GNU.sparse.name", name}, {"GNU.sparse.realsize", strconv.FormatInt(realSize, 10)}} {
+		rec := " " + kv[0] + "=" + kv[1] + "\n"
+		l := len(rec) + 1
+		for len(strconv.Itoa(l))+len(rec) != l {
+			l = len(strconv.Itoa(l)) + len(rec)
+		}
+		recs.WriteString(strconv.Itoa(l) + rec)
+	}
+	var out bytes.Buffer
+	out.Write(block("PaxHeader/"+name, 'x', int64(recs.Len())))
+	out.Write(recs.Bytes())
+	out.Write(make([]byte, (512-recs.Len()%512)%512))
+	smap := make([]byte, 512)
+	copy(smap, "0\n")
+	out.Write(block(name, '0', 512))
+	out.Write(smap)
+	out.Write(make([]byte, 1024))
+	return out.Bytes()
+}
+
+// An archive of a few KiB that unpacks to far more is held at its logical size:
+// the quota refuses it instead of reserving its length on disk.
+func TestImportBatchSpoolSeesASparseArchiveAtItsRealSize(t *testing.T) {
+	archive := sparseSpoolTar("hole.xg", 64<<20)
+	ts, srv := spoolServer(t, 8<<20)
+	var buf bytes.Buffer
+	mw := multipart.NewWriter(&buf)
+	fw, _ := mw.CreateFormFile("file", "lot.tar")
+	_, _ = fw.Write(archive)
+	_ = mw.Close()
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/imports.batch", &buf)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	req.Header.Set(middleware.TenantHeader, testTenant)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusTooManyRequests {
+		t.Fatalf("status %d, want 429: the 64 MiB it unpacks to does not fit an 8 MiB spool", resp.StatusCode)
+	}
+	if got := srv.spool.usage(); got != 0 {
+		t.Errorf("spool still holds %d bytes", got)
 	}
 }

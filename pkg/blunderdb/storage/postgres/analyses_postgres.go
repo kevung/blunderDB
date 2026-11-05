@@ -10,6 +10,7 @@ import (
 	"slices"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"log/slog"
 
@@ -123,7 +124,7 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 		// read again under it, since the writer we waited for may have made it.
 		if _, err := s.db.Exec(ctx, `SELECT pg_advisory_xact_lock($1)`,
 			guardKey(storage.AnalysisGuardKey(scope, positionID))); err != nil {
-			return false, fmt.Errorf("postgres: guard analysis for position %d: %w", positionID, err)
+			return false, fmt.Errorf("postgres: guard analysis for position %d: %w", positionID, lockTableFull(err))
 		}
 		err = load()
 	}
@@ -920,4 +921,19 @@ func (s *analysisStore) playPositions(ctx context.Context, tenant int64, ids []i
 		return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
 	}
 	return out, nil
+}
+
+// lockTableFull names what an exhausted lock table (SQLSTATE 53200) means here.
+// Each position already stored without an analysis holds one advisory lock until
+// the transaction ends, and the lock table holds max_locks_per_transaction x
+// (max_connections + prepared transactions) entries, 6,400 at the defaults: past
+// that, the whole import rolls back and other sessions may fail with it. The
+// transaction cannot be split without losing its all-or-nothing, so the limit is
+// stated and documented (mode_headless) rather than hidden.
+func lockTableFull(err error) error {
+	var pe *pgconn.PgError
+	if errors.As(err, &pe) && pe.Code == "53200" {
+		return fmt.Errorf("%w: the import analyses more already-stored positions than the PostgreSQL lock table holds (about max_locks_per_transaction x max_connections, 6400 by default): raise max_locks_per_transaction or import in smaller files", err)
+	}
+	return err
 }
