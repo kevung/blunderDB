@@ -109,6 +109,13 @@ type ChangeJournalStore interface {
 	// a row that goes is dated at, and a row that appears is dated below the
 	// floor, so that its real record always wins.
 	Applying(ctx context.Context, scope, at string) error
+	// JournalOff says this library keeps no journal, so it has nothing to give a
+	// peer and takes nothing from one (ErrJournalOff).
+	JournalOff(ctx context.Context, scope string) (bool, error)
+	// SetJournalOff cuts the library's journal, dropping its entries, or restores
+	// it: the rows written meanwhile are then Unjournaled, which an export from the
+	// start reaches. ErrInvalid where a library cannot go without one.
+	SetJournalOff(ctx context.Context, scope string, off bool) error
 	// PartFact is the last fact known of a part of a position; false when
 	// there has never been one.
 	PartFact(ctx context.Context, scope string, positionID int64, part string) (PartFact, bool, error)

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
@@ -20,6 +21,14 @@ func (s *Server) changesetRoutes() []route {
 		{http.MethodPost, "/v1/changeset.import", rpc(func(ctx context.Context, scope string, req changesetImportReq) (changeset.Report, error) {
 			return changeset.Import(ctx, st(), scope, changeset.Set{Records: req.Records})
 		})},
+		// For the operator's client: a public library no peer syncs with.
+		{http.MethodPost, "/v1/changeset.setJournalOff", rpc(func(ctx context.Context, scope string, req changesetJournalReq) (struct{}, error) {
+			p, ok := st().(storage.ChangeJournalProvider)
+			if !ok {
+				return struct{}{}, errors.New("changeset: the backend keeps no change journal")
+			}
+			return struct{}{}, p.ChangeJournal().SetJournalOff(ctx, scope, req.Off)
+		})},
 	}
 }
 
@@ -32,6 +41,10 @@ type changesetExportReq struct {
 }
 
 func (r changesetExportReq) pageLimit() int { return r.Limit }
+
+type changesetJournalReq struct {
+	Off bool `json:"off"`
+}
 
 type changesetImportReq struct {
 	Records []changeset.Record `json:"records"`

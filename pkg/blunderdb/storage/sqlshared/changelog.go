@@ -227,7 +227,10 @@ func (s *ChangeJournalStore) Mark(ctx context.Context, scope, family, uuid, op, 
 	default:
 		return errf(s.DB, "mark change", fmt.Errorf("operation %q: %w", op, storage.ErrInvalid))
 	}
-	var err error
+	off, err := s.JournalOff(ctx, scope)
+	if err != nil || off {
+		return err
+	}
 	if s.DB.Name() == "sqlite" {
 		if at == "" {
 			// Selected before the replace: the date this write has to pass.
@@ -333,6 +336,40 @@ func (s *ChangeJournalStore) PendingLinks(ctx context.Context, scope string) ([]
 		return nil, errf(s.DB, "pending links", err)
 	}
 	return out, nil
+}
+
+// JournalOff — see storage.ChangeJournalStore. On SQLite a file without the
+// table is an exported one; on PostgreSQL the triggers read the same setting.
+func (s *ChangeJournalStore) JournalOff(ctx context.Context, scope string) (bool, error) {
+	query, args := `SELECT EXISTS (SELECT 1 FROM library_settings WHERE tenant_id = ? AND key = 'change_journal' AND value = 'off')`, []any{s.DB.ScopeArg(scope)}
+	if s.DB.Name() == "sqlite" {
+		query, args = `SELECT NOT EXISTS (SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'change_log')`, nil
+	}
+	var off bool
+	if err := s.DB.QueryRow(ctx, query, args...).Scan(&off); err != nil {
+		return false, errf(s.DB, "journal off", err)
+	}
+	return off, nil
+}
+
+// SetJournalOff — see storage.ChangeJournalStore. One statement: the entries go
+// with the setting that stops new ones. A file on SQLite is cut by being exported.
+func (s *ChangeJournalStore) SetJournalOff(ctx context.Context, scope string, off bool) error {
+	if s.DB.Name() == "sqlite" {
+		return errf(s.DB, "journal off", fmt.Errorf("a library file keeps its journal: %w", storage.ErrInvalid))
+	}
+	query := `DELETE FROM library_settings WHERE tenant_id = ? AND key = 'change_journal'`
+	args := []any{s.DB.ScopeArg(scope)}
+	if off {
+		query = `WITH gone AS (DELETE FROM change_log WHERE tenant_id = ?)
+			INSERT INTO library_settings (tenant_id, key, value) VALUES (?, 'change_journal', 'off')
+			ON CONFLICT (tenant_id, key) DO UPDATE SET value = 'off'`
+		args = append(args, s.DB.ScopeArg(scope))
+	}
+	if _, err := s.DB.Exec(ctx, query, args...); err != nil {
+		return errf(s.DB, "journal off", err)
+	}
+	return nil
 }
 
 // Adopt — see storage.ChangeJournalStore.

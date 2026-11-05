@@ -199,7 +199,7 @@ func (s *positionStore) SaveCreated(ctx context.Context, scope string, p *domain
 			return 0, false, fmt.Errorf("postgres: save position dedup lookup: %w", err)
 		}
 	case err != nil:
-		return 0, false, fmt.Errorf("postgres: save position: %w", err)
+		return 0, false, fmt.Errorf("postgres: save position: %w", outOfRange(err))
 	}
 	norm.ID = id
 	*p = norm
@@ -653,7 +653,7 @@ func (s *positionStore) saveChunk(ctx context.Context, tenant int64, chunk []*do
 	}
 	inserted := make(map[int64]int64, len(chunk))
 	if err := s.scanHashIDs(ctx, inserted, positionBulkInsertSQL, args...); err != nil {
-		return fmt.Errorf("postgres: save position: %w", err)
+		return fmt.Errorf("postgres: save position: %w", outOfRange(err))
 	}
 	if len(inserted) > 0 {
 		minID := int64(math.MaxInt64)

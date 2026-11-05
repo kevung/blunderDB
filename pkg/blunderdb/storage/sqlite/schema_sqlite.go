@@ -973,7 +973,6 @@ var schemaStatements = []string{
 	// The few analyses computed with an imported table: the stats read them to
 	// leave out what another table valued (ADR-0068).
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_met            ON analysis(met_id) WHERE met_id IS NOT NULL`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_creation_date  ON analysis(creation_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_match_date     ON position(match_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_multi_played   ON position(id) WHERE multi_played = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,
@@ -1181,6 +1180,10 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 	have, err := indexNames(ctx, db)
 	if err != nil {
 		return err
+	}
+	// No statement reads it; 1 GB on the largest library.
+	if _, err := db.ExecContext(ctx, `DROP INDEX IF EXISTS idx_analysis_creation_date`); err != nil {
+		return fmt.Errorf("sqlite: drop a retired index: %w", err)
 	}
 	for _, stmt := range ref.indexes {
 		if _, err := db.ExecContext(ctx, stmt); err != nil {

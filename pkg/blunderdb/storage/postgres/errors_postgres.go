@@ -3,6 +3,7 @@ package postgres
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/jackc/pgx/v5/pgconn"
 
@@ -14,6 +15,7 @@ import (
 const (
 	pgForeignKeyViolation = "23503"
 	pgUniqueViolation     = "23505"
+	pgNumericOutOfRange   = "22003"
 )
 
 // isUniqueViolation reports whether err is PostgreSQL refusing a row for a
@@ -25,11 +27,25 @@ func isUniqueViolation(err error) bool {
 
 // referenced maps a FOREIGN KEY violation onto storage.ErrNotFound — the row
 // the caller pointed at does not exist, the same thing Get reports for a bad
-// id. Mirrors the SQLite backend; any other error passes through unchanged.
+// id. Mirrors the SQLite backend.
 func referenced(err error) error {
 	var pe *pgconn.PgError
 	if errors.As(err, &pe) && pe.Code == pgForeignKeyViolation {
 		return fmt.Errorf("%w: %w", storage.ErrNotFound, err)
+	}
+	return outOfRange(err)
+}
+
+// outOfRange names a value wider than its column an invalid one: refused, whether
+// by the server (22003) or by the driver encoding the parameter of a narrow column.
+func outOfRange(err error) error {
+	var pe *pgconn.PgError
+	if err == nil {
+		return nil
+	}
+	if (errors.As(err, &pe) && pe.Code == pgNumericOutOfRange) ||
+		strings.Contains(err.Error(), "than maximum value for int") || strings.Contains(err.Error(), "than minimum value for int") {
+		return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 	}
 	return err
 }

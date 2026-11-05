@@ -84,7 +84,6 @@ func TestSchemaV200_Indexes(t *testing.T) {
 		"idx_position_occupancy2",
 		"idx_analysis_win_gammon2_covering",
 		"idx_analysis_provenance_pending",
-		"idx_analysis_creation_date",
 		"idx_position_match_date",
 		"idx_move_position",
 		"idx_move_game",

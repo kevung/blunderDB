@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -82,7 +83,7 @@ func (shared) TimestampText(col string) string {
 func (shared) Referenced(err error) error { return referenced(err) }
 
 func (a shared) Exec(ctx context.Context, query string, args ...any) (int64, error) {
-	tag, err := a.db.Exec(ctx, sqlshared.Rebind(query), args...)
+	tag, err := a.db.Exec(ctx, typedRebind(query, args), args...)
 	if err != nil {
 		return 0, err
 	}
@@ -90,11 +91,49 @@ func (a shared) Exec(ctx context.Context, query string, args ...any) (int64, err
 }
 
 func (a shared) Query(ctx context.Context, query string, args ...any) (sqlshared.Rows, error) {
-	rows, err := a.db.Query(ctx, sqlshared.Rebind(query), args...) //nolint:rowserrcheck // the cursor is handed to the caller, which iterates it and checks Err
+	rows, err := a.db.Query(ctx, typedRebind(query, args), args...) //nolint:rowserrcheck // the cursor is handed to the caller, which iterates it and checks Err
 	if err != nil {
 		return nil, err
 	}
 	return pgRows{rows}, nil
+}
+
+// typedRebind is sqlshared.Rebind that declares each Go integer a bigint. Left to infer, a parameter
+// takes the type of its column, and a filter past a smallint would fail to encode instead of finding
+// nothing. An integer comparison of two widths still reads the index.
+func typedRebind(query string, args []any) string {
+	if !strings.Contains(query, "?") {
+		return query
+	}
+	if len(args) > 0 {
+		if _, option := args[0].(pgx.QueryExecMode); option {
+			args = args[1:]
+		}
+	}
+	var b strings.Builder
+	b.Grow(len(query) + 16)
+	n := 0
+	for i := 0; i < len(query); i++ {
+		if query[i] != '?' {
+			b.WriteByte(query[i])
+			continue
+		}
+		b.WriteByte('$')
+		b.WriteString(strconv.Itoa(n + 1))
+		if n < len(args) && isGoInteger(args[n]) && !strings.HasPrefix(query[i+1:], "::") {
+			b.WriteString("::bigint")
+		}
+		n++
+	}
+	return b.String()
+}
+
+func isGoInteger(v any) bool {
+	switch v.(type) {
+	case int, int8, int16, int32, int64, uint8, uint16, uint32:
+		return true
+	}
+	return false
 }
 
 // searchDB plans each statement of a search for its values. A cached statement may keep a generic
@@ -112,12 +151,12 @@ func (a searchDB) QueryRow(ctx context.Context, query string, args ...any) sqlsh
 }
 
 func (a shared) QueryRow(ctx context.Context, query string, args ...any) sqlshared.Row {
-	return pgRow{a.db.QueryRow(ctx, sqlshared.Rebind(query), args...)}
+	return pgRow{a.db.QueryRow(ctx, typedRebind(query, args), args...)}
 }
 
 func (a shared) Insert(ctx context.Context, query string, args ...any) (int64, error) {
 	var id int64
-	if err := a.db.QueryRow(ctx, sqlshared.Rebind(query)+" RETURNING id", args...).Scan(&id); err != nil {
+	if err := a.db.QueryRow(ctx, typedRebind(query, args)+" RETURNING id", args...).Scan(&id); err != nil {
 		return 0, err
 	}
 	return id, nil

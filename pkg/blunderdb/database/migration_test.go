@@ -3920,7 +3920,7 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	}
 	for name, want := range map[string]bool{
 		"idx_analysis_engine": false, "idx_analysis_depth": false,
-		"idx_analysis_provenance_pending": true, "idx_position_match_date": true, "idx_analysis_creation_date": true,
+		"idx_analysis_provenance_pending": true, "idx_position_match_date": true, "idx_analysis_creation_date": false,
 	} {
 		var n int
 		_ = d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = ?`, name).Scan(&n)

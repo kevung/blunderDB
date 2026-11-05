@@ -39,17 +39,12 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	$15,$16,$17::timestamp AT TIME ZONE 'UTC')`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
-// same statement, so concurrent saves cannot insert two rows. The conflict
-// target names the UNIQUE index idx_analysis_position; position
-// ids are unique across tenants (one BIGSERIAL sequence), so the index needs
-// no tenant_id and the target is position_id alone. That target also
-// catches another tenant's row, so the WHERE keeps the update inside the
-// writer's tenant: a foreign row is left as it is. Save checks the position
-// is the tenant's first (requireOwned), so a foreign position with or without
-// an analysis gets the same ErrNotFound; the WHERE holds even without it.
+// same statement, so concurrent saves cannot insert two rows. Save checks the
+// position is the tenant's first (requireOwned), so a foreign position with or
+// without an analysis gets the same ErrNotFound.
 // met_id follows the SQLite upsert: dropped unless the verdict is gammonNet's.
 const analysisUpsertSQL = analysisInsertSQL + `
-ON CONFLICT (position_id) DO UPDATE SET
+ON CONFLICT (tenant_id, position_id) DO UPDATE SET
 	data=excluded.data,
 	best_cube_action=excluded.best_cube_action,
 	cube_error=excluded.cube_error,

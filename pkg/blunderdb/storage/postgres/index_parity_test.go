@@ -40,6 +40,8 @@ const sqliteSchemaSource = "../sqlite/schema_sqlite.go"
 // whose cell key leads with the kind; the PostgreSQL key leads with
 // (tenant_id, match_id, seat) and serves it already.
 var sqliteOnlyIndexes = []string{
+	// PostgreSQL's analysis key leads with the tenant: idx_analysis_tenant_position.
+	"idx_analysis_position",
 	// PostgreSQL covers it with idx_move_game_position, for row-level security.
 	"idx_move_game",
 	// PostgreSQL reads the win rates from idx_analysis_win1/2, five times lighter for the same
@@ -55,8 +57,8 @@ var sqliteOnlyIndexes = []string{
 // postgresOnlyIndexes are declared here and deliberately absent from SQLite.
 // Add an entry (with a reason) rather than loosening the test.
 var postgresOnlyIndexes = []string{
-	// SQLite's analysis index is its tenant's alone, and its table is ordered by id.
-	"idx_analysis_tenant_position",
+	// See idx_analysis_position above.
+	"idx_analysis_tenant_position_key",
 	"idx_position_structure",
 	// The covering indexes kept by SQLite, narrowed here (see above).
 	"idx_analysis_win1",
