@@ -168,6 +168,12 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
      - ``0``
      - imports d'un même tenant en cours à la fois (429, ``quota_exceeded``) ;
        0 = illimité
+   * - ``--max-spool-bytes <n>``
+     - ``0``
+     - espace disque que les imports en cours occupent ensemble, tous tenants
+       confondus (429 au-delà) : un envoi réserve deux fois sa taille déclarée,
+       un lot ce que son archive annonce ; 0 = quatre fois le plus gros envoi
+       admis
    * - ``--analysis-workers <n>``
      - ``0``
      - travailleurs du moteur que partagent les balayages et les évaluations
@@ -1157,6 +1163,14 @@ reprendre que les marques, comme ``--skip-duplicates`` en ligne de commande.
 ``Idempotency-Key`` est accepté : rejouer l'appel avec la même clé rend le même
 ``importId`` (en-tête ``Idempotency-Replayed: true``) sans relancer l'import. Pour
 un lot reçu en archive, la clé désigne le lot, pas le contenu de l'archive.
+
+Chaque fichier refusé porte un ``code`` stable en plus de son texte, dans le
+statut comme dans le rapport (l'import d'un fichier le rend en ``import_code``
+dans son événement d'erreur) : ``unknown_format``, ``truncated``, ``corrupt``,
+``too_large``, ``empty`` ou ``internal``. Un doublon n'est pas une erreur : le
+rapport le compte à part. L'import d'un fichier accepte ``?report=deferred`` :
+son dernier événement omet alors le rapport, que ``imports.report`` rend à la
+demande.
 
 ``imports.batch.status`` (``{"importId": …}``) rend l'état (``receiving``,
 ``running``, ``done``, ``cancelled`` ou ``failed``) et la progression
