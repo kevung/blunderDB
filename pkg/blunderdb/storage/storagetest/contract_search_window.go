@@ -187,7 +187,7 @@ func testSearchErrorSortOfCubeDecisions(t *testing.T, s storage.Storage) {
 	// A played move stored on a cube decision must not reach the error column: the sort
 	// above orders these rows by id on that invariant, and the unfiltered sort reads the column.
 	e := 0.5
-	strayMove := domain.PositionAnalysis{AnalysisType: "DoublingCube", PlayedCubeAction: "No double", PlayedMove: "24/20",
+	strayMove := domain.PositionAnalysis{AnalysisType: "DoublingCube", PlayedCubeAction: "No double", PlayedMoves: []string{"24/20"},
 		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "2-ply", BestCubeAction: "Double, take", CubefulNoDoubleError: -0.2},
 		CheckerAnalysis:      &domain.CheckerAnalysis{Moves: []domain.CheckerMove{{Move: "13/9", Equity: 0.1}, {Move: "24/20", Equity: -0.4, EquityError: &e}}}}
 	if err := s.Analyses().Save(ctx, "", ids[4], &strayMove); err != nil {

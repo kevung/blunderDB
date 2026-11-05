@@ -222,16 +222,16 @@ func (s *analysisStore) positionOf(ctx context.Context, tenant, positionID int64
 		return played.Position, nil
 	}
 	var state []byte
-	var por, d1, d2 *int64
+	var por, d1, d2, dt *int64
 	err := s.db.QueryRow(ctx, `SELECT `+sqlshared.PlayPositionColumns+` FROM position p WHERE p.id = $1 AND p.tenant_id = $2`,
-		positionID, tenant).Scan(&state, &por, &d1, &d2)
+		positionID, tenant).Scan(&state, &por, &d1, &d2, &dt)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {
 		return nil, fmt.Errorf("postgres: read position %d to replay its plays: %w", positionID, err)
 	}
-	return sqlshared.PlayPosition(state, por, d1, d2), nil
+	return sqlshared.PlayPosition(state, por, d1, d2, dt), nil
 }
 
 // write encodes a prepared analysis into the BYTEA data column and upserts
@@ -459,8 +459,8 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 		bestMoveUnscored     bool
 		forced, closeCub     bool
 		// The position's columns its legal plays depend on.
-		state       []byte
-		por, d1, d2 *int64
+		state           []byte
+		por, d1, d2, dt *int64
 		// The match's own record of what was played, joined in here rather
 		// than looked up row by row: a repair walks every analysis in the
 		// tenant.
@@ -486,7 +486,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
+				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
 					return fmt.Errorf("postgres: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -511,7 +511,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 				a.PlayedMoves, a.PlayedCubeActions,
 				[]string{deref(r.mvMove)}, []string{deref(r.mvCube)})
 			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
-				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2))
+				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2, r.dt))
 			analyses[r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
@@ -911,11 +911,11 @@ func (s *analysisStore) playPositions(ctx context.Context, tenant int64, ids []i
 	for rows.Next() {
 		var id int64
 		var state []byte
-		var por, d1, d2 *int64
-		if err := rows.Scan(&id, &state, &por, &d1, &d2); err != nil {
+		var por, d1, d2, dt *int64
+		if err := rows.Scan(&id, &state, &por, &d1, &d2, &dt); err != nil {
 			return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
 		}
-		out[id] = sqlshared.PlayPosition(state, por, d1, d2)
+		out[id] = sqlshared.PlayPosition(state, por, d1, d2, dt)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
