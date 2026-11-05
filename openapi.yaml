@@ -8669,6 +8669,8 @@ components:
           type: string
         error:
           type: string
+        code:
+          type: string
     batchStatus:
       type: object
       properties:

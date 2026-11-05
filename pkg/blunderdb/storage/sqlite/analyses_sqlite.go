@@ -821,6 +821,11 @@ func (s *analysisStore) ReencodeAnalyses(ctx context.Context, scope string, afte
 	return sqlshared.ReencodeAnalyses(ctx, binder{db: s.db}.shared(), scope, after, limit)
 }
 
+// SaveFresh — see storage.AnalysisStore. A local database pays no round trip.
+func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []storage.FreshAnalysis) error {
+	return storage.SaveFreshEach(ctx, s, scope, items)
+}
+
 // SaveMany — see storage.AnalysisStore. A local database pays no round trip:
 // the loop is the batch.
 func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error {

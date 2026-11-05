@@ -10,6 +10,7 @@ import (
 	"slices"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"log/slog"
 
@@ -123,7 +124,7 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 		// read again under it, since the writer we waited for may have made it.
 		if _, err := s.db.Exec(ctx, `SELECT pg_advisory_xact_lock($1)`,
 			guardKey(storage.AnalysisGuardKey(scope, positionID))); err != nil {
-			return false, fmt.Errorf("postgres: guard analysis for position %d: %w", positionID, err)
+			return false, fmt.Errorf("postgres: guard analysis for position %d: %w", positionID, lockTableFull(err))
 		}
 		err = load()
 	}
@@ -830,6 +831,72 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 	return nil
 }
 
+// analysisBulkTypes are the columns of analysisInsertSQL, in order.
+var analysisBulkTypes = []string{
+	bulkBigint, bulkBigint, bulkBytea,
+	bulkInt, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkBigint,
+	bulkBool, bulkBool,
+	bulkText, bulkInt, bulkTime,
+}
+
+var analysisBulkInsertSQL = insertHead(analysisInsertSQL) + " " + unnestSelect(analysisBulkTypes)
+
+// SaveFresh — see storage.AnalysisStore. A chunk is one statement, and one
+// more for the cube-response flags.
+func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []storage.FreshAnalysis) error {
+	tenant := tenantID(scope)
+	for start := 0; start < len(items); start += saveManyChunk {
+		chunk := items[start:min(start+saveManyChunk, len(items))]
+		rows := make([][]any, len(chunk))
+		var responses []int64
+		for i, it := range chunk {
+			c, err := s.prepare(ctx, tenant, it.PositionID, it.Analysis, it.Played)
+			if err != nil {
+				return err
+			}
+			data, err := engine.EncodeAnalysisForStorage(it.Analysis)
+			if err != nil {
+				return fmt.Errorf("postgres: encode analysis: %w", err)
+			}
+			bestCube, err := actionCode(ctx, s.db, tenant, c.BestCubeAction)
+			if err != nil {
+				return fmt.Errorf("postgres: save analysis: %w", err)
+			}
+			rows[i] = []any{
+				tenant, it.PositionID, data,
+				bestCube, c.CubeError, c.BestMoveErrorArg(),
+				c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
+				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
+				c.IsForced != 0, c.IsCloseCube != 0,
+				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate),
+			}
+			if slices.ContainsFunc(it.Analysis.PlayedCubeActions, engine.IsResponseCubeAction) {
+				responses = append(responses, it.PositionID)
+			}
+		}
+		args, err := bulkColumns(analysisBulkTypes, rows)
+		if err != nil {
+			return err
+		}
+		if _, err := s.db.Exec(ctx, analysisBulkInsertSQL, args...); err != nil {
+			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
+		}
+		if err := analyzeFirstOfTenant(ctx, s.db, "analysis", "position_id", tenant, chunk[0].PositionID); err != nil {
+			return err
+		}
+		if len(responses) > 0 {
+			if _, err := s.db.Exec(ctx,
+				`UPDATE position SET is_cube_response = TRUE WHERE tenant_id = $1 AND id = ANY($2)`,
+				tenant, responses); err != nil {
+				return fmt.Errorf("postgres: flag cube response: %w", err)
+			}
+		}
+	}
+	return nil
+}
+
 // playPositions is positionOf for several positions in one read: what of
 // each stored position its checker plays depend on, nil (or absent) when it
 // has none.
@@ -854,4 +921,19 @@ func (s *analysisStore) playPositions(ctx context.Context, tenant int64, ids []i
 		return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
 	}
 	return out, nil
+}
+
+// lockTableFull names what an exhausted lock table (SQLSTATE 53200) means here.
+// Each position already stored without an analysis holds one advisory lock until
+// the transaction ends, and the lock table holds max_locks_per_transaction x
+// (max_connections + prepared transactions) entries, 6,400 at the defaults: past
+// that, the whole import rolls back and other sessions may fail with it. The
+// transaction cannot be split without losing its all-or-nothing, so the limit is
+// stated and documented (mode_headless) rather than hidden.
+func lockTableFull(err error) error {
+	var pe *pgconn.PgError
+	if errors.As(err, &pe) && pe.Code == "53200" {
+		return fmt.Errorf("%w: the import analyses more already-stored positions than the PostgreSQL lock table holds (about max_locks_per_transaction x max_connections, 6400 by default): raise max_locks_per_transaction or import in smaller files", err)
+	}
+	return err
 }

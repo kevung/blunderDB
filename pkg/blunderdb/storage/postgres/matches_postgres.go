@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"slices"
 	"strings"
 	"time"
 
@@ -970,8 +971,7 @@ type batcher interface {
 // two round trips whatever their number: the analysis each position scores
 // its moves by is read once per position, then the inserts go out together.
 func (s *matchStore) CreateMoves(ctx context.Context, scope string, mvs []*domain.Move) error {
-	bt, ok := s.db.(batcher)
-	if !ok || len(mvs) < 2 {
+	if _, ok := s.db.(batcher); !ok || len(mvs) < 2 {
 		for _, mv := range mvs {
 			if _, err := s.CreateMove(ctx, scope, mv); err != nil {
 				return err
@@ -980,7 +980,15 @@ func (s *matchStore) CreateMoves(ctx context.Context, scope string, mvs []*domai
 		return nil
 	}
 	tenant := tenantID(scope)
+	for start := 0; start < len(mvs); start += saveManyChunk {
+		if err := s.createMovesChunk(ctx, tenant, mvs[start:min(start+saveManyChunk, len(mvs))]); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
+func (s *matchStore) createMovesChunk(ctx context.Context, tenant int64, mvs []*domain.Move) error {
 	var positionIDs []int64
 	seen := map[int64]bool{}
 	for _, mv := range mvs {
@@ -989,46 +997,16 @@ func (s *matchStore) CreateMoves(ctx context.Context, scope string, mvs []*domai
 			positionIDs = append(positionIDs, mv.PositionID)
 		}
 	}
-	bases := make(map[int64]*sqlshared.PlayedDecisionBasis, len(positionIDs))
-	if len(positionIDs) > 0 {
-		read := &pgx.Batch{}
-		for _, id := range positionIDs {
-			read.Queue(sqlshared.Rebind(sqlshared.PlayedDecisionAnalysisSQL), id)
-		}
-		res := bt.SendBatch(ctx, read)
-		for _, id := range positionIDs {
-			rows, err := res.Query()
-			if err != nil {
-				_ = res.Close()
-				return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
-			}
-			if rows.Next() {
-				basis, err := sqlshared.ScanPlayedDecisionBasis(rows.Scan)
-				if err != nil {
-					rows.Close()
-					_ = res.Close()
-					return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
-				}
-				bases[id] = basis
-			}
-			rows.Close()
-			if err := rows.Err(); err != nil {
-				_ = res.Close()
-				return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
-			}
-		}
-		if err := res.Close(); err != nil {
-			return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
-		}
+	bases, err := s.playedDecisionBases(ctx, positionIDs)
+	if err != nil {
+		return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
 	}
 
-	insert := &pgx.Batch{}
-	for _, mv := range mvs {
+	rows := make([][]any, len(mvs))
+	for i, mv := range mvs {
 		var positionID any
-		sql := moveInsertSQL
 		if mv.PositionID != 0 {
 			positionID = mv.PositionID
-			sql = moveInsertDatingSQL
 		}
 		var luckMP any
 		if mv.LuckMP != nil {
@@ -1043,28 +1021,96 @@ func (s *matchStore) CreateMoves(ctx context.Context, scope string, mvs []*domai
 			return fmt.Errorf("postgres: create move: %w", err)
 		}
 		decisionErr, closeCube := bases[mv.PositionID].Args(mv.CheckerMove, mv.CubeAction)
-		insert.Queue(sql,
+		rows[i] = []any{
 			tenant, mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
 			mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP,
 			sqlshared.MSArg(mv.DecisionMS), sqlshared.MSArg(mv.CubeDecisionMS), decisionErr, closeCube,
-			sqlshared.MSArg(mv.RollTickMS), sqlshared.MSArg(mv.TickMS))
-	}
-	res := bt.SendBatch(ctx, insert)
-	ids := make([]int64, len(mvs))
-	for i := range mvs {
-		if err := res.QueryRow().Scan(&ids[i]); err != nil {
-			_ = res.Close()
-			return fmt.Errorf("postgres: create move: %w", referenced(err))
+			sqlshared.MSArg(mv.RollTickMS), sqlshared.MSArg(mv.TickMS),
 		}
 	}
-	if err := res.Close(); err != nil {
+	args, err := bulkColumns(moveBulkTypes, rows)
+	if err != nil {
+		return err
+	}
+	res, err := s.db.Query(ctx, moveBulkInsertSQL, args...)
+	if err != nil {
 		return fmt.Errorf("postgres: create move: %w", referenced(err))
 	}
+	defer res.Close()
+	ids := make([]int64, 0, len(mvs))
+	for res.Next() {
+		var id int64
+		if err := res.Scan(&id); err != nil {
+			return fmt.Errorf("postgres: create move: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := res.Err(); err != nil {
+		return fmt.Errorf("postgres: create move: %w", referenced(err))
+	}
+	if len(ids) != len(mvs) {
+		return fmt.Errorf("postgres: create move: %d ids for %d moves", len(ids), len(mvs))
+	}
+	// The sequence hands ids in the order of the rows; RETURNING promises none.
+	slices.Sort(ids)
 	for i, mv := range mvs {
 		mv.ID = ids[i]
 	}
-	return nil
+	res.Close()
+	return analyzeFirstOfTenant(ctx, s.db, "move", "id", tenant, ids[0])
 }
+
+// playedDecisionBases reads what scores a move at each position, by position;
+// a position without analysis has no entry.
+func (s *matchStore) playedDecisionBases(ctx context.Context, positionIDs []int64) (map[int64]*sqlshared.PlayedDecisionBasis, error) {
+	bases := make(map[int64]*sqlshared.PlayedDecisionBasis, len(positionIDs))
+	if len(positionIDs) == 0 {
+		return bases, nil
+	}
+	rows, err := s.db.Query(ctx, playedDecisionBasesSQL, positionIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		basis, err := sqlshared.ScanPlayedDecisionBasis(func(dest ...any) error {
+			return rows.Scan(append([]any{&id}, dest...)...)
+		})
+		if err != nil {
+			return nil, err
+		}
+		bases[id] = basis
+	}
+	return bases, rows.Err()
+}
+
+var playedDecisionBasesSQL = strings.Replace(strings.Replace(sqlshared.PlayedDecisionAnalysisSQL,
+	"SELECT ", "SELECT p.id, ", 1), "WHERE p.id = ?", "WHERE p.id = ANY($1)", 1)
+
+// moveBulkTypes are the columns of moveInsertSQL, in order.
+var moveBulkTypes = []string{
+	bulkBigint, bulkBigint, bulkBigint, bulkInt, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkText, bulkInt, bulkBigint,
+	bulkBigint, bulkBigint, bulkBigint, bulkInt,
+	bulkBigint, bulkBigint,
+}
+
+// moveBulkInsertSQL is moveInsertDatingSQL for a set of moves: a position takes
+// the earliest date among the matches its new moves belong to, the date those
+// moves written one by one would have lowered it to.
+var moveBulkInsertSQL = `WITH ins AS (` + insertHead(moveInsertSQL) + " " + unnestSelect(moveBulkTypes) + ` RETURNING id, tenant_id, game_id, position_id),
+	dated AS (
+	UPDATE position SET match_date = d.md
+	FROM (SELECT i.tenant_id, i.position_id, MIN(m.match_date) AS md
+	        FROM ins i
+	        JOIN game g ON g.id = i.game_id AND g.tenant_id = i.tenant_id
+	        JOIN match m ON m.id = g.match_id AND m.tenant_id = g.tenant_id
+	       WHERE i.position_id IS NOT NULL
+	       GROUP BY i.tenant_id, i.position_id) AS d
+	WHERE position.id = d.position_id AND position.tenant_id = d.tenant_id AND d.md IS NOT NULL
+	  AND (position.match_date IS NULL OR position.match_date > d.md))
+	SELECT id FROM ins`
 
 // moveInsertDatingSQL is moveInsertSQL plus, in the same statement, the
 // lowering of position.match_date to the date of the match the new move ties
