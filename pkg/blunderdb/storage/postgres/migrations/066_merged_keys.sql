@@ -26,3 +26,11 @@ DROP INDEX IF EXISTS idx_analysis_position;
 
 ALTER TABLE position DROP CONSTRAINT IF EXISTS position_pkey;
 ALTER TABLE move DROP CONSTRAINT IF EXISTS move_pkey;
+
+-- Keys that only grow: a page split on the right leaves the page full rather
+-- than 90 % (1.4 GB on the largest library). Applies to the pages written from
+-- now on; a REINDEX after a bulk load packs the rest.
+ALTER INDEX position_tenant_id_key SET (fillfactor = 100);
+ALTER INDEX move_tenant_id_key SET (fillfactor = 100);
+ALTER INDEX analysis_pkey SET (fillfactor = 100);
+ALTER INDEX idx_analysis_tenant_position_key SET (fillfactor = 100);
