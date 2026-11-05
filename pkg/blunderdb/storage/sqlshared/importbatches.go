@@ -121,17 +121,55 @@ func (s *ImportBatchStore) Report(ctx context.Context, scope string, batchID int
 		return nil, err
 	}
 	what := fmt.Sprintf("report of import batch %d", batchID)
+	batch, batchArgs, err := s.batchClause(ctx, scope, batchID)
+	if err != nil {
+		return nil, errf(s.DB, what, err)
+	}
 
-	if err := s.measurePositions(ctx, scope, b); err != nil {
+	if err := s.measurePositions(ctx, scope, b, batch, batchArgs); err != nil {
 		return nil, errf(s.DB, what, err)
 	}
-	if err := s.measurePerformance(ctx, scope, b, players); err != nil {
+	if err := s.measurePerformance(ctx, scope, b, players, batch, batchArgs); err != nil {
 		return nil, errf(s.DB, what, err)
 	}
-	if err := s.measureWorst(ctx, scope, b, players); err != nil {
+	if err := s.measureWorst(ctx, scope, b, players, batch, batchArgs); err != nil {
 		return nil, errf(s.DB, what, err)
 	}
 	return b, nil
+}
+
+// maxBatchClauseMatches bounds the list of matchIDs batchClause writes out.
+const maxBatchClauseMatches = 10000
+
+// batchClause narrows a join reaching game g to the matches of the batch, named
+// one by one. The planner cannot be trusted with the batch's id: match has no
+// index on it, so until autovacuum has analysed a growing library it estimates
+// one row everywhere and starts from all of the tenant's positions, a cost that
+// grows with the library, on every report. A list on game's index it starts
+// from whatever the statistics say. A batch too large to list keeps the plain
+// predicate.
+func (s *ImportBatchStore) batchClause(ctx context.Context, scope string, batchID int64) (string, []any, error) {
+	tenant, targs := s.DB.TenantFilter("m", scope)
+	var ids []int64
+	err := scanEach(ctx, s.DB, `SELECT m.id FROM match m WHERE `+tenant+` AND m.import_batch_id = ?`,
+		append(targs, batchID), func(r Rows) error {
+			var id int64
+			if err := r.Scan(&id); err != nil {
+				return err
+			}
+			ids = append(ids, id)
+			return nil
+		})
+	if err != nil {
+		return "", nil, err
+	}
+	switch {
+	case len(ids) == 0:
+		return " AND 1 = 0", nil, nil
+	case len(ids) > maxBatchClauseMatches:
+		return " AND m.import_batch_id = ?", []any{batchID}, nil
+	}
+	return " AND g.match_id IN (" + Placeholders(len(ids)) + ")", int64Args(ids), nil
 }
 
 // batchPositionsFrom is the join from a batch to the positions its matches
@@ -144,15 +182,15 @@ JOIN match m ON m.id = g.match_id`
 
 // measurePositions fills the two position counts the panel acts on: what the
 // source tool had flagged for study, and what no engine has judged.
-func (s *ImportBatchStore) measurePositions(ctx context.Context, scope string, b *domain.ImportBatch) error {
+func (s *ImportBatchStore) measurePositions(ctx context.Context, scope string, b *domain.ImportBatch, batch string, batchArgs []any) error {
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	args := append(append([]any{}, targs...), b.ID)
+	args := append(append([]any{}, targs...), batchArgs...)
 	row := s.DB.QueryRow(ctx,
 		`SELECT COUNT(DISTINCT CASE WHEN `+s.DB.Bool("p.flagged", true)+` THEN p.id END),
 		        COUNT(DISTINCT CASE WHEN a.position_id IS NULL THEN p.id END)
 		 `+batchPositionsFrom+`
 		 LEFT JOIN analysis a ON a.position_id = p.id
-		 WHERE `+tenant+` AND m.import_batch_id = ?`, args...)
+		 WHERE `+tenant+batch, args...)
 	return row.Scan(&b.Report.PositionsFlagged, &b.Report.PositionsWithoutAnalysis)
 }
 
@@ -200,13 +238,13 @@ func batchPlayerClause(players []string) (string, []any) {
 // statistics show, over this import alone, from the same countedExpr. A batch
 // that carried no analysis scores no decisions and reports a PR of zero, which
 // the panel must render as "no analysis" rather than as a perfect game.
-func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string, b *domain.ImportBatch, players []string) error {
+func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string, b *domain.ImportBatch, players []string, batch string, batchArgs []any) error {
 	tenant, targs := s.DB.TenantFilter("p", scope)
 	playerClause, playerArgs, perr := s.playerClause(ctx, scope, players)
 	if perr != nil {
 		return perr
 	}
-	args := append(append([]any{}, targs...), b.ID)
+	args := append(append([]any{}, targs...), batchArgs...)
 	args = append(args, playerArgs...)
 
 	var total int64
@@ -214,7 +252,7 @@ func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string,
 	row := s.DB.QueryRow(ctx,
 		`SELECT COUNT(*), `+s.DB.Bigint("COALESCE(SUM("+statsErrExpr+"), 0)")+`
 		 `+statsBaseJoin+`
-		 WHERE `+tenant+` AND m.import_batch_id = ?`+playerClause+`
+		 WHERE `+tenant+batch+playerClause+`
 		   AND `+countedExpr(s.DB), args...)
 	if err := row.Scan(&decisions, &total); err != nil {
 		return err
@@ -229,13 +267,13 @@ func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string,
 //
 // It reads the SAME error column (statsErrExpr) and counted predicate as the
 // statistics.
-func (s *ImportBatchStore) measureWorst(ctx context.Context, scope string, b *domain.ImportBatch, players []string) error {
+func (s *ImportBatchStore) measureWorst(ctx context.Context, scope string, b *domain.ImportBatch, players []string, batch string, batchArgs []any) error {
 	tenant, targs := s.DB.TenantFilter("p", scope)
 	playerClause, playerArgs, perr := s.playerClause(ctx, scope, players)
 	if perr != nil {
 		return perr
 	}
-	args := append(append([]any{}, targs...), b.ID)
+	args := append(append([]any{}, targs...), batchArgs...)
 	args = append(args, playerArgs...)
 	limit, largs := s.DB.LimitOffset(domain.MaxImportBlunders, 0)
 	args = append(args, largs...)
@@ -245,7 +283,7 @@ func (s *ImportBatchStore) measureWorst(ctx context.Context, scope string, b *do
 		        COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length, 0),
 		        `+statsErrExpr+`, p.decision_type
 		 `+statsBaseJoin+`
-		 WHERE `+tenant+` AND m.import_batch_id = ?`+playerClause+`
+		 WHERE `+tenant+batch+playerClause+`
 		   AND `+countedExpr(s.DB)+`
 		   AND COALESCE(`+statsErrExpr+`, 0) > 0
 		 ORDER BY `+statsErrExpr+` DESC, p.id ASC`+limit, args...)
@@ -432,8 +470,12 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 	batchClause := ""
 	args := append([]any{}, targs...)
 	if batchID > 0 {
-		batchClause = " AND m.import_batch_id = ?"
-		args = append(args, batchID)
+		clause, batchArgs, err := s.batchClause(ctx, scope, batchID)
+		if err != nil {
+			return nil, err
+		}
+		batchClause = clause
+		args = append(args, batchArgs...)
 	}
 	args = append(args, playerArgs...)
 	args = append(args, extraArgs...)

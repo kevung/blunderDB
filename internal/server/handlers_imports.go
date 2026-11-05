@@ -18,6 +18,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
@@ -156,6 +157,16 @@ func (q *spoolQuota) release(n int64) { q.inFlight.Add(-n) }
 
 // usage returns the bytes currently reserved — backs blunderdb_import_spool_bytes.
 func (q *spoolQuota) usage() int64 { return q.inFlight.Load() }
+
+// uploadSpool is what r's body can hold on disk: multipart's own overflow file
+// and the copy the parser reads. The server stops a body at its declared length,
+// so only a body that declares none (chunked) counts as the largest allowed.
+func (s *Server) uploadSpool(r *http.Request) int64 {
+	if r.ContentLength < 0 {
+		return s.opts.ImportMaxBodyBytes
+	}
+	return min(2*r.ContentLength, s.opts.ImportMaxBodyBytes)
+}
 
 // allowedUploadExtensions is the allow-list for the spool file's suffix,
 // taken from the upload's filename. An extension outside it is dropped
@@ -492,6 +503,9 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 	}
 }
 
+// importProgressEvery spaces the progress events of an import.
+const importProgressEvery = 100 * time.Millisecond
+
 // handleImport streams an uploaded file through the importer, emitting NDJSON
 // progress events. The upload is spooled to a temp file so parser-backed
 // formats can seek; JSON reads it back sequentially.
@@ -508,13 +522,14 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			return
 		}
 
-		// Claim the worst case against the global spool quota (see
+		// Claim what the upload can hold against the global spool quota (see
 		// spoolQuota) before touching the body at all.
-		if !s.spool.reserve(s.opts.ImportMaxBodyBytes) {
+		spooled := s.uploadSpool(r)
+		if !s.spool.reserve(spooled) {
 			writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
 			return
 		}
-		defer s.spool.release(s.opts.ImportMaxBodyBytes)
+		defer s.spool.release(spooled)
 		if s.refuseImport(r.Context(), w, scopeOf(r)) {
 			return
 		}
@@ -574,7 +589,15 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 
 		emit(map[string]any{"event": "started", "import_id": importID, "batch_id": batchID})
 
+		var lastProgress time.Time
 		prog := func(p ingest.Progress) {
+			// A match writes thousands of moves: one flush each is a syscall
+			// per move for a client that redraws a counter.
+			now := time.Now()
+			if now.Sub(lastProgress) < importProgressEvery {
+				return
+			}
+			lastProgress = now
 			ev := map[string]any{
 				"event":     "progress",
 				"matches":   p.Matches,
@@ -621,7 +644,8 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary
-		// without a second call. Best-effort — the import has already
+		// without a second call, unless it asked report=deferred to read it
+		// once from imports.report. Best-effort — the import has already
 		// succeeded and committed by here.
 		if batchID != 0 {
 			done["batch_id"] = batchID
@@ -636,7 +660,8 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			if sum.Deepened > 0 {
 				counts.MatchesDeepened = 1
 			}
-			if err := batches.Finish(ctx, scope, batchID, counts); err == nil {
+			err := batches.Finish(ctx, scope, batchID, counts)
+			if err == nil && r.URL.Query().Get("report") != "deferred" {
 				if rep, err := batches.Report(ctx, scope, batchID, nil); err == nil {
 					done["report"] = rep.Report
 				}
@@ -667,11 +692,12 @@ func maxPositionsParam(r *http.Request, format ingest.Format) (int, error) {
 // tenant (ingest.AnalyzeDB) without importing it: a client can warn before
 // sending the import itself.
 func (s *Server) handleDBAnalyze(w http.ResponseWriter, r *http.Request) {
-	if !s.spool.reserve(s.opts.ImportMaxBodyBytes) {
+	spooled := s.uploadSpool(r)
+	if !s.spool.reserve(spooled) {
 		writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
 		return
 	}
-	defer s.spool.release(s.opts.ImportMaxBodyBytes)
+	defer s.spool.release(spooled)
 
 	r.Body = http.MaxBytesReader(w, r.Body, s.opts.ImportMaxBodyBytes)
 	file, _, err := r.FormFile("file")

@@ -282,12 +282,12 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 
 	mt, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if mt == "multipart/form-data" {
-		reserved = s.opts.ImportMaxBodyBytes * (1 + batchExtractFactor)
-		if !s.spool.reserve(reserved) {
-			reserved = 0
+		upload := s.uploadSpool(r)
+		if !s.spool.reserve(upload) {
 			writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
 			return
 		}
+		reserved = upload
 		r.Body = http.MaxBytesReader(w, r.Body, s.opts.ImportMaxBodyBytes)
 		file, header, err := r.FormFile("file")
 		if err != nil {
@@ -309,9 +309,23 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 			writeStorageError(w, err)
 			return
 		}
+		// The archive says what it will unpack to; only that stays held for
+		// the batch's whole life, the upload's share goes once it is unpacked.
+		budget := s.opts.ImportMaxBodyBytes * batchExtractFactor
+		unpacked := budget
+		if declared, derr := ingest.ArchiveUnpackedSize(archive); derr == nil {
+			unpacked = min(declared, budget)
+		}
+		if !s.spool.reserve(unpacked) {
+			writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
+			return
+		}
+		reserved += unpacked
 		root = filepath.Join(workDir, "files")
-		n, err := ingest.ExtractArchive(archive, root, s.opts.ImportMaxBodyBytes*batchExtractFactor)
+		n, err := ingest.ExtractArchive(archive, root, budget)
 		os.Remove(archive)
+		s.spool.release(upload)
+		reserved -= upload
 		if err != nil {
 			if errors.Is(err, ingest.ErrArchiveTooLarge) || errors.Is(err, ingest.ErrArchiveTooManyEntries) {
 				writeErrorCode(w, CodeInvalid, err.Error())

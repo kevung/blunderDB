@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -62,6 +63,32 @@ func ExtractArchive(archive, dir string, maxBytes int64) (int, error) {
 		return extractTar(archive, dir, maxBytes)
 	}
 	return 0, fmt.Errorf("unsupported archive type %q (want .zip or .tar)", filepath.Ext(archive))
+}
+
+// ArchiveUnpackedSize says what archive can unpack to, without unpacking it. A
+// zip states it entry by entry, and its reader refuses an entry that runs past
+// its statement; a tar holds its entries as they are, so its own size bounds them.
+func ArchiveUnpackedSize(archive string) (int64, error) {
+	if strings.ToLower(filepath.Ext(archive)) != ".zip" {
+		fi, err := os.Stat(archive)
+		if err != nil {
+			return 0, err
+		}
+		return fi.Size(), nil
+	}
+	zr, err := zip.OpenReader(archive)
+	if err != nil {
+		return 0, err
+	}
+	defer zr.Close()
+	var total uint64
+	for _, f := range zr.File {
+		total += f.UncompressedSize64
+	}
+	if total > math.MaxInt64 {
+		return math.MaxInt64, nil
+	}
+	return int64(total), nil
 }
 
 // unpacker writes entries under dir within a byte budget.
