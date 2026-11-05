@@ -131,6 +131,20 @@ func (s *SearchStore) appendRateClauses(ctx context.Context, scope string, f dom
 	return nil
 }
 
+// placedCheckers counts the checkers a board places for each side, bar included.
+func placedCheckers(b domain.Board) (black, white int) {
+	for _, p := range b.Points {
+		switch {
+		case p.Checkers <= 0 || p.Color < 0:
+		case p.Color == domain.Black:
+			black += p.Checkers
+		default:
+			white += p.Checkers
+		}
+	}
+	return black, white
+}
+
 // narrowLimit is how many matches a filter on another table may name by literal list.
 // Atomic so a test can move it (SetNarrowLimit) while other searches run.
 var narrowLimit atomic.Int64
@@ -446,6 +460,17 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 			args = append(args,
 				int64(occ1Req), int64(occ1Req), int64(pt1Req), int64(pt1Req),
 				int64(occ2Req), int64(occ2Req), int64(pt2Req), int64(pt2Req))
+			// A side whose fifteen checkers are all placed has nowhere else to be: its
+			// occupancy is implied whole, and an index answers what masks cannot.
+			black, white := placedCheckers(effInclude.Board)
+			if black == domain.CheckersPerPlayer {
+				where.WriteString(" AND p.occupancy_1 = ?")
+				args = append(args, int64(occ1Req))
+			}
+			if white == domain.CheckersPerPlayer {
+				where.WriteString(" AND p.occupancy_2 = ?")
+				args = append(args, int64(occ2Req))
+			}
 		}
 
 		// Exclusion structure ("Sauf"): drop positions that contain ANY of the

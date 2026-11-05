@@ -408,3 +408,5 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   the tenant's analyses by id, the order by played-move error (supersedes
   `idx_analysis_move_error`), the gammon rates, the checker masks by id. No schema
   change, no version bump.
+- `062_search_occupancy.sql` — the occupancy of each side, for a board filter placing all
+  its fifteen checkers. No schema change, no version bump.

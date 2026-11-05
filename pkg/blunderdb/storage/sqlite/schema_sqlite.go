@@ -941,6 +941,8 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_error_order    ON analysis(best_move_equity_error DESC, position_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon1        ON analysis(player1_gammon_rate)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis(player2_gammon_rate)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy1     ON position(occupancy_1)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy2     ON position(occupancy_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis(is_forced) WHERE is_forced = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_close_cube  ON analysis(is_close_cube) WHERE is_close_cube = 1`,
 	// The comment-presence filter (`co`/`xco`) probes this table once per search
@@ -978,7 +980,7 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon2    ON analysis(player2_backgammon_rate)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match(canonical_hash)`,
 	`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
-	`CREATE        INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_move_game_position              ON move(game_id, position_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_command_history_scope   ON command_history(scope, timestamp)`,
 	`CREATE        INDEX IF NOT EXISTS idx_search_history_scope    ON search_history(scope, timestamp)`,
