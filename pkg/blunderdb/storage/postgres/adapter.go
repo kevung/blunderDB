@@ -1,9 +1,9 @@
 package postgres
 
 import (
-	"strings"
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -51,7 +51,7 @@ func (shared) ILike() string               { return "ILIKE" }
 func (shared) IDsIn(expr string, ids []string) (string, []any) {
 	return expr + " = ANY(?::bigint[])", []any{"{" + strings.Join(ids, ",") + "}"}
 }
-func (shared) ForUpdate() string           { return " FOR UPDATE" }
+func (shared) ForUpdate() string { return " FOR UPDATE" }
 func (shared) Guard(key string) (string, []any) {
 	return "SELECT pg_advisory_xact_lock(?)", []any{guardKey(key)}
 }

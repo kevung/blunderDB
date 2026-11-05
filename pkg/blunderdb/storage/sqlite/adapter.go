@@ -1,10 +1,10 @@
 package sqlite
 
 import (
-	"strings"
 	"context"
 	"database/sql"
 	"errors"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -60,7 +60,7 @@ func (shared) ILike() string             { return "LIKE" }
 func (shared) IDsIn(expr string, ids []string) (string, []any) {
 	return expr + " IN (" + strings.Join(ids, ",") + ")", nil
 }
-func (shared) ForUpdate() string         { return "" }
+func (shared) ForUpdate() string { return "" }
 func (shared) Guard(string) (string, []any) {
 	return "", nil
 }

@@ -1,10 +1,10 @@
 package sqlshared
 
 import (
-	"strings"
 	"context"
 	"errors"
 	"reflect"
+	"strings"
 	"time"
 )
 
@@ -43,7 +43,7 @@ func (fakeDialect) ILike() string             { return "LIKE" }
 func (fakeDialect) IDsIn(expr string, ids []string) (string, []any) {
 	return expr + " IN (" + strings.Join(ids, ",") + ")", nil
 }
-func (fakeDialect) ForUpdate() string         { return "" }
+func (fakeDialect) ForUpdate() string { return "" }
 func (fakeDialect) Guard(string) (string, []any) {
 	return "", nil
 }
