@@ -3063,6 +3063,7 @@
         },
         "unapplied": "{conflicts} en conflicto, {missing} con una referencia ausente, {unsupported} de un tipo no admitido: estos elementos no se aplicaron.",
         "skipped": {
+            "status": "Sincronización: {count} elemento(s) sin aplicar o apartados; detalle en Ajustes, Sincronización.",
             "title": "Apartados, se reintentan en cada sincronización ({count}):",
             "item": "{family} {id} — {direction}, {reason}",
             "sent": "enviado",

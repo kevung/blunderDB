@@ -3063,6 +3063,7 @@
         },
         "unapplied": "{conflicts} ristiriidassa, {missing} puuttuvalla viittauksella, {unsupported} tukemattomaa tyyppiä: näitä kohteita ei otettu käyttöön.",
         "skipped": {
+            "status": "Synkronointi: {count} kohdetta jäi soveltamatta tai sivuun; tiedot kohdassa Asetukset, Synkronointi.",
             "title": "Sivuun jätetty, yritetään uudelleen jokaisessa synkronoinnissa ({count}):",
             "item": "{family} {id} — {direction}, {reason}",
             "sent": "lähetetty",

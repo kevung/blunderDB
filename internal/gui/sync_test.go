@@ -1,8 +1,12 @@
 package gui
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -210,5 +214,57 @@ func TestSyncSkippedRecordsAreKeptAndShownAfterARestart(t *testing.T) {
 	got := b.SyncStatus().Skipped
 	if len(got) != 1 || got[0].Family != "match" || got[0].UUID != "u-1" {
 		t.Fatalf("skipped = %+v", got)
+	}
+}
+
+// A revoked token is said, the library keeps its cursors, and removing the token
+// leaves nothing in the keyring; the token is in no log line, status or state file.
+func TestSyncARevokedTokenIsSaidAndTheTokenIsInNoLog(t *testing.T) {
+	const tok = "bdb_revoked-secret"
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(`{"error":"unauthorized"}`))
+	}))
+	defer srv.Close()
+	a, state := syncApp(t, srv.URL)
+	if err := a.SyncSetToken(srv.URL, tok); err != nil {
+		t.Fatal(err)
+	}
+	var logs bytes.Buffer
+	prev := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(&logs, nil)))
+	t.Cleanup(func() { slog.SetDefault(prev) })
+
+	a.sync.running = true
+	a.syncRun(context.Background())
+	st := a.SyncStatus()
+	if st.Error == nil || st.Error.Kind != "refused" || !st.HasToken || st.LastSuccess != "" {
+		t.Fatalf("status = %+v, want the token refused and kept until removed", st)
+	}
+	if !strings.Contains(logs.String(), "sync failed") {
+		t.Fatalf("the failure is not logged, so the log check proves nothing: %q", logs.String())
+	}
+	shown, _ := json.Marshal(st)
+	raw, _ := os.ReadFile(state)
+	for where, text := range map[string]string{"log": logs.String(), "status": string(shown), "state file": string(raw)} {
+		if strings.Contains(text, tok) {
+			t.Errorf("the token is in the %s", where)
+		}
+	}
+
+	if err := a.SyncSetToken(srv.URL, ""); err != nil {
+		t.Fatal(err)
+	}
+	addr, _ := syncremote.NormalizeAddress(srv.URL)
+	if _, err := keyring.Get(syncKeyringService, addr); !errors.Is(err, keyring.ErrNotFound) {
+		t.Fatalf("after removal the keyring answers %v", err)
+	}
+	if st := a.SyncStatus(); st.HasToken {
+		t.Fatalf("status still says a token is stored")
+	}
+	a.sync.running = true
+	a.syncRun(context.Background())
+	if st := a.SyncStatus(); st.Error == nil || st.Error.Kind != "no_token" {
+		t.Fatalf("a run without the token = %+v, want no_token and no call", st.Error)
 	}
 }

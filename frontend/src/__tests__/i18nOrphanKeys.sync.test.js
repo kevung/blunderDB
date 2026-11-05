@@ -40,6 +40,7 @@ const DYNAMIC_PREFIXES = [
     'keyNames.', // utils/keyNames.js: t(`keyNames.${key}`)
     'sync.error.', // services/syncService.js: the kind of failure Go reports
     'sync.skipped.', // SyncSettings.svelte: the direction and reason of a record set aside, by key
+    'sync.allowance.axis.', // services/syncService.js: the axis the server names in an exceeded allowance
     'libraryGroups.migrationPhase.', // services/migrationProgress.js: the migration phase Go reports
     'maintenance.line_', // MaintenanceSettings.svelte, StatusBar.svelte: the line's kind Go sends
     'maintenance.hint_', // MaintenanceSettings.svelte: same

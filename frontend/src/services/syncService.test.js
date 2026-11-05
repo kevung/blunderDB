@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { syncErrorKey, syncErrorIsVerbatim, syncErrorWords, syncSkipped, syncSkipReasonKey } from './syncService.js';
+import { syncErrorKey, syncErrorIsVerbatim, syncErrorWords, syncSkipped, syncSkipReasonKey, syncStatusMessage } from './syncService.js';
 import en from '../i18n/locales/en.json';
 
 describe('syncErrorKey', () => {
@@ -65,6 +65,24 @@ describe('syncErrorWords', () => {
             expect(sync.error.invalid_records, lang).toBeTruthy();
             for (const a of ['positions', 'matches', 'storage', 'collections', 'other']) expect(sync.allowance.axis[a], `${lang} ${a}`).toBeTruthy();
             for (const r of ['invalid', 'reference']) expect(sync.skipped[r], `${lang} ${r}`).toBeTruthy();
+        }
+    });
+});
+
+describe('syncStatusMessage', () => {
+    it('tells on the status bar what a run left behind, since the tab may stay closed', async () => {
+        const base = { running: false, server: '', hasToken: true, lastSuccess: '' };
+        expect(syncStatusMessage(base)).toBeNull();
+        expect(syncStatusMessage({ ...base, running: true, skipped: [{ direction: 'sent', family: 'match', uuid: 'u', reason: 'too_large' }] })).toBeNull();
+        const skipped = [{ direction: 'sent', family: 'match', uuid: 'u', reason: 'too_large' }];
+        const result = { sent: { records: 3, conflicts: 0, missing: 0, unsupported: 1 }, received: { records: 0, conflicts: 0, missing: 0, unsupported: 0 } };
+        expect(syncStatusMessage({ ...base, skipped, result })).toEqual({ i18nKey: 'sync.skipped.status', i18nParams: { count: 2 } });
+        expect(syncStatusMessage({ ...base, error: { kind: 'refused', message: 'HTTP 401' } })).toEqual({ i18nKey: 'sync.error.refused', i18nParams: {} });
+        const allowance = syncStatusMessage({ ...base, error: { kind: 'allowance', message: 'Limite atteinte', allowance: { axis: 'matches', allowed: 10, held: 10, new: 1 } } });
+        expect(allowance).toMatchObject({ i18nKey: 'sync.error.allowance', i18nParams: { axis: { i18nKey: 'sync.allowance.axis.matches' }, allowed: 10 } });
+        for (const lang of ['de', 'el', 'en', 'es', 'fi', 'fr', 'it', 'ja', 'ru']) {
+            const sync = (await import(`../i18n/locales/${lang}.json`)).default.sync;
+            expect(sync.skipped.status, lang).toContain('{count}');
         }
     });
 });

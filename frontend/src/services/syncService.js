@@ -11,7 +11,7 @@ import { logger } from '../utils/logger.js';
 // the token goes straight to the system keyring and never comes back here.
 
 /** @typedef {{ server: string, auto: boolean }} SyncSettings */
-/** @typedef {{ running: boolean, server: string, hasToken: boolean, lastSuccess: string, error?: { kind: string, message: string } | null, result?: { sent: SyncTotals, received: SyncTotals } | null, skipped?: SyncSkip[] | null }} SyncState */
+/** @typedef {{ running: boolean, server: string, hasToken: boolean, lastSuccess: string, error?: { kind: string, message: string, allowance?: { axis: string, allowed: number, held: number, new: number } } | null, result?: { sent: SyncTotals, received: SyncTotals } | null, skipped?: SyncSkip[] | null }} SyncState */
 /** @typedef {{ direction: string, family: string, uuid: string, size?: number, reason: string }} SyncSkip */
 /** @typedef {{ records: number, conflicts: number, missing: number, unsupported: number, unsynchronizable?: number }} SyncTotals */
 
@@ -25,8 +25,24 @@ let subscribed = false;
 /** @param {SyncState} s */
 function onStatus(s) {
     syncStateStore.set(s);
-    // A failed run is told on the status bar too: nobody opens the tab to look for it.
-    if (!s.running && s.error) statusBarTextStore.set(syncErrorIsVerbatim(s.error.kind) ? s.error.message : tMsg(syncErrorKey(s.error.kind)));
+    const msg = syncStatusMessage(s);
+    if (msg) statusBarTextStore.set(msg);
+}
+
+/**
+ * What the status bar says when a run ends, since nobody opens the tab to look: a failure, or
+ * the records that did not get through. Nothing for a run under way or one that left nothing behind.
+ * @param {SyncState} s
+ */
+export function syncStatusMessage(s) {
+    if (s.running) return null;
+    if (s.error) {
+        const w = syncErrorWords(s.error);
+        if (!w.key) return w.verbatim;
+        return tMsg(w.key, w.params.axis ? { ...w.params, axis: tMsg(String(w.params.axis)) } : w.params);
+    }
+    const left = syncSkipped(s).length + syncUnapplied(s.result);
+    return left > 0 ? tMsg('sync.skipped.status', { count: left }) : null;
 }
 
 function subscribe() {

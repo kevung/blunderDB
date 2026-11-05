@@ -3063,6 +3063,7 @@
         },
         "unapplied": "競合 {conflicts} 件、参照先なし {missing} 件、未対応の種類 {unsupported} 件：これらは適用されませんでした。",
         "skipped": {
+            "status": "同期：{count} 件が適用されなかったか保留されています。詳細は設定の「同期」にあります。",
             "title": "保留中、同期のたびに再試行します（{count} 件）：",
             "item": "{family} {id} — {direction}、{reason}",
             "sent": "送信",

@@ -141,18 +141,13 @@ func TestAReferenceToARecordTheServerSkippedIsRetriedWhenItServesIt(t *testing.T
 }
 
 // Matches go first and alone, then the rest: an account with a cap refuses the positions of a match that is not there yet.
-func TestMatchesAreSentBeforeThePositionsAndNeverInTheSameRequest(t *testing.T) {
-	a, b := openLibrary(t), openLibrary(t)
-	if _, err := a.ImportXGMatch("../../../testdata/test.xg"); err != nil {
-		t.Fatal(err)
-	}
-	collectionWith(t, a, 2)
-	r := &scripted{lib: b}
-	if _, _, err := run(t, a, b, r, syncremote.Options{}); err != nil {
-		t.Fatal(err)
-	}
+// matchesPerRequest checks the order an account with a cap relies on: no request
+// mixes matches with other records, and none carries another record before the
+// first match. It returns how many match records went.
+func matchesPerRequest(t *testing.T, calls [][]changeset.Record) int {
+	t.Helper()
 	matches := 0
-	for i, call := range r.imports {
+	for i, call := range calls {
 		m, o := 0, 0
 		for _, rec := range call {
 			if rec.Family == "match" {
@@ -161,17 +156,131 @@ func TestMatchesAreSentBeforeThePositionsAndNeverInTheSameRequest(t *testing.T) 
 				o++
 			}
 		}
-		t.Logf("request %d: %d matches, %d others", i+1, m, o)
 		if m > 0 && o > 0 {
 			t.Fatalf("request %d mixes %d matches with %d other records", i+1, m, o)
 		}
 		matches += m
 		if matches == 0 {
-			t.Fatalf("request %d carries positions before any match was sent", i+1)
+			t.Fatalf("request %d carries %d records before any match was sent", i+1, o)
 		}
 	}
-	if len(r.imports) < 2 || matches == 0 {
-		t.Fatalf("requests=%d matches=%d: the fixture should hold both", len(r.imports), matches)
+	return matches
+}
+
+func TestMatchesAreSentBeforeThePositionsAndNeverInTheSameRequest(t *testing.T) {
+	cases := []struct {
+		name string
+		opt  syncremote.Options
+		cur  syncremote.Cursors
+	}{
+		// The journal gives the positions first: the match is pages later.
+		{name: "pages of the default size"},
+		{name: "short pages", opt: syncremote.Options{Page: 5}},
+		{name: "a stale cursor starts over in the same order", opt: syncremote.Options{Page: 5}, cur: syncremote.Cursors{Sent: storage.Cursor{Seq: 5, Carried: "another journal"}}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			a, b := openLibrary(t), openLibrary(t)
+			if _, err := a.ImportXGMatch("../../../testdata/test.xg"); err != nil {
+				t.Fatal(err)
+			}
+			collectionWith(t, a, 2)
+			r := &scripted{lib: b}
+			if _, _, err := syncremote.Run(context.Background(), database.JournalOf(a), r, tc.cur, tc.opt); err != nil {
+				t.Fatal(err)
+			}
+			if got := matchesPerRequest(t, r.imports); got != 1 || len(r.imports) < 2 {
+				t.Fatalf("requests=%d matches sent=%d, want the fixture's one match sent once and the rest apart", len(r.imports), got)
+			}
+		})
+	}
+}
+
+// journalAfterWalk stands for a library written during a run: its first walk of
+// the journal finds nothing to send ahead, then the page holds a match among others.
+type journalAfterWalk struct {
+	syncremote.Local
+	page  []changeset.Record
+	walks int
+}
+
+func (l *journalAfterWalk) Export(context.Context, storage.Cursor, int) (changeset.Set, error) {
+	if l.walks++; l.walks == 1 {
+		return changeset.Set{}, nil
+	}
+	return changeset.Set{Records: l.page}, nil
+}
+
+type recordingRemote struct {
+	syncremote.Remote
+	imports [][]changeset.Record
+}
+
+func (r *recordingRemote) Import(_ context.Context, recs []changeset.Record) (changeset.Report, error) {
+	r.imports = append(r.imports, recs)
+	return changeset.Report{}, nil
+}
+
+func (r *recordingRemote) Export(context.Context, storage.Cursor, int) (syncremote.Page, error) {
+	return syncremote.Page{}, nil
+}
+
+// A match only the main pass sees still goes ahead of its page, alone.
+func TestAMatchJournaledDuringTheRunGoesAheadOfItsPage(t *testing.T) {
+	rec := func(family, uuid string) changeset.Record {
+		return changeset.Record{Change: storage.Change{Family: family, UUID: uuid}}
+	}
+	local := &journalAfterWalk{page: []changeset.Record{rec("position", "p1"), rec("match", "m1"), rec("position", "p2")}}
+	r := &recordingRemote{}
+	if _, _, err := syncremote.Run(context.Background(), local, r, syncremote.Cursors{}, syncremote.Options{}); err != nil {
+		t.Fatal(err)
+	}
+	if got := matchesPerRequest(t, r.imports); got != 1 || len(r.imports) != 2 {
+		t.Fatalf("requests=%d matches sent=%d, want the match alone, then the positions", len(r.imports), got)
+	}
+}
+
+// editAfterWalk writes in the library when the first walk of the journal ends.
+type editAfterWalk struct {
+	syncremote.Local
+	edit func()
+}
+
+func (l *editAfterWalk) Export(ctx context.Context, after storage.Cursor, limit int) (changeset.Set, error) {
+	set, err := l.Local.Export(ctx, after, limit)
+	if err == nil && !set.More && l.edit != nil {
+		l.edit()
+		l.edit = nil
+	}
+	return set, err
+}
+
+// A match edited between the two walks is a new journal entry: leaving it out as
+// already sent would move the cursor past the edit for good.
+func TestAMatchEditedDuringTheRunIsNotLeftOutAsAlreadySent(t *testing.T) {
+	a, b := openLibrary(t), openLibrary(t)
+	if _, err := a.ImportXGMatch("../../../testdata/test.xg"); err != nil {
+		t.Fatal(err)
+	}
+	ms, err := a.GetAllMatches()
+	if err != nil || len(ms) != 1 {
+		t.Fatalf("matches: %v %v", ms, err)
+	}
+	local := &editAfterWalk{Local: database.JournalOf(a), edit: func() {
+		if err := a.UpdateMatchComment(ms[0].ID, "written during the run"); err != nil {
+			t.Fatal(err)
+		}
+	}}
+	r := &scripted{lib: b}
+	if _, _, err := syncremote.Run(context.Background(), local, r, syncremote.Cursors{}, syncremote.Options{}); err != nil {
+		t.Fatal(err)
+	}
+	got, err := b.GetAllMatches()
+	if err != nil || len(got) != 1 {
+		t.Fatalf("server matches: %v %v", got, err)
+	}
+	if got[0].Comment != "written during the run" {
+		t.Fatalf("the server holds comment %q: the edit was passed over", got[0].Comment)
 	}
 }
 

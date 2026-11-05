@@ -292,17 +292,23 @@ func payloadSize(recs []changeset.Record) func(family, uuid string) int64 {
 // sendMatchesFirst sends every match of what is left to send before any
 // position: the journal may hold the positions of a match many pages before the
 // match, and an account with a cap refuses them without it. It returns the
-// matches it sent, which the pass that follows leaves out.
-func sendMatchesFirst(ctx context.Context, local Local, remote Remote, cur *Cursors, opt Options, res *Result) (map[string]bool, error) {
-	done := map[string]bool{}
+// journal entries it sent, which the pass that follows leaves out; a match
+// written since has a new entry and goes with its page.
+func sendMatchesFirst(ctx context.Context, local Local, remote Remote, cur *Cursors, opt Options, res *Result) (map[storage.Change]bool, error) {
+	done := map[storage.Change]bool{}
 	after := cur.Sent
+	restarted := false
 	for {
 		if err := ctx.Err(); err != nil {
 			return done, err
 		}
 		set, err := local.Export(ctx, after, opt.Page)
 		if errors.Is(err, storage.ErrCursorStale) {
-			return map[string]bool{}, nil // the pass that follows starts over and sends them in their pages
+			if restarted || after.IsStart() {
+				return done, nil // the pass that follows says it
+			}
+			cur.Sent, after, restarted = storage.Cursor{}, storage.Cursor{}, true
+			continue
 		}
 		if err != nil {
 			return done, fmt.Errorf("reading this library's changes: %w", err)
@@ -324,7 +330,7 @@ func sendMatchesFirst(ctx context.Context, local Local, remote Remote, cur *Curs
 			}
 			cur.dangle(DirectionSent, miss, payloadSize(matches), from, to)
 			for _, m := range matches {
-				done[m.UUID] = true
+				done[m.Change] = true
 			}
 		}
 		if !set.More || set.Cursor == after {
@@ -512,7 +518,7 @@ func run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 			return cur, res, fmt.Errorf("reading this library's changes: %w", err)
 		}
 		if len(early) > 0 {
-			set.Records = slices.DeleteFunc(slices.Clone(set.Records), func(r changeset.Record) bool { return r.Family == "match" && early[r.UUID] })
+			set.Records = slices.DeleteFunc(slices.Clone(set.Records), func(r changeset.Record) bool { return early[r.Change] })
 		}
 		if len(set.Records) > 0 {
 			aside := func(rec changeset.Record, reason string) {

@@ -3063,6 +3063,7 @@
         },
         "unapplied": "{conflicts} in conflitto, {missing} con un riferimento assente, {unsupported} di un tipo non supportato: questi elementi non sono stati applicati.",
         "skipped": {
+            "status": "Sincronizzazione: {count} elemento/i non applicato/i o messo/i da parte; dettagli in Impostazioni, Sincronizzazione.",
             "title": "Messi da parte, ritentati a ogni sincronizzazione ({count}):",
             "item": "{family} {id} — {direction}, {reason}",
             "sent": "inviato",

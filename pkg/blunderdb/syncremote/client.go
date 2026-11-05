@@ -61,8 +61,9 @@ type Client struct {
 	http  *http.Client
 }
 
-// maxAnswer bounds what is read from one answer.
-const maxAnswer = 256 << 20
+// maxAnswer bounds what is read from one answer: a record of the 256 MiB a
+// server may serve, and its envelope.
+const maxAnswer = 257 << 20
 
 // NewClient checks the address. https is required unless the server is on this
 // machine: a bearer token must not cross a network in clear.

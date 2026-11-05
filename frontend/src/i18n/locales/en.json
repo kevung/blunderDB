@@ -3063,6 +3063,7 @@
         },
         "unapplied": "{conflicts} in conflict, {missing} with a missing reference, {unsupported} of an unsupported type: these items were not applied.",
         "skipped": {
+            "status": "Synchronisation: {count} item(s) not applied or set aside; see Settings, Synchronisation.",
             "title": "Set aside, tried again at each synchronisation ({count}):",
             "item": "{family} {id} — {direction}, {reason}",
             "sent": "sent",

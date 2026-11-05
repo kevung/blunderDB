@@ -3063,6 +3063,7 @@
         },
         "unapplied": "{conflicts} im Konflikt, {missing} mit fehlendem Verweis, {unsupported} von nicht unterstütztem Typ: Diese Elemente wurden nicht übernommen.",
         "skipped": {
+            "status": "Synchronisierung: {count} Element(e) nicht übernommen oder zurückgestellt; Details unter Einstellungen, Synchronisierung.",
             "title": "Zurückgestellt, bei jeder Synchronisation erneut versucht ({count}):",
             "item": "{family} {id} — {direction}, {reason}",
             "sent": "gesendet",
