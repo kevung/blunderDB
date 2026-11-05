@@ -170,7 +170,7 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	// The walk in id order is checked once per position; the subquery form would lead
 	// the planner to read every move of the match set, then look up each position.
 	walk := func() {
-		where.WriteString(" AND EXISTS (SELECT 1" + joined + " AND mv.position_id = p.id LIMIT 1 OFFSET 0)")
+		where.WriteString(" AND EXISTS (SELECT 1" + joined + " AND "+walkKey+" LIMIT 1 OFFSET 0)")
 		*args = append(*args, subArgs...)
 	}
 	limit := matchListLimit
@@ -188,6 +188,13 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	}
 	return s.narrowWithin(ctx, limit, sub, subArgs, where, args, walk)
 }
+
+// walkKey ties the walk's moves to the position. Read through the joined analysis when the
+// rest of the filter reads it, it cannot run before that cheaper filter, at the scan.
+const (
+	walkKey       = "mv.position_id = p.id"
+	walkKeyJoined = "mv.position_id = COALESCE(a.position_id, p.id)"
+)
 
 // matchListLimit is how many moves a match-level filter may name by literal list: above
 // it the filter holds of at least one position in a hundred of a five-million library,
