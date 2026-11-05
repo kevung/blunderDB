@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -19,6 +20,28 @@ const (
 	bulkText   = "text"
 	bulkTime   = "timestamptz"
 )
+
+// analyzeNeverAnalysed gives table its first statistics, once it holds rows. A
+// plan made while a table has none is cached with the connection and survives
+// until the first ANALYZE, which autovacuum makes a minute later at best: until
+// then each foreign key check and journal trigger on position walks every row
+// of the tenant through its first index on tenant_id, a cost that grows with
+// the table. After this, the plans hold however fast it grows. Taken in the
+// caller's transaction, whose rows it counts, and paid by a first import only.
+func analyzeNeverAnalysed(ctx context.Context, db execer, table string) error {
+	var never bool
+	if err := db.QueryRow(ctx,
+		`SELECT reltuples < 1 FROM pg_class WHERE oid = $1::regclass`, table).Scan(&never); err != nil {
+		return fmt.Errorf("postgres: statistics of %s: %w", table, err)
+	}
+	if !never {
+		return nil
+	}
+	if _, err := db.Exec(ctx, "ANALYZE "+table); err != nil {
+		return fmt.Errorf("postgres: analyze %s: %w", table, err)
+	}
+	return nil
+}
 
 // unnestSelect renders "SELECT * FROM unnest($1::t1[], $2::t2[], ...)".
 func unnestSelect(types []string) string {

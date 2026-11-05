@@ -649,6 +649,9 @@ func (s *positionStore) saveChunk(ctx context.Context, tenant int64, chunk []*do
 	if err := s.scanHashIDs(ctx, inserted, positionBulkInsertSQL, args...); err != nil {
 		return fmt.Errorf("postgres: save position: %w", err)
 	}
+	if err := analyzeNeverAnalysed(ctx, s.db, "position"); err != nil {
+		return err
+	}
 
 	var stored, individual, flagged []int64
 	visited := make(map[int64]bool, len(hashes))

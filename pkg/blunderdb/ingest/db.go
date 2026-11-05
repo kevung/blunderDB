@@ -185,24 +185,29 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	targetIDs := make([]int64, 0, len(records))
 	targetOf := make(map[int64]int64, len(records))
 	var created []int64
+	copies := make([]*domain.Position, len(records))
 	for i := range records {
-		if err := ctx.Err(); err != nil {
-			return Summary{}, err
-		}
-		rec := &records[i]
-		pc := *rec.pos
+		pc := *records[i].pos
 		pc.ID = 0
-		id, inserted, err := tx.Positions().SaveCreated(ctx, scope, &pc)
-		if err != nil {
-			return Summary{}, err
-		}
-		if inserted {
-			created = append(created, id)
-		}
-		saved = append(saved, savedRecord{rec: rec, id: id})
-		targetIDs = append(targetIDs, id)
-		targetOf[rec.pos.ID] = id
+		copies[i] = &pc
 	}
+	ids, inserted, err := tx.Positions().SaveMany(ctx, scope, copies)
+	if err != nil {
+		return Summary{}, err
+	}
+	for i := range records {
+		rec := &records[i]
+		if inserted[i] {
+			created = append(created, ids[i])
+		}
+		saved = append(saved, savedRecord{rec: rec, id: ids[i]})
+		targetIDs = append(targetIDs, ids[i])
+		targetOf[rec.pos.ID] = ids[i]
+	}
+	// A position this transaction created can have no analysis yet: asking would
+	// take the analysis guard, a lock held to the commit, once per position, and
+	// a library is more positions than a server's lock table has room for.
+	mergeCtx := storage.WithFreshPositions(ctx, created)
 
 	targetComments, err := tx.Comments().ByPositions(ctx, scope, targetIDs)
 	if err != nil {
@@ -221,7 +226,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 			if err != nil {
 				return sum, err
 			}
-			if _, err := MergeDBAnalysis(ctx, tx, scope, s.id, s.rec.analysis, met); err != nil {
+			if _, err := MergeDBAnalysis(mergeCtx, tx, scope, s.id, s.rec.analysis, met); err != nil {
 				return sum, err
 			}
 		}

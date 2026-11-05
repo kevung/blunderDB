@@ -882,6 +882,9 @@ func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []sto
 		if _, err := s.db.Exec(ctx, analysisBulkInsertSQL, args...); err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
 		}
+		if err := analyzeNeverAnalysed(ctx, s.db, "analysis"); err != nil {
+			return err
+		}
 		if len(responses) > 0 {
 			if _, err := s.db.Exec(ctx,
 				`UPDATE position SET is_cube_response = TRUE WHERE tenant_id = $1 AND id = ANY($2)`,

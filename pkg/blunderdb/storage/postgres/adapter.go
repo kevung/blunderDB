@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -111,6 +112,25 @@ func (a shared) FillKey(scope string) (any, bool) {
 		return nil, false
 	}
 	return poolScope{pool, scope}, true
+}
+
+// joinOrderSettings are what sqlshared.withJoinOrderPlan needs of the planner.
+var joinOrderSettings = []string{"join_collapse_limit", "from_collapse_limit", "enable_hashjoin", "enable_mergejoin", "enable_seqscan"}
+
+// PinJoinOrder — see sqlshared.withJoinOrderPlan. Local to the transaction, and
+// taken back at the end of the work it was asked for: the transaction may go on
+// to other writes.
+func (a shared) PinJoinOrder(ctx context.Context) (func() error, error) {
+	if _, err := a.db.Exec(ctx, `SELECT set_config('join_collapse_limit', '1', true), set_config('from_collapse_limit', '1', true),
+		set_config('enable_hashjoin', 'off', true), set_config('enable_mergejoin', 'off', true), set_config('enable_seqscan', 'off', true)`); err != nil {
+		return nil, fmt.Errorf("postgres: pin join order: %w", err)
+	}
+	return func() error {
+		if _, err := a.db.Exec(ctx, `SELECT set_config(name, reset_val, true) FROM pg_settings WHERE name = ANY($1)`, joinOrderSettings); err != nil {
+			return fmt.Errorf("postgres: unpin join order: %w", err)
+		}
+		return nil
+	}, nil
 }
 
 type poolScope struct {

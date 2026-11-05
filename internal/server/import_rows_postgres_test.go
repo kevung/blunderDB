@@ -16,9 +16,13 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/testcontainers/testcontainers-go"
+	tcpg "github.com/testcontainers/testcontainers-go/modules/postgres"
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 )
 
@@ -229,5 +233,62 @@ func TestImportBatchUnderRLS(t *testing.T) {
 	}
 	if matches != 1 || batches != 1 {
 		t.Errorf("after a batch under RLS: %d match(es), %d closed batch(es), want 1 and 1", matches, batches)
+	}
+}
+
+// TestImportDBWithinTheLockTable: a whole library comes in one transaction, so
+// nothing may take a lock per position; a small server's lock table would run
+// out ("out of shared memory").
+func TestImportDBWithinTheLockTable(t *testing.T) {
+	ctx := context.Background()
+	// Room for about 200 locks: a lock per position would not fit.
+	container, err := tcpg.Run(ctx, "postgres:15",
+		tcpg.WithDatabase("postgres"), tcpg.WithUsername("test"), tcpg.WithPassword("test"),
+		tcpg.BasicWaitStrategies(),
+		testcontainers.WithCmdArgs("-c", "max_locks_per_transaction=10", "-c", "max_connections=20"))
+	if err != nil {
+		t.Skipf("postgres container unavailable: %v", err)
+	}
+	t.Cleanup(func() { _ = testcontainers.TerminateContainer(container) })
+	super, err := container.ConnectionString(ctx, "sslmode=disable")
+	if err != nil {
+		t.Fatal(err)
+	}
+	benchExec(t, ctx, super, fmt.Sprintf(`CREATE ROLE %s LOGIN PASSWORD '%s'`, benchRole, benchRole))
+	benchExec(t, ctx, super, fmt.Sprintf(`CREATE DATABASE locks OWNER %s`, benchRole))
+	st := benchOpen(t, ctx, benchDSN(t, super, benchRole, "locks"))
+	defer st.Close()
+	srv, err := New(Options{Storage: st, Metrics: metrics.New()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts := newBenchHTTPServer(t, srv)
+
+	src := filepath.Join(t.TempDir(), "source.db")
+	lite, err := sqlite.Open(ctx, src, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := lite.Migrate(ctx); err != nil {
+		t.Fatal(err)
+	}
+	files := importRowsFiles(t, filepath.Join("..", "..", "testdata"))
+	if _, err := ingest.ImportFiles(ctx, lite, files[:4], ingest.PipelineOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	lite.Close()
+	benchPost(t, ts, src, "imports.db", "")
+
+	conn, err := pgx.Connect(ctx, benchDSN(t, super, "", "locks"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(ctx)
+	var analyses int
+	if err := conn.QueryRow(ctx, `SELECT COUNT(*) FROM analysis`).Scan(&analyses); err != nil {
+		t.Fatal(err)
+	}
+	if analyses < 500 {
+		t.Errorf("%d analyses after the import of a base holding more: nothing to prove", analyses)
 	}
 }

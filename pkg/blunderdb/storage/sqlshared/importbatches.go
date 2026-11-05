@@ -125,14 +125,19 @@ func (s *ImportBatchStore) Report(ctx context.Context, scope string, batchID int
 	if err != nil {
 		return nil, errf(s.DB, what, err)
 	}
-
-	if err := s.measurePositions(ctx, scope, b, batch, batchArgs); err != nil {
-		return nil, errf(s.DB, what, err)
-	}
-	if err := s.measurePerformance(ctx, scope, b, players, batch, batchArgs); err != nil {
-		return nil, errf(s.DB, what, err)
-	}
-	if err := s.measureWorst(ctx, scope, b, players, batch, batchArgs); err != nil {
+	err = transactRead(ctx, s.DB, func(tx Execer) error {
+		r := &ImportBatchStore{DB: tx}
+		return withJoinOrderPlan(ctx, tx, func() error {
+			if err := r.measurePositions(ctx, scope, b, batch, batchArgs); err != nil {
+				return err
+			}
+			if err := r.measurePerformance(ctx, scope, b, players, batch, batchArgs); err != nil {
+				return err
+			}
+			return r.measureWorst(ctx, scope, b, players, batch, batchArgs)
+		})
+	})
+	if err != nil {
 		return nil, errf(s.DB, what, err)
 	}
 	return b, nil
@@ -141,13 +146,9 @@ func (s *ImportBatchStore) Report(ctx context.Context, scope string, batchID int
 // maxBatchClauseMatches bounds the list of matchIDs batchClause writes out.
 const maxBatchClauseMatches = 10000
 
-// batchClause narrows a join reaching game g to the matches of the batch, named
-// one by one. The planner cannot be trusted with the batch's id: match has no
-// index on it, so until autovacuum has analysed a growing library it estimates
-// one row everywhere and starts from all of the tenant's positions, a cost that
-// grows with the library, on every report. A list on game's index it starts
-// from whatever the statistics say. A batch too large to list keeps the plain
-// predicate.
+// batchClause narrows a join starting from game g to the matches of the batch,
+// named one by one: match has no index on the batch, game has one on the match.
+// A batch too large to list keeps the plain predicate.
 func (s *ImportBatchStore) batchClause(ctx context.Context, scope string, batchID int64) (string, []any, error) {
 	tenant, targs := s.DB.TenantFilter("m", scope)
 	var ids []int64
@@ -175,9 +176,9 @@ func (s *ImportBatchStore) batchClause(ctx context.Context, scope string, batchI
 // batchPositionsFrom is the join from a batch to the positions its matches
 // touched. DISTINCT because a position recurs across games and matches, and
 // the report counts positions, not visits.
-const batchPositionsFrom = `FROM position p
-JOIN move mv ON mv.position_id = p.id
-JOIN game g ON g.id = mv.game_id
+const batchPositionsFrom = `FROM game g
+JOIN move mv ON mv.game_id = g.id
+JOIN position p ON p.id = mv.position_id
 JOIN match m ON m.id = g.match_id`
 
 // measurePositions fills the two position counts the panel acts on: what the
@@ -251,7 +252,7 @@ func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string,
 	var decisions int
 	row := s.DB.QueryRow(ctx,
 		`SELECT COUNT(*), `+s.DB.Bigint("COALESCE(SUM("+statsErrExpr+"), 0)")+`
-		 `+statsBaseJoin+`
+		 `+matchScopedJoin+`
 		 WHERE `+tenant+batch+playerClause+`
 		   AND `+countedExpr(s.DB), args...)
 	if err := row.Scan(&decisions, &total); err != nil {
@@ -282,7 +283,7 @@ func (s *ImportBatchStore) measureWorst(ctx context.Context, scope string, b *do
 		`SELECT p.id, m.id,
 		        COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length, 0),
 		        `+statsErrExpr+`, p.decision_type
-		 `+statsBaseJoin+`
+		 `+matchScopedJoin+`
 		 WHERE `+tenant+batch+playerClause+`
 		   AND `+countedExpr(s.DB)+`
 		   AND COALESCE(`+statsErrExpr+`, 0) > 0
@@ -485,7 +486,7 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 	query := `SELECT DISTINCT p.id, m.id,
 		        COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length, 0),
 		        COALESCE(` + statsErrExpr + `, 0), p.decision_type
-		 ` + statsBaseJoin + `
+		 ` + matchScopedJoin + `
 		 WHERE ` + tenant + batchClause + playerClause + `
 		   AND ` + countedExpr(s.DB) + extraWhere + orderBy + limitSQL
 	if reason == domain.StudyBacklog {
@@ -503,7 +504,21 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 		     AND ` + countedExpr(s.DB) + extraWhere + `
 		 ) q WHERE rn = 1 ORDER BY cost DESC, pid ASC` + limitSQL
 	}
-	rows, err := s.DB.Query(ctx, query, args...)
+	if batchID > 0 {
+		var out []domain.StudyQueueEntry
+		err := transactRead(ctx, s.DB, func(tx Execer) error {
+			return withJoinOrderPlan(ctx, tx, func() (err error) {
+				out, err = scanQueueRows(ctx, tx, query, args, reason)
+				return err
+			})
+		})
+		return out, err
+	}
+	return scanQueueRows(ctx, s.DB, query, args, reason)
+}
+
+func scanQueueRows(ctx context.Context, db Execer, query string, args []any, reason domain.StudyQueueReason) ([]domain.StudyQueueEntry, error) {
+	rows, err := db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
