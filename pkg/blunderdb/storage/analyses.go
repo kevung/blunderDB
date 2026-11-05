@@ -40,6 +40,12 @@ type AnalysisStore interface {
 	// it so as not to pay one round trip per analysis.
 	SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error
 
+	// SaveFresh stores, in as few round trips as the backend allows, the
+	// analyses of positions the caller's transaction has just created: no row
+	// can stand in their way, nothing reaches them yet, so what Merge would
+	// read and invalidate does not exist. Played is what Merge takes as played.
+	SaveFresh(ctx context.Context, scope string, items []FreshAnalysis) error
+
 	// Merge reads the stored analysis of positionID once, hands it to merge
 	// (nil when there is none) and saves what merge returns, rounded and
 	// encoded as Save would. When the result equals the stored analysis apart
@@ -166,6 +172,26 @@ func ReencodeAllAnalyses(ctx context.Context, store AnalysisStore, scope string,
 		}
 		next = n
 	}
+}
+
+// FreshAnalysis is one item of AnalysisStore.SaveFresh.
+type FreshAnalysis struct {
+	PositionID int64
+	Analysis   *domain.PositionAnalysis
+	Played     *PlayedActions
+}
+
+// SaveFreshEach is SaveFresh as a loop of Merge, for a backend for which one
+// round trip per analysis costs little or for which no batch exists.
+func SaveFreshEach(ctx context.Context, store AnalysisStore, scope string, items []FreshAnalysis) error {
+	for _, it := range items {
+		a := it.Analysis
+		if _, err := store.Merge(WithFreshPosition(ctx, it.PositionID), scope, it.PositionID, it.Played,
+			func(*domain.PositionAnalysis) *domain.PositionAnalysis { return a }); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // SaveAnalysesEach is SaveMany as a loop of Save, by ascending position id,

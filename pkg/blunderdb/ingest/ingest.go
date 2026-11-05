@@ -182,6 +182,12 @@ type ExportOptions struct {
 	// The callers set it exactly when they seal a Watermark: the producer
 	// who vouches for the file vouches for its notes.
 	Signer *issuance.Identity
+
+	// Transfer marks the export a transfer between two libraries builds. A
+	// transfer without Comments leaves the private notes of a match and the
+	// name of its file behind, and a position that arrives without a move of
+	// its own is individually imported on the recipient's side.
+	Transfer bool
 }
 
 // Importer reads a Source and writes its contents through Storage, emitting

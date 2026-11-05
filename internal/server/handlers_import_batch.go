@@ -55,6 +55,8 @@ const batchExtractFactor = 2
 type batchFileError struct {
 	Path  string `json:"path"`
 	Error string `json:"error"`
+	// Code is one of the domain.ImportErr values.
+	Code string `json:"code"`
 }
 
 // batchJob is one batch import. All its mutable fields sit behind mu.
@@ -282,12 +284,12 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 
 	mt, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if mt == "multipart/form-data" {
-		reserved = s.opts.ImportMaxBodyBytes * (1 + batchExtractFactor)
-		if !s.spool.reserve(reserved) {
-			reserved = 0
+		upload := s.uploadSpool(r)
+		if !s.spool.reserve(upload) {
 			writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
 			return
 		}
+		reserved = upload
 		r.Body = http.MaxBytesReader(w, r.Body, s.opts.ImportMaxBodyBytes)
 		file, header, err := r.FormFile("file")
 		if err != nil {
@@ -305,13 +307,37 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		archive := filepath.Join(workDir, "archive"+ext)
-		if err := copyToFile(archive, file); err != nil {
+		if err := copyToFile(archive, file, upload); err != nil {
+			if errors.Is(err, ingest.ErrArchiveTooLarge) {
+				writeErrorCode(w, CodeInvalid, "the upload is larger than its declared length")
+				return
+			}
 			writeStorageError(w, err)
 			return
 		}
+		// The archive says what it will unpack to; only that stays held for
+		// the batch's whole life, the upload's share goes once it is unpacked.
+		budget := s.opts.ImportMaxBodyBytes * batchExtractFactor
+		unpacked := budget
+		declared, derr := ingest.ArchiveUnpackedSize(archive)
+		switch {
+		case errors.Is(derr, ingest.ErrArchiveTooLarge) || errors.Is(derr, ingest.ErrArchiveTooManyEntries):
+			writeErrorCode(w, CodeInvalid, derr.Error())
+			return
+		case derr == nil:
+			unpacked = min(declared, budget)
+		}
+		if !s.spool.reserve(unpacked) {
+			writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
+			return
+		}
+		reserved += unpacked
 		root = filepath.Join(workDir, "files")
-		n, err := ingest.ExtractArchive(archive, root, s.opts.ImportMaxBodyBytes*batchExtractFactor)
+		// Unpacking stops at what was reserved, whatever the archive announced.
+		n, err := ingest.ExtractArchive(archive, root, unpacked)
 		os.Remove(archive)
+		s.spool.release(upload)
+		reserved -= upload
 		if err != nil {
 			if errors.Is(err, ingest.ErrArchiveTooLarge) || errors.Is(err, ingest.ErrArchiveTooManyEntries) {
 				writeErrorCode(w, CodeInvalid, err.Error())
@@ -380,7 +406,9 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 			size += fi.Size()
 		}
 	}
-	ctx, cancel := context.WithCancel(context.Background())
+	// The job outlives the request but keeps what its context carries: the
+	// tenant the row-level policies check is among it.
+	ctx, cancel := context.WithCancel(context.WithoutCancel(r.Context()))
 	s.imports.register(job.id, scope, cancel)
 	job.mu.Lock()
 	job.skipDuplicates = skipDuplicatesParam(r)
@@ -408,14 +436,19 @@ func writeBatchAccepted(w http.ResponseWriter, job *batchJob) {
 	writeJSONResp(w, importBatchResp{ImportID: job.id, Files: total})
 }
 
-func copyToFile(path string, r io.Reader) error {
+func copyToFile(path string, r io.Reader, max int64) error {
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
 	if err != nil {
 		return fmt.Errorf("server: spool archive: %w", err)
 	}
-	if _, err := io.Copy(f, r); err != nil {
+	n, err := io.Copy(f, io.LimitReader(r, max+1))
+	if err != nil {
 		f.Close()
 		return fmt.Errorf("server: spool archive: %w", err)
+	}
+	if n > max {
+		f.Close()
+		return ingest.ErrArchiveTooLarge
 	}
 	return f.Close()
 }
@@ -491,12 +524,12 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 					}
 					counts.FilesFailed++
 					if len(counts.Failures) < batchErrorWindow {
-						counts.Failures = append(counts.Failures, domain.ImportFailure{Source: rel, Reason: o.Error})
+						counts.Failures = append(counts.Failures, domain.ImportFailure{Source: rel, Reason: o.Error, Code: o.Code})
 					}
 					job.mu.Lock()
 					job.failed++
 					if len(job.errors) < batchErrorWindow {
-						job.errors = append(job.errors, batchFileError{Path: rel, Error: o.Error})
+						job.errors = append(job.errors, batchFileError{Path: rel, Error: o.Error, Code: o.Code})
 					}
 					job.mu.Unlock()
 				}
@@ -514,8 +547,8 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 
 	if batchID != 0 {
 		// Whatever the end, the groups committed are in the database: the
-		// batch's report must say so. A fresh context, the job's is over.
-		if ferr := batches.Finish(context.Background(), scope, batchID, counts); ferr != nil {
+		// batch's report must say so. Not the job's cancellation, it is over.
+		if ferr := batches.Finish(context.WithoutCancel(ctx), scope, batchID, counts); ferr != nil {
 			slog.Warn("import batch: closing the batch failed", "err", ferr)
 		}
 	}

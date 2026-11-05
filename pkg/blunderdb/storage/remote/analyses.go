@@ -83,6 +83,11 @@ func (s analysisStore) RepairDenormalisedColumns(ctx context.Context, scope stri
 	return r.Repaired, err
 }
 
+// SaveFresh has no batch route.
+func (s analysisStore) SaveFresh(ctx context.Context, scope string, items []storage.FreshAnalysis) error {
+	return storage.SaveFreshEach(ctx, s, scope, items)
+}
+
 // SaveMany has no batch route: it asks analyses.save once per analysis.
 func (s analysisStore) SaveMany(ctx context.Context, scope string, analyses map[int64]*domain.PositionAnalysis) error {
 	return storage.SaveAnalysesEach(ctx, s, scope, analyses)

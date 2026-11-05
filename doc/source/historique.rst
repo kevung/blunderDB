@@ -42,6 +42,18 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.50.0 (2026-11-05)
+-------------------
+
+- **La synchronisation couvre les paquets Anki, les transcriptions et les tournois** : ``changeset.export`` et ``changeset.import`` les échangent, avec les cartes d'un paquet, dans les deux sens ; à égalité de date, chaque famille fusionne sans perdre de donnée.
+- **Un transfert sans commentaires n'emporte rien de privé** : ni la note du match, ni le nom du fichier source, ni le lien vidéo, ni le commentaire d'un tournoi ne partent ; le match reçu reste importé.
+- **L'import est plus rapide sur PostgreSQL** : les positions s'écrivent par groupes, les statistiques d'un tenant se calculent dès ses premières lignes, et une position née d'un match daté porte la date du match.
+- **Chaque fichier refusé à l'import porte un code stable** (``unknown_format``, ``truncated``, ``corrupt``, ``too_large``, ``empty`` ou ``internal``) en plus de son texte ; ``?report=deferred`` omet le rapport du dernier événement et ``imports.report`` le rend à la demande.
+- **L'espace disque des imports est borné** : l'option ``--max-spool-bytes`` fixe ce que les imports en cours occupent ensemble, et une archive qui dépasse ce qu'elle annonce est refusée et effacée.
+- **Une base passe au schéma 2.57.0** à l'ouverture.
+- Corrections notables : ``imports.batch`` garde le tenant de la requête sous RLS, et ``imports.db`` n'échoue plus avec ``out of shared memory`` sur une base volumineuse.
+- Voir :ref:`headless` et :ref:`annexe_db_migration`.
+
 0.49.0 (2026-11-02)
 -------------------
 

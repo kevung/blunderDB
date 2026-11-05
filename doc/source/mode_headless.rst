@@ -168,6 +168,12 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
      - ``0``
      - imports d'un même tenant en cours à la fois (429, ``quota_exceeded``) ;
        0 = illimité
+   * - ``--max-spool-bytes <n>``
+     - ``0``
+     - espace disque que les imports en cours occupent ensemble, tous tenants
+       confondus (429 au-delà) : un envoi réserve deux fois sa taille déclarée,
+       un lot ce que son archive annonce ; 0 = quatre fois le plus gros envoi
+       admis
    * - ``--analysis-workers <n>``
      - ``0``
      - travailleurs du moteur que partagent les balayages et les évaluations
@@ -1157,6 +1163,28 @@ reprendre que les marques, comme ``--skip-duplicates`` en ligne de commande.
 ``Idempotency-Key`` est accepté : rejouer l'appel avec la même clé rend le même
 ``importId`` (en-tête ``Idempotency-Replayed: true``) sans relancer l'import. Pour
 un lot reçu en archive, la clé désigne le lot, pas le contenu de l'archive.
+
+Deux limites tiennent à PostgreSQL. L'archive d'un lot est comptée à la taille
+logique de ses entrées (trous des archives creuses compris) : une somme qui
+déborde, ou des octets écrits au-delà de ce que le lot a réservé, la fait
+refuser (400) et efface ce qui avait été écrit. Le rôle de la base doit être
+propriétaire des tables, ou détenir ``MAINTAIN`` (PostgreSQL 17) : sinon les
+statistiques du premier import d'un tenant ne sont pas calculées, ce que le
+serveur journalise une fois par processus (``import statistics skipped``) et
+que l'import mesure en plans plus lents jusqu'au passage de l'autovacuum.
+Enfin, un ``imports.db`` qui analyse plus de positions déjà présentes et sans
+analyse que la table des verrous n'en contient (``max_locks_per_transaction`` ×
+``max_connections``, soit environ 6 400 aux réglages par défaut) échoue en bloc
+avec une erreur qui le dit (``out of shared memory``, SQLSTATE 53200) : relever
+``max_locks_per_transaction`` ou importer en fichiers plus petits.
+
+Chaque fichier refusé porte un ``code`` stable en plus de son texte, dans le
+statut comme dans le rapport (l'import d'un fichier le rend en ``import_code``
+dans son événement d'erreur) : ``unknown_format``, ``truncated``, ``corrupt``,
+``too_large``, ``empty`` ou ``internal``. Un doublon n'est pas une erreur : le
+rapport le compte à part. L'import d'un fichier accepte ``?report=deferred`` :
+son dernier événement omet alors le rapport, que ``imports.report`` rend à la
+demande.
 
 ``imports.batch.status`` (``{"importId": …}``) rend l'état (``receiving``,
 ``running``, ``done``, ``cancelled`` ou ``failed``) et la progression

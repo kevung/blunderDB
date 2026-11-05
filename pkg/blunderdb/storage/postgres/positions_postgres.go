@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"math"
+	"slices"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
@@ -597,13 +599,29 @@ func (s *positionStore) LoadByIDs(ctx context.Context, scope string, ids []int64
 // once.
 const saveManyChunk = 1000
 
-// SaveMany — see storage.PositionStore. The inserts of a chunk go out as one
-// pipeline; a position whose hash is already stored (in the tenant, or
-// earlier in ps) gets no row back and takes SaveCreated's path, which raises
-// its marks and finds its id.
+// positionBulkTypes are positionInsertArgs' columns, in order.
+var positionBulkTypes = []string{
+	bulkBigint, bulkBigint, bulkBigint, bulkBigint, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkBigint, bulkBigint,
+	bulkBool, bulkBool,
+	bulkBigint, bulkBigint, bulkBigint, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkBool, bulkInt, bulkInt,
+	bulkBigint, bulkBigint, bulkBigint, bulkBigint,
+	bulkBytea, bulkBool, bulkBool, bulkInt,
+}
+
+// positionBulkInsertTypes add the match date the positions are born with.
+var positionBulkInsertTypes = append(slices.Clone(positionBulkTypes), bulkTime)
+
+var positionBulkInsertSQL = strings.TrimSuffix(insertHead(positionInsertSQL), ")") + ", match_date) " + unnestSelect(positionBulkInsertTypes) + `
+ON CONFLICT (tenant_id, zobrist_hash) DO NOTHING
+RETURNING id, zobrist_hash`
+
+// SaveMany — see storage.PositionStore. A chunk is one statement; what it does
+// not return was stored already (in the tenant, or earlier in the chunk), and
+// a second statement raises those positions' marks and a third finds their ids.
 func (s *positionStore) SaveMany(ctx context.Context, scope string, ps []*domain.Position) ([]int64, []bool, error) {
-	bt, ok := s.db.(batcher)
-	if !ok || len(ps) < 2 {
+	if _, ok := s.db.(batcher); !ok || len(ps) < 2 {
 		return storage.SaveEach(ctx, s, scope, ps)
 	}
 	tenant := tenantID(scope)
@@ -611,38 +629,104 @@ func (s *positionStore) SaveMany(ctx context.Context, scope string, ps []*domain
 	created := make([]bool, len(ps))
 	for start := 0; start < len(ps); start += saveManyChunk {
 		chunk := ps[start:min(start+saveManyChunk, len(ps))]
-		norms := make([]domain.Position, len(chunk))
-		b := &pgx.Batch{}
-		for i, p := range chunk {
-			norms[i] = p.NormalizeForStorage()
-			b.Queue(positionInsertSQL, positionInsertArgs(tenant, engine.PopulatePositionColumns(p), &norms[i])...)
-		}
-		res := bt.SendBatch(ctx, b)
-		var dup []int
-		for i := range chunk {
-			var id int64
-			switch err := res.QueryRow().Scan(&id); {
-			case errors.Is(err, pgx.ErrNoRows):
-				dup = append(dup, i)
-			case err != nil:
-				_ = res.Close()
-				return nil, nil, fmt.Errorf("postgres: save position: %w", err)
-			default:
-				ids[start+i], created[start+i] = id, true
-				norms[i].ID = id
-				*chunk[i] = norms[i]
-			}
-		}
-		if err := res.Close(); err != nil {
-			return nil, nil, fmt.Errorf("postgres: save position: %w", err)
-		}
-		for _, i := range dup {
-			id, _, err := s.SaveCreated(ctx, scope, chunk[i])
-			if err != nil {
-				return nil, nil, err
-			}
-			ids[start+i] = id
+		if err := s.saveChunk(ctx, tenant, chunk, ids[start:], created[start:]); err != nil {
+			return nil, nil, err
 		}
 	}
 	return ids, created, nil
+}
+
+func (s *positionStore) saveChunk(ctx context.Context, tenant int64, chunk []*domain.Position, ids []int64, created []bool) error {
+	norms := make([]domain.Position, len(chunk))
+	hashes := make([]int64, len(chunk))
+	rows := make([][]any, len(chunk))
+	matchDate := nullableTime(storage.PositionMatchDateFromContext(ctx))
+	for i, p := range chunk {
+		norms[i] = p.NormalizeForStorage()
+		cols := engine.PopulatePositionColumns(p)
+		hashes[i] = int64(cols.ZobristHash)
+		rows[i] = append(positionInsertArgs(tenant, cols, &norms[i]), matchDate)
+	}
+	args, err := bulkColumns(positionBulkInsertTypes, rows)
+	if err != nil {
+		return err
+	}
+	inserted := make(map[int64]int64, len(chunk))
+	if err := s.scanHashIDs(ctx, inserted, positionBulkInsertSQL, args...); err != nil {
+		return fmt.Errorf("postgres: save position: %w", err)
+	}
+	if len(inserted) > 0 {
+		minID := int64(math.MaxInt64)
+		for _, id := range inserted {
+			minID = min(minID, id)
+		}
+		if err := analyzeFirstOfTenant(ctx, s.db, "position", "id", tenant, minID); err != nil {
+			return err
+		}
+	}
+
+	var stored, individual, flagged []int64
+	visited := make(map[int64]bool, len(hashes))
+	for i, h := range hashes {
+		_, new := inserted[h]
+		if new && !visited[h] {
+			visited[h] = true
+			created[i] = true
+			continue
+		}
+		if !new {
+			stored = append(stored, h)
+		}
+		if norms[i].IndividuallyImported {
+			individual = append(individual, h)
+		}
+		if norms[i].Flagged {
+			flagged = append(flagged, h)
+		}
+	}
+	if len(individual) > 0 {
+		if _, err := s.db.Exec(ctx, `UPDATE position SET individually_imported = TRUE
+			WHERE tenant_id = $1 AND zobrist_hash = ANY($2) AND NOT individually_imported`, tenant, individual); err != nil {
+			return fmt.Errorf("postgres: mark position individually imported: %w", err)
+		}
+	}
+	if len(flagged) > 0 {
+		if _, err := s.db.Exec(ctx, `UPDATE position SET flagged = TRUE
+			WHERE tenant_id = $1 AND zobrist_hash = ANY($2) AND NOT flagged`, tenant, flagged); err != nil {
+			return fmt.Errorf("postgres: mark position flagged: %w", err)
+		}
+	}
+	if len(stored) > 0 {
+		if err := s.scanHashIDs(ctx, inserted, `SELECT id, zobrist_hash FROM position
+			WHERE tenant_id = $1 AND zobrist_hash = ANY($2)`, tenant, stored); err != nil {
+			return fmt.Errorf("postgres: save position dedup lookup: %w", err)
+		}
+	}
+	for i, p := range chunk {
+		id, ok := inserted[hashes[i]]
+		if !ok {
+			return fmt.Errorf("postgres: save position: hash %d came back without an id", hashes[i])
+		}
+		ids[i] = id
+		norms[i].ID = id
+		*p = norms[i]
+	}
+	return nil
+}
+
+// scanHashIDs reads (id, zobrist_hash) rows into into, by hash.
+func (s *positionStore) scanHashIDs(ctx context.Context, into map[int64]int64, sql string, args ...any) error {
+	rows, err := s.db.Query(ctx, sql, args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id, hash int64
+		if err := rows.Scan(&id, &hash); err != nil {
+			return err
+		}
+		into[hash] = id
+	}
+	return rows.Err()
 }
