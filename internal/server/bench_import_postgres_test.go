@@ -15,6 +15,7 @@
 // BLUNDERDB_BENCH_SEED    synthetic matches stored beforehand (default 0)
 // BLUNDERDB_BENCH_QUERY   query string of each upload (e.g. report=deferred)
 // BLUNDERDB_BENCH_BATCH   send the files as one .tar to imports.batch
+// BLUNDERDB_BENCH_DB      send the files as one native .db to imports.db
 // BLUNDERDB_BENCH_OUT     where to write the JSON result
 // BLUNDERDB_BENCH_NEW_TENANT  measure on a tenant other than the seeded one
 // BLUNDERDB_BENCH_TEMPLATE  database to clone instead of seeding; when it does
@@ -50,6 +51,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 const (
@@ -263,6 +265,28 @@ func benchPost(t *testing.T, ts *httptest.Server, path, method, query string) {
 	}
 }
 
+// benchNativeDB imports files into a new SQLite library and returns its path.
+func benchNativeDB(t *testing.T, ctx context.Context, files []benchFile) string {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "source.db")
+	lite, err := sqlite.Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer lite.Close()
+	if err := lite.Migrate(ctx); err != nil {
+		t.Fatal(err)
+	}
+	paths := make([]string, len(files))
+	for i, f := range files {
+		paths[i] = f.path
+	}
+	if _, err := ingest.ImportFiles(ctx, lite, paths, ingest.PipelineOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	return path
+}
+
 // benchBatch sends files as one .tar to imports.batch, waits for its end and
 // reads its report once, as a client of the batch route does.
 func benchBatch(t *testing.T, ts *httptest.Server, srv *Server, files []benchFile) {
@@ -410,12 +434,20 @@ func TestBenchImportHTTP(t *testing.T) {
 	for _, f := range measured {
 		bytesIn += f.size
 	}
+	// A native base holding the measured files, built before the clock starts.
+	dbSource := ""
+	if os.Getenv("BLUNDERDB_BENCH_DB") != "" {
+		dbSource = benchNativeDB(t, ctx, measured)
+	}
 	loadBefore := benchLoad()
 	durations := make([]time.Duration, 0, len(measured))
 	t0 := time.Now()
-	if os.Getenv("BLUNDERDB_BENCH_BATCH") != "" {
+	switch {
+	case os.Getenv("BLUNDERDB_BENCH_BATCH") != "":
 		benchBatch(t, ts, srv, measured)
-	} else {
+	case dbSource != "":
+		benchPost(t, ts, dbSource, "imports.db", "")
+	default:
 		for _, f := range measured {
 			t1 := time.Now()
 			benchUpload(t, ts, f, os.Getenv("BLUNDERDB_BENCH_QUERY"))
