@@ -282,7 +282,22 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 			" UNION ALL SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
 		// As a subquery the planner, estimating two hundred rows out of the union, sorts
 		// them all, a heap read each; a list it walks in id order and stops at the window.
-		common := func() {}
+		// Too long for a list, the walk tests each id against the hashed index, without
+		// reading a row the filter drops; the few multi-played positions go by list.
+		multi, err := s.readIDList(ctx, "SELECT id FROM position WHERE "+own+" AND "+s.DB.Bool("multi_played", true), ownArgs, blunderListLimit)
+		if err != nil {
+			return true, err
+		}
+		common := func() {
+			where.WriteString(" AND (p.id IN (SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + "))")
+			*argsp = append(*argsp, ownArgs...)
+			if len(multi) > 0 {
+				cond, condArgs := s.DB.IDsIn("p.id", multi)
+				where.WriteString(" OR " + cond)
+				*argsp = append(*argsp, condArgs...)
+			}
+			where.WriteString(")")
+		}
 		if err := s.narrowWithin(ctx, blunderListLimit, sub, append(append([]any{}, ownArgs...), ownArgs...), where, argsp, common); err != nil {
 			return true, err
 		}

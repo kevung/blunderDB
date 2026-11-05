@@ -942,7 +942,7 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon1        ON analysis(player1_gammon_rate)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis(player2_gammon_rate)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_blunder        ON analysis(position_id) WHERE best_move_equity_error >= 100 OR cube_error >= 100`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy1     ON position(occupancy_1)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy1     ON position(occupancy_1, occupancy_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy2     ON position(occupancy_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis(is_forced) WHERE is_forced = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_close_cube  ON analysis(is_close_cube) WHERE is_close_cube = 1`,

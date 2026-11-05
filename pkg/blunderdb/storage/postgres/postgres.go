@@ -67,6 +67,9 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	cfg.MaxConnLifetime = durationFromEnv(maxConnLifetimeEnv, defaultMaxConnLifetime)
 	cfg.HealthCheckPeriod = durationFromEnv(healthCheckPeriodEnv, defaultHealthCheck)
 	cfg.MaxConnIdleTime = durationFromEnv(maxConnIdleTimeEnv, defaultMaxConnIdleTime)
+	// The pool caches its statements, and after five executions a cached one may keep a generic plan: unaware
+	// of the LIMIT or of the value, a search walks or sorts the tenant. Planning costs a fraction of a millisecond.
+	cfg.ConnConfig.RuntimeParams["plan_cache_mode"] = "force_custom_plan"
 	cfg.ConnConfig.ConnectTimeout = durationFromEnv(connectTimeoutEnv, defaultConnectTimeout)
 
 	if opts != nil && opts.EnableRLS {
