@@ -151,7 +151,8 @@ func itoa(i int) string {
 
 // digest is one checksum per engine table, over every column but the ones
 // that differ by nature between two runs (times, random uuids) and the
-// import's own bookkeeping, which names the files.
+// import's own bookkeeping, which names the files. A float is rounded: a sum
+// in another row order differs in its last bits.
 func digest(t *testing.T, dsn string) map[string]string {
 	t.Helper()
 	ctx := context.Background()
@@ -160,7 +161,8 @@ func digest(t *testing.T, dsn string) map[string]string {
 		t.Fatal(err)
 	}
 	defer conn.Close(ctx)
-	rows, err := conn.Query(ctx, `SELECT table_name, string_agg(quote_ident(column_name), ',' ORDER BY ordinal_position)
+	rows, err := conn.Query(ctx, `SELECT table_name, string_agg(CASE WHEN data_type = 'double precision'
+			THEN 'round(' || quote_ident(column_name) || '::numeric, 9)' ELSE quote_ident(column_name) END, ',' ORDER BY ordinal_position)
 		FROM information_schema.columns
 		WHERE table_schema = 'public' AND data_type NOT IN ('timestamp with time zone', 'timestamp without time zone', 'uuid', 'date')
 		  AND table_name NOT IN ('import_batch', 'import_batch_file', 'change_log', 'library_settings', 'schema_migrations', 'metadata')
