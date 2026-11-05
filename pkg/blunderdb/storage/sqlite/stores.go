@@ -82,6 +82,9 @@ func (b binder) Aliases() storage.AliasStore { return &sqlshared.AliasStore{DB: 
 func (b binder) ChangeJournal() storage.ChangeJournalStore {
 	return &sqlshared.ChangeJournalStore{DB: b.shared()}
 }
+func (b binder) AnkiStates() storage.AnkiStateStore {
+	return &sqlshared.AnkiStateStore{DB: b.shared()}
+}
 func (b binder) ObjectUUIDs() storage.ObjectUUIDStore {
 	return &sqlshared.ObjectUUIDStore{DB: b.shared()}
 }

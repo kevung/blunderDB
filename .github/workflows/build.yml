@@ -116,7 +116,13 @@ jobs:
           # package still lands in `rest` without editing this file.
           - shard: rest-sqlite
             run: |
-              go test -timeout 1200s -race -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+              go test -timeout 1200s -race -count=1 -skip '^TestChangeSet' -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+                ./pkg/blunderdb/storage/sqlite 2>&1 | tee test-output.txt
+          # The changeset families add 63 subtests (32 s without -race against
+          # 1 s before): in rest-sqlite they pushed the job past its 1200 s.
+          - shard: changeset-sqlite
+            run: |
+              go test -timeout 1200s -race -count=1 -run '^TestChangeSet' -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
                 ./pkg/blunderdb/storage/sqlite 2>&1 | tee test-output.txt
           - shard: rest
             run: |

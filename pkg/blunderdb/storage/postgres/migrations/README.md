@@ -395,3 +395,12 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   stay ordered for a peer. `blunderdb_stamp_after`, and the three journal
   functions replaced. No table touched. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.56.0.
+- `060_deck_tournament_uuid.sql` — `anki_deck.uuid` and `tournament.uuid` (unique
+  per tenant, `blunderdb_uuid7()` by default, set after the bare `ADD COLUMN`),
+  and a `blunderdb_journal` trigger on each, whose update side ignores the columns
+  that are the library's own (`sqlshared.LocalColumns`); the match's update trigger
+  also leaves out `tournament_sort_order`, as 055 did `tournament_id`, and the Slot a
+  match fills (`direction_match_id`): attachments stay in each library. The rows held before are named by
+  Go in a pass of their own per family (`sqlshared.MarkFor`), so a library that
+  passed 054's pass still gets it. `lock_timeout = 15s`.
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.57.0.

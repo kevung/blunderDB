@@ -11,7 +11,10 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
@@ -187,5 +190,115 @@ func TestMigrate_054_ObjectUUIDsUnderRLS(t *testing.T) {
 	})
 	if !pgUUIDv7.MatchString(fresh) || fresh[:13] == "00000000-0000" {
 		t.Errorf("a new collection got %q, want a version 7 UUID with a clock timestamp", fresh)
+	}
+}
+
+// TestMigrate_060_DeckAndTournamentUUIDsUnderRLS: a library whose first uuid
+// pass is long done still names its decks and tournaments, by a pass of their
+// own, on a role that is neither superuser nor BYPASSRLS. The identifiers are
+// the ones Go derives, two tenants holding the same names converge, FORCE is
+// back, the naming is no change of the journal (an export from the start still
+// carries the rows), and a deck written afterwards is journaled by its trigger.
+func TestMigrate_060_DeckAndTournamentUUIDsUnderRLS(t *testing.T) {
+	ctx := context.Background()
+	s, conn, ownerDSN := openAsRLSOwner(t)
+	for _, scope := range []string{"1", "2"} {
+		for _, stmt := range []string{
+			`INSERT INTO anki_deck (tenant_id, name) VALUES ($1::bigint, 'Openings')`,
+			`INSERT INTO anki_deck (tenant_id, name) VALUES ($1::bigint, 'Openings')`,
+			`INSERT INTO tournament (tenant_id, name) VALUES ($1::bigint, 'Open')`,
+			`INSERT INTO tournament (tenant_id, name, date) VALUES ($1::bigint, 'Open', '2025-06-01')`,
+		} {
+			if _, err := conn.Exec(ctx, stmt, scope); err != nil {
+				t.Fatalf("%s: %v", stmt, err)
+			}
+		}
+	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	tables := []string{"anki_deck", "tournament"}
+	var rewind []string
+	for _, tbl := range tables {
+		rewind = append(rewind, `UPDATE `+tbl+` SET uuid = NULL`, `DELETE FROM change_log WHERE family = '`+tbl+`'`,
+			`DELETE FROM metadata WHERE key = '`+sqlshared.MarkFor(tbl)+`'`)
+	}
+	execUnforced(t, conn, tables, rewind)
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate under RLS: %v", err)
+	}
+	assertForced(t, conn, tables...)
+
+	for _, scope := range []string{"1", "2"} {
+		var got []string
+		asTenant(t, conn, scope, func() {
+			rows, err := conn.Query(ctx, `SELECT CAST(uuid AS TEXT) FROM anki_deck ORDER BY id`)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer rows.Close()
+			for rows.Next() {
+				var u string
+				if err := rows.Scan(&u); err != nil {
+					t.Fatal(err)
+				}
+				got = append(got, u)
+			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
+			}
+		})
+		want := []string{sqlshared.DeriveObjectUUID("anki_deck", "Openings", 1), sqlshared.DeriveObjectUUID("anki_deck", "Openings", 2)}
+		if len(got) != 2 || got[0] != want[0] || got[1] != want[1] {
+			t.Errorf("tenant %s: deck uuids %v, want %v", scope, got, want)
+		}
+		var tu string
+		asTenant(t, conn, scope, func() {
+			if err := conn.QueryRow(ctx, `SELECT CAST(uuid AS TEXT) FROM tournament WHERE date IS NULL`).Scan(&tu); err != nil {
+				t.Fatal(err)
+			}
+		})
+		var edition string
+		asTenant(t, conn, scope, func() {
+			if err := conn.QueryRow(ctx, `SELECT CAST(uuid AS TEXT) FROM tournament WHERE date IS NOT NULL`).Scan(&edition); err != nil {
+				t.Fatal(err)
+			}
+		})
+		if edition != sqlshared.DeriveObjectUUID("tournament", "Open|2025-06-01", 1) {
+			t.Errorf("tenant %s: the other edition has uuid %s", scope, edition)
+		}
+		if tu != sqlshared.DeriveObjectUUID("tournament", "Open|", 1) {
+			t.Errorf("tenant %s: tournament uuid %s", scope, tu)
+		}
+	}
+
+	rls, err := pg.Open(ctx, ownerDSN, &storage.Options{EnableRLS: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rls.Close()
+	c := storage.WithTenant(ctx, 1)
+	set, err := changeset.Export(c, rls, "1", storage.Cursor{}, 1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	carried := map[string]int{}
+	for _, r := range set.Records {
+		carried[r.Family]++
+	}
+	if carried["anki_deck"] != 2 || carried["tournament"] != 2 {
+		t.Errorf("an export from the start carries %v", carried)
+	}
+	id, err := rls.Anki().CreateDeck(c, "1", "New", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	u, err := rls.ObjectUUIDs().ObjectUUID(c, "1", "anki_deck", id)
+	if err != nil || u == "" {
+		t.Fatalf("uuid of the new deck: %q, %v", u, err)
+	}
+	if e, err := rls.ChangeJournal().Entry(c, "1", u); err != nil || e.Op != storage.ChangeCreate || e.Family != "anki_deck" {
+		t.Errorf("journal entry of the new deck: %+v, %v", e, err)
 	}
 }

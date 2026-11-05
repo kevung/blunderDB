@@ -63,7 +63,11 @@ type Cursor struct {
 	// Xid is on: a backup restored elsewhere restarts that counter and a
 	// point-in-time recovery rewinds it, so no order holds between a cursor from
 	// before and an entry from after (ErrCursorStale).
-	Epoch   string `json:"epoch,omitempty"`
+	Epoch string `json:"epoch,omitempty"`
+	// Carried names the families the changeset carried when the cursor was
+	// taken: a cursor taken before a family was added passed its entries
+	// without reading them (ErrCursorStale).
+	Carried string `json:"carried,omitempty"`
 	Family  string `json:"family,omitempty"`
 	ReadXid int64  `json:"read_xid,omitempty"`
 	ReadSeq int64  `json:"read_seq,omitempty"`

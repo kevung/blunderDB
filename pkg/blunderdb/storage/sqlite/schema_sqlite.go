@@ -621,6 +621,7 @@ var schemaStatements = []string{
 	)`,
 	`CREATE TABLE IF NOT EXISTS tournament (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		name TEXT NOT NULL,
 		date TEXT,
 		location TEXT,
@@ -811,6 +812,7 @@ var schemaStatements = []string{
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_direction_slot ON match(tournament_id, direction_match_id) WHERE direction_match_id <> ''`,
 	`CREATE TABLE IF NOT EXISTS anki_deck (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		uuid TEXT,
 		name TEXT NOT NULL,
 		description TEXT DEFAULT '',
 		source_type TEXT NOT NULL DEFAULT 'collection',
@@ -910,6 +912,8 @@ var schemaStatements = []string{
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_collection_uuid ON collection(uuid)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_lesson_uuid ON lesson(uuid)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_anki_card_uuid ON anki_card(uuid)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_anki_deck_uuid ON anki_deck(uuid)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_tournament_uuid ON tournament(uuid)`,
 	// No index leads with decision_type: it splits the library in
 	// two, and a filter on it ran slower through such an index than through
 	// the table on a 15.6 M-position library. Only the take/pass side of
