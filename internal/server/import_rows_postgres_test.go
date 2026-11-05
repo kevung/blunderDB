@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"slices"
@@ -22,8 +23,8 @@ import (
 	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 const importRowsGolden = "testdata/import_rows_golden.json"
@@ -133,6 +134,57 @@ func importRowsFiles(t *testing.T, dir string) (uploads []string) {
 	return slices.Concat(xg, others, xg)
 }
 
+// importRowsServer opens a fresh database under the application role behind an HTTP server.
+func importRowsServer(t *testing.T, ctx context.Context) (ts *httptest.Server, super, name string) {
+	t.Helper()
+	super = os.Getenv("BLUNDERDB_BENCH_DSN")
+	if super == "" {
+		super = postgresDSN(t)
+	}
+	name = fmt.Sprintf("rows_%d", os.Getpid())
+	benchExec(t, ctx, super, fmt.Sprintf(`CREATE ROLE %s LOGIN PASSWORD '%s'`, benchRole, benchRole))
+	benchExec(t, ctx, super, fmt.Sprintf(`CREATE DATABASE %s OWNER %s`, name, benchRole))
+	t.Cleanup(func() { benchExec(t, ctx, super, fmt.Sprintf(`DROP DATABASE %s WITH (FORCE)`, name)) })
+
+	st := benchOpen(t, ctx, benchDSN(t, super, benchRole, name))
+	t.Cleanup(func() { st.Close() })
+	if _, ok := st.(*pg.Storage); !ok {
+		t.Fatal("postgres storage expected")
+	}
+	srv, err := New(Options{Storage: st, Metrics: metrics.New(), EnableMetrics: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return newBenchHTTPServer(t, srv), super, name
+}
+
+// TestImportDatesPositionsAtBirth: a position a dated match creates is written
+// with the match's date, so the journal records it as created, never as updated.
+func TestImportDatesPositionsAtBirth(t *testing.T) {
+	ctx := context.Background()
+	ts, super, name := importRowsServer(t, ctx)
+	benchUploadAny(t, ts, filepath.Join("..", "..", "testdata", "charlot1-charlot2_7p_2025-11-08-2305.xg"))
+
+	conn, err := pgx.Connect(ctx, benchDSN(t, super, "", name))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(ctx)
+	var positions, dated, created, updated int
+	err = conn.QueryRow(ctx, `SELECT
+		(SELECT COUNT(*) FROM position),
+		(SELECT COUNT(*) FROM position p WHERE p.match_date = (SELECT MIN(match_date) FROM match)),
+		(SELECT COUNT(*) FROM change_log WHERE family = 'position' AND op = 'create'),
+		(SELECT COUNT(*) FROM change_log WHERE family = 'position' AND op = 'update')`).
+		Scan(&positions, &dated, &created, &updated)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if positions == 0 || dated != positions || created != positions || updated != 0 {
+		t.Errorf("%d positions: %d dated like the match, journal %d created and %d updated", positions, dated, created, updated)
+	}
+}
+
 // TestImportStoredRowsAreStable holds what an import stores, row by row, to
 // the digests recorded when each position still took its own round trips: a
 // write path may change how it reaches the database, never what it leaves
@@ -143,25 +195,7 @@ func importRowsFiles(t *testing.T, dir string) (uploads []string) {
 // to BLUNDERDB_BENCH_OUT (they name nothing) for two builds to be compared.
 func TestImportStoredRowsAreStable(t *testing.T) {
 	ctx := context.Background()
-	super := os.Getenv("BLUNDERDB_BENCH_DSN")
-	if super == "" {
-		super = postgresDSN(t)
-	}
-	name := fmt.Sprintf("rows_%d", os.Getpid())
-	benchExec(t, ctx, super, fmt.Sprintf(`CREATE ROLE %s LOGIN PASSWORD '%s'`, benchRole, benchRole))
-	benchExec(t, ctx, super, fmt.Sprintf(`CREATE DATABASE %s OWNER %s`, name, benchRole))
-	t.Cleanup(func() { benchExec(t, ctx, super, fmt.Sprintf(`DROP DATABASE %s WITH (FORCE)`, name)) })
-
-	st := benchOpen(t, ctx, benchDSN(t, super, benchRole, name))
-	defer st.Close()
-	if _, ok := st.(*pg.Storage); !ok {
-		t.Fatal("postgres storage expected")
-	}
-	srv, err := New(Options{Storage: st, Metrics: metrics.New(), EnableMetrics: true})
-	if err != nil {
-		t.Fatal(err)
-	}
-	ts := newBenchHTTPServer(t, srv)
+	ts, super, name := importRowsServer(t, ctx)
 
 	corpus := cmp.Or(os.Getenv("BLUNDERDB_IMPORT_ROWS_CORPUS"), filepath.Join("..", "..", "testdata"))
 	for _, p := range importRowsFiles(t, corpus) {

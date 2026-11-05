@@ -294,7 +294,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			}
 		}
 	}
-	saved, err := saveVisits(ctx, tx, scope, g, visits, positions, createdHere)
+	saved, err := saveVisits(ctx, tx, scope, g, visits, positions, createdHere, !enrich)
 	if err != nil {
 		return res, err
 	}
@@ -447,8 +447,13 @@ func foldFragments(existing *domain.PositionAnalysis, frags []*domain.PositionAn
 // analyses of the first visit to a position this call created, which can read
 // nothing; then, in visit order, those that can find a row, a second visit to
 // such a position included, then the comments.
-func saveVisits(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph, visits []*MoveGraph, positions []*domain.Position, createdHere map[int64]bool) (int, error) {
-	ids, created, err := tx.Positions().SaveMany(ctx, scope, positions)
+func saveVisits(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph, visits []*MoveGraph, positions []*domain.Position, createdHere map[int64]bool, dated bool) (int, error) {
+	saveCtx := ctx
+	if dated {
+		// The match row holds g.Match's date: a position born here starts with it.
+		saveCtx = storage.WithPositionMatchDate(ctx, g.Match.MatchDate)
+	}
+	ids, created, err := tx.Positions().SaveMany(saveCtx, scope, positions)
 	if err != nil {
 		return 0, err
 	}

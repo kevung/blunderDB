@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"iter"
 	"math"
+	"slices"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
@@ -609,7 +610,10 @@ var positionBulkTypes = []string{
 	bulkBytea, bulkBool, bulkBool, bulkInt,
 }
 
-var positionBulkInsertSQL = insertHead(positionInsertSQL) + " " + unnestSelect(positionBulkTypes) + `
+// positionBulkInsertTypes add the match date the positions are born with.
+var positionBulkInsertTypes = append(slices.Clone(positionBulkTypes), bulkTime)
+
+var positionBulkInsertSQL = strings.TrimSuffix(insertHead(positionInsertSQL), ")") + ", match_date) " + unnestSelect(positionBulkInsertTypes) + `
 ON CONFLICT (tenant_id, zobrist_hash) DO NOTHING
 RETURNING id, zobrist_hash`
 
@@ -636,13 +640,14 @@ func (s *positionStore) saveChunk(ctx context.Context, tenant int64, chunk []*do
 	norms := make([]domain.Position, len(chunk))
 	hashes := make([]int64, len(chunk))
 	rows := make([][]any, len(chunk))
+	matchDate := nullableTime(storage.PositionMatchDateFromContext(ctx))
 	for i, p := range chunk {
 		norms[i] = p.NormalizeForStorage()
 		cols := engine.PopulatePositionColumns(p)
 		hashes[i] = int64(cols.ZobristHash)
-		rows[i] = positionInsertArgs(tenant, cols, &norms[i])
+		rows[i] = append(positionInsertArgs(tenant, cols, &norms[i]), matchDate)
 	}
-	args, err := bulkColumns(positionBulkTypes, rows)
+	args, err := bulkColumns(positionBulkInsertTypes, rows)
 	if err != nil {
 		return err
 	}
