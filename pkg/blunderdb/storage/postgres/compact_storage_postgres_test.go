@@ -206,11 +206,6 @@ func TestNarrowColumn_WiderValueIsInvalid(t *testing.T) {
 	bg := context.Background()
 	s, _ := openRLS(t)
 	ctx := tctx(bg, "1")
-	dice := compactPosition(7)
-	dice.Dice = [2]int{70000, 70000}
-	if _, err := s.Positions().Save(ctx, "1", dice); err == nil {
-		t.Skip("the board checks the dice first") // bounded by a CHECK as before
-	}
 	far := compactPosition(8)
 	far.Board.Points[3] = domain.Point{Checkers: 40000, Color: domain.White}
 	if _, err := s.Positions().Save(ctx, "1", far); !errors.Is(err, storage.ErrInvalid) {
