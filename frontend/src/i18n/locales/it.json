@@ -3057,7 +3057,9 @@
             "other": "Sincronizzazione non riuscita.",
             "library_changed": "La libreria è cambiata durante la sincronizzazione: è stata interrotta, la riavvii.",
             "tool_locked": "Il server è bloccato durante una partita: riprovi dopo la partita.",
-            "blocked": "Qualcosa tra questo computer e il server (proxy, firewall) rifiuta una richiesta per le sue dimensioni. Nulla è stato saltato; chieda a chi gestisce il server di alzare il limite."
+            "blocked": "Qualcosa tra questo computer e il server (proxy, firewall) rifiuta una richiesta per le sue dimensioni. Nulla è stato saltato; chieda a chi gestisce il server di alzare il limite.",
+            "allowance": "Il suo piano consente {allowed} {axis}; ne possiede {held} e questa sincronizzazione ne aggiunge {new}. Nulla è andato perso: liberi spazio o cambi piano, poi riavvii.",
+            "invalid_records": "Il server rifiuta il contenuto di alcuni record."
         },
         "unapplied": "{conflicts} in conflitto, {missing} con un riferimento assente, {unsupported} di un tipo non supportato: questi elementi non sono stati applicati.",
         "skipped": {
@@ -3066,7 +3068,18 @@
             "sent": "inviato",
             "received": "ricevuto",
             "too_large": "rifiutato dal server per le sue dimensioni",
-            "interrupted": "non è passato"
+            "interrupted": "non è passato",
+            "invalid": "rifiutato dal server per il contenuto",
+            "reference": "inviato senza un riferimento a un record messo da parte, reinviato quando questo passa"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "posizioni",
+                "matches": "partite",
+                "storage": "MB di spazio",
+                "collections": "raccolte",
+                "other": "elementi"
+            }
         }
     },
     "emptyState": {

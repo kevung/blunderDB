@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/changeset"
@@ -19,6 +20,10 @@ const maxRetryAfter = 2 * time.Minute
 
 // maxRetries is how many times one call waits out a rate limit.
 const maxRetries = 3
+
+// maxInProgressWait is how long one call waits for the server to finish an
+// import of this account that a broken connection left in flight (up to 15 s).
+const maxInProgressWait = 40 * time.Second
 
 // Local is the open library.
 type Local interface {
@@ -65,6 +70,12 @@ const (
 	// ReasonInterrupted: it alone could not be sent before the connection broke
 	// or timed out; nothing refused it.
 	ReasonInterrupted = "interrupted"
+	// ReasonInvalid: the server refuses its content (422 invalid_records).
+	ReasonInvalid = "invalid"
+	// ReasonReference: the record went through but held a reference to a record
+	// set aside, which the other side could not place. It is sent again once
+	// that record has gone through, and listed until then.
+	ReasonReference = "reference"
 )
 
 // Skip is a record set aside. From and To are the cursors of the page it was
@@ -149,6 +160,10 @@ type Options struct {
 	Save func(Cursors) error
 	// Sleep waits out a Retry-After, time-based when nil.
 	Sleep func(ctx context.Context, d time.Duration) error
+
+	// exportLimit is the page size the server's exports have shown it can
+	// compute in time, lowered on each payload_too_large of an export.
+	exportLimit *int
 }
 
 func sleep(ctx context.Context, d time.Duration) error {
@@ -165,10 +180,19 @@ func sleep(ctx context.Context, d time.Duration) error {
 // retrying replays a call the server rate-limited, after the wait it asked for.
 // Every other error, a refusal on the allowance included, is returned at once.
 func retrying[T any](ctx context.Context, opt Options, call func() (T, error)) (T, error) {
+	var inProgress time.Duration
 	for n := 0; ; n++ {
 		v, err := call()
 		after, ok := RetryAfter(err)
-		if err == nil || !ok || n >= maxRetries || after > maxRetryAfter {
+		if err == nil || !ok || after > maxRetryAfter {
+			return v, err
+		}
+		if importInProgress(err) {
+			if inProgress += after; inProgress > maxInProgressWait {
+				return v, err
+			}
+			n = 0
+		} else if n >= maxRetries {
 			return v, err
 		}
 		if err := opt.Sleep(ctx, after); err != nil {
@@ -181,15 +205,18 @@ func retrying[T any](ctx context.Context, opt Options, call func() (T, error)) (
 // or the connection breaks under it. A record alone that the server refuses by
 // its size, or that cannot get through, is handed to aside, which keeps it for
 // the next run; any other failure stops the run with the cursor where it was.
-func send(ctx context.Context, remote Remote, opt Options, recs []changeset.Record, res *Result, aside func(rec changeset.Record, reason string)) error {
+func send(ctx context.Context, remote Remote, opt Options, recs []changeset.Record, res *Result, aside func(rec changeset.Record, reason string), miss *[]changeset.MissingRef) error {
 	rep, err := retrying(ctx, opt, func() (changeset.Report, error) { return remote.Import(ctx, recs) })
 	reason := ""
 	switch {
 	case err == nil:
 		res.Sent.add(len(recs), rep)
+		*miss = append(*miss, rep.Missing...)
 		return nil
 	case errors.Is(err, ErrTooLarge):
 		reason = ReasonTooLarge
+	case errors.Is(err, ErrInvalidRecords):
+		reason = ReasonInvalid
 	case errors.Is(err, ErrInterrupted):
 		reason = ReasonInterrupted
 	default:
@@ -202,21 +229,139 @@ func send(ctx context.Context, remote Remote, opt Options, recs []changeset.Reco
 		return nil
 	}
 	mid := len(recs) / 2
-	if err := send(ctx, remote, opt, recs[:mid], res, aside); err != nil {
+	if err := send(ctx, remote, opt, recs[:mid], res, aside, miss); err != nil {
 		return err
 	}
-	return send(ctx, remote, opt, recs[mid:], res, aside)
+	return send(ctx, remote, opt, recs[mid:], res, aside, miss)
+}
+
+// sendPage sends a page with the matches first, alone: an account with a cap
+// refuses a request that holds the positions of a match without the match, and
+// a match of many positions does not fit in a request with others. The server
+// takes the matches, then the rest in the next request.
+func sendPage(ctx context.Context, remote Remote, opt Options, recs []changeset.Record, res *Result, aside func(rec changeset.Record, reason string), miss *[]changeset.MissingRef) error {
+	var matches, rest []changeset.Record
+	for _, r := range recs {
+		if r.Family == "match" {
+			matches = append(matches, r)
+		} else {
+			rest = append(rest, r)
+		}
+	}
+	for _, part := range [][]changeset.Record{matches, rest} {
+		if len(part) == 0 {
+			continue
+		}
+		if err := send(ctx, remote, opt, part, res, aside, miss); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// dangle keeps the records that went through holding a reference the other side
+// could not place, while some record of that direction is set aside: the
+// cursor has moved past them, so they would not be sent again once the record
+// they point at goes through.
+func (c *Cursors) dangle(direction string, miss []changeset.MissingRef, size func(family, uuid string) int64, from, to storage.Cursor) {
+	waiting := false
+	for _, o := range c.Skipped {
+		if o.Direction == direction && o.Reason != ReasonReference {
+			waiting = true
+		}
+	}
+	if !waiting {
+		return
+	}
+	for _, m := range miss {
+		c.setAside(Skip{Direction: direction, Family: m.Family, UUID: m.UUID, Size: size(m.Family, m.UUID), Reason: ReasonReference, From: from, To: to})
+	}
+}
+
+func payloadSize(recs []changeset.Record) func(family, uuid string) int64 {
+	return func(family, uuid string) int64 {
+		for _, r := range recs {
+			if r.Family == family && r.UUID == uuid {
+				return int64(len(r.Payload))
+			}
+		}
+		return 0
+	}
+}
+
+// sendMatchesFirst sends every match of what is left to send before any
+// position: the journal may hold the positions of a match many pages before the
+// match, and an account with a cap refuses them without it. It returns the
+// matches it sent, which the pass that follows leaves out.
+func sendMatchesFirst(ctx context.Context, local Local, remote Remote, cur *Cursors, opt Options, res *Result) (map[string]bool, error) {
+	done := map[string]bool{}
+	after := cur.Sent
+	for {
+		if err := ctx.Err(); err != nil {
+			return done, err
+		}
+		set, err := local.Export(ctx, after, opt.Page)
+		if errors.Is(err, storage.ErrCursorStale) {
+			return map[string]bool{}, nil // the pass that follows starts over and sends them in their pages
+		}
+		if err != nil {
+			return done, fmt.Errorf("reading this library's changes: %w", err)
+		}
+		var matches []changeset.Record
+		for _, r := range set.Records {
+			if r.Family == "match" {
+				matches = append(matches, r)
+			}
+		}
+		if len(matches) > 0 {
+			from, to := after, set.Cursor
+			aside := func(rec changeset.Record, reason string) {
+				cur.setAside(Skip{Direction: DirectionSent, Family: rec.Family, UUID: rec.UUID, Size: int64(len(rec.Payload)), Reason: reason, From: from, To: to})
+			}
+			var miss []changeset.MissingRef
+			if err := send(ctx, remote, opt, matches, res, aside, &miss); err != nil {
+				return done, fmt.Errorf("sending: %w", err)
+			}
+			cur.dangle(DirectionSent, miss, payloadSize(matches), from, to)
+			for _, m := range matches {
+				done[m.UUID] = true
+			}
+		}
+		if !set.More || set.Cursor == after {
+			return done, nil
+		}
+		after = set.Cursor
+	}
+}
+
+// exportRemote asks for a page of the server's journal. A payload_too_large on
+// an export is the server running out of time to compute the page: it is asked
+// again for fewer records, and the size that worked is kept for the next pages.
+func exportRemote(ctx context.Context, remote Remote, opt Options, after storage.Cursor) (Page, error) {
+	for {
+		limit := *opt.exportLimit
+		page, err := retrying(ctx, opt, func() (Page, error) { return remote.Export(ctx, after, limit) })
+		if errors.Is(err, ErrTooLarge) && limit > 1 {
+			*opt.exportLimit = limit / 2
+			continue
+		}
+		return page, err
+	}
 }
 
 // skippedAfter lists the records of a side set aside, to be tried again.
 func (c *Cursors) skippedAfter(direction string) []Skip {
-	var out []Skip
+	var out, last []Skip
 	for _, o := range c.Skipped {
-		if o.Direction == direction {
+		switch {
+		case o.Direction != direction:
+		case o.Reason == ReasonReference:
+			last = append(last, o)
+		default:
 			out = append(out, o)
 		}
 	}
-	return out
+	return append(out, last...)
 }
 
 // retrySent sends again the records set aside on the way out, found by
@@ -253,10 +398,13 @@ func retrySent(ctx context.Context, local Local, remote Remote, cur *Cursors, op
 			s.Reason, s.Size = reason, int64(len(rec.Payload))
 			cur.setAside(s)
 		}
-		if err := send(ctx, remote, opt, found[len(found)-1:], res, again); err != nil {
+		var miss []changeset.MissingRef
+		last := found[len(found)-1:]
+		if err := send(ctx, remote, opt, last, res, again, &miss); err != nil {
 			cur.setAside(sk)
 			return fmt.Errorf("sending: %w", err)
 		}
+		cur.dangle(DirectionSent, miss, payloadSize(last), sk.From, sk.To)
 		if err := save(); err != nil {
 			return err
 		}
@@ -266,18 +414,21 @@ func retrySent(ctx context.Context, local Local, remote Remote, cur *Cursors, op
 
 // receive merges one page of the remote journal and sets aside what it skipped.
 func receive(ctx context.Context, local Local, cur *Cursors, from storage.Cursor, page Page, res *Result) error {
+	var missing []changeset.MissingRef
 	if len(page.Records) > 0 {
 		rep, err := local.Import(ctx, page.Set)
 		if err != nil {
 			return fmt.Errorf("merging what was received: %w", err)
 		}
 		res.Received.add(len(page.Records), rep)
+		missing = rep.Missing
 	}
 	for _, k := range page.Skipped {
 		res.Received.Records++
 		res.Received.Unsynchronizable++
 		cur.setAside(Skip{Direction: DirectionReceived, Family: k.Family, UUID: k.UUID, Size: k.Size, Reason: ReasonTooLarge, From: from, To: page.Cursor})
 	}
+	cur.dangle(DirectionReceived, missing, payloadSize(page.Records), from, page.Cursor)
 	return nil
 }
 
@@ -289,7 +440,7 @@ func retryReceived(ctx context.Context, local Local, remote Remote, cur *Cursors
 		cur.release(DirectionReceived, func(o Skip) bool { return o.Family != sk.Family || o.UUID != sk.UUID })
 		after := sk.From
 		for {
-			page, err := retrying(ctx, opt, func() (Page, error) { return remote.Export(ctx, after, opt.Page) })
+			page, err := exportRemote(ctx, remote, opt, after)
 			if errors.Is(err, storage.ErrCursorStale) {
 				break // the next full pass brings it back
 			}
@@ -325,6 +476,8 @@ func run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 	if opt.Page <= 0 || opt.Page > DefaultPage {
 		opt.Page = DefaultPage
 	}
+	opt.exportLimit = new(int)
+	*opt.exportLimit = opt.Page
 	if opt.Sleep == nil {
 		opt.Sleep = sleep
 	}
@@ -337,6 +490,11 @@ func run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 	}
 
 	if err := retrySent(ctx, local, remote, &cur, opt, &res, save); err != nil {
+		return cur, res, err
+	}
+
+	early, err := sendMatchesFirst(ctx, local, remote, &cur, opt, &res)
+	if err != nil {
 		return cur, res, err
 	}
 
@@ -353,13 +511,18 @@ func run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 		if err != nil {
 			return cur, res, fmt.Errorf("reading this library's changes: %w", err)
 		}
+		if len(early) > 0 {
+			set.Records = slices.DeleteFunc(slices.Clone(set.Records), func(r changeset.Record) bool { return r.Family == "match" && early[r.UUID] })
+		}
 		if len(set.Records) > 0 {
 			aside := func(rec changeset.Record, reason string) {
 				cur.setAside(Skip{Direction: DirectionSent, Family: rec.Family, UUID: rec.UUID, Size: int64(len(rec.Payload)), Reason: reason, From: cur.Sent, To: set.Cursor})
 			}
-			if err := send(ctx, remote, opt, set.Records, &res, aside); err != nil {
+			var miss []changeset.MissingRef
+			if err := sendPage(ctx, remote, opt, set.Records, &res, aside, &miss); err != nil {
 				return cur, res, fmt.Errorf("sending: %w", err)
 			}
+			cur.dangle(DirectionSent, miss, payloadSize(set.Records), cur.Sent, set.Cursor)
 		}
 		if set.More && set.Cursor == cur.Sent {
 			return cur, res, fmt.Errorf("reading this library's changes: the cursor does not advance")
@@ -382,7 +545,7 @@ func run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 		if err := ctx.Err(); err != nil {
 			return cur, res, err
 		}
-		set, err := retrying(ctx, opt, func() (Page, error) { return remote.Export(ctx, cur.Received, opt.Page) })
+		set, err := exportRemote(ctx, remote, opt, cur.Received)
 		if errors.Is(err, storage.ErrCursorStale) && !restarted && !cur.Received.IsStart() {
 			cur.Received, restarted = storage.Cursor{}, true
 			cur.release(DirectionReceived, func(Skip) bool { return false })

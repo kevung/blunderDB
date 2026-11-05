@@ -64,7 +64,7 @@ export function syncSkipped(s) {
 
 /** The i18n key wording why a record was set aside. @param {string} reason */
 export function syncSkipReasonKey(reason) {
-    return reason === 'interrupted' ? 'sync.skipped.interrupted' : 'sync.skipped.too_large';
+    return ['interrupted', 'invalid', 'reference'].includes(reason) ? `sync.skipped.${reason}` : 'sync.skipped.too_large';
 }
 
 export async function loadSync() {
@@ -95,11 +95,30 @@ export async function syncNow() {
     syncStateStore.set(await SyncNow());
 }
 
-const ERROR_KINDS = ['refused', 'unavailable', 'rate_limited', 'too_large', 'blocked', 'address', 'no_token', 'no_library', 'library_changed', 'tool_locked'];
+const ERROR_KINDS = ['refused', 'unavailable', 'rate_limited', 'too_large', 'blocked', 'address', 'no_token', 'no_library', 'library_changed', 'tool_locked', 'invalid_records'];
 
 /** The server words an exceeded allowance itself: its message is shown as is, not translated. @param {string} kind */
 export function syncErrorIsVerbatim(kind) {
-    return kind === 'allowance';
+    return kind === 'allowance' || kind === 'server_refusal';
+}
+
+const ALLOWANCE_AXES = ['positions', 'matches', 'storage', 'collections'];
+
+/**
+ * The words of a failed run: the i18n key with its values, and the technical detail to show under it.
+ * An exceeded allowance is worded here from the server's figures, in the interface language; the server's
+ * own message is only the fallback when it gave no figures, and is never shown twice.
+ * @param {{kind: string, message: string, allowance?: {axis: string, allowed: number, held: number, new: number}}} error
+ * @returns {{key: string, params: Record<string, string|number>, verbatim: string, detail: string}}
+ */
+export function syncErrorWords(error) {
+    const a = error.allowance;
+    if (error.kind === 'allowance' && a) {
+        const axis = ALLOWANCE_AXES.includes(a.axis) ? a.axis : 'other';
+        return { key: 'sync.error.allowance', params: { axis: `sync.allowance.axis.${axis}`, allowed: a.allowed, held: a.held, new: a.new }, verbatim: '', detail: '' };
+    }
+    if (syncErrorIsVerbatim(error.kind)) return { key: '', params: {}, verbatim: error.message, detail: '' };
+    return { key: syncErrorKey(error.kind), params: {}, verbatim: '', detail: error.message };
 }
 
 /** The i18n key wording a failed run; an unforeseen kind falls back to the generic one. @param {string} kind */

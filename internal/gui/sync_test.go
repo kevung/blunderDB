@@ -168,6 +168,18 @@ func TestSyncErrorKindsFromTheServersAnswers(t *testing.T) {
 	if e := syncError(answer(402, `{"error":{"code":"allowance_exceeded","message":"Quota atteint."}}`)); e.Kind != "allowance" || e.Message != "Quota atteint." {
 		t.Errorf("allowance = %+v, want the server's words as they are", e)
 	}
+	if e := syncError(answer(402, `{"error":{"code":"allowance_exceeded","message":"Plan limit","axis":"positions","allowed":150,"held":140,"new":20}}`)); e.Kind != "allowance" || e.Allowance == nil || *e.Allowance != (syncremote.AllowanceFigures{Axis: "positions", Allowed: 150, Held: 140, New: 20}) {
+		t.Errorf("allowance with figures = %+v, want them carried for the window to word", e)
+	}
+	if e := syncError(answer(422, `{"error":{"code":"invalid_records","message":"x"}}`)); e.Kind != "invalid_records" {
+		t.Errorf("422 = %+v, want a refusal of content, not an unreachable server", e)
+	}
+	if e := syncError(answer(403, `{"error":{"code":"no_journal","message":"no journal here"}}`)); e.Kind != "server_refusal" {
+		t.Errorf("403 with the server's own code = %+v, want its refusal and not a token problem", e)
+	}
+	if e := syncError(answer(403, `{"error":{"code":"forbidden","message":"x"}}`)); e.Kind != "refused" {
+		t.Errorf("403 forbidden = %+v, want the token refused", e)
+	}
 	if e := syncError(answer(413, `{"error":{"code":"payload_too_large","message":"x"}}`)); e.Kind != "too_large" {
 		t.Errorf("413 with the server's code = %+v", e)
 	}

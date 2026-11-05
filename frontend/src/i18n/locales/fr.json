@@ -3057,7 +3057,9 @@
             "other": "La synchronisation a échoué.",
             "library_changed": "La bibliothèque a changé pendant la synchronisation : elle a été interrompue, relancez-la.",
             "tool_locked": "Le serveur est verrouillé pendant une partie : réessayez après la partie.",
-            "blocked": "Un élément entre cet ordinateur et le serveur (mandataire, pare-feu) refuse une requête pour sa taille. Rien n'a été enjambé ; demandez à l'exploitant du serveur de relever la limite."
+            "blocked": "Un élément entre cet ordinateur et le serveur (mandataire, pare-feu) refuse une requête pour sa taille. Rien n'a été enjambé ; demandez à l'exploitant du serveur de relever la limite.",
+            "allowance": "Votre formule permet {allowed} {axis} ; vous en détenez {held} et cette synchronisation en ajoute {new}. Rien n’est perdu : libérez de la place ou changez de formule, puis relancez.",
+            "invalid_records": "Le serveur refuse le contenu de certains enregistrements."
         },
         "unapplied": "{conflicts} en conflit, {missing} avec une référence absente, {unsupported} d'un type non pris en charge : ces éléments n'ont pas été appliqués.",
         "skipped": {
@@ -3066,7 +3068,18 @@
             "sent": "envoyé",
             "received": "reçu",
             "too_large": "refusé par le serveur pour sa taille",
-            "interrupted": "n'a pas pu passer"
+            "interrupted": "n'a pas pu passer",
+            "invalid": "refusé par le serveur pour son contenu",
+            "reference": "envoyé sans une référence vers un enregistrement mis de côté, renvoyé quand celui-ci passe"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "positions",
+                "matches": "matchs",
+                "storage": "Mo de stockage",
+                "collections": "collections",
+                "other": "éléments"
+            }
         }
     },
     "emptyState": {

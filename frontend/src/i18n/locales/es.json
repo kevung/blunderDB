@@ -3057,7 +3057,9 @@
             "other": "La sincronización ha fallado.",
             "library_changed": "La biblioteca cambió durante la sincronización: se interrumpió, vuelva a lanzarla.",
             "tool_locked": "El servidor está bloqueado durante una partida: vuelva a intentarlo después de la partida.",
-            "blocked": "Algo entre este equipo y el servidor (proxy, cortafuegos) rechaza una solicitud por su tamaño. No se omitió nada; pida a quien administra el servidor que suba el límite."
+            "blocked": "Algo entre este equipo y el servidor (proxy, cortafuegos) rechaza una solicitud por su tamaño. No se omitió nada; pida a quien administra el servidor que suba el límite.",
+            "allowance": "Su plan permite {allowed} {axis}; usted tiene {held} y esta sincronización añade {new}. No se ha perdido nada: libere espacio o cambie de plan y vuelva a intentarlo.",
+            "invalid_records": "El servidor rechaza el contenido de algunos registros."
         },
         "unapplied": "{conflicts} en conflicto, {missing} con una referencia ausente, {unsupported} de un tipo no admitido: estos elementos no se aplicaron.",
         "skipped": {
@@ -3066,7 +3068,18 @@
             "sent": "enviado",
             "received": "recibido",
             "too_large": "rechazado por el servidor por su tamaño",
-            "interrupted": "no pudo pasar"
+            "interrupted": "no pudo pasar",
+            "invalid": "rechazado por el servidor por su contenido",
+            "reference": "enviado sin una referencia a un registro apartado, se reenvía cuando este pasa"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "posiciones",
+                "matches": "partidas",
+                "storage": "MB de almacenamiento",
+                "collections": "colecciones",
+                "other": "elementos"
+            }
         }
     },
     "emptyState": {

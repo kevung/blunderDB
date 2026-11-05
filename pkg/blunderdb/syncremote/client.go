@@ -43,6 +43,13 @@ var (
 	ErrAllowance = errors.New("syncremote: the allowance is exceeded")
 	// ErrToolLocked: the server holds this library's tools while a match is played (409); retry after it.
 	ErrToolLocked = errors.New("syncremote: the server is locked during a match")
+	// ErrInvalidRecords: the server refuses the content of the records (422
+	// invalid_records), not their size; a record alone that it refuses is set aside.
+	ErrInvalidRecords = errors.New("syncremote: the server refuses the content of the records")
+	// ErrServerRefusal: the server declines the call for a reason of its own that
+	// is not about the token (a 403 with a code such as a tenant that keeps no
+	// journal): its words are shown, and the run does not go on.
+	ErrServerRefusal = errors.New("syncremote: the server declines the call")
 	// ErrBadAddress: the address is not usable (not http(s), embeds credentials or a query).
 	ErrBadAddress = errors.New("syncremote: invalid server address")
 )
@@ -163,16 +170,32 @@ func (c *Client) call(ctx context.Context, method string, in, out any) error {
 
 // rateLimited is ErrRateLimited that remembers how long the server asked to wait.
 type rateLimited struct {
-	msg   string
-	after time.Duration
+	msg        string
+	after      time.Duration
+	inProgress bool
 }
 
 func (e *rateLimited) Error() string             { return ErrRateLimited.Error() + e.msg }
 func (e *rateLimited) Unwrap() error             { return ErrRateLimited }
 func (e *rateLimited) RetryAfter() time.Duration { return e.after }
 
-// allowance is ErrAllowance worded by the server: its message is shown as is.
-type allowance struct{ msg string }
+// defaultInProgressWait is the wait when the server says an import is still
+// running and does not say for how long.
+const defaultInProgressWait = 2 * time.Second
+
+// importInProgress says the server is still applying an earlier import of this
+// account, one a broken connection left in flight for up to 15 s.
+func importInProgress(err error) bool {
+	var r *rateLimited
+	return errors.As(err, &r) && r.inProgress
+}
+
+// allowance is ErrAllowance with the figures the server gave: the window words
+// it in its own language from them, the server's message is only a fallback.
+type allowance struct {
+	msg string
+	AllowanceFigures
+}
 
 func (e *allowance) Error() string {
 	if e.msg == "" {
@@ -189,6 +212,25 @@ func AllowanceMessage(err error) string {
 		return a.Error()
 	}
 	return err.Error()
+}
+
+// AllowanceFigures are the fields of a 402 allowance_exceeded: the axis that is
+// exceeded, what the plan allows, what the account holds and what the call adds.
+type AllowanceFigures struct {
+	Axis    string `json:"axis"`
+	Allowed int64  `json:"allowed"`
+	Held    int64  `json:"held"`
+	New     int64  `json:"new"`
+}
+
+// AllowanceOf returns the figures of an exceeded allowance, false when the
+// server gave none.
+func AllowanceOf(err error) (AllowanceFigures, bool) {
+	var a *allowance
+	if errors.As(err, &a) && a.Axis != "" {
+		return a.AllowanceFigures, true
+	}
+	return AllowanceFigures{}, false
 }
 
 // RetryAfter is the wait a rate-limited answer asked for.
@@ -220,11 +262,16 @@ func parseRetryAfter(v string) time.Duration {
 	return 0
 }
 
+// tokenCodes are the codes of a 403 that mean the token, not a decision of the server.
+var tokenCodes = map[string]bool{"forbidden": true, "unauthorized": true, "invalid_token": true, "token_expired": true, "token_revoked": true, "token_invalid": true, "missing_token": true}
+
 func statusError(status int, h http.Header, raw []byte) error {
 	var env struct {
 		Error struct {
 			Code    string `json:"code"`
 			Message string `json:"message"`
+			AllowanceFigures
+			Details *AllowanceFigures `json:"details"`
 		} `json:"error"`
 	}
 	_ = json.Unmarshal(raw, &env)
@@ -237,14 +284,26 @@ func statusError(status int, h http.Header, raw []byte) error {
 		return fmt.Errorf("%w (HTTP %d): the server redirects, give its final address", ErrBadAddress, status)
 	case status == http.StatusGone:
 		return fmt.Errorf("%w%s", storage.ErrCursorStale, msg)
+	case status == http.StatusForbidden && env.Error.Code != "" && !tokenCodes[env.Error.Code]:
+		return fmt.Errorf("%w (HTTP %d)%s", ErrServerRefusal, status, msg)
 	case status == http.StatusUnauthorized, status == http.StatusForbidden:
 		return fmt.Errorf("%w (HTTP %d)%s", ErrRefused, status, msg)
 	case status == http.StatusPaymentRequired:
-		return &allowance{msg: env.Error.Message}
+		f := env.Error.AllowanceFigures
+		if f.Axis == "" && env.Error.Details != nil {
+			f = *env.Error.Details
+		}
+		return &allowance{msg: env.Error.Message, AllowanceFigures: f}
 	case status == http.StatusConflict && env.Error.Code == "tool_locked_during_match":
 		return fmt.Errorf("%w%s", ErrToolLocked, msg)
 	case status == http.StatusTooManyRequests:
-		return &rateLimited{msg: msg, after: parseRetryAfter(h.Get("Retry-After"))}
+		r := &rateLimited{msg: msg, after: parseRetryAfter(h.Get("Retry-After")), inProgress: env.Error.Code == "import_in_progress"}
+		if r.inProgress && r.after == 0 {
+			r.after = defaultInProgressWait
+		}
+		return r
+	case status == http.StatusUnprocessableEntity && env.Error.Code == "invalid_records":
+		return fmt.Errorf("%w%s", ErrInvalidRecords, msg)
 	case status == http.StatusRequestEntityTooLarge && (env.Error.Code == "payload_too_large" || env.Error.Code == "record_too_large"):
 		return fmt.Errorf("%w%s", ErrTooLarge, msg)
 	case status == http.StatusRequestEntityTooLarge:

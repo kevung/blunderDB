@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { t, language } from '../i18n';
     import { logger } from '../utils/logger.js';
-    import { syncSettingsStore, syncStateStore, loadSync, saveSyncSettings, setSyncToken, syncNow, syncErrorKey, syncErrorIsVerbatim, syncUnapplied, syncSkipped, syncSkipReasonKey } from '../services/syncService.js';
+    import { syncSettingsStore, syncStateStore, loadSync, saveSyncSettings, setSyncToken, syncNow, syncErrorWords, syncUnapplied, syncSkipped, syncSkipReasonKey } from '../services/syncService.js';
 
     let serverInput = $state('');
     let tokenInput = $state('');
@@ -71,9 +71,10 @@
         <button class="secondary-button" onclick={syncNow} disabled={st.running || !$syncSettingsStore.server || !st.hasToken}>{$t('sync.now')}</button>
     </div>
     {#if st.error}
+        {@const w = syncErrorWords(st.error)}
         <p class="setting-note warn" role="alert" data-testid="sync-error">
-            {syncErrorIsVerbatim(st.error.kind) ? st.error.message : $t(syncErrorKey(st.error.kind))}
-            <span class="detail">{st.error.message}</span>
+            {w.key ? $t(w.key, { ...w.params, axis: w.params.axis ? $t(String(w.params.axis)) : '' }) : w.verbatim}
+            {#if w.detail}<span class="detail">{w.detail}</span>{/if}
         </p>
     {:else if !st.running && st.result}
         <p class="setting-note ok" data-testid="sync-result">

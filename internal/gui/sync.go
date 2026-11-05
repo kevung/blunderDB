@@ -36,11 +36,15 @@ type SyncSettingsSource interface {
 }
 
 // SyncError is why the last run failed. Kind lets the window word it:
-// refused, unavailable, rate_limited, too_large, blocked, address, no_token,
+// refused, unavailable, rate_limited, too_large, invalid_records, server_refusal,
+// allowance, blocked, address, no_token,
 // no_library or other. Message is the detail, free of the token.
 type SyncError struct {
 	Kind    string `json:"kind"`
 	Message string `json:"message"`
+	// Allowance carries the figures of an exceeded allowance: the window words
+	// them in its own language and shows no message of the server's.
+	Allowance *syncremote.AllowanceFigures `json:"allowance,omitempty"`
 }
 
 // SyncStatus is what the window shows: whether a run is under way, the last
@@ -292,7 +296,16 @@ func syncError(err error) *SyncError {
 	case errors.Is(err, syncremote.ErrRefused):
 		kind = "refused"
 	case errors.Is(err, syncremote.ErrAllowance):
-		return &SyncError{Kind: "allowance", Message: syncremote.AllowanceMessage(err)}
+		f, ok := syncremote.AllowanceOf(err)
+		e := &SyncError{Kind: "allowance", Message: syncremote.AllowanceMessage(err)}
+		if ok {
+			e.Allowance = &f
+		}
+		return e
+	case errors.Is(err, syncremote.ErrServerRefusal):
+		return &SyncError{Kind: "server_refusal", Message: err.Error()}
+	case errors.Is(err, syncremote.ErrInvalidRecords):
+		kind = "invalid_records"
 	case errors.Is(err, syncremote.ErrToolLocked):
 		kind = "tool_locked"
 	case errors.Is(err, syncremote.ErrRateLimited):

@@ -3057,7 +3057,9 @@
             "other": "Synchronisation failed.",
             "library_changed": "The library changed during the synchronisation: it was interrupted, run it again.",
             "tool_locked": "The server is locked during a match: try again after the match.",
-            "blocked": "Something between this machine and the server refuses a request for its size (a proxy or a firewall). Nothing was skipped; ask whoever runs the server to raise the limit."
+            "blocked": "Something between this machine and the server refuses a request for its size (a proxy or a firewall). Nothing was skipped; ask whoever runs the server to raise the limit.",
+            "allowance": "Your plan allows {allowed} {axis}; you hold {held} and this synchronisation adds {new}. Nothing was lost: free some room or change plan, then run it again.",
+            "invalid_records": "The server refuses the content of some records."
         },
         "unapplied": "{conflicts} in conflict, {missing} with a missing reference, {unsupported} of an unsupported type: these items were not applied.",
         "skipped": {
@@ -3066,7 +3068,18 @@
             "sent": "sent",
             "received": "received",
             "too_large": "refused by the server for its size",
-            "interrupted": "could not get through"
+            "interrupted": "could not get through",
+            "invalid": "refused by the server for its content",
+            "reference": "sent without a reference to a record set aside, sent again once it goes through"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "positions",
+                "matches": "matches",
+                "storage": "MB of storage",
+                "collections": "collections",
+                "other": "items"
+            }
         }
     },
     "emptyState": {
