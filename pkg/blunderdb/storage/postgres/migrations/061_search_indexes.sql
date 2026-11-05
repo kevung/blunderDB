@@ -20,4 +20,4 @@ CREATE INDEX IF NOT EXISTS idx_analysis_error_order ON analysis (tenant_id, best
 DROP INDEX IF EXISTS idx_analysis_move_error;
 CREATE INDEX IF NOT EXISTS idx_analysis_gammon1 ON analysis (tenant_id, player1_gammon_rate);
 CREATE INDEX IF NOT EXISTS idx_analysis_gammon2 ON analysis (tenant_id, player2_gammon_rate);
-CREATE INDEX IF NOT EXISTS idx_position_structure ON position (tenant_id, id) INCLUDE (occupancy_1, point_mask_1, occupancy_2, point_mask_2);
+CREATE INDEX IF NOT EXISTS idx_position_structure ON position (tenant_id, id) INCLUDE (occupancy_1, point_mask_1, occupancy_2, point_mask_2, pip_1, pip_2);

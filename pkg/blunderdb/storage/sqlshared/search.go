@@ -597,14 +597,21 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 			// A side whose fifteen checkers are all placed has nowhere else to be: its
 			// occupancy is implied whole, and an index answers what masks cannot.
 			black, white := placedCheckers(effInclude.Board)
+			pip1, pip2 := engine.PipCounts(effInclude.Board)
 			for _, side := range []struct {
 				placed int
 				col    string
 				occ    int64
-			}{{black, "occupancy_1", int64(occ1Req)}, {white, "occupancy_2", int64(occ2Req)}} {
+				pipCol string
+				pip    int
+			}{{black, "occupancy_1", int64(occ1Req), "p.pip_1", pip1}, {white, "occupancy_2", int64(occ2Req), "p.pip_2", pip2}} {
 				if side.placed != domain.CheckersPerPlayer {
 					continue
 				}
+				// Masks cannot count beyond two checkers: the pip count, from the same index
+				// as the masks, spares the Go phase nearly all its candidates.
+				where.WriteString(" AND (" + side.pipCol + " = ? OR " + side.pipCol + " IS NULL)")
+				args = append(args, side.pip)
 				rare := black == white // both sides whole: the pair is the index's own key
 				if !rare {
 					var err error
