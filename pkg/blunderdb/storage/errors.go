@@ -86,3 +86,7 @@ var ErrNoReviewToUndo = fmt.Errorf("%w: the card has no review to undo", ErrConf
 // restored into another cluster). Nothing can be read after it: start again
 // from the zero Cursor, which an import absorbs without harm.
 var ErrCursorStale = errors.New("storage: journal cursor no longer valid")
+
+// ErrJournalOff: this library keeps no change journal, by choice (a public
+// library, a reference file), so it does not synchronize.
+var ErrJournalOff = errors.New("storage: this library keeps no change journal")

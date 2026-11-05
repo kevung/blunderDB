@@ -154,6 +154,19 @@ func providers(s storage.Stores) (storage.ChangeJournalStore, storage.ObjectUUID
 	return j.ChangeJournal(), u.ObjectUUIDs(), nil
 }
 
+// refuseJournalOff says so where an empty answer would pass for a library with
+// nothing new, or a foreign record for one it holds.
+func refuseJournalOff(ctx context.Context, journal storage.ChangeJournalStore, scope string) error {
+	off, err := journal.JournalOff(ctx, scope)
+	if err != nil {
+		return err
+	}
+	if off {
+		return fmt.Errorf("changeset: %w", storage.ErrJournalOff)
+	}
+	return nil
+}
+
 // normalize renders a date as the journal's layout: UTC, milliseconds. Text
 // of that layout compares as time; the text a peer sends may not (an offset,
 // no fraction).
@@ -173,6 +186,9 @@ func normalize(at string) (string, error) {
 func Export(ctx context.Context, s storage.Stores, scope string, after storage.Cursor, limit int) (Set, error) {
 	journal, uuids, err := providers(s)
 	if err != nil {
+		return Set{}, err
+	}
+	if err := refuseJournalOff(ctx, journal, scope); err != nil {
 		return Set{}, err
 	}
 	if limit <= 0 {
@@ -357,6 +373,11 @@ const clockSlack = time.Second
 // transaction, in which nothing it writes is dated now (see Applying).
 func Import(ctx context.Context, s storage.Stores, scope string, set Set) (Report, error) {
 	var rep Report
+	if journal, _, err := providers(s); err != nil {
+		return rep, err
+	} else if err := refuseJournalOff(ctx, journal, scope); err != nil {
+		return rep, err
+	}
 	var waiting []waitingLink
 	records := slices.Clone(set.Records)
 	slices.SortStableFunc(records, func(a, b Record) int { return codecs[a.Family].rank - codecs[b.Family].rank })

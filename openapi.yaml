@@ -1093,6 +1093,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/changeset_Report"
+  /v1/changeset.setJournalOff:
+    post:
+      operationId: changeset.setJournalOff
+      tags: [changeset]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/changesetJournalReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
   /v1/collections.addPosition:
     post:
       operationId: collections.addPosition
@@ -8716,6 +8733,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/changeset_Record"
+    changesetJournalReq:
+      type: object
+      properties:
+        off:
+          type: boolean
     changeset_Record:
       type: object
       description: "Opaque: see the Go type changeset.Record (defined outside internal/server, not expanded here)."
