@@ -411,3 +411,6 @@ why it must hold no per-tenant data: the daemon exposes it read-only
 - `062_search_occupancy.sql` — the occupancy of each side, for a board filter placing all
   its fifteen checkers; the positions of a game from the index alone (supersedes
   `idx_move_game`); the blunders of a tenant in id order. No schema change, no version bump.
+- `063_search_rates.sql` — the win rates on a plain index (`idx_analysis_win1/2`), replacing the
+  two covering indexes, `idx_analysis_win_gammon_covering` and `idx_analysis_win_gammon2_covering`,
+  five times heavier for the same search. No schema change, no version bump.

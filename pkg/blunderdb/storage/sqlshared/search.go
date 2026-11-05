@@ -91,10 +91,8 @@ func (s *SearchStore) appendRateClauses(ctx context.Context, scope string, f dom
 	// Win/gammon rate as `p.id IN (SELECT position_id FROM analysis …)`,
 	// not a clause on the LEFT JOIN: the join form drives the scan through
 	// idx_analysis_win_gammon in rate order and forces a TEMP B-TREE sort
-	// for the ORDER BY p.id. The IN-subquery keeps the rowid-order scan and
-	// is answered from the covering index (position_id is its third column;
-	// idx_analysis_win_gammon_covering on PostgreSQL, hence the tenant
-	// predicate there).
+	// for the ORDER BY p.id. The IN-subquery keeps the rowid-order scan, the
+	// tenant predicate leading the rate indexes on PostgreSQL.
 	var winGammonWhere strings.Builder
 	var winGammonArgs []any
 	wMin, wMax, wHasMin, wHasMax := searchfilter.ParseFloatFilterExpr(f.WinRateFilter, "w")
@@ -111,9 +109,8 @@ func (s *SearchStore) appendRateClauses(ctx context.Context, scope string, f dom
 	}
 	bMin, bMax, bHasMin, bHasMax := searchfilter.ParseFloatFilterExpr(f.BackgammonRateFilter, "b")
 	searchfilter.AppendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, where, &args)
-	// The player-2 rates take the same IN-subquery, answered from
-	// idx_analysis_win_gammon2_covering: through the LEFT JOIN the scan
-	// went by rate order, then looked up and sorted every candidate.
+	// The player-2 rates take the same IN-subquery: through the LEFT JOIN the
+	// scan went by rate order, then looked up and sorted every candidate.
 	var winGammon2Where strings.Builder
 	var winGammon2Args []any
 	WMin, WMax, WHasMin, WHasMax := searchfilter.ParseFloatFilterExpr(f.Player2WinRateFilter, "W")
