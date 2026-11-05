@@ -36,7 +36,7 @@ type SyncSettingsSource interface {
 }
 
 // SyncError is why the last run failed. Kind lets the window word it:
-// refused, unavailable, rate_limited, too_large, address, no_token,
+// refused, unavailable, rate_limited, too_large, blocked, address, no_token,
 // no_library or other. Message is the detail, free of the token.
 type SyncError struct {
 	Kind    string `json:"kind"`
@@ -53,6 +53,8 @@ type SyncStatus struct {
 	LastSuccess string             `json:"lastSuccess"`
 	Error       *SyncError         `json:"error,omitempty"`
 	Result      *syncremote.Result `json:"result,omitempty"`
+	// Skipped are the records set aside until they go through, kept across runs.
+	Skipped []syncremote.Skip `json:"skipped"`
 }
 
 type syncState struct {
@@ -170,7 +172,8 @@ func (a *App) statusLocked(server string) SyncStatus {
 	st := SyncStatus{Running: a.sync.running, Server: server, HasToken: syncHasToken(server), Error: a.sync.lastErr, Result: a.sync.result}
 	if a.db != nil {
 		if addr, err := syncremote.NormalizeAddress(server); err == nil {
-			st.LastSuccess = a.sync.load()[syncKey(a.db, addr)].LastSuccess
+			entry := a.sync.load()[syncKey(a.db, addr)]
+			st.LastSuccess, st.Skipped = entry.LastSuccess, entry.Cursors.Skipped
 		}
 	}
 	return st
@@ -296,6 +299,8 @@ func syncError(err error) *SyncError {
 		kind = "rate_limited"
 	case errors.Is(err, syncremote.ErrTooLarge):
 		kind = "too_large"
+	case errors.Is(err, syncremote.ErrBlocked):
+		kind = "blocked"
 	case errors.Is(err, syncremote.ErrBadAddress):
 		kind = "address"
 	case errors.Is(err, syncremote.ErrUnavailable):

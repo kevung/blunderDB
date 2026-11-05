@@ -4833,6 +4833,7 @@ export namespace gui {
 	    lastSuccess: string;
 	    error?: SyncError;
 	    result?: syncremote.Result;
+	    skipped: syncremote.Skip[];
 	
 	    static createFrom(source: any = {}) {
 	        return new SyncStatus(source);
@@ -4846,6 +4847,7 @@ export namespace gui {
 	        this.lastSuccess = source["lastSuccess"];
 	        this.error = this.convertValues(source["error"], SyncError);
 	        this.result = this.convertValues(source["result"], syncremote.Result);
+	        this.skipped = source["skipped"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -10170,6 +10172,30 @@ export namespace storage {
 
 export namespace syncremote {
 	
+	export class Skip {
+	    direction: string;
+	    family: string;
+	    uuid: string;
+	    size?: number;
+	    reason: string;
+	    from: any;
+	    to: any;
+	
+	    static createFrom(source: any = {}) {
+	        return new Skip(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.direction = source["direction"];
+	        this.family = source["family"];
+	        this.uuid = source["uuid"];
+	        this.size = source["size"];
+	        this.reason = source["reason"];
+	        this.from = source["from"];
+	        this.to = source["to"];
+	    }
+	}
 	export class Totals {
 	    records: number;
 	    added: number;
@@ -10199,6 +10225,7 @@ export namespace syncremote {
 	export class Result {
 	    sent: Totals;
 	    received: Totals;
+	    skipped?: Skip[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Result(source);
@@ -10208,6 +10235,7 @@ export namespace syncremote {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.sent = this.convertValues(source["sent"], Totals);
 	        this.received = this.convertValues(source["received"], Totals);
+	        this.skipped = this.convertValues(source["skipped"], Skip);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

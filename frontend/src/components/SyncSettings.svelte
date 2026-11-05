@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { t, language } from '../i18n';
     import { logger } from '../utils/logger.js';
-    import { syncSettingsStore, syncStateStore, loadSync, saveSyncSettings, setSyncToken, syncNow, syncErrorKey, syncErrorIsVerbatim, syncUnapplied } from '../services/syncService.js';
+    import { syncSettingsStore, syncStateStore, loadSync, saveSyncSettings, setSyncToken, syncNow, syncErrorKey, syncErrorIsVerbatim, syncUnapplied, syncSkipped, syncSkipReasonKey } from '../services/syncService.js';
 
     let serverInput = $state('');
     let tokenInput = $state('');
@@ -88,6 +88,16 @@
                 })}
             </p>
         {/if}
+    {/if}
+    {#if syncSkipped(st).length > 0}
+        <div class="setting-note warn" role="alert" data-testid="sync-skipped">
+            {$t('sync.skipped.title', { count: syncSkipped(st).length })}
+            <ul>
+                {#each syncSkipped(st) as k (k.direction + k.family + k.uuid)}
+                    <li>{$t('sync.skipped.item', { family: k.family, id: k.uuid, direction: $t(k.direction === 'received' ? 'sync.skipped.received' : 'sync.skipped.sent'), reason: $t(syncSkipReasonKey(k.reason)) })}</li>
+                {/each}
+            </ul>
+        </div>
     {/if}
     {#if saveError}
         <p class="setting-note warn" role="alert">{saveError}</p>

@@ -168,7 +168,35 @@ func TestSyncErrorKindsFromTheServersAnswers(t *testing.T) {
 	if e := syncError(answer(402, `{"error":{"code":"allowance_exceeded","message":"Quota atteint."}}`)); e.Kind != "allowance" || e.Message != "Quota atteint." {
 		t.Errorf("allowance = %+v, want the server's words as they are", e)
 	}
+	if e := syncError(answer(413, `{"error":{"code":"payload_too_large","message":"x"}}`)); e.Kind != "too_large" {
+		t.Errorf("413 with the server's code = %+v", e)
+	}
+	if e := syncError(answer(413, "<html>413</html>")); e.Kind != "blocked" {
+		t.Errorf("413 from something else = %+v, want blocked: no record is to blame", e)
+	}
 	if e := syncError(answer(409, `{"error":{"code":"tool_locked_during_match","message":"x"}}`)); e.Kind != "tool_locked" {
 		t.Errorf("locked tool = %+v", e)
+	}
+}
+
+// The records set aside survive in the state file and reach the window with their type and identifier.
+func TestSyncSkippedRecordsAreKeptAndShownAfterARestart(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"cursor":{"seq":0},"more":false,"records":[]}`))
+	}))
+	defer srv.Close()
+	a, state := syncApp(t, srv.URL)
+	addr, _ := syncremote.NormalizeAddress(srv.URL)
+	entries := map[string]syncEntry{syncKey(a.db, addr): {Cursors: syncremote.Cursors{Skipped: []syncremote.Skip{
+		{Direction: syncremote.DirectionSent, Family: "match", UUID: "u-1", Reason: syncremote.ReasonTooLarge},
+	}}}}
+	if err := a.sync.store(entries); err != nil {
+		t.Fatal(err)
+	}
+	b := NewApp(a.db)
+	b.sync.source, b.sync.path = a.sync.source, state
+	got := b.SyncStatus().Skipped
+	if len(got) != 1 || got[0].Family != "match" || got[0].UUID != "u-1" {
+		t.Fatalf("skipped = %+v", got)
 	}
 }

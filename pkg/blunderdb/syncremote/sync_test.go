@@ -177,7 +177,7 @@ func TestTwoPassesLevelBothLibrariesThenSendOnlyWhatChanged(t *testing.T) {
 	if res2.Received.Added+res2.Received.Modified != 0 {
 		t.Errorf("second pass changed this library on receipt: %+v", res2.Received)
 	}
-	if cur2 == cur {
+	if cur2.Sent == cur.Sent && cur2.Received == cur.Received {
 		t.Errorf("cursors did not move after a change")
 	}
 }
@@ -221,7 +221,7 @@ func TestPagesAreSettledOneByOneAndAResumeSkipsThem(t *testing.T) {
 	if len(saved) != 1 {
 		t.Fatalf("%d pages settled before the failure, want 1", len(saved))
 	}
-	if cur != saved[0] {
+	if cur.Sent != saved[0].Sent || cur.Received != saved[0].Received {
 		t.Errorf("returned cursors differ from the last saved ones")
 	}
 
@@ -283,7 +283,7 @@ func TestARefusedTokenIsSaidAndNeverRepeated(t *testing.T) {
 	if strings.Contains(err.Error(), wrong) {
 		t.Errorf("the error repeats the token: %v", err)
 	}
-	if cur != (syncremote.Cursors{}) {
+	if !cur.Sent.IsStart() || !cur.Received.IsStart() || len(cur.Skipped) != 0 {
 		t.Errorf("cursors moved on a refused call: %+v", cur)
 	}
 	if n := len(names(t, b)); n != 0 {

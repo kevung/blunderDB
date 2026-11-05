@@ -3056,9 +3056,18 @@
             "no_library": "No hay ninguna biblioteca abierta.",
             "other": "La sincronización ha fallado.",
             "library_changed": "La biblioteca cambió durante la sincronización: se interrumpió, vuelva a lanzarla.",
-            "tool_locked": "El servidor está bloqueado durante una partida: vuelva a intentarlo después de la partida."
+            "tool_locked": "El servidor está bloqueado durante una partida: vuelva a intentarlo después de la partida.",
+            "blocked": "Algo entre este equipo y el servidor (proxy, cortafuegos) rechaza una solicitud por su tamaño. No se omitió nada; pida a quien administra el servidor que suba el límite."
         },
-        "unapplied": "{conflicts} en conflicto, {missing} con una referencia ausente, {unsupported} de un tipo no admitido: estos elementos no se aplicaron."
+        "unapplied": "{conflicts} en conflicto, {missing} con una referencia ausente, {unsupported} de un tipo no admitido: estos elementos no se aplicaron.",
+        "skipped": {
+            "title": "Apartados, se reintentan en cada sincronización ({count}):",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "enviado",
+            "received": "recibido",
+            "too_large": "rechazado por el servidor por su tamaño",
+            "interrupted": "no pudo pasar"
+        }
     },
     "emptyState": {
         "import": "Importar… (Ctrl+I)",

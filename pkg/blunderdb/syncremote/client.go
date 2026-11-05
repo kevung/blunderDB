@@ -9,6 +9,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/http/httptrace"
 	"net/url"
 	"strconv"
 	"strings"
@@ -27,8 +28,17 @@ var (
 	ErrUnavailable = errors.New("syncremote: the server does not answer")
 	// ErrRateLimited: the server's limit is reached (429); retry later.
 	ErrRateLimited = errors.New("syncremote: the server's limit is reached")
-	// ErrTooLarge: the server refuses the page for its size (413).
+	// ErrTooLarge: the server itself refuses the page for its size (413 with the
+	// code payload_too_large or record_too_large).
 	ErrTooLarge = errors.New("syncremote: the page is too large for the server")
+	// ErrInterrupted: the connection broke or timed out while the request was
+	// being sent, after it was made; a smaller page may get through. It is also
+	// an ErrUnavailable.
+	ErrInterrupted = errors.New("syncremote: the request was interrupted while being sent")
+	// ErrBlocked: a 413 that does not carry the server's own code, so something
+	// between (a proxy, a firewall) limits the size of a request; no record is
+	// to blame, the run stops.
+	ErrBlocked = errors.New("syncremote: something between this machine and the server refuses a request for its size")
 	// ErrAllowance: the account's allowance is used up (402); retrying cannot help.
 	ErrAllowance = errors.New("syncremote: the allowance is exceeded")
 	// ErrToolLocked: the server holds this library's tools while a match is played (409); retry after it.
@@ -94,13 +104,13 @@ func isLoopback(host string) bool {
 }
 
 // Export asks for the page of the remote journal after a cursor.
-func (c *Client) Export(ctx context.Context, after storage.Cursor, limit int) (changeset.Set, error) {
-	var set changeset.Set
+func (c *Client) Export(ctx context.Context, after storage.Cursor, limit int) (Page, error) {
+	var page Page
 	err := c.call(ctx, "changeset.export", struct {
 		Cursor storage.Cursor `json:"cursor"`
 		Limit  int            `json:"limit"`
-	}{after, limit}, &set)
-	return set, err
+	}{after, limit}, &page)
+	return page, err
 }
 
 // Import sends records to be merged and returns the remote's report.
@@ -124,12 +134,17 @@ func (c *Client) call(ctx context.Context, method string, in, out any) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.token)
+	connected := false
+	req = req.WithContext(httptrace.WithClientTrace(req.Context(), &httptrace.ClientTrace{GotConn: func(httptrace.GotConnInfo) { connected = true }}))
 	resp, err := c.http.Do(req)
 	if err != nil {
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
 		// The transport's error repeats the URL, never a header.
+		if connected {
+			return fmt.Errorf("%w: %w: %v", ErrUnavailable, ErrInterrupted, err)
+		}
 		return fmt.Errorf("%w: %v", ErrUnavailable, err)
 	}
 	defer resp.Body.Close()
@@ -230,8 +245,13 @@ func statusError(status int, h http.Header, raw []byte) error {
 		return fmt.Errorf("%w%s", ErrToolLocked, msg)
 	case status == http.StatusTooManyRequests:
 		return &rateLimited{msg: msg, after: parseRetryAfter(h.Get("Retry-After"))}
-	case status == http.StatusRequestEntityTooLarge:
+	case status == http.StatusRequestEntityTooLarge && (env.Error.Code == "payload_too_large" || env.Error.Code == "record_too_large"):
 		return fmt.Errorf("%w%s", ErrTooLarge, msg)
+	case status == http.StatusRequestEntityTooLarge:
+		return fmt.Errorf("%w (HTTP %d)", ErrBlocked, status)
+	// The server could not read the body it was sent: cut or too slow.
+	case status == http.StatusBadRequest && env.Error.Code == "invalid_body":
+		return fmt.Errorf("%w (HTTP %d)%s: %w", ErrUnavailable, status, msg, ErrInterrupted)
 	default:
 		return fmt.Errorf("%w (HTTP %d)%s", ErrUnavailable, status, msg)
 	}

@@ -3056,9 +3056,18 @@
             "no_library": "Keine Bibliothek ist geöffnet.",
             "other": "Die Synchronisierung ist fehlgeschlagen.",
             "library_changed": "Die Bibliothek hat sich während der Synchronisierung geändert: Sie wurde abgebrochen, starten Sie sie erneut.",
-            "tool_locked": "Der Server ist während einer Partie gesperrt: versuchen Sie es nach der Partie erneut."
+            "tool_locked": "Der Server ist während einer Partie gesperrt: versuchen Sie es nach der Partie erneut.",
+            "blocked": "Etwas zwischen diesem Rechner und dem Server (Proxy, Firewall) lehnt eine Anfrage wegen ihrer Größe ab. Nichts wurde übersprungen; bitten Sie den Betreiber des Servers, die Grenze anzuheben."
         },
-        "unapplied": "{conflicts} im Konflikt, {missing} mit fehlendem Verweis, {unsupported} von nicht unterstütztem Typ: Diese Elemente wurden nicht übernommen."
+        "unapplied": "{conflicts} im Konflikt, {missing} mit fehlendem Verweis, {unsupported} von nicht unterstütztem Typ: Diese Elemente wurden nicht übernommen.",
+        "skipped": {
+            "title": "Zurückgestellt, bei jeder Synchronisation erneut versucht ({count}):",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "gesendet",
+            "received": "empfangen",
+            "too_large": "vom Server wegen seiner Größe abgelehnt",
+            "interrupted": "kam nicht durch"
+        }
     },
     "emptyState": {
         "import": "Importieren… (Strg+I)",

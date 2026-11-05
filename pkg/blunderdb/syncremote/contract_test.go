@@ -24,6 +24,7 @@ type scripted struct {
 	exports  []storage.Cursor
 	importFn func(call int, recs []changeset.Record) error
 	exportFn func(call int, after storage.Cursor, limit int) (changeset.Set, bool, error)
+	pageFn   func(call int, after storage.Cursor, limit int) (syncremote.Page, bool, error)
 	limits   []int
 }
 
@@ -37,15 +38,21 @@ func (s *scripted) Import(ctx context.Context, recs []changeset.Record) (changes
 	return database.JournalOf(s.lib).Import(ctx, changeset.Set{Records: recs})
 }
 
-func (s *scripted) Export(ctx context.Context, after storage.Cursor, limit int) (changeset.Set, error) {
+func (s *scripted) Export(ctx context.Context, after storage.Cursor, limit int) (syncremote.Page, error) {
 	s.exports = append(s.exports, after)
 	s.limits = append(s.limits, limit)
-	if s.exportFn != nil {
-		if set, ok, err := s.exportFn(len(s.exports), after, limit); ok || err != nil {
-			return set, err
+	if s.pageFn != nil {
+		if p, ok, err := s.pageFn(len(s.exports), after, limit); ok || err != nil {
+			return p, err
 		}
 	}
-	return database.JournalOf(s.lib).Export(ctx, after, limit)
+	if s.exportFn != nil {
+		if set, ok, err := s.exportFn(len(s.exports), after, limit); ok || err != nil {
+			return syncremote.Page{Set: set}, err
+		}
+	}
+	set, err := database.JournalOf(s.lib).Export(ctx, after, limit)
+	return syncremote.Page{Set: set}, err
 }
 
 func tooLarge(max int) func(int, []changeset.Record) error {

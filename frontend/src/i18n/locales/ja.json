@@ -3056,9 +3056,18 @@
             "no_library": "ライブラリが開かれていません。",
             "other": "同期に失敗しました。",
             "library_changed": "同期中にライブラリが切り替わったため中断しました。もう一度実行してください。",
-            "tool_locked": "対局中はサーバーがロックされています。対局の後にもう一度お試しください。"
+            "tool_locked": "対局中はサーバーがロックされています。対局の後にもう一度お試しください。",
+            "blocked": "このコンピューターとサーバーの間にある何か（プロキシやファイアウォール）が、サイズを理由に要求を拒否しています。何もスキップされていません。サーバーの管理者に上限の引き上げを依頼してください。"
         },
-        "unapplied": "競合 {conflicts} 件、参照先なし {missing} 件、未対応の種類 {unsupported} 件：これらは適用されませんでした。"
+        "unapplied": "競合 {conflicts} 件、参照先なし {missing} 件、未対応の種類 {unsupported} 件：これらは適用されませんでした。",
+        "skipped": {
+            "title": "保留中、同期のたびに再試行します（{count} 件）：",
+            "item": "{family} {id} — {direction}、{reason}",
+            "sent": "送信",
+            "received": "受信",
+            "too_large": "サイズのためサーバーが拒否",
+            "interrupted": "送信できませんでした"
+        }
     },
     "emptyState": {
         "import": "インポート… (Ctrl+I)",

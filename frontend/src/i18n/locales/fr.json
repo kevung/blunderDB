@@ -3056,9 +3056,18 @@
             "no_library": "Aucune bibliothèque n'est ouverte.",
             "other": "La synchronisation a échoué.",
             "library_changed": "La bibliothèque a changé pendant la synchronisation : elle a été interrompue, relancez-la.",
-            "tool_locked": "Le serveur est verrouillé pendant une partie : réessayez après la partie."
+            "tool_locked": "Le serveur est verrouillé pendant une partie : réessayez après la partie.",
+            "blocked": "Un élément entre cet ordinateur et le serveur (mandataire, pare-feu) refuse une requête pour sa taille. Rien n'a été enjambé ; demandez à l'exploitant du serveur de relever la limite."
         },
-        "unapplied": "{conflicts} en conflit, {missing} avec une référence absente, {unsupported} d'un type non pris en charge : ces éléments n'ont pas été appliqués."
+        "unapplied": "{conflicts} en conflit, {missing} avec une référence absente, {unsupported} d'un type non pris en charge : ces éléments n'ont pas été appliqués.",
+        "skipped": {
+            "title": "Mis de côté, retentés à chaque synchronisation ({count}) :",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "envoyé",
+            "received": "reçu",
+            "too_large": "refusé par le serveur pour sa taille",
+            "interrupted": "n'a pas pu passer"
+        }
     },
     "emptyState": {
         "import": "Importer… (Ctrl+I)",

@@ -3056,9 +3056,18 @@
             "no_library": "Nessuna libreria aperta.",
             "other": "Sincronizzazione non riuscita.",
             "library_changed": "La libreria è cambiata durante la sincronizzazione: è stata interrotta, la riavvii.",
-            "tool_locked": "Il server è bloccato durante una partita: riprovi dopo la partita."
+            "tool_locked": "Il server è bloccato durante una partita: riprovi dopo la partita.",
+            "blocked": "Qualcosa tra questo computer e il server (proxy, firewall) rifiuta una richiesta per le sue dimensioni. Nulla è stato saltato; chieda a chi gestisce il server di alzare il limite."
         },
-        "unapplied": "{conflicts} in conflitto, {missing} con un riferimento assente, {unsupported} di un tipo non supportato: questi elementi non sono stati applicati."
+        "unapplied": "{conflicts} in conflitto, {missing} con un riferimento assente, {unsupported} di un tipo non supportato: questi elementi non sono stati applicati.",
+        "skipped": {
+            "title": "Messi da parte, ritentati a ogni sincronizzazione ({count}):",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "inviato",
+            "received": "ricevuto",
+            "too_large": "rifiutato dal server per le sue dimensioni",
+            "interrupted": "non è passato"
+        }
     },
     "emptyState": {
         "import": "Importa… (Ctrl+I)",
