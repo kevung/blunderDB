@@ -167,26 +167,26 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 		" WHERE " + mtTenant + cond.String()
 	sub := "SELECT mv.position_id" + joined
 	subArgs := append(append([]any{}, mtArgs...), condArgs...)
-	// The walk in id order is checked once per position; the subquery form would lead
-	// the planner to read every move of the match set, then look up each position.
-	walk := func() {
-		where.WriteString(" AND EXISTS (SELECT 1" + joined + " AND "+walkKey+" LIMIT 1 OFFSET 0)")
-		*args = append(*args, subArgs...)
+	if strings.Contains(cond.String(), "mv.") || narrowLimit.Load() < 0 {
+		return s.narrowToIDs(ctx, sub, subArgs, where, args, nil)
 	}
-	limit := matchListLimit
-	if !strings.Contains(cond.String(), "mv.") && narrowLimit.Load() >= 0 {
-		// Whose moves are too many to list is known from the matches alone, without
-		// reading any move. Inexact, and only a choice of form.
-		var games int64
-		if err := s.DB.QueryRow(ctx, `SELECT COALESCE(SUM(mt.game_count), 0) FROM match mt WHERE `+mtTenant+cond.String(), subArgs...).Scan(&games); err != nil {
-			return errf(s.DB, "search match games", err)
-		}
-		if games*movesPerGame > int64(limit) {
-			walk()
+	// Heavy, the filter is checked position by position in the walk in id order, from the
+	// games it holds of: any join here, the planner may start each check from the matches,
+	// row after row. Whether it is heavy is known from the games, without reading any move.
+	games, err := s.readIDList(ctx, `SELECT g.id FROM game g JOIN match mt ON g.match_id = mt.id WHERE `+mtTenant+cond.String(), subArgs, 0)
+	if err != nil {
+		return err
+	}
+	if len(games)*movesPerGame <= matchListLimit {
+		if len(games) == 0 {
+			where.WriteString(" AND 0=1")
 			return nil
 		}
+		sub = "SELECT position_id FROM move WHERE game_id IN (" + strings.Join(games, ",") + ")"
+		return s.narrowWithin(ctx, matchListLimit, sub, nil, where, args, nil)
 	}
-	return s.narrowWithin(ctx, limit, sub, subArgs, where, args, walk)
+	where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE " + walkKey + " AND mv.game_id IN (" + strings.Join(games, ",") + ") LIMIT 1 OFFSET 0)")
+	return nil
 }
 
 // walkKey ties the walk's moves to the position. Read through the joined analysis when the

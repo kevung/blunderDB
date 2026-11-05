@@ -131,6 +131,33 @@ func (s *SearchStore) appendRateClauses(ctx context.Context, scope string, f dom
 	return nil
 }
 
+// readIDList reads a column of ids as the text of a literal list, up to limit if positive.
+// Written as literals, parsed integers only: no placeholder limit of the database applies.
+func (s *SearchStore) readIDList(ctx context.Context, query string, queryArgs []any, limit int) ([]string, error) {
+	if limit > 0 {
+		limitClause, limitArgs := s.DB.LimitOffset(limit, 0)
+		query += limitClause
+		queryArgs = append(append([]any{}, queryArgs...), limitArgs...)
+	}
+	rows, err := s.DB.Query(ctx, query, queryArgs...)
+	if err != nil {
+		return nil, errf(s.DB, "search id list", err)
+	}
+	defer rows.Close()
+	ids := make([]string, 0, 64)
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, errf(s.DB, "search id list scan", err)
+		}
+		ids = append(ids, strconv.FormatInt(id, 10))
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "search id list rows", err)
+	}
+	return ids, nil
+}
+
 // placedCheckers counts the checkers a board places for each side, bar included.
 func placedCheckers(b domain.Board) (black, white int) {
 	for _, p := range b.Points {
@@ -187,22 +214,9 @@ func (s *SearchStore) narrowWithin(ctx context.Context, limit int, sub string, s
 		writeCommon()
 		return nil
 	}
-	limitClause, limitArgs := s.DB.LimitOffset(limit+1, 0)
-	rows, err := s.DB.Query(ctx, `SELECT * FROM (`+sub+`) AS probe`+limitClause, append(append([]any{}, subArgs...), limitArgs...)...)
+	ids, err := s.readIDList(ctx, `SELECT * FROM (`+sub+`) AS probe`, subArgs, limit+1)
 	if err != nil {
-		return errf(s.DB, "search narrow", err)
-	}
-	defer rows.Close()
-	ids := make([]string, 0, 64)
-	for rows.Next() {
-		var id int64
-		if err := rows.Scan(&id); err != nil {
-			return errf(s.DB, "search narrow scan", err)
-		}
-		ids = append(ids, strconv.FormatInt(id, 10))
-	}
-	if err := rows.Err(); err != nil {
-		return errf(s.DB, "search narrow rows", err)
+		return err
 	}
 	switch {
 	case len(ids) > limit:
