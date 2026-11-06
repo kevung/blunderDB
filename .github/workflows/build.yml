@@ -418,7 +418,7 @@ jobs:
       - name: Run PostgreSQL storage + migration tests
         run: |
           go test -tags postgres -timeout 1200s -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
-            ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/... ./pkg/blunderdb/events/pgnotify/... 2>&1 | tee test-output.txt
+            ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/bulkload/... ./pkg/blunderdb/migrate/... ./pkg/blunderdb/events/pgnotify/... 2>&1 | tee test-output.txt
         shell: bash
 
       - name: Upload coverage shard

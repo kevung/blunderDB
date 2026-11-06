@@ -20,22 +20,21 @@ type copyTx struct {
 	pgx.Tx
 }
 
-type copier interface {
-	CopyFrom(ctx context.Context, table pgx.Identifier, columns []string, src pgx.CopyFromSource) (int64, error)
-}
-
 // WriteByUnnest returns a loader to the ordinary statements, to compare.
 func (s *Storage) WriteByUnnest() { s.copyWrites = false }
 
 // bulkStatement gives the statement and arguments that write rows by sql, an
 // insert from unnestSelect(types). Under COPY the rows are staged first and
-// the statement reads the stage instead of the arrays.
+// the statement reads the stage instead of the arrays. Only a copyTx stages:
+// BeginTx makes one for a loader alone, so the pool, a server's transactions
+// and the ordinary import keep the arrays, and the stage always lives on the
+// one connection of a transaction.
 func bulkStatement(ctx context.Context, db execer, sql string, types []string, rows [][]any) (string, []any, error) {
 	cols, err := bulkColumns(types, rows)
 	if err != nil {
 		return "", nil, err
 	}
-	c, ok := db.(copier)
+	c, ok := db.(copyTx)
 	if !ok {
 		return sql, cols, nil
 	}

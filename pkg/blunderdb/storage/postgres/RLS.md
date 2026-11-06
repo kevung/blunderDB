@@ -74,12 +74,13 @@ The connection pool (`pgxpool`) is sized from `BLUNDERDB_POSTGRES_MAX_CONNS`
 (default 50). Ensure `max_connections` comfortably exceeds the sum of pool
 sizes across all application instances.
 
-## The loader role — offline bulk load of the public library
+## The loader role — offline bulk load of one tenant's library
 
 `cmd/blunderdb-load` (package `bulkload`) loads a large collection of `.xg`
-files into tenant 0 as `blunderdb_loader`. The role is created by the
+files into one tenant, given by `--tenant N` (above 0), as `blunderdb_loader`. The role is created by the
 exploitant (superuser), `NOSUPERUSER NOBYPASSRLS`, `NOLOGIN` outside a load;
-the engine never creates it. When it exists, `ApplyRLS` (run by the tables'
+the engine never creates it. When it exists and the server runs with
+`BLUNDERDB_LOADER_TENANT=N` (unset: the role reaches nothing), `ApplyRLS` (run by the tables'
 owner at each `serve --rls` start) grants it `SELECT, INSERT, UPDATE, DELETE`
 on the tenant tables (never `TRUNCATE`, which no policy filters), `SELECT` on
 `metadata` and `schema_migrations`, the sequences, and adds on every tenant
@@ -87,18 +88,19 @@ table:
 
 ```sql
 CREATE POLICY loader_public_only ON position AS RESTRICTIVE FOR ALL
-    TO blunderdb_loader USING (tenant_id = 0) WITH CHECK (tenant_id = 0);
+    TO blunderdb_loader USING (tenant_id = N) WITH CHECK (tenant_id = N);
 ```
 
 A restrictive policy is AND-ed with `tenant_isolation`: whatever
-`app.tenant_id` the session sets, it reaches tenant 0 only.
+`app.tenant_id` the session sets, it reaches tenant N only. Changing the variable replaces the policy at the next start; `OpenLoader` refuses a `--tenant` the policy does not name.
 
 - **Why not `BYPASSRLS`.** `COPY FROM` is refused on any table where RLS
   applies to the role, a permissive policy of its own included; only
   `BYPASSRLS` lifts that, and it opens every tenant. The loader sends its rows
   by `COPY` to a **session temporary table** (no policy, no lasting object),
   then the ordinary `INSERT … SELECT … ON CONFLICT … RETURNING` moves them under
-  the policy. `COPY` straight into `position` could not do the conflict on
+  the policy. Only a loader's transaction does so (`copyTx`); the pool and a
+  server's transactions keep the `unnest` statements. `COPY` straight into `position` could not do the conflict on
   `(tenant_id, zobrist_hash)` nor return ids anyway.
 - **Never serves.** `postgres.Open` (every server and migration path) refuses
   a role that is, or is a member of, the loader; the loader opens with

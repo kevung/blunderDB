@@ -108,7 +108,7 @@ func (s *Storage) ApplyRLS(ctx context.Context) error {
 			return fmt.Errorf("postgres: RLS on %s: %w", t, err)
 		}
 	}
-	return s.ApplyLoaderRole(ctx)
+	return s.ApplyLoaderRole(ctx, loaderTenantFromEnv())
 }
 
 const rlsLockTimeout = "5s"

@@ -1,4 +1,4 @@
-// Package bulkload loads a large collection of match files into the public
+// Package bulkload loads a large collection of match files into one tenant's
 // library of a PostgreSQL database, offline, as the loader role: the parse and
 // the writes of the ordinary import, the rows sent by COPY, the library's
 // change journal cut, and a run that resumes where it stopped.
@@ -13,7 +13,9 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,8 +28,12 @@ import (
 // DefaultPasswordFile is where a container holds the loader's secret.
 const DefaultPasswordFile = "/run/secrets/blunderdb_loader_password"
 
-// publicScope is the public library, tenant 0: the only one the loader writes.
-const publicScope = ""
+// DefaultMaxWorkers caps the default parsing goroutines: each holds a parsed
+// match, and the writer behind them is the bottleneck anyway.
+const DefaultMaxWorkers = 8
+
+// DefaultMemoryLimitMiB is the Go runtime's soft memory limit of the CLI.
+const DefaultMemoryLimitMiB = 4096
 
 // Options drive Load.
 type Options struct {
@@ -35,6 +41,9 @@ type Options struct {
 	DSN string
 	// Password is the loader role's secret, read from a file by the CLI.
 	Password string
+	// Tenant is the library the load writes, above 0; the server's policy for
+	// the loader role must be installed for the same tenant.
+	Tenant int64
 	// Source is a directory of .xg files or a .zip of them.
 	Source string
 	// Limit, when positive, loads only the first files in name order.
@@ -43,12 +52,14 @@ type Options struct {
 	Batch int64
 	// ChunkFiles is how many archive members are unpacked at a time.
 	ChunkFiles int
-	// Workers and FilesPerTx tune the pipeline (0: its defaults).
+	// Workers and FilesPerTx tune the pipeline (0: DefaultMaxWorkers or one
+	// per CPU if fewer, and the pipeline's default).
 	Workers, FilesPerTx int
 	// Unnest writes rows by the ordinary unnest statements instead of COPY,
 	// to compare the two.
 	Unnest bool
-	// Progress receives the run's progress; Out the line printed per update.
+	// Progress receives the run's progress, once as soon as the batch is
+	// known and at each committed group.
 	Progress func(Report)
 }
 
@@ -98,8 +109,13 @@ func Load(ctx context.Context, opts Options) (Report, error) {
 	if err != nil {
 		return Report{}, err
 	}
-	ctx = storage.WithTenant(ctx, 0)
-	st, err := postgres.OpenLoader(ctx, conn)
+	if opts.Tenant <= 0 {
+		return Report{}, errors.New("bulkload: the tenant must be above 0")
+	}
+	// A library's scope is its tenant in decimal; the empty scope is tenant 0.
+	scope := strconv.FormatInt(opts.Tenant, 10)
+	ctx = storage.WithTenant(ctx, opts.Tenant)
+	st, err := postgres.OpenLoader(ctx, conn, opts.Tenant)
 	if err != nil {
 		return Report{}, scrub(err, opts.Password)
 	}
@@ -107,7 +123,7 @@ func Load(ctx context.Context, opts Options) (Report, error) {
 	if opts.Unnest {
 		st.WriteByUnnest()
 	}
-	if err := st.ChangeJournal().SetJournalOff(ctx, publicScope, true); err != nil {
+	if err := st.ChangeJournal().SetJournalOff(ctx, scope, true); err != nil {
 		return Report{}, fmt.Errorf("bulkload: cut the public journal: %w", err)
 	}
 
@@ -122,17 +138,17 @@ func Load(ctx context.Context, opts Options) (Report, error) {
 	var counts domain.ImportReport
 	var journal *ingest.Journal
 	if opts.Batch != 0 {
-		b, err := batches.Load(ctx, publicScope, opts.Batch)
+		b, err := batches.Load(ctx, scope, opts.Batch)
 		if err != nil {
 			return rep, fmt.Errorf("bulkload: resume batch %d: %w", opts.Batch, err)
 		}
 		counts = b.Report
 		counts.FilesFailed, counts.Failures = 0, nil
-		if journal, err = ingest.LoadJournal(ctx, batches, publicScope, opts.Batch); err != nil {
+		if journal, err = ingest.LoadJournal(ctx, batches, scope, opts.Batch); err != nil {
 			return rep, fmt.Errorf("bulkload: resume batch %d: %w", opts.Batch, err)
 		}
 		rep.Batch = opts.Batch
-	} else if rep.Batch, err = batches.Begin(ctx, publicScope, "bulkload", "batch"); err != nil {
+	} else if rep.Batch, err = batches.Begin(ctx, scope, "bulkload", "batch"); err != nil {
 		return rep, fmt.Errorf("bulkload: open the batch: %w", err)
 	}
 
@@ -147,6 +163,11 @@ func Load(ctx context.Context, opts Options) (Report, error) {
 			opts.Progress(rep)
 		}
 	}
+	emit()
+	workers := opts.Workers
+	if workers <= 0 {
+		workers = min(runtime.NumCPU(), DefaultMaxWorkers)
+	}
 	chunk := opts.ChunkFiles
 	if chunk <= 0 {
 		chunk = 2000
@@ -159,9 +180,9 @@ func Load(ctx context.Context, opts Options) (Report, error) {
 			break
 		}
 		popts := ingest.PipelineOptions{
-			Scope:         publicScope,
+			Scope:         scope,
 			ImportBatchID: rep.Batch,
-			Workers:       opts.Workers,
+			Workers:       workers,
 			FilesPerTx:    opts.FilesPerTx,
 			OnCommit: func(group []ingest.FileOutcome) {
 				for _, o := range group {
@@ -194,7 +215,7 @@ func Load(ctx context.Context, opts Options) (Report, error) {
 		_, runErr = ingest.ImportFiles(ctx, st, paths, popts)
 		cleanup()
 	}
-	if ferr := batches.Finish(context.WithoutCancel(ctx), publicScope, rep.Batch, counts); ferr != nil && runErr == nil {
+	if ferr := batches.Finish(context.WithoutCancel(ctx), scope, rep.Batch, counts); ferr != nil && runErr == nil {
 		runErr = fmt.Errorf("bulkload: close the batch: %w", ferr)
 	}
 	emit()
