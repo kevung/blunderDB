@@ -188,6 +188,9 @@ func digest(t *testing.T, dsn string) map[string]string {
 		cols[tb] = cs
 	}
 	rows.Close()
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 	out := map[string]string{}
 	for tb, cs := range cols {
 		var n int64
