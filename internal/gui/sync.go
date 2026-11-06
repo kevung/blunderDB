@@ -45,6 +45,9 @@ type SyncError struct {
 	// Allowance carries the figures of an exceeded allowance: the window words
 	// them in its own language and shows no message of the server's.
 	Allowance *syncremote.AllowanceFigures `json:"allowance,omitempty"`
+	// StateFile is why the date of this run could not be written, when the run
+	// stopped for another reason that Kind keeps.
+	StateFile string `json:"stateFile,omitempty"`
 }
 
 // SyncStatus is what the window shows: whether a run is under way, the last
@@ -279,13 +282,28 @@ func (a *App) syncRun(ctx context.Context) {
 	if err != nil {
 		runErr = syncError(err)
 		slog.Warn("sync failed", "server", addr, "kind", runErr.Kind, "err", runErr.Message)
-		return
+		// A cap only suspends the sending: when the receiving went to its end the
+		// library is synchronised as far as the plan allows, and is not "never".
+		if !(runErr.Kind == "allowance" && syncremote.ReceivedAll(err)) {
+			return
+		}
 	}
 	entry.LastSuccess = time.Now().UTC().Format(time.RFC3339)
 	entries[key] = entry
 	if err := a.sync.store(entries); err != nil {
-		runErr = &SyncError{Kind: "other", Message: "state file: " + err.Error()}
+		runErr = withStateFailure(runErr, err)
 	}
+}
+
+// withStateFailure adds a failed write of the state file to how the run ended
+// without hiding the reason the run stopped (a cap, for one).
+func withStateFailure(runErr *SyncError, err error) *SyncError {
+	slog.Warn("sync state not written", "err", err)
+	if runErr == nil {
+		return &SyncError{Kind: "other", Message: "state file: " + err.Error()}
+	}
+	runErr.StateFile = err.Error()
+	return runErr
 }
 
 func syncError(err error) *SyncError {
