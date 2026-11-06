@@ -120,6 +120,40 @@ func TestSyncSuccessIsRecordedAndSurvivesInTheStateFile(t *testing.T) {
 	}
 }
 
+// A first run stopped by the plan's cap (402) has still received everything the
+// server holds: the window must not say "never synchronised", and the 402 stays shown.
+func TestSyncStoppedByTheAllowanceIsNotNeverSynchronised(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, ".import") {
+			w.WriteHeader(http.StatusPaymentRequired)
+			_, _ = w.Write([]byte(`{"error":{"code":"allowance_exceeded","message":"Plan limit","axis":"positions","allowed":150,"held":140,"new":20}}`))
+			return
+		}
+		_, _ = w.Write([]byte(`{"cursor":{"seq":0},"more":false,"records":[]}`))
+	}))
+	defer srv.Close()
+	a, state := syncApp(t, srv.URL)
+	if _, err := a.db.CreateCollection("Mine", ""); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.SyncSetToken(srv.URL, "tok"); err != nil {
+		t.Fatal(err)
+	}
+	a.syncRun(context.Background())
+	st := a.SyncStatus()
+	if st.Error == nil || st.Error.Kind != "allowance" {
+		t.Fatalf("status = %+v, want the allowance said", st)
+	}
+	if st.LastSuccess == "" {
+		t.Errorf("lastSuccess is empty after a run that received everything: the window says never synchronised")
+	}
+	b := NewApp(a.db)
+	b.sync.source, b.sync.path = a.sync.source, state
+	if got := b.SyncStatus().LastSuccess; got != st.LastSuccess {
+		t.Errorf("after a restart lastSuccess = %q, want %q", got, st.LastSuccess)
+	}
+}
+
 // The window starts with an empty in-memory library: a startup run waits for the real one.
 func TestSyncAtStartupWaitsForTheRealLibrary(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

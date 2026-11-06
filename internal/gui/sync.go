@@ -279,7 +279,11 @@ func (a *App) syncRun(ctx context.Context) {
 	if err != nil {
 		runErr = syncError(err)
 		slog.Warn("sync failed", "server", addr, "kind", runErr.Kind, "err", runErr.Message)
-		return
+		// The cap only suspends the sending: the receiving went all the way, so the
+		// library is synchronised as far as the plan allows and is not "never".
+		if runErr.Kind != "allowance" {
+			return
+		}
 	}
 	entry.LastSuccess = time.Now().UTC().Format(time.RFC3339)
 	entries[key] = entry
