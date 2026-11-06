@@ -107,6 +107,8 @@ export const COMMAND = Object.freeze({
     TAKE: 'take',
     PASS: 'pass',
     RESIGN: 'resign',
+    /** `r` puis `4` : le camp au trait abandonne le match entier, rien ne suit. */
+    FORFEIT: 'forfeit',
     CURSOR_BACK: 'cursor_back',
     CURSOR_FORWARD: 'cursor_forward',
     /** `Fin` : le Cursor rejoint le bout du document, donc la Saisie. */
@@ -151,8 +153,17 @@ export function onBar(position) {
     return (bar?.checkers ?? 0) > 0 && bar.color === side;
 }
 
-/** Le niveau d'une résignation : simple, gammon, backgammon. */
+/**
+ * Le niveau d'une résignation : simple, gammon, backgammon ; au-delà, le
+ * match entier ([FORFEIT_LEVEL]).
+ */
 const RESIGN_LEVELS = new Set([1, 2, 3]);
+
+/**
+ * Le « niveau » qui abandonne le match : il suit backgammon sur la rangée des
+ * chiffres, et le moteur en fait un `forfeit`, non une résignation.
+ */
+export const FORFEIT_LEVEL = 4;
 
 /**
  * @typedef {{phase: string, dice: number[], selected: number, candidateCount: number, awaitingCandidates: boolean, resume: KeyState|null}} KeyState
@@ -433,7 +444,7 @@ function resignLevel(state, event) {
     if (event.key === 'Escape') return { handled: true, ...cancelResign(state) };
     // Enter takes the commonest level, a single game.
     const level = event.key === 'Enter' && !event.ctrlKey && !event.metaKey ? 1 : dieOf(event);
-    if (!RESIGN_LEVELS.has(level)) return swallowed(state);
+    if (!RESIGN_LEVELS.has(level) && level !== FORFEIT_LEVEL) return swallowed(state);
     return { handled: true, ...resignWithLevel(state, level) };
 }
 
@@ -467,6 +478,7 @@ export function beginResign(state) {
  * @returns {{state: KeyState, commands: KeyCommand[]}}
  */
 export function resignWithLevel(state, level) {
+    if (level === FORFEIT_LEVEL) return { state: initialKeyState(), commands: [{ kind: COMMAND.FORFEIT }] };
     if (!RESIGN_LEVELS.has(level)) return { state, commands: [] };
     return { state: initialKeyState(), commands: [{ kind: COMMAND.RESIGN, value: level }] };
 }

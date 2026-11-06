@@ -1332,6 +1332,8 @@
         "resignSingle": "Простая",
         "resignGammon": "Гаммон",
         "resignBackgammon": "Бэкгаммон",
+        "resignMatch": "Матч",
+        "resignMatchTooltip": "Сдать весь матч: его выигрывает соперник, ничего не следует (4)",
         "resignLevelTooltip": "Сдаться на этом уровне ({n})",
         "resignCancel": "Отмена",
         "resignCancelTooltip": "Отказаться от сдачи, ничего не записывая (Esc)",

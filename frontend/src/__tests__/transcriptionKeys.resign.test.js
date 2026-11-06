@@ -116,10 +116,21 @@ describe('la résignation', () => {
         expect(d.commands).toEqual([]);
     });
 
+    // `4` suit backgammon : le match entier, un forfait et non une résignation
+    // de quatre points — la partie et le match vont à l'adversaire.
+    test('r puis 4 abandonne le match', () => {
+        const d = driver();
+        d.press('KeyR');
+        const result = d.press('Digit4');
+        expect(result.handled).toBe(true);
+        expect(d.commands).toEqual([{ kind: COMMAND.FORFEIT }]);
+        expect(d.state).toEqual(initialKeyState());
+    });
+
     // Le piège que la phase existe pour éviter : 4 à 6 sont des dés partout
-    // ailleurs, et ne sont pas des niveaux.
+    // ailleurs ; 5 et 6 ne sont pas des niveaux.
     test('entre r et son niveau, rien ne retombe sur les dés', () => {
-        for (const code of ['Digit4', 'Digit5', 'Digit6']) {
+        for (const code of ['Digit5', 'Digit6']) {
             const d = driver();
             d.press('KeyR');
             const result = d.press(code);

@@ -1332,6 +1332,8 @@
         "resignSingle": "Yksinkertainen",
         "resignGammon": "Gammon",
         "resignBackgammon": "Backgammon",
+        "resignMatch": "Ottelu",
+        "resignMatchTooltip": "Luovuta koko ottelu: vastustaja voittaa sen, mitään ei seuraa (4)",
         "resignLevelTooltip": "Luovuta tällä tasolla ({n})",
         "resignCancel": "Peruuta",
         "resignCancelTooltip": "Luovu luovutuksesta tallentamatta mitään (Esc)",

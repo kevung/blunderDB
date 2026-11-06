@@ -1332,6 +1332,8 @@
         "resignSingle": "Einfach",
         "resignGammon": "Gammon",
         "resignBackgammon": "Backgammon",
+        "resignMatch": "Das Match",
+        "resignMatchTooltip": "Das ganze Match aufgeben: der Gegner gewinnt es, nichts folgt (4)",
         "resignLevelTooltip": "Auf dieser Stufe aufgeben ({n})",
         "resignCancel": "Abbrechen",
         "resignCancelTooltip": "Aufgabe verwerfen, ohne etwas aufzuzeichnen (Esc)",

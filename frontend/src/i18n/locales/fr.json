@@ -1332,6 +1332,8 @@
         "resignSingle": "Simple",
         "resignGammon": "Gammon",
         "resignBackgammon": "Backgammon",
+        "resignMatch": "Le match",
+        "resignMatchTooltip": "Abandonner le match entier : il revient à l'adversaire, rien ne suit (4)",
         "resignLevelTooltip": "Abandonner à ce niveau ({n})",
         "resignCancel": "Annuler",
         "resignCancelTooltip": "Renoncer à l'abandon sans rien enregistrer (Échap)",

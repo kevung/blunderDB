@@ -39,6 +39,9 @@ const (
 	GestureTake   GestureKind = "take"
 	GesturePass   GestureKind = "pass"
 	GestureResign GestureKind = "resign"
+	// GestureForfeit gives the whole match up (KindForfeit): timed, undone and
+	// replayed as a resignation is, and like a won match it ends the document.
+	GestureForfeit GestureKind = "forfeit"
 	// GestureCursorBack and GestureCursorForward move the Cursor and load the Action
 	// it lands on, whose dice and play the next entry corrects in place.
 	GestureCursorBack    GestureKind = "cursor_back"
@@ -195,7 +198,7 @@ func movesOnly(k GestureKind) bool {
 func writesAction(k GestureKind) bool {
 	switch k {
 	case GestureEnterDie, GestureEnterPlay, GestureSelectCandidate, GestureDance,
-		GestureDouble, GestureTake, GesturePass, GestureResign:
+		GestureDouble, GestureTake, GesturePass, GestureResign, GestureForfeit:
 		return true
 	}
 	return false
@@ -295,7 +298,7 @@ func apply(doc Document, g Gesture) (Document, error) {
 		return record(out, Action{Side: e.Side, Kind: KindDance, Dice: e.Dice,
 			RollTickMS: e.RollTickMS, TickMS: e.TickMS}), nil
 
-	case GestureDouble, GestureTake, GesturePass, GestureResign:
+	case GestureDouble, GestureTake, GesturePass, GestureResign, GestureForfeit:
 		return cubeGesture(out, g)
 
 	case GestureCursorBack:
@@ -1060,6 +1063,8 @@ func cubeGesture(doc Document, g Gesture) (Document, error) {
 		if a.Level < 1 {
 			a.Level = 1
 		}
+	case GestureForfeit:
+		a.Kind = KindForfeit
 	}
 	doc.Entry = &Entry{Side: side, Mode: mode, At: at}
 	return record(doc, a), nil

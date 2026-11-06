@@ -34,7 +34,7 @@
 -->
 <script>
     import { t } from '../i18n';
-    import { COMMAND } from '../services/transcriptionKeys.js';
+    import { COMMAND, FORFEIT_LEVEL } from '../services/transcriptionKeys.js';
 
     let {
         /** Le camp au trait peut annoncer (aucune réponse attendue). */
@@ -47,7 +47,7 @@
         onGesture = null,
         /** `[R]` : la résignation annoncée, son niveau attendu. */
         onResign = null,
-        /** Le niveau donné : `(level) => void`, 1, 2 ou 3. */
+        /** Le niveau donné : `(level) => void`, 1, 2 ou 3 ; 4 abandonne le match (FORFEIT_LEVEL). */
         onLevel = null,
         /** La résignation abandonnée. */
         onCancelResign = null
@@ -56,14 +56,16 @@
     const LEVELS = [
         { level: 1, key: 'transcription.resignSingle' },
         { level: 2, key: 'transcription.resignGammon' },
-        { level: 3, key: 'transcription.resignBackgammon' }
+        { level: 3, key: 'transcription.resignBackgammon' },
+        // The whole match, not a fourth game value: the engine records a forfeit.
+        { level: FORFEIT_LEVEL, key: 'transcription.resignMatch', tooltip: 'transcription.resignMatchTooltip' }
     ];
 </script>
 
 <div class="cube-row" role="group" aria-label={$t('transcription.cubeRow')}>
     {#if resigning}
         {#each LEVELS as entry (entry.level)}
-            <button class="cube-btn" type="button" onclick={() => onLevel?.(entry.level)} title={$t('transcription.resignLevelTooltip', { n: entry.level })}>
+            <button class="cube-btn" type="button" onclick={() => onLevel?.(entry.level)} title={entry.tooltip ? $t(entry.tooltip) : $t('transcription.resignLevelTooltip', { n: entry.level })}>
                 {$t(entry.key)}
             </button>
         {/each}

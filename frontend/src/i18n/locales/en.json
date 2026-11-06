@@ -1332,6 +1332,8 @@
         "resignSingle": "Single",
         "resignGammon": "Gammon",
         "resignBackgammon": "Backgammon",
+        "resignMatch": "The match",
+        "resignMatchTooltip": "Forfeit the whole match: the opponent wins it, nothing follows (4)",
         "resignLevelTooltip": "Resign at this level ({n})",
         "resignCancel": "Cancel",
         "resignCancelTooltip": "Give up the resignation without recording anything (Escape)",

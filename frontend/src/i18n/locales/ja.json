@@ -1332,6 +1332,8 @@
         "resignSingle": "シングル",
         "resignGammon": "ギャモン",
         "resignBackgammon": "バックギャモン",
+        "resignMatch": "マッチ",
+        "resignMatchTooltip": "マッチ全体を投了：相手の勝ちとなり、以後は何も続きません (4)",
         "resignLevelTooltip": "このレベルで投了 ({n})",
         "resignCancel": "取り消し",
         "resignCancelTooltip": "何も記録せずに投了をやめる (Esc)",

@@ -12,7 +12,7 @@ import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 
 import CubeActionRow from '../components/CubeActionRow.svelte';
-import { COMMAND } from '../services/transcriptionKeys.js';
+import { COMMAND, FORFEIT_LEVEL } from '../services/transcriptionKeys.js';
 
 const buttons = () => [...document.querySelectorAll('button')];
 const labels = () => buttons().map((b) => b.textContent.trim());
@@ -79,16 +79,16 @@ describe('la résignation demande son niveau', () => {
     // Trois niveaux plus l'abandon, à la place des quatre cases : le geste sert
     // une fois par match, et trois boutons de plus à demeure auraient coûté la
     // place de ceux qui servent à chaque tour.
-    test('la rangée devient les trois niveaux et « Annuler »', () => {
+    test('la rangée devient les trois niveaux, le match et « Annuler »', () => {
         render(CubeActionRow, { props: { resigning: true } });
-        expect(labels()).toEqual(['Single', 'Gammon', 'Backgammon', 'Cancel']);
+        expect(labels()).toEqual(['Single', 'Gammon', 'Backgammon', 'The match', 'Cancel']);
     });
 
     test('chaque niveau rend son chiffre', async () => {
         const onLevel = vi.fn();
         render(CubeActionRow, { props: { resigning: true, onLevel } });
         const cells = buttons();
-        for (const level of [1, 2, 3]) {
+        for (const level of [1, 2, 3, FORFEIT_LEVEL]) {
             onLevel.mockClear();
             await fireEvent.click(cells[level - 1]);
             expect(onLevel).toHaveBeenCalledExactlyOnceWith(level);
@@ -99,7 +99,7 @@ describe('la résignation demande son niveau', () => {
         const onLevel = vi.fn();
         const onCancelResign = vi.fn();
         render(CubeActionRow, { props: { resigning: true, onLevel, onCancelResign } });
-        await fireEvent.click(buttons()[3]);
+        await fireEvent.click(buttons()[4]);
         expect(onCancelResign).toHaveBeenCalledTimes(1);
         expect(onLevel).not.toHaveBeenCalled();
     });

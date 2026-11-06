@@ -1332,6 +1332,8 @@
         "resignSingle": "Απλή",
         "resignGammon": "Γκάμον",
         "resignBackgammon": "Μπάκγκαμον",
+        "resignMatch": "Τον αγώνα",
+        "resignMatchTooltip": "Παραίτηση από ολόκληρο τον αγώνα: τον κερδίζει ο αντίπαλος, τίποτα δεν ακολουθεί (4)",
         "resignLevelTooltip": "Παραίτηση σε αυτό το επίπεδο ({n})",
         "resignCancel": "Ακύρωση",
         "resignCancelTooltip": "Εγκατάλειψη της παραίτησης χωρίς καμία καταγραφή (Esc)",

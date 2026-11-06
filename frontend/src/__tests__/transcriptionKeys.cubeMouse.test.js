@@ -18,7 +18,20 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { COMMAND, PHASE, initialKeyState, pressKey, applyCandidates, cubeGesture, beginResign, resignWithLevel, cancelResign, menuCommands, cursorCommands } from '../services/transcriptionKeys.js';
+import {
+    COMMAND,
+    PHASE,
+    FORFEIT_LEVEL,
+    initialKeyState,
+    pressKey,
+    applyCandidates,
+    cubeGesture,
+    beginResign,
+    resignWithLevel,
+    cancelResign,
+    menuCommands,
+    cursorCommands
+} from '../services/transcriptionKeys.js';
 
 function key(/** @type {string} */ code, extra = {}) {
     const digit = /^(?:Digit|Numpad)([0-9])$/.exec(code);
@@ -108,6 +121,15 @@ describe('la résignation, deux gestes à la souris comme au clavier', () => {
         }
     });
 
+    test('« Le match » cliqué fait ce que fait 4 : un forfait', () => {
+        const armed = beginResign(initialKeyState()).state;
+        const clicked = resignWithLevel(armed, FORFEIT_LEVEL);
+        const pressed = typed(armed, 'Digit4', 'checker');
+        expect(clicked.commands).toEqual([{ kind: COMMAND.FORFEIT }]);
+        expect(clicked.commands).toEqual(pressed.commands);
+        expect(clicked.state).toEqual(pressed.state);
+    });
+
     test('« Annuler » rend l’état d’avant, comme Échap, sans rien enregistrer', () => {
         const before = typed(initialKeyState(), 'Digit4', 'checker').state;
         const armed = beginResign(before).state;
@@ -120,9 +142,9 @@ describe('la résignation, deux gestes à la souris comme au clavier', () => {
 
     // Un niveau qui n'en est pas un ne crée rien : la rangée n'en offre que
     // trois, mais la fonction est publique et le dit elle-même.
-    test('un niveau hors de 1-2-3 ne produit aucun geste', () => {
+    test('un niveau hors de 1-2-3-4 ne produit aucun geste', () => {
         const armed = beginResign(initialKeyState()).state;
-        for (const level of [0, 4, -1]) {
+        for (const level of [0, 5, -1]) {
             expect(resignWithLevel(armed, level).commands, String(level)).toEqual([]);
         }
     });
