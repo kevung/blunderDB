@@ -42,6 +42,17 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.51.0 (2026-11-06)
+-------------------
+
+- **Une bibliothèque se synchronise avec un serveur distant** : l'onglet *Synchronisation* des paramètres reçoit l'adresse du serveur et un jeton personnel, gardé dans le trousseau du système ; l'envoi puis la réception se font au démarrage ou sur demande, une page à la fois, la modification la plus récente l'emportant.
+- **Une limite du serveur n'arrête pas la réception** : quand un plafond refuse l'envoi, l'envoi seul est suspendu et la réception continue ; un envoi trop gros est divisé jusqu'à un enregistrement, et ce qu'un serveur refuse reste listé dans l'onglet et retenté à chaque passage.
+- **La recherche tient sur de très grosses bases** : une page se coupe sur les identifiants, ``search.countUpTo`` compte jusqu'à une borne, et de nouveaux index servent les filtres d'erreur, de plateau complet et de taux de gain.
+- **Une base occupe environ moitié moins de place sur PostgreSQL** : colonnes plus étroites, journal des changements plus léger, clés fusionnées ; au démarrage, la migration réécrit au plus 512 Mo de positions et nomme l'étape manuelle au-delà.
+- **Le journal se coupe pour un tenant** : ``changeset.setJournalOff`` l'arrête, ``changeset.export`` et ``changeset.import`` refusent alors par un code nommé, et le rallumer rend les objets écrits pendant la coupure.
+- **La base reste au schéma 2.57.0** : les migrations de cette version ajoutent des index et rétrécissent des colonnes, sans changer le format d'un fichier SQLite.
+- Voir :ref:`synchronisation_distante`, :ref:`headless` et :ref:`annexe_db_migration`.
+
 0.50.0 (2026-11-05)
 -------------------
 

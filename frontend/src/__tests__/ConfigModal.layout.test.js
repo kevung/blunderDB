@@ -28,12 +28,12 @@ beforeEach(() => {
 afterEach(() => cleanup());
 
 describe('ConfigModal tabs', () => {
-    test('ten tabs in a vertical tablist, each selectable', async () => {
+    test('eleven tabs in a vertical tablist, each selectable', async () => {
         const { container } = render(ConfigModal, { visible: true, onClose: () => {} });
         const list = container.ownerDocument.querySelector('[role="tablist"]');
         expect(must(list).getAttribute('aria-orientation')).toBe('vertical');
         const tabs = [...must(list).querySelectorAll('[role="tab"]')];
-        expect(tabs).toHaveLength(10);
+        expect(tabs).toHaveLength(11);
         expect(tabs[0].getAttribute('aria-selected')).toBe('true');
         await fireEvent.click(tabs[7]);
         expect(tabs[7].getAttribute('aria-selected')).toBe('true');

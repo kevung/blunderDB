@@ -6,6 +6,7 @@
     import { t } from '../i18n';
     import { closeOnEscape } from '../services/escapeService.js';
     import { portal } from '../utils/portal.js';
+    import { FORFEIT_LEVEL } from '../services/transcriptionKeys.js';
 
     let {
         open = false,
@@ -20,7 +21,9 @@
     const LEVELS = [
         { level: 1, key: 'transcription.resignSingle' },
         { level: 2, key: 'transcription.resignGammon' },
-        { level: 3, key: 'transcription.resignBackgammon' }
+        { level: 3, key: 'transcription.resignBackgammon' },
+        // The whole match, not a fourth game value: the engine records a forfeit.
+        { level: FORFEIT_LEVEL, key: 'transcription.resignMatch', tooltip: 'transcription.resignMatchTooltip' }
     ];
 
     $effect(() => {
@@ -43,7 +46,7 @@
                         data-level={entry.level}
                         onmousedown={keepFocus}
                         onclick={() => onLevel(entry.level)}
-                        title={$t('transcription.resignLevelTooltip', { n: entry.level })}
+                        title={entry.tooltip ? $t(entry.tooltip) : $t('transcription.resignLevelTooltip', { n: entry.level })}
                     >
                         <kbd>{entry.level}</kbd>{$t(entry.key)}
                     </button>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 03:48+0100\n"
+"POT-Creation-Date: 2026-11-06 01:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -730,7 +730,7 @@ msgstr ""
 " **読み取り専用**\\ "
 "で開きます：ナビゲーション、検索、解析は引き続き可能ですが、あらゆる変更は無効になり、タイトルバーに「[読み取り専用]」と表示されます。"
 
-#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:928
+#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:934
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "利用可能なショートカットについては :ref:`raccourcis` を参照してください。"
 
@@ -1118,20 +1118,21 @@ msgid ""
 " ne répondrait à rien reste éteint. Le clavier, lui, ne refuse jamais "
 "rien : un bouton éteint est une cible qu'on n'offre pas, pas un geste "
 "interdit. « Abandonner » n'enregistre rien encore : la rangée devient les"
-" trois niveaux — simple, gammon, backgammon — et « Annuler », qui reprend"
-" la touche ÉCHAP ; au clavier, *r* puis *1*, *2* ou *3*, *ENTREE* valant "
-"simple. Le videau dessiné sur le plateau est la seconde cible de ces "
-"gestes : un clic dessus propose un double. Devant une offre il ne répond "
-"pas — la prise et la passe sont deux réponses symétriques et vivent "
-"ensemble dans la rangée, un clic chacune."
+" trois niveaux — simple, gammon, backgammon —, « Le match » et « Annuler "
+"», qui reprend la touche ÉCHAP ; au clavier, *r* puis *1*, *2* ou *3*, "
+"*ENTREE* valant simple, et *r* puis *4* pour le match. Le videau dessiné "
+"sur le plateau est la seconde cible de ces gestes : un clic dessus "
+"propose un double. Devant une offre il ne répond pas — la prise et la "
+"passe sont deux réponses symétriques et vivent ensemble dans la rangée, "
+"un clic chacune."
 msgstr ""
 "ダイスの行にある\\ **ダブル**\\ 、\\ **テイク**\\ 、\\ **パス**\\ 、\\ **投了**\\ "
-"の並びは、キューブの四つの操作をマウスにもたらします。二つのダイスと合わせて、それらは「手番の側は何をしたか」というただ一つの問いへの五つの答えです。並びは誰の番かを告げます。手番の側が告げる——ダブル、投了——か、相手の側が答える——テイク、パス——かであって、四つが同時に並ぶことはなく、その操作が何にも答えないボタンは消えたままです。一方キーボードは決して何も拒みません。消えたボタンは差し出さない標的であって、禁じられた操作ではありません。「投了」はまだ何も記録しません。並びは三つの水準——シングル、ギャモン、バックギャモン——と、ESC"
+"の並びは、キューブの四つの操作をマウスにもたらします。二つのダイスと合わせて、それらは「手番の側は何をしたか」というただ一つの問いへの五つの答えです。並びは誰の番かを告げます。手番の側が告げる——ダブル、投了——か、相手の側が答える——テイク、パス——かであって、四つが同時に並ぶことはなく、その操作が何にも答えないボタンは消えたままです。一方キーボードは決して何も拒みません。消えたボタンは差し出さない標的であって、禁じられた操作ではありません。「投了」はまだ何も記録しません。並びは三つの水準——シングル、ギャモン、バックギャモン——と、「マッチ」と、ESC"
 " キーを重ねる「取消」に変わります。キーボードでは\\ *r*\\ のあと\\ *1*\\ 、\\ *2*\\ 、\\ *3*\\ "
-"のいずれかを押し、\\ *ENTER*\\ "
-"はシングルになります。盤に描かれたキューブはこれらの操作の第二の標的です。それをクリックするとダブルを提案します。申し出の前では答えません——テイクとパスは対称な二つの答えであり、並びの中に共に住み、それぞれ一クリックです。"
+"のいずれかを押し、\\ *ENTER*\\ はシングルになります。マッチには\\ *r*\\ のあと\\ *4*\\ "
+"を押します。盤に描かれたキューブはこれらの操作の第二の標的です。それをクリックするとダブルを提案します。申し出の前では答えません——テイクとパスは対称な二つの答えであり、並びの中に共に住み、それぞれ一クリックです。"
 
-#: ../../source/manuel_matchs.rst:616
+#: ../../source/manuel_matchs.rst:617
 msgid ""
 "La **barre d'état** dit ce que le brouillon attend, en un mot : la danse "
 "enregistrée d'office, le premier coup d'une partie, la réponse attendue à"
@@ -1145,16 +1146,21 @@ msgstr ""
 "\\ **ステータスバー**\\ "
 "は下書きが何を待っているかを一言で告げます。自動的に記録されたダンス、ゲームの最初の手、ダブルへの応答待ち、投了後の水準待ち、その場での訂正、出目が変わって「要確認」となった手です。何もすることのない操作にもそこで答えます——「取り消すものがありません」「カーソルの下にアクションがありません」——一秒半のあいだ。ある行動が残した不整合のほうは、誤りのあるセルがある場所、すなわちトランスクリプトの冒頭で知らされます。"
 
-#: ../../source/manuel_matchs.rst:624
+#: ../../source/manuel_matchs.rst:625
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
 " du videau). Le score, la partie Crawford et la fin du match paraissent "
 "alors dans la barre de match, et le premier coup de la partie suivante "
-"est attendu."
-msgstr "ゲームはパス、投了、または十五個目の駒の上がり(シングル、ギャモン、バックギャモンに、キューブの値を掛けたもの)で終わります。スコア、クロフォードゲーム、マッチの終わりはそのときマッチバーに現れ、次のゲームの最初の手が待たれます。"
+"est attendu. L'abandon du match, lui, clôt le transcript : l'adversaire "
+"gagne la partie en cours pour les points qui le mènent à la longueur du "
+"match — un simple à la valeur du videau en money —, aucune action ne peut"
+" plus suivre, et le match s'enregistre et s'exporte gagné par lui, comme "
+"un Duel abandonné. Il porte son repère vidéo et s'annule comme une "
+"résignation."
+msgstr "ゲームはパス、投了、または十五個目の駒の上がり(シングル、ギャモン、バックギャモンに、キューブの値を掛けたもの)で終わります。スコア、クロフォードゲーム、マッチの終わりはそのときマッチバーに現れ、次のゲームの最初の手が待たれます。一方、マッチの放棄は書き起こしを閉じます。相手は進行中のゲームに、マッチの長さに届くポイントで勝ちます(マネーゲームではキューブの値のシングル)。以後はいかなる操作も続けられず、マッチは相手の勝ちとして記録・エクスポートされます。放棄したデュエルと同じです。ビデオの目印を持ち、投了と同じように取り消せます。"
 
-#: ../../source/manuel_matchs.rst:629
+#: ../../source/manuel_matchs.rst:635
 msgid ""
 "Le score d'une partie est celui que donnent les parties précédentes, sauf"
 " s'il a été annoncé autrement à la table. Un double-clic sur le score de "
@@ -1174,7 +1180,7 @@ msgstr ""
 " ``.mat``\\ "
 "ファイルもそのスコアを持ちます。導かれたスコアと異なるスコアは印が付き、ツールチップが導かれたスコアを示し、ゲームの最初のアクションに不整合「申告スコアの不一致」が付きます。マネーゲームには申告するスコアがありません。"
 
-#: ../../source/manuel_matchs.rst:641
+#: ../../source/manuel_matchs.rst:647
 msgid ""
 "Un transcript repris en cours de match peut commencer après la partie "
 "Crawford. Lorsque la première partie s'ouvre avec un joueur à un point du"
@@ -1193,7 +1199,7 @@ msgstr ""
 " ``.mat``\\ ファイルは見出し行\\ ``; [Crawford \"PostCrawford\"]``\\ "
 "に書き出し、blunderDB はそれを読み戻します。gnubg はこれを無視し、この最初のゲームをクロフォードゲームとして数えます。"
 
-#: ../../source/manuel_matchs.rst:651
+#: ../../source/manuel_matchs.rst:657
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1218,7 +1224,7 @@ msgstr ""
 " ``???`` "
 "と書きます。出目は分かっていて手が分からないので、そのセルにカーソルを置くとその出目の手が示され、補うことができます。二重手番は、手番が抜けている側の列に、破線で囲まれた空のセルを残します。カーソルはそこで止まり、クリックでそこへ移動でき、抜けた手番（たとえば削除した判断）はそこで入力します。ゲームは折りたたまれ、カーソルのあるものが開いています。"
 
-#: ../../source/manuel_matchs.rst:667
+#: ../../source/manuel_matchs.rst:673
 msgid ""
 "**Ce qui est en train d'être tapé se dessine dans le transcript**, en "
 "pointillés, à la place exacte où il sera écrit : les dés au fur et à "
@@ -1232,7 +1238,7 @@ msgstr ""
 "**入力中の内容はトランスクリプトに描かれる**\\ "
 "。破線で、実際に書き込まれる位置そのものに示される。ダイスは入力されるそばから、手のノーテーションは選択されるとすぐに、そしてそのアクションが属する手番の列に現れる。訂正は置き換えるセルを覆い、挿入は両隣のあいだにセルを開き、新しい入力は進行中のゲームの末尾に現れる。確定前には下書きに何も書き込まれない。読んでいるものと文書が語ることとが食い違うことはない。"
 
-#: ../../source/manuel_matchs.rst:676
+#: ../../source/manuel_matchs.rst:682
 msgid ""
 "Corriger, c'est taper sur la cellule où l'on est. Le curseur posé sur une"
 " action, un chiffre en recommence le jet sur place, et les quatre gestes "
@@ -1252,7 +1258,7 @@ msgstr ""
 "テイクが書き込まれる。ゲームはそこから再び進行する。テイクの直後、ダブルした側にセルが開き、ゲームの続きはいつもどおりそこに入力され、ゲームが終わるまで次のゲームの最初の手の前に挿入される。この最初の手は、そのゲームが始まったときのスコアを保ち、それを明示する。再開したゲームの終わりが別のスコアを与える場合、その差が印される。同じキーは、挿入が開いたばかりのセルも埋める。\\"
 " *i*\\ のあとに\\ *d*\\ で、対象のアクションの前にダブルが挿入される。"
 
-#: ../../source/manuel_matchs.rst:688
+#: ../../source/manuel_matchs.rst:694
 msgid ""
 "Revenir sur la **dernière** action, c'est revenir là où la transcription "
 "s'écrit. Un chiffre tapé sur elle en corrige encore le jet, mais une fois"
@@ -1264,7 +1270,7 @@ msgstr ""
 "アクションに戻ることは、記譜が書き進められている場所に戻ることである。その上で打った数字はまだその出目を訂正するが、その出目を打ち直すと、次の数字がアクションを確定して次の決定を開く。ENTER"
 " も同じくそれを確定する。以降の決定は、最初のときと同じく、そのあとに追加されていく。"
 
-#: ../../source/manuel_matchs.rst:694
+#: ../../source/manuel_matchs.rst:700
 msgid ""
 "Taper un **autre jet** sur le **premier coup** d'une partie décide à "
 "nouveau qui commence : le dé du joueur 1 se tape en premier, celui du "
@@ -1283,7 +1289,7 @@ msgstr ""
 " **同じ出目** をどちらの順で入力し直しても何も変わりません。出目を変えずに最初の手をもう一方のプレイヤーに渡すには *s* "
 "を使います。ダイスの順はサイドに従い、その順が示さないサイドが指した最初の手は「ダイスの不整合」として印されます。ゲームの残りはサイドを保ちます。"
 
-#: ../../source/manuel_matchs.rst:704
+#: ../../source/manuel_matchs.rst:710
 msgid ""
 "Une **insertion au milieu du document continue d'insérer** : la "
 "validation ouvre une cellule vide à la suite, et l'action suivante "
@@ -1296,7 +1302,7 @@ msgstr ""
 "**文書の途中への挿入は挿入を続ける**\\ "
 "。確定すると続きに空のセルが開き、次のアクションもまた挿入され、後続のアクションを上書きしない。これによって、テイクであるべきだったパスなど、ゲームの終わり全体を後から補いながら、次のゲームについてすでに入力した分を失わずに済む。ゲームが終わるか、カーソルを動かすと挿入は終わる。そのときカーソルは次のゲームの最初の手に置かれる。"
 
-#: ../../source/manuel_matchs.rst:712
+#: ../../source/manuel_matchs.rst:718
 msgid ""
 "**Suppr** (ou *x*) retire la décision en cours d'édition et recule sur la"
 " précédente, prête à être corrigée : sur une cellule écrite, l'action "
@@ -1311,7 +1317,7 @@ msgstr ""
 " "
 "を繰り返し押すと、こうして消しながらトランスクリプトをさかのぼる。後続のアクションは手番を保ち、削除によって残った二重手番には印が付くが、カーソルはそこへ戻されない。"
 
-#: ../../source/manuel_matchs.rst:719
+#: ../../source/manuel_matchs.rst:725
 msgid ""
 "Un clic droit sur une cellule ouvre les corrections de cette action — "
 "insérer avant, insérer après, supprimer, changer de camp — et amène le "
@@ -1325,7 +1331,7 @@ msgstr ""
 "*i*\\ 、\\ *a*\\ 、\\ *x*\\ 、\\ *s*\\ "
 "のキーと同じ操作であり、ブラウザのメニューが外されるのはそこだけです。ほかの場所にボタンはありません。「カーソルの下のアクション」に作用するボタンは、見えているとは限らないセルを狙うことになりますが、右クリックは自分のセルを名指すからです。"
 
-#: ../../source/manuel_matchs.rst:726
+#: ../../source/manuel_matchs.rst:732
 msgid ""
 "La barre du brouillon porte ses deux seules sorties, au bout à droite, "
 "après le menu « ⋯ ». « **Terminer** » (CTRL-ENTREE) écrit le match dans "
@@ -1346,7 +1352,7 @@ msgstr ""
 " #\\ *n*\\ "
 "の置き換えか)を示します。下書き自体の保全については何も示しません。下書きは操作のたびにデータベースへ書き込まれ、一覧に戻っても後で再開できるよう残ります。"
 
-#: ../../source/manuel_matchs.rst:737
+#: ../../source/manuel_matchs.rst:743
 msgid ""
 "Le menu **⋯** de la barre tient « **Texte .mat** », qui ouvre le fichier "
 "Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que "
@@ -1360,7 +1366,7 @@ msgstr ""
 "」と、同じファイルをディスクに書く「\\ **.mat を書き出す**\\ 」があります。二つの矢印\\ **↶**\\ と\\ **↷**\\ "
 "は、\\ *CTRL-Z*\\ および\\ *CTRL-SHIFT-Z*\\ と同じく取り消しとやり直しを行います。"
 
-#: ../../source/manuel_matchs.rst:744
+#: ../../source/manuel_matchs.rst:750
 msgid ""
 "Si l'analyse d'un match transcrit a été interrompue — l'application "
 "fermée pendant le lot —, la barre d'état le signale à la prochaine "
@@ -1370,7 +1376,7 @@ msgid ""
 " sur toute la bibliothèque."
 msgstr "記譜したマッチの解析が中断された場合（解析中にアプリケーションを閉じたとき）、次にデータベースを開いたときにステータスバーがそれを知らせ、続きを実行するか尋ねます。この中断について記録は何も残りません。未解析の局面が残っているかぎり提案は繰り返し現れ、再開される解析はそのマッチだけを対象とし、ライブラリ全体には及びません。"
 
-#: ../../source/manuel_matchs.rst:750
+#: ../../source/manuel_matchs.rst:756
 msgid ""
 "Un brouillon qui porte des incohérences est terminé tout de même, après "
 "un avertissement : rien n'est refusé. Un coup illégal est exporté tel "
@@ -1380,7 +1386,7 @@ msgstr ""
 "不整合のある下書きも、警告のあとで完了されます。何も拒否されません。違法な手は指されたとおりに書き出され、gnubg と XG "
 "がそれを指摘し(「Invalid move」)、以後は食い違うという警告が付きます。"
 
-#: ../../source/manuel_matchs.rst:755
+#: ../../source/manuel_matchs.rst:761
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "
 "matchs ou « **Éditer la transcription** » de sa fiche ouvre un brouillon "
@@ -1397,7 +1403,7 @@ msgstr ""
 " ``.mat`` "
 "に含まれない分析とコメントを持っています。開く前に、最大でどれだけあるか、そして下書きを完了するとそれらが失われうることがダイアログで示されます。"
 
-#: ../../source/manuel_matchs.rst:764
+#: ../../source/manuel_matchs.rst:770
 msgid ""
 "Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de "
 "la barre du brouillon ouvre un menu : **Fichier local…** pour choisir une"
@@ -1428,7 +1434,7 @@ msgstr ""
 " **ファイルを選択…**\\ で再指定します。YouTube の動画がすでに添付されている場合、\\ **YouTube リンク…**\\ "
 "はそのアドレスを選択した状態で開き、貼り付けると置き換わります。開き直した下書きは、この端末で最後にいた位置で一時停止した動画を取り戻し、なければ最後のマークの数秒前に戻ります。カーソルは入力に備えてトランスクリプトの末尾に留まり、再生が別のアクションに入って初めて再生を追います。"
 
-#: ../../source/manuel_matchs.rst:783
+#: ../../source/manuel_matchs.rst:789
 msgid ""
 "Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
 "YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
@@ -1439,7 +1445,7 @@ msgstr ""
 " 利用規約 <https://www.youtube.com/t/terms>`_\\ に従います。blunderDB "
 "はそこから画像を一切取り出しません。"
 
-#: ../../source/manuel_matchs.rst:787
+#: ../../source/manuel_matchs.rst:793
 msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
@@ -1463,7 +1469,7 @@ msgstr ""
 "の動画は、元の時点で一時停止の状態で再開します。動画、そのコントロール、または区切りバーをクリックしても、キーボードはパネルに残ります。入力のキー、動画のキー、そして盤を回転させる"
 " *CTRL-←* / *CTRL-→* はそのまま効きます。"
 
-#: ../../source/manuel_matchs.rst:801
+#: ../../source/manuel_matchs.rst:807
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1480,7 +1486,7 @@ msgstr ""
 " *ESC*\\ "
 "か、領域の外で離すと取り消されます。盤そのものは動かせません。盤の上でのドラッグはチェッカーを動かします。側はセッションをまたいで記憶され、幅はどちらの側でも動画の幅のままです。ハンドルとボタンはキーボードをパネルに残します。"
 
-#: ../../source/manuel_matchs.rst:812
+#: ../../source/manuel_matchs.rst:818
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -1499,28 +1505,30 @@ msgid ""
 "candidats, la validation, le curseur et les touches de la vidéo "
 "(*ESPACE*, *[*, *]*, …) gardent leur effet, et ni le plateau ni les "
 "boutons ne prennent le focus. Comme la rangée des gestes de videau y est "
-"cachée, *r* ouvre par-dessus la vidéo une petite fenêtre des trois "
-"niveaux d'abandon : *1*, *2*, *3* ou un clic les choisissent, *ENTREE* "
-"vaut simple, et *ÉCHAP* l'annule sans quitter le théâtre. *F11*, *ÉCHAP* "
-"ou le bouton en haut à droite sortent du mode théâtre et rendent la "
-"fenêtre à son état précédent : dans le théâtre, *ÉCHAP* sert à sortir, et"
-" *RETOUR ARRIERE* efface les dés saisis. Retirer la vidéo, quitter le "
-"brouillon ou changer d'onglet y met fin aussi. Le lecteur n'a pas de "
-"plein écran à lui, YouTube compris : seul le mode théâtre change l'écran."
-" Le mode n'existe que dans la Transcription, avec une vidéo attachée."
+"cachée, *r* ouvre par-dessus la vidéo une petite fenêtre des niveaux "
+"d'abandon : *1*, *2*, *3* ou un clic les choisissent, *ENTREE* vaut "
+"simple, *4* abandonne le match, et *ÉCHAP* l'annule sans quitter le "
+"théâtre. *F11*, *ÉCHAP* ou le bouton en haut à droite sortent du mode "
+"théâtre et rendent la fenêtre à son état précédent : dans le théâtre, "
+"*ÉCHAP* sert à sortir, et *RETOUR ARRIERE* efface les dés saisis. Retirer"
+" la vidéo, quitter le brouillon ou changer d'onglet y met fin aussi. Le "
+"lecteur n'a pas de plein écran à lui, YouTube compris : seul le mode "
+"théâtre change l'écran. Le mode n'existe que dans la Transcription, avec "
+"une vidéo attachée."
 msgstr ""
 "**シアターモード。**\\ 試合を大きく見るには、\\ *F11*\\ "
 "、または動画の上のバーにあるボタン（動画をパネルに戻すボタンの左）を使います。ウィンドウが全画面になり、動画が画面全体を占めます。その上の右下隅に小さな盤面が浮かびます。記譜中の局面、入力済みのダイス、盤面で進行中の手、メインの盤面と同じ矢印を示し、その手の表記は盤面の見出しに表示されます。手はメインの盤面と同じように指します。チェッカーをクリックまたはドラッグし、ダイスをクリックして入れ替えるか確定し、盤面を右クリックしてやり直します。盤面はドラッグで移動できますが、ダイスが入力済みのときは見出しをドラッグします（盤面そのものはその手を指すため）。見出しのボタンの一つで三段階に大きさを変え、もう一つでタブに折りたたみ、タブから再び開けます。位置と大きさは記憶されます。折りたたんだ場合は、次にシアターモードに入るときに再び開きます。キーボードはパネルのものがそのまま使えます。ダイス、候補手、確定、カーソル、動画のキー（\\"
 " *SPACE*\\ 、\\ *[*\\ 、\\ *]*\\ "
 "など）はそのまま働き、盤面やボタンがフォーカスを奪うことはありません。ビデオ操作の列はここでは隠れているため、\\ *r*\\ "
-"を押すと、動画の上に投了の三つの水準を示す小さなウィンドウが開きます。\\ *1*\\ 、\\ *2*\\ 、\\ *3*\\ "
-"またはクリックで選び、\\ *ENTER*\\ はシングルとなり、\\ *ESC*\\ はシアターモードを離れずに取り消します。\\ "
-"*F11*\\ 、\\ *ESC*\\ 、または右上のボタンでシアターモードを終了し、ウィンドウは元の状態に戻ります。シアターモードでは\\ "
-"*ESC*\\ は終了に使われ、\\ *BACKSPACE*\\ "
+"を押すと、動画の上に投了の水準を示す小さなウィンドウが開きます。\\ *1*\\ 、\\ *2*\\ 、\\ *3*\\ "
+"またはクリックで選び、\\ *ENTER*\\ はシングルとなり、\\ *4*\\ はマッチを放棄し、\\ *ESC*\\ "
+"はシアターモードを離れずに取り消します。\\ *F11*\\ 、\\ *ESC*\\ "
+"、または右上のボタンでシアターモードを終了し、ウィンドウは元の状態に戻ります。シアターモードでは\\ *ESC*\\ は終了に使われ、\\ "
+"*BACKSPACE*\\ "
 "が入力済みのダイスを消します。動画を外す、下書きを離れる、タブを切り替える、のいずれでも終了します。プレーヤーには独自の全画面表示はなく、YouTube"
 " も同様です。画面を切り替えるのはシアターモードだけです。このモードは動画が添付された記譜でのみ使えます。"
 
-#: ../../source/manuel_matchs.rst:838
+#: ../../source/manuel_matchs.rst:844
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -1551,7 +1559,7 @@ msgstr ""
 "の動画では、プレーヤーが提供する速度のみ、最大 2× まで使えます。速度が 1× でないときは動画の隅に表示され、新しいソースは 1× "
 "から始まります。"
 
-#: ../../source/manuel_matchs.rst:856
+#: ../../source/manuel_matchs.rst:862
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -1564,7 +1572,7 @@ msgstr ""
 "ずつ、0° から 270° まで回転します。ファイルの動画でも YouTube "
 "のフレームでも、画像は全体が表示されたままです。角度は下書きごとにこのコンピューターにのみ保存され、データベースには書き込まれません。"
 
-#: ../../source/manuel_matchs.rst:862
+#: ../../source/manuel_matchs.rst:868
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -1585,7 +1593,7 @@ msgstr ""
 " 12:34, 手 12:51, 17 s」)。分析パネルは、Duel "
 "で対局した試合と同様に、カーソルのアクションの所要時間を表示します。動画の順序に反する時刻マークは、他のマークが先へ進めるようできるだけ少なく選ばれ、他の不整合と同様に表示され、それに依存する所要時間は不明のままになります。セル上にカーソルを置く(手または所要時間のクリック、*h*、*l*)と、そのアクションのロールの1秒前に動画が移動します。ロールに時刻がない場合は、そのアクションの1秒前です。一時停止中のプレーヤーは一時停止のままです。"
 
-#: ../../source/manuel_matchs.rst:875
+#: ../../source/manuel_matchs.rst:881
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -1618,7 +1626,7 @@ msgstr ""
 " *v* "
 "を押すと、その手が時刻を受け取ります。終わりのない最後のアクションでは、ロールから10秒間そこに留まり、その後トランスクリプトの末尾に戻ります。そこでは数字キーが次のロールを開き、インジケーターがそれを示します。"
 
-#: ../../source/manuel_matchs.rst:897
+#: ../../source/manuel_matchs.rst:903
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -1642,7 +1650,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav``\\ (後者は RPM Fusion "
 "由来)です。:ref:`telecharge_install` を参照してください。"
 
-#: ../../source/manuel_matchs.rst:909
+#: ../../source/manuel_matchs.rst:915
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -1654,7 +1662,7 @@ msgstr ""
 "秒後に再読み込みされ、指定した時点から同じ速度で、以前と同じく再生または一時停止の状態で再開します。3 "
 "回再読み込みしても効果がない場合は、パネルがその旨を表示し、再試行を提案します。"
 
-#: ../../source/manuel_matchs.rst:914
+#: ../../source/manuel_matchs.rst:920
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -1671,7 +1679,7 @@ msgstr ""
 " "
 "はファイルのインデックス(グループあたり数キロバイト)を読み、問題のあるシークを見つけた場合、ペインはそれを知らせるとともに、再エンコードせずにファイルを修復するコマンドをコピーできる状態で表示します:"
 
-#: ../../source/manuel_matchs.rst:924
+#: ../../source/manuel_matchs.rst:930
 msgid ""
 "La commande écrit une copie à côté de l'original ; associez ensuite cette"
 " copie au match ou à la transcription. Le volet propose la même commande "
@@ -1765,4 +1773,3 @@ msgstr ""
 #~ " は、校正した盤が画像内に見えなくなっている間、校正バーに表示されます。動画上の ◐ "
 #~ "アイコンは、ゲームのどのイベントでも説明できないオーバーレイの変更があったことを 30 "
 #~ "秒間知らせます。描いた領域がもうゲームと一致していない可能性があり、▭ で描き直します。"
-

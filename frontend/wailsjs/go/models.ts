@@ -4812,6 +4812,62 @@ export namespace gui {
 	        this.maxGames = source["maxGames"];
 	    }
 	}
+	export class SyncError {
+	    kind: string;
+	    message: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SyncError(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.message = source["message"];
+	    }
+	}
+	export class SyncStatus {
+	    running: boolean;
+	    server: string;
+	    hasToken: boolean;
+	    lastSuccess: string;
+	    error?: SyncError;
+	    result?: syncremote.Result;
+	    skipped: syncremote.Skip[];
+	
+	    static createFrom(source: any = {}) {
+	        return new SyncStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.running = source["running"];
+	        this.server = source["server"];
+	        this.hasToken = source["hasToken"];
+	        this.lastSuccess = source["lastSuccess"];
+	        this.error = this.convertValues(source["error"], SyncError);
+	        this.result = this.convertValues(source["result"], syncremote.Result);
+	        this.skipped = source["skipped"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class TournamentDisplayConfig {
 	    tournamentId: number;
 	    port: number;
@@ -5703,6 +5759,8 @@ export namespace main {
 	    assistant_model?: string;
 	    assistant_write?: boolean;
 	    assistant_remote_ack?: string;
+	    sync_server?: string;
+	    sync_auto?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -5755,6 +5813,8 @@ export namespace main {
 	        this.assistant_model = source["assistant_model"];
 	        this.assistant_write = source["assistant_write"];
 	        this.assistant_remote_ack = source["assistant_remote_ack"];
+	        this.sync_server = source["sync_server"];
+	        this.sync_auto = source["sync_auto"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -5793,6 +5853,20 @@ export namespace main {
 	}
 	
 	
+	export class SyncSettings {
+	    server: string;
+	    auto: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new SyncSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.server = source["server"];
+	        this.auto = source["auto"];
+	    }
+	}
 	
 	export class WatchFolderSettings {
 	    on: boolean;
@@ -10073,6 +10147,95 @@ export namespace storage {
 	        this.num_decisions = source["num_decisions"];
 	        this.pr = source["pr"];
 	        this.per_phase = this.convertValues(source["per_phase"], WindowPhaseStats);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
+export namespace syncremote {
+	
+	export class Skip {
+	    direction: string;
+	    family: string;
+	    uuid: string;
+	    size?: number;
+	    reason: string;
+	    from: any;
+	    to: any;
+	
+	    static createFrom(source: any = {}) {
+	        return new Skip(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.direction = source["direction"];
+	        this.family = source["family"];
+	        this.uuid = source["uuid"];
+	        this.size = source["size"];
+	        this.reason = source["reason"];
+	        this.from = source["from"];
+	        this.to = source["to"];
+	    }
+	}
+	export class Totals {
+	    records: number;
+	    added: number;
+	    modified: number;
+	    removed: number;
+	    older: number;
+	    conflicts: number;
+	    missing: number;
+	    unsupported: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Totals(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.records = source["records"];
+	        this.added = source["added"];
+	        this.modified = source["modified"];
+	        this.removed = source["removed"];
+	        this.older = source["older"];
+	        this.conflicts = source["conflicts"];
+	        this.missing = source["missing"];
+	        this.unsupported = source["unsupported"];
+	    }
+	}
+	export class Result {
+	    sent: Totals;
+	    received: Totals;
+	    skipped?: Skip[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Result(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.sent = this.convertValues(source["sent"], Totals);
+	        this.received = this.convertValues(source["received"], Totals);
+	        this.skipped = this.convertValues(source["skipped"], Skip);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

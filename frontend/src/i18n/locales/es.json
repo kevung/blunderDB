@@ -163,7 +163,8 @@
         "commentAuthor": "Su nombre",
         "commentAuthorNote": "Firma los comentarios que escribe. Vacío: sin firma.",
         "assistantTitle": "Asistente y MCP",
-        "corpusTitle": "Corpus"
+        "corpusTitle": "Corpus",
+        "syncTitle": "Sincronización"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -1332,6 +1333,8 @@
         "resignSingle": "Sencilla",
         "resignGammon": "Gammon",
         "resignBackgammon": "Backgammon",
+        "resignMatch": "El match",
+        "resignMatchTooltip": "Abandonar todo el match: lo gana el rival, no sigue nada (4)",
         "resignLevelTooltip": "Abandonar en este nivel ({n})",
         "resignCancel": "Cancelar",
         "resignCancelTooltip": "Renunciar al abandono sin registrar nada (Esc)",
@@ -3029,6 +3032,58 @@
         "needsAck": "Acepte primero el aviso de privacidad de este proveedor en Ajustes › Asistente y MCP.",
         "error": "Error: {error}",
         "write": "Dejar que el asistente proponga cambios (cada uno confirmado)"
+    },
+    "sync": {
+        "title": "Sincronización con un servidor",
+        "intro": "Mantenga su biblioteca al mismo nivel que una remota: pegue la dirección de un servidor y el token personal que le dio. Los cambios se envían y reciben por páginas; si ambos lados cambiaron lo mismo, gana el más reciente. Sin conexión, nada se bloquea.",
+        "server": "Dirección del servidor",
+        "token": "Token personal",
+        "tokenSave": "Guardar el token",
+        "tokenRemove": "Quitar el token",
+        "tokenStored": "Hay un token guardado en el llavero del sistema.",
+        "tokenNone": "Ningún token guardado.",
+        "auto": "Sincronizar al iniciar",
+        "now": "Sincronizar ahora",
+        "running": "Sincronizando…",
+        "last": "Última sincronización correcta: {date}",
+        "never": "Nunca sincronizada.",
+        "result": "Enviados: {sent} · recibidos: {received}",
+        "error": {
+            "refused": "El servidor rechaza el token: es incorrecto, ha caducado o fue revocado.",
+            "unavailable": "El servidor no responde. Su biblioteca está intacta; la sincronización continuará donde se detuvo.",
+            "rate_limited": "El servidor limita las peticiones: inténtelo de nuevo en unos minutos.",
+            "too_large": "El servidor rechaza un envío demasiado grande.",
+            "address": "Dirección no válida: se exige https:// (http:// solo en este equipo).",
+            "no_token": "No hay ningún token guardado para este servidor.",
+            "no_library": "No hay ninguna biblioteca abierta.",
+            "other": "La sincronización ha fallado.",
+            "library_changed": "La biblioteca cambió durante la sincronización: se interrumpió, vuelva a lanzarla.",
+            "tool_locked": "El servidor está bloqueado durante una partida: vuelva a intentarlo después de la partida.",
+            "blocked": "Algo entre este equipo y el servidor (proxy, cortafuegos) rechaza una solicitud por su tamaño. No se omitió nada; pida a quien administra el servidor que suba el límite.",
+            "allowance": "Envío suspendido, límite alcanzado: su plan permite {allowed} {axis}; usted tiene {held} y este envío añade {new}. La recepción ha continuado y no se ha perdido nada: el envío se reanudará cuando esté por debajo del límite (libere espacio o cambie de plan).",
+            "invalid_records": "El servidor rechaza el contenido de algunos registros."
+        },
+        "unapplied": "{conflicts} en conflicto, {missing} con una referencia ausente, {unsupported} de un tipo no admitido: estos elementos no se aplicaron.",
+        "skipped": {
+            "status": "Sincronización: {count} elemento(s) sin aplicar o apartados; detalle en Ajustes, Sincronización.",
+            "title": "Apartados, se reintentan en cada sincronización ({count}):",
+            "item": "{family} {id} — {direction}, {reason}",
+            "sent": "enviado",
+            "received": "recibido",
+            "too_large": "rechazado por el servidor por su tamaño",
+            "interrupted": "no pudo pasar",
+            "invalid": "rechazado por el servidor por su contenido",
+            "reference": "enviado sin una referencia a un registro apartado, se reenvía cuando este pasa"
+        },
+        "allowance": {
+            "axis": {
+                "positions": "posiciones",
+                "matches": "partidas",
+                "storage": "MB de almacenamiento",
+                "collections": "colecciones",
+                "other": "elementos"
+            }
+        }
     },
     "emptyState": {
         "import": "Importar… (Ctrl+I)",

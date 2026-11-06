@@ -441,6 +441,9 @@
             // Camp au trait par défaut ; `flip_side` le change ensuite (fonctionnel.md §1.2, §2).
             case COMMAND.RESIGN:
                 return { Kind: 'resign', Level: command.value };
+            // Le match entier, rien ne suit : `transcript.KindForfeit`, pas une résignation.
+            case COMMAND.FORFEIT:
+                return { Kind: 'forfeit' };
             case COMMAND.CURSOR_BACK:
                 return { Kind: 'cursor_back' };
             case COMMAND.CURSOR_FORWARD:
@@ -485,7 +488,7 @@
         const pendingPlay = !inPlace && entry?.dice?.[0] > 0 && entry?.dice?.[1] > 0;
         // A cube decision starts at the previous Action's instant and is never estimated:
         // without it, say how to measure it.
-        if (videoSource && !inPlace && !pendingPlay && commands.some((c) => CUBE_KINDS.has(c.kind) && c.kind !== COMMAND.RESIGN) && !previousTimed()) {
+        if (videoSource && !inPlace && !pendingPlay && commands.some((c) => CUBE_KINDS.has(c.kind) && c.kind !== COMMAND.RESIGN && c.kind !== COMMAND.FORFEIT) && !previousTimed()) {
             noticeTranscription('transcription.notice.cubeUntimed');
         }
         /** @type {any[]} */
@@ -522,12 +525,12 @@
     }
 
     /** @type {Set<string>} */
-    const CUBE_KINDS = new Set([COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN]);
+    const CUBE_KINDS = new Set([COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN, COMMAND.FORFEIT]);
 
     // The gestures that write a Repère on a new Action; the engine keeps the Repères of
     // a correction in place whatever the panel sends.
     /** @type {Set<string>} */
-    const TIMED = new Set([COMMAND.DIE, COMMAND.ENTER_PLAY, COMMAND.VALIDATE, COMMAND.DANCE, COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN]);
+    const TIMED = new Set([COMMAND.DIE, COMMAND.ENTER_PLAY, COMMAND.VALIDATE, COMMAND.DANCE, COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN, COMMAND.FORFEIT]);
 
     /** @returns {number | null} the video's current instant, null without a source or a ready player */
     function videoNow() {
@@ -1561,7 +1564,7 @@
     // Commands after which the panel re-reads the Cursor the engine chose:
     // walking, every edit, and the cube gestures (which may correct in place).
     /** @type {Set<string>} */
-    const REARMING = new Set([COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN, ...EDITS]);
+    const REARMING = new Set([COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN, COMMAND.FORFEIT, ...EDITS]);
 
     /**
      * Runs one command from a key, a button or the global dispatcher.

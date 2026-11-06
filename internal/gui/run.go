@@ -25,6 +25,9 @@ func Run(assets embed.FS, icon []byte, width, height int, db *database.Database,
 		if c, ok := bind.(AssistantConsent); ok {
 			app.assistant.consent = c.AssistantConsentURL
 		}
+		if c, ok := bind.(SyncSettingsSource); ok {
+			app.sync.source = c
+		}
 	}
 	return wails.Run(&options.App{
 		Title:  "blunderDB",

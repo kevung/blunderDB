@@ -83,8 +83,8 @@ var serverOnly = map[string]string{
 	"/v1/search.countUpTo": "a bound on a count for a remote reader; a library of one counts whole",
 	// The peer of an exchange reaches the daemon only by HTTP; the desktop and
 	// the CLI hold their own library and call package changeset directly.
-	"/v1/changeset.export": "package changeset, shared: no Database method wraps it",
-	"/v1/changeset.import": "package changeset, shared: no Database method wraps it",
+	"/v1/changeset.export":        "package changeset, shared: no Database method wraps it",
+	"/v1/changeset.import":        "package changeset, shared: no Database method wraps it",
 	"/v1/changeset.setJournalOff": "the operator's cut of a public library's journal: a library file keeps its own",
 	// One Database method per alias gesture takes the kind ("player" or
 	// "event"); the daemon spells the kind in the path.

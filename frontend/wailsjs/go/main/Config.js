@@ -106,6 +106,10 @@ export function GetStatsFilter() {
   return window['go']['main']['Config']['GetStatsFilter']();
 }
 
+export function GetSync() {
+  return window['go']['main']['Config']['GetSync']();
+}
+
 export function GetTabOrder() {
   return window['go']['main']['Config']['GetTabOrder']();
 }
@@ -242,6 +246,10 @@ export function SaveStatsFilter(arg1) {
   return window['go']['main']['Config']['SaveStatsFilter'](arg1);
 }
 
+export function SaveSync(arg1) {
+  return window['go']['main']['Config']['SaveSync'](arg1);
+}
+
 export function SaveTabOrder(arg1) {
   return window['go']['main']['Config']['SaveTabOrder'](arg1);
 }
@@ -272,4 +280,12 @@ export function SaveWatchFolder(arg1, arg2, arg3) {
 
 export function SaveWindowDimensions(arg1, arg2) {
   return window['go']['main']['Config']['SaveWindowDimensions'](arg1, arg2);
+}
+
+export function SyncAutoStart() {
+  return window['go']['main']['Config']['SyncAutoStart']();
+}
+
+export function SyncServerAddress() {
+  return window['go']['main']['Config']['SyncServerAddress']();
 }
