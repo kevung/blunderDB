@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"os"
 	"regexp"
 	"strconv"
@@ -31,10 +32,17 @@ func loaderPredicate(tenant int64) string { return "tenant_id = " + strconv.Form
 
 var digits = regexp.MustCompile(`\d+`)
 
-// loaderTenantFromEnv is 0 when the variable is unset or not a tenant.
+// loaderTenantFromEnv is 0 when the variable is unset or not a tenant. A value
+// that is set but invalid is logged and counts as unset, so the role loses its
+// rights rather than keeping those of an earlier start.
 func loaderTenantFromEnv() int64 {
-	n, err := strconv.ParseInt(strings.TrimSpace(os.Getenv(LoaderTenantEnv)), 10, 64)
+	raw := strings.TrimSpace(os.Getenv(LoaderTenantEnv))
+	if raw == "" {
+		return 0
+	}
+	n, err := strconv.ParseInt(raw, 10, 64)
 	if err != nil || n <= 0 {
+		slog.Warn("loader tenant ignored: the loader role is closed", "env", LoaderTenantEnv, "value", raw, "want", "an integer above 0")
 		return 0
 	}
 	return n
@@ -52,19 +60,20 @@ var loaderReads = []string{"metadata", "schema_migrations"}
 // ApplyLoaderRole grants the loader role what an import writes and installs
 // its policy for tenant on every tenant table, when an exploitant created the
 // role and tenant is above 0; else it does nothing, the role reaching no
-// table. A policy for another tenant is replaced. Idempotent, and silent once
+// table and, if an earlier start opened it, losing its policy and rights. A
+// policy for another tenant is replaced. Idempotent, and silent once
 // in place: a start takes no lock. Run by the tables' owner, after Migrate and
 // ApplyRLS.
 func (s *Storage) ApplyLoaderRole(ctx context.Context, tenant int64) error {
-	if tenant <= 0 {
-		return nil
-	}
 	var exists bool
 	if err := s.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = $1)`, LoaderRole).Scan(&exists); err != nil {
 		return fmt.Errorf("postgres: loader role: %w", err)
 	}
 	if !exists {
 		return nil
+	}
+	if tenant <= 0 {
+		return s.closeLoaderRole(ctx)
 	}
 	var stmts []string
 	for _, t := range rlsTables {
@@ -110,6 +119,52 @@ func (s *Storage) ApplyLoaderRole(ctx context.Context, tenant int64) error {
 		for _, stmt := range stmts {
 			if _, err := tx.Exec(ctx, stmt); err != nil {
 				return fmt.Errorf("postgres: loader role: %w", err)
+			}
+		}
+		return nil
+	})
+}
+
+// closeLoaderRole removes the loader policy and every right an earlier start
+// gave the role, so that an unset tenant means what the documentation says.
+func (s *Storage) closeLoaderRole(ctx context.Context) error {
+	var stmts []string
+	for _, t := range rlsTables {
+		if _, found, err := s.loaderPolicyQual(ctx, t); err != nil {
+			return err
+		} else if found {
+			stmts = append(stmts, `DROP POLICY `+loaderPolicy+` ON `+t)
+		}
+		for _, priv := range loaderPrivileges {
+			var granted bool
+			if err := s.pool.QueryRow(ctx, `SELECT has_table_privilege($1, $2, $3)`, LoaderRole, t, priv).Scan(&granted); err != nil {
+				return fmt.Errorf("postgres: loader role on %s: %w", t, err)
+			}
+			if granted {
+				stmts = append(stmts, `REVOKE `+priv+` ON `+t+` FROM `+LoaderRole)
+			}
+		}
+	}
+	for _, t := range loaderReads {
+		var granted bool
+		if err := s.pool.QueryRow(ctx, `SELECT has_table_privilege($1, $2, 'SELECT')`, LoaderRole, t).Scan(&granted); err != nil {
+			return fmt.Errorf("postgres: loader role on %s: %w", t, err)
+		}
+		if granted {
+			stmts = append(stmts, `REVOKE SELECT ON `+t+` FROM `+LoaderRole)
+		}
+	}
+	if len(stmts) == 0 {
+		return nil
+	}
+	stmts = append(stmts, `REVOKE USAGE ON ALL SEQUENCES IN SCHEMA `+pgx.Identifier{"public"}.Sanitize()+` FROM `+LoaderRole)
+	return pgx.BeginFunc(ctx, s.pool, func(tx pgx.Tx) error {
+		if _, err := tx.Exec(ctx, `SET LOCAL lock_timeout = '`+rlsLockTimeout+`'`); err != nil {
+			return err
+		}
+		for _, stmt := range stmts {
+			if _, err := tx.Exec(ctx, stmt); err != nil {
+				return fmt.Errorf("postgres: close loader role: %w", err)
 			}
 		}
 		return nil

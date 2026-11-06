@@ -53,6 +53,9 @@ func RunCLI(args []string) error {
 		fs.Usage()
 		return fmt.Errorf("load: --dsn, --source and --tenant (above 0) are required")
 	}
+	if *memMiB < 0 || *memMiB > MaxMemoryLimitMiB {
+		return fmt.Errorf("load: --memory-limit-mb must be between 0 (none) and %d, got %d", MaxMemoryLimitMiB, *memMiB)
+	}
 	if *memMiB > 0 {
 		debug.SetMemoryLimit(*memMiB << 20)
 	}

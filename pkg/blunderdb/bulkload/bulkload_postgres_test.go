@@ -497,3 +497,58 @@ func TestServerRefusesAMemberOfTheLoader(t *testing.T) {
 		t.Errorf("the server started as a member of the loader: %v", err)
 	}
 }
+
+func loaderRights(t *testing.T, c *cluster, db string) (policies, privileges int) {
+	t.Helper()
+	conn, err := pgx.Connect(context.Background(), c.dsn(db, "", ""))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(context.Background())
+	if err := conn.QueryRow(context.Background(), `SELECT count(*) FROM pg_policies WHERE policyname = 'loader_public_only'`).Scan(&policies); err != nil {
+		t.Fatal(err)
+	}
+	if err := conn.QueryRow(context.Background(), `SELECT count(*) FROM information_schema.role_table_grants WHERE grantee = $1`, pg.LoaderRole).Scan(&privileges); err != nil {
+		t.Fatal(err)
+	}
+	return policies, privileges
+}
+
+// A start without a usable BLUNDERDB_LOADER_TENANT closes what an earlier start
+// opened: the role keeps neither its policy nor its rights, and cannot load.
+func TestLoaderTenantAbsentOrInvalidClosesTheRole(t *testing.T) {
+	for _, value := range []string{"", "1_000_000_000", "abc", "-3", "0"} {
+		t.Run("value="+value, func(t *testing.T) {
+			c := startCluster(t)
+			ctx := context.Background()
+			c.database("lib")
+			if p, g := loaderRights(t, c, "lib"); p == 0 || g == 0 {
+				t.Fatalf("the role was not open to begin with: %d policies, %d grants", p, g)
+			}
+			t.Setenv(pg.LoaderTenantEnv, value)
+			owner, err := pg.Open(ctx, c.dsn("lib", "", ""), nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer owner.Close()
+			if err := owner.ApplyRLS(ctx); err != nil {
+				t.Fatal(err)
+			}
+			if p, g := loaderRights(t, c, "lib"); p != 0 || g != 0 {
+				t.Errorf("the role kept %d policies and %d grants", p, g)
+			}
+			dir, _ := sampleDir(t, fixtures(t), 1)
+			if _, err := bulkload.Load(ctx, bulkload.Options{DSN: c.loaderDSN("lib"), Password: loaderPassword, Tenant: publicTenant, Source: dir}); err == nil {
+				t.Error("the closed role loaded")
+			}
+			// A later valid start opens it again.
+			t.Setenv(pg.LoaderTenantEnv, itoa(int(publicTenant)))
+			if err := owner.ApplyRLS(ctx); err != nil {
+				t.Fatal(err)
+			}
+			if p, g := loaderRights(t, c, "lib"); p == 0 || g == 0 {
+				t.Errorf("the role did not reopen: %d policies, %d grants", p, g)
+			}
+		})
+	}
+}

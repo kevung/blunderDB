@@ -35,6 +35,9 @@ const DefaultMaxWorkers = 8
 // DefaultMemoryLimitMiB is the Go runtime's soft memory limit of the CLI.
 const DefaultMemoryLimitMiB = 4096
 
+// MaxMemoryLimitMiB (1 PiB) keeps the limit in bytes, MiB << 20, far from int64 overflow.
+const MaxMemoryLimitMiB = 1 << 30
+
 // Options drive Load.
 type Options struct {
 	// DSN names the database and the loader role, without a password.

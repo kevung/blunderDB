@@ -80,7 +80,7 @@ sizes across all application instances.
 files into one tenant, given by `--tenant N` (above 0), as `blunderdb_loader`. The role is created by the
 exploitant (superuser), `NOSUPERUSER NOBYPASSRLS`, `NOLOGIN` outside a load;
 the engine never creates it. When it exists and the server runs with
-`BLUNDERDB_LOADER_TENANT=N` (unset: the role reaches nothing), `ApplyRLS` (run by the tables'
+`BLUNDERDB_LOADER_TENANT=N` (unset or invalid, logged: the role reaches nothing, and a start revokes the policy and rights an earlier start gave it), `ApplyRLS` (run by the tables'
 owner at each `serve --rls` start) grants it `SELECT, INSERT, UPDATE, DELETE`
 on the tenant tables (never `TRUNCATE`, which no policy filters), `SELECT` on
 `metadata` and `schema_migrations`, the sequences, and adds on every tenant
