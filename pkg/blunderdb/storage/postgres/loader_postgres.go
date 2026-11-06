@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/fs"
 	"os"
@@ -120,7 +121,7 @@ func (s *Storage) loaderPolicyQual(ctx context.Context, table string) (qual stri
 	var q *string
 	err = s.pool.QueryRow(ctx, `SELECT qual FROM pg_policies WHERE schemaname = current_schema() AND tablename = $1 AND policyname = $2`,
 		table, loaderPolicy).Scan(&q)
-	if err == pgx.ErrNoRows {
+	if errors.Is(err, pgx.ErrNoRows) {
 		return "", false, nil
 	}
 	if err != nil {
