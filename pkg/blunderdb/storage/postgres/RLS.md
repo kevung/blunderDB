@@ -73,3 +73,43 @@ starting points for a dedicated server:
 The connection pool (`pgxpool`) is sized from `BLUNDERDB_POSTGRES_MAX_CONNS`
 (default 50). Ensure `max_connections` comfortably exceeds the sum of pool
 sizes across all application instances.
+
+## The loader role — offline bulk load of one tenant's library
+
+`cmd/blunderdb-load` (package `bulkload`) loads a large collection of `.xg`
+files into one tenant, given by `--tenant N` (above 0), as `blunderdb_loader`. The role is created by the
+exploitant (superuser), `NOSUPERUSER NOBYPASSRLS`, `NOLOGIN` outside a load;
+the engine never creates it. When it exists and the server runs with
+`BLUNDERDB_LOADER_TENANT=N` (unset or invalid, logged: the role reaches nothing, and a start revokes the policy and rights an earlier start gave it), `ApplyRLS` (run by the tables'
+owner at each `serve --rls` start) grants it `SELECT, INSERT, UPDATE, DELETE`
+on the tenant tables (never `TRUNCATE`, which no policy filters), `SELECT` on
+`metadata` and `schema_migrations`, the sequences, and adds on every tenant
+table:
+
+```sql
+CREATE POLICY loader_public_only ON position AS RESTRICTIVE FOR ALL
+    TO blunderdb_loader USING (tenant_id = N) WITH CHECK (tenant_id = N);
+```
+
+A restrictive policy is AND-ed with `tenant_isolation`: whatever
+`app.tenant_id` the session sets, it reaches tenant N only. Changing the variable replaces the policy at the next start; `OpenLoader` refuses a `--tenant` the policy does not name.
+
+- **Why not `BYPASSRLS`.** `COPY FROM` is refused on any table where RLS
+  applies to the role, a permissive policy of its own included; only
+  `BYPASSRLS` lifts that, and it opens every tenant. The loader sends its rows
+  by `COPY` to a **session temporary table** (no policy, no lasting object),
+  then the ordinary `INSERT … SELECT … ON CONFLICT … RETURNING` moves them under
+  the policy. Only a loader's transaction does so (`copyTx`); the pool and a
+  server's transactions keep the `unnest` statements. `COPY` straight into `position` could not do the conflict on
+  `(tenant_id, zobrist_hash)` nor return ids anyway.
+- **Never serves.** `postgres.Open` (every server and migration path) refuses
+  a role that is, or is a member of, the loader; the loader opens with
+  `OpenLoader`, which does not migrate and refuses a schema behind this binary.
+- **Secret.** `--password-file` (default `/run/secrets/blunderdb_loader_password`);
+  a `--dsn` holding a password is refused; no fallback password.
+- **Resumable.** One import batch per load: each group of files commits with
+  its journal lines, and `--batch N` skips by SHA-256 what committed.
+  Positions, matches and analyses are the ordinary import's (test
+  `TestLoadMatchesTheOrdinaryImport`). The public journal is cut
+  (`change_journal = off`) and never restored by the load. No index is dropped:
+  that needs the table owner, and the tables hold every tenant.

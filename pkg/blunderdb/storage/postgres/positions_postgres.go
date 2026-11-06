@@ -647,12 +647,12 @@ func (s *positionStore) saveChunk(ctx context.Context, tenant int64, chunk []*do
 		hashes[i] = int64(cols.ZobristHash)
 		rows[i] = append(positionInsertArgs(tenant, cols, &norms[i]), matchDate)
 	}
-	args, err := bulkColumns(positionBulkInsertTypes, rows)
+	q, args, err := bulkStatement(ctx, s.db, positionBulkInsertSQL, positionBulkInsertTypes, rows)
 	if err != nil {
 		return err
 	}
 	inserted := make(map[int64]int64, len(chunk))
-	if err := s.scanHashIDs(ctx, inserted, positionBulkInsertSQL, args...); err != nil {
+	if err := s.scanHashIDs(ctx, inserted, q, args...); err != nil {
 		return fmt.Errorf("postgres: save position: %w", outOfRange(err))
 	}
 	if len(inserted) > 0 {

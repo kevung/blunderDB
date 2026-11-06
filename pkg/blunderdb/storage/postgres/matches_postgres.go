@@ -1028,11 +1028,11 @@ func (s *matchStore) createMovesChunk(ctx context.Context, tenant int64, mvs []*
 			sqlshared.MSArg(mv.RollTickMS), sqlshared.MSArg(mv.TickMS),
 		}
 	}
-	args, err := bulkColumns(moveBulkTypes, rows)
+	q, args, err := bulkStatement(ctx, s.db, moveBulkInsertSQL, moveBulkTypes, rows)
 	if err != nil {
 		return err
 	}
-	res, err := s.db.Query(ctx, moveBulkInsertSQL, args...)
+	res, err := s.db.Query(ctx, q, args...)
 	if err != nil {
 		return fmt.Errorf("postgres: create move: %w", referenced(err))
 	}
