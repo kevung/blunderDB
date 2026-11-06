@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.51.0" date="2026-11-06">
+      <description>
+        <ul>
+          <li>A library synchronises with a remote server from a new Synchronization tab of the settings, with the access token kept in the system keychain</li>
+          <li>A server limit no longer stops reception, and records a server refuses stay listed and retried</li>
+          <li>Search holds up on very large PostgreSQL databases, and a database takes about half the space</li>
+          <li>The change journal can be switched off for a tenant</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.50.0" date="2026-11-05">
       <description>
         <ul>

@@ -28,6 +28,7 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -122,11 +123,20 @@ func nullable(v *int64) int64 {
 
 // actionDim maps a scanned action-code column to its stored dimension. A
 // value of any other type is an error: reading it as a text cell silently
-// lost the cube cells once.
+// lost the cube cells once. A library file migrated from an old schema keeps
+// TEXT columns, so a code scans as its digits and no action as an empty
+// string; a label reads the empty string as no action, as it reads NULL.
 func actionDim(v any) (int64, error) {
 	switch x := v.(type) {
 	case nil:
 		return cellNull, nil
+	case string:
+		if x == "" {
+			return cellNull, nil
+		}
+		if n, err := strconv.ParseInt(x, 10, 64); err == nil {
+			return n, nil
+		}
 	case int64:
 		return x, nil
 	case int32:
