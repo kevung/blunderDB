@@ -69,6 +69,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    changeset
      POST /v1/changeset.export                     JSON
      POST /v1/changeset.import                     JSON
+     POST /v1/changeset.setJournalOff              JSON
    collections
      POST /v1/collections.addPosition              JSON
      POST /v1/collections.addPositions             JSON
@@ -339,6 +340,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rollout.position                     custom
    search
      POST /v1/search.count                         JSON
+     POST /v1/search.countUpTo                     JSON
      POST /v1/search.find                          NDJSON
      POST /v1/search.ids                           JSON
      POST /v1/search.indexOf                       JSON

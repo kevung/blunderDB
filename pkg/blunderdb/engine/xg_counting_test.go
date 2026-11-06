@@ -167,3 +167,18 @@ func TestPopulateAnalysisColumns_UnscoredMove(t *testing.T) {
 		t.Errorf("scored played move: %+v", c)
 	}
 }
+
+func TestPopulateAnalysisColumns_CubeDecisionPlaysNoMove(t *testing.T) {
+	t.Parallel()
+	e := 0.05
+	a := &domain.PositionAnalysis{CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+		{Move: "13/9", Equity: 0.1}, {Move: "24/20", Equity: 0.05, EquityError: &e},
+	}}}
+	pos := domain.InitializePosition()
+	pos.DecisionType = domain.CubeAction
+	for _, played := range []string{"24/20", "6/2"} {
+		if c := PopulateAnalysisColumns(a, played, "", &pos); c.BestMoveUnscored || c.BestMoveErrorArg() != int64(0) {
+			t.Errorf("played %q on a cube decision: %+v", played, c)
+		}
+	}
+}

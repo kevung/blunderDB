@@ -84,6 +84,7 @@ type serveConfig struct {
 	identityDir     string
 	identityName    string
 	importDir       string
+	maxSpool        int64
 	pprofAddr       string
 }
 
@@ -141,6 +142,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		identityDir     = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
 		identityName    = fs.String("identity-name", os.Getenv("BLUNDERDB_IDENTITY_NAME"), "name this daemon's identity signs with, shown to whoever opens a watermarked export and on every comment it signs — one name for every tenant (empty keeps the stored one; \""+defaultIdentityName+"\" on first use)")
 		importDir       = fs.String("import-dir", os.Getenv("BLUNDERDB_IMPORT_DIR"), "directory on this host from which imports.batch may read match files by path (off by default: without it a batch comes only as an uploaded archive); a path outside it is refused")
+		maxSpool        = fs.Int64("max-spool-bytes", int64(envIntOr("BLUNDERDB_MAX_SPOOL_BYTES", 0)), "disk space the imports in flight may hold at once, across every tenant: an upload holds up to twice its size, a batch what its archive unpacks to (0 = 4 × the largest upload)")
 		opsAddr         = fs.String("ops-addr", envOr("BLUNDERDB_OPS_ADDR", ""), "optional listener for the /ops/ family (maintenance.vacuum, tenant.purge) on a SEPARATE address, e.g. \"127.0.0.1:8081\"; empty (the default) serves /ops/ on --addr, where the reverse proxy in front is expected to refuse the prefix (#233)")
 		pprofAddr       = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
 	)
@@ -153,6 +155,9 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 
 	if *quotaPositions < 0 || *quotaBytes < 0 || *quotaAnalysis < 0 || *quotaImports < 0 {
 		return nil, fmt.Errorf("serve: a quota is a bound, 0 or more (0 = unlimited)")
+	}
+	if *maxSpool < 0 {
+		return nil, fmt.Errorf("serve: --max-spool-bytes is 0 (the default) or more")
 	}
 	if *heavySlots < -1 {
 		return nil, fmt.Errorf("serve: --heavy-slots is -1 (unbounded), 0 (by backend) or more")
@@ -191,6 +196,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		identityDir:     *identityDir,
 		identityName:    *identityName,
 		importDir:       *importDir,
+		maxSpool:        *maxSpool,
 		pprofAddr:       *pprofAddr,
 	}
 	if cfg.dbPath != "" {
@@ -293,6 +299,7 @@ func RunServe(args []string) error {
 		AnalysisWeights:  cfg.analysisWeights,
 		Identity:         identity,
 		ImportDir:        cfg.importDir,
+		MaxSpoolBytes:    cfg.maxSpool,
 		HeavySlots:       heavySlotsFor(cfg.backend, cfg.heavySlots),
 		StatsReady:       statsReady,
 	})

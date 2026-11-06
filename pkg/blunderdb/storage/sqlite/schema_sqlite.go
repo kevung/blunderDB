@@ -938,7 +938,12 @@ var schemaStatements = []string{
 	// idx_analysis_win_gammon and idx_analysis_win1 (a strict prefix).
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon_covering ON analysis(player1_win_rate, player1_gammon_rate, position_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_error_order    ON analysis(best_move_equity_error DESC, position_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon1        ON analysis(player1_gammon_rate)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis(player2_gammon_rate)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_blunder        ON analysis(position_id) WHERE best_move_equity_error >= 100 OR cube_error >= 100`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy1     ON position(occupancy_1, occupancy_2)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_occupancy2     ON position(occupancy_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis(is_forced) WHERE is_forced = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_close_cube  ON analysis(is_close_cube) WHERE is_close_cube = 1`,
 	// The comment-presence filter (`co`/`xco`) probes this table once per search
@@ -968,7 +973,6 @@ var schemaStatements = []string{
 	// The few analyses computed with an imported table: the stats read them to
 	// leave out what another table valued (ADR-0068).
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_met            ON analysis(met_id) WHERE met_id IS NOT NULL`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_creation_date  ON analysis(creation_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_match_date     ON position(match_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_multi_played   ON position(id) WHERE multi_played = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,
@@ -1176,6 +1180,10 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 	have, err := indexNames(ctx, db)
 	if err != nil {
 		return err
+	}
+	// No statement reads it; 1 GB on the largest library.
+	if _, err := db.ExecContext(ctx, `DROP INDEX IF EXISTS idx_analysis_creation_date`); err != nil {
+		return fmt.Errorf("sqlite: drop a retired index: %w", err)
 	}
 	for _, stmt := range ref.indexes {
 		if _, err := db.ExecContext(ctx, stmt); err != nil {

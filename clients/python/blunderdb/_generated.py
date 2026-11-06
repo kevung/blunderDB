@@ -234,6 +234,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/changeset.import — JSON."
         return self._call("/v1/changeset.import", payload)
 
+    def changeset_set_journal_off(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/changeset.setJournalOff — JSON."
+        return self._call("/v1/changeset.setJournalOff", payload)
+
     def collections_add_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.addPosition — JSON."
         return self._call("/v1/collections.addPosition", payload)
@@ -1213,6 +1217,10 @@ class GeneratedAPI(BaseClient):
     def search_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/search.count — JSON."
         return self._call("/v1/search.count", payload)
+
+    def search_count_up_to(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.countUpTo — JSON."
+        return self._call("/v1/search.countUpTo", payload)
 
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."

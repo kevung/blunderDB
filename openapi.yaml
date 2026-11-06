@@ -1093,6 +1093,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/changeset_Report"
+  /v1/changeset.setJournalOff:
+    post:
+      operationId: changeset.setJournalOff
+      tags: [changeset]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/changesetJournalReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
   /v1/collections.addPosition:
     post:
       operationId: collections.addPosition
@@ -6485,6 +6502,23 @@ paths:
               schema:
                 type: integer
                 format: int32
+  /v1/search.countUpTo:
+    post:
+      operationId: search.countUpTo
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchCountUpToReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/searchCountUpToResp"
   /v1/search.find:
     post:
       operationId: search.find
@@ -8652,6 +8686,8 @@ components:
           type: string
         error:
           type: string
+        code:
+          type: string
     batchStatus:
       type: object
       properties:
@@ -8697,6 +8733,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/changeset_Record"
+    changesetJournalReq:
+      type: object
+      properties:
+        off:
+          type: boolean
     changeset_Record:
       type: object
       description: "Opaque: see the Go type changeset.Record (defined outside internal/server, not expanded here)."
@@ -10130,6 +10171,22 @@ components:
             $ref: "#/components/schemas/domain_RolloutAnalysis"
     scopeReq:
       type: object
+    searchCountUpToReq:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/domain_SearchFilters"
+        max:
+          type: integer
+          format: int32
+    searchCountUpToResp:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+        capped:
+          type: boolean
     searchFindReq:
       type: object
       properties:

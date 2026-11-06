@@ -10,6 +10,7 @@ import (
 	"slices"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"log/slog"
 
@@ -38,17 +39,12 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	$15,$16,$17::timestamp AT TIME ZONE 'UTC')`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
-// same statement, so concurrent saves cannot insert two rows. The conflict
-// target names the UNIQUE index idx_analysis_position; position
-// ids are unique across tenants (one BIGSERIAL sequence), so the index needs
-// no tenant_id and the target is position_id alone. That target also
-// catches another tenant's row, so the WHERE keeps the update inside the
-// writer's tenant: a foreign row is left as it is. Save checks the position
-// is the tenant's first (requireOwned), so a foreign position with or without
-// an analysis gets the same ErrNotFound; the WHERE holds even without it.
+// same statement, so concurrent saves cannot insert two rows. Save checks the
+// position is the tenant's first (requireOwned), so a foreign position with or
+// without an analysis gets the same ErrNotFound.
 // met_id follows the SQLite upsert: dropped unless the verdict is gammonNet's.
 const analysisUpsertSQL = analysisInsertSQL + `
-ON CONFLICT (position_id) DO UPDATE SET
+ON CONFLICT (tenant_id, position_id) DO UPDATE SET
 	data=excluded.data,
 	best_cube_action=excluded.best_cube_action,
 	cube_error=excluded.cube_error,
@@ -123,7 +119,7 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 		// read again under it, since the writer we waited for may have made it.
 		if _, err := s.db.Exec(ctx, `SELECT pg_advisory_xact_lock($1)`,
 			guardKey(storage.AnalysisGuardKey(scope, positionID))); err != nil {
-			return false, fmt.Errorf("postgres: guard analysis for position %d: %w", positionID, err)
+			return false, fmt.Errorf("postgres: guard analysis for position %d: %w", positionID, lockTableFull(err))
 		}
 		err = load()
 	}
@@ -221,16 +217,16 @@ func (s *analysisStore) positionOf(ctx context.Context, tenant, positionID int64
 		return played.Position, nil
 	}
 	var state []byte
-	var por, d1, d2 *int64
+	var por, d1, d2, dt *int64
 	err := s.db.QueryRow(ctx, `SELECT `+sqlshared.PlayPositionColumns+` FROM position p WHERE p.id = $1 AND p.tenant_id = $2`,
-		positionID, tenant).Scan(&state, &por, &d1, &d2)
+		positionID, tenant).Scan(&state, &por, &d1, &d2, &dt)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
 	}
 	if err != nil {
 		return nil, fmt.Errorf("postgres: read position %d to replay its plays: %w", positionID, err)
 	}
-	return sqlshared.PlayPosition(state, por, d1, d2), nil
+	return sqlshared.PlayPosition(state, por, d1, d2, dt), nil
 }
 
 // write encodes a prepared analysis into the BYTEA data column and upserts
@@ -458,8 +454,8 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 		bestMoveUnscored     bool
 		forced, closeCub     bool
 		// The position's columns its legal plays depend on.
-		state       []byte
-		por, d1, d2 *int64
+		state           []byte
+		por, d1, d2, dt *int64
 		// The match's own record of what was played, joined in here rather
 		// than looked up row by row: a repair walks every analysis in the
 		// tenant.
@@ -485,7 +481,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
+				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2, &r.dt); err != nil {
 					return fmt.Errorf("postgres: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -510,7 +506,7 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 				a.PlayedMoves, a.PlayedCubeActions,
 				[]string{deref(r.mvMove)}, []string{deref(r.mvCube)})
 			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
-				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2))
+				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2, r.dt))
 			analyses[r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
@@ -830,6 +826,72 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 	return nil
 }
 
+// analysisBulkTypes are the columns of analysisInsertSQL, in order.
+var analysisBulkTypes = []string{
+	bulkBigint, bulkBigint, bulkBytea,
+	bulkInt, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkBigint,
+	bulkBigint, bulkBigint, bulkBigint,
+	bulkBool, bulkBool,
+	bulkText, bulkInt, bulkTime,
+}
+
+var analysisBulkInsertSQL = insertHead(analysisInsertSQL) + " " + unnestSelect(analysisBulkTypes)
+
+// SaveFresh — see storage.AnalysisStore. A chunk is one statement, and one
+// more for the cube-response flags.
+func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []storage.FreshAnalysis) error {
+	tenant := tenantID(scope)
+	for start := 0; start < len(items); start += saveManyChunk {
+		chunk := items[start:min(start+saveManyChunk, len(items))]
+		rows := make([][]any, len(chunk))
+		var responses []int64
+		for i, it := range chunk {
+			c, err := s.prepare(ctx, tenant, it.PositionID, it.Analysis, it.Played)
+			if err != nil {
+				return err
+			}
+			data, err := engine.EncodeAnalysisForStorage(it.Analysis)
+			if err != nil {
+				return fmt.Errorf("postgres: encode analysis: %w", err)
+			}
+			bestCube, err := actionCode(ctx, s.db, tenant, c.BestCubeAction)
+			if err != nil {
+				return fmt.Errorf("postgres: save analysis: %w", err)
+			}
+			rows[i] = []any{
+				tenant, it.PositionID, data,
+				bestCube, c.CubeError, c.BestMoveErrorArg(),
+				c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
+				c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
+				c.IsForced != 0, c.IsCloseCube != 0,
+				c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate),
+			}
+			if slices.ContainsFunc(it.Analysis.PlayedCubeActions, engine.IsResponseCubeAction) {
+				responses = append(responses, it.PositionID)
+			}
+		}
+		args, err := bulkColumns(analysisBulkTypes, rows)
+		if err != nil {
+			return err
+		}
+		if _, err := s.db.Exec(ctx, analysisBulkInsertSQL, args...); err != nil {
+			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
+		}
+		if err := analyzeFirstOfTenant(ctx, s.db, "analysis", "position_id", tenant, chunk[0].PositionID); err != nil {
+			return err
+		}
+		if len(responses) > 0 {
+			if _, err := s.db.Exec(ctx,
+				`UPDATE position SET is_cube_response = TRUE WHERE tenant_id = $1 AND id = ANY($2)`,
+				tenant, responses); err != nil {
+				return fmt.Errorf("postgres: flag cube response: %w", err)
+			}
+		}
+	}
+	return nil
+}
+
 // playPositions is positionOf for several positions in one read: what of
 // each stored position its checker plays depend on, nil (or absent) when it
 // has none.
@@ -844,14 +906,29 @@ func (s *analysisStore) playPositions(ctx context.Context, tenant int64, ids []i
 	for rows.Next() {
 		var id int64
 		var state []byte
-		var por, d1, d2 *int64
-		if err := rows.Scan(&id, &state, &por, &d1, &d2); err != nil {
+		var por, d1, d2, dt *int64
+		if err := rows.Scan(&id, &state, &por, &d1, &d2, &dt); err != nil {
 			return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
 		}
-		out[id] = sqlshared.PlayPosition(state, por, d1, d2)
+		out[id] = sqlshared.PlayPosition(state, por, d1, d2, dt)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("postgres: read positions to replay their plays: %w", err)
 	}
 	return out, nil
+}
+
+// lockTableFull names what an exhausted lock table (SQLSTATE 53200) means here.
+// Each position already stored without an analysis holds one advisory lock until
+// the transaction ends, and the lock table holds max_locks_per_transaction x
+// (max_connections + prepared transactions) entries, 6,400 at the defaults: past
+// that, the whole import rolls back and other sessions may fail with it. The
+// transaction cannot be split without losing its all-or-nothing, so the limit is
+// stated and documented (mode_headless) rather than hidden.
+func lockTableFull(err error) error {
+	var pe *pgconn.PgError
+	if errors.As(err, &pe) && pe.Code == "53200" {
+		return fmt.Errorf("%w: the import analyses more already-stored positions than the PostgreSQL lock table holds (about max_locks_per_transaction x max_connections, 6400 by default): raise max_locks_per_transaction or import in smaller files", err)
+	}
+	return err
 }

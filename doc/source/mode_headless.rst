@@ -168,6 +168,12 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
      - ``0``
      - imports d'un même tenant en cours à la fois (429, ``quota_exceeded``) ;
        0 = illimité
+   * - ``--max-spool-bytes <n>``
+     - ``0``
+     - espace disque que les imports en cours occupent ensemble, tous tenants
+       confondus (429 au-delà) : un envoi réserve deux fois sa taille déclarée,
+       un lot ce que son archive annonce ; 0 = quatre fois le plus gros envoi
+       admis
    * - ``--analysis-workers <n>``
      - ``0``
      - travailleurs du moteur que partagent les balayages et les évaluations
@@ -1158,6 +1164,28 @@ reprendre que les marques, comme ``--skip-duplicates`` en ligne de commande.
 ``importId`` (en-tête ``Idempotency-Replayed: true``) sans relancer l'import. Pour
 un lot reçu en archive, la clé désigne le lot, pas le contenu de l'archive.
 
+Deux limites tiennent à PostgreSQL. L'archive d'un lot est comptée à la taille
+logique de ses entrées (trous des archives creuses compris) : une somme qui
+déborde, ou des octets écrits au-delà de ce que le lot a réservé, la fait
+refuser (400) et efface ce qui avait été écrit. Le rôle de la base doit être
+propriétaire des tables, ou détenir ``MAINTAIN`` (PostgreSQL 17) : sinon les
+statistiques du premier import d'un tenant ne sont pas calculées, ce que le
+serveur journalise une fois par processus (``import statistics skipped``) et
+que l'import mesure en plans plus lents jusqu'au passage de l'autovacuum.
+Enfin, un ``imports.db`` qui analyse plus de positions déjà présentes et sans
+analyse que la table des verrous n'en contient (``max_locks_per_transaction`` ×
+``max_connections``, soit environ 6 400 aux réglages par défaut) échoue en bloc
+avec une erreur qui le dit (``out of shared memory``, SQLSTATE 53200) : relever
+``max_locks_per_transaction`` ou importer en fichiers plus petits.
+
+Chaque fichier refusé porte un ``code`` stable en plus de son texte, dans le
+statut comme dans le rapport (l'import d'un fichier le rend en ``import_code``
+dans son événement d'erreur) : ``unknown_format``, ``truncated``, ``corrupt``,
+``too_large``, ``empty`` ou ``internal``. Un doublon n'est pas une erreur : le
+rapport le compte à part. L'import d'un fichier accepte ``?report=deferred`` :
+son dernier événement omet alors le rapport, que ``imports.report`` rend à la
+demande.
+
 ``imports.batch.status`` (``{"importId": …}``) rend l'état (``receiving``,
 ``running``, ``done``, ``cancelled`` ou ``failed``) et la progression
 mesurée par le pipeline : fichiers traités, matchs importés, doublons, fichiers en
@@ -1465,6 +1493,53 @@ et n'efface rien que l'autre garde : la note ou la description qui manque d'un c
 est reprise, deux notes sont gardées ensemble, la révision la plus avancée l'emporte.
 ``skipped``, dans la page exportée, compte les objets du journal dont le contenu n'a pas pu être lu ;
 une collection dont la requête désigne des lignes par leur numéro (``id12``, ``ma3``) ne voyage pas.
+
+**Serveur de synchronisation.** L'onglet *Synchronisation* des paramètres
+(voir :ref:`synchronisation_distante`) tient la bibliothèque ouverte au même
+état qu'un serveur distant, quel qu'il soit, pourvu qu'il réponde aux deux
+mêmes appels que ``blunderdb serve``, sous l'adresse que l'utilisateur colle
+(son ``<base>`` peut porter un préfixe, par exemple ``https://hôte/api``) :
+
+* ``POST <base>/v1/changeset.export`` avec ``{"cursor": {…}, "limit": N}`` rend
+  ``200`` et ``{"cursor": {…}, "more": bool, "records": […]}``. Le curseur est
+  opaque, ``{}`` repart du début ; ``limit`` ne dépasse pas 1000 (l'application
+  en demande 500). Un enregistrement est ``{"seq", "uuid", "family", "op",
+  "changed_at", "payload"?}``. Le serveur doit pouvoir rendre un curseur qu'il a
+  émis, et répondre ``410`` quand il ne peut plus en reprendre un. Un serveur
+  qui ne veut pas porter un enregistrement trop gros rend une page vide dont le
+  curseur le dépasse et qui le nomme : ``"skipped": [{"family", "uuid",
+  "size"}]``. Sans cela, une page d'un seul enregistrement est servie quelle
+  que soit sa taille.
+* ``POST <base>/v1/changeset.import`` avec ``{"records": […]}`` (au plus 500
+  enregistrements, ceux d'un ``changeset.export``) fusionne, la dernière
+  écriture gagnant, et rend ``200`` et le rapport (``applied``, ``added``,
+  ``modified``, ``removed``, ``older``, ``conflicts``, ``missing``,
+  ``unsupported``). Un enregistrement répété ne change rien.
+* Chaque requête porte ``Authorization: Bearer <jeton>`` et
+  ``Content-Type: application/json``. Le jeton ne figure jamais dans l'adresse.
+  ``401`` ou ``403`` : jeton refusé ; ``413`` avec le code ``payload_too_large``
+  ou ``record_too_large`` : envoi trop gros pour le serveur (tout autre ``413``,
+  d'un mandataire par exemple, arrête le passage sans rien enjamber) ; ``400``
+  de code ``invalid_body`` : corps coupé ou trop lent ; ``429`` : débit
+  atteint ; ``410`` sur l'export : curseur périmé ; tout autre échec porte
+  l'enveloppe ``{"error": {"code", "message"}}`` des appels ci-dessus.
+
+L'application envoie d'abord, puis reçoit, une page à la fois. Elle garde deux
+curseurs par serveur et par bibliothèque : celui du journal local (ce que le
+serveur a déjà) et celui du serveur (ce qui est déjà fusionné ici), chacun
+avancé une fois sa page réglée. Un curseur refusé par un journal (``410``, ou
+périmé en local) repart du début, l'import absorbant la répétition. Les
+enregistrements reçus reviennent à l'envoi suivant, que le serveur absorbe de
+la même façon.
+
+Sur ``413 payload_too_large`` ou une coupure en cours d'envoi, l'application
+divise la page par deux jusqu'à un enregistrement. Un enregistrement seul que
+le serveur refuse pour sa taille (code explicite), ou qui ne passe pas, est mis
+de côté : il est conservé avec son type et son identifiant dans l'état de
+synchronisation, retenté à chaque passage et listé dans l'écran de
+synchronisation. De même pour un enregistrement que le serveur déclare enjambé
+à l'export. Le serveur doit donc lire un corps lentement envoyé : le délai de
+lecture se renouvelle tant que l'envoi progresse.
 
 Trois marques s'ajoutent à une position : ``changeset.export`` les emporte toutes
 les trois, l'export et le transfert le dessin et le lien d'origine, sans le libellé.

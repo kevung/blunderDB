@@ -404,3 +404,23 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   Go in a pass of their own per family (`sqlshared.MarkFor`), so a library that
   passed 054's pass still gets it. `lock_timeout = 15s`.
   Schema-visible: bumped `domain.DatabaseVersion` to 2.57.0.
+- `061_search_indexes.sql` — indexes of the search (`docs/PERF-RECHERCHE.md` in gammonGo):
+  the tenant's analyses by id, the order by played-move error (supersedes
+  `idx_analysis_move_error`), the gammon rates, the checker masks by id. No schema
+  change, no version bump.
+- `062_search_occupancy.sql` — the occupancy of each side, for a board filter placing all
+  its fifteen checkers; the positions of a game from the index alone (supersedes
+  `idx_move_game`); the blunders of a tenant in id order. No schema change, no version bump.
+- `063_search_rates.sql` — the win rates on a plain index (`idx_analysis_win1/2`), replacing the
+  two covering indexes, `idx_analysis_win_gammon_covering` and `idx_analysis_win_gammon2_covering`,
+  five times heavier for the same search. No schema change, no version bump.
+- `064_narrow_columns.sql` — `position`, `analysis` and `move` columns as wide as their values
+  (16 or 32 bits), one rewrite per table; past 512 MB of positions a start leaves them wide and
+  `SELECT blunderdb_narrow_columns()` does it in a window; a stored value past its type refuses it
+  by table, column, value and row. Shared statements compare Go integers as `bigint`, so a filter
+  past a column finds nothing. No version bump.
+- `065_journal_writes_less.sql` — functions only: a second write of an object in the transaction
+  that journaled it rewrites no entry, and a library may keep no journal (`library_settings` key
+  `change_journal`, `changeset.export`/`import` refused with `journal_off`). No version bump.
+- `066_merged_keys.sql` — `position` and `move` keep their `(tenant_id, id)` key alone, `analysis`
+  its `(tenant_id, position_id)` one; `idx_analysis_creation_date` goes (SQLite too). No version bump.

@@ -22,8 +22,10 @@ const likeEscape = ` ESCAPE '\'`
 // player's PR, the engine and depth of the analysis, the kind of cube decision.
 // They are properties of stored rows, not of the board, so — like the identity
 // clauses — they stay in SQL even in mirror search.
-func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) {
-	s.appendMatchLevelClause(scope, f, prMissing, aliases, where, args)
+func (s *SearchStore) appendCorpusClauses(ctx context.Context, scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) error {
+	if err := s.appendMatchLevelClause(ctx, scope, f, prMissing, aliases, where, args); err != nil {
+		return err
+	}
 
 	if f.MatchDateFilter != "" {
 		from, until, ok := searchfilter.ParseMatchDate(f.MatchDateFilter)
@@ -55,6 +57,7 @@ func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, 
 		where.WriteString(" AND p.decision_type = ? AND " + s.DB.Bool("p.is_cube_response", f.CubeResponseFilter == "takepass"))
 		*args = append(*args, domain.CubeAction)
 	}
+	return nil
 }
 
 // appendMatchLevelClause writes ONE subquery over the moves that reach a
@@ -62,7 +65,7 @@ func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, 
 // of the one who decided, the tournament, the round, the PR — holds of the same
 // match and the same move. Separate subqueries would let `pl"A" op"B"` be
 // satisfied by A's match against C and a match of B against D.
-func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) {
+func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) error {
 	player, seatOnly := searchfilter.PlayerSpec(f.PlayerFilter)
 	opponent := ""
 	if f.OpponentFilter != "" {
@@ -74,7 +77,7 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 	}
 	rounds := domain.SplitFilterList(f.RoundFilter)
 	if player == "" && opponent == "" && tournament == "" && len(rounds) == 0 && f.PlayerPRFilter == "" && f.MatchLengthFilter == "" {
-		return
+		return nil
 	}
 
 	var cond strings.Builder
@@ -158,13 +161,57 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 	}
 
 	mtTenant, mtArgs := s.DB.TenantFilter("mt", scope)
-	where.WriteString(" AND p.id IN (SELECT mv.position_id FROM move mv" +
+	joined := " FROM move mv" +
 		" JOIN game g ON mv.game_id = g.id" +
 		" JOIN match mt ON g.match_id = mt.id" +
-		" WHERE " + mtTenant + cond.String() + ")")
-	*args = append(*args, mtArgs...)
-	*args = append(*args, condArgs...)
+		" WHERE " + mtTenant + cond.String()
+	sub := "SELECT mv.position_id" + joined
+	subArgs := append(append([]any{}, mtArgs...), condArgs...)
+	if strings.Contains(cond.String(), "mv.") || narrowLimit.Load() < 0 {
+		return s.narrowToIDs(ctx, sub, subArgs, where, args, nil)
+	}
+	// Heavy, the filter is checked position by position in the walk in id order, from the
+	// games it holds of: any join here, the planner may start each check from the matches,
+	// row after row, and the sum keeps it from reading the list through an index, one
+	// descent per game. Whether it is heavy is known from the games, without reading any move.
+	games, err := s.readIDList(ctx, `SELECT g.id FROM game g JOIN match mt ON g.match_id = mt.id WHERE `+mtTenant+cond.String(), subArgs, 0)
+	if err != nil {
+		return err
+	}
+	if len(games) == 0 {
+		where.WriteString(" AND 0=1")
+		return nil
+	}
+	inGames, gameArgs := s.DB.IDsIn("mv.game_id + 0", games)
+	walk := func() {
+		where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE mv.position_id = p.id AND " + inGames + " LIMIT 1 OFFSET 0)")
+		*args = append(*args, gameArgs...)
+	}
+	if narrowLimit.Load() == 0 || len(games)*movesPerGame > matchSortLimit {
+		walk()
+		return nil
+	}
+	listGames, listArgs := s.DB.IDsIn("game_id", games)
+	sub = "SELECT position_id FROM move WHERE " + listGames
+	// Too long for a list but not common enough to trust the walk, grouped at the end of the
+	// tenant it would cross everything: the moves are read from the index and sorted once,
+	// OFFSET keeping the planner from probing them position by position.
+	sorted := func() {
+		where.WriteString(" AND p.id IN (" + sub + " LIMIT 2147483647 OFFSET 0)")
+		*args = append(*args, listArgs...)
+	}
+	return s.narrowWithin(ctx, matchListLimit, sub, listArgs, where, args, sorted)
 }
+
+// matchListLimit is how many moves a match-level filter may name by literal list.
+// matchSortLimit is how many it may read and sort for one query, about 200 ms: above it the
+// filter is taken as common and the walk as meeting it soon. movesPerGame is a mean of real
+// matches, for an estimate.
+const (
+	matchListLimit = 30000
+	matchSortLimit = 1000000
+	movesPerGame   = 55
+)
 
 // playerSeatCond writes the " AND (...)" condition on the two players of the
 // match a move belongs to (mt) and, with a seat, on who took the decision (mv).

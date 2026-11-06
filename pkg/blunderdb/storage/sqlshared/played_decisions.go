@@ -110,15 +110,15 @@ func NewPlayedDecisionBasis(decisionType int, a *domain.PositionAnalysis, pos *d
 func ScanPlayedDecisionBasis(scan func(dest ...any) error) (*PlayedDecisionBasis, error) {
 	var decisionType int
 	var data, state []byte
-	var por, d1, d2 *int64
-	if err := scan(&decisionType, &data, &state, &por, &d1, &d2); err != nil {
+	var por, d1, d2, dt *int64
+	if err := scan(&decisionType, &data, &state, &por, &d1, &d2, &dt); err != nil {
 		return nil, err
 	}
 	a, decErr := engine.DecodeAnalysisFromStorage(data)
 	if decErr != nil {
 		return nil, nil
 	}
-	return &PlayedDecisionBasis{decisionType: decisionType, analysis: &a, position: PlayPosition(state, por, d1, d2)}, nil
+	return &PlayedDecisionBasis{decisionType: decisionType, analysis: &a, position: PlayPosition(state, por, d1, d2, dt)}, nil
 }
 
 // Args returns move.decision_error_mp and move.is_close_cube for a move with
@@ -190,12 +190,12 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 	for rows.Next() {
 		var m move
 		var state []byte
-		var por, d1, d2 *int64
-		if err := rows.Scan(&m.id, &m.positionID, &m.decisionType, &m.checkerMove, &m.cubeAct, &m.stored.errMP, &m.stored.closeCube, &state, &por, &d1, &d2); err != nil {
+		var por, d1, d2, dt *int64
+		if err := rows.Scan(&m.id, &m.positionID, &m.decisionType, &m.checkerMove, &m.cubeAct, &m.stored.errMP, &m.stored.closeCube, &state, &por, &d1, &d2, &dt); err != nil {
 			rows.Close()
 			return 0, errf(db, "read moves to rescore", err)
 		}
-		m.pos = PlayPosition(state, por, d1, d2)
+		m.pos = PlayPosition(state, por, d1, d2, dt)
 		moves = append(moves, m)
 	}
 	rows.Close()

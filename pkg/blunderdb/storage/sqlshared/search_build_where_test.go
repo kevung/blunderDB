@@ -86,6 +86,7 @@ func TestBuildWhereRestrictToPositionIDsEmptyListExcludesEverything(t *testing.T
 }
 
 func TestBuildWherePlayerFilterUsesILikeAndBindsTwice(t *testing.T) {
+	defer SetNarrowLimit(-1)()
 	wc, err := buildWhereStore().buildWhere(context.Background(), "", domain.SearchFilters{
 		PlayerFilter: "Dupont",
 	})
@@ -208,6 +209,7 @@ func TestBuildWhereNeedAnalysisTriggers(t *testing.T) {
 // the ORDER BY plan). Backgammon/player-2 rates go through applyGoFilters's
 // rateFilterChecks instead and add nothing here.
 func TestBuildWhereWinGammonRateAddsAnalysisSubquery(t *testing.T) {
+	defer SetNarrowLimit(-1)()
 	wc, err := buildWhereStore().buildWhere(context.Background(), "", domain.SearchFilters{
 		WinRateFilter: "w>0.55",
 	})

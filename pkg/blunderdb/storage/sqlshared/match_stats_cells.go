@@ -24,9 +24,11 @@ package sqlshared
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -44,13 +46,8 @@ const (
 	cellBucket   = 5
 )
 
-// cellNull stands for a NULL dimension column; cellText for an action
-// column still holding text (”), which a label reads as no action, as it
-// reads NULL, but which the direct GROUP BY keeps apart from both.
-const (
-	cellNull = -1
-	cellText = -2
-)
+// cellNull stands for a NULL dimension column.
+const cellNull = -1
 
 // rowsPerInsert bounds the rows of one multi-row INSERT: at most twenty-two
 // columns a row keeps the statement far below every driver's parameter limit.
@@ -124,20 +121,37 @@ func nullable(v *int64) int64 {
 	return *v
 }
 
-// actionDim maps a scanned action-code column to its stored dimension.
-func actionDim(v any) int64 {
+// actionDim maps a scanned action-code column to its stored dimension. A
+// value of any other type is an error: reading it as a text cell silently
+// lost the cube cells once. A library file migrated from an old schema keeps
+// TEXT columns, so a code scans as its digits and no action as an empty
+// string; a label reads the empty string as no action, as it reads NULL.
+func actionDim(v any) (int64, error) {
 	switch x := v.(type) {
 	case nil:
-		return cellNull
+		return cellNull, nil
+	case string:
+		if x == "" {
+			return cellNull, nil
+		}
+		if n, err := strconv.ParseInt(x, 10, 64); err == nil {
+			return n, nil
+		}
 	case int64:
-		return x
+		return x, nil
 	case int32:
-		return int64(x)
+		return int64(x), nil
+	case int16:
+		return int64(x), nil
 	case int:
-		return int64(x)
+		return int64(x), nil
 	}
-	return cellText
+	return 0, fmt.Errorf("%w: %T", ErrUnexpectedActionType, v)
 }
+
+// ErrUnexpectedActionType reports an action-code column that the driver
+// returned as something other than an integer.
+var ErrUnexpectedActionType = errors.New("unexpected type for an action code")
 
 // writeMatchStatsCells computes the cells and positions of the matches in
 // the IN list ph (bound by ids) and inserts them; match_stats rows of those
@@ -171,7 +185,7 @@ func writeMatchStatsCells(ctx context.Context, tx Execer, scope, ph string, ids 
 		`SELECT g.match_id, `+seatExpr+`, p.decision_type, COALESCE(a.met_id, 0), p.id, p.game_phase, p.game_type,
 			p.score_1, p.score_2, a.best_cube_action, mv.cube_action, (`+statsErrExpr+`), COALESCE(mv.player, 0),
 			`+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0) `+
-			statsBaseJoin+where,
+			matchScopedJoin+where,
 		append(append([]any{}, pArgs...), ids...), func(r Rows) error {
 			var match, met, pos, errMP int64
 			var seat, dt, rawPlayer, cubeValue, matchLength int
@@ -203,7 +217,15 @@ func writeMatchStatsCells(ctx context.Context, tx Execer, scope, ph string, ids 
 				add(base, errMP, loss)
 			}
 			if dt == 1 {
-				base.kind, base.k1, base.k2 = cellCube, actionDim(best), actionDim(played)
+				bestDim, err := actionDim(best)
+				if err != nil {
+					return fmt.Errorf("best cube action of position %d: %w", pos, err)
+				}
+				playedDim, err := actionDim(played)
+				if err != nil {
+					return fmt.Errorf("played cube action of position %d: %w", pos, err)
+				}
+				base.kind, base.k1, base.k2 = cellCube, bestDim, playedDim
 				add(base, errMP, loss)
 			}
 			positions[cellPosition{match: match, seat: seat, dt: dt, met: met, position: pos}] = nullable(phase)

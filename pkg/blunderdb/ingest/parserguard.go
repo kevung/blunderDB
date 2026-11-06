@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"syscall"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/xgparser/xgparser"
 )
@@ -66,6 +68,32 @@ func wrapInvalid(err error) error {
 	return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 }
 
+// errTruncated marks a file that stops before its end. Its text is the
+// refusal's own, so that wrapping it changes no message.
+var errTruncated error = truncatedFile{}
+
+type truncatedFile struct{}
+
+func (truncatedFile) Error() string        { return storage.ErrInvalid.Error() }
+func (truncatedFile) Is(target error) bool { return target == storage.ErrInvalid }
+
+// ImportErrorCode is the domain.ImportErr value of a file's refusal.
+func ImportErrorCode(err error) string {
+	switch {
+	case errors.Is(err, xgparser.ErrDecompressionLimit):
+		return domain.ImportErrTooLarge
+	case errors.Is(err, errUnsupportedFile):
+		return domain.ImportErrUnknownFormat
+	case errors.Is(err, errTruncated), errors.Is(err, ErrIncompleteMatch):
+		return domain.ImportErrTruncated
+	case errors.Is(err, ErrNoPosition), errors.Is(err, errNothingToImport):
+		return domain.ImportErrEmpty
+	case errors.Is(err, storage.ErrInvalid):
+		return domain.ImportErrCorrupt
+	}
+	return domain.ImportErrInternal
+}
+
 // ErrParserPanic is returned when a third-party parser panicked on its input.
 var ErrParserPanic = fmt.Errorf("%w: ingest: parser failed on malformed input", storage.ErrInvalid)
 
@@ -94,7 +122,7 @@ func xgParseError(path, stage string, err error) error {
 			filepath.Base(path), xgparser.MaxDecompressedSize>>20, wrapInvalid(err))
 	}
 	if truncatedRead(err) {
-		return fmt.Errorf("%w: ingest: %s: %s: file is truncated or corrupt", storage.ErrInvalid, stage, filepath.Base(path))
+		return fmt.Errorf("%w: ingest: %s: %s: file is truncated or corrupt", errTruncated, stage, filepath.Base(path))
 	}
 	return fmt.Errorf("ingest: %s: %w", stage, wrapInvalid(err))
 }

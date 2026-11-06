@@ -123,6 +123,42 @@ JOIN game g ON g.id = mv.game_id
 JOIN match m ON m.id = g.match_id
 LEFT JOIN tournament t ON t.id = m.tournament_id`
 
+// matchScopedJoin is statsBaseJoin written from the games of named matches
+// outward, for withJoinOrderPlan.
+const matchScopedJoin = `FROM game g
+JOIN move mv ON mv.game_id = g.id
+JOIN position p ON p.id = mv.position_id
+JOIN analysis a ON a.position_id = p.id
+JOIN match m ON m.id = g.match_id
+LEFT JOIN tournament t ON t.id = m.tournament_id`
+
+// joinOrderPinner is implemented by an Execer whose planner can be told to
+// follow the join order as written and reach each next table through its index.
+type joinOrderPinner interface {
+	PinJoinOrder(ctx context.Context) (unpin func() error, err error)
+}
+
+// withJoinOrderPlan runs fn, whose queries start from matches they name, under
+// that plan. Its cost then follows the matches named, whatever the statistics:
+// left to itself, a planner that believes a growing library holds few rows may
+// start from all of a tenant's positions (seen at 1.4 s where 2 ms are enough),
+// and the choice changes from one autovacuum to the next.
+func withJoinOrderPlan(ctx context.Context, db Execer, fn func() error) error {
+	p, ok := db.(joinOrderPinner)
+	if !ok {
+		return fn()
+	}
+	unpin, err := p.PinJoinOrder(ctx)
+	if err != nil {
+		return err
+	}
+	if err := fn(); err != nil {
+		// The enclosing transaction is lost, and the settings with it.
+		return err
+	}
+	return unpin()
+}
+
 // pr computes the Performance Rating from a sum of errors (millipoints stored
 // units) and the number of decisions. Formula: 500 × sumErrMP / 1000 / nDecisions.
 func pr(sumErrMP int64, nDecisions int) float64 {

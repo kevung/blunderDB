@@ -86,6 +86,26 @@
   </branding>
 
   <releases>
+    <release version="0.51.0" date="2026-11-06">
+      <description>
+        <ul>
+          <li>A library synchronises with a remote server from a new Synchronization tab of the settings, with the access token kept in the system keychain</li>
+          <li>A server limit no longer stops reception, and records a server refuses stay listed and retried</li>
+          <li>Search holds up on very large PostgreSQL databases, and a database takes about half the space</li>
+          <li>The change journal can be switched off for a tenant</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.50.0" date="2026-11-05">
+      <description>
+        <ul>
+          <li>Library synchronisation also covers Anki decks with their cards, transcriptions and tournaments</li>
+          <li>A transfer without comments leaves out the match note, the source file name, the video link and tournament comments</li>
+          <li>Imports are faster on PostgreSQL, with a stable error code for each refused file and a bound on the disk space imports occupy</li>
+          <li>Databases move to schema 2.57.0</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.49.1" date="2026-11-05">
       <description>
         <p>Fixes writes silently lost during library synchronisation when two edits of one object carried the same or an earlier date, and the Home, End, Page Up and Page Down keys moving the library while a transcription draft is open.</p>

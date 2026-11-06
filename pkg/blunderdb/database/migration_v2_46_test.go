@@ -174,7 +174,8 @@ func TestMigrate_2_45_0_to_2_46_0_CommentRebuildKeepsEverything(t *testing.T) {
 		kept[c] = true
 	}
 	for _, c := range before.Schema {
-		if !kept[c] {
+		// Superseded by idx_analysis_error_order, and retired unread, on purpose.
+		if !kept[c] && !strings.Contains(c, "name=idx_analysis_move_error|") && !strings.Contains(c, "name=idx_analysis_creation_date|") {
 			t.Errorf("the rebuild lost an index or trigger: %s", c)
 		}
 	}

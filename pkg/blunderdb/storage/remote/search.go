@@ -30,6 +30,18 @@ func (s searchStore) Count(ctx context.Context, scope string, f domain.SearchFil
 	return n, err
 }
 
+func (s searchStore) CountUpTo(ctx context.Context, scope string, f domain.SearchFilters, max int) (int, bool, error) {
+	var out struct {
+		Count  int  `json:"count"`
+		Capped bool `json:"capped"`
+	}
+	err := s.c.call(ctx, scope, "search.countUpTo", struct {
+		Filters domain.SearchFilters `json:"filters"`
+		Max     int                  `json:"max"`
+	}{f, max}, &out)
+	return out.Count, out.Capped, err
+}
+
 // IndexOf reads search.indexOf, which answers -1 for a position the search
 // does not reach.
 func (s searchStore) IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (int, bool, error) {

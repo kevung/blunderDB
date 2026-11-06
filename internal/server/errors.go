@@ -27,6 +27,8 @@ const (
 	// CodeGone: the transcription session the request names expired or was
 	// never this instance's; reopen the draft (410).
 	CodeGone = "gone"
+	// CodeJournalOff: this library keeps no change journal and does not synchronize.
+	CodeJournalOff = "journal_off"
 	// CodePreconditionRequired: a gesture that writes named no revision in
 	// If-Match (428).
 	CodePreconditionRequired = "precondition_required"
@@ -64,7 +66,7 @@ func statusForCode(code string) int {
 	switch code {
 	case CodeNotFound, CodeUnknownRoute:
 		return http.StatusNotFound
-	case CodeConflict:
+	case CodeConflict, CodeJournalOff:
 		return http.StatusConflict
 	case CodeInvalid:
 		return http.StatusBadRequest
@@ -92,6 +94,8 @@ func codeForErr(err error) string {
 	switch {
 	case errors.Is(err, transcription.ErrSessionGone), errors.Is(err, storage.ErrCursorStale):
 		return CodeGone
+	case errors.Is(err, storage.ErrJournalOff):
+		return CodeJournalOff
 	case isDuelRefusal(err):
 		return CodeInvalid
 	case errors.Is(err, storage.ErrNotFound), errors.Is(err, direction.ErrNoDirection):

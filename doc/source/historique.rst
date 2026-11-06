@@ -42,6 +42,29 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.51.0 (2026-11-06)
+-------------------
+
+- **Une bibliothèque se synchronise avec un serveur distant** : l'onglet *Synchronisation* des paramètres reçoit l'adresse du serveur et un jeton personnel, gardé dans le trousseau du système ; l'envoi puis la réception se font au démarrage ou sur demande, une page à la fois, la modification la plus récente l'emportant.
+- **Une limite du serveur n'arrête pas la réception** : quand un plafond refuse l'envoi, l'envoi seul est suspendu et la réception continue ; un envoi trop gros est divisé jusqu'à un enregistrement, et ce qu'un serveur refuse reste listé dans l'onglet et retenté à chaque passage.
+- **La recherche tient sur de très grosses bases** : une page se coupe sur les identifiants, ``search.countUpTo`` compte jusqu'à une borne, et de nouveaux index servent les filtres d'erreur, de plateau complet et de taux de gain.
+- **Une base occupe environ moitié moins de place sur PostgreSQL** : colonnes plus étroites, journal des changements plus léger, clés fusionnées ; au démarrage, la migration réécrit au plus 512 Mo de positions et nomme l'étape manuelle au-delà.
+- **Le journal se coupe pour un tenant** : ``changeset.setJournalOff`` l'arrête, ``changeset.export`` et ``changeset.import`` refusent alors par un code nommé, et le rallumer rend les objets écrits pendant la coupure.
+- **La base reste au schéma 2.57.0** : les migrations de cette version ajoutent des index et rétrécissent des colonnes, sans changer le format d'un fichier SQLite.
+- Voir :ref:`synchronisation_distante`, :ref:`headless` et :ref:`annexe_db_migration`.
+
+0.50.0 (2026-11-05)
+-------------------
+
+- **La synchronisation couvre les paquets Anki, les transcriptions et les tournois** : ``changeset.export`` et ``changeset.import`` les échangent, avec les cartes d'un paquet, dans les deux sens ; à égalité de date, chaque famille fusionne sans perdre de donnée.
+- **Un transfert sans commentaires n'emporte rien de privé** : ni la note du match, ni le nom du fichier source, ni le lien vidéo, ni le commentaire d'un tournoi ne partent ; le match reçu reste importé.
+- **L'import est plus rapide sur PostgreSQL** : les positions s'écrivent par groupes, les statistiques d'un tenant se calculent dès ses premières lignes, et une position née d'un match daté porte la date du match.
+- **Chaque fichier refusé à l'import porte un code stable** (``unknown_format``, ``truncated``, ``corrupt``, ``too_large``, ``empty`` ou ``internal``) en plus de son texte ; ``?report=deferred`` omet le rapport du dernier événement et ``imports.report`` le rend à la demande.
+- **L'espace disque des imports est borné** : l'option ``--max-spool-bytes`` fixe ce que les imports en cours occupent ensemble, et une archive qui dépasse ce qu'elle annonce est refusée et effacée.
+- **Une base passe au schéma 2.57.0** à l'ouverture.
+- Corrections notables : ``imports.batch`` garde le tenant de la requête sous RLS, et ``imports.db`` n'échoue plus avec ``out of shared memory`` sur une base volumineuse.
+- Voir :ref:`headless` et :ref:`annexe_db_migration`.
+
 0.49.0 (2026-11-02)
 -------------------
 

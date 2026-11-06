@@ -225,8 +225,9 @@ func (s *DirectionStore) EventsHead(ctx context.Context, scope string, tournamen
 // sqlTime scans a timestamp column whatever shape the driver hands back: a
 // time.Time from PostgreSQL's TIMESTAMPTZ, text or a time.Time from SQLite's
 // DATETIME. Reading it raw rather than through Dialect.TimestampText keeps
-// the sub-second part an event was written with. An unreadable value is the
-// zero time: a timestamp is information here, never a key.
+// the sub-second part an event was written with. Text that does not parse is
+// the zero time: a timestamp is information here, never a key. A column of
+// another type is an error.
 type sqlTime struct{ t time.Time }
 
 func (st *sqlTime) Scan(src any) error {
@@ -237,8 +238,10 @@ func (st *sqlTime) Scan(src any) error {
 		st.t = parseTimeText(v)
 	case []byte:
 		st.t = parseTimeText(string(v))
-	default:
+	case nil:
 		st.t = time.Time{}
+	default:
+		return fmt.Errorf("timestamp column of unsupported type %T", src)
 	}
 	return nil
 }
