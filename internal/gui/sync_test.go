@@ -120,6 +120,111 @@ func TestSyncSuccessIsRecordedAndSurvivesInTheStateFile(t *testing.T) {
 	}
 }
 
+// A first run stopped by the plan's cap (402) has still received everything the
+// server holds: the window must not say "never synchronised", and the 402 stays shown.
+func TestSyncStoppedByTheAllowanceIsNotNeverSynchronised(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasSuffix(r.URL.Path, ".import") {
+			w.WriteHeader(http.StatusPaymentRequired)
+			_, _ = w.Write([]byte(`{"error":{"code":"allowance_exceeded","message":"Plan limit","axis":"positions","allowed":150,"held":140,"new":20}}`))
+			return
+		}
+		_, _ = w.Write([]byte(`{"cursor":{"seq":0},"more":false,"records":[]}`))
+	}))
+	defer srv.Close()
+	a, state := syncApp(t, srv.URL)
+	if _, err := a.db.CreateCollection("Mine", ""); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.SyncSetToken(srv.URL, "tok"); err != nil {
+		t.Fatal(err)
+	}
+	a.syncRun(context.Background())
+	st := a.SyncStatus()
+	if st.Error == nil || st.Error.Kind != "allowance" {
+		t.Fatalf("status = %+v, want the allowance said", st)
+	}
+	if st.LastSuccess == "" {
+		t.Errorf("lastSuccess is empty after a run that received everything: the window says never synchronised")
+	}
+	b := NewApp(a.db)
+	b.sync.source, b.sync.path = a.sync.source, state
+	if got := b.SyncStatus().LastSuccess; got != st.LastSuccess {
+		t.Errorf("after a restart lastSuccess = %q, want %q", got, st.LastSuccess)
+	}
+}
+
+func allowanceBody() string {
+	return `{"error":{"code":"allowance_exceeded","message":"Plan limit","axis":"positions","allowed":150,"held":140,"new":20}}`
+}
+
+// A 402 met while receiving did not finish the receiving: no date is written.
+func TestSyncAllowanceWhileReceivingWritesNoDate(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusPaymentRequired)
+		_, _ = w.Write([]byte(allowanceBody()))
+	}))
+	defer srv.Close()
+	a, _ := syncApp(t, srv.URL)
+	if err := a.SyncSetToken(srv.URL, "tok"); err != nil {
+		t.Fatal(err)
+	}
+	a.syncRun(context.Background())
+	st := a.SyncStatus()
+	if st.Error == nil || st.Error.Kind != "allowance" || st.LastSuccess != "" {
+		t.Fatalf("status = %+v, want the allowance and no date", st)
+	}
+}
+
+// An unwritable state file is said next to the cap, never in its place.
+func TestSyncStateFailureDoesNotHideTheAllowance(t *testing.T) {
+	got := withStateFailure(&SyncError{Kind: "allowance", Allowance: &syncremote.AllowanceFigures{Axis: "positions"}}, errors.New("disk full"))
+	if got.Kind != "allowance" || got.Allowance == nil || got.StateFile != "disk full" {
+		t.Fatalf("got %+v", got)
+	}
+	if only := withStateFailure(nil, errors.New("disk full")); only.Kind != "other" {
+		t.Fatalf("alone, the failure is %+v", only)
+	}
+}
+
+// After a cap, a run that goes through writes a new date and clears the error.
+func TestSyncSuccessAfterAnAllowanceClearsItAndRenewsTheDate(t *testing.T) {
+	capped := true
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if capped && strings.HasSuffix(r.URL.Path, ".import") {
+			w.WriteHeader(http.StatusPaymentRequired)
+			_, _ = w.Write([]byte(allowanceBody()))
+			return
+		}
+		_, _ = w.Write([]byte(`{"cursor":{"seq":0},"more":false,"records":[]}`))
+	}))
+	defer srv.Close()
+	a, state := syncApp(t, srv.URL)
+	if _, err := a.db.CreateCollection("Mine", ""); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.SyncSetToken(srv.URL, "tok"); err != nil {
+		t.Fatal(err)
+	}
+	a.syncRun(context.Background())
+	first := a.SyncStatus().LastSuccess
+	addr, _ := syncremote.NormalizeAddress(srv.URL)
+	entries := a.sync.load()
+	e := entries[syncKey(a.db, addr)]
+	e.LastSuccess = "2000-01-01T00:00:00Z"
+	entries[syncKey(a.db, addr)] = e
+	if err := a.sync.store(entries); err != nil || first == "" {
+		t.Fatalf("store: %v, first=%q", err, first)
+	}
+	capped = false
+	a.syncRun(context.Background())
+	st := a.SyncStatus()
+	if st.Error != nil || st.LastSuccess == "" || st.LastSuccess == "2000-01-01T00:00:00Z" {
+		t.Fatalf("status = %+v, want a new date and no error", st)
+	}
+	_ = state
+}
+
 // The window starts with an empty in-memory library: a startup run waits for the real one.
 func TestSyncAtStartupWaitsForTheRealLibrary(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

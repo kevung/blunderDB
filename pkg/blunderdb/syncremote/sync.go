@@ -535,7 +535,23 @@ func run(ctx context.Context, local Local, remote Remote, cur Cursors, opt Optio
 			break
 		}
 	}
-	return cur, res, held
+	if held != nil {
+		return cur, res, &sendingHeld{held}
+	}
+	return cur, res, nil
+}
+
+// sendingHeld marks an error that stopped only the sending: the receiving ran to its end.
+type sendingHeld struct{ error }
+
+func (e *sendingHeld) Unwrap() error { return e.error }
+
+// ReceivedAll reports whether err stopped only the sending, the receiving having
+// gone to its end (an allowance does that), so the library is as synchronised
+// as the account permits.
+func ReceivedAll(err error) bool {
+	var h *sendingHeld
+	return errors.As(err, &h)
 }
 
 // sendAll sends what the server lacks: the records set aside first, then every
