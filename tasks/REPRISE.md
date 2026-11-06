@@ -33,7 +33,7 @@ publiées (857d10d17).
 ## Prochaines étapes
 
 1. Livre, 12 scores hors grille : calcul `standard` lancé le 2026-11-06 sur smith dans
-   `~/openingbook-hors-grille/` (cron 22 h 30 – 8 h, 40 fils, SCHED_IDLE, binaire de main
+   `~/openingbook-hors-grille/` (20 fils, nice 19, cron toutes les 10 min pour reprendre après un arrêt, binaire de main
    cf790644d). `TERMINE` présent → rapatrier `book.jsonl.gz`, le fusionner au livre embarqué
    (ses lignes remplacent celles des mêmes scores), `go test ./pkg/blunderdb/openingbook/...`.
 2. #845 : vérification à la main sous `make dev` (procédure dans
