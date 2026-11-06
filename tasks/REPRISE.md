@@ -32,11 +32,15 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. #845 : vérification à la main sous `make dev` (procédure dans
+1. Livre, 12 scores hors grille : calcul `standard` lancé le 2026-11-06 sur smith dans
+   `~/openingbook-hors-grille/` (cron 22 h 30 – 8 h, 40 fils, SCHED_IDLE, binaire de main
+   cf790644d). `TERMINE` présent → rapatrier `book.jsonl.gz`, le fusionner au livre embarqué
+   (ses lignes remplacent celles des mêmes scores), `go test ./pkg/blunderdb/openingbook/...`.
+2. #845 : vérification à la main sous `make dev` (procédure dans
    `tasks/transcription-vision/bancs/03-cors.md`).
-2. Vision : reprendre #870 sur le poste qui a le prototype (voir ci-dessus).
-3. #846 (LNA WebView2) : attend un poste Windows.
-4. Travail de fond : voir `tasks/BACKLOG.md`.
+3. Vision : reprendre #870 sur le poste qui a le prototype (voir ci-dessus).
+4. #846 (LNA WebView2) : attend un poste Windows.
+5. Travail de fond : voir `tasks/BACKLOG.md`.
 
 ## Pièges
 
