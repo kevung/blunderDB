@@ -36,7 +36,7 @@ publiées (857d10d17).
    `~/openingbook-hors-grille/` (20 fils, nice 19, cron toutes les 10 min pour reprendre après un arrêt, binaire de main
    cf790644d). `TERMINE` présent → rapatrier `book.jsonl.gz`, le fusionner au livre embarqué
    (ses lignes remplacent celles des mêmes scores), `go test ./pkg/blunderdb/openingbook/...`.
-   Avancement au 2026-11-06 à 14:11 : phase 1 faite (180 ouvertures), phase 2 à 1614/5208,
+   Avancement au 2026-11-06 à 15:12 : phase 1 faite (180 ouvertures), phase 2 à 2334/5208,
    fin estimée vers 19 h.
 2. #845 : vérification à la main sous `make dev` (procédure dans
    `tasks/transcription-vision/bancs/03-cors.md`).
