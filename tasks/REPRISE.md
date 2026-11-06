@@ -7,9 +7,8 @@
 - Release **0.51.0** coupée le 2026-11-06. Depuis la reprise du 30 oct. : stockage compact,
   recherche rapide, synchronisation du bureau avec un serveur distant, changeset (paquets Anki,
   transcriptions, tournois dans les deux sens), corrections du panneau de transcription.
-- Livre d'ouverture (#664) : le calcul `standard` de smith (terminé le 23 oct.) est embarqué pour
-  les 20 scores de la grille ; les 12 autres scores (money, DMP, Crawford, match en 5) restent au
-  préréglage `fast`. Chaque ligne porte sa signature.
+- Livre d'ouverture (#664) : tout le livre embarqué (32 scores, 13 836 lignes) est au préréglage
+  `standard`, calculé sur smith (grille le 23 oct., 12 scores hors grille le 6 nov.).
 - Issues ouvertes : #845 (vérif. CORS à la main), #846 (poste Windows), #858 et #870 (vision).
 
 ## Chantier vision — en pause, bloqué hors dépôt
@@ -32,17 +31,11 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. Livre, 12 scores hors grille : calcul `standard` lancé le 2026-11-06 sur smith dans
-   `~/openingbook-hors-grille/` (20 fils, nice 19, cron toutes les 10 min pour reprendre après un arrêt, binaire de main
-   cf790644d). `TERMINE` présent → rapatrier `book.jsonl.gz`, le fusionner au livre embarqué
-   (ses lignes remplacent celles des mêmes scores), `go test ./pkg/blunderdb/openingbook/...`.
-   Avancement au 2026-11-06 à 19:13 : phase 1 faite (180 ouvertures), phase 2 à 4968/5208,
-   fin estimée vers 19 h.
-2. #845 : vérification à la main sous `make dev` (procédure dans
+1. #845 : vérification à la main sous `make dev` (procédure dans
    `tasks/transcription-vision/bancs/03-cors.md`).
-3. Vision : reprendre #870 sur le poste qui a le prototype (voir ci-dessus).
-4. #846 (LNA WebView2) : attend un poste Windows.
-5. Travail de fond : voir `tasks/BACKLOG.md`.
+2. Vision : reprendre #870 sur le poste qui a le prototype (voir ci-dessus).
+3. #846 (LNA WebView2) : attend un poste Windows.
+4. Travail de fond : voir `tasks/BACKLOG.md`.
 
 ## Pièges
 
