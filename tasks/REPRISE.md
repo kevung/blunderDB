@@ -9,7 +9,8 @@
   transcriptions, tournois dans les deux sens), corrections du panneau de transcription.
 - Livre d'ouverture (#664) : tout le livre embarqué (32 scores, 13 836 lignes) est au préréglage
   `standard`, calculé sur smith (grille le 23 oct., 12 scores hors grille le 6 nov.).
-- Issues ouvertes : #845 (vérif. CORS à la main), #846 (poste Windows), #858 et #870 (vision).
+- Issues ouvertes : #846 (poste Windows), #858 et #870 (vision). #845 close le 2026-11-07
+  (vérifiée sous WebKitGTK, `tasks/transcription-vision/bancs/03-cors.md`).
 
 ## Chantier vision — en pause, bloqué hors dépôt
 
@@ -26,16 +27,14 @@ publiées (857d10d17).
   pas de fusion V1/V2.
 - **Avant de trancher** : un 4ᵉ matériel, le lecteur mesuré seul sur des dés bien localisés,
   plus de jets étiquetés en valeurs sur v3 et v4.
-- **Bloquant** : les prototypes (`~/src/vision-proto/`) et les notes de banc (`~/bkgm/bancs/`)
-  sont sur un poste auquel Kevin n'a pas accès pour l'instant. Reprendre de là, ou les recopier.
+- Prototypes (`~/src/vision-proto/`) et notes de banc (`~/bkgm/bancs/`) : accessibles de
+  nouveau ; la campagne `~/bkgm/bancs/campagne-materiels/ETAT.md` fait foi (fusion pions + dés).
 
 ## Prochaines étapes
 
-1. #845 : vérification à la main sous `make dev` (procédure dans
-   `tasks/transcription-vision/bancs/03-cors.md`).
-2. Vision : reprendre #870 sur le poste qui a le prototype (voir ci-dessus).
-3. #846 (LNA WebView2) : attend un poste Windows.
-4. Travail de fond : voir `tasks/BACKLOG.md`.
+1. Vision : campagne matériels, voir son `ETAT.md`.
+2. #846 (LNA WebView2) : attend un poste Windows.
+3. Travail de fond : voir `tasks/BACKLOG.md`.
 
 ## Pièges
 
