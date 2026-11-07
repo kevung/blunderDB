@@ -4998,6 +4998,24 @@ export namespace gui {
 	        this.command = source["command"];
 	    }
 	}
+	export class VideoRepair {
+	    path: string;
+	    noFFmpeg: boolean;
+	    cancelled: boolean;
+	    reason: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new VideoRepair(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.noFFmpeg = source["noFFmpeg"];
+	        this.cancelled = source["cancelled"];
+	        this.reason = source["reason"];
+	    }
+	}
 	export class ViewerEntry {
 	    id: number;
 	    label: string;

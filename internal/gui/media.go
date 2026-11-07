@@ -35,11 +35,12 @@ type mediaHost struct {
 	mu      sync.Mutex
 	srv     *http.Server
 	base    string
-	tokens  map[string]string   // token -> absolute path
-	byPath  map[string]string   // absolute path -> token
-	refs    map[string]int      // token or YouTube id -> panes holding it
-	youtube map[string]bool     // ids with an attached YouTube source
-	mux     map[string]muxEntry // token -> multiplexing check of the file it serves
+	tokens  map[string]string     // token -> absolute path
+	byPath  map[string]string     // absolute path -> token
+	refs    map[string]int        // token or YouTube id -> panes holding it
+	youtube map[string]bool       // ids with an attached YouTube source
+	mux     map[string]muxEntry   // token -> multiplexing check of the file it serves
+	repairs map[string]*repairJob // absolute path -> the repair running for it
 }
 
 var youTubeIDRe = regexp.MustCompile(`^[A-Za-z0-9_-]{6,20}$`)
@@ -235,6 +236,7 @@ func (h *mediaHost) release(u string) {
 		delete(h.youtube, key)
 		return
 	}
+	h.dropRepairLocked(h.tokens[key], true)
 	delete(h.byPath, h.tokens[key])
 	delete(h.tokens, key)
 	delete(h.mux, key)
@@ -244,6 +246,9 @@ func (h *mediaHost) stop() {
 	h.mu.Lock()
 	srv := h.srv
 	h.srv, h.base = nil, ""
+	for abs := range h.repairs {
+		h.dropRepairLocked(abs, true)
+	}
 	h.tokens, h.byPath, h.youtube, h.refs, h.mux = nil, nil, nil, nil, nil
 	h.mu.Unlock()
 	if srv != nil {

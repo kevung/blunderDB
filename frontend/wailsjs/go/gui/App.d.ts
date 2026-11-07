@@ -45,6 +45,8 @@ export function CancelMaintenance():Promise<void>;
 
 export function CancelRollout():Promise<void>;
 
+export function CancelVideoRepair(arg1:string):Promise<void>;
+
 export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
 
 export function CheckVideoMux(arg1:string):Promise<gui.VideoMuxReport>;
@@ -176,6 +178,8 @@ export function ReadLogTail(arg1:number):Promise<Array<string>>;
 export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdentityInfo>;
 
 export function ReleaseMedia(arg1:string):Promise<void>;
+
+export function RepairVideoMux(arg1:string):Promise<gui.VideoRepair>;
 
 export function RolloutPresets():Promise<Array<gui.RolloutPreset>>;
 

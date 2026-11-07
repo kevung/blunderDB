@@ -101,6 +101,8 @@ var boundAppMethods = []string{
 	"OpenSyncFolderDialog",
 	"MediaURL",
 	"CheckVideoMux",
+	"RepairVideoMux",
+	"CancelVideoRepair",
 	"OpenVideoExternally",
 	"PathExists",
 	"PickTranscriptionVideo",

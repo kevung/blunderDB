@@ -12,7 +12,13 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { flushSync } from 'svelte';
 
 const REMUX = "ffmpeg -i '/v/round2.webm' -map 0 -c copy -cluster_time_limit 30000 '/v/round2.remux.webm'";
-const gui = vi.hoisted(() => ({ kind: 'file', mediaError: null, faulty: /** @type {number[]} */ ([]) }));
+const gui = vi.hoisted(() => ({
+    kind: 'file',
+    mediaError: null,
+    faulty: /** @type {number[]} */ ([]),
+    /** @type {() => Promise<any>} */
+    repair: () => Promise.resolve({ noFFmpeg: true })
+}));
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     VideoSourceKind: vi.fn(() => Promise.resolve(gui.kind)),
@@ -20,12 +26,15 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     YouTubeEmbedURL: vi.fn(() => Promise.resolve('http://127.0.0.1:1/yt/abc')),
     PickTranscriptionVideo: vi.fn(() => Promise.resolve('/new/place.mp4')),
     ReleaseMedia: vi.fn(() => Promise.resolve()),
-    CheckVideoMux: vi.fn(() => Promise.resolve({ checked: true, faulty: gui.faulty, command: REMUX }))
+    // A repaired copy is sound.
+    CheckVideoMux: vi.fn((/** @type {string} */ p) => Promise.resolve({ checked: true, faulty: p.includes('.remux.') ? [] : gui.faulty, command: REMUX })),
+    RepairVideoMux: vi.fn(() => gui.repair()),
+    CancelVideoRepair: vi.fn(() => Promise.resolve())
 }));
 
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({ ClipboardSetText: vi.fn(() => Promise.resolve(true)) }));
 
-import { CheckVideoMux, MediaURL, ReleaseMedia } from '../../wailsjs/go/gui/App.js';
+import { CancelVideoRepair, CheckVideoMux, MediaURL, ReleaseMedia, RepairVideoMux } from '../../wailsjs/go/gui/App.js';
 import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 import VideoPane from '../components/VideoPane.svelte';
 
@@ -34,6 +43,7 @@ describe('VideoPane', () => {
         gui.kind = 'file';
         gui.mediaError = null;
         gui.faulty = [];
+        gui.repair = () => Promise.resolve({ noFFmpeg: true });
     });
     afterEach(cleanup);
 
@@ -473,6 +483,79 @@ describe('VideoPane', () => {
         await vi.waitFor(() => expect(ClipboardSetText).toHaveBeenCalledWith(REMUX));
         await fireEvent.click(must(container.querySelector('[data-testid="video-mux-dismiss"]')));
         expect(container.querySelector('[data-testid="video-mux-warning"]')).toBeNull();
+    });
+
+    describe('repairing a faulty .webm', () => {
+        /** @type {((r: any) => void) | undefined} */
+        let answer;
+        const reply = (/** @type {any} */ r) => must(answer)(r);
+        beforeEach(() => {
+            answer = undefined;
+            gui.faulty = [55.6];
+            gui.repair = () => new Promise((r) => (answer = r));
+            vi.mocked(RepairVideoMux).mockClear();
+            vi.mocked(CancelVideoRepair).mockClear();
+            vi.mocked(MediaURL).mockClear();
+        });
+
+        test('runs in the background, then plays the copy from the same instant and hands it to the caller', async () => {
+            const onrelocate = vi.fn();
+            vi.mocked(MediaURL).mockResolvedValueOnce('http://127.0.0.1:1/media/orig').mockResolvedValueOnce('http://127.0.0.1:1/media/copy');
+            const { container, rerender } = render(VideoPane, { props: { source: '/v/round2.webm', onrelocate } });
+            await vi.waitFor(() => expect(container.querySelector('[data-testid="video-repairing"]')).not.toBeNull());
+            expect(RepairVideoMux).toHaveBeenCalledWith('/v/round2.webm');
+            expect(container.querySelector('[data-testid="video-mux-warning"]')).toBeNull();
+            let video = must(container.querySelector('video'));
+            await fireEvent(video, new Event('loadedmetadata'));
+            video.currentTime = 42;
+
+            reply({ path: '/v/round2.remux.webm' });
+            await vi.waitFor(() => expect(onrelocate).toHaveBeenCalledWith('/v/round2.remux.webm'));
+            await vi.waitFor(() => expect(container.querySelector('video')?.getAttribute('src')).toBe('http://127.0.0.1:1/media/copy'));
+            expect(MediaURL).toHaveBeenLastCalledWith('/v/round2.remux.webm');
+            await vi.waitFor(() => expect(CheckVideoMux).toHaveBeenCalledWith('/v/round2.remux.webm'));
+            video = must(container.querySelector('video'));
+            video.currentTime = 0;
+            await fireEvent(video, new Event('loadedmetadata'));
+            expect(video.currentTime).toBe(42);
+            expect(container.querySelector('[data-testid="video-repairing"]')).toBeNull();
+            expect(container.querySelector('[data-testid="video-mux-warning"]')).toBeNull();
+
+            // The caller storing the copy as its source does not reload it.
+            await rerender({ source: '/v/round2.remux.webm', onrelocate });
+            flushSync();
+            expect(MediaURL).toHaveBeenCalledTimes(2);
+        });
+
+        test('without ffmpeg the warning and its command stay, with the reason on one line', async () => {
+            const { container } = render(VideoPane, { props: { source: '/v/round2.webm' } });
+            await vi.waitFor(() => expect(answer).toBeDefined());
+            reply({ noFFmpeg: true });
+            const note = await vi.waitFor(() => container.querySelector('[data-testid="video-mux-warning"]') ?? expect.fail('no warning'));
+            expect(note.textContent).toContain(REMUX);
+            expect(must(container.querySelector('[data-testid="video-repair-failed"]')).textContent).toContain('ffmpeg not found');
+            expect(container.querySelector('[data-testid="video-repairing"]')).toBeNull();
+        });
+
+        test('a failed repair names its cause beside the command', async () => {
+            const { container } = render(VideoPane, { props: { source: '/v/round2.webm' } });
+            await vi.waitFor(() => expect(answer).toBeDefined());
+            reply({ reason: 'ffmpeg: No space left on device' });
+            const line = await vi.waitFor(() => container.querySelector('[data-testid="video-repair-failed"]') ?? expect.fail('no reason'));
+            expect(line.textContent).toContain('No space left on device');
+            expect(container.querySelector('[data-testid="video-mux-warning"]')?.textContent).toContain(REMUX);
+        });
+
+        test('closing the pane, or changing its source, gives the repair up', async () => {
+            const { rerender, unmount } = render(VideoPane, { props: { source: '/v/round2.webm' } });
+            await vi.waitFor(() => expect(RepairVideoMux).toHaveBeenCalledTimes(1));
+            await rerender({ source: '/v/other.mp4' });
+            expect(CancelVideoRepair).toHaveBeenCalledWith('/v/round2.webm');
+            await rerender({ source: '/v/round3.webm' });
+            await vi.waitFor(() => expect(RepairVideoMux).toHaveBeenCalledWith('/v/round3.webm'));
+            unmount();
+            expect(CancelVideoRepair).toHaveBeenLastCalledWith('/v/round3.webm');
+        });
     });
 
     test('a clean .webm, or a file of another container, shows no warning', async () => {

@@ -5,7 +5,7 @@
     // and never touches the element, so the Transcription panel and the match review share one
     // player. It fills the box its caller gives it; the media keeps its own ratio inside.
     import { untrack } from 'svelte';
-    import { CheckVideoMux, MediaURL, ReleaseMedia, PickTranscriptionVideo, VideoSourceKind, YouTubeEmbedURL } from '../../wailsjs/go/gui/App.js';
+    import { CancelVideoRepair, CheckVideoMux, MediaURL, ReleaseMedia, PickTranscriptionVideo, RepairVideoMux, VideoSourceKind, YouTubeEmbedURL } from '../../wailsjs/go/gui/App.js';
     import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
@@ -89,6 +89,16 @@
     let muxDismissed = $state(false);
     let copied = $state(false);
     const muxFaulty = $derived(mux?.faulty?.length ?? 0);
+    // A faulty file is repaired in the background into a sound copy, which the pane then plays
+    // from the same instant; the caller is told through onrelocate so the source it stores
+    // names the copy. Without ffmpeg, or when the repair fails, the warning and its command stay.
+    let repair = $state(/** @type {{ state: 'running' } | { state: 'failed', reason: string } | null} */ (null));
+    // The copy played in place of `from` until the caller hands it back as its source.
+    let swapped = $state(/** @type {{ from: string, to: string } | null} */ (null));
+    const active = $derived(swapped && swapped.from === source ? swapped.to : source);
+    // Whether the video was playing, and at what speed, when it moved to the copy.
+    /** @type {{ playing: boolean, rate: number } | null} */
+    let swapResume = null;
 
     async function copyCommand() {
         const text = mux?.command ?? '';
@@ -114,6 +124,40 @@
             logger.warn('checking the video multiplexing:', error);
             return null;
         });
+    }
+
+    /**
+     * @param {string} path the faulty file
+     * @param {() => boolean} gone whether the pane closed or changed source since
+     */
+    async function repairMux(path, gone) {
+        repair = { state: 'running' };
+        /** @type {{ path?: string, noFFmpeg?: boolean, cancelled?: boolean, reason?: string }} */
+        let r;
+        try {
+            r = await RepairVideoMux(path);
+        } catch (error) {
+            r = { reason: String((error instanceof Error && error.message) || error) };
+        }
+        if (gone()) return;
+        if (r?.path) {
+            switchToCopy(path, r.path);
+            return;
+        }
+        if (r?.cancelled) {
+            repair = null;
+            return;
+        }
+        repair = { state: 'failed', reason: r?.noFFmpeg ? $t('video.repairNoFFmpeg') : $t('video.repairFailed', { reason: r?.reason ?? '' }) };
+    }
+
+    /** @param {string} from @param {string} to */
+    function switchToCopy(from, to) {
+        const at = currentTimeMs();
+        if (at !== null) pendingMs = at;
+        swapResume = video && status === 'ready' ? { playing: !video.paused, rate: video.playbackRate } : null;
+        swapped = { from, to };
+        onrelocate?.(to);
     }
 
     /** @param {MessageEvent} event */
@@ -167,9 +211,10 @@
     // The pane releases the URL it was given when it closes or changes source, and only that
     // one: another pane's video keeps playing.
     $effect(() => {
-        const current = source;
+        const current = active;
         let cancelled = false;
         let served = '';
+        let repairing = false;
         status = 'loading';
         detail = '';
         src = '';
@@ -184,6 +229,7 @@
         mux = null;
         muxDismissed = false;
         copied = false;
+        repair = null;
         (async () => {
             try {
                 const k = await VideoSourceKind(current);
@@ -203,7 +249,11 @@
                     if (k === 'youtube') ytOrigin = new URL(url).origin;
                     if (k === 'file')
                         checkMux(current).then((r) => {
-                            if (!cancelled && r?.command) mux = r;
+                            if (cancelled || !r?.command) return;
+                            mux = r;
+                            if (!r.faulty?.length) return;
+                            repairing = true;
+                            repairMux(current, () => cancelled);
                         });
                 } else {
                     status = 'error';
@@ -222,6 +272,7 @@
         return () => {
             cancelled = true;
             release(served);
+            if (repairing) Promise.resolve(CancelVideoRepair(current)).catch(() => {});
         };
     });
 
@@ -262,8 +313,9 @@
         if (stalledOut) return;
         status = 'ready';
         queuedMs = null;
-        const resume = reloading;
+        const resume = reloading ?? swapResume;
         reloading = null;
+        swapResume = null;
         if (pendingMs > 0 && video) askTime(pendingMs);
         if (!video) return;
         if (resume) {
@@ -277,7 +329,7 @@
     // What the webview cannot read is named by its container and by the packages that give a
     // Linux webview its decoders; a black frame says nothing.
     function onVideoError() {
-        const [container, mime] = containerOf(source);
+        const [container, mime] = containerOf(active);
         const code = video?.error?.code;
         stalledOut = null;
         status = 'codec';
@@ -291,7 +343,7 @@
     $effect(() => {
         if (status !== 'loading' || kind !== 'file' || !src) return;
         const timer = setTimeout(() => {
-            const [container] = containerOf(source);
+            const [container] = containerOf(active);
             stalledOut = null;
             status = 'codec';
             detail = $t('video.noMetadata', { seconds: METADATA_MS / 1000, container });
@@ -612,9 +664,12 @@
             {#if stalledOut}<button class="video-btn" data-testid="video-retry" onclick={retryStalled}>{$t('video.stalledRetry')}</button>{/if}
         </div>
     {/if}
-    {#if muxFaulty && !muxDismissed && status !== 'error' && status !== 'missing' && mux}
+    {#if repair?.state === 'running' && status !== 'error' && status !== 'missing'}
+        <p class="video-mux video-repairing" data-testid="video-repairing" role="status">{$t('video.repairing')}</p>
+    {:else if muxFaulty && !muxDismissed && status !== 'error' && status !== 'missing' && mux}
         <div class="video-mux" data-testid="video-mux-warning" role="status">
             <p>{$t('video.muxWarning', { count: muxFaulty })}</p>
+            {#if repair?.state === 'failed'}<p class="video-hint" data-testid="video-repair-failed">{repair.reason}</p>{/if}
             <code class="video-command">{mux.command}</code>
             <div class="video-mux-actions">
                 <button class="video-btn" onclick={copyCommand}>{copied ? $t('video.copied') : $t('video.copyCommand')}</button>
@@ -737,7 +792,8 @@
         color: white;
         font-size: var(--font-size-small);
     }
-    .video-mux p {
+    .video-mux p,
+    p.video-repairing {
         margin: 0;
     }
     .video-mux-actions {

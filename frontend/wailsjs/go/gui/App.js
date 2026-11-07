@@ -74,6 +74,10 @@ export function CancelRollout() {
   return window['go']['gui']['App']['CancelRollout']();
 }
 
+export function CancelVideoRepair(arg1) {
+  return window['go']['gui']['App']['CancelVideoRepair'](arg1);
+}
+
 export function CheckForUpdate() {
   return window['go']['gui']['App']['CheckForUpdate']();
 }
@@ -336,6 +340,10 @@ export function RegenerateIssuerIdentity(arg1) {
 
 export function ReleaseMedia(arg1) {
   return window['go']['gui']['App']['ReleaseMedia'](arg1);
+}
+
+export function RepairVideoMux(arg1) {
+  return window['go']['gui']['App']['RepairVideoMux'](arg1);
 }
 
 export function RolloutPresets() {

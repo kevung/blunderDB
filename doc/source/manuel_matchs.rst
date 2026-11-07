@@ -920,14 +920,22 @@ réessayer.
 Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur certains sauts : un groupe
 d'images du fichier commence par une image non clé, que le webview ne sait pas décoder seule.
 Certains muxeurs, qui coupent les groupes sans tenir compte des images clés, en produisent. À l'ouverture d'un tel fichier, blunderDB lit
-l'index du fichier (quelques kilo-octets par groupe) et, s'il trouve des sauts fautifs, le volet
-l'annonce avec la commande qui répare le fichier sans le réencoder, prête à copier :
+l'index du fichier (quelques kilo-octets par groupe) et, s'il trouve des sauts fautifs et que
+``ffmpeg`` est installé, répare le fichier en arrière-plan sans le réencoder ; le volet affiche
+« Réparation de la vidéo… » pendant ce temps. La copie, ``ronde 4.remux.webm``, s'écrit à côté de
+l'original, ou dans le dossier de cache de blunderDB (``blunderDB/remux``) quand ce dossier refuse
+l'écriture. Une fois vérifiée, le volet la lit au même instant et elle devient la vidéo du match ou
+de la transcription. L'original n'est ni modifié ni supprimé, et une copie saine déjà présente est
+reprise sans nouvelle réparation.
+
+Sans ``ffmpeg``, ou si la réparation échoue, le volet annonce les sauts fautifs avec la raison et la
+commande qui répare le fichier, prête à copier :
 
 .. code-block:: bash
 
    ffmpeg -i 'ronde 4.webm' -map 0 -c copy -cluster_time_limit 30000 'ronde 4.remux.webm'
 
-La commande écrit une copie à côté de l'original ; associez ensuite cette copie au match ou à la
+La commande écrit la même copie à côté de l'original ; associez-la ensuite au match ou à la
 transcription. Le volet propose la même commande quand il renonce après ses trois rechargements
 sur un ``.webm`` ou un ``.mkv``.
 
