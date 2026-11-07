@@ -17,9 +17,10 @@
 //
 // # Attribution
 //
-// The weights are `strehl-prob5-512-512-256-256`, by Alexander Strehl
-// (alexstrehl/backgammon-ai-engine, MIT, pinned commit 7184e2f), redistributed
-// by gammonNet v1.8.1 in its float16 form (BGN6). "gammonNet" names the configuration, not the weights.
+// The weights are `strehl-prob5-768-768-256-256-256` (NetworkName), with
+// `strehl-prob5-512-512-256-256` embedded beside it (AlternateNetworkName), by
+// Alexander Strehl (alexstrehl/backgammon-ai-engine, MIT, weights at commit
+// c373141), redistributed by gammonNet v1.9.0 in their float16 form (BGN6). "gammonNet" names the configuration, not the weights.
 // LICENSE.gammonNet and NOTICE.gammonNet travel with this package.
 package gammonnet
 

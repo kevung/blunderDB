@@ -3,22 +3,22 @@
   "format": "GNPL v1, enregistrements de 160 octets, petit-boutiste",
   "questions": {
     "path": "data/policy_reference.bin",
-    "sha256": "4f1b6e0588bf4c87bd31d81158c91b8d5c971418a1ba853b945ebe5a1d2a2674"
+    "sha256": "acdb496d3fc1d478b05c03be8bbf2c089a3ab69479f2105b0996fcbd62c5b19f"
   },
-  "count": 1411,
+  "count": 1409,
   "levels": [
     "instant",
     "normal",
     "thorough"
   ],
   "by_level_and_pending": {
-    "instant/CUBE": 417,
+    "instant/CUBE": 405,
     "instant/CUBE/refus": 3,
-    "instant/MOVE": 790,
+    "instant/MOVE": 800,
     "instant/MOVE/refus": 1,
-    "instant/RESIGN": 57,
+    "instant/RESIGN": 56,
     "instant/RESIGN/refus": 1,
-    "instant/TAKE": 18,
+    "instant/TAKE": 19,
     "instant/TAKE/refus": 2,
     "normal/CUBE": 25,
     "normal/MOVE": 23,
@@ -34,15 +34,15 @@
     "normal": 0,
     "thorough": 0
   },
-  "max_equity_delta_where_action_agrees": 0.000626559903845747,
+  "max_equity_delta_where_action_agrees": 0.0032768504681510713,
   "models": {
-    "release": "v1.8.1",
+    "release": "v1.9.0",
     "network": {
-      "path": "models/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16",
-      "sha256": "79b27fb63c477ab8eccaa227b29f1e75580c6b7499433bf7e383685909d34954"
+      "path": "models/strehl-prob5-768-768-256-256-256_v1.9.0_2026-11-07.bin16",
+      "sha256": "b9471f3150933bd1b20507e3e00036496767e878101197f934ef7e11c05f5e6c"
     },
     "prune": {
-      "path": "models/strehl-prune-32_v1.8.1_2026-10-22.bin16",
+      "path": "models/strehl-prune-32_v1.9.0_2026-11-07.bin16",
       "sha256": "87c1986d30aae649a369d8f8fa9db8bab17197c69d66b24c926b93f29e847a70"
     }
   },

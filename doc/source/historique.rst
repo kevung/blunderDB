@@ -18,10 +18,10 @@ blunderDB, d'où la sauvegarde préalable (:ref:`annexe_db_migration`). Le reste
 ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 
 - **Réanalyser les positions périmées** (0.38.0, 0.40.0, 0.46.0). Une analyse
-  gammonNet écrite avant la version 0.46.0 l'a été par un moteur antérieur
-  (gammonNet v1.8.1 depuis) : ``blunderdb analyze --stale``, ou la ligne *Analyses
-  gammonNet périmées* de l'onglet *Maintenance*, la récrit. Une analyse
-  importée n'est jamais touchée.
+  gammonNet écrite par une version antérieure du moteur (gammonNet v1.9.0
+  aujourd'hui, réseau ``strehl-prob5-768-768-256-256-256``) est périmée :
+  ``blunderdb analyze --stale``, ou la ligne *Analyses gammonNet périmées* de
+  l'onglet *Maintenance*, la récrit. Une analyse importée n'est jamais touchée.
 - **Réimporter les fichiers source pour obtenir la chance** (0.33.0). Les matchs
   importés avant portent un tiret dans la colonne *Chance*, et un tiret n'est
   pas un zéro. Les formats qui ne transportent pas la chance (BGF, Jellyfish

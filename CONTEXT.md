@@ -191,9 +191,11 @@ Position, identified by its hash — distance zero within another Match is a nei
 duplicate)
 
 **Network**:
-The weights, and only the weights — `strehl-prob5-512-512-256-256`. A network changes name
-only when its weights change: neither the search wrapped around it, nor a quantisation, nor a
-port to another language makes it a new one.
+The weights, and only the weights — `strehl-prob5-768-768-256-256-256`, with
+`strehl-prob5-512-512-256-256` embedded beside it. Neither the search wrapped around it, nor a
+quantisation, nor a port to another language makes it a new one. Upstream may refresh a
+network's weights under the same name (gammonNet v1.9.0 did, for the 512 network), so the
+gammonNet tag, not the name alone, dates a network's numbers.
 
 **Configuration**:
 A network *plus* the search, the endgame tables and the match-equity table around it — the

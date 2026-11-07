@@ -15,7 +15,7 @@ import (
 
 // testdata/policy_reference16.bin is gammonNet's reference corpus for the
 // policy (GNPL v1, upstream docs/specs/politique-spec.md §8), copied verbatim
-// from gammonNet (data/policy_reference16.bin, commit cc1a66c): the questions
+// from gammonNet (data/policy_reference16.bin, commit cf6fcf0): the questions
 // of seed 20261005 answered by tools/policy_corpus.py --fp16 with the two
 // .bin16 of the tag PolicyEngineVersion names. Its sidecar
 // policy_reference16.json names the weights it was generated with: the SHA-256
@@ -23,7 +23,7 @@ import (
 // comparison of this port with itself, so the digest is pinned.
 const (
 	policyCorpusPath   = "testdata/policy_reference16.bin"
-	policyCorpusSHA256 = "05f51800d2127b607f1a98c6fb65dea3c60c804e113b998b1b5de86818fc33f7"
+	policyCorpusSHA256 = "43c96ecb25116239f1cd2f4cfcb65798aab573c1d9eae18332bb05114f5f716a"
 	policyRecordSize   = 160
 )
 

@@ -202,7 +202,15 @@ func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32
 	in, out := e.batchA, e.batchB
 	for l := 1; l <= last; l++ {
 		lay := &e.net.layers[l]
-		dense(lay.weight, lay.bias, in[:lay.in*EvalBatchWidth], out, lay.in, lay.out, l < last)
+		k := lay.in
+		if !e.noSkipZeros {
+			k = e.compactLiveUnits(in, lay.in)
+		}
+		if k == lay.in {
+			dense(lay.weight, lay.bias, in[:lay.in*EvalBatchWidth], out, lay.in, lay.out, l < last)
+		} else {
+			e.denseLive(lay, in[:k*EvalBatchWidth], out, k, l < last)
+		}
 		in, out = out, in
 	}
 
@@ -217,8 +225,70 @@ func (e *Evaluator) EvaluateBatch(features *[EvalBatchWidth][NumFeatures]float32
 	return nil
 }
 
-// ensureBatchScratch allocates the batched scratch (400 KB for the big
-// network) on first use, so a scalar-only caller never pays for it.
+// compactLiveUnits drops, in place, the columns of act (the previous layer's
+// ReLU output, feature-major) that are zero in every lane, records the
+// survivors' indices in e.liveUnits and returns how many survive.
+//
+// Dropping them is exact, not approximate — gammonNet's own optimisation,
+// measured upstream. A ReLU writes the literal +0, so a dropped term is
+// w × +0, a signed zero; adding a signed zero leaves a non-zero accumulator
+// unchanged and can only flip the sign of a zero one, which the next ReLU
+// (`!(v > 0)` → +0) and the sigmoid (portableExp(±0) = 1) both erase. The
+// terms that remain keep their ascending order. Every lane holds a real
+// position (the tail duplicates the last one), so no lane keeps a column
+// alive that no position needs. A column moves only to a slot already read.
+func (e *Evaluator) compactLiveUnits(act []float32, width int) int {
+	k := 0
+	live := e.liveUnits[:0]
+	for j := 0; j < width; j++ {
+		col := act[j*EvalBatchWidth : j*EvalBatchWidth+EvalBatchWidth]
+		fires := false
+		for _, v := range col {
+			if v != 0 {
+				fires = true
+				break
+			}
+		}
+		if !fires {
+			continue
+		}
+		if k != j {
+			copy(act[k*EvalBatchWidth:k*EvalBatchWidth+EvalBatchWidth], col)
+		}
+		live = append(live, int32(j))
+		k++
+	}
+	e.liveUnits = live
+	return k
+}
+
+// denseLive runs lay over its k live input columns (compactLiveUnits): their
+// weights are gathered once per batch, as contiguous columns where the kernel
+// reads column-major weights, regathered row-major otherwise — the same
+// choice as the first layer's.
+func (e *Evaluator) denseLive(lay *layer, act, out []float32, k int, relu bool) {
+	live := e.liveUnits[:k]
+	if cols := e.kernel.denseCols; cols != nil {
+		cw := e.batchWeight[:k*lay.out]
+		for t, j := range live {
+			copy(cw[t*lay.out:(t+1)*lay.out], lay.cols[int(j)*lay.out:(int(j)+1)*lay.out])
+		}
+		cols(cw, lay.bias, act, out, k, lay.out, relu)
+		return
+	}
+	cw := e.batchWeight[:lay.out*k]
+	for i := 0; i < lay.out; i++ {
+		row := lay.weight[i*lay.in : (i+1)*lay.in]
+		dst := cw[i*k : (i+1)*k]
+		for t, j := range live {
+			dst[t] = row[j]
+		}
+	}
+	e.kernel.dense(cw, lay.bias, act, out, k, lay.out, relu)
+}
+
+// ensureBatchScratch allocates the batched scratch (about 2.5 MB for the big
+// network, its widest weight matrix included) on first use, so a scalar-only caller never pays for it.
 func (e *Evaluator) ensureBatchScratch() error {
 	if e.batchA != nil {
 		return e.kernelErr
@@ -229,11 +299,15 @@ func (e *Evaluator) ensureBatchScratch() error {
 		return err
 	}
 	e.kernel = k
-	lay0 := &e.net.layers[0]
+	largest := 0
+	for l := range e.net.layers {
+		largest = max(largest, e.net.layers[l].out*e.net.layers[l].in)
+	}
 	e.batchA = make([]float32, e.net.widest*EvalBatchWidth)
 	e.batchB = make([]float32, e.net.widest*EvalBatchWidth)
 	e.batchAct = make([]float32, NumFeatures*EvalBatchWidth)
-	e.batchWeight = make([]float32, lay0.out*lay0.in)
+	e.batchWeight = make([]float32, largest)
 	e.nz = make([]int32, 0, NumFeatures)
+	e.liveUnits = make([]int32, 0, e.net.widest)
 	return nil
 }

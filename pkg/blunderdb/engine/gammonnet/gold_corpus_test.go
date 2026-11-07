@@ -281,7 +281,7 @@ func encodeCorpus(cases []goldCase) []byte {
 	return buf.Bytes()
 }
 
-func decodeCorpus(t *testing.T, raw []byte) []goldCase {
+func decodeCorpus(t testing.TB, raw []byte) []goldCase {
 	t.Helper()
 	if len(raw) < 8 || string(raw[:4]) != corpusMagic {
 		t.Fatalf("%s: unexpected magic", corpusPath)

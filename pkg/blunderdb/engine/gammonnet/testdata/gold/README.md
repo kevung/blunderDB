@@ -15,7 +15,7 @@ two moving targets.
 ## What you need
 
 - a checkout of [gammonNet](https://github.com/kevung/gammonNet) at the pinned version
-  (currently **v1.8.1**), including `vendor/backgammon-ai-engine` at commit `7184e2f` (fetched
+  (currently **v1.9.0**), including `vendor/backgammon-ai-engine` at commit `7184e2f` (fetched
   by its `tools/fetch_vendor.py`);
 - a C compiler; nothing else. This never runs in CI.
 
@@ -47,20 +47,20 @@ two moving targets.
        $V/c_inference/nn_eval.c $V/c_engine/bg_engine.c -lm
 
    ./gold $M/testdata/search_corpus.bin \
-          $M/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16 \
-          $M/strehl-prune-32_v1.8.1_2026-10-22.bin16 \
+          $M/strehl-prob5-768-768-256-256-256_v1.9.0_2026-11-07.bin16 \
+          $M/strehl-prune-32_v1.9.0_2026-11-07.bin16 \
           $M/testdata/search_gold.bin
    ./gold $M/testdata/search_cube_corpus.bin \
-          $M/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16 \
-          $M/strehl-prune-32_v1.8.1_2026-10-22.bin16 \
+          $M/strehl-prob5-768-768-256-256-256_v1.9.0_2026-11-07.bin16 \
+          $M/strehl-prune-32_v1.9.0_2026-11-07.bin16 \
           $M/testdata/search_cube_gold.bin
    ./gold $M/testdata/search_corpus.bin \
-          $M/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16 \
-          $M/strehl-prune-32_v1.8.1_2026-10-22.bin16 \
+          $M/strehl-prob5-768-768-256-256-256_v1.9.0_2026-11-07.bin16 \
+          $M/strehl-prune-32_v1.9.0_2026-11-07.bin16 \
           $M/testdata/search_stage_gold.bin stage
    ./gold $M/testdata/search_corpus.bin \
-          $M/strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16 \
-          $M/strehl-prune-32_v1.8.1_2026-10-22.bin16 \
+          $M/strehl-prob5-768-768-256-256-256_v1.9.0_2026-11-07.bin16 \
+          $M/strehl-prune-32_v1.9.0_2026-11-07.bin16 \
           $M/testdata/search_ply3_gold.bin ply3
    ```
 
@@ -168,6 +168,32 @@ for this recipe (kevung/gammonNet#33):
   `tasks/mesure-float16-score-2026-10-22.md`.
 
 `cube_gold.bin` is unchanged: `cube_gold.c` loads no weights.
+
+**Regenerated on 2026-11-07 against gammonNet v1.9.0**, whose default network is
+`strehl-prob5-768-768-256-256-256` (five layers, weights at upstream `c373141`); the
+four-layer `strehl-prob5-512-512-256-256`, on refreshed weights of the same commit, is
+embedded beside it but no gold is built from it. The four files are the C's answers at the
+`v1.9.0` sources (`git archive`, vendored engine unchanged at `7184e2f`), from the published
+`.bin16` of the tag (SHA-256 checked against the release's `SHA256SUMS`). The search, cube and
+MET arithmetic did not change upstream; the batch kernel's new skip of the units a ReLU leaves
+at zero is exact, and the port carries it (`kernel.go`, `compactLiveUnits`). Margins:
+2.384e-07 (money, 85), 1.916e-07 (match and cube, 126), 2.384e-07 (stage, 85),
+1.192e-07 (ply3, 10), 0 ties. `cube_gold.bin` is unchanged: `gn_cube.c` did not move.
+
+**The alternate network's reference.** `../reference16.bin` is the release's own
+`verify/reference16.bin`, for the default network. Upstream publishes none for the network
+beside it, so `../reference16_alternate.bin` (magic `GNRO`: the five outputs only, on the same
+feature vectors) is the C's answer, from `reference_alternate.c`:
+```sh
+gcc -O2 -pthread -I$GN/src -I$V/c_inference -I$V/c_engine -o refalt reference_alternate.c \
+    $GN/src/gn_infer_reference.c $GN/src/gn_encoding.c $GN/src/gn_rules_reference.c \
+    $GN/src/gn_int8_model.c $GN/src/gn_gemm_int8.c $GN/src/gn_parallel.c \
+    $V/c_inference/nn_eval.c $V/c_engine/bg_engine.c -lm
+./refalt $M/testdata/reference16.bin $M/strehl-prob5-512-512-256-256_v1.9.0_2026-11-07.bin16 \
+    $M/testdata/reference16_alternate.bin
+```
+Run on the default network's `.bin16`, the same harness writes exactly the outputs of
+`reference16.bin`: that is what makes its answer for the alternate one a reference.
 
 Note the two extra translation units in the command above: v1.3.0's `gn_infer_reference.c`
 references `gn_int8_model_evaluate`, so `gn_int8_model.c` and `gn_gemm_int8.c` must be linked in

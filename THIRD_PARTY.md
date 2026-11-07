@@ -19,7 +19,8 @@ These are compiled into every binary (`//go:embed`).
 
 | Component | Author | Licence | What blunderDB uses | Where |
 |---|---|---|---|---|
-| **`strehl-prob5-512-512-256-256`** neural network | Alexander Strehl | MIT (notice reproduced in §5) | The evaluation network's weights, unchanged. The network keeps its author's name: neither the search around it nor this port makes it a new network. | `pkg/blunderdb/engine/gammonnet/strehl-prob5-512-512-256-256_*.bin`, from [alexstrehl/backgammon-ai-engine](https://github.com/alexstrehl/backgammon-ai-engine) (commit `7184e2f`) |
+| **`strehl-prob5-768-768-256-256-256`** neural network | Alexander Strehl | MIT (notice reproduced in §5) | The evaluation network's weights, unchanged. The network keeps its author's name: neither the search around it nor this port makes it a new network. | `pkg/blunderdb/engine/gammonnet/strehl-prob5-768-768-256-256-256_*.bin16`, from [alexstrehl/backgammon-ai-engine](https://github.com/alexstrehl/backgammon-ai-engine) (weights at commit `c373141`) |
+| **`strehl-prob5-512-512-256-256`** neural network | Alexander Strehl | MIT (notice reproduced in §5) | The network gammonNet publishes beside the default one, embedded but not used by any analysis. | `pkg/blunderdb/engine/gammonnet/strehl-prob5-512-512-256-256_*.bin16`, same source (weights at commit `c373141`) |
 | **`strehl-prune-32`** pruning network | gammonNet, distilled from the Strehl network above | MIT | The small network that ranks candidate moves before the full evaluation. | `pkg/blunderdb/engine/gammonnet/strehl-prune-32_*.bin`, from [kevung/gammonNet](https://github.com/kevung/gammonNet) (`models/prune_32.provenance.json`) |
 | **gammonNet** evaluator | Kévin Unger | MIT (`pkg/blunderdb/engine/gammonnet/LICENSE.gammonNet`) | The search, cube model and match-equity handling around the network, ported from C to Go. The C rules and inference engine the port follows are Alexander Strehl's (`c_engine/bg_engine.c`, `c_inference/nn_eval.c`, MIT). | `pkg/blunderdb/engine/gammonnet/`, from [kevung/gammonNet](https://github.com/kevung/gammonNet) (tag named by `EngineVersion`) |
 | **Kazaross-XG2 match equity table** | Neil Kazaross | Work of Neil Kazaross, used with attribution | The 25×25 pre-Crawford table and the 24 post-Crawford entries, produced by XG rollouts to 9 points, GNU Backgammon Supremo to 15, and extended to 25 by projecting take points. Published in Tom Keith's article [The Kazaross-XG2 Match Equity Table](https://bkgm.com/articles/Keith/KazarossXG2MET/index.html); GNU Backgammon distributes it as `met/Kazaross-XG2.xml`. | `pkg/blunderdb/engine/met.go`; `frontend/src/stores/metTable.js` (the `met` command) |
@@ -85,7 +86,8 @@ Both are subsets, embedded as WOFF2 (`frontend/src/assets/fonts/`, see its
 
 ### MIT — Alexander Strehl (network weights, rules and inference engine)
 
-    Copyright (c) 2026 alexstrehl
+    Copyright (c) 2026 Alex Strehl (network weights, commit c373141)
+    Copyright (c) 2026 alexstrehl (rules and inference engine, commit 7184e2f)
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal

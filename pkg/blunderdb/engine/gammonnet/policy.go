@@ -17,7 +17,7 @@ import (
 // file ports. Its reference corpus comes from commit cc1a66c, replayed with the
 // .bin16 of that tag. It is not EngineVersion: the policy can move upstream
 // while the network, and so the analyses EngineVersion dates, stays the same.
-const PolicyEngineVersion = "gammonNet v1.8.1"
+const PolicyEngineVersion = "gammonNet v1.9.0"
 
 // PolicyResignHorizon is H of spec §5.5: how many rolls ahead the certain
 // loss is read. Widening it is a measured choice, made upstream.

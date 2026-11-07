@@ -94,32 +94,35 @@ func TestIsStaleAnalysisMixedCheckerMoveEntriesAreForeignProtected(t *testing.T)
 	}
 }
 
-// TestIsStaleAnalysisV170IsStaleUnderV181 pins the adoption of gammonNet
-// v1.8.1 and its float16 weights: every analysis labelled v1.7.0 is stale at
-// every depth, although no chosen move differs in the gold corpora, while a
-// v1.8.1 entry at the target depth is current.
-func TestIsStaleAnalysisV170IsStaleUnderV181(t *testing.T) {
-	if EngineVersion != "gammonNet v1.8.1" {
-		t.Fatalf("EngineVersion = %q, want gammonNet v1.8.1", EngineVersion)
+// TestIsStaleAnalysisV181IsStaleUnderV190 pins the adoption of gammonNet
+// v1.9.0 and its default network strehl-prob5-768-768-256-256-256: every
+// analysis labelled v1.8.1 (the four-layer network) is stale at every depth —
+// two networks' equities do not compare — while a v1.9.0 entry at the target
+// depth is current. Stale rows are re-analysed, never deleted.
+func TestIsStaleAnalysisV181IsStaleUnderV190(t *testing.T) {
+	if EngineVersion != "gammonNet v1.9.0" {
+		t.Fatalf("EngineVersion = %q, want gammonNet v1.9.0", EngineVersion)
 	}
 	for _, depth := range []string{"0-ply", "1-ply", "2-ply", "3-ply", "4-ply"} {
-		old := &domain.PositionAnalysis{
-			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisEngine: "gammonNet v1.7.0", AnalysisDepth: depth},
-			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
-				{AnalysisEngine: "gammonNet v1.7.0", AnalysisDepth: depth},
-			}},
-		}
-		if !IsStaleAnalysis(old, depth) {
-			t.Errorf("a gammonNet v1.7.0 analysis at %s was not reported stale", depth)
+		for _, prev := range []string{"gammonNet v1.7.0", "gammonNet v1.8.1"} {
+			old := &domain.PositionAnalysis{
+				DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisEngine: prev, AnalysisDepth: depth},
+				CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+					{AnalysisEngine: prev, AnalysisDepth: depth},
+				}},
+			}
+			if !IsStaleAnalysis(old, depth) {
+				t.Errorf("a %s analysis at %s was not reported stale", prev, depth)
+			}
 		}
 		current := &domain.PositionAnalysis{
-			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisEngine: "gammonNet v1.8.1", AnalysisDepth: depth},
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisEngine: "gammonNet v1.9.0", AnalysisDepth: depth},
 			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
-				{AnalysisEngine: "gammonNet v1.8.1", AnalysisDepth: depth},
+				{AnalysisEngine: "gammonNet v1.9.0", AnalysisDepth: depth},
 			}},
 		}
 		if IsStaleAnalysis(current, depth) {
-			t.Errorf("a gammonNet v1.8.1 analysis at %s was reported stale", depth)
+			t.Errorf("a gammonNet v1.9.0 analysis at %s was reported stale", depth)
 		}
 	}
 }

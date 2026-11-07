@@ -45,11 +45,30 @@ const (
 	PLoseBackgammon
 )
 
-//go:embed strehl-prob5-512-512-256-256_v1.8.1_2026-10-22.bin16
+// NetworkName is the network every analysis is evaluated with: the default
+// of the gammonNet tag EngineVersion names (its manifest's `network`).
+// AlternateNetworkName is the one that tag publishes beside it
+// (`alternate_network`). Two networks' equities do not compare, so a result
+// computed under the alternate must never be stored under EngineVersion.
+const (
+	NetworkName          = "strehl-prob5-768-768-256-256-256"
+	AlternateNetworkName = "strehl-prob5-512-512-256-256"
+)
+
+//go:embed strehl-prob5-768-768-256-256-256_v1.9.0_2026-11-07.bin16
 var embeddedWeights []byte
 
+//go:embed strehl-prob5-512-512-256-256_v1.9.0_2026-11-07.bin16
+var embeddedAlternateWeights []byte
+
 type layer struct {
-	weight   []float32 // row-major, out × in; column-major, in × out, when colMajor
+	weight []float32 // row-major, out × in; column-major, in × out, when colMajor
+	// cols is the same weights column-major, beside the row-major ones, for
+	// the hidden and output layers: the batch drops the input units a ReLU
+	// left at zero (kernel.go) and gathers the rest as contiguous columns,
+	// while the scalar path keeps its row loop. Nil on the first layer, which
+	// is column-major already.
+	cols     []float32
 	bias     []float32 // out
 	in       int
 	out      int
@@ -81,6 +100,23 @@ func embeddedNetwork() (*Network, error) {
 		embeddedNet, embeddedErr = Load(embeddedWeights)
 	})
 	return embeddedNet, embeddedErr
+}
+
+var (
+	alternateOnce sync.Once
+	alternateNet  *Network
+	alternateErr  error
+)
+
+// AlternateNetwork returns the network the pinned tag publishes beside the
+// default (AlternateNetworkName), loaded on first use. No analysis path reads
+// it: blunderDB offers no choice of network, and its results would carry
+// EngineVersion's label without being EngineVersion's numbers.
+func AlternateNetwork() (*Network, error) {
+	alternateOnce.Do(func() {
+		alternateNet, alternateErr = Load(embeddedAlternateWeights)
+	})
+	return alternateNet, alternateErr
 }
 
 // Load parses a BGNN (float32) or BGN6 (float16) weight file. The two share
@@ -219,6 +255,15 @@ func Load(raw []byte) (*Network, error) {
 		lay.weight = t
 		lay.colMajor = true
 	}
+	for l := 1; l < len(n.layers); l++ {
+		lay := &n.layers[l]
+		lay.cols = make([]float32, len(lay.weight))
+		for i := 0; i < lay.out; i++ {
+			for j := 0; j < lay.in; j++ {
+				lay.cols[j*lay.out+i] = lay.weight[i*lay.in+j]
+			}
+		}
+	}
 	if pos != len(raw) {
 		return nil, fmt.Errorf("gammonnet: %d trailing bytes after the weights", len(raw)-pos)
 	}
@@ -274,8 +319,9 @@ type Evaluator struct {
 	batchA      []float32 // feature-major activations, widest × EvalBatchWidth
 	batchB      []float32 // the alternate buffer, same size
 	batchAct    []float32 // the input layer, transposed and stripped of its zero columns
-	batchWeight []float32 // the first layer's weights, compacted to those columns
+	batchWeight []float32 // a layer's weights, compacted to its live input columns
 	nz          []int32   // the surviving feature indices, ascending
+	liveUnits   []int32   // the units of the previous layer still live, ascending
 
 	// noSkipZeros éteint la compaction des colonnes nulles pour cet
 	// évaluateur, pour la mesure seulement. Par évaluateur pour pouvoir

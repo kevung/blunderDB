@@ -18,7 +18,7 @@ import (
 // every other platform must reproduce it (engine/gammonnet/CLAUDE.md, bit
 // parity). An intentional change of the engine's arithmetic re-pins it, from
 // amd64 at the default level, with the digest the failure prints.
-const evaluationDigest = "3186a4ee377dec0e8702850f0e6064079acbe592dbdf1730a67d3ef4151459e8"
+const evaluationDigest = "01b5f4882268c9d48f6de82a836ed1a04f2a3823f793f64d23769355ca5aa2da"
 
 func TestEvaluationBitsMatchThePinnedDigest(t *testing.T) {
 	raw, err := os.ReadFile(corpusPath)
