@@ -1683,8 +1683,12 @@ jobs:
 
       - name: Install LaTeX (release tags only)
         if: env.BUILD_PDF == '1'
+        # Each PDF language's babel module is named, never left to texlive-latex-extra's
+        # dependencies, which do not carry them on every runner image (without
+        # babel-french the first PDF dies on « Unknown option 'french' »).
         run: |
-          sudo apt-get update && sudo apt-get install -y latexmk texlive-xetex texlive-fonts-recommended texlive-latex-extra fonts-freefont-otf fonts-noto-cjk texlive-lang-cjk
+          sudo apt-get update && sudo apt-get install -y latexmk texlive-xetex texlive-fonts-recommended texlive-latex-extra fonts-freefont-otf fonts-noto-cjk texlive-lang-cjk \
+            texlive-lang-english texlive-lang-french texlive-lang-german texlive-lang-greek texlive-lang-spanish texlive-lang-european texlive-lang-italian texlive-lang-cyrillic
         shell: bash
 
       - name: Build documentation
