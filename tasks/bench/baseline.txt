@@ -1,39 +1,39 @@
 goos: linux
 goarch: amd64
 pkg: github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite
-cpu: AMD Ryzen 7 3700X 8-Core Processor             
-BenchmarkWatchCost/plain/select-16             	  353850	      5449 ns/op	     472 B/op	      12 allocs/op
-BenchmarkWatchCost/plain/insert-16             	   78373	     13084 ns/op	      76 B/op	       4 allocs/op
-BenchmarkWatchCost/plain/tx-16                 	   44192	     24144 ns/op	     553 B/op	      14 allocs/op
-BenchmarkWatchCost/watched/select-16           	  167680	      6408 ns/op	     472 B/op	      12 allocs/op
-BenchmarkWatchCost/watched/insert-16           	   35302	     32822 ns/op	     951 B/op	      33 allocs/op
-BenchmarkWatchCost/watched/tx-16               	   28114	     43804 ns/op	    1425 B/op	      44 allocs/op
-BenchmarkSavePositionJournal/with-16           	    9961	    124930 ns/op	    2031 B/op	      21 allocs/op
-BenchmarkSavePositionJournal/without-16        	   12859	    102208 ns/op	    2031 B/op	      21 allocs/op
-BenchmarkWriteJournalFamilies/tournament/with-16         	    3898	    393799 ns/op	     989 B/op	      29 allocs/op
-BenchmarkWriteJournalFamilies/tournament/without-16      	    5646	    368001 ns/op	     990 B/op	      29 allocs/op
-BenchmarkWriteJournalFamilies/draft/with-16              	    6249	    185125 ns/op	     828 B/op	      17 allocs/op
-BenchmarkWriteJournalFamilies/draft/without-16           	   14781	     80849 ns/op	     828 B/op	      17 allocs/op
-BenchmarkWriteJournalFamilies/deck/with-16               	    5624	    208380 ns/op	    1004 B/op	      19 allocs/op
-BenchmarkWriteJournalFamilies/deck/without-16            	   13479	     90208 ns/op	    1005 B/op	      19 allocs/op
-BenchmarkReviewJournal/with-16                           	    2491	    457072 ns/op	   11883 B/op	     227 allocs/op
-BenchmarkReviewJournal/without-16                        	    2626	    387863 ns/op	   11873 B/op	     226 allocs/op
-BenchmarkSavePosition-16                                 	    9913	    123125 ns/op	    2031 B/op	      21 allocs/op
-BenchmarkLoadPosition-16                                 	   33662	     43056 ns/op	    3472 B/op	      66 allocs/op
-BenchmarkSearchByZobrist-16                              	   91455	     13810 ns/op	     592 B/op	      19 allocs/op
-BenchmarkSearchByFilter-16                               	     258	   4694968 ns/op	 1162045 B/op	   19948 allocs/op
-BenchmarkSearchText-16                                   	      15	  68961837 ns/op	14555570 B/op	  279198 allocs/op
-BenchmarkSearchMoveErrorMirror-16                        	      20	  81014726 ns/op	27003370 B/op	  399574 allocs/op
-BenchmarkRepairDenormalisedColumnsMemory-16              	       1	3250471867 ns/op	        37.43 peak-heap-MB	131147104 B/op	 1253536 allocs/op
-BenchmarkStatsCompute-16                                 	     207	   5384918 ns/op	  253429 B/op	    4975 allocs/op
-BenchmarkConcurrentInsert-16                             	    6568	    198128 ns/op	    2184 B/op	      25 allocs/op
+cpu: AMD Ryzen 7 PRO 6850U with Radeon Graphics     
+BenchmarkWatchCost/plain/select-16             	  313218	      3557 ns/op	     456 B/op	      12 allocs/op
+BenchmarkWatchCost/plain/insert-16             	   68244	     16509 ns/op	      76 B/op	       4 allocs/op
+BenchmarkWatchCost/plain/tx-16                 	   55149	     21606 ns/op	     537 B/op	      14 allocs/op
+BenchmarkWatchCost/watched/select-16           	  314029	      3641 ns/op	     456 B/op	      12 allocs/op
+BenchmarkWatchCost/watched/insert-16           	   34935	     33766 ns/op	     952 B/op	      33 allocs/op
+BenchmarkWatchCost/watched/tx-16               	   28884	     41111 ns/op	    1408 B/op	      44 allocs/op
+BenchmarkSavePositionJournal/with-16           	    8079	    155866 ns/op	    2032 B/op	      21 allocs/op
+BenchmarkSavePositionJournal/without-16        	    8599	    120730 ns/op	    2031 B/op	      21 allocs/op
+BenchmarkWriteJournalFamilies/deck/with-16     	    4962	    225245 ns/op	    1004 B/op	      19 allocs/op
+BenchmarkWriteJournalFamilies/deck/without-16  	   11127	    106377 ns/op	    1005 B/op	      19 allocs/op
+BenchmarkWriteJournalFamilies/tournament/with-16         	    4146	    450532 ns/op	     974 B/op	      29 allocs/op
+BenchmarkWriteJournalFamilies/tournament/without-16      	    6684	    422088 ns/op	     974 B/op	      29 allocs/op
+BenchmarkWriteJournalFamilies/draft/with-16              	    5362	    208268 ns/op	     828 B/op	      17 allocs/op
+BenchmarkWriteJournalFamilies/draft/without-16           	   12171	     97521 ns/op	     828 B/op	      17 allocs/op
+BenchmarkReviewJournal/with-16                           	    2564	    453619 ns/op	   11812 B/op	     227 allocs/op
+BenchmarkReviewJournal/without-16                        	    3540	    338101 ns/op	   11749 B/op	     225 allocs/op
+BenchmarkSavePosition-16                                 	    8883	    162090 ns/op	    2031 B/op	      21 allocs/op
+BenchmarkLoadPosition-16                                 	   43879	     26875 ns/op	    3456 B/op	      66 allocs/op
+BenchmarkSearchByZobrist-16                              	  106933	     11581 ns/op	     576 B/op	      19 allocs/op
+BenchmarkSearchByFilter-16                               	     453	   2906720 ns/op	 1162029 B/op	   19948 allocs/op
+BenchmarkSearchText-16                                   	      18	  57485109 ns/op	14563903 B/op	  279199 allocs/op
+BenchmarkSearchMoveErrorMirror-16                        	      16	  68126710 ns/op	27001820 B/op	  399573 allocs/op
+BenchmarkRepairDenormalisedColumnsMemory-16              	       1	2844506043 ns/op	        37.47 peak-heap-MB	131450064 B/op	 1273533 allocs/op
+BenchmarkStatsCompute-16                                 	     208	   5519034 ns/op	  253131 B/op	    4976 allocs/op
+BenchmarkConcurrentInsert-16                             	    6859	    173278 ns/op	    2184 B/op	      25 allocs/op
 PASS
-ok  	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite	101.478s
+ok  	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite	109.965s
 ?   	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/filelock	[no test files]
 PASS
-ok  	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/migrateprogress	0.008s
+ok  	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/migrateprogress	0.006s
 PASS
-ok  	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/nomigrator	0.005s
+ok  	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite/nomigrator	0.006s
 PASS
 ok  	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared	0.006s
 goos: linux
