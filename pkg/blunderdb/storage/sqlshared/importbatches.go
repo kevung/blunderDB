@@ -650,6 +650,23 @@ func (s *ImportBatchStore) RestoreStudyMark(ctx context.Context, scope string, p
 	return nil
 }
 
+// KnownFile — see storage.ImportBatchStore.
+func (s *ImportBatchStore) KnownFile(ctx context.Context, scope string, sha string) (int64, bool, error) {
+	if sha == "" {
+		return 0, false, nil
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	ids, err := queryIDs(ctx, s.DB, "look up a journaled file by digest",
+		`SELECT match_id FROM import_batch_file
+		 WHERE sha256 = ? AND sha256 <> '' AND match_id IS NOT NULL AND outcome <> ? AND `+tenant+`
+		 ORDER BY id DESC LIMIT 1`,
+		append([]any{sha, domain.JournalError}, targs...))
+	if err != nil || len(ids) == 0 {
+		return 0, false, err
+	}
+	return ids[0], true, nil
+}
+
 // FilesOfMatch — see storage.ImportBatchStore.
 func (s *ImportBatchStore) FilesOfMatch(ctx context.Context, scope string, matchID int64) ([]int64, error) {
 	tenant, targs := s.DB.TenantFilter("", scope)

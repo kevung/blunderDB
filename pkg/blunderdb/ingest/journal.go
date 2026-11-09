@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"time"
 
@@ -109,4 +110,25 @@ func (j *Journal) Pending(paths []string) (todo []string, skipped int) {
 func (j *Journal) Known(sha string) (int64, bool) {
 	id, ok := j.bySHA[sha]
 	return id, ok
+}
+
+// KnownFiles answers PipelineOptions.Known for a whole library: a file whose
+// digest the resumed batch's journal j (nil outside a resume) or any earlier
+// batch of the tenant journaled with a match still stored is not decoded
+// again. A lookup that fails answers "unknown": the file is then decoded and
+// deduplicated by its content, as it always was.
+func KnownFiles(ctx context.Context, batches storage.ImportBatchStore, scope string, j *Journal) func(sha string) (int64, bool) {
+	return func(sha string) (int64, bool) {
+		if j != nil {
+			if id, ok := j.Known(sha); ok {
+				return id, true
+			}
+		}
+		id, ok, err := batches.KnownFile(ctx, scope, sha)
+		if err != nil {
+			slog.Warn("import: digest lookup failed; file decoded", "err", err)
+			return 0, false
+		}
+		return id, ok
+	}
 }
