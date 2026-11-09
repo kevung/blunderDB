@@ -65,7 +65,7 @@ func (s *StatsStore) studyEffectDecisions(ctx context.Context, scope string, fil
 	whereSQL, args := s.buildStatsWhereClause(scope, filter)
 	q, err := s.DB.Query(ctx,
 		`SELECT p.id, COALESCE(p.game_type, 0), p.decision_type, `+s.DB.DateText("m.match_date")+`, COUNT(*) `+
-			statsBaseJoin+whereSQL+` AND COALESCE(p.match_length, m.match_length, 0) > 0
+			statsBaseJoin(s.DB)+whereSQL+` AND COALESCE(p.match_length, m.match_length, 0) > 0
 			GROUP BY p.id, p.game_type, p.decision_type, m.match_date`, args...)
 	if err != nil {
 		return nil, nil, errf(s.DB, "StudyEffect decisions", err)
@@ -137,7 +137,7 @@ func (s *StatsStore) studyEffectPositions(ctx context.Context, scope string, fil
 	day := "NULLIF(" + s.DB.DateText("m.match_date") + ", '')"
 	q, err := s.DB.Query(ctx,
 		`SELECT p.id, COALESCE(p.game_type, 0), p.decision_type, MIN(`+day+`), MAX(`+day+`) `+
-			statsBaseJoin+whereSQL+` AND COALESCE(p.match_length, m.match_length, 0) > 0
+			statsBaseJoin(s.DB)+whereSQL+` AND COALESCE(p.match_length, m.match_length, 0) > 0
 			GROUP BY p.id, p.game_type, p.decision_type`, args...)
 	if err != nil {
 		return nil, errf(s.DB, "StudyEffect positions", err)
@@ -280,7 +280,7 @@ func (s *StatsStore) biasRows(ctx context.Context, scope string, filter storage.
 	cubeRows, err := s.DB.Query(ctx,
 		`SELECT p.id, `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`,
 			COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), COALESCE(`+statsErrExpr+`, 0) `+
-			statsBaseJoin+whereSQL+` AND p.decision_type = 1`, args...)
+			statsBaseJoin(s.DB)+whereSQL+` AND p.decision_type = 1`, args...)
 	if err != nil {
 		return nil, nil, errf(s.DB, "DirectionalBiases cube", err)
 	}
@@ -307,7 +307,7 @@ func (s *StatsStore) biasRows(ctx context.Context, scope string, filter storage.
 		`SELECT p.id, p.state, COALESCE(p.player_on_roll, 0), COALESCE(p.dice_1, 0), COALESCE(p.dice_2, 0),
 			COALESCE(`+statsErrExpr+`, 0), COALESCE(mv.checker_move, ''),
 			CASE WHEN `+statsErrExpr+` > 0 THEN a.data END `+
-			statsBaseJoin+whereSQL+` AND p.decision_type = 0`, args...)
+			statsBaseJoin(s.DB)+whereSQL+` AND p.decision_type = 0`, args...)
 	if err != nil {
 		return nil, nil, errf(s.DB, "DirectionalBiases checker", err)
 	}

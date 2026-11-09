@@ -116,7 +116,7 @@ func (s *StatsStore) run(ctx context.Context, scope string, filter storage.Stats
 	// tables need, and gives every pass the same snapshot.
 	err = transactRead(ctx, s.DB, func(tx Execer) error {
 		ts := &StatsStore{DB: tx}
-		q.join = statsBaseJoin
+		q.join = statsBaseJoin(s.DB)
 		// A reader asks within the snapshot it then reads.
 		if fromMatchStats(filter) && readOnly {
 			var err error

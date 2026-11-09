@@ -59,19 +59,36 @@ func (pd playedDecision) errArg() any {
 }
 
 // PlayedDecisionAnalysisSQL reads what PlayedDecisionArgs scores a new move
-// by; a constant, so an import prepares it once.
-const PlayedDecisionAnalysisSQL = `SELECT COALESCE(p.decision_type, 0), a.data, ` + PlayPositionColumns + `
-		FROM position p JOIN analysis a ON a.position_id = p.id WHERE p.id = ?`
+// by; its text is fixed per dialect, so an import prepares it once. Its
+// arguments are the position id, then the tenant where the dialect has one
+// (andTenant): position is keyed by (tenant_id, id).
+func PlayedDecisionAnalysisSQL(d Dialect) string {
+	tenant, _ := andTenant(d, "p", "")
+	return `SELECT COALESCE(p.decision_type, 0), a.data, ` + PlayPositionColumns + `
+		FROM position p JOIN analysis a ON a.position_id = p.id` + andSameTenant(d, "a", "p") + ` WHERE p.id = ?` + tenant
+}
+
+// andTenant is a conjunct confining alias to the scope's tenant, and its
+// argument, on a dialect whose rows carry one; nothing on SQLite, whose
+// TenantFilter is a constant TRUE that would change a prepared text.
+func andTenant(d Dialect, alias, scope string) (string, []any) {
+	cols, args := d.TenantColumns(scope)
+	if len(cols) == 0 {
+		return "", nil
+	}
+	return " AND " + alias + "." + cols[0] + " = ?", args
+}
 
 // PlayedDecisionArgs returns the values of move.decision_error_mp and
 // move.is_close_cube for a move about to be written at positionID with the
 // given checker play and cube action, from the position's stored analysis.
 // A move without position or analysis gets NULL and 0.
-func PlayedDecisionArgs(ctx context.Context, db Execer, positionID int64, checkerMove, cubeAction string) (errMP any, closeCube int64, err error) {
+func PlayedDecisionArgs(ctx context.Context, db Execer, scope string, positionID int64, checkerMove, cubeAction string) (errMP any, closeCube int64, err error) {
 	if positionID == 0 {
 		return nil, 0, nil
 	}
-	rows, err := db.Query(ctx, PlayedDecisionAnalysisSQL, positionID)
+	_, tenantArgs := andTenant(db, "p", scope)
+	rows, err := db.Query(ctx, PlayedDecisionAnalysisSQL(db), append([]any{positionID}, tenantArgs...)...)
 	if err != nil {
 		return nil, 0, errf(db, "read analysis of move", err)
 	}
@@ -169,7 +186,7 @@ func RescoreMovesSQL(d Dialect, n int) string {
 	return `SELECT mv.id, mv.position_id, COALESCE(p.decision_type, 0), COALESCE(mv.checker_move, ''),
 			` + ActionLabelOrEmptyFor(d, "mv.cube_action") + `, mv.decision_error_mp, COALESCE(mv.is_close_cube, 0),
 			` + PlayPositionColumns + `
-		FROM move mv JOIN position p ON p.id = mv.position_id
+		FROM move mv JOIN position p ON p.id = mv.position_id` + andSameTenant(d, "p", "mv") + `
 		WHERE mv.position_id IN (` + Placeholders(n) + `)`
 }
 

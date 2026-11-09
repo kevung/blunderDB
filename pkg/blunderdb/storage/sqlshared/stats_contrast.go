@@ -65,7 +65,7 @@ func (s *StatsStore) PlayerContrast(ctx context.Context, scope, playerA, playerB
 		// their own play.
 		rows, err := s.DB.Query(ctx,
 			`SELECT p.id, `+s.DB.Bigint("COALESCE(MAX("+errExpr+"), -1)")+`, COUNT(`+errExpr+`), `+
-				`SUM(CASE WHEN (`+errExpr+`) IS NULL THEN 1 ELSE 0 END) `+statsBaseJoin+where+
+				`SUM(CASE WHEN (`+errExpr+`) IS NULL THEN 1 ELSE 0 END) `+statsBaseJoin(s.DB)+where+
 				` GROUP BY p.id ORDER BY p.id`, args...)
 		if err != nil {
 			return nil, err

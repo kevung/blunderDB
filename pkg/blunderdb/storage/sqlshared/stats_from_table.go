@@ -78,7 +78,7 @@ func (s *StatsStore) matchStatsSource(ctx context.Context, scope string) (string
 			SUM(CASE WHEN ` + isCube + ` THEN 0 ELSE ` + errE + ` END) AS checker_error_mp,
 			SUM(CASE WHEN ` + isCube + ` THEN 1 ELSE 0 END) AS cube_decisions,
 			SUM(CASE WHEN ` + isCube + ` THEN ` + errE + ` ELSE 0 END) AS cube_error_mp
-			` + statsBaseJoin + ` WHERE ` + pTenant + ` AND a.position_id IS NOT NULL AND ` + errE + ` IS NOT NULL AND ` + countedExpr(d) + `
+			` + statsBaseJoin(d) + ` WHERE ` + pTenant + ` AND a.position_id IS NOT NULL AND ` + errE + ` IS NOT NULL AND ` + countedExpr(d) + `
 			GROUP BY g.match_id, ` + seatExpr + `) x ON x.match_id = m0.id AND x.seat = s.seat
 		WHERE ` + mTenant + `) ms JOIN match m ON m.id = ms.match_id`
 	return from, append(append([]any{}, pArgs...), mArgs...), nil

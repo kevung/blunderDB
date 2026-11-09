@@ -25,6 +25,7 @@ func (fakeDialect) TenantFilter(alias, scope string) (string, []any) {
 	return "1=1", nil
 }
 func (fakeDialect) TenantColumns(scope string) ([]string, []any) { return nil, nil }
+func (fakeDialect) SameTenant(_, _ string) string                { return "" }
 func (fakeDialect) Bool(col string, v bool) string {
 	if v {
 		return col + " = 1"

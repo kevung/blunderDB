@@ -40,6 +40,9 @@ func (shared) TenantFilter(alias, scope string) (string, []any) {
 func (shared) TenantColumns(scope string) ([]string, []any) {
 	return []string{"tenant_id"}, []any{tenantID(scope)}
 }
+func (shared) SameTenant(left, right string) string {
+	return left + ".tenant_id = " + right + ".tenant_id"
+}
 func (shared) Bool(col string, v bool) string {
 	if v {
 		return col + " = TRUE"

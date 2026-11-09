@@ -32,9 +32,9 @@ func (s *StatsStore) MatchMoveGrades(ctx context.Context, scope string, matchID 
 		`SELECT mv.id, mv.position_id, `+ActionLabelOrEmptyFor(s.DB, "mv.move_type")+`,
 			COALESCE(mv.checker_move, ''), `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`, a.data
 		 FROM move mv
-		 JOIN game g ON g.id = mv.game_id
-		 JOIN position p ON p.id = mv.position_id
-		 JOIN analysis a ON a.position_id = p.id
+		 JOIN game g ON g.id = mv.game_id`+andSameTenant(s.DB, "g", "mv")+`
+		 JOIN position p ON p.id = mv.position_id`+andSameTenant(s.DB, "p", "mv")+`
+		 JOIN analysis a ON a.position_id = p.id`+andSameTenant(s.DB, "a", "p")+`
 		 WHERE `+tenant+` AND g.match_id = ?
 		 ORDER BY g.game_number, mv.move_number, mv.id`,
 		append(args, matchID)...)

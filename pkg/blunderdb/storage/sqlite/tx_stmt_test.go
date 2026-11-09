@@ -103,7 +103,7 @@ func TestImportPathStatementsArePreparedOnceAndSkipTheMoveTable(t *testing.T) {
 		t.Errorf("%d statements per decision, want 8 (position, analysis read, match stats invalidation, analysis upsert, moves to rescore, analysis of the new move, move, position match date): %v", per, count.sent)
 	}
 	for _, q := range []string{positionInsertSQL, analysisMergeSelectSQL, invalidateMatchStatsOfPositionSQL, analysisUpsertSQL,
-		sqlshared.RescoreMovesSQL(shared{}, 1), sqlshared.PlayedDecisionAnalysisSQL, moveInsertSQL, positionMatchDateOnMoveSQL} {
+		sqlshared.RescoreMovesSQL(shared{}, 1), sqlshared.PlayedDecisionAnalysisSQL(shared{}), moveInsertSQL, positionMatchDateOnMoveSQL} {
 		if _, ok := stx.stmts[q]; !ok {
 			t.Errorf("hot statement not prepared: %.40q", q)
 		}

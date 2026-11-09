@@ -169,7 +169,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 		`SELECT g.match_id, `+seatExpr+`, p.decision_type, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
 			d.Bigint(`SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END)`)+`, `+
 			d.Bigint(`SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END)`)+` `+
-			matchScopedJoin+where+` GROUP BY g.match_id, `+seatExpr+`, p.decision_type`,
+			matchScopedJoin(d)+where+` GROUP BY g.match_id, `+seatExpr+`, p.decision_type`,
 		append([]any{settings.ErrorThresholdMP, settings.BlunderThresholdMP}, whereArgs...), func(r Rows) error {
 			var id, sum, errs, blunders int64
 			var seat, dt, n int
@@ -201,7 +201,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, `+
 			d.Bigint(`SUM(CASE WHEN p.decision_type = 0 THEN 1 ELSE 0 END)`)+` `+
-			matchScopedJoin+analysed+` GROUP BY g.match_id, `+seatExpr,
+			matchScopedJoin(d)+analysed+` GROUP BY g.match_id, `+seatExpr,
 		whereArgs, func(r Rows) error {
 			var id, sum, moves int64
 			var seat int
@@ -220,8 +220,9 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	// play: the players table's Snowie denominator.
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, COUNT(*)
-		 FROM game g JOIN move mv ON mv.game_id = g.id JOIN position p ON p.id = mv.position_id
-		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0 AND NOT `+UnscoredPlaySQL("p", "mv")+`
+		 FROM game g JOIN move mv ON mv.game_id = g.id`+andSameTenant(d, "mv", "g")+`
+		 JOIN position p ON p.id = mv.position_id`+andSameTenant(d, "p", "mv")+`
+		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0 AND NOT `+UnscoredPlaySQL(d, "p", "mv")+`
 		 GROUP BY g.match_id, `+seatExpr,
 		ids, func(r Rows) error {
 			var id int64
@@ -248,7 +249,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	best := map[key]prov{}
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, COALESCE(a.analysis_engine, ''), COALESCE(a.analysis_depth, 0), COUNT(*) `+
-			matchScopedJoin+where+` GROUP BY g.match_id, `+seatExpr+`, a.analysis_engine, a.analysis_depth`,
+			matchScopedJoin(d)+where+` GROUP BY g.match_id, `+seatExpr+`, a.analysis_engine, a.analysis_depth`,
 		whereArgs, func(r Rows) error {
 			var id int64
 			var p prov
@@ -294,7 +295,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	games := map[int64]*gameLosses{}
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, mv.game_id, `+statsErrExpr+`, COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), `+
-			cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0) `+matchScopedJoin+where+
+			cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0) `+matchScopedJoin(d)+where+
 			` ORDER BY g.match_id, mv.game_id, mv.id`,
 		whereArgs, func(r Rows) error {
 			var id, game, errMP int64
@@ -785,7 +786,7 @@ func (s *StatsStore) MatchSeries(ctx context.Context, scope string, filter stora
 		// A provenance filter, or a reader that cannot fill the table:
 		// Compute's direct per-match pass alone, over the decisions.
 		whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
-		q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs, join: statsBaseJoin}
+		q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs, join: statsBaseJoin(s.DB)}
 		if err := s.computePerMatch(ctx, q, &res); err != nil {
 			return errf(s.DB, "match series", err)
 		}

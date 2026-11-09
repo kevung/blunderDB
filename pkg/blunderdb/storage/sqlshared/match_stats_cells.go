@@ -185,7 +185,7 @@ func writeMatchStatsCells(ctx context.Context, tx Execer, scope, ph string, ids 
 		`SELECT g.match_id, `+seatExpr+`, p.decision_type, COALESCE(a.met_id, 0), p.id, p.game_phase, p.game_type,
 			p.score_1, p.score_2, a.best_cube_action, mv.cube_action, (`+statsErrExpr+`), COALESCE(mv.player, 0),
 			`+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0) `+
-			matchScopedJoin+where,
+			matchScopedJoin(d)+where,
 		append(append([]any{}, pArgs...), ids...), func(r Rows) error {
 			var match, met, pos, errMP int64
 			var seat, dt, rawPlayer, cubeValue, matchLength int

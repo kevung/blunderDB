@@ -86,7 +86,7 @@ func (s *StatsStore) phaseMonths(ctx context.Context, scope string, filter stora
 	} else {
 		where, wargs := s.buildStatsWhereClause(scope, filter)
 		query = `SELECT ` + month + ` AS mon, COALESCE(p.game_phase, 0) AS ph, ` + d.Bigint(`SUM(`+statsErrExpr+`)`) + `, ` +
-			`COUNT(*), COUNT(DISTINCT m.id) ` + statsBaseJoin + where + ` AND m.match_date IS NOT NULL GROUP BY 1, 2`
+			`COUNT(*), COUNT(DISTINCT m.id) ` + statsBaseJoin(s.DB) + where + ` AND m.match_date IS NOT NULL GROUP BY 1, 2`
 		args = wargs
 	}
 	out := map[string]map[int]phaseMonth{}

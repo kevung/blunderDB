@@ -21,7 +21,7 @@ func (s *StatsStore) playerMWC7(ctx context.Context, scope string, f storage.Sta
 	err := scanEach(ctx, s.DB,
 		`SELECT `+moverNameExpr+`, m.id, COALESCE(`+statsErrExpr+`, 0), COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
 			`+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0), COALESCE(m.match_length, 0) `+
-			statsBaseJoin+statsWhere,
+			statsBaseJoin(s.DB)+statsWhere,
 		statsArgs, func(r Rows) error {
 			var name string
 			var match, errMP int64

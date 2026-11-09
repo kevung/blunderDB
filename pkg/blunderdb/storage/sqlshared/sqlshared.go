@@ -135,6 +135,14 @@ type Dialect interface {
 	// them first in the column list and the argument list.
 	TenantColumns(scope string) (cols []string, args []any)
 
+	// SameTenant renders the predicate that two aliased domain rows belong to
+	// the same tenant, for a join condition: "" on SQLite (no tenant column),
+	// "left.tenant_id = right.tenant_id" on PostgreSQL. Its keys lead with
+	// tenant_id, so a join on an id alone walks every tenant's entries of the
+	// index unless row-level security adds the tenant; with this predicate
+	// the planner carries the WHERE clause's tenant across the join.
+	SameTenant(left, right string) string
+
 	// Bool renders the predicate "col is v". The SQLite schema stores its
 	// flags as INTEGER 0/1 and declares partial indexes on `col = 1`, which
 	// the planner only matches textually, so the literal has to stay 1/0

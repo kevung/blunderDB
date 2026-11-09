@@ -88,8 +88,9 @@ func (s *StatsStore) walkTimedDecisions(ctx context.Context, scope string, match
 	// with the few rows the table reads and nothing is added to the import.
 	query := `SELECT COALESCE(m.player1_name, ''), COALESCE(m.player2_name, ''), mv.player,
 			mv.decision_ms, mv.cube_decision_ms, ` + scoredMoveCols(s.DB) + `
-		 FROM move mv JOIN game g ON g.id = mv.game_id JOIN match m ON m.id = g.match_id
-		 LEFT JOIN analysis a ON a.position_id = mv.position_id
+		 FROM move mv JOIN game g ON g.id = mv.game_id` + andSameTenant(s.DB, "g", "mv") + `
+		 JOIN match m ON m.id = g.match_id` + andSameTenant(s.DB, "m", "g") + `
+		 LEFT JOIN analysis a ON a.position_id = mv.position_id` + andSameTenant(s.DB, "a", "mv") + `
 		 WHERE ` + tenant + ` AND (mv.decision_ms IS NOT NULL OR mv.cube_decision_ms IS NOT NULL)`
 	if len(matchIDs) > 0 {
 		query += ` AND m.id IN (` + strings.TrimSuffix(strings.Repeat("?,", len(matchIDs)), ",") + `)`

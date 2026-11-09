@@ -120,7 +120,7 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 
 	var numDecisions int
 	if !opts.uncounted {
-		if err := s.DB.QueryRow(ctx, `SELECT COUNT(*) `+statsBaseJoin+whereSQL, baseArgs...).Scan(&numDecisions); err != nil {
+		if err := s.DB.QueryRow(ctx, `SELECT COUNT(*) `+statsBaseJoin(s.DB)+whereSQL, baseArgs...).Scan(&numDecisions); err != nil {
 			return nil, 0, 0, errf(s.DB, "classifiedErrors count", err)
 		}
 	}
@@ -138,7 +138,7 @@ func (s *StatsStore) classifiedErrors(ctx context.Context, scope string, filter 
 			`+dataExpr+`, m.id, COALESCE(m.player1_name, ''), COALESCE(m.player2_name, ''),
 			COALESCE(mv.player, 0), COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), `+cubeMultiplierExpr+`,
 			COALESCE(p.match_length, m.match_length, 0), COALESCE(m.match_length, 0), `+s.DB.DateText("m.match_date")+` `+
-			statsBaseJoin+whereSQL+` AND (`+statsErrExpr+`) >= ?`,
+			statsBaseJoin(s.DB)+whereSQL+` AND (`+statsErrExpr+`) >= ?`,
 		append(append([]any{}, baseArgs...), settings.ErrorThresholdMP)...)
 	if err != nil {
 		return nil, 0, 0, errf(s.DB, "classifiedErrors query", err)
