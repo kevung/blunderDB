@@ -86,6 +86,11 @@
   </branding>
 
   <releases>
+    <release version="0.52.1" date="2026-11-09">
+      <description>
+        <p>The PDF manuals in all nine languages are attached to the release again.</p>
+      </description>
+    </release>
     <release version="0.52.0" date="2026-11-09">
       <description>
         <ul>
