@@ -150,7 +150,7 @@ func (s *MatchEquityTableStore) TagAnalyses(ctx context.Context, scope string, m
 			}
 			// The table of an analysis is a dimension of the per-match cells
 			// (match_stats_cells.go): the matches reaching it are stale.
-			if err := InvalidateMatchStatsOfPositions(ctx, tx, chunk); err != nil {
+			if err := InvalidateMatchStatsOfPositions(ctx, tx, scope, chunk); err != nil {
 				return err
 			}
 		}

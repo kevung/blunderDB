@@ -1247,7 +1247,7 @@ func (s *StatsStore) playerTable(ctx context.Context, scope string, filter stora
 	}
 	if readable {
 		decisions, snowieErr, luck, err = s.playerSumsFromTable(ctx, scope, f)
-		checkerMoves = `COALESCE((SELECT SUM(ms.checker_moves) FROM match_stats ms WHERE ms.match_id = m.id), 0)`
+		checkerMoves = `COALESCE((SELECT SUM(ms.checker_moves) FROM match_stats ms WHERE ms.match_id = m.id` + andSameTenant(s.DB, "ms", "m") + `), 0)`
 	} else {
 		decisions, snowieErr, luck, err = s.playerSumsDirect(ctx, scope, f, settings)
 	}

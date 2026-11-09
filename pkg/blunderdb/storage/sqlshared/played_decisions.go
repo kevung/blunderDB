@@ -161,16 +161,16 @@ const playedDecisionUpdateBatch = 200
 // returns how many moves changed. Only changed moves are written, so a
 // second run returns 0.
 //
-// Positions are named by id alone: their ids are unique across tenants, and
-// a caller rescoring for one tenant only holds that tenant's positions.
-func RescorePlayedDecisions(ctx context.Context, db Execer, analyses map[int64]*domain.PositionAnalysis) (int, error) {
+// The positions are scope's: the keys of move and match_stats lead with the
+// tenant, so each write names it.
+func RescorePlayedDecisions(ctx context.Context, db Execer, scope string, analyses map[int64]*domain.PositionAnalysis) (int, error) {
 	ids := make([]int64, 0, len(analyses))
 	for id := range analyses {
 		ids = append(ids, id)
 	}
 	changed := 0
 	for start := 0; start < len(ids); start += playedDecisionChunk {
-		n, err := rescorePlayedDecisionsChunk(ctx, db, ids[start:min(start+playedDecisionChunk, len(ids))], analyses)
+		n, err := rescorePlayedDecisionsChunk(ctx, db, scope, ids[start:min(start+playedDecisionChunk, len(ids))], analyses)
 		changed += n
 		if err != nil {
 			return changed, err
@@ -181,16 +181,19 @@ func RescorePlayedDecisions(ctx context.Context, db Execer, analyses map[int64]*
 
 // RescoreMovesSQL reads the moves of n positions as RescorePlayedDecisions
 // scores them; for one position, what every analysis write sends, its text
-// is fixed, so an import prepares it once.
+// is fixed, so an import prepares it once. Its first argument is the tenant
+// (TenantFilter's, none on SQLite): the text of the predicate does not
+// depend on which.
 func RescoreMovesSQL(d Dialect, n int) string {
+	tenant, _ := d.TenantFilter("mv", "")
 	return `SELECT mv.id, mv.position_id, COALESCE(p.decision_type, 0), COALESCE(mv.checker_move, ''),
 			` + ActionLabelOrEmptyFor(d, "mv.cube_action") + `, mv.decision_error_mp, COALESCE(mv.is_close_cube, 0),
 			` + PlayPositionColumns + `
 		FROM move mv JOIN position p ON p.id = mv.position_id` + andSameTenant(d, "p", "mv") + `
-		WHERE mv.position_id IN (` + Placeholders(n) + `)`
+		WHERE ` + tenant + ` AND mv.position_id IN (` + Placeholders(n) + `)`
 }
 
-func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, analyses map[int64]*domain.PositionAnalysis) (int, error) {
+func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, scope string, ids []int64, analyses map[int64]*domain.PositionAnalysis) (int, error) {
 	type move struct {
 		id                   int64
 		positionID           int64
@@ -199,7 +202,8 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 		stored               playedDecision
 		pos                  *domain.Position
 	}
-	rows, err := db.Query(ctx, RescoreMovesSQL(db, len(ids)), int64Args(ids)...)
+	_, targs := db.TenantFilter("mv", scope)
+	rows, err := db.Query(ctx, RescoreMovesSQL(db, len(ids)), append(append([]any{}, targs...), int64Args(ids)...)...)
 	if err != nil {
 		return 0, errf(db, "read moves to rescore", err)
 	}
@@ -227,6 +231,9 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 			pd playedDecision
 		}
 		var updates []update
+		moveTenant, moveArgs := tx.TenantFilter("move", scope)
+		mvTenant, mvArgs := tx.TenantFilter("mv", scope)
+		statsTenant, statsArgs := tx.TenantFilter("", scope)
 		for _, m := range moves {
 			pd := scorePlayedDecision(analyses[m.positionID], m.pos, m.decisionType, m.checkerMove, m.cubeAct)
 			if pd.closeCube == m.stored.closeCube && equalErr(pd.errMP, m.stored.errMP) {
@@ -248,8 +255,8 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 				sb.WriteString(`SELECT CAST(? AS BIGINT) AS id, CAST(? AS BIGINT) AS e, CAST(? AS BIGINT) AS c`)
 				args = append(args, u.id, u.pd.errArg(), u.pd.closeCube)
 			}
-			sb.WriteString(`) AS v WHERE move.id = v.id`)
-			if _, err := tx.Exec(ctx, sb.String(), args...); err != nil {
+			sb.WriteString(`) AS v WHERE ` + moveTenant + ` AND move.id = v.id`)
+			if _, err := tx.Exec(ctx, sb.String(), append(args, moveArgs...)...); err != nil {
 				return fmt.Errorf("rescore moves: %w", err)
 			}
 		}
@@ -259,9 +266,10 @@ func rescorePlayedDecisionsChunk(ctx context.Context, db Execer, ids []int64, an
 		// The match_stats rows summarise the columns just rewritten.
 		for start := 0; start < len(changedIDs); start += playedDecisionChunk {
 			part := changedIDs[start:min(start+playedDecisionChunk, len(changedIDs))]
-			if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE match_id IN
-				(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id WHERE mv.id IN (`+Placeholders(len(part))+`))`,
-				int64Args(part)...); err != nil {
+			args := append(append(append([]any{}, statsArgs...), mvArgs...), int64Args(part)...)
+			if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE `+statsTenant+` AND match_id IN
+				(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id`+andSameTenant(tx, "g", "mv")+`
+				 WHERE `+mvTenant+` AND mv.id IN (`+Placeholders(len(part))+`))`, args...); err != nil {
 				return fmt.Errorf("invalidate match stats of rescored moves: %w", err)
 			}
 		}
@@ -283,14 +291,16 @@ func equalErr(a, b *int64) bool {
 // RescorePlayedDecisionsOf is RescorePlayedDecisions over positionIDs, each
 // scored by its stored analysis: what a write that points moves at another
 // position, or rewrites an analysis without its columns, calls afterwards.
-func RescorePlayedDecisionsOf(ctx context.Context, db Execer, positionIDs []int64) (int, error) {
+func RescorePlayedDecisionsOf(ctx context.Context, db Execer, scope string, positionIDs []int64) (int, error) {
+	tenant, targs := db.TenantFilter("", scope)
 	analyses := make(map[int64]*domain.PositionAnalysis, len(positionIDs))
 	for _, id := range positionIDs {
 		analyses[id] = nil
 	}
 	for start := 0; start < len(positionIDs); start += playedDecisionChunk {
 		part := positionIDs[start:min(start+playedDecisionChunk, len(positionIDs))]
-		rows, err := db.Query(ctx, `SELECT position_id, data FROM analysis WHERE position_id IN (`+Placeholders(len(part))+`)`, int64Args(part)...)
+		rows, err := db.Query(ctx, `SELECT position_id, data FROM analysis WHERE `+tenant+` AND position_id IN (`+Placeholders(len(part))+`)`,
+			append(append([]any{}, targs...), int64Args(part)...)...)
 		if err != nil {
 			return 0, errf(db, "read analyses to rescore moves", err)
 		}
@@ -310,18 +320,20 @@ func RescorePlayedDecisionsOf(ctx context.Context, db Execer, positionIDs []int6
 			return 0, errf(db, "read analyses to rescore moves", err)
 		}
 	}
-	return RescorePlayedDecisions(ctx, db, analyses)
+	return RescorePlayedDecisions(ctx, db, scope, analyses)
 }
 
 // RescoreAllPlayedDecisions runs RescorePlayedDecisions over every analysed
 // position the handle sees, a page of analyses at a time, decoding each
 // once: the pass that scores a library older than the per-move columns. An
 // undecodable analysis leaves its moves as they are.
-func RescoreAllPlayedDecisions(ctx context.Context, db Execer) (int, error) {
+func RescoreAllPlayedDecisions(ctx context.Context, db Execer, scope string) (int, error) {
 	changed := 0
 	var last int64
+	tenant, targs := db.TenantFilter("", scope)
 	for {
-		rows, err := db.Query(ctx, `SELECT id, position_id, data FROM analysis WHERE id > ? ORDER BY id LIMIT ?`, last, playedDecisionChunk)
+		rows, err := db.Query(ctx, `SELECT id, position_id, data FROM analysis WHERE `+tenant+` AND id > ? ORDER BY id LIMIT ?`,
+			append(append([]any{}, targs...), last, playedDecisionChunk)...)
 		if err != nil {
 			return changed, errf(db, "read analyses to rescore moves", err)
 		}
@@ -346,7 +358,7 @@ func RescoreAllPlayedDecisions(ctx context.Context, db Execer) (int, error) {
 		if n == 0 {
 			return changed, nil
 		}
-		k, err := RescorePlayedDecisions(ctx, db, analyses)
+		k, err := RescorePlayedDecisions(ctx, db, scope, analyses)
 		changed += k
 		if err != nil {
 			return changed, err

@@ -373,7 +373,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		return true, nil
 	}
 	branch := func(decision, col string) string {
-		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
+		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id` + andSameTenant(s.DB, "q", "an") + ` WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
 	}
 	sub := branch("q.decision_type = 1", "cube_error") + " UNION ALL " +
 		branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + " UNION ALL " +
@@ -894,7 +894,7 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 	args := append(append([]any{}, wc.args...), extraArgs...)
 	plain := "position p"
 	if readsAnalysis.MatchString(filter) || strings.HasPrefix(key, "a.") {
-		plain += " LEFT JOIN analysis a ON a.position_id = p.id"
+		plain += " LEFT JOIN analysis a ON a.position_id = p.id" + andSameTenant(s.DB, "a", "p")
 	}
 	if key == "" {
 		return s.readIDs(ctx, plain, filter, "p.id", args, limit, offset)
@@ -906,7 +906,7 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 	keyed, keyedFilter, keyedArgs := plain, filter+" AND "+key+" IS NOT NULL", args
 	if strings.HasPrefix(key, "a.") {
 		tenant, tenantArgs := s.DB.TenantFilter("a", wc.scope)
-		keyed = "analysis a JOIN position p ON p.id = a.position_id"
+		keyed = "analysis a JOIN position p ON p.id = a.position_id" + andSameTenant(s.DB, "p", "a")
 		keyedFilter += " AND " + tenant
 		keyedArgs = append(append([]any{}, args...), tenantArgs...)
 	}
@@ -987,9 +987,10 @@ func (s *SearchStore) scanChunk(ctx context.Context, f domain.SearchFilters, wc 
 		if err != nil || len(ids) == 0 {
 			return nil, 0, 0, err
 		}
+		tenant, tenantArgs := s.DB.TenantFilter("p", wc.scope)
 		rows, err := s.DB.Query(ctx, `SELECT `+columns+` FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE p.id IN (`+Placeholders(len(ids))+`) ORDER BY `+order, int64Args(ids)...)
+	LEFT JOIN analysis a ON a.position_id = p.id`+andSameTenant(s.DB, "a", "p")+`
+	WHERE `+tenant+` AND p.id IN (`+Placeholders(len(ids))+`) ORDER BY `+order, append(tenantArgs, int64Args(ids)...)...)
 		if err != nil {
 			return nil, 0, 0, errf(s.DB, "search query", err)
 		}
@@ -999,7 +1000,7 @@ func (s *SearchStore) scanChunk(ctx context.Context, f domain.SearchFilters, wc 
 
 	query := `SELECT ` + columns + `
 	FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id
+	LEFT JOIN analysis a ON a.position_id = p.id` + andSameTenant(s.DB, "a", "p") + `
 	WHERE ` + wc.where + extra + ` ORDER BY ` + order + limitClause
 
 	args := append(append(append([]any{}, wc.args...), extraArgs...), limitArgs...)
@@ -1055,7 +1056,7 @@ func (s *SearchStore) FindIDs(ctx context.Context, scope string, f domain.Search
 	}
 	limitClause, limitArgs := s.DB.LimitOffset(opts.Limit, opts.Offset)
 	query := `SELECT p.id FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id
+	LEFT JOIN analysis a ON a.position_id = p.id` + andSameTenant(s.DB, "a", "p") + `
 	WHERE ` + wc.where + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort) + limitClause
 	rows, err := s.DB.Query(ctx, query, append(append([]any{}, wc.args...), limitArgs...)...)
 	if err != nil {
@@ -1098,7 +1099,7 @@ func (s *SearchStore) Count(ctx context.Context, scope string, f domain.SearchFi
 func (s *SearchStore) countRows(ctx context.Context, wc searchWhereClause, limit int) (n int, err error) {
 	limitClause, limitArgs := s.DB.LimitOffset(limit, 0)
 	rows, err := s.DB.Query(ctx, `SELECT 1 FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id
+	LEFT JOIN analysis a ON a.position_id = p.id`+andSameTenant(s.DB, "a", "p")+`
 	WHERE `+wc.where+limitClause, append(append([]any{}, wc.args...), limitArgs...)...)
 	if err != nil {
 		return 0, errf(s.DB, "search bounded count", err)
@@ -1167,7 +1168,7 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 
 func (s *SearchStore) countWhere(ctx context.Context, wc searchWhereClause, extra string, extraArgs []any) (int, error) {
 	query := `SELECT COUNT(*) FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id
+	LEFT JOIN analysis a ON a.position_id = p.id` + andSameTenant(s.DB, "a", "p") + `
 	WHERE ` + wc.where + extra
 	var n int
 	if err := s.DB.QueryRow(ctx, query, append(append([]any{}, wc.args...), extraArgs...)...).Scan(&n); err != nil {
@@ -1239,7 +1240,7 @@ func (s *SearchStore) indexOfInSQL(ctx context.Context, wc searchWhereClause, or
 	}
 
 	query := `SELECT ` + col + ` FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id
+	LEFT JOIN analysis a ON a.position_id = p.id` + andSameTenant(s.DB, "a", "p") + `
 	WHERE ` + wc.where + ` AND p.id = ?`
 	var key any
 	switch err := s.DB.QueryRow(ctx, query, append(append([]any{}, wc.args...), id)...).Scan(&key); {
@@ -1484,7 +1485,7 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 				// beside a time filter by that of the plays the time keeps; its
 				// blob may not have been fetched with the scan, so load it now.
 				if ana == nil {
-					ana = loadAnalysis(ctx, s.DB, pos.ID)
+					ana = loadAnalysis(ctx, s.DB, wc.scope, pos.ID)
 				}
 				if !matchesMoveErrorFilterPreloaded(ana, player1MovesByID[pos.ID], f.MoveErrorFilter) {
 					return false, nil

@@ -23,18 +23,20 @@ var answerCodesSQL = fmt.Sprint(fixedActionCode("Take")) + `, ` + fmt.Sprint(fix
 // alone on the doubler's own row when it owned the cube before redoubling,
 // which looks the same; there the take is the doubler's record, while an
 // answer recorded by a transcription follows the opponent's own Double move.
-// Aliases mv, g, m, p; the caller
-// appends its tenant predicate.
-var AnsweredOwnedCubeMovesSQL = `SELECT mv.id, mv.game_id, mv.position_id FROM move mv
-	JOIN game g ON g.id = mv.game_id
-	JOIN match m ON m.id = g.match_id
-	JOIN position p ON p.id = mv.position_id
+// Aliases mv, g, m, p, each joined within its tenant; the caller appends
+// its tenant predicate.
+func AnsweredOwnedCubeMovesSQL(d Dialect) string {
+	return `SELECT mv.id, mv.game_id, mv.position_id FROM move mv
+	JOIN game g ON g.id = mv.game_id` + andSameTenant(d, "g", "mv") + `
+	JOIN match m ON m.id = g.match_id` + andSameTenant(d, "m", "g") + `
+	JOIN position p ON p.id = mv.position_id` + andSameTenant(d, "p", "mv") + `
 	WHERE ` + ActionCodeOrEmptySQL("mv.cube_action") + ` IN (` + answerCodesSQL + `)
 	  AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner = p.player_on_roll
 	  AND NOT EXISTS (SELECT 1 FROM move d WHERE d.game_id = mv.game_id AND d.position_id = mv.position_id
 	      AND ` + ActionCodeOrEmptySQL("d.cube_action") + ` NOT IN (` + answerCodesSQL + `))
 	  AND EXISTS (SELECT 1 FROM move o WHERE o.game_id = mv.game_id AND o.move_number = mv.move_number - 1
 	      AND ` + ActionIsSQL("o.cube_action", "Double") + ` AND o.player <> mv.player)`
+}
 
 // DropGammonNetResponseAnalyses deletes every gammonNet analysis stored on a
 // take/pass position (a turned cube held by no one) whose verdict is the
@@ -44,16 +46,16 @@ var AnsweredOwnedCubeMovesSQL = `SELECT mv.id, mv.game_id, mv.position_id FROM m
 // fill. The caller runs it once per library, before any right verdict can
 // exist. Other engines' verdicts are the doubler's and stay. The moves on
 // those rows lose their error and the match statistics that summarised them
-// are dropped. Every scope the handle sees; it returns how many analyses
-// went.
-func DropGammonNetResponseAnalyses(ctx context.Context, db Execer) (int, error) {
+// are dropped. One scope; it returns how many analyses went.
+func DropGammonNetResponseAnalyses(ctx context.Context, db Execer, scope string) (int, error) {
+	tenant, targs := db.TenantFilter("a", scope)
 	// A row whose provenance is not derived yet is read from its blob, so
 	// the drop does not depend on the provenance pass having run first.
 	rows, err := db.Query(ctx, `SELECT a.position_id, a.analysis_engine IS NULL, CASE WHEN a.analysis_engine IS NULL THEN a.data END
-		FROM analysis a JOIN position p ON p.id = a.position_id
-		WHERE (a.analysis_engine LIKE 'gammonNet%' OR a.analysis_engine IS NULL)
+		FROM analysis a JOIN position p ON p.id = a.position_id`+andSameTenant(db, "p", "a")+`
+		WHERE `+tenant+` AND (a.analysis_engine LIKE 'gammonNet%' OR a.analysis_engine IS NULL)
 		  AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner = -1
-		ORDER BY a.position_id`)
+		ORDER BY a.position_id`, targs...)
 	if err != nil {
 		return 0, errf(db, "list gammonNet response analyses", err)
 	}
@@ -86,17 +88,17 @@ func DropGammonNetResponseAnalyses(ctx context.Context, db Execer) (int, error) 
 	}
 	err = db.Transact(ctx, func(tx Execer) error {
 		for start := 0; start < len(ids); start += playedDecisionChunk {
-			part := int64Args(ids[start:min(start+playedDecisionChunk, len(ids))])
-			in := `(` + Placeholders(len(part)) + `)`
-			if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE match_id IN
-				(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id WHERE mv.position_id IN `+in+`)`, part...); err != nil {
+			chunk := ids[start:min(start+playedDecisionChunk, len(ids))]
+			if err := InvalidateMatchStatsOfPositions(ctx, tx, scope, chunk); err != nil {
 				return fmt.Errorf("invalidate match stats of response analyses: %w", err)
 			}
-			if _, err := tx.Exec(ctx, `DELETE FROM analysis WHERE position_id IN `+in, part...); err != nil {
+			analysisTenant, aargs := tx.TenantFilter("", scope)
+			if _, err := tx.Exec(ctx, `DELETE FROM analysis WHERE `+analysisTenant+` AND position_id IN (`+Placeholders(len(chunk))+`)`,
+				append(append([]any{}, aargs...), int64Args(chunk)...)...); err != nil {
 				return fmt.Errorf("delete response analyses: %w", err)
 			}
 		}
-		_, err := RescorePlayedDecisionsOf(ctx, tx, ids)
+		_, err := RescorePlayedDecisionsOf(ctx, tx, scope, ids)
 		return err
 	})
 	if err != nil {
@@ -105,12 +107,21 @@ func DropGammonNetResponseAnalyses(ctx context.Context, db Execer) (int, error) 
 	return len(ids), nil
 }
 
-// DropOwnedCubeAnswerMatchStatsSQL deletes the statistics of every match
-// holding a take or a pass on an owned cube: the doubler's own row, where an
-// .xg file without its raw cube segment leaves the take. Those statistics
-// converted its MWC loss at half the cube it stands at; they are recomputed
-// from the rows.
-var DropOwnedCubeAnswerMatchStatsSQL = `DELETE FROM match_stats WHERE match_id IN (
-	SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id JOIN position p ON p.id = mv.position_id
-	WHERE ` + ActionCodeOrEmptySQL("mv.cube_action") + ` IN (` + answerCodesSQL + `)
-	  AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner <> -1)`
+// DropOwnedCubeAnswerMatchStats deletes the statistics of every match of
+// scope holding a take or a pass on an owned cube: the doubler's own row,
+// where an .xg file without its raw cube segment leaves the take. Those
+// statistics converted its MWC loss at half the cube it stands at; they are
+// recomputed from the rows.
+func DropOwnedCubeAnswerMatchStats(ctx context.Context, db Execer, scope string) error {
+	tenant, args := db.TenantFilter("", scope)
+	mvTenant, mvArgs := db.TenantFilter("mv", scope)
+	_, err := db.Exec(ctx, `DELETE FROM match_stats WHERE `+tenant+` AND match_id IN (
+	SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id`+andSameTenant(db, "g", "mv")+`
+	JOIN position p ON p.id = mv.position_id`+andSameTenant(db, "p", "mv")+`
+	WHERE `+mvTenant+` AND `+ActionCodeOrEmptySQL("mv.cube_action")+` IN (`+answerCodesSQL+`)
+	  AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner <> -1)`, append(args, mvArgs...)...)
+	if err != nil {
+		return errf(db, "drop the statistics of owned-cube answers", err)
+	}
+	return nil
+}

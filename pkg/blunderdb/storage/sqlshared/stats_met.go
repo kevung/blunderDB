@@ -42,11 +42,13 @@ func metComparableMatch(d Dialect, scope string) (string, []any) {
 		args = append(args, a...)
 		return sql
 	}
-	const movesOf = ` FROM analysis a JOIN move mv ON mv.position_id = a.position_id JOIN game g ON g.id = mv.game_id`
+	movesOf := ` FROM analysis a JOIN move mv ON mv.position_id = a.position_id` + andSameTenant(d, "mv", "a") +
+		` JOIN game g ON g.id = mv.game_id` + andSameTenant(d, "g", "mv")
 	sql := `(` + matchIsMoney +
 		` OR (m.id NOT IN (SELECT g.match_id` + movesOf + ` WHERE ` + tenant() + ` AND a.met_id IS NOT NULL AND a.met_id IS DISTINCT FROM ` + cur() + `)`
 	sql += ` AND (` + cur() + ` IS NULL OR (m.id IN (SELECT g.match_id` + movesOf + ` WHERE ` + tenant() + ` AND a.met_id = ` + cur() + `)`
-	sql += ` AND NOT EXISTS (SELECT 1 FROM game g JOIN move mv ON mv.game_id = g.id JOIN analysis a ON a.position_id = mv.position_id` +
+	sql += ` AND NOT EXISTS (SELECT 1 FROM game g JOIN move mv ON mv.game_id = g.id` + andSameTenant(d, "mv", "g") +
+		` JOIN analysis a ON a.position_id = mv.position_id` + andSameTenant(d, "a", "mv") +
 		` WHERE ` + tenant() + ` AND g.match_id = m.id AND a.met_id IS DISTINCT FROM ` + cur() + `)))))`
 	return sql, args
 }

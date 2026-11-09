@@ -53,7 +53,9 @@ const matchStatsBatch = 200
 const InvalidateMatchStatsOfMatchesSQL = `DELETE FROM match_stats WHERE match_id IN `
 
 // InvalidateMatchStatsOfPositionsSQL drops the rows of every match that
-// reaches one of the positions in the IN list that follows it.
+// reaches one of the positions in the IN list that follows it, on a backend
+// without a tenant column: the SQLite callers that run their own
+// transaction. InvalidateMatchStatsOfPositions is the scoped form.
 const InvalidateMatchStatsOfPositionsSQL = `DELETE FROM match_stats WHERE match_id IN
 	(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id WHERE mv.position_id IN `
 
@@ -85,14 +87,21 @@ func UpsertDropsMET(storedMET bool, newEngine string) bool {
 }
 
 // InvalidateMatchStats drops the rows of matchIDs, in batches.
-func InvalidateMatchStats(ctx context.Context, db Execer, matchIDs []int64) error {
-	return execInBatches(ctx, db, matchIDs, InvalidateMatchStatsOfMatchesSQL, "")
+func InvalidateMatchStats(ctx context.Context, db Execer, scope string, matchIDs []int64) error {
+	tenant, args := db.TenantFilter("", scope)
+	return execInBatches(ctx, db, args, matchIDs, `DELETE FROM match_stats WHERE `+tenant+` AND match_id IN `, "")
 }
 
-// InvalidateMatchStatsOfPositions drops the rows of every match reaching one
-// of positionIDs, in batches.
-func InvalidateMatchStatsOfPositions(ctx context.Context, db Execer, positionIDs []int64) error {
-	return execInBatches(ctx, db, positionIDs, InvalidateMatchStatsOfPositionsSQL, InvalidateMatchStatsOfPositionsSuffix)
+// InvalidateMatchStatsOfPositions drops the rows of every match of scope
+// reaching one of positionIDs, in batches. The keys of match_stats and move
+// lead with the tenant, which each lookup names.
+func InvalidateMatchStatsOfPositions(ctx context.Context, db Execer, scope string, positionIDs []int64) error {
+	tenant, args := db.TenantFilter("", scope)
+	mvTenant, mvArgs := db.TenantFilter("mv", scope)
+	return execInBatches(ctx, db, append(args, mvArgs...), positionIDs,
+		`DELETE FROM match_stats WHERE `+tenant+` AND match_id IN
+	(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id`+andSameTenant(db, "g", "mv")+`
+	 WHERE `+mvTenant+` AND mv.position_id IN `, `)`)
 }
 
 // InvalidateAllMatchStats drops every row of the scope: the next read
@@ -105,11 +114,11 @@ func InvalidateAllMatchStats(ctx context.Context, db Execer, scope string) error
 	return nil
 }
 
-func execInBatches(ctx context.Context, db Execer, ids []int64, prefix, suffix string) error {
+func execInBatches(ctx context.Context, db Execer, lead []any, ids []int64, prefix, suffix string) error {
 	for start := 0; start < len(ids); start += matchStatsBatch {
 		chunk := ids[start:min(start+matchStatsBatch, len(ids))]
 		q := prefix + "(" + Placeholders(len(chunk)) + ")" + suffix
-		if _, err := db.Exec(ctx, q, int64Args(chunk)...); err != nil {
+		if _, err := db.Exec(ctx, q, append(append([]any{}, lead...), int64Args(chunk)...)...); err != nil {
 			return errf(db, "invalidate match stats", err)
 		}
 	}
@@ -368,7 +377,7 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 		}); err != nil {
 			return err
 		}
-		if _, err := tx.Exec(ctx, InvalidateMatchStatsOfMatchesSQL+"("+Placeholders(len(matchIDs))+")", int64Args(matchIDs)...); err != nil {
+		if err := InvalidateMatchStats(ctx, tx, scope, matchIDs); err != nil {
 			return fmt.Errorf("match stats delete: %w", err)
 		}
 		tcols, targs := tx.TenantColumns(scope)
@@ -523,7 +532,7 @@ func (s *StatsStore) MissingMatchStats(ctx context.Context, scope string) ([]int
 	var ids []int64
 	err := scanEach(ctx, s.DB,
 		`SELECT m.id FROM match m WHERE `+tenant+
-			` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id) ORDER BY m.id`,
+			` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id`+andSameTenant(s.DB, "ms", "m")+`) ORDER BY m.id`,
 		args, func(r Rows) error {
 			var id int64
 			if err := r.Scan(&id); err != nil {
@@ -665,7 +674,7 @@ func (s *StatsStore) missingMatchStatsAmong(ctx context.Context, scope string, m
 		chunk := matchIDs[start:min(start+matchStatsBatch, len(matchIDs))]
 		err := scanEach(ctx, s.DB,
 			`SELECT m.id FROM match m WHERE `+tenant+` AND m.id IN (`+Placeholders(len(chunk))+`)`+
-				` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id) ORDER BY m.id`,
+				` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id`+andSameTenant(s.DB, "ms", "m")+`) ORDER BY m.id`,
 			append(append([]any{}, targs...), int64Args(chunk)...), func(r Rows) error {
 				var id int64
 				if err := r.Scan(&id); err != nil {

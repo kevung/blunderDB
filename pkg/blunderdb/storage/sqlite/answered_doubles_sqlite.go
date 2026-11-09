@@ -64,7 +64,7 @@ func (s *matchStore) ReanchorAnsweredDoubles(ctx context.Context, scope string) 
 			landed = append(landed, newID)
 		}
 		// A moved move is scored by the analysis of the row it lands on.
-		if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{db: tx}.shared(), landed); err != nil {
+		if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{db: tx}.shared(), scope, landed); err != nil {
 			return fmt.Errorf("rescore answered moves: %w", err)
 		}
 		if err := RefreshPositionMatchDates(ctx, tx, left); err != nil {
@@ -84,7 +84,7 @@ type answeredMove struct{ move, game int64 }
 // answeredOwnedCubeMoves groups the rows of sqlshared.AnsweredOwnedCubeMovesSQL
 // by position, positions in id order.
 func answeredOwnedCubeMoves(ctx context.Context, tx execer) (map[int64][]answeredMove, []int64, error) {
-	rows, err := tx.QueryContext(ctx, sqlshared.AnsweredOwnedCubeMovesSQL+` ORDER BY mv.position_id, mv.id`)
+	rows, err := tx.QueryContext(ctx, sqlshared.AnsweredOwnedCubeMovesSQL(shared{})+` ORDER BY mv.position_id, mv.id`)
 	if err != nil {
 		return nil, nil, fmt.Errorf("list answered moves: %w", err)
 	}

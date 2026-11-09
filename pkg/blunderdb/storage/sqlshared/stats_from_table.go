@@ -44,7 +44,11 @@ func (s *StatsStore) matchStatsWhere(scope string, filter storage.StatsFilter, s
 	return where, args
 }
 
-const matchStatsJoin = ` FROM match_stats ms JOIN match m ON m.id = ms.match_id`
+// matchStatsJoin joins each row to its match within its tenant (match_stats'
+// key leads with it).
+func matchStatsJoin(d Dialect) string {
+	return ` FROM match_stats ms JOIN match m ON m.id = ms.match_id` + andSameTenant(d, "m", "ms")
+}
 
 // matchStatsSource is the FROM clause of a read of match_stats, for a
 // caller inside inReadSnapshot: the table, filled first or already
@@ -60,7 +64,7 @@ func (s *StatsStore) matchStatsSource(ctx context.Context, scope string) (string
 		return "", nil, err
 	}
 	if readable {
-		return matchStatsJoin, nil, nil
+		return matchStatsJoin(s.DB), nil, nil
 	}
 	d := s.DB
 	pTenant, pArgs := d.TenantFilter("p", scope)
@@ -104,7 +108,7 @@ func (s *StatsStore) prByDecisionTypeFromTable(ctx context.Context, q statsQuery
 	if err := d.QueryRow(ctx,
 		`SELECT `+d.Bigint(`COALESCE(SUM(ms.checker_error_mp),0)`)+`, `+d.Bigint(`COALESCE(SUM(ms.checker_decisions),0)`)+`, `+
 			d.Bigint(`COALESCE(SUM(ms.cube_error_mp),0)`)+`, `+d.Bigint(`COALESCE(SUM(ms.cube_decisions),0)`)+
-			matchStatsJoin+where, args...).Scan(&chkErr, &chkN, &cubeErr, &cubeN); err != nil {
+			matchStatsJoin(s.DB)+where, args...).Scan(&chkErr, &chkN, &cubeErr, &cubeN); err != nil {
 		return fmt.Errorf("PR by decision_type (table): %w", err)
 	}
 	// A decision-type filter leaves the other type out entirely, as the
@@ -129,12 +133,12 @@ func (s *StatsStore) snowieGlobalFromTable(ctx context.Context, q statsQuery, re
 	f.DecisionType = -1
 	numWhere, numArgs := s.matchStatsWhere(q.scope, f, true)
 	var num int64
-	if err := d.QueryRow(ctx, `SELECT `+d.Bigint(`COALESCE(SUM(ms.snowie_error_mp),0)`)+matchStatsJoin+numWhere, numArgs...).Scan(&num); err != nil {
+	if err := d.QueryRow(ctx, `SELECT `+d.Bigint(`COALESCE(SUM(ms.snowie_error_mp),0)`)+matchStatsJoin(d)+numWhere, numArgs...).Scan(&num); err != nil {
 		return fmt.Errorf("snowie ER (table) numerator: %w", err)
 	}
 	denWhere, denArgs := s.matchStatsWhere(q.scope, f, false)
 	var den int64
-	if err := d.QueryRow(ctx, `SELECT `+d.Bigint(`COALESCE(SUM(ms.snowie_moves),0)`)+matchStatsJoin+denWhere, denArgs...).Scan(&den); err != nil {
+	if err := d.QueryRow(ctx, `SELECT `+d.Bigint(`COALESCE(SUM(ms.snowie_moves),0)`)+matchStatsJoin(d)+denWhere, denArgs...).Scan(&den); err != nil {
 		return fmt.Errorf("snowie ER (table) denominator: %w", err)
 	}
 	result.SnowieGlobal = snowieER(num, int(den))
@@ -150,7 +154,7 @@ func (s *StatsStore) perTournamentFromTable(ctx context.Context, q statsQuery, r
 	agg, aggArgs := tournamentMatchAgg(d, q.scope, "")
 	return scanEach(ctx, d,
 		`SELECT m.tournament_id, COALESCE(t.name,''), `+eff+`, `+sumErr+`, `+count+
-			matchStatsJoin+` LEFT JOIN tournament t ON t.id = m.tournament_id`+agg+where+
+			matchStatsJoin(s.DB)+` LEFT JOIN tournament t ON t.id = m.tournament_id`+agg+where+
 			` AND m.tournament_id IS NOT NULL`+
 			` GROUP BY m.tournament_id, t.id, t.name, t.date, t.created_at, tma.first_day HAVING `+count+` > 0`+tournamentChronology(eff),
 		append(aggArgs, args...), func(r Rows) error {
@@ -172,7 +176,7 @@ func (s *StatsStore) perMatchFromTable(ctx context.Context, q statsQuery, result
 	where, args := s.matchStatsWhere(q.scope, q.filter, true)
 	sumErr, count := tableErrDecisions(d, q.filter.DecisionType)
 	return scanEach(ctx, d,
-		`SELECT m.id, `+d.DateText("m.match_date")+`, `+sumErr+`, `+count+matchStatsJoin+where+
+		`SELECT m.id, `+d.DateText("m.match_date")+`, `+sumErr+`, `+count+matchStatsJoin(s.DB)+where+
 			` GROUP BY m.id, m.match_date HAVING `+count+` > 0 ORDER BY m.match_date, m.id`,
 		args, func(r Rows) error {
 			var ms storage.MatchStats
@@ -202,7 +206,7 @@ func (s *StatsStore) playerSumsFromTable(ctx context.Context, scope string, f st
 			d.Bigint(`SUM(ms.errors)`)+`, `+d.Bigint(`SUM(ms.blunders)`)+`, `+
 			d.Bigint(`SUM(ms.snowie_error_mp)`)+`, `+d.Bigint(`SUM(ms.snowie_moves)`)+`, `+
 			d.Bigint(`SUM(ms.luck_mp)`)+`, `+d.Bigint(`SUM(ms.luck_rolls)`)+
-			matchStatsJoin+where+` GROUP BY pname`,
+			matchStatsJoin(s.DB)+where+` GROUP BY pname`,
 		args, func(r Rows) error {
 			var name *string
 			var chkErr, chkN, cubeErr, cubeN, errs, blunders, snowie, snowieMoves, luckMP, luckRolls int64

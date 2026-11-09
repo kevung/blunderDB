@@ -235,7 +235,7 @@ func writeMatchStatsCells(ctx context.Context, tx Execer, scope, ph string, ids 
 		return fmt.Errorf("match stats cells: %w", err)
 	}
 
-	shared, err := sharePositions(ctx, tx, ph, ids, positions)
+	shared, err := sharePositions(ctx, tx, scope, ph, ids, positions)
 	if err != nil {
 		return err
 	}
@@ -304,17 +304,21 @@ type matchSeat struct {
 // are stale and its match's match_stats rows are dropped, for the fill to
 // recompute — this time with the position shared. A position already listed
 // as shared needs nothing: nobody holds it private.
-func sharePositions(ctx context.Context, tx Execer, ph string, ids []any, positions map[cellPosition]int64) (map[cellPosition]bool, error) {
+func sharePositions(ctx context.Context, tx Execer, scope, ph string, ids []any, positions map[cellPosition]int64) (map[cellPosition]bool, error) {
 	shared := map[cellPosition]bool{}
 	if len(positions) == 0 {
 		return shared, nil
 	}
+	// The keys of match_stats_position and match_stats lead with the
+	// tenant, which each lookup names.
+	tenant, targs := tx.TenantFilter("", scope)
+	gTenant, gArgs := tx.TenantFilter("g", scope)
 	// The batch's own references, per position and seat.
 	own := map[int64]map[matchSeat]int64{}
 	if err := scanEach(ctx, tx,
-		`SELECT mv.position_id, g.match_id, `+seatExpr+`, COUNT(*) FROM move mv JOIN game g ON g.id = mv.game_id
-		 WHERE g.match_id IN (`+ph+`) AND mv.position_id IS NOT NULL GROUP BY mv.position_id, g.match_id, `+seatExpr,
-		ids, func(r Rows) error {
+		`SELECT mv.position_id, g.match_id, `+seatExpr+`, COUNT(*) FROM move mv JOIN game g ON g.id = mv.game_id`+andSameTenant(tx, "g", "mv")+`
+		 WHERE `+gTenant+` AND g.match_id IN (`+ph+`) AND mv.position_id IS NOT NULL GROUP BY mv.position_id, g.match_id, `+seatExpr,
+		append(append([]any{}, gArgs...), ids...), func(r Rows) error {
 			var pos, n int64
 			var ms matchSeat
 			if err := r.Scan(&pos, &ms.match, &ms.seat, &n); err != nil {
@@ -340,7 +344,7 @@ func sharePositions(ctx context.Context, tx Execer, ph string, ids []any, positi
 
 	// Every reference, from the move index alone.
 	total := map[int64]int64{}
-	if err := eachChunk(ctx, tx, list, `SELECT position_id, COUNT(*) FROM move WHERE position_id IN `, ` GROUP BY position_id`, func(r Rows) error {
+	if err := eachChunk(ctx, tx, nil, list, `SELECT position_id, COUNT(*) FROM move WHERE position_id IN `, ` GROUP BY position_id`, func(r Rows) error {
 		var pos, n int64
 		if err := r.Scan(&pos, &n); err != nil {
 			return err
@@ -371,7 +375,7 @@ func sharePositions(ctx context.Context, tx Execer, ph string, ids []any, positi
 	}
 
 	listed := map[int64]bool{}
-	if err := eachChunk(ctx, tx, outside, `SELECT DISTINCT position_id FROM match_stats_position WHERE position_id IN `, ``, func(r Rows) error {
+	if err := eachChunk(ctx, tx, targs, outside, `SELECT DISTINCT position_id FROM match_stats_position WHERE `+tenant+` AND position_id IN `, ``, func(r Rows) error {
 		var pos int64
 		if err := r.Scan(&pos); err != nil {
 			return err
@@ -392,9 +396,9 @@ func sharePositions(ctx context.Context, tx Execer, ph string, ids []any, positi
 		batch[id.(int64)] = true
 	}
 	stale := map[int64]bool{}
-	if err := eachChunk(ctx, tx, unlisted,
-		`SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id
-		 JOIN match_stats ms ON ms.match_id = g.match_id AND ms.seat = 1 WHERE mv.position_id IN `, ``, func(r Rows) error {
+	if err := eachChunk(ctx, tx, gArgs, unlisted,
+		`SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id`+andSameTenant(tx, "g", "mv")+`
+		 JOIN match_stats ms ON ms.match_id = g.match_id AND ms.seat = 1`+andSameTenant(tx, "ms", "g")+` WHERE `+gTenant+` AND mv.position_id IN `, ``, func(r Rows) error {
 			var id int64
 			if err := r.Scan(&id); err != nil {
 				return err
@@ -411,14 +415,15 @@ func sharePositions(ctx context.Context, tx Execer, ph string, ids []any, positi
 		staleIDs = append(staleIDs, id)
 	}
 	sort.Slice(staleIDs, func(i, j int) bool { return staleIDs[i] < staleIDs[j] })
-	return shared, InvalidateMatchStats(ctx, tx, staleIDs)
+	return shared, InvalidateMatchStats(ctx, tx, scope, staleIDs)
 }
 
-// eachChunk runs prefix (ids) suffix over ids, byPositionsChunk at a time.
-func eachChunk(ctx context.Context, db Execer, ids []int64, prefix, suffix string, fn func(Rows) error) error {
+// eachChunk runs prefix (ids) suffix over ids, byPositionsChunk at a time,
+// lead bound before the ids.
+func eachChunk(ctx context.Context, db Execer, lead []any, ids []int64, prefix, suffix string, fn func(Rows) error) error {
 	for start := 0; start < len(ids); start += byPositionsChunk {
 		chunk := ids[start:min(start+byPositionsChunk, len(ids))]
-		if err := scanEach(ctx, db, prefix+"("+Placeholders(len(chunk))+")"+suffix, int64Args(chunk), fn); err != nil {
+		if err := scanEach(ctx, db, prefix+"("+Placeholders(len(chunk))+")"+suffix, append(append([]any{}, lead...), int64Args(chunk)...), fn); err != nil {
 			return err
 		}
 	}

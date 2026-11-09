@@ -266,9 +266,10 @@ func multiPlayedPlayer1Positions(ctx context.Context, db Execer, scope string) (
 // loadAnalysis returns a position's decoded analysis, or nil when it has none
 // or the blob does not decode — the same answer the search scan gives a row
 // it could not decode.
-func loadAnalysis(ctx context.Context, db Execer, positionID int64) *domain.PositionAnalysis {
+func loadAnalysis(ctx context.Context, db Execer, scope string, positionID int64) *domain.PositionAnalysis {
 	var data []byte
-	if err := db.QueryRow(ctx, `SELECT data FROM analysis WHERE position_id = ?`, positionID).Scan(&data); err != nil {
+	tenant, args := db.TenantFilter("", scope)
+	if err := db.QueryRow(ctx, `SELECT data FROM analysis WHERE `+tenant+` AND position_id = ?`, append(args, positionID)...).Scan(&data); err != nil {
 		return nil
 	}
 	a, err := engine.DecodeAnalysisFromStorage(data)

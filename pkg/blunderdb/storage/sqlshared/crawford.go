@@ -576,7 +576,7 @@ func MergePositionInto(ctx context.Context, tx Execer, scope string, keepID, dup
 		return fail(err)
 	}
 	// dupID's moves are now scored by keepID's analysis.
-	if _, err := RescorePlayedDecisionsOf(ctx, tx, []int64{keepID}); err != nil {
+	if _, err := RescorePlayedDecisionsOf(ctx, tx, scope, []int64{keepID}); err != nil {
 		return fail(err)
 	}
 	if err := raiseStickyMarks(ctx, tx, scope, keepID, dupID); err != nil {

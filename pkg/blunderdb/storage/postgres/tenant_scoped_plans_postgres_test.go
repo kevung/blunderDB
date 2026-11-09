@@ -14,26 +14,36 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 type recordedStmt struct {
-	sql  string
-	args []any
+	phase string
+	sql   string
+	args  []any
 }
 
+// stmtRecorder keeps the statements sent while phase is set, each with the
+// phase that sent it.
 type stmtRecorder struct {
 	mu    sync.Mutex
-	on    bool
+	phase string
 	stmts []recordedStmt
+}
+
+func (r *stmtRecorder) record(phase string) {
+	r.mu.Lock()
+	r.phase = phase
+	r.mu.Unlock()
 }
 
 func (r *stmtRecorder) TraceQueryStart(ctx context.Context, _ *pgx.Conn, d pgx.TraceQueryStartData) context.Context {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	if r.on {
-		r.stmts = append(r.stmts, recordedStmt{d.SQL, d.Args})
+	if r.phase != "" {
+		r.stmts = append(r.stmts, recordedStmt{r.phase, d.SQL, d.Args})
 	}
 	return ctx
 }
@@ -56,8 +66,11 @@ type planNode struct {
 // reaches its rows in a time bounded by that tenant only if each lookup names
 // the tenant. A lookup that does not walks every tenant's entries of the
 // index, once per row of the outer side — the import then slows down with the
-// library, quadratically. Every statement an import and the statistics of one
-// tenant send is planned here with another tenant present, under the
+// library, quadratically; a search, a training session or an Anki review
+// slows down with the other tenants' libraries. Every statement an import,
+// the statistics, the search (every token of the shared query corpus), the
+// training, the Anki decks and their export, the counts and the maintenance
+// of one tenant send is planned here with another tenant present, under the
 // settings of withJoinOrderPlan; no lookup into those tables may
 // go through a tenant-leading index without the tenant in its condition, nor
 // fall back to a sequential scan.
@@ -86,13 +99,12 @@ func TestTenantReadsNameTheirTenantWithoutRLS(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	rec.mu.Lock()
-	rec.on = true
-	rec.mu.Unlock()
 	const scope = "1"
+	rec.record("import")
 	if _, err := (ingest.XGImporter{S: s}).Import(ctx, scope, ingest.Source{Path: file}, nil); err != nil {
 		t.Fatal(err)
 	}
+	rec.record("stats")
 	if _, err := s.Stats().Compute(ctx, scope, storage.StatsFilter{}); err != nil {
 		t.Fatal(err)
 	}
@@ -108,8 +120,22 @@ func TestTenantReadsNameTheirTenantWithoutRLS(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	ids, err := s.Search().FindIDs(ctx, scope, domain.SearchFilters{}, storage.ListOpts{})
+	if err != nil || len(ids) < 10 {
+		t.Fatalf("positions of the tenant: %d, %v", len(ids), err)
+	}
+	rec.record("search")
+	exerciseSearch(ctx, t, s, scope, ids)
+	rec.record("training")
+	exerciseTraining(ctx, t, s, scope, ids)
+	rec.record("anki")
+	exerciseAnki(ctx, t, s, scope, ids)
+	rec.record("metadata")
+	exerciseMetadata(ctx, t, s, scope)
+	rec.record("maintenance")
+	exerciseMaintenance(ctx, t, s, scope, ids)
+	rec.record("")
 	rec.mu.Lock()
-	rec.on = false
 	stmts := rec.stmts
 	rec.mu.Unlock()
 
@@ -122,7 +148,7 @@ func TestTenantReadsNameTheirTenantWithoutRLS(t *testing.T) {
 	rows, err := conn.Query(ctx, `SELECT i.relname FROM pg_index x
 		JOIN pg_class i ON i.oid = x.indexrelid JOIN pg_class c ON c.oid = x.indrelid
 		JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = x.indkey[0]
-		WHERE c.relname IN ('position', 'move', 'analysis') AND a.attname = 'tenant_id'`)
+		WHERE a.attname = 'tenant_id'`)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -164,11 +190,11 @@ func TestTenantReadsNameTheirTenantWithoutRLS(t *testing.T) {
 		}
 		for _, p := range plans {
 			for _, bad := range unboundedLookups(p.Plan, tenantLeading) {
-				t.Errorf("%s\n  in: %s", bad, oneLine(st.sql))
+				t.Errorf("%s: %s\n  in: %s", st.phase, bad, oneLine(st.sql))
 			}
 		}
 	}
-	if explained < 20 {
+	if explained < 100 {
 		t.Fatalf("only %d statements planned: the recording missed the import", explained)
 	}
 }

@@ -390,9 +390,33 @@ jobs:
   # the `postgres` build tag (see postgres_test.go) because they need Docker;
   # BLUNDERDB_REQUIRE_PG=1 turns the tests' "Docker unavailable" skip into a
   # hard failure so a broken runner can't silently skip the whole suite.
+  #
+  # Three shards. Whole, storage/postgres took 925 s of the 1200 s go test is
+  # given and the job 16 min 20 s of its 20 (1013 s locally): a margin a slower
+  # runner or a few more tests would eat. The package is split by name, not by
+  # test index (scripts/go-test-shard.sh): two tests carry 60% of its time
+  # (TestContract_Postgres about 420 s, TestChangeSet_Postgres about 180 s), and
+  # an index split put both in one half (817 s against 196 s).
   test-postgres:
+    name: test-postgres (${{ matrix.shard }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: contract
+            run: |
+              go test -tags postgres -timeout 1200s -count=1 -run '^TestContract_Postgres$' -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+                ./pkg/blunderdb/storage/postgres/ 2>&1 | tee test-output.txt
+          - shard: changeset
+            run: |
+              go test -tags postgres -timeout 1200s -count=1 -run '^TestChangeSet_Postgres$' -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+                ./pkg/blunderdb/storage/postgres/ 2>&1 | tee test-output.txt
+          - shard: rest
+            run: |
+              go test -tags postgres -timeout 1200s -count=1 -skip '^(TestContract_Postgres|TestChangeSet_Postgres)$' -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+                ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/bulkload/... ./pkg/blunderdb/migrate/... ./pkg/blunderdb/events/pgnotify/... 2>&1 | tee test-output.txt
     env:
       BLUNDERDB_REQUIRE_PG: "1"
     steps:
@@ -416,16 +440,14 @@ jobs:
       # `coverage` job's Merge step now waits on this job too and downloads
       # its profile the same way it does the `test` matrix's.
       - name: Run PostgreSQL storage + migration tests
-        run: |
-          go test -tags postgres -timeout 1200s -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
-            ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/bulkload/... ./pkg/blunderdb/migrate/... ./pkg/blunderdb/events/pgnotify/... 2>&1 | tee test-output.txt
+        run: ${{ matrix.run }}
         shell: bash
 
       - name: Upload coverage shard
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: go-coverage-postgres
+          name: go-coverage-postgres-${{ matrix.shard }}
           path: coverage.out
           if-no-files-found: ignore
 
@@ -433,7 +455,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: pkg-times-postgres
+          name: pkg-times-postgres-${{ matrix.shard }}
           path: test-output.txt
           if-no-files-found: ignore
 

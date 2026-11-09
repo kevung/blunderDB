@@ -396,7 +396,7 @@ func (s *Storage) Migrate(ctx context.Context) error {
 // (sqlshared.RescoreAllPlayedDecisions): the migration step that adds the
 // per-move columns runs it on the raw handle.
 func RescorePlayedDecisions(ctx context.Context, db *sql.DB) (int, error) {
-	return sqlshared.RescoreAllPlayedDecisions(ctx, binder{db: db}.shared())
+	return sqlshared.RescoreAllPlayedDecisions(ctx, binder{db: db}.shared(), "")
 }
 
 // DropGammonNetResponseAnalyses empties the gammonNet verdicts stored on
@@ -404,7 +404,13 @@ func RescorePlayedDecisions(ctx context.Context, db *sql.DB) (int, error) {
 // migration step that moves the transcribed answers runs it on the raw
 // handle.
 func DropGammonNetResponseAnalyses(ctx context.Context, db *sql.DB) (int, error) {
-	return sqlshared.DropGammonNetResponseAnalyses(ctx, binder{db: db}.shared())
+	return sqlshared.DropGammonNetResponseAnalyses(ctx, binder{db: db}.shared(), "")
+}
+
+// DropOwnedCubeAnswerMatchStats drops the statistics of the matches holding
+// a take or a pass on an owned cube (sqlshared.DropOwnedCubeAnswerMatchStats).
+func DropOwnedCubeAnswerMatchStats(ctx context.Context, db *sql.DB) error {
+	return sqlshared.DropOwnedCubeAnswerMatchStats(ctx, binder{db: db}.shared(), "")
 }
 
 // IDsVisibleInOrder reports that SQLite's identifiers become visible in the
