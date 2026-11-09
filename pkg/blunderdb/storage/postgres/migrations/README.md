@@ -424,3 +424,4 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `change_journal`, `changeset.export`/`import` refused with `journal_off`). No version bump.
 - `066_merged_keys.sql` — `position` and `move` keep their `(tenant_id, id)` key alone, `analysis`
   its `(tenant_id, position_id)` one; `idx_analysis_creation_date` goes (SQLite too). No version bump.
+- `067_import_file_digest_index.sql` — partial index `idx_import_batch_file_sha` on the journal's `(tenant_id, sha256)` for the lines that name a match, so an import recognises a file already imported by its bytes (`ImportBatchStore.KnownFile`) before decoding it. Index only. No version bump.

@@ -55,6 +55,7 @@ var Unsupported = []string{
 	"ImportBatchStore.Files",
 	"ImportBatchStore.FilesOfMatch",
 	"ImportBatchStore.Finish",
+	"ImportBatchStore.KnownFile",
 	"ImportBatchStore.List",
 	"ImportBatchStore.Load",
 	"ImportBatchStore.RecordFiles",
@@ -307,6 +308,10 @@ func (importBatchStore) List(_ context.Context, _ string, _ storage.ListOpts) (r
 
 func (importBatchStore) Load(_ context.Context, _ string, _ int64) (r0 *domain.ImportBatch, err error) {
 	return r0, unsupported("ImportBatchStore.Load")
+}
+
+func (importBatchStore) KnownFile(_ context.Context, _ string, _ string) (r0 int64, r1 bool, err error) {
+	return r0, r1, unsupported("ImportBatchStore.KnownFile")
 }
 
 func (importBatchStore) RecordFiles(_ context.Context, _ string, _ int64, _ []domain.ImportFileEntry) error {
