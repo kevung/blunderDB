@@ -39,35 +39,35 @@ ok  	github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared	0.006s
 goos: linux
 goarch: amd64
 pkg: github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet
-cpu: AMD Ryzen 7 3700X 8-Core Processor             
-BenchmarkLevelSolveBisection-16            	 5791203	       212.8 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLevelSolveClosed-16               	165503331	         6.724 ns/op	       0 B/op	       0 allocs/op
-BenchmarkBuildLevels-16                    	 3384632	       357.8 ns/op	       0 B/op	       0 allocs/op
-BenchmarkBuildLevelAnchors-16              	 3804399	       273.1 ns/op	       0 B/op	       0 allocs/op
-BenchmarkCubeDecisionAtScore-16            	 2777191	       446.4 ns/op	       0 B/op	       0 allocs/op
-BenchmarkCubeDecisionMoney-16              	23654118	        51.37 ns/op	       0 B/op	       0 allocs/op
-BenchmarkAnalysisBatchThroughput/0-ply-16  	     522	   2396742 ns/op	     13351 pos/s	 8419337 B/op	   34767 allocs/op
-BenchmarkNotationPhase/index-16            	   54584	     23946 ns/op	    6616 B/op	       4 allocs/op
-BenchmarkNotationPhase/balayage-16         	    4056	    295689 ns/op	       0 B/op	       0 allocs/op
-BenchmarkEncode/complet-16                 	13508941	        87.42 ns/op	       0 B/op	       0 allocs/op
-BenchmarkEncode/legal-16                   	25940066	        44.44 ns/op	       0 B/op	       0 allocs/op
-BenchmarkEncode/valid-seul-16              	29155722	        39.72 ns/op	       0 B/op	       0 allocs/op
-BenchmarkEncode/clear-seul-16              	97385418	        11.58 ns/op	       0 B/op	       0 allocs/op
-BenchmarkEvaluateBatchKernel-16            	   10000	    117252 ns/op	     14657 ns/position	       0 B/op	       0 allocs/op
-BenchmarkEvaluateBatchKernelPartial-16     	   10850	    110157 ns/op	    110157 ns/position	       0 B/op	       0 allocs/op
-BenchmarkEvaluateBatchKernelSiblings-16    	   10250	    112122 ns/op	     14015 ns/position	       0 B/op	       0 allocs/op
-BenchmarkEvaluate-16                       	    3000	    390614 ns/op	       0 B/op	       0 allocs/op
-BenchmarkEvaluateBatch-16                  	     390	   3121213 ns/op	    390152 ns/position	       0 B/op	       0 allocs/op
-BenchmarkSortByEquity/n=12-16              	 6730077	       177.2 ns/op	       0 B/op	       0 allocs/op
-BenchmarkSortByEquity/n=30-16              	  866220	      1336 ns/op	       0 B/op	       0 allocs/op
-BenchmarkSortByEquity/n=240-16             	   29826	     37677 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLegalPlays/opening/3-1/n=16-16    	  399291	      2901 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLegalPlays/opening/6-5/n=7-16     	 1212688	       984.2 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLegalPlays/opening/6-6/n=11-16    	  496898	      2379 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLegalPlays/opening/3-3/n=73-16    	   70270	     15118 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLegalPlays/busy/3-1/n=22-16       	  207564	      4922 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLegalPlays/busy/6-5/n=17-16       	  376166	      3139 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLegalPlays/busy/6-6/n=9-16        	  565407	      2104 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLegalPlays/busy/3-3/n=27-16       	  130334	      7969 ns/op	       0 B/op	       0 allocs/op
+cpu: AMD Ryzen 7 PRO 6850U with Radeon Graphics     
+BenchmarkLevelSolveBisection-16            	 4486926	       261.5 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLevelSolveClosed-16               	142417381	         8.318 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBuildLevels-16                    	 2253618	       559.1 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBuildLevelAnchors-16              	 2530629	       479.5 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCubeDecisionAtScore-16            	 1840830	       659.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCubeDecisionMoney-16              	18700125	        67.38 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAnalysisBatchThroughput/0-ply-16  	     524	   2358462 ns/op	     13568 pos/s	 8480104 B/op	   34799 allocs/op
+BenchmarkNotationPhase/index-16            	   90872	     12812 ns/op	    6616 B/op	       4 allocs/op
+BenchmarkNotationPhase/balayage-16         	    3873	    283704 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEncode/complet-16                 	15346758	        85.02 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEncode/legal-16                   	27708318	        41.17 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEncode/valid-seul-16              	29988913	        37.90 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEncode/clear-seul-16              	95259127	        12.53 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEvaluateBatchKernel-16            	    4303	    302348 ns/op	     37793 ns/position	       0 B/op	       0 allocs/op
+BenchmarkEvaluateBatchKernelPartial-16     	    7738	    147296 ns/op	    147296 ns/position	       0 B/op	       0 allocs/op
+BenchmarkEvaluateBatchKernelSiblings-16    	    6307	    180992 ns/op	     22624 ns/position	       0 B/op	       0 allocs/op
+BenchmarkEvaluate-16                       	    1347	    817854 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEvaluateBatch-16                  	     172	   6727625 ns/op	    840953 ns/position	       0 B/op	       0 allocs/op
+BenchmarkSortByEquity/n=12-16              	 5713306	       207.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSortByEquity/n=30-16              	  740089	      1426 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSortByEquity/n=240-16             	   31588	     38147 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLegalPlays/opening/3-1/n=16-16    	  425610	      2913 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLegalPlays/opening/6-5/n=7-16     	 1220000	       945.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLegalPlays/opening/6-6/n=11-16    	  549235	      2419 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLegalPlays/opening/3-3/n=73-16    	   72219	     14979 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLegalPlays/busy/3-1/n=22-16       	  251214	      4629 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLegalPlays/busy/6-5/n=17-16       	  405662	      2911 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLegalPlays/busy/6-6/n=9-16        	  610310	      2033 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLegalPlays/busy/3-3/n=27-16       	  145048	      7731 ns/op	       0 B/op	       0 allocs/op
 PASS
-ok  	github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet	49.473s
+ok  	github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet	41.738s
