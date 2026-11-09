@@ -16,6 +16,4 @@
 
 SET LOCAL lock_timeout = '15s';
 
-CREATE INDEX IF NOT EXISTS idx_import_batch_file_sha
-    ON import_batch_file (tenant_id, sha256)
-    WHERE match_id IS NOT NULL AND sha256 <> '';
+CREATE INDEX IF NOT EXISTS idx_import_batch_file_sha ON import_batch_file (tenant_id, sha256) WHERE match_id IS NOT NULL AND sha256 <> '';
