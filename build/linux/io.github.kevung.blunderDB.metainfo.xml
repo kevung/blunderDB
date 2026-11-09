@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.52.0" date="2026-11-09">
+      <description>
+        <ul>
+          <li>gammonNet v1.9.0 analyses with a larger five-layer network; earlier gammonNet analyses are marked stale</li>
+          <li>The embedded opening book is computed at the standard rollout setting on all 32 scores</li>
+          <li>A badly multiplexed .webm or .mkv video is repaired automatically when ffmpeg is installed</li>
+          <li>The whole match can be given up during a transcription</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.51.0" date="2026-11-06">
       <description>
         <ul>
