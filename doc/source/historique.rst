@@ -42,6 +42,14 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.53.0 (2026-11-09)
+-------------------
+
+- **Abandonner face à un double en transcription** : quand un double attend sa réponse, le bouton « Abandonner » s'allume pour le répondant, comme *r* puis *1*, *2*, *3* ou *4*. Un abandon simple, gammon ou backgammon vaut le videau d'avant l'offre, comme une passe ; l'abandon du match donne la partie et le match au doubleur.
+- **Un clic dans la transcription pose le curseur d'un seul geste** : cliquer une cellule, ou appuyer sur *Fin*, déplace le curseur en un appel et un rendu du plateau, au lieu d'un par cellule franchie ; du bout au début d'un match de tournoi, le clic prenait plus d'une seconde. L'annulation le défait en un pas.
+- Corrections notables : sous PostgreSQL sans ``--rls``, le mode par défaut de ``serve``, les statistiques par match, le score des coups à l'import, la recherche, Anki, l'entraînement et la maintenance nomment leur tenant dans leurs jointures ; depuis 0.51.0, ces requêtes parcouraient l'index de tous les tenants, et l'import ralentissait à mesure que la base grandissait.
+- Voir :ref:`panneau_transcription`, :ref:`raccourcis` et :ref:`headless`.
+
 0.52.0 (2026-11-09)
 -------------------
 
