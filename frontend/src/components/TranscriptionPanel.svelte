@@ -1837,6 +1837,8 @@
     let resigning = $derived(keys.phase === PHASE.RESIGN);
     let cubeRowOpen = $derived(!!draft && !matchOver);
     let canCubeAct = $derived(cubeRowOpen && !awaitingAnswer && !resigning);
+    // Face à un double, le répondant peut aussi abandonner.
+    let canCubeResign = $derived(cubeRowOpen && awaitingAnswer && !resigning);
     // [T]/[P] répondent à une offre ou corrigent la cellule tenue par le curseur.
     let canCubeAnswer = $derived(cubeRowOpen && (awaitingAnswer || editingSlot) && !resigning);
 
@@ -2319,6 +2321,7 @@
                             <CubeActionRow
                                 canAct={canCubeAct}
                                 canAnswer={canCubeAnswer}
+                                canResign={canCubeAct || canCubeResign}
                                 {resigning}
                                 onGesture={sendCube}
                                 onResign={startResign}

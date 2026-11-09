@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-06 01:46+0100\n"
+"POT-Creation-Date: 2026-11-09 11:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1649,12 +1649,12 @@ msgstr "r のあと 1、2 または 3"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Abandonner la partie pour le camp au trait : simple, gammon ou backgammon"
-" ; ENTREE vaut simple. Esc entre les deux touches annule sans rien "
-"enregistrer. Dans le mode théâtre, les niveaux s'affichent dans une "
-"petite fenêtre par-dessus la vidéo."
+"Abandonner la partie pour le camp au trait, ou pour celui qui répond à un"
+" double : simple, gammon ou backgammon ; ENTREE vaut simple. Esc entre "
+"les deux touches annule sans rien enregistrer. Dans le mode théâtre, les "
+"niveaux s'affichent dans une petite fenêtre par-dessus la vidéo."
 msgstr ""
-"手番の側がゲームを投了する。シングル、ギャモン、バックギャモン。Enter はシングルとなる。二つのキーの間に Esc "
+"手番の側、またはダブルに答える側がゲームを投了する。シングル、ギャモン、バックギャモン。Enter はシングルとなる。二つのキーの間に Esc "
 "を押すと何も記録せずに取り消す。シアターモードでは、水準が動画の上の小さなウィンドウに表示される。"
 
 #: ../../source/raccourcis.rst:1
@@ -1663,9 +1663,10 @@ msgstr "r のあと 4"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Abandonner le match pour le camp au trait : l'adversaire gagne la partie "
-"en cours et le match, et rien ne peut suivre."
-msgstr "手番の側がマッチを放棄する。相手が進行中のゲームとマッチに勝ち、以後は何も続けられない。"
+"Abandonner le match pour le camp au trait, ou pour celui qui répond à un "
+"double : l'adversaire gagne la partie en cours et le match, et rien ne "
+"peut suivre."
+msgstr "手番の側、またはダブルに答える側がマッチを放棄する。相手が進行中のゲームとマッチに勝ち、以後は何も続けられない。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic (sur le videau)"

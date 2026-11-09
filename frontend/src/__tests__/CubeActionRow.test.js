@@ -41,6 +41,12 @@ describe('la rangée du videau', () => {
         expect(buttons().map((b) => b.disabled)).toEqual([true, false, false, true]);
     });
 
+    // Face à un double, le répondant peut aussi abandonner (la partie ou le match).
+    test('réponse attendue avec canResign : [T], [P] et [R] actifs, [D] éteint', () => {
+        render(CubeActionRow, { props: { canAct: false, canAnswer: true, canResign: true } });
+        expect(buttons().map((b) => b.disabled)).toEqual([true, false, false, false]);
+    });
+
     test('chaque bouton rend son geste, une seule fois', async () => {
         const onGesture = vi.fn();
         const onResign = vi.fn();
