@@ -111,15 +111,18 @@ describe('le rang des arrêts compte le trou', () => {
         expect(cursorStop(ann, 3)).toBe(4);
     });
 
-    test('un clic par-dessus le trou le traverse : trois pas de 1 à 3', () => {
+    test('un clic par-dessus le trou le franchit d’un seul geste', () => {
         const ann = { ...holed(1), cursor: 1 };
-        expect(cursorCommands(currentStop(ann), cursorStop(ann, 3))).toEqual([{ kind: COMMAND.CURSOR_FORWARD }, { kind: COMMAND.CURSOR_FORWARD }, { kind: COMMAND.CURSOR_FORWARD }]);
+        expect(cursorStop(ann, 3) - currentStop(ann)).toBe(3);
+        expect(cursorCommands(ann, 3)).toEqual([{ kind: COMMAND.CURSOR_TO, index: 3, hole: false }]);
     });
 
     test('le Cursor sur le trou est à son rang, et l’Action après lui à un pas', () => {
         const ann = holed(1, { at: 3, replacing: false, side: 0, dice: [0, 0] }, 3);
         expect(currentStop(ann)).toBe(3);
-        expect(cursorCommands(currentStop(ann), cursorStop(ann, 3))).toEqual([{ kind: COMMAND.CURSOR_FORWARD }]);
+        expect(cursorStop(ann, 3)).toBe(4);
+        expect(cursorCommands(ann, 3)).toEqual([{ kind: COMMAND.CURSOR_TO, index: 3, hole: false }]);
+        expect(cursorCommands(ann, 3, true)).toEqual([]);
     });
 
     test('sans trou, le rang est l’index', () => {

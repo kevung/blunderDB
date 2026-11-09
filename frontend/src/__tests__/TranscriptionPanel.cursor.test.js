@@ -3,7 +3,7 @@
  *
  * Ce que le panneau doit à la vue et que la vue ne peut pas tenir seule : une
  * touche `h`/`l` ou un clic sur une cellule demande au moteur de déplacer le
- * Cursor (`cursor_back`/`cursor_forward`, qui rechargent l'Action visée), puis
+ * Cursor (`cursor_back`/`cursor_forward`, `cursor_to` d'un clic, qui rechargent l'Action visée), puis
  * le panneau REMONTE le reste de l'écran — le plateau suit `annotated.cursor`
  * tout seul, mais les candidats sont une Évaluation, jamais stockée (ADR-0045
  * règle 8), et doivent être redemandés avec le coup joué présélectionné.
@@ -53,23 +53,23 @@ const ACTIONS = [
 const NOTATIONS = ['', '8/5 6/5', '13/8 13/11'];
 
 /** L'annoté que le moteur rend, le Cursor où on le lui demande. */
-function annotated(/** @type {number} */ cursor) {
+function annotated(/** @type {number} */ cursor, actions = ACTIONS) {
     return {
-        document: { header: { match_length: 7, player1: 'Kévin', player2: 'Alice' }, actions: ACTIONS, cursor },
-        actions: ACTIONS.map((a, index) => ({
+        document: { header: { match_length: 7, player1: 'Kévin', player2: 'Alice' }, actions, cursor },
+        actions: actions.map((a, index) => ({
             index,
             side: a.side,
             kind: a.kind,
             before: POSITION(a.dice),
             has_position: a.kind !== 'opening',
-            notation: NOTATIONS[index],
+            notation: NOTATIONS[index] ?? '24/23 13/11',
             game_index: 0,
             game_number: 1,
             score: [0, 0],
             move_number: index,
             inconsistencies: []
         })),
-        games: [{ number: 1, initial_score: [0, 0], winner: -1, points_won: 0, crawford: false, finished: false, first: 0, last: 2 }],
+        games: [{ number: 1, initial_score: [0, 0], winner: -1, points_won: 0, crawford: false, finished: false, first: 0, last: actions.length - 1 }],
         next: { expects: 'checker', side: 0, position: POSITION([0, 0]), crawford: false },
         score: [0, 0],
         cursor
@@ -114,6 +114,7 @@ beforeEach(() => {
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
         if (gesture.Kind === 'cursor_back') at = Math.max(0, at - 1);
         if (gesture.Kind === 'cursor_forward') at = Math.min(ACTIONS.length, at + 1);
+        if (gesture.Kind === 'cursor_to') at = Math.max(0, Math.min(ACTIONS.length, gesture.At));
         return Promise.resolve({ id: 1, annotated: annotated(at) });
     });
 });
@@ -184,7 +185,7 @@ describe('le Cursor au clavier', () => {
 });
 
 describe('le Cursor à la souris', () => {
-    test('un clic sur une cellule du Transcript marche jusqu’à elle', async () => {
+    test('un clic sur une cellule du Transcript y pose le Cursor d’un seul geste', async () => {
         const { container } = await openedPanel();
         await settle();
 
@@ -193,8 +194,32 @@ describe('le Cursor à la souris', () => {
         await fireEvent.click(cell);
         await settle();
 
-        // Du bout du document (3) jusqu'à l'Action 1 : deux pas en arrière.
-        expect(gestures()).toEqual([{ Kind: 'cursor_back' }, { Kind: 'cursor_back' }]);
+        expect(gestures()).toEqual([{ Kind: 'cursor_to', At: 1, Hole: false }]);
+        expect(/** @type {any} */ (get(transcriptionStore)).annotated.cursor).toBe(1);
+    });
+
+    test('un clic lointain coûte un aller-retour et un document rendu, pas un par Action franchie', async () => {
+        // Une partie de tournoi : le Cursor au bout de 325 Actions, le clic sur la deuxième.
+        const long = Array.from({ length: 325 }, (_, i) => (i === 0 ? ACTIONS[0] : { side: i % 2, kind: 'checker', dice: [3, 1] }));
+        let at = long.length;
+        /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
+            if (gesture.Kind === 'cursor_back') at = Math.max(0, at - 1);
+            if (gesture.Kind === 'cursor_to') at = gesture.At;
+            return Promise.resolve({ id: 1, annotated: annotated(at, long) });
+        });
+        transcriptionStore.set({ id: 1, annotated: annotated(at, long) });
+        const { container } = render(TranscriptionPanel);
+        await settle();
+        let documents = 0;
+        const unsubscribe = transcriptionStore.subscribe(() => documents++);
+        documents = 0;
+
+        await fireEvent.click(/** @type {Element} */ (container.querySelector('.cell[data-index="1"]')));
+        await settle(20);
+        unsubscribe();
+
+        expect(gestures()).toEqual([{ Kind: 'cursor_to', At: 1, Hole: false }]);
+        expect(documents).toBe(1);
         expect(/** @type {any} */ (get(transcriptionStore)).annotated.cursor).toBe(1);
     });
 

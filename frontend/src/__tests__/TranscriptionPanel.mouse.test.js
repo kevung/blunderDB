@@ -219,8 +219,8 @@ describe('le menu contextuel du Transcript', () => {
         await fireEvent.click(entry);
         await settle();
 
-        // Deux pas en arrière, puis la suppression : exactement `h` `h` `x`.
-        expect(kinds()).toEqual(['cursor_back', 'cursor_back', 'delete']);
+        // Le Cursor posé sur la cellule d'un geste, puis la suppression : `x` là où il est.
+        expect(kinds()).toEqual(['cursor_to', 'delete']);
     });
 
     test('les quatre entrées sont les quatre corrections, et rien de plus', async () => {

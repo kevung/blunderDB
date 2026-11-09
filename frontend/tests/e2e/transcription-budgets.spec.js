@@ -390,8 +390,8 @@ test.describe('ux.md §4.3 — la correction', () => {
         expect(count.keys).toBe(k + m + 5);
         const kinds = await sentKinds(page);
         expect(kinds.filter((x) => x === 'cursor_back')).toHaveLength(k);
-        // La validation a déjà avancé d'une décision.
-        await expect.poll(async () => (await sentKinds(page)).filter((x) => x === 'cursor_forward')).toHaveLength(k - 1);
+        // `Fin` pose le Cursor au bout d'un seul geste, quelle que soit la distance.
+        await expect.poll(async () => (await sentKinds(page)).filter((x) => x === 'cursor_to')).toHaveLength(1);
         expect(kinds.filter((x) => x === 'select_candidate')).toHaveLength(m);
         expect(kinds.filter((x) => x === 'validate')).toHaveLength(1);
     });
@@ -454,8 +454,8 @@ test.describe('ux.md §4.3 — la correction', () => {
         });
         expect(count.clicks).toBe(1);
         expect(count.keys).toBe(0);
-        // Un geste de l'utilisateur, autant de pas de Cursor que la distance :
-        // c'est le moteur qui les compte, pas la main.
-        await expect.poll(() => sentKinds(page)).toEqual(Array(ACTION_COUNT - target).fill('cursor_back'));
+        // Un geste de l'utilisateur, un geste du moteur, quelle que soit la distance.
+        expect(ACTION_COUNT - target).toBeGreaterThan(1);
+        await expect.poll(() => sentKinds(page)).toEqual(['cursor_to']);
     });
 });

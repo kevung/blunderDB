@@ -203,9 +203,10 @@ export async function installTranscriptionEngine(page, opts = {}) {
                 // Dérivés : le Cursor (budgets §4.3) et l'Action attendue
                 // après un double (`t`/`p`, §4.2). Le reste reste figé.
                 const kind = gesture ? gesture.Kind : '';
-                if (kind === 'cursor_back' || kind === 'cursor_forward') inserting = false;
+                if (kind === 'cursor_back' || kind === 'cursor_forward' || kind === 'cursor_to') inserting = false;
                 if (kind === 'cursor_back') at = Math.max(0, at - 1);
                 if (kind === 'cursor_forward') at = Math.min(doc.actions.length, at + 1);
+                if (kind === 'cursor_to') at = Math.max(0, Math.min(doc.actions.length, gesture.At));
                 if (kind === 'insert_before') inserting = true;
                 // Une validation place le Cursor sur la décision qui suit (transcript.record).
                 if (kind === 'validate' && (inserting || at < doc.actions.length)) {

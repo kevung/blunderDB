@@ -352,6 +352,6 @@ describe('Saisie et décision existante (ADR-0092)', () => {
     test('`Fin` mène le Cursor au bout du document', async () => {
         await openedPanel(relue());
         await press('End');
-        await vi.waitFor(() => expect(gestures()).toEqual([{ Kind: 'cursor_forward' }, { Kind: 'cursor_forward' }]));
+        await vi.waitFor(() => expect(gestures()).toEqual([{ Kind: 'cursor_to', At: 3, Hole: false }]));
     });
 });

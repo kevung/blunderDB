@@ -46,6 +46,12 @@ const (
 	// it lands on, whose dice and play the next entry corrects in place.
 	GestureCursorBack    GestureKind = "cursor_back"
 	GestureCursorForward GestureKind = "cursor_forward"
+	// GestureCursorTo puts the Cursor at once where walking to the Action
+	// Gesture.At names would leave it — the end of the document past the last
+	// one, the hole in front of it when Gesture.Hole says so — committing the
+	// correction it leaves as a step does. A click is one gesture, not a walk:
+	// one round trip and one Replay whatever the distance.
+	GestureCursorTo GestureKind = "cursor_to"
 	// GestureCorrect loads the Action under the Cursor for correction in place.
 	GestureCorrect GestureKind = "correct"
 	// GestureInsertBefore and GestureInsertAfter expect a new Action beside the
@@ -147,6 +153,9 @@ type Gesture struct {
 	VideoSource string
 	// PostCrawford is what GestureSetPostCrawford declares.
 	PostCrawford bool
+	// Hole, for GestureCursorTo, aims at the hole of a double turn in front of
+	// the Action At names rather than at that Action (ADR-0054).
+	Hole bool
 }
 
 var (
@@ -186,7 +195,7 @@ func Apply(doc Document, g Gesture) (Document, error) {
 func movesOnly(k GestureKind) bool {
 	switch k {
 	case GestureEnterDie, GestureClearDice, GestureSelectCandidate, GestureEnterPlay,
-		GestureCursorBack, GestureCursorForward, GestureCorrect,
+		GestureCursorBack, GestureCursorForward, GestureCursorTo, GestureCorrect,
 		GestureInsertBefore, GestureInsertAfter:
 		return true
 	}
@@ -306,6 +315,9 @@ func apply(doc Document, g Gesture) (Document, error) {
 
 	case GestureCursorForward:
 		return cursorForward(commitCorrection(out)), nil
+
+	case GestureCursorTo:
+		return cursorTo(commitCorrection(out), g.At, g.Hole), nil
 
 	case GestureCorrect:
 		if out.Cursor < 0 || out.Cursor >= len(out.Actions) {
@@ -684,6 +696,22 @@ func cursorForward(out Document) Document {
 		}
 	}
 	loadEntry(&out)
+	return out
+}
+
+// cursorTo is GestureCursorTo once the correction it leaves is committed: the
+// Cursor where the steps of cursorBack and cursorForward would stop. The
+// commit's Replay must not pull it elsewhere: the clicked cell is where the
+// user goes on working.
+func cursorTo(out Document, at int, hole bool) Document {
+	at = clampSlot(at, len(out.Actions))
+	if hole && holeBefore(out, at) {
+		openHole(&out, at)
+	} else {
+		out.Cursor = at
+		loadEntry(&out)
+	}
+	out.HoldCursor = true
 	return out
 }
 

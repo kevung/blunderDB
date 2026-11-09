@@ -329,7 +329,7 @@ describe('sur une Action relue', () => {
     async function onRecorded() {
         let cursor = 1;
         /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
-            if (gesture.Kind === 'cursor_back') cursor = 0;
+            if (gesture.Kind === 'cursor_back' || gesture.Kind === 'cursor_to') cursor = 0;
             return Promise.resolve(state(withOneAction(cursor)));
         });
         transcriptionStore.set(state(withOneAction(1)));
@@ -353,7 +353,7 @@ describe('sur une Action relue', () => {
         await vi.waitFor(() => expect(gestures().some((/** @type {any} */ g) => g.Kind === 'validate')).toBe(true));
         const sent = gestures();
         // Le Cursor sur la cellule, puis l'Action retapée à sa place.
-        expect(sent[0]).toEqual({ Kind: 'cursor_back' });
+        expect(sent[0]).toEqual({ Kind: 'cursor_to', At: 0, Hole: false });
         const [die1, die2, play, validate] = recorded();
         expect(die1).toEqual({ Kind: 'enter_die', Die: 6 });
         expect(die2).toEqual({ Kind: 'enter_die', Die: 1 });
@@ -383,7 +383,7 @@ describe('le coup tapé dans sa cellule (double-clic)', () => {
     beforeEach(() => {
         let cursor = 1;
         /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
-            if (gesture.Kind === 'cursor_back') cursor = 0;
+            if (gesture.Kind === 'cursor_back' || gesture.Kind === 'cursor_to') cursor = 0;
             return Promise.resolve(state(withOneAction(cursor)));
         });
     });
@@ -409,7 +409,7 @@ describe('le coup tapé dans sa cellule (double-clic)', () => {
         const sent = gestures();
         // Le Cursor y est allé une fois, pas deux : le second clic ne relance
         // pas le chemin.
-        expect(sent.filter((/** @type {any} */ g) => g.Kind === 'cursor_back')).toHaveLength(1);
+        expect(sent.filter((/** @type {any} */ g) => g.Kind === 'cursor_to')).toHaveLength(1);
         const [die1, die2, play, validate] = recorded();
         expect(die1).toEqual({ Kind: 'enter_die', Die: 6 });
         expect(die2).toEqual({ Kind: 'enter_die', Die: 1 });
