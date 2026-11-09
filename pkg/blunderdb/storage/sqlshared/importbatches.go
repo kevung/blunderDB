@@ -656,7 +656,7 @@ func (s *ImportBatchStore) KnownFile(ctx context.Context, scope string, sha stri
 	tenant, targs := s.DB.TenantFilter("", scope)
 	ids, err := queryIDs(ctx, s.DB, "look up a journaled file by digest",
 		`SELECT match_id FROM import_batch_file
-		 WHERE sha256 = ? AND match_id IS NOT NULL AND outcome <> ? AND `+tenant+`
+		 WHERE sha256 = ? AND sha256 <> '' AND match_id IS NOT NULL AND outcome <> ? AND `+tenant+`
 		 ORDER BY id DESC LIMIT 1`,
 		append([]any{sha, domain.JournalError}, targs...))
 	if err != nil || len(ids) == 0 {

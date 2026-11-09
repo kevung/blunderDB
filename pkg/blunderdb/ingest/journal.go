@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"time"
 
@@ -125,6 +126,7 @@ func KnownFiles(ctx context.Context, batches storage.ImportBatchStore, scope str
 		}
 		id, ok, err := batches.KnownFile(ctx, scope, sha)
 		if err != nil {
+			slog.Warn("import: digest lookup failed; file decoded", "err", err)
 			return 0, false
 		}
 		return id, ok
