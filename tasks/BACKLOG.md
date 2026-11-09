@@ -14,6 +14,14 @@ propre issue le jour où il est lancé.
   au-delà de `clockSlack`, et peuvent faire diverger durablement deux pairs. Aucun chemin réel
   connu : à reprendre si l'un apparaît (`storage/changelog.go`, `changeset/changeset.go`).
 
+- **Changeset : la date seule identifie le renvoi d'un enregistrement daté dans le futur** — le
+  pair garde la date future du dernier enregistrement borné d'un uuid et rejette comme renvoi
+  tout enregistrement qui la porte (`apply`, `changeset.go`). Deux cas théoriques à la
+  milliseconde près : restauration d'une sauvegarde ancienne avec une horloge en avance de plus
+  d'1 s, ou deux pairs en avance écrivant le même objet dans la même milliseconde (la date passe
+  avant le départage `tieKey`). Remède possible : une empreinte du contenu avec la date. Aucun
+  chemin réel connu.
+
 - **Changeset : cartes jumelles, 5 révisions anciennes contre 1 récente** — deux tirages d'une même
   carte fusionnés gardent le planning de la révision la plus récente (`cardPayload.ahead`, date de
   `LastReview`) : 5 révisions d'un côté cèdent à 1 révision postérieure de l'autre, le compte de
