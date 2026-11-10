@@ -177,6 +177,8 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Search/WindowsAgree", testSearchWindowsAgree},
 		{"Search/EncounterCountsEveryOccurrence", testSearchEncounterCountsEveryOccurrence},
 		{"Search/EncounterCountsEveryOccurrence/Heavy", asHeavyCondition(testSearchEncounterCountsEveryOccurrence)},
+		{"Search/MatchLevelKeepsAndExcludes", testSearchMatchLevelKeepsAndExcludes},
+		{"Search/MatchLevelKeepsAndExcludes/Heavy", asHeavyCondition(testSearchMatchLevelKeepsAndExcludes)},
 		{"Match/CreateMovesEqualsCreateMove", testCreateMovesEqualsCreateMove},
 		{"Match/CreateGamesEqualsCreateGame", testCreateGamesEqualsCreateGame},
 		{"Search/SortPipAndDate", testSearchSortPipAndDate},

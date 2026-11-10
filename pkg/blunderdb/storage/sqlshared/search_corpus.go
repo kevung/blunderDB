@@ -176,6 +176,7 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	// move. Whether it is heavy is known from the games, read only up to where the walk wins.
 	readLimit := matchSortLimit/movesPerGame + 1
 	if narrowLimit.Load() == 0 {
+		// Always walked: only whether no game matches is needed.
 		readLimit = 1
 	}
 	games, err := s.readIDList(ctx, `SELECT g.id FROM game g JOIN match mt ON g.match_id = mt.id WHERE `+mtTenant+cond.String(), subArgs, readLimit)
