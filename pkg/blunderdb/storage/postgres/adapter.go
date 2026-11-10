@@ -53,8 +53,11 @@ func (shared) BoolAsInt(col string) string { return "CASE WHEN " + col + " THEN 
 func (shared) BoolArg(v bool) any          { return v }
 func (shared) Bigint(expr string) string   { return "CAST(" + expr + " AS BIGINT)" }
 func (shared) ILike() string               { return "ILIKE" }
+
+// The array is wrapped in a scalar sub-select so the planner treats it as a
+// parameter, not a constant kept by the custom plan (~68 MB per backend at 220k ids).
 func (shared) IDsIn(expr string, ids []string) (string, []any) {
-	return expr + " = ANY(?::bigint[])", []any{"{" + strings.Join(ids, ",") + "}"}
+	return expr + " = ANY((SELECT ?::bigint[]))", []any{"{" + strings.Join(ids, ",") + "}"}
 }
 func (shared) ForUpdate() string { return " FOR UPDATE" }
 func (shared) Guard(key string) (string, []any) {
