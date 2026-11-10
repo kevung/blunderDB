@@ -10,7 +10,7 @@ import (
 // custom plan retains it per backend (tens of MB for 200k ids).
 func TestIDsInWrapsArrayInSubselect(t *testing.T) {
 	cond, args := shared{}.IDsIn("p.id", []string{"1", "22", "333"})
-	if want := "p.id = ANY((SELECT ?::bigint[]))"; cond != want {
+	if want := "p.id = ANY((SELECT ?::bigint[])::bigint[])"; cond != want {
 		t.Errorf("cond = %q, want %q", cond, want)
 	}
 	if want := []any{"{1,22,333}"}; !reflect.DeepEqual(args, want) {
