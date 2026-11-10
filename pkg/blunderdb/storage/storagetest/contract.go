@@ -40,10 +40,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep func(name string) bool) {
 	t.Helper()
 
-	cases := []struct {
-		name string
-		fn   func(t *testing.T, s storage.Storage)
-	}{
+	cases := []contractCase{
 		{"Position/Save+Load", testPositionSaveLoad},
 		{"Position/DedupByZobrist", testPositionDedup},
 		{"Position/SaveCreatedReportsTheInsert", testPositionSaveCreated},
@@ -60,16 +57,6 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Position/RepairCrawfordMergeCarriesDependents", testRepairCrawfordMergeCarriesDependents},
 		{"Position/RepairCrawfordSentinelFromPastedXGID", testRepairCrawfordSentinelFromPastedXGID},
 		{"Position/RepairCrawfordSentinelOnePointMatch", testRepairCrawfordSentinelOnePointMatch},
-		{"Search/FilterByIndividuallyImported", testSearchFilterByIndividuallyImported},
-		{"Search/FilterByCommentPresence", testSearchFilterByCommentPresence},
-		{"Search/FilterByFlagged", testSearchFilterByFlagged},
-		{"Search/CountUpTo", testSearchCountUpTo},
-		{"Search/FilterPastTheColumn", testSearchFilterPastTheColumn},
-		{"Search/WindowsCutTheFullResult", testSearchWindowsCutTheFullResult},
-		{"Search/ErrorSortOfCubeDecisions", testSearchErrorSortOfCubeDecisions},
-		{"Search/ExcludePositionIDs", testSearchExcludePositionIDs},
-		{"Search/FilterByAway", testSearchFilterByAway},
-		{"Search/FilterByMargin", testSearchFilterByMargin},
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Analysis/SaveIsAnUpsert", testAnalysisSaveIsAnUpsert},
 		{"Analysis/SaveManyEqualsSave", testAnalysisSaveManyEqualsSave},
@@ -165,21 +152,8 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Comment/AuthorFromContext", testCommentAuthorFromContext},
 		{"Session/SaveLoadEmpty", testSessionSaveLoad},
 		{"Session/MultiScopeIsolation", testSessionMultiScope},
-		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
-		{"Search/FilterByCubeResponse", testSearchFilterByCubeResponse},
-		{"Search/FilterByAnalysisDecodesCompressedBlob", testSearchFilterByAnalysisDecodesCompressedBlob},
-		{"Search/MoveErrorFilterMaxOverPlays", testSearchMoveErrorFilterMaxOverPlays},
-		{"Search/MoveErrorFilterMaxOverPlays/Common", asCommonCondition(testSearchMoveErrorFilterMaxOverPlays)},
-		{"Search/MultiPlayedFollowsWrites", testMultiPlayedFollowsWrites},
-		{"Search/DecisionTimeFilter", testSearchDecisionTimeFilter},
-		{"Search/DecisionTimeWithMoveError", testSearchDecisionTimeWithMoveError},
-		{"Search/Pagination", testSearchPagination},
-		{"Search/WindowsAgree", testSearchWindowsAgree},
-		{"Search/EncounterCountsEveryOccurrence", testSearchEncounterCountsEveryOccurrence},
-		{"Search/EncounterCountsEveryOccurrence/Heavy", asHeavyCondition(testSearchEncounterCountsEveryOccurrence)},
 		{"Match/CreateMovesEqualsCreateMove", testCreateMovesEqualsCreateMove},
 		{"Match/CreateGamesEqualsCreateGame", testCreateGamesEqualsCreateGame},
-		{"Search/SortPipAndDate", testSearchSortPipAndDate},
 		{"Match/MoveLuckRoundTrip", testMoveLuckRoundTrip},
 		{"Match/MoveDecisionTimeRoundTrip", testMoveDecisionTimeRoundTrip},
 		{"Match/VideoRoundTrip", testMatchVideoRoundTrip},
@@ -202,8 +176,6 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Analyses/RepairDenormalisedColumns", testRepairDenormalisedColumns},
 		{"Analyses/PlayedActionsComeFromTheMatch", testAnalysisTakesPlayedActionsFromTheMatch},
 		{"Comments/TagVocabulary", testTagVocabulary},
-		{"Search/TagFilterIsDelimited", testTagSearchIsDelimited},
-		{"Search/CommentRestrictionLosesNothing", testCommentRestrictionLosesNothing},
 		{"Stats/MatchDetail", testStatsMatchDetail},
 		{"Stats/BadgesFollowWrites", testStatsBadgesFollowWrites},
 		{"Stats/MatchStatsOracle", testMatchStatsOracle},
@@ -330,6 +302,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}
+	cases = append(cases, searchContractCases()...)
 
 	for _, tc := range cases {
 		runContractCase(t, tc.name, tc.fn, factory, keep)
@@ -468,4 +441,41 @@ func statsFixtureMatchBy(t *testing.T, s storage.Storage, slotBase int, p1, p2 s
 	posIDs[0] = mkDecision(slotBase, 1)
 	posIDs[1] = mkDecision(slotBase+1, -1)
 	return matchID, posIDs
+}
+
+type contractCase struct {
+	name string
+	fn   func(t *testing.T, s storage.Storage)
+}
+
+func searchContractCases() []contractCase {
+	return []contractCase{
+		{"Search/FilterByIndividuallyImported", testSearchFilterByIndividuallyImported},
+		{"Search/FilterByCommentPresence", testSearchFilterByCommentPresence},
+		{"Search/FilterByFlagged", testSearchFilterByFlagged},
+		{"Search/CountUpTo", testSearchCountUpTo},
+		{"Search/FilterPastTheColumn", testSearchFilterPastTheColumn},
+		{"Search/WindowsCutTheFullResult", testSearchWindowsCutTheFullResult},
+		{"Search/ErrorSortOfCubeDecisions", testSearchErrorSortOfCubeDecisions},
+		{"Search/ExcludePositionIDs", testSearchExcludePositionIDs},
+		{"Search/FilterByAway", testSearchFilterByAway},
+		{"Search/FilterByMargin", testSearchFilterByMargin},
+		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
+		{"Search/FilterByCubeResponse", testSearchFilterByCubeResponse},
+		{"Search/FilterByAnalysisDecodesCompressedBlob", testSearchFilterByAnalysisDecodesCompressedBlob},
+		{"Search/MoveErrorFilterMaxOverPlays", testSearchMoveErrorFilterMaxOverPlays},
+		{"Search/MoveErrorFilterMaxOverPlays/Common", asCommonCondition(testSearchMoveErrorFilterMaxOverPlays)},
+		{"Search/MultiPlayedFollowsWrites", testMultiPlayedFollowsWrites},
+		{"Search/DecisionTimeFilter", testSearchDecisionTimeFilter},
+		{"Search/DecisionTimeWithMoveError", testSearchDecisionTimeWithMoveError},
+		{"Search/Pagination", testSearchPagination},
+		{"Search/WindowsAgree", testSearchWindowsAgree},
+		{"Search/EncounterCountsEveryOccurrence", testSearchEncounterCountsEveryOccurrence},
+		{"Search/EncounterCountsEveryOccurrence/Heavy", asHeavyCondition(testSearchEncounterCountsEveryOccurrence)},
+		{"Search/MatchLevelKeepsAndExcludes", testSearchMatchLevelKeepsAndExcludes},
+		{"Search/MatchLevelKeepsAndExcludes/Heavy", asHeavyCondition(testSearchMatchLevelKeepsAndExcludes)},
+		{"Search/SortPipAndDate", testSearchSortPipAndDate},
+		{"Search/TagFilterIsDelimited", testTagSearchIsDelimited},
+		{"Search/CommentRestrictionLosesNothing", testCommentRestrictionLosesNothing},
+	}
 }
