@@ -56,12 +56,13 @@ func LegalMoves(p *Position) []LegalPlay {
 	type seq struct {
 		pos   Position
 		steps []CheckerStep
+		dice  []int // the die each step consumed, parallel to steps
 	}
 	var terminals []seq
 	maxUsed := 0
 
-	var explore func(pos Position, remaining []int, steps []CheckerStep)
-	explore = func(pos Position, remaining []int, steps []CheckerStep) {
+	var explore func(pos Position, remaining []int, steps []CheckerStep, used []int)
+	explore = func(pos Position, remaining []int, steps []CheckerStep, used []int) {
 		moved := false
 		tried := map[int]bool{}
 		for i, die := range remaining {
@@ -74,7 +75,7 @@ func LegalMoves(p *Position) []LegalPlay {
 				rem := make([]int, 0, len(remaining)-1)
 				rem = append(rem, remaining[:i]...)
 				rem = append(rem, remaining[i+1:]...)
-				explore(np, rem, append(append([]CheckerStep{}, steps...), mv))
+				explore(np, rem, append(append([]CheckerStep{}, steps...), mv), append(append([]int{}, used...), die))
 				moved = true
 			}
 		}
@@ -82,10 +83,10 @@ func LegalMoves(p *Position) []LegalPlay {
 			if len(steps) > maxUsed {
 				maxUsed = len(steps)
 			}
-			terminals = append(terminals, seq{pos, steps})
+			terminals = append(terminals, seq{pos, steps, used})
 		}
 	}
-	explore(*p, dice, nil)
+	explore(*p, dice, nil, nil)
 
 	// Keep only plays using the maximum number of dice (must play as many as
 	// possible). For non-doubles where only one die is playable, the larger-die
@@ -98,11 +99,15 @@ func LegalMoves(p *Position) []LegalPlay {
 		larger = d2
 	}
 	// Larger-die rule: if only one die can be played and the larger die is
-	// playable alone, plays using only the smaller die are illegal.
+	// playable alone, plays using only the smaller die are illegal. The test is
+	// on the die the generator actually consumed, not on the step's geometry: a
+	// bear-off the smaller die makes exactly also "covers" the larger die, yet
+	// the larger die may have no legal move at all (overage forbidden while a
+	// checker sits higher).
 	mustUseLarger := false
 	if maxUsed == 1 && d1 != d2 {
 		for _, t := range terminals {
-			if len(t.steps) == 1 && stepUsesDie(t.steps[0], mover, larger) {
+			if len(t.steps) == 1 && t.dice[0] == larger {
 				mustUseLarger = true
 				break
 			}
@@ -115,7 +120,7 @@ func LegalMoves(p *Position) []LegalPlay {
 		if len(t.steps) != maxUsed {
 			continue
 		}
-		if mustUseLarger && !stepUsesDie(t.steps[0], mover, larger) {
+		if mustUseLarger && t.dice[0] != larger {
 			continue
 		}
 		key := boardKey(&t.pos)
@@ -323,8 +328,7 @@ func stepUsesDie(s CheckerStep, mover, die int) bool {
 		return s.To == die
 	case s.To == Off:
 		// Bear-off may be exact or overage; treat as using `die` if the pip need
-		// is <= die (overage). For the larger-die rule a bear-off with the larger
-		// die qualifies.
+		// is <= die (overage), without checking the board allows the overage.
 		var need int
 		if mover == Black {
 			need = s.From
@@ -425,6 +429,8 @@ func Notation(steps []CheckerStep, mover int) string { return notation(steps, mo
 
 // StepUsesDie reports whether one step is a move of exactly `die` pips — a
 // bear-off counting as such whenever the die covers the distance, which is the
-// overage rule. The larger-die rule uses it here; a transcription uses it to
-// tell whether a play still matches its roll after the roll was corrected.
+// overage rule, whether or not overage is allowed on the board. A transcription
+// uses it to tell whether a play still matches its roll after the roll was
+// corrected. The larger-die rule does not: it needs the die a step actually
+// consumed, which a bear-off's geometry does not tell.
 func StepUsesDie(s CheckerStep, mover, die int) bool { return stepUsesDie(s, mover, die) }

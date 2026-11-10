@@ -57,6 +57,48 @@ func randomBoard(rng *rand.Rand, onRoll int) domain.Position {
 	return p
 }
 
+// randomBearoffBoard puts the mover's checkers on its home board only, and
+// the opponent's (two or more a point, so that some of the mover's moves are
+// blocked) anywhere the mover is not.
+func randomBearoffBoard(rng *rand.Rand, onRoll int) domain.Position {
+	var p domain.Position
+	p.PlayerOnRoll = onRoll
+	p.Score = [2]int{-1, -1}
+
+	home := func(i int) int { // mover-relative point i (1..6) → board index
+		if onRoll == domain.Black {
+			return i
+		}
+		return 25 - i
+	}
+	left := 1 + rng.Intn(15)
+	p.Board.Bearoff[onRoll] = 15 - left
+	for left > 0 {
+		idx := home(1 + rng.Intn(6))
+		n := 1 + rng.Intn(min(4, left))
+		p.Board.Points[idx].Color = onRoll
+		p.Board.Points[idx].Checkers += n
+		left -= n
+	}
+
+	opp := domain.White
+	if onRoll == domain.White {
+		opp = domain.Black
+	}
+	left = 15
+	for left > 0 {
+		idx := 1 + rng.Intn(domain.NumPoints)
+		if p.Board.Points[idx].Checkers > 0 && p.Board.Points[idx].Color != opp {
+			continue
+		}
+		n := min(left, 2+rng.Intn(3))
+		p.Board.Points[idx].Color = opp
+		p.Board.Points[idx].Checkers += n
+		left -= n
+	}
+	return p
+}
+
 func min(a, b int) int {
 	if a < b {
 		return a
@@ -90,12 +132,17 @@ func TestGeneratorsAgreeWithDomain(t *testing.T) {
 	const boards = 400
 	var checked, dances int
 
+	// A bearoff board every third one: random boards rarely have the mover all
+	// home, and the bear-off branch is where the larger-die rule meets overage.
 	for b := 0; b < boards; b++ {
 		onRoll := domain.White
 		if b%2 == 1 {
 			onRoll = domain.Black
 		}
 		dp := randomBoard(rng, onRoll)
+		if b%3 == 2 {
+			dp = randomBearoffBoard(rng, onRoll)
+		}
 		gp, err := FromDomain(&dp)
 		if err != nil {
 			t.Fatalf("board %d: %v", b, err)
