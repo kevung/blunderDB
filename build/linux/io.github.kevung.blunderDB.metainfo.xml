@@ -86,6 +86,11 @@
   </branding>
 
   <releases>
+    <release version="0.53.1" date="2026-11-10">
+      <description>
+        <p>A file already imported is recognised by its bytes and skipped without being decoded again; filtering a search by player on a large PostgreSQL account no longer builds a list of games; with only one die playable, a bear-off made exactly by the smaller die no longer hides that die's other legal moves.</p>
+      </description>
+    </release>
     <release version="0.53.0" date="2026-11-09">
       <description>
         <ul>

@@ -42,6 +42,8 @@ type liveEngine struct {
 	mu  sync.Mutex
 	gen uint64
 	srv *server.Server
+	// clock is the engine's clock; nil is time.Now. Tests freeze it.
+	clock func() time.Time
 }
 
 func (e *liveEngine) handler() (http.Handler, error) {
@@ -61,7 +63,7 @@ func (e *liveEngine) handler() (http.Handler, error) {
 		e.srv.Close()
 		e.srv = nil
 	}
-	srv, err := server.New(server.Options{Storage: st, SingleTenant: true, SessionPerCall: true,
+	srv, err := server.New(server.Options{Storage: st, SingleTenant: true, SessionPerCall: true, Clock: e.clock,
 		Logger: slog.Default().With("component", "mcp-gui")})
 	if err != nil {
 		return nil, err
