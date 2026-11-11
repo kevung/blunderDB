@@ -133,6 +133,7 @@ beforeEach(() => {
     /** @type {any} */ (ApplyTranscriptionGesture).mockImplementation((/** @type {any} */ _id, /** @type {any} */ gesture) => {
         if (gesture.Kind === 'cursor_back') at = Math.max(0, at - 1);
         if (gesture.Kind === 'cursor_forward') at = Math.min(ACTIONS.length, at + 1);
+        if (gesture.Kind === 'cursor_to') at = Math.max(0, Math.min(ACTIONS.length, gesture.At));
         return Promise.resolve({ id: 1, annotated: annotated(at) });
     });
 });

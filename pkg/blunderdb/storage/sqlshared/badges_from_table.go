@@ -20,7 +20,7 @@ import (
 func (s *StatsStore) matchBadgesFromTable(ctx context.Context, scope string, matchIDs []int64) (map[int64]storage.MatchBadge, error) {
 	tenant, targs := s.DB.TenantFilter("ms", scope)
 	q := `SELECT ms.match_id, ms.seat, ms.decisions, ms.error_mp, ms.mwc_loss, COALESCE(ms.mwc_games, 0),
-		COALESCE(ms.mwc_game_ss, 0), COALESCE(m.match_length, 0)` + matchStatsJoin + ` WHERE ` + tenant
+		COALESCE(ms.mwc_game_ss, 0), COALESCE(m.match_length, 0)` + matchStatsJoin(s.DB) + ` WHERE ` + tenant
 	type seatRow struct {
 		decisions int
 		errMP     int64
@@ -94,7 +94,7 @@ func (s *StatsStore) tournamentBadgesFromTable(ctx context.Context, scope, main 
 	err := scanEach(ctx, s.DB,
 		`SELECT m.tournament_id, ms.match_id, ms.decisions, ms.error_mp, ms.mwc_loss, COALESCE(m.match_length, 0),
 			COALESCE(CASE WHEN ms.seat = 1 THEN m.player1_name ELSE m.player2_name END, '')`+
-			matchStatsJoin+` WHERE `+tenant+` AND m.tournament_id IS NOT NULL AND ms.decisions > 0`,
+			matchStatsJoin(s.DB)+` WHERE `+tenant+` AND m.tournament_id IS NOT NULL AND ms.decisions > 0`,
 		targs, func(r Rows) error {
 			var tournamentID, matchID, errMP int64
 			var decisions, length int
@@ -143,7 +143,7 @@ func (s *StatsStore) playerMWC7FromTable(ctx context.Context, scope string, f st
 	losses := map[playerMWC7Unit]float64{}
 	err := scanEach(ctx, s.DB,
 		`SELECT COALESCE(CASE WHEN ms.seat = 1 THEN m.player1_name ELSE m.player2_name END, ''), ms.match_id,
-			ms.mwc_loss, COALESCE(m.match_length, 0)`+matchStatsJoin+where+` AND ms.mwc_loss IS NOT NULL`,
+			ms.mwc_loss, COALESCE(m.match_length, 0)`+matchStatsJoin(s.DB)+where+` AND ms.mwc_loss IS NOT NULL`,
 		args, func(r Rows) error {
 			var name string
 			var match int64

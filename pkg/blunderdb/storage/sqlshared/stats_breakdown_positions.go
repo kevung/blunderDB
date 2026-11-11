@@ -77,7 +77,7 @@ func (s *StatsStore) breakdownPositionSets(ctx context.Context, scope string, fi
 		commented, cArgs := s.DB.TenantFilter("c", scope)
 		byPosition := map[int64]bool{}
 		err := scanEach(ctx, s.DB,
-			`SELECT DISTINCT p.id, `+blunder+` `+statsBaseJoin+whereSQL+
+			`SELECT DISTINCT p.id, `+blunder+` `+statsBaseJoin(s.DB)+whereSQL+
 				` AND p.id IN (SELECT c.position_id FROM comment c WHERE `+commented+` AND c.text != '')`,
 			append(args, cArgs...), func(r Rows) error {
 				var id int64
@@ -125,7 +125,7 @@ func (s *StatsStore) breakdownPositionSets(ctx context.Context, scope string, fi
 	}
 	whereSQL += breakdownKeyWhere(dim, only)
 	err = scanEach(ctx, s.DB,
-		`SELECT DISTINCT p.id, `+shown+nulls+`, `+blunder+` `+statsBaseJoin+whereSQL, args,
+		`SELECT DISTINCT p.id, `+shown+nulls+`, `+blunder+` `+statsBaseJoin(s.DB)+whereSQL, args,
 		func(r Rows) error {
 			var id int64
 			var k breakdownKey
@@ -245,7 +245,7 @@ func (s *StatsStore) breakdownCountsSQL(ctx context.Context, scope string, filte
 	err = scanEach(ctx, s.DB,
 		`SELECT `+shown+`, `+nulls+`, COUNT(DISTINCT p.id),
 		        COUNT(DISTINCT CASE WHEN `+statsErrExpr+` >= ? THEN p.id END) `+
-			statsBaseJoin+whereSQL+` GROUP BY `+shown+`, `+nulls, args,
+			statsBaseJoin(s.DB)+whereSQL+` GROUP BY `+shown+`, `+nulls, args,
 		func(r Rows) error {
 			var k breakdownKey
 			var c storage.BreakdownPositionCount

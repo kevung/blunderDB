@@ -230,8 +230,10 @@ type Options struct {
 	// in the binary (openingbook.Default).
 	OpeningBook *openingbook.Book
 
-	// now is an injectable clock for deterministic tests. Defaults to
-	// time.Now.
+	// Clock is the clock of the time-dependent reads (their ETag lives one
+	// minute); nil is time.Now. Tests of an embedding host inject a frozen one.
+	Clock func() time.Time
+	// now is the clock in use, set from Clock; server tests overwrite it.
 	now func() time.Time
 	// eventsHeartbeat, eventsBuffer and eventsMaxPerTenant tune /v1/events (events.go), for
 	// tests.
@@ -288,6 +290,9 @@ func (o *Options) applyDefaults() {
 	}
 	if o.ShutdownTimeout == 0 {
 		o.ShutdownTimeout = defaultShutdownTimeout
+	}
+	if o.now == nil {
+		o.now = o.Clock
 	}
 	if o.now == nil {
 		o.now = time.Now

@@ -940,7 +940,7 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if err != nil {
 		return 0, fmt.Errorf("postgres: create move: %w", err)
 	}
-	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{s.db}.shared(), mv.PositionID, mv.CheckerMove, mv.CubeAction)
+	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{s.db}.shared(), scope, mv.PositionID, mv.CheckerMove, mv.CubeAction)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: create move: %w", err)
 	}
@@ -997,7 +997,7 @@ func (s *matchStore) createMovesChunk(ctx context.Context, tenant int64, mvs []*
 			positionIDs = append(positionIDs, mv.PositionID)
 		}
 	}
-	bases, err := s.playedDecisionBases(ctx, positionIDs)
+	bases, err := s.playedDecisionBases(ctx, tenant, positionIDs)
 	if err != nil {
 		return fmt.Errorf("postgres: create moves: read analysis of move: %w", err)
 	}
@@ -1062,12 +1062,12 @@ func (s *matchStore) createMovesChunk(ctx context.Context, tenant int64, mvs []*
 
 // playedDecisionBases reads what scores a move at each position, by position;
 // a position without analysis has no entry.
-func (s *matchStore) playedDecisionBases(ctx context.Context, positionIDs []int64) (map[int64]*sqlshared.PlayedDecisionBasis, error) {
+func (s *matchStore) playedDecisionBases(ctx context.Context, tenant int64, positionIDs []int64) (map[int64]*sqlshared.PlayedDecisionBasis, error) {
 	bases := make(map[int64]*sqlshared.PlayedDecisionBasis, len(positionIDs))
 	if len(positionIDs) == 0 {
 		return bases, nil
 	}
-	rows, err := s.db.Query(ctx, playedDecisionBasesSQL, positionIDs)
+	rows, err := s.db.Query(ctx, playedDecisionBasesSQL, positionIDs, tenant)
 	if err != nil {
 		return nil, err
 	}
@@ -1085,8 +1085,9 @@ func (s *matchStore) playedDecisionBases(ctx context.Context, positionIDs []int6
 	return bases, rows.Err()
 }
 
-var playedDecisionBasesSQL = strings.Replace(strings.Replace(sqlshared.PlayedDecisionAnalysisSQL,
-	"SELECT ", "SELECT p.id, ", 1), "WHERE p.id = ?", "WHERE p.id = ANY($1)", 1)
+var playedDecisionBasesSQL = strings.NewReplacer("SELECT ", "SELECT p.id, ",
+	"WHERE p.id = ? AND p.tenant_id = ?", "WHERE p.tenant_id = $2 AND p.id = ANY($1)").
+	Replace(sqlshared.PlayedDecisionAnalysisSQL(shared{}))
 
 // moveBulkTypes are the columns of moveInsertSQL, in order.
 var moveBulkTypes = []string{

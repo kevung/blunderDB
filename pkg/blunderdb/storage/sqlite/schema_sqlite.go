@@ -977,6 +977,7 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_position_multi_played   ON position(id) WHERE multi_played = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_path  ON import_batch_file(path, size, mtime)`,
+	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_sha   ON import_batch_file(sha256) WHERE match_id IS NOT NULL AND sha256 <> ''`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon2    ON analysis(player2_backgammon_rate)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match(canonical_hash)`,
 	`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,

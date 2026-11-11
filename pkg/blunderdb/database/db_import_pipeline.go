@@ -56,6 +56,7 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 	var store ingest.TxBeginner = d.store
 	batchID, sqlDB := d.importBatchID, d.db
 	journal := d.importJournal
+	batches := d.store.ImportBatches()
 	positions := d.store.Positions()
 	d.mu.RUnlock()
 
@@ -130,9 +131,7 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 		},
 		OnRead: onRead,
 	}
-	if journal != nil {
-		popts.Known = journal.Known
-	}
+	popts.Known = ingest.KnownFiles(ctx, batches, "", journal)
 	out, err := ingest.ImportFiles(ctx, store, paths, popts)
 	slog.Info("imported files", "files", len(out), "of", len(paths), "err", err)
 	return out, err

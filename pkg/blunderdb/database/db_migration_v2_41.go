@@ -8,7 +8,6 @@ import (
 	"log/slog"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // answeredDoublesPendingKey is the metadata key that says the transcribed
@@ -66,7 +65,7 @@ func (d *Database) finishAnsweredDoubles(ctx context.Context) error {
 	if n > 0 {
 		slog.Info("moved the transcribed answers to a double onto the ownerless cube", "moves", n)
 	}
-	if _, err := d.db.ExecContext(ctx, sqlshared.DropOwnedCubeAnswerMatchStatsSQL); err != nil {
+	if err := sqlite.DropOwnedCubeAnswerMatchStats(ctx, d.db); err != nil {
 		return fmt.Errorf("dropping the statistics of matches with a take on the doubler's row: %w", err)
 	}
 	_, err = d.db.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, answeredDoublesPendingKey)

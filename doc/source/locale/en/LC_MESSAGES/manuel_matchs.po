@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-07 03:21+0100\n"
+"POT-Creation-Date: 2026-11-09 11:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -899,7 +899,7 @@ msgstr ""
 "**read-only**: navigation, search and analysis remain possible, but any "
 "modification is disabled and the title bar shows \"[read-only]\"."
 
-#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:942
+#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:944
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Refer to :ref:`raccourcis` for available shortcuts."
 
@@ -1402,35 +1402,39 @@ msgid ""
 " avec les deux dés, les cinq réponses possibles à une seule question — "
 "qu'a fait le camp au trait ? Elle dit de qui est le tour : le camp au "
 "trait annonce — doubler, abandonner — ou le camp d'en face répond — "
-"prendre, passer ; jamais les quatre à la fois, et un bouton dont le geste"
-" ne répondrait à rien reste éteint. Le clavier, lui, ne refuse jamais "
-"rien : un bouton éteint est une cible qu'on n'offre pas, pas un geste "
-"interdit. « Abandonner » n'enregistre rien encore : la rangée devient les"
-" trois niveaux — simple, gammon, backgammon —, « Le match » et « Annuler "
-"», qui reprend la touche ÉCHAP ; au clavier, *r* puis *1*, *2* ou *3*, "
-"*ENTREE* valant simple, et *r* puis *4* pour le match. Le videau dessiné "
-"sur le plateau est la seconde cible de ces gestes : un clic dessus "
-"propose un double. Devant une offre il ne répond pas — la prise et la "
-"passe sont deux réponses symétriques et vivent ensemble dans la rangée, "
-"un clic chacune."
+"prendre, passer, abandonner ; « Doubler » ne s'allume jamais avec « "
+"Prendre » et « Passer », et un bouton dont le geste ne répondrait à rien "
+"reste éteint. Face à un double, abandonner met fin à la partie au videau "
+"d'avant l'offre, comme une passe, ou au match. Le clavier, lui, ne refuse"
+" jamais rien : un bouton éteint est une cible qu'on n'offre pas, pas un "
+"geste interdit. « Abandonner » n'enregistre rien encore : la rangée "
+"devient les trois niveaux — simple, gammon, backgammon —, « Le match » et"
+" « Annuler », qui reprend la touche ÉCHAP ; au clavier, *r* puis *1*, *2*"
+" ou *3*, *ENTREE* valant simple, et *r* puis *4* pour le match. Le videau"
+" dessiné sur le plateau est la seconde cible de ces gestes : un clic "
+"dessus propose un double. Devant une offre il ne répond pas — la prise et"
+" la passe sont deux réponses symétriques et vivent ensemble dans la "
+"rangée, un clic chacune."
 msgstr ""
 "On the dice line, the **Double**, **Take**, **Pass**, **Resign** row "
 "takes the four cube gestures to the mouse: they are, with the two dice, "
 "the five possible answers to a single question — what did the side on "
 "roll do? It says whose turn it is: the side on roll announces — double, "
-"resign — or the other side answers — take, pass; never all four at once, "
-"and a button whose gesture would answer nothing stays off. The keyboard, "
-"for its part, never refuses anything: a button that is off is a target "
-"one does not offer, not a forbidden gesture. \"Resign\" records nothing "
-"yet: the row becomes the three levels — single, gammon, backgammon —, "
-"\"The match\" and \"Cancel\", which doubles the ESCAPE key; on the "
-"keyboard, *r* then *1*, *2* or *3*, *ENTER* meaning single, and *r* then "
-"*4* for the match. The cube drawn on the board is the second target of "
-"these gestures: a click on it offers a double. Facing an offer it does "
-"not answer — take and pass are two symmetric answers and live together in"
-" the row, one click each."
+"resign — or the other side answers — take, pass, resign; \"Double\" never"
+" lights together with \"Take\" and \"Pass\", and a button whose gesture "
+"would answer nothing stays off. Facing a double, resigning ends the game "
+"at the cube value before the offer, like a pass, or the match. The "
+"keyboard, for its part, never refuses anything: a button that is off is a"
+" target one does not offer, not a forbidden gesture. \"Resign\" records "
+"nothing yet: the row becomes the three levels — single, gammon, "
+"backgammon —, \"The match\" and \"Cancel\", which doubles the ESCAPE key;"
+" on the keyboard, *r* then *1*, *2* or *3*, *ENTER* meaning single, and "
+"*r* then *4* for the match. The cube drawn on the board is the second "
+"target of these gestures: a click on it offers a double. Facing an offer "
+"it does not answer — take and pass are two symmetric answers and live "
+"together in the row, one click each."
 
-#: ../../source/manuel_matchs.rst:617
+#: ../../source/manuel_matchs.rst:619
 msgid ""
 "La **barre d'état** dit ce que le brouillon attend, en un mot : la danse "
 "enregistrée d'office, le premier coup d'une partie, la réponse attendue à"
@@ -1450,7 +1454,7 @@ msgstr ""
 " behind it is flagged at the head of the transcript instead, where the "
 "offending cell is."
 
-#: ../../source/manuel_matchs.rst:625
+#: ../../source/manuel_matchs.rst:627
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -1474,7 +1478,7 @@ msgstr ""
 "abandoned Duel. It carries its video marker and is cancelled like a "
 "resignation."
 
-#: ../../source/manuel_matchs.rst:635
+#: ../../source/manuel_matchs.rst:637
 msgid ""
 "Le score d'une partie est celui que donnent les parties précédentes, sauf"
 " s'il a été annoncé autrement à la table. Un double-clic sur le score de "
@@ -1501,7 +1505,7 @@ msgstr ""
 "“inconsistent declared score”. In money play there is no score to "
 "declare."
 
-#: ../../source/manuel_matchs.rst:647
+#: ../../source/manuel_matchs.rst:649
 msgid ""
 "Un transcript repris en cours de match peut commencer après la partie "
 "Crawford. Lorsque la première partie s'ouvre avec un joueur à un point du"
@@ -1524,7 +1528,7 @@ msgstr ""
 "[Crawford \"PostCrawford\"]`` header line that blunderDB reads back; "
 "gnubg ignores it and counts that first game as the Crawford game."
 
-#: ../../source/manuel_matchs.rst:657
+#: ../../source/manuel_matchs.rst:659
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1562,7 +1566,7 @@ msgstr ""
 "typed — a deleted decision, for instance. Games fold away; the cursor's "
 "is open."
 
-#: ../../source/manuel_matchs.rst:673
+#: ../../source/manuel_matchs.rst:675
 msgid ""
 "**Ce qui est en train d'être tapé se dessine dans le transcript**, en "
 "pointillés, à la place exacte où il sera écrit : les dés au fur et à "
@@ -1582,7 +1586,7 @@ msgstr ""
 "before the validation; what is read and what the document will say never "
 "diverge."
 
-#: ../../source/manuel_matchs.rst:682
+#: ../../source/manuel_matchs.rst:684
 msgid ""
 "Corriger, c'est taper sur la cellule où l'on est. Le curseur posé sur une"
 " action, un chiffre en recommence le jet sur place, et les quatre gestes "
@@ -1609,7 +1613,7 @@ msgstr ""
 "Announcing it, that first play keeps the score its game started at: if "
 "the end of the resumed game gives another one, the difference is marked."
 
-#: ../../source/manuel_matchs.rst:694
+#: ../../source/manuel_matchs.rst:696
 msgid ""
 "Revenir sur la **dernière** action, c'est revenir là où la transcription "
 "s'écrit. Un chiffre tapé sur elle en corrige encore le jet, mais une fois"
@@ -1623,7 +1627,7 @@ msgstr ""
 "it and opens the following decision; ENTER validates it likewise. The "
 "following decisions are then added after it, as the first time."
 
-#: ../../source/manuel_matchs.rst:700
+#: ../../source/manuel_matchs.rst:702
 msgid ""
 "Taper un **autre jet** sur le **premier coup** d'une partie décide à "
 "nouveau qui commence : le dé du joueur 1 se tape en premier, celui du "
@@ -1647,7 +1651,7 @@ msgstr ""
 " that order does not name is marked “inconsistent dice”. The rest of the "
 "game keeps its sides."
 
-#: ../../source/manuel_matchs.rst:710
+#: ../../source/manuel_matchs.rst:712
 msgid ""
 "Une **insertion au milieu du document continue d'insérer** : la "
 "validation ouvre une cellule vide à la suite, et l'action suivante "
@@ -1665,7 +1669,7 @@ msgstr ""
 "the next game. The end of the game, or moving the cursor, puts an end to "
 "the insertion: the cursor then lands on the next game's first play."
 
-#: ../../source/manuel_matchs.rst:718
+#: ../../source/manuel_matchs.rst:720
 msgid ""
 "**Suppr** (ou *x*) retire la décision en cours d'édition et recule sur la"
 " précédente, prête à être corrigée : sur une cellule écrite, l'action "
@@ -1683,7 +1687,7 @@ msgstr ""
 " keep their side, and the double turn a deletion leaves is marked without"
 " the cursor being brought back to it."
 
-#: ../../source/manuel_matchs.rst:725
+#: ../../source/manuel_matchs.rst:727
 msgid ""
 "Un clic droit sur une cellule ouvre les corrections de cette action — "
 "insérer avant, insérer après, supprimer, changer de camp — et amène le "
@@ -1700,7 +1704,7 @@ msgstr ""
 " elsewhere: a button acting on \"the action under the cursor\" would aim "
 "at a cell one may not see, where the right click names its own."
 
-#: ../../source/manuel_matchs.rst:732
+#: ../../source/manuel_matchs.rst:734
 msgid ""
 "La barre du brouillon porte ses deux seules sorties, au bout à droite, "
 "après le menu « ⋯ ». « **Terminer** » (CTRL-ENTREE) écrit le match dans "
@@ -1725,7 +1729,7 @@ msgstr ""
 " saving the draft itself: it is written to the database after each "
 "action, and returning to the list leaves it to be resumed later."
 
-#: ../../source/manuel_matchs.rst:743
+#: ../../source/manuel_matchs.rst:745
 msgid ""
 "Le menu **⋯** de la barre tient « **Texte .mat** », qui ouvre le fichier "
 "Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que "
@@ -1740,7 +1744,7 @@ msgstr ""
 ".mat**\", which writes that same file to disk. The two arrows **↶** and "
 "**↷** undo and redo, like *CTRL-Z* and *CTRL-SHIFT-Z*."
 
-#: ../../source/manuel_matchs.rst:750
+#: ../../source/manuel_matchs.rst:752
 msgid ""
 "Si l'analyse d'un match transcrit a été interrompue — l'application "
 "fermée pendant le lot —, la barre d'état le signale à la prochaine "
@@ -1756,7 +1760,7 @@ msgstr ""
 "to be analysed, and the batch that restarts covers only that match, never"
 " the whole library."
 
-#: ../../source/manuel_matchs.rst:756
+#: ../../source/manuel_matchs.rst:758
 msgid ""
 "Un brouillon qui porte des incohérences est terminé tout de même, après "
 "un avertissement : rien n'est refusé. Un coup illégal est exporté tel "
@@ -1768,7 +1772,7 @@ msgstr ""
 "played, with the warning that gnubg and XG will flag it (\\\"Invalid "
 "move\\\") and diverge afterwards."
 
-#: ../../source/manuel_matchs.rst:761
+#: ../../source/manuel_matchs.rst:763
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "
 "matchs ou « **Éditer la transcription** » de sa fiche ouvre un brouillon "
@@ -1789,7 +1793,7 @@ msgstr ""
 " not: before opening, a dialog says up to how many, and that finishing "
 "the draft may lose them."
 
-#: ../../source/manuel_matchs.rst:770
+#: ../../source/manuel_matchs.rst:772
 msgid ""
 "Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de "
 "la barre du brouillon ouvre un menu : **Fichier local…** pour choisir une"
@@ -1829,7 +1833,7 @@ msgstr ""
 "cursor stays at the end of the transcript, ready for typing, and follows "
 "the playback only once it enters another action."
 
-#: ../../source/manuel_matchs.rst:789
+#: ../../source/manuel_matchs.rst:791
 msgid ""
 "Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
 "YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
@@ -1841,7 +1845,7 @@ msgstr ""
 "Service <https://www.youtube.com/t/terms>`_: blunderDB extracts no image "
 "from it."
 
-#: ../../source/manuel_matchs.rst:793
+#: ../../source/manuel_matchs.rst:795
 msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
@@ -1874,7 +1878,7 @@ msgstr ""
 " the panel: the input keys, the video keys and *CTRL-LEFT* / *CTRL-"
 "RIGHT*, which rotate the board, keep their effect."
 
-#: ../../source/manuel_matchs.rst:807
+#: ../../source/manuel_matchs.rst:809
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1896,7 +1900,7 @@ msgstr ""
 "session to the next, and the width stays that of the video, whichever "
 "side it is on. The handle and the button leave the keyboard to the panel."
 
-#: ../../source/manuel_matchs.rst:818
+#: ../../source/manuel_matchs.rst:820
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -1952,7 +1956,7 @@ msgstr ""
 "theatre mode changes the screen. The mode exists only in Transcription, "
 "with a video attached."
 
-#: ../../source/manuel_matchs.rst:844
+#: ../../source/manuel_matchs.rst:846
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -1994,7 +1998,7 @@ msgstr ""
 "corner of the video when it is not 1×, and a new source starts again at "
 "1×."
 
-#: ../../source/manuel_matchs.rst:862
+#: ../../source/manuel_matchs.rst:864
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -2009,7 +2013,7 @@ msgstr ""
 "as in the YouTube frame. The angle is kept for the draft, on this "
 "computer only; it is not written to the database."
 
-#: ../../source/manuel_matchs.rst:868
+#: ../../source/manuel_matchs.rst:870
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2039,7 +2043,7 @@ msgstr ""
 "second before the roll of that action, or before its action if the roll "
 "has no instant; a paused player stays paused."
 
-#: ../../source/manuel_matchs.rst:881
+#: ../../source/manuel_matchs.rst:883
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2089,7 +2093,7 @@ msgstr ""
 "roll, then returns to the end of the transcript: the digits open the next"
 " roll there, and the indicator says so."
 
-#: ../../source/manuel_matchs.rst:903
+#: ../../source/manuel_matchs.rst:905
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2115,7 +2119,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav`` (the latter comes from RPM Fusion) —"
 " see :ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:915
+#: ../../source/manuel_matchs.rst:917
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2128,7 +2132,7 @@ msgstr ""
 " instant, at the same speed, playing or paused as before. After three "
 "reloads to no effect, the pane says so and offers to retry."
 
-#: ../../source/manuel_matchs.rst:920
+#: ../../source/manuel_matchs.rst:922
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -2159,7 +2163,7 @@ msgstr ""
 "transcription. The original is neither modified nor deleted, and a sound "
 "copy already there is reused without a new repair."
 
-#: ../../source/manuel_matchs.rst:931
+#: ../../source/manuel_matchs.rst:933
 msgid ""
 "Sans ``ffmpeg``, ou si la réparation échoue, le volet annonce les sauts "
 "fautifs avec la raison et la commande qui répare le fichier, prête à "
@@ -2169,7 +2173,7 @@ msgstr ""
 " seeks with the reason and the command that repairs the file, ready to "
 "copy:"
 
-#: ../../source/manuel_matchs.rst:938
+#: ../../source/manuel_matchs.rst:940
 msgid ""
 "La commande écrit la même copie à côté de l'original ; associez-la "
 "ensuite au match ou à la transcription. Le volet propose la même commande"

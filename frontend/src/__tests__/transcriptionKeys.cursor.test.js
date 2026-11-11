@@ -98,16 +98,23 @@ describe('h/l depuis tout état', () => {
     });
 });
 
+/** Un document de `n` Actions, le Cursor en `cursor`, sans trou. */
+const doc = (/** @type {number} */ n, /** @type {number} */ cursor) => ({ cursor, actions: Array.from({ length: n }, () => ({ kind: 'checker' })) });
+
 describe('cursorCommands — le clic sur une cellule', () => {
-    test('remonte le Transcript d’autant de pas que d’Actions', () => {
-        expect(cursorCommands(12, 9)).toEqual([{ kind: COMMAND.CURSOR_BACK }, { kind: COMMAND.CURSOR_BACK }, { kind: COMMAND.CURSOR_BACK }]);
+    test('un clic lointain est un seul geste, quelle que soit la distance', () => {
+        expect(cursorCommands(doc(325, 324), 2)).toEqual([{ kind: COMMAND.CURSOR_TO, index: 2, hole: false }]);
+        expect(cursorCommands(doc(325, 0), 325)).toEqual([{ kind: COMMAND.CURSOR_TO, index: 325, hole: false }]);
     });
 
-    test('le redescend de même', () => {
-        expect(cursorCommands(2, 4)).toEqual([{ kind: COMMAND.CURSOR_FORWARD }, { kind: COMMAND.CURSOR_FORWARD }]);
+    test('le trou devant une Action est un arrêt à part', () => {
+        const ann = doc(6, 0);
+        ann.actions[4] = { kind: 'checker', inconsistencies: [{ kind: 'double_turn' }] };
+        expect(cursorCommands(ann, 4)).toEqual([{ kind: COMMAND.CURSOR_TO, index: 4, hole: false }]);
+        expect(cursorCommands(ann, 4, true)).toEqual([{ kind: COMMAND.CURSOR_TO, index: 4, hole: true }]);
     });
 
     test('la cellule où le Cursor est déjà ne demande rien', () => {
-        expect(cursorCommands(3, 3)).toEqual([]);
+        expect(cursorCommands(doc(8, 3), 3)).toEqual([]);
     });
 });

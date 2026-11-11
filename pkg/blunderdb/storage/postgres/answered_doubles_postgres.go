@@ -81,7 +81,7 @@ func reanchorAnsweredDoublesTx(ctx context.Context, tx pgx.Tx, scope string) (in
 		landed = append(landed, newID)
 	}
 	// A moved move is scored by the analysis of the row it lands on.
-	if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), landed); err != nil {
+	if _, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), scope, landed); err != nil {
 		return 0, fmt.Errorf("rescore answered moves: %w", err)
 	}
 	if err := refreshPositionMatchDates(ctx, tx, tenant, left); err != nil {
@@ -127,14 +127,36 @@ func dropGammonNetResponseAnalyses(ctx context.Context, conn beginner) (bool, er
 		if done > 0 || !complete {
 			return nil
 		}
-		var err error
-		if n, err = sqlshared.DropGammonNetResponseAnalyses(ctx, binder{tx}.shared()); err != nil {
-			return err
+		// Tenant by tenant: the keys of analysis and move lead with it.
+		rows, err := tx.Query(ctx, `SELECT DISTINCT tenant_id FROM analysis
+			WHERE analysis_engine LIKE 'gammonNet%' OR analysis_engine IS NULL ORDER BY 1`)
+		if err != nil {
+			return fmt.Errorf("postgres: list tenants with gammonNet verdicts: %w", err)
+		}
+		tenants, err := pgx.CollectRows(rows, pgx.RowTo[int64])
+		if err != nil {
+			return fmt.Errorf("postgres: list tenants with gammonNet verdicts: %w", err)
+		}
+		for _, tenant := range tenants {
+			k, err := sqlshared.DropGammonNetResponseAnalyses(ctx, binder{tx}.shared(), scopeOfTenant(tenant))
+			if err != nil {
+				return err
+			}
+			n += k
 		}
 		// Once too: a take on the doubler's own row had its MWC loss
 		// converted at half its cube.
-		if _, err := tx.Exec(ctx, sqlshared.DropOwnedCubeAnswerMatchStatsSQL); err != nil {
-			return fmt.Errorf("postgres: drop the statistics of owned-cube answers: %w", err)
+		rows, err = tx.Query(ctx, `SELECT DISTINCT tenant_id FROM match_stats ORDER BY 1`)
+		if err != nil {
+			return fmt.Errorf("postgres: list tenants with match statistics: %w", err)
+		}
+		if tenants, err = pgx.CollectRows(rows, pgx.RowTo[int64]); err != nil {
+			return fmt.Errorf("postgres: list tenants with match statistics: %w", err)
+		}
+		for _, tenant := range tenants {
+			if err := sqlshared.DropOwnedCubeAnswerMatchStats(ctx, binder{tx}.shared(), scopeOfTenant(tenant)); err != nil {
+				return err
+			}
 		}
 		if _, err := tx.Exec(ctx, `INSERT INTO metadata (key, value) VALUES ($1, '1') ON CONFLICT (key) DO NOTHING`,
 			responseAnalysesDroppedKey); err != nil {
@@ -165,9 +187,8 @@ var reanchorProbeTables = []string{"move", "game", "match", "position"}
 func reanchorAnsweredDoubles(ctx context.Context, conn beginner) (bool, error) {
 	var tenants []int64
 	complete, err := inUnforcedTx(ctx, conn, reanchorProbeTables, func(tx pgx.Tx) error {
-		rows, err := tx.Query(ctx, `SELECT DISTINCT mv.tenant_id FROM (`+sqlshared.AnsweredOwnedCubeMovesSQL+`
-			  AND g.tenant_id = mv.tenant_id AND m.tenant_id = mv.tenant_id AND p.tenant_id = mv.tenant_id) a
-			JOIN move mv ON mv.id = a.id ORDER BY 1`)
+		rows, err := tx.Query(ctx, `SELECT DISTINCT g.tenant_id FROM game g WHERE g.id IN (SELECT a.game_id FROM (`+
+			sqlshared.AnsweredOwnedCubeMovesSQL(binder{tx}.shared())+`) a) ORDER BY 1`)
 		if err != nil {
 			return fmt.Errorf("postgres: list tenants with answered doubles: %w", err)
 		}
@@ -222,7 +243,7 @@ type answeredMove struct{ move, game int64 }
 // answeredOwnedCubeMoves groups the tenant's rows of
 // sqlshared.AnsweredOwnedCubeMovesSQL by position, positions in id order.
 func answeredOwnedCubeMoves(ctx context.Context, tx pgx.Tx, tenant int64) (map[int64][]answeredMove, []int64, error) {
-	rows, err := tx.Query(ctx, sqlshared.AnsweredOwnedCubeMovesSQL+`
+	rows, err := tx.Query(ctx, sqlshared.AnsweredOwnedCubeMovesSQL(binder{tx}.shared())+`
 	  AND mv.tenant_id = $1 AND g.tenant_id = $1 AND m.tenant_id = $1 AND p.tenant_id = $1
 	ORDER BY mv.position_id, mv.id`, tenant)
 	if err != nil {

@@ -536,9 +536,7 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 			}
 		},
 	}
-	if journal != nil {
-		popts.Known = journal.Known
-	}
+	popts.Known = ingest.KnownFiles(ctx, batches, scope, journal)
 	_, err = ingest.ImportFiles(ctx, s.opts.Storage, paths, popts)
 	final := meter.Finish()
 	job.mu.Lock()

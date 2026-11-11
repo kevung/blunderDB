@@ -448,6 +448,8 @@
                 return { Kind: 'cursor_back' };
             case COMMAND.CURSOR_FORWARD:
                 return { Kind: 'cursor_forward' };
+            case COMMAND.CURSOR_TO:
+                return { Kind: 'cursor_to', At: command.index, Hole: !!command.hole };
             // Gestes de correction, sans camp : le moteur le propose, seul
             // `flip_side` le change (ADR-0045 §4).
             case COMMAND.INSERT_BEFORE:
@@ -482,7 +484,7 @@
         // there, and the panel sends none. A walk in the batch leads onto an Action that
         // already exists. A validation ends the correction: what follows it opens a new
         // Action at the end of the document.
-        let inPlace = entry?.replacing === true || commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
+        let inPlace = entry?.replacing === true || commands.some((c) => WALKS.has(c.kind));
         // A play typed and preselected but not validated: a cube gesture validates it on
         // the way, as the next roll's digit does, without an instant.
         const pendingPlay = !inPlace && entry?.dice?.[0] > 0 && entry?.dice?.[1] > 0;
@@ -523,6 +525,10 @@
         const prev = actions[(entry && !entry.replacing ? entry.at : actions.length) - 1];
         return !prev || prev.tick_ms != null;
     }
+
+    // The Cursor's moves, onto an Action that already exists.
+    /** @type {Set<string>} */
+    const WALKS = new Set([COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, COMMAND.CURSOR_TO]);
 
     /** @type {Set<string>} */
     const CUBE_KINDS = new Set([COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN, COMMAND.FORFEIT]);
@@ -575,7 +581,7 @@
         if (typeof at === 'number') videoPane.seek(at - 1000);
     }
 
-    // Placements by hand under way: a walk takes one engine round trip per stop, then the
+    // Placements by hand under way: a move takes one engine round trip, then the
     // video is sought. Until it is, the clock still reads the stretch the Cursor left, and
     // the follower would take it back there mid-walk.
     let placing = 0;
@@ -1097,13 +1103,16 @@
     function selectAction(index, hole = false) {
         const ann = get(transcriptionStore)?.annotated;
         if (!ann) return;
-        const from = currentStop(ann);
         const to = cursorStop(ann, index, hole);
         // Le second clic d'un double-clic (ADR-0052) arrive souvent avant le
         // retour du premier : ne pas refaire le chemin deux fois.
-        if (to === from || to === walkingTo) return;
+        if (to === currentStop(ann) || to === walkingTo) return;
         walkingTo = to;
-        byHand(run(cursorCommands(from, to)).then(settleCursor).then(seekToCursor)).finally(() => {
+        byHand(
+            run(cursorCommands(ann, index, hole))
+                .then(settleCursor)
+                .then(seekToCursor)
+        ).finally(() => {
             if (walkingTo === to) walkingTo = null;
         });
         panelEl?.focus({ preventScroll: true });
@@ -1365,7 +1374,7 @@
         ranked = [];
         unranked = false;
         danced = false;
-        byHand(run(menuCommands(currentStop(ann), cursorStop(ann, index), kind)).then(settleCursor));
+        byHand(run(menuCommands(ann, index, kind)).then(settleCursor));
         panelEl?.focus({ preventScroll: true });
     }
 
@@ -1530,7 +1539,7 @@
         }
         if (result.commands.some((c) => c.kind === COMMAND.CURSOR_END)) {
             const ann = get(transcriptionStore)?.annotated;
-            const end = ann ? cursorCommands(currentStop(ann), cursorStop(ann, ann.actions?.length ?? 0)) : [];
+            const end = ann ? cursorCommands(ann, ann.actions?.length ?? 0) : [];
             result = { ...result, commands: result.commands.flatMap((c) => (c.kind === COMMAND.CURSOR_END ? end : [c])) };
         }
         // A restarted or validated roll drops its list before any gesture can `select` it.
@@ -1549,7 +1558,7 @@
         }
 
         const rearms = result.commands.some((c) => REARMING.has(c.kind));
-        const walks = result.commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
+        const walks = result.commands.some((c) => WALKS.has(c.kind));
         const done = run(result.commands)
             .then(() => (rearms ? settleCursor() : settleAfter(result.commands)))
             .then(() => {
@@ -1564,7 +1573,7 @@
     // Commands after which the panel re-reads the Cursor the engine chose:
     // walking, every edit, and the cube gestures (which may correct in place).
     /** @type {Set<string>} */
-    const REARMING = new Set([COMMAND.CURSOR_BACK, COMMAND.CURSOR_FORWARD, COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN, COMMAND.FORFEIT, ...EDITS]);
+    const REARMING = new Set([...WALKS, COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN, COMMAND.FORFEIT, ...EDITS]);
 
     /**
      * Runs one command from a key, a button or the global dispatcher.
@@ -1837,6 +1846,8 @@
     let resigning = $derived(keys.phase === PHASE.RESIGN);
     let cubeRowOpen = $derived(!!draft && !matchOver);
     let canCubeAct = $derived(cubeRowOpen && !awaitingAnswer && !resigning);
+    // Face à un double, le répondant peut aussi abandonner.
+    let canCubeResign = $derived(cubeRowOpen && awaitingAnswer && !resigning);
     // [T]/[P] répondent à une offre ou corrigent la cellule tenue par le curseur.
     let canCubeAnswer = $derived(cubeRowOpen && (awaitingAnswer || editingSlot) && !resigning);
 
@@ -2019,7 +2030,7 @@
             pos = { ...structuredClone(info.before), player_on_roll: typeof info.side === 'number' ? info.side : info.before.player_on_roll };
             dice = info.before.dice ?? [0, 0];
             // Cursor pas encore sur la cellule : le chemin précède le coup, même file.
-            lead = cursorCommands(currentStop(ann), cursorStop(ann, index));
+            lead = cursorCommands(ann, index);
         }
         if (!pos || !(dice[0] > 0) || !(dice[1] > 0)) return false;
         const parsed = parseDiceMove(text);
@@ -2319,6 +2330,7 @@
                             <CubeActionRow
                                 canAct={canCubeAct}
                                 canAnswer={canCubeAnswer}
+                                canResign={canCubeAct || canCubeResign}
                                 {resigning}
                                 onGesture={sendCube}
                                 onResign={startResign}

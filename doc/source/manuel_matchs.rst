@@ -602,8 +602,10 @@ Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**,
 les deux dés, les cinq réponses possibles à une seule question — qu'a fait le
 camp au trait ? Elle dit de qui
 est le tour : le camp au trait annonce — doubler, abandonner — ou le camp d'en
-face répond — prendre, passer ; jamais les quatre à la fois, et un bouton dont
-le geste ne répondrait à rien reste éteint. Le clavier, lui, ne refuse jamais
+face répond — prendre, passer, abandonner ; « Doubler » ne s'allume jamais avec
+« Prendre » et « Passer », et un bouton dont le geste ne répondrait à rien
+reste éteint. Face à un double, abandonner met fin à la partie au videau
+d'avant l'offre, comme une passe, ou au match. Le clavier, lui, ne refuse jamais
 rien : un bouton éteint est une cible qu'on n'offre pas, pas un geste interdit.
 « Abandonner » n'enregistre rien encore : la rangée devient les trois niveaux —
 simple, gammon, backgammon —, « Le match » et « Annuler », qui reprend la

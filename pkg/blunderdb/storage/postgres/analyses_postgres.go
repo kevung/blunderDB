@@ -272,7 +272,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 		}
 		// The moves played here are scored against the analysis just written.
 		if !fresh {
-			if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
+			if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), scopeOfTenant(tenant), map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
 				return err
 			}
 		}
@@ -336,7 +336,7 @@ func (s *analysisStore) Delete(ctx context.Context, scope string, positionID int
 			positionID, tenantID(scope)); err != nil {
 			return fmt.Errorf("postgres: delete analysis for position %d: %w", positionID, err)
 		}
-		_, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: nil})
+		_, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), scope, map[int64]*domain.PositionAnalysis{positionID: nil})
 		return err
 	})
 }
@@ -495,8 +495,9 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 		}
 		lastID = page[len(page)-1].id
 
-		// The moves of the page's positions, scored once the page is done.
-		analyses := make(map[int64]*domain.PositionAnalysis, len(page))
+		// The moves of the page's positions, scored once the page is done,
+		// tenant by tenant: a repair of every tenant walks them all.
+		analyses := map[int64]map[int64]*domain.PositionAnalysis{}
 		for _, r := range page {
 			a, err := engine.DecodeAnalysisFromStorage(r.data)
 			if err != nil {
@@ -507,7 +508,10 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 				[]string{deref(r.mvMove)}, []string{deref(r.mvCube)})
 			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
 				sqlshared.PlayPosition(r.state, r.por, r.d1, r.d2, r.dt))
-			analyses[r.posID] = &a
+			if analyses[r.tenant] == nil {
+				analyses[r.tenant] = map[int64]*domain.PositionAnalysis{}
+			}
+			analyses[r.tenant][r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
 			if stored.equal(c) {
@@ -526,11 +530,13 @@ func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, afte
 			}
 			repaired++
 		}
-		n, err := sqlshared.RescorePlayedDecisions(ctx, binder{db}.shared(), analyses)
-		if err != nil {
-			return repaired, lastID, fmt.Errorf("postgres: repair: %w", err)
+		for tenant, of := range analyses {
+			n, err := sqlshared.RescorePlayedDecisions(ctx, binder{db}.shared(), scopeOfTenant(tenant), of)
+			if err != nil {
+				return repaired, lastID, fmt.Errorf("postgres: repair: %w", err)
+			}
+			repaired += n
 		}
-		repaired += n
 	}
 	return repaired, lastID, nil
 }

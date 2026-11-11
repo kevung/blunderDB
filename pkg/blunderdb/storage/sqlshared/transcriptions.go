@@ -191,8 +191,8 @@ func (s *TranscriptionStore) Annotations(ctx context.Context, scope string, matc
 	var analyses, comments int
 	err := s.DB.QueryRow(ctx, `
 		SELECT (SELECT COUNT(*) FROM analysis a WHERE a.position_id IN (`+positions+`) AND `+ta+`)
-		     + (SELECT COUNT(*) FROM move_analysis ma JOIN move mv ON mv.id = ma.move_id
-		                                              JOIN game g ON g.id = mv.game_id
+		     + (SELECT COUNT(*) FROM move_analysis ma JOIN move mv ON mv.id = ma.move_id`+andSameTenant(s.DB, "mv", "ma")+`
+		                                              JOIN game g ON g.id = mv.game_id`+andSameTenant(s.DB, "g", "mv")+`
 		         WHERE g.match_id = ? AND `+tg+` AND `+tma+`),
 		       (SELECT COUNT(*) FROM comment c WHERE c.position_id IN (`+positions+`) AND `+tc+`)`,
 		args...).Scan(&analyses, &comments)

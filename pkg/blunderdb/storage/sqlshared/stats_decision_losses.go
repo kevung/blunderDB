@@ -34,10 +34,10 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 			`+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0), mv.luck_mp, mv.decision_ms,
 			CASE WHEN p.id IS NULL THEN 0 ELSE 1 END
 		 FROM move mv
-		 JOIN game g ON g.id = mv.game_id
-		 JOIN match m ON m.id = g.match_id
-		 LEFT JOIN position p ON p.id = mv.position_id
-		 LEFT JOIN analysis a ON a.position_id = p.id
+		 JOIN game g ON g.id = mv.game_id`+andSameTenant(s.DB, "g", "mv")+`
+		 JOIN match m ON m.id = g.match_id`+andSameTenant(s.DB, "m", "g")+`
+		 LEFT JOIN position p ON p.id = mv.position_id`+andSameTenant(s.DB, "p", "mv")+`
+		 LEFT JOIN analysis a ON a.position_id = p.id`+andSameTenant(s.DB, "a", "p")+`
 		 WHERE `+tenant+` AND g.match_id = ?
 		 ORDER BY g.game_number, mv.move_number, mv.id`,
 		append(args, matchID)...)

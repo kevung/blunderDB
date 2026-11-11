@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"sort"
 	"strings"
 	"testing"
 )
@@ -357,5 +358,71 @@ func TestLegalMovesOutputIsStable(t *testing.T) {
 	}
 	if got := hex.EncodeToString(h.Sum(nil)); got != legalMovesGolden {
 		t.Fatalf("LegalMoves output changed: digest %s, want %s", got, legalMovesGolden)
+	}
+}
+
+// Only one die plays, and the only larger-die candidate is a bear-off that the
+// smaller die makes exactly. Black (on roll) holds 2(3) 3(3) 4(4) 6(3) with 2
+// off; White holds Black's 1-point. Roll 5-2: the 5 has no move (6/1 is
+// blocked, and no overage bear-off while a checker sits on 6), so the 2 is
+// played alone, anywhere: 6/4, 4/2, 2/off (3/1 is blocked). 2/off covers five
+// pips' worth of distance, but it was played with the 2, so it does not make
+// the larger die playable.
+func TestLegalMovesSmallerDieExactBearOffIsNotTheLargerDie(t *testing.T) {
+	pts := map[int]int{2: 3, 3: 3, 4: 4, 6: 3, 1: -2,
+		11: -1, 12: -1, 17: -2, 18: -1, 19: -2, 20: -2, 22: -3, 23: -1}
+	want := []string{"2/off", "4/2", "6/4"}
+
+	p := mkPos(Black, 5, 2, pts)
+	if b, w := totals(&p); b != 15 || w != 15 {
+		t.Fatalf("bad fixture: black=%d white=%d", b, w)
+	}
+	assertNotations(t, LegalMoves(&p), want)
+
+	q := mkPos(Black, 2, 5, pts) // dice order is irrelevant
+	assertNotations(t, LegalMoves(&q), want)
+
+	// The same position from White's side (mirrored board): same rule.
+	mirrored := map[int]int{}
+	for idx, v := range pts {
+		mirrored[25-idx] = -v
+	}
+	r := mkPos(White, 5, 2, mirrored)
+	assertNotations(t, LegalMoves(&r), want)
+}
+
+// A lone checker on the 2-point with 5-2: the 5 bears it off by overage (no
+// checker higher), so the larger die is playable and the play survives the
+// larger-die rule.
+func TestLegalMovesLargerDieOverageBearOffStillLegal(t *testing.T) {
+	p := mkPos(Black, 5, 2, map[int]int{2: 1, 20: -15})
+	assertNotations(t, LegalMoves(&p), []string{"2/off"})
+}
+
+// Doubles are untouched by the larger-die rule: 2-2 in the same position plays
+// four twos.
+func TestLegalMovesDoublesUnaffectedByLargerDieRule(t *testing.T) {
+	p := mkPos(Black, 2, 2, map[int]int{2: 3, 3: 3, 4: 4, 6: 3, 1: -2,
+		11: -1, 12: -1, 17: -2, 18: -1, 19: -2, 20: -2, 22: -3, 23: -1})
+	plays := LegalMoves(&p)
+	if len(plays) == 0 {
+		t.Fatal("2-2: expected legal plays")
+	}
+	for _, pl := range plays {
+		if len(pl.Steps) != 4 {
+			t.Fatalf("2-2: play %q uses %d dice, want 4", pl.Notation, len(pl.Steps))
+		}
+	}
+}
+
+func assertNotations(t *testing.T, plays []LegalPlay, want []string) {
+	t.Helper()
+	got := make([]string, 0, len(plays))
+	for _, pl := range plays {
+		got = append(got, pl.Notation)
+	}
+	sort.Strings(got)
+	if strings.Join(got, " ") != strings.Join(want, " ") {
+		t.Fatalf("plays = %v, want %v", got, want)
 	}
 }

@@ -1,16 +1,34 @@
-# Reprise — 2026-11-06
+# Reprise — 2026-11-10
 
-État de main au 6 novembre, pour reprendre depuis GitHub sur un autre poste.
+État de main au 10 novembre, pour reprendre depuis GitHub sur un autre poste.
 
 ## État
 
-- Release **0.51.0** coupée le 2026-11-06. Depuis la reprise du 30 oct. : stockage compact,
-  recherche rapide, synchronisation du bureau avec un serveur distant, changeset (paquets Anki,
-  transcriptions, tournois dans les deux sens), corrections du panneau de transcription.
-- Livre d'ouverture (#664) : tout le livre embarqué (32 scores, 13 836 lignes) est au préréglage
-  `standard`, calculé sur smith (grille le 23 oct., 12 scores hors grille le 6 nov.).
-- Issues ouvertes : #846 (poste Windows), #858 et #870 (vision). #845 close le 2026-11-07
-  (vérifiée sous WebKitGTK, `tasks/transcription-vision/bancs/03-cors.md`).
+- Release **0.53.0** coupée le 2026-11-09 (`DatabaseVersion` 2.57.0). Depuis la reprise du 6 nov. :
+  - **0.52.0** : gammonNet v1.9.0 (réseau 768×768 par défaut, le 4 couches embarqué à côté),
+    chargement hors ligne de la bibliothèque publique par COPY (rôle chargeur confiné au tenant 0),
+    réparation d'une vidéo `.webm`/`.mkv` mal multiplexée, abandon du match en transcription,
+    synchronisation après un 402, livre d'ouverture entier au préréglage `standard`.
+  - **0.52.1** : correctif de CI (modules babel des PDF sous ubuntu-26.04).
+  - **0.53.0** : le répondant à un double peut abandonner la partie ou le match ; sous PostgreSQL,
+    les jointures de la recherche, des statistiques, d'Anki, de l'entraînement et de la
+    maintenance nomment leur tenant (clés à `tenant_id` en tête depuis la migration 066).
+- Sur main après 0.53.0, sans release : un fichier déjà importé est reconnu par ses octets avant
+  décodage (#909, migration 067) ; la règle du plus grand dé regarde le dé consommé ; le parcours
+  d'une recherche à filtre de match lourd réécrit le prédicat au lieu de lister les parties
+  (#911, ferme #910).
+- Issues ouvertes : #912 (test ETag intermittent), #846 (poste Windows), #858 et #870 (vision).
+
+## En cours — performance de la recherche sous PostgreSQL (banc gammonGo, 20 M positions)
+
+- **#914** (brouillon, rebasée sur main le 10 nov.) : plateau de fin de partie, l'occupation lue
+  par son index quand le pip la réduit (Q31). À relire : le pire cas du nouveau seuil, 591 ms à
+  froid pour une occupation de 4 997 lignes au pip épars.
+- **Mesure due après #911** : rejouer Q11 et Q12 à 50 clients sur la pile du banc ; #910 s'est
+  fermée à la fusion sans elle.
+- **#913** (horloge injectable pour l'ETag, répond à #912) : le job `test (rest)` a été annulé à
+  la limite de 25 min ; le relancer, et diagnostiquer un blocage s'il la dépasse encore.
+- Dependabot #903 (modules Go) et #904 (actions) : en attente.
 
 ## Chantier vision — en pause, bloqué hors dépôt
 
@@ -32,9 +50,10 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. Vision : campagne matériels, voir son `ETAT.md`.
-2. #846 (LNA WebView2) : attend un poste Windows.
-3. Travail de fond : voir `tasks/BACKLOG.md`.
+1. Recherche PostgreSQL : #914, la mesure Q11/Q12, #913 (section « En cours »).
+2. Vision : campagne matériels, voir son `ETAT.md`.
+3. #846 (LNA WebView2) : attend un poste Windows.
+4. Travail de fond : voir `tasks/BACKLOG.md`.
 
 ## Pièges
 

@@ -95,8 +95,9 @@ func isActiveCubeLabel(label string) bool {
 // candidate (engine.AnalysisColumns.BestMoveUnscored). Such a play is left out
 // of every count, as an unanalysed one is left out of the analysed counts;
 // pos and mv are the position's and the move's aliases.
-func UnscoredPlaySQL(pos, mv string) string {
-	return "(" + mv + ".decision_error_mp IS NULL AND EXISTS (SELECT 1 FROM analysis ua WHERE ua.position_id = " + pos + ".id))"
+func UnscoredPlaySQL(d Dialect, pos, mv string) string {
+	return "(" + mv + ".decision_error_mp IS NULL AND EXISTS (SELECT 1 FROM analysis ua WHERE ua.position_id = " + pos + ".id" +
+		andSameTenant(d, "ua", pos) + "))"
 }
 
 // cubeMultiplierExpr is the cube value (1, 2, 4, …) a decision's equity is
@@ -116,21 +117,37 @@ var cubeMultiplierExpr = "(1 << CAST(CASE WHEN " + ActionCodeOrEmptySQL("mv.cube
 	") AND COALESCE(p.cube_value, 0) > 0 AND p.cube_owner = -1 THEN p.cube_value - 1 ELSE COALESCE(p.cube_value, 0) END AS INTEGER))"
 
 // statsBaseJoin is the FROM + JOIN fragment shared by all stats queries.
-const statsBaseJoin = `FROM position p
-JOIN analysis a ON a.position_id = p.id
-JOIN move mv ON mv.position_id = p.id
-JOIN game g ON g.id = mv.game_id
-JOIN match m ON m.id = g.match_id
-LEFT JOIN tournament t ON t.id = m.tournament_id`
+// Each edge also names the tenant (Dialect.SameTenant): the keys of position,
+// move and analysis lead with tenant_id, and without it a PostgreSQL library
+// read outside row-level security walks every tenant's index entries per row.
+func statsBaseJoin(d Dialect) string {
+	return `FROM position p
+JOIN analysis a ON a.position_id = p.id` + andSameTenant(d, "a", "p") + `
+JOIN move mv ON mv.position_id = p.id` + andSameTenant(d, "mv", "p") + `
+JOIN game g ON g.id = mv.game_id` + andSameTenant(d, "g", "mv") + `
+JOIN match m ON m.id = g.match_id` + andSameTenant(d, "m", "g") + `
+LEFT JOIN tournament t ON t.id = m.tournament_id` + andSameTenant(d, "t", "m")
+}
 
 // matchScopedJoin is statsBaseJoin written from the games of named matches
 // outward, for withJoinOrderPlan.
-const matchScopedJoin = `FROM game g
-JOIN move mv ON mv.game_id = g.id
-JOIN position p ON p.id = mv.position_id
-JOIN analysis a ON a.position_id = p.id
-JOIN match m ON m.id = g.match_id
-LEFT JOIN tournament t ON t.id = m.tournament_id`
+func matchScopedJoin(d Dialect) string {
+	return `FROM game g
+JOIN move mv ON mv.game_id = g.id` + andSameTenant(d, "mv", "g") + `
+JOIN position p ON p.id = mv.position_id` + andSameTenant(d, "p", "mv") + `
+JOIN analysis a ON a.position_id = p.id` + andSameTenant(d, "a", "p") + `
+JOIN match m ON m.id = g.match_id` + andSameTenant(d, "m", "g") + `
+LEFT JOIN tournament t ON t.id = m.tournament_id` + andSameTenant(d, "t", "m")
+}
+
+// andSameTenant is Dialect.SameTenant as a conjunct to append to a join
+// condition, or nothing on a dialect without tenants.
+func andSameTenant(d Dialect, left, right string) string {
+	if p := d.SameTenant(left, right); p != "" {
+		return " AND " + p
+	}
+	return ""
+}
 
 // joinOrderPinner is implemented by an Execer whose planner can be told to
 // follow the join order as written and reach each next table through its index.
@@ -424,7 +441,7 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	if sel.Kind == "cube_direction" {
 		rows, err := s.DB.Query(ctx,
 			"SELECT DISTINCT p.id, "+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+", "+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+" "+
-				statsBaseJoin+whereSQL+" AND p.decision_type = 1", baseArgs...)
+				statsBaseJoin(s.DB)+whereSQL+" AND p.decision_type = 1", baseArgs...)
 		if err != nil {
 			return nil, fmt.Errorf("PositionIDsBySelection (cube_direction): %w", err)
 		}
@@ -433,7 +450,7 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 
 	whereAdd, orderLimit, selArgs := buildSelectionWhereClause(s.DB, sel)
 
-	query := "SELECT DISTINCT p.id " + statsBaseJoin + whereSQL + whereAdd
+	query := "SELECT DISTINCT p.id " + statsBaseJoin(s.DB) + whereSQL + whereAdd
 	if orderLimit != "" {
 		query += " " + orderLimit
 	}
@@ -475,7 +492,7 @@ func (s *StatsStore) countedIDs(ctx context.Context, scope string, filter storag
 		args = whereArgs
 	} else {
 		where, whereArgs := s.buildStatsWhereClause(scope, filter)
-		query = "SELECT " + col + " " + statsBaseJoin + where + tail
+		query = "SELECT " + col + " " + statsBaseJoin(s.DB) + where + tail
 		args = whereArgs
 	}
 	rows, err := s.DB.Query(ctx, query, args...)
@@ -493,7 +510,7 @@ func (s *StatsStore) countedIDs(ctx context.Context, scope string, filter storag
 // tournament for the tenant, regardless of any stats filter.
 func (s *StatsStore) PositionIDsByTournament(ctx context.Context, scope string, tournamentID int64) ([]int64, error) {
 	tenant, args := s.DB.TenantFilter("p", scope)
-	query := "SELECT DISTINCT p.id " + statsBaseJoin +
+	query := "SELECT DISTINCT p.id " + statsBaseJoin(s.DB) +
 		" WHERE " + tenant + " AND m.tournament_id = ? AND a.position_id IS NOT NULL AND (" + statsErrExpr + ") IS NOT NULL"
 	rows, err := s.DB.Query(ctx, query, append(args, tournamentID)...)
 	if err != nil {
@@ -506,7 +523,7 @@ func (s *StatsStore) PositionIDsByTournament(ctx context.Context, scope string, 
 // the tenant, regardless of any stats filter.
 func (s *StatsStore) PositionIDsByMatch(ctx context.Context, scope string, matchID int64) ([]int64, error) {
 	tenant, args := s.DB.TenantFilter("p", scope)
-	query := "SELECT DISTINCT p.id " + statsBaseJoin +
+	query := "SELECT DISTINCT p.id " + statsBaseJoin(s.DB) +
 		" WHERE " + tenant + " AND m.id = ? AND a.position_id IS NOT NULL AND (" + statsErrExpr + ") IS NOT NULL"
 	rows, err := s.DB.Query(ctx, query, append(args, matchID)...)
 	if err != nil {
@@ -521,7 +538,7 @@ func (s *StatsStore) AnalysisEngines(ctx context.Context, scope string) ([]strin
 	tenant, targs := s.DB.TenantFilter("p", scope)
 	rows, err := s.DB.Query(ctx, `
 		SELECT DISTINCT a.analysis_engine
-		FROM analysis a JOIN position p ON p.id = a.position_id
+		FROM analysis a JOIN position p ON p.id = a.position_id`+andSameTenant(s.DB, "p", "a")+`
 		WHERE `+tenant+` AND a.analysis_engine IS NOT NULL AND a.analysis_engine != ''
 		ORDER BY a.analysis_engine`, targs...)
 	if err != nil {
@@ -723,7 +740,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
 		` + cubeMultiplierExpr + `,
 		COALESCE(p.match_length, m.match_length, 0), mv.game_id, COALESCE(m.match_length, 0) ` +
-		statsBaseJoin +
+		statsBaseJoin(s.DB) +
 		` WHERE ` + tenant + ` AND m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB) +
 		// The losses are summed in floating point, which is not associative:
 		// a fixed order keeps the same match giving the same figures to the
@@ -854,7 +871,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 	{
 		snowieRows, snowieErr := s.DB.Query(ctx,
 			`SELECT mv.player, p.decision_type, (`+statsErrExpr+`) as err_mp `+
-				statsBaseJoin+
+				statsBaseJoin(s.DB)+
 				` WHERE `+tenant+` AND m.id = ? AND a.position_id IS NOT NULL AND (`+statsErrExpr+`) IS NOT NULL`,
 			append(append([]any{}, targs...), matchID)...)
 		if snowieErr != nil {
@@ -969,7 +986,7 @@ func (s *StatsStore) matchBadgesDirect(ctx context.Context, scope string, matchI
 	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
 		` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0), mv.game_id, COALESCE(m.match_length, 0) ` +
-		statsBaseJoin +
+		statsBaseJoin(s.DB) +
 		` WHERE ` + tenant + ` AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB)
 	if len(matchIDs) > 0 {
 		ph := strings.TrimSuffix(strings.Repeat("?,", len(matchIDs)), ",")
@@ -1070,7 +1087,7 @@ func (s *StatsStore) tournamentBadgesDirect(ctx context.Context, scope, main str
 		` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0),
 		COALESCE(CASE WHEN mv.player = 1 THEN m.player1_name ELSE m.player2_name END, ''),
 		g.match_id ` +
-		statsBaseJoin +
+		statsBaseJoin(s.DB) +
 		` WHERE ` + tenant + ` AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL
 		AND m.tournament_id IS NOT NULL AND ` + countedExpr(s.DB)
 
@@ -1217,9 +1234,9 @@ func (s *StatsStore) playerTable(ctx context.Context, scope string, filter stora
 	// The Snowie denominator per match: every checker decision with a
 	// position, both seats, but an unscored play (UnscoredPlaySQL).
 	checkerMoves := `COALESCE((SELECT COUNT(*) FROM move mv2
-		                  JOIN position p2 ON p2.id = mv2.position_id
-		                  JOIN game g2 ON g2.id = mv2.game_id
-		                  WHERE g2.match_id = m.id AND p2.decision_type = 0 AND NOT ` + UnscoredPlaySQL("p2", "mv2") + `), 0)`
+		                  JOIN position p2 ON p2.id = mv2.position_id` + andSameTenant(d, "p2", "mv2") + `
+		                  JOIN game g2 ON g2.id = mv2.game_id` + andSameTenant(d, "g2", "mv2") + `
+		                  WHERE g2.match_id = m.id` + andSameTenant(d, "g2", "m") + ` AND p2.decision_type = 0 AND NOT ` + UnscoredPlaySQL(d, "p2", "mv2") + `), 0)`
 	// A reader that cannot write takes the direct path, as Compute does,
 	// unless the table already holds every match.
 	readable := false
@@ -1230,7 +1247,7 @@ func (s *StatsStore) playerTable(ctx context.Context, scope string, filter stora
 	}
 	if readable {
 		decisions, snowieErr, luck, err = s.playerSumsFromTable(ctx, scope, f)
-		checkerMoves = `COALESCE((SELECT SUM(ms.checker_moves) FROM match_stats ms WHERE ms.match_id = m.id), 0)`
+		checkerMoves = `COALESCE((SELECT SUM(ms.checker_moves) FROM match_stats ms WHERE ms.match_id = m.id` + andSameTenant(s.DB, "ms", "m") + `), 0)`
 	} else {
 		decisions, snowieErr, luck, err = s.playerSumsDirect(ctx, scope, f, settings)
 	}
@@ -1308,7 +1325,7 @@ func (s *StatsStore) playerSumsDirect(ctx context.Context, scope string, f stora
 			` `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+`, COUNT(*),`+
 			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+`,`+
 			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+` `+
-			statsBaseJoin+statsWhere+
+			statsBaseJoin(s.DB)+statsWhere+
 			` GROUP BY pname, p.decision_type`,
 		append([]any{settings.ErrorThresholdMP, settings.BlunderThresholdMP}, statsArgs...)...)
 	if err != nil {
@@ -1337,7 +1354,7 @@ func (s *StatsStore) playerSumsDirect(ctx context.Context, scope string, f stora
 	snowieErr = map[string]int64{}
 	rows, err = s.DB.Query(ctx,
 		`SELECT `+moverNameExpr+` AS pname, `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+
-			statsBaseJoin+baseWhere+` GROUP BY pname`,
+			statsBaseJoin(s.DB)+baseWhere+` GROUP BY pname`,
 		baseArgs...)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("PlayerTable snowie: %w", err)

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -128,6 +129,9 @@ func TestDisplayHandler_ServesADirectedTournamentConditionally(t *testing.T) {
 		t.Fatalf("the file must hold a Direction: %v %d", err, len(list))
 	}
 	id := list[0].TournamentID
+	// The tag lives one minute: freeze the clock so no minute change falls between the calls.
+	now := time.Date(2026, 10, 1, 14, 0, 10, 0, time.UTC)
+	a.display.engine.clock = func() time.Time { return now }
 	h := displayHandler(&a.display.engine, id)
 	body := fmt.Sprintf(`{"tournamentId":%d}`, id)
 
@@ -143,6 +147,14 @@ func TestDisplayHandler_ServesADirectedTournamentConditionally(t *testing.T) {
 	if again.Code != http.StatusNotModified {
 		t.Fatalf("unchanged page: code=%d, want 304", again.Code)
 	}
+
+	// A minute later the tag is spent even though nothing was written (the page shows the clock).
+	now = now.Add(60 * time.Second)
+	later := serveDisplay(h, http.MethodPost, displayRoute, body, map[string]string{"Content-Type": "application/json", "If-None-Match": tag})
+	if later.Code != http.StatusOK || later.Header().Get("ETag") == tag {
+		t.Fatalf("next minute: code=%d, want 200 and a new tag", later.Code)
+	}
+	now = now.Add(-60 * time.Second)
 
 	// A Direction write — naming a table, which the page shows — moves the tag: the phones
 	// get the new page on their next poll.

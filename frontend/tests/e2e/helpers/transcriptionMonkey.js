@@ -203,6 +203,10 @@ export async function installMonkeyEngine(page, opts) {
                         doc.cursor = Math.min(len, doc.cursor + 1);
                         doc.dice = [0, 0];
                         return;
+                    case 'cursor_to':
+                        doc.cursor = Math.max(0, Math.min(len, g.At));
+                        doc.dice = [0, 0];
+                        return;
                     case 'undo':
                         if (doc.undo.length) {
                             doc.redo.push(snapshot(doc));

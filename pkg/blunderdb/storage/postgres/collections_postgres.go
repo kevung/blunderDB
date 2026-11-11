@@ -458,7 +458,7 @@ func (s *collectionStore) Members(ctx context.Context, scope string, collectionI
 			`SELECT cp.id, cp.collection_id, cp.position_id, COALESCE(cp.sort_order,0), cp.added_at,
 			 `+collectionPositionCols+`
 			 FROM collection_position cp
-			 INNER JOIN position p ON p.id = cp.position_id
+			 INNER JOIN position p ON p.id = cp.position_id AND p.tenant_id = cp.tenant_id
 			 WHERE cp.collection_id = $1 AND cp.tenant_id = $2
 			 ORDER BY cp.sort_order ASC`,
 			collectionID, tenantID(scope))

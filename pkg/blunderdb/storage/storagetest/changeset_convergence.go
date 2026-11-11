@@ -102,8 +102,14 @@ func scenarioLocalWritesDatedPastHeld(p *csPair) {
 		if !w.check(5) {
 			t.Errorf("#%d %s older-than-held write lost at peer: %+v", n, w.fam, rep)
 		}
-		// held an hour ahead, on both: only the local write's stamp orders them
-		far := time.Now().UTC().Add(time.Hour).Format(storage.ChangedAtLayout)
+		// held an hour ahead, on both: only the local write's stamp orders them.
+		// Marking rewinds the journal, which a library never does: the peer
+		// remembers the future date of the last record it clamped for this uuid
+		// and takes a record carrying it again as that change resent. Families
+		// sharing an object (both tournament rows, both card rows) would collide
+		// whenever an iteration lasts as long as its burst of writes, so each one
+		// holds a date past every earlier one.
+		far := heldFar(n)
 		_ = journal.Mark(p.ca, p.sa, w.fam, u, storage.ChangeUpdate, far)
 		_ = journalB.Mark(p.cb, p.sb, w.fam, u, storage.ChangeUpdate, far)
 		if err := w.write(6); err != nil {
@@ -117,7 +123,7 @@ func scenarioLocalWritesDatedPastHeld(p *csPair) {
 	}
 	// delete over a held date
 	u := famUUID(t, p.a, p.ca, p.sa, "tournament", tid)
-	far := time.Now().UTC().Add(time.Hour).Format(storage.ChangedAtLayout)
+	far := heldFar(len(ws))
 	_ = journal.Mark(p.ca, p.sa, "tournament", u, storage.ChangeUpdate, far)
 	_ = journalB.Mark(p.cb, p.sb, "tournament", u, storage.ChangeUpdate, far)
 	_ = p.a.Tournaments().Delete(p.ca, p.sa, tid)
@@ -125,6 +131,13 @@ func scenarioLocalWritesDatedPastHeld(p *csPair) {
 	if _, ok := famID(p.b, p.cb, p.sb, "tournament", u); ok {
 		t.Errorf("delete over held date lost at peer: %+v", rep)
 	}
+}
+
+// heldFar is a date an hour ahead, a minute further for each step: a step's
+// held date lies past the future dates the earlier steps sent, whatever the
+// clock's resolution or the time a step takes.
+func heldFar(step int) string {
+	return time.Now().UTC().Add(time.Hour + time.Duration(step)*time.Minute).Format(storage.ChangedAtLayout)
 }
 
 func exportedPayload(p *csPair, s storage.Storage, ctx context.Context, scope string, u string) string {

@@ -995,7 +995,7 @@ func (s *AnkiStore) ReviewsByGameType(ctx context.Context, scope string, since s
 	rows, err := s.DB.Query(ctx,
 		`SELECT COALESCE(p.game_type, 0), COUNT(DISTINCT rl.position_id)
 		 FROM anki_review_log rl
-		 INNER JOIN position p ON p.id = rl.position_id
+		 INNER JOIN position p ON p.id = rl.position_id`+andSameTenant(s.DB, "p", "rl")+`
 		 WHERE `+tenant+` AND rl.reviewed_at >= ?
 		 GROUP BY p.game_type`,
 		append(targs, since)...)

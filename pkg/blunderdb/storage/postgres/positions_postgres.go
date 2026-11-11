@@ -7,6 +7,7 @@ import (
 	"iter"
 	"math"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
@@ -61,6 +62,14 @@ func tenantID(scope string) int64 {
 		panic("postgres: " + err.Error() + " (the caller must validate the scope with storage.ParseTenant)")
 	}
 	return n
+}
+
+// scopeOfTenant is tenantID's inverse: the default tenant 0 is the empty scope.
+func scopeOfTenant(tenant int64) string {
+	if tenant == 0 {
+		return ""
+	}
+	return strconv.FormatInt(tenant, 10)
 }
 
 // positionSelectCols is the column list read back into a Position; the first
@@ -326,7 +335,7 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 			return err
 		}
 		// A new decision type changes which play each move is scored against.
-		_, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), []int64{p.ID})
+		_, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), scope, []int64{p.ID})
 		return err
 	})
 	if isUniqueViolation(err) {

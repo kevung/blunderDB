@@ -836,7 +836,7 @@ const moveInsertSQL = `INSERT INTO move (
 // CreateMove stores a new move and returns its id, updating mv.ID in place. A
 // zero PositionID is stored as NULL (no associated position).
 func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Move) (int64, error) {
-	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{db: s.db}.shared(), mv.PositionID, mv.CheckerMove, mv.CubeAction)
+	decisionErr, closeCube, err := sqlshared.PlayedDecisionArgs(ctx, binder{db: s.db}.shared(), scope, mv.PositionID, mv.CheckerMove, mv.CubeAction)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}

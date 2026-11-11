@@ -849,6 +849,56 @@ func testSearchEncounterCountsEveryOccurrence(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testSearchMatchLevelKeepsAndExcludes: a match-level filter keeps the positions its matches
+// reach and drops those only other matches reach, whether written as a list or walked.
+func testSearchMatchLevelKeepsAndExcludes(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	reach := func(p1, p2, round string, decision int) int64 {
+		m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7, Round: round,
+			MatchDate: time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)}
+		matchID, err := s.Matches().Save(ctx, "", &m)
+		if err != nil {
+			t.Fatalf("Save match: %v", err)
+		}
+		g := domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1}
+		gameID, err := s.Matches().CreateGame(ctx, "", &g)
+		if err != nil {
+			t.Fatalf("CreateGame: %v", err)
+		}
+		pos := statsDecisionPos(t, decision)
+		id, err := s.Positions().Save(ctx, "", &pos)
+		if err != nil {
+			t.Fatalf("Save position: %v", err)
+		}
+		mv := domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "checker",
+			PositionID: id, Player: 1, CheckerMove: "13/11 24/23"}
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove: %v", err)
+		}
+		return id
+	}
+	final := reach("me", "them", "Final", 0)
+	semi := reach("them", "me", "Semi", 1)
+	other := reach("carol", "dave", "Final", 2)
+
+	for _, tc := range []struct {
+		name string
+		f    domain.SearchFilters
+		want []int64
+	}{
+		{"player", domain.SearchFilters{PlayerFilter: `pl"me"`}, []int64{final, semi}},
+		{"round", domain.SearchFilters{RoundFilter: "Final"}, []int64{final, other}},
+		{"player and round", domain.SearchFilters{PlayerFilter: `pl"me"`, RoundFilter: "Semi"}, []int64{semi}},
+		{"nobody", domain.SearchFilters{PlayerFilter: `pl"zoe"`}, nil},
+	} {
+		got := searchIDs(t, s, tc.f)
+		slices.Sort(got)
+		if !slices.Equal(got, tc.want) {
+			t.Errorf("%s: got %v, want %v", tc.name, got, tc.want)
+		}
+	}
+}
+
 // testSearchSortPipAndDate pins the direction and the meaning of the pip and
 // date sorts: pip is the count of the side on roll (C is a White-to-play
 // position whose absolute Black count, 10, would mis-order it), date is the

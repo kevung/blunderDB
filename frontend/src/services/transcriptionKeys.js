@@ -111,6 +111,8 @@ export const COMMAND = Object.freeze({
     FORFEIT: 'forfeit',
     CURSOR_BACK: 'cursor_back',
     CURSOR_FORWARD: 'cursor_forward',
+    /** Un clic, `Fin` : le Cursor posé d'un coup sur l'arrêt visé (`index`, `hole`). */
+    CURSOR_TO: 'cursor_to',
     /** `Fin` : le Cursor rejoint le bout du document, donc la Saisie. */
     CURSOR_END: 'cursor_end',
     /** `e` : rouvrir la décision au Cursor, son coup tapé en texte (ADR-0052). */
@@ -221,17 +223,18 @@ export function cursorDelta(event) {
 }
 
 /**
- * Les gestes qui mènent le Cursor de l'arrêt `from` à `to` (rangs de
- * [cursorStop]). Le moteur ne connaît que `cursor_back`/`cursor_forward` : un
- * saut est la répétition du pas.
+ * Le geste qui pose le Cursor sur l'Action `index` (sur le trou devant elle si
+ * `hole`), aucun s'il y est déjà. Un seul geste quelle que soit la distance :
+ * un pas par Action ferait un aller-retour et un rendu du plateau chacun.
  *
- * @param {number} from
- * @param {number} to
- * @returns {{kind: string}[]}
+ * @param {any} annotated
+ * @param {number} index
+ * @param {boolean} [hole]
+ * @returns {{kind: string, index?: number, hole?: boolean}[]}
  */
-export function cursorCommands(from, to) {
-    const kind = to < from ? COMMAND.CURSOR_BACK : COMMAND.CURSOR_FORWARD;
-    return Array.from({ length: Math.abs(to - from) }, () => ({ kind }));
+export function cursorCommands(annotated, index, hole = false) {
+    if (currentStop(annotated) === cursorStop(annotated, index, hole)) return [];
+    return [{ kind: COMMAND.CURSOR_TO, index, hole }];
 }
 
 /**
@@ -495,12 +498,12 @@ export function cancelResign(state) {
  * Une entrée du menu contextuel : mener le Cursor à la cellule cliquée, puis
  * la correction (qui agit sur l'Action au Cursor).
  *
- * @param {number} from - le Cursor actuel
- * @param {number} to - la cellule cliquée
+ * @param {any} annotated - le document, son Cursor actuel compris
+ * @param {number} index - la cellule cliquée
  * @param {string} kind - COMMAND.INSERT_BEFORE, INSERT_AFTER, DELETE ou FLIP_SIDE
  */
-export function menuCommands(from, to, kind) {
-    return [...cursorCommands(from, to), { kind }];
+export function menuCommands(annotated, index, kind) {
+    return [...cursorCommands(annotated, index), { kind }];
 }
 
 /**

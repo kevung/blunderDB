@@ -174,6 +174,19 @@ describe('la rangée [D] [T] [P] [R] envoie ce que la touche envoie', () => {
         expect(engine.sent).toEqual([{ Kind: 'take' }]);
     });
 
+    // Face à un double, le répondant peut abandonner : [R] s'allume, puis le match.
+    test('[R] est allumé devant une offre, et « Le match » envoie le forfait', async () => {
+        await mount(draftState('take'));
+        expect(/** @type {HTMLButtonElement} */ (buttonNamed('Resign')).disabled).toBe(false);
+        expect(/** @type {HTMLButtonElement} */ (buttonNamed('Double')).disabled).toBe(true);
+
+        await fireEvent.click(buttonNamed('Resign'));
+        await settle();
+        await fireEvent.click(buttonNamed('The match'));
+        await settle();
+        expect(engine.sent).toEqual([{ Kind: 'forfeit' }]);
+    });
+
     // [R] n'écrit rien : il arme l'attente du niveau, et c'est le niveau qui
     // crée l'Action — les deux gestes d'ux.md §4.2.
     test('[R] arme le niveau, et le niveau cliqué crée la résignation', async () => {
@@ -206,8 +219,8 @@ describe('le menu contextuel du Transcript', () => {
         await fireEvent.click(entry);
         await settle();
 
-        // Deux pas en arrière, puis la suppression : exactement `h` `h` `x`.
-        expect(kinds()).toEqual(['cursor_back', 'cursor_back', 'delete']);
+        // Le Cursor posé sur la cellule d'un geste, puis la suppression : `x` là où il est.
+        expect(kinds()).toEqual(['cursor_to', 'delete']);
     });
 
     test('les quatre entrées sont les quatre corrections, et rien de plus', async () => {

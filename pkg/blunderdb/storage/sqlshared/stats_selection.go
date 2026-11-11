@@ -111,8 +111,8 @@ func (s *StatsStore) materializeSelection(ctx context.Context, scope string, fil
 		// Created empty from the source tables so each column keeps its type
 		// on both backends; filled by INSERT, which takes parameters where
 		// CREATE TABLE AS does not on PostgreSQL.
-		{`CREATE TEMP TABLE ` + selectionTable + ` AS SELECT ` + selectList + ` ` + statsBaseJoin + ` WHERE 1 = 0`, nil},
-		{`INSERT INTO ` + selectionTable + ` SELECT ` + selectList + ` ` + statsBaseJoin + where, args},
+		{`CREATE TEMP TABLE ` + selectionTable + ` AS SELECT ` + selectList + ` ` + statsBaseJoin(s.DB) + ` WHERE 1 = 0`, nil},
+		{`INSERT INTO ` + selectionTable + ` SELECT ` + selectList + ` ` + statsBaseJoin(s.DB) + where, args},
 	}
 	for _, st := range steps {
 		if _, err := s.DB.Exec(ctx, st.query, st.args...); err != nil {

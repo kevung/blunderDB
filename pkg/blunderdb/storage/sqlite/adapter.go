@@ -42,6 +42,7 @@ func (shared) LibrarySettingsTable() (string, bool)     { return "metadata", fal
 func (shared) ScopeArg(scope string) any                { return scope }
 func (shared) TenantFilter(_, _ string) (string, []any) { return "1=1", nil }
 func (shared) TenantColumns(string) ([]string, []any)   { return nil, nil }
+func (shared) SameTenant(_, _ string) string            { return "" }
 func (shared) Bool(col string, v bool) string {
 	if v {
 		return col + " = 1"

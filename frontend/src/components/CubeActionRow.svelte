@@ -17,8 +17,9 @@
   réponse au videau.
 
   La rangée dit donc de qui est le tour : « le camp au trait agit » — `[D]` et
-  `[R]` — ou « le camp d'en face répond » — `[T]` et `[P]`. Jamais les quatre à
-  la fois.
+  `[R]` — ou « le camp d'en face répond » — `[T]`, `[P]` et `[R]` : face à un
+  double on peut aussi abandonner (la partie, au videau d'avant l'offre, ou le
+  match). `[D]` ne s'allume jamais en même temps que `[T]` et `[P]`.
 
   # La résignation, en deux gestes
 
@@ -41,6 +42,8 @@
         canAct = false,
         /** Une offre attend sa réponse : prise ou passe. */
         canAnswer = false,
+        /** La résignation s'offre : par défaut `canAct`, mais le camp qui répond à un double peut aussi abandonner. */
+        canResign = null,
         /** La résignation est annoncée, son niveau attendu. */
         resigning = false,
         /** Le geste choisi : `(kind) => void`, avec les COMMAND du videau. */
@@ -52,6 +55,8 @@
         /** La résignation abandonnée. */
         onCancelResign = null
     } = $props();
+
+    let resignOn = $derived(canResign ?? canAct);
 
     const LEVELS = [
         { level: 1, key: 'transcription.resignSingle' },
@@ -82,7 +87,7 @@
         <button class="cube-btn" type="button" disabled={!canAnswer} onclick={() => onGesture?.(COMMAND.PASS)} title={$t('transcription.passTooltip')}>
             {$t('transcription.pass')}
         </button>
-        <button class="cube-btn" type="button" disabled={!canAct} onclick={() => onResign?.()} title={$t('transcription.resignTooltip')}>
+        <button class="cube-btn" type="button" disabled={!resignOn} onclick={() => onResign?.()} title={$t('transcription.resignTooltip')}>
             {$t('transcription.resign')}
         </button>
     {/if}

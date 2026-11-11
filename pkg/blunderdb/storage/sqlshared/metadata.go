@@ -208,7 +208,7 @@ func (s *MetadataStore) BlunderCount(ctx context.Context, scope string) (int, er
 // recountBlunders is the count itself, without the cache.
 func recountBlunders(ctx context.Context, db Execer, scope string, threshold int) (int, error) {
 	tenant, targs := db.TenantFilter("p", scope)
-	const join = ` FROM position p INNER JOIN analysis a ON a.position_id = p.id WHERE `
+	join := ` FROM position p INNER JOIN analysis a ON a.position_id = p.id` + andSameTenant(db, "a", "p") + ` WHERE `
 	byColumn := ` AND COALESCE(` + positionErrExpr + `, 0) >= ?`
 
 	var total int
@@ -258,7 +258,7 @@ func recountBlunders(ctx context.Context, db Execer, scope string, threshold int
 	}
 	var byLargest int
 	for _, id := range ids {
-		analysis := loadAnalysis(ctx, db, id)
+		analysis := loadAnalysis(ctx, db, scope, id)
 		if analysis == nil {
 			continue
 		}

@@ -53,7 +53,9 @@ const matchStatsBatch = 200
 const InvalidateMatchStatsOfMatchesSQL = `DELETE FROM match_stats WHERE match_id IN `
 
 // InvalidateMatchStatsOfPositionsSQL drops the rows of every match that
-// reaches one of the positions in the IN list that follows it.
+// reaches one of the positions in the IN list that follows it, on a backend
+// without a tenant column: the SQLite callers that run their own
+// transaction. InvalidateMatchStatsOfPositions is the scoped form.
 const InvalidateMatchStatsOfPositionsSQL = `DELETE FROM match_stats WHERE match_id IN
 	(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id WHERE mv.position_id IN `
 
@@ -85,14 +87,21 @@ func UpsertDropsMET(storedMET bool, newEngine string) bool {
 }
 
 // InvalidateMatchStats drops the rows of matchIDs, in batches.
-func InvalidateMatchStats(ctx context.Context, db Execer, matchIDs []int64) error {
-	return execInBatches(ctx, db, matchIDs, InvalidateMatchStatsOfMatchesSQL, "")
+func InvalidateMatchStats(ctx context.Context, db Execer, scope string, matchIDs []int64) error {
+	tenant, args := db.TenantFilter("", scope)
+	return execInBatches(ctx, db, args, matchIDs, `DELETE FROM match_stats WHERE `+tenant+` AND match_id IN `, "")
 }
 
-// InvalidateMatchStatsOfPositions drops the rows of every match reaching one
-// of positionIDs, in batches.
-func InvalidateMatchStatsOfPositions(ctx context.Context, db Execer, positionIDs []int64) error {
-	return execInBatches(ctx, db, positionIDs, InvalidateMatchStatsOfPositionsSQL, InvalidateMatchStatsOfPositionsSuffix)
+// InvalidateMatchStatsOfPositions drops the rows of every match of scope
+// reaching one of positionIDs, in batches. The keys of match_stats and move
+// lead with the tenant, which each lookup names.
+func InvalidateMatchStatsOfPositions(ctx context.Context, db Execer, scope string, positionIDs []int64) error {
+	tenant, args := db.TenantFilter("", scope)
+	mvTenant, mvArgs := db.TenantFilter("mv", scope)
+	return execInBatches(ctx, db, append(args, mvArgs...), positionIDs,
+		`DELETE FROM match_stats WHERE `+tenant+` AND match_id IN
+	(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id`+andSameTenant(db, "g", "mv")+`
+	 WHERE `+mvTenant+` AND mv.position_id IN `, `)`)
 }
 
 // InvalidateAllMatchStats drops every row of the scope: the next read
@@ -105,11 +114,11 @@ func InvalidateAllMatchStats(ctx context.Context, db Execer, scope string) error
 	return nil
 }
 
-func execInBatches(ctx context.Context, db Execer, ids []int64, prefix, suffix string) error {
+func execInBatches(ctx context.Context, db Execer, lead []any, ids []int64, prefix, suffix string) error {
 	for start := 0; start < len(ids); start += matchStatsBatch {
 		chunk := ids[start:min(start+matchStatsBatch, len(ids))]
 		q := prefix + "(" + Placeholders(len(chunk)) + ")" + suffix
-		if _, err := db.Exec(ctx, q, int64Args(chunk)...); err != nil {
+		if _, err := db.Exec(ctx, q, append(append([]any{}, lead...), int64Args(chunk)...)...); err != nil {
 			return errf(db, "invalidate match stats", err)
 		}
 	}
@@ -169,7 +178,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 		`SELECT g.match_id, `+seatExpr+`, p.decision_type, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
 			d.Bigint(`SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END)`)+`, `+
 			d.Bigint(`SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END)`)+` `+
-			matchScopedJoin+where+` GROUP BY g.match_id, `+seatExpr+`, p.decision_type`,
+			matchScopedJoin(d)+where+` GROUP BY g.match_id, `+seatExpr+`, p.decision_type`,
 		append([]any{settings.ErrorThresholdMP, settings.BlunderThresholdMP}, whereArgs...), func(r Rows) error {
 			var id, sum, errs, blunders int64
 			var seat, dt, n int
@@ -201,7 +210,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, `+
 			d.Bigint(`SUM(CASE WHEN p.decision_type = 0 THEN 1 ELSE 0 END)`)+` `+
-			matchScopedJoin+analysed+` GROUP BY g.match_id, `+seatExpr,
+			matchScopedJoin(d)+analysed+` GROUP BY g.match_id, `+seatExpr,
 		whereArgs, func(r Rows) error {
 			var id, sum, moves int64
 			var seat int
@@ -220,8 +229,9 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	// play: the players table's Snowie denominator.
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, COUNT(*)
-		 FROM game g JOIN move mv ON mv.game_id = g.id JOIN position p ON p.id = mv.position_id
-		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0 AND NOT `+UnscoredPlaySQL("p", "mv")+`
+		 FROM game g JOIN move mv ON mv.game_id = g.id`+andSameTenant(d, "mv", "g")+`
+		 JOIN position p ON p.id = mv.position_id`+andSameTenant(d, "p", "mv")+`
+		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0 AND NOT `+UnscoredPlaySQL(d, "p", "mv")+`
 		 GROUP BY g.match_id, `+seatExpr,
 		ids, func(r Rows) error {
 			var id int64
@@ -248,7 +258,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	best := map[key]prov{}
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, COALESCE(a.analysis_engine, ''), COALESCE(a.analysis_depth, 0), COUNT(*) `+
-			matchScopedJoin+where+` GROUP BY g.match_id, `+seatExpr+`, a.analysis_engine, a.analysis_depth`,
+			matchScopedJoin(d)+where+` GROUP BY g.match_id, `+seatExpr+`, a.analysis_engine, a.analysis_depth`,
 		whereArgs, func(r Rows) error {
 			var id int64
 			var p prov
@@ -294,7 +304,7 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	games := map[int64]*gameLosses{}
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, mv.game_id, `+statsErrExpr+`, COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), `+
-			cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0) `+matchScopedJoin+where+
+			cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0) `+matchScopedJoin(d)+where+
 			` ORDER BY g.match_id, mv.game_id, mv.id`,
 		whereArgs, func(r Rows) error {
 			var id, game, errMP int64
@@ -367,7 +377,7 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 		}); err != nil {
 			return err
 		}
-		if _, err := tx.Exec(ctx, InvalidateMatchStatsOfMatchesSQL+"("+Placeholders(len(matchIDs))+")", int64Args(matchIDs)...); err != nil {
+		if err := InvalidateMatchStats(ctx, tx, scope, matchIDs); err != nil {
 			return fmt.Errorf("match stats delete: %w", err)
 		}
 		tcols, targs := tx.TenantColumns(scope)
@@ -522,7 +532,7 @@ func (s *StatsStore) MissingMatchStats(ctx context.Context, scope string) ([]int
 	var ids []int64
 	err := scanEach(ctx, s.DB,
 		`SELECT m.id FROM match m WHERE `+tenant+
-			` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id) ORDER BY m.id`,
+			` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id`+andSameTenant(s.DB, "ms", "m")+`) ORDER BY m.id`,
 		args, func(r Rows) error {
 			var id int64
 			if err := r.Scan(&id); err != nil {
@@ -664,7 +674,7 @@ func (s *StatsStore) missingMatchStatsAmong(ctx context.Context, scope string, m
 		chunk := matchIDs[start:min(start+matchStatsBatch, len(matchIDs))]
 		err := scanEach(ctx, s.DB,
 			`SELECT m.id FROM match m WHERE `+tenant+` AND m.id IN (`+Placeholders(len(chunk))+`)`+
-				` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id) ORDER BY m.id`,
+				` AND NOT EXISTS (SELECT 1 FROM match_stats ms WHERE ms.match_id = m.id`+andSameTenant(s.DB, "ms", "m")+`) ORDER BY m.id`,
 			append(append([]any{}, targs...), int64Args(chunk)...), func(r Rows) error {
 				var id int64
 				if err := r.Scan(&id); err != nil {
@@ -785,7 +795,7 @@ func (s *StatsStore) MatchSeries(ctx context.Context, scope string, filter stora
 		// A provenance filter, or a reader that cannot fill the table:
 		// Compute's direct per-match pass alone, over the decisions.
 		whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
-		q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs, join: statsBaseJoin}
+		q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs, join: statsBaseJoin(s.DB)}
 		if err := s.computePerMatch(ctx, q, &res); err != nil {
 			return errf(s.DB, "match series", err)
 		}

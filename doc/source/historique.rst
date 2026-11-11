@@ -17,9 +17,9 @@ retour** : une base migrée n'est plus lisible par une version antérieure de
 blunderDB, d'où la sauvegarde préalable (:ref:`annexe_db_migration`). Le reste
 ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 
-- **Réanalyser les positions périmées** (0.38.0, 0.40.0, 0.46.0). Une analyse
-  gammonNet écrite par une version antérieure du moteur (gammonNet v1.9.0
-  aujourd'hui, réseau ``strehl-prob5-768-768-256-256-256``) est périmée :
+- **Réanalyser les positions périmées** (0.38.0, 0.40.0, 0.46.0, 0.52.0). Une
+  analyse gammonNet écrite par une version antérieure du moteur (gammonNet
+  v1.9.0 aujourd'hui, réseau ``strehl-prob5-768-768-256-256-256``) est périmée :
   ``blunderdb analyze --stale``, ou la ligne *Analyses gammonNet périmées* de
   l'onglet *Maintenance*, la récrit. Une analyse importée n'est jamais touchée.
 - **Réimporter les fichiers source pour obtenir la chance** (0.33.0). Les matchs
@@ -41,6 +41,24 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   analyse : ``blunderdb match repair --list`` trouve les matchs qui diffèrent de
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
+
+0.53.0 (2026-11-09)
+-------------------
+
+- **Abandonner face à un double en transcription** : quand un double attend sa réponse, le bouton « Abandonner » s'allume pour le répondant, comme *r* puis *1*, *2*, *3* ou *4*. Un abandon simple, gammon ou backgammon vaut le videau d'avant l'offre, comme une passe ; l'abandon du match donne la partie et le match au doubleur.
+- **Un clic dans la transcription pose le curseur d'un seul geste** : cliquer une cellule, ou appuyer sur *Fin*, déplace le curseur en un appel et un rendu du plateau, au lieu d'un par cellule franchie ; du bout au début d'un match de tournoi, le clic prenait plus d'une seconde. L'annulation le défait en un pas.
+- Corrections notables : sous PostgreSQL sans ``--rls``, le mode par défaut de ``serve``, les statistiques par match, le score des coups à l'import, la recherche, Anki, l'entraînement et la maintenance nomment leur tenant dans leurs jointures ; depuis 0.51.0, ces requêtes parcouraient l'index de tous les tenants, et l'import ralentissait à mesure que la base grandissait.
+- Voir :ref:`panneau_transcription`, :ref:`raccourcis` et :ref:`headless`.
+
+0.52.0 (2026-11-09)
+-------------------
+
+- **gammonNet v1.9.0 analyse avec un réseau plus grand** : le réseau par défaut est ``strehl-prob5-768-768-256-256-256``, à cinq couches ; ``strehl-prob5-512-512-256-256`` reste embarqué à côté, sans servir aucune analyse. Une analyse gammonNet écrite par la version précédente est périmée : ``blunderdb analyze --stale``, ou la ligne *Analyses gammonNet périmées* de l'onglet *Maintenance*, la récrit.
+- **Le livre d'ouverture est calculé au réglage standard** : ses 32 scores (13 836 lignes) sont des rollouts de 1296 parties tronquées à 11 demi-coups, et non plus au réglage rapide. L'exercice Ouverture, ``train opening`` et les routes ``openingbook.*`` jugent contre ce livre ; sur les vingt scores de la grille, 28 meilleurs coups d'ouverture sur 480 changent, chaque fois pour un coup voisin.
+- **Une vidéo mal multiplexée se répare d'elle-même** : quand le volet vidéo trouve des sauts fautifs dans un fichier .webm ou .mkv et que ``ffmpeg`` est installé, il en écrit une copie réparée sans réencodage, à côté de l'original ou dans le cache de blunderDB, puis la lit au même instant ; l'original n'est ni modifié ni supprimé.
+- **Abandonner le match en transcription** : « Le match » rejoint les options d'abandon (*r* puis *4*, aussi dans le mode théâtre). L'adversaire gagne la partie en cours pour les points qui le mènent à la longueur du match, aucune action ne peut suivre, et le match s'enregistre et s'exporte gagné par lui.
+- Corrections notables : une synchronisation dont l'envoi est arrêté par le plafond du serveur (402) n'affiche plus « Jamais synchronisée » quand la réception a abouti, et l'échec d'écriture de la date n'efface plus la raison de l'arrêt.
+- Voir :ref:`panneau_matchs`, :ref:`manuel_entrainement`, :ref:`raccourcis` et :ref:`synchronisation_distante`.
 
 0.51.0 (2026-11-06)
 -------------------

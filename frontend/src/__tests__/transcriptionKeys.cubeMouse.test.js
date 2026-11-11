@@ -150,24 +150,16 @@ describe('la résignation, deux gestes à la souris comme au clavier', () => {
     });
 });
 
+/** Un document de `n` Actions, le Cursor en `cursor`, sans trou. */
+const doc = (/** @type {number} */ n, /** @type {number} */ cursor) => ({ cursor, actions: Array.from({ length: n }, () => ({ kind: 'checker' })) });
+
 describe('le menu contextuel du Transcript vaut sa relecture au clavier', () => {
     // ux.md §4.3, ligne « coup en double » : `h`×k puis `x`. Le menu fait les
     // deux d'un clic droit et d'une entrée choisie, et le moteur reçoit
     // exactement la même suite de gestes.
-    test('« supprimer » sur une cellule lointaine = h×k puis x', () => {
-        const byMenu = menuCommands(12, 7, COMMAND.DELETE);
-
-        let state = initialKeyState();
-        const byKeys = [];
-        for (let i = 0; i < 5; i++) {
-            const step = pressKey(state, key('KeyH'), { expects: 'checker' });
-            state = step.state;
-            byKeys.push(...step.commands);
-        }
-        byKeys.push(...pressKey(state, key('KeyX'), { expects: 'checker' }).commands);
-
-        expect(byMenu).toEqual(byKeys);
-        expect(byMenu).toHaveLength(6);
+    test('« supprimer » sur une cellule lointaine = le Cursor posé d’un geste, puis x', () => {
+        const byMenu = menuCommands(doc(13, 12), 7, COMMAND.DELETE);
+        expect(byMenu).toEqual([{ kind: COMMAND.CURSOR_TO, index: 7, hole: false }, ...pressKey(initialKeyState(), key('KeyX'), { expects: 'checker' }).commands]);
     });
 
     test('les quatre entrées sont les quatre touches i, a, x, s', () => {
@@ -177,16 +169,16 @@ describe('le menu contextuel du Transcript vaut sa relecture au clavier', () => 
             [COMMAND.DELETE, 'KeyX'],
             [COMMAND.FLIP_SIDE, 'KeyS']
         ]) {
-            expect(menuCommands(3, 3, kind), kind).toEqual(pressKey(initialKeyState(), key(code), { expects: 'checker' }).commands);
+            expect(menuCommands(doc(6, 3), 3, kind), kind).toEqual(pressKey(initialKeyState(), key(code), { expects: 'checker' }).commands);
         }
     });
 
     test('sur la cellule du Cursor, le menu ne déplace rien', () => {
-        expect(menuCommands(4, 4, COMMAND.FLIP_SIDE)).toEqual([{ kind: COMMAND.FLIP_SIDE }]);
+        expect(menuCommands(doc(6, 4), 4, COMMAND.FLIP_SIDE)).toEqual([{ kind: COMMAND.FLIP_SIDE }]);
     });
 
     test('vers l’avant, le Cursor avance — le menu n’a pas d’autre sens de marche', () => {
-        expect(menuCommands(2, 5, COMMAND.DELETE)).toEqual([...cursorCommands(2, 5), { kind: COMMAND.DELETE }]);
+        expect(menuCommands(doc(6, 2), 5, COMMAND.DELETE)).toEqual([...cursorCommands(doc(6, 2), 5), { kind: COMMAND.DELETE }]);
     });
 });
 

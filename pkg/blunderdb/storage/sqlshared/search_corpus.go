@@ -170,11 +170,16 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	if strings.Contains(cond.String(), "mv.") || narrowLimit.Load() < 0 {
 		return s.narrowToIDs(ctx, sub, subArgs, where, args, nil)
 	}
-	// Heavy, the filter is checked position by position in the walk in id order, from the
-	// games it holds of: any join here, the planner may start each check from the matches,
-	// row after row, and the sum keeps it from reading the list through an index, one
-	// descent per game. Whether it is heavy is known from the games, without reading any move.
-	games, err := s.readIDList(ctx, `SELECT g.id FROM game g JOIN match mt ON g.match_id = mt.id WHERE `+mtTenant+cond.String(), subArgs, 0)
+	// Heavy, the filter is checked position by position in the walk in id order, through the
+	// moves of each position: the predicate itself, never the list of games, which as a
+	// constant costs the backend tens of MB to plan and as a parameter a linear search per
+	// move. Whether it is heavy is known from the games, read only up to where the walk wins.
+	readLimit := matchSortLimit/movesPerGame + 1
+	if narrowLimit.Load() == 0 {
+		// Always walked: only whether no game matches is needed.
+		readLimit = 1
+	}
+	games, err := s.readIDList(ctx, `SELECT g.id FROM game g JOIN match mt ON g.match_id = mt.id WHERE `+mtTenant+cond.String(), subArgs, readLimit)
 	if err != nil {
 		return err
 	}
@@ -182,13 +187,9 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 		where.WriteString(" AND 0=1")
 		return nil
 	}
-	inGames, gameArgs := s.DB.IDsIn("mv.game_id + 0", games)
-	walk := func() {
-		where.WriteString(" AND EXISTS (SELECT 1 FROM move mv WHERE mv.position_id = p.id AND " + inGames + " LIMIT 1 OFFSET 0)")
-		*args = append(*args, gameArgs...)
-	}
 	if narrowLimit.Load() == 0 || len(games)*movesPerGame > matchSortLimit {
-		walk()
+		where.WriteString(" AND EXISTS (SELECT 1" + joined + " AND mv.position_id = p.id LIMIT 1 OFFSET 0)")
+		*args = append(*args, subArgs...)
 		return nil
 	}
 	listGames, listArgs := s.DB.IDsIn("game_id", games)

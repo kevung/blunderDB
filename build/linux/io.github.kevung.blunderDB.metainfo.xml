@@ -86,6 +86,35 @@
   </branding>
 
   <releases>
+    <release version="0.53.1" date="2026-11-10">
+      <description>
+        <p>A file already imported is recognised by its bytes and skipped without being decoded again; filtering a search by player on a large PostgreSQL account no longer builds a list of games; with only one die playable, a bear-off made exactly by the smaller die no longer hides that die's other legal moves.</p>
+      </description>
+    </release>
+    <release version="0.53.0" date="2026-11-09">
+      <description>
+        <ul>
+          <li>The side answering a double can resign the game or the match during a transcription</li>
+          <li>A click in the transcription moves the cursor to the clicked cell in a single step</li>
+          <li>PostgreSQL without row-level security: statistics, search, Anki, training and maintenance queries name their tenant, so imports no longer slow down as the database grows</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.52.1" date="2026-11-09">
+      <description>
+        <p>The PDF manuals in all nine languages are attached to the release again.</p>
+      </description>
+    </release>
+    <release version="0.52.0" date="2026-11-09">
+      <description>
+        <ul>
+          <li>gammonNet v1.9.0 analyses with a larger five-layer network; earlier gammonNet analyses are marked stale</li>
+          <li>The embedded opening book is computed at the standard rollout setting on all 32 scores</li>
+          <li>A badly multiplexed .webm or .mkv video is repaired automatically when ffmpeg is installed</li>
+          <li>The whole match can be given up during a transcription</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.51.0" date="2026-11-06">
       <description>
         <ul>

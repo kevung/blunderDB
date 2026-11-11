@@ -176,10 +176,12 @@ func (s *ImportBatchStore) batchClause(ctx context.Context, scope string, batchI
 // batchPositionsFrom is the join from a batch to the positions its matches
 // touched. DISTINCT because a position recurs across games and matches, and
 // the report counts positions, not visits.
-const batchPositionsFrom = `FROM game g
-JOIN move mv ON mv.game_id = g.id
-JOIN position p ON p.id = mv.position_id
-JOIN match m ON m.id = g.match_id`
+func batchPositionsFrom(d Dialect) string {
+	return `FROM game g
+JOIN move mv ON mv.game_id = g.id` + andSameTenant(d, "mv", "g") + `
+JOIN position p ON p.id = mv.position_id` + andSameTenant(d, "p", "mv") + `
+JOIN match m ON m.id = g.match_id` + andSameTenant(d, "m", "g")
+}
 
 // measurePositions fills the two position counts the panel acts on: what the
 // source tool had flagged for study, and what no engine has judged.
@@ -189,8 +191,8 @@ func (s *ImportBatchStore) measurePositions(ctx context.Context, scope string, b
 	row := s.DB.QueryRow(ctx,
 		`SELECT COUNT(DISTINCT CASE WHEN `+s.DB.Bool("p.flagged", true)+` THEN p.id END),
 		        COUNT(DISTINCT CASE WHEN a.position_id IS NULL THEN p.id END)
-		 `+batchPositionsFrom+`
-		 LEFT JOIN analysis a ON a.position_id = p.id
+		 `+batchPositionsFrom(s.DB)+`
+		 LEFT JOIN analysis a ON a.position_id = p.id`+andSameTenant(s.DB, "a", "p")+`
 		 WHERE `+tenant+batch, args...)
 	return row.Scan(&b.Report.PositionsFlagged, &b.Report.PositionsWithoutAnalysis)
 }
@@ -252,7 +254,7 @@ func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string,
 	var decisions int
 	row := s.DB.QueryRow(ctx,
 		`SELECT COUNT(*), `+s.DB.Bigint("COALESCE(SUM("+statsErrExpr+"), 0)")+`
-		 `+matchScopedJoin+`
+		 `+matchScopedJoin(s.DB)+`
 		 WHERE `+tenant+batch+playerClause+`
 		   AND `+countedExpr(s.DB), args...)
 	if err := row.Scan(&decisions, &total); err != nil {
@@ -283,7 +285,7 @@ func (s *ImportBatchStore) measureWorst(ctx context.Context, scope string, b *do
 		`SELECT p.id, m.id,
 		        COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length, 0),
 		        `+statsErrExpr+`, p.decision_type
-		 `+matchScopedJoin+`
+		 `+matchScopedJoin(s.DB)+`
 		 WHERE `+tenant+batch+playerClause+`
 		   AND `+countedExpr(s.DB)+`
 		   AND COALESCE(`+statsErrExpr+`, 0) > 0
@@ -486,7 +488,7 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 	query := `SELECT DISTINCT p.id, m.id,
 		        COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length, 0),
 		        COALESCE(` + statsErrExpr + `, 0), p.decision_type
-		 ` + matchScopedJoin + `
+		 ` + matchScopedJoin(s.DB) + `
 		 WHERE ` + tenant + batchClause + playerClause + `
 		   AND ` + countedExpr(s.DB) + extraWhere + orderBy + limitSQL
 	if reason == domain.StudyBacklog {
@@ -499,7 +501,7 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 		          COALESCE(m.match_length, 0) AS len,
 		          COALESCE(` + statsErrExpr + `, 0) AS cost, p.decision_type AS dt,
 		          ROW_NUMBER() OVER (PARTITION BY p.id ORDER BY m.id) AS rn
-		   ` + statsBaseJoin + `
+		   ` + statsBaseJoin(s.DB) + `
 		   WHERE ` + tenant + batchClause + playerClause + `
 		     AND ` + countedExpr(s.DB) + extraWhere + `
 		 ) q WHERE rn = 1 ORDER BY cost DESC, pid ASC` + limitSQL
@@ -646,6 +648,23 @@ func (s *ImportBatchStore) RestoreStudyMark(ctx context.Context, scope string, p
 		return errf(s.DB, "restore study mark", err)
 	}
 	return nil
+}
+
+// KnownFile — see storage.ImportBatchStore.
+func (s *ImportBatchStore) KnownFile(ctx context.Context, scope string, sha string) (int64, bool, error) {
+	if sha == "" {
+		return 0, false, nil
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	ids, err := queryIDs(ctx, s.DB, "look up a journaled file by digest",
+		`SELECT match_id FROM import_batch_file
+		 WHERE sha256 = ? AND sha256 <> '' AND match_id IS NOT NULL AND outcome <> ? AND `+tenant+`
+		 ORDER BY id DESC LIMIT 1`,
+		append([]any{sha, domain.JournalError}, targs...))
+	if err != nil || len(ids) == 0 {
+		return 0, false, err
+	}
+	return ids[0], true, nil
 }
 
 // FilesOfMatch — see storage.ImportBatchStore.

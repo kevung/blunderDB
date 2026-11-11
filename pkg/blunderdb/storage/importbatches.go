@@ -76,6 +76,13 @@ type ImportBatchStore interface {
 	// ErrNotFound when the batch does not exist.
 	Files(ctx context.Context, scope string, batchID int64) ([]domain.ImportFileEntry, error)
 
+	// KnownFile answers whether a file with this SHA-256 (hex) was already
+	// imported by any batch of the tenant, and into which match: the match of
+	// the newest journal line carrying the digest, a line that did not fail
+	// and still names a match (a deleted match unlinks its lines). It lets an
+	// import recognise a file by its bytes before decoding it.
+	KnownFile(ctx context.Context, scope string, sha string) (matchID int64, ok bool, err error)
+
 	// StudyMark returns when the position was marked studied (Unix seconds),
 	// 0 when it is not.
 	StudyMark(ctx context.Context, scope string, positionID int64) (int64, error)
