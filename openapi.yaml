@@ -6643,6 +6643,23 @@ paths:
                 items:
                   type: integer
                   format: int64
+  /v1/search.idsPage:
+    post:
+      operationId: search.idsPage
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchPageReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/searchIDsPageResp"
   /v1/search.indexOf:
     post:
       operationId: search.indexOf
@@ -6661,6 +6678,23 @@ paths:
               schema:
                 type: integer
                 format: int32
+  /v1/search.page:
+    post:
+      operationId: search.page
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchPageReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/searchPageResp"
   /v1/search.parse:
     post:
       operationId: search.parse
@@ -10309,6 +10343,16 @@ components:
           type: string
         excludePosition:
           type: string
+    searchIDsPageResp:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        nextCursor:
+          type: string
     searchIndexOfReq:
       type: object
       properties:
@@ -10317,6 +10361,30 @@ components:
         id:
           type: integer
           format: int64
+    searchPageReq:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/domain_SearchFilters"
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+          nullable: true
+        cursor:
+          type: string
+          nullable: true
+    searchPageResp:
+      type: object
+      properties:
+        positions:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_Position"
+        nextCursor:
+          type: string
     searchParseResp:
       type: object
       properties:
