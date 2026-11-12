@@ -135,6 +135,41 @@ func (d *Database) StartMatchManually(tournamentID int64, a string, b string, le
 	return d.directionService().StartMatchManually(context.Background(), tournamentID, a, b, length, table)
 }
 
+// StartMatchInRound is service.Service.StartMatchInRound on the open database.
+func (d *Database) StartMatchInRound(tournamentID int64, round int, a string, b string, length int, table int) (*DirectionView, error) {
+	return d.directionService().StartMatchInRound(context.Background(), tournamentID, round, a, b, length, table)
+}
+
+// PlaceBye is service.Service.PlaceBye on the open database.
+func (d *Database) PlaceBye(tournamentID int64, id string, round int) (*DirectionView, error) {
+	return d.directionService().PlaceBye(context.Background(), tournamentID, id, round)
+}
+
+// CancelBye is service.Service.CancelBye on the open database.
+func (d *Database) CancelBye(tournamentID int64, id string, round int) (*DirectionView, error) {
+	return d.directionService().CancelBye(context.Background(), tournamentID, id, round)
+}
+
+// GiveHalfBye is service.Service.GiveHalfBye on the open database.
+func (d *Database) GiveHalfBye(tournamentID int64, id string, round int) (*DirectionView, error) {
+	return d.directionService().GiveHalfBye(context.Background(), tournamentID, id, round)
+}
+
+// CancelHalfBye is service.Service.CancelHalfBye on the open database.
+func (d *Database) CancelHalfBye(tournamentID int64, id string, round int) (*DirectionView, error) {
+	return d.directionService().CancelHalfBye(context.Background(), tournamentID, id, round)
+}
+
+// ReplaceParticipant is service.Service.ReplaceParticipant on the open database.
+func (d *Database) ReplaceParticipant(tournamentID int64, id, newID, name, club string, rating float64) (*DirectionView, error) {
+	return d.directionService().ReplaceParticipant(context.Background(), tournamentID, id, newID, name, club, rating)
+}
+
+// SwapParticipants is service.Service.SwapParticipants on the open database.
+func (d *Database) SwapParticipants(tournamentID int64, a, b string) (*DirectionView, error) {
+	return d.directionService().SwapParticipants(context.Background(), tournamentID, a, b)
+}
+
 // FreeParticipants is service.Service.FreeParticipants on the open database.
 func (d *Database) FreeParticipants(tournamentID int64) ([]tournoi.Player, error) {
 	return d.directionService().FreeParticipants(context.Background(), tournamentID)

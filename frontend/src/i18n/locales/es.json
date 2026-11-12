@@ -2222,7 +2222,9 @@
             "lives_bracket": "Cuadro con exenciones",
             "bracket": "Cuadro",
             "gsl": "Bloques GSL",
-            "round_robin": "Grupos"
+            "round_robin": "Grupos",
+            "swiss_rounds": "Suizo por rondas",
+            "manual": "Emparejamiento manual"
         },
         "settings": {
             "format": "Formato",
@@ -2357,7 +2359,8 @@
             "last": "última oportunidad",
             "gf": "gran final",
             "pool": "grupo {letter}",
-            "playoff": "desempate del grupo {letter}"
+            "playoff": "desempate del grupo {letter}",
+            "playoffFinal": "desempate final"
         },
         "note": {
             "winner": "ganador",
@@ -2381,7 +2384,8 @@
             "slow_match": "Partida {match}: supera el tiempo previsto.",
             "table_shared": "Mesa {table}: las partidas {other} y {match} se juegan ambas allí.",
             "correction_eliminates_running": "Partida {match}: {player} no tiene vidas desde una corrección, y sigue jugando.",
-            "correction_revives": "{player} recupera una vida tras una corrección: puede volver a ser emparejado."
+            "correction_revives": "{player} recupera una vida tras una corrección: puede volver a ser emparejado.",
+            "barrage_stale": "Una corrección de grupo posterior al sorteo del desempate cambió los jugadores que designa; el desempate se juega entre los sorteados."
         },
         "reason": {
             "matches_running": "Partidas en curso.",
@@ -2389,7 +2393,8 @@
             "waiting_batch": "Emparejamiento en la próxima tanda.",
             "waiting_table": "ninguna mesa libre",
             "player_unavailable": "jugador no disponible",
-            "player_busy": "juega en otra prueba"
+            "player_busy": "juega en otra prueba",
+            "manual": "Fase manual: el director coloca los partidos."
         },
         "proposals": {
             "keys": "J / K o ↑ ↓: elegir una propuesta · Intro: lanzarla · ← →: de mesa en mesa",
@@ -2669,6 +2674,15 @@
             "lastChance": "Fase {phase} — última oportunidad: {from} → {to}",
             "reconciliation": "Fase {phase} — reconciliación: {from} → {to}",
             "recharge": "Fase {phase} — recarga: {from} → {to}",
+            "rounds": "Fase {phase} — número de rondas: {from} → {to}",
+            "groups": "Fase {phase} — número de grupos: {from} → {to}",
+            "finalBarrage": "Fase {phase} — desempate final entre grupos: {from} → {to}",
+            "tiebreak": "Fase {phase} — desempates: {from} → {to}",
+            "accelerated": "Fase {phase} — emparejamiento acelerado: {from} → {to}",
+            "monradWiden": "Fase {phase} — Monrad ampliado: {from} → {to}",
+            "avoidCountries": "Fase {phase} — evitar jugadores del mismo país: {from} → {to}",
+            "avoidRounds": "Fase {phase} — rondas de evitación: {from} → {to}",
+            "avoidExcept": "Fase {phase} — excepciones a la evitación: {from} → {to}",
             "alsoFor": "También se aplica a: {names} (mismo evento)."
         },
         "lock": {

@@ -808,3 +808,24 @@ func TestDirectionReads_FreeSlots(t *testing.T) {
 		t.Errorf("the latecomer is not entered under the id it brought: %+v", rows)
 	}
 }
+
+// TestDirectionGestures_RoundGestures: the gestures of a round-based phase are routes of the
+// daemon, and the engine's refusal of one that does not fit the format answers 400.
+func TestDirectionGestures_RoundGestures(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	for _, c := range []struct{ path, extra string }{
+		{"/v1/directions.placeBye", `"id":"nobody","round":1`},
+		{"/v1/directions.cancelBye", `"id":"nobody","round":1`},
+		{"/v1/directions.giveHalfBye", `"id":"nobody","round":1`},
+		{"/v1/directions.cancelHalfBye", `"id":"nobody","round":1`},
+		{"/v1/directions.replaceParticipant", `"id":"nobody","name":"Nouveau"`},
+		{"/v1/directions.swapParticipants", `"a":"nobody","b":"none"`},
+		{"/v1/directions.startMatch", `"round":2,"a":"nobody","b":"none"`},
+	} {
+		v := f.versionOf(t, ts)
+		if r := send(t, ts, "1", c.path, f.body(c.extra), v, ""); r.status != http.StatusBadRequest {
+			t.Errorf("%s: status %d, body %.200s; want 400", c.path, r.status, r.body)
+		}
+	}
+}

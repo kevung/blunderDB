@@ -129,8 +129,11 @@ type directionProposalReq struct {
 
 func (r directionProposalReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
 
+// directionStartMatchReq launches a match; round, in a manual phase only, places it in that
+// round (0: the latest).
 type directionStartMatchReq struct {
 	TournamentID int64  `json:"tournamentId"`
+	Round        int    `json:"round"`
 	A            string `json:"a"`
 	B            string `json:"b"`
 	Length       int    `json:"length"`
@@ -138,6 +141,37 @@ type directionStartMatchReq struct {
 }
 
 func (r directionStartMatchReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
+
+// directionPlayerRoundReq names a Participant and a round of the current phase: a director's bye
+// (round 0: the latest) or a half-bye (a round is required).
+type directionPlayerRoundReq struct {
+	TournamentID int64  `json:"tournamentId"`
+	ID           string `json:"id"`
+	Round        int    `json:"round"`
+}
+
+func (r directionPlayerRoundReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
+
+// directionReplaceReq puts newcomer name in the place of id; newId, when given, is the
+// identifier the newcomer keeps.
+type directionReplaceReq struct {
+	TournamentID int64   `json:"tournamentId"`
+	ID           string  `json:"id"`
+	NewID        string  `json:"newId"`
+	Name         string  `json:"name"`
+	Club         string  `json:"club"`
+	Rating       float64 `json:"rating"`
+}
+
+func (r directionReplaceReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
+
+type directionSwapReq struct {
+	TournamentID int64  `json:"tournamentId"`
+	A            string `json:"a"`
+	B            string `json:"b"`
+}
+
+func (r directionSwapReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
 
 type directionResultReq struct {
 	TournamentID int64  `json:"tournamentId"`
@@ -358,7 +392,25 @@ func (s *Server) directionGestureRoutes() []route {
 			return bare(svc(scope).ConfirmAllProposals(ctx, req.TournamentID))
 		}))},
 		{http.MethodPost, "/v1/directions.startMatch", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionStartMatchReq) (*service.DirectionView, error) {
-			return bare(svc(scope).StartMatchManually(ctx, req.TournamentID, req.A, req.B, req.Length, req.Table))
+			return bare(svc(scope).StartMatchInRound(ctx, req.TournamentID, req.Round, req.A, req.B, req.Length, req.Table))
+		}))},
+		{http.MethodPost, "/v1/directions.placeBye", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionPlayerRoundReq) (*service.DirectionView, error) {
+			return bare(svc(scope).PlaceBye(ctx, req.TournamentID, req.ID, req.Round))
+		}))},
+		{http.MethodPost, "/v1/directions.cancelBye", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionPlayerRoundReq) (*service.DirectionView, error) {
+			return bare(svc(scope).CancelBye(ctx, req.TournamentID, req.ID, req.Round))
+		}))},
+		{http.MethodPost, "/v1/directions.giveHalfBye", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionPlayerRoundReq) (*service.DirectionView, error) {
+			return bare(svc(scope).GiveHalfBye(ctx, req.TournamentID, req.ID, req.Round))
+		}))},
+		{http.MethodPost, "/v1/directions.cancelHalfBye", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionPlayerRoundReq) (*service.DirectionView, error) {
+			return bare(svc(scope).CancelHalfBye(ctx, req.TournamentID, req.ID, req.Round))
+		}))},
+		{http.MethodPost, "/v1/directions.replaceParticipant", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionReplaceReq) (*service.DirectionView, error) {
+			return bare(svc(scope).ReplaceParticipant(ctx, req.TournamentID, req.ID, req.NewID, req.Name, req.Club, req.Rating))
+		}))},
+		{http.MethodPost, "/v1/directions.swapParticipants", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionSwapReq) (*service.DirectionView, error) {
+			return bare(svc(scope).SwapParticipants(ctx, req.TournamentID, req.A, req.B))
 		}))},
 		{http.MethodPost, "/v1/directions.enterResult", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionResultReq) (*service.DirectionView, error) {
 			return bare(svc(scope).EnterResult(ctx, req.TournamentID, req.MatchID, req.Winner, req.ScoreA, req.ScoreB, req.Note))

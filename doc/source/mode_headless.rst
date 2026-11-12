@@ -761,7 +761,11 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   ``directions.updateParticipant``, ``directions.withdraw``,
   ``directions.reinstate``, ``directions.makeAbsent``,
   ``directions.makeAvailable``, ``directions.addPair``,
-  ``directions.updatePair`` ;
+  ``directions.updatePair``, ``directions.replaceParticipant`` (``id``, le
+  joueur remplacé, qui n'a encore joué aucun match ; ``name``, ``club``,
+  ``rating`` et ``newId`` pour le remplaçant), ``directions.swapParticipants``
+  (``a``, ``b``, deux joueurs qui n'ont encore joué aucun match échangent leurs
+  places) ;
 * le déroulement : ``directions.confirmProposal`` (``action``, telle que
   ``directions.get`` la propose), ``directions.confirmAllProposals``,
   ``directions.startMatch``, ``directions.enterResult``,
@@ -769,6 +773,15 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   ``directions.cancelMatch``, ``directions.correctResult``,
   ``directions.close``, ``directions.reopen``, ``directions.addNote``,
   ``directions.attachMatch``, ``directions.detachMatch`` ;
+* les rondes de la phase en cours : dans une phase à appariement manuel
+  (``manual``), le directeur pose chaque match par ``directions.startMatch``
+  avec ``round`` (``0`` : la dernière ronde ; la suivante l'ouvre) et chaque
+  exemption par ``directions.placeBye`` (``id``, ``round``), qu'il retire par
+  ``directions.cancelBye`` ; une autre phase refuse ``round``. Dans un suisse
+  par rondes (``swiss_rounds``), ``directions.giveHalfBye`` (``id``,
+  ``round``, obligatoire) enregistre qu'un joueur ne jouera pas cette ronde et
+  y reçoit un demi-point, et ``directions.cancelHalfBye`` le retire tant que la
+  ronde n'est pas ouverte ;
 * l'événement : ``rencontres.create``, ``rencontres.update``,
   ``rencontres.attach``, ``rencontres.detach``, ``rencontres.trash``,
   ``rencontres.setTableOutOfService``, ``rencontres.setBreaks`` ;

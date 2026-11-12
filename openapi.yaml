@@ -1909,6 +1909,98 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/service_BracketPhase"
+  /v1/directions.cancelBye:
+    post:
+      operationId: directions.cancelBye
+      tags: [directions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionPlayerRoundReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
+  /v1/directions.cancelHalfBye:
+    post:
+      operationId: directions.cancelHalfBye
+      tags: [directions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionPlayerRoundReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
   /v1/directions.cancelMatch:
     post:
       operationId: directions.cancelMatch
@@ -2512,6 +2604,52 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_DirectionView"
                 nullable: true
+  /v1/directions.giveHalfBye:
+    post:
+      operationId: directions.giveHalfBye
+      tags: [directions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionPlayerRoundReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
   /v1/directions.history:
     post:
       operationId: directions.history
@@ -2843,6 +2981,52 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/service_ParticipantRow"
+  /v1/directions.placeBye:
+    post:
+      operationId: directions.placeBye
+      tags: [directions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionPlayerRoundReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
   /v1/directions.previewConfig:
     post:
       operationId: directions.previewConfig
@@ -2932,6 +3116,52 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/directionGestureReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
+  /v1/directions.replaceParticipant:
+    post:
+      operationId: directions.replaceParticipant
+      tags: [directions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReplaceReq"
       responses:
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
@@ -3238,6 +3468,52 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/service_PlayerStatusRow"
+  /v1/directions.swapParticipants:
+    post:
+      operationId: directions.swapParticipants
+      tags: [directions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionSwapReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
   /v1/directions.tableGrid:
     post:
       operationId: directions.tableGrid
@@ -9217,6 +9493,17 @@ components:
           format: int64
         id:
           type: string
+    directionPlayerRoundReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        id:
+          type: string
+        round:
+          type: integer
+          format: int32
     directionPlayersReq:
       type: object
       properties:
@@ -9235,6 +9522,23 @@ components:
         action:
           type: object
           description: "Arbitrary JSON value."
+    directionReplaceReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        id:
+          type: string
+        newId:
+          type: string
+        name:
+          type: string
+        club:
+          type: string
+        rating:
+          type: number
+          format: double
     directionReq:
       type: object
       properties:
@@ -9291,6 +9595,9 @@ components:
         tournamentId:
           type: integer
           format: int64
+        round:
+          type: integer
+          format: int32
         a:
           type: string
         b:
@@ -9311,6 +9618,16 @@ components:
           type: array
           items:
             type: string
+    directionSwapReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        a:
+          type: string
+        b:
+          type: string
     directionTablesReq:
       type: object
       properties:
