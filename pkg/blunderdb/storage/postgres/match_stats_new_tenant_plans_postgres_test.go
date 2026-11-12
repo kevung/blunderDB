@@ -29,16 +29,16 @@ type executedNode struct {
 	Plans     []executedNode `json:"Plans"`
 }
 
-// newTenantLibrary builds a library of 39 tenants (2 to 40) with RLS applied
-// and analyzed, autovacuum off, and returns a store bound as a role the
-// policies bind, whose statements rec records; importAll(1) then makes tenant 1
-// the new tenant the statistics do not know.
-func newTenantLibrary(t *testing.T) (ctx context.Context, admin *pgxpool.Pool, pool *pgxpool.Pool, s *Storage, rec *stmtRecorder, importAll func(int64), files []string) {
+// rlsLibrary is an empty library with RLS applied: admin owns the tables, s
+// and pool are bound as a role the policies bind, and rec records the
+// statements s sends.
+func rlsLibrary(t *testing.T) (ctx context.Context, admin *pgxpool.Pool, pool *pgxpool.Pool, s *Storage, rec *stmtRecorder) {
 	t.Helper()
 	ctx = context.Background()
 	dsn := purgeTestDB(t)
 
-	admin, err := pgxpool.New(ctx, dsn)
+	var err error
+	admin, err = pgxpool.New(ctx, dsn)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,6 +74,16 @@ func newTenantLibrary(t *testing.T) (ctx context.Context, admin *pgxpool.Pool, p
 	}
 	t.Cleanup(pool.Close)
 	s = &Storage{binder: binder{db: pool}, pool: pool}
+	return ctx, admin, pool, s, rec
+}
+
+// newTenantLibrary builds a library of 39 tenants (2 to 40) with RLS applied
+// and analyzed, autovacuum off, and returns a store bound as a role the
+// policies bind, whose statements rec records; importAll(1) then makes tenant 1
+// the new tenant the statistics do not know.
+func newTenantLibrary(t *testing.T) (ctx context.Context, admin *pgxpool.Pool, pool *pgxpool.Pool, s *Storage, rec *stmtRecorder, importAll func(int64), files []string) {
+	t.Helper()
+	ctx, admin, pool, s, rec = rlsLibrary(t)
 
 	files = []string{"test.xg", "HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg",
 		"Kev_GammonNetNormal_2026-10-06_7p.xg", "charlot1-charlot2_7p_2025-11-08-2305.xg"}

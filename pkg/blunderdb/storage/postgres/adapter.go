@@ -252,6 +252,11 @@ var joinOrderSettings = []string{"join_collapse_limit", "from_collapse_limit", "
 // nothing else then costs as little as the key — one walk of the tenant's rows
 // per row looked up. Only these statements: elsewhere a custom plan is what
 // keeps a probe of a tenant cheap.
+//
+// The generic plan stays in the connection's prepared statement, whatever the
+// settings later. The same text run unpinned (search_corpus) reads
+// plan_cache_mode at each execution: custom plans first, and that generic plan
+// only once its estimate is no dearer than theirs — a walk by key either way.
 func (a shared) PinJoinOrder(ctx context.Context) (func() error, error) {
 	if _, err := a.db.Exec(ctx, `SELECT set_config('join_collapse_limit', '1', true), set_config('from_collapse_limit', '1', true),
 		set_config('enable_hashjoin', 'off', true), set_config('enable_mergejoin', 'off', true), set_config('enable_seqscan', 'off', true),
