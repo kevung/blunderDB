@@ -72,7 +72,7 @@ permissions:
 
 # Single statement of the Go version for this file (B.19, #187).
 env:
-  GO_VERSION: "1.27.3"
+  GO_VERSION: "1.27.4"
 
 jobs:
   test-os-full:
