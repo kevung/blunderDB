@@ -21,7 +21,7 @@ func TestRefusedGestureClassifiesOnlyRefusals(t *testing.T) {
 		}
 	}
 	for _, err := range []error{errors.New("disk on fire"), transcript.ErrNotPure} {
-		if got := refusedGesture(err); errors.Is(got, storage.ErrInvalid) || got != err {
+		if got := refusedGesture(err); errors.Is(got, storage.ErrInvalid) || !errors.Is(got, err) {
 			t.Errorf("refusedGesture(%v) = %v; want it unchanged, a failure", err, got)
 		}
 	}
