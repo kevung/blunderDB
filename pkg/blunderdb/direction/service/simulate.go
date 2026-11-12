@@ -26,7 +26,7 @@ import (
 const (
 	// SimulateMaxPlayers is the largest field a simulation reads. directions.create bounds no
 	// field; the simulation does, on purpose, so that nothing is sized by the request: what
-	// a field within it may cost is simulateMaxRunWork's to bound, for it depends on the
+	// a field within it may cost is simulateMaxRunCost's to bound, for it depends on the
 	// format too.
 	SimulateMaxPlayers  = 512
 	SimulateMaxRuns     = 200
@@ -51,40 +51,36 @@ const (
 	simulateMaxPlayersBytes = 256 << 10
 	// simulateMaxSteps bounds one simulated tournament, whatever its format.
 	simulateMaxSteps = 50000
-	// simulateMaxRunWork bounds the work of one simulated tournament, counted after each of
-	// its events as eventWork: the engine
-	// copies about that much at every event, so a run costs the sum, which grows with the
-	// square of its matches. Counted, not timed, the bound refuses the same requests on every
-	// machine. A unit costs 0.2 to 0.5 µs on an ordinary processor, so a run at the bound
-	// takes 0.1 to 0.2 s and SimulateBudget plays about SimulateUsefulRuns of them: past it the budget would
-	// stand an answer on a handful of runs, or none, and the request is refused at its
-	// first run instead (ErrSimulationTooHeavy).
-	simulateMaxRunWork = 400_000
+	// simulateMaxRunCost bounds the cost of the first simulated tournament, run with the
+	// request's own seed, as runCost counts it: the engine copies about eventWork at every
+	// event, so a run costs the sum, which grows with the square of its matches. Counted,
+	// not timed, and on that one run only, the bound gives a request the same verdict on
+	// every machine whatever the budget lets the other runs reach. At it a run takes about
+	// 0.3 s on an ordinary processor: under it SimulateBudget plays about SimulateUsefulRuns
+	// runs or more; past it, a handful or none, and the request is refused at its first run
+	// instead (ErrSimulationTooHeavy). The runs of other seeds vary by some 15 %: they are
+	// held under twice the bound, a run past it counted as failed, for its memory only.
+	simulateMaxRunCost = 30_000_000
 	// SimulateUsefulRuns is the fewest runs whose 10th and 90th centiles say something.
 	SimulateUsefulRuns = 10
 )
 
-// SimulateBudget is the computing time one simulation may take: with the two places of the
-// daemon's gate taken, the most a host computes for callers who are only asking. Past it the runs already
-// played are answered, under the warning SimulateWarnTimeBudget; with none played the answer
-// is ErrSimulationTooHeavy.
+// SimulateBudget is the computing time the runs after the first may take: with the two
+// places of the daemon's gate taken, the most a host computes for callers who are only
+// asking. The first run is not cut by it — simulateMaxRunCost holds it to a fraction of the
+// budget —, so every request admitted stands on one run at least, whatever the machine; past
+// the budget the runs already played are answered, under the warning SimulateWarnTimeBudget.
 var SimulateBudget = 2 * time.Second
 
-// ErrSimulationTooHeavy: the request is well formed and within the bounds, but its format
-// cannot be simulated usefully here. Either one of its tournaments plays more than
-// simulateMaxRunWork — the same answer on every machine, given at its first run, wrapped in
-// errRunTooHeavy's words — or not one run ended within SimulateBudget, which a quieter
-// machine may still answer. A smaller field is answered in both cases.
-var ErrSimulationTooHeavy = errors.New("direction: the simulation ran out of time before one run ended: ask for fewer players or a shorter format (fewer runs help an answer cut short by time_budget, not this one)")
+// ErrSimulationTooHeavy: the request is well formed and within the bounds, but the first of
+// its tournaments costs more than simulateMaxRunCost, so the budget would stand an answer on
+// a handful of runs. The verdict is counted, not timed: the same on every machine.
+var ErrSimulationTooHeavy = fmt.Errorf("direction: this format is too heavy to simulate %d times within %v: one of its tournaments outgrows what a simulation computes; ask for fewer players, smaller pools, fewer lives or a lighter format (fewer runs do not help)",
+	SimulateUsefulRuns, SimulateBudget)
 
-// errRunTooHeavy stops a run past simulateMaxRunWork; Simulate answers it as a tooHeavy.
-var errRunTooHeavy = errors.New("direction: run past its work")
-
-// tooHeavy is an ErrSimulationTooHeavy in words of its own.
-type tooHeavy struct{ msg string }
-
-func (e tooHeavy) Error() string        { return e.msg }
-func (e tooHeavy) Is(target error) bool { return target == ErrSimulationTooHeavy }
+// errRunTooHeavy stops a run past its cost; Simulate answers it as ErrSimulationTooHeavy at
+// the first run, as a failed run at another.
+var errRunTooHeavy = errors.New("direction: run past its cost")
 
 // simulateMaxMinutes bounds the length a simulated tournament may have and still be
 // answered: past a year the figure says a break or a length is mistyped, and the end would
@@ -204,21 +200,36 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		firstErr error
 	)
 	for i := range runs {
-		peak, work := 0, 0
+		// The first run decides the verdict: it answers to the caller only, never to the
+		// budget, so that no clock decides it.
+		limit := ctx
+		if i == 0 {
+			limit = parent
+		} else if ctx.Err() != nil {
+			warnings[SimulateWarnTimeBudget] = true
+			break
+		}
+		peak, cost, most := 0, 0, simulateMaxRunCost
+		if i > 0 {
+			most *= 2
+		}
 		r := sim.Run(cfg, players, sim.Options{Seed: req.Seed + int64(i), Start: start, MaxSteps: simulateMaxSteps,
 			MinPerPoint: cfg.MinPerPoint,
 			Hook: func(s *tournoi.State, _ tournoi.Event) error {
 				peak = max(peak, len(s.Running()))
-				if work += eventWork(s); work > simulateMaxRunWork {
+				if cost += eventCost(cfg, s); cost > most {
 					return errRunTooHeavy
 				}
-				return ctx.Err()
+				return limit.Err()
 			}})
-		if errors.Is(r.Err, errRunTooHeavy) {
-			return nil, tooHeavy{fmt.Sprintf("direction: this format is too heavy to simulate %d times within %v: one of its tournaments with %d players outgrows what a simulation computes; ask for fewer players, smaller pools, fewer lives or a lighter format",
-				SimulateUsefulRuns, SimulateBudget, len(players))}
+		// The caller left: nobody reads a verdict on the request.
+		if err := parent.Err(); err != nil {
+			return nil, err
 		}
-		if ctx.Err() != nil {
+		if i == 0 && errors.Is(r.Err, errRunTooHeavy) {
+			return nil, ErrSimulationTooHeavy
+		}
+		if ctx.Err() != nil && errors.Is(r.Err, ctx.Err()) {
 			warnings[SimulateWarnTimeBudget] = true
 			break
 		}
@@ -252,13 +263,6 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		}
 	}
 	if len(minutes) == 0 {
-		// The caller left: nobody reads a verdict on the request.
-		if err := parent.Err(); err != nil {
-			return nil, err
-		}
-		if ctx.Err() != nil && firstErr == nil {
-			return nil, ErrSimulationTooHeavy
-		}
 		if firstErr != nil {
 			return nil, direction.Refusef("direction: this format cannot be simulated: %v", firstErr)
 		}
@@ -358,6 +362,31 @@ func eventWork(s *tournoi.State) int {
 		n += len(ph.Entrants) * len(ph.Entrants) / 64
 	}
 	return n
+}
+
+// eventCost weighs eventWork by the phase in play, as a run's cost in tens of nanoseconds
+// of an ordinary processor: the engine's work per unit differs by format, from a bracket's
+// sections to the pairing a Swiss by rounds searches anew at every round. Before its first
+// phase a tournament is weighed as that phase.
+func eventCost(cfg tournoi.Config, s *tournoi.State) int {
+	kind := ""
+	if s.Current >= 0 && s.Current < len(s.Phases) {
+		kind = s.Phases[s.Current].Cfg.Kind
+	} else if len(cfg.Phases) > 0 {
+		kind = cfg.Phases[0].Kind
+	}
+	var weight int
+	switch kind {
+	case tournoi.KindBracket, tournoi.KindLivesBracket, tournoi.KindGSL:
+		weight = 22
+	case tournoi.KindSwissLives:
+		weight = 33
+	case tournoi.KindRoundRobin:
+		weight = 40
+	default: // swiss_rounds and manual pair anew at every round, and an unknown kind is weighed as they are
+		weight = 62
+	}
+	return weight * eventWork(s)
 }
 
 // centile is the nearest-rank p-th centile of sorted, which is not empty.

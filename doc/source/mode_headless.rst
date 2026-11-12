@@ -819,17 +819,16 @@ rend la même réponse. La simulation lance chaque match dès qu'il est apparié
 et le code ``tables_exceeded`` signale une salle plus petite, dont les durées
 rendues sont alors un minimum. Sans version ni ``If-Match``.
 
-Le calcul est borné à deux secondes, et le travail d'un tournoi simulé l'est
-aussi, compté et non chronométré : un format dont un seul tournoi demande plus
-que ce qui en laisse jouer une dizaine dans le budget est refusé dès son premier
-``run``, par ``503``, code ``unavailable``, ``details.reason`` ``too_heavy``,
-sans ``Retry-After``, et la même requête reçoit ce refus sur toute machine. La
-requête est bien formée mais trop lourde : réduisez l'effectif, les poules, les
-vies ou le format (baisser ``runs`` n'y change rien). Un format admis dont les
-``runs`` ne tiennent pas en deux secondes rend une réponse partielle : elle porte
-le code ``time_budget`` et s'appuie sur les ``runs`` joués ; si aucun n'a
-abouti, la réponse est la même ``too_heavy``. Une requête mal formée ou hors
-bornes rend ``400``, quelle que soit la charge.
+Le premier ``run``, joué avec le ``seed`` de la requête, décide : son travail
+est compté, non chronométré, et un format dont ce tournoi demande plus que ce
+qui en laisse jouer une dizaine en deux secondes est refusé par ``503``, code
+``unavailable``, ``details.reason`` ``too_heavy``, sans ``Retry-After``. La même
+requête reçoit le même verdict sur toute machine, quel que soit ``runs``. Elle
+est bien formée mais trop lourde : réduisez l'effectif, les poules, les vies ou
+le format. Un format admis rend toujours ce premier ``run`` ; les suivants sont
+bornés à deux secondes, au-delà desquelles la réponse est partielle : elle porte
+le code ``time_budget`` et s'appuie sur les ``runs`` joués. Une requête mal
+formée ou hors bornes rend ``400``, quelle que soit la charge.
 
 Les bornes d'une simulation sont des refus, prononcés avant tout calcul : 512
 joueurs, 200 ``runs``, 16 phases, des matchs en 99 points, 100 vies, 4096
@@ -841,9 +840,9 @@ au-delà). ``directions.create`` ne borne ni l'effectif, ni les vies, ni les
 poules ; la simulation, si : rien n'y est dimensionné par la requête, et le
 tirage d'une grande poule, qui ne s'interrompt pas, occuperait le processeur et
 la mémoire hors du budget. Sous ces bornes, c'est le travail qui tranche : une
-poule unique de 40 joueurs, 200 joueurs en poules de 4 ou un tableau de 512
-rendent ``too_heavy`` ; une poule unique de 25 joueurs, un tableau de 256 ou un
-suisse de 128 joueurs rendent leurs ``runs``. Les durées suivent le
+poule unique de 40 joueurs, un tableau de 512 ou une double élimination de 256
+rendent ``too_heavy`` ; une poule unique de 30 joueurs, une double élimination
+de 128, un tableau de 256 ou 200 joueurs en poules de 4 sont admis. Les durées suivent le
 ``min_per_point`` de la configuration (8 minutes par défaut) et, avec un ``start``, sautent ses pauses
 (``breaks``) comme le fait ``directions.clock`` ; sans ``start``, une pause,
 qui est une date, n'est pas comptée. Sont aussi refusés (``400``) un format

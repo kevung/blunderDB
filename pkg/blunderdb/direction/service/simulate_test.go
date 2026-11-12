@@ -146,27 +146,24 @@ func TestSimulate_HugeFieldAllocatesNothing(t *testing.T) {
 	}
 }
 
-// TestSimulate_TimeBudget: past its computing time a simulation stops. With no run ended the
-// answer is ErrSimulationTooHeavy, which is no refusal of the request: the same request is
-// answered with more time. A caller that left gets its own cancellation back.
+// TestSimulate_TimeBudget: past its computing time a simulation stops, but never before its
+// first run, which the budget does not decide: with no time at all a request is answered on
+// that one run, under the warning time_budget. A caller that left gets its own cancellation
+// back.
 func TestSimulate_TimeBudget(t *testing.T) {
 	was := service.SimulateBudget
 	t.Cleanup(func() { service.SimulateBudget = was })
 	service.SimulateBudget = time.Nanosecond
-	req := simulateReq("256")
+	req := simulateReq("128")
 	req.Runs = service.SimulateMaxRuns
-	began := time.Now()
 	got, err := service.Simulate(context.Background(), req)
-	if !errors.Is(err, service.ErrSimulationTooHeavy) || errors.Is(err, direction.ErrRefused) || time.Since(began) > 5*time.Second {
-		t.Errorf("with no time: %+v (%v) after %v; want too heavy, promptly, and no refusal", got, err, time.Since(began))
-	}
-	if err == nil || !strings.Contains(err.Error(), "fewer players") {
-		t.Errorf("too heavy says %q; want what to reduce", err)
+	if err != nil || got.Runs != 1 || !slices.Contains(got.Warnings, service.SimulateWarnTimeBudget) {
+		t.Errorf("with no time: %+v (%v); want the first run, under time_budget", got, err)
 	}
 	service.SimulateBudget = time.Minute
-	req = simulateReq("16")
-	if _, err := service.Simulate(context.Background(), req); err != nil {
-		t.Errorf("the same kind of request with its time: %v", err)
+	req.Runs = 20
+	if got, err := service.Simulate(context.Background(), req); err != nil || got.Runs != 20 {
+		t.Errorf("the same request with its time: %+v (%v); want its 20 runs", got, err)
 	}
 	gone, cancel := context.WithCancel(context.Background())
 	cancel()
@@ -376,6 +373,9 @@ func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 // for, or refused as too heavy by its work — the same answer on every machine, which the
 // time budget does not decide.
 func TestSimulate_UsefulOrTooHeavy(t *testing.T) {
+	if testing.Short() {
+		t.Skip("plays some three hundred runs")
+	}
 	unhurried(t)
 	for name, tc := range map[string]struct {
 		config, players string
@@ -386,7 +386,12 @@ func TestSimulate_UsefulOrTooHeavy(t *testing.T) {
 		"a bracket of 256":            {`{"name":"x","phases":[{"kind":"bracket","length":7}]}`, "256", false},
 		"a Swiss of 2 lives for 128":  {simulatedSwiss, "128", false},
 		"a club of 40 in one pool":    {`{"name":"x","phases":[{"kind":"round_robin","length":5,"groups":1}]}`, "40", true},
-		"200 players in pools of 4":   {`{"name":"x","phases":[{"kind":"round_robin","length":5,"group_size":4,"qualifiers":2},{"kind":"bracket","length":7}]}`, "200", true},
+		"200 players in pools of 4":   {`{"name":"x","phases":[{"kind":"round_robin","length":5,"group_size":4,"qualifiers":2},{"kind":"bracket","length":7}]}`, "200", false},
+		"one pool of 30":              {`{"name":"x","phases":[{"kind":"round_robin","length":5,"groups":1}]}`, "30", false},
+		"a double elimination of 128": {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "128", false},
+		"a double elimination of 256": {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "256", true},
+		"a bracket of 512":            {`{"name":"x","phases":[{"kind":"bracket","length":7}]}`, "512", true},
+		"a Swiss of 7 rounds for 128": {`{"name":"x","phases":[{"kind":"swiss_rounds","length":5,"rounds":7}]}`, "128", true},
 		"a Swiss of 2 lives for 512":  {simulatedSwiss, "512", true},
 		"a Swiss of 100 lives for 64": {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"mode":"rounds","pairing":"wins"}]}`, "64", true},
 		"a double elimination of 512": {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "512", true},
