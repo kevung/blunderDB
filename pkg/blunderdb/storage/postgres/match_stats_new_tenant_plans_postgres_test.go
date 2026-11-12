@@ -29,16 +29,13 @@ type executedNode struct {
 	Plans     []executedNode `json:"Plans"`
 }
 
-// The first import of a tenant into a library whose statistics predate it, as
-// served: under row-level security, as a role the policies bind. Planned for
-// its values, a statement of that tenant is estimated at one row per table, and
-// the statistics of a match may then reach position, move or game through an
-// index that names the tenant and nothing else: every row of the tenant read
-// for one match. Each statement the refresh sends is replayed here as the
-// engine runs it — prepared, under the settings of its own PinJoinOrder — and
-// none may walk the tenant.
-func TestMatchStatsOfANewTenantLookUpByKey(t *testing.T) {
-	ctx := context.Background()
+// newTenantLibrary builds a library of 39 tenants (2 to 40) with RLS applied
+// and analyzed, autovacuum off, and returns a store bound as a role the
+// policies bind, whose statements rec records; importAll(1) then makes tenant 1
+// the new tenant the statistics do not know.
+func newTenantLibrary(t *testing.T) (ctx context.Context, admin *pgxpool.Pool, pool *pgxpool.Pool, s *Storage, rec *stmtRecorder, importAll func(int64), files []string) {
+	t.Helper()
+	ctx = context.Background()
 	dsn := purgeTestDB(t)
 
 	admin, err := pgxpool.New(ctx, dsn)
@@ -69,18 +66,18 @@ func TestMatchStatsOfANewTenantLookUpByKey(t *testing.T) {
 	}
 	cfg.ConnConfig.User, cfg.ConnConfig.Password = "stats_app", "app"
 	configureRLSPool(cfg)
-	rec := &stmtRecorder{}
+	rec = &stmtRecorder{}
 	cfg.ConnConfig.Tracer = rec
-	pool, err := pgxpool.NewWithConfig(ctx, cfg)
+	pool, err = pgxpool.NewWithConfig(ctx, cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Cleanup(pool.Close)
-	s := &Storage{binder: binder{db: pool}, pool: pool}
+	s = &Storage{binder: binder{db: pool}, pool: pool}
 
-	files := []string{"test.xg", "HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg",
+	files = []string{"test.xg", "HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg",
 		"Kev_GammonNetNormal_2026-10-06_7p.xg", "charlot1-charlot2_7p_2025-11-08-2305.xg"}
-	importAll := func(tenant int64) {
+	importAll = func(tenant int64) {
 		tctx := storage.WithTenant(ctx, tenant)
 		for _, f := range files {
 			src := ingest.Source{Path: filepath.Join("..", "..", "..", "..", "testdata", f)}
@@ -96,6 +93,19 @@ func TestMatchStatsOfANewTenantLookUpByKey(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	return ctx, admin, pool, s, rec, importAll, files
+}
+
+// The first import of a tenant into a library whose statistics predate it, as
+// served: under row-level security, as a role the policies bind. Planned for
+// its values, a statement of that tenant is estimated at one row per table, and
+// the statistics of a match may then reach position, move or game through an
+// index that names the tenant and nothing else: every row of the tenant read
+// for one match. Each statement the refresh sends is replayed here as the
+// engine runs it — prepared, under the settings of its own PinJoinOrder — and
+// none may walk the tenant.
+func TestMatchStatsOfANewTenantLookUpByKey(t *testing.T) {
+	ctx, admin, pool, s, rec, importAll, files := newTenantLibrary(t)
 	importAll(1)
 
 	var matchIDs []int64
