@@ -3137,6 +3137,52 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_DirectionView"
                 nullable: true
+  /v1/directions.replacePair:
+    post:
+      operationId: directions.replacePair
+      tags: [directions]
+      x-kind: json
+      x-idempotency-key: true
+      x-if-match: required
+      parameters:
+        - name: If-Match
+          in: header
+          required: true
+          description: The version the gesture was decided on, as the last read gave it; 428 without it, 409 when it moved.
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionUpdatePairReq"
+      responses:
+        "409":
+          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
+        "428":
+          description: Precondition Required — no usable If-Match.
+        "200":
+          description: OK
+          headers:
+            Direction-Version:
+              description: The version the gesture left; the If-Match of the next one.
+              schema:
+                type: string
+            Direction-Page-Warning:
+              description: A display page the gesture applied but could not rewrite, once per page.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_DirectionView"
+                nullable: true
   /v1/directions.replaceParticipant:
     post:
       operationId: directions.replaceParticipant

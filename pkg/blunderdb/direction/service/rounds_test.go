@@ -149,3 +149,56 @@ func TestReplaceAndSwapBeforeAnyMatch(t *testing.T) {
 func TestFinalBarrageIsAccepted(t *testing.T) {
 	directed(t, `{"name":"Club","tables":{"count":4},"phases":[{"kind":"round_robin","length":5,"group_size":4,"qualifiers":1,"final_barrage":true,"tiebreak":["point_diff"]}]}`)
 }
+
+// TestReplacingAPairChangesItsPersons: a pair is replaced with its two persons, in one gesture;
+// the old pair's persons leave the Directory and no "A / B" line enters it. Replacing a pair as
+// if it were one person is refused.
+func TestReplacingAPairChangesItsPersons(t *testing.T) {
+	ctx, svc, state, tid := directed(t, `{"name":"Club","tables":{"count":4},"phases":[{"kind":"swiss_rounds","length":5,"rounds":3}]}`)
+	if _, err := svc.AddPair(ctx, tid, `[{"name":"Alice"},{"name":"Bob"}]`, 0); err != nil {
+		t.Fatal(err)
+	}
+	_, err := svc.ReplaceParticipant(ctx, tid, "alice-bob", "", "Carol / Dan", "", 0)
+	refused(t, err, "a pair replaced as one person")
+	if _, err := svc.ReplacePair(ctx, tid, "alice-bob", `[{"name":"Carol"},{"name":"Dan"}]`, 0); err != nil {
+		t.Fatal(err)
+	}
+	pairs, err := svc.Pairs(ctx, tid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, left := pairs["alice-bob"]; left {
+		t.Errorf("the replaced pair keeps its persons: %v", pairs)
+	}
+	s := state()
+	if _, still := s.Players["alice-bob"]; still {
+		t.Error("alice-bob was replaced, still entered")
+	}
+	var newID string
+	for id, p := range s.Players {
+		if p.Name == "Carol / Dan" {
+			newID = string(id)
+		}
+	}
+	if got := pairs[newID]; len(got) != 2 || got[0].Name != "Carol" || got[1].Name != "Dan" {
+		t.Errorf("the newcomer %q has persons %v, want Carol and Dan", newID, got)
+	}
+	dir, err := svc.DirectoryEntrants(ctx, tid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var names []string
+	for _, e := range dir {
+		names = append(names, e.Name)
+	}
+	for _, bad := range []string{"Alice", "Bob", "Carol / Dan", "Alice / Bob"} {
+		if slices.Contains(names, bad) {
+			t.Errorf("the Directory lists %q: %v", bad, names)
+		}
+	}
+	for _, want := range []string{"Carol", "Dan"} {
+		if !slices.Contains(names, want) {
+			t.Errorf("the Directory misses %q: %v", want, names)
+		}
+	}
+}

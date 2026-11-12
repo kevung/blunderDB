@@ -109,6 +109,7 @@ var customContentTypes = map[string][]string{
 	"/v1/directions.giveHalfBye":          {"application/json"},
 	"/v1/directions.cancelHalfBye":        {"application/json"},
 	"/v1/directions.replaceParticipant":   {"application/json"},
+	"/v1/directions.replacePair":          {"application/json"},
 	"/v1/directions.swapParticipants":     {"application/json"},
 	"/v1/directions.reinstate":            {"application/json"},
 	"/v1/directions.makeAbsent":           {"application/json"},

@@ -451,6 +451,7 @@ var databaseParity = map[string]parityEntry{
 	"GiveHalfBye":                       {Server: "/v1/directions.giveHalfBye", Why: whyDirectionGesture},
 	"CancelHalfBye":                     {Server: "/v1/directions.cancelHalfBye", Why: whyDirectionGesture},
 	"ReplaceParticipant":                {Server: "/v1/directions.replaceParticipant", Why: whyDirectionGesture},
+	"ReplacePair":                       {Server: "/v1/directions.replacePair", Why: whyDirectionGesture},
 	"SwapParticipants":                  {Server: "/v1/directions.swapParticipants", Why: whyDirectionGesture},
 	"ReinstateParticipant":              {Server: "/v1/directions.reinstate", Why: whyDirectionGesture},
 	"MakeParticipantAbsent":             {Server: "/v1/directions.makeAbsent", Why: whyDirectionGesture},

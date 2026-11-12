@@ -820,6 +820,7 @@ func TestDirectionGestures_RoundGestures(t *testing.T) {
 		{"/v1/directions.giveHalfBye", `"id":"nobody","round":1`},
 		{"/v1/directions.cancelHalfBye", `"id":"nobody","round":1`},
 		{"/v1/directions.replaceParticipant", `"id":"nobody","name":"Nouveau"`},
+		{"/v1/directions.replacePair", `"id":"nobody","members":[{"name":"A"},{"name":"B"}]`},
 		{"/v1/directions.swapParticipants", `"a":"nobody","b":"none"`},
 		{"/v1/directions.startMatch", `"round":2,"a":"nobody","b":"none"`},
 	} {

@@ -709,6 +709,8 @@ export function RepairGamePhases():Promise<number>;
 
 export function RepairMatch(arg1:number,arg2:boolean):Promise<ingest.RepairReport>;
 
+export function ReplacePair(arg1:number,arg2:string,arg3:string,arg4:number):Promise<service.DirectionView>;
+
 export function ReplaceParticipant(arg1:number,arg2:string,arg3:string,arg4:string,arg5:string,arg6:number):Promise<service.DirectionView>;
 
 export function ResetAnkiDeck(arg1:number):Promise<void>;

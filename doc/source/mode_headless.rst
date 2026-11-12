@@ -763,7 +763,10 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   ``directions.makeAvailable``, ``directions.addPair``,
   ``directions.updatePair``, ``directions.replaceParticipant`` (``id``, le
   joueur remplacé, qui n'a encore joué aucun match ; ``name``, ``club``,
-  ``rating`` et ``newId`` pour le remplaçant), ``directions.swapParticipants``
+  ``rating`` et ``newId`` pour le remplaçant ; une paire de double y est
+  refusée), ``directions.replacePair`` (``id``, la paire remplacée ;
+  ``members`` et ``rating`` pour la nouvelle paire, dont les deux personnes
+  remplacent les anciennes dans l'annuaire), ``directions.swapParticipants``
   (``a``, ``b``, deux joueurs qui n'ont encore joué aucun match échangent leurs
   places) ;
 * le déroulement : ``directions.confirmProposal`` (``action``, telle que

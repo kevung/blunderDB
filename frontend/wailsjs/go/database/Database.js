@@ -1374,6 +1374,10 @@ export function RepairMatch(arg1, arg2) {
   return window['go']['database']['Database']['RepairMatch'](arg1, arg2);
 }
 
+export function ReplacePair(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['ReplacePair'](arg1, arg2, arg3, arg4);
+}
+
 export function ReplaceParticipant(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['database']['Database']['ReplaceParticipant'](arg1, arg2, arg3, arg4, arg5, arg6);
 }

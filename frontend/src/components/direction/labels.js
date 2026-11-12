@@ -59,6 +59,8 @@ export function renderSectionName(t, name) {
     if (!name) return '';
     const pool = name.startsWith('poule:') ? name.slice('poule:'.length) : null;
     if (pool) return t('direction.section.pool', { letter: pool });
+    // Le barrage entre les qualifiés ex æquo des poules n'appartient à aucune poule : pas de lettre.
+    if (name === 'barrage:final') return t('direction.section.playoffFinal');
     const barrage = name.startsWith('barrage:') ? name.slice('barrage:'.length) : null;
     if (barrage) return t('direction.section.playoff', { letter: barrage });
     const key = `direction.section.${name}`;

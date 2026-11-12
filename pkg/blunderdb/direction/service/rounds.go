@@ -85,15 +85,23 @@ func (d *Service) halfBye(ctx context.Context, tournamentID int64, id string, ro
 
 // ReplaceParticipant puts a new player in the place of id, who has not played a match yet: the
 // newcomer takes their seed, their slot in a draw and their pairing. newID, when given, is the
-// identifier the newcomer keeps; without one it is derived from the name.
+// identifier the newcomer keeps; without one it is derived from the name. A pair is refused:
+// its persons must change with it, which is ReplacePair.
 func (d *Service) ReplaceParticipant(ctx context.Context, tournamentID int64, id, newID, name, club string, rating float64) (*DirectionView, error) {
 	name = strings.TrimSpace(name)
 	if name == "" {
 		return nil, direction.Refusef("direction: an entry needs a name")
 	}
-	err := d.applyToDirection(ctx, tournamentID, func(st *tournoi.State, now time.Time) (tournoi.Event, error) {
+	err := d.applyToDirection(ctx, tournamentID, func(locked *Service, st *tournoi.State, now time.Time) (tournoi.Event, error) {
 		if _, ok := st.Players[tournoi.PlayerID(id)]; !ok {
 			return tournoi.Event{}, direction.Refusef("direction: no entry %q", id)
+		}
+		pairs, err := locked.Pairs(ctx, tournamentID)
+		if err != nil {
+			return tournoi.Event{}, err
+		}
+		if _, pair := pairs[id]; pair {
+			return tournoi.Event{}, direction.Refusef("direction: %q is a pair: replace it with its two persons (directions.replacePair)", id)
 		}
 		pid, err := entryID(st, newID, name)
 		if err != nil {
@@ -111,7 +119,7 @@ func (d *Service) ReplaceParticipant(ctx context.Context, tournamentID int64, id
 // SwapParticipants exchanges the places of a and b, neither of whom has played yet — two
 // names entered in each other's line of a draw.
 func (d *Service) SwapParticipants(ctx context.Context, tournamentID int64, a, b string) (*DirectionView, error) {
-	err := d.applyToDirection(ctx, tournamentID, func(_ *tournoi.State, now time.Time) (tournoi.Event, error) {
+	err := d.applyToDirection(ctx, tournamentID, func(_ *Service, _ *tournoi.State, now time.Time) (tournoi.Event, error) {
 		return tournoi.PlayersSwappedEvent(tournoi.PlayerID(a), tournoi.PlayerID(b), now), nil
 	})
 	if err != nil {
@@ -121,7 +129,8 @@ func (d *Service) SwapParticipants(ctx context.Context, tournamentID int64, a, b
 }
 
 // applyToDirection writes the event build makes from the Direction's state, under its lock.
-func (d *Service) applyToDirection(ctx context.Context, tournamentID int64, build func(*tournoi.State, time.Time) (tournoi.Event, error)) (err error) {
+// build is handed the locked Service: a read it makes goes through the gesture's own store.
+func (d *Service) applyToDirection(ctx context.Context, tournamentID int64, build func(*Service, *tournoi.State, time.Time) (tournoi.Event, error)) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return err
@@ -135,7 +144,7 @@ func (d *Service) applyToDirection(ctx context.Context, tournamentID int64, buil
 	if st == nil {
 		return direction.ErrNoDirection
 	}
-	ev, err := build(st, time.Now())
+	ev, err := build(d, st, time.Now())
 	if err != nil {
 		return err
 	}
@@ -144,7 +153,7 @@ func (d *Service) applyToDirection(ctx context.Context, tournamentID int64, buil
 
 // applyToCurrentPhase is applyToDirection for a gesture about the phase being played.
 func (d *Service) applyToCurrentPhase(ctx context.Context, tournamentID int64, build func(*tournoi.State, *tournoi.PhaseState, time.Time) (tournoi.Event, error)) error {
-	return d.applyToDirection(ctx, tournamentID, func(st *tournoi.State, now time.Time) (tournoi.Event, error) {
+	return d.applyToDirection(ctx, tournamentID, func(_ *Service, st *tournoi.State, now time.Time) (tournoi.Event, error) {
 		if st.Current < 0 || st.Current >= len(st.Phases) || st.Phases[st.Current] == nil {
 			return tournoi.Event{}, direction.Refusef("direction: no phase is being played")
 		}

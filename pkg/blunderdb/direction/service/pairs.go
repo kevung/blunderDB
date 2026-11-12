@@ -173,6 +173,58 @@ func (d *Service) updatePair(ctx context.Context, tournamentID int64, id, member
 	return nil
 }
 
+// ReplacePair puts a new pair in the place of id, which has not played a match yet: the
+// engine's Participant changes as ReplaceParticipant changes it, and the persons behind it
+// change in the same transaction — the old pair's rows go, the newcomers' are written — so the
+// Directory lists the two new persons, never an "A / B" line nor the persons who left.
+func (d *Service) ReplacePair(ctx context.Context, tournamentID int64, id, membersJSON string, rating float64) (*DirectionView, error) {
+	if err := d.replacePair(ctx, tournamentID, id, membersJSON, rating); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) replacePair(ctx context.Context, tournamentID int64, id, membersJSON string, rating float64) (err error) {
+	d, release, err := d.lockDirection(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
+	defer release(&err)
+	members, err := parsePair(membersJSON)
+	if err != nil {
+		return err
+	}
+	return d.directionTx(ctx, func(ctx context.Context, tx storage.Tx, store direction.Store) error {
+		dir, err := direction.Open(ctx, store, tournamentID)
+		if err != nil {
+			return err
+		}
+		st := dir.State()
+		if st == nil {
+			return direction.ErrNoDirection
+		}
+		if _, ok := st.Players[tournoi.PlayerID(id)]; !ok {
+			return direction.Refusef("direction: no entry %q", id)
+		}
+		taken := map[string]bool{}
+		for pid := range st.Players {
+			taken[string(pid)] = true
+		}
+		label := PairLabel(members)
+		if rating <= 0 {
+			rating = PairRating(members)
+		}
+		p := tournoi.Player{ID: tournoi.PlayerID(participantID(label, taken)), Name: label, Club: pairClub(members), Rating: rating}
+		if err := dir.Apply(ctx, tournoi.PlayerReplacedEvent(tournoi.PlayerID(id), p, time.Now())); err != nil {
+			return err
+		}
+		if err := writePairMembers(ctx, tx, d.scope, tournamentID, id, nil); err != nil {
+			return err
+		}
+		return writePairMembers(ctx, tx, d.scope, tournamentID, string(p.ID), members)
+	})
+}
+
 func writePairMembers(ctx context.Context, tx storage.Tx, scope string, tournamentID int64, id string, members []PairMember) error {
 	if err := tx.Directions().SetPair(ctx, scope, tournamentID, id, members); err != nil {
 		return fmt.Errorf("direction: pair %s: %w", id, err)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 22:53+0100\n"
+"POT-Creation-Date: 2026-11-12 23:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -43,17 +43,17 @@ msgstr ""
 " с их формой ответа (JSON или NDJSON для потокового списка) и, если "
 "применимо, упоминанием необязательного заголовка ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:464
+#: ../../source/api_reference.rst:465
 msgid "Idempotence"
 msgstr "Идемпотентность"
 
-#: ../../source/api_reference.rst:466
+#: ../../source/api_reference.rst:467
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 57 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 58 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -65,7 +65,7 @@ msgstr ""
 "Большинству методов не нужен никакой особый механизм: чтения не имеют "
 "побочных эффектов, а записи ``positions.*`` идемпотентны по своему "
 "действию благодаря хешу Зобриста содержимого — повторное сохранение той "
-"же позиции возвращает ту же строку, а не дубликат. 57 методов принимают "
+"же позиции возвращает ту же строку, а не дубликат. 58 методов принимают "
 "необязательный заголовок ``Idempotency-Key``: те, у которых два вызова — "
 "это два разных действия, и ``positions.save``, ответ которого сообщает, "
 "создал ли вызов позицию (``created``), и сообщил бы это неверно при "
@@ -74,11 +74,11 @@ msgstr ""
 "пометку «(Idempotency-Key)» в таблице выше. Ни одному другому методу этот"
 " заголовок не нужен, и они его не принимают."
 
-#: ../../source/api_reference.rst:478
+#: ../../source/api_reference.rst:479
 msgid "Lectures conditionnelles"
 msgstr "Условные чтения"
 
-#: ../../source/api_reference.rst:480
+#: ../../source/api_reference.rst:481
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,11 +90,11 @@ msgstr ""
 "без тела, пока не изменилось ничто из того, что читает метод — см. "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:485
+#: ../../source/api_reference.rst:486
 msgid "Enregistrer et lire une analyse"
 msgstr "Сохранение и чтение анализа"
 
-#: ../../source/api_reference.rst:487
+#: ../../source/api_reference.rst:488
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -123,11 +123,11 @@ msgstr ""
 "With-Played``: демон, который его не отправляет, игнорирует "
 "``withPlayed`` и возвращает анализ без ходов матчей."
 
-#: ../../source/api_reference.rst:500
+#: ../../source/api_reference.rst:501
 msgid "Repères d'une transcription"
 msgstr "Таймкоды транскрипции"
 
-#: ../../source/api_reference.rst:502
+#: ../../source/api_reference.rst:503
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -157,7 +157,7 @@ msgstr ""
 "путь), пустая строка отвязывает его; ``set_header`` тоже задаёт его, "
 "когда его заголовок называет источник, но никогда не стирает."
 
-#: ../../source/api_reference.rst:514
+#: ../../source/api_reference.rst:515
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -172,7 +172,7 @@ msgstr ""
 "вместе с ``decision_estimated`` — это оценка: ход без метки действия, "
 "измеренный от броска до первого момента следующего действия."
 
-#: ../../source/api_reference.rst:520
+#: ../../source/api_reference.rst:521
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

@@ -87,3 +87,56 @@ func TestAnEarlierJournalStillReads(t *testing.T) {
 		t.Errorf("after reopening, ranking %v, want %v", got, fx.Ranking)
 	}
 }
+
+// TestAnEarlierJournalContinues: a tournament stored IN PROGRESS under format 2 reopens and
+// carries on under the current engine. The rest of its decisions, as the earlier engine recorded
+// them, apply one by one and end on the standings that engine gave.
+func TestAnEarlierJournalContinues(t *testing.T) {
+	raw, err := os.ReadFile("testdata/journal_v2_poules_tableau.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fx journalFixture
+	if err := json.Unmarshal(raw, &fx); err != nil {
+		t.Fatal(err)
+	}
+	ctx := context.Background()
+	for _, cut := range []int{len(fx.Journal) / 3, len(fx.Journal) / 2, len(fx.Journal) - 2} {
+		store := newMemStore()
+		if err := store.CreateDirection(ctx, Record{TournamentID: 1, FormatVersion: 2, State: StateRunning}); err != nil {
+			t.Fatal(err)
+		}
+		for i, payload := range fx.Journal[:cut] {
+			var ev tournoi.Event
+			if err := json.Unmarshal(payload, &ev); err != nil {
+				t.Fatal(err)
+			}
+			if err := store.AppendEvent(ctx, 1, StoredEvent{Seq: i, Kind: string(ev.Kind), Time: ev.Time, Payload: payload}); err != nil {
+				t.Fatal(err)
+			}
+		}
+		d, err := Open(ctx, store, 1)
+		if err != nil {
+			t.Fatalf("cut %d: an earlier journal in progress must reopen: %v", cut, err)
+		}
+		if d.State().Finished {
+			t.Fatalf("cut %d: the stored tournament was still running", cut)
+		}
+		for i, payload := range fx.Journal[cut:] {
+			var ev tournoi.Event
+			if err := json.Unmarshal(payload, &ev); err != nil {
+				t.Fatal(err)
+			}
+			if err := d.Apply(ctx, ev); err != nil {
+				t.Fatalf("cut %d: decision %d (%s) refused under the current engine: %v", cut, cut+i, ev.Kind, err)
+			}
+		}
+		d, err = Open(ctx, store, 1)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := rankingIDs(d); !slices.Equal(got, fx.Ranking) {
+			t.Errorf("cut %d: ranking %v, want %v", cut, got, fx.Ranking)
+		}
+	}
+}

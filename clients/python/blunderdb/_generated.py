@@ -510,6 +510,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.reopen — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.reopen", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def directions_replace_pair(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.replacePair — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.replacePair", payload, if_match=if_match, idempotency_key=idempotency_key)
+
     def directions_replace_participant(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/directions.replaceParticipant — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.replaceParticipant", payload, if_match=if_match, idempotency_key=idempotency_key)

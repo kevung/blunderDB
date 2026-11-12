@@ -409,6 +409,9 @@ func (s *Server) directionGestureRoutes() []route {
 		{http.MethodPost, "/v1/directions.replaceParticipant", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionReplaceReq) (*service.DirectionView, error) {
 			return bare(svc(scope).ReplaceParticipant(ctx, req.TournamentID, req.ID, req.NewID, req.Name, req.Club, req.Rating))
 		}))},
+		{http.MethodPost, "/v1/directions.replacePair", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionUpdatePairReq) (*service.DirectionView, error) {
+			return bare(svc(scope).ReplacePair(ctx, req.TournamentID, req.ID, rawText(req.Members), req.Rating))
+		}))},
 		{http.MethodPost, "/v1/directions.swapParticipants", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionSwapReq) (*service.DirectionView, error) {
 			return bare(svc(scope).SwapParticipants(ctx, req.TournamentID, req.A, req.B))
 		}))},

@@ -165,6 +165,11 @@ func (d *Database) ReplaceParticipant(tournamentID int64, id, newID, name, club 
 	return d.directionService().ReplaceParticipant(context.Background(), tournamentID, id, newID, name, club, rating)
 }
 
+// ReplacePair is service.Service.ReplacePair on the open database.
+func (d *Database) ReplacePair(tournamentID int64, id string, membersJSON string, rating float64) (*DirectionView, error) {
+	return d.directionService().ReplacePair(context.Background(), tournamentID, id, membersJSON, rating)
+}
+
 // SwapParticipants is service.Service.SwapParticipants on the open database.
 func (d *Database) SwapParticipants(tournamentID int64, a, b string) (*DirectionView, error) {
 	return d.directionService().SwapParticipants(context.Background(), tournamentID, a, b)
