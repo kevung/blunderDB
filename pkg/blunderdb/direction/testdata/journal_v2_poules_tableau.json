@@ -1,0 +1,511 @@
+{
+ "journal": [
+  {
+   "seq": 0,
+   "version": 2,
+   "kind": "created",
+   "time": "2026-03-01T09:00:00Z",
+   "config": {
+    "name": "Poules puis tableau",
+    "phases": [
+     {
+      "kind": "round_robin",
+      "length": 5,
+      "group_size": 4,
+      "qualifiers": 2,
+      "entry": "survivors"
+     },
+     {
+      "kind": "bracket",
+      "length": 9,
+      "entry": "survivors"
+     }
+    ],
+    "min_per_point": 8,
+    "tables": {},
+    "prizes": {
+     "retention": {}
+    }
+   },
+   "label": {}
+  },
+  {
+   "seq": 1,
+   "version": 2,
+   "kind": "player_added",
+   "time": "2026-03-01T09:00:01Z",
+   "player": {
+    "id": "j01",
+    "name": "J 1",
+    "club": "C",
+    "rating": 6.1177154833623035
+   },
+   "label": {}
+  },
+  {
+   "seq": 2,
+   "version": 2,
+   "kind": "player_added",
+   "time": "2026-03-01T09:00:02Z",
+   "player": {
+    "id": "j02",
+    "name": "J 2",
+    "club": "B",
+    "rating": 6.580493333515752
+   },
+   "label": {}
+  },
+  {
+   "seq": 3,
+   "version": 2,
+   "kind": "player_added",
+   "time": "2026-03-01T09:00:03Z",
+   "player": {
+    "id": "j03",
+    "name": "J 3",
+    "rating": 7.201602934602484
+   },
+   "label": {}
+  },
+  {
+   "seq": 4,
+   "version": 2,
+   "kind": "player_added",
+   "time": "2026-03-01T09:00:04Z",
+   "player": {
+    "id": "j04",
+    "name": "J 4",
+    "club": "C",
+    "rating": 8.147606552563438
+   },
+   "label": {}
+  },
+  {
+   "seq": 5,
+   "version": 2,
+   "kind": "player_added",
+   "time": "2026-03-01T09:00:05Z",
+   "player": {
+    "id": "j05",
+    "name": "J 5",
+    "club": "A",
+    "rating": 8.96611382692453
+   },
+   "label": {}
+  },
+  {
+   "seq": 6,
+   "version": 2,
+   "kind": "draw",
+   "time": "2026-03-01T09:01:05Z",
+   "label": {
+    "kind": "draw_pools",
+    "n": 2
+   },
+   "draw": {
+    "groups": [
+     [
+      "j04",
+      "j01",
+      "j03"
+     ],
+     [
+      "j05",
+      "j02"
+     ]
+    ]
+   }
+  },
+  {
+   "seq": 7,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:02:05Z",
+   "match_id": "M1",
+   "section": "poule:A",
+   "label": {
+    "kind": "in_section",
+    "section": "poule:A",
+    "sub": {
+     "kind": "pool_round",
+     "n": 1
+    }
+   },
+   "key": "poule:A.0.1",
+   "a": "j01",
+   "b": "j03",
+   "length": 5,
+   "table": 1
+  },
+  {
+   "seq": 8,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:02:05Z",
+   "match_id": "M2",
+   "section": "poule:B",
+   "label": {
+    "kind": "in_section",
+    "section": "poule:B",
+    "sub": {
+     "kind": "pool_round",
+     "n": 1
+    }
+   },
+   "key": "poule:B.0.0",
+   "a": "j05",
+   "b": "j02",
+   "length": 5,
+   "table": 2
+  },
+  {
+   "seq": 9,
+   "version": 2,
+   "kind": "player_withdrawn",
+   "time": "2026-03-01T09:02:05Z",
+   "player_id": "j05",
+   "label": {},
+   "after_current": true
+  },
+  {
+   "seq": 10,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:03:05Z",
+   "match_id": "M1",
+   "label": {},
+   "winner": "j01",
+   "score_a": 5,
+   "score_b": 3
+  },
+  {
+   "seq": 11,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:04:05Z",
+   "match_id": "M3",
+   "section": "poule:A",
+   "label": {
+    "kind": "in_section",
+    "section": "poule:A",
+    "sub": {
+     "kind": "pool_round",
+     "n": 2
+    }
+   },
+   "key": "poule:A.1.0",
+   "a": "j04",
+   "b": "j03",
+   "length": 5,
+   "table": 1
+  },
+  {
+   "seq": 12,
+   "version": 2,
+   "kind": "result_corrected",
+   "time": "2026-03-01T09:04:05Z",
+   "match_id": "M1",
+   "label": {},
+   "winner": "j03",
+   "score_a": 3,
+   "score_b": 5
+  },
+  {
+   "seq": 13,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:05:05Z",
+   "match_id": "M2",
+   "label": {},
+   "winner": "j02",
+   "score_b": 5
+  },
+  {
+   "seq": 14,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:06:05Z",
+   "match_id": "M3",
+   "label": {},
+   "winner": "j04",
+   "score_a": 5
+  },
+  {
+   "seq": 15,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:07:05Z",
+   "match_id": "M4",
+   "section": "poule:A",
+   "label": {
+    "kind": "in_section",
+    "section": "poule:A",
+    "sub": {
+     "kind": "pool_round",
+     "n": 3
+    }
+   },
+   "key": "poule:A.2.0",
+   "a": "j04",
+   "b": "j01",
+   "length": 5,
+   "table": 1
+  },
+  {
+   "seq": 16,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:07:05Z",
+   "match_id": "M4",
+   "label": {},
+   "winner": "j01",
+   "score_a": 2,
+   "score_b": 5
+  },
+  {
+   "seq": 17,
+   "version": 2,
+   "kind": "draw",
+   "time": "2026-03-01T09:08:05Z",
+   "section": "barrage:A",
+   "label": {
+    "kind": "draw_barrage",
+    "section": "poule:A",
+    "players": 3,
+    "spots": 2
+   },
+   "draw": {
+    "groups": [
+     [
+      "j01",
+      "j03",
+      "j04"
+     ]
+    ]
+   }
+  },
+  {
+   "seq": 18,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:09:05Z",
+   "match_id": "M5",
+   "section": "barrage:A",
+   "label": {
+    "kind": "barrage",
+    "section": "barrage:A"
+   },
+   "a": "j03",
+   "b": "j01",
+   "length": 5,
+   "table": 1
+  },
+  {
+   "seq": 19,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:10:05Z",
+   "match_id": "M5",
+   "label": {},
+   "winner": "j01",
+   "score_a": 2,
+   "score_b": 5
+  },
+  {
+   "seq": 20,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:11:05Z",
+   "match_id": "M6",
+   "section": "barrage:A",
+   "label": {
+    "kind": "barrage",
+    "section": "barrage:A"
+   },
+   "a": "j01",
+   "b": "j04",
+   "length": 5,
+   "table": 1
+  },
+  {
+   "seq": 21,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:11:05Z",
+   "match_id": "M6",
+   "label": {},
+   "winner": "j01",
+   "score_a": 5,
+   "score_b": 3
+  },
+  {
+   "seq": 22,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:12:05Z",
+   "match_id": "M7",
+   "section": "barrage:A",
+   "label": {
+    "kind": "barrage",
+    "section": "barrage:A"
+   },
+   "a": "j04",
+   "b": "j03",
+   "length": 5,
+   "table": 1
+  },
+  {
+   "seq": 23,
+   "version": 2,
+   "kind": "match_cancelled",
+   "time": "2026-03-01T09:13:05Z",
+   "match_id": "M7",
+   "label": {}
+  },
+  {
+   "seq": 24,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:14:05Z",
+   "match_id": "M8",
+   "section": "barrage:A",
+   "label": {
+    "kind": "barrage",
+    "section": "barrage:A"
+   },
+   "a": "j04",
+   "b": "j03",
+   "length": 5,
+   "table": 1
+  },
+  {
+   "seq": 25,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:15:05Z",
+   "match_id": "M8",
+   "label": {},
+   "winner": "j04",
+   "score_a": 5,
+   "score_b": 3
+  },
+  {
+   "seq": 26,
+   "version": 2,
+   "kind": "next_phase",
+   "time": "2026-03-01T09:16:05Z",
+   "label": {
+    "kind": "phase",
+    "text": "Tableau"
+   }
+  },
+  {
+   "seq": 27,
+   "version": 2,
+   "kind": "draw",
+   "time": "2026-03-01T09:17:05Z",
+   "phase": 1,
+   "label": {
+    "kind": "draw_bracket",
+    "n": 4,
+    "sub": {
+     "kind": "phase",
+     "text": "Tableau"
+    }
+   },
+   "draw": {
+    "slots": [
+     "j01",
+     "BYE",
+     "j02",
+     "j04"
+    ],
+    "lives": {
+     "j01": 1,
+     "j02": 1,
+     "j04": 1
+    }
+   }
+  },
+  {
+   "seq": 28,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:18:05Z",
+   "match_id": "M9",
+   "phase": 1,
+   "section": "main",
+   "label": {
+    "kind": "semi_final"
+   },
+   "key": "main.0.1",
+   "a": "j02",
+   "b": "j04",
+   "length": 9,
+   "table": 1
+  },
+  {
+   "seq": 29,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:18:05Z",
+   "match_id": "M9",
+   "label": {},
+   "winner": "j02",
+   "score_a": 9,
+   "score_b": 2
+  },
+  {
+   "seq": 30,
+   "version": 2,
+   "kind": "match_started",
+   "time": "2026-03-01T09:19:05Z",
+   "match_id": "M10",
+   "phase": 1,
+   "section": "main",
+   "label": {
+    "kind": "final"
+   },
+   "key": "main.1.0",
+   "a": "j01",
+   "b": "j02",
+   "length": 9,
+   "table": 1
+  },
+  {
+   "seq": 31,
+   "version": 2,
+   "kind": "player_available",
+   "time": "2026-03-01T09:20:05Z",
+   "player_id": "j03",
+   "label": {}
+  },
+  {
+   "seq": 32,
+   "version": 2,
+   "kind": "result",
+   "time": "2026-03-01T09:21:05Z",
+   "match_id": "M10",
+   "label": {},
+   "winner": "j01",
+   "score_a": 9,
+   "score_b": 2
+  },
+  {
+   "seq": 33,
+   "version": 2,
+   "kind": "finished",
+   "time": "2026-03-01T09:22:05Z",
+   "phase": 1,
+   "label": {}
+  }
+ ],
+ "name": "perturbe/poules_tableau/5/0",
+ "ranking": [
+  "j01",
+  "j02",
+  "j04",
+  "j03",
+  "j05"
+ ]
+}
