@@ -341,6 +341,9 @@ func openExportTarget(ctx context.Context, path string) (*sql.DB, error) {
 // exporter carries one export's state: the resolved selection and the maps
 // from source ids to the ids the new file assigned.
 type exporter struct {
+	// tags are the tags of the comments that leave: a stored query may name
+	// no other.
+	tags  map[string]bool
 	ctx   context.Context
 	src   storage.Storage
 	scope string
@@ -785,6 +788,7 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				continue
 			}
 			e.report.Comments++
+			e.noteTags(c.Text)
 			if c.Signature == "" && c.Origin == domain.CommentOriginUser {
 				if e.opts.Signer != nil {
 					e.report.SignedComments++
@@ -1023,11 +1027,24 @@ func (e *exporter) writeLivingQueries() error {
 
 // queryGate says what a stored query may take out of the library. Without
 // provenance the query never leaves as written: searchquery.Anonymous either
-// rewrites it from what the parser read, or refuses it.
-type queryGate struct{ omitProvenance, comments bool }
+// rewrites it from what the parser read, or refuses it — a tag included,
+// when no comment that leaves bears it.
+type queryGate struct {
+	omitProvenance, comments bool
+	tags                     map[string]bool
+}
 
 func (e *exporter) gate() queryGate {
-	return queryGate{omitProvenance: e.opts.OmitProvenance, comments: e.opts.Comments}
+	return queryGate{omitProvenance: e.opts.OmitProvenance, comments: e.opts.Comments, tags: e.tags}
+}
+
+func (e *exporter) noteTags(text string) {
+	if e.tags == nil {
+		e.tags = map[string]bool{}
+	}
+	for _, tag := range domain.ExtractTags(text) {
+		e.tags[tag] = true
+	}
 }
 
 // leavingQuery is the one door a stored query — a living collection's, a
@@ -1040,7 +1057,7 @@ func (e *exporter) leavingQuery(query string) (string, bool) {
 func (g queryGate) carried(query string, positions, matches, tournaments map[int64]int64) (string, bool) {
 	narrowing := strings.HasPrefix(strings.TrimSpace(query), "ss ")
 	if g.omitProvenance {
-		anonymous, ok := searchquery.Anonymous(query, g.comments)
+		anonymous, ok := searchquery.Anonymous(query, g.comments, g.tags)
 		if !ok {
 			return "", false
 		}

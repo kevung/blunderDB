@@ -1,6 +1,7 @@
 package searchquery
 
 import (
+	"reflect"
 	"regexp"
 	"strings"
 
@@ -23,13 +24,15 @@ const (
 	// without the provenance. The filter would select other rows there.
 	ReadsPlayed
 	// ReadsProvenance: a player, a match, a tournament, an author, or a text
-	// free to name any of them.
+	// free to name any of them — or a row whose answer is narrowed by the
+	// matches it was met in.
 	ReadsProvenance
 )
 
 // FieldReads classifies every field of [FieldTokens]. The parity test fails
 // when a field is in one map and not in the other: a new filter cannot be
-// added without deciding, in writing, what it reads.
+// added without deciding, in writing, what it reads. [Anonymous] refuses a
+// query by this table and no other list.
 var FieldReads = map[string]Reads{
 	"IncludeCube":                   ReadsPosition,
 	"IncludeScore":                  ReadsPosition,
@@ -43,7 +46,6 @@ var FieldReads = map[string]Reads{
 	"GamePhaseFilter":               ReadsPosition,
 	"GameTypeFilter":                ReadsPosition,
 	"LikeFilter":                    ReadsPosition,
-	"LikeTargetID":                  ReadsPosition,
 	"LikeMaxDistance":               ReadsPosition,
 	"LikeWidened":                   ReadsPosition,
 	"PipCountFilter":                ReadsPosition,
@@ -84,6 +86,10 @@ var FieldReads = map[string]Reads{
 	"MarginFilter":       ReadsPlayed,
 	"CubeResponseFilter": ReadsPlayed,
 
+	// A ranking against a stored position leaves out the matches that
+	// position was met in; against a drawn board it reads the board alone.
+	"LikeTargetID": ReadsProvenance,
+
 	"SearchText":                 ReadsProvenance,
 	"PlayerFilter":               ReadsProvenance,
 	"OpponentFilter":             ReadsProvenance,
@@ -101,14 +107,35 @@ var FieldReads = map[string]Reads{
 
 const number = `-?\d+(?:\.\d+)?`
 
+// rangeFields are the filters whose value is a numeric range written after
+// the filter's own token.
+var rangeFields = []string{
+	"PipCountFilter", "Player1AbsolutePipCountFilter", "WinRateFilter", "GammonRateFilter", "BackgammonRateFilter",
+	"Player2WinRateFilter", "Player2GammonRateFilter", "Player2BackgammonRateFilter",
+	"Player1CheckerOffFilter", "Player2CheckerOffFilter", "Player1BackCheckerFilter", "Player2BackCheckerFilter",
+	"Player1CheckerInZoneFilter", "Player2CheckerInZoneFilter", "Player1OutfieldBlotFilter", "Player2OutfieldBlotFilter",
+	"Player1JanBlotFilter", "Player2JanBlotFilter", "EquityFilter",
+}
+
+// rangeShapes holds, for each of rangeFields, the only shape its value may
+// leave in. A prefix rule of Parse claims any word that starts with its
+// letter (`wanda` is a win-rate filter, `bZ<-11` a backgammon rate): the
+// shape demands the filter's exact token, then a range.
+var rangeShapes = func() map[string]*regexp.Regexp {
+	out := make(map[string]*regexp.Regexp, len(rangeFields))
+	for _, name := range rangeFields {
+		out[name] = regexp.MustCompile(`^` + regexp.QuoteMeta(FieldTokens[name]) + `(?:[<>]` + number + `|` + number + `(?:,` + number + `)?)$`)
+	}
+	return out
+}()
+
 var (
-	// A prefix rule of Parse claims any word that starts with its letter
-	// (`wanda` is a win-rate filter): only this shape is a range.
-	rangeRe   = regexp.MustCompile(`^[A-Za-z]{1,2}(?:[<>]` + number + `|` + number + `(?:,` + number + `)?)$`)
 	dayRe     = `\d{4}/\d{2}/\d{2}`
 	dateRe    = regexp.MustCompile(`^T(?:[<>]` + dayRe + `|` + dayRe + `,` + dayRe + `)$`)
 	patternRe = regexp.MustCompile(`^m["'](?:[0-9/*(); ,-]|bar|off|nd|dt|dp)+["']$`)
 	depthRe   = regexp.MustCompile(`^(?:\d+ply\+?|book|rollout)$`)
+	// Parse claims as an id list any word that starts with `id` and a digit.
+	idListRe = regexp.MustCompile(`^\d+(?:[-,;]\d+)*$`)
 )
 
 // Anonymous returns the form of query that may leave a library without the
@@ -116,11 +143,14 @@ var (
 // parser did not understand travels — or false when the query must not leave
 // at all and what it selects has to be evaluated at the source instead. That
 // is the case when it reads something that stays behind (a player, a match, a
-// free text, the played move; a comment when comments is false), when it
-// holds a token the parser does not know or ignores, or when a value is not
-// of the closed shape its filter reads: a word the storage layer would ignore
-// is still a word.
-func Anonymous(query string, comments bool) (string, bool) {
+// free text, the played move, the matches of a ranking's stored target; a
+// comment when comments is false), when it holds a token the parser does not
+// know or ignores, or when a value is not of the closed shape its filter
+// reads: a word the storage layer would ignore is still a word. A tag is a
+// word too: it leaves only when tags, the tags of the comments that leave,
+// holds it — a tag no carried comment bears selects nothing there and tells
+// what the sender was looking for.
+func Anonymous(query string, comments bool, tags map[string]bool) (string, bool) {
 	f, diags := Parse(query)
 	if len(diags) > 0 {
 		return "", false
@@ -137,33 +167,33 @@ func Anonymous(query string, comments bool) (string, bool) {
 		return "", false
 	}
 
-	for _, stays := range []string{
-		f.SearchText, f.PlayerFilter, f.OpponentFilter, f.TournamentNameFilter, f.CommentAuthorFilter,
-		f.RoundFilter, f.MatchLengthFilter, f.MatchDateFilter, f.PlayerPRFilter, f.EncounterFilter,
-		f.MatchIDsFilter, f.TournamentIDsFilter,
-		f.MoveErrorFilter, f.DecisionTimeFilter, f.MarginFilter, f.CubeResponseFilter,
-	} {
-		if stays != "" {
+	v := reflect.ValueOf(f)
+	for name, reads := range FieldReads {
+		if v.FieldByName(name).IsZero() {
+			continue
+		}
+		switch reads {
+		case ReadsPlayed, ReadsProvenance:
 			return "", false
+		case ReadsComment:
+			if !comments {
+				return "", false
+			}
 		}
 	}
-	if f.IndividuallyImportedFilter {
-		return "", false
-	}
-	if !comments && (f.CommentFilter != "" || f.CommentOriginFilter != "" || f.TagFilter != "") {
-		return "", false
+	for _, tag := range domain.ParseTagFilter(f.TagFilter) {
+		if !tags[tag] {
+			return "", false
+		}
 	}
 
-	for _, r := range []string{
-		f.PipCountFilter, f.Player1AbsolutePipCountFilter, f.WinRateFilter, f.GammonRateFilter, f.BackgammonRateFilter,
-		f.Player2WinRateFilter, f.Player2GammonRateFilter, f.Player2BackgammonRateFilter,
-		f.Player1CheckerOffFilter, f.Player2CheckerOffFilter, f.Player1BackCheckerFilter, f.Player2BackCheckerFilter,
-		f.Player1CheckerInZoneFilter, f.Player2CheckerInZoneFilter, f.Player1OutfieldBlotFilter, f.Player2OutfieldBlotFilter,
-		f.Player1JanBlotFilter, f.Player2JanBlotFilter, f.EquityFilter,
-	} {
-		if r != "" && !rangeRe.MatchString(r) {
+	for name, shape := range rangeShapes {
+		if r := v.FieldByName(name).String(); r != "" && !shape.MatchString(r) {
 			return "", false
 		}
+	}
+	if f.PositionIDsFilter != "" && !idListRe.MatchString(f.PositionIDsFilter) {
+		return "", false
 	}
 	if f.DateFilter != "" && !dateRe.MatchString(f.DateFilter) {
 		return "", false

@@ -234,7 +234,7 @@ func TestFieldReads_ClassifiesEveryToken(t *testing.T) {
 // point of Parse and Format, and reads nothing that stays behind.
 func TestAnonymous_IsWhatTheParserWrites(t *testing.T) {
 	for _, q := range []string{"s w>50", "s c o5 nc", `s m"13/11;bar/22"`, "s ph:race gt:holding ad:book", "s #Prime co"} {
-		got, ok := Anonymous(q, true)
+		got, ok := Anonymous(q, true, map[string]bool{"#prime": true})
 		if !ok {
 			t.Errorf("%q may not leave; want it rewritten", q)
 			continue
@@ -244,7 +244,54 @@ func TestAnonymous_IsWhatTheParserWrites(t *testing.T) {
 			t.Errorf("%q leaves as %q, which Parse and Format write back as %q (%v)", q, got, Format(f), diags)
 		}
 	}
-	if _, ok := Anonymous("s #prime", false); ok {
+	if _, ok := Anonymous("s #prime", false, map[string]bool{"#prime": true}); ok {
 		t.Error("a tag may leave without the comments it is read from")
+	}
+}
+
+// TestAnonymous_RefusesWhatStaysBehind: every field FieldReads does not class
+// as read from the position keeps its query at the source, and so does a
+// value that is not of the shape its filter reads.
+func TestAnonymous_RefusesWhatStaysBehind(t *testing.T) {
+	tags := map[string]bool{"#prime": true}
+	for _, q := range []string{
+		// A ranking against a stored row leaves out the matches it was met in.
+		"s like42", "s like42<12*", "s w>50 like5",
+		// A word in the place of a number.
+		"s id1Zanzibar", "s id1 id3Zanzibar", "s bZ<-11", "s wZ>50", "s BOx>1", "s eZ>0",
+		// A tag no comment that leaves bears.
+		"s #zanzibar", "s #prime #zanzibar",
+	} {
+		if got, ok := Anonymous(q, true, tags); ok {
+			t.Errorf("%q leaves, as %q", q, got)
+		}
+	}
+	for _, q := range []string{"s like", "s like<12*", "s id1 id3", "s b<11", "s p-5,5", "s #prime"} {
+		if _, ok := Anonymous(q, true, tags); !ok {
+			t.Errorf("%q does not leave", q)
+		}
+	}
+	// Every field classed as staying behind is refused once it is set, the
+	// comments' fields when the comments stay: the table is what refuses.
+	for name, reads := range FieldReads {
+		if reads == ReadsPosition {
+			continue
+		}
+		var f domain.SearchFilters
+		field := reflect.ValueOf(&f).Elem().FieldByName(name)
+		switch field.Kind() {
+		case reflect.Bool:
+			field.SetBool(true)
+		case reflect.Int64:
+			field.SetInt(7)
+		default:
+			continue // a string field: its token is in the corpus of the export test
+		}
+		if Format(f) == Format(domain.SearchFilters{}) {
+			continue // written only beside another field
+		}
+		if got, ok := Anonymous("s "+Format(f), false, nil); ok {
+			t.Errorf("%s is classed as staying behind, and %q leaves as %q", name, Format(f), got)
+		}
 	}
 }

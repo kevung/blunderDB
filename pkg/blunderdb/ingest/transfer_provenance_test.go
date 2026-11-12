@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math/rand/v2"
 	"path/filepath"
 	"reflect"
 	"slices"
@@ -420,6 +421,9 @@ var anonymityCorpus = []struct {
 	{"s dr", false, false},
 	{"s dd", false, false},
 	// What names the match: never leaves.
+	{"s like42", false, false},
+	{"s like42<12*", false, false},
+	{"s like5 w>50", false, false},
 	{"s md:2020", false, false},
 	{"s md>2019-06", false, false},
 	{"s ml:7", false, false},
@@ -441,6 +445,10 @@ var anonymityCorpus = []struct {
 	{"s w>50 x", false, false},
 	// A word a prefix rule or an open vocabulary takes for a value.
 	{"s w" + needle, false, false},
+	{"s id1" + needle, false, false},
+	{"s b" + needle[:1] + "<-11", false, false},
+	{"s #" + strings.ToLower(needle), false, false},
+	{"s co #" + strings.ToLower(needle), false, false},
 	{"s " + strings.ToLower(needle), false, false},
 	{"s T" + needle, false, false},
 	{"s ph:" + strings.ToLower(needle), false, false},
@@ -564,6 +572,169 @@ func TestExport_OmitProvenanceQueryNeverLeavesAsWritten(t *testing.T) {
 				t.Errorf("comments %v, %q (arrived %q): selects %d positions at the destination, %d at the source",
 					comments, c.query, got.FilterQuery, len(ev.PositionIDs), selected[i])
 			}
+		}
+		dst.Close()
+	}
+}
+
+// selectionAtoms are tokens of every filter the grammar writes, several values
+// each, from which the queries of the selection property are drawn.
+var selectionAtoms = []string{
+	"c", "s", "d", "dr", "dd", "D", "D1", "xD65", "xD11", "nc", "M", "i", "fl", "cr", "pcr",
+	"co", "xco", "co:user", "co:import", "#monaco2026", "#absent",
+	"ph:race", "ph:opening", "ph:middlegame", "ph:bearoff", "gt:holding", "gt:contact", "gt:race", "gt:blitz",
+	"ad:3ply+", "ad:book", "ad:rollout", "ad:4ply",
+	"p>10", "p<5", "p-5,5", "P>100", "P<80", "w>50", "w<40", "g>10", "g<5", "b>1", "W>50", "G>10", "B>1",
+	"o1", "o>0", "O>0", "k>1", "k0", "K>1", "z>5", "Z>5", "bo>0", "BO>0", "bj>0", "BJ>0",
+	"e>0", "e<-0.2", "e-0.1,0.1", "T>2020/01/01", "T<2020/01/01", `m"13/11"`, `m"24/23"`,
+	"aw:2", "aw>3", "AW>3", "AW:5",
+	"like", "like<12", "like*", "like42", "like42<12*", "like5", "id1", "id1;2", "id7 id9",
+	"E>0.1", "E<0.05", "tm>5", "mg>50", "n>1", "ml:7", "md:2020", "pr>5", "rd:1", "ma1", "tn1",
+	`pl"a"`, `op"a"`, `tn"a"`, `au"a"`, `t"joli"`,
+}
+
+// TestExport_OmitProvenanceSelectsWhatTheSourceSelects: a living collection
+// that leaves living without provenance selects at the destination the very
+// positions it selects at the source — whatever its query, drawn here from
+// every filter of the grammar, alone and combined. A filter that reads a row
+// the file does not carry fails here whatever it is classified as.
+func TestExport_OmitProvenanceSelectsWhatTheSourceSelects(t *testing.T) {
+	ctx := context.Background()
+	src, _, player := provenanceLibrary(t)
+	atoms := append(slices.Clone(selectionAtoms), `pl"`+player+`"`, `op"`+player+`"`, `t"`+player+`"`)
+	n := 0
+	for p, err := range src.Positions().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		n++
+		if n%3 == 0 {
+			if _, err := src.Comments().Add(ctx, "", p.ID, "joli coup #monaco2026"); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if n%5 == 0 {
+			if _, err := src.Positions().RaiseFlag(ctx, "", p); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+
+	queries := make([]string, 0, 700)
+	for _, a := range atoms {
+		queries = append(queries, "s "+a)
+	}
+	rng := rand.New(rand.NewPCG(1, 2))
+	for len(queries) < 700 {
+		k := 2 + rng.IntN(3)
+		parts := make([]string, k)
+		for i := range parts {
+			parts[i] = atoms[rng.IntN(len(atoms))]
+		}
+		queries = append(queries, "s "+strings.Join(parts, " "))
+	}
+
+	hashes := func(s storage.Storage) map[int64]uint64 {
+		out := map[int64]uint64{}
+		for p, err := range s.Positions().List(ctx, "", storage.ListOpts{}) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			out[p.ID] = engine.ZobristHash(p)
+		}
+		return out
+	}
+	selection := func(s storage.Storage, of map[int64]uint64, id int64) ([]uint64, error) {
+		ev, err := storage.EvaluateCollection(ctx, s, "", id, 1<<20)
+		if err != nil {
+			return nil, err
+		}
+		out := make([]uint64, len(ev.PositionIDs))
+		for i, id := range ev.PositionIDs {
+			out[i] = of[id]
+		}
+		slices.Sort(out)
+		return out, nil
+	}
+
+	name := func(i int) string { return fmt.Sprintf("tirage %03d", i) }
+	srcHash := hashes(src)
+	atSource := make([][]uint64, len(queries))
+	readable := make([]bool, len(queries))
+	for i, q := range queries {
+		id, err := src.Collections().Create(ctx, "", name(i), "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := src.Collections().SetFilterQuery(ctx, "", id, q); err != nil {
+			t.Fatal(err)
+		}
+		if sel, err := selection(src, srcHash, id); err == nil {
+			atSource[i], readable[i] = sel, true
+		}
+	}
+
+	for _, comments := range []bool{false, true} {
+		opts := WholeLibraryOptions()
+		opts.OmitProvenance, opts.IncludeComments = true, comments
+		plan, err := OptionsFor(ctx, src, "", opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		path := filepath.Join(t.TempDir(), "export.db")
+		if _, err := ExportSQLite(ctx, src, "", path, plan); err != nil {
+			t.Fatal(err)
+		}
+		dst, err := sqlite.Open(ctx, path, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		dstHash := hashes(dst)
+		arrived := map[string]storage.Collection{}
+		for c, err := range dst.Collections().List(ctx, "") {
+			if err != nil {
+				t.Fatal(err)
+			}
+			arrived[c.Name] = *c
+		}
+		living, telling, gaps := 0, 0, 0
+		var mute []string // the filters that leave and tell nothing on this library
+		for i, q := range queries {
+			got, ok := arrived[name(i)]
+			if !ok {
+				t.Errorf("comments %v, %q: the collection did not leave", comments, q)
+				continue
+			}
+			if !readable[i] {
+				if got.FilterQuery != "" {
+					t.Errorf("comments %v, %q: unreadable at the source, yet it left living as %q", comments, q, got.FilterQuery)
+				}
+				continue
+			}
+			sel, err := selection(dst, dstHash, got.ID)
+			if err != nil {
+				t.Errorf("comments %v, %q (arrived %q): unreadable at the destination: %v", comments, q, got.FilterQuery, err)
+				continue
+			}
+			if got.FilterQuery != "" {
+				living++
+				if len(sel) > 0 && len(sel) < len(srcHash) {
+					telling++
+				} else if i < len(atoms) {
+					mute = append(mute, atoms[i])
+				}
+			}
+			if !slices.Equal(sel, atSource[i]) {
+				if gaps++; gaps <= 25 {
+					t.Errorf("comments %v, %q (arrived %q): selects %d positions at the destination, %d at the source",
+						comments, q, got.FilterQuery, len(sel), len(atSource[i]))
+				}
+			}
+		}
+		t.Logf("comments %v: %d queries, %d left living, %d of them select part of the library, %d gaps; alone, these select nothing or everything here: %v",
+			comments, len(queries), living, telling, gaps, mute)
+		if living < 100 || telling < 50 {
+			t.Errorf("comments %v: %d queries left living, %d of them telling: the draw proves nothing", comments, living, telling)
 		}
 		dst.Close()
 	}
