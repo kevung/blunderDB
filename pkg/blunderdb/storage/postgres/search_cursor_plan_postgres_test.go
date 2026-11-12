@@ -15,6 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // A page read by cursor must start at its anchor: the sort key bounds an index
@@ -115,5 +116,74 @@ func TestSearchCursorPageStartsAtItsAnchor(t *testing.T) {
 				t.Errorf("key %s in an Index Cond: %v; full sort: %v\n  in: %s\n  plan: %s", key, bounded, sorted, oneLine(st.sql), out)
 			}
 		})
+	}
+}
+
+// The probe that tells a rare move-error condition from a common one reads at
+// most narrowLimit+1 ids. Each branch of its union stops there by itself: a LIMIT
+// above the union alone left the planner free to hash-join a branch, reading every
+// candidate of the tenant (1.5 s on 8 M positions) before keeping 5001 of them.
+func TestMoveErrorProbeStopsInEachBranch(t *testing.T) {
+	ctx := context.Background()
+	dsn := purgeTestDB(t)
+	rec := &stmtRecorder{}
+	cfg, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg.ConnConfig.Tracer = rec
+	pool, err := pgxpool.NewWithConfig(ctx, cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := &Storage{binder: binder{db: pool}, pool: pool}
+	t.Cleanup(func() { _ = s.Close() })
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatal(err)
+	}
+	file := filepath.Join("..", "..", "..", "..", "testdata", "test.xg")
+	if _, err := (ingest.XGImporter{S: s}).Import(ctx, "1", ingest.Source{Path: file}, nil); err != nil {
+		t.Fatal(err)
+	}
+	defer sqlshared.SetNarrowLimit(2)()
+	rec.record("probe")
+	if _, _, err := s.Search().FindIDsPage(ctx, "1", domain.SearchFilters{MoveErrorFilter: "E>50"}, storage.PageOpts{Limit: 2}); err != nil {
+		t.Fatal(err)
+	}
+	rec.record("")
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = conn.Close(ctx) })
+	probes := 0
+	for _, st := range rec.stmts {
+		if !strings.Contains(st.sql, "UNION ALL") {
+			continue
+		}
+		probes++
+		var out []byte
+		if err := conn.QueryRow(ctx, "EXPLAIN (FORMAT JSON) "+st.sql, st.args...).Scan(&out); err != nil {
+			t.Fatalf("explain: %v\n  in: %s", err, oneLine(st.sql))
+		}
+		var plans []struct {
+			Plan planNode `json:"Plan"`
+		}
+		if err := json.Unmarshal(out, &plans); err != nil {
+			t.Fatal(err)
+		}
+		var walk func(planNode)
+		walk = func(n planNode) {
+			for _, c := range n.Plans {
+				if strings.HasSuffix(n.NodeType, "Append") && c.NodeType != "Limit" {
+					t.Errorf("a branch of the probe is a %s, not a Limit\n  in: %s", c.NodeType, oneLine(st.sql))
+				}
+				walk(c)
+			}
+		}
+		walk(plans[0].Plan)
+	}
+	if probes == 0 {
+		t.Fatal("no probe sent: the move-error filter no longer narrows")
 	}
 }

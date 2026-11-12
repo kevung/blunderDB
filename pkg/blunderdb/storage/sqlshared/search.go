@@ -377,9 +377,13 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	branch := func(decision, col string) string {
 		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id` + andSameTenant(s.DB, "q", "an") + ` WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
 	}
-	sub := branch("q.decision_type = 1", "cube_error") + " UNION ALL " +
-		branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + " UNION ALL " +
-		"SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
+	// The probe keeps narrowLimit+1 ids of the union; each branch stops there by itself.
+	// A LIMIT above the union alone leaves the planner free to hash-join a branch,
+	// reading every candidate of the tenant before keeping a few thousand of them.
+	stop := " LIMIT " + strconv.FormatInt(max(narrowLimit.Load(), 0)+1, 10) + ") AS "
+	sub := "SELECT * FROM (" + branch("q.decision_type = 1", "cube_error") + stop + "cube UNION ALL " +
+		"SELECT * FROM (" + branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + stop + "checker UNION ALL " +
+		"SELECT * FROM (SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true) + stop + "multi"
 	subArgs := append(append(append(append(append([]any{}, tenantArgs...), bound...), tenantArgs...), bound...), ownArgs...)
 	err := s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
 	return true, err
