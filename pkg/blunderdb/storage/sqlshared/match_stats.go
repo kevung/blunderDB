@@ -173,6 +173,11 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	analysed := ` WHERE ` + pTenant + ` AND g.match_id IN (` + ph + `) AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL`
 	where := analysed + ` AND ` + countedExpr(d)
 	whereArgs := append(append([]any{}, pArgs...), ids...)
+	// Every read names its tenant, not only through row-level security: a
+	// statement whose tenant is a parameter keeps the generic plan of
+	// withJoinOrderPlan off the tenant's own statistics.
+	gTenant, gArgs := d.TenantFilter("g", scope)
+	gArgs = append(append([]any{}, gArgs...), ids...)
 
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, p.decision_type, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
@@ -226,14 +231,18 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	}
 
 	// Checker decisions with a position, analysed or not, but an unscored
-	// play: the players table's Snowie denominator.
+	// play: the players table's Snowie denominator. UnscoredPlaySQL as a join
+	// (one analysis per position at most): its EXISTS may be planned as one
+	// read of all the tenant's analyses.
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, COUNT(*)
 		 FROM game g JOIN move mv ON mv.game_id = g.id`+andSameTenant(d, "mv", "g")+`
 		 JOIN position p ON p.id = mv.position_id`+andSameTenant(d, "p", "mv")+`
-		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0 AND NOT `+UnscoredPlaySQL(d, "p", "mv")+`
+		 LEFT JOIN analysis ua ON ua.position_id = p.id`+andSameTenant(d, "ua", "p")+`
+		 WHERE `+gTenant+` AND g.match_id IN (`+ph+`) AND p.decision_type = 0
+		   AND NOT (mv.decision_error_mp IS NULL AND ua.position_id IS NOT NULL)
 		 GROUP BY g.match_id, `+seatExpr,
-		ids, func(r Rows) error {
+		gArgs, func(r Rows) error {
 			var id int64
 			var seat, n int
 			if err := r.Scan(&id, &seat, &n); err != nil {
@@ -281,9 +290,9 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, `+d.Bigint(`SUM(mv.luck_mp)`)+`, COUNT(mv.luck_mp)
 		 FROM game g JOIN move mv ON mv.game_id = g.id
-		 WHERE g.match_id IN (`+ph+`) AND mv.luck_mp IS NOT NULL
+		 WHERE `+gTenant+` AND g.match_id IN (`+ph+`) AND mv.luck_mp IS NOT NULL
 		 GROUP BY g.match_id, `+seatExpr,
-		ids, func(r Rows) error {
+		gArgs, func(r Rows) error {
 			var id, sum int64
 			var seat, n int
 			if err := r.Scan(&id, &seat, &sum, &n); err != nil {

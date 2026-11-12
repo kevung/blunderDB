@@ -240,15 +240,22 @@ func (a shared) FillKey(scope string) (any, bool) {
 }
 
 // joinOrderSettings are what sqlshared.withJoinOrderPlan needs of the planner.
-var joinOrderSettings = []string{"join_collapse_limit", "from_collapse_limit", "enable_hashjoin", "enable_mergejoin", "enable_seqscan", "enable_bitmapscan"}
+var joinOrderSettings = []string{"join_collapse_limit", "from_collapse_limit", "enable_hashjoin", "enable_mergejoin", "enable_seqscan", "enable_bitmapscan", "plan_cache_mode"}
 
 // PinJoinOrder — see sqlshared.withJoinOrderPlan. Local to the transaction, and
 // taken back at the end of the work it was asked for: the transaction may go on
 // to other writes.
+//
+// The plan is generic, planned without the values: under row-level security the
+// planner estimates a tenant it has no statistics for (a first import into a
+// large library) at one row per table, and an index that names the tenant and
+// nothing else then costs as little as the key — one walk of the tenant's rows
+// per row looked up. Only these statements: elsewhere a custom plan is what
+// keeps a probe of a tenant cheap.
 func (a shared) PinJoinOrder(ctx context.Context) (func() error, error) {
 	if _, err := a.db.Exec(ctx, `SELECT set_config('join_collapse_limit', '1', true), set_config('from_collapse_limit', '1', true),
 		set_config('enable_hashjoin', 'off', true), set_config('enable_mergejoin', 'off', true), set_config('enable_seqscan', 'off', true),
-		set_config('enable_bitmapscan', 'off', true)`); err != nil {
+		set_config('enable_bitmapscan', 'off', true), set_config('plan_cache_mode', 'force_generic_plan', true)`); err != nil {
 		return nil, fmt.Errorf("postgres: pin join order: %w", err)
 	}
 	return func() error {
