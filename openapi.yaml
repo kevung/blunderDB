@@ -3012,6 +3012,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_DirectionView"
                 nullable: true
+  /v1/directions.simulate:
+    post:
+      operationId: directions.simulate
+      tags: [directions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/service_SimulateRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_Simulation"
+                nullable: true
   /v1/directions.slots:
     post:
       operationId: directions.slots
@@ -10289,6 +10307,12 @@ components:
     service_SeasonView:
       type: object
       description: "Opaque: see the Go type service.SeasonView (defined outside internal/server, not expanded here)."
+    service_SimulateRequest:
+      type: object
+      description: "Opaque: see the Go type service.SimulateRequest (defined outside internal/server, not expanded here)."
+    service_Simulation:
+      type: object
+      description: "Opaque: see the Go type service.Simulation (defined outside internal/server, not expanded here)."
     service_SlotRow:
       type: object
       description: "Opaque: see the Go type service.SlotRow (defined outside internal/server, not expanded here)."

@@ -778,6 +778,25 @@ commencé, configuration rejetée par le moteur) rend ``400`` avec le motif. Une
 panne du démon ou de sa base rend ``500``, sans détail : le motif reste dans le
 journal du démon.
 
+**Simuler un format.** ``directions.simulate`` joue un format sans tournoi ni
+base : ``config`` (la configuration du moteur), ``players`` (un effectif, de 2
+à 512, ou une liste d'inscrits avec ``id`` et ``rating``), ``tables``,
+``start``, ``runs`` (30 par défaut, 200 au plus) et ``seed``. La réponse rend
+``runs``, ``matches``, ``minutesP10``, ``minutesP50``, ``minutesP90``,
+``estimatedEnd``, ``peakTables``, ``matchesPerPlayerMin``,
+``matchesPerPlayerMax`` et ``warnings``, une liste de codes. Une même requête
+rend la même réponse. La simulation lance chaque match dès qu'il est apparié :
+``peakTables`` est le nombre de tables qu'il faut pour que personne n'attende,
+et le code ``tables_exceeded`` signale une salle plus petite, dont les durées
+rendues sont alors un minimum. Le calcul est borné à deux secondes : au-delà,
+la réponse porte le code ``time_budget`` et s'appuie sur les ``runs`` joués ;
+une requête hors bornes rend ``400``, et ``503`` quand deux simulations
+tournent déjà. Sans version ni ``If-Match``.
+
+Tant que le tournoi n'est pas fini, ``directions.clock`` rend, à côté de
+``estimatedEnd``, ``estimatedEndEarly`` et ``estimatedEndLate`` : les 10\ :sup:`e`
+et 90\ :sup:`e` centiles de la même prévision.
+
 **Version obligatoire.** Toute lecture d'un tournoi ou d'un événement rend un
 en-tête ``Direction-Version``, et tout geste le renvoie dans ``If-Match`` :
 

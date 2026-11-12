@@ -1,6 +1,7 @@
 package direction
 
 import (
+	"slices"
 	"time"
 
 	tournoi "github.com/kevung/nicomaque"
@@ -47,12 +48,35 @@ const forecastRuns = 15
 // EstimatedEnd is the median forecast end of the tournament, pushed past the declared breaks;
 // ok is false when the engine cannot forecast (a finished tournament, a stuck simulation).
 func (d *Direction) EstimatedEnd(now time.Time) (time.Time, bool) {
+	f, ok := d.EndForecast(now)
+	return f.End, ok
+}
+
+// EndForecast is the forecast end of a tournament with its uncertainty: the median of the
+// simulated ends, and the 10th and 90th centiles around it (nearest rank).
+type EndForecast struct {
+	Early, End, Late time.Time
+}
+
+// EndForecast is EstimatedEnd with the early and late ends, each pushed past the declared
+// breaks.
+func (d *Direction) EndForecast(now time.Time) (EndForecast, bool) {
 	if d.st == nil || d.st.Finished {
-		return time.Time{}, false
+		return EndForecast{}, false
 	}
 	runs, err := sim.Forecast(d.journal, now, forecastRuns, 0, d.rec.TournamentID)
 	if err != nil || len(runs) == 0 {
-		return time.Time{}, false
+		return EndForecast{}, false
 	}
-	return rules.EstimatedEnd(now, sim.Durations(runs), d.st.Config.BreakIntervals())
+	breaks := d.st.Config.BreakIntervals()
+	remaining := sim.Durations(runs)
+	end, ok := rules.EstimatedEnd(now, remaining, breaks)
+	if !ok {
+		return EndForecast{}, false
+	}
+	slices.Sort(remaining)
+	at := func(p float64) time.Time {
+		return rules.AfterBreaks(now, remaining[int(p*float64(len(remaining)-1)+0.5)], breaks)
+	}
+	return EndForecast{Early: at(0.10), End: end, Late: at(0.90)}, true
 }

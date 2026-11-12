@@ -13,6 +13,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	tournoi "github.com/kevung/nicomaque"
 
@@ -495,5 +496,69 @@ func TestTrashRestoreRealignsTheRoom(t *testing.T) {
 	}
 	if v.RencontreID == 0 || v.Config.Tables.Count != 4 {
 		t.Errorf("restored: rencontre %d, %d tables; want the room's 4", v.RencontreID, v.Config.Tables.Count)
+	}
+}
+
+// TestDirectionSimulate: a format is simulated without any Tournament, only under
+// --direction; a request past the bounds is the caller's error.
+func TestDirectionSimulate(t *testing.T) {
+	const body = `{"config":{"name":"Open","tables":{"count":4},"phases":[{"kind":"swiss_lives","length":5,"lives":2,"mode":"continuous"}]},
+		"players":16,"tables":6,"start":"2026-10-01T09:00:00Z","runs":10,"seed":3}`
+	plain, _ := newTestServerAndHandler(t)
+	if r := send(t, plain, "1", "/v1/directions.simulate", body, "", ""); r.status != http.StatusNotFound {
+		t.Errorf("directions.simulate without --direction: status %d; want 404", r.status)
+	}
+
+	ts, _ := gestureServer(t)
+	r := send(t, ts, "1", "/v1/directions.simulate", body, "", "")
+	var got service.Simulation
+	if err := json.Unmarshal(r.body, &got); err != nil || r.status != http.StatusOK {
+		t.Fatalf("directions.simulate: status %d, body %.300s (%v)", r.status, r.body, err)
+	}
+	if got.Runs != 10 || got.Matches == 0 || got.MinutesP50 <= 0 || got.EstimatedEnd == "" || got.PeakTables != 8 || len(got.Warnings) != 1 || got.Warnings[0] != service.SimulateWarnTablesExceeded {
+		t.Errorf("directions.simulate = %+v; want ten runs summarised, and the warning that six tables are fewer than the eight wanted", got)
+	}
+	if again := send(t, ts, "1", "/v1/directions.simulate", body, "", ""); string(again.body) != string(r.body) {
+		t.Errorf("the same request answered\n%s\nthen\n%s", r.body, again.body)
+	}
+	for _, bad := range []string{strings.Replace(body, `"runs":10`, `"runs":100000`, 1), strings.Replace(body, `"players":16`, `"players":100000`, 1), `{}`} {
+		if r := send(t, ts, "1", "/v1/directions.simulate", bad, "", ""); r.status != http.StatusBadRequest {
+			t.Errorf("directions.simulate %.60s…: status %d, body %.200s; want 400", bad, r.status, r.body)
+		}
+	}
+
+	// Every slot taken: one more simulation is turned away rather than queued.
+	for range cap(simulateSlots) {
+		simulateSlots <- struct{}{}
+	}
+	r = send(t, ts, "1", "/v1/directions.simulate", body, "", "")
+	for range cap(simulateSlots) {
+		<-simulateSlots
+	}
+	if r.status != http.StatusServiceUnavailable {
+		t.Errorf("directions.simulate with every slot taken: status %d; want 503", r.status)
+	}
+}
+
+// TestDirectionClock_EndRange: the estimated end comes with its early and late bounds, in
+// order.
+func TestDirectionClock_EndRange(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	_, b := readAs(t, ts, "1", "/v1/directions.clock", f.body(""), "")
+	var c service.ClockView
+	if err := json.Unmarshal(b, &c); err != nil {
+		t.Fatalf("directions.clock = %s (%v)", b, err)
+	}
+	parse := func(s string) time.Time {
+		at, err := time.Parse(time.RFC3339, s)
+		if err != nil {
+			t.Fatalf("clock %s: %q is not a time", b, s)
+		}
+		return at
+	}
+	early, end, late := parse(c.EstimatedEndEarly), parse(c.EstimatedEnd), parse(c.EstimatedEndLate)
+	if early.After(end) || end.After(late) || !early.Before(late) {
+		t.Errorf("clock ends = %s, %s, %s; want early ≤ estimated ≤ late, and a range", c.EstimatedEndEarly, c.EstimatedEnd, c.EstimatedEndLate)
 	}
 }
