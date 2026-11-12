@@ -793,7 +793,7 @@ journal du démon.
 
 **Simuler un format.** ``directions.simulate`` joue un format sans tournoi ni
 base : ``config`` (la configuration du moteur), ``players`` (un effectif, de 2
-à 512, ou une liste d'inscrits avec ``id`` et ``rating``), ``tables``,
+à 1024, ou une liste d'inscrits avec ``id`` et ``rating``), ``tables``,
 ``start``, ``runs`` (30 par défaut, 200 au plus) et ``seed``. La réponse rend
 ``runs``, ``matches``, ``minutesP10``, ``minutesP50``, ``minutesP90``,
 ``estimatedEnd``, ``peakTables``, ``matchesPerPlayerMin``,
@@ -801,20 +801,36 @@ base : ``config`` (la configuration du moteur), ``players`` (un effectif, de 2
 rend la même réponse. La simulation lance chaque match dès qu'il est apparié :
 ``peakTables`` est le nombre de tables qu'il faut pour que personne n'attende,
 et le code ``tables_exceeded`` signale une salle plus petite, dont les durées
-rendues sont alors un minimum. Le calcul est borné à deux secondes : au-delà,
-la réponse porte le code ``time_budget`` et s'appuie sur les ``runs`` joués ;
-une requête hors bornes rend ``400``, et ``503`` quand deux simulations
-tournent déjà. Sans version ni ``If-Match``.
+rendues sont alors un minimum. Sans version ni ``If-Match``.
 
-Les bornes d'une simulation sont des refus, prononcés avant tout calcul : 512
-joueurs, 200 ``runs``, 16 phases, des matchs en 99 points, 16 vies, 4096 tables
-et un corps de 1 Mio (``413`` au-delà). La borne de 512 joueurs est nominale :
-avec les 30 ``runs`` par défaut, un suisse de 128 joueurs ou un tableau de 256
-sortent déjà sous ``time_budget``, sur une partie des ``runs`` seulement ;
-l'hôte baisse ``runs`` quand l'effectif monte. Les deux places de calcul sont
-celles du processus, tous tenants confondus : un tenant qui en tient une n'en
-prend une seconde que si aucun autre n'attend, et celui qui n'en tient aucune
-attend la suivante quelques secondes avant de recevoir ``503``.
+Le calcul est borné à deux secondes. Au-delà, si au moins un ``run`` est allé
+au bout, la réponse est partielle : elle porte le code ``time_budget`` et
+s'appuie sur les ``runs`` joués. Si aucun n'a abouti, la réponse est ``503``,
+code ``unavailable``, ``details.reason`` ``too_heavy``, sans ``Retry-After`` :
+la requête est bien formée mais trop lourde, réduisez l'effectif ou le format
+(baisser ``runs`` sert une réponse partielle, pas celle-ci). Une requête mal
+formée ou hors bornes rend ``400``, quelle que soit la charge.
+
+Les bornes d'une simulation sont des refus, prononcés avant tout calcul : 1024
+joueurs, 200 ``runs``, 16 phases, des matchs en 99 points, 100 vies, 4096
+tables et un corps de 1 Mio (``413`` au-delà). ``directions.create`` ne borne
+ni l'effectif ni les vies : ces deux bornes sont très au-delà d'un tournoi
+réel, et c'est le budget de temps qui protège le processeur en dessous. Elles
+sont nominales : avec les 30 ``runs`` par défaut, un suisse de 128 joueurs ou
+un tableau de 256 sortent déjà sous ``time_budget``, sur une partie des
+``runs`` seulement ; l'hôte baisse ``runs`` quand l'effectif monte. Sont aussi
+refusés (``400``) un format qui ne joue aucun match avec cet effectif, un
+tournoi simulé de plus d'un an et un ``start`` dont la fin sort du calendrier.
+
+Les deux places de calcul sont celles du processus, tous tenants confondus : un
+tenant qui en tient une n'en prend une seconde que si aucun autre n'attend, et
+celui qui n'en tient aucune attend la suivante, trois secondes au plus. Sans
+place, la réponse est ``503``, code ``unavailable``, ``details.reason``
+``simulation_busy``, avec ``Retry-After`` : la même requête se rejoue telle
+quelle. Cette attente s'ajoute au budget de calcul : de bout en bout une
+simulation peut prendre jusqu'à cinq secondes, et l'hôte règle son délai
+d'attente au-dessus. Un appelant qui abandonne pendant l'attente n'est pas une
+panne : rien n'est écrit, et le journal porte ``499``.
 
 Tant que le tournoi n'est pas fini, ``directions.clock`` rend, à côté de
 ``estimatedEnd``, ``estimatedEndEarly`` et ``estimatedEndLate`` : les 10\ :sup:`e`

@@ -157,13 +157,13 @@ func TestDirectionSimulate(t *testing.T) {
 	}
 	for bad, want := range map[string]string{
 		strings.Replace(body, `"runs":10`, `"runs":100000`, 1):                    "1 to 200 runs, not 100000",
-		strings.Replace(body, `"players":16`, `"players":100000`, 1):              "2 to 512 players, not 100000",
-		strings.Replace(body, `"players":16`, `"players":3000000000`, 1):          "2 to 512 players, not 3000000000",
-		strings.Replace(body, `"players":16`, `"players":1000000000000`, 1):       "2 to 512 players, not 1000000000000",
-		strings.Replace(body, `"players":16`, `"players":9000000000000000000`, 1): "2 to 512 players, not 9000000000000000000",
-		strings.Replace(body, `"players":16`, `"players":-3`, 1):                  "2 to 512 players, not -3",
+		strings.Replace(body, `"players":16`, `"players":100000`, 1):              "2 to 1024 players, not 100000",
+		strings.Replace(body, `"players":16`, `"players":3000000000`, 1):          "2 to 1024 players, not 3000000000",
+		strings.Replace(body, `"players":16`, `"players":1000000000000`, 1):       "2 to 1024 players, not 1000000000000",
+		strings.Replace(body, `"players":16`, `"players":9000000000000000000`, 1): "2 to 1024 players, not 9000000000000000000",
+		strings.Replace(body, `"players":16`, `"players":-3`, 1):                  "2 to 1024 players, not -3",
 		strings.Replace(body, `"length":5`, `"length":1000000000`, 1):             "length is 0 to 99, not 1000000000",
-		strings.Replace(body, `"lives":2`, `"lives":1000000000`, 1):               "lives is 0 to 16, not 1000000000",
+		strings.Replace(body, `"lives":2`, `"lives":1000000000`, 1):               "lives is 0 to 100, not 1000000000",
 		`{}`: "empty configuration",
 	} {
 		if r := send(t, ts, "1", "/v1/directions.simulate", bad, "", ""); r.status != http.StatusBadRequest || !strings.Contains(string(r.body), want) {
@@ -192,12 +192,20 @@ func TestDirectionSimulate_ThirdAtOnceIsBusy(t *testing.T) {
 	for total, _ := simulations.running(); total < 2; total, _ = simulations.running() {
 		runtime.Gosched()
 	}
-	if r := send(t, ts, "1", "/v1/directions.simulate", long, "", ""); r.status != http.StatusServiceUnavailable {
-		t.Errorf("a third simulation at once: status %d, body %.200s; want 503", r.status, r.body)
+	// The third is told the simulations are busy — not that a write holds the database —
+	// and when to come back.
+	r := send(t, ts, "1", "/v1/directions.simulate", long, "", "")
+	if r.status != http.StatusServiceUnavailable || !strings.Contains(string(r.body), `"reason":"simulation_busy"`) ||
+		!strings.Contains(string(r.body), "simulation busy") || strings.Contains(string(r.body), "database") || r.header.Get("Retry-After") == "" {
+		t.Errorf("a third simulation at once: status %d, Retry-After %q, body %.200s; want 503 simulation_busy with a Retry-After", r.status, r.header.Get("Retry-After"), r.body)
 	}
 	for range 2 {
-		// Cut by the budget: a partial answer, or the refusal of a budget no run fitted in.
-		if r := <-done; r.status != http.StatusOK && r.status != http.StatusBadRequest || !strings.Contains(string(r.body), "time") {
+		// Cut by the budget: a partial answer, or too heavy for a budget no run fitted in —
+		// never the 400 of a malformed request.
+		r := <-done
+		partial := r.status == http.StatusOK && strings.Contains(string(r.body), service.SimulateWarnTimeBudget)
+		heavy := r.status == http.StatusServiceUnavailable && strings.Contains(string(r.body), `"reason":"too_heavy"`) && r.header.Get("Retry-After") == ""
+		if !partial && !heavy {
 			t.Errorf("a simulation holding its slot: status %d, body %.200s; want it computed until its time budget", r.status, r.body)
 		}
 	}
@@ -205,6 +213,67 @@ func TestDirectionSimulate_ThirdAtOnceIsBusy(t *testing.T) {
 		t.Errorf("after the three: %d slots held, %d waiting; want none", total, waiting)
 	}
 }
+
+func isSimulationBusy(err error) bool {
+	var u *simulationUnavailable
+	return errors.As(err, &u) && u.reason == "simulation_busy" && !errors.Is(err, storage.ErrBusy)
+}
+
+// TestDirectionSimulate_TooHeavyIsNotInvalid: a request within the bounds that no run of fits
+// in the budget is 503 too_heavy, saying what to reduce — the caller tells it from a
+// malformed request, which stays 400.
+func TestDirectionSimulate_TooHeavyIsNotInvalid(t *testing.T) {
+	was := service.SimulateBudget
+	t.Cleanup(func() { service.SimulateBudget = was })
+	service.SimulateBudget = time.Nanosecond
+	ts, _ := gestureServer(t)
+	const body = `{"config":{"name":"Open","phases":[{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous"}]},"players":256,"runs":5,"seed":1}`
+	r := send(t, ts, "1", "/v1/directions.simulate", body, "", "")
+	if r.status != http.StatusServiceUnavailable || !strings.Contains(string(r.body), `"code":"unavailable"`) ||
+		!strings.Contains(string(r.body), `"reason":"too_heavy"`) || !strings.Contains(string(r.body), "fewer players") {
+		t.Errorf("a simulation with no time: status %d, body %.300s; want 503 too_heavy and what to reduce", r.status, r.body)
+	}
+}
+
+// TestDirectionSimulate_ClientGoneWhileWaiting: a caller that leaves while it waits for a slot
+// is no failure of the daemon: 499, no envelope, nothing recorded as an internal error.
+func TestDirectionSimulate_ClientGoneWhileWaiting(t *testing.T) {
+	a1, _ := simulations.acquire(context.Background(), "a")
+	a2, _ := simulations.acquire(context.Background(), "a")
+	defer a1()
+	defer a2()
+	ctx, cancel := context.WithCancel(context.Background())
+	got := make(chan error, 1)
+	go func() {
+		_, err := simulate(ctx, "b", service.SimulateRequest{})
+		got <- err
+	}()
+	for _, waiting := simulations.running(); waiting < 1; _, waiting = simulations.running() {
+		runtime.Gosched()
+	}
+	cancel()
+	err := <-got
+	if !errors.As(err, new(clientGone)) || !errors.Is(err, context.Canceled) {
+		t.Fatalf("a caller gone while waiting: %v; want it marked as gone", err)
+	}
+	rec := &erroredRecorder{ResponseRecorder: httptest.NewRecorder()}
+	writeStorageError(rec, err)
+	if rec.Code != statusClientClosedRequest || rec.Body.Len() != 0 || rec.err != nil {
+		t.Errorf("answered %d, body %q, recorded %v; want 499, nothing written, nothing recorded", rec.Code, rec.Body, rec.err)
+	}
+	if _, waiting := simulations.running(); waiting != 0 {
+		t.Errorf("%d still waiting after the caller left", waiting)
+	}
+}
+
+// erroredRecorder is a response recorder the way the logging middleware wraps one: it
+// keeps the error a handler records as an internal failure.
+type erroredRecorder struct {
+	*httptest.ResponseRecorder
+	err error
+}
+
+func (r *erroredRecorder) SetErr(err error) { r.err = err }
 
 // TestSimulateGate_OneTenantCannotHoldEverySlot: the slots are the process's, so a tenant
 // takes a second one only while no other tenant waits, and the tenant that waited is served
@@ -217,7 +286,7 @@ func TestSimulateGate_OneTenantCannotHoldEverySlot(t *testing.T) {
 	if err1 != nil || err2 != nil {
 		t.Fatalf("alone, a tenant takes both slots: %v, %v", err1, err2)
 	}
-	if _, err := g.acquire(ctx, "a"); !errors.Is(err, storage.ErrBusy) {
+	if _, err := g.acquire(ctx, "a"); !isSimulationBusy(err) {
 		t.Errorf("a third slot for the same tenant: %v; want busy at once", err)
 	}
 	got := make(chan error, 1)
@@ -230,7 +299,7 @@ func TestSimulateGate_OneTenantCannotHoldEverySlot(t *testing.T) {
 	for _, waiting := g.running(); waiting < 1; _, waiting = g.running() {
 		runtime.Gosched()
 	}
-	if _, err := g.acquire(ctx, "c"); !errors.Is(err, storage.ErrBusy) {
+	if _, err := g.acquire(ctx, "c"); !isSimulationBusy(err) {
 		t.Errorf("past the queue's length: %v; want busy at once", err)
 	}
 	a1()
@@ -259,7 +328,7 @@ func TestSimulateGate_HolderYieldsToWaiter(t *testing.T) {
 		t.Fatal(err)
 	}
 	g.waiting = 1
-	if _, err := g.acquire(ctx, "a"); !errors.Is(err, storage.ErrBusy) {
+	if _, err := g.acquire(ctx, "a"); !isSimulationBusy(err) {
 		t.Errorf("a holder while another tenant waits: %v; want busy", err)
 	}
 	if _, err := g.acquire(ctx, "b"); err != nil {

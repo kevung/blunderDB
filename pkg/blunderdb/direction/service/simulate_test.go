@@ -92,10 +92,10 @@ func TestSimulate_Bounds(t *testing.T) {
 	}{
 		"too many runs":      {func(r *service.SimulateRequest) { r.Runs = service.SimulateMaxRuns + 1 }, "1 to 200 runs, not 201"},
 		"negative runs":      {func(r *service.SimulateRequest) { r.Runs = -1 }, "1 to 200 runs, not -1"},
-		"too many players":   {players("513"), "2 to 512 players, not 513"},
-		"one player":         {players("1"), "2 to 512 players, not 1"},
-		"negative players":   {players("-3"), "2 to 512 players, not -3"},
-		"a list too long":    {players("[" + strings.Repeat(`{"id":"a"},`, service.SimulateMaxPlayers) + `{"id":"b"}]`), "2 to 512 players, not 513"},
+		"too many players":   {players("1025"), "2 to 1024 players, not 1025"},
+		"one player":         {players("1"), "2 to 1024 players, not 1"},
+		"negative players":   {players("-3"), "2 to 1024 players, not -3"},
+		"a list too long":    {players("[" + strings.Repeat(`{"id":"a"},`, service.SimulateMaxPlayers) + `{"id":"b"}]`), "2 to 1024 players, not 1025"},
 		"a list too heavy":   {players(`[{"id":"a"},{"id":"` + strings.Repeat("b", 1<<20) + `"}]`), "players is larger than"},
 		"no players":         {func(r *service.SimulateRequest) { r.Players = nil }, "needs players"},
 		"players a string":   {players(`"many"`), "neither a number nor a list"},
@@ -109,7 +109,7 @@ func TestSimulate_Bounds(t *testing.T) {
 		"a length too long":  {config(`{"kind":"bracket","length":1000000000}`), "length is 0 to 99, not 1000000000"},
 		"a final too long":   {config(`{"kind":"bracket","length":5,"final_length":100}`), "final_length is 0 to 99, not 100"},
 		"a round too long":   {config(`{"kind":"bracket","length":5,"lengths":[7,1000]}`), "lengths is 0 to 99, not 1000"},
-		"too many lives":     {config(`{"kind":"swiss_lives","length":5,"lives":1000000000}`), "lives is 0 to 16, not 1000000000"},
+		"too many lives":     {config(`{"kind":"swiss_lives","length":5,"lives":1000000000}`), "lives is 0 to 100, not 1000000000"},
 		"too many phases":    {config(strings.TrimSuffix(strings.Repeat(`{"kind":"bracket","length":5},`, 17), ",")), "at most 16 phases, not 17"},
 		"a config too heavy": {func(r *service.SimulateRequest) {
 			r.Config = json.RawMessage(`{"name":"` + strings.Repeat("x", 1<<20) + `","phases":[{"kind":"bracket","length":5}]}`)
@@ -135,7 +135,7 @@ func TestSimulate_HugeFieldAllocatesNothing(t *testing.T) {
 		runtime.ReadMemStats(&before)
 		_, err := service.Simulate(context.Background(), req)
 		runtime.ReadMemStats(&after)
-		if !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "2 to 512 players, not "+n) {
+		if !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "2 to 1024 players, not "+n) {
 			t.Errorf("%s players: %v; want the refusal of the bound", n, err)
 		}
 		if grew := after.TotalAlloc - before.TotalAlloc; grew > 1<<20 {
@@ -144,8 +144,9 @@ func TestSimulate_HugeFieldAllocatesNothing(t *testing.T) {
 	}
 }
 
-// TestSimulate_TimeBudget: past its computing time a simulation stops; with no run ended it
-// is a refusal, and a cancelled request stops as well.
+// TestSimulate_TimeBudget: past its computing time a simulation stops. With no run ended the
+// answer is ErrSimulationTooHeavy, which is no refusal of the request: the same request is
+// answered with more time. A caller that left gets its own cancellation back.
 func TestSimulate_TimeBudget(t *testing.T) {
 	was := service.SimulateBudget
 	t.Cleanup(func() { service.SimulateBudget = was })
@@ -154,10 +155,56 @@ func TestSimulate_TimeBudget(t *testing.T) {
 	req.Runs = service.SimulateMaxRuns
 	began := time.Now()
 	got, err := service.Simulate(context.Background(), req)
-	if err == nil || time.Since(began) > 5*time.Second {
-		t.Errorf("with no time: %+v (%v) after %v; want a prompt refusal", got, err, time.Since(began))
+	if !errors.Is(err, service.ErrSimulationTooHeavy) || errors.Is(err, direction.ErrRefused) || time.Since(began) > 5*time.Second {
+		t.Errorf("with no time: %+v (%v) after %v; want too heavy, promptly, and no refusal", got, err, time.Since(began))
 	}
-	if !errors.Is(err, direction.ErrRefused) {
-		t.Errorf("out of time is %v; want a refusal, the caller's to act on", err)
+	if err == nil || !strings.Contains(err.Error(), "fewer players") {
+		t.Errorf("too heavy says %q; want what to reduce", err)
+	}
+	service.SimulateBudget = was
+	req = simulateReq("16")
+	if _, err := service.Simulate(context.Background(), req); err != nil {
+		t.Errorf("the same kind of request with its time: %v", err)
+	}
+	gone, cancel := context.WithCancel(context.Background())
+	cancel()
+	if _, err := service.Simulate(gone, simulateReq("256")); !errors.Is(err, context.Canceled) {
+		t.Errorf("a caller that left: %v; want its cancellation, not a verdict on the request", err)
+	}
+}
+
+// TestSimulate_AcceptsWhatCreationAccepts: directions.create bounds neither the lives nor the
+// field; a Swiss of 20 lives and a field of 600 are simulated.
+func TestSimulate_AcceptsWhatCreationAccepts(t *testing.T) {
+	req := simulateReq("8")
+	req.Config = json.RawMessage(strings.Replace(simulatedSwiss, `"lives":2`, `"lives":20`, 1))
+	req.Runs = 1
+	if got, err := service.Simulate(context.Background(), req); err != nil || got.Runs != 1 {
+		t.Errorf("a Swiss of 20 lives: %+v (%v); want one run", got, err)
+	}
+	req = service.SimulateRequest{Config: json.RawMessage(`{"name":"x","phases":[{"kind":"bracket","length":5}]}`), Players: json.RawMessage("600"), Runs: 1}
+	if got, err := service.Simulate(context.Background(), req); err != nil || got.Matches != 599 {
+		t.Errorf("a bracket of 600: %+v (%v); want its 599 matches", got, err)
+	}
+}
+
+// TestSimulate_NothingToSay: a format that plays no match with this field, and a tournament
+// whose end has no date, are refused rather than answered with figures that say nothing.
+func TestSimulate_NothingToSay(t *testing.T) {
+	req := simulateReq("2")
+	req.Config = json.RawMessage(`{"name":"x","phases":[{"kind":"gsl","length":7,"target":512}]}`)
+	if got, err := service.Simulate(context.Background(), req); !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "plays no match with 2 players") {
+		t.Errorf("two players in a GSL aiming at 512: %+v (%v); want the refusal of a format that plays no match", got, err)
+	}
+	req = simulateReq("16")
+	req.Start = "9999-12-31T23:30:00Z"
+	if got, err := service.Simulate(context.Background(), req); !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "leaves no date") {
+		t.Errorf("a start at the end of the calendar: %+v (%v); want a refusal, not a date RFC 3339 cannot write", got, err)
+	}
+	req = simulateReq("8")
+	req.Config = json.RawMessage(`{"name":"x","min_per_point":60,"phases":[{"kind":"swiss_lives","length":99,"lives":100,"mode":"continuous"}]}`)
+	req.Runs = 1
+	if got, err := service.Simulate(context.Background(), req); !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "more than a year") {
+		t.Errorf("a tournament of years: %+v (%v); want a refusal", got, err)
 	}
 }

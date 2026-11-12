@@ -2,12 +2,11 @@ package server
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"sync"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // simulateMaxBodyBytes caps the body of directions.simulate well under the default cap: a
@@ -39,8 +38,53 @@ func newSimulateGate(slots, maxWait int) *simulateGate {
 
 var simulations = newSimulateGate(2, 8)
 
-// acquire takes a slot for tenant, or answers storage.ErrBusy. The release it returns is
-// called once.
+// simulationUnavailable is a 503 of directions.simulate that is not a lost write: reason
+// tells the host what to do — "simulation_busy", retry as is after retryAfter seconds;
+// "too_heavy", ask for less.
+type simulationUnavailable struct {
+	reason, message, retryAfter string
+}
+
+func (e *simulationUnavailable) Error() string { return e.message }
+
+func (e *simulationUnavailable) ErrorDetails() map[string]any {
+	return map[string]any{"reason": e.reason}
+}
+
+func simulationBusy(why string) error {
+	return &simulationUnavailable{reason: "simulation_busy", retryAfter: busyRetryAfter,
+		message: "simulation busy: " + why + "; retry shortly"}
+}
+
+// clientGone marks a request whose caller left before the answer: no failure of the
+// daemon, and nobody to read an envelope.
+type clientGone struct{ cause error }
+
+func (e clientGone) Error() string { return "the client closed the request: " + e.cause.Error() }
+func (e clientGone) Unwrap() error { return e.cause }
+
+// statusClientClosedRequest is the status a log shows for a request its caller abandoned.
+const statusClientClosedRequest = 499
+
+// simulate answers directions.simulate through the gate.
+func simulate(ctx context.Context, scope string, req service.SimulateRequest) (*service.Simulation, error) {
+	release, err := simulations.acquire(ctx, scope)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
+	sim, err := service.Simulate(ctx, req)
+	switch {
+	case errors.Is(err, service.ErrSimulationTooHeavy):
+		return nil, &simulationUnavailable{reason: "too_heavy", message: err.Error()}
+	case errors.Is(err, context.Canceled):
+		return nil, clientGone{err}
+	}
+	return sim, gestureError(err)
+}
+
+// acquire takes a slot for tenant, or answers a simulationUnavailable: busy. The wait is
+// not part of service.SimulateBudget. The release it returns is called once.
 func (g *simulateGate) acquire(ctx context.Context, tenant string) (func(), error) {
 	g.mu.Lock()
 	queued := false
@@ -60,11 +104,11 @@ func (g *simulateGate) acquire(ctx context.Context, tenant string) (func(), erro
 			return func() { g.release(tenant) }, nil
 		}
 		if g.held[tenant] > 0 {
-			return nil, fmt.Errorf("%w: this tenant already runs a simulation", storage.ErrBusy)
+			return nil, simulationBusy("this tenant already runs a simulation")
 		}
 		if !queued {
 			if g.waiting >= g.maxWait {
-				return nil, fmt.Errorf("%w: too many simulations are waiting", storage.ErrBusy)
+				return nil, simulationBusy("too many simulations are waiting")
 			}
 			queued = true
 			g.waiting++
@@ -76,10 +120,10 @@ func (g *simulateGate) acquire(ctx context.Context, tenant string) (func(), erro
 			g.mu.Lock()
 		case <-ctx.Done():
 			g.mu.Lock()
-			return nil, ctx.Err()
+			return nil, clientGone{ctx.Err()}
 		case <-deadline.C:
 			g.mu.Lock()
-			return nil, fmt.Errorf("%w: no simulation ended in time", storage.ErrBusy)
+			return nil, simulationBusy("no simulation ended in time")
 		}
 	}
 }

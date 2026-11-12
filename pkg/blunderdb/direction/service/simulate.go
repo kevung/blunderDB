@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"math/rand"
 	"slices"
 	"time"
@@ -22,14 +23,17 @@ import (
 // The bounds of one simulation. They are refusals, not clamps: a caller who asked for a
 // thousand runs must not read the answer of two hundred as theirs.
 const (
-	SimulateMaxPlayers  = 512
+	SimulateMaxPlayers  = 1024
 	SimulateMaxRuns     = 200
 	SimulateDefaultRuns = 30
 	SimulateMaxTables   = 4096
 	SimulateMaxPhases   = 16
 	// SimulateMaxLength bounds every match length of the format, in points.
 	SimulateMaxLength = 99
-	SimulateMaxLives  = 16
+	// directions.create bounds neither the field nor the lives, and the engine admits any:
+	// these two are well past a real tournament, and under them SimulateBudget is what
+	// protects the processor (a run is cut between two of its events).
+	SimulateMaxLives = 100
 	// The raw sizes of the two free-form members: nothing is decoded past them, so no slice
 	// is ever sized by what a request says.
 	simulateMaxConfigBytes  = 64 << 10
@@ -39,8 +43,19 @@ const (
 )
 
 // SimulateBudget is the computing time one simulation may take. Past it the runs already
-// played are answered, under the warning SimulateWarnTimeBudget.
+// played are answered, under the warning SimulateWarnTimeBudget; with none played the answer
+// is ErrSimulationTooHeavy.
 var SimulateBudget = 2 * time.Second
+
+// ErrSimulationTooHeavy: the request is well formed and within the bounds, but not one run
+// ended within SimulateBudget. It is no refusal of the request's shape: the same request may
+// be answered on a quieter machine, and a smaller field is answered here.
+var ErrSimulationTooHeavy = errors.New("direction: the simulation ran out of time before one run ended: ask for fewer players or a shorter format (fewer runs help an answer cut short by time_budget, not this one)")
+
+// simulateMaxMinutes bounds the length a simulated tournament may have and still be
+// answered: past a year the figure says a break or a length is mistyped, and the end would
+// leave the dates RFC 3339 writes.
+const simulateMaxMinutes = 366 * 24 * 60
 
 // The warnings of a simulation, as codes. The engine's own warning codes (tournoi.WarningCode)
 // join them when a simulated tournament ends with one.
@@ -139,6 +154,7 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		return nil, err
 	}
 
+	parent := ctx
 	ctx, cancel := context.WithTimeout(ctx, SimulateBudget)
 	defer cancel()
 	var (
@@ -189,8 +205,12 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		}
 	}
 	if len(minutes) == 0 {
-		if err := ctx.Err(); err != nil && firstErr == nil {
-			return nil, direction.Refusef("direction: the simulation ran out of time before its first run ended; ask for fewer players")
+		// The caller left: nobody reads a verdict on the request.
+		if err := parent.Err(); err != nil {
+			return nil, err
+		}
+		if ctx.Err() != nil && firstErr == nil {
+			return nil, ErrSimulationTooHeavy
 		}
 		if firstErr != nil {
 			return nil, direction.Refusef("direction: this format cannot be simulated: %v", firstErr)
@@ -202,8 +222,18 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 	out.Runs = len(minutes)
 	out.Matches = matches[len(matches)/2]
 	out.MinutesP10, out.MinutesP50, out.MinutesP90 = centile(minutes, 0.10), centile(minutes, 0.50), centile(minutes, 0.90)
+	if matches[len(matches)-1] == 0 {
+		return nil, direction.Refusef("direction: this format plays no match with %d players: there is nothing to simulate", len(players))
+	}
+	if out.MinutesP90 > simulateMaxMinutes {
+		return nil, direction.Refusef("direction: the simulated tournament lasts more than a year (%.0f minutes): check its breaks and its lengths", out.MinutesP90)
+	}
 	if !start.IsZero() {
-		out.EstimatedEnd = start.Add(time.Duration(out.MinutesP50 * float64(time.Minute))).Format(time.RFC3339)
+		end := start.Add(time.Duration(out.MinutesP50 * float64(time.Minute)))
+		if end.Year() > 9999 {
+			return nil, direction.Refusef("direction: start %q leaves no date for the end of the tournament", req.Start)
+		}
+		out.EstimatedEnd = end.Format(time.RFC3339)
 	}
 	if cfg.Tables.Count > 0 && out.PeakTables > cfg.Tables.Count {
 		warnings[SimulateWarnTablesExceeded] = true
