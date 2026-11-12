@@ -142,6 +142,9 @@ func (s *Server) directionReadRoutes() []route {
 		{http.MethodPost, "/v1/directions.freeParticipants", rpcRead(v, func(ctx context.Context, scope string, req directionReq) ([]tournoi.Player, error) {
 			return svc(scope).FreeParticipants(ctx, req.TournamentID)
 		})},
+		{http.MethodPost, "/v1/directions.freeSlots", rpcRead(v, func(ctx context.Context, scope string, req directionReq) ([]service.FreeSlot, error) {
+			return svc(scope).DirectionFreeSlots(ctx, req.TournamentID)
+		})},
 		{http.MethodPost, "/v1/directions.tableGrid", rpcRead(v, func(ctx context.Context, scope string, req directionReq) ([]service.TableCell, error) {
 			return svc(scope).TableGrid(ctx, req.TournamentID)
 		})},
