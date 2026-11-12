@@ -185,7 +185,8 @@ func unhurried(t *testing.T) {
 }
 
 // TestSimulate_AcceptsWhatCreationAccepts: directions.create bounds neither the lives nor the
-// field; a Swiss of 20 lives and the largest field are simulated.
+// field; a Swiss of 20 lives and a large bracket are simulated, and the largest field is
+// read, its bracket answered as too heavy rather than refused as malformed.
 func TestSimulate_AcceptsWhatCreationAccepts(t *testing.T) {
 	unhurried(t)
 	req := simulateReq("8")
@@ -194,9 +195,13 @@ func TestSimulate_AcceptsWhatCreationAccepts(t *testing.T) {
 	if got, err := service.Simulate(context.Background(), req); err != nil || got.Runs != 1 {
 		t.Errorf("a Swiss of 20 lives: %+v (%v); want one run", got, err)
 	}
-	req = service.SimulateRequest{Config: json.RawMessage(`{"name":"x","phases":[{"kind":"bracket","length":5}]}`), Players: json.RawMessage("512"), Runs: 1}
-	if got, err := service.Simulate(context.Background(), req); err != nil || got.Matches != 511 {
-		t.Errorf("a bracket of 512: %+v (%v); want its 511 matches", got, err)
+	req = service.SimulateRequest{Config: json.RawMessage(`{"name":"x","phases":[{"kind":"bracket","length":5}]}`), Players: json.RawMessage("256"), Runs: 1}
+	if got, err := service.Simulate(context.Background(), req); err != nil || got.Matches != 255 {
+		t.Errorf("a bracket of 256: %+v (%v); want its 255 matches", got, err)
+	}
+	req.Players = json.RawMessage("512")
+	if got, err := service.Simulate(context.Background(), req); !errors.Is(err, service.ErrSimulationTooHeavy) || errors.Is(err, direction.ErrRefused) {
+		t.Errorf("a bracket of 512: %+v (%v); want too heavy, not a refusal of its shape", got, err)
 	}
 }
 
@@ -215,7 +220,7 @@ func TestSimulate_NothingToSay(t *testing.T) {
 		t.Errorf("a start at the end of the calendar: %+v (%v); want a refusal, not a date RFC 3339 cannot write", got, err)
 	}
 	req = simulateReq("8")
-	req.Config = json.RawMessage(`{"name":"x","min_per_point":60,"phases":[{"kind":"swiss_lives","length":99,"lives":100,"mode":"continuous"}]}`)
+	req.Config = json.RawMessage(`{"name":"x","min_per_point":60,"phases":[{"kind":"swiss_lives","length":99,"lives":50,"mode":"continuous"}]}`)
 	req.Runs = 1
 	if got, err := service.Simulate(context.Background(), req); !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "more than a year") {
 		t.Errorf("a tournament of years: %+v (%v); want a refusal", got, err)
@@ -285,9 +290,10 @@ func TestSimulate_BudgetIsTwoSeconds(t *testing.T) {
 }
 
 // TestSimulate_WorkWithinTheBounds: at the budget of production, the heaviest requests the
-// bounds admit are answered or cut close to the budget and hold little memory, for a run is
-// cut between two events only; the requests whose single draw would outgrow both are refused
-// before anything is played.
+// bounds admit are answered, or refused as too heavy at their first run, and hold little
+// memory; the requests whose single draw would outgrow both are refused before anything is
+// played. The pools are those the engine draws: as many as the size asks, the field dealt
+// evenly between them.
 func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 	if testing.Short() {
 		t.Skip("plays the budget of production several times")
@@ -300,14 +306,20 @@ func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 		config, players string
 		refused         bool
 	}{
-		"one pool of 91":                  {rr(91, ""), "91", false},
-		"pools of 16 for the full field":  {rr(16, ""), "512", false},
-		"a Swiss of 100 lives by rounds":  {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"mode":"rounds","pairing":"wins"}]}`, "512", false},
-		"a Swiss of 100 lives by batches": {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"batch_minutes":1}]}`, "512", false},
-		"a double elimination":            {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "512", false},
-		"one pool of 92":                  {rr(92, ""), "92", true},
-		"one pool of the full field":      {rr(512, ""), "512", true},
-		"pools of 17 for the full field":  {rr(17, ""), "512", true},
+		"one pool of 91":                   {rr(91, ""), "91", false},
+		"100 players in pools of 91":       {rr(91, ""), "100", false},
+		"100 players in pools of 92":       {rr(92, ""), "100", false},
+		"pools of 17 for the full field":   {rr(17, ""), "512", false},
+		"91 players in one group":          {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "91", false},
+		"a Swiss of 100 lives by rounds":   {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"mode":"rounds","pairing":"wins"}]}`, "512", false},
+		"a Swiss of 100 lives by batches":  {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"batch_minutes":1}]}`, "512", false},
+		"a double elimination":             {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "512", false},
+		"one pool of 92":                   {rr(92, ""), "92", true},
+		"one pool of the full field":       {rr(512, ""), "512", true},
+		"one group of the full field":      {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "512", true},
+		"92 players in one group":          {`{"name":"x","phases":[{"kind":"round_robin","length":1,"groups":1}]}`, "92", true},
+		"pools of 18 for the full field":   {rr(18, ""), "512", true},
+		"pools of 92 entered later by 100": {`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":2,"qualifiers":1},{"kind":"round_robin","length":1,"group_size":92,"qualifiers":1,"entry":"all"}]}`, "100", true},
 		"a large pool entered later": {`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":2,"qualifiers":1},` +
 			`{"kind":"round_robin","length":1,"group_size":512,"qualifiers":1,"entry":"all"}]}`, "512", true},
 	} {
@@ -346,13 +358,53 @@ func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 			continue
 		}
 		if err != nil && !errors.Is(err, service.ErrSimulationTooHeavy) {
-			t.Errorf("%s: %v; want an answer, or the budget", name, err)
+			t.Errorf("%s: %v; want an answer, or too heavy", name, err)
+		}
+		if err != nil && strings.Contains(err.Error(), refusal) {
+			t.Errorf("%s: %v; the pools the engine draws are within the bound", name, err)
 		}
 		if over := elapsed - service.SimulateBudget; over > 250*time.Millisecond {
 			t.Errorf("%s: answered %v past the budget; want a run cut within a quarter of a second", name, over)
 		}
 		if grew > 64 {
 			t.Errorf("%s: held %d MiB of heap; want 64 at most", name, grew)
+		}
+	}
+}
+
+// TestSimulate_UsefulOrTooHeavy: whatever the time, a format is answered on every run asked
+// for, or refused as too heavy by its work — the same answer on every machine, which the
+// time budget does not decide.
+func TestSimulate_UsefulOrTooHeavy(t *testing.T) {
+	unhurried(t)
+	for name, tc := range map[string]struct {
+		config, players string
+		heavy           bool
+	}{
+		"a club of 40 in pools of 4":  {`{"name":"x","phases":[{"kind":"round_robin","length":5,"group_size":4,"qualifiers":2},{"kind":"bracket","length":7}]}`, "40", false},
+		"one pool of 25":              {`{"name":"x","phases":[{"kind":"round_robin","length":5,"groups":1}]}`, "25", false},
+		"a bracket of 256":            {`{"name":"x","phases":[{"kind":"bracket","length":7}]}`, "256", false},
+		"a Swiss of 2 lives for 128":  {simulatedSwiss, "128", false},
+		"a club of 40 in one pool":    {`{"name":"x","phases":[{"kind":"round_robin","length":5,"groups":1}]}`, "40", true},
+		"200 players in pools of 4":   {`{"name":"x","phases":[{"kind":"round_robin","length":5,"group_size":4,"qualifiers":2},{"kind":"bracket","length":7}]}`, "200", true},
+		"a Swiss of 2 lives for 512":  {simulatedSwiss, "512", true},
+		"a Swiss of 100 lives for 64": {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"mode":"rounds","pairing":"wins"}]}`, "64", true},
+		"a double elimination of 512": {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "512", true},
+	} {
+		req := service.SimulateRequest{Config: json.RawMessage(tc.config), Players: json.RawMessage(tc.players), Seed: 3}
+		got, err := service.Simulate(context.Background(), req)
+		if !tc.heavy {
+			if err != nil || got.Runs != service.SimulateDefaultRuns || slices.Contains(got.Warnings, service.SimulateWarnTimeBudget) {
+				t.Errorf("%s: %+v (%v); want its %d runs", name, got, err, service.SimulateDefaultRuns)
+			}
+			continue
+		}
+		if !errors.Is(err, service.ErrSimulationTooHeavy) || errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "fewer players") {
+			t.Errorf("%s: %+v (%v); want too heavy, saying what to reduce", name, got, err)
+			continue
+		}
+		if _, again := service.Simulate(context.Background(), req); again == nil || again.Error() != err.Error() {
+			t.Errorf("%s: %v, then %v; want the same answer", name, err, again)
 		}
 	}
 }

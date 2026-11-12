@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"math/rand"
 	"slices"
 	"time"
@@ -23,10 +24,10 @@ import (
 // The bounds of one simulation. They are refusals, not clamps: a caller who asked for a
 // thousand runs must not read the answer of two hundred as theirs.
 const (
-	// SimulateMaxPlayers is the largest field a simulation answers for. directions.create
-	// bounds no field; the simulation does, on purpose: past this one not even the lightest
-	// format — a single-elimination bracket — plays one run within SimulateBudget, so a
-	// larger field would hold a place for the whole budget to answer ErrSimulationTooHeavy.
+	// SimulateMaxPlayers is the largest field a simulation reads. directions.create bounds no
+	// field; the simulation does, on purpose, so that nothing is sized by the request: what
+	// a field within it may cost is simulateMaxRunWork's to bound, for it depends on the
+	// format too.
 	SimulateMaxPlayers  = 512
 	SimulateMaxRuns     = 200
 	SimulateDefaultRuns = 30
@@ -50,6 +51,17 @@ const (
 	simulateMaxPlayersBytes = 256 << 10
 	// simulateMaxSteps bounds one simulated tournament, whatever its format.
 	simulateMaxSteps = 50000
+	// simulateMaxRunWork bounds the work of one simulated tournament, counted after each of
+	// its events as eventWork: the engine
+	// copies about that much at every event, so a run costs the sum, which grows with the
+	// square of its matches. Counted, not timed, the bound refuses the same requests on every
+	// machine. A unit costs 0.2 to 0.5 µs on an ordinary processor, so a run at the bound
+	// takes 0.1 to 0.2 s and SimulateBudget plays about SimulateUsefulRuns of them: past it the budget would
+	// stand an answer on a handful of runs, or none, and the request is refused at its
+	// first run instead (ErrSimulationTooHeavy).
+	simulateMaxRunWork = 400_000
+	// SimulateUsefulRuns is the fewest runs whose 10th and 90th centiles say something.
+	SimulateUsefulRuns = 10
 )
 
 // SimulateBudget is the computing time one simulation may take: with the two places of the
@@ -58,10 +70,21 @@ const (
 // is ErrSimulationTooHeavy.
 var SimulateBudget = 2 * time.Second
 
-// ErrSimulationTooHeavy: the request is well formed and within the bounds, but not one run
-// ended within SimulateBudget. It is no refusal of the request's shape: the same request may
-// be answered on a quieter machine, and a smaller field is answered here.
+// ErrSimulationTooHeavy: the request is well formed and within the bounds, but its format
+// cannot be simulated usefully here. Either one of its tournaments plays more than
+// simulateMaxRunWork — the same answer on every machine, given at its first run, wrapped in
+// errRunTooHeavy's words — or not one run ended within SimulateBudget, which a quieter
+// machine may still answer. A smaller field is answered in both cases.
 var ErrSimulationTooHeavy = errors.New("direction: the simulation ran out of time before one run ended: ask for fewer players or a shorter format (fewer runs help an answer cut short by time_budget, not this one)")
+
+// errRunTooHeavy stops a run past simulateMaxRunWork; Simulate answers it as a tooHeavy.
+var errRunTooHeavy = errors.New("direction: run past its work")
+
+// tooHeavy is an ErrSimulationTooHeavy in words of its own.
+type tooHeavy struct{ msg string }
+
+func (e tooHeavy) Error() string        { return e.msg }
+func (e tooHeavy) Is(target error) bool { return target == ErrSimulationTooHeavy }
 
 // simulateMaxMinutes bounds the length a simulated tournament may have and still be
 // answered: past a year the figure says a break or a length is mistyped, and the end would
@@ -181,13 +204,20 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		firstErr error
 	)
 	for i := range runs {
-		peak := 0
+		peak, work := 0, 0
 		r := sim.Run(cfg, players, sim.Options{Seed: req.Seed + int64(i), Start: start, MaxSteps: simulateMaxSteps,
 			MinPerPoint: cfg.MinPerPoint,
 			Hook: func(s *tournoi.State, _ tournoi.Event) error {
 				peak = max(peak, len(s.Running()))
+				if work += eventWork(s); work > simulateMaxRunWork {
+					return errRunTooHeavy
+				}
 				return ctx.Err()
 			}})
+		if errors.Is(r.Err, errRunTooHeavy) {
+			return nil, tooHeavy{fmt.Sprintf("direction: this format is too heavy to simulate %d times within %v: one of its tournaments with %d players outgrows what a simulation computes; ask for fewer players, smaller pools, fewer lives or a lighter format",
+				SimulateUsefulRuns, SimulateBudget, len(players))}
+		}
 		if ctx.Err() != nil {
 			warnings[SimulateWarnTimeBudget] = true
 			break
@@ -278,19 +308,56 @@ func boundSimulatedWork(cfg tournoi.Config, players int) error {
 		if p.Kind != tournoi.KindRoundRobin {
 			continue
 		}
-		// A later phase is entered by no more players than the field.
-		size := p.GroupSize
-		if size <= 0 {
-			size = 4
+		// The first phase draws the field; a later one is entered by no more players than the
+		// field, and a few entrants may sit in larger pools than the whole field does.
+		least := players
+		if i > 0 {
+			least = 2
 		}
-		size = min(size, players)
-		pools := (players + size - 1) / size
-		if drawn := pools * size * (size - 1) / 2; drawn > SimulateMaxPhaseMatches {
-			return direction.Refusef("direction: in phase %d of a simulation, pools of %d draw up to %d matches for %d players; a simulation plays at most %d matches a phase: ask for smaller pools or fewer players",
-				i+1, size, drawn, players, SimulateMaxPhaseMatches)
+		for n := least; n <= players; n++ {
+			if size, drawn := poolDraw(p, n); drawn > SimulateMaxPhaseMatches {
+				return direction.Refusef("direction: in phase %d of a simulation, %d players draw pools of up to %d, so %d matches; a simulation plays at most %d matches a phase: ask for smaller pools or fewer players",
+					i+1, n, size, drawn, SimulateMaxPhaseMatches)
+			}
 		}
 	}
 	return nil
+}
+
+// poolDraw is the largest pool and the matches the engine draws for n entrants of a round
+// robin: it deals them in turn into its pools, which so differ by one player at most.
+func poolDraw(p tournoi.PhaseConfig, n int) (size, drawn int) {
+	var pools int
+	switch {
+	case p.Groups > 0:
+		pools = max(min(p.Groups, n/2), 1)
+	case p.GroupSize > 0:
+		pools = max((n+p.GroupSize-1)/p.GroupSize, 1)
+	default:
+		pools = max((n+3)/4, 1)
+	}
+	size = (n + pools - 1) / pools
+	big := n - (size-1)*pools // the pools of size players; the others have one fewer
+	return size, big*size*(size-1)/2 + (pools-big)*(size-1)*(size-2)/2
+}
+
+// eventWork is about what the engine goes through at one event of s: its players, its
+// matches and the planned matches of the phase in play — a pool plans every pair at its
+// draw. A Swiss plans nothing and pairs as it goes, each pairing searching its entrants
+// against one another: a share of their square stands for that search.
+func eventWork(s *tournoi.State) int {
+	n := len(s.Players) + len(s.MatchOrder)
+	if s.Current < 0 || s.Current >= len(s.Phases) {
+		return n
+	}
+	ph := s.Phases[s.Current]
+	for _, sec := range ph.Sections {
+		n += len(sec.Matches)
+	}
+	if k := ph.Cfg.Kind; k == tournoi.KindSwissLives || k == tournoi.KindSwissRounds || k == tournoi.KindManual {
+		n += len(ph.Entrants) * len(ph.Entrants) / 64
+	}
+	return n
 }
 
 // centile is the nearest-rank p-th centile of sorted, which is not empty.
@@ -356,6 +423,7 @@ func boundSimulatedConfig(raw json.RawMessage) error {
 			BatchMinutes  int   `json:"batch_minutes"`
 			Target        int   `json:"target"`
 			GroupSize     int   `json:"group_size"`
+			Groups        int   `json:"groups"`
 			Qualifiers    int   `json:"qualifiers"`
 		} `json:"phases"`
 		MinPerPoint float64 `json:"min_per_point"`
@@ -378,7 +446,8 @@ func boundSimulatedConfig(raw json.RawMessage) error {
 			{"length", p.Length, SimulateMaxLength}, {"final_length", p.FinalLength, SimulateMaxLength},
 			{"length_late", p.LengthLate, SimulateMaxLength}, {"lives", p.Lives, SimulateMaxLives},
 			{"late_threshold", p.LateThreshold, SimulateMaxPlayers}, {"target", p.Target, SimulateMaxPlayers},
-			{"group_size", p.GroupSize, SimulateMaxPlayers}, {"qualifiers", p.Qualifiers, SimulateMaxPlayers},
+			{"group_size", p.GroupSize, SimulateMaxPlayers}, {"groups", p.Groups, SimulateMaxPlayers},
+			{"qualifiers", p.Qualifiers, SimulateMaxPlayers},
 			{"batch_minutes", p.BatchMinutes, 24 * 60},
 		} {
 			if b.v < 0 || b.v > b.max {
