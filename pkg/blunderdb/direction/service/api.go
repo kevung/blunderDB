@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	tournoi "github.com/kevung/nicomaque"
@@ -241,6 +242,13 @@ func (d *Service) EnterParticipants(ctx context.Context, tournamentID int64, pla
 	}
 	if err := json.Unmarshal([]byte(playersJSON), &players); err != nil {
 		return direction.Refused(fmt.Errorf("entries: %w", err))
+	}
+	// Every id is checked before the first entry is written: a list is entered whole or not.
+	for i := range players {
+		players[i].ID = tournoi.PlayerID(strings.TrimSpace(string(players[i].ID)))
+		if err := checkEntryID(string(players[i].ID)); err != nil {
+			return err
+		}
 	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {

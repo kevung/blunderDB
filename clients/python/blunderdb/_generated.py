@@ -438,6 +438,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.freeParticipants — JSON."
         return self._call("/v1/directions.freeParticipants", payload)
 
+    def directions_free_slots(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.freeSlots — JSON."
+        return self._call("/v1/directions.freeSlots", payload)
+
     def directions_get(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.get — JSON."
         return self._call("/v1/directions.get", payload)
@@ -513,6 +517,10 @@ class GeneratedAPI(BaseClient):
     def directions_start_match(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/directions.startMatch — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.startMatch", payload, if_match=if_match, idempotency_key=idempotency_key)
+
+    def directions_statuses(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.statuses — JSON."
+        return self._call("/v1/directions.statuses", payload)
 
     def directions_table_grid(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.tableGrid — JSON."
