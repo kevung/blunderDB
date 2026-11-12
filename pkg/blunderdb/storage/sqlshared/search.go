@@ -71,6 +71,11 @@ type searchWhereClause struct {
 	likeTarget *domain.Position
 	// after is the cursor a page resumes from, nil for the first page.
 	after *searchCursor
+	// keys, for a page read by cursor, receives the sort key of every id the window
+	// reads, from the statement that reads the id: the next cursor anchors on the
+	// key the row had when it was ordered, not on a second look at a row that may
+	// have gone meanwhile.
+	keys map[int64]any
 }
 
 // appendRowFlagClauses adds the filters on properties of the row, not of the
@@ -907,7 +912,7 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 			cond, condArgs := wc.after.cond()
 			filter, args = filter+cond, append(args, condArgs...)
 		}
-		return s.readIDs(ctx, plain, filter, "p.id", args, limit, offset)
+		return s.readIDs(ctx, plain, filter, "p.id", "", args, limit, offset, nil)
 	}
 	dir := " ASC"
 	if desc {
@@ -939,7 +944,7 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 	}
 	if !skipKeyed {
 		var err error
-		ids, err = s.readIDs(ctx, keyed, keyedFilter, keyedOrder, keyedArgs, limit, offset)
+		ids, err = s.readIDs(ctx, keyed, keyedFilter, keyedOrder, key, keyedArgs, limit, offset, wc.keys)
 		if err != nil || len(ids) == limit {
 			return ids, err
 		}
@@ -954,16 +959,26 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 		}
 		rest = max(offset-n, 0)
 	}
-	tail, err := s.readIDs(ctx, plain, tailFilter, "p.id", tailArgs, limit-len(ids), rest)
+	tail, err := s.readIDs(ctx, plain, tailFilter, "p.id", "", tailArgs, limit-len(ids), rest, nil)
 	if err != nil {
 		return nil, err
+	}
+	if wc.keys != nil {
+		for _, id := range tail {
+			wc.keys[id] = nil
+		}
 	}
 	return append(ids, tail...), nil
 }
 
-func (s *SearchStore) readIDs(ctx context.Context, from, filter, order string, args []any, limit, offset int) ([]int64, error) {
+// readIDs reads the ids of a window; with keys, it also reads keyCol beside each id.
+func (s *SearchStore) readIDs(ctx context.Context, from, filter, order, keyCol string, args []any, limit, offset int, keys map[int64]any) ([]int64, error) {
 	limitClause, limitArgs := s.DB.LimitOffset(limit, offset)
-	rows, err := s.DB.Query(ctx, `SELECT p.id FROM `+from+` WHERE `+filter+` ORDER BY `+order+limitClause,
+	columns := "p.id"
+	if keys != nil {
+		columns += ", " + keyCol
+	}
+	rows, err := s.DB.Query(ctx, `SELECT `+columns+` FROM `+from+` WHERE `+filter+` ORDER BY `+order+limitClause,
 		append(append([]any{}, args...), limitArgs...)...)
 	if err != nil {
 		return nil, errf(s.DB, "search ids query", err)
@@ -972,8 +987,16 @@ func (s *SearchStore) readIDs(ctx context.Context, from, filter, order string, a
 	ids := make([]int64, 0, limit)
 	for rows.Next() {
 		var id int64
-		if err := rows.Scan(&id); err != nil {
+		var key any
+		dest := []any{&id}
+		if keys != nil {
+			dest = append(dest, &key)
+		}
+		if err := rows.Scan(dest...); err != nil {
 			return nil, errf(s.DB, "search ids scan", err)
+		}
+		if keys != nil {
+			keys[id] = key
 		}
 		ids = append(ids, id)
 	}

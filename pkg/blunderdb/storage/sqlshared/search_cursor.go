@@ -1,12 +1,13 @@
 package sqlshared
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"sync/atomic"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -25,19 +26,22 @@ type searchCursor struct {
 	id   int64
 }
 
-// wireCursor is the cursor as the client holds it, base64url JSON. Seal ties it to
-// the scope and filters that issued it, so that it cannot be replayed on another
-// search, another sort or another tenant.
+// wireCursor is the cursor as the client holds it, base64url JSON. Fingerprint is
+// a digest of the scope, filters and sort that issued it: it tells a cursor replayed
+// on another search from a mistake, and protects nothing — the client can read and
+// rewrite every field. Tenant isolation does not rest on it but on the tenant filter
+// every statement of the page carries; the anchor is therefore checked for its shape
+// and its type only, as any client input.
 type wireCursor struct {
-	Seal string `json:"s"`
-	ID   int64  `json:"id"`
-	Null bool   `json:"n,omitempty"`
-	Int  *int64 `json:"i,omitempty"`
-	Time *int64 `json:"t,omitempty"` // Unix nanoseconds
-	Bool *bool  `json:"b,omitempty"`
+	Fingerprint string `json:"f"`
+	ID          int64  `json:"id"`
+	Null        bool   `json:"n,omitempty"`
+	Int         *int64 `json:"i,omitempty"`
+	Time        *int64 `json:"t,omitempty"` // Unix nanoseconds: 1678 to 2262, the range of time.UnixNano
+	Bool        *bool  `json:"b,omitempty"`
 }
 
-func cursorSeal(scope string, f domain.SearchFilters) string {
+func cursorFingerprint(scope string, f domain.SearchFilters) string {
 	raw, _ := json.Marshal(struct {
 		Scope   string
 		Filters domain.SearchFilters
@@ -46,11 +50,38 @@ func cursorSeal(scope string, f domain.SearchFilters) string {
 	return base64.RawURLEncoding.EncodeToString(sum[:9])
 }
 
+// keyKind is the type a sort column is read back and bound as.
+type keyKind uint8
+
+const (
+	kindNone keyKind = iota // the id order: the anchor is an id alone
+	kindInt
+	kindTime
+	kindBool
+)
+
+// cursorKeyKind is the kind of col on backend. SQLite stores every key as an integer;
+// PostgreSQL binds a key only to a column of its own type, and fails the statement
+// otherwise.
+func cursorKeyKind(backend, col string) keyKind {
+	switch {
+	case col == "":
+		return kindNone
+	case backend != "postgres":
+		return kindInt
+	case col == "a.is_close_cube":
+		return kindBool
+	case col == "p.match_date":
+		return kindTime
+	}
+	return kindInt
+}
+
 func invalidCursor(why string) error {
 	return fmt.Errorf("%w: search cursor %s", storage.ErrInvalid, why)
 }
 
-func decodeSearchCursor(raw, scope string, f domain.SearchFilters) (*searchCursor, error) {
+func decodeSearchCursor(raw, backend, scope string, f domain.SearchFilters) (*searchCursor, error) {
 	col, desc, ok := sortKey(f.Sort)
 	if !ok {
 		return nil, invalidCursor("for an unknown sort")
@@ -59,51 +90,72 @@ func decodeSearchCursor(raw, scope string, f domain.SearchFilters) (*searchCurso
 	if err != nil {
 		return nil, invalidCursor("unreadable")
 	}
+	dec := json.NewDecoder(bytes.NewReader(blob))
+	dec.DisallowUnknownFields()
 	var w wireCursor
-	if err := json.Unmarshal(blob, &w); err != nil {
+	if err := dec.Decode(&w); err != nil || dec.More() {
 		return nil, invalidCursor("unreadable")
 	}
-	if w.Seal != cursorSeal(scope, f) {
+	if w.Fingerprint != cursorFingerprint(scope, f) {
 		return nil, invalidCursor("issued by another search")
 	}
+	if w.ID < 1 {
+		return nil, invalidCursor("anchored on no row")
+	}
 	c := &searchCursor{col: col, desc: desc, null: w.Null, id: w.ID}
+	var kinds []keyKind
+	if w.Int != nil {
+		kinds, c.key = append(kinds, kindInt), *w.Int
+	}
+	if w.Time != nil {
+		kinds, c.key = append(kinds, kindTime), time.Unix(0, *w.Time).UTC()
+	}
+	if w.Bool != nil {
+		kinds, c.key = append(kinds, kindBool), *w.Bool
+	}
+	want := cursorKeyKind(backend, col)
 	switch {
-	case col == "" || w.Null:
-	case w.Int != nil:
-		c.key = *w.Int
-	case w.Time != nil:
-		c.key = time.Unix(0, *w.Time).UTC()
-	case w.Bool != nil:
-		c.key = *w.Bool
-	default:
-		return nil, invalidCursor("without its key")
+	case want == kindNone && (w.Null || len(kinds) > 0):
+		return nil, invalidCursor("with a key the id order has not")
+	case want == kindNone:
+	case w.Null && len(kinds) > 0:
+		return nil, invalidCursor("both with and without a key")
+	case w.Null:
+	case len(kinds) != 1:
+		return nil, invalidCursor("without one key")
+	case kinds[0] != want:
+		return nil, invalidCursor("with a key of another type than its sort")
 	}
 	return c, nil
 }
 
-func encodeSearchCursor(scope string, f domain.SearchFilters, id int64, key any) (string, error) {
-	w := wireCursor{Seal: cursorSeal(scope, f), ID: id}
+func encodeSearchCursor(backend, scope string, f domain.SearchFilters, id int64, key any) (string, error) {
+	col, _, _ := sortKey(f.Sort)
+	want := cursorKeyKind(backend, col)
+	w := wireCursor{Fingerprint: cursorFingerprint(scope, f), ID: id}
+	var got keyKind
 	switch v := key.(type) {
 	case nil:
-		w.Null = true
+		w.Null, got = want != kindNone, want
 	case int64:
-		w.Int = &v
+		w.Int, got = &v, kindInt
 	case int32:
 		n := int64(v)
-		w.Int = &n
+		w.Int, got = &n, kindInt
 	case int16:
 		n := int64(v)
-		w.Int = &n
+		w.Int, got = &n, kindInt
 	case int:
 		n := int64(v)
-		w.Int = &n
+		w.Int, got = &n, kindInt
 	case time.Time:
 		n := v.UnixNano()
-		w.Time = &n
+		w.Time, got = &n, kindTime
 	case bool:
-		w.Bool = &v
-	default:
-		return "", fmt.Errorf("%w: search cursor key of type %T", storage.ErrInternal, key)
+		w.Bool, got = &v, kindBool
+	}
+	if got != want {
+		return "", fmt.Errorf("%w: search cursor key of type %T on %q", storage.ErrInternal, key, col)
 	}
 	blob, _ := json.Marshal(w)
 	return base64.RawURLEncoding.EncodeToString(blob), nil
@@ -153,7 +205,8 @@ func (s *SearchStore) FindPage(ctx context.Context, scope string, f domain.Searc
 		return positions, "", err
 	}
 	positions = positions[:opts.Limit]
-	next, err := s.nextCursor(ctx, scope, f, positions[len(positions)-1].ID)
+	pageRead(positions[len(positions)-1].ID)
+	next, err := s.nextCursor(scope, f, wc, positions[len(positions)-1].ID)
 	return positions, next, err
 }
 
@@ -168,7 +221,8 @@ func (s *SearchStore) FindIDsPage(ctx context.Context, scope string, f domain.Se
 		return ids, "", err
 	}
 	ids = ids[:opts.Limit]
-	next, err := s.nextCursor(ctx, scope, f, ids[len(ids)-1])
+	pageRead(ids[len(ids)-1])
+	next, err := s.nextCursor(scope, f, wc, ids[len(ids)-1])
 	return ids, next, err
 }
 
@@ -182,27 +236,39 @@ func (s *SearchStore) pageWhere(ctx context.Context, scope string, f domain.Sear
 	var after *searchCursor
 	if opts.Cursor != "" {
 		var err error
-		if after, err = decodeSearchCursor(opts.Cursor, scope, f); err != nil {
+		if after, err = decodeSearchCursor(opts.Cursor, s.DB.Name(), scope, f); err != nil {
 			return searchWhereClause{}, err
 		}
 	}
 	wc, err := s.buildWhere(ctx, scope, f)
-	wc.after = after
+	wc.after, wc.keys = after, map[int64]any{}
 	return wc, err
 }
 
-// nextCursor reads the sort key of the last row of a page.
-func (s *SearchStore) nextCursor(ctx context.Context, scope string, f domain.SearchFilters, id int64) (string, error) {
+// nextCursor anchors the next page on the last row of this one, at the sort key the
+// window read with it.
+func (s *SearchStore) nextCursor(scope string, f domain.SearchFilters, wc searchWhereClause, id int64) (string, error) {
 	col, _, _ := sortKey(f.Sort)
-	var key any
-	if col != "" {
-		tenant, tenantArgs := s.DB.TenantFilter("p", scope)
-		err := s.DB.QueryRow(ctx, `SELECT `+col+` FROM position p
-	LEFT JOIN analysis a ON a.position_id = p.id`+andSameTenant(s.DB, "a", "p")+`
-	WHERE `+tenant+` AND p.id = ?`, append(tenantArgs, id)...).Scan(&key)
-		if err != nil && !errors.Is(err, ErrNoRows) {
-			return "", errf(s.DB, "search cursor key", err)
-		}
+	key, read := wc.keys[id]
+	if col != "" && !read {
+		return "", fmt.Errorf("%w: search cursor on row %d, which the window did not read", storage.ErrInternal, id)
 	}
-	return encodeSearchCursor(scope, f, id, key)
+	return encodeSearchCursor(s.DB.Name(), scope, f, id, key)
+}
+
+// pageReadHook runs between the read of a page and the issue of its cursor.
+var pageReadHook atomic.Pointer[func(lastID int64)]
+
+func pageRead(lastID int64) {
+	if h := pageReadHook.Load(); h != nil {
+		(*h)(lastID)
+	}
+}
+
+// SetPageReadHook makes fn run on the last id of every page read by cursor, before
+// its next cursor is issued, and returns a func removing it. For tests only: it
+// places a write between the two exactly.
+func SetPageReadHook(fn func(lastID int64)) (restore func()) {
+	pageReadHook.Store(&fn)
+	return func() { pageReadHook.Store(nil) }
 }

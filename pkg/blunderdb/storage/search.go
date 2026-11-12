@@ -69,9 +69,11 @@ type SearchStore interface {
 	IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (index int, found bool, err error)
 }
 
-// PageOpts bounds a page read by cursor. Limit is required. Cursor is opaque:
-// it is only good for the search (scope, filters, sort) that issued it, and
-// any other is ErrInvalid. Offset, for a client still counting rows, cuts the
+// PageOpts bounds a page read by cursor. Limit is required. Cursor is opaque but
+// not secret: it carries a fingerprint of the search (scope, filters, sort) that
+// issued it, so a cursor replayed on another search is ErrInvalid, as is an anchor
+// rewritten out of its shape or its type. It protects nothing: tenant isolation
+// comes from the tenant filter of every statement, not from the cursor. Offset, for a client still counting rows, cuts the
 // first page only: an offset with a cursor is ErrInvalid.
 type PageOpts struct {
 	Limit  int

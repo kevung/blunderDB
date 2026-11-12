@@ -1,7 +1,10 @@
 package storagetest
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"slices"
 	"testing"
@@ -247,6 +250,212 @@ func checkSearchCursorIsolation(t *testing.T, ctx context.Context, s storage.Sto
 		for _, id := range ids {
 			if !own[id] {
 				t.Errorf("FindIDsPage(%s, cursor of %s, %q): read %d, not %s's", b, a, sort, id, b)
+			}
+		}
+		checkGraftedAnchorStaysHome(t, ctx, s, a, b, f, next, own)
+	}
+}
+
+// checkGraftedAnchorStaysHome: a's anchor grafted onto a cursor b was issued for the
+// same search passes the fingerprint; b then reads past a's row only its own rows, and
+// the cursor it hands back anchors on one of them — never on a's row or a's key.
+func checkGraftedAnchorStaysHome(t *testing.T, ctx context.Context, s storage.Storage, a, b string, f domain.SearchFilters, cursorOfA string, own map[int64]bool) {
+	t.Helper()
+	anchors := map[string]bool{} // every anchor b issues, one row a page
+	var first string
+	for cursor, page := "", 0; page == 0 || cursor != ""; page++ {
+		_, next, err := s.Search().FindIDsPage(ctx, b, f, storage.PageOpts{Limit: 1, Cursor: cursor})
+		if err != nil {
+			t.Fatalf("FindIDsPage(%s, %q, page %d): %v", b, f.Sort, page, err)
+		}
+		if page == 0 {
+			first = next
+		}
+		if next != "" {
+			anchors[anchorOf(t, next)] = true
+		}
+		cursor = next
+	}
+	stolen := map[string]any{}
+	for k, v := range cursorFields(t, cursorOfA) {
+		if slices.Contains(anchorFields, k) {
+			stolen[k] = v
+		}
+	}
+	grafted := withAnchor(t, first, stolen)
+	ids, next, err := s.Search().FindIDsPage(ctx, b, f, storage.PageOpts{Limit: 2, Cursor: grafted})
+	if err != nil && !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("FindIDsPage(%s, anchor of %s, %q): %v", b, a, f.Sort, err)
+	}
+	for _, id := range ids {
+		if !own[id] {
+			t.Errorf("FindIDsPage(%s, anchor of %s, %q): read %d, not %s's", b, a, f.Sort, id, b)
+		}
+	}
+	if next != "" && !anchors[anchorOf(t, next)] {
+		t.Errorf("FindIDsPage(%s, anchor of %s, %q): next cursor anchors on %s, not on a row of %s", b, a, f.Sort, anchorOf(t, next), b)
+	}
+}
+
+func anchorOf(t *testing.T, cursor string) string {
+	m := cursorFields(t, cursor)
+	anchor := map[string]any{}
+	for _, k := range anchorFields {
+		if v, ok := m[k]; ok {
+			anchor[k] = v
+		}
+	}
+	blob, _ := json.Marshal(anchor)
+	return string(blob)
+}
+
+// anchorFields are the parts of a wire cursor that say where the page resumes; the
+// rest ties it to its search.
+var anchorFields = []string{"id", "n", "i", "t", "b"}
+
+func cursorFields(t *testing.T, cursor string) map[string]any {
+	t.Helper()
+	blob, err := base64.RawURLEncoding.DecodeString(cursor)
+	if err != nil {
+		t.Fatalf("cursor %q: %v", cursor, err)
+	}
+	dec := json.NewDecoder(bytes.NewReader(blob))
+	dec.UseNumber()
+	m := map[string]any{}
+	if err := dec.Decode(&m); err != nil {
+		t.Fatalf("cursor %q: %v", cursor, err)
+	}
+	return m
+}
+
+func cursorOf(m map[string]any) string {
+	blob, _ := json.Marshal(m)
+	return base64.RawURLEncoding.EncodeToString(blob)
+}
+
+// withAnchor is cursor with its anchor replaced by the fields of anchor.
+func withAnchor(t *testing.T, cursor string, anchor map[string]any) string {
+	m := cursorFields(t, cursor)
+	for _, k := range anchorFields {
+		delete(m, k)
+	}
+	for k, v := range anchor {
+		m[k] = v
+	}
+	return cursorOf(m)
+}
+
+// testSearchCursorRefusesAForgedAnchor: the anchor of a cursor is the client's to
+// rewrite, the fingerprint of the search left as it was. Whatever it rewrites — a key
+// of another type than the sort column's, an id out of range, a shape the server never
+// issues — the page is refused as invalid, never failed as an internal error.
+func testSearchCursorRefusesAForgedAnchor(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	seedCursorFixture(t, s, "", 1, 6)
+	keys := map[string]any{"i": json.Number("3"), "t": json.Number("1600000000000000000"), "b": true}
+	for _, sort := range searchSorts {
+		f := domain.SearchFilters{Sort: sort}
+		_, next, err := s.Search().FindIDsPage(ctx, "", f, storage.PageOpts{Limit: 2})
+		if err != nil || next == "" {
+			t.Fatalf("%q first page: next %q, %v", sort, next, err)
+		}
+		genuine := cursorFields(t, next)
+		id := genuine["id"]
+		forged := map[string]map[string]any{
+			"id zero":       {"id": 0},
+			"id negative":   {"id": -5},
+			"null and key":  {"id": id, "n": true, "i": json.Number("3")},
+			"two keys":      {"id": id, "i": json.Number("3"), "b": true},
+			"key as string": {"id": id, "i": "3"},
+		}
+		if sort == "" {
+			forged["null on the id order"] = map[string]any{"id": id, "n": true}
+		}
+		for kind, v := range keys {
+			if _, issued := genuine[kind]; !issued {
+				forged["key of kind "+kind] = map[string]any{"id": id, kind: v}
+			}
+		}
+		for name, anchor := range forged {
+			cursor := withAnchor(t, next, anchor)
+			if ids, _, err := s.Search().FindIDsPage(ctx, "", f, storage.PageOpts{Limit: 2, Cursor: cursor}); !errors.Is(err, storage.ErrInvalid) {
+				t.Errorf("%q, %s: got %v, %v; want ErrInvalid", sort, name, ids, err)
+			}
+			if _, _, err := s.Search().FindPage(ctx, "", f, storage.PageOpts{Limit: 2, Cursor: cursor}); !errors.Is(err, storage.ErrInvalid) {
+				t.Errorf("%q, %s: FindPage got %v; want ErrInvalid", sort, name, err)
+			}
+		}
+		extra := cursorFields(t, next)
+		extra["x"] = 1
+		if _, _, err := s.Search().FindIDsPage(ctx, "", f, storage.PageOpts{Limit: 2, Cursor: cursorOf(extra)}); !errors.Is(err, storage.ErrInvalid) {
+			t.Errorf("%q, unknown field: got %v; want ErrInvalid", sort, err)
+		}
+		if _, _, err := s.Search().FindIDsPage(ctx, "", f, storage.PageOpts{Limit: 2, Cursor: cursorOf(genuine)}); err != nil {
+			t.Errorf("%q, the genuine cursor rewritten as is: %v", sort, err)
+		}
+	}
+}
+
+// testSearchCursorKeyComesWithItsRow: the last row of a page deleted before the page
+// is answered still anchors the next cursor at its own key — the key is read with the
+// row, not looked up afterwards — so no row with a key is skipped.
+func testSearchCursorKeyComesWithItsRow(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	seedCursorFixture(t, s, "", 1, 12)
+	for _, sort := range searchSorts {
+		t.Run(sort, func(t *testing.T) {
+			f := domain.SearchFilters{Sort: sort}
+			want := searchIDs(t, s, f)
+			var deleted []int64
+			restore := sqlshared.SetPageReadHook(func(lastID int64) {
+				if len(deleted) > 0 {
+					return
+				}
+				deleted = append(deleted, lastID)
+				if err := s.Positions().Delete(ctx, "", lastID); err != nil {
+					t.Fatalf("Delete %d: %v", lastID, err)
+				}
+			})
+			ids, next, err := s.Search().FindIDsPage(ctx, "", f, storage.PageOpts{Limit: 3})
+			restore()
+			if err != nil || next == "" || len(deleted) != 1 {
+				t.Fatalf("first page: %v, next %q, %v, deleted %v", ids, next, err, deleted)
+			}
+			var got []int64
+			for cursor := next; cursor != ""; {
+				page, n, err := s.Search().FindIDsPage(ctx, "", f, storage.PageOpts{Limit: 3, Cursor: cursor})
+				if err != nil {
+					t.Fatalf("FindIDsPage: %v", err)
+				}
+				got, cursor = append(got, page...), n
+			}
+			if wantRest := want[3:]; !slices.Equal(got, wantRest) {
+				t.Errorf("after the deleted anchor %d: got %v, want %v", deleted[0], got, wantRest)
+			}
+		})
+	}
+}
+
+// testMoveErrorProbeKeepsTheResult: the probe that reads a rare move-error condition
+// first, cut to a few ids per branch of its union, answers the result the condition
+// answers unread, whatever branch the cut truncates.
+func testMoveErrorProbeKeepsTheResult(t *testing.T, s storage.Storage) {
+	seedCursorFixture(t, s, "", 1, 12)
+	for _, sort := range []string{"", "error", "pip_asc"} {
+		f := domain.SearchFilters{MoveErrorFilter: "E>10", Sort: sort}
+		restore := sqlshared.SetNarrowLimit(-1)
+		want := searchIDs(t, s, f)
+		restore()
+		if len(want) < 3 {
+			t.Fatalf("fixture too small: %v", want)
+		}
+		for n := 0; n <= len(want)+1; n++ {
+			restore := sqlshared.SetNarrowLimit(n)
+			got := searchIDs(t, s, f)
+			paged := pageThrough(t, s, "", f, 2, nil)
+			restore()
+			if !slices.Equal(got, want) || !slices.Equal(paged, want) {
+				t.Errorf("%q, probe cut at %d: got %v, by cursor %v; want %v", sort, n, got, paged, want)
 			}
 		}
 	}
