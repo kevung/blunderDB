@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"math"
 	"reflect"
 	"runtime"
 	"slices"
@@ -92,10 +94,10 @@ func TestSimulate_Bounds(t *testing.T) {
 	}{
 		"too many runs":      {func(r *service.SimulateRequest) { r.Runs = service.SimulateMaxRuns + 1 }, "1 to 200 runs, not 201"},
 		"negative runs":      {func(r *service.SimulateRequest) { r.Runs = -1 }, "1 to 200 runs, not -1"},
-		"too many players":   {players("1025"), "2 to 1024 players, not 1025"},
-		"one player":         {players("1"), "2 to 1024 players, not 1"},
-		"negative players":   {players("-3"), "2 to 1024 players, not -3"},
-		"a list too long":    {players("[" + strings.Repeat(`{"id":"a"},`, service.SimulateMaxPlayers) + `{"id":"b"}]`), "2 to 1024 players, not 1025"},
+		"too many players":   {players("513"), "2 to 512 players, not 513"},
+		"one player":         {players("1"), "2 to 512 players, not 1"},
+		"negative players":   {players("-3"), "2 to 512 players, not -3"},
+		"a list too long":    {players("[" + strings.Repeat(`{"id":"a"},`, service.SimulateMaxPlayers) + `{"id":"b"}]`), "2 to 512 players, not 513"},
 		"a list too heavy":   {players(`[{"id":"a"},{"id":"` + strings.Repeat("b", 1<<20) + `"}]`), "players is larger than"},
 		"no players":         {func(r *service.SimulateRequest) { r.Players = nil }, "needs players"},
 		"players a string":   {players(`"many"`), "neither a number nor a list"},
@@ -135,7 +137,7 @@ func TestSimulate_HugeFieldAllocatesNothing(t *testing.T) {
 		runtime.ReadMemStats(&before)
 		_, err := service.Simulate(context.Background(), req)
 		runtime.ReadMemStats(&after)
-		if !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "2 to 1024 players, not "+n) {
+		if !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "2 to 512 players, not "+n) {
 			t.Errorf("%s players: %v; want the refusal of the bound", n, err)
 		}
 		if grew := after.TotalAlloc - before.TotalAlloc; grew > 1<<20 {
@@ -183,7 +185,7 @@ func unhurried(t *testing.T) {
 }
 
 // TestSimulate_AcceptsWhatCreationAccepts: directions.create bounds neither the lives nor the
-// field; a Swiss of 20 lives and a field of 600 are simulated.
+// field; a Swiss of 20 lives and the largest field are simulated.
 func TestSimulate_AcceptsWhatCreationAccepts(t *testing.T) {
 	unhurried(t)
 	req := simulateReq("8")
@@ -192,9 +194,9 @@ func TestSimulate_AcceptsWhatCreationAccepts(t *testing.T) {
 	if got, err := service.Simulate(context.Background(), req); err != nil || got.Runs != 1 {
 		t.Errorf("a Swiss of 20 lives: %+v (%v); want one run", got, err)
 	}
-	req = service.SimulateRequest{Config: json.RawMessage(`{"name":"x","phases":[{"kind":"bracket","length":5}]}`), Players: json.RawMessage("600"), Runs: 1}
-	if got, err := service.Simulate(context.Background(), req); err != nil || got.Matches != 599 {
-		t.Errorf("a bracket of 600: %+v (%v); want its 599 matches", got, err)
+	req = service.SimulateRequest{Config: json.RawMessage(`{"name":"x","phases":[{"kind":"bracket","length":5}]}`), Players: json.RawMessage("512"), Runs: 1}
+	if got, err := service.Simulate(context.Background(), req); err != nil || got.Matches != 511 {
+		t.Errorf("a bracket of 512: %+v (%v); want its 511 matches", got, err)
 	}
 }
 
@@ -217,5 +219,140 @@ func TestSimulate_NothingToSay(t *testing.T) {
 	req.Runs = 1
 	if got, err := service.Simulate(context.Background(), req); !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "more than a year") {
 		t.Errorf("a tournament of years: %+v (%v); want a refusal", got, err)
+	}
+}
+
+// TestSimulate_PaceOfTheConfiguration: the lengths are those of the pace the configuration
+// announces, as the clock of a live tournament reads it — not of the engine's default.
+func TestSimulate_PaceOfTheConfiguration(t *testing.T) {
+	unhurried(t)
+	p50 := func(pace string) float64 {
+		req := service.SimulateRequest{Config: json.RawMessage(`{"name":"x","min_per_point":` + pace + `,"phases":[{"kind":"bracket","length":7}]}`),
+			Players: json.RawMessage("16"), Runs: 20, Seed: 7}
+		got, err := service.Simulate(context.Background(), req)
+		if err != nil {
+			t.Fatalf("min_per_point %s: %v", pace, err)
+		}
+		return got.MinutesP50
+	}
+	quick, plain, slow := p50("4"), p50("8"), p50("16")
+	if !(quick > 0 && math.Abs(plain/quick-2) < 0.01 && math.Abs(slow/quick-4) < 0.01) {
+		t.Errorf("p50 = %.0f, %.0f, %.0f minutes at 4, 8, 16 minutes a point; want it to follow the pace", quick, plain, slow)
+	}
+	req := service.SimulateRequest{Config: json.RawMessage(`{"name":"x","phases":[{"kind":"bracket","length":7}]}`), Players: json.RawMessage("16"), Runs: 20, Seed: 7}
+	if got, err := service.Simulate(context.Background(), req); err != nil || got.MinutesP50 != plain {
+		t.Errorf("no min_per_point: %+v (%v); want the engine's 8 minutes a point, %.0f minutes", got, err, plain)
+	}
+}
+
+// TestSimulate_BreaksMoveTheEnd: with a start, the declared breaks push the lengths and the
+// estimated end, as they push the forecast of a live tournament; with no start a break, which
+// is a date, is met by nothing.
+func TestSimulate_BreaksMoveTheEnd(t *testing.T) {
+	unhurried(t)
+	const bracket = `"phases":[{"kind":"bracket","length":7}]}`
+	lunch := `{"name":"x","breaks":[{"start":"2026-10-01T09:30:00Z","end":"2026-10-01T11:00:00Z"}],` + bracket
+	run := func(config, start string) *service.Simulation {
+		got, err := service.Simulate(context.Background(), service.SimulateRequest{Config: json.RawMessage(config),
+			Players: json.RawMessage("16"), Runs: 20, Seed: 7, Start: start})
+		if err != nil {
+			t.Fatalf("%s from %q: %v", config, start, err)
+		}
+		return got
+	}
+	plain := run(`{"name":"x",`+bracket, "2026-10-01T09:00:00Z")
+	paused := run(lunch, "2026-10-01T09:00:00Z")
+	later := func(paused, plain float64) bool { return math.Abs(paused-plain-90) < 1e-6 }
+	if plain.MinutesP10 <= 30 || !later(paused.MinutesP10, plain.MinutesP10) || !later(paused.MinutesP50, plain.MinutesP50) || !later(paused.MinutesP90, plain.MinutesP90) {
+		t.Errorf("with a break of 90 minutes the lengths are %v, %v, %v; without, %v, %v, %v: want each 90 minutes longer",
+			paused.MinutesP10, paused.MinutesP50, paused.MinutesP90, plain.MinutesP10, plain.MinutesP50, plain.MinutesP90)
+	}
+	start, _ := time.Parse(time.RFC3339, "2026-10-01T09:00:00Z")
+	if want := start.Add(time.Duration(paused.MinutesP50 * float64(time.Minute))).Format(time.RFC3339); paused.EstimatedEnd != want || paused.EstimatedEnd == plain.EstimatedEnd {
+		t.Errorf("estimatedEnd = %q with the break, %q without; want %q", paused.EstimatedEnd, plain.EstimatedEnd, want)
+	}
+	if got := run(lunch, ""); got.MinutesP50 != plain.MinutesP50 {
+		t.Errorf("with no start the break changed the median: %v, not %v", got.MinutesP50, plain.MinutesP50)
+	}
+}
+
+// TestSimulate_BudgetIsTwoSeconds: the computing time of one simulation is what the daemon's
+// gate and its hosts count on.
+func TestSimulate_BudgetIsTwoSeconds(t *testing.T) {
+	if service.SimulateBudget != 2*time.Second {
+		t.Errorf("SimulateBudget = %v; want 2s", service.SimulateBudget)
+	}
+}
+
+// TestSimulate_WorkWithinTheBounds: at the budget of production, the heaviest requests the
+// bounds admit are answered or cut close to the budget and hold little memory, for a run is
+// cut between two events only; the requests whose single draw would outgrow both are refused
+// before anything is played.
+func TestSimulate_WorkWithinTheBounds(t *testing.T) {
+	if testing.Short() {
+		t.Skip("plays the budget of production several times")
+	}
+	rr := func(size int, more string) string {
+		return fmt.Sprintf(`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":%d,"qualifiers":1%s}]}`, size, more)
+	}
+	const refusal = "matches a phase"
+	for name, tc := range map[string]struct {
+		config, players string
+		refused         bool
+	}{
+		"one pool of 91":                  {rr(91, ""), "91", false},
+		"pools of 16 for the full field":  {rr(16, ""), "512", false},
+		"a Swiss of 100 lives by rounds":  {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"mode":"rounds","pairing":"wins"}]}`, "512", false},
+		"a Swiss of 100 lives by batches": {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"batch_minutes":1}]}`, "512", false},
+		"a double elimination":            {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "512", false},
+		"one pool of 92":                  {rr(92, ""), "92", true},
+		"one pool of the full field":      {rr(512, ""), "512", true},
+		"pools of 17 for the full field":  {rr(17, ""), "512", true},
+		"a large pool entered later": {`{"name":"x","phases":[{"kind":"round_robin","length":1,"group_size":2,"qualifiers":1},` +
+			`{"kind":"round_robin","length":1,"group_size":512,"qualifiers":1,"entry":"all"}]}`, "512", true},
+	} {
+		req := service.SimulateRequest{Config: json.RawMessage(tc.config), Players: json.RawMessage(tc.players), Runs: 1}
+		runtime.GC()
+		var m runtime.MemStats
+		runtime.ReadMemStats(&m)
+		base, peak := m.HeapAlloc, m.HeapAlloc
+		stop, sampled := make(chan struct{}), make(chan struct{})
+		go func() {
+			defer close(sampled)
+			tick := time.NewTicker(2 * time.Millisecond)
+			defer tick.Stop()
+			for {
+				select {
+				case <-stop:
+					return
+				case <-tick.C:
+					var m runtime.MemStats
+					runtime.ReadMemStats(&m)
+					peak = max(peak, m.HeapAlloc)
+				}
+			}
+		}()
+		began := time.Now()
+		_, err := service.Simulate(context.Background(), req)
+		elapsed := time.Since(began)
+		close(stop)
+		<-sampled
+		grew := (peak - base) >> 20
+		t.Logf("%s: %v, %d MiB of heap (%v)", name, elapsed.Round(time.Millisecond), grew, err)
+		if tc.refused {
+			if !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), refusal) || elapsed > 100*time.Millisecond {
+				t.Errorf("%s: %v after %v and %d MiB of heap; want the refusal of the phase's matches, at once", name, err, elapsed, grew)
+			}
+			continue
+		}
+		if err != nil && !errors.Is(err, service.ErrSimulationTooHeavy) {
+			t.Errorf("%s: %v; want an answer, or the budget", name, err)
+		}
+		if over := elapsed - service.SimulateBudget; over > 250*time.Millisecond {
+			t.Errorf("%s: answered %v past the budget; want a run cut within a quarter of a second", name, over)
+		}
+		if grew > 64 {
+			t.Errorf("%s: held %d MiB of heap; want 64 at most", name, grew)
+		}
 	}
 }

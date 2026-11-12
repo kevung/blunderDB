@@ -793,7 +793,7 @@ journal du démon.
 
 **Simuler un format.** ``directions.simulate`` joue un format sans tournoi ni
 base : ``config`` (la configuration du moteur), ``players`` (un effectif, de 2
-à 1024, ou une liste d'inscrits avec ``id`` et ``rating``), ``tables``,
+à 512, ou une liste d'inscrits avec ``id`` et ``rating``), ``tables``,
 ``start``, ``runs`` (30 par défaut, 200 au plus) et ``seed``. La réponse rend
 ``runs``, ``matches``, ``minutesP10``, ``minutesP50``, ``minutesP90``,
 ``estimatedEnd``, ``peakTables``, ``matchesPerPlayerMin``,
@@ -811,16 +811,23 @@ la requête est bien formée mais trop lourde, réduisez l'effectif ou le format
 (baisser ``runs`` sert une réponse partielle, pas celle-ci). Une requête mal
 formée ou hors bornes rend ``400``, quelle que soit la charge.
 
-Les bornes d'une simulation sont des refus, prononcés avant tout calcul : 1024
+Les bornes d'une simulation sont des refus, prononcés avant tout calcul : 512
 joueurs, 200 ``runs``, 16 phases, des matchs en 99 points, 100 vies, 4096
-tables et un corps de 1 Mio (``413`` au-delà). ``directions.create`` ne borne
-ni l'effectif ni les vies : ces deux bornes sont très au-delà d'un tournoi
-réel, et c'est le budget de temps qui protège le processeur en dessous. Elles
-sont nominales : avec les 30 ``runs`` par défaut, un suisse de 128 joueurs ou
-un tableau de 256 sortent déjà sous ``time_budget``, sur une partie des
-``runs`` seulement ; l'hôte baisse ``runs`` quand l'effectif monte. Sont aussi
-refusés (``400``) un format qui ne joue aucun match avec cet effectif, un
-tournoi simulé de plus d'un an et un ``start`` dont la fin sort du calendrier.
+tables, 4096 matchs tirés d'un coup par une phase (les poules d'un
+``round_robin`` : une poule unique de 91 joueurs au plus, des poules de 16 pour
+512 joueurs) et un corps de 1 Mio (``413`` au-delà). ``directions.create`` ne
+borne ni l'effectif, ni les vies, ni les poules ; la simulation, si : au-delà
+de 512 joueurs aucun format ne joue un ``run`` dans le budget, et le tirage
+d'une grande poule, qui ne s'interrompt pas, occuperait le processeur et la
+mémoire hors de ce budget. Ces bornes restent nominales : avec les 30 ``runs``
+par défaut, un suisse de 128 joueurs ou un tableau de 256 sortent déjà sous
+``time_budget``, sur une partie des ``runs`` seulement ; l'hôte baisse ``runs``
+quand l'effectif monte. Les durées suivent le ``min_per_point`` de la
+configuration (8 minutes par défaut) et, avec un ``start``, sautent ses pauses
+(``breaks``) comme le fait ``directions.clock`` ; sans ``start``, une pause,
+qui est une date, n'est pas comptée. Sont aussi refusés (``400``) un format
+qui ne joue aucun match avec cet effectif, un tournoi simulé de plus d'un an
+et un ``start`` dont la fin sort du calendrier.
 
 Les deux places de calcul sont celles du processus, tous tenants confondus : un
 tenant qui en tient une n'en prend une seconde que si aucun autre n'attend, et

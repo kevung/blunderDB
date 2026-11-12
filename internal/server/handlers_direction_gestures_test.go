@@ -157,11 +157,11 @@ func TestDirectionSimulate(t *testing.T) {
 	}
 	for bad, want := range map[string]string{
 		strings.Replace(body, `"runs":10`, `"runs":100000`, 1):                    "1 to 200 runs, not 100000",
-		strings.Replace(body, `"players":16`, `"players":100000`, 1):              "2 to 1024 players, not 100000",
-		strings.Replace(body, `"players":16`, `"players":3000000000`, 1):          "2 to 1024 players, not 3000000000",
-		strings.Replace(body, `"players":16`, `"players":1000000000000`, 1):       "2 to 1024 players, not 1000000000000",
-		strings.Replace(body, `"players":16`, `"players":9000000000000000000`, 1): "2 to 1024 players, not 9000000000000000000",
-		strings.Replace(body, `"players":16`, `"players":-3`, 1):                  "2 to 1024 players, not -3",
+		strings.Replace(body, `"players":16`, `"players":100000`, 1):              "2 to 512 players, not 100000",
+		strings.Replace(body, `"players":16`, `"players":3000000000`, 1):          "2 to 512 players, not 3000000000",
+		strings.Replace(body, `"players":16`, `"players":1000000000000`, 1):       "2 to 512 players, not 1000000000000",
+		strings.Replace(body, `"players":16`, `"players":9000000000000000000`, 1): "2 to 512 players, not 9000000000000000000",
+		strings.Replace(body, `"players":16`, `"players":-3`, 1):                  "2 to 512 players, not -3",
 		strings.Replace(body, `"length":5`, `"length":1000000000`, 1):             "length is 0 to 99, not 1000000000",
 		strings.Replace(body, `"lives":2`, `"lives":1000000000`, 1):               "lives is 0 to 100, not 1000000000",
 		`{}`: "empty configuration",

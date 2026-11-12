@@ -23,17 +23,27 @@ import (
 // The bounds of one simulation. They are refusals, not clamps: a caller who asked for a
 // thousand runs must not read the answer of two hundred as theirs.
 const (
-	SimulateMaxPlayers  = 1024
+	// SimulateMaxPlayers is the largest field a simulation answers for. directions.create
+	// bounds no field; the simulation does, on purpose: past this one not even the lightest
+	// format — a single-elimination bracket — plays one run within SimulateBudget, so a
+	// larger field would hold a place for the whole budget to answer ErrSimulationTooHeavy.
+	SimulateMaxPlayers  = 512
 	SimulateMaxRuns     = 200
 	SimulateDefaultRuns = 30
 	SimulateMaxTables   = 4096
 	SimulateMaxPhases   = 16
 	// SimulateMaxLength bounds every match length of the format, in points.
 	SimulateMaxLength = 99
-	// directions.create bounds neither the field nor the lives, and the engine admits any:
-	// these two are well past a real tournament, and under them SimulateBudget is what
-	// protects the processor (a run is cut between two of its events).
+	// directions.create does not bound the lives, and the engine admits any: this is well
+	// past a real tournament, and under it SimulateBudget is what protects the processor (a
+	// run is cut between two of its events).
 	SimulateMaxLives = 100
+	// SimulateMaxPhaseMatches bounds the matches one phase draws at once. A run is cut
+	// between two events only, and the draw of a round robin is one event that creates every
+	// match of every pool: its time and its memory grow with the square of the pool, out of
+	// the reach of SimulateBudget. At this bound a draw holds a few megabytes for a few tens
+	// of milliseconds, several times what a run plays within the budget.
+	SimulateMaxPhaseMatches = 4096
 	// The raw sizes of the two free-form members: nothing is decoded past them, so no slice
 	// is ever sized by what a request says.
 	simulateMaxConfigBytes  = 64 << 10
@@ -42,7 +52,8 @@ const (
 	simulateMaxSteps = 50000
 )
 
-// SimulateBudget is the computing time one simulation may take. Past it the runs already
+// SimulateBudget is the computing time one simulation may take: with the two places of the
+// daemon's gate taken, the most a host computes for callers who are only asking. Past it the runs already
 // played are answered, under the warning SimulateWarnTimeBudget; with none played the answer
 // is ErrSimulationTooHeavy.
 var SimulateBudget = 2 * time.Second
@@ -97,11 +108,13 @@ type Simulation struct {
 	// Matches is the median number of matches of a tournament.
 	Matches int `json:"matches"`
 	// MinutesP10, MinutesP50 and MinutesP90 are the 10th, 50th and 90th centiles of the
-	// tournament's length, from the first match launched to the last result, breaks included.
+	// tournament's length, from the first match launched to the last result, at the
+	// configuration's min_per_point. With a Start the configuration's breaks are included: a
+	// break is a date, and a tournament with no start meets none.
 	MinutesP10 float64 `json:"minutesP10"`
 	MinutesP50 float64 `json:"minutesP50"`
 	MinutesP90 float64 `json:"minutesP90"`
-	// EstimatedEnd is Start plus MinutesP50 (RFC 3339), empty without a Start.
+	// EstimatedEnd is Start plus MinutesP50 (RFC 3339), so past the breaks; empty without a Start.
 	EstimatedEnd string `json:"estimatedEnd,omitempty"`
 	// PeakTables is the most matches ever running at once: the tables the format wants so that
 	// no match waits for one. It can exceed the room's (SimulateWarnTablesExceeded).
@@ -153,6 +166,9 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 	if err != nil {
 		return nil, err
 	}
+	if err := boundSimulatedWork(cfg, len(players)); err != nil {
+		return nil, err
+	}
 
 	parent := ctx
 	ctx, cancel := context.WithTimeout(ctx, SimulateBudget)
@@ -167,6 +183,7 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 	for i := range runs {
 		peak := 0
 		r := sim.Run(cfg, players, sim.Options{Seed: req.Seed + int64(i), Start: start, MaxSteps: simulateMaxSteps,
+			MinPerPoint: cfg.MinPerPoint,
 			Hook: func(s *tournoi.State, _ tournoi.Event) error {
 				peak = max(peak, len(s.Running()))
 				return ctx.Err()
@@ -217,6 +234,13 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		}
 		return nil, direction.Refusef("direction: this format cannot be simulated: no run reached its end")
 	}
+	if !start.IsZero() && len(cfg.Breaks) > 0 {
+		// The engine's simulation plays through the breaks; the clock of a live tournament
+		// lays its forecast past them, and so does this one.
+		for i, m := range minutes {
+			minutes[i] = direction.AfterBreaks(start, time.Duration(m*float64(time.Minute)), cfg.Breaks).Sub(start).Minutes()
+		}
+	}
 	slices.Sort(minutes)
 	slices.Sort(matches)
 	out.Runs = len(minutes)
@@ -244,6 +268,29 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 	}
 	slices.Sort(out.Warnings)
 	return out, nil
+}
+
+// boundSimulatedWork refuses a format whose phase would draw more matches at once than a
+// simulation plays: the pools of a round robin, every pair of each. Every other format draws
+// at most one match for two players.
+func boundSimulatedWork(cfg tournoi.Config, players int) error {
+	for i, p := range cfg.Phases {
+		if p.Kind != tournoi.KindRoundRobin {
+			continue
+		}
+		// A later phase is entered by no more players than the field.
+		size := p.GroupSize
+		if size <= 0 {
+			size = 4
+		}
+		size = min(size, players)
+		pools := (players + size - 1) / size
+		if drawn := pools * size * (size - 1) / 2; drawn > SimulateMaxPhaseMatches {
+			return direction.Refusef("direction: in phase %d of a simulation, pools of %d draw up to %d matches for %d players; a simulation plays at most %d matches a phase: ask for smaller pools or fewer players",
+				i+1, size, drawn, players, SimulateMaxPhaseMatches)
+		}
+	}
+	return nil
 }
 
 // centile is the nearest-rank p-th centile of sorted, which is not empty.
