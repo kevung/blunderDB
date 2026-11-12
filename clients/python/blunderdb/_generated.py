@@ -438,6 +438,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.freeParticipants — JSON."
         return self._call("/v1/directions.freeParticipants", payload)
 
+    def directions_free_slots(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.freeSlots — JSON."
+        return self._call("/v1/directions.freeSlots", payload)
+
     def directions_get(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.get — JSON."
         return self._call("/v1/directions.get", payload)

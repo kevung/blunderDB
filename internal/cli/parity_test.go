@@ -474,7 +474,7 @@ var databaseParity = map[string]parityEntry{
 	"DirectoryEntrants":                 {Why: whyDirection},
 	"DirectoryCSV":                      {Why: whyDirection},
 	"ParseDirectoryCSV":                 {Why: whyDirection},
-	"DirectionFreeSlots":                {Why: whyDirection},
+	"DirectionFreeSlots":                {Server: "/v1/directions.freeSlots", Why: whyDirectionRead},
 	"AddParticipantAtSlot":              {Server: "/v1/directions.addParticipant", Why: whyDirectionGesture},
 	"DirectionJournalJSON":              {CLI: "tournament export", Why: whyDirection},
 	"HasDirection":                      {Why: whyDirection},

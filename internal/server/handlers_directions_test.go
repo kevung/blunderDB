@@ -113,6 +113,7 @@ func directionReadCalls(f directedFixture) map[string]string {
 		"/v1/directions.get":              tid,
 		"/v1/directions.participants":     tid,
 		"/v1/directions.freeParticipants": tid,
+		"/v1/directions.freeSlots":        tid,
 		"/v1/directions.tableGrid":        tid,
 		"/v1/directions.brackets":         tid,
 		"/v1/directions.standings":        tid,

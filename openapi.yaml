@@ -2447,6 +2447,39 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/tournoi_Player"
+  /v1/directions.freeSlots:
+    post:
+      operationId: directions.freeSlots
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_FreeSlot"
   /v1/directions.get:
     post:
       operationId: directions.get
@@ -9069,6 +9102,8 @@ components:
         tournamentId:
           type: integer
           format: int64
+        id:
+          type: string
         name:
           type: string
         club:
@@ -10314,6 +10349,9 @@ components:
     service_DirectoryEntry:
       type: object
       description: "Opaque: see the Go type service.DirectoryEntry (defined outside internal/server, not expanded here)."
+    service_FreeSlot:
+      type: object
+      description: "Opaque: see the Go type service.FreeSlot (defined outside internal/server, not expanded here)."
     service_HistoryEntry:
       type: object
       description: "Opaque: see the Go type service.HistoryEntry (defined outside internal/server, not expanded here)."

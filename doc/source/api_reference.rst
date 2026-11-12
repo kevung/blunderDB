@@ -123,6 +123,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.enterParticipants         JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.enterResult               JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.freeParticipants          JSON  (ETag)
+     POST /v1/directions.freeSlots                 JSON  (ETag)
      POST /v1/directions.get                       JSON  (ETag)
      POST /v1/directions.history                   JSON  (ETag)
      POST /v1/directions.lastDecision              JSON  (ETag)

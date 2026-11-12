@@ -662,6 +662,10 @@ ces choses appartiennent au démon parce qu'il fait face à un réseau, et
 l'ADR-0005 dit pourquoi. Un programme qui embarque le moteur choisit lui-même
 son tenant et répond de ses appels.
 
+``Config.EnableDirection`` ouvre les gestes de direction de tournoi dans le
+moteur embarqué, comme ``serve --direction`` le fait pour le démon ; ils sont
+fermés par défaut.
+
 .. _headless_direction:
 
 Direction de tournoi et événements
@@ -678,7 +682,8 @@ résultat, appairer, créer un événement) ne le sont que sous ``serve --direct
 * Les autres ``directions.*`` prennent ``{"tournamentId": N}`` :
   ``directions.get`` (la vue complète : propositions, classement, matchs en
   cours), ``directions.participants``, ``directions.freeParticipants``,
-  ``directions.tableGrid``, ``directions.brackets``, ``directions.standings``,
+  ``directions.tableGrid``, ``directions.freeSlots`` (les places d'exemption
+  qu'un retardataire peut encore prendre), ``directions.brackets``, ``directions.standings``,
   ``directions.standingsCsv``, ``directions.history`` (filtres facultatifs
   ``player`` et ``match``), ``directions.clock``, ``directions.slots``,
   ``directions.lastDecision``, ``directions.pageHtml`` et
@@ -751,7 +756,8 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   configuration au format JSON du moteur) ;
 * les inscriptions : ``directions.enterParticipants`` (``players``),
   ``directions.addParticipant`` (``name``, ``club``, ``rating`` ; avec
-  ``section`` et ``key``, un retardataire prend une place d'exemption),
+  ``section`` et ``key``, un retardataire prend une place d'exemption ; avec
+  ``id``, l'inscription garde l'identifiant donné, refusé s'il est déjà pris),
   ``directions.updateParticipant``, ``directions.withdraw``,
   ``directions.reinstate``, ``directions.makeAbsent``,
   ``directions.makeAvailable``, ``directions.addPair``,
