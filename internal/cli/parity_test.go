@@ -161,6 +161,10 @@ var serverOnly = map[string]string{
 	// method; the CLI reaches it through `duel list` and `duel show`.
 	"/v1/duels.get": whyDuelService,
 
+	// A calculation over the engine's simulation: it reads no database, so no
+	// Database holds it.
+	"/v1/directions.simulate": "service.Simulate, shared and pure: it reads no library, so no Database method wraps it",
+
 	// Backend-specific, and the wrapper is SQLite-only.
 	"/ops/tenant.purge": whyPostgresOnly,
 }
