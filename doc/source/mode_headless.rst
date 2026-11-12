@@ -1137,6 +1137,12 @@ rend une page des identifiants derrière l'un de ces comptes : ``export`` porte
 le corps d'``exports.sqlite``, ``family`` la famille, ``offset`` et ``limit``
 la page (1000 identifiants au plus).
 
+``"omitProvenance": true`` (``--provenance=false`` en ligne de commande, pour
+l'export comme pour le transfert) retire ce qui nomme le match d'origine : les
+analyses partent sans joueurs ni coups et décisions de videau joués, aucun
+match, tournoi, transcription ni alias ne part, et nommer un match ou un
+tournoi est refusé (``invalid``).
+
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,
 mêmes empreintes ``canonical_hash``, un doublon n'est écrit qu'une fois. L'appel
