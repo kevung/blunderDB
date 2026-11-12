@@ -83,7 +83,7 @@ func MergeDecks(ctx context.Context, tx storage.Stores, scope string, src []Sour
 				sourceID = targetColl[name]
 			}
 		case domain.AnkiSourceSearch:
-			sourceCmd = carriedSearchSource(sourceCmd, targetOf, maps.Matches, maps.Tournaments)
+			sourceCmd = carriedSearchSource(sourceCmd, targetOf, maps.Matches, maps.Tournaments, queryGate{})
 		}
 		id, err := tx.Anki().CreateDeck(ctx, scope, d.Name, d.Description, d.SourceType, sourceID, sourceCmd)
 		if err != nil {

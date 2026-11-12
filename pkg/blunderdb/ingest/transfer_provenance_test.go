@@ -4,14 +4,17 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"reflect"
 	"slices"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -240,7 +243,7 @@ func provenanceLibrary(t *testing.T) (src *sqlite.Storage, living int64, player 
 	if err := src.Aliases().Set(ctx, "", storage.AliasPlayer, "Surnom", player); err != nil {
 		t.Fatal(err)
 	}
-	for name, command := range map[string]string{"contre lui": `s op"` + player + `"`, "gros coups": "s E>0.1"} {
+	for name, command := range map[string]string{"contre lui": `s op"` + player + `"`, "gros coups": "s E>0.1", "gagnants": "s w>50"} {
 		if _, err := src.Filters().Save(ctx, "", name, command); err != nil {
 			t.Fatal(err)
 		}
@@ -297,7 +300,7 @@ func fileHolds(t *testing.T, path, needle string) []string {
 // TestExport_OmitProvenanceLeavesNoName: a file exported without provenance
 // holds the player's name nowhere — not in a living collection's query, which
 // leaves frozen on the members it selects at the source, not in a saved
-// filter, an alias, a transcription or the producer's metadata — while the
+// filter (one that reads the played move stays too), an alias, a transcription or the producer's metadata — while the
 // same export with provenance carries each of them.
 func TestExport_OmitProvenanceLeavesNoName(t *testing.T) {
 	ctx := context.Background()
@@ -353,8 +356,8 @@ func TestExport_OmitProvenanceLeavesNoName(t *testing.T) {
 		}
 		kept = append(kept, f.Name)
 	}
-	if !slices.Equal(kept, []string{"gros coups"}) {
-		t.Errorf("saved filters in the file: %v; want only the one that names nobody", kept)
+	if !slices.Equal(kept, []string{"gagnants"}) {
+		t.Errorf("saved filters in the file: %v; want only the one that reads the position alone", kept)
 	}
 	found := false
 	for c, err := range dst.Collections().List(ctx, "") {
@@ -376,5 +379,192 @@ func TestExport_OmitProvenanceLeavesNoName(t *testing.T) {
 	}
 	if !found {
 		t.Error("the living collection did not leave")
+	}
+}
+
+// needle is a name planted in every place of a query the parser lets a word
+// stand: no file exported without provenance may hold it.
+const needle = "Zanzibar"
+
+// anonymityCorpus is one query per filter of the grammar, and per way a text
+// the parser does not understand can ride in a query. living says whether the
+// query may leave (rewritten) without provenance when the comments leave too;
+// bare, when they do not.
+var anonymityCorpus = []struct {
+	query        string
+	living, bare bool
+}{
+	// What the position holds: leaves, rewritten.
+	{"s w>50", true, true},
+	{"s c w>50 g>10 b>1 W>50 G>10 B>1", true, true},
+	{"s nc P>100 k>1 K>1 z>5 Z>5 o5 O>0", true, true},
+	{"s bo>0 BO>0 bj>0 BJ>0 e>0 xD65", true, true},
+	{"s d fl aw:2 AW>3 M", true, true},
+	{"s cr", true, true},
+	{"s T>2020/01/01", true, true},
+	{`s m"13/11"`, true, true},
+	{"s ph:race", true, true},
+	{"s gt:holding", true, true},
+	{"s ad:3ply+", true, true},
+	{"ss w>50", true, true},
+	// What the comments hold: leaves with them only.
+	{"s #monaco2026", true, false},
+	{"s co", true, false},
+	{"s xco", true, false},
+	{"s co:user", true, false},
+	// What the played move holds: never leaves.
+	{"s E>0.1", false, false},
+	{"s E<0.05", false, false},
+	{"s tm>5", false, false},
+	{"s mg>50", false, false},
+	{"s dr", false, false},
+	{"s dd", false, false},
+	// What names the match: never leaves.
+	{"s md:2020", false, false},
+	{"s md>2019-06", false, false},
+	{"s ml:7", false, false},
+	{"s pr>5", false, false},
+	{"s n>1", false, false},
+	{"s i", false, false},
+	{"s rd:" + needle, false, false},
+	{`s pl"` + needle + `"`, false, false},
+	{`s op"` + needle + `"`, false, false},
+	{`s tn"` + needle + `"`, false, false},
+	{`s au"` + needle + `"`, false, false},
+	{`s t"` + needle + `"`, false, false},
+	// A second value the parser drops without a word.
+	{`s m"13/11" m"` + needle + `"`, false, false},
+	{`s w>50 pl"a" pl"` + needle + `"`, false, false},
+	// A token the parser does not know, or knows and ignores.
+	{`s w>50 hello"` + needle, false, false},
+	{"s w>50 w>60" + needle, false, false},
+	{"s w>50 x", false, false},
+	// A word a prefix rule or an open vocabulary takes for a value.
+	{"s w" + needle, false, false},
+	{"s " + strings.ToLower(needle), false, false},
+	{"s T" + needle, false, false},
+	{"s ph:" + strings.ToLower(needle), false, false},
+	{"s gt:" + strings.ToLower(needle), false, false},
+	{"s co:" + strings.ToLower(needle), false, false},
+	{"s ad:" + strings.ToLower(needle), false, false},
+	{`s m"` + needle + `"`, false, false},
+}
+
+// queryWords are the tokens and quoted values of a query, for comparing two
+// queries by what they hold.
+func queryWords(query string) map[string]bool {
+	words := map[string]bool{}
+	for _, w := range strings.Fields(query) {
+		words[w] = true
+	}
+	return words
+}
+
+// TestExport_OmitProvenanceQueryNeverLeavesAsWritten: without provenance a
+// living collection either leaves frozen on what it selects at the source, or
+// living on the query the parser writes back — never with a string the
+// rewritten form does not hold — and selects at the destination the positions
+// it selects at the source.
+func TestExport_OmitProvenanceQueryNeverLeavesAsWritten(t *testing.T) {
+	ctx := context.Background()
+	src, _, _ := provenanceLibrary(t)
+	n := 0
+	for p, err := range src.Positions().List(ctx, "", storage.ListOpts{Limit: 40}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if n++; n%2 == 0 {
+			if _, err := src.Comments().Add(ctx, "", p.ID, "joli coup #monaco2026"); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	name := func(i int) string { return fmt.Sprintf("corpus %02d", i) }
+	selected := make([]int, len(anonymityCorpus))
+	for i, c := range anonymityCorpus {
+		// Past the validation of CreateCollection: a query written by another
+		// version reaches the export all the same.
+		id, err := src.Collections().Create(ctx, "", name(i), "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := src.Collections().SetFilterQuery(ctx, "", id, c.query); err != nil {
+			t.Fatal(err)
+		}
+		if ev, err := storage.EvaluateCollection(ctx, src, "", id, 0); err == nil {
+			selected[i] = len(ev.PositionIDs)
+		} else {
+			selected[i] = -1 // unreadable at the source: nothing to compare
+		}
+	}
+
+	export := func(omit, comments bool) string {
+		opts := WholeLibraryOptions()
+		opts.OmitProvenance, opts.IncludeComments = omit, comments
+		plan, err := OptionsFor(ctx, src, "", opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		path := filepath.Join(t.TempDir(), "export.db")
+		if _, err := ExportSQLite(ctx, src, "", path, plan); err != nil {
+			t.Fatal(err)
+		}
+		return path
+	}
+	if held := fileHolds(t, export(false, true), needle); !slices.Contains(held, "collection.filter_query") {
+		t.Fatalf("with provenance the queries do not carry %q (held in %v): the test data proves nothing", needle, held)
+	}
+
+	for _, comments := range []bool{false, true} {
+		path := export(true, comments)
+		if held := fileHolds(t, path, needle); len(held) > 0 {
+			t.Errorf("comments %v: the file holds %q in %v", comments, needle, held)
+		}
+		dst, err := sqlite.Open(ctx, path, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		arrived := map[string]storage.Collection{}
+		for c, err := range dst.Collections().List(ctx, "") {
+			if err != nil {
+				t.Fatal(err)
+			}
+			arrived[c.Name] = *c
+		}
+		for i, c := range anonymityCorpus {
+			got, ok := arrived[name(i)]
+			if !ok {
+				t.Errorf("comments %v, %q: the collection did not leave", comments, c.query)
+				continue
+			}
+			f, _ := searchquery.Parse(c.query)
+			rewritten := searchquery.Format(f)
+			want := ""
+			if (comments && c.living) || (!comments && c.bare) {
+				want = rewritten
+				if strings.HasPrefix(c.query, "ss ") {
+					want = "s" + want
+				}
+			}
+			if got.FilterQuery != want {
+				t.Errorf("comments %v, %q: arrived with query %q, want %q", comments, c.query, got.FilterQuery, want)
+			}
+			held := queryWords(rewritten)
+			for w := range queryWords(strings.TrimPrefix(got.FilterQuery, "s")) {
+				if !held[w] {
+					t.Errorf("comments %v, %q: arrived holding %q, which its rewritten form %q does not", comments, c.query, w, rewritten)
+				}
+			}
+			ev, err := storage.EvaluateCollection(ctx, dst, "", got.ID, 0)
+			if err != nil {
+				t.Errorf("comments %v, %q: unreadable at the destination: %v", comments, c.query, err)
+				continue
+			}
+			if selected[i] >= 0 && len(ev.PositionIDs) != selected[i] {
+				t.Errorf("comments %v, %q (arrived %q): selects %d positions at the destination, %d at the source",
+					comments, c.query, got.FilterQuery, len(ev.PositionIDs), selected[i])
+			}
+		}
+		dst.Close()
 	}
 }

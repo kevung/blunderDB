@@ -740,13 +740,18 @@ type ExportOptions struct {
 	// OmitProvenance sends the positions without what names the match they
 	// were played in: each analysis leaves without its players and its played
 	// moves and cube actions, and no match, tournament, transcription or alias
-	// leaves. Naming a match or a tournament by id is then refused. A living
-	// collection whose query names a player, a tournament or an author, holds
-	// a free text or selects by the match leaves frozen, its members evaluated
-	// at the source; a saved filter of that kind does not leave; the file does
-	// not carry the producer's "user" and "description" metadata. Comments are
-	// free text and leave as IncludeComments says: the daemon and the CLI turn
-	// them off under OmitProvenance unless the caller asks for them by name.
+	// leaves. Naming a match or a tournament by id is then refused. A stored
+	// query never leaves as written: it leaves rewritten by the parser, or
+	// not at all — when it reads what stays behind (the match, a free text,
+	// the played move, a comment when comments stay), or holds a token or a
+	// value the parser does not understand. A living collection then leaves
+	// frozen, its members evaluated at the source; a saved filter does not
+	// leave; a search deck keeps its positions without its query. The file
+	// does not carry the producer's "user" and "description" metadata.
+	// Comments are free text and leave as IncludeComments says: the daemon
+	// and the CLI turn them off under OmitProvenance unless the caller asks
+	// for them by name. The name and description of a collection, a filter
+	// or a deck are free text too and leave as they are.
 	// Off, the zero value, the export carries them as the other options say.
 	OmitProvenance bool `json:"omitProvenance"`
 

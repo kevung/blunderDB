@@ -399,3 +399,94 @@ func TestTransferPull_OmitProvenance_Postgres(t *testing.T) {
 		t.Errorf("the source holds %d analyses, %d named; want its %d, all named", all, named, len(loaded))
 	}
 }
+
+// TestTransferPull_OmitProvenanceQueries_Postgres: pulled without provenance,
+// a living collection arrives frozen on what it selects at the source, or
+// living on the query the parser writes back; it never arrives with a text
+// the parser did not read, and selects what it selected.
+func TestTransferPull_OmitProvenanceQueries_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	st := srv.opts.Storage
+	importFixture(t, st, "2", "test.xg")
+	ctx2 := storage.WithTenant(context.Background(), 2)
+	n := 0
+	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{Limit: 40}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if n++; n%2 == 0 {
+			if _, err := st.Comments().Add(ctx2, "2", p.ID, "joli coup #monaco2026"); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	// query → what arrives without the comments, and with them.
+	cases := []struct{ name, query, bare, commented string }{
+		{"tag", "s #monaco2026", "", "s #monaco2026"},
+		{"second pattern", `s m"13/11" m"Zanzibar"`, "", ""},
+		{"match date", "s md>2019-06", "", ""},
+		{"unread text", `s w>50 hello"Zanzibar`, "", ""},
+		{"word as a value", "s wZanzibar", "", ""},
+		{"played error", "s E>0.1", "", ""},
+		{"decision time", "s tm>5", "", ""},
+		{"position", "s c w>50", "s cube w>50", "s cube w>50"},
+	}
+	selected := map[string]int{}
+	for _, c := range cases {
+		id, err := st.Collections().Create(ctx2, "2", c.name, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := st.Collections().SetFilterQuery(ctx2, "2", id, c.query); err != nil {
+			t.Fatal(err)
+		}
+		selected[c.name] = -1
+		if ev, err := storage.EvaluateCollection(ctx2, st, "2", id, 0); err == nil {
+			selected[c.name] = len(ev.PositionIDs)
+		}
+	}
+	if selected["tag"] == 0 || selected["played error"] == 0 || selected["match date"] == 0 {
+		t.Fatalf("the source selects %v: the test needs a tag, a played error and a match date that select something", selected)
+	}
+
+	for writer, body := range map[string]string{
+		"1": `{"tenant":"2","export":{"omitProvenance":true}}`,
+		"3": `{"tenant":"2","export":{"omitProvenance":true,"includeComments":true}}`,
+	} {
+		if rec := serveAcross(t, srv, writer, "2", "/v1/across.transferPull", body); rec.Code != http.StatusOK {
+			t.Fatalf("pull into %s: %d %s", writer, rec.Code, rec.Body)
+		}
+		tenant, _ := storage.ParseTenant(writer)
+		ctx := storage.WithTenant(context.Background(), tenant)
+		arrived := map[string]storage.Collection{}
+		for c, err := range st.Collections().List(ctx, writer) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			arrived[c.Name] = *c
+		}
+		for _, c := range cases {
+			want := c.bare
+			if writer == "3" {
+				want = c.commented
+			}
+			got, ok := arrived[c.name]
+			if !ok {
+				t.Errorf("tenant %s, %q: the collection did not arrive", writer, c.query)
+				continue
+			}
+			if got.FilterQuery != want {
+				t.Errorf("tenant %s, %q: arrived with query %q, want %q", writer, c.query, got.FilterQuery, want)
+			}
+			ev, err := storage.EvaluateCollection(ctx, st, writer, got.ID, 0)
+			if err != nil {
+				t.Errorf("tenant %s, %q: %v", writer, c.query, err)
+				continue
+			}
+			if selected[c.name] >= 0 && len(ev.PositionIDs) != selected[c.name] {
+				t.Errorf("tenant %s, %q (arrived %q): selects %d positions, %d at the source",
+					writer, c.query, got.FilterQuery, len(ev.PositionIDs), selected[c.name])
+			}
+		}
+	}
+}

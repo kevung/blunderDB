@@ -192,7 +192,7 @@ func planRows(plan *CapPlan, all, allMatches, tournaments map[int64]int64, match
 		case touches(d.PositionIDs):
 		case d.Deck.SourceType == domain.AnkiSourceCollection && plan.Collections[d.Deck.SourceID]:
 		case d.Deck.SourceType == domain.AnkiSourceSearch &&
-			carriedSearchSource(d.Deck.SourceCommand, all, allMatches, tournaments) != carriedSearchSource(d.Deck.SourceCommand, kept, keptMatches, tournaments):
+			carriedSearchSource(d.Deck.SourceCommand, all, allMatches, tournaments, queryGate{}) != carriedSearchSource(d.Deck.SourceCommand, kept, keptMatches, tournaments, queryGate{}):
 		default:
 			continue
 		}

@@ -589,7 +589,7 @@ func selectionFlags(fs *flag.FlagSet, what string) exportSelection {
 		tournaments:    fs.Bool("tournaments", true, "Include tournaments in "+what+" (default: true)"),
 		decks:          fs.Bool("decks", true, "Include Anki decks in "+what+" (default: true)"),
 		lessons:        fs.Bool("lessons", true, "Include lessons, with the collections and positions their steps show, in "+what+" (default: true)"),
-		provenance:     fs.Bool("provenance", true, "Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases, freezes the living collections and drops the saved filters that name a player or select by the match, and sends the comments only with --comments (default: true)"),
+		provenance:     fs.Bool("provenance", true, "Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases, sends a stored query only as the parser rewrites it (a living collection whose query reads the match, a free text, the played move or an unsent comment leaves frozen, such a saved filter stays), sends the comments only with --comments, and leaves the names and descriptions of collections as they are (default: true)"),
 		collectionIDs:  fs.String("collection-ids", "", "Comma-separated list of collection IDs to take (empty = all)"),
 		matchIDs:       fs.String("match-ids", "", "Comma-separated list of match IDs to take (empty = all)"),
 		deckIDs:        fs.String("deck-ids", "", "Comma-separated list of Anki deck IDs to take (empty = all)"),
