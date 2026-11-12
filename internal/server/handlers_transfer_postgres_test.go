@@ -429,6 +429,10 @@ func TestTransferPull_OmitProvenanceQueries_Postgres(t *testing.T) {
 		{"word as a value", "s wZanzibar", "", ""},
 		{"played error", "s E>0.1", "", ""},
 		{"decision time", "s tm>5", "", ""},
+		{"ranking on a stored row", "s like42", "", ""},
+		{"ranking on a stored row, narrowed", "s like5<12* w>50", "", ""},
+		{"absent tag", "s #zanzibar", "", ""},
+		{"word as an id", "s id1Zanzibar", "", ""},
 		{"position", "s c w>50", "s cube w>50", "s cube w>50"},
 	}
 	selected := map[string]int{}

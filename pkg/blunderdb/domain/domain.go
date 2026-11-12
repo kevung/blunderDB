@@ -743,8 +743,9 @@ type ExportOptions struct {
 	// leaves. Naming a match or a tournament by id is then refused. A stored
 	// query never leaves as written: it leaves rewritten by the parser, or
 	// not at all — when it reads what stays behind (the match, a free text,
-	// the played move, a comment when comments stay), or holds a token or a
-	// value the parser does not understand. A living collection then leaves
+	// the played move, the matches a ranking on a stored position sets aside,
+	// a comment when comments stay, a tag no comment that leaves bears), or
+	// holds a token or a value the parser does not understand. A living collection then leaves
 	// frozen, its members evaluated at the source; a saved filter does not
 	// leave; a search deck keeps its positions without its query. The file
 	// does not carry the producer's "user" and "description" metadata.

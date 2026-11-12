@@ -1172,6 +1172,16 @@ positions à l'arrivée) ou, quand les commentaires ne partent pas, un commentai
 jeton inconnu ou ignoré (un second ``m"…"``), ou une valeur hors de la forme
 attendue : un mot à la place d'un nombre, un moteur après ``ad:``.
 
+Ne part pas davantage le classement sur une position enregistrée
+(``like<n>``) : il écarte les matchs où cette position a été rencontrée et
+classerait d'autres positions à l'arrivée ; ``like`` seul, sur un plateau
+dessiné, ne lit que ce plateau et part. Avec les commentaires, un ``#tag`` ne
+part que s'il figure dans un commentaire emporté, et une liste ``id`` n'est
+faite que de nombres. La source d'un paquet de recherche ne garde, à tout
+export, que ``ids``, ``command``, ``position`` (le plateau dessiné, sans
+l'identifiant de la position dont il vient), ``library`` et, avec la
+provenance, ``payload``.
+
 Le fichier ne porte ni le ``user`` ni la ``description`` du producteur. Les
 commentaires sont du texte libre : ils ne partent que demandés par leur nom
 (``"includeComments": true``, ``--comments``). Le nom et la description d'une

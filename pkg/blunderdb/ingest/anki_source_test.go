@@ -25,8 +25,8 @@ func TestCarriedSearchSource(t *testing.T) {
 	}{
 		{
 			name:   "ids and an id command renumbered",
-			source: `{"command":"s id10,11","position":"{\"a\":1}","ids":[10,11,12]}`,
-			want:   map[string]any{"command": "s id1 id2", "position": `{"a":1}`, "ids": []any{1.0, 2.0}},
+			source: `{"command":"s id10,11","ids":[10,11,12]}`,
+			want:   map[string]any{"command": "s id1 id2", "ids": []any{1.0, 2.0}},
 		},
 		{
 			name:   "a command naming no row travels as written",
@@ -52,6 +52,11 @@ func TestCarriedSearchSource(t *testing.T) {
 			name:   "a payload naming no row travels",
 			source: `{"ids":[],"payload":{"likeTargetId":0,"searchText":"x"}}`,
 			want:   map[string]any{"ids": []any{}, "payload": map[string]any{"likeTargetId": 0.0, "searchText": "x"}},
+		},
+		{
+			name:   "a field nothing reads stays behind",
+			source: `{"ids":[10],"note":"Zanzibar","library":true}`,
+			want:   map[string]any{"ids": []any{1.0}, "library": true},
 		},
 		{name: "legacy list", source: "10,12, 11", legacy: "1,2"},
 	} {
@@ -213,5 +218,42 @@ func TestCarriedSearchSource_WithoutProvenance(t *testing.T) {
 	var doc struct{ Command string }
 	if err := json.Unmarshal([]byte(got), &doc); err != nil || doc.Command != "s cube w>50" {
 		t.Errorf("a command that reads the position alone leaves as %s; want it rewritten by the parser", got)
+	}
+}
+
+// The board a search was drawn on travels as a board: the id of the row it
+// was drawn from names a row of the source library, and any other field is
+// text nothing reads.
+func TestCarriedSearchSource_BoardWithoutItsRow(t *testing.T) {
+	for _, source := range []string{
+		`{"command":"s like","position":{"id":10,"player_on_roll":1,"note":"Zanzibar"},"ids":[10]}`,
+		`{"command":"s like","position":"{\"id\":10,\"player_on_roll\":1,\"note\":\"Zanzibar\"}","ids":[10]}`,
+	} {
+		got := carriedSearchSource(source, map[int64]int64{10: 1}, nil, nil, queryGate{})
+		if strings.Contains(got, "Zanzibar") {
+			t.Errorf("%s travels as %s, holding a field nothing reads", source, got)
+		}
+		var doc struct {
+			Command  string          `json:"command"`
+			Position json.RawMessage `json:"position"`
+		}
+		if err := json.Unmarshal([]byte(got), &doc); err != nil {
+			t.Fatal(err)
+		}
+		raw := doc.Position
+		var text string
+		if json.Unmarshal(raw, &text) == nil {
+			raw = json.RawMessage(text)
+		}
+		var board domain.Position
+		if err := json.Unmarshal(raw, &board); err != nil {
+			t.Fatalf("%s travels with the board %s: %v", source, doc.Position, err)
+		}
+		if doc.Command != "s like" || board.ID != 0 || board.PlayerOnRoll != 1 {
+			t.Errorf("%s travels as %s: want the command, the board, and no row id", source, got)
+		}
+	}
+	if got := carriedSearchSource(`{"command":"s like","position":"Zanzibar","ids":[10]}`, map[int64]int64{10: 1}, nil, nil, queryGate{}); strings.Contains(got, "Zanzibar") {
+		t.Errorf("a board that is no board travels: %s", got)
 	}
 }

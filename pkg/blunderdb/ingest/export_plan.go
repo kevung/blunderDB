@@ -244,6 +244,9 @@ func (p *planner) comments() error {
 			return fmt.Errorf("cannot read comments to export: %w", err)
 		}
 		for _, id := range batch {
+			for _, c := range comments[id] {
+				p.noteTags(c.Text)
+			}
 			if n := len(comments[id]); n > 0 {
 				p.plan.Comments += n
 				p.ids[PlanComments] = append(p.ids[PlanComments], id)
