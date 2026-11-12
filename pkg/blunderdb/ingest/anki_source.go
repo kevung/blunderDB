@@ -1,6 +1,7 @@
 package ingest
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -77,11 +78,20 @@ func carriedSearchSource(source string, positions, matches, tournaments map[int6
 
 // carriedBoard writes the board of a search source back as a board with no
 // row id, in the form it was stored in: an object, or a string holding one.
-// ok is false for anything that is not a board.
+// ok is false for anything that is not a board. A null board — bare or in a
+// string — stays null: decoding it would fill a zero position, and an empty
+// board is a board the search was never drawn on.
 func carriedBoard(raw json.RawMessage) (json.RawMessage, bool) {
+	stored := raw
+	if isJSONNull(raw) {
+		return json.RawMessage("null"), true
+	}
 	text, inString := "", false
 	if json.Unmarshal(raw, &text) == nil {
 		raw, inString = json.RawMessage(text), true
+	}
+	if isJSONNull(raw) {
+		return stored, true
 	}
 	var board domain.Position
 	if json.Unmarshal(raw, &board) != nil {
@@ -93,6 +103,10 @@ func carriedBoard(raw json.RawMessage) (json.RawMessage, bool) {
 		out, err = json.Marshal(string(out))
 	}
 	return out, err == nil
+}
+
+func isJSONNull(raw json.RawMessage) bool {
+	return string(bytes.TrimSpace(raw)) == "null"
 }
 
 // searchSourceLost reports whether carrying a search deck's source dropped

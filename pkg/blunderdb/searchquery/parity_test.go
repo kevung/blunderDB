@@ -295,3 +295,23 @@ func TestAnonymous_RefusesWhatStaysBehind(t *testing.T) {
 		}
 	}
 }
+
+// TestAnonymous_RefusesAnUnclassifiedField: a filter the grammar can set and
+// the table does not classify keeps its query at the source, so a filter added
+// tomorrow without a line in FieldReads cannot leave by default.
+func TestAnonymous_RefusesAnUnclassifiedField(t *testing.T) {
+	for q, name := range map[string]string{"s p-5,5": "PipCountFilter", "s w>50": "WinRateFilter", "s like": "LikeFilter"} {
+		if _, ok := anonymous(q, true, nil, FieldReads); !ok {
+			t.Fatalf("%q does not leave with every field classified", q)
+		}
+		unclassified := make(map[string]Reads, len(FieldReads))
+		for k, v := range FieldReads {
+			if k != name {
+				unclassified[k] = v
+			}
+		}
+		if got, ok := anonymous(q, true, nil, unclassified); ok {
+			t.Errorf("%q leaves as %q though %s is not classified", q, got, name)
+		}
+	}
+}

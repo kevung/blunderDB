@@ -151,6 +151,13 @@ var (
 // holds it — a tag no carried comment bears selects nothing there and tells
 // what the sender was looking for.
 func Anonymous(query string, comments bool, tags map[string]bool) (string, bool) {
+	return anonymous(query, comments, tags, FieldReads)
+}
+
+// anonymous is [Anonymous] against a classification given as an argument, so
+// that a test can stand for a filter added to [FieldTokens] without a line in
+// [FieldReads]: such a filter, once set, keeps its query at the source.
+func anonymous(query string, comments bool, tags map[string]bool, fieldReads map[string]Reads) (string, bool) {
 	f, diags := Parse(query)
 	if len(diags) > 0 {
 		return "", false
@@ -167,10 +174,20 @@ func Anonymous(query string, comments bool, tags map[string]bool) (string, bool)
 		return "", false
 	}
 
+	// Closed by default: the walk is over every token the grammar can set, and
+	// a filter the table does not classify is read as one that stays behind.
 	v := reflect.ValueOf(f)
-	for name, reads := range FieldReads {
-		if v.FieldByName(name).IsZero() {
+	for name := range FieldTokens {
+		field := v.FieldByName(name)
+		if !field.IsValid() {
+			return "", false
+		}
+		if field.IsZero() {
 			continue
+		}
+		reads, classified := fieldReads[name]
+		if !classified {
+			return "", false
 		}
 		switch reads {
 		case ReadsPlayed, ReadsProvenance:

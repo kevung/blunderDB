@@ -257,3 +257,36 @@ func TestCarriedSearchSource_BoardWithoutItsRow(t *testing.T) {
 		t.Errorf("a board that is no board travels: %s", got)
 	}
 }
+
+// A search drawn on no board carries no board: a null position, bare or in a
+// string, stays null on the way out and reads back null on the way in, never
+// as an empty board.
+func TestCarriedSearchSource_NullBoardStaysNull(t *testing.T) {
+	for _, source := range []string{
+		`{"command":"s like","position":null,"ids":[10]}`,
+		`{"command":"s like","position":"null","ids":[10]}`,
+	} {
+		out := carriedSearchSource(source, map[int64]int64{10: 1}, nil, nil, queryGate{})
+		back := carriedSearchSource(out, map[int64]int64{1: 10}, nil, nil, queryGate{})
+		for _, got := range []string{out, back} {
+			if strings.Contains(got, "points") {
+				t.Fatalf("%s travels as %s: a null board became a board", source, got)
+			}
+			var doc map[string]json.RawMessage
+			if err := json.Unmarshal([]byte(got), &doc); err != nil {
+				t.Fatal(err)
+			}
+			raw, ok := doc["position"]
+			if !ok {
+				t.Fatalf("%s travels as %s: the null board is gone", source, got)
+			}
+			var text string
+			if raw[0] == '"' && json.Unmarshal(raw, &text) == nil {
+				raw = json.RawMessage(text)
+			}
+			if string(raw) != "null" {
+				t.Errorf("%s travels as %s: want the position null", source, got)
+			}
+		}
+	}
+}
