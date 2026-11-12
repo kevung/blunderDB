@@ -793,6 +793,16 @@ la réponse porte le code ``time_budget`` et s'appuie sur les ``runs`` joués ;
 une requête hors bornes rend ``400``, et ``503`` quand deux simulations
 tournent déjà. Sans version ni ``If-Match``.
 
+Les bornes d'une simulation sont des refus, prononcés avant tout calcul : 512
+joueurs, 200 ``runs``, 16 phases, des matchs en 99 points, 16 vies, 4096 tables
+et un corps de 1 Mio (``413`` au-delà). La borne de 512 joueurs est nominale :
+avec les 30 ``runs`` par défaut, un suisse de 128 joueurs ou un tableau de 256
+sortent déjà sous ``time_budget``, sur une partie des ``runs`` seulement ;
+l'hôte baisse ``runs`` quand l'effectif monte. Les deux places de calcul sont
+celles du processus, tous tenants confondus : un tenant qui en tient une n'en
+prend une seconde que si aucun autre n'attend, et celui qui n'en tient aucune
+attend la suivante quelques secondes avant de recevoir ``503``.
+
 Tant que le tournoi n'est pas fini, ``directions.clock`` rend, à côté de
 ``estimatedEnd``, ``estimatedEndEarly`` et ``estimatedEndLate`` : les 10\ :sup:`e`
 et 90\ :sup:`e` centiles de la même prévision.

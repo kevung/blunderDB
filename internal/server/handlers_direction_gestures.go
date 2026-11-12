@@ -3,12 +3,10 @@ package server
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // The gestures of a Direction and of a Rencontre (ADR-0057): every write the desktop makes on a
@@ -285,11 +283,6 @@ func bareRoom(r *service.RencontreView, err error) (*service.RencontreView, erro
 	return r, err
 }
 
-// simulateSlots bounds the simulations computed at once in this process: one is pure
-// computing for up to service.SimulateBudget, and a client repeating it must not take the
-// processors the gestures need.
-var simulateSlots = make(chan struct{}, 2)
-
 // thenView returns the Direction as it stands once a gesture that answers nothing succeeded,
 // and the version of that very view as the answer's Direction-Version (service.ViewAfter).
 func thenView(ctx context.Context, svc *service.Service, tournamentID int64, err error) (*service.DirectionView, error) {
@@ -318,13 +311,12 @@ func (s *Server) directionGestureRoutes() []route {
 			p, err := svc(scope).PreviewDirectionConfig(ctx, req.TournamentID, rawText(req.Config))
 			return p, gestureError(err)
 		})},
-		{http.MethodPost, "/v1/directions.simulate", rpc(func(ctx context.Context, _ string, req service.SimulateRequest) (*service.Simulation, error) {
-			select {
-			case simulateSlots <- struct{}{}:
-				defer func() { <-simulateSlots }()
-			default:
-				return nil, fmt.Errorf("%w: another simulation is running", storage.ErrBusy)
+		{http.MethodPost, "/v1/directions.simulate", rpc(func(ctx context.Context, scope string, req service.SimulateRequest) (*service.Simulation, error) {
+			release, err := simulations.acquire(ctx, scope)
+			if err != nil {
+				return nil, err
 			}
+			defer release()
 			sim, err := service.Simulate(ctx, req)
 			return sim, gestureError(err)
 		})},

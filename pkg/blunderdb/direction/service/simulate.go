@@ -25,6 +25,15 @@ const (
 	SimulateMaxPlayers  = 512
 	SimulateMaxRuns     = 200
 	SimulateDefaultRuns = 30
+	SimulateMaxTables   = 4096
+	SimulateMaxPhases   = 16
+	// SimulateMaxLength bounds every match length of the format, in points.
+	SimulateMaxLength = 99
+	SimulateMaxLives  = 16
+	// The raw sizes of the two free-form members: nothing is decoded past them, so no slice
+	// is ever sized by what a request says.
+	simulateMaxConfigBytes  = 64 << 10
+	simulateMaxPlayersBytes = 256 << 10
 	// simulateMaxSteps bounds one simulated tournament, whatever its format.
 	simulateMaxSteps = 50000
 )
@@ -93,12 +102,21 @@ type Simulation struct {
 // Simulate plays req.Runs tournaments of the format and summarises them. It is deterministic
 // for a given request unless the time budget cuts it short, which the answer says.
 func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
+	if len(req.Config) > simulateMaxConfigBytes {
+		return nil, direction.Refusef("direction: config is larger than %d bytes", simulateMaxConfigBytes)
+	}
+	if len(req.Players) > simulateMaxPlayersBytes {
+		return nil, direction.Refusef("direction: players is larger than %d bytes", simulateMaxPlayersBytes)
+	}
+	if req.Tables < 0 || req.Tables > SimulateMaxTables {
+		return nil, direction.Refusef("direction: a simulation has 0 to %d tables, not %d", SimulateMaxTables, req.Tables)
+	}
+	if err := boundSimulatedConfig(req.Config); err != nil {
+		return nil, err
+	}
 	cfg, err := parseDirectionConfig(string(req.Config))
 	if err != nil {
 		return nil, err
-	}
-	if req.Tables < 0 {
-		return nil, direction.Refusef("direction: a simulation cannot have %d tables", req.Tables)
 	}
 	if req.Tables > 0 {
 		cfg.Tables.Count = req.Tables
@@ -215,6 +233,9 @@ func simulatedField(raw json.RawMessage, seed int64) ([]tournoi.Player, error) {
 		if err := json.Unmarshal(raw, &players); err != nil {
 			return nil, direction.Refusef("direction: players is not a list of entries: %v", err)
 		}
+		if len(players) < 2 || len(players) > SimulateMaxPlayers {
+			return nil, direction.Refusef("direction: a simulation plays 2 to %d players, not %d", SimulateMaxPlayers, len(players))
+		}
 		seen := map[tournoi.PlayerID]bool{}
 		ratings := make([]float64, len(players))
 		for i, p := range players {
@@ -235,15 +256,63 @@ func simulatedField(raw json.RawMessage, seed int64) ([]tournoi.Player, error) {
 		if err := json.Unmarshal(raw, &n); err != nil {
 			return nil, direction.Refusef("direction: players is neither a number nor a list")
 		}
-		if n >= 2 && n <= SimulateMaxPlayers {
-			// The engine's own test field: levels around 6, between 2 and 10.
-			players = sim.Champ(n, 6, 2, 2, 10, rand.New(rand.NewSource(seed)))
-		} else {
-			players = make([]tournoi.Player, max(n, 0))
+		if n < 2 || n > SimulateMaxPlayers {
+			return nil, direction.Refusef("direction: a simulation plays 2 to %d players, not %d", SimulateMaxPlayers, n)
 		}
-	}
-	if len(players) < 2 || len(players) > SimulateMaxPlayers {
-		return nil, direction.Refusef("direction: a simulation plays 2 to %d players, not %d", SimulateMaxPlayers, len(players))
+		// The engine's own test field: levels around 6, between 2 and 10.
+		return sim.Champ(n, 6, 2, 2, 10, rand.New(rand.NewSource(seed))), nil
 	}
 	return players, nil
+}
+
+// boundSimulatedConfig refuses a configuration whose sizes would hold the processor or the
+// memory, before the engine reads it: the engine validates a format, not its cost.
+func boundSimulatedConfig(raw json.RawMessage) error {
+	var c struct {
+		Phases []struct {
+			Lives         int   `json:"lives"`
+			Length        int   `json:"length"`
+			FinalLength   int   `json:"final_length"`
+			Lengths       []int `json:"lengths"`
+			LengthLate    int   `json:"length_late"`
+			LateThreshold int   `json:"late_threshold"`
+			BatchMinutes  int   `json:"batch_minutes"`
+			Target        int   `json:"target"`
+			GroupSize     int   `json:"group_size"`
+			Qualifiers    int   `json:"qualifiers"`
+		} `json:"phases"`
+		MinPerPoint float64 `json:"min_per_point"`
+	}
+	// A configuration that does not decode is the engine's to refuse, in its own words.
+	if json.Unmarshal(raw, &c) != nil {
+		return nil
+	}
+	if len(c.Phases) > SimulateMaxPhases {
+		return direction.Refusef("direction: a simulation plays at most %d phases, not %d", SimulateMaxPhases, len(c.Phases))
+	}
+	if c.MinPerPoint < 0 || c.MinPerPoint > 60 {
+		return direction.Refusef("direction: in a simulation min_per_point is 0 to 60, not %v", c.MinPerPoint)
+	}
+	for i, p := range c.Phases {
+		for _, b := range []struct {
+			name   string
+			v, max int
+		}{
+			{"length", p.Length, SimulateMaxLength}, {"final_length", p.FinalLength, SimulateMaxLength},
+			{"length_late", p.LengthLate, SimulateMaxLength}, {"lives", p.Lives, SimulateMaxLives},
+			{"late_threshold", p.LateThreshold, SimulateMaxPlayers}, {"target", p.Target, SimulateMaxPlayers},
+			{"group_size", p.GroupSize, SimulateMaxPlayers}, {"qualifiers", p.Qualifiers, SimulateMaxPlayers},
+			{"batch_minutes", p.BatchMinutes, 24 * 60},
+		} {
+			if b.v < 0 || b.v > b.max {
+				return direction.Refusef("direction: in phase %d of a simulation %s is 0 to %d, not %d", i+1, b.name, b.max, b.v)
+			}
+		}
+		for _, l := range p.Lengths {
+			if l < 0 || l > SimulateMaxLength {
+				return direction.Refusef("direction: in phase %d of a simulation lengths is 0 to %d, not %d", i+1, SimulateMaxLength, l)
+			}
+		}
+	}
+	return nil
 }

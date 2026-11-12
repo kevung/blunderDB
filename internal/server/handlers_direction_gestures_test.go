@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -153,22 +155,115 @@ func TestDirectionSimulate(t *testing.T) {
 	if again := send(t, ts, "1", "/v1/directions.simulate", body, "", ""); string(again.body) != string(r.body) {
 		t.Errorf("the same request answered\n%s\nthen\n%s", r.body, again.body)
 	}
-	for _, bad := range []string{strings.Replace(body, `"runs":10`, `"runs":100000`, 1), strings.Replace(body, `"players":16`, `"players":100000`, 1), `{}`} {
-		if r := send(t, ts, "1", "/v1/directions.simulate", bad, "", ""); r.status != http.StatusBadRequest {
-			t.Errorf("directions.simulate %.60s…: status %d, body %.200s; want 400", bad, r.status, r.body)
+	for bad, want := range map[string]string{
+		strings.Replace(body, `"runs":10`, `"runs":100000`, 1):                    "1 to 200 runs, not 100000",
+		strings.Replace(body, `"players":16`, `"players":100000`, 1):              "2 to 512 players, not 100000",
+		strings.Replace(body, `"players":16`, `"players":3000000000`, 1):          "2 to 512 players, not 3000000000",
+		strings.Replace(body, `"players":16`, `"players":1000000000000`, 1):       "2 to 512 players, not 1000000000000",
+		strings.Replace(body, `"players":16`, `"players":9000000000000000000`, 1): "2 to 512 players, not 9000000000000000000",
+		strings.Replace(body, `"players":16`, `"players":-3`, 1):                  "2 to 512 players, not -3",
+		strings.Replace(body, `"length":5`, `"length":1000000000`, 1):             "length is 0 to 99, not 1000000000",
+		strings.Replace(body, `"lives":2`, `"lives":1000000000`, 1):               "lives is 0 to 16, not 1000000000",
+		`{}`: "empty configuration",
+	} {
+		if r := send(t, ts, "1", "/v1/directions.simulate", bad, "", ""); r.status != http.StatusBadRequest || !strings.Contains(string(r.body), want) {
+			t.Errorf("directions.simulate %.60s…: status %d, body %.200s; want 400 and %q", bad, r.status, r.body, want)
 		}
 	}
+	huge := strings.Replace(body, `"name":"Open"`, `"name":"`+strings.Repeat("x", simulateMaxBodyBytes)+`"`, 1)
+	if r := send(t, ts, "1", "/v1/directions.simulate", huge, "", ""); r.status != http.StatusRequestEntityTooLarge {
+		t.Errorf("directions.simulate with a body past its cap: status %d; want 413", r.status)
+	}
+}
 
-	// Every slot taken: one more simulation is turned away rather than queued.
-	for range cap(simulateSlots) {
-		simulateSlots <- struct{}{}
+// TestDirectionSimulate_ThirdAtOnceIsBusy: with two simulations computing, a third sent at the
+// same moment is turned away with 503 rather than taking a third processor, and the two end.
+func TestDirectionSimulate_ThirdAtOnceIsBusy(t *testing.T) {
+	was := service.SimulateBudget
+	t.Cleanup(func() { service.SimulateBudget = was })
+	service.SimulateBudget = time.Second
+	// Past the budget by far: each of the two holds its slot for the whole second.
+	const long = `{"config":{"name":"Open","phases":[{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous"}]},"players":512,"runs":200,"seed":1}`
+	ts, _ := gestureServer(t)
+	done := make(chan gestureResult, 2)
+	for range 2 {
+		go func() { done <- send(t, ts, "1", "/v1/directions.simulate", long, "", "") }()
 	}
-	r = send(t, ts, "1", "/v1/directions.simulate", body, "", "")
-	for range cap(simulateSlots) {
-		<-simulateSlots
+	for total, _ := simulations.running(); total < 2; total, _ = simulations.running() {
+		runtime.Gosched()
 	}
-	if r.status != http.StatusServiceUnavailable {
-		t.Errorf("directions.simulate with every slot taken: status %d; want 503", r.status)
+	if r := send(t, ts, "1", "/v1/directions.simulate", long, "", ""); r.status != http.StatusServiceUnavailable {
+		t.Errorf("a third simulation at once: status %d, body %.200s; want 503", r.status, r.body)
+	}
+	for range 2 {
+		// Cut by the budget: a partial answer, or the refusal of a budget no run fitted in.
+		if r := <-done; r.status != http.StatusOK && r.status != http.StatusBadRequest || !strings.Contains(string(r.body), "time") {
+			t.Errorf("a simulation holding its slot: status %d, body %.200s; want it computed until its time budget", r.status, r.body)
+		}
+	}
+	if total, waiting := simulations.running(); total != 0 || waiting != 0 {
+		t.Errorf("after the three: %d slots held, %d waiting; want none", total, waiting)
+	}
+}
+
+// TestSimulateGate_OneTenantCannotHoldEverySlot: the slots are the process's, so a tenant
+// takes a second one only while no other tenant waits, and the tenant that waited is served
+// first.
+func TestSimulateGate_OneTenantCannotHoldEverySlot(t *testing.T) {
+	g := newSimulateGate(2, 1)
+	ctx := context.Background()
+	a1, err1 := g.acquire(ctx, "a")
+	a2, err2 := g.acquire(ctx, "a")
+	if err1 != nil || err2 != nil {
+		t.Fatalf("alone, a tenant takes both slots: %v, %v", err1, err2)
+	}
+	if _, err := g.acquire(ctx, "a"); !errors.Is(err, storage.ErrBusy) {
+		t.Errorf("a third slot for the same tenant: %v; want busy at once", err)
+	}
+	got := make(chan error, 1)
+	var b func()
+	go func() {
+		var err error
+		b, err = g.acquire(ctx, "b")
+		got <- err
+	}()
+	for _, waiting := g.running(); waiting < 1; _, waiting = g.running() {
+		runtime.Gosched()
+	}
+	if _, err := g.acquire(ctx, "c"); !errors.Is(err, storage.ErrBusy) {
+		t.Errorf("past the queue's length: %v; want busy at once", err)
+	}
+	a1()
+	if err := <-got; err != nil {
+		t.Fatalf("the tenant that waited: %v; want the slot just released", err)
+	}
+	a2()
+	// One slot is free and "b" holds the other: "a" takes it back only because nobody waits.
+	a3, err := g.acquire(ctx, "a")
+	if err != nil {
+		t.Fatalf("a free slot nobody waits for: %v", err)
+	}
+	a3()
+	b()
+	if total, waiting := g.running(); total != 0 || waiting != 0 {
+		t.Errorf("at the end: %d slots held, %d waiting; want none", total, waiting)
+	}
+}
+
+// TestSimulateGate_HolderYieldsToWaiter: in the instant a slot is free and another tenant
+// still waits for it, the tenant that already holds one does not take it.
+func TestSimulateGate_HolderYieldsToWaiter(t *testing.T) {
+	g := newSimulateGate(2, 4)
+	ctx := context.Background()
+	if _, err := g.acquire(ctx, "a"); err != nil {
+		t.Fatal(err)
+	}
+	g.waiting = 1
+	if _, err := g.acquire(ctx, "a"); !errors.Is(err, storage.ErrBusy) {
+		t.Errorf("a holder while another tenant waits: %v; want busy", err)
+	}
+	if _, err := g.acquire(ctx, "b"); err != nil {
+		t.Errorf("a tenant holding nothing, a slot free: %v; want the slot", err)
 	}
 }
 

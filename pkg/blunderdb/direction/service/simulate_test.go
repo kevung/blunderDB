@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
+	"runtime"
 	"slices"
+	"strings"
 	"testing"
 	"time"
 
@@ -73,27 +75,71 @@ func TestSimulate_TablesAndField(t *testing.T) {
 	}
 }
 
-// TestSimulate_Bounds: what would hold the processor is refused, never clamped.
+// TestSimulate_Bounds: what would hold the processor or the memory is refused, never clamped,
+// and each refusal names its own bound.
 func TestSimulate_Bounds(t *testing.T) {
-	for name, change := range map[string]func(*service.SimulateRequest){
-		"too many runs":     func(r *service.SimulateRequest) { r.Runs = service.SimulateMaxRuns + 1 },
-		"negative runs":     func(r *service.SimulateRequest) { r.Runs = -1 },
-		"too many players":  func(r *service.SimulateRequest) { r.Players = json.RawMessage("513") },
-		"one player":        func(r *service.SimulateRequest) { r.Players = json.RawMessage("1") },
-		"no players":        func(r *service.SimulateRequest) { r.Players = nil },
-		"players a string":  func(r *service.SimulateRequest) { r.Players = json.RawMessage(`"many"`) },
-		"twice the same id": func(r *service.SimulateRequest) { r.Players = json.RawMessage(`[{"id":"a"},{"id":"a"}]`) },
-		"negative tables":   func(r *service.SimulateRequest) { r.Tables = -1 },
-		"a start no time":   func(r *service.SimulateRequest) { r.Start = "tomorrow" },
-		"no config":         func(r *service.SimulateRequest) { r.Config = nil },
-		"an unknown format": func(r *service.SimulateRequest) {
-			r.Config = json.RawMessage(`{"phases":[{"kind":"nope","length":5}]}`)
-		},
+	config := func(phase string) func(*service.SimulateRequest) {
+		return func(r *service.SimulateRequest) {
+			r.Config = json.RawMessage(`{"name":"x","phases":[` + phase + `]}`)
+		}
+	}
+	players := func(raw string) func(*service.SimulateRequest) {
+		return func(r *service.SimulateRequest) { r.Players = json.RawMessage(raw) }
+	}
+	for name, c := range map[string]struct {
+		change func(*service.SimulateRequest)
+		want   string
+	}{
+		"too many runs":      {func(r *service.SimulateRequest) { r.Runs = service.SimulateMaxRuns + 1 }, "1 to 200 runs, not 201"},
+		"negative runs":      {func(r *service.SimulateRequest) { r.Runs = -1 }, "1 to 200 runs, not -1"},
+		"too many players":   {players("513"), "2 to 512 players, not 513"},
+		"one player":         {players("1"), "2 to 512 players, not 1"},
+		"negative players":   {players("-3"), "2 to 512 players, not -3"},
+		"a list too long":    {players("[" + strings.Repeat(`{"id":"a"},`, service.SimulateMaxPlayers) + `{"id":"b"}]`), "2 to 512 players, not 513"},
+		"a list too heavy":   {players(`[{"id":"a"},{"id":"` + strings.Repeat("b", 1<<20) + `"}]`), "players is larger than"},
+		"no players":         {func(r *service.SimulateRequest) { r.Players = nil }, "needs players"},
+		"players a string":   {players(`"many"`), "neither a number nor a list"},
+		"players a fraction": {players("9e18"), "neither a number nor a list"},
+		"twice the same id":  {players(`[{"id":"a"},{"id":"a"}]`), "an id of its own"},
+		"negative tables":    {func(r *service.SimulateRequest) { r.Tables = -1 }, "0 to 4096 tables, not -1"},
+		"too many tables":    {func(r *service.SimulateRequest) { r.Tables = 1000000000 }, "0 to 4096 tables, not 1000000000"},
+		"a start no time":    {func(r *service.SimulateRequest) { r.Start = "tomorrow" }, "RFC 3339"},
+		"no config":          {func(r *service.SimulateRequest) { r.Config = nil }, "empty configuration"},
+		"an unknown format":  {config(`{"kind":"nope","length":5}`), ""},
+		"a length too long":  {config(`{"kind":"bracket","length":1000000000}`), "length is 0 to 99, not 1000000000"},
+		"a final too long":   {config(`{"kind":"bracket","length":5,"final_length":100}`), "final_length is 0 to 99, not 100"},
+		"a round too long":   {config(`{"kind":"bracket","length":5,"lengths":[7,1000]}`), "lengths is 0 to 99, not 1000"},
+		"too many lives":     {config(`{"kind":"swiss_lives","length":5,"lives":1000000000}`), "lives is 0 to 16, not 1000000000"},
+		"too many phases":    {config(strings.TrimSuffix(strings.Repeat(`{"kind":"bracket","length":5},`, 17), ",")), "at most 16 phases, not 17"},
+		"a config too heavy": {func(r *service.SimulateRequest) {
+			r.Config = json.RawMessage(`{"name":"` + strings.Repeat("x", 1<<20) + `","phases":[{"kind":"bracket","length":5}]}`)
+		}, "config is larger than"},
 	} {
 		req := simulateReq("16")
-		change(&req)
-		if got, err := service.Simulate(context.Background(), req); err == nil {
-			t.Errorf("%s: answered %+v; want a refusal", name, got)
+		c.change(&req)
+		got, err := service.Simulate(context.Background(), req)
+		if !errors.Is(err, direction.ErrRefused) {
+			t.Errorf("%s: answered %+v (%v); want a refusal", name, got, err)
+		} else if !strings.Contains(err.Error(), c.want) {
+			t.Errorf("%s: refused with %q; want its own bound, %q", name, err, c.want)
+		}
+	}
+}
+
+// TestSimulate_HugeFieldAllocatesNothing: the number of players comes from the request, so it
+// is refused before anything is sized by it.
+func TestSimulate_HugeFieldAllocatesNothing(t *testing.T) {
+	for _, n := range []string{"3000000000", "1000000000000", "9000000000000000000"} {
+		req := service.SimulateRequest{Config: json.RawMessage(`{"name":"x","phases":[{"kind":"bracket","length":5}]}`), Players: json.RawMessage(n)}
+		var before, after runtime.MemStats
+		runtime.ReadMemStats(&before)
+		_, err := service.Simulate(context.Background(), req)
+		runtime.ReadMemStats(&after)
+		if !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "2 to 512 players, not "+n) {
+			t.Errorf("%s players: %v; want the refusal of the bound", n, err)
+		}
+		if grew := after.TotalAlloc - before.TotalAlloc; grew > 1<<20 {
+			t.Errorf("%s players: refused after allocating %d bytes; want nothing sized by the request", n, grew)
 		}
 	}
 }
