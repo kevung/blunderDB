@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -55,7 +56,7 @@ func TestCarriedSearchSource(t *testing.T) {
 		{name: "legacy list", source: "10,12, 11", legacy: "1,2"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			got := carriedSearchSource(tc.source, positions, matches, nil)
+			got := carriedSearchSource(tc.source, positions, matches, nil, queryGate{})
 			if tc.want == nil {
 				if got != tc.legacy {
 					t.Errorf("got %q, want %q", got, tc.legacy)
@@ -194,3 +195,23 @@ func sourceOf(t *testing.T, doc map[string]any) string {
 }
 
 func itoa(n int64) string { b, _ := json.Marshal(n); return string(b) }
+
+// TestCarriedSearchSource_WithoutProvenance: a search deck's source leaves
+// through the same gate as a living query — its command rewritten or dropped,
+// its payload dropped — and keeps its ids.
+func TestCarriedSearchSource_WithoutProvenance(t *testing.T) {
+	positions := map[int64]int64{1: 10}
+	named := `{"command":"s pl\"Zanzibar\"","payload":{"playerFilter":"Zanzibar"},"ids":[1]}`
+	if got := carriedSearchSource(named, positions, nil, nil, queryGate{}); !strings.Contains(got, "Zanzibar") {
+		t.Fatalf("with provenance the source leaves as %s: the test data proves nothing", got)
+	}
+	got := carriedSearchSource(named, positions, nil, nil, queryGate{omitProvenance: true})
+	if strings.Contains(got, "Zanzibar") || !strings.Contains(got, `"ids":[10]`) {
+		t.Errorf("without provenance the source leaves as %s; want its ids alone", got)
+	}
+	got = carriedSearchSource(`{"command":"s c w>50","ids":[1]}`, positions, nil, nil, queryGate{omitProvenance: true})
+	var doc struct{ Command string }
+	if err := json.Unmarshal([]byte(got), &doc); err != nil || doc.Command != "s cube w>50" {
+		t.Errorf("a command that reads the position alone leaves as %s; want it rewritten by the parser", got)
+	}
+}

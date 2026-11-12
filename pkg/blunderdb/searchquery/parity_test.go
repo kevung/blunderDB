@@ -214,3 +214,37 @@ func idList(rng *rand.Rand, max int) string {
 }
 
 func pick(rng *rand.Rand, options ...string) string { return options[rng.Intn(len(options))] }
+
+// TestFieldReads_ClassifiesEveryToken: a filter the grammar can express says
+// what it reads, or it could leave a library without provenance unexamined.
+func TestFieldReads_ClassifiesEveryToken(t *testing.T) {
+	for name := range FieldTokens {
+		if _, ok := FieldReads[name]; !ok {
+			t.Errorf("FieldTokens names %q, which FieldReads does not classify: say what the filter reads, and make Anonymous act on it", name)
+		}
+	}
+	for name := range FieldReads {
+		if _, ok := FieldTokens[name]; !ok {
+			t.Errorf("FieldReads names %q, which no token expresses", name)
+		}
+	}
+}
+
+// TestAnonymous_IsWhatTheParserWrites: a query that may leave is a fixed
+// point of Parse and Format, and reads nothing that stays behind.
+func TestAnonymous_IsWhatTheParserWrites(t *testing.T) {
+	for _, q := range []string{"s w>50", "s c o5 nc", `s m"13/11;bar/22"`, "s ph:race gt:holding ad:book", "s #Prime co"} {
+		got, ok := Anonymous(q, true)
+		if !ok {
+			t.Errorf("%q may not leave; want it rewritten", q)
+			continue
+		}
+		f, diags := Parse(got)
+		if len(diags) > 0 || Format(f) != got {
+			t.Errorf("%q leaves as %q, which Parse and Format write back as %q (%v)", q, got, Format(f), diags)
+		}
+	}
+	if _, ok := Anonymous("s #prime", false); ok {
+		t.Error("a tag may leave without the comments it is read from")
+	}
+}

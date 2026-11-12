@@ -1185,15 +1185,29 @@ analyses partent sans joueurs ni coups et décisions de videau joués, aucun
 match, tournoi, transcription ni alias ne part, et nommer un match ou un
 tournoi est refusé (``invalid``).
 
-Sans provenance, une collection vivante dont la requête nomme un joueur, un
-tournoi ou un auteur, porte un texte libre ou choisit par le match (``pl``,
-``op``, ``tn``, ``au``, ``ma``, ``rd:``, ``ml:``, ``n``, la date et le PR du
-match) part figée sur les positions qu'elle sélectionne à la source ; un filtre
-enregistré de ce genre ne part pas, et le fichier ne porte ni le ``user`` ni la
-``description`` du producteur. Les commentaires sont du texte libre : ils ne
-partent que demandés par leur nom (``"includeComments": true``,
-``--comments``). ``export --type matches`` et ``--type mat`` refusent
-``--provenance=false`` : un match est la provenance.
+Sans provenance, une requête enregistrée ne part jamais telle qu'elle est
+écrite : elle part réécrite par l'analyseur de requêtes — seuls les jetons qu'il
+a lus voyagent, dans leur forme canonique (``c`` devient ``cube``) — ou elle ne
+part pas. La collection vivante part alors figée sur les positions qu'elle
+sélectionne à la source, le filtre enregistré reste, et le paquet de recherche
+garde ses positions sans sa requête.
+
+Ne part pas la requête qui lit ce qui reste à la source : le match (``pl``,
+``op``, ``tn``, ``au``, ``ma``, ``rd:``, ``ml``, ``md``, ``pr``, ``n``, ``i``),
+un texte libre (``t"…"``), le coup joué et son temps (``E``, ``tm``, ``mg``,
+``dr``, ``dd`` : sans les coups joués, la requête sélectionnerait d'autres
+positions à l'arrivée) ou, quand les commentaires ne partent pas, un commentaire
+(``co``, ``xco``, ``co:``, ``#tag``). Ne part pas non plus celle qui porte un
+jeton inconnu ou ignoré (un second ``m"…"``), ou une valeur hors de la forme
+attendue : un mot à la place d'un nombre, un moteur après ``ad:``.
+
+Le fichier ne porte ni le ``user`` ni la ``description`` du producteur. Les
+commentaires sont du texte libre : ils ne partent que demandés par leur nom
+(``"includeComments": true``, ``--comments``). Le nom et la description d'une
+collection, comme le nom d'un filtre ou d'un paquet, sont aussi du texte libre
+et partent tels quels : n'y écrivez pas ce que l'envoi doit taire.
+``export --type matches`` et ``--type mat`` refusent ``--provenance=false`` : un
+match est la provenance.
 
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,

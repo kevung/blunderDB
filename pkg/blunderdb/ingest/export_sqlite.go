@@ -1004,15 +1004,9 @@ func (e *exporter) writeMembers(srcID, dstID int64, positions []int64) {
 // its query selects now, as an ordinary list.
 func (e *exporter) writeLivingQueries() error {
 	for _, lc := range e.living {
-		if e.opts.OmitProvenance && readsProvenance(lc.query) {
-			slog.Warn("export: living collection reads the provenance the file leaves behind; it leaves frozen",
-				"collectionID", lc.src)
-			e.writeMembers(lc.src, lc.dst, e.evaluateLiving(lc.src).PositionIDs)
-			continue
-		}
-		query, ok := carriedLivingQuery(lc.query, e.posMap, e.matchMap, e.tourMap)
+		query, ok := e.leavingQuery(lc.query)
 		if !ok {
-			slog.Warn("export: living collection names rows the file does not hold; it leaves frozen",
+			slog.Warn("export: living collection cannot say in the file what it says here; it leaves frozen",
 				"collectionID", lc.src)
 			e.writeMembers(lc.src, lc.dst, e.evaluateLiving(lc.src).PositionIDs)
 			continue
@@ -1027,28 +1021,36 @@ func (e *exporter) writeLivingQueries() error {
 	return nil
 }
 
-// readsProvenance reports whether a query names a player, a tournament, a
-// comment's author or a free text, or selects by the match a position was
-// played in. Without provenance such a query must not leave: it would carry
-// the name it holds, and select nothing in a file that holds no match. A token
-// the parser does not read counts: nothing says what it names.
-func readsProvenance(query string) bool {
-	f, diags := searchquery.Parse(query)
-	for _, d := range diags {
-		if d.Kind == searchquery.DiagUnknown {
-			return true
+// queryGate says what a stored query may take out of the library. Without
+// provenance the query never leaves as written: searchquery.Anonymous either
+// rewrites it from what the parser read, or refuses it.
+type queryGate struct{ omitProvenance, comments bool }
+
+func (e *exporter) gate() queryGate {
+	return queryGate{omitProvenance: e.opts.OmitProvenance, comments: e.opts.Comments}
+}
+
+// leavingQuery is the one door a stored query — a living collection's, a
+// saved filter's, a search deck's — leaves the library through. ok is false
+// when the query cannot leave: its owner then leaves frozen, or stays.
+func (e *exporter) leavingQuery(query string) (string, bool) {
+	return e.gate().carried(query, e.posMap, e.matchMap, e.tourMap)
+}
+
+func (g queryGate) carried(query string, positions, matches, tournaments map[int64]int64) (string, bool) {
+	narrowing := strings.HasPrefix(strings.TrimSpace(query), "ss ")
+	if g.omitProvenance {
+		anonymous, ok := searchquery.Anonymous(query, g.comments)
+		if !ok {
+			return "", false
 		}
+		query = anonymous
 	}
-	for _, token := range []string{
-		f.PlayerFilter, f.OpponentFilter, f.TournamentNameFilter, f.CommentAuthorFilter, f.SearchText,
-		f.MatchIDsFilter, f.TournamentIDsFilter, f.MatchDateFilter, f.RoundFilter,
-		f.PlayerPRFilter, f.MatchLengthFilter, f.EncounterFilter,
-	} {
-		if token != "" {
-			return true
-		}
+	carried, ok := carriedLivingQuery(query, positions, matches, tournaments)
+	if ok && narrowing && !strings.HasPrefix(carried, "ss ") {
+		carried = "s" + carried // Format writes the plain verb; keep the narrowing one
 	}
-	return false
+	return carried, ok
 }
 
 // carriedLivingQuery rewrites a living query's row ids — `like<n>`, `id<n>`,
@@ -1550,17 +1552,10 @@ func (e *exporter) writeFilters() error {
 		filters = append(filters, &fc)
 	}
 	for _, f := range filters {
-		if e.opts.OmitProvenance && readsProvenance(f.Command) {
-			e.skip("saved filter reads the provenance the export leaves behind", "name", f.Name)
-			continue
-		}
-		command, ok := carriedLivingQuery(f.Command, e.posMap, e.matchMap, e.tourMap)
+		command, ok := e.leavingQuery(f.Command)
 		if !ok {
-			e.skip("saved filter names a row the export leaves behind", "name", f.Name)
+			e.skip("saved filter cannot say in the export what it says here", "name", f.Name)
 			continue
-		}
-		if command != f.Command && strings.HasPrefix(strings.TrimSpace(f.Command), "ss ") {
-			command = "s" + command // Format writes the plain verb; keep the narrowing one
 		}
 		editPosition, err := e.src.Filters().LoadEditPosition(e.ctx, e.scope, f.Name)
 		if err != nil && !errors.Is(err, storage.ErrNotFound) {
@@ -1708,7 +1703,7 @@ func (e *exporter) writeAnkiDecks() error {
 		case domain.AnkiSourceCollection:
 			sourceID = e.collMap[sd.d.SourceID] // 0 if the collection was not exported
 		case domain.AnkiSourceSearch:
-			sourceCmd = carriedSearchSource(sourceCmd, e.posMap, e.matchMap, e.tourMap)
+			sourceCmd = carriedSearchSource(sourceCmd, e.posMap, e.matchMap, e.tourMap, e.gate())
 			if searchSourceLost(sd.d.SourceCommand, sourceCmd) {
 				slog.Warn("export: search deck leaves with part of its source dropped", "deck", sd.d.Name)
 				e.report.DegradedAnkiDecks++

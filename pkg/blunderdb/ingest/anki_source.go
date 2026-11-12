@@ -13,10 +13,11 @@ import (
 // cannot say there what it said here is abandoned with the board it
 // searched, and the deck keeps its ids — widening it, or aiming it at other
 // rows, would change what the deck asks. A stored payload naming rows by id
-// is abandoned for the same reason. `library` travels as it is: it names the
+// is abandoned for the same reason. gate is what the export lets a query
+// take out (the zero value on import: the file already left). `library` travels as it is: it names the
 // whole library, wherever it is. A legacy comma-separated list is renumbered
 // as a list.
-func carriedSearchSource(source string, positions, matches, tournaments map[int64]int64) string {
+func carriedSearchSource(source string, positions, matches, tournaments map[int64]int64, gate queryGate) string {
 	doc, ok := domain.SearchSourceDocument(source)
 	if !ok {
 		return remapIDList(source, positions)
@@ -34,7 +35,7 @@ func carriedSearchSource(source string, positions, matches, tournaments map[int6
 		var command string
 		carried, kept := "", false
 		if json.Unmarshal(raw, &command) == nil {
-			carried, kept = carriedLivingQuery(command, positions, matches, tournaments)
+			carried, kept = gate.carried(command, positions, matches, tournaments)
 		}
 		if enc, err := json.Marshal(carried); kept && err == nil {
 			doc["command"] = enc
@@ -43,7 +44,9 @@ func carriedSearchSource(source string, positions, matches, tournaments map[int6
 			delete(doc, "position")
 		}
 	}
-	if raw, ok := doc["payload"]; ok && domain.SearchPayloadNamesRows(raw) {
+	// Without provenance the payload stays too: it holds the same names as
+	// a command, in a form nothing here reads.
+	if raw, ok := doc["payload"]; ok && (gate.omitProvenance || domain.SearchPayloadNamesRows(raw)) {
 		delete(doc, "payload")
 	}
 	out, err := json.Marshal(doc)
