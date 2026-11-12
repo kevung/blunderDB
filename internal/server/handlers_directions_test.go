@@ -13,6 +13,8 @@ import (
 	"testing"
 	"time"
 
+	tournoi "github.com/kevung/nicomaque"
+
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -114,6 +116,7 @@ func directionReadCalls(f directedFixture) map[string]string {
 		"/v1/directions.tableGrid":        tid,
 		"/v1/directions.brackets":         tid,
 		"/v1/directions.standings":        tid,
+		"/v1/directions.statuses":         tid,
 		"/v1/directions.standingsCsv":     tid,
 		"/v1/directions.history":          tid,
 		"/v1/directions.clock":            tid,
@@ -371,5 +374,137 @@ func TestDirectionReads_NoServerPath(t *testing.T) {
 		if _, b := readAs(t, ts, f.tenant, p, body, ""); strings.Contains(string(b), "/srv/secret") {
 			t.Errorf("%s shows a server path: %.300s", p, b)
 		}
+	}
+}
+
+// statusesOf reads directions.statuses with extra request fields, keyed by player.
+func statusesOf(t *testing.T, ts *httptest.Server, f directedFixture, extra string) map[string]service.PlayerStatusRow {
+	t.Helper()
+	resp, b := readAs(t, ts, f.tenant, "/v1/directions.statuses", f.body(extra), "")
+	var rows []service.PlayerStatusRow
+	if err := json.Unmarshal(b, &rows); err != nil || resp.StatusCode != http.StatusOK {
+		t.Fatalf("directions.statuses: status %d, body %s (%v)", resp.StatusCode, b, err)
+	}
+	out := map[string]service.PlayerStatusRow{}
+	for _, r := range rows {
+		out[r.Player] = r
+	}
+	if len(out) != len(rows) {
+		t.Fatalf("directions.statuses lists a player twice: %s", b)
+	}
+	return out
+}
+
+// TestDirectionReads_StatusesSwiss: every entry of a Swiss with lives is playing, with its
+// lives, its match, its table and its opponent; ids narrows the answer and a stranger is left
+// out; a withdrawn player says so.
+func TestDirectionReads_StatusesSwiss(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+
+	all := statusesOf(t, ts, f, "")
+	if len(all) != 4 {
+		t.Fatalf("statuses = %+v; want the four entries", all)
+	}
+	for _, m := range f.running(t) {
+		a, b := all[string(m.A)], all[string(m.B)]
+		want := service.PlayerStatusRow{Player: string(m.A), Kind: tournoi.StatusPlaying, Lives: 2,
+			MatchID: string(m.ID), Table: m.Table, Opponent: string(m.B)}
+		if a.Kind != want.Kind || a.Lives != want.Lives || a.MatchID != want.MatchID || a.Table != want.Table || a.Table == 0 ||
+			a.Opponent != want.Opponent || b.Opponent != string(m.A) || b.MatchID != want.MatchID {
+			t.Errorf("statuses of match %s = %+v and %+v; want both playing it, two lives each", m.ID, a, b)
+		}
+	}
+
+	if some := statusesOf(t, ts, f, `"ids":["cc","nobody","aa"]`); len(some) != 2 || some["cc"].Player == "" || some["aa"].Player == "" {
+		t.Errorf("statuses of cc, nobody, aa = %+v; want cc and aa only", some)
+	}
+	if none := statusesOf(t, ts, f, `"ids":[]`); len(none) != 0 {
+		t.Errorf("statuses of no id = %+v; want none", none)
+	}
+
+	f.enterFirstResult(t)
+	loser := string(f.lastLoser(t))
+	if got := statusesOf(t, ts, f, "")[loser]; got.Kind != tournoi.StatusPlaying || got.Lives != 1 || got.MatchID != "" {
+		t.Errorf("status of %s after a loss = %+v; want playing, one life, no running match", loser, got)
+	}
+	if r := send(t, ts, "1", "/v1/directions.withdraw", f.body(`"id":"`+loser+`"`), f.versionOf(t, ts), ""); r.status != http.StatusOK {
+		t.Fatalf("withdraw: status %d, body %.200s", r.status, r.body)
+	}
+	if got := statusesOf(t, ts, f, "")[loser]; got.Kind != tournoi.StatusWithdrawn {
+		t.Errorf("status of %s once withdrawn = %+v; want withdrawn", loser, got)
+	}
+}
+
+// lastLoser is the first entry of the fixture to have lost a match.
+func (f directedFixture) lastLoser(t *testing.T) tournoi.PlayerID {
+	t.Helper()
+	rows, err := f.svc.Participants(f.ctx, f.tournamentID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, r := range rows {
+		if r.Losses > 0 {
+			return tournoi.PlayerID(r.ID)
+		}
+	}
+	t.Fatal("no player has lost yet")
+	return ""
+}
+
+// TestDirectionReads_StatusesBracket: a bracket of three exempts one player, eliminates the
+// loser of each match and names the winner once the final is played.
+func TestDirectionReads_StatusesBracket(t *testing.T) {
+	ts, srv := gestureServer(t)
+	st := srv.opts.Storage
+	ctx := storage.WithTenant(context.Background(), 1)
+	svc := service.New(st, "1", nil)
+	tid, err := st.Tournaments().Create(ctx, "1", "Coupe", "2026-10-01", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := svc.CreateDirection(ctx, tid, `{"name":"Coupe","tables":{"count":4},"phases":[{"kind":"bracket","length":5}]}`, 7); err != nil {
+		t.Fatalf("CreateDirection: %v", err)
+	}
+	if err := svc.EnterParticipants(ctx, tid, `[{"id":"aa","name":"A"},{"id":"bb","name":"B"},{"id":"cc","name":"C"}]`); err != nil {
+		t.Fatalf("EnterParticipants: %v", err)
+	}
+	f := directedFixture{tenant: "1", tournamentID: tid, svc: svc, ctx: ctx}
+	play := func() (winner, loser string) {
+		t.Helper()
+		v, err := svc.ConfirmAllProposals(ctx, tid)
+		if err != nil || len(v.Running) != 1 {
+			t.Fatalf("ConfirmAllProposals: %v, %d running; want one match", err, len(v.Running))
+		}
+		m := v.Running[0]
+		if _, err := svc.EnterResult(ctx, tid, string(m.ID), string(m.A), 0, 0, ""); err != nil {
+			t.Fatalf("EnterResult: %v", err)
+		}
+		return string(m.A), string(m.B)
+	}
+
+	if _, err := svc.ConfirmAllProposals(ctx, tid); err != nil {
+		t.Fatal(err)
+	}
+	first := statusesOf(t, ts, f, "")
+	kinds := map[tournoi.StatusKind]int{}
+	for _, r := range first {
+		kinds[r.Kind]++
+		if r.Kind == tournoi.StatusBye && (r.MatchID != "" || r.Round == 0 || r.Label.Empty()) {
+			t.Errorf("the exempt player = %+v; want no running match, and the round and label of the match they enter at", r)
+		}
+	}
+	if kinds[tournoi.StatusPlaying] != 2 || kinds[tournoi.StatusBye] != 1 {
+		t.Fatalf("statuses of a bracket of three = %+v; want two playing and one bye", first)
+	}
+
+	_, out1 := play()
+	if got := statusesOf(t, ts, f, "")[out1]; got.Kind != tournoi.StatusEliminated {
+		t.Errorf("status of the semi-final's loser = %+v; want eliminated", got)
+	}
+	champion, out2 := play()
+	last := statusesOf(t, ts, f, "")
+	if last[champion].Kind != tournoi.StatusWinner || last[out2].Kind != tournoi.StatusEliminated || last[out1].Kind != tournoi.StatusEliminated {
+		t.Errorf("statuses once the final is played = %+v; want %s winner, the others eliminated", last, champion)
 	}
 }
