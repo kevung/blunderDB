@@ -161,7 +161,7 @@ func TestSimulate_TimeBudget(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "fewer players") {
 		t.Errorf("too heavy says %q; want what to reduce", err)
 	}
-	service.SimulateBudget = was
+	service.SimulateBudget = time.Minute
 	req = simulateReq("16")
 	if _, err := service.Simulate(context.Background(), req); err != nil {
 		t.Errorf("the same kind of request with its time: %v", err)
@@ -173,9 +173,19 @@ func TestSimulate_TimeBudget(t *testing.T) {
 	}
 }
 
+// unhurried gives the simulations of a test the time a slow machine needs: what it checks
+// is the answer, not the budget.
+func unhurried(t *testing.T) {
+	t.Helper()
+	was := service.SimulateBudget
+	t.Cleanup(func() { service.SimulateBudget = was })
+	service.SimulateBudget = time.Minute
+}
+
 // TestSimulate_AcceptsWhatCreationAccepts: directions.create bounds neither the lives nor the
 // field; a Swiss of 20 lives and a field of 600 are simulated.
 func TestSimulate_AcceptsWhatCreationAccepts(t *testing.T) {
+	unhurried(t)
 	req := simulateReq("8")
 	req.Config = json.RawMessage(strings.Replace(simulatedSwiss, `"lives":2`, `"lives":20`, 1))
 	req.Runs = 1
@@ -191,6 +201,7 @@ func TestSimulate_AcceptsWhatCreationAccepts(t *testing.T) {
 // TestSimulate_NothingToSay: a format that plays no match with this field, and a tournament
 // whose end has no date, are refused rather than answered with figures that say nothing.
 func TestSimulate_NothingToSay(t *testing.T) {
+	unhurried(t)
 	req := simulateReq("2")
 	req.Config = json.RawMessage(`{"name":"x","phases":[{"kind":"gsl","length":7,"target":512}]}`)
 	if got, err := service.Simulate(context.Background(), req); !errors.Is(err, direction.ErrRefused) || !strings.Contains(err.Error(), "plays no match with 2 players") {
