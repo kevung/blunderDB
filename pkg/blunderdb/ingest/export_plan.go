@@ -244,6 +244,9 @@ func (p *planner) comments() error {
 			return fmt.Errorf("cannot read comments to export: %w", err)
 		}
 		for _, id := range batch {
+			for _, c := range comments[id] {
+				p.noteTags(c.Text)
+			}
 			if n := len(comments[id]); n > 0 {
 				p.plan.Comments += n
 				p.ids[PlanComments] = append(p.ids[PlanComments], id)
@@ -323,7 +326,7 @@ func (p *planner) collections() error {
 		p.collMap[id] = id
 		p.add(PlanCollections, &p.plan.Collections, id)
 		if query := strings.TrimSpace(c.FilterQuery); query != "" {
-			if _, ok := carriedLivingQuery(query, p.posMap, p.matchMap, p.tourMap); !ok {
+			if _, ok := p.leavingQuery(query); !ok {
 				p.plan.FrozenCollections = append(p.plan.FrozenCollections, PlannedRow{ID: id, Name: c.Name})
 			}
 		}
@@ -394,7 +397,7 @@ func (p *planner) filters() error {
 		if err != nil {
 			return fmt.Errorf("ingest: list filters: %w", err)
 		}
-		if _, ok := carriedLivingQuery(f.Command, p.posMap, p.matchMap, p.tourMap); ok {
+		if _, ok := p.leavingQuery(f.Command); ok {
 			p.add(PlanFilters, &p.plan.Filters, f.ID)
 		}
 	}
@@ -418,7 +421,7 @@ func (p *planner) ankiDecks() error {
 	for _, d := range decks {
 		p.add(PlanAnkiDecks, &p.plan.AnkiDecks, d.ID)
 		if d.SourceType == domain.AnkiSourceSearch &&
-			searchSourceLost(d.SourceCommand, carriedSearchSource(d.SourceCommand, p.posMap, p.matchMap, p.tourMap)) {
+			searchSourceLost(d.SourceCommand, carriedSearchSource(d.SourceCommand, p.posMap, p.matchMap, p.tourMap, p.gate())) {
 			p.plan.DegradedAnkiDecks = append(p.plan.DegradedAnkiDecks, PlannedRow{ID: d.ID, Name: d.Name})
 		}
 	}

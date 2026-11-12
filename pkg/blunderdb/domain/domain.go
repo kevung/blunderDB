@@ -737,6 +737,24 @@ type ExportOptions struct {
 	// card's schedule and its review events. Off, the decks leave as fresh
 	// study copies.
 	IncludeAnkiHistory bool `json:"includeAnkiHistory"`
+	// OmitProvenance sends the positions without what names the match they
+	// were played in: each analysis leaves without its players and its played
+	// moves and cube actions, and no match, tournament, transcription or alias
+	// leaves. Naming a match or a tournament by id is then refused. A stored
+	// query never leaves as written: it leaves rewritten by the parser, or
+	// not at all — when it reads what stays behind (the match, a free text,
+	// the played move, the matches a ranking on a stored position sets aside,
+	// a comment when comments stay, a tag no comment that leaves bears), or
+	// holds a token or a value the parser does not understand. A living collection then leaves
+	// frozen, its members evaluated at the source; a saved filter does not
+	// leave; a search deck keeps its positions without its query. The file
+	// does not carry the producer's "user" and "description" metadata.
+	// Comments are free text and leave as IncludeComments says: the daemon
+	// and the CLI turn them off under OmitProvenance unless the caller asks
+	// for them by name. The name and description of a collection, a filter
+	// or a deck are free text too and leave as they are.
+	// Off, the zero value, the export carries them as the other options say.
+	OmitProvenance bool `json:"omitProvenance"`
 
 	// Incremental exports only what entered the library since the last
 	// incremental export under the same SyncCursor, then advances that cursor

@@ -3527,6 +3527,8 @@ Options:
     	Print one page of the source ids behind a --plan count, for a family: positions, comments, matches, tournaments, directions, rencontres, collections, lessons, ankiDecks, transcriptions, filters
   -played-moves
     	Include played moves in analysis (default: true) (default true)
+  -provenance
+    	Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases, sends a stored query only as the parser rewrites it (a living collection whose query reads the match, a free text, the played move, a ranking on a stored position (like<n>), an unsent comment or a tag no sent comment bears leaves frozen, such a saved filter stays), sends the comments only with --comments, and leaves the names and descriptions of collections as they are (default: true) (default true)
   -sync-cursor string
     	With --incremental: name of the cursor to read and advance (default: the destination folder)
   -tournament-ids string
@@ -5982,6 +5984,8 @@ Options:
     	Include matches in the transfer (default: true) (default true)
   -played-moves
     	Include played moves in analysis (default: true) (default true)
+  -provenance
+    	Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases, sends a stored query only as the parser rewrites it (a living collection whose query reads the match, a free text, the played move, a ranking on a stored position (like<n>), an unsent comment or a tag no sent comment bears leaves frozen, such a saved filter stays), sends the comments only with --comments, and leaves the names and descriptions of collections as they are (default: true) (default true)
   -to string
     	Path to the library to copy into (required; created when missing)
   -tournament-ids string

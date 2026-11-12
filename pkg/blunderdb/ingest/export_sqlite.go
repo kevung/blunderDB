@@ -341,6 +341,9 @@ func openExportTarget(ctx context.Context, path string) (*sql.DB, error) {
 // exporter carries one export's state: the resolved selection and the maps
 // from source ids to the ids the new file assigned.
 type exporter struct {
+	// tags are the tags of the comments that leave: a stored query may name
+	// no other.
+	tags  map[string]bool
 	ctx   context.Context
 	src   storage.Storage
 	scope string
@@ -413,6 +416,10 @@ func (e *exporter) writeMetadata() error {
 		return nil
 	}
 	for key, value := range issuance.Carried(e.opts.Metadata) {
+		// The producer's name and its free description name whose matches these were.
+		if e.opts.OmitProvenance && (key == "user" || key == "description") {
+			continue
+		}
 		if err := put(key, value); err != nil {
 			return err
 		}
@@ -740,11 +747,14 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 
 		if a := analyses[p.ID]; a != nil {
 			ac := *a
-			if e.opts.PlayedMoves {
+			if e.opts.PlayedMoves && !e.opts.OmitProvenance {
 				foldPlayedMoves(&ac, moves[p.ID])
 			} else {
 				ac.PlayedMove, ac.PlayedCubeAction = "", ""
 				ac.PlayedMoves, ac.PlayedCubeActions = nil, nil
+			}
+			if e.opts.OmitProvenance {
+				ac.Player1, ac.Player2 = "", ""
 			}
 			if basis, err := sqlite.SaveExportedAnalysis(e.ctx, e.tx, newID, &ac); err != nil {
 				e.skip("inserting analysis for position", "newID", newID, "oldID", p.ID, "err", err)
@@ -778,6 +788,7 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				continue
 			}
 			e.report.Comments++
+			e.noteTags(c.Text)
 			if c.Signature == "" && c.Origin == domain.CommentOriginUser {
 				if e.opts.Signer != nil {
 					e.report.SignedComments++
@@ -997,9 +1008,9 @@ func (e *exporter) writeMembers(srcID, dstID int64, positions []int64) {
 // its query selects now, as an ordinary list.
 func (e *exporter) writeLivingQueries() error {
 	for _, lc := range e.living {
-		query, ok := carriedLivingQuery(lc.query, e.posMap, e.matchMap, e.tourMap)
+		query, ok := e.leavingQuery(lc.query)
 		if !ok {
-			slog.Warn("export: living collection names rows the file does not hold; it leaves frozen",
+			slog.Warn("export: living collection cannot say in the file what it says here; it leaves frozen",
 				"collectionID", lc.src)
 			e.writeMembers(lc.src, lc.dst, e.evaluateLiving(lc.src).PositionIDs)
 			continue
@@ -1012,6 +1023,51 @@ func (e *exporter) writeLivingQueries() error {
 		e.writeMembers(lc.src, lc.dst, lc.hand)
 	}
 	return nil
+}
+
+// queryGate says what a stored query may take out of the library. Without
+// provenance the query never leaves as written: searchquery.Anonymous either
+// rewrites it from what the parser read, or refuses it — a tag included,
+// when no comment that leaves bears it.
+type queryGate struct {
+	omitProvenance, comments bool
+	tags                     map[string]bool
+}
+
+func (e *exporter) gate() queryGate {
+	return queryGate{omitProvenance: e.opts.OmitProvenance, comments: e.opts.Comments, tags: e.tags}
+}
+
+func (e *exporter) noteTags(text string) {
+	if e.tags == nil {
+		e.tags = map[string]bool{}
+	}
+	for _, tag := range domain.ExtractTags(text) {
+		e.tags[tag] = true
+	}
+}
+
+// leavingQuery is the one door a stored query — a living collection's, a
+// saved filter's, a search deck's — leaves the library through. ok is false
+// when the query cannot leave: its owner then leaves frozen, or stays.
+func (e *exporter) leavingQuery(query string) (string, bool) {
+	return e.gate().carried(query, e.posMap, e.matchMap, e.tourMap)
+}
+
+func (g queryGate) carried(query string, positions, matches, tournaments map[int64]int64) (string, bool) {
+	narrowing := strings.HasPrefix(strings.TrimSpace(query), "ss ")
+	if g.omitProvenance {
+		anonymous, ok := searchquery.Anonymous(query, g.comments, g.tags)
+		if !ok {
+			return "", false
+		}
+		query = anonymous
+	}
+	carried, ok := carriedLivingQuery(query, positions, matches, tournaments)
+	if ok && narrowing && !strings.HasPrefix(carried, "ss ") {
+		carried = "s" + carried // Format writes the plain verb; keep the narrowing one
+	}
+	return carried, ok
 }
 
 // carriedLivingQuery rewrites a living query's row ids — `like<n>`, `id<n>`,
@@ -1513,13 +1569,10 @@ func (e *exporter) writeFilters() error {
 		filters = append(filters, &fc)
 	}
 	for _, f := range filters {
-		command, ok := carriedLivingQuery(f.Command, e.posMap, e.matchMap, e.tourMap)
+		command, ok := e.leavingQuery(f.Command)
 		if !ok {
-			e.skip("saved filter names a row the export leaves behind", "name", f.Name)
+			e.skip("saved filter cannot say in the export what it says here", "name", f.Name)
 			continue
-		}
-		if command != f.Command && strings.HasPrefix(strings.TrimSpace(f.Command), "ss ") {
-			command = "s" + command // Format writes the plain verb; keep the narrowing one
 		}
 		editPosition, err := e.src.Filters().LoadEditPosition(e.ctx, e.scope, f.Name)
 		if err != nil && !errors.Is(err, storage.ErrNotFound) {
@@ -1667,7 +1720,7 @@ func (e *exporter) writeAnkiDecks() error {
 		case domain.AnkiSourceCollection:
 			sourceID = e.collMap[sd.d.SourceID] // 0 if the collection was not exported
 		case domain.AnkiSourceSearch:
-			sourceCmd = carriedSearchSource(sourceCmd, e.posMap, e.matchMap, e.tourMap)
+			sourceCmd = carriedSearchSource(sourceCmd, e.posMap, e.matchMap, e.tourMap, e.gate())
 			if searchSourceLost(sd.d.SourceCommand, sourceCmd) {
 				slog.Warn("export: search deck leaves with part of its source dropped", "deck", sd.d.Name)
 				e.report.DegradedAnkiDecks++

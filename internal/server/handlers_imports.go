@@ -354,6 +354,11 @@ func (r *exportSQLiteReq) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &opts); err != nil {
 		return err
 	}
+	// A comment is free text that may name the match: without provenance it
+	// leaves only when the caller asks for it by name.
+	if _, asked := keys["includeComments"]; opts.OmitProvenance && !asked {
+		opts.IncludeComments = false
+	}
 	if len(opts.Metadata) > 0 {
 		return errors.New(`"metadata" is not an export option of the daemon: it writes only the file's creation date and the watermark`)
 	}

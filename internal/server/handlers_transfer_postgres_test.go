@@ -322,3 +322,175 @@ func TestTransferPull_NoMatchNoteAndIndividualPositions_Postgres(t *testing.T) {
 		t.Errorf("tenant 4 holds %d positions, %d individual; want %d of %d", n, individual, len(ids), len(ids))
 	}
 }
+
+// namedAnalyses counts the analyses of scope, and those naming a player.
+func namedAnalyses(t *testing.T, st storage.Storage, scope string) (all, named int) {
+	t.Helper()
+	ctx := context.Background()
+	if n, err := storage.ParseTenant(scope); err == nil && n > 0 {
+		ctx = storage.WithTenant(ctx, n)
+	}
+	var ids []int64
+	for p, err := range st.Positions().List(ctx, scope, storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	loaded, err := st.Analyses().LoadMany(ctx, scope, ids)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, a := range loaded {
+		all++
+		if a.Player1 != "" || a.Player2 != "" || len(a.PlayedMoves) > 0 || len(a.PlayedCubeActions) > 0 {
+			named++
+		}
+	}
+	return all, named
+}
+
+// TestTransferPull_OmitProvenance_Postgres: export.omitProvenance copies the
+// analyses without the players and played moves, and no match; without it the
+// pull carries them, and the source keeps them either way.
+func TestTransferPull_OmitProvenance_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	st := srv.opts.Storage
+	importFixture(t, st, "2", "test.xg")
+	ctx2 := storage.WithTenant(context.Background(), 2)
+	var ids []int64
+	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	loaded, err := st.Analyses().LoadMany(ctx2, "2", ids)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, a := range loaded {
+		a.Player1, a.Player2 = "Alice", "Bob"
+	}
+	if err := st.Analyses().SaveMany(ctx2, "2", loaded); err != nil {
+		t.Fatal(err)
+	}
+
+	if rec := serveAcross(t, srv, "1", "2", "/v1/across.transferPull", `{"tenant":"2","export":{"omitProvenance":true}}`); rec.Code != http.StatusOK {
+		t.Fatalf("pull without provenance: %d %s", rec.Code, rec.Body)
+	}
+	if all, named := namedAnalyses(t, st, "1"); all == 0 || named != 0 {
+		t.Errorf("tenant 1 holds %d analyses, %d with provenance; want some, none with it", all, named)
+	}
+	ctx1 := storage.WithTenant(context.Background(), 1)
+	for _, err := range st.Matches().List(ctx1, "1", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Error("tenant 1 holds a match")
+		break
+	}
+
+	pull(t, srv, "3", "2")
+	if all, named := namedAnalyses(t, st, "3"); named == 0 || named != all {
+		t.Errorf("a default pull: %d of %d analyses carry their provenance, want all", named, all)
+	}
+	if all, named := namedAnalyses(t, st, "2"); named != all || all != len(loaded) {
+		t.Errorf("the source holds %d analyses, %d named; want its %d, all named", all, named, len(loaded))
+	}
+}
+
+// TestTransferPull_OmitProvenanceQueries_Postgres: pulled without provenance,
+// a living collection arrives frozen on what it selects at the source, or
+// living on the query the parser writes back; it never arrives with a text
+// the parser did not read, and selects what it selected.
+func TestTransferPull_OmitProvenanceQueries_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	st := srv.opts.Storage
+	importFixture(t, st, "2", "test.xg")
+	ctx2 := storage.WithTenant(context.Background(), 2)
+	n := 0
+	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{Limit: 40}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if n++; n%2 == 0 {
+			if _, err := st.Comments().Add(ctx2, "2", p.ID, "joli coup #monaco2026"); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	// query → what arrives without the comments, and with them.
+	cases := []struct{ name, query, bare, commented string }{
+		{"tag", "s #monaco2026", "", "s #monaco2026"},
+		{"second pattern", `s m"13/11" m"Zanzibar"`, "", ""},
+		{"match date", "s md>2019-06", "", ""},
+		{"unread text", `s w>50 hello"Zanzibar`, "", ""},
+		{"word as a value", "s wZanzibar", "", ""},
+		{"played error", "s E>0.1", "", ""},
+		{"decision time", "s tm>5", "", ""},
+		{"ranking on a stored row", "s like42", "", ""},
+		{"ranking on a stored row, narrowed", "s like5<12* w>50", "", ""},
+		{"absent tag", "s #zanzibar", "", ""},
+		{"word as an id", "s id1Zanzibar", "", ""},
+		{"position", "s c w>50", "s cube w>50", "s cube w>50"},
+	}
+	selected := map[string]int{}
+	for _, c := range cases {
+		id, err := st.Collections().Create(ctx2, "2", c.name, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := st.Collections().SetFilterQuery(ctx2, "2", id, c.query); err != nil {
+			t.Fatal(err)
+		}
+		selected[c.name] = -1
+		if ev, err := storage.EvaluateCollection(ctx2, st, "2", id, 0); err == nil {
+			selected[c.name] = len(ev.PositionIDs)
+		}
+	}
+	if selected["tag"] == 0 || selected["played error"] == 0 || selected["match date"] == 0 {
+		t.Fatalf("the source selects %v: the test needs a tag, a played error and a match date that select something", selected)
+	}
+
+	for writer, body := range map[string]string{
+		"1": `{"tenant":"2","export":{"omitProvenance":true}}`,
+		"3": `{"tenant":"2","export":{"omitProvenance":true,"includeComments":true}}`,
+	} {
+		if rec := serveAcross(t, srv, writer, "2", "/v1/across.transferPull", body); rec.Code != http.StatusOK {
+			t.Fatalf("pull into %s: %d %s", writer, rec.Code, rec.Body)
+		}
+		tenant, _ := storage.ParseTenant(writer)
+		ctx := storage.WithTenant(context.Background(), tenant)
+		arrived := map[string]storage.Collection{}
+		for c, err := range st.Collections().List(ctx, writer) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			arrived[c.Name] = *c
+		}
+		for _, c := range cases {
+			want := c.bare
+			if writer == "3" {
+				want = c.commented
+			}
+			got, ok := arrived[c.name]
+			if !ok {
+				t.Errorf("tenant %s, %q: the collection did not arrive", writer, c.query)
+				continue
+			}
+			if got.FilterQuery != want {
+				t.Errorf("tenant %s, %q: arrived with query %q, want %q", writer, c.query, got.FilterQuery, want)
+			}
+			ev, err := storage.EvaluateCollection(ctx, st, writer, got.ID, 0)
+			if err != nil {
+				t.Errorf("tenant %s, %q: %v", writer, c.query, err)
+				continue
+			}
+			if selected[c.name] >= 0 && len(ev.PositionIDs) != selected[c.name] {
+				t.Errorf("tenant %s, %q (arrived %q): selects %d positions, %d at the source",
+					writer, c.query, got.FilterQuery, len(ev.PositionIDs), selected[c.name])
+			}
+		}
+	}
+}

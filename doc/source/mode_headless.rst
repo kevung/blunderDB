@@ -1150,6 +1150,46 @@ rend une page des identifiants derrière l'un de ces comptes : ``export`` porte
 le corps d'``exports.sqlite``, ``family`` la famille, ``offset`` et ``limit``
 la page (1000 identifiants au plus).
 
+``"omitProvenance": true`` (``--provenance=false`` en ligne de commande, pour
+l'export comme pour le transfert) retire ce qui nomme le match d'origine : les
+analyses partent sans joueurs ni coups et décisions de videau joués, aucun
+match, tournoi, transcription ni alias ne part, et nommer un match ou un
+tournoi est refusé (``invalid``).
+
+Sans provenance, une requête enregistrée ne part jamais telle qu'elle est
+écrite : elle part réécrite par l'analyseur de requêtes — seuls les jetons qu'il
+a lus voyagent, dans leur forme canonique (``c`` devient ``cube``) — ou elle ne
+part pas. La collection vivante part alors figée sur les positions qu'elle
+sélectionne à la source, le filtre enregistré reste, et le paquet de recherche
+garde ses positions sans sa requête.
+
+Ne part pas la requête qui lit ce qui reste à la source : le match (``pl``,
+``op``, ``tn``, ``au``, ``ma``, ``rd:``, ``ml``, ``md``, ``pr``, ``n``, ``i``),
+un texte libre (``t"…"``), le coup joué et son temps (``E``, ``tm``, ``mg``,
+``dr``, ``dd`` : sans les coups joués, la requête sélectionnerait d'autres
+positions à l'arrivée) ou, quand les commentaires ne partent pas, un commentaire
+(``co``, ``xco``, ``co:``, ``#tag``). Ne part pas non plus celle qui porte un
+jeton inconnu ou ignoré (un second ``m"…"``), ou une valeur hors de la forme
+attendue : un mot à la place d'un nombre, un moteur après ``ad:``.
+
+Ne part pas davantage le classement sur une position enregistrée
+(``like<n>``) : il écarte les matchs où cette position a été rencontrée et
+classerait d'autres positions à l'arrivée ; ``like`` seul, sur un plateau
+dessiné, ne lit que ce plateau et part. Avec les commentaires, un ``#tag`` ne
+part que s'il figure dans un commentaire emporté, et une liste ``id`` n'est
+faite que de nombres. La source d'un paquet de recherche ne garde, à tout
+export, que ``ids``, ``command``, ``position`` (le plateau dessiné, sans
+l'identifiant de la position dont il vient), ``library`` et, avec la
+provenance, ``payload``.
+
+Le fichier ne porte ni le ``user`` ni la ``description`` du producteur. Les
+commentaires sont du texte libre : ils ne partent que demandés par leur nom
+(``"includeComments": true``, ``--comments``). Le nom et la description d'une
+collection, comme le nom d'un filtre ou d'un paquet, sont aussi du texte libre
+et partent tels quels : n'y écrivez pas ce que l'envoi doit taire.
+``export --type matches`` et ``--type mat`` refusent ``--provenance=false`` : un
+match est la provenance.
+
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,
 mêmes empreintes ``canonical_hash``, un doublon n'est écrit qu'une fois. L'appel

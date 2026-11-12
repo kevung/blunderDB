@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -24,8 +25,8 @@ func TestCarriedSearchSource(t *testing.T) {
 	}{
 		{
 			name:   "ids and an id command renumbered",
-			source: `{"command":"s id10,11","position":"{\"a\":1}","ids":[10,11,12]}`,
-			want:   map[string]any{"command": "s id1 id2", "position": `{"a":1}`, "ids": []any{1.0, 2.0}},
+			source: `{"command":"s id10,11","ids":[10,11,12]}`,
+			want:   map[string]any{"command": "s id1 id2", "ids": []any{1.0, 2.0}},
 		},
 		{
 			name:   "a command naming no row travels as written",
@@ -52,10 +53,15 @@ func TestCarriedSearchSource(t *testing.T) {
 			source: `{"ids":[],"payload":{"likeTargetId":0,"searchText":"x"}}`,
 			want:   map[string]any{"ids": []any{}, "payload": map[string]any{"likeTargetId": 0.0, "searchText": "x"}},
 		},
+		{
+			name:   "a field nothing reads stays behind",
+			source: `{"ids":[10],"note":"Zanzibar","library":true}`,
+			want:   map[string]any{"ids": []any{1.0}, "library": true},
+		},
 		{name: "legacy list", source: "10,12, 11", legacy: "1,2"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			got := carriedSearchSource(tc.source, positions, matches, nil)
+			got := carriedSearchSource(tc.source, positions, matches, nil, queryGate{})
 			if tc.want == nil {
 				if got != tc.legacy {
 					t.Errorf("got %q, want %q", got, tc.legacy)
@@ -194,3 +200,60 @@ func sourceOf(t *testing.T, doc map[string]any) string {
 }
 
 func itoa(n int64) string { b, _ := json.Marshal(n); return string(b) }
+
+// TestCarriedSearchSource_WithoutProvenance: a search deck's source leaves
+// through the same gate as a living query — its command rewritten or dropped,
+// its payload dropped — and keeps its ids.
+func TestCarriedSearchSource_WithoutProvenance(t *testing.T) {
+	positions := map[int64]int64{1: 10}
+	named := `{"command":"s pl\"Zanzibar\"","payload":{"playerFilter":"Zanzibar"},"ids":[1]}`
+	if got := carriedSearchSource(named, positions, nil, nil, queryGate{}); !strings.Contains(got, "Zanzibar") {
+		t.Fatalf("with provenance the source leaves as %s: the test data proves nothing", got)
+	}
+	got := carriedSearchSource(named, positions, nil, nil, queryGate{omitProvenance: true})
+	if strings.Contains(got, "Zanzibar") || !strings.Contains(got, `"ids":[10]`) {
+		t.Errorf("without provenance the source leaves as %s; want its ids alone", got)
+	}
+	got = carriedSearchSource(`{"command":"s c w>50","ids":[1]}`, positions, nil, nil, queryGate{omitProvenance: true})
+	var doc struct{ Command string }
+	if err := json.Unmarshal([]byte(got), &doc); err != nil || doc.Command != "s cube w>50" {
+		t.Errorf("a command that reads the position alone leaves as %s; want it rewritten by the parser", got)
+	}
+}
+
+// The board a search was drawn on travels as a board: the id of the row it
+// was drawn from names a row of the source library, and any other field is
+// text nothing reads.
+func TestCarriedSearchSource_BoardWithoutItsRow(t *testing.T) {
+	for _, source := range []string{
+		`{"command":"s like","position":{"id":10,"player_on_roll":1,"note":"Zanzibar"},"ids":[10]}`,
+		`{"command":"s like","position":"{\"id\":10,\"player_on_roll\":1,\"note\":\"Zanzibar\"}","ids":[10]}`,
+	} {
+		got := carriedSearchSource(source, map[int64]int64{10: 1}, nil, nil, queryGate{})
+		if strings.Contains(got, "Zanzibar") {
+			t.Errorf("%s travels as %s, holding a field nothing reads", source, got)
+		}
+		var doc struct {
+			Command  string          `json:"command"`
+			Position json.RawMessage `json:"position"`
+		}
+		if err := json.Unmarshal([]byte(got), &doc); err != nil {
+			t.Fatal(err)
+		}
+		raw := doc.Position
+		var text string
+		if json.Unmarshal(raw, &text) == nil {
+			raw = json.RawMessage(text)
+		}
+		var board domain.Position
+		if err := json.Unmarshal(raw, &board); err != nil {
+			t.Fatalf("%s travels with the board %s: %v", source, doc.Position, err)
+		}
+		if doc.Command != "s like" || board.ID != 0 || board.PlayerOnRoll != 1 {
+			t.Errorf("%s travels as %s: want the command, the board, and no row id", source, got)
+		}
+	}
+	if got := carriedSearchSource(`{"command":"s like","position":"Zanzibar","ids":[10]}`, map[int64]int64{10: 1}, nil, nil, queryGate{}); strings.Contains(got, "Zanzibar") {
+		t.Errorf("a board that is no board travels: %s", got)
+	}
+}
