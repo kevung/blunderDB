@@ -173,3 +173,33 @@ func TestBootstrapTranscriptionGestures(t *testing.T) {
 		t.Errorf("Transcription on: status = %d, want 200", got)
 	}
 }
+
+// TestBootstrapDirectionGestures: Config.EnableDirection reaches
+// internal/server.Options. Off (the default) a gesture is not routed while the
+// reads are; on, it is.
+func TestBootstrapDirectionGestures(t *testing.T) {
+	post := func(cfg Config, path string) int {
+		cfg.Backend, cfg.DSN = "sqlite", ":memory:"
+		h, closer, err := Bootstrap(context.Background(), cfg)
+		if err != nil {
+			t.Fatalf("Bootstrap: %v", err)
+		}
+		defer closer.Close()
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, path, bytes.NewReader([]byte(`{}`)))
+		req.Header.Set(middleware.TenantHeader, "1")
+		req.Header.Set("Content-Type", "application/json")
+		h.ServeHTTP(rec, req)
+		return rec.Code
+	}
+	if got := post(Config{}, "/v1/directions.create"); got != http.StatusNotFound {
+		t.Errorf("default, directions.create: status = %d, want 404", got)
+	}
+	if got := post(Config{}, "/v1/directions.list"); got != http.StatusOK {
+		t.Errorf("default, directions.list: status = %d, want 200", got)
+	}
+	// Routed: the empty request is refused for what it lacks, not for its path.
+	if got := post(Config{EnableDirection: true}, "/v1/directions.create"); got == http.StatusNotFound || got >= 500 {
+		t.Errorf("EnableDirection on, directions.create: status = %d, want a routed refusal", got)
+	}
+}

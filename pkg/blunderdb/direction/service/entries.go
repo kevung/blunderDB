@@ -138,13 +138,37 @@ func (d *Service) Participants(ctx context.Context, tournamentID int64) ([]Parti
 // AddParticipant enters one player. It is an event, in preparation as afterwards: a late
 // arrival is an entry like any other, and the engine decides where they come in.
 func (d *Service) AddParticipant(ctx context.Context, tournamentID int64, name, club string, rating float64) (*DirectionView, error) {
-	if err := d.addParticipant(ctx, tournamentID, name, club, rating); err != nil {
+	return d.AddParticipantAs(ctx, tournamentID, "", name, club, rating)
+}
+
+// AddParticipantAs is AddParticipant under the identifier the caller brings — a list imported
+// with its own (a federation licence, say). An empty id is derived from the name; one already
+// entered is refused, never suffixed: the caller named a person, and a second entry is not them.
+func (d *Service) AddParticipantAs(ctx context.Context, tournamentID int64, id, name, club string, rating float64) (*DirectionView, error) {
+	if err := d.addParticipant(ctx, tournamentID, id, name, club, rating); err != nil {
 		return nil, err
 	}
 	return d.viewAfter(ctx, tournamentID)
 }
 
-func (d *Service) addParticipant(ctx context.Context, tournamentID int64, name, club string, rating float64) (err error) {
+// entryID is the identifier a new entry takes in st: the one given when it is free, else one
+// derived from the name.
+func entryID(st *tournoi.State, id, name string) (tournoi.PlayerID, error) {
+	id = strings.TrimSpace(id)
+	if id != "" {
+		if _, exists := st.Players[tournoi.PlayerID(id)]; exists {
+			return "", direction.Refusef("direction: the entry %q already exists", id)
+		}
+		return tournoi.PlayerID(id), nil
+	}
+	taken := map[string]bool{}
+	for p := range st.Players {
+		taken[string(p)] = true
+	}
+	return tournoi.PlayerID(participantID(name, taken)), nil
+}
+
+func (d *Service) addParticipant(ctx context.Context, tournamentID int64, id, name, club string, rating float64) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return err
@@ -162,11 +186,11 @@ func (d *Service) addParticipant(ctx context.Context, tournamentID int64, name, 
 	if st == nil {
 		return direction.ErrNoDirection
 	}
-	taken := map[string]bool{}
-	for id := range st.Players {
-		taken[string(id)] = true
+	pid, err := entryID(st, id, name)
+	if err != nil {
+		return err
 	}
-	p := tournoi.Player{ID: tournoi.PlayerID(participantID(name, taken)), Name: name, Club: club, Rating: rating}
+	p := tournoi.Player{ID: pid, Name: name, Club: club, Rating: rating}
 	if err := dir.Apply(ctx, tournoi.PlayerAddedEvent(p, time.Now())); err != nil {
 		return err
 	}

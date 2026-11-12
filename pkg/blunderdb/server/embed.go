@@ -66,6 +66,12 @@ type Config struct {
 	// PostgreSQL the instances sharing the database relay one another's
 	// gestures to their event subscribers (LISTEN/NOTIFY), as `serve` does.
 	Transcription bool
+	// EnableDirection serves the gestures of a Direction and of a Rencontre
+	// (/v1/directions.* and /v1/rencontres.* that write), as `serve
+	// --direction` does; their reads are always served. Off by default, for
+	// the reason Transcription is.
+	EnableDirection bool
+
 	// TranscriptionTTL closes a transcription session idle for longer (its
 	// undo stack goes, nothing typed does). Zero means 30 minutes, the
 	// `serve --transcription-ttl` default.
@@ -118,7 +124,7 @@ const ReadTenantsHeader = middleware.ReadTenantsHeader
 // Bootstrap opens the storage backend, runs migrations, installs RLS policies
 // when enabled, builds the engine server and returns its http.Handler plus an
 // io.Closer for the storage pool and, on PostgreSQL, the event transport. On
-// PostgreSQL with Config.Transcription, a failing LISTEN (a pgbouncer in
+// PostgreSQL with Config.Transcription or Config.EnableDirection, a failing LISTEN (a pgbouncer in
 // transaction mode, say) makes Bootstrap fail, as it makes serve fail. Mount
 // the handler behind your own auth and inject X-Tenant-ID per request — the
 // tenant's positive decimal integer, a name is refused with 400 (ADR-0005);
@@ -174,6 +180,7 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		StreamTimeout:      cfg.StreamTimeout,
 		MCPWrite:           cfg.MCPWrite,
 		Transcription:      cfg.Transcription,
+		EnableDirection:    cfg.EnableDirection,
 		EventsDSN:          internalserver.EventsDSNFor(cfg.Backend, cfg.DSN),
 		TranscriptionTTL:   cfg.TranscriptionTTL,
 		Identity:           cfg.Identity,
