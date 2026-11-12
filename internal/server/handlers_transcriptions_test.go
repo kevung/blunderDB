@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -489,6 +490,14 @@ func TestTranscriptionRefusedGestureIsInvalid(t *testing.T) {
 		{"no dice", []transcript.Gesture{{Kind: transcript.GestureEnterDie, Die: 3}},
 			transcript.Gesture{Kind: transcript.GestureSelectCandidate, Candidate: 0}, transcript.ErrNoDice},
 		{"no entry", nil, transcript.Gesture{Kind: transcript.GestureValidate}, transcript.ErrNoEntry},
+		{"unknown gesture", nil, transcript.Gesture{Kind: "nope"}, errors.New(`unknown gesture "nope"`)},
+		{"a die of nine", nil, transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 9}, errors.New("9 is not a die")},
+		{"a die of zero", nil, transcript.Gesture{Kind: transcript.GestureEnterDie, Die: 0}, errors.New("0 is not a die")},
+		{"a negative score", nil, transcript.Gesture{Kind: transcript.GestureSetScore, Score: &[2]int{-1, 0}}, errors.New("-1-0 is not a score")},
+		{"a candidate past the list", []transcript.Gesture{{Kind: transcript.GestureEnterDie, Die: 3}, {Kind: transcript.GestureEnterDie, Die: 1}},
+			transcript.Gesture{Kind: transcript.GestureSelectCandidate, Candidate: 99}, errors.New("no candidate 99 among")},
+		{"a negative candidate", []transcript.Gesture{{Kind: transcript.GestureEnterDie, Die: 3}, {Kind: transcript.GestureEnterDie, Die: 1}},
+			transcript.Gesture{Kind: transcript.GestureSelectCandidate, Candidate: -1}, errors.New("no candidate -1 among")},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			st := createDraft(t, ts, "1")
