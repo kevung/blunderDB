@@ -740,11 +740,14 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 
 		if a := analyses[p.ID]; a != nil {
 			ac := *a
-			if e.opts.PlayedMoves {
+			if e.opts.PlayedMoves && !e.opts.OmitProvenance {
 				foldPlayedMoves(&ac, moves[p.ID])
 			} else {
 				ac.PlayedMove, ac.PlayedCubeAction = "", ""
 				ac.PlayedMoves, ac.PlayedCubeActions = nil, nil
+			}
+			if e.opts.OmitProvenance {
+				ac.Player1, ac.Player2 = "", ""
 			}
 			if basis, err := sqlite.SaveExportedAnalysis(e.ctx, e.tx, newID, &ac); err != nil {
 				e.skip("inserting analysis for position", "newID", newID, "oldID", p.ID, "err", err)

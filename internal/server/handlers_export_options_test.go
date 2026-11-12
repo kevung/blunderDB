@@ -153,3 +153,44 @@ func TestExportSQLiteRefusesUnknownKeys(t *testing.T) {
 		}
 	}
 }
+
+// omitProvenance leaves the matches out of the file; without it they leave.
+func TestExportSQLiteOmitProvenance(t *testing.T) {
+	ts, _ := newTestServerAndHandler(t)
+	ctx := context.Background()
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "test.sgf"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	uploadImportNamed(t, ts, "/v1/imports.gnubg", "test.sgf", fixture)
+	for _, tc := range []struct {
+		req     any
+		matches int
+	}{{nil, 1}, {map[string]any{"omitProvenance": true}, 0}} {
+		resp := post(t, ts, "/v1/exports.sqlite", tc.req)
+		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil || resp.StatusCode != http.StatusOK {
+			t.Fatalf("%v: status %d, %v", tc.req, resp.StatusCode, err)
+		}
+		path := filepath.Join(t.TempDir(), "export.db")
+		if err := os.WriteFile(path, body, 0o600); err != nil {
+			t.Fatal(err)
+		}
+		dst, err := sqlite.Open(ctx, path, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		n := 0
+		for _, err := range dst.Matches().List(ctx, "", storage.MatchListOpts{}) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			n++
+		}
+		dst.Close()
+		if n != tc.matches {
+			t.Errorf("%v: %d matches in the file, want %d", tc.req, n, tc.matches)
+		}
+	}
+}

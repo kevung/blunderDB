@@ -204,3 +204,63 @@ func TestCLI_TransferNamedCollection(t *testing.T) {
 		t.Errorf("--match-ids=999: %v, want refused", runErr)
 	}
 }
+
+// --provenance=false copies the analyses without their players and played
+// moves, and no match; the source keeps them.
+func TestCLI_TransferWithoutProvenance(t *testing.T) {
+	dir := tempDir(t)
+	src, dst := filepath.Join(dir, "club.db"), filepath.Join(dir, "student.db")
+	seedTransferLibrary(t, src, "test.xg")
+	ctx := context.Background()
+	s, err := sqlite.Open(ctx, src, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ids []int64
+	for p, err := range s.Positions().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	loaded, err := s.Analyses().LoadMany(ctx, "", ids)
+	if err == nil {
+		for _, a := range loaded {
+			a.Player1, a.Player2 = "Alice", "Bob"
+		}
+		err = s.Analyses().SaveMany(ctx, "", loaded)
+	}
+	s.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rep := runTransfer(t, "--from", src, "--to", dst, "--provenance=false")
+	if rep.Exported.Matches != 0 || rep.Exported.Analyses == 0 {
+		t.Errorf("read %+v, want analyses and no match", rep.Exported)
+	}
+	d, err := sqlite.Open(ctx, dst, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer d.Close()
+	var got []int64
+	for p, err := range d.Positions().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, p.ID)
+	}
+	arrived, err := d.Analyses().LoadMany(ctx, "", got)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for id, a := range arrived {
+		if a.Player1 != "" || a.Player2 != "" || len(a.PlayedMoves) > 0 || len(a.PlayedCubeActions) > 0 {
+			t.Fatalf("position %d arrived with players %q/%q, played %v %v", id, a.Player1, a.Player2, a.PlayedMoves, a.PlayedCubeActions)
+		}
+	}
+	if len(arrived) == 0 || libraryRows(t, dst)[1] != 0 {
+		t.Errorf("destination holds %d analyses and %v rows, want analyses and no match", len(arrived), libraryRows(t, dst))
+	}
+}

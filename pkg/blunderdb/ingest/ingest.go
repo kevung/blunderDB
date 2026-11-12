@@ -163,6 +163,9 @@ type ExportOptions struct {
 	Transcriptions bool
 	Aliases        bool
 	AnkiHistory    bool
+	// OmitProvenance clears from each analysis what names the match it was
+	// played in: its players, played moves and cube actions.
+	OmitProvenance bool
 
 	// Metadata is copied by allow-list (issuance.Carried). Watermark is the
 	// sealed document to write verbatim (see SealWatermark), "" for none.

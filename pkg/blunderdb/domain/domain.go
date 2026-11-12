@@ -737,6 +737,12 @@ type ExportOptions struct {
 	// card's schedule and its review events. Off, the decks leave as fresh
 	// study copies.
 	IncludeAnkiHistory bool `json:"includeAnkiHistory"`
+	// OmitProvenance sends the positions without what names the match they
+	// were played in: each analysis leaves without its players and its played
+	// moves and cube actions, and no match, tournament, transcription or alias
+	// leaves. Naming a match or a tournament by id is then refused. Off, the
+	// zero value, the export carries them as the other options say.
+	OmitProvenance bool `json:"omitProvenance"`
 
 	// Incremental exports only what entered the library since the last
 	// incremental export under the same SyncCursor, then advances that cursor

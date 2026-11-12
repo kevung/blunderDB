@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -38,6 +39,21 @@ func WholeLibraryOptions() domain.ExportOptions {
 // some ids is then taken out of it. Anything else is a list of positions, and the
 // matches it carries are, unless named, those its positions were played in.
 func OptionsFor(ctx context.Context, src storage.Storage, scope string, opts domain.ExportOptions) (ExportOptions, error) {
+	if opts.OmitProvenance {
+		if len(opts.MatchIDs) > 0 || len(opts.TournamentIDs) > 0 {
+			return ExportOptions{}, fmt.Errorf("%w: a match or a tournament cannot leave without the names it holds: drop matchIDs and tournamentIDs, or keep the provenance", storage.ErrInvalid)
+		}
+		// Every family below names the match a position was played in.
+		opts.IncludeMatches, opts.IncludeTournaments = false, false
+		opts.IncludeTranscriptions, opts.IncludeAliases = false, false
+		opts.IncludePlayedMoves = false
+	}
+	plan, err := optionsFor(ctx, src, scope, opts)
+	plan.OmitProvenance = opts.OmitProvenance
+	return plan, err
+}
+
+func optionsFor(ctx context.Context, src storage.Storage, scope string, opts domain.ExportOptions) (ExportOptions, error) {
 	if opts.Incremental {
 		return incrementalOptions(ctx, src, scope, opts)
 	}
