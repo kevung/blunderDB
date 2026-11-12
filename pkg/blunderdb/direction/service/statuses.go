@@ -46,9 +46,19 @@ func (d *Service) Statuses(ctx context.Context, tournamentID int64, ids []string
 		running[m.A], running[m.B] = m, m
 	}
 	ph := st.Phases[st.Current]
+	// The engine gives one life to every entrant of a format that counts none, where a loss
+	// is the end: that is its bookkeeping, not a count a host should show.
+	countsLives := false
+	switch ph.Cfg.Kind {
+	case tournoi.KindSwissLives, tournoi.KindLivesBracket, tournoi.KindGSL:
+		countsLives = true
+	}
 	row := func(s tournoi.PlayerStatus) PlayerStatusRow {
 		r := PlayerStatusRow{Player: string(s.Player), Kind: s.Kind, Phase: s.Phase, Section: s.Section,
-			Round: s.Round, Label: s.Label, Lives: max(ph.Lives[s.Player]-ph.Losses[s.Player], 0)}
+			Round: s.Round, Label: s.Label}
+		if countsLives {
+			r.Lives = max(ph.Lives[s.Player]-ph.Losses[s.Player], 0)
+		}
 		if m := running[s.Player]; m != nil {
 			r.MatchID, r.Table, r.Opponent = string(m.ID), m.Table, string(m.B)
 			if m.B == s.Player {

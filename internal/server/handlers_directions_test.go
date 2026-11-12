@@ -494,6 +494,11 @@ func TestDirectionReads_StatusesBracket(t *testing.T) {
 			t.Errorf("the exempt player = %+v; want no running match, and the round and label of the match they enter at", r)
 		}
 	}
+	for _, r := range first {
+		if r.Lives != 0 {
+			t.Errorf("lives of %s in a bracket = %d; want 0, a bracket counts no lives", r.Player, r.Lives)
+		}
+	}
 	if kinds[tournoi.StatusPlaying] != 2 || kinds[tournoi.StatusBye] != 1 {
 		t.Fatalf("statuses of a bracket of three = %+v; want two playing and one bye", first)
 	}
@@ -506,5 +511,103 @@ func TestDirectionReads_StatusesBracket(t *testing.T) {
 	last := statusesOf(t, ts, f, "")
 	if last[champion].Kind != tournoi.StatusWinner || last[out2].Kind != tournoi.StatusEliminated || last[out1].Kind != tournoi.StatusEliminated {
 		t.Errorf("statuses once the final is played = %+v; want %s winner, the others eliminated", last, champion)
+	}
+}
+
+// statusFixture is a Direction of cfg with the entries aa, bb, cc and dd, and a way to play the
+// running matches, the entry whose id sorts first winning each.
+func statusFixture(t *testing.T, srv *Server, cfg string) (directedFixture, func()) {
+	t.Helper()
+	st := srv.opts.Storage
+	ctx := storage.WithTenant(context.Background(), 1)
+	svc := service.New(st, "1", nil)
+	tid, err := st.Tournaments().Create(ctx, "1", "Coupe", "2026-10-01", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := svc.CreateDirection(ctx, tid, cfg, 7); err != nil {
+		t.Fatalf("CreateDirection: %v", err)
+	}
+	if err := svc.EnterParticipants(ctx, tid, `[{"id":"aa","name":"A"},{"id":"bb","name":"B"},{"id":"cc","name":"C"},{"id":"dd","name":"D"}]`); err != nil {
+		t.Fatalf("EnterParticipants: %v", err)
+	}
+	play := func() {
+		t.Helper()
+		v, err := svc.ConfirmAllProposals(ctx, tid)
+		if err != nil || len(v.Running) == 0 {
+			t.Fatalf("ConfirmAllProposals: %v, %d running; want a match to play", err, len(v.Running))
+		}
+		for _, m := range v.Running {
+			if _, err := svc.EnterResult(ctx, tid, string(m.ID), string(min(m.A, m.B)), 0, 0, ""); err != nil {
+				t.Fatalf("EnterResult: %v", err)
+			}
+		}
+	}
+	return directedFixture{tenant: "1", tournamentID: tid, svc: svc, ctx: ctx}, play
+}
+
+// TestDirectionReads_StatusesQualified: once a phase is over, those who pass are qualified for
+// the next and the others eliminated.
+func TestDirectionReads_StatusesQualified(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f, play := statusFixture(t, srv, `{"name":"Coupe","tables":{"count":4},"phases":[{"kind":"swiss_lives","length":5,"lives":1,"mode":"rounds"},{"kind":"bracket","length":5,"entry":"top:2"}]}`)
+	play()
+	play()
+	got := statusesOf(t, ts, f, "")
+	kinds := map[tournoi.StatusKind]int{}
+	for _, r := range got {
+		kinds[r.Kind]++
+		if r.Kind == tournoi.StatusQualified && (r.Phase != 1 || r.MatchID != "") {
+			t.Errorf("a qualified player = %+v; want phase 1 and no match", r)
+		}
+	}
+	if kinds[tournoi.StatusQualified] != 2 || kinds[tournoi.StatusEliminated] != 2 {
+		t.Fatalf("statuses once the Swiss is over = %+v; want its first two qualified and the others eliminated", got)
+	}
+}
+
+// TestDirectionReads_StatusesNotEntered: an entry added once a full bracket is drawn is engaged
+// in no phase.
+func TestDirectionReads_StatusesNotEntered(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f, _ := statusFixture(t, srv, `{"name":"Coupe","tables":{"count":4},"phases":[{"kind":"bracket","length":5}]}`)
+	if _, err := f.svc.ConfirmAllProposals(f.ctx, f.tournamentID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.svc.AddParticipant(f.ctx, f.tournamentID, "Retardataire", "", 0); err != nil {
+		t.Fatalf("AddParticipant: %v", err)
+	}
+	late := statusesOf(t, ts, f, "")
+	for _, id := range []string{"aa", "bb", "cc", "dd"} {
+		delete(late, id)
+	}
+	if len(late) != 1 {
+		t.Fatalf("statuses beyond the four first entries = %+v; want the latecomer alone", late)
+	}
+	for _, r := range late {
+		if r.Kind != tournoi.StatusNotEntered || r.Lives != 0 || r.MatchID != "" {
+			t.Errorf("status of an entry added once the bracket is full = %+v; want not_entered, in no match", r)
+		}
+	}
+}
+
+// TestDirectionReads_StatusesUndecided: a player out of a phase whose best N pass, known at
+// its end only, is undecided while the phase goes on.
+func TestDirectionReads_StatusesUndecided(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f, play := statusFixture(t, srv, `{"name":"Coupe","tables":{"count":4},"phases":[{"kind":"swiss_lives","length":5,"lives":1,"mode":"rounds"},{"kind":"bracket","length":5,"entry":"top:2"}]}`)
+	play()
+	got := statusesOf(t, ts, f, "")
+	undecided := 0
+	for _, r := range got {
+		if r.Kind == tournoi.StatusUndecided {
+			undecided++
+			if r.Phase != 1 || r.Lives != 0 || r.MatchID != "" {
+				t.Errorf("an undecided player = %+v; want phase 1, no life left and no match", r)
+			}
+		}
+	}
+	if undecided != 2 {
+		t.Errorf("statuses after the first round = %+v; want its two losers undecided", got)
 	}
 }
