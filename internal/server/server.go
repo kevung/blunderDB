@@ -302,11 +302,15 @@ func (s *Server) publicPaths() map[string]bool {
 func (s *Server) limitBody(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Body != nil && !s.uploadPaths[r.URL.Path] {
-			if r.ContentLength > s.opts.MaxBodyBytes {
-				writeBodyTooLarge(w, s.opts.MaxBodyBytes)
+			limit := s.opts.MaxBodyBytes
+			if small, ok := smallBodyPaths[r.URL.Path]; ok && small < limit {
+				limit = small
+			}
+			if r.ContentLength > limit {
+				writeBodyTooLarge(w, limit)
 				return
 			}
-			r.Body = http.MaxBytesReader(w, r.Body, s.opts.MaxBodyBytes)
+			r.Body = http.MaxBytesReader(w, r.Body, limit)
 		}
 		next.ServeHTTP(w, r)
 	})

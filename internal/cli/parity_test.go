@@ -86,6 +86,10 @@ var serverOnly = map[string]string{
 	"/v1/changeset.export":        "package changeset, shared: no Database method wraps it",
 	"/v1/changeset.import":        "package changeset, shared: no Database method wraps it",
 	"/v1/changeset.setJournalOff": "the operator's cut of a public library's journal: a library file keeps its own",
+	// A calculation over the engine's simulation: it reads no database, so no
+	// Database holds it.
+	"/v1/directions.simulate": "service.Simulate, shared and pure: it reads no library, so no Database method wraps it",
+
 	// One Database method per alias gesture takes the kind ("player" or
 	// "event"); the daemon spells the kind in the path.
 	"/v1/events.alias.list":    "ListAliases(\"event\"), the CLI's `events alias list`: the parity row names the players route of the same method",

@@ -23,6 +23,10 @@ type ClockView struct {
 	Day int `json:"day"`
 	// EstimatedEnd is the engine's forecast end (RFC 3339), empty when there is none.
 	EstimatedEnd string `json:"estimatedEnd,omitempty"`
+	// EstimatedEndEarly and EstimatedEndLate bound it: the 10th and 90th centiles of the same
+	// forecast, present whenever EstimatedEnd is.
+	EstimatedEndEarly string `json:"estimatedEndEarly,omitempty"`
+	EstimatedEndLate  string `json:"estimatedEndLate,omitempty"`
 	// Finished: the tournament is closed, and the strip has nothing left to say.
 	Finished        bool    `json:"finished"`
 	Played          int     `json:"played"`
@@ -50,11 +54,11 @@ const forecastTTL = 5 * time.Minute
 type forecastMemo struct {
 	events int
 	at     time.Time
-	end    time.Time
+	end    direction.EndForecast
 	ok     bool
 }
 
-func (d *Service) estimatedEnd(ctx context.Context, tournamentID int64, dir *direction.Direction, now time.Time) (time.Time, bool) {
+func (d *Service) estimatedEnd(ctx context.Context, tournamentID int64, dir *direction.Direction, now time.Time) (direction.EndForecast, bool) {
 	n := len(dir.Journal())
 	d.forecastMu.Lock()
 	key := forecastKey{d.scope, tournamentID}
@@ -63,7 +67,7 @@ func (d *Service) estimatedEnd(ctx context.Context, tournamentID int64, dir *dir
 	if hit && m.events == n && !now.Before(m.at) && now.Sub(m.at) < forecastTTL {
 		return m.end, m.ok
 	}
-	end, ok := dir.EstimatedEnd(now)
+	end, ok := dir.EndForecast(now)
 	d.forecastMu.Lock()
 	if d.forecasts == nil {
 		d.forecasts = map[forecastKey]forecastMemo{}
@@ -108,7 +112,9 @@ func (d *Service) ClockAt(ctx context.Context, tournamentID int64, now time.Time
 		v.Day = direction.DayOfPlay(start, now)
 	}
 	if end, ok := d.estimatedEnd(ctx, tournamentID, dir, now); ok {
-		v.EstimatedEnd = end.Format(time.RFC3339)
+		v.EstimatedEnd = end.End.Format(time.RFC3339)
+		v.EstimatedEndEarly = end.Early.Format(time.RFC3339)
+		v.EstimatedEndLate = end.Late.Format(time.RFC3339)
 	}
 	c := st.ClockAt(now, start)
 	v.Played, v.Running = c.Played, c.Running

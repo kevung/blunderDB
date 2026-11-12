@@ -139,6 +139,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.reopen                    JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.setConfig                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.setTables                 JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/directions.simulate                  JSON
      POST /v1/directions.slots                     JSON  (ETag)
      POST /v1/directions.standings                 JSON  (ETag)
      POST /v1/directions.standingsCsv              JSON  (ETag)

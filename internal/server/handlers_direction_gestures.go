@@ -313,6 +313,9 @@ func (s *Server) directionGestureRoutes() []route {
 			p, err := svc(scope).PreviewDirectionConfig(ctx, req.TournamentID, rawText(req.Config))
 			return p, gestureError(err)
 		})},
+		{http.MethodPost, "/v1/directions.simulate", rpc(func(ctx context.Context, scope string, req service.SimulateRequest) (*service.Simulation, error) {
+			return simulate(ctx, scope, req)
+		})},
 		{http.MethodPost, "/v1/directions.setConfig", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionConfigReq) (*service.DirectionView, error) {
 			d := svc(scope)
 			return thenView(ctx, d, req.TournamentID, d.SetDirectionConfig(ctx, req.TournamentID, rawText(req.Config)))

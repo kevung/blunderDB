@@ -502,6 +502,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.setTables — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.setTables", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def directions_simulate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/directions.simulate — JSON."
+        return self._call("/v1/directions.simulate", payload)
+
     def directions_slots(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/directions.slots — JSON."
         return self._call("/v1/directions.slots", payload)

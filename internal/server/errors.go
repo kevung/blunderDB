@@ -105,7 +105,7 @@ func codeForErr(err error) string {
 		return CodeConflict
 	case errors.Is(err, storage.ErrInvalid):
 		return CodeInvalid
-	case errors.Is(err, storage.ErrBusy):
+	case errors.Is(err, storage.ErrBusy), errors.As(err, new(*simulationUnavailable)):
 		return CodeUnavailable
 	default:
 		return CodeInternal
@@ -237,9 +237,19 @@ func errorBodyFor(w http.ResponseWriter, err error) errorBody {
 // writeStorageError maps a storage error onto the envelope — errorBodyFor's
 // masking, then the matching HTTP status.
 func writeStorageError(w http.ResponseWriter, err error) {
+	// Before errorBodyFor: an abandoned request is not recorded as a failure.
+	var gone clientGone
+	if errors.As(err, &gone) {
+		w.WriteHeader(statusClientClosedRequest)
+		return
+	}
 	body := errorBodyFor(w, err)
 	if errors.Is(err, storage.ErrBusy) {
 		w.Header().Set("Retry-After", busyRetryAfter)
+	}
+	var sim *simulationUnavailable
+	if errors.As(err, &sim) && sim.retryAfter != "" {
+		w.Header().Set("Retry-After", sim.retryAfter)
 	}
 	writeErrorDetails(w, body.Code, body.Message, body.Details)
 }
