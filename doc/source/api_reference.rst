@@ -110,6 +110,8 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.addParticipant            JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.attachMatch               JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.brackets                  JSON  (ETag)
+     POST /v1/directions.cancelBye                 JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/directions.cancelHalfBye             JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.cancelMatch               JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.clock                     JSON  (ETag)
      POST /v1/directions.close                     JSON  (Idempotency-Key)  (If-Match)
@@ -125,6 +127,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.freeParticipants          JSON  (ETag)
      POST /v1/directions.freeSlots                 JSON  (ETag)
      POST /v1/directions.get                       JSON  (ETag)
+     POST /v1/directions.giveHalfBye               JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.history                   JSON  (ETag)
      POST /v1/directions.lastDecision              JSON  (ETag)
      POST /v1/directions.list                      JSON  (ETag)
@@ -134,9 +137,12 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.pageHtml                  JSON  (ETag)
      POST /v1/directions.pairingSheetHtml          JSON  (ETag)
      POST /v1/directions.participants              JSON  (ETag)
+     POST /v1/directions.placeBye                  JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.previewConfig             JSON
      POST /v1/directions.reinstate                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.reopen                    JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/directions.replacePair               JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/directions.replaceParticipant        JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.setConfig                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.setTables                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.simulate                  JSON
@@ -145,6 +151,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.standingsCsv              JSON  (ETag)
      POST /v1/directions.startMatch                JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.statuses                  JSON  (ETag)
+     POST /v1/directions.swapParticipants          JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.tableGrid                 JSON  (ETag)
      POST /v1/directions.updatePair                JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.updateParticipant         JSON  (Idempotency-Key)  (If-Match)
@@ -460,7 +467,7 @@ Idempotence
 La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et les écritures de ``positions.*`` sont
 idempotentes dans leur effet grâce au hachage Zobrist du contenu — enregistrer
-deux fois la même position renvoie la même ligne, jamais un doublon. 51 méthodes
+deux fois la même position renvoie la même ligne, jamais un doublon. 58 méthodes
 acceptent un en-tête ``Idempotency-Key`` optionnel : celles dont deux appels
 sont deux effets distincts, et ``positions.save``, dont la réponse dit si
 l'appel a créé la position (``created``) et le dirait faux si elle était

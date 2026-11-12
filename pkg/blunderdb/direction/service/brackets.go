@@ -182,8 +182,10 @@ func (d *Service) bracketsOf(ctx context.Context, dir *direction.Direction) ([]B
 			}
 			bp.Sections = append(bp.Sections, bs)
 		}
-		// A Swiss or GSL phase has no graph before its switch: the lives board is its view.
-		if ph.Cfg.Kind == tournoi.KindSwissLives || len(ph.Sections) == 0 {
+		// A Swiss or GSL phase has no graph before its switch: the lives board is its view. A
+		// Swiss by rounds and a manual phase count no lives: their view is the standings.
+		noLives := ph.Cfg.Kind == tournoi.KindSwissRounds || ph.Cfg.Kind == tournoi.KindManual
+		if ph.Cfg.Kind == tournoi.KindSwissLives || (len(ph.Sections) == 0 && !noLives) {
 			bp.Lives = livesRows(st, ph)
 		}
 		out = append(out, bp)

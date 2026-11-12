@@ -44,6 +44,8 @@ describe('les codes du moteur deviennent des phrases', () => {
         expect(renderSectionName(t, 'main')).toBe('principal');
         expect(renderSectionName(t, 'poule:A')).toBe('poule A');
         expect(renderSectionName(t, 'barrage:B')).toBe('barrage poule B');
+        // Même nom que le labeler Go (rules.FinalBarrageName) : le barrage final n'est pas une poule.
+        expect(renderSectionName(t, 'barrage:final')).toBe('barrage final');
         expect(renderSectionName(t, '')).toBe('');
     });
 

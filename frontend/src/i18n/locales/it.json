@@ -2222,7 +2222,9 @@
             "lives_bracket": "Tabellone con esenzioni",
             "bracket": "Tabellone",
             "gsl": "Blocchi GSL",
-            "round_robin": "Gironi"
+            "round_robin": "Gironi",
+            "swiss_rounds": "Svizzero a turni",
+            "manual": "Abbinamento manuale"
         },
         "settings": {
             "format": "Formato",
@@ -2357,7 +2359,8 @@
             "last": "ultima possibilità",
             "gf": "gran finale",
             "pool": "girone {letter}",
-            "playoff": "spareggio girone {letter}"
+            "playoff": "spareggio girone {letter}",
+            "playoffFinal": "spareggio finale"
         },
         "note": {
             "winner": "vincitore",
@@ -2381,7 +2384,8 @@
             "slow_match": "Partita {match}: supera il tempo previsto.",
             "table_shared": "Tavolo {table}: i match {other} e {match} sono entrambi in corso lì.",
             "correction_eliminates_running": "Match {match}: {player} non ha più vite dopo una correzione, e sta ancora giocando.",
-            "correction_revives": "{player} ritrova una vita dopo una correzione: di nuovo abbinabile."
+            "correction_revives": "{player} ritrova una vita dopo una correzione: di nuovo abbinabile.",
+            "barrage_stale": "Una correzione di girone successiva al sorteggio dello spareggio ha cambiato i giocatori che designa; lo spareggio si gioca tra i sorteggiati."
         },
         "reason": {
             "matches_running": "Partite in corso.",
@@ -2389,7 +2393,8 @@
             "waiting_batch": "Abbinamento al prossimo lotto.",
             "waiting_table": "nessun tavolo libero",
             "player_unavailable": "giocatore non disponibile",
-            "player_busy": "gioca in un'altra prova"
+            "player_busy": "gioca in un'altra prova",
+            "manual": "Fase manuale: il direttore dispone le partite."
         },
         "proposals": {
             "keys": "J / K o ↑ ↓: scegli una proposta · Invio: avviarla · ← →: da tavolo a tavolo",
@@ -2669,6 +2674,15 @@
             "lastChance": "Fase {phase} — ultima chance: {from} → {to}",
             "reconciliation": "Fase {phase} — riconciliazione: {from} → {to}",
             "recharge": "Fase {phase} — ricarica: {from} → {to}",
+            "rounds": "Fase {phase} — numero di turni: {from} → {to}",
+            "groups": "Fase {phase} — numero di gironi: {from} → {to}",
+            "finalBarrage": "Fase {phase} — spareggio finale tra gironi: {from} → {to}",
+            "tiebreak": "Fase {phase} — spareggi tecnici: {from} → {to}",
+            "accelerated": "Fase {phase} — abbinamento accelerato: {from} → {to}",
+            "monradWiden": "Fase {phase} — Monrad allargato: {from} → {to}",
+            "avoidCountries": "Fase {phase} — evitare giocatori dello stesso paese: {from} → {to}",
+            "avoidRounds": "Fase {phase} — turni di esclusione: {from} → {to}",
+            "avoidExcept": "Fase {phase} — eccezioni all'esclusione: {from} → {to}",
             "alsoFor": "Vale anche per: {names} (stesso evento)."
         },
         "lock": {

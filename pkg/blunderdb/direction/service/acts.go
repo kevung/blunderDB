@@ -189,13 +189,21 @@ func confirmAt(ctx context.Context, dir *direction.Direction, a tournoi.Action, 
 // (unknown player, already playing, against themselves) — and a table another match is
 // played on, in this event or a sister of its room, which would hide that match.
 func (d *Service) StartMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (*DirectionView, error) {
-	if err := d.startMatchManually(ctx, tournamentID, a, b, length, table); err != nil {
+	return d.StartMatchInRound(ctx, tournamentID, 0, a, b, length, table)
+}
+
+// StartMatchInRound is StartMatchManually naming the round, which a manual phase needs: there
+// the director places every match in a round (the last one, or the next to open it). round 0
+// is the latest round of a manual phase; any other phase refuses a round, its own pairing
+// numbers them.
+func (d *Service) StartMatchInRound(ctx context.Context, tournamentID int64, round int, a, b string, length, table int) (*DirectionView, error) {
+	if err := d.startMatchManually(ctx, tournamentID, round, a, b, length, table); err != nil {
 		return nil, err
 	}
 	return d.viewAfter(ctx, tournamentID)
 }
 
-func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a, b string, length, table int) (err error) {
+func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, round int, a, b string, length, table int) (err error) {
 	d, release, shared, err := d.lockTables(ctx, tournamentID)
 	if err != nil {
 		return err
@@ -246,6 +254,18 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 			table = firstFreeTable(st, "", st.Current, skip)
 		} else if _, next := sisters[table]; next || occupant(st, table, "") != nil {
 			return direction.Refusef("direction: table %d is taken", table)
+		}
+		ph := st.Phases[st.Current]
+		if ph.Cfg.Kind == tournoi.KindManual {
+			if round == 0 {
+				round = max(ph.Round, 1)
+			}
+			ev := st.ManualMatchEvent(round, tournoi.PlayerID(a), tournoi.PlayerID(b), time.Now())
+			ev.Length, ev.Table = length, table
+			return dir.Apply(ctx, ev)
+		}
+		if round != 0 {
+			return direction.Refusef("direction: only a manual phase takes a round, phase %d pairs its own", st.Current+1)
 		}
 		return confirm(ctx, dir, tournoi.Action{
 			Kind: tournoi.ActStartMatch, Phase: st.Current,

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 04:53+0100\n"
+"POT-Creation-Date: 2026-11-12 23:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -43,17 +43,17 @@ msgstr ""
 "per un elenco in streaming) e, quando esiste, una nota sull'intestazione "
 "opzionale ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:453
+#: ../../source/api_reference.rst:465
 msgid "Idempotence"
 msgstr "Idempotenza"
 
-#: ../../source/api_reference.rst:455
+#: ../../source/api_reference.rst:467
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 51 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 58 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -61,13 +61,25 @@ msgid ""
 "première tentative au lieu de répéter son effet — voir la marque « "
 "(Idempotency-Key) » dans le tableau ci-dessus. Aucune autre méthode n'a "
 "besoin ou n'accepte cet en-tête."
-msgstr "La maggior parte dei metodi non richiede alcun meccanismo particolare: le letture non hanno effetti collaterali e le scritture di ``positions.*`` sono idempotenti nel loro effetto grazie all'hash Zobrist del contenuto — salvare due volte la stessa posizione restituisce la stessa riga, mai un duplicato. 51 metodi accettano un'intestazione ``Idempotency-Key`` facoltativa: quelli le cui due chiamate sono due effetti distinti, e ``positions.save``, la cui risposta dice se la chiamata ha creato la posizione (``created``) e lo direbbe in modo errato se fosse ripetuta dopo una risposta persa. Una chiamata ripetuta con la stessa chiave restituisce il risultato del primo tentativo invece di ripeterne l'effetto — vedi il contrassegno «(Idempotency-Key)» nella tabella qui sopra. Nessun altro metodo richiede o accetta questa intestazione."
+msgstr ""
+"La maggior parte dei metodi non richiede alcun meccanismo particolare: le"
+" letture non hanno effetti collaterali e le scritture di ``positions.*`` "
+"sono idempotenti nel loro effetto grazie all'hash Zobrist del contenuto —"
+" salvare due volte la stessa posizione restituisce la stessa riga, mai un"
+" duplicato. 58 metodi accettano un'intestazione ``Idempotency-Key`` "
+"facoltativa: quelli le cui due chiamate sono due effetti distinti, e "
+"``positions.save``, la cui risposta dice se la chiamata ha creato la "
+"posizione (``created``) e lo direbbe in modo errato se fosse ripetuta "
+"dopo una risposta persa. Una chiamata ripetuta con la stessa chiave "
+"restituisce il risultato del primo tentativo invece di ripeterne "
+"l'effetto — vedi il contrassegno «(Idempotency-Key)» nella tabella qui "
+"sopra. Nessun altro metodo richiede o accetta questa intestazione."
 
-#: ../../source/api_reference.rst:467
+#: ../../source/api_reference.rst:479
 msgid "Lectures conditionnelles"
 msgstr "Letture condizionali"
 
-#: ../../source/api_reference.rst:469
+#: ../../source/api_reference.rst:481
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -79,11 +91,11 @@ msgstr ""
 "finché non è cambiato nulla di ciò che il metodo legge — vedere "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:474
+#: ../../source/api_reference.rst:486
 msgid "Enregistrer et lire une analyse"
 msgstr "Salvare e leggere un'analisi"
 
-#: ../../source/api_reference.rst:476
+#: ../../source/api_reference.rst:488
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -113,11 +125,11 @@ msgstr ""
 "Played``: un demone che non la invia ignora ``withPlayed`` e restituisce "
 "l'analisi senza le mosse delle partite."
 
-#: ../../source/api_reference.rst:489
+#: ../../source/api_reference.rst:501
 msgid "Repères d'une transcription"
 msgstr "Marcatori temporali di una trascrizione"
 
-#: ../../source/api_reference.rst:491
+#: ../../source/api_reference.rst:503
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -148,7 +160,7 @@ msgstr ""
 "imposta anche quando la sua intestazione ne indica una, senza mai "
 "cancellarla."
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:515
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -164,7 +176,7 @@ msgstr ""
 " una stima: una mossa senza riferimento d'azione, misurata dal tiro al "
 "primo istante dell'azione successiva."
 
-#: ../../source/api_reference.rst:509
+#: ../../source/api_reference.rst:521
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
@@ -180,4 +192,3 @@ msgstr ""
 "altrimenti dedotte dai marcatori. Un marcatore anteriore al precedente è "
 "segnalato dall'incoerenza ``timecode_backwards`` e lascia sconosciute le "
 "durate che ne dipendono."
-

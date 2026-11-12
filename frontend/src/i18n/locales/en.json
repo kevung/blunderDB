@@ -2222,7 +2222,9 @@
             "lives_bracket": "Bracket with byes",
             "bracket": "Bracket",
             "gsl": "GSL blocks",
-            "round_robin": "Pools"
+            "round_robin": "Pools",
+            "swiss_rounds": "Swiss by rounds",
+            "manual": "Manual pairing"
         },
         "settings": {
             "format": "Format",
@@ -2357,7 +2359,8 @@
             "last": "last chance",
             "gf": "grand final",
             "pool": "pool {letter}",
-            "playoff": "playoff pool {letter}"
+            "playoff": "playoff pool {letter}",
+            "playoffFinal": "final barrage"
         },
         "note": {
             "winner": "winner",
@@ -2381,7 +2384,8 @@
             "slow_match": "Match {match}: running beyond the expected time.",
             "table_shared": "Table {table}: matches {other} and {match} are both running there.",
             "correction_eliminates_running": "Match {match}: {player} has no life left since a correction, and is still playing.",
-            "correction_revives": "{player} regains a life after a correction: can be paired again."
+            "correction_revives": "{player} regains a life after a correction: can be paired again.",
+            "barrage_stale": "A pool correction made after the barrage was drawn changed the players it designates; the barrage is played between those drawn."
         },
         "reason": {
             "matches_running": "Matches running.",
@@ -2389,7 +2393,8 @@
             "waiting_batch": "Pairing at the next batch.",
             "waiting_table": "no free table",
             "player_unavailable": "player unavailable",
-            "player_busy": "playing in another competition"
+            "player_busy": "playing in another competition",
+            "manual": "Manual phase: the director places the matches."
         },
         "proposals": {
             "keys": "J / K or ↑ ↓: pick a proposal · Enter: launch it · ← →: move between tables",
@@ -2669,6 +2674,15 @@
             "lastChance": "Phase {phase} — last chance: {from} → {to}",
             "reconciliation": "Phase {phase} — reconciliation: {from} → {to}",
             "recharge": "Phase {phase} — recharge: {from} → {to}",
+            "rounds": "Phase {phase} — number of rounds: {from} → {to}",
+            "groups": "Phase {phase} — number of pools: {from} → {to}",
+            "finalBarrage": "Phase {phase} — final barrage between pools: {from} → {to}",
+            "tiebreak": "Phase {phase} — tie-breaks: {from} → {to}",
+            "accelerated": "Phase {phase} — accelerated pairing: {from} → {to}",
+            "monradWiden": "Phase {phase} — widened Monrad: {from} → {to}",
+            "avoidCountries": "Phase {phase} — avoid players from the same country: {from} → {to}",
+            "avoidRounds": "Phase {phase} — avoidance rounds: {from} → {to}",
+            "avoidExcept": "Phase {phase} — avoidance exceptions: {from} → {to}",
             "alsoFor": "Also applies to: {names} (same event)."
         },
         "lock": {

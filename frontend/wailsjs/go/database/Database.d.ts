@@ -67,6 +67,10 @@ export function Brackets(arg1:number):Promise<Array<service.BracketPhase>>;
 
 export function BuryAnkiCard(arg1:number):Promise<void>;
 
+export function CancelBye(arg1:number,arg2:string,arg3:number):Promise<service.DirectionView>;
+
+export function CancelHalfBye(arg1:number,arg2:string,arg3:number):Promise<service.DirectionView>;
+
 export function CancelImport():Promise<void>;
 
 export function CancelMaintenance():Promise<void>;
@@ -407,6 +411,8 @@ export function GetTournamentReview(arg1:number,arg2:string):Promise<storage.Tou
 
 export function GetTournamentReviews(arg1:number,arg2:Array<string>):Promise<Array<storage.TournamentReview>>;
 
+export function GiveHalfBye(arg1:number,arg2:string,arg3:number):Promise<service.DirectionView>;
+
 export function GradeQuizChecker(arg1:number,arg2:domain.Board):Promise<engine.QuizVerdict>;
 
 export function GradeQuizCheckerMove(arg1:number,arg2:string):Promise<engine.QuizVerdict>;
@@ -607,6 +613,8 @@ export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAna
 
 export function PileCollectionID():Promise<number>;
 
+export function PlaceBye(arg1:number,arg2:string,arg3:number):Promise<service.DirectionView>;
+
 export function PlanExport(arg1:domain.ExportOptions):Promise<ingest.ExportPlan>;
 
 export function PlanExportCtx(arg1:context.Context,arg2:domain.ExportOptions):Promise<ingest.ExportPlan>;
@@ -700,6 +708,10 @@ export function RepairCrawfordSentinel():Promise<storage.CrawfordRepair>;
 export function RepairGamePhases():Promise<number>;
 
 export function RepairMatch(arg1:number,arg2:boolean):Promise<ingest.RepairReport>;
+
+export function ReplacePair(arg1:number,arg2:string,arg3:string,arg4:number):Promise<service.DirectionView>;
+
+export function ReplaceParticipant(arg1:number,arg2:string,arg3:string,arg4:string,arg5:string,arg6:number):Promise<service.DirectionView>;
 
 export function ResetAnkiDeck(arg1:number):Promise<void>;
 
@@ -823,6 +835,8 @@ export function Standings(arg1:number):Promise<service.StandingsView>;
 
 export function StandingsCSV(arg1:number):Promise<string>;
 
+export function StartMatchInRound(arg1:number,arg2:number,arg3:string,arg4:string,arg5:number,arg6:number):Promise<service.DirectionView>;
+
 export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number):Promise<service.DirectionView>;
 
 export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<database.TranscriptionState>;
@@ -870,6 +884,8 @@ export function SuggestTranscriptionMatFilename(arg1:number):Promise<string>;
 export function SuspendDuel(arg1:number):Promise<void>;
 
 export function SwapMatchPlayers(arg1:number):Promise<void>;
+
+export function SwapParticipants(arg1:number,arg2:string,arg3:string):Promise<service.DirectionView>;
 
 export function SyncAnkiDeck(arg1:number):Promise<storage.DeckSync>;
 

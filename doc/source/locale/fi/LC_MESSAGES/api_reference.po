@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-02 04:53+0100\n"
+"POT-Creation-Date: 2026-11-12 23:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,17 +42,17 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:453
+#: ../../source/api_reference.rst:465
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:455
+#: ../../source/api_reference.rst:467
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 51 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 58 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -60,13 +60,25 @@ msgid ""
 "première tentative au lieu de répéter son effet — voir la marque « "
 "(Idempotency-Key) » dans le tableau ci-dessus. Aucune autre méthode n'a "
 "besoin ou n'accepte cet en-tête."
-msgstr "Useimmat menetelmät eivät tarvitse mitään erityistä mekanismia: lukemisilla ei ole sivuvaikutuksia, ja ``positions.*``-kirjoitukset ovat vaikutukseltaan idempotentteja sisällön Zobrist-tiivisteen ansiosta — saman aseman tallentaminen kahdesti palauttaa saman rivin, ei koskaan kaksoiskappaletta. 51 menetelmää hyväksyy valinnaisen ``Idempotency-Key``-otsakkeen: ne, joiden kaksi kutsua ovat kaksi erillistä vaikutusta, sekä ``positions.save``, jonka vastaus kertoo, loiko kutsu aseman (``created``), ja kertoisi sen väärin, jos kutsu toistettaisiin menetetyn vastauksen jälkeen. Samalla avaimella toistettu kutsu palauttaa ensimmäisen yrityksen tuloksen sen vaikutuksen toistamisen sijaan — katso merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu menetelmä ei tarvitse tai hyväksy tätä otsaketta."
+msgstr ""
+"Useimmat menetelmät eivät tarvitse mitään erityistä mekanismia: "
+"lukemisilla ei ole sivuvaikutuksia, ja ``positions.*``-kirjoitukset ovat "
+"vaikutukseltaan idempotentteja sisällön Zobrist-tiivisteen ansiosta — "
+"saman aseman tallentaminen kahdesti palauttaa saman rivin, ei koskaan "
+"kaksoiskappaletta. 58 menetelmää hyväksyy valinnaisen ``Idempotency-"
+"Key``-otsakkeen: ne, joiden kaksi kutsua ovat kaksi erillistä vaikutusta,"
+" sekä ``positions.save``, jonka vastaus kertoo, loiko kutsu aseman "
+"(``created``), ja kertoisi sen väärin, jos kutsu toistettaisiin menetetyn"
+" vastauksen jälkeen. Samalla avaimella toistettu kutsu palauttaa "
+"ensimmäisen yrityksen tuloksen sen vaikutuksen toistamisen sijaan — katso"
+" merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu "
+"menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:467
+#: ../../source/api_reference.rst:479
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:469
+#: ../../source/api_reference.rst:481
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -78,11 +90,11 @@ msgstr ""
 "rungoton ``304``-vastaus niin kauan kuin mikään metodin lukema ei ole "
 "muuttunut — katso :ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:474
+#: ../../source/api_reference.rst:486
 msgid "Enregistrer et lire une analyse"
 msgstr "Analyysin tallentaminen ja lukeminen"
 
-#: ../../source/api_reference.rst:476
+#: ../../source/api_reference.rst:488
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -113,11 +125,11 @@ msgstr ""
 "sitä, ohittaa ``withPlayed``-kentän ja palauttaa analyysin ilman "
 "otteluiden siirtoja."
 
-#: ../../source/api_reference.rst:489
+#: ../../source/api_reference.rst:501
 msgid "Repères d'une transcription"
 msgstr "Litteroinnin aikaleimat"
 
-#: ../../source/api_reference.rst:491
+#: ../../source/api_reference.rst:503
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -147,7 +159,7 @@ msgstr ""
 "paikallinen polku), tyhjä merkkijono irrottaa sen; ``set_header`` asettaa"
 " sen myös, kun sen otsake nimeää lähteen, mutta ei koskaan poista sitä."
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:515
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -163,7 +175,7 @@ msgstr ""
 " ilman toiminnan aikamerkkiä, mitattuna heitosta seuraavan toiminnon "
 "ensimmäiseen hetkeen."
 
-#: ../../source/api_reference.rst:509
+#: ../../source/api_reference.rst:521
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
@@ -179,4 +191,3 @@ msgstr ""
 "muuten ne johdetaan aikaleimoista. Edellistä aiempi aikaleima merkitään "
 "epäjohdonmukaisuudella ``timecode_backwards``, ja siitä riippuvat kestot "
 "jäävät tuntemattomiksi."
-

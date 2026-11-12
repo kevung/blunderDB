@@ -2222,7 +2222,9 @@
             "lives_bracket": "K.-o.-Runde mit Freilosen",
             "bracket": "K.-o.-Runde",
             "gsl": "GSL-Blöcke",
-            "round_robin": "Gruppen"
+            "round_robin": "Gruppen",
+            "swiss_rounds": "Schweizer System nach Runden",
+            "manual": "Manuelle Auslosung"
         },
         "settings": {
             "format": "Format",
@@ -2357,7 +2359,8 @@
             "last": "letzte Chance",
             "gf": "großes Finale",
             "pool": "Gruppe {letter}",
-            "playoff": "Entscheidung Gruppe {letter}"
+            "playoff": "Entscheidung Gruppe {letter}",
+            "playoffFinal": "Finalstechen"
         },
         "note": {
             "winner": "Sieger",
@@ -2381,7 +2384,8 @@
             "slow_match": "Partie {match}: Dauer über dem Erwarteten.",
             "table_shared": "Tisch {table}: Partien {other} und {match} laufen dort beide.",
             "correction_eliminates_running": "Partie {match}: {player} hat seit einer Korrektur kein Leben mehr und spielt noch.",
-            "correction_revives": "{player} erhält nach einer Korrektur ein Leben zurück: wieder paarbar."
+            "correction_revives": "{player} erhält nach einer Korrektur ein Leben zurück: wieder paarbar.",
+            "barrage_stale": "Eine Gruppenkorrektur nach der Auslosung des Stechens hat die bestimmten Spieler geändert; das Stechen wird zwischen den Ausgelosten gespielt."
         },
         "reason": {
             "matches_running": "Partien laufen.",
@@ -2389,7 +2393,8 @@
             "waiting_batch": "Paarung beim nächsten Durchgang.",
             "waiting_table": "kein freier Tisch",
             "player_unavailable": "Spieler nicht verfügbar",
-            "player_busy": "spielt in einem anderen Wettbewerb"
+            "player_busy": "spielt in einem anderen Wettbewerb",
+            "manual": "Manuelle Phase: Die Turnierleitung setzt die Partien an."
         },
         "proposals": {
             "keys": "J / K oder ↑ ↓: Vorschlag wählen · Eingabe: starten · ← →: von Tisch zu Tisch",
@@ -2669,6 +2674,15 @@
             "lastChance": "Phase {phase} — Letzte Chance: {from} → {to}",
             "reconciliation": "Phase {phase} — Versöhnungsspiel: {from} → {to}",
             "recharge": "Phase {phase} — Aufladung: {from} → {to}",
+            "rounds": "Phase {phase} — Anzahl der Runden: {from} → {to}",
+            "groups": "Phase {phase} — Anzahl der Gruppen: {from} → {to}",
+            "finalBarrage": "Phase {phase} — Finalstechen zwischen Gruppen: {from} → {to}",
+            "tiebreak": "Phase {phase} — Feinwertungen: {from} → {to}",
+            "accelerated": "Phase {phase} — beschleunigte Auslosung: {from} → {to}",
+            "monradWiden": "Phase {phase} — erweitertes Monrad: {from} → {to}",
+            "avoidCountries": "Phase {phase} — Spieler desselben Landes meiden: {from} → {to}",
+            "avoidRounds": "Phase {phase} — Runden der Vermeidung: {from} → {to}",
+            "avoidExcept": "Phase {phase} — Ausnahmen der Vermeidung: {from} → {to}",
             "alsoFor": "Gilt auch für: {names} (gleiche Veranstaltung)."
         },
         "lock": {

@@ -91,12 +91,13 @@ func TestLabeler_RendersEngineCodes(t *testing.T) {
 func TestLabeler_SectionNamesAreIdentifiers(t *testing.T) {
 	l := direction.NewLabeler(catalog(t, "fr"), nil)
 	cases := map[string]string{
-		"main":       "principal",
-		"conso":      "consolante",
-		"poule:A":    "poule A",
-		"barrage:B":  "barrage poule B",
-		"":           "",
-		"inconnue:X": "inconnue:X",
+		"main":          "principal",
+		"conso":         "consolante",
+		"poule:A":       "poule A",
+		"barrage:B":     "barrage poule B",
+		"barrage:final": "barrage final",
+		"":              "",
+		"inconnue:X":    "inconnue:X",
 	}
 	for in, want := range cases {
 		if got := l.SectionName(in); got != want {
@@ -136,6 +137,20 @@ func TestLabeler_EveryLanguageAnswers(t *testing.T) {
 		}
 		if got := l.PhaseName(tournoi.PhaseConfig{Kind: tournoi.KindBracket}); got == "bracket" || got == "" {
 			t.Errorf("%s: the bracket phase is named %q", lang, got)
+		}
+		for _, k := range []string{tournoi.KindSwissRounds, tournoi.KindManual} {
+			if got := l.PhaseName(tournoi.PhaseConfig{Kind: k}); got == k || got == "" {
+				t.Errorf("%s: the %s phase is named %q", lang, k, got)
+			}
+		}
+		if got := l.Reason(tournoi.ReasonManual); got == string(tournoi.ReasonManual) || got == "" {
+			t.Errorf("%s: a manual phase's wait is rendered %q", lang, got)
+		}
+		if got := l.Warn(tournoi.WarnBarrageStale); got == string(tournoi.WarnBarrageStale) || got == "" {
+			t.Errorf("%s: a stale barrage is rendered %q", lang, got)
+		}
+		if got := l.SectionName("barrage:final"); got == "barrage:final" || got == "" {
+			t.Errorf("%s: the final barrage is named %q", lang, got)
 		}
 	}
 }

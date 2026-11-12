@@ -90,6 +90,14 @@ export function BuryAnkiCard(arg1) {
   return window['go']['database']['Database']['BuryAnkiCard'](arg1);
 }
 
+export function CancelBye(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['CancelBye'](arg1, arg2, arg3);
+}
+
+export function CancelHalfBye(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['CancelHalfBye'](arg1, arg2, arg3);
+}
+
 export function CancelImport() {
   return window['go']['database']['Database']['CancelImport']();
 }
@@ -770,6 +778,10 @@ export function GetTournamentReviews(arg1, arg2) {
   return window['go']['database']['Database']['GetTournamentReviews'](arg1, arg2);
 }
 
+export function GiveHalfBye(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['GiveHalfBye'](arg1, arg2, arg3);
+}
+
 export function GradeQuizChecker(arg1, arg2) {
   return window['go']['database']['Database']['GradeQuizChecker'](arg1, arg2);
 }
@@ -1170,6 +1182,10 @@ export function PileCollectionID() {
   return window['go']['database']['Database']['PileCollectionID']();
 }
 
+export function PlaceBye(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlaceBye'](arg1, arg2, arg3);
+}
+
 export function PlanExport(arg1) {
   return window['go']['database']['Database']['PlanExport'](arg1);
 }
@@ -1356,6 +1372,14 @@ export function RepairGamePhases() {
 
 export function RepairMatch(arg1, arg2) {
   return window['go']['database']['Database']['RepairMatch'](arg1, arg2);
+}
+
+export function ReplacePair(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['ReplacePair'](arg1, arg2, arg3, arg4);
+}
+
+export function ReplaceParticipant(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['ReplaceParticipant'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 export function ResetAnkiDeck(arg1) {
@@ -1602,6 +1626,10 @@ export function StandingsCSV(arg1) {
   return window['go']['database']['Database']['StandingsCSV'](arg1);
 }
 
+export function StartMatchInRound(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['StartMatchInRound'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
 export function StartMatchManually(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['database']['Database']['StartMatchManually'](arg1, arg2, arg3, arg4, arg5);
 }
@@ -1696,6 +1724,10 @@ export function SuspendDuel(arg1) {
 
 export function SwapMatchPlayers(arg1) {
   return window['go']['database']['Database']['SwapMatchPlayers'](arg1);
+}
+
+export function SwapParticipants(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SwapParticipants'](arg1, arg2, arg3);
 }
 
 export function SyncAnkiDeck(arg1) {

@@ -2222,7 +2222,9 @@
             "lives_bracket": "Tableau à exemptions",
             "bracket": "Tableau",
             "gsl": "Blocs GSL",
-            "round_robin": "Poules"
+            "round_robin": "Poules",
+            "swiss_rounds": "Suisse par rondes",
+            "manual": "Appariement manuel"
         },
         "settings": {
             "format": "Format",
@@ -2357,7 +2359,8 @@
             "last": "dernière chance",
             "gf": "grande finale",
             "pool": "poule {letter}",
-            "playoff": "barrage poule {letter}"
+            "playoff": "barrage poule {letter}",
+            "playoffFinal": "barrage final"
         },
         "note": {
             "winner": "vainqueur",
@@ -2381,7 +2384,8 @@
             "slow_match": "Match {match} : la durée dépasse ce qui était attendu.",
             "table_shared": "Table {table} : les matchs {other} et {match} y sont en cours tous les deux.",
             "correction_eliminates_running": "Match {match} : {player} n'a plus de vie depuis une correction, et joue encore.",
-            "correction_revives": "{player} retrouve une vie après une correction : de nouveau appariable."
+            "correction_revives": "{player} retrouve une vie après une correction : de nouveau appariable.",
+            "barrage_stale": "Une correction de poule postérieure au tirage du barrage a changé les joueurs qu'elle désigne ; le barrage se joue entre ceux du tirage."
         },
         "reason": {
             "matches_running": "Matchs en cours.",
@@ -2389,7 +2393,8 @@
             "waiting_batch": "Appariement au prochain lot.",
             "waiting_table": "aucune table libre",
             "player_unavailable": "joueur indisponible",
-            "player_busy": "joue dans une autre épreuve"
+            "player_busy": "joue dans une autre épreuve",
+            "manual": "Phase manuelle : le directeur pose les matchs."
         },
         "proposals": {
             "keys": "J / K ou ↑ ↓ : choisir une proposition · Entrée : la lancer · ← → : de table en table",
@@ -2669,6 +2674,15 @@
             "lastChance": "Phase {phase} — dernière chance : {from} → {to}",
             "reconciliation": "Phase {phase} — réconciliation : {from} → {to}",
             "recharge": "Phase {phase} — recharge : {from} → {to}",
+            "rounds": "Phase {phase} — nombre de rondes : {from} → {to}",
+            "groups": "Phase {phase} — nombre de poules : {from} → {to}",
+            "finalBarrage": "Phase {phase} — barrage final entre poules : {from} → {to}",
+            "tiebreak": "Phase {phase} — départages : {from} → {to}",
+            "accelerated": "Phase {phase} — appariement accéléré : {from} → {to}",
+            "monradWiden": "Phase {phase} — Monrad élargi : {from} → {to}",
+            "avoidCountries": "Phase {phase} — éviter les joueurs du même pays : {from} → {to}",
+            "avoidRounds": "Phase {phase} — rondes d'évitement : {from} → {to}",
+            "avoidExcept": "Phase {phase} — exceptions à l'évitement : {from} → {to}",
             "alsoFor": "Vaut aussi pour : {names} (même événement)."
         },
         "lock": {

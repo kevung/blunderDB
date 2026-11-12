@@ -2222,7 +2222,9 @@
             "lives_bracket": "Kaavio vapaakierroksin",
             "bracket": "Kaavio",
             "gsl": "GSL-lohkot",
-            "round_robin": "Lohkot"
+            "round_robin": "Lohkot",
+            "swiss_rounds": "Sveitsiläinen kierroksittain",
+            "manual": "Käsin tehty paritus"
         },
         "settings": {
             "format": "Muoto",
@@ -2357,7 +2359,8 @@
             "last": "viimeinen mahdollisuus",
             "gf": "suurfinaali",
             "pool": "lohko {letter}",
-            "playoff": "lohkon {letter} karsinta"
+            "playoff": "lohkon {letter} karsinta",
+            "playoffFinal": "loppu-uusinta"
         },
         "note": {
             "winner": "voittaja",
@@ -2381,7 +2384,8 @@
             "slow_match": "Ottelu {match}: kestää odotettua pidempään.",
             "table_shared": "Pöytä {table}: ottelut {other} ja {match} ovat molemmat käynnissä siinä.",
             "correction_eliminates_running": "Ottelu {match}: pelaajalla {player} ei ole korjauksen jälkeen enää elämiä, ja hän pelaa yhä.",
-            "correction_revives": "{player} saa korjauksen jälkeen elämän takaisin: voidaan taas pariuttaa."
+            "correction_revives": "{player} saa korjauksen jälkeen elämän takaisin: voidaan taas pariuttaa.",
+            "barrage_stale": "Uusintaottelun arvonnan jälkeen tehty lohkokorjaus muutti sen määräämiä pelaajia; uusinta pelataan arvottujen kesken."
         },
         "reason": {
             "matches_running": "Otteluita käynnissä.",
@@ -2389,7 +2393,8 @@
             "waiting_batch": "Parit seuraavassa erässä.",
             "waiting_table": "ei vapaata pöytää",
             "player_unavailable": "pelaaja ei käytettävissä",
-            "player_busy": "pelaa toisessa kilpailussa"
+            "player_busy": "pelaa toisessa kilpailussa",
+            "manual": "Käsin paritettava vaihe: johtaja asettaa ottelut."
         },
         "proposals": {
             "keys": "J / K tai ↑ ↓: valitse ehdotus · Enter: käynnistä · ← →: pöydästä toiseen",
@@ -2669,6 +2674,15 @@
             "lastChance": "Vaihe {phase} — viimeinen mahdollisuus: {from} → {to}",
             "reconciliation": "Vaihe {phase} — sovitteluottelu: {from} → {to}",
             "recharge": "Vaihe {phase} — lataus: {from} → {to}",
+            "rounds": "Vaihe {phase} — kierrosten määrä: {from} → {to}",
+            "groups": "Vaihe {phase} — lohkojen määrä: {from} → {to}",
+            "finalBarrage": "Vaihe {phase} — lohkojen välinen loppu-uusinta: {from} → {to}",
+            "tiebreak": "Vaihe {phase} — tasapisteratkaisut: {from} → {to}",
+            "accelerated": "Vaihe {phase} — nopeutettu paritus: {from} → {to}",
+            "monradWiden": "Vaihe {phase} — laajennettu Monrad: {from} → {to}",
+            "avoidCountries": "Vaihe {phase} — vältä saman maan pelaajia: {from} → {to}",
+            "avoidRounds": "Vaihe {phase} — välttämiskierrokset: {from} → {to}",
+            "avoidExcept": "Vaihe {phase} — välttämisen poikkeukset: {from} → {to}",
             "alsoFor": "Koskee myös: {names} (sama tapahtuma)."
         },
         "lock": {

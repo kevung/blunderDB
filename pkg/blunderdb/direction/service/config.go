@@ -220,6 +220,15 @@ func diffConfig(cur, next tournoi.Config) []ConfigChange {
 		yesno("lastChance", p, c.LastChance, n.LastChance)
 		yesno("reconciliation", p, c.Reconciliation, n.Reconciliation)
 		yesno("recharge", p, c.Recharge, n.Recharge)
+		num("rounds", p, c.Rounds, n.Rounds)
+		num("groups", p, c.Groups, n.Groups)
+		yesno("finalBarrage", p, c.FinalBarrage, n.FinalBarrage)
+		add("tiebreak", p, strings.Join(c.Tiebreak, ", "), strings.Join(n.Tiebreak, ", "))
+		yesno("accelerated", p, c.Accelerated, n.Accelerated)
+		yesno("monradWiden", p, c.MonradWiden, n.MonradWiden)
+		yesno("avoidCountries", p, c.AvoidCountries, n.AvoidCountries)
+		num("avoidRounds", p, c.AvoidRounds, n.AvoidRounds)
+		add("avoidExcept", p, strings.Join(c.AvoidExcept, ", "), strings.Join(n.AvoidExcept, ", "))
 	}
 	return out
 }

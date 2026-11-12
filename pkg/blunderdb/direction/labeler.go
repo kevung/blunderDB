@@ -8,6 +8,7 @@ import (
 
 	tournoi "github.com/kevung/nicomaque"
 	"github.com/kevung/nicomaque/render"
+	"github.com/kevung/nicomaque/rules"
 )
 
 // Translating the engine's codes on the Go side, for the standalone page (the panel does it in
@@ -203,6 +204,12 @@ func (l *CatalogLabeler) SectionName(name string) string {
 	}
 	if letter, ok := strings.CutPrefix(name, "poule:"); ok {
 		if out, found := l.C.t("section.pool", map[string]any{"letter": letter}); found {
+			return out
+		}
+	}
+	if name == rules.FinalBarrageName {
+		// The barrage between the pools' tied qualifiers belongs to no pool: it has no letter.
+		if out, found := l.C.t("section.playoffFinal", nil); found {
 			return out
 		}
 	}
