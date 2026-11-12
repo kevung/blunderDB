@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -466,5 +467,51 @@ func TestTranscriptionCandidatesRankedUncappedOutsideQuota(t *testing.T) {
 	}
 	if spent, _ := srv.quota.usage("1"); spent != time.Hour {
 		t.Fatalf("analysis time %v after ranking, want the hour charged before, nothing more", spent)
+	}
+}
+
+// A gesture the draft's state refuses is the caller's error, with the reason,
+// and leaves the draft and its revision as they were.
+func TestTranscriptionRefusedGestureIsInvalid(t *testing.T) {
+	ts := newTranscriptionServer(t, time.Minute)
+	apply := func(st *transcription.State, g transcript.Gesture) (int, []byte) {
+		return gesture(t, ts, "1", "/v1/transcriptions.apply", st.Revision,
+			map[string]any{"id": st.ID, "sessionId": st.SessionID, "gesture": g})
+	}
+	for _, c := range []struct {
+		name    string
+		before  []transcript.Gesture
+		refused transcript.Gesture
+		reason  error
+	}{
+		{"no play selected", []transcript.Gesture{{Kind: transcript.GestureEnterDie, Die: 3}, {Kind: transcript.GestureEnterDie, Die: 1}},
+			transcript.Gesture{Kind: transcript.GestureValidate}, transcript.ErrNoCandidate},
+		{"no dice", []transcript.Gesture{{Kind: transcript.GestureEnterDie, Die: 3}},
+			transcript.Gesture{Kind: transcript.GestureSelectCandidate, Candidate: 0}, transcript.ErrNoDice},
+		{"no entry", nil, transcript.Gesture{Kind: transcript.GestureValidate}, transcript.ErrNoEntry},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			st := createDraft(t, ts, "1")
+			for _, g := range c.before {
+				status, body := apply(st, g)
+				st = decodeState(t, status, body)
+			}
+			get := func() *transcription.State {
+				status, raw := gesture(t, ts, "1", "/v1/transcriptions.get", 0, map[string]any{"id": st.ID})
+				return decodeState(t, status, raw)
+			}
+			was := get()
+			status, body := apply(st, c.refused)
+			env := decodeEnvelope(t, body)
+			if status != http.StatusBadRequest || env.Error.Code != CodeInvalid || !strings.Contains(env.Error.Message, c.reason.Error()) {
+				t.Fatalf("refused gesture: status %d, body %s; want 400 %s with %q", status, body, CodeInvalid, c.reason)
+			}
+			is := get()
+			before, _ := json.Marshal(was.Annotated)
+			after, _ := json.Marshal(is.Annotated)
+			if is.Revision != st.Revision || !bytes.Equal(before, after) {
+				t.Errorf("after the refusal: revision %d (was %d), draft changed: %v", is.Revision, st.Revision, !bytes.Equal(before, after))
+			}
+		})
 	}
 }
