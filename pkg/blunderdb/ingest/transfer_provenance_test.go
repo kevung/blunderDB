@@ -2,8 +2,11 @@ package ingest
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"path/filepath"
 	"reflect"
+	"slices"
 	"testing"
 	"time"
 
@@ -188,5 +191,190 @@ func TestTransfer_OmitProvenanceRefusesNamedMatches(t *testing.T) {
 	opts.OmitProvenance = true
 	if _, err := Transfer(ctx, TransferEnd{S: src}, TransferEnd{S: dst}, opts, nil); !errors.Is(err, storage.ErrInvalid) {
 		t.Errorf("a named match without provenance: %v, want ErrInvalid", err)
+	}
+}
+
+// TestTransfer_OmitProvenanceRefusesNamedTournaments: a tournament named by id,
+// alone, cannot leave without the names it is made of.
+func TestTransfer_OmitProvenanceRefusesNamedTournaments(t *testing.T) {
+	ctx := context.Background()
+	src := seedLibrary(t, "test.xg", "lesson")
+	tour, err := src.Tournaments().Create(ctx, "", "Open de Lyon", "2026-03-01", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dst, err := sqlite.Open(ctx, ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dst.Close()
+	opts := WholeLibraryOptions()
+	opts.TournamentIDs = []int64{tour}
+	opts.OmitProvenance = true
+	if _, err := Transfer(ctx, TransferEnd{S: src}, TransferEnd{S: dst}, opts, nil); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("a named tournament without provenance: %v, want ErrInvalid", err)
+	}
+}
+
+// provenanceLibrary is a library whose every family names its matches: the
+// players of the match in each analysis, an alias, a transcription, a living
+// collection and saved filters that select by a player, and the producer's
+// own name. It returns the living collection and the player its query names.
+func provenanceLibrary(t *testing.T) (src *sqlite.Storage, living int64, player string) {
+	t.Helper()
+	ctx := context.Background()
+	src = seedLibrary(t, "test.xg", "lesson")
+	for m, err := range src.Matches().List(ctx, "", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		player = m.Player1Name
+	}
+	if player == "" {
+		t.Fatal("the fixture's match names no player")
+	}
+	if _, err := src.Transcriptions().Save(ctx, "", &storage.Transcription{FormatVersion: "1",
+		Label: player + " – X", Document: `{"header":{"player1":"` + player + `"}}`}); err != nil {
+		t.Fatal(err)
+	}
+	if err := src.Aliases().Set(ctx, "", storage.AliasPlayer, "Surnom", player); err != nil {
+		t.Fatal(err)
+	}
+	for name, command := range map[string]string{"contre lui": `s op"` + player + `"`, "gros coups": "s E>0.1"} {
+		if _, err := src.Filters().Save(ctx, "", name, command); err != nil {
+			t.Fatal(err)
+		}
+	}
+	living, err := storage.CreateCollection(ctx, src, "", "Ses coups", "", `s pl"`+player+`"`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return src, living, player
+}
+
+// fileHolds lists the table.column of the SQLite file at path that hold needle.
+func fileHolds(t *testing.T, path, needle string) []string {
+	t.Helper()
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	names := func(query string, args ...any) []string {
+		rows, err := db.Query(query, args...)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+		var out []string
+		for rows.Next() {
+			var name string
+			if err := rows.Scan(&name); err != nil {
+				t.Fatal(err)
+			}
+			out = append(out, name)
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		return out
+	}
+	var found []string
+	for _, table := range names(`SELECT name FROM sqlite_master WHERE type = 'table'`) {
+		for _, c := range names(`SELECT name FROM pragma_table_info(?)`, table) {
+			var n int
+			if err := db.QueryRow(`SELECT COUNT(*) FROM "`+table+`" WHERE CAST("`+c+`" AS TEXT) LIKE ?`, "%"+needle+"%").Scan(&n); err != nil {
+				t.Fatal(err)
+			}
+			if n > 0 {
+				found = append(found, table+"."+c)
+			}
+		}
+	}
+	return found
+}
+
+// TestExport_OmitProvenanceLeavesNoName: a file exported without provenance
+// holds the player's name nowhere — not in a living collection's query, which
+// leaves frozen on the members it selects at the source, not in a saved
+// filter, an alias, a transcription or the producer's metadata — while the
+// same export with provenance carries each of them.
+func TestExport_OmitProvenanceLeavesNoName(t *testing.T) {
+	ctx := context.Background()
+	src, living, player := provenanceLibrary(t)
+	selected, err := storage.EvaluateCollection(ctx, src, "", living, 0)
+	if err != nil || len(selected.PositionIDs) == 0 {
+		t.Fatalf("the living collection selects %d positions at the source (%v); the test needs some", len(selected.PositionIDs), err)
+	}
+
+	export := func(omit bool) (string, ExportReport) {
+		opts := WholeLibraryOptions()
+		opts.OmitProvenance = omit
+		plan, err := OptionsFor(ctx, src, "", opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		plan.Metadata = map[string]string{"user": player, "description": "les matchs de " + player}
+		path := filepath.Join(t.TempDir(), "export.db")
+		rep, err := ExportSQLite(ctx, src, "", path, plan)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return path, rep
+	}
+
+	with, rep := export(false)
+	held := fileHolds(t, with, player)
+	for _, want := range []string{"collection.filter_query", "filter_library.command", "metadata.value"} {
+		if !slices.Contains(held, want) {
+			t.Fatalf("with provenance %s does not hold the name (held in %v): the test data proves nothing", want, held)
+		}
+	}
+	if rep.Aliases == 0 || rep.Transcriptions == 0 {
+		t.Fatalf("with provenance the file carries %d aliases and %d transcriptions; the test needs both", rep.Aliases, rep.Transcriptions)
+	}
+
+	bare, rep := export(true)
+	if held := fileHolds(t, bare, player); len(held) > 0 {
+		t.Errorf("without provenance the file still holds %q in %v", player, held)
+	}
+	if rep.Aliases != 0 || rep.Transcriptions != 0 || rep.Matches != 0 {
+		t.Errorf("without provenance the file carries %d aliases, %d transcriptions, %d matches; want none", rep.Aliases, rep.Transcriptions, rep.Matches)
+	}
+	dst, err := sqlite.Open(ctx, bare, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dst.Close()
+	var kept []string
+	for f, err := range dst.Filters().List(ctx, "") {
+		if err != nil {
+			t.Fatal(err)
+		}
+		kept = append(kept, f.Name)
+	}
+	if !slices.Equal(kept, []string{"gros coups"}) {
+		t.Errorf("saved filters in the file: %v; want only the one that names nobody", kept)
+	}
+	found := false
+	for c, err := range dst.Collections().List(ctx, "") {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if c.Name != "Ses coups" {
+			continue
+		}
+		found = true
+		ev, err := storage.EvaluateCollection(ctx, dst, "", c.ID, 0)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if c.FilterQuery != "" || len(ev.PositionIDs) != len(selected.PositionIDs) {
+			t.Errorf("the living collection arrived with query %q and %d positions; want it frozen on the %d it selects at the source",
+				c.FilterQuery, len(ev.PositionIDs), len(selected.PositionIDs))
+		}
+	}
+	if !found {
+		t.Error("the living collection did not leave")
 	}
 }

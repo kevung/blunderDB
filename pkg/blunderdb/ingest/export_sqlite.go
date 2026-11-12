@@ -413,6 +413,10 @@ func (e *exporter) writeMetadata() error {
 		return nil
 	}
 	for key, value := range issuance.Carried(e.opts.Metadata) {
+		// The producer's name and its free description name whose matches these were.
+		if e.opts.OmitProvenance && (key == "user" || key == "description") {
+			continue
+		}
 		if err := put(key, value); err != nil {
 			return err
 		}
@@ -1000,6 +1004,12 @@ func (e *exporter) writeMembers(srcID, dstID int64, positions []int64) {
 // its query selects now, as an ordinary list.
 func (e *exporter) writeLivingQueries() error {
 	for _, lc := range e.living {
+		if e.opts.OmitProvenance && readsProvenance(lc.query) {
+			slog.Warn("export: living collection reads the provenance the file leaves behind; it leaves frozen",
+				"collectionID", lc.src)
+			e.writeMembers(lc.src, lc.dst, e.evaluateLiving(lc.src).PositionIDs)
+			continue
+		}
 		query, ok := carriedLivingQuery(lc.query, e.posMap, e.matchMap, e.tourMap)
 		if !ok {
 			slog.Warn("export: living collection names rows the file does not hold; it leaves frozen",
@@ -1015,6 +1025,30 @@ func (e *exporter) writeLivingQueries() error {
 		e.writeMembers(lc.src, lc.dst, lc.hand)
 	}
 	return nil
+}
+
+// readsProvenance reports whether a query names a player, a tournament, a
+// comment's author or a free text, or selects by the match a position was
+// played in. Without provenance such a query must not leave: it would carry
+// the name it holds, and select nothing in a file that holds no match. A token
+// the parser does not read counts: nothing says what it names.
+func readsProvenance(query string) bool {
+	f, diags := searchquery.Parse(query)
+	for _, d := range diags {
+		if d.Kind == searchquery.DiagUnknown {
+			return true
+		}
+	}
+	for _, token := range []string{
+		f.PlayerFilter, f.OpponentFilter, f.TournamentNameFilter, f.CommentAuthorFilter, f.SearchText,
+		f.MatchIDsFilter, f.TournamentIDsFilter, f.MatchDateFilter, f.RoundFilter,
+		f.PlayerPRFilter, f.MatchLengthFilter, f.EncounterFilter,
+	} {
+		if token != "" {
+			return true
+		}
+	}
+	return false
 }
 
 // carriedLivingQuery rewrites a living query's row ids — `like<n>`, `id<n>`,
@@ -1516,6 +1550,10 @@ func (e *exporter) writeFilters() error {
 		filters = append(filters, &fc)
 	}
 	for _, f := range filters {
+		if e.opts.OmitProvenance && readsProvenance(f.Command) {
+			e.skip("saved filter reads the provenance the export leaves behind", "name", f.Name)
+			continue
+		}
 		command, ok := carriedLivingQuery(f.Command, e.posMap, e.matchMap, e.tourMap)
 		if !ok {
 			e.skip("saved filter names a row the export leaves behind", "name", f.Name)

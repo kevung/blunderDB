@@ -1143,6 +1143,16 @@ analyses partent sans joueurs ni coups et décisions de videau joués, aucun
 match, tournoi, transcription ni alias ne part, et nommer un match ou un
 tournoi est refusé (``invalid``).
 
+Sans provenance, une collection vivante dont la requête nomme un joueur, un
+tournoi ou un auteur, porte un texte libre ou choisit par le match (``pl``,
+``op``, ``tn``, ``au``, ``ma``, ``rd:``, ``ml:``, ``n``, la date et le PR du
+match) part figée sur les positions qu'elle sélectionne à la source ; un filtre
+enregistré de ce genre ne part pas, et le fichier ne porte ni le ``user`` ni la
+``description`` du producteur. Les commentaires sont du texte libre : ils ne
+partent que demandés par leur nom (``"includeComments": true``,
+``--comments``). ``export --type matches`` et ``--type mat`` refusent
+``--provenance=false`` : un match est la provenance.
+
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,
 mêmes empreintes ``canonical_hash``, un doublon n'est écrit qu'une fois. L'appel

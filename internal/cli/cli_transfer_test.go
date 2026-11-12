@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/json"
+	"flag"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -262,5 +263,46 @@ func TestCLI_TransferWithoutProvenance(t *testing.T) {
 	}
 	if len(arrived) == 0 || libraryRows(t, dst)[1] != 0 {
 		t.Errorf("destination holds %d analyses and %v rows, want analyses and no match", len(arrived), libraryRows(t, dst))
+	}
+}
+
+// A match is the provenance: exporting matches without it is refused, never
+// answered by an export that carries the names anyway.
+func TestCLI_ExportMatchesRefusesWithoutProvenance(t *testing.T) {
+	dir := tempDir(t)
+	src := filepath.Join(dir, "club.db")
+	seedTransferLibrary(t, src, "test.xg")
+	for _, kind := range []string{"matches", "mat"} {
+		out := filepath.Join(dir, "out-"+kind)
+		cli := &CLI{db: NewDatabase()}
+		err := cli.Run([]string{"export", "--db", src, "--type", kind, "--file", out, "--provenance=false"})
+		cli.db.Close()
+		if err == nil || !strings.Contains(err.Error(), "a match is the provenance") {
+			t.Errorf("export --type %s --provenance=false: %v; want the refusal", kind, err)
+		}
+		if _, statErr := os.Stat(out); statErr == nil {
+			t.Errorf("export --type %s --provenance=false wrote %s", kind, out)
+		}
+	}
+}
+
+// Without provenance the comments, free text that may name the match, leave
+// only when --comments is written.
+func TestSelection_CommentsWithoutProvenance(t *testing.T) {
+	for args, want := range map[string]bool{
+		"":                              true,
+		"--provenance=false":            false,
+		"--provenance=false --comments": true,
+		"--comments=false":              false,
+	} {
+		fs := flag.NewFlagSet("export", flag.ContinueOnError)
+		sel := selectionFlags(fs, "the test")
+		if err := fs.Parse(strings.Fields(args)); err != nil {
+			t.Fatal(err)
+		}
+		opts, err := sel.options()
+		if err != nil || opts.IncludeComments != want {
+			t.Errorf("%q: includeComments %v (%v); want %v", args, opts.IncludeComments, err, want)
+		}
 	}
 }

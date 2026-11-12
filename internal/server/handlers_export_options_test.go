@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 	"os"
@@ -191,6 +192,22 @@ func TestExportSQLiteOmitProvenance(t *testing.T) {
 		dst.Close()
 		if n != tc.matches {
 			t.Errorf("%v: %d matches in the file, want %d", tc.req, n, tc.matches)
+		}
+	}
+}
+
+// Without provenance the comments, free text that may name the match, leave
+// only when the body asks for them by name.
+func TestExportOptions_CommentsWithoutProvenance(t *testing.T) {
+	for body, want := range map[string]bool{
+		`{}`:                      true,
+		`{"omitProvenance":true}`: false,
+		`{"omitProvenance":true,"includeComments":true}`: true,
+		`{"includeComments":false}`:                      false,
+	} {
+		var req exportSQLiteReq
+		if err := json.Unmarshal([]byte(body), &req); err != nil || req.options().IncludeComments != want {
+			t.Errorf("%s: includeComments %v (%v); want %v", body, req.options().IncludeComments, err, want)
 		}
 	}
 }

@@ -3528,7 +3528,7 @@ Options:
   -played-moves
     	Include played moves in analysis (default: true) (default true)
   -provenance
-    	Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases (default: true) (default true)
+    	Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases, freezes the living collections and drops the saved filters that name a player or select by the match, and sends the comments only with --comments (default: true) (default true)
   -sync-cursor string
     	With --incremental: name of the cursor to read and advance (default: the destination folder)
   -tournament-ids string
@@ -5985,7 +5985,7 @@ Options:
   -played-moves
     	Include played moves in analysis (default: true) (default true)
   -provenance
-    	Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases (default: true) (default true)
+    	Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases, freezes the living collections and drops the saved filters that name a player or select by the match, and sends the comments only with --comments (default: true) (default true)
   -to string
     	Path to the library to copy into (required; created when missing)
   -tournament-ids string

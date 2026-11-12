@@ -145,6 +145,9 @@ func (cli *CLI) runExport(args []string) error {
 		return err
 	}
 	matchIDs := opts.MatchIDs
+	if t := strings.ToLower(*exportType); opts.OmitProvenance && (t == "matches" || t == "mat") {
+		return fmt.Errorf("--provenance=false cannot export --type %s: a match is the provenance; export --type database to send positions without it", t)
+	}
 
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {
@@ -563,12 +566,19 @@ type exportSelection struct {
 	analysis, comments, playedMoves, matches, transcriptions, aliases *bool
 	collections, tournaments, decks, lessons, ankiHistory, provenance *bool
 	collectionIDs, matchIDs, deckIDs, lessonIDs, tournamentIDs        *string
+	// given reports whether a flag was written on the command line.
+	given func(name string) bool
 }
 
 // selectionFlags declares the selection flags on fs; what names the command's action in
 // the help ("database export", "transfer").
 func selectionFlags(fs *flag.FlagSet, what string) exportSelection {
 	return exportSelection{
+		given: func(name string) bool {
+			given := false
+			fs.Visit(func(f *flag.Flag) { given = given || f.Name == name })
+			return given
+		},
 		analysis:       fs.Bool("analysis", true, "Include analysis in "+what+" (default: true)"),
 		comments:       fs.Bool("comments", true, "Include comments in "+what+" (default: true)"),
 		playedMoves:    fs.Bool("played-moves", true, "Include played moves in analysis (default: true)"),
@@ -579,7 +589,7 @@ func selectionFlags(fs *flag.FlagSet, what string) exportSelection {
 		tournaments:    fs.Bool("tournaments", true, "Include tournaments in "+what+" (default: true)"),
 		decks:          fs.Bool("decks", true, "Include Anki decks in "+what+" (default: true)"),
 		lessons:        fs.Bool("lessons", true, "Include lessons, with the collections and positions their steps show, in "+what+" (default: true)"),
-		provenance:     fs.Bool("provenance", true, "Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases (default: true)"),
+		provenance:     fs.Bool("provenance", true, "Include what names the match a position was played in: the analyses' players, played moves and cube actions; false also leaves out matches, tournaments, transcriptions and aliases, freezes the living collections and drops the saved filters that name a player or select by the match, and sends the comments only with --comments (default: true)"),
 		collectionIDs:  fs.String("collection-ids", "", "Comma-separated list of collection IDs to take (empty = all)"),
 		matchIDs:       fs.String("match-ids", "", "Comma-separated list of match IDs to take (empty = all)"),
 		deckIDs:        fs.String("deck-ids", "", "Comma-separated list of Anki deck IDs to take (empty = all)"),
@@ -610,9 +620,11 @@ func (s exportSelection) options() (ExportOptions, error) {
 	}
 	collectionIDs, lessonIDs, deckIDs, matchIDs, tournamentIDs := ids[0], ids[1], ids[2], ids[3], ids[4]
 	return ExportOptions{
-		WholeLibrary:          true,
-		IncludeAnalysis:       *s.analysis,
-		IncludeComments:       *s.comments,
+		WholeLibrary:    true,
+		IncludeAnalysis: *s.analysis,
+		// A comment is free text that may name the match: without provenance it
+		// leaves only when --comments is written.
+		IncludeComments:       *s.comments && (*s.provenance || s.given("comments")),
 		IncludePlayedMoves:    *s.playedMoves,
 		IncludeMatches:        *s.matches || len(matchIDs) > 0,
 		IncludeTranscriptions: *s.transcriptions,

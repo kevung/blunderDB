@@ -740,8 +740,14 @@ type ExportOptions struct {
 	// OmitProvenance sends the positions without what names the match they
 	// were played in: each analysis leaves without its players and its played
 	// moves and cube actions, and no match, tournament, transcription or alias
-	// leaves. Naming a match or a tournament by id is then refused. Off, the
-	// zero value, the export carries them as the other options say.
+	// leaves. Naming a match or a tournament by id is then refused. A living
+	// collection whose query names a player, a tournament or an author, holds
+	// a free text or selects by the match leaves frozen, its members evaluated
+	// at the source; a saved filter of that kind does not leave; the file does
+	// not carry the producer's "user" and "description" metadata. Comments are
+	// free text and leave as IncludeComments says: the daemon and the CLI turn
+	// them off under OmitProvenance unless the caller asks for them by name.
+	// Off, the zero value, the export carries them as the other options say.
 	OmitProvenance bool `json:"omitProvenance"`
 
 	// Incremental exports only what entered the library since the last
