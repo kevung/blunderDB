@@ -54,7 +54,8 @@ func pathItem(doc, pattern string) string {
 // TestDirectionGestures_DeclareTheirContract: every versioned gesture of a Direction or a
 // Rencontre states, in the contract, the If-Match it requires, the 409 and 428 it answers, the
 // Direction-Version it leaves and the Idempotency-Key it accepts — and the Python client sends
-// the version. The two creates name nothing that has a version yet; previewConfig writes nothing.
+// the version. The two creates name nothing that has a version yet; previewConfig and simulate
+// write nothing.
 func TestDirectionGestures_DeclareTheirContract(t *testing.T) {
 	exempt := map[string]bool{
 		"/v1/directions.create": true,
@@ -71,7 +72,7 @@ func TestDirectionGestures_DeclareTheirContract(t *testing.T) {
 		t.Fatalf("only %d routes behind --direction: the probe is broken", len(gestures))
 	}
 	for _, p := range gestures {
-		if p == "/v1/directions.previewConfig" {
+		if p == "/v1/directions.previewConfig" || p == "/v1/directions.simulate" {
 			continue
 		}
 		item := pathItem(doc, p)
