@@ -151,11 +151,30 @@ func (d *Service) AddParticipantAs(ctx context.Context, tournamentID int64, id, 
 	return d.viewAfter(ctx, tournamentID)
 }
 
+// MaxEntryIDLength bounds, in bytes, the identifier a caller gives an entry.
+const MaxEntryIDLength = 64
+
+// checkEntryID refuses an identifier the engine keeps for itself — tournoi.BYE stands for an
+// exemption, so an entry of that id would vanish from every listing and win nothing — and one
+// too long to be an identifier.
+func checkEntryID(id string) error {
+	if tournoi.PlayerID(id) == tournoi.BYE {
+		return direction.Refusef("direction: %q is not an entry's id: it stands for an exemption", id)
+	}
+	if len(id) > MaxEntryIDLength {
+		return direction.Refusef("direction: an entry's id holds at most %d bytes, not %d", MaxEntryIDLength, len(id))
+	}
+	return nil
+}
+
 // entryID is the identifier a new entry takes in st: the one given when it is free, else one
 // derived from the name.
 func entryID(st *tournoi.State, id, name string) (tournoi.PlayerID, error) {
 	id = strings.TrimSpace(id)
 	if id != "" {
+		if err := checkEntryID(id); err != nil {
+			return "", err
+		}
 		if _, exists := st.Players[tournoi.PlayerID(id)]; exists {
 			return "", direction.Refusef("direction: the entry %q already exists", id)
 		}

@@ -68,8 +68,11 @@ type Config struct {
 	Transcription bool
 	// EnableDirection serves the gestures of a Direction and of a Rencontre
 	// (/v1/directions.* and /v1/rencontres.* that write), as `serve
-	// --direction` does; their reads are always served. Off by default, for
-	// the reason Transcription is.
+	// --direction` does; their reads are always served. It also opens
+	// GET /v1/events and, on PostgreSQL, the LISTEN/NOTIFY transport between
+	// instances: one dedicated connection, so Bootstrap fails behind a
+	// pgbouncer in transaction mode. Off by default, for the reason
+	// Transcription is.
 	EnableDirection bool
 
 	// TranscriptionTTL closes a transcription session idle for longer (its
