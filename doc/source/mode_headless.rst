@@ -688,6 +688,13 @@ résultat, appairer, créer un événement) ne le sont que sous ``serve --direct
   ``player`` et ``match``), ``directions.clock``, ``directions.slots``,
   ``directions.lastDecision``, ``directions.pageHtml`` et
   ``directions.pairingSheetHtml`` (avec ``round``).
+* ``directions.statuses`` (``tournamentId``, et ``ids`` pour ne lire que
+  certains inscrits) répond à « est-ce que je joue ? » : pour chaque inscrit,
+  ``kind`` (``playing``, ``bye``, ``qualified``, ``undecided``,
+  ``eliminated``, ``winner``, ``withdrawn`` ou ``not_entered``), la phase, la
+  section, le tour et un ``label`` en codes, jamais en phrases, les vies
+  restantes (``lives``) et, quand un match est en cours, ``matchId``,
+  ``table`` et ``opponent``. Un identifiant qui n'est pas inscrit est omis.
 * ``rencontres.list``, puis ``rencontres.get`` et ``rencontres.pageHtml``
   avec ``{"id": N}``. ``rencontres.pageHtml`` rend la page murale de l'événement,
   un document HTML autonome dans le champ ``html`` : un écran mural l'affiche

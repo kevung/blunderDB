@@ -3187,6 +3187,39 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_DirectionView"
                 nullable: true
+  /v1/directions.statuses:
+    post:
+      operationId: directions.statuses
+      tags: [directions]
+      x-kind: json
+      parameters:
+        - name: If-None-Match
+          in: header
+          required: false
+          description: An ETag of an earlier answer; 304 while it still holds.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/directionStatusesReq"
+      responses:
+        "304":
+          description: Not Modified — the If-None-Match tag still holds; no body.
+        "200":
+          description: OK
+          headers:
+            ETag:
+              description: Weak tag of this answer; send it back in If-None-Match.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/service_PlayerStatusRow"
   /v1/directions.tableGrid:
     post:
       operationId: directions.tableGrid
@@ -9250,6 +9283,16 @@ components:
         table:
           type: integer
           format: int32
+    directionStatusesReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        ids:
+          type: array
+          items:
+            type: string
     directionTablesReq:
       type: object
       properties:
@@ -10318,6 +10361,9 @@ components:
     service_ParticipantRow:
       type: object
       description: "Opaque: see the Go type service.ParticipantRow (defined outside internal/server, not expanded here)."
+    service_PlayerStatusRow:
+      type: object
+      description: "Opaque: see the Go type service.PlayerStatusRow (defined outside internal/server, not expanded here)."
     service_RencontreView:
       type: object
       description: "Opaque: see the Go type service.RencontreView (defined outside internal/server, not expanded here)."

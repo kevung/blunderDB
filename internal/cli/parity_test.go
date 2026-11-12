@@ -161,6 +161,11 @@ var serverOnly = map[string]string{
 	// method; the CLI reaches it through `duel list` and `duel show`.
 	"/v1/duels.get": whyDuelService,
 
+	// The engine's status of each entry as data, for a client that draws its own
+	// players' screen. The desktop's wall words the same engine call itself
+	// (direction.StatusBlock).
+	"/v1/directions.statuses": "service.Statuses, shared: the desktop's wall renders the engine's statuses itself and no Database method wraps the list",
+
 	// Backend-specific, and the wrapper is SQLite-only.
 	"/ops/tenant.purge": whyPostgresOnly,
 }

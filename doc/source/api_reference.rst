@@ -143,6 +143,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.standings                 JSON  (ETag)
      POST /v1/directions.standingsCsv              JSON  (ETag)
      POST /v1/directions.startMatch                JSON  (Idempotency-Key)  (If-Match)
+     POST /v1/directions.statuses                  JSON  (ETag)
      POST /v1/directions.tableGrid                 JSON  (ETag)
      POST /v1/directions.updatePair                JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.updateParticipant         JSON  (Idempotency-Key)  (If-Match)
