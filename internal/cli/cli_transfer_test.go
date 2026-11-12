@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/json"
+	"flag"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -202,5 +203,106 @@ func TestCLI_TransferNamedCollection(t *testing.T) {
 	cli.db.Close()
 	if runErr == nil || !strings.Contains(runErr.Error(), "match 999") {
 		t.Errorf("--match-ids=999: %v, want refused", runErr)
+	}
+}
+
+// --provenance=false copies the analyses without their players and played
+// moves, and no match; the source keeps them.
+func TestCLI_TransferWithoutProvenance(t *testing.T) {
+	dir := tempDir(t)
+	src, dst := filepath.Join(dir, "club.db"), filepath.Join(dir, "student.db")
+	seedTransferLibrary(t, src, "test.xg")
+	ctx := context.Background()
+	s, err := sqlite.Open(ctx, src, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ids []int64
+	for p, err := range s.Positions().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	loaded, err := s.Analyses().LoadMany(ctx, "", ids)
+	if err == nil {
+		for _, a := range loaded {
+			a.Player1, a.Player2 = "Alice", "Bob"
+		}
+		err = s.Analyses().SaveMany(ctx, "", loaded)
+	}
+	s.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rep := runTransfer(t, "--from", src, "--to", dst, "--provenance=false")
+	if rep.Exported.Matches != 0 || rep.Exported.Analyses == 0 {
+		t.Errorf("read %+v, want analyses and no match", rep.Exported)
+	}
+	d, err := sqlite.Open(ctx, dst, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer d.Close()
+	var got []int64
+	for p, err := range d.Positions().List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got = append(got, p.ID)
+	}
+	arrived, err := d.Analyses().LoadMany(ctx, "", got)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for id, a := range arrived {
+		if a.Player1 != "" || a.Player2 != "" || len(a.PlayedMoves) > 0 || len(a.PlayedCubeActions) > 0 {
+			t.Fatalf("position %d arrived with players %q/%q, played %v %v", id, a.Player1, a.Player2, a.PlayedMoves, a.PlayedCubeActions)
+		}
+	}
+	if len(arrived) == 0 || libraryRows(t, dst)[1] != 0 {
+		t.Errorf("destination holds %d analyses and %v rows, want analyses and no match", len(arrived), libraryRows(t, dst))
+	}
+}
+
+// A match is the provenance: exporting matches without it is refused, never
+// answered by an export that carries the names anyway.
+func TestCLI_ExportMatchesRefusesWithoutProvenance(t *testing.T) {
+	dir := tempDir(t)
+	src := filepath.Join(dir, "club.db")
+	seedTransferLibrary(t, src, "test.xg")
+	for _, kind := range []string{"matches", "mat"} {
+		out := filepath.Join(dir, "out-"+kind)
+		cli := &CLI{db: NewDatabase()}
+		err := cli.Run([]string{"export", "--db", src, "--type", kind, "--file", out, "--provenance=false"})
+		cli.db.Close()
+		if err == nil || !strings.Contains(err.Error(), "a match is the provenance") {
+			t.Errorf("export --type %s --provenance=false: %v; want the refusal", kind, err)
+		}
+		if _, statErr := os.Stat(out); statErr == nil {
+			t.Errorf("export --type %s --provenance=false wrote %s", kind, out)
+		}
+	}
+}
+
+// Without provenance the comments, free text that may name the match, leave
+// only when --comments is written.
+func TestSelection_CommentsWithoutProvenance(t *testing.T) {
+	for args, want := range map[string]bool{
+		"":                              true,
+		"--provenance=false":            false,
+		"--provenance=false --comments": true,
+		"--comments=false":              false,
+	} {
+		fs := flag.NewFlagSet("export", flag.ContinueOnError)
+		sel := selectionFlags(fs, "the test")
+		if err := fs.Parse(strings.Fields(args)); err != nil {
+			t.Fatal(err)
+		}
+		opts, err := sel.options()
+		if err != nil || opts.IncludeComments != want {
+			t.Errorf("%q: includeComments %v (%v); want %v", args, opts.IncludeComments, err, want)
+		}
 	}
 }

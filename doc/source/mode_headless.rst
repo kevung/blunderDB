@@ -662,6 +662,10 @@ ces choses appartiennent au démon parce qu'il fait face à un réseau, et
 l'ADR-0005 dit pourquoi. Un programme qui embarque le moteur choisit lui-même
 son tenant et répond de ses appels.
 
+``Config.EnableDirection`` ouvre les gestes de direction de tournoi dans le
+moteur embarqué, comme ``serve --direction`` le fait pour le démon ; ils sont
+fermés par défaut.
+
 .. _headless_direction:
 
 Direction de tournoi et événements
@@ -678,11 +682,19 @@ résultat, appairer, créer un événement) ne le sont que sous ``serve --direct
 * Les autres ``directions.*`` prennent ``{"tournamentId": N}`` :
   ``directions.get`` (la vue complète : propositions, classement, matchs en
   cours), ``directions.participants``, ``directions.freeParticipants``,
-  ``directions.tableGrid``, ``directions.brackets``, ``directions.standings``,
+  ``directions.tableGrid``, ``directions.freeSlots`` (les places d'exemption
+  qu'un retardataire peut encore prendre), ``directions.brackets``, ``directions.standings``,
   ``directions.standingsCsv``, ``directions.history`` (filtres facultatifs
   ``player`` et ``match``), ``directions.clock``, ``directions.slots``,
   ``directions.lastDecision``, ``directions.pageHtml`` et
   ``directions.pairingSheetHtml`` (avec ``round``).
+* ``directions.statuses`` (``tournamentId``, et ``ids`` pour ne lire que
+  certains inscrits) répond à « est-ce que je joue ? » : pour chaque inscrit,
+  ``kind`` (``playing``, ``bye``, ``qualified``, ``undecided``,
+  ``eliminated``, ``winner``, ``withdrawn`` ou ``not_entered``), la phase, la
+  section, le tour et un ``label`` en codes, jamais en phrases, les vies
+  restantes (``lives``) et, quand un match est en cours, ``matchId``,
+  ``table`` et ``opponent``. Un identifiant qui n'est pas inscrit est omis.
 * ``rencontres.list``, puis ``rencontres.get`` et ``rencontres.pageHtml``
   avec ``{"id": N}``. ``rencontres.pageHtml`` rend la page murale de l'événement,
   un document HTML autonome dans le champ ``html`` : un écran mural l'affiche
@@ -744,7 +756,8 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   configuration au format JSON du moteur) ;
 * les inscriptions : ``directions.enterParticipants`` (``players``),
   ``directions.addParticipant`` (``name``, ``club``, ``rating`` ; avec
-  ``section`` et ``key``, un retardataire prend une place d'exemption),
+  ``section`` et ``key``, un retardataire prend une place d'exemption ; avec
+  ``id``, l'inscription garde l'identifiant donné, refusé s'il est déjà pris),
   ``directions.updateParticipant``, ``directions.withdraw``,
   ``directions.reinstate``, ``directions.makeAbsent``,
   ``directions.makeAvailable``, ``directions.addPair``,
@@ -1165,6 +1178,22 @@ la source perdrait une partie ; il n'écrit rien. ``POST /v1/exports.planIds``
 rend une page des identifiants derrière l'un de ces comptes : ``export`` porte
 le corps d'``exports.sqlite``, ``family`` la famille, ``offset`` et ``limit``
 la page (1000 identifiants au plus).
+
+``"omitProvenance": true`` (``--provenance=false`` en ligne de commande, pour
+l'export comme pour le transfert) retire ce qui nomme le match d'origine : les
+analyses partent sans joueurs ni coups et décisions de videau joués, aucun
+match, tournoi, transcription ni alias ne part, et nommer un match ou un
+tournoi est refusé (``invalid``).
+
+Sans provenance, une collection vivante dont la requête nomme un joueur, un
+tournoi ou un auteur, porte un texte libre ou choisit par le match (``pl``,
+``op``, ``tn``, ``au``, ``ma``, ``rd:``, ``ml:``, ``n``, la date et le PR du
+match) part figée sur les positions qu'elle sélectionne à la source ; un filtre
+enregistré de ce genre ne part pas, et le fichier ne porte ni le ``user`` ni la
+``description`` du producteur. Les commentaires sont du texte libre : ils ne
+partent que demandés par leur nom (``"includeComments": true``,
+``--comments``). ``export --type matches`` et ``--type mat`` refusent
+``--provenance=false`` : un match est la provenance.
 
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,

@@ -657,3 +657,85 @@ func TestTrashRestoreRealignsTheRoom(t *testing.T) {
 		t.Errorf("restored: rencontre %d, %d tables; want the room's 4", v.RencontreID, v.Config.Tables.Count)
 	}
 }
+
+// TestDirectionGestures_AddParticipantKeepsGivenID: an entry brought with its identifier keeps
+// it; one already entered is refused and nothing is written; without one it is derived from
+// the name.
+func TestDirectionGestures_AddParticipantKeepsGivenID(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	ids := func() map[string]bool {
+		rows, err := f.svc.Participants(f.ctx, f.tournamentID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		out := map[string]bool{}
+		for _, r := range rows {
+			out[r.ID] = true
+		}
+		return out
+	}
+
+	r := send(t, ts, "1", "/v1/directions.addParticipant", f.body(`"id":"FFBG-0042","name":"Ada Lovelace"`), f.versionOf(t, ts), "")
+	if r.status != http.StatusOK || !ids()["FFBG-0042"] || ids()["ada-lovelace"] {
+		t.Fatalf("addParticipant with an id: status %d, entries %v, body %.200s; want the entry under FFBG-0042", r.status, ids(), r.body)
+	}
+
+	before := len(ids())
+	v := f.versionOf(t, ts)
+	r = send(t, ts, "1", "/v1/directions.addParticipant", f.body(`"id":"FFBG-0042","name":"Someone Else"`), v, "")
+	if r.status != http.StatusBadRequest || len(ids()) != before || f.versionOf(t, ts) != v {
+		t.Errorf("addParticipant with a taken id: status %d, %d entries (was %d), body %.200s; want 400 and nothing written", r.status, len(ids()), before, r.body)
+	}
+
+	r = send(t, ts, "1", "/v1/directions.addParticipant", f.body(`"name":"Grace Hopper"`), v, "")
+	if r.status != http.StatusOK || !ids()["grace-hopper"] {
+		t.Errorf("addParticipant without an id: status %d, entries %v; want grace-hopper", r.status, ids())
+	}
+}
+
+// TestDirectionReads_FreeSlots: the byes a latecomer can still take are read as a list, and
+// the place one names seats an entry.
+func TestDirectionReads_FreeSlots(t *testing.T) {
+	ts, srv := gestureServer(t)
+	st := srv.opts.Storage
+	ctx := storage.WithTenant(context.Background(), 1)
+	svc := service.New(st, "1", nil)
+	tid, err := st.Tournaments().Create(ctx, "1", "Coupe", "2026-10-01", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Coupe","tables":{"count":4},"phases":[{"kind":"bracket","length":5}]}`
+	if err := svc.CreateDirection(ctx, tid, cfg, 7); err != nil {
+		t.Fatalf("CreateDirection: %v", err)
+	}
+	if err := svc.EnterParticipants(ctx, tid, `[{"id":"aa","name":"A"},{"id":"bb","name":"B"},{"id":"cc","name":"C"}]`); err != nil {
+		t.Fatalf("EnterParticipants: %v", err)
+	}
+	if _, err := svc.ConfirmAllProposals(ctx, tid); err != nil {
+		t.Fatalf("ConfirmAllProposals: %v", err)
+	}
+	f := directedFixture{tenant: "1", tournamentID: tid, svc: svc, ctx: ctx}
+
+	_, b := readAs(t, ts, "1", "/v1/directions.freeSlots", f.body(""), "")
+	var slots []service.FreeSlot
+	if err := json.Unmarshal(b, &slots); err != nil || len(slots) != 1 || slots[0].Key == "" {
+		t.Fatalf("directions.freeSlots = %s (%v); want the one bye of a three-player bracket", b, err)
+	}
+	extra := `"id":"late","name":"Latecomer","section":"` + slots[0].Section + `","key":"` + slots[0].Key + `"`
+	if r := send(t, ts, "1", "/v1/directions.addParticipant", f.body(extra), f.versionOf(t, ts), ""); r.status != http.StatusOK {
+		t.Fatalf("addParticipant on the free slot: status %d, body %.300s", r.status, r.body)
+	}
+	_, b = readAs(t, ts, "1", "/v1/directions.freeSlots", f.body(""), "")
+	if err := json.Unmarshal(b, &slots); err != nil || len(slots) != 0 {
+		t.Errorf("directions.freeSlots once taken = %s (%v); want none", b, err)
+	}
+	rows, _ := svc.Participants(ctx, tid)
+	found := false
+	for _, r := range rows {
+		found = found || r.ID == "late"
+	}
+	if !found {
+		t.Errorf("the latecomer is not entered under the id it brought: %+v", rows)
+	}
+}

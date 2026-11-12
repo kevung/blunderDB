@@ -46,13 +46,19 @@ func (d *Service) DirectionFreeSlots(ctx context.Context, tournamentID int64) ([
 // Separate from AddParticipant on purpose: the place is the director's decision, and one no
 // longer free is refused rather than replaced.
 func (d *Service) AddParticipantAtSlot(ctx context.Context, tournamentID int64, name, club string, rating float64, section, key string) (*DirectionView, error) {
-	if err := d.addParticipantAtSlot(ctx, tournamentID, name, club, rating, section, key); err != nil {
+	return d.AddParticipantAtSlotAs(ctx, tournamentID, "", name, club, rating, section, key)
+}
+
+// AddParticipantAtSlotAs is AddParticipantAtSlot under the identifier the caller brings
+// (AddParticipantAs).
+func (d *Service) AddParticipantAtSlotAs(ctx context.Context, tournamentID int64, id, name, club string, rating float64, section, key string) (*DirectionView, error) {
+	if err := d.addParticipantAtSlot(ctx, tournamentID, id, name, club, rating, section, key); err != nil {
 		return nil, err
 	}
 	return d.viewAfter(ctx, tournamentID)
 }
 
-func (d *Service) addParticipantAtSlot(ctx context.Context, tournamentID int64, name, club string, rating float64, section, key string) (err error) {
+func (d *Service) addParticipantAtSlot(ctx context.Context, tournamentID int64, id, name, club string, rating float64, section, key string) (err error) {
 	d, release, err := d.lockDirection(ctx, tournamentID)
 	if err != nil {
 		return err
@@ -70,11 +76,11 @@ func (d *Service) addParticipantAtSlot(ctx context.Context, tournamentID int64, 
 	if st == nil {
 		return direction.ErrNoDirection
 	}
-	taken := map[string]bool{}
-	for id := range st.Players {
-		taken[string(id)] = true
+	pid, err := entryID(st, id, name)
+	if err != nil {
+		return err
 	}
-	p := tournoi.Player{ID: tournoi.PlayerID(participantID(name, taken)), Name: name, Club: club, Rating: rating}
+	p := tournoi.Player{ID: pid, Name: name, Club: club, Rating: rating}
 	slot := tournoi.Slot{Phase: st.Current, Section: section, Key: key}
 	if err := dir.Apply(ctx, tournoi.PlayerAddedAtSlotEvent(p, slot, time.Now())); err != nil {
 		return err

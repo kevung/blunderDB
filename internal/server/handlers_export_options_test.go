@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
 	"os"
@@ -150,6 +151,63 @@ func TestExportSQLiteRefusesUnknownKeys(t *testing.T) {
 		resp.Body.Close()
 		if resp.StatusCode != http.StatusBadRequest || !strings.Contains(string(body), tc.key) {
 			t.Errorf("%s with %s: status %d, body %s; want 400 naming the key", tc.route, tc.key, resp.StatusCode, body)
+		}
+	}
+}
+
+// omitProvenance leaves the matches out of the file; without it they leave.
+func TestExportSQLiteOmitProvenance(t *testing.T) {
+	ts, _ := newTestServerAndHandler(t)
+	ctx := context.Background()
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "test.sgf"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	uploadImportNamed(t, ts, "/v1/imports.gnubg", "test.sgf", fixture)
+	for _, tc := range []struct {
+		req     any
+		matches int
+	}{{nil, 1}, {map[string]any{"omitProvenance": true}, 0}} {
+		resp := post(t, ts, "/v1/exports.sqlite", tc.req)
+		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil || resp.StatusCode != http.StatusOK {
+			t.Fatalf("%v: status %d, %v", tc.req, resp.StatusCode, err)
+		}
+		path := filepath.Join(t.TempDir(), "export.db")
+		if err := os.WriteFile(path, body, 0o600); err != nil {
+			t.Fatal(err)
+		}
+		dst, err := sqlite.Open(ctx, path, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		n := 0
+		for _, err := range dst.Matches().List(ctx, "", storage.MatchListOpts{}) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			n++
+		}
+		dst.Close()
+		if n != tc.matches {
+			t.Errorf("%v: %d matches in the file, want %d", tc.req, n, tc.matches)
+		}
+	}
+}
+
+// Without provenance the comments, free text that may name the match, leave
+// only when the body asks for them by name.
+func TestExportOptions_CommentsWithoutProvenance(t *testing.T) {
+	for body, want := range map[string]bool{
+		`{}`:                      true,
+		`{"omitProvenance":true}`: false,
+		`{"omitProvenance":true,"includeComments":true}`: true,
+		`{"includeComments":false}`:                      false,
+	} {
+		var req exportSQLiteReq
+		if err := json.Unmarshal([]byte(body), &req); err != nil || req.options().IncludeComments != want {
+			t.Errorf("%s: includeComments %v (%v); want %v", body, req.options().IncludeComments, err, want)
 		}
 	}
 }

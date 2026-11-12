@@ -38,6 +38,14 @@ type directionHistoryReq struct {
 
 func (r directionHistoryReq) readKey() readKey { return readKey{tournamentID: r.TournamentID} }
 
+// directionStatusesReq names the entries whose status is read; without ids, every entry.
+type directionStatusesReq struct {
+	TournamentID int64    `json:"tournamentId"`
+	IDs          []string `json:"ids"`
+}
+
+func (r directionStatusesReq) readKey() readKey { return readKey{tournamentID: r.TournamentID} }
+
 // directionRoundReq names one batch of pairings of a Direction.
 type directionRoundReq struct {
 	TournamentID int64 `json:"tournamentId"`
@@ -142,6 +150,9 @@ func (s *Server) directionReadRoutes() []route {
 		{http.MethodPost, "/v1/directions.freeParticipants", rpcRead(v, func(ctx context.Context, scope string, req directionReq) ([]tournoi.Player, error) {
 			return svc(scope).FreeParticipants(ctx, req.TournamentID)
 		})},
+		{http.MethodPost, "/v1/directions.freeSlots", rpcRead(v, func(ctx context.Context, scope string, req directionReq) ([]service.FreeSlot, error) {
+			return svc(scope).DirectionFreeSlots(ctx, req.TournamentID)
+		})},
 		{http.MethodPost, "/v1/directions.tableGrid", rpcRead(v, func(ctx context.Context, scope string, req directionReq) ([]service.TableCell, error) {
 			return svc(scope).TableGrid(ctx, req.TournamentID)
 		})},
@@ -154,6 +165,9 @@ func (s *Server) directionReadRoutes() []route {
 		{http.MethodPost, "/v1/directions.standingsCsv", rpcRead(v, func(ctx context.Context, scope string, req directionReq) (csvResp, error) {
 			csv, err := svc(scope).StandingsCSV(ctx, req.TournamentID)
 			return csvResp{CSV: csv}, err
+		})},
+		{http.MethodPost, "/v1/directions.statuses", rpcRead(v, func(ctx context.Context, scope string, req directionStatusesReq) ([]service.PlayerStatusRow, error) {
+			return svc(scope).Statuses(ctx, req.TournamentID, req.IDs)
 		})},
 		{http.MethodPost, "/v1/directions.history", rpcRead(v, func(ctx context.Context, scope string, req directionHistoryReq) ([]service.HistoryEntry, error) {
 			return svc(scope).History(ctx, req.TournamentID, req.Player, req.Match)

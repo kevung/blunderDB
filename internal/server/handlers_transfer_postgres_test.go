@@ -322,3 +322,80 @@ func TestTransferPull_NoMatchNoteAndIndividualPositions_Postgres(t *testing.T) {
 		t.Errorf("tenant 4 holds %d positions, %d individual; want %d of %d", n, individual, len(ids), len(ids))
 	}
 }
+
+// namedAnalyses counts the analyses of scope, and those naming a player.
+func namedAnalyses(t *testing.T, st storage.Storage, scope string) (all, named int) {
+	t.Helper()
+	ctx := context.Background()
+	if n, err := storage.ParseTenant(scope); err == nil && n > 0 {
+		ctx = storage.WithTenant(ctx, n)
+	}
+	var ids []int64
+	for p, err := range st.Positions().List(ctx, scope, storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	loaded, err := st.Analyses().LoadMany(ctx, scope, ids)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, a := range loaded {
+		all++
+		if a.Player1 != "" || a.Player2 != "" || len(a.PlayedMoves) > 0 || len(a.PlayedCubeActions) > 0 {
+			named++
+		}
+	}
+	return all, named
+}
+
+// TestTransferPull_OmitProvenance_Postgres: export.omitProvenance copies the
+// analyses without the players and played moves, and no match; without it the
+// pull carries them, and the source keeps them either way.
+func TestTransferPull_OmitProvenance_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	st := srv.opts.Storage
+	importFixture(t, st, "2", "test.xg")
+	ctx2 := storage.WithTenant(context.Background(), 2)
+	var ids []int64
+	for p, err := range st.Positions().List(ctx2, "2", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, p.ID)
+	}
+	loaded, err := st.Analyses().LoadMany(ctx2, "2", ids)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, a := range loaded {
+		a.Player1, a.Player2 = "Alice", "Bob"
+	}
+	if err := st.Analyses().SaveMany(ctx2, "2", loaded); err != nil {
+		t.Fatal(err)
+	}
+
+	if rec := serveAcross(t, srv, "1", "2", "/v1/across.transferPull", `{"tenant":"2","export":{"omitProvenance":true}}`); rec.Code != http.StatusOK {
+		t.Fatalf("pull without provenance: %d %s", rec.Code, rec.Body)
+	}
+	if all, named := namedAnalyses(t, st, "1"); all == 0 || named != 0 {
+		t.Errorf("tenant 1 holds %d analyses, %d with provenance; want some, none with it", all, named)
+	}
+	ctx1 := storage.WithTenant(context.Background(), 1)
+	for _, err := range st.Matches().List(ctx1, "1", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Error("tenant 1 holds a match")
+		break
+	}
+
+	pull(t, srv, "3", "2")
+	if all, named := namedAnalyses(t, st, "3"); named == 0 || named != all {
+		t.Errorf("a default pull: %d of %d analyses carry their provenance, want all", named, all)
+	}
+	if all, named := namedAnalyses(t, st, "2"); named != all || all != len(loaded) {
+		t.Errorf("the source holds %d analyses, %d named; want its %d, all named", all, named, len(loaded))
+	}
+}

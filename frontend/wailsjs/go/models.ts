@@ -2344,6 +2344,7 @@ export namespace domain {
 	    lessonIDs: number[];
 	    deckIDs: number[];
 	    includeAnkiHistory: boolean;
+	    omitProvenance: boolean;
 	    incremental: boolean;
 	    syncCursor: string;
 	    watermark: string;
@@ -2380,6 +2381,7 @@ export namespace domain {
 	        this.lessonIDs = source["lessonIDs"];
 	        this.deckIDs = source["deckIDs"];
 	        this.includeAnkiHistory = source["includeAnkiHistory"];
+	        this.omitProvenance = source["omitProvenance"];
 	        this.incremental = source["incremental"];
 	        this.syncCursor = source["syncCursor"];
 	        this.watermark = source["watermark"];

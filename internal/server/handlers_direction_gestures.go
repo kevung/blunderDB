@@ -53,9 +53,11 @@ type directionPlayersReq struct {
 func (r directionPlayersReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
 
 // directionAddParticipantReq enters one player; section and key, when given, seat a latecomer
-// on a free bye slot (directions.freeSlots is not served: the desktop's latecomer dialog reads it).
+// on a free bye slot (one directions.freeSlots lists). id, when given, is the identifier the
+// entry keeps — refused when already entered; without one it is derived from the name.
 type directionAddParticipantReq struct {
 	TournamentID int64   `json:"tournamentId"`
+	ID           string  `json:"id"`
 	Name         string  `json:"name"`
 	Club         string  `json:"club"`
 	Rating       float64 `json:"rating"`
@@ -330,9 +332,9 @@ func (s *Server) directionGestureRoutes() []route {
 		}))},
 		{http.MethodPost, "/v1/directions.addParticipant", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionAddParticipantReq) (*service.DirectionView, error) {
 			if req.Section != "" || req.Key != "" {
-				return bare(svc(scope).AddParticipantAtSlot(ctx, req.TournamentID, req.Name, req.Club, req.Rating, req.Section, req.Key))
+				return bare(svc(scope).AddParticipantAtSlotAs(ctx, req.TournamentID, req.ID, req.Name, req.Club, req.Rating, req.Section, req.Key))
 			}
-			return bare(svc(scope).AddParticipant(ctx, req.TournamentID, req.Name, req.Club, req.Rating))
+			return bare(svc(scope).AddParticipantAs(ctx, req.TournamentID, req.ID, req.Name, req.Club, req.Rating))
 		}))},
 		{http.MethodPost, "/v1/directions.updateParticipant", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionUpdateParticipantReq) (*service.DirectionView, error) {
 			return bare(svc(scope).UpdateParticipant(ctx, req.TournamentID, req.ID, req.Name, req.Club, req.Rating))
