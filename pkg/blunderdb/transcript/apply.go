@@ -176,6 +176,17 @@ var (
 	ErrNotPure   = errors.New("transcript: undo, redo and seek belong to the editor, not to Apply")
 )
 
+// BadGesture is a gesture that says something no document could take — a kind that does
+// not exist, a die outside 1 to 6, a negative score, a candidate out of the list: what
+// was typed is wrong, whatever the document's state.
+type BadGesture struct{ Detail string }
+
+func (e *BadGesture) Error() string { return "transcript: " + e.Detail }
+
+func badGesture(format string, args ...any) error {
+	return &BadGesture{Detail: fmt.Sprintf(format, args...)}
+}
+
 // Apply returns the document that gesture g makes of doc. It is pure: doc is never
 // modified, and the same pair always gives the same result. Undo and redo are not
 // here — a stack is state, and it lives in [Editor].
@@ -266,7 +277,7 @@ func apply(doc Document, g Gesture) (Document, error) {
 			return doc, ErrNoDice
 		}
 		if g.Candidate < 0 || g.Candidate >= len(cands) {
-			return doc, fmt.Errorf("transcript: no candidate %d among %d", g.Candidate, len(cands))
+			return doc, badGesture("no candidate %d among %d", g.Candidate, len(cands))
 		}
 		out.Entry.Steps = append([]domain.CheckerStep(nil), cands[g.Candidate].Steps...)
 		out.Entry.Selected = true
@@ -368,7 +379,7 @@ func apply(doc Document, g Gesture) (Document, error) {
 
 	case GestureSetLength:
 		if !g.HasLength {
-			return doc, fmt.Errorf("transcript: no match length given")
+			return doc, badGesture("no match length given")
 		}
 		out.Header.MatchLength = g.MatchLength
 		// The session's rules SURVIVE a crossing to match play (no Position
@@ -439,7 +450,7 @@ func apply(doc Document, g Gesture) (Document, error) {
 	case GestureUndo, GestureRedo, GestureSeekCursor:
 		return doc, ErrNotPure
 	}
-	return doc, fmt.Errorf("transcript: unknown gesture %q", g.Kind)
+	return doc, badGesture("unknown gesture %q", g.Kind)
 }
 
 // setScore is GestureSetScore. It refuses only the meaningless (not a game's first
@@ -453,7 +464,7 @@ func setScore(doc, out Document, g Gesture) (Document, error) {
 	at := g.At
 	end := at == len(out.Actions)
 	if at < 0 || at > len(out.Actions) || !end && !Replay(out, 0).Actions[at].OpensGame {
-		return doc, fmt.Errorf("transcript: action %d is not the first of a game", at)
+		return doc, badGesture("action %d is not the first of a game", at)
 	}
 	if g.Score == nil {
 		if end {
@@ -465,10 +476,10 @@ func setScore(doc, out Document, g Gesture) (Document, error) {
 		return out, nil
 	}
 	if out.Header.MatchLength <= 0 {
-		return doc, errors.New("transcript: a money session has no score")
+		return doc, badGesture("a money session has no score")
 	}
 	if g.Score[0] < 0 || g.Score[1] < 0 {
-		return doc, fmt.Errorf("transcript: %d-%d is not a score", g.Score[0], g.Score[1])
+		return doc, badGesture("%d-%d is not a score", g.Score[0], g.Score[1])
 	}
 	sc := *g.Score
 	if end {
@@ -484,7 +495,7 @@ func setScore(doc, out Document, g Gesture) (Document, error) {
 // document as it was, returned with an error; out is its working copy.
 func enterDie(doc, out Document, g Gesture) (Document, error) {
 	if g.Die < 1 || g.Die > 6 {
-		return doc, fmt.Errorf("transcript: %d is not a die", g.Die)
+		return doc, badGesture("%d is not a die", g.Die)
 	}
 	e := ensureEntry(&out)
 	// The roll's Repère is the FIRST die typed: retyping or correcting a
@@ -529,7 +540,7 @@ func setTimecode(doc, out Document, g Gesture) (Document, error) {
 	a := &out.Actions[at]
 	if g.HasRollTick {
 		if !rolls(a.Kind) {
-			return doc, fmt.Errorf("transcript: a %s has no roll to time", a.Kind)
+			return doc, badGesture("a %s has no roll to time", a.Kind)
 		}
 		a.RollTickMS = tickOf(g.RollTickMS)
 	}
