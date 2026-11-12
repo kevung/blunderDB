@@ -165,7 +165,7 @@ func (s *Service) Apply(ctx context.Context, scope string, id int64, exp Expect,
 		ss.ed.SeekCursor(g.At)
 	default:
 		if err := ss.ed.Apply(g); err != nil {
-			return nil, err
+			return nil, refusedGesture(err)
 		}
 	}
 	after, err := DurableJSON(ss.ed.Doc)
@@ -420,4 +420,25 @@ func Label(h transcript.Header) string {
 	default:
 		return strings.TrimSpace(h.Event)
 	}
+}
+
+// refusedGesture makes a gesture the document's state refuses a
+// storage.ErrInvalid, the caller's to correct: nothing was typed, the roll is
+// missing, no play is selected, the rules refuse the Action, or the gesture
+// itself reads as nothing (transcript.BadGesture). Anything else —
+// ErrNotPure included, a mistake of this package — stays a failure.
+func refusedGesture(err error) error {
+	var (
+		r   *transcript.Refusal
+		bad *transcript.BadGesture
+	)
+	if errors.Is(err, storage.ErrInvalid) {
+		return err
+	}
+	if errors.As(err, &r) || errors.As(err, &bad) || errors.Is(err, transcript.ErrNoEntry) || errors.Is(err, transcript.ErrNoDice) ||
+		errors.Is(err, transcript.ErrNoCandidate) || errors.Is(err, transcript.ErrNoAction) ||
+		errors.Is(err, transcript.ErrMatchOver) {
+		return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+	}
+	return err
 }
