@@ -46,6 +46,30 @@ func (d *Database) LoadPositionsByFiltersCoreCtx(
 	return positions, analysisMap, nil
 }
 
+// LoadPositionsPageByFiltersCtx reads one page of the search, resumed after
+// opts.Cursor ("" for the first page), with its rows' analyses and the cursor of
+// the next page ("" after the last). A deep page costs what the first one does.
+func (d *Database) LoadPositionsPageByFiltersCtx(
+	ctx context.Context, f SearchFilters, opts storage.PageOpts,
+) ([]Position, map[int64]*PositionAnalysis, string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	positions, next, err := d.store.Search().FindPage(ctx, "", f, opts)
+	if err != nil {
+		return nil, nil, "", err
+	}
+	ids := make([]int64, len(positions))
+	for i := range positions {
+		ids[i] = positions[i].ID
+	}
+	analysisMap, err := d.store.Analyses().LoadMany(ctx, "", ids)
+	if err != nil {
+		return nil, nil, "", err
+	}
+	return positions, analysisMap, next, nil
+}
+
 // LoadPositionsByFilters returns positions matching the supplied filters.
 // Unbounded; for callers wanting whole positions in one round trip (tests,
 // scripting). The GUI uses LoadPositionIDsByFilters.
