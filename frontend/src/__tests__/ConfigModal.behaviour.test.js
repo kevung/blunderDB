@@ -147,6 +147,14 @@ describe('ConfigModal — Interface tab', () => {
         expect(spy('main.Config', 'SaveLikeMaxDistance')).toHaveBeenCalledWith(3);
     });
 
+    test('the distance ceiling cannot be edited before Go has said the order it serves', async () => {
+        const { doc } = await mount({ 'main.Config': { GetLikeMaxOrder: () => new Promise(() => {}) } });
+        expect(input(doc, 'config-like-max-distance').disabled).toBe(true);
+        await fireEvent.change(input(doc, 'config-like-max-distance'), { target: { value: '1' } });
+        await flush();
+        expect(spy('main.Config', 'SaveLikeMaxDistance')).not.toHaveBeenCalled();
+    });
+
     test('a neighbour cap below one is raised to one', async () => {
         const { doc } = await mount();
         await fireEvent.change(input(doc, 'config-like-limit'), { target: { value: '-4' } });

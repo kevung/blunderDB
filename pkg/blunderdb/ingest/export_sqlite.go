@@ -1009,9 +1009,7 @@ func (e *exporter) writeMembers(srcID, dstID int64, positions []int64) {
 func (e *exporter) writeLivingQueries() error {
 	for _, lc := range e.living {
 		query, ok := e.leavingQuery(lc.query)
-		// A query the source refuses to evaluate leaves frozen like any other
-		// it cannot carry: what it selects here, which is nothing.
-		if _, _, err := storage.ParseLiving(lc.src, lc.query); err != nil {
+		if livingRefused(lc.src, lc.query) {
 			ok = false
 		}
 		if !ok {
@@ -1073,6 +1071,16 @@ func (g queryGate) carried(query string, positions, matches, tournaments map[int
 		carried = "s" + carried // Format writes the plain verb; keep the narrowing one
 	}
 	return carried, ok
+}
+
+// livingRefused says whether the source refuses to evaluate a living
+// collection's query (`like` outside a ranked search, a starred form). Export
+// and transfer both freeze such a collection, like any other query they
+// cannot carry: what it selects at the source, which is nothing — carried
+// living, it would only be refused again on the other side.
+func livingRefused(collectionID int64, query string) bool {
+	_, _, err := storage.ParseLiving(collectionID, query)
+	return err != nil
 }
 
 // carriedLivingQuery rewrites a living query's row ids — `like<n>`, `id<n>`,

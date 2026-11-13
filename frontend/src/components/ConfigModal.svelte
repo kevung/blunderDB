@@ -216,6 +216,8 @@
 
     async function onLikeMaxDistanceChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const field = event.currentTarget;
+        // Before the order is known, the clamp would save 0 whatever was typed.
+        if (maxLikeOrder === 0) return;
         const n = parseInt(field.value, 10);
         if (Number.isFinite(n)) likeMaxDistance = Math.min(Math.max(n, 0), maxLikeOrder);
         field.value = String(likeMaxDistance);
@@ -735,7 +737,16 @@
                 </div>
                 <div class="setting-row">
                     <label for="config-like-max-distance">{$t('config.likeMaxDistance')}</label>
-                    <input id="config-like-max-distance" type="number" class="setting-number" min="0" max={maxLikeOrder} value={likeMaxDistance} onchange={onLikeMaxDistanceChange} />
+                    <input
+                        id="config-like-max-distance"
+                        type="number"
+                        class="setting-number"
+                        min="0"
+                        max={maxLikeOrder}
+                        value={likeMaxDistance}
+                        disabled={maxLikeOrder === 0}
+                        onchange={onLikeMaxDistanceChange}
+                    />
                 </div>
                 <p class="setting-note">{$t('config.likeNote')}</p>
             {:else if activeTab === 'colors'}
