@@ -63,6 +63,16 @@ const (
 	simulateMaxRunCost = 30_000_000
 	// SimulateUsefulRuns is the fewest runs whose 10th and 90th centiles say something.
 	SimulateUsefulRuns = 10
+	// simulateSwissSearchField is the largest field whose Swiss by rounds is simulated at any
+	// number of rounds (swissSearchTooDeep): its pairing search ends before the engine's
+	// steps run out, and eventCost bounds the run.
+	simulateSwissSearchField = 12
+	// simulateSwissMaxRounds is the most rounds of a larger field's Swiss by rounds.
+	simulateSwissMaxRounds = 16
+	// simulateFirstRunNet stops a first run whose count missed its cost: well past what any
+	// admitted first run takes, even under the race detector, and its verdict, too heavy, is
+	// the one the count would have given.
+	simulateFirstRunNet = 5 * time.Second
 )
 
 // SimulateBudget is the computing time the runs after the first may take: with the two
@@ -74,8 +84,10 @@ var SimulateBudget = 2 * time.Second
 
 // ErrSimulationTooHeavy: the request is well formed and within the bounds, but the first of
 // its tournaments costs more than simulateMaxRunCost, so the budget would stand an answer on
-// a handful of runs. The verdict is counted, not timed: the same on every machine.
-var ErrSimulationTooHeavy = fmt.Errorf("direction: this format is too heavy to simulate %d times within %v: one of its tournaments outgrows what a simulation computes; ask for fewer players, smaller pools, fewer lives or a lighter format (fewer runs do not help)",
+// a handful of runs, or one of its Swiss by rounds plays more rounds than swissRoundsAt
+// allows its entrants (the first phase's before any run). The verdict is counted, not timed:
+// the same on every machine.
+var ErrSimulationTooHeavy = fmt.Errorf("direction: this format is too heavy to simulate %d times within %v: one of its tournaments outgrows what a simulation computes; ask for fewer players, smaller pools, fewer lives, fewer rounds or a lighter format (fewer runs do not help)",
 	SimulateUsefulRuns, SimulateBudget)
 
 // errRunTooHeavy stops a run past its cost; Simulate answers it as ErrSimulationTooHeavy at
@@ -199,12 +211,14 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		out      = &Simulation{MatchesPerPlayerMin: -1}
 		firstErr error
 	)
+	// The first run decides the verdict: it answers to its count, never to the budget, so that
+	// no clock decides it. simulateFirstRunNet only stops a cost the count would miss.
+	first, cancelFirst := context.WithTimeout(parent, simulateFirstRunNet)
+	defer cancelFirst()
 	for i := range runs {
-		// The first run decides the verdict: it answers to the caller only, never to the
-		// budget, so that no clock decides it.
 		limit := ctx
 		if i == 0 {
-			limit = parent
+			limit = first
 		} else if ctx.Err() != nil {
 			warnings[SimulateWarnTimeBudget] = true
 			break
@@ -220,14 +234,25 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 				if cost += eventCost(cfg, s); cost > most {
 					return errRunTooHeavy
 				}
+				if s.Current > 0 && s.Current < len(s.Phases) {
+					ph := s.Phases[s.Current]
+					if err := swissSearchTooDeep(ph.Cfg, len(ph.Entrants)); err != nil {
+						return err
+					}
+				}
 				return limit.Err()
 			}})
 		// The caller left: nobody reads a verdict on the request.
 		if err := parent.Err(); err != nil {
 			return nil, err
 		}
-		if i == 0 && errors.Is(r.Err, errRunTooHeavy) {
-			return nil, ErrSimulationTooHeavy
+		if i == 0 {
+			switch {
+			case errors.Is(r.Err, ErrSimulationTooHeavy):
+				return nil, r.Err
+			case errors.Is(r.Err, errRunTooHeavy), first.Err() != nil && errors.Is(r.Err, context.DeadlineExceeded):
+				return nil, ErrSimulationTooHeavy
+			}
 		}
 		if ctx.Err() != nil && errors.Is(r.Err, ctx.Err()) {
 			warnings[SimulateWarnTimeBudget] = true
@@ -308,6 +333,12 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 // simulation plays: the pools of a round robin, every pair of each. Every other format draws
 // at most one match for two players.
 func boundSimulatedWork(cfg tournoi.Config, players int) error {
+	if len(cfg.Phases) > 0 {
+		// The first phase is entered by the whole field; a later one is checked as it opens.
+		if err := swissSearchTooDeep(cfg.Phases[0], players); err != nil {
+			return err
+		}
+	}
 	for i, p := range cfg.Phases {
 		if p.Kind != tournoi.KindRoundRobin {
 			continue
@@ -326,6 +357,34 @@ func boundSimulatedWork(cfg tournoi.Config, players int) error {
 		}
 	}
 	return nil
+}
+
+// swissSearchTooDeep refuses a Swiss by rounds that plays more rounds than swissRoundsAt
+// allows its entrants. The engine pairs a round by a depth-first search it cuts at 200 000
+// steps, starts anew for every rematch it has to allow — and, in an odd field, for every
+// player who may take the bye —, and repeats at every event of the round. Past some sixteen
+// rounds, or two thirds of a smaller field, a round without rematch is often not found and
+// the search runs out its steps at every event: a run then takes twenty to two hundred times
+// what its events say, and eventCost, which counts what the engine copies and not what it
+// searches, cannot see it. Within the bound no run of twenty seeds was measured past twice
+// its count, by rounds or Monrad; a small field's search ends before its steps do, whatever
+// the rounds, and eventCost holds it.
+func swissSearchTooDeep(p tournoi.PhaseConfig, entrants int) error {
+	most := swissRoundsAt(entrants)
+	if p.Kind != tournoi.KindSwissRounds || most < 0 || p.Rounds <= most {
+		return nil
+	}
+	return fmt.Errorf("%w (a Swiss of %d rounds for %d players searches its pairings past what a simulation computes: %d rounds at most for this field)",
+		ErrSimulationTooHeavy, p.Rounds, entrants, most)
+}
+
+// swissRoundsAt is the most rounds a simulated Swiss by rounds plays with entrants, -1 when
+// the field is small enough to play any.
+func swissRoundsAt(entrants int) int {
+	if entrants <= simulateSwissSearchField {
+		return -1
+	}
+	return min(simulateSwissMaxRounds, 2*entrants/3)
 }
 
 // poolDraw is the largest pool and the matches the engine draws for n entrants of a round
