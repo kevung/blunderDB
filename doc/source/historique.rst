@@ -42,6 +42,13 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.55.0 (2026-11-13)
+-------------------
+
+- **Une recherche se lit page après page, par un curseur** : en mode serveur, ``search.page`` et ``search.idsPage`` rendent une page de ``limit`` résultats et le curseur de la suivante (``nextCursor``, vide après la dernière page) ; ``blunderdb search --cursor`` fait de même en ligne de commande. Une page lointaine coûte ce que coûte la première, pour chaque tri offert, et une position enregistrée entre deux pages ne fait ni doublon ni trou. Au banc de 5 millions de positions, la page à 192 000 résultats triée par erreur passe de 331 ms à 6,3 ms ; au banc de 8,1 millions, la première page du filtre ``E>50`` passe de 1 461 ms à 43 ms.
+- **Un tenant neuf s'importe vite dans une base PostgreSQL déjà grosse** : sous RLS, les statistiques de match, la lecture des analyses des positions jouées et la datation des positions atteignent chaque table par sa clé. Au banc de 3,1 millions de positions et 39 tenants, l'import dans un tenant neuf passe de 0,31 à plus de 4,5 fichiers par seconde, et le calcul des statistiques d'un match de 4 575 ms en moyenne à 16 ms.
+- Voir :ref:`api_reference`, :ref:`headless` et :ref:`cli`.
+
 0.54.0 (2026-11-13)
 -------------------
 

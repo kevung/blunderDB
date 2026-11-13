@@ -86,6 +86,14 @@
   </branding>
 
   <releases>
+    <release version="0.55.0" date="2026-11-13">
+      <description>
+        <ul>
+          <li>Server mode and command line: read a search page by page with a cursor (search.page, search.idsPage, search --cursor); a deep page costs what the first one does</li>
+          <li>Faster import into a new tenant of a large PostgreSQL database under row-level security</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.54.0" date="2026-11-13">
       <description>
         <ul>
