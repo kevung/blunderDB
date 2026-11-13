@@ -360,7 +360,7 @@ func TestSimulate_WorkWithinTheBounds(t *testing.T) {
 		if err != nil && strings.Contains(err.Error(), refusal) {
 			t.Errorf("%s: %v; the pools the engine draws are within the bound", name, err)
 		}
-		if over := elapsed - service.SimulateBudget; over > 250*time.Millisecond {
+		if over := elapsed - service.SimulateBudget; over > 250*time.Millisecond && !raceEnabled {
 			t.Errorf("%s: answered %v past the budget; want a run cut within a quarter of a second", name, over)
 		}
 		if grew > 64 {
