@@ -446,6 +446,40 @@ func (s *SearchStore) blunderWindow(ctx context.Context, wc searchWhereClause, f
 	return s.readIDs(ctx, from, "1=1", "p.id", "", both, limit, offset, nil)
 }
 
+// neutralMasks: atomic so a test can have the masks that ask nothing written as
+// comparisons (SetNeutralMasks) while other searches run.
+var neutralMasks atomic.Bool
+
+// SetNeutralMasks makes a mask that asks nothing be written as a comparison,
+// or not, and returns a func restoring the previous state. For tests only:
+// both ways of writing a structure are compared.
+func SetNeutralMasks(on bool) (restore func()) {
+	old := neutralMasks.Swap(on)
+	return func() { neutralMasks.Store(old) }
+}
+
+// appendMaskClauses writes the four masks of a structure, on the occupancy and
+// the made points of each side: every bit held when all, none otherwise. A
+// mask of zero asks nothing but that the column be filled, and is written as
+// that: a comparison on a mask has no statistics, the planner takes each for
+// one row in two hundred, and with two that keep everything it expects one
+// row of a filter keeping thousands — no walk of a sort index is then tried.
+func appendMaskClauses(where *strings.Builder, args *[]any, masks [4]uint32, all bool) {
+	for i, col := range [4]string{"p.occupancy_1", "p.point_mask_1", "p.occupancy_2", "p.point_mask_2"} {
+		m := int64(masks[i])
+		switch {
+		case m == 0 && !neutralMasks.Load():
+			where.WriteString(" AND " + col + " IS NOT NULL")
+		case all:
+			where.WriteString(" AND (" + col + " & ?) = ?")
+			*args = append(*args, m, m)
+		default:
+			where.WriteString(" AND (" + col + " & ?) = 0")
+			*args = append(*args, m)
+		}
+	}
+}
+
 // buildWhere is whereClause for every reader but Rank. Each of them refuses
 // `like` rather than ignoring it: the relation is decided by Rank alone, and
 // a reader that skipped the token would select the whole library.
@@ -645,11 +679,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		if searchfilter.HasBoardFilter(effInclude.Board) {
 			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(effInclude)
 			bitboardTight, structure = tight, true
-			where.WriteString(" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ?")
-			where.WriteString(" AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?")
-			args = append(args,
-				int64(occ1Req), int64(occ1Req), int64(pt1Req), int64(pt1Req),
-				int64(occ2Req), int64(occ2Req), int64(pt2Req), int64(pt2Req))
+			appendMaskClauses(&where, &args, [4]uint32{occ1Req, pt1Req, occ2Req, pt2Req}, true)
 			// A side whose fifteen checkers are all placed has nowhere else to be: its
 			// occupancy is implied whole, and an index answers what masks cannot.
 			black, white := placedCheckers(effInclude.Board)
@@ -690,10 +720,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		if searchfilter.HasBoardFilter(f.ExcludeFilter.Board) {
 			eSingle1, eMade1, eSingle2, eMade2 := engine.ExclusionMasks(f.ExcludeFilter)
 			structure = true
-			where.WriteString(" AND (p.occupancy_1 & ?) = 0 AND (p.point_mask_1 & ?) = 0")
-			where.WriteString(" AND (p.occupancy_2 & ?) = 0 AND (p.point_mask_2 & ?) = 0")
-			args = append(args,
-				int64(eSingle1), int64(eMade1), int64(eSingle2), int64(eMade2))
+			appendMaskClauses(&where, &args, [4]uint32{eSingle1, eMade1, eSingle2, eMade2}, false)
 		}
 	}
 
