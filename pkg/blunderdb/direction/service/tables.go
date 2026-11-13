@@ -257,9 +257,9 @@ func tableRefused(p direction.TablePlan, table int, event string) error {
 	if table > 0 && !p.Allowed(table) {
 		s, _ := p.Setting(table)
 		if s.Room == "" {
-			return direction.Refusef("direction: table %d is in no room of %s", table, event)
+			return direction.RefuseAs(direction.ReasonTableOutside, "direction: table %d is in no room of %s", table, event)
 		}
-		return direction.Refusef("direction: table %d is in room %q, where %s does not play", table, s.Room, event)
+		return direction.RefuseAs(direction.ReasonTableOutside, "direction: table %d is in room %q, where %s does not play", table, s.Room, event)
 	}
 	return nil
 }
@@ -298,9 +298,9 @@ func (d *Service) refuseClosed(ctx context.Context, dir *direction.Direction, to
 		return nil
 	}
 	if s, _ := p.Setting(a.Table); len(s.AssignedTo) > 0 && !s.Reserved {
-		return direction.Refusef("direction: table %d is kept for %s", a.Table, strings.Join(s.AssignedTo, ", "))
+		return direction.RefuseAs(direction.ReasonTableClosed, "direction: table %d is kept for %s", a.Table, strings.Join(s.AssignedTo, ", "))
 	}
-	return direction.Refusef("direction: table %d is reserved", a.Table)
+	return direction.RefuseAs(direction.ReasonTableClosed, "direction: table %d is reserved", a.Table)
 }
 
 // closedTables are the tables a match seated without a number must not land on: those the

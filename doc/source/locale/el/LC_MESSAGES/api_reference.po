@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 23:14+0100\n"
+"POT-Creation-Date: 2026-11-13 14:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -43,17 +43,17 @@ msgstr ""
 "NDJSON για μια ροή λίστας) και, όπου υπάρχει, μια σημείωση για την "
 "προαιρετική κεφαλίδα ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:465
+#: ../../source/api_reference.rst:468
 msgid "Idempotence"
 msgstr "Ιδεμποτότητα"
 
-#: ../../source/api_reference.rst:467
+#: ../../source/api_reference.rst:470
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 58 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 59 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -66,7 +66,7 @@ msgstr ""
 "αναγνώσεις δεν έχουν παρενέργειες και οι εγγραφές των ``positions.*`` "
 "είναι αυτοδύναμες (idempotent) ως προς το αποτέλεσμα χάρη στο "
 "κατακερματισμό Zobrist του περιεχομένου — η αποθήκευση δύο φορές της "
-"ίδιας θέσης επιστρέφει την ίδια γραμμή, ποτέ διπλότυπο. 58 μέθοδοι "
+"ίδιας θέσης επιστρέφει την ίδια γραμμή, ποτέ διπλότυπο. 59 μέθοδοι "
 "δέχονται μια προαιρετική κεφαλίδα ``Idempotency-Key``: εκείνες των οποίων"
 " οι δύο κλήσεις είναι δύο διαφορετικά αποτελέσματα, και η "
 "``positions.save``, της οποίας η απάντηση λέει αν η κλήση δημιούργησε τη "
@@ -76,11 +76,11 @@ msgstr ""
 "αποτέλεσμά της — βλ. την ένδειξη «(Idempotency-Key)» στον παραπάνω "
 "πίνακα. Καμία άλλη μέθοδος δεν χρειάζεται ούτε δέχεται αυτή την κεφαλίδα."
 
-#: ../../source/api_reference.rst:479
+#: ../../source/api_reference.rst:482
 msgid "Lectures conditionnelles"
 msgstr "Υπό συνθήκη αναγνώσεις"
 
-#: ../../source/api_reference.rst:481
+#: ../../source/api_reference.rst:484
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -92,11 +92,11 @@ msgstr ""
 "σώμα εφόσον δεν έχει αλλάξει τίποτα από όσα διαβάζει η μέθοδος — βλέπε "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:486
+#: ../../source/api_reference.rst:489
 msgid "Enregistrer et lire une analyse"
 msgstr "Αποθήκευση και ανάγνωση ανάλυσης"
 
-#: ../../source/api_reference.rst:488
+#: ../../source/api_reference.rst:491
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -128,11 +128,11 @@ msgstr ""
 "αγνοεί το ``withPlayed`` και επιστρέφει την ανάλυση χωρίς τις κινήσεις "
 "των αγώνων."
 
-#: ../../source/api_reference.rst:501
+#: ../../source/api_reference.rst:504
 msgid "Repères d'une transcription"
 msgstr "Χρονοσημάνσεις μιας μεταγραφής"
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:506
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -163,7 +163,7 @@ msgstr ""
 "διαδρομή), μια κενή συμβολοσειρά την αποσυνδέει· το ``set_header`` την "
 "ορίζει επίσης όταν η κεφαλίδα του ονομάζει μία, χωρίς ποτέ να τη σβήνει."
 
-#: ../../source/api_reference.rst:515
+#: ../../source/api_reference.rst:518
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -179,7 +179,7 @@ msgstr ""
 "``decision_estimated`` είναι εκτίμηση: κίνηση χωρίς σημάδι ενέργειας, "
 "μετρημένη από τη ζαριά έως την πρώτη στιγμή της επόμενης ενέργειας."
 
-#: ../../source/api_reference.rst:521
+#: ../../source/api_reference.rst:524
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

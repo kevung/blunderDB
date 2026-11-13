@@ -267,7 +267,7 @@ func (d *Direction) Apply(ctx context.Context, ev tournoi.Event) error {
 		return ErrFinished
 	}
 	if err := d.st.Apply(ev); err != nil {
-		return Refused(err)
+		return RefusedAs(ReasonEngineRefused, err)
 	}
 	if err := d.append(ctx, ev); err != nil {
 		return err
@@ -290,7 +290,7 @@ func (d *Direction) EventFor(a tournoi.Action, now time.Time) (tournoi.Event, er
 		return tournoi.Event{}, Refusef("direction: the tournament has not started")
 	}
 	ev, err := d.st.EventFromAction(a, now)
-	return ev, Refused(err)
+	return ev, RefusedAs(ReasonEngineRefused, err)
 }
 
 // append writes one event at the next sequence number and keeps the in-memory log in step.

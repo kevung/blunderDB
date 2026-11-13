@@ -246,6 +246,10 @@ export function ConfirmProposal(arg1, arg2) {
   return window['go']['database']['Database']['ConfirmProposal'](arg1, arg2);
 }
 
+export function ConfirmProposals(arg1, arg2) {
+  return window['go']['database']['Database']['ConfirmProposals'](arg1, arg2);
+}
+
 export function ContributeDuel(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['ContributeDuel'](arg1, arg2, arg3, arg4);
 }

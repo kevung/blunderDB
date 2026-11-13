@@ -117,6 +117,7 @@ var customContentTypes = map[string][]string{
 	"/v1/directions.addPair":              {"application/json"},
 	"/v1/directions.updatePair":           {"application/json"},
 	"/v1/directions.confirmProposal":      {"application/json"},
+	"/v1/directions.confirmProposals":     {"application/json"},
 	"/v1/directions.confirmAllProposals":  {"application/json"},
 	"/v1/directions.startMatch":           {"application/json"},
 	"/v1/directions.enterResult":          {"application/json"},
