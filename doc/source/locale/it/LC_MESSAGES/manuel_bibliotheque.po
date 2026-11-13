@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 02:00+0100\n"
+"POT-Creation-Date: 2026-11-13 02:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1518,6 +1518,17 @@ msgstr ""
 
 #: ../../source/manuel_bibliotheque.rst:645
 msgid ""
+"Une collection vivante dont la base refuse la requête (``like``, une "
+"forme étoilée) part **figée et vide**, dans un export comme dans un "
+"transfert vers une autre base : vivante, elle n'y serait que refusée de "
+"nouveau."
+msgstr ""
+"Una raccolta viva la cui richiesta è rifiutata dalla base (``like``, una "
+"forma con asterisco) viene esportata o trasferita in un'altra base "
+"**congelata e vuota**: viva, lì verrebbe soltanto rifiutata di nuovo."
+
+#: ../../source/manuel_bibliotheque.rst:649
+msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
 "sélectionne depuis la dernière fois y entrent, et les cartes déjà là "
@@ -1535,7 +1546,7 @@ msgstr ""
 "barra di stato lo segnala insieme al numero reale di posizioni "
 "selezionate."
 
-#: ../../source/manuel_bibliotheque.rst:655
+#: ../../source/manuel_bibliotheque.rst:659
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1553,7 +1564,7 @@ msgstr ""
 " riferimento sta al centro di più dei tuoi errori, di struttura simile, e"
 " la sua lezione serve a tutti."
 
-#: ../../source/manuel_bibliotheque.rst:662
+#: ../../source/manuel_bibliotheque.rst:666
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1567,7 +1578,7 @@ msgstr ""
 "12 passi di pedina di distanza di trasporto; un errore di cubo ha come "
 "vicini solo quelli dello stesso punteggio."
 
-#: ../../source/manuel_bibliotheque.rst:666
+#: ../../source/manuel_bibliotheque.rst:670
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1585,7 +1596,7 @@ msgstr ""
 "segnalato. La cifra all'inizio di ogni riga è l'MWC coperto; la ragione "
 "dà la cifra conteggiata quando la lezione conta per metà."
 
-#: ../../source/manuel_bibliotheque.rst:673
+#: ../../source/manuel_bibliotheque.rst:677
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1599,7 +1610,7 @@ msgstr ""
 " in una collezione, una carta Anki o contrassegnata come «studiata» — non"
 " viene mai proposta, e le sue vicine sono considerate coperte."
 
-#: ../../source/manuel_bibliotheque.rst:679
+#: ../../source/manuel_bibliotheque.rst:683
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1623,11 +1634,11 @@ msgstr ""
 " **quiz**. Da riga di comando: ``blunderdb collection suggest`` (vedi "
 ":ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:692
+#: ../../source/manuel_bibliotheque.rst:696
 msgid "Leçons"
 msgstr "Lezioni"
 
-#: ../../source/manuel_bibliotheque.rst:694
+#: ../../source/manuel_bibliotheque.rst:698
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1643,7 +1654,7 @@ msgstr ""
 "Il comando ``le`` elenca le lezioni del database nella barra di stato; "
 "``le 2`` apre la lezione 2; ``le edit`` apre l'editor delle lezioni."
 
-#: ../../source/manuel_bibliotheque.rst:701
+#: ../../source/manuel_bibliotheque.rst:705
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1659,7 +1670,7 @@ msgstr ""
 "consueti. *Chiudi* esce dalla lezione. Un passo la cui collezione o "
 "posizione è stata eliminata conserva il suo testo."
 
-#: ../../source/manuel_bibliotheque.rst:708
+#: ../../source/manuel_bibliotheque.rst:712
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1677,7 +1688,7 @@ msgstr ""
 "esportazione lo porta con sé. Importare un file che contiene una lezione "
 "la crea; una lezione con lo stesso nome già presente non viene toccata."
 
-#: ../../source/manuel_bibliotheque.rst:716
+#: ../../source/manuel_bibliotheque.rst:720
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1716,7 +1727,7 @@ msgstr ""
 "creano e si modificano anche da riga di comando o tramite l'API "
 "(:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:733
+#: ../../source/manuel_bibliotheque.rst:737
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"

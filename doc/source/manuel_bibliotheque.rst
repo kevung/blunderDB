@@ -642,6 +642,10 @@ tournois par leur numéro est réécrite sur les numéros du fichier ; si l'un
 d'eux reste hors du fichier, la collection part **figée**, avec les positions
 que la requête sélectionne au moment de l'export.
 
+Une collection vivante dont la base refuse la requête (``like``, une forme
+étoilée) part **figée et vide**, dans un export comme dans un transfert vers
+une autre base : vivante, elle n'y serait que refusée de nouveau.
+
 Un paquet de répétition espacée fondé sur une collection vivante rejoue sa
 requête à chaque ouverture de séance : les positions que la recherche
 sélectionne depuis la dernière fois y entrent, et les cartes déjà là gardent
