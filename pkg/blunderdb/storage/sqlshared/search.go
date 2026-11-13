@@ -1019,8 +1019,9 @@ func SetIDWalkProbe(n int) (restore func()) {
 func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start string, startArgs []any, filter string, args []any, limit int) (ids []int64, full bool, err error) {
 	p, ok := s.DB.(idWalkProber)
 	rows := int(idWalkProbe.Load())
-	// A subquery of the filter would run here and again after a short window.
-	if !ok || !p.ProbesIDWalk() || limit <= 0 || limit >= rows || strings.Contains(filter, "SELECT") {
+	// A subquery of the filter would run here and again after a short window,
+	// a list of ids be sent twice; and a position named is reached by its key.
+	if !ok || !p.ProbesIDWalk() || limit <= 0 || limit >= rows || strings.Contains(filter, "SELECT") || strings.Contains(filter, "p.id IN (") {
 		return nil, false, nil
 	}
 	tenant, walkArgs := s.DB.TenantFilter("p", scope)

@@ -165,6 +165,9 @@ func TestStructureSearchAnswersTheSameThroughAProbe(t *testing.T) {
 	for _, st := range rec.stmts {
 		if isProbe(st.sql) {
 			probes++
+			if strings.Contains(st.sql, "p.id IN (") {
+				t.Errorf("a probe carries a list of ids: %s", oneLine(st.sql)[:200])
+			}
 		}
 	}
 	if probes < len(filters) {
