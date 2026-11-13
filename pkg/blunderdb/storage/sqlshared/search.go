@@ -74,6 +74,9 @@ type searchWhereClause struct {
 	structure bool
 	// blunder is the threshold of a move-error search read by blunderWindow, "" otherwise.
 	blunder string
+	// matchWalk is the clause for a bounded walk, when a match-level filter
+	// has its moves sorted for the query (matchProbe); nil otherwise.
+	matchWalk *matchWalk
 	// after is the cursor a page resumes from, nil for the first page.
 	after *searchCursor
 	// keys, for a page read by cursor, receives the sort key of every id the window
@@ -498,6 +501,8 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
 	lists := &idLists{}
 	ctx = context.WithValue(ctx, idListsKey{}, lists)
+	probe := &matchProbe{}
+	ctx = context.WithValue(ctx, matchProbeKey{}, probe)
 	useSQLFilters := !f.MirrorFilter
 	moveErrorInGo, blunder := false, ""
 
@@ -745,6 +750,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		structure:     structure,
 		moveErrorInGo: moveErrorInGo,
 		blunder:       blunder,
+		matchWalk:     probe.walked(where.String(), args),
 		effInclude:    effInclude,
 		likeTarget:    likeTarget,
 	}, nil
@@ -996,11 +1002,18 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 			filter, args = filter+cond, append(args, condArgs...)
 			start, startArgs = start+cond, append(startArgs, condArgs...)
 		}
+		atIDs := offset == 0 && strings.Count(start, afterID)*len(afterID) == len(start)
+		if wc.matchWalk != nil && atIDs {
+			ids, full, err := s.probeMatchWalk(ctx, wc, joins, start, startArgs, limit)
+			if err != nil || full {
+				return ids, err
+			}
+		}
 		if wc.blunder != "" {
 			return s.blunderWindow(ctx, wc, filter, args, limit, offset)
 		}
 		order := "p.id"
-		if offset == 0 && strings.Count(start, afterID)*len(afterID) == len(start) {
+		if atIDs {
 			rows := int(idWalkProbe.Load())
 			// Masks have no index to fall back on: the walk is given more rows.
 			if !wc.structure {
@@ -1149,10 +1162,7 @@ func SetIDWalkProbe(n int) (restore func()) {
 // row (masks) sends it to read and sort the whole tenant for a page that the
 // first hundred rows fill.
 func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start string, startArgs []any, filter string, args []any, limit, rows int) (ids []int64, tried bool, err error) {
-	p, ok := s.DB.(idWalkProber)
-	// A subquery of the filter would run here and again after a short window,
-	// a list of ids be sent twice; and a position named is reached by its key.
-	if !ok || !p.ProbesIDWalk() || limit <= 0 || limit >= rows || strings.Contains(filter, "SELECT") || strings.Contains(filter, "p.id IN (") {
+	if !s.probesIDWalk(filter, limit, rows) {
 		return nil, false, nil
 	}
 	tenant, walkArgs := s.DB.TenantFilter("p", scope)
@@ -1160,6 +1170,66 @@ func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start strin
 	walkArgs = append(append(walkArgs, startArgs...), args...)
 	ids, err = s.readIDs(ctx, from, filter, "p.id", "", walkArgs, limit, 0, nil)
 	return ids, err == nil, err
+}
+
+// probesIDWalk tells whether a window of limit rows under filter may be asked
+// of a walk of rows rows.
+func (s *SearchStore) probesIDWalk(filter string, limit, rows int) bool {
+	p, ok := s.DB.(idWalkProber)
+	// A subquery of the filter would run here and again after a short window,
+	// a list of ids be sent twice; and a position named is reached by its key.
+	return ok && p.ProbesIDWalk() && limit > 0 && limit < rows && !strings.Contains(filter, "SELECT") && !strings.Contains(filter, "p.id IN (")
+}
+
+// probeMatchWalk reads a window of a search whose match-level filter has its
+// moves sorted for the query, from a bounded walk that checks each position
+// against its own moves instead; full tells that the window is the answer. A
+// walk that does not fill the window is thrown away, and the sorted moves
+// answer as they did: what the walk cost is its rows, each a read of the
+// position's moves, never the tenant.
+//
+// The walk is over the next positions of the tenant, or, for a move-error
+// search from a blunder up, over the next entries of the blunder index: the
+// positions played several ways, few, are all candidates. Their window is the
+// answer when the blunders filled one by themselves — a blunder further on
+// than the walk went then comes after every row kept.
+func (s *SearchStore) probeMatchWalk(ctx context.Context, wc searchWhereClause, joins, start string, startArgs []any, limit int) (ids []int64, full bool, err error) {
+	rows := int(idWalkProbe.Load())
+	filter := wc.matchWalk.where + start
+	args := append(append([]any{}, wc.matchWalk.args...), startArgs...)
+	// The check reads the moves of one position: it is the only subquery a walk may carry.
+	if !s.probesIDWalk(strings.Replace(filter, wc.matchWalk.check, "", 1), limit, rows) {
+		return nil, false, nil
+	}
+	if wc.blunder == "" {
+		tenant, walkArgs := s.DB.TenantFilter("p", wc.scope)
+		from := "(SELECT * FROM position p WHERE " + tenant + start + " ORDER BY p.id LIMIT " + strconv.Itoa(rows) + ") p" + joins
+		ids, err = s.readIDs(ctx, from, filter, "p.id", "", append(append(walkArgs, startArgs...), args...), limit, 0, nil)
+		return ids, err == nil && len(ids) == limit, err
+	}
+	tenant, walkArgs := s.DB.TenantFilter("a", wc.scope)
+	stop := " LIMIT " + strconv.Itoa(limit) + ") AS "
+	from := "(SELECT * FROM (SELECT p.id, 0 AS marked FROM (SELECT * FROM analysis a WHERE " + tenant +
+		" AND (a.best_move_equity_error >= " + wc.blunder + " OR a.cube_error >= " + wc.blunder + ")" + strings.ReplaceAll(start, "p.id", "a.position_id") +
+		" ORDER BY a.position_id LIMIT " + strconv.Itoa(rows) + ") a JOIN position p ON p.id = a.position_id" + andSameTenant(s.DB, "p", "a") +
+		" WHERE " + s.DB.Bool("p.multi_played", false) + " AND " + filter + " ORDER BY a.position_id" + stop + "single" +
+		" UNION ALL SELECT * FROM (SELECT p.id, 1 AS marked FROM position p LEFT JOIN analysis a ON a.position_id = p.id" + andSameTenant(s.DB, "a", "p") +
+		" WHERE " + s.DB.Bool("p.multi_played", true) + " AND " + filter + " ORDER BY p.id" + stop + "multi) p"
+	marked := map[int64]any{}
+	ids, err = s.readIDs(ctx, from, "1=1", "p.id", "p.marked", append(append(append(walkArgs, startArgs...), args...), args...), 2*limit, 0, marked)
+	if err != nil {
+		return nil, false, err
+	}
+	single := 0
+	for _, id := range ids {
+		if fmt.Sprint(marked[id]) == "0" {
+			single++
+		}
+	}
+	if single < limit {
+		return nil, false, nil
+	}
+	return ids[:limit], true, nil
 }
 
 // readIDs reads the ids of a window; with keys, it also reads keyCol beside each id.
@@ -1395,6 +1465,8 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 	}
 	// A move error alone calls for Go only on the rows played more than one way: the others
 	// are counted from their columns, without reading an analysis.
+	// The two halves of the count alter the clause: no walk written from the whole one.
+	wc.matchWalk = nil
 	bySQL := wc
 	bySQL.moveErrorInGo = false
 	if wc.moveErrorInGo && !bySQL.goPhase(f) {

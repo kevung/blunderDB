@@ -5,6 +5,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -198,18 +199,105 @@ func (s *SearchStore) appendMatchLevelClause(ctx context.Context, scope string, 
 	// tenant it would cross everything: the moves are read from the index and sorted once,
 	// OFFSET keeping the planner from probing them position by position.
 	sorted := func() {
-		where.WriteString(" AND p.id IN (" + sub + " LIMIT 2147483647 OFFSET 0)")
+		clause := " AND p.id IN (" + sub + " LIMIT 2147483647 OFFSET 0)"
+		if probe, ok := ctx.Value(matchProbeKey{}).(*matchProbe); ok {
+			probe.offer(s, clause, len(*args), len(listArgs), games)
+		}
+		where.WriteString(clause)
 		*args = append(*args, listArgs...)
 	}
-	return s.narrowWithin(ctx, matchListLimit, sub, listArgs, where, args, sorted)
+	return s.narrowWithin(ctx, int(matchListLimit.Load()), sub, listArgs, where, args, sorted)
+}
+
+// matchProbe is the other writing of a match-level filter whose moves are
+// read and sorted for the query: a check of each position against its own
+// moves. It costs nothing to prepare and stops with the window, where the
+// sorted moves are read whole by every statement; but it walks the tenant in
+// id order, to its end when another filter of the search is rare. So it is
+// only asked of a bounded walk (probeMatchWalk), and the sorted moves answer
+// when that walk comes short.
+type matchProbe struct {
+	// sorted is the clause as the search writes it, its n arguments at
+	// index at of the search's.
+	sorted string
+	at, n  int
+	// check is the clause of the walk. It binds nothing.
+	check string
+}
+
+type matchProbeKey struct{}
+
+// idListInliner is implemented by an Execer that writes a list of ids in the
+// statement as one constant, which its planner hashes: bound as a parameter,
+// the list is searched from end to end for every move checked.
+type idListInliner interface {
+	InlineIDs(expr string, ids []string) string
+}
+
+func (m *matchProbe) offer(s *SearchStore, sorted string, at, n int, games []string) {
+	in, ok := s.DB.(idListInliner)
+	if !ok || !matchProbes.Load() {
+		return
+	}
+	m.sorted, m.at, m.n = sorted, at, n
+	// LIMIT keeps the check a read of one position's moves: without it the planner may turn it
+	// into a join, and read the moves of every game for the rows of a bounded walk.
+	m.check = " AND EXISTS (SELECT 1 FROM move mv WHERE mv.position_id = p.id AND " + in.InlineIDs("mv.game_id", games) + " LIMIT 1 OFFSET 0)"
+}
+
+// walked returns the search's clause and arguments with the check in place of
+// the sorted moves, nil when the search sorts none.
+func (m *matchProbe) walked(where string, args []any) *matchWalk {
+	if m.sorted == "" {
+		return nil
+	}
+	return &matchWalk{
+		where: strings.Replace(where, m.sorted, m.check, 1),
+		args:  append(append([]any{}, args[:m.at]...), args[m.at+m.n:]...),
+		check: m.check,
+	}
+}
+
+// matchWalk is a search's WHERE clause written for a bounded walk.
+type matchWalk struct {
+	where string
+	args  []any
+	check string
+}
+
+// matchProbes: atomic so a test can turn the checks off (SetMatchProbes)
+// while other searches run.
+var matchProbes atomic.Bool
+
+func init() {
+	matchProbes.Store(true)
+	matchListLimit.Store(30000)
+}
+
+// SetMatchProbes turns the walk of a match-level filter on or off and returns
+// a func restoring the previous state. For tests only: both ways of reading
+// the filter are compared.
+func SetMatchProbes(on bool) (restore func()) {
+	old := matchProbes.Swap(on)
+	return func() { matchProbes.Store(old) }
+}
+
+// SetMatchListLimit sets matchListLimit and returns a func restoring the
+// previous one. For tests only: a single match then has too many moves for a
+// list.
+func SetMatchListLimit(n int) (restore func()) {
+	old := matchListLimit.Swap(int64(n))
+	return func() { matchListLimit.Store(old) }
 }
 
 // matchListLimit is how many moves a match-level filter may name by literal list.
+// Atomic so a test can move it (SetMatchListLimit) while other searches run.
+var matchListLimit atomic.Int64
+
 // matchSortLimit is how many it may read and sort for one query, about 200 ms: above it the
 // filter is taken as common and the walk as meeting it soon. movesPerGame is a mean of real
 // matches, for an estimate.
 const (
-	matchListLimit = 30000
 	matchSortLimit = 1000000
 	movesPerGame   = 55
 )
