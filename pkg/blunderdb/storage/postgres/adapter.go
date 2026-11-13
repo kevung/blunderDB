@@ -54,6 +54,12 @@ func (shared) BoolAsInt(col string) string { return "CASE WHEN " + col + " THEN 
 func (shared) BoolArg(v bool) any          { return v }
 func (shared) Bigint(expr string) string   { return "CAST(" + expr + " AS BIGINT)" }
 func (shared) ILike() string               { return "ILIKE" }
+
+// BitsSet — see sqlshared.Dialect. The text is the predicate of the
+// idx_position_blot_* partial indexes: the planner matches it to them.
+func (shared) BitsSet(expr string, lo, hi int) string {
+	return fmt.Sprintf("bit_count(((%s) & %d)::bit(32))", expr, sqlshared.BitRange(lo, hi))
+}
 func (shared) IDsIn(expr string, ids []string) (string, []any) {
 	return expr + " = ANY(?::bigint[])", []any{"{" + strings.Join(ids, ",") + "}"}
 }
