@@ -70,6 +70,8 @@ type searchWhereClause struct {
 	// here because the class it imposes on the WHERE clause is read off it —
 	// its kind of decision, its regime, and the matches it was met in.
 	likeTarget *domain.Position
+	// structure is set by masks on the checkers: predicates no statistics describe.
+	structure bool
 	// after is the cursor a page resumes from, nil for the first page.
 	after *searchCursor
 	// keys, for a page read by cursor, receives the sort key of every id the window
@@ -488,7 +490,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		}
 	}
 
-	var bitboardTight bool
+	var bitboardTight, structure bool
 	if useSQLFilters {
 		if f.DecisionTypeFilter {
 			where.WriteString(" AND p.decision_type = ? AND p.player_on_roll = ?")
@@ -594,7 +596,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 
 		if searchfilter.HasBoardFilter(effInclude.Board) {
 			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(effInclude)
-			bitboardTight = tight
+			bitboardTight, structure = tight, true
 			where.WriteString(" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ?")
 			where.WriteString(" AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?")
 			args = append(args,
@@ -639,6 +641,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		// check (Position.ContainsAnyCheckerOf) below.
 		if searchfilter.HasBoardFilter(f.ExcludeFilter.Board) {
 			eSingle1, eMade1, eSingle2, eMade2 := engine.ExclusionMasks(f.ExcludeFilter)
+			structure = true
 			where.WriteString(" AND (p.occupancy_1 & ?) = 0 AND (p.point_mask_1 & ?) = 0")
 			where.WriteString(" AND (p.occupancy_2 & ?) = 0 AND (p.point_mask_2 & ?) = 0")
 			args = append(args,
@@ -664,6 +667,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		needAnalysis:  needAnalysis,
 		useSQLFilters: useSQLFilters,
 		bitboardTight: bitboardTight,
+		structure:     structure,
 		moveErrorInGo: moveErrorInGo,
 		effInclude:    effInclude,
 		likeTarget:    likeTarget,
@@ -860,7 +864,7 @@ func (s *SearchStore) scan(ctx context.Context, f domain.SearchFilters, wc searc
 		if keyset {
 			offset = 0
 			if resumed {
-				extra, extraArgs = " AND p.id > ?", []any{after}
+				extra, extraArgs = afterID, []any{after}
 			}
 		}
 		positions, n, lastID, err := s.scanChunk(ctx, f, wc, extra, extraArgs, chunk, offset)
@@ -903,14 +907,24 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 	key, desc, _ := sortKey(f.Sort)
 	filter := wc.where + extra
 	args := append(append([]any{}, wc.args...), extraArgs...)
-	plain := "position p"
+	joins := ""
 	if readsAnalysis.MatchString(filter) || strings.HasPrefix(key, "a.") {
-		plain += " LEFT JOIN analysis a ON a.position_id = p.id" + andSameTenant(s.DB, "a", "p")
+		joins = " LEFT JOIN analysis a ON a.position_id = p.id" + andSameTenant(s.DB, "a", "p")
 	}
+	plain := "position p" + joins
 	if key == "" {
+		// Where the window starts: the walk of a probe starts there too.
+		start, startArgs := extra, append([]any{}, extraArgs...)
 		if wc.after != nil {
 			cond, condArgs := wc.after.cond()
 			filter, args = filter+cond, append(args, condArgs...)
+			start, startArgs = start+cond, append(startArgs, condArgs...)
+		}
+		if offset == 0 && wc.structure && strings.Count(start, afterID)*len(afterID) == len(start) {
+			ids, full, err := s.probeIDWalk(ctx, wc.scope, joins, start, startArgs, filter, args, limit)
+			if err != nil || full {
+				return ids, err
+			}
 		}
 		return s.readIDs(ctx, plain, filter, "p.id", "", args, limit, offset, nil)
 	}
@@ -969,6 +983,51 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 		}
 	}
 	return append(ids, tail...), nil
+}
+
+// afterID resumes a walk in id order.
+const afterID = " AND p.id > ?"
+
+// idWalkProber is implemented by an Execer whose planner chooses between the
+// walk in id order and a pass over the tenant on an estimate of the rows a
+// filter keeps: an estimate it cannot make for masks, and makes wrong for
+// columns that go together.
+type idWalkProber interface{ ProbesIDWalk() bool }
+
+// idWalkProbe is how many rows of the tenant a probe walks, in id order.
+// Atomic so a test can move it (SetIDWalkProbe) while other searches run.
+var idWalkProbe atomic.Int64
+
+func init() { idWalkProbe.Store(20000) }
+
+// SetIDWalkProbe sets how many rows a probe walks, 0 for no probe, and returns
+// a function that restores the previous value.
+func SetIDWalkProbe(n int) (restore func()) {
+	old := idWalkProbe.Swap(int64(n))
+	return func() { idWalkProbe.Store(old) }
+}
+
+// probeIDWalk reads a window in id order from the next idWalkProbe rows of the
+// tenant, and says whether it is full. A full window is the answer: the rows
+// are walked in the order asked, and the filter met limit of them. A short one
+// says nothing of the rows further on, and is thrown away: what it cost is the
+// rows walked, not a pass over the tenant.
+//
+// The walk is written, not left to the planner: a filter it believes keeps one
+// row (masks) sends it to read and sort the whole tenant for a page that the
+// first hundred rows fill.
+func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start string, startArgs []any, filter string, args []any, limit int) (ids []int64, full bool, err error) {
+	p, ok := s.DB.(idWalkProber)
+	rows := int(idWalkProbe.Load())
+	// A subquery of the filter would run here and again after a short window.
+	if !ok || !p.ProbesIDWalk() || limit <= 0 || limit >= rows || strings.Contains(filter, "SELECT") {
+		return nil, false, nil
+	}
+	tenant, walkArgs := s.DB.TenantFilter("p", scope)
+	from := "(SELECT * FROM position p WHERE " + tenant + start + " ORDER BY p.id LIMIT " + strconv.Itoa(rows) + ") p" + joins
+	walkArgs = append(append(walkArgs, startArgs...), args...)
+	ids, err = s.readIDs(ctx, from, filter, "p.id", "", walkArgs, limit, 0, nil)
+	return ids, err == nil && len(ids) == limit, err
 }
 
 // readIDs reads the ids of a window; with keys, it also reads keyCol beside each id.
