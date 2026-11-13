@@ -48,6 +48,48 @@ func testMatchStatsSharedPositions(t *testing.T, s storage.Storage) {
 	totals("its players gone", storage.StatsFilter{DecisionType: -1, PlayerName: "Bea"}, 0, 0, 0)
 }
 
+// testMatchStatsImportLeavesNoMatchToFill: computing a match's rows, as an
+// import does, leaves every earlier match its rows, even one whose private
+// position the new match reaches; the figures are those of a table rebuilt
+// from scratch. A reader would otherwise pay the statistics of every match
+// an import had touched.
+func testMatchStatsImportLeavesNoMatchToFill(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	// Each match is written then computed, as an import does: the second
+	// and fourth reach both positions of the first, the third one of them.
+	for i, m := range []struct {
+		slot   int
+		p1, p2 string
+	}{{0, "Ann", "Abe"}, {1, "Cid", "Cal"}, {0, "Bea", "Bob"}, {0, "Dee", "Dan"}} {
+		id, _ := statsFixtureMatch(t, s, m.slot, m.p1, m.p2)
+		if err := s.Stats().RefreshMatchStats(ctx, "", []int64{id}); err != nil {
+			t.Fatalf("RefreshMatchStats of match %d: %v", id, err)
+		}
+		missing, err := s.Stats().MissingMatchStats(ctx, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(missing) != 0 {
+			t.Fatalf("after importing %d match(es): %v left without statistics", i+1, missing)
+		}
+	}
+	res, err := s.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := res.Totals; got.NumPositions != 3 || got.NumDecisions != 8 || got.NumMatches != 4 {
+		t.Errorf("positions %d, decisions %d, matches %d; want 3, 8, 4", got.NumPositions, got.NumDecisions, got.NumMatches)
+	}
+	one, err := s.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1, PlayerName: "Ann"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := one.Totals; got.NumPositions != 1 || got.NumDecisions != 1 {
+		t.Errorf("one seat: positions %d, decisions %d; want 1, 1", got.NumPositions, got.NumDecisions)
+	}
+	statsMatchRebuild(t, s, "after four refreshes")
+}
+
 // statsMatchRebuild fails when the figures Compute reads from match_stats and
 // its cells differ from the figures of a table rebuilt from scratch: a write
 // that changed what a row summarises without dropping it left it stale.
