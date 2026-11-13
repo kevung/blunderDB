@@ -219,6 +219,12 @@ func (a searchDB) QueryRow(ctx context.Context, query string, args ...any) sqlsh
 	return a.Execer.QueryRow(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
 }
 
+// InlineIDs — see sqlshared.matchProbe. The ids are the text of integers read
+// from the database.
+func (searchDB) InlineIDs(expr string, ids []string) string {
+	return expr + " = ANY('{" + strings.Join(ids, ",") + "}'::bigint[])"
+}
+
 // ProbesIDWalk — see sqlshared.probeIDWalk.
 func (searchDB) ProbesIDWalk() bool { return true }
 
