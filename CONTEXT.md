@@ -177,18 +177,16 @@ provenance filters, where a Position has one value and naming two can only mean 
 _Avoid_: label, category (both suggest a closed, declared set — a tag is neither)
 
 **Neighbouring Position** (of a target):
-A stored Position that poses *the same problem* as the target with a nearby checker
-structure — never merely the same drawing. "Nearby" is a transport distance in checker-pips,
-seen from the side on roll, and it is measured only inside the target's *equivalence class*:
-the same kind of decision (checker or cube); for a cube decision, the same regime (money or
-match); and, when the target belongs to a Match, a different Match — the plies before and
-after a decision are its closest structures and never its neighbours. Dice, score and cube
-value are outside both the distance and the class: the ordinary search filters narrow on them.
-The target may be a drawn board as well as a stored Position. Neighbours are *ranked*, not
-filtered, and a ranking with nothing under the asked distance is empty, not padded.
+A stored Position whose checker structure is a few legal plays from the target's: N plays,
+alternating sides, the first by either, in either direction, turn one structure into the
+other (ADR-0112). The distance is the smallest such N; the same structure at another score,
+cube or decision is at 0. Only checkers count, and the whole library is searched, the
+target's own Match included. The target may be a drawn board as well as a stored Position.
+Neighbours are *ranked*, not filtered, and a ranking with nothing within the asked plays is
+empty, not padded.
 _Avoid_: similar position (suggests the drawing alone), duplicate (a duplicate is the same
-Position, identified by its hash — distance zero within another Match is a neighbour, not a
-duplicate)
+Position, identified by its hash — distance zero is the same checkers as another Position, a
+neighbour, not a duplicate)
 
 **Network**:
 The weights, and only the weights — `strehl-prob5-768-768-256-256-256`, with

@@ -344,7 +344,7 @@ func sharePositions(ctx context.Context, tx Execer, scope, ph string, ids []any,
 
 	// Every reference, from the move index alone.
 	total := map[int64]int64{}
-	if err := eachChunk(ctx, tx, nil, list, `SELECT position_id, COUNT(*) FROM move WHERE position_id IN `, ` GROUP BY position_id`, func(r Rows) error {
+	if err := eachChunk(ctx, tx, targs, list, `SELECT position_id, COUNT(*) FROM move WHERE `+tenant+` AND position_id IN `, ` GROUP BY position_id`, func(r Rows) error {
 		var pos, n int64
 		if err := r.Scan(&pos, &n); err != nil {
 			return err

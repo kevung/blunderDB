@@ -19,10 +19,18 @@ func TestElsewhereInGroups_ReadsTheWaitingGroupsByHash(t *testing.T) {
 	if _, err := a.OpenLibraryGroup(pathA); err != nil {
 		t.Fatal(err)
 	}
-	// The second position of A, commented there.
-	board := database.Position{Board: database.Board{Points: [26]database.Point{{Checkers: 2, Color: 0}}}, Cube: database.Cube{Value: 0, Owner: -1}}
+	// A position of A, commented there, and the board one play after it:
+	// Black's 3-1 from two checkers on its six point.
+	board := database.Position{Cube: database.Cube{Value: 0, Owner: -1}, Dice: [2]int{3, 1}}
+	board.Board.Points[6] = database.Point{Checkers: 2, Color: 0}
 	idA, err := db.SavePosition(&board)
 	if err != nil {
+		t.Fatal(err)
+	}
+	near := database.Position{Cube: database.Cube{Value: 0, Owner: -1}}
+	near.Board.Points[5] = database.Point{Checkers: 1, Color: 0}
+	near.Board.Points[3] = database.Point{Checkers: 1, Color: 0}
+	if _, err := db.SavePosition(&near); err != nil {
 		t.Fatal(err)
 	}
 	if err := db.AddComment(idA, "seen in A"); err != nil {

@@ -603,7 +603,7 @@ Cherche une position, par son hachage Zobrist, dans d'autres fichiers de base
 passés à la même commande, et rend pour chacun ce qu'il en sait : son analyse,
 ses commentaires, les matchs où la position a été jouée (joueurs, longueur,
 date, coup joué et son coût), et ses positions les plus proches (même
-classement que le jeton ``like`` de la recherche, en pips de pions déplacés).
+classement que le jeton ``like`` de la recherche, en jets).
 
 Le coût d'un coup joué ailleurs est jugé avec les seuils d'erreur et de blunder
 de la base ``--db``, jamais avec ceux de la base lue : ``error``, ``blunder``,
@@ -642,8 +642,8 @@ nombre total (``matchesTotal`` et ``playsTruncated`` en JSON).
   (parties, matchs, positions ou étapes).
 * ``--neighbours N`` — Nombre de voisines par base (défaut : 5, 0 : aucune,
   50 au plus).
-* ``--max-distance D`` — Écarte les voisines à plus de D pips de pions
-  déplacés (0 : sans plafond).
+* ``--max-distance D`` — Écarte les voisines à plus de D jets (0 : deux jets,
+  le plus servi ; au-delà, refusé).
 * ``--format`` — ``text`` (défaut) ou ``json``.
 
 Le démon sert les mêmes lectures à travers les tenants : ``across.positionElsewhere``

@@ -47,7 +47,6 @@ var FieldReads = map[string]Reads{
 	"GameTypeFilter":                ReadsPosition,
 	"LikeFilter":                    ReadsPosition,
 	"LikeMaxDistance":               ReadsPosition,
-	"LikeWidened":                   ReadsPosition,
 	"PipCountFilter":                ReadsPosition,
 	"Player1AbsolutePipCountFilter": ReadsPosition,
 	"WinRateFilter":                 ReadsPosition,
@@ -86,8 +85,9 @@ var FieldReads = map[string]Reads{
 	"MarginFilter":       ReadsPlayed,
 	"CubeResponseFilter": ReadsPlayed,
 
-	// A ranking against a stored position leaves out the matches that
-	// position was met in; against a drawn board it reads the board alone.
+	// A ranking against a stored position names a row of this library, which
+	// names nothing in another; against a drawn board it reads the board
+	// alone.
 	"LikeTargetID": ReadsProvenance,
 
 	"SearchText":                 ReadsProvenance,

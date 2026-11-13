@@ -39,8 +39,11 @@ type searchParams struct {
 	hasAnalysis bool
 	limit       int
 	offset      int
-	format      string
-	outputDB    string
+	// paged is set by --cursor, even empty: one page read by cursor.
+	paged    bool
+	cursor   string
+	format   string
+	outputDB string
 }
 
 // parseSearchFlags defines and parses the `search` command's flags, and
@@ -88,11 +91,16 @@ func (cli *CLI) parseSearchFlags(args []string) (*searchParams, string, error) {
 		if len(unknown) > 0 {
 			return nil, "", fmt.Errorf("unknown token(s) in --query: %s (see --query-help)", strings.Join(unknown, ", "))
 		}
+		if err := searchquery.Refusal(diags); err != nil {
+			return nil, "", err
+		}
 		return &searchParams{
 			filters:  filters,
 			diags:    diags,
 			limit:    *f.limit,
 			offset:   *f.offset,
+			paged:    flagSet(searchCmd, "cursor"),
+			cursor:   *f.cursor,
 			format:   strings.ToLower(*f.format),
 			outputDB: *f.outputDB,
 		}, *f.dbPath, nil
@@ -108,9 +116,48 @@ func (cli *CLI) parseSearchFlags(args []string) (*searchParams, string, error) {
 		hasAnalysis: *f.hasAnalysis,
 		limit:       *f.limit,
 		offset:      *f.offset,
+		paged:       flagSet(searchCmd, "cursor"),
+		cursor:      *f.cursor,
 		format:      strings.ToLower(*f.format),
 		outputDB:    *f.outputDB,
 	}, *f.dbPath, nil
+}
+
+// runSearchPage answers --cursor: one page of --limit results resumed after the
+// cursor, read by the storage's cursor so that a deep page costs the first one.
+// The next page's cursor goes with the count ("" after the last page).
+func (cli *CLI) runSearchPage(params *searchParams) error {
+	switch {
+	case params.limit <= 0:
+		return fmt.Errorf("--cursor needs --limit")
+	case params.offset != 0:
+		return fmt.Errorf("--cursor and --offset are exclusive")
+	case params.filters.LikeFilter:
+		return fmt.Errorf("--cursor does not page a ranked (like) query")
+	case params.errorMin > 0 || params.hasAnalysis || params.outputDB != "":
+		return fmt.Errorf("--cursor does not combine with --error-min, --has-analysis or --export")
+	}
+	var positions []Position
+	var analysisMap map[int64]*PositionAnalysis
+	var next string
+	err := withInterruptibleContext(func() {}, func(ctx context.Context) error {
+		var err error
+		positions, analysisMap, next, err = cli.db.LoadPositionsPageByFiltersCtx(ctx, params.filters,
+			storage.PageOpts{Limit: params.limit, Cursor: params.cursor})
+		return err
+	})
+	if err != nil {
+		return fmt.Errorf("failed to search positions: %w", err)
+	}
+	status := io.Writer(cli.stdout())
+	if params.format == "json" || params.format == "xgid" {
+		status = os.Stderr
+	}
+	fmt.Fprintf(status, "Found %d position(s)\nNext cursor: %s\n\n", len(positions), next)
+	if len(positions) == 0 {
+		return nil
+	}
+	return renderResults(cli.stdout(), positions, analysisMap, params.format)
 }
 
 // filterFlagsSet names the filter flags the user actually passed. Only the
@@ -119,7 +166,7 @@ func (cli *CLI) parseSearchFlags(args []string) (*searchParams, string, error) {
 // --query.
 func filterFlagsSet(fs *flag.FlagSet) []string {
 	passthrough := map[string]bool{
-		"db": true, "format": true, "limit": true, "offset": true,
+		"db": true, "format": true, "limit": true, "offset": true, "cursor": true,
 		"export": true, "query": true, "query-help": true,
 	}
 	var named []string
@@ -173,10 +220,16 @@ func (cli *CLI) runSearch(args []string) error {
 		return err
 	}
 
+	// A cursor page goes first: with `like` it is refused by the paged
+	// reader, never served by the ranking with its cursor dropped.
+	if params.paged {
+		return cli.runSearchPage(params)
+	}
+
 	// A ranked query — one carrying the `like` token — is answered here and
 	// returns: its result is neighbours WITH their distance, which the ordinary
 	// table has no column for. Every filter still applies; ranking is what the
-	// token adds, not what it replaces (ADR-0043).
+	// token adds, not what it replaces (ADR-0112).
 	if params.filters.LikeFilter {
 		return cli.runSearchRanked(params)
 	}
@@ -421,8 +474,8 @@ func renderResults(w io.Writer, positions []Position, analyses map[int64]*Positi
 }
 
 // runSearchRanked prints the neighbours a `like` query selects, nearest first,
-// with the distance that ranked them — in checker-pips, so the number can be
-// read and not merely compared.
+// with the distance that ranked them — in plays, so the number can be read
+// and not merely compared.
 func (cli *CLI) runSearchRanked(params *searchParams) error {
 	limit := params.limit
 	if limit <= 0 {
@@ -436,17 +489,17 @@ func (cli *CLI) runSearchRanked(params *searchParams) error {
 		return json.NewEncoder(cli.stdout()).Encode(neighbours)
 	}
 	if len(neighbours) == 0 {
-		// An empty ranking is an answer, not a failure: nothing stood close
-		// enough, and saying so beats handing over the least distant of the
-		// unrelated (ADR-0043 rule 4).
+		// An empty ranking is an answer, not a failure: nothing stands within
+		// the plays asked, and saying so beats handing over the least distant
+		// of the unrelated (ADR-0112).
 		fmt.Fprintln(cli.stdout(), "No neighbour found.")
 		return nil
 	}
 	fmt.Fprintf(cli.stdout(), "\n%d neighbour(s) of position %d:\n\n", len(neighbours), params.filters.LikeTargetID)
-	fmt.Fprintln(cli.stdout(), "ID      Distance  XGID")
-	fmt.Fprintln(cli.stdout(), "--      --------  ----")
+	fmt.Fprintln(cli.stdout(), "ID      Plays  XGID")
+	fmt.Fprintln(cli.stdout(), "--      -----  ----")
 	for _, n := range neighbours {
-		fmt.Fprintf(cli.stdout(), "%-6d  %-8d  %s\n", n.Position.ID, n.Distance, engine.EncodeBoardCompact(n.Position.Board))
+		fmt.Fprintf(cli.stdout(), "%-6d  %-5d  %s\n", n.Position.ID, n.Distance, engine.EncodeBoardCompact(n.Position.Board))
 	}
 	return nil
 }

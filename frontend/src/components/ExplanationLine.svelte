@@ -1,6 +1,6 @@
 <script>
     // La phrase d'explication, quand une règle est confiante (gabarit traduit
-    // ici), sinon rien. Porte aussi la distance d'un classement `like` (ADR-0043).
+    // ici), sinon rien. Porte aussi la distance d'un classement `like` (ADR-0112).
     import { explainDecision, playedFromAnalysis } from '../services/explainService.js';
     import { positionStore } from '../stores/positionStore.js';
     import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';

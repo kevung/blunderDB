@@ -353,7 +353,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/search.countUpTo                     JSON
      POST /v1/search.find                          NDJSON
      POST /v1/search.ids                           JSON
+     POST /v1/search.idsPage                       JSON
      POST /v1/search.indexOf                       JSON
+     POST /v1/search.page                          JSON
      POST /v1/search.parse                         JSON
      POST /v1/search.query                         custom
    searchHistory

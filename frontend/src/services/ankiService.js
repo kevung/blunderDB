@@ -247,7 +247,11 @@ export async function resolveSearchDeckIds(/** @type {string} */ sourceCommand) 
                 .trim()
                 .split(' ')
                 .map((f) => f.trim());
-            payload = buildSearchFilterPayload(position, parseFilters(filters, command), filters);
+            const parsed = parseFilters(filters, command);
+            // A refused form never runs without its token, and `like` ranks
+            // rather than selects: the deck keeps the ids it was made of.
+            if (parsed.likeRefused || parsed.likeFilter) return storedIds;
+            payload = buildSearchFilterPayload(position, parsed, filters);
         }
         // Ids only: this only ever reads .id off the results, so
         // there is no reason to ship every matching position whole.

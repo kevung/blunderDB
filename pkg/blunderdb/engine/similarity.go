@@ -2,8 +2,11 @@ package engine
 
 import "github.com/kevung/blunderdb/pkg/blunderdb/domain"
 
-// « Des positions comme celle-ci » : ce que « proche » veut dire, en une
-// distance.
+// La distance de transport entre deux positions, engine.SimilarityDistance,
+// en pions-pas. Ce n'est pas celle de `like`, qui compte des jets
+// (engine/reach, ADR-0112) ; elle et son vecteur servent là où une mesure
+// graduée et bon marché suffit, dans le voisinage des positions de référence
+// (ADR-0080) et les erreurs récurrentes.
 //
 // Vecteur brut des points (P7 : l'espace latent du réseau n'est validé par
 // aucune littérature pour le backgammon) et TRANSPORT OPTIMAL en une dimension

@@ -1,7 +1,7 @@
 # ADR-0080 — Une position de référence couvre le MWC récupérable de ses voisines
 
 Statut : acceptée.
-Voir aussi : ADR-0077 (plan d'étude), ADR-0076 (difficulté), ADR-0043 (distance `like`),
+Voir aussi : ADR-0077 (plan d'étude), ADR-0076 (difficulté), ADR-0043 (distance de transport),
 ADR-0046 (seuils d'erreur), ADR-0007 (rien n'est écrit chez le receveur).
 
 ## Contexte
@@ -25,7 +25,8 @@ Le regroupement par similarité a été différé par l'ADR-0077 pour son coût 
    (écarts du joueur au trait et de l'adversaire) : une référence de videau vaut à un score, pas
    à un autre.
 2. **Voisines.** Deux candidates d'un groupe sont voisines à au plus **ρ = 12 pions-pas** de
-   distance `like` (ADR-0043 : un coup de dés en vaut 8 à 16). Une erreur jouée plusieurs fois
+   distance de transport `engine.SimilarityDistance` (ADR-0043 : un coup de dés en vaut 8
+   à 16), et non de la distance en jets de `like` (ADR-0112). Une erreur jouée plusieurs fois
    dans une même position est une seule candidate.
 3. **Gain d'une candidate.** G(p) = c(p) · Σ excès des candidates du voisinage de p (p comprise)
    que la sélection ne couvre pas encore, en fraction de MWC. La somme porte à la fois la

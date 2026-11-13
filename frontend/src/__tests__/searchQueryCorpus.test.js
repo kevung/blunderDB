@@ -57,7 +57,7 @@ const SHORT_TO_LONG = {
     likeFilter: 'likeFilter',
     likeTargetId: 'likeTargetId',
     likeMaxDistance: 'likeMaxDistance',
-    likeWidened: 'likeWidened',
+    likeRefused: 'likeRefused',
     dt: 'decisionTypeFilter',
     dr: 'diceRollFilter',
     drMode: 'diceRollMode',

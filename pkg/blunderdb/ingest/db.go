@@ -438,7 +438,7 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 			res.Created = append(res.Created, id)
 			members := sc.Members
 			if q := strings.TrimSpace(sc.Coll.FilterQuery); q != "" {
-				if carried, ok := carriedLivingQuery(q, targetOf, maps.Matches, maps.Tournaments); ok {
+				if carried, ok := carriedLivingQuery(q, targetOf, maps.Matches, maps.Tournaments); ok && !livingRefused(sc.Coll.ID, q) {
 					if err := tx.Collections().SetFilterQuery(ctx, scope, id, carried); err != nil {
 						return res, err
 					}

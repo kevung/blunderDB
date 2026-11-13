@@ -81,8 +81,8 @@ type ElsewhereQuery struct {
 	Zobrist uint64           `json:"zobrist"`
 	Target  *domain.Position `json:"position,omitempty"`
 	// Neighbours is how many nearest boards each source returns (0: the
-	// default, negative: none); MaxDistance drops those farther than this many
-	// checker-pips (0: no ceiling).
+	// default, negative: none); MaxDistance drops those more than this many
+	// plays away (0: reach.DefaultOrder; beyond reach.MaxOrder, refused).
 	Neighbours  int `json:"neighbours"`
 	MaxDistance int `json:"maxDistance"`
 }
@@ -225,8 +225,7 @@ func elsewhereIn(ctx context.Context, s Storage, scope string, q ElsewhereQuery,
 	f := domain.SearchFilters{LikeFilter: true, LikeMaxDistance: q.MaxDistance}
 	switch {
 	case held != nil:
-		// Its own copy, so the plies of its matches around the board are
-		// left out as for any ranking there.
+		// Its own copy, which the ranking leaves out of its neighbours.
 		f.LikeTargetID = id
 	case q.Target != nil:
 		// An id of the asking library names nothing here.

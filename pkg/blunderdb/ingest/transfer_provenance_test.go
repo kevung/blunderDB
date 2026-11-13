@@ -422,7 +422,7 @@ var anonymityCorpus = []struct {
 	{"s dd", false, false},
 	// What names the match: never leaves.
 	{"s like42", false, false},
-	{"s like42<12*", false, false},
+	{"s like42<2", false, false},
 	{"s like5 w>50", false, false},
 	{"s md:2020", false, false},
 	{"s md>2019-06", false, false},
@@ -588,7 +588,7 @@ var selectionAtoms = []string{
 	"o1", "o>0", "O>0", "k>1", "k0", "K>1", "z>5", "Z>5", "bo>0", "BO>0", "bj>0", "BJ>0",
 	"e>0", "e<-0.2", "e-0.1,0.1", "T>2020/01/01", "T<2020/01/01", `m"13/11"`, `m"24/23"`,
 	"aw:2", "aw>3", "AW>3", "AW:5",
-	"like", "like<12", "like*", "like42", "like42<12*", "like5", "id1", "id1;2", "id7 id9",
+	"like", "like<1", "like42", "like42<2", "like5", "id1", "id1;2", "id7 id9",
 	"E>0.1", "E<0.05", "tm>5", "mg>50", "n>1", "ml:7", "md:2020", "pr>5", "rd:1", "ma1", "tn1",
 	`pl"a"`, `op"a"`, `tn"a"`, `au"a"`, `t"joli"`,
 }

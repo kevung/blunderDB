@@ -1270,9 +1270,17 @@ class GeneratedAPI(BaseClient):
         "POST /v1/search.ids — JSON."
         return self._call("/v1/search.ids", payload)
 
+    def search_ids_page(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.idsPage — JSON."
+        return self._call("/v1/search.idsPage", payload)
+
     def search_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/search.indexOf — JSON."
         return self._call("/v1/search.indexOf", payload)
+
+    def search_page(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.page — JSON."
+        return self._call("/v1/search.page", payload)
 
     def search_parse(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/search.parse — JSON."

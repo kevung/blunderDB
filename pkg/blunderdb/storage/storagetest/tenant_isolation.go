@@ -30,6 +30,7 @@ type tenantIsolationCase struct {
 
 var tenantIsolationCases = []tenantIsolationCase{
 	{"Position", checkPositionIsolation},
+	{"SearchCursor", checkSearchCursorIsolation},
 	{"EstimatedCounts", checkEstimatedCountsIsolation},
 	{"StoredBytes", checkStoredBytesIsolation},
 	{"TranscriptionRevision", checkTranscriptionRevisionIsolation},
@@ -41,6 +42,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"Tournament", checkTournamentIsolation},
 	{"Filter", checkFilterIsolation},
 	{"Match", checkMatchIsolation},
+	{"MatchStats", checkMatchStatsIsolation},
 	{"Comment", checkCommentIsolation},
 	{"Anki/Deck", checkAnkiDeckIsolation},
 	{"Anki/UndoReview", checkAnkiUndoReviewIsolation},
@@ -583,5 +585,54 @@ func checkAnkiUndoReviewIsolation(t *testing.T, ctx context.Context, s storage.S
 	}
 	if n := ankiReviewCount(t, s, a, deckID); n != 1 {
 		t.Errorf("tenant %s's log holds %d reviews after %s's undo, want 1", a, n, b)
+	}
+}
+
+// checkMatchStatsIsolation: b reads no statistics of a's match, and cannot
+// play a move on a's position — the read of what scores it finds nothing of a,
+// and the insert is refused.
+func checkMatchStatsIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7, MatchDate: time.Date(2024, 3, 1, 0, 0, 0, 0, time.UTC)}
+	matchID, err := s.Matches().Save(ctx, a, &m)
+	if err != nil {
+		t.Fatalf("Save(%s): %v", a, err)
+	}
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, a, &p)
+	if err != nil {
+		t.Fatalf("Save position(%s): %v", a, err)
+	}
+	gameID, err := s.Matches().CreateGame(ctx, a, &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame(%s): %v", a, err)
+	}
+	luck := int32(120)
+	moves := func(game int64) []*domain.Move {
+		return []*domain.Move{
+			{GameID: game, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1, CheckerMove: "8/5 6/5", LuckMP: &luck},
+			{GameID: game, MoveNumber: 2, MoveType: "checker", Player: -1, CheckerMove: "13/11 24/23", LuckMP: &luck},
+		}
+	}
+	if err := s.Matches().CreateMoves(ctx, a, moves(gameID)); err != nil {
+		t.Fatalf("CreateMoves(%s): %v", a, err)
+	}
+	if rows, err := s.Stats().MatchStats(ctx, a, []int64{matchID}); err != nil || len(rows) == 0 {
+		t.Fatalf("MatchStats(%s, own match) = %v, %v; want its rows", a, rows, err)
+	}
+	if rows, err := s.Stats().MatchStats(ctx, b, []int64{matchID}); err != nil || len(rows) != 0 {
+		t.Errorf("MatchStats(%s, match from %s) = %v, %v; want none", b, a, rows, err)
+	}
+
+	own := domain.Match{Player1Name: "Carl", Player2Name: "Dora", MatchLength: 7}
+	ownID, err := s.Matches().Save(ctx, b, &own)
+	if err != nil {
+		t.Fatalf("Save(%s): %v", b, err)
+	}
+	ownGame, err := s.Matches().CreateGame(ctx, b, &domain.Game{MatchID: ownID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame(%s): %v", b, err)
+	}
+	if err := s.Matches().CreateMoves(ctx, b, moves(ownGame)); err == nil {
+		t.Errorf("CreateMoves(%s) on a position of %s: accepted, want refused", b, a)
 	}
 }

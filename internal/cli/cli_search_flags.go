@@ -22,6 +22,7 @@ type searchFlags struct {
 	outputDB *string
 	limit    *int
 	offset   *int
+	cursor   *string
 	format   *string
 
 	decisionType      *string
@@ -79,6 +80,7 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		outputDB: fs.String("export", "", "Export results to a new database file"),
 		limit:    fs.Int("limit", 0, "Maximum number of results (0 = no limit)"),
 		offset:   fs.Int("offset", 0, "Skip this many results before the first one returned (paging, with --limit)"),
+		cursor:   fs.String("cursor", "", "Read one page of --limit results after this cursor (empty: the first page); the next page's cursor is printed with the count"),
 		format:   fs.String("format", "table", "Output format: table, json, xgid"),
 
 		// Filter flags

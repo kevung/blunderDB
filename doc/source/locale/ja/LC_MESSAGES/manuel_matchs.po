@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 11:45+0100\n"
+"POT-Creation-Date: 2026-11-13 02:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -730,7 +730,7 @@ msgstr ""
 " **読み取り専用**\\ "
 "で開きます：ナビゲーション、検索、解析は引き続き可能ですが、あらゆる変更は無効になり、タイトルバーに「[読み取り専用]」と表示されます。"
 
-#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:944
+#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:956
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "利用可能なショートカットについては :ref:`raccourcis` を参照してください。"
 
@@ -1708,6 +1708,27 @@ msgid ""
 msgstr ""
 "このコマンドは同じコピーを元のファイルの隣に書き込みます。その後、コピーを試合または書き起こしに関連付けてください。 ``.webm`` や "
 "``.mkv`` で 3 回の再読み込みの後に諦めたときも、ペインは同じコマンドを提示します。"
+
+#: ../../source/manuel_matchs.rst:944
+msgid ""
+"Sous Linux, l'application lit les vidéos par GStreamer (WebKitGTK). Avec "
+"``gst-libav`` 1.28.9, le décodeur H.264 ``avdec_h264`` fait échouer tout "
+"déplacement dans la vidéo (clic sur la barre de temps, saut à un repère) "
+": la lecture s'arrête ou ne se repositionne pas. Pour contourner le "
+"problème, lancez l'application en écartant ce décodeur ; GStreamer "
+"utilise alors un autre décodeur H.264 installé (par exemple "
+"``openh264dec``, ou un décodeur matériel) :"
+msgstr ""
+"Linux では、アプリケーションは GStreamer (WebKitGTK) を通じて動画を再生します。``gst-libav`` "
+"1.28.9 では、H.264 デコーダー ``avdec_h264`` "
+"が動画内のあらゆる移動(タイムバーのクリック、マーカーへのジャンプ)を失敗させ、再生が停止するか、位置が変わりません。回避するには、このデコーダーを除外してアプリケーションを起動します。GStreamer"
+" は、インストール済みの別の H.264 デコーダー(たとえば ``openh264dec`` やハードウェアデコーダー)を使用します:"
+
+#: ../../source/manuel_matchs.rst:954
+msgid ""
+"Revenir à ``gst-libav`` 1.28.8 convient aussi. Windows et macOS ne sont "
+"pas concernés."
+msgstr "``gst-libav`` 1.28.8 に戻すことでも回避できます。Windows と macOS は影響を受けません。"
 
 #~ msgid ""
 #~ "**La vue du plateau et la ligne"

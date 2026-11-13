@@ -29,22 +29,33 @@ type SearchStore interface {
 	// yielded is the caller's: the store never reuses or alters it.
 	Find(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) iter.Seq2[*domain.Position, error]
 
-	// Rank answers a query carrying the `like` token: the same filters as
-	// Find, but ORDERED by how far each survivor stands from the query's
-	// target, nearest first, with that distance attached (ADR-0043).
+	// Rank answers a query carrying the `like` token: the survivors of the
+	// same filters as Find that stand within LikeMaxDistance plays of the
+	// query's target, nearest first, with that distance attached (ADR-0112).
+	// Nothing farther is ever returned; an order beyond reach.MaxOrder is
+	// refused with ErrInvalid.
 	//
 	// A separate entry point because the distance is part of the answer, and
 	// domain.Position has no business carrying it.
 	//
-	// The set it ranks is the filters INTERSECTED with the target's
-	// equivalence class (ClassOf). opts bounds the RANKING, not the scan:
-	// every candidate must be seen before any is called nearest (ADR-0043).
+	// opts bounds the RANKING, not the scan: every candidate must be seen
+	// before any is called nearest.
 	Rank(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) ([]SimilarPosition, error)
 
 	// FindIDs is Find answering ids only, in the same order and window: a
 	// projection on the id when no Go-only filter is left, so a list of
 	// results is browsed without reconstructing any position.
 	FindIDs(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) ([]int64, error)
+
+	// FindPage is Find read by cursor: up to opts.Limit positions after
+	// opts.Cursor (the start when empty), and the cursor of the page that
+	// follows ("" after the last). A page costs its own rows whatever its
+	// depth, where an offset costs every row before it. Rows saved between
+	// two pages neither repeat nor hide a row already ordered before them.
+	FindPage(ctx context.Context, scope string, f domain.SearchFilters, opts PageOpts) (positions []domain.Position, nextCursor string, err error)
+
+	// FindIDsPage is FindPage answering ids only, with the same cursors.
+	FindIDsPage(ctx context.Context, scope string, f domain.SearchFilters, opts PageOpts) (ids []int64, nextCursor string, err error)
 
 	// Count is the length of Find's unbounded result.
 	Count(ctx context.Context, scope string, f domain.SearchFilters) (int, error)
@@ -57,6 +68,18 @@ type SearchStore interface {
 	// IndexOf is the rank of id in Find's unbounded result; found is false
 	// when the search does not find it.
 	IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (index int, found bool, err error)
+}
+
+// PageOpts bounds a page read by cursor. Limit is required. Cursor is opaque but
+// not secret: it carries a fingerprint of the search (scope, filters, sort) that
+// issued it, so a cursor replayed on another search is ErrInvalid, as is an anchor
+// rewritten out of its shape or its type. It protects nothing: tenant isolation
+// comes from the tenant filter of every statement, not from the cursor. Offset, for a client still counting rows, cuts the
+// first page only: an offset with a cursor is ErrInvalid.
+type PageOpts struct {
+	Limit  int
+	Offset int
+	Cursor string
 }
 
 // SearchHistoryStore persists the log of executed searches.

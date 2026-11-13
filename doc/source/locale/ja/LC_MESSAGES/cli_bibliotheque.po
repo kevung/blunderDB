@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 12:06+0100\n"
+"POT-Creation-Date: 2026-11-13 01:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1063,11 +1063,11 @@ msgid ""
 "son analyse, ses commentaires, les matchs où la position a été jouée "
 "(joueurs, longueur, date, coup joué et son coût), et ses positions les "
 "plus proches (même classement que le jeton ``like`` de la recherche, en "
-"pips de pions déplacés)."
+"jets)."
 msgstr ""
 "同じコマンドに渡された他のデータベースファイルから、Zobrist "
 "ハッシュで局面を検索し、それぞれについて分かっていることを返します。解析、コメント、その局面がプレイされたマッチ（プレイヤー、長さ、日付、指された手とそのコスト）、そして最も近い局面（検索の\\"
-" ``like``\\ トークンと同じ順位付けで、動かしたチェッカーのピップ数）です。"
+" ``like``\\ トークンと同じ順位付けで、手数）です。"
 
 #: ../../source/cli_bibliotheque.rst:608
 msgid ""
@@ -1153,9 +1153,11 @@ msgstr "``--neighbours N`` — データベースごとの近傍局面の数（�
 
 #: ../../source/cli_bibliotheque.rst:645
 msgid ""
-"``--max-distance D`` — Écarte les voisines à plus de D pips de pions "
-"déplacés (0 : sans plafond)."
-msgstr "``--max-distance D`` — 動かしたチェッカーのピップ数が D を超えて離れた近傍局面を除外します（0: 上限なし）。"
+"``--max-distance D`` — Écarte les voisines à plus de D jets (0 : deux "
+"jets, le plus servi ; au-delà, refusé)."
+msgstr ""
+"``--max-distance D`` — D 手を超えて離れた近傍局面を除外します（0: 2 "
+"手まで。これが提供される最大で、それを超えると拒否されます）。"
 
 #: ../../source/cli_bibliotheque.rst:647
 msgid "``--format`` — ``text`` (défaut) ou ``json``."

@@ -373,9 +373,8 @@ type Position struct {
 // IsMoney reports whether the position is played for money rather than at a
 // match score: both away scores sit at the -1 sentinel CONTEXT.md describes.
 //
-// This is the one spelling of the question: gammonnet.IsMoneyPosition and the
-// similarity equivalence class (ADR-0043) delegate to it, so a malformed score
-// cannot get two answers.
+// This is the one spelling of the question: gammonnet.IsMoneyPosition
+// delegates to it, so a malformed score cannot get two answers.
 func (p *Position) IsMoney() bool {
 	return p.Score[0] < 0 && p.Score[1] < 0
 }
@@ -455,12 +454,12 @@ type SearchFilters struct {
 	EncounterFilter string `json:"encounterFilter"`
 
 	// LikeFilter marks the query as RANKED instead of merely filtered: the
-	// positions come back nearest first, by the transport distance in
-	// checker-pips that engine.SimilarityDistance defines (ADR-0043).
+	// positions within a few plays of the target come back nearest first, the
+	// distance being the fewest legal rolls, played by alternating sides, that
+	// turn one checker structure into the other (engine/reach, ADR-0112).
 	//
 	// It is the one token that orders rather than narrows, so it composes with
-	// the others (`like42 E>80`). The storage layer restricts the ranked set to
-	// the target's equivalence class; see storage.ClassOf.
+	// the others (`like42 E>80`).
 	LikeFilter bool `json:"likeFilter"`
 
 	// LikeTargetID is the position the ranking is taken against — the `42` of
@@ -475,13 +474,10 @@ type SearchFilters struct {
 	// not a pattern: a point left empty means checkers borne off.
 	LikeTargetBoard Position `json:"likeTargetBoard"`
 
-	// LikeMaxDistance drops neighbours beyond this many checker-pips (0 = no
-	// ceiling). A ranking whose ceiling nothing passes comes back EMPTY.
+	// LikeMaxDistance is the most plays a neighbour may stand from the target
+	// (0 = reach.DefaultOrder). Nothing farther is ever returned, so a ranking
+	// can come back EMPTY; an order beyond reach.MaxOrder is refused.
 	LikeMaxDistance int `json:"likeMaxDistance"`
-
-	// LikeWidened drops the class down to nothing but the match exclusion —
-	// the `*` form. Every kind of decision, both regimes.
-	LikeWidened bool `json:"likeWidened"`
 
 	Player1AbsolutePipCountFilter string `json:"player1AbsolutePipCountFilter"`
 	EquityFilter                  string `json:"equityFilter"`

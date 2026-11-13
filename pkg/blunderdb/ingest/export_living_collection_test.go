@@ -190,3 +190,84 @@ func TestCarriedLivingQueryRenumbersALikeTarget(t *testing.T) {
 		t.Errorf("a query naming no row travels as written, got %q", got)
 	}
 }
+
+// A living query the source refuses to evaluate (`like` outside a ranked
+// search) leaves frozen by export and by transfer alike: one rule, so that a
+// collection never arrives living through one path and frozen through the
+// other.
+func TestExportAndTransferFreezeALivingQueryTheSourceRefuses(t *testing.T) {
+	ctx := context.Background()
+	srcPath := filepath.Join(t.TempDir(), "club.db")
+	src, err := sqlite.Open(ctx, srcPath, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := domain.InitializePosition()
+	p.Dice = [2]int{3, 1}
+	pid, err := src.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cid, err := src.Collections().Create(ctx, "", "Proches", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Written below the validation, as a collection stored before the
+	// refusal would be.
+	if err := src.Collections().SetFilterQuery(ctx, "", cid, fmt.Sprintf("like%d", pid)); err != nil {
+		t.Fatal(err)
+	}
+	if !livingRefused(cid, fmt.Sprintf("like%d", pid)) {
+		t.Fatal("the source must refuse a like query outside a ranked search")
+	}
+
+	frozenIn := func(t *testing.T, st storage.Storage) {
+		t.Helper()
+		var got []storage.Collection
+		for c, err := range st.Collections().List(ctx, "") {
+			if err != nil {
+				t.Fatal(err)
+			}
+			got = append(got, *c)
+		}
+		if len(got) != 1 || got[0].Name != "Proches" {
+			t.Fatalf("collections = %+v, want only Proches", got)
+		}
+		if got[0].FilterQuery != "" {
+			t.Errorf("arrived living with %q, want frozen", got[0].FilterQuery)
+		}
+		for m, err := range st.Collections().Members(ctx, "", got[0].ID) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Errorf("frozen collection holds %d, want nothing", m.PositionID)
+		}
+	}
+
+	t.Run("export", func(t *testing.T) {
+		path := filepath.Join(t.TempDir(), "export.db")
+		sel := Selection{CollectionIDs: []int64{cid}, CollectionPositions: true}
+		if _, err := ExportSQLite(ctx, src, "", path, ExportOptions{Selection: sel}); err != nil {
+			t.Fatal(err)
+		}
+		dst, err := sqlite.Open(ctx, path, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer dst.Close()
+		frozenIn(t, dst)
+	})
+	src.Close()
+
+	t.Run("transfer", func(t *testing.T) {
+		target := openMemTarget(t)
+		sum, err := DBImporter{S: target}.Import(ctx, "", Source{Path: srcPath}, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		frozenIn(t, target)
+		if len(sum.LivingCollectionsFrozen) != 1 {
+			t.Errorf("livingCollectionsFrozen = %v, want [Proches]", sum.LivingCollectionsFrozen)
+		}
+	})
+}

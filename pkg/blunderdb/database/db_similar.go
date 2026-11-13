@@ -7,7 +7,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// « Des positions comme celle-ci » (ADR-0043), côté base.
+// « Des positions comme celle-ci » (ADR-0112), côté base.
 
 // SimilarPositionsLimit is how many neighbours a ranking returns when the
 // query names no number of its own.
@@ -29,8 +29,8 @@ func (d *Database) RankPositionsByFilters(f domain.SearchFilters, limit int) ([]
 	return d.store.Search().Rank(context.Background(), "", f, storage.ListOpts{Limit: limit})
 }
 
-// SimilarPositions is the ranking with no other filter: the neighbours of one
-// position, in its class, nearest first.
+// SimilarPositions is the ranking with no other filter: the positions within
+// reach.DefaultOrder plays of one position, nearest first.
 func (d *Database) SimilarPositions(positionID int, limit int) ([]storage.SimilarPosition, error) {
 	return d.RankPositionsByFilters(domain.SearchFilters{
 		LikeFilter:   true,

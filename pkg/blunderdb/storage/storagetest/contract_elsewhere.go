@@ -75,8 +75,16 @@ func RunElsewhereTests(t *testing.T, factory func() storage.Storage) {
 		if len(c.Plays) != 1 || c.Plays[0].Player1 != "Alice" || c.Plays[0].Verdict != storage.VerdictBlunder {
 			t.Errorf("club plays = %+v, want one play by Alice judged a blunder here", c.Plays)
 		}
-		if len(c.Neighbours) == 0 || c.Neighbours[0].Zobrist != storage.ZobristOf(&near) {
-			t.Errorf("club neighbours = %+v, want the near board first", c.Neighbours)
+		// The club's match holds the same checkers as other decisions, at
+		// distance 0: the board one play away comes after them.
+		nearFound := false
+		for _, n := range c.Neighbours {
+			if n.Zobrist == storage.ZobristOf(&near) && n.Distance == 1 {
+				nearFound = true
+			}
+		}
+		if !nearFound {
+			t.Errorf("club neighbours = %+v, want the board one play away", c.Neighbours)
 		}
 		for _, n := range c.Neighbours {
 			if n.Zobrist == storage.ZobristOf(&asked) {
@@ -258,20 +266,14 @@ func testElsewhereObject(t *testing.T, here, club, empty storage.Storage) {
 	}
 }
 
-// neighbourOf moves one checker of the side on roll one point down onto an
-// empty point: a board a few checker-pips away, of the same kind.
+// neighbourOf plays the first legal play of p's roll: a board one play away.
 func neighbourOf(t *testing.T, p domain.Position) domain.Position {
 	t.Helper()
-	n := p
-	n.ID = 0
-	pts := &n.Board.Points
-	for i := 2; i < len(pts)-1; i++ {
-		if pts[i].Color == n.PlayerOnRoll && pts[i].Checkers >= 2 && pts[i-1].Checkers == 0 {
-			pts[i].Checkers--
-			pts[i-1] = domain.Point{Checkers: 1, Color: n.PlayerOnRoll}
-			return n
-		}
+	plays := domain.LegalMoves(&p)
+	if len(plays) == 0 {
+		t.Fatal("neighbourOf: no legal play")
 	}
-	t.Fatal("neighbourOf: no checker to move")
+	n := plays[0].Result
+	n.ID = 0
 	return n
 }

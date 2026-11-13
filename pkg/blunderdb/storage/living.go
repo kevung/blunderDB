@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -36,14 +37,16 @@ type CollectionEvaluation struct {
 // is an ErrInvalid: the request, not the store, is at fault.
 var ErrUnreadableFilter = fmt.Errorf("%w: filter query carries tokens nothing claims", ErrInvalid)
 
-// ValidateFilterQuery refuses a query the parser cannot read whole. A blank
-// query is valid: it turns a collection back into a hand-made list.
+// ValidateFilterQuery refuses a query the parser cannot read whole, one
+// carrying a refused form, and one carrying `like`, which only a ranked search
+// serves. A blank query is valid: it turns a collection back into a hand-made
+// list.
 func ValidateFilterQuery(query string) error {
 	query = strings.TrimSpace(query)
 	if query == "" {
 		return nil
 	}
-	_, diags := searchquery.Parse(query)
+	filters, diags := searchquery.Parse(query)
 	var unknown []string
 	for _, d := range diags {
 		if d.Kind == searchquery.DiagUnknown {
@@ -53,8 +56,18 @@ func ValidateFilterQuery(query string) error {
 	if len(unknown) > 0 {
 		return fmt.Errorf("%w: %s", ErrUnreadableFilter, strings.Join(unknown, ", "))
 	}
+	if err := searchquery.Refusal(diags); err != nil {
+		return fmt.Errorf("%w: %w", ErrInvalid, err)
+	}
+	if filters.LikeFilter {
+		return ErrLikeUnranked
+	}
 	return nil
 }
+
+// ErrLikeUnranked is searchquery.ErrLikeUnranked as the storage reports it:
+// the request, not the store, is at fault.
+var ErrLikeUnranked = fmt.Errorf("%w: %w", ErrInvalid, searchquery.ErrLikeUnranked)
 
 // SetCollectionFilter makes a collection living after checking its query, so
 // every mode refuses the same queries.
@@ -94,8 +107,18 @@ func LivingFilters(ctx context.Context, st Stores, scope string, collectionID in
 		return domain.SearchFilters{}, "", false, err
 	}
 	query = strings.TrimSpace(col.FilterQuery)
-	filters, living, err = searchquery.Living(collectionID, query)
+	filters, living, err = ParseLiving(collectionID, query)
 	return filters, query, living, err
+}
+
+// ParseLiving is searchquery.Living with a refused query reported as
+// ErrInvalid, so every mode answers a refused collection the same way.
+func ParseLiving(collectionID int64, query string) (domain.SearchFilters, bool, error) {
+	filters, living, err := searchquery.Living(collectionID, query)
+	if errors.Is(err, searchquery.ErrRefused) {
+		err = fmt.Errorf("%w: %w", ErrInvalid, err)
+	}
+	return filters, living, err
 }
 
 // clampCap bounds a requested limit by the declared ceiling; zero or less asks

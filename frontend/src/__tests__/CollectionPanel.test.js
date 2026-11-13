@@ -24,6 +24,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     CountCollectionPositions: vi.fn().mockResolvedValue(0),
     ListCollectionPositionIDs: vi.fn().mockResolvedValue([]),
     LoadPositionsByIDs: vi.fn((ids) => Promise.resolve(ids.map((id) => ({ id })))),
+    SetCollectionFilter: vi.fn().mockResolvedValue(undefined),
+    FreezeCollection: vi.fn().mockResolvedValue(0),
     ReorderCollectionPositions: vi.fn().mockResolvedValue(undefined),
     ReorderCollections: vi.fn().mockResolvedValue(undefined),
     UpdateCollection: vi.fn().mockResolvedValue(undefined),
@@ -41,9 +43,11 @@ import {
     AddPositionToCollection,
     RemovePositionFromCollection,
     CountCollectionPositions,
+    SetCollectionFilter,
     ListCollectionPositionIDs,
     UpdateCollection,
-    IndexOfPosition
+    IndexOfPosition,
+    FreezeCollection
 } from '../../wailsjs/go/database/Database.js';
 import { confirmAction } from '../services/confirmService.js';
 import { HoldLibrary } from '../stores/libraryHold.js';
@@ -311,6 +315,48 @@ describe('CollectionPanel — detail view', () => {
 
         expect(get(positionStore)).toEqual({ id: 202 });
         expect(get(currentPositionIndexStore)).toBe(1);
+    });
+});
+
+describe('CollectionPanel — a living query the search refuses', () => {
+    const LIVING = aCollection({ id: 3, name: 'Near', positionCount: 0, filterQuery: 'like 2' });
+
+    test('opens empty, says why, and lets the query be taken off', async () => {
+        vi.mocked(GetAllCollections).mockResolvedValue([...SAMPLE_COLLECTIONS, LIVING]);
+        vi.mocked(CountCollectionPositions).mockRejectedValueOnce(new Error('storage: invalid argument: like needs a ranked search'));
+        render(CollectionPanel, { props: {} });
+        const row = (await screen.findByText('Near')).closest('tr');
+
+        await fireEvent.dblClick(must(row));
+        await vi.waitFor(() => expect(get(activeCollectionStore)).toMatchObject({ id: 3 }));
+
+        expect(get(collectionPositionsStore)).toEqual([]);
+        expect(document.querySelectorAll('tbody tr')).toHaveLength(0);
+        expect(get(statusBarTextStore)).toEqual(tMsg('collection.livingUnreadable', { reason: 'like needs a ranked search' }));
+
+        serve([]);
+        await fireEvent.click(screen.getByText('◈'));
+
+        await vi.waitFor(() => expect(SetCollectionFilter).toHaveBeenCalledWith(3, ''));
+        await vi.waitFor(() => expect(get(activeCollectionStore)).toMatchObject({ id: 3, filterQuery: '' }));
+    });
+
+    test('freezing it is refused aloud, in the user’s language', async () => {
+        const unranked = 'storage: invalid argument: refused query: like-unranked: `like` is served only by a ranked search';
+        vi.mocked(GetAllCollections).mockResolvedValue([...SAMPLE_COLLECTIONS, LIVING]);
+        // A queued answer left by an earlier test would open the collection as an empty list.
+        vi.mocked(CountCollectionPositions).mockReset().mockResolvedValue(0).mockRejectedValueOnce(new Error(unranked));
+        vi.mocked(FreezeCollection).mockRejectedValueOnce(new Error(unranked));
+        render(CollectionPanel, { props: {} });
+        const row = (await screen.findByText('Near')).closest('tr');
+        await fireEvent.dblClick(must(row));
+        await vi.waitFor(() => expect(get(activeCollectionStore)).toMatchObject({ id: 3 }));
+
+        await fireEvent.click(screen.getByText('❄'));
+
+        const reason = tMsg('similar.unrankedRefused');
+        await vi.waitFor(() => expect(get(statusBarTextStore)).toEqual(tMsg('collection.freezeRefused', { reason })));
+        expect(get(activeCollectionStore)).toMatchObject({ id: 3, filterQuery: 'like 2' });
     });
 });
 

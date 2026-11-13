@@ -1038,15 +1038,31 @@ func (s *matchStore) createMovesChunk(ctx context.Context, tenant int64, mvs []*
 	}
 	defer res.Close()
 	ids := make([]int64, 0, len(mvs))
+	type undated struct {
+		position int64
+		date     time.Time
+	}
+	var skipped []undated
 	for res.Next() {
-		var id int64
-		if err := res.Scan(&id); err != nil {
+		var id, position *int64
+		var date *time.Time
+		if err := res.Scan(&id, &position, &date); err != nil {
 			return fmt.Errorf("postgres: create move: %w", err)
 		}
-		ids = append(ids, id)
+		if id != nil {
+			ids = append(ids, *id)
+		} else if position != nil && date != nil {
+			skipped = append(skipped, undated{*position, *date})
+		}
 	}
 	if err := res.Err(); err != nil {
 		return fmt.Errorf("postgres: create move: %w", referenced(err))
+	}
+	res.Close()
+	for _, u := range skipped {
+		if _, err := s.db.Exec(ctx, positionDateByKeySQL, tenant, u.position, u.date); err != nil {
+			return fmt.Errorf("postgres: create move: date position %d: %w", u.position, err)
+		}
 	}
 	if len(ids) != len(mvs) {
 		return fmt.Errorf("postgres: create move: %d ids for %d moves", len(ids), len(mvs))
@@ -1056,7 +1072,6 @@ func (s *matchStore) createMovesChunk(ctx context.Context, tenant int64, mvs []*
 	for i, mv := range mvs {
 		mv.ID = ids[i]
 	}
-	res.Close()
 	return analyzeFirstOfTenant(ctx, s.db, "move", "id", tenant, ids[0])
 }
 
@@ -1067,22 +1082,25 @@ func (s *matchStore) playedDecisionBases(ctx context.Context, tenant int64, posi
 	if len(positionIDs) == 0 {
 		return bases, nil
 	}
-	rows, err := s.db.Query(ctx, playedDecisionBasesSQL, positionIDs, tenant)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var id int64
-		basis, err := sqlshared.ScanPlayedDecisionBasis(func(dest ...any) error {
-			return rows.Scan(append([]any{&id}, dest...)...)
-		})
+	err := withPinnedPlan(ctx, s.db, func() error {
+		rows, err := s.db.Query(ctx, playedDecisionBasesSQL, positionIDs, tenant)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		bases[id] = basis
-	}
-	return bases, rows.Err()
+		defer rows.Close()
+		for rows.Next() {
+			var id int64
+			basis, err := sqlshared.ScanPlayedDecisionBasis(func(dest ...any) error {
+				return rows.Scan(append([]any{&id}, dest...)...)
+			})
+			if err != nil {
+				return err
+			}
+			bases[id] = basis
+		}
+		return rows.Err()
+	})
+	return bases, err
 }
 
 var playedDecisionBasesSQL = strings.NewReplacer("SELECT ", "SELECT p.id, ",
@@ -1100,18 +1118,46 @@ var moveBulkTypes = []string{
 // moveBulkInsertSQL is moveInsertDatingSQL for a set of moves: a position takes
 // the earliest date among the matches its new moves belong to, the date those
 // moves written one by one would have lowered it to.
+//
+// Each table is reached by its key from a value already in hand, never through
+// a join the planner may turn around: in a tenant it has no statistics for, it
+// would start from the tenant (one row, it believes) and read all of it once
+// per chunk. Neither a scalar subquery nor a lateral one behind OFFSET 0 is
+// flattened into the join, and the position updated is then the one found,
+// by its ctid: joined by its key instead, the update starts from the tenant.
+//
+// A ctid names one version of the row. When another import dates the position
+// after this statement's snapshot, Postgres rechecks the update on the newer
+// version, whose ctid differs, and skips it. The statement therefore returns,
+// after the ids of the moves (position NULL), each position it meant to date
+// and did not; createMovesChunk dates those by key.
 var moveBulkInsertSQL = `WITH ins AS (` + insertHead(moveInsertSQL) + " " + unnestSelect(moveBulkTypes) + ` RETURNING id, tenant_id, game_id, position_id),
+	game_date AS (
+	SELECT s.tenant_id, s.game_id,
+	       (SELECT m.match_date FROM match m
+	         WHERE m.tenant_id = s.tenant_id
+	           AND m.id = (SELECT g.match_id FROM game g WHERE g.tenant_id = s.tenant_id AND g.id = s.game_id)) AS md
+	  FROM (SELECT DISTINCT tenant_id, game_id FROM ins) s),
+	d AS (
+	SELECT i.tenant_id, i.position_id, MIN(gd.md) AS md
+	  FROM ins i JOIN game_date gd ON gd.game_id = i.game_id AND gd.tenant_id = i.tenant_id
+	 WHERE i.position_id IS NOT NULL
+	 GROUP BY i.tenant_id, i.position_id),
+	later AS (
+	SELECT p.pctid, d.position_id, d.md
+	  FROM d, LATERAL (SELECT p.ctid AS pctid, p.match_date FROM position p
+	                    WHERE p.tenant_id = d.tenant_id AND p.id = d.position_id OFFSET 0) p
+	 WHERE d.md IS NOT NULL AND (p.match_date IS NULL OR p.match_date > d.md)),
 	dated AS (
-	UPDATE position SET match_date = d.md
-	FROM (SELECT i.tenant_id, i.position_id, MIN(m.match_date) AS md
-	        FROM ins i
-	        JOIN game g ON g.id = i.game_id AND g.tenant_id = i.tenant_id
-	        JOIN match m ON m.id = g.match_id AND m.tenant_id = g.tenant_id
-	       WHERE i.position_id IS NOT NULL
-	       GROUP BY i.tenant_id, i.position_id) AS d
-	WHERE position.id = d.position_id AND position.tenant_id = d.tenant_id AND d.md IS NOT NULL
-	  AND (position.match_date IS NULL OR position.match_date > d.md))
-	SELECT id FROM ins`
+	UPDATE position SET match_date = later.md FROM later WHERE position.ctid = later.pctid RETURNING position.id)
+	SELECT id, NULL, NULL FROM ins
+	UNION ALL
+	SELECT NULL, l.position_id, l.md FROM later l WHERE NOT EXISTS (SELECT 1 FROM dated WHERE dated.id = l.position_id)`
+
+// positionDateByKeySQL lowers one position's date by its key, the condition
+// rechecked on whatever version of the row is current.
+const positionDateByKeySQL = `UPDATE position SET match_date = $3
+	WHERE tenant_id = $1 AND id = $2 AND (match_date IS NULL OR match_date > $3)`
 
 // moveInsertDatingSQL is moveInsertSQL plus, in the same statement, the
 // lowering of position.match_date to the date of the match the new move ties
@@ -1509,4 +1555,18 @@ func (s *matchStore) DiceSequences(ctx context.Context, scope string) iter.Seq2[
 // RescorePositionMoves — see storage.MatchStore.
 func (s *matchStore) RescorePositionMoves(ctx context.Context, scope string, positionID int64) error {
 	return sqlshared.RescorePositionMoves(ctx, binder{s.db}.shared(), scope, positionID)
+}
+
+// withPinnedPlan runs fn under the settings of PinJoinOrder, a generic plan
+// among them: planned for the values of a tenant it has no statistics for, a
+// read by key may start from the tenant and read all of it per key.
+func withPinnedPlan(ctx context.Context, db execer, fn func() error) error {
+	unpin, err := shared{db}.PinJoinOrder(ctx)
+	if err != nil {
+		return err
+	}
+	if err := fn(); err != nil {
+		return err
+	}
+	return unpin()
 }

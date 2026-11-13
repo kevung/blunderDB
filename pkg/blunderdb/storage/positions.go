@@ -126,64 +126,17 @@ type PositionStore interface {
 }
 
 // Finding "positions like this one" is NOT here, and that is deliberate: it is
-// SearchStore.Rank. Ranking by similarity is a search that happens to be
-// ordered, so it shares the filters, the Go-side predicates and the paging of
-// every other search rather than owning a second scan of the position table
-// with its own half of the grammar (ADR-0043).
+// SearchStore.Rank. Ranking by distance in plays is a search that happens to
+// be ordered, so it shares the filters, the Go-side predicates and the paging
+// of every other search rather than owning a second scan of the position
+// table with its own half of the grammar (ADR-0112).
 
-// SimilarPosition is one neighbour and how far it stands, in checker-pips: the
-// amount of checker movement separating it from the position asked about.
+// SimilarPosition is one neighbour and how far it stands, in plays: the
+// fewest legal rolls, played by alternating sides, separating its checkers
+// from the target's (engine/reach).
 type SimilarPosition struct {
 	Position domain.Position `json:"position"`
 	Distance int             `json:"distance"`
-}
-
-// SimilarOptions is the SET a similarity ranking is taken over: the target's
-// equivalence class (ADR-0043). How much of it comes back is the query's
-// business, not the class's — see domain.SearchFilters.LikeMaxDistance and
-// ListOpts.
-//
-// Ranking the whole library would return the same board's other decision and
-// the neighbouring plies of the same match; "like this one" asks for the same
-// problem met elsewhere.
-//
-// Dice, score and cube value are deliberately absent: the ordinary search
-// filters narrow on them. Nothing is folded into the distance, which stays in
-// checker-pips.
-type SimilarOptions struct {
-	// DecisionType, when set, keeps only neighbours of that kind — a cube
-	// decision and the checker play on the same board are two problems, and
-	// they are two rows one pip-pip apart.
-	DecisionType *int
-
-	// Money, when set, keeps only money positions (true) or only positions at
-	// a match score (false). The regime is part of the class for a CUBE
-	// decision, where it changes what the position asks, and not for a checker
-	// play, where the same plan of play recurs at every score.
-	Money *bool
-}
-
-// The third rule of the class — "another match" — is not in SimilarOptions on
-// purpose. It is never a caller's choice: the plies around the target are its
-// closest structures in every match that played through it, and the ranking
-// reads them off the target itself. A drawn board or a position imported on
-// its own belongs to no match, and then nothing is excluded.
-
-// ClassOf returns the equivalence class of target: same kind of decision, and
-// for a cube decision the same regime (ADR-0043 rule 1). It carries neither
-// the limit nor the match exclusion, which are the caller's to add — the class
-// is a property of the position, the other two are properties of the question.
-func ClassOf(target *domain.Position) SimilarOptions {
-	if target == nil {
-		return SimilarOptions{}
-	}
-	kind := target.DecisionType
-	opts := SimilarOptions{DecisionType: &kind}
-	if kind == domain.CubeAction {
-		money := target.IsMoney()
-		opts.Money = &money
-	}
-	return opts
 }
 
 // SaveEach is SaveMany as a loop of SaveCreated, for a backend for which one

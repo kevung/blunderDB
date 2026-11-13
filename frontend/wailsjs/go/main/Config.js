@@ -82,6 +82,10 @@ export function GetLikeMaxDistance() {
   return window['go']['main']['Config']['GetLikeMaxDistance']();
 }
 
+export function GetLikeMaxOrder() {
+  return window['go']['main']['Config']['GetLikeMaxOrder']();
+}
+
 export function GetMCPHost() {
   return window['go']['main']['Config']['GetMCPHost']();
 }

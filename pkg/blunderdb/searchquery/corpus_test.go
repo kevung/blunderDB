@@ -34,7 +34,8 @@ func TestMain(m *testing.M) {
 // The two names differ where the frontend's own field name differs from the
 // backend's (mirrorPositionFilter/MirrorFilter), and `excludeStructure` maps to
 // no field at all — it is the `x` token, which this grammar reports as a
-// no-effect diagnostic rather than a filter (see the package doc).
+// no-effect diagnostic rather than a filter (see the package doc); nor does
+// `likeRefused`, a starred `like` reported as a refused diagnostic.
 var corpusField = map[string]string{
 	"includeCube":                   "IncludeCube",
 	"includeScore":                  "IncludeScore",
@@ -72,7 +73,6 @@ var corpusField = map[string]string{
 	"likeFilter":                    "LikeFilter",
 	"likeTargetId":                  "LikeTargetID",
 	"likeMaxDistance":               "LikeMaxDistance",
-	"likeWidened":                   "LikeWidened",
 	"dateFilter":                    "DateFilter",
 	"movePatternFilter":             "MovePatternFilter",
 	"searchText":                    "SearchText",
@@ -134,6 +134,10 @@ func TestParseMatchesSharedCorpus(t *testing.T) {
 					assertExcludeStructure(t, tc.Command, want)
 					continue
 				}
+				if key == "likeRefused" {
+					assertLikeRefused(t, tc.Command, want)
+					continue
+				}
 				field, ok := corpusField[key]
 				if !ok {
 					t.Fatalf("corpus key %q has no Go field mapping: add it to corpusField, or explain in the package doc why the Go grammar cannot express it", key)
@@ -163,6 +167,19 @@ func assertExcludeStructure(t *testing.T, command string, want any) {
 		}
 	}
 	t.Errorf("`x` in %q produced no no-effect diagnostic; diagnostics were %v", command, diags)
+}
+
+// assertLikeRefused checks a starred `like`, which sets no filter: Parse
+// claims it and reports it as refused, so no reader runs the query without it.
+func assertLikeRefused(t *testing.T, command string, want any) {
+	t.Helper()
+	_, diags := Parse(command)
+	for _, d := range diags {
+		if d.Token == want && d.Kind == DiagRefused {
+			return
+		}
+	}
+	t.Errorf("%q in %q produced no refused diagnostic; diagnostics were %v", want, command, diags)
 }
 
 func assertField(t *testing.T, key string, fv reflect.Value, want any) {

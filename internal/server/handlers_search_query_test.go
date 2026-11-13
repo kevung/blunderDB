@@ -130,6 +130,31 @@ func TestSearchQueryStreamsAndRefusesUnreadableQueries(t *testing.T) {
 		t.Errorf("error message %q does not name the offending token", env.Error.Message)
 	}
 
+	// `like` is served by a ranking alone, and a starred `like` not at all:
+	// search.query, search.ids and search.count refuse both rather than run
+	// the query without them over the whole library.
+	for _, query := range []string{"s like", "s like1<1", "s like*", "s like1<12* nc"} {
+		r := post(t, ts, "/v1/search.query", searchQueryReq{Query: query})
+		if r.StatusCode != http.StatusBadRequest {
+			t.Errorf("search.query(%q) status = %d, want 400", query, r.StatusCode)
+		}
+		r.Body.Close()
+	}
+	for _, route := range []string{"/v1/search.ids", "/v1/search.count"} {
+		r := post(t, ts, route, searchFindReq{Filters: domain.SearchFilters{LikeFilter: true, LikeTargetID: 1}})
+		if r.StatusCode != http.StatusBadRequest {
+			t.Errorf("%s with `like` status = %d, want 400", route, r.StatusCode)
+		}
+		r.Body.Close()
+	}
+	for _, route := range []string{"/v1/search.page", "/v1/search.idsPage"} {
+		r := post(t, ts, route, searchPageReq{Filters: domain.SearchFilters{LikeFilter: true, LikeTargetID: 1}, Limit: 3})
+		if r.StatusCode != http.StatusBadRequest {
+			t.Errorf("%s with `like` status = %d, want 400", route, r.StatusCode)
+		}
+		r.Body.Close()
+	}
+
 	// A no-effect token still runs the search, and says so in a header rather
 	// than corrupting the NDJSON body.
 	withX := post(t, ts, "/v1/search.query", searchQueryReq{Query: "s x"})

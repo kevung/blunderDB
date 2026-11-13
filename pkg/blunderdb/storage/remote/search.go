@@ -57,3 +57,28 @@ func (s searchStore) IndexOf(ctx context.Context, scope string, f domain.SearchF
 	}
 	return i, true, nil
 }
+
+type searchPageReq struct {
+	Filters domain.SearchFilters `json:"filters"`
+	Limit   int                  `json:"limit"`
+	Offset  int                  `json:"offset,omitempty"`
+	Cursor  string               `json:"cursor,omitempty"`
+}
+
+func (s searchStore) FindPage(ctx context.Context, scope string, f domain.SearchFilters, opts storage.PageOpts) ([]domain.Position, string, error) {
+	var out struct {
+		Positions  []domain.Position `json:"positions"`
+		NextCursor string            `json:"nextCursor"`
+	}
+	err := s.c.call(ctx, scope, "search.page", searchPageReq{f, opts.Limit, opts.Offset, opts.Cursor}, &out)
+	return out.Positions, out.NextCursor, err
+}
+
+func (s searchStore) FindIDsPage(ctx context.Context, scope string, f domain.SearchFilters, opts storage.PageOpts) ([]int64, string, error) {
+	var out struct {
+		IDs        []int64 `json:"ids"`
+		NextCursor string  `json:"nextCursor"`
+	}
+	err := s.c.call(ctx, scope, "search.idsPage", searchPageReq{f, opts.Limit, opts.Offset, opts.Cursor}, &out)
+	return out.IDs, out.NextCursor, err
+}

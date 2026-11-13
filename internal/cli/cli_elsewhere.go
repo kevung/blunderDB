@@ -35,7 +35,7 @@ func (cli *CLI) runElsewhere(args []string) error {
 	collection := fs.Int64("collection", 0, "Instead of a board: a collection id of --db, found elsewhere by its name")
 	lesson := fs.Int64("lesson", 0, "Instead of a board: a lesson id of --db, found elsewhere by its name")
 	neighbours := fs.Int("neighbours", storage.ElsewhereDefaultNeighbours, fmt.Sprintf("Nearest boards listed per database (0: none, at most %d)", storage.ElsewhereMaxNeighbours))
-	maxDistance := fs.Int("max-distance", 0, "Leave out neighbours farther than this many checker-pips (0: no ceiling)")
+	maxDistance := fs.Int("max-distance", 0, "Leave out neighbours more than this many plays away (0: two, the most served; beyond, refused)")
 	format := fs.String("format", "text", "Output format: text or json")
 	fs.Usage = func() {
 		fmt.Fprintln(cli.stdout(), "Usage: blunderdb elsewhere --db <file> --other <file> [--other <file>...] (--position <id> | --xgid <XGID> | --zobrist <hash> | --match <id> | --tournament <id> | --collection <id> | --lesson <id>) [options]")
@@ -361,7 +361,7 @@ func (cli *CLI) printElsewhere(zobrist uint64, judge storage.Judge, files []stri
 		if len(rep.Neighbours) > 0 {
 			fmt.Fprintln(cli.stdout(), "  Nearest boards:")
 			for _, n := range rep.Neighbours {
-				fmt.Fprintf(cli.stdout(), "    position %d at %d checker-pips (%s)\n", n.Position.ID, n.Distance, domain.EncodeXGID(&n.Position))
+				fmt.Fprintf(cli.stdout(), "    position %d at %d play(s) (%s)\n", n.Position.ID, n.Distance, domain.EncodeXGID(&n.Position))
 			}
 		}
 	}

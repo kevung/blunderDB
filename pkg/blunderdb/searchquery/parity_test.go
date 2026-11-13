@@ -255,8 +255,8 @@ func TestAnonymous_IsWhatTheParserWrites(t *testing.T) {
 func TestAnonymous_RefusesWhatStaysBehind(t *testing.T) {
 	tags := map[string]bool{"#prime": true}
 	for _, q := range []string{
-		// A ranking against a stored row leaves out the matches it was met in.
-		"s like42", "s like42<12*", "s w>50 like5",
+		// A ranking against a stored row names a row of this library.
+		"s like42", "s like42<2", "s w>50 like5",
 		// A word in the place of a number.
 		"s id1Zanzibar", "s id1 id3Zanzibar", "s bZ<-11", "s wZ>50", "s BOx>1", "s eZ>0",
 		// A tag no comment that leaves bears.
@@ -266,7 +266,7 @@ func TestAnonymous_RefusesWhatStaysBehind(t *testing.T) {
 			t.Errorf("%q leaves, as %q", q, got)
 		}
 	}
-	for _, q := range []string{"s like", "s like<12*", "s id1 id3", "s b<11", "s p-5,5", "s #prime"} {
+	for _, q := range []string{"s like", "s like<1", "s id1 id3", "s b<11", "s p-5,5", "s #prime"} {
 		if _, ok := Anonymous(q, true, tags); !ok {
 			t.Errorf("%q does not leave", q)
 		}

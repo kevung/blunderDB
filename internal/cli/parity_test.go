@@ -81,6 +81,7 @@ const (
 // Sorted by route.
 var serverOnly = map[string]string{
 	"/v1/search.countUpTo": "a bound on a count for a remote reader; a library of one counts whole",
+	"/v1/search.idsPage":   "the ids of one page for a remote reader that holds no list; the CLI pages positions by search --cursor, the desktop its id list",
 	// The peer of an exchange reaches the daemon only by HTTP; the desktop and
 	// the CLI hold their own library and call package changeset directly.
 	"/v1/changeset.export":        "package changeset, shared: no Database method wraps it",
@@ -396,6 +397,7 @@ var databaseParity = map[string]parityEntry{
 	"LoadPositionsByFilters":            {CLI: "search", Server: "/v1/search.find"},
 	"LoadPositionsByFiltersCore":        {CLI: "search", Server: "/v1/search.find"},
 	"LoadPositionsByFiltersCoreCtx":     {Why: whyCtxVariant},
+	"LoadPositionsPageByFiltersCtx":     {CLI: "search --cursor", Server: "/v1/search.page"},
 	"LoadSearchHistory":                 {Server: "/v1/searchHistory.list", Why: whyGUIState},
 	"LoadSessionState":                  {Server: "/v1/session.load", Why: whyGUIState},
 	"AddDirectionNote":                  {Server: "/v1/directions.addNote", Why: whyDirectionGesture},

@@ -433,6 +433,8 @@ Search for positions in the database using filters.
 - `--db` - Path to the database file (required)
 - `--export` - Export results to a new database file
 - `--limit` - Maximum number of results (0 = no limit)
+- `--offset` - Skip this many results before the first one returned (paging, with `--limit`)
+- `--cursor` - Read one page of `--limit` results after this cursor (`--cursor ""`: the first page); the next page's cursor is printed after the count (`Next cursor:`, empty after the last page). A deep page costs what the first one does. Exclusive with `--offset`, `--error-min`, `--has-analysis`, `--export`
 - `--format` - Output format: `table`, `json`, `xgid` (default: table)
 - `--decision` - Filter by decision type: `checker`, `cube`
 - `--dice` - Filter by dice roll. Use `5,3` to match positions where both dice were rolled (any order); use `5` to match positions where a 5 appeared on either die. Implies `--decision checker` when no decision flag is set.
@@ -3396,7 +3398,7 @@ Options:
   -match int
     	Instead of a board: a match id of --db, found elsewhere by its fingerprint
   -max-distance int
-    	Leave out neighbours farther than this many checker-pips (0: no ceiling)
+    	Leave out neighbours more than this many plays away (0: two, the most served; beyond, refused)
   -neighbours int
     	Nearest boards listed per database (0: none, at most 50) (default 5)
   -other value
@@ -4711,6 +4713,8 @@ Options:
     	Filter by cube value
   -cube-response string
     	Only one kind of cube decision: double (double/no double) or takepass (take/pass)
+  -cursor string
+    	Read one page of --limit results after this cursor (empty: the first page); the next page's cursor is printed with the count
   -db string
     	Path to the database file (required)
   -decision string

@@ -40,6 +40,7 @@
 package searchquery
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"sort"
@@ -47,6 +48,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/reach"
 )
 
 // DiagKind classifies what [Parse] wants to say about a token.
@@ -62,7 +64,46 @@ const (
 	// switches on the exclusion structure, and the structure itself is a board
 	// the GUI holds, so a text query carries the switch and nothing to switch on.
 	DiagNoEffect DiagKind = "no-effect"
+	// DiagRefused marks a token that is understood and must not run: a form
+	// the grammar no longer serves. Unlike an unknown token it is never
+	// skipped, for running the query without it would answer another one.
+	DiagRefused DiagKind = "refused"
 )
+
+// ErrRefused is what a query carrying a refused form amounts to.
+var ErrRefused = errors.New("refused query")
+
+// ErrLikeUnranked refuses `like` anywhere but a ranked search: the relation
+// orders its answer by a distance, and every other reader — a count, an
+// unordered search, a living collection — would have to ignore the token and
+// select the whole library.
+//
+// Each refusal of `like` heads its text with a code (like-unranked,
+// like-starred; reach.ErrOrder's like-order) that the GUI reads to word it in
+// the user's language: the English sentence after it may change, the code not.
+var ErrLikeUnranked = fmt.Errorf("%w: like-unranked: `like` is served only by a ranked search (`s like…`); a count, an unordered search or a living collection cannot carry it", ErrRefused)
+
+// ErrLikeStarred is the refusal of a starred `like` (`like*`, `like42<1*`).
+var ErrLikeStarred = fmt.Errorf("%w: like-starred", ErrRefused)
+
+// Refusal is the error a query's diagnostics amount to, or nil: every refused
+// token, named with what it would have had to mean.
+func Refusal(diags []Diag) error {
+	var msgs []string
+	head := ErrRefused
+	for _, d := range diags {
+		if d.Kind == DiagRefused {
+			msgs = append(msgs, d.String())
+			if likeWidenedRe.MatchString(d.Token) {
+				head = ErrLikeStarred
+			}
+		}
+	}
+	if len(msgs) == 0 {
+		return nil
+	}
+	return fmt.Errorf("%w: %s", head, strings.Join(msgs, "; "))
+}
 
 // A Diag reports one token [Parse] could not turn into a filter.
 type Diag struct {
@@ -90,11 +131,15 @@ var (
 	phaseRe  = regexp.MustCompile(`^ph:[a-z]+$`)
 	originRe = regexp.MustCompile(`^co:[a-z]+$`)
 	typeRe   = regexp.MustCompile(`^gt:[a-z-]+$`)
-	// `like`, `like42`, `like<12`, `like42<12*` — the one token that RANKS.
+	// `like`, `like42`, `like<1`, `like42<2` — the one token that RANKS.
 	// Matched by shape rather than by prefix, for the reason `n` is: a prefix
 	// rule would claim any word starting with "like" and turn a typo into a
 	// silent reordering of the result.
-	likeRe = regexp.MustCompile(`^like(\d+)?(?:<(\d+))?(\*)?$`)
+	likeRe = regexp.MustCompile(`^like(\d+)?(?:<(\d+))?$`)
+	// The widened form a starred `like` once had, still written in saved
+	// searches. It is recognised so it can be refused: unknown, it would be
+	// skipped and the search would run unranked over the whole library.
+	likeWidenedRe = regexp.MustCompile(`^like(\d+)?(?:<(\d+))?\*$`)
 	// n>3, n<10, n3,5 or a bare n4 ("exactly four").
 	encounterRe = regexp.MustCompile(`^n(?:[<>]\d+|\d+(?:,\d+)?)$`)
 	// A tag names itself: `#prime`. No letter prefix, so nothing else can
@@ -194,7 +239,8 @@ func Tokenize(command string) []string {
 // typed query would not. living is false for a hand-made list (blank query).
 // A query that has become unreadable — a token removed by a later version —
 // is an error rather than the whole library: silently widening is the one
-// failure a saved filter must not have.
+// failure a saved filter must not have. So is a refused form, and `like`: a
+// collection is a set, and the relation is only served as a ranking.
 func Living(collectionID int64, query string) (filters domain.SearchFilters, living bool, err error) {
 	query = strings.TrimSpace(query)
 	if query == "" {
@@ -205,6 +251,12 @@ func Living(collectionID int64, query string) (filters domain.SearchFilters, liv
 		if diag.Kind == DiagUnknown {
 			return domain.SearchFilters{}, false, fmt.Errorf("collection %d: its filter carries a token this version does not know: %s", collectionID, diag.Token)
 		}
+	}
+	if err := Refusal(diags); err != nil {
+		return domain.SearchFilters{}, false, fmt.Errorf("collection %d: %w", collectionID, err)
+	}
+	if filters.LikeFilter {
+		return domain.SearchFilters{}, false, fmt.Errorf("collection %d: %w", collectionID, ErrLikeUnranked)
 	}
 	return filters, true, nil
 }
@@ -390,7 +442,15 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 		if m[2] != "" {
 			f.LikeMaxDistance, _ = strconv.Atoi(m[2])
 		}
-		f.LikeWidened = m[3] != ""
+	}
+	var refused []Diag
+	for _, tok := range all(func(s string) bool { return likeWidenedRe.MatchString(s) }) {
+		refused = append(refused, Diag{
+			Kind:  DiagRefused,
+			Token: tok,
+			Message: fmt.Sprintf("the starred `like` is no longer served: the neighbours are counted in plays, "+
+				"with no wider class; write `like` or `like<n>`, n at most %d", reach.MaxOrder),
+		})
 	}
 	f.EquityFilter = first(prefix("e"))
 	f.DateFilter = first(prefix("T"))
@@ -445,7 +505,7 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 		}
 	}
 
-	var diags []Diag
+	diags := refused
 	for i, tok := range tokens {
 		if claimed[i] {
 			continue
@@ -538,9 +598,6 @@ func Format(f domain.SearchFilters) string {
 		}
 		if f.LikeMaxDistance > 0 {
 			tok += "<" + strconv.Itoa(f.LikeMaxDistance)
-		}
-		if f.LikeWidened {
-			tok += "*"
 		}
 		add(tok)
 	}
@@ -650,7 +707,6 @@ var FieldTokens = map[string]string{
 	"LikeFilter":                    "like",
 	"LikeTargetID":                  "like",
 	"LikeMaxDistance":               "like<",
-	"LikeWidened":                   "like*",
 	"TagFilter":                     "#",
 	"PipCountFilter":                "p",
 	"Player1AbsolutePipCountFilter": "P",
