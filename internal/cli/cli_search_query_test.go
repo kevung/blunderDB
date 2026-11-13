@@ -5,6 +5,7 @@ package cli
 // the flags cover only some.
 
 import (
+	"os"
 	"strings"
 	"testing"
 )
@@ -103,5 +104,60 @@ func TestSearchQueryHelpNeedsNoDatabase(t *testing.T) {
 	}
 	if !params.queryHelp {
 		t.Error("queryHelp not set")
+	}
+}
+
+// --cursor pages the search by the storage's cursor: following the printed
+// cursor from the first page to the last reads the whole result once, in order.
+func TestSearchCursorWalksTheWholeResult(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("match_with_comment.xg")}); err != nil {
+		t.Fatal(err)
+	}
+	search := func(args ...string) (out, status string, err error) {
+		f, ferr := os.CreateTemp(t.TempDir(), "stderr")
+		if ferr != nil {
+			t.Fatal(ferr)
+		}
+		prev := os.Stderr
+		os.Stderr = f
+		out = captureOut(t, cli, func() {
+			err = cli.Run(append([]string{"search", "--db", dbPath, "--format", "xgid"}, args...))
+		})
+		os.Stderr = prev
+		raw, _ := os.ReadFile(f.Name())
+		_ = f.Close()
+		return out, string(raw), err
+	}
+	all, _, err := search("--limit", "0")
+	if err != nil || strings.Count(all, "\n") < 7 {
+		t.Fatalf("whole result: %d lines, %v", strings.Count(all, "\n"), err)
+	}
+	var walked strings.Builder
+	cursor := ""
+	for page := 0; ; page++ {
+		if page > 1000 {
+			t.Fatal("the cursor never ends")
+		}
+		out, status, err := search("--limit", "3", "--cursor", cursor)
+		if err != nil {
+			t.Fatal(err)
+		}
+		walked.WriteString(out)
+		_, after, ok := strings.Cut(status, "Next cursor: ")
+		if !ok {
+			t.Fatalf("no cursor printed: %q", status)
+		}
+		if cursor, _, _ = strings.Cut(after, "\n"); cursor == "" {
+			break
+		}
+	}
+	if walked.String() != all {
+		t.Errorf("pages by cursor:\n%s\nwhole result:\n%s", walked.String(), all)
+	}
+	for _, bad := range [][]string{{"--cursor", ""}, {"--limit", "3", "--offset", "2", "--cursor", ""}} {
+		if _, _, err := search(bad...); err == nil {
+			t.Errorf("%v: accepted", bad)
+		}
 	}
 }

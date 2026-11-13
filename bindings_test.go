@@ -17,6 +17,7 @@ import (
 var bindableSignatureExceptions = map[string]string{
 	"LoadPositionsByFiltersCore":    "Go-side helper; the GUI calls LoadPositionsByFilters",
 	"LoadPositionsByFiltersCoreCtx": "Go-side helper; the GUI calls LoadPositionsByFilters",
+	"LoadPositionsPageByFiltersCtx": "Go-side helper of search --cursor; the GUI browses its id list by window",
 }
 
 func TestBoundMethodsHaveABindableSignature(t *testing.T) {
