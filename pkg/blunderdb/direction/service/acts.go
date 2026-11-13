@@ -25,7 +25,7 @@ import (
 func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actionJSON string) (*DirectionView, error) {
 	var a tournoi.Action
 	if err := json.Unmarshal([]byte(actionJSON), &a); err != nil {
-		return nil, direction.Refused(fmt.Errorf("direction: proposal: %w", err))
+		return nil, direction.RefusedAs(direction.ReasonInvalidAction, fmt.Errorf("direction: proposal: %w", err))
 	}
 	if err := d.confirmProposal(ctx, tournamentID, a); err != nil {
 		return nil, err
@@ -101,24 +101,32 @@ func (d *Service) refuseTable(ctx context.Context, dir *direction.Direction, tou
 //
 // The list travels back as the engine's own JSON, like ConfirmProposal's action. Nothing is
 // written, and the refusal carries its direction.Reason, when one of them
+//
 //   - is held back by the engine — it waits for a table or a player — or is a wait
 //     (ReasonProposalHeld): the director is shown those as not confirmable (Held), so a list
 //     holding one is not what the panel offered, and launching it would seat a match nowhere;
+//
 //   - names a table or a person a sister event of the room took since (ReasonTableTaken,
 //     ReasonPlayerBusy);
+//
 //   - is no longer proposed as listed, or is listed twice (ReasonProposalChanged).
+//
+//   - is a draw or a passage to the next phase while a repechage between tied candidates is
+//     still proposed (ReasonRepechagePending): the place would become a bye, a choice the
+//     engine keeps for the director. Listing the chosen repechage before it lifts the refusal.
 //
 // A tied repechage and a closing are confirmed when listed: listing them is the deliberate
 // choice ConfirmAllProposals waits for. What the list brings about — the queue behind a
 // repechage, the next phase's draw — is proposed in the view handed back and never confirmed
-// here; when a repechage changes a proposal listed after it, the whole list is refused.
+// here. After every action but a match launched, the rest of the list must still be what the
+// engine proposes, or the whole list is refused and nothing of it stays written.
 func (d *Service) ConfirmProposals(ctx context.Context, tournamentID int64, actionsJSON string) (*DirectionView, error) {
 	var list []tournoi.Action
 	if err := json.Unmarshal([]byte(actionsJSON), &list); err != nil {
-		return nil, direction.Refused(fmt.Errorf("direction: proposals: %w", err))
+		return nil, direction.RefusedAs(direction.ReasonInvalidAction, fmt.Errorf("direction: proposals: %w", err))
 	}
 	if len(list) == 0 {
-		return nil, direction.Refusef("direction: no proposal to confirm")
+		return nil, direction.RefuseAs(direction.ReasonEmptyList, "direction: no proposal to confirm")
 	}
 	if err := d.confirmProposals(ctx, tournamentID, list); err != nil {
 		return nil, err
@@ -150,25 +158,45 @@ func (d *Service) confirmProposals(ctx context.Context, tournamentID int64, list
 			return err
 		}
 	}
-	if err := stillProposed(room.propose(dir, now), list); err != nil {
+	proposals := room.propose(dir, now)
+	if err := stillProposed(proposals, list); err != nil {
 		return err
 	}
 	for i, a := range list {
+		if (a.Kind == tournoi.ActNextPhase || a.Kind == tournoi.ActDraw) && tiedRepechage(proposals) {
+			return direction.RefuseAs(direction.ReasonRepechagePending,
+				"direction: a repechage between tied candidates waits for a choice before %s", describe(a))
+		}
 		if err := d.refuseTable(ctx, dir, tournamentID, a); err != nil {
 			return err
 		}
 		if err := confirmAt(ctx, dir, a, now); err != nil {
 			return err
 		}
-		if a.Kind == tournoi.ActRepechage && i+1 < len(list) {
-			// The repechage changes who enters the next phase: what was listed behind it
-			// must still be what the engine proposes over the new state.
-			if err := stillProposed(room.propose(dir, now), list[i+1:]); err != nil {
-				return err
-			}
+		if a.Kind == tournoi.ActStartMatch {
+			// A match launched engages its two players and its table and nothing else: the
+			// proposals listed beside it stand.
+			continue
+		}
+		// Anything else — a bye, a draw, a repechage, a passage, a closing — may change what
+		// the engine proposes: what is listed behind it must still be proposed as listed.
+		proposals = room.propose(dir, now)
+		if err := stillProposed(proposals, list[i+1:]); err != nil {
+			return err
 		}
 	}
 	return nil
+}
+
+// tiedRepechage tells a queue where a repechage waits for the director to choose between
+// tied candidates.
+func tiedRepechage(proposals []tournoi.Action) bool {
+	for _, p := range proposals {
+		if p.Kind == tournoi.ActRepechage && p.Label.Players > 1 {
+			return true
+		}
+	}
+	return false
 }
 
 // stillProposed refuses a list one action of which is not among proposals, each proposal

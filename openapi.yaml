@@ -1718,6 +1718,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionNoteReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -1764,6 +1766,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionAddPairReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -1810,6 +1814,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionAddParticipantReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -1856,6 +1862,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionSlotReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -1935,6 +1943,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionPlayerRoundReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -1981,6 +1991,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionPlayerRoundReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2027,6 +2039,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionMatchReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2105,6 +2119,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionGestureReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2151,6 +2167,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionGestureReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2197,6 +2215,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionProposalReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2243,6 +2263,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionProposalsReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2289,6 +2311,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionResultReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2361,6 +2385,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionSlotReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2440,6 +2466,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionForfeitReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2486,6 +2514,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionPlayersReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2532,6 +2562,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionResultReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2676,6 +2708,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionPlayerRoundReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2820,6 +2854,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionAbsentReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2866,6 +2902,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionParticipantReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -2912,6 +2950,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionMoveReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3053,6 +3093,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionPlayerRoundReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3117,6 +3159,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionParticipantReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3163,6 +3207,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionGestureReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3209,6 +3255,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionUpdatePairReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3255,6 +3303,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionReplaceReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3301,6 +3351,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionConfigReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3347,6 +3399,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionTablesReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3507,6 +3561,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionStartMatchReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3586,6 +3642,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionSwapReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3665,6 +3723,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionUpdatePairReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3711,6 +3771,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionUpdateParticipantReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -3757,6 +3819,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionWithdrawReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -6399,6 +6463,8 @@ paths:
             schema:
               $ref: "#/components/schemas/rencontreAttachReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -6471,6 +6537,8 @@ paths:
             schema:
               $ref: "#/components/schemas/directionGestureReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -6631,6 +6699,8 @@ paths:
             schema:
               $ref: "#/components/schemas/rencontreBreaksReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -6677,6 +6747,8 @@ paths:
             schema:
               $ref: "#/components/schemas/rencontreRoomsReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -6723,6 +6795,8 @@ paths:
             schema:
               $ref: "#/components/schemas/rencontreTableReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -6769,6 +6843,8 @@ paths:
             schema:
               $ref: "#/components/schemas/rencontreTablesReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -6815,6 +6891,8 @@ paths:
             schema:
               $ref: "#/components/schemas/rencontreGestureReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -6860,6 +6938,8 @@ paths:
             schema:
               $ref: "#/components/schemas/rencontreUpdateReq"
       responses:
+        "400":
+          $ref: "#/components/responses/gestureRefused"
         "409":
           description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.
         "428":
@@ -11515,3 +11595,36 @@ components:
         analysis:
           $ref: "#/components/schemas/domain_PositionAnalysis"
           nullable: true
+  responses:
+    gestureRefused:
+      description: Bad Request — the gesture is refused and nothing was written. error.message is for a person; error.details.reason, when the refusal states one, is the stable code to branch on.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    enum: [invalid]
+                  message:
+                    type: string
+                  details:
+                    type: object
+                    properties:
+                      reason:
+                        type: string
+                        enum:
+                          - table_taken
+                          - player_busy
+                          - no_such_table
+                          - table_outside
+                          - table_closed
+                          - proposal_changed
+                          - proposal_held
+                          - repechage_pending
+                          - empty_list
+                          - invalid_action
+                          - engine_refused

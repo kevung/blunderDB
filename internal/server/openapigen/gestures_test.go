@@ -89,7 +89,7 @@ func TestDirectionGestures_DeclareTheirContract(t *testing.T) {
 		if exempt[p] {
 			continue
 		}
-		for _, want := range []string{"name: If-Match", `"409":`, `"428":`, "Direction-Version:"} {
+		for _, want := range []string{"name: If-Match", `"400":`, "#/components/responses/gestureRefused", `"409":`, `"428":`, "Direction-Version:"} {
 			if !strings.Contains(item, want) {
 				t.Errorf("%s: missing %s", p, want)
 			}

@@ -794,6 +794,12 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   quelqu'un d'autre), ``proposal_held`` et ``proposal_changed`` (une
   proposition de la liste est tenue en attente, ou n'est plus proposée telle
   quelle). Le message reste destiné à la lecture, le code à la décision ;
+* les autres raisons : ``repechage_pending`` (un tirage ou un passage à la
+  phase suivante est listé alors qu'un repêchage entre candidats à égalité
+  attend le choix du directeur), ``empty_list`` (liste vide),
+  ``invalid_action`` (une proposition renvoyée est illisible) et
+  ``engine_refused`` (les règles du moteur refusent l'événement, le message
+  dit lequel) ;
 * les rondes de la phase en cours : dans une phase à appariement manuel
   (``manual``), le directeur pose chaque match par ``directions.startMatch``
   avec ``round`` (``0`` : la dernière ronde ; la suivante l'ouvre) et chaque

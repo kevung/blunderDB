@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"slices"
+	"sync"
 	"testing"
 
 	tournoi "github.com/kevung/nicomaque"
@@ -151,4 +153,143 @@ func checkConfirmProposals(t *testing.T, ts *httptest.Server, st storage.Storage
 func TestDirectionGestures_ConfirmProposals(t *testing.T) {
 	ts, srv := gestureServer(t)
 	checkConfirmProposals(t, ts, srv.opts.Storage, "1")
+}
+
+// seedTiedPool plays a pool of four to a 2-2-1-1 finish and withdraws its winner: two tied
+// repechages are proposed for one place.
+func seedTiedPool(t *testing.T, st storage.Storage, tenant string) directedFixture {
+	t.Helper()
+	tn, err := storage.ParseTenant(tenant)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx := storage.WithTenant(t.Context(), tn)
+	svc := service.New(st, tenant, nil)
+	tid, err := st.Tournaments().Create(ctx, tenant, "Poule", "2026-10-01", "Lyon")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Poule","tables":{"count":4},"phases":[` +
+		`{"kind":"round_robin","length":5,"group_size":4,"qualifiers":2,"entry":"survivors"},` +
+		`{"kind":"bracket","length":5,"entry":"survivors"}]}`
+	if err := svc.CreateDirection(ctx, tid, cfg, 5); err != nil {
+		t.Fatal(err)
+	}
+	ids := []string{"p1", "p2", "p3", "p4"}
+	for i, id := range ids {
+		if _, err := svc.AddParticipantAs(ctx, tid, id, "Joueur "+id, "", float64(1600-10*i)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	beats := map[[2]string]bool{
+		{"p1", "p2"}: true, {"p1", "p3"}: true, {"p2", "p3"}: true,
+		{"p2", "p4"}: true, {"p3", "p4"}: true, {"p4", "p1"}: true,
+	}
+	for played, step := 0, 0; played < 6; step++ {
+		v, err := svc.ConfirmAllProposals(ctx, tid)
+		if err != nil || step > 20 {
+			t.Fatalf("the pool stalls after %d matches: %v", played, err)
+		}
+		for _, m := range v.Running {
+			winner := string(m.B)
+			if beats[[2]string{string(m.A), string(m.B)}] {
+				winner = string(m.A)
+			}
+			if _, err := svc.EnterResult(ctx, tid, string(m.ID), winner, m.Length, 2, ""); err != nil {
+				t.Fatal(err)
+			}
+			played++
+		}
+	}
+	if _, err := svc.WithdrawParticipant(ctx, tid, "p1", false); err != nil {
+		t.Fatal(err)
+	}
+	return directedFixture{tenant: tenant, tournamentID: tid, svc: svc, ctx: ctx}
+}
+
+// checkConfirmProposalsRollsBack: a list refused after its first proposal was recorded — two
+// repechages for one place — leaves the journal and the version as they were; so does a
+// passage listed over the undecided repechage.
+func checkConfirmProposalsRollsBack(t *testing.T, ts *httptest.Server, st storage.Storage, tenant string) {
+	t.Helper()
+	const path = "/v1/directions.confirmProposals"
+	f := seedTiedPool(t, st, tenant)
+	v, err := f.svc.GetDirection(f.ctx, f.tournamentID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var reps, passage []tournoi.Action
+	for _, a := range v.Proposals {
+		switch a.Kind {
+		case tournoi.ActRepechage:
+			reps = append(reps, a)
+		case tournoi.ActNextPhase, tournoi.ActDraw:
+			passage = append(passage, a)
+		}
+	}
+	if len(reps) != 2 || len(passage) == 0 {
+		t.Fatalf("the queue holds %+v, want two repechages and a passage", v.Proposals)
+	}
+	events := func() int {
+		h, err := f.svc.History(f.ctx, f.tournamentID, "", "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		return len(h)
+	}
+	before, version := events(), f.versionOf(t, ts)
+	for want, list := range map[direction.Reason][]tournoi.Action{
+		direction.ReasonProposalChanged:  reps,
+		direction.ReasonRepechagePending: passage,
+	} {
+		blob, _ := json.Marshal(list)
+		r := send(t, ts, tenant, path, f.body(`"actions":`+string(blob)), version, "")
+		if r.status != http.StatusBadRequest || reasonOf(t, r) != string(want) {
+			t.Errorf("%s: status %d, body %.300s; want 400 with that reason", want, r.status, r.body)
+		}
+		if got := f.versionOf(t, ts); got != version || events() != before {
+			t.Errorf("%s: %d events (were %d), version moved: %v", want, events(), before, got != version)
+		}
+	}
+}
+
+// checkConfirmProposalsRace: two confirmations of one list on one reading launch it once.
+func checkConfirmProposalsRace(t *testing.T, ts *httptest.Server, st storage.Storage, tenant string) {
+	t.Helper()
+	f := seedSwiss(t, st, tenant, "Course", 0, 8)
+	v, list, n := f.shownList(t, ts)
+	if n != 4 {
+		t.Fatalf("%d launchable proposals, want 4", n)
+	}
+	results := make([]gestureResult, 2)
+	var wg sync.WaitGroup
+	start := make(chan struct{})
+	for i := range results {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			<-start
+			results[i] = send(t, ts, tenant, "/v1/directions.confirmProposals", f.body(list), v, "")
+		}()
+	}
+	close(start)
+	wg.Wait()
+	got := []int{results[0].status, results[1].status}
+	slices.Sort(got)
+	if !slices.Equal(got, []int{http.StatusOK, http.StatusConflict}) {
+		t.Fatalf("statuses %v; want one 200 and one 409", got)
+	}
+	if lots, matches := f.batches(t, st); lots != 1 || matches != 4 {
+		t.Errorf("%d matches in %d batches after the race, want 4 in one", matches, lots)
+	}
+}
+
+func TestDirectionGestures_ConfirmProposalsRollsBack(t *testing.T) {
+	ts, srv := gestureServer(t)
+	checkConfirmProposalsRollsBack(t, ts, srv.opts.Storage, "1")
+}
+
+func TestDirectionGestures_ConfirmProposalsRace(t *testing.T) {
+	ts, srv := gestureServer(t)
+	checkConfirmProposalsRace(t, ts, srv.opts.Storage, "1")
 }

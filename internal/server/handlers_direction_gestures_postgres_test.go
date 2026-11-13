@@ -69,6 +69,8 @@ func TestDirectionGestures_ConfirmProposalsPostgres(t *testing.T) {
 	_, pgSrv := newPostgresTestServerAndHandler(t)
 	ts, srv := gestureServerOn(t, pgSrv.opts.Storage)
 	checkConfirmProposals(t, ts, srv.opts.Storage, "1")
+	checkConfirmProposalsRollsBack(t, ts, srv.opts.Storage, "1")
+	checkConfirmProposalsRace(t, ts, srv.opts.Storage, "1")
 }
 
 // TestDirectionGestures_TenantIsolationPostgres: ids are global on PostgreSQL; another tenant
@@ -92,10 +94,11 @@ func checkGestureIsolation(t *testing.T, ts *httptest.Server, mine, theirs direc
 	v := mine.versionOf(t, ts)
 	m := mine.running(t)[0]
 	calls := map[string]string{
-		"/v1/directions.enterResult": mine.resultBody(m),
-		"/v1/directions.addNote":     mine.body(`"text":"intrus"`),
-		"/v1/rencontres.setBreaks":   `{"id":` + strconv.FormatInt(mine.rencontreID, 10) + `,"breaks":[]}`,
-		"/v1/rencontres.trash":       `{"id":` + strconv.FormatInt(mine.rencontreID, 10) + `}`,
+		"/v1/directions.enterResult":      mine.resultBody(m),
+		"/v1/directions.addNote":          mine.body(`"text":"intrus"`),
+		"/v1/directions.confirmProposals": mine.body(`"actions":[{"kind":"finish","phase":0}]`),
+		"/v1/rencontres.setBreaks":        `{"id":` + strconv.FormatInt(mine.rencontreID, 10) + `,"breaks":[]}`,
+		"/v1/rencontres.trash":            `{"id":` + strconv.FormatInt(mine.rencontreID, 10) + `}`,
 	}
 	for path, body := range calls {
 		if r := send(t, ts, theirs.tenant, path, body, v, ""); r.status != http.StatusNotFound {

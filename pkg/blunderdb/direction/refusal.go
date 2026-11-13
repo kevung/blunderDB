@@ -30,7 +30,23 @@ const (
 	// ReasonProposalHeld: a proposal of a confirmed list waits for a table or a player, or is
 	// a wait: there is nothing to launch.
 	ReasonProposalHeld Reason = "proposal_held"
+	// ReasonRepechagePending: a passage to the next phase is listed while a repechage between
+	// tied candidates waits for the director's choice.
+	ReasonRepechagePending Reason = "repechage_pending"
+	// ReasonEmptyList: a confirmed list holds no proposal.
+	ReasonEmptyList Reason = "empty_list"
+	// ReasonInvalidAction: a proposal sent back does not read as one.
+	ReasonInvalidAction Reason = "invalid_action"
+	// ReasonEngineRefused: the engine's rules refuse the event; its message says which.
+	ReasonEngineRefused Reason = "engine_refused"
 )
+
+// Reasons lists every Reason a refusal may state, for the contract a server publishes.
+var Reasons = []Reason{
+	ReasonTableTaken, ReasonPlayerBusy, ReasonNoSuchTable, ReasonTableOutside, ReasonTableClosed,
+	ReasonProposalChanged, ReasonProposalHeld, ReasonRepechagePending, ReasonEmptyList,
+	ReasonInvalidAction, ReasonEngineRefused,
+}
 
 // refusal keeps its own message and is ErrRefused too.
 type refusal struct {
@@ -57,6 +73,14 @@ func Refusef(format string, args ...any) error {
 // RefuseAs is Refusef with the reason a client can branch on.
 func RefuseAs(reason Reason, format string, args ...any) error {
 	return refusal{err: fmt.Errorf(format, args...), reason: reason}
+}
+
+// RefusedAs marks err as a refusal stating reason; a refusal already made keeps its own.
+func RefusedAs(reason Reason, err error) error {
+	if err == nil || errors.Is(err, ErrRefused) {
+		return err
+	}
+	return refusal{err: err, reason: reason}
 }
 
 // ReasonOf is the reason of a refusal, empty when it states none or err is not one.

@@ -238,3 +238,108 @@ func TestConfirmProposalsRefusesAPlayerSeatedNextDoor(t *testing.T) {
 		t.Errorf("%d matches of B launched with their players next door", len(st.Running()))
 	}
 }
+
+// tiedPool plays a pool of four to a 2-2-1-1 finish and withdraws its winner: two tied
+// repechages are proposed for the place, and the passage to the bracket behind them.
+func tiedPool(t *testing.T, ctx context.Context, svc *service.Service, raw storage.Storage) (int64, []tournoi.Action) {
+	t.Helper()
+	phases := `{"kind":"round_robin","length":5,"group_size":4,"qualifiers":2,"entry":"survivors"},` +
+		`{"kind":"bracket","length":5,"entry":"survivors"}`
+	tid := phaseOf(t, ctx, svc, raw, phases, 4, names("P", 4)...)
+	ids := slices.Clone(replayed(t, ctx, svc, tid).Order)
+	slices.Sort(ids)
+	beats := map[[2]tournoi.PlayerID]bool{
+		{ids[0], ids[1]}: true, {ids[0], ids[2]}: true, {ids[1], ids[2]}: true,
+		{ids[1], ids[3]}: true, {ids[2], ids[3]}: true, {ids[3], ids[0]}: true,
+	}
+	playWith(t, ctx, svc, tid, tournoi.ActNextPhase, func(a, b tournoi.PlayerID) tournoi.PlayerID {
+		if beats[[2]tournoi.PlayerID{a, b}] {
+			return a
+		}
+		return b
+	})
+	if _, err := svc.WithdrawParticipant(ctx, tid, string(ids[0]), false); err != nil {
+		t.Fatal(err)
+	}
+	list, _ := shown(t, ctx, svc, tid)
+	if reps := repechages(list); len(reps) != 2 || reps[0].Label.Players != 2 {
+		t.Fatalf("the queue holds %+v, want two tied repechages", list)
+	}
+	return tid, list
+}
+
+// untouched tells that nothing was written since the journal had n events and that version.
+func untouched(t *testing.T, ctx context.Context, svc *service.Service, tid int64, n int, version, what string) {
+	t.Helper()
+	_, journal := replayedJournal(t, ctx, svc, tid)
+	if v, err := svc.DirectionVersion(ctx, tid); err != nil || v != version || len(journal) != n {
+		t.Errorf("%s: %d events and version %q (%v), want %d and %q", what, len(journal), v, err, n, version)
+	}
+}
+
+// The passage to the next phase is not confirmed over a repechage the director has not
+// decided: the withdrawn player's place would become a bye.
+func TestConfirmProposalsHoldsThePassageBehindATiedRepechage(t *testing.T) {
+	ctx, svc, raw := openService(t)
+	tid, list := tiedPool(t, ctx, svc, raw)
+	_, journal := replayedJournal(t, ctx, svc, tid)
+	version, err := svc.DirectionVersion(ctx, tid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var passage []tournoi.Action
+	for _, a := range list {
+		if a.Kind == tournoi.ActNextPhase || a.Kind == tournoi.ActDraw {
+			passage = append(passage, a)
+		}
+	}
+	if len(passage) == 0 {
+		t.Fatalf("no passage proposed in %+v", list)
+	}
+	_, err = svc.ConfirmProposals(ctx, tid, mustJSON(t, passage))
+	reasonIs(t, err, direction.ReasonRepechagePending, "the passage alone")
+	untouched(t, ctx, svc, tid, len(journal), version, "the passage alone")
+
+	// Both candidates for one place: the first is recorded, the second is then no longer
+	// proposed, and the first is taken back with it.
+	reps := repechages(list)
+	_, err = svc.ConfirmProposals(ctx, tid, mustJSON(t, reps))
+	reasonIs(t, err, direction.ReasonProposalChanged, "two repechages for one place")
+	untouched(t, ctx, svc, tid, len(journal), version, "two repechages for one place")
+
+	// The director's pick, then the passage as the engine proposes it once the pick is made.
+	v, err := svc.ConfirmProposals(ctx, tid, mustJSON(t, reps[1:]))
+	if err != nil {
+		t.Fatal(err)
+	}
+	passage = passage[:0]
+	for _, a := range v.Proposals {
+		if a.Kind == tournoi.ActNextPhase {
+			passage = append(passage, a)
+		}
+	}
+	if _, err := svc.ConfirmProposals(ctx, tid, mustJSON(t, passage)); err != nil {
+		t.Fatal(err)
+	}
+	if st := replayed(t, ctx, svc, tid); st.Current != 1 || !slices.Contains(st.Phases[1].Entrants, reps[1].B) {
+		t.Errorf("phase %d enters %v, want the bracket with %s", st.Current, st.Phases[st.Current].Entrants, reps[1].B)
+	}
+}
+
+// Every refusal of the gesture names its reason, the engine's own included.
+func TestConfirmProposalsRefusalsAreCoded(t *testing.T) {
+	ctx, svc, raw := openService(t)
+	tid := swissOf(t, ctx, svc, raw, "Open", 4, names("P", 8)...)
+	list, _ := shown(t, ctx, svc, tid)
+	_, err := svc.ConfirmProposals(ctx, tid, `[]`)
+	reasonIs(t, err, direction.ReasonEmptyList, "an empty list")
+	_, err = svc.ConfirmProposals(ctx, tid, `{"kind":"start_match"}`)
+	reasonIs(t, err, direction.ReasonInvalidAction, "a list that is not one")
+	_, err = svc.ConfirmProposal(ctx, tid, `[`)
+	reasonIs(t, err, direction.ReasonInvalidAction, "an action that is not one")
+	if _, err := svc.ConfirmProposal(ctx, tid, mustJSON(t, list[0])); err != nil {
+		t.Fatal(err)
+	}
+	_, err = svc.ConfirmProposal(ctx, tid, mustJSON(t, list[0]))
+	reasonIs(t, err, direction.ReasonEngineRefused, "a match whose players already play")
+}
