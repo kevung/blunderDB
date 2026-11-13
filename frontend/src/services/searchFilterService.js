@@ -164,6 +164,10 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const likeFilter = !!likeMatch;
     const likeTargetId = likeMatch && likeMatch[1] ? parseInt(likeMatch[1], 10) : 0;
     const likeMaxDistance = likeMatch && likeMatch[2] ? parseInt(likeMatch[2], 10) : 0;
+    // La forme étoilée que d'anciennes recherches enregistrées portent encore :
+    // reconnue pour être refusée, car ignorée elle laisserait la recherche
+    // tourner sans classement sur toute la base.
+    const likeRefused = filters.find((f) => typeof f === 'string' && /^like(\d+)?(?:<(\d+))?\*$/.test(f)) || '';
     const decisionTypeFilter = filters.includes('d');
     // `dr` (take/pass response) and `dd` (double / no double) narrow the cube
     // decisions; both at once read as the response.
@@ -347,6 +351,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         likeFilter,
         likeTargetId,
         likeMaxDistance,
+        likeRefused,
         decisionTypeFilter,
         cubeResponseFilter,
         diceRollFilter,
@@ -466,7 +471,8 @@ export function parseFilterTokens(tokens) {
         // Nom entier : le classement n'a pas d'abréviation.
         likeFilter: p.likeFilter,
         likeTargetId: p.likeTargetId,
-        likeMaxDistance: p.likeMaxDistance
+        likeMaxDistance: p.likeMaxDistance,
+        likeRefused: p.likeRefused
     };
 }
 
@@ -488,6 +494,7 @@ export function parseSearchCommand(command) {
         likeFilter: p.likeFilter,
         likeTargetId: p.likeTargetId,
         likeMaxDistance: p.likeMaxDistance,
+        likeRefused: p.likeRefused,
         dt: p.decisionTypeFilter,
         dr: p.diceRollFilter,
         drMode: p.diceRollMode,
@@ -631,7 +638,8 @@ export function replaySearchArgs(command) {
         // Le classement (ADR-0112), pour la même raison.
         likeFilter: f.likeFilter,
         likeTargetId: f.likeTargetId,
-        likeMaxDistance: f.likeMaxDistance
+        likeMaxDistance: f.likeMaxDistance,
+        likeRefused: f.likeRefused
     };
     return { args, f };
 }

@@ -577,6 +577,7 @@
         "livingOn": "Tee tästä kokoelmasta elävä: se sisältää viimeisimmän haun tuloksen, joka lasketaan uudelleen joka avauksella.",
         "livingOff": "Elävä kokoelma ({query}). Napsauta palauttaaksesi käsin tehdyn listan.",
         "livingNeedsSearch": "Tee ensin haku: sen kokoelma säilyttää.",
+        "livingRefused": "Kokoelmaa ei tehty eläväksi: {reason}",
         "livingSet": "Elävä kokoelma: {query}",
         "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi.",
         "livingCapped": "Pakka ”{name}”: elävä kokoelma valitsee {total} asemaa; {count} aseman katto täyttyi, ja vain ensimmäiset päätyvät pakkaan.",
@@ -2167,7 +2168,9 @@
         "none": "Ei läheisiä asemia tässä tietokannassa.",
         "found": "{n} läheistä asemaa, {nearest}–{farthest} heittoa.",
         "fromPosition": "{distance} heiton päässä asemasta nro {id}.",
-        "fromBoard": "{distance} heiton päässä piirretystä laudasta."
+        "fromBoard": "{distance} heiton päässä piirretystä laudasta.",
+        "refused": "Haku hylätty: {reason}",
+        "widenedRefused": "”{token}” ei ole enää käytössä: naapurit lasketaan heittoina, ilman laajennettua luokkaa. Kirjoita like tai like<n>."
     },
     "log": {
         "title": "Toimintaloki",

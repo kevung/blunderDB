@@ -384,12 +384,22 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	return true, err
 }
 
-// buildWhere translates f into the WHERE clause of the search query: cheap
+// buildWhere is whereClause for every reader but Rank. Each of them refuses
+// `like` rather than ignoring it: the relation is decided by Rank alone, and
+// a reader that skipped the token would select the whole library.
+func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
+	if f.LikeFilter {
+		return searchWhereClause{}, storage.ErrLikeUnranked
+	}
+	return s.whereClause(ctx, scope, f)
+}
+
+// whereClause translates f into the WHERE clause of the search query: cheap
 // predicates that can be pushed to SQL become clause text and bound
 // arguments; the rest are left to applyGoFilters (matchesGoFilters below),
 // which is what needAnalysis/useSQLFilters/bitboardTight/moveErrorInGo/
 // effInclude in the returned searchWhereClause are for.
-func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
+func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
 	lists := &idLists{}
 	ctx = context.WithValue(ctx, idListsKey{}, lists)
 	useSQLFilters := !f.MirrorFilter
@@ -667,7 +677,7 @@ func (s *SearchStore) Rank(ctx context.Context, scope string, f domain.SearchFil
 	if err := reach.CheckOrder(order); err != nil {
 		return nil, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 	}
-	wc, err := s.buildWhere(ctx, scope, f)
+	wc, err := s.whereClause(ctx, scope, f)
 	if err != nil {
 		return nil, err
 	}

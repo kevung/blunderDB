@@ -5,8 +5,11 @@ package cli
 // the flags cover only some.
 
 import (
+	"errors"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 )
 
 func TestSearchQueryFillsFiltersNoFlagCanReach(t *testing.T) {
@@ -54,6 +57,14 @@ func TestSearchQueryRefusesUnknownTokens(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "nosuchtoken") {
 		t.Errorf("error %q does not name the offending token", err)
+	}
+}
+
+func TestSearchQueryRefusesTheStarredLike(t *testing.T) {
+	t.Parallel()
+	_, _, err := (&CLI{}).parseSearchFlags([]string{"--db", "database.db", "--query", "s like42<12* nc"})
+	if !errors.Is(err, searchquery.ErrRefused) || !strings.Contains(err.Error(), "like42<12*") {
+		t.Errorf("starred like: err = %v, want a refusal naming the token", err)
 	}
 }
 

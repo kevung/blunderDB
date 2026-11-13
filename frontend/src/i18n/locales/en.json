@@ -577,6 +577,7 @@
         "livingOn": "Make this collection living: it will hold the result of the last search, re-evaluated every time it is opened.",
         "livingOff": "Living collection ({query}). Click to give it back its hand-made list.",
         "livingNeedsSearch": "Run a search first: it is what the collection will keep.",
+        "livingRefused": "The collection was not made living: {reason}",
         "livingSet": "Living collection: {query}",
         "livingCleared": "Collection given back its hand-made list.",
         "livingCapped": "Deck \"{name}\": the living collection selects {total} positions; the ceiling of {count} was reached and only the first ones feed the deck.",
@@ -2167,7 +2168,9 @@
         "none": "No close position in this database.",
         "found": "{n} close positions, from {nearest} to {farthest} roll(s).",
         "fromPosition": "{distance} roll(s) from position no. {id}.",
-        "fromBoard": "{distance} roll(s) from the drawn board."
+        "fromBoard": "{distance} roll(s) from the drawn board.",
+        "refused": "Search refused: {reason}",
+        "widenedRefused": "“{token}” is no longer served: neighbours are counted in rolls, with no wider class. Write like or like<n>."
     },
     "log": {
         "title": "Activity log",

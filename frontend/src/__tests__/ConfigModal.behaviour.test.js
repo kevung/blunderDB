@@ -53,6 +53,7 @@ function defaults() {
         'main.Config': {
             GetLikeLimit: () => Promise.resolve(30),
             GetLikeMaxDistance: () => Promise.resolve(0),
+            GetLikeMaxOrder: () => Promise.resolve(2),
             GetCommentAuthor: () => Promise.resolve('Alice'),
             GetCheckForUpdates: () => Promise.resolve(false),
             GetGammonNetDisplayPly: () => Promise.resolve(2),
@@ -136,6 +137,14 @@ describe('ConfigModal — Interface tab', () => {
         await flush();
         expect(spy('main.Config', 'SaveLikeLimit')).toHaveBeenCalledWith(500);
         expect(input(doc, 'config-like-limit').value).toBe('500');
+    });
+
+    test('the distance ceiling is held to the order Go serves', async () => {
+        const { doc } = await mount({ 'main.Config': { GetLikeMaxOrder: () => Promise.resolve(3) } });
+        expect(input(doc, 'config-like-max-distance').max).toBe('3');
+        await fireEvent.change(input(doc, 'config-like-max-distance'), { target: { value: '9' } });
+        await flush();
+        expect(spy('main.Config', 'SaveLikeMaxDistance')).toHaveBeenCalledWith(3);
     });
 
     test('a neighbour cap below one is raised to one', async () => {

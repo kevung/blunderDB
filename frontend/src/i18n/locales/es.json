@@ -577,6 +577,7 @@
         "livingOn": "Hacer viva esta colección: contendrá el resultado de la última búsqueda, reevaluado en cada apertura.",
         "livingOff": "Colección viva ({query}). Pulse para devolverle su lista hecha a mano.",
         "livingNeedsSearch": "Lance primero una búsqueda: es lo que la colección guardará.",
+        "livingRefused": "La colección no se ha hecho viva: {reason}",
         "livingSet": "Colección viva: {query}",
         "livingCleared": "Colección devuelta a su lista hecha a mano.",
         "livingCapped": "Mazo «{name}»: la colección viva selecciona {total} posiciones; se alcanzó el tope de {count} y solo las primeras alimentan el mazo.",
@@ -2167,7 +2168,9 @@
         "none": "Ninguna posición cercana en esta base.",
         "found": "{n} posiciones cercanas, de {nearest} a {farthest} tirada(s).",
         "fromPosition": "A {distance} tirada(s) de la posición n.º {id}.",
-        "fromBoard": "A {distance} tirada(s) del tablero dibujado."
+        "fromBoard": "A {distance} tirada(s) del tablero dibujado.",
+        "refused": "Búsqueda rechazada: {reason}",
+        "widenedRefused": "«{token}» ya no se admite: las vecinas se cuentan en tiradas, sin clase ampliada. Escriba like o like<n>."
     },
     "log": {
         "title": "Registro de actividad",

@@ -145,8 +145,9 @@ func canReach(s *state, g *goal, r int) int {
 // two plays P is never hit before it plays again, so the pips its play moves
 // are bounded by its pips now and at the end: exactly their difference when
 // nothing hits it afterwards, and up to 24 more per checker on the bar in g
-// otherwise — a checker there may also never have entered. A play bearing a checker off from below the die moves
-// fewer pips than the die, so then only the lower bound holds.
+// otherwise — a checker there may also never have entered. A play bearing a
+// checker off from below the die moves fewer pips than the die, so then only
+// the lower bound holds.
 func rollsToward(s *state, g *goal, r int, fits int) func(d1, d2 int) bool {
 	if r > 2 {
 		return nil

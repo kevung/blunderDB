@@ -577,6 +577,7 @@
         "livingOn": "Rendi viva questa raccolta: conterrà il risultato dell'ultima ricerca, rivalutato a ogni apertura.",
         "livingOff": "Raccolta viva ({query}). Clicca per restituirle la lista fatta a mano.",
         "livingNeedsSearch": "Lancia prima una ricerca: è quella che la raccolta conserverà.",
+        "livingRefused": "La collezione non è stata resa viva: {reason}",
         "livingSet": "Raccolta viva: {query}",
         "livingCleared": "Raccolta restituita alla sua lista fatta a mano.",
         "livingCapped": "Mazzo «{name}»: la raccolta viva seleziona {total} posizioni; il tetto di {count} è stato raggiunto e solo le prime alimentano il mazzo.",
@@ -2167,7 +2168,9 @@
         "none": "Nessuna posizione vicina in questa base.",
         "found": "{n} posizioni vicine, da {nearest} a {farthest} tiro/i.",
         "fromPosition": "A {distance} tiro/i dalla posizione n. {id}.",
-        "fromBoard": "A {distance} tiro/i dalla scacchiera disegnata."
+        "fromBoard": "A {distance} tiro/i dalla scacchiera disegnata.",
+        "refused": "Ricerca rifiutata: {reason}",
+        "widenedRefused": "«{token}» non è più supportato: le vicine si contano in tiri, senza classe allargata. Scrivete like o like<n>."
     },
     "log": {
         "title": "Registro attività",

@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { refusalReason } from '../utils/refusal.js';
     import NewButton from './panels/NewButton.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import { formatDateTime } from '../utils/format.js';
@@ -161,6 +162,9 @@
             statusBarTextStore.set(query ? tMsg('collection.livingSet', { query }) : tMsg('collection.livingCleared'));
         } catch (error) {
             logger.error('Error setting the collection filter:', error);
+            // Une requête refusée (`like`, un jeton inconnu) le dit, au lieu d'un clic sans effet.
+            const reason = refusalReason(error);
+            if (reason) statusBarTextStore.set(tMsg('collection.livingRefused', { reason }));
         }
     }
 

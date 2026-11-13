@@ -335,6 +335,21 @@
       }
     },
     {
+      "command": "s like*",
+      "expected": {
+        "likeFilter": false,
+        "likeRefused": "like*"
+      }
+    },
+    {
+      "command": "s like42<12* nc",
+      "expected": {
+        "likeFilter": false,
+        "likeRefused": "like42<12*",
+        "noContactFilter": true
+      }
+    },
+    {
       "command": "s like42<2",
       "expected": {
         "likeFilter": true,

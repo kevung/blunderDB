@@ -219,6 +219,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Positions/SimilarSpansTheTargetsMatches", testSimilarSpansTheTargetsMatches},
 		{"Positions/SimilarRefusesAnUnservedOrder", testSimilarRefusesAnUnservedOrder},
 		{"Positions/SimilarRanksAgainstADrawnBoard", testSimilarRanksAgainstADrawnBoard},
+		{"Positions/SimilarOnlyRanks", testSimilarOnlyRanks},
 		{"Anki/CubePairsAreChained", testAnkiCubePairsAreChained},
 		{"Anki/ScoreDeckHoldsScores", testAnkiScoreDeckHoldsScores},
 		{"Collection/FilterQueryRoundTrips", testCollectionFilterQuery},

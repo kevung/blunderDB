@@ -299,8 +299,11 @@ func testDBImportCappedLosesQueryTarget(t *testing.T, s storage.Storage) {
 		must(err)
 	}
 	like := fmt.Sprintf("like%d", p[3])
-	_, err = storage.CreateCollection(ctx, src, "", "near", "", like)
+	// CreateCollection refuses `like`; an older library may still hold such
+	// a query, and the import reads stored rows.
+	near, err := storage.CreateCollection(ctx, src, "", "near", "", "")
 	must(err)
+	must(src.Collections().SetFilterQuery(ctx, "", near, like))
 	_, err = storage.CreateCollection(ctx, src, "", "pick", "", fmt.Sprintf("id%d", p[3]))
 	must(err)
 	_, err = src.Anki().CreateDeck(ctx, "", "search", "", domain.AnkiSourceSearch, 0, fmt.Sprintf(`{"ids":[],"command":%q}`, like))

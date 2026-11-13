@@ -577,6 +577,7 @@
         "livingOn": "このコレクションを「生きた」ものにします。直近の検索結果を内容とし、開くたびに再評価します。",
         "livingOff": "生きたコレクション（{query}）。クリックすると手作りのリストに戻します。",
         "livingNeedsSearch": "先に検索してください。それがコレクションに残るものです。",
+        "livingRefused": "コレクションをライブにできませんでした: {reason}",
         "livingSet": "生きたコレクション：{query}",
         "livingCleared": "コレクションを手作りのリストに戻しました。",
         "livingCapped": "デッキ「{name}」：ライブコレクションは {total} 局面を選びます。上限 {count} に達したため、先頭の局面だけがデッキに入ります。",
@@ -2167,7 +2168,9 @@
         "none": "このデータベースに近い局面はありません。",
         "found": "近い局面 {n} 件（{nearest}〜{farthest} 手）。",
         "fromPosition": "局面 {id} から {distance} 手。",
-        "fromBoard": "描いた盤面から {distance} 手。"
+        "fromBoard": "描いた盤面から {distance} 手。",
+        "refused": "検索は拒否されました: {reason}",
+        "widenedRefused": "「{token}」は使えなくなりました。近いポジションはロール数で数え、広げたクラスはありません。like または like<n> と入力してください。"
     },
     "log": {
         "title": "動作ログ",

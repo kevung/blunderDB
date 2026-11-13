@@ -577,6 +577,7 @@
         "livingOn": "Diese Sammlung lebendig machen: Sie enthält das Ergebnis der letzten Suche, bei jedem Öffnen neu ausgewertet.",
         "livingOff": "Lebendige Sammlung ({query}). Klicken, um ihre handgemachte Liste zurückzugeben.",
         "livingNeedsSearch": "Führen Sie zuerst eine Suche aus: Sie ist es, was die Sammlung behält.",
+        "livingRefused": "Die Sammlung wurde nicht lebendig gemacht: {reason}",
         "livingSet": "Lebendige Sammlung: {query}",
         "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück.",
         "livingCapped": "Stapel „{name}“: Die lebende Sammlung wählt {total} Positionen aus; die Obergrenze von {count} wurde erreicht, nur die ersten speisen den Stapel.",
@@ -2167,7 +2168,9 @@
         "none": "Keine nahe Stellung in dieser Datenbank.",
         "found": "{n} nahe Stellungen, {nearest} bis {farthest} Wurf/Würfe.",
         "fromPosition": "{distance} Wurf/Würfe von Stellung Nr. {id} entfernt.",
-        "fromBoard": "{distance} Wurf/Würfe vom gezeichneten Brett entfernt."
+        "fromBoard": "{distance} Wurf/Würfe vom gezeichneten Brett entfernt.",
+        "refused": "Suche abgelehnt: {reason}",
+        "widenedRefused": "„{token}“ wird nicht mehr unterstützt: Nachbarn werden in Würfen gezählt, ohne erweiterte Klasse. Schreiben Sie like oder like<n>."
     },
     "log": {
         "title": "Aktivitätsprotokoll",

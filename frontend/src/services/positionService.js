@@ -34,6 +34,7 @@ import { GetLikeLimit, GetLikeMaxDistance } from '../../wailsjs/go/main/Config.j
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
+import { refusalReason } from '../utils/refusal.js';
 import { closeOnEscape } from './escapeService.js';
 import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin, leaveStudiedModeForList, takeEvalContext, giveEvalContext } from './modeMachine.js';
 // Ctrl-G status line (keyboardService imports it from here).
@@ -454,6 +455,8 @@ export async function loadPositionsByFilters({
     likeFilter = false,
     likeTargetId = 0,
     likeMaxDistance = 0,
+    // Une forme de `like` que la grammaire reconnaît pour la refuser.
+    likeRefused = '',
     includeCube = false,
     includeScore = false,
     pipCountFilter = '',
@@ -519,6 +522,12 @@ export async function loadPositionsByFilters({
 } = {}) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
+        return;
+    }
+    // Refusée, jamais lancée sans elle : sans le jeton, la recherche
+    // répondrait à une autre question, sur toute la base.
+    if (likeRefused) {
+        setStatusBarMessage(tMsg('similar.widenedRefused', { token: likeRefused }));
         return;
     }
 
@@ -711,7 +720,8 @@ export async function loadPositionsByFilters({
             } catch (error) {
                 if (stale()) return;
                 logger.error('could not rank the neighbours:', error);
-                setStatusBarMessage(tMsg('similar.failed'));
+                const reason = refusalReason(error);
+                setStatusBarMessage(reason ? tMsg('similar.refused', { reason }) : tMsg('similar.failed'));
                 return;
             }
             if (stale()) return;

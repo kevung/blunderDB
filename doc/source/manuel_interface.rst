@@ -665,9 +665,9 @@ blunderDB lui-même.
 Deux réglages de l'onglet *Interface* gouvernent le classement des **positions voisines** (jeton
 ``like``, voir :ref:`panneau_recherche`) : le nombre de voisines rendues, et la
 distance maximale au-delà de laquelle une position cesse d'en être une. Cette
-distance vaut zéro par défaut, c'est-à-dire aucun plafond : l'échelle dépend de
-la phase de la partie, et une valeur choisie ici se lirait comme une mesure. Le
-jeton ``like<12`` impose la sienne pour une recherche, sans toucher au réglage.
+distance se compte en jets ; zéro vaut la valeur par défaut, deux jets, qui est
+aussi le maximum servi. Le jeton ``like<1`` impose la sienne pour une recherche,
+sans toucher au réglage.
 
 L'onglet *Couleurs* permet de personnaliser les couleurs du
 plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,

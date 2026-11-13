@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-// La distance de chaque voisine d'un classement `like` (ADR-0112), en pions-pas, par id de
+// La distance de chaque voisine d'un classement `like` (ADR-0112), en jets, par id de
 // position. À part car c'est le résultat d'une comparaison, pas une propriété de la position ;
 // vide pour une liste ordinaire.
 /** @type {import('svelte/store').Writable<Map<number, number>>} */

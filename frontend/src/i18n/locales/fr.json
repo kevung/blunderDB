@@ -577,6 +577,7 @@
         "livingOn": "Rendre cette collection vivante : elle contiendra le résultat de la dernière recherche, réévalué à chaque ouverture.",
         "livingOff": "Collection vivante ({query}). Cliquer pour la rendre à sa liste faite à la main.",
         "livingNeedsSearch": "Lancez d'abord une recherche : c'est elle que la collection gardera.",
+        "livingRefused": "Collection non rendue vivante : {reason}",
         "livingSet": "Collection vivante : {query}",
         "livingCleared": "Collection rendue à sa liste faite à la main.",
         "livingCapped": "Paquet « {name} » : la collection vivante retient {total} positions ; le plafond de {count} a été atteint et seules les premières alimentent le paquet.",
@@ -2167,7 +2168,9 @@
         "none": "Aucune position proche dans cette base.",
         "found": "{n} positions proches, de {nearest} à {farthest} jet(s).",
         "fromPosition": "À {distance} jet(s) de la position n° {id}.",
-        "fromBoard": "À {distance} jet(s) du plateau dessiné."
+        "fromBoard": "À {distance} jet(s) du plateau dessiné.",
+        "refused": "Recherche refusée : {reason}",
+        "widenedRefused": "« {token} » n'est plus servi : les voisines se comptent en jets, sans classe élargie. Écrivez like ou like<n>."
     },
     "log": {
         "title": "Journal d'activité",

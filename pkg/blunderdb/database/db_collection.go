@@ -6,7 +6,6 @@ import (
 	"iter"
 	"strings"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -266,7 +265,7 @@ func (d *Database) livingFilters(collectionID int64) (filters SearchFilters, liv
 	if err != nil {
 		return SearchFilters{}, false, err
 	}
-	return searchquery.Living(collectionID, query)
+	return storage.ParseLiving(collectionID, query)
 }
 
 // GetCollectionPositions returns all positions in a collection. A LIVING

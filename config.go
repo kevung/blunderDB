@@ -669,6 +669,12 @@ func (c *Config) GetLikeMaxDistance() int {
 	return c.LikeMaxDistance
 }
 
+// GetLikeMaxOrder reports the most plays a ranking serves, so the setting is
+// bounded where the search refuses rather than by a copy of the number.
+func (c *Config) GetLikeMaxOrder() int {
+	return reach.MaxOrder
+}
+
 // SaveLikeMaxDistance persists that ceiling, held to the orders served.
 func (c *Config) SaveLikeMaxDistance(d int) error {
 	if reach.CheckOrder(d) != nil {

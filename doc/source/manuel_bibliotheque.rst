@@ -627,6 +627,12 @@ connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
 
+Une collection vivante ne peut pas porter ``like`` : une collection est un
+ensemble, et ce jeton classe. Elle refuse la requête qui le porte, en le
+disant : seule une recherche sert ``like``. Une forme
+étoilée (``like42*``) qu'une ancienne recherche enregistrée porte encore est
+refusée au rejeu, depuis l'historique ou la bibliothèque de filtres.
+
 Une collection vivante **reste vivante dans un export** de la base : sa requête
 voyage avec elle et se réévalue, chez le destinataire, sur les positions du
 fichier. Quand l'export emporte les positions des collections, il emporte

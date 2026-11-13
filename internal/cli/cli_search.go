@@ -88,6 +88,9 @@ func (cli *CLI) parseSearchFlags(args []string) (*searchParams, string, error) {
 		if len(unknown) > 0 {
 			return nil, "", fmt.Errorf("unknown token(s) in --query: %s (see --query-help)", strings.Join(unknown, ", "))
 		}
+		if err := searchquery.Refusal(diags); err != nil {
+			return nil, "", err
+		}
 		return &searchParams{
 			filters:  filters,
 			diags:    diags,

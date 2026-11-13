@@ -182,6 +182,53 @@ func testSimilarRanksAgainstADrawnBoard(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testSimilarOnlyRanks pins that the relation is served by Rank alone. Every
+// unordered reader refuses `like` rather than ignoring it, for an ignored
+// `like` selects the whole library; a living collection is one such reader.
+func testSimilarOnlyRanks(t *testing.T, s storage.Storage) {
+	fx := saveSimilarFixture(t, s)
+	ctx := context.Background()
+	f := domain.SearchFilters{LikeFilter: true, LikeTargetID: fx.target}
+	readers := []struct {
+		name string
+		run  func() error
+	}{
+		{"Find", func() error {
+			for _, err := range s.Search().Find(ctx, "", f, storage.ListOpts{}) {
+				if err != nil {
+					return err
+				}
+			}
+			return nil
+		}},
+		{"FindIDs", func() error { _, err := s.Search().FindIDs(ctx, "", f, storage.ListOpts{}); return err }},
+		{"Count", func() error { _, err := s.Search().Count(ctx, "", f); return err }},
+		{"CountUpTo", func() error { _, _, err := s.Search().CountUpTo(ctx, "", f, 10); return err }},
+		{"IndexOf", func() error { _, _, err := s.Search().IndexOf(ctx, "", f, fx.one); return err }},
+		{"CreateCollection", func() error {
+			_, err := storage.CreateCollection(ctx, s, "", "like", "", "s like")
+			return err
+		}},
+		{"EvaluateCollection", func() error {
+			// A query saved before the token was refused there.
+			id, err := storage.CreateCollection(ctx, s, "", "saved like", "", "")
+			if err != nil {
+				return err
+			}
+			if err := s.Collections().SetFilterQuery(ctx, "", id, "s like"); err != nil {
+				return err
+			}
+			_, err = storage.EvaluateCollection(ctx, s, "", id, 0)
+			return err
+		}},
+	}
+	for _, r := range readers {
+		if err := r.run(); !errors.Is(err, storage.ErrInvalid) {
+			t.Errorf("%s with `like`: err = %v, want ErrInvalid", r.name, err)
+		}
+	}
+}
+
 // rank runs a ranked query the way every caller does: the `like` token, its
 // target already resolved to an id.
 func rank(ctx context.Context, s storage.Storage, targetID int64, order, limit int) ([]storage.SimilarPosition, error) {

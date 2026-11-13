@@ -164,6 +164,10 @@ func (s *Server) handleSearchQuery(ss func() storage.SearchStore) http.HandlerFu
 			writeErrorCode(w, CodeInvalid, "unknown token(s) in query: "+strings.Join(unknown, ", "))
 			return
 		}
+		if err := searchquery.Refusal(diags); err != nil {
+			writeErrorCode(w, CodeInvalid, err.Error())
+			return
+		}
 		// A no-effect token (`x`, the exclusion structure, which is a board)
 		// travels in a header rather than the stream: the body is NDJSON
 		// positions and must stay so for every existing client.

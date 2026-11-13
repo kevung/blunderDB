@@ -352,5 +352,12 @@ func ParseQuery(query string) (domain.SearchFilters, error) {
 	if len(unknown) > 0 {
 		return domain.SearchFilters{}, fmt.Errorf("unknown token(s) in query: %s", strings.Join(unknown, ", "))
 	}
+	if err := searchquery.Refusal(diags); err != nil {
+		return domain.SearchFilters{}, err
+	}
+	// A rollout runs over a set: the ranking `like` asks for has no place in it.
+	if filters.LikeFilter {
+		return domain.SearchFilters{}, searchquery.ErrLikeUnranked
+	}
 	return filters, nil
 }

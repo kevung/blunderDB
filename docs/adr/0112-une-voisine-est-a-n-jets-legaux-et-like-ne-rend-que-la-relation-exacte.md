@@ -37,6 +37,12 @@ de jeu.
 7. **La cible « plateau dessiné »** (mode édition) suit la même relation.
 8. **Transfert sans provenance** : `like<id>` nomme une ligne de la base et reste
    `ReadsProvenance` ; seul `like` sur un plateau dessiné voyage.
+9. **`like` ne se lit que classé** : `Rank` seul sert la relation. `Find`, `FindIDs`, `Count`,
+   `CountUpTo`, `IndexOf`, une collection vivante et une analyse par requête refusent une requête
+   qui porte `like` (`ErrInvalid`) plutôt que de l'ignorer et de rendre toute la base. La forme
+   étoilée `like*` qu'une recherche enregistrée porte encore est reconnue pour être refusée
+   (diagnostic `refused`, les deux grammaires), jamais sautée ; les lignes enregistrées ne sont
+   pas migrées, le refus arrive au rejeu.
 
 ## Mesures
 
@@ -62,7 +68,7 @@ la génération par candidate devient la norme.
   se lit comme zéro.
 - « Ailleurs » (ADR-0103) classe ses voisines par la même relation.
 - `engine.SimilarityDistance` ne sert plus que les positions de référence (ADR-0080), qui gardent
-  leur rayon en pions-pas.
+  leur rayon en pions-pas ; son vecteur sert aussi les erreurs récurrentes.
 - Rejeté : garder l'ancienne distance sous un autre nom — le propriétaire a choisi le
   remplacement.
 - Rejeté : un ensemble précalculé des structures à deux jets de la cible — un demi-million
@@ -72,4 +78,6 @@ la génération par candidate devient la norme.
 
 `pkg/blunderdb/engine/reach/reach_test.go` (générateur contre `domain.LegalMoves`, distance contre
 l'oracle `reachtest`), `pkg/blunderdb/database/db_similar_test.go` (un match réel),
-`pkg/blunderdb/storage/storagetest/contract_similar.go` (les deux stockages).
+`pkg/blunderdb/storage/storagetest/contract_similar.go` (les deux stockages, refus hors de `Rank`
+compris), `pkg/blunderdb/searchquery/living_test.go` et `testdata/search_query_corpus.json`
+(forme étoilée refusée).

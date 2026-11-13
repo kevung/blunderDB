@@ -42,6 +42,8 @@ export function GetLikeLimit():Promise<number>;
 
 export function GetLikeMaxDistance():Promise<number>;
 
+export function GetLikeMaxOrder():Promise<number>;
+
 export function GetMCPHost():Promise<main.MCPHostSettings>;
 
 export function GetPageStep():Promise<string>;

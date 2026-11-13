@@ -1009,6 +1009,11 @@ func (e *exporter) writeMembers(srcID, dstID int64, positions []int64) {
 func (e *exporter) writeLivingQueries() error {
 	for _, lc := range e.living {
 		query, ok := e.leavingQuery(lc.query)
+		// A query the source refuses to evaluate leaves frozen like any other
+		// it cannot carry: what it selects here, which is nothing.
+		if _, _, err := storage.ParseLiving(lc.src, lc.query); err != nil {
+			ok = false
+		}
 		if !ok {
 			slog.Warn("export: living collection cannot say in the file what it says here; it leaves frozen",
 				"collectionID", lc.src)
