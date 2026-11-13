@@ -86,7 +86,7 @@ var wantIndexes = []string{
 	"idx_import_batch_file_path", "idx_import_batch_file_sha", "idx_lesson_step_lesson", "idx_lesson_step_position",
 	"idx_lesson_uuid", "idx_match_canonical", "idx_match_dice_hash", "idx_match_direction_slot",
 	"idx_match_hash", "idx_match_stats_position_position", "idx_match_stats_pr", "idx_match_uuid",
-	"idx_move_game_position", "idx_move_position", "idx_player_alias_canonical",
+	"idx_move_game_position", "idx_move_position", "idx_move_timed", "idx_player_alias_canonical",
 	"idx_position_back_checkers_1", "idx_position_back_checkers_2", "idx_position_cube_take",
 	"idx_position_derivation_from", "idx_position_dice", "idx_position_flagged",
 	"idx_position_game_type", "idx_position_individual", "idx_position_match_date",

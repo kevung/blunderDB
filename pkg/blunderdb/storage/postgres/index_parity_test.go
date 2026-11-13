@@ -70,6 +70,9 @@ var postgresOnlyIndexes = []string{
 	"idx_change_log_seq",
 	// The read order of PostgreSQL's journal (xid, seq): SQLite has no xid.
 	"idx_change_log_xid",
+	// SQLite drives the `tm` filter from the positions and reaches each one's
+	// moves by idx_move_position; it never picks an index of the timed moves.
+	"idx_move_timed",
 }
 
 // indexDecl is one CREATE INDEX statement, normalised for comparison.

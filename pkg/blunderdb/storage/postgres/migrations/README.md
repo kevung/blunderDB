@@ -425,3 +425,4 @@ why it must hold no per-tenant data: the daemon exposes it read-only
 - `066_merged_keys.sql` — `position` and `move` keep their `(tenant_id, id)` key alone, `analysis`
   its `(tenant_id, position_id)` one; `idx_analysis_creation_date` goes (SQLite too). No version bump.
 - `067_import_file_digest_index.sql` — partial index `idx_import_batch_file_sha` on the journal's `(tenant_id, sha256)` for the lines that name a match, so an import recognises a file already imported by its bytes (`ImportBatchStore.KnownFile`) before decoding it. Index only. No version bump.
+- `068_timed_moves_index.sql` — partial index `idx_move_timed` on `move (tenant_id, position_id)` for the moves that carry a decision time, so the `tm` search filter reads those alone instead of probing the moves of every position of the tenant. PostgreSQL only: SQLite drives the same statement from the positions and never picks the index (74 ms on 150 000 positions without it). Index only. No version bump.
