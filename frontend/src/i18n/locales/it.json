@@ -158,8 +158,8 @@
         "theme_contrast": "Contrasto elevato",
         "theme_print": "Stampabile",
         "likeLimit": "Vicine per classifica",
-        "likeMaxDistance": "Distanza massima (pip di pedina)",
-        "likeNote": "Zero: nessun limite. Il token like<12 impone il proprio per una ricerca.",
+        "likeMaxDistance": "Distanza massima (tiri)",
+        "likeNote": "Zero: 2 tiri, il massimo. Il token like<1 impone il proprio per una ricerca.",
         "commentAuthor": "Il tuo nome",
         "commentAuthorNote": "Firma i commenti che scrivi. Vuoto: senza firma.",
         "assistantTitle": "Assistente e MCP",
@@ -2165,9 +2165,9 @@
         "noPosition": "Nessuna posizione corrente di cui cercare le vicine.",
         "failed": "La ricerca di posizioni vicine è fallita.",
         "none": "Nessuna posizione vicina in questa base.",
-        "found": "{n} posizioni vicine, da {nearest} a {farthest} pip di pedina.",
-        "fromPosition": "A {distance} pip di pedina dalla posizione n. {id}.",
-        "fromBoard": "A {distance} pip di pedina dalla scacchiera disegnata."
+        "found": "{n} posizioni vicine, da {nearest} a {farthest} tiro/i.",
+        "fromPosition": "A {distance} tiro/i dalla posizione n. {id}.",
+        "fromBoard": "A {distance} tiro/i dalla scacchiera disegnata."
     },
     "log": {
         "title": "Registro attività",

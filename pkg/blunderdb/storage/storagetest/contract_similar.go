@@ -1,178 +1,134 @@
-// Contract cases for the "positions like this one" scan.
+// Contract cases for "positions like this one": the distance in plays.
 // The table that runs them lives in contract.go.
 package storagetest
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/reach"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// testSimilarIsExactAndOrdered pins the two promises the contract makes about
-// Similar, both of which an approximate index would break: the neighbours come
-// back NEAREST FIRST, and the scan is exhaustive — so a position that is
-// closer is never missed. It also pins that a position is not its own
-// neighbour.
-func testSimilarIsExactAndOrdered(t *testing.T, s storage.Storage) {
+// The opening, then Black's 3-1 (8/5 6/5), then White's 6-4 (8/2 6/2 in its
+// own numbering), and a race no two plays lead to or from.
+var (
+	openingBlack = map[int]int{24: 2, 13: 5, 8: 3, 6: 5}
+	openingWhite = map[int]int{1: 2, 12: 5, 17: 3, 19: 5}
+	afterBlack   = map[int]int{24: 2, 13: 5, 8: 2, 6: 4, 5: 2}
+	afterWhite   = map[int]int{1: 2, 12: 5, 17: 2, 19: 4, 23: 2}
+	raceBlack    = map[int]int{6: 5, 5: 5, 4: 5}
+	raceWhite    = map[int]int{19: 5, 20: 5, 21: 5}
+)
+
+// similarFixture saves the target and four others; it returns their ids.
+type similarFixture struct{ target, same, one, two, far int64 }
+
+func saveSimilarFixture(t *testing.T, s storage.Storage) similarFixture {
+	t.Helper()
 	ctx := context.Background()
 	ps := s.Positions()
+	save := func(p domain.Position) int64 {
+		t.Helper()
+		id, err := ps.Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save: %v", err)
+		}
+		return id
+	}
+	var f similarFixture
+	f.target = save(board(openingBlack, openingWhite))
+	// The same checkers as another problem: a cube decision at a match score,
+	// the other side on roll. None of that is part of a structure.
+	same := board(openingWhite2Black(), openingBlack2White())
+	same.DecisionType = domain.CubeAction
+	same.Score = [2]int{3, 5}
+	f.same = save(same)
+	f.one = save(board(afterBlack, openingWhite))
+	f.two = save(board(afterBlack, afterWhite))
+	f.far = save(board(raceBlack, raceWhite))
+	return f
+}
 
-	// One reference and three variations, at growing distance from it: one
-	// checker moved one pip, then three, then six.
-	base := similarityBoard(map[int]int{13: 5, 8: 5, 6: 5})
-	near := similarityBoard(map[int]int{13: 4, 12: 1, 8: 5, 6: 5})
-	middle := similarityBoard(map[int]int{13: 4, 10: 1, 8: 5, 6: 5})
-	far := similarityBoard(map[int]int{13: 4, 7: 1, 8: 5, 6: 5})
+// openingWhite2Black and openingBlack2White draw the opening with the colours
+// swapped: the same structure, read from the other side.
+func openingWhite2Black() map[int]int { return flip(openingWhite) }
+func openingBlack2White() map[int]int { return flip(openingBlack) }
 
-	baseID, err := ps.Save(ctx, "", &base)
-	if err != nil {
-		t.Fatalf("Save base: %v", err)
+func flip(m map[int]int) map[int]int {
+	out := map[int]int{}
+	for pt, n := range m {
+		out[25-pt] = n
 	}
-	nearID, err := ps.Save(ctx, "", &near)
-	if err != nil {
-		t.Fatalf("Save near: %v", err)
-	}
-	middleID, err := ps.Save(ctx, "", &middle)
-	if err != nil {
-		t.Fatalf("Save middle: %v", err)
-	}
-	if _, err := ps.Save(ctx, "", &far); err != nil {
-		t.Fatalf("Save far: %v", err)
-	}
+	return out
+}
 
-	base.ID = baseID
-	got, err := rank(ctx, s, baseID, 2, 0, false)
+// testSimilarCountsPlays pins what a distance is: the same structure at 0
+// whatever the decision and score, one play at 1, two plays at 2, nearest
+// first, and nothing beyond.
+func testSimilarCountsPlays(t *testing.T, s storage.Storage) {
+	f := saveSimilarFixture(t, s)
+	got, err := rank(context.Background(), s, f.target, 0, 50)
 	if err != nil {
-		t.Fatalf("Similar: %v", err)
+		t.Fatalf("Rank: %v", err)
 	}
-	if len(got) != 2 {
-		t.Fatalf("Similar returned %d neighbours, want 2", len(got))
+	want := []struct {
+		id   int64
+		dist int
+	}{{f.same, 0}, {f.one, 1}, {f.two, 2}}
+	if len(got) != len(want) {
+		t.Fatalf("Rank returned %d neighbours, want %d: %+v", len(got), len(want), distances(got))
 	}
-	if got[0].Position.ID != nearID || got[1].Position.ID != middleID {
-		t.Errorf("neighbours must come back nearest first: got %d then %d, want %d then %d",
-			got[0].Position.ID, got[1].Position.ID, nearID, middleID)
-	}
-	if got[0].Distance >= got[1].Distance {
-		t.Errorf("distances must grow: got %d then %d", got[0].Distance, got[1].Distance)
-	}
-	for _, n := range got {
-		if n.Position.ID == baseID {
-			t.Error("a position is not its own neighbour")
+	for i, w := range want {
+		if got[i].Position.ID != w.id || got[i].Distance != w.dist {
+			t.Errorf("neighbour %d = id %d at %d, want id %d at %d", i, got[i].Position.ID, got[i].Distance, w.id, w.dist)
 		}
 	}
-}
-
-// testSimilarRanksInsideTheClass pins what a neighbour IS (ADR-0043): the same
-// PROBLEM nearby, not the nearest drawing.
-// Each case below is one way of being close and useless: the same board's
-// other decision, the neighbouring plies of the same match.
-func testSimilarRanksInsideTheClass(t *testing.T, s storage.Storage) {
-	ctx := context.Background()
-	ps := s.Positions()
-
-	board := map[int]int{13: 5, 8: 5, 6: 5}
-	near := map[int]int{13: 4, 12: 1, 8: 5, 6: 5}
-
-	// The target: a cube decision at a match score.
-	target := similarityBoard(board)
-	target.DecisionType = domain.CubeAction
-	target.Dice = [2]int{0, 0}
-	target.Score = [2]int{3, 5}
-	targetID, err := ps.Save(ctx, "", &target)
+	// Symmetric: the target is one play from the position after it.
+	back, err := rank(context.Background(), s, f.one, 1, 50)
 	if err != nil {
-		t.Fatalf("Save target: %v", err)
+		t.Fatalf("Rank: %v", err)
 	}
-	target.ID = targetID
-
-	// The twin: the SAME board, one pip away, as a checker play. Distance ~1,
-	// and a different problem entirely.
-	twin := similarityBoard(near)
-	twin.DecisionType = domain.CheckerAction
-	twin.Dice = [2]int{3, 1}
-	twin.Score = [2]int{3, 5}
-	twinID, err := ps.Save(ctx, "", &twin)
-	if err != nil {
-		t.Fatalf("Save twin: %v", err)
+	found := false
+	for _, n := range back {
+		if n.Position.ID == f.target && n.Distance == 1 {
+			found = true
+		}
 	}
-
-	// Same board, same kind of decision, but played for money: the regime
-	// changes what a cube decision asks, so it is not the same problem.
-	moneyTwin := similarityBoard(near)
-	moneyTwin.DecisionType = domain.CubeAction
-	moneyTwin.Dice = [2]int{0, 0}
-	moneyTwin.Score = [2]int{-1, -1}
-	moneyID, err := ps.Save(ctx, "", &moneyTwin)
-	if err != nil {
-		t.Fatalf("Save money twin: %v", err)
-	}
-
-	// A legitimate neighbour: same kind, same regime, further away.
-	elsewhere := similarityBoard(map[int]int{13: 4, 10: 1, 8: 5, 6: 5})
-	elsewhere.DecisionType = domain.CubeAction
-	elsewhere.Dice = [2]int{0, 0}
-	elsewhere.Score = [2]int{2, 4}
-	elsewhereID, err := ps.Save(ctx, "", &elsewhere)
-	if err != nil {
-		t.Fatalf("Save elsewhere: %v", err)
-	}
-
-	got, err := rankWidened(ctx, s, targetID, 10)
-	if err != nil {
-		t.Fatalf("Similar: %v", err)
-	}
-	if len(got) != 3 {
-		t.Fatalf("with no class asked for, every position is a candidate: got %d neighbours, want 3", len(got))
-	}
-
-	got, err = rank(ctx, s, targetID, 10, 0, false)
-	if err != nil {
-		t.Fatalf("Similar in class: %v", err)
-	}
-	ids := map[int64]bool{}
-	for _, n := range got {
-		ids[n.Position.ID] = true
-	}
-	if ids[twinID] {
-		t.Error("the checker play on the same board is not a neighbour of a cube decision: it is the other question the board asks")
-	}
-	if ids[moneyID] {
-		t.Error("a money cube decision is not a neighbour of one at a match score: the regime is what the position asks about")
-	}
-	if !ids[elsewhereID] {
-		t.Error("a cube decision at another score, of the same regime, IS a neighbour and was dropped")
+	if !found {
+		t.Errorf("the position before a play is one play away too: %+v", distances(back))
 	}
 }
 
-// testSimilarExcludesTheTargetsMatches pins the third rule of the class: the
-// plies around a position, in every match that played through it, are its
-// closest structures and never its neighbours (ADR-0043).
-// Two plies are one roll, so they would crowd out everything else.
-func testSimilarExcludesTheTargetsMatches(t *testing.T, s storage.Storage) {
+// testSimilarCeilingNeverWidens pins the honest answer: a ranking returns
+// what stands within its order and never completes with farther positions,
+// down to an empty list.
+func testSimilarCeilingNeverWidens(t *testing.T, s storage.Storage) {
+	f := saveSimilarFixture(t, s)
+	got, err := rank(context.Background(), s, f.target, 1, 50)
+	if err != nil {
+		t.Fatalf("Rank: %v", err)
+	}
+	if len(got) != 2 || got[0].Position.ID != f.same || got[1].Position.ID != f.one {
+		t.Errorf("like<1 = %+v, want the same structure then the one-play neighbour", distances(got))
+	}
+	alone, err := rank(context.Background(), s, f.far, 0, 50)
+	if err != nil {
+		t.Fatalf("Rank: %v", err)
+	}
+	if len(alone) != 0 {
+		t.Errorf("nothing stands within two plays of the race: got %+v", distances(alone))
+	}
+}
+
+// testSimilarSpansTheTargetsMatches pins that the relation holds across the
+// whole library: the plies of the target's own match are neighbours too.
+func testSimilarSpansTheTargetsMatches(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
-	ps, ms := s.Positions(), s.Matches()
-
-	target := similarityBoard(map[int]int{13: 5, 8: 5, 6: 5})
-	neighbourInMatch := similarityBoard(map[int]int{13: 4, 12: 1, 8: 5, 6: 5})
-	neighbourElsewhere := similarityBoard(map[int]int{13: 4, 10: 1, 8: 5, 6: 5})
-
-	targetID, err := ps.Save(ctx, "", &target)
-	if err != nil {
-		t.Fatalf("Save target: %v", err)
-	}
-	target.ID = targetID
-	insideID, err := ps.Save(ctx, "", &neighbourInMatch)
-	if err != nil {
-		t.Fatalf("Save neighbour in match: %v", err)
-	}
-	outsideID, err := ps.Save(ctx, "", &neighbourElsewhere)
-	if err != nil {
-		t.Fatalf("Save neighbour elsewhere: %v", err)
-	}
-
-	// Both the target and its nearest neighbour are plies of the same match:
-	// exactly the arrangement a real import produces.
+	f := saveSimilarFixture(t, s)
+	ms := s.Matches()
 	matchID, err := ms.Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 7})
 	if err != nil {
 		t.Fatalf("Save match: %v", err)
@@ -181,170 +137,72 @@ func testSimilarExcludesTheTargetsMatches(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("CreateGame: %v", err)
 	}
-	for i, pid := range []int64{targetID, insideID} {
+	for i, pid := range []int64{f.target, f.one} {
 		mv := domain.Move{GameID: gameID, MoveNumber: int32(i + 1), PositionID: pid, MoveType: "checker"}
 		if _, err := ms.CreateMove(ctx, "", &mv); err != nil {
 			t.Fatalf("CreateMove: %v", err)
 		}
 	}
-
-	got, err := rank(ctx, s, targetID, 10, 0, false)
-	if err != nil {
-		t.Fatalf("Similar: %v", err)
-	}
-	for _, n := range got {
-		if n.Position.ID == insideID {
-			t.Error("a ply of the target's own match is not a neighbour: it is the game being looked at")
-		}
-	}
-	found := false
-	for _, n := range got {
-		if n.Position.ID == outsideID {
-			found = true
-		}
-	}
-	if !found {
-		t.Error("a position outside the target's matches IS a neighbour and was dropped")
-	}
-}
-
-// testSimilarCeilingLeavesAnEmptyRankingEmpty pins the honest answer: when
-// nothing stands close enough, the ranking is EMPTY (ADR-0043 rule 4).
-// A fixed count alone would hand back the least distant of the unrelated.
-func testSimilarCeilingLeavesAnEmptyRankingEmpty(t *testing.T, s storage.Storage) {
-	ctx := context.Background()
-	ps := s.Positions()
-
-	target := similarityBoard(map[int]int{13: 5, 8: 5, 6: 5})
-	far := similarityBoard(map[int]int{2: 5, 8: 5, 6: 5})
-
-	targetID, err := ps.Save(ctx, "", &target)
-	if err != nil {
-		t.Fatalf("Save target: %v", err)
-	}
-	target.ID = targetID
-	if _, err := ps.Save(ctx, "", &far); err != nil {
-		t.Fatalf("Save far: %v", err)
-	}
-
-	loose, err := rank(ctx, s, targetID, 10, 0, false)
-	if err != nil {
-		t.Fatalf("Similar without a ceiling: %v", err)
-	}
-	if len(loose) == 0 {
-		t.Fatal("without a ceiling the far position is still a neighbour")
-	}
-
-	tight, err := rank(ctx, s, targetID, 10, 1, false)
-	if err != nil {
-		t.Fatalf("Similar with a ceiling: %v", err)
-	}
-	if len(tight) != 0 {
-		t.Errorf("a ceiling nothing passes returns nothing, never the least distant: got %d neighbours", len(tight))
-	}
-
-	exact, err := rank(ctx, s, targetID, 10, loose[0].Distance, false)
-	if err != nil {
-		t.Fatalf("Similar at the exact distance: %v", err)
-	}
-	if len(exact) != 1 {
-		t.Errorf("the ceiling is inclusive: got %d neighbours at exactly %d checker-pips, want 1", len(exact), loose[0].Distance)
-	}
-}
-
-// testSimilarWithoutAMatchExcludesNothing pins the case a drawn board and an
-// individually imported position share: belonging to no match, they have no
-// plies to exclude, and the rule costs them nothing.
-func testSimilarWithoutAMatchExcludesNothing(t *testing.T, s storage.Storage) {
-	ctx := context.Background()
-	ps := s.Positions()
-
-	target := similarityBoard(map[int]int{13: 5, 8: 5, 6: 5})
-	near := similarityBoard(map[int]int{13: 4, 12: 1, 8: 5, 6: 5})
-	targetID, err := ps.Save(ctx, "", &target)
-	if err != nil {
-		t.Fatalf("Save target: %v", err)
-	}
-	nearID, err := ps.Save(ctx, "", &near)
-	if err != nil {
-		t.Fatalf("Save near: %v", err)
-	}
-
-	got, err := rank(ctx, s, targetID, 10, 0, false)
+	got, err := rank(ctx, s, f.target, 1, 50)
 	if err != nil {
 		t.Fatalf("Rank: %v", err)
 	}
-	found := false
 	for _, n := range got {
-		if n.Position.ID == nearID {
-			found = true
+		if n.Position.ID == f.one {
+			return
 		}
 	}
-	if !found {
-		t.Error("a position belonging to no match excludes nothing, so the near one is a neighbour")
+	t.Errorf("the next ply of the target's own match is one play away: %+v", distances(got))
+}
+
+// testSimilarRefusesAnUnservedOrder pins that an order the search cannot
+// answer exactly is refused, never approximated.
+func testSimilarRefusesAnUnservedOrder(t *testing.T, s storage.Storage) {
+	f := saveSimilarFixture(t, s)
+	_, err := rank(context.Background(), s, f.target, reach.MaxOrder+1, 50)
+	if !errors.Is(err, storage.ErrInvalid) {
+		t.Fatalf("like<%d: err = %v, want ErrInvalid", reach.MaxOrder+1, err)
 	}
 }
 
-// testSimilarRanksAgainstADrawnBoard pins the target that was never stored:
-// a board the user has merely DRAWN (ADR-0043 rule 3).
-// The board is read as a POSITION, not a pattern: checkers not placed count as
-// borne off.
+// testSimilarRanksAgainstADrawnBoard pins the target of a bare `like` in edit
+// mode: the board on the screen, never saved, under the same relation.
 func testSimilarRanksAgainstADrawnBoard(t *testing.T, s storage.Storage) {
-	ctx := context.Background()
-	ps := s.Positions()
-
-	near := similarityBoard(map[int]int{13: 4, 12: 1, 8: 5, 6: 5})
-	far := similarityBoard(map[int]int{2: 5, 8: 5, 6: 5})
-	nearID, err := ps.Save(ctx, "", &near)
-	if err != nil {
-		t.Fatalf("Save near: %v", err)
-	}
-	if _, err := ps.Save(ctx, "", &far); err != nil {
-		t.Fatalf("Save far: %v", err)
-	}
-
-	// Never saved: this board exists only on the screen.
-	drawn := similarityBoard(map[int]int{13: 5, 8: 5, 6: 5})
-	got, err := s.Search().Rank(ctx, "", domain.SearchFilters{
+	f := saveSimilarFixture(t, s)
+	got, err := s.Search().Rank(context.Background(), "", domain.SearchFilters{
 		LikeFilter:      true,
-		LikeTargetBoard: drawn,
+		LikeTargetBoard: board(openingBlack, openingWhite),
 	}, storage.ListOpts{Limit: 10})
 	if err != nil {
 		t.Fatalf("Rank against a drawn board: %v", err)
 	}
-	if len(got) == 0 {
-		t.Fatal("a drawn board is a legitimate target: it ranked nothing")
-	}
-	if got[0].Position.ID != nearID {
-		t.Errorf("nearest to the drawn board = %d, want %d", got[0].Position.ID, nearID)
-	}
-	// Nothing is excluded: a drawing belongs to no match, and is its own
-	// neighbour of nobody.
-	if len(got) != 2 {
-		t.Errorf("a drawing excludes no match, so both stored positions are neighbours: got %d", len(got))
+	// A drawing is no stored position: the stored opening is at 0 too.
+	if len(got) != 4 || got[0].Distance != 0 || got[1].Distance != 0 || got[3].Position.ID != f.two {
+		t.Errorf("ranking against the drawn opening = %+v", distances(got))
 	}
 }
 
 // rank runs a ranked query the way every caller does: the `like` token, its
-// target already resolved to an id, and the class the target imposes.
-func rank(ctx context.Context, s storage.Storage, targetID int64, limit, maxDistance int, widened bool) ([]storage.SimilarPosition, error) {
+// target already resolved to an id.
+func rank(ctx context.Context, s storage.Storage, targetID int64, order, limit int) ([]storage.SimilarPosition, error) {
 	return s.Search().Rank(ctx, "", domain.SearchFilters{
 		LikeFilter:      true,
 		LikeTargetID:    targetID,
-		LikeMaxDistance: maxDistance,
-		LikeWidened:     widened,
+		LikeMaxDistance: order,
 	}, storage.ListOpts{Limit: limit})
 }
 
-// rankWidened is the `*` form: the match exclusion still applies, but nothing
-// else does — every kind of decision, both regimes.
-func rankWidened(ctx context.Context, s storage.Storage, targetID int64, limit int) ([]storage.SimilarPosition, error) {
-	return rank(ctx, s, targetID, limit, 0, true)
+func distances(ns []storage.SimilarPosition) [][2]int64 {
+	out := make([][2]int64, len(ns))
+	for i, n := range ns {
+		out[i] = [2]int64{n.Position.ID, int64(n.Distance)}
+	}
+	return out
 }
 
-// similarityBoard builds a money-game checker position from Black's points,
-// with White standing clear of every point Black uses.
-func similarityBoard(black map[int]int) domain.Position {
+// board builds a checker-play position, Black on roll, from both sides'
+// points in board numbering.
+func board(black, white map[int]int) domain.Position {
 	var p domain.Position
 	for i := range p.Board.Points {
 		p.Board.Points[i] = domain.Point{Checkers: 0, Color: domain.None}
@@ -352,8 +210,8 @@ func similarityBoard(black map[int]int) domain.Position {
 	for pt, n := range black {
 		p.Board.Points[pt] = domain.Point{Checkers: n, Color: domain.Black}
 	}
-	for _, pt := range []int{17, 19, 21} {
-		p.Board.Points[pt] = domain.Point{Checkers: 5, Color: domain.White}
+	for pt, n := range white {
+		p.Board.Points[pt] = domain.Point{Checkers: n, Color: domain.White}
 	}
 	p.PlayerOnRoll = domain.Black
 	p.Dice = [2]int{3, 1}

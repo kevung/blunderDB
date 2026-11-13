@@ -1241,8 +1241,8 @@ jeton inconnu ou ignoré (un second ``m"…"``), ou une valeur hors de la forme
 attendue : un mot à la place d'un nombre, un moteur après ``ad:``.
 
 Ne part pas davantage le classement sur une position enregistrée
-(``like<n>``) : il écarte les matchs où cette position a été rencontrée et
-classerait d'autres positions à l'arrivée ; ``like`` seul, sur un plateau
+(``like<n>``) : il nomme une ligne de cette base, qui ne désigne rien à
+l'arrivée ; ``like`` seul, sur un plateau
 dessiné, ne lit que ce plateau et part. Avec les commentaires, un ``#tag`` ne
 part que s'il figure dans un commentaire emporté, et une liste ``id`` n'est
 faite que de nombres. La source d'un paquet de recherche ne garde, à tout

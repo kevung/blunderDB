@@ -405,37 +405,39 @@ qu'aucun n'est sur la barre.
    une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées
    ne renvoie rien pour ``ph:`` — rien, plutôt qu'une réponse fausse.
 
-Le jeton ``like`` **classe** au lieu de restreindre : sa présence ordonne le
-résultat par distance croissante à une position cible — ``like`` la position
-courante, ``like42`` celle d'indice 42 — et les autres jetons restreignent
-l'ensemble ainsi classé, si bien que ``s like42 E>80`` se lit « les voisines
-de la 42 où j'ai fauté ». La distance est une distance de transport en
-pions-pas, la quantité de mouvement de pions qui sépare deux positions, vue du
-joueur au trait.
+Le jeton ``like`` **classe** au lieu de restreindre : il retient les positions
+qu'un petit nombre de jets sépare d'une position cible — ``like`` la position
+courante, ``like42`` celle d'indice 42 — et les range par distance croissante,
+puis par indice. Les autres jetons restreignent l'ensemble ainsi classé, si
+bien que ``s like42 E>80`` se lit « les positions à deux jets au plus de la 42
+où j'ai fauté ».
 
-Une voisine est le même **problème**, pas le même dessin : le classement se
-prend dans la classe de la cible — même type de décision, même régime (argent
-ou match) pour une décision de videau, et un match différent du sien, car les
-positions qui l'entourent dans sa propre partie sont ses structures les plus
-proches sans jamais être ses voisines. Les dés, le score et le videau restent
-hors classe ; les jetons ordinaires les filtrent quand on le veut. ``like42*`` élargit la classe à tous
-les types de décision et aux deux régimes, jamais au match de la cible ;
-``like<12`` écarte ce qui est à plus de douze pions-pas. Un classement qui ne
-trouve rien rend une liste vide et le dit, plutôt que dix positions sans
-rapport.
+La distance de deux positions est le plus petit nombre de jets légaux
+successifs qui mènent de la structure de pions de l'une à celle de l'autre. Les
+jets alternent les camps, mais le premier peut être joué par l'un ou l'autre,
+et le sens n'importe pas : de la cible vers la position ou de la position vers
+la cible. Un coup légal est celui que l'application accepte — entrer d'abord
+depuis la barre, jouer le plus de dés possible, le plus fort quand un seul
+passe, sortir, frapper — et un jet injouable compte pour un jet. Seuls les
+pions comptent : la même structure à un autre score, avec un autre videau ou
+pour une autre décision est à distance 0 et sort en tête. La recherche couvre
+toute la base, match de la cible compris : la position qui la suit dans sa
+partie est à un jet.
 
-En mode **édition**, ``s like`` prend pour cible le plateau **dessiné** : on
-dessine à peu près la position dont on se souvient, on lance, et la
-bibliothèque répond — là où la recherche par structure exige le dessin juste.
-Le plateau est alors lu comme une position et non comme un motif : un point
-laissé vide compte comme des pions sortis, ce qui est exact pour une position
-réelle et fausse le calcul pour un dessin laissé à moitié.
+Sans plafond écrit, ``like`` va jusqu'à deux jets ; ``like<1`` s'arrête à un.
+Au-delà de deux jets, la recherche est refusée et le dit : la relation est
+exacte, jamais approchée, et son calcul serait trop long sur une base de
+100 000 positions. Le classement ne complète jamais avec des positions plus
+lointaines : il rend une liste vide plutôt que dix positions sans rapport.
 
-Chaque voisine porte sa distance sous les tableaux d'analyse, avec la position
-dont elle est proche. C'est ce qui permet de juger si l'on regarde une voisine
-ou une coïncidence, et c'est la raison d'être du plafond. Le classement se
-lance aussi sans passer par la ligne de commande : *CTRL-MAJ-L*, ou l'entrée
-**Positions voisines** du menu contextuel du plateau.
+En mode **édition**, ``s like`` prend pour cible le plateau **dessiné**, sous la
+même relation. Le plateau est lu comme une position et non comme un motif : un
+point laissé vide compte comme des pions sortis.
+
+Chaque voisine porte sa distance en jets sous les tableaux d'analyse, avec la
+position dont elle est proche. Le classement se lance aussi sans passer par la
+ligne de commande : *CTRL-MAJ-L*, ou l'entrée **Positions voisines** du menu
+contextuel du plateau.
 
 Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions
 rencontrées au moins trois fois dans la base, tous matchs et tous joueurs
@@ -653,7 +655,7 @@ vos erreurs, de structure voisine, et sa leçon sert à toutes.
 
 * Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées en
   MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs d'une
-  famille sont **voisines** à au plus 12 pions-pas de distance ``like`` ; une
+  famille sont **voisines** à au plus 12 pions-pas de distance de transport ; une
   erreur de videau n'a pour voisines que celles du même score.
 * Chaque position vaut le **MWC récupérable** (perte moins difficulté) de ses
   voisines et d'elle-même : ce que sa leçon rapporterait si elle servait à

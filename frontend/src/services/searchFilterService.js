@@ -157,14 +157,13 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
     const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
     const noContactFilter = filters.includes('nc');
-    // `like`, `like42`, `like<12`, `like42<12*` : le seul jeton qui CLASSE au
-    // lieu de restreindre (ADR-0043). Reconnu par sa forme, pas son préfixe,
+    // `like`, `like42`, `like<1`, `like42<2` : le seul jeton qui CLASSE au
+    // lieu de restreindre (ADR-0112). Reconnu par sa forme, pas son préfixe,
     // pour qu'une faute de frappe ne devienne pas un tri silencieux.
-    const likeMatch = filters.map((f) => /^like(\d+)?(?:<(\d+))?(\*)?$/.exec(f)).find(Boolean);
+    const likeMatch = filters.map((f) => /^like(\d+)?(?:<(\d+))?$/.exec(f)).find(Boolean);
     const likeFilter = !!likeMatch;
     const likeTargetId = likeMatch && likeMatch[1] ? parseInt(likeMatch[1], 10) : 0;
     const likeMaxDistance = likeMatch && likeMatch[2] ? parseInt(likeMatch[2], 10) : 0;
-    const likeWidened = !!(likeMatch && likeMatch[3]);
     const decisionTypeFilter = filters.includes('d');
     // `dr` (take/pass response) and `dd` (double / no double) narrow the cube
     // decisions; both at once read as the response.
@@ -348,7 +347,6 @@ export function parseSearchTokens(filtersOrCommand, command) {
         likeFilter,
         likeTargetId,
         likeMaxDistance,
-        likeWidened,
         decisionTypeFilter,
         cubeResponseFilter,
         diceRollFilter,
@@ -468,8 +466,7 @@ export function parseFilterTokens(tokens) {
         // Nom entier : le classement n'a pas d'abréviation.
         likeFilter: p.likeFilter,
         likeTargetId: p.likeTargetId,
-        likeMaxDistance: p.likeMaxDistance,
-        likeWidened: p.likeWidened
+        likeMaxDistance: p.likeMaxDistance
     };
 }
 
@@ -491,7 +488,6 @@ export function parseSearchCommand(command) {
         likeFilter: p.likeFilter,
         likeTargetId: p.likeTargetId,
         likeMaxDistance: p.likeMaxDistance,
-        likeWidened: p.likeWidened,
         dt: p.decisionTypeFilter,
         dr: p.diceRollFilter,
         drMode: p.diceRollMode,
@@ -632,11 +628,10 @@ export function replaySearchArgs(command) {
         encounterFilter: f.encounterFilter,
         commentOriginFilter: f.coOrigin,
         commentAuthorFilter: f.coAuthor,
-        // Le classement (ADR-0043), pour la même raison.
+        // Le classement (ADR-0112), pour la même raison.
         likeFilter: f.likeFilter,
         likeTargetId: f.likeTargetId,
-        likeMaxDistance: f.likeMaxDistance,
-        likeWidened: f.likeWidened
+        likeMaxDistance: f.likeMaxDistance
     };
     return { args, f };
 }
@@ -712,11 +707,10 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         likeFilter: pf.likeFilter || false,
         likeTargetId: pf.likeTargetId || 0,
         // Dans son propre champ : dans `filter`, le plateau servirait aussi de
-        // motif que toute candidate doit contenir, l'inverse de pardonner un
-        // dessin approximatif (ADR-0043).
+        // motif que toute candidate doit contenir, alors qu'il n'est que la
+        // cible du classement (ADR-0112).
         likeTargetBoard: pf.likeTargetBoard || emptySearchBoardPosition(),
         likeMaxDistance: pf.likeMaxDistance || 0,
-        likeWidened: pf.likeWidened || false,
         tagFilter: pf.tagFilter || '',
         player1AbsolutePipCountFilter: pf.player1AbsolutePipCountFilter || '',
         equityFilter: pf.equityFilter || '',

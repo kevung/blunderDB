@@ -328,19 +328,18 @@
       }
     },
     {
-      "command": "s like<12",
+      "command": "s like<1",
       "expected": {
         "likeFilter": true,
-        "likeMaxDistance": 12
+        "likeMaxDistance": 1
       }
     },
     {
-      "command": "s like42<12*",
+      "command": "s like42<2",
       "expected": {
         "likeFilter": true,
         "likeTargetId": 42,
-        "likeMaxDistance": 12,
-        "likeWidened": true
+        "likeMaxDistance": 2
       }
     },
     {

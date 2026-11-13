@@ -14,6 +14,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/reach"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
 )
@@ -447,36 +448,23 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		return searchWhereClause{}, err
 	}
 
-	// A ranked query narrows to the target's equivalence class BEFORE anything
-	// else: a neighbour is the same problem nearby, and the rest of the WHERE
-	// clause then says which of those problems the user is asking about
-	// (ADR-0043).
+	// A ranked query reads its target here, once: the stored position it
+	// names, else the drawn board (ADR-0112), read as a POSITION, not a
+	// pattern — checkers not placed count as borne off. Nothing narrows the
+	// candidates: the relation holds across the whole library, whatever the
+	// decision, the score or the match.
 	var likeTarget *domain.Position
 	if f.LikeFilter {
-		// The target is the named stored position, else the drawn board
-		// (ADR-0043 rule 3), read as a POSITION, not a pattern: checkers not
-		// placed count as borne off.
-		var t *domain.Position
 		if f.LikeTargetID > 0 {
 			loaded, err := LoadTargetPosition(ctx, s.DB, scope, f.LikeTargetID)
 			if err != nil {
 				return searchWhereClause{}, err
 			}
-			t = loaded
+			likeTarget = loaded
 		} else {
 			board := f.LikeTargetBoard
-			t = &board
+			likeTarget = &board
 		}
-		likeTarget = t
-		class := storage.SimilarOptions{}
-		if !f.LikeWidened {
-			class = storage.ClassOf(t)
-		}
-		excluded, err := MatchesOfPosition(ctx, s.DB, scope, t.ID)
-		if err != nil {
-			return searchWhereClause{}, err
-		}
-		AppendClassSQL(class, excluded, &where, &args)
 	}
 
 	var bitboardTight bool
@@ -661,42 +649,45 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	}, nil
 }
 
-// Rank answers a query carrying the `like` token: the same candidates Find
-// would return, ordered by how far each stands from the target, with that
-// distance attached (ADR-0043).
+// Rank answers a query carrying the `like` token: the candidates Find would
+// return that stand within LikeMaxDistance plays of the target, nearest
+// first, each with its distance (ADR-0112).
 //
-// The ordering is done in Go, necessarily: several filters are decided in
-// applyGoFilters after the scan, so the ranking must see all the survivors.
-// ADR-0043 keeps that exhaustive scan over an approximate index.
+// The distance is decided in Go, necessarily: it is a search over legal
+// plays, and several filters are decided in applyGoFilters after the scan
+// anyway, so the ranking must see all the survivors.
 func (s *SearchStore) Rank(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]storage.SimilarPosition, error) {
 	if !f.LikeFilter {
 		return nil, fmt.Errorf("Rank needs a query carrying the `like` token; use Find for an unordered search")
+	}
+	order := f.LikeMaxDistance
+	if order == 0 {
+		order = reach.DefaultOrder
+	}
+	if err := reach.CheckOrder(order); err != nil {
+		return nil, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 	}
 	wc, err := s.buildWhere(ctx, scope, f)
 	if err != nil {
 		return nil, err
 	}
-	// The candidates are gathered UNBOUNDED: opts bounds the ranking, not the
-	// scan. Paging the scan would rank an arbitrary page and call it nearest.
-	candidates, err := s.findWith(ctx, f, wc, storage.ListOpts{})
+	target := reach.NewTarget(reach.Of(wc.likeTarget), order)
+	var out []storage.SimilarPosition
+	// The candidates are read chunk by chunk and only the neighbours kept:
+	// a library holds far more positions than stand a few plays away.
+	err = s.scan(ctx, f, wc, storage.ListOpts{}, func(chunk []domain.Position) bool {
+		for i := range chunk {
+			if wc.likeTarget.ID != 0 && chunk[i].ID == wc.likeTarget.ID {
+				continue
+			}
+			if d, ok := target.Distance(reach.Of(&chunk[i])); ok {
+				out = append(out, storage.SimilarPosition{Position: chunk[i], Distance: d})
+			}
+		}
+		return true
+	})
 	if err != nil {
 		return nil, err
-	}
-
-	wanted := engine.BuildSimilarityVector(wc.likeTarget)
-	out := make([]storage.SimilarPosition, 0, len(candidates))
-	for i := range candidates {
-		if candidates[i].ID == wc.likeTarget.ID {
-			continue
-		}
-		d := engine.SimilarityDistance(wanted, engine.BuildSimilarityVector(&candidates[i]))
-		// The ceiling drops a neighbour outright rather than ranking it last:
-		// a ranking that finds nothing close comes back empty, and says so,
-		// instead of handing over the least distant of the unrelated.
-		if f.LikeMaxDistance > 0 && d > f.LikeMaxDistance {
-			continue
-		}
-		out = append(out, storage.SimilarPosition{Position: candidates[i], Distance: d})
 	}
 	// Ties break on the id, so the same library answers the same question the
 	// same way twice — a ranking whose order wobbles between two runs cannot
@@ -733,35 +724,6 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		return true
 	})
 	return chunks, err
-}
-
-// findWith is find once the WHERE clause is built: the scan, and the Go-side
-// predicates that finish it. Rank shares it so a ranked query and a plain one
-// select the same rows by the same rules, and differ only in what happens to
-// the survivors afterwards.
-func (s *SearchStore) findWith(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, opts storage.ListOpts) ([]domain.Position, error) {
-	var chunks [][]domain.Position
-	n := 0
-	err := s.scan(ctx, f, wc, opts, func(positions []domain.Position) bool {
-		chunks = append(chunks, positions)
-		n += len(positions)
-		return true
-	})
-	if err != nil || len(chunks) == 1 {
-		return firstChunk(chunks), err
-	}
-	all := make([]domain.Position, 0, n)
-	for _, c := range chunks {
-		all = append(all, c...)
-	}
-	return all, nil
-}
-
-func firstChunk(chunks [][]domain.Position) []domain.Position {
-	if len(chunks) == 0 {
-		return nil
-	}
-	return chunks[0]
 }
 
 // searchChunk is how many SQL candidates one round of a Go-filtered scan

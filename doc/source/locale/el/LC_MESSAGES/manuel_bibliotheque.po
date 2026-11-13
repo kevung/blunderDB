@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 16:01+0200\n"
+"POT-Creation-Date: 2026-11-13 01:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -663,7 +663,7 @@ msgstr ""
 "τροποποίησή του ή μεταφορά του στον κάδο· για ένα τουρνουά, τροποποίηση ή"
 " διαγραφή του· για μια συλλογή, τροποποίηση ή μεταφορά της στον κάδο."
 
-#: ../../source/manuel_bibliotheque.rst:274
+#: ../../source/manuel_bibliotheque.rst:278
 msgid ""
 "**Envoyer** : *Copier la position vers …*, *Copier le match vers …* ou "
 "*Copier le tournoi vers …*, une entrée par autre base ouverte, la même "
@@ -677,7 +677,7 @@ msgstr ""
 "*Αναίρεση*· *Προσθήκη στην παρτίδα*· για μια θέση, *Προσθήκη στη συλλογή "
 "…*, μία καταχώριση για κάθε συλλογή της βάσης (βλ. :ref:`vue_ailleurs`)."
 
-#: ../../source/manuel_bibliotheque.rst:279
+#: ../../source/manuel_bibliotheque.rst:284
 msgid ""
 "Seules les actions qui s'appliquent sont proposées : un brouillon ne "
 "s'annote pas et ne va pas à la corbeille, le plateau de recherche ne "
@@ -696,11 +696,11 @@ msgstr ""
 "ενέργεια, το *ΑΡΙΣΤΕΡΆ* επιστρέφει, το *ESC* κλείνει το υπομενού και μετά"
 " το μενού."
 
-#: ../../source/manuel_bibliotheque.rst:290
+#: ../../source/manuel_bibliotheque.rst:295
 msgid "La corbeille"
 msgstr "Ο κάδος"
 
-#: ../../source/manuel_bibliotheque.rst:292
+#: ../../source/manuel_bibliotheque.rst:297
 msgid ""
 "Supprimer une position, une collection, un commentaire, une carte Anki ou"
 " un match passe par une **corbeille** : la suppression a bien lieu, mais "
@@ -714,7 +714,7 @@ msgstr ""
 "εντολή ``trash`` ανοίγει το παράθυρο που τα απαριθμεί, καθένα με "
 "*Επαναφορά* και *Διαγραφή*, και ένα κουμπί *Άδειασμα του κάδου*."
 
-#: ../../source/manuel_bibliotheque.rst:298
+#: ../../source/manuel_bibliotheque.rst:303
 msgid ""
 "Une position restaurée revient avec **son analyse et ses commentaires** —"
 " la rendre nue serait une restauration de nom seulement —, sa marque « "
@@ -737,7 +737,7 @@ msgstr ""
 "παίρνει νέο. Μια συλλογή επιστρέφει με τη λίστα της· οι θέσεις που "
 "περιείχε δεν είχαν διαγραφεί ποτέ — μια συλλογή είναι μια όψη πάνω τους."
 
-#: ../../source/manuel_bibliotheque.rst:308
+#: ../../source/manuel_bibliotheque.rst:313
 msgid ""
 "Un match supprimé emporte ses parties, ses coups, leurs analyses et les "
 "positions que plus rien d'autre ne retient, avec les notes venues du "
@@ -773,7 +773,7 @@ msgstr ""
 " ματς χωρίς αποτύπωμα, πληκτρολογημένο ή παιγμένο στο blunderDB, δεν "
 "συγκρίνεται έτσι."
 
-#: ../../source/manuel_bibliotheque.rst:324
+#: ../../source/manuel_bibliotheque.rst:329
 msgid ""
 "Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, "
 "jamais à l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout "
@@ -783,16 +783,16 @@ msgstr ""
 "``vacuum``, ποτέ το άνοιγμα μιας βάσης: το να μην κάνει κανείς ``vacuum``"
 " σημαίνει να τα κρατά όλα."
 
-#: ../../source/manuel_bibliotheque.rst:327
+#: ../../source/manuel_bibliotheque.rst:332
 msgid "La corbeille ne voyage pas : un export ne l'emporte pas."
 msgstr "Ο κάδος δεν ταξιδεύει: μια εξαγωγή δεν τον μεταφέρει."
 
-#: ../../source/manuel_bibliotheque.rst:332
-#: ../../source/manuel_bibliotheque.rst:340
+#: ../../source/manuel_bibliotheque.rst:337
+#: ../../source/manuel_bibliotheque.rst:345
 msgid "Panneau Recherche"
 msgstr "Πίνακας Αναζήτησης"
 
-#: ../../source/manuel_bibliotheque.rst:334
+#: ../../source/manuel_bibliotheque.rst:339
 msgid ""
 "Le panneau **Recherche** (*CTRL-F* ou *TAB*) permet de filtrer les "
 "positions selon des critères combinables librement : structure de pions, "
@@ -808,7 +808,7 @@ msgstr ""
 "επεξεργαστή θέσης, επιτρέποντας τον ορισμό μιας δομής πουλιών προς "
 "αναζήτηση πάνω στο ταμπλό."
 
-#: ../../source/manuel_bibliotheque.rst:344
+#: ../../source/manuel_bibliotheque.rst:349
 msgid ""
 "Le panneau Recherche : filtres numériques, structure de pions au plateau,"
 " onglets *Au moins* / *Sauf*."
@@ -816,7 +816,7 @@ msgstr ""
 "Ο πίνακας Αναζήτησης: αριθμητικά φίλτρα, δομή πουλιών στο ταμπλό, "
 "καρτέλες *Τουλάχιστον* / *Εκτός*."
 
-#: ../../source/manuel_bibliotheque.rst:347
+#: ../../source/manuel_bibliotheque.rst:352
 msgid ""
 "Les filtres se règlent dans le sous-onglet **Critères**. Quand une "
 "recherche ne trouve rien, le panneau l'affiche (« Aucune position ne "
@@ -827,7 +827,7 @@ msgstr ""
 "βρίσκει τίποτα, το πάνελ το δείχνει («Καμία θέση δεν ταιριάζει») με "
 "κουμπί **Εκκαθάριση φίλτρων**, αντί να αφήνει μόνο τη γραμμή κατάστασης."
 
-#: ../../source/manuel_bibliotheque.rst:351
+#: ../../source/manuel_bibliotheque.rst:356
 msgid ""
 "Pour chercher parmi les positions affichées, utiliser la commande ``ss`` "
 "suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la "
@@ -852,7 +852,7 @@ msgstr ""
 "αγώνα, η ``s`` απορρίπτεται: θα αναζητούσε σε όλη τη βιβλιοθήκη και θα "
 "αντικαθιστούσε την εμφανιζόμενη λίστα."
 
-#: ../../source/manuel_bibliotheque.rst:362
+#: ../../source/manuel_bibliotheque.rst:367
 msgid ""
 "Les résultats d'une recherche ``ss`` lancée depuis une collection ou un "
 "match se quittent avec *Esc*, en un seul appui dès que ni un champ ni le "
@@ -872,7 +872,7 @@ msgstr ""
 "αναζήτησης ανοιγμένο πάνω σε συλλογή ή αγώνα, αναζητά σε όλη τη "
 "βιβλιοθήκη, και το *Esc* δεν επιστρέφει πια στη λίστα που αφήσατε."
 
-#: ../../source/manuel_bibliotheque.rst:371
+#: ../../source/manuel_bibliotheque.rst:376
 msgid ""
 "Une recherche sur une grande base se montre avant d'être comptée : la "
 "première page de résultats s'affiche aussitôt, et la barre d'état indique"
@@ -892,7 +892,7 @@ msgstr ""
 "πρώτη σελίδα εμφανιζόταν ήδη, παραμένει μόνη της και η γραμμή κατάστασης "
 "το δηλώνει."
 
-#: ../../source/manuel_bibliotheque.rst:379
+#: ../../source/manuel_bibliotheque.rst:384
 msgid ""
 "Le panneau propose un contrôle explicite du **type de décision** "
 "recherché : *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou "
@@ -915,7 +915,7 @@ msgstr ""
 "Πάσο*, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· "
 "η τιμή αυτή παραμένει επεξεργάσιμη."
 
-#: ../../source/manuel_bibliotheque.rst:388
+#: ../../source/manuel_bibliotheque.rst:393
 msgid ""
 "La **phase de partie** — ouverture, milieu de partie, course, sortie des "
 "pions — est une étiquette calculée par blunderDB à partir du plateau "
@@ -939,7 +939,7 @@ msgstr ""
 "περισσότερα από τέσσερα πούλια από τα σημεία εκκίνησής του, κανένα δεν "
 "έχει βγει και κανένα δεν βρίσκεται στη μπάρα."
 
-#: ../../source/manuel_bibliotheque.rst:398
+#: ../../source/manuel_bibliotheque.rst:403
 msgid ""
 "L'étiquette est recalculée par la commande ``blunderdb repair``. Sur une "
 "base ouverte pour la première fois avec cette version, le calcul est fait"
@@ -953,85 +953,88 @@ msgstr ""
 "υπολογίστηκαν ποτέ δεν επιστρέφει τίποτα για το ``ph:`` — τίποτα, αντί "
 "για λανθασμένη απάντηση."
 
-#: ../../source/manuel_bibliotheque.rst:403
+#: ../../source/manuel_bibliotheque.rst:408
 msgid ""
-"Le jeton ``like`` **classe** au lieu de restreindre : sa présence ordonne"
-" le résultat par distance croissante à une position cible — ``like`` la "
-"position courante, ``like42`` celle d'indice 42 — et les autres jetons "
+"Le jeton ``like`` **classe** au lieu de restreindre : il retient les "
+"positions qu'un petit nombre de jets sépare d'une position cible — "
+"``like`` la position courante, ``like42`` celle d'indice 42 — et les "
+"range par distance croissante, puis par indice. Les autres jetons "
 "restreignent l'ensemble ainsi classé, si bien que ``s like42 E>80`` se "
-"lit « les voisines de la 42 où j'ai fauté ». La distance est une distance"
-" de transport en pions-pas, la quantité de mouvement de pions qui sépare "
-"deux positions, vue du joueur au trait."
+"lit « les positions à deux jets au plus de la 42 où j'ai fauté »."
 msgstr ""
-"Το σύμβολο ``like`` **κατατάσσει** αντί να περιορίζει: η παρουσία του "
-"ταξινομεί το αποτέλεσμα κατά αύξουσα απόσταση από μια θέση-στόχο — το "
-"``like`` την τρέχουσα, το ``like42`` αυτή με δείκτη 42 — και τα άλλα "
-"σύμβολα περιορίζουν το σύνολο που κατατάσσεται έτσι, ώστε το ``s like42 "
-"E>80`` να διαβάζεται «οι γειτονικές θέσεις της 42 όπου έσφαλα». Η "
-"απόσταση είναι απόσταση μεταφοράς σε pip πουλιών, η ποσότητα κίνησης "
-"πουλιών που χωρίζει δύο θέσεις, ιδωμένη από τον παίκτη που παίζει."
+"Το σύμβολο ``like`` **κατατάσσει** αντί να περιορίζει: κρατά τις θέσεις "
+"που τις χωρίζει από μια θέση-στόχο μικρός αριθμός ζαριών — το ``like`` "
+"την τρέχουσα, το ``like42`` αυτή με δείκτη 42 — και τις ταξινομεί κατά "
+"αύξουσα απόσταση και έπειτα κατά δείκτη. Τα άλλα σύμβολα περιορίζουν το "
+"σύνολο που κατατάσσεται έτσι, ώστε το ``s like42 E>80`` να διαβάζεται «οι"
+" θέσεις το πολύ δύο ζαριές από την 42 όπου έσφαλα»."
 
-#: ../../source/manuel_bibliotheque.rst:411
+#: ../../source/manuel_bibliotheque.rst:415
 msgid ""
-"Une voisine est le même **problème**, pas le même dessin : le classement "
-"se prend dans la classe de la cible — même type de décision, même régime "
-"(argent ou match) pour une décision de videau, et un match différent du "
-"sien, car les positions qui l'entourent dans sa propre partie sont ses "
-"structures les plus proches sans jamais être ses voisines. Les dés, le "
-"score et le videau restent hors classe ; les jetons ordinaires les "
-"filtrent quand on le veut. ``like42*`` élargit la classe à tous les types"
-" de décision et aux deux régimes, jamais au match de la cible ; "
-"``like<12`` écarte ce qui est à plus de douze pions-pas. Un classement "
-"qui ne trouve rien rend une liste vide et le dit, plutôt que dix "
+"La distance de deux positions est le plus petit nombre de jets légaux "
+"successifs qui mènent de la structure de pions de l'une à celle de "
+"l'autre. Les jets alternent les camps, mais le premier peut être joué par"
+" l'un ou l'autre, et le sens n'importe pas : de la cible vers la position"
+" ou de la position vers la cible. Un coup légal est celui que "
+"l'application accepte — entrer d'abord depuis la barre, jouer le plus de "
+"dés possible, le plus fort quand un seul passe, sortir, frapper — et un "
+"jet injouable compte pour un jet. Seuls les pions comptent : la même "
+"structure à un autre score, avec un autre videau ou pour une autre "
+"décision est à distance 0 et sort en tête. La recherche couvre toute la "
+"base, match de la cible compris : la position qui la suit dans sa partie "
+"est à un jet."
+msgstr ""
+"Η απόσταση δύο θέσεων είναι ο μικρότερος αριθμός διαδοχικών νόμιμων "
+"ζαριών που οδηγούν από τη δομή πούλιων της μιας σε εκείνη της άλλης. Οι "
+"ζαριές εναλλάσσουν τις πλευρές, αλλά την πρώτη μπορεί να την παίξει όποια"
+" από τις δύο, και η φορά δεν έχει σημασία: από τον στόχο προς τη θέση ή "
+"από τη θέση προς τον στόχο. Νόμιμη κίνηση είναι εκείνη που δέχεται η "
+"εφαρμογή — πρώτα είσοδος από το μπαρ, παίξιμο όσο το δυνατόν περισσότερων"
+" ζαριών, του μεγαλύτερου όταν περνά μόνο ένα, έξοδος, χτύπημα — και μια "
+"ζαριά που δεν παίζεται μετρά για μία ζαριά. Μετρούν μόνο τα πούλια: η "
+"ίδια δομή σε άλλο σκορ, με άλλο κύβο ή για άλλη απόφαση απέχει 0 και "
+"βγαίνει πρώτη. Η αναζήτηση καλύπτει όλη τη βάση, μαζί με τον αγώνα του "
+"στόχου: η θέση που την ακολουθεί στο παιχνίδι της απέχει μία ζαριά."
+
+#: ../../source/manuel_bibliotheque.rst:427
+msgid ""
+"Sans plafond écrit, ``like`` va jusqu'à deux jets ; ``like<1`` s'arrête à"
+" un. Au-delà de deux jets, la recherche est refusée et le dit : la "
+"relation est exacte, jamais approchée, et son calcul serait trop long sur"
+" une base de 100 000 positions. Le classement ne complète jamais avec des"
+" positions plus lointaines : il rend une liste vide plutôt que dix "
 "positions sans rapport."
 msgstr ""
-"Μια γειτονική θέση είναι το ίδιο **πρόβλημα**, όχι το ίδιο σχέδιο: η "
-"κατάταξη γίνεται μέσα στην κλάση του στόχου — ίδιος τύπος απόφασης, ίδιο "
-"καθεστώς (χρήματα ή αγώνας) για μια απόφαση κύβου, και αγώνας "
-"διαφορετικός από τον δικό του, γιατί οι θέσεις που τον περιβάλλουν στην "
-"ίδια του την παρτίδα είναι οι πλησιέστερες δομές του χωρίς ποτέ να είναι "
-"γειτονικές του. Τα ζάρια, το σκορ και ο κύβος μένουν εκτός κλάσης· τα "
-"συνηθισμένα σύμβολα τα φιλτράρουν όποτε το θέλουμε. Το ``like42*`` "
-"διευρύνει την κλάση σε όλους τους τύπους απόφασης και στα δύο καθεστώτα, "
-"ποτέ στον αγώνα του στόχου· το ``like<12`` απορρίπτει ό,τι απέχει πάνω "
-"από δώδεκα pip πουλιών. Μια κατάταξη που δεν βρίσκει τίποτα επιστρέφει "
-"κενή λίστα και το λέει, αντί για δέκα άσχετες θέσεις."
+"Χωρίς γραπτό όριο, το ``like`` φτάνει μέχρι δύο ζαριές· το ``like<1`` "
+"σταματά στη μία. Πέρα από δύο ζαριές, η αναζήτηση απορρίπτεται και το "
+"λέει: η σχέση είναι ακριβής, ποτέ προσεγγιστική, και ο υπολογισμός της θα"
+" ήταν υπερβολικά μακρύς σε βάση 100 000 θέσεων. Η κατάταξη δεν "
+"συμπληρώνει ποτέ με πιο απομακρυσμένες θέσεις: επιστρέφει κενή λίστα αντί"
+" για δέκα άσχετες θέσεις."
 
-#: ../../source/manuel_bibliotheque.rst:422
+#: ../../source/manuel_bibliotheque.rst:433
 msgid ""
-"En mode **édition**, ``s like`` prend pour cible le plateau **dessiné** :"
-" on dessine à peu près la position dont on se souvient, on lance, et la "
-"bibliothèque répond — là où la recherche par structure exige le dessin "
-"juste. Le plateau est alors lu comme une position et non comme un motif :"
-" un point laissé vide compte comme des pions sortis, ce qui est exact "
-"pour une position réelle et fausse le calcul pour un dessin laissé à "
-"moitié."
+"En mode **édition**, ``s like`` prend pour cible le plateau **dessiné**, "
+"sous la même relation. Le plateau est lu comme une position et non comme "
+"un motif : un point laissé vide compte comme des pions sortis."
 msgstr ""
 "Σε λειτουργία **επεξεργασίας**, το ``s like`` παίρνει ως στόχο το "
-"**σχεδιασμένο** ταμπλό: σχεδιάζει κανείς κατά προσέγγιση τη θέση που "
-"θυμάται, εκτελεί, και η βιβλιοθήκη απαντά — εκεί όπου η αναζήτηση κατά "
-"δομή απαιτεί το ακριβές σχέδιο. Το ταμπλό διαβάζεται τότε ως θέση και όχι"
-" ως μοτίβο: ένα σημείο που έμεινε κενό μετρά ως πούλια έξω, πράγμα "
-"ακριβές για μια πραγματική θέση και που παραποιεί τον υπολογισμό για ένα "
-"σχέδιο αφημένο στη μέση."
+"**σχεδιασμένο** ταμπλό, με την ίδια σχέση. Το ταμπλό διαβάζεται ως θέση "
+"και όχι ως μοτίβο: ένα σημείο που έμεινε κενό μετρά ως πούλια έξω."
 
-#: ../../source/manuel_bibliotheque.rst:429
+#: ../../source/manuel_bibliotheque.rst:437
 msgid ""
-"Chaque voisine porte sa distance sous les tableaux d'analyse, avec la "
-"position dont elle est proche. C'est ce qui permet de juger si l'on "
-"regarde une voisine ou une coïncidence, et c'est la raison d'être du "
-"plafond. Le classement se lance aussi sans passer par la ligne de "
-"commande : *CTRL-MAJ-L*, ou l'entrée **Positions voisines** du menu "
-"contextuel du plateau."
+"Chaque voisine porte sa distance en jets sous les tableaux d'analyse, "
+"avec la position dont elle est proche. Le classement se lance aussi sans "
+"passer par la ligne de commande : *CTRL-MAJ-L*, ou l'entrée **Positions "
+"voisines** du menu contextuel du plateau."
 msgstr ""
-"Κάθε γειτονική θέση φέρει την απόστασή της κάτω από τους πίνακες "
-"ανάλυσης, μαζί με τη θέση με την οποία γειτονεύει. Αυτό επιτρέπει να "
-"κρίνει κανείς αν βλέπει μια γειτονική θέση ή μια σύμπτωση, και αυτός "
-"είναι ο λόγος ύπαρξης του ορίου. Η κατάταξη ξεκινά επίσης χωρίς τη γραμμή"
-" εντολών: *CTRL-SHIFT-L*, ή η επιλογή **Γειτονικές θέσεις** του μενού "
-"περιβάλλοντος του ταμπλό."
+"Κάθε γειτονική θέση φέρει την απόστασή της σε ζαριές κάτω από τους "
+"πίνακες ανάλυσης, μαζί με τη θέση με την οποία γειτονεύει. Η κατάταξη "
+"ξεκινά επίσης χωρίς τη γραμμή εντολών: *CTRL-SHIFT-L*, ή η επιλογή "
+"**Γειτονικές θέσεις** του μενού περιβάλλοντος του ταμπλό."
 
-#: ../../source/manuel_bibliotheque.rst:435
+#: ../../source/manuel_bibliotheque.rst:442
 msgid ""
 "Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions "
 "rencontrées au moins trois fois dans la base, tous matchs et tous joueurs"
@@ -1057,7 +1060,7 @@ msgstr ""
 "``pl\"Alice\"`` αυτές των αγώνων που έπαιξε· το ``op\"Bob\"`` περιορίζει "
 "ομοίως το μέτρημα στους αγώνες εναντίον του Bob."
 
-#: ../../source/manuel_bibliotheque.rst:447
+#: ../../source/manuel_bibliotheque.rst:454
 msgid ""
 "Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase,"
 " et elle répond à la question qu'un paquet de filtres sauvegardés ne sait"
@@ -1072,7 +1075,7 @@ msgstr ""
 "του **παίκτη που παίζει** — του σχεδίου μέσα στο οποίο παιρνόταν η "
 "απόφαση."
 
-#: ../../source/manuel_bibliotheque.rst:453
+#: ../../source/manuel_bibliotheque.rst:460
 msgid ""
 "Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus "
 "spécifique au plus général :"
@@ -1080,7 +1083,7 @@ msgstr ""
 "Τα δέκα αναγνωρισμένα σχέδια, με τη σειρά που οι κανόνες τα εξαντλούν, "
 "από το πιο ειδικό στο πιο γενικό:"
 
-#: ../../source/manuel_bibliotheque.rst:456
+#: ../../source/manuel_bibliotheque.rst:463
 msgid ""
 "``race`` — les pions les plus arriérés des deux camps se sont croisés : "
 "aucun contact n'est plus possible. Frontière de GNU Backgammon."
@@ -1088,7 +1091,7 @@ msgstr ""
 "``race`` — τα πιο πίσω πούλια των δύο πλευρών διασταυρώθηκαν: καμία επαφή"
 " δεν είναι πια δυνατή. Όριο του GNU Backgammon."
 
-#: ../../source/manuel_bibliotheque.rst:458
+#: ../../source/manuel_bibliotheque.rst:465
 msgid ""
 "``bearin`` — le joueur au trait rentre ses pions alors que l'adversaire "
 "tient encore une ancre dans son jan."
@@ -1096,7 +1099,7 @@ msgstr ""
 "``bearin`` — ο παίκτης που παίζει μαζεύει τα πούλια ενώ ο αντίπαλος κρατά"
 " ακόμη άγκυρα στο σπίτι του."
 
-#: ../../source/manuel_bibliotheque.rst:460
+#: ../../source/manuel_bibliotheque.rst:467
 msgid ""
 "``crunch`` — le joueur au trait a au plus six pions hors de ses points 1 "
 "et 2. Règle de GNU Backgammon, seuil de son auteur."
@@ -1105,11 +1108,11 @@ msgstr ""
 "σημείων 1 και 2 του. Κανόνας του GNU Backgammon, κατώφλι του συγγραφέα "
 "του."
 
-#: ../../source/manuel_bibliotheque.rst:462
+#: ../../source/manuel_bibliotheque.rst:469
 msgid "``backgame`` — deux ancres ou plus dans le jan adverse."
 msgstr "``backgame`` — δύο ή περισσότερες άγκυρες στο σπίτι του αντιπάλου."
 
-#: ../../source/manuel_bibliotheque.rst:463
+#: ../../source/manuel_bibliotheque.rst:470
 msgid ""
 "``acepoint`` — une seule ancre, sur le point 1 adverse, avec au moins "
 "vingt pions de retard."
@@ -1117,7 +1120,7 @@ msgstr ""
 "``acepoint`` — μία μόνο άγκυρα, στο σημείο άσσου του αντιπάλου, με "
 "τουλάχιστον είκοσι pip πίσω."
 
-#: ../../source/manuel_bibliotheque.rst:465
+#: ../../source/manuel_bibliotheque.rst:472
 msgid ""
 "``blitz`` — trois points du jan faits ou plus, et l'adversaire à la barre"
 " ou avec un blot à frapper dans ce jan."
@@ -1125,7 +1128,7 @@ msgstr ""
 "``blitz`` — τρία ή περισσότερα σημεία του σπιτιού φτιαγμένα, και ο "
 "αντίπαλος στη μπάρα ή με blot προς χτύπημα σε αυτό το σπίτι."
 
-#: ../../source/manuel_bibliotheque.rst:467
+#: ../../source/manuel_bibliotheque.rst:474
 msgid ""
 "``primevprime`` — les deux camps tiennent une amorce d'au moins quatre "
 "points, et chacun a un pion enfermé derrière celle de l'autre."
@@ -1134,15 +1137,15 @@ msgstr ""
 "σημείων, και καθεμιά έχει ένα πούλι παγιδευμένο πίσω από το φράγμα της "
 "άλλης."
 
-#: ../../source/manuel_bibliotheque.rst:469
+#: ../../source/manuel_bibliotheque.rst:476
 msgid "``mutualholding`` — les deux camps tiennent une ancre haute."
 msgstr "``mutualholding`` — και οι δύο πλευρές κρατούν ψηλή άγκυρα."
 
-#: ../../source/manuel_bibliotheque.rst:470
+#: ../../source/manuel_bibliotheque.rst:477
 msgid "``holding`` — le joueur au trait tient une ancre haute, l'adversaire non."
 msgstr "``holding`` — ο παίκτης που παίζει κρατά ψηλή άγκυρα, ο αντίπαλος όχι."
 
-#: ../../source/manuel_bibliotheque.rst:471
+#: ../../source/manuel_bibliotheque.rst:478
 msgid ""
 "``contact`` — contact, et aucun des plans ci-dessus. L'ouverture atterrit"
 " ici."
@@ -1150,7 +1153,7 @@ msgstr ""
 "``contact`` — επαφή, και κανένα από τα παραπάνω σχέδια. Το άνοιγμα "
 "καταλήγει εδώ."
 
-#: ../../source/manuel_bibliotheque.rst:473
+#: ../../source/manuel_bibliotheque.rst:480
 msgid ""
 "Trois de ces règles sont celles de GNU Backgammon et sont sourcées ; les "
 "autres sont des **conventions de blunderDB**. La littérature du "
@@ -1172,7 +1175,7 @@ msgstr ""
 " είναι εκδοσιοποιημένα: αλλάξτε τα, τρέξτε ``blunderdb repair``, και όλη "
 "η βάση ξαναετικετάρεται."
 
-#: ../../source/manuel_bibliotheque.rst:482
+#: ../../source/manuel_bibliotheque.rst:489
 msgid ""
 "Une seule étiquette est conservée par position, celle du joueur au trait."
 " Une étiquette dérivée n'est jamais modifiable, jamais exportée comme une"
@@ -1184,7 +1187,7 @@ msgstr ""
 "μια βάση της οποίας τα σχέδια δεν υπολογίστηκαν ποτέ δεν επιστρέφει "
 "τίποτα για ``gt:`` — όπως και για ``ph:``."
 
-#: ../../source/manuel_bibliotheque.rst:487
+#: ../../source/manuel_bibliotheque.rst:494
 msgid ""
 "Le filtre **Marquée** retient les positions que vous avez marquées "
 "(*flag*) dans le logiciel d'origine du match. Seul eXtreme Gammon produit"
@@ -1202,7 +1205,7 @@ msgstr ""
 "αποδοχή/πάσο, καθώς το blunderDB χωρίζει στα δύο ό,τι το αρχείο "
 "προέλευσης καταγράφει ως μία απόφαση."
 
-#: ../../source/manuel_bibliotheque.rst:494
+#: ../../source/manuel_bibliotheque.rst:501
 msgid ""
 "Le marquage n'est pas rétroactif : les matchs déjà présents dans la base "
 "ne portent pas cette information, puisqu'elle n'existe que dans les "
@@ -1221,7 +1224,7 @@ msgstr ""
 "για έναν προσωρινό κατάλογο εργασίας, χρησιμοποιήστε καλύτερα μια "
 "συλλογή."
 
-#: ../../source/manuel_bibliotheque.rst:502
+#: ../../source/manuel_bibliotheque.rst:509
 msgid ""
 "Le filtre **Commentaire** interroge les commentaires attachés aux "
 "positions selon trois modes exclusifs. *contient le texte* recherche un "
@@ -1241,7 +1244,7 @@ msgstr ""
 "σε συνδυασμό με φίλτρο σφάλματος ή ημερομηνίας, για να καταρτίσετε τον "
 "κατάλογο όσων απομένουν προς σχολιασμό."
 
-#: ../../source/manuel_bibliotheque.rst:510
+#: ../../source/manuel_bibliotheque.rst:517
 msgid ""
 "Les commentaires importés depuis un fichier de match (XG, GNUbg) comptent"
 " comme des commentaires. Pour ne retenir que les vôtres, ajoutez le jeton"
@@ -1258,7 +1261,7 @@ msgstr ""
 "έναν *αγώνα* ή ένα *τουρνουά* δεν αφορούν αυτό: σχολιάζουν τον αγώνα ή το"
 " τουρνουά, όχι τις θέσεις του."
 
-#: ../../source/manuel_bibliotheque.rst:517
+#: ../../source/manuel_bibliotheque.rst:524
 msgid ""
 "Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre"
 " modale) plutôt que sur la saisie d'identifiants numériques : deux listes"
@@ -1280,7 +1283,7 @@ msgstr ""
 "γκριζάρει) τους αγώνες-μέλη του στη λίστα αγώνων, καθιστώντας εμφανές ότι"
 " ένα τουρνουά ισοδυναμεί με το σύνολο των αγώνων του."
 
-#: ../../source/manuel_bibliotheque.rst:526
+#: ../../source/manuel_bibliotheque.rst:533
 msgid ""
 "La bande du panneau de recherche porte un sélecteur *Critères* (les "
 "filtres) | *Historique* | *Enregistrés* — avec un quatrième segment, "
@@ -1308,7 +1311,7 @@ msgstr ""
 "να εκτελέσετε ξανά την αντίστοιχη αναζήτηση (βλ. :ref:`annexe_filtres`). "
 "Η εντολή ``history`` (ψευδώνυμο ``hi``) ανοίγει τον πίνακα αναζήτησης."
 
-#: ../../source/manuel_bibliotheque.rst:539
+#: ../../source/manuel_bibliotheque.rst:546
 msgid ""
 "L'étoile d'un filtre de la bibliothèque l'**épingle**. Les filtres "
 "épinglés s'affichent en pastilles en haut du panneau, quel que soit "
@@ -1331,7 +1334,7 @@ msgstr ""
 "που μετονομάζεται, εξαφανίζεται με ένα φίλτρο που διαγράφεται και δεν "
 "ταξιδεύει με την εξαγωγή της βιβλιοθήκης."
 
-#: ../../source/manuel_bibliotheque.rst:548
+#: ../../source/manuel_bibliotheque.rst:555
 msgid ""
 "Une recherche relancée garde son classement : ``s like42`` classe contre "
 "la position 42, et ``s like`` contre le plateau enregistré avec la "
@@ -1345,7 +1348,7 @@ msgstr ""
 "σχεδιαστεί. Μια καταχώριση που δεν κράτησε ταμπλό δεν ξαναεκτελείται με "
 "το ταμπλό της οθόνης, και η γραμμή κατάστασης το αναφέρει."
 
-#: ../../source/manuel_bibliotheque.rst:554
+#: ../../source/manuel_bibliotheque.rst:561
 msgid ""
 "Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste des "
 "filtres disponibles."
@@ -1353,12 +1356,12 @@ msgstr ""
 "Ανατρέξτε στο :ref:`λίστα εντολών <cmd_mode>` για τη λίστα των διαθέσιμων"
 " φίλτρων."
 
-#: ../../source/manuel_bibliotheque.rst:560
-#: ../../source/manuel_bibliotheque.rst:562
+#: ../../source/manuel_bibliotheque.rst:567
+#: ../../source/manuel_bibliotheque.rst:569
 msgid "Panneau Collections"
 msgstr "Πίνακας Συλλογών"
 
-#: ../../source/manuel_bibliotheque.rst:566
+#: ../../source/manuel_bibliotheque.rst:573
 msgid ""
 "Le panneau Collections : nom, nombre de positions, description, dernière "
 "modification."
@@ -1366,7 +1369,7 @@ msgstr ""
 "Ο πίνακας Συλλογών: όνομα, αριθμός θέσεων, περιγραφή, τελευταία "
 "τροποποίηση."
 
-#: ../../source/manuel_bibliotheque.rst:569
+#: ../../source/manuel_bibliotheque.rst:576
 msgid ""
 "Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton"
 " **+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle "
@@ -1384,7 +1387,7 @@ msgstr ""
 "αγώνων, το εικονίδιο ⌨ ανοίγει τη μεταγραφή του αγώνα και το εικονίδιο ✎ "
 "διορθώνει τα μεταδεδομένα του."
 
-#: ../../source/manuel_bibliotheque.rst:577
+#: ../../source/manuel_bibliotheque.rst:584
 msgid ""
 "Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de "
 "positions. Les collections peuvent être créées, renommées et supprimées. "
@@ -1408,7 +1411,7 @@ msgstr ""
 "*CTRL-B* ή εκτελέστε την εντολή ``collection`` για να εμφανίσετε ή να "
 "αποκρύψετε τον πίνακα."
 
-#: ../../source/manuel_bibliotheque.rst:588
+#: ../../source/manuel_bibliotheque.rst:595
 msgid ""
 "En tête d'une collection ouverte, le nombre de positions est un lien qui "
 "les remet dans le parcours, depuis la première ; la case **dans cette "
@@ -1420,7 +1423,7 @@ msgstr ""
 " συλλογή** προσθέτει ή αφαιρεί την εμφανιζόμενη θέση. Μια κενή λίστα "
 "προτείνει **+ Νέα συλλογή**."
 
-#: ../../source/manuel_bibliotheque.rst:593
+#: ../../source/manuel_bibliotheque.rst:600
 msgid ""
 "La **Pile** est la collection du geste « à revoir plus tard » : un "
 "double-clic hors du plateau, la touche *b* ou le bouton marque-page de la"
@@ -1453,7 +1456,7 @@ msgstr ""
 "που φέρνει κανείς μόνη της, και κατόπιν μπαίνει στη Στοίβα. Η γραμμή "
 "εντολών κάνει την ίδια χειρονομία με το ``collection pile``."
 
-#: ../../source/manuel_bibliotheque.rst:606
+#: ../../source/manuel_bibliotheque.rst:613
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1471,7 +1474,7 @@ msgstr ""
 "καταστρέφεται: οι θέσεις που περιείχε είναι ακόμη εκεί όταν γυρίσετε "
 "πίσω."
 
-#: ../../source/manuel_bibliotheque.rst:613
+#: ../../source/manuel_bibliotheque.rst:620
 msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
@@ -1484,7 +1487,7 @@ msgstr ""
 "συνηθισμένης συλλογής, με τη σειρά της αναζήτησης, και το ερώτημα "
 "διαγράφεται. Οι θέσεις που περιείχε πριν γίνει ζωντανή αντικαθίστανται."
 
-#: ../../source/manuel_bibliotheque.rst:618
+#: ../../source/manuel_bibliotheque.rst:625
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1496,7 +1499,7 @@ msgstr ""
 "επιστρέψει όλη τη βάση. Είναι η μοναδική βλάβη που ένα αποθηκευμένο "
 "φίλτρο δεν πρέπει να έχει: να διευρύνεται σιωπηλά."
 
-#: ../../source/manuel_bibliotheque.rst:623
+#: ../../source/manuel_bibliotheque.rst:630
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1518,7 +1521,7 @@ msgstr ""
 "**παγωμένη**, με τις θέσεις που επιλέγει το ερώτημα τη στιγμή της "
 "εξαγωγής."
 
-#: ../../source/manuel_bibliotheque.rst:632
+#: ../../source/manuel_bibliotheque.rst:639
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1537,7 +1540,7 @@ msgstr ""
 "τροφοδοτούν το πακέτο, και η γραμμή κατάστασης το αναφέρει μαζί με τον "
 "πραγματικό αριθμό των επιλεγμένων θέσεων."
 
-#: ../../source/manuel_bibliotheque.rst:642
+#: ../../source/manuel_bibliotheque.rst:649
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1555,21 +1558,21 @@ msgstr ""
 "κέντρο πολλών λαθών σας, παρόμοιας δομής, και το μάθημά της εξυπηρετεί "
 "όλα."
 
-#: ../../source/manuel_bibliotheque.rst:649
+#: ../../source/manuel_bibliotheque.rst:656
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
-"d'une famille sont **voisines** à au plus 12 pions-pas de distance "
-"``like`` ; une erreur de videau n'a pour voisines que celles du même "
+"d'une famille sont **voisines** à au plus 12 pions-pas de distance de "
+"transport ; une erreur de videau n'a pour voisines que celles du même "
 "score."
 msgstr ""
 "Τα λάθη είναι εκείνα του :ref:`πλάνου μελέτης <plan_etude>`: εκφρασμένα "
 "σε MWC και ταξινομημένα ανά οικογένεια (πλάνο παιχνιδιού, φύση, θέμα). "
 "Δύο λάθη μιας οικογένειας είναι **γείτονες** όταν απέχουν το πολύ 12 "
-"βήματα πούλιων σε απόσταση ``like``· ένα λάθος κύβου έχει ως γείτονες "
-"μόνο όσα έχουν το ίδιο σκορ."
+"βήματα πούλιων απόστασης μεταφοράς· ένα λάθος κύβου έχει ως γείτονες μόνο"
+" όσα έχουν το ίδιο σκορ."
 
-#: ../../source/manuel_bibliotheque.rst:653
+#: ../../source/manuel_bibliotheque.rst:660
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1588,7 +1591,7 @@ msgstr ""
 " που καλύπτεται· ο λόγος δίνει τον αριθμό που μετράει όταν το μάθημα "
 "μετράει για το μισό."
 
-#: ../../source/manuel_bibliotheque.rst:660
+#: ../../source/manuel_bibliotheque.rst:667
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1602,7 +1605,7 @@ msgstr ""
 "με σχόλιο, σε συλλογή, κάρτα Anki ή σημειωμένη ως «μελετημένη» — δεν "
 "προτείνεται ποτέ, και οι γείτονές της θεωρούνται καλυμμένοι."
 
-#: ../../source/manuel_bibliotheque.rst:666
+#: ../../source/manuel_bibliotheque.rst:673
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1626,11 +1629,11 @@ msgstr ""
 "Στη γραμμή εντολών: ``blunderdb collection suggest`` (βλ. "
 ":ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:679
+#: ../../source/manuel_bibliotheque.rst:686
 msgid "Leçons"
 msgstr "Μαθήματα"
 
-#: ../../source/manuel_bibliotheque.rst:681
+#: ../../source/manuel_bibliotheque.rst:688
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1646,7 +1649,7 @@ msgstr ""
 "``le`` εμφανίζει τα μαθήματα της βάσης στη γραμμή κατάστασης· το ``le 2``"
 " ανοίγει το μάθημα 2· το ``le edit`` ανοίγει τον επεξεργαστή μαθημάτων."
 
-#: ../../source/manuel_bibliotheque.rst:688
+#: ../../source/manuel_bibliotheque.rst:695
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1662,7 +1665,7 @@ msgstr ""
 "συνήθεις κινήσεις. Το *Κλείσιμο* εγκαταλείπει το μάθημα. Ένα βήμα του "
 "οποίου η συλλογή ή η θέση έχει διαγραφεί διατηρεί το κείμενό του."
 
-#: ../../source/manuel_bibliotheque.rst:695
+#: ../../source/manuel_bibliotheque.rst:702
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1681,7 +1684,7 @@ msgstr ""
 "αρχείου που περιέχει μάθημα το δημιουργεί· ένα μάθημα με το ίδιο όνομα "
 "που υπάρχει ήδη δεν αγγίζεται."
 
-#: ../../source/manuel_bibliotheque.rst:703
+#: ../../source/manuel_bibliotheque.rst:710
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1720,7 +1723,7 @@ msgstr ""
 "εμφάνιζαν. Τα μαθήματα δημιουργούνται και τροποποιούνται επίσης από τη "
 "γραμμή εντολών ή μέσω του API (:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:720
+#: ../../source/manuel_bibliotheque.rst:727
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
@@ -1739,3 +1742,50 @@ msgstr ""
 " να προστατεύεται με κωδικό (``.dbx``) όπως κάθε εξαγωγή. Χωρίς αυτό το "
 "πλαίσιο, μια μερική εξαγωγή (μια επιλογή θέσεων, συλλογών ή αγώνων) δεν "
 "μεταφέρει τα μαθήματα."
+
+#~ msgid ""
+#~ "Une voisine est le même **problème**,"
+#~ " pas le même dessin : le "
+#~ "classement se prend dans la classe "
+#~ "de la cible — même type de "
+#~ "décision, même régime (argent ou match)"
+#~ " pour une décision de videau, et "
+#~ "un match différent du sien, car "
+#~ "les positions qui l'entourent dans sa"
+#~ " propre partie sont ses structures "
+#~ "les plus proches sans jamais être "
+#~ "ses voisines. Les dés, le score et"
+#~ " le videau restent hors classe ; "
+#~ "les jetons ordinaires les filtrent quand"
+#~ " on le veut. ``like42*`` élargit la"
+#~ " classe à tous les types de "
+#~ "décision et aux deux régimes, jamais "
+#~ "au match de la cible ; ``like<12``"
+#~ " écarte ce qui est à plus de"
+#~ " douze pions-pas. Un classement qui"
+#~ " ne trouve rien rend une liste "
+#~ "vide et le dit, plutôt que dix "
+#~ "positions sans rapport."
+#~ msgstr ""
+#~ "Μια γειτονική θέση είναι το ίδιο "
+#~ "**πρόβλημα**, όχι το ίδιο σχέδιο: η "
+#~ "κατάταξη γίνεται μέσα στην κλάση του "
+#~ "στόχου — ίδιος τύπος απόφασης, ίδιο "
+#~ "καθεστώς (χρήματα ή αγώνας) για μια "
+#~ "απόφαση κύβου, και αγώνας διαφορετικός "
+#~ "από τον δικό του, γιατί οι θέσεις"
+#~ " που τον περιβάλλουν στην ίδια του"
+#~ " την παρτίδα είναι οι πλησιέστερες "
+#~ "δομές του χωρίς ποτέ να είναι "
+#~ "γειτονικές του. Τα ζάρια, το σκορ "
+#~ "και ο κύβος μένουν εκτός κλάσης· "
+#~ "τα συνηθισμένα σύμβολα τα φιλτράρουν "
+#~ "όποτε το θέλουμε. Το ``like42*`` "
+#~ "διευρύνει την κλάση σε όλους τους "
+#~ "τύπους απόφασης και στα δύο καθεστώτα,"
+#~ " ποτέ στον αγώνα του στόχου· το "
+#~ "``like<12`` απορρίπτει ό,τι απέχει πάνω "
+#~ "από δώδεκα pip πουλιών. Μια κατάταξη "
+#~ "που δεν βρίσκει τίποτα επιστρέφει κενή"
+#~ " λίστα και το λέει, αντί για "
+#~ "δέκα άσχετες θέσεις."

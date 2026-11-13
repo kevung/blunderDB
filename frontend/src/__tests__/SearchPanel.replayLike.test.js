@@ -1,7 +1,7 @@
 /**
  * SearchPanel.replayLike.test.js — #404
  *
- * L'ADR-0043 range `like` dans la grammaire pour que tout ce qui relit une
+ * L'ADR-0112 range `like` dans la grammaire pour que tout ce qui relit une
  * requête la comprenne, l'historique compris. Or le rejeu (double-clic dans
  * l'historique ou dans la bibliothèque de filtres, executeSearch) ne
  * transmettait aucun champ du classement : `s like42` rejoué partait en
@@ -151,7 +151,7 @@ afterEach(() => {
 });
 
 describe('le rejeu porte le classement like (#404)', () => {
-    for (const command of ['s like42', 's like42*', 's like42 E>80']) {
+    for (const command of ['s like42', 's like42<1', 's like42 E>80']) {
         test(`${command} rejoué depuis l'historique envoie ce que la barre envoie`, async () => {
             const board = drawnBoard();
             const expected = await typed(command, board);
@@ -167,12 +167,12 @@ describe('le rejeu porte le classement like (#404)', () => {
         });
     }
 
-    test('like42* élargit la classe et E>80 restreint, au rejeu comme à la frappe', async () => {
-        await replayHistory('s like42* E>80', drawnBoard());
+    test('like42<1 borne les jets et E>80 restreint, au rejeu comme à la frappe', async () => {
+        await replayHistory('s like42<1 E>80', drawnBoard());
         const [payload] = ranked();
         expect(must(payload).likeFilter).toBe(true);
         expect(must(payload).likeTargetId).toBe(42);
-        expect(must(payload).likeWidened).toBe(true);
+        expect(must(payload).likeMaxDistance).toBe(1);
         expect(must(payload).moveErrorFilter).toBe('E>80');
     });
 

@@ -14,6 +14,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/reach"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -186,8 +187,8 @@ type Config struct {
 	BoardColors   BoardColors   `json:"board_colors,omitempty"`
 	UIScale       int           `json:"ui_scale,omitempty"`
 	// LikeLimit is how many neighbours a `like` ranking returns;
-	// LikeMaxDistance the checker-pip ceiling, 0 = none. No default ceiling:
-	// its scale depends on the phase and is unmeasured (ADR-0043 rule 4).
+	// LikeMaxDistance the most plays a neighbour stands from its target,
+	// 0 = reach.DefaultOrder (ADR-0112).
 	LikeLimit int `json:"like_limit,omitempty"`
 	// CommentAuthor is « Votre nom »: it signs the comments written from the
 	// desktop. Empty leaves them unsigned.
@@ -658,18 +659,19 @@ func (c *Config) SaveCommentAuthor(name string) error {
 	return c.SaveConfig(c)
 }
 
-// GetLikeMaxDistance reports the ceiling, in checker-pips, beyond which a
-// position stops being a neighbour. Zero means no ceiling.
+// GetLikeMaxDistance reports the most plays a neighbour may stand from its
+// target. Zero means reach.DefaultOrder; a value no search serves reads as
+// zero, so a stored preference never turns every ranking into a refusal.
 func (c *Config) GetLikeMaxDistance() int {
-	if c.LikeMaxDistance < 0 {
+	if reach.CheckOrder(c.LikeMaxDistance) != nil {
 		return 0
 	}
 	return c.LikeMaxDistance
 }
 
-// SaveLikeMaxDistance persists that ceiling. Zero removes it.
+// SaveLikeMaxDistance persists that ceiling, held to the orders served.
 func (c *Config) SaveLikeMaxDistance(d int) error {
-	if d < 0 {
+	if reach.CheckOrder(d) != nil {
 		d = 0
 	}
 	c.LikeMaxDistance = d

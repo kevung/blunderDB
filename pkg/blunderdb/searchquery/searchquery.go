@@ -90,11 +90,11 @@ var (
 	phaseRe  = regexp.MustCompile(`^ph:[a-z]+$`)
 	originRe = regexp.MustCompile(`^co:[a-z]+$`)
 	typeRe   = regexp.MustCompile(`^gt:[a-z-]+$`)
-	// `like`, `like42`, `like<12`, `like42<12*` — the one token that RANKS.
+	// `like`, `like42`, `like<1`, `like42<2` — the one token that RANKS.
 	// Matched by shape rather than by prefix, for the reason `n` is: a prefix
 	// rule would claim any word starting with "like" and turn a typo into a
 	// silent reordering of the result.
-	likeRe = regexp.MustCompile(`^like(\d+)?(?:<(\d+))?(\*)?$`)
+	likeRe = regexp.MustCompile(`^like(\d+)?(?:<(\d+))?$`)
 	// n>3, n<10, n3,5 or a bare n4 ("exactly four").
 	encounterRe = regexp.MustCompile(`^n(?:[<>]\d+|\d+(?:,\d+)?)$`)
 	// A tag names itself: `#prime`. No letter prefix, so nothing else can
@@ -390,7 +390,6 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 		if m[2] != "" {
 			f.LikeMaxDistance, _ = strconv.Atoi(m[2])
 		}
-		f.LikeWidened = m[3] != ""
 	}
 	f.EquityFilter = first(prefix("e"))
 	f.DateFilter = first(prefix("T"))
@@ -539,9 +538,6 @@ func Format(f domain.SearchFilters) string {
 		if f.LikeMaxDistance > 0 {
 			tok += "<" + strconv.Itoa(f.LikeMaxDistance)
 		}
-		if f.LikeWidened {
-			tok += "*"
-		}
 		add(tok)
 	}
 	flag(f.MirrorFilter, "M")
@@ -650,7 +646,6 @@ var FieldTokens = map[string]string{
 	"LikeFilter":                    "like",
 	"LikeTargetID":                  "like",
 	"LikeMaxDistance":               "like<",
-	"LikeWidened":                   "like*",
 	"TagFilter":                     "#",
 	"PipCountFilter":                "p",
 	"Player1AbsolutePipCountFilter": "P",

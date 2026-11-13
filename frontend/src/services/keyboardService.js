@@ -496,7 +496,7 @@ export function handleKeyDown(event) {
         event.preventDefault();
         showCommandInputStore.set(true);
     } else if (event.ctrlKey && event.shiftKey && letter('l')) {
-        // Ctrl+Maj+L : les voisines de la position courante (ADR-0043). Testé
+        // Ctrl+Maj+L : les voisines de la position courante (ADR-0112). Testé
         // AVANT Ctrl+L, que la branche suivante capte — sans quoi le panneau
         // d'analyse s'ouvrirait à la place.
         event.preventDefault();

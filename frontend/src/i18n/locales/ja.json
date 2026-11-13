@@ -158,8 +158,8 @@
         "theme_contrast": "ハイコントラスト",
         "theme_print": "印刷向け",
         "likeLimit": "並べ替えごとの近い局面の数",
-        "likeMaxDistance": "最大距離（チェッカーピップ）",
-        "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。",
+        "likeMaxDistance": "最大距離（手数）",
+        "likeNote": "ゼロ：2手（上限）。トークン like<1 は検索ごとに独自の上限を指定します。",
         "commentAuthor": "あなたの名前",
         "commentAuthorNote": "あなたが書くコメントに署名します。空欄：署名なし。",
         "assistantTitle": "アシスタントと MCP",
@@ -2165,9 +2165,9 @@
         "noPosition": "近い局面を探す対象の局面がありません。",
         "failed": "近い局面の検索に失敗しました。",
         "none": "このデータベースに近い局面はありません。",
-        "found": "近い局面 {n} 件、{nearest} から {farthest} チェッカーピップ。",
-        "fromPosition": "局面 {id} から {distance} チェッカーピップ。",
-        "fromBoard": "描いた盤面から {distance} チェッカーピップ。"
+        "found": "近い局面 {n} 件（{nearest}〜{farthest} 手）。",
+        "fromPosition": "局面 {id} から {distance} 手。",
+        "fromBoard": "描いた盤面から {distance} 手。"
     },
     "log": {
         "title": "動作ログ",

@@ -72,7 +72,6 @@ var corpusField = map[string]string{
 	"likeFilter":                    "LikeFilter",
 	"likeTargetId":                  "LikeTargetID",
 	"likeMaxDistance":               "LikeMaxDistance",
-	"likeWidened":                   "LikeWidened",
 	"dateFilter":                    "DateFilter",
 	"movePatternFilter":             "MovePatternFilter",
 	"searchText":                    "SearchText",

@@ -38,8 +38,9 @@ type ogidReq struct {
 type similarReq struct {
 	PositionID int64 `json:"positionId"`
 	Limit      int   `json:"limit"`
-	// MaxDistance drops neighbours beyond this many checker-pips (0 = none).
-	// A ranking whose ceiling nothing passes comes back empty (ADR-0043).
+	// MaxDistance is the most plays a neighbour may stand from the position
+	// (0 = reach.DefaultOrder; beyond reach.MaxOrder, refused). A ranking
+	// nothing stands within comes back empty (ADR-0112).
 	MaxDistance int `json:"maxDistance,omitempty"`
 }
 
@@ -326,10 +327,9 @@ func (s *Server) positionRoutes() []route {
 			}
 			return race.Evaluate(req.Position), nil
 		})},
-		// "Positions like this one" (ADR-0043). An exhaustive scan, so EXACT
-		// neighbours: under a hundred thousand positions, an approximate
-		// index would trade consistency for a smaller recall gain than it
-		// costs. Ranking is done WITHIN the target's class.
+		// "Positions like this one" (ADR-0112): every position within a few
+		// legal plays of the target, across the whole library, nearest
+		// first. An exhaustive scan, so the relation is exact.
 		{http.MethodPost, "/v1/positions.similar", rpc(func(ctx context.Context, scope string, req similarReq) ([]storage.SimilarPosition, error) {
 			if req.PositionID <= 0 {
 				return nil, errMissing("positionId")

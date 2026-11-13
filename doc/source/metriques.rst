@@ -499,7 +499,7 @@ erreurs évitables, porte une leçon nette et n'est pas déjà étudiée. Les
 filtre, réunies par position ; l'excès d'une position est la somme des excès
 positifs ℓ − d de ses erreurs. Deux candidates d'une même famille — et, pour
 le videau, du même score — sont **voisines** à au plus ρ = 12 pions-pas de
-distance ``like`` (un coup de dés en vaut 8 à 16).
+distance de transport (un coup de dés en vaut 8 à 16).
 
 **La formule.** Le gain d'une candidate p est
 
@@ -523,8 +523,8 @@ comme déjà retenue.
 
 **Unité.** Le MWC couvert, en pourcentage.
 
-**Limites.** Le rayon et les facteurs sont fixés, pas appris. La distance
-``like`` compare des structures de pions, pas des idées : deux positions de
+**Limites.** Le rayon et les facteurs sont fixés, pas appris. La distance de
+transport compare des structures de pions, pas des idées : deux positions de
 même leçon mais de structure éloignée ne se couvrent pas.
 
 **XG et gnuBG.** Pas d'équivalent.

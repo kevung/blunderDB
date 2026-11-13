@@ -158,8 +158,8 @@
         "theme_contrast": "Contraste élevé",
         "theme_print": "Imprimable",
         "likeLimit": "Voisines par classement",
-        "likeMaxDistance": "Distance maximale (pions-pas)",
-        "likeNote": "Zéro : aucun plafond. Le jeton like<12 impose le sien pour une recherche.",
+        "likeMaxDistance": "Distance maximale (jets)",
+        "likeNote": "Zéro : 2 jets, le maximum servi. Le jeton like<1 impose le sien pour une recherche.",
         "commentAuthor": "Votre nom",
         "commentAuthorNote": "Signe les commentaires que vous écrivez. Vide : non signés.",
         "assistantTitle": "Assistant et MCP",
@@ -2165,9 +2165,9 @@
         "noPosition": "Aucune position courante dont chercher les voisines.",
         "failed": "La recherche de positions proches a échoué.",
         "none": "Aucune position proche dans cette base.",
-        "found": "{n} positions proches, de {nearest} à {farthest} pions-pas.",
-        "fromPosition": "À {distance} pions-pas de la position n° {id}.",
-        "fromBoard": "À {distance} pions-pas du plateau dessiné."
+        "found": "{n} positions proches, de {nearest} à {farthest} jet(s).",
+        "fromPosition": "À {distance} jet(s) de la position n° {id}.",
+        "fromBoard": "À {distance} jet(s) du plateau dessiné."
     },
     "log": {
         "title": "Journal d'activité",

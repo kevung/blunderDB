@@ -29,16 +29,17 @@ type SearchStore interface {
 	// yielded is the caller's: the store never reuses or alters it.
 	Find(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) iter.Seq2[*domain.Position, error]
 
-	// Rank answers a query carrying the `like` token: the same filters as
-	// Find, but ORDERED by how far each survivor stands from the query's
-	// target, nearest first, with that distance attached (ADR-0043).
+	// Rank answers a query carrying the `like` token: the survivors of the
+	// same filters as Find that stand within LikeMaxDistance plays of the
+	// query's target, nearest first, with that distance attached (ADR-0112).
+	// Nothing farther is ever returned; an order beyond reach.MaxOrder is
+	// refused with ErrInvalid.
 	//
 	// A separate entry point because the distance is part of the answer, and
 	// domain.Position has no business carrying it.
 	//
-	// The set it ranks is the filters INTERSECTED with the target's
-	// equivalence class (ClassOf). opts bounds the RANKING, not the scan:
-	// every candidate must be seen before any is called nearest (ADR-0043).
+	// opts bounds the RANKING, not the scan: every candidate must be seen
+	// before any is called nearest.
 	Rank(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) ([]SimilarPosition, error)
 
 	// FindIDs is Find answering ids only, in the same order and window: a

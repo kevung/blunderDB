@@ -158,8 +158,8 @@
         "theme_contrast": "Suuri kontrasti",
         "theme_print": "Tulostettava",
         "likeLimit": "Naapureita järjestystä kohden",
-        "likeMaxDistance": "Enimmäisetäisyys (nappulapip)",
-        "likeNote": "Nolla: ei kattoa. Merkintä like<12 asettaa omansa yhtä hakua varten.",
+        "likeMaxDistance": "Enimmäisetäisyys (heitot)",
+        "likeNote": "Nolla: 2 heittoa, enimmäismäärä. Merkintä like<1 asettaa omansa yhtä hakua varten.",
         "commentAuthor": "Nimesi",
         "commentAuthorNote": "Allekirjoittaa kirjoittamasi kommentit. Tyhjä: ei allekirjoitusta.",
         "assistantTitle": "Avustaja ja MCP",
@@ -2165,9 +2165,9 @@
         "noPosition": "Ei nykyistä asemaa, jolle etsiä naapureita.",
         "failed": "Läheisten asemien haku epäonnistui.",
         "none": "Ei läheisiä asemia tässä tietokannassa.",
-        "found": "{n} läheistä asemaa, {nearest}–{farthest} nappulapipiä.",
-        "fromPosition": "{distance} nappulapipiä asemasta nro {id}.",
-        "fromBoard": "{distance} nappulapipiä piirretystä laudasta."
+        "found": "{n} läheistä asemaa, {nearest}–{farthest} heittoa.",
+        "fromPosition": "{distance} heiton päässä asemasta nro {id}.",
+        "fromBoard": "{distance} heiton päässä piirretystä laudasta."
     },
     "log": {
         "title": "Toimintaloki",

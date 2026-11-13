@@ -5,7 +5,7 @@ import { loadPositionsByFilters } from './positionService.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { tMsg } from '../i18n';
 
-// « Positions voisines » (ADR-0043) : menu contextuel et raccourci lancent
+// « Positions voisines » (ADR-0112) : menu contextuel et raccourci lancent
 // exactement `s like<id>`, le seul chemin du classement.
 
 /** Classe les voisines de la position courante. */
