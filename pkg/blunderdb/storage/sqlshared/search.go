@@ -920,13 +920,22 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 			filter, args = filter+cond, append(args, condArgs...)
 			start, startArgs = start+cond, append(startArgs, condArgs...)
 		}
-		if offset == 0 && wc.structure && strings.Count(start, afterID)*len(afterID) == len(start) {
-			ids, full, err := s.probeIDWalk(ctx, wc.scope, joins, start, startArgs, filter, args, limit)
-			if err != nil || full {
+		order := "p.id"
+		if offset == 0 && strings.Count(start, afterID)*len(afterID) == len(start) {
+			rows := int(idWalkProbe.Load())
+			// Masks have no index to fall back on: the walk is given more rows.
+			if !wc.structure {
+				rows /= columnProbeShare
+			}
+			ids, tried, err := s.probeIDWalk(ctx, wc.scope, joins, start, startArgs, filter, args, limit, rows)
+			if err != nil || len(ids) == limit {
 				return ids, err
 			}
+			if tried && s.fewRowsExpected(ctx, plain, filter, args) {
+				order = sortedIDOrder
+			}
 		}
-		return s.readIDs(ctx, plain, filter, "p.id", "", args, limit, offset, nil)
+		return s.readIDs(ctx, plain, filter, order, "", args, limit, offset, nil)
 	}
 	dir := " ASC"
 	if desc {
@@ -992,7 +1001,51 @@ const afterID = " AND p.id > ?"
 // walk in id order and a pass over the tenant on an estimate of the rows a
 // filter keeps: an estimate it cannot make for masks, and makes wrong for
 // columns that go together.
-type idWalkProber interface{ ProbesIDWalk() bool }
+type idWalkProber interface {
+	ProbesIDWalk() bool
+	// EstimateRows is how many rows the planner expects of a query.
+	EstimateRows(ctx context.Context, query string, args ...any) (float64, error)
+}
+
+// columnProbeShare is the part of idWalkProbe a filter without masks walks:
+// when it keeps few rows an index finds them, and a long walk is time lost.
+const columnProbeShare = 4
+
+// sortedIDOrder is the id order, written so that no index gives it: the rows
+// are found by the filter's own indexes, then sorted.
+const sortedIDOrder = "p.id + 0"
+
+// sortedReadMax is how many rows a read by the filter's indexes may expect
+// and still be asked to sort them: about a second of fetching, at worst.
+// Atomic so a test can move it (SetSortedReadMax) while other searches run.
+var sortedReadMax atomic.Int64
+
+func init() { sortedReadMax.Store(500000) }
+
+// SetSortedReadMax sets the rows a sorted read may expect, -1 for never
+// sorting, and returns a function that restores the previous value.
+func SetSortedReadMax(n int) (restore func()) {
+	old := sortedReadMax.Swap(int64(n))
+	return func() { sortedReadMax.Store(old) }
+}
+
+// fewRowsExpected tells, after a short probe, whether the window is better read
+// by the filter's indexes and sorted than walked in id order. The probe showed
+// the walk does not fill the window where it starts; the planner, left to
+// choose, still bets on it when two columns it believes independent are rarely
+// true together, and walks the whole tenant. Its estimate of the rows kept,
+// too high in that case, is what bounds the other read: under sortedReadMax
+// the walk is forbidden, above it the planner chooses as before — a filter
+// that keeps much of the tenant further on in the ids is cheaper walked than
+// fetched whole.
+func (s *SearchStore) fewRowsExpected(ctx context.Context, from, filter string, args []any) bool {
+	p, ok := s.DB.(idWalkProber)
+	if !ok {
+		return false
+	}
+	rows, err := p.EstimateRows(ctx, `SELECT p.id FROM `+from+` WHERE `+filter, args...)
+	return err == nil && rows <= float64(sortedReadMax.Load())
+}
 
 // idWalkProbe is how many rows of the tenant a probe walks, in id order.
 // Atomic so a test can move it (SetIDWalkProbe) while other searches run.
@@ -1007,8 +1060,8 @@ func SetIDWalkProbe(n int) (restore func()) {
 	return func() { idWalkProbe.Store(old) }
 }
 
-// probeIDWalk reads a window in id order from the next idWalkProbe rows of the
-// tenant, and says whether it is full. A full window is the answer: the rows
+// probeIDWalk reads a window in id order from the next rows rows of the
+// tenant, and says whether it tried. A full window is the answer: the rows
 // are walked in the order asked, and the filter met limit of them. A short one
 // says nothing of the rows further on, and is thrown away: what it cost is the
 // rows walked, not a pass over the tenant.
@@ -1016,9 +1069,8 @@ func SetIDWalkProbe(n int) (restore func()) {
 // The walk is written, not left to the planner: a filter it believes keeps one
 // row (masks) sends it to read and sort the whole tenant for a page that the
 // first hundred rows fill.
-func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start string, startArgs []any, filter string, args []any, limit int) (ids []int64, full bool, err error) {
+func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start string, startArgs []any, filter string, args []any, limit, rows int) (ids []int64, tried bool, err error) {
 	p, ok := s.DB.(idWalkProber)
-	rows := int(idWalkProbe.Load())
 	// A subquery of the filter would run here and again after a short window,
 	// a list of ids be sent twice; and a position named is reached by its key.
 	if !ok || !p.ProbesIDWalk() || limit <= 0 || limit >= rows || strings.Contains(filter, "SELECT") || strings.Contains(filter, "p.id IN (") {
@@ -1028,7 +1080,7 @@ func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start strin
 	from := "(SELECT * FROM position p WHERE " + tenant + start + " ORDER BY p.id LIMIT " + strconv.Itoa(rows) + ") p" + joins
 	walkArgs = append(append(walkArgs, startArgs...), args...)
 	ids, err = s.readIDs(ctx, from, filter, "p.id", "", walkArgs, limit, 0, nil)
-	return ids, err == nil && len(ids) == limit, err
+	return ids, err == nil, err
 }
 
 // readIDs reads the ids of a window; with keys, it also reads keyCol beside each id.

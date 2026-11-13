@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -220,6 +221,23 @@ func (a searchDB) QueryRow(ctx context.Context, query string, args ...any) sqlsh
 
 // ProbesIDWalk — see sqlshared.probeIDWalk.
 func (searchDB) ProbesIDWalk() bool { return true }
+
+// EstimateRows — see sqlshared.fewRowsExpected.
+func (a searchDB) EstimateRows(ctx context.Context, query string, args ...any) (float64, error) {
+	var out []byte
+	if err := a.QueryRow(ctx, "EXPLAIN (FORMAT JSON) "+query, args...).Scan(&out); err != nil {
+		return 0, fmt.Errorf("postgres: estimate rows: %w", err)
+	}
+	var plans []struct {
+		Plan struct {
+			Rows float64 `json:"Plan Rows"`
+		} `json:"Plan"`
+	}
+	if err := json.Unmarshal(out, &plans); err != nil || len(plans) == 0 {
+		return 0, fmt.Errorf("postgres: estimate rows: unreadable plan: %w", err)
+	}
+	return plans[0].Plan.Rows, nil
+}
 
 func (a shared) QueryRow(ctx context.Context, query string, args ...any) sqlshared.Row {
 	return pgRow{a.db.QueryRow(ctx, typedRebind(query, args), args...)}
