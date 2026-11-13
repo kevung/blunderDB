@@ -89,7 +89,7 @@
     <release version="0.56.0" date="2026-11-13">
       <description>
         <ul>
-          <li>Proximity search (like): the distance is now the number of legal rolls between two checker structures; like&lt;n&gt; returns positions at most n rolls away (default and maximum 2), and like is served only in a ranked search, refused elsewhere (the starred form like* is gone: remove the star from saved searches)</li>
+          <li>Proximity search (like): the distance is now the number of legal rolls between two checker structures; like&lt;n&gt; returns positions at most n rolls away (default and maximum 2), and like is served only in a ranked search, refused elsewhere. Saved searches written with like* are refused: remove the star and any old threshold, which was counted in pip steps and is now counted in rolls</li>
           <li>Server mode: directions.confirmProposals confirms a list of proposals in one transaction, with stable refusal codes</li>
           <li>Faster search under PostgreSQL; an import no longer drops the statistics of matches it shares a position with</li>
         </ul>
