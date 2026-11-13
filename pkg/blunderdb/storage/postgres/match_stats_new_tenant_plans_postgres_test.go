@@ -281,6 +281,9 @@ func copyTenant(ctx context.Context, t *testing.T, db *pgxpool.Pool, from, first
 			}
 		}
 		rows.Close()
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
 		q := fmt.Sprintf(`INSERT INTO %s (%s) SELECT %s FROM %s, generate_series($2::bigint, $3::bigint) AS k WHERE tenant_id = $1`,
 			table, strings.Join(cols, ", "), strings.Join(exprs, ", "), table)
 		if _, err := db.Exec(ctx, q, from, first, last); err != nil {
