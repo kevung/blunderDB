@@ -202,6 +202,14 @@ func testSimilarOnlyRanks(t *testing.T, s storage.Storage) {
 			return nil
 		}},
 		{"FindIDs", func() error { _, err := s.Search().FindIDs(ctx, "", f, storage.ListOpts{}); return err }},
+		{"FindPage", func() error {
+			_, _, err := s.Search().FindPage(ctx, "", f, storage.PageOpts{Limit: 3})
+			return err
+		}},
+		{"FindIDsPage", func() error {
+			_, _, err := s.Search().FindIDsPage(ctx, "", f, storage.PageOpts{Limit: 3})
+			return err
+		}},
 		{"Count", func() error { _, err := s.Search().Count(ctx, "", f); return err }},
 		{"CountUpTo", func() error { _, _, err := s.Search().CountUpTo(ctx, "", f, 10); return err }},
 		{"IndexOf", func() error { _, _, err := s.Search().IndexOf(ctx, "", f, fx.one); return err }},

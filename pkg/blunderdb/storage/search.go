@@ -47,6 +47,16 @@ type SearchStore interface {
 	// results is browsed without reconstructing any position.
 	FindIDs(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) ([]int64, error)
 
+	// FindPage is Find read by cursor: up to opts.Limit positions after
+	// opts.Cursor (the start when empty), and the cursor of the page that
+	// follows ("" after the last). A page costs its own rows whatever its
+	// depth, where an offset costs every row before it. Rows saved between
+	// two pages neither repeat nor hide a row already ordered before them.
+	FindPage(ctx context.Context, scope string, f domain.SearchFilters, opts PageOpts) (positions []domain.Position, nextCursor string, err error)
+
+	// FindIDsPage is FindPage answering ids only, with the same cursors.
+	FindIDsPage(ctx context.Context, scope string, f domain.SearchFilters, opts PageOpts) (ids []int64, nextCursor string, err error)
+
 	// Count is the length of Find's unbounded result.
 	Count(ctx context.Context, scope string, f domain.SearchFilters) (int, error)
 
@@ -58,6 +68,18 @@ type SearchStore interface {
 	// IndexOf is the rank of id in Find's unbounded result; found is false
 	// when the search does not find it.
 	IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (index int, found bool, err error)
+}
+
+// PageOpts bounds a page read by cursor. Limit is required. Cursor is opaque but
+// not secret: it carries a fingerprint of the search (scope, filters, sort) that
+// issued it, so a cursor replayed on another search is ErrInvalid, as is an anchor
+// rewritten out of its shape or its type. It protects nothing: tenant isolation
+// comes from the tenant filter of every statement, not from the cursor. Offset, for a client still counting rows, cuts the
+// first page only: an offset with a cursor is ErrInvalid.
+type PageOpts struct {
+	Limit  int
+	Offset int
+	Cursor string
 }
 
 // SearchHistoryStore persists the log of executed searches.

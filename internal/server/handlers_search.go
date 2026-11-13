@@ -20,6 +20,33 @@ type searchFindReq struct {
 	Offset  int                  `json:"offset"`
 }
 
+// searchPageReq asks for one page of a search read by cursor: Cursor is the
+// nextCursor of the previous page, "" for the first. Offset, for a client still
+// counting rows, cuts the first page only.
+type searchPageReq struct {
+	Filters domain.SearchFilters `json:"filters"`
+	Limit   int                  `json:"limit"`
+	Offset  int                  `json:"offset,omitempty"`
+	Cursor  string               `json:"cursor,omitempty"`
+}
+
+func (r searchPageReq) pageLimit() int { return r.Limit }
+
+func (r searchPageReq) opts() storage.PageOpts {
+	return storage.PageOpts{Limit: r.Limit, Offset: r.Offset, Cursor: r.Cursor}
+}
+
+// searchPageResp is a page of positions; NextCursor is "" after the last page.
+type searchPageResp struct {
+	Positions  []domain.Position `json:"positions"`
+	NextCursor string            `json:"nextCursor"`
+}
+
+type searchIDsPageResp struct {
+	IDs        []int64 `json:"ids"`
+	NextCursor string  `json:"nextCursor"`
+}
+
 // searchIndexOfReq asks for the rank of one position in a search's result.
 type searchCountUpToReq struct {
 	Filters domain.SearchFilters `json:"filters"`
@@ -102,6 +129,23 @@ func (s *Server) searchRoutes() []route {
 		// holding it or shipping whole positions.
 		{http.MethodPost, "/v1/search.ids", rpc(func(ctx context.Context, scope string, req searchFindReq) ([]int64, error) {
 			return ss().FindIDs(ctx, scope, req.Filters, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
+		// search.page and search.idsPage are search.find and search.ids read by
+		// cursor: a page deep in a large result costs its own rows, where an
+		// offset reads every row before it.
+		{http.MethodPost, "/v1/search.page", rpc(func(ctx context.Context, scope string, req searchPageReq) (searchPageResp, error) {
+			positions, next, err := ss().FindPage(ctx, scope, req.Filters, req.opts())
+			if positions == nil {
+				positions = []domain.Position{}
+			}
+			return searchPageResp{Positions: positions, NextCursor: next}, err
+		})},
+		{http.MethodPost, "/v1/search.idsPage", rpc(func(ctx context.Context, scope string, req searchPageReq) (searchIDsPageResp, error) {
+			ids, next, err := ss().FindIDsPage(ctx, scope, req.Filters, req.opts())
+			if ids == nil {
+				ids = []int64{}
+			}
+			return searchIDsPageResp{IDs: ids, NextCursor: next}, err
 		})},
 		{http.MethodPost, "/v1/search.count", rpc(func(ctx context.Context, scope string, req searchFindReq) (int, error) {
 			return ss().Count(ctx, scope, req.Filters)

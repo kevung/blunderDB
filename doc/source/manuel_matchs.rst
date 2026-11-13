@@ -941,5 +941,17 @@ La commande écrit la même copie à côté de l'original ; associez-la ensuite 
 transcription. Le volet propose la même commande quand il renonce après ses trois rechargements
 sur un ``.webm`` ou un ``.mkv``.
 
+Sous Linux, l'application lit les vidéos par GStreamer (WebKitGTK). Avec ``gst-libav`` 1.28.9, le
+décodeur H.264 ``avdec_h264`` fait échouer tout déplacement dans la vidéo (clic sur la barre de
+temps, saut à un repère) : la lecture s'arrête ou ne se repositionne pas. Pour contourner le
+problème, lancez l'application en écartant ce décodeur ; GStreamer utilise alors un autre décodeur
+H.264 installé (par exemple ``openh264dec``, ou un décodeur matériel) :
+
+.. code-block:: bash
+
+   GST_PLUGIN_FEATURE_RANK=avdec_h264:NONE blunderDB
+
+Revenir à ``gst-libav`` 1.28.8 convient aussi. Windows et macOS ne sont pas concernés.
+
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 

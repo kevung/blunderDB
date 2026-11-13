@@ -147,6 +147,13 @@ func TestSearchQueryStreamsAndRefusesUnreadableQueries(t *testing.T) {
 		}
 		r.Body.Close()
 	}
+	for _, route := range []string{"/v1/search.page", "/v1/search.idsPage"} {
+		r := post(t, ts, route, searchPageReq{Filters: domain.SearchFilters{LikeFilter: true, LikeTargetID: 1}, Limit: 3})
+		if r.StatusCode != http.StatusBadRequest {
+			t.Errorf("%s with `like` status = %d, want 400", route, r.StatusCode)
+		}
+		r.Body.Close()
+	}
 
 	// A no-effect token still runs the search, and says so in a header rather
 	// than corrupting the NDJSON body.

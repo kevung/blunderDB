@@ -70,6 +70,13 @@ type searchWhereClause struct {
 	// here because the class it imposes on the WHERE clause is read off it —
 	// its kind of decision, its regime, and the matches it was met in.
 	likeTarget *domain.Position
+	// after is the cursor a page resumes from, nil for the first page.
+	after *searchCursor
+	// keys, for a page read by cursor, receives the sort key of every id the window
+	// reads, from the statement that reads the id: the next cursor anchors on the
+	// key the row had when it was ordered, not on a second look at a row that may
+	// have gone meanwhile.
+	keys map[int64]any
 }
 
 // appendRowFlagClauses adds the filters on properties of the row, not of the
@@ -376,9 +383,13 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	branch := func(decision, col string) string {
 		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id` + andSameTenant(s.DB, "q", "an") + ` WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
 	}
-	sub := branch("q.decision_type = 1", "cube_error") + " UNION ALL " +
-		branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + " UNION ALL " +
-		"SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
+	// The probe keeps narrowLimit+1 ids of the union; each branch stops there by itself.
+	// A LIMIT above the union alone leaves the planner free to hash-join a branch,
+	// reading every candidate of the tenant before keeping a few thousand of them.
+	stop := " LIMIT " + strconv.FormatInt(max(narrowLimit.Load(), 0)+1, 10) + ") AS "
+	sub := "SELECT * FROM (" + branch("q.decision_type = 1", "cube_error") + stop + "cube UNION ALL " +
+		"SELECT * FROM (" + branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + stop + "checker UNION ALL " +
+		"SELECT * FROM (SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true) + stop + "multi"
 	subArgs := append(append(append(append(append([]any{}, tenantArgs...), bound...), tenantArgs...), bound...), ownArgs...)
 	err := s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
 	return true, err
@@ -736,6 +747,34 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	return chunks, err
 }
 
+// findWith is find once the WHERE clause is built: the scan, and the Go-side
+// predicates that finish it, the survivors in one slice: a cursor page reads
+// its own bounded window through it.
+func (s *SearchStore) findWith(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, opts storage.ListOpts) ([]domain.Position, error) {
+	var chunks [][]domain.Position
+	n := 0
+	err := s.scan(ctx, f, wc, opts, func(positions []domain.Position) bool {
+		chunks = append(chunks, positions)
+		n += len(positions)
+		return true
+	})
+	if err != nil || len(chunks) == 1 {
+		return firstChunk(chunks), err
+	}
+	all := make([]domain.Position, 0, n)
+	for _, c := range chunks {
+		all = append(all, c...)
+	}
+	return all, nil
+}
+
+func firstChunk(chunks [][]domain.Position) []domain.Position {
+	if len(chunks) == 0 {
+		return nil
+	}
+	return chunks[0]
+}
+
 // searchChunk is how many SQL candidates one round of a Go-filtered scan
 // holds in memory at most: the scan's footprint is bounded by it, not by the
 // size of the library. The first round reads searchFirstChunk and each next
@@ -869,7 +908,11 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 		plain += " LEFT JOIN analysis a ON a.position_id = p.id" + andSameTenant(s.DB, "a", "p")
 	}
 	if key == "" {
-		return s.readIDs(ctx, plain, filter, "p.id", args, limit, offset)
+		if wc.after != nil {
+			cond, condArgs := wc.after.cond()
+			filter, args = filter+cond, append(args, condArgs...)
+		}
+		return s.readIDs(ctx, plain, filter, "p.id", "", args, limit, offset, nil)
 	}
 	dir := " ASC"
 	if desc {
@@ -888,28 +931,54 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 	if key == "a.best_move_equity_error" && f.DecisionTypeFilter && f.Filter.DecisionType == domain.CubeAction {
 		keyedOrder = "p.id"
 	}
-	ids, err := s.readIDs(ctx, keyed, keyedFilter, keyedOrder, keyedArgs, limit, offset)
-	if err != nil || len(ids) == limit {
-		return ids, err
+	tailFilter, tailArgs := filter+" AND "+key+" IS NULL", args
+	var ids []int64
+	skipKeyed := false
+	if wc.after != nil {
+		var cond string
+		var condArgs []any
+		cond, condArgs, skipKeyed = wc.after.keyedCond()
+		keyedFilter, keyedArgs = keyedFilter+cond, append(append([]any{}, keyedArgs...), condArgs...)
+		cond, condArgs = wc.after.tailCond()
+		tailFilter, tailArgs = tailFilter+cond, append(append([]any{}, tailArgs...), condArgs...)
+	}
+	if !skipKeyed {
+		var err error
+		ids, err = s.readIDs(ctx, keyed, keyedFilter, keyedOrder, key, keyedArgs, limit, offset, wc.keys)
+		if err != nil || len(ids) == limit {
+			return ids, err
+		}
 	}
 	rest := 0
-	if len(ids) == 0 && offset > 0 {
+	if skipKeyed {
+		rest = offset
+	} else if len(ids) == 0 && offset > 0 {
 		var n int
 		if err := s.DB.QueryRow(ctx, `SELECT COUNT(*) FROM `+keyed+` WHERE `+keyedFilter, keyedArgs...).Scan(&n); err != nil {
 			return nil, errf(s.DB, "search keyed count", err)
 		}
 		rest = max(offset-n, 0)
 	}
-	tail, err := s.readIDs(ctx, plain, filter+" AND "+key+" IS NULL", "p.id", args, limit-len(ids), rest)
+	tail, err := s.readIDs(ctx, plain, tailFilter, "p.id", "", tailArgs, limit-len(ids), rest, nil)
 	if err != nil {
 		return nil, err
+	}
+	if wc.keys != nil {
+		for _, id := range tail {
+			wc.keys[id] = nil
+		}
 	}
 	return append(ids, tail...), nil
 }
 
-func (s *SearchStore) readIDs(ctx context.Context, from, filter, order string, args []any, limit, offset int) ([]int64, error) {
+// readIDs reads the ids of a window; with keys, it also reads keyCol beside each id.
+func (s *SearchStore) readIDs(ctx context.Context, from, filter, order, keyCol string, args []any, limit, offset int, keys map[int64]any) ([]int64, error) {
 	limitClause, limitArgs := s.DB.LimitOffset(limit, offset)
-	rows, err := s.DB.Query(ctx, `SELECT p.id FROM `+from+` WHERE `+filter+` ORDER BY `+order+limitClause,
+	columns := "p.id"
+	if keys != nil {
+		columns += ", " + keyCol
+	}
+	rows, err := s.DB.Query(ctx, `SELECT `+columns+` FROM `+from+` WHERE `+filter+` ORDER BY `+order+limitClause,
 		append(append([]any{}, args...), limitArgs...)...)
 	if err != nil {
 		return nil, errf(s.DB, "search ids query", err)
@@ -918,8 +987,16 @@ func (s *SearchStore) readIDs(ctx context.Context, from, filter, order string, a
 	ids := make([]int64, 0, limit)
 	for rows.Next() {
 		var id int64
-		if err := rows.Scan(&id); err != nil {
+		var key any
+		dest := []any{&id}
+		if keys != nil {
+			dest = append(dest, &key)
+		}
+		if err := rows.Scan(dest...); err != nil {
 			return nil, errf(s.DB, "search ids scan", err)
+		}
+		if keys != nil {
+			keys[id] = key
 		}
 		ids = append(ids, id)
 	}
@@ -970,6 +1047,10 @@ func (s *SearchStore) scanChunk(ctx context.Context, f domain.SearchFilters, wc 
 		return s.finishChunk(ctx, f, wc, rows, limit)
 	}
 
+	if wc.after != nil {
+		cond, condArgs := wc.after.cond()
+		extra, extraArgs = extra+cond, append(append([]any{}, extraArgs...), condArgs...)
+	}
 	query := `SELECT ` + columns + `
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id` + andSameTenant(s.DB, "a", "p") + `
@@ -1012,6 +1093,11 @@ func (s *SearchStore) FindIDs(ctx context.Context, scope string, f domain.Search
 	if err != nil {
 		return nil, err
 	}
+	return s.findIDsWith(ctx, f, wc, opts)
+}
+
+// findIDsWith is FindIDs once the WHERE clause is built.
+func (s *SearchStore) findIDsWith(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, opts storage.ListOpts) ([]int64, error) {
 	if wc.goPhase(f) {
 		var ids []int64
 		err := s.scan(ctx, f, wc, opts, func(positions []domain.Position) bool {
@@ -1025,6 +1111,9 @@ func (s *SearchStore) FindIDs(ctx context.Context, scope string, f domain.Search
 
 	if opts.Limit > 0 {
 		return s.windowIDs(ctx, f, wc, "", nil, opts.Limit, opts.Offset)
+	}
+	if wc.after != nil {
+		return nil, fmt.Errorf("%w: a page read by cursor needs a limit", storage.ErrInvalid)
 	}
 	limitClause, limitArgs := s.DB.LimitOffset(opts.Limit, opts.Offset)
 	query := `SELECT p.id FROM position p
