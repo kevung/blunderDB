@@ -252,6 +252,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"MatchEquityTable/DifferentLeftOut", testMETDifferentLeftOut},
 		{"MatchEquityTable/MixedMatchLeavesThePlayersTable", testMETMixedMatchLeavesThePlayersTable},
 		{"MatchStats/SharedPositionsCountOnce", testMatchStatsSharedPositions},
+		{"MatchStats/ImportLeavesNoMatchToFill", testMatchStatsImportLeavesNoMatchToFill},
 		{"Matches/LastVisitedFollowsTheVisit", testMatchLastVisitedFollowsTheVisit},
 		{"Matches/LastVisitedFallbackIsTheListHead", testMatchLastVisitedFallbackIsTheListHead},
 		{"Matches/LibraryMoves", testMatchLibraryMoves},

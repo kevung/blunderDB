@@ -300,10 +300,10 @@ type matchSeat struct {
 // A private position turns shared when another match's moves reach it.
 // Before this batch, a position no filled seat lists as shared was private
 // to at most one filled seat (the induction this function keeps); when the
-// batch reaches such a position from outside that seat, the seat's figures
-// are stale and its match's match_stats rows are dropped, for the fill to
-// recompute — this time with the position shared. A position already listed
-// as shared needs nothing: nobody holds it private.
+// batch reaches such a position from outside that seat, the seat lists it
+// and stops counting it as private (listPrivatePositions), in the batch's
+// transaction: no match loses its rows for a reader to recompute. A
+// position already listed as shared needs nothing: nobody holds it private.
 func sharePositions(ctx context.Context, tx Execer, scope, ph string, ids []any, positions map[cellPosition]int64) (map[cellPosition]bool, error) {
 	shared := map[cellPosition]bool{}
 	if len(positions) == 0 {
@@ -395,27 +395,82 @@ func sharePositions(ctx context.Context, tx Execer, scope, ph string, ids []any,
 	for _, id := range ids {
 		batch[id.(int64)] = true
 	}
-	stale := map[int64]bool{}
+	// The filled seats that counted one of those positions as private, with
+	// the phase cell it was counted in. Written from the positions outward,
+	// for withJoinOrderPlan.
+	type holder struct {
+		cellPosition
+		phase int64
+	}
+	var holders []holder
 	if err := eachChunk(ctx, tx, gArgs, unlisted,
-		`SELECT DISTINCT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id`+andSameTenant(tx, "g", "mv")+`
-		 JOIN match_stats ms ON ms.match_id = g.match_id AND ms.seat = 1`+andSameTenant(tx, "ms", "g")+` WHERE `+gTenant+` AND mv.position_id IN `, ``, func(r Rows) error {
-			var id int64
-			if err := r.Scan(&id); err != nil {
+		`SELECT DISTINCT g.match_id, `+seatExpr+`, p.decision_type, COALESCE(a.met_id, 0), p.id, p.game_phase
+		 FROM move mv JOIN game g ON g.id = mv.game_id`+andSameTenant(tx, "g", "mv")+`
+		 JOIN match_stats ms ON ms.match_id = g.match_id AND ms.seat = 1`+andSameTenant(tx, "ms", "g")+`
+		 JOIN position p ON p.id = mv.position_id`+andSameTenant(tx, "p", "mv")+`
+		 JOIN analysis a ON a.position_id = p.id`+andSameTenant(tx, "a", "p")+`
+		 WHERE `+gTenant+` AND (`+statsErrExpr+`) IS NOT NULL AND `+countedExpr(tx)+` AND mv.position_id IN `, ``, func(r Rows) error {
+			var h holder
+			var phase *int64
+			if err := r.Scan(&h.match, &h.seat, &h.dt, &h.met, &h.position, &phase); err != nil {
 				return err
 			}
-			if !batch[id] {
-				stale[id] = true
+			if !batch[h.match] {
+				h.phase = nullable(phase)
+				holders = append(holders, h)
 			}
 			return nil
 		}); err != nil {
-		return nil, fmt.Errorf("match stats stale seats: %w", err)
+		return nil, fmt.Errorf("match stats private holders: %w", err)
 	}
-	staleIDs := make([]int64, 0, len(stale))
-	for id := range stale {
-		staleIDs = append(staleIDs, id)
+	sort.Slice(holders, func(i, j int) bool {
+		a, b := holders[i], holders[j]
+		if a.match != b.match {
+			return a.match < b.match
+		}
+		if a.seat != b.seat {
+			return a.seat < b.seat
+		}
+		if a.position != b.position {
+			return a.position < b.position
+		}
+		return a.met < b.met
+	})
+	return shared, listPrivatePositions(ctx, tx, scope, len(holders), func(i int) (cellPosition, int64) {
+		return holders[i].cellPosition, holders[i].phase
+	})
+}
+
+// listPrivatePositions turns n positions a filled seat counted as private
+// into shared ones: each gets its match_stats_position row and leaves the
+// private count of its phase cell. The seat's other figures do not depend on
+// who else reaches a position, so its rows stay. Only the writer whose row
+// lands moves the count: two imports reaching the same position at once list
+// it once.
+func listPrivatePositions(ctx context.Context, tx Execer, scope string, n int, at func(i int) (cellPosition, int64)) error {
+	if n == 0 {
+		return nil
 	}
-	sort.Slice(staleIDs, func(i, j int) bool { return staleIDs[i] < staleIDs[j] })
-	return shared, InvalidateMatchStats(ctx, tx, scope, staleIDs)
+	tcols, targs := tx.TenantColumns(scope)
+	cols := append(append([]string{}, tcols...), "match_id", "seat", "position_id", "decision_type", "met_id")
+	insert := `INSERT INTO match_stats_position (` + strings.Join(cols, ", ") + `) VALUES (` + Placeholders(len(cols)) + `) ON CONFLICT DO NOTHING`
+	tenant, wargs := tx.TenantFilter("", scope)
+	uncount := `UPDATE match_stats_cell SET positions = positions - 1 WHERE ` + tenant +
+		` AND match_id = ? AND seat = ? AND decision_type = ? AND met_id = ? AND kind = ? AND k1 = ? AND k2 = 0`
+	for i := range n {
+		p, phase := at(i)
+		listed, err := tx.Exec(ctx, insert, append(append([]any{}, targs...), p.match, p.seat, p.position, p.dt, p.met)...)
+		if err != nil {
+			return fmt.Errorf("match stats list a private position: %w", err)
+		}
+		if listed == 0 {
+			continue
+		}
+		if _, err := tx.Exec(ctx, uncount, append(append([]any{}, wargs...), p.match, p.seat, p.dt, p.met, cellPhase, phase)...); err != nil {
+			return fmt.Errorf("match stats uncount a private position: %w", err)
+		}
+	}
+	return nil
 }
 
 // eachChunk runs prefix (ids) suffix over ids, byPositionsChunk at a time,
