@@ -821,13 +821,17 @@ rendues sont alors un minimum. Sans version ni ``If-Match``.
 
 Le premier ``run``, joué avec le ``seed`` de la requête, décide : son travail
 est compté, non chronométré, et un format dont ce tournoi demande plus que ce
-qui en laisse jouer une dizaine en deux secondes est refusé par ``503``, code
-``unavailable``, ``details.reason`` ``too_heavy``, sans ``Retry-After``. La même
-requête reçoit le même verdict sur toute machine, quel que soit ``runs``. Elle
-est bien formée mais trop lourde : réduisez l'effectif, les poules, les vies ou
-le format. Un format admis rend toujours ce premier ``run`` ; les suivants sont
-bornés à deux secondes, au-delà desquelles la réponse est partielle : elle porte
-le code ``time_budget`` et s'appuie sur les ``runs`` joués. Une requête mal
+qu'un processeur ordinaire calcule en trois dixièmes de seconde est refusé par
+``503``, code ``unavailable``, ``details.reason`` ``too_heavy``, sans
+``Retry-After``, dès que le compte dépasse ce seuil. La même requête reçoit le
+même verdict sur toute machine, quel que soit ``runs``. Elle est bien formée
+mais trop lourde : réduisez l'effectif, les poules, les vies, les rondes ou le
+format. Un format admis rend toujours ce premier ``run`` ; les suivants
+s'arrêtent deux secondes après le début du calcul, et la réponse est alors
+partielle : elle porte le code ``time_budget`` et s'appuie sur les
+``runs`` joués, dont le nombre dépend de la machine. Un ``run`` que le moteur
+ne mène pas à son terme est écarté sous le code ``run_failed`` : les chiffres
+s'appuient sur les autres. Une requête mal
 formée ou hors bornes rend ``400``, quelle que soit la charge.
 
 Les bornes d'une simulation sont des refus, prononcés avant tout calcul : 512
@@ -848,6 +852,13 @@ de 128, un tableau de 256 ou 200 joueurs en poules de 4 sont admis. Les durées 
 qui est une date, n'est pas comptée. Sont aussi refusés (``400``) un format
 qui ne joue aucun match avec cet effectif, un tournoi simulé de plus d'un an
 et un ``start`` dont la fin sort du calendrier.
+
+Un ``swiss_rounds`` de plus de 12 joueurs joue au plus 16 rondes, et au plus
+les deux tiers de son effectif : au-delà, le moteur cherche ses appariements
+sans revanche bien plus longtemps que le compte ne le voit. Au-dessus, la
+requête rend ``too_heavy``, avant tout calcul si la première phase est ce
+suisse, à l'ouverture de la phase sinon. Jusqu'à 12 joueurs, le nombre de
+rondes est libre et le compte tranche.
 
 Les deux places de calcul sont celles du processus, tous tenants confondus : un
 tenant qui en tient une n'en prend une seconde que si aucun autre n'attend, et
