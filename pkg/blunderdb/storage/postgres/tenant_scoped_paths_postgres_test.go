@@ -50,6 +50,12 @@ func exerciseSearch(ctx context.Context, t *testing.T, s *Storage, scope string,
 			if _, err := s.Search().Rank(ctx, scope, f, storage.ListOpts{Limit: 5}); err != nil {
 				t.Fatalf("rank %q: %v", c.Command, err)
 			}
+			// `like` is served only ranked: every other entry point refuses it
+			// before sending a statement.
+			if _, err := s.Search().Count(ctx, scope, f); !errors.Is(err, searchquery.ErrRefused) {
+				t.Fatalf("count %q: want a refusal, got %v", c.Command, err)
+			}
+			continue
 		}
 		if _, err := s.Search().Count(ctx, scope, f); err != nil {
 			t.Fatalf("count %q: %v", c.Command, err)
