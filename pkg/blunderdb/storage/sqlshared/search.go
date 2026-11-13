@@ -72,6 +72,8 @@ type searchWhereClause struct {
 	likeTarget *domain.Position
 	// structure is set by masks on the checkers: predicates no statistics describe.
 	structure bool
+	// blunder is the threshold of a move-error search read by blunderWindow, "" otherwise.
+	blunder string
 	// after is the cursor a page resumes from, nil for the first page.
 	after *searchCursor
 	// keys, for a page read by cursor, receives the sort key of every id the window
@@ -318,7 +320,7 @@ func (s *SearchStore) narrowWithin(ctx context.Context, limit int, sub string, s
 
 // appendMoveErrorClause adds the move-error filter and reports whether Go
 // must settle it afterwards.
-func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) (bool, error) {
+func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) (inGo bool, blunder string, err error) {
 	// The denormalised error column scores ONE play (the first of
 	// PlayedMoves, see AnalysisStore.Save). A position played several ways
 	// is let through by its multi_played indicator and settled in Go by
@@ -326,7 +328,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	// under-state it. The indicator is kept by triggers on move, so the
 	// clause reads two columns of the row and no move at all.
 	if f.MoveErrorFilter == "" {
-		return false, nil
+		return false, "", nil
 	}
 	eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
 	eqMin := int(math.Round(eMin))
@@ -341,7 +343,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	case eHasMax:
 		cond, bound = " <= ?", []any{eqMax}
 	default:
-		return false, nil
+		return false, "", nil
 	}
 	// Rare, the error is read from its two indexes, positionErrExpr split in its two
 	// branches. Common, the walk in id order meets its rows soon, on the joined analysis.
@@ -356,6 +358,10 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	// that the partial index applies.
 	if eHasMin && eqMin >= blunderFloor {
 		n := strconv.Itoa(eqMin)
+		if s.readsBlunderWindows(ctx, f) {
+			recheck()
+			return true, n, nil
+		}
 		sub := "SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + ")" +
 			" UNION ALL SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
 		// As a subquery the planner, estimating two hundred rows out of the union, sorts
@@ -364,7 +370,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		// reading a row the filter drops; the few multi-played positions go by list.
 		multi, err := s.readIDList(ctx, "SELECT id FROM position WHERE "+own+" AND "+s.DB.Bool("multi_played", true), ownArgs, blunderListLimit)
 		if err != nil {
-			return true, err
+			return true, "", err
 		}
 		common := func() {
 			where.WriteString(" AND (p.id IN (SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + "))")
@@ -377,10 +383,10 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 			where.WriteString(")")
 		}
 		if err := s.narrowWithin(ctx, blunderListLimit, sub, append(append([]any{}, ownArgs...), ownArgs...), where, argsp, common); err != nil {
-			return true, err
+			return true, "", err
 		}
 		recheck()
-		return true, nil
+		return true, "", nil
 	}
 	branch := func(decision, col string) string {
 		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id` + andSameTenant(s.DB, "q", "an") + ` WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
@@ -393,8 +399,51 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		"SELECT * FROM (" + branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + stop + "checker UNION ALL " +
 		"SELECT * FROM (SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true) + stop + "multi"
 	subArgs := append(append(append(append(append([]any{}, tenantArgs...), bound...), tenantArgs...), bound...), ownArgs...)
-	err := s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
-	return true, err
+	return true, "", s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
+}
+
+// blunderBranches: atomic so a test can turn the blunder windows off
+// (SetBlunderBranches) while other searches run.
+var blunderBranches atomic.Bool
+
+func init() { blunderBranches.Store(true) }
+
+// SetBlunderBranches turns the blunder windows on or off and returns a func
+// restoring the previous state. For tests only: both ways of reading a
+// move-error search are compared.
+func SetBlunderBranches(on bool) (restore func()) {
+	old := blunderBranches.Swap(on)
+	return func() { blunderBranches.Store(old) }
+}
+
+// listedBlundersKey marks a reader that counts the clause as one statement,
+// without a window: it needs the candidates named in the clause itself.
+type listedBlundersKey struct{}
+
+// readsBlunderWindows tells whether every window of the search is cut by
+// blunderWindow, so that the clause need not name the candidates: the id
+// order alone, a sort key being read from its own index. SQLite keeps the
+// named candidates: its planner is not known to follow the two indexes.
+func (s *SearchStore) readsBlunderWindows(ctx context.Context, f domain.SearchFilters) bool {
+	return blunderBranches.Load() && s.DB.Name() != "sqlite" && keysetOrder(f.Sort) && ctx.Value(listedBlundersKey{}) == nil
+}
+
+// blunderWindow cuts a window, in id order, of a move-error search from a
+// blunder up. The candidates are the entries of idx_analysis_blunder and the
+// positions played several ways, two short lists already in id order: each is
+// walked until it has filled the window by itself, and the window is the head
+// of the two. Named in the clause instead, the candidates are hashed whole by
+// every statement, and a search settled in Go sends one per chunk.
+func (s *SearchStore) blunderWindow(ctx context.Context, wc searchWhereClause, filter string, args []any, limit, offset int) ([]int64, error) {
+	tenant, tenantArgs := s.DB.TenantFilter("a", wc.scope)
+	stop := " LIMIT " + strconv.Itoa(limit+offset) + ") AS "
+	from := "(SELECT * FROM (SELECT p.id FROM analysis a JOIN position p ON p.id = a.position_id" + andSameTenant(s.DB, "p", "a") +
+		" WHERE " + tenant + " AND (a.best_move_equity_error >= " + wc.blunder + " OR a.cube_error >= " + wc.blunder + ")" +
+		" AND " + s.DB.Bool("p.multi_played", false) + " AND " + filter + " ORDER BY a.position_id" + stop + "single" +
+		" UNION ALL SELECT * FROM (SELECT p.id FROM position p LEFT JOIN analysis a ON a.position_id = p.id" + andSameTenant(s.DB, "a", "p") +
+		" WHERE " + s.DB.Bool("p.multi_played", true) + " AND " + filter + " ORDER BY p.id" + stop + "multi) p"
+	both := append(append(append([]any{}, tenantArgs...), args...), args...)
+	return s.readIDs(ctx, from, "1=1", "p.id", "", both, limit, offset, nil)
 }
 
 // buildWhere is whereClause for every reader but Rank. Each of them refuses
@@ -416,7 +465,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 	lists := &idLists{}
 	ctx = context.WithValue(ctx, idListsKey{}, lists)
 	useSQLFilters := !f.MirrorFilter
-	moveErrorInGo := false
+	moveErrorInGo, blunder := false, ""
 
 	// Decode the compressed analysis blob per row only when a Go-side filter
 	// reads it: move pattern, mirror re-checks, date, equity, margin. The rate, cube
@@ -581,11 +630,10 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		if err := s.appendRateClauses(ctx, scope, f, &where, &args); err != nil {
 			return searchWhereClause{}, err
 		}
-		moveError, err := s.appendMoveErrorClause(ctx, scope, f, &where, &args)
-		if err != nil {
+		var err error
+		if moveErrorInGo, blunder, err = s.appendMoveErrorClause(ctx, scope, f, &where, &args); err != nil {
 			return searchWhereClause{}, err
 		}
-		moveErrorInGo = moveError
 
 		if f.DecisionTimeFilter != "" {
 			if cond, condArgs := decisionTimeSQL(s.DB, scope, f.DecisionTimeFilter); cond != "" {
@@ -669,6 +717,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		bitboardTight: bitboardTight,
 		structure:     structure,
 		moveErrorInGo: moveErrorInGo,
+		blunder:       blunder,
 		effInclude:    effInclude,
 		likeTarget:    likeTarget,
 	}, nil
@@ -919,6 +968,9 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 			cond, condArgs := wc.after.cond()
 			filter, args = filter+cond, append(args, condArgs...)
 			start, startArgs = start+cond, append(startArgs, condArgs...)
+		}
+		if wc.blunder != "" {
+			return s.blunderWindow(ctx, wc, filter, args, limit, offset)
 		}
 		order := "p.id"
 		if offset == 0 && strings.Count(start, afterID)*len(afterID) == len(start) {
@@ -1297,7 +1349,7 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 	if max <= 0 {
 		return 0, false, fmt.Errorf("search count: max %d: %w", max, storage.ErrInvalid)
 	}
-	wc, err := s.buildWhere(ctx, scope, f)
+	wc, err := s.buildWhere(context.WithValue(ctx, listedBlundersKey{}, true), scope, f)
 	if err != nil {
 		return 0, false, err
 	}
