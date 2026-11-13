@@ -39,7 +39,8 @@ vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => ({ ..
 vi.mock('../../wailsjs/go/main/Config.js', async (importOriginal) => ({
     ...(await importOriginal()),
     GetLikeLimit: vi.fn(() => Promise.resolve(10)),
-    GetLikeMaxDistance: vi.fn(() => Promise.resolve(0))
+    GetLikeMaxDistance: vi.fn(() => Promise.resolve(0)),
+    GetLikeMaxOrder: vi.fn(() => Promise.resolve(2))
 }));
 vi.mock('../services/databaseService.js', () => ({
     setStatusBarMessage: vi.fn(),
@@ -236,10 +237,9 @@ describe('une forme de like refusée arrive refusée, jamais lancée sans elle',
         });
     }
 
-    test('le refus du classement, avec son maximum, arrive à l’utilisateur', async () => {
-        const reason = 'a search within 3 plays is not served: at most 2';
-        bindings.RankPositionIDsByFilters.mockRejectedValueOnce(`storage: invalid argument: ${reason}`);
+    test('le refus du classement, avec le maximum de Go, arrive à l’utilisateur dans sa langue', async () => {
+        bindings.RankPositionIDsByFilters.mockRejectedValueOnce('storage: invalid argument: like-order: a search within 3 plays is not served: at most 2');
         await replayHistory('s like42<3', drawnBoard());
-        expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('similar.refused', { reason }));
+        expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('similar.refused', { reason: tMsg('similar.orderRefused', { max: 2 }) }));
     });
 });

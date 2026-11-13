@@ -49,8 +49,24 @@ export async function saveSessionState() {
 // count left to the view once on screen (viewStore settle) — a ranked or restricted search as its
 // ids, bounded by the ranking limit or by the list it searched within. An origin that no longer
 // yields anything (positions deleted, search now empty) falls back to the library.
+// A view saved by an earlier version may carry a starred `like` (`likeWidened`), a form no
+// longer served: the backend ignores the field and would rank the narrower `like` in silence.
+// It is refused here as everywhere else: no search, the library instead, the refusal named once
+// the session is on screen.
+let starredOnRestore = '';
+
+/** @param {any} payload */
+function starredToken(payload) {
+    if (!payload.likeWidened) return '';
+    const target = payload.likeTargetId ? String(payload.likeTargetId) : '';
+    const order = payload.likeMaxDistance ? `<${payload.likeMaxDistance}` : '';
+    return `like${target}${order}*`;
+}
+
 async function resolveOriginList(origin) {
-    if (origin && origin.kind === 'search' && origin.payload) {
+    const starred = origin && origin.kind === 'search' && origin.payload ? starredToken(origin.payload) : '';
+    if (starred) starredOnRestore ||= starred;
+    else if (origin && origin.kind === 'search' && origin.payload) {
         try {
             const payload = origin.payload;
             if (!payload.likeFilter && !payload.restrictToPositionIDs) {
@@ -91,6 +107,7 @@ export async function restoreSessionState() {
 /** @param {any} sessionState */
 async function restoreViews(sessionState) {
     try {
+        starredOnRestore = '';
         if (sessionState && sessionState.viewsJSON) {
             const viewsRestored = await viewStore.deserialize(sessionState.viewsJSON, resolveOriginList);
             if (viewsRestored) {
@@ -99,7 +116,7 @@ async function restoreViews(sessionState) {
                     lastSearchPosition: sessionState.lastSearchPosition ? JSON.parse(sessionState.lastSearchPosition) : null,
                     hasActiveSearch: sessionState.hasActiveSearch || false
                 });
-                setStatusBarMessage(tMsg('status.sessionRestoredViews'));
+                setStatusBarMessage(starredOnRestore ? tMsg('similar.widenedRefused', { token: starredOnRestore }) : tMsg('status.sessionRestoredViews'));
                 logger.log('Session restored with views');
                 return;
             }

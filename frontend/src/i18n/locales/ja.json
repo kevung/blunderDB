@@ -579,6 +579,7 @@
         "livingNeedsSearch": "先に検索してください。それがコレクションに残るものです。",
         "livingRefused": "コレクションをライブにできませんでした: {reason}",
         "livingUnreadable": "ライブクエリは拒否されました: {reason}。◈ で外すと一覧に戻ります。",
+        "freezeRefused": "コレクションを固定できません: {reason}。◈ でクエリを外すと一覧が残ります。",
         "livingSet": "生きたコレクション：{query}",
         "livingCleared": "コレクションを手作りのリストに戻しました。",
         "livingCapped": "デッキ「{name}」：ライブコレクションは {total} 局面を選びます。上限 {count} に達したため、先頭の局面だけがデッキに入ります。",
@@ -2171,7 +2172,9 @@
         "fromPosition": "局面 {id} から {distance} 手。",
         "fromBoard": "描いた盤面から {distance} 手。",
         "refused": "検索は拒否されました: {reason}",
-        "widenedRefused": "「{token}」は使えなくなりました。近いポジションはロール数で数え、広げたクラスはありません。like または like<n> と入力してください。"
+        "widenedRefused": "「{token}」は使えなくなりました。近いポジションはロール数で数え、広げたクラスはありません。like または like<n> と入力してください",
+        "unrankedRefused": "「like」は順位付き検索（s like…）でのみ使えます。件数の集計、順位なしの検索、ライブコレクションでは使えません",
+        "orderRefused": "近いポジションは最大 {max} ロール先まで検索します"
     },
     "log": {
         "title": "動作ログ",

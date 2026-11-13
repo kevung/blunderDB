@@ -579,6 +579,7 @@
         "livingNeedsSearch": "Lance primero una búsqueda: es lo que la colección guardará.",
         "livingRefused": "La colección no se ha hecho viva: {reason}",
         "livingUnreadable": "Consulta viva rechazada: {reason}. Quítela con ◈ para recuperar la lista.",
+        "freezeRefused": "Colección no congelada: {reason}. Quite la consulta con ◈ para conservar la lista.",
         "livingSet": "Colección viva: {query}",
         "livingCleared": "Colección devuelta a su lista hecha a mano.",
         "livingCapped": "Mazo «{name}»: la colección viva selecciona {total} posiciones; se alcanzó el tope de {count} y solo las primeras alimentan el mazo.",
@@ -2171,7 +2172,9 @@
         "fromPosition": "A {distance} tirada(s) de la posición n.º {id}.",
         "fromBoard": "A {distance} tirada(s) del tablero dibujado.",
         "refused": "Búsqueda rechazada: {reason}",
-        "widenedRefused": "«{token}» ya no se admite: las vecinas se cuentan en tiradas, sin clase ampliada. Escriba like o like<n>."
+        "widenedRefused": "«{token}» ya no se admite: las vecinas se cuentan en tiradas, sin clase ampliada. Escriba like o like<n>",
+        "unrankedRefused": "«like» solo lo sirve una búsqueda ordenada (s like…): un recuento, una búsqueda sin orden o una colección viva no pueden llevarlo",
+        "orderRefused": "las vecinas se buscan a {max} tirada(s) como máximo"
     },
     "log": {
         "title": "Registro de actividad",

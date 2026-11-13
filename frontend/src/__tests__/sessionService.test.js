@@ -157,6 +157,22 @@ describe('restoreSessionState', () => {
         expect(get(statusBarModeStore)).toBe('NORMAL');
     });
 
+    test('vue étoilée d’une version antérieure : pas de recherche, le refus nomme la forme', async () => {
+        const payload = { likeFilter: true, likeTargetId: 42, likeMaxDistance: 0, likeWidened: true };
+        bindings.LoadSessionState.mockResolvedValue({
+            lastSearchCommand: 's like42*',
+            viewsJSON: viewsOf({ origin: { kind: 'search', payload }, positionId: 2 })
+        });
+
+        await restoreSessionState();
+
+        expect(bindings.RankPositionIDsByFilters).not.toHaveBeenCalled();
+        expect(bindings.SearchPositionIDs).not.toHaveBeenCalled();
+        expect(get(positionsStore)).toMatchObject({ ids: null, length: 3, paged: true });
+        expect(get(currentPositionIndexStore)).toBe(1);
+        expect(setStatusBarMessage).toHaveBeenLastCalledWith({ i18nKey: 'similar.widenedRefused', i18nParams: { token: 'like42*' } });
+    });
+
     test('recherche devenue vide : repli sur la bibliothèque', async () => {
         bindings.CountPositionsByFilters.mockResolvedValue(0);
         bindings.SearchPositionIDs.mockResolvedValue([]);

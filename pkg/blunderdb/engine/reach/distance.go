@@ -13,11 +13,13 @@ const MaxOrder = 2
 // DefaultOrder is the distance a search reaches when it names none.
 const DefaultOrder = 2
 
-// ErrOrder is returned for an order the search does not serve.
+// ErrOrder is returned for an order the search does not serve. Its text heads
+// with the code like-order, which the GUI reads to word it in the user's
+// language.
 type ErrOrder struct{ Asked int }
 
 func (e ErrOrder) Error() string {
-	return fmt.Sprintf("a search within %d plays is not served: at most %d", e.Asked, MaxOrder)
+	return fmt.Sprintf("like-order: a search within %d plays is not served: at most %d", e.Asked, MaxOrder)
 }
 
 // CheckOrder validates the order a search asks for.

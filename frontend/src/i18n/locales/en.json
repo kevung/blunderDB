@@ -579,6 +579,7 @@
         "livingNeedsSearch": "Run a search first: it is what the collection will keep.",
         "livingRefused": "The collection was not made living: {reason}",
         "livingUnreadable": "Living query refused: {reason}. Take it off with ◈ to get the list back.",
+        "freezeRefused": "Collection not frozen: {reason}. Take the query off with ◈ to keep the list.",
         "livingSet": "Living collection: {query}",
         "livingCleared": "Collection given back its hand-made list.",
         "livingCapped": "Deck \"{name}\": the living collection selects {total} positions; the ceiling of {count} was reached and only the first ones feed the deck.",
@@ -2171,7 +2172,9 @@
         "fromPosition": "{distance} roll(s) from position no. {id}.",
         "fromBoard": "{distance} roll(s) from the drawn board.",
         "refused": "Search refused: {reason}",
-        "widenedRefused": "“{token}” is no longer served: neighbours are counted in rolls, with no wider class. Write like or like<n>."
+        "widenedRefused": "“{token}” is no longer served: neighbours are counted in rolls, with no wider class. Write like or like<n>",
+        "unrankedRefused": "“like” is served only by a ranked search (s like…): a count, an unordered search or a living collection cannot carry it",
+        "orderRefused": "neighbours are searched at most {max} roll(s) away"
     },
     "log": {
         "title": "Activity log",
