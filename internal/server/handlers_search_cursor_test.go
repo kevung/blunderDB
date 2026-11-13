@@ -26,17 +26,17 @@ func checkForgedCursorIsBadRequest(t *testing.T, ts *httptest.Server, st storage
 			t.Fatalf("Save: %v", err)
 		}
 	}
-	page := func(cursor string) (*http.Response, []byte) {
+	page := func(cursor string) (int, []byte) {
 		body, _ := json.Marshal(searchPageReq{Filters: domain.SearchFilters{Sort: "pip_asc"}, Limit: 1, Cursor: cursor})
 		resp := doPost(t, ts.URL+"/v1/search.idsPage", tenant, string(body))
 		defer resp.Body.Close()
 		raw, _ := io.ReadAll(resp.Body)
-		return resp, raw
+		return resp.StatusCode, raw
 	}
-	resp, raw := page("")
+	status, raw := page("")
 	var first searchIDsPageResp
-	if err := json.Unmarshal(raw, &first); resp.StatusCode != http.StatusOK || err != nil || first.NextCursor == "" {
-		t.Fatalf("first page: %d %s", resp.StatusCode, raw)
+	if err := json.Unmarshal(raw, &first); status != http.StatusOK || err != nil || first.NextCursor == "" {
+		t.Fatalf("first page: %d %s", status, raw)
 	}
 	blob, err := base64.RawURLEncoding.DecodeString(first.NextCursor)
 	if err != nil {
@@ -49,9 +49,9 @@ func checkForgedCursorIsBadRequest(t *testing.T, ts *httptest.Server, st storage
 	for _, n := range []string{"70000", "2147483648", "-9223372036854775808"} {
 		w["i"] = json.RawMessage(n)
 		forged, _ := json.Marshal(w)
-		resp, raw := page(base64.RawURLEncoding.EncodeToString(forged))
-		if resp.StatusCode >= http.StatusInternalServerError {
-			t.Errorf("key %s outside the smallint pip_1: %d %s; want a page or 400", n, resp.StatusCode, strings.TrimSpace(string(raw)))
+		status, raw := page(base64.RawURLEncoding.EncodeToString(forged))
+		if status >= http.StatusInternalServerError {
+			t.Errorf("key %s outside the smallint pip_1: %d %s; want a page or 400", n, status, strings.TrimSpace(string(raw)))
 		}
 	}
 	delete(w, "i")
@@ -59,9 +59,9 @@ func checkForgedCursorIsBadRequest(t *testing.T, ts *httptest.Server, st storage
 		w[kind] = json.RawMessage(v)
 		forged, _ := json.Marshal(w)
 		delete(w, kind)
-		resp, raw := page(base64.RawURLEncoding.EncodeToString(forged))
-		if resp.StatusCode != http.StatusBadRequest || decodeEnvelope(t, raw).Error.Code != CodeInvalid {
-			t.Errorf("key of kind %s on an integer sort: %d %s; want 400 invalid", kind, resp.StatusCode, strings.TrimSpace(string(raw)))
+		status, raw := page(base64.RawURLEncoding.EncodeToString(forged))
+		if status != http.StatusBadRequest || decodeEnvelope(t, raw).Error.Code != CodeInvalid {
+			t.Errorf("key of kind %s on an integer sort: %d %s; want 400 invalid", kind, status, strings.TrimSpace(string(raw)))
 		}
 	}
 }
