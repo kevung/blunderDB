@@ -42,6 +42,17 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.56.0 (2026-11-13)
+-------------------
+
+- **La relation « proche » compte des jets légaux** : la distance de deux positions est le plus petit nombre de jets légaux qui mènent de la structure de pions de l'une à celle de l'autre. ``like<n>`` rend les positions à ``n`` jets au plus de la cible (2 par défaut et au maximum), la même structure à 0 en tête, et ne complète jamais avec des positions plus lointaines ; un ordre que la base ne sert pas est refusé. La classe, l'exclusion du match de la cible et la forme étoilée ``like*`` disparaissent.
+- **« like » ne se sert que dans une recherche classée, et se refuse ailleurs** : une requête portant ``like`` passée à une collection, à une analyse par requête ou à la validation d'un filtre est refusée, en le disant, au lieu d'être ignorée et de rendre toute la base. Une collection vivante qui porte ``like`` s'ouvre vide, le dit, et sa requête se retire à la main ; exportée ou transférée, elle part figée et vide. Un paquet de répétition espacée fondé sur une recherche qui porte ``like`` garde ses positions au lieu de rejouer la requête. Une recherche enregistrée en ``like*`` (par exemple ``like42*`` ou ``like42<12*``) est reconnue et refusée au rejeu : rouvrez-la, retirez l'étoile et tout seuil ``<n>`` hérité, compté jusqu'ici en pions-pas (``like42``), pour la relancer classée. Un seuil ``<n>``, comme le plafond de l'onglet *Interface*, se compte désormais en jets ; au-delà de 2, la recherche est refusée, et un ``like<1`` ou ``like<2`` enregistré vaut désormais 1 ou 2 jets, une portée plus large. Les refus sont dits dans la langue de l'interface.
+- **Confirmer une liste de propositions d'un coup, en mode serveur** : ``directions.confirmProposals`` enregistre la liste telle que le directeur l'a lue, dans une transaction et à un instant commun, tout ou rien ; les refus portent un code stable dans ``error.details.reason`` (voir :ref:`headless_direction_gestures`).
+- **Recherche plus rapide sous PostgreSQL** : un filtre de structure combiné à un autre filtre lit sa page par une sonde bornée dans l'ordre des identifiants, le filtre de temps de décision ne lit que les coups chronométrés (index partiel ``idx_move_timed``, migration 068 ; 2 030 ms à 1,4 ms au banc de 15,6 millions de positions pour un tenant sans coup chronométré), et la question « le tenant a-t-il déjà des lignes ? » de l'import se lit par la clé.
+- **Un import ne retire plus les statistiques des matchs dont il partage une position** : les statistiques d'un match déjà calculé restent en place au lieu d'être recalculées par le premier lecteur.
+- **Dépannage de la lecture vidéo sous Linux** : avec ``gst-libav`` 1.28.9, le décodeur H.264 ``avdec_h264`` fait échouer les déplacements dans la vidéo ; le contournement (écarter ce décodeur) est décrit dans le manuel des matchs.
+- Voir :ref:`panneau_recherche`, :ref:`panneau_collections`, :ref:`headless_direction_gestures`, :ref:`api_reference` et :ref:`manuel_matchs`.
+
 0.55.0 (2026-11-13)
 -------------------
 
