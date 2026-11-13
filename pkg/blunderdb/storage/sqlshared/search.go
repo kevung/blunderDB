@@ -241,14 +241,38 @@ func (l *idLists) write(s *SearchStore, where *strings.Builder, args *[]any) {
 
 // occupancyProbeLimit: a whole occupancy shared by more positions is no use from its index,
 // each row a heap read before the sort, a millisecond when cold, where the walk in id order
-// reads the masks from an index.
-const occupancyProbeLimit = 500
+// reads the masks from an index. Up to occupancyPipLimit rows, the occupancy is still read
+// from its index when its pip, read from the heap, leaves few rows: the walk would otherwise
+// cross the whole tenant to meet them.
+var occupancyProbeLimit, occupancyPipLimit atomic.Int64
 
-// rareOccupancy tells whether an occupancy is worth asking its index.
-func (s *SearchStore) rareOccupancy(ctx context.Context, scope, col string, v int64) (bool, error) {
+func init() {
+	occupancyProbeLimit.Store(500)
+	occupancyPipLimit.Store(5000)
+}
+
+// SetOccupancyProbeLimits sets both limits and returns a func restoring them. For tests only:
+// every way of reading a whole occupancy is exercised on every backend.
+func SetOccupancyProbeLimits(probe, pip int) (restore func()) {
+	oldProbe, oldPip := occupancyProbeLimit.Swap(int64(probe)), occupancyPipLimit.Swap(int64(pip))
+	return func() {
+		occupancyProbeLimit.Store(oldProbe)
+		occupancyPipLimit.Store(oldPip)
+	}
+}
+
+// rareOccupancy tells whether an occupancy, with its pip, is worth asking its index.
+func (s *SearchStore) rareOccupancy(ctx context.Context, scope, col string, v int64, pipCol string, pip int) (bool, error) {
+	probe, pipLimit := int(occupancyProbeLimit.Load()), int(occupancyPipLimit.Load())
 	own, ownArgs := s.DB.TenantFilter("", scope)
-	found, err := s.readIDList(ctx, "SELECT 1 FROM position WHERE "+own+" AND "+col+" = ?", append(append([]any{}, ownArgs...), v), occupancyProbeLimit+1)
-	return len(found) <= occupancyProbeLimit, err
+	args := append(append([]any{}, ownArgs...), v)
+	found, err := s.readIDList(ctx, "SELECT 1 FROM position WHERE "+own+" AND "+col+" = ?", args, max(probe, pipLimit)+1)
+	if err != nil || len(found) <= probe || len(found) > pipLimit {
+		return len(found) <= probe, err
+	}
+	found, err = s.readIDList(ctx, "SELECT 1 FROM position WHERE "+own+" AND "+col+" = ? AND ("+pipCol+" = ? OR "+pipCol+" IS NULL)",
+		append(args, pip), probe+1)
+	return len(found) <= probe, err
 }
 
 // narrowLimit is how many matches a filter on another table may name by literal list.
@@ -610,18 +634,18 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 				occ    int64
 				pipCol string
 				pip    int
-			}{{black, "occupancy_1", int64(occ1Req), "p.pip_1", pip1}, {white, "occupancy_2", int64(occ2Req), "p.pip_2", pip2}} {
+			}{{black, "occupancy_1", int64(occ1Req), "pip_1", pip1}, {white, "occupancy_2", int64(occ2Req), "pip_2", pip2}} {
 				if side.placed != domain.CheckersPerPlayer {
 					continue
 				}
 				// Masks cannot count beyond two checkers: the pip count, from the same index
 				// as the masks, spares the Go phase nearly all its candidates.
-				where.WriteString(" AND (" + side.pipCol + " = ? OR " + side.pipCol + " IS NULL)")
+				where.WriteString(" AND (p." + side.pipCol + " = ? OR p." + side.pipCol + " IS NULL)")
 				args = append(args, side.pip)
 				rare := black == white // both sides whole: the pair is the index's own key
 				if !rare {
 					var err error
-					if rare, err = s.rareOccupancy(ctx, scope, side.col, side.occ); err != nil {
+					if rare, err = s.rareOccupancy(ctx, scope, side.col, side.occ, side.pipCol, side.pip); err != nil {
 						return searchWhereClause{}, err
 					}
 				}

@@ -481,6 +481,7 @@ func searchContractCases() []contractCase {
 		{"Search/MatchLevelKeepsAndExcludes", testSearchMatchLevelKeepsAndExcludes},
 		{"Search/MatchLevelKeepsAndExcludes/Heavy", asHeavyCondition(testSearchMatchLevelKeepsAndExcludes)},
 		{"Search/SortPipAndDate", testSearchSortPipAndDate},
+		{"Search/WholeSideBoard", testSearchWholeSideBoard},
 		{"Search/TagFilterIsDelimited", testTagSearchIsDelimited},
 		{"Search/CommentRestrictionLosesNothing", testCommentRestrictionLosesNothing},
 	}
