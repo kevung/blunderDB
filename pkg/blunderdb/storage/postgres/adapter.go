@@ -218,6 +218,9 @@ func (a searchDB) QueryRow(ctx context.Context, query string, args ...any) sqlsh
 	return a.Execer.QueryRow(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
 }
 
+// ProbesIDWalk — see sqlshared.probeIDWalk.
+func (searchDB) ProbesIDWalk() bool { return true }
+
 func (a shared) QueryRow(ctx context.Context, query string, args ...any) sqlshared.Row {
 	return pgRow{a.db.QueryRow(ctx, typedRebind(query, args), args...)}
 }
