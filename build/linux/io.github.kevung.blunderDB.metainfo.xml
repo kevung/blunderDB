@@ -86,6 +86,15 @@
   </branding>
 
   <releases>
+    <release version="0.54.0" date="2026-11-13">
+      <description>
+        <ul>
+          <li>Export or transfer positions and their analyses without what names the match they come from (export --provenance=false)</li>
+          <li>Server mode: the tournament gestures of nicomaque 0.9 (manual pairing, half-point byes, replacing and swapping entrants), plus status and format simulation routes</li>
+          <li>A tournament that received a nicomaque 0.9 gesture does not reopen with blunderDB 0.53.1 or earlier</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.53.1" date="2026-11-10">
       <description>
         <p>A file already imported is recognised by its bytes and skipped without being decoded again; filtering a search by player on a large PostgreSQL account no longer builds a list of games; with only one die playable, a bear-off made exactly by the smaller die no longer hides that die's other legal moves.</p>

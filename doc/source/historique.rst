@@ -42,6 +42,17 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.54.0 (2026-11-13)
+-------------------
+
+- **Exporter sans la provenance** : ``blunderdb export --provenance=false``, comme ``"omitProvenance": true`` en mode serveur, pour l'export comme pour le transfert, copie les positions et leurs analyses sans ce qui nomme le match d'origine : ni joueurs, ni coups et décisions de videau joués, ni matchs, tournois, transcriptions ou alias. Une requête enregistrée ne part que réécrite par l'analyseur de requêtes, sans aucun jeton qui lirait ce qui reste à la source, et les commentaires ne partent que demandés par ``--comments``.
+- **Les gestes de nicomaque 0.9 en mode serveur** : sous ``serve --direction``, les routes ``directions.*`` servent la phase à appariement manuel (``directions.startMatch`` avec ``round``, ``directions.placeBye``, ``directions.cancelBye``), les demi-exemptions du suisse par rondes (``directions.giveHalfBye``, ``directions.cancelHalfBye``), le remplacement et l'échange d'inscrits (``directions.replaceParticipant``, ``directions.replacePair``, ``directions.swapParticipants``). Le panneau Direction nomme les formats suisse par rondes et appariement manuel, et le barrage final entre poules.
+- **Un tournoi qui a reçu un geste de nicomaque 0.9** (demi-exemption, remplacement ou échange d'inscrits, phase manuelle, suisse par rondes) ne se rouvre pas avec blunderDB 0.53.1 ou une version antérieure ; la base et la liste des tournois, elles, s'y ouvrent.
+- **« Est-ce que je joue ? » par l'API** : ``directions.statuses`` rend, pour chaque inscrit, son état en codes (``playing``, ``bye``, ``qualified``, ``eliminated``…), sa phase, ses vies restantes et, pendant un match, sa table et son adversaire ; ``directions.freeSlots`` rend les places d'exemption qu'un retardataire peut encore prendre.
+- **Simuler un format de tournoi** : ``directions.simulate`` joue une configuration sans tournoi ni base, pour un effectif et un nombre de tables donnés, et rend la durée (déciles 10, 50 et 90), la fin estimée, le nombre de tables qu'il faut pour que personne n'attende et le nombre de matchs par joueur. Une requête trop lourde est refusée avant tout calcul.
+- Corrections notables : un geste de transcription illisible ou refusé rend ``400`` avec son motif, et non plus ``500`` ; le démon est construit avec Go 1.27.4, qui corrige une faille de ``net/http`` (GO-2026-6859).
+- Voir :ref:`headless_direction`, :ref:`headless_direction_gestures`, :ref:`headless` et :ref:`cli`.
+
 0.53.0 (2026-11-09)
 -------------------
 
