@@ -70,6 +70,12 @@ var postgresOnlyIndexes = []string{
 	"idx_change_log_seq",
 	// The read order of PostgreSQL's journal (xid, seq): SQLite has no xid.
 	"idx_change_log_xid",
+	// The rare blot counts. SQLite has no bit_count to write their predicate
+	// with, and a private file is walked in the time the index would save.
+	"idx_position_blot_j1",
+	"idx_position_blot_j2",
+	"idx_position_blot_o1",
+	"idx_position_blot_o2",
 }
 
 // indexDecl is one CREATE INDEX statement, normalised for comparison.

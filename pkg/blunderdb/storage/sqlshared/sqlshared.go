@@ -163,6 +163,11 @@ type Dialect interface {
 	// NUMERIC in PostgreSQL (cast back), plain integer in SQLite (unchanged).
 	Bigint(expr string) string
 
+	// BitsSet is an integer expression counting the bits lo to hi set in
+	// the integer expression expr: PostgreSQL has bit_count, SQLite adds
+	// the bits one by one.
+	BitsSet(expr string, lo, hi int) string
+
 	// ILike is the case-insensitive LIKE operator: LIKE in SQLite (already
 	// case-insensitive for ASCII), ILIKE in PostgreSQL.
 	ILike() string

@@ -467,6 +467,7 @@ func searchContractCases() []contractCase {
 		{"Search/MoveErrorFilterMaxOverPlays/Common", asCommonCondition(testSearchMoveErrorFilterMaxOverPlays)},
 		{"Search/MultiPlayedFollowsWrites", testMultiPlayedFollowsWrites},
 		{"Search/DecisionTimeFilter", testSearchDecisionTimeFilter},
+		{"Search/BlotFilters", testSearchBlotFilters},
 		{"Search/DecisionTimeWithMoveError", testSearchDecisionTimeWithMoveError},
 		{"Search/Pagination", testSearchPagination},
 		{"Search/WindowsAgree", testSearchWindowsAgree},

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -58,6 +59,15 @@ func (shared) BoolArg(v bool) any {
 }
 func (shared) Bigint(expr string) string { return expr }
 func (shared) ILike() string             { return "LIKE" }
+
+// BitsSet — see sqlshared.Dialect. SQLite has no bit count.
+func (shared) BitsSet(expr string, lo, hi int) string {
+	bits := make([]string, 0, hi-lo+1)
+	for i := lo; i <= hi; i++ {
+		bits = append(bits, fmt.Sprintf("(((%s) >> %d) & 1)", expr, i))
+	}
+	return "(" + strings.Join(bits, " + ") + ")"
+}
 func (shared) IDsIn(expr string, ids []string) (string, []any) {
 	return expr + " IN (" + strings.Join(ids, ",") + ")", nil
 }
