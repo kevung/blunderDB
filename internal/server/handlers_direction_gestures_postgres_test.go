@@ -63,6 +63,14 @@ func TestDirectionGestures_RacePostgres(t *testing.T) {
 	checkRaceOneConflict(t, ts, seedDirection(t, srv.opts.Storage, "1", "Open de Lyon"))
 }
 
+// TestDirectionGestures_ConfirmProposalsPostgres: a confirmed list is one batch, all or none,
+// on the pooled backend too.
+func TestDirectionGestures_ConfirmProposalsPostgres(t *testing.T) {
+	_, pgSrv := newPostgresTestServerAndHandler(t)
+	ts, srv := gestureServerOn(t, pgSrv.opts.Storage)
+	checkConfirmProposals(t, ts, srv.opts.Storage, "1")
+}
+
 // TestDirectionGestures_TenantIsolationPostgres: ids are global on PostgreSQL; another tenant
 // naming this tenant's Direction or Rencontre writes nothing.
 func TestDirectionGestures_TenantIsolationPostgres(t *testing.T) {

@@ -145,6 +145,8 @@ export function ConfirmAllProposals(arg1:number):Promise<service.DirectionView>;
 
 export function ConfirmProposal(arg1:number,arg2:string):Promise<service.DirectionView>;
 
+export function ConfirmProposals(arg1:number,arg2:string):Promise<service.DirectionView>;
+
 export function ContributeDuel(arg1:number,arg2:number,arg3:number,arg4:string):Promise<database.DuelState>;
 
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;

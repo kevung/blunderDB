@@ -129,6 +129,15 @@ type directionProposalReq struct {
 
 func (r directionProposalReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
 
+// directionProposalsReq confirms a list of proposals as directions.get showed them, each the
+// engine's own action.
+type directionProposalsReq struct {
+	TournamentID int64             `json:"tournamentId"`
+	Actions      []json.RawMessage `json:"actions"`
+}
+
+func (r directionProposalsReq) gestureKey() readKey { return readKey{tournamentID: r.TournamentID} }
+
 // directionStartMatchReq launches a match; round, in a manual phase only, places it in that
 // round (0: the latest).
 type directionStartMatchReq struct {
@@ -387,6 +396,13 @@ func (s *Server) directionGestureRoutes() []route {
 		}))},
 		{http.MethodPost, "/v1/directions.confirmProposal", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionProposalReq) (*service.DirectionView, error) {
 			return bare(svc(scope).ConfirmProposal(ctx, req.TournamentID, rawText(req.Action)))
+		}))},
+		{http.MethodPost, "/v1/directions.confirmProposals", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionProposalsReq) (*service.DirectionView, error) {
+			list, err := json.Marshal(req.Actions)
+			if err != nil {
+				return nil, err
+			}
+			return bare(svc(scope).ConfirmProposals(ctx, req.TournamentID, string(list)))
 		}))},
 		{http.MethodPost, "/v1/directions.confirmAllProposals", s.withIdempotency(rpcGesture(s, func(ctx context.Context, scope string, req directionGestureReq) (*service.DirectionView, error) {
 			return bare(svc(scope).ConfirmAllProposals(ctx, req.TournamentID))
