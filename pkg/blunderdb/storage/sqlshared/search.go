@@ -448,6 +448,9 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		return searchWhereClause{}, err
 	}
 
+	if err := appendBlotClauses(s.DB, f, useSQLFilters, &where); err != nil {
+		return searchWhereClause{}, err
+	}
 	if err := s.appendIdentityClauses(ctx, scope, f, &where, &args); err != nil {
 		return searchWhereClause{}, err
 	}
@@ -811,8 +814,6 @@ func (wc searchWhereClause) goPhase(f domain.SearchFilters) bool {
 		searchfilter.HasBoardFilter(f.ExcludeFilter.Board) ||
 		wc.moveErrorInGo ||
 		f.Player1CheckerInZoneFilter != "" || f.Player2CheckerInZoneFilter != "" ||
-		f.Player1OutfieldBlotFilter != "" || f.Player2OutfieldBlotFilter != "" ||
-		f.Player1JanBlotFilter != "" || f.Player2JanBlotFilter != "" ||
 		f.SearchText != "" || f.TagFilter != "" ||
 		f.DateFilter != "" || f.EquityFilter != "" || f.MarginFilter != "" ||
 		f.MovePatternFilter != ""

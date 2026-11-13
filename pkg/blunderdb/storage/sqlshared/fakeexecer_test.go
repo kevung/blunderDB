@@ -39,8 +39,9 @@ func (fakeDialect) BoolArg(v bool) any {
 	}
 	return 0
 }
-func (fakeDialect) Bigint(expr string) string { return expr }
-func (fakeDialect) ILike() string             { return "LIKE" }
+func (fakeDialect) Bigint(expr string) string            { return expr }
+func (fakeDialect) ILike() string                        { return "LIKE" }
+func (fakeDialect) BitsSet(expr string, _, _ int) string { return "bits(" + expr + ")" }
 func (fakeDialect) IDsIn(expr string, ids []string) (string, []any) {
 	return expr + " IN (" + strings.Join(ids, ",") + ")", nil
 }
