@@ -14,6 +14,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/apkg"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/maintenance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -224,5 +225,68 @@ func must[T any](v T, err error) func(*testing.T) T {
 			t.Fatal(err)
 		}
 		return v
+	}
+}
+
+// exerciseRows reads positions and analyses the ways the stores' own methods
+// do: by id, by hash, by batch and by listing, and saves a position the tenant
+// already holds, which looks its row up again.
+func exerciseRows(ctx context.Context, t *testing.T, s *Storage, scope string, ids []int64) {
+	t.Helper()
+	pos, an := s.Positions(), s.Analyses()
+	p := must(pos.Load(ctx, scope, ids[0]))(t)
+	must(pos.LoadByIDs(ctx, scope, ids[:5]))(t)
+	must(pos.ListIDs(ctx, scope, storage.ListOpts{Limit: 5}))(t)
+	must(pos.Count(ctx, scope))(t)
+	if _, _, err := pos.IndexOf(ctx, scope, ids[1]); err != nil {
+		t.Fatal(err)
+	}
+	h := uint64(engine.PopulatePositionColumns(p).ZobristHash)
+	if _, ok, err := pos.Exists(ctx, scope, h); err != nil || !ok {
+		t.Fatalf("exists: %v, %v", ok, err)
+	}
+	must(pos.ExistsMany(ctx, scope, []uint64{h}))(t)
+	dup := *p
+	dup.ID = 0
+	if _, created, err := pos.SaveCreated(ctx, scope, &dup); err != nil || created {
+		t.Fatalf("save of a held position: created=%v, %v", created, err)
+	}
+	if _, _, err := pos.Reinstate(ctx, scope, p); err != nil {
+		t.Fatal(err)
+	}
+	for _, id := range ids {
+		if a, err := an.Load(ctx, scope, id); err == nil && a != nil {
+			break
+		}
+	}
+	must(an.LoadMany(ctx, scope, ids[:20]))(t)
+	must(an.CountPositionsWithAnalysisRow(ctx, scope))(t)
+	must(an.CountWithoutAnalysis(ctx, scope))(t)
+	must(an.WithoutAnalysisIDs(ctx, scope))(t)
+	for _, err := range an.WithoutAnalysis(ctx, scope, storage.ListOpts{Limit: 5}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, id := range ids {
+		a, err := an.Load(ctx, scope, id)
+		if err != nil || a == nil {
+			continue
+		}
+		// Rewriting a stored analysis reads its position and the move played.
+		if err := an.Save(ctx, scope, id, a); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := an.Merge(ctx, scope, id, nil, func(a *domain.PositionAnalysis) *domain.PositionAnalysis { return a }); err != nil {
+			t.Fatal(err)
+		}
+		break
+	}
+	for m, err := range s.Matches().List(ctx, scope, storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		must(an.WithoutAnalysisIDsInMatch(ctx, scope, m.ID))(t)
+		break
 	}
 }
