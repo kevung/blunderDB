@@ -776,6 +776,24 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   ``directions.cancelMatch``, ``directions.correctResult``,
   ``directions.close``, ``directions.reopen``, ``directions.addNote``,
   ``directions.attachMatch``, ``directions.detachMatch`` ;
+* la confirmation d'une liste : ``directions.confirmProposals`` (``actions``,
+  les propositions telles que ``directions.get`` les montre) les enregistre
+  toutes au même instant, de sorte que les matchs lancés ensemble forment un
+  seul lot, ou n'en enregistre aucune. Une proposition tenue en attente
+  (``reason`` valant ``waiting_table``, ``player_unavailable`` ou
+  ``player_busy``) n'est pas confirmable : la liste qui en contient une est
+  refusée. Ce que la liste fait naître, la file après un repêchage ou le
+  tirage de la phase suivante, est proposé dans la réponse et n'est jamais
+  confirmé d'office ;
+* la raison d'un refus : le 400 d'un geste refusé porte, quand la cause est
+  l'une de celles-ci, un code stable dans ``details.reason`` :
+  ``table_taken`` (la table est occupée, dans ce tableau ou dans un autre de
+  la Rencontre), ``player_busy`` (un joueur est en match dans un autre
+  tableau), ``no_such_table``, ``table_outside`` (la table n'est dans aucune
+  salle du tableau), ``table_closed`` (table réservée ou gardée pour
+  quelqu'un d'autre), ``proposal_held`` et ``proposal_changed`` (une
+  proposition de la liste est tenue en attente, ou n'est plus proposée telle
+  quelle). Le message reste destiné à la lecture, le code à la décision ;
 * les rondes de la phase en cours : dans une phase à appariement manuel
   (``manual``), le directeur pose chaque match par ``directions.startMatch``
   avec ``round`` (``0`` : la dernière ronde ; la suivante l'ouvre) et chaque
