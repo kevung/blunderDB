@@ -282,3 +282,31 @@ func TestBuildWhereAwayFilter(t *testing.T) {
 		}
 	}
 }
+
+// A side the structure asks nothing of is written as a filled column, never
+// as a mask of zero: that comparison keeps the same rows, and the planner,
+// which has no statistics for it, would count it as a filter.
+func TestBuildWhereStructureWritesNoMaskOfZero(t *testing.T) {
+	include := domain.Position{}
+	include.Board.Points[5] = domain.Point{Checkers: 2, Color: domain.Black}
+	exclude := domain.Position{}
+	exclude.Board.Points[7] = domain.Point{Checkers: 1, Color: domain.White}
+
+	wc, err := buildWhereStore().buildWhere(context.Background(), "", domain.SearchFilters{Filter: include, ExcludeFilter: exclude})
+	if err != nil {
+		t.Fatalf("buildWhere: %v", err)
+	}
+	for _, want := range []string{
+		" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ? AND p.occupancy_2 IS NOT NULL AND p.point_mask_2 IS NOT NULL",
+		" AND p.occupancy_1 IS NOT NULL AND p.point_mask_1 IS NOT NULL AND (p.occupancy_2 & ?) = 0 AND p.point_mask_2 IS NOT NULL",
+	} {
+		if !strings.Contains(wc.where, want) {
+			t.Errorf("where = %q, want %q", wc.where, want)
+		}
+	}
+	for _, a := range wc.args {
+		if a == int64(0) {
+			t.Errorf("args = %v: a mask of zero is bound", wc.args)
+		}
+	}
+}
