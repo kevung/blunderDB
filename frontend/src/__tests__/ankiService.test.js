@@ -138,6 +138,16 @@ describe('resolveSearchDeckIds', () => {
         expect(payload).toBeTruthy();
     });
 
+    // Une commande refusée ne lance rien : sans son jeton, la recherche
+    // rendrait toute la base filtrée par le reste.
+    for (const command of ['s like42*', 's like42<12* e>0.1', 's like42', 's like']) {
+        test(`${command} keeps the deck's frozen ids and runs no search`, async () => {
+            const ids = await resolveSearchDeckIds(JSON.stringify({ command, position: '{}', ids: [4, 5] }));
+            expect(db.LoadPositionIDsByFilters).not.toHaveBeenCalled();
+            expect(ids).toEqual([4, 5]);
+        });
+    }
+
     test('a failing search is logged and yields no ids', async () => {
         vi.mocked(db.LoadPositionIDsByFilters).mockRejectedValueOnce(new Error('boom'));
         expect(await resolveSearchDeckIds(JSON.stringify({ command: 's', position: '{}', ids: [1] }))).toEqual([]);

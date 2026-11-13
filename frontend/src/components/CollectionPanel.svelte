@@ -429,6 +429,19 @@
             }
         } catch (error) {
             logger.error('Error opening collection:', error);
+            // A living query the search refuses (`like`, a token no longer
+            // read) still opens, empty, so the query can be taken off from
+            // the detail; it is never frozen behind the user's back.
+            const reason = refusalReason(error);
+            if (reason && collection.filterQuery) {
+                loadedTotal = 0;
+                collectionPositionsStore.set([]);
+                selectedCollectionStore.set(collection);
+                activeCollectionStore.set(collection);
+                selectedPositionIndices.clear();
+                view = 'detail';
+                statusBarTextStore.set(tMsg('collection.livingUnreadable', { reason }));
+            }
         }
     }
 

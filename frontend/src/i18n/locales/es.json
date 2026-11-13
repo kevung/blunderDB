@@ -578,6 +578,7 @@
         "livingOff": "Colección viva ({query}). Pulse para devolverle su lista hecha a mano.",
         "livingNeedsSearch": "Lance primero una búsqueda: es lo que la colección guardará.",
         "livingRefused": "La colección no se ha hecho viva: {reason}",
+        "livingUnreadable": "Consulta viva rechazada: {reason}. Quítela con ◈ para recuperar la lista.",
         "livingSet": "Colección viva: {query}",
         "livingCleared": "Colección devuelta a su lista hecha a mano.",
         "livingCapped": "Mazo «{name}»: la colección viva selecciona {total} posiciones; se alcanzó el tope de {count} y solo las primeras alimentan el mazo.",
