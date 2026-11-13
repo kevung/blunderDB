@@ -15,7 +15,8 @@ import (
 )
 
 // checkForgedCursorIsBadRequest: a page cursor whose anchor the client rewrote — a
-// key of another type than the sort column's — is a 400 invalid, never a 500.
+// key of another type than the sort column's — is a 400 invalid, never a 500; a key
+// outside its column's range is never a 500 either.
 func checkForgedCursorIsBadRequest(t *testing.T, ts *httptest.Server, st storage.Storage, tenant string) {
 	t.Helper()
 	for n := range 3 {
@@ -44,6 +45,14 @@ func checkForgedCursorIsBadRequest(t *testing.T, ts *httptest.Server, st storage
 	var w map[string]json.RawMessage
 	if err := json.Unmarshal(blob, &w); err != nil {
 		t.Fatal(err)
+	}
+	for _, n := range []string{"70000", "2147483648", "-9223372036854775808"} {
+		w["i"] = json.RawMessage(n)
+		forged, _ := json.Marshal(w)
+		resp, raw := page(base64.RawURLEncoding.EncodeToString(forged))
+		if resp.StatusCode >= http.StatusInternalServerError {
+			t.Errorf("key %s outside the smallint pip_1: %d %s; want a page or 400", n, resp.StatusCode, strings.TrimSpace(string(raw)))
+		}
 	}
 	delete(w, "i")
 	for kind, v := range map[string]string{"b": "true", "t": "1600000000000000000"} {

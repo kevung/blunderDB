@@ -345,6 +345,15 @@ func withAnchor(t *testing.T, cursor string, anchor map[string]any) string {
 	return cursorOf(m)
 }
 
+// outOfColumnKeys are integer keys no row of the sort column can hold: pip_1 and
+// player1_win_rate are smallint, best_move_equity_error integer in PostgreSQL. Bound
+// as a parameter, such a key must not fail the statement.
+var outOfColumnKeys = func() map[string][]string {
+	int4 := []string{"2147483648", "-2147483649", "-9223372036854775808", "9223372036854775807"}
+	int2 := append([]string{"32768", "70000", "-32769"}, int4...)
+	return map[string][]string{"error": int4, "winrate": int2, "pip_asc": int2, "pip_desc": int2}
+}()
+
 // testSearchCursorRefusesAForgedAnchor: the anchor of a cursor is the client's to
 // rewrite, the fingerprint of the search left as it was. Whatever it rewrites — a key
 // of another type than the sort column's, an id out of range, a shape the server never
@@ -370,6 +379,14 @@ func testSearchCursorRefusesAForgedAnchor(t *testing.T, s storage.Storage) {
 		}
 		if sort == "" {
 			forged["null on the id order"] = map[string]any{"id": id, "n": true}
+		}
+		if _, issued := genuine["i"]; issued {
+			for _, n := range outOfColumnKeys[sort] {
+				cursor := withAnchor(t, next, map[string]any{"id": id, "i": json.Number(n)})
+				if _, _, err := s.Search().FindIDsPage(ctx, "", f, storage.PageOpts{Limit: 2, Cursor: cursor}); err != nil && !errors.Is(err, storage.ErrInvalid) {
+					t.Errorf("%q, key %s outside its column: %v; want a page or ErrInvalid", sort, n, err)
+				}
+			}
 		}
 		for kind, v := range keys {
 			if _, issued := genuine[kind]; !issued {
@@ -438,7 +455,8 @@ func testSearchCursorKeyComesWithItsRow(t *testing.T, s storage.Storage) {
 
 // testMoveErrorProbeKeepsTheResult: the probe that reads a rare move-error condition
 // first, cut to a few ids per branch of its union, answers the result the condition
-// answers unread, whatever branch the cut truncates.
+// answers unread, wherever the cut falls in the checker-play branch (the only branch
+// this fixture fills).
 func testMoveErrorProbeKeepsTheResult(t *testing.T, s storage.Storage) {
 	seedCursorFixture(t, s, "", 1, 12)
 	for _, sort := range []string{"", "error", "pip_asc"} {
