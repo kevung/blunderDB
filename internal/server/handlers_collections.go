@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -79,7 +78,7 @@ func (s *Server) livingFilters(ctx context.Context, scope string, collectionID i
 	if err != nil {
 		return domain.SearchFilters{}, false, err
 	}
-	return searchquery.Living(collectionID, strings.TrimSpace(col.FilterQuery))
+	return storage.ParseLiving(collectionID, strings.TrimSpace(col.FilterQuery))
 }
 
 func (s *Server) collectionRoutes() []route {

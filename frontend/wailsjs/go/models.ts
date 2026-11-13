@@ -3292,7 +3292,6 @@ export namespace domain {
 	    likeTargetId: number;
 	    likeTargetBoard: Position;
 	    likeMaxDistance: number;
-	    likeWidened: boolean;
 	    player1AbsolutePipCountFilter: string;
 	    equityFilter: string;
 	    decisionTypeFilter: boolean;
@@ -3365,7 +3364,6 @@ export namespace domain {
 	        this.likeTargetId = source["likeTargetId"];
 	        this.likeTargetBoard = this.convertValues(source["likeTargetBoard"], Position);
 	        this.likeMaxDistance = source["likeMaxDistance"];
-	        this.likeWidened = source["likeWidened"];
 	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
 	        this.equityFilter = source["equityFilter"];
 	        this.decisionTypeFilter = source["decisionTypeFilter"];

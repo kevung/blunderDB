@@ -153,7 +153,7 @@ Each package's `doc.go` is the first thing to read; this map only says where to 
   guards in tests).
 - `cmd/` — `serve` plus dev-time tools, never shipped: `blunderdb-loadtest`,
   `extract_gnubg_stats`, `calibrace`, `train-analysis-dict`, `help-gen`, `cli-doc-gen`
-  (rerun after changing a command's help), `openapi-gen`, `likecorpus`, `blunderdb-synthdb`
+  (rerun after changing a command's help), `openapi-gen`, `blunderdb-synthdb`
   (synthetic base for the scale benchmarks `BenchmarkScale_*`).
 - External parsers are separate modules (`github.com/kevung/xgparser`, `gnubgparser`,
   `bgfparser`); Jellyfish `.mat` export lives here (`database/db_mat_export.go`,

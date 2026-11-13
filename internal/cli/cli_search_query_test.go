@@ -5,9 +5,12 @@ package cli
 // the flags cover only some.
 
 import (
+	"errors"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 )
 
 func TestSearchQueryFillsFiltersNoFlagCanReach(t *testing.T) {
@@ -55,6 +58,14 @@ func TestSearchQueryRefusesUnknownTokens(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "nosuchtoken") {
 		t.Errorf("error %q does not name the offending token", err)
+	}
+}
+
+func TestSearchQueryRefusesTheStarredLike(t *testing.T) {
+	t.Parallel()
+	_, _, err := (&CLI{}).parseSearchFlags([]string{"--db", "database.db", "--query", "s like42<12* nc"})
+	if !errors.Is(err, searchquery.ErrRefused) || !strings.Contains(err.Error(), "like42<12*") {
+		t.Errorf("starred like: err = %v, want a refusal naming the token", err)
 	}
 }
 
@@ -155,7 +166,9 @@ func TestSearchCursorWalksTheWholeResult(t *testing.T) {
 	if walked.String() != all {
 		t.Errorf("pages by cursor:\n%s\nwhole result:\n%s", walked.String(), all)
 	}
-	for _, bad := range [][]string{{"--cursor", ""}, {"--limit", "3", "--offset", "2", "--cursor", ""}} {
+	// A cursor with `like` is refused, never served by the ranking with the
+	// cursor dropped.
+	for _, bad := range [][]string{{"--cursor", ""}, {"--limit", "3", "--offset", "2", "--cursor", ""}, {"--limit", "3", "--cursor", "", "--query", "s like1"}} {
 		if _, _, err := search(bad...); err == nil {
 			t.Errorf("%v: accepted", bad)
 		}

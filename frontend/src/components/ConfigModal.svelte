@@ -57,6 +57,7 @@
         SaveCommentAuthor,
         SaveLikeLimit,
         GetLikeMaxDistance,
+        GetLikeMaxOrder,
         SaveLikeMaxDistance
     } from '../../wailsjs/go/main/Config.js';
     import { watchStatusStore } from '../stores/watchStore.js';
@@ -188,9 +189,11 @@
         }
     }
 
-    // Réglages de `like` (ADR-0043). Plafond à zéro par défaut : l'échelle dépend
-    // de la phase et n'a pas été mesurée.
+    // Réglages de `like` (ADR-0112). Le plafond se compte en jets ; zéro vaut
+    // la valeur par défaut, et au-delà de l'ordre que Go sert la recherche
+    // refuse : le maximum se lit là, pas recopié ici.
     const MAX_LIKE_LIMIT = 500;
+    let maxLikeOrder = $state(0);
     let commentAuthor = $state('');
 
     async function onCommentAuthorChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
@@ -213,8 +216,10 @@
 
     async function onLikeMaxDistanceChange(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) {
         const field = event.currentTarget;
+        // Before the order is known, the clamp would save 0 whatever was typed.
+        if (maxLikeOrder === 0) return;
         const n = parseInt(field.value, 10);
-        if (Number.isFinite(n)) likeMaxDistance = Math.max(n, 0);
+        if (Number.isFinite(n)) likeMaxDistance = Math.min(Math.max(n, 0), maxLikeOrder);
         field.value = String(likeMaxDistance);
         if (Number.isFinite(n)) await SaveLikeMaxDistance(likeMaxDistance);
     }
@@ -393,6 +398,7 @@
             commentAuthor = await GetCommentAuthor();
             likeLimit = await GetLikeLimit();
             likeMaxDistance = await GetLikeMaxDistance();
+            maxLikeOrder = await GetLikeMaxOrder();
         } catch (error) {
             logger.error('Error loading the neighbour-ranking settings:', error);
         }
@@ -731,7 +737,16 @@
                 </div>
                 <div class="setting-row">
                     <label for="config-like-max-distance">{$t('config.likeMaxDistance')}</label>
-                    <input id="config-like-max-distance" type="number" class="setting-number" min="0" value={likeMaxDistance} onchange={onLikeMaxDistanceChange} />
+                    <input
+                        id="config-like-max-distance"
+                        type="number"
+                        class="setting-number"
+                        min="0"
+                        max={maxLikeOrder}
+                        value={likeMaxDistance}
+                        disabled={maxLikeOrder === 0}
+                        onchange={onLikeMaxDistanceChange}
+                    />
                 </div>
                 <p class="setting-note">{$t('config.likeNote')}</p>
             {:else if activeTab === 'colors'}

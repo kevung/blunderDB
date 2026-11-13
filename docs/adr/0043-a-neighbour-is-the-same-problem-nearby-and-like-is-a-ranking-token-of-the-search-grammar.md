@@ -1,6 +1,6 @@
 # A neighbour is the same problem nearby, and `like` is a ranking token of the search grammar
 
-Status: accepted.
+Status: superseded by ADR-0112 (distance in legal plays, whole library, no class, no `*`). The `like` token as a ranking token of the search grammar stands.
 
 ## Context
 

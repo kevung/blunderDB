@@ -3398,7 +3398,7 @@ Options:
   -match int
     	Instead of a board: a match id of --db, found elsewhere by its fingerprint
   -max-distance int
-    	Leave out neighbours farther than this many checker-pips (0: no ceiling)
+    	Leave out neighbours more than this many plays away (0: two, the most served; beyond, refused)
   -neighbours int
     	Nearest boards listed per database (0: none, at most 50) (default 5)
   -other value

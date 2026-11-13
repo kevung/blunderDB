@@ -1,7 +1,7 @@
 /**
  * SearchPanel.replayLike.test.js — #404
  *
- * L'ADR-0043 range `like` dans la grammaire pour que tout ce qui relit une
+ * L'ADR-0112 range `like` dans la grammaire pour que tout ce qui relit une
  * requête la comprenne, l'historique compris. Or le rejeu (double-clic dans
  * l'historique ou dans la bibliothèque de filtres, executeSearch) ne
  * transmettait aucun champ du classement : `s like42` rejoué partait en
@@ -57,6 +57,7 @@ import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { tMsg } from '../i18n';
+import { setStatusBarMessage } from '../services/databaseService.js';
 
 // Un plateau dessiné, reconnaissable : cinq pions sur le 6, trois sur le 8.
 function drawnBoard() {
@@ -151,7 +152,7 @@ afterEach(() => {
 });
 
 describe('le rejeu porte le classement like (#404)', () => {
-    for (const command of ['s like42', 's like42*', 's like42 E>80']) {
+    for (const command of ['s like42', 's like42<1', 's like42 E>80']) {
         test(`${command} rejoué depuis l'historique envoie ce que la barre envoie`, async () => {
             const board = drawnBoard();
             const expected = await typed(command, board);
@@ -167,12 +168,12 @@ describe('le rejeu porte le classement like (#404)', () => {
         });
     }
 
-    test('like42* élargit la classe et E>80 restreint, au rejeu comme à la frappe', async () => {
-        await replayHistory('s like42* E>80', drawnBoard());
+    test('like42<1 borne les jets et E>80 restreint, au rejeu comme à la frappe', async () => {
+        await replayHistory('s like42<1 E>80', drawnBoard());
         const [payload] = ranked();
         expect(must(payload).likeFilter).toBe(true);
         expect(must(payload).likeTargetId).toBe(42);
-        expect(must(payload).likeWidened).toBe(true);
+        expect(must(payload).likeMaxDistance).toBe(1);
         expect(must(payload).moveErrorFilter).toBe('E>80');
     });
 
@@ -200,5 +201,45 @@ describe('le rejeu porte le classement like (#404)', () => {
         expect(bindings.RankPositionIDsByFilters).not.toHaveBeenCalled();
         expect(bindings.LoadPositionIDsByFilters).not.toHaveBeenCalled();
         expect(get(statusBarTextStore)).toEqual(tMsg('similar.noPosition'));
+    });
+});
+
+describe('une forme de like refusée arrive refusée, jamais lancée sans elle', () => {
+    function refusedWith(token) {
+        expect(bindings.RankPositionIDsByFilters).not.toHaveBeenCalled();
+        expect(bindings.LoadPositionIDsByFilters).not.toHaveBeenCalled();
+        expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('similar.widenedRefused', { token }));
+    }
+
+    for (const [command, token] of [
+        ['s like*', 'like*'],
+        ['s like42<12*', 'like42<12*'],
+        ['s like42* E>80', 'like42*']
+    ]) {
+        test(`${command} tapé`, async () => {
+            positionStore.set(drawnBoard());
+            pending = undefined;
+            initCommandProcessor({ onLoadPositionsByFilters: trackedLoad });
+            processCommand(command);
+            if (pending) await pending;
+            refusedWith(token);
+        });
+
+        test(`${command} rejoué depuis l'historique`, async () => {
+            await replayHistory(command, drawnBoard());
+            refusedWith(token);
+        });
+
+        test(`${command} rejoué depuis la bibliothèque`, async () => {
+            await replaySaved(command, drawnBoard());
+            refusedWith(token);
+        });
+    }
+
+    test('le refus du classement, avec son maximum, arrive à l’utilisateur', async () => {
+        const reason = 'a search within 3 plays is not served: at most 2';
+        bindings.RankPositionIDsByFilters.mockRejectedValueOnce(`storage: invalid argument: ${reason}`);
+        await replayHistory('s like42<3', drawnBoard());
+        expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('similar.refused', { reason }));
     });
 });

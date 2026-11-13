@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { refusalReason } from '../utils/refusal.js';
     import NewButton from './panels/NewButton.svelte';
     import PanelHeader from './panels/PanelHeader.svelte';
     import { formatDateTime } from '../utils/format.js';
@@ -161,6 +162,9 @@
             statusBarTextStore.set(query ? tMsg('collection.livingSet', { query }) : tMsg('collection.livingCleared'));
         } catch (error) {
             logger.error('Error setting the collection filter:', error);
+            // Une requête refusée (`like`, un jeton inconnu) le dit, au lieu d'un clic sans effet.
+            const reason = refusalReason(error);
+            if (reason) statusBarTextStore.set(tMsg('collection.livingRefused', { reason }));
         }
     }
 
@@ -425,6 +429,19 @@
             }
         } catch (error) {
             logger.error('Error opening collection:', error);
+            // A living query the search refuses (`like`, a token no longer
+            // read) still opens, empty, so the query can be taken off from
+            // the detail; it is never frozen behind the user's back.
+            const reason = refusalReason(error);
+            if (reason && collection.filterQuery) {
+                loadedTotal = 0;
+                collectionPositionsStore.set([]);
+                selectedCollectionStore.set(collection);
+                activeCollectionStore.set(collection);
+                selectedPositionIndices.clear();
+                view = 'detail';
+                statusBarTextStore.set(tMsg('collection.livingUnreadable', { reason }));
+            }
         }
     }
 

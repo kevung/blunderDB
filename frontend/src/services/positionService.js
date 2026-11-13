@@ -34,6 +34,7 @@ import { GetLikeLimit, GetLikeMaxDistance } from '../../wailsjs/go/main/Config.j
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
+import { refusalReason } from '../utils/refusal.js';
 import { closeOnEscape } from './escapeService.js';
 import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin, leaveStudiedModeForList, takeEvalContext, giveEvalContext } from './modeMachine.js';
 // Ctrl-G status line (keyboardService imports it from here).
@@ -448,13 +449,14 @@ viewStore.setEvalContextKeeper({ take: () => takeEvalContext(), give: (context) 
 /** @param {{ filters?: string[], [option: string]: any }} [options] */
 export async function loadPositionsByFilters({
     filters = [],
-    // Le classement par similarité (ADR-0043). `likeFilter` dit que la requête
+    // Le classement en jets (ADR-0112). `likeFilter` dit que la requête
     // CLASSE au lieu de seulement restreindre ; les autres jetons continuent de
     // dire lesquelles sont candidates.
     likeFilter = false,
     likeTargetId = 0,
     likeMaxDistance = 0,
-    likeWidened = false,
+    // Une forme de `like` que la grammaire reconnaît pour la refuser.
+    likeRefused = '',
     includeCube = false,
     includeScore = false,
     pipCountFilter = '',
@@ -520,6 +522,12 @@ export async function loadPositionsByFilters({
 } = {}) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
+        return;
+    }
+    // Refusée, jamais lancée sans elle : sans le jeton, la recherche
+    // répondrait à une autre question, sur toute la base.
+    if (likeRefused) {
+        setStatusBarMessage(tMsg('similar.widenedRefused', { token: likeRefused }));
         return;
     }
 
@@ -607,8 +615,8 @@ export async function loadPositionsByFilters({
         // Only ids cross the Wails bridge; positionsStore fetches the window
         // it shows through LoadPositionsByIDs.
         // La cible d'un `like` nu se résout ici : « cette position » est celle
-        // qu'on feuillette. En mode ÉDITION, le plateau DESSINÉ est la cible —
-        // un dessin approximatif que `like` pardonne.
+        // qu'on feuillette. En mode ÉDITION, le plateau DESSINÉ est la cible,
+        // sous la même relation en jets.
         let likeTarget = likeTargetId;
         if (likeFilter && !likeTarget && !queryBoard && get(statusBarModeStore) !== 'EDIT') {
             likeTarget = positionsStore.idAt(get(currentPositionIndexStore)) || 0;
@@ -686,8 +694,7 @@ export async function loadPositionsByFilters({
             restrictToPositionIDs,
             likeFilter,
             likeTargetId: likeTarget,
-            likeMaxDistance,
-            likeWidened
+            likeMaxDistance
         };
 
         // Appel propre au classement : la distance fait partie de la réponse,
@@ -705,15 +712,16 @@ export async function loadPositionsByFilters({
             let ranked;
             try {
                 // Les deux réglages du panneau de configuration, que le jeton
-                // surcharge pour une requête : `like<12` l'emporte sur le
-                // plafond enregistré, et l'emporte seulement là (ADR-0043).
+                // surcharge pour une requête : `like<1` l'emporte sur le
+                // plafond enregistré, et l'emporte seulement là (ADR-0112).
                 const [limit, ceiling] = await Promise.all([GetLikeLimit(), GetLikeMaxDistance()]);
                 if (!payload.likeMaxDistance) payload.likeMaxDistance = ceiling || 0;
                 ranked = (await RankPositionIDsByFilters(/** @type {SearchFilters} */ (/** @type {unknown} */ (payload)), limit || 0)) || [];
             } catch (error) {
                 if (stale()) return;
                 logger.error('could not rank the neighbours:', error);
-                setStatusBarMessage(tMsg('similar.failed'));
+                const reason = refusalReason(error);
+                setStatusBarMessage(reason ? tMsg('similar.refused', { reason }) : tMsg('similar.failed'));
                 return;
             }
             if (stale()) return;
@@ -799,7 +807,7 @@ export async function loadPositionsByFilters({
             }
         } else {
             // Un classement vide dit « aucune n'est proche », pas « aucune ne
-            // correspond » (ADR-0043).
+            // correspond » (ADR-0112).
             setStatusBarMessage(tMsg(likeFilter ? 'similar.none' : 'status.noMatchingPositions'));
             if (get(activeTabStore) === 'search') {
                 statusBarModeStore.set('EDIT');

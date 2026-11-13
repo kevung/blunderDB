@@ -351,7 +351,7 @@ func registerPositions(tb *Toolbox) {
 		Limit      int   `json:"limit,omitempty" jsonschema:"rows to return (default 20, at most 200)"`
 	}
 	Add(tb, Reads, &sdk.Tool{Name: "similar_positions", Title: "Similar positions",
-		Description: "Positions of the database whose checker layout is closest to this one, nearest first, with their distance (checkers to move)."},
+		Description: "Positions of the database whose checkers stand within two legal plays of this one (either side playing first, in either direction), nearest first, with their distance in plays; 0 is the same checkers at another score, cube or decision."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a similarIn) (any, error) {
 			var rows []struct {
 				Position domain.Position `json:"position"`
