@@ -720,7 +720,7 @@ export async function loadPositionsByFilters({
             } catch (error) {
                 if (stale()) return;
                 logger.error('could not rank the neighbours:', error);
-                const reason = refusalReason(error);
+                const reason = await refusalReason(error);
                 setStatusBarMessage(reason ? tMsg('similar.refused', { reason }) : tMsg('similar.failed'));
                 return;
             }

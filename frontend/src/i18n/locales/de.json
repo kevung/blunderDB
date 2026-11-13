@@ -579,6 +579,7 @@
         "livingNeedsSearch": "Führen Sie zuerst eine Suche aus: Sie ist es, was die Sammlung behält.",
         "livingRefused": "Die Sammlung wurde nicht lebendig gemacht: {reason}",
         "livingUnreadable": "Lebendige Abfrage abgelehnt: {reason}. Entfernen Sie sie mit ◈, um die Liste zurückzubekommen.",
+        "freezeRefused": "Sammlung nicht eingefroren: {reason}. Entfernen Sie die Abfrage mit ◈, um die Liste zu behalten.",
         "livingSet": "Lebendige Sammlung: {query}",
         "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück.",
         "livingCapped": "Stapel „{name}“: Die lebende Sammlung wählt {total} Positionen aus; die Obergrenze von {count} wurde erreicht, nur die ersten speisen den Stapel.",
@@ -2171,7 +2172,9 @@
         "fromPosition": "{distance} Wurf/Würfe von Stellung Nr. {id} entfernt.",
         "fromBoard": "{distance} Wurf/Würfe vom gezeichneten Brett entfernt.",
         "refused": "Suche abgelehnt: {reason}",
-        "widenedRefused": "„{token}“ wird nicht mehr unterstützt: Nachbarn werden in Würfen gezählt, ohne erweiterte Klasse. Schreiben Sie like oder like<n>."
+        "widenedRefused": "„{token}“ wird nicht mehr unterstützt: Nachbarn werden in Würfen gezählt, ohne erweiterte Klasse. Schreiben Sie like oder like<n>",
+        "unrankedRefused": "„like“ wird nur von einer sortierten Suche (s like…) bedient: eine Zählung, eine unsortierte Suche oder eine lebende Sammlung kann es nicht tragen",
+        "orderRefused": "Nachbarn werden höchstens {max} Wurf/Würfe entfernt gesucht"
     },
     "log": {
         "title": "Aktivitätsprotokoll",

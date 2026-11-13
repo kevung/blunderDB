@@ -77,21 +77,32 @@ var ErrRefused = errors.New("refused query")
 // orders its answer by a distance, and every other reader — a count, an
 // unordered search, a living collection — would have to ignore the token and
 // select the whole library.
-var ErrLikeUnranked = fmt.Errorf("%w: `like` is served only by a ranked search (`s like…`); a count, an unordered search or a living collection cannot carry it", ErrRefused)
+//
+// Each refusal of `like` heads its text with a code (like-unranked,
+// like-starred; reach.ErrOrder's like-order) that the GUI reads to word it in
+// the user's language: the English sentence after it may change, the code not.
+var ErrLikeUnranked = fmt.Errorf("%w: like-unranked: `like` is served only by a ranked search (`s like…`); a count, an unordered search or a living collection cannot carry it", ErrRefused)
+
+// ErrLikeStarred is the refusal of a starred `like` (`like*`, `like42<1*`).
+var ErrLikeStarred = fmt.Errorf("%w: like-starred", ErrRefused)
 
 // Refusal is the error a query's diagnostics amount to, or nil: every refused
 // token, named with what it would have had to mean.
 func Refusal(diags []Diag) error {
 	var msgs []string
+	head := ErrRefused
 	for _, d := range diags {
 		if d.Kind == DiagRefused {
 			msgs = append(msgs, d.String())
+			if likeWidenedRe.MatchString(d.Token) {
+				head = ErrLikeStarred
+			}
 		}
 	}
 	if len(msgs) == 0 {
 		return nil
 	}
-	return fmt.Errorf("%w: %s", ErrRefused, strings.Join(msgs, "; "))
+	return fmt.Errorf("%w: %s", head, strings.Join(msgs, "; "))
 }
 
 // A Diag reports one token [Parse] could not turn into a filter.

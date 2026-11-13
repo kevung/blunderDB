@@ -579,6 +579,7 @@
         "livingNeedsSearch": "Tee ensin haku: sen kokoelma säilyttää.",
         "livingRefused": "Kokoelmaa ei tehty eläväksi: {reason}",
         "livingUnreadable": "Elävä kysely hylätty: {reason}. Poista se ◈:llä saadaksesi luettelon takaisin.",
+        "freezeRefused": "Kokoelmaa ei jäädytetty: {reason}. Poista kysely ◈:llä säilyttääksesi luettelon.",
         "livingSet": "Elävä kokoelma: {query}",
         "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi.",
         "livingCapped": "Pakka ”{name}”: elävä kokoelma valitsee {total} asemaa; {count} aseman katto täyttyi, ja vain ensimmäiset päätyvät pakkaan.",
@@ -2171,7 +2172,9 @@
         "fromPosition": "{distance} heiton päässä asemasta nro {id}.",
         "fromBoard": "{distance} heiton päässä piirretystä laudasta.",
         "refused": "Haku hylätty: {reason}",
-        "widenedRefused": "”{token}” ei ole enää käytössä: naapurit lasketaan heittoina, ilman laajennettua luokkaa. Kirjoita like tai like<n>."
+        "widenedRefused": "”{token}” ei ole enää käytössä: naapurit lasketaan heittoina, ilman laajennettua luokkaa. Kirjoita like tai like<n>",
+        "unrankedRefused": "”like” toimii vain järjestetyssä haussa (s like…): laskenta, järjestämätön haku tai elävä kokoelma ei voi sisältää sitä",
+        "orderRefused": "naapureita haetaan enintään {max} heiton päästä"
     },
     "log": {
         "title": "Toimintaloki",

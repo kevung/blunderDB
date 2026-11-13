@@ -163,7 +163,7 @@
         } catch (error) {
             logger.error('Error setting the collection filter:', error);
             // Une requête refusée (`like`, un jeton inconnu) le dit, au lieu d'un clic sans effet.
-            const reason = refusalReason(error);
+            const reason = await refusalReason(error);
             if (reason) statusBarTextStore.set(tMsg('collection.livingRefused', { reason }));
         }
     }
@@ -178,6 +178,9 @@
             statusBarTextStore.set(tMsg('collection.frozen', { count }));
         } catch (error) {
             logger.error('Error freezing the collection:', error);
+            // A query the search refuses (`like`) cannot be frozen: say so, and point to ◈.
+            const reason = await refusalReason(error);
+            if (reason) statusBarTextStore.set(tMsg('collection.freezeRefused', { reason }));
         }
     }
 
@@ -432,7 +435,7 @@
             // A living query the search refuses (`like`, a token no longer
             // read) still opens, empty, so the query can be taken off from
             // the detail; it is never frozen behind the user's back.
-            const reason = refusalReason(error);
+            const reason = await refusalReason(error);
             if (reason && collection.filterQuery) {
                 loadedTotal = 0;
                 collectionPositionsStore.set([]);
