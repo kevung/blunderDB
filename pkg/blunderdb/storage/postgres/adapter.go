@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -53,6 +54,12 @@ func (shared) BoolAsInt(col string) string { return "CASE WHEN " + col + " THEN 
 func (shared) BoolArg(v bool) any          { return v }
 func (shared) Bigint(expr string) string   { return "CAST(" + expr + " AS BIGINT)" }
 func (shared) ILike() string               { return "ILIKE" }
+
+// BitsSet — see sqlshared.Dialect. The text is the predicate of the
+// idx_position_blot_* partial indexes: the planner matches it to them.
+func (shared) BitsSet(expr string, lo, hi int) string {
+	return fmt.Sprintf("bit_count(((%s) & %d)::bit(32))", expr, sqlshared.BitRange(lo, hi))
+}
 func (shared) IDsIn(expr string, ids []string) (string, []any) {
 	return expr + " = ANY(?::bigint[])", []any{"{" + strings.Join(ids, ",") + "}"}
 }
@@ -218,8 +225,31 @@ func (a searchDB) QueryRow(ctx context.Context, query string, args ...any) sqlsh
 	return a.Execer.QueryRow(ctx, query, append([]any{pgx.QueryExecModeDescribeExec}, args...)...)
 }
 
+// InlineIDs — see sqlshared.matchProbe. The ids are the text of integers read
+// from the database.
+func (searchDB) InlineIDs(expr string, ids []string) string {
+	return expr + " = ANY('{" + strings.Join(ids, ",") + "}'::bigint[])"
+}
+
 // ProbesIDWalk — see sqlshared.probeIDWalk.
 func (searchDB) ProbesIDWalk() bool { return true }
+
+// EstimateRows — see sqlshared.fewRowsExpected.
+func (a searchDB) EstimateRows(ctx context.Context, query string, args ...any) (float64, error) {
+	var out []byte
+	if err := a.QueryRow(ctx, "EXPLAIN (FORMAT JSON) "+query, args...).Scan(&out); err != nil {
+		return 0, fmt.Errorf("postgres: estimate rows: %w", err)
+	}
+	var plans []struct {
+		Plan struct {
+			Rows float64 `json:"Plan Rows"`
+		} `json:"Plan"`
+	}
+	if err := json.Unmarshal(out, &plans); err != nil || len(plans) == 0 {
+		return 0, fmt.Errorf("postgres: estimate rows: unreadable plan: %w", err)
+	}
+	return plans[0].Plan.Rows, nil
+}
 
 func (a shared) QueryRow(ctx context.Context, query string, args ...any) sqlshared.Row {
 	return pgRow{a.db.QueryRow(ctx, typedRebind(query, args), args...)}

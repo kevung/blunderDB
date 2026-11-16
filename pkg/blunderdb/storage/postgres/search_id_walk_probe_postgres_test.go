@@ -104,9 +104,10 @@ func searchAnswers(ctx context.Context, s *Storage, f domain.SearchFilters) stri
 // isProbe spots the statement of a probe: a window read from a bounded walk.
 func isProbe(sql string) bool { return strings.Contains(sql, "FROM (SELECT * FROM position p WHERE") }
 
-// A probe is a shortcut: whatever it walks, one row or the whole tenant, the
-// search answers what it answers without it — same ids, same order, same pages.
-func TestStructureSearchAnswersTheSameThroughAProbe(t *testing.T) {
+// A probe is a shortcut: whatever it walks, one row or the whole tenant, and
+// whichever read follows a short one, the search answers what it answers
+// without it — same ids, same order, same pages.
+func TestSearchAnswersTheSameThroughAProbe(t *testing.T) {
 	ctx := context.Background()
 	s, rec, _ := probeFixture(ctx, t)
 	structure := madePoints(ctx, t, s)
@@ -126,12 +127,12 @@ func TestStructureSearchAnswersTheSameThroughAProbe(t *testing.T) {
 	var filters []domain.SearchFilters
 	for _, c := range corpus.Cases {
 		f, _ := searchquery.Parse(c.Command)
-		f.Filter.Board = structure
 		filters = append(filters, f)
 		excluded := f
-		excluded.Filter.Board = domain.Board{}
 		excluded.ExcludeFilter.Board = structure
 		filters = append(filters, excluded)
+		f.Filter.Board = structure
+		filters = append(filters, f)
 	}
 
 	restore := sqlshared.SetIDWalkProbe(0)
@@ -148,20 +149,30 @@ func TestStructureSearchAnswersTheSameThroughAProbe(t *testing.T) {
 	}
 	rec.mu.Unlock()
 
-	for _, rows := range []int{1, 8, 60, 20000} {
-		restore := sqlshared.SetIDWalkProbe(rows)
-		rec.record(fmt.Sprintf("probe %d", rows))
+	// sorted false: a short probe is followed by the walk the planner chooses.
+	for _, run := range []struct {
+		rows   int
+		sorted bool
+	}{{4, true}, {32, true}, {240, true}, {80000, true}, {32, false}} {
+		restoreProbe := sqlshared.SetIDWalkProbe(run.rows)
+		restoreSort := func() {}
+		if !run.sorted {
+			restoreSort = sqlshared.SetSortedReadMax(-1)
+		}
+		rec.record(fmt.Sprintf("probe %d", run.rows))
 		for i, f := range filters {
 			if got := searchAnswers(ctx, s, f); got != want[i] {
-				t.Errorf("probe of %d rows, %q (case %d):\n  got  %s\n  want %s", rows, corpus.Cases[i/2].Command, i, got, want[i])
+				t.Errorf("probe of %d rows, sorted read %v, %q (case %d):\n  got  %s\n  want %s",
+					run.rows, run.sorted, corpus.Cases[i/3].Command, i, got, want[i])
 			}
 		}
-		restore()
+		restoreSort()
+		restoreProbe()
 	}
 	rec.record("")
 	rec.mu.Lock()
 	defer rec.mu.Unlock()
-	probes := 0
+	probes, sorted := 0, 0
 	for _, st := range rec.stmts {
 		if isProbe(st.sql) {
 			probes++
@@ -169,9 +180,12 @@ func TestStructureSearchAnswersTheSameThroughAProbe(t *testing.T) {
 				t.Errorf("a probe carries a list of ids: %s", oneLine(st.sql)[:200])
 			}
 		}
+		if strings.Contains(st.sql, "ORDER BY p.id + 0") {
+			sorted++
+		}
 	}
-	if probes < len(filters) {
-		t.Fatalf("%d probes for %d filters: the structure searches no longer probe", probes, len(filters))
+	if probes < len(filters) || sorted == 0 {
+		t.Fatalf("%d probes and %d sorted reads for %d filters: the searches no longer probe", probes, sorted, len(filters))
 	}
 }
 
@@ -297,4 +311,70 @@ func (n walkNode) sortsAndPositionsRead() (sorts int, read float64) {
 		sorts, read = sorts+s, read+r
 	}
 	return sorts, read
+}
+
+// Two columns rarely true together — a cube decision has no dice: the planner
+// believes them independent and bets on the walk in id order, which reads the
+// whole tenant to find nothing. The probe stops that walk short, and the page
+// is read by the columns' indexes; told the filter keeps too many rows to
+// sort, the search leaves the choice to the planner, as before.
+func TestSearchOfColumnsRarelyTrueTogetherLeavesTheIDWalk(t *testing.T) {
+	ctx := context.Background()
+	s, rec, dsn := probeFixture(ctx, t)
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = conn.Close(ctx) })
+	tenantRows := growTenant(ctx, t, conn, 80)
+
+	f := domain.SearchFilters{DecisionTypeFilter: true, DiceRollFilter: true}
+	f.Filter.DecisionType = domain.CubeAction
+	f.Filter.Dice = [2]int{3, 1}
+	read := func(phase string) (probes, sorted, walked []recordedStmt) {
+		rec.record(phase)
+		ids, _, err := s.Search().FindIDsPage(ctx, "1", f, storage.PageOpts{Limit: 25})
+		rec.record("")
+		if err != nil || len(ids) != 0 {
+			t.Fatalf("%s: %d ids, %v: a cube decision with dice", phase, len(ids), err)
+		}
+		rec.mu.Lock()
+		defer rec.mu.Unlock()
+		for _, st := range rec.stmts {
+			switch {
+			case st.phase != phase || !strings.Contains(st.sql, "ORDER BY p.id"):
+			case isProbe(st.sql):
+				probes = append(probes, st)
+			case strings.Contains(st.sql, "ORDER BY p.id + 0"):
+				sorted = append(sorted, st)
+			default:
+				walked = append(walked, st)
+			}
+		}
+		return probes, sorted, walked
+	}
+
+	probes, sorted, walked := read("sorted")
+	if len(probes) != 1 || len(sorted) != 1 || len(walked) != 0 {
+		t.Fatalf("%d probe(s), %d sorted read(s), %d walk(s): want a short probe, then a sorted read", len(probes), len(sorted), len(walked))
+	}
+	var out []byte
+	if err := conn.QueryRow(ctx, "EXPLAIN (ANALYZE, FORMAT JSON) "+probes[0].sql, probes[0].args...).Scan(&out); err != nil {
+		t.Fatal(err)
+	}
+	var plans []struct {
+		Plan walkNode `json:"Plan"`
+	}
+	if err := json.Unmarshal(out, &plans); err != nil {
+		t.Fatal(err)
+	}
+	if _, rows := plans[0].Plan.sortsAndPositionsRead(); rows >= float64(tenantRows)/4 {
+		t.Errorf("the probe read %.0f of the tenant's %d positions: it is not bounded\n  plan: %s", rows, tenantRows, out)
+	}
+
+	defer sqlshared.SetSortedReadMax(-1)()
+	probes, sorted, walked = read("walked")
+	if len(probes) != 1 || len(sorted) != 0 || len(walked) != 1 {
+		t.Fatalf("%d probe(s), %d sorted read(s), %d walk(s): want a short probe, then the planner's own read", len(probes), len(sorted), len(walked))
+	}
 }

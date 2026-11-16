@@ -72,6 +72,11 @@ type searchWhereClause struct {
 	likeTarget *domain.Position
 	// structure is set by masks on the checkers: predicates no statistics describe.
 	structure bool
+	// blunder is the threshold of a move-error search read by blunderWindow, "" otherwise.
+	blunder string
+	// matchWalk is the clause for a bounded walk, when a match-level filter
+	// has its moves sorted for the query (matchProbe); nil otherwise.
+	matchWalk *matchWalk
 	// after is the cursor a page resumes from, nil for the first page.
 	after *searchCursor
 	// keys, for a page read by cursor, receives the sort key of every id the window
@@ -318,7 +323,7 @@ func (s *SearchStore) narrowWithin(ctx context.Context, limit int, sub string, s
 
 // appendMoveErrorClause adds the move-error filter and reports whether Go
 // must settle it afterwards.
-func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) (bool, error) {
+func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) (inGo bool, blunder string, err error) {
 	// The denormalised error column scores ONE play (the first of
 	// PlayedMoves, see AnalysisStore.Save). A position played several ways
 	// is let through by its multi_played indicator and settled in Go by
@@ -326,7 +331,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	// under-state it. The indicator is kept by triggers on move, so the
 	// clause reads two columns of the row and no move at all.
 	if f.MoveErrorFilter == "" {
-		return false, nil
+		return false, "", nil
 	}
 	eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
 	eqMin := int(math.Round(eMin))
@@ -341,7 +346,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	case eHasMax:
 		cond, bound = " <= ?", []any{eqMax}
 	default:
-		return false, nil
+		return false, "", nil
 	}
 	// Rare, the error is read from its two indexes, positionErrExpr split in its two
 	// branches. Common, the walk in id order meets its rows soon, on the joined analysis.
@@ -356,6 +361,10 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 	// that the partial index applies.
 	if eHasMin && eqMin >= blunderFloor {
 		n := strconv.Itoa(eqMin)
+		if s.readsBlunderWindows(ctx, f) {
+			recheck()
+			return true, n, nil
+		}
 		sub := "SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + ")" +
 			" UNION ALL SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true)
 		// As a subquery the planner, estimating two hundred rows out of the union, sorts
@@ -364,7 +373,7 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		// reading a row the filter drops; the few multi-played positions go by list.
 		multi, err := s.readIDList(ctx, "SELECT id FROM position WHERE "+own+" AND "+s.DB.Bool("multi_played", true), ownArgs, blunderListLimit)
 		if err != nil {
-			return true, err
+			return true, "", err
 		}
 		common := func() {
 			where.WriteString(" AND (p.id IN (SELECT position_id FROM analysis WHERE " + own + " AND (best_move_equity_error >= " + n + " OR cube_error >= " + n + "))")
@@ -377,10 +386,10 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 			where.WriteString(")")
 		}
 		if err := s.narrowWithin(ctx, blunderListLimit, sub, append(append([]any{}, ownArgs...), ownArgs...), where, argsp, common); err != nil {
-			return true, err
+			return true, "", err
 		}
 		recheck()
-		return true, nil
+		return true, "", nil
 	}
 	branch := func(decision, col string) string {
 		return `SELECT an.position_id FROM analysis an JOIN position q ON q.id = an.position_id` + andSameTenant(s.DB, "q", "an") + ` WHERE ` + tenant + ` AND ` + decision + ` AND an.` + col + cond
@@ -393,8 +402,85 @@ func (s *SearchStore) appendMoveErrorClause(ctx context.Context, scope string, f
 		"SELECT * FROM (" + branch("COALESCE(q.decision_type, 0) <> 1", "best_move_equity_error") + stop + "checker UNION ALL " +
 		"SELECT * FROM (SELECT id FROM position WHERE " + own + " AND " + s.DB.Bool("multi_played", true) + stop + "multi"
 	subArgs := append(append(append(append(append([]any{}, tenantArgs...), bound...), tenantArgs...), bound...), ownArgs...)
-	err := s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
-	return true, err
+	return true, "", s.narrowToIDs(ctx, sub, subArgs, where, argsp, recheck)
+}
+
+// blunderBranches: atomic so a test can turn the blunder windows off
+// (SetBlunderBranches) while other searches run.
+var blunderBranches atomic.Bool
+
+func init() { blunderBranches.Store(true) }
+
+// SetBlunderBranches turns the blunder windows on or off and returns a func
+// restoring the previous state. For tests only: both ways of reading a
+// move-error search are compared.
+func SetBlunderBranches(on bool) (restore func()) {
+	old := blunderBranches.Swap(on)
+	return func() { blunderBranches.Store(old) }
+}
+
+// listedBlundersKey marks a reader that counts the clause as one statement,
+// without a window: it needs the candidates named in the clause itself.
+type listedBlundersKey struct{}
+
+// readsBlunderWindows tells whether every window of the search is cut by
+// blunderWindow, so that the clause need not name the candidates: the id
+// order alone, a sort key being read from its own index. SQLite keeps the
+// named candidates: its planner is not known to follow the two indexes.
+func (s *SearchStore) readsBlunderWindows(ctx context.Context, f domain.SearchFilters) bool {
+	return blunderBranches.Load() && s.DB.Name() != "sqlite" && keysetOrder(f.Sort) && ctx.Value(listedBlundersKey{}) == nil
+}
+
+// blunderWindow cuts a window, in id order, of a move-error search from a
+// blunder up. The candidates are the entries of idx_analysis_blunder and the
+// positions played several ways, two short lists already in id order: each is
+// walked until it has filled the window by itself, and the window is the head
+// of the two. Named in the clause instead, the candidates are hashed whole by
+// every statement, and a search settled in Go sends one per chunk.
+func (s *SearchStore) blunderWindow(ctx context.Context, wc searchWhereClause, filter string, args []any, limit, offset int) ([]int64, error) {
+	tenant, tenantArgs := s.DB.TenantFilter("a", wc.scope)
+	stop := " LIMIT " + strconv.Itoa(limit+offset) + ") AS "
+	from := "(SELECT * FROM (SELECT p.id FROM analysis a JOIN position p ON p.id = a.position_id" + andSameTenant(s.DB, "p", "a") +
+		" WHERE " + tenant + " AND (a.best_move_equity_error >= " + wc.blunder + " OR a.cube_error >= " + wc.blunder + ")" +
+		" AND " + s.DB.Bool("p.multi_played", false) + " AND " + filter + " ORDER BY a.position_id" + stop + "single" +
+		" UNION ALL SELECT * FROM (SELECT p.id FROM position p LEFT JOIN analysis a ON a.position_id = p.id" + andSameTenant(s.DB, "a", "p") +
+		" WHERE " + s.DB.Bool("p.multi_played", true) + " AND " + filter + " ORDER BY p.id" + stop + "multi) p"
+	both := append(append(append([]any{}, tenantArgs...), args...), args...)
+	return s.readIDs(ctx, from, "1=1", "p.id", "", both, limit, offset, nil)
+}
+
+// neutralMasks: atomic so a test can have the masks that ask nothing written as
+// comparisons (SetNeutralMasks) while other searches run.
+var neutralMasks atomic.Bool
+
+// SetNeutralMasks makes a mask that asks nothing be written as a comparison,
+// or not, and returns a func restoring the previous state. For tests only:
+// both ways of writing a structure are compared.
+func SetNeutralMasks(on bool) (restore func()) {
+	old := neutralMasks.Swap(on)
+	return func() { neutralMasks.Store(old) }
+}
+
+// appendMaskClauses writes the four masks of a structure, on the occupancy and
+// the made points of each side: every bit held when all, none otherwise. A
+// mask of zero asks nothing but that the column be filled, and is written as
+// that: a comparison on a mask has no statistics, the planner takes each for
+// one row in two hundred, and with two that keep everything it expects one
+// row of a filter keeping thousands — no walk of a sort index is then tried.
+func appendMaskClauses(where *strings.Builder, args *[]any, masks [4]uint32, all bool) {
+	for i, col := range [4]string{"p.occupancy_1", "p.point_mask_1", "p.occupancy_2", "p.point_mask_2"} {
+		m := int64(masks[i])
+		switch {
+		case m == 0 && !neutralMasks.Load():
+			where.WriteString(" AND " + col + " IS NOT NULL")
+		case all:
+			where.WriteString(" AND (" + col + " & ?) = ?")
+			*args = append(*args, m, m)
+		default:
+			where.WriteString(" AND (" + col + " & ?) = 0")
+			*args = append(*args, m)
+		}
+	}
 }
 
 // buildWhere is whereClause for every reader but Rank. Each of them refuses
@@ -415,8 +501,10 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
 	lists := &idLists{}
 	ctx = context.WithValue(ctx, idListsKey{}, lists)
+	probe := &matchProbe{}
+	ctx = context.WithValue(ctx, matchProbeKey{}, probe)
 	useSQLFilters := !f.MirrorFilter
-	moveErrorInGo := false
+	moveErrorInGo, blunder := false, ""
 
 	// Decode the compressed analysis blob per row only when a Go-side filter
 	// reads it: move pattern, mirror re-checks, date, equity, margin. The rate, cube
@@ -448,6 +536,9 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		return searchWhereClause{}, err
 	}
 
+	if err := appendBlotClauses(s.DB, f, useSQLFilters, &where); err != nil {
+		return searchWhereClause{}, err
+	}
 	if err := s.appendIdentityClauses(ctx, scope, f, &where, &args); err != nil {
 		return searchWhereClause{}, err
 	}
@@ -581,11 +672,10 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		if err := s.appendRateClauses(ctx, scope, f, &where, &args); err != nil {
 			return searchWhereClause{}, err
 		}
-		moveError, err := s.appendMoveErrorClause(ctx, scope, f, &where, &args)
-		if err != nil {
+		var err error
+		if moveErrorInGo, blunder, err = s.appendMoveErrorClause(ctx, scope, f, &where, &args); err != nil {
 			return searchWhereClause{}, err
 		}
-		moveErrorInGo = moveError
 
 		if f.DecisionTimeFilter != "" {
 			if cond, condArgs := decisionTimeSQL(s.DB, scope, f.DecisionTimeFilter); cond != "" {
@@ -597,11 +687,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		if searchfilter.HasBoardFilter(effInclude.Board) {
 			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(effInclude)
 			bitboardTight, structure = tight, true
-			where.WriteString(" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ?")
-			where.WriteString(" AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?")
-			args = append(args,
-				int64(occ1Req), int64(occ1Req), int64(pt1Req), int64(pt1Req),
-				int64(occ2Req), int64(occ2Req), int64(pt2Req), int64(pt2Req))
+			appendMaskClauses(&where, &args, [4]uint32{occ1Req, pt1Req, occ2Req, pt2Req}, true)
 			// A side whose fifteen checkers are all placed has nowhere else to be: its
 			// occupancy is implied whole, and an index answers what masks cannot.
 			black, white := placedCheckers(effInclude.Board)
@@ -642,10 +728,7 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		if searchfilter.HasBoardFilter(f.ExcludeFilter.Board) {
 			eSingle1, eMade1, eSingle2, eMade2 := engine.ExclusionMasks(f.ExcludeFilter)
 			structure = true
-			where.WriteString(" AND (p.occupancy_1 & ?) = 0 AND (p.point_mask_1 & ?) = 0")
-			where.WriteString(" AND (p.occupancy_2 & ?) = 0 AND (p.point_mask_2 & ?) = 0")
-			args = append(args,
-				int64(eSingle1), int64(eMade1), int64(eSingle2), int64(eMade2))
+			appendMaskClauses(&where, &args, [4]uint32{eSingle1, eMade1, eSingle2, eMade2}, false)
 		}
 	}
 
@@ -669,6 +752,8 @@ func (s *SearchStore) whereClause(ctx context.Context, scope string, f domain.Se
 		bitboardTight: bitboardTight,
 		structure:     structure,
 		moveErrorInGo: moveErrorInGo,
+		blunder:       blunder,
+		matchWalk:     probe.walked(where.String(), args),
 		effInclude:    effInclude,
 		likeTarget:    likeTarget,
 	}, nil
@@ -811,8 +896,6 @@ func (wc searchWhereClause) goPhase(f domain.SearchFilters) bool {
 		searchfilter.HasBoardFilter(f.ExcludeFilter.Board) ||
 		wc.moveErrorInGo ||
 		f.Player1CheckerInZoneFilter != "" || f.Player2CheckerInZoneFilter != "" ||
-		f.Player1OutfieldBlotFilter != "" || f.Player2OutfieldBlotFilter != "" ||
-		f.Player1JanBlotFilter != "" || f.Player2JanBlotFilter != "" ||
 		f.SearchText != "" || f.TagFilter != "" ||
 		f.DateFilter != "" || f.EquityFilter != "" || f.MarginFilter != "" ||
 		f.MovePatternFilter != ""
@@ -920,13 +1003,32 @@ func (s *SearchStore) windowIDs(ctx context.Context, f domain.SearchFilters, wc 
 			filter, args = filter+cond, append(args, condArgs...)
 			start, startArgs = start+cond, append(startArgs, condArgs...)
 		}
-		if offset == 0 && wc.structure && strings.Count(start, afterID)*len(afterID) == len(start) {
-			ids, full, err := s.probeIDWalk(ctx, wc.scope, joins, start, startArgs, filter, args, limit)
+		atIDs := offset == 0 && strings.Count(start, afterID)*len(afterID) == len(start)
+		if wc.matchWalk != nil && atIDs {
+			ids, full, err := s.probeMatchWalk(ctx, wc, joins, start, startArgs, limit)
 			if err != nil || full {
 				return ids, err
 			}
 		}
-		return s.readIDs(ctx, plain, filter, "p.id", "", args, limit, offset, nil)
+		if wc.blunder != "" {
+			return s.blunderWindow(ctx, wc, filter, args, limit, offset)
+		}
+		order := "p.id"
+		if atIDs {
+			rows := int(idWalkProbe.Load())
+			// Masks have no index to fall back on: the walk is given more rows.
+			if !wc.structure {
+				rows /= columnProbeShare
+			}
+			ids, tried, err := s.probeIDWalk(ctx, wc.scope, joins, start, startArgs, filter, args, limit, rows)
+			if err != nil || len(ids) == limit {
+				return ids, err
+			}
+			if tried && s.fewRowsExpected(ctx, plain, filter, args) {
+				order = sortedIDOrder
+			}
+		}
+		return s.readIDs(ctx, plain, filter, order, "", args, limit, offset, nil)
 	}
 	dir := " ASC"
 	if desc {
@@ -992,7 +1094,51 @@ const afterID = " AND p.id > ?"
 // walk in id order and a pass over the tenant on an estimate of the rows a
 // filter keeps: an estimate it cannot make for masks, and makes wrong for
 // columns that go together.
-type idWalkProber interface{ ProbesIDWalk() bool }
+type idWalkProber interface {
+	ProbesIDWalk() bool
+	// EstimateRows is how many rows the planner expects of a query.
+	EstimateRows(ctx context.Context, query string, args ...any) (float64, error)
+}
+
+// columnProbeShare is the part of idWalkProbe a filter without masks walks:
+// when it keeps few rows an index finds them, and a long walk is time lost.
+const columnProbeShare = 4
+
+// sortedIDOrder is the id order, written so that no index gives it: the rows
+// are found by the filter's own indexes, then sorted.
+const sortedIDOrder = "p.id + 0"
+
+// sortedReadMax is how many rows a read by the filter's indexes may expect
+// and still be asked to sort them: about a second of fetching, at worst.
+// Atomic so a test can move it (SetSortedReadMax) while other searches run.
+var sortedReadMax atomic.Int64
+
+func init() { sortedReadMax.Store(500000) }
+
+// SetSortedReadMax sets the rows a sorted read may expect, -1 for never
+// sorting, and returns a function that restores the previous value.
+func SetSortedReadMax(n int) (restore func()) {
+	old := sortedReadMax.Swap(int64(n))
+	return func() { sortedReadMax.Store(old) }
+}
+
+// fewRowsExpected tells, after a short probe, whether the window is better read
+// by the filter's indexes and sorted than walked in id order. The probe showed
+// the walk does not fill the window where it starts; the planner, left to
+// choose, still bets on it when two columns it believes independent are rarely
+// true together, and walks the whole tenant. Its estimate of the rows kept,
+// too high in that case, is what bounds the other read: under sortedReadMax
+// the walk is forbidden, above it the planner chooses as before — a filter
+// that keeps much of the tenant further on in the ids is cheaper walked than
+// fetched whole.
+func (s *SearchStore) fewRowsExpected(ctx context.Context, from, filter string, args []any) bool {
+	p, ok := s.DB.(idWalkProber)
+	if !ok {
+		return false
+	}
+	rows, err := p.EstimateRows(ctx, `SELECT p.id FROM `+from+` WHERE `+filter, args...)
+	return err == nil && rows <= float64(sortedReadMax.Load())
+}
 
 // idWalkProbe is how many rows of the tenant a probe walks, in id order.
 // Atomic so a test can move it (SetIDWalkProbe) while other searches run.
@@ -1007,8 +1153,8 @@ func SetIDWalkProbe(n int) (restore func()) {
 	return func() { idWalkProbe.Store(old) }
 }
 
-// probeIDWalk reads a window in id order from the next idWalkProbe rows of the
-// tenant, and says whether it is full. A full window is the answer: the rows
+// probeIDWalk reads a window in id order from the next rows rows of the
+// tenant, and says whether it tried. A full window is the answer: the rows
 // are walked in the order asked, and the filter met limit of them. A short one
 // says nothing of the rows further on, and is thrown away: what it cost is the
 // rows walked, not a pass over the tenant.
@@ -1016,19 +1162,75 @@ func SetIDWalkProbe(n int) (restore func()) {
 // The walk is written, not left to the planner: a filter it believes keeps one
 // row (masks) sends it to read and sort the whole tenant for a page that the
 // first hundred rows fill.
-func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start string, startArgs []any, filter string, args []any, limit int) (ids []int64, full bool, err error) {
-	p, ok := s.DB.(idWalkProber)
-	rows := int(idWalkProbe.Load())
-	// A subquery of the filter would run here and again after a short window,
-	// a list of ids be sent twice; and a position named is reached by its key.
-	if !ok || !p.ProbesIDWalk() || limit <= 0 || limit >= rows || strings.Contains(filter, "SELECT") || strings.Contains(filter, "p.id IN (") {
+func (s *SearchStore) probeIDWalk(ctx context.Context, scope, joins, start string, startArgs []any, filter string, args []any, limit, rows int) (ids []int64, tried bool, err error) {
+	if !s.probesIDWalk(filter, limit, rows) {
 		return nil, false, nil
 	}
 	tenant, walkArgs := s.DB.TenantFilter("p", scope)
 	from := "(SELECT * FROM position p WHERE " + tenant + start + " ORDER BY p.id LIMIT " + strconv.Itoa(rows) + ") p" + joins
 	walkArgs = append(append(walkArgs, startArgs...), args...)
 	ids, err = s.readIDs(ctx, from, filter, "p.id", "", walkArgs, limit, 0, nil)
-	return ids, err == nil && len(ids) == limit, err
+	return ids, err == nil, err
+}
+
+// probesIDWalk tells whether a window of limit rows under filter may be asked
+// of a walk of rows rows.
+func (s *SearchStore) probesIDWalk(filter string, limit, rows int) bool {
+	p, ok := s.DB.(idWalkProber)
+	// A subquery of the filter would run here and again after a short window,
+	// a list of ids be sent twice; and a position named is reached by its key.
+	return ok && p.ProbesIDWalk() && limit > 0 && limit < rows && !strings.Contains(filter, "SELECT") && !strings.Contains(filter, "p.id IN (")
+}
+
+// probeMatchWalk reads a window of a search whose match-level filter has its
+// moves sorted for the query, from a bounded walk that checks each position
+// against its own moves instead; full tells that the window is the answer. A
+// walk that does not fill the window is thrown away, and the sorted moves
+// answer as they did: what the walk cost is its rows, each a read of the
+// position's moves, never the tenant.
+//
+// The walk is over the next positions of the tenant, or, for a move-error
+// search from a blunder up, over the next entries of the blunder index: the
+// positions played several ways, few, are all candidates. Their window is the
+// answer when the blunders filled one by themselves — a blunder further on
+// than the walk went then comes after every row kept.
+func (s *SearchStore) probeMatchWalk(ctx context.Context, wc searchWhereClause, joins, start string, startArgs []any, limit int) (ids []int64, full bool, err error) {
+	rows := int(idWalkProbe.Load())
+	filter := wc.matchWalk.where + start
+	args := append(append([]any{}, wc.matchWalk.args...), startArgs...)
+	// The check reads the moves of one position: it is the only subquery a walk may carry.
+	if !s.probesIDWalk(strings.Replace(filter, wc.matchWalk.check, "", 1), limit, rows) {
+		return nil, false, nil
+	}
+	if wc.blunder == "" {
+		tenant, walkArgs := s.DB.TenantFilter("p", wc.scope)
+		from := "(SELECT * FROM position p WHERE " + tenant + start + " ORDER BY p.id LIMIT " + strconv.Itoa(rows) + ") p" + joins
+		ids, err = s.readIDs(ctx, from, filter, "p.id", "", append(append(walkArgs, startArgs...), args...), limit, 0, nil)
+		return ids, err == nil && len(ids) == limit, err
+	}
+	tenant, walkArgs := s.DB.TenantFilter("a", wc.scope)
+	stop := " LIMIT " + strconv.Itoa(limit) + ") AS "
+	from := "(SELECT * FROM (SELECT p.id, 0 AS marked FROM (SELECT * FROM analysis a WHERE " + tenant +
+		" AND (a.best_move_equity_error >= " + wc.blunder + " OR a.cube_error >= " + wc.blunder + ")" + strings.ReplaceAll(start, "p.id", "a.position_id") +
+		" ORDER BY a.position_id LIMIT " + strconv.Itoa(rows) + ") a JOIN position p ON p.id = a.position_id" + andSameTenant(s.DB, "p", "a") +
+		" WHERE " + s.DB.Bool("p.multi_played", false) + " AND " + filter + " ORDER BY a.position_id" + stop + "single" +
+		" UNION ALL SELECT * FROM (SELECT p.id, 1 AS marked FROM position p LEFT JOIN analysis a ON a.position_id = p.id" + andSameTenant(s.DB, "a", "p") +
+		" WHERE " + s.DB.Bool("p.multi_played", true) + " AND " + filter + " ORDER BY p.id" + stop + "multi) p"
+	marked := map[int64]any{}
+	ids, err = s.readIDs(ctx, from, "1=1", "p.id", "p.marked", append(append(append(walkArgs, startArgs...), args...), args...), 2*limit, 0, marked)
+	if err != nil {
+		return nil, false, err
+	}
+	single := 0
+	for _, id := range ids {
+		if fmt.Sprint(marked[id]) == "0" {
+			single++
+		}
+	}
+	if single < limit {
+		return nil, false, nil
+	}
+	return ids[:limit], true, nil
 }
 
 // readIDs reads the ids of a window; with keys, it also reads keyCol beside each id.
@@ -1245,7 +1447,7 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 	if max <= 0 {
 		return 0, false, fmt.Errorf("search count: max %d: %w", max, storage.ErrInvalid)
 	}
-	wc, err := s.buildWhere(ctx, scope, f)
+	wc, err := s.buildWhere(context.WithValue(ctx, listedBlundersKey{}, true), scope, f)
 	if err != nil {
 		return 0, false, err
 	}
@@ -1264,6 +1466,8 @@ func (s *SearchStore) CountUpTo(ctx context.Context, scope string, f domain.Sear
 	}
 	// A move error alone calls for Go only on the rows played more than one way: the others
 	// are counted from their columns, without reading an analysis.
+	// The two halves of the count alter the clause: no walk written from the whole one.
+	wc.matchWalk = nil
 	bySQL := wc
 	bySQL.moveErrorInGo = false
 	if wc.moveErrorInGo && !bySQL.goPhase(f) {
