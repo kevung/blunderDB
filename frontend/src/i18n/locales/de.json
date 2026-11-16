@@ -1608,7 +1608,7 @@
         "watchImportNotice": "Überwachter Ordner: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
         "watchImportReport": "Bericht",
         "importIdentifierEmpty": "Geben Sie eine Kennung an: import XGID=…",
-        "importIdentifierUnknown": "Kennung nicht erkannt. Vorerst wird nur XGID gelesen.",
+        "importIdentifierUnknown": "Kennung nicht erkannt: XGID, OGID oder GNUbg-ID erwartet.",
         "importIdentifierSaved": "Stellung aus der Kennung importiert.",
         "importIdentifierOnBoard": "Position aus der Kennung auf das Brett gesetzt.",
         "captureOnBoard": "Screenshot auf das Brett gelesen ({software}).{unsure} Prüfen, {unread} setzen, dann speichern.{more}",

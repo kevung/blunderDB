@@ -6198,6 +6198,7 @@ export namespace parser {
 	    position: domain.Position;
 	    analysis?: domain.PositionAnalysis;
 	    comment: string;
+	    format: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Result(source);
@@ -6208,6 +6209,7 @@ export namespace parser {
 	        this.position = this.convertValues(source["position"], domain.Position);
 	        this.analysis = this.convertValues(source["analysis"], domain.PositionAnalysis);
 	        this.comment = source["comment"];
+	        this.format = source["format"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

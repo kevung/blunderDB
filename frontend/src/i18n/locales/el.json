@@ -1608,7 +1608,7 @@
         "watchImportNotice": "Παρακολουθούμενος φάκελος: {succeeded} εισήχθησαν, {skipped} παραλείφθηκαν, {failed} απέτυχαν",
         "watchImportReport": "Αναφορά",
         "importIdentifierEmpty": "Δώστε ένα αναγνωριστικό: import XGID=…",
-        "importIdentifierUnknown": "Μη αναγνωρίσιμο αναγνωριστικό. Προς το παρόν διαβάζεται μόνο το XGID.",
+        "importIdentifierUnknown": "Μη αναγνωρίσιμο αναγνωριστικό: αναμένεται XGID, OGID ή GNUbg ID.",
         "importIdentifierSaved": "Η θέση εισήχθη από το αναγνωριστικό.",
         "importIdentifierOnBoard": "Η θέση τοποθετήθηκε στο ταμπλό από το αναγνωριστικό.",
         "captureOnBoard": "Το στιγμιότυπο διαβάστηκε στο ταμπλό ({software}).{unsure} Ελέγξτε το, ορίστε {unread} και αποθηκεύστε.{more}",

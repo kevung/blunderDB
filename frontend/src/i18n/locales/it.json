@@ -1608,7 +1608,7 @@
         "watchImportNotice": "Cartella sorvegliata: {succeeded} importate, {skipped} ignorate, {failed} fallite",
         "watchImportReport": "Resoconto",
         "importIdentifierEmpty": "Indicate un identificatore: import XGID=…",
-        "importIdentifierUnknown": "Identificatore non riconosciuto. Per ora è letto solo XGID.",
+        "importIdentifierUnknown": "Identificatore non riconosciuto: è atteso un XGID, un OGID o un ID GNUbg.",
         "importIdentifierSaved": "Posizione importata dall'identificatore.",
         "importIdentifierOnBoard": "Posizione messa sulla scacchiera dall'identificativo.",
         "captureOnBoard": "Schermata letta sulla scacchiera ({software}).{unsure} Controllala, imposta {unread} e salva.{more}",

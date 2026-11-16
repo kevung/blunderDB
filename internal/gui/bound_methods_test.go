@@ -84,7 +84,7 @@ var boundAppMethods = []string{
 	"IsDirectory",
 	"LegalMoves",
 	"GnubgID",
-	"LooksLikeOGID",
+	"LooksLikePositionID",
 	"ReadLogTail",
 	"OpenBearoffFileDialog",
 	"OpenDatabaseDialog",

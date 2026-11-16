@@ -115,7 +115,7 @@ export function LibraryGroupHolding(arg1:string):Promise<number>;
 
 export function ListLibraryGroups():Promise<Array<gui.LibraryGroup>>;
 
-export function LooksLikeOGID(arg1:string):Promise<boolean>;
+export function LooksLikePositionID(arg1:string):Promise<boolean>;
 
 export function MediaURL(arg1:string):Promise<string>;
 
