@@ -42,6 +42,13 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   leur fichier source, et ``match repair --id`` ou le bouton ⟲ de la fiche les
   réécrit depuis ce fichier.
 
+0.57.0 (2026-11-16)
+-------------------
+
+- **Coller un identifiant GNU Backgammon** : le collage et ``positions.parseText`` lisent l'ID de position seul, l'ID de position suivi de l'ID de match (``4HPwATDgc/ABMA:cIkFAAAAAAAE``) et les deux lignes *Position ID* / *Match ID* que GNU Backgammon copie ; la réponse de ``positions.parseText`` nomme le format lu (``xgid``, ``ogid`` ou ``gnubgid``), et un texte sans XGID, OGID ni ID GNUbg est refusé en le disant.
+- **Recherche plus rapide sous PostgreSQL** : les filtres de blot se décident en SQL (quatre index partiels, migration 069), le filtre d'erreur lit sa fenêtre par deux branches bornées, les filtres de joueur, d'adversaire, de tournoi et de longueur de match par une marche bornée, deux colonnes rarement vraies ensemble par une sonde bornée, et une structure n'écrit plus de condition neutre. Une forme de filtre de blot illisible (``bo3``) est désormais refusée au lieu de ne rien rendre.
+- Voir :ref:`manuel_eval`, :ref:`panneau_recherche` et :ref:`api_reference`.
+
 0.56.0 (2026-11-13)
 -------------------
 

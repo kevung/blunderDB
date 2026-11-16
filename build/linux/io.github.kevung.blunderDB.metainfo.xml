@@ -86,6 +86,14 @@
   </branding>
 
   <releases>
+    <release version="0.57.0" date="2026-11-16">
+      <description>
+        <ul>
+          <li>Paste a GNU Backgammon identifier (position ID alone, or position ID and match ID) like an XGID or an OGID; positions.parseText names the format it read</li>
+          <li>Faster search under PostgreSQL: blot, error, player, tournament and match-length filters; an unreadable blot filter form is now refused</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.56.0" date="2026-11-13">
       <description>
         <ul>
