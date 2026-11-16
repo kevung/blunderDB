@@ -3,7 +3,8 @@
 // GUI (over Wails), the server and the CLI all call it; testdata/
 // parse_corpus.json holds it.
 //
-// It handles: a bare XGID line; an OGID line (OpenGammon); the XG
+// It handles: a bare XGID line; an OGID line (OpenGammon); a GNUbg
+// identifier (Position ID, alone or with its Match ID); the XG
 // human-readable export with either a doubling-cube or a checker-move analysis
 // block (French / English / Japanese / German); blunderDB's own internal export
 // format; and a trailing comment.
@@ -15,6 +16,7 @@
 package parser
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -31,7 +33,16 @@ type Result struct {
 	Position domain.Position          `json:"position"`
 	Analysis *domain.PositionAnalysis `json:"analysis"`
 	Comment  string                   `json:"comment"`
+	// Format names the identifier the position was read from: FormatXGID,
+	// FormatOGID or FormatGNUbgID.
+	Format string `json:"format"`
 }
+
+const (
+	FormatXGID    = "xgid"
+	FormatOGID    = "ogid"
+	FormatGNUbgID = "gnubgid"
+)
 
 // ErrNoXGID / ErrEmpty mirror the JS throws so callers can map them to 4xx.
 var (
@@ -86,9 +97,17 @@ func ParsePosition(text string) (Result, error) {
 		// comes back empty, Analysis.XGID included (no absolute score or match
 		// length to write one from).
 		if pos, ok := parseOGIDLine(lines); ok {
-			return Result{Position: pos, Analysis: &domain.PositionAnalysis{}}, nil
+			return Result{Position: pos, Analysis: &domain.PositionAnalysis{}, Format: FormatOGID}, nil
 		}
-		return Result{}, errNoXGID
+		// A GNUbg identifier, like an OGID, carries a position and no analysis.
+		if id, ok := domain.FindGNUbgID(raw); ok {
+			pos, err := domain.DecodeGNUbgID(id)
+			if err != nil {
+				return Result{}, fmt.Errorf("%w: %w", ErrNoPosition, err)
+			}
+			return Result{Position: pos, Analysis: &domain.PositionAnalysis{}, Format: FormatGNUbgID}, nil
+		}
+		return Result{}, ErrNoPosition
 	}
 
 	pos := decodePosition(xgid, lines, isFrench, isJapanese, isGerman, isInternalChecker, isInternalDoubling)
@@ -121,7 +140,7 @@ func ParsePosition(text string) (Result, error) {
 
 	comment := extractComment(content, analysis.AnalysisType == "DoublingCube")
 
-	return Result{Position: pos, Analysis: analysis, Comment: comment}, nil
+	return Result{Position: pos, Analysis: analysis, Comment: comment, Format: FormatXGID}, nil
 }
 
 // parseOGIDLine finds and decodes the first OGID of the text. It is tolerant

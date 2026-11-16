@@ -1608,7 +1608,7 @@
         "watchImportNotice": "Valvottu kansio: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
         "watchImportReport": "Raportti",
         "importIdentifierEmpty": "Anna tunniste: import XGID=…",
-        "importIdentifierUnknown": "Tuntematon tunniste. Toistaiseksi luetaan vain XGID.",
+        "importIdentifierUnknown": "Tuntematon tunniste: odotetaan XGID-, OGID- tai GNUbg ID -tunnistetta.",
         "importIdentifierSaved": "Asema tuotu tunnisteesta.",
         "importIdentifierOnBoard": "Asema asetettu laudalle tunnisteesta.",
         "captureOnBoard": "Kuvakaappaus luettu laudalle ({software}).{unsure} Tarkista, aseta {unread} ja tallenna.{more}",

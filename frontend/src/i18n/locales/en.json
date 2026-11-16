@@ -1608,7 +1608,7 @@
         "watchImportNotice": "Watched folder: {succeeded} imported, {skipped} skipped, {failed} failed",
         "watchImportReport": "Report",
         "importIdentifierEmpty": "Give an identifier: import XGID=…",
-        "importIdentifierUnknown": "Unrecognised identifier. Only XGID is read for now.",
+        "importIdentifierUnknown": "Unrecognised identifier: XGID, OGID or GNUbg ID expected.",
         "importIdentifierSaved": "Position imported from the identifier.",
         "importIdentifierOnBoard": "Position placed on the board from the identifier.",
         "captureOnBoard": "Capture read onto the board ({software}).{unsure} Check it, set {unread}, then save.{more}",

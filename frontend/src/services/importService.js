@@ -10,7 +10,7 @@ import {
     ReadFileContent,
     ShowAlert,
     IsDirectory,
-    LooksLikeOGID,
+    LooksLikePositionID,
     ImportFiles
 } from '../../wailsjs/go/gui/App.js';
 import {
@@ -1281,8 +1281,8 @@ async function pastePositionCore() {
             setStatusBarMessage(tMsg('status.errorPastingBgblitzPos', { error }));
         }
     } else {
-        // An OGID needs no branch here: parser.ParsePosition reads it like it
-        // reads an XGID, so a pasted OpenGammon identifier lands in the
+        // An OGID or a GNUbg ID needs no branch here: parser.ParsePosition
+        // reads it like it reads an XGID, so a pasted identifier lands in the
         // database through exactly this call.
         const { positionData, parsedAnalysis } = await parsePositionText(result);
         const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.pastedPositionSaved'));
@@ -1308,14 +1308,14 @@ async function pastePositionToBoard() {
             }
         }
 
-        if (clipboardText && !clipboardText.includes('XGID=') && (await LooksLikeOGID(clipboardText))) {
+        if (clipboardText && !clipboardText.includes('XGID=') && (await LooksLikePositionID(clipboardText))) {
             try {
                 const { positionData } = await parsePositionOnly(clipboardText);
                 applyPositionToBoard(positionData);
                 setStatusBarMessage(tMsg('status.positionPastedClipboard'));
                 return;
             } catch (e) {
-                logger.log('Clipboard text looks like an OGID but decoding failed:', e);
+                logger.log('Clipboard text looks like an OGID or GNUbg ID but decoding failed:', e);
             }
         }
 
@@ -1558,9 +1558,9 @@ export async function analyzeRemainingAfterImport() {
 
 /**
  * Importe une position depuis un identifiant tapé (`import XGID=…`), par le
- * même chemin que le presse-papier. parser.ParsePosition lit aussi un OGID ;
- * seul l'aiguillage « est-ce un identifiant ? » vit ici, un OGID n'ayant pas
- * de préfixe. Sans évaluation, la fiche d'analyse arrive vide ; le reste est
+ * même chemin que le presse-papier. parser.ParsePosition lit aussi un OGID et
+ * un ID GNUbg ; seul l'aiguillage « est-ce un identifiant ? » vit ici, ni l'un
+ * ni l'autre n'ayant de préfixe. Sans évaluation, la fiche d'analyse arrive vide ; le reste est
  * refusé en le disant.
  *
  * @param {string} text
@@ -1579,7 +1579,7 @@ export async function importIdentifier(text) {
         setStatusBarMessage(tMsg('status.importIdentifierEmpty'));
         return null;
     }
-    if (!trimmed.includes('XGID=') && !(await LooksLikeOGID(trimmed))) {
+    if (!trimmed.includes('XGID=') && !(await LooksLikePositionID(trimmed))) {
         setStatusBarMessage(tMsg('status.importIdentifierUnknown'));
         return null;
     }

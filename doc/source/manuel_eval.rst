@@ -341,8 +341,8 @@ le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :
 * **CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse,
   puis la coller une fois dans le panneau Eval. Le collage accepte aussi un
   identifiant venu d'ailleurs — un XGID (eXtreme Gammon, GNU Backgammon, une
-  autre instance de blunderDB) ou un OGID (OpenGammon) : il suffit qu'il soit
-  dans le presse-papier.
+  autre instance de blunderDB), un OGID (OpenGammon) ou un ID GNUbg (GNU
+  Backgammon) : il suffit qu'il soit dans le presse-papier.
 
 * **La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où
   l'identifiant n'est pas dans le presse-papier mais dans un message, sur un
@@ -355,6 +355,12 @@ le plus souvent d'une position déjà en main. Quatre gestes l'y amènent :
 Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La position
 arrive donc sans analyse, exactement comme un XGID nu, et l'évaluateur intégré
 peut la combler ensuite.
+
+Un ID GNUbg se colle sous la forme que GNU Backgammon copie : l'ID de position
+et l'ID de match joints par deux-points (``4HPwATDgc/ABMA:cIkFAAAAAAAE``), ou
+les deux lignes *Position ID* et *Match ID*. L'ID de position seul ne dit ni le
+joueur au trait, ni les dés, ni le score : la position arrive alors au trait du
+joueur du bas, sans dés, en partie d'argent, videau au centre.
 
 Dans un OGID, la partie Crawford se lit au ``C`` qui suit la longueur du match
 (``7C``) : sans lui, un joueur à un point du but est après la Crawford.
