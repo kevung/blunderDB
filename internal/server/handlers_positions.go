@@ -371,6 +371,12 @@ func (s *Server) positionRoutes() []route {
 			}
 			return index, nil
 		})},
+		// What a table of positions shows beside the board, for a page of
+		// ids: played error or no analysis, date, collections. Caller's order,
+		// unknown ids skipped; the page costs a fixed number of queries.
+		{http.MethodPost, "/v1/positions.listFields", rpc(func(ctx context.Context, scope string, req idsReq) ([]storage.PositionListFields, error) {
+			return s.listFields(ctx, scope, req.IDs)
+		})},
 		// Positions in the order the ids were given; unknown ids are skipped.
 		{http.MethodPost, "/v1/positions.loadByIds", rpc(func(ctx context.Context, scope string, req idsReq) ([]domain.Position, error) {
 			return ps().LoadByIDs(ctx, scope, req.IDs)
@@ -450,6 +456,21 @@ type drawingResp struct {
 type setDrawingReq struct {
 	ID    int64                `json:"id"`
 	Marks []domain.DrawingMark `json:"marks"`
+}
+
+func (s *Server) listFields(ctx context.Context, scope string, ids []int64) ([]storage.PositionListFields, error) {
+	p, ok := s.opts.Storage.(storage.ListFieldsProvider)
+	if !ok {
+		return nil, fmt.Errorf("this backend answers no list fields: %w", storage.ErrUnsupported)
+	}
+	if len(ids) > maxPageSize {
+		return nil, fmt.Errorf("%w: at most %d ids", storage.ErrInvalid, maxPageSize)
+	}
+	fields, err := p.PositionListFields().ListFields(ctx, scope, ids)
+	if fields == nil {
+		fields = []storage.PositionListFields{}
+	}
+	return fields, err
 }
 
 func (s *Server) drawings() (storage.DrawingStore, error) {

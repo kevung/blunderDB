@@ -80,7 +80,7 @@ var wantIndexes = []string{
 	"idx_analysis_win1", "idx_analysis_win2", "idx_anki_card_deck",
 	"idx_anki_card_due", "idx_anki_card_identity", "idx_anki_card_uuid", "idx_anki_deck_uuid",
 	"idx_anki_review_log_card", "idx_anki_review_log_deck", "idx_change_log_seq",
-	"idx_change_log_xid", "idx_collection_position_collection", "idx_collection_uuid",
+	"idx_change_log_xid", "idx_collection_position_collection", "idx_collection_position_position", "idx_collection_uuid",
 	"idx_comment_position", "idx_comment_uuid", "idx_direction_event_tournament",
 	"idx_event_alias_canonical", "idx_game_match", "idx_import_batch_file_batch",
 	"idx_import_batch_file_path", "idx_import_batch_file_sha", "idx_lesson_step_lesson", "idx_lesson_step_position",

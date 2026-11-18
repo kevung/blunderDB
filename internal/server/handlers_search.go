@@ -28,6 +28,9 @@ type searchPageReq struct {
 	Limit   int                  `json:"limit"`
 	Offset  int                  `json:"offset,omitempty"`
 	Cursor  string               `json:"cursor,omitempty"`
+	// ListFields asks, beside each position, what a table shows of it
+	// (positions.listFields), read for the whole page at once.
+	ListFields bool `json:"listFields,omitempty"`
 }
 
 func (r searchPageReq) pageLimit() int { return r.Limit }
@@ -37,9 +40,11 @@ func (r searchPageReq) opts() storage.PageOpts {
 }
 
 // searchPageResp is a page of positions; NextCursor is "" after the last page.
+// ListFields, when asked, follows Positions row for row.
 type searchPageResp struct {
-	Positions  []domain.Position `json:"positions"`
-	NextCursor string            `json:"nextCursor"`
+	Positions  []domain.Position            `json:"positions"`
+	NextCursor string                       `json:"nextCursor"`
+	ListFields []storage.PositionListFields `json:"listFields,omitempty"`
 }
 
 type searchIDsPageResp struct {
@@ -138,7 +143,32 @@ func (s *Server) searchRoutes() []route {
 			if positions == nil {
 				positions = []domain.Position{}
 			}
-			return searchPageResp{Positions: positions, NextCursor: next}, err
+			resp := searchPageResp{Positions: positions, NextCursor: next}
+			if err != nil || !req.ListFields {
+				return resp, err
+			}
+			ids := make([]int64, len(positions))
+			for i := range positions {
+				ids[i] = positions[i].ID
+			}
+			fields, err := s.listFields(ctx, scope, ids)
+			if err != nil {
+				return resp, err
+			}
+			// A position deleted since the page was read keeps its row, bare.
+			byID := make(map[int64]storage.PositionListFields, len(fields))
+			for _, f := range fields {
+				byID[f.PositionID] = f
+			}
+			resp.ListFields = make([]storage.PositionListFields, len(ids))
+			for i, id := range ids {
+				f, ok := byID[id]
+				if !ok {
+					f = storage.PositionListFields{PositionID: id, Collections: []storage.CollectionRef{}}
+				}
+				resp.ListFields[i] = f
+			}
+			return resp, nil
 		})},
 		{http.MethodPost, "/v1/search.idsPage", rpc(func(ctx context.Context, scope string, req searchPageReq) (searchIDsPageResp, error) {
 			ids, next, err := ss().FindIDsPage(ctx, scope, req.Filters, req.opts())

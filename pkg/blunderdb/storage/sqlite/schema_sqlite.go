@@ -539,6 +539,7 @@ var schemaStatements = []string{
 		UNIQUE(collection_id, position_id)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`,
+	`CREATE INDEX IF NOT EXISTS idx_collection_position_position ON collection_position(position_id)`,
 	// The trash: a SNAPSHOT of what was deleted, not a deleted_at column, so
 	// no live query, statistic or retention predicate has to know about it
 	// (ADR-0036).
