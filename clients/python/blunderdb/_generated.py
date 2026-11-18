@@ -1118,6 +1118,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.list — NDJSON stream."
         return self._stream("/v1/positions.list", payload)
 
+    def positions_list_fields(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.listFields — JSON."
+        return self._call("/v1/positions.listFields", payload)
+
     def positions_list_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.listIds — JSON."
         return self._call("/v1/positions.listIds", payload)

@@ -79,6 +79,9 @@ func (b binder) PositionDerivations() storage.DerivationStore {
 func (b binder) PositionDrawings() storage.DrawingStore {
 	return &sqlshared.DrawingStore{DB: b.shared()}
 }
+func (b binder) PositionListFields() storage.ListFieldsStore {
+	return &sqlshared.ListFieldsStore{DB: b.shared()}
+}
 func (b binder) PublicIDs() storage.PublicIDStore {
 	return &sqlshared.PublicIDStore{DB: b.shared()}
 }
