@@ -415,6 +415,7 @@
         "legendToggle": "показать или скрыть решения этого игрока",
         "lossSoFar": "Нарастающим итогом: {loss}",
         "timesPerDecision": "Время на решение",
+        "timesHistogram": "Гистограмма времени решений",
         "tabsLabel": "Разделы матча",
         "tabTranscript": "Запись",
         "tabCharts": "Графики",

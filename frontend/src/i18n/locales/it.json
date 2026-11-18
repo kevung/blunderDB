@@ -415,6 +415,7 @@
         "legendToggle": "mostra o nascondi le decisioni di questo giocatore",
         "lossSoFar": "Cumulato: {loss}",
         "timesPerDecision": "Tempo per decisione",
+        "timesHistogram": "Istogramma dei tempi di decisione",
         "tabsLabel": "Viste della partita",
         "tabTranscript": "Trascrizione",
         "tabCharts": "Grafici",

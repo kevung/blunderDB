@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 16:10+0100\n"
+"POT-Creation-Date: 2026-11-18 22:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -48,11 +48,14 @@ msgid ""
 " bot, voir le Duel), la sortie ``text`` donne la durée de chaque "
 "décision, celle du videau à part, et la sortie ``summary`` le total et la"
 " moyenne de chaque joueur, avec la marque du joueur dont la réserve s'est"
-" épuisée en premier ; la sortie ``json`` porte ``decision_ms`` et "
-"``cube_decision_ms``. Une durée inconnue n'est pas écrite. ``list --type "
-"timeerrors`` donne, par joueur et par tranche de durée (moins de 5 s, 5 à"
-" 15 s, 15 à 30 s, plus de 30 s), le nombre de décisions, l'erreur moyenne"
-" et la part de blunders ; ``--format json`` en livre les lignes. "
+" épuisée en premier, puis le nombre de ses décisions par tranche de durée"
+" non vide (``<2 s: 4, 2-5 s: 11``) ; ``/v1/stats.matchTimeSummary`` livre"
+" ces tranches (``histogram`` de chaque joueur, bornes en millisecondes "
+"dans ``histogram_bounds_ms``) ; la sortie ``json`` porte ``decision_ms`` "
+"et ``cube_decision_ms``. Une durée inconnue n'est pas écrite. ``list "
+"--type timeerrors`` donne, par joueur et par tranche de durée (moins de 5"
+" s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre de décisions, l'erreur "
+"moyenne et la part de blunders ; ``--format json`` en livre les lignes. "
 "``--ids`` (identifiants de matchs séparés par des virgules) restreint ce "
 "tableau à ces matchs : la revue d'un tournoi ou d'une séance."
 msgstr ""
@@ -60,8 +63,12 @@ msgstr ""
 "παίχτηκε εναντίον bot, βλ. το Duel), η έξοδος ``text`` δίνει τη διάρκεια "
 "κάθε απόφασης, χωριστά αυτή του κύβου, και η έξοδος ``summary`` το σύνολο"
 " και τον μέσο όρο κάθε παίκτη, με τη σήμανση του παίκτη του οποίου το "
-"απόθεμα τελείωσε πρώτο· η έξοδος ``json`` περιέχει τα ``decision_ms`` και"
-" ``cube_decision_ms``. Μια άγνωστη διάρκεια δεν γράφεται. Το ``list "
+"απόθεμα τελείωσε πρώτο, και έπειτα τον αριθμό των αποφάσεών του ανά μη "
+"κενή ζώνη διάρκειας (``<2 s: 4, 2-5 s: 11``)· το "
+"``/v1/stats.matchTimeSummary`` παραδίδει αυτές τις ζώνες (το "
+"``histogram`` κάθε παίκτη, όρια σε χιλιοστά του δευτερολέπτου στο "
+"``histogram_bounds_ms``)· η έξοδος ``json`` περιέχει τα ``decision_ms`` "
+"και ``cube_decision_ms``. Μια άγνωστη διάρκεια δεν γράφεται. Το ``list "
 "--type timeerrors`` δίνει, ανά παίκτη και ζώνη διάρκειας (κάτω από 5 s, 5"
 " έως 15 s, 15 έως 30 s, πάνω από 30 s), τον αριθμό αποφάσεων, το μέσο "
 "λάθος και το ποσοστό blunders· το ``--format json`` δίνει τις γραμμές. Το"
@@ -69,7 +76,7 @@ msgstr ""
 "πίνακα σε αυτούς τους αγώνες: η ανασκόπηση ενός τουρνουά ή μιας "
 "συνεδρίας."
 
-#: ../../source/cli_matchs.rst:26
+#: ../../source/cli_matchs.rst:29
 msgid ""
 "Pour un match joué ici par un Duel, les sorties ``text`` et ``summary`` "
 "ajoutent son origine : le départ, le germe des dés révélé et son SHA-256,"
@@ -96,7 +103,7 @@ msgstr ""
 "``/v1/matches.origin``: ``null`` για ματς χωρίς προέλευση, 404 για ματς "
 "που δεν υπάρχει."
 
-#: ../../source/cli_matchs.rst:37
+#: ../../source/cli_matchs.rst:40
 msgid ""
 "Pour un match analysé, la perte de chances de gagner le match de chaque "
 "coup (``mwc_loss``, une fraction : 0,0123 vaut 1,23 %, ``null`` pour un "
@@ -127,7 +134,7 @@ msgstr ""
 "ενότητα ``Difficulty``. Ο διακομιστής την εξυπηρετεί μέσω "
 "``/v1/stats.matchDecisionLosses``."
 
-#: ../../source/cli_matchs.rst:49
+#: ../../source/cli_matchs.rst:52
 #, no-python-format
 msgid ""
 "``summary`` se termine par une section ``Review``, le bilan du match "
@@ -154,19 +161,19 @@ msgstr ""
 "σκορ φέρουν το διάστημά τους 95 % επί των αγώνων (στήλη ``95 % CI``), και"
 " το ``list --type players`` μια στήλη ``L7``."
 
-#: ../../source/cli_matchs.rst:63 ../../source/cli_matchs.rst:223
+#: ../../source/cli_matchs.rst:66 ../../source/cli_matchs.rst:226
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
-#: ../../source/cli_matchs.rst:65
+#: ../../source/cli_matchs.rst:68
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Βάση δεδομένων (υποχρεωτικό)."
 
-#: ../../source/cli_matchs.rst:66
+#: ../../source/cli_matchs.rst:69
 msgid "``--id`` — ID du match à afficher (obligatoire)."
 msgstr "``--id`` — ID του αγώνα προς εμφάνιση (υποχρεωτικό)."
 
-#: ../../source/cli_matchs.rst:67
+#: ../../source/cli_matchs.rst:70
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
@@ -174,15 +181,15 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``json``, ``text`` ή ``summary`` "
 "(προεπιλογή: ``json``)."
 
-#: ../../source/cli_matchs.rst:68
+#: ../../source/cli_matchs.rst:71
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr "``--output`` — Αρχείο εξόδου (προεπιλογή: τυπική έξοδος)."
 
-#: ../../source/cli_matchs.rst:70 ../../source/cli_matchs.rst:184
+#: ../../source/cli_matchs.rst:73 ../../source/cli_matchs.rst:187
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
-#: ../../source/cli_matchs.rst:78
+#: ../../source/cli_matchs.rst:81
 msgid ""
 "**match repair** — Réécrit les positions, les analyses et les erreurs "
 "d'un match à partir de son fichier source, celui que l'onglet **Infos** "
@@ -232,11 +239,11 @@ msgstr ""
 "``/v1/matches.repair``, με το αρχείο προέλευσης να αποστέλλεται στο "
 "αίτημα."
 
-#: ../../source/cli_matchs.rst:110
+#: ../../source/cli_matchs.rst:113
 msgid "tournament — Lire un tournoi dirigé"
 msgstr "tournament — Ανάγνωση διευθυνόμενου τουρνουά"
 
-#: ../../source/cli_matchs.rst:112
+#: ../../source/cli_matchs.rst:115
 msgid ""
 "Lit un tournoi dirigé sans interface graphique. Diriger un tournoi de "
 "façon interactive est le rôle de la console du moteur Nicomaque ; ces "
@@ -248,11 +255,11 @@ msgstr ""
 " Nicomaque· αυτές οι υποεντολές **διαβάζουν**, καμία δεν περιμένει "
 "είσοδο, και μόνο οι ``move`` και ``confirm`` γράφουν."
 
-#: ../../source/cli_matchs.rst:121
+#: ../../source/cli_matchs.rst:124
 msgid "**Sous-commandes:**"
 msgstr "**Υποεντολές:**"
 
-#: ../../source/cli_matchs.rst:123
+#: ../../source/cli_matchs.rst:126
 msgid ""
 "``list [--format text|json]`` — Les tournois dirigés de la base, avec "
 "leur état, la version du moteur, l'événement auquel chacun appartient (si"
@@ -262,7 +269,7 @@ msgstr ""
 "την κατάστασή τους, την έκδοση της μηχανής, τη διοργάνωση στην οποία "
 "ανήκει καθένα (κενό αν καμία) και την ημερομηνία της τελευταίας απόφασης."
 
-#: ../../source/cli_matchs.rst:126
+#: ../../source/cli_matchs.rst:129
 msgid ""
 "``verify --id N [--format text|json]`` — Rejoue la direction et signale "
 "tout avertissement résiduel. **Sort en erreur** s'il en reste un : c'est "
@@ -275,7 +282,7 @@ msgstr ""
 "τον τρέχει στις βάσεις μιας σεζόν θέλει κωδικό εξόδου, όχι μια γραμμή "
 "προς φιλτράρισμα."
 
-#: ../../source/cli_matchs.rst:130
+#: ../../source/cli_matchs.rst:133
 msgid ""
 "``standings --id N`` — Le classement en CSV, prix compris, dans la langue"
 " de l'interface."
@@ -283,7 +290,7 @@ msgstr ""
 "``standings --id N`` — Η κατάταξη σε CSV, με τα έπαθλα, στη γλώσσα της "
 "διεπαφής."
 
-#: ../../source/cli_matchs.rst:132
+#: ../../source/cli_matchs.rst:135
 msgid ""
 "``ranking --season [--rencontre N] [--from AAAA-MM-JJ] [--to AAAA-MM-JJ] "
 "[--points 25,18,15] [--participation P] [--elo] [--format csv|json]`` — "
@@ -312,7 +319,7 @@ msgstr ""
 " ανά πρόσωπο και μία στήλη βαθμών ανά τουρνουά· ένα μη ολοκληρωμένο "
 "τουρνουά εμφανίζεται στη λίστα αλλά δεν αποφέρει τίποτα."
 
-#: ../../source/cli_matchs.rst:143
+#: ../../source/cli_matchs.rst:146
 msgid ""
 "``page --id N|--rencontre N [--out <dossier>]`` — La page HTML "
 "d'affichage d'une épreuve (``--id``), ou la page murale d'un événement "
@@ -328,7 +335,7 @@ msgstr ""
 "στην τυπική έξοδο· με αυτό, γράφεται στον φάκελο, ο οποίος γίνεται ο "
 "φάκελος της διεύθυνσης ή της διοργάνωσης."
 
-#: ../../source/cli_matchs.rst:149
+#: ../../source/cli_matchs.rst:152
 msgid ""
 "``export --id N`` — Le journal d'événements brut, rejouable par les "
 "outils du moteur. Le journal est toute la vérité d'une direction : le "
@@ -341,7 +348,7 @@ msgstr ""
 "από αυτό. Ένα εργαλείο που διαβάζει αυτή την έξοδο δεν χρειάζεται καθόλου"
 " το blunderDB."
 
-#: ../../source/cli_matchs.rst:153
+#: ../../source/cli_matchs.rst:156
 msgid ""
 "``move --id N --match M --table T [--format text|json]`` — Change la "
 "table d'un match en cours, comme le glisser-déposer d'une case sur une "
@@ -360,7 +367,7 @@ msgstr ""
 "γράφεται στο ημερολόγιο καθενός. Εμφανίζει το τραπέζι κάθε αγώνα σε "
 "εξέλιξη."
 
-#: ../../source/cli_matchs.rst:160
+#: ../../source/cli_matchs.rst:163
 msgid ""
 "``hall --rencontre N [--format text|json]`` — Toutes les tables d'un "
 "événement : une ligne par table, quelle que soit l'épreuve qui l'occupe "
@@ -381,7 +388,7 @@ msgstr ""
 "ομαδοποιούνται ανά αίθουσα όταν η εκδήλωση έχει αίθουσες, και φέρουν "
 "όνομα όταν έχουν."
 
-#: ../../source/cli_matchs.rst:168
+#: ../../source/cli_matchs.rst:171
 msgid ""
 "``proposals --id N [--format text|json]`` — La file des propositions du "
 "moteur, numérotée : matchs, tirages, passage de phase, repêchage d'un "
@@ -391,7 +398,7 @@ msgstr ""
 "της μηχανής: αγώνες, κληρώσεις, αλλαγή φάσης, επαναφορά ενός αποσυρθέντος"
 " προκριθέντα ομίλου."
 
-#: ../../source/cli_matchs.rst:171
+#: ../../source/cli_matchs.rst:174
 msgid ""
 "``confirm --id N --n K [--format text|json]`` — Confirme la proposition "
 "numéro K de ``proposals``, comme *Lancer* dans le panneau, puis affiche "
@@ -401,7 +408,7 @@ msgstr ""
 "με αριθμό K του ``proposals``, όπως το *Έναρξη* στον πίνακα, και μετά "
 "εμφανίζει τη λίστα που ακολουθεί."
 
-#: ../../source/cli_matchs.rst:174
+#: ../../source/cli_matchs.rst:177
 msgid ""
 "``tables --rencontre N|--tournament N [--format text|json]`` — Les "
 "propriétés des tables (nom, salle, réservée, attitrée à) et les salles où"
@@ -418,7 +425,7 @@ msgstr ""
 "(``rencontres.setTables``, ``rencontres.setEventRooms``, "
 "``directions.setTables``)."
 
-#: ../../source/cli_matchs.rst:181
+#: ../../source/cli_matchs.rst:184
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf "
 "pour ``list``, ``ranking``, ``page --rencontre``, ``hall`` et "
@@ -428,11 +435,11 @@ msgstr ""
 "από τα ``list``, ``ranking``, ``page --rencontre``, ``hall`` και "
 "``tables``), ``--format``."
 
-#: ../../source/cli_matchs.rst:204
+#: ../../source/cli_matchs.rst:207
 msgid "transcribe — Rejouer une transcription"
 msgstr "transcribe — Αναπαραγωγή μιας μεταγραφής"
 
-#: ../../source/cli_matchs.rst:206
+#: ../../source/cli_matchs.rst:209
 msgid ""
 "Rejoue une transcription et rend compte de ce que la relecture y trouve. "
 "La source est un fichier ``.mat``, un match de la bibliothèque ou un "
@@ -446,37 +453,37 @@ msgstr ""
 "μέσω του ``.mat`` που θα παρήγαγε κατά την εξαγωγή: αυτό που αναπαράγεται"
 " είναι επομένως αυτό που θα περιείχε μια εξαγωγή."
 
-#: ../../source/cli_matchs.rst:225
+#: ../../source/cli_matchs.rst:228
 msgid "``--mat`` — Fichier ``.mat`` à rejouer."
 msgstr "``--mat`` — Αρχείο ``.mat`` προς αναπαραγωγή."
 
-#: ../../source/cli_matchs.rst:226
+#: ../../source/cli_matchs.rst:229
 msgid "``--db`` — Base de données, pour ``--match`` et ``--draft``."
 msgstr "``--db`` — Βάση δεδομένων, για τα ``--match`` και ``--draft``."
 
-#: ../../source/cli_matchs.rst:227
+#: ../../source/cli_matchs.rst:230
 msgid "``--match`` — Identifiant du match de la bibliothèque à rejouer."
 msgstr "``--match`` — Αναγνωριστικό του αγώνα της βιβλιοθήκης προς αναπαραγωγή."
 
-#: ../../source/cli_matchs.rst:228
+#: ../../source/cli_matchs.rst:231
 msgid "``--draft`` — Identifiant du brouillon de transcription à rejouer."
 msgstr "``--draft`` — Αναγνωριστικό του πρόχειρου μεταγραφής προς αναπαραγωγή."
 
-#: ../../source/cli_matchs.rst:229
+#: ../../source/cli_matchs.rst:232
 msgid "``--check`` — Liste les incohérences trouvées (comportement par défaut)."
 msgstr ""
 "``--check`` — Παραθέτει τις ασυνέπειες που βρέθηκαν (προεπιλεγμένη "
 "συμπεριφορά)."
 
-#: ../../source/cli_matchs.rst:230
+#: ../../source/cli_matchs.rst:233
 msgid "``--render`` — Réécrit la transcription en ``.mat`` à ce chemin."
 msgstr "``--render`` — Ξαναγράφει τη μεταγραφή σε ``.mat`` σε αυτή τη διαδρομή."
 
-#: ../../source/cli_matchs.rst:231
+#: ../../source/cli_matchs.rst:234
 msgid "``--format`` — Format de sortie: ``text`` (défaut) ou ``json``."
 msgstr "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json``."
 
-#: ../../source/cli_matchs.rst:232
+#: ../../source/cli_matchs.rst:235
 msgid ""
 "``--edit`` — Ouvre un brouillon sur le ``--match`` (ou rend celui qui y "
 "est déjà ouvert)."
@@ -484,7 +491,7 @@ msgstr ""
 "``--edit`` — Ανοίγει ένα προσχέδιο στο ``--match`` (ή επιστρέφει αυτό που"
 " είναι ήδη ανοιχτό σε αυτό)."
 
-#: ../../source/cli_matchs.rst:234
+#: ../../source/cli_matchs.rst:237
 msgid ""
 "``--accept-losses`` — Avec ``--edit`` sur un match importé : accepte que "
 "ses analyses et commentaires puissent être perdus."
@@ -492,7 +499,7 @@ msgstr ""
 "``--accept-losses`` — Με το ``--edit`` σε εισαγμένο αγώνα: δέχεται ότι οι"
 " αναλύσεις και τα σχόλιά του μπορεί να χαθούν."
 
-#: ../../source/cli_matchs.rst:236
+#: ../../source/cli_matchs.rst:239
 msgid ""
 "``--finish`` — Termine le ``--draft`` : écrit son match, ou remplace "
 "celui dont il a été ouvert, et libère le brouillon."
@@ -500,7 +507,7 @@ msgstr ""
 "``--finish`` — Ολοκληρώνει το ``--draft``: γράφει τον αγώνα του ή "
 "αντικαθιστά αυτόν από τον οποίο ανοίχτηκε, και ελευθερώνει το προσχέδιο."
 
-#: ../../source/cli_matchs.rst:238
+#: ../../source/cli_matchs.rst:241
 msgid ""
 "``--abandon`` — Abandonne le ``--draft`` : le supprime sans match ; un "
 "match dont il a été ouvert reste tel quel."
@@ -508,7 +515,7 @@ msgstr ""
 "``--abandon`` — Εγκαταλείπει το ``--draft``: το διαγράφει χωρίς αγώνα· "
 "ένας αγώνας από τον οποίο ανοίχτηκε μένει όπως είναι."
 
-#: ../../source/cli_matchs.rst:240
+#: ../../source/cli_matchs.rst:243
 msgid ""
 "``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme"
 " que tout ce qui y est écrit est perdu."
@@ -516,7 +523,7 @@ msgstr ""
 "``--yes`` — Με το ``--abandon`` σε προσχέδιο που δεν παρήγαγε ποτέ αγώνα:"
 " επιβεβαιώνει ότι ό,τι έχει γραφτεί σε αυτό χάνεται."
 
-#: ../../source/cli_matchs.rst:242
+#: ../../source/cli_matchs.rst:245
 msgid ""
 "``--materialize`` — Document JSON (``header`` et ``actions``, dés "
 "compris) à écrire en match d'un seul coup, ou pas du tout."
@@ -524,7 +531,7 @@ msgstr ""
 "``--materialize`` — Έγγραφο JSON (``header`` και ``actions``, με τα "
 "ζάρια) που γράφεται ως αγώνας με μία κίνηση, ή καθόλου."
 
-#: ../../source/cli_matchs.rst:244
+#: ../../source/cli_matchs.rst:247
 msgid ""
 "``--import`` — Fichier ``.mat`` ou document de transcription JSON sur "
 "lequel ouvrir un nouveau brouillon."
@@ -532,7 +539,7 @@ msgstr ""
 "``--import`` — Αρχείο ``.mat`` ή έγγραφο μεταγραφής JSON πάνω στο οποίο "
 "ανοίγει νέο προσχέδιο."
 
-#: ../../source/cli_matchs.rst:246
+#: ../../source/cli_matchs.rst:249
 msgid ""
 "``--marks`` — Écrit à ce chemin le manifeste des repères des vidéos "
 "locales, une ligne JSON par coup horodaté (``--match`` le limite à un "
@@ -542,7 +549,7 @@ msgstr ""
 "τοπικών βίντεο, μία γραμμή JSON ανά χρονοσημασμένη κίνηση (το ``--match``"
 " το περιορίζει σε έναν αγώνα)."
 
-#: ../../source/cli_matchs.rst:249
+#: ../../source/cli_matchs.rst:252
 msgid ""
 "``--check`` nomme chaque incohérence avec le numéro de l'action et la "
 "partie où elle se trouve : coup illégal, deux tours de suite pour le même"
@@ -565,7 +572,7 @@ msgstr ""
 "αυτή που δίνουν οι προηγούμενες παρτίδες, και που ξαναπαίζεται με το "
 "γραμμένο σκορ."
 
-#: ../../source/cli_matchs.rst:258
+#: ../../source/cli_matchs.rst:261
 msgid ""
 "Une incohérence est **rapportée, jamais opposée** : rien n'est refusé "
 "pour elle et le code de sortie reste 0 quoi que la relecture trouve. Un "
@@ -582,7 +589,7 @@ msgstr ""
 "διαβάζει με ``--format json``, όπου ένα χαλασμένο αρχείο και μια παρτίδα "
 "που περιέχει παράνομη κίνηση δεν συγχέονται."
 
-#: ../../source/cli_matchs.rst:265
+#: ../../source/cli_matchs.rst:268
 msgid ""
 "``--render`` réécrit la transcription en ``.mat``, ce qui permet de "
 "vérifier l'aller-retour sur un fichier réel, en dehors des tests."
@@ -591,7 +598,7 @@ msgstr ""
 "τον έλεγχο της μετάβασης και επιστροφής σε πραγματικό αρχείο, εκτός των "
 "δοκιμών."
 
-#: ../../source/cli_matchs.rst:268
+#: ../../source/cli_matchs.rst:271
 msgid ""
 "``--materialize`` écrit, sans brouillon, le match que joue un document "
 "d'actions arrivé d'ailleurs. Les règles sont appliquées strictement : la "
@@ -607,7 +614,7 @@ msgstr ""
 "διάρκειες απόφασης του εγγράφου (``decision_ms``, ``cube_decision_ms``) "
 "μεταφέρονται στις κινήσεις."
 
-#: ../../source/cli_matchs.rst:274
+#: ../../source/cli_matchs.rst:277
 msgid ""
 "``--import`` ouvre un nouveau brouillon sur un fichier ``.mat`` ou sur un"
 " document de transcription JSON (``header``, ``actions``, et "
@@ -629,7 +636,7 @@ msgstr ""
 "εκτός ταμπλό, ``.mat`` χωρίς παρτίδα — κάνει την εντολή να αποτύχει και "
 "δεν ανοίγει κανένα προσχέδιο."
 
-#: ../../source/cli_matchs.rst:283
+#: ../../source/cli_matchs.rst:286
 msgid ""
 "Seules trois autres options écrivent, par les mêmes méthodes que le "
 "panneau Transcription : ``--edit`` ouvre un brouillon sur un match "
@@ -649,7 +656,7 @@ msgstr ""
 "αναλύσεις και σχόλια που ένα ``.mat`` δεν φέρει: το ``--edit`` δίνει το "
 "πολύ τον αριθμό τους και αρνείται χωρίς ``--accept-losses``."
 
-#: ../../source/cli_matchs.rst:291
+#: ../../source/cli_matchs.rst:294
 msgid ""
 "``--marks`` écrit un manifeste, sans toucher à la base : une ligne JSON "
 "par coup qui porte un repère (un instant de la vidéo), pour les seuls "
@@ -677,15 +684,15 @@ msgstr ""
 "εντολών: ο δαίμονας ``serve`` δεν διαβάζει κανένα αρχείο βίντεο και η "
 "εφαρμογή επιφάνειας εργασίας δεν την εκθέτει."
 
-#: ../../source/cli_matchs.rst:303
+#: ../../source/cli_matchs.rst:306
 msgid "**Exemple:**"
 msgstr "**Παράδειγμα:**"
 
-#: ../../source/cli_matchs.rst:316
+#: ../../source/cli_matchs.rst:319
 msgid "duel — Jouer un Duel"
 msgstr "duel — Παίξτε μια Μονομαχία"
 
-#: ../../source/cli_matchs.rst:318
+#: ../../source/cli_matchs.rst:321
 msgid ""
 "Joue un Duel sans interface, une Action par appel. Chaque appel est son "
 "propre processus : il reprend le Duel dans la base, joue une Action et la"
@@ -697,11 +704,11 @@ msgstr ""
 "μία Ενέργεια και την ξαναγράφει. Οι διάρκειες των κινήσεων μιας "
 "Μονομαχίας που παίζεται έτσι είναι άγνωστες, ποτέ μηδενικές."
 
-#: ../../source/cli_matchs.rst:334
+#: ../../source/cli_matchs.rst:337
 msgid "**Sous-commandes :**"
 msgstr "**Υποεντολές:**"
 
-#: ../../source/cli_matchs.rst:336
+#: ../../source/cli_matchs.rst:339
 msgid ""
 "``create`` — Démarre un Duel et joue jusqu'à la première décision d'un "
 "Côté externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` "
@@ -762,7 +769,7 @@ msgstr ""
 "μεταξύ δύο Bot απορρίπτεται, επειδή δεν θα τελείωνε ποτέ, εκτός από ένα "
 "μόνο παιχνίδι."
 
-#: ../../source/cli_matchs.rst:362
+#: ../../source/cli_matchs.rst:365
 msgid ""
 "``show`` — Score, ce que le Duel attend et, pour un coup, les jeux "
 "légaux. Le germe des dés n'est jamais affiché avant la fin : l'empreinte "
@@ -772,11 +779,11 @@ msgstr ""
 "νόμιμα παιχνίδια. Ο σπόρος των ζαριών δεν εμφανίζεται ποτέ πριν από το "
 "τέλος: το αποτύπωμα τον αντιπροσωπεύει."
 
-#: ../../source/cli_matchs.rst:364
+#: ../../source/cli_matchs.rst:367
 msgid "``list`` — Les Duels en suspens."
 msgstr "``list`` — Οι Μονομαχίες σε αναστολή."
 
-#: ../../source/cli_matchs.rst:365
+#: ../../source/cli_matchs.rst:368
 msgid ""
 "``roll``, ``move``, ``double``, ``take``, ``pass``, ``resign`` — Une "
 "Action du Côté que le Duel attend (``--side 1|2`` pour le nommer) ; "
@@ -790,7 +797,7 @@ msgstr ""
 "σειρά θέλετε· το ``--level`` (1 έως 3) την αξία μιας παραίτησης· το "
 "``--revision`` απορρίπτει την Ενέργεια αν η Μονομαχία έχει προχωρήσει."
 
-#: ../../source/cli_matchs.rst:369
+#: ../../source/cli_matchs.rst:372
 msgid ""
 "``contribute`` — L'apport d'un Côté externe au germe combiné (``--side "
 "1|2``, ``--value``, 1 à 64 octets), une seule fois, avant le premier "
@@ -805,7 +812,7 @@ msgstr ""
 "συνεισφορά κάθε Πλευράς, με προηγούμενο το μήκος της, και η προέλευση του"
 " Αγώνα φέρει τις συνεισφορές."
 
-#: ../../source/cli_matchs.rst:374
+#: ../../source/cli_matchs.rst:377
 msgid ""
 "``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie "
 "en cours va à l'autre Côté pour les points qui le portent à la longueur "
@@ -817,7 +824,7 @@ msgstr ""
 " στο μήκος (στο παιχνίδι με χρήματα, μια απλή στην αξία του κύβου), και "
 "το Ματς εγγράφεται ως κερδισμένο από αυτήν."
 
-#: ../../source/cli_matchs.rst:378
+#: ../../source/cli_matchs.rst:381
 msgid ""
 "``stop`` — Arrête une session en argent et écrit son Match tel qu'il est,"
 " la partie en cours sans vainqueur. Un match en points est refusé : il ne"
@@ -829,10 +836,10 @@ msgstr ""
 "απορρίπτεται: εγγράφεται μόνο ολόκληρο (``forfeit``, ``discard``). Η "
 "διακοπή δεν είναι εγκατάλειψη."
 
-#: ../../source/cli_matchs.rst:381
+#: ../../source/cli_matchs.rst:384
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."
 msgstr "``discard`` — Απορρίπτει τη Μονομαχία: δεν γράφεται τίποτα."
 
-#: ../../source/cli_matchs.rst:383
+#: ../../source/cli_matchs.rst:386
 msgid "Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``)."
 msgstr "Όλες δέχονται ``--db`` και ``--format`` (``text`` ή ``json``)."

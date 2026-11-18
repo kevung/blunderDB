@@ -258,9 +258,13 @@ l'Arbitre seul) porte un tiret, et ces coups passent en dernier. L'Horloge
 part de zéro dès le premier coup. L'onglet **Graphes** commence par un résumé
 qui donne pour chaque joueur le total, la moyenne par coup de pions et par décision
 de videau, et, si le match a une cadence, une marque pour le joueur dont la
-réserve s'est épuisée en premier (le Duel n'enregistre que celui-là) ; un
-graphique place la durée
-de chaque décision au fil du match. En revue, la durée de la décision jouée se
+réserve s'est épuisée en premier (le Duel n'enregistre que celui-là). À côté,
+un histogramme compte les décisions de chaque joueur par tranche de durée (moins
+de 2 s, 2 à 5 s, 5 à 10 s, puis jusqu'à plus de 120 s) ; un clic sur une tranche
+ouvre ses décisions l'une après l'autre dans l'ordre du match. Un graphique
+place la durée de chaque décision au fil du match. Les durées d'un match
+transcrit d'une vidéo sont tirées de ses repères et enregistrées dans la base :
+le graphique et l'histogramme restent quand la vidéo est détachée ou introuvable. En revue, la durée de la décision jouée se
 lit discrètement sous l'analyse. La recherche la filtre avec ``tm>30`` (en
 secondes), qui se combine avec ``E>x`` : ``s tm>30 E>80`` retient les coups
 longuement réfléchis et pourtant faux, la durée et l'erreur étant celles du

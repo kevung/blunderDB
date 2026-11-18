@@ -415,6 +415,7 @@
         "legendToggle": "このプレイヤーの判断を表示／非表示",
         "lossSoFar": "累計: {loss}",
         "timesPerDecision": "決定ごとの時間",
+        "timesHistogram": "決定時間のヒストグラム",
         "tabsLabel": "試合の表示",
         "tabTranscript": "棋譜",
         "tabCharts": "グラフ",

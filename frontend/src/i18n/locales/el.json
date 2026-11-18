@@ -415,6 +415,7 @@
         "legendToggle": "εμφάνιση ή απόκρυψη των αποφάσεων αυτού του παίκτη",
         "lossSoFar": "Σωρευτικά: {loss}",
         "timesPerDecision": "Χρόνος ανά απόφαση",
+        "timesHistogram": "Ιστόγραμμα χρόνων απόφασης",
         "tabsLabel": "Προβολές του αγώνα",
         "tabTranscript": "Μεταγραφή",
         "tabCharts": "Γραφήματα",

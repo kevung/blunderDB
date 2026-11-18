@@ -2470,6 +2470,7 @@ export namespace domain {
 	export class ImportFailure {
 	    source: string;
 	    reason: string;
+	    code?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ImportFailure(source);
@@ -2479,6 +2480,7 @@ export namespace domain {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.source = source["source"];
 	        this.reason = source["reason"];
+	        this.code = source["code"];
 	    }
 	}
 	export class ImportReport {
@@ -3327,6 +3329,7 @@ export namespace domain {
 	    analysisProvenanceFilter: string;
 	    positionIDsFilter: string;
 	    restrictToPositionIDs: string;
+	    excludePositionIDs?: string;
 	    sort: string;
 	
 	    static createFrom(source: any = {}) {
@@ -3399,6 +3402,7 @@ export namespace domain {
 	        this.analysisProvenanceFilter = source["analysisProvenanceFilter"];
 	        this.positionIDsFilter = source["positionIDsFilter"];
 	        this.restrictToPositionIDs = source["restrictToPositionIDs"];
+	        this.excludePositionIDs = source["excludePositionIDs"];
 	        this.sort = source["sort"];
 	    }
 	
@@ -4815,6 +4819,8 @@ export namespace gui {
 	export class SyncError {
 	    kind: string;
 	    message: string;
+	    allowance?: syncremote.AllowanceFigures;
+	    stateFile?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new SyncError(source);
@@ -4824,7 +4830,27 @@ export namespace gui {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.kind = source["kind"];
 	        this.message = source["message"];
+	        this.allowance = this.convertValues(source["allowance"], syncremote.AllowanceFigures);
+	        this.stateFile = source["stateFile"];
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class SyncStatus {
 	    running: boolean;
@@ -4847,7 +4873,7 @@ export namespace gui {
 	        this.lastSuccess = source["lastSuccess"];
 	        this.error = this.convertValues(source["error"], SyncError);
 	        this.result = this.convertValues(source["result"], syncremote.Result);
-	        this.skipped = source["skipped"];
+	        this.skipped = this.convertValues(source["skipped"], syncremote.Skip);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -5381,6 +5407,7 @@ export namespace ingest {
 	    player2?: string;
 	    games?: number;
 	    error?: string;
+	    code?: string;
 	    duplicate_of: number;
 	
 	    static createFrom(source: any = {}) {
@@ -5406,6 +5433,7 @@ export namespace ingest {
 	        this.player2 = source["player2"];
 	        this.games = source["games"];
 	        this.error = source["error"];
+	        this.code = source["code"];
 	        this.duplicate_of = source["duplicate_of"];
 	    }
 	
@@ -6886,6 +6914,8 @@ export namespace service {
 	    playingSeconds: number;
 	    day: number;
 	    estimatedEnd?: string;
+	    estimatedEndEarly?: string;
+	    estimatedEndLate?: string;
 	    finished: boolean;
 	    played: number;
 	    running: number;
@@ -6905,6 +6935,8 @@ export namespace service {
 	        this.playingSeconds = source["playingSeconds"];
 	        this.day = source["day"];
 	        this.estimatedEnd = source["estimatedEnd"];
+	        this.estimatedEndEarly = source["estimatedEndEarly"];
+	        this.estimatedEndLate = source["estimatedEndLate"];
 	        this.finished = source["finished"];
 	        this.played = source["played"];
 	        this.running = source["running"];
@@ -8260,6 +8292,34 @@ export namespace storage {
 	        this.signaturesUnverified = source["signaturesUnverified"];
 	    }
 	}
+	export class Cursor {
+	    xid?: number;
+	    seq: number;
+	    epoch?: string;
+	    carried?: string;
+	    family?: string;
+	    read_xid?: number;
+	    read_seq?: number;
+	    end_xid?: number;
+	    end_seq?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Cursor(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.xid = source["xid"];
+	        this.seq = source["seq"];
+	        this.epoch = source["epoch"];
+	        this.carried = source["carried"];
+	        this.family = source["family"];
+	        this.read_xid = source["read_xid"];
+	        this.read_seq = source["read_seq"];
+	        this.end_xid = source["end_xid"];
+	        this.end_seq = source["end_seq"];
+	    }
+	}
 	export class DecisionLoss {
 	    move_id: number;
 	    game_number: number;
@@ -8893,6 +8953,7 @@ export namespace storage {
 	    cube_count: number;
 	    cube_total_ms: number;
 	    unknown: number;
+	    histogram: number[];
 	    over_time: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -8907,12 +8968,14 @@ export namespace storage {
 	        this.cube_count = source["cube_count"];
 	        this.cube_total_ms = source["cube_total_ms"];
 	        this.unknown = source["unknown"];
+	        this.histogram = source["histogram"];
 	        this.over_time = source["over_time"];
 	    }
 	}
 	export class MatchTimeSummary {
 	    has_cadence: boolean;
 	    players: PlayerTimeSummary[];
+	    histogram_bounds_ms: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new MatchTimeSummary(source);
@@ -8922,6 +8985,7 @@ export namespace storage {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.has_cadence = source["has_cadence"];
 	        this.players = this.convertValues(source["players"], PlayerTimeSummary);
+	        this.histogram_bounds_ms = source["histogram_bounds_ms"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -8956,6 +9020,22 @@ export namespace storage {
 	        this.move_id = source["move_id"];
 	        this.error_mp = source["error_mp"];
 	        this.grade = source["grade"];
+	    }
+	}
+	export class PageOpts {
+	    Limit: number;
+	    Offset: number;
+	    Cursor: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new PageOpts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Limit = source["Limit"];
+	        this.Offset = source["Offset"];
+	        this.Cursor = source["Cursor"];
 	    }
 	}
 	export class PairMember {
@@ -10192,14 +10272,32 @@ export namespace storage {
 
 export namespace syncremote {
 	
+	export class AllowanceFigures {
+	    axis: string;
+	    allowed: number;
+	    held: number;
+	    new: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new AllowanceFigures(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.axis = source["axis"];
+	        this.allowed = source["allowed"];
+	        this.held = source["held"];
+	        this.new = source["new"];
+	    }
+	}
 	export class Skip {
 	    direction: string;
 	    family: string;
 	    uuid: string;
 	    size?: number;
 	    reason: string;
-	    from: any;
-	    to: any;
+	    from: storage.Cursor;
+	    to: storage.Cursor;
 	
 	    static createFrom(source: any = {}) {
 	        return new Skip(source);
@@ -10212,9 +10310,27 @@ export namespace syncremote {
 	        this.uuid = source["uuid"];
 	        this.size = source["size"];
 	        this.reason = source["reason"];
-	        this.from = source["from"];
-	        this.to = source["to"];
+	        this.from = this.convertValues(source["from"], storage.Cursor);
+	        this.to = this.convertValues(source["to"], storage.Cursor);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class Totals {
 	    records: number;
@@ -10225,6 +10341,7 @@ export namespace syncremote {
 	    conflicts: number;
 	    missing: number;
 	    unsupported: number;
+	    unsynchronizable: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Totals(source);
@@ -10240,6 +10357,7 @@ export namespace syncremote {
 	        this.conflicts = source["conflicts"];
 	        this.missing = source["missing"];
 	        this.unsupported = source["unsupported"];
+	        this.unsynchronizable = source["unsynchronizable"];
 	    }
 	}
 	export class Result {
@@ -10276,6 +10394,7 @@ export namespace syncremote {
 		    return a;
 		}
 	}
+	
 
 }
 
@@ -10554,6 +10673,7 @@ export namespace tournoi {
 	    kind: string;
 	    name?: string;
 	    lives?: number;
+	    rounds?: number;
 	    length: number;
 	    final_length?: number;
 	    lengths?: number[];
@@ -10562,7 +10682,11 @@ export namespace tournoi {
 	    batch_minutes?: number;
 	    mode?: string;
 	    pairing?: string;
+	    monrad_widen?: boolean;
 	    avoid_clubs?: boolean;
+	    avoid_countries?: boolean;
+	    avoid_rounds?: number;
+	    avoid_except?: string[];
 	    allow_rematch?: boolean;
 	    target?: number;
 	    consolation?: boolean;
@@ -10570,9 +10694,13 @@ export namespace tournoi {
 	    reconciliation?: boolean;
 	    recharge?: boolean;
 	    group_size?: number;
+	    groups?: number;
 	    qualifiers?: number;
+	    final_barrage?: boolean;
 	    entry?: string;
 	    seeding?: string;
+	    tiebreak?: string[];
+	    accelerated?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new PhaseConfig(source);
@@ -10583,6 +10711,7 @@ export namespace tournoi {
 	        this.kind = source["kind"];
 	        this.name = source["name"];
 	        this.lives = source["lives"];
+	        this.rounds = source["rounds"];
 	        this.length = source["length"];
 	        this.final_length = source["final_length"];
 	        this.lengths = source["lengths"];
@@ -10591,7 +10720,11 @@ export namespace tournoi {
 	        this.batch_minutes = source["batch_minutes"];
 	        this.mode = source["mode"];
 	        this.pairing = source["pairing"];
+	        this.monrad_widen = source["monrad_widen"];
 	        this.avoid_clubs = source["avoid_clubs"];
+	        this.avoid_countries = source["avoid_countries"];
+	        this.avoid_rounds = source["avoid_rounds"];
+	        this.avoid_except = source["avoid_except"];
 	        this.allow_rematch = source["allow_rematch"];
 	        this.target = source["target"];
 	        this.consolation = source["consolation"];
@@ -10599,9 +10732,13 @@ export namespace tournoi {
 	        this.reconciliation = source["reconciliation"];
 	        this.recharge = source["recharge"];
 	        this.group_size = source["group_size"];
+	        this.groups = source["groups"];
 	        this.qualifiers = source["qualifiers"];
+	        this.final_barrage = source["final_barrage"];
 	        this.entry = source["entry"];
 	        this.seeding = source["seeding"];
+	        this.tiebreak = source["tiebreak"];
+	        this.accelerated = source["accelerated"];
 	    }
 	}
 	export class Config {
@@ -10752,6 +10889,11 @@ export namespace tournoi {
 	    kind?: string;
 	    wins?: number;
 	    losses?: number;
+	    byes?: number;
+	    half_byes?: number;
+	    point_diff?: number;
+	    points_scored?: number;
+	    buchholz?: number;
 	    lives?: number;
 	    section?: string;
 	    qualified?: boolean;
@@ -10766,6 +10908,11 @@ export namespace tournoi {
 	        this.kind = source["kind"];
 	        this.wins = source["wins"];
 	        this.losses = source["losses"];
+	        this.byes = source["byes"];
+	        this.half_byes = source["half_byes"];
+	        this.point_diff = source["point_diff"];
+	        this.points_scored = source["points_scored"];
+	        this.buchholz = source["buchholz"];
 	        this.lives = source["lives"];
 	        this.section = source["section"];
 	        this.qualified = source["qualified"];
@@ -10795,7 +10942,9 @@ export namespace tournoi {
 	    id: string;
 	    name: string;
 	    club?: string;
+	    country?: string;
 	    rating?: number;
+	    seed?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Player(source);
@@ -10806,7 +10955,9 @@ export namespace tournoi {
 	        this.id = source["id"];
 	        this.name = source["name"];
 	        this.club = source["club"];
+	        this.country = source["country"];
 	        this.rating = source["rating"];
+	        this.seed = source["seed"];
 	    }
 	}
 	
@@ -11446,6 +11597,7 @@ export namespace transcript {
 	    HasRollTick: boolean;
 	    VideoSource: string;
 	    PostCrawford: boolean;
+	    Hole: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Gesture(source);
@@ -11475,6 +11627,7 @@ export namespace transcript {
 	        this.HasRollTick = source["HasRollTick"];
 	        this.VideoSource = source["VideoSource"];
 	        this.PostCrawford = source["PostCrawford"];
+	        this.Hole = source["Hole"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

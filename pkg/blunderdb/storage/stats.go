@@ -463,6 +463,11 @@ type PlayerTimeSummary struct {
 	CubeCount      int   `json:"cube_count"`
 	CubeTotalMS    int64 `json:"cube_total_ms"`
 	Unknown        int   `json:"unknown"`
+	// Histogram counts the decisions with a known time, checker plays and
+	// cube decisions alike, by band of DecisionTimeHistogramBounds: band i
+	// holds the durations under bound i and at or above bound i-1, the last
+	// band everything longer. It always has len(bounds)+1 bands.
+	Histogram []int `json:"histogram"`
 	// OverTime is true for the player whose reserve ran out, as the Duel
 	// recorded it in the Match's origin. Only the first to run out is
 	// recorded: the other reads false even if its reserve ran out later.
@@ -475,6 +480,26 @@ type PlayerTimeSummary struct {
 type MatchTimeSummary struct {
 	HasCadence bool                 `json:"has_cadence"`
 	Players    [2]PlayerTimeSummary `json:"players"`
+	// HistogramBoundsMS are the band bounds of the players' Histogram, so a
+	// reader draws them without a copy of DecisionTimeHistogramBounds.
+	HistogramBoundsMS []int64 `json:"histogram_bounds_ms"`
+}
+
+// DecisionTimeHistogramBounds are the upper bounds, in milliseconds, of the
+// bands of PlayerTimeSummary.Histogram: finer where most decisions fall, a
+// few seconds, coarser beyond a minute. They contain TimeBucketBounds, so a
+// band of the histogram never straddles a band of the time/error table.
+var DecisionTimeHistogramBounds = []int64{2000, 5000, 10000, 15000, 20000, 30000, 45000, 60000, 90000, 120000}
+
+// DecisionTimeBand is the band of DecisionTimeHistogramBounds a duration
+// falls in.
+func DecisionTimeBand(ms int64) int {
+	for i, bound := range DecisionTimeHistogramBounds {
+		if ms < bound {
+			return i
+		}
+	}
+	return len(DecisionTimeHistogramBounds)
 }
 
 // MatchTurn is one recorded Move of a Match as its clock sees it: the player
