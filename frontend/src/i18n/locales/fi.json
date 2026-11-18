@@ -415,6 +415,7 @@
         "legendToggle": "näytä tai piilota tämän pelaajan päätökset",
         "lossSoFar": "Kertymä: {loss}",
         "timesPerDecision": "Aika päätöstä kohden",
+        "timesHistogram": "Päätösaikojen histogrammi",
         "tabsLabel": "Ottelun näkymät",
         "tabTranscript": "Transkriptio",
         "tabCharts": "Kaaviot",

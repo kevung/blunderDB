@@ -123,3 +123,55 @@ export function fmtClock(ms) {
     if (total < 3600) return `${Math.floor(total / 60)}:${s}`;
     return `${Math.floor(total / 3600)}:${String(Math.floor((total % 3600) / 60)).padStart(2, '0')}:${s}`;
 }
+
+/**
+ * The band of a decision-time histogram a duration falls in: band i holds the
+ * durations under `bounds[i]` and at or above `bounds[i - 1]`, the last band
+ * everything longer — the banding of the time summary's histogram.
+ *
+ * @param {readonly number[]} bounds ascending, in ms
+ * @param {number} ms
+ */
+export function timeBand(bounds, ms) {
+    const i = bounds.findIndex((b) => ms < b);
+    return i < 0 ? bounds.length : i;
+}
+
+/**
+ * A band's label in whole seconds: "<2 s", "2–5 s", ">120 s".
+ *
+ * @param {readonly number[]} bounds
+ * @param {number} i
+ */
+export function bandLabel(bounds, i) {
+    const s = (/** @type {number} */ ms) => String(Math.round(ms / 1000));
+    if (i === 0) return `<${s(bounds[0])} s`;
+    if (i >= bounds.length) return `>${s(bounds[bounds.length - 1])} s`;
+    return `${s(bounds[i - 1])}–${s(bounds[i])} s`;
+}
+
+/**
+ * The decisions of each band, in match order: a Move enters the band of its
+ * play and the band of its cube decision, once per band. Indexed like
+ * `movePositions`.
+ *
+ * @param {readonly { player_on_roll: number, decision_ms?: number | null, cube_decision_ms?: number | null }[]} movePositions
+ * @param {readonly number[]} bounds
+ * @returns {{ index: number, player: 0 | 1 }[][]}
+ */
+export function bandMoves(movePositions, bounds) {
+    /** @type {{ index: number, player: 0 | 1 }[][]} */
+    const bands = Array.from({ length: bounds.length + 1 }, () => []);
+    movePositions.forEach((mp, index) => {
+        const player = mp.player_on_roll === 1 ? 1 : 0;
+        const seen = new Set();
+        for (const ms of [mp.decision_ms, mp.cube_decision_ms]) {
+            if (ms === null || ms === undefined || !Number.isFinite(ms)) continue;
+            const b = timeBand(bounds, ms);
+            if (seen.has(b)) continue;
+            seen.add(b);
+            bands[b].push({ index, player });
+        }
+    });
+    return bands;
+}

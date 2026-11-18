@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
@@ -461,5 +462,34 @@ func (cli *CLI) writeTimeSummary(sb *strings.Builder, match *Match) {
 			sb.WriteString(", reserve ran out first")
 		}
 		sb.WriteString("\n")
+		if line := histogramLine(sum.HistogramBoundsMS, p.Histogram); line != "" {
+			fmt.Fprintf(sb, "    %s\n", line)
+		}
 	}
+}
+
+// histogramLine prints a player's decision-time histogram as its non-empty
+// bands, "<2 s: 4, 2-5 s: 11, >120 s: 1"; empty when no band is counted.
+func histogramLine(bounds []int64, counts []int) string {
+	if len(counts) != len(bounds)+1 {
+		return ""
+	}
+	sec := func(ms int64) string { return strconv.FormatInt(ms/1000, 10) }
+	var parts []string
+	for i, n := range counts {
+		if n == 0 {
+			continue
+		}
+		var band string
+		switch {
+		case i == 0:
+			band = "<" + sec(bounds[0]) + " s"
+		case i == len(bounds):
+			band = ">" + sec(bounds[i-1]) + " s"
+		default:
+			band = sec(bounds[i-1]) + "-" + sec(bounds[i]) + " s"
+		}
+		parts = append(parts, fmt.Sprintf("%s: %d", band, n))
+	}
+	return strings.Join(parts, ", ")
 }

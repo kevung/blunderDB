@@ -415,6 +415,7 @@
         "legendToggle": "show or hide this player's decisions",
         "lossSoFar": "Running total: {loss}",
         "timesPerDecision": "Time per decision",
+        "timesHistogram": "Histogram of decision times",
         "tabsLabel": "Match views",
         "tabTranscript": "Transcript",
         "tabCharts": "Charts",
