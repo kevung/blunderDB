@@ -52,8 +52,9 @@ const (
 	// simulateMaxSteps bounds one simulated tournament, whatever its format.
 	simulateMaxSteps = 50000
 	// simulateMaxRunCost bounds the cost of the first simulated tournament, run with the
-	// request's own seed, as runCost counts it: the engine copies about eventWork at every
-	// event, so a run costs the sum, which grows with the square of its matches. Counted,
+	// request's own seed, as eventCost and simulateSearchStepCost count it: the engine copies
+	// about eventWork at every event, so a run costs the sum, which grows with the square of
+	// its matches, and its pairing search adds its steps. Counted,
 	// not timed, and on that one run only, the bound gives a request the same verdict on
 	// every machine whatever the budget lets the other runs reach. At it a run takes about
 	// 0.3 s on an ordinary processor: under it SimulateBudget plays about SimulateUsefulRuns
@@ -63,16 +64,12 @@ const (
 	simulateMaxRunCost = 30_000_000
 	// SimulateUsefulRuns is the fewest runs whose 10th and 90th centiles say something.
 	SimulateUsefulRuns = 10
-	// simulateSwissSearchField is the largest field whose Swiss by rounds is simulated at any
-	// number of rounds (swissSearchTooDeep): its pairing search ends before the engine's
-	// steps run out, and eventCost bounds the run.
-	simulateSwissSearchField = 12
-	// simulateSwissMaxRounds is the most rounds of a larger field's Swiss by rounds.
-	simulateSwissMaxRounds = 16
-	// simulateFirstRunNet stops a first run whose count missed its cost: well past what any
-	// admitted first run takes, even under the race detector, and its verdict, too heavy, is
-	// the one the count would have given.
-	simulateFirstRunNet = 5 * time.Second
+	// simulateSearchStepCost weighs one step of the engine's pairing search in the units of
+	// simulateMaxRunCost: about 27 ns on an ordinary processor. The engine counts the steps
+	// (tournoi.SearchBudget), so a search that never finds a round without rematch — a club
+	// holding more than half the field with avoid_clubs, a Swiss by rounds as long as its
+	// field — ends the run on its count as the events do, and not on a clock.
+	simulateSearchStepCost = 3
 )
 
 // SimulateBudget is the computing time the runs after the first may take: with the two
@@ -83,10 +80,9 @@ const (
 var SimulateBudget = 2 * time.Second
 
 // ErrSimulationTooHeavy: the request is well formed and within the bounds, but the first of
-// its tournaments costs more than simulateMaxRunCost, so the budget would stand an answer on
-// a handful of runs, or one of its Swiss by rounds plays more rounds than swissRoundsAt
-// allows its entrants (the first phase's before any run). The verdict is counted, not timed:
-// the same on every machine.
+// its tournaments, its events and its pairing search together, costs more than
+// simulateMaxRunCost, so the budget would stand an answer on a handful of runs. The verdict
+// is counted, not timed: the same on every machine.
 var ErrSimulationTooHeavy = fmt.Errorf("direction: this format is too heavy to simulate %d times within %v: one of its tournaments outgrows what a simulation computes; ask for fewer players, smaller pools, fewer lives, fewer rounds or a lighter format (fewer runs do not help)",
 	SimulateUsefulRuns, SimulateBudget)
 
@@ -211,34 +207,30 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 		out      = &Simulation{MatchesPerPlayerMin: -1}
 		firstErr error
 	)
-	// The first run decides the verdict: it answers to its count, never to the budget, so that
-	// no clock decides it. simulateFirstRunNet only stops a cost the count would miss.
-	first, cancelFirst := context.WithTimeout(parent, simulateFirstRunNet)
-	defer cancelFirst()
 	for i := range runs {
-		limit := ctx
-		if i == 0 {
-			limit = first
-		} else if ctx.Err() != nil {
-			warnings[SimulateWarnTimeBudget] = true
-			break
+		// The first run decides the verdict: it answers to its count only, never to a clock, so
+		// that the verdict is the same on every machine.
+		limit := parent
+		if i > 0 {
+			if ctx.Err() != nil {
+				warnings[SimulateWarnTimeBudget] = true
+				break
+			}
+			limit = ctx
 		}
 		peak, cost, most := 0, 0, simulateMaxRunCost
 		if i > 0 {
 			most *= 2
 		}
+		// The engine counts its pairing search and stops it past the limit, inside a proposal
+		// the hook never sees the end of; the hook adds the steps already searched to the count.
+		search := &tournoi.SearchBudget{Limit: int64(most / simulateSearchStepCost)}
 		r := sim.Run(cfg, players, sim.Options{Seed: req.Seed + int64(i), Start: start, MaxSteps: simulateMaxSteps,
-			MinPerPoint: cfg.MinPerPoint,
+			MinPerPoint: cfg.MinPerPoint, Search: search,
 			Hook: func(s *tournoi.State, _ tournoi.Event) error {
 				peak = max(peak, len(s.Running()))
-				if cost += eventCost(cfg, s); cost > most {
+				if cost += eventCost(cfg, s); cost+int(search.Used)*simulateSearchStepCost > most {
 					return errRunTooHeavy
-				}
-				if s.Current > 0 && s.Current < len(s.Phases) {
-					ph := s.Phases[s.Current]
-					if err := swissSearchTooDeep(ph.Cfg, len(ph.Entrants)); err != nil {
-						return err
-					}
 				}
 				return limit.Err()
 			}})
@@ -247,10 +239,7 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 			return nil, err
 		}
 		if i == 0 {
-			switch {
-			case errors.Is(r.Err, ErrSimulationTooHeavy):
-				return nil, r.Err
-			case errors.Is(r.Err, errRunTooHeavy), first.Err() != nil && errors.Is(r.Err, context.DeadlineExceeded):
+			if errors.Is(r.Err, errRunTooHeavy) || errors.Is(r.Err, tournoi.ErrSearchBudget) {
 				return nil, ErrSimulationTooHeavy
 			}
 		}
@@ -333,12 +322,6 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 // simulation plays: the pools of a round robin, every pair of each. Every other format draws
 // at most one match for two players.
 func boundSimulatedWork(cfg tournoi.Config, players int) error {
-	if len(cfg.Phases) > 0 {
-		// The first phase is entered by the whole field; a later one is checked as it opens.
-		if err := swissSearchTooDeep(cfg.Phases[0], players); err != nil {
-			return err
-		}
-	}
 	for i, p := range cfg.Phases {
 		if p.Kind != tournoi.KindRoundRobin {
 			continue
@@ -357,34 +340,6 @@ func boundSimulatedWork(cfg tournoi.Config, players int) error {
 		}
 	}
 	return nil
-}
-
-// swissSearchTooDeep refuses a Swiss by rounds that plays more rounds than swissRoundsAt
-// allows its entrants. The engine pairs a round by a depth-first search it cuts at 200 000
-// steps, starts anew for every rematch it has to allow — and, in an odd field, for every
-// player who may take the bye —, and repeats at every event of the round. Past some sixteen
-// rounds, or two thirds of a smaller field, a round without rematch is often not found and
-// the search runs out its steps at every event: a run then takes twenty to two hundred times
-// what its events say, and eventCost, which counts what the engine copies and not what it
-// searches, cannot see it. Within the bound no run of twenty seeds was measured past twice
-// its count, by rounds or Monrad; a small field's search ends before its steps do, whatever
-// the rounds, and eventCost holds it.
-func swissSearchTooDeep(p tournoi.PhaseConfig, entrants int) error {
-	most := swissRoundsAt(entrants)
-	if p.Kind != tournoi.KindSwissRounds || most < 0 || p.Rounds <= most {
-		return nil
-	}
-	return fmt.Errorf("%w (a Swiss of %d rounds for %d players searches its pairings past what a simulation computes: %d rounds at most for this field)",
-		ErrSimulationTooHeavy, p.Rounds, entrants, most)
-}
-
-// swissRoundsAt is the most rounds a simulated Swiss by rounds plays with entrants, -1 when
-// the field is small enough to play any.
-func swissRoundsAt(entrants int) int {
-	if entrants <= simulateSwissSearchField {
-		return -1
-	}
-	return min(simulateSwissMaxRounds, 2*entrants/3)
 }
 
 // poolDraw is the largest pool and the matches the engine draws for n entrants of a round
