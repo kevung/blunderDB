@@ -39,6 +39,15 @@
 {#if ready}
     <div class="histogram" role="group" aria-label={$t('match.timesHistogram')} data-testid="times-histogram" style:--bands={bounds.length + 1}>
         {#each counts[0] as _, band (band)}
+            <span class="counts" aria-hidden="true" data-testid="times-count-{band}">
+                {#each [0, 1] as p (p)}
+                    {#if shown[p] && counts[p][band]}
+                        <span class="n" class:player1={p === 0} class:player2={p === 1}>{counts[p][band]}</span>
+                    {/if}
+                {/each}
+            </span>
+        {/each}
+        {#each counts[0] as _, band (band)}
             {@const empty = !(shown[0] && counts[0][band]) && !(shown[1] && counts[1][band])}
             <button type="button" class="band" disabled={empty} title={tip(band)} aria-label={tip(band)} data-testid="times-band-{band}" onclick={() => open(band)}>
                 {#each [0, 1] as p (p)}
@@ -61,7 +70,7 @@
         max-width: 360px;
         display: grid;
         grid-template-columns: repeat(var(--bands), 1fr);
-        grid-template-rows: 1fr auto;
+        grid-template-rows: auto 1fr auto;
         column-gap: 2px;
         min-height: 56px;
     }
@@ -92,6 +101,18 @@
     .bin.player2 {
         background: var(--player2-color, currentColor);
         opacity: 0.6;
+    }
+    .counts {
+        display: flex;
+        justify-content: center;
+        gap: 3px;
+        font-variant-numeric: tabular-nums;
+    }
+    .n.player1 {
+        color: var(--player1-color, inherit);
+    }
+    .n.player2 {
+        color: var(--player2-color, inherit);
     }
     .edge {
         text-align: right;

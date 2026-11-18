@@ -151,11 +151,13 @@ export function bandLabel(bounds, i) {
 }
 
 /**
- * The decisions of each band, in match order: a Move enters the band of its
- * play and the band of its cube decision, once per band. Indexed like
+ * The decisions of each band, in match order, counted as the time summary
+ * counts them: a cube Move is one decision, its decision_ms; a checker Move is
+ * its play and, apart, the cube decision before its roll — two entries, in the
+ * same band or not. A band's length is its count in the summary. Indexed like
  * `movePositions`.
  *
- * @param {readonly { player_on_roll: number, decision_ms?: number | null, cube_decision_ms?: number | null }[]} movePositions
+ * @param {readonly { player_on_roll: number, move_type?: string, decision_ms?: number | null, cube_decision_ms?: number | null }[]} movePositions
  * @param {readonly number[]} bounds
  * @returns {{ index: number, player: 0 | 1 }[][]}
  */
@@ -164,13 +166,10 @@ export function bandMoves(movePositions, bounds) {
     const bands = Array.from({ length: bounds.length + 1 }, () => []);
     movePositions.forEach((mp, index) => {
         const player = mp.player_on_roll === 1 ? 1 : 0;
-        const seen = new Set();
-        for (const ms of [mp.decision_ms, mp.cube_decision_ms]) {
+        const decisions = mp.move_type === 'cube' ? [mp.decision_ms] : [mp.decision_ms, mp.cube_decision_ms];
+        for (const ms of decisions) {
             if (ms === null || ms === undefined || !Number.isFinite(ms)) continue;
-            const b = timeBand(bounds, ms);
-            if (seen.has(b)) continue;
-            seen.add(b);
-            bands[b].push({ index, player });
+            bands[timeBand(bounds, ms)].push({ index, player });
         }
     });
     return bands;

@@ -25,11 +25,16 @@ describe('bands', () => {
         expect([0, 1, 2].map((i) => bandLabel(bounds, i))).toEqual(['<2 s', '2–5 s', '>5 s']);
     });
 
-    test('a Move enters the band of its play and of its cube decision', () => {
-        expect(bandMoves(movePositions, bounds)).toEqual([
+    test('a Move enters a band once per decision, a cube Move by its decision_ms alone', () => {
+        const moves = [
+            { player_on_roll: 0, decision_ms: 1000, cube_decision_ms: 1500 },
+            { player_on_roll: 1, move_type: 'cube', decision_ms: 3000, cube_decision_ms: 1000 },
+            { player_on_roll: 0, decision_ms: 4000 }
+        ];
+        expect(bandMoves(moves, bounds)).toEqual([
             [
                 { index: 0, player: 0 },
-                { index: 2, player: 0 }
+                { index: 0, player: 0 }
             ],
             [
                 { index: 1, player: 1 },
@@ -52,6 +57,18 @@ describe('MatchTimeHistogram', () => {
         expect(screen.getByTestId('times-band-0').title).toBe('<2 s\nAnn: 2\nBob: 0');
         expect(screen.getByTestId('times-band-2').hasAttribute('disabled')).toBe(true);
         expect(screen.getByTestId('times-band-1').querySelectorAll('.bin')).toHaveLength(2);
+    });
+
+    test('a band shows its counts, and a click walks exactly that many decisions', async () => {
+        const onselect = mount();
+        const counts = [0, 1, 2].map((b) => screen.getByTestId(`times-count-${b}`).textContent.replace(/\s+/g, ''));
+        expect(counts).toEqual(['2', '11', '']);
+        for (let band = 0; band < 2; band++) {
+            onselect.mockClear();
+            const n = summary.players.reduce((sum, p) => sum + p.histogram[band], 0);
+            for (let k = 0; k < n; k++) await fireEvent.click(screen.getByTestId(`times-band-${band}`));
+            expect(onselect.mock.calls.map((c) => c[0])).toEqual(bandMoves(movePositions, bounds)[band].map((m) => m.index));
+        }
     });
 
     test('a click walks the band through its decisions', async () => {
