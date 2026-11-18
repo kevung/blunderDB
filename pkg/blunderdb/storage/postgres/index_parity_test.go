@@ -52,6 +52,8 @@ var sqliteOnlyIndexes = []string{
 	"idx_filter_library_scope_name",
 	"idx_match_stats_cell_match",
 	"idx_search_history_scope",
+	// PostgreSQL reads pips from idx_position_pip_order, which it leads.
+	"idx_position_pip_1",
 }
 
 // postgresOnlyIndexes are declared here and deliberately absent from SQLite.
@@ -79,6 +81,10 @@ var postgresOnlyIndexes = []string{
 	"idx_position_blot_j2",
 	"idx_position_blot_o1",
 	"idx_position_blot_o2",
+	// A pip sort read in order with the masks beside it: a private SQLite
+	// file sorts its matching rows in the time the index would save.
+	"idx_position_pip_order",
+	"idx_position_pip_order_desc",
 }
 
 // indexDecl is one CREATE INDEX statement, normalised for comparison.
