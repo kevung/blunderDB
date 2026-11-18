@@ -19,7 +19,7 @@ These are compiled into every binary (`//go:embed`).
 
 | Component | Author | Licence | What blunderDB uses | Where |
 |---|---|---|---|---|
-| **`strehl-prob5-768-768-256-256-256`** neural network | Alexander Strehl | MIT (notice reproduced in §5) | The evaluation network's weights, unchanged. The network keeps its author's name: neither the search around it nor this port makes it a new network. | `pkg/blunderdb/engine/gammonnet/strehl-prob5-768-768-256-256-256_*.bin16`, from [alexstrehl/backgammon-ai-engine](https://github.com/alexstrehl/backgammon-ai-engine) (weights at commit `c373141`) |
+| **`strehl-prob5-768-768-256-256-256`** neural network | Alexander Strehl | MIT (notice reproduced in §5) | The evaluation network's weights, unchanged. The network keeps its author's name: neither the search around it nor this port makes it a new network. | `pkg/blunderdb/engine/gammonnet/strehl-prob5-768-768-256-256-256_*.bin16`, from [alexstrehl/puretd](https://github.com/alexstrehl/puretd) (weights at commit `c373141`) |
 | **`strehl-prob5-512-512-256-256`** neural network | Alexander Strehl | MIT (notice reproduced in §5) | The network gammonNet publishes beside the default one, embedded but not used by any analysis. | `pkg/blunderdb/engine/gammonnet/strehl-prob5-512-512-256-256_*.bin16`, same source (weights at commit `c373141`) |
 | **`strehl-prune-32`** pruning network | gammonNet, distilled from the Strehl network above | MIT | The small network that ranks candidate moves before the full evaluation. | `pkg/blunderdb/engine/gammonnet/strehl-prune-32_*.bin`, from [kevung/gammonNet](https://github.com/kevung/gammonNet) (`models/prune_32.provenance.json`) |
 | **gammonNet** evaluator | Kévin Unger | MIT (`pkg/blunderdb/engine/gammonnet/LICENSE.gammonNet`) | The search, cube model and match-equity handling around the network, ported from C to Go. The C rules and inference engine the port follows are Alexander Strehl's (`c_engine/bg_engine.c`, `c_inference/nn_eval.c`, MIT). | `pkg/blunderdb/engine/gammonnet/`, from [kevung/gammonNet](https://github.com/kevung/gammonNet) (tag named by `EngineVersion`) |
@@ -54,7 +54,7 @@ directory of each one).
 | [github.com/shirou/gopsutil/v4](https://github.com/shirou/gopsutil) | v4.26.8 | BSD-3-Clause | (c) 2014 WAKAYAMA Shirou | Available memory before computing a bearoff table (desktop) |
 | [github.com/zalando/go-keyring](https://github.com/zalando/go-keyring) | v0.2.8 | MIT | (c) 2016 Zalando SE | Assistant API key in the system keyring (desktop) |
 | [github.com/skip2/go-qrcode](https://github.com/skip2/go-qrcode) | v0.0.0-20200617195104-da1b6568686e | MIT | (c) 2014 Tom Harwood | QR code of the tournament display address (desktop, not linked into `cmd/serve`) |
-| [github.com/kevung/nicomaque](https://github.com/kevung/nicomaque) | v0.9.0 | MIT | (c) 2026 Nicolas Harmand, Kévin Unger | Tournament direction rules |
+| [github.com/kevung/nicomaque](https://github.com/kevung/nicomaque) | v0.10.0 | MIT | (c) 2026 Nicolas Harmand, Kévin Unger | Tournament direction rules |
 | [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto), `x/net`, `x/sys`, `x/text` | see `go.mod` | BSD-3-Clause | The Go Authors | Signed watermarks and encrypted export containers, OS calls, text collation |
 | Go standard library | 1.27 | BSD-3-Clause | The Go Authors | — |
 

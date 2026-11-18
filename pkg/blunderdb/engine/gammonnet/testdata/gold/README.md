@@ -15,8 +15,9 @@ two moving targets.
 ## What you need
 
 - a checkout of [gammonNet](https://github.com/kevung/gammonNet) at the pinned version
-  (currently **v1.9.0**), including `vendor/backgammon-ai-engine` at commit `7184e2f` (fetched
-  by its `tools/fetch_vendor.py`);
+  (currently **v1.9.0**), including `vendor/puretd` at commit `7184e2f` (fetched
+  by the `tools/fetch_vendor.py` of gammonNet's `main`: the one in the tags up to v1.9.0 clones
+  the upstream's former address, which no longer carries the history);
 - a C compiler; nothing else. This never runs in CI.
 
 ## The two files, and the order they are made in
@@ -36,7 +37,7 @@ two moving targets.
 
    ```sh
    GN=<gammonNet checkout>
-   V=$GN/vendor/backgammon-ai-engine
+   V=$GN/vendor/puretd
    M=<blunderDB>/pkg/blunderdb/engine/gammonnet
 
    gcc -O2 -pthread -I$GN/src -I$V/c_inference -I$V/c_engine -o gold gold.c \
@@ -101,7 +102,7 @@ its 8-byte header. Measured on that regeneration: max|Δ| = 3.902e-07 over 126 d
 **Building the reference at the pinned tag when the checkout has moved on.** The gold must
 come from the pinned version, not from whatever `HEAD` the checkout happens to be at. A
 `git archive` of the tag into a scratch directory gives exactly that without touching the
-checkout (the vendored `backgammon-ai-engine` is not in the archive; point `V` at the
+checkout (the vendored `puretd` is not in the archive; point `V` at the
 checkout's copy):
 
 ```sh
@@ -266,7 +267,7 @@ is the port's own statement that it changed in step with the reference and not o
 ## What you need
 
 Nothing but the pinned gammonNet checkout and a C compiler — `gn_cube.c` and `gn_met.c` have
-no network to load, so this harness does not need `vendor/backgammon-ai-engine` built or the
+no network to load, so this harness does not need `vendor/puretd` built or the
 weight files at all, only `gn_infer_reference.c`'s `gn_probs_exclusive` (which does not touch
 the network either) plus whatever it takes to satisfy the linker for the rest of that
 translation unit. Building against the project's own `build/*.o` (produced by its Makefile)

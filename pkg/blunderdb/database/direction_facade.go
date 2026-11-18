@@ -125,6 +125,11 @@ func (d *Database) ConfirmProposal(tournamentID int64, actionJSON string) (*Dire
 	return d.directionService().ConfirmProposal(context.Background(), tournamentID, actionJSON)
 }
 
+// ConfirmProposals is service.Service.ConfirmProposals on the open database.
+func (d *Database) ConfirmProposals(tournamentID int64, actionsJSON string) (*DirectionView, error) {
+	return d.directionService().ConfirmProposals(context.Background(), tournamentID, actionsJSON)
+}
+
 // ConfirmAllProposals is service.Service.ConfirmAllProposals on the open database.
 func (d *Database) ConfirmAllProposals(tournamentID int64) (*DirectionView, error) {
 	return d.directionService().ConfirmAllProposals(context.Background(), tournamentID)

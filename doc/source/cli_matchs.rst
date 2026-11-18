@@ -15,7 +15,10 @@ sortie ``json`` les porte dans l'objet ``match``.
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot,
 voir le Duel), la sortie ``text`` donne la durée de chaque décision, celle du
 videau à part, et la sortie ``summary`` le total et la moyenne de chaque
-joueur, avec la marque du joueur dont la réserve s'est épuisée en premier ; la
+joueur, avec la marque du joueur dont la réserve s'est épuisée en premier, puis
+le nombre de ses décisions par tranche de durée non vide (``<2 s: 4, 2-5 s: 11``) ;
+``/v1/stats.matchTimeSummary`` livre ces tranches (``histogram`` de chaque
+joueur, bornes en millisecondes dans ``histogram_bounds_ms``) ; la
 sortie ``json`` porte ``decision_ms`` et ``cube_decision_ms``. Une durée
 inconnue n'est pas écrite. ``list --type timeerrors`` donne, par joueur et par
 tranche de durée (moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre

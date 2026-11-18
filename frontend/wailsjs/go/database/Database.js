@@ -246,6 +246,10 @@ export function ConfirmProposal(arg1, arg2) {
   return window['go']['database']['Database']['ConfirmProposal'](arg1, arg2);
 }
 
+export function ConfirmProposals(arg1, arg2) {
+  return window['go']['database']['Database']['ConfirmProposals'](arg1, arg2);
+}
+
 export function ContributeDuel(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['ContributeDuel'](arg1, arg2, arg3, arg4);
 }
@@ -690,12 +694,12 @@ export function GetMatchReview(arg1) {
   return window['go']['database']['Database']['GetMatchReview'](arg1);
 }
 
-export function GetMatchTimeSummary(arg1) {
-  return window['go']['database']['Database']['GetMatchTimeSummary'](arg1);
-}
-
 export function GetMatchTextValues(arg1) {
   return window['go']['database']['Database']['GetMatchTextValues'](arg1);
+}
+
+export function GetMatchTimeSummary(arg1) {
+  return window['go']['database']['Database']['GetMatchTimeSummary'](arg1);
 }
 
 export function GetMatchTournament(arg1) {
@@ -846,6 +850,10 @@ export function ImportJournal(arg1) {
   return window['go']['database']['Database']['ImportJournal'](arg1);
 }
 
+export function ImportLessonMarkdown(arg1) {
+  return window['go']['database']['Database']['ImportLessonMarkdown'](arg1);
+}
+
 export function ImportMET(arg1) {
   return window['go']['database']['Database']['ImportMET'](arg1);
 }
@@ -928,6 +936,10 @@ export function LessonHTML(arg1, arg2, arg3) {
 
 export function LessonHTMLCtx(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['LessonHTMLCtx'](arg1, arg2, arg3, arg4);
+}
+
+export function LessonMarkdown(arg1) {
+  return window['go']['database']['Database']['LessonMarkdown'](arg1);
 }
 
 export function LessonPositionIDs(arg1) {
@@ -1048,6 +1060,10 @@ export function LoadPositionsByFiltersCoreCtx(arg1, arg2, arg3) {
 
 export function LoadPositionsByIDs(arg1) {
   return window['go']['database']['Database']['LoadPositionsByIDs'](arg1);
+}
+
+export function LoadPositionsPageByFiltersCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['LoadPositionsPageByFiltersCtx'](arg1, arg2, arg3);
 }
 
 export function LoadRollouts(arg1) {

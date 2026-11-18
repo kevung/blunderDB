@@ -4,6 +4,7 @@
     import { t } from '../i18n';
     import { fmtDuration, fmtMean, timeBars } from '../utils/decisionTime.js';
     import MatchChart from './MatchChart.svelte';
+    import MatchTimeHistogram from './MatchTimeHistogram.svelte';
     import PlayerToggle from './PlayerToggle.svelte';
 
     /** @type {{ summary: any, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void, shown?: [boolean, boolean], ontoggle?: (p: 0 | 1) => void }} */
@@ -33,32 +34,35 @@
 
 {#if known}
     <div class="match-times" role="group" aria-label={$t('match.timesTitle')} data-testid="match-times">
-        <table class="times-table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>{$t('match.timesTotal')}</th>
-                    <th>{$t('match.timesChecker')}</th>
-                    <th>{$t('match.timesCube')}</th>
-                    {#if summary.has_cadence}<th title={$t('match.timesOverrunTooltip')}>{$t('match.timesOverrun')}</th>{/if}
-                </tr>
-            </thead>
-            <tbody>
-                {#each players as { name, p }, i (i)}
-                    {#if p}
-                        <tr>
-                            <td class="times-player" class:player1={i === 0} class:player2={i === 1}>{name}</td>
-                            <td>{fmtDuration(p.checker_count + p.cube_count > 0 ? p.total_ms : null)}</td>
-                            <td>{fmtMean(p.checker_total_ms, p.checker_count)}</td>
-                            <td>{fmtMean(p.cube_total_ms, p.cube_count)}</td>
-                            {#if summary.has_cadence}
-                                <td data-testid="overrun-{i}">{p.over_time ? '●' : ''}</td>
-                            {/if}
-                        </tr>
-                    {/if}
-                {/each}
-            </tbody>
-        </table>
+        <div class="times-head">
+            <table class="times-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>{$t('match.timesTotal')}</th>
+                        <th>{$t('match.timesChecker')}</th>
+                        <th>{$t('match.timesCube')}</th>
+                        {#if summary.has_cadence}<th title={$t('match.timesOverrunTooltip')}>{$t('match.timesOverrun')}</th>{/if}
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each players as { name, p }, i (i)}
+                        {#if p}
+                            <tr>
+                                <td class="times-player" class:player1={i === 0} class:player2={i === 1}>{name}</td>
+                                <td>{fmtDuration(p.checker_count + p.cube_count > 0 ? p.total_ms : null)}</td>
+                                <td>{fmtMean(p.checker_total_ms, p.checker_count)}</td>
+                                <td>{fmtMean(p.cube_total_ms, p.cube_count)}</td>
+                                {#if summary.has_cadence}
+                                    <td data-testid="overrun-{i}">{p.over_time ? '●' : ''}</td>
+                                {/if}
+                            </tr>
+                        {/if}
+                    {/each}
+                </tbody>
+            </table>
+            <MatchTimeHistogram {summary} {movePositions} names={[player1, player2]} {shown} {onselect} />
+        </div>
         <div class="times-chart">
             <MatchChart
                 testid="times-plot"
@@ -116,6 +120,12 @@
         gap: 4px;
         padding: 6px 12px 0;
         font-size: var(--font-size-small);
+    }
+    .times-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 4px 24px;
     }
     .times-table {
         align-self: flex-start;

@@ -467,6 +467,7 @@ var databaseParity = map[string]parityEntry{
 	"MoveMatchToTable":                  {CLI: "tournament move", Server: "/v1/directions.moveMatchToTable"},
 	"TableGrid":                         {Server: "/v1/directions.tableGrid", Why: whyDirectionRead},
 	"RencontreTableGrid":                {CLI: "tournament hall", Why: "the Hall merges the tables of every event of a Rencontre; the daemon serves each event's grid (/v1/directions.tableGrid) and the Rencontre (/v1/rencontres.get), not yet the merged view"},
+	"ConfirmProposals":                  {Server: "/v1/directions.confirmProposals", Why: whyDirectionGesture},
 	"ConfirmProposal":                   {Server: "/v1/directions.confirmProposal", Why: whyDirectionGesture},
 	"CreateDirection":                   {Server: "/v1/directions.create", Why: whyDirectionGesture},
 	"FreeParticipants":                  {Server: "/v1/directions.freeParticipants", Why: whyDirectionRead},

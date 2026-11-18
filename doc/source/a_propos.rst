@@ -75,8 +75,8 @@ et présent à la racine du `dépôt
 L'essentiel :
 
 * le réseau de neurones ``strehl-prob5-768-768-256-256-256`` est l'œuvre
-  d'*Alexander Strehl* (`alexstrehl/backgammon-ai-engine
-  <https://github.com/alexstrehl/backgammon-ai-engine>`__, licence MIT) ; la
+  d'*Alexander Strehl* (`alexstrehl/puretd
+  <https://github.com/alexstrehl/puretd>`__, licence MIT) ; la
   recherche, le modèle de videau et la table d'équité de match qui l'entourent
   forment la configuration propre de `gammonNet
   <https://github.com/kevung/gammonNet>`__ (MIT) ;

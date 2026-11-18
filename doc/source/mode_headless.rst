@@ -776,6 +776,30 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   ``directions.cancelMatch``, ``directions.correctResult``,
   ``directions.close``, ``directions.reopen``, ``directions.addNote``,
   ``directions.attachMatch``, ``directions.detachMatch`` ;
+* la confirmation d'une liste : ``directions.confirmProposals`` (``actions``,
+  les propositions telles que ``directions.get`` les montre) les enregistre
+  toutes au même instant, de sorte que les matchs lancés ensemble forment un
+  seul lot, ou n'en enregistre aucune. Une proposition tenue en attente
+  (``reason`` valant ``waiting_table``, ``player_unavailable`` ou
+  ``player_busy``) n'est pas confirmable : la liste qui en contient une est
+  refusée. Ce que la liste fait naître, la file après un repêchage ou le
+  tirage de la phase suivante, est proposé dans la réponse et n'est jamais
+  confirmé d'office ;
+* la raison d'un refus : le 400 d'un geste refusé porte, quand la cause est
+  l'une de celles-ci, un code stable dans ``details.reason`` :
+  ``table_taken`` (la table est occupée, dans ce tableau ou dans un autre de
+  la Rencontre), ``player_busy`` (un joueur est en match dans un autre
+  tableau), ``no_such_table``, ``table_outside`` (la table n'est dans aucune
+  salle du tableau), ``table_closed`` (table réservée ou gardée pour
+  quelqu'un d'autre), ``proposal_held`` et ``proposal_changed`` (une
+  proposition de la liste est tenue en attente, ou n'est plus proposée telle
+  quelle). Le message reste destiné à la lecture, le code à la décision ;
+* les autres raisons : ``repechage_pending`` (un tirage ou un passage à la
+  phase suivante est listé alors qu'un repêchage entre candidats à égalité
+  attend le choix du directeur), ``empty_list`` (liste vide),
+  ``invalid_action`` (une proposition renvoyée est illisible) et
+  ``engine_refused`` (les règles du moteur refusent l'événement, le message
+  dit lequel) ;
 * les rondes de la phase en cours : dans une phase à appariement manuel
   (``manual``), le directeur pose chaque match par ``directions.startMatch``
   avec ``round`` (``0`` : la dernière ronde ; la suivante l'ouvre) et chaque
@@ -2450,6 +2474,16 @@ Quand ``--metrics`` est actif, l'état du pool est exposé en continu sur
 utilisées), ``_idle`` (disponibles), ``_max`` (plafond configuré) et
 ``_wait_count`` (nombre cumulé d'``Acquire`` ayant dû attendre une connexion
 libre).
+
+``BLUNDERDB_POSTGRES_QUERY_EXEC_MODE`` choisit le mode d'exécution des
+requêtes du pool : ``cache_describe`` (par défaut), ``cache_statement``,
+``describe_exec``, ``exec`` ou ``simple_protocol`` (les noms de pgx). Par
+défaut le moteur ne prépare pas de plan nommé côté serveur : en
+``cache_statement``, chaque texte SQL distinct (listes ``IN`` et insertions
+multi-lignes de taille variable) laisse un plan en mémoire sur la connexion
+jusqu'à sa fermeture. Une valeur inconnue fait échouer le démarrage ; un
+``default_query_exec_mode`` donné dans l'URL de connexion l'emporte sur la
+variable.
 
 Avec le backend SQLite, le daemon ouvre une connexion par cœur, dix au moins
 (le bureau en garde dix). Les requêtes qui parcourent toute la bibliothèque

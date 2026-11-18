@@ -414,6 +414,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.confirmProposal — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.confirmProposal", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def directions_confirm_proposals(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/directions.confirmProposals — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
+        return self._call("/v1/directions.confirmProposals", payload, if_match=if_match, idempotency_key=idempotency_key)
+
     def directions_correct_result(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/directions.correctResult — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.correctResult", payload, if_match=if_match, idempotency_key=idempotency_key)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 23:14+0100\n"
+"POT-Creation-Date: 2026-11-13 14:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -42,17 +42,17 @@ msgstr ""
 " with their response shape (JSON, or NDJSON for a streamed list) and, "
 "where it exists, a note of the optional ``Idempotency-Key`` header."
 
-#: ../../source/api_reference.rst:465
+#: ../../source/api_reference.rst:468
 msgid "Idempotence"
 msgstr "Idempotency"
 
-#: ../../source/api_reference.rst:467
+#: ../../source/api_reference.rst:470
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 58 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 59 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -64,7 +64,7 @@ msgstr ""
 "Most methods need no special mechanism: reads have no side effects, and "
 "the writes of ``positions.*`` are idempotent in effect thanks to the "
 "Zobrist hash of the content — saving the same position twice returns the "
-"same row, never a duplicate. 58 methods accept an optional ``Idempotency-"
+"same row, never a duplicate. 59 methods accept an optional ``Idempotency-"
 "Key`` header: those whose two calls are two distinct effects, and "
 "``positions.save``, whose response says whether the call created the "
 "position (``created``) and would say so wrongly if replayed after a lost "
@@ -73,11 +73,11 @@ msgstr ""
 "Key)\" mark in the table above. No other method needs or accepts this "
 "header."
 
-#: ../../source/api_reference.rst:479
+#: ../../source/api_reference.rst:482
 msgid "Lectures conditionnelles"
 msgstr "Conditional reads"
 
-#: ../../source/api_reference.rst:481
+#: ../../source/api_reference.rst:484
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -88,11 +88,11 @@ msgstr ""
 "``If-None-Match`` gets a body-less ``304`` response as long as nothing "
 "the method reads has changed — see :ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:486
+#: ../../source/api_reference.rst:489
 msgid "Enregistrer et lire une analyse"
 msgstr "Saving and reading an analysis"
 
-#: ../../source/api_reference.rst:488
+#: ../../source/api_reference.rst:491
 msgid ""
 "``analyses.save`` enregistre l'analyse telle quelle et remplace celle que"
 " la position portait : rien de l'ancienne n'est gardé. ``analyses.merge``"
@@ -121,11 +121,11 @@ msgstr ""
 " header: a daemon that does not send it ignores ``withPlayed`` and "
 "returns the analysis without the matches' moves."
 
-#: ../../source/api_reference.rst:501
+#: ../../source/api_reference.rst:504
 msgid "Repères d'une transcription"
 msgstr "Timecodes of a transcription"
 
-#: ../../source/api_reference.rst:503
+#: ../../source/api_reference.rst:506
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -155,7 +155,7 @@ msgstr ""
 "``set_header`` also sets it when its header names one, but never clears "
 "it."
 
-#: ../../source/api_reference.rst:515
+#: ../../source/api_reference.rst:518
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -171,7 +171,7 @@ msgstr ""
 "estimate: a play without an action timecode, measured from the roll to "
 "the next action's first instant."
 
-#: ../../source/api_reference.rst:521
+#: ../../source/api_reference.rst:524
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

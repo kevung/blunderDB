@@ -586,9 +586,8 @@ func (s *StatsStore) fillMatchStats(ctx context.Context, scope string, progress 
 	if err != nil {
 		return 0, fmt.Errorf("match stats settings: %w", err)
 	}
-	// A batch can drop the rows of a match filled earlier whose private
-	// position it reaches (sharePositions); the next round recomputes those
-	// with the position shared, which drops nothing more, so the loop ends.
+	// A write landing between two batches can drop rows again; the next
+	// round fills them.
 	filled := 0
 	for len(ids) > 0 {
 		for start := 0; start < len(ids); start += matchStatsBatch {
@@ -661,9 +660,8 @@ func (s *StatsStore) matchStatsReadableFor(ctx context.Context, scope string, ma
 		afterMatchStatsProbe()
 		return !olderShape, nil
 	}
-	// A refresh can drop the rows of a match it shares a position with
-	// (sharePositions); the next round recomputes them, which drops nothing
-	// more, as in FillMatchStats.
+	// A write landing meanwhile can drop rows again; the next round fills
+	// them.
 	for len(missing) > 0 {
 		if err := s.RefreshMatchStats(ctx, scope, missing); err != nil {
 			return false, err

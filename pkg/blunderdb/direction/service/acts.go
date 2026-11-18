@@ -25,7 +25,7 @@ import (
 func (d *Service) ConfirmProposal(ctx context.Context, tournamentID int64, actionJSON string) (*DirectionView, error) {
 	var a tournoi.Action
 	if err := json.Unmarshal([]byte(actionJSON), &a); err != nil {
-		return nil, direction.Refused(fmt.Errorf("direction: proposal: %w", err))
+		return nil, direction.RefusedAs(direction.ReasonInvalidAction, fmt.Errorf("direction: proposal: %w", err))
 	}
 	if err := d.confirmProposal(ctx, tournamentID, a); err != nil {
 		return nil, err
@@ -48,33 +48,191 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 		if err != nil {
 			return err
 		}
-		if _, taken := room.tables[a.Table]; a.Table > 0 && taken {
-			return direction.Refusef("direction: table %d is taken", a.Table)
-		}
-		// One person cannot sit at two matches: a proposal shown before its player sat down
-		// next door, or held for that very reason, is not launched.
-		for _, p := range []tournoi.PlayerID{a.A, a.B} {
-			if seat, busy := room.players[p]; busy && p != "" {
-				name := string(p)
-				if pl := dir.State().Players[p]; pl != nil && pl.Name != "" {
-					name = pl.Name
-				}
-				return direction.Refusef("direction: %s plays in %s, table %d", name, seat.Event, seat.Table)
-			}
+		if err := room.refuseSeat(dir, a); err != nil {
+			return err
 		}
 	}
-	if a.Kind == tournoi.ActStartMatch && a.Table > 0 {
-		if err := d.tableBeyond(ctx, dir, tournamentID, a.Table); err != nil {
-			return err
-		}
-		if err := d.refuseOutside(ctx, dir, tournamentID, a.Table); err != nil {
-			return err
-		}
-		if err := d.refuseClosed(ctx, dir, tournamentID, a); err != nil {
-			return err
-		}
+	if err := d.refuseTable(ctx, dir, tournamentID, a); err != nil {
+		return err
 	}
 	return confirm(ctx, dir, a)
+}
+
+// refuseSeat refuses launching a match on a table a sister event plays on, or with a person
+// who sits at a sister's match: a proposal shown before the sister wrote is stale.
+func (r sisterRoom) refuseSeat(dir *direction.Direction, a tournoi.Action) error {
+	if a.Kind != tournoi.ActStartMatch {
+		return nil
+	}
+	if _, taken := r.tables[a.Table]; a.Table > 0 && taken {
+		return direction.RefuseAs(direction.ReasonTableTaken, "direction: table %d is taken", a.Table)
+	}
+	// One person cannot sit at two matches: a proposal shown before its player sat down
+	// next door, or held for that very reason, is not launched.
+	for _, p := range []tournoi.PlayerID{a.A, a.B} {
+		if seat, busy := r.players[p]; busy && p != "" {
+			name := string(p)
+			if pl := dir.State().Players[p]; pl != nil && pl.Name != "" {
+				name = pl.Name
+			}
+			return direction.RefuseAs(direction.ReasonPlayerBusy, "direction: %s plays in %s, table %d", name, seat.Event, seat.Table)
+		}
+	}
+	return nil
+}
+
+// refuseTable refuses launching a match on a table that does not exist, is outside the
+// event's rooms, or is closed to it.
+func (d *Service) refuseTable(ctx context.Context, dir *direction.Direction, tournamentID int64, a tournoi.Action) error {
+	if a.Kind != tournoi.ActStartMatch || a.Table <= 0 {
+		return nil
+	}
+	if err := d.tableBeyond(ctx, dir, tournamentID, a.Table); err != nil {
+		return err
+	}
+	if err := d.refuseOutside(ctx, dir, tournamentID, a.Table); err != nil {
+		return err
+	}
+	return d.refuseClosed(ctx, dir, tournamentID, a)
+}
+
+// ConfirmProposals records a list of proposals exactly as the director was shown them, in one
+// gesture and at one instant, all or none: the matches launched together are one batch.
+//
+// The list travels back as the engine's own JSON, like ConfirmProposal's action. Nothing is
+// written, and the refusal carries its direction.Reason, when one of them
+//
+//   - is held back by the engine — it waits for a table or a player — or is a wait
+//     (ReasonProposalHeld): the director is shown those as not confirmable (Held), so a list
+//     holding one is not what the panel offered, and launching it would seat a match nowhere;
+//
+//   - names a table or a person a sister event of the room took since (ReasonTableTaken,
+//     ReasonPlayerBusy);
+//
+//   - is no longer proposed as listed, or is listed twice (ReasonProposalChanged).
+//
+//   - is a draw or a passage to the next phase while a repechage between tied candidates is
+//     still proposed (ReasonRepechagePending): the place would become a bye, a choice the
+//     engine keeps for the director. Listing the chosen repechage before it lifts the refusal.
+//
+// A tied repechage and a closing are confirmed when listed: listing them is the deliberate
+// choice ConfirmAllProposals waits for. What the list brings about — the queue behind a
+// repechage, the next phase's draw — is proposed in the view handed back and never confirmed
+// here. After every action but a match launched, the rest of the list must still be what the
+// engine proposes, or the whole list is refused and nothing of it stays written.
+func (d *Service) ConfirmProposals(ctx context.Context, tournamentID int64, actionsJSON string) (*DirectionView, error) {
+	var list []tournoi.Action
+	if err := json.Unmarshal([]byte(actionsJSON), &list); err != nil {
+		return nil, direction.RefusedAs(direction.ReasonInvalidAction, fmt.Errorf("direction: proposals: %w", err))
+	}
+	if len(list) == 0 {
+		return nil, direction.RefuseAs(direction.ReasonEmptyList, "direction: no proposal to confirm")
+	}
+	if err := d.confirmProposals(ctx, tournamentID, list); err != nil {
+		return nil, err
+	}
+	return d.viewAfter(ctx, tournamentID)
+}
+
+func (d *Service) confirmProposals(ctx context.Context, tournamentID int64, list []tournoi.Action) (err error) {
+	d, release, _, err := d.lockTables(ctx, tournamentID)
+	if err != nil {
+		return err
+	}
+	defer release(&err)
+	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
+	if err != nil {
+		return err
+	}
+	// One instant for the list, and the proposals it is compared with read at that instant.
+	now := time.Now()
+	room, err := d.roomAround(ctx, tournamentID, dir)
+	if err != nil {
+		return err
+	}
+	for _, a := range list {
+		if a.Kind == tournoi.ActWait || heldForTable(a) {
+			return direction.RefuseAs(direction.ReasonProposalHeld, "direction: %s is held back, there is nothing to confirm", describe(a))
+		}
+		if err := room.refuseSeat(dir, a); err != nil {
+			return err
+		}
+	}
+	proposals := room.propose(dir, now)
+	if err := stillProposed(proposals, list); err != nil {
+		return err
+	}
+	for i, a := range list {
+		if (a.Kind == tournoi.ActNextPhase || a.Kind == tournoi.ActDraw) && tiedRepechage(proposals) {
+			return direction.RefuseAs(direction.ReasonRepechagePending,
+				"direction: a repechage between tied candidates waits for a choice before %s", describe(a))
+		}
+		if err := d.refuseTable(ctx, dir, tournamentID, a); err != nil {
+			return err
+		}
+		if err := confirmAt(ctx, dir, a, now); err != nil {
+			return err
+		}
+		if a.Kind == tournoi.ActStartMatch {
+			// A match launched engages its two players and its table and nothing else: the
+			// proposals listed beside it stand.
+			continue
+		}
+		// Anything else — a bye, a draw, a repechage, a passage, a closing — may change what
+		// the engine proposes: what is listed behind it must still be proposed as listed.
+		proposals = room.propose(dir, now)
+		if err := stillProposed(proposals, list[i+1:]); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// tiedRepechage tells a queue where a repechage waits for the director to choose between
+// tied candidates.
+func tiedRepechage(proposals []tournoi.Action) bool {
+	for _, p := range proposals {
+		if p.Kind == tournoi.ActRepechage && p.Label.Players > 1 {
+			return true
+		}
+	}
+	return false
+}
+
+// stillProposed refuses a list one action of which is not among proposals, each proposal
+// answering for one action of the list.
+func stillProposed(proposals, list []tournoi.Action) error {
+	left := map[string]int{}
+	for _, p := range proposals {
+		left[proposalKey(p)]++
+	}
+	for _, a := range list {
+		k := proposalKey(a)
+		if left[k] == 0 {
+			return direction.RefuseAs(direction.ReasonProposalChanged, "direction: %s is no longer proposed", describe(a))
+		}
+		left[k]--
+	}
+	return nil
+}
+
+// proposalKey is what makes two proposals the same one: everything the engine decided, less
+// its warning, which follows the clock and changes nothing of what is recorded.
+func proposalKey(a tournoi.Action) string {
+	a.Warn = ""
+	blob, _ := json.Marshal(a)
+	return string(blob)
+}
+
+// describe names a proposal in a refusal.
+func describe(a tournoi.Action) string {
+	switch {
+	case a.A != "" && a.B != "":
+		return fmt.Sprintf("%s %s - %s", a.Kind, a.A, a.B)
+	case a.A != "":
+		return fmt.Sprintf("%s %s", a.Kind, a.A)
+	}
+	return string(a.Kind)
 }
 
 // ConfirmAllProposals records every proposal in one gesture, all or none: a refusal or a failure
@@ -156,6 +314,11 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 	}
 	return nil
 }
+
+// Held tells a proposal the director cannot confirm yet: the engine holds it back until a
+// table or a player frees up, and says so in the proposal's reason. The panel shows it apart,
+// and neither ConfirmAllProposals nor ConfirmProposals launches it.
+func Held(a tournoi.Action) bool { return heldForTable(a) }
 
 // heldForTable tells a match the engine proposes without a table to play on: every table taken,
 // or a player unavailable or at a match of a sister event. It stays in the queue until its
@@ -253,7 +416,7 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, ro
 			}
 			table = firstFreeTable(st, "", st.Current, skip)
 		} else if _, next := sisters[table]; next || occupant(st, table, "") != nil {
-			return direction.Refusef("direction: table %d is taken", table)
+			return direction.RefuseAs(direction.ReasonTableTaken, "direction: table %d is taken", table)
 		}
 		ph := st.Phases[st.Current]
 		if ph.Cfg.Kind == tournoi.KindManual {

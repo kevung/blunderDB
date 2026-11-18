@@ -33,8 +33,7 @@ const (
 // its transaction, whose rows it counts; a concurrent ANALYZE is left to finish.
 func analyzeFirstOfTenant(ctx context.Context, db execer, table, idColumn string, tenant, minID int64) error {
 	var seen bool
-	if err := db.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM `+table+` WHERE tenant_id = $1 AND `+idColumn+` < $2)`,
-		tenant, minID).Scan(&seen); err != nil {
+	if err := db.QueryRow(ctx, tenantHasRowsBelowSQL(table, idColumn), tenant, minID).Scan(&seen); err != nil {
 		return fmt.Errorf("postgres: first rows of the tenant in %s: %w", table, err)
 	}
 	if seen {
@@ -54,6 +53,17 @@ func analyzeFirstOfTenant(ctx context.Context, db execer, table, idColumn string
 		return fmt.Errorf("postgres: analyze %s: %w", table, err)
 	}
 	return nil
+}
+
+// tenantHasRowsBelowSQL asks whether the tenant $1 has a row of table whose
+// idColumn is below $2, by reading the tenant's lowest one: the first entry of
+// the (tenant_id, idColumn) key, whatever the planner believes about the table.
+// Written as "tenant_id = $1 AND idColumn < $2", the generic plan the import is
+// pinned to cannot see how few rows a bound leaves and scans the whole table,
+// every tenant's rows included, once per file.
+func tenantHasRowsBelowSQL(table, idColumn string) string {
+	return `SELECT EXISTS (SELECT 1 FROM (SELECT ` + idColumn + ` AS id FROM ` + table +
+		` WHERE tenant_id = $1 ORDER BY ` + idColumn + ` LIMIT 1) lowest WHERE lowest.id < $2)`
 }
 
 // analyzeDeniedSQL says whether the current role may not ANALYZE $1: the same

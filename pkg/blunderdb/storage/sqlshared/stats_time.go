@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"slices"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -13,7 +14,10 @@ import (
 // the XG side code: 1 is player 1, -1 player 2. The overrun is the fact the
 // Duel recorded in the Match's origin, never recomputed here.
 func (s *StatsStore) MatchTimeSummary(ctx context.Context, scope string, matchID int64) (storage.MatchTimeSummary, error) {
-	var out storage.MatchTimeSummary
+	out := storage.MatchTimeSummary{HistogramBoundsMS: slices.Clone(storage.DecisionTimeHistogramBounds)}
+	for i := range out.Players {
+		out.Players[i].Histogram = make([]int, len(storage.DecisionTimeHistogramBounds)+1)
+	}
 	tenant, args := s.DB.TenantFilter("mv", scope)
 	rows, err := s.DB.Query(ctx,
 		`SELECT mv.player, `+ActionLabelOrEmptyFor(s.DB, "mv.move_type")+`,
@@ -48,6 +52,7 @@ func (s *StatsStore) MatchTimeSummary(ctx context.Context, scope string, matchID
 			}
 			known = true
 			ps.TotalMS += *v
+			ps.Histogram[storage.DecisionTimeBand(*v)]++
 			if cube {
 				ps.CubeCount++
 				ps.CubeTotalMS += *v

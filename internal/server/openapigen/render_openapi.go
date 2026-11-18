@@ -3,6 +3,8 @@ package openapigen
 import (
 	"fmt"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
 // openAPIHeader is fixed prose so a reader of openapi.yaml sees the security
@@ -233,6 +235,8 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 		b.WriteString("          description: Not Modified — the If-None-Match tag still holds; no body.\n")
 	}
 	if r.Gesture {
+		b.WriteString("        \"400\":\n")
+		b.WriteString("          $ref: \"#/components/responses/gestureRefused\"\n")
 		b.WriteString("        \"409\":\n")
 		b.WriteString("          description: Conflict — the If-Match version moved; error.details holds the fresh state and its version.\n")
 		b.WriteString("        \"428\":\n")
@@ -333,6 +337,37 @@ func writeComponents(b *strings.Builder, comps *Components) {
 	for _, name := range names {
 		fmt.Fprintf(b, "    %s:\n", yamlKey(name))
 		writeSchema(b, comps.Get(name), 6)
+	}
+	writeGestureRefused(b)
+}
+
+// writeGestureRefused declares the 400 every gesture answers when the rules refuse it, and
+// the reasons its details may state — the list is direction.Reasons, defined once.
+func writeGestureRefused(b *strings.Builder) {
+	b.WriteString("  responses:\n")
+	b.WriteString("    gestureRefused:\n")
+	b.WriteString("      description: Bad Request — the gesture is refused and nothing was written. error.message is for a person; error.details.reason, when the refusal states one, is the stable code to branch on.\n")
+	b.WriteString("      content:\n")
+	b.WriteString("        application/json:\n")
+	b.WriteString("          schema:\n")
+	b.WriteString("            type: object\n")
+	b.WriteString("            properties:\n")
+	b.WriteString("              error:\n")
+	b.WriteString("                type: object\n")
+	b.WriteString("                properties:\n")
+	b.WriteString("                  code:\n")
+	b.WriteString("                    type: string\n")
+	b.WriteString("                    enum: [invalid]\n")
+	b.WriteString("                  message:\n")
+	b.WriteString("                    type: string\n")
+	b.WriteString("                  details:\n")
+	b.WriteString("                    type: object\n")
+	b.WriteString("                    properties:\n")
+	b.WriteString("                      reason:\n")
+	b.WriteString("                        type: string\n")
+	b.WriteString("                        enum:\n")
+	for _, r := range direction.Reasons {
+		fmt.Fprintf(b, "                          - %s\n", r)
 	}
 }
 

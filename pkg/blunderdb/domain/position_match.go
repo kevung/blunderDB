@@ -502,184 +502,85 @@ func (p *Position) MatchesExceptDice(excluded [][2]int) bool {
 	return true
 }
 
-func (p *Position) MatchesPlayer1OutfieldBlot(filter string) bool {
-	outfieldBlots := 0
-	for i := 7; i <= 18; i++ {
-		if p.Board.Points[i].Color == 0 && p.Board.Points[i].Checkers == 1 {
-			outfieldBlots++
-		}
-	}
+// BlotZone is a run of points: the blots a blot filter counts are the points
+// of the zone holding exactly one checker of Color.
+type BlotZone struct {
+	Color  int
+	Lo, Hi int
+}
 
-	if strings.HasPrefix(filter, "bo>") {
-		value, err := strconv.Atoi(filter[3:])
-		if err != nil {
-			slog.Warn("parsing filter value", "value", filter[3:])
-			return false
-		}
-		return outfieldBlots >= value
-	} else if strings.HasPrefix(filter, "bo<") {
-		value, err := strconv.Atoi(filter[3:])
-		if err != nil {
-			slog.Warn("parsing filter value", "value", filter[3:])
-			return false
-		}
-		return outfieldBlots <= value
-	} else if strings.HasPrefix(filter, "bo") {
-		values := strings.Split(filter[2:], ",")
-		if len(values) != 2 {
-			slog.Warn("parsing filter values", "value", filter[2:])
-			return false
-		}
-		value1, err1 := strconv.Atoi(values[0])
-		value2, err2 := strconv.Atoi(values[1])
-		if err1 != nil || err2 != nil {
-			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
-			return false
-		}
-		minValue := value1
-		maxValue := value2
-		if value1 > value2 {
-			minValue = value2
-			maxValue = value1
-		}
-		return outfieldBlots >= minValue && outfieldBlots <= maxValue
+// The zones of the four blot filters, by filter prefix. The outfield is
+// points 7 to 18 for both sides; each side's jan is its own home board.
+var blotZones = map[string]BlotZone{
+	"bo": {Color: Black, Lo: 7, Hi: 18},
+	"BO": {Color: White, Lo: 7, Hi: 18},
+	"bj": {Color: Black, Lo: 1, Hi: 6},
+	"BJ": {Color: White, Lo: 19, Hi: 24},
+}
+
+// BlotZoneOf is the zone the blot filter of that prefix counts in.
+func BlotZoneOf(prefix string) BlotZone { return blotZones[prefix] }
+
+// ParseBlotFilter reads a blot filter: prefix>N is N blots or more, prefix<N
+// is N or fewer, prefixA,B is between the two, in either order. ok is false
+// for any other spelling, a bare prefixN included.
+func ParseBlotFilter(filter, prefix string) (lo, hi int, hasLo, hasHi, ok bool) {
+	rest, found := strings.CutPrefix(filter, prefix)
+	if !found {
+		return 0, 0, false, false, false
 	}
-	return false
+	if v, isMin := strings.CutPrefix(rest, ">"); isMin {
+		n, err := strconv.Atoi(v)
+		return n, 0, true, false, err == nil
+	}
+	if v, isMax := strings.CutPrefix(rest, "<"); isMax {
+		n, err := strconv.Atoi(v)
+		return 0, n, false, true, err == nil
+	}
+	values := strings.Split(rest, ",")
+	if len(values) != 2 {
+		return 0, 0, false, false, false
+	}
+	a, err1 := strconv.Atoi(values[0])
+	b, err2 := strconv.Atoi(values[1])
+	if err1 != nil || err2 != nil {
+		return 0, 0, false, false, false
+	}
+	return min(a, b), max(a, b), true, true, true
+}
+
+// matchesBlots counts the blots of the prefix's zone and holds the count to
+// the filter. An unreadable filter matches nothing; the search refuses it
+// before it reads a position.
+func (p *Position) matchesBlots(filter, prefix string) bool {
+	lo, hi, hasLo, hasHi, ok := ParseBlotFilter(filter, prefix)
+	if !ok {
+		return false
+	}
+	z := blotZones[prefix]
+	blots := 0
+	for i := z.Lo; i <= z.Hi; i++ {
+		if p.Board.Points[i].Color == z.Color && p.Board.Points[i].Checkers == 1 {
+			blots++
+		}
+	}
+	return (!hasLo || blots >= lo) && (!hasHi || blots <= hi)
+}
+
+func (p *Position) MatchesPlayer1OutfieldBlot(filter string) bool {
+	return p.matchesBlots(filter, "bo")
 }
 
 func (p *Position) MatchesPlayer2OutfieldBlot(filter string) bool {
-	opponentOutfieldBlots := 0
-	for i := 7; i <= 18; i++ {
-		if p.Board.Points[i].Color == 1 && p.Board.Points[i].Checkers == 1 {
-			opponentOutfieldBlots++
-		}
-	}
-
-	if strings.HasPrefix(filter, "BO>") {
-		value, err := strconv.Atoi(filter[3:])
-		if err != nil {
-			slog.Warn("parsing filter value", "value", filter[3:])
-			return false
-		}
-		return opponentOutfieldBlots >= value
-	} else if strings.HasPrefix(filter, "BO<") {
-		value, err := strconv.Atoi(filter[3:])
-		if err != nil {
-			slog.Warn("parsing filter value", "value", filter[3:])
-			return false
-		}
-		return opponentOutfieldBlots <= value
-	} else if strings.HasPrefix(filter, "BO") {
-		values := strings.Split(filter[2:], ",")
-		if len(values) != 2 {
-			slog.Warn("parsing filter values", "value", filter[2:])
-			return false
-		}
-		value1, err1 := strconv.Atoi(values[0])
-		value2, err2 := strconv.Atoi(values[1])
-		if err1 != nil || err2 != nil {
-			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
-			return false
-		}
-		minValue := value1
-		maxValue := value2
-		if value1 > value2 {
-			minValue = value2
-			maxValue = value1
-		}
-		return opponentOutfieldBlots >= minValue && opponentOutfieldBlots <= maxValue
-	}
-	return false
+	return p.matchesBlots(filter, "BO")
 }
 
 func (p *Position) MatchesPlayer1JanBlot(filter string) bool {
-	janBlots := 0
-	for i := 1; i <= 6; i++ {
-		if p.Board.Points[i].Color == 0 && p.Board.Points[i].Checkers == 1 {
-			janBlots++
-		}
-	}
-
-	if strings.HasPrefix(filter, "bj>") {
-		value, err := strconv.Atoi(filter[3:])
-		if err != nil {
-			slog.Warn("parsing filter value", "value", filter[3:])
-			return false
-		}
-		return janBlots >= value
-	} else if strings.HasPrefix(filter, "bj<") {
-		value, err := strconv.Atoi(filter[3:])
-		if err != nil {
-			slog.Warn("parsing filter value", "value", filter[3:])
-			return false
-		}
-		return janBlots <= value
-	} else if strings.HasPrefix(filter, "bj") {
-		values := strings.Split(filter[2:], ",")
-		if len(values) != 2 {
-			slog.Warn("parsing filter values", "value", filter[2:])
-			return false
-		}
-		value1, err1 := strconv.Atoi(values[0])
-		value2, err2 := strconv.Atoi(values[1])
-		if err1 != nil || err2 != nil {
-			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
-			return false
-		}
-		minValue := value1
-		maxValue := value2
-		if value1 > value2 {
-			minValue = value2
-			maxValue = value1
-		}
-		return janBlots >= minValue && janBlots <= maxValue
-	}
-	return false
+	return p.matchesBlots(filter, "bj")
 }
 
 func (p *Position) MatchesPlayer2JanBlot(filter string) bool {
-	opponentJanBlots := 0
-	for i := 19; i <= 24; i++ {
-		if p.Board.Points[i].Color == 1 && p.Board.Points[i].Checkers == 1 {
-			opponentJanBlots++
-		}
-	}
-
-	if strings.HasPrefix(filter, "BJ>") {
-		value, err := strconv.Atoi(filter[3:])
-		if err != nil {
-			slog.Warn("parsing filter value", "value", filter[3:])
-			return false
-		}
-		return opponentJanBlots >= value
-	} else if strings.HasPrefix(filter, "BJ<") {
-		value, err := strconv.Atoi(filter[3:])
-		if err != nil {
-			slog.Warn("parsing filter value", "value", filter[3:])
-			return false
-		}
-		return opponentJanBlots <= value
-	} else if strings.HasPrefix(filter, "BJ") {
-		values := strings.Split(filter[2:], ",")
-		if len(values) != 2 {
-			slog.Warn("parsing filter values", "value", filter[2:])
-			return false
-		}
-		value1, err1 := strconv.Atoi(values[0])
-		value2, err2 := strconv.Atoi(values[1])
-		if err1 != nil || err2 != nil {
-			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
-			return false
-		}
-		minValue := value1
-		maxValue := value2
-		if value1 > value2 {
-			minValue = value2
-			maxValue = value1
-		}
-		return opponentJanBlots >= minValue && opponentJanBlots <= maxValue
-	}
-	return false
+	return p.matchesBlots(filter, "BJ")
 }
 
 func (p *Position) MatchesNoContact() bool {

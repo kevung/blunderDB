@@ -214,8 +214,8 @@ export function ListLibraryGroups() {
   return window['go']['gui']['App']['ListLibraryGroups']();
 }
 
-export function LooksLikeOGID(arg1) {
-  return window['go']['gui']['App']['LooksLikeOGID'](arg1);
+export function LooksLikePositionID(arg1) {
+  return window['go']['gui']['App']['LooksLikePositionID'](arg1);
 }
 
 export function MediaURL(arg1) {

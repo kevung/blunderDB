@@ -58,6 +58,8 @@ type planNode struct {
 	Relation  string     `json:"Relation Name"`
 	IndexName string     `json:"Index Name"`
 	IndexCond string     `json:"Index Cond"`
+	Filter    string     `json:"Filter"`
+	Recheck   string     `json:"Recheck Cond"`
 	Plans     []planNode `json:"Plans"`
 }
 
@@ -126,6 +128,8 @@ func TestTenantReadsNameTheirTenantWithoutRLS(t *testing.T) {
 	}
 	rec.record("search")
 	exerciseSearch(ctx, t, s, scope, ids)
+	rec.record("rows")
+	exerciseRows(ctx, t, s, scope, ids)
 	rec.record("training")
 	exerciseTraining(ctx, t, s, scope, ids)
 	rec.record("anki")
@@ -206,6 +210,12 @@ func unboundedLookups(n planNode, tenantLeading map[string]bool) []string {
 		bad = append(bad, "sequential scan of "+n.Relation)
 	case tenantLeading[n.IndexName] && !strings.Contains(n.IndexCond, "tenant_id"):
 		bad = append(bad, n.NodeType+" of "+n.IndexName+" without its tenant (cond: "+n.IndexCond+")")
+	// A scan through an index that does not lead with tenant_id (the primary
+	// key, the hash) reads every tenant's rows unless the tenant is also in
+	// its condition or filter.
+	case strings.HasSuffix(n.NodeType, "Scan") && n.NodeType != "Tid Scan" && (n.Relation == "position" || n.Relation == "analysis") &&
+		!strings.Contains(n.IndexCond+n.Filter+n.Recheck, "tenant_id"):
+		bad = append(bad, n.NodeType+" of "+n.Relation+" via "+n.IndexName+" without its tenant (cond: "+n.IndexCond+")")
 	}
 	for _, c := range n.Plans {
 		bad = append(bad, unboundedLookups(c, tenantLeading)...)

@@ -322,7 +322,7 @@ func (d *Service) moveMatch(ctx context.Context, tournamentID int64, matchID str
 		if (o != nil || so != nil) && from <= 0 {
 			// A match with no table has nowhere to send the occupant, whatever its event:
 			// refused rather than stacking two matches on one table.
-			return direction.Refusef("direction: table %d is taken", table)
+			return direction.RefuseAs(direction.ReasonTableTaken, "direction: table %d is taken", table)
 		}
 		// The occupant goes back to the moved match's table: that end of the swap must be in
 		// service too, in the occupant's own configuration.
@@ -445,7 +445,7 @@ func (d *Service) tableBeyond(ctx context.Context, dir *direction.Direction, tou
 		}
 	}
 	if limit > 0 && table > limit {
-		return direction.Refusef("direction: there is no table %d, the last is %d", table, limit)
+		return direction.RefuseAs(direction.ReasonNoSuchTable, "direction: there is no table %d, the last is %d", table, limit)
 	}
 	return nil
 }
