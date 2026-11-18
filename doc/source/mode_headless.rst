@@ -854,7 +854,7 @@ qui ne joue aucun match avec cet effectif, un tournoi simulé de plus d'un an
 et un ``start`` dont la fin sort du calendrier.
 
 Le compte inclut la recherche d'appariement d'un ``swiss_rounds``, que le
-moteur compte en pas : un suisse dont les rondes approchent l'effectif, ou un
+moteur compte en pas : un grand suisse dont les rondes approchent l'effectif, ou un
 club qui dépasse la moitié du champ avec ``avoid_clubs``, cherche longtemps une
 ronde sans revanche, et rend ``too_heavy`` sur ce compte, sans borne sur le
 nombre de rondes.

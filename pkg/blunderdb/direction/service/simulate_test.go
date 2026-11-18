@@ -391,7 +391,7 @@ func TestSimulate_UsefulOrTooHeavy(t *testing.T) {
 		"a double elimination of 128": {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "128", false},
 		"a double elimination of 256": {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "256", true},
 		"a bracket of 512":            {`{"name":"x","phases":[{"kind":"bracket","length":7}]}`, "512", true},
-		"a Swiss of 7 rounds for 128": {`{"name":"x","phases":[{"kind":"swiss_rounds","length":5,"rounds":7}]}`, "128", true},
+		"a Swiss of 7 rounds for 128": {`{"name":"x","phases":[{"kind":"swiss_rounds","length":5,"rounds":7}]}`, "128", false},
 		"a Swiss of 2 lives for 512":  {simulatedSwiss, "512", true},
 		"a Swiss of 100 lives for 64": {`{"name":"x","phases":[{"kind":"swiss_lives","lives":100,"length":1,"mode":"rounds","pairing":"wins"}]}`, "64", true},
 		"a double elimination of 512": {`{"name":"x","phases":[{"kind":"bracket","length":1,"consolation":true,"last_chance":true,"reconciliation":true,"recharge":true}]}`, "512", true},

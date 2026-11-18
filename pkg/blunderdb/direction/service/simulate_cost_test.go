@@ -82,12 +82,12 @@ func clubField(n, club int) json.RawMessage {
 }
 
 // TestSimulate_SearchCountedNotTimed: a club holding more than half the field with avoid_clubs
-// sends the engine's pairing search after a round it rarely finds. Its events alone stay under
+// sends the engine's pairing search after a round it never finds. Its events alone stay under
 // simulateMaxRunCost; the steps the engine counts carry it past, and the request is refused on
 // that count at any budget, the time the machine takes deciding nothing.
 func TestSimulate_SearchCountedNotTimed(t *testing.T) {
-	const config = `{"name":"x","phases":[{"kind":"swiss_rounds","length":5,"rounds":7,"avoid_clubs":true}]}`
-	players := clubField(20, 12)
+	const config = `{"name":"x","phases":[{"kind":"swiss_rounds","length":5,"rounds":9,"avoid_clubs":true}]}`
+	players := clubField(100, 60)
 	cfg, err := parseDirectionConfig(config)
 	if err != nil {
 		t.Fatal(err)
@@ -117,21 +117,46 @@ func TestSimulate_SearchCountedNotTimed(t *testing.T) {
 }
 
 // TestSimulate_SwissRoundsAnswerToTheCount: no bound on a Swiss by rounds' rounds stands
-// before the count. A Swiss as long as its field is refused on the steps its search spends,
-// small field or large; one whose search ends early is answered at any number of rounds.
+// before the count. A Swiss as long as a large field is refused on the steps its search
+// spends; one whose search ends early, a small field's among them, is answered at any number
+// of rounds.
 func TestSimulate_SwissRoundsAnswerToTheCount(t *testing.T) {
 	for _, tc := range []struct {
 		players, rounds int
 		refused         bool
 	}{
-		{36, 35, true}, {40, 99, true}, {12, 99, true},
-		{37, 17, false}, {16, 11, false}, {13, 9, false}, {8, 20, false},
+		{36, 35, true}, {40, 99, true},
+		{12, 99, false}, {37, 17, false}, {16, 11, false}, {13, 9, false}, {8, 20, false},
 	} {
 		config := fmt.Sprintf(`{"name":"x","phases":[{"kind":"swiss_rounds","length":5,"rounds":%d}]}`, tc.rounds)
 		req := SimulateRequest{Config: json.RawMessage(config), Players: json.RawMessage(fmt.Sprint(tc.players)), Runs: 1}
 		got, err := Simulate(context.Background(), req)
 		if refused := errors.Is(err, ErrSimulationTooHeavy); refused != tc.refused || (!refused && err != nil) {
 			t.Errorf("%d players, %d rounds: %+v (%v); want refused %v", tc.players, tc.rounds, got, err, tc.refused)
+		}
+	}
+}
+
+// TestSimulate_OrdinarySwissAdmitted: the Swiss of a club or an open, 32 to 200 players in 5
+// to 11 rounds, with or without a fifth of the field sharing a club under avoid_clubs, is
+// answered. A bound that refuses them bounds the wrong thing.
+func TestSimulate_OrdinarySwissAdmitted(t *testing.T) {
+	if testing.Short() {
+		t.Skip("plays some forty first runs")
+	}
+	for _, n := range []int{32, 64, 100, 128, 200} {
+		for _, rounds := range []int{5, 7, 9, 11} {
+			for _, clubs := range []bool{false, true} {
+				config := fmt.Sprintf(`{"name":"x","phases":[{"kind":"swiss_rounds","length":5,"rounds":%d,"avoid_clubs":%v}]}`, rounds, clubs)
+				players := json.RawMessage(fmt.Sprint(n))
+				if clubs {
+					players = clubField(n, n/5)
+				}
+				req := SimulateRequest{Config: json.RawMessage(config), Players: players, Runs: 1}
+				if got, err := Simulate(context.Background(), req); err != nil || got.Runs != 1 {
+					t.Errorf("%d players, %d rounds, avoid_clubs %v: %+v (%v); want answered", n, rounds, clubs, got, err)
+				}
+			}
 		}
 	}
 }

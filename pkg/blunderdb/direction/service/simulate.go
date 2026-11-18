@@ -64,12 +64,12 @@ const (
 	simulateMaxRunCost = 30_000_000
 	// SimulateUsefulRuns is the fewest runs whose 10th and 90th centiles say something.
 	SimulateUsefulRuns = 10
-	// simulateSearchStepCost weighs one step of the engine's pairing search in the units of
-	// simulateMaxRunCost: about 27 ns on an ordinary processor. The engine counts the steps
-	// (tournoi.SearchBudget), so a search that never finds a round without rematch — a club
-	// holding more than half the field with avoid_clubs, a Swiss by rounds as long as its
-	// field — ends the run on its count as the events do, and not on a clock.
-	simulateSearchStepCost = 3
+	// simulateSearchStepCost weighs one step of the engine's pairing search, a pair looked
+	// at, kept or not, in the units of simulateMaxRunCost: 5 to 10 ns measured. The engine
+	// counts the steps (tournoi.SearchBudget), so a search that never finds a round without
+	// rematch — a club holding more than half the field with avoid_clubs, a Swiss by rounds
+	// as long as its field — ends the run on its count as the events do, not on a clock.
+	simulateSearchStepCost = 1
 )
 
 // SimulateBudget is the computing time the runs after the first may take: with the two
@@ -223,7 +223,8 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 			most *= 2
 		}
 		// The engine counts its pairing search and stops it past the limit, inside a proposal
-		// the hook never sees the end of; the hook adds the steps already searched to the count.
+		// the hook never sees the end of; the hook adds the steps already searched to the count
+		// and leaves the search what the events have not spent. A limit of 0 would be none.
 		search := &tournoi.SearchBudget{Limit: int64(most / simulateSearchStepCost)}
 		r := sim.Run(cfg, players, sim.Options{Seed: req.Seed + int64(i), Start: start, MaxSteps: simulateMaxSteps,
 			MinPerPoint: cfg.MinPerPoint, Search: search,
@@ -232,6 +233,7 @@ func Simulate(ctx context.Context, req SimulateRequest) (*Simulation, error) {
 				if cost += eventCost(cfg, s); cost+int(search.Used)*simulateSearchStepCost > most {
 					return errRunTooHeavy
 				}
+				search.Limit = max(int64((most-cost)/simulateSearchStepCost), 1)
 				return limit.Err()
 			}})
 		// The caller left: nobody reads a verdict on the request.
@@ -361,8 +363,10 @@ func poolDraw(p tournoi.PhaseConfig, n int) (size, drawn int) {
 
 // eventWork is about what the engine goes through at one event of s: its players, its
 // matches and the planned matches of the phase in play — a pool plans every pair at its
-// draw. A Swiss plans nothing and pairs as it goes, each pairing searching its entrants
-// against one another: a share of their square stands for that search.
+// draw. A Swiss plans nothing and pairs as it goes: the engine counts the steps of a Swiss
+// by rounds' search itself (simulateSearchStepCost), but a continuous Swiss with lives pairs
+// every group of its entrants anew at every event, greedily and uncounted, and a share of
+// their square stands for that.
 func eventWork(s *tournoi.State) int {
 	n := len(s.Players) + len(s.MatchOrder)
 	if s.Current < 0 || s.Current >= len(s.Phases) {
@@ -372,33 +376,39 @@ func eventWork(s *tournoi.State) int {
 	for _, sec := range ph.Sections {
 		n += len(sec.Matches)
 	}
-	if k := ph.Cfg.Kind; k == tournoi.KindSwissLives || k == tournoi.KindSwissRounds || k == tournoi.KindManual {
+	if continuousLives(ph.Cfg) {
 		n += len(ph.Entrants) * len(ph.Entrants) / 64
 	}
 	return n
 }
 
+// continuousLives: a Swiss with lives that pairs as players come free, not by rounds.
+func continuousLives(p tournoi.PhaseConfig) bool {
+	return p.Kind == tournoi.KindSwissLives && p.Mode != "rounds"
+}
+
 // eventCost weighs eventWork by the phase in play, as a run's cost in tens of nanoseconds
 // of an ordinary processor: the engine's work per unit differs by format, from a bracket's
-// sections to the pairing a Swiss by rounds searches anew at every round. Before its first
-// phase a tournament is weighed as that phase.
+// sections to a continuous Swiss pairing at every event. The weights are measured, the
+// search's steps apart, from 32 to 200 players. Before its first phase a tournament is
+// weighed as that phase.
 func eventCost(cfg tournoi.Config, s *tournoi.State) int {
-	kind := ""
+	var p tournoi.PhaseConfig
 	if s.Current >= 0 && s.Current < len(s.Phases) {
-		kind = s.Phases[s.Current].Cfg.Kind
+		p = s.Phases[s.Current].Cfg
 	} else if len(cfg.Phases) > 0 {
-		kind = cfg.Phases[0].Kind
+		p = cfg.Phases[0]
 	}
 	var weight int
-	switch kind {
-	case tournoi.KindBracket, tournoi.KindLivesBracket, tournoi.KindGSL:
+	switch {
+	case p.Kind == tournoi.KindBracket, p.Kind == tournoi.KindLivesBracket, p.Kind == tournoi.KindGSL:
 		weight = 22
-	case tournoi.KindSwissLives:
-		weight = 33
-	case tournoi.KindRoundRobin:
+	case continuousLives(p):
+		weight = 54
+	case p.Kind == tournoi.KindRoundRobin:
 		weight = 40
-	default: // swiss_rounds and manual pair anew at every round, and an unknown kind is weighed as they are
-		weight = 62
+	default: // swiss_rounds, a Swiss with lives by rounds, manual, and an unknown kind
+		weight = 15
 	}
 	return weight * eventWork(s)
 }
