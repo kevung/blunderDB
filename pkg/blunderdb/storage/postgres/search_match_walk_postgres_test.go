@@ -52,8 +52,10 @@ func TestMatchLevelSearchAnswersTheSameThroughAWalk(t *testing.T) {
 	if err := conn.QueryRow(ctx, `SELECT player1_name, player2_name, match_length FROM match WHERE tenant_id = 1 ORDER BY id LIMIT 1`).Scan(&player, &opponent, &length); err != nil {
 		t.Fatal(err)
 	}
-	// A single match has too many moves for a list of ten.
+	// A single match has too many moves for a list of ten. The tenants are small enough for
+	// their other filters to be read first: that read is left out, to compare the walk alone.
 	defer sqlshared.SetMatchListLimit(10)()
+	defer sqlshared.SetMatchRestLimit(0)()
 
 	corpus, commands := corpusFilters(t)
 	var filters []domain.SearchFilters
