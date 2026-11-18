@@ -21,6 +21,9 @@ type mainPlayerMatch struct {
 	Swap     swapSnapshot
 	Header   domain.Match
 	Comments map[int64][]string
+	// The result names its seats: a swap exchanges the scores and the winner.
+	Final  *[2]int32
+	Winner int32
 }
 
 func takeMainPlayerMatch(ctx context.Context, s storage.Storage, id int64) (mainPlayerMatch, error) {
@@ -39,6 +42,8 @@ func takeMainPlayerMatch(ctx context.Context, s storage.Storage, id int64) (main
 	h.Player1Elo, h.Player2Elo, h.Player1Experience, h.Player2Experience = nil, nil, nil, nil
 	h.PR, h.PR2, h.MWCLoss, h.MWCLoss2 = 0, 0, 0, 0
 	h.MWC7, h.MWC7P2 = domain.MWC7{}, domain.MWC7{}
+	out.Final, out.Winner = h.FinalScore, h.Winner
+	h.FinalScore, h.Winner = nil, domain.WinnerUnfinished
 	out.Header = h
 	ids := make([]int64, 0, len(out.Swap.PosByMove))
 	for _, p := range out.Swap.PosByMove {
@@ -65,6 +70,10 @@ func seatsExchanged(got, was mainPlayerMatch) string {
 	}
 	if !reflect.DeepEqual(got.Comments, was.Comments) {
 		return "comments changed"
+	}
+	if got.Winner != -was.Winner || (got.Final == nil) != (was.Final == nil) ||
+		(got.Final != nil && *got.Final != [2]int32{was.Final[1], was.Final[0]}) {
+		return fmt.Sprintf("result %v won by %d, want %v won by %d exchanged", got.Final, got.Winner, was.Final, was.Winner)
 	}
 	g, w := got.Swap, was.Swap
 	if !reflect.DeepEqual(g.PosByMove, w.PosByMove) || !reflect.DeepEqual(g.Positions, w.Positions) ||

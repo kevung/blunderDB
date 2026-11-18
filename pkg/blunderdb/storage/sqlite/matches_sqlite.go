@@ -41,7 +41,8 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	COALESCE(m.tournament_sort_order,0),
 	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,''), COALESCE(m.dice_hash,''),
 	m.player1_elo, m.player2_elo, m.player1_experience, m.player2_experience,
-	COALESCE(m.transcriber,''), m.has_jacoby, m.has_beaver, COALESCE(m.engine_version,''), m.video_source`
+	COALESCE(m.transcriber,''), m.has_jacoby, m.has_beaver, COALESCE(m.engine_version,''), m.video_source,
+	m.final_score_1, m.final_score_2, COALESCE(m.winner,0)`
 
 // LenientTime scans a date column that legacy rows may hold as an empty string, as the
 // zero time, as Go's time.String text or as text in no known layout. All of
@@ -107,6 +108,7 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 	var elo1, elo2 sql.NullFloat64
 	var exp1, exp2, jacoby, beaver sql.NullInt64
 	var video sql.NullString
+	var final1, final2 sql.NullInt32
 	if err := sc.Scan(
 		&m.ID, &m.Player1Name, &m.Player2Name,
 		&m.Event, &m.Location, &m.Round,
@@ -118,8 +120,12 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 		&m.MatchHash, &m.CanonicalHash, &m.DiceHash,
 		&elo1, &elo2, &exp1, &exp2,
 		&m.Transcriber, &jacoby, &beaver, &m.EngineVersion, &video,
+		&final1, &final2, &m.Winner,
 	); err != nil {
 		return domain.Match{}, err
+	}
+	if final1.Valid && final2.Valid {
+		m.FinalScore = &[2]int32{final1.Int32, final2.Int32}
 	}
 	m.Player1Elo, m.Player2Elo = nullFloat(elo1), nullFloat(elo2)
 	m.Player1Experience, m.Player2Experience = nullInt(exp1), nullInt(exp2)
@@ -145,8 +151,9 @@ const matchInsertSQL = `INSERT INTO match (
 	match_length, match_date, file_path, game_count, tournament_id, comment, comment_author,
 	match_hash, canonical_hash, import_batch_id, dice_hash,
 	player1_elo, player2_elo, player1_experience, player2_experience,
-	transcriber, has_jacoby, has_beaver, engine_version, video_source
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULLIF(?, ''))`
+	transcriber, has_jacoby, has_beaver, engine_version, video_source,
+	final_score_1, final_score_2, winner
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULLIF(?, ''),?,?,?)`
 
 func nullFloat(v sql.NullFloat64) *float64 {
 	if !v.Valid {
@@ -178,6 +185,24 @@ func nullBool(v sql.NullInt64) *bool {
 func sourceMetadataArgs(m *domain.Match) []any {
 	return []any{m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
 		m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion, m.VideoSource}
+}
+
+// resultArgs are the match's result columns, after the video source in
+// matchInsertSQL and ReplaceHeader: the final score NULL when unknown, which
+// ReplaceHeader reads as "keep the stored result" (a header restated without
+// its games).
+func resultArgs(m *domain.Match) []any {
+	if m.FinalScore == nil {
+		return []any{nil, nil, m.Winner}
+	}
+	return []any{m.FinalScore[0], m.FinalScore[1], m.Winner}
+}
+
+// headerResultArgs are resultArgs for ReplaceHeader, whose winner is bound
+// after the final score it is kept with.
+func headerResultArgs(m *domain.Match) []any {
+	r := resultArgs(m)
+	return []any{r[0], r[1], r[0], r[2]}
 }
 
 // nullableID returns nil for a zero id so it is stored as SQL NULL — which is
@@ -217,6 +242,7 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 		m.TournamentID, m.Comment, m.CommentAuthor,
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
 		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
+	args = append(args, resultArgs(m)...)
 	res, err := s.db.ExecContext(ctx, matchInsertSQL, args...)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: save match: %w", err)
@@ -267,6 +293,7 @@ func (s *matchStore) Reinstate(ctx context.Context, scope string, m *domain.Matc
 		m.TournamentID, m.Comment, m.CommentAuthor,
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
 		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
+	args = append(args, resultArgs(m)...)
 	if _, err := s.db.ExecContext(ctx, matchReinstateSQL, args...); err != nil {
 		if isKeyViolation(err) {
 			return fmt.Errorf("sqlite: reinstate match %d: %w", m.ID, storage.ErrConflict)
@@ -543,12 +570,14 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 		                  match_hash = ?, canonical_hash = ?, dice_hash = ?,
 		                  player1_elo = ?, player2_elo = ?, player1_experience = ?, player2_experience = ?,
 		                  transcriber = ?, has_jacoby = ?, has_beaver = ?, engine_version = ?,
-		                  video_source = NULLIF(COALESCE(?, video_source), '')
+		                  video_source = NULLIF(COALESCE(?, video_source), ''),
+		                  final_score_1 = COALESCE(?, final_score_1), final_score_2 = COALESCE(?, final_score_2),
+		                  winner = CASE WHEN ? IS NULL THEN winner ELSE ? END
 		 WHERE id = ?`,
-		append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
+		append(append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
 			m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
 			nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash)},
-			sourceMetadataArgs(m)...), id)...)
+			sourceMetadataArgs(m)...), headerResultArgs(m)...), id)...)
 	if err != nil {
 		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
 	}

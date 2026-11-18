@@ -54,6 +54,8 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"MaintenanceLog", checkMaintenanceLogIsolation},
 	{"KeptDates", checkKeptDatesIsolation},
 	{"MatchTextValues", checkMatchTextValuesIsolation},
+	{"MatchResult", checkMatchResultIsolation},
+	{"ListFields", checkListFieldsIsolation},
 }
 
 // checkKeptDatesIsolation: dates kept for a row in one tenant's scope never

@@ -265,7 +265,7 @@ func TestRenderResults_Formats(t *testing.T) {
 	}
 
 	var tableBuf bytes.Buffer
-	if err := renderResults(&tableBuf, one, analyses, "table"); err != nil {
+	if err := renderResults(&tableBuf, one, analyses, nil, "table"); err != nil {
 		t.Fatalf("renderResults table: %v", err)
 	}
 	if !bytes.Contains(tableBuf.Bytes(), []byte("ID")) {
@@ -273,7 +273,7 @@ func TestRenderResults_Formats(t *testing.T) {
 	}
 
 	var jsonBuf bytes.Buffer
-	if err := renderResults(&jsonBuf, one, analyses, "json"); err != nil {
+	if err := renderResults(&jsonBuf, one, analyses, nil, "json"); err != nil {
 		t.Fatalf("renderResults json: %v", err)
 	}
 	if !json.Valid(bytes.TrimSpace(jsonBuf.Bytes())) {
@@ -281,7 +281,7 @@ func TestRenderResults_Formats(t *testing.T) {
 	}
 
 	var xgidBuf bytes.Buffer
-	if err := renderResults(&xgidBuf, one, analyses, "xgid"); err != nil {
+	if err := renderResults(&xgidBuf, one, analyses, nil, "xgid"); err != nil {
 		t.Fatalf("renderResults xgid: %v", err)
 	}
 	if got := strings.TrimSpace(xgidBuf.String()); !strings.HasPrefix(got, "XGID=") || strings.Count(got, ":") != 9 || strings.Contains(got, "\n") {

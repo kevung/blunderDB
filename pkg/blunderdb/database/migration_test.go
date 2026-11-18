@@ -5586,3 +5586,60 @@ func TestMigrate_2_56_0_to_2_57_0_DeckAndTournamentUUID(t *testing.T) {
 		t.Errorf("second run of the step: %v", err)
 	}
 }
+
+func TestMigrate_2_57_0_to_2_58_0_MatchResult(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2570.db")
+
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	for _, stmt := range []string{
+		`ALTER TABLE match DROP COLUMN final_score_1`,
+		`ALTER TABLE match DROP COLUMN final_score_2`,
+		`ALTER TABLE match DROP COLUMN winner`,
+		// Won 7-5 by player 2 in its last game; a 5-point match left at 3-2;
+		// a match without games.
+		`INSERT INTO match (id, player1_name, player2_name, match_length) VALUES (1, 'A', 'B', 7), (2, 'C', 'D', 5), (3, 'E', 'F', 3)`,
+		`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES
+			(1, 1, 0, 0, 1, 5), (1, 2, 5, 5, -1, 2), (2, 1, 0, 0, 1, 3), (2, 2, 3, 0, 0, 0)`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+	stampVersion(t, dbPath, "2.57.0")
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.57.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration: %s, %v", v, err)
+	}
+	want := map[int64]struct {
+		final  *[2]int32
+		winner int32
+	}{1: {&[2]int32{5, 7}, -1}, 2: {&[2]int32{3, 0}, 0}, 3: {nil, 0}}
+	for id, w := range want {
+		m, err := d.GetMatchByID(id)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if (m.FinalScore == nil) != (w.final == nil) || (m.FinalScore != nil && *m.FinalScore != *w.final) || m.Winner != w.winner {
+			t.Errorf("match %d: result %v won by %d, want %v won by %d", id, m.FinalScore, m.Winner, w.final, w.winner)
+		}
+	}
+	var journaled int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM change_log WHERE family = 'match' AND op = 'update'`).Scan(&journaled); err != nil || journaled != 0 {
+		t.Errorf("computing the results journaled %d match update(s), %v; want none", journaled, err)
+	}
+	if err := d.migrate_2_57_0_to_2_58_0(context.Background()); err != nil {
+		t.Errorf("second run of the step: %v", err)
+	}
+}

@@ -394,6 +394,7 @@ var databaseParity = map[string]parityEntry{
 	"LoadPositionIDsByFilters":          {Why: "the whole id list of a search the GUI holds bounded (a sub-search within a list on screen, an Anki deck filled from a search); a plain search is browsed by SearchPositionIDs windows. The CLI's `search` and the daemon's /v1/search.find page the survivors and print or stream the positions themselves, which is what a script or a remote client wants"},
 	"LoadPositionView":                  {Why: "the GUI board reads a position's analysis and comment in one binding call to save an IPC round trip; the CLI and the daemon have no round-trip cost to save and expose the two halves apart (LoadAnalysis, LoadComment)"},
 	"LoadPositionsByIDs":                {CLI: "search --position-ids", Server: "/v1/positions.loadByIds"},
+	"PositionListFields":                {CLI: "list --type positions", Server: "/v1/positions.listFields", Why: "the CLI prints the list fields of every position it lists or finds (`list --type positions`, `search`), a page at a time"},
 	"LoadPositionsByFilters":            {CLI: "search", Server: "/v1/search.find"},
 	"LoadPositionsByFiltersCore":        {CLI: "search", Server: "/v1/search.find"},
 	"LoadPositionsByFiltersCoreCtx":     {Why: whyCtxVariant},

@@ -647,6 +647,8 @@ export function PlayerRanking(arg1:database.StatsFilter,arg2:number):Promise<Arr
 
 export function PlayerRankingCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.RankedPlayer>>;
 
+export function PositionListFields(arg1:Array<number>):Promise<Array<storage.PositionListFields>>;
+
 export function PositionsToRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<Array<domain.Position>>;
 
 export function PositionsToRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<Array<domain.Position>>;
