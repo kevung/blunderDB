@@ -31,6 +31,7 @@ const (
 	healthCheckPeriodEnv = "BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD"
 	connectTimeoutEnv    = "BLUNDERDB_POSTGRES_CONNECT_TIMEOUT"
 	maxConnIdleTimeEnv   = "BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME"
+	queryExecModeEnv     = "BLUNDERDB_POSTGRES_QUERY_EXEC_MODE"
 )
 
 // Connection-pool defaults, each overridable via the env vars above.
@@ -89,6 +90,13 @@ func openPool(ctx context.Context, dsn string, opts *storage.Options) (*Storage,
 	cfg.HealthCheckPeriod = durationFromEnv(healthCheckPeriodEnv, defaultHealthCheck)
 	cfg.MaxConnIdleTime = durationFromEnv(maxConnIdleTimeEnv, defaultMaxConnIdleTime)
 	cfg.ConnConfig.ConnectTimeout = durationFromEnv(connectTimeoutEnv, defaultConnectTimeout)
+	mode, override, err := resolveQueryExecMode(dsn, os.Getenv(queryExecModeEnv))
+	if err != nil {
+		return nil, err
+	}
+	if override {
+		cfg.ConnConfig.DefaultQueryExecMode = mode
+	}
 
 	if opts != nil && opts.EnableRLS {
 		configureRLSPool(cfg)
@@ -109,6 +117,36 @@ func openPool(ctx context.Context, dsn string, opts *storage.Options) (*Storage,
 	}
 
 	return &Storage{binder: binder{db: pool}, pool: pool}, nil
+}
+
+// queryExecModes maps the accepted values of queryExecModeEnv (pgx's own
+// names) to their mode.
+var queryExecModes = map[string]pgx.QueryExecMode{
+	"cache_statement": pgx.QueryExecModeCacheStatement,
+	"cache_describe":  pgx.QueryExecModeCacheDescribe,
+	"describe_exec":   pgx.QueryExecModeDescribeExec,
+	"exec":            pgx.QueryExecModeExec,
+	"simple_protocol": pgx.QueryExecModeSimpleProtocol,
+}
+
+// resolveQueryExecMode picks the pool's query execution mode. An explicit
+// default_query_exec_mode in the DSN wins (override=false: pgx already applied
+// it); otherwise env, then cache_describe. pgx's own default, cache_statement,
+// prepares every distinct SQL text server-side, and variable-length IN lists
+// and multi-row INSERTs then pile up hundreds of cached plans per connection;
+// cache_describe keeps the parameter-type cache without named prepared plans.
+func resolveQueryExecMode(dsn, env string) (mode pgx.QueryExecMode, override bool, err error) {
+	if strings.Contains(dsn, "default_query_exec_mode") {
+		return 0, false, nil
+	}
+	if env == "" {
+		return pgx.QueryExecModeCacheDescribe, true, nil
+	}
+	m, ok := queryExecModes[env]
+	if !ok {
+		return 0, false, fmt.Errorf("postgres: %s=%q: want cache_statement, cache_describe, describe_exec, exec or simple_protocol", queryExecModeEnv, env)
+	}
+	return m, true, nil
 }
 
 // intFromEnv reads a positive integer from the named environment variable,

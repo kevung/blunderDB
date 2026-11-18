@@ -2461,6 +2461,16 @@ utilisées), ``_idle`` (disponibles), ``_max`` (plafond configuré) et
 ``_wait_count`` (nombre cumulé d'``Acquire`` ayant dû attendre une connexion
 libre).
 
+``BLUNDERDB_POSTGRES_QUERY_EXEC_MODE`` choisit le mode d'exécution des
+requêtes du pool : ``cache_describe`` (par défaut), ``cache_statement``,
+``describe_exec``, ``exec`` ou ``simple_protocol`` (les noms de pgx). Par
+défaut le moteur ne prépare pas de plan nommé côté serveur : en
+``cache_statement``, chaque texte SQL distinct (listes ``IN`` et insertions
+multi-lignes de taille variable) laisse un plan en mémoire sur la connexion
+jusqu'à sa fermeture. Une valeur inconnue fait échouer le démarrage ; un
+``default_query_exec_mode`` donné dans l'URL de connexion l'emporte sur la
+variable.
+
 Avec le backend SQLite, le daemon ouvre une connexion par cœur, dix au moins
 (le bureau en garde dix). Les requêtes qui parcourent toute la bibliothèque
 (``stats.*``, ``search.count``, ``search.find``, ``search.ids``,
