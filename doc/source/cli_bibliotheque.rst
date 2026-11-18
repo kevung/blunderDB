@@ -126,25 +126,33 @@ chacun équivaut à un jeton du langage de requête (:ref:`cmd_filter`) :
 
 ``--format table`` (le défaut) donne une ligne par position : l'identifiant,
 le score, la valeur du videau, le type de décision, le lancer, la meilleure
-décision et son équité. Les deux dernières colonnes restent vides pour une
-position sans analyse.
+décision et son équité ; ces deux colonnes restent vides pour une position
+sans analyse. Suivent **Error**, l'équité perdue par la décision jouée, sur
+l'échelle de la position (points en money, équité normalisée à un score de
+match) : ``no analysis`` sans analyse, ``-`` quand la décision jouée n'est pas
+parmi celles analysées ; **Date**, le jour du plus ancien match qui atteint la
+position, sinon celui de son entrée dans la base ; **Collections**, les
+collections qui la contiennent.
 
 .. code-block:: text
 
    Found 5 position(s)
 
-   ID  Score  Cube  Type  Dice  Best Move  Equity
-   --  -----  ----  ----  ----  ---------  ------
-   2   7-7    0     cube        No Double  -0.005
-   4   7-7    0     cube        No Double  -0.027
-   6   7-7    0     cube        No Double  -0.161
-   8   7-7    0     cube        No Double  0.256
-   10  7-7    0     cube        No Double  -0.234
+   ID  Score  Cube  Type  Dice  Best Move  Equity  Error  Date        Collections
+   --  -----  ----  ----  ----  ---------  ------  -----  ----        -----------
+   2   7-7    0     cube        No Double  -0.005  0.000  2023-11-26
+   4   7-7    0     cube        No Double  -0.027  0.000  2023-11-26
+   6   7-7    0     cube        No Double  -0.161  0.000  2023-11-26  Videau
+   8   7-7    0     cube        No Double  0.256   0.071  2023-11-26  Videau
+   10  7-7    0     cube        No Double  -0.234  0.000  2023-11-26
 
 ``--format json`` donne un tableau des mêmes positions. Les champs sont
 ``id``, ``xgid``, ``score``, ``cube``, ``decision_type`` (``checker`` ou
 ``cube``) et ``dice``, toujours présents ; ``best_move`` et ``equity``
-n'apparaissent que si la position porte une analyse qui les renseigne. La ligne
+n'apparaissent que si la position porte une analyse qui les renseigne. Les
+champs de liste suivent : ``analysed``, ``played_error`` (``null`` sans
+analyse, ou quand la décision jouée n'est pas parmi celles analysées),
+``date`` et ``collections`` (les noms, liste vide si aucune). La ligne
 ``Found n position(s)`` va sur la sortie d'erreur : la sortie standard ne porte
 que le JSON.
 
@@ -164,7 +172,13 @@ que le JSON.
          3
        ],
        "best_move": "10/3",
-       "equity": 0.565
+       "equity": 0.565,
+       "analysed": true,
+       "played_error": 0.042,
+       "date": "2023-11-26",
+       "collections": [
+         "Ouvertures"
+       ]
      }
    ]
 
@@ -265,10 +279,14 @@ Affiche le contenu de la base de données.
 
 **Types:**
 
-* ``matches`` — Liste des matchs importés.
+* ``matches`` — Liste des matchs importés, avec leur résultat : score final
+  et vainqueur, ou ``unfinished`` quand aucun joueur n'a atteint la longueur
+  du match.
 * ``tournaments`` — Liste des tournois.
 * ``positions`` — Liste des positions (limité à 10 par défaut ;
-  ``--offset <n>`` saute les *n* premières). Seule la fenêtre affichée est
+  ``--offset <n>`` saute les *n* premières). Chaque position porte l'erreur
+  de la décision jouée (ou ``no analysis``), sa date et ses collections, comme
+  la sortie de ``search``. Seule la fenêtre affichée est
   lue, quelle que soit la taille de la base. Avec
   ``--format csv``, devient un **export tabulaire** : une ligne par position,
   avec son XGID, sa phase, son score, son videau, ses pips et les colonnes

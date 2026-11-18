@@ -1,10 +1,16 @@
 package database
 
 import (
+	"context"
 	"os"
 	"path/filepath"
+	"slices"
 	"sync"
 	"testing"
+	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Scale benchmarks run against a large pre-built database rather than the
@@ -159,4 +165,48 @@ func BenchmarkScale_GetAllMatches(b *testing.B) {
 		n = len(ms)
 	}
 	b.ReportMetric(float64(n), "matches")
+}
+
+// BenchmarkScale_SearchPageListFields walks the first pages of 24 positions of
+// the whole library by cursor, as a table view does, and reports the median
+// page (search page and its analyses) without and with its list fields
+// (played error, date, collections): the share the list fields add.
+func BenchmarkScale_SearchPageListFields(b *testing.B) {
+	db := openScaleDB(b)
+	const pages = 200
+	var bare, full []time.Duration
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		cursor := ""
+		for p := 0; p < pages; p++ {
+			start := time.Now()
+			positions, _, next, err := db.LoadPositionsPageByFiltersCtx(context.Background(), domain.SearchFilters{},
+				storage.PageOpts{Limit: 24, Cursor: cursor})
+			if err != nil {
+				b.Fatal(err)
+			}
+			page := time.Since(start)
+			ids := make([]int64, len(positions))
+			for j := range positions {
+				ids[j] = positions[j].ID
+			}
+			if _, err := db.PositionListFields(ids); err != nil {
+				b.Fatal(err)
+			}
+			bare, full = append(bare, page), append(full, time.Since(start))
+			if next == "" {
+				break
+			}
+			cursor = next
+		}
+	}
+	b.StopTimer()
+	median := func(d []time.Duration) float64 {
+		slices.Sort(d)
+		return float64(d[len(d)/2].Microseconds()) / 1000
+	}
+	p50, p50Fields := median(bare), median(full)
+	b.ReportMetric(p50, "p50-page-ms")
+	b.ReportMetric(p50Fields, "p50-page+fields-ms")
+	b.ReportMetric(100*(p50Fields-p50)/p50, "added-%")
 }

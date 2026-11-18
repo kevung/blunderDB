@@ -16,7 +16,10 @@ Le champ de filtre, en haut du panneau (*/* pour y aller, *Esc* pour
 l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu, le
 tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes
 sont faits par la base : la liste se charge par pages au fil du défilement, et
-le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une
+le compteur « n / N matchs » indique la part chargée. La colonne
+**Résultat** donne le score final, les points du vainqueur en gras (son nom
+au survol) ; un match qu'aucun joueur n'a mené à la longueur prévue s'affiche
+en gris. Corriger un joueur, une
 date ou un tournoi dans la liste ne met à jour que la ligne éditée.
 
 Quand la liste est vide, le panneau propose **Importer… (Ctrl+I)** ; sans base
