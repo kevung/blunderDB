@@ -110,10 +110,15 @@ func MergeSavedAnalysis(existing *domain.PositionAnalysis, analysis domain.Posit
 		if analysis.CheckerAnalysis != nil {
 			engine.RankCheckerMoves(analysis.CheckerAnalysis.Moves)
 		}
+		analysis.AllCheckerAnalyses = engine.MergeAnalysisCheckerSources(nil, &analysis)
 		return analysis
 	}
 
 	analysis.CreationDate = existing.CreationDate
+
+	// Computed before the merged view replaces the incoming moves: each
+	// source keeps its own evaluation, whichever wins the merge.
+	analysis.AllCheckerAnalyses = engine.MergeAnalysisCheckerSources(existing, &analysis)
 
 	if existing.CheckerAnalysis != nil && analysis.CheckerAnalysis != nil {
 		analysis.CheckerAnalysis.Moves = engine.MergeCheckerMoves(

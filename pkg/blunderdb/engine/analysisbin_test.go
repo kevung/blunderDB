@@ -311,8 +311,9 @@ func TestBinaryFormatCoversEveryField(t *testing.T) {
 	sort.Strings(got)
 	list := strings.Join(got, "\n")
 	sum := sha256.Sum256([]byte(list))
-	// The 93 leaf fields format version 1 writes, by the hash of their list.
-	const want = "7132471539e17044"
+	// The 107 leaf fields format version 2 writes (version 1 the same less
+	// AllCheckerAnalyses), by the hash of their list.
+	const want = "3eca881e2fd3ed93"
 	if hex.EncodeToString(sum[:8]) != want {
 		t.Fatalf("PositionAnalysis changed shape (%d leaf fields, hash %x); binary format version 1 knows:\n%s",
 			len(got), sum[:8], list)
@@ -335,7 +336,7 @@ func TestBinarySeedStringsAreUnique(t *testing.T) {
 // error, never a misread.
 func TestBinaryBlobOfUnknownVersionIsRefused(t *testing.T) {
 	blob, _ := EncodeAnalysisForStorage(&domain.PositionAnalysis{XGID: "x"})
-	blob[1] = binFormatVersion + 1
+	blob[1] = binFormatVersionSources + 1
 	if _, err := DecodeAnalysisFromStorage(blob); err == nil || !strings.Contains(err.Error(), "unknown binary format") {
 		t.Fatalf("unknown version accepted: %v", err)
 	}

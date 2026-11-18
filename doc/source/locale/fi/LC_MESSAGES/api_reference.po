@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 14:26+0100\n"
+"POT-Creation-Date: 2026-11-19 00:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -125,11 +125,33 @@ msgstr ""
 "sitä, ohittaa ``withPlayed``-kentän ja palauttaa analyysin ilman "
 "otteluiden siirtoja."
 
-#: ../../source/api_reference.rst:504
+#: ../../source/api_reference.rst:503
+msgid ""
+"``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
+"chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
+"évalué la position (un moteur à une profondeur, un rollout étant une "
+"profondeur à part), l'analyse porte aussi ``allCheckerAnalyses`` : une "
+"entrée par source, avec son moteur (``analysisEngine``), sa profondeur "
+"(``analysisDepth``) et ses propres coups (``moves``), XG en tête, comme "
+"``allCubeAnalyses`` pour le videau. Le champ est absent quand une seule "
+"source a évalué la position : ``checkerAnalysis`` est alors cette source."
+" Une source importée de nouveau remplace sa propre entrée."
+msgstr ""
+"``checkerAnalysis`` on ehdokassiirtojen yhdistetty näkymä: kullekin "
+"siirrolle syvin arvio. Kun useampi lähde on arvioinut aseman (yksi "
+"moottori yhdellä syvyydellä, rollout omana syvyytenään), analyysissä on "
+"lisäksi ``allCheckerAnalyses``: yksi merkintä lähdettä kohden, mukana sen"
+" moottori (``analysisEngine``), syvyys (``analysisDepth``) ja omat "
+"siirrot (``moves``), XG ensin, kuten ``allCubeAnalyses`` kuutiolle. "
+"Kenttä puuttuu, kun vain yksi lähde on arvioinut aseman: "
+"``checkerAnalysis`` on silloin tuo lähde. Uudelleen tuotu lähde korvaa "
+"oman merkintänsä."
+
+#: ../../source/api_reference.rst:513
 msgid "Repères d'une transcription"
 msgstr "Litteroinnin aikaleimat"
 
-#: ../../source/api_reference.rst:506
+#: ../../source/api_reference.rst:515
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -159,7 +181,7 @@ msgstr ""
 "paikallinen polku), tyhjä merkkijono irrottaa sen; ``set_header`` asettaa"
 " sen myös, kun sen otsake nimeää lähteen, mutta ei koskaan poista sitä."
 
-#: ../../source/api_reference.rst:518
+#: ../../source/api_reference.rst:527
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -175,7 +197,7 @@ msgstr ""
 " ilman toiminnan aikamerkkiä, mitattuna heitosta seuraavan toiminnon "
 "ensimmäiseen hetkeen."
 
-#: ../../source/api_reference.rst:524
+#: ../../source/api_reference.rst:533
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

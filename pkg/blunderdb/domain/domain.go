@@ -42,14 +42,16 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.57.0"
+	DatabaseVersion = "2.58.0"
 
 	// MinReaderVersion is the oldest schema version a binary must speak to
 	// open a database this binary has opened for writing. Raised only when a
 	// binary of an older schema would write rows the newer one cannot trust:
 	// from 2.50.0 on, an analysis written without the per-move columns of
-	// 2.50 is never re-derived.
-	MinReaderVersion = "2.50.0"
+	// 2.50 is never re-derived. From 2.58.0 on, an analysis blob may carry
+	// per-source checker evaluations a 2.57 decoder rejects as unknown flags,
+	// and a rewrite by such a binary would drop them.
+	MinReaderVersion = "2.58.0"
 )
 
 // Anki deck source types
@@ -840,6 +842,16 @@ type CheckerAnalysis struct {
 	Moves []CheckerMove `json:"moves"`
 }
 
+// CheckerSourceAnalysis is one source's evaluation of a position's candidate
+// moves: one engine at one depth, a rollout being a depth of its own. Depth is
+// the label of the deepest move the source evaluated, the one an engine such
+// as XG ranks every other candidate against.
+type CheckerSourceAnalysis struct {
+	AnalysisEngine string        `json:"analysisEngine"`
+	AnalysisDepth  string        `json:"analysisDepth"`
+	Moves          []CheckerMove `json:"moves"`
+}
+
 type PositionAnalysis struct {
 	PositionID            int                    `json:"positionId"`
 	XGID                  string                 `json:"xgid"`
@@ -850,10 +862,16 @@ type PositionAnalysis struct {
 	DoublingCubeAnalysis  *DoublingCubeAnalysis  `json:"doublingCubeAnalysis,omitempty"`
 	AllCubeAnalyses       []DoublingCubeAnalysis `json:"allCubeAnalyses,omitempty"`
 	CheckerAnalysis       *CheckerAnalysis       `json:"checkerAnalysis,omitempty"`
-	PlayedMove            string                 `json:"playedMove,omitempty"`        // Deprecated: Use PlayedMoves instead
-	PlayedCubeAction      string                 `json:"playedCubeAction,omitempty"`  // Deprecated: Use PlayedCubeActions instead
-	PlayedMoves           []string               `json:"playedMoves,omitempty"`       // All moves played in this position across different matches
-	PlayedCubeActions     []string               `json:"playedCubeActions,omitempty"` // All cube actions taken in this position across different matches
+	// AllCheckerAnalyses keeps every source's evaluation of the candidate
+	// moves when more than one source evaluated them; CheckerAnalysis stays
+	// the merged view, where the deepest evaluation of each move wins. Nil
+	// when a single source did, as AllCubeAnalyses is for one engine: the
+	// merged view is then that source (engine.CheckerSources).
+	AllCheckerAnalyses []CheckerSourceAnalysis `json:"allCheckerAnalyses,omitempty"`
+	PlayedMove         string                  `json:"playedMove,omitempty"`        // Deprecated: Use PlayedMoves instead
+	PlayedCubeAction   string                  `json:"playedCubeAction,omitempty"`  // Deprecated: Use PlayedCubeActions instead
+	PlayedMoves        []string                `json:"playedMoves,omitempty"`       // All moves played in this position across different matches
+	PlayedCubeActions  []string                `json:"playedCubeActions,omitempty"` // All cube actions taken in this position across different matches
 	// Rollouts are the rollouts written down on this position, each its own
 	// Configuration, beside the analysis above and never in its place.
 	Rollouts         []RolloutAnalysis `json:"rollouts,omitempty"`

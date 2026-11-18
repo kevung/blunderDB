@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 14:26+0100\n"
+"POT-Creation-Date: 2026-11-19 00:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -121,11 +121,33 @@ msgstr ""
 " header: a daemon that does not send it ignores ``withPlayed`` and "
 "returns the analysis without the matches' moves."
 
-#: ../../source/api_reference.rst:504
+#: ../../source/api_reference.rst:503
+msgid ""
+"``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
+"chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
+"évalué la position (un moteur à une profondeur, un rollout étant une "
+"profondeur à part), l'analyse porte aussi ``allCheckerAnalyses`` : une "
+"entrée par source, avec son moteur (``analysisEngine``), sa profondeur "
+"(``analysisDepth``) et ses propres coups (``moves``), XG en tête, comme "
+"``allCubeAnalyses`` pour le videau. Le champ est absent quand une seule "
+"source a évalué la position : ``checkerAnalysis`` est alors cette source."
+" Une source importée de nouveau remplace sa propre entrée."
+msgstr ""
+"``checkerAnalysis`` is the merged view of the candidate moves: for each "
+"move, the deepest evaluation. When several sources have evaluated the "
+"position (one engine at one depth, a rollout being a depth of its own), "
+"the analysis also carries ``allCheckerAnalyses``: one entry per source, "
+"with its engine (``analysisEngine``), its depth (``analysisDepth``) and "
+"its own moves (``moves``), XG first, like ``allCubeAnalyses`` for the "
+"cube. The field is absent when a single source has evaluated the "
+"position: ``checkerAnalysis`` is then that source. A source imported "
+"again replaces its own entry."
+
+#: ../../source/api_reference.rst:513
 msgid "Repères d'une transcription"
 msgstr "Timecodes of a transcription"
 
-#: ../../source/api_reference.rst:506
+#: ../../source/api_reference.rst:515
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -155,7 +177,7 @@ msgstr ""
 "``set_header`` also sets it when its header names one, but never clears "
 "it."
 
-#: ../../source/api_reference.rst:518
+#: ../../source/api_reference.rst:527
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -171,7 +193,7 @@ msgstr ""
 "estimate: a play without an action timecode, measured from the roll to "
 "the next action's first instant."
 
-#: ../../source/api_reference.rst:524
+#: ../../source/api_reference.rst:533
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

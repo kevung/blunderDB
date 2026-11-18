@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 14:26+0100\n"
+"POT-Creation-Date: 2026-11-19 00:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -123,11 +123,33 @@ msgstr ""
 "With-Played``: демон, который его не отправляет, игнорирует "
 "``withPlayed`` и возвращает анализ без ходов матчей."
 
-#: ../../source/api_reference.rst:504
+#: ../../source/api_reference.rst:503
+msgid ""
+"``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
+"chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
+"évalué la position (un moteur à une profondeur, un rollout étant une "
+"profondeur à part), l'analyse porte aussi ``allCheckerAnalyses`` : une "
+"entrée par source, avec son moteur (``analysisEngine``), sa profondeur "
+"(``analysisDepth``) et ses propres coups (``moves``), XG en tête, comme "
+"``allCubeAnalyses`` pour le videau. Le champ est absent quand une seule "
+"source a évalué la position : ``checkerAnalysis`` est alors cette source."
+" Une source importée de nouveau remplace sa propre entrée."
+msgstr ""
+"``checkerAnalysis`` — объединённое представление ходов-кандидатов: для "
+"каждого хода самая глубокая оценка. Когда позицию оценили несколько "
+"источников (один движок на одной глубине, причём роллаут — отдельная "
+"глубина), анализ также содержит ``allCheckerAnalyses``: по одной записи "
+"на источник, с его движком (``analysisEngine``), глубиной "
+"(``analysisDepth``) и собственными ходами (``moves``), XG первым, как "
+"``allCubeAnalyses`` для куба. Поле отсутствует, когда позицию оценил "
+"только один источник: тогда ``checkerAnalysis`` и есть этот источник. "
+"Повторно импортированный источник заменяет свою собственную запись."
+
+#: ../../source/api_reference.rst:513
 msgid "Repères d'une transcription"
 msgstr "Таймкоды транскрипции"
 
-#: ../../source/api_reference.rst:506
+#: ../../source/api_reference.rst:515
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -157,7 +179,7 @@ msgstr ""
 "путь), пустая строка отвязывает его; ``set_header`` тоже задаёт его, "
 "когда его заголовок называет источник, но никогда не стирает."
 
-#: ../../source/api_reference.rst:518
+#: ../../source/api_reference.rst:527
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -172,7 +194,7 @@ msgstr ""
 "вместе с ``decision_estimated`` — это оценка: ход без метки действия, "
 "измеренный от броска до первого момента следующего действия."
 
-#: ../../source/api_reference.rst:524
+#: ../../source/api_reference.rst:533
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

@@ -64,7 +64,11 @@ const maxTimeOffset = 100 * 3600
 const (
 	binFlagCube    = 1 << 0
 	binFlagChecker = 1 << 1
-	binFlagsKnown  = binFlagCube | binFlagChecker
+	// binFlagCheckerSources marks a payload ending with the per-source
+	// checker evaluations; a payload without them keeps the bytes it had
+	// before the flag existed.
+	binFlagCheckerSources = 1 << 2
+	binFlagsKnown         = binFlagCube | binFlagChecker | binFlagCheckerSources
 
 	binBoolCubefulBias  = 1 << 0
 	binBoolExactBearoff = 1 << 1
@@ -278,6 +282,9 @@ func MarshalAnalysisBinary(a *domain.PositionAnalysis) []byte {
 	if a.CheckerAnalysis != nil {
 		flags |= binFlagChecker
 	}
+	if a.AllCheckerAnalyses != nil {
+		flags |= binFlagCheckerSources
+	}
 	w.uvarint(flags)
 	w.varint(int64(a.PositionID))
 	w.str(a.XGID)
@@ -313,6 +320,18 @@ func MarshalAnalysisBinary(a *domain.PositionAnalysis) []byte {
 	w.count(a.Rollouts == nil, len(a.Rollouts))
 	for i := range a.Rollouts {
 		w.rollout(&a.Rollouts[i], a.CreationDate)
+	}
+	if a.AllCheckerAnalyses != nil {
+		w.count(false, len(a.AllCheckerAnalyses))
+		for i := range a.AllCheckerAnalyses {
+			src := &a.AllCheckerAnalyses[i]
+			w.str(src.AnalysisEngine)
+			w.str(src.AnalysisDepth)
+			w.count(src.Moves == nil, len(src.Moves))
+			for j := range src.Moves {
+				w.move(j, src.Moves)
+			}
+		}
 	}
 	return w.buf
 }
@@ -645,6 +664,27 @@ func UnmarshalAnalysisBinary(payload []byte) (domain.PositionAnalysis, error) {
 		a.Rollouts = make([]domain.RolloutAnalysis, n)
 		for i := range a.Rollouts {
 			r.rollout(&a.Rollouts[i], a.CreationDate)
+			if r.err != nil {
+				break
+			}
+		}
+	}
+	if flags&binFlagCheckerSources != 0 && r.err == nil {
+		n, _ := r.count()
+		a.AllCheckerAnalyses = make([]domain.CheckerSourceAnalysis, n)
+		for i := range a.AllCheckerAnalyses {
+			src := &a.AllCheckerAnalyses[i]
+			src.AnalysisEngine = r.str()
+			src.AnalysisDepth = r.str()
+			if m, isNil := r.count(); !isNil {
+				src.Moves = make([]domain.CheckerMove, m)
+				for j := range src.Moves {
+					r.move(j, src.Moves)
+					if r.err != nil {
+						break
+					}
+				}
+			}
 			if r.err != nil {
 				break
 			}

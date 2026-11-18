@@ -65,6 +65,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Stats/AnalysisEngines", testStatsAnalysisEngines},
 		{"Stats/MatchTextValues", testStatsMatchTextValues},
 		{"Analysis/MergeSkipsAnIdenticalResult", testAnalysisMergeSkipsAnIdenticalResult},
+		{"Analysis/KeepsCheckerSources", testAnalysisKeepsCheckerSources},
 		{"Analysis/MergeTakesPlayedFromTheCaller", testAnalysisMergeTakesPlayedFromTheCaller},
 		{"Analysis/RolloutIsASecondAnalysis", testRolloutIsASecondAnalysis},
 		{"Analysis/RolloutAloneFeedsTheSearch", testRolloutAloneFeedsTheSearch},

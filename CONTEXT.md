@@ -109,7 +109,10 @@ was lost with the Match.
 A *record* of what an engine concluded about a Position, stored against it and read back
 later. It carries its provenance (`AnalysisEngine`, e.g. XG, GNUbg, BGBlitz, gammonNet) and
 its `AnalysisDepth`. A Position has at most one Analysis row; several engines coexist inside
-it, each entry tagged with the engine that produced it. An Analysis is *relit*, never
+it, each entry tagged with the engine that produced it. For checker play the merged view keeps,
+per move, the deepest entry; when several **Sources** — one engine at one depth, a rollout
+being a depth of its own — analysed the Position, each Source's moves are also kept whole
+(`AllCheckerAnalyses`), as each engine's cube entry is. An Analysis is *relit*, never
 recomputed: a Position with no identity — one the user has just composed on the board — cannot
 have one.
 _Avoid_: evaluation, eval, engine output

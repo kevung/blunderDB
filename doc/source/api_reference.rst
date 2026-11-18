@@ -500,6 +500,15 @@ en tête, comme les lit le bureau. Chaque réponse d'``analyses.load`` porte l'e
 ``X-Blunderdb-With-Played`` : un démon qui ne le rend pas ignore ``withPlayed`` et rend
 l'analyse sans les coups des matchs.
 
+``checkerAnalysis`` est la vue fusionnée des coups candidats : pour chaque coup,
+l'évaluation la plus profonde. Quand plusieurs sources ont évalué la position (un
+moteur à une profondeur, un rollout étant une profondeur à part), l'analyse porte
+aussi ``allCheckerAnalyses`` : une entrée par source, avec son moteur
+(``analysisEngine``), sa profondeur (``analysisDepth``) et ses propres coups
+(``moves``), XG en tête, comme ``allCubeAnalyses`` pour le videau. Le champ est
+absent quand une seule source a évalué la position : ``checkerAnalysis`` est alors
+cette source. Une source importée de nouveau remplace sa propre entrée.
+
 Repères d'une transcription
 ---------------------------
 
