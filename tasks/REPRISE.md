@@ -46,13 +46,21 @@
   les branches `perf/952-resultat-wip*` sont supprimées.
 - Une base SQLite ouverte en lecture seule sans migration lit un résultat inconnu au lieu
   d'échouer sur la colonne absente.
-- **Plancher de lecture 2.59.0, monté par l'écriture** (décidé le 19) : `MinReaderVersion` reste
-  2.50.0 (ADR-0113 §6 : jamais de montée à l'ouverture) ; le plancher monte à 2.59.0 dans la
-  transaction qui écrit le premier résultat de match, avec son ADR. En cours le 19 au soir sur la
-  branche, main refusionnée : lire le corps de la PR et `gh pr checks 959` pour l'état exact
-  (suite PostgreSQL complète, CI).
-- **Reste avant fusion** : toutes les mesures « à mesurer » du corps de la PR, au banc gammonGo
-  base pleine ; puis sortir du brouillon, fusionner, fermer #952.
+- **Plancher de lecture 2.59.0, monté par l'écriture** (ADR-0114, 13b9d4426) : `MinReaderVersion`
+  reste 2.50.0 (ADR-0113 §6 : jamais de montée à l'ouverture) ; `MatchResultReaderVersion` vaut
+  2.59.0 et le plancher y monte dans la transaction qui écrit un résultat connu (`Save`,
+  `Reinstate`, `ReplaceHeader` des deux backends, export SQLite). main refusionnée, suite
+  PostgreSQL complète verte en local, CI de la PR verte.
+- **Deux points à valider avant fusion** :
+  - le rôle `blunderdb_loader` reçoit `INSERT, UPDATE` sur `metadata` (il n'avait que `SELECT`),
+    sans quoi `bulkload` échoue à monter le plancher — un rôle censé n'atteindre que son tenant
+    écrit dans une table globale ;
+  - une base migrée de 2.58 garde ses résultats rétro-calculés **sans** monter le plancher : un
+    binaire 2.58 peut encore y importer des matchs au résultat inconnu, jusqu'au premier résultat
+    écrit par un binaire 2.59. Écrit dans l'ADR-0114 ; monter à la migration reviendrait à monter
+    à l'ouverture.
+- **Reste avant fusion** : ces deux validations ; toutes les mesures « à mesurer » du corps de
+  la PR, au banc gammonGo base pleine ; puis sortir du brouillon, fusionner, fermer #952.
 - **Mesure toujours due depuis #911** : Q11 et Q12 à 50 clients sur la pile du banc.
 
 ## Chantier vision — en pause, bloqué hors dépôt
@@ -75,7 +83,8 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. #959 : vérifier le plancher et la CI de la PR, mesures au banc, fusion ; fermer #952.
+1. #959 : les deux validations (rôle de chargement, base migrée), mesures au banc, fusion ;
+   fermer #952.
 2. #935 : fermer à la première nuit verte.
 3. #961 : tri des matchs par PR, origine d'un tournoi, critères des collections vivantes (la
    version qui les porte demande l'accord du propriétaire).
