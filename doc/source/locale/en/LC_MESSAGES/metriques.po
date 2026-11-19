@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 01:11+0100\n"
+"POT-Creation-Date: 2026-11-19 01:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -470,10 +470,118 @@ msgstr ""
 "differ from XG's through the analysis, not through the formula."
 
 #: ../../source/metriques.rst:204
+msgid "Courbe des chances de gagner le match"
+msgstr "Match winning chances curve"
+
+#: ../../source/metriques.rst:206
+msgid ""
+"**La question.** Où le match a-t-il basculé, et par la faute de qui ou "
+"par les dés ? La perte cumulée dit ce que chaque joueur a donné ; la "
+"courbe dit où en était le match à chaque décision, et sépare ce que les "
+"erreurs ont coûté de ce que les dés ont fait."
+msgstr ""
+"**The question.** Where did the match turn, and whose fault was it, the "
+"player's or the dice's? The cumulated loss tells what each player gave "
+"away; the curve tells where the match stood at each decision, and "
+"separates what the errors cost from what the dice did."
+
+#: ../../source/metriques.rst:211
+msgid ""
+"**Définition.** Pour chaque décision, deux valeurs, toujours du point de "
+"vue du premier joueur. *Avant* : ses chances de gagner le match si la "
+"décision est prise au mieux, lues dans l'analyse — l'équité du meilleur "
+"coup pour un coup de pions, max(pas de double, min(double/prend, "
+"double/passe)) pour qui double, min(double/prend, double/passe) pour qui "
+"répond, vu du doubleur puis retourné. *Après* : *avant* moins la perte ℓ "
+"du joueur qui a joué (:ref:`metrique_perte_mwc`), ou plus ℓ quand c'est "
+"l'adversaire."
+msgstr ""
+"**Definition.** For each decision, two values, always from the first "
+"player's point of view. *Before*: his chances of winning the match if the"
+" decision is made optimally, read from the analysis: the equity of the "
+"best move for a checker play, max(no double, min(double/take, "
+"double/pass)) for the player who doubles, min(double/take, double/pass) "
+"for the player who responds, seen from the doubler and then flipped. "
+"*After*: *before* minus the loss ℓ of the player who played "
+"(:ref:`metrique_perte_mwc`), or plus ℓ when it is the opponent."
+
+#: ../../source/metriques.rst:219
+msgid ""
+"\\mathrm{MWC} = \\frac{\\mathrm{MWC}_{+v} + \\mathrm{MWC}_{-v}}{2}\n"
+"+ e \\times \\frac{\\mathrm{MWC}_{+v} - \\mathrm{MWC}_{-v}}{2}"
+msgstr ""
+"\\mathrm{MWC} = \\frac{\\mathrm{MWC}_{+v} + \\mathrm{MWC}_{-v}}{2}\n"
+"+ e \\times \\frac{\\mathrm{MWC}_{+v} - \\mathrm{MWC}_{-v}}{2}"
+
+#: ../../source/metriques.rst:224
+#, no-python-brace-format
+msgid ""
+"où *e* est l'équité normalisée de l'option (±1 = gagner ou perdre le "
+"videau), *v* la valeur du videau (avant le double, pour un double et sa "
+"réponse) et :math:`\\mathrm{MWC}_{\\pm v}` les chances du joueur qui "
+"décide s'il gagne ou perd *v* points, lues dans la MET de la base. C'est "
+"la conversion de ℓ, à laquelle on ajoute le milieu : l'écart entre "
+"*avant* et *après* est donc ℓ, exactement, décision par décision."
+msgstr ""
+"where *e* is the normalised equity of the option (±1 = winning or losing "
+"the cube), *v* the value of the cube (before the double, for a double and"
+" its response) and :math:`\\mathrm{MWC}_{\\pm v}` the chances of the "
+"player who decides if he wins or loses *v* points, read from the "
+"database's MET. This is the conversion of ℓ, to which the midpoint is "
+"added: the gap between *before* and *after* is therefore exactly ℓ, "
+"decision by decision."
+
+#: ../../source/metriques.rst:231
+msgid "**Unité.** Une fraction de 0 à 1, affichée en pourcentage."
+msgstr "**Unit.** A fraction from 0 to 1, displayed as a percentage."
+
+#: ../../source/metriques.rst:233
+msgid ""
+"**Lecture.** Une chute sur une décision est une erreur ; une marche entre"
+" deux décisions, ce sont les dés. Une courbe qui reste haute puis tombe "
+"d'un coup sur une décision désigne l'erreur qui a perdu le match."
+msgstr ""
+"**Reading.** A drop on a decision is an error; a step between two "
+"decisions is the dice. A curve that stays high and then falls at once on "
+"a decision points to the error that lost the match."
+
+#: ../../source/metriques.rst:237
+msgid ""
+"**Incertitude.** Celle de l'analyse et de la MET, comme ℓ ; l'arrondi de "
+"l'analyse peut porter une position gagnée un rien au-delà de 100 %."
+msgstr ""
+"**Uncertainty.** That of the analysis and of the MET, as for ℓ; the "
+"rounding of the analysis can carry a won position slightly beyond 100%."
+
+#: ../../source/metriques.rst:240
+msgid ""
+"**Limites.** Une décision sans analyse n'a pas de valeur, jamais une "
+"valeur estimée : la courbe s'interrompt. Une décision analysée dont le "
+"coup joué n'est pas noté (un coup qu'aucun candidat ne nomme) n'a que sa "
+"valeur *avant*. Un match en money n'a pas de chances de gagner le match :"
+" la trace ne porte alors aucune valeur, et le dit (``money``)."
+msgstr ""
+"**Limits.** A decision without analysis has no value, never an estimated "
+"one: the curve breaks. An analysed decision whose move played is not "
+"rated (a move that no candidate names) has only its *before* value. A "
+"money game has no match winning chances: the trace then carries no value,"
+" and says so (``money``)."
+
+#: ../../source/metriques.rst:246
+msgid ""
+"**XG et gnuBG.** La formule est l'inverse de la conversion de gnuBG entre"
+" équité normalisée et MWC (``mwc2eq``) ; sur une même position, deux "
+"logiciels diffèrent par leur analyse et par leur MET, pas par la formule."
+msgstr ""
+"**XG and gnuBG.** The formula is the inverse of gnuBG's conversion "
+"between normalised equity and MWC (``mwc2eq``); on the same position, two"
+" programs differ by their analysis and their MET, not by the formula."
+
+#: ../../source/metriques.rst:254
 msgid "Perte MWC (éq. 7 pts) L₇ et Elo face au moteur"
 msgstr "MWC loss (7-pt eq.) L₇ and Elo against the engine"
 
-#: ../../source/metriques.rst:206
+#: ../../source/metriques.rst:256
 msgid ""
 "**La question.** Combien de match ai-je perdu par mes erreurs, quelle que"
 " soit la façon de compter les décisions, et comment comparer un match en "
@@ -487,7 +595,7 @@ msgstr ""
 "cannot be manipulated by adding easy decisions, and it weighs each error "
 "at what it cost."
 
-#: ../../source/metriques.rst:212
+#: ../../source/metriques.rst:262
 msgid ""
 "**Définition.** Sous jeu parfait, les chances de gagner le match évoluent"
 " sans biais : contre un adversaire parfait, un joueur qui perd L de MWC "
@@ -503,7 +611,7 @@ msgstr ""
 "N. L is therefore brought back to a 7-point match, the most common "
 "tournament length:"
 
-#: ../../source/metriques.rst:218
+#: ../../source/metriques.rst:268
 msgid ""
 "L_7 = L \\times \\sqrt{7 / N}\n"
 "\\qquad\n"
@@ -513,7 +621,7 @@ msgstr ""
 "\\qquad\n"
 "L_7^\\text{agrégat} = \\sqrt{7} \\times \\frac{\\sum L}{\\sum \\sqrt{N}}"
 
-#: ../../source/metriques.rst:224
+#: ../../source/metriques.rst:274
 msgid ""
 "L'agrégat (plusieurs matchs, un joueur, un tournoi) additionne les pertes"
 " et les racines des longueurs avant le rapport : un match en 7 points "
@@ -527,11 +635,11 @@ msgstr ""
 "returns its own value. Without a player filter, the two seats of a match "
 "each weigh √N, but form a single unit of the interval."
 
-#: ../../source/metriques.rst:230
+#: ../../source/metriques.rst:280
 msgid "**L'Elo face au moteur** inverse la formule FIBS à 7 points :"
 msgstr "**Elo against the engine** inverts the FIBS formula at 7 points:"
 
-#: ../../source/metriques.rst:232
+#: ../../source/metriques.rst:282
 msgid ""
 "D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
 "0{,}5 - L_7"
@@ -539,7 +647,7 @@ msgstr ""
 "D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
 "0{,}5 - L_7"
 
-#: ../../source/metriques.rst:236
+#: ../../source/metriques.rst:286
 msgid ""
 "Linéarisé, D ≈ −3474 × L / √N. À L₇ ≥ 50 %, q n'a plus d'inverse fini ; "
 "dès L₇ > 49 %, q est plancher à 1 % (D ≥ −1509) et l'Elo est affiché « ≤ "
@@ -550,7 +658,7 @@ msgstr ""
 "from L₇ > 49%, q is floored at 1% (D ≥ −1509) and the Elo is displayed "
 "“≤”. L₇ itself has no floor. Both rank players in the same order."
 
-#: ../../source/metriques.rst:240
+#: ../../source/metriques.rst:290
 msgid ""
 "**Unité.** L₇ : un pourcentage de MWC. D : des points Elo, négatifs, "
 "l'écart attendu entre le joueur et le moteur."
@@ -558,7 +666,7 @@ msgstr ""
 "**Unit.** L₇: a percentage of MWC. D: Elo points, negative, the expected "
 "gap between the player and the engine."
 
-#: ../../source/metriques.rst:243
+#: ../../source/metriques.rst:293
 #, no-python-format
 msgid ""
 "**Lecture.** 12,3 % : au lieu de 50 % de chances contre le moteur, le "
@@ -571,7 +679,7 @@ msgstr ""
 "statistics, the tournament and the progression display it (:ref:`MWC loss"
 " (7-pt eq.) <perte_mwc_7pts>`)."
 
-#: ../../source/metriques.rst:248
+#: ../../source/metriques.rst:298
 msgid ""
 "**Incertitude.** Intervalle à 95 % par les parties pour un match, par les"
 " matchs pour un agrégat (:ref:`metrique_intervalles`), puis même "
@@ -584,7 +692,7 @@ msgstr ""
 "the value. A per-match row of the statistics has none: it is a single "
 "unit; the match review carries the by-games interval."
 
-#: ../../source/metriques.rst:254
+#: ../../source/metriques.rst:304
 msgid ""
 "**Limites.** Le modèle en √N est approximatif sous 7 points et autour du "
 "Crawford. L₇ dépend de la MET. Une partie d'argent n'a pas de longueur, "
@@ -598,7 +706,7 @@ msgstr ""
 "lose more than half a match, because errors made after a swing of luck "
 "add up: the Elo then reaches its floor."
 
-#: ../../source/metriques.rst:260
+#: ../../source/metriques.rst:310
 msgid ""
 "**XG et gnuBG.** Pour un match en 7 points, L₇ est exactement la perte de"
 " MWC qu'affiche XG. Aucun des deux logiciels ne ramène la perte à une "
@@ -610,11 +718,11 @@ msgstr ""
 "converts it to Elo. This Elo measures the gap to the engine, not a FIBS "
 "or BMAB rating between human players."
 
-#: ../../source/metriques.rst:269
+#: ../../source/metriques.rst:319
 msgid "Difficulté, erreurs évitables, excès et ratio"
 msgstr "Difficulty, avoidable errors, excess and ratio"
 
-#: ../../source/metriques.rst:271
+#: ../../source/metriques.rst:321
 #, no-python-format
 msgid ""
 "**La question.** Cette erreur était-elle pardonnable ? Une même perte de "
@@ -632,7 +740,7 @@ msgstr ""
 "known) are fixed quickly and come first; losses on difficult decisions "
 "belong to the long-term work."
 
-#: ../../source/metriques.rst:278
+#: ../../source/metriques.rst:328
 msgid ""
 "**Définition.** La difficulté d est la perte qu'aurait subie en moyenne, "
 "dans la même position, un **joueur de référence** qui choisit chaque "
@@ -642,7 +750,7 @@ msgstr ""
 "would have suffered on average in the same position, choosing each option"
 " i with a probability that is lower the more it costs:"
 
-#: ../../source/metriques.rst:282
+#: ../../source/metriques.rst:332
 msgid ""
 "\\pi(i) = \\frac{e^{-\\Delta_i/\\tau}}{\\sum_j e^{-\\Delta_j/\\tau}},\n"
 "\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
@@ -652,7 +760,7 @@ msgstr ""
 "\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
 "\\qquad \\tau = 0{,}025"
 
-#: ../../source/metriques.rst:288
+#: ../../source/metriques.rst:338
 msgid ""
 "Δᵢ est le coût de l'option i par rapport à la meilleure, en équité "
 "normalisée. Les options sont les candidats de l'analyse pour un coup de "
@@ -668,7 +776,7 @@ msgstr ""
 "MWC like ℓ: both are in the same unit, and the option played has cost "
 "exactly ℓ."
 
-#: ../../source/metriques.rst:295
+#: ../../source/metriques.rst:345
 #, no-python-brace-format
 msgid ""
 "τ = 0,025 est un a priori de joueur fort : sur deux options séparées de "
@@ -682,7 +790,7 @@ msgstr ""
 "“error”; a gap of 0.1 costs only 0.002; five candidates spaced 0.01 apart"
 " give d ≈ 0.012, the average error of a player with a PR of about 6."
 
-#: ../../source/metriques.rst:300
+#: ../../source/metriques.rst:350
 msgid ""
 "**Erreur évitable** : la perte atteint le seuil Erreur de la base et d ≤ "
 "ℓ / 10 — sur deux options, le joueur de référence ne la commettrait pas "
@@ -692,7 +800,7 @@ msgstr ""
 "d ≤ ℓ / 10 — with two options, the reference player would not make it one"
 " time in ten."
 
-#: ../../source/metriques.rst:303
+#: ../../source/metriques.rst:353
 msgid ""
 "**Excès** d'un joueur sur un match : Σ(ℓ − d), ce qu'il a perdu au-delà "
 "de la référence (négatif quand il a fait mieux)."
@@ -700,7 +808,7 @@ msgstr ""
 "**Excess** of a player over a match: Σ(ℓ − d), what they lost beyond the "
 "reference (negative when they did better)."
 
-#: ../../source/metriques.rst:305
+#: ../../source/metriques.rst:355
 #, no-python-format
 msgid ""
 "**Ratio** : Σℓ / Σd ; 1 veut dire « joue comme la référence », 2 « perd "
@@ -711,7 +819,7 @@ msgstr ""
 " much”. It is not given when Σd < 0.5% of MWC: on a match that is too "
 "easy it measures only noise, the excess remains."
 
-#: ../../source/metriques.rst:309
+#: ../../source/metriques.rst:359
 msgid ""
 "**Ce qui compte.** Les décisions comptées au PR dont la perte est notée "
 "et convertie en MWC ; ailleurs la difficulté est absente, jamais nulle. "
@@ -726,11 +834,11 @@ msgstr ""
 "difficulty. Among the counted decisions, no additional threshold sets "
 "apart an obvious decision: its difficulty is close to zero on its own."
 
-#: ../../source/metriques.rst:315
+#: ../../source/metriques.rst:365
 msgid "**Unité.** d et l'excès : un pourcentage de MWC. Le ratio : sans unité."
 msgstr "**Unit.** d and the excess: a percentage of MWC. The ratio: no unit."
 
-#: ../../source/metriques.rst:317
+#: ../../source/metriques.rst:367
 msgid ""
 "**Lecture.** Une perte bien au-dessus de sa difficulté est une faute que "
 "la position n'excusait pas ; une perte proche de sa difficulté, une faute"
@@ -743,7 +851,7 @@ msgstr ""
 "and ratio correct PR for the difficulty of the positions met, hence "
 "partly for the opponent's style (:ref:`panneau_matchs`)."
 
-#: ../../source/metriques.rst:322
+#: ../../source/metriques.rst:372
 msgid ""
 "**Incertitude.** Sur un match, excès et ratio reposent sur peu de "
 "décisions et varient beaucoup : une tendance, pas un classement."
@@ -751,7 +859,7 @@ msgstr ""
 "**Uncertainty.** Over one match, excess and ratio rest on few decisions "
 "and vary a lot: a trend, not a ranking."
 
-#: ../../source/metriques.rst:325
+#: ../../source/metriques.rst:375
 msgid ""
 "**Limites.** La difficulté dépend d'un modèle de joueur et de τ, fixés "
 "une fois : les changer change tous les chiffres. Elle ne connaît que les "
@@ -766,7 +874,7 @@ msgstr ""
 "options weigh nothing, and d is then a lower bound. It inherits the "
 "analysis error, especially at low depth."
 
-#: ../../source/metriques.rst:331
+#: ../../source/metriques.rst:381
 msgid ""
 "**XG et gnuBG.** Ni l'un ni l'autre ne calcule de difficulté. L'idée "
 "vient des indices de vraisemblance des échecs (Regan) ; τ n'est pas "
@@ -776,11 +884,11 @@ msgstr ""
 "likelihood indices of chess (Regan); τ is not calibrated on a population "
 "of players."
 
-#: ../../source/metriques.rst:339
+#: ../../source/metriques.rst:389
 msgid "Intervalles à 95 %"
 msgstr "95% intervals"
 
-#: ../../source/metriques.rst:341
+#: ../../source/metriques.rst:391
 msgid ""
 "**La question.** Ce chiffre dit-il quelque chose, ou est-ce du bruit ? Un"
 " PR de 4,2 sur un match et un PR de 4,2 sur quarante matchs ne valent pas"
@@ -792,7 +900,7 @@ msgstr ""
 "same. The interval avoids building a work plan on a cell that rests on "
 "nothing, and reading a rank into an isolated match."
 
-#: ../../source/metriques.rst:346
+#: ../../source/metriques.rst:396
 msgid ""
 "**Définition.** L'intervalle rééchantillonne la plus grande unité "
 "indépendante : les **parties** d'un match, les **matchs** d'un agrégat "
@@ -810,7 +918,7 @@ msgstr ""
 " the two seats of a match form a single unit, because they play the same "
 "positions."
 
-#: ../../source/metriques.rst:354
+#: ../../source/metriques.rst:404
 msgid ""
 "**La formule.** Pour un rapport R = Σeᵤ / Σnᵤ sur G unités (eᵤ la somme "
 "des erreurs, nᵤ le nombre de décisions de l'unité), la variance du "
@@ -820,7 +928,7 @@ msgstr ""
 "errors, nᵤ the number of decisions of the unit), the bootstrap variance "
 "is computed, without drawing:"
 
-#: ../../source/metriques.rst:358
+#: ../../source/metriques.rst:408
 msgid ""
 "\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
 "\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
@@ -828,7 +936,7 @@ msgstr ""
 "\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
 "\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
 
-#: ../../source/metriques.rst:363
+#: ../../source/metriques.rst:413
 msgid ""
 "et l'intervalle vaut R ± 1,96 × √Var, la borne basse jamais sous 0, puis "
 "la même transformation que la valeur (× 500 pour le PR). Le L₇ d'un "
@@ -845,7 +953,7 @@ msgstr ""
 "− l̄)², l_g the loss of game g. The computation is deterministic: the "
 "same database always gives the same interval, on both storage engines."
 
-#: ../../source/metriques.rst:371
+#: ../../source/metriques.rst:421
 msgid ""
 "**Ce qu'il faut.** Au moins **trois unités** et une largeur non nulle. "
 "Avec deux, la dispersion repose sur un seul degré de liberté et "
@@ -859,7 +967,7 @@ msgstr ""
 "they agree, not that the value is exact. Without an interval, the cell is"
 " greyed out, its sample size visible (:ref:`stats`)."
 
-#: ../../source/metriques.rst:377
+#: ../../source/metriques.rst:427
 msgid ""
 "**Lecture.** Deux intervalles qui se chevauchent largement ne départagent"
 " rien. Une famille dont l'intervalle reste au-dessus de votre PR global "
@@ -868,7 +976,7 @@ msgstr ""
 "**Reading.** Two intervals that overlap widely settle nothing. A family "
 "whose interval stays above your overall PR is an established weakness."
 
-#: ../../source/metriques.rst:381
+#: ../../source/metriques.rst:431
 msgid ""
 "**Limites.** L'approximation normale est grossière sur peu d'unités, et "
 "les erreurs ont une distribution asymétrique (quelques grosses fautes) : "
@@ -878,15 +986,15 @@ msgstr ""
 "have a skewed distribution (a few big mistakes): with three or four "
 "units, the interval is indicative."
 
-#: ../../source/metriques.rst:385
+#: ../../source/metriques.rst:435
 msgid "**XG et gnuBG.** Aucun des deux ne donne d'intervalle."
 msgstr "**XG and gnuBG.** Neither gives an interval."
 
-#: ../../source/metriques.rst:391
+#: ../../source/metriques.rst:441
 msgid "Bilan du match"
 msgstr "Match review"
 
-#: ../../source/metriques.rst:393
+#: ../../source/metriques.rst:443
 msgid ""
 "**La question.** Après un match : qu'est-ce que je revois, ai-je perdu à "
 "cause des dés ou du jeu, et mes erreurs viennent-elles de la "
@@ -897,7 +1005,7 @@ msgstr ""
 "the dice or the play, and do my errors come from haste or from a gap in "
 "knowledge? The screens: :ref:`match review <bilan_match>`."
 
-#: ../../source/metriques.rst:397
+#: ../../source/metriques.rst:447
 msgid ""
 "**Trois décisions à revoir.** Parmi les erreurs du joueur (seuil de la "
 "base) dont la perte est chiffrée, les trois de plus grande **part "
@@ -913,7 +1021,7 @@ msgstr ""
 "larger loss, then match order. An error the reference player would also "
 "make is not worth a session."
 
-#: ../../source/metriques.rst:404
+#: ../../source/metriques.rst:454
 msgid ""
 "**Résultat ajusté de la chance**, pour un match terminé, en points de MWC"
 " du joueur :"
@@ -921,7 +1029,7 @@ msgstr ""
 "**Luck-adjusted result**, for a finished match, in MWC points of the "
 "player:"
 
-#: ../../source/metriques.rst:407
+#: ../../source/metriques.rst:457
 #, no-python-brace-format
 msgid ""
 "A = R - C, \\quad R = \\text{issue} - \\mathrm{MWC}_\\text{départ}, "
@@ -934,7 +1042,7 @@ msgstr ""
 "C = \\sum \\text{chance de ses jets} - \\sum \\text{chance des jets "
 "adverses}"
 
-#: ../../source/metriques.rst:412
+#: ../../source/metriques.rst:462
 msgid ""
 "L'issue vaut 1 gagné, 0 perdu ; la MWC de départ est celle du score "
 "initial (50 % à 0-0). Chaque jet est converti en MWC comme une perte, au "
@@ -957,7 +1065,7 @@ msgstr ""
 "(rolls measured over rolls played) is displayed, because partial luck "
 "biases A. No row either for a money game or an unfinished match."
 
-#: ../../source/metriques.rst:422
+#: ../../source/metriques.rst:472
 msgid ""
 "**Erreurs précipitées et réfléchies.** Par joueur et par type (pions, "
 "videau), le seuil est la médiane des durées connues de ses décisions "
@@ -975,7 +1083,7 @@ msgstr ""
 "split half and half. A hasty majority calls for discipline; a considered "
 "majority, for knowledge."
 
-#: ../../source/metriques.rst:430
+#: ../../source/metriques.rst:480
 msgid ""
 "**Limites.** Un match est un petit échantillon : PR et L₇ y portent leur "
 "intervalle par parties (trois parties au moins). Le résultat ajusté "
@@ -987,7 +1095,7 @@ msgstr ""
 " MET and on the luck in the file. Duration exists only for a match that "
 "kept it (a match played against a bot)."
 
-#: ../../source/metriques.rst:435
+#: ../../source/metriques.rst:485
 msgid ""
 "**XG et gnuBG.** XG et gnuBG affichent la chance totale de chaque joueur,"
 " mais ni résultat ajusté en MWC, ni sélection des décisions à revoir, ni "
@@ -997,11 +1105,11 @@ msgstr ""
 "neither an MWC-adjusted result, nor a selection of decisions to review, "
 "nor a split by duration."
 
-#: ../../source/metriques.rst:443
+#: ../../source/metriques.rst:493
 msgid "Plan d'étude"
 msgstr "Study plan"
 
-#: ../../source/metriques.rst:445
+#: ../../source/metriques.rst:495
 msgid ""
 "**La question.** Que dois-je travailler maintenant ? Classer ses erreurs "
 "par coût dit où l'on a le plus perdu, pas où l'étude rapporte le plus : "
@@ -1013,7 +1121,7 @@ msgstr ""
 " really difficult positions costs everyone, and three errors do not make "
 "a trend. The screens: :ref:`plan_etude`."
 
-#: ../../source/metriques.rst:450
+#: ../../source/metriques.rst:500
 msgid ""
 "**Définition.** Une **famille** est un triplet (plan de jeu, nature de la"
 " décision, thème) des erreurs récurrentes ; ses membres sont les erreurs "
@@ -1029,11 +1137,11 @@ msgstr ""
 "carries ℓ and d; an error in a money game is counted “unquantified” and "
 "enters no priority."
 
-#: ../../source/metriques.rst:457
+#: ../../source/metriques.rst:507
 msgid "**La formule.** Le **MWC récupérable** et son intervalle :"
 msgstr "**The formula.** The **recoverable MWC** and its interval:"
 
-#: ../../source/metriques.rst:459
+#: ../../source/metriques.rst:509
 #, no-python-brace-format
 msgid ""
 "R = \\sum_i (\\ell_i - d_i), \\qquad\n"
@@ -1042,7 +1150,7 @@ msgstr ""
 "R = \\sum_i (\\ell_i - d_i), \\qquad\n"
 "R \\pm 1{,}96 \\sqrt{\\textstyle\\sum_i (\\ell_i - d_i)^2}"
 
-#: ../../source/metriques.rst:464
+#: ../../source/metriques.rst:514
 msgid ""
 "R est la fréquence de la famille multipliée par sa perte moyenne au-delà "
 "de la difficulté : ce qu'on regagnerait en jouant ces positions comme le "
@@ -1054,7 +1162,7 @@ msgstr ""
 "reference player. The sum is signed, without clipping. The interval "
 "treats the number of members as a Poisson count."
 
-#: ../../source/metriques.rst:469
+#: ../../source/metriques.rst:519
 msgid ""
 "**Ce qui entre au plan.** Au moins **5 membres chiffrés** et une **borne "
 "basse strictement positive**. Le plan est classé par borne basse "
@@ -1066,11 +1174,11 @@ msgstr ""
 " bound: at equal recoverable, the better-established family comes first. "
 "The others are “to be confirmed”, without rank."
 
-#: ../../source/metriques.rst:474
+#: ../../source/metriques.rst:524
 msgid "**Unité.** Un pourcentage de MWC, cumulé sur le filtre."
 msgstr "**Unit.** A percentage of MWC, cumulated over the filter."
 
-#: ../../source/metriques.rst:476
+#: ../../source/metriques.rst:526
 msgid ""
 "**Lecture.** Une famille d'erreurs évitables monte ; une famille de "
 "positions où tout le monde se trompe descend. Un nouveau joueur voit "
@@ -1081,7 +1189,7 @@ msgstr ""
 "where everyone errs falls. A new player first sees “to be confirmed” "
 "families: the plan does not push toward noise."
 
-#: ../../source/metriques.rst:480
+#: ../../source/metriques.rst:530
 msgid ""
 "**Limites.** Le thème vient du classificateur de blunderDB : une erreur "
 "mal classée tombe dans une mauvaise famille, une erreur sans thème n'est "
@@ -1092,15 +1200,15 @@ msgstr ""
 "error falls into the wrong family, an error without a theme is in none. R"
 " inherits the limits of ℓ and d (MET, truncation of candidates)."
 
-#: ../../source/metriques.rst:484
+#: ../../source/metriques.rst:534
 msgid "**XG et gnuBG.** Ni l'un ni l'autre ne propose de plan d'étude."
 msgstr "**XG and gnuBG.** Neither offers a study plan."
 
-#: ../../source/metriques.rst:490
+#: ../../source/metriques.rst:540
 msgid "Positions de référence"
 msgstr "Reference positions"
 
-#: ../../source/metriques.rst:492
+#: ../../source/metriques.rst:542
 msgid ""
 "**La question.** Quelles positions mettre dans une collection pour "
 "travailler le plan ? Les dix pires erreurs donnent souvent dix variantes "
@@ -1115,7 +1223,7 @@ msgstr ""
 "errors, carries a clear lesson and is not already studied. The screens: "
 ":ref:`reference positions <positions_reference>`."
 
-#: ../../source/metriques.rst:498
+#: ../../source/metriques.rst:548
 msgid ""
 "**Définition.** Les candidates sont les erreurs chiffrées et thématisées "
 "du filtre, réunies par position ; l'excès d'une position est la somme des"
@@ -1130,11 +1238,11 @@ msgstr ""
 "transport distance of at most ρ = 12 checker-steps (one dice roll is "
 "worth 8 to 16)."
 
-#: ../../source/metriques.rst:504
+#: ../../source/metriques.rst:554
 msgid "**La formule.** Le gain d'une candidate p est"
 msgstr "**The formula.** The gain of a candidate p is"
 
-#: ../../source/metriques.rst:506
+#: ../../source/metriques.rst:556
 msgid ""
 "G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
 "\\text{non couverte}} \\text{excès}(q)"
@@ -1142,7 +1250,7 @@ msgstr ""
 "G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
 "\\text{non couverte}} \\text{excès}(q)"
 
-#: ../../source/metriques.rst:510
+#: ../../source/metriques.rst:560
 msgid ""
 "en fraction de MWC : la représentativité, la fréquence et le coût "
 "évitable en une seule quantité. c(p) part de 1 et est multiplié par ½ si "
@@ -1159,7 +1267,7 @@ msgstr ""
 "depth or a rollout gives another verdict): ¼ when both combine. A rollout"
 " that confirms raises nothing: it breaks ties at equal gain."
 
-#: ../../source/metriques.rst:518
+#: ../../source/metriques.rst:568
 msgid ""
 "**Sélection.** Gloutonne par gain marginal : chaque position retenue "
 "couvre ses voisines, qui ne rapportent plus rien aux suivantes, et ses "
@@ -1173,11 +1281,11 @@ msgstr ""
 " dealt with (comment, Anki card, collection, “studied” mark) is never "
 "proposed and counts as already kept."
 
-#: ../../source/metriques.rst:524
+#: ../../source/metriques.rst:574
 msgid "**Unité.** Le MWC couvert, en pourcentage."
 msgstr "**Unit.** The MWC covered, as a percentage."
 
-#: ../../source/metriques.rst:526
+#: ../../source/metriques.rst:576
 msgid ""
 "**Limites.** Le rayon et les facteurs sont fixés, pas appris. La distance"
 " de transport compare des structures de pions, pas des idées : deux "
@@ -1187,16 +1295,16 @@ msgstr ""
 "transport distance compares checker structures, not ideas: two positions "
 "with the same lesson but distant structure do not cover each other."
 
-#: ../../source/metriques.rst:530 ../../source/metriques.rst:572
-#: ../../source/metriques.rst:653
+#: ../../source/metriques.rst:580 ../../source/metriques.rst:622
+#: ../../source/metriques.rst:703
 msgid "**XG et gnuBG.** Pas d'équivalent."
 msgstr "**XG and gnuBG.** No equivalent."
 
-#: ../../source/metriques.rst:536
+#: ../../source/metriques.rst:586
 msgid "Avant/après l'étude"
 msgstr "Before/after study"
 
-#: ../../source/metriques.rst:538
+#: ../../source/metriques.rst:588
 msgid ""
 "**La question.** Ce que j'ai travaillé me coûte-t-il moins en match réel "
 "? Sans mesure, l'étude se juge à l'impression ; une famille qui ne bouge "
@@ -1208,7 +1316,7 @@ msgstr ""
 "not move despite the work says that the method must change. The screens: "
 ":ref:`avant_apres_etude`."
 
-#: ../../source/metriques.rst:543
+#: ../../source/metriques.rst:593
 msgid ""
 "**Définition.** Chaque famille thématisée du filtre est mesurée, celles "
 "du plan comme celles « à confirmer ». Une famille est **étudiée** au jour"
@@ -1226,7 +1334,7 @@ msgstr ""
 "the matches dated strictly before that day; *after*: strictly after; the "
 "day itself and undated matches are discarded."
 
-#: ../../source/metriques.rst:551
+#: ../../source/metriques.rst:601
 msgid ""
 "**La formule.** Dans chaque fenêtre, le taux de perte r = Σℓ / N : ℓ les "
 "pertes des erreurs de la famille, N les décisions comptées en match du "
@@ -1238,7 +1346,7 @@ msgstr ""
 "game plan and the same nature (the theme exists only for an error). The "
 "gain and its interval:"
 
-#: ../../source/metriques.rst:556
+#: ../../source/metriques.rst:606
 msgid ""
 "\\Delta = r_\\text{avant} - r_\\text{après}, \\qquad\n"
 "\\Delta \\pm 1{,}96 \\sqrt{\\frac{\\sum "
@@ -1250,7 +1358,7 @@ msgstr ""
 "\\ell^2_\\text{avant}}{N^2_\\text{avant}}\n"
 "+ \\frac{\\sum \\ell^2_\\text{après}}{N^2_\\text{après}}}"
 
-#: ../../source/metriques.rst:562
+#: ../../source/metriques.rst:612
 msgid ""
 "**Verdict.** Au moins **30 décisions** dans chaque fenêtre, sinon « "
 "insuffisant ». « En progrès » si la borne basse de Δ est positive, « en "
@@ -1260,11 +1368,11 @@ msgstr ""
 "“insufficient”. “Improving” if the lower bound of Δ is positive, "
 "“declining” if the upper bound is negative, “indeterminate” otherwise."
 
-#: ../../source/metriques.rst:566
+#: ../../source/metriques.rst:616
 msgid "**Unité.** Points de MWC pour 100 décisions."
 msgstr "**Unit.** MWC points per 100 decisions."
 
-#: ../../source/metriques.rst:568
+#: ../../source/metriques.rst:618
 msgid ""
 "**Limites.** Un changement, pas un effet. Une famille est étudiée *parce "
 "qu'elle* coûtait : la régression vers la moyenne gonfle le gain. Rien ne "
@@ -1274,11 +1382,11 @@ msgstr ""
 " costing: regression to the mean inflates the gain. Nothing controls for "
 "opponents, format or dice."
 
-#: ../../source/metriques.rst:578
+#: ../../source/metriques.rst:628
 msgid "Biais signés"
 msgstr "Signed biases"
 
-#: ../../source/metriques.rst:580
+#: ../../source/metriques.rst:630
 msgid ""
 "**La question.** Dans quel sens est-ce que je me trompe ? « Vous prenez "
 "trop » se corrige mieux qu'un PR : la règle à revoir est nommée. Les "
@@ -1288,7 +1396,7 @@ msgstr ""
 "easier to correct than a PR: the rule to review is named. The screens: "
 ":ref:`biais_signes`."
 
-#: ../../source/metriques.rst:584
+#: ../../source/metriques.rst:634
 msgid ""
 "**La formule.** Chaque décision comptée porte x = +1 (erreur par excès "
 "d'audace), −1 (par excès de prudence) ou 0. Avec P et M les deux comptes "
@@ -1298,7 +1406,7 @@ msgstr ""
 " boldness), −1 (by excess of caution) or 0. With P and M the two counts "
 "over N decisions:"
 
-#: ../../source/metriques.rst:588
+#: ../../source/metriques.rst:638
 msgid ""
 "B = \\frac{P - M}{N}, \\qquad\n"
 "B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
@@ -1306,7 +1414,7 @@ msgstr ""
 "B = \\frac{P - M}{N}, \\qquad\n"
 "B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
 
-#: ../../source/metriques.rst:593
+#: ../../source/metriques.rst:643
 msgid ""
 "Au moins **20 décisions** ; « trop » si la borne basse est positive, « "
 "pas assez » si la borne haute est négative, « équilibré » sinon. Le coût "
@@ -1318,7 +1426,7 @@ msgstr ""
 "cost of P and M (in mpt) accompanies the counts. The sign and the cost "
 "are those of the move played in its match."
 
-#: ../../source/metriques.rst:598
+#: ../../source/metriques.rst:648
 msgid ""
 "**Prise / refus** : sur les réponses au videau ; P = prises fautives, M ="
 " refus fautifs. B est exactement votre taux de prise moins celui du bot "
@@ -1328,7 +1436,7 @@ msgstr ""
 "passes. B is exactly your take rate minus the bot's on the same "
 "positions."
 
-#: ../../source/metriques.rst:601
+#: ../../source/metriques.rst:651
 msgid ""
 "**Doubles** : sur les décisions de videau du porteur comptées au PR ; P ="
 " doubles prématurés (pas de double, ou trop bon), M = doubles manqués. Le"
@@ -1340,7 +1448,7 @@ msgstr ""
 " is also given per score cell (your points to go, the opponent's; post-"
 "Crawford counted as 1; money game apart)."
 
-#: ../../source/metriques.rst:605
+#: ../../source/metriques.rst:655
 msgid ""
 "**Blots** : sur les coups de pions avec contact ; x est le signe de (vos "
 "blots après le coup joué − vos blots après le meilleur coup). Un coup est"
@@ -1352,11 +1460,11 @@ msgstr ""
 "recognised by the board it leaves; a move that cannot be found drops out "
 "of the count, and its share is displayed."
 
-#: ../../source/metriques.rst:610
+#: ../../source/metriques.rst:660
 msgid "**Unité.** Une différence de proportions, sans unité."
 msgstr "**Unit.** A difference of proportions, no unit."
 
-#: ../../source/metriques.rst:612
+#: ../../source/metriques.rst:662
 msgid ""
 "**Limites.** La plupart des cases de score restent muettes : c'est la "
 "réponse honnête. Le biais des blots compte les blots sans peser leur "
@@ -1366,7 +1474,7 @@ msgstr ""
 "blot bias counts blots without weighing their exposure, and the discarded"
 " moves are not a neutral draw."
 
-#: ../../source/metriques.rst:616
+#: ../../source/metriques.rst:666
 msgid ""
 "**XG et gnuBG.** Pas d'équivalent ; XG et gnuBG comptent les erreurs de "
 "videau par type (double manqué, prise fautive…) sans intervalle ni "
@@ -1375,11 +1483,11 @@ msgstr ""
 "**XG and gnuBG.** No equivalent; XG and gnuBG count cube errors by type "
 "(missed double, faulty take…) without interval or verdict."
 
-#: ../../source/metriques.rst:623
+#: ../../source/metriques.rst:673
 msgid "Bilan du tournoi"
 msgstr "Tournament review"
 
-#: ../../source/metriques.rst:625
+#: ../../source/metriques.rst:675
 msgid ""
 "**La question.** Ai-je joué à mon niveau, et sinon, où cela a-t-il cédé :"
 " les dernières rondes, les longues fins de match, les scores où un point "
@@ -1391,7 +1499,7 @@ msgstr ""
 "decides, the clock? The screens: :ref:`tournament review "
 "<bilan_tournoi>`."
 
-#: ../../source/metriques.rst:629
+#: ../../source/metriques.rst:679
 msgid ""
 "**Définition.** Le joueur est par défaut le joueur principal s'il a joué "
 "dans le tournoi, sinon le plus présent dans ses matchs. Le **niveau "
@@ -1409,7 +1517,7 @@ msgstr ""
 "are needed. The tournament and the usual level each have their PR and "
 "their L₇, with the by-matches interval (:ref:`metrique_intervalles`)."
 
-#: ../../source/metriques.rst:636
+#: ../../source/metriques.rst:686
 msgid ""
 "**La formule.** Δ = tournoi − habituel, d'écart-type √(σₜ² + σₕ²), chaque"
 " σ lu sur la demi-largeur haute de son intervalle. « Moins bien » si la "
@@ -1425,7 +1533,7 @@ msgstr ""
 "interval and at least **20 decisions** on each side; otherwise "
 "“insufficient”, figures visible."
 
-#: ../../source/metriques.rst:642
+#: ../../source/metriques.rst:692
 msgid ""
 "**Ventilations**, en PR : par ronde, chaque match face au PR habituel "
 "global ; puis, chaque case face à la même case du niveau habituel, par "
@@ -1441,7 +1549,7 @@ msgstr ""
 "durations in the match). At most three families of the study plan "
 "restricted to the tournament."
 
-#: ../../source/metriques.rst:648
+#: ../../source/metriques.rst:698
 msgid ""
 "**Limites.** Un tournoi de trois matchs ne dit presque jamais « moins "
 "bien » : c'est voulu. Les deux côtés sont traités comme indépendants, ce "
@@ -1454,12 +1562,12 @@ msgstr ""
 "interval: the rule is cautious. The clock reserve is not recorded move by"
 " move: the pressure of the remaining time cannot be measured."
 
-#: ../../source/metriques.rst:658
+#: ../../source/metriques.rst:708
 #, no-python-format
 msgid "Livre d'ouverture : écart, IC 95 % et égalité"
 msgstr "Opening book: gap, 95 % CI and tie"
 
-#: ../../source/metriques.rst:660
+#: ../../source/metriques.rst:710
 msgid ""
 "**La question.** À ce score, quel coup jouer avec ce jet d'ouverture, et "
 "quelle réponse ? Et mon coup est-il vraiment moins bon, ou seulement "
@@ -1474,7 +1582,7 @@ msgstr ""
 "the :ref:`Training panel <panneau_entrainement>`. It serves to learn how "
 "the score shifts the first moves — which no money-play table teaches."
 
-#: ../../source/metriques.rst:666
+#: ../../source/metriques.rst:716
 msgid ""
 "**Définition.** Le livre range, pour chaque position et chaque score, les"
 " meilleurs candidats d'un rollout cubeful de blunderDB, avec leur équité "
@@ -1492,7 +1600,7 @@ msgstr ""
 "equity, because the rollout's cube model weighs on both moves the same "
 "way."
 
-#: ../../source/metriques.rst:674
+#: ../../source/metriques.rst:724
 msgid ""
 "**La formule.** σ(écart) = √(σ²meilleur + σ²coup), les deux estimations "
 "prises indépendantes ; l'**IC 95 %** de l'écart est ± 1,96·σ(écart). Un "
@@ -1508,7 +1616,7 @@ msgstr ""
 "best is tied with itself. What counts as a decision: every move played, "
 "the opening and the reply apart."
 
-#: ../../source/metriques.rst:681
+#: ../../source/metriques.rst:731
 msgid ""
 "**Comment le lire.** « À égalité » n'affirme pas que deux coups se valent"
 " ; il dit que le livre ne peut pas les départager — tout coup du groupe "
@@ -1520,7 +1628,7 @@ msgstr ""
 " group is therefore a good answer. A gap beyond its CI is a real "
 "difference."
 
-#: ../../source/metriques.rst:685
+#: ../../source/metriques.rst:735
 msgid ""
 "**Incertitude et limites.** Les dés communs du rollout corrèlent "
 "positivement les deux estimations : les supposer indépendantes surestime "
@@ -1539,7 +1647,7 @@ msgstr ""
 "A move outside the book's candidates is counted wrong with no quantified "
 "gap. The book only covers the scores of its grid."
 
-#: ../../source/metriques.rst:693
+#: ../../source/metriques.rst:743
 msgid ""
 "**XG et gnuBG.** Les tables d'ouverture publiées (bkgm.com) sont des "
 "rollouts d'argent ; XG et gnuBG roulent une position à la demande mais ne"

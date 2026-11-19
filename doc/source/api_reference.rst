@@ -382,6 +382,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.matchReview                    JSON
      POST /v1/stats.matchTextValues                JSON
      POST /v1/stats.matchTimeSummary               JSON
+     POST /v1/stats.matchWinTrace                  JSON
      POST /v1/stats.playerContrast                 JSON
      POST /v1/stats.playerNames                    JSON
      POST /v1/stats.playerTable                    JSON

@@ -123,6 +123,16 @@ décoche pas, et chaque match s'ouvre avec les deux joueurs cochés. Hors de l'i
 ``--format text`` une ligne « MWC loss » par coup noté et ``--format summary`` le
 total par joueur.
 
+**Chances de gagner le match.** Sous les graphiques de perte, un troisième
+graphique trace les chances de gagner le match du premier joueur au fil des
+décisions (:ref:`metrique_trace_mwc`), entre 0 et 100 %, avec un trait
+pointillé à 50 %. Sur chaque décision, la courbe va des chances avec la
+meilleure option à celles qui suivent le coup joué ; d'une décision à la
+suivante, elle saute de ce que les dés ont donné. Une décision sans analyse
+interrompt la courbe, une erreur y porte un point. Survol, flèches et clic s'y
+comportent comme sur les autres graphiques ; l'info-bulle donne les chances
+avant et après la décision. Un match en money n'a pas ce graphique.
+
 **Difficulté et erreurs évitables.** Une perte dit ce qu'un coup a coûté, pas
 s'il était difficile de trouver le bon. La colonne **Diff.**, à côté de
 **MWC**, donne la *difficulté* de la décision : la perte de chances de gagner

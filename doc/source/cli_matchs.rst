@@ -49,6 +49,14 @@ joueur : ``difficulty``, ``excess``, ``ratio``, ``avoidable``), ``text`` les lig
 ``Difficulty`` et ``Avoidable error``, ``summary`` une section ``Difficulty``.
 Le serveur la sert par ``/v1/stats.matchDecisionLosses``.
 
+La sortie ``json`` porte aussi ``win_trace`` : les chances de gagner le match du
+premier joueur avant et après chaque coup (``mwc_before``, ``mwc_after``, des
+fractions), ``analysed`` pour un coup analysé, ``null`` sans analyse, avec
+``mwc_loss`` et ``error`` pour marquer les erreurs ; ``money`` vaut ``true``
+pour un match en money, dont aucun coup n'a de valeur. ``text`` ajoute la ligne
+``MWC (<joueur 1>): 50.00% -> 48.77%`` aux coups analysés
+(:ref:`metrique_trace_mwc`). Le serveur la sert par ``/v1/stats.matchWinTrace``.
+
 ``summary`` se termine par une section ``Review``, le bilan du match
 (:ref:`bilan du match <bilan_match>`) : par joueur, le PR et son intervalle à 95 % sur les
 parties, la perte MWC ramenée à 7 points et son intervalle sur les parties, le résultat ajusté de la chance (avec le résultat, la chance nette,
