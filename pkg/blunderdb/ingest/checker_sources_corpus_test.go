@@ -17,12 +17,101 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 var updateMergedViewGolden = flag.Bool("update-merged-view", false, "rewrite testdata/merged_view.golden")
 
 const mergedViewGolden = "../../../testdata/merged_view.golden"
+
+// sourcesStore is a fresh SQLite store, with its connection for raw reads.
+func sourcesStore(t *testing.T) (*sql.DB, storage.Storage) {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "merged.db")
+	db, err := sql.Open("sqlite", sqlite.DSN(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { db.Close() })
+	sqlite.ConfigurePool(db, path)
+	if err := sqlite.Bootstrap(context.Background(), db); err != nil {
+		t.Fatal(err)
+	}
+	return db, sqlite.New(db)
+}
+
+func mapMatchFile(t *testing.T, file string) *MatchGraph {
+	t.Helper()
+	var g *MatchGraph
+	var err error
+	if strings.HasSuffix(file, ".xg") {
+		g, err = MapXG(file)
+	} else {
+		g, err = MapGnuBG(file)
+	}
+	if err != nil {
+		t.Fatalf("%s: %v", file, err)
+	}
+	return g
+}
+
+// analysisBlobs is every stored analysis blob by position.
+func analysisBlobs(t *testing.T, db *sql.DB) map[int64]string {
+	t.Helper()
+	rows, err := db.Query(`SELECT position_id, data FROM analysis`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	out := map[int64]string{}
+	for rows.Next() {
+		var id int64
+		var data []byte
+		if err := rows.Scan(&id, &data); err != nil {
+			t.Fatal(err)
+		}
+		out[id] = string(data)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	return out
+}
+
+// TestReimportOfAStoredSourceWritesNothing: once a match carries two sources,
+// importing either file again brings no evaluation the position lacks. The
+// source first read from the merged view holds its moves ranked, their errors
+// measured from rounded equities; the file gives them in its own order with
+// its own errors. Both are the same evaluation: the duplicate deepens nothing
+// and leaves every blob as it was.
+func TestReimportOfAStoredSourceWritesNothing(t *testing.T) {
+	xg := "../../../testdata/charlot1-charlot2_7p_2025-11-08-2305.xg"
+	sgf := "../../../testdata/charlot1-charlot2_7p_2025-11-08-2305.sgf"
+	for _, order := range [][]string{{xg, sgf}, {sgf, xg}} {
+		db, s := sourcesStore(t)
+		for _, file := range order {
+			writeGraph(t, s, mapMatchFile(t, file))
+		}
+		before := analysisBlobs(t, db)
+		for _, file := range order {
+			if res := writeGraph(t, s, mapMatchFile(t, file)); res.Deepened != 0 {
+				t.Errorf("%s again after %s: %d analyses deepened, want 0",
+					filepath.Ext(file), filepath.Ext(order[0]), res.Deepened)
+			}
+		}
+		after := analysisBlobs(t, db)
+		changed := 0
+		for id, blob := range before {
+			if after[id] != blob {
+				changed++
+			}
+		}
+		if changed != 0 || len(after) != len(before) {
+			t.Errorf("%s first: %d of %d blobs rewritten by the re-imports", filepath.Ext(order[0]), changed, len(before))
+		}
+	}
+}
 
 // mergedViewDigests imports the XG and the GNUbg file of one match in the
 // given order, each twice, and gives one line per stored analysis: its
@@ -32,29 +121,9 @@ const mergedViewGolden = "../../../testdata/merged_view.golden"
 func mergedViewDigests(t *testing.T, order []string) []string {
 	t.Helper()
 	ctx := context.Background()
-	path := filepath.Join(t.TempDir(), "merged.db")
-	db, err := sql.Open("sqlite", sqlite.DSN(path))
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() { db.Close() })
-	sqlite.ConfigurePool(db, path)
-	if err := sqlite.Bootstrap(ctx, db); err != nil {
-		t.Fatal(err)
-	}
-	s := sqlite.New(db)
+	db, s := sourcesStore(t)
 	for _, file := range append(append([]string(nil), order...), order...) {
-		var g *MatchGraph
-		var err error
-		if strings.HasSuffix(file, ".xg") {
-			g, err = MapXG(file)
-		} else {
-			g, err = MapGnuBG(file)
-		}
-		if err != nil {
-			t.Fatalf("%s: %v", file, err)
-		}
-		writeGraph(t, s, g)
+		writeGraph(t, s, mapMatchFile(t, file))
 	}
 	rows, err := db.QueryContext(ctx, `SELECT position_id, data FROM analysis ORDER BY position_id`)
 	if err != nil {

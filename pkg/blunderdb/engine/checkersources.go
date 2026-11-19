@@ -76,6 +76,16 @@ func MergeCheckerSources(existingMoves []domain.CheckerMove, existingAll []domai
 	if incoming == nil && !evaluatedIn(existingMoves, incomingMoves) {
 		incoming = CheckerSourcesOf(incomingMoves)
 	}
+	// A source already held with the same evaluation stays as stored: read
+	// from a merged view, its moves are ranked and their errors measured from
+	// rounded equities, where the file gives its own order and its own
+	// errors. Taking the file's would rewrite the row on every re-import.
+	incoming = slices.DeleteFunc(slices.Clone(incoming), func(in domain.CheckerSourceAnalysis) bool {
+		return slices.ContainsFunc(existing, func(ex domain.CheckerSourceAnalysis) bool {
+			return in.AnalysisEngine == ex.AnalysisEngine && in.AnalysisDepth == ex.AnalysisDepth &&
+				len(in.Moves) == len(ex.Moves) && evaluatedIn(ex.Moves, in.Moves)
+		})
+	})
 	seen := map[[2]string]bool{}
 	var all []domain.CheckerSourceAnalysis
 	for _, list := range [2][]domain.CheckerSourceAnalysis{incoming, existing} {
