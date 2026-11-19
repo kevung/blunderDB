@@ -982,3 +982,57 @@ func testSearchSortPipAndDate(t *testing.T, s storage.Storage) {
 		}
 	}
 }
+
+// testSearchWholeSideBoard: a bear-off board, one side whole, the other with one checker left. The
+// whole side's occupancy is shared by a row with another pip and by one with the same pip and
+// another distribution; the board finds itself alone however that occupancy is read: from its
+// index, after its pip, or by the walk.
+func testSearchWholeSideBoard(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	mk := func(black, white map[int]int) domain.Position {
+		p := domain.InitializePosition()
+		for i := range p.Board.Points {
+			p.Board.Points[i] = domain.Point{Color: -1}
+		}
+		b, w := 0, 0
+		for pt, n := range black {
+			p.Board.Points[pt] = domain.Point{Checkers: n, Color: domain.Black}
+			b += n
+		}
+		for pt, n := range white {
+			p.Board.Points[pt] = domain.Point{Checkers: n, Color: domain.White}
+			w += n
+		}
+		p.Board.Bearoff = [2]int{15 - b, 15 - w}
+		return p
+	}
+	white := map[int]int{19: 3, 20: 3, 21: 3, 22: 3, 23: 3}
+	target := mk(map[int]int{1: 1}, white)
+	var targetID int64
+	for i, p := range []domain.Position{
+		target,
+		mk(map[int]int{1: 1}, map[int]int{19: 4, 20: 2, 21: 3, 22: 3, 23: 3}), // same occupancy, other pip
+		mk(map[int]int{1: 1}, map[int]int{19: 2, 20: 4, 21: 4, 22: 2, 23: 3}), // same occupancy and pip
+		mk(map[int]int{2: 1}, white),                                          // the other side elsewhere
+	} {
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", i, err)
+		}
+		if i == 0 {
+			targetID = id
+		}
+	}
+	f := domain.SearchFilters{Filter: domain.Position{Board: target.Board, Cube: domain.Cube{Owner: domain.None}}}
+	for _, lim := range []struct {
+		name       string
+		probe, pip int
+	}{{"index", 500, 5000}, {"index after pip", 3, 5000}, {"walk after pip", 2, 5000}, {"walk", 0, 0}} {
+		restore := sqlshared.SetOccupancyProbeLimits(lim.probe, lim.pip)
+		got := searchIDs(t, s, f)
+		restore()
+		if !slices.Equal(got, []int64{targetID}) {
+			t.Errorf("%s: got %v, want [%d]", lim.name, got, targetID)
+		}
+	}
+}

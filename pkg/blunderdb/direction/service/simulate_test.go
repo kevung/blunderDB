@@ -376,7 +376,14 @@ func TestSimulate_UsefulOrTooHeavy(t *testing.T) {
 	if testing.Short() {
 		t.Skip("plays some three hundred runs")
 	}
+	if raceEnabled {
+		// Slowed tenfold, the runs outlast the minute unhurried gives them; the nightly plays it.
+		t.Skip("plays some three hundred runs, too slow under the race detector")
+	}
 	unhurried(t)
+	// What is asked is the work, not the clock: a whole suite on four cores plays a pool of 30
+	// its 30 runs in over a minute.
+	service.SimulateBudget = 10 * time.Minute
 	for name, tc := range map[string]struct {
 		config, players string
 		heavy           bool
