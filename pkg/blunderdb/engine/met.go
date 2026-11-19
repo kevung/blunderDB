@@ -500,7 +500,12 @@ func EquityToMWC(equity float64, score0, score1, cubeValue, matchLength int) flo
 	}
 	mwcWin := float32(GnuBGGetME(score0, score1, matchLength, 0, cubeValue, 0, false))
 	mwcLose := float32(GnuBGGetME(score0, score1, matchLength, 0, cubeValue, 1, false))
-	return float64(mwcWin+mwcLose)/2 + equity*float64(mwcWin-mwcLose)/2
+	// Each term is rounded on its own before the sum: left bare, arm64 and
+	// amd64-v3 fuse a product (a halving is one) into the addition and give
+	// other bits than default amd64.
+	middle := float64(float64(mwcWin+mwcLose) / 2)
+	swing := float64(equity * float64(mwcWin-mwcLose) / 2)
+	return middle + swing
 }
 
 // IsMoneyLength says a match length stands for money play: a length ≤ 0 or
