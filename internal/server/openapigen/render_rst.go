@@ -68,7 +68,15 @@ aussi ` + "``allCheckerAnalyses``" + ` : une entrée par source, avec son moteur
 (` + "``analysisEngine``" + `), sa profondeur (` + "``analysisDepth``" + `) et ses propres coups
 (` + "``moves``" + `), XG en tête, comme ` + "``allCubeAnalyses``" + ` pour le videau. Le champ est
 absent quand une seule source a évalué la position : ` + "``checkerAnalysis``" + ` est alors
-cette source. Une source importée de nouveau remplace sa propre entrée.
+cette source, même quand ses coups portent plusieurs profondeurs (XG déroule ses
+meilleurs coups et évalue les autres moins profond). Une source importée de nouveau
+remplace sa propre entrée.
+
+Quand ` + "``allCheckerAnalyses``" + ` est absent et que les coups de ` + "``checkerAnalysis``" + ` portent
+plusieurs ` + "``analysisEngine``" + `, la position a été analysée par plusieurs moteurs sous un
+schéma antérieur à 2.58.0 : chaque coup y porte l'évaluation la plus profonde, et ce
+qu'a dit chaque moteur seul n'est plus connu. Aucune source n'est alors disponible, et
+un nouvel import ne la reconstruit pas.
 
 Repères d'une transcription
 ---------------------------

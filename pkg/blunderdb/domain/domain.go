@@ -872,7 +872,10 @@ type PositionAnalysis struct {
 	// moves when more than one source evaluated them; CheckerAnalysis stays
 	// the merged view, where the deepest evaluation of each move wins. Nil
 	// when a single source did, as AllCubeAnalyses is for one engine: the
-	// merged view is then that source (engine.CheckerSources).
+	// merged view is then that source, at whatever depths its moves carry
+	// (engine.CheckerSources). Nil too under a merged view that mixes
+	// engines, written before the sources were kept: what each engine alone
+	// said is lost, and such a view gives no source.
 	AllCheckerAnalyses []CheckerSourceAnalysis `json:"allCheckerAnalyses,omitempty"`
 	PlayedMove         string                  `json:"playedMove,omitempty"`        // Deprecated: Use PlayedMoves instead
 	PlayedCubeAction   string                  `json:"playedCubeAction,omitempty"`  // Deprecated: Use PlayedCubeActions instead

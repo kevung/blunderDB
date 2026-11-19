@@ -115,3 +115,61 @@ func checkCheckerSourcesIsolation(t *testing.T, ctx context.Context, s storage.S
 		t.Errorf("Load(%s) = %+v, want its single 3-ply source", b, gotB)
 	}
 }
+
+// readerFloor is the floor s records.
+func readerFloor(t *testing.T, s storage.Storage) string {
+	t.Helper()
+	m, err := s.Metadata().Load(context.Background(), "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return m[storage.MinReaderVersionKey]
+}
+
+// floorRaisedByWrite checks the floor before and after write, which stores
+// a second source: a single source leaves a database readable by older
+// binaries, the first blob carrying sources raises the floor (ADR-0113).
+func floorRaisedByWrite(t *testing.T, s storage.Storage, write func(posID int64, a domain.PositionAnalysis)) {
+	t.Helper()
+	ctx := context.Background()
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	mergeSaved(t, s, "", posID, sourceAnalysis("XG", "XG Roller++", 0.30, 0.20, 0.10))
+	if got := readerFloor(t, s); got != domain.MinReaderVersion {
+		t.Fatalf("floor after a single source = %q, want %q", got, domain.MinReaderVersion)
+	}
+	write(posID, sourceAnalysis("GNUbg", "2-ply", 0.25, 0.28))
+	a, err := s.Analyses().Load(ctx, "", posID)
+	if err != nil || len(a.AllCheckerAnalyses) != 2 {
+		t.Fatalf("stored sources = %+v, %v; want two", a, err)
+	}
+	if got := readerFloor(t, s); got != domain.CheckerSourcesReaderVersion {
+		t.Errorf("floor after the first blob with sources = %q, want %q", got, domain.CheckerSourcesReaderVersion)
+	}
+}
+
+// testCheckerSourcesRaiseFloorOnMerge: the floor rises on Merge's write.
+func testCheckerSourcesRaiseFloorOnMerge(t *testing.T, s storage.Storage) {
+	floorRaisedByWrite(t, s, func(posID int64, a domain.PositionAnalysis) {
+		mergeSaved(t, s, "", posID, a)
+	})
+}
+
+// testCheckerSourcesRaiseFloorOnSaveMany: the floor rises on SaveMany's
+// write, the batch path imports take.
+func testCheckerSourcesRaiseFloorOnSaveMany(t *testing.T, s storage.Storage) {
+	floorRaisedByWrite(t, s, func(posID int64, a domain.PositionAnalysis) {
+		ctx := context.Background()
+		existing, err := s.Analyses().Load(ctx, "", posID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		m := storage.MergeSavedAnalysis(existing, a)
+		if err := s.Analyses().SaveMany(ctx, "", map[int64]*domain.PositionAnalysis{posID: &m}); err != nil {
+			t.Fatalf("SaveMany: %v", err)
+		}
+	})
+}
