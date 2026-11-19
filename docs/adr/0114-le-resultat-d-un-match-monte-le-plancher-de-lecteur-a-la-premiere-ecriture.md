@@ -30,7 +30,9 @@ le disent autrement que « résultat inconnu ».
    binaire n'y a écrit aucun résultat. Le plancher ne baisse jamais : après une analyse à
    plusieurs sources et un résultat, dans un ordre ou dans l'autre, il vaut 2.59.0.
 4. **PostgreSQL : même chemin que l'ADR-0113 §7.** `metadata` est globale, hors RLS ; le rôle du
-   démon y a déjà `SELECT`, `INSERT` et `UPDATE`. Sans ces droits, l'enregistrement d'un match
+   démon y a déjà `SELECT`, `INSERT` et `UPDATE`. Le rôle de chargement en masse
+   (`blunderdb_loader`), qui n'y avait que `SELECT`, reçoit aussi `INSERT` et `UPDATE`
+   (`ApplyLoaderRole`) : il importe des matchs au résultat connu. Sans ces droits, l'enregistrement d'un match
    au résultat connu échoue entier plutôt que d'écrire un résultat que le plancher n'annonce pas.
 
 ## Alternatives écartées
@@ -61,4 +63,4 @@ le disent autrement que « résultat inconnu ».
 `Match/ResultFloorBeforeSources` (deux backends, refus d'un lecteur 2.58 par
 `storage.CheckReaderFloorAs`) ; `TestMatchResultFloor_PostgresRLS` ;
 `TestMigrate_2_58_0_to_2_59_0_MatchResult` (plancher inchangé par la migration) ;
-`TestExportRaisesFloorForMatchResult`.
+`TestExportRaisesFloorForMatchResult` ; `bulkload` sous le rôle de chargement.
