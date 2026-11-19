@@ -14,38 +14,35 @@ import (
 // never rebuilt from the sources: it is computed as it always was, and the
 // sources ride beside it.
 
-// CheckerSourcesOf splits candidate moves by engine, in first-seen order, each
-// source's depth the label of its deepest move. A list from one engine is one
-// source holding it as it came; a list mixing engines (a merged view) is split
-// and each part ranked on its own, since its indices and errors were measured
-// from another engine's best move.
+// CheckerSourcesOf reads a list of candidate moves that carries no sources as
+// sources. A list from one engine is one source, holding the moves as they
+// came even when the engine evaluated them at several depths (XG rolls out
+// its best candidates and leaves the others shallower), labelled as the
+// provenance columns label it (analysis_engine, analysis_depth): the engine
+// and the depth of the deepest move. A list mixing engines is a merged view
+// whose indices and errors were measured from another engine's best move;
+// what each engine alone said is lost, so it gives no source at all.
 func CheckerSourcesOf(moves []domain.CheckerMove) []domain.CheckerSourceAnalysis {
-	var out []domain.CheckerSourceAnalysis
-	at := map[string]int{}
-	for _, m := range moves {
-		i, ok := at[m.AnalysisEngine]
-		if !ok {
-			i = len(out)
-			at[m.AnalysisEngine] = i
-			out = append(out, domain.CheckerSourceAnalysis{AnalysisEngine: m.AnalysisEngine, AnalysisDepth: m.AnalysisDepth})
-		}
-		s := &out[i]
-		if domain.AnalysisDepthRank(m.AnalysisDepth) > domain.AnalysisDepthRank(s.AnalysisDepth) {
-			s.AnalysisDepth = m.AnalysisDepth
-		}
-		s.Moves = append(s.Moves, m)
+	if len(moves) == 0 {
+		return nil
 	}
-	if len(out) > 1 {
-		for i := range out {
-			RankCheckerMovesDepthFirst(out[i].Moves)
+	src := domain.CheckerSourceAnalysis{AnalysisEngine: moves[0].AnalysisEngine, AnalysisDepth: moves[0].AnalysisDepth}
+	for _, m := range moves[1:] {
+		if m.AnalysisEngine != src.AnalysisEngine {
+			return nil
+		}
+		if domain.AnalysisDepthRank(m.AnalysisDepth) > domain.AnalysisDepthRank(src.AnalysisDepth) {
+			src.AnalysisDepth = m.AnalysisDepth
 		}
 	}
-	return out
+	src.Moves = moves
+	return []domain.CheckerSourceAnalysis{src}
 }
 
 // CheckerSources is every source's evaluation of a's candidate moves: the
 // stored set when several sources evaluated them, else the merged view as its
-// single source. Nil when a has no checker analysis.
+// single source (CheckerSourcesOf). Nil when a has no checker analysis, or
+// when its merged view mixes engines and carries no stored set.
 func CheckerSources(a *domain.PositionAnalysis) []domain.CheckerSourceAnalysis {
 	switch {
 	case a == nil:

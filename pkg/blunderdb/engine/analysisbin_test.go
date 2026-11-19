@@ -315,7 +315,7 @@ func TestBinaryFormatCoversEveryField(t *testing.T) {
 	// AllCheckerAnalyses), by the hash of their list.
 	const want = "3eca881e2fd3ed93"
 	if hex.EncodeToString(sum[:8]) != want {
-		t.Fatalf("PositionAnalysis changed shape (%d leaf fields, hash %x); binary format version 1 knows:\n%s",
+		t.Fatalf("PositionAnalysis changed shape (%d leaf fields, hash %x): write the new field in MarshalAnalysisBinary under a new format version (ADR-0070), then update the hash. Fields now:\n%s",
 			len(got), sum[:8], list)
 	}
 }

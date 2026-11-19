@@ -214,14 +214,11 @@ func deepenAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionA
 		}
 	}
 
-	// The incoming source is kept beside the others when it deepened the
-	// analysis or comes from an engine the position has no evaluation of: a
-	// shallower re-import of a stored match leaves the row as it was.
-	if changed || !hasCheckerSourceEngine(existing, &incoming) {
-		if sources := engine.MergeAnalysisCheckerSources(existing, &incoming); !reflect.DeepEqual(sources, existing.AllCheckerAnalyses) {
-			a.AllCheckerAnalyses = sources
-			changed = true
-		}
+	// Every source comes in beside the others, a shallower one too: what
+	// deepens the merged view is decided above, what a source is by engine.
+	if sources := engine.MergeAnalysisCheckerSources(existing, &incoming); !reflect.DeepEqual(sources, existing.AllCheckerAnalyses) {
+		a.AllCheckerAnalyses = sources
+		changed = true
 	}
 
 	if !changed {
@@ -230,22 +227,4 @@ func deepenAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionA
 	a.LastModifiedDate = time.Now()
 	sortCheckerMovesByEquity(&a)
 	return &a
-}
-
-// hasCheckerSourceEngine reports whether every engine that evaluated
-// incoming's moves already has a source in existing.
-func hasCheckerSourceEngine(existing, incoming *domain.PositionAnalysis) bool {
-	if incoming.CheckerAnalysis == nil {
-		return true
-	}
-	held := map[string]bool{}
-	for _, src := range engine.CheckerSources(existing) {
-		held[src.AnalysisEngine] = true
-	}
-	for _, m := range incoming.CheckerAnalysis.Moves {
-		if !held[m.AnalysisEngine] {
-			return false
-		}
-	}
-	return true
 }

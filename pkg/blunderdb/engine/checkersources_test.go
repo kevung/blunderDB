@@ -3,6 +3,7 @@ package engine
 import (
 	"bytes"
 	"reflect"
+	"slices"
 	"testing"
 	"time"
 
@@ -67,20 +68,37 @@ func TestMergeCheckerSourcesSingleSourceIsNil(t *testing.T) {
 	}
 }
 
-// A merged view written before the sources existed may already mix engines:
-// read as sources, each engine's part is ranked against its own best move.
-func TestCheckerSourcesOfMixedViewRanksEachEngine(t *testing.T) {
+// An analysis from one engine at several depths, as XG writes one, is one
+// source as it came, labelled by its deepest move.
+func TestCheckerSourcesOfOneEngineIsOneSourceAsItCame(t *testing.T) {
+	moves := []domain.CheckerMove{
+		{Move: "a", AnalysisEngine: "XG", AnalysisDepth: "XG Roller++", Equity: 0.3, Index: 0},
+		{Move: "b", AnalysisEngine: "XG", AnalysisDepth: "3-ply", Equity: 0.35, Index: 1},
+	}
+	want := slices.Clone(moves)
+	srcs := CheckerSourcesOf(moves)
+	if len(srcs) != 1 || srcs[0].AnalysisEngine != "XG" || srcs[0].AnalysisDepth != "XG Roller++" {
+		t.Fatalf("sources = %+v, want one XG Roller++ source", srcs)
+	}
+	if !reflect.DeepEqual(srcs[0].Moves, want) {
+		t.Errorf("moves = %+v, want them as they came", srcs[0].Moves)
+	}
+}
+
+// A merged view written before the sources existed may mix engines: each
+// move's index and error were measured from the other engine's best move, so
+// no source is derived from it.
+func TestCheckerSourcesOfMixedViewGivesNoSource(t *testing.T) {
 	mixed := []domain.CheckerMove{
 		{Move: "a", AnalysisEngine: "XG", AnalysisDepth: "XG Roller++", Equity: 0.3},
 		{Move: "b", AnalysisEngine: "GNUbg", AnalysisDepth: "2-ply", Equity: 0.2},
-		{Move: "c", AnalysisEngine: "XG", AnalysisDepth: "3-ply", Equity: 0.1},
 	}
-	srcs := CheckerSourcesOf(mixed)
-	if len(srcs) != 2 || srcs[0].AnalysisDepth != "XG Roller++" || len(srcs[0].Moves) != 2 {
-		t.Fatalf("sources = %+v", srcs)
+	if srcs := CheckerSourcesOf(mixed); srcs != nil {
+		t.Errorf("sources of a mixed view = %+v, want none", srcs)
 	}
-	if g := srcs[1].Moves[0]; g.Index != 0 || g.EquityError != nil {
-		t.Errorf("GNUbg's best move = %+v, want index 0 and no error", g)
+	a := &domain.PositionAnalysis{CheckerAnalysis: &domain.CheckerAnalysis{Moves: mixed}}
+	if srcs := CheckerSources(a); srcs != nil {
+		t.Errorf("CheckerSources of a mixed view = %+v, want none", srcs)
 	}
 }
 
