@@ -9006,6 +9006,68 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class WinTracePoint {
+	    move_id: number;
+	    game_number: number;
+	    move_number: number;
+	    player: number;
+	    decision_type: string;
+	    analysed: boolean;
+	    mwc_before?: number;
+	    mwc_after?: number;
+	    mwc_loss?: number;
+	    error: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new WinTracePoint(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.move_id = source["move_id"];
+	        this.game_number = source["game_number"];
+	        this.move_number = source["move_number"];
+	        this.player = source["player"];
+	        this.decision_type = source["decision_type"];
+	        this.analysed = source["analysed"];
+	        this.mwc_before = source["mwc_before"];
+	        this.mwc_after = source["mwc_after"];
+	        this.mwc_loss = source["mwc_loss"];
+	        this.error = source["error"];
+	    }
+	}
+	export class MatchWinTrace {
+	    money: boolean;
+	    decisions: WinTracePoint[];
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchWinTrace(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.money = source["money"];
+	        this.decisions = this.convertValues(source["decisions"], WinTracePoint);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class MoveGrade {
 	    move_id: number;
 	    error_mp: number;
@@ -10206,6 +10268,7 @@ export namespace storage {
 		    return a;
 		}
 	}
+	
 	
 	
 	

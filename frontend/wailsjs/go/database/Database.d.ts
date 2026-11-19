@@ -375,6 +375,8 @@ export function GetMatchTimeSummary(arg1:number):Promise<storage.MatchTimeSummar
 
 export function GetMatchTournament(arg1:number):Promise<domain.Tournament>;
 
+export function GetMatchWinTrace(arg1:number):Promise<storage.MatchWinTrace>;
+
 export function GetMovesByGame(arg1:number):Promise<Array<domain.Move>>;
 
 export function GetNextAnkiCard(arg1:number):Promise<domain.AnkiReviewCard>;

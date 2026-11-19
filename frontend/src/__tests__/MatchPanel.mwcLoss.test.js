@@ -4,7 +4,8 @@
  *
  * The Transcript shows the match winning chances each decision cost, laid out
  * as the decision times are (a column, a sort header, absent when nothing is
- * scored), and the loss and time charts jump to a decision in the Transcript.
+ * scored), the loss and time charts jump to a decision in the Transcript, and
+ * the Charts tab draws player 1's match winning chances.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -29,6 +30,17 @@ const LOSSES = [
     { move_id: 201, game_number: 2, move_number: 1, player: 0, decision_type: 'checker', mwc_loss: 0.05, difficulty: 0.001, avoidable: true },
     { move_id: 202, game_number: 2, move_number: 2, player: 1, decision_type: 'checker', mwc_loss: 0.002, difficulty: 0.003, avoidable: false }
 ];
+
+const TRACE = {
+    money: false,
+    decisions: [
+        { move_id: 101, player: 0, analysed: true, mwc_before: 0.5, mwc_after: 0.4877, error: false },
+        { move_id: 102, player: 1, analysed: false, mwc_before: null, mwc_after: null, error: false },
+        { move_id: 103, player: 0, analysed: true, mwc_before: 0.55, mwc_after: 0.55, error: false },
+        { move_id: 201, player: 0, analysed: true, mwc_before: 0.6, mwc_after: 0.55, error: true },
+        { move_id: 202, player: 1, analysed: true, mwc_before: 0.45, mwc_after: 0.452, error: false }
+    ]
+};
 
 const SUMMARY = {
     has_cadence: true,
@@ -78,6 +90,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetMatchDetailStats: vi.fn(() => Promise.resolve(null)),
     GetMatchMoveGrades: vi.fn(() => Promise.resolve([])),
     GetMatchDecisionLosses: vi.fn(() => Promise.resolve(LOSSES)),
+    GetMatchWinTrace: vi.fn(() => Promise.resolve(TRACE)),
     GetMatchReview: vi.fn(() => Promise.resolve(REVIEW)),
     GetMatchTimeSummary: vi.fn(() => Promise.resolve(SUMMARY)),
     GetMatchOrigin: vi.fn(() => Promise.resolve(null)),
@@ -92,7 +105,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 import { activeTabStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
-import { ListMatches, GetMatchDecisionLosses, LoadAnalysis } from '../../wailsjs/go/database/Database.js';
+import { ListMatches, GetMatchDecisionLosses, GetMatchWinTrace, LoadAnalysis } from '../../wailsjs/go/database/Database.js';
 import { openTab } from './matchTabHelper.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 
@@ -276,5 +289,19 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         await fireEvent.mouseLeave(lossPlot);
         expect(container.querySelector('tr.linked')).toBeNull();
         expect(times.querySelector('line.cross')).toBeNull();
+    });
+
+    test("the Charts tab draws player 1's winning chances, broken where a decision has no analysis, an error as a dot", async () => {
+        const container = await openTranscript();
+        const plot = container.querySelector('[data-testid="win-trace-plot"]');
+        expect(plot).not.toBeNull();
+        expect(plot.querySelectorAll('polyline.line').length).toBe(2);
+        expect(plot.querySelectorAll('[data-testid="win-trace-error"]').length).toBe(1);
+    });
+
+    test('a money session draws no winning chances', async () => {
+        vi.mocked(GetMatchWinTrace).mockResolvedValueOnce({ money: true, decisions: TRACE.decisions.map((d) => ({ ...d, mwc_before: null, mwc_after: null })) });
+        const container = await openTranscript();
+        expect(container.querySelector('[data-testid="win-trace-plot"]')).toBeNull();
     });
 });

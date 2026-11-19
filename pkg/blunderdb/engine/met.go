@@ -482,3 +482,30 @@ func ConvertEMGLossToMWCLoss(emgMillipoints, score0, score1, fMove, cubeValue, m
 	}
 	return (float64(emgMillipoints) / 1000.0) * float64(denom) / 2.0
 }
+
+// EquityToMWC converts a normalised equity (ADR-0019: ±1 = winning or losing
+// cubeValue points outright) into the match winning chances of the side whose
+// equity it is, score0 being that side's current score. It inverts GNUbg's
+// mwc2eq, MWC = (W+L)/2 + eq×(W−L)/2, with the same float32 table reads as
+// ConvertEMGLossToMWCLoss, so that the gap between two equities converted here
+// is the loss ConvertEMGLossToMWCLoss gives for their difference.
+//
+// NaN where ConvertEMGLossToMWCLoss is: money play, a score outside the match.
+func EquityToMWC(equity float64, score0, score1, cubeValue, matchLength int) float64 {
+	if IsMoneyLength(matchLength) {
+		return math.NaN()
+	}
+	if score0 < 0 || score1 < 0 || score0 >= matchLength || score1 >= matchLength {
+		return math.NaN()
+	}
+	mwcWin := float32(GnuBGGetME(score0, score1, matchLength, 0, cubeValue, 0, false))
+	mwcLose := float32(GnuBGGetME(score0, score1, matchLength, 0, cubeValue, 1, false))
+	return float64(mwcWin+mwcLose)/2 + equity*float64(mwcWin-mwcLose)/2
+}
+
+// IsMoneyLength says a match length stands for money play: a length ≤ 0 or
+// one the match equity table cannot represent, the importers' 99999 sentinel
+// among them, as ConvertEMGLossToMWCLoss reads it.
+func IsMoneyLength(matchLength int) bool {
+	return matchLength <= 0 || matchLength > gnuBGMaxScore
+}

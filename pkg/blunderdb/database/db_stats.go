@@ -589,6 +589,14 @@ func (d *Database) GetMatchDecisionLosses(matchID int64) ([]storage.DecisionLoss
 	return d.store.Stats().MatchDecisionLosses(context.Background(), "", matchID)
 }
 
+// GetMatchWinTrace is player 1's match winning chances before and after
+// every decision of a match, for the Match sheet's curve and `match`.
+func (d *Database) GetMatchWinTrace(matchID int64) (storage.MatchWinTrace, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().MatchWinTrace(context.Background(), "", matchID)
+}
+
 // GetMatchReview is a match's study summary (ADR-0078), for the Match panel's
 // review and `match --format summary`.
 func (d *Database) GetMatchReview(matchID int64) (storage.MatchReview, error) {

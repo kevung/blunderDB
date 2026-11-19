@@ -706,6 +706,10 @@ export function GetMatchTournament(arg1) {
   return window['go']['database']['Database']['GetMatchTournament'](arg1);
 }
 
+export function GetMatchWinTrace(arg1) {
+  return window['go']['database']['Database']['GetMatchWinTrace'](arg1);
+}
+
 export function GetMovesByGame(arg1) {
   return window['go']['database']['Database']['GetMovesByGame'](arg1);
 }

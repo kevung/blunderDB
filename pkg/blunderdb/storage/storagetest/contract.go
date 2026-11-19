@@ -184,6 +184,7 @@ func RunContractTestsOnly(t *testing.T, factory func() storage.Storage, keep fun
 		{"Stats/MatchMoveGrades", testStatsMatchMoveGrades},
 		{"Stats/MatchDecisionLosses", testStatsMatchDecisionLosses},
 		{"Stats/MatchDecisionLossesCube", testStatsMatchDecisionLossesCube},
+		{"Stats/MatchWinTrace", testStatsMatchWinTrace},
 		{"Stats/TournamentReview", testStatsTournamentReview},
 		{"Stats/TournamentReferenceIsMainPlayer", testStatsTournamentReferenceIsMainPlayer},
 		{"Stats/PlayedDecisionPerMatch", testStatsPlayedDecisionPerMatch},

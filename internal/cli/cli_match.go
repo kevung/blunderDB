@@ -127,6 +127,11 @@ func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition, ori
 		output["decision_losses"] = losses
 		output["difficulty_summary"] = storage.SummariseDifficulty(losses)
 	}
+	// Player 1's match winning chances before and after each Move, null
+	// without analysis, every value null at money.
+	if trace, ok := cli.winTrace(match.ID); ok {
+		output["win_trace"] = trace
+	}
 
 	jsonData, err := json.MarshalIndent(output, "", "  ")
 	if err != nil {
@@ -262,6 +267,14 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 			lossByMove[d.MoveID] = d
 		}
 	}
+	traceByMove := map[int64]storage.WinTracePoint{}
+	if trace, ok := cli.winTrace(match.ID); ok {
+		for _, pt := range trace.Decisions {
+			if pt.MWCBefore != nil {
+				traceByMove[pt.MoveID] = pt
+			}
+		}
+	}
 	for i, movePos := range positions {
 		sb.WriteString(fmt.Sprintf("Position %d:\n", i+1))
 		sb.WriteString(fmt.Sprintf("  Game: %d, Move: %d\n", movePos.GameNumber, movePos.MoveNumber))
@@ -288,6 +301,13 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 		if movePos.CubeDecisionMS != nil {
 			sb.WriteString(fmt.Sprintf("  Cube decision time: %.1f s\n", float64(*movePos.CubeDecisionMS)/1000))
 		}
+		if pt, ok := traceByMove[movePos.MoveID]; ok {
+			sb.WriteString(fmt.Sprintf("  MWC (%s): %.2f%%", match.Player1Name, *pt.MWCBefore*100))
+			if pt.MWCAfter != nil {
+				sb.WriteString(fmt.Sprintf(" -> %.2f%%", *pt.MWCAfter*100))
+			}
+			sb.WriteString("\n")
+		}
 		// An unscored decision is left out, never printed as zero.
 		if d, ok := lossByMove[movePos.MoveID]; ok {
 			sb.WriteString(fmt.Sprintf("  MWC loss: %.2f%%\n", *d.MWCLoss*100))
@@ -302,6 +322,16 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 	}
 
 	return sb.String(), nil
+}
+
+// winTrace is player 1's match winning chances over a match, ok false when
+// it cannot be read.
+func (cli *CLI) winTrace(matchID int64) (storage.MatchWinTrace, bool) {
+	if cli.db == nil {
+		return storage.MatchWinTrace{}, false
+	}
+	trace, err := cli.db.GetMatchWinTrace(matchID)
+	return trace, err == nil
 }
 
 // decisionLosses is the per-Move MWC loss of a match, nil when it cannot be read.

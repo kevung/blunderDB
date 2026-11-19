@@ -210,6 +210,7 @@ var covered = map[string]bool{
 	"Stats/MatchDecisionLosses":                              true,
 	"Stats/MatchDecisionLossesCube":                          true,
 	"Stats/MatchDetail":                                      true,
+	"Stats/MatchWinTrace":                                    true,
 	"Stats/MatchMoveGrades":                                  true,
 	"Stats/OpponentFilter":                                   true,
 	"Stats/PlayedDecisionFollowsPositionEdit":                true,

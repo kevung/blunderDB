@@ -449,6 +449,45 @@ type DecisionLoss struct {
 	Away [2]int `json:"away"`
 }
 
+// MatchWinTrace is player 1's match winning chances over a match, one point
+// per Move in Transcript order, for the curve the Match sheet draws. Money is
+// a match played for money: it has no match winning chances, so every point
+// keeps nil values and only Analysed says what the analysis covers.
+type MatchWinTrace struct {
+	Money     bool            `json:"money"`
+	Decisions []WinTracePoint `json:"decisions"`
+}
+
+// WinTracePoint is one decision of a MatchWinTrace. MWCBefore is player 1's
+// match winning chances with the decision taken at its best, as its analysis
+// rates it; MWCAfter the same chances once the decision was played: MWCBefore
+// moved by the loss of the player who made it, so that MWCBefore − MWCAfter is
+// MWCLoss for player 1's decisions and −MWCLoss for player 2's (the loss
+// MatchDecisionLosses gives, same conversion). Both are fractions, read off
+// the library's match equity table from the analysis's normalised equity
+// (ADR-0019): no equity leaves on another scale. They are not clamped: an
+// analysis's rounding can put a won position a hair past 1.
+//
+// Analysed says the decision has an analysis its equity can be read from;
+// without one both values are nil, never estimated. An analysed decision whose
+// own play is unscored (a played move no candidate names) has a MWCBefore and
+// a nil MWCAfter. Between two decisions the curve moves by the dice, which no
+// decision accounts for.
+type WinTracePoint struct {
+	MoveID       int64    `json:"move_id"`
+	GameNumber   int      `json:"game_number"`
+	MoveNumber   int      `json:"move_number"`
+	Player       int      `json:"player"`        // 0 is player 1, 1 is player 2
+	DecisionType string   `json:"decision_type"` // "checker" or "cube"
+	Analysed     bool     `json:"analysed"`
+	MWCBefore    *float64 `json:"mwc_before"`
+	MWCAfter     *float64 `json:"mwc_after"`
+	// MWCLoss and Error are the decision's DecisionLoss fields, for marking
+	// the errors on the curve.
+	MWCLoss *float64 `json:"mwc_loss"`
+	Error   bool     `json:"error"`
+}
+
 // PlayerTimeSummary is what one player's recorded decision times add up to
 // (ADR-0073). Durations are milliseconds; a Move whose duration is unknown is
 // counted in Unknown and in no total or mean, so an unknown is never a zero:
@@ -740,6 +779,12 @@ type StatsStore interface {
 	// and converts through the same function, so a player's losses add up to
 	// the Match's MWCLoss (MWCLoss2 for player 2).
 	MatchDecisionLosses(ctx context.Context, scope string, matchID int64) ([]DecisionLoss, error)
+
+	// MatchWinTrace is player 1's match winning chances before and after
+	// every Move of a Match, in Transcript order, read from the analyses and
+	// moved by the losses MatchDecisionLosses gives. A match of another
+	// tenant, or none, is an empty trace.
+	MatchWinTrace(ctx context.Context, scope string, matchID int64) (MatchWinTrace, error)
 
 	// MatchReview is a match's study summary (ADR-0078): PR and L7 with
 	// their intervals over the games, the errors worth revisiting, the

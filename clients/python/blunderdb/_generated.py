@@ -1374,6 +1374,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.matchTimeSummary — JSON."
         return self._call("/v1/stats.matchTimeSummary", payload)
 
+    def stats_match_win_trace(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.matchWinTrace — JSON."
+        return self._call("/v1/stats.matchWinTrace", payload)
+
     def stats_player_contrast(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.playerContrast — JSON."
         return self._call("/v1/stats.playerContrast", payload)
