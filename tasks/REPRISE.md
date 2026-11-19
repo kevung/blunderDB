@@ -24,31 +24,35 @@
 
 ## CI
 
-- Deux rouges de main corrigés le 19 : `EquityToMWC` fusionnait un produit en FMA sur arm64 et
-  amd64-v3 (`TestEngineEmitsNoFusedMultiplyAdd`) ; `TestDirectionSimulate_ThirdAtOnceIsBusy`
-  attendait sans fin un chevauchement que les bornes de la simulation ne garantissent plus.
-- Restaient `TestSimulate_UsefulOrTooHeavy` et `TestSimulate_WorkWithinTheBounds` (`hostile-smoke`,
-  `test (rest)`), repris par #962 et #963 : **vérifier que le run de 2faadf91e est vert**.
-- **Nightly rouge chaque jour depuis le 13 nov. (#935)**, non diagnostiqué :
-  `TestImportStoredRowsAreStable` (PostgreSQL) lit 26 lignes `match_stats` stockées contre 22
-  enregistrées (942 contre 792 pour `match_stats_cell`, 6 contre 4 pour `match_stats_position`) —
-  à rapprocher des statistiques conservées à l'import (0.56.0) : empreinte à ré-épingler, ou
-  lignes en trop. Le lien gnu.org du linkcheck est une panne réseau.
+- **main vert** (run de 48013308e, le 19) après quatre corrections du jour : `EquityToMWC`
+  fusionnait un produit en FMA sur arm64 et amd64-v3 ; `TestDirectionSimulate_ThirdAtOnceIsBusy`
+  attendait sans fin un chevauchement ; les gardes d'horloge de la simulation (#962, #963) ;
+  réimporter une source de pions déjà tenue réécrivait ses analyses (ci-dessous).
+- **Nightly (#935)**, rouge du 13 au 18, deux causes sur `TestImportStoredRowsAreStable` : des
+  statistiques de match en plus, voulues, empreinte déjà ré-épinglée ; puis, depuis les sources de
+  pions, un réimport de `.xg` ou `.sgf` qui réécrivait `analysis_data` et annonçait des analyses
+  « approfondies ». `MergeCheckerSources` garde la source tenue quand l'évaluation est la même
+  (`TestReimportOfAStoredSourceWritesNothing`, hors nightly). **Fermer #935 à la première nuit
+  verte.** Le lien gnu.org du linkcheck est une panne passagère (job consultatif).
+- Proposé, non fait : `TestImportStoredRowsAreStable` dans le job `test-postgres` de `build.yml`
+  (≈ 35 s), qui aurait signalé les deux rouges dès la PR. Vu, laissé : le tri de la vue fusionnée
+  est instable (`sort.Slice` dans `rankCheckerMoves`).
 
-## En cours — #959, suite de #952 (brouillon, branche `perf/952-suite`, 2c63d7584)
+## En cours — #959, suite de #952 (brouillon, branche `perf/952-suite`)
 
 - Les quatre cases sont faites : champs de liste des positions, index couvrant du tri par pips
   (migration 071), filtre de match × colonne rare, **résultat de match conservé** (migration 072,
   étape SQLite 2.58 → 2.59, GUI, CLI, doc en 9 langues). `feat/champs-liste` y est fusionnée ;
-  `perf/952-resultat-wip` et `-wip-2` sont le doublon abandonné (branches à supprimer).
+  les branches `perf/952-resultat-wip*` sont supprimées.
 - Une base SQLite ouverte en lecture seule sans migration lit un résultat inconnu au lieu
   d'échouer sur la colonne absente.
-- **À arbitrer avant fusion** : `MinReaderVersion` est resté à 2.50.0, donc un binaire 2.50 à
-  2.58 écrit encore dans une base 2.59 ; les matchs qu'il importe gardent un résultat NULL que
-  rien ne recalcule. Monter le plancher, ou recalculer à la lecture.
-- **À faire avant fusion** : la suite PostgreSQL complète (seul un sous-ensemble ciblé a tourné en
-  local) ; `hostile-smoke` de la PR, rouge avant #962/#963 — refusionner main ; toutes les mesures
-  « à mesurer » du corps de la PR, au banc gammonGo base pleine.
+- **Plancher de lecture 2.59.0, monté par l'écriture** (décidé le 19) : `MinReaderVersion` reste
+  2.50.0 (ADR-0113 §6 : jamais de montée à l'ouverture) ; le plancher monte à 2.59.0 dans la
+  transaction qui écrit le premier résultat de match, avec son ADR. En cours le 19 au soir sur la
+  branche, main refusionnée : lire le corps de la PR et `gh pr checks 959` pour l'état exact
+  (suite PostgreSQL complète, CI).
+- **Reste avant fusion** : toutes les mesures « à mesurer » du corps de la PR, au banc gammonGo
+  base pleine ; puis sortir du brouillon, fusionner, fermer #952.
 - **Mesure toujours due depuis #911** : Q11 et Q12 à 50 clients sur la pile du banc.
 
 ## Chantier vision — en pause, bloqué hors dépôt
@@ -71,8 +75,8 @@ publiées (857d10d17).
 
 ## Prochaines étapes
 
-1. CI : run de main, puis le nightly (#935).
-2. #959 : arbitrage `MinReaderVersion`, suite PostgreSQL, mesures au banc, fusion ; fermer #952.
+1. #959 : vérifier le plancher et la CI de la PR, mesures au banc, fusion ; fermer #952.
+2. #935 : fermer à la première nuit verte.
 3. #961 : tri des matchs par PR, origine d'un tournoi, critères des collections vivantes (la
    version qui les porte demande l'accord du propriétaire).
 4. Vision : campagne matériels, voir son `ETAT.md`.
