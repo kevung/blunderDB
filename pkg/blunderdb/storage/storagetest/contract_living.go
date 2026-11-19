@@ -204,3 +204,49 @@ func checkLivingCollectionIsolation(t *testing.T, ctx context.Context, s storage
 		t.Errorf("DeckPositionCount(%s) = %d, %v; want 0", b, n, err)
 	}
 }
+
+// testCollectionLivingProvenance: the two row marks are criteria a living
+// collection can be built on — `i`, the positions brought in one by one (by
+// hand or from a positions file), and `fl`, the positions the source tool
+// had marked — alone or together, as the self-filing "my positions" and
+// "marked at import" collections read them.
+func testCollectionLivingProvenance(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	save := func(n int, individual, flagged bool) int64 {
+		t.Helper()
+		p := provenancePos(n)
+		p.IndividuallyImported, p.Flagged = individual, flagged
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		return id
+	}
+	mine := save(1, true, false)
+	marked := save(2, false, true)
+	both := save(3, true, true)
+	save(4, false, false)
+
+	for _, tc := range []struct {
+		query string
+		want  []int64
+	}{
+		{"s i", []int64{mine, both}},
+		{"s fl", []int64{marked, both}},
+		{"s i fl", []int64{both}},
+	} {
+		id, err := storage.CreateCollection(ctx, s, "", tc.query, "", tc.query)
+		if err != nil {
+			t.Fatalf("CreateCollection(%q): %v", tc.query, err)
+		}
+		ev, err := storage.EvaluateCollection(ctx, s, "", id, 0)
+		if err != nil {
+			t.Fatalf("EvaluateCollection(%q): %v", tc.query, err)
+		}
+		got := slices.Clone(ev.PositionIDs)
+		slices.Sort(got)
+		if !ev.Living || !slices.Equal(got, tc.want) || ev.Total != len(tc.want) {
+			t.Errorf("%q: living=%v ids=%v total=%d; want %v", tc.query, ev.Living, got, ev.Total, tc.want)
+		}
+	}
+}

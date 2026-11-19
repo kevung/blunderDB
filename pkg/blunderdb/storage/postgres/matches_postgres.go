@@ -375,12 +375,24 @@ func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchL
 			return
 		}
 		args := []any{tenantID(scope)}
+		prOrder, byPR, err := sqlshared.MatchPRSort(ctx, binder{db: s.db}.shared(), scope, opts.Sort)
+		if err != nil {
+			yield(nil, fmt.Errorf("postgres: list matches: %w", err))
+			return
+		}
+		join := sqlshared.RebindFrom(prOrder.Join, len(args)+1)
+		args = append(args, prOrder.JoinArgs...)
 		whereSQL, filterArgs := buildMatchListWhere(opts, len(args)+1)
 		args = append(args, filterArgs...)
+		orderBy := domain.MatchOrderByClause(opts.Sort)
+		if byPR {
+			orderBy = sqlshared.RebindFrom(prOrder.OrderBy, len(args)+1)
+			args = append(args, prOrder.OrderArgs...)
+		}
 		query := `SELECT ` + matchSelectCols + ` FROM match m
-			 LEFT JOIN tournament t ON m.tournament_id = t.id
+			 LEFT JOIN tournament t ON m.tournament_id = t.id` + join + `
 			 WHERE m.tenant_id = $1` + whereSQL +
-			` ORDER BY ` + domain.MatchOrderByClause(opts.Sort)
+			` ORDER BY ` + orderBy
 		if opts.Limit > 0 {
 			args = append(args, opts.Limit)
 			query += fmt.Sprintf(" LIMIT $%d", len(args))

@@ -4082,7 +4082,7 @@ Options:
   -queue
     	With --type imports --batch <id>: the study queue that follows the report — what to look at now, in order
   -sort string
-    	With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent
+    	With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent, pr1, pr1_desc, pr2, pr2_desc, pr_main, pr_main_desc, pr_opponent, pr_opponent_desc
   -to string
     	End date filter YYYY-MM-DD (stats only)
   -top-blunders int
