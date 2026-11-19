@@ -198,6 +198,25 @@ func (d *Database) LoadPositionsByIDs(ids []int64) ([]Position, error) {
 	return positions, nil
 }
 
+// PositionListFields returns what a table of positions shows beside each
+// board — the error of the played decision (or none without analysis), the
+// date, the collections — for the listed positions in the caller's order, in
+// a number of queries that does not grow with the page.
+func (d *Database) PositionListFields(ids []int64) ([]storage.PositionListFields, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	p, ok := d.store.(storage.ListFieldsProvider)
+	if !ok {
+		return nil, fmt.Errorf("this backend answers no list fields: %w", storage.ErrUnsupported)
+	}
+	fields, err := p.PositionListFields().ListFields(context.Background(), "", ids)
+	if fields == nil {
+		fields = []storage.PositionListFields{}
+	}
+	return fields, err
+}
+
 func (d *Database) DeletePosition(positionID int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()

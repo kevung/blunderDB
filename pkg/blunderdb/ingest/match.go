@@ -207,6 +207,12 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 
+	games := make([]domain.Game, len(g.Games))
+	for i := range g.Games {
+		games[i] = g.Games[i].Game
+	}
+	g.Match.FinalScore, g.Match.Winner = domain.MatchResultOf(g.Match.MatchLength, games)
+
 	switch {
 	case enrich:
 		if err := fillStoredMetadata(ctx, tx, scope, matchID, &g.Match); err != nil {

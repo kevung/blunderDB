@@ -2910,6 +2910,8 @@ export namespace domain {
 	    engine_version?: string;
 	    video_source?: string;
 	    post_crawford?: boolean;
+	    final_score?: number[];
+	    winner: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -2954,6 +2956,8 @@ export namespace domain {
 	        this.engine_version = source["engine_version"];
 	        this.video_source = source["video_source"];
 	        this.post_crawford = source["post_crawford"];
+	        this.final_score = source["final_score"];
+	        this.winner = source["winner"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -8275,6 +8279,20 @@ export namespace storage {
 	        this.truncated = source["truncated"];
 	    }
 	}
+	export class CollectionRef {
+	    id: number;
+	    name: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new CollectionRef(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	    }
+	}
 	export class Comparison {
 	    verdict: string;
 	    delta: number;
@@ -9251,6 +9269,46 @@ export namespace storage {
 	}
 	
 	
+	export class PositionListFields {
+	    positionId: number;
+	    analysed: boolean;
+	    playedErrorMp?: number;
+	    date: string;
+	    matchDated: boolean;
+	    collections: CollectionRef[];
+	
+	    static createFrom(source: any = {}) {
+	        return new PositionListFields(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.positionId = source["positionId"];
+	        this.analysed = source["analysed"];
+	        this.playedErrorMp = source["playedErrorMp"];
+	        this.date = source["date"];
+	        this.matchDated = source["matchDated"];
+	        this.collections = this.convertValues(source["collections"], CollectionRef);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class RankedPlayer {
 	    rank: number;
 	    name: string;

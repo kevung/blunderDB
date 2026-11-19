@@ -1254,6 +1254,10 @@ export function PlayerRankingCtx(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PlayerRankingCtx'](arg1, arg2, arg3);
 }
 
+export function PositionListFields(arg1) {
+  return window['go']['database']['Database']['PositionListFields'](arg1);
+}
+
 export function PositionsToRollout(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PositionsToRollout'](arg1, arg2, arg3);
 }

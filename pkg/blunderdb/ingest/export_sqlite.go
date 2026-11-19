@@ -1330,6 +1330,15 @@ var notExportedTables = map[string]string{
 // analyses. A move whose position was not exported keeps everything but the
 // position; a match whose tournament was not exported keeps everything but
 // the link.
+// finalScoreArg binds one seat of the match's final score, NULL when the
+// match has no result.
+func finalScoreArg(m *domain.Match, seat int) any {
+	if m.FinalScore == nil {
+		return nil
+	}
+	return m.FinalScore[seat]
+}
+
 // exportedMatchColumns are the match columns an export carries, in the
 // order writeMatches binds them: an allow-list, like issuance.Carried for
 // the metadata keys (ADR-0007). The match's own note and its author travel
@@ -1348,6 +1357,7 @@ var exportedMatchColumns = []string{
 	"tournament_id", "tournament_sort_order", "last_visited_position",
 	"player1_elo", "player2_elo", "player1_experience", "player2_experience",
 	"transcriber", "has_jacoby", "has_beaver", "engine_version", "video_source",
+	"final_score_1", "final_score_2", "winner",
 }
 
 // notExportedMatchColumns are the match columns an export leaves behind, each
@@ -1406,14 +1416,14 @@ func (e *exporter) writeMatches() error {
 		res, err := e.tx.ExecContext(e.ctx,
 			`INSERT INTO match (`+strings.Join(append(slices.Clone(exportedMatchColumns), noteCols...), ", ")+`)
 			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?,
-			         ?, ?, ?, ?, ?, ?, ?, ?, ?`+strings.Repeat(", ?", len(noteArgs))+`)`,
+			         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?`+strings.Repeat(", ?", len(noteArgs))+`)`,
 			append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
 				nullableTime(m.MatchDate), nullableTime(m.ImportDate), filePath, m.GameCount,
 				m.MatchHash, m.CanonicalHash,
 				tournamentID, m.TournamentSortOrder, m.LastVisitedPosition,
 				m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
 				m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion,
-				videoSource}, noteArgs...)...)
+				videoSource, finalScoreArg(m, 0), finalScoreArg(m, 1), m.Winner}, noteArgs...)...)
 		if err != nil {
 			e.skip("inserting match", "matchID", id, "err", err)
 			continue

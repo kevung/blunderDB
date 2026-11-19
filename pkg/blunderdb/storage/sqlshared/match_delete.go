@@ -152,7 +152,9 @@ func SwapMatchPlayers(ctx context.Context, db Execer, scope string, id int64) er
 			`UPDATE match SET player1_name = player2_name, player2_name = player1_name,
 			                  player1_elo = player2_elo, player2_elo = player1_elo,
 			                  player1_experience = player2_experience,
-			                  player2_experience = player1_experience
+			                  player2_experience = player1_experience,
+			                  final_score_1 = final_score_2, final_score_2 = final_score_1,
+			                  winner = -winner
 			 WHERE `+tf+` AND id = ?`, withID()...); err != nil {
 			return fmt.Errorf("swap names: %w", err)
 		}
