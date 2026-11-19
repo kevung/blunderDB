@@ -4,6 +4,7 @@ package storagetest
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 	"testing"
 	"time"
@@ -21,6 +22,7 @@ func CheckChangeSetAnkiFamilies(t *testing.T, a storage.Storage, ca context.Cont
 	t.Run("AnkiSearchDeck", func(t *testing.T) { p := pair(); p.t = t; scenarioAnkiSearch(p) })
 	t.Run("Transcription", func(t *testing.T) { p := pair(); p.t = t; scenarioTranscription(p) })
 	t.Run("Tournament", func(t *testing.T) { p := pair(); p.t = t; scenarioTournament(p) })
+	t.Run("TournamentOrigin", func(t *testing.T) { p := pair(); p.t = t; scenarioTournamentOrigin(p) })
 	t.Run("TrashIsADelete", func(t *testing.T) { p := pair(); p.t = t; scenarioTrashWithoutBin(p) })
 	checkChangeSetReview(t, pair)
 	checkChangeSetTies(t, pair)
@@ -488,5 +490,82 @@ func scenarioTrashWithoutBin(p *csPair) {
 		if rep := p.replay(); rep.Added != 0 {
 			t.Errorf("%s: a replay brought it back: %+v", fam, rep)
 		}
+	}
+}
+
+// The origin of a tournament travels, a cleared one too; a payload that names
+// no origin, as a peer of a schema without it writes, leaves it alone.
+func scenarioTournamentOrigin(p *csPair) {
+	t := p.t
+	p.catchUp()
+	tid, err := p.a.Tournaments().Create(p.ca, p.sa, "Club night", "2026-11-01", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := p.a.Tournaments().UpdateOrigin(p.ca, p.sa, tid, "club"); err != nil {
+		t.Fatal(err)
+	}
+	u := famUUID(t, p.a, p.ca, p.sa, "tournament", tid)
+	p.send()
+	bid, ok := famID(p.b, p.cb, p.sb, "tournament", u)
+	if !ok {
+		t.Fatal("the tournament did not arrive under its uuid")
+	}
+	origin := func() string {
+		t.Helper()
+		g, err := p.b.Tournaments().Get(p.cb, p.sb, bid)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return g.Origin
+	}
+	if o := origin(); o != "club" {
+		t.Fatalf("origin in b = %q, want club", o)
+	}
+
+	// An older peer edits the note: its payload carries no origin key.
+	tick()
+	if err := p.a.Tournaments().UpdateComment(p.ca, p.sa, tid, "edited by an older peer"); err != nil {
+		t.Fatal(err)
+	}
+	set, err := changeset.Export(p.ca, p.a, p.sa, p.cursorFrom, 1000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p.cursorFrom = set.Cursor
+	stripped := 0
+	for i := range set.Records {
+		r := &set.Records[i]
+		if r.Family != "tournament" {
+			continue
+		}
+		var m map[string]any
+		if err := json.Unmarshal(r.Payload, &m); err != nil {
+			t.Fatal(err)
+		}
+		delete(m, "origin")
+		if r.Payload, err = json.Marshal(m); err != nil {
+			t.Fatal(err)
+		}
+		stripped++
+	}
+	if stripped == 0 {
+		t.Fatal("the note edit sent no tournament record")
+	}
+	if _, err := changeset.Import(p.cb, p.b, p.sb, set); err != nil {
+		t.Fatal(err)
+	}
+	if g, _ := p.b.Tournaments().Get(p.cb, p.sb, bid); g.Comment != "edited by an older peer" || g.Origin != "club" {
+		t.Errorf("after an older peer's edit b holds note %q, origin %q; want the note, origin club", g.Comment, g.Origin)
+	}
+
+	// Clearing the origin is an edit too, and travels.
+	tick()
+	if err := p.a.Tournaments().UpdateOrigin(p.ca, p.sa, tid, ""); err != nil {
+		t.Fatal(err)
+	}
+	p.send()
+	if o := origin(); o != "" {
+		t.Errorf("a cleared origin arrived as %q", o)
 	}
 }
