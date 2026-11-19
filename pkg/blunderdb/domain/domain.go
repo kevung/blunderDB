@@ -48,10 +48,16 @@ const (
 	// open a database this binary has opened for writing. Raised only when a
 	// binary of an older schema would write rows the newer one cannot trust:
 	// from 2.50.0 on, an analysis written without the per-move columns of
-	// 2.50 is never re-derived. From 2.58.0 on, an analysis blob may carry
-	// per-source checker evaluations a 2.57 decoder rejects as unknown flags,
-	// and a rewrite by such a binary would drop them.
-	MinReaderVersion = "2.58.0"
+	// 2.50 is never re-derived.
+	MinReaderVersion = "2.50.0"
+
+	// CheckerSourcesReaderVersion is the floor a database is raised to when
+	// it first stores an analysis blob carrying per-source checker
+	// evaluations (binary format version 2): a binary of an older schema
+	// refuses that blob, and rewriting the analysis would drop the sources.
+	// Raised by the write itself, never at open, so a library that holds no
+	// such blob stays readable by 2.50 to 2.57 (ADR-0113).
+	CheckerSourcesReaderVersion = "2.58.0"
 )
 
 // Anki deck source types

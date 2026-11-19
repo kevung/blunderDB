@@ -110,8 +110,8 @@ func TestBinaryPayloadCarriesCheckerSources(t *testing.T) {
 	}
 	b := a
 	b.AllCheckerAnalyses = []domain.CheckerSourceAnalysis{}
-	if bytes.Equal(MarshalAnalysisBinary(&b), payload) {
-		t.Error("an empty set of sources encodes as none")
+	if !bytes.Equal(MarshalAnalysisBinary(&b), payload) {
+		t.Error("an empty set of sources does not encode as none")
 	}
 }
 

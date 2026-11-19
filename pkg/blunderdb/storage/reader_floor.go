@@ -41,13 +41,19 @@ func CheckReaderFloor(floor string) error {
 // larger of the stored one and domain.MinReaderVersion, so a floor a newer
 // binary set is never lowered.
 func RaisedReaderFloor(stored string) string {
+	return RaisedReaderFloorTo(stored, domain.MinReaderVersion)
+}
+
+// RaisedReaderFloorTo is the larger of the stored floor and floor: a write
+// that needs a newer reader raises it, and nothing lowers it.
+func RaisedReaderFloorTo(stored, floor string) string {
 	if stored == "" {
-		return domain.MinReaderVersion
+		return floor
 	}
-	if cmp, err := CompareSchemaVersions(stored, domain.MinReaderVersion); err == nil && cmp > 0 {
+	if cmp, err := CompareSchemaVersions(stored, floor); err == nil && cmp > 0 {
 		return stored
 	}
-	return domain.MinReaderVersion
+	return floor
 }
 
 // ParseSchemaVersion splits a schema version "MAJOR.MINOR.PATCH" into its

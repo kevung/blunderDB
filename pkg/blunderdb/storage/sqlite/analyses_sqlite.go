@@ -230,6 +230,9 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 	// caller that already holds a transaction writes inside it, a caller that
 	// does not gets one of its own (withTx).
 	return withTx(ctx, s.db, func(tx execer) error {
+		if err := sqlshared.RaiseReaderFloorForAnalysis(ctx, binder{db: tx}.shared(), a); err != nil {
+			return err
+		}
 		if statsChanged == nil {
 			changed, err := analysisStatsColumnsChange(ctx, tx, positionID, c)
 			if err != nil {
@@ -334,6 +337,9 @@ func SaveExportedAnalysis(ctx context.Context, tx *sql.Tx, positionID int64, a *
 	data, err := engine.EncodeAnalysisForStorage(a)
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: encode analysis: %w", err)
+	}
+	if err := sqlshared.RaiseReaderFloorForAnalysis(ctx, binder{db: tx}.shared(), a); err != nil {
+		return nil, err
 	}
 	var decisionType int
 	var state []byte

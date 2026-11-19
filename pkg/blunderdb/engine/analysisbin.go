@@ -282,7 +282,8 @@ func MarshalAnalysisBinary(a *domain.PositionAnalysis) []byte {
 	if a.CheckerAnalysis != nil {
 		flags |= binFlagChecker
 	}
-	if a.AllCheckerAnalyses != nil {
+	// An empty set is no set: it writes the version-1 payload, read back nil.
+	if len(a.AllCheckerAnalyses) > 0 {
 		flags |= binFlagCheckerSources
 	}
 	w.uvarint(flags)
@@ -321,7 +322,7 @@ func MarshalAnalysisBinary(a *domain.PositionAnalysis) []byte {
 	for i := range a.Rollouts {
 		w.rollout(&a.Rollouts[i], a.CreationDate)
 	}
-	if a.AllCheckerAnalyses != nil {
+	if flags&binFlagCheckerSources != 0 {
 		w.count(false, len(a.AllCheckerAnalyses))
 		for i := range a.AllCheckerAnalyses {
 			src := &a.AllCheckerAnalyses[i]
