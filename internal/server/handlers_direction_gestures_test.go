@@ -176,39 +176,35 @@ func TestDirectionSimulate(t *testing.T) {
 	}
 }
 
-// TestDirectionSimulate_ThirdAtOnceIsBusy: with two simulations computing, a third sent at the
-// same moment is turned away with 503 rather than taking a third processor, and the two end.
+// TestDirectionSimulate_ThirdAtOnceIsBusy: with both slots held, a third simulation is turned
+// away with 503 rather than taking a third processor.
 func TestDirectionSimulate_ThirdAtOnceIsBusy(t *testing.T) {
 	was := service.SimulateBudget
 	t.Cleanup(func() { service.SimulateBudget = was })
-	service.SimulateBudget = time.Second
-	// Past the budget by far: each of the two holds its slot for the whole second.
-	const long = `{"config":{"name":"Open","phases":[{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous"}]},"players":512,"runs":200,"seed":1}`
+	// The wait for a slot outlasts the budget: a short one keeps the test short.
+	service.SimulateBudget = time.Millisecond
+	// The two slots are held here, not by two requests: how long a simulation computes is
+	// the service's to decide, and two that end early never overlap.
+	first, err := simulations.acquire(context.Background(), "a")
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := simulations.acquire(context.Background(), "a")
+	if err != nil {
+		first()
+		t.Fatal(err)
+	}
 	ts, _ := gestureServer(t)
-	done := make(chan gestureResult, 2)
-	for range 2 {
-		go func() { done <- send(t, ts, "1", "/v1/directions.simulate", long, "", "") }()
-	}
-	for total, _ := simulations.running(); total < 2; total, _ = simulations.running() {
-		runtime.Gosched()
-	}
+	const body = `{"config":{"name":"Open","phases":[{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous"}]},"players":16,"runs":5,"seed":1}`
 	// The third is told the simulations are busy — not that a write holds the database —
 	// and when to come back.
-	r := send(t, ts, "1", "/v1/directions.simulate", long, "", "")
+	r := send(t, ts, "1", "/v1/directions.simulate", body, "", "")
 	if r.status != http.StatusServiceUnavailable || !strings.Contains(string(r.body), `"reason":"simulation_busy"`) ||
 		!strings.Contains(string(r.body), "simulation busy") || strings.Contains(string(r.body), "database") || r.header.Get("Retry-After") == "" {
 		t.Errorf("a third simulation at once: status %d, Retry-After %q, body %.200s; want 503 simulation_busy with a Retry-After", r.status, r.header.Get("Retry-After"), r.body)
 	}
-	for range 2 {
-		// Cut by the budget: a partial answer, or too heavy for a budget no run fitted in —
-		// never the 400 of a malformed request.
-		r := <-done
-		partial := r.status == http.StatusOK && strings.Contains(string(r.body), service.SimulateWarnTimeBudget)
-		heavy := r.status == http.StatusServiceUnavailable && strings.Contains(string(r.body), `"reason":"too_heavy"`) && r.header.Get("Retry-After") == ""
-		if !partial && !heavy {
-			t.Errorf("a simulation holding its slot: status %d, body %.200s; want it computed until its time budget", r.status, r.body)
-		}
-	}
+	first()
+	second()
 	if total, waiting := simulations.running(); total != 0 || waiting != 0 {
 		t.Errorf("after the three: %d slots held, %d waiting; want none", total, waiting)
 	}
