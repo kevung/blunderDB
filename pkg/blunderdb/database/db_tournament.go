@@ -213,6 +213,18 @@ func (d *Database) UpdateTournamentComment(tournamentID int64, comment string) e
 	return d.store.Tournaments().UpdateComment(context.Background(), "", tournamentID, comment)
 }
 
+// UpdateTournamentOrigin sets where a tournament was played: free text such
+// as "imported", "platform" or "club", empty for unknown.
+func (d *Database) UpdateTournamentOrigin(tournamentID int64, origin string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+	return d.store.Tournaments().UpdateOrigin(context.Background(), "", tournamentID, origin)
+}
+
 // ReorderTournamentMatches sets the sort order for matches in a tournament.
 // matchIDs should be in the desired order.
 func (d *Database) ReorderTournamentMatches(tournamentID int64, matchIDs []int64) error {

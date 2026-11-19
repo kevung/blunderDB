@@ -5718,3 +5718,66 @@ func TestMigrate_2_58_0_to_2_59_0_MatchResult(t *testing.T) {
 		t.Errorf("second run of the step: %v", err)
 	}
 }
+
+func TestMigrate_2_59_0_to_2_60_0_TournamentOrigin(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2590.db")
+
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	for _, stmt := range []string{
+		// The journal trigger names every column; it is rewritten after the chain.
+		`DROP TRIGGER change_log_tournament_u`,
+		`ALTER TABLE tournament DROP COLUMN origin`,
+		`INSERT INTO tournament (id, name, date, location) VALUES (1, 'Open de Lyon', '2026-10-01', 'Lyon')`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+	stampVersion(t, dbPath, "2.59.0")
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.59.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration: %s, %v", v, err)
+	}
+	all, err := d.GetAllTournaments()
+	if err != nil || len(all) != 1 {
+		t.Fatalf("tournaments after migration: %v, %v", all, err)
+	}
+	if tr := all[0]; tr.Origin != "" || tr.Name != "Open de Lyon" {
+		t.Errorf("tournament after migration: %q of origin %q, want an unknown origin", tr.Name, tr.Origin)
+	}
+	var journaled int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM change_log WHERE family = 'tournament' AND op = 'update'`).Scan(&journaled); err != nil || journaled != 0 {
+		t.Errorf("adding the origin journaled %d tournament update(s), %v; want none", journaled, err)
+	}
+	// An origin is no row an older binary would get wrong: no floor.
+	var floor string
+	if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'min_reader_version'`).Scan(&floor); err != nil || floor != domain.MinReaderVersion {
+		t.Errorf("floor after migration = %q, %v; want %q", floor, err, domain.MinReaderVersion)
+	}
+	if err := d.migrate_2_59_0_to_2_60_0(context.Background()); err != nil {
+		t.Errorf("second run of the step: %v", err)
+	}
+
+	// Setting the origin is a change of the tournament: it travels.
+	if err := d.UpdateTournamentOrigin(1, "platform"); err != nil {
+		t.Fatalf("UpdateTournamentOrigin: %v", err)
+	}
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM change_log WHERE family = 'tournament' AND op = 'update'`).Scan(&journaled); err != nil || journaled != 1 {
+		t.Errorf("setting the origin journaled %d tournament update(s), %v; want one", journaled, err)
+	}
+	if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'min_reader_version'`).Scan(&floor); err != nil || floor != domain.MinReaderVersion {
+		t.Errorf("floor after an origin is written = %q, %v; want %q", floor, err, domain.MinReaderVersion)
+	}
+}

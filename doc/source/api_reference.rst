@@ -428,6 +428,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/tournaments.tournamentOf             JSON
      POST /v1/tournaments.update                   JSON
      POST /v1/tournaments.updateComment            JSON
+     POST /v1/tournaments.updateOrigin             JSON
    training
      POST /v1/training.generateBearoff             custom
      POST /v1/training.generateEvaluation          custom

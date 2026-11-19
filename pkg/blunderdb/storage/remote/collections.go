@@ -179,6 +179,13 @@ func (s tournamentStore) UpdateComment(ctx context.Context, scope string, id int
 	}{id, comment}, nil)
 }
 
+func (s tournamentStore) UpdateOrigin(ctx context.Context, scope string, id int64, origin string) error {
+	return s.c.call(ctx, scope, "tournaments.updateOrigin", struct {
+		ID     int64  `json:"id"`
+		Origin string `json:"origin"`
+	}{id, origin}, nil)
+}
+
 func (s tournamentStore) Delete(ctx context.Context, scope string, id int64) error {
 	return s.c.call(ctx, scope, "tournaments.delete", idReq{id}, nil)
 }

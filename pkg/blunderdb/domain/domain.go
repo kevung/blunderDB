@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.59.0"
+	DatabaseVersion = "2.60.0"
 
 	// MinReaderVersion is the oldest schema version a binary must speak to
 	// open a database this binary has opened for writing. Raised only when a
@@ -247,15 +247,19 @@ type Tournament struct {
 	// EffectiveDate is Date, else the day of the tournament's earliest match
 	// (YYYY-MM-DD), derived on read and never stored. Empty when neither
 	// exists. The date is derived exactly when Date is empty and this is not.
-	EffectiveDate string  `json:"effectiveDate"`
-	Location      string  `json:"location"`
-	SortOrder     int     `json:"sortOrder"`
-	CreatedAt     string  `json:"createdAt"`
-	UpdatedAt     string  `json:"updatedAt"`
-	MatchCount    int     `json:"matchCount"`
-	Comment       string  `json:"comment"`
-	PR            float64 `json:"pr"`
-	MWCLoss       float64 `json:"mwc_loss"`
+	EffectiveDate string `json:"effectiveDate"`
+	Location      string `json:"location"`
+	// Origin says where the tournament was played, as free text the user or
+	// the producing application chooses ("imported", "platform", "club"…).
+	// Empty when unknown, which every tournament stored before it was.
+	Origin     string  `json:"origin"`
+	SortOrder  int     `json:"sortOrder"`
+	CreatedAt  string  `json:"createdAt"`
+	UpdatedAt  string  `json:"updatedAt"`
+	MatchCount int     `json:"matchCount"`
+	Comment    string  `json:"comment"`
+	PR         float64 `json:"pr"`
+	MWCLoss    float64 `json:"mwc_loss"`
 	// RefPlayer is the player whose PR/MWCLoss the badge reports: the person
 	// present in the most of the tournament's matches. Empty when unknown.
 	RefPlayer string `json:"ref_player"`

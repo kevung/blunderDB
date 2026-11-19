@@ -324,8 +324,8 @@ func TestTransfer_CollectionIDsAloneCarriesMembers(t *testing.T) {
 }
 
 // TestTransfer_NamedMatchBringsItsTournamentAlone: a match named by id
-// arrives with its tournament's record and its own positions, not with the
-// tournament's other matches.
+// arrives with its tournament's record, origin included, and its own
+// positions, not with the tournament's other matches.
 func TestTransfer_NamedMatchBringsItsTournamentAlone(t *testing.T) {
 	ctx := context.Background()
 	a := seedLibrary(t, "match_with_comment.xg", "c")
@@ -334,6 +334,9 @@ func TestTransfer_NamedMatchBringsItsTournamentAlone(t *testing.T) {
 	}
 	tid, err := a.Tournaments().Create(ctx, "", "Open", "2026-01-01", "Paris")
 	if err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Tournaments().UpdateOrigin(ctx, "", tid, "platform"); err != nil {
 		t.Fatal(err)
 	}
 	var matches []int64
@@ -366,8 +369,8 @@ func TestTransfer_NamedMatchBringsItsTournamentAlone(t *testing.T) {
 			t.Fatal(err)
 		}
 		tournaments++
-		if tr.Name != "Open" {
-			t.Errorf("tournament %q arrived, want Open", tr.Name)
+		if tr.Name != "Open" || tr.Origin != "platform" {
+			t.Errorf("tournament %q of origin %q arrived, want Open of origin platform", tr.Name, tr.Origin)
 		}
 	}
 	if tournaments != 1 {

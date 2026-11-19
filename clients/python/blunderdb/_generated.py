@@ -1538,6 +1538,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/tournaments.updateComment — JSON."
         return self._call("/v1/tournaments.updateComment", payload)
 
+    def tournaments_update_origin(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/tournaments.updateOrigin — JSON."
+        return self._call("/v1/tournaments.updateOrigin", payload)
+
     def training_generate_bearoff(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/training.generateBearoff — hand-written handler — see openapi.yaml."
         return self._call("/v1/training.generateBearoff", payload)

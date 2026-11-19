@@ -26,7 +26,16 @@ var _ storage.TournamentStore = (*tournamentStore)(nil)
 var tournamentSelectCols = `t.id, t.name, COALESCE(t.date,''), COALESCE(t.location,''),
 	COALESCE(t.sort_order,0), COALESCE(t.created_at,''), COALESCE(t.updated_at,''),
 	` + sqlshared.TournamentMatchCount + `,
-	COALESCE(t.comment,''), ` + sqlshared.TournamentEffectiveDate
+	COALESCE(t.comment,''), ` + sqlshared.TournamentEffectiveDate + `, t.origin`
+
+// tournamentColumns is tournamentSelectCols, the origin read as unknown from a
+// file whose tournament table predates it.
+func (s *tournamentStore) tournamentColumns(ctx context.Context) string {
+	if s.cols.has(ctx, s.db, "tournament", "origin") {
+		return tournamentSelectCols
+	}
+	return strings.Replace(tournamentSelectCols, ", t.origin", ", ''", 1)
+}
 
 // tournamentFrom is the FROM clause tournamentSelectCols reads; matchFilter
 // confines the matches aggregated (alias tm).
@@ -38,7 +47,7 @@ func scanTournament(sc interface{ Scan(...any) error }) (domain.Tournament, erro
 	var t domain.Tournament
 	if err := sc.Scan(&t.ID, &t.Name, &t.Date, &t.Location,
 		&t.SortOrder, &t.CreatedAt, &t.UpdatedAt, &t.MatchCount, &t.Comment,
-		&t.EffectiveDate); err != nil {
+		&t.EffectiveDate, &t.Origin); err != nil {
 		return domain.Tournament{}, err
 	}
 	return t, nil
@@ -68,7 +77,7 @@ func (s *tournamentStore) Create(ctx context.Context, scope string, name, date, 
 // Get returns the tournament with the given id, or ErrNotFound.
 func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*domain.Tournament, error) {
 	row := s.db.QueryRowContext(ctx,
-		`SELECT `+tournamentSelectCols+tournamentFrom("tm.tournament_id = ?")+` WHERE t.id = ?`, id, id)
+		`SELECT `+s.tournamentColumns(ctx)+tournamentFrom("tm.tournament_id = ?")+` WHERE t.id = ?`, id, id)
 	t, err := scanTournament(row)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, fmt.Errorf("sqlite: get tournament %d: %w", id, storage.ErrNotFound)
@@ -84,7 +93,7 @@ func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*dom
 func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Tournament, error] {
 	return func(yield func(*domain.Tournament, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+tournamentSelectCols+tournamentFrom("1=1")+`
+			`SELECT `+s.tournamentColumns(ctx)+tournamentFrom("1=1")+`
 			 ORDER BY `+sqlshared.TournamentEffectiveDate+` DESC, t.created_at DESC, t.id DESC`+opts.SQL("LIMIT -1"))
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list tournaments: %w", err))
@@ -123,6 +132,17 @@ func (s *tournamentStore) UpdateComment(ctx context.Context, scope string, id in
 		`UPDATE tournament SET comment = ?, updated_at = datetime('now') WHERE id = ?`,
 		comment, id); err != nil {
 		return fmt.Errorf("sqlite: update tournament %d comment: %w", id, err)
+	}
+	return nil
+}
+
+// UpdateOrigin sets where a tournament was played, as free text trimmed of
+// surrounding blanks.
+func (s *tournamentStore) UpdateOrigin(ctx context.Context, scope string, id int64, origin string) error {
+	if _, err := s.db.ExecContext(ctx,
+		`UPDATE tournament SET origin = ?, updated_at = datetime('now') WHERE id = ?`,
+		strings.TrimSpace(origin), id); err != nil {
+		return fmt.Errorf("sqlite: update tournament %d origin: %w", id, err)
 	}
 	return nil
 }

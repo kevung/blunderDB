@@ -34,7 +34,7 @@ func tsTime(t time.Time) string {
 var tournamentSelectExpr = `t.id, t.name, COALESCE(t.date,''), COALESCE(t.location,''),
 	COALESCE(t.sort_order,0), t.created_at, t.updated_at,
 	` + sqlshared.TournamentMatchCount + `,
-	COALESCE(t.comment,''), ` + sqlshared.TournamentEffectiveDate
+	COALESCE(t.comment,''), ` + sqlshared.TournamentEffectiveDate + `, t.origin`
 
 // tournamentFrom is the FROM clause tournamentSelectExpr reads; matchFilter
 // confines the matches aggregated (alias tm) to the tenant, and more.
@@ -47,7 +47,7 @@ func scanTournament(sc scanner) (domain.Tournament, error) {
 	var createdAt, updatedAt time.Time
 	if err := sc.Scan(&t.ID, &t.Name, &t.Date, &t.Location,
 		&t.SortOrder, &createdAt, &updatedAt, &t.MatchCount, &t.Comment,
-		&t.EffectiveDate); err != nil {
+		&t.EffectiveDate, &t.Origin); err != nil {
 		return domain.Tournament{}, err
 	}
 	t.CreatedAt = tsTime(createdAt)
@@ -136,6 +136,17 @@ func (s *tournamentStore) UpdateComment(ctx context.Context, scope string, id in
 		`UPDATE tournament SET comment = $1, updated_at = now() WHERE id = $2 AND tenant_id = $3`,
 		comment, id, tenantID(scope)); err != nil {
 		return fmt.Errorf("postgres: update tournament %d comment: %w", id, err)
+	}
+	return nil
+}
+
+// UpdateOrigin sets where a tournament was played, as free text trimmed of
+// surrounding blanks.
+func (s *tournamentStore) UpdateOrigin(ctx context.Context, scope string, id int64, origin string) error {
+	if _, err := s.db.Exec(ctx,
+		`UPDATE tournament SET origin = $1, updated_at = now() WHERE id = $2 AND tenant_id = $3`,
+		strings.TrimSpace(origin), id, tenantID(scope)); err != nil {
+		return fmt.Errorf("postgres: update tournament %d origin: %w", id, err)
 	}
 	return nil
 }
