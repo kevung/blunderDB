@@ -28,7 +28,7 @@ func (cli *CLI) runList(args []string) error {
 	// Matches filter and order, applied in SQL like the match panel's search box
 	matchQuery := listCmd.String("query", "", "With --type matches: keep matches whose players, event, location, round, tournament or date contain this text")
 	matchIDs := listCmd.String("ids", "", "With --type matches or timeerrors: keep only these match IDs, comma-separated (as `stats matches` prints them)")
-	matchSort := listCmd.String("sort", "", "With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent")
+	matchSort := listCmd.String("sort", "", "With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent, pr1, pr1_desc, pr2, pr2_desc, pr_main, pr_main_desc, pr_opponent, pr_opponent_desc")
 
 	// Stats-specific flags (only used when --type stats)
 	statsMetric := listCmd.String("metric", "pr", "Metric to display: pr or mwc (stats only)")

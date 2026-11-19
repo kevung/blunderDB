@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 02:39+0100\n"
+"POT-Creation-Date: 2026-11-19 01:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1490,6 +1490,20 @@ msgstr ""
 
 #: ../../source/manuel_bibliotheque.rst:620
 msgid ""
+"Deux critères de provenance se prêtent à une collection qui se range "
+"seule : ``s i`` garde les positions apportées une à une (à la main ou par"
+" un fichier de positions) plutôt qu'avec un match, ``s fl`` celles que le"
+" logiciel d'origine avait marquées à l'import. Les deux se combinent avec"
+" tout autre critère."
+msgstr ""
+"Zwei Herkunftskriterien eignen sich für eine Sammlung, die sich selbst "
+"füllt: ``s i`` behält die einzeln eingebrachten Positionen (von Hand oder"
+" aus einer Positionsdatei) statt mit einem Match, ``s fl`` jene, die die "
+"Ursprungssoftware beim Import markiert hatte. Beide lassen sich mit jedem"
+" anderen Kriterium kombinieren."
+
+#: ../../source/manuel_bibliotheque.rst:626
+msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
 "composition d'une collection ordinaire, dans l'ordre de la recherche, et "
@@ -1502,7 +1516,7 @@ msgstr ""
 "Sammlung, und die Abfrage wird gelöscht. Die Positionen, die sie vor dem "
 "Lebendigwerden enthielt, werden ersetzt."
 
-#: ../../source/manuel_bibliotheque.rst:625
+#: ../../source/manuel_bibliotheque.rst:631
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1514,7 +1528,7 @@ msgstr ""
 "ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein "
 "gespeicherter Filter nicht haben darf: sich im Stillen zu weiten."
 
-#: ../../source/manuel_bibliotheque.rst:630
+#: ../../source/manuel_bibliotheque.rst:636
 msgid ""
 "Une collection vivante ne peut pas porter ``like`` : une collection est "
 "un ensemble, et ce jeton classe. Elle refuse la requête qui le porte, en "
@@ -1528,7 +1542,7 @@ msgstr ""
 "(``like42*``), die eine ältere gespeicherte Suche noch enthält, wird beim"
 " Wiederholen abgelehnt, aus dem Verlauf wie aus der Filterbibliothek."
 
-#: ../../source/manuel_bibliotheque.rst:636
+#: ../../source/manuel_bibliotheque.rst:642
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1550,7 +1564,7 @@ msgstr ""
 " außerhalb der Datei, wird die Sammlung **eingefroren** exportiert, mit "
 "den Positionen, die die Abfrage zum Zeitpunkt des Exports auswählt."
 
-#: ../../source/manuel_bibliotheque.rst:645
+#: ../../source/manuel_bibliotheque.rst:651
 msgid ""
 "Une collection vivante dont la base refuse la requête (``like``, une "
 "forme étoilée) part **figée et vide**, dans un export comme dans un "
@@ -1562,7 +1576,7 @@ msgstr ""
 "andere Datenbank übertragen: dynamisch würde sie dort nur erneut "
 "abgelehnt."
 
-#: ../../source/manuel_bibliotheque.rst:649
+#: ../../source/manuel_bibliotheque.rst:655
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1581,7 +1595,7 @@ msgstr ""
 "der Suche, den Stapel, und die Statusleiste meldet dies zusammen mit der "
 "tatsächlichen Anzahl der ausgewählten Positionen."
 
-#: ../../source/manuel_bibliotheque.rst:659
+#: ../../source/manuel_bibliotheque.rst:665
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1599,7 +1613,7 @@ msgstr ""
 "Referenzposition liegt im Zentrum mehrerer Ihrer Fehler von ähnlicher "
 "Struktur, und ihre Lehre gilt für alle."
 
-#: ../../source/manuel_bibliotheque.rst:666
+#: ../../source/manuel_bibliotheque.rst:672
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1613,7 +1627,7 @@ msgstr ""
 "Transportdistanz voneinander entfernt sind; ein Doppler-Fehler hat nur "
 "jene desselben Spielstands als Nachbarn."
 
-#: ../../source/manuel_bibliotheque.rst:670
+#: ../../source/manuel_bibliotheque.rst:676
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1632,7 +1646,7 @@ msgstr ""
 " ist der abgedeckte MWC; die Begründung nennt die Zahl, die zählt, wenn "
 "die Lehre zur Hälfte zählt."
 
-#: ../../source/manuel_bibliotheque.rst:677
+#: ../../source/manuel_bibliotheque.rst:683
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1647,7 +1661,7 @@ msgstr ""
 "Anki-Karte oder als „studiert“ markiert — wird nie vorgeschlagen, und "
 "ihre Nachbarn gelten als abgedeckt."
 
-#: ../../source/manuel_bibliotheque.rst:683
+#: ../../source/manuel_bibliotheque.rst:689
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1672,11 +1686,11 @@ msgstr ""
 "Kommandozeile: ``blunderdb collection suggest`` (siehe "
 ":ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:696
+#: ../../source/manuel_bibliotheque.rst:702
 msgid "Leçons"
 msgstr "Lektionen"
 
-#: ../../source/manuel_bibliotheque.rst:698
+#: ../../source/manuel_bibliotheque.rst:704
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1693,7 +1707,7 @@ msgstr ""
 "der Statusleiste auf; ``le 2`` öffnet Lektion 2; ``le edit`` öffnet den "
 "Lektionseditor."
 
-#: ../../source/manuel_bibliotheque.rst:705
+#: ../../source/manuel_bibliotheque.rst:711
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1709,7 +1723,7 @@ msgstr ""
 "verlässt die Lektion. Ein Schritt, dessen Sammlung oder Stellung gelöscht"
 " wurde, behält seinen Text."
 
-#: ../../source/manuel_bibliotheque.rst:712
+#: ../../source/manuel_bibliotheque.rst:718
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1729,7 +1743,7 @@ msgstr ""
 " Lektion enthält, legt sie an; eine bereits vorhandene Lektion desselben "
 "Namens bleibt unberührt."
 
-#: ../../source/manuel_bibliotheque.rst:720
+#: ../../source/manuel_bibliotheque.rst:726
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1769,7 +1783,7 @@ msgstr ""
 "lassen sich auch über die Kommandozeile oder die API anlegen und ändern "
 "(:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:737
+#: ../../source/manuel_bibliotheque.rst:743
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"

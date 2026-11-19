@@ -16,7 +16,9 @@ Le champ de filtre, en haut du panneau (*/* pour y aller, *Esc* pour
 l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu, le
 tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes
 sont faits par la base : la liste se charge par pages au fil du défilement, et
-le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une
+le compteur « n / N matchs » indique la part chargée. La colonne **PR**
+(celle du joueur 1) se trie aussi par la base, sur toute la bibliothèque ; un
+match sans PR vient en dernier dans les deux sens. Corriger un joueur, une
 date ou un tournoi dans la liste ne met à jour que la ligne éditée.
 
 Quand la liste est vide, le panneau propose **Importer… (Ctrl+I)** ; sans base
@@ -122,6 +124,16 @@ décoche pas, et chaque match s'ouvre avec les deux joueurs cochés. Hors de l'i
 (une entrée par coup, ``mwc_loss`` valant ``null`` pour un coup non noté),
 ``--format text`` une ligne « MWC loss » par coup noté et ``--format summary`` le
 total par joueur.
+
+**Chances de gagner le match.** Sous les graphiques de perte, un troisième
+graphique trace les chances de gagner le match du premier joueur au fil des
+décisions (:ref:`metrique_trace_mwc`), entre 0 et 100 %, avec un trait
+pointillé à 50 %. Sur chaque décision, la courbe va des chances avec la
+meilleure option à celles qui suivent le coup joué ; d'une décision à la
+suivante, elle saute de ce que les dés ont donné. Une décision sans analyse
+interrompt la courbe, une erreur y porte un point. Survol, flèches et clic s'y
+comportent comme sur les autres graphiques ; l'info-bulle donne les chances
+avant et après la décision. Un match en money n'a pas ce graphique.
 
 **Difficulté et erreurs évitables.** Une perte dit ce qu'un coup a coûté, pas
 s'il était difficile de trouver le bon. La colonne **Diff.**, à côté de
@@ -258,9 +270,13 @@ l'Arbitre seul) porte un tiret, et ces coups passent en dernier. L'Horloge
 part de zéro dès le premier coup. L'onglet **Graphes** commence par un résumé
 qui donne pour chaque joueur le total, la moyenne par coup de pions et par décision
 de videau, et, si le match a une cadence, une marque pour le joueur dont la
-réserve s'est épuisée en premier (le Duel n'enregistre que celui-là) ; un
-graphique place la durée
-de chaque décision au fil du match. En revue, la durée de la décision jouée se
+réserve s'est épuisée en premier (le Duel n'enregistre que celui-là). À côté,
+un histogramme compte les décisions de chaque joueur par tranche de durée (moins
+de 2 s, 2 à 5 s, 5 à 10 s, puis jusqu'à plus de 120 s) ; un clic sur une tranche
+ouvre ses décisions l'une après l'autre dans l'ordre du match. Un graphique
+place la durée de chaque décision au fil du match. Les durées d'un match
+transcrit d'une vidéo sont tirées de ses repères et enregistrées dans la base :
+le graphique et l'histogramme restent quand la vidéo est détachée ou introuvable. En revue, la durée de la décision jouée se
 lit discrètement sous l'analyse. La recherche la filtre avec ``tm>30`` (en
 secondes), qui se combine avec ``E>x`` : ``s tm>30 E>80`` retient les coups
 longuement réfléchis et pourtant faux, la durée et l'erreur étant celles du

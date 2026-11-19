@@ -24,6 +24,7 @@
         GetMatchDetailStats,
         GetMatchMoveGrades,
         GetMatchDecisionLosses,
+        GetMatchWinTrace,
         GetMatchReview,
         GetMatchTimeSummary,
         GetMatchOrigin
@@ -84,6 +85,8 @@
     let detailTimes = $state(null);
     /** @type {any[] | null} the MWC loss of each decision */
     let detailLosses = $state(null);
+    /** @type {import('../../wailsjs/go/models').storage.MatchWinTrace | null} player 1's match winning chances */
+    let detailTrace = $state(null);
     let detailReview = $state(/** @type {import('../../wailsjs/go/models').storage.MatchReview | null} */ (null));
     // The Origin of a match played here.
     let detailOrigin = $state(/** @type {import('../../wailsjs/go/models').duel.Origin | null} */ (null));
@@ -308,14 +311,15 @@
         detailMatch = match;
         detailStats = null; // reset stats when switching match
         try {
-            const [movePositions, games, grades, times, origin, losses, review] = await Promise.all([
+            const [movePositions, games, grades, times, origin, losses, review, trace] = await Promise.all([
                 GetMatchMovePositions(match.id),
                 GetGamesByMatch(match.id),
                 loadMoveGrades(match.id),
                 loadTimeSummary(match.id),
                 loadOrigin(match.id),
                 loadDecisionLosses(match.id),
-                loadReview(match.id)
+                loadReview(match.id),
+                loadWinTrace(match.id)
             ]);
             if (detailMatch?.id !== match.id) return;
             detailMovePositions = movePositions || [];
@@ -323,6 +327,7 @@
             detailGrades = grades;
             detailTimes = times;
             detailLosses = losses;
+            detailTrace = trace;
             detailReview = review;
             detailOrigin = origin;
         } catch (error) {
@@ -332,6 +337,7 @@
             detailGrades = [];
             detailTimes = null;
             detailLosses = null;
+            detailTrace = null;
             detailReview = null;
             detailOrigin = null;
         }
@@ -367,6 +373,17 @@
             return (await GetMatchDecisionLosses(matchID)) || null;
         } catch (error) {
             logger.error('Error loading decision losses:', error);
+            return null;
+        }
+    }
+
+    // Player 1's winning chances are optional too: without them no curve is drawn.
+    /** @param {number} matchID */
+    async function loadWinTrace(matchID) {
+        try {
+            return (await GetMatchWinTrace(matchID)) || null;
+        } catch (error) {
+            logger.error('Error loading win trace:', error);
             return null;
         }
     }
@@ -844,6 +861,7 @@
                     matchId={detailMatch.id}
                     times={detailTimes}
                     losses={detailLosses}
+                    trace={detailTrace}
                     movePositions={detailMovePositions}
                     player1={detailMatch.player1_name}
                     player2={detailMatch.player2_name}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 14:26+0100\n"
+"POT-Creation-Date: 2026-11-19 01:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -110,11 +110,47 @@ msgstr ""
 "が先頭になります。デスクトップ版の読み方と同じです。``analyses.load`` の応答にはすべて ``X-Blunderdb-With-"
 "Played`` ヘッダーが付きます。これを返さないデーモンは ``withPlayed`` を無視し、試合の手を含まない解析を返します。"
 
-#: ../../source/api_reference.rst:504
+#: ../../source/api_reference.rst:503
+msgid ""
+"``checkerAnalysis`` est la vue fusionnée des coups candidats : pour "
+"chaque coup, l'évaluation la plus profonde. Quand plusieurs sources ont "
+"évalué la position (un moteur à une profondeur, un rollout étant une "
+"profondeur à part), l'analyse porte aussi ``allCheckerAnalyses`` : une "
+"entrée par source, avec son moteur (``analysisEngine``), sa profondeur "
+"(``analysisDepth``) et ses propres coups (``moves``), XG en tête, comme "
+"``allCubeAnalyses`` pour le videau. Le champ est absent quand une seule "
+"source a évalué la position : ``checkerAnalysis`` est alors cette source,"
+" même quand ses coups portent plusieurs profondeurs (XG déroule ses "
+"meilleurs coups et évalue les autres moins profond). Une source importée "
+"de nouveau remplace sa propre entrée."
+msgstr ""
+"``checkerAnalysis``\\ "
+"は候補手を統合したビューで、各手について最も深い評価を示します。複数のソース（ある深さのひとつのエンジン。ロールアウトはそれ自体でひとつの深さ）がポジションを評価した場合、解析は\\"
+" ``allCheckerAnalyses``\\ も持ちます。ソースごとにひとつの項目があり、そのエンジン（\\ "
+"``analysisEngine``\\ ）、深さ（\\ ``analysisDepth``\\ ）、独自の手（\\ ``moves``\\ "
+"）を含み、キューブの\\ ``allCubeAnalyses``\\ と同様に XG "
+"が先頭です。ひとつのソースだけがポジションを評価した場合、このフィールドはありません。そのときは\\ ``checkerAnalysis``\\ "
+"がそのソースです。その手が複数の深さを持つ場合も同じです（XG "
+"は最善の手をロールアウトし、ほかの手はより浅く評価します）。再度インポートされたソースは自身の項目を置き換えます。"
+
+#: ../../source/api_reference.rst:514
+msgid ""
+"Quand ``allCheckerAnalyses`` est absent et que les coups de "
+"``checkerAnalysis`` portent plusieurs ``analysisEngine``, la position a "
+"été analysée par plusieurs moteurs sous un schéma antérieur à 2.58.0 : "
+"chaque coup y porte l'évaluation la plus profonde, et ce qu'a dit chaque "
+"moteur seul n'est plus connu. Aucune source n'est alors disponible, et un"
+" nouvel import ne la reconstruit pas."
+msgstr ""
+"``allCheckerAnalyses``\\ がなく、\\ ``checkerAnalysis``\\ の手が複数の\\ "
+"``analysisEngine``\\ を持つ場合、そのポジションは 2.58.0 "
+"より前のスキーマで複数のエンジンにより解析されています。各手は最も深い評価を持ち、各エンジン単独の評価はもはやわかりません。このときソースは利用できず、新たなインポートでも再構築されません。"
+
+#: ../../source/api_reference.rst:521
 msgid "Repères d'une transcription"
 msgstr "文字起こしのタイムコード"
 
-#: ../../source/api_reference.rst:506
+#: ../../source/api_reference.rst:523
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -141,7 +177,7 @@ msgstr ""
 "またはローカルパス)を関連付け、空文字列はそれを解除します。``set_header`` "
 "も、ヘッダーが動画ソースを指定している場合はそれを設定しますが、消去することはありません。"
 
-#: ../../source/api_reference.rst:518
+#: ../../source/api_reference.rst:535
 msgid ""
 "Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
 "fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
@@ -155,7 +191,7 @@ msgstr ""
 " を伴う ``decision_ms`` "
 "は推定値です。アクションのタイムコードがない手について、ロールから次のアクションの最初の時刻までを測ったものです。"
 
-#: ../../source/api_reference.rst:524
+#: ../../source/api_reference.rst:541
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

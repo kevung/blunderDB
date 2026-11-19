@@ -12,7 +12,7 @@ func sameTick(a, b *int64) bool { return (a == nil) == (b == nil) && (a == nil |
 
 // TestVideoAndRepèresSurviveAMatchRoundTrip: a Match saved with a video and its
 // Repères, reopened as a draft and saved again, keeps both — and the durations
-// the Repères give reach its Moves.
+// the Repères give reach its Moves and outlive the video.
 func TestVideoAndRepèresSurviveAMatchRoundTrip(t *testing.T) {
 	ctx := context.Background()
 	svc := New(newStore(t), Options{})
@@ -95,6 +95,20 @@ func TestVideoAndRepèresSurviveAMatchRoundTrip(t *testing.T) {
 	}
 	if m := matchHeader(t, svc, "1", res.MatchID); m.VideoSource != nil && *m.VideoSource != "" {
 		t.Fatalf("a detached source is still on the Match: %q", *m.VideoSource)
+	}
+	// The durations are the Match's own, not read from the media: they stay
+	// once it is gone, so its time chart does too.
+	timed := 0
+	for mv, err := range svc.store.Matches().MovesByMatch(ctx, "1", res.MatchID) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if mv.DecisionMS != nil {
+			timed++
+		}
+	}
+	if timed != deduced {
+		t.Fatalf("%d Moves keep a duration without the video, want %d", timed, deduced)
 	}
 }
 

@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"context"
+	"slices"
 	"testing"
 	"time"
 
@@ -40,8 +41,9 @@ func storedAnalysis(t *testing.T, s *sqlite.Storage) *domain.PositionAnalysis {
 	return a
 }
 
-// A deeper analysis of a match already stored replaces the stored one; a
-// shallower one, or the same one again, leaves it — whatever the order.
+// A deeper analysis of a match already stored replaces the stored merged
+// view; a shallower one leaves the view and comes in as a source of its own;
+// the same one again changes nothing.
 func TestDuplicateMatchDeepensItsAnalyses(t *testing.T) {
 	ctx := context.Background()
 	s, err := sqlite.Open(ctx, ":memory:", nil)
@@ -66,15 +68,24 @@ func TestDuplicateMatchDeepensItsAnalyses(t *testing.T) {
 		t.Errorf("cube depth after deeper re-import = %q", got)
 	}
 
-	for _, again := range []*MatchGraph{analysedGraph("2-ply", 0.30), analysedGraph("XG Roller++", 0.20)} {
-		res = writeGraph(t, s, again)
-		if !res.Skipped || res.Deepened != 0 {
-			t.Fatalf("shallower or equal re-import: %+v, want Skipped and Deepened=0", res)
-		}
+	res = writeGraph(t, s, analysedGraph("2-ply", 0.30))
+	if !res.Skipped || res.Deepened != 1 {
+		t.Fatalf("shallower re-import: %+v, want Skipped and Deepened=1 for its source", res)
+	}
+	res = writeGraph(t, s, analysedGraph("XG Roller++", 0.20))
+	if !res.Skipped || res.Deepened != 0 {
+		t.Fatalf("equal re-import: %+v, want Skipped and Deepened=0", res)
 	}
 	a = storedAnalysis(t, s)
 	if got := a.CheckerAnalysis.Moves[0]; got.AnalysisDepth != "XG Roller++" || got.Equity != 0.20 {
 		t.Errorf("best move after shallower re-import = %+v", got)
+	}
+	var depths []string
+	for _, src := range a.AllCheckerAnalyses {
+		depths = append(depths, src.AnalysisDepth)
+	}
+	if want := []string{"XG Roller++", "3-ply", "2-ply"}; !slices.Equal(depths, want) {
+		t.Errorf("sources = %v, want %v", depths, want)
 	}
 
 	counts, _ := s.Metadata().Counts(ctx, "")
@@ -124,8 +135,9 @@ func withRollout(g *MatchGraph, signature string, games int) *MatchGraph {
 }
 
 // The same match under a spelling the aliases know is that match again: a
-// shallower copy degrades nothing — checker, cube or rollout — while a new
-// rollout, or a longer series of a stored one, still comes in.
+// shallower copy degrades nothing — checker, cube or rollout — and its
+// checker evaluation comes in as a source of its own, while a new rollout,
+// or a longer series of a stored one, still comes in.
 func TestAliasedCopyNeverDegradesTheStoredAnalysis(t *testing.T) {
 	ctx := context.Background()
 	s, err := sqlite.Open(ctx, ":memory:", nil)
@@ -149,10 +161,13 @@ func TestAliasedCopyNeverDegradesTheStoredAnalysis(t *testing.T) {
 	}
 
 	res := writeGraph(t, s, aliased(withRollout(analysedGraph("3-ply", 0.90), "cfg-a", 1296)))
-	if !res.Skipped || res.MatchID != first.MatchID || res.Deepened != 0 {
-		t.Fatalf("shallower aliased copy: %+v, want the stored match, nothing deepened", res)
+	if !res.Skipped || res.MatchID != first.MatchID || res.Deepened != 1 {
+		t.Fatalf("shallower aliased copy: %+v, want the stored match, its source added", res)
 	}
 	a := storedAnalysis(t, s)
+	if len(a.AllCheckerAnalyses) != 2 || a.AllCheckerAnalyses[1].AnalysisDepth != "3-ply" {
+		t.Errorf("sources = %+v, want XG Roller++ and XG 3-ply", a.AllCheckerAnalyses)
+	}
 	if m := a.CheckerAnalysis.Moves[0]; m.AnalysisDepth != "XG Roller++" || m.Equity != 0.20 {
 		t.Errorf("checker degraded: %+v", m)
 	}

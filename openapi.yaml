@@ -7548,6 +7548,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_MatchTimeSummary"
+  /v1/stats.matchWinTrace:
+    post:
+      operationId: stats.matchWinTrace
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_MatchWinTrace"
   /v1/stats.playerContrast:
     post:
       operationId: stats.playerContrast
@@ -11178,6 +11195,9 @@ components:
     storage_MatchTimeSummary:
       type: object
       description: "Opaque: see the Go type storage.MatchTimeSummary (defined outside internal/server, not expanded here)."
+    storage_MatchWinTrace:
+      type: object
+      description: "Opaque: see the Go type storage.MatchWinTrace (defined outside internal/server, not expanded here)."
     storage_MoveGrade:
       type: object
       description: "Opaque: see the Go type storage.MoveGrade (defined outside internal/server, not expanded here)."

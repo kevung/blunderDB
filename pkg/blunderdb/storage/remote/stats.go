@@ -115,6 +115,12 @@ func (s statsStore) MatchDecisionLosses(ctx context.Context, scope string, match
 	return r, err
 }
 
+func (s statsStore) MatchWinTrace(ctx context.Context, scope string, matchID int64) (storage.MatchWinTrace, error) {
+	var r storage.MatchWinTrace
+	err := s.c.call(ctx, scope, "stats.matchWinTrace", matchIDReq{matchID}, &r)
+	return r, err
+}
+
 func (s statsStore) MatchReview(ctx context.Context, scope string, matchID int64) (storage.MatchReview, error) {
 	var r storage.MatchReview
 	err := s.c.call(ctx, scope, "stats.matchReview", matchIDReq{matchID}, &r)

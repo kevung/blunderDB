@@ -123,3 +123,54 @@ export function fmtClock(ms) {
     if (total < 3600) return `${Math.floor(total / 60)}:${s}`;
     return `${Math.floor(total / 3600)}:${String(Math.floor((total % 3600) / 60)).padStart(2, '0')}:${s}`;
 }
+
+/**
+ * The band of a decision-time histogram a duration falls in: band i holds the
+ * durations under `bounds[i]` and at or above `bounds[i - 1]`, the last band
+ * everything longer — the banding of the time summary's histogram.
+ *
+ * @param {readonly number[]} bounds ascending, in ms
+ * @param {number} ms
+ */
+export function timeBand(bounds, ms) {
+    const i = bounds.findIndex((b) => ms < b);
+    return i < 0 ? bounds.length : i;
+}
+
+/**
+ * A band's label in whole seconds: "<2 s", "2–5 s", ">120 s".
+ *
+ * @param {readonly number[]} bounds
+ * @param {number} i
+ */
+export function bandLabel(bounds, i) {
+    const s = (/** @type {number} */ ms) => String(Math.round(ms / 1000));
+    if (i === 0) return `<${s(bounds[0])} s`;
+    if (i >= bounds.length) return `>${s(bounds[bounds.length - 1])} s`;
+    return `${s(bounds[i - 1])}–${s(bounds[i])} s`;
+}
+
+/**
+ * The decisions of each band, in match order, counted as the time summary
+ * counts them: a cube Move is one decision, its decision_ms; a checker Move is
+ * its play and, apart, the cube decision before its roll — two entries, in the
+ * same band or not. A band's length is its count in the summary. Indexed like
+ * `movePositions`.
+ *
+ * @param {readonly { player_on_roll: number, move_type?: string, decision_ms?: number | null, cube_decision_ms?: number | null }[]} movePositions
+ * @param {readonly number[]} bounds
+ * @returns {{ index: number, player: 0 | 1 }[][]}
+ */
+export function bandMoves(movePositions, bounds) {
+    /** @type {{ index: number, player: 0 | 1 }[][]} */
+    const bands = Array.from({ length: bounds.length + 1 }, () => []);
+    movePositions.forEach((mp, index) => {
+        const player = mp.player_on_roll === 1 ? 1 : 0;
+        const decisions = mp.move_type === 'cube' ? [mp.decision_ms] : [mp.decision_ms, mp.cube_decision_ms];
+        for (const ms of decisions) {
+            if (ms === null || ms === undefined || !Number.isFinite(ms)) continue;
+            bands[timeBand(bounds, ms)].push({ index, player });
+        }
+    });
+    return bands;
+}

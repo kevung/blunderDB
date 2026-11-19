@@ -29,7 +29,9 @@ describe('sqlSortKey', () => {
         expect(sqlSortKey('date', 'desc')).toBe('date');
         expect(sqlSortKey('date', 'asc')).toBe('date_asc');
         expect(sqlSortKey('player1', 'desc')).toBe('player1_desc');
-        expect(sqlSortKey('pr', 'asc')).toBeNull();
+        expect(sqlSortKey('pr', 'asc')).toBe('pr1');
+        expect(sqlSortKey('pr', 'desc')).toBe('pr1_desc');
+        expect(sqlSortKey('mwc', 'asc')).toBeNull();
     });
 });
 
@@ -66,7 +68,7 @@ describe('createMatchList', () => {
 
     test('a computed column is ordered here, over the whole filtered list', async () => {
         const { store, list } = make(10);
-        await store.setSort('pr', 'asc');
+        await store.setSort('mwc', 'asc');
         expect(list).toHaveBeenLastCalledWith({ Text: '', Sort: '', Limit: 0, Offset: 0 });
         expect(get(store).rows).toHaveLength(10);
     });

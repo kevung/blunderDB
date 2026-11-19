@@ -843,31 +843,45 @@ rend la même réponse. La simulation lance chaque match dès qu'il est apparié
 et le code ``tables_exceeded`` signale une salle plus petite, dont les durées
 rendues sont alors un minimum. Sans version ni ``If-Match``.
 
-Le calcul est borné à deux secondes. Au-delà, si au moins un ``run`` est allé
-au bout, la réponse est partielle : elle porte le code ``time_budget`` et
-s'appuie sur les ``runs`` joués. Si aucun n'a abouti, la réponse est ``503``,
-code ``unavailable``, ``details.reason`` ``too_heavy``, sans ``Retry-After`` :
-la requête est bien formée mais trop lourde, réduisez l'effectif ou le format
-(baisser ``runs`` sert une réponse partielle, pas celle-ci). Une requête mal
+Le premier ``run``, joué avec le ``seed`` de la requête, décide : son travail
+est compté, non chronométré, et un format dont ce tournoi demande plus que ce
+qu'un processeur ordinaire calcule en trois dixièmes de seconde est refusé par
+``503``, code ``unavailable``, ``details.reason`` ``too_heavy``, sans
+``Retry-After``, dès que le compte dépasse ce seuil. La même requête reçoit le
+même verdict sur toute machine, quel que soit ``runs``. Elle est bien formée
+mais trop lourde : réduisez l'effectif, les poules, les vies, les rondes ou le
+format. Un format admis rend toujours ce premier ``run`` ; les suivants
+s'arrêtent deux secondes après le début du calcul, et la réponse est alors
+partielle : elle porte le code ``time_budget`` et s'appuie sur les
+``runs`` joués, dont le nombre dépend de la machine. Un ``run`` que le moteur
+ne mène pas à son terme est écarté sous le code ``run_failed`` : les chiffres
+s'appuient sur les autres. Une requête mal
 formée ou hors bornes rend ``400``, quelle que soit la charge.
 
 Les bornes d'une simulation sont des refus, prononcés avant tout calcul : 512
 joueurs, 200 ``runs``, 16 phases, des matchs en 99 points, 100 vies, 4096
 tables, 4096 matchs tirés d'un coup par une phase (les poules d'un
-``round_robin`` : une poule unique de 91 joueurs au plus, des poules de 16 pour
-512 joueurs) et un corps de 1 Mio (``413`` au-delà). ``directions.create`` ne
-borne ni l'effectif, ni les vies, ni les poules ; la simulation, si : au-delà
-de 512 joueurs aucun format ne joue un ``run`` dans le budget, et le tirage
-d'une grande poule, qui ne s'interrompt pas, occuperait le processeur et la
-mémoire hors de ce budget. Ces bornes restent nominales : avec les 30 ``runs``
-par défaut, un suisse de 128 joueurs ou un tableau de 256 sortent déjà sous
-``time_budget``, sur une partie des ``runs`` seulement ; l'hôte baisse ``runs``
-quand l'effectif monte. Les durées suivent le ``min_per_point`` de la
-configuration (8 minutes par défaut) et, avec un ``start``, sautent ses pauses
+``round_robin`` telles que le moteur les tire, l'effectif réparti également :
+une poule unique de 91 joueurs au plus, deux poules de 50 pour 100 joueurs en
+poules de 91, des poules de 17 pour 512 joueurs) et un corps de 1 Mio (``413``
+au-delà). ``directions.create`` ne borne ni l'effectif, ni les vies, ni les
+poules ; la simulation, si : rien n'y est dimensionné par la requête, et le
+tirage d'une grande poule, qui ne s'interrompt pas, occuperait le processeur et
+la mémoire hors du budget. Sous ces bornes, c'est le travail qui tranche : une
+poule unique de 40 joueurs, un tableau de 512 ou une double élimination de 256
+rendent ``too_heavy`` ; une poule unique de 30 joueurs, une double élimination
+de 128, un tableau de 256 ou 200 joueurs en poules de 4 sont admis. Les durées suivent le
+``min_per_point`` de la configuration (8 minutes par défaut) et, avec un ``start``, sautent ses pauses
 (``breaks``) comme le fait ``directions.clock`` ; sans ``start``, une pause,
 qui est une date, n'est pas comptée. Sont aussi refusés (``400``) un format
 qui ne joue aucun match avec cet effectif, un tournoi simulé de plus d'un an
 et un ``start`` dont la fin sort du calendrier.
+
+Le compte inclut la recherche d'appariement d'un ``swiss_rounds``, que le
+moteur compte en pas : un grand suisse dont les rondes approchent l'effectif, ou un
+club qui dépasse la moitié du champ avec ``avoid_clubs``, cherche longtemps une
+ronde sans revanche, et rend ``too_heavy`` sur ce compte, sans borne sur le
+nombre de rondes.
 
 Les deux places de calcul sont celles du processus, tous tenants confondus : un
 tenant qui en tient une n'en prend une seconde que si aucun autre n'attend, et
@@ -2460,6 +2474,16 @@ Quand ``--metrics`` est actif, l'état du pool est exposé en continu sur
 utilisées), ``_idle`` (disponibles), ``_max`` (plafond configuré) et
 ``_wait_count`` (nombre cumulé d'``Acquire`` ayant dû attendre une connexion
 libre).
+
+``BLUNDERDB_POSTGRES_QUERY_EXEC_MODE`` choisit le mode d'exécution des
+requêtes du pool : ``cache_describe`` (par défaut), ``cache_statement``,
+``describe_exec``, ``exec`` ou ``simple_protocol`` (les noms de pgx). Par
+défaut le moteur ne prépare pas de plan nommé côté serveur : en
+``cache_statement``, chaque texte SQL distinct (listes ``IN`` et insertions
+multi-lignes de taille variable) laisse un plan en mémoire sur la connexion
+jusqu'à sa fermeture. Une valeur inconnue fait échouer le démarrage ; un
+``default_query_exec_mode`` donné dans l'URL de connexion l'emporte sur la
+variable.
 
 Avec le backend SQLite, le daemon ouvre une connexion par cœur, dix au moins
 (le bureau en garde dix). Les requêtes qui parcourent toute la bibliothèque

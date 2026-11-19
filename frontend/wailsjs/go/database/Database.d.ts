@@ -369,11 +369,13 @@ export function GetMatchOrigin(arg1:number):Promise<duel.Origin>;
 
 export function GetMatchReview(arg1:number):Promise<storage.MatchReview>;
 
-export function GetMatchTimeSummary(arg1:number):Promise<storage.MatchTimeSummary>;
-
 export function GetMatchTextValues(arg1:string):Promise<Array<string>>;
 
+export function GetMatchTimeSummary(arg1:number):Promise<storage.MatchTimeSummary>;
+
 export function GetMatchTournament(arg1:number):Promise<domain.Tournament>;
+
+export function GetMatchWinTrace(arg1:number):Promise<storage.MatchWinTrace>;
 
 export function GetMovesByGame(arg1:number):Promise<Array<domain.Move>>;
 
@@ -447,6 +449,8 @@ export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
 
 export function ImportJournal(arg1:number):Promise<Array<domain.ImportFileEntry>>;
 
+export function ImportLessonMarkdown(arg1:string):Promise<Array<number>>;
+
 export function ImportMET(arg1:string):Promise<domain.MatchEquityTable>;
 
 export function ImportOGXMMatch(arg1:string):Promise<number>;
@@ -488,6 +492,8 @@ export function LessonDoneSteps(arg1:number):Promise<Record<number, string>>;
 export function LessonHTML(arg1:number,arg2:string,arg3:Record<number, string>):Promise<string>;
 
 export function LessonHTMLCtx(arg1:context.Context,arg2:number,arg3:string,arg4:Record<number, string>):Promise<string>;
+
+export function LessonMarkdown(arg1:Array<number>):Promise<string>;
 
 export function LessonPositionIDs(arg1:number):Promise<Array<number>>;
 
@@ -548,6 +554,8 @@ export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters,arg2:storag
 export function LoadPositionsByFiltersCoreCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:storage.ListOpts):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
+
+export function LoadPositionsPageByFiltersCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:storage.PageOpts):Promise<Array<domain.Position>>;
 
 export function LoadRollouts(arg1:number):Promise<Array<domain.RolloutAnalysis>>;
 

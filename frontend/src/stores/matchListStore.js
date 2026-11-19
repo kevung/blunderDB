@@ -13,9 +13,11 @@ export const MATCH_PAGE_SIZE = 500;
 
 // Columns the database can order by, with the ascending / descending key of
 // each (storage.MatchListOpts.Sort). `date` descends by default, as the list
-// always has.
+// always has. `pr` is seat 1's PR, read from the badges' own source; a match
+// without one comes last either way.
 const SQL_SORT = {
     date: ['date_asc', 'date'],
+    pr: ['pr1', 'pr1_desc'],
     player1: ['player1', 'player1_desc'],
     player2: ['player2', 'player2_desc'],
     length: ['length_asc', 'length_desc'],
@@ -24,8 +26,8 @@ const SQL_SORT = {
 
 /**
  * The SQL sort key of a column and direction; '' (the default order) when
- * nothing is sorted, `null` for a column the database cannot order by (PR, MWC
- * are computed badges).
+ * nothing is sorted, `null` for a column the database cannot order by (MWC is
+ * computed from the decisions).
  * @param {string | null | undefined} column
  * @param {string} direction
  * @returns {string | null}

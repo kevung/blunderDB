@@ -112,3 +112,56 @@ export function sortByLoss(moves, direction) {
         return sign * (a.loss - b.loss);
     });
 }
+
+/**
+ * Player 1's match winning chances along the decision axis of the charts
+ * (MatchWinTrace): per Move of movePositions, its chances before and after
+ * the decision, null where the trace has none (no analysis, an unscored play),
+ * and whether the decision is an error. `any` is false at money, or when no
+ * decision has a value: nothing is then drawn.
+ *
+ * @param {any[]} movePositions
+ * @param {{ money?: boolean, decisions?: any[] } | null | undefined} trace
+ */
+export function winTraceSeries(movePositions, trace) {
+    if (!trace || trace.money) return { items: [], any: false };
+    const byMove = new Map((trace.decisions ?? []).map((d) => [d.move_id, d]));
+    const items = movePositions.map((mp, index) => {
+        const d = byMove.get(mp.move_id);
+        return {
+            index,
+            player: /** @type {0 | 1} */ (d?.player === 1 ? 1 : 0),
+            before: d?.mwc_before ?? null,
+            after: d?.mwc_after ?? null,
+            error: !!d?.error
+        };
+    });
+    return { items, any: items.some((d) => d.before !== null) };
+}
+
+/**
+ * The runs of the curve: consecutive decisions that have a value, each point
+ * at its decision's left edge (before) and right edge (after, or before when
+ * the play is unscored). A decision without value breaks the line.
+ *
+ * @param {{ index: number, before: number | null, after: number | null }[]} items
+ * @returns {{ x: number, v: number }[][]} x in decision slots
+ */
+export function winTraceRuns(items) {
+    /** @type {{ x: number, v: number }[][]} */
+    const runs = [];
+    /** @type {{ x: number, v: number }[] | null} */
+    let run = null;
+    for (const d of items) {
+        if (d.before === null) {
+            run = null;
+            continue;
+        }
+        if (!run) {
+            run = [];
+            runs.push(run);
+        }
+        run.push({ x: d.index, v: d.before }, { x: d.index + 1, v: d.after ?? d.before });
+    }
+    return runs;
+}

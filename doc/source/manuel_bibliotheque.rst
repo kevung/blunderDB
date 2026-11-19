@@ -617,6 +617,12 @@ dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bout
 la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions
 qu'elle contenait sont toujours là quand on revient en arrière.
 
+Deux critères de provenance se prêtent à une collection qui se range seule :
+``s i`` garde les positions apportées une à une (à la main ou par un fichier
+de positions) plutôt qu'avec un match, ``s fl`` celles que le logiciel
+d'origine avait marquées à l'import. Les deux se combinent avec tout autre
+critère.
+
 Le bouton ❄, visible sur une collection vivante, la **fige** : les positions
 que la recherche sélectionne à cet instant deviennent la composition d'une
 collection ordinaire, dans l'ordre de la recherche, et la requête s'efface.

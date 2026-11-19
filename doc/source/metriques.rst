@@ -198,6 +198,57 @@ conversion, avec ses propres équités : sur un match qu'il a analysé, ses
 chiffres diffèrent de ceux d'XG par l'analyse, pas par la formule.
 
 
+.. _metrique_trace_mwc:
+
+Courbe des chances de gagner le match
+-------------------------------------
+
+**La question.** Où le match a-t-il basculé, et par la faute de qui ou par
+les dés ? La perte cumulée dit ce que chaque joueur a donné ; la courbe dit
+où en était le match à chaque décision, et sépare ce que les erreurs ont
+coûté de ce que les dés ont fait.
+
+**Définition.** Pour chaque décision, deux valeurs, toujours du point de vue
+du premier joueur. *Avant* : ses chances de gagner le match si la décision
+est prise au mieux, lues dans l'analyse — l'équité du meilleur coup pour un
+coup de pions, max(pas de double, min(double/prend, double/passe)) pour qui
+double, min(double/prend, double/passe) pour qui répond, vu du doubleur puis
+retourné. *Après* : *avant* moins la perte ℓ du joueur qui a joué
+(:ref:`metrique_perte_mwc`), ou plus ℓ quand c'est l'adversaire.
+
+.. math::
+
+   \mathrm{MWC} = \frac{\mathrm{MWC}_{+v} + \mathrm{MWC}_{-v}}{2}
+   + e \times \frac{\mathrm{MWC}_{+v} - \mathrm{MWC}_{-v}}{2}
+
+où *e* est l'équité normalisée de l'option (±1 = gagner ou perdre le videau),
+*v* la valeur du videau (avant le double, pour un double et sa réponse) et
+:math:`\mathrm{MWC}_{\pm v}` les chances du joueur qui décide s'il gagne ou
+perd *v* points, lues dans la MET de la base. C'est la conversion de ℓ, à
+laquelle on ajoute le milieu : l'écart entre *avant* et *après* est donc ℓ,
+exactement, décision par décision.
+
+**Unité.** Une fraction de 0 à 1, affichée en pourcentage.
+
+**Lecture.** Une chute sur une décision est une erreur ; une marche entre deux
+décisions, ce sont les dés. Une courbe qui reste haute puis tombe d'un coup sur
+une décision désigne l'erreur qui a perdu le match.
+
+**Incertitude.** Celle de l'analyse et de la MET, comme ℓ ; l'arrondi de
+l'analyse peut porter une position gagnée un rien au-delà de 100 %.
+
+**Limites.** Une décision sans analyse n'a pas de valeur, jamais une valeur
+estimée : la courbe s'interrompt. Une décision analysée sans ℓ (hors du
+compte, ou un coup joué qu'aucun candidat ne nomme) laisse les chances où
+elles étaient : *après* vaut *avant*.
+Un match en money n'a pas de chances de gagner le match : la trace ne porte
+alors aucune valeur, et le dit (``money``).
+
+**XG et gnuBG.** La formule est l'inverse de la conversion de gnuBG entre
+équité normalisée et MWC (``mwc2eq``) ; sur une même position, deux logiciels
+diffèrent par leur analyse et par leur MET, pas par la formule.
+
+
 .. _metrique_l7:
 
 Perte MWC (éq. 7 pts) L₇ et Elo face au moteur

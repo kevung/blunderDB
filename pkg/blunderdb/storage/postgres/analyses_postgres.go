@@ -248,6 +248,9 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 				return err
 			}
 		}
+		if err := sqlshared.RaiseReaderFloorForAnalysis(ctx, shared{tx}, a); err != nil {
+			return err
+		}
 		bestCube, err := actionCode(ctx, tx, tenant, c.BestCubeAction)
 		if err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", err)
@@ -788,6 +791,11 @@ func (s *analysisStore) SaveMany(ctx context.Context, scope string, analyses map
 			if err != nil {
 				return fmt.Errorf("postgres: encode analysis: %w", err)
 			}
+			// Raised before the batch that writes the blob: a floor raised
+			// for a write that then fails only refuses older readers sooner.
+			if err := sqlshared.RaiseReaderFloorForAnalysis(ctx, shared{s.db}, a); err != nil {
+				return err
+			}
 			bestCube, known := codes[c.BestCubeAction]
 			if !known {
 				if bestCube, err = actionCode(ctx, s.db, tenant, c.BestCubeAction); err != nil {
@@ -860,6 +868,9 @@ func (s *analysisStore) SaveFresh(ctx context.Context, scope string, items []sto
 			data, err := engine.EncodeAnalysisForStorage(it.Analysis)
 			if err != nil {
 				return fmt.Errorf("postgres: encode analysis: %w", err)
+			}
+			if err := sqlshared.RaiseReaderFloorForAnalysis(ctx, shared{s.db}, it.Analysis); err != nil {
+				return err
 			}
 			bestCube, err := actionCode(ctx, s.db, tenant, c.BestCubeAction)
 			if err != nil {

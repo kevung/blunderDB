@@ -2,6 +2,7 @@ package storagetest
 
 import (
 	"context"
+	"slices"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -80,6 +81,24 @@ func testStatsMatchTimeSummary(t *testing.T, s storage.Storage) {
 	}
 	if p2.TotalMS != 6000 || p2.CheckerCount != 2 || p2.CubeCount != 0 || p2.Unknown != 0 {
 		t.Errorf("player 2: %+v", p2)
+	}
+	// Each known decision, checker or cube, enters one band: 1 s and 5 s for
+	// player 1, 4 s and 2 s for player 2 — a bound opens the band above it.
+	bands := func(at map[int]int) []int {
+		h := make([]int, len(storage.DecisionTimeHistogramBounds)+1)
+		for i, n := range at {
+			h[i] = n
+		}
+		return h
+	}
+	if want := bands(map[int]int{0: 1, 2: 1}); !slices.Equal(p1.Histogram, want) {
+		t.Errorf("player 1 histogram %v, want %v", p1.Histogram, want)
+	}
+	if want := bands(map[int]int{1: 2}); !slices.Equal(p2.Histogram, want) {
+		t.Errorf("player 2 histogram %v, want %v", p2.Histogram, want)
+	}
+	if !slices.Equal(got.HistogramBoundsMS, storage.DecisionTimeHistogramBounds) {
+		t.Errorf("histogram bounds %v", got.HistogramBoundsMS)
 	}
 
 	origin := storage.MatchOrigin{MatchID: matchID, DiceSeed: "s", Cadence: `{"reserve":10,"delay":2}`, OverTime: 2}

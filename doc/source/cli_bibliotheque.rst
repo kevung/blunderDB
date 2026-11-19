@@ -373,7 +373,12 @@ notebook qui a cessé de fonctionner sans que personne le sache.
   (ceux qu'imprime ``stats matches``).
 * ``--sort`` — Ordre : ``date`` (défaut, le plus récent d'abord), ``date_asc``,
   ``length_asc``, ``length_desc``, ``player1``, ``player1_desc``, ``player2``,
-  ``player2_desc``, ``tournament``, ``tournament_desc`` ou ``opponent``.
+  ``player2_desc``, ``tournament``, ``tournament_desc``, ``opponent``, ou par
+  PR : ``pr1`` / ``pr1_desc`` (joueur 1), ``pr2`` / ``pr2_desc`` (joueur 2),
+  ``pr_main`` / ``pr_main_desc`` (le joueur principal, à quelque place qu'il
+  ait joué, alias compris) et ``pr_opponent`` / ``pr_opponent_desc`` (son
+  adversaire). Un match sans ce PR — aucune décision comptée, ou un match que
+  le joueur principal n'a pas joué — vient en dernier dans les deux sens.
 
 Le filtre et le tri sont faits par la base, comme dans le panneau Matchs ; le
 total annoncé est celui des matchs retenus. Le serveur les offre sur

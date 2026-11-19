@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
@@ -125,6 +127,11 @@ func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition, ori
 	if losses := cli.decisionLosses(match.ID); losses != nil {
 		output["decision_losses"] = losses
 		output["difficulty_summary"] = storage.SummariseDifficulty(losses)
+	}
+	// Player 1's match winning chances before and after each Move, null
+	// without analysis, every value null at money.
+	if trace, ok := cli.winTrace(match.ID); ok {
+		output["win_trace"] = trace
 	}
 
 	jsonData, err := json.MarshalIndent(output, "", "  ")
@@ -261,6 +268,14 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 			lossByMove[d.MoveID] = d
 		}
 	}
+	traceByMove := map[int64]storage.WinTracePoint{}
+	if trace, ok := cli.winTrace(match.ID); ok {
+		for _, pt := range trace.Decisions {
+			if pt.MWCBefore != nil {
+				traceByMove[pt.MoveID] = pt
+			}
+		}
+	}
 	for i, movePos := range positions {
 		sb.WriteString(fmt.Sprintf("Position %d:\n", i+1))
 		sb.WriteString(fmt.Sprintf("  Game: %d, Move: %d\n", movePos.GameNumber, movePos.MoveNumber))
@@ -287,6 +302,15 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 		if movePos.CubeDecisionMS != nil {
 			sb.WriteString(fmt.Sprintf("  Cube decision time: %.1f s\n", float64(*movePos.CubeDecisionMS)/1000))
 		}
+		if pt, ok := traceByMove[movePos.MoveID]; ok {
+			// The analysis's rounding can put a value a hair outside [0, 1];
+			// a percentage reads clamped, the json keeps the arithmetic.
+			sb.WriteString(fmt.Sprintf("  MWC (%s): %.2f%%", match.Player1Name, clampUnit(*pt.MWCBefore)*100))
+			if pt.MWCAfter != nil {
+				sb.WriteString(fmt.Sprintf(" -> %.2f%%", clampUnit(*pt.MWCAfter)*100))
+			}
+			sb.WriteString("\n")
+		}
 		// An unscored decision is left out, never printed as zero.
 		if d, ok := lossByMove[movePos.MoveID]; ok {
 			sb.WriteString(fmt.Sprintf("  MWC loss: %.2f%%\n", *d.MWCLoss*100))
@@ -301,6 +325,21 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 	}
 
 	return sb.String(), nil
+}
+
+// clampUnit bounds a chance to [0, 1] for display.
+func clampUnit(v float64) float64 {
+	return math.Min(1, math.Max(0, v))
+}
+
+// winTrace is player 1's match winning chances over a match, ok false when
+// it cannot be read.
+func (cli *CLI) winTrace(matchID int64) (storage.MatchWinTrace, bool) {
+	if cli.db == nil {
+		return storage.MatchWinTrace{}, false
+	}
+	trace, err := cli.db.GetMatchWinTrace(matchID)
+	return trace, err == nil
 }
 
 // decisionLosses is the per-Move MWC loss of a match, nil when it cannot be read.
@@ -461,5 +500,34 @@ func (cli *CLI) writeTimeSummary(sb *strings.Builder, match *Match) {
 			sb.WriteString(", reserve ran out first")
 		}
 		sb.WriteString("\n")
+		if line := histogramLine(sum.HistogramBoundsMS, p.Histogram); line != "" {
+			fmt.Fprintf(sb, "    %s\n", line)
+		}
 	}
+}
+
+// histogramLine prints a player's decision-time histogram as its non-empty
+// bands, "<2 s: 4, 2-5 s: 11, >120 s: 1"; empty when no band is counted.
+func histogramLine(bounds []int64, counts []int) string {
+	if len(counts) != len(bounds)+1 {
+		return ""
+	}
+	sec := func(ms int64) string { return strconv.FormatInt(ms/1000, 10) }
+	var parts []string
+	for i, n := range counts {
+		if n == 0 {
+			continue
+		}
+		var band string
+		switch {
+		case i == 0:
+			band = "<" + sec(bounds[0]) + " s"
+		case i == len(bounds):
+			band = ">" + sec(bounds[i-1]) + " s"
+		default:
+			band = sec(bounds[i-1]) + "-" + sec(bounds[i]) + " s"
+		}
+		parts = append(parts, fmt.Sprintf("%s: %d", band, n))
+	}
+	return strings.Join(parts, ", ")
 }

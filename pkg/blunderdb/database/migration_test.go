@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -5583,6 +5584,74 @@ func TestMigrate_2_56_0_to_2_57_0_DeckAndTournamentUUID(t *testing.T) {
 		}
 	}
 	if err := d.migrate_2_56_0_to_2_57_0(context.Background()); err != nil {
+		t.Errorf("second run of the step: %v", err)
+	}
+}
+
+// TestMigrate_2_57_0_to_2_58_0_KeepsAnalysesAsTheirSingleSource: the step
+// rewrites no analysis — a blob written before 2.58.0 is read back unchanged,
+// its merged view its single source — and leaves the reader floor where it
+// was: only a blob carrying sources raises it.
+func TestMigrate_2_57_0_to_2_58_0_KeepsAnalysesAsTheirSingleSource(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2570.db")
+
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	pos := domain.InitializePosition()
+	pos.Dice = [2]int{3, 1}
+	posID, err := d.SavePosition(&pos)
+	if err != nil {
+		t.Fatalf("save position: %v", err)
+	}
+	a := domain.PositionAnalysis{
+		AnalysisType: "CheckerMove",
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "8/5 6/5", AnalysisEngine: "XG", AnalysisDepth: "XG Roller++", Equity: 0.2},
+		}},
+	}
+	blob, err := engine.EncodeAnalysisForStorage(&a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, posID, blob); err != nil {
+		t.Fatalf("insert analysis: %v", err)
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+	stampVersion(t, dbPath, "2.57.0")
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.57.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration: %s, %v", v, err)
+	}
+	var after []byte
+	if err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&after); err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(after, blob) {
+		t.Error("the migration rewrote an analysis blob")
+	}
+	var floor string
+	if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'min_reader_version'`).Scan(&floor); err != nil || floor != domain.MinReaderVersion {
+		t.Errorf("reader floor = %q, %v; want %q, not %q before any blob carries sources",
+			floor, err, domain.MinReaderVersion, domain.CheckerSourcesReaderVersion)
+	}
+	got, err := engine.DecodeAnalysisFromStorage(after)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if srcs := engine.CheckerSources(&got); len(srcs) != 1 || srcs[0].AnalysisEngine != "XG" || srcs[0].AnalysisDepth != "XG Roller++" {
+		t.Errorf("sources of a migrated analysis = %+v, want its single XG source", srcs)
+	}
+	if err := d.migrate_2_57_0_to_2_58_0(context.Background()); err != nil {
 		t.Errorf("second run of the step: %v", err)
 	}
 }

@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -23,6 +24,7 @@ import (
 	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -206,6 +208,7 @@ func TestImportStoredRowsAreStable(t *testing.T) {
 		benchUploadAny(t, ts, p)
 	}
 	got := importRowsDigests(t, ctx, benchDSN(t, super, "", name))
+	importRowsStatsAsRecomputed(t, ctx, super, name, got)
 
 	if os.Getenv("BLUNDERDB_IMPORT_ROWS_CORPUS") != "" {
 		blob, _ := json.MarshalIndent(got, "", "  ")
@@ -232,6 +235,34 @@ func TestImportStoredRowsAreStable(t *testing.T) {
 	for table, w := range want {
 		if got[table] != w {
 			t.Errorf("%s: stored rows %s, recorded %s", table, got[table], w)
+		}
+	}
+}
+
+// importRowsStatsAsRecomputed: the statistics an import keeps up to date in
+// place (a position turning shared lists itself on the seat that held it
+// private) are those a fill from nothing computes; otherwise the digests would
+// hold a drift.
+func importRowsStatsAsRecomputed(t *testing.T, ctx context.Context, super, name string, kept map[string]string) {
+	t.Helper()
+	conn, err := pgx.Connect(ctx, benchDSN(t, super, "", name))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close(ctx)
+	if _, err := conn.Exec(ctx, `DELETE FROM match_stats_position; DELETE FROM match_stats_cell; DELETE FROM match_stats`); err != nil {
+		t.Fatal(err)
+	}
+	st := benchOpen(t, ctx, benchDSN(t, super, benchRole, name))
+	defer st.Close()
+	tenant := benchMeasuredTenant()
+	if _, err := st.Stats().FillMatchStats(storage.WithTenant(ctx, tenant), strconv.FormatInt(tenant, 10), nil); err != nil {
+		t.Fatal(err)
+	}
+	fresh := importRowsDigests(t, ctx, benchDSN(t, super, "", name))
+	for _, table := range []string{"match_stats", "match_stats_cell", "match_stats_position"} {
+		if kept[table] != fresh[table] {
+			t.Errorf("%s: kept by the imports %s, computed from nothing %s", table, kept[table], fresh[table])
 		}
 	}
 }

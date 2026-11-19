@@ -15,7 +15,10 @@ sortie ``json`` les porte dans l'objet ``match``.
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot,
 voir le Duel), la sortie ``text`` donne la durée de chaque décision, celle du
 videau à part, et la sortie ``summary`` le total et la moyenne de chaque
-joueur, avec la marque du joueur dont la réserve s'est épuisée en premier ; la
+joueur, avec la marque du joueur dont la réserve s'est épuisée en premier, puis
+le nombre de ses décisions par tranche de durée non vide (``<2 s: 4, 2-5 s: 11``) ;
+``/v1/stats.matchTimeSummary`` livre ces tranches (``histogram`` de chaque
+joueur, bornes en millisecondes dans ``histogram_bounds_ms``) ; la
 sortie ``json`` porte ``decision_ms`` et ``cube_decision_ms``. Une durée
 inconnue n'est pas écrite. ``list --type timeerrors`` donne, par joueur et par
 tranche de durée (moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre
@@ -45,6 +48,14 @@ une erreur évitable ; la sortie ``json`` ajoute ``difficulty_summary`` (par
 joueur : ``difficulty``, ``excess``, ``ratio``, ``avoidable``), ``text`` les lignes
 ``Difficulty`` et ``Avoidable error``, ``summary`` une section ``Difficulty``.
 Le serveur la sert par ``/v1/stats.matchDecisionLosses``.
+
+La sortie ``json`` porte aussi ``win_trace`` : les chances de gagner le match du
+premier joueur avant et après chaque coup (``mwc_before``, ``mwc_after``, des
+fractions), ``analysed`` pour un coup analysé, ``null`` sans analyse, avec
+``mwc_loss`` et ``error`` pour marquer les erreurs ; ``money`` vaut ``true``
+pour un match en money, dont aucun coup n'a de valeur. ``text`` ajoute la ligne
+``MWC (<joueur 1>): 50.00% -> 48.77%`` aux coups analysés
+(:ref:`metrique_trace_mwc`). Le serveur la sert par ``/v1/stats.matchWinTrace``.
 
 ``summary`` se termine par une section ``Review``, le bilan du match
 (:ref:`bilan du match <bilan_match>`) : par joueur, le PR et son intervalle à 95 % sur les

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 02:17+0100\n"
+"POT-Creation-Date: 2026-11-19 01:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -44,7 +44,9 @@ msgid ""
 "l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu,"
 " le tournoi ou la date contient le texte saisi. Le filtre et le tri des "
 "colonnes sont faits par la base : la liste se charge par pages au fil du "
-"défilement, et le compteur « n / N matchs » indique la part chargée. "
+"défilement, et le compteur « n / N matchs » indique la part chargée. La "
+"colonne **PR** (celle du joueur 1) se trie aussi par la base, sur toute "
+"la bibliothèque ; un match sans PR vient en dernier dans les deux sens. "
 "Corriger un joueur, une date ou un tournoi dans la liste ne met à jour "
 "que la ligne éditée."
 msgstr ""
@@ -53,10 +55,12 @@ msgstr ""
 "el evento, el lugar, el torneo o la fecha contiene el texto escrito. El "
 "filtro y la ordenación de columnas los hace la base de datos: la lista se"
 " carga por páginas al desplazarse, y el contador «n / N partidas» indica "
-"la parte cargada. Corregir un jugador, una fecha o un torneo en la lista "
-"solo actualiza la fila editada."
+"la parte cargada. La columna **PR** (la del jugador 1) también la ordena "
+"la base de datos, sobre toda la biblioteca; una partida sin PR va al "
+"final en ambos sentidos. Corregir un jugador, una fecha o un torneo en la"
+" lista solo actualiza la fila editada."
 
-#: ../../source/manuel_matchs.rst:22
+#: ../../source/manuel_matchs.rst:24
 msgid ""
 "Quand la liste est vide, le panneau propose **Importer… (Ctrl+I)** ; sans"
 " base ouverte, il propose **Ouvrir une base…** à la place. Quand c'est le"
@@ -69,11 +73,11 @@ msgstr ""
 "filtro**. Los paneles Stats, Colecciones y Anki vacíos ofrecen los mismos"
 " botones."
 
-#: ../../source/manuel_matchs.rst:27
+#: ../../source/manuel_matchs.rst:29
 msgid "L'utilisateur peut:"
 msgstr "El usuario puede:"
 
-#: ../../source/manuel_matchs.rst:29
+#: ../../source/manuel_matchs.rst:31
 msgid ""
 "parcourir les coups d'un match en utilisant les touches *GAUCHE* et "
 "*DROITE*,"
@@ -81,25 +85,25 @@ msgstr ""
 "recorrer las jugadas de una partida con las teclas *IZQUIERDA* y "
 "*DERECHA*,"
 
-#: ../../source/manuel_matchs.rst:31
+#: ../../source/manuel_matchs.rst:33
 msgid "passer d'une partie à l'autre à l'aide des touches *PageUp* et *PageDown*,"
 msgstr "pasar de una partida a otra con las teclas *PageUp* y *PageDown*,"
 
-#: ../../source/manuel_matchs.rst:33
+#: ../../source/manuel_matchs.rst:35
 msgid "afficher l'analyse des coups (pions et cube) en appuyant sur *CTRL-L*,"
 msgstr "mostrar el análisis de las jugadas (fichas y cubo) pulsando *CTRL-L*,"
 
-#: ../../source/manuel_matchs.rst:35
+#: ../../source/manuel_matchs.rst:37
 msgid "basculer entre l'analyse des coups de pions et du cube avec la touche *d*,"
 msgstr ""
 "alternar entre el análisis de las jugadas de fichas y del cubo con la "
 "tecla *d*,"
 
-#: ../../source/manuel_matchs.rst:37
+#: ../../source/manuel_matchs.rst:39
 msgid "voir le coup effectivement joué mis en évidence dans l'analyse,"
 msgstr "ver la jugada realmente jugada resaltada en el análisis,"
 
-#: ../../source/manuel_matchs.rst:39
+#: ../../source/manuel_matchs.rst:41
 msgid ""
 "chercher parmi les positions du match avec la commande ``ss`` (ex: ``ss "
 "E>80``) ; *Esc* ramène ensuite au coup étudié (voir "
@@ -109,7 +113,7 @@ msgstr ""
 "``ss E>80``); *Esc* vuelve después a la jugada estudiada (véase "
 ":ref:`panneau_recherche`)."
 
-#: ../../source/manuel_matchs.rst:43
+#: ../../source/manuel_matchs.rst:45
 msgid ""
 "La dernière position visitée dans chaque match est mémorisée et restaurée"
 " automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande "
@@ -119,7 +123,7 @@ msgstr ""
 "automáticamente. Pulse *CTRL-Tab* o ejecute el comando ``match`` para "
 "mostrar u ocultar el panel."
 
-#: ../../source/manuel_matchs.rst:47
+#: ../../source/manuel_matchs.rst:49
 msgid ""
 "Le bouton **⊕** d'une ligne enrichit ce match depuis un fichier. Il n'y a"
 " rien de nouveau derrière : réimporter le même match dans un autre format"
@@ -139,7 +143,7 @@ msgstr ""
 "dice cuál de los dos ha ocurrido — «enriquecidos: 1» en lugar de "
 "«importados: 1»."
 
-#: ../../source/manuel_matchs.rst:56
+#: ../../source/manuel_matchs.rst:58
 msgid ""
 "Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le"
 " bouton ⬇ de la liste des matchs ou l'entrée *Exporter en .mat* du menu ⋯"
@@ -149,7 +153,7 @@ msgstr ""
 "mediante el botón ⬇ de la lista de partidas o la entrada *Exportar .mat* "
 "del menú ⋯ de la ficha del match."
 
-#: ../../source/manuel_matchs.rst:60
+#: ../../source/manuel_matchs.rst:62
 msgid ""
 "Un clic sur un match ouvre sa fiche. Une ligne d'en-tête donne les "
 "joueurs, le score final (le vainqueur en gras, son nom au survol), la "
@@ -186,7 +190,7 @@ msgstr ""
 " análisis no tiene ni **A revisar** ni **Detalles**, un match sin pérdida"
 " ni duración conocida no tiene **Gráficos**."
 
-#: ../../source/manuel_matchs.rst:75
+#: ../../source/manuel_matchs.rst:77
 msgid ""
 "La fiche s'ouvre à côté de la liste ; la poignée qui les sépare règle sa "
 "largeur, retenue d'un lancement à l'autre."
@@ -194,11 +198,11 @@ msgstr ""
 "La ficha se abre junto a la lista; el tirador que las separa ajusta su "
 "anchura, que se conserva de un inicio a otro."
 
-#: ../../source/manuel_matchs.rst:78
+#: ../../source/manuel_matchs.rst:80
 msgid "Fiche d'un match, onglet Graphes"
 msgstr "Ficha de un match, pestaña Gráficos"
 
-#: ../../source/manuel_matchs.rst:82
+#: ../../source/manuel_matchs.rst:84
 msgid ""
 "La fiche d'un match : l'en-tête, la synthèse du bilan par joueur, puis "
 "l'onglet *Graphes*, une décision survolée."
@@ -206,7 +210,7 @@ msgstr ""
 "La ficha de un match: la cabecera, la síntesis del balance por jugador y "
 "después la pestaña *Gráficos*, con una decisión bajo el cursor."
 
-#: ../../source/manuel_matchs.rst:85
+#: ../../source/manuel_matchs.rst:87
 msgid ""
 "Chaque coup de la transcription porte sa **gravité** : ``?`` pour une "
 "erreur, ``??`` pour un blunder, un filet de couleur en marge de la ligne,"
@@ -224,7 +228,7 @@ msgstr ""
 "una misma posición jugada dos veces en el match recibe dos juicios. Una "
 "jugada que el análisis no puntúa no lleva ninguna marca."
 
-#: ../../source/manuel_matchs.rst:92
+#: ../../source/manuel_matchs.rst:94
 msgid ""
 "L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou "
 "non : on voit sans l'ouvrir dans quelle partie se trouvent les blunders. "
@@ -234,7 +238,7 @@ msgstr ""
 "ve sin abrirla en qué partida están los blunders. Un clic en una cifra "
 "carga esas posiciones en el panel de análisis."
 
-#: ../../source/manuel_matchs.rst:96
+#: ../../source/manuel_matchs.rst:98
 msgid ""
 "Quand le match est analysé, la transcription ajoute la colonne **MWC**, "
 "les chances de gagner le match que la décision a coûtées, en pourcentage "
@@ -304,7 +308,31 @@ msgstr ""
 "text`` una línea «MWC loss» por jugada puntuada y ``--format summary`` el"
 " total por jugador."
 
-#: ../../source/manuel_matchs.rst:126
+#: ../../source/manuel_matchs.rst:128
+msgid ""
+"**Chances de gagner le match.** Sous les graphiques de perte, un "
+"troisième graphique trace les chances de gagner le match du premier "
+"joueur au fil des décisions (:ref:`metrique_trace_mwc`), entre 0 et 100 "
+"%, avec un trait pointillé à 50 %. Sur chaque décision, la courbe va des "
+"chances avec la meilleure option à celles qui suivent le coup joué ; "
+"d'une décision à la suivante, elle saute de ce que les dés ont donné. Une"
+" décision sans analyse interrompt la courbe, une erreur y porte un point."
+" Survol, flèches et clic s'y comportent comme sur les autres graphiques ;"
+" l'info-bulle donne les chances avant et après la décision. Un match en "
+"money n'a pas ce graphique."
+msgstr ""
+"**Probabilidades de ganar el match.** Debajo de los gráficos de pérdida, "
+"un tercer gráfico traza las probabilidades de ganar el match del primer "
+"jugador a lo largo de las decisiones (:ref:`metrique_trace_mwc`), entre 0"
+" y 100 %, con una línea de puntos en 50 %. En cada decisión, la curva va "
+"de las probabilidades con la mejor opción a las que siguen a la jugada "
+"realizada; de una decisión a la siguiente, salta según lo que dieron los "
+"dados. Una decisión sin análisis interrumpe la curva, un error lleva un "
+"punto. El paso del ratón, las flechas y el clic se comportan como en los "
+"otros gráficos; la información emergente da las probabilidades antes y "
+"después de la decisión. Una partida de dinero no tiene este gráfico."
+
+#: ../../source/manuel_matchs.rst:138
 msgid ""
 "**Difficulté et erreurs évitables.** Une perte dit ce qu'un coup a coûté,"
 " pas s'il était difficile de trouver le bon. La colonne **Diff.**, à côté"
@@ -344,7 +372,7 @@ msgstr ""
 "de PR 6 aproximadamente; es un a priori de jugador fuerte, fijado antes "
 "de examinar ningún resultado."
 
-#: ../../source/manuel_matchs.rst:143
+#: ../../source/manuel_matchs.rst:155
 msgid ""
 "À lire ainsi : une décision évidente, ou forcée, a une difficulté proche "
 "de ``0`` sans qu'aucun seuil la mette à part ; une décision serrée, où "
@@ -372,7 +400,7 @@ msgstr ""
 "decisión, la dificultad es un trazo horizontal sobre cada barra: una "
 "barra que sube muy por encima de su trazo señala un error evitable."
 
-#: ../../source/manuel_matchs.rst:155
+#: ../../source/manuel_matchs.rst:167
 msgid ""
 "Le tableau de l'onglet **Détails** donne, pour chaque joueur, sa perte "
 "MWC totale (celle de la liste des matchs), le nombre de décisions notées "
@@ -396,7 +424,7 @@ msgstr ""
 "inferior al 0,5 %: en una partida demasiado fácil solo mediría ruido, el "
 "exceso permanece."
 
-#: ../../source/manuel_matchs.rst:165
+#: ../../source/manuel_matchs.rst:177
 msgid ""
 "Pourquoi la regarder : le PR et la perte MWC mêlent deux choses, la "
 "qualité du jeu et la difficulté des positions rencontrées. Un adversaire "
@@ -420,7 +448,7 @@ msgstr ""
 "trabajo de fondo (rollouts, principios, posiciones de referencia) y pesan"
 " menos en el juicio de una partida."
 
-#: ../../source/manuel_matchs.rst:175
+#: ../../source/manuel_matchs.rst:187
 msgid ""
 "Incertitude et limites : la difficulté dépend d'un modèle de joueur et de"
 " τ, fixés une fois ; changer l'un change tous les chiffres. Elle ne "
@@ -453,7 +481,7 @@ msgstr ""
 "añade las líneas «Difficulty» y «Avoidable error», ``--format summary`` "
 "la dificultad, el exceso, la ratio y el número de errores evitables."
 
-#: ../../source/manuel_matchs.rst:192
+#: ../../source/manuel_matchs.rst:204
 msgid ""
 "**Bilan du match.** Le bilan répond, pour chaque joueur, aux trois "
 "questions qu'on se pose après un match : qu'est-ce que je revois, ai-je "
@@ -467,7 +495,7 @@ msgstr ""
 "precipitación o de una laguna? Los umbrales se fijaron antes de examinar "
 "ningún resultado."
 
-#: ../../source/manuel_matchs.rst:197
+#: ../../source/manuel_matchs.rst:209
 msgid ""
 "En tête de la fiche, au-dessus des onglets, une synthèse place les "
 "joueurs côte à côte (l'un sous l'autre quand le panneau est étroit) : le "
@@ -491,7 +519,7 @@ msgstr ""
 "pérdida referida a 7 pts y la suerte; **A revisar**, las decisiones por "
 "revisar y el reparto de los errores entre precipitados y meditados:"
 
-#: ../../source/manuel_matchs.rst:207
+#: ../../source/manuel_matchs.rst:219
 msgid ""
 "**PR et perte de MWC ramenée à 7 pts, avec leur intervalle à 95 %**, "
 "calculé en rééchantillonnant les parties du match. La perte ramenée à 7 "
@@ -512,7 +540,7 @@ msgstr ""
 "compárelo con sus otros matches en lugar de concluir a partir de un único"
 " valor."
 
-#: ../../source/manuel_matchs.rst:215
+#: ../../source/manuel_matchs.rst:227
 #, no-python-format
 msgid ""
 "**Résultat ajusté de la chance**, pour un match terminé. Le *résultat* "
@@ -541,7 +569,7 @@ msgstr ""
 "suerte medida (un archivo sin suerte, una tirada no analizada); sin "
 "ninguna tirada medida, o en una partida de dinero, la línea no aparece."
 
-#: ../../source/manuel_matchs.rst:226
+#: ../../source/manuel_matchs.rst:238
 msgid ""
 "**Trois décisions à revoir** : parmi vos erreurs (seuil de la base), "
 "celles dont la *part évitable* de la perte, perte − difficulté, est la "
@@ -557,7 +585,7 @@ msgstr ""
 "sesión: se repasa primero lo que estaba a su alcance. Un clic en la "
 "decisión la muestra, como una línea del extracto."
 
-#: ../../source/manuel_matchs.rst:232
+#: ../../source/manuel_matchs.rst:244
 msgid ""
 "**Erreurs précipitées et réfléchies**, quand le match a gardé la durée "
 "des décisions : une erreur jouée plus vite que la médiane de vos "
@@ -577,7 +605,7 @@ msgstr ""
 "(ir más despacio en estas posiciones); una mayoría meditada, conocimiento"
 " (estudiar la familia de posiciones)."
 
-#: ../../source/manuel_matchs.rst:240
+#: ../../source/manuel_matchs.rst:252
 msgid ""
 "L'onglet **Détails** se termine sur le tableau des pertes et de la "
 "difficulté décrit plus haut. ``match --format summary`` imprime le même "
@@ -587,7 +615,7 @@ msgstr ""
 "descrita más arriba. ``match --format summary`` imprime el mismo balance,"
 " y el servidor lo sirve mediante ``/v1/stats.matchReview``."
 
-#: ../../source/manuel_matchs.rst:244
+#: ../../source/manuel_matchs.rst:256
 msgid ""
 "Quand le match a gardé la durée de ses décisions (un match joué contre un"
 " bot), la transcription ajoute trois colonnes alignées sur les chiffres :"
@@ -608,17 +636,23 @@ msgid ""
 "premier coup. L'onglet **Graphes** commence par un résumé qui donne pour "
 "chaque joueur le total, la moyenne par coup de pions et par décision de "
 "videau, et, si le match a une cadence, une marque pour le joueur dont la "
-"réserve s'est épuisée en premier (le Duel n'enregistre que celui-là) ; un"
-" graphique place la durée de chaque décision au fil du match. En revue, "
-"la durée de la décision jouée se lit discrètement sous l'analyse. La "
-"recherche la filtre avec ``tm>30`` (en secondes), qui se combine avec "
-"``E>x`` : ``s tm>30 E>80`` retient les coups longuement réfléchis et "
-"pourtant faux, la durée et l'erreur étant celles du même coup joué. "
-"L'onglet **Stats**, sous les erreurs récurrentes, croise le temps et "
-"l'erreur : pour chaque joueur et chaque tranche de durée connue (moins de"
-" 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre de décisions, "
-"l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est"
-" pas enregistrée est comptée sans entrer dans la moyenne."
+"réserve s'est épuisée en premier (le Duel n'enregistre que celui-là). À "
+"côté, un histogramme compte les décisions de chaque joueur par tranche de"
+" durée (moins de 2 s, 2 à 5 s, 5 à 10 s, puis jusqu'à plus de 120 s) ; un"
+" clic sur une tranche ouvre ses décisions l'une après l'autre dans "
+"l'ordre du match. Un graphique place la durée de chaque décision au fil "
+"du match. Les durées d'un match transcrit d'une vidéo sont tirées de ses "
+"repères et enregistrées dans la base : le graphique et l'histogramme "
+"restent quand la vidéo est détachée ou introuvable. En revue, la durée de"
+" la décision jouée se lit discrètement sous l'analyse. La recherche la "
+"filtre avec ``tm>30`` (en secondes), qui se combine avec ``E>x`` : ``s "
+"tm>30 E>80`` retient les coups longuement réfléchis et pourtant faux, la "
+"durée et l'erreur étant celles du même coup joué. L'onglet **Stats**, "
+"sous les erreurs récurrentes, croise le temps et l'erreur : pour chaque "
+"joueur et chaque tranche de durée connue (moins de 5 s, 5 à 15 s, 15 à 30"
+" s, plus de 30 s), le nombre de décisions, l'erreur moyenne et la part de"
+" blunders. Une décision dont l'erreur n'est pas enregistrée est comptée "
+"sans entrer dans la moyenne."
 msgstr ""
 "Cuando la partida ha conservado la duración de sus decisiones (una "
 "partida jugada contra un bot), la transcripción añade tres columnas "
@@ -641,18 +675,25 @@ msgstr ""
 "empieza con un resumen que da para cada jugador el total, la media por "
 "jugada de fichas y por decisión de cubo y, si la partida tiene cadencia, "
 "una marca para el jugador cuya reserva se agotó primero (el Duelo solo "
-"registra ese); un gráfico sitúa la duración de cada decisión a lo largo "
-"de la partida. En la revisión, la duración de la decisión jugada se lee "
-"discretamente bajo el análisis. La búsqueda la filtra con ``tm>30`` (en "
-"segundos), que se combina con ``E>x``: ``s tm>30 E>80`` conserva las "
-"jugadas muy meditadas y aun así erróneas, siendo la duración y el error "
-"los de la misma jugada. La pestaña **Estadísticas**, bajo los errores "
-"recurrentes, cruza tiempo y error: para cada jugador y cada banda de "
-"duración conocida (menos de 5 s, de 5 a 15 s, de 15 a 30 s, más de 30 s),"
-" el número de decisiones, el error medio y la proporción de blunders. Una"
-" decisión cuyo error no está registrado se cuenta sin entrar en la media."
+"registra ese). Al lado, un histograma cuenta las decisiones de cada "
+"jugador por banda de duración (menos de 2 s, de 2 a 5 s, de 5 a 10 s, y "
+"luego hasta más de 120 s); un clic en una banda abre sus decisiones una "
+"tras otra en el orden de la partida. Un gráfico sitúa la duración de cada"
+" decisión a lo largo de la partida. Las duraciones de una partida "
+"transcrita de un vídeo se obtienen de sus marcas de tiempo y se guardan "
+"en la base: el gráfico y el histograma se conservan cuando el vídeo se "
+"desvincula o no se encuentra. En la revisión, la duración de la decisión "
+"jugada se lee discretamente bajo el análisis. La búsqueda la filtra con "
+"``tm>30`` (en segundos), que se combina con ``E>x``: ``s tm>30 E>80`` "
+"conserva las jugadas muy meditadas y aun así erróneas, siendo la duración"
+" y el error los de la misma jugada. La pestaña **Estadísticas**, bajo los"
+" errores recurrentes, cruza tiempo y error: para cada jugador y cada "
+"banda de duración conocida (menos de 5 s, de 5 a 15 s, de 15 a 30 s, más "
+"de 30 s), el número de decisiones, el error medio y la proporción de "
+"blunders. Una decisión cuyo error no está registrado se cuenta sin entrar"
+" en la media."
 
-#: ../../source/manuel_matchs.rst:273
+#: ../../source/manuel_matchs.rst:289
 msgid ""
 "La colonne **Positions** compte les positions distinctes de ces décisions"
 " et les ouvre d'un clic. Le tableau et ses liens lisent toutes les "
@@ -662,7 +703,7 @@ msgstr ""
 "decisiones y las abre con un clic. La tabla y sus enlaces leen todas las "
 "decisiones cronometradas de la base, sin el filtro del panel."
 
-#: ../../source/manuel_matchs.rst:277
+#: ../../source/manuel_matchs.rst:293
 msgid ""
 "Un match joué ici, issu d'un Duel, porte son origine dans l'onglet "
 "**Infos** de sa fiche, sous le titre **Provenance**, sur une ligne, même "
@@ -692,7 +733,7 @@ msgstr ""
 "blunderDB. Un match que no se jugó aquí no tiene origen, y su pestaña "
 "**Info** no tiene este título."
 
-#: ../../source/manuel_matchs.rst:289
+#: ../../source/manuel_matchs.rst:305
 msgid ""
 "L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute "
 "ce que le fichier source dit des joueurs et de la session, quand il le "
@@ -724,7 +765,7 @@ msgstr ""
 "muestra este autor junto al comentario, y la exportación lo copia con él;"
 " modificar el comentario lo firma con **Su nombre** (ajustes)."
 
-#: ../../source/manuel_matchs.rst:303
+#: ../../source/manuel_matchs.rst:319
 msgid ""
 "La ligne **Fichier source** porte le bouton ⟲ quand le match en nomme un "
 ": il relit ce fichier et réécrit les positions, les analyses et les "
@@ -757,7 +798,7 @@ msgstr ""
 "mismo, y ``match repair --list`` encuentra las partidas que difieren de "
 "su archivo."
 
-#: ../../source/manuel_matchs.rst:316
+#: ../../source/manuel_matchs.rst:332
 msgid ""
 "Un match transcrit depuis une vidéo en porte la **source** : une URL "
 "http(s) (YouTube, par exemple) ou le chemin d'un fichier. La ligne "
@@ -791,7 +832,7 @@ msgstr ""
 "paquetes que hay que instalar (véase :ref:`telecharge_install`). Una "
 "partida sin fuente no cambia."
 
-#: ../../source/manuel_matchs.rst:330
+#: ../../source/manuel_matchs.rst:346
 msgid ""
 "Le bouton **Gérer les joueurs** de la barre d'outils du panneau ouvre une"
 " fenêtre listant tous les joueurs de la base, chacun avec son nombre de "
@@ -820,7 +861,7 @@ msgstr ""
 "registran el nombre canónico. Hacer clic en un alias (*×*) lo quita y "
 "deshace la fusión, como en la pestaña **Corpus** de los ajustes."
 
-#: ../../source/manuel_matchs.rst:343
+#: ../../source/manuel_matchs.rst:359
 msgid ""
 "L'étoile (☆) d'une ligne désigne le **joueur principal**, celui à qui "
 "appartient la base, mémorisé dans la base et toujours en tête de la "
@@ -849,7 +890,7 @@ msgstr ""
 "abierto, o jugada en blunderDB, no se invierte: su número se indica "
 "aparte."
 
-#: ../../source/manuel_matchs.rst:355
+#: ../../source/manuel_matchs.rst:371
 msgid ""
 "Une fusion qui touche le joueur principal — un alias ajouté à son nom, ou"
 " son nom fusionné dans un autre, qui le désigne — n'inverse rien d'elle-"
@@ -867,7 +908,7 @@ msgstr ""
 "llena (★) vuelve a abrir este banner; si no, quita al jugador principal, "
 "sin invertir nada de vuelta."
 
-#: ../../source/manuel_matchs.rst:362
+#: ../../source/manuel_matchs.rst:378
 msgid ""
 "Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-"
 "dessus du plateau : elle rappelle les joueurs en présence (*joueur 1* "
@@ -891,7 +932,7 @@ msgstr ""
 "enumera las demás al pasar el cursor. Una posición importada por "
 "separado, que ninguna partida referencia, no muestra nada."
 
-#: ../../source/manuel_matchs.rst:372
+#: ../../source/manuel_matchs.rst:388
 msgid ""
 "Les onglets **Recherche** et **Eval** remplacent le plateau par un "
 "plateau de travail : un bandeau en haut du plateau le dit (« Plateau de "
@@ -905,7 +946,7 @@ msgstr ""
 "información se oculta mientras describiría una posición que no está en "
 "pantalla. Volver al análisis restaura la posición estudiada."
 
-#: ../../source/manuel_matchs.rst:378
+#: ../../source/manuel_matchs.rst:394
 msgid ""
 "À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est "
 "affiché d'emblée et la revue débute directement sur la première position,"
@@ -915,7 +956,7 @@ msgstr ""
 " de inmediato y la revisión comienza directamente en la primera posición,"
 " para empezar a navegar de inmediato."
 
-#: ../../source/manuel_matchs.rst:382
+#: ../../source/manuel_matchs.rst:398
 msgid ""
 "Une base de données ne peut être ouverte en écriture que par une seule "
 "fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre "
@@ -929,15 +970,15 @@ msgstr ""
 "análisis siguen siendo posibles, pero toda modificación queda desactivada"
 " y la barra de título muestra « [solo lectura] »."
 
-#: ../../source/manuel_matchs.rst:388 ../../source/manuel_matchs.rst:956
+#: ../../source/manuel_matchs.rst:404 ../../source/manuel_matchs.rst:972
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Consulte :ref:`raccourcis` para ver los atajos disponibles."
 
-#: ../../source/manuel_matchs.rst:393
+#: ../../source/manuel_matchs.rst:409
 msgid "Panneau Transcription"
 msgstr "Panel de Transcripción"
 
-#: ../../source/manuel_matchs.rst:395
+#: ../../source/manuel_matchs.rst:411
 msgid ""
 "Le panneau **Transcription** (*CTRL-MAJ-T*, commande ``transcribe`` ou "
 "``tr``) sert à taper un match qu'on a sous les yeux — une feuille de "
@@ -953,7 +994,7 @@ msgstr ""
 "cierra y se vuelve a abrir, y no entra ni en las estadísticas ni en las "
 "búsquedas mientras no se haya guardado como partido."
 
-#: ../../source/manuel_matchs.rst:402
+#: ../../source/manuel_matchs.rst:418
 msgid ""
 "Le panneau s'ouvre sur la **liste des brouillons** de la base : date de "
 "dernière modification, joueurs, longueur, nombre d'actions, et le match "
@@ -973,7 +1014,7 @@ msgstr ""
 "de transcripción (JSON) y crea con él un borrador, abierto de inmediato; "
 "un archivo rechazado muestra el motivo y no crea nada."
 
-#: ../../source/manuel_matchs.rst:411
+#: ../../source/manuel_matchs.rst:427
 msgid ""
 "La liste se parcourt aussi au clavier : *BAS* et *HAUT* (ou *j* et *k*) "
 "déplacent le surlignage, *ENTREE* ouvre le brouillon surligné, *n* déplie"
@@ -987,7 +1028,7 @@ msgstr ""
 "el modificado más recientemente: retomar el trabajo de ayer cuesta por "
 "tanto dos teclas, *CTRL-MAYÚS-T* y luego *INTRO*."
 
-#: ../../source/manuel_matchs.rst:417
+#: ../../source/manuel_matchs.rst:433
 msgid ""
 "Le formulaire ne demande qu'une chose : la **longueur du match**. La "
 "valeur ``0`` désigne une partie d'argent et fait apparaître les cases "
@@ -1003,7 +1044,7 @@ msgstr ""
 "los jugadores no se piden: el borrador designa los bandos como *Jugador "
 "1* y *Jugador 2*, y la lista muestra «Sin nombre»."
 
-#: ../../source/manuel_matchs.rst:424
+#: ../../source/manuel_matchs.rst:440
 msgid ""
 "Tout ce qui se déduit de ce qui a été tapé — la longueur du match (ou « "
 "Argent »), le score, la mention *Crawford* lorsque la partie en cours "
@@ -1023,7 +1064,7 @@ msgstr ""
 "con todas sus letras en la **barra de estado**: «dados de Kévin», "
 "«respuesta de Alice al doble»."
 
-#: ../../source/manuel_matchs.rst:432
+#: ../../source/manuel_matchs.rst:448
 msgid ""
 "La **barre du brouillon**, en tête du panneau, se lit en trois groupes. À"
 " gauche, **Brouillons** ramène à la liste. Au centre, ce qui sert pendant"
@@ -1039,7 +1080,7 @@ msgstr ""
 "sacan al borrador de sí mismo y el menú **⋯**. En un panel estrecho, la "
 "entrada pasa a una segunda línea."
 
-#: ../../source/manuel_matchs.rst:438
+#: ../../source/manuel_matchs.rst:454
 msgid ""
 "Le **joueur 1 reste en bas du plateau**, quel que soit le camp au trait. "
 "Un match qui se transcrit est une partie qui se déroule : le trait change"
@@ -1063,7 +1104,7 @@ msgstr ""
 "*Invertir los jugadores* del panel Metadatos, que intercambia a los dos "
 "jugadores en el propio documento."
 
-#: ../../source/manuel_matchs.rst:448
+#: ../../source/manuel_matchs.rst:464
 msgid ""
 "Le bouton **Métadonnées** de la barre déplie l'en-tête du brouillon, à "
 "tout moment : les noms des deux joueurs — autocomplétés depuis les "
@@ -1089,7 +1130,7 @@ msgstr ""
 "todas las acciones al bando contrario y da la vuelta al tablero: es la "
 "misma partida, leída desde el otro lado."
 
-#: ../../source/manuel_matchs.rst:460
+#: ../../source/manuel_matchs.rst:476
 msgid ""
 "L'événement et le lieu proposent ceux des matchs déjà en base, les plus "
 "fréquents d'abord ; le transcripteur propose les noms de joueurs. Choisir"
@@ -1101,7 +1142,7 @@ msgstr ""
 "jugadores. Elegir una propuesta rellena solo su campo, y un texto ausente"
 " de la lista se queda tal como se escribió."
 
-#: ../../source/manuel_matchs.rst:464
+#: ../../source/manuel_matchs.rst:480
 msgid ""
 "Ouvert, le formulaire prend la place de la saisie : les dés, la palette "
 "et les candidats sont masqués, la transcription reste visible, la vidéo "
@@ -1112,7 +1153,7 @@ msgstr ""
 "vídeo permanece en su sitio. El mismo botón, o *Esc*, devuelve la "
 "entrada."
 
-#: ../../source/manuel_matchs.rst:468
+#: ../../source/manuel_matchs.rst:484
 msgid ""
 "La **longueur du match** se change dans ce même volet, à tout moment : le"
 " score, la partie Crawford et le référentiel — les parties d'argent "
@@ -1134,7 +1175,7 @@ msgstr ""
 "escribe posiciones nuevas, por analizar, y las antiguas desaparecen en "
 "cuanto ya nada las retiene."
 
-#: ../../source/manuel_matchs.rst:477
+#: ../../source/manuel_matchs.rst:493
 msgid ""
 "Sous la barre, le brouillon occupe trois régions : la **palette** des "
 "cibles souris, les **coups candidats** et le **transcript**. Elles se "
@@ -1164,7 +1205,7 @@ msgstr ""
 "casillas de la tirada y la primera línea de candidatas, y al menos cinco "
 "candidatas se leen sin desplazar nada."
 
-#: ../../source/manuel_matchs.rst:490
+#: ../../source/manuel_matchs.rst:506
 msgid ""
 "La palette montre les deux dés au fur et à mesure de leur saisie ; un "
 "clic dessus les efface, comme *RETOUR ARRIERE*. Une partie commence par "
@@ -1192,7 +1233,7 @@ msgstr ""
 "cubo anotada después del final de una partida lleva la misma marca: se "
 "queda en la partida terminada, no abre una nueva y se borra a mano."
 
-#: ../../source/manuel_matchs.rst:502
+#: ../../source/manuel_matchs.rst:518
 msgid ""
 "Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,"
 " classés par le moteur embarqué, le premier présélectionné. Il ne dessine"
@@ -1214,7 +1255,7 @@ msgstr ""
 "base. Cuando el motor no está disponible, los movimientos se listan sin "
 "clasificar y la lista lo dice en su cabecera."
 
-#: ../../source/manuel_matchs.rst:510
+#: ../../source/manuel_matchs.rst:526
 msgid ""
 "Un jet sans aucun coup légal enregistre la **danse** de lui-même : la "
 "main passe à l'adversaire sans coup à taper. Quand le jet dansant importe"
@@ -1231,7 +1272,7 @@ msgstr ""
 "interior que deja entrar todas las tiradas, no introduce nada y la barra "
 "de estado lo indica."
 
-#: ../../source/manuel_matchs.rst:517
+#: ../../source/manuel_matchs.rst:533
 msgid ""
 "La **molette** sélectionne le candidat suivant ou précédent, au-dessus de"
 " la liste comme au-dessus du damier : le regard reste sur le plateau et "
@@ -1244,7 +1285,7 @@ msgstr ""
 "flechas desfilan, lo que reconoce un movimiento más rápido que leer su "
 "notación. Un clic en una fila la selecciona, un doble clic la valida."
 
-#: ../../source/manuel_matchs.rst:522
+#: ../../source/manuel_matchs.rst:538
 msgid ""
 "Un indicateur, à gauche des cases du jet — et sur la barre du mode "
 "théâtre —, dit ce que fait la frappe à l'instant : **Saisie** au bout du "
@@ -1273,7 +1314,7 @@ msgstr ""
 "siguiente, y las posiciones que siguen se recalculan. Fin devuelve al "
 "final del documento."
 
-#: ../../source/manuel_matchs.rst:534
+#: ../../source/manuel_matchs.rst:550
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -1286,7 +1327,7 @@ msgstr ""
 "transcribe con la mano en el ratón. Una casilla por tirada, nunca dos: "
 "3-1 y 1-3 son la misma tirada."
 
-#: ../../source/manuel_matchs.rst:539
+#: ../../source/manuel_matchs.rst:555
 msgid ""
 "Tout coup joué au plateau commence par le jet, tapé au clavier ou cliqué "
 "au triangle : sans dés saisis, le damier ne joue rien. Les deux dés "
@@ -1320,7 +1361,7 @@ msgstr ""
 "jugada que se está haciendo; vuelven cuando la jugada se retoma o se "
 "registra."
 
-#: ../../source/manuel_matchs.rst:553
+#: ../../source/manuel_matchs.rst:569
 msgid ""
 "Le coup achevé n'est enregistré que par une validation : un clic sur les "
 "dés grisés, ENTREE, ou le jet suivant — un chiffre ou une case du "
@@ -1332,7 +1373,7 @@ msgstr ""
 "casilla del triángulo —, que la registra primero con los dados tal como "
 "se escribieron. En una acción releída, la sustituye."
 
-#: ../../source/manuel_matchs.rst:558
+#: ../../source/manuel_matchs.rst:574
 msgid ""
 "Un coup illégal se transcrit tel qu'il a été joué, sans bouton ni "
 "changement de mode. Un glissé qu'aucun coup légal n'offre pose le pion là"
@@ -1354,7 +1395,7 @@ msgstr ""
 "obtenido. Retroceso deshace el último paso; deshacer el único paso fuera "
 "de las reglas devuelve la lista."
 
-#: ../../source/manuel_matchs.rst:567
+#: ../../source/manuel_matchs.rst:583
 msgid ""
 "Le coup se tape aussi au clavier, dans le transcript. Un double-clic sur "
 "la cellule d'un coup — ou d'une danse, d'un coup non consigné — la change"
@@ -1383,7 +1424,7 @@ msgstr ""
 " del cursor. La celda de puntos de la entrada en curso se abre "
 "igualmente, en cuanto sus dos dados están introducidos."
 
-#: ../../source/manuel_matchs.rst:580
+#: ../../source/manuel_matchs.rst:596
 msgid ""
 "Un coup saisi par le glissé libre ou par la notation qui se trouve être "
 "légal reste un coup ordinaire — la comparaison se fait sur le plateau "
@@ -1397,7 +1438,7 @@ msgstr ""
 "si no, se marca «movimiento ilegal» en la transcripción, y la exportación"
 " ``.mat`` advierte antes de escribir el archivo, sin negarse nunca."
 
-#: ../../source/manuel_matchs.rst:586
+#: ../../source/manuel_matchs.rst:602
 msgid ""
 "Le plateau obtenu par un coup hors des règles vaut pour la position où il"
 " a été joué. Quand une correction plus haut dans le transcript change "
@@ -1409,7 +1450,7 @@ msgstr ""
 " posición, los pasos del movimiento se vuelven a jugar desde la nueva, y "
 "todas las posiciones siguientes reflejan la corrección."
 
-#: ../../source/manuel_matchs.rst:591
+#: ../../source/manuel_matchs.rst:607
 msgid ""
 "Les flèches du plateau sont celles du coup écrit dans la décision sous le"
 " curseur, en gris, rejoué sur la position qu'elle a. Un pas qui ne s'y "
@@ -1436,7 +1477,7 @@ msgstr ""
 "solo al pasar el puntero por encima o al elegirla con la rueda, las "
 "teclas o un clic."
 
-#: ../../source/manuel_matchs.rst:600
+#: ../../source/manuel_matchs.rst:616
 msgid ""
 "Sur la ligne des dés, la rangée **Doubler**, **Prendre**, **Passer**, "
 "**Abandonner** reprend à la souris les quatre gestes de videau : ce sont,"
@@ -1475,7 +1516,7 @@ msgstr ""
 " él propone un doble. Ante una oferta no responde — aceptar y pasar son "
 "dos respuestas simétricas y viven juntas en la fila, un clic cada una."
 
-#: ../../source/manuel_matchs.rst:619
+#: ../../source/manuel_matchs.rst:635
 msgid ""
 "La **barre d'état** dit ce que le brouillon attend, en un mot : la danse "
 "enregistrée d'office, le premier coup d'une partie, la réponse attendue à"
@@ -1496,7 +1537,7 @@ msgstr ""
 "señala, en cambio, en la cabecera de la transcripción, allí donde está la"
 " celda defectuosa."
 
-#: ../../source/manuel_matchs.rst:627
+#: ../../source/manuel_matchs.rst:643
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -1520,7 +1561,7 @@ msgstr ""
 "exporta ganado por él, como un Duelo abandonado. Lleva su marca de vídeo "
 "y se anula como un abandono de partida."
 
-#: ../../source/manuel_matchs.rst:637
+#: ../../source/manuel_matchs.rst:653
 msgid ""
 "Le score d'une partie est celui que donnent les parties précédentes, sauf"
 " s'il a été annoncé autrement à la table. Un double-clic sur le score de "
@@ -1547,7 +1588,7 @@ msgstr ""
 " la primera acción de la partida lleva la incoherencia «marcador "
 "anunciado incoherente». En dinero no hay marcador que anunciar."
 
-#: ../../source/manuel_matchs.rst:649
+#: ../../source/manuel_matchs.rst:665
 msgid ""
 "Un transcript repris en cours de match peut commencer après la partie "
 "Crawford. Lorsque la première partie s'ouvre avec un joueur à un point du"
@@ -1571,7 +1612,7 @@ msgstr ""
 "``; [Crawford \"PostCrawford\"]`` que blunderDB vuelve a leer; gnubg la "
 "ignora y cuenta esa primera partida como la partida Crawford."
 
-#: ../../source/manuel_matchs.rst:659
+#: ../../source/manuel_matchs.rst:675
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1610,7 +1651,7 @@ msgstr ""
 "turno que falta — una decisión eliminada, por ejemplo. Las partidas se "
 "pliegan; la del cursor está abierta."
 
-#: ../../source/manuel_matchs.rst:675
+#: ../../source/manuel_matchs.rst:691
 msgid ""
 "**Ce qui est en train d'être tapé se dessine dans le transcript**, en "
 "pointillés, à la place exacte où il sera écrit : les dés au fur et à "
@@ -1630,7 +1671,7 @@ msgstr ""
 "escribe en el borrador antes de la validación; lo que se lee y lo que "
 "dirá el documento nunca divergen."
 
-#: ../../source/manuel_matchs.rst:684
+#: ../../source/manuel_matchs.rst:700
 msgid ""
 "Corriger, c'est taper sur la cellule où l'on est. Le curseur posé sur une"
 " action, un chiffre en recommence le jet sur place, et les quatre gestes "
@@ -1659,7 +1700,7 @@ msgstr ""
 "rellenan la celda que acaba de abrir una inserción: *i* y luego *d* "
 "inserta un doble delante de la acción señalada."
 
-#: ../../source/manuel_matchs.rst:696
+#: ../../source/manuel_matchs.rst:712
 msgid ""
 "Revenir sur la **dernière** action, c'est revenir là où la transcription "
 "s'écrit. Un chiffre tapé sur elle en corrige encore le jet, mais une fois"
@@ -1673,7 +1714,7 @@ msgstr ""
 "abre la decisión siguiente; INTRO la valida igualmente. Las decisiones "
 "siguientes se añaden entonces a continuación, como la primera vez."
 
-#: ../../source/manuel_matchs.rst:702
+#: ../../source/manuel_matchs.rst:718
 msgid ""
 "Taper un **autre jet** sur le **premier coup** d'une partie décide à "
 "nouveau qui commence : le dé du joueur 1 se tape en premier, celui du "
@@ -1697,7 +1738,7 @@ msgstr ""
 "una primera jugada hecha por el bando que ese orden no designa se marca "
 "«dados incoherentes». El resto de la partida conserva sus bandos."
 
-#: ../../source/manuel_matchs.rst:712
+#: ../../source/manuel_matchs.rst:728
 msgid ""
 "Une **insertion au milieu du document continue d'insérer** : la "
 "validation ouvre une cellule vide à la suite, et l'action suivante "
@@ -1716,7 +1757,7 @@ msgstr ""
 "inserción: el cursor se coloca entonces sobre la primera jugada de la "
 "partida siguiente."
 
-#: ../../source/manuel_matchs.rst:720
+#: ../../source/manuel_matchs.rst:736
 msgid ""
 "**Suppr** (ou *x*) retire la décision en cours d'édition et recule sur la"
 " précédente, prête à être corrigée : sur une cellule écrite, l'action "
@@ -1734,7 +1775,7 @@ msgstr ""
 "conservan su bando, y el doble turno que deja una eliminación se señala "
 "sin que el cursor vuelva a él."
 
-#: ../../source/manuel_matchs.rst:727
+#: ../../source/manuel_matchs.rst:743
 msgid ""
 "Un clic droit sur une cellule ouvre les corrections de cette action — "
 "insérer avant, insérer après, supprimer, changer de camp — et amène le "
@@ -1752,7 +1793,7 @@ msgstr ""
 "cursor» apuntaría a una celda que quizá no se vea, mientras que el clic "
 "derecho nombra la suya."
 
-#: ../../source/manuel_matchs.rst:734
+#: ../../source/manuel_matchs.rst:750
 msgid ""
 "La barre du brouillon porte ses deux seules sorties, au bout à droite, "
 "après le menu « ⋯ ». « **Terminer** » (CTRL-ENTREE) écrit le match dans "
@@ -1777,7 +1818,7 @@ msgstr ""
 "dice nada de la salvaguarda del borrador mismo: se escribe en la base "
 "tras cada acción, y volver a la lista lo deja para retomarlo más tarde."
 
-#: ../../source/manuel_matchs.rst:745
+#: ../../source/manuel_matchs.rst:761
 msgid ""
 "Le menu **⋯** de la barre tient « **Texte .mat** », qui ouvre le fichier "
 "Jellyfish tel qu'il serait écrit, dans une fenêtre assez large pour que "
@@ -1792,7 +1833,7 @@ msgstr ""
 "«**Exportar .mat**», que escribe ese mismo archivo en el disco. Las dos "
 "flechas **↶** y **↷** deshacen y rehacen, como *CTRL-Z* y *CTRL-MAYÚS-Z*."
 
-#: ../../source/manuel_matchs.rst:752
+#: ../../source/manuel_matchs.rst:768
 msgid ""
 "Si l'analyse d'un match transcrit a été interrompue — l'application "
 "fermée pendant le lot —, la barre d'état le signale à la prochaine "
@@ -1808,7 +1849,7 @@ msgstr ""
 "analizar, y el lote reanudado solo abarca esa partida, nunca toda la "
 "biblioteca."
 
-#: ../../source/manuel_matchs.rst:758
+#: ../../source/manuel_matchs.rst:774
 msgid ""
 "Un brouillon qui porte des incohérences est terminé tout de même, après "
 "un avertissement : rien n'est refusé. Un coup illégal est exporté tel "
@@ -1820,7 +1861,7 @@ msgstr ""
 " jugó, con la advertencia de que gnubg y XG la señalarán («Invalid move»)"
 " y divergirán después."
 
-#: ../../source/manuel_matchs.rst:763
+#: ../../source/manuel_matchs.rst:779
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "
 "matchs ou « **Éditer la transcription** » de sa fiche ouvre un brouillon "
@@ -1842,7 +1883,7 @@ msgstr ""
 "no lleva: antes de abrir, un diálogo indica hasta cuántos, y que terminar"
 " el borrador puede perderlos."
 
-#: ../../source/manuel_matchs.rst:772
+#: ../../source/manuel_matchs.rst:788
 msgid ""
 "Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de "
 "la barre du brouillon ouvre un menu : **Fichier local…** pour choisir une"
@@ -1884,7 +1925,7 @@ msgstr ""
 "para la entrada, y solo sigue la reproducción cuando esta entra en otra "
 "acción."
 
-#: ../../source/manuel_matchs.rst:791
+#: ../../source/manuel_matchs.rst:807
 msgid ""
 "Un fichier local est une vidéo que vous détenez légitimement. Une vidéo "
 "YouTube se lit dans le lecteur intégré de YouTube, soumis aux `Conditions"
@@ -1897,7 +1938,7 @@ msgstr ""
 "<https://www.youtube.com/t/terms>`_: blunderDB no extrae ninguna imagen "
 "de él."
 
-#: ../../source/manuel_matchs.rst:795
+#: ../../source/manuel_matchs.rst:811
 msgid ""
 "**La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du"
 " plateau se partage : la vidéo à gauche, le plateau à droite, séparés par"
@@ -1931,7 +1972,7 @@ msgstr ""
 " teclas del vídeo y *CTRL-IZQUIERDA* / *CTRL-DERECHA*, que giran el "
 "tablero, conservan su efecto."
 
-#: ../../source/manuel_matchs.rst:809
+#: ../../source/manuel_matchs.rst:825
 msgid ""
 "**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; "
 "elle peut passer à droite. Le bouton ⇄, à côté de celui qui la remet dans"
@@ -1953,7 +1994,7 @@ msgstr ""
 " sigue siendo el del vídeo, esté en el lado que esté. El asa y el botón "
 "dejan el teclado al panel."
 
-#: ../../source/manuel_matchs.rst:820
+#: ../../source/manuel_matchs.rst:836
 msgid ""
 "**Le mode théâtre.** Pour suivre le match en grand, *F11* ou le bouton de"
 " la barre au-dessus de la vidéo, à gauche de celui qui la remet dans le "
@@ -2011,7 +2052,7 @@ msgstr ""
 "modo cine cambia la pantalla. El modo solo existe en la Transcripción, "
 "con un vídeo adjunto."
 
-#: ../../source/manuel_matchs.rst:846
+#: ../../source/manuel_matchs.rst:862
 msgid ""
 "Avec une vidéo, chaque action **nouvelle** porte des **repères** : "
 "l'instant du jet, posé par la première touche de dé, et l'instant de "
@@ -2054,7 +2095,7 @@ msgstr ""
 " su reproductor, hasta 2×. La velocidad se muestra en la esquina del "
 "vídeo cuando no es 1×, y una nueva fuente vuelve a empezar a 1×."
 
-#: ../../source/manuel_matchs.rst:864
+#: ../../source/manuel_matchs.rst:880
 msgid ""
 "Une vidéo filmée de travers se redresse par le bouton ⟳ de la barre "
 "vidéo, présent aussi dans la barre du mode théâtre, ou par *o* : un quart"
@@ -2069,7 +2110,7 @@ msgstr ""
 "el vídeo de un archivo como en el marco de YouTube. El ángulo se recuerda"
 " para el borrador, solo en este ordenador; no se escribe en la base."
 
-#: ../../source/manuel_matchs.rst:870
+#: ../../source/manuel_matchs.rst:886
 msgid ""
 "Des repères se déduisent les **durées** de décision : la décision de "
 "pions va du jet à la fin du coup, la décision de videau de l'action "
@@ -2100,7 +2141,7 @@ msgstr ""
 " jugada si la tirada no tiene instante; un reproductor en pausa sigue en "
 "pausa."
 
-#: ../../source/manuel_matchs.rst:883
+#: ../../source/manuel_matchs.rst:899
 msgid ""
 "Dès que le brouillon a une vidéo ou un repère, le transcript gagne une "
 "colonne **durée** à droite de chaque joueur : la durée de la décision, en"
@@ -2152,7 +2193,7 @@ msgstr ""
 "luego vuelve al final de la transcripción: allí las cifras abren el "
 "lanzamiento siguiente, y el indicador lo dice."
 
-#: ../../source/manuel_matchs.rst:905
+#: ../../source/manuel_matchs.rst:921
 msgid ""
 "L'application ne décode pas la vidéo elle-même : les formats lus sont "
 "ceux du webview. Un format qu'il ne lit pas, ou un fichier dont le "
@@ -2179,7 +2220,7 @@ msgstr ""
 "-plugins-bad-free gstreamer1-libav`` (este último procede de RPM Fusion) "
 "— véase :ref:`telecharge_install`."
 
-#: ../../source/manuel_matchs.rst:917
+#: ../../source/manuel_matchs.rst:933
 msgid ""
 "Une vidéo qui se fige — un saut qui n'aboutit pas, une image immobile "
 "pendant la lecture — est rechargée au bout de trois secondes, puis "
@@ -2193,7 +2234,7 @@ msgstr ""
 " en pausa como antes. Tras tres recargas sin efecto, el panel lo indica y"
 " propone reintentar."
 
-#: ../../source/manuel_matchs.rst:922
+#: ../../source/manuel_matchs.rst:938
 msgid ""
 "Un fichier ``.webm`` ou ``.mkv`` mal multiplexé fige la vidéo sur "
 "certains sauts : un groupe d'images du fichier commence par une image non"
@@ -2225,7 +2266,7 @@ msgstr ""
 "transcripción. El original no se modifica ni se borra, y una copia sana "
 "ya presente se reutiliza sin nueva reparación."
 
-#: ../../source/manuel_matchs.rst:933
+#: ../../source/manuel_matchs.rst:949
 msgid ""
 "Sans ``ffmpeg``, ou si la réparation échoue, le volet annonce les sauts "
 "fautifs avec la raison et la commande qui répare le fichier, prête à "
@@ -2235,7 +2276,7 @@ msgstr ""
 "defectuosos con el motivo y el comando que repara el archivo, listo para "
 "copiar:"
 
-#: ../../source/manuel_matchs.rst:940
+#: ../../source/manuel_matchs.rst:956
 msgid ""
 "La commande écrit la même copie à côté de l'original ; associez-la "
 "ensuite au match ou à la transcription. Le volet propose la même commande"
@@ -2246,7 +2287,7 @@ msgstr ""
 "partido o a la transcripción. El panel ofrece el mismo comando cuando "
 "desiste tras sus tres recargas en un ``.webm`` o un ``.mkv``."
 
-#: ../../source/manuel_matchs.rst:944
+#: ../../source/manuel_matchs.rst:960
 msgid ""
 "Sous Linux, l'application lit les vidéos par GStreamer (WebKitGTK). Avec "
 "``gst-libav`` 1.28.9, le décodeur H.264 ``avdec_h264`` fait échouer tout "
@@ -2264,7 +2305,7 @@ msgstr ""
 "decodificador; GStreamer usa entonces otro decodificador H.264 instalado "
 "(por ejemplo ``openh264dec``, o un decodificador por hardware):"
 
-#: ../../source/manuel_matchs.rst:954
+#: ../../source/manuel_matchs.rst:970
 msgid ""
 "Revenir à ``gst-libav`` 1.28.8 convient aussi. Windows et macOS ne sont "
 "pas concernés."
