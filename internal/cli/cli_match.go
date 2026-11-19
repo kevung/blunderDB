@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -302,9 +303,11 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 			sb.WriteString(fmt.Sprintf("  Cube decision time: %.1f s\n", float64(*movePos.CubeDecisionMS)/1000))
 		}
 		if pt, ok := traceByMove[movePos.MoveID]; ok {
-			sb.WriteString(fmt.Sprintf("  MWC (%s): %.2f%%", match.Player1Name, *pt.MWCBefore*100))
+			// The analysis's rounding can put a value a hair outside [0, 1];
+			// a percentage reads clamped, the json keeps the arithmetic.
+			sb.WriteString(fmt.Sprintf("  MWC (%s): %.2f%%", match.Player1Name, clampUnit(*pt.MWCBefore)*100))
 			if pt.MWCAfter != nil {
-				sb.WriteString(fmt.Sprintf(" -> %.2f%%", *pt.MWCAfter*100))
+				sb.WriteString(fmt.Sprintf(" -> %.2f%%", clampUnit(*pt.MWCAfter)*100))
 			}
 			sb.WriteString("\n")
 		}
@@ -322,6 +325,11 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 	}
 
 	return sb.String(), nil
+}
+
+// clampUnit bounds a chance to [0, 1] for display.
+func clampUnit(v float64) float64 {
+	return math.Min(1, math.Max(0, v))
 }
 
 // winTrace is player 1's match winning chances over a match, ok false when

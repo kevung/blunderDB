@@ -16,10 +16,12 @@ import (
 // the conversion the losses use (engine.EquityToMWC beside
 // ConvertEMGLossToMWCLoss).
 //
-// The stored position is the decider's: its first score is the decider's,
-// for a take or a pass too (the responder's). A cube analysis is the doubler's
-// equity at the cube before the double, so a response reads it from the
-// doubler's side and turns it over.
+// The stored position is the side of the seat that played the Move: its
+// first score is that seat's. A cube analysis is the doubler's equity at the
+// cube before the double. A response on the turned cube is the responder's
+// row, so it reads the analysis from the doubler's side and turns it over; a
+// take the .xg fallback left on the doubler's own row (ADR-0083, rule 2) is
+// the doubler's side already and reads it as stored.
 func (s *StatsStore) MatchWinTrace(ctx context.Context, scope string, matchID int64) (storage.MatchWinTrace, error) {
 	trace := storage.MatchWinTrace{Decisions: []storage.WinTracePoint{}}
 	tenant, args := s.DB.TenantFilter("m", scope)
@@ -55,13 +57,18 @@ func (s *StatsStore) MatchWinTrace(ctx context.Context, scope string, matchID in
 					before = 1 - before
 				}
 				pt.MWCBefore = &before
-				if !math.IsNaN(e.loss) {
-					after := before - e.loss
+				// A decision outside the counted set (a forced play, a no
+				// double outside the window) or an unscored play has no
+				// loss: it leaves the chances where they were.
+				after := before
+				if d.MWCLoss != nil {
 					if d.Player == 1 {
-						after = before + e.loss
+						after = before + *d.MWCLoss
+					} else {
+						after = before - *d.MWCLoss
 					}
-					pt.MWCAfter = &after
 				}
+				pt.MWCAfter = &after
 			}
 		}
 		trace.Decisions = append(trace.Decisions, pt)
@@ -69,11 +76,10 @@ func (s *StatsStore) MatchWinTrace(ctx context.Context, scope string, matchID in
 	return trace, nil
 }
 
-// decisionEquity is a Move's best option in its decider's match winning
-// chances, and what the played option cost in the same unit; NaN where the
-// score cannot be priced (money) or the play is unscored.
+// decisionEquity is a Move's best option in the match winning chances of
+// the seat that played the Move; NaN where the score cannot be priced (money).
 type decisionEquity struct {
-	before, loss float64
+	before float64
 }
 
 // decisionEquities maps every Move of the match whose analysis gives its best
@@ -83,8 +89,8 @@ func (s *StatsStore) decisionEquities(ctx context.Context, scope string, matchID
 	tenant, args := s.DB.TenantFilter("mv", scope)
 	rows, err := s.DB.Query(ctx,
 		`SELECT mv.id, `+ActionLabelOrEmptyFor(s.DB, "mv.move_type")+`, `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`,
-			p.id, a.data, mv.decision_error_mp, COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
-			`+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0)
+			p.id, a.data, COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
+			COALESCE(p.cube_value, 0), COALESCE(p.cube_owner, -1), `+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0)
 		 FROM move mv
 		 JOIN game g ON g.id = mv.game_id`+andSameTenant(s.DB, "g", "mv")+`
 		 JOIN match m ON m.id = g.match_id`+andSameTenant(s.DB, "m", "g")+`
@@ -103,9 +109,8 @@ func (s *StatsStore) decisionEquities(ctx context.Context, scope string, matchID
 		var moveID, positionID int64
 		var moveType, cubeAction string
 		var data []byte
-		var errMP *int64
-		var away0, away1, cubeValue, matchLength int
-		if err := rows.Scan(&moveID, &moveType, &cubeAction, &positionID, &data, &errMP, &away0, &away1, &cubeValue, &matchLength); err != nil {
+		var away0, away1, storedCube, cubeOwner, cubeValue, matchLength int
+		if err := rows.Scan(&moveID, &moveType, &cubeAction, &positionID, &data, &away0, &away1, &storedCube, &cubeOwner, &cubeValue, &matchLength); err != nil {
 			return nil, errf(s.DB, "MatchWinTrace scan", err)
 		}
 		analysis, seen := decoded[positionID]
@@ -115,15 +120,16 @@ func (s *StatsStore) decisionEquities(ctx context.Context, scope string, matchID
 			}
 			decoded[positionID] = analysis
 		}
-		before, ok := bestOptionMWC(analysis, moveType == "cube", cubeAction, away0, away1, cubeValue, matchLength)
+		// The condition cubeMultiplierExpr steps the cube down on: a
+		// response on the turned cube held by no one, stored from the
+		// responder's side. The .xg fallback leaves a take on the doubler's
+		// own row, an owned cube, stored from the doubler's side.
+		turned := storedCube > 0 && cubeOwner == -1
+		before, ok := bestOptionMWC(analysis, moveType == "cube", cubeAction, turned, away0, away1, cubeValue, matchLength)
 		if !ok {
 			continue
 		}
-		e := decisionEquity{before: before, loss: math.NaN()}
-		if errMP != nil {
-			e.loss = decisionMWCLoss(*errMP, away0, away1, cubeValue, matchLength)
-		}
-		out[moveID] = e
+		out[moveID] = decisionEquity{before: before}
 	}
 	if err := rows.Err(); err != nil {
 		return nil, errf(s.DB, "MatchWinTrace rows", err)
@@ -134,8 +140,10 @@ func (s *StatsStore) decisionEquities(ctx context.Context, scope string, matchID
 // bestOptionMWC is the decider's match winning chances with the decision
 // taken at its best, from the analysis its loss is scored by (ColumnSource).
 // ok is false when that analysis lacks the decision's part; the chances are
-// NaN when the score cannot be priced. away0 is the decider's away score.
-func bestOptionMWC(analysis *domain.PositionAnalysis, cube bool, cubeAction string, away0, away1, cubeValue, matchLength int) (float64, bool) {
+// NaN when the score cannot be priced. away0 is the away score of the side
+// the position is stored from; turned marks a response stored from the
+// responder's side.
+func bestOptionMWC(analysis *domain.PositionAnalysis, cube bool, cubeAction string, turned bool, away0, away1, cubeValue, matchLength int) (float64, bool) {
 	analysis = analysis.ColumnSource()
 	if analysis == nil {
 		return 0, false
@@ -158,7 +166,9 @@ func bestOptionMWC(analysis *domain.PositionAnalysis, cube bool, cubeAction stri
 	offered := math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity)
 	switch engine.CanonicalCubeAction(cubeAction) {
 	case engine.CubeTake, engine.CubePass:
-		return 1 - engine.EquityToMWC(offered, score1, score0, cubeValue, matchLength), true
+		if turned {
+			return 1 - engine.EquityToMWC(offered, score1, score0, cubeValue, matchLength), true
+		}
 	}
 	return engine.EquityToMWC(math.Max(dca.CubefulNoDoubleEquity, offered), score0, score1, cubeValue, matchLength), true
 }

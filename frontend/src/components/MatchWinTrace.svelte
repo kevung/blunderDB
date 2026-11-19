@@ -28,8 +28,10 @@
     /** @param {number | null} i */
     const setHover = (i) => onhover(i === null ? null : (movePositions[i]?.move_id ?? null));
 
+    // The analysis's rounding can put a value a hair outside [0, 1]: the label
+    // reads it clamped, never "-0.0 %" or "100.0 %" past a won position.
     /** @param {number} v */
-    const pct = (v) => `${(v * 100).toFixed(1)} %`;
+    const pct = (v) => `${(Math.min(1, Math.max(0, v)) * 100).toFixed(1)} %`;
     const ticks = [
         { at: 1, text: '100 %' },
         { at: 0.5, text: '50 %' },

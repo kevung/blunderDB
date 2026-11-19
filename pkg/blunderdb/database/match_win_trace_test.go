@@ -55,6 +55,9 @@ func TestMatchWinTraceAgreesWithDecisionLosses(t *testing.T) {
 					}
 				}
 				if d.MWCLoss == nil {
+					if pt.MWCBefore != nil && (pt.MWCAfter == nil || *pt.MWCAfter != *pt.MWCBefore) {
+						t.Errorf("move %d: no loss, yet the chances move from %v to %v", pt.MoveID, *pt.MWCBefore, deref(pt.MWCAfter))
+					}
 					continue
 				}
 				if pt.MWCBefore == nil || pt.MWCAfter == nil {

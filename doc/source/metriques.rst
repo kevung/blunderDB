@@ -238,8 +238,9 @@ une décision désigne l'erreur qui a perdu le match.
 l'analyse peut porter une position gagnée un rien au-delà de 100 %.
 
 **Limites.** Une décision sans analyse n'a pas de valeur, jamais une valeur
-estimée : la courbe s'interrompt. Une décision analysée dont le coup joué
-n'est pas noté (un coup qu'aucun candidat ne nomme) n'a que sa valeur *avant*.
+estimée : la courbe s'interrompt. Une décision analysée sans ℓ (hors du
+compte, ou un coup joué qu'aucun candidat ne nomme) laisse les chances où
+elles étaient : *après* vaut *avant*.
 Un match en money n'a pas de chances de gagner le match : la trace ne porte
 alors aucune valeur, et le dit (``money``).
 

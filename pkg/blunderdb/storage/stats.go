@@ -463,15 +463,16 @@ type MatchWinTrace struct {
 // rates it; MWCAfter the same chances once the decision was played: MWCBefore
 // moved by the loss of the player who made it, so that MWCBefore − MWCAfter is
 // MWCLoss for player 1's decisions and −MWCLoss for player 2's (the loss
-// MatchDecisionLosses gives, same conversion). Both are fractions, read off
+// MatchDecisionLosses gives, same conversion). A decision with a nil MWCLoss
+// (outside the counted set: a forced play, a no double outside the window; or
+// a played move no candidate names) leaves the chances where they were:
+// MWCAfter equals MWCBefore. Both are fractions, read off
 // the library's match equity table from the analysis's normalised equity
 // (ADR-0019): no equity leaves on another scale. They are not clamped: an
 // analysis's rounding can put a won position a hair past 1.
 //
 // Analysed says the decision has an analysis its equity can be read from;
-// without one both values are nil, never estimated. An analysed decision whose
-// own play is unscored (a played move no candidate names) has a MWCBefore and
-// a nil MWCAfter. Between two decisions the curve moves by the dice, which no
+// without one both values are nil, never estimated. Between two decisions the curve moves by the dice, which no
 // decision accounts for.
 type WinTracePoint struct {
 	MoveID       int64    `json:"move_id"`

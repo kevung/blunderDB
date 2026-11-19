@@ -107,3 +107,92 @@ func testStatsMatchWinTrace(t *testing.T, s storage.Storage) {
 		t.Errorf("unknown match: %+v, %v", none, err)
 	}
 }
+
+// testStatsMatchWinTraceCube runs MatchWinTrace over cube decisions at an
+// asymmetric score, where reading a response from the wrong side shows: a
+// double and its take on the turned cube held by no one (the take stored from
+// the responder's side, at the cube after the double), and a take the .xg
+// fallback left on the doubler's own row (stored from the doubler's side, on
+// the owned cube before the double, ADR-0083). Both read the doubler's
+// equity at the cube before the double.
+func testStatsMatchWinTraceCube(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	dca := func() *domain.DoublingCubeAnalysis {
+		return &domain.DoublingCubeAnalysis{CubefulNoDoubleEquity: 0.4, CubefulNoDoubleError: -0.2,
+			CubefulDoubleTakeEquity: 0.6, CubefulDoublePassEquity: 1.0, CubefulDoublePassError: 0.4}
+	}
+	cubePos := func(score [2]int, cubeLog2, owner int, played string) int64 {
+		pos := statsDecisionPos(t, 0)
+		pos.DecisionType = domain.CubeAction
+		pos.Dice = [2]int{0, 0}
+		pos.Score = score
+		pos.Cube = domain.Cube{Value: cubeLog2, Owner: owner}
+		id, err := s.Positions().Save(ctx, "", &pos)
+		if err != nil {
+			t.Fatalf("Save cube position %v: %v", score, err)
+		}
+		if err := s.Analyses().Save(ctx, "", id, &domain.PositionAnalysis{AnalysisType: "DoublingCube",
+			PlayedCubeActions: []string{played}, DoublingCubeAnalysis: dca()}); err != nil {
+			t.Fatalf("Save cube analysis %v: %v", score, err)
+		}
+		return id
+	}
+	type row struct {
+		pos    int64
+		player int32
+		action string
+	}
+	match := func(rows []row) storage.MatchWinTrace {
+		m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7,
+			MatchDate: time.Date(2025, 6, 3, 0, 0, 0, 0, time.UTC)}
+		matchID, err := s.Matches().Save(ctx, "", &m)
+		if err != nil {
+			t.Fatalf("Save match: %v", err)
+		}
+		gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 2})
+		if err != nil {
+			t.Fatalf("CreateGame: %v", err)
+		}
+		for i, r := range rows {
+			if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gameID, MoveNumber: int32(i + 1), MoveType: "cube",
+				PositionID: r.pos, Player: r.player, CubeAction: r.action}); err != nil {
+				t.Fatalf("CreateMove %d: %v", i, err)
+			}
+		}
+		trace, err := s.Stats().MatchWinTrace(ctx, "", matchID)
+		if err != nil {
+			t.Fatalf("MatchWinTrace: %v", err)
+		}
+		if len(trace.Decisions) != len(rows) {
+			t.Fatalf("got %d points, want %d: %+v", len(trace.Decisions), len(rows), trace)
+		}
+		return trace
+	}
+	check := func(what string, pt storage.WinTracePoint, want float64) {
+		t.Helper()
+		if pt.MWCBefore == nil || pt.MWCAfter == nil {
+			t.Fatalf("%s: no chances: %+v", what, pt)
+		}
+		if math.Abs(*pt.MWCBefore-want) > 1e-9 {
+			t.Errorf("%s: player 1 before %v, want %v", what, *pt.MWCBefore, want)
+		}
+		if math.Abs(*pt.MWCAfter-*pt.MWCBefore) > 1e-9 {
+			t.Errorf("%s: a right decision moves the chances from %v to %v", what, *pt.MWCBefore, *pt.MWCAfter)
+		}
+	}
+
+	// Alice (player 1) is 5 away, Bob 3 away: current score 2-4. Alice
+	// doubles on the centred cube, Bob takes on the turned one.
+	trace := match([]row{
+		{cubePos([2]int{5, 3}, 0, domain.None, "Double"), 1, "Double"},
+		{cubePos([2]int{3, 5}, 1, domain.None, "Take"), -1, "Take"},
+	})
+	want := engine.EquityToMWC(0.6, 2, 4, 1, 7)
+	check("double", trace.Decisions[0], want)
+	check("take on the turned cube", trace.Decisions[1], want)
+
+	// The .xg fallback: Alice's own row holds the take, on the cube she owns
+	// at 2, stored from her side at the cube before the double.
+	fallback := match([]row{{cubePos([2]int{5, 3}, 1, 0, "Take"), 1, "Take"}})
+	check("take on the doubler's row", fallback.Decisions[0], engine.EquityToMWC(0.6, 2, 4, 2, 7))
+}
