@@ -117,11 +117,11 @@ func testStatsMatchWinTrace(t *testing.T, s storage.Storage) {
 // equity at the cube before the double.
 func testStatsMatchWinTraceCube(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
-	dca := func() *domain.DoublingCubeAnalysis {
-		return &domain.DoublingCubeAnalysis{CubefulNoDoubleEquity: 0.4, CubefulNoDoubleError: -0.2,
+	dca := func(nd float64) *domain.DoublingCubeAnalysis {
+		return &domain.DoublingCubeAnalysis{CubefulNoDoubleEquity: nd, CubefulNoDoubleError: -0.2,
 			CubefulDoubleTakeEquity: 0.6, CubefulDoublePassEquity: 1.0, CubefulDoublePassError: 0.4}
 	}
-	cubePos := func(score [2]int, cubeLog2, owner int, played string) int64 {
+	cubePos := func(score [2]int, cubeLog2, owner int, played string, nd float64) int64 {
 		pos := statsDecisionPos(t, 0)
 		pos.DecisionType = domain.CubeAction
 		pos.Dice = [2]int{0, 0}
@@ -132,7 +132,7 @@ func testStatsMatchWinTraceCube(t *testing.T, s storage.Storage) {
 			t.Fatalf("Save cube position %v: %v", score, err)
 		}
 		if err := s.Analyses().Save(ctx, "", id, &domain.PositionAnalysis{AnalysisType: "DoublingCube",
-			PlayedCubeActions: []string{played}, DoublingCubeAnalysis: dca()}); err != nil {
+			PlayedCubeActions: []string{played}, DoublingCubeAnalysis: dca(nd)}); err != nil {
 			t.Fatalf("Save cube analysis %v: %v", score, err)
 		}
 		return id
@@ -184,8 +184,8 @@ func testStatsMatchWinTraceCube(t *testing.T, s storage.Storage) {
 	// Alice (player 1) is 5 away, Bob 3 away: current score 2-4. Alice
 	// doubles on the centred cube, Bob takes on the turned one.
 	trace := match([]row{
-		{cubePos([2]int{5, 3}, 0, domain.None, "Double"), 1, "Double"},
-		{cubePos([2]int{3, 5}, 1, domain.None, "Take"), -1, "Take"},
+		{cubePos([2]int{5, 3}, 0, domain.None, "Double", 0.4), 1, "Double"},
+		{cubePos([2]int{3, 5}, 1, domain.None, "Take", 0.4), -1, "Take"},
 	})
 	want := engine.EquityToMWC(0.6, 2, 4, 1, 7)
 	check("double", trace.Decisions[0], want)
@@ -193,6 +193,11 @@ func testStatsMatchWinTraceCube(t *testing.T, s storage.Storage) {
 
 	// The .xg fallback: Alice's own row holds the take, on the cube she owns
 	// at 2, stored from her side at the cube before the double.
-	fallback := match([]row{{cubePos([2]int{5, 3}, 1, 0, "Take"), 1, "Take"}})
+	fallback := match([]row{{cubePos([2]int{5, 3}, 1, 0, "Take", 0.4), 1, "Take"}})
 	check("take on the doubler's row", fallback.Decisions[0], engine.EquityToMWC(0.6, 2, 4, 2, 7))
+
+	// Once the cube is offered, no double is no longer an option: a fallback
+	// take reads the offered equity even where no double was worth more.
+	tooGood := match([]row{{cubePos([2]int{5, 4}, 1, 0, "Take", 0.8), 1, "Take"}})
+	check("take on the doubler's row, no double better", tooGood.Decisions[0], engine.EquityToMWC(0.6, 2, 3, 2, 7))
 }

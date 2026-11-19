@@ -166,9 +166,11 @@ func bestOptionMWC(analysis *domain.PositionAnalysis, cube bool, cubeAction stri
 	offered := math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity)
 	switch engine.CanonicalCubeAction(cubeAction) {
 	case engine.CubeTake, engine.CubePass:
+		// Once the cube is offered, no double is no longer an option.
 		if turned {
 			return 1 - engine.EquityToMWC(offered, score1, score0, cubeValue, matchLength), true
 		}
+		return engine.EquityToMWC(offered, score0, score1, cubeValue, matchLength), true
 	}
 	return engine.EquityToMWC(math.Max(dca.CubefulNoDoubleEquity, offered), score0, score1, cubeValue, matchLength), true
 }
