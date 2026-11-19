@@ -51,8 +51,9 @@ type MatchListOpts struct {
 	DateTo      string // ISO "YYYY-MM-DD", inclusive
 	MatchLength []int
 	// Sort is a key understood by domain.MatchOrderByClause ("" = most recent
-	// first). PR/MWC are not match columns (they are computed badges), so they
-	// are not sortable here.
+	// first), or a PR key sqlshared.MatchPRSort serves: pr1, pr2 (a seat's
+	// PR), pr_main, pr_opponent (the main player's, aliases included, and
+	// his opponent's), each with a _desc form. MWC is not sortable here.
 	Sort   string
 	Limit  int
 	Offset int

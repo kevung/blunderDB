@@ -428,10 +428,21 @@ func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchL
 			yield(nil, err)
 			return
 		}
-		whereSQL, args := buildMatchListWhere(opts)
+		prOrder, byPR, err := sqlshared.MatchPRSort(ctx, binder{db: s.db}.shared(), scope, opts.Sort)
+		if err != nil {
+			yield(nil, fmt.Errorf("sqlite: list matches: %w", err))
+			return
+		}
+		whereSQL, whereArgs := buildMatchListWhere(opts)
+		args := append(append([]any{}, prOrder.JoinArgs...), whereArgs...)
+		orderBy := domain.MatchOrderByClauseWithDate(opts.Sort, domain.MatchSortDateSQLite)
+		if byPR {
+			orderBy = prOrder.OrderBy
+			args = append(args, prOrder.OrderArgs...)
+		}
 		query := `SELECT ` + matchSelectCols + ` FROM match m
-			 LEFT JOIN tournament t ON m.tournament_id = t.id` + whereSQL +
-			` ORDER BY ` + domain.MatchOrderByClauseWithDate(opts.Sort, domain.MatchSortDateSQLite)
+			 LEFT JOIN tournament t ON m.tournament_id = t.id` + prOrder.Join + whereSQL +
+			` ORDER BY ` + orderBy
 		switch {
 		case opts.Limit > 0:
 			query += ` LIMIT ?`

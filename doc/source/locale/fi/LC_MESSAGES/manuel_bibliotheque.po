@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-13 02:39+0100\n"
+"POT-Creation-Date: 2026-11-19 01:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1435,6 +1435,19 @@ msgstr ""
 
 #: ../../source/manuel_bibliotheque.rst:620
 msgid ""
+"Deux critères de provenance se prêtent à une collection qui se range "
+"seule : ``s i`` garde les positions apportées une à une (à la main ou par"
+" un fichier de positions) plutôt qu'avec un match, ``s fl`` celles que le"
+" logiciel d'origine avait marquées à l'import. Les deux se combinent avec"
+" tout autre critère."
+msgstr ""
+"Kaksi alkuperäkriteeriä sopii kokoelmaan, joka järjestää itsensä: ``s i``"
+" säilyttää yksitellen tuodut asemat (käsin tai asematiedostosta) eikä "
+"ottelun mukana tulleita, ``s fl`` ne, jotka alkuperäinen ohjelma oli "
+"merkinnyt tuonnissa. Molemmat yhdistyvät mihin tahansa muuhun kriteeriin."
+
+#: ../../source/manuel_bibliotheque.rst:626
+msgid ""
 "Le bouton ❄, visible sur une collection vivante, la **fige** : les "
 "positions que la recherche sélectionne à cet instant deviennent la "
 "composition d'une collection ordinaire, dans l'ordre de la recherche, et "
@@ -1446,7 +1459,7 @@ msgstr ""
 "järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli "
 "ennen sen muuttumista eläväksi, korvataan."
 
-#: ../../source/manuel_bibliotheque.rst:625
+#: ../../source/manuel_bibliotheque.rst:631
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -1458,7 +1471,7 @@ msgstr ""
 "palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla "
 "suodattimella ei saa olla: laajeta hiljaisuudessa."
 
-#: ../../source/manuel_bibliotheque.rst:630
+#: ../../source/manuel_bibliotheque.rst:636
 msgid ""
 "Une collection vivante ne peut pas porter ``like`` : une collection est "
 "un ensemble, et ce jeton classe. Elle refuse la requête qui le porte, en "
@@ -1472,7 +1485,7 @@ msgstr ""
 "vanhempi tallennettu haku vielä sisältää, hylätään toistettaessa, olipa "
 "se historiasta tai suodatinkirjastosta."
 
-#: ../../source/manuel_bibliotheque.rst:636
+#: ../../source/manuel_bibliotheque.rst:642
 msgid ""
 "Une collection vivante **reste vivante dans un export** de la base : sa "
 "requête voyage avec elle et se réévalue, chez le destinataire, sur les "
@@ -1493,7 +1506,7 @@ msgstr ""
 "tiedoston ulkopuolelle, kokoelma viedään **jäädytettynä** niillä "
 "asemilla, jotka kysely valitsee viennin hetkellä."
 
-#: ../../source/manuel_bibliotheque.rst:645
+#: ../../source/manuel_bibliotheque.rst:651
 msgid ""
 "Une collection vivante dont la base refuse la requête (``like``, une "
 "forme étoilée) part **figée et vide**, dans un export comme dans un "
@@ -1504,7 +1517,7 @@ msgstr ""
 "viedään tai siirretään toiseen tietokantaan **jäädytettynä ja tyhjänä**: "
 "elävänä se vain hylättäisiin siellä uudelleen."
 
-#: ../../source/manuel_bibliotheque.rst:649
+#: ../../source/manuel_bibliotheque.rst:655
 msgid ""
 "Un paquet de répétition espacée fondé sur une collection vivante rejoue "
 "sa requête à chaque ouverture de séance : les positions que la recherche "
@@ -1522,7 +1535,7 @@ msgstr ""
 "järjestyksessä syöttävät pakkaa, ja tilarivi kertoo tämän yhdessä "
 "valittujen asemien todellisen määrän kanssa."
 
-#: ../../source/manuel_bibliotheque.rst:659
+#: ../../source/manuel_bibliotheque.rst:665
 msgid ""
 "Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence**"
 " : une courte liste de positions à étudier, choisie parmi vos erreurs "
@@ -1539,7 +1552,7 @@ msgstr ""
 "opeta mitään muista; viiteasema on usean virheesi keskellä, rakenteeltaan"
 " samankaltaisena, ja sen opetus palvelee kaikkia."
 
-#: ../../source/manuel_bibliotheque.rst:666
+#: ../../source/manuel_bibliotheque.rst:672
 msgid ""
 "Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées "
 "en MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs "
@@ -1553,7 +1566,7 @@ msgstr ""
 "on enintään 12 nappulaaskelta; tuplauskuution virheen naapureita ovat "
 "vain samassa tilanteessa olevat."
 
-#: ../../source/manuel_bibliotheque.rst:670
+#: ../../source/manuel_bibliotheque.rst:676
 msgid ""
 "Chaque position vaut le **MWC récupérable** (perte moins difficulté) de "
 "ses voisines et d'elle-même : ce que sa leçon rapporterait si elle "
@@ -1571,7 +1584,7 @@ msgstr ""
 "alussa oleva luku on katettu MWC; peruste antaa luvun, joka lasketaan, "
 "kun oppitunti lasketaan puoliksi."
 
-#: ../../source/manuel_bibliotheque.rst:677
+#: ../../source/manuel_bibliotheque.rst:683
 msgid ""
 "La liste est **variée** : une position retenue couvre ses voisines, qui "
 "ne rapportent plus rien aux suivantes, et aucune position proposée n'est "
@@ -1585,7 +1598,7 @@ msgstr ""
 "kokoelmassa olevaa, Anki-korttia tai „opiskelluksi“ merkittyä — ei "
 "koskaan ehdoteta, ja sen naapurien katsotaan olevan katettuja."
 
-#: ../../source/manuel_bibliotheque.rst:683
+#: ../../source/manuel_bibliotheque.rst:689
 msgid ""
 "La **portée** est toute la base, le match en cours, un tournoi ou le "
 "filtre du panneau Statistiques ; le joueur est celui de ce filtre. La "
@@ -1609,11 +1622,11 @@ msgstr ""
 "**tietovisaksi**. Komentorivillä: ``blunderdb collection suggest`` (katso"
 " :ref:`cli_collection`)."
 
-#: ../../source/manuel_bibliotheque.rst:696
+#: ../../source/manuel_bibliotheque.rst:702
 msgid "Leçons"
 msgstr "Oppitunnit"
 
-#: ../../source/manuel_bibliotheque.rst:698
+#: ../../source/manuel_bibliotheque.rst:704
 msgid ""
 "Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un "
 "élève et lui remet dans un fichier de base (voir la commande ``lesson "
@@ -1629,7 +1642,7 @@ msgstr ""
 " Komento ``le`` luettelee tietokannan oppitunnit tilarivillä; ``le 2`` "
 "avaa oppitunnin 2; ``le edit`` avaa oppituntieditorin."
 
-#: ../../source/manuel_bibliotheque.rst:705
+#: ../../source/manuel_bibliotheque.rst:711
 msgid ""
 "Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la "
 "leçon, numéro de l'étape, titre, puis le texte. *Précédente* et "
@@ -1644,7 +1657,7 @@ msgstr ""
 "näyttää, ja sitä selataan tavallisin elein. *Sulje* poistuu oppitunnilta."
 " Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä."
 
-#: ../../source/manuel_bibliotheque.rst:712
+#: ../../source/manuel_bibliotheque.rst:718
 msgid ""
 "La case *Étape faite* de la barre marque l'étape courante comme faite ; "
 "un second clic retire la marque, et la barre compte les étapes faites. "
@@ -1663,7 +1676,7 @@ msgstr ""
 "sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa "
 "oleva oppitunti jää koskematta."
 
-#: ../../source/manuel_bibliotheque.rst:720
+#: ../../source/manuel_bibliotheque.rst:726
 msgid ""
 "**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la "
 "leçon 2) ou par le bouton *Modifier* de la barre de lecture. À gauche, la"
@@ -1701,7 +1714,7 @@ msgstr ""
 "Oppitunteja voi luoda ja muokata myös komentoriviltä tai API:n kautta "
 "(:ref:`headless_lecons`)."
 
-#: ../../source/manuel_bibliotheque.rst:737
+#: ../../source/manuel_bibliotheque.rst:743
 msgid ""
 "Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre "
 "d'export ou par la ligne de commande — emporte toutes les leçons. Dans la"
