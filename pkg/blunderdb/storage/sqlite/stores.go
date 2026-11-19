@@ -33,14 +33,16 @@ type binder struct {
 	probe *writeProbe
 	// stmts is nil on a binder over a transaction, where stmtTx prepares.
 	stmts *poolStmts
+	// cols is nil on a binder over a transaction, which asks each time.
+	cols *columnProbe
 }
 
 func (b binder) Positions() storage.PositionStore     { return &positionStore{b.db, b.shared(), b.stmts} }
 func (b binder) Analyses() storage.AnalysisStore      { return &analysisStore{db: b.db, stmts: b.stmts} }
-func (b binder) Matches() storage.MatchStore          { return &matchStore{b.db} }
+func (b binder) Matches() storage.MatchStore          { return &matchStore{b.db, b.cols} }
 func (b binder) Comments() storage.CommentStore       { return &sqlshared.CommentStore{DB: b.shared()} }
 func (b binder) Collections() storage.CollectionStore { return &collectionStore{b.db} }
-func (b binder) Tournaments() storage.TournamentStore { return &tournamentStore{b.db} }
+func (b binder) Tournaments() storage.TournamentStore { return &tournamentStore{b.db, b.cols} }
 func (b binder) Anki() storage.AnkiStore {
 	return &ankiStore{&sqlshared.AnkiStore{DB: b.shared(), Positions: b.Positions()}}
 }

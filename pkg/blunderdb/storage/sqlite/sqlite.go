@@ -124,7 +124,7 @@ func open(ctx context.Context, dsn string, opts *storage.Options, watch bool) (*
 	if opts != nil {
 		progress = opts.MigrationProgress
 	}
-	st := &Storage{binder: binder{db: db, probe: &writeProbe{}, stmts: &poolStmts{db: db}}, sqlDB: db, ownsDB: true, migrationProgress: progress}
+	st := &Storage{binder: binder{db: db, probe: &writeProbe{}, stmts: &poolStmts{db: db}, cols: &columnProbe{}}, sqlDB: db, ownsDB: true, migrationProgress: progress}
 	if !fresh {
 		// Before the first write of the open: a database above the floor is
 		// left exactly as it was.
@@ -168,7 +168,7 @@ func (s *Storage) restoreBulkIndexes(ctx context.Context) error {
 // connection: Close is a no-op and the caller stays responsible for closing
 // db. Used by the Database wrapper.
 func New(db *sql.DB) *Storage {
-	return &Storage{binder: binder{db: db, probe: &writeProbe{}, stmts: &poolStmts{db: db}}, sqlDB: db, ownsDB: false}
+	return &Storage{binder: binder{db: db, probe: &writeProbe{}, stmts: &poolStmts{db: db}, cols: &columnProbe{}}, sqlDB: db, ownsDB: false}
 }
 
 // perConnPragmas are the connection-scoped PRAGMAs every SQLite connection
@@ -483,7 +483,7 @@ func openReadOnlyMode(ctx context.Context, abs, path string, immutable bool) (*S
 		db.Close()
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
-	return &Storage{binder: binder{db: db, probe: &writeProbe{}, stmts: &poolStmts{db: db}}, sqlDB: db, ownsDB: true}, nil
+	return &Storage{binder: binder{db: db, probe: &writeProbe{}, stmts: &poolStmts{db: db}, cols: &columnProbe{}}, sqlDB: db, ownsDB: true}, nil
 }
 
 // FileComments is Comments over a file read as it stands, never migrated —

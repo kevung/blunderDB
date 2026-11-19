@@ -13,7 +13,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
-type tournamentStore struct{ db execer }
+type tournamentStore struct {
+	db   execer
+	cols *columnProbe
+}
 
 var _ storage.TournamentStore = (*tournamentStore)(nil)
 
@@ -259,7 +262,7 @@ func (s *tournamentStore) ReorderMatches(ctx context.Context, scope string, tour
 func (s *tournamentStore) Matches(ctx context.Context, scope string, tournamentID int64) iter.Seq2[*domain.Match, error] {
 	return func(yield func(*domain.Match, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+matchSelectCols+` FROM match m
+			`SELECT `+matchColumns(ctx, s.db, s.cols)+` FROM match m
 			 LEFT JOIN tournament t ON m.tournament_id = t.id
 			 WHERE m.tournament_id = ?
 			 ORDER BY m.tournament_sort_order ASC, m.match_date DESC`, tournamentID)

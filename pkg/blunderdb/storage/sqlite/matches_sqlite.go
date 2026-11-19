@@ -17,7 +17,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
-type matchStore struct{ db execer }
+type matchStore struct {
+	db   execer
+	cols *columnProbe
+}
 
 var _ storage.MatchStore = (*matchStore)(nil)
 
@@ -433,7 +436,7 @@ func buildMatchListWhere(opts storage.MatchListOpts) (whereSQL string, args []an
 // Get returns the match with the given id, or ErrNotFound.
 func (s *matchStore) Get(ctx context.Context, scope string, id int64) (*domain.Match, error) {
 	row := s.db.QueryRowContext(ctx,
-		`SELECT `+matchSelectCols+` FROM match m
+		`SELECT `+matchColumns(ctx, s.db, s.cols)+` FROM match m
 		 LEFT JOIN tournament t ON m.tournament_id = t.id
 		 WHERE m.id = ?`, id)
 	m, err := scanMatch(row)
@@ -467,7 +470,7 @@ func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchL
 			orderBy = prOrder.OrderBy
 			args = append(args, prOrder.OrderArgs...)
 		}
-		query := `SELECT ` + matchSelectCols + ` FROM match m
+		query := `SELECT ` + matchColumns(ctx, s.db, s.cols) + ` FROM match m
 			 LEFT JOIN tournament t ON m.tournament_id = t.id` + prOrder.Join + whereSQL +
 			` ORDER BY ` + orderBy
 		switch {
@@ -709,7 +712,7 @@ func (s *matchStore) SetLastVisitedPosition(ctx context.Context, scope string, i
 // is stored.
 func (s *matchStore) LastVisited(ctx context.Context, scope string) (*domain.Match, error) {
 	row := s.db.QueryRowContext(ctx,
-		`SELECT `+matchSelectCols+` FROM match m
+		`SELECT `+matchColumns(ctx, s.db, s.cols)+` FROM match m
 		 LEFT JOIN tournament t ON m.tournament_id = t.id
 		 WHERE m.last_visited_position >= 0
 		 ORDER BY m.last_visited_at DESC NULLS LAST, m.import_date DESC, m.id DESC LIMIT 1`)
@@ -722,7 +725,7 @@ func (s *matchStore) LastVisited(ctx context.Context, scope string) (*domain.Mat
 	}
 
 	row = s.db.QueryRowContext(ctx,
-		`SELECT `+matchSelectCols+` FROM match m
+		`SELECT `+matchColumns(ctx, s.db, s.cols)+` FROM match m
 		 LEFT JOIN tournament t ON m.tournament_id = t.id`+matchOrderClause+` LIMIT 1`)
 	m, err = scanMatch(row)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -1311,7 +1314,7 @@ func (s *matchStore) ListByDiceHash(ctx context.Context, scope string, hash stri
 	if hash == "" {
 		return nil, nil
 	}
-	rows, err := s.db.QueryContext(ctx, `SELECT `+matchSelectCols+` FROM match m
+	rows, err := s.db.QueryContext(ctx, `SELECT `+matchColumns(ctx, s.db, s.cols)+` FROM match m
 		 LEFT JOIN tournament t ON m.tournament_id = t.id
 		 WHERE m.dice_hash = ? ORDER BY m.id`, hash)
 	if err != nil {
